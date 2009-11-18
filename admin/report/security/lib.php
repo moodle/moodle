@@ -510,7 +510,8 @@ function report_security_check_passwordsaltmain($detailed=false) {
     }
 
     if ($detailed) {
-        $result->details = get_string('check_passwordsaltmain_details', 'report_security');
+        $docspath = $CFG->docroot.'/'.str_replace('_utf8', '', current_language()).'/report/security/report_security_check_passwordsaltmain';
+        $result->details = get_string('check_passwordsaltmain_details', 'report_security', $docspath);
     }
 
     return $result;

@@ -3195,7 +3195,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
         $message = get_string('upgrade197notice', 'admin');
         if (empty($CFG->passwordmainsalt)) {
-            $message .= "\n".get_string('upgrade197salt', 'admin');
+            $docspath = $CFG->docroot.'/'.str_replace('_utf8', '', current_language()).'/report/security/report_security_check_passwordsaltmain';
+            $message .= "\n".get_string('upgrade197salt', 'admin', $docspath);
         }
         notify($message, 'notifysuccess');
 
@@ -3209,7 +3210,8 @@ function xmldb_main_upgrade($oldversion=0) {
         $messagesubject = get_string('upgrade197noticesubject', 'admin');
         $message  = addslashes(get_string('upgrade197notice', 'admin'));
         if (empty($CFG->passwordmainsalt)) {
-            $message .= "\n".get_string('upgrade197salt', 'admin');
+            $docspath = $CFG->docroot.'/'.str_replace('_utf8', '', current_language()).'/report/security/report_security_check_passwordsaltmain';
+            $message .= "\n".get_string('upgrade197salt', 'admin', $docspath);
         }
 
         // Force administrators to change password on next login
