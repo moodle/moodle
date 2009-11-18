@@ -7595,7 +7595,7 @@ if (!class_exists('TCPDF', false)) {
 			if (isset($dash)) {
 				$dash_string = '';
 				if ($dash) {
-					if (ereg('^.+,', $dash)) {
+					if (preg_match('/^.+,/', $dash)) {
 						$tab = explode(',', $dash);
 					} else {
 						$tab = array($dash);

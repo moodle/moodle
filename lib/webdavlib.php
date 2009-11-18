@@ -178,7 +178,7 @@ class webdav_client {
 
         $regs = array();
         /*         [1]        [2]        [3]        [4]        [5]        [6]  */
-        if (ereg('^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$', $iso8601, $regs)) {
+        if (preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$/', $iso8601, $regs)) {
             return mktime($regs[4],$regs[5], $regs[6], $regs[2], $regs[3], $regs[1]);
         }
         // to be done: regex for partial-time...apache webdav mod never returns partial-time

@@ -314,7 +314,7 @@ function mnet_server_dummy_method($methodname, $argsarray, $functionname) {
     global $MNET_REMOTE_CLIENT;
 
     if (is_object($MNET_REMOTE_CLIENT->object_to_call)) {
-        return @call_user_method_array($functionname, $MNET_REMOTE_CLIENT->object_to_call, $argsarray);
+        return @call_user_func_array(array($MNET_REMOTE_CLIENT->object_to_call,$functionname), $argsarray);
     } else if (!empty($MNET_REMOTE_CLIENT->static_location)) {
         return @call_user_func_array(array($MNET_REMOTE_CLIENT->static_location, $functionname), $argsarray);
     } else {

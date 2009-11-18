@@ -29,3 +29,24 @@ by David Mudrak <david.mudrak@gmail.com>
     accessible directly. However, it doesn't seem to be used within the
     library code.
 
+
+
+18 Nov 2009
+Description of modifications to remove ereg related functions deprecated as of php 5.3. Patch below.
+
+Index: tcpdf.php
+===================================================================
+RCS file: /cvsroot/moodle/moodle/lib/tcpdf/tcpdf.php,v
+retrieving revision 1.3
+diff -u -r1.3 tcpdf.php
+--- tcpdf.php	20 Jul 2009 17:31:48 -0000	1.3
++++ tcpdf.php	18 Nov 2009 05:48:56 -0000
+@@ -7595,7 +7595,7 @@
+ 			if (isset($dash)) {
+ 				$dash_string = '';
+ 				if ($dash) {
+-					if (ereg('^.+,', $dash)) {
++					if (preg_match('/^.+,/', $dash)) {
+ 						$tab = explode(',', $dash);
+ 					} else {
+ 						$tab = array($dash);

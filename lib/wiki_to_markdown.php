@@ -229,7 +229,7 @@ class WikiToMarkdown {
     // MARKDOWN: no change so leave
 
     // is this a list line (starts with * # ; :)
-    if (eregi( "^([*]+|[#]+|[;]+|[:]+) ", $line )) {
+    if (preg_match( "/^([*]+|[#]+|[;]+|[:]+) /i", $line )) {
       $line = $this->do_list( $line );
     }
 
@@ -331,7 +331,7 @@ class WikiToMarkdown {
     // run through lines
     foreach( $lines as $line ) {
       // is this a blank line?
-      $blank_line = eregi( "^[[:blank:]\r]*$", $line );
+      $blank_line = preg_match( "/^[[:blank:]\r]*$/i", $line );
       if ($blank_line) {
         // first end current block according to state
         $buffer = $buffer . $this->close_block( $this->block_state );
@@ -342,13 +342,13 @@ class WikiToMarkdown {
       // act now depending on current block state
       if ($this->block_state == STATE_NONE) {
         // first character of line defines block type
-        if (eregi( "^> ",$line )) {
+        if (preg_match( "/^> /i",$line )) {
           // blockquote
           $buffer = $buffer . $this->line_replace( $line ). "\n";
           $this->block_state = STATE_BLOCKQUOTE;
         }
         else
-        if (eregi( "^  ",$line) ) {
+        if (preg_match( "/^  /i",$line) ) {
           // preformatted text
           // MARKDOWN: no real equiv. so just use <pre>
           $buffer = $buffer . "<pre>\n";
@@ -356,7 +356,7 @@ class WikiToMarkdown {
           $this->block_state = STATE_PREFORM;
         }
         else
-        if (eregi("^\% ",$line) ) {
+        if (preg_match("/^\% /i",$line) ) {
                 // preformatted text - no processing
                 // MARKDOWN: this is MD code form of a paragraph
                 $buffer = $buffer . "    " . preg_replace( "/^\%/i","",$line) . "\n";
