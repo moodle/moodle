@@ -227,9 +227,9 @@
     <PHP version="5.2.8" level="required">
     </PHP>
     <PHP_EXTENSIONS>
-      <PHP_EXTENSION name="iconv" level="optional">
+      <PHP_EXTENSION name="iconv" level="required">
         <FEEDBACK>
-          <ON_CHECK message="iconvrecommended" />
+          <ON_CHECK message="iconvrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="mbstring" level="optional">
