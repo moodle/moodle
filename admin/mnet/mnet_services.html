@@ -44,9 +44,6 @@ echo $OUTPUT->box_start();
             echo $breakstring;
 ?>
     <input type="hidden" name="exists[<?php echo  $version['serviceid']; ?>]" value="1" />
-<?php if ($name == 'pf') { // see MDL-16269 ?>
-    <input type="hidden" name="publish[<?php echo $version['serviceid']; ?>]" value="0" />
-<?php } else { ?>
     <input type="checkbox" name="publish[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_publish']))? 'checked="checked" ': '' ; ?>/>
 <?php
             print_string('publish','mnet');
@@ -58,7 +55,7 @@ echo $OUTPUT->box_start();
                 print_string("enabled_for_all",'mnet',!empty($version['I_publish']));
             }
             echo '<br />';
-} ?>
+?>
     <input type="checkbox" name="subscribe[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_subscribe']))? 'checked="checked" ': '' ; ?>/>
 <?php
             print_string('subscribe','mnet');

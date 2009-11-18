@@ -126,8 +126,9 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
                                     a.name = ? AND
                                     s1.name = ? AND hs1.publish = ? AND
                                     s2.name = ? AND hs2.subscribe = ? AND
-                                    s3.name = ? AND hs3.subscribe = ?',
-                        array($CFG->mnet_localhost_id, 'mahara', 'sso_idp', 1, 'sso_sp', 1, 'pf', 1));;
+                                    s3.name = ? AND hs3.subscribe = ? AND
+                                    s3.name = ? AND hs3.publish = ?',
+                        array($CFG->mnet_localhost_id, 'mahara', 'sso_idp', 1, 'sso_sp', 1, 'pf', 1, 'pf', 1));
         if (empty($hosts)) { $hosts = array(); }
         if (isset($this) && is_object($this)) {
             $this->hosts = $hosts;
