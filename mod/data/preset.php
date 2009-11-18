@@ -333,27 +333,27 @@ echo '<table class="presets" cellpadding="5">';
 echo '<tr><td valign="top" colspan="2" align="center"><h3>'.$strexport.'</h3></td></tr>';
 
 echo '<tr><td><label>'.$strexportaszip.'</label>';
-echo $OUTPUT->help_icon(moodle_help_icon::make('exportzip', '', 'data', true));
+echo $OUTPUT->help_icon(moodle_help_icon::make('exportzip', get_string('help'), 'data', false));
 echo '</td><td>';
-$options = new object();
-$options->action = 'export';
-$options->d = $data->id;
-$options->sesskey = sesskey();
+$options = array();
+$options['sesskey'] = sesskey();
+$options['action']  = 'export';
+$options['d']       = $data->id;
 echo $OUTPUT->button(html_form::make_button('preset.php', $options, $strexport));
 echo '</td></tr>';
 
 echo '<tr><td><label>'.$strsaveaspreset.'</label>';
-echo $OUTPUT->help_icon(moodle_help_icon::make('savepreset', '', 'data', true));
+echo $OUTPUT->help_icon(moodle_help_icon::make('savepreset', get_string('help'), 'data', false));
 echo '</td><td>';
-$options = new object();
-$options->action = 'save1';
-$options->d = $data->id;
-$options->sesskey = sesskey();
+$options = array();
+$options['sesskey'] = sesskey();
+$options['action']  = 'save1';
+$options['d']       = $data->id;
 echo $OUTPUT->button(html_form::make_button('preset.php', $options, $strsave));
 echo '</td></tr>';
 echo '<tr><td valign="top" colspan="2" align="center"><h3>'.$strimport.'</h3></td></tr>';
 echo '<tr><td><label for="fromfile">'.$strfromfile.'</label>';
-echo $OUTPUT->help_icon(moodle_help_icon::make('importfromfile', '', 'data', true));
+echo $OUTPUT->help_icon(moodle_help_icon::make('importfromfile', get_string('help'), 'data', true));
 echo '</td><td>';
 echo '<form id="uploadpreset" method="post" action="preset.php">';
 echo '<fieldset class="invisiblefieldset">';
@@ -366,7 +366,7 @@ echo '</fieldset></form>';
 echo '</td></tr>';
 
 echo '<tr valign="top"><td><label>'.$strusestandard.'</label>';
-echo $OUTPUT->help_icon(moodle_help_icon::make('usepreset', '', 'data', true));
+echo $OUTPUT->help_icon(moodle_help_icon::make('usepreset', get_string('help'), 'data', true));
 echo '</td><td>';
 
 echo '<form id="presets" method="post" action="preset.php" >';
