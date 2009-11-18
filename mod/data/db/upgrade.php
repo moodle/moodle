@@ -180,8 +180,9 @@ function xmldb_data_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009042000, 'data');
     }
 
-    if ($result && $oldversion < 2009111700) {
+    if ($result && $oldversion < 2009111701) {
         require_once($CFG->libdir . '/commentlib.php');
+        upgrade_set_timeout(60*20);
  
     /// Define table data_comments to be dropped
         $table = new xmldb_table('data_comments');
@@ -191,41 +192,46 @@ function xmldb_data_upgrade($oldversion) {
             $sql = 'SELECT d.id AS dataid,
                 d.course AS courseid,
                 r.id AS itemid,
+                c.id AS commentid,
                 c.content AS comment,
                 c.format AS format,
                 c.created AS timemodified
                 FROM {data_comments} c, {data_records} r, {data} d
-                WHERE c.recordid=r.id AND r.dataid=d.id';
-        /// move data comments to new comments table
+                WHERE c.recordid=r.id AND r.dataid=d.id ORDER BY dataid, courseid';
+
+            /// move data comments to new comments table
+            $lastdataid = null;
+            $lastcourseid = null;
+            $modcontext = null;
             if ($rs = $DB->get_recordset_sql($sql)) {
-                $error = false;
                 foreach($rs as $res) {
-                    if ($cm = get_coursemodule_from_instance('data', $res->dataid, $res->courseid)) {
-                        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-                        $cmt = new stdclass;
-                        $cmt->contextid = $context->id;
-                        $cmt->courseid  = $res->courseid;
-                        $cmt->area      = 'database_entry';
-                        $cmt->itemid    = $res->itemid;
-                        $comment = new comment($cmt);
-                        try {
-                            $cmt = $comment->add($res->comment, $res->format);
-                        } catch (comment_exception $e) {
-                            add_to_log($res->courseid, 'comments', 'add', '', 'Cannot migrate data module comment with ID# '.$res->old_id);
-                            $error = true;
+                    if ($res->dataid != $lastdataid || $res->courseid != $lastcourseid) {
+                        $cm = get_coursemodule_from_instance('data', $res->dataid, $res->courseid);
+                        if ($cm) {
+                            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
                         }
+                        $lastdataid = $res->dataid;
+                        $lastcourseid = $res->courseid;
+                    }
+                    $cmt = new stdclass;
+                    $cmt->contextid = $modcontext->id;
+                    $cmt->courseid  = $res->courseid;
+                    $cmt->area      = 'database_entry';
+                    $cmt->itemid    = $res->itemid;
+                    $comment = new comment($cmt);
+                    // comments class will throw an exception if error occurs
+                    $cmt = $comment->add($res->comment, $res->format);
+                    if (!empty($cmt)) {
+                        $DB->delete_records('data_comments', array('id'=>$res->commentid));
                     }
                 }
             }
-            if (empty($error)) {
-                $dbman->drop_table($table);
-            } else {
-                print_error('cannotmigratedatacomments');
-            }
+            // the default exception handler will stop the script if error occurs before
+            $dbman->drop_table($table);
         }
 
     /// data savepoint reached
-        upgrade_mod_savepoint($result, 2009111700, 'data');
+        upgrade_mod_savepoint($result, 2009111701, 'data');
     }
     return $result;
 }
