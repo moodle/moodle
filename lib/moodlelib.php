@@ -2861,6 +2861,22 @@ function is_internal_auth($auth) {
 }
 
 /**
+ * Returns true if the user is a 'restored' one
+ *
+ * Used in the login process to inform the user
+ * and allow him/her to reset the password
+ *
+ * @uses $CFG
+ * @param string $username username to be checked
+ * @return bool
+ */
+function is_restored_user($username) {
+    global $CFG;
+
+    return record_exists('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id, 'password', 'restored');
+}
+
+/**
  * Returns an array of user fields
  *
  * @uses $CFG
