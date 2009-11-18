@@ -28,6 +28,6 @@ if (!$landed) {
     $exporter->verify_rewaken();
 
     $exporter->get('instance')->send_intent();
-    redirect($CFG->wwwroot . '/portfolio/add.php?postcontrol=1&id=' . $id);
+    redirect($CFG->wwwroot . '/portfolio/add.php?postcontrol=1&sesskey=' . sesskey() . '&id=' . $id);
 }
 
