@@ -780,6 +780,55 @@ function xmldb_main_upgrade($oldversion=0) {
         filter_tex_updatedcallback(null);
     }
 
+    if ($result && $oldversion < 2007021599.11) {
+        $messagesubject = get_string('upgrade1811noticesubject', 'admin');
+        $message  = addslashes(get_string('upgrade1811notice', 'admin'));
+        if (empty($CFG->passwordmainsalt)) {
+            $message .= "\n".get_string('upgrade1811salt', 'admin');
+        }
+
+        notify($message, 'notifysuccess');
+        
+        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        // Force administrators to change password on next login
+        $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, u.password
+              FROM {$CFG->prefix}role_capabilities rc
+              JOIN {$CFG->prefix}role_assignments ra ON (ra.contextid = rc.contextid AND ra.roleid = rc.roleid)
+              JOIN {$CFG->prefix}user u ON u.id = ra.userid
+             WHERE rc.capability = 'moodle/site:doanything'
+                   AND rc.permission = ".CAP_ALLOW."
+                   AND u.deleted = 0
+                   AND rc.contextid = ".$systemcontext->id."";
+
+        $adminusers = get_records_sql($sql);
+        foreach ($adminusers as $adminuser) {
+            if ($adminuser->password === 'not cached') {
+                // no need to change password if stored only outside of moodle - most probably ldap auth
+                continue;
+            }
+            if ($preference = get_record('user_preferences', 'userid', $adminuser->id, 'name', 'auth_forcepasswordchange')) {
+                if ($preference->value == '1') {
+                    continue;
+                }
+                set_field('user_preferences', 'value', '1', 'id', $preference->id);
+            } else {
+                $preference = new stdClass;
+                $preference->userid = $adminuser->id;
+                $preference->name   = 'auth_forcepasswordchange';
+                $preference->value  = '1';
+                insert_record('user_preferences', $preference);
+            }
+            
+            // Message them with the notice about upgrading
+            email_to_user($adminuser, $adminuser, $messagesubject, $message);
+        }
+
+        unset($adminusers);
+        unset($preference);
+        unset($message);
+        unset($messagesubject);
+    }
+
     return $result;
 
 }
