@@ -305,17 +305,17 @@ function validateUrlSyntax( $urladdr, $options="" ){
     $querystring       = '(\?(' . $reserved . '|' . $unreserved . '|' . $escaped . ')*)' . $aOptions['q'];
 
                        // Fragment Section - Accepts anchors such as #top
-    $fragment          = '(#(' . $reserved . '|' . $unreserved . '|' . $escaped . ')*)' . $aOptions['r'];
+    $fragment          = '(\#(' . $reserved . '|' . $unreserved . '|' . $escaped . ')*)' . $aOptions['r'];
 
 
     // Building Regular Expression
-    $regexp = '^' . $scheme . $userinfo . $address . $port_number . $path . $querystring . $fragment . '$';
+    $regexp = '#^' . $scheme . $userinfo . $address . $port_number . $path . $querystring . $fragment . '$#i';
 
     // DEBUGGING - Uncomment Line Below To Display The Regular Expression Built
     // echo '<pre>' . htmlentities(wordwrap($regexp,70,"\n",1)) . '</pre>';
 
     // Running the regular expression
-    if (preg_match( preg_quote($regexp,'/'), $urladdr ))
+    if (preg_match( $regexp, $urladdr ))
     {
         return true; // The domain passed
     }
