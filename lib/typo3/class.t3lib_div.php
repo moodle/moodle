@@ -1063,7 +1063,7 @@ final class t3lib_div {
 	 */
 	public static function split_fileref($fileref)	{
 		$reg = array();
-		if (	preg_match('#(.*/)(.*)$#',$fileref,$reg)	)	{
+		if (	ereg('(.*/)(.*)$',$fileref,$reg)	)	{
 			$info['path'] = $reg[1];
 			$info['file'] = $reg[2];
 		} else {
@@ -1071,7 +1071,7 @@ final class t3lib_div {
 			$info['file'] = $fileref;
 		}
 		$reg='';
-		if (	preg_match('#(.*)\.([^\.]*$)#',$info['file'],$reg)	)	{
+		if (	ereg('(.*)\.([^\.]*$)',$info['file'],$reg)	)	{
 			$info['filebody'] = $reg[1];
 			$info['fileext'] = strtolower($reg[2]);
 			$info['realFileext'] = $reg[2];
@@ -1423,7 +1423,7 @@ final class t3lib_div {
 		if (strpos($email,' ') !== false) {
 			return false;
 		}
-		return preg_match('/^[A-Za-z0-9\._-]+[@][A-Za-z0-9\._-]+[\.].[A-Za-z0-9]+$/',$email) ? TRUE : FALSE;
+		return ereg('^[A-Za-z0-9\._-]+[@][A-Za-z0-9\._-]+[\.].[A-Za-z0-9]+$',$email) ? TRUE : FALSE;
 	}
 
 	/**
@@ -2713,7 +2713,7 @@ final class t3lib_div {
 							// Checking if the "subdir" is found:
 						$subdir = substr($fI['dirname'],strlen($dirName));
 						if ($subdir)	{
-							if (preg_match('#^[[:alnum:]_]+\/$#',$subdir) || preg_match('#^[[:alnum:]_]+\/[[:alnum:]_]+\/$#',$subdir))	{
+							if (ereg('^[[:alnum:]_]+\/$',$subdir) || ereg('^[[:alnum:]_]+\/[[:alnum:]_]+\/$',$subdir))	{
 								$dirName.= $subdir;
 								if (!@is_dir($dirName))	{
 									t3lib_div::mkdir_deep(PATH_site.'typo3temp/', $subdir);
@@ -3785,7 +3785,7 @@ final class t3lib_div {
 	 */
 	public static function verifyFilenameAgainstDenyPattern($filename)	{
 		if (strcmp($filename,'') && strcmp($GLOBALS['TYPO3_CONF_VARS']['BE']['fileDenyPattern'],''))	{
-			$result = preg_match('/'.$GLOBALS['TYPO3_CONF_VARS']['BE']['fileDenyPattern'].'/i',$filename);
+			$result = eregi($GLOBALS['TYPO3_CONF_VARS']['BE']['fileDenyPattern'],$filename);
 			if ($result)	return false;	// so if a matching filename is found, return false;
 		}
 		return true;
@@ -5103,12 +5103,12 @@ final class t3lib_div {
 			if($quoteActive > -1)	{
 				$paramsArr[$quoteActive] .= ' '.$v;
 				unset($paramsArr[$k]);
-				if(preg_match('/"$/', $v))	{ $quoteActive = -1; }
+				if(ereg('"$', $v))	{ $quoteActive = -1; }
 
 			} elseif(!trim($v))	{
 				unset($paramsArr[$k]);	// Remove empty elements
 
-			} elseif(preg_match('/^"/', $v))	{
+			} elseif(ereg('^"', $v))	{
 				$quoteActive = $k;
 			}
 		}
