@@ -175,7 +175,7 @@ if (has_capability('moodle/course:viewparticipants', $coursecontext) ||
     has_capability('moodle/site:viewparticipants', $systemcontext)) {
     $PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/message/index.php', array('id'=>$course->id)));
 }
-$PAGE->navbar->add($userfullname, new moodle_url($CFG->wwwroot.'/message/view.php', array('id'=>$user->id, 'course'=>$course->id)));
+$PAGE->navbar->add($userfullname, new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id, 'course'=>$course->id)));
 $PAGE->navbar->add($streditmymessage);
 $PAGE->set_title("$course->shortname: $streditmymessage");
 if ($course->id != SITEID) {
