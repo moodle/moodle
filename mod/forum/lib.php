@@ -4358,7 +4358,7 @@ function forum_print_attachments($post, $cm, $type) {
                 $output .= "<a href=\"$path\">".s($filename)."</a>";
                 if ($canexport) {
                     $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()));
-                    $button->set_formats(portfolio_format_from_file($file));
+                    $button->set_format_by_file($file);
                     $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                 }
                 $output .= "<br />";
@@ -4372,7 +4372,7 @@ function forum_print_attachments($post, $cm, $type) {
                     $imagereturn .= "<br /><img src=\"$path\" alt=\"\" />";
                     if ($canexport) {
                         $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()));
-                        $button->set_formats(portfolio_format_from_file($file));
+                        $button->set_format_by_file($file);
                         $imagereturn .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                     }
                 } else {
@@ -4380,7 +4380,7 @@ function forum_print_attachments($post, $cm, $type) {
                     $output .= filter_text("<a href=\"$path\">".s($filename)."</a>");
                     if ($canexport) {
                         $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()));
-                        $button->set_formats(portfolio_format_from_file($file));
+                        $button->set_format_by_file($file);
                         $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                     }
                     $output .= '<br />';

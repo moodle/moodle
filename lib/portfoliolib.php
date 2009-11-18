@@ -43,6 +43,7 @@ require_once($CFG->libdir . '/portfolio/caller.php');      // the base classes f
  *
  * These class methods do not check permissions. the caller must check permissions first.
  * Later, during the export process, the caller class is instantiated and the check_permissions method is called
+ * If you are exporting a single file, you should always call set_format_by_file($file)
  *
  * This class can be used like this:
  * <code>
@@ -71,6 +72,7 @@ class portfolio_add_button {
     private $callbackfile;
     private $formats;
     private $instances;
+    private $file; // for single-file exports
 
     /**
     * constructor. either pass the options here or set them using the helper methods.
@@ -82,7 +84,7 @@ class portfolio_add_button {
     *                       key 'callbackfile': the file containing the class definition of your caller class.
     *                       See set_callback_options for more information on these three.
     *                       key 'formats': an array of PORTFOLIO_FORMATS this caller will support
-    *                       See set_formats for more information on this.
+    *                       See set_formats or set_format_by_file for more information on this.
     */
     public function __construct($options=null) {
         global $SESSION, $CFG;
@@ -165,6 +167,18 @@ class portfolio_add_button {
         $this->formats = portfolio_most_specific_formats($formats, $callerformats);
     }
 
+    /**
+     * if we already know we have exactly one file,
+     * bypass set_formats and just pass the file
+     * so we can detect the formats by mimetype.
+     *
+     * @param stored_file $file
+     */
+    public function set_format_by_file(stored_file $file) {
+        $this->file = $file;
+        $this->formats = array(portfolio_format_from_file($file));
+    }
+
     /*
     * echo the form/button/icon/text link to the page
     *
@@ -238,11 +252,15 @@ class portfolio_add_button {
                 debugging(get_string('singleinstancenomultiallowed', 'portfolio'));
                 return;
             }
+            if ($this->file && $this->file instanceof stored_file && !$instance->file_mime_check($this->file->get_mimetype())) {
+                // bail, we have a specific file and this plugin doesn't support it
+                return;
+            }
             $formoutput .= "\n" . '<input type="hidden" name="instance" value="' . $instance->get('id') . '" />';
             $linkoutput .= '&amp;instance=' . $instance->get('id');
         }
         else {
-            if (!$selectoutput = portfolio_instance_select($this->instances, $this->formats, $this->callbackclass, 'instance', true)) {
+            if (!$selectoutput = portfolio_instance_select($this->instances, $this->formats, $this->file, $this->callbackclass, 'instance', true)) {
                 return;
             }
         }
@@ -334,16 +352,17 @@ class portfolio_add_button {
 /**
 * returns a drop menu with a list of available instances.
 *
-* @param array    $instances     array of portfolio plugin instance objects - the instances to put in the menu
-* @param array    $callerformats array of PORTFOLIO_FORMAT_XXX constants - the formats the caller supports (this is used to filter plugins)
-* @param array    $callbackclass the callback class name - used for debugging only for when there are no common formats
-* @param string   $selectname    the name of the select element. Optional, defaults to instance.
-* @param boolean  $return        whether to print or return the output. Optional, defaults to print.
-* @param booealn  $returnarray   if returning, whether to return the HTML or the array of options. Optional, defaults to HTML.
+* @param array          $instances      array of portfolio plugin instance objects - the instances to put in the menu
+* @param array          $callerformats  array of PORTFOLIO_FORMAT_XXX constants - the formats the caller supports (this is used to filter plugins)
+* @param array          $callbackclass  the callback class name - used for debugging only for when there are no common formats
+* @param stored_file    $file           if we already know we have exactly one file, pass it here to do mime filtering.
+* @param string         $selectname     the name of the select element. Optional, defaults to instance.
+* @param boolean        $return         whether to print or return the output. Optional, defaults to print.
+* @param booealn        $returnarray    if returning, whether to return the HTML or the array of options. Optional, defaults to HTML.
 *
 * @return string the html, from <select> to </select> inclusive.
 */
-function portfolio_instance_select($instances, $callerformats, $callbackclass, $selectname='instance', $return=false, $returnarray=false) {
+function portfolio_instance_select($instances, $callerformats, $callbackclass, $file=null, $selectname='instance', $return=false, $returnarray=false) {
     global $CFG, $USER;
 
     if (empty($CFG->enableportfolios)) {
@@ -375,7 +394,10 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass, $
             // bail, already exporting something with this plugin and it doesn't support multiple exports
             continue;
         }
-
+        if ($file && $file instanceof stored_file && !$instance->file_mime_check($file->get_mimetype())) {
+            // bail, we have a specific file and this plugin doesn't support it
+            continue;
+        }
         $count++;
         $selectoutput .= "\n" . '<option value="' . $instance->get('id') . '">' . $instance->get('name') . '</option>' . "\n";
         $options[$instance->get('id')] = $instance->get('name');

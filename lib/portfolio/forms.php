@@ -258,6 +258,7 @@ class portfolio_instance_select extends moodleform {
             portfolio_instances(),
             $this->caller->supported_formats($this->caller),
             get_class($this->caller),
+            $this->caller->get('singlefile'),
             'instance',
             true,
             true

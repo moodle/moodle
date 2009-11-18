@@ -1808,7 +1808,7 @@ class assignment_base {
                 $output .= '<a href="'.$path.'" ><img src="'.$OUTPUT->old_icon_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />'.s($filename).'</a>';
                 if ($this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                     $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'fileid' => $file->get_id()));
-                    $button->set_formats(portfolio_format_from_file($file));
+                    $button->set_format_by_file($file);
                     $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                 }
                 $output .= '<br />';

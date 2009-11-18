@@ -60,7 +60,7 @@ class mod_data_export_form extends moodleform {
             if ($portfoliooptions = portfolio_instance_select(
                 portfolio_instances(),
                 call_user_func(array('data_portfolio_caller', 'supported_formats')),
-                'data_portfolio_caller', '', true, true)) {
+                'data_portfolio_caller', null, '', true, true)) {
                 $mform->addElement('header', 'notice', get_string('portfolionotfile', 'data') . ':');
                 $portfoliooptions[0] = get_string('none');
                 ksort($portfoliooptions);
