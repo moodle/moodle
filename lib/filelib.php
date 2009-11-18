@@ -1203,11 +1203,11 @@ function mimeinfo($element, $filename) {
                 } else {
                     $filename = 'unknown';
                 }
-                $filename .= '-32.png';
-                if (file_exists($CFG->dirroot.'/pix/f/'.$filename)) {
+                $filename .= '-32';
+                if (file_exists($CFG->dirroot.'/pix/f/'.$filename.'.png')) {
                     return $filename;
                 } else {
-                    return 'unknown-32.png';
+                    return 'unknown-32';
                 }
             } else {
                 return $mimeinfo['xxx'][$element];   // By default
