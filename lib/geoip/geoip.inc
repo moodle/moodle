@@ -203,6 +203,35 @@ class GeoIP {
 "Anonymous Proxy","Satellite Provider","Other",
 "Aland Islands","Guernsey","Isle of Man","Jersey","Saint Barthelemy","Saint Martin"
 );
+
+    var $GEOIP_CONTINENT_CODES = array(
+"--", "AS", "EU", "EU", "AS", "AS", "SA", "SA", "EU", "AS",
+"SA", "AF", "AN", "SA", "OC", "EU", "OC", "SA", "AS", "EU",
+"SA", "AS", "EU", "AF", "EU", "AS", "AF", "AF", "SA", "AS",
+"SA", "SA", "SA", "AS", "AF", "AF", "EU", "SA", "NA", "AS",
+"AF", "AF", "AF", "EU", "AF", "OC", "SA", "AF", "AS", "SA",
+"SA", "SA", "AF", "AS", "AS", "EU", "EU", "AF", "EU", "SA",
+"SA", "AF", "SA", "EU", "AF", "AF", "AF", "EU", "AF", "EU",
+"OC", "SA", "OC", "EU", "EU", "EU", "AF", "EU", "SA", "AS",
+"SA", "AF", "EU", "SA", "AF", "AF", "SA", "AF", "EU", "SA",
+"SA", "OC", "AF", "SA", "AS", "AF", "SA", "EU", "SA", "EU",
+"AS", "EU", "AS", "AS", "AS", "AS", "AS", "EU", "EU", "SA",
+"AS", "AS", "AF", "AS", "AS", "OC", "AF", "SA", "AS", "AS",
+"AS", "SA", "AS", "AS", "AS", "SA", "EU", "AS", "AF", "AF",
+"EU", "EU", "EU", "AF", "AF", "EU", "EU", "AF", "OC", "EU",
+"AF", "AS", "AS", "AS", "OC", "SA", "AF", "SA", "EU", "AF",
+"AS", "AF", "NA", "AS", "AF", "AF", "OC", "AF", "OC", "AF",
+"SA", "EU", "EU", "AS", "OC", "OC", "OC", "AS", "SA", "SA",
+"OC", "OC", "AS", "AS", "EU", "SA", "OC", "SA", "AS", "EU",
+"OC", "SA", "AS", "AF", "EU", "AS", "AF", "AS", "OC", "AF",
+"AF", "EU", "AS", "AF", "EU", "EU", "EU", "AF", "EU", "AF",
+"AF", "SA", "AF", "SA", "AS", "AF", "SA", "AF", "AF", "AF",
+"AS", "AS", "OC", "AS", "AF", "OC", "AS", "EU", "SA", "OC",
+"AS", "AF", "EU", "AF", "OC", "NA", "SA", "AS", "EU", "SA",
+"SA", "SA", "SA", "AS", "OC", "OC", "OC", "AS", "AF", "EU",
+"AF", "AF", "EU", "AF", "--", "--", "--", "EU", "EU", "EU",
+"EU", "SA", "SA" );
+    
 }
 function geoip_load_shared_mem ($file) {
 
@@ -391,10 +420,17 @@ function _geoip_seek_country($gi, $ipnum) {
   $offset = 0;
   for ($depth = 31; $depth >= 0; --$depth) {
     if ($gi->flags & GEOIP_MEMORY_CACHE) {
+      // workaround php's broken substr, strpos, etc handling with
+      // mbstring.func_overload and mbstring.internal_encoding
+      $enc = mb_internal_encoding();
+       mb_internal_encoding('ISO-8859-1'); 
+
       $buf = substr($gi->memory_buffer,
                             2 * $gi->record_length * $offset,
                             2 * $gi->record_length);
-        } elseif ($gi->flags & GEOIP_SHARED_MEMORY) {
+
+      mb_internal_encoding($enc);
+    } elseif ($gi->flags & GEOIP_SHARED_MEMORY) {
       $buf = @shmop_read ($gi->shmid, 
                             2 * $gi->record_length * $offset,
                             2 * $gi->record_length );
@@ -437,7 +473,12 @@ function _get_org($gi,$ipnum){
     fseek($gi->filehandle, $record_pointer, SEEK_SET);
     $org_buf = fread($gi->filehandle,MAX_ORG_RECORD_LENGTH);
   }
+  // workaround php's broken substr, strpos, etc handling with
+  // mbstring.func_overload and mbstring.internal_encoding
+  $enc = mb_internal_encoding();
+  mb_internal_encoding('ISO-8859-1'); 
   $org_buf = substr($org_buf, 0, strpos($org_buf, 0));
+  mb_internal_encoding($enc);
   return $org_buf;
 }
 
