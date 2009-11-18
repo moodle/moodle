@@ -591,8 +591,7 @@ $string['upgrade1811notice'] = '<p>Moodle 1.8.11 contains a number of security f
 As a result some of your settings and permissions relating to backups may have changed.<br />
 Please see the <a href=\'http://docs.moodle.org/en/Moodle_1.8.11_release_notes\' target=\'_blank\'>Moodle 1.8.11 release</a> notes for full details.</p>';
 $string['upgrade1811noticesubject'] = 'Moodle 1.8.11 upgrade security notices';
-$string['upgrade1811salt'] = 'It is also now strongly recommended that you set a password salt to greatly reduce the risk of password theft.<br />
-Please refer to the Moodle security report for more information on this topic. The security report can be accessed by logging into your site as an administrator and go to Site Administration - Security - Site policies';
+$string['upgrade1811salt'] = 'It is also now strongly recommended that you set a password salt to greatly reduce the risk of password theft.<br />Please refer to the <a href=\"$a\" target=\"_blank\">password salting documentation</a> for details.</a>';
 $string['upgradingdata'] = 'Upgrading data';
 $string['upgradinglogs'] = 'Upgrading logs';
 $string['upwards'] = 'upwards';

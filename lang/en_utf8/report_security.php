@@ -123,9 +123,11 @@ $string['check_passwordsaltmain_name'] = 'Password salt';
 $string['check_passwordsaltmain_warning'] = 'No password salt has been set';
 $string['check_passwordsaltmain_ok'] = 'Password salt is OK';
 $string['check_passwordsaltmain_weak'] = 'Password salt is weak';
-$string['check_passwordsaltmain_details'] = '<p>It is strongly recommended that a password salt is set as it greatly reduces the risk of password theft.<br />To set a password salt add the following to your config.php file.</p><code>\$CFG->passwordsaltmain = \'a_very_long_random_string_of_characters#@6&*1\';</code>
-<p>The random string of characters should be a mix of letters, numbers and other characters.</p>
-<p>When changing main salt make sure that you include the old value in config.php, there may be 20 alternative salts. Without the old value in alternative salts list users will not be able to login and will have to use password reset.<br /><code>\$CFG->passwordsaltalt1 = \'previous_main_salt\';</code><br /></p>';
+$string['check_passwordsaltmain_details'] = '<p>Setting a password salt greatly reduces the risk of password theft.</p>
+<p>To set a password salt, add the following line to your config.php file:</p>
+<code>\$CFG->passwordsaltmain = \'some long random string here with lots of characters\';</code>
+<p>The random string of characters should be a mix of letters, numbers and other characters. A string length of at least 40 characters is recommended.</p>
+<p>Please refer to the <a href=\"$a\" target=\"_blank\">password salting documentation</a> if you wish to change the password salt. Once set, do NOT delete your password salt otherwise you will no longer be able to login to your site!</p>';
 
 $string['check_riskadmin_detailsok'] = '<p>Please verify the following list of system administrators:</p>$a';
 $string['check_riskadmin_detailswarning'] = '<p>Please verify the following list of system administrators:</p>$a->admins
