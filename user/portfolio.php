@@ -119,6 +119,7 @@ if ($display) {
     }
 
     echo $OUTPUT->table($table);
+    echo $OUTPUT->box_end();
 }
 echo $OUTPUT->footer();
 
