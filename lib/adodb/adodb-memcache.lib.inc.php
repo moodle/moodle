@@ -65,7 +65,7 @@ $db->CacheExecute($sql);
 
 			$memcache = new MemCache;
 			
-			if (!is_array($this->hosts)) $this->hosts = array($hosts);
+			if (!is_array($this->hosts)) $this->hosts = array($this->hosts);
 		
 			$failcnt = 0;
 			foreach($this->hosts as $host) {

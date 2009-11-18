@@ -1,7 +1,7 @@
 <?php
 /*
 
-@version V5.08 6 Apr 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
+@version V5.10 10 Nov 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
   Latest version is available at http://adodb.sourceforge.net
  
   Released under both BSD license and Lesser GPL library license. 
@@ -26,6 +26,7 @@ global $ADODB_ACTIVE_DEFVALS; // use default values of table definition when cre
 $_ADODB_ACTIVE_DBS = array();
 $ACTIVE_RECORD_SAFETY = true;
 $ADODB_ACTIVE_DEFVALS = false;
+$ADODB_ACTIVE_CACHESECS = 0;
 
 class ADODB_Active_DB {
 	var $db; // ADOConnection
@@ -73,6 +74,8 @@ function ADODB_SetDatabaseAdapter(&$db, $index=false)
 
 class ADODB_Active_Record {
 	static $_changeNames = true; // dynamically pluralize table names
+	static $_quoteNames = false;
+	
 	static $_foreignSuffix = '_id'; // 
 	var $_dbat; // associative index pointing to ADODB_Active_DB eg. $ADODB_Active_DBS[_dbat]
 	var $_table; // tablename, if set in class definition then use it as table name
@@ -655,6 +658,13 @@ class ADODB_Active_Record {
 	}
 	
 	
+	function _QName($n,$db=false)
+	{
+		if (!ADODB_Active_Record::$_quoteNames) return $n;
+		if (!$db) $db = $this->DB(); if (!$db) return false;
+		return $db->nameQuote.$n.$db->nameQuote;
+	}
+	
 	//------------------------------------------------------------ Public functions below
 	
 	function Load($where=null,$bindarr=false)
@@ -708,6 +718,7 @@ class ADODB_Active_Record {
 		return $ok;
 	}
 	
+	
 	// false on error
 	function Insert()
 	{
@@ -723,7 +734,7 @@ class ADODB_Active_Record {
 			$val = $this->$name;
 			if(!is_array($val) || !is_null($val) || !array_key_exists($name, $table->keys)) {
 				$valarr[] = $val;
-				$names[] = $name;
+				$names[] = $this->_QName($name,$db);
 				$valstr[] = $db->Param($cnt);
 				$cnt += 1;
 			}
@@ -883,7 +894,7 @@ class ADODB_Active_Record {
 				continue;
 			}			
 			$valarr[] = $val;
-			$pairs[] = $name.'='.$db->Param($cnt);
+			$pairs[] = $this->_QName($name,$db).'='.$db->Param($cnt);
 			$cnt += 1;
 		}
 		
@@ -922,9 +933,9 @@ global $_ADODB_ACTIVE_DBS;
 	{
 		$rows = false;
 		if(isset($extra['offset'])) {
-			$rs = $db->SelectLimit($qry, $extra['limit'], $extra['offset']);
+			$rs = $db->SelectLimit($qry, $extra['limit'], $extra['offset'],$bindarr);
 		} else {
-			$rs = $db->SelectLimit($qry, $extra['limit']);
+			$rs = $db->SelectLimit($qry, $extra['limit'],-1,$bindarr);
 		}
 		if ($rs) {
 			while (!$rs->EOF) {

@@ -1,6 +1,6 @@
 <?php
 /*
-V5.08 6 Apr 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
+V5.10 10 Nov 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -349,7 +349,7 @@ class ADODB_mysql extends ADOConnection {
 		if (!$date) $date = $this->sysDate;
 		
 		$fraction = $dayFraction * 24 * 3600;
-		return $date . ' + INTERVAL ' .	 $fraction.' SECOND';
+		return '('. $date . ' + INTERVAL ' .	 $fraction.' SECOND)';
 		
 //		return "from_unixtime(unix_timestamp($date)+$fraction)";
 	}
@@ -394,7 +394,7 @@ class ADODB_mysql extends ADOConnection {
 		return $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename);
 	}
 	
- 	function MetaColumns($table) 
+ 	function MetaColumns($table, $normalize=true) 
 	{
 		$this->_findschema($table,$schema);
 		if ($schema) {

@@ -1,6 +1,6 @@
 <?php
 /* 
-V5.08 6 Apr 2009   (c) 2000-2009 John Lim. All rights reserved.
+V5.10 10 Nov 2009   (c) 2000-2009 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -86,11 +86,11 @@ class ADODB_sybase extends ADOConnection {
 	}
 	
 	// http://www.isug.com/Sybase_FAQ/ASE/section6.1.html#6.1.4
-	function RowLock($tables,$where,$flds='top 1 null as ignore') 
+	function RowLock($tables,$where,$col='top 1 null as ignore') 
 	{
 		if (!$this->_hastrans) $this->BeginTrans();
 		$tables = str_replace(',',' HOLDLOCK,',$tables);
-		return $this->GetOne("select $flds from $tables HOLDLOCK where $where");
+		return $this->GetOne("select $col from $tables HOLDLOCK where $where");
 		
 	}	
 		

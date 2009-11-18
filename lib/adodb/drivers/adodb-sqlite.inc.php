@@ -1,6 +1,6 @@
 <?php
 /*
-V5.08 6 Apr 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
+V5.10 10 Nov 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -78,14 +78,14 @@ class ADODB_sqlite extends ADOConnection {
 	}
 	
 	// mark newnham
-	function MetaColumns($tab)
+	function MetaColumns($table, $normalize=true) 
 	{
 	  global $ADODB_FETCH_MODE;
 	  $false = false;
 	  $save = $ADODB_FETCH_MODE;
 	  $ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 	  if ($this->fetchMode !== false) $savem = $this->SetFetchMode(false);
-	  $rs = $this->Execute("PRAGMA table_info('$tab')");
+	  $rs = $this->Execute("PRAGMA table_info('$table')");
 	  if (isset($savem)) $this->SetFetchMode($savem);
 	  if (!$rs) {
 	    $ADODB_FETCH_MODE = $save; 

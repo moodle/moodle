@@ -1001,13 +1001,11 @@ function _adodb_column_sql(&$zthis, $action, $type, $fname, $fnameq, $arrFields,
 			$val = $zthis->DBTimeStamp($arrFields[$fname]);
 			break;
 			
-		case "F": //Floating point number       // Moodle added
 		case "N":
 		    $val = $arrFields[$fname];
 			if (!is_numeric($val)) $val = str_replace(',', '.', (float)$val);
 		    break;
 
-		case "L": //Integer field suitable for storing booleans (0 or 1)     // Moodle added
 		case "I":
 		case "R":
 		    $val = $arrFields[$fname];
@@ -1055,13 +1053,13 @@ function _adodb_debug_execute(&$zthis, $sql, $inputarr)
 			$ss = '<code>'.htmlspecialchars($ss).'</code>';
 		}
 		if ($zthis->debug === -1)
-			ADOConnection::outp( "<br />\n($dbt): ".htmlspecialchars($sqlTxt)." &nbsp; $ss\n<br />\n",false); /// Moodle XHTML
+			ADOConnection::outp( "<br>\n($dbt): ".htmlspecialchars($sqlTxt)." &nbsp; $ss\n<br>\n",false);
 		else if ($zthis->debug !== -99)
-			ADOConnection::outp( "<hr />\n($dbt): ".htmlspecialchars($sqlTxt)." &nbsp; $ss\n<hr />\n",false); /// Moodle XHTML
+			ADOConnection::outp( "<hr>\n($dbt): ".htmlspecialchars($sqlTxt)." &nbsp; $ss\n<hr>\n",false);
 	} else {
 		$ss = "\n   ".$ss;
 		if ($zthis->debug !== -99)
-			ADOConnection::outp("-----<hr />\n($dbt): ".$sqlTxt." $ss\n-----<hr />\n",false); /// Moodle XHTML
+			ADOConnection::outp("-----<hr>\n($dbt): ".$sqlTxt." $ss\n-----<hr>\n",false);
 	}
 
 	$qID = $zthis->_query($sql,$inputarr);
@@ -1076,7 +1074,7 @@ function _adodb_debug_execute(&$zthis, $sql, $inputarr)
 		if($emsg = $zthis->ErrorMsg()) {
 			if ($err = $zthis->ErrorNo()) {
 				if ($zthis->debug === -99) 
-					ADOConnection::outp( "<hr />\n($dbt): ".htmlspecialchars($sqlTxt)." &nbsp; $ss\n<hr />\n",false); /// Moodle XHTML
+					ADOConnection::outp( "<hr>\n($dbt): ".htmlspecialchars($sqlTxt)." &nbsp; $ss\n<hr>\n",false);
 		
 				ADOConnection::outp($err.': '.$emsg);
 			}
@@ -1084,8 +1082,8 @@ function _adodb_debug_execute(&$zthis, $sql, $inputarr)
 	} else if (!$qID) {
 	
 		if ($zthis->debug === -99) 
-				if ($inBrowser) ADOConnection::outp( "<hr />\n($dbt): ".htmlspecialchars($sqlTxt)." &nbsp; $ss\n<hr />\n",false); /// Moodle XHTML
-				else ADOConnection::outp("-----<hr />\n($dbt): ".$sqlTxt."$ss\n-----<hr />\n",false);
+				if ($inBrowser) ADOConnection::outp( "<hr>\n($dbt): ".htmlspecialchars($sqlTxt)." &nbsp; $ss\n<hr>\n",false);
+				else ADOConnection::outp("-----<hr>\n($dbt): ".$sqlTxt."$ss\n-----<hr>\n",false);
 				
 		ADOConnection::outp($zthis->ErrorNo() .': '. $zthis->ErrorMsg());
 	}
@@ -1102,11 +1100,11 @@ function _adodb_backtrace($printOrArr=true,$levels=9999,$skippy=0,$ishtml=null)
 	if ($ishtml === null) $html =  (isset($_SERVER['HTTP_USER_AGENT']));
 	else $html = $ishtml;
 	
-	$fmt =  ($html) ? "</font><font color=\"#808080\" size=\"-1\"> %% line %4d, file: <a href=\"file:/%s\">%s</a></font>" : "%% line %4d, file: %s"; /// Moodle XHTML
+	$fmt =  ($html) ? "</font><font color=#808080 size=-1> %% line %4d, file: <a href=\"file:/%s\">%s</a></font>" : "%% line %4d, file: %s";
 
 	$MAXSTRLEN = 128;
 
-	$s = ($html) ? '<pre align="left">' : ''; /// Moodle XHTML
+	$s = ($html) ? '<pre align=left>' : '';
 	
 	if (is_array($printOrArr)) $traceArr = $printOrArr;
 	else $traceArr = debug_backtrace();

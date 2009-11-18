@@ -33,6 +33,7 @@ class ADODB2_sapdb extends ADODB_DataDict {
 		case 'B': return 'LONG';
 			
 		case 'D': return 'DATE';
+		case 'TS':
 		case 'T': return 'TIMESTAMP';
 		
 		case 'L': return 'BOOLEAN';

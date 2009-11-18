@@ -1214,7 +1214,7 @@ function adodb_mktime($hr,$min,$sec,$mon=false,$day=false,$year=false,$is_dst=fa
 		
 		// for windows, we don't check 1970 because with timezone differences, 
 		// 1 Jan 1970 could generate negative timestamp, which is illegal
-		$usephpfns = (1971 < $year && $year < 2038
+		$usephpfns = (1970 < $year && $year < 2038
 			|| !defined('ADODB_NO_NEGATIVE_TS') && (1901 < $year && $year < 2038)
 			); 
 			

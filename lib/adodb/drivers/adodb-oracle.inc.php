@@ -1,6 +1,6 @@
 <?php
 /*
-V5.08 6 Apr 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
+V5.10 10 Nov 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -35,15 +35,19 @@ class ADODB_oracle extends ADOConnection {
 	function DBDate($d)
 	{
 		if (is_string($d)) $d = ADORecordSet::UnixDate($d);
-		return 'TO_DATE('.adodb_date($this->fmtDate,$d).",'YYYY-MM-DD')";
+		if (is_object($d)) $ds = $d->format($this->fmtDate);
+		else $ds = adodb_date($this->fmtDate,$d);
+		return 'TO_DATE('.$ds.",'YYYY-MM-DD')";
 	}
 	
 	// format and return date string in database timestamp format
 	function DBTimeStamp($ts)
 	{
 
-		if (is_string($ts)) $d = ADORecordSet::UnixTimeStamp($ts);
-		return 'TO_DATE('.adodb_date($this->fmtTimeStamp,$ts).",'RRRR-MM-DD, HH:MI:SS AM')";
+		if (is_string($ts)) $ts = ADORecordSet::UnixTimeStamp($ts);
+		if (is_object($ts)) $ds = $ts->format($this->fmtDate);
+		else $ds = adodb_date($this->fmtTimeStamp,$ts);
+		return 'TO_DATE('.$ds.",'RRRR-MM-DD, HH:MI:SS AM')";
 	}
 	
 	
@@ -286,9 +290,9 @@ class ADORecordset_oracle extends ADORecordSet {
    function _fetch($ignore_fields=false) {
 // should remove call by reference, but ora_fetch_into requires it in 4.0.3pl1
 		if ($this->fetchMode & ADODB_FETCH_ASSOC)
-			return @ora_fetch_into($this->_queryID,&$this->fields,ORA_FETCHINTO_NULLS|ORA_FETCHINTO_ASSOC);
+			return @ora_fetch_into($this->_queryID,$this->fields,ORA_FETCHINTO_NULLS|ORA_FETCHINTO_ASSOC);
    		else 
-			return @ora_fetch_into($this->_queryID,&$this->fields,ORA_FETCHINTO_NULLS);
+			return @ora_fetch_into($this->_queryID,$this->fields,ORA_FETCHINTO_NULLS);
    }
 
    /*		close() only needs to be called if you are worried about using too much memory while your script
