@@ -308,8 +308,6 @@ function print_graded_users_selector($course, $actionpage, $userid=0, $groupid=0
         $label = get_string('selectalloroneuser', 'grades');
     }
 
-    $nextuser = $gui->next_user();
-
     while ($userdata = $gui->next_user()) {
         $user = $userdata->user;
         $menu[$user->id] = fullname($user);
