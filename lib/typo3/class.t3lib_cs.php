@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2003-2008 Kasper Skaarhoj (kasperYYYY@typo3.com)
+*  (c) 2003-2009 Kasper Skaarhoj (kasperYYYY@typo3.com)
 *  All rights reserved
 *
 *  This script is part of the Typo3 project. The Typo3 project is
@@ -24,7 +24,7 @@
 /**
  * Class for conversion between charsets.
  *
- * Typo    Id: class.t3lib_cs.php 3439 2008-03-16 19:16:51Z flyguide $
+ * Id: class.t3lib_cs.php 5844 2009-08-30 10:02:57Z rupi $
  *
  * @author	Kasper Skaarhoj <kasperYYYY@typo3.com>
  * @author	Martin Kutschker <martin.t.kutschker@blackbox.net>
@@ -111,6 +111,7 @@
  * - trim/ltrim/rtrim: the second parameter 'charlist' won't work for characters not contained in 7-bit ASCII
  * - strpos/strrpos: they return the BYTE position, if you need the CHARACTER position use utf8_strpos/utf8_strrpos
  * - htmlentities: charset support for UTF-8 only since PHP 4.3.0
+ * - preg_*: Support compiled into PHP by default nowadays, but could be unavailable, need to use modifier
  *
  * Functions NOT working on UTF-8 strings:
  *
@@ -119,9 +120,7 @@
  * - stripos
  * - substr
  * - strrev
- * - ereg/eregi
  * - split/spliti
- * - preg_*
  * - ...
  *
  */
@@ -172,8 +171,16 @@ class t3lib_cs {
 		'cp819' => 'iso-8859-1',
 		'ibm819' => 'iso-8859-1',
 		'iso-ir-100' => 'iso-8859-1',
-		'iso-ir-109' => 'iso-8859-2',
+		'iso-ir-101' => 'iso-8859-2',
+		'iso-ir-109' => 'iso-8859-3',
+		'iso-ir-110' => 'iso-8859-4',
+		'iso-ir-144' => 'iso-8859-5',
+		'iso-ir-127' => 'iso-8859-6',
+		'iso-ir-126' => 'iso-8859-7',
+		'iso-ir-138' => 'iso-8859-8',
 		'iso-ir-148' => 'iso-8859-9',
+		'iso-ir-157' => 'iso-8859-10',
+		'iso-ir-179' => 'iso-8859-13',
 		'iso-ir-199' => 'iso-8859-14',
 		'iso-ir-203' => 'iso-8859-15',
 		'csisolatin1' => 'iso-8859-1',
@@ -244,12 +251,9 @@ class t3lib_cs {
 		'ucs4' => 'ucs-4',
 	);
 
-		// mapping of iso-639:2 language codes to script names
+		// mapping of iso-639-1 language codes to script names
 	var $lang_to_script=array(
-			// iso-639:2 language codes, see:
-			//  http://www.w3.org/WAI/ER/IG/ert/iso639.htm
-			//  http://www.loc.gov/standards/iso639-2/langcodes.html
-			//  http://www.unicode.org/onlinedat/languages.html
+			// iso-639-1 language codes, see http://www.loc.gov/standards/iso639-2/php/code_list.php
 		'ar' => 'arabic',
 		'bg' => 'cyrillic',		// Bulgarian
 		'bs' => 'east_european',	// Bosnian
@@ -281,6 +285,8 @@ class t3lib_cs {
 		'lv' => 'west_european',	// Latvian/Lettish
 		'nl' => 'west_european',	// Dutch
 		'no' => 'west_european',	// Norwegian
+		'nb' => 'west_european',	// Norwegian Bokmal
+		'nn' => 'west_european',	// Norwegian Nynorsk
 		'pl' => 'east_european',	// Polish
 		'pt' => 'west_european',	// Portuguese
 		'ro' => 'east_european',	// Romanian
@@ -715,6 +721,10 @@ class t3lib_cs {
 	 */
 	function utf8_decode($str,$charset,$useEntityForNoChar=0)	{
 
+		if ($charset === 'utf-8') {
+			return $str;
+		}
+
 			// Charset is case-insensitive.
 		if ($this->initCharset($charset))	{	// Parse conv. table if not already...
 			$strLen = strlen($str);
@@ -794,8 +804,8 @@ class t3lib_cs {
 			$trans_tbl = array_flip(get_html_translation_table(HTML_ENTITIES));		// Getting them in iso-8859-1 - but thats ok since this is observed below.
 		}
 
-		$token = 'a'.md5(microtime());//token must start with a letter or preg_replace substitution won't work
-		$parts = explode($token,preg_replace('/(&([#[:alnum:]]*);)/',$token.'\2'.$token,$str));
+		$token = md5(microtime());
+		$parts = explode($token, preg_replace('/(&([#[:alnum:]]*);)/', $token . '${2}' . $token, $str));
 		foreach($parts as $k => $v)	{
 			if ($k%2)	{
 				if (substr($v,0,1)=='#')	{	// Dec or hex entities:
@@ -987,13 +997,13 @@ class t3lib_cs {
 
 								// Detect type if not done yet: (Done on first real line)
 								// The "whitespaced" type is on the syntax 	"0x0A	0x000A	#LINE FEED" 	while 	"ms-token" is like 		"B9 = U+00B9 : SUPERSCRIPT ONE"
-							if (!$detectedType)		$detectedType = ereg('[[:space:]]*0x([[:alnum:]]*)[[:space:]]+0x([[:alnum:]]*)[[:space:]]+',$value) ? 'whitespaced' : 'ms-token';
+							if (!$detectedType)		$detectedType = preg_match('/[[:space:]]*0x([[:alnum:]]*)[[:space:]]+0x([[:alnum:]]*)[[:space:]]+/',$value) ? 'whitespaced' : 'ms-token';
 
 							if ($detectedType=='ms-token')	{
-								list($hexbyte,$utf8) = split('=|:',$value,3);
+								list($hexbyte, $utf8) = preg_split('/[=:]/', $value, 3);
 							} elseif ($detectedType=='whitespaced')	{
 								$regA=array();
-								ereg('[[:space:]]*0x([[:alnum:]]*)[[:space:]]+0x([[:alnum:]]*)[[:space:]]+',$value,$regA);
+								preg_match('/[[:space:]]*0x([[:alnum:]]*)[[:space:]]+0x([[:alnum:]]*)[[:space:]]+/',$value,$regA);
 								$hexbyte = $regA[1];
 								$utf8 = 'U+'.$regA[2];
 							}
@@ -1074,7 +1084,7 @@ class t3lib_cs {
 		while (!feof($fh))	{
 			$line = fgets($fh,4096);
 				// has a lot of info
-			list($char,$name,$cat,,,$decomp,,,$num,,,,$upper,$lower,$title,) = split(';', rtrim($line));
+			list($char,$name,$cat,,,$decomp,,,$num,,,,$upper,$lower,$title,) = explode(';', rtrim($line));
 
 			$ord = hexdec($char);
 			if ($ord > 0xFFFF)	break;	// only process the BMP
@@ -1097,7 +1107,7 @@ class t3lib_cs {
 
 				// accented Latin letters without "official" decomposition
 			$match = array();
-			if (ereg('^LATIN (SMALL|CAPITAL) LETTER ([A-Z]) WITH',$name,$match) && !$decomp)	{
+			if (preg_match('/^LATIN (SMALL|CAPITAL) LETTER ([A-Z]) WITH/',$name,$match) && !$decomp)	{
 				$c = ord($match[2]);
 				if ($match[1] == 'SMALL')	$c += 32;
 
@@ -1106,7 +1116,7 @@ class t3lib_cs {
 			}
 
 			$match = array();
-			if (ereg('(<.*>)? *(.+)',$decomp,$match))	{
+			if (preg_match('/(<.*>)? *(.+)/',$decomp,$match))	{
 				switch($match[1])	{
 					case '<circle>':	// add parenthesis as circle replacement, eg (1)
 						$match[2] = '0028 '.$match[2].' 0029';
@@ -1117,7 +1127,7 @@ class t3lib_cs {
 						break;
 
 					case '<compat>':	// ignore multi char decompositions that start with a space
-						if (ereg('^0020 ',$match[2]))	continue 2;
+						if (preg_match('/^0020 /',$match[2]))	continue 2;
 						break;
 
 						// ignore Arabic and vertical layout presentation decomposition
@@ -1128,7 +1138,7 @@ class t3lib_cs {
 					case '<vertical>':
 						continue 2;
 				}
-				$decomposition["U+$char"] = split(' ',$match[2]);
+				$decomposition["U+$char"] = explode(' ', $match[2]);
 			}
 		}
 		fclose($fh);
@@ -1146,17 +1156,17 @@ class t3lib_cs {
 						if ($cond == '' || $cond{0} == '#')	{
 							$utf8_char = $this->UnumberToChar(hexdec($char));
 							if ($char != $lower)	{
-								$arr = split(' ',$lower);
+								$arr = explode(' ', $lower);
 								for ($i=0; isset($arr[$i]); $i++)	$arr[$i] = $this->UnumberToChar(hexdec($arr[$i]));
 								$utf8CaseFolding['toLower'][$utf8_char] = implode('',$arr);
 							}
 							if ($char != $title && $title != $upper)	{
-								$arr = split(' ',$title);
+								$arr = explode(' ', $title);
 								for ($i=0; isset($arr[$i]); $i++)	$arr[$i] = $this->UnumberToChar(hexdec($arr[$i]));
 								$utf8CaseFolding['toTitle'][$utf8_char] = implode('',$arr);
 							}
 							if ($char != $upper)	{
-									$arr = split(' ',$upper);
+									$arr = explode(' ', $upper);
 								for ($i=0; isset($arr[$i]); $i++)	$arr[$i] = $this->UnumberToChar(hexdec($arr[$i]));
 								$utf8CaseFolding['toUpper'][$utf8_char] = implode('',$arr);
 							}
@@ -1177,7 +1187,7 @@ class t3lib_cs {
 					if ($line{0} != '#' && trim($line) != '')	{
 						list($char,$translit) = t3lib_div::trimExplode(';', $line);
 						if (!$translit)	$omit["U+$char"] = 1;
-						$decomposition["U+$char"] = split(' ', $translit);
+						$decomposition["U+$char"] = explode(' ', $translit);
 
 					}
 				}
@@ -1453,6 +1463,30 @@ class t3lib_cs {
 	}
 
 	/**
+	 * Method to crop strings using the mb_substr function.
+	 *
+	 * @param  string		The character set
+	 * @param  string		String to be cropped
+	 * @param  integer		Crop length (in characters)
+	 * @param  string		Crop signifier
+	 * @return string		The shortened string
+	 * @see mb_strlen(), mb_substr()
+	 */
+	protected function cropMbstring($charset, $string, $len, $crop = '') {
+		if (intval($len) == 0 || mb_strlen($string) < $len) {
+			return $string;
+		}
+
+		if ($len > 0) {
+			$string = mb_substr($string, 0, $len, $charset) . $crop;
+		} else {
+			$string = $crop . mb_substr($string, $len, mb_strlen($string, $charset), $charset);
+		}
+
+		return $string;
+	}
+
+	/**
 	 * Truncates a string and pre-/appends a string.
 	 * Unit tested by Kasper
 	 *
@@ -1465,6 +1499,10 @@ class t3lib_cs {
 	 * @author	Martin Kutschker <martin.t.kutschker@blackbox.net>
 	 */
 	function crop($charset,$string,$len,$crop='')	{
+		if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] == 'mbstring') {
+			return $this->cropMbstring($charset, $string, $len, $crop);
+		}
+
 		if (intval($len) == 0)	return $string;
 
 		if ($charset == 'utf-8')	{
@@ -1591,6 +1629,66 @@ class t3lib_cs {
 	}
 
 
+	/**
+	 * converts the language codes that we get from the client (usually HTTP_ACCEPT_LANGUAGE)
+	 * into a TYPO3-readable language code
+	 * @param	$languageCodesList	list of language codes. something like 'de,en-us;q=0.9,de-de;q=0.7,es-cl;q=0.6,en;q=0.4,es;q=0.3,zh;q=0.1'
+	 * 			see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
+	 * @return	string	a preferred language that TYPO3 supports, or "default" if none found
+	 * @author	Benjamin Mack (benni.typo3.org)
+	 */
+	public function getPreferredClientLanguage($languageCodesList) {
+		$allLanguageCodes = array();
+		$selectedLanguage = 'default';
+
+		// get all languages where TYPO3 code is the same as the ISO code
+		foreach ($this->charSetArray as $typo3Lang => $charSet) {
+			$allLanguageCodes[$typo3Lang] = $typo3Lang;
+		}
+
+		// get all languages where TYPO3 code differs from ISO code
+		// or needs the country part
+		// the iso codes will here overwrite the default typo3 language in the key
+		foreach ($this->isoArray as $typo3Lang => $isoLang) {
+			$isoLang = join('-', explode('_', $isoLang));
+			$allLanguageCodes[$typo3Lang] = $isoLang;
+		}
+
+		// move the iso codes to the (because we're comparing the keys with "isset" later on)
+		$allLanguageCodes = array_flip($allLanguageCodes);
+
+
+		$preferredLanguages = t3lib_div::trimExplode(',', $languageCodesList);
+		// order the preferred languages after they key
+		$sortedPreferredLanguages = array();
+		foreach ($preferredLanguages as $preferredLanguage) {
+			$quality = 1.0;
+			if (strpos($preferredLanguage, ';q=') !== false) {
+				list($preferredLanguage, $quality) = explode(';q=', $preferredLanguage);
+			}
+			$sortedPreferredLanguages[$preferredLanguage] = $quality;
+		}
+
+		// loop through the languages, with the highest priority first
+		arsort($sortedPreferredLanguages, SORT_NUMERIC);
+		foreach ($sortedPreferredLanguages as $preferredLanguage => $quality) {
+			if (isset($allLanguageCodes[$preferredLanguage])) {
+				$selectedLanguage = $allLanguageCodes[$preferredLanguage];
+				break;
+			}
+
+			// strip the country code from the end
+			list($preferredLanguage, $preferredCountry) = explode('-', $preferredLanguage);
+			if (isset($allLanguageCodes[$preferredLanguage])) {
+				$selectedLanguage = $allLanguageCodes[$preferredLanguage];
+				break;
+			}
+		}
+		if (!$selectedLanguage || $selectedLanguage == 'en') {
+			$selectedLanguage = 'default';
+		}
+		return $selectedLanguage;
+	}
 
 
 
@@ -1733,7 +1831,7 @@ class t3lib_cs {
 			if ($i <= 0)	return ''; // sanity check
 			for ($bc=0, $mbs=ord($str{$i}); $mbs & 0x80; $mbs = $mbs << 1)	$bc++;	// calculate number of bytes
 			if ($bc+$i > $len)	return substr($str,0,$i);
-                        // fallthru: multibyte char fits into length
+			// fallthru: multibyte char fits into length
 		}
 		return substr($str,0,$len);
 	}
@@ -1948,11 +2046,12 @@ class t3lib_cs {
 		}
 		if (!strlen($str{$i}))	return $str;	// string shorter than supplied length
 
-		if ($i>$len)
+		if ($i>$len) {
 			return substr($str,0,$len-1);	// we ended on a first byte
-		else
+		} else {
 			return substr($str,0,$len);
-        }
+		}
+	}
 
 	/**
 	 * Returns a part of a string in the EUC charset family.
@@ -2107,4 +2206,5 @@ class t3lib_cs {
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_cs.php'])	{
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_cs.php']);
 }
+
 ?>
