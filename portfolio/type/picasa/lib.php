@@ -66,7 +66,7 @@ class portfolio_plugin_picasa extends portfolio_plugin_push_base {
             }
         }
 
-        return google_authsub::login_url($CFG->wwwroot.'/portfolio/add.php?postcontrol=1', google_picasa::REALM);
+        return google_authsub::login_url($CFG->wwwroot.'/portfolio/add.php?postcontrol=1&id=' . $this->exporter->get('id') . '&sesskey=' . sesskey(), google_picasa::REALM);
     }
 
     public function post_control($stage, $params) {
