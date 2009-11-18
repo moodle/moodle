@@ -122,6 +122,25 @@ define('PORTFOLIO_FORMAT_VIDEO', 'video');
 */
 define('PORTFOLIO_FORMAT_TEXT', 'text');
 
+/**
+* pdf - subtype of file
+*/
+define('PORTFOLIO_FORMAT_PDF', 'pdf');
+
+/**
+* document - subtype of file
+*/
+define('PORTFOLIO_FORMAT_DOCUMENT', 'document');
+
+/**
+* document - subtype of file
+*/
+define('PORTFOLIO_FORMAT_SPREADSHEET', 'spreadsheet');
+
+/**
+* document - subtype of file
+*/
+define('PORTFOLIO_FORMAT_PRESENTATION', 'presentation');
 
 // ************************************************** //
 //  EXPORT TIME LEVELS

@@ -465,12 +465,16 @@ function portfolio_instances($visibleonly=true, $useronly=true) {
 */
 function portfolio_supported_formats() {
     return array(
-        PORTFOLIO_FORMAT_FILE       => 'portfolio_format_file',
-        PORTFOLIO_FORMAT_IMAGE      => 'portfolio_format_image',
-        PORTFOLIO_FORMAT_RICHHTML   => 'portfolio_format_richhtml',
-        PORTFOLIO_FORMAT_PLAINHTML  => 'portfolio_format_plainhtml',
-        PORTFOLIO_FORMAT_TEXT       => 'portfolio_format_text',
-        PORTFOLIO_FORMAT_VIDEO      => 'portfolio_format_video',
+        PORTFOLIO_FORMAT_FILE         => 'portfolio_format_file',
+        PORTFOLIO_FORMAT_IMAGE        => 'portfolio_format_image',
+        PORTFOLIO_FORMAT_RICHHTML     => 'portfolio_format_richhtml',
+        PORTFOLIO_FORMAT_PLAINHTML    => 'portfolio_format_plainhtml',
+        PORTFOLIO_FORMAT_TEXT         => 'portfolio_format_text',
+        PORTFOLIO_FORMAT_VIDEO        => 'portfolio_format_video',
+        PORTFOLIO_FORMAT_PDF          => 'portfolio_format_pdf',
+        PORTFOLIO_FORMAT_DOCUMENT     => 'portfolio_format_document',
+        PORTFOLIO_FORMAT_SPREADSHEET  => 'portfolio_format_spreadsheet',
+        PORTFOLIO_FORMAT_PRESENTATION => 'portfolio_format_presentation',
         /*PORTFOLIO_FORMAT_MBKP, */ // later
         /*PORTFOLIO_FORMAT_LEAP, */ // also later
     );

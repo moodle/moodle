@@ -141,3 +141,56 @@ class portfolio_format_leap extends portfolio_format_rich { }
 * it's commented out in portfolio_supported_formats so cannot currently be used.
 */
 class portfolio_format_mbkp extends portfolio_format_rich {}
+
+/**
+* 'PDF format', subtype of file.
+*
+* for portfolio plugins that support PDFs specifically
+*/
+class portfolio_format_pdf extends portfolio_format_file {
+    public static function mimetypes() {
+        return array('application/pdf');
+    }
+}
+
+/**
+* 'Document format', subtype of file.
+*
+* for portfolio plugins that support documents specifically
+*/
+class portfolio_format_document extends portfolio_format_file {
+    public static function mimetypes() {
+        return array_merge(
+            array('text/plain', 'text/rtf'),
+            mimeinfo_from_icon('type', 'word.gif', true),
+            mimeinfo_from_icon('type', 'docx.gif', true),
+            mimeinfo_from_icon('type', 'odt.gif', true)
+        );
+    }
+}
+
+/**
+* 'Spreadsheet format', subtype of file.
+*
+* for portfolio plugins that support spreadsheets specifically
+*/
+class portfolio_format_spreadsheet extends portfolio_format_file {
+    public static function mimetypes() {
+        return array_merge(
+            mimeinfo_from_icon('type', 'excel.gif', true),
+            mimeinfo_from_icon('type', 'xlsm.gif', true),
+            mimeinfo_from_icon('type', 'ods.gif', true)
+        );
+    }
+}
+
+/**
+* 'Presentation format', subtype of file.
+*
+* for portfolio plugins that support presentation specifically
+*/
+class portfolio_format_presentation extends portfolio_format_file {
+    public static function mimetypes() {
+        return mimeinfo_from_icon('type', 'powerpoint.gif', true);
+    }
+}

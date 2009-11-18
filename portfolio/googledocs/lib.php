@@ -11,7 +11,15 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
     private $sessiontoken;
 
     public static function supported_formats() {
-        return array(PORTFOLIO_FORMAT_PLAINHTML, PORTFOLIO_FORMAT_IMAGE, PORTFOLIO_FORMAT_TEXT);
+        return array(
+            PORTFOLIO_FORMAT_PLAINHTML,
+            PORTFOLIO_FORMAT_IMAGE,
+            PORTFOLIO_FORMAT_TEXT,
+            PORTFOLIO_FORMAT_PDF,
+            PORTFOLIO_FORMAT_DOCUMENT,
+            PORTFOLIO_FORMAT_PRESENTATION,
+            PORTFOLIO_FORMAT_SPREADSHEET
+        );
     }
 
     public static function get_name() {
