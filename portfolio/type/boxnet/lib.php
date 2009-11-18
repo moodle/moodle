@@ -60,7 +60,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
         );
     }
 
-    public function get_continue_url() {
+    public function get_interactive_continue_url() {
         return 'http://box.net/files#0:f:' . $this->get_export_config('folder');
     }
 

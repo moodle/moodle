@@ -195,20 +195,38 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         if (isset($response->querystring)) {
             $this->continueurl = $response->querystring;
         }
+        // if we're not queuing the logging might have already happened
+        $this->exporter->update_log_url($this->get_static_continue_url());
     }
 
-    public function get_continue_url() {
-        $this->ensure_mnethost();
-        $this->ensure_environment();
-        $mnetauth = get_auth_plugin('mnet');
+    public function get_static_continue_url() {
         $remoteurl = '/artefact/file/';// @todo penny this might change later when we change formats.
         if (isset($this->continueurl)) {
             $remoteurl .= $this->continueurl;
         }
+        return $remoteurl;
+    }
+
+    public function resolve_static_continue_url($remoteurl) {
+        static $sessions = array();
+        // if this is called mutliple times for the same host, stuff breaks
+        // so we have to keep track and just replace the wantsurl bit
+        // in case things go to different plugins or whatever
+        if (array_key_exists($this->get_config('mnethostid'), $sessions)) {
+            return preg_replace('/wantsurl=[^&]*&/', 'wantsurl=' . urlencode($remoteurl) . '&', $sessions[$this->get_config('mnethostid')]);
+        }
+        $this->ensure_mnethost();
+        $this->ensure_environment();
+        $mnetauth = get_auth_plugin('mnet');
         if (!$url = $mnetauth->start_jump_session($this->get_config('mnethostid'), $remoteurl)) {
             return false;
         }
+        $sessions[$this->get_config('mnethostid')] = $url;
         return $url;
+    }
+
+    public function get_interactive_continue_url() {
+        return $this->resolve_static_continue_url($this->get_static_continue_url());
     }
 
     public function steal_control($stage) {

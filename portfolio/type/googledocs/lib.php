@@ -23,7 +23,7 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
         return true;
     }
 	
-    public function get_continue_url(){
+    public function get_interactive_continue_url(){
         return 'http://docs.google.com/';
     }
 

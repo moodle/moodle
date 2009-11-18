@@ -118,6 +118,12 @@ class portfolio_exporter {
     private $expirytime;
 
     /**
+     * deleted - this is set during the cleanup routine
+     * so that subsequent save() calls can detect it
+     */
+    private $deleted = false;
+
+    /**
     * construct a new exporter for use
     *
     * @param portfolio_plugin_base subclass $instance portfolio instance (passed by reference)
@@ -485,6 +491,7 @@ class portfolio_exporter {
         $DB->delete_records('portfolio_tempdata', array('id' => $this->id));
         $fs = get_file_storage();
         $fs->delete_area_files(SYSCONTEXTID, 'portfolio_exporter', $this->id);
+        $this->deleted = true;
         return true;
     }
 
@@ -523,9 +530,21 @@ class portfolio_exporter {
             'caller_file'    => $this->callerfile,
             'caller_sha1'    => $this->caller->get_sha1(),
             'caller_class'   => get_class($this->caller),
+            'continueurl'    => $this->instance->get_static_continue_url(),
+            'returnurl'      => $this->caller->get_return_url(),
+            'tempdataid'     => $this->id,
             'time'           => time(),
         );
         $DB->insert_record('portfolio_log', $l);
+    }
+
+    /**
+     * in some cases (mahara) we need to update this after the log has been done
+     * because of MDL-20872
+     */
+    public function update_log_url($url) {
+        global $DB;
+        $DB->set_field('portfolio_log', 'continueurl', $url, array('tempdataid' => $this->id));
     }
 
     /**
@@ -536,7 +555,7 @@ class portfolio_exporter {
     public function process_stage_finished($queued=false) {
         global $OUTPUT;
         $returnurl = $this->caller->get_return_url();
-        $continueurl = $this->instance->get_continue_url();
+        $continueurl = $this->instance->get_interactive_continue_url();
         $extras = $this->instance->get_extra_finish_options();
 
         $key = 'exportcomplete';
@@ -616,7 +635,9 @@ class portfolio_exporter {
             $this->save(); // call again so that id gets added to the save data.
         } else {
             if (!$r = $DB->get_record('portfolio_tempdata', array('id' => $this->id))) {
-                debugging("tried to save current object, but failed - see  MDL-20872");
+                if (!$this->deleted) {
+                    debugging("tried to save current object, but failed - see MDL-20872");
+                }
                 return;
             }
             $r->data = base64_encode(serialize($this));
@@ -774,7 +795,7 @@ class portfolio_exporter {
     *
     * @return array of stored_file objects keyed by name
     */
-    public function get_tempfiles() {
+    public function get_tempfiles($skipfile='portfolio-export.zip') {
         $fs = get_file_storage();
         $files = $fs->get_area_files(SYSCONTEXTID, 'portfolio_exporter', $this->id, '', false);
         if (empty($files)) {
@@ -782,6 +803,9 @@ class portfolio_exporter {
         }
         $returnfiles = array();
         foreach ($files as $f) {
+            if ($f->get_filename() == $skipfile) {
+                continue;
+            }
             $returnfiles[$f->get_filepath() . '/' . $f->get_filename()] = $f;
         }
         return $returnfiles;
@@ -856,15 +880,18 @@ class portfolio_exporter {
         return $DB->get_records_sql_menu($sql, $values);
     }
 
-    public static function print_cleaned_export($log) {
+    public static function print_cleaned_export($log, $instance=null) {
         global $CFG, $OUTPUT, $PAGE;
+        if (empty($instance) || !$instance instanceof portfolio_plugin) {
+            $instance = portfolio_instance($log->portfolio);
+        }
         $title = get_string('exportalreadyfinished', 'portfolio');
         $PAGE->navbar->add($title);
         $PAGE->set_title($title);
         $PAGE->set_heading($title);
         echo $OUTPUT->header();
         echo $OUTPUT->notification(get_string('exportalreadyfinished', 'portfolio'));
-        self::print_finish_info($log->returnurl, $log->continueurl);
+        self::print_finish_info($log->returnurl, $instance->resolve_static_continue_url($log->continueurl));
         echo $OUTPUT->continue_button($CFG->wwwroot);
         echo $OUTPUT->footer();
         exit;

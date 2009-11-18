@@ -325,10 +325,29 @@ abstract class portfolio_plugin_base {
 
     /**
     * the url for the user to continue to their portfolio
+    * during the lifecycle of the request
     *
     * @return string url or false.
     */
-    public abstract function get_continue_url();
+    public abstract function get_interactive_continue_url();
+
+    /**
+     * the url to save in the log as the continue url
+     * this is passed through resolve_static_continue_url()
+     * at display time to the user.
+     */
+    public function get_static_continue_url() {
+        return $this->get_interactive_continue_url();
+    }
+
+    /**
+     * override this function if you need to add something on to the url
+     * for post-export continues (eg from the log page)
+     * mahara does this, for example, to start a jump session
+     */
+    public function resolve_static_continue_url($url) {
+        return $url;
+    }
 
     /**
     * mform to display to the user in their profile

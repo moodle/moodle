@@ -55,7 +55,7 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
         return false;
     }
 
-    public function get_continue_url() {
+    public function get_interactive_continue_url() {
         // return $this->flickr->urls_getUserPhotos();
         return "http://www.flickr.com/tools/uploader_edit.gne?ids="; // Add ids of uploaded files
     }

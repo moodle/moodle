@@ -130,14 +130,19 @@ if ($logcount > 0) {
         $pluginname = '';
         try {
             $plugin = portfolio_instance($log->portfolio);
-            $pluginname = $plugin->get('name');
+            $url = $plugin->resolve_static_continue_url($log->continueurl);
+            if ($url) {
+                $pluginname = '<a href="' . $url . '">' . $plugin->get('name') . '</a>';
+            } else {
+                $pluginname = $plugin->get('name');
+            }
         } catch (portfolio_exception $e) { // may have been deleted
             $pluginname = get_string('unknownplugin', 'portfolio');
         }
 
         $table->data[] = array(
             $pluginname,
-            call_user_func(array($class, 'display_name')),
+            '<a href="' . $log->returnurl . '">' . call_user_func(array($class, 'display_name')) . '</a>',
             userdate($log->time),
         );
     }

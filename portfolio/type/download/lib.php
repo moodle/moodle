@@ -48,7 +48,7 @@ class portfolio_plugin_download extends portfolio_plugin_pull_base {
         return true;
     }
 
-    public function get_continue_url() {
+    public function get_interactive_continue_url() {
         return false;
     }
 }

@@ -24,7 +24,7 @@ class portfolio_plugin_picasa extends portfolio_plugin_push_base {
         return true;
     }
 	
-    public function get_continue_url(){
+    public function get_interactive_continue_url(){
         return 'http://picasaweb.google.com/';
     }
 
