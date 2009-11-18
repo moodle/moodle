@@ -128,7 +128,7 @@ httpsrequired();
 
         // Intercept 'restored' users to provide them with info & reset password
         if (!$user and $frm and is_restored_user($frm->username)) {
-            print_header("$site->fullname: $loginsite", $site->fullname, $navigation, '',
+            print_header("$site->fullname: $loginsite", $site->fullname, $loginsite, '',
                              '', true, '<div class="langmenu">'.$langmenu.'</div>');
             print_heading(get_string('restoredaccount'));
             print_simple_box(get_string('restoredaccountinfo'), 'center', '70%');
