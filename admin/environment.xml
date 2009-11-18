@@ -257,6 +257,11 @@
           <ON_CHECK message="xmlrpcrecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
+      <PHP_EXTENSION name="soap" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="soaprecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
       <PHP_EXTENSION name="ctype" level="required">
         <FEEDBACK>
           <ON_ERROR message="ctyperequired" />
