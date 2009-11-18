@@ -2738,7 +2738,9 @@ function redirect($url, $message='', $delay=-1) {
        $url = $SESSION->sid_process_url($url);
     }
 
-    $lasterror = error_get_last();
+    if (function_exists('error_get_last')) {
+        $lasterror = error_get_last();
+    }
     $debugdisableredirect = defined('DEBUGGING_PRINTED') ||
             (!empty($CFG->debugdisplay) && !empty($lasterror) && ($lasterror['type'] & DEBUG_DEVELOPER));
 
