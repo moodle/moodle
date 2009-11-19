@@ -144,6 +144,7 @@
         if (!empty($SESSION->restore->importing)) {
             // set up all the config stuff and skip asking the user about it.
             restore_setup_for_check($SESSION->restore,$backup_unique_code);
+            require_sesskey();
             include_once("restore_execute.html");
         } else {
             include_once("restore_form.html");
@@ -159,6 +160,7 @@
         }
         //Unset this for the future
         unset($SESSION->cancontinue);
+        require_sesskey();
         include_once("restore_execute.html");
     }
     print_simple_box_end();

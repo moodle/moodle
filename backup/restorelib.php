@@ -5848,7 +5848,9 @@
             }
             else {
                 if (empty($noredirect)) {
-                    redirect($CFG->wwwroot.'/backup/restore.php?backup_unique_code='.$backup_unique_code.'&launch=form&file='.$file.'&id='.$id);
+                    print_continue($CFG->wwwroot.'/backup/restore.php?backup_unique_code='.$backup_unique_code.'&launch=form&file='.$file.'&id='.$id.'&sesskey='.sesskey());
+                    print_footer();
+                    die;                    
                 } else {
                     return $backup_unique_code;
                 }

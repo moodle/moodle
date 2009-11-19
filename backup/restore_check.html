@@ -284,6 +284,7 @@
             $hidden["launch"]             = "execute";
             $hidden["file"]               =  $file;
             $hidden["id"]                 =  $id;
+            $hidden["sesskey"]            =  sesskey();
             print_string('longtimewarning','admin');
 
             if ($restore->users && !empty($info->mnet_externalusers) 
