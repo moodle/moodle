@@ -101,6 +101,7 @@ $string['registerallhostsexplain']      = 'You can choose to register all hosts 
                                           'Moodle site that connects to you and requests your public key.<br />'.
                                           'You have the option below to configure services for \'All Hosts\' and by enabling some services there, you are able to provide '.
                                           'services to any Moodle server indiscriminately.';
+$string['allhosts_no_options']          = 'No options are available when viewing multiple hosts';
 
 $string['mnet_session_prohibited']      = 'Users from your home server are not currently permitted to roam to $a.';
 $string['ssl_acl_allow']                = 'SSO ACL: Allow user $a[0] from $a[1]';
