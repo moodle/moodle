@@ -185,7 +185,9 @@ if ($mform->is_cancelled()){
     if ($inpopup) {
         close_window();
     } else {
-        redirect($returnurl);
+        $nexturl = new moodle_url($returnurl);
+        $nexturl->param('lastchanged', $question->id);
+        redirect($nexturl->out());
     }
 } elseif ($fromform = $mform->get_data()) {
     /// If we are saving as a copy, break the connection to the old question.
