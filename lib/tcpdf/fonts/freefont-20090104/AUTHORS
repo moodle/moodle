@@ -1,7 +1,8 @@
 -*- mode:text; coding:utf-8; -*-
-$Id$
+                        GNU FreeFont Authors
+                        ====================
 
-The free UCS scalable font collection is being maintained by
+The FreeFont collection is being maintained by
 	Steve White <stevan.white AT googlemail.com>
 The folowing list cites the other contributors that contributed to
 particular ISO 10646 blocks.
@@ -33,6 +34,7 @@ particular ISO 10646 blocks.
 
 	Arrows					(U+2190-U+21FF)
 	Mathematical Symbols			(U+2200-U+22FF)
+	Mathematical Alphanumeric Symbols       (U+1D400-U+1D7FF)
 
 * Valek Filippov <frob AT df.ru>
 
@@ -171,7 +173,6 @@ particular ISO 10646 blocks.
 	Malayalam				(U+0D00-U+0D7F)
 	Tamil					(U+0B80-U+0BFF)
 
-
 * Kulbir Singh Thind
 
 	Gurmukhi				(U+0A00-U+0A7F)
@@ -180,9 +181,28 @@ particular ISO 10646 blocks.
 
         Georgian				(U+10A0-U+10FF)
 
+* Daniel Johnson
+
+	Cherokee                                (U+13A0-U+13FF)
+
+* George Douros
+
+	Gothic                                  (U+10330-U+1034F)
+	Phoenecian                              (U+10900-U+1091F)
+	Byzantine Musical Symbols               (U+1D000-U+1D0FF)
+	Western Musical Symbols                 (U+1D100-U+1D1DF)
+	Mathematical Alphanumeric Symbols       (U+1D400-U+1D7FF)
+	Mah Jong Tiles                          (U+1F000-U+1F02B)
+	Dominoes                                (U+1F030-U+1F093)
+
+* Steve White <stevan_white AT gmail.com>
+	Coptic                                  (U+2C80-U+2CFF)
+
 * Primož Peterlin <primoz.peterlin AT biofiz.mf.uni-lj.si>
-  maintained FreeFont for several years, and is to be thanked for 
-  all the work he did.
+  maintained FreeFont for several years, and is thanked for all his work.
 
 Please see the CREDITS file for details on who contributed particular
 subsets of the glyphs in font files.
+
+--------------------------------------------------------------------------
+$Id$

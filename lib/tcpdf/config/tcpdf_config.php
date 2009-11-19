@@ -2,7 +2,7 @@
 //============================================================+
 // File name   : tcpdf_config.php
 // Begin       : 2004-06-11
-// Last Update : 2009-04-20
+// Last Update : 2009-09-30
 //
 // Description : Configuration file for TCPDF.
 //

@@ -2,8 +2,8 @@
 //============================================================+
 // File name   : barcodes.php
 // Begin       : 2008-06-09
-// Last Update : 2009-04-15
-// Version     : 1.0.008
+// Last Update : 2009-08-26
+// Version     : 1.0.009
 // License     : GNU LGPL (http://www.gnu.org/copyleft/lesser.html)
 // 	----------------------------------------------------------------------------
 //  Copyright (C) 2008-2009 Nicola Asuni - Tecnick.com S.r.l.
@@ -219,6 +219,8 @@ class TCPDFBarcode {
 			}
 			default: {
 				$this->barcode_array = false;
+				$arrcode = false;
+				break;
 			}
 		}
 		$this->barcode_array = $arrcode;

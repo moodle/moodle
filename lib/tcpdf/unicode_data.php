@@ -2,7 +2,7 @@
 //============================================================+
 // File name   : unicode_data.php
 // Begin       : 2008-01-01
-// Last Update : 2008-11-17
+// Last Update : 2009-08-17
 // License     : GNU LGPL (http://www.gnu.org/copyleft/lesser.html)
 // 	----------------------------------------------------------------------------
 //  Copyright (C) 2002-2009  Nicola Asuni - Tecnick.com S.r.l.

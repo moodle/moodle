@@ -1,8 +1,8 @@
 -*- mode:text; coding:utf-8; -*-
-$Id$
+                         GNU FreeFont Credits
+                         ====================
 
-This file lists the contributors and contributions to the free UCS
-scalable font project.
+This file lists contributors and contributions to the GNU FreeFont project.
 
 
 * URW++ Design & Development GmbH <http://www.urwpp.de/>
@@ -23,25 +23,22 @@ under the terms of GNU General Public License (GPL).
 * Yannis Haralambous <yannis.haralambous AT enst-bretagne.fr> and John
   Plaice <plaice AT omega.cse.unsw.edu.au>
 
-Yannis Haralambous and John Plaice are the authors of Omega
-typesetting system, <http://omega.cse.unsw.edu.au/>. Omega is an
-extension of TeX. Its first release, aims primarily at improving TeX's
-multilingual abilities. In Omega all characters and pointers into
-data-structures are 16-bit wide, instead of 8-bit, thereby eliminating
-many of the trivial limitations of TeX. Omega also allows multiple
-input and output character sets, and uses programmable filters to
-translate from one encoding to another, to perform contextual
-analysis, etc. Internally, Omega uses the universal 16-bit Unicode
-standard character set, based on ISO-10646. These improvements not
-only make it a lot easier for TeX users to cope with multiple or
-complex languages, like Arabic, Indic, Khmer, Chinese, Japanese or
-Korean, in one document, but will also form the basis for future
-developments in other areas, such as native color support and
-hypertext features. ... Fonts for UT1 (omlgc family) and UT2 (omah
-family) are under development: these fonts are in PostScript format
-and visually close to Times and Helvetica font families. (from the
-Omega WWW site). Omega fonts are available subject to GPL
-<http://www.ctan.org/tex-archive/help/Catalogue/entries/omegafonts.html>.
+Yannis Haralambous and John Plaice are the authors of Omega typesetting
+system, <http://omega.enstb.org/>. Omega is an extension of TeX.
+Its first release, aims primarily at improving TeX's multilingual abilities.
+In Omega all characters and pointers into data-structures are 16-bit wide,
+instead of 8-bit, thereby eliminating many of the trivial limitations of TeX.
+Omega also allows multiple input and output character sets, and uses
+programmable filters to translate from one encoding to another, to perform
+contextual analysis, etc. Internally, Omega uses the universal 16-bit Unicode
+standard character set, based on ISO-10646. These improvements not only make
+it a lot easier for TeX users to cope with multiple or complex languages,
+like Arabic, Indic, Khmer, Chinese, Japanese or Korean, in one document, but
+will also form the basis for future developments in other areas, such as
+native color support and hypertext features. ... Fonts for UT1 (omlgc family)
+and UT2 (omah family) are under development: these fonts are in PostScript
+format and visually close to Times and Helvetica font families. 
+Omega fonts are available subject to GPL
 
 	Latin Extended-B                        (U+0180-U+024F)
 	IPA Extensions				(U+0250-U+02AF)
@@ -53,13 +50,13 @@ Omega WWW site). Omega fonts are available subject to GPL
 	Arabic Presentation Forms-A		(U+FB50-U+FDFF)
 	Arabic Presentation Forms-B		(U+FE70-U+FEFF)
 
+Current info: <http://tug.ctan.org/cgi-bin/ctanPackageInformation.py?id=omega>
 
 * Valek Filippov <frob AT df.ru>
 
 Valek Filippov added Cyrillic glyphs and composite Latin Extended A to
-the whole set of the abovementioned URW set of 35 PostScript core
-fonts, <ftp://ftp.gnome.ru/fonts/urw/>. The fonts are available under
-GPL.
+the whole set of the abovementioned URW set of 35 PostScript core fonts,
+<ftp://ftp.gnome.ru/fonts/urw/>. The fonts are available under GPL.
 
 	Latin Extended-A                        (U+0100-U+017F)
 	Cyrillic				(U+0400-U+04FF)
@@ -92,9 +89,8 @@ etc. would result in too thick math symbols, in my opinion. In the TX
 fonts, these glyphs are thinner than those of original Times
 fonts. That is, the rule thickness of these glyphs is around 85% of
 that of the Times fonts, but still thicker than that of the CM fonts."
-TX fonts are are distributed under the GNU public license
-(GPL). Pointers to their location are available on
-<http://www.utdallas.edu/~ryoung/txfonts/>.
+TX fonts are are distributed under the GNU public license (GPL). 
+<http://www.ctan.org/tex-archive/fonts/txfonts/>.
 
 	Arrows					(U+2190-U+21FF)
 	Mathematical Symbols			(U+2200-U+22FF)
@@ -119,10 +115,10 @@ version. You can also send comments etc to the above address."
 * Yannis Haralambous and Virach Sornlertlamvanich
 
 In 1999, Yannis Haralambous and Virach Sornlertlamvanich made a set of
-glyphs covering the Thai national standard NF3, in both upright and
+glyphs covering the Thai national standard Nf3, in both upright and
 slanted shape. The collection of glyphs have been made part of GNU
-intlfonts 1.2 package and is available on
-<ftp://ftp.gnu.org/pub/gnu/intlfonts/> under GPL.
+intlfonts 1.2 package and is available under the GPL at
+<ftp://ftp.gnu.org/pub/gnu/intlfonts/>.
 
 	Thai					(U+0E00-U+0E7F)
 
@@ -336,8 +332,7 @@ a set of TTF fonts for nine Indian scripts (Devanagari, Gujarati,
 Telugu, Tamil, Malayalam, Kannada, Bengali, Oriya, and Gurumukhi)
 under the GNU General Public License (GPL). You can download the fonts
 from the Free Software Foundation of India WWW site
-(http://www.gnu.org.in/software/software.html#akruti) or from the
-Akruti website.
+(http://www.gnu.org.in/akruti-fonts/) or from the Akruti website.
 
 For any further information or assistance regarding these fonts,
 please contact mssridhar AT vsnl.com.
@@ -386,17 +381,20 @@ Latin Extended-B and IPA Extensions ranges.
 
 * K.H. Hussain <hussain AT kfri.org> and R. Chitrajan
 
-`Rachana' in Malayalam means `to write', `to create'. Rachana Akshara
-Vedi, a team of socially committed information technology
-professionals and philologists, has applied developments in computer
-technology and desktop publishing to resurrect the Malayalam language
-from the disorder, fragmentation and degeneration it had suffered
-since the attempt to adapt the Malayalam script for using with a
-regular mechanical typewriter, which took place in
-1967-69. K.H. Hussein at the Kerala Forest Research Institute has
-released "Rachana Normal" fonts with approximately 900 glyphs required
+`Rachana' in Malayalam means `to write', `to create'. Rachana Akshara Vedi,
+a team of socially committed information technology professionals and
+philologists, has applied developments in computer technology and desktop
+publishing to resurrect the Malayalam language from the disorder,
+fragmentation and degeneration it had suffered since the attempt to adapt
+the Malayalam script for using with a regular mechanical typewriter, which
+took place in 1967-69. K.H. Hussein at the Kerala Forest Research Institute
+has released "Rachana Normal" fonts with approximately 900 glyphs required
 to typeset traditional Malayalam. R. Chitrajan apparently encoded the
 glyphs in the OpenType table.
+
+In 2008, the Malayalam ranges in FreeSerif were updated under the advise 
+and supervision of Hiran Venugopalan of Swathanthra Malayalam Computing,
+to reflect the revised edition Rachana_04.
 
 	Malayalam				(U+0D00-U+0D7F)
 
@@ -406,7 +404,7 @@ glyphs in the OpenType table.
 	Bengali					(U+0980-U+09FF)
 
 Solaiman Karim has developed several OpenType Bangla fonts and
-released them under GNU GPL on www.ekushey.org.
+released them under GNU GPL on <http://www.ekushey.org>.
 
 
 * Sonali Sonania <sonalisonania AT gmail.com> and Monika Shah
@@ -481,9 +479,50 @@ created the following UCS blocks:
 	Block Elements				(U+2580-U+259F)
 	Geometrical Shapes			(U+25A0-U+25FF)
 
+* Mark Williamson
+
+Made the MPH 2 Damase font, from which 
+	Hanunóo                                 (U+1720-U+173F)
+	Buginese                                (U+1A00-U+1A1F)
+	Tai Le                                  (U+1950-U+197F)
+	Ugaritic                                (U+10380-U+1039F)
+	Old Persian                             (U+103A0-U+103DF)
+
+* Jacob Poon
+
+Submitted a very thorough survey of glyph problems and other suggestions.
+
+* Alexey Kryukov
+
+Made the TemporaLCGUni fonts, based on the URW++ fonts, from which at one 
+point FreeSerif Cyrillic, and some of the Greek, was drawn.  He also provided
+valuable direction about Cyrillic and Greek typesetting.
+
+* George Douros
+
+The creator of several fonts focusing on ancient scripts and symbols.
+Many of the glyphs are created by making outlines from scanned images
+of ancient sources.
+
+	Aegean:   Phoenecian
+	Analecta: Gothic                        (U+10330-U+1034F)
+	Musical:  Byzantine & Western                  
+	Unicode:  many Miscellaneous Symbols, Miscellaneous Technical,
+	          supplemental Symbols, and Mathematical Alphanumeric symbols,
+		  Mah Jong, and the outline of the Domino.
+
+* Daniel Johnson
+
+Created by hand a Cherokee range specially for FreeFont to be "in line with
+the classic Cherokee typefaces used in 19th century printing", but also to
+fit well with ranges previously in FreeFont.
+	Cherokee                                (U+13A0-U+13FF)
 
 Notes:
 
 *: The glyph collection looks license-compatible, but its author has
-   not yet replied and agreed on his/her work being used in part of
+   not yet replied and agreed on their work being used in part of
    this glyph collection.
+
+--------------------------------------------------------------------------
+$Id$

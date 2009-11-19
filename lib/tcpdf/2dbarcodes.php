@@ -2,7 +2,7 @@
 //============================================================+
 // File name   : 2dbarcodes.php
 // Begin       : 2009-04-07
-// Last Update : 2009-04-08
+// Last Update : 2009-08-17
 // Version     : 1.0.000
 // License     : GNU LGPL (http://www.gnu.org/copyleft/lesser.html)
 // 	----------------------------------------------------------------------------
