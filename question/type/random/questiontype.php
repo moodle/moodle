@@ -175,7 +175,7 @@ class random_qtype extends default_questiontype {
 
         while ($wrappedquestion =
                 array_pop($this->catrandoms[$question->category][$question->questiontext])) {
-            if (!preg_match("/(^|,)$wrappedquestion->id(,|$)/", $cmoptions->questionsinuse)) {
+            if (!ereg("(^|,)$wrappedquestion->id(,|$)", $cmoptions->questionsinuse)) {
                 /// $randomquestion is not in use and will therefore be used
                 /// as the randomquestion here...
                 $wrappedquestion = get_record('question', 'id', $wrappedquestion->id);
@@ -216,7 +216,7 @@ class random_qtype extends default_questiontype {
         /// the other question types in that it now only needs one response
         /// record per question.
         global $QTYPES;
-        if (!preg_match('/^random([0-9]+)-(.*)$/', $state->responses[''], $answerregs)) {
+        if (!ereg('^random([0-9]+)-(.*)$', $state->responses[''], $answerregs)) {
             if (empty($state->responses[''])) {
                 // This is the case if there weren't enough questions available in the category.
                 $question->questiontext = '<span class="notifyproblem">'.
@@ -361,7 +361,7 @@ class random_qtype extends default_questiontype {
         global $QTYPES;
         $answer_field = "";
 
-        if (preg_match('/^random([0-9]+)-(.*)$/', $state->answer, $answerregs)) {
+        if (ereg('^random([0-9]+)-(.*)$', $state->answer, $answerregs)) {
             // Recode the question id in $answerregs[1]
             // Get the question from backup_ids
             if(!$wrapped = backup_getid($restore->backup_unique_code,"question",$answerregs[1])) {
