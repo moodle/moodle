@@ -512,7 +512,7 @@ class graph {
       $label = $this->calculated['x_label'];
       $coords = array('x' => $x, 'y' => $y, 'reference' => 'top-center');
       $this->update_boundaryBox($label['boundary_box'], $coords);
-     $this->print_TTF($label);
+      $this->print_TTF($label);
     }
 
     function draw_zero_axis_left() {
@@ -1371,7 +1371,7 @@ class graph {
       } else {
         $width = abs($bounds[4]-$bounds[6]);
         $height = abs($bounds[7]-$bounds[1]);
-        $offsetY = 0;
+        $offsetY = $bounds[1];
         $offsetX = 0;
       }
 
