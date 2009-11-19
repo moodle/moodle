@@ -1,7 +1,7 @@
 <?php
 
 $string['apikey'] = 'API key';
-$string['apikeyhelp'] = 'You need to get this by signing up to enabled.box.net and adding an application.  The callback url must be yourwwwroot/portfolio/add.php?postcontrol=1';
+$string['apikeyhelp'] = 'You need to get this by signing up to enabled.box.net and adding an application.  The callback url must be yourwwwroot/portfolio/add.php?postcontrol=1&type=boxnet';
 $string['apikeyinlinehelp'] = '<p>To configure Box.net, visit <a href=\"http://enabled.box.net/my-projects\">enabled.box.net</a> and log in.</p><p>Under My Projects you will need to create one new project for each Moodle site.</p><p>The only setting that matters is the callback url, which should be $a. You can put anything you like for the other settings. Save it and you\'re done!';
 $string['err_noapikey'] = 'There is no API Key configured for this plugin.  You can get one of these from http://enabled.box.net';
 $string['existingfolder'] = 'Exiting folder to put file(s) into';

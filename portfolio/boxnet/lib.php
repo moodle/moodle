@@ -116,7 +116,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
         );
         $mform->setHelpButton('apikey', $helpparams);
         $mform->addRule('apikey', $strrequired, 'required', null, 'client');
-        $mform->addElement('warning', 'apikeyhelp', 'smalltext', get_string('apikeyinlinehelp', 'portfolio_boxnet', $CFG->wwwroot . '/portfolio/add.php?postcontrol=1'));
+        $mform->addElement('warning', 'apikeyhelp', 'smalltext', get_string('apikeyinlinehelp', 'portfolio_boxnet', $CFG->wwwroot . '/portfolio/add.php?postcontrol=1&type=boxnet'));
 
     }
 
