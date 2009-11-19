@@ -124,6 +124,8 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 <form id="form1" method="post" action="backup.php">
 <table cellpadding="5" style="margin-left:auto;margin-right:auto;">
 <?php
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+
 /// Acummulator for hidden options and proper XHTML output
     $hidden_options = '';
     //Now, check modules and info and show posibilities
