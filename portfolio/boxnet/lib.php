@@ -247,4 +247,12 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
     public static function supported_formats() {
         return array(PORTFOLIO_FORMAT_FILE); // don't support rich html, it breaks links
     }
+
+    /*
+     * for now , boxnet doesn't support this,
+     * because we can't dynamically construct return urls.
+     */
+    public static function allows_multiple_exports() {
+        return false;
+    }
 }
