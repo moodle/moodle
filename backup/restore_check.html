@@ -194,15 +194,21 @@
     //Check login
     require_login();
 
+    //Init restoreuserinfo
+    $restoreuserinfo = false;
+
+
     //Check admin
     if (!empty($id)) {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))) {
             error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
+        $restoreuserinfo = has_capability('moodle/restore:userinfo', get_context_instance(CONTEXT_COURSE, $id));
     } else {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM))) {
             error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
+        $restoreuserinfo = has_capability('moodle/restore:userinfo', get_context_instance(CONTEXT_SYSTEM));
     }
 
     //Check site
@@ -315,6 +321,32 @@
                 $restore->users = 1;
             }
         }
+
+        // Re-enforce moodle/restore:userinfo capability
+        if (!$restoreuserinfo) {
+            $userinfocheck = true;
+            // Confirm that all the settings are properly set to no users
+            // if anything is wrong, message and stop
+            // First global settings
+            if ($restore->users != 2 or $restore->user_files or $restore->messages or $restore->blogs) {
+                $userinfocheck = false;
+
+            // Now all modules userinfo flag
+            } else {
+                $mods = $restore->mods;
+                foreach ($mods as $mod) {
+                    if ($mod->userinfo) {
+                        $userinfocheck = false;
+                    }
+                }
+            }
+
+            if (!$userinfocheck) { // Something was wrong
+                $messages[] = get_string('restoreuserinfofailed');
+                $show_continue_button = false;
+            }
+        }
+
 
     /// If restoring users and backup has mnet remote users and we are restoring to different site, forbid restore to non-admins. MDL-17009
         if ($restore->users != 2 &&                                                   /// If restoring users

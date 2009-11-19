@@ -23,15 +23,20 @@
     //Check login
     require_login();
 
+    //Init restoreuserinfo
+    $restoreuserinfo = false;
+
     //Check admin
     if (!empty($id)) {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))) {
             error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
+        $restoreuserinfo = has_capability('moodle/restore:userinfo', get_context_instance(CONTEXT_COURSE, $id));
     } else {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM))) {
             error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
+        $restoreuserinfo = has_capability('moodle/restore:userinfo', get_context_instance(CONTEXT_SYSTEM));
     }
 
     //Check site
@@ -62,8 +67,10 @@
             }
             //Check include user info
             $var = "restore_user_info_".$modname;
-            if (!isset($$var)) {
+            if (!isset($$var) && $restoreuserinfo) {
                 $$var = 1;
+            } else {
+                $$var = 0;
             }
         }
     }
@@ -318,14 +325,18 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo "<a href=\"javascript:void(0);\" onclick=\"selectItemInCheckboxByName('form1', 'restore_', false);\">".
              get_string("none")."</a>";
         echo "</td>";
-        echo "<td align=\"right\">";
-        echo '<b>&nbsp;</b>';
-        echo "</td><td>";
-        echo "<a href=\"javascript:void(0);\" onclick=\"selectItemInCheckboxByName('form1', 'restore_user_info_', true);\">".
-             get_string("all")."</a>/";
-        echo "<a href=\"javascript:void(0);\" onclick=\"selectItemInCheckboxByName('form1', 'restore_user_info_', false);\">".
-             get_string("none")."</a>";
-        echo "</td>";
+        if ($restoreuserinfo) {
+            echo "<td align=\"right\">";
+            echo '<b>&nbsp;</b>';
+            echo "</td><td>";
+            echo "<a href=\"javascript:void(0);\" onclick=\"selectItemInCheckboxByName('form1', 'restore_user_info_', true);\">".
+                 get_string("all")."</a>/";
+            echo "<a href=\"javascript:void(0);\" onclick=\"selectItemInCheckboxByName('form1', 'restore_user_info_', false);\">".
+                 get_string("none")."</a>";
+            echo "</td>";
+        } else {
+            echo "<td colspan=\"2\">&nbsp;</td>";
+        }
         echo "</tr>";
         echo "<tr><td colspan=\"4\"><hr /></td></tr>";
         $currentrow = 0;
@@ -355,7 +366,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                         //without user data
                         echo "</td><td align=\"right\">&nbsp;";
                         echo "</td><td>";
-                        if ($info->mods[$modname]->userinfo == "true") {
+                        if ($info->mods[$modname]->userinfo == "true" && $restoreuserinfo) {
                             $restore_user_options[1] = get_string("yes");
                             $restore_user_options[0] = get_string("no");
                             //choose_from_menu($restore_user_options, $user_info_var, $$user_info_var, "");
@@ -380,7 +391,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                                 echo '</td><td align="right">&nbsp;';
                                 $var = 'restore_user_info_'.$modname.'_instance_'.$instance->id;
                                 $$var = optional_param($var,1);
-                                if (!empty($info->mods[$modname]->instances) && ($info->mods[$modname]->instances[$instance->id]->userinfo == 'true')) {
+                                if (!empty($info->mods[$modname]->instances) && ($info->mods[$modname]->instances[$instance->id]->userinfo == 'true') && $restoreuserinfo) {
                                     print_checkbox($var,$$var,$$var,get_string('userdata'),'','this.form.elements[\'restore_user_info_'.$modname.'\'].checked=1;');
                                 } else {
                                     echo '<input type="hidden" name="'.$var.'" value="0" />';
@@ -431,7 +442,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo '<label for="menurestore_users">'.get_string ("users").'</label>';
         echo "</b></td><td colspan=\"2\">";
         //If some user is present in the backup file
-        if ($info->backup_users == "all" or $info->backup_users == "course") {
+        if (($info->backup_users == "all" or $info->backup_users == "course") and $restoreuserinfo) {
             $user_options = array();
             //If all users are in the backup file
             if ($info->backup_users == "all") {
@@ -451,23 +462,17 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo "<tr>";
         echo "<td align=\"right\" colspan=\"2\"><b>";
         $helplink = helpbutton('grouprestore', get_string('groups'), '', true, false, '', true);
+        echo '<label for="menurestore_groups">'.get_string ("groups").'</label>'.$helplink;
+        echo "</b></td><td colspan=\"2\">";
         if (empty($CFG->enablegroupings)) {
-            echo '<label for="menurestore_groups">'.get_string ("groups").'</label>'.$helplink;
-            echo "</b></td><td colspan=\"2\">";
             $group_options[RESTORE_GROUPS_NONE] = get_string('no');
             $group_options[RESTORE_GROUPS_ONLY] = get_string('yes');
         } else {
-            echo '<label for="menurestore_groups">'.get_string ('groupsgroupings', 'group').'</label>'.$helplink;
-            echo "</b></td><td colspan=\"2\">";
             $group_options[RESTORE_GROUPS_NONE] = get_string('none');
             $group_options[RESTORE_GROUPS_ONLY] = get_string('groupsonly', 'group');
             $group_options[RESTORE_GROUPINGS_ONLY] = get_string('groupingsonly', 'group');
             $group_options[RESTORE_GROUPS_GROUPINGS] = get_string('groupsgroupings', 'group'); //all.
-
-        } /*else {
-            echo get_string('none');
-            echo "<input type=\"hidden\" name=\"restore_groups\" value=\"2\" />";
-        }*/
+        }
         choose_from_menu($group_options, 'restore_groups', $restore_groups, '');
         echo "</td></tr>";
 
@@ -477,7 +482,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo '<label for="menurestore_logs">'.get_string ("logs").'</label>';
         echo "</b></td><td colspan=\"2\">";
         //If logs are in the backup file, show menu, else fixed to no
-        if ($info->backup_logs == "true") {
+        if ($info->backup_logs == "true" and $restoreuserinfo) {
             $log_options = array();
             $log_options[0] = get_string("no");
             $log_options[1] = get_string("yes");
@@ -494,7 +499,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo '<label for="menurestore_user_files">'.get_string ("userfiles").'</label>';
         echo "</b></td><td colspan=\"2\">";
         //If user files are in the backup file, show menu, else fixed to no
-        if ($info->backup_user_files == "true") {
+        if ($info->backup_user_files == "true" and $restoreuserinfo) {
             $user_file_options = array();
             $user_file_options[0] = get_string("no");
             $user_file_options[1] = get_string("yes");
@@ -543,7 +548,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo "</td></tr>";
 
         // do you want grade histories to be restored?
-        if (empty($CFG->disablegradehistory)) {
+        if (empty($CFG->disablegradehistory) and $restoreuserinfo) {
             echo "<tr>";
             echo "<td align=\"right\" colspan=\"2\"><b>";
             echo '<label for="menurestore_gradebook_history">'.get_string ('gradebookhistories', 'grades').'</label>';
@@ -566,7 +571,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         //we haven't messages is the backup, to avoid confusions to users.
         //If messages are in the backup file, show menu, else fixed to no and show nothing
         //Also, messaging must be enabled in the destination site
-        if (isset($info->backup_messages) && $info->backup_messages == "true" && !empty($CFG->messaging)) {
+        if (isset($info->backup_messages) && $info->backup_messages == "true" && !empty($CFG->messaging) and $restoreuserinfo) {
             echo "<tr>";
             echo "<td align=\"right\" colspan=\"2\"><b>";
             echo '<label for="menurestore_messages">'.get_string ('messages', 'message').'</label>';
@@ -584,7 +589,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         //we haven't blogs is the backup, to avoid confusions to users.
         //If blogs are in the backup file, show menu, else fixed to no and show nothing
         //Also, blogs must be enabled in the destination site
-        if (isset($info->backup_blogs) && $info->backup_blogs == "true" && !empty($CFG->bloglevel)) {
+        if (isset($info->backup_blogs) && $info->backup_blogs == "true" && !empty($CFG->bloglevel) and $restoreuserinfo) {
             echo "<tr>";
             echo "<td align=\"right\" colspan=\"2\"><b>";
             echo '<label for="menurestore_blogs">'.get_string ('blogs', 'blog').'</label>';
@@ -604,105 +609,106 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 
 <hr />
 <?php
+// Only show the roles mapping if restore of user info is allowed
+if ($restoreuserinfo) {
+    print_heading(get_string('rolemappings'));
+    $xml_file  = $CFG->dataroot."/temp/backup/".$backup_unique_code."/moodle.xml";
 
-print_heading(get_string('rolemappings'));
-$xml_file  = $CFG->dataroot."/temp/backup/".$backup_unique_code."/moodle.xml";
+    $info = restore_read_xml_info($xml_file);
 
-$info = restore_read_xml_info($xml_file);
+    // fix for MDL-9068, front page course is just a normal course
+    $siterolesarray = get_assignable_roles (get_context_instance(CONTEXT_COURSE, $course->id), "shortname", ROLENAME_ORIGINAL);
+    $siterolesnamearray = get_assignable_roles (get_context_instance(CONTEXT_COURSE, $course->id), "name", ROLENAME_ORIGINAL);
+    $allroles = get_records('role');
 
-// fix for MDL-9068, front page course is just a normal course
-$siterolesarray = get_assignable_roles (get_context_instance(CONTEXT_COURSE, $course->id), "shortname", ROLENAME_ORIGINAL);
-$siterolesnamearray = get_assignable_roles (get_context_instance(CONTEXT_COURSE, $course->id), "name", ROLENAME_ORIGINAL);
-$allroles = get_records('role');
+    echo ('<table width="100%" class="restore-form-instances">');
+    echo ('<tr><td align="right" style="width:50%"><b>'.get_string('sourcerole').'</b></td><td align="left" style="width:50%"><b>'.get_string('targetrole').'</b></td></tr>');
 
-echo ('<table width="100%" class="restore-form-instances">');
-echo ('<tr><td align="right" style="width:50%"><b>'.get_string('sourcerole').'</b></td><td align="left" style="width:50%"><b>'.get_string('targetrole').'</b></td></tr>');
+    if ($info->backup_moodle_version < 2006092801) {
+        // 1.6 and below backup
 
-if ($info->backup_moodle_version < 2006092801) {
-    // 1.6 and below backup
+        /// Editting teacher
+        echo ('<tr><td align="right">');
+        echo '<label for="menudefaultteacheredit">'.get_string ('defaultcourseteacher').'</label>';
+        echo ('</td><td algin="left">');
 
-    /// Editting teacher
-    echo ('<tr><td align="right">');
-    echo '<label for="menudefaultteacheredit">'.get_string ('defaultcourseteacher').'</label>';
-    echo ('</td><td algin="left">');
+        // get the first teacheredit legacy
+        $roles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
 
-    // get the first teacheredit legacy
-    $roles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
+        $editteacher = reset($roles);
+        choose_from_menu ($siterolesarray, "defaultteacheredit", $editteacher->id, 'new role', '', '0');
+        echo ('</td></tr>');
 
-    $editteacher = reset($roles);
-    choose_from_menu ($siterolesarray, "defaultteacheredit", $editteacher->id, 'new role', '', '0');
-    echo ('</td></tr>');
+        /// Non-editting teacher
+        echo ('<tr><td align="right">');
+        echo '<label for="menudefaultteacher">'.get_string ('noneditingteacher').'</label>';
+        print_string('noneditingteacher');
+        echo ('</td><td algin="left">');
 
-    /// Non-editting teacher
-    echo ('<tr><td align="right">');
-    echo '<label for="menudefaultteacher">'.get_string ('noneditingteacher').'</label>';
-    print_string('noneditingteacher');
-    echo ('</td><td algin="left">');
+        // get the first teacheredit legacy
+        $roles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
+        $teacher = reset($roles);
 
-    // get the first teacheredit legacy
-    $roles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
-    $teacher = reset($roles);
-
-    choose_from_menu ($siterolesarray, "defaultteacher", $teacher->id, 'new role', '', '0');
-    echo ('</td></tr>');
+        choose_from_menu ($siterolesarray, "defaultteacher", $teacher->id, 'new role', '', '0');
+        echo ('</td></tr>');
 
 
-    /// Student
-    echo ('<tr><td align="right">');
-    echo '<label for="menudefaultstudent">'.get_string ('defaultcoursestudent').'</label>';
-    echo ('</td><td algin="left">');
+        /// Student
+        echo ('<tr><td align="right">');
+        echo '<label for="menudefaultstudent">'.get_string ('defaultcoursestudent').'</label>';
+        echo ('</td><td algin="left">');
 
-    // get the first teacheredit legacy
-    $roles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
-    $studentrole = array_shift($roles);
+        // get the first teacheredit legacy
+        $roles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
+        $studentrole = array_shift($roles);
 
-    choose_from_menu ($siterolesarray, "defaultstudent", $studentrole->id, 'new role', '', '0');
-    echo ('</td></tr>');
+        choose_from_menu ($siterolesarray, "defaultstudent", $studentrole->id, 'new role', '', '0');
+        echo ('</td></tr>');
 
-} else {
-    // 1.7 and above backup
-    $roles = restore_read_xml_roles($xml_file);
+    } else {
+        // 1.7 and above backup
+        $roles = restore_read_xml_roles($xml_file);
 
-    if (!empty($roles->roles)) { // possible to have course with no roles
-        foreach ($siterolesarray as $siteroleid=>$siteroleshortname) {
-            $siteroleschoicearray[$siteroleid] = $siterolesnamearray[$siteroleid]." (". $siterolesarray[$siteroleid].")";
-        }
+        if (!empty($roles->roles)) { // possible to have course with no roles
+            foreach ($siterolesarray as $siteroleid=>$siteroleshortname) {
+                $siteroleschoicearray[$siteroleid] = $siterolesnamearray[$siteroleid]." (". $siterolesarray[$siteroleid].")";
+            }
 
-        foreach ($roles->roles as $roleid=>$role) {
+            foreach ($roles->roles as $roleid=>$role) {
 
-            $mappableroles = $siteroleschoicearray;
+                $mappableroles = $siteroleschoicearray;
 
-            echo ('<tr><td align="right">');
-            echo '<label for="menuroles_'.$roleid.'">'.format_string($role->name)." (".($role->shortname).")".'</label>';
-            echo ('</td><td align="left">');
+                echo ('<tr><td align="right">');
+                echo '<label for="menuroles_'.$roleid.'">'.format_string($role->name)." (".($role->shortname).")".'</label>';
+                echo ('</td><td align="left">');
 
-            /// first, we see if any exact role definition is found
-            /// if found, that is the only option of restoring to
+                /// first, we see if any exact role definition is found
+                /// if found, that is the only option of restoring to
 
-            if ($samerole = restore_samerole($roleid, $role)) {
-                $matchrole = $samerole->id;
-                // if an exact role is found, it does not matter whether this user can assign this role or not,
-                // this will be presented as a valid option regardless
-                $mappableroles[$samerole->id] = format_string($allroles[$samerole->id]->name)." (". $allroles[$samerole->id]->shortname.")";
-            } else {
-                // no exact role found, let's try to match shortname
-                // this is useful in situations where basic roles differ slightly in definition
-                $matchrole = 0;
-                foreach ($siterolesarray as $siteroleid=>$siteroleshortname) {
-                    if ($siteroleshortname == $role->shortname) {
-                        $matchrole = $siteroleid;
-                        break;
+                if ($samerole = restore_samerole($roleid, $role)) {
+                    $matchrole = $samerole->id;
+                    // if an exact role is found, it does not matter whether this user can assign this role or not,
+                    // this will be presented as a valid option regardless
+                    $mappableroles[$samerole->id] = format_string($allroles[$samerole->id]->name)." (". $allroles[$samerole->id]->shortname.")";
+                } else {
+                    // no exact role found, let's try to match shortname
+                    // this is useful in situations where basic roles differ slightly in definition
+                    $matchrole = 0;
+                    foreach ($siterolesarray as $siteroleid=>$siteroleshortname) {
+                        if ($siteroleshortname == $role->shortname) {
+                            $matchrole = $siteroleid;
+                            break;
+                        }
                     }
                 }
+                choose_from_menu ($mappableroles, "roles_".$roleid, $matchrole, 'new role', '', '0');
+                echo ('</td></tr>');
             }
-            choose_from_menu ($mappableroles, "roles_".$roleid, $matchrole, 'new role', '', '0');
-            echo ('</td></tr>');
         }
-    }
 
-} // end else
-
-echo ('</table>'); // end of role mappings table
+    } // end else
+    echo ('</table>'); // end of role mappings table
+}
 
 ?>
 <br />
@@ -723,7 +729,6 @@ echo ('</table>'); // end of role mappings table
 <?php
 
 /**
- * Look for a role in the database with exactly the same definition as the one in the backup file.
  *
  * @param integer $roleid the id that the role in the backup files had on the old server.
  * @param object $role the rest of the definition of the role from the backup file.

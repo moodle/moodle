@@ -289,7 +289,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         }
 
         // do you want grade histories to be backed up?
-        if (empty($CFG->disablegradehistory)) {
+        if (empty($to) and $backupuserinfo and empty($CFG->disablegradehistory)) {
             echo "<tr>";
             echo "<td align=\"right\" colspan=\"2\"><b>";
             echo '<label for="menubackup_gradebook_history">'.get_string ('gradebookhistories', 'grades').'</label>';
