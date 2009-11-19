@@ -50,6 +50,7 @@
 <form id="form" method="post" action="backup.php">
 <table cellpadding="5" style="text-align:center;margin-left:auto;margin-right:auto">
 <?php
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 
     if (empty($to)) {
         //Now print the Backup Name tr
