@@ -21,10 +21,10 @@
 
     $roles = get_all_roles();
 
-    if ($grant = data_submitted()) {
+    if ($grant = data_submitted() and confirm_sesskey()) {
 
         foreach ($grant as $grole => $val) {
-            if ($grole == 'dummy') {
+            if ($grole == 'dummy' or !strpos($grole, '_')) {
                 continue;
             }
 
@@ -81,6 +81,7 @@
     print_table($table);
     echo '<div class="buttons"><input type="submit" value="'.get_string('savechanges').'"/>';
     echo '<input type="hidden" name="dummy" value="1" />'; // this is needed otherwise we do not know a form has been submitted
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '</div></form>';
 
     admin_externalpage_print_footer();
