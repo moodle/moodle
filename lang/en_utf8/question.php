@@ -30,6 +30,7 @@ $string['deletecoursecategorywithquestions'] = 'There are questions in the quest
 $string['donothing']= 'Don\'t copy or move files or change links.';
 $string['editingcategory'] = 'Editing a category';
 $string['editingquestion'] = 'Editing a question';
+$string['editthiscategory'] = 'Edit this category';
 $string['erroraccessingcontext'] = 'Cannot access context';
 $string['errordeletingquestionsfromcategory'] = 'Error deleting questions from category $a.';
 $string['errorfilecannotbecopied'] = 'Error cannot copy file $a.';
