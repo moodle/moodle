@@ -19,6 +19,7 @@
               <input type="password" name="password" size="20" value="<?php p($password) ?>"  />
               <input type="hidden" name="id" value="<?php p($course->id) ?>"  />
               <input type="hidden" name="enrol" value="manual" />
+              <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
               <input type="submit" value="<?php print_string("enrolme") ?>" />
             </td>
           </tr>

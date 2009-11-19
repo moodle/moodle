@@ -64,12 +64,12 @@ function print_entry($course) {
 
             print_header($strloginto, $course->fullname, "<a href=\".\">$strcourses</a> -> $strloginto");
             echo '<br />';
-            notice_yesno(get_string('enrolmentconfirmation'), "enrol.php?id=$course->id&amp;confirm=1", 
+            notice_yesno(get_string('enrolmentconfirmation'), "enrol.php?id=$course->id&amp;confirm=1&amp;sesskey=".sesskey(),
                                                               "enrol.php?id=$course->id&amp;cancel=1");
             print_footer();
             exit;
 
-        } else if (!empty($_GET['confirm'])) {
+        } else if (!empty($_GET['confirm'])  and confirm_sesskey()) {
 
             if (!enrol_into_course($course, $USER, 'manual')) {
                 print_error('couldnotassignrole');
@@ -130,7 +130,7 @@ function check_entry($form, $course) {
         $form->password = '';
     }
 
-    if (empty($course->password)) {
+    if (empty($course->password) or !confirm_sesskey()) {
         // do not allow entry when no course password set
         // automatic login when manual primary, no login when secondary at all!!
         error('illegal enrolment attempted');
