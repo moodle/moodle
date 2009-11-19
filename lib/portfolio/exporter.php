@@ -291,7 +291,7 @@ class portfolio_exporter {
         $expectedtime = $this->instance->expected_time($this->caller->expected_time());
         if (count($formats) == 0) {
             // something went wrong, we should not have gotten this far.
-            throw new portfolio_export_exception($this, 'nocommonformats', 'portfolio', null, get_class($this->caller));
+            throw new portfolio_export_exception($this, 'nocommonformats', 'portfolio', null, array('location' => get_class($this->caller), 'formats' => implode(',', $formats)));
         }
         // even if neither plugin or caller wants any config, we have to let the user choose their format, and decide to wait.
         if ($pluginobj || $callerobj || count($formats) > 1 || ($expectedtime != PORTFOLIO_TIME_LOW && $expectedtime != PORTFOLIO_TIME_FORCEQUEUE)) {
