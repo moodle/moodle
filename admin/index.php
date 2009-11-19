@@ -369,7 +369,7 @@ if ($insecuredataroot == INSECURE_DATAROOT_WARNING) {
 }
 
 if (empty($CFG->passwordsaltmain)) {
-    print_box(get_string('upgrade197notice', 'admin')."\n".get_string('upgrade197salt', 'admin', get_docs_url('report/security/report_security_check_passwordsaltmain')));
+    echo $OUTPUT->box(get_string('upgrade197notice', 'admin')."\n".get_string('upgrade197salt', 'admin', get_docs_url('report/security/report_security_check_passwordsaltmain')), 'generalbox adminwarning');
 }
 
 if (defined('WARN_DISPLAY_ERRORS_ENABLED')) {
