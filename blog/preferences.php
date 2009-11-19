@@ -22,7 +22,7 @@
 
 /// If data submitted, then process and store.
 
-    if (data_submitted()) {
+    if (data_submitted() and confirm_sesskey()) {
         $pagesize = required_param('pagesize', PARAM_INT);
 
         if ($pagesize < 1) {

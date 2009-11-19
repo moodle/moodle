@@ -8,6 +8,7 @@
 <tr>
     <td colspan="2" align="center">
     <input type="hidden" name="courseid" value="<?php echo $courseid; ?>" />
+    <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
     <input type="submit" value="<?php print_string("savechanges"); ?>" />
     <input type="button" value="<?php print_string('cancel'); ?>" onclick="javascript:history.go(-1)" /></td>
 </tr>
