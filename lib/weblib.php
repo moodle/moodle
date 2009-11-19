@@ -1355,7 +1355,7 @@ function formerr($error) {
  */
 function validate_email($address) {
 
-    return (validate_email('#^[-!\#$%&\'*+\\/0-9=?A-Z^_`a-z{|}~]+'.
+    return (preg_match('#^[-!\#$%&\'*+\\/0-9=?A-Z^_`a-z{|}~]+'.
                  '(\.[-!\#$%&\'*+\\/0-9=?A-Z^_`a-z{|}~]+)*'.
                   '@'.
                   '[-!\#$%&\'*+\\/0-9=?A-Z^_`a-z{|}~]+\.'.
