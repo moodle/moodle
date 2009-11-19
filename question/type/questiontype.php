@@ -943,76 +943,75 @@ class default_questiontype {
      * Used by print_question()
      */
     function history($question, $state, $number, $cmoptions, $options) {
-        $history = '';
-        if(isset($options->history) and $options->history) {
-            if ($options->history == 'all') {
-                // show all states
-                $states = get_records_select('question_states', "attempt = '$state->attempt' AND question = '$question->id' AND event > '0'", 'seq_number ASC');
-            } else {
-                // show only graded states
-                $states = get_records_select('question_states', "attempt = '$state->attempt' AND question = '$question->id' AND event IN (".QUESTION_EVENTS_GRADED.")", 'seq_number ASC');
-            }
-            if (count($states) > 1) {
-                $strreviewquestion = get_string('reviewresponse', 'quiz');
-                $table = new stdClass;
-                $table->width = '100%';
-                if ($options->scores) {
-                    $table->head  = array (
-                                           get_string('numberabbr', 'quiz'),
-                                           get_string('action', 'quiz'),
-                                           get_string('response', 'quiz'),
-                                           get_string('time'),
-                                           get_string('score', 'quiz'),
-                                           //get_string('penalty', 'quiz'),
-                                           get_string('grade', 'quiz'),
-                                           );
-                } else {
-                    $table->head  = array (
-                                           get_string('numberabbr', 'quiz'),
-                                           get_string('action', 'quiz'),
-                                           get_string('response', 'quiz'),
-                                           get_string('time'),
-                                           );
-                }
-
-                foreach ($states as $st) {
-                    $st->responses[''] = $st->answer;
-                    $this->restore_session_and_responses($question, $st);
-                    $b = ($state->id == $st->id) ? '<b>' : '';
-                    $be = ($state->id == $st->id) ? '</b>' : '';
-                    if ($state->id == $st->id) {
-                        $link = '<b>'.$st->seq_number.'</b>';
-                    } else {
-                        if(isset($options->questionreviewlink)) {
-                            $link = link_to_popup_window ($options->questionreviewlink.'?state='.$st->id.'&amp;number='.$number,
-                             'reviewquestion', $st->seq_number, 450, 650, $strreviewquestion, 'none', true);
-                        } else {
-                            $link = $st->seq_number;
-                        }
-                    }
-                    if ($options->scores) {
-                        $table->data[] = array (
-                                                $link,
-                                                $b.get_string('event'.$st->event, 'quiz').$be,
-                                                $b.$this->response_summary($question, $st).$be,
-                                                $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
-                                                $b.round($st->raw_grade, $cmoptions->decimalpoints).$be,
-                                                //$b.round($st->penalty, $cmoptions->decimalpoints).$be,
-                                                $b.round($st->grade, $cmoptions->decimalpoints).$be
-                                                );
-                    } else {
-                        $table->data[] = array (
-                                                $link,
-                                                $b.get_string('event'.$st->event, 'quiz').$be,
-                                                $b.$this->response_summary($question, $st).$be,
-                                                $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
-                                                );
-                    }
-                }
-                $history = print_table($table, true);
-            }
+        if (empty($options->history)) {
+            return '';
         }
-        return $history;
+
+        if (isset($question->randomquestionid)) {
+            $qid = $question->randomquestionid;
+        } else {
+            $qid = $question->id;
+        }
+        if ($options->history == 'all') {
+            $eventtest = 'event > 0';
+        } else {
+            $eventtest = 'event IN (' . QUESTION_EVENTS_GRADED . ')';
+        }
+        $states = get_records_select('question_states',
+                'attempt = ' . $state->attempt . ' AND question = ' . $qid .
+                ' AND ' . $eventtest, 'seq_number ASC');
+        if (empty($states)) {
+            return '';
+        }
+
+        $strreviewquestion = get_string('reviewresponse', 'quiz');
+        $table = new stdClass;
+        $table->width = '100%';
+        $table->head  = array (
+            get_string('numberabbr', 'quiz'),
+            get_string('action', 'quiz'),
+            get_string('response', 'quiz'),
+            get_string('time'),
+        );
+        if ($options->scores) {
+            $table->head[] = get_string('score', 'quiz');
+            $table->head[] = get_string('grade', 'quiz');
+        }
+
+        foreach ($states as $st) {
+            $st->responses[''] = $st->answer;
+            $this->restore_session_and_responses($question, $st);
+
+            if ($state->id == $st->id) {
+                $link = '<b>' . $st->seq_number . '</b>';
+            } else if (isset($options->questionreviewlink)) {
+                $link = link_to_popup_window($options->questionreviewlink.'?state='.$st->id.'&amp;number='.$number,
+                        'reviewquestion', $st->seq_number, 450, 650, $strreviewquestion, 'none', true);
+            } else {
+                $link = $st->seq_number;
+            }
+
+            if ($state->id == $st->id) {
+                $b = '<b>';
+                $be = '</b>';
+            } else {
+                $b = '';
+                $be = '';
+            }
+
+            $data = array (
+                $link,
+                $b.get_string('event'.$st->event, 'quiz').$be,
+                $b.$this->response_summary($question, $st).$be,
+                $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
+            );
+            if ($options->scores) {
+                $data[] = $b.round($st->raw_grade, $cmoptions->decimalpoints).$be;
+                $data[] = $b.round($st->grade, $cmoptions->decimalpoints).$be;
+            }
+            $table->data[] = $data;
+        }
+        return print_table($table, true);
     }
 
 
