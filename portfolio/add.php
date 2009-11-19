@@ -59,7 +59,7 @@ if ($postcontrol && $type && !$dataid) {
         throw new portfolio_exception('multiplesingleresume', 'portfolio');
     }
 
-    if (!$dataid = $DB->get_field('portfolio_tempdata', 'id', array('type' => $type, 'userid' => $USER->id))) {
+    if (!$dataid = portfolio_export_type_to_id($type, $USER->id)) {
         throw new portfolio_exception('invalidtempid', 'portfolio');
     }
 } else {

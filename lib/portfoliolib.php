@@ -1017,3 +1017,9 @@ function portfolio_export_pagesetup($PAGE, $caller) {
     }
     $PAGE->navbar->add(get_string('exporting', 'portfolio'));
 }
+
+function portfolio_export_type_to_id($type, $userid) {
+    global $DB;
+    $sql = 'SELECT t.id FROM {portfolio_tempdata} t JOIN {portfolio_instance} i ON t.instance = i.id WHERE t.userid = ? AND i.plugin = ?';
+    return $DB->get_field_sql($sql, array($userid, $type));
+}
