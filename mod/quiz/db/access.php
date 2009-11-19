@@ -65,7 +65,7 @@ $mod_quiz_capabilities = array(
 
     // Manually grade and comment on student attempts at a question, and regrade quizzes.
     'mod/quiz:grade' => array(
-        'riskbitmask' => RISK_SPAM | RISK_XSS,
+        'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
