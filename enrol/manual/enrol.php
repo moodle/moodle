@@ -70,11 +70,11 @@ function print_entry($course) {
             $PAGE->set_heading($course->fullname);
             echo $OUTPUT->header();
             echo '<br />';
-            echo $OUTPUT->confirm(get_string('enrolmentconfirmation'), "enrol.php?id=$course->id&confirm=1", "enrol.php?id=$course->id&cancel=1");
+            echo $OUTPUT->confirm(get_string('enrolmentconfirmation'), "enrol.php?id=$course->id&confirm=1&amp;sesskey=".sesskey(), "enrol.php?id=$course->id&cancel=1");
             echo $OUTPUT->footer();
             exit;
 
-        } else if (!empty($_GET['confirm'])) {
+        } else if (!empty($_GET['confirm']) and confirm_sesskey()) {
 
             if (!enrol_into_course($course, $USER, 'manual')) {
                 print_error('couldnotassignrole');
@@ -140,7 +140,7 @@ function check_entry($form, $course) {
         $form->password = '';
     }
 
-    if (empty($course->password)) {
+    if (empty($course->password) or !confirm_sesskey()) {
         // do not allow entry when no course password set
         // automatic login when manual primary, no login when secondary at all!!
         print_error('invalidenrol');
