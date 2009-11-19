@@ -202,7 +202,7 @@ class portfolio_add_button {
     *                    this is whole string, not key.  optional, defaults to 'Add to portfolio';
     */
     public function to_html($format=null, $addstr=null) {
-        global $CFG, $COURSE, $OUTPUT;
+        global $CFG, $COURSE, $OUTPUT, $USER;
         if (!$this->is_renderable()) {
             return;
         }
@@ -240,7 +240,7 @@ class portfolio_add_button {
             $formats = portfolio_supported_formats_intersect($this->formats, $instance->supported_formats());
             if (count($formats) == 0) {
                 // bail. no common formats.
-                debugging(get_string('nocommonformats', 'portfolio', $this->callbackclass));
+                debugging(get_string('nocommonformats', 'portfolio', (object)array('location' => $this->callbackclass, 'formats' => implode(',', $this->formats))));
                 return;
             }
             if ($error = portfolio_instance_sanity_check($instance)) {
@@ -254,6 +254,7 @@ class portfolio_add_button {
             }
             if ($this->file && $this->file instanceof stored_file && !$instance->file_mime_check($this->file->get_mimetype())) {
                 // bail, we have a specific file and this plugin doesn't support it
+                debugging(get_string('mimecheckfail', 'portfolio', (object)array('plugin' => $instance->get('plugin'), 'mimetype' => $this->file->get_mimetype())));
                 return;
             }
             $formoutput .= "\n" . '<input type="hidden" name="instance" value="' . $instance->get('id') . '" />';
@@ -395,6 +396,7 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass, $
             continue;
         }
         if ($file && $file instanceof stored_file && !$instance->file_mime_check($file->get_mimetype())) {
+            debugging(get_string('mimecheckfail', 'portfolio', (object)array('plugin' => $instance->get('plugin'), 'mimetype' => $this->file->get_mimetype())));
             // bail, we have a specific file and this plugin doesn't support it
             continue;
         }
@@ -404,7 +406,7 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass, $
     }
     if (empty($count)) {
         // bail. no common formats.
-        debugging(get_string('nocommonformats', 'portfolio', $callbackclass));
+        debugging(get_string('nocommonformats', 'portfolio', (object)array('location' => $callbackclass, 'formats' => implode(',', $callerformats))));
         return;
     }
     $selectoutput .= "\n" . "</select>\n";
