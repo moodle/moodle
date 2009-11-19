@@ -246,7 +246,7 @@ class enrol_authorize_form extends moodleform
 
     function validate_aba($aba)
     {
-        if (preg_match("/^[0-9]{9}$/", $aba)) {
+        if (ereg("^[0-9]{9}$", $aba)) {
             $n = 0;
             for($i = 0; $i < 9; $i += 3) {
                 $n += (substr($aba, $i, 1) * 3) + (substr($aba, $i + 1, 1) * 7) + (substr($aba, $i + 2, 1));
@@ -276,45 +276,45 @@ class enrol_authorize_form extends moodleform
         $GoodCard = true;
 
         //  Get rid of any non-digits
-        $Num = preg_replace("/[^0-9]/", "", $Num);
+        $Num = ereg_replace("[^0-9]", "", $Num);
 
         // Perform card-specific checks, if applicable
         switch ($Name)
         {
             case "mcd" :
-                $GoodCard = preg_match("/^5[1-5].{14}$/", $Num);
+                $GoodCard = ereg("^5[1-5].{14}$", $Num);
                 break;
 
             case "vis" :
-                $GoodCard = preg_match("/^4.{15}$|^4.{12}$/", $Num);
+                $GoodCard = ereg("^4.{15}$|^4.{12}$", $Num);
                 break;
 
             case "amx" :
-                $GoodCard = preg_match("/^3[47].{13}$/", $Num);
+                $GoodCard = ereg("^3[47].{13}$", $Num);
                 break;
 
             case "dsc" :
-                $GoodCard = preg_match("/^6011.{12}$/", $Num);
+                $GoodCard = ereg("^6011.{12}$", $Num);
                 break;
 
             case "dnc" :
-                $GoodCard = preg_match("/^30[0-5].{11}$|^3[68].{12}$/", $Num);
+                $GoodCard = ereg("^30[0-5].{11}$|^3[68].{12}$", $Num);
                 break;
 
             case "jcb" :
-                $GoodCard = preg_match("/^3.{15}$|^2131|1800.{11}$/", $Num);
+                $GoodCard = ereg("^3.{15}$|^2131|1800.{11}$", $Num);
                 break;
 
             case "dlt" :
-                $GoodCard = preg_match("/^4.{15}$/", $Num);
+                $GoodCard = ereg("^4.{15}$", $Num);
                 break;
 
             case "swi" :
-                $GoodCard = preg_match("/^[456].{15}$|^[456].{17,18}$/", $Num);
+                $GoodCard = ereg("^[456].{15}$|^[456].{17,18}$", $Num);
                 break;
 
             case "enr" :
-                $GoodCard = preg_match("/^2014.{11}$|^2149.{11}$/", $Num);
+                $GoodCard = ereg("^2014.{11}$|^2149.{11}$", $Num);
                 break;
         }
 

@@ -146,7 +146,7 @@ function tex_filter ($courseid, $text) {
         $texexp = str_replace('</nolink>','',$texexp);
         $texexp = str_replace('<span class="nolink">','',$texexp);
         $texexp = str_replace('</span>','',$texexp);
-        $texexp = preg_replace("#<br[[:space:]]*\/?>#i", '', $texexp);  //dlnsk
+        $texexp = eregi_replace("<br[[:space:]]*\/?>", '', $texexp);  //dlnsk
         $align = "middle";
         if (preg_match('/^align=bottom /',$texexp)) {
           $align = "text-bottom";

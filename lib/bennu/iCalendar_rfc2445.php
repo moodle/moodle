@@ -139,13 +139,13 @@ function rfc2445_is_valid_value($value, $type) {
             }
         
             if($scheme === 'mailto') {
-                $regexp = '#^[a-zA-Z0-9]+[_a-zA-Z0-9\-]*(\.[_a-z0-9\-]+)*@(([0-9a-zA-Z\-]+\.)+[a-zA-Z][0-9a-zA-Z\-]+|([0-9]{1,3}\.){3}[0-9]{1,3})$#';
+                $regexp = '^[a-zA-Z0-9]+[_a-zA-Z0-9\-]*(\.[_a-z0-9\-]+)*@(([0-9a-zA-Z\-]+\.)+[a-zA-Z][0-9a-zA-Z\-]+|([0-9]{1,3}\.){3}[0-9]{1,3})$';
             }
             else {
-                $regexp = '#^//(.+(:.*)?@)?(([0-9a-zA-Z\-]+\.)+[a-zA-Z][0-9a-zA-Z\-]+|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$#';
+                $regexp = '^//(.+(:.*)?@)?(([0-9a-zA-Z\-]+\.)+[a-zA-Z][0-9a-zA-Z\-]+|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$';
             }
         
-            return preg_match($regexp, $remain);
+            return ereg($regexp, $remain);
         break;
 
         case RFC2445_TYPE_BINARY:

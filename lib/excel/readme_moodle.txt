@@ -1,5 +1,5 @@
 18 Nov 2009
-Description of modifications to remove ereg related functions deprecated as of php 5.3. Patch below.
+Description of WriteExcel modifications to remove functions deprecated as of php 5.3
 
 Index: Parser.php
 ===================================================================
@@ -7,7 +7,7 @@ RCS file: /cvsroot/moodle/moodle/lib/excel/Parser.php,v
 retrieving revision 1.1
 diff -u -r1.1 Parser.php
 --- Parser.php	26 Sep 2003 04:18:02 -0000	1.1
-+++ Parser.php	18 Nov 2009 06:27:54 -0000
++++ Parser.php	18 Nov 2009 03:58:49 -0000
 @@ -466,7 +466,7 @@
          {
          return(pack("C", $this->ptg[$token]));
@@ -88,7 +88,7 @@ RCS file: /cvsroot/moodle/moodle/lib/excel/Worksheet.php,v
 retrieving revision 1.1
 diff -u -r1.1 Worksheet.php
 --- Worksheet.php	26 Sep 2003 04:18:02 -0000	1.1
-+++ Worksheet.php	18 Nov 2009 06:27:55 -0000
++++ Worksheet.php	18 Nov 2009 03:58:50 -0000
 @@ -1264,10 +1264,10 @@
          }
      

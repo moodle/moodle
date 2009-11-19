@@ -252,9 +252,9 @@ if ($settings['eolchar'] == '<br />') {
 function arguments($argv) {
     $_ARG = array();
     foreach ($argv as $arg) {
-        if (preg_match('/--?([^=]+)=(.*)/',$arg,$reg)) {
+        if (ereg('--?([^=]+)=(.*)',$arg,$reg)) {
             $_ARG[$reg[1]] = $reg[2];
-        } elseif(preg_match('/-([a-zA-Z0-9]+)/',$arg,$reg)) {
+        } elseif(ereg('-([a-zA-Z0-9]+)',$arg,$reg)) {
            $_ARG[$reg[1]] = 'true';
         }
     }

@@ -496,7 +496,7 @@ function mimeinfo($element, $filename) {
         $mimeinfo = get_mimetypes_array();
     }
 
-    if (preg_match('/\.([a-z0-9]+)$/i', $filename, $match)) {
+    if (eregi('\.([a-z0-9]+)$', $filename, $match)) {
         if (isset($mimeinfo[strtolower($match[1])][$element])) {
             return $mimeinfo[strtolower($match[1])][$element];
         } else {

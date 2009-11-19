@@ -3245,9 +3245,7 @@
       }
 
       // ----- Look for extract by ereg rule
-      /*
-       * MDL-20821 ereg is now deprecated
-       else if (   (isset($p_options[PCLZIP_OPT_BY_EREG]))
+      else if (   (isset($p_options[PCLZIP_OPT_BY_EREG]))
                && ($p_options[PCLZIP_OPT_BY_EREG] != "")) {
           //--(MAGIC-PclTrace)--//PclTraceFctMessage(__FILE__, __LINE__, 3, "Extract by ereg '".$p_options[PCLZIP_OPT_BY_EREG]."'");
 
@@ -3255,7 +3253,7 @@
               //--(MAGIC-PclTrace)--//PclTraceFctMessage(__FILE__, __LINE__, 3, "Filename match the regular expression");
               $v_extract = true;
           }
-      }*/
+      }
 
       // ----- Look for extract by preg rule
       else if (   (isset($p_options[PCLZIP_OPT_BY_PREG]))
@@ -4686,8 +4684,6 @@
       }
 
       // ----- Look for extract by ereg rule
-      /*
-       * MDL-20821 ereg is now deprecated
       else if (   (isset($p_options[PCLZIP_OPT_BY_EREG]))
                && ($p_options[PCLZIP_OPT_BY_EREG] != "")) {
           //--(MAGIC-PclTrace)--//PclTraceFctMessage(__FILE__, __LINE__, 3, "Extract by ereg '".$p_options[PCLZIP_OPT_BY_EREG]."'");
@@ -4696,7 +4692,7 @@
               //--(MAGIC-PclTrace)--//PclTraceFctMessage(__FILE__, __LINE__, 3, "Filename match the regular expression");
               $v_found = true;
           }
-      }*/
+      }
 
       // ----- Look for extract by preg rule
       else if (   (isset($p_options[PCLZIP_OPT_BY_PREG]))

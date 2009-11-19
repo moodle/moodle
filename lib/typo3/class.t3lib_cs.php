@@ -781,8 +781,8 @@ class t3lib_cs {
 			$trans_tbl = array_flip(get_html_translation_table(HTML_ENTITIES));		// Getting them in iso-8859-1 - but thats ok since this is observed below.
 		}
 
-		$token = 'a'.md5(microtime());//token must start with a letter or preg_replace substitution won't work
-		$parts = explode($token,preg_replace('/(&([#[:alnum:]]*);)/',$token.'\2'.$token,$str));
+		$token = md5(microtime());
+		$parts = explode($token,ereg_replace('(&([#[:alnum:]]*);)',$token.'\2'.$token,$str));
 		foreach($parts as $k => $v)	{
 			if ($k%2)	{
 				if (substr($v,0,1)=='#')	{	// Dec or hex entities:
@@ -974,13 +974,13 @@ class t3lib_cs {
 
 								// Detect type if not done yet: (Done on first real line)
 								// The "whitespaced" type is on the syntax 	"0x0A	0x000A	#LINE FEED" 	while 	"ms-token" is like 		"B9 = U+00B9 : SUPERSCRIPT ONE"
-							if (!$detectedType)		$detectedType = preg_match('/[[:space:]]*0x([[:alnum:]]*)[[:space:]]+0x([[:alnum:]]*)[[:space:]]+/',$value) ? 'whitespaced' : 'ms-token';
+							if (!$detectedType)		$detectedType = ereg('[[:space:]]*0x([[:alnum:]]*)[[:space:]]+0x([[:alnum:]]*)[[:space:]]+',$value) ? 'whitespaced' : 'ms-token';
 
 							if ($detectedType=='ms-token')	{
 								list($hexbyte,$utf8) = split('=|:',$value,3);
 							} elseif ($detectedType=='whitespaced')	{
 								$regA=array();
-								preg_match('/[[:space:]]*0x([[:alnum:]]*)[[:space:]]+0x([[:alnum:]]*)[[:space:]]+/',$value,$regA);
+								ereg('[[:space:]]*0x([[:alnum:]]*)[[:space:]]+0x([[:alnum:]]*)[[:space:]]+',$value,$regA);
 								$hexbyte = $regA[1];
 								$utf8 = 'U+'.$regA[2];
 							}
@@ -1084,7 +1084,7 @@ class t3lib_cs {
 
 				// accented Latin letters without "official" decomposition
 			$match = array();
-			if (preg_match('/^LATIN (SMALL|CAPITAL) LETTER ([A-Z]) WITH/',$name,$match) && !$decomp)	{
+			if (ereg('^LATIN (SMALL|CAPITAL) LETTER ([A-Z]) WITH',$name,$match) && !$decomp)	{
 				$c = ord($match[2]);
 				if ($match[1] == 'SMALL')	$c += 32;
 
@@ -1093,7 +1093,7 @@ class t3lib_cs {
 			}
 
 			$match = array();
-			if (preg_match('/(<.*>)? *(.+)/',$decomp,$match))	{
+			if (ereg('(<.*>)? *(.+)',$decomp,$match))	{
 				switch($match[1])	{
 					case '<circle>':	// add parenthesis as circle replacement, eg (1)
 						$match[2] = '0028 '.$match[2].' 0029';
@@ -1104,7 +1104,7 @@ class t3lib_cs {
 						break;
 
 					case '<compat>':	// ignore multi char decompositions that start with a space
-						if (preg_match('/^0020 /',$match[2]))	continue 2;
+						if (ereg('^0020 ',$match[2]))	continue 2;
 						break;
 
 						// ignore Arabic and vertical layout presentation decomposition
