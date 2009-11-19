@@ -21,7 +21,7 @@ calendar_session_vars();
 
 /// If data submitted, then process and store.
 
-if ($form = data_submitted()) {
+if ($form = data_submitted() and confirm_sesskey()) {
     foreach ($form as $preference => $value) {
         switch ($preference) {
             case 'timeformat':
