@@ -42,6 +42,7 @@ require_once($CFG->libdir.'/filelib.php');
  */
 abstract class google_auth_request extends curl{
     protected $token = '';
+    private $persistantheaders = array();
 
     // Must be overriden with the authorization header name
     public abstract static function get_auth_header_name();
@@ -50,6 +51,10 @@ abstract class google_auth_request extends curl{
         if($this->token){
             // Adds authorisation head to a request so that it can be authentcated
             $this->setHeader('Authorization: '. $this->get_auth_header_name().'"'.$this->token.'"');
+        }
+
+        foreach($this->persistantheaders as $h){
+            $this->setHeader($h);
         }
 
         $ret = parent::request($url, $options);
@@ -64,6 +69,10 @@ abstract class google_auth_request extends curl{
             $this->setHeader('Authorization: '. $this->get_auth_header_name().'"'.$this->token.'"');
         }
 
+        foreach($this->persistantheaders as $h){
+            $this->setHeader($h);
+        }
+
         $ret = parent::multi($requests, $options);
         // reset headers for next request
         $this->header = array();
@@ -72,6 +81,10 @@ abstract class google_auth_request extends curl{
 
     public function get_sessiontoken(){
         return $this->token;
+    }
+
+    public function add_persistant_header($header){
+        $this->persistantheaders[] = $header;
     }
 }
 
@@ -224,8 +237,8 @@ class google_authsub extends google_auth_request {
  */
 class google_docs {
     // need both docs and the spreadsheets realm
-    const REALM            = 'http://docs.google.com/feeds/ http://spreadsheets.google.com/feeds/';
-    const DOCUMENTFEED_URL = 'http://docs.google.com/feeds/documents/private/full';
+    const REALM            = 'http://docs.google.com/feeds/ http://spreadsheets.google.com/feeds/ http://docs.googleusercontent.com/';
+    const DOCUMENTFEED_URL = 'http://docs.google.com/feeds/default/private/full';
     const USER_PREF_NAME   = 'google_authsub_sesskey';
 
     private $google_curl = null;
@@ -238,6 +251,7 @@ class google_docs {
     public function __construct($google_curl){
         if(is_a($google_curl, 'google_auth_request')){
             $this->google_curl = $google_curl;
+            $this->google_curl->add_persistant_header('GData-Version: 3.0');
         }else{
             throw new moodle_exception('Google Curl Request object not given');
         }
@@ -263,7 +277,7 @@ class google_docs {
      */
     #FIXME
     public function get_file_list($search = ''){
-        global $CFG;
+        global $CFG, $OUTPUT;
         $url = google_docs::DOCUMENTFEED_URL;
 
         if($search){
@@ -275,18 +289,19 @@ class google_docs {
 
 
 
+
         $files = array();
         foreach($xml->entry as $gdoc){
 
-            // there doesn't seem to to be cleaner way of getting the id/type
-            // than spliting this..
-            if (preg_match('/^http:\/\/docs.google.com\/feeds\/documents\/private\/full\/([^%]*)%3A(.*)$/', $gdoc->id, $matches)){
-                $docid = $matches[2];
+            $docid  = (string) $gdoc->children('http://schemas.google.com/g/2005')->resourceId;
+            list($type) = explode(':', $docid);
 
-                // FIXME: We're making hard-coded choices about format here.
-                // If the repo api can support it, we could let the user
-                // chose.
-                switch($matches[1]){
+            $title  = '';
+            $source = '';
+            // FIXME: We're making hard-coded choices about format here.
+            // If the repo api can support it, we could let the user
+            // chose.
+            switch($type){
                 case 'document':
                     $title = $gdoc->title.'.rtf';
                     $source = 'http://docs.google.com/feeds/download/documents/Export?docID='.$docid.'&exportFormat=rtf';
@@ -297,15 +312,20 @@ class google_docs {
                     break;
                 case 'spreadsheet':
                     $title = $gdoc->title.'.xls';
-                    $source = 'http://spreadsheets.google.com/feeds/download/spreadsheets/Export?key='.$docid.'&fmcmd=4';
+                    $source = 'http://spreadsheets.google.com/feeds/download/spreadsheets/Export?key='.$docid.'&exportFormat=xls';
                     break;
-                }
+                case 'pdf':
+                    $title  = (string)$gdoc->title;
+                    $source = (string)$gdoc->content[0]->attributes()->src;
+                    break;
+            }
 
+            if(!empty($source)){
                 $files[] =  array( 'title' => $title,
                     'url' => "{$gdoc->link[0]->attributes()->href}",
                     'source' => $source,
                     'date'   => usertime(strtotime($gdoc->updated)),
-                    'thumbnail' => $CFG->wwwroot.'/pix/f/'.mimeinfo('icon32', $title)
+                    'thumbnail' => $OUTPUT->old_icon_url(file_extension_icon($title, 32))
                 );
             }
         }
@@ -366,6 +386,7 @@ class google_picasa {
     public function __construct($google_curl){
         if(is_a($google_curl, 'google_auth_request')){
             $this->google_curl = $google_curl;
+            $this->google_curl->add_persistant_header('GData-Version: 2');
         }else{
             throw new moodle_exception('Google Curl Request object not given');
         }
