@@ -61,6 +61,7 @@ $string['disterror'] = 'The distribution $a caused problems';
 $string['donothing']= 'Don\'t copy or move files or change links.';
 $string['editingcategory'] = 'Editing a category';
 $string['editingquestion'] = 'Editing a question';
+$string['editthiscategory'] = 'Edit this category';
 $string['enabled'] = 'Enabled';
 $string['erroraccessingcontext'] = 'Cannot access context';
 $string['errordeletingquestionsfromcategory'] = 'Error deleting questions from category $a.';
