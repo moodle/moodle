@@ -1264,10 +1264,10 @@ class Worksheet extends BIFFwriter
         }
     
         // Strip the '=' or '@' sign at the beginning of the formula string
-        if (preg_match("/^=/",$formula)) {
+        if (ereg("^=",$formula)) {
             $formula = preg_replace("/(^=)/","",$formula);
         }
-        elseif(preg_match("/^@/",$formula)) {
+        elseif(ereg("^@",$formula)) {
             $formula = preg_replace("/(^@)/","",$formula);
         }
         else {

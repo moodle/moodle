@@ -371,7 +371,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $rawresponse = str_replace($search, $replace, trim($rawresponse));
 
         // Apply any unit that is present.
-        if (preg_match('/^([+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+]?[0-9]+)?)([^0-9].*)?$/',
+        if (ereg('^([+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+]?[0-9]+)?)([^0-9].*)?$',
                 $rawresponse, $responseparts)) {
 
             if (!empty($responseparts[5])) {

@@ -266,7 +266,7 @@ class embedded_cloze_qtype extends default_questiontype {
         // The regex will recognize text snippets of type {#X}
         // where the X can be any text not containg } or white-space characters.
 
-        while (preg_match('/\{#([^[:space:]}]*)}/', $qtextremaining, $regs)) {
+        while (ereg('\{#([^[:space:]}]*)}', $qtextremaining, $regs)) {
             $qtextsplits = explode($regs[0], $qtextremaining, 2);
             echo $qtextsplits[0];
             echo "<label>"; // MDL-7497
@@ -983,7 +983,7 @@ function qtype_multianswer_extract_question($text) {
                 $wrapped->feedback[] = '';
             }
             if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_NUMERICAL])
-                    && preg_match('/'.NUMERICAL_ALTERNATIVE_REGEX.'/', $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER], $numregs)) {
+                    && ereg(NUMERICAL_ALTERNATIVE_REGEX, $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER], $numregs)) {
                 $wrapped->answer[] = $numregs[NUMERICAL_CORRECT_ANSWER];
                 if ($numregs[NUMERICAL_ABS_ERROR_MARGIN]) {
                     $wrapped->tolerance[] =

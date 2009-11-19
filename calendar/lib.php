@@ -766,8 +766,8 @@ function calendar_top_controls($type, $data) {
             $text = get_string('strftimedaydate');
             /*
             // Regexp hackery to make a link out of the month/year part
-            $text = preg_replace('/(%B.+%Y|%Y.+%B|%Y.+%m[^ ]+)/', '<a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $data['m'], $data['y']).'">\\1</a>', $text);
-            $text = preg_replace('/(F.+Y|Y.+F|Y.+m[^ ]+)/', '<a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $data['m'], $data['y']).'">\\1</a>', $text);
+            $text = ereg_replace('(%B.+%Y|%Y.+%B|%Y.+%m[^ ]+)', '<a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $data['m'], $data['y']).'">\\1</a>', $text);
+            $text = ereg_replace('(F.+Y|Y.+F|Y.+m[^ ]+)', '<a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $data['m'], $data['y']).'">\\1</a>', $text);
             */
             // Replace with actual values and lose any day leading zero
             $text = userdate($time, $text);
