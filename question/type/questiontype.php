@@ -1061,7 +1061,8 @@ class default_questiontype {
 
         if (!empty($cmoptions->thispageurl)) {
         /// The module allow editing in the same window, print an ordinary link.
-            return '<a href="' . $CFG->wwwroot . $linkurl . '&amp;returnurl=' . urlencode($cmoptions->thispageurl) .
+            return '<a href="' . $CFG->wwwroot . $linkurl . '&amp;returnurl=' .
+                    urlencode($cmoptions->thispageurl . '#q' . $question->id) .
                     '" title="' . $stredit . '">' . $linktext . '</a>';
         } else {
         /// We have to edit in a pop-up.
