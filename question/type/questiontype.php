@@ -946,7 +946,10 @@ class default_questiontype {
             $grade .= question_format_grade($cmoptions, $question->maxgrade);
         }
 
-        $comment = $state->manualcomment;
+        $formatoptions = new stdClass;
+        $formatoptions->para = false;
+        $comment = format_text($state->manualcomment, FORMAT_HTML,
+                $formatoptions, $cmoptions->course);
         $commentlink = '';
 
         if (!empty($options->questioncommentlink)) {
