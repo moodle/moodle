@@ -1371,6 +1371,7 @@ $string['restorefinished'] = 'Restore completed successfully';
 $string['restoreto'] = 'Restore to';
 $string['restoretositeadding'] = 'Warning: You are about to restore to the site front page, adding data to it!';
 $string['restoretositedeleting'] = 'Warning: You are about to restore to the site front page, deleting data from it first!';
+$string['restoreuserinfofailed'] = '<strong>Warning:</strong> To be able to restore any user data (in activities, files, messages...) the \"moodle/restore:userinfo\" capability is required and you are missing it. Restore process stopped.';
 $string['restricted'] = 'Restricted';
 $string['restrictmodules'] = 'Restrict activity modules?';
 $string['returntooriginaluser'] = 'Return to $a';
