@@ -821,7 +821,7 @@ function xmldb_main_upgrade($oldversion=0) {
             }
             $adminuser->maildisplay = 0; // do not use return email to self, it might actually help emails to get through and prevents notices
             // Message them with the notice about upgrading
-            email_to_user($adminuser, $adminuser, $messagesubject, $message);
+            email_to_user($adminuser, $adminuser, $messagesubject, html_to_text($message), $message);
         }
 
         unset($adminusers);
