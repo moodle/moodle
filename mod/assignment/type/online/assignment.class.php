@@ -45,6 +45,7 @@ class assignment_online extends assignment_base {
         $mformdata = new stdClass;
         $mformdata->assignmentid = $this->assignment->id;
         $mformdata->context = $this->context;
+        $mformdata->maxbytes = $this->course->maxbytes;
         $mform = new mod_assignment_online_edit_form(null, $mformdata);
 
         $defaults = new object();
@@ -348,7 +349,6 @@ class assignment_online extends assignment_base {
 class mod_assignment_online_edit_form extends moodleform {
 
     public function set_data($data) {
-        global $PAGE;
         $editoroptions = $this->get_editor_options();
         if (!isset($data->text)) {
             $data->text = '';
@@ -363,7 +363,6 @@ class mod_assignment_online_edit_form extends moodleform {
     }
 
     public function get_data() {
-        global $PAGE;
         $data = parent::get_data();
         if ($data) {
             $editoroptions = $this->get_editor_options();
@@ -391,12 +390,11 @@ class mod_assignment_online_edit_form extends moodleform {
     }
 
     protected function get_editor_options() {
-        global $PAGE;
         $editoroptions = array();
         $editoroptions['filearea'] = 'assignment_online_submission';
         $editoroptions['noclean'] = false;
         $editoroptions['maxfiles'] = EDITOR_UNLIMITED_FILES;
-        $editoroptions['maxbytes'] = $PAGE->course->maxbytes;
+        $editoroptions['maxbytes'] = $this->_customdata->maxbytes;
         return $editoroptions;
     }
 }
