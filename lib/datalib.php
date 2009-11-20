@@ -42,22 +42,15 @@ function addslashes_object( $dataobject ) {
  * @return object(admin) An associative array representing the admin user.
  */
 function get_admin () {
-
-    global $CFG;
     static $myadmin;
 
-    if (isset($myadmin)) {
-        return $myadmin;
-    }
-
-    if ( $admins = get_admins() ) {
-        foreach ($admins as $admin) {
-            $myadmin = $admin;
-            return $admin;   // ie the first one
+    if (! isset($admin)) {
+        if (! $admins = get_admins()) {
+            return false;
         }
-    } else {
-        return false;
+        $admin = reset($admins);//reset returns first element
     }
+    return $admin;
 }
 
 /**
