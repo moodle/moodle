@@ -116,7 +116,7 @@ class block_online_users extends block_base {
         if (count($users) < 50) {
             $usercount = "";
         } else {
-            $usercount = count_records_sql("SELECT COUNT(u.id), u.id $from $where GROUP BY u.id");
+            $usercount = count_records_sql("SELECT COUNT(DISTINCT(u.id)) $from $where");
             $usercount = ": $usercount";
         }
 
