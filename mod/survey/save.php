@@ -6,7 +6,7 @@
 
 // Make sure this is a legitimate posting
 
-    if (!$formdata = data_submitted("$CFG->wwwroot/mod/survey/view.php")) {
+    if (!$formdata = data_submitted("$CFG->wwwroot/mod/survey/view.php") or !confirm_sesskey()) {
         error("You are not supposed to use this script like that.");
     }
 
