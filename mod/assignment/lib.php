@@ -885,6 +885,7 @@ class assignment_base {
         echo '<input type="hidden" name="offset" value="'.($offset+1).'" />';
         echo '<input type="hidden" name="userid" value="'.$userid.'" />';
         echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<input type="hidden" name="mode" value="grade" />';
         echo '<input type="hidden" name="menuindex" value="0" />';//selected menu index
 
@@ -1316,6 +1317,7 @@ class assignment_base {
             echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
             echo '<input type="hidden" name="mode" value="fastgrade" />';
             echo '<input type="hidden" name="page" value="'.$page.'" />';
+            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '</div>';
         }
 
@@ -1375,7 +1377,7 @@ class assignment_base {
         global $CFG, $USER;
         require_once($CFG->libdir.'/gradelib.php');
 
-        if (!$feedback = data_submitted()) {      // No incoming data?
+        if (!$feedback = data_submitted() or !confirm_sesskey()) {      // No incoming data?
             return false;
         }
 
@@ -1443,7 +1445,7 @@ class assignment_base {
 
         require_once($CFG->libdir.'/gradelib.php');
 
-        if (!$formdata = data_submitted()) {
+        if (!$formdata = data_submitted() or !confirm_sesskey()) {
             return;
         }
 

@@ -170,6 +170,7 @@ class assignment_upload extends assignment_base {
             echo '<fieldset class="invisiblefieldset">';
             echo "<p>$struploadafile ($strmaxsize)</p>";
             echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
+            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '<input type="hidden" name="action" value="uploadfile" />';
             require_once($CFG->libdir.'/uploadlib.php');
             upload_print_form_fragment(1,array('newfile'),null,false,null,0,$this->assignment->maxbytes,false);
@@ -211,6 +212,7 @@ class assignment_upload extends assignment_base {
             echo '<form method="post" action="upload.php">';
             echo '<fieldset class="invisiblefieldset">';
             echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
+            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '<input type="hidden" name="action" value="finalize" />';
             echo '<input type="submit" name="formarking" value="'.get_string('sendformarking', 'assignment').'" />';
             echo '</fieldset>';
@@ -257,6 +259,7 @@ class assignment_upload extends assignment_base {
         $output .= '<input type="hidden" name="mode" value="'.$mode.'" />';
         $output .= '<input type="hidden" name="offset" value="'.$offset.'" />';
         $output .= '<input type="hidden" name="userid" value="'.$submission->userid.'" />';
+        $output .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         require_once($CFG->libdir.'/uploadlib.php');
         $output .= upload_print_form_fragment(1,array('newfile'),null,false,null,0,0,true);
         $output .= '<input type="submit" name="save" value="'.get_string('uploadthisfile').'" />';
@@ -379,10 +382,10 @@ class assignment_upload extends assignment_base {
 
         if ($this->drafts_tracked() and $this->isopen() and has_capability('mod/assignment:grade', $this->context) and $mode != '') { // we do not want it on view.php page
             if ($this->can_unfinalize($submission)) {
-                $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'unfinalize', 'mode'=>$mode, 'offset'=>$offset);
+                $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'unfinalize', 'mode'=>$mode, 'offset'=>$offset, 'sesskey'=>sesskey());
                 $output .= print_single_button('upload.php', $options, get_string('unfinalize', 'assignment'), 'post', '_self', true);
             } else if ($this->can_finalize($submission)) {
-                $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'finalizeclose', 'mode'=>$mode, 'offset'=>$offset);
+                $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'finalizeclose', 'mode'=>$mode, 'offset'=>$offset, 'sesskey'=>sesskey());
                 $output .= print_single_button('upload.php', $options, get_string('finalize', 'assignment'), 'post', '_self', true);
             }
         }
@@ -544,7 +547,7 @@ class assignment_upload extends assignment_base {
 
         $returnurl = "submissions.php?id={$this->cm->id}&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset";
 
-        if (data_submitted('nomatch') and $this->can_manage_responsefiles()) {
+        if (data_submitted('nomatch') and $this->can_manage_responsefiles() and confirm_sesskey()) {
             $dir = $this->file_area_name($userid).'/responses';
             check_dir_exists($CFG->dataroot.'/'.$dir, true, true);
 
@@ -631,9 +634,9 @@ class assignment_upload extends assignment_base {
             redirect($returnurl); // probably already graded, redirect to assignment page, the reason should be obvious
         }
 
-        if (!data_submitted() or !$confirm) {
+        if (!data_submitted() or !$confirm or !confirm_sesskey()) {
             $optionsno = array('id'=>$this->cm->id);
-            $optionsyes = array ('id'=>$this->cm->id, 'confirm'=>1, 'action'=>'finalize');
+            $optionsyes = array ('id'=>$this->cm->id, 'confirm'=>1, 'action'=>'finalize', 'sesskey'=>sesskey());
             $this->view_header(get_string('submitformarking', 'assignment'));
             print_heading(get_string('submitformarking', 'assignment'));
             notice_yesno(get_string('onceassignmentsent', 'assignment'), 'upload.php', 'view.php', $optionsyes, $optionsno, 'post', 'get');
@@ -671,7 +674,7 @@ class assignment_upload extends assignment_base {
         // create but do not add student submission date
         $submission = $this->get_submission($userid, true, true);
 
-        if (!data_submitted() or !$this->can_finalize($submission)) {
+        if (!data_submitted() or !$this->can_finalize($submission) or !confirm_sesskey()) {
             redirect($returnurl); // probably closed already
         }
 
@@ -698,7 +701,8 @@ class assignment_upload extends assignment_base {
 
         if (data_submitted('nomatch')
           and $submission = $this->get_submission($userid)
-          and $this->can_unfinalize($submission)) {
+          and $this->can_unfinalize($submission)
+          and confirm_sesskey()) {
 
             $updated = new object();
             $updated->id = $submission->id;
@@ -752,8 +756,8 @@ class assignment_upload extends assignment_base {
         $urlreturn = 'submissions.php';
         $optionsreturn = array('id'=>$this->cm->id, 'offset'=>$offset, 'mode'=>$mode, 'userid'=>$userid);
 
-        if (!data_submitted('nomatch') or !$confirm) {
-            $optionsyes = array ('id'=>$this->cm->id, 'file'=>$file, 'userid'=>$userid, 'confirm'=>1, 'action'=>'response', 'mode'=>$mode, 'offset'=>$offset);
+        if (!data_submitted('nomatch') or !$confirm or !confirm_sesskey()) {
+            $optionsyes = array ('id'=>$this->cm->id, 'file'=>$file, 'userid'=>$userid, 'confirm'=>1, 'action'=>'response', 'mode'=>$mode, 'offset'=>$offset, 'sesskey'=>sesskey());
             print_header(get_string('delete'));
             print_heading(get_string('delete'));
             notice_yesno(get_string('confirmdeletefile', 'assignment', $file), 'delete.php', $urlreturn, $optionsyes, $optionsreturn, 'post', 'get');
@@ -810,8 +814,8 @@ class assignment_upload extends assignment_base {
         }
         $dir = $this->file_area_name($userid);
 
-        if (!data_submitted('nomatch') or !$confirm) {
-            $optionsyes = array ('id'=>$this->cm->id, 'file'=>$file, 'userid'=>$userid, 'confirm'=>1, 'sesskey'=>sesskey(), 'mode'=>$mode, 'offset'=>$offset);
+        if (!data_submitted('nomatch') or !$confirm or !confirm_sesskey()) {
+            $optionsyes = array ('id'=>$this->cm->id, 'file'=>$file, 'userid'=>$userid, 'confirm'=>1, 'sesskey'=>sesskey(), 'mode'=>$mode, 'offset'=>$offset, 'sesskey'=>sesskey());
             if (empty($mode)) {
                 $this->view_header(get_string('delete'));
             } else {
