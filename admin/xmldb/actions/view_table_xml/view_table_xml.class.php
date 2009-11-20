@@ -35,6 +35,7 @@ class view_table_xml extends XMLDBAction {
         parent::init();
 
     /// Set own custom attributes
+        $this->sesskey_protected = false; // This action doesn't need sesskey protection
 
     /// Get needed strings
         $this->loadStrings(array(

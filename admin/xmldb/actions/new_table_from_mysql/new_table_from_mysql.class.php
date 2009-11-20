@@ -111,6 +111,7 @@ class new_table_from_mysql extends XMLDBAction {
             $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
             $o.= '    <input type="hidden" name ="action" value="new_table_from_mysql" />';
             $o.= '    <input type="hidden" name ="postaction" value="edit_table" />';
+            $o.= '    <input type="hidden" name ="sesskey" value="' . sesskey() . '" />';
             $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
             $o.= '      <tr><td><label for="table" accesskey="t">' . $this->str['createtable'] .' </label>' . choose_from_menu($selecttables, 'table', '', 'choose', '', 0, true) . '<label for="after" accesskey="a">' . $this->str['aftertable'] . ' </label>' .choose_from_menu($aftertables, 'after', '', 'choose', '', 0, true) . '</td></tr>';
             $o.= '      <tr><td colspan="2" align="center"><input type="submit" value="' .$this->str['create'] . '" /></td></tr>';

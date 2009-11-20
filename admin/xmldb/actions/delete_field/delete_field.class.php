@@ -77,7 +77,7 @@ class delete_field extends XMLDBAction {
             $o.= '    <p class="centerpara">' . $this->str['confirmdeletefield'] . '<br /><br />' . $fieldparam . '</p>';
             $o.= '    <table class="boxaligncenter" cellpadding="20"><tr><td>';
             $o.= '      <div class="singlebutton">';
-            $o.= '        <form action="index.php?action=delete_field&amp;confirmed=yes&amp;postaction=edit_table&amp;field=' . $fieldparam . '&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '" method="post"><fieldset class="invisiblefieldset">';
+            $o.= '        <form action="index.php?action=delete_field&amp;sesskey=' . sesskey() . '&amp;confirmed=yes&amp;postaction=edit_table&amp;field=' . $fieldparam . '&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '" method="post"><fieldset class="invisiblefieldset">';
             $o.= '          <input type="submit" value="'. $this->str['yes'] .'" /></fieldset></form></div>';
             $o.= '      </td><td>';
             $o.= '      <div class="singlebutton">';

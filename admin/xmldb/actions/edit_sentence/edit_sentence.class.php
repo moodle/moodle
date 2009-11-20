@@ -35,6 +35,7 @@ class edit_sentence extends XMLDBAction {
         parent::init();
 
     /// Set own custom attributes
+        $this->sesskey_protected = false; // This action doesn't need sesskey protection
 
     /// Get needed strings
         $this->loadStrings(array(
@@ -119,6 +120,7 @@ class edit_sentence extends XMLDBAction {
             $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
             $o.= '    <input type="hidden" name ="statement" value="' . $statementparam .'" />';
             $o.= '    <input type="hidden" name ="sentence" value="' . $sentenceparam .'" />';
+            $o.= '    <input type="hidden" name ="sesskey" value="' . sesskey() .'" />';
             $o.= '    <input type="hidden" name ="action" value="edit_sentence_save" />';
             $o.= '    <input type="hidden" name ="postaction" value="edit_statement" />';
             $o.= '    <table id="formelements" class="boxaligncenter">';
