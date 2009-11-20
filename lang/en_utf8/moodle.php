@@ -1195,6 +1195,7 @@ $string['restoredaccount'] = 'Restored account';
 $string['restoredaccountinfo'] = 'This account was imported from another server and the password has been lost. To set a new password by email, please click \"Continue\"';
 $string['restorefinished'] = 'Restore completed successfully';
 $string['restoreto'] = 'Restore to';
+$string['restoreuserinfofailed'] = '<strong>Warning:</strong> To be able to restore any user data (in activities, files, messages...) the \"moodle/restore:userinfo\" capability is required and you are missing it. Restore process stopped.';
 $string['restricted'] = 'Restricted';
 $string['restrictmodules'] = 'Restrict activity modules?';
 $string['returningtosite'] = 'Returning to this web site?';

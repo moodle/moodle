@@ -18,8 +18,8 @@
 
     if ($form1 = data_submitted()) {
         $currentcourseshortname = $course_header->course_shortname; //"store_ShortName";
-        $course_header->course_shortname =  stripslashes_safe($form1->shortname);  //"update_ShortName";    
-        $course_header->course_fullname =   stripslashes_safe($form1->fullname);   //"update_FullName";  
+        $course_header->course_shortname = !empty($form1->shortname) ? stripslashes_safe($form1->shortname) : '';  //"update_ShortName";
+        $course_header->course_fullname  = !empty($form1->fullname) ? stripslashes_safe($form1->fullname) : '';   //"update_FullName"
     /// Roll dates only if the backup course has a start date
     /// (some formats like main page, social..., haven't it and rolling dates
     /// from 0 produces crazy dates. MDL-10125 and we have passed some custom startyear/month/day. MDL-12922
@@ -176,15 +176,21 @@
     //Check login
     require_login();
 
+    //Init restoreuserinfo
+    $restoreuserinfo = false;
+
+
     //Check admin
     if (!empty($id)) {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))) {
             error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
+        $restoreuserinfo = has_capability('moodle/restore:userinfo', get_context_instance(CONTEXT_COURSE, $id));
     } else {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
+        $restoreuserinfo = has_capability('moodle/restore:userinfo', get_context_instance(CONTEXT_SYSTEM));
     }
 
     //Check site
@@ -275,6 +281,33 @@
                 $restore->users = 1;
             }
         }
+
+        // Re-enforce moodle/restore:userinfo capability
+        if (!$restoreuserinfo) {
+            $userinfocheck = true;
+            // Confirm that all the settings are properly set to no users
+            // if anything is wrong, message and stop
+            // First global settings
+            if ($restore->users != 2 or $restore->user_files or $restore->messages) {
+                $userinfocheck = false;
+
+            // Now all modules userinfo flag
+            } else {
+                $mods = $restore->mods;
+                foreach ($mods as $mod) {
+                    if ($mod->userinfo) {
+                        $userinfocheck = false;
+                    }
+                }
+            }
+
+            if (!$userinfocheck) { // Something was wrong
+                echo get_string ('restoreuserinfofailed');
+                echo "<hr noshade size=\"1\">";
+                $show_continue_button = false;
+            }
+        }
+
         //Save the restore session object
         $SESSION->restore = $restore;
         if ($show_continue_button) {

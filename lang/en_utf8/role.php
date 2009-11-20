@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // role.php - created with Moodle 1.7 beta + (2006101003)
 
 
@@ -8,6 +8,7 @@ $string['allowassign'] = 'Allow role assignments';
 $string['allowoverride'] = 'Allow role overrides';
 $string['assignroles'] = 'Assign roles';
 $string['assignglobalroles'] = 'Assign system roles';
+$string['backup:userinfo'] = 'Backup user data';
 $string['blog:create'] = 'Create new blog entries';
 $string['blog:manageentries'] = 'Edit and manage entries';
 $string['blog:manageofficialtags'] = 'Manage official tags';
@@ -89,6 +90,7 @@ $string['resetrole'] = 'Reset to defaults';
 $string['resetrolenolegacy'] = 'Clear permissions';
 $string['resetrolesure'] = 'Are you sure that you want to reset role \"$a->name ($a->shortname)\" to defaults?<p></p>The defaults are taken from the selected legacy capability ($a->legacytype).';
 $string['resetrolesurenolegacy'] = 'Are you sure that you want to clear all permissions defined in this role \"$a->name ($a->shortname)\"?';
+$string['restore:userinfo'] = 'Restore user data';
 $string['risks'] = 'Risks';
 $string['role:assign'] = 'Assign roles to users';
 $string['role:manage'] = 'Create and manage roles';
