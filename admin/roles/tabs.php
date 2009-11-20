@@ -75,7 +75,7 @@ if ($currenttab != 'update') {
 
             $PAGE->navbar->add($strcategories, new moodle_url($CFG->wwwroot.'/course/index.php'), navigation_node::TYPE_SETTING);
             $PAGE->navbar->add($category->name, new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$category->id)), navigation_node::TYPE_SETTING);
-            $PAGE->navbar->add(get_string("roles"), null, navigation_node::TYPE_SETTING);
+            $PAGE->navbar->add(get_string("roles"));
             $PAGE->set_title($title);
             $PAGE->set_heading("$SITE->fullname: $strcourses");
             echo $OUTPUT->header();
