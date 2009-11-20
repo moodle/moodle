@@ -118,14 +118,14 @@ function glossary_comment_delete() {
         error('You can\'t delete comments in this glossary!');
     }
 
-    if (data_submitted() and $confirm) {
+    if (data_submitted() and $confirm and confirm_sesskey()) {
         delete_records('glossary_comments','id', $cid);
         add_to_log($course->id, 'glossary', 'delete comment', "comments.php?id=$cm->id&amp;eid=$entry->id", "$comment->id",$cm->id);
         redirect("comments.php?id=$cm->id&amp;eid=$entry->id");
 
     } else {
         $linkyes    = 'comment.php';
-        $optionsyes = array('action'=>'delete', 'cid'=>$cid, 'confirm'=>1);
+        $optionsyes = array('action'=>'delete', 'cid'=>$cid, 'confirm'=>1, 'sesskey'=>sesskey());
         $linkno     = 'comments.php';
         $optionsno  = array('id'=>$cm->id, 'eid'=>$entry->id);
         $strdeletewarning = get_string('areyousuredeletecomment','glossary');
