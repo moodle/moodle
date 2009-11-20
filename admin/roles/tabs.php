@@ -35,6 +35,9 @@ if ($currenttab != 'update') {
             $navlinks[] = array('name' => $category->name,
                                 'link' => "$CFG->wwwroot/course/category.php?id=$category->id",
                                 'type' => 'misc');
+            $navlinks[] = array('name' => get_string("roles"),
+                                'link' => null,
+                                'type' => 'misc');
             $navigation = build_navigation($navlinks);
 
             print_header("$SITE->shortname: $category->name", "$SITE->fullname: $strcourses", $navigation, "", "", true);
