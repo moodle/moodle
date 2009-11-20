@@ -1658,6 +1658,9 @@ function calendar_add_event_allowed($event) {
             return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, SITEID));
 
         default:
+            if (isset($event->courseid) && $event->courseid > 0) {
+                return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $event->courseid));
+            }
             return false;
     }
 }
@@ -2051,6 +2054,8 @@ class calendar_event {
                 add_to_log($this->properties->courseid, 'calendar', 'edit all', 'event.php?action=edit&amp;id='.$this->properties->id, $this->properties->name);
             } else {
                 $DB->update_record('event', $this->properties);
+                $event = calendar_event::load($this->properties->id);
+                $this->properties = $event->properties();
                 add_to_log($this->properties->courseid, 'calendar', 'edit', 'event.php?action=edit&amp;id='.$this->properties->id, $this->properties->name);
             }
 
