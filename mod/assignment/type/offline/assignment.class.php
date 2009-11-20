@@ -41,7 +41,7 @@ class assignment_offline extends assignment_base {
         global $CFG, $USER, $DB;
         require_once($CFG->libdir.'/gradelib.php');
 
-        if (!$feedback = data_submitted()) {      // No incoming data?
+        if (!$feedback = data_submitted() or !confirm_sesskey()) {      // No incoming data?
             return false;
         }
 
