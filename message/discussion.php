@@ -41,6 +41,7 @@
      <head>
        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
        <title><?php echo get_string('discussion', 'message').': '.fullname($user) ?></title>
+       <link rel="shortcut icon" href="<?php echo $CFG->wwwroot.'/theme/'.current_theme() ?>/favicon.ico" />
      </head>
      <frameset rows="110,*,0,220">
        <noframes><body><?php
