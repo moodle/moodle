@@ -82,6 +82,7 @@ if ( !$step ) {
     exit;
 }
 
+require_sesskey();
 $form = data_submitted();
 $file = $_FILES["file"];
 

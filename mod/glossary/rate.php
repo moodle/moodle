@@ -46,7 +46,7 @@
         $returnurl = $CFG->wwwroot.'/mod/glossary/view.php?id='.$cm->id;
     }
 
-    if ($data = data_submitted()) {    // form submitted
+    if ($data = data_submitted() and confirm_sesskey()) {    // form submitted
 
     /// Calculate scale values
         $scale_values = make_grades_menu($glossary->scale);

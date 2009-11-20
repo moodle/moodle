@@ -417,6 +417,7 @@ if ($allentries) {
         echo "<form method=\"post\" action=\"rate.php\">";
         echo "<div>";
         echo "<input type=\"hidden\" name=\"glossaryid\" value=\"$glossary->id\" />";
+        echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
     }
 
     foreach ($allentries as $entry) {
