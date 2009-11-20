@@ -35,6 +35,7 @@ class edit_xml_file extends XMLDBAction {
         parent::init();
 
     /// Set own custom attributes
+        $this->sesskey_protected = false; // This action doesn't need sesskey protection
 
     /// Get needed strings
         $this->loadStrings(array(
@@ -107,6 +108,7 @@ class edit_xml_file extends XMLDBAction {
                 $o.= '    <input type="hidden" name ="postaction" value="edit_xml_file" />';
                 $o.= '    <input type="hidden" name ="path" value="' . s($structure->getPath()) .'" />';
                 $o.= '    <input type="hidden" name ="version" value="' . s($structure->getVersion()) .'" />';
+                $o.= '    <input type="hidden" name ="sesskey" value="' . sesskey() .'" />';
                 $o.= '    <table id="formelements" class="boxaligncenter">';
                 $o.= '      <tr valign="top"><td>Path:</td><td>' . s($structure->getPath()) . '</td></tr>';
                 $o.= '      <tr valign="top"><td>Version:</td><td>' . s($structure->getVersion()) . '</td></tr>';
@@ -125,15 +127,15 @@ class edit_xml_file extends XMLDBAction {
                     $b .= '&nbsp;[' . $this->str['viewedited'] . ']';
                 }
             /// The new table button
-                $b .= '&nbsp;<a href="index.php?action=new_table&amp;postaction=edit_table&amp;table=changeme&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newtable'] . ']</a>';
+                $b .= '&nbsp;<a href="index.php?action=new_table&amp;sesskey=' . sesskey() . '&amp;postaction=edit_table&amp;table=changeme&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newtable'] . ']</a>';
             /// The new from MySQL button
                 if ($CFG->dbfamily == 'mysql') {
-                    $b .= '&nbsp;<a href="index.php?action=new_table_from_mysql&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newtablefrommysql'] . ']</a>';
+                    $b .= '&nbsp;<a href="index.php?action=new_table_from_mysql&amp;sesskey=' . sesskey() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newtablefrommysql'] . ']</a>';
                 } else {
                     $b .= '&nbsp;[' . $this->str['newtablefrommysql'] . ']';
                 }
             /// The new statement button
-                $b .= '&nbsp;<a href="index.php?action=new_statement&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newstatement'] . ']</a>';
+                $b .= '&nbsp;<a href="index.php?action=new_statement&amp;sesskey=' . sesskey() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newstatement'] . ']</a>';
             /// The back to main menu button
                 $b .= '&nbsp;<a href="index.php?action=main_view#lastused">[' . $this->str['backtomainview'] . ']</a>';
                 $b .= '</p>';
@@ -169,14 +171,14 @@ class edit_xml_file extends XMLDBAction {
                         $b .= '</td><td class="button cell">';
                     /// The up button
                         if ($table->getPrevious()) {
-                            $b .= '<a href="index.php?action=move_updown_table&amp;direction=up&amp;table=' . $table->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['up'] . ']</a>';
+                            $b .= '<a href="index.php?action=move_updown_table&amp;direction=up&amp;sesskey=' . sesskey() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['up'] . ']</a>';
                         } else {
                             $b .= '[' . $this->str['up'] . ']';
                         }
                         $b .= '</td><td class="button cell">';
                     /// The down button
                         if ($table->getNext()) {
-                            $b .= '<a href="index.php?action=move_updown_table&amp;direction=down&amp;table=' . $table->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['down'] . ']</a>';
+                            $b .= '<a href="index.php?action=move_updown_table&amp;direction=down&amp;sesskey=' . sesskey() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['down'] . ']</a>';
                         } else {
                             $b .= '[' . $this->str['down'] . ']';
                         }
@@ -185,7 +187,7 @@ class edit_xml_file extends XMLDBAction {
                         if (count($tables) > 1 &&
                             !$structure->getTableUses($table->getName())) {
                             ///!$structure->getTableUses($table->getName())) {
-                            $b .= '<a href="index.php?action=delete_table&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
+                            $b .= '<a href="index.php?action=delete_table&amp;sesskey=' . sesskey() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
                         } else {
                             $b .= '[' . $this->str['delete'] . ']';
                         }
@@ -214,20 +216,20 @@ class edit_xml_file extends XMLDBAction {
                         $b .= '</td><td class="button cell">';
                     /// The up button
                         if ($statement->getPrevious()) {
-                            $b .= '<a href="index.php?action=move_updown_statement&amp;direction=up&amp;statement=' . $statement->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['up'] . ']</a>';
+                            $b .= '<a href="index.php?action=move_updown_statement&amp;direction=up&amp;sesskey=' . sesskey() . '&amp;statement=' . $statement->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['up'] . ']</a>';
                         } else {
                             $b .= '[' . $this->str['up'] . ']';
                         }
                         $b .= '</td><td class="button cell">';
                     /// The down button
                         if ($statement->getNext()) {
-                            $b .= '<a href="index.php?action=move_updown_statement&amp;direction=down&amp;statement=' . $statement->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['down'] . ']</a>';
+                            $b .= '<a href="index.php?action=move_updown_statement&amp;direction=down&amp;sesskey=' . sesskey() . '&amp;statement=' . $statement->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['down'] . ']</a>';
                         } else {
                             $b .= '[' . $this->str['down'] . ']';
                         }
                         $b .= '</td><td class="button cell">';
                     /// The delete button
-                        $b .= '<a href="index.php?action=delete_statement&amp;statement=' . $statement->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
+                        $b .= '<a href="index.php?action=delete_statement&amp;sesskey=' . sesskey() . '&amp;statement=' . $statement->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
                         $b .= '</td>';
                     /// Print statement row
                         $o .= '<tr class="r' . $row . '"><td class="statement cell"><a href="index.php?action=view_statement_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;statement=' . $statement->getName() . '&amp;select=edited">' . $statement->getName() . '</a>' . $b . '</tr>';

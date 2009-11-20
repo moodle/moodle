@@ -107,6 +107,7 @@ class new_statement extends XMLDBAction {
             $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
             $o.= '    <input type="hidden" name ="action" value="new_statement" />';
             $o.= '    <input type="hidden" name ="postaction" value="edit_statement" />';
+            $o.= '    <input type="hidden" name ="sesskey" value="' . sesskey() . '" />';
             $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
             $o.= '      <tr><td><label for="type" accesskey="t">' . $this->str['statementtype'] .' </label>' . choose_from_menu($typeoptions, 'type', '', 'choose', '', 0, true) . '<label for="table" accesskey="a">' . $this->str['statementtable'] . ' </label>' .choose_from_menu($selecttables, 'table', '', 'choose', '', 0, true) . '</td></tr>';
             $o.= '      <tr><td colspan="2" align="center"><input type="submit" value="' .$this->str['create'] . '" /></td></tr>';

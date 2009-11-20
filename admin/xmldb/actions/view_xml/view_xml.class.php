@@ -38,6 +38,7 @@ class view_xml extends XMLDBAction {
         //$this->can_subaction = ACTION_HAVE_SUBACTIONS;
 
     /// Set own custom attributes
+        $this->sesskey_protected = false; // This action doesn't need sesskey protection
 
     /// Get needed strings
         $this->loadStrings(array(

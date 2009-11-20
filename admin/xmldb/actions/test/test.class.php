@@ -955,6 +955,20 @@ class test extends XMLDBAction {
 
         $this->output = $o;
 
+    /// Finally drop all the potentially existing test tables
+        $table = new XMLDBTable('testtable');
+        if (table_exists($table)) {
+            $status = drop_table($table, true, false);
+        }
+        $table = new XMLDBTable ('anothertest');
+        if (table_exists($table)) {
+            $status = drop_table($table, true, false);
+        }
+        $table = new XMLDBTable ('newnameforthetable');
+        if (table_exists($table)) {
+            $status = drop_table($table, true, false);
+        }
+
     /// Launch postaction if exists (leave this here!)
         if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());

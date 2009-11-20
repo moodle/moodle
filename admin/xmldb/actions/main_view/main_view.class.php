@@ -35,6 +35,7 @@ class main_view extends XMLDBAction {
         parent::init();
 
     /// Set own custom attributes
+        $this->sesskey_protected = false; // This action doesn't need sesskey protection
 
     /// Get needed strings
         $this->loadStrings(array(
@@ -84,9 +85,9 @@ class main_view extends XMLDBAction {
     /// The reserved_words button
         $b .= '&nbsp;<a href="index.php?action=view_reserved_words">[' . $this->str['reservedwords'] . ']</a>';
     /// The test button
-        $b .= '&nbsp;<a href="index.php?action=test">[' . $this->str['test'] . ']</a>';
+        $b .= '&nbsp;<a href="index.php?action=test&amp;sesskey=' . sesskey() . '">[' . $this->str['test'] . ']</a>';
     /// The check indexes button
-        $b .= '&nbsp;<a href="index.php?action=check_indexes">[' . $this->str['checkindexes'] . ']</a>';
+        $b .= '&nbsp;<a href="index.php?action=check_indexes&amp;sesskey=' . sesskey() . '">[' . $this->str['checkindexes'] . ']</a>';
         $b .= '</p>';
     /// Send buttons to output
         $o .= $b;
@@ -126,7 +127,7 @@ class main_view extends XMLDBAction {
                 if ($dbdir->path_exists &&
                     !file_exists($key . '/install.xml') &&
                     is_writeable($key)) {
-                    $b .= '<a href="index.php?action=create_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['create'] . ']</a>';
+                    $b .= '<a href="index.php?action=create_xml_file&amp;sesskey=' . sesskey() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['create'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['create'] . ']';
                 }
@@ -159,7 +160,7 @@ class main_view extends XMLDBAction {
                     is_writeable($key) &&
                     !empty($dbdir->xml_loaded) &&
                     !empty($dbdir->xml_changed)) {
-                    $b .= '<a href="index.php?action=save_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['save'] . ']</a>';
+                    $b .= '<a href="index.php?action=save_xml_file&amp;sesskey=' . sesskey() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['save'] . ']</a>';
                 /// Check if the file has been manually edited while being modified in the editor
                     if ($dbdir->filemtime != filemtime($key . '/install.xml')) {
                     /// File manually modified. Add to errors.
@@ -178,7 +179,7 @@ class main_view extends XMLDBAction {
                     is_writeable($key) &&
                     !empty($dbdir->xml_loaded) &&
                     !empty($dbdir->xml_changed)) {
-                    $b .= '<a href="index.php?action=revert_changes&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '">[' . $this->str['revert'] . ']</a>';
+                    $b .= '<a href="index.php?action=revert_changes&amp;sesskey=' . sesskey() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '">[' . $this->str['revert'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['revert'] . ']';
                 }
@@ -200,7 +201,7 @@ class main_view extends XMLDBAction {
                     is_readable($key . '/install.xml') &&
                     is_writeable($key) &&
                     empty($dbdir->xml_loaded)) {
-                    $b .= '<a href="index.php?action=delete_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '">[' . $this->str['delete'] . ']</a>';
+                    $b .= '<a href="index.php?action=delete_xml_file&amp;sesskey=' . sesskey() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '">[' . $this->str['delete'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['delete'] . ']';
                 }

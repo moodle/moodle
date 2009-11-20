@@ -77,7 +77,7 @@ class delete_sentence extends XMLDBAction {
             $o.= '    <p class="centerpara">' . $this->str['confirmdeletesentence'] . '</p>';
             $o.= '    <table class="boxaligncenter" cellpadding="20"><tr><td>';
             $o.= '      <div class="singlebutton">';
-            $o.= '        <form action="index.php?action=delete_sentence&amp;confirmed=yes&amp;postaction=edit_statement&amp;sentence=' . $sentenceparam . '&amp;statement=' . urlencode($statementparam) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '" method="post"><fieldset class="invisiblefieldset">';
+            $o.= '        <form action="index.php?action=delete_sentence&amp;sesskey=' . sesskey() . '&amp;confirmed=yes&amp;postaction=edit_statement&amp;sentence=' . $sentenceparam . '&amp;statement=' . urlencode($statementparam) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '" method="post"><fieldset class="invisiblefieldset">';
             $o.= '          <input type="submit" value="'. $this->str['yes'] .'" /></fieldset></form></div>';
             $o.= '      </td><td>';
             $o.= '      <div class="singlebutton">';
