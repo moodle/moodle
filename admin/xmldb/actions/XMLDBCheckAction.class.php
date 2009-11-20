@@ -96,7 +96,7 @@ abstract class XMLDBCheckAction extends XMLDBAction {
             $o.= '    <p class="centerpara">' . $this->str[$this->introstr] . '</p>';
             $o.= '    <table class="boxaligncenter" cellpadding="20"><tr><td>';
             $o.= '      <div class="singlebutton">';
-            $o.= '        <form action="index.php?action=' . $this->title . '&amp;confirmed=yes" method="post"><fieldset class="invisiblefieldset">';
+            $o.= '        <form action="index.php?action=' . $this->title . '&amp;confirmed=yes&amp;sesskey=' . sesskey() . '" method="post"><fieldset class="invisiblefieldset">';
             $o.= '          <input type="submit" value="'. $this->str['yes'] .'" /></fieldset></form></div>';
             $o.= '      </td><td>';
             $o.= '      <div class="singlebutton">';

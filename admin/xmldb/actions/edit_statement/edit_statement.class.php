@@ -1,31 +1,33 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/// This class will provide the interface for all the edit statement actions
+/**
+ * @package   xmldb-editor
+ * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+/**
+ * This class will provide the interface for all the edit statement actions
+ *
+ * @package   xmldb-editor
+ * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class edit_statement extends XMLDBAction {
 
     /**
@@ -35,6 +37,7 @@ class edit_statement extends XMLDBAction {
         parent::init();
 
     /// Set own custom attributes
+        $this->sesskey_protected = false; // This action doesn't need sesskey protection
 
     /// Get needed strings
         $this->loadStrings(array(
@@ -106,6 +109,7 @@ class edit_statement extends XMLDBAction {
         $o.= '<div>';
         $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="statement" value="' . $statementparam .'" />';
+        $o.= '    <input type="hidden" name ="sesskey" value="' . sesskey() .'" />';
         $o.= '    <input type="hidden" name ="action" value="edit_statement_save" />';
         $o.= '    <input type="hidden" name ="postaction" value="edit_statement" />';
         $o.= '    <table id="formelements" class="boxaligncenter">';
@@ -129,7 +133,7 @@ class edit_statement extends XMLDBAction {
             $b .= '&nbsp;[' . $this->str['viewedited'] . ']';
         }
     /// The new sentence button
-        $b .= '&nbsp;<a href="index.php?action=new_sentence&amp;postaction=edit_sentence&amp;statement=' . $statementparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newsentence'] . ']</a>';
+        $b .= '&nbsp;<a href="index.php?action=new_sentence&amp;postaction=edit_sentence&amp;sesskey=' . sesskey() . '&amp;statement=' . $statementparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newsentence'] . ']</a>';
     /// The back to edit xml file button
         $b .= '&nbsp;<a href="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
         $b .= '</p>';
@@ -157,10 +161,10 @@ class edit_statement extends XMLDBAction {
                 $b .= '<a href="index.php?action=edit_sentence&amp;sentence=' .$key . '&amp;statement=' . urlencode($statement->getName()) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['edit'] . ']</a>';
                 $b .= '</td><td class="button cell">';
             /// The duplicate button
-                $b .= '<a href="index.php?action=new_sentence&amp;postaction=edit_sentence&amp;basesentence=' . $key . '&amp;statement=' . urlencode($statement->getName()) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['duplicate'] . ']</a>';
+                $b .= '<a href="index.php?action=new_sentence&amp;postaction=edit_sentence&amp;sesskey=' . sesskey() . '&amp;basesentence=' . $key . '&amp;statement=' . urlencode($statement->getName()) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['duplicate'] . ']</a>';
                 $b .= '</td><td class="button cell">';
             /// The delete button
-                $b .= '<a href="index.php?action=delete_sentence&amp;sentence=' . $key . '&amp;statement=' . urlencode($statement->getName()) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
+                $b .= '<a href="index.php?action=delete_sentence&amp;sesskey=' . sesskey() . '&amp;sentence=' . $key . '&amp;statement=' . urlencode($statement->getName()) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
                 $b .= '</td>';
             /// Print table row
             $o .= '<tr class="r' . $row . '"><td class="table cell">' . $p . $sentence . $b . '</tr>';

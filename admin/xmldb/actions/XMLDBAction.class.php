@@ -51,6 +51,8 @@ class XMLDBAction {
 
     var $postaction;     //Action to execute at the end of the invoke script
 
+    var $sesskey_protected; // Actions must be protected by sesskey mechanishm
+
     /**
      * Constructor
      */
@@ -76,6 +78,7 @@ class XMLDBAction {
         $this->output    = NULL;
         $this->errormsg  = NULL;
         $this->subaction = NULL;
+        $this->sesskey_protected = true;
     }
 
     /**
@@ -134,12 +137,17 @@ class XMLDBAction {
     }
 
     /**
-     * main invoke method, it simply sets the postaction attribute
-     * if possible
+     * main invoke method, it sets the postaction attribute
+     * if possible and checks sesskey_protected if needed
      */
     function invoke() {
 
         global $SESSION;
+
+    /// Sesskey protection
+        if ($this->sesskey_protected) {
+            require_sesskey();
+        }
 
     /// If we are used any dir, save it in the lastused session object
     /// Some actions can use it to perform positioning
