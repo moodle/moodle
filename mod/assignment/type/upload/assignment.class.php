@@ -460,7 +460,7 @@ class assignment_upload extends assignment_base {
     }
 
     function upload_notes() {
-        global $CFG, $USER, $OUTPUT;
+        global $CFG, $USER, $OUTPUT, $DB;
 
         $action = required_param('action', PARAM_ALPHA);
 
@@ -1102,11 +1102,31 @@ class assignment_upload extends assignment_base {
 }
 
 class mod_assignment_upload_notes_form extends moodleform {
+
+    function get_data() {
+        $data = parent::get_data();
+        if ($data) {
+            $data->format = $data->text['format'];
+            $data->text = $data->text['text'];
+        }
+        return $data;
+    }
+
+    function set_data($data) {
+        if (!isset($data->format)) {
+            $data->format = FORMAT_HTML;
+        }
+        if (isset($data->text)) {
+            $data->text = array('text'=>$data->text, 'format'=>$data->format);
+        }
+        parent::set_data($data);
+    }
+
     function definition() {
         $mform = $this->_form;
 
         // visible elements
-        $mform->addElement('htmleditor', 'text', get_string('notes', 'assignment'), array('cols'=>85, 'rows'=>30));
+        $mform->addElement('editor', 'text', get_string('notes', 'assignment'), null, null);
         $mform->setType('text', PARAM_RAW); // to be cleaned before display
         $mform->setHelpButton('text', array('reading', 'writing'), false, 'editorhelpbutton');
 

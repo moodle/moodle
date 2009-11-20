@@ -42,7 +42,10 @@ class assignment_online extends assignment_base {
         add_to_log($this->course->id, "assignment", "view", "view.php?id={$this->cm->id}", $this->assignment->id, $this->cm->id);
 
 /// prepare form and process submitted data
-        $mform = new mod_assignment_online_edit_form();
+        $mformdata = new stdClass;
+        $mformdata->assignmentid = $this->assignment->id;
+        $mformdata->context = $this->context;
+        $mform = new mod_assignment_online_edit_form(null, $mformdata);
 
         $defaults = new object();
         $defaults->id = $this->cm->id;
@@ -102,7 +105,8 @@ class assignment_online extends assignment_base {
             } else {
                 echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter', 'online');
                 if ($submission && has_capability('mod/assignment:exportownsubmission', $this->context)) {
-                    echo format_text($submission->data1, $submission->data2);
+                    $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $this->context->id, 'assignment_online_submission', $this->assignment->id);
+                    echo format_text($text, $submission->data2);
                     $button = new portfolio_add_button();
                     $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/lib.php');
                     $button->render();
@@ -322,20 +326,61 @@ class assignment_online extends assignment_base {
             $node->add(get_string('editmysubmission', 'assignment'), $link, navigation_node::TYPE_SETTING);
         }
     }
+
+    public function send_file($filearea, $args) {
+        require_capability('mod/assignment:view', $this->context);
+
+        $fullpath = $this->context->id.$filearea.implode('/', $args);
+
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        if (($USER->id != $file->get_userid()) && !has_capability('mod/assignment:grade', $this->context)) {
+            send_file_not_found();
+        }
+
+        session_get_instance()->write_close(); // unlock session during fileserving
+        send_stored_file($file, 60*60, 0, true);
+    }
 }
 
 class mod_assignment_online_edit_form extends moodleform {
+
+    public function set_data($data) {
+        global $PAGE;
+        $editoroptions = $this->get_editor_options();
+        if (!isset($data->text)) {
+            $data->text = '';
+        }
+        if (!isset($data->format)) {
+            $data->textformat = FORMAT_HTML;
+        } else {
+            $data->textformat = $data->format;
+        }
+        $data = file_prepare_standard_editor($data, 'text', $editoroptions, $this->_customdata->context, $editoroptions['filearea'], $this->_customdata->assignmentid);
+        return parent::set_data($data);
+    }
+
+    public function get_data() {
+        global $PAGE;
+        $data = parent::get_data();
+        if ($data) {
+            $editoroptions = $this->get_editor_options();
+            $data = file_postupdate_standard_editor($data, 'text', $editoroptions, $this->_customdata->context, $editoroptions['filearea'], $this->_customdata->assignmentid);
+            $data->format = $data->textformat;
+        }
+        return $data;
+    }
+
     function definition() {
         $mform =& $this->_form;
 
         // visible elements
-        $mform->addElement('htmleditor', 'text', get_string('submission', 'assignment'), array('cols'=>60, 'rows'=>30));
-        $mform->setType('text', PARAM_RAW); // to be cleaned before display
-        $mform->setHelpButton('text', array('reading', 'writing', 'richtext2'), false, 'editorhelpbutton');
-        $mform->addRule('text', get_string('required'), 'required', null, 'client');
-
-        $mform->addElement('format', 'format', get_string('format'));
-        $mform->setHelpButton('format', array('textformat', get_string('helpformatting')));
+        $mform->addElement('editor', 'text_editor', get_string('submission', 'assignment'), null, $this->get_editor_options());
+        $mform->setType('text_editor', PARAM_RAW); // to be cleaned before display
+        $mform->setHelpButton('text_editor', array('reading', 'writing', 'richtext2'), false, 'editorhelpbutton');
+        $mform->addRule('text_editor', get_string('required'), 'required', null, 'client');
 
         // hidden params
         $mform->addElement('hidden', 'id', 0);
@@ -343,6 +388,16 @@ class mod_assignment_online_edit_form extends moodleform {
 
         // buttons
         $this->add_action_buttons();
+    }
+
+    protected function get_editor_options() {
+        global $PAGE;
+        $editoroptions = array();
+        $editoroptions['filearea'] = 'assignment_online_submission';
+        $editoroptions['noclean'] = false;
+        $editoroptions['maxfiles'] = EDITOR_UNLIMITED_FILES;
+        $editoroptions['maxbytes'] = $PAGE->course->maxbytes;
+        return $editoroptions;
     }
 }
 

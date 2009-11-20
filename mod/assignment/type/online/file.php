@@ -27,7 +27,8 @@ if (! $user = $DB->get_record("user", array("id"=>$userid))) {
 
 require_login($course->id, false, $cm);
 
-if (($USER->id != $user->id) && !has_capability('mod/assignment:grade', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+if (($USER->id != $user->id) && !has_capability('mod/assignment:grade', $context)) {
     print_error('cannotviewassignment', 'assignment');
 }
 
@@ -38,6 +39,7 @@ if ($assignment->assignmenttype != 'online') {
 $assignmentinstance = new assignment_online($cm->id, $assignment, $cm, $course);
 
 if ($submission = $assignmentinstance->get_submission($user->id)) {
+    $PAGE->set_generaltype('popup');
     $PAGE->set_title(fullname($user,true).': '.$assignment->name);
     echo $OUTPUT->header();
     echo $OUTPUT->box_start('generalbox boxaligcenter', 'dates');
@@ -57,7 +59,8 @@ if ($submission = $assignmentinstance->get_submission($user->id)) {
     echo '</table>';
     echo $OUTPUT->box_end();
 
-    echo $OUTPUT->box(format_text($submission->data1, $submission->data2), 'generalbox boxaligncenter boxwidthwide');
+    $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $context->id, 'assignment_online_submission', $assignment->id);
+    echo $OUTPUT->box(format_text($text, $submission->data2), 'generalbox boxaligncenter boxwidthwide');
     echo $OUTPUT->close_window_button();
     echo $OUTPUT->footer();
 } else {
