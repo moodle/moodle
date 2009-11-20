@@ -31,6 +31,8 @@ require_once($CFG->libdir.'/eventslib.php');
 require_once($CFG->libdir.'/formslib.php');
 /** Include portfoliolib.php */
 require_once($CFG->libdir.'/portfoliolib.php');
+/** Include calendar/lib.php */
+require_once($CFG->dirroot.'/calendar/lib.php');
 
 /** ASSIGNMENT_COUNT_WORDS = 1 */
 DEFINE ('ASSIGNMENT_COUNT_WORDS', 1);
@@ -425,7 +427,7 @@ class assignment_base {
                 $event->timestart   = $assignment->timedue;
                 $event->timeduration = 0;
 
-                add_event($event);
+                calendar_event::create($event);
             }
 
             assignment_grade_item_update($assignment);
@@ -510,7 +512,8 @@ class assignment_base {
                 $event->description = format_module_intro('assignment', $assignment, $assignment->coursemodule);
                 $event->timestart   = $assignment->timedue;
 
-                update_event($event);
+                $calendarevent = calendar_event::load($event->id);
+                $calendarevent->update($event);
             } else {
                 $event = new object();
                 $event->name        = $assignment->name;
@@ -524,7 +527,7 @@ class assignment_base {
                 $event->timestart   = $assignment->timedue;
                 $event->timeduration = 0;
 
-                add_event($event);
+                calendar_event::create($event);
             }
         } else {
             $DB->delete_records('event', array('modulename'=>'assignment', 'instance'=>$assignment->id));
@@ -917,7 +920,8 @@ class assignment_base {
                 $sort = 'ORDER BY '.$sort.' ';
             }
 
-            if (($auser = $DB->get_records_sql($select.$sql.$sort, null, $offset+1, 1)) !== false) {
+            $auser = $DB->get_records_sql($select.$sql.$sort, null, $offset+1, 1);
+            if (is_array($auser) && count($auser)>0) {
                 $nextuser = array_shift($auser);
             /// Calculate user status
                 $nextuser->status = ($nextuser->timemarked > 0) && ($nextuser->timemarked >= $nextuser->timemodified);
