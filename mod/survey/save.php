@@ -30,7 +30,7 @@
 
 // Make sure this is a legitimate posting
 
-    if (!$formdata = data_submitted()) {
+    if (!$formdata = data_submitted() or !confirm_sesskey()) {
         print_error('cannotcallscript');
     }
 

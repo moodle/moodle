@@ -135,6 +135,7 @@
     echo "<form method=\"post\" action=\"save.php\" id=\"surveyform\">";
     echo '<div>';
     echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
 
     echo $OUTPUT->box(format_module_intro('survey', $survey, $cm->id), 'generalbox boxaligncenter bowidthnormal', 'intro');
 
