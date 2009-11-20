@@ -974,6 +974,8 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
             $tagline = get_string('emailtagline', 'message', $SITE->shortname);
 
             $messagesubject = preg_replace('/\s+/', ' ', strip_tags($message)); // make sure it's all on one line
+            //convert things like &quot; back to regular characters then strip out tags like <b> <p> etc
+            $messagesubject = strip_tags(html_entity_decode($messagesubject));
             $messagesubject = message_shorten_message($messagesubject, 30).'...';
 
             $messagetext = format_text_email($message, $format).
