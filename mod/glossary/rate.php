@@ -24,9 +24,6 @@
     $glossary = false;
     if ($data = data_submitted("$CFG->wwwroot/mod/glossary/view.php")) {    // form submitted
 
-    /// Calculate scale values
-        $scale_values = make_grades_menu($glossary->scale);
-
         foreach ((array)$data as $entryid => $rating) {
             if (!is_numeric($entryid)) {
                 continue;
@@ -56,6 +53,10 @@
                     $returnurl = $CFG->wwwroot.'/mod/glossary/view.php?id='.$cm->id;
                 }
             }
+
+            /// Calculate scale values
+            $scale_values = make_grades_menu($glossary->scale);
+
 
             if ($entry->glossaryid != $glossary->id) {
                 error('This is not valid entry!!');
