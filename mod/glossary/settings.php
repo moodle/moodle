@@ -67,7 +67,7 @@ foreach ($formats as $formatid=>$formatname) {
         $vtitle = get_string("show");
         $vicon  = "show.gif";
     }
-    $vicon = "<a title=\"".$vtitle."\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&amp;mode=visible\"><img class=\"iconsmall\" src=\"$CFG->pixpath/t/".$vicon."\" alt=\"$vtitle\" /></a>";
+    $vicon = "<a title=\"".$vtitle."\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&amp;mode=visible&amp;sesskey=".sesskey()."\"><img class=\"iconsmall\" src=\"$CFG->pixpath/t/".$vicon."\" alt=\"$vtitle\" /></a>";
 
     $str .= '<td align="center">'.$eicon.'&nbsp;&nbsp;'.$vicon.'</td>';
     $str .= '</tr>';
