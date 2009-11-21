@@ -223,7 +223,9 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "<td align=\"right\" colspan=\"2\"><b>";
             echo '<label for="menubackup_users">'.get_string ("users").'</label>';
             echo "</b></td><td colspan=\"2\">";
-            $user_options[0] = get_string("all");
+            if (has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM))) {
+                $user_options[0] = get_string("all");
+            }
             $user_options[1] = get_string("course");
             $user_options[2] = get_string("none");
             echo $OUTPUT->select(html_select::make($user_options, "backup_users", $backup_users, false));

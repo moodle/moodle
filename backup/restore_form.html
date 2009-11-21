@@ -446,8 +446,8 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         //If some user is present in the backup file
         if (($info->backup_users == "all" or $info->backup_users == "course") and $restoreuserinfo) {
             $user_options = array();
-            //If all users are in the backup file
-            if ($info->backup_users == "all") {
+            //If all users are in the backup file and user has 'moodle/site:restore' at system level
+            if ($info->backup_users == "all" and has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM))) {
                 $user_options[0] = get_string("all");
             }
             $user_options[1] = get_string("course");

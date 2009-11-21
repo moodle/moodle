@@ -71,6 +71,11 @@
 
     }
 
+    // Re-enforce 'moodle/site:backup' at system context to be able to backup all users
+    if ($backupprefs->backup_users == 0 and !has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM))) {
+        $backupprefs->backup_users = 1; // users => course
+    }
+
     // Re-enforce moodle/backup:userinfo capability
     if (!$backupuserinfo) {
         $backupprefs->backup_users = 2; // users => none
