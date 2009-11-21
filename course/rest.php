@@ -53,6 +53,13 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_login($course);
 require_capability('moodle/course:update', $context);
 
+if (!empty($CFG->disablecourseajax)) {
+    errorl_log('Course AJAX not allowed');
+    die;
+}
+
+require_sesskey();
+
 // OK, now let's process the parameters and do stuff
 // MDL-10221 the DELETE method is not allowed on some web servers, so we simulate it with the action URL param
 $requestmethod = $_SERVER['REQUEST_METHOD'];
