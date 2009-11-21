@@ -22,7 +22,7 @@ if ( !$displayformat = $DB->get_record("glossary_formats", array("id"=>$id))) {
 }
 
 $form = data_submitted();
-if ( $mode == 'visible' ) {
+if ( $mode == 'visible' and confirm_sesskey()) {
     if ( $displayformat ) {
         if ( $displayformat->visible ) {
             $displayformat->visible = 0;
@@ -33,7 +33,7 @@ if ( $mode == 'visible' ) {
     }
     redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=modsettingglossary#glossary_formats_header");
     die;
-} elseif ( $mode == 'edit' and $form) {
+} elseif ( $mode == 'edit' and $form and confirm_sesskey()) {
 
     $displayformat->popupformatname = $form->popupformatname;
     $displayformat->showgroup   = $form->showgroup;
@@ -253,6 +253,7 @@ echo '<table width="90%" align="center" class="generalbox">';
     <input type="submit" value="<?php print_string("savechanges") ?>" /></td>
 </tr>
 <input type="hidden" name="id"    value="<?php p($id) ?>" />
+<input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
 <input type="hidden" name="mode"    value="edit" />
 <?php
 
