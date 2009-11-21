@@ -28,7 +28,7 @@
 
     list($cm, $course, $lesson) = lesson_get_basics($id);
 
-    require_login($course->id, false, $cm);
+    require_login($course, false, $cm);
 
     $url = new moodle_url($CFG->wwwroot.'/mod/lesson/edit.php', array('id'=>$id,'action'=>$action));
     $PAGE->set_url($url);
