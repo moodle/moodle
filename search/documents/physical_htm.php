@@ -56,7 +56,7 @@ function get_text_for_indexing_htm(&$resource, $directfile = ''){
     */
     
     if (!empty($CFG->block_search_limit_index_body)){
-        $text = shorten($text, $CFG->block_search_limit_index_body);
+        $text = shorten_text($text, $CFG->block_search_limit_index_body);
     }
     return $text;
 }
