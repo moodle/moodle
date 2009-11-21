@@ -102,7 +102,7 @@ $strsubscribers = get_string("subscribers", "forum");
 $strforums      = get_string("forums", "forum");
 
 $searchtext = optional_param('searchtext', '', PARAM_RAW);
-if ($frm = data_submitted()) {
+if ($frm = data_submitted() and confirm_sesskey()) {
 
 /// A form was submitted so process the input
     if (!empty($frm->add) and !empty($frm->addselect)) {
