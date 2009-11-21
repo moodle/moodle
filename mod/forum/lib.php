@@ -3765,6 +3765,7 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
                 echo '<div class="ratingform">';
                 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
                 echo '<input type="hidden" name="forumid" value="'.$forum->id.'" />';
+                echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
                 $ratingsformused = true;
             }
         }

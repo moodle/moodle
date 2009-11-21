@@ -39,7 +39,7 @@
         }
     }
 
-    if ($data) {
+    if ($data and confirm_sesskey()) {
 
         $lastpostid = 0;
 
