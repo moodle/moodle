@@ -5033,6 +5033,7 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
                 echo '<form id="form" method="post" action="rate.php">';
                 echo '<div class="ratingform">';
                 echo '<input type="hidden" name="forumid" value="'.$forum->id.'" />';
+                echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
                 $ratingsformused = true;
             }
 
