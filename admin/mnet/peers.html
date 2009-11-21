@@ -55,6 +55,7 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
                 <div>
                 <input type="hidden" name="hostid" value="<?php echo $host->id; ?>" />
                 <input type="hidden" name="step" value="verify" />
+                <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
                 <input type="submit" name="submit" value="<?php print_string('delete'); ?>"/>
                 </div>
             </form>

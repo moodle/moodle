@@ -29,6 +29,8 @@
         redirect('index.php', get_string('postrequired','mnet') ,7);
     }
 
+    require_sesskey();
+
     if ('verify' == $step) {
         $mnet_peer = new mnet_peer();
         $mnet_peer->set_id($hostid);
