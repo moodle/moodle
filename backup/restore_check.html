@@ -322,6 +322,11 @@
             }
         }
 
+        // Re-enforce 'moodle/site:restore' at system context to be able to restore all users
+        if ($restore->users == 0 and !has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM))) {
+            $restore->users = 1; // users => course
+        }
+
         // Re-enforce moodle/restore:userinfo capability
         if (!$restoreuserinfo) {
             $userinfocheck = true;
