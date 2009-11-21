@@ -44,7 +44,12 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_login($course->id);
 require_capability('moodle/course:update', $context);
 
+if (!empty($CFG->disablecourseajax)) {
+    errorl_log('Course AJAX not allowed');
+    die;
+}
 
+require_sesskey();
 
 // OK, now let's process the parameters and do stuff
 
