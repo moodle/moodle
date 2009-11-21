@@ -31,7 +31,7 @@
 
 /// Submit any new data if there is any
 
-    if ($form = data_submitted() && has_capability('mod/choice:choose', $context)) {
+    if ($form = data_submitted() && has_capability('mod/choice:choose', $context) && confirm_sesskey()) {
         $timenow = time();
         if (has_capability('mod/choice:deleteresponses', $context)) {
             if ($action == 'delete') { //some responses need to be deleted     

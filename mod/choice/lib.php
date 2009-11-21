@@ -221,6 +221,7 @@ function choice_show_form($choice, $user, $cm) {
     }
     //show save choice button
     echo '<div class="button">';
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
     echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
     if (!isguest()) { //don't show save button if the logged in user is the guest user.
         echo "<input type=\"submit\" value=\"".get_string("savemychoice","choice")."\" />";
