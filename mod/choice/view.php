@@ -28,7 +28,7 @@
         print_error('badcontext');
     }
 
-    if ($action == 'delchoice') {
+    if ($action == 'delchoice' and confirm_sesskey() and has_capability('mod/choice:choose', $context) and $choice->allowupdate) {
         if ($answer = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $USER->id)) {
             //print_object($answer);
             delete_records('choice_answers', 'id', $answer->id);
@@ -39,7 +39,7 @@
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
 
 /// Submit any new data if there is any
-    if ($form = data_submitted() && has_capability('mod/choice:choose', $context)) {
+    if ($form = data_submitted() && has_capability('mod/choice:choose', $context) && confirm_sesskey()) {
         $timenow = time();
         if (has_capability('mod/choice:deleteresponses', $context)) {
             if ($action == 'delete') { //some responses need to be deleted     
