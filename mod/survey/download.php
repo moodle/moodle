@@ -8,7 +8,7 @@
     $type  = optional_param('type', 'xls', PARAM_ALPHA);
     $group = optional_param('group', 0, PARAM_INT);
 
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = get_coursemodule_from_id('survey', $id)) {
         error("Course Module ID was incorrect");
     }
 
