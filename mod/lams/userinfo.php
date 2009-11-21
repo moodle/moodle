@@ -14,8 +14,7 @@
  */
   include_once("../../config.php");
 
-    if(!isset($CFG->lams_serverid)||!isset($CFG->lams_serverkey))
-    {
+    if (empty($CFG->lams_serverid) || !empty($CFG->lams_serverkey)) {
         header("HTTP/1.1 401 Unauthenticated");
         exit(1);
     }
