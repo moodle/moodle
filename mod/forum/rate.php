@@ -38,7 +38,7 @@ if (!$forum->assessed) {
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/forum:rate', $context);
 
-if ($data = data_submitted()) {
+if ($data = data_submitted() and confirm_sesskey()) {
 
     $discussionid = false;
 
