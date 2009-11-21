@@ -116,6 +116,10 @@ switch($action) {
         }
         break;
     case 'addofficialtag':
+        if (!data_submitted() or !confirm_sesskey()) {
+            break;
+        }
+
         $new_otags = explode(',', optional_param('otagsadd', '', PARAM_TAG));
         $notice = '';
         foreach ( $new_otags as $new_otag ) {
@@ -145,6 +149,7 @@ print('<form class="tag-management-form" method="post" action="'.$CFG->wwwroot.'
 print('<input type="hidden" name="action" value="addofficialtag" />');
 print('<div class="tag-management-form generalbox"><label class="accesshide" for="id_otagsadd">'. get_string('addotags', 'tag') .'</label>'.
     '<input name="otagsadd" id="id_otagsadd" type="text" />'.
+    '<input type="hidden" name="sesskey" value="'.sesskey().'">'.
     '<input name="addotags" value="'. get_string('addotags', 'tag') .'" onclick="skipClientValidation = true;" id="id_addotags" type="submit" />'.
     '</div>');
 print('</form>');
