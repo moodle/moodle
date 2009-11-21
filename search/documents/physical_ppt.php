@@ -87,7 +87,7 @@ function get_text_for_indexing_ppt(&$resource, $directfile = ''){
     // fclose($logppt);
     
     if (!empty($CFG->block_search_limit_index_body)){
-        $indextext = shorten($text, $CFG->block_search_limit_index_body);
+        $indextext = shorten_text($text, $CFG->block_search_limit_index_body);
     }
 
     $indextext = mb_convert_encoding($indextext, 'UTF-8', 'auto');
