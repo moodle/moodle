@@ -86,6 +86,9 @@ class portfolio_plugin_picasa extends portfolio_plugin_push_base {
         google_picasa::set_sesskey($this->sessionkey, $this->get('user')->id);
     }
 
+    public static function allows_multiple_instances() {
+        return false;
+    }
 }
 
 /**

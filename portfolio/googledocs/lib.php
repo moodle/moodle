@@ -93,6 +93,9 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
         google_docs::set_sesskey($this->sessiontoken, $this->get('user')->id);
     }
 
+    public static function allows_multiple_instances() {
+        return false;
+    }
 }
 
 /**
