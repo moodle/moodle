@@ -35,7 +35,7 @@
         print_error('badcontext');
     }
 
-    if ($action == 'delchoice') {
+    if ($action == 'delchoice' and confirm_sesskey() and has_capability('mod/choice:choose', $context) and $choice->allowupdate) {
         if ($answer = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id))) {
             //print_object($answer);
             $DB->delete_records('choice_answers', array('id' => $answer->id));
@@ -47,7 +47,7 @@
     echo $OUTPUT->header();
 
 /// Submit any new data if there is any
-    if ($form = data_submitted() && has_capability('mod/choice:choose', $context)) {
+    if ($form = data_submitted() && has_capability('mod/choice:choose', $context) && confirm_sesskey()) {
         $timenow = time();
         if (has_capability('mod/choice:deleteresponses', $context)) {
             if ($action == 'delete') { //some responses need to be deleted

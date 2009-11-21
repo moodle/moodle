@@ -288,6 +288,7 @@ function choice_show_form($choice, $user, $cm, $allresponses) {
     //show save choice button
     echo '<div class="button">';
     echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
     if (has_capability('mod/choice:choose', $context, $user->id, false)) { //don't show save button if the logged in user is the guest user.
         if ($choicefull) {
             print_string('choicefull', 'choice');
@@ -296,7 +297,7 @@ function choice_show_form($choice, $user, $cm, $allresponses) {
             echo "<input type=\"submit\" value=\"".get_string("savemychoice","choice")."\" />";
         }
         if ($choice->allowupdate && $aaa = $DB->get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id)) {
-            echo "<br /><a href='view.php?id=".$cm->id."&amp;action=delchoice'>".get_string("removemychoice","choice")."</a>";
+            echo "<br /><a href='view.php?id=".$cm->id."&amp;action=delchoice&amp;sesskey=".sesskey()."'>".get_string("removemychoice","choice")."</a>";
         }
     } else {
         print_string('havetologin', 'choice');
