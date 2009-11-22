@@ -42,13 +42,7 @@
     }
 
     if ($entries) {
-        $modinfo = get_fast_modinfo($course);
         foreach ($entries as $key => $entry) {
-            // make sure the entry is visible
-            if (empty($modinfo->cms[$entry->cmid]->uservisible)) {
-                unset($entries[$key]);
-                continue;
-            }
             if (!$entry->approved and ($USER->id != $entry->userid)) {
                 $context = get_context_instance(CONTEXT_MODULE, $entry->cmid);
                 if (!has_capability('mod/glossary:approve', $context)) {
