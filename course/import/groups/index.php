@@ -56,7 +56,7 @@
 
     require_once($CFG->dirroot.'/lib/uploadlib.php');
     $um = new upload_manager('userfile',false,false,null,false,0);
-    if ($um->preprocess_files()) {
+    if ($um->preprocess_files() and confirm_sesskey()) {
         $filename = $um->files['userfile']['tmp_name'];
 
         //Fix mac/dos newlines
