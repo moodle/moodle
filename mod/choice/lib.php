@@ -370,6 +370,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 echo '<form id="attemptsform" method="post" action="'.$_SERVER['PHP_SELF'].'" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.addslashes(get_string('deleteattemptcheck','quiz')).'\' : true);">';
                 echo '<div>';
                 echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
+                echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
                 echo '<input type="hidden" name="mode" value="overview" />';
             }
 
