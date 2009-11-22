@@ -846,6 +846,7 @@ function xmldb_main_upgrade($oldversion=0) {
     if ($result && $oldversion < 2007021599.14) {
         // this block tries to undo incorrect forcing of new passwords for admins that have no
         // way to change passwords MDL-20933
+        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
         $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, u.password, u.auth
                   FROM {$CFG->prefix}role_capabilities rc
                   JOIN {$CFG->prefix}role_assignments ra ON (ra.contextid = rc.contextid AND ra.roleid = rc.roleid)
@@ -853,7 +854,7 @@ function xmldb_main_upgrade($oldversion=0) {
                  WHERE rc.capability = 'moodle/site:doanything'
                        AND rc.permission = ".CAP_ALLOW."
                        AND u.deleted = 0
-                       AND rc.contextid = ".SYSCONTEXTID."";
+                       AND rc.contextid = ".$systemcontext->id."";
 
         $adminusers = get_records_sql($sql);
         foreach ($adminusers as $adminuser) {
