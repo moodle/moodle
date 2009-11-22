@@ -6633,9 +6633,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         case "LASTIP":
                             $this->info->tempuser->lastip = $this->getContents();
                             break;
-                        case "SECRET":
-                            $this->info->tempuser->secret = $this->getContents();
-                            break;
                         case "PICTURE":
                             $this->info->tempuser->picture = $this->getContents();
                             break;
