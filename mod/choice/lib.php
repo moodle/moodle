@@ -443,6 +443,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                 echo '<form id="attemptsform" method="post" action="'.$FULLSCRIPT.'" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.addslashes_js(get_string('deleteattemptcheck','quiz')).'\' : true);">';
                 echo '<div>';
                 echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
+                echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
                 echo '<input type="hidden" name="mode" value="overview" />';
             }
 

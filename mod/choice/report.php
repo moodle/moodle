@@ -45,7 +45,7 @@
 
     add_to_log($course->id, "choice", "report", "report.php?id=$cm->id", "$choice->id",$cm->id);
 
-    if ($action == 'delete' && has_capability('mod/choice:deleteresponses',$context)) {
+    if (data_submitted() && $action == 'delete' && has_capability('mod/choice:deleteresponses',$context) && confirm_sesskey()) {
         choice_delete_responses($attemptids, $choice->id); //delete responses.
         redirect("report.php?id=$cm->id");
     }
