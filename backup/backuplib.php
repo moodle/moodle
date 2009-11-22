@@ -1370,7 +1370,6 @@
                 fwrite ($bf,full_tag("LASTLOGIN",4,false,$user->lastlogin));
                 fwrite ($bf,full_tag("CURRENTLOGIN",4,false,$user->currentlogin));
                 fwrite ($bf,full_tag("LASTIP",4,false,$user->lastip));
-                fwrite ($bf,full_tag("SECRET",4,false,$user->secret));
                 fwrite ($bf,full_tag("PICTURE",4,false,$user->picture));
                 fwrite ($bf,full_tag("URL",4,false,$user->url));
                 fwrite ($bf,full_tag("DESCRIPTION",4,false,$user->description));
