@@ -846,6 +846,21 @@ function xmldb_main_upgrade($oldversion=0) {
         unset($adminusers);
     }
 
+    if ($result && $oldversion < 2007021599.16) {
+        // NOTE: this is quite hacky, but anyway it should work fine in 1.9,
+        //       in 2.0 we should always use plugin upgrade code for things like this
+
+        $authsavailable = get_list_of_plugins('auth');
+        foreach($authsavailable as $authname) {
+            if (!$auth = get_auth_plugin($authname)) {
+                continue;
+            }
+            if ($auth->prevent_local_passwords()) {
+                execute_sql("UPDATE {$CFG->prefix}user SET password='not cached' WHERE auth='$authname'");
+            }
+        }
+    }
+
     return $result;
 
 }

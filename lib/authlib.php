@@ -108,6 +108,15 @@ class auth_plugin_base {
     }
 
     /**
+     * Indicates if password hashes should be stored in local moodle database.
+     * @return bool true means md5 password hash stored in user table, false means flag 'not_cached' stored there instead
+     */
+    function prevent_local_passwords() {
+        // NOTE: this will be changed to true in 2.0
+        return false;
+    }
+
+    /**
      * Updates the user's password. In previous versions of Moodle, the function
      * auth_user_update_password accepted a username as the first parameter. The
      * revised function expects a user object.

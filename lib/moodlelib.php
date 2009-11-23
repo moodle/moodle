@@ -2904,7 +2904,7 @@ function update_internal_user_password(&$user, $password) {
     global $CFG;
 
     $authplugin = get_auth_plugin($user->auth);
-    if (!empty($authplugin->config->preventpassindb)) {
+    if ($authplugin->prevent_local_passwords()) {
         $hashedpassword = 'not cached';
     } else {
         $hashedpassword = hash_internal_user_password($password);

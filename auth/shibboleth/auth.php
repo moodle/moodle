@@ -134,6 +134,10 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         return $moodleattributes;
     }
 
+    function prevent_local_passwords() {
+        return true;
+    }
+
     /**
      * Returns true if this authentication plugin is 'internal'.
      *
