@@ -10,6 +10,7 @@ required changes in code:
 * replace STATEMENTS section in db/install.xml by db/install.php
 * move post installation code from lib.php into db/install.php
 * move uninstallation code from lib.php to db/uninstall.php
+* new mandatory intro and introformat table fields in module tables
 * completely rewrite file handling
 * rewrite backup/restore
 * rewrite trusttext support - new db table columns needed
