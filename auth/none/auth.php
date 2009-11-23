@@ -62,6 +62,10 @@ class auth_plugin_none extends auth_plugin_base {
         return update_internal_user_password($user, $newpassword);
     }
 
+    function prevent_local_passwords() {
+        return false;
+    }
+
     /**
      * Returns true if this authentication plugin is 'internal'.
      *

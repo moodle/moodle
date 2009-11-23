@@ -144,6 +144,10 @@ class auth_plugin_fc extends auth_plugin_base {
         return false;
     }
 
+    function prevent_local_passwords() {
+        return true;
+    }
+
     /**
      * Returns true if this authentication plugin is 'internal'.
      *

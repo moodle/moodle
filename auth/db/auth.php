@@ -563,6 +563,13 @@ class auth_plugin_db extends auth_plugin_base {
         }
     }
 
+    function prevent_local_passwords() {
+        if (!isset($this->config->passtype)) {
+            return false;
+        }
+        return ($this->config->passtype != 'internal');
+    }
+
     /**
      * Returns true if this authentication plugin is 'internal'.
      *

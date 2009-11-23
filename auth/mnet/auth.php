@@ -578,6 +578,10 @@ class auth_plugin_mnet extends auth_plugin_base {
         $DB->delete_records_select('mnet_enrol_assignments', $whereclause, array($userid, $MNET_REMOTE_CLIENT->id));
     }
 
+    function prevent_local_passwords() {
+        return true;
+    }
+
     /**
      * Returns true if this authentication plugin is 'internal'.
      *

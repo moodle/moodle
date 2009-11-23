@@ -1749,6 +1749,10 @@ class auth_plugin_ldap extends auth_plugin_base {
         return ($fresult);
     }
 
+    function prevent_local_passwords() {
+        return !empty($this->config->preventpassindb);
+    }
+
     /**
      * Returns true if this authentication plugin is 'internal'.
      *

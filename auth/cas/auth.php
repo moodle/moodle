@@ -48,6 +48,11 @@ class auth_plugin_cas extends auth_plugin_base {
             $this->config->objectclass = 'objectClass='.$this->config->objectclass;
         }
     }
+
+    function prevent_local_passwords() {
+        return true;
+    }
+
     /**
      * Authenticates user againt CAS
      * Returns true if the username and password work and false if they are
