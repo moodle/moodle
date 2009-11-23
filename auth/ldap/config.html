@@ -16,7 +16,7 @@
     if (!isset($config->opt_deref))
         { $config->opt_deref = LDAP_DEREF_NEVER; }
     if (!isset($config->preventpassindb))
-        { $config->preventpassindb = 0; }
+        { $config->preventpassindb = 1; }
     if (!isset($config->bind_dn))
         {$config->bind_dn = ''; }
     if (!isset($config->bind_pw))

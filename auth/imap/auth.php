@@ -81,6 +81,10 @@ class auth_plugin_imap extends auth_plugin_base {
         return false;  // No match
     }
 
+    function prevent_local_passwords() {
+        return true;
+    }
+
     /**
      * Returns true if this authentication plugin is 'internal'.
      *

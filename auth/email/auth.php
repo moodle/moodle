@@ -146,6 +146,10 @@ class auth_plugin_email extends auth_plugin_base {
         }
     }
 
+    function prevent_local_passwords() {
+        return false;
+    }
+
     /**
      * Returns true if this authentication plugin is 'internal'.
      *

@@ -2651,7 +2651,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         if (!array_key_exists($user->auth, $authcache)) { // Not in cache
                             $userauth = new stdClass();
                             $authplugin = get_auth_plugin($user->auth);
-                            $userauth->preventpassindb = !empty($authplugin->config->preventpassindb);
+                            $userauth->preventpassindb = $authplugin->prevent_local_passwords();
                             $userauth->isinternal      = $authplugin->is_internal();
                             $userauth->canresetpwd     = $authplugin->can_reset_password();
                             $authcache[$user->auth] = $userauth;
@@ -2659,7 +2659,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             $userauth = $authcache[$user->auth]; // Get from cache
                         }
 
-                        // Respect strange config in some (ldap) plugins. Isn't this a dupe of is_internal() ?
+                        // Most external plugins do not store passwords locally
                         if (!empty($userauth->preventpassindb)) {
                             $user->password = 'not cached';
 

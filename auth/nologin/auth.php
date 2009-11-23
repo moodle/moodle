@@ -46,6 +46,11 @@ class auth_plugin_nologin extends auth_plugin_base {
         return false;
     }
 
+    function prevent_local_passwords() {
+        // just in case, we do not want to loose the passwords
+        return false;
+    }
+
     /**
      * No external data sync.
      *
