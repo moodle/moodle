@@ -114,8 +114,8 @@
             $updateuser->id           = $user->id;
             $updateuser->deleted      = 1;
             $updateuser->username     = addslashes("$user->email.".time());  // Remember it just in case
-            $updateuser->email        = '';               // Clear this field to free it up
-            $updateuser->idnumber     = '';               // Clear this field to free it up
+            $updateuser->email        = md5($user->username); // Store hash of username, useful importing/restoring users
+            $updateuser->idnumber     = '';                   // Clear this field to free it up
             $updateuser->timemodified = time();
             if (update_record('user', $updateuser)) {
                 // Removing a user may have more requirements than just removing their role assignments.
@@ -431,6 +431,8 @@
             print_heading('<a href="'.$securewwwroot.'/user/editadvanced.php?id=-1">'.get_string('addnewuser').'</a>');
         }
     }
+
+    require_once($CFG->dirroot . '/blocks/extrafields/admin_user.php');
 
 
     admin_externalpage_print_footer($adminroot);
