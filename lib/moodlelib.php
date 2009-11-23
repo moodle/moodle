@@ -3105,9 +3105,9 @@ function delete_user($user) {
     $updateuser = new object();
     $updateuser->id           = $user->id;
     $updateuser->deleted      = 1;
-    $updateuser->username     = $delname;         // Remember it just in case
-    $updateuser->email        = '';               // Clear this field to free it up
-    $updateuser->idnumber     = '';               // Clear this field to free it up
+    $updateuser->username     = $delname;            // Remember it just in case
+    $updateuser->email        = md5($user->username);// Store hash of username, useful importing/restoring users
+    $updateuser->idnumber     = '';                  // Clear this field to free it up
     $updateuser->timemodified = time();
 
     if (update_record('user', $updateuser)) {
