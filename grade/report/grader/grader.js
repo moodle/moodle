@@ -4,8 +4,14 @@ YAHOO.graderreport.init = function() {
     // Adjust height of header c0
     var rows = YAHOO.util.Dom.getElementsByClassName('heading_name_row');
     var header_cell_region = YAHOO.util.Dom.getRegion();
-    var height = header_cell_region.bottom - header_cell_region.top;
-    YAHOO.util.Dom.setStyle('studentheader', 'height', height + 'px');
+    if(header_cell_region)
+    {
+        var height = header_cell_region.bottom - header_cell_region.top;
+        if(!isNan(height))
+        {
+            YAHOO.util.Dom.setStyle('studentheader', 'height', height + 'px');
+        }
+    }
 
     // attach event listener to the table for mouseover and mouseout
     var table = document.getElementById('user-grades');
@@ -35,7 +41,6 @@ YAHOO.graderreport.mouseoverHandler = function (e) {
     // get the element that we just moved the mouse over
     var elTarget = YAHOO.util.Event.getTarget(e);
 
-
     // if it was part of the yui panel, we don't want to redraw yet
     searchString = /fullname|itemname|feedback/;
     if (elTarget.className.search(searchString) > -1) {
@@ -58,7 +63,7 @@ YAHOO.graderreport.mouseoverHandler = function (e) {
         // popping up on top of the panel.
 
         // don't do anything if we have already made the tooltip div
-        var makeTooltip = true
+        var makeTooltip = true;
         for (var k=0; k < elTarget.childNodes.length; k++) {
             if (typeof(elTarget.childNodes[k].className) != 'undefined') {
                 if (elTarget.childNodes[k].className.search('tooltipDiv') > -1) {
@@ -87,10 +92,13 @@ YAHOO.graderreport.mouseoverHandler = function (e) {
                 }
             }
         }
-        //build and show the tooltip
-        YAHOO.graderreport.panelEl.setBody(tooltipNode.innerHTML);
-        YAHOO.graderreport.panelEl.render(elTarget);
-        YAHOO.graderreport.panelEl.show()
+        //build and show the tooltip (if not empty)
+        if(tooltipNode.innerHTML)
+        {
+            YAHOO.graderreport.panelEl.setBody(tooltipNode.innerHTML);
+            YAHOO.graderreport.panelEl.render(elTarget);
+            YAHOO.graderreport.panelEl.show();
+        }
     }
 };
 
