@@ -1569,11 +1569,11 @@ function wiki_admin_checklinks($pagetocheck) {
      }
 
      /// Remove old Notices
-     $content = preg_replace('/ µµ__~\['.get_string("offline","wiki").'\]__µµ /i','', $content);
+     $content = eregi_replace(' µµ__~\['.get_string("offline","wiki").'\]__µµ ','', $content);
 
      #-- replace dead links
      foreach ($badlinks as $href) {
-        $content = preg_replace("/\377^(.*)($href)\377m", '$1 µµ__~['.get_string("offline","wiki").']__µµ $2/', $content);
+        $content = preg_replace("\377^(.*)($href)\377m", '$1 µµ__~['.get_string("offline","wiki").']__µµ $2', $content);
      }
 
      #-- compare against db content

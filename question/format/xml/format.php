@@ -921,9 +921,9 @@ class qformat_xml extends qformat_default {
         case MULTIANSWER:
             $a_count=1;
             foreach($question->options->questions as $question) {
-                $thispattern = '/'.addslashes("{#".$a_count."}").'/';
+                $thispattern = addslashes("{#".$a_count."}");
                 $thisreplace = $question->questiontext;
-                $expout=preg_replace($thispattern, $thisreplace, $expout );
+                $expout=ereg_replace($thispattern, $thisreplace, $expout );
                 $a_count++;
             }
         break;

@@ -170,7 +170,7 @@ class question_edit_calculated_form extends question_edit_form {
             $qtextremaining = str_replace('{'.$name.'}', '1', $qtextremaining);
         }
     //     echo "numericalquestion qtextremaining <pre>";print_r($possibledatasets);
-        while  (preg_match('/\{=([^[:space:]}]*)}/', $qtextremaining, $regs1)) {
+        while  (ereg('\{=([^[:space:]}]*)}', $qtextremaining, $regs1)) {
             $qtextsplits = explode($regs1[0], $qtextremaining, 2);
             $qtext =$qtext.$qtextsplits[0];
             $qtextremaining = $qtextsplits[1];

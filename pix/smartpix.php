@@ -21,10 +21,10 @@ function makesafe($param) {
     $param = str_replace('\\\'', '\'', $param);
     $param = str_replace('\\"', '"', $param);
     $param = str_replace('\\', '/', $param);
-    $param = preg_replace('/[[:cntrl:]]|[<>"`\|\':]/', '', $param);
-    $param = preg_replace('/\.\.+/', '', $param);
-    $param = preg_replace('#//+#', '/', $param);
-    return preg_replace('#/(\./)+#', '/', $param);
+    $param = ereg_replace('[[:cntrl:]]|[<>"`\|\':]', '', $param);
+    $param = ereg_replace('\.\.+', '', $param);
+    $param = ereg_replace('//+', '/', $param);
+    return ereg_replace('/(\./)+', '/', $param);
 }
 
 // Nicked from weblib
