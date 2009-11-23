@@ -200,8 +200,14 @@ function init() {
     // Adjust height of header c0
     var rows = YAHOO.util.Dom.getElementsByClassName('heading_name_row');
     var header_cell_region = YAHOO.util.Dom.getRegion();
-    var height = header_cell_region.bottom - header_cell_region.top;
-    YAHOO.util.Dom.setStyle('studentheader', 'height', height + 'px');
+    if(header_cell_region)
+    {
+        var height = header_cell_region.bottom - header_cell_region.top;
+        if(!isNaN(height))
+        {
+            YAHOO.util.Dom.setStyle('studentheader', 'height', height + 'px');
+        }
+    }
 
     // attach event listener to the table for mouseover and mouseout
     var table = document.getElementById('user-grades');
