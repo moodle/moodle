@@ -806,8 +806,9 @@ function xmldb_main_upgrade($oldversion=0) {
                    AND rc.contextid = ".$systemcontext->id."";
 
         $adminusers = get_records_sql($sql);
+        $permittedstates = array('email', 'manual');
         foreach ($adminusers as $adminuser) {
-            if ($adminuser->password === 'not cached') {
+            if ($adminuser->password === 'not cached' || !in_array($adminuser->auth, $permittedstates)) {
                 // no need to change password if stored only outside of moodle - most probably ldap auth
                 continue;
             }
