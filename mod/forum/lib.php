@@ -1207,7 +1207,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
 function forum_print_overview($courses,&$htmlarray) {
     global $USER, $CFG, $DB, $SESSION;
 
-    $LIKE = $DB->sql_ilike();
+    //$LIKE = $DB->sql_ilike();//no longer using like in queries. MDL-20578
 
     if (empty($courses) || !is_array($courses) || count($courses) == 0) {
         return array();
