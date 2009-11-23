@@ -3206,10 +3206,6 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2007101561.02) {
-
-		//NOTE: this is a wrong location for forcing of admin password change,
-		//      it should have been done from each auth plugin separately
-
         $messagesubject = get_string('upgrade197noticesubject', 'admin');
         $message  = addslashes(get_string('upgrade197notice', 'admin'));
         if (empty($CFG->passwordmainsalt)) {
@@ -3218,30 +3214,18 @@ function xmldb_main_upgrade($oldversion=0) {
         }
 
         // Force administrators to change password on next login
-        $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, u.password, u.auth
+        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, u.password
               FROM {$CFG->prefix}role_capabilities rc
               JOIN {$CFG->prefix}role_assignments ra ON (ra.contextid = rc.contextid AND ra.roleid = rc.roleid)
               JOIN {$CFG->prefix}user u ON u.id = ra.userid
              WHERE rc.capability = 'moodle/site:doanything'
                    AND rc.permission = ".CAP_ALLOW."
                    AND u.deleted = 0
-                   AND rc.contextid = ".SYSCONTEXTID."";
+                   AND rc.contextid = ".$systemcontext->id." AND (u.auth='manual' OR u.auth='email')";
 
         $adminusers = get_records_sql($sql);
         foreach ($adminusers as $adminuser) {
-            if ($adminuser->password === 'not cached') {
-                // no need to change password if stored only outside of moodle - most probably ldap auth
-                continue;
-            }
-            if (!$auth = get_auth_plugin($adminuser->auth)) { // very ugly hack, we are not supposed to use any plugins from main upgrade!!
-                continue;
-            }
-            // let's hope no auth plugin is going to end with fatal error here
-            if (!@$auth->can_change_password()) { // very ugly hack, we are not supposed to use any plugins from main upgrade!!
-                // do not force admin to change password if there is no way to actually change it
-                continue;
-            }
-
             if ($preference = get_record('user_preferences', 'userid', $adminuser->id, 'name', 'auth_forcepasswordchange')) {
                 if ($preference->value == '1') {
                     continue;
@@ -3267,32 +3251,26 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101561.02);
     }
 
-    if ($result && $oldversion < 2007101563.01) {
+    if ($result && $oldversion < 2007101563.02) {
         // this block tries to undo incorrect forcing of new passwords for admins that have no
         // way to change passwords MDL-20933
-        $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, u.password, u.auth
+        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, u.password
                   FROM {$CFG->prefix}role_capabilities rc
                   JOIN {$CFG->prefix}role_assignments ra ON (ra.contextid = rc.contextid AND ra.roleid = rc.roleid)
                   JOIN {$CFG->prefix}user u ON u.id = ra.userid
                  WHERE rc.capability = 'moodle/site:doanything'
                        AND rc.permission = ".CAP_ALLOW."
                        AND u.deleted = 0
-                       AND rc.contextid = ".SYSCONTEXTID."";
+                       AND rc.contextid = ".$systemcontext->id." AND u.auth<>'manual' AND u.auth<>'email'";
 
         $adminusers = get_records_sql($sql);
-        $permittedstates = array('email', 'manual');
         foreach ($adminusers as $adminuser) {
-            if ($adminuser->password === 'not cached' || !in_array($adminuser->auth, $permittedstates)) {
-                // no need to change password if stored only outside of moodle - most probably ldap auth
-                continue;
-            }
-            if ($auth = get_auth_plugin($adminuser->auth) and @$auth->can_change_password()) { // very ugly hack, we are not supposed to use any plugins from main upgrade!!
-                continue;
-            }
             delete_records('user_preferences', 'userid', $adminuser->id, 'name', 'auth_forcepasswordchange');
         }
+        unset($adminusers);
 
-        upgrade_main_savepoint($result, 2007101563.01);
+        upgrade_main_savepoint($result, 2007101563.02);
     }
 
     return $result;
