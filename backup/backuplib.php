@@ -85,7 +85,6 @@
 
     //Returns every needed user (participant) in a course
     //It uses the xxxx_get_participants() function
-    //plus users needed to backup scales.
     //Also it search for users having messages and
     //users having blogs
     //WARNING: It returns only NEEDED users, not every
@@ -121,21 +120,6 @@
                         }
                     }
                  }
-            }
-        }
-
-        //Now, add scale users (from site and course scales)
-        //Get users
-        $scaleusers = get_records_sql("SELECT DISTINCT userid,userid
-                                       FROM {$CFG->prefix}scale
-                                       WHERE courseid = '0' or courseid = '$courseid'");
-        //Add scale users to results
-        if ($scaleusers) {
-            foreach ($scaleusers as $scaleuser) {
-                //If userid != 0
-                if ($scaleuser->userid != 0) {
-                    $result[$scaleuser->userid]->id = $scaleuser->userid;
-                }
             }
         }
 
@@ -184,7 +168,7 @@
         // get all users with moodle/course:view capability, this will include people
         // assigned at cat level, or site level
         // but it should be ok if they have no direct assignment at course, mod, block level
-        return get_users_by_capability(get_context_instance(CONTEXT_COURSE, $courseid), 'moodle/course:view');
+        return get_users_by_capability(get_context_instance(CONTEXT_COURSE, $courseid), 'moodle/course:view', '', '', '', '', '', '', false);
     }
 
     //Returns all users ids (every record in users table)
