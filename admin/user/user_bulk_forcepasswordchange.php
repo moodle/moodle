@@ -29,7 +29,7 @@ if ($confirm and confirm_sesskey()) {
         if (!$auth = get_auth_plugin($authname)) {
             continue;
         }
-        if (@$auth->can_change_password()) { // plugins may not be configured yet, not nice :-(
+        if (@$auth->is_internal() and @$auth->can_change_password()) { // plugins may not be configured yet, not nice :-(
             $changeable[$authname] = true;
         }
     }
