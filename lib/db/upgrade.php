@@ -3264,9 +3264,10 @@ function xmldb_main_upgrade($oldversion=0) {
                        AND u.deleted = 0
                        AND rc.contextid = ".$systemcontext->id." AND u.auth<>'manual' AND u.auth<>'email'";
 
-        $adminusers = get_records_sql($sql);
-        foreach ($adminusers as $adminuser) {
-            delete_records('user_preferences', 'userid', $adminuser->id, 'name', 'auth_forcepasswordchange');
+        if ($adminusers = get_records_sql($sql)) {
+            foreach ($adminusers as $adminuser) {
+                delete_records('user_preferences', 'userid', $adminuser->id, 'name', 'auth_forcepasswordchange');
+            }
         }
         unset($adminusers);
 
