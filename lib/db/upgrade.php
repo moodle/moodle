@@ -2826,6 +2826,14 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009111702);
     }
 
+    if ($result && $oldversion < 2009112400) {
+        if (empty($CFG->passwordsaltmain)) {
+            $subject = get_string('check_passwordsaltmain_name', 'report_security');
+            $description = get_string('check_passwordsaltmain_warning', 'report_security');;
+            upgrade_log(UPGRADE_LOG_NOTICE, null, $subject, $description);
+        }
+        upgrade_main_savepoint($result, 2009112400);
+    }
 
     return $result;
 }
