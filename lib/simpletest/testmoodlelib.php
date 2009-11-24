@@ -380,6 +380,10 @@ class moodlelib_test extends UnitTestCase {
         $text = "<h3>standard 'break-out' sub groups in TGs?</h3>&nbsp;&lt;&lt;There are several";
         $this->assertEqual("<h3>standard 'break-out' sub groups in ...</h3>",
             shorten_text($text, 43));
+
+        $text = "<h1>123456789</h1>";//a string with no convenient breaks
+        $this->assertEqual("<h1>12345...</h1>",
+            shorten_text($text, 8));
     }
 
 }
