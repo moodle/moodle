@@ -3325,7 +3325,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
     //This function creates all the scales
     function restore_create_scales($restore,$xml_file) {
-        global $CFG, $DB;
+        global $CFG, $USER, $DB;
 
         $status = true;
         //Check it exists
@@ -3341,16 +3341,11 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         //Now, if we have anything in scales, we have to restore that
         //scales
         if ($scales) {
-            //Get admin->id for later use
-            $admin = get_admin();
-            $adminid = $admin->id;
             if ($scales !== true) {
                 //Iterate over each scale
                 foreach ($scales as $scale) {
                     //Get record from backup_ids
                     $data = backup_getid($restore->backup_unique_code,"scale",$scale->id);
-                    //Init variables
-                    $create_scale = false;
 
                     if ($data) {
                         //Now get completed xmlized object
@@ -3368,51 +3363,42 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $sca->description = backup_todb($info['SCALE']['#']['DESCRIPTION']['0']['#']);
                         $sca->timemodified = backup_todb($info['SCALE']['#']['TIMEMODIFIED']['0']['#']);
 
-                        //Now search if that scale exists (by scale field) in course 0 (Standar scale)
-                        //or in restore->course_id course (Personal scale)
-                        if ($sca->courseid == 0) {
-                            $course_to_search = 0;
-                        } else {
-                            $course_to_search = $restore->course_id;
-                        }
-
-                        // scale is not course unique
-                        //Going to compare LOB columns so, use the cross-db sql_compare_text() in both sides.
+                        // Look for scale (by 'scale' both in standard (course=0) and current course
+                        // with priority to standard scales (ORDER clause)
+                        // scale is not course unique, use get_record_sql to suppress warning
+                        // Going to compare LOB columns so, use the cross-db sql_compare_text() in both sides.
                         $compare_scale_clause = $DB->sql_compare_text('scale')  . ' = ' . $DB->sql_compare_text(':scaledesc');
-                        $params = array('courseid'=>$course_to_search, 'scaledesc'=>$sca->scale);
-                        $sca_db = $DB->get_record_sql("SELECT *
-                                                         FROM {scale}
-                                                        WHERE courseid = :courseid
-                                                          AND $compare_scale_clause", $params, true);
+                        $params = array('courseid'=>$restore->course_id, 'scaledesc'=>$sca->scale);
+                        // Scale doesn't exist, create it
+                        if (!$sca_db = $DB->get_record_sql("SELECT *
+                                                              FROM {scale}
+                                                             WHERE courseid IN (0, :courseid)
+                                                               AND $compare_scale_clause
+                                                          ORDER BY courseid", $params, true)) {
 
-                        //If it doesn't exist, create
-                        if (!$sca_db) {
-                            $create_scale = true;
-                        }
-                        //If we must create the scale
-                        if ($create_scale) {
-                            //Me must recode the courseid if it's <> 0 (common scale)
-                            if ($sca->courseid != 0) {
-                                $sca->courseid = $restore->course_id;
-                            }
-                            //We must recode the userid
+                            // Try to recode the user field, defaulting to current user if not found
                             $user = backup_getid($restore->backup_unique_code,"user",$sca->userid);
                             if ($user) {
                                 $sca->userid = $user->new_id;
                             } else {
-                                //Assign it to admin
-                                $sca->userid = $adminid;
+                                $sca->userid = $USER->id;
+                            }
+                            // If scale is standard, if user lacks perms to manage standar scales
+                            // 'downgrade' them to course scales
+                            if ($sca->courseid == 0 and !has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM), $sca->userid)) {
+                                $sca->courseid = $restore->course_id;
                             }
                             //The structure is equal to the db, so insert the scale
                             $newid = $DB->insert_record ("scale",$sca);
+
+                        // Scale exists, reuse it
                         } else {
-                            //get current scale id
                             $newid = $sca_db->id;
                         }
+
                         if ($newid) {
                             //We have the newid, update backup_ids
-                            backup_putid($restore->backup_unique_code,"scale",
-                                         $scale->id, $newid);
+                            backup_putid($restore->backup_unique_code,"scale", $scale->id, $newid);
                         }
                     }
                 }
