@@ -683,6 +683,258 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         return $status;
     }
 
+   /**
+    * Given one user object (from backup file), perform all the neccesary
+    * checks is order to decide how that user will be handled on restore.
+    *
+    * Note the function requires $user->mnethostid to be already calculated
+    * so it's caller responsibility to set it
+    *
+    * This function is used both by @restore_precheck_users() and
+    * @restore_create_users() to get consistent results in both places
+    *
+    * It returns:
+    *   - one user object (from DB), if match has been found and user will be remapped
+    *   - boolean true if the user needs to be created
+    *   - boolean false if some conflict happened and the user cannot be handled
+    *
+    * Each test is responsible for returning its results and interrupt
+    * execution. At the end, boolean true (user needs to be created) will be
+    * returned if no test has interrupted that.
+    *
+    * Here it's the logic applied, keep it updated:
+    *
+    *  If restoring users from same site backup:
+    *      1A - If match by id and username and mnethost  => ok, return target user
+    *      1B - If match by id and mnethost and user is deleted in DB and
+    *           match by email LIKE 'backup_email%'  => ok, return target user
+    *      1C - If match by id and mnethost and user is deleted in backup file
+    *           and match by email = email_without_time(backup_email) => ok, return target user
+    *      1D - If match by username and mnethost and doesn't match by id => conflict, return false
+    *      1E - else => user needs to be created, return true
+    *
+    *  if restoring from another site backup:
+    *      2A - If match by username and mnethost and
+    *           (email or non-zero firstaccess) => ok, return target user
+    *      2B - Note: we cannot handle "deleted" situations here as far
+    *           as username gets modified and id cannot be used here
+    *      2C - If match by username and mnethost and not
+    *           by (email or non-zero firstaccess) => conflict, return false
+    *      2D - else => user needs to be created, return true
+    */
+    function restore_check_user($restore, $user) {
+        global $CFG;
+
+        // Verify mnethostid is set, return error if not
+        // it's parent responsibility to define that before
+        // arriving here
+        if (empty($user->mnethostid)) {
+            debugging("restore_check_user() wrong use, mnethostid not set for user $user->username", DEBUG_DEVELOPER);
+            return false;
+        }
+
+        // Handle checks from same site backups
+        if (backup_is_same_site($restore)) {
+
+            // 1A - If match by id and username and mnethost => ok, return target user
+            if ($rec = get_record('user', 'id', $user->id, 'username', addslashes($user->username), 'mnethostid', $user->mnethostid)) {
+                return $rec; // Matching user found, return it
+            }
+
+            // 1B - Handle users deleted in DB and "alive" in backup file
+            // 1B1- If match by id and mnethost and user is deleted in DB and
+            //      match by email LIKE 'backup_email.%'  => ok, return target user
+            // Note: for deleted users email is stored in username field, hence we
+            //       are looking there for emails in the query below. See delete_user()
+            if ($rec = get_record_sql("SELECT *
+                                         FROM {$CFG->prefix}user u
+                                        WHERE id = $user->id
+                                          AND mnethostid = $user->mnethostid
+                                          AND deleted = 1
+                                          AND username LIKE '$user->email.%'")) {
+                return $rec; // Matching user, deleted in DB found, return it
+            }
+
+            // 1C - Handle users deleted in backup file and "alive" in DB
+            // 1C1- If match by id and mnethost and user is deleted in backup file
+            //      and match by email = email_without_time(backup_email) => ok, return target user
+            if ($user->deleted) {
+                // Trim time() from email
+                // Note: for deleted users email is stored in username field, hece
+                //       we are trimming the username field to get the email. See delete_user()
+                $trimemail = preg_replace('/(.*?)\.[0-9]+.?$/', '\\1', $user->username);
+                if ($rec = get_record_sql("SELECT *
+                                             FROM {$CFG->prefix}user u
+                                            WHERE id = $user->id
+                                              AND mnethostid = $user->mnethostid
+                                              AND email = '$trimemail'")) {
+                    return $rec; // Matching user, deleted in backup file found, return it
+                }
+            }
+
+            // 1D - If match by username and mnethost and doesn't match by id => conflict, return false
+            if ($rec = get_record('user', 'username', addslashes($user->username), 'mnethostid', $user->mnethostid)) {
+                if ($user->id != $rec->id) {
+                    return false; // Conflict, username already exists and belongs to another id
+                }
+            }
+
+        // Handle checks from different site backups
+        } else {
+
+            // 2A - If match by username and mnethost and
+            //     (email or non-zero firstaccess) => ok, return target user
+            if ($rec = get_record_sql("SELECT *
+                                         FROM {$CFG->prefix}user u
+                                        WHERE username = '$user->username'
+                                          AND mnethostid = $user->mnethostid
+                                          AND (
+                                                  email = '$user->email'
+                                               OR (
+                                                      firstaccess != 0
+                                                  AND firstaccess = $user->firstaccess
+                                                  )
+                                              )")) {
+                return $rec; // Matching user
+            }
+
+            // 2B - Handle users deleted in DB and "alive" in backup file
+            // Note: for deleted users email is stored in username field, hence we
+            //       are looking there for emails in the query below. See delete_user()
+            // Note: for deleted users md5(username) is stored *sometimes* in the
+            // email field, hence we are looking there for usernames in the query below
+            // 2B - Note: we cannot handle "deleted" situations here as far
+            //     as username gets modified and id cannot be used either
+            // 2B1-deleted = 1 AND email = md5(username) AND mnsethostid AND (username like $user->email.% OR firstaccess)
+            // 2B2 deleted and mnsethostid AND username like $user->email.% AND firstaccess
+
+            // 2C - Handle users deleted in backup file and "alive" in DB
+
+            // 2D - If match by username and mnethost and not
+            //     by (email or non-zero firstaccess) => conflict, return false
+            if ($rec = get_record_sql("SELECT *
+                                         FROM {$CFG->prefix}user u
+                                        WHERE username = '$user->username'
+                                          AND mnethostid = $user->mnethostid
+                                      AND NOT (
+                                                  email = '$user->email'
+                                               OR (
+                                                      firstaccess != 0
+                                                  AND firstaccess = $user->firstaccess
+                                                  )
+                                              )")) {
+                return false; // Conflict, username/mnethostid already exist and belong to another user (by email/firstaccess)
+            }
+        }
+
+        // Arrived here, return true as the user will need to be created and no
+        // conflicts have been found in the logic above. This covers:
+        // 1E - else => user needs to be created, return true
+        // 2D - else => user needs to be created, return true
+        return true;
+    }
+
+   /**
+    * For all the users being restored, check if they are going to cause problems
+    * before executing the restore process itself, detecting situations like:
+    *   - conflicts preventing restore to continue - provided by @restore_check_user()
+    *   - prevent creation of users if not allowed - check some global settings/caps
+    */
+    function restore_precheck_users($xml_file, $restore, &$problems) {
+        global $CFG;
+
+        $status = true; // Init $status
+
+        // We aren't restoring users, nothing to check, allow continue
+        if ($restore->users == 2) {
+            return true;
+        }
+
+        // Get array of users from xml file and load them in backup_ids table
+        if (!$info = restore_read_xml_users($restore,$xml_file)) {
+            return true; // No users, nothing to check, allow continue
+        }
+
+        // We are going to map mnethostid, so load all the available ones
+        $mnethosts = get_records('mnet_host', '', '', 'wwwroot', 'wwwroot, id');
+
+        // Calculate the context we are going to use for capability checking
+        if (!empty($restore->course_id)) { // Know the target (existing) course, check capabilities there
+            $context = get_context_instance(CONTEXT_COURSE, $restore->course_id);
+        } else if (!empty($restore->restore_restorecatto)) { // Know the category, check capabilities there
+            $context = get_context_instance(CONTEXT_COURSECAT, $restore->restore_restorecatto);
+        } else { // Last resort, check capabilities at system level
+            $context = get_context_instance(CONTEXT_SYSTEM);
+        }
+
+        // Calculate if we have perms to create users, by checking:
+        // to 'moodle/restore:createuser' and 'moodle/restore:userinfo'
+        // and also observe $CFG->disableusercreationonrestore
+        $cancreateuser = false;
+        if (has_capability('moodle/restore:createuser', $context) and
+            has_capability('moodle/restore:userinfo', $context) and
+            empty($CFG->disableusercreationonrestore)) { // Can create users
+
+            $cancreateuser = true;
+        }
+
+        // Iterate over all users, checking if they are likely to cause problems on restore
+        $counter = 0;
+        foreach ($info->users as $userid) {
+            $rec = backup_getid($restore->backup_unique_code, 'user', $userid);
+            $user = $rec->info;
+
+            // Find the correct mnethostid for user before performing any further check
+            if (empty($user->mnethosturl) || $user->mnethosturl===$CFG->wwwroot) {
+                $user->mnethostid = $CFG->mnet_localhost_id;
+            } else {
+                // fast url-to-id lookups
+                if (isset($mnethosts[$user->mnethosturl])) {
+                    $user->mnethostid = $mnethosts[$user->mnethosturl]->id;
+                } else {
+                    $user->mnethostid = $CFG->mnet_localhost_id;
+                }
+            }
+
+            // Calculate the best way to handle this user from backup file
+            $usercheck = restore_check_user($restore, $user);
+
+            if (is_object($usercheck)) { // No problem, we have found one user in DB to be mapped to
+
+            } else if ($usercheck === false) { // Found conflict, report it as problem
+                $problems[] = get_string('restoreuserconflict', '', $user->username);
+                $status = false;
+
+            } else if ($usercheck === true) { // User needs to be created, check if we are able
+                if (!$cancreateuser) { // Cannot create, report as problem
+
+                    $problems[] = get_string('restorecannotcreateuser', '', $user->username);
+                    $status = false;
+                }
+
+            } else { // Shouldn't arrive here ever, something is for sure wrong in restore_check_user()
+                if (!defined('RESTORE_SILENTLY')) {
+                    notify('Unexpected error pre-checking user ' . s($user->username) . ' from backup file');
+                    return false;
+                }
+            }
+
+            // Do some output
+            $counter++;
+            if ($counter % 10 == 0) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo ".";
+                    if ($counter % 200 == 0) {
+                        echo "<br />";
+                    }
+                }
+                backup_flush(300);
+            }
+        }
+
+        return $status;
+    }
+
     //This function create a new course record.
     //When finished, course_header contains the id of the new course
     function restore_create_new_course($restore,&$course_header) {
@@ -7947,6 +8199,24 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 return false;
             }
         }
+
+        // Precheck the users section, detecting various situations that can lead to problems, so
+        // we stop restore before performing any further action
+        /*
+        if (!defined('RESTORE_SILENTLY')) {
+            echo '<li>'.get_string('restoreusersprecheck').'</li>';
+        }
+        if (!restore_precheck_users($xml_file, $restore, $problems)) {
+            $errorstr = get_string('restoreusersprecheckerror');
+            if (!empty($problems)) {
+                $errorstr .= ' (' . implode(', ', $problems)  . ')';
+            }
+            if (!defined('RESTORE_SILENTLY')) {
+                notify($errorstr);
+            }
+            return false;
+        }
+        */
 
         //If we've selected to restore into new course
         //create it (course)
