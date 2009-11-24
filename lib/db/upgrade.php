@@ -2841,3 +2841,4 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 //TODO: Before 2.0 release
 // 1/ remove the automatic enabling of completion lib if debug enabled ( in 2008121701 block)
 // 2/ move 2009061300 block to the top of the file so that we may log upgrade queries
+// 3/ force admin password change if salt not set, to be done after planned role changes
