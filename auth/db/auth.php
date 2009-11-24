@@ -576,6 +576,9 @@ class auth_plugin_db extends auth_plugin_base {
      * @return bool
      */
     function is_internal() {
+        if (!isset($this->config->passtype)) {
+            return true;
+        }
         return ($this->config->passtype == 'internal');
     }
 
