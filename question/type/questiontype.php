@@ -1088,8 +1088,10 @@ class default_questiontype {
         $params = array('aid' => $state->attempt);
         if (isset($question->randomquestionid)) {
             $params['qid'] = $question->randomquestionid;
+            $randomprefix = 'random' . $question->id . '-';
         } else {
             $params['qid'] = $question->id;
+            $randomprefix = '';
         }
         if ($options->history == 'all') {
             $eventtest = 'event > 0';
@@ -1098,7 +1100,7 @@ class default_questiontype {
         }
         $states = $DB->get_records_select('question_states', 
                 'attempt = :aid AND question = :qid AND ' . $eventtest, $params, 'seq_number ASC');
-        if (empty($states)) {
+        if (count($states) <= 1) {
             return '';
         }
 
@@ -1117,6 +1119,9 @@ class default_questiontype {
         }
 
         foreach ($states as $st) {
+            if ($randomprefix && strpos($st->answer, $randomprefix) === 0) {
+                $st->answer = substr($st->answer, strlen($randomprefix));
+            }
             $st->responses[''] = $st->answer;
             $this->restore_session_and_responses($question, $st);
 
