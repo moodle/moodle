@@ -762,7 +762,7 @@ $string['uploadpicture_cannotsave'] = 'Cannot save picture for user $a. Check or
 $string['updatetimezones'] = 'Update timezones';
 $string['upgrade197notice'] = '<p>Moodle 1.9.7 contains a number of security fixes to user passwords and backups to protect the user information on your site.<br />
 As a result some of your settings and permissions relating to backups may have changed.<br />
-Please see the <a href=\'http://docs.moodle.org/en/Moodle_1.9.7_release_notes\' target=\'_blank\'>Moodle 1.9.7 release</a> notes for full details.</p>';
+Please see the <a href=\"http://docs.moodle.org/en/Moodle_1.9.7_release_notes\" target=\"_blank\">Moodle 1.9.7 release</a> notes for full details.</p>';
 $string['upgrade197noticesubject'] = 'Moodle 1.9.7 upgrade security notices';
 $string['upgrade197salt'] = 'It is also now strongly recommended that you set a password salt to greatly reduce the risk of password theft.<br />Please refer to the <a href=\"$a\" target=\"_blank\">password salting documentation</a> for details.</a>';
 $string['upgradeforumread'] = 'A new feature has been added in Moodle 1.5 to track read/unread forum posts.<br />To use this functionality you need to <a href=\"$a\">update your tables</a>.';

@@ -19,7 +19,7 @@
 
 function xmldb_main_upgrade($oldversion=0) {
 
-    global $CFG, $THEME, $USER, $db;
+    global $CFG, $THEME, $USER, $SITE, $db;
 
     $result = true;
 
@@ -3206,8 +3206,8 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2007101561.02) {
-        $messagesubject = get_string('upgrade197noticesubject', 'admin');
-        $message  = addslashes(get_string('upgrade197notice', 'admin'));
+        $messagesubject = s($SITE->shortname).': '.get_string('upgrade197noticesubject', 'admin');
+        $message  = '<p>'.s($SITE->fullname).':</p>'.get_string('upgrade197notice', 'admin');
         if (empty($CFG->passwordmainsalt)) {
             $docspath = $CFG->docroot.'/'.str_replace('_utf8', '', current_language()).'/report/security/report_security_check_passwordsaltmain';
             $message .= "\n".get_string('upgrade197salt', 'admin', $docspath);
@@ -3215,7 +3215,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
         // Force administrators to change password on next login
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-        $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, u.password
+        $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, u.password, u.mailformat
               FROM {$CFG->prefix}role_capabilities rc
               JOIN {$CFG->prefix}role_assignments ra ON (ra.contextid = rc.contextid AND ra.roleid = rc.roleid)
               JOIN {$CFG->prefix}user u ON u.id = ra.userid
