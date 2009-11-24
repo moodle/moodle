@@ -28,7 +28,7 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
- *//** */
+ */
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/moodlelib.php');
@@ -44,6 +44,7 @@ $title = 'get_string performance test';
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
+$PAGE->set_url('lib/simpletest/getstringperformancetester.php');
 echo $OUTPUT->header();
 
 $installedlangs = get_list_of_languages();
@@ -113,7 +114,7 @@ echo $OUTPUT->footer();
  */
 function time_log_file($filename) {
     global $CFG, $OUTPUT;
-    echo $OUTPUT->heading("Playing back calls from $filename", '', 3);
+    echo $OUTPUT->heading("Playing back calls from $filename", 3);
     $fullpath = $CFG->libdir . '/simpletest/get_string_fixtures/pagelogs/' . $filename;
     for ($i = 0; $i < NUM_REPITITIONS; ++$i) {
         set_time_limit(60);
