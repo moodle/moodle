@@ -21,12 +21,12 @@ require_once($CFG->libdir . '/simpletestlib/test_case.php');
  * them into a group test.
  * @package SimpleTestEx
  */
-class AutoGroupTest extends GroupTest {
+class AutoGroupTest extends TestSuite {
 
     var $showsearch;
 
     function AutoGroupTest($showsearch, $test_name = null) {
-        $this->GroupTest($test_name);
+        $this->TestSuite($test_name);
         $this->showsearch = $showsearch;
     }
 
