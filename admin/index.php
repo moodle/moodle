@@ -635,7 +635,7 @@
         
     }
 
-    if (empty($CFG->passwordsaltmain) || 1==1) {
+    if (empty($CFG->passwordsaltmain)) {
         $path = $CFG->docroot.'/'.str_replace('_utf8', '', current_language()).'/report/security/report_security_check_passwordsaltmain';
         print_box(get_string('upgrade197notice', 'admin')."\n".get_string('upgrade197salt', 'admin', $path));
     }
