@@ -215,7 +215,9 @@ function scorm_parse_aicc($pkgdir,$scormid) {
 
             //print_r($sco);
             if (get_record('scorm_scoes','scorm',$scormid,'identifier',$sco->identifier)) {
-                $id = update_record('scorm_scoes',addslashes_recursive($sco));
+                if (update_record('scorm_scoes',addslashes_recursive($sco))) {
+                    $id = $oldscoes[$id]->id;
+                }
                 unset($oldscoes[$id]);
             } else {
                 $id = insert_record('scorm_scoes',addslashes_recursive($sco));
