@@ -950,8 +950,10 @@ class default_questiontype {
 
         if (isset($question->randomquestionid)) {
             $qid = $question->randomquestionid;
+            $randomprefix = 'random' . $question->id . '-';
         } else {
             $qid = $question->id;
+            $randomprefix = '';
         }
         if ($options->history == 'all') {
             $eventtest = 'event > 0';
@@ -961,7 +963,7 @@ class default_questiontype {
         $states = get_records_select('question_states',
                 'attempt = ' . $state->attempt . ' AND question = ' . $qid .
                 ' AND ' . $eventtest, 'seq_number ASC');
-        if (empty($states)) {
+        if (count($states) <= 1) {
             return '';
         }
 
@@ -980,6 +982,9 @@ class default_questiontype {
         }
 
         foreach ($states as $st) {
+            if ($randomprefix && strpos($st->answer, $randomprefix) === 0) {
+                $st->answer = substr($st->answer, strlen($randomprefix));
+            }
             $st->responses[''] = $st->answer;
             $this->restore_session_and_responses($question, $st);
 
