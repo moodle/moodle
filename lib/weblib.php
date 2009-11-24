@@ -2480,8 +2480,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
     define('HEADER_PRINTED', 'true');
 
-/// Perform some browser environment checks
-    if (!empty($CFG->excludeoldflashclients) && empty($SESSION->flashversion)) { // Do a single check per session for the flash version
+/// Perform a browser environment check for the flash version.  Should only run once per login session.
+    if (isloggedin() && !empty($CFG->excludeoldflashclients) && empty($SESSION->flashversion)) {
         // Unfortunately we can't use require_js here and keep it all clean in 1.9 ...
         // require_js(array('yui_yahoo', 'yui_event', 'yui_connection', $CFG->httpswwwroot."/lib/swfobject/swfobject.js"));
         $meta .= '<script type="text/javascript"  src="'.$CFG->wwwroot.'/lib/yui/yahoo/yahoo-min.js"></script>';
@@ -2491,9 +2491,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $meta .= 
            "<script type=\"text/javascript\">\n".
            "  var flashversion = swfobject.getFlashPlayerVersion();\n".
-           "  YAHOO.util.Connect.asyncRequest('GET','".$CFG->wwwroot."/login/environment.php?flashversion='+flashversion.major+'.'+flashversion.minor+'.'+flashversion.release);\n".
+           "  YAHOO.util.Connect.asyncRequest('GET','".$CFG->wwwroot."/login/environment.php?sesskey=".sesskey()."&flashversion='+flashversion.major+'.'+flashversion.minor+'.'+flashversion.release);\n".
            "</script>";
-
     }
 
 
