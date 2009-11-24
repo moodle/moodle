@@ -2480,6 +2480,22 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
     define('HEADER_PRINTED', 'true');
 
+/// Perform some browser environment checks
+    if (!empty($CFG->excludeoldflashclients) && empty($SESSION->flashversion)) { // Do a single check per session for the flash version
+        # Unfortunately we can't use require_js here and keep it all clean in 1.9 ...
+        # require_js(array('yui_yahoo', 'yui_event', 'yui_connection', $CFG->httpswwwroot."/lib/swfobject/swfobject.js"));
+        $meta .= '<script type="text/javascript"  src="'.$CFG->wwwroot.'/lib/yui/yahoo/yahoo-min.js"></script>';
+        $meta .= '<script type="text/javascript"  src="'.$CFG->wwwroot.'/lib/yui/event/event-min.js"></script>';
+        $meta .= '<script type="text/javascript"  src="'.$CFG->wwwroot.'/lib/yui/connection/connection-min.js"></script>';
+        $meta .= '<script type="text/javascript"  src="'.$CFG->wwwroot.'/lib/swfobject/swfobject.js"></script>';
+        $meta .= 
+           "<script type=\"text/javascript\">\n".
+           "  var flashversion = swfobject.getFlashPlayerVersion();\n".
+           "  YAHOO.util.Connect.asyncRequest('GET','".$CFG->wwwroot."/login/environment.php?flashversion='+flashversion.major+'.'+flashversion.minor+'.'+flashversion.release);\n".
+           "</script>";
+
+    }
+
 
 /// Add the required stylesheets
     $stylesheetshtml = '';
