@@ -215,10 +215,10 @@ function scorm_parse_aicc($pkgdir,$scormid) {
 
             //print_r($sco);
             if (get_record('scorm_scoes','scorm',$scormid,'identifier',$sco->identifier)) {
-                $id = update_record('scorm_scoes',$sco);
+                $id = update_record('scorm_scoes',addslashes_recursive($sco));
                 unset($oldscoes[$id]);
             } else {
-                $id = insert_record('scorm_scoes',$sco);
+                $id = insert_record('scorm_scoes',addslashes_recursive($sco));
             }
 
             if ($launch == 0) {
@@ -249,7 +249,7 @@ function scorm_parse_aicc($pkgdir,$scormid) {
                             delete_records('scorm_scoes_data','scoid',$oldscoid);
                             unset($oldscoes[$oldscoid]);
                         } else {
-                            $id = insert_record('scorm_scoes',$sco);
+                            $id = insert_record('scorm_scoes',addslashes_recursive($sco));
                         }
                         if (!empty($id)) {
                             unset($scodata);
@@ -257,32 +257,32 @@ function scorm_parse_aicc($pkgdir,$scormid) {
                             if (isset($element->web_launch)) {
                                 $scodata->name = 'parameters';
                                 $scodata->value = $element->web_launch;
-                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                                $dataid = insert_record('scorm_scoes_data',addslashes_recursive($scodata));
                             }
                             if (isset($element->prerequisites)) {
                                 $scodata->name = 'prerequisites';
                                 $scodata->value = $element->prerequisites;
-                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                                $dataid = insert_record('scorm_scoes_data',addslashes_recursive($scodata));
                             }
                             if (isset($element->max_time_allowed)) {
                                 $scodata->name = 'max_time_allowed';
                                 $scodata->value = $element->max_time_allowed;
-                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                                $dataid = insert_record('scorm_scoes_data',addslashes_recursive($scodata));
                             }
                             if (isset($element->time_limit_action)) {
                                 $scodata->name = 'time_limit_action';
                                 $scodata->value = $element->time_limit_action;
-                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                                $dataid = insert_record('scorm_scoes_data',addslashes_recursive($scodata));
                             }
                             if (isset($element->mastery_score)) {
                                 $scodata->name = 'mastery_score';
                                 $scodata->value = $element->mastery_score;
-                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                                $dataid = insert_record('scorm_scoes_data',addslashes_recursive($scodata));
                             }
                             if (isset($element->core_vendor)) {
                                 $scodata->name = 'datafromlms';
                                 $scodata->value = eregi_replace('<cr>', "\r\n", $element->core_vendor);
-                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                                $dataid = insert_record('scorm_scoes_data',addslashes_recursive($scodata));
                             }
                         }
                         if ($launch==0) {
