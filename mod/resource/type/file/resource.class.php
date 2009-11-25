@@ -267,11 +267,11 @@ class resource_file extends resource_base {
                 $resourcetype = "pdf";
                 //no need embedded, html file types behave like unknown file type
                 
-            } else if ($mimetype == "audio/x-pn-realaudio") {   // It's a realmedia file
+            } else if ($mimetype == "audio/x-pn-realaudio-plugin") {   // It's a realmedia file
                 $resourcetype = "rm";
                     $embedded = true;
-                }
-            } 
+            }
+        } 
 
         $isteamspeak = (stripos($resource->reference, 'teamspeak://') === 0);
 
