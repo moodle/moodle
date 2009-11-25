@@ -221,6 +221,7 @@
 
 /// Print a list of roles with edit/copy/delete/reorder icons.
     $table->data = array();
+    $firstrole = reset($roles);
     $lastrole = end($roles);
     foreach ($roles as $role) {
 
@@ -234,7 +235,7 @@
 
     /// Icons:
         // move up
-        if ($role->sortorder != 0) {
+        if ($role->sortorder != $firstrole->sortorder) {
             $row[3] .= get_action_icon($baseurl . '?action=moveup&amp;roleid=' . $role->id . '&amp;sesskey=' . sesskey(), 'up', $strmoveup, $strmoveup);
         } else {
             $row[3] .= get_spacer();
