@@ -20,7 +20,7 @@ $itemid = optional_param('itemid', false, PARAM_INT);
 if(!$typ)redirect(htmlspecialchars('edit.php?id=' . $id));
 
 $url = new moodle_url($CFG->wwwroot.'/mod/feedback/edit_item.php', array('id'=>$id));
-if ($type !== false) {
+if ($typ !== false) {
     $url->param('typ', $typ);
 }
 if ($itemid !== false) {
@@ -157,13 +157,13 @@ $item_form = &$itemobj->show_edit($item);
 $i_form = &$item_form->get_item_form();
 // $i_form->addElement('header', 'general', 'Titel');
 $i_form->addElement('hidden', 'id', $id);
-$mform->setType('id', PARAM_INT);
+$i_form->setType('id', PARAM_INT);
 $i_form->addElement('hidden', 'itemid', isset($item->id)?$item->id:'');
-$mform->setType('itemid', PARAM_INT);
+$i_form->setType('itemid', PARAM_INT);
 $i_form->addElement('hidden', 'typ', $typ);
-$mform->setType('typ', PARAM_ALPHA);
+$i_form->setType('typ', PARAM_ALPHA);
 $i_form->addElement('hidden', 'feedbackid', $feedback->id);
-$mform->setType('feedbackid', PARAM_INT);
+$i_form->setType('feedbackid', PARAM_INT);
 
 
 $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
@@ -183,12 +183,12 @@ $i_formselect->setValue($i_formselect_value);
 $buttonarray = array();
 if(!empty($item->id)){
     $i_form->addElement('hidden', 'updateitem', '1');
-    $mform->setType('updateitem', PARAM_INT);
+    $i_form->setType('updateitem', PARAM_INT);
     // $i_form->addElement('submit', 'update_item', get_string('update_item', 'feedback'));
     $buttonarray[] = &$i_form->createElement('submit', 'update_item', get_string('update_item', 'feedback'));
 }else{
     $i_form->addElement('hidden', 'saveitem', '1');
-    $mform->setType('saveitem', PARAM_INT);
+    $i_form->setType('saveitem', PARAM_INT);
     // $i_form->addElement('submit', 'save_item', get_string('save_item', 'feedback'));
     $buttonarray[] = &$i_form->createElement('submit', 'save_item', get_string('save_item', 'feedback'));
 }

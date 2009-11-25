@@ -76,8 +76,8 @@ class mod_feedback_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'aftersubmithdr', get_string('after_submit', 'feedback'));
-
-        $mform->addElement('htmleditor', 'page_after_submit', get_string("page_after_submit", "feedback"), array('rows' => 20));
+        
+        $mform->addElement('editor', 'page_after_submit', get_string("page_after_submit", "feedback"), null, null);
         $mform->setType('page_after_submit', PARAM_RAW);
 
         $mform->addElement('text', 'site_after_submit', get_string('url_for_continue_button', 'feedback'), array('size'=>'64','maxlength'=>'255'));
@@ -101,7 +101,22 @@ class mod_feedback_mod_form extends moodleform_mod {
         } else {
             $default_values['closeenable'] = 1;
         }
+        if (!isset($default_values['page_after_submitformat'])) {
+            $default_values['page_after_submitformat'] = FORMAT_HTML;
+        }
+        if (!isset($default_values['page_after_submit'])) {
+            $default_values['page_after_submit'] = '';
+        }
+        $default_values['page_after_submit'] = array('text'=>$default_values['page_after_submit'],'format'=>$default_values['page_after_submitformat']);
+    }
 
+    function get_data() {
+        $data = parent::get_data();
+        if ($data) {
+            $data->page_after_submitformat = $data->page_after_submit['format'];
+            $data->page_after_submit = $data->page_after_submit['text'];
+        }
+        return $data;
     }
 
     function validation($data, $files){

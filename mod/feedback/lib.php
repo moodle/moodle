@@ -26,6 +26,8 @@
 
 /** Include eventslib.php */
 require_once($CFG->libdir.'/eventslib.php');
+/** Include calendar/lib.php */
+require_once($CFG->dirroot.'/calendar/lib.php');
 
 
 define('FEEDBACK_INCLUDE_TEST', 1);
@@ -548,7 +550,7 @@ function feedback_set_events($feedback) {
             $event->timeduration = 0;
         }
 
-        add_event($event);
+        calendar_event::create($event);
     }
 
     // the close-event
@@ -566,7 +568,7 @@ function feedback_set_events($feedback) {
         $event->visible      = instance_is_visible('feedback', $feedback);
         $event->timeduration = 0;
 
-        add_event($event);
+        calendar_event::create($event);
     }
 }
 

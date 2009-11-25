@@ -277,6 +277,20 @@ function xmldb_feedback_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009042001, 'feedback');
     }
 
+    if ($result && $oldversion < 2009112000) {
+        /// Define field page_after_submitformat to be added to feedback
+        $table = new xmldb_table('feedback');
+        $field = new xmldb_field('page_after_submitformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'page_after_submit');
+
+        if (!$dbman->field_exists($table, $field)) {
+            // Launch add field page_after_submitformat
+            $dbman->add_field($table, $field);
+        }
+
+        // feedback savepoint reached
+        upgrade_mod_savepoint($result, 2009112000, 'feedback');
+    }
+
     return $result;
 }
 

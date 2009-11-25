@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/feedback/db" VERSION="20090420" COMMENT="XMLDB file for Moodle mod/feedback"
+<XMLDB PATH="mod/feedback/db" VERSION="20091120" COMMENT="XMLDB file for Moodle mod/feedback"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -16,8 +16,9 @@
         <FIELD NAME="multiple_submit" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="email_notification" NEXT="autonumbering"/>
         <FIELD NAME="autonumbering" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="multiple_submit" NEXT="site_after_submit"/>
         <FIELD NAME="site_after_submit" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="autonumbering" NEXT="page_after_submit"/>
-        <FIELD NAME="page_after_submit" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="site_after_submit" NEXT="publish_stats"/>
-        <FIELD NAME="publish_stats" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="page_after_submit" NEXT="timeopen"/>
+        <FIELD NAME="page_after_submit" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="site_after_submit" NEXT="page_after_submitformat"/>
+        <FIELD NAME="page_after_submitformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="page_after_submit" NEXT="publish_stats"/>
+        <FIELD NAME="publish_stats" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="page_after_submitformat" NEXT="timeopen"/>
         <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="publish_stats" NEXT="timeclose"/>
         <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeopen" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeclose"/>
