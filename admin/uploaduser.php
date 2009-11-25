@@ -156,8 +156,7 @@ if ($formdata = $mform->is_cancelled()) {
     $renames      = 0;
     $renameerrors = 0;
     $usersskipped = 0;
-
-    $forcechangepassword = 0;
+    $weakpasswords = 0;
 
     // caches
     $ccache    = array(); // course cache - do not fetch all courses here, we  will not probably use them all anyway!
@@ -200,6 +199,8 @@ if ($formdata = $mform->is_cancelled()) {
 
         $upt->track('line', $linenum);
 
+        $forcechangepassword = false;
+
         $user = new object();
         // by default, use the local mnet id (this may be changed in the file)
         $user->mnethostid = $CFG->mnet_localhost_id;
@@ -212,7 +213,8 @@ if ($formdata = $mform->is_cancelled()) {
                     if ($value !== '') {
                         $user->password = hash_internal_user_password($value);
                         if (!empty($CFG->passwordpolicy) and !check_password_policy($value, $errmsg)) {
-                            $forcechangepassword++;
+                            $forcechangepassword = true;
+                            $weakpasswords++;
                         }
                     }
                 } else {
@@ -729,7 +731,7 @@ if ($formdata = $mform->is_cancelled()) {
     if ($usersskipped) {
         echo get_string('usersskipped', 'admin').': '.$usersskipped.'<br />';
     }
-    echo get_string('usersweakpassword', 'admin').': '.$forcechangepassword.'<br />';
+    echo get_string('usersweakpassword', 'admin').': '.$weakpasswords.'<br />';
     echo get_string('errors', 'admin').': '.$userserrors.'</p>';
     echo $OUTPUT->box_end();
 
