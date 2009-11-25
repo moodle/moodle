@@ -130,11 +130,21 @@ $string['check_passwordsaltmain_details'] = '<p>Setting a password salt greatly 
 <p>Please refer to the <a href=\"$a\" target=\"_blank\">password salting documentation</a> if you wish to change the password salt. Once set, do NOT delete your password salt otherwise you will no longer be able to login to your site!</p>';
 $string['check_riskadmin_detailsok'] = '<p>Please verify the following list of system administrators:</p>$a';
 $string['check_riskadmin_detailswarning'] = '<p>Please verify the following list of system administrators:</p>$a->admins
-<p>It is recommended to assign administrator role in system context only. Following users have unsupported admin role assignments:</p>$a->unsupported';
+<p>It is recommended to assign administrator role in the system context only. The following users have (unsupported) admin role assignments in other contexts:</p>$a->unsupported';
 $string['check_riskadmin_name'] = 'Administrators';
 $string['check_riskadmin_ok'] = 'Found $a server administrator(s).';
 $string['check_riskadmin_unassign'] = '<a href=\"$a->url\">$a->fullname ($a->email) review role assignment</a>';
 $string['check_riskadmin_warning'] = 'Found $a->admincount server administrators and $a->unsupcount unsupported admin role assignments.';
+$string['check_riskadmin_name'] = 'Administrators';
+
+$string['check_riskbackup_name'] = 'Backup of user data';
+$string['check_riskbackup_warning'] = 'Found $a->rolecount roles and $a->usercount users with the ability to backup user data.';
+$string['check_riskbackup_detailswarning'] = '<p>Please verify the following roles should allow the backup of user data:</p>$a->roles
+<p>These user accounts currently have the capability to make backups containing user data from the whole site.  Make sure they are (a) trusted and (b) protected by strong passwords:</p>$a->users';
+$string['check_riskbackup_editrole'] = '<a href=\"$a->url\">$a->name</a>';
+$string['check_riskbackup_unassign'] = '<a href=\"$a->url\">$a->fullname ($a->email)</a>';
+$string['check_riskbackup_ok'] = 'No roles explicitly allow backup of user data';
+$string['check_riskbackup_detailsok'] = 'No roles explicitly allow backup of user data.  However, note that admins with the \"doanything\" capability are still likely to be able to do this.';
 
 $string['check_riskxss_details'] = '<p>RISK_XSS denotes all dangerous capabilities that only trusted users may use.</p>
 <p>Please verify the following list of users and make sure that you trust them completely on this server:</p><p>$a</p>';

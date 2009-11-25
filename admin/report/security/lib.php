@@ -59,6 +59,7 @@ function report_security_get_issue_list() {
         'report_security_check_configrw',
         'report_security_check_riskxss',
         'report_security_check_riskadmin',
+        'report_security_check_riskbackup',
         'report_security_check_defaultuserrole',
         'report_security_check_guestrole',
         'report_security_check_frontpagerole',
@@ -1087,6 +1088,81 @@ function report_security_check_riskadmin($detailed=false) {
             $users = '<ul>'.implode($users).'</ul>';
             $a = (object)array('admins'=>$admins, 'unsupported'=>$users);
             $result->details = get_string('check_riskadmin_detailswarning', 'report_security', $a);
+        }
+    }
+
+    return $result;
+}
+
+/**
+ * Lists all roles that have the ability to backup user data, as well as users
+ * @param bool $detailed
+ * @return object result
+ */
+function report_security_check_riskbackup($detailed=false) {
+    global $CFG;
+
+    $result = new object();
+    $result->issue   = 'report_security_check_riskbackup';
+    $result->name    = get_string('check_riskbackup_name', 'report_security');
+    $result->info    = null;
+    $result->details = null;
+    $result->status  = null;
+    $result->link    = null;
+
+    if ($roles = get_roles_with_capability('moodle/backup:userinfo', CAP_ALLOW)) {
+        // Find all the users who have the potential ability to backup user info.  Ignoring the actual backup capability for now
+        // because it could easily be ALLOWed later and then these user info caps would suddenly be a problem.
+        $sqluserinfo = "SELECT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, ra.contextid, ra.roleid
+                      FROM (SELECT rcx.*
+                            FROM {$CFG->prefix}role_capabilities rcx
+                           WHERE rcx.capability = 'moodle/backup:userinfo' AND rcx.permission = ".CAP_ALLOW.") rc,
+                         {$CFG->prefix}context c,
+                         {$CFG->prefix}context sc,
+                         {$CFG->prefix}role_assignments ra,
+                         {$CFG->prefix}user u
+                   WHERE c.id = rc.contextid
+                         AND (sc.path = c.path OR sc.path LIKE ".sql_concat('c.path', "'/%'")." OR c.path LIKE ".sql_concat('sc.path', "'/%'").")
+                         AND u.id = ra.userid AND u.deleted = 0
+                         AND ra.contextid = sc.id AND ra.roleid = rc.roleid AND sc.contextlevel <= ".CONTEXT_COURSE."
+                GROUP BY u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, ra.contextid, ra.roleid
+                ORDER BY u.lastname, u.firstname";
+    
+        $usercount = count_records_sql("SELECT COUNT('x') FROM ($sqluserinfo) userinfo");
+
+        $result->status  = REPORT_SECURITY_WARNING;
+        $a = (object)array('rolecount'=>count($roles), 'usercount'=>$usercount);
+        $result->info = get_string('check_riskbackup_warning', 'report_security', $a);
+
+        if ($detailed) {
+            // Make a list of roles
+            foreach ($roles as $role) {
+                $role->url = "$CFG->wwwroot/$CFG->admin/roles/manage.php?action=edit&amp;roleid=$role->id";
+                $rolelinks[] = '<li>'.get_string('check_riskbackup_editrole', 'report_security', $role).'</li>';
+            }
+            $rolelinks = '<ul>'.implode($rolelinks).'</ul>';
+
+            // Get a list of users as well
+            $rs = get_recordset_sql($sqluserinfo);
+            $users = array();
+            while ($user = rs_fetch_next_record($rs)) {
+                $url = "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=$user->contextid&amp;roleid=$user->roleid";
+                $a = (object)array('fullname'=>fullname($user), 'url'=>$url, 'email'=>$user->email);
+                $users[] = '<li>'.get_string('check_riskbackup_unassign', 'report_security', $a).'</li>';
+            }
+            rs_close($rs);
+            $users = '<ul>'.implode($users).'</ul>';
+
+            // Combine as one big list of info
+            $a = (object)array('roles'=>$rolelinks, 'users'=>$users);
+            $result->details = get_string('check_riskbackup_detailswarning', 'report_security', $a);
+        }
+    } else {
+        $result->status  = REPORT_SECURITY_OK;
+        $result->info = get_string('check_riskbackup_ok', 'report_security');
+
+        if ($detailed) {
+            $result->details = get_string('check_riskbackup_detailsok', 'report_security');
         }
     }
 
