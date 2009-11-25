@@ -206,6 +206,7 @@ function xmldb_glossary_upgrade($oldversion) {
     }
     if ($result && $oldversion < 2009110800) {
         require_once($CFG->libdir . '/commentlib.php');
+        upgrade_set_timeout(60*20);
 
     /// Define table glossary_comments to be dropped
         $table = new xmldb_table('glossary_comments');
@@ -221,33 +222,35 @@ function xmldb_glossary_upgrade($oldversion) {
                 c.entrycommenttrust AS trust,
                 c.timemodified AS timemodified
                 FROM {glossary_comments} c, {glossary_entries} e, {glossary} g
-                WHERE c.entryid=e.id AND e.glossaryid=g.id';
+                WHERE c.entryid=e.id AND e.glossaryid=g.id ORDER BY glossaryid, courseid';
+            $lastglossaryid = null;
+            $lastcourseid   = null;
+            $modcontext     = null;
+
         /// move glossary comments to new comments table
-            $error = false;
             if ($rs = $DB->get_recordset_sql($sql)) {
                 foreach($rs as $res) {
-                    if ($cm = get_coursemodule_from_instance('glossary', $res->glossaryid, $res->courseid)) {
-                        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-                        $cmt = new stdclass;
-                        $cmt->contextid = $context->id;
-                        $cmt->courseid  = $res->courseid;
-                        $cmt->area      = 'glossary_entry';
-                        $cmt->itemid    = $res->itemid;
-                        $comment = new comment($cmt);
-                        try {
-                            $cmt = $comment->add($res->comment, $res->format);
-                        } catch (comment_exception $e) {
-                            add_to_log($res->courseid, 'comments', 'add', '', 'Cannot migrate glossary comment with ID# '.$res->old_id);
-                            $error = true;
+                    if ($res->glossaryid != $lastglossaryid || $res->courseid != $lastcourseid) {
+                        $cm = get_coursemodule_from_instance('glossary', $res->glossaryid, $res->courseid);
+                        if ($cm) {
+                            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
                         }
+                        $lastglossaryid = $res->glossaryid;
+                        $lastcourseid   = $res->courseid;
+                    }
+                    $cmt = new stdclass;
+                    $cmt->contextid = $modcontext->id;
+                    $cmt->courseid  = $res->courseid;
+                    $cmt->area      = 'glossary_entry';
+                    $cmt->itemid    = $res->itemid;
+                    $comment = new comment($cmt);
+                    $cmt = $comment->add($res->comment, $res->format);
+                    if (!empty($cmt)) {
+                        $DB->delete_records('glossary_comments', array('id'=>$res->old_id));
                     }
                 }
             }
-            if (empty($error)) {
-                $dbman->drop_table($table);
-            } else {
-                print_error('error');
-            }
+            $dbman->drop_table($table);
         }
 
     /// glossary savepoint reached
