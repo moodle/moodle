@@ -1259,7 +1259,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         }
 
         if (!empty($CFG->doctonewwindow)) {
-            $icon->actions[] = new popup_action('click', $icon->link->url);
+            $icon->add_action(new popup_action('click', $icon->link->url));
         }
 
         return $this->action_icon($icon);
