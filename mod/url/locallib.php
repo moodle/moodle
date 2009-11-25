@@ -259,7 +259,7 @@ function url_display_embed($url, $cm, $course) {
         // Mpeg file
         $code = resourcelib_embed_mpeg($fullurl, $title, $clicktoopen);
 
-    } else if ($mimetype == 'audio/x-pn-realaudio') {
+    } else if ($mimetype == 'audio/x-pn-realaudio-plugin') {
         // RealMedia file
         $code = resourcelib_embed_real($fullurl, $title, $clicktoopen);
 
