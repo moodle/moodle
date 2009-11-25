@@ -1110,7 +1110,7 @@ function report_security_check_riskbackup($detailed=false) {
     $result->status  = null;
     $result->link    = null;
 
-    if ($roles = get_roles_with_capability('moodle/backup:userinfo', CAP_ALLOW)) {
+    if ($roles = get_roles_with_capability('moodle/backup:userinfo', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM))) {
         // Find all the users who have the potential ability to backup user info.  Ignoring the actual backup capability for now
         // because it could easily be ALLOWed later and then these user info caps would suddenly be a problem.
         $sqluserinfo = "SELECT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, ra.contextid, ra.roleid
