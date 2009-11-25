@@ -3672,7 +3672,7 @@ function fetch_context_capabilities($context) {
                      WHERE (contextlevel = ".CONTEXT_MODULE."
                            AND component = :component)
                            $extra";
-            $params['component'] = "mod/$module->name";
+            $params['component'] = "mod_$module->name";
         break;
 
         case CONTEXT_BLOCK: // block caps
@@ -3690,7 +3690,7 @@ function fetch_context_capabilities($context) {
                      WHERE (contextlevel = ".CONTEXT_BLOCK."
                            AND component = :component)
                            $extra";
-            $params['component'] = 'block/' . $bi->blockname;
+            $params['component'] = 'block_' . $bi->blockname;
         break;
 
         default:
@@ -3861,11 +3861,12 @@ function get_child_contexts($context) {
     // will probably ask for the full record anyway soon after
     // soon after calling us ;-)
 
+    $array = array();
+
     switch ($context->contextlevel) {
 
         case CONTEXT_BLOCK:
             // No children.
-            return array();
         break;
 
         case CONTEXT_MODULE:
@@ -3879,8 +3880,8 @@ function get_child_contexts($context) {
             $records = $DB->get_recordset_sql($sql, $params);
             foreach ($records as $rec) {
                 cache_context($rec);
+                $array[$rec->id] = $rec;
             }
-            return $records;
             break;
 
         case CONTEXT_COURSE:
@@ -3894,8 +3895,8 @@ function get_child_contexts($context) {
             $records = $DB->get_recordset_sql($sql, $params);
             foreach ($records as $rec) {
                 cache_context($rec);
+                $array[$rec->id] = $rec;
             }
-            return $records;
         break;
 
         case CONTEXT_COURSECAT:
@@ -3910,8 +3911,8 @@ function get_child_contexts($context) {
             $records = $DB->get_recordset_sql($sql, $params);
             foreach ($records as $rec) {
                 cache_context($rec);
+                $array[$rec->id] = $rec;
             }
-            return $records;
         break;
 
         case CONTEXT_USER:
@@ -3925,9 +3926,8 @@ function get_child_contexts($context) {
             $records = $DB->get_recordset_sql($sql, $params);
             foreach ($records as $rec) {
                 cache_context($rec);
+                $array[$rec->id] = $rec;
             }
-            return $records;
-            break;
             break;
 
         case CONTEXT_SYSTEM:
@@ -3937,13 +3937,17 @@ function get_child_contexts($context) {
                       FROM {context} c
                      WHERE contextlevel != ".CONTEXT_SYSTEM;
 
-            return $DB->get_records_sql($sql);
+            $records = $DB->get_records_sql($sql);
+            foreach ($records as $rec) {
+                $array[$rec->id] = $rec;
+            }
         break;
 
         default:
             print_error('unknowcontext', '', '', $context->contextlevel);
             return false;
     }
+    return $array;
 }
 
 
