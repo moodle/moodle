@@ -1170,6 +1170,9 @@ function report_security_check_riskbackup($detailed=false) {
             $links = array();
             foreach ($overriddenroles as $role) {
                 $context = get_context_instance_by_id($role->contextid);
+                if ($context->contextlevel == CONTEXT_COURSE) {
+                    $role->name = role_get_name($role, $context);
+                }
                 $role->contextname = print_context_name($context);
                 $role->url = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$role->contextid&amp;roleid=$role->id";
                 $links[] = '<li>'.get_string('check_riskbackup_editoverride', 'report_security', $role).'</li>';
