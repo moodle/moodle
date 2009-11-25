@@ -138,11 +138,13 @@ $string['check_riskadmin_warning'] = 'Found $a->admincount server administrators
 $string['check_riskadmin_name'] = 'Administrators';
 
 $string['check_riskbackup_name'] = 'Backup of user data';
-$string['check_riskbackup_warning'] = 'Found $a->rolecount roles and $a->usercount users with the ability to backup user data.';
-$string['check_riskbackup_detailswarning'] = '<p>The following roles currently allow users to include user data in backups.  Are you really sure they need to?</p>$a->roles
-<p>Because of the above roles, the following user accounts currently have the capability to make backups containing user data from the whole site.  Make sure they are (a) trusted and (b) protected by strong passwords:</p>$a->users';
+$string['check_riskbackup_warning'] = 'Found $a->rolecount roles, $a->overridecount overrides and $a->usercount users with the ability to backup user data.';
+$string['check_riskbackup_details_systemroles'] = '<p>The following system roles currently allow users to include user data in backups.  Please make sure this permission is necessary.</p> $a';
+$string['check_riskbackup_details_overriddenroles'] = '<p>These active overrides give users the ability to include user data in backups. Please make sure this permission is necessary.</p> $a';
+$string['check_riskbackup_details_users'] = '<p>Because of the above roles or local overrides, the following user accounts currently have permission to make backups containing private data from any users enrolled in their course.  Make sure they are (a) trusted and (b) protected by strong passwords:</p> $a';
 $string['check_riskbackup_editrole'] = '<a href=\"$a->url\">$a->name</a>';
-$string['check_riskbackup_unassign'] = '<a href=\"$a->url\">$a->fullname ($a->email)</a>';
+$string['check_riskbackup_editoverride'] = '<a href=\"$a->url\">$a->name in $a->contextname</a>';
+$string['check_riskbackup_unassign'] = '<a href=\"$a->url\">$a->fullname ($a->email) in $a->contextname</a>';
 $string['check_riskbackup_ok'] = 'No roles explicitly allow backup of user data';
 $string['check_riskbackup_detailsok'] = 'No roles explicitly allow backup of user data.  However, note that admins with the \"doanything\" capability are still likely to be able to do this.';
 

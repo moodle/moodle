@@ -1110,59 +1110,90 @@ function report_security_check_riskbackup($detailed=false) {
     $result->status  = null;
     $result->link    = null;
 
-    if ($roles = get_roles_with_capability('moodle/backup:userinfo', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM))) {
-        // Find all the users who have the potential ability to backup user info.  Ignoring the actual backup capability for now
-        // because it could easily be ALLOWed later and then these user info caps would suddenly be a problem.
-        $sqluserinfo = "SELECT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, ra.contextid, ra.roleid
-                      FROM (SELECT rcx.*
-                            FROM {$CFG->prefix}role_capabilities rcx
-                           WHERE rcx.capability = 'moodle/backup:userinfo' AND rcx.permission = ".CAP_ALLOW.") rc,
-                         {$CFG->prefix}context c,
-                         {$CFG->prefix}context sc,
-                         {$CFG->prefix}role_assignments ra,
-                         {$CFG->prefix}user u
-                   WHERE c.id = rc.contextid
-                         AND (sc.path = c.path OR sc.path LIKE ".sql_concat('c.path', "'/%'")." OR c.path LIKE ".sql_concat('sc.path', "'/%'").")
-                         AND u.id = ra.userid AND u.deleted = 0
-                         AND ra.contextid = sc.id AND ra.roleid = rc.roleid AND sc.contextlevel <= ".CONTEXT_COURSE."
-                GROUP BY u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, ra.contextid, ra.roleid
-                ORDER BY u.lastname, u.firstname";
-    
-        $usercount = count_records_sql("SELECT COUNT('x') FROM ($sqluserinfo) userinfo");
+    $syscontext = get_context_instance(CONTEXT_SYSTEM);
 
-        $result->status  = REPORT_SECURITY_WARNING;
-        $a = (object)array('rolecount'=>count($roles), 'usercount'=>$usercount);
-        $result->info = get_string('check_riskbackup_warning', 'report_security', $a);
+    $systemroles = get_records_sql(
+        "SELECT DISTINCT r.*
+           FROM {$CFG->prefix}role r
+           JOIN {$CFG->prefix}role_capabilities rc ON rc.roleid = r.id
+          WHERE rc.capability = 'moodle/backup:userinfo' AND rc.contextid = $syscontext->id AND rc.permission = ".CAP_ALLOW."");
 
-        if ($detailed) {
-            // Make a list of roles
-            foreach ($roles as $role) {
+    $overriddenroles = get_records_sql(
+        "SELECT DISTINCT r.*, rc.contextid
+           FROM {$CFG->prefix}role r
+           JOIN {$CFG->prefix}role_capabilities rc ON rc.roleid = r.id
+          WHERE rc.capability = 'moodle/backup:userinfo' AND rc.contextid <> $syscontext->id AND rc.permission = ".CAP_ALLOW."");
+
+    // list of users that are able to backup personal info
+    // note: "sc" is context where is role assigned,
+    //       "c" is context where is role overriden or system context if in role definition
+    $sqluserinfo = "
+        FROM (SELECT rcx.*
+                FROM {$CFG->prefix}role_capabilities rcx
+               WHERE rcx.permission = ".CAP_ALLOW." AND rcx.capability = 'moodle/backup:userinfo') rc,
+             {$CFG->prefix}context c,
+             {$CFG->prefix}context sc,
+             {$CFG->prefix}role_assignments ra,
+             {$CFG->prefix}user u
+       WHERE c.id = rc.contextid
+             AND (sc.path = c.path OR sc.path LIKE ".sql_concat('c.path', "'/%'")." OR c.path LIKE ".sql_concat('sc.path', "'/%'").")
+             AND u.id = ra.userid AND u.deleted = 0
+             AND ra.contextid = sc.id AND ra.roleid = rc.roleid
+             AND sc.contextlevel <= ".CONTEXT_COURSE." AND c.contextlevel <= ".CONTEXT_COURSE."";
+
+    $usercount = count_records_sql("SELECT COUNT('x') FROM (SELECT DISTINCT u.id $sqluserinfo) userinfo");
+    $systemrolecount = empty($systemroles) ? 0 : count($systemroles);
+    $overriddenrolecount = empty($overriddenroles) ? 0 : count($overriddenroles);
+
+    $result->status  = REPORT_SECURITY_WARNING; // there is always at least one admin
+    $a = (object)array('rolecount'=>$systemrolecount,'overridecount'=>$overriddenrolecount,'usercount'=>$usercount);
+    $result->info = get_string('check_riskbackup_warning', 'report_security', $a);
+
+    if ($detailed) {
+
+        $result->details = '';  // Will be added to later
+
+        // Make a list of roles
+        if ($systemroles) {
+            $links = array();
+            foreach ($systemroles as $role) {
                 $role->url = "$CFG->wwwroot/$CFG->admin/roles/manage.php?action=edit&amp;roleid=$role->id";
-                $rolelinks[] = '<li>'.get_string('check_riskbackup_editrole', 'report_security', $role).'</li>';
+                $links[] = '<li>'.get_string('check_riskbackup_editrole', 'report_security', $role).'</li>';
             }
-            $rolelinks = '<ul>'.implode($rolelinks).'</ul>';
-
-            // Get a list of users as well
-            $rs = get_recordset_sql($sqluserinfo);
-            $users = array();
-            while ($user = rs_fetch_next_record($rs)) {
-                $url = "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=$user->contextid&amp;roleid=$user->roleid";
-                $a = (object)array('fullname'=>fullname($user), 'url'=>$url, 'email'=>$user->email);
-                $users[] = '<li>'.get_string('check_riskbackup_unassign', 'report_security', $a).'</li>';
-            }
-            rs_close($rs);
-            $users = '<ul>'.implode($users).'</ul>';
-
-            // Combine as one big list of info
-            $a = (object)array('roles'=>$rolelinks, 'users'=>$users);
-            $result->details = get_string('check_riskbackup_detailswarning', 'report_security', $a);
+            $links = '<ul>'.implode($links).'</ul>';
+            $result->details .= get_string('check_riskbackup_details_systemroles', 'report_security', $links);
         }
-    } else {
-        $result->status  = REPORT_SECURITY_OK;
-        $result->info = get_string('check_riskbackup_ok', 'report_security');
 
-        if ($detailed) {
-            $result->details = get_string('check_riskbackup_detailsok', 'report_security');
+        // Make a list of overrides to roles
+        $rolelinks2 = array();
+        if ($overriddenroles) {
+            $links = array();
+            foreach ($overriddenroles as $role) {
+                $context = get_context_instance_by_id($role->contextid);
+                $role->contextname = print_context_name($context);
+                $role->url = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$role->contextid&amp;roleid=$role->id";
+                $links[] = '<li>'.get_string('check_riskbackup_editoverride', 'report_security', $role).'</li>';
+            }
+            $links = '<ul>'.implode($links).'</ul>';
+            $result->details .= get_string('check_riskbackup_details_overriddenroles', 'report_security', $links);
+        }
+
+        // Get a list of affected users as well
+        $rs = get_recordset_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, ra.contextid, ra.roleid
+            $sqluserinfo ORDER BY u.lastname, u.firstname");
+
+        $users = array();
+        while ($user = rs_fetch_next_record($rs)) {
+            $context = get_context_instance_by_id($user->contextid);
+            $url = "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=$user->contextid&amp;roleid=$user->roleid";
+            $a = (object)array('fullname'=>fullname($user), 'url'=>$url, 'email'=>$user->email,
+                               'contextname'=>print_context_name($context));
+            $users[] = '<li>'.get_string('check_riskbackup_unassign', 'report_security', $a).'</li>';
+        }
+        rs_close($rs);
+        if (!empty($users)) {
+            $users = '<ul>'.implode($users).'</ul>';
+            $result->details .= get_string('check_riskbackup_details_users', 'report_security', $users);
         }
     }
 
