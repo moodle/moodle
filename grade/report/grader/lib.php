@@ -1256,9 +1256,9 @@ class grade_report_grader extends grade_report {
 
             $fixedstudents = $this->is_fixed_students();
             if (!$fixedstudents) {
-                $colspan='';
+                $colspan='colspan="2" ';
                 if ($this->get_pref('showuseridnumber')) {
-                    $colspan = 'colspan="2" ';
+                    $colspan = 'colspan="3" ';
                 }
                 $rangehtml .= '<th class="header c0 range" '.$colspan.' scope="row">'.$this->get_lang_string('range','grades').'</th>';
             }
@@ -1297,9 +1297,9 @@ class grade_report_grader extends grade_report {
             $fixedstudents = $this->is_fixed_students();
             $showuseridnumber = $this->get_pref('showuseridnumber');
 
-            $colspan = '';
+            $colspan = 'colspan="2"';
             if ($showuseridnumber) {
-                $colspan = 'colspan="2"';
+                $colspan = 'colspan="3"';
             }
 
             if (!$fixedstudents) {
