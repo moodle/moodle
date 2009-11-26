@@ -14,7 +14,5 @@ $string['environment'] = 'Mediu';
 $string['language'] = 'Limba';
 $string['reload'] = 'Reîncarcă';
 $string['thischarset'] = 'UTF-8';
-$string['thischarset'] = 'UTF-8';
-$string['thislanguage'] = 'Română';
 $string['thislanguage'] = 'Română';
 ?>
