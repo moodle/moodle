@@ -30,10 +30,10 @@
         $entriesbypage = $CFG->glossary_entbypage;
     }
 
-    print_header();
-
     require_course_login($course, true, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    print_header();
 
 /// Loading the textlib singleton instance. We are going to need it.
     $textlib = textlib_get_instance();
