@@ -105,7 +105,8 @@
     $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id", 'type' => 'misc');
     $navlinks[] = array('name' => $strchangepassword, 'link' => null, 'type' => 'misc');
     $navigation = build_navigation($navlinks);
-
+    // Turn off pop-up messaging window for this page
+    $CFG->messaging = 0;
     print_header($strchangepassword, $strchangepassword, $navigation);
     if (get_user_preferences('auth_forcepasswordchange')) {
         notify(get_string('forcepasswordchangenotice'));
