@@ -51,10 +51,10 @@ if ( !$entriesbypage = $glossary->entbypage ) {
     $entriesbypage = $CFG->glossary_entbypage;
 }
 
-echo $OUTPUT->header();
-
 require_course_login($course, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+echo $OUTPUT->header();
 
 /// Loading the textlib singleton instance. We are going to need it.
 $textlib = textlib_get_instance();
