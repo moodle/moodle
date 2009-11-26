@@ -29,9 +29,7 @@ $string['report'] = 'Raport';
 $string['restricted'] = 'Restricţionat';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
-$string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Română';
 $string['thislanguage'] = 'Română';
 $string['user'] = 'Utilizator';
 ?>
