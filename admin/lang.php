@@ -1013,6 +1013,10 @@ function lang_fix_value_before_save($value='') {
     if (ini_get_bool('magic_quotes_sybase')) {          // Unescape escaped sybase quotes
         $value = str_replace("''", "'", $value);
     }
+    // escape all embedded variables
+    $value = str_replace('$', '\$', $value);            // Add slashes for $
+    // unescape placeholders: only $a and $a->something are allowed. All other $variables are left escaped
+    $value = preg_replace('/\\\\\$a($|[^_a-zA-Z0-9\-]|\->[a-zA-Z0-9_]+)/', '$a\\1', $value);
     $value = str_replace("'", "\\'", $value);           // Add slashes for '
     $value = str_replace('"', "\\\"", $value);          // Add slashes for "
     $value = str_replace("%","%%",$value);              // Escape % characters
