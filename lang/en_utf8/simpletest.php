@@ -54,7 +54,7 @@ $string['updatingnoninsertedrecord'] = 'Trying to update a record that was not i
 $string['uncaughtexception'] = 'Uncaught exception [{$a->getMessage()}] in [{$a->getFile()}:{$a->getLine()}] TESTS ABORTED.';
 $string['uncoveredlines'] = 'Uncovered lines';
 $string['unittests'] = 'Unit tests';
-$string['unittestprefixsetting'] = 'Unit test prefix: <strong>$CFG->unittestprefix</strong> (Edit config.php to modify this).';
+$string['unittestprefixsetting'] = 'Unit test prefix: <strong>$a->unittestprefix</strong> (Edit config.php to modify this).';
 $string['version'] = 'Using <a href=\"http://sourceforge.net/projects/simpletest/\">SimpleTest</a> version $a.';
 
 ?>
