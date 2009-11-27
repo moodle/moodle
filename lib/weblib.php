@@ -1580,7 +1580,7 @@ function get_emoticons_list_for_help_file() {
  * @global object
  * @param string $text The string to convert.
  * @param boolean $smiley Convert any smiley characters to smiley images?
- * @param boolean $para If true then the returned string will be wrapped in paragraph tags
+ * @param boolean $para If true then the returned string will be wrapped in div tags
  * @param boolean $newlines If true then lines newline breaks will be converted to HTML newline breaks.
  * @return string
  */
@@ -1609,9 +1609,10 @@ function text_to_html($text, $smiley=true, $para=true, $newlines=true) {
         replace_smilies($text);
     }
 
-/// Wrap the whole thing in a paragraph tag if required
+/// Wrap the whole thing in a div if required
     if ($para) {
-        return '<p>'.$text.'</p>';
+        //return '<p>'.$text.'</p>'; //1.9 version
+        return '<div class="text_to_html">'.$text.'</div>';
     } else {
         return $text;
     }
