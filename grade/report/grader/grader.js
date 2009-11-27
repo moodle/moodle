@@ -2,14 +2,18 @@ YAHOO.namespace("graderreport");
 
 YAHOO.graderreport.init = function() {
     // Adjust height of header c0
+    //"heading_name_row" only exists if static students column is turned on
     var rows = YAHOO.util.Dom.getElementsByClassName('heading_name_row');
-    var header_cell_region = YAHOO.util.Dom.getRegion();
-    if(header_cell_region)
+    if(rows && rows.length>0)
     {
-        var height = header_cell_region.bottom - header_cell_region.top;
-        if(!isNan(height))
+        var header_cell_region = YAHOO.util.Dom.getRegion(rows[rows.length-1].firstChild);
+        if(header_cell_region)
         {
-            YAHOO.util.Dom.setStyle('studentheader', 'height', height + 'px');
+            var height = header_cell_region.bottom - header_cell_region.top;
+            if(!isNan(height))
+            {
+                YAHOO.util.Dom.setStyle('studentheader', 'height', height + 'px');
+            }
         }
     }
 
