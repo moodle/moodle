@@ -34,6 +34,8 @@ class data_field_checkbox extends data_field_base {
         if ($recordid) {
             $content = $DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
             $content = explode('##', $content);
+        } else {
+            $content = array();
         }
 
         $str = '<div title="'.s($this->field->description).'">';
@@ -50,7 +52,7 @@ class data_field_checkbox extends data_field_base {
             $str .= 'value="' . s($checkbox) . '" ';
 
             if (array_search($checkbox, $content) !== false) {
-                $str .= 'checked="checked" />';
+                $str .= 'checked />';
             } else {
                 $str .= '/>';
             }
@@ -64,26 +66,68 @@ class data_field_checkbox extends data_field_base {
 
     function display_search_field($value='') {
         global $CFG, $DB, $OUTPUT;
-        $temp = $DB->get_records_sql_menu('SELECT id, content FROM {data_content} WHERE fieldid=? GROUP BY content ORDER BY content', array($this->field->id));
-        $options = array();
-        if(!empty($temp)) {
-            $options[''] = '';              //Make first index blank.
-            foreach ($temp as $key) {
-                $options[$key] = $key;  //Build following indicies from the sql.
-            }
+        if (!is_array($value)) {
+            $content = $value['checked'];
+            $allrequired = $value['allrequired'] ? 'checked = "checked"' : '';
+        } else {
+            $content = array();
+            $allrequired = '';
         }
-        return $OUTPUT->select(html_select::make($options, 'f_'.$this->field->id, $value));
+
+        $str = '';
+        $found = false;
+        foreach (explode("\n",$this->field->param1) as $checkbox) {
+            $checkbox = trim($checkbox);
+
+            if (in_array(addslashes($checkbox), $content)) {
+                $str .= $OUTPUT->checkbox(html_select_option::make_checkbox(s($checkbox), true, $checkbox), 'f_'.$this->field->id.'[]');
+            }
+            $str .= $OUTPUT->checkbox(html_select_option::make_checkbox(s($checkbox), false, $checkbox), 'f_'.$this->field->id.'[]');
+            $found = true;
+        }
+        if (!$found) {
+            return '';
+        }
+
+        $str .= $OUTPUT->checkbox(html_select_option::make_checkbox(null, false, get_string('selectedrequired', 'data')), 'f_'.$this->field->id.'_allreq');
+        return $str;
     }
 
     function parse_search_field() {
-        return optional_param('f_'.$this->field->id, '', PARAM_NOTAGS);
+        $selected    = optional_param('f_'.$this->field->id, array(), PARAM_NOTAGS);
+        $allrequired = optional_param('f_'.$this->field->id.'_allreq', 0, PARAM_BOOL);
+        if (empty($selected)) {
+            // no searching
+            return '';
+        }
+        return array('checked'=>$selected, 'allrequired'=>$allrequired);
     }
 
     function generate_sql($tablealias, $value) {
         static $i=0;
         $i++;
         $name = "df_checkbox_$i";
-        return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = :$name) ", array($name=>$value));
+        $allrequired = $value['allrequired'];
+        $selected    = $value['checked'];
+
+        if ($selected) {
+            $conditions = array();
+            foreach ($selected as $sel) {
+                $likesel = str_replace('%', '\%', $sel);
+                $likeselsel = str_replace('_', '\_', $likesel);
+                $conditions[] = "({$tablealias}.fieldid = {$this->field->id} AND ({$tablealias}.content = '$sel'
+                    OR {$tablealias}.content LIKE '$likesel##%'
+                    OR {$tablealias}.content LIKE '%##$likesel'
+                    OR {$tablealias}.content LIKE '%##$likesel##%'))";
+            }
+            if ($allrequired) {
+                return array(" (".implode(" AND ", $conditions).") ", array($name=>$value));
+            } else {
+                return array(" (".implode(" OR ", $conditions).") ", array($name=>$value));
+            }
+        } else {
+            return array(" ", array());
+        }
     }
 
     function update_content($recordid, $value, $name='') {
@@ -106,12 +150,20 @@ class data_field_checkbox extends data_field_base {
         global $DB;
 
         if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
-            $contentArr = array();
-            if (!empty($content->content)) {
-                $contentArr = explode('##', $content->content);
+            if (empty($content->content)) {
+                return false;
             }
+
+            $options = explode("\n",$this->field->param1);
+            $options = array_map('trim', $options);
+
+            $contentArr = explode('##', $content->content);
             $str = '';
             foreach ($contentArr as $line) {
+                if (!in_array($line, $options)) {
+                    // hmm, looks like somebody edited the field definition
+                    continue;
+                }
                 $str .= $line . "<br />\n";
             }
             return $str;
@@ -121,16 +173,29 @@ class data_field_checkbox extends data_field_base {
 
     function format_data_field_checkbox_content($content) {
         if (!is_array($content)) {
-            $str = $content;
-        } else {
-            $str = '';
-            foreach ($content as $val) {
-                $str .= $val . '##';
-            }
-            $str = substr($str, 0, -2);
+            return NULL;
         }
-        $str = clean_param($str, PARAM_NOTAGS);
-        return $str;
+        $options = explode("\n", $this->field->param1);
+        $options = array_map('trim', $options);
+
+        $vals = array();
+        foreach ($content as $key=>$val) {
+            if ($key === 'xxx') {
+                continue;
+            }
+            if (!in_array(stripslashes($val), $options)) {
+                continue;
+
+            }
+            $vals[] = $val;
+        }
+
+        if (empty($vals)) {
+            return NULL;
+        }
+
+        return implode('##', $vals);
     }
+
 }
 
