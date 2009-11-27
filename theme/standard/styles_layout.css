@@ -1325,6 +1325,10 @@ table.explainpermissions .cell {
   margin:auto;
 }
 
+.generalboxcontent table{
+  width:100%;
+}
+
 #admin-index .adminerror,
 #admin-index .adminwarning {
   text-align:center;
