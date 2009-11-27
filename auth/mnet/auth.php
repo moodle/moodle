@@ -295,6 +295,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                 print_error('nolocaluser', 'mnet');
             }
             $remoteuser->mnethostid = $remotehost->id;
+            $remoteuser->firstaccess = time(); // First time user in this server, grab it here
             $DB->insert_record('user', $remoteuser);
             $firsttime = true;
             if (! $localuser = $DB->get_record('user', array('username'=>$remoteuser->username, 'mnethostid'=>$remotehost->id))) {
@@ -366,6 +367,9 @@ class auth_plugin_mnet extends auth_plugin_base {
         }
 
         $localuser->mnethostid = $remotepeer->id;
+        if (empty($localuser->firstaccess)) { // Now firstaccess, grab it here
+            $localuser->firstaccess = time();
+        }
 
         $DB->update_record('user', $localuser);
 
