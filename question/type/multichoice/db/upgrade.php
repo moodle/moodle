@@ -21,7 +21,7 @@
 // before any action that may take longer time to finish.
 
 function xmldb_qtype_multichoice_upgrade($oldversion) {
-    global $CFG, $DB;
+    global $CFG, $DB, $QTYPES;
 
     $dbman = $DB->get_manager();
     $result = true;
