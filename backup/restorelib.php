@@ -705,22 +705,34 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     * Here it's the logic applied, keep it updated:
     *
     *  If restoring users from same site backup:
-    *      1A - If match by id and username and mnethost  => ok, return target user
-    *      1B - If match by id and mnethost and user is deleted in DB and
-    *           match by email LIKE 'backup_email%'  => ok, return target user
-    *      1C - If match by id and mnethost and user is deleted in backup file
+    *      1A - Normal check: If match by id and username and mnethost  => ok, return target user
+    *      1B - Handle users deleted in DB and "alive" in backup file:
+    *           If match by id and mnethost and user is deleted in DB and
+    *           (match by username LIKE 'backup_email.%' or by non empty email = md5(username)) => ok, return target user
+    *      1C - Handle users deleted in backup file and "alive" in DB:
+    *           If match by id and mnethost and user is deleted in backup file
     *           and match by email = email_without_time(backup_email) => ok, return target user
-    *      1D - If match by username and mnethost and doesn't match by id => conflict, return false
-    *      1E - else => user needs to be created, return true
+    *      1D - Conflict: If match by username and mnethost and doesn't match by id => conflict, return false
+    *      1E - None of the above, return true => User needs to be created
     *
-    *  if restoring from another site backup:
-    *      2A - If match by username and mnethost and
-    *           (email or non-zero firstaccess) => ok, return target user
-    *      2B - Note: we cannot handle "deleted" situations here as far
-    *           as username gets modified and id cannot be used here
-    *      2C - If match by username and mnethost and not
-    *           by (email or non-zero firstaccess) => conflict, return false
-    *      2D - else => user needs to be created, return true
+    *  if restoring from another site backup (cannot match by id here, replace it by email/firstaccess combination):
+    *      2A - Normal check: If match by username and mnethost and (email or non-zero firstaccess) => ok, return target user
+    *      2B - Handle users deleted in DB and "alive" in backup file:
+    *           2B1 - If match by mnethost and user is deleted in DB and not empty email = md5(username) and
+    *                 (username LIKE 'backup_email.%' or non-zero firstaccess) => ok, return target user
+    *           2B2 - If match by mnethost and user is deleted in DB and
+    *                 username LIKE 'backup_email.%' and non-zero firstaccess) => ok, return target user
+    *                 (to cover situations were md5(username) wasn't implemented on delete we requiere both)
+    *      2C - Handle users deleted in backup file and "alive" in DB:
+    *           If match mnethost and user is deleted in backup file
+    *           and by email = email_without_time(backup_email) and non-zero firstaccess=> ok, return target user
+    *      2D - Conflict: If match by username and mnethost and not by (email or non-zero firstaccess) => conflict, return false
+    *      1E - None of the above, return true => User needs to be created
+    *
+    * Note: for DB deleted users email is stored in username field, hence we
+    *       are looking there for emails. See delete_user()
+    * Note: for DB deleted users md5(username) is stored *sometimes* in the email field,
+    *       hence we are looking there for usernames if not empty. See delete_user()
     */
     function restore_check_user($restore, $user) {
         global $CFG;
@@ -742,26 +754,34 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
 
             // 1B - Handle users deleted in DB and "alive" in backup file
-            // 1B1- If match by id and mnethost and user is deleted in DB and
-            //      match by email LIKE 'backup_email.%'  => ok, return target user
-            // Note: for deleted users email is stored in username field, hence we
-            //       are looking there for emails in the query below. See delete_user()
+            // Note: for DB deleted users email is stored in username field, hence we
+            //       are looking there for emails. See delete_user()
+            // Note: for DB deleted users md5(username) is stored *sometimes* in the email field,
+            //       hence we are looking there for usernames if not empty. See delete_user()
+            // If match by id and mnethost and user is deleted in DB and
+            // match by username LIKE 'backup_email.%' or by non empty email = md5(username) => ok, return target user
             if ($rec = get_record_sql("SELECT *
                                          FROM {$CFG->prefix}user u
                                         WHERE id = $user->id
                                           AND mnethostid = $user->mnethostid
                                           AND deleted = 1
-                                          AND username LIKE '$user->email.%'")) {
+                                          AND (
+                                                  username LIKE '$user->email.%'
+                                               OR (
+                                                      ".sql_isnotempty('user', 'email', false, false)."
+                                                  AND email = '".md5($user->username)."'
+                                                  )
+                                              )")) {
                 return $rec; // Matching user, deleted in DB found, return it
             }
 
             // 1C - Handle users deleted in backup file and "alive" in DB
-            // 1C1- If match by id and mnethost and user is deleted in backup file
-            //      and match by email = email_without_time(backup_email) => ok, return target user
+            // If match by id and mnethost and user is deleted in backup file
+            // and match by email = email_without_time(backup_email) => ok, return target user
             if ($user->deleted) {
+                // Note: for DB deleted users email is stored in username field, hence we
+                //       are looking there for emails. See delete_user()
                 // Trim time() from email
-                // Note: for deleted users email is stored in username field, hece
-                //       we are trimming the username field to get the email. See delete_user()
                 $trimemail = preg_replace('/(.*?)\.[0-9]+.?$/', '\\1', $user->username);
                 if ($rec = get_record_sql("SELECT *
                                              FROM {$CFG->prefix}user u
@@ -795,23 +815,65 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                                   AND firstaccess = $user->firstaccess
                                                   )
                                               )")) {
-                return $rec; // Matching user
+                return $rec; // Matching user found, return it
             }
 
             // 2B - Handle users deleted in DB and "alive" in backup file
-            // Note: for deleted users email is stored in username field, hence we
-            //       are looking there for emails in the query below. See delete_user()
-            // Note: for deleted users md5(username) is stored *sometimes* in the
-            // email field, hence we are looking there for usernames in the query below
-            // 2B - Note: we cannot handle "deleted" situations here as far
-            //     as username gets modified and id cannot be used either
-            // 2B1-deleted = 1 AND email = md5(username) AND mnsethostid AND (username like $user->email.% OR firstaccess)
-            // 2B2 deleted and mnsethostid AND username like $user->email.% AND firstaccess
+            // Note: for DB deleted users email is stored in username field, hence we
+            //       are looking there for emails. See delete_user()
+            // Note: for DB deleted users md5(username) is stored *sometimes* in the email field,
+            //       hence we are looking there for usernames if not empty. See delete_user()
+            // 2B1 - If match by mnethost and user is deleted in DB and not empty email = md5(username) and
+            //       (by username LIKE 'backup_email.%' or non-zero firstaccess) => ok, return target user
+            if ($rec = get_record_sql("SELECT *
+                                         FROM {$CFG->prefix}user u
+                                        WHERE mnethostid = $user->mnethostid
+                                          AND deleted = 1
+                                          AND ".sql_isnotempty('user', 'email', false, false)."
+                                          AND email = '".md5($user->username)."'
+                                          AND (
+                                                  username LIKE '$user->email.%'
+                                               OR (
+                                                      firstaccess != 0
+                                                  AND firstaccess = $user->firstaccess
+                                                  )
+                                              )")) {
+                return $rec; // Matching user found, return it
+            }
+
+            // 2B2 - If match by mnethost and user is deleted in DB and
+            //       username LIKE 'backup_email.%' and non-zero firstaccess) => ok, return target user
+            //       (this covers situations where md5(username) wasn't being stored so we require both
+            //        the email & non-zero firstaccess to match)
+            if ($rec = get_record_sql("SELECT *
+                                         FROM {$CFG->prefix}user u
+                                        WHERE mnethostid = $user->mnethostid
+                                          AND deleted = 1
+                                          AND username LIKE '$user->email.%'
+                                          AND firstaccess != 0
+                                          AND firstaccess = $user->firstaccess")) {
+                return $rec; // Matching user found, return it
+            }
 
             // 2C - Handle users deleted in backup file and "alive" in DB
+            // If match mnethost and user is deleted in backup file
+            // and match by email = email_without_time(backup_email) and non-zero firstaccess=> ok, return target user
+            if ($user->deleted) {
+                // Note: for DB deleted users email is stored in username field, hence we
+                //       are looking there for emails. See delete_user()
+                // Trim time() from email
+                $trimemail = preg_replace('/(.*?)\.[0-9]+.?$/', '\\1', $user->username);
+                if ($rec = get_record_sql("SELECT *
+                                             FROM {$CFG->prefix}user u
+                                            WHERE mnethostid = $user->mnethostid
+                                              AND email = '$trimemail'
+                                              AND firstaccess != 0
+                                              AND firstaccess = $user->firstaccess")) {
+                    return $rec; // Matching user, deleted in backup file found, return it
+                }
+            }
 
-            // 2D - If match by username and mnethost and not
-            //     by (email or non-zero firstaccess) => conflict, return false
+            // 2D - If match by username and mnethost and not by (email or non-zero firstaccess) => conflict, return false
             if ($rec = get_record_sql("SELECT *
                                          FROM {$CFG->prefix}user u
                                         WHERE username = '$user->username'
@@ -830,7 +892,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         // Arrived here, return true as the user will need to be created and no
         // conflicts have been found in the logic above. This covers:
         // 1E - else => user needs to be created, return true
-        // 2D - else => user needs to be created, return true
+        // 2E - else => user needs to be created, return true
         return true;
     }
 
