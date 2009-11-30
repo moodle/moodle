@@ -598,7 +598,8 @@ class TestSuite {
                 // moodle hack start - need to do this before the constructor call, because of FakeDBUnitTestCase.
                 global $CFG;
                 if (is_subclass_of($class, 'FakeDBUnitTestCase')) {
-                    // Do not execute this test because the test tables system no longer works.
+                    // Do not execute this test because the test tables system no longer works, reporting it as exception
+                    $reporter->paintError("Unit test \"{$class}\" of type FakeDBUnitTestCase no longer supported. Must be migrated to UnitTestCaseUsingDatabase.");
                     continue;
                 }
                 if (is_subclass_of($class, 'UnitTestCaseUsingDatabase') && empty($CFG->unittestprefix)) {
