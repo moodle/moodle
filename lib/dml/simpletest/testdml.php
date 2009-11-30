@@ -1304,8 +1304,8 @@ class dml_test extends UnitTestCase {
         $rs = $DB->get_recordset($tablename, array('id' => $recid));
         $record = $rs->current();
         $rs->close();
-        $this->assertEqual($clob, $record->onetext);
-        $this->assertEqual($blob, $record->onebinary);
+        $this->assertEqual($clob, $record->onetext, 'Test CLOB insert (full contents output disabled)');
+        $this->assertEqual($blob, $record->onebinary, 'Test BLOB insert (full contents output disabled)');
 
         // And "small" LOBs too, just in case
         $newclob = substr($clob, 0, 500);
@@ -1316,8 +1316,8 @@ class dml_test extends UnitTestCase {
         $rs = $DB->get_recordset($tablename, array('id' => $recid));
         $record = $rs->current();
         $rs->close();
-        $this->assertEqual($newclob, $record->onetext);
-        $this->assertEqual($newblob, $record->onebinary);
+        $this->assertEqual($newclob, $record->onetext, 'Test "small" CLOB insert (full contents output disabled)');
+        $this->assertEqual($newblob, $record->onebinary, 'Test "small" BLOB insert (full contents output disabled)');
         $this->assertEqual(false, $rs->key()); // Ensure recordset key() method to be working ok after closing
     }
 
@@ -1520,8 +1520,8 @@ class dml_test extends UnitTestCase {
         $record->onebinary = $blob;
         $DB->update_record($tablename, $record);
         $record = $DB->get_record($tablename, array('course' => 2));
-        $this->assertEqual($clob, $record->onetext);
-        $this->assertEqual($blob, $record->onebinary);
+        $this->assertEqual($clob, $record->onetext, 'Test CLOB update (full contents output disabled)');
+        $this->assertEqual($blob, $record->onebinary, 'Test BLOB update (full contents output disabled)');
 
         // And "small" LOBs too, just in case
         $newclob = substr($clob, 0, 500);
@@ -1530,8 +1530,8 @@ class dml_test extends UnitTestCase {
         $record->onebinary = $newblob;
         $DB->update_record($tablename, $record);
         $record = $DB->get_record($tablename, array('course' => 2));
-        $this->assertEqual($newclob, $record->onetext);
-        $this->assertEqual($newblob, $record->onebinary);
+        $this->assertEqual($newclob, $record->onetext, 'Test "small" CLOB update (full contents output disabled)');
+        $this->assertEqual($newblob, $record->onebinary, 'Test "small" BLOB update (full contents output disabled)');
     }
 
     public function test_set_field() {
@@ -1675,16 +1675,16 @@ class dml_test extends UnitTestCase {
         $blob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/randombinary');
         $DB->set_field_select($tablename, 'onetext', $clob, 'id = ?', array(1));
         $DB->set_field_select($tablename, 'onebinary', $blob, 'id = ?', array(1));
-        $this->assertEqual($clob, $DB->get_field($tablename, 'onetext', array('id' => 1)));
-        $this->assertEqual($blob, $DB->get_field($tablename, 'onebinary', array('id' => 1)));
+        $this->assertEqual($clob, $DB->get_field($tablename, 'onetext', array('id' => 1)), 'Test CLOB set_field (full contents output disabled)');
+        $this->assertEqual($blob, $DB->get_field($tablename, 'onebinary', array('id' => 1)), 'Test BLOB set_field (full contents output disabled)');
 
         // And "small" LOBs too, just in case
         $newclob = substr($clob, 0, 500);
         $newblob = substr($blob, 0, 250);
         $DB->set_field_select($tablename, 'onetext', $newclob, 'id = ?', array(1));
         $DB->set_field_select($tablename, 'onebinary', $newblob, 'id = ?', array(1));
-        $this->assertEqual($newclob, $DB->get_field($tablename, 'onetext', array('id' => 1)));
-        $this->assertEqual($newblob, $DB->get_field($tablename, 'onebinary', array('id' => 1)));
+        $this->assertEqual($newclob, $DB->get_field($tablename, 'onetext', array('id' => 1)), 'Test "small" CLOB set_field (full contents output disabled)');
+        $this->assertEqual($newblob, $DB->get_field($tablename, 'onebinary', array('id' => 1)), 'Test "small" BLOB set_field (full contents output disabled)');
     }
 
     public function test_count_records() {
