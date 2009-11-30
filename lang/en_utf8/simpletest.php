@@ -40,6 +40,7 @@ $string['runtests'] = 'Run tests';
 $string['rununittests'] = 'Run the unit tests';
 $string['showpasses'] = 'Show passes as well as fails.';
 $string['showsearch'] = 'Show the search for test files.';
+$string['skip'] = 'Skip';
 $string['stacktrace'] = 'Stack trace:';
 $string['summary'] = '{$a->run}/{$a->total} test cases complete: <strong>{$a->passes}</strong> passes, <strong>{$a->fails}</strong> fails and <strong>{$a->exceptions}</strong> exceptions.';
 $string['tablesnotsetup'] = 'Unit test tables are not yet built. Do you want to build them now?.';

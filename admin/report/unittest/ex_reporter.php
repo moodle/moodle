@@ -69,6 +69,15 @@ class ExHtmlReporter extends HtmlReporter {
     }
 
     /**
+     * Called when a skip needs to be output.
+     */
+    function paintSkip($message) {
+        // Explicitly call grandparent, not parent::paintFail.
+        SimpleScorer::paintSkip($message);
+        $this->_paintPassFail('skip', $message);
+    }
+
+    /**
      * Called when an error (uncaught exception or PHP error) needs to be output.
      */
     function paintError($message) {
@@ -78,7 +87,7 @@ class ExHtmlReporter extends HtmlReporter {
     }
 
     /**
-     * Private method. Used by printPass/Fail/Error.
+     * Private method. Used by printPass/Fail/Skip/Error.
      */
     function _paintPassFail($passorfail, $message, $rawmessage=false) {
         global $FULLME, $CFG, $OUTPUT;

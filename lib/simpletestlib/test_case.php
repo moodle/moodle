@@ -604,6 +604,7 @@ class TestSuite {
                 }
                 if (is_subclass_of($class, 'UnitTestCaseUsingDatabase') && empty($CFG->unittestprefix)) {
                     // Do not execute this test because $CFG->unittestprefix is not set, but it will be required.
+                    $reporter->paintSkip("Unit test \"{$class}\" of type UnitTestCaseUsingDatabase skipped. Must define different, non-conflicting \$CFG->unittestprefix to be runnable.");
                     continue;
                 }
                 if ($currenttl = @ini_get('max_execution_time')) {
