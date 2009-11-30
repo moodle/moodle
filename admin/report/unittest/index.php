@@ -119,28 +119,6 @@ echo '</fieldset>';
 echo '</form>';
 echo $OUTPUT->box_end();
 
-echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
-if (true) {
-    echo "<p>Fake test tables are disabled for now, sorry</p>"; // DO NOT LOCALISE!!! to be removed soon
-
-} else if (empty($CFG->unittestprefix)) {
-    echo $OUTPUT->heading(get_string('testdboperations', 'simpletest'));
-    // TODO: localise
-    echo '<p>Please add $CFG->unittestprefix="tst_"; or some other unique test table prefix if you want to execute all tests';
-
-} else {
-    echo $OUTPUT->heading(get_string('testdboperations', 'simpletest'));
-    echo '<p>'.get_string('unittestprefixsetting', 'simpletest', $CFG).'</p>';
-
-    echo '<form style="display:inline" method="get" action="index.php">';
-    echo '<fieldset class="invisiblefieldset">';
-    echo '<input type="hidden" name="setuptesttables" value="1" />';
-    echo '<input type="submit" value="' . get_string('reinstalltesttables', 'simpletest') . '" />';
-    echo '</fieldset>';
-    echo '</form>';
-}
-echo $OUTPUT->box_end();
-
 // Print link to latest code coverage for this report type
 if (is_null($path) || !$codecoverage) {
     moodle_coverage_reporter::print_link_to_latest('unittest');
