@@ -76,7 +76,7 @@ class moodle_page_test extends UnitTestCase {
     /** Creates an object with all the fields you would expect a $course object to have. */
     protected function create_a_course() {
         $course = new stdClass;
-        $course->id = -1;
+        $course->id = 13; // Why 13, good question. MDL-21007
         $course->category = 2;
         $course->fullname = 'Anonymous test course';
         $course->shortname = 'ANON';
@@ -416,7 +416,7 @@ class moodle_page_with_context_table_test extends UnitTestCaseUsingDatabase {
     /** Creates an object with all the fields you would expect a $course object to have. */
     protected function create_a_course_with_context() {
         $course = new stdClass;
-        $course->id = -1;
+        $course->id = 13;
         $course->category = 2;
         $course->fullname = 'Anonymous test course';
         $course->shortname = 'ANON';
@@ -426,7 +426,7 @@ class moodle_page_with_context_table_test extends UnitTestCaseUsingDatabase {
         $context->contextlevel = CONTEXT_COURSE;
         $context->instanceid = $course->id;
         $context->path = 'not initialised';
-        $context->depth = '-1';
+        $context->depth = '13';
         $this->testdb->insert_record('context', $context);
 
         return $course;
@@ -464,7 +464,7 @@ class moodle_page_categories_test extends UnitTestCaseUsingDatabase {
         $context->contextlevel = CONTEXT_COURSE;
         $context->instanceid = $SITE->id;
         $context->path = 'not initialised';
-        $context->depth = '-1';
+        $context->depth = '13';
         $this->testdb->insert_record('context', $context);
     }
 
@@ -497,7 +497,7 @@ class moodle_page_categories_test extends UnitTestCaseUsingDatabase {
         $context->contextlevel = CONTEXT_COURSECAT;
         $context->instanceid = $cat->id;
         $context->path = 'not initialised';
-        $context->depth = '-1';
+        $context->depth = '13';
         $this->testdb->insert_record('context', $context);
 
         return $cat;
@@ -550,7 +550,7 @@ class moodle_page_cm_test extends UnitTestCaseUsingDatabase {
         $context->contextlevel = CONTEXT_COURSE;
         $context->instanceid = $SITE->id;
         $context->path = 'not initialised';
-        $context->depth = '-1';
+        $context->depth = '13';
         $this->testdb->insert_record('context', $context);
     }
 
@@ -577,7 +577,7 @@ class moodle_page_cm_test extends UnitTestCaseUsingDatabase {
         $forum->id = $this->testdb->insert_record('forum', $forum);
 
         $cm = new stdClass;
-        $cm->id = -1;
+        $cm->id = 13;
         $cm->course = $course->id;
         $cm->instance = $forum->id;
         $cm->modname = 'forum';
@@ -587,7 +587,7 @@ class moodle_page_cm_test extends UnitTestCaseUsingDatabase {
         $context->contextlevel = CONTEXT_MODULE;
         $context->instanceid = $cm->id;
         $context->path = 'not initialised';
-        $context->depth = '-1';
+        $context->depth = '13';
         $this->testdb->insert_record('context', $context);
 
         return array($cm, $course, $forum);
@@ -674,7 +674,7 @@ class moodle_page_cm_test extends UnitTestCaseUsingDatabase {
         // Set expectation
         $this->expectException();
         // Exercise SUT
-        $forum->course = -1;
+        $forum->course = 13;
         $this->testpage->set_activity_record($forum);
     }
 
@@ -685,7 +685,7 @@ class moodle_page_cm_test extends UnitTestCaseUsingDatabase {
         // Set expectation
         $this->expectException();
         // Exercise SUT
-        $forum->id = -1;
+        $forum->id = 13;
         $this->testpage->set_activity_record($forum);
     }
 
@@ -717,7 +717,7 @@ class moodle_page_cm_test extends UnitTestCaseUsingDatabase {
         // Set expectation
         $this->expectException();
         // Exercise SUT
-        $cm->course = -1;
+        $cm->course = 13;
         $this->testpage->set_cm($cm, $course);
     }
 
