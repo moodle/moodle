@@ -1930,7 +1930,8 @@ class moodle_user_picture extends moodle_html_component {
             if (!empty($this->user->imagealt)) {
                 $this->image->alt = $this->user->imagealt;
             } else {
-                $this->image->alt = get_string('pictureof','',fullname($this->user));
+                // No alt text when there is nothing useful (accessibility)
+                $this->image->alt = HTML_ATTR_EMPTY;
             }
         }
 
