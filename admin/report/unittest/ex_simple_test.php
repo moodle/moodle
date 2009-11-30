@@ -55,8 +55,8 @@ class AutoGroupTest extends TestSuite {
                 continue;
             }
             $file_path = $path . '/' . $file;
-            if (is_dir($file_path) && !preg_match('/CVS/i',$file) && !preg_match('/.git/i',$file)) {
-                if ($file != 'CVS' && !in_array($file_path, $this->ignorefolders)) {
+            if (is_dir($file_path)) {
+                if ($file != 'CVS' && $file != '.git' && !in_array($file_path, $this->ignorefolders)) {
                     $this->_recurseFolders($file_path);
                 }
             } elseif (preg_match('/simpletest(\/|\\\\)test.*\.php$/', $file_path) ||
