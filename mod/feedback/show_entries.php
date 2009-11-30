@@ -94,7 +94,7 @@ if($do_show == 'showentries'){
             $groupmode = $course->groupmode;
         }
 
-        $groupselect = groups_print_activity_menu($cm, 'show_entries.php?id=' . $cm->id.'&do_show=showentries', true);
+        $groupselect = groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/feedback/show_entries.php?id=' . $cm->id.'&do_show=showentries', true);
         $mygroupid = groups_get_activity_group($cm);
 
         //get students in conjunction with groupmode

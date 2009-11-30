@@ -61,7 +61,7 @@
     /// Check to see if groups are being used here
         $groupmode = groups_get_activity_groupmode($cm);
         $currentgroup = groups_get_activity_group($cm, true);
-        groups_print_activity_menu($cm, "report.php?id=$cm->id");
+        groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/chat/report.php?id=$cm->id");
 
         $params = array('currentgroup'=>$currentgroup, 'chatid'=>$chat->id, 'start'=>$start, 'end'=>$end);
 
@@ -128,7 +128,7 @@
 /// Check to see if groups are being used here
     if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
         $currentgroup = groups_get_activity_group($cm, true);
-        groups_print_activity_menu($cm, "report.php?id=$cm->id");
+        groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/chat/report.php?id=$cm->id");
     } else {
         $currentgroup = false;
     }

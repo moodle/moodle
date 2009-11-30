@@ -135,7 +135,7 @@ $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'data'));
 echo $OUTPUT->header();
 
 /// Check to see if groups are being used here
-groups_print_activity_menu($cm, 'edit.php?d='.$data->id);
+groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/data/edit.php?d='.$data->id);
 $currentgroup = groups_get_activity_group($cm);
 $groupmode = groups_get_activity_groupmode($cm);
 

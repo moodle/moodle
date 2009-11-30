@@ -76,7 +76,7 @@ include('tabs.php');
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
 //get the groupid
-$groupselect = groups_print_activity_menu($cm, 'analysis.php?id=' . $cm->id.'&do_show=analysis', true);
+$groupselect = groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/feedback/analysis.php?id=' . $cm->id.'&do_show=analysis', true);
 $mygroupid = groups_get_activity_group($cm);
 
 if( $capabilities->viewreports ) {

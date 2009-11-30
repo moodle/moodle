@@ -59,7 +59,7 @@
         $groupmode = groups_get_activity_groupmode($cm);
         if ($groupmode) {
             groups_get_activity_group($cm, true);
-            groups_print_activity_menu($cm, 'report.php?id='.$id);
+            groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/choice/report.php?id='.$id);
         }
     } else {
         $groupmode = groups_get_activity_groupmode($cm);

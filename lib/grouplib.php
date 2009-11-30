@@ -500,7 +500,7 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
  * @global object
  * @param object $cm course module object
  * @param string $urlroot return address that users get to if they choose an option;
- *   should include any parameters needed, e.g. 'view.php?id=34'
+ *   should include any parameters needed, e.g. "$CFG->wwwroot/mod/forum/view.php?id=34"
  * @param boolean $return return as string instead of printing
  * @param boolean $hideallparticipants If true, this prevents the 'All participants'
  *   option from appearing in cases where it normally would. This is intended for
@@ -512,6 +512,15 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
  */
 function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallparticipants=false) {
     global $CFG, $USER, $SESSION, $OUTPUT;
+
+    // Display error if urlroot is not absolute (this causes the non-JS version
+    // to break)
+    if (strpos($urlroot, 'http') !== 0) { // Will also work for https
+        debugging('groups_print_activity_menu requires absolute URL for ' .
+            '$urlroot, not <tt>' . s($urlroot) . '</tt>. Example: ' .
+            'groups_print_activity_menu($cm, $CFG->wwwroot . \'/mod/mymodule/view.php?id=13\');',
+            DEBUG_DEVELOPER);
+    }
 
     // groupings are ignored when not enabled
     if (empty($CFG->enablegroupings)) {

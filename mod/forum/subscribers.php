@@ -58,7 +58,7 @@ if (has_capability('mod/forum:managesubscriptions', $context)) {
 echo $OUTPUT->header();
 
 /// Check to see if groups are being used in this forum
-groups_print_activity_menu($cm, "subscribers.php?id=$forum->id");
+groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/forum/subscribers.php?id=$forum->id");
 $currentgroup = groups_get_activity_group($cm);
 $groupmode = groups_get_activity_groupmode($cm);
 

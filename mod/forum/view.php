@@ -92,7 +92,7 @@
     }
 
 /// find out current groups mode
-    groups_print_activity_menu($cm, 'view.php?id=' . $cm->id);
+    groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/forum/view.php?id=' . $cm->id);
     $currentgroup = groups_get_activity_group($cm);
     $groupmode = groups_get_activity_groupmode($cm);
 

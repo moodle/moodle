@@ -126,7 +126,7 @@
     if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
         $menuaction = $action == "student" ? "students" : $action;
         $currentgroup = groups_get_activity_group($cm, true);
-        groups_print_activity_menu($cm, "report.php?id=$cm->id&amp;action=$menuaction&amp;qid=$qid");
+        groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/survey/report.php?id=$cm->id&amp;action=$menuaction&amp;qid=$qid");
     } else {
         $currentgroup = 0;
     }
