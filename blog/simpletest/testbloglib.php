@@ -27,14 +27,62 @@
 
 require_once($CFG->dirroot . '/blog/locallib.php');
 
+/**
+ * Test functions that rely on the DB tables
+ */
 class bloglib_test extends UnitTestCaseUsingDatabase {
 
     public static $includecoverage = array('blog/locallib.php');
 
+    private $courseid; // To store important ids to be used in tests
+    private $groupid;
+
+    public function setUp() {
+        parent::setUp();
+        $this->create_test_tables(array('course', 'groups', 'context'), 'lib');
+        $this->switch_to_test_db();
+
+        // Create default course
+        $course = new stdClass();
+        $course->category = 1;
+        $course->fullname = 'Anonymous test course';
+        $course->shortname = 'ANON';
+        $course->summary = '';
+        $course->id = $this->testdb->insert_record('course', $course);
+
+        // Create default group
+        $group = new stdClass();
+        $group->courseid = $course->id;
+        $group->name = 'ANON';
+        $group->id = $this->testdb->insert_record('groups', $group);
+
+        // Create required contexts
+        $contexts = array(CONTEXT_SYSTEM => 1, CONTEXT_COURSE => $course->id, CONTEXT_MODULE => 1);
+        foreach ($contexts as $level => $instance) {
+            $context = new stdClass;
+            $context->contextlevel = $level;
+            $context->instanceid = $instance;
+            $context->path = 'not initialised';
+            $context->depth = '13';
+            $this->testdb->insert_record('context', $context);
+        }
+
+        // Grab important ids
+        $this->courseid = $course->id;
+        $this->groupid  = $group->id;
+    }
+
+    public function tearDown() {
+        parent::tearDown();
+    }
+
+
     public function test_overrides() {
 
         // Try all the filters at once: Only the entry filter is active
-        $blog_listing = new blog_listing(array('site' => 1, 'course' => 1, 'module' => 1, 'group' => 1, 'user' => 1, 'tag' => 1, 'entry' => 1));
+        $filters = array('site' => 1, 'course' => $this->courseid, 'module' => 1,
+                         'group' => $this->groupid, 'user' => 1, 'tag' => 1, 'entry' => 1);
+        $blog_listing = new blog_listing($filters);
         $this->assertFalse(array_key_exists('site', $blog_listing->filters));
         $this->assertFalse(array_key_exists('course', $blog_listing->filters));
         $this->assertFalse(array_key_exists('module', $blog_listing->filters));
@@ -44,7 +92,9 @@ class bloglib_test extends UnitTestCaseUsingDatabase {
         $this->assertTrue(array_key_exists('entry', $blog_listing->filters));
 
         // Again, but without the entry filter: This time, the tag, user and module filters are active
-        $blog_listing = new blog_listing(array('site' => 1, 'course' => 1, 'module' => 1, 'group' => 1, 'user' => 1, 'tag' => 1));
+        $filters = array('site' => 1, 'course' => $this->courseid, 'module' => 1,
+                         'group' => $this->groupid, 'user' => 1, 'tag' => 1);
+        $blog_listing = new blog_listing($filters);
         $this->assertFalse(array_key_exists('site', $blog_listing->filters));
         $this->assertFalse(array_key_exists('course', $blog_listing->filters));
         $this->assertFalse(array_key_exists('group', $blog_listing->filters));
@@ -53,7 +103,8 @@ class bloglib_test extends UnitTestCaseUsingDatabase {
         $this->assertTrue(array_key_exists('tag', $blog_listing->filters));
 
         // We should get the same result by removing the 3 inactive filters: site, course and group:
-        $blog_listing = new blog_listing(array('module' => 1, 'user' => 1, 'tag' => 1));
+        $filters = array('module' => 1, 'user' => 1, 'tag' => 1);
+        $blog_listing = new blog_listing($filters);
         $this->assertFalse(array_key_exists('site', $blog_listing->filters));
         $this->assertFalse(array_key_exists('course', $blog_listing->filters));
         $this->assertFalse(array_key_exists('group', $blog_listing->filters));
