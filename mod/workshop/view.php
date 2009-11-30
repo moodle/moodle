@@ -308,7 +308,7 @@
         /// find out current groups mode
         $groupmode = groups_get_activity_groupmode($cm);
         $currentgroup = groups_get_activity_group($cm, true);
-        groups_print_activity_menu($cm, "view.php?id=$cm->id");
+        groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/workshop/view.php?id=$cm->id");
 
         /// Print admin links
         echo "<table width=\"100%\"><tr><td>";

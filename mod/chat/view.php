@@ -108,7 +108,7 @@
                 /// Check to see if groups are being used here
                 $groupmode = groups_get_activity_groupmode($cm);
                 $currentgroup = groups_get_activity_group($cm, true);
-                groups_print_activity_menu($cm, "view.php?id=$cm->id");
+                groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/chat/view.php?id=$cm->id");
 
                 if ($currentgroup) {
                     $groupselect = " AND groupid = '$currentgroup'";

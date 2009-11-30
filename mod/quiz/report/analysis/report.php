@@ -25,7 +25,7 @@ class quiz_report extends quiz_default_report {
         
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
             if (!$download) {
-                groups_print_activity_menu($cm, "report.php?id=$cm->id&amp;mode=analysis");
+                groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/quiz/report.php?id=$cm->id&amp;mode=analysis");
             }
         }
 
