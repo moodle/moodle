@@ -78,7 +78,6 @@ $strusergroupmembership = get_string('usergroupmembership', 'group');
 $groupname = format_string($group->name);
 
 $PAGE->requires->js('group/clientlib.js');
-$PAGE->requires->js_function_call('init_add_remove_members_page');
 $PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
 $PAGE->navbar->add($strgroups, new moodle_url($CFG->wwwroot.'/group/index.php', array('id'=>$courseid)));
 $PAGE->navbar->add($stradduserstogroup);
@@ -128,4 +127,7 @@ check_theme_arrows();
 </div>
 
 <?php
+    //this must be after calling display() on the selectors so their setup JS executes first
+    $PAGE->requires->js_function_call('init_add_remove_members_page');
+
     echo $OUTPUT->footer();
