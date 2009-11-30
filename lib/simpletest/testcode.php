@@ -16,7 +16,7 @@ class code_test extends UnitTestCase {
     var $allok = array();
 
     var $badstrings;
-    var $extensions_to_ignore = array('exe', 'gif', 'ico', 'jpg', 'png', 'ttf');
+    var $extensions_to_ignore = array('exe', 'gif', 'ico', 'jpg', 'png', 'ttf', 'log');
     var $ignore_folders = array();
 
     function test_dnc() {
