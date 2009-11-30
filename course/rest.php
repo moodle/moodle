@@ -54,7 +54,7 @@ require_login($course);
 require_capability('moodle/course:update', $context);
 
 if (!empty($CFG->disablecourseajax)) {
-    errorl_log('Course AJAX not allowed');
+    error_log('Course AJAX not allowed');
     die;
 }
 
