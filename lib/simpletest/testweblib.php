@@ -66,5 +66,39 @@ class web_test extends UnitTestCase {
         $this->assertEqual(highlight('+good', 'This is goodness'), 'This is goodness');
         $this->assertEqual(highlight('good', 'This is goodness'), 'This is <span class="highlight">good</span>ness');
     }
+
+    function test_convert_urls_into_links() {
+        $texts = array (
+                     'URL: http://moodle.org/s/i=1&j=2' => 'URL: <a href="http://moodle.org/s/i=1&j=2" target="_blank">http://moodle.org/s/i=1&j=2</a>',
+                     'URL: www.moodle.org/s/i=1&amp;j=2' => 'URL: <a href="http://www.moodle.org/s/i=1&amp;j=2" target="_blank">www.moodle.org/s/i=1&amp;j=2</a>',
+                     'URL: https://moodle.org/s/i=1&j=2' => 'URL: <a href="https://moodle.org/s/i=1&j=2" target="_blank">https://moodle.org/s/i=1&j=2</a>',
+                     'URL: http://moodle.org:8080/s/i=1' => 'URL: <a href="http://moodle.org:8080/s/i=1" target="_blank">http://moodle.org:8080/s/i=1</a>',
+                     'http://moodle.org - URL' => '<a href="http://moodle.org" target="_blank">http://moodle.org</a> - URL',
+                     'www.moodle.org - URL' => '<a href="http://www.moodle.org" target="_blank">www.moodle.org</a> - URL',
+                     '(http://moodle.org) - URL' => '(<a href="http://moodle.org" target="_blank">http://moodle.org</a>) - URL',
+                     '(www.moodle.org) - URL' => '(<a href="http://www.moodle.org" target="_blank">www.moodle.org</a>) - URL',
+                     '[http://moodle.org] - URL' => '[<a href="http://moodle.org" target="_blank">http://moodle.org</a>] - URL',
+                     '[www.moodle.org] - URL' => '[<a href="http://www.moodle.org" target="_blank">www.moodle.org</a>] - URL',
+                     '[http://moodle.org/main#anchor] - URL' => '[<a href="http://moodle.org/main#anchor" target="_blank">http://moodle.org/main#anchor</a>] - URL',
+                     '[www.moodle.org/main#anchor] - URL' => '[<a href="http://www.moodle.org/main#anchor" target="_blank">www.moodle.org/main#anchor</a>] - URL',
+                     'URL: http://cc.org/url_(withpar)_go/?i=2' => 'URL: <a href="http://cc.org/url_(withpar)_go/?i=2" target="_blank">http://cc.org/url_(withpar)_go/?i=2</a>',
+                     'URL: www.cc.org/url_(withpar)_go/?i=2' => 'URL: <a href="http://www.cc.org/url_(withpar)_go/?i=2" target="_blank">www.cc.org/url_(withpar)_go/?i=2</a>',
+                     'URL: http://cc.org/url_(with)_(par)_go/?i=2' => 'URL: <a href="http://cc.org/url_(with)_(par)_go/?i=2" target="_blank">http://cc.org/url_(with)_(par)_go/?i=2</a>',
+                     'URL: www.cc.org/url_(with)_(par)_go/?i=2' => 'URL: <a href="http://www.cc.org/url_(with)_(par)_go/?i=2" target="_blank">www.cc.org/url_(with)_(par)_go/?i=2</a>',
+                     'URL: <a href="http://moodle.org">http://moodle.org</a>' => 'URL: <a href="http://moodle.org">http://moodle.org</a>',
+                     'URL: <a href="http://moodle.org">www.moodle.org</a>' => 'URL: <a href="http://moodle.org">www.moodle.org</a>',
+                     'URL: <a href="http://moodle.org"> http://moodle.org</a>' => 'URL: <a href="http://moodle.org"> http://moodle.org</a>',
+                     'URL: <a href="http://moodle.org"> www.moodle.org</a>' => 'URL: <a href="http://moodle.org"> www.moodle.org</a>',
+                     'URL: http://moodle.org/s/i=1&j=2.' => 'URL: <a href="http://moodle.org/s/i=1&j=2" target="_blank">http://moodle.org/s/i=1&j=2</a>.',
+                     'URL: www.moodle.org/s/i=1&amp;j=2.' => 'URL: <a href="http://www.moodle.org/s/i=1&amp;j=2" target="_blank">www.moodle.org/s/i=1&amp;j=2</a>.',
+                     'URL: http://moodle.org)<br />' => 'URL: <a href="http://moodle.org" target="_blank">http://moodle.org</a>)<br />',
+                     'URL: <p>text www.moodle.org&lt;/p> text' => 'URL: <p>text <a href="http://www.moodle.org" target="_blank">www.moodle.org</a>&lt;/p> text'
+                 );
+        foreach ($texts as $text => $correctresult) {
+            $failedmsg = "Testing text: \"$text\": %s";
+            convert_urls_into_links($text);
+            $this->assertEqual($text, $correctresult, $failedmsg);
+        }
+    }
 }
 ?>
