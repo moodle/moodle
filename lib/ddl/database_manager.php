@@ -411,10 +411,21 @@ class database_manager {
      *
      * @param $file full path to the XML file to be used
      * @param $tablename the name of the table.
+     * @param bool $cachestructures boolean to decide if loaded xmldb structures can be safely cached
+     *             useful for testunits loading the enormous main xml file hundred of times (100x)
      */
-    public function install_one_table_from_xmldb_file($file, $tablename) {
-        $xmldb_file = $this->load_xmldb_file($file);
-        $xmldb_structure = $xmldb_file->getStructure();
+    public function install_one_table_from_xmldb_file($file, $tablename, $cachestructures = false) {
+
+        static $xmldbstructurecache = array(); // To store cached structures
+        if (!empty($xmldbstructurecache) && array_key_exists($file, $xmldbstructurecache)) {
+            $xmldb_structure = $xmldbstructurecache[$file];
+        } else {
+            $xmldb_file = $this->load_xmldb_file($file);
+            $xmldb_structure = $xmldb_file->getStructure();
+            if ($cachestructures) {
+                $xmldbstructurecache[$file] = $xmldb_structure;
+            }
+        }
 
         $targettable = $xmldb_structure->getTable($tablename);
         if (is_null($targettable)) {
