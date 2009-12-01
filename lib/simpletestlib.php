@@ -543,11 +543,15 @@ class UnitTestCaseUsingDatabase extends UnitTestCase {
      */
     protected function create_test_table($tablename, $installxmlfile) {
         global $CFG;
+        $dbman = $this->testdb->get_manager();
         if (isset($this->tables[$tablename])) {
             debugging('You are attempting to create test table ' . $tablename . ' again. It already exists. Please review your code immediately.', DEBUG_DEVELOPER);
             return;
         }
-        $dbman = $this->testdb->get_manager();
+        if ($dbman->table_exists($tablename)) {
+            debugging('This table ' . $tablename . ' already exists from a previous execution. If the error persists you will need to review your code to ensure it is being created only once.', DEBUG_DEVELOPER);
+            $dbman->drop_table(new xmldb_table($tablename));
+        }
         $dbman->install_one_table_from_xmldb_file($CFG->dirroot . '/' . $installxmlfile . '/db/install.xml', $tablename);
         $this->tables[$tablename] = 1;
     }
