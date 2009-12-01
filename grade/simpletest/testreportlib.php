@@ -33,7 +33,7 @@ require_once($CFG->dirroot.'/grade/report/lib.php');
 /**
  * @TODO create a set of mock objects to simulate the database operations. We don't want to connect to any real sql server.
  */
-class gradereportlib_test extends FakeDBUnitTestCase {
+class gradereportlib_test extends UnitTestCaseUsingDatabase {
     var $courseid = 1;
     var $context = null;
     var $report = null;
