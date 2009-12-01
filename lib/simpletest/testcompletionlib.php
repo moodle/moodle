@@ -87,7 +87,7 @@ class TimeModifiedExpectation extends SimpleExpectation {
     }
 }
 
-class completionlib_test extends FakeDBUnitTestCase {
+class completionlib_test extends UnitTestCase {
 
     public static $includecoverage = array('lib/completionlib.php');
     var $realdb,$realcfg,$realsession,$realuser;
@@ -597,7 +597,7 @@ WHERE
         $c=new completion_cutdown();
         $c->__construct((object)array('id'=>42));
 
-        $cm=(object)array('course'=>42,'id'=>13,'completiongradeitemnumber'=>null);
+        $cm=(object)array('course'=>42,'id'=>13,'completion'=>0,'completiongradeitemnumber'=>null);
         $item=(object)array('itemnumber'=>3);
         $grade=(object)array('userid'=>31337);
 
