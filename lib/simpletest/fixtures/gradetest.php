@@ -49,14 +49,19 @@ Mock::generate('grade_outcome', 'mock_grade_outcome');
  * category1 => array(category2 => array(grade_item1, grade_item2), category3 => array(grade_item3))
  * 3 users for 3 grade_items
  */
-class grade_test extends FakeDBUnitTestCase {
+class grade_test extends UnitTestCaseUsingDatabase {
 
-    public $grade_tables = array('grade_categories',
-                                'scale',
-                                'grade_items',
-                                'grade_grades',
-                                'grade_outcomes');
-
+    public $grade_tables = array('lib' => array(
+                                     'grade_categories', 'grade_categories_history',
+                                     'scale', 'scale_history',
+                                     'grade_items', 'grade_items_history',
+                                     'grade_grades', 'grade_grades_history',
+                                     'grade_outcomes', 'grade_outcomes_history','grade_outcomes_courses',
+                                     'files',
+                                     'modules',
+                                     'course_modules'),
+                                 'mod/quiz' => array('quiz')
+                            );
 
     public $grade_items = array();
     public $grade_categories = array();
@@ -73,7 +78,7 @@ class grade_test extends FakeDBUnitTestCase {
      * These tests have to work on a brand new site.
      */
     function setUp() {
-        global $CFG, $DB;
+        global $CFG;
 
         parent::setup();
         $CFG->grade_droplow = -1;
@@ -83,21 +88,22 @@ class grade_test extends FakeDBUnitTestCase {
         $CFG->grade_aggregateoutcomes = -1;
         $CFG->grade_aggregatesubcats = -1;
 
-        foreach ($this->grade_tables as $table) {
-            $function = "load_$table";
-            $this->$function();
+        $this->switch_to_test_db(); // All operations until end of test method will happen in test DB
+
+        foreach ($this->grade_tables as $dir => $tables) {
+            $this->create_test_tables($tables, $dir); // Create tables
+            foreach ($tables as $table) { // Fill them if load_xxx method is available
+                $function = "load_$table";
+                if (method_exists($this, $function)) {
+                    $this->$function();
+                }
+            }
         }
+
     }
 
-    /**
-     * Drop test tables from DB.
-     */
     function tearDown() {
-        // delete the contents of tables before the test run - the unit test might fail on fatal error and the data would not be deleted!
-        foreach ($this->grade_tables as $table) {
-            unset($this->$table);
-        }
-        parent::tearDown();
+        parent::tearDown(); // All the test tables created in setUp will be dropped by this
     }
 
     /**
@@ -271,7 +277,7 @@ class grade_test extends FakeDBUnitTestCase {
     }
 
     /**
-     * Load module entries in modules table\
+     * Load module entries in modules table
      */
     function load_modules() {
         global $DB;
