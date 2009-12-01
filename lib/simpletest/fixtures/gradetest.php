@@ -1,50 +1,36 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    moodlecore
+ * @copyright  nicolas@moodle.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-/**
- * Shared code for all grade related tests.
- *
- * @author nicolas@moodle.com
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodlecore
- */
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/gradelib.php');
 
-Mock::generate('grade_item', 'mock_grade_item');
-Mock::generate('grade_scale', 'mock_grade_scale');
-Mock::generate('grade_category', 'mock_grade_category');
-Mock::generate('grade_grade', 'mock_grade_grade');
-Mock::generate('grade_outcome', 'mock_grade_outcome');
-
-
 /**
+ * Shared code for all grade related tests.
+ *
  * Here is a brief explanation of the test data set up in these unit tests.
  * category1 => array(category2 => array(grade_item1, grade_item2), category3 => array(grade_item3))
  * 3 users for 3 grade_items
