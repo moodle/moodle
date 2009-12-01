@@ -96,7 +96,7 @@ class grade_outcome extends grade_object {
             $DB->delete_records('grade_outcomes_courses', array('outcomeid' => $this->id, 'courseid' => $this->courseid));
         }
         if (parent::delete($source)) {
-            $context = get_context_instace(CONTEXT_SYSTEM);
+            $context = get_context_instance(CONTEXT_SYSTEM);
             $fs = get_file_storage();
             $files = $fs->get_area_files($context->id, 'grade_outcome', $this->id);
             foreach ($files as $file) {
