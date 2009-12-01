@@ -127,7 +127,7 @@ class grade_scale extends grade_object {
     public function delete($source=null) {
         global $DB;
         if (parent::delete($source)) {
-            $context = get_context_instace(CONTEXT_SYSTEM);
+            $context = get_context_instance(CONTEXT_SYSTEM);
             $fs = get_file_storage();
             $files = $fs->get_area_files($context->id, 'grade_scale', $this->id);
             foreach ($files as $file) {
