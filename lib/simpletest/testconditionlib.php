@@ -5,25 +5,57 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->dirroot . '/lib/conditionlib.php');
 
-class conditionlib_test extends FakeDBUnitTestCase {
+class conditionlib_test extends UnitTestCaseUsingDatabase {
     public static $includecoverage = array('lib/conditionlib.php');
-    var $oldcfg;
+
+    public $conditionlib_tables = array(
+               'lib' => array(
+                   'context', 'capabilities', 'role',
+                   'role_capabilities', 'role_assignments',
+                   'course_categories', 'course',
+                   'modules',
+                   'course_sections', 'course_modules',
+                   'course_modules_availability',
+                   'course_modules_completion',
+                   'grade_items', 'grade_grades'),
+               'mod/resource' => array(
+                   'resource'));
+    public $oldcfg;
 
     public function setUp() {
-        parent::setUp();
         global $CFG;
+        parent::setUp();
         $this->oldcfg=clone $CFG;
         $CFG->enableavailability=true;
         $CFG->enablecompletion=true;
+
+        $this->switch_to_test_db(); // All operations until end of test method will happen in test DB
+
+        foreach ($this->conditionlib_tables as $dir => $tables) {
+            $this->create_test_tables($tables, $dir); // Create tables
+        }
+        $this->fill_records(); // Add common stuff needed by various test methods
     }
 
     /**
      * Method called after each test method. Doesn't do anything extraordinary except restore the global $DB to the real one.
      */
     public function tearDown() {
+        global $CFG;
         $CFG->enableavailability=$this->oldcfg->enableavailability;
         $CFG->enablecompletion=$this->oldcfg->enablecompletion;
-        parent::tearDown();
+        parent::tearDown(); // All the test tables created in setUp will be dropped by this
+    }
+
+    private function fill_records() {
+        global $DB;
+
+        // We need the resource modules record available
+        $DB->insert_record('modules', (object)array('name' => 'resource'));
+
+        // We (get_fast_modinfo) need some capabilities present
+        $DB->insert_record('capabilities', (object)array('name' => 'moodle/course:viewhiddenactivities',
+                                                         'contextlevel' => CONTEXT_COURSE));
     }
 
     function test_constructor() {
@@ -89,7 +121,7 @@ class conditionlib_test extends FakeDBUnitTestCase {
 
     private function make_course() {
         global $DB;
-        $categoryid=$DB->insert_record('course_categories',(object)array());
+        $categoryid=$DB->insert_record('course_categories',(object)array('name'=>'conditionlibtest'));
         return $DB->insert_record('course',(object)array(
             'fullname'=>'Condition test','shortname'=>'CT1',
             'category'=>$categoryid,'enablecompletion'=>1));
