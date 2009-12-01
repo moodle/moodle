@@ -11,22 +11,42 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-class simpletestlib_test extends FakeDBUnitTestCase {
+class simpletestlib_test extends UnitTestCaseUsingDatabase {
 
-    function test_load_delete_test_data() {
+    function test_table_creation_and_data() {
         global $DB;
-        $contexts = $this->load_test_data('context',
-                array('contextlevel', 'instanceid', 'path', 'depth'), array(
-                array(10, 666, '', 1),
-                array(40, 666, '', 2),
-                array(50, 666, '', 3),
-        ));
 
-        // Just test load_test_data and delete_test_data for now.
-        $this->assertTrue($DB->record_exists('context', array('id' => $contexts[1]->id)));
-        $this->assertTrue($DB->get_field('context', 'contextlevel', array('id' => $contexts[2]->id)), $contexts[2]->contextlevel);
-        $this->delete_test_data('context', $contexts);
-        $this->assertFalse($DB->record_exists('context', array('id' => $contexts[1]->id)));
+        $this->switch_to_test_db(); // All operations until end of test method will happen in test DB
+        $dbman = $DB->get_manager();
+
+        // Create table and test
+        $this->create_test_table('context', 'lib');
+        $this->assertTrue($dbman->table_exists('context'));
+
+        $sampledata = array(
+                          array('contextlevel' => 10, 'instanceid' => 666, 'path' => '', 'depth' => 1),
+                          array('contextlevel' => 40, 'instanceid' => 666, 'path' => '', 'depth' => 2),
+                          array('contextlevel' => 50, 'instanceid' => 666, 'path' => '', 'depth' => 3));
+
+        foreach($sampledata as $key => $record) {
+            $sampledata[$key]['id'] = $DB->insert_record('context', $record);
+        }
+
+        // Just test added data and delete later
+        $this->assertEqual($DB->count_records('context'), 3);
+        $this->assertTrue($DB->record_exists('context', array('id' => $sampledata[0]['id'])));
+        $this->assertTrue($DB->get_field('context', 'contextlevel', array('id' => $sampledata[2]['id'])), $sampledata[2]['contextlevel']);
+        $DB->delete_records('context');
+        $this->assertFalse($DB->record_exists('context', array('id' => $sampledata[1]['id'])));
+    }
+
+    function test_tables_are_dropped() {
+        global $DB;
+
+        $this->switch_to_test_db(); // All operations until end of test method will happen in test DB
+        $dbman = $DB->get_manager();
+        // Previous method tearDown *must* delete all created tables, so here 'context' must not exist anymore
+        $this->assertFalse($dbman->table_exists('context'));
     }
 }
 
