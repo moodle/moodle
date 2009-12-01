@@ -552,7 +552,7 @@ class UnitTestCaseUsingDatabase extends UnitTestCase {
             debugging('This table ' . $tablename . ' already exists from a previous execution. If the error persists you will need to review your code to ensure it is being created only once.', DEBUG_DEVELOPER);
             $dbman->drop_table(new xmldb_table($tablename));
         }
-        $dbman->install_one_table_from_xmldb_file($CFG->dirroot . '/' . $installxmlfile . '/db/install.xml', $tablename);
+        $dbman->install_one_table_from_xmldb_file($CFG->dirroot . '/' . $installxmlfile . '/db/install.xml', $tablename, true); // with structure cache enabled!
         $this->tables[$tablename] = 1;
     }
 
