@@ -1701,8 +1701,8 @@ function clean_text($text, $format=FORMAT_MOODLE) {
         default:
 
         /// Fix non standard entity notations
-            $text = preg_replace('/(&#[0-9]+)(;?)/', "\\1;", $text);
-            $text = preg_replace('/(&#x[0-9a-fA-F]+)(;?)/', "\\1;", $text);
+            $text = preg_replace('/&#0*([0-9]+);?/', "&#\\1;", $text);
+            $text = preg_replace('/&#x0*([0-9a-fA-F]+);?/', "&#x\\1;", $text);
 
         /// Remove tags that are not allowed
             $text = strip_tags($text, $ALLOWED_TAGS);
