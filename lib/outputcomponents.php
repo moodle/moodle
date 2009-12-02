@@ -781,7 +781,7 @@ class html_select_option extends labelled_html_component {
      * @return void
      */
     public function prepare() {
-        if (empty($this->text)) {
+        if (empty($this->text) && (string)$this->text!=='0') {
             throw new coding_exception('html_select_option requires a $text value.');
         }
 
