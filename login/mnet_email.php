@@ -13,9 +13,10 @@ if (isloggedin() and !isguestuser()) {
 
 $PAGE->set_url(new moodle_url($CFG->wwwroot.'/login/mnet_email.php', array('u'=>$username)));
 
-$PAGE->navbar->add('MNET ID Provider');
-$PAGE->set_title('MNET ID Provider');
-$PAGE->set_heading('MNET ID Provider');
+$mnetidprovider = get_string('mnetidprovider','mnet');
+$PAGE->navbar->add($mnetidprovider);
+$PAGE->set_title($mnetidprovider);
+$PAGE->set_heading($mnetidprovider);
 $PAGE->set_focuscontrol('email');
 
 echo $OUTPUT->header();
@@ -23,7 +24,8 @@ echo $OUTPUT->header();
 if ($form = data_submitted() and confirm_sesskey()) {
     if ($user = $DB->get_record('user', array('username'=>$username, 'email'=>$form->email))) {
         if (!empty($user->mnethostid) and $host = $DB->get_record('mnet_host', array('id'=>$user->mnethostid))) {
-            notice("You should be able to login at your <a href=\"{$host->wwwroot}/login/\">{$host->name}</a> provider.");
+            $link = "<a href=\"{$host->wwwroot}/login/\">{$host->name}</a>";
+            notice(get_string('mnetidprovidermsg','mnet',$link));
         }
     }
 }
@@ -36,7 +38,7 @@ echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
     <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>">
     <?php echo get_string('email') ?>:
     <input type="text" name="email" id="email" size="" maxlength="100" />
-    <input type="submit" value="Find Login" />
+    <input type="submit" value="<?php echo get_string('findlogin','mnet'); ?>" />
   </form>
 <?php
 
