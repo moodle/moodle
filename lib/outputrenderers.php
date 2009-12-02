@@ -512,9 +512,8 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         /// Perform a browser environment check for the flash version.  Should only run once per login session.
         if (isloggedin() && !empty($CFG->excludeoldflashclients) && empty($SESSION->flashversion)) {
-            $this->page->requires->js('lib/yui/yahoo/yahoo-min.js')->in_head();
-            $this->page->requires->js('lib/yui/event/event-min.js')->in_head();
-            $this->page->requires->js('lib/yui/connection/connection-min.js')->in_head();
+            $this->page->requires->yui_lib('event')->in_head();
+            $this->page->requires->yui_lib('connection')->in_head();
             $this->page->requires->js('lib/swfobject/swfobject.js')->in_head();
             $this->page->requires->js('lib/flashdetect/flashdetect.js')->in_head();
             $this->page->requires->js_function_call('setflashversiontosession', array($CFG->wwwroot, sesskey()));
