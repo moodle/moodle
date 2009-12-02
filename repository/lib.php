@@ -95,16 +95,17 @@ class repository_type {
      * Return if the instance is visible in a context
      * TODO: check if the context visibility has been overwritten by the plugin creator
      *       (need to create special functions to be overvwritten in repository class)
-     * @param objet $contextlevel - context level
+     * @param objet $context - context
      * @return boolean
      */
-    public function get_contextvisibility($contextlevel) {
+    public function get_contextvisibility($context) {
+        global $USER;
 
-        if ($contextlevel == CONTEXT_COURSE) {
+        if ($context->contextlevel == CONTEXT_COURSE) {
             return $this->_options['enablecourseinstances'];
         }
 
-        if ($contextlevel == CONTEXT_USER) {
+        if ($context->contextlevel == CONTEXT_USER) {
             return $this->_options['enableuserinstances'];
         }
 
@@ -577,7 +578,7 @@ abstract class repository {
         foreach ($types as $type) {
             $instanceoptionnames = repository::static_function($type->get_typename(), 'get_instance_option_names');
             if (!empty($instanceoptionnames)) {
-                if ($type->get_contextvisibility($context->contextlevel)) {
+                if ($type->get_contextvisibility($context)) {
                     $editabletypes[]=$type;
                 }
              }
@@ -1007,6 +1008,7 @@ abstract class repository {
         } else {
             $baseurl = $CFG->httpswwwroot . '/repository/manage_instances.php?contextid=' . $context->id . '&amp;sesskey=' . sesskey();
         }
+        $url = new moodle_url($baseurl);
 
         $namestr = get_string('name');
         $pluginstr = get_string('plugin', 'repository');
@@ -1036,9 +1038,24 @@ abstract class repository {
         foreach ($instances as $i) {
             $settings = '';
             $delete = '';
-            $settings .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;edit=' . $i->id . '">' . $settingsstr . '</a>' . "\n";
-            if (!$i->readonly) {
-                $delete .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;delete=' .  $i->id . '">' . $deletestr . '</a>' . "\n";
+
+            $type = repository::get_type_by_id($i->options['typeid']);
+
+            if ($type->get_contextvisibility($context)) {
+                if (!$i->readonly) {
+
+                    $url->param('type', $i->options['type']);
+                    $url->param('edit', $i->id);
+                    $link = html_link::make($url->out(), $settingsstr);
+                    $settings .= $OUTPUT->link($link);
+
+                    $url->remove_params('edit');
+                    $url->param('delete', $i->id);
+                    $link = html_link::make($url->out(), $deletestr);
+                    $delete .= $OUTPUT->link($link);
+
+                    $url->remove_params('type');
+                }
             }
 
             $type = repository::get_type_by_id($i->options['typeid']);
@@ -1161,7 +1178,7 @@ abstract class repository {
 
         if ($type->get_visible()) {
             //if the instance is unique so it's visible, otherwise check if the instance has a enabled context
-            if (empty($instanceoptions) || $type->get_contextvisibility($this->context->contextlevel)) {
+            if (empty($instanceoptions) || $type->get_contextvisibility($this->context)) {
                 return true;
             }
         }
