@@ -1149,8 +1149,8 @@ function wikify_links($string) {
  * @return string
  */
 function fix_non_standard_entities($string) {
-    $text = preg_replace('/(&#[0-9]+)(;?)/', '$1;', $string);
-    $text = preg_replace('/(&#x[0-9a-fA-F]+)(;?)/', '$1;', $text);
+    $text = preg_replace('/&#0*([0-9]+);?/', '&#$1;', $string);
+    $text = preg_replace('/&#x0*([0-9a-fA-F]+);?/', '&#x$1;', $text);
     return $text;
 }
 
