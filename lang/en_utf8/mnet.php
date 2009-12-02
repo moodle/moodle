@@ -241,6 +241,9 @@ $string['enrolcourseenrol_desc'] = 'Enrol/unenrol users from this course using M
 $string['host'] = 'host';
 $string['loginlinkmnetuser'] = '<br />If you are a Moodle Network remote user and can <a href=\"$a\">confirm your email address here</a>, you can be redirected to your login page.<br />';
 $string['certdetails'] = 'Cert Details';
+$string['mnetidprovider'] = 'MNET ID Provider';
+$string['mnetidprovidermsg'] = 'You should be able to login at your $a provider.';
+$string['findlogin'] = 'Find Login';
 
 $string['error7020'] = 'This error normally occurs if the remote site has created a record for you with the wrong wwwroot, for example, http://yoursite.com instead of http://www.yoursite.com. You should contact the administrator of the remote site with your wwwroot (as specified in config.php) asking her to update her record for your host.';
 $string['error7023'] = 'The remote site has tried to decrypt your message with all the keys it has on record for your site. They have all failed. You might be able to fix this problem by manually re-keying with the remote site. This is unlikely to occur unless you\'ve been out of communication with the remote site for a few months.';
