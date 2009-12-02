@@ -472,7 +472,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string HTML fragment.
      */
     public function standard_head_html() {
-        global $CFG;
+        global $CFG, $SESSION;
         $output = '';
         $output .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' . "\n";
         $output .= '<meta name="keywords" content="moodle, ' . $this->page->title . '" />' . "\n";
@@ -508,6 +508,16 @@ class moodle_core_renderer extends moodle_renderer_base {
                 // Focus element with given id
                 $this->page->requires->js_function_call('focuscontrol', array($focus));
             }
+        }
+
+        /// Perform a browser environment check for the flash version.  Should only run once per login session.
+        if (isloggedin() && !empty($CFG->excludeoldflashclients) && empty($SESSION->flashversion)) {
+            $this->page->requires->js('lib/yui/yahoo/yahoo-min.js')->in_head();
+            $this->page->requires->js('lib/yui/event/event-min.js')->in_head();
+            $this->page->requires->js('lib/yui/connection/connection-min.js')->in_head();
+            $this->page->requires->js('lib/swfobject/swfobject.js')->in_head();
+            $this->page->requires->js('lib/flashdetect/flashdetect.js')->in_head();
+            $this->page->requires->js_function_call('setflashversiontosession', array($CFG->wwwroot, sesskey()));
         }
 
         // Add the meta tags from the themes if any were requested.

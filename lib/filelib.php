@@ -1452,7 +1452,7 @@ function send_temp_file_finished($path) {
  */
 function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='', $dontdie=false) {
     global $CFG, $COURSE, $SESSION;
-
+    
     if ($dontdie) {
         ignore_user_abort(true);
     }
@@ -1474,6 +1474,22 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
     $isFF         = check_browser_version('Firefox', '1.5'); // only FF > 1.5 properly tested
     $mimetype     = ($forcedownload and !$isFF) ? 'application/x-forcedownload' :
                          ($mimetype ? $mimetype : mimeinfo('type', $filename));
+
+    // If the file is a Flash file and that the user flash player is outdated return a flash upgrader MDL-20841
+    if (!empty($CFG->excludeoldflashclients) && $mimetype == 'application/x-shockwave-flash'&& !empty($SESSION->flashversion)) {
+        $userplayerversion = explode('.', $SESSION->flashversion);
+        $requiredplayerversion = explode('.', $CFG->excludeoldflashclients);
+        if (($userplayerversion[0] <  $requiredplayerversion[0]) ||
+            ($userplayerversion[0] == $requiredplayerversion[0] && $userplayerversion[1] < $requiredplayerversion[1]) ||
+            ($userplayerversion[0] == $requiredplayerversion[0] && $userplayerversion[1] == $requiredplayerversion[1]
+             && $userplayerversion[2] < $requiredplayerversion[2])) {
+            $path = $CFG->dirroot."/lib/flashdetect/flashupgrade.swf";  // Alternate content asking user to upgrade Flash
+            $filename = "flashupgrade.swf";
+            $lifetime = 0;  // Do not cache
+        }
+    }
+
+
     $lastmodified = $pathisstring ? time() : filemtime($path);
     $filesize     = $pathisstring ? strlen($path) : filesize($path);
 
@@ -1682,6 +1698,39 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
     $isFF         = check_browser_version('Firefox', '1.5'); // only FF > 1.5 properly tested
     $mimetype     = ($forcedownload and !$isFF) ? 'application/x-forcedownload' :
                          ($stored_file->get_mimetype() ? $stored_file->get_mimetype() : mimeinfo('type', $filename));
+    
+    // If the file is a Flash file and that the user flash player is outdated return a flash upgrader MDL-20841
+    if (!empty($CFG->excludeoldflashclients) && $mimetype == 'application/x-shockwave-flash'&& !empty($SESSION->flashversion)) {     
+        $userplayerversion = explode('.', $SESSION->flashversion);
+        $requiredplayerversion = explode('.', $CFG->excludeoldflashclients);
+        if (($userplayerversion[0] <  $requiredplayerversion[0]) ||
+            ($userplayerversion[0] == $requiredplayerversion[0] && $userplayerversion[1] < $requiredplayerversion[1]) ||
+            ($userplayerversion[0] == $requiredplayerversion[0] && $userplayerversion[1] == $requiredplayerversion[1]
+             && $userplayerversion[2] < $requiredplayerversion[2])) {
+
+            $path = $CFG->dirroot."/lib/flashdetect/";
+            $filename = "flashupgrade.swf";
+
+            $entry = new object();
+            $entry->filearea  = 'content';
+            $entry->contextid =  get_system_context()->id;
+            $entry->filename  = $filename;
+            $entry->filepath  = $path;
+            $entry->timecreated  = time();
+            $entry->timemodified = time();
+            $entry->mimetype     = $mimetype;
+            $entry->itemid = 0;
+            $fs = get_file_storage();
+            $browser = get_file_browser();
+            $stored_file = $fs->get_file($entry->contextid, $entry->filearea, $entry->itemid, $entry->filepath, $entry->filename);
+            if (empty($stored_file)) {
+                $stored_file = $fs->create_file_from_pathname($entry, $path.$filename);
+            }
+
+            $lifetime = 0;  // Do not cache
+        }
+    }
+
     $lastmodified = $stored_file->get_timemodified();
     $filesize     = $stored_file->get_filesize();
 
