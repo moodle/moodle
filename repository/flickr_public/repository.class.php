@@ -131,25 +131,16 @@ class repository_flickr_public extends repository {
             $commercial = new stdclass;
             $commercial->label = get_string('commercialuse', 'repository_flickr_public').': ';
             $commercial->id    = 'flickr_commercial_id';
-            $commercial->type  = 'radio';
+            $commercial->type  = 'checkbox';
             $commercial->name  = 'flickr_commercial';
-            $commercial->value = implode('|', array('yes', 'no'));
-            $commercial->value_label = implode('|', array(
-                    get_string('yes'),
-                    get_string('no')
-                ));
+            $commercial->value = 'yes';
 
             $modification = new stdclass;
             $modification->label = get_string('modification', 'repository_flickr_public').': ';
             $modification->id    = 'flickr_modification_id';
-            $modification->type  = 'radio';
+            $modification->type  = 'checkbox';
             $modification->name  = 'flickr_modification';
-            $modification->value = implode('|', array('yes', 'sharealike', 'no'));
-            $modification->value_label = implode('|', array(
-                    get_string('yes'),
-                    get_string('sharealike', 'repository_flickr_public'),
-                    get_string('no')
-                ));
+            $modification->value = 'yes';
 
             $ret['login'] = array($fulltext, $tag, $email_field, $commercial, $modification);
             $ret['login_btn_label'] = get_string('search');
@@ -166,20 +157,12 @@ class repository_flickr_public extends repository {
 
             echo '<tr><td><label>'.get_string('commercialuse', 'repository_flickr_public').'</label></td>';
             echo '<td>';
-            echo '<input type="radio" name="flickr_commercial" value="yes" /> '.get_string('yes');
-            echo '<br />';
-            echo '<input type="radio" name="flickr_commercial" value="no" /> '.get_string('no');
-            echo '<br />';
+            echo '<input type="checkbox" name="flickr_commercial" value="yes" />';
             echo '</td></tr>';
 
             echo '<tr><td><label>'.get_string('modification', 'repository_flickr_public').'</label></td>';
             echo '<td>';
-            echo '<input type="radio" name="flickr_modification" value="yes" /> '.get_string('yes');
-            echo '<br />';
-            echo '<input type="radio" name="flickr_modification" value="sharealike" /> '.get_string('sharealike', 'repository_flickr_public');
-            echo '<br />';
-            echo '<input type="radio" name="flickr_modification" value="no" /> '.get_string('no');
-            echo '<br />';
+            echo '<input type="checkbox" name="flickr_modification" value="yes" />';
             echo '</td></tr>';
 
             echo '</table>';
@@ -254,18 +237,18 @@ class repository_flickr_public extends repository {
             // 7: unknown license
             unset($licenses[3], $licenses[6]);
         }
-        if ($modification == 'sharealike') {
+        //if ($modification == 'sharealike') {
             // including
             // 1: Attribution NonCommercial ShareAlike
             // 5: Attribution ShareAlike
-            unset($licenses[2], $licenses[3], $licenses[4], $licenses[6], $licenses[7]);
-        }
+            //unset($licenses[2], $licenses[3], $licenses[4], $licenses[6], $licenses[7]);
+        //}
 
         $licenses = implode(',', $licenses);
 
         if (!empty($SESSION->{$this->sess_tag})         // use tag to search
             or !empty($SESSION->{$this->sess_text})     // use keyword to search
-            or !empty($this->nsid)/*use pre-defined accound*/) {
+            or !empty($this->nsid)/*use pre-defined accound*/) {                   
             $photos = $this->flickr->photos_search(array(
                 'tags'=>$SESSION->{$this->sess_tag},
                 'page'=>$page,
