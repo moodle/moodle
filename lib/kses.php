@@ -243,7 +243,12 @@ function kses_hair($attr, $allowed_protocols)
         if (preg_match('/^"([^"]*)"(\s+|$)/', $attr, $match))
          # "value"
         {
-          $thisval = kses_bad_protocol($match[1], $allowed_protocols);
+          // MDL-2684 - kses stripping CSS styles that it thinks look like protocols
+          if ($attrname == 'style') {
+              $thisval = $match[1];
+          } else {
+              $thisval = kses_bad_protocol($match[1], $allowed_protocols);
+          }
 
           $attrarr[] = array
                         ('name'  => $attrname,
