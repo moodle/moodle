@@ -47,6 +47,7 @@ $stage         = optional_param('stage', PORTFOLIO_STAGE_CONFIG, PARAM_INT);  //
 $postcontrol   = optional_param('postcontrol', 0, PARAM_INT);                 // when returning from some bounce to an external system, this gets passed
 $callbackfile  = optional_param('callbackfile', null, PARAM_PATH);            // callback file eg /mod/forum/lib.php - the location of the exporting content
 $callbackclass = optional_param('callbackclass', null, PARAM_ALPHAEXT);       // callback class eg forum_portfolio_caller - the class to handle the exporting content.
+$callerformats = optional_param('callerformats', null, PARAM_TAGLIST);        // comma separated list of formats the specific place exporting content supports
 
 require_login();  // this is selectively called again with $course later when we know for sure which one we're in.
 $PAGE->set_url('/portfolio/add.php', array('id' => $dataid, 'sesskey' => sesskey()));
@@ -91,14 +92,14 @@ if (!empty($dataid)) {
         if ($cancelsure) {
             $exporter->cancel_request($logreturn);
         } else {
-            $yesurl = $CFG->wwwroot . '/portfolio/add.php?id=' . $dataid . '&cancel=1&cancelsure=1&logreturn=' . $logreturn . '&sesskey=' . sesskey();
-            $nourl  = $CFG->wwwroot . '/portfolio/add.php?id=' . $dataid . '&sesskey=' . sesskey();
-            if ($logreturn) {
-                $nourl = $CFG->wwwroot . '/user/portfoliologs.php';
-            }
             $exporter->print_header('confirmcancel');
             echo $OUTPUT->box_start();
-            echo $OUTPUT->confirm(get_string('confirmcancel', 'portfolio'), $yesurl, $nourl);
+            $yesbutton = html_form::make_button($CFG->wwwroot . '/portfolio/add.php', array('id' => $dataid, 'cancel' => 1, 'cancelsure' => 1, 'logreturn' => $logreturn));
+            $nobutton  = html_form::make_button($CFG->wwwroot . '/portfolio/add.php', array('id' => $dataid), get_string('no'));
+            if ($logreturn) {
+                $nobutton->url = $CFG->wwwroot . '/user/portfoliologs.php';
+            }
+            echo $OUTPUT->confirm(get_string('confirmcancel', 'portfolio'), $yesbutton, $nobutton);
             echo $OUTPUT->box_end();
             echo $OUTPUT->footer();
             exit;
@@ -151,6 +152,7 @@ if (!empty($dataid)) {
     // we must be passed this from the caller, we cannot start a new export
     // without knowing information about what part of moodle we come from.
     if (empty($callbackfile) || empty($callbackclass)) {
+        debugging('no callback file or class');
         portfolio_exporter::print_expired_export();
     }
 
@@ -179,6 +181,9 @@ if (!empty($dataid)) {
     }
     $caller = new $callbackclass($callbackargs);
     $caller->set('user', $USER);
+    if ($formats = explode(',', $callerformats)) {
+        $caller->set_formats_from_button($formats);
+    }
     $caller->load_data();
     // this must check capabilities and either throw an exception or return false.
     if (!$caller->check_permissions()) {
@@ -200,7 +205,25 @@ if (!$exporter->get('instance')) {
     // in this case the exporter object and the caller object have been set up above
     // so just make a little form to select the portfolio plugin instance,
     // which is the last thing to do before starting the export.
-    $mform = new portfolio_instance_select('', array('id' => $exporter->get('id'), 'caller' => $exporter->get('caller')));
+    //
+    // first check to make sure there is actually a point
+    $options = portfolio_instance_select(
+        portfolio_instances(),
+        $exporter->get('caller')->supported_formats(),
+        get_class($exporter->get('caller')),
+        $exporter->get('caller')->get('singlefile'),
+        'instance',
+        true,
+        true
+    );
+    if (empty($options)) {
+        throw new portfolio_export_exception($exporter, 'noavailableplugins', 'portfolio');
+    } else if (count($options) == 1) {
+        // no point displaying a form, just redirect.
+        $instance = array_shift(array_keys($options));
+        redirect($CFG->wwwroot . '/portfolio/add.php?id= ' . $exporter->get('id') . '&instance=' . $instance . '&sesskey=' . sesskey());
+    }
+    $mform = new portfolio_instance_select('', array('id' => $exporter->get('id'), 'caller' => $exporter->get('caller'), 'options' => $options));
     if ($mform->is_cancelled()) {
         $exporter->cancel_request();
     } else if ($fromform = $mform->get_data()){

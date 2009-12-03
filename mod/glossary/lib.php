@@ -985,6 +985,18 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             && has_capability('mod/glossary:exportownentry', $context))) {
         $button = new portfolio_add_button();
         $button->set_callback_options('glossary_entry_portfolio_caller',  array('id' => $cm->id, 'entryid' => $entry->id));
+
+        $filecontext = $context;
+        if ($entry->sourceglossaryid == $cm->instance) {
+            if ($maincm = get_coursemodule_from_instance('glossary', $entry->glossaryid)) {
+                $filecontext = get_context_instance(CONTEXT_MODULE, $maincm->id);
+            }
+        }
+        $fs = get_file_storage();
+        if ($files = $fs->get_area_files($filecontext->id, 'glossary_attachment', $entry->id, "timemodified", false)) {
+            $button->set_formats(PORTFOLIO_FORMAT_RICHHTML);
+        }
+
         $return .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
     }
     $return .= "&nbsp;&nbsp;"; // just to make up a little the output in Mozilla ;)
@@ -2666,7 +2678,7 @@ function glossary_supports($feature) {
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
+class glossary_full_portfolio_caller extends portfolio_module_caller_base {
 
     private $glossary;
     private $exportdata;
@@ -2736,8 +2748,10 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
                 $categories[$cat->entryid][] = $cat->name;
             }
         }
+        // TODO detect format here
         $csv = glossary_generate_export_csv($entries, $aliases, $categories);
         return $this->exporter->write_new_file($csv, clean_filename($this->cm->name) . '.csv', false);
+        // TODO when csv, what do we do with attachments?!
     }
     /**
      * @return bool
@@ -2751,6 +2765,10 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
     public static function display_name() {
         return get_string('modulename', 'glossary');
     }
+
+    public static function base_supported_formats() {
+        return array(PORTFOLIO_FORMAT_FILE);
+    }
 }
 
 /**
@@ -2758,7 +2776,7 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
+class glossary_entry_portfolio_caller extends portfolio_module_caller_base { // TODO files support
 
     private $glossary;
     private $entry;
@@ -2790,7 +2808,14 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
             // in case we don't have USER this will make the entry be printed
             $this->entry->approved = true;
         }
-        $this->supportedformats = array(PORTFOLIO_FORMAT_PLAINHTML);
+        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        if ($this->entry->sourceglossaryid == $this->cm->instance) {
+            if ($maincm = get_coursemodule_from_instance('glossary', $this->entry->glossaryid)) {
+                $context = get_context_instance(CONTEXT_MODULE, $maincm->id);
+            }
+        }
+        $fs = get_file_storage();
+        $this->multifiles = $fs->get_area_files($context->id, 'glossary_attachment', $this->entry->id, "timemodified", false);
     }
     /**
      * @return string
@@ -2821,13 +2846,22 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
         $entry = clone $this->entry;
         glossary_print_entry($this->get('course'), $this->cm, $this->glossary, $entry, null, null, false);
         $content = ob_get_clean();
-        return $this->exporter->write_new_file($content, clean_filename($this->entry->concept) . '.html', false);
+        if ($this->multifiles) {
+            foreach ($this->multifiles as $file) {
+                $this->exporter->copy_existing_file($file);
+            }
+        }
+        return $this->exporter->write_new_file($content, clean_filename($this->entry->concept) . '.html', !empty($files));
     }
     /**
      * @return string
      */
     public function get_sha1() {
-        return sha1(serialize($this->entry));
+        return sha1(serialize($this->entry) . $this->get_sha1_file());
+    }
+
+    public static function base_supported_formats() {
+        return array(PORTFOLIO_FORMAT_RICHHTML, PORTFOLIO_FORMAT_PLAINHTML);
     }
 }
 

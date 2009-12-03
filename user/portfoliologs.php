@@ -68,7 +68,7 @@ include('tabs.php');
 
 echo $OUTPUT->box_start();
 
-$queued = $DB->get_records('portfolio_tempdata', array('userid' => $USER->id), '', 'id, expirytime');
+$queued = $DB->get_records('portfolio_tempdata', array('userid' => $USER->id), 'expirytime DESC', 'id, expirytime');
 if (count($queued) > 0) {
     $table = new html_table();
     $table->head = array(

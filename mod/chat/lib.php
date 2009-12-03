@@ -1272,7 +1272,7 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
     /**
      * @return array
      */
-    public static function supported_formats() {
+    public static function base_supported_formats() {
         return array(PORTFOLIO_FORMAT_PLAINHTML);
     }
     /**

@@ -110,6 +110,7 @@ class assignment_online extends assignment_base {
                     echo format_text($text, $submission->data2);
                     $button = new portfolio_add_button();
                     $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/lib.php');
+                    $button->set_formats(PORTFOLIO_FORMAT_PLAINHTML); //TODO this might have files?
                     $button->render();
                 } else if (!has_capability('mod/assignment:submit', $context)) { //fix for #4604
                     echo '<div style="text-align:center">'. get_string('guestnosubmit', 'assignment').'</div>';
@@ -285,11 +286,19 @@ class assignment_online extends assignment_base {
 
     function portfolio_prepare_package($exporter, $userid=0) {
         $submission = $this->get_submission($userid);
-        $exporter->write_new_file(format_text($submission->data1, $submission->data2), 'assignment.html', false);
-    }
-
-    function portfolio_supported_formats() {
-        return array(PORTFOLIO_FORMAT_PLAINHTML);
+        $html = format_text($submission->data1, $submission->data2);
+        if ($exporter->get('formatclass') == PORTFOLIO_FORMAT_PLAINHTML) {
+            return $exporter->write_new_file($html, 'assignment.html', false);
+        } else if ($exporter->get('formatclass') == PORTFOLIO_FORMAT_LEAP2A) {
+            $leapwriter = $exporter->get('format')->leap2a_writer();
+            $entry = new portfolio_format_leap2a_entry('assignmentonline' . $this->assignment->id, $this->assignment->name, 'resource', $html); // TODO entry?
+            $entry->add_category('web', 'resource_type');
+            $leapwriter->add_entry($entry);
+            return $exporter->write_new_file($leapwriter->to_xml(), $exporter->get('format')->manifest_name(), true);
+            //TODO attached files?!
+        } else {
+            die('wtf ;' . $exporter->get('formatclass'));
+        }
     }
 
     function extend_settings_navigation($node) {

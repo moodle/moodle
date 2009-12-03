@@ -53,9 +53,34 @@ class portfolio_format_file {
      * given a file, return a snippet of markup in whatever format
      * to link to that file.
      * usually involves the path given by {@link get_file_directory}
+     * this is not supported in subclasses of portfolio_format_file
+     * since they're all just single files.
      */
     public static function file_output($file) {
-        return '';
+        throw new portfolio_exception('fileoutputnotsupported', 'portfolio');
+    }
+
+    /**
+     * whether this format conflicts with the given format
+     * this is used for the case where an export location
+     * "generally" supports something like FORMAT_PLAINHTML
+     * but then in a specific export case, must add attachments
+     * which means that FORMAT_RICHHTML is supported in that case
+     * which implies removing support for FORMAT_PLAINHTML.
+     * Note that conflicts don't have to be bi-directional
+     * (eg FORMAT_PLAINHTML conflicts with FORMAT_RICHHTML
+     * but not the other way around) and things within the class hierarchy
+     * are resolved automatically anyway.
+     *
+     * This is really just between subclasses of format_rich
+     * and subclasses of format_file.
+     *
+     * @param string $format one of the FORMAT_XX constants
+     *
+     * @return boolean
+     */
+    public static function conflicts($format) {
+        return false;
     }
 }
 
@@ -77,8 +102,13 @@ class portfolio_format_image extends portfolio_format_file {
 * in case we want to be really specific.
 */
 class portfolio_format_plainhtml extends portfolio_format_file {
+
     public static function mimetypes() {
         return array('text/html');
+    }
+
+    public static function conflicts($format) {
+        return ($format == PORTFOLIO_FORMAT_RICHHTML);
     }
 }
 
@@ -104,16 +134,38 @@ class portfolio_format_text extends portfolio_format_file {
     public static function mimetypes() {
         return array('text/plain');
     }
+
+    public static function conflicts($format ) {
+        return ($format == PORTFOLIO_FORMAT_PLAINHTML
+            || $format == PORTFOLIO_FORMAT_RICHHTML);
+    }
 }
 
 /**
  * base class for rich formats.
  * these are multipart - eg things with attachments
  */
-class portfolio_format_rich {
+abstract class portfolio_format_rich {
     public static function mimetypes() {
         return array(null);
     }
+
+    public static function conflicts($format) {
+        return false;
+    }
+
+    /**
+     * given a file, return a snippet of markup in whatever format
+     * to link to that file.
+     * usually involves the path given by {@link get_file_directory}
+     * this is not supported in subclasses of portfolio_format_file
+     * since they're all just single files.
+     *
+     * @param stored_file $file the file to link to
+     * @param mixed       $extras any extra arguments
+     */
+    public static abstract function file_output($file, $extras=null);
+
 }
 
 /**
@@ -124,23 +176,62 @@ class portfolio_format_richhtml extends portfolio_format_rich {
     public static function get_file_directory() {
         return 'site_files';
     }
-    public static function file_output($file) {
+    public static function file_output($file, $extras=null) {
         $path = self::get_file_directory() . '/' . $file->get_filename();
         if (in_array($file->get_mimetype(), portfolio_format_image::mimetypes())) {
             return '<img src="' . $path . '" alt="' . $file->get_filename() . '" />';
         }
         return '<a href="' . $path . '">' . $file->get_filename() . '</a>';
     }
+    public static function conflicts($format) { // TODO revisit the conflict with file, since we zip here
+        return ($format == PORTFOLIO_FORMAT_PLAINHTML || $format == PORTFOLIO_FORMAT_FILE);
+    }
+
 }
 
-class portfolio_format_leap extends portfolio_format_rich { }
+class portfolio_format_leap2a extends portfolio_format_rich {
+
+    public static function get_file_directory() {
+        return 'files/';
+    }
+
+    /**
+     * return the link to a file
+     *
+     * @param stored_file $file
+     * @param boolean $entry whether the file is a LEAP2A entry or just a bundled file (default false)
+     */
+    public static function file_output($file, $entry=false) {
+        $id = '';
+        if ($entry) {
+            $id = 'portfolio:file' . $file->get_id;
+        } else {
+            $id = self::get_file_directory() . '/' . $file->get_filename();
+        }
+        return '<a rel="enclosure" href="' . $id . '">' . $file->get_filename() . '</a>';
+    }
+
+    public static function leap2a_writer(stdclass $user=null) {
+        global $CFG;
+        if (empty($user)) {
+            global $USER;
+            $user = $USER;
+        }
+        require_once($CFG->libdir . '/portfolio/formats/leap2a/lib.php');
+        return new portfolio_format_leap2a_writer($user);
+    }
+
+    public static function manifest_name() {
+        return 'leap2a.xml';
+    }
+}
 
 
 /**
 * later.... a moodle plugin might support this.
 * it's commented out in portfolio_supported_formats so cannot currently be used.
 */
-class portfolio_format_mbkp extends portfolio_format_rich {}
+//class portfolio_format_mbkp extends portfolio_format_rich {}
 
 /**
 * 'PDF format', subtype of file.

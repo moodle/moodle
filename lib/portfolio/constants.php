@@ -142,6 +142,17 @@ define('PORTFOLIO_FORMAT_SPREADSHEET', 'spreadsheet');
 */
 define('PORTFOLIO_FORMAT_PRESENTATION', 'presentation');
 
+/**
+ * abstract - just used to say, "we support all these"
+ */
+define('PORTFOLIO_FORMAT_RICH', 'rich');
+
+/**
+ * leap2a http://wiki.cetis.ac.uk/LEAP_2.0
+ * supported by mahara and and others
+ */
+define('PORTFOLIO_FORMAT_LEAP2A', 'leap2a');
+
 // ************************************************** //
 //  EXPORT TIME LEVELS
 // these should correspond to a string

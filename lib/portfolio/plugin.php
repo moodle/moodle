@@ -109,7 +109,7 @@ abstract class portfolio_plugin_base {
     * @return array list of formats
     */
     public static function supported_formats() {
-        return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_RICHHTML);
+        return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_RICH);
     }
 
     /**

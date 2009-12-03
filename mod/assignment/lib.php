@@ -1821,7 +1821,6 @@ class assignment_base {
             }
             if (count($files) > 1  && $this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                 $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id));
-                $button->set_formats(PORTFOLIO_PORMAT_FILE);
                 $output .= '<br />'  . $button->to_html();
             }
         }
@@ -3395,16 +3394,33 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
             throw new portfolio_caller_exception('notexportable', 'portfolio', $this->get_return_url());
         }
 
-        $this->set_file_and_format_data($this->fileid, $this->assignment->context->id, 'assignment_submission', $this->user->id);
-        if (empty($this->supportedformats) && is_callable(array($this->assignment, 'portfolio_supported_formats'))) {
-            $this->supportedformats = $this->assignment->portfolio_supported_formats();
-        }
+        $this->set_file_and_format_data($this->fileid, $this->assignment->context->id, 'assignment_submission', $this->user->id, 'timemodified', false);
     }
 
     public function prepare_package() {
         global $CFG;
         if (is_callable(array($this->assignment, 'portfolio_prepare_package'))) {
             return $this->assignment->portfolio_prepare_package($this->exporter, $this->user->id);
+        }
+        if ($this->exporter->get('formatclass') == PORTFOLIO_FORMAT_LEAP2A) {
+            $leapwriter = $this->exporter->get('format')->leap2a_writer();
+            $files = array();
+            if ($this->singlefile) {
+                $files[] = $this->singlefile;
+            } elseif ($this->multifiles) {
+                $files = $this->multifiles;
+            } else {
+                throw new portfolio_caller_exception('invalidpreparepackagefile', 'portfolio', $this->get_return_url());
+            }
+            $baseid = 'assignment' . $this->assignment->assignment->assignmenttype . $this->assignment->assignment->id . 'submission';
+            foreach ($files as $file) {
+                $id = $baseid . $file->get_id();
+                $entry = new portfolio_format_leap2a_entry($id, $file->get_filename(), 'resource',  $file);
+                $entry->add_category('offline', 'resource_type');
+                $leapwriter->add_entry($entry);
+                $this->exporter->copy_existing_file($file);
+            }
+            return $this->exporter->write_new_file($leapwriter->to_xml(), $this->exporter->get('format')->manifest_name(), true);
         }
         return $this->prepare_package_file();
     }
@@ -3440,6 +3456,10 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
 
     public static function display_name() {
         return get_string('modulename', 'assignment');
+    }
+
+    public static function base_supported_formats() {
+        return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_LEAP2A);
     }
 }
 

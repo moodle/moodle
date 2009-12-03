@@ -80,3 +80,8 @@ class portfolio_plugin_exception extends portfolio_exception {}
 * exception for interacting with the button class
 */
 class portfolio_button_exception extends portfolio_exception {}
+
+/**
+ * leap2a exception - for invalid api calls
+ */
+class portfolio_format_leap2a_exception extends portfolio_exception {}

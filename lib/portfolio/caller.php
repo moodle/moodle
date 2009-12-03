@@ -314,18 +314,22 @@ abstract class portfolio_caller_base {
     * as this function <b>must</b> be called statically.
     *
     * @return array list of formats
+    *
     */
-    public static function supported_formats($caller=null) {
-        if ($caller && $formats = $caller->get('supportedformats')) {
-            if (is_array($formats)) {
-                return $formats;
-            }
+    public final function supported_formats() {
+        $basic = $this->base_supported_formats();
+        if (empty($this->supportedformats)) {
+            $specific = array();
+        } else if (!is_array($this->supportedformats)) {
             debugging(get_class($caller) . ' has set a non array value of member variable supported formats - working around but should be fixed in code');
-            return array($formats);
+            $specific = array($formats);
+        } else {
+            $specific = $this->supportedformats;
         }
-        return array(PORTFOLIO_FORMAT_FILE);
+        return portfolio_most_specific_formats($specific, $basic);
     }
 
+    public abstract static function base_supported_formats();
 
     /**
     * this is the "return to where you were" url
@@ -392,7 +396,7 @@ abstract class portfolio_caller_base {
                 }
             }
         } else if (count($args) != 0) {
-            if (count($args) != 3) {
+            if (count($args) < 3) {
                 throw new portfolio_caller_exception('invalidfileareaargs', 'portfolio');
             }
             $files = array_values(call_user_func_array(array($fs, 'get_area_files'), $args));
@@ -401,13 +405,72 @@ abstract class portfolio_caller_base {
             case 0: return;
             case 1: {
                 $this->singlefile = $files[0];
-                $this->supportedformats = array(portfolio_format_from_file($this->singlefile));
                 return;
             }
             default: {
                 $this->multifiles = $files;
             }
         }
+    }
+
+    /**
+     * the button-location always knows best
+     * what the formats are... so it should be trusted.
+     *
+     * @param array $formats array of PORTFOLIO_FORMAT_XX
+     */
+    public function set_formats_from_button($formats) {
+        $base = $this->base_supported_formats();
+        if (count($base) != count($formats)
+                || count($base) != count(array_intersect($base, $formats))) {
+                return $this->supportedformats = portfolio_most_specific_formats($formats, $base);
+        }
+        // in the case where the button hasn't actually set anything,
+        // we need to run through again and resolve conflicts
+        $removed = array();
+        foreach ($formats as $f1key => $f1) {
+            if (in_array($f1, $removed)) {
+                continue;
+            }
+            $f1obj = portfolio_format_object($f1);
+            foreach ($formats as $f2key => $f2) {
+                if (in_array($f2, $removed)) {
+                    continue;
+                }
+                if ($f1obj->conflicts($f2)) {
+                    unset($formats[$f2key]);
+                    $removed[] = $f2;
+                }
+            }
+        }
+        $this->supportedformats = $formats;
+    }
+
+    /**
+     * adds a new format to the list of supported formats.
+     * handles removing conflicting and less specific
+     * formats at the same time.
+     *
+     * @param string $format one of PORTFOLIO_FORMAT_XX
+     *
+     * @return void
+     */
+    protected function add_format($format) {
+        if (in_array($format, $this->supportedformats)) {
+            return;
+        }
+        $formatobj = portfolio_format_object($format);
+        foreach ($this->supportedformats as $key => $f) {
+            $f2obj = portfolio_format_object($f);
+            if ($formatobj->conflicts($f)) {
+                unset($this->supportedformats[$key]);
+            }
+            $class = get_class($f2obj);
+            if ($formatobj instanceof $class) {
+                unset($this->supportedformats[$key]);
+            }
+        }
+        $this->supportedformats[] = $format;
     }
 
     /**

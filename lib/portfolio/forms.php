@@ -254,22 +254,7 @@ class portfolio_instance_select extends moodleform {
 
     function definition() {
         $this->caller = $this->_customdata['caller'];
-        $options = portfolio_instance_select(
-            portfolio_instances(),
-            $this->caller->supported_formats($this->caller),
-            get_class($this->caller),
-            $this->caller->get('singlefile'),
-            'instance',
-            true,
-            true
-        );
-        // TODO maybe add on some information to the user if they're already exporting
-        // and some of the options were skipped because they are for plugins that don't support
-        // multiple exports per session
-        if (empty($options)) {
-            debugging('noavailableplugins', 'portfolio');
-            return false;
-        }
+        $options = $this->_customdata['options'];
         $mform =& $this->_form;
         $mform->addElement('select', 'instance', get_string('selectplugin', 'portfolio'), $options);
         $mform->addElement('hidden', 'id', $this->_customdata['id']);

@@ -145,10 +145,10 @@ class portfolio_add_button {
     * sets the available export formats for this content
     * this function will also poll the static function in the caller class
     * and make sure we're not overriding a format that has nothing to do with mimetypes
-    * eg if you pass IMAGE here but the caller can export LEAP it will keep LEAP as well.
+    * eg if you pass IMAGE here but the caller can export LEAP2A it will keep LEAP2A as well.
     * see portfolio_most_specific_formats for more information
     *
-    * @param array $formats if the calling code knows better than the static method on the calling class (supported_formats)
+    * @param array $formats if the calling code knows better than the static method on the calling class (base_supported_formats)
     *                       eg, if it's going to be a single file, or if you know it's HTML, you can pass it here instead
     *                       this is almost always the case so you should always use this.
     *                       {@see portfolio_format_from_file} for how to get the appropriate formats to pass here for uploaded files.
@@ -163,20 +163,33 @@ class portfolio_add_button {
         if (empty($this->callbackclass)) {
             throw new portfolio_button_exception('noclassbeforeformats', 'portfolio');
         }
-        $callerformats = call_user_func(array($this->callbackclass, 'supported_formats'));
+        $callerformats = call_user_func(array($this->callbackclass, 'base_supported_formats'));
         $this->formats = portfolio_most_specific_formats($formats, $callerformats);
     }
+
+    public function reset_formats() {
+        $this->set_formats();
+    }
+
 
     /**
      * if we already know we have exactly one file,
      * bypass set_formats and just pass the file
      * so we can detect the formats by mimetype.
      *
-     * @param stored_file $file
+     * @param stored_file $file         file to set the format from
+     * @param mixed       $extraformats any additional formats other than by mimetype
+     *                                  eg leap2a etc
      */
-    public function set_format_by_file(stored_file $file) {
+    public function set_format_by_file(stored_file $file, $extraformats=null) {
         $this->file = $file;
-        $this->formats = array(portfolio_format_from_file($file));
+        if (is_string($extraformats)) {
+            $this->set_formats(array(portfolio_format_from_file($file), $extraformats));
+        } else if (is_array($extraformats)) {
+            $this->set_formats(array_merge(array(portfolio_format_from_file($file)), $extraformats));
+        } else  {
+            $this->set_formats(portfolio_format_from_file($file));
+        }
     }
 
     /*
@@ -230,8 +243,10 @@ class portfolio_add_button {
         $formoutput .= "\n" . '<input type="hidden" name="callbackfile" value="' . $this->callbackfile . '" />';
         $formoutput .= "\n" . '<input type="hidden" name="callbackclass" value="' . $this->callbackclass . '" />';
         $formoutput .= "\n" . '<input type="hidden" name="course" value="' . (!empty($COURSE) ? $COURSE->id : 0) . '" />';
+        $formoutput .= "\n" . '<input type="hidden" name="callerformats" value="' . implode(',', $this->formats) . '" />';
         $linkoutput .= 'callbackfile=' . $this->callbackfile . '&amp;callbackclass='
-            . $this->callbackclass . '&amp;course=' . (!empty($COURSE) ? $COURSE->id : 0);
+            . $this->callbackclass . '&amp;course=' . (!empty($COURSE) ? $COURSE->id : 0)
+            . '&amp;callerformats=' . implode(',', $this->formats);
         $selectoutput = '';
         if (count($this->instances) == 1) {
             $tmp = array_values($this->instances);
@@ -478,7 +493,8 @@ function portfolio_supported_formats() {
         PORTFOLIO_FORMAT_SPREADSHEET  => 'portfolio_format_spreadsheet',
         PORTFOLIO_FORMAT_PRESENTATION => 'portfolio_format_presentation',
         /*PORTFOLIO_FORMAT_MBKP, */ // later
-        /*PORTFOLIO_FORMAT_LEAP, */ // also later
+        PORTFOLIO_FORMAT_LEAP2A       => 'portfolio_format_leap2a',
+        PORTFOLIO_FORMAT_RICH         => 'portfolio_format_rich',
     );
 }
 
@@ -538,13 +554,17 @@ function portfolio_supported_formats_intersect($callerformats, $pluginformats) {
     $intersection = array();
     foreach ($callerformats as $cf) {
         if (!array_key_exists($cf, $allformats)) {
-            debugging(get_string('invalidformat', 'portfolio', $cf));
+            if (!portfolio_format_is_abstract($cf)) {
+                debugging(get_string('invalidformat', 'portfolio', $cf));
+            }
             continue;
         }
         $cfobj = new $allformats[$cf]();
         foreach ($pluginformats as $p => $pf) {
             if (!array_key_exists($pf, $allformats)) {
-                debugging(get_string('invalidformat', 'portfolio', $pf));
+                if (!portfolio_format_is_abstract($pf)) {
+                    debugging(get_string('invalidformat', 'portfolio', $pf));
+                }
                 unset($pluginformats[$p]); // to avoid the same warning over and over
                 continue;
             }
@@ -557,7 +577,33 @@ function portfolio_supported_formats_intersect($callerformats, $pluginformats) {
 }
 
 /**
+ * tiny helper to figure out whether a portfolio format is abstract
+ *
+ * @param string $format the format to test
+ *
+ * @retun bool
+ */
+function portfolio_format_is_abstract($format) {
+    if (class_exists($format)) {
+        $class = $format;
+    } else if (class_exists('portfolio_format_' . $format)) {
+        $class = 'portfolio_format_' . $format;
+    } else {
+        $allformats = portfolio_supported_formats();
+        if (array_key_exists($format, $allformats)) {
+            $class = $allformats[$format];
+        }
+    }
+    if (empty($class)) {
+        return true; // it may as well be, we can't instantiate it :)
+    }
+    $rc = new ReflectionClass($class);
+    return $rc->isAbstract();
+}
+
+/**
 * return the combination of the two arrays of formats with duplicates in terms of specificity removed
+* and also removes conflicting formats
 * use case: a module is exporting a single file, so the general formats would be FILE and MBKP
 *           while the specific formats would be the specific subclass of FILE based on mime (say IMAGE)
 *           and this function would return IMAGE and MBKP
@@ -569,20 +615,39 @@ function portfolio_supported_formats_intersect($callerformats, $pluginformats) {
 */
 function portfolio_most_specific_formats($specificformats, $generalformats) {
     $allformats = portfolio_supported_formats();
+    if (empty($specificformats)) {
+        return $generalformats;
+    } else if (empty($generalformats)) {
+        return $specificformats;
+    }
     foreach ($specificformats as $f) {
         // look for something less specific and remove it, ie outside of the inheritance tree of the current formats.
         if (!array_key_exists($f, $allformats)) {
-            throw new portfolio_button_exception('invalidformat', 'portfolio', $f);
+            if (!portfolio_format_is_abstract($pf)) {
+                throw new portfolio_button_exception('invalidformat', 'portfolio', $f);
+            }
         }
         $fobj = new $allformats[$f];
         foreach ($generalformats as $key => $cf) {
             $cfclass = $allformats[$cf];
-            if ($fobj instanceof $cfclass) {
-                unset($generalformats[$cf]);
+            if ($fobj instanceof $cfclass && $cfclass != get_class($fobj)) {
+                debugging("unsetting $key $cf because it's not specific enough ($f is better)");
+                unset($generalformats[$key]);
+            }
+            // check for conflicts
+            if ($fobj->conflicts($cf)) {
+                debugging("unsetting $key $cf because it conflicts with $f");
+                unset($generalformats[$key]);
             }
         }
+        //debugging('inside loop');
+        //print_object($generalformats);
     }
-    return array_merge(array_values($specificformats), array_values($generalformats));
+
+    //debugging('final formats');
+    $finalformats =  array_unique(array_merge(array_values($specificformats), array_values($generalformats)));
+    //print_object($finalformats);
+    return $finalformats;
 }
 
 /**
@@ -784,9 +849,9 @@ function portfolio_report_insane($insane, $instances=false, $return=false) {
 * @param string $classfile    file containing the callback class definition
 * @param array  $callbackargs arguments to pass to the callback class
 */
-function portfolio_fake_add_url($instanceid, $classname, $classfile, $callbackargs) {
+function portfolio_fake_add_url($instanceid, $classname, $classfile, $callbackargs, $formats) {
     global $CFG;
-    $url = $CFG->wwwroot . '/portfolio/add.php?instance=' . $instanceid . '&amp;callbackclass=' . $classname . '&amp;callbackfile=' . $classfile . '&sesskey=' . sesskey();
+    $url = $CFG->wwwroot . '/portfolio/add.php?instance=' . $instanceid . '&callbackclass=' . $classname . '&callbackfile=' . $classfile . '&sesskey=' . sesskey();
 
     if (is_object($callbackargs)) {
         $callbackargs = (array)$callbackargs;
@@ -795,8 +860,9 @@ function portfolio_fake_add_url($instanceid, $classname, $classfile, $callbackar
         return $url;
     }
     foreach ($callbackargs as $key => $value) {
-        $url .= '&amp;ca_' . $key . '=' . urlencode($value);
+        $url .= '&ca_' . $key . '=' . urlencode($value);
     }
+    $url .= '&callerformats=' . implode(',', $formats);
     return $url;
 }
 

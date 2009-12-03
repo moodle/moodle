@@ -152,6 +152,8 @@ class portfolio_exporter {
     public function get($field) {
         if ($field == 'format') {
             return portfolio_format_object($this->format);
+        } else if ($field == 'formatclass') {
+            return $this->format;
         }
         if (property_exists($this, $field)) {
             return $this->{$field};
@@ -287,7 +289,7 @@ class portfolio_exporter {
         if ($this->caller->has_export_config()) {
             $callerobj = $this->caller;
         }
-        $formats = portfolio_supported_formats_intersect($this->caller->supported_formats($this->caller), $this->instance->supported_formats());
+        $formats = portfolio_supported_formats_intersect($this->caller->supported_formats(), $this->instance->supported_formats());
         $expectedtime = $this->instance->expected_time($this->caller->expected_time());
         if (count($formats) == 0) {
             // something went wrong, we should not have gotten this far.

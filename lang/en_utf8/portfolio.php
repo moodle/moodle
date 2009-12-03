@@ -51,6 +51,7 @@ $string['format_image'] = 'Image';
 $string['format_mbkp'] = 'Moodle Backup Format';
 $string['format_video'] = 'Video';
 $string['format_text'] = 'Plain Text';
+$string['format_leap2a'] = 'LEAP2A portfolio format';
 $string['hidden'] = 'Hidden';
 $string['highfilesizethreshold'] = 'High transfer filesize';
 $string['highfilesizethresholddesc'] = 'Filesizes over this threshold will be considered to take a high amount of time to transfer';
