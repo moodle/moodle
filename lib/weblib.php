@@ -1007,7 +1007,7 @@ function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$
     }
     if (!empty($options)) {
         foreach ($options as $section => $values) {
-            $output .= '   <optgroup label="'. format_string($section) .'">'."\n";
+            $output .= '   <optgroup label="'. s(strip_tags(format_string($section))) .'">'."\n";
             foreach ($values as $value => $label) {
                 $output .= '   <option value="'. format_string($value) .'"';
                 if ((string)$value == (string)$selected) {
