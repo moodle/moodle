@@ -1007,8 +1007,7 @@ function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$
     }
     if (!empty($options)) {
         foreach ($options as $section => $values) {
-
-            $output .= '   <optgroup label="'. s(format_string($section)) .'">'."\n";
+            $output .= '   <optgroup label="'. format_string($section) .'">'."\n";
             foreach ($values as $value => $label) {
                 $output .= '   <option value="'. format_string($value) .'"';
                 if ((string)$value == (string)$selected) {
@@ -6187,7 +6186,7 @@ function redirect($url, $message='', $delay=-1) {
 <script type="text/javascript">
 //<![CDATA[
 
-  function redirect() {
+  function redirect() { 
       document.location.replace('<?php echo addslashes_js($url) ?>');
   }
   setTimeout("redirect()", <?php echo ($delay * 1000) ?>);
@@ -6446,10 +6445,15 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
             echo "\n<ul class='list'>\n";
             foreach ($list as $key => $string) {
                 echo '<li class="r'. $row .'">';
-                if ($icons) {
-                    echo '<div class="icon column c0">'. $icons[$key] .'</div>';
+                if ($icons) {                    
+                    $newstring = str_replace('">', '">'.$icons[$key].'&nbsp;', $string);
+                    $newstring = str_replace('" >', '">'.$icons[$key].'&nbsp;', $newstring);
+                    if ($newstring == $string) {  // No link found, so insert before the string
+                        $newstring = $icons[$key].'&nbsp;'.$string;
+                    }
+                    $string = $newstring;                    
                 }
-                echo '<div class="column c1">'. $string .'</div>';
+                echo '<div class="column c1">' . $string . '</div>';
                 echo "</li>\n";
                 $row = $row ? 0:1;
             }
@@ -6484,7 +6488,7 @@ function print_side_block_start($heading='', $attributes = array()) {
         $attributes['class'] = 'sideblock';
 
     } else if(!strpos($attributes['class'], 'sideblock')) {
-        $attributes['class'] .= ' sideblock';
+        $attributes['class'] .= ' sideblock';        
     }
 
     // OK, the class is surely there and in addition to anything
@@ -7113,5 +7117,40 @@ function auth_get_plugin_title ($authtype) {
     return $authtitle;
 }
 
-// vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
+ /**
+ * Print password policy.
+ * @uses $CFG
+ * @return string
+ */
+ function print_password_policy(){
+     global $CFG;
+     $messages = array();
+     
+     if(!empty($CFG->passwordpolicy)){
+            $messages[] = get_string('informminpasswordlength', 'auth', $CFG->minpasswordlength);
+            if(!empty($CFG->minpassworddigits)){
+                $messages[] = get_string('informminpassworddigits', 'auth', $CFG->minpassworddigits);
+            }
+            if(!empty($CFG->minpasswordlower)){
+                $messages[] = get_string('informminpasswordlower', 'auth', $CFG->minpasswordlower);
+            }
+            if(!empty($CFG->minpasswordupper)){
+                $messages[] = get_string('informminpasswordupper', 'auth', $CFG->minpasswordupper);
+            }
+            if(!empty($CFG->minpasswordnonalphanum)){
+                $messages[] = get_string('informminpasswordnonalphanum', 'auth', $CFG->minpasswordnonalphanum);
+            }
+            
+            $lastmessage = new stdClass;
+            $lastmessage->one = '';
+            $lastmessage->two = array_pop($messages);
+            $messages[] = get_string('and','moodle',$lastmessage);
+            $message = join(', ', $messages);
+            $message = '<div class="fitemtitle">&nbsp;</div><div class="felement ftext">'. get_string('informpasswordpolicy', 'auth', $message) . '</div>';
+        }
+        return $message;
+                
+ }
+
+ // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
