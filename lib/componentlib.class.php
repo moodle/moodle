@@ -477,7 +477,9 @@ class component_installer {
                         continue;
                     }
                     $component[0]=trim($component[0]);
-                    $component[1]=trim($component[1]);
+                    if (!empty($component[1])) {
+                        $component[1]=trim($component[1]);
+                    }
                     if (!empty($component[2])) {
                         $component[2]=trim($component[2]);
                     }
