@@ -93,6 +93,7 @@ switch ($action) {
 case 'upload':
     // The uploaded file has been processed in plugin construct function
     // redirect to default page
+    $repo->upload();
     redirect($url, get_string('uploadsucc','repository'));
     break;
 
