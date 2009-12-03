@@ -2490,7 +2490,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $meta .= 
            "<script type=\"text/javascript\">\n".
            "  var flashversion = swfobject.getFlashPlayerVersion();\n".
-           "  YAHOO.util.Connect.asyncRequest('GET','".$CFG->wwwroot."/login/environment.php?sesskey=".sesskey()."&flashversion='+flashversion.major+'.'+flashversion.minor+'.'+flashversion.release);\n".
+           "  YAHOO.util.Connect.asyncRequest('GET','".$CFG->wwwroot."/login/environment.php?sesskey=".sesskey()."&amp;flashversion='+flashversion.major+'.'+flashversion.minor+'.'+flashversion.release);\n".
            "</script>";
     }
 
