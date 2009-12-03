@@ -2292,13 +2292,17 @@ class calendar_event {
      * This function makes use of MUST_EXIST, if the event id passed in is invalid
      * it will result in an exception being thrown
      *
-     * @param int $id
+     * @param int|object $param
      * @return calendar_event|false
      */
-    public static function load($id) {
+    public static function load($param) {
         global $DB;
-        $event = $DB->get_record('event', array('id'=>$id), '*', MUST_EXIST);
-        $event = new calendar_event($event);
+        if (is_object($param)) {
+            $event = new calendar_event($param);
+        } else {
+            $event = $DB->get_record('event', array('id'=>(int)$param), '*', MUST_EXIST);
+            $event = new calendar_event($event);
+        }
         return $event;
     }
 
