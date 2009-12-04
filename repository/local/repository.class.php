@@ -1,14 +1,30 @@
 <?php
-/**
- * repository_local class
- * This is a subclass of repository class
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * repository_local class is used to browse moodle files
  *
+ * @since 2.0
+ * @package moodlecore
+ * @subpackage repository
+ * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 class repository_local extends repository {
 
     /**
@@ -39,6 +55,7 @@ class repository_local extends repository {
     }
 
     /**
+     * Get file listing
      *
      * @param string $encodedpath
      * @param string $path not used by this plugin
@@ -117,16 +134,15 @@ class repository_local extends repository {
     }
 
      /**
-     * Download a file, this function can be overridden by
-     * subclass.
+     * Move a file to draft area
      *
-     * @global object $CFG
+     * @global object $USER
+     * @global object $DB
      * @param string $encoded The metainfo of file, it is base64 encoded php seriablized data
      * @param string $title The intended name of file
      * @param string $itemid itemid
      * @param string $save_path the new path in draft area
-     * @return array The metainfo of file
-     * @see curl package
+     * @return array The information of file
      */
     public function move_to_draft($encoded, $title = '', $itemid = '', $save_path = '/') {
         global $USER, $DB;
@@ -153,11 +169,19 @@ class repository_local extends repository {
     }
 
     /**
-     * @return string
+     * Set repository name
+     *
+     * @return string repository name
      */
     public function get_name(){
         return get_string('repositoryname', 'repository_local');;
     }
+
+    /**
+     * Local file don't support to link to external links
+     *
+     * @return int 
+     */
     public function supported_returntypes() {
         return FILE_INTERNAL;
     }
