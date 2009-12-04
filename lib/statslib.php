@@ -1287,7 +1287,10 @@ function stats_get_action_names($str) {
         require_once($file);
         $function = $mod->name.'_get_'.$str.'_actions';
         if (function_exists($function)) {
-            $actions = array_merge($actions,$function());
+            $mod_actions = $function();
+            if (is_array($mod_actions)) {
+                $actions = array_merge($actions, $mod_actions);
+            }
         }
     }
 
