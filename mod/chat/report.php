@@ -10,6 +10,7 @@
     $end           = optional_param('end', 0, PARAM_INT);     // End of period
     $deletesession = optional_param('deletesession', 0, PARAM_BOOL);
     $confirmdelete = optional_param('confirmdelete', 0, PARAM_BOOL);
+    $show_all      = optional_param('show_all', 0, PARAM_BOOL);
 
     $url = new moodle_url($CFG->wwwroot.'/mod/chat/report.php', array('id'=>$id));
     if ($start !== 0) {
@@ -155,7 +156,6 @@
 
 
 /// Get the messages
-
     if (empty($messages)) {   /// May have already got them above
         if (!$messages = $DB->get_records_select('chat_messages', "chatid = :chatid $groupselect", $params, "timestamp DESC")) {
             echo $OUTPUT->heading(get_string('nomessages', 'chat'));
@@ -164,13 +164,20 @@
         }
     }
 
+    if ($show_all) {
+        echo $OUTPUT->heading(get_string('listing_all_sessions', 'chat') .
+                      '&nbsp;<a href="report.php?id='.$cm->id.'&amp;show_all=0">' .
+                      get_string('list_complete_sessions', 'chat') .  '</a>');
+    }
+
 /// Show all the sessions
 
-    $sessiongap = 5 * 60;    // 5 minutes silence means a new session
-    $sessionend = 0;
-    $sessionstart   = 0;
-    $sessionusers = array();
-    $lasttime   = 0;
+    $sessiongap        = 5 * 60;    // 5 minutes silence means a new session
+    $sessionend        = 0;
+    $sessionstart      = 0;
+    $sessionusers      = array();
+    $lasttime          = 0;
+    $complete_sessions = 0;
 
     $messagesleft = count($messages);
 
@@ -195,7 +202,8 @@
         } else {
             $sessionstart = $lasttime;
 
-            if ($sessionend - $sessionstart > 60 and count($sessionusers) > 1) {
+            $is_complete = ($sessionend - $sessionstart > 60 and count($sessionusers) > 1);
+            if ($show_all or $is_complete) {
 
                 echo '<p align="center">'.userdate($sessionstart).' --> '. userdate($sessionend).'</p>';
 
@@ -231,6 +239,9 @@
                 echo '</p>';
                 echo $OUTPUT->box_end();
             }
+            if ($is_complete) {
+                $complete_sessions++;
+            }
 
             $sessionend = $message->timestamp;
             $sessionusers = array();
@@ -246,6 +257,13 @@
         $button->render(null, get_string('addalltoportfolio', 'portfolio'));
     }
 
+
+    if (!$show_all and $complete_sessions == 0) {
+        echo $OUTPUT->heading(get_string('no_complete_sessions_found', 'chat') . 
+                      '&nbsp;<a href="report.php?id='.$cm->id.'&amp;show_all=1">' .
+                      get_string('list_all_sessions', 'chat') .
+                      '</a>');
+    }
 
 /// Finish the page
     echo $OUTPUT->footer();
