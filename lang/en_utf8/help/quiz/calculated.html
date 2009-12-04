@@ -49,7 +49,7 @@
 In the question text input and "Correct Answer Formula" {a} and {b} can be seen. These and any other {name} can be used as a wildcard that is substituted by some value when the quiz is taken. Also, the correct answer is calculated when the quiz is submitted using the expression in "Correct Answer Formula", which is calculated as a numerical expression after the substitution of the wildcards. The possible wildcard values are set or generated on a later page in "editing wizard" for calculated questions...
 </p> <p>
 The example formula uses the operator +. Other accepted operators are -*/ and % where % is the modulo operator. It is also possible to use some PHP-style mathematical function. Among these there are 24 single-argument function:<br /><b>
-abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos, cosh, deg2rad, exp, expm1, floor, log, log10, log1p, rad2deg, round, sin, sinh, sprt, tan, tanh
+abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos, cosh, deg2rad, exp, expm1, floor, log, log10, log1p, rad2deg, round, sin, sinh, sqrt, tan, tanh
 </b><br />and two two-argument functions<br /><b>
 atan2, pow
 </b><br />and the functions <b>min</b> and <b>max</b> that can take two or more arguments. It is also possible to use the function <b>pi</b> that takes no arguments but do not forget the use the parentheses - the correct usage is <b>pi()</b>. Similarly the other function must have their argument(s) within parentheses. Possible usage is for example <b>sin({a}) + cos({b}) * 2</b>. It should not be any problem to wrap functions within each other like <b>cos(deg2rad({a} + 90))</b> etc.
