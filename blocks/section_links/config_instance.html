@@ -1,0 +1,73 @@
+<?php
+$numberofsections = array();
+for ($i = 1; $i < 53; $i++){
+	$numberofsections[$i] = $i;
+}
+
+$increments = array();
+
+for ($i = 1; $i < 11; $i++){
+	$increments[$i] = $i;
+}
+
+if(isset($this->config)){
+	$config = $this->config;
+} else{
+	$config = get_config('blocks/section_links');
+}
+
+$selected = array();
+if (!empty($config->numsections1)) {
+    if (!empty($config->incby1)) {
+        $config->incby1 = 2;
+    }
+    $selected[1] = array($config->numsections1, $config->incby1);
+} else {
+    $selected[1] = array(22, 2);
+}
+
+if (!empty($config->numsections2)) {
+    if (!empty($config->incby1)) {
+        $config->incby1 = 5;
+    }
+    $selected[2] = array($config->numsections2, $config->incby2);
+} else {
+    $selected[2] = array(40, 5);
+}
+
+?>
+<table cellpadding="9" cellspacing="0">
+<?php
+for($i = 1; $i < 3; $i++){
+?>
+	<tr valign="top">
+	    <td align="right">
+	        <?php print_string('numsections'.$i, 'block_section_links'); ?>:
+	    </td>
+	    <td>
+	        <?php choose_from_menu($numberofsections, 'numsections'.$i, $selected[$i][0]); ?>
+	    </td>
+	    <td>
+	        <?php print_string('numsectionsdesc'.$i, 'block_section_links'); ?>
+	    </td>
+	</tr>
+	<tr valign="top">
+	    <td align="right">
+	        <?php print_string('incby'.$i, 'block_section_links'); ?>:
+	    </td>
+	    <td>
+	        <?php choose_from_menu($increments, 'incby'.$i, $selected[$i][1]); ?>
+	    </td>
+	    <td>
+	        <?php print_string('incbydesc'.$i, 'block_section_links'); ?>
+	    </td>
+	</tr>	
+<?php }
+?>
+<tr>
+    <td colspan="3" align="center">
+        <input type="hidden" name="sesskey" value="<?php echo sesskey();?>">
+        <input type="submit" value="<?php print_string('savechanges') ?>" />
+    </td>
+</tr>
+</table>
