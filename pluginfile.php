@@ -55,8 +55,23 @@ if (!$context = get_context_instance_by_id($contextid)) {
 }
 $fs = get_file_storage();
 
+// If the file is a Flash file and that the user flash player is outdated return a flash upgrader MDL-20841
+$mimetype = mimeinfo('type', $args[count($args)-1]);
+if (!empty($CFG->excludeoldflashclients) && $mimetype == 'application/x-shockwave-flash'&& !empty($SESSION->flashversion)) {
+    $userplayerversion = explode('.', $SESSION->flashversion);
+    $requiredplayerversion = explode('.', $CFG->excludeoldflashclients);
+    $sendflashupgrader = true;
+}
+if (!empty($sendflashupgrader) && (($userplayerversion[0] <  $requiredplayerversion[0]) ||
+        ($userplayerversion[0] == $requiredplayerversion[0] && $userplayerversion[1] < $requiredplayerversion[1]) ||
+        ($userplayerversion[0] == $requiredplayerversion[0] && $userplayerversion[1] == $requiredplayerversion[1]
+         && $userplayerversion[2] < $requiredplayerversion[2]))) {
+        $path = $CFG->dirroot."/lib/flashdetect/flashupgrade.swf";  // Alternate content asking user to upgrade Flash
+        $filename = "flashupgrade.swf";
+        $lifetime = 0;  // Do not cache
+        send_file($path, $filename, $lifetime, 0, false, false, $mimetype);
 
-if ($context->contextlevel == CONTEXT_SYSTEM) {
+} else if ($context->contextlevel == CONTEXT_SYSTEM) {   
     if ($filearea === 'blog_attachment' || $filearea === 'blog_post') {
 
         if (empty($CFG->bloglevel)) {
