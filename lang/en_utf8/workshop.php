@@ -223,6 +223,7 @@ $string['releaseteachergrades'] = 'Release Teacher Grades';
 $string['removeallattachments'] = 'Remove All Attachments';
 $string['repeatanalysis'] = 'Repeat Analysis';
 $string['reply'] = 'Reply';
+$string['resetworkshopall'] ='Delete submissions, grades and assessments';
 $string['returnto'] = 'Return to';
 $string['returntosubmissionpage'] = 'Return to Submission Page';
 $string['rubric'] = 'Rubric';

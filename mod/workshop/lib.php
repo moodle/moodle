@@ -1869,4 +1869,58 @@ function workshop_get_extra_capabilities() {
     return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
 }
 
+/**
+ * Called by course/reset.php
+ * @param $mform form passed by reference
+ */
+function workshop_reset_course_form_definition(&$mform) {
+
+    $mform->addElement('header', ' workshopheader', get_string('modulenameplural', 'workshop'));
+    $mform->addElement('checkbox', 'reset_workshop_all', get_string('resetworkshopall','workshop'));
+}
+
+/**
+ * Course reset form defaults.
+ */
+function workshop_reset_course_form_defaults($course) {
+    return array('reset_workshop_all'=>1);
+}
+
+/**
+ * This function is used by the reset_course_userdata function in moodlelib.
+ * This function will remove all issued certificates from the specified course
+ * @param $data the data submitted from the reset course.
+ * @return array status array
+ */
+function workshop_reset_userdata($data) {
+    global $CFG;
+
+    $status = array();
+
+    if (!empty($data->reset_workshop_all)) {
+        $workshopids = get_records('workshop', 'course', $data->courseid, '', 'id');
+        if (!empty($workshopids)) {
+            $workshopidslist = implode(',', array_keys($workshopids));
+            // delete all students participation info, keep assessment forms elements and stock comments
+            delete_records_select('workshop_submissions', "workshopid IN ($workshopidslist)");
+            delete_records_select('workshop_grades', "workshopid IN ($workshopidslist)");
+            delete_records_select('workshop_comments', "workshopid IN ($workshopidslist)");
+            delete_records_select('workshop_assessments', "workshopid IN ($workshopidslist)");
+
+            set_field_select('workshop_elements', 'stddev', 0, "workshopid IN ($workshopidslist)");
+            set_field_select('workshop_elements', 'totalassessments', 0, "workshopid IN ($workshopidslist)");
+        }
+
+        // delete module data (submissions)
+        $basedir = $CFG->dataroot.'/'.$data->courseid.'/'.$CFG->moddata.'/workshop/';
+        remove_dir("$basedir");
+
+        // fill return info
+        $status[] = array('component' => get_string('modulenameplural', 'workshop'),
+                            'item' => get_string('resetworkshopall', 'workshop'), 'error' => false);
+    }
+
+    return $status;
+}
+
 ?>
