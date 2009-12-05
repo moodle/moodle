@@ -377,8 +377,8 @@ class portfolio_format_leap2a_entry {
         // selectively add uncomplicated optional elements
         foreach (array('updated', 'published') as $field) {
             if ($this->{$field}) {
-                // TODO get the proper date format
-                $entry->appendChild($dom->createElement($field, $this->{$field}));
+                $date = date(DATE_ATOM, $this->{$field});
+                $entry->appendChild($dom->createElement($field, $date));
             }
         }
         // deal with referenced files first since it's simple

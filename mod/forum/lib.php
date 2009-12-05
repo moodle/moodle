@@ -8133,7 +8133,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
                 $leapwriter->add_entry($selection);
                 $leapwriter->make_selection($selection, $ids, 'Grouping');
                 $content = $leapwriter->to_xml();
-                $name = $this->exporter->get('format')->manifest_name();
+                $name = $this->get('exporter')->get('format')->manifest_name();
             }
             $this->get('exporter')->write_new_file($content, $name, $manifest);
 
@@ -8169,6 +8169,9 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
      */
     private function prepare_post_leap2a(portfolio_format_leap2a_writer $leapwriter, $post, $posthtml) {
         $entry = new portfolio_format_leap2a_entry('forumpost' . $post->id,  $post->subject, 'resource', $posthtml);
+        $entry->published = $post->created;
+        $entry->updated = $post->modified;
+        $entry->author = $post->author;
         if (is_array($this->keyedfiles) && array_key_exists($post->id, $this->keyedfiles) && is_array($this->keyedfiles[$post->id])) {
             foreach ($this->keyedfiles[$post->id] as $file) {
                 // copying the file into the package area is handled elsewhere
@@ -8215,6 +8218,8 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         if (!array_key_exists($post->userid, $users)) {
             $users[$post->userid] = $DB->get_record('user', array('id' => $post->userid));
         }
+        // add the user object on to the post so we can pass it to the leap writer if necessary
+        $post->author = $users[$post->userid];
         $viewfullnames = true;
         // format the post body
         $options = new object();
