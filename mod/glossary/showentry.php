@@ -42,13 +42,19 @@
     }
 
     if ($entries) {
-        $modinfo = get_fast_modinfo($course);
         foreach ($entries as $key => $entry) {
+            // Need to get the course where the entry is,
+            // in order to check for visibility/approve permissions there
+            if (!$entrycourse = get_record("course", "id", $entry->courseid)) {
+                error('Invalid entry course id');
+            }
+            $modinfo = get_fast_modinfo($entrycourse);
             // make sure the entry is visible
             if (empty($modinfo->cms[$entry->cmid]->uservisible)) {
                 unset($entries[$key]);
                 continue;
             }
+            // make sure the entry is approved (or approvable by current user)
             if (!$entry->approved and ($USER->id != $entry->userid)) {
                 $context = get_context_instance(CONTEXT_MODULE, $entry->cmid);
                 if (!has_capability('mod/glossary:approve', $context)) {
@@ -56,7 +62,6 @@
                     continue;
                 }
             }
-            //$entries[$key]->footer = "<p align=\"right\">&raquo;&nbsp;<a onClick=\"if (window.opener) {window.opener.location.href='$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid'; return false;} else {openpopup('/mod/glossary/view.php?g=$entry->glossaryid', 'glossary', 'menubar=1,location=1,toolbar=1,scrollbars=1,directories=1,status=1,resizable=1', 0); return false;}\" href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid\" target=\"_blank\">".format_string($entry->glossaryname,true)."</a></p>";  // Could not get this to work satisfactorily in all cases  - Martin
             $entries[$key]->footer = "<p style=\"text-align:right\">&raquo;&nbsp;<a href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid\">".format_string($entry->glossaryname,true)."</a></p>";
             add_to_log($entry->courseid, "glossary", "view entry", "showentry.php?eid=$entry->id", $entry->id, $entry->cmid);
         }
