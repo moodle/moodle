@@ -36,7 +36,7 @@ if ($eid) {
     $entries = glossary_get_entries_search($concept, $courseid);
 
 } else {
-    error('No valid entry specified');
+    print_error('invalidelementid');
 }
 
 if ($entries) {
