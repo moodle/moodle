@@ -429,10 +429,12 @@
                 print_error('cannotaddcoursemodule');
             }
 
-            $introeditor = $fromform->introeditor;
-            unset($fromform->introeditor);
-            $fromform->intro       = $introeditor['text'];
-            $fromform->introformat = $introeditor['format'];
+            if (plugin_supports('mod', $fromform->modulename, FEATURE_MOD_INTRO, false)) {
+                $introeditor = $fromform->introeditor;
+                unset($fromform->introeditor);
+                $fromform->intro       = $introeditor['text'];
+                $fromform->introformat = $introeditor['format'];
+            }
 
             $returnfromfunc = $addinstancefunction($fromform, $mform);
 
