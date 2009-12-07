@@ -5875,12 +5875,15 @@ wikiadminactions {
 .filemanager-toolbar{
     margin: 5px 0;
 }
-.filemanager-toolbar a{
+.filemanager-toolbar a:link, .filemanager-toolbar a:visited {
     border: 1px solid grey;
+    background: #ccc;
+    color: black;
     padding: 3px;
 }
 .filemanager-toolbar a:hover {
-    background: #CCC;
+    background: white;
+    text-decoration: none;
 }
 .fm-breadcrumb {
     margin:0;

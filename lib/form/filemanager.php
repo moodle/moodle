@@ -210,7 +210,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             $CFG->filemanagerjsloaded = true;
             // print html template
             $html .= <<<FMHTML
-<div id="fm-tmpl" style="display:none"><div class="fm-file-menu">___action___</div> <div class="fm-file-name">___fullname___</div></div>
+<div id="fm-template" style="display:none"><div class="fm-file-menu">___action___</div> <div class="fm-file-name">___fullname___</div></div>
 FMHTML;
         }
 
@@ -239,7 +239,7 @@ FMHTML;
 
         $html .= $PAGE->requires->js_function_call('destroy_item', array("nonjs-filemanager-{$client_id}"))->asap();
         $html .= $PAGE->requires->js_function_call('show_item', array("filemanager-wrapper-{$client_id}"))->asap();
-        $PAGE->requires->js_function_call('setup_filebrowser', array($client_id, $options))->on_dom_ready();
+        $PAGE->requires->js_function_call('launch_filemanager', array($client_id, $options))->on_dom_ready();
 
         return $html;
     }

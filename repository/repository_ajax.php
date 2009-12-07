@@ -42,6 +42,7 @@
     $title     = optional_param('title', '', PARAM_FILE);           // new file name
     $page      = optional_param('page', '', PARAM_RAW);             // page
     $repo_id   = optional_param('repo_id', 1, PARAM_INT);           // repository ID
+    $maxbytes  = optional_param('maxbytes', -1, PARAM_INT);           // repository ID
     $req_path  = optional_param('p', '', PARAM_RAW);                // path
     $save_path = optional_param('savepath', '/', PARAM_PATH);
     $search_text   = optional_param('s', '', PARAM_CLEANHTML);
@@ -236,6 +237,11 @@ EOD;
                     $info['file'] = $fileinfo['title'];
                     $info['id'] = $itemid;
                     $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
+                    $filesize = $fileinfo->get_filesize();
+                    if (($maxbytes!==-1) && ($filesize > $maxbytes)) {
+                        $fileinfo->delete();
+                        throw new file_exception('maxbytes');
+                    }
                     die(json_encode($info));
                 }
 
@@ -261,10 +267,14 @@ EOD;
                     die(json_encode($info));
                 }
 
+                // get the file location
                 $filepath = $repo->get_file($file, $title, $itemid, $save_path);
                 if ($filepath === false) {
                     $err->e = get_string('cannotdownload', 'repository');
                     die(json_encode($err));
+                }
+                if (($maxbytes!==-1) && (filesize($filepath) > $maxbytes)) {
+                    throw new file_exception('maxbytes');
                 }
                 $info = repository::move_to_filepool($filepath, $title, $itemid, $save_path);
                 $info['client_id'] = $client_id;

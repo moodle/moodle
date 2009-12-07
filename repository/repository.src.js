@@ -1045,6 +1045,7 @@ repository_client.download = function(client_id, repo_id) {
     params['ctx_id']=fp_config.contextid;
     params['repo_id']=repo_id;
     params['client_id']=client_id;
+    params['maxbytes']=fp.maxbytes;
     var trans = YAHOO.util.Connect.asyncRequest('POST',
             MOODLE.repository.api+'?action=download',
             repository_client.download_cb,
@@ -1247,7 +1248,7 @@ var mdl_in_array = function(el, arr) {
     return false;
 }
 
-// will be called by filemanager or htmleditor
+// will be called by filemanager or editor to launch file picker
 function open_filepicker(id, params) {
     var r = repository_client.fp[id];
     if(!r) {
@@ -1294,7 +1295,12 @@ function open_filepicker(id, params) {
         // unlimited
         params.maxfiles = -1;
     }
+    if (!params.maxbytes) {
+        // unlimited
+        params.maxbytes = -1;
+    }
     r.maxfiles = params.maxfiles;
+    r.maxbytes = params.maxbytes;
     return r;
 }
 
