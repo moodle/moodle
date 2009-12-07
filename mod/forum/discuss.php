@@ -12,13 +12,23 @@
     $mark   = optional_param('mark', '', PARAM_ALPHA);       // Used for tracking read posts if user initiated.
     $postid = optional_param('postid', 0, PARAM_INT);        // Used for tracking read posts if user initiated.
 
-    $PAGE->set_url('/mod/forum/post.php', array(
-            'd' => $d,
-            'parent' => $parent,
-            'mode'  => $mode,
-            'mark' => $mark,
-            'postid'  => $postid
-            ));
+    $url = new moodle_url($CFG->wwwroot.'/mod/forum/discuss.php', array('d'=>$d));
+    if ($parent !== 0) {
+        $url->param('parent', $parent);
+    }
+    if ($mode !== 0) {
+        $url->param('mode', $mode);
+    }
+    if ($move !== 0) {
+        $url->param('move', $move);
+    }
+    if ($mark !== '') {
+        $url->param('mark', $mark);
+    }
+    if ($postid !== 0) {
+        $url->param('postid', $postid);
+    }
+    $PAGE->set_url($url);
 
     if (!$discussion = $DB->get_record('forum_discussions', array('id' => $d))) {
         print_error('invaliddiscussionid', 'forum');
@@ -35,7 +45,6 @@
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
         print_error('invalidcoursemodule');
     }
-
     require_course_login($course, true, $cm);
 
 /// Add ajax-related libs
@@ -149,7 +158,7 @@
 
     $searchform = forum_search_form($course);
 
-    $PAGE->navbar->add(format_string($discussion->name), new moodle_url($CFG->wwwroot.'/mod/forum/discuss.php', array('id'=>$discussion->id)));
+    $PAGE->navbar->add(format_string($discussion->name), new moodle_url($CFG->wwwroot.'/mod/forum/discuss.php', array('d'=>$discussion->id)));
     if ($parent != $discussion->firstpost) {
         $PAGE->navbar->add(format_string($post->subject));
     }

@@ -8395,7 +8395,9 @@ function forum_extend_settings_navigation($settingsnav, $module=null) {
     $forum->forceopen = true;
 
     $forumobject = $DB->get_record("forum", array("id" => $PAGE->cm->instance));
-
+    if (empty($PAGE->cm->context)) {
+        $PAGE->cm->context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->instance);
+    }
     if (!empty($USER->id) && !has_capability('moodle/legacy:guest', $PAGE->cm->context, NULL, false)) {
         $notekey = false;
         $helpbutton = false;
