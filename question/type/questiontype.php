@@ -1128,7 +1128,9 @@ class default_questiontype {
             if ($state->id == $st->id) {
                 $link = '<b>' . $st->seq_number . '</b>';
             } else if (isset($options->questionreviewlink)) {
-                $link = html_link::make("$options->questionreviewlink?state=$st->id&question=$question->id", $st->seq_number);
+                $reviewlink = new moodle_url($options->questionreviewlink);
+                $reviewlink->params(array('state'=>$st->id,'question'=>$question->id));
+                $link = html_link::make($reviewlink, $st->seq_number);
                 $link->add_action(new popup_action('click', $link->url, 'reviewquestion', array('height' => 450, 'width' => 650)));
                 $link->title = $strreviewquestion;
                 $link = $OUTPUT->link($link);
