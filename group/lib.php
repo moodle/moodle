@@ -280,7 +280,7 @@ function groups_delete_group($grouporid) {
     $DB->delete_records('groups', array('id'=>$groupid));
 
     // Delete all files associated with this group
-    $context = get_context_instace(CONTEXT_COURSE, $group->courseid);
+    $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
     $fs = get_file_storage();
     $files = $fs->get_area_files($context->id, 'course_group_description', $groupid);
     foreach ($files as $file) {
@@ -321,7 +321,7 @@ function groups_delete_grouping($groupingorid) {
     //group itself last
     $DB->delete_records('groupings', array('id'=>$groupingid));
 
-    $context = get_context_instace(CONTEXT_COURSE, $grouping->courseid);
+    $context = get_context_instance(CONTEXT_COURSE, $grouping->courseid);
     $fs = get_file_storage();
     $files = $fs->get_area_files($context->id, 'course_grouping_description', $groupingid);
     foreach ($files as $file) {
@@ -387,7 +387,7 @@ function groups_delete_groupings_groups($courseid, $showfeedback=false) {
     $DB->delete_records_select('groupings_groups', "groupid IN ($groupssql)", array($courseid));
 
     // Delete all files associated with groupings for this course
-    $context = get_context_instace(CONTEXT_COURSE, $courseid);
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'course_group_description');
 
@@ -461,7 +461,7 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
     $DB->delete_records('groupings', array('courseid'=>$courseid));
 
     // Delete all files associated with groupings for this course
-    $context = get_context_instace(CONTEXT_COURSE, $courseid);
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'course_grouping_description');
 
