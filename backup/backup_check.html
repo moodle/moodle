@@ -133,7 +133,12 @@
         $backupprefs->backup_blogs = 0;
         $backupprefs->backuproleassignments = array();
 
-        print_simple_box("<font color=\"red\">".get_string("backupnoneusersinfo")."</font>","center", "70%", '', "20", "noticebox");
+        if ($backupuserinfo) { // Based on perms, decide the msg to show
+            $nousersmsgtoshow = 'backupnoneusersinfo';
+        } else {
+            $nousersmsgtoshow = 'backupmissinguserinfoperms';
+        }
+        print_simple_box("<font color=\"red\">".get_string($nousersmsgtoshow)."</font>","center", "70%", '', "20", "noticebox");
         echo "<hr />";
     }
 
