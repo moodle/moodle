@@ -25,6 +25,7 @@
 
 /** Include portfoliolib.php */
 require_once($CFG->libdir.'/portfoliolib.php');
+require_once($CFG->dirroot.'/calendar/lib.php');
 
 // The HTML head for the message window to start with (<!-- nix --> is used to get some browsers starting with output
 global $CHAT_HTMLHEAD;
@@ -125,7 +126,7 @@ function chat_add_instance($chat) {
         $event->timestart   = $chat->chattime;
         $event->timeduration = 0;
 
-        add_event($event);
+        calendar_event::create($event);
     }
 
     return $returnid;
@@ -157,7 +158,8 @@ function chat_update_instance($chat) {
             $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
             $event->timestart   = $chat->chattime;
 
-            update_event($event);
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->update($event);
         }
     }
 
@@ -491,8 +493,8 @@ function chat_refresh_events($courseid = 0) {
         $event->timestart   = $chat->chattime;
 
         if ($event->id = $DB->get_field('event', 'id', array('modulename'=>'chat', 'instance'=>$chat->id))) {
-            update_event($event);
-
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->update($event);
         } else {
             $event->courseid    = $chat->course;
             $event->groupid     = 0;
@@ -503,7 +505,7 @@ function chat_refresh_events($courseid = 0) {
             $event->timeduration = 0;
             $event->visible     = $DB->get_field('course_modules', 'visible', array('module'=>$moduleid, 'instance'=>$chat->id));
 
-            add_event($event);
+            calendar_event::create($event);
         }
     }
     return true;
@@ -739,7 +741,8 @@ function chat_update_chat_times($chatid=0) {
 
         if ($event->id = $DB->get_field_select('event', 'id', $cond, $params)) {
             $event->timestart   = $chat->chattime;
-            update_event($event);
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->update($event);
         }
     }
 }
