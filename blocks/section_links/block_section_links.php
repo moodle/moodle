@@ -133,7 +133,8 @@ class block_section_links extends block_base {
         return true;
     }
     function before_delete() {
-        delete_records('config_plugins', 'plugin', 'blocks/section_links');
+        global $DB;
+        $DB->delete_records('config_plugins', 'plugin', 'blocks/section_links');
     }
 }
 
