@@ -183,7 +183,7 @@ function html_header($context, $file_info){
     global $CFG, $SITE, $PAGE, $OUTPUT;
 
     $strfiles = get_string("files");
-    $PAGE->navbar->add($strfiles);
+    build_navbar_for_file($PAGE, $file_info);
     $PAGE->set_url("files/index.php", $file_info->get_params_rawencoded());
     $PAGE->set_title("$SITE->shortname: $strfiles");
     echo $OUTPUT->header();
@@ -328,4 +328,23 @@ function displaydir($file_info) {
 
 }
 
-
+/**
+ * Creates a navigation bar that relates to the passed file
+ *
+ * @param moodle_page $page
+ * @param file_info $file_info
+ */
+function build_navbar_for_file($page, $file_info) {
+    $page->navbar->ignore_active();
+    $parent_info = $file_info->get_parent();
+    $level = $parent_info;
+    $nodes = array(clone($file_info));
+    while ($level) {
+        $nodes[] = $level;
+        $level = $level->get_parent();
+    }
+    $page->navbar->add(get_string('files'));
+    foreach (array_reverse($nodes) as $level) {
+        $page->navbar->add($level->get_visible_name(), 'index.php?'.implode('&amp;', $level->get_params_rawencoded()));
+    }
+}
