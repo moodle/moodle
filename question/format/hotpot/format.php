@@ -509,6 +509,28 @@ class qformat_hotpot extends qformat_default {
     }
 } // end class
 
+function hotpot_charcode_to_utf8($charcode) {
+    // thanks to Miguel Perez: http://jp2.php.net/chr (19-Sep-2007)
+    if ($charcode <= 0x7F) {
+        // ascii char (roman alphabet + punctuation)
+        return chr($charcode);
+    }
+    if ($charcode <= 0x7FF) {
+        // 2-byte char
+        return chr(($charcode >> 0x06) + 0xC0).chr(($charcode & 0x3F) + 128);
+    }
+    if ($charcode <= 0xFFFF) {
+        // 3-byte char
+        return chr(($charcode >> 0x0C) + 0xE0).chr((($charcode >> 0x06) & 0x3F) + 0x80).chr(($charcode & 0x3F) + 0x80);
+    }
+    if ($charcode <= 0x1FFFFF) {
+        // 4-byte char
+        return chr(($charcode >> 0x12) + 0xF0).chr((($charcode >> 0x0C) & 0x3F) + 0x80).chr((($charcode >> 0x06) & 0x3F) + 0x80).chr(($charcode & 0x3F) + 0x80);
+    }
+    // unidentified char code !!
+    return ' '; 
+}
+
 function hotpot_convert_relative_urls($str, $baseurl, $filename) {
     $tagopen = '(?:(<)|(&lt;)|(&amp;#x003C;))'; // left angle bracket
     $tagclose = '(?(2)>|(?(3)&gt;|(?(4)&amp;#x003E;)))'; //  right angle bracket (to match left angle bracket)
