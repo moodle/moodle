@@ -151,10 +151,8 @@ if (!empty($allowedusers)) {
     echo "<br/><br/><span style=\"font-size:85%\">"; //reduce font of the user settings
     foreach($allowedusers as $user) {
 
-        echo "<strong>";
         echo print_collapsible_region_start('', 'usersettings'.$user->id,$user->firstname." ".$user->lastname.", ".$user->email,false,true,true);
-        echo "</strong>";
-
+       
         //user settings form
         $contents = "<div class=\"fcontainer clearfix\">";
         $form = new html_form();
@@ -209,7 +207,7 @@ if (!empty($allowedusers)) {
         echo $OUTPUT->form($form, $contents);
 
         echo print_collapsible_region_end(true);
-
+        
 
     }
     echo "</span>";
