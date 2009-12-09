@@ -2867,10 +2867,10 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base { // 
 
 function glossary_extend_navigation($navigation, $course, $module, $cm) {
     global $CFG;
-    $navigation->add(get_string('standardview', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->instance, 'mode'=>'letter')));
-    $navigation->add(get_string('categoryview', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->instance, 'mode'=>'cat')));
-    $navigation->add(get_string('dateview', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->instance, 'mode'=>'date')));
-    $navigation->add(get_string('authorview', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->instance, 'mode'=>'author')));
+    $navigation->add(get_string('standardview', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->id, 'mode'=>'letter')));
+    $navigation->add(get_string('categoryview', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->id, 'mode'=>'cat')));
+    $navigation->add(get_string('dateview', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->id, 'mode'=>'date')));
+    $navigation->add(get_string('authorview', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->id, 'mode'=>'author')));
 }
 
 function glossary_extend_settings_navigation($settings, $module) {
