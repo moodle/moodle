@@ -925,7 +925,13 @@ class global_navigation extends navigation_node {
             $contextlevel = 10;
         }
         $depth = 0;
-
+        
+        /**
+         * We always want to load the front page activities into the tree, these
+         * will appear at the bottom of the opening (site) node.
+         */
+        $sitekeys = array();
+        $this->load_course_activities($sitekeys, $SITE);
         switch ($contextlevel) {
             case CONTEXT_SYSTEM:
                 $this->cache->volatile();
@@ -1379,7 +1385,8 @@ class global_navigation extends navigation_node {
         if ($course===null) {
             $course = $PAGE->course;
         }
-        if (is_object($course)) {
+        if (is_object($course) && $course->id !== SITEID) {
+
             if (!$this->cache->cached('canviewhiddencourses')) {
                 $this->cache->canviewhiddencourses = has_capability('moodle/course:viewhiddencourses', $this->context);
             }
