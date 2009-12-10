@@ -11,7 +11,7 @@
         print_error('invalidcourseid');
     }
 
-    $PAGE->set_url(new moodle_url($CFg->wwwroot.'/course/report/outline/index.php', array('id'=>$id)));
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/report/outline/index.php', array('id'=>$id)));
 
     require_login($course);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
