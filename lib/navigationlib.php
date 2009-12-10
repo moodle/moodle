@@ -1281,6 +1281,11 @@ class global_navigation extends navigation_node {
             }
             $file = $CFG->dirroot.'/mod/'.$module->name.'/lib.php';
             $function = $module->name.'_extend_navigation';
+
+            if (empty($PAGE->cm->context)) {
+                $PAGE->cm->context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->instance);
+            }
+
             if (file_exists($file)) {
                 require_once($file);
                 if (function_exists($function)) {
@@ -2938,6 +2943,14 @@ class settings_navigation extends navigation_node {
         if (!$this->page->cm) {
             debugging('The module has not been set against the page but we are attempting to generate module specific information for navigation', DEBUG_DEVELOPER);
             return;
+        }
+
+        if (empty($this->page->cm->context)) {
+            if ($this->context->instanceid === $this->page->cm->id) {
+                $this->page->cm->context = $this->context;
+            } else {
+                $this->page->cm->context = get_context_instance(CONTEXT_MODULE, $this->page->cm->instance);
+            }
         }
 
         $module = $DB->get_record('modules', array('id'=>$this->page->cm->module));
