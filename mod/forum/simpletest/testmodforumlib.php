@@ -30,7 +30,7 @@
  * @author T.J.Hunt@open.ac.uk
  * @author nicolas@moodle.com
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod/forum
+ * @package mod-forum
  */
 
 if (!defined('MOODLE_INTERNAL')) {

@@ -1,9 +1,32 @@
 <?php
-    //This file adds support to rss feeds generation
 
-    //This function is the main entry point to forum
-    //rss feeds generation. Foreach site forum with rss enabled
-    //build one XML rss structure.
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This file adds support to rss feeds generation
+ *
+ * @package mod-forum
+ * @copyright 2001 Eloy Lafuente (stronk7) http://contiento.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+    /**
+     * This function is the main entry point to forum rss feeds generation.
+     * Foreach site forum with rss enabled build one XML rss structure.
+     */
     function forum_rss_feeds() {
 
         global $CFG, $DB;
@@ -69,7 +92,12 @@
     }
 
 
-    // Given a forum object, deletes the RSS file
+    /**
+     * Given a forum object, deletes the RSS file
+     *
+     * @param 0object $forum
+     * @return bool
+     */
     function forum_rss_delete_file($forum) {
         global $CFG;
         $rssfile = rss_file_name('forum', $forum);
@@ -81,9 +109,15 @@
     }
 
 
+    /**
+     * If there is new stuff in the forum since $time then this returns
+     * true.  Otherwise it returns false.
+     *
+     * @param object $forum
+     * @param int $time
+     * @return bool
+     */
     function forum_rss_newstuff($forum, $time) {
-    // If there is new stuff in the forum since $time then this returns
-    // true.  Otherwise it returns false.
         if ($forum->rsstype == 1) {
             $items = forum_rss_feed_discussions($forum, $time);
         } else {
@@ -92,8 +126,13 @@
         return (!empty($items));
     }
 
-    //This function return the XML rss contents about the forum record passed as parameter
-    //It returns false if something is wrong
+    /**
+     * This function return the XML rss contents about the forum record passed as parameter
+     * It returns false if something is wrong
+     *
+     * @param object $forum
+     * @param bool
+     */
     function forum_rss_feed($forum) {
 
         global $CFG;
@@ -145,8 +184,13 @@
         return $status;
     }
 
-    //This function returns "items" record array to be used to build the rss feed
-    //for a Type=discussions forum
+    /**
+     * This function returns "items" record array to be used to build the rss feed
+     * for a Type=discussions forum
+     *
+     * @param object $forum
+     * @param int $newsince
+     */
     function forum_rss_feed_discussions($forum, $newsince=0) {
 
         global $CFG, $DB;
@@ -200,8 +244,13 @@
         return $items;
     }
 
-    //This function returns "items" record array to be used to build the rss feed
-    //for a Type=posts forum
+    /**
+     * This function returns "items" record array to be used to build the rss feed
+     * for a Type=posts forum
+     * 
+     * @param object $forum
+     * @param int $newsince
+     */
     function forum_rss_feed_posts($forum, $newsince=0) {
 
         global $CFG, $DB;
@@ -265,4 +314,3 @@
         }
         return $items;
     }
-

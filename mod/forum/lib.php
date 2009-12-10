@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   forum
+ * @package mod-forum
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -7965,7 +7965,7 @@ function forum_get_extra_capabilities() {
 }
 
 /**
- * @package   forum
+ * @package mod-forum
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -8501,12 +8501,35 @@ function forum_extend_settings_navigation($settingsnav, $module=null) {
     return $forumkey;
 }
 
+/**
+ * Abstract class used by forum subscriber selection controls
+ * @package mod-forum
+ * @copyright 2009 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 abstract class forum_subscriber_selector_base extends user_selector_base {
 
+    /**
+     * The id of the forum this selector is being used for
+     * @var int
+     */
     protected $forumid = null;
+    /**
+     * The context of the forum this selector is being used for
+     * @var object
+     */
     protected $context = null;
+    /**
+     * The id of the current group
+     * @var int
+     */
     protected $currentgroup = null;
 
+    /**
+     * Constructor method
+     * @param string $name
+     * @param array $options
+     */
     public function __construct($name, $options) {
         parent::__construct($name, $options);
         if (isset($options['context'])) {
@@ -8520,6 +8543,11 @@ abstract class forum_subscriber_selector_base extends user_selector_base {
         }
     }
 
+    /**
+     * Returns an array of options to seralise and store for searches
+     *
+     * @return array
+     */
     protected function get_options() {
         global $CFG;
         $options = parent::get_options();
@@ -8532,11 +8560,30 @@ abstract class forum_subscriber_selector_base extends user_selector_base {
 
 }
 
+/**
+ * A user selector control for potential subscribers to the selected forum
+ * @package mod-forum
+ * @copyright 2009 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class forum_potential_subscriber_selector extends forum_subscriber_selector_base {
 
+    /**
+     * If set to true EVERYONE in this course is force subscribed to this forum
+     * @var bool
+     */
     protected $forcesubscribed = false;
+    /**
+     * Can be used to store existing subscribers so that they can be removed from
+     * the potential subscribers list
+     */
     protected $existingsubscribers = array();
 
+    /**
+     * Constructor method
+     * @param string $name
+     * @param array $options
+     */
     public function  __construct($name, $options) {
         parent::__construct($name, $options);
         if (isset($options['forcesubscribed'])) {
@@ -8544,6 +8591,10 @@ class forum_potential_subscriber_selector extends forum_subscriber_selector_base
         }
     }
 
+    /**
+     * Returns an arary of options for this control
+     * @return array
+     */
     protected function get_options() {
         $options = parent::get_options();
         if ($this->forcesubscribed===true) {
@@ -8552,6 +8603,15 @@ class forum_potential_subscriber_selector extends forum_subscriber_selector_base
         return $options;
     }
 
+    /**
+     * Finds all potential users
+     *
+     * Potential users are determined by checking for users with a capability
+     * determined in {@see forum_get_potential_subscribers()}
+     *
+     * @param string $search
+     * @return array
+     */
     public function find_users($search) {
         global $DB;
 
@@ -8586,17 +8646,36 @@ class forum_potential_subscriber_selector extends forum_subscriber_selector_base
         }
     }
 
+    /**
+     * Sets the existing subscribers
+     * @param array $users
+     */
     public function set_existing_subscribers(array $users) {
         $this->existingsubscribers = $users;
     }
 
+    /**
+     * Sets this forum as force subscribed or not
+     */
     public function set_force_subscribed($setting=true) {
         $this->forcesubscribed = true;
     }
 }
 
+/**
+ * User selector control for removing subscribed users
+ * @package mod-forum
+ * @copyright 2009 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class forum_existing_subscriber_selector extends forum_subscriber_selector_base {
 
+    /**
+     * Finds all subscribed users
+     *
+     * @param string $search
+     * @return array
+     */
     public function find_users($search) {
         global $DB;
         list($wherecondition, $params) = $this->search_sql($search, 'u');
