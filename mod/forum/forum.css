@@ -1,0 +1,26 @@
+#mod-forum-subscribers .subscriberdiv,
+#mod-forum-subscribers .subscribertable {
+    width:100%;
+    background-color:#EEEEEE;
+    border:1px solid #BBBBBB;
+}
+#mod-forum-subscribers .subscriberdiv,
+#mod-forum-subscribers .subscribertable tr td {
+    vertical-align:top;
+    padding:0.2em 0.3em;
+}
+#mod-forum-subscribers .subscribertable tr td.existing {
+    width:42%;
+}
+#mod-forum-subscribers .subscribertable tr td.actions {
+    width:16%;
+    padding-top:3em;
+}
+#mod-forum-subscribers .subscribertable tr td.actions .actionbutton {
+    margin:0.3em 0;
+    padding:0.5em 0;
+    width:100%;
+}
+#mod-forum-subscribers .subscribertable tr td.potential {
+    width:42%;
+}

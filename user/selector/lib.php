@@ -63,9 +63,9 @@ abstract class user_selector_base {
     /** When searching, do we only match the starts of fields (better performace)
      * or do we match occurrences anywhere? */
     protected $searchanywhere = false;
-
     // This is used by get selected users,
-    private $validatinguserids = null;
+    protected $validatinguserids = null;
+    
     // Used to ensure we only output the search options for one user selector on
     // each page.
     private static $searchoptionsoutput = false;
@@ -372,7 +372,7 @@ abstract class user_selector_base {
         $users = array();
         foreach ($groupedusers as $group) {
             foreach ($group as $user) {
-                if (!isset($users[$user->id]) && empty($user->disabled)) {
+                if (!isset($users[$user->id]) && empty($user->disabled) && in_array($user->id, $userids)) {
                     $users[$user->id] = $user;
                 }
             }

@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   mod-forum
+ * @package   forum
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,6 +26,7 @@ require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/eventslib.php');
 require_once($CFG->libdir.'/portfoliolib.php');
 require_once($CFG->libdir . '/completionlib.php');
+require_once($CFG->dirroot.'/user/selector/lib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////
 
@@ -7964,7 +7965,7 @@ function forum_get_extra_capabilities() {
 }
 
 /**
- * @package   mod-forum
+ * @package   forum
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -8498,4 +8499,124 @@ function forum_extend_settings_navigation($settingsnav, $module=null) {
     }
 
     return $forumkey;
+}
+
+abstract class forum_subscriber_selector_base extends user_selector_base {
+
+    protected $forumid = null;
+    protected $context = null;
+    protected $currentgroup = null;
+
+    public function __construct($name, $options) {
+        parent::__construct($name, $options);
+        if (isset($options['context'])) {
+            $this->context = $options['context'];
+        }
+        if (isset($options['currentgroup'])) {
+            $this->currentgroup = $options['currentgroup'];
+        }
+        if (isset($options['forumid'])) {
+            $this->forumid = $options['forumid'];
+        }
+    }
+
+    protected function get_options() {
+        global $CFG;
+        $options = parent::get_options();
+        $options['file'] =  substr(__FILE__, strlen($CFG->dirroot.'/'));
+        $options['context'] = $this->context;
+        $options['currentgroup'] = $this->currentgroup;
+        $options['forumid'] = $this->forumid;
+        return $options;
+    }
+
+}
+
+class forum_potential_subscriber_selector extends forum_subscriber_selector_base {
+
+    protected $forcesubscribed = false;
+    protected $existingsubscribers = array();
+
+    public function  __construct($name, $options) {
+        parent::__construct($name, $options);
+        if (isset($options['forcesubscribed'])) {
+            $this->forcesubscribed=true;
+        }
+    }
+
+    protected function get_options() {
+        $options = parent::get_options();
+        if ($this->forcesubscribed===true) {
+            $options['forcesubscribed']=1;
+        }
+        return $options;
+    }
+
+    public function find_users($search) {
+        global $DB;
+
+        $availableusers = forum_get_potential_subscribers($this->context, $this->currentgroup, $this->required_fields_sql('u'), 'firstname ASC, lastname ASC');
+
+        if (empty($availableusers)) {
+            $availableusers = array();
+        } else if ($search) {
+            $search = strtolower($search);
+            foreach ($availableusers as $key=>$user) {
+                if (stripos($user->firstname, $search) === false && stripos($user->lastname, $search) === false) {
+                    unset($availableusers[$key]);
+                }
+            }
+        }
+
+        // Unset any existing subscribers
+        if (count($this->existingsubscribers)>0 && !$this->forcesubscribed) {
+            foreach ($this->existingsubscribers as $group) {
+                foreach ($group as $user) {
+                    if (array_key_exists($user->id, $availableusers)) {
+                        unset($availableusers[$user->id]);
+                    }
+                }
+            }
+        }
+
+        if ($this->forcesubscribed) {
+            return array(get_string("existingsubscribers", 'forum') => $availableusers);
+        } else {
+            return array(get_string("potentialsubscribers", 'forum') => $availableusers);
+        }
+    }
+
+    public function set_existing_subscribers(array $users) {
+        $this->existingsubscribers = $users;
+    }
+
+    public function set_force_subscribed($setting=true) {
+        $this->forcesubscribed = true;
+    }
+}
+
+class forum_existing_subscriber_selector extends forum_subscriber_selector_base {
+
+    public function find_users($search) {
+        global $DB;
+        list($wherecondition, $params) = $this->search_sql($search, 'u');
+
+        $fields = 'SELECT ' . $this->required_fields_sql('u');
+        $from = ' FROM {user} u LEFT JOIN {forum_subscriptions} s ON s.userid=u.id';
+        $wherecondition .= ' AND s.forum=?';
+        $params[] = $this->forumid;
+        $order = ' ORDER BY lastname ASC, firstname ASC';
+
+        if ($this->currentgroup) {
+            $from .= ", {groups_members} gm ";
+            $wherecondition .= " AND gm.groupid = ? AND u.id = gm.userid";
+            $params[] = $this->currentgroup;
+        }
+        if (!$subscribers = $DB->get_records_sql($fields.$from.' WHERE '.$wherecondition.$order, $params)) {
+            $subscribers = array();
+        }
+        
+        return array(get_string("existingsubscribers", 'forum') => $subscribers);
+    }
+
 }

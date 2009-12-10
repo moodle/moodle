@@ -1926,8 +1926,8 @@ function check_theme_arrows() {
     if (!isset($THEME->rarrow) and !isset($THEME->larrow)) {
         // Default, looks good in Win XP/IE 6, Win/Firefox 1.5, Win/Netscape 8...
         // Also OK in Win 9x/2K/IE 5.x
-        $THEME->rarrow = '&#x25BA;';
-        $THEME->larrow = '&#x25C4;';
+        $THEME->rarrow = '►'; // &#x25BA;
+        $THEME->larrow = '◄'; // &#x25C4;
         if (empty($_SERVER['HTTP_USER_AGENT'])) {
             $uagent = '';
         } else {
@@ -1937,12 +1937,12 @@ function check_theme_arrows() {
             || false !== strpos($uagent, 'Mac')) {
             // Looks good in Win XP/Mac/Opera 8/9, Mac/Firefox 2, Camino, Safari.
             // Not broken in Mac/IE 5, Mac/Netscape 7 (?).
-            $THEME->rarrow = '&#x25B6;';
-            $THEME->larrow = '&#x25C0;';
+            $THEME->rarrow = '▶'; // &#x25B6;
+            $THEME->larrow = '◀'; // &#x25C0;
         }
         elseif (false !== strpos($uagent, 'Konqueror')) {
-            $THEME->rarrow = '&rarr;';
-            $THEME->larrow = '&larr;';
+            $THEME->rarrow = '→'; // &rarr;
+            $THEME->larrow = '←'; // &larr;
         }
         elseif (isset($_SERVER['HTTP_ACCEPT_CHARSET'])
             && false === stripos($_SERVER['HTTP_ACCEPT_CHARSET'], 'utf-8')) {
