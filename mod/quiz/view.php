@@ -63,10 +63,8 @@
         $USER->editing = $edit;
     }
 
-/// Print the page header
-    $bodytags = '';
     if ($accessmanager->securewindow_required($canpreview)) {
-        $bodytags = 'onload="popupchecker(\'' . get_string('popupblockerwarning', 'quiz') . '\');"';
+        $PAGE->requires->js_function_call('popupchecker',array(get_string('popupblockerwarning', 'quiz')));
     }
     $PAGE->requires->yui_lib('event');
 
