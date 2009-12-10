@@ -2357,7 +2357,7 @@ function require_logout() {
  *             in order to keep redirects working properly. MDL-14495
  */
 function require_course_login($courseorid, $autologinguest=true, $cm=null, $setwantsurltome=true) {
-    global $CFG;
+    global $CFG, $PAGE, $SITE;
     if (!empty($CFG->forcelogin)) {
         // login required for both SITE and courses
         require_login($courseorid, $autologinguest, $cm, $setwantsurltome);
@@ -2376,6 +2376,24 @@ function require_course_login($courseorid, $autologinguest=true, $cm=null, $setw
             // not-logged-in users do not have any group membership
             require_login($courseorid, $autologinguest, $cm, $setwantsurltome);
         } else {
+            // We still need to instatiate PAGE vars properly so that things
+            // that rely on it like navigation function correctly.
+            if (!empty($courseorid)) {
+                if (is_object($courseorid)) {
+                    $course = $courseorid;
+                } else {
+                    $course = clone($SITE);
+                }
+                if ($cm) {
+                    $PAGE->set_cm($cm, $course);
+                } else {
+                    $PAGE->set_course($course);
+                }
+            } else {
+                // If $PAGE->course, and hence $PAGE->context, have not already been set
+                // up properly, set them up now.
+                $PAGE->set_course($PAGE->course);
+            }
             //TODO: verify conditional activities here
             user_accesstime_log(SITEID);
             return;
