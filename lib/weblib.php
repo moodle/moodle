@@ -1924,6 +1924,7 @@ function check_theme_arrows() {
     global $THEME;
 
     if (!isset($THEME->rarrow) and !isset($THEME->larrow)) {
+        debug($THEME, 'not set');
         // Default, looks good in Win XP/IE 6, Win/Firefox 1.5, Win/Netscape 8...
         // Also OK in Win 9x/2K/IE 5.x
         $THEME->rarrow = '►'; // &#x25BA;
@@ -1957,6 +1958,13 @@ function check_theme_arrows() {
             $t = $THEME->rarrow;
             $THEME->rarrow = $THEME->larrow;
             $THEME->larrow = $t;
+        }
+    } else {
+        if (strpos($THEME->rarrow, '&')===0 && strrpos($THEME->rarrow, ';')===strlen($THEME->rarrow)-1) {
+            $THEME->rarrow = html_entity_decode($THEME->rarrow, ENT_QUOTES, 'utf-8');
+        }
+        if (strpos($THEME->larrow, '&')===0 && strrpos($THEME->larrow, ';')===strlen($THEME->larrow)-1) {
+            $THEME->larrow = html_entity_decode($THEME->larrow, ENT_QUOTES, 'utf-8');
         }
     }
 }
