@@ -1924,7 +1924,6 @@ function check_theme_arrows() {
     global $THEME;
 
     if (!isset($THEME->rarrow) and !isset($THEME->larrow)) {
-        debug($THEME, 'not set');
         // Default, looks good in Win XP/IE 6, Win/Firefox 1.5, Win/Netscape 8...
         // Also OK in Win 9x/2K/IE 5.x
         $THEME->rarrow = '►'; // &#x25BA;
