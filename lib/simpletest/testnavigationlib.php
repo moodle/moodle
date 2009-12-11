@@ -46,6 +46,8 @@ class navigation_node_test extends UnitTestCase {
         parent::setUp();
 
         $this->activeurl = $PAGE->url;
+        navigation_node::override_active_url($this->activeurl);
+        
         $this->inactiveurl = new moodle_url('http://www.moodle.com/');
         $this->fakeproperties['action'] = $this->inactiveurl;
 
