@@ -211,8 +211,9 @@
     echo "</td><td>";
 
     if (has_capability('mod/forum:exportdiscussion', $modcontext)) {
+        require_once($CFG->libdir.'/portfoliolib.php');
         $button = new portfolio_add_button();
-        $button->set_callback_options('forum_portfolio_caller', array('discussionid' => $discussion->id), '/mod/forum/lib.php');
+        $button->set_callback_options('forum_portfolio_caller', array('discussionid' => $discussion->id), '/mod/forum/locallib.php');
         $button->render();
         echo '</td><td>';
     }

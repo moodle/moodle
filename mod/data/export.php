@@ -101,7 +101,8 @@ if (array_key_exists('portfolio', $formdata) && !empty($formdata['portfolio'])) 
     // fake  portfolio callback stuff and redirect
     $formdata['id'] = $cm->id;
     $formdata['exporttype'] = 'csv'; // force for now
-    $url = portfolio_fake_add_url($formdata['portfolio'], 'data_portfolio_caller', '/mod/data/lib.php', $formdata, array());
+    require_once($CFG->libdir . '/portfoliolib.php');
+    $url = portfolio_fake_add_url($formdata['portfolio'], 'data_portfolio_caller', '/mod/data/locallib.php', $formdata, array(PORTFOLIO_FORMAT_SPREADSHEET));
     redirect($url);
 }
 

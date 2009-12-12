@@ -29,14 +29,25 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/** require all the sublibraries first. */
-require_once($CFG->libdir . '/portfolio/constants.php');   // all the constants for time, export format etc.
+// require some of the sublibraries first.
+// this is not an exhaustive list, the others are pulled in as they're needed
+// so we don't have to always include everything unnecessarily for performance
+
+// very lightweight list of constants. always needed and no further dependencies
+require_once($CFG->libdir . '/portfolio/constants.php');
+// a couple of exception deinitions. always needed and no further dependencies
 require_once($CFG->libdir . '/portfolio/exceptions.php');  // exception classes used by portfolio code
-require_once($CFG->libdir . '/portfolio/formats.php');     // the export format hierarchy
-require_once($CFG->libdir . '/portfolio/forms.php');       // the form classes that subclass moodleform
-require_once($CFG->libdir . '/portfolio/exporter.php');    // the exporter class
-require_once($CFG->libdir . '/portfolio/plugin.php');      // the base classes for plugins
-require_once($CFG->libdir . '/portfolio/caller.php');      // the base classes for calling code
+// The base class for the caller classes. We always need this because we're either drawing a button,
+// in which case the button needs to know the calling class definition, which requires the base class,
+// or we're exporting, in which case we need the caller class anyway.
+require_once($CFG->libdir . '/portfolio/caller.php');
+
+// the other dependencies are included on demand:
+// libdir/portfolio/formats.php  - the classes for the export formats
+// libdir/portfolio/forms.php    - all portfolio form classes (requires formslib)
+// libdir/portfolio/plugin.php   - the base class for the export plugins
+// libdir/portfolio/exporter.php - the exporter class
+
 
 /**
  * use this to add a portfolio button or icon or form to a page
@@ -127,6 +138,7 @@ class portfolio_add_button {
             throw new portfolio_button_exception('nocallbackfile', 'portfolio', $file);
         }
         $this->callbackfile = $file;
+        require_once($CFG->libdir . '/portfolio/caller.php'); // require the base class first
         require_once($CFG->dirroot . $file);
         if (!class_exists($class)) {
             throw new portfolio_button_exception('nocallbackclass', 'portfolio', $class);
@@ -263,7 +275,7 @@ class portfolio_add_button {
                 debugging(get_string('instancemisconfigured', 'portfolio', get_string($error[$instance->get('id')], 'portfolio_' . $instance->get('plugin'))));
                 return;
             }
-            if (!$instance->allows_multiple_exports() && $already = portfolio_exporter::existing_exports($USER->id, $instance->get('plugin'))) {
+            if (!$instance->allows_multiple_exports() && $already = portfolio_existing_exports($USER->id, $instance->get('plugin'))) {
                 debugging(get_string('singleinstancenomultiallowed', 'portfolio'));
                 return;
             }
@@ -390,7 +402,7 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass, $
 
     $count = 0;
     $selectoutput = "\n" . '<select name="' . $selectname . '">' . "\n";
-    $existingexports = portfolio_exporter::existing_exports_by_plugin($USER->id);
+    $existingexports = portfolio_existing_exports_by_plugin($USER->id);
     foreach ($instances as $instance) {
         $formats = portfolio_supported_formats_intersect($callerformats, $instance->supported_formats());
         if (count($formats) == 0) {
@@ -512,6 +524,7 @@ function portfolio_supported_formats() {
 * @return string the format constant (see PORTFOLIO_FORMAT_XXX constants)
 */
 function portfolio_format_from_file(stored_file $file) {
+    global $CFG;
     static $alreadymatched;
     if (empty($alreadymatched)) {
         $alreadymatched = array();
@@ -524,6 +537,7 @@ function portfolio_format_from_file(stored_file $file) {
         return $alreadymatched[$mimetype];
     }
     $allformats = portfolio_supported_formats();
+    require_once($CFG->libdir . '/portfolio/formats.php');
     foreach ($allformats as $format => $classname) {
         $supportedmimetypes = call_user_func(array($classname, 'mimetypes'));
         if (!is_array($supportedmimetypes)) {
@@ -550,6 +564,7 @@ function portfolio_format_from_file(stored_file $file) {
 * @param array $pluginformats formats the portfolio plugin supports
 */
 function portfolio_supported_formats_intersect($callerformats, $pluginformats) {
+    global $CFG;
     $allformats = portfolio_supported_formats();
     $intersection = array();
     foreach ($callerformats as $cf) {
@@ -559,6 +574,7 @@ function portfolio_supported_formats_intersect($callerformats, $pluginformats) {
             }
             continue;
         }
+        require_once($CFG->libdir . '/portfolio/formats.php');
         $cfobj = new $allformats[$cf]();
         foreach ($pluginformats as $p => $pf) {
             if (!array_key_exists($pf, $allformats)) {
@@ -614,6 +630,7 @@ function portfolio_format_is_abstract($format) {
 * @return array merged formats with dups removed
 */
 function portfolio_most_specific_formats($specificformats, $generalformats) {
+    global $CFG;
     $allformats = portfolio_supported_formats();
     if (empty($specificformats)) {
         return $generalformats;
@@ -623,10 +640,11 @@ function portfolio_most_specific_formats($specificformats, $generalformats) {
     foreach ($specificformats as $f) {
         // look for something less specific and remove it, ie outside of the inheritance tree of the current formats.
         if (!array_key_exists($f, $allformats)) {
-            if (!portfolio_format_is_abstract($pf)) {
+            if (!portfolio_format_is_abstract($f)) {
                 throw new portfolio_button_exception('invalidformat', 'portfolio', $f);
             }
         }
+        require_once($CFG->libdir . '/portfolio/formats.php');
         $fobj = new $allformats[$f];
         foreach ($generalformats as $key => $cf) {
             $cfclass = $allformats[$cf];
@@ -658,6 +676,8 @@ function portfolio_most_specific_formats($specificformats, $generalformats) {
 * @return portfolio_format object
 */
 function portfolio_format_object($name) {
+    global $CFG;
+    require_once($CFG->libdir . '/portfolio/formats.php');
     $formats = portfolio_supported_formats();
     return new $formats[$name];
 }
@@ -682,6 +702,7 @@ function portfolio_instance($instanceid, $record=null) {
             throw new portfolio_exception('invalidinstance', 'portfolio');
         }
     }
+    require_once($CFG->libdir . '/portfolio/plugin.php');
     require_once($CFG->dirroot . '/portfolio/'. $instance->plugin . '/lib.php');
     $classname = 'portfolio_plugin_' . $instance->plugin;
     return new $classname($instanceid, $instance);
@@ -717,6 +738,7 @@ function portfolio_static_function($plugin, $function) {
         array_shift($args);
     }
 
+    require_once($CFG->libdir . '/portfolio/plugin.php');
     require_once($CFG->dirroot . '/portfolio/' . $plugin .  '/lib.php');
     return call_user_func_array(array('portfolio_plugin_' . $plugin, $function), $args);
 }
@@ -873,6 +895,8 @@ function portfolio_fake_add_url($instanceid, $classname, $classfile, $callbackar
 */
 function portfolio_handle_event($eventdata) {
     global $CFG;
+
+    require_once($CFG->libdir . '/portfolio/exporter.php');
     $exporter = portfolio_exporter::rewaken_object($eventdata);
     $exporter->process_stage_package();
     $exporter->process_stage_send();
@@ -889,7 +913,7 @@ function portfolio_handle_event($eventdata) {
 */
 function portfolio_cron() {
     global $DB;
-
+    require_once($CFG->libdir . '/portfolio/exporter.php');
     if ($expired = $DB->get_records_select('portfolio_tempdata', 'expirytime < ?', array(time()), '', 'id')) {
         foreach ($expired as $d) {
             try {
@@ -1088,4 +1112,38 @@ function portfolio_export_type_to_id($type, $userid) {
     global $DB;
     $sql = 'SELECT t.id FROM {portfolio_tempdata} t JOIN {portfolio_instance} i ON t.instance = i.id WHERE t.userid = ? AND i.plugin = ?';
     return $DB->get_field_sql($sql, array($userid, $type));
+}
+
+/**
+ * return a list of current exports for the given user
+ * this will not go through and call rewaken_object, because it's heavy
+ * it's really just used to figure out what exports are currently happening.
+ * this is useful for plugins that don't support multiple exports per session
+ *
+ * @param int $userid  the user to check for
+ * @param string $type (optional) the portfolio plugin to filter by
+ *
+ * @return array
+ */
+function portfolio_existing_exports($userid, $type=null) {
+    global $DB;
+    $sql = 'SELECT t.*,t.instance,i.plugin,i.name FROM {portfolio_tempdata} t JOIN {portfolio_instance} i ON t.instance = i.id WHERE t.userid = ? ';
+    $values = array($userid);
+    if ($type) {
+        $sql .= ' AND i.plugin = ?';
+        $values[] = $type;
+    }
+    return $DB->get_records_sql($sql, $values);
+}
+
+/**
+ * Return an array of existing exports by type for a given user.
+ * This is much more lightweight than {@see existing_exports} because it only returns the types, rather than the whole serialised data
+ * so can be used for checking availability of multiple plugins at the same time.
+ */
+function portfolio_existing_exports_by_plugin($userid) {
+    global $DB;
+    $sql = 'SELECT t.id,i.plugin FROM {portfolio_tempdata} t JOIN {portfolio_instance} i ON t.instance = i.id WHERE t.userid = ? ';
+    $values = array($userid);
+    return $DB->get_records_sql_menu($sql, $values);
 }

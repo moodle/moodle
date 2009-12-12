@@ -29,8 +29,6 @@
 require_once($CFG->libdir.'/eventslib.php');
 /** Include formslib.php */
 require_once($CFG->libdir.'/formslib.php');
-/** Include portfoliolib.php */
-require_once($CFG->libdir.'/portfoliolib.php');
 /** Include calendar/lib.php */
 require_once($CFG->dirroot.'/calendar/lib.php');
 
@@ -1805,6 +1803,8 @@ class assignment_base {
         $found = false;
 
         if ($files = $fs->get_area_files($this->context->id, 'assignment_submission', $userid, "timemodified", false)) {
+            require_once($CFG->libdir.'/portfoliolib.php');
+            require_once($CFG->dirroot . '/mod/assignment/locallib.php');
             $button = new portfolio_add_button();
             foreach ($files as $file) {
                 $filename = $file->get_filename();
@@ -1813,7 +1813,7 @@ class assignment_base {
                 $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
                 $output .= '<a href="'.$path.'" ><img src="'.$OUTPUT->old_icon_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />'.s($filename).'</a>';
                 if ($this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
-                    $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'fileid' => $file->get_id()));
+                    $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'fileid' => $file->get_id()), '/mod/assignment/locallib.php');
                     $button->set_format_by_file($file);
                     $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                 }
@@ -3342,125 +3342,6 @@ function assignment_reset_course_form_defaults($course) {
  */
 function assignment_get_extra_capabilities() {
     return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
-}
-
-/**
- * @package   mod-assignment
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class assignment_portfolio_caller extends portfolio_module_caller_base {
-
-    /**
-    * the assignment subclass
-    */
-    private $assignment;
-
-    /**
-    * the file to include when waking up to load the assignment subclass def
-    */
-    private $assignmentfile;
-
-    /**
-    * callback arg for a single file export
-    */
-    protected $fileid;
-
-    public static function expected_callbackargs() {
-        return array(
-            'id'     => true,
-            'fileid' => false,
-        );
-    }
-
-    public function load_data() {
-        global $DB, $CFG;
-
-        if (! $this->cm = get_coursemodule_from_id('assignment', $this->id)) {
-            throw new portfolio_caller_exception('invalidcoursemodule');
-        }
-
-        if (! $assignment = $DB->get_record("assignment", array("id"=>$this->cm->instance))) {
-            throw new portfolio_caller_exception('invalidid', 'assignment');
-        }
-
-        $this->assignmentfile = '/mod/assignment/type/' . $assignment->assignmenttype . '/assignment.class.php';
-        require_once($CFG->dirroot . $this->assignmentfile);
-        $assignmentclass = "assignment_$assignment->assignmenttype";
-
-        $this->assignment = new $assignmentclass($this->cm->id, $assignment, $this->cm);
-
-        if (!$this->assignment->portfolio_exportable()) {
-            throw new portfolio_caller_exception('notexportable', 'portfolio', $this->get_return_url());
-        }
-
-        $this->set_file_and_format_data($this->fileid, $this->assignment->context->id, 'assignment_submission', $this->user->id, 'timemodified', false);
-    }
-
-    public function prepare_package() {
-        global $CFG;
-        if (is_callable(array($this->assignment, 'portfolio_prepare_package'))) {
-            return $this->assignment->portfolio_prepare_package($this->exporter, $this->user->id);
-        }
-        if ($this->exporter->get('formatclass') == PORTFOLIO_FORMAT_LEAP2A) {
-            $leapwriter = $this->exporter->get('format')->leap2a_writer();
-            $files = array();
-            if ($this->singlefile) {
-                $files[] = $this->singlefile;
-            } elseif ($this->multifiles) {
-                $files = $this->multifiles;
-            } else {
-                throw new portfolio_caller_exception('invalidpreparepackagefile', 'portfolio', $this->get_return_url());
-            }
-            $baseid = 'assignment' . $this->assignment->assignment->assignmenttype . $this->assignment->assignment->id . 'submission';
-            foreach ($files as $file) {
-                $id = $baseid . $file->get_id();
-                $entry = new portfolio_format_leap2a_entry($id, $file->get_filename(), 'resource',  $file);
-                $entry->add_category('offline', 'resource_type');
-                $leapwriter->add_entry($entry);
-                $this->exporter->copy_existing_file($file);
-            }
-            return $this->exporter->write_new_file($leapwriter->to_xml(), $this->exporter->get('format')->manifest_name(), true);
-        }
-        return $this->prepare_package_file();
-    }
-
-    public function get_sha1() {
-        global $CFG;
-        if (is_callable(array($this->assignment, 'portfolio_get_sha1'))) {
-            return $this->assignment->portfolio_get_sha1($this->user->id);
-        }
-        return $this->get_sha1_file();
-    }
-
-    public function expected_time() {
-        if (is_callable(array($this->assignment, 'portfolio_get_expected_time'))) {
-            return $this->assignment->portfolio_get_expected_time();
-        }
-        return $this->expected_time_file();
-    }
-
-    public function check_permissions() {
-        $context = get_context_instance(CONTEXT_MODULE, $this->assignment->cm->id);
-        return has_capability('mod/assignment:exportownsubmission', $context);
-    }
-
-    public function __wakeup() {
-        global $CFG;
-        if (empty($CFG)) {
-            return true; // too early yet
-        }
-        require_once($CFG->dirroot . $this->assignmentfile);
-        $this->assignment = unserialize(serialize($this->assignment));
-    }
-
-    public static function display_name() {
-        return get_string('modulename', 'assignment');
-    }
-
-    public static function base_supported_formats() {
-        return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_LEAP2A);
-    }
 }
 
 /**

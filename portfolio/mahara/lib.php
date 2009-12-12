@@ -5,7 +5,9 @@ define('PORTFOLIO_MAHARA_ERR_NOHOSTS', 'err_nomnethosts');
 define('PORTFOLIO_MAHARA_ERR_INVALIDHOST', 'err_invalidhost');
 define('PORTFOLIO_MAHARA_ERR_NOMNETAUTH', 'err_nomnetauth');
 
-require_once($CFG->dirroot . '/lib/portfoliolib.php');
+require_once($CFG->libdir . '/portfoliolib.php');
+require_once($CFG->libdir . '/portfolio/plugin.php');
+require_once($CFG->libdir . '/portfolio/exporter.php');
 require_once($CFG->dirroot . '/mnet/lib.php');
 
 define('PORTFOLIO_MAHARA_QUEUE', PORTFOLIO_TIME_HIGH);
@@ -363,8 +365,10 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
      * which might be higher up the format hierarchy tree (eg 'file')
      */
     private function resolve_format() {
+        global $CFG;
         $thisformat = $this->get_export_config('format');
         $allformats = portfolio_supported_formats();
+        require_once($CFG->libdir . '/portfolio/formats.php');
         $thisobj = new $allformats[$thisformat];
         foreach ($this->supported_formats() as $f) {
             $class = $allformats[$f];

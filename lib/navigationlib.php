@@ -3152,12 +3152,15 @@ class settings_navigation extends navigation_node {
         }
 
         // Portfolio
-        if (empty($userindexpage) && $currentuser && !empty($CFG->enableportfolios) && has_capability('moodle/portfolio:export', $systemcontext) && portfolio_instances(true, false)) {
-            $portfoliokey = $usersetting->add(get_string('portfolios', 'portfolio'), null, self::TYPE_SETTING);
-            $url = new moodle_url($CFG->wwwroot .'/user/portfolio.php');
-            $usersetting->get($portfoliokey)->add(get_string('configure', 'portfolio'), $url, self::TYPE_SETTING);
-            $url = new moodle_url($CFG->wwwroot .'/user/portfoliologs.php');
-            $usersetting->get($portfoliokey)->add(get_string('logs', 'portfolio'), $url, self::TYPE_SETTING);
+        if (empty($userindexpage) && $currentuser && !empty($CFG->enableportfolios) && has_capability('moodle/portfolio:export', $systemcontext)) {
+            require_once($CFG->libdir . '/portfoliolib.php');
+            if (portfolio_instances(true, false)) {
+                $portfoliokey = $usersetting->add(get_string('portfolios', 'portfolio'), null, self::TYPE_SETTING);
+                $url = new moodle_url($CFG->wwwroot .'/user/portfolio.php');
+                $usersetting->get($portfoliokey)->add(get_string('configure', 'portfolio'), $url, self::TYPE_SETTING);
+                $url = new moodle_url($CFG->wwwroot .'/user/portfoliologs.php');
+                $usersetting->get($portfoliokey)->add(get_string('logs', 'portfolio'), $url, self::TYPE_SETTING);
+            }
         }
 
         // Repository

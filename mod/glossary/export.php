@@ -73,7 +73,7 @@ echo $OUTPUT->box_start('glossarydisplay generalbox');
     if ($DB->count_records('glossary_entries', array('glossaryid' => $glossary->id))) {
         require_once($CFG->libdir . '/portfoliolib.php');
         $button = new portfolio_add_button();
-        $button->set_callback_options('glossary_full_portfolio_caller', array('id' => $cm->id), '/mod/glossary/lib.php');
+        $button->set_callback_options('glossary_full_portfolio_caller', array('id' => $cm->id), '/mod/glossary/locallib.php');
         $button->render();
     }
     echo $OUTPUT->box_end();

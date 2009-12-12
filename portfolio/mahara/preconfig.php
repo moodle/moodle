@@ -6,6 +6,8 @@ if (empty($CFG->enableportfolios)) {
 }
 
 require_once($CFG->libdir . '/portfoliolib.php');
+require_once($CFG->libdir . '/portfolio/plugin.php');
+require_once($CFG->libdir . '/portfolio/exporter.php');
 require_once($CFG->dirroot . '/mnet/lib.php');
 
 require_login();

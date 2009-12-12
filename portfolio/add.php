@@ -31,10 +31,10 @@ if (empty($CFG->enableportfolios)) {
     print_error('disabled', 'portfolio');
 }
 
-// this will pull in all the other required libraries
 require_once($CFG->libdir . '/portfoliolib.php');
-// so plugins don't have to.
-require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->libdir . '/portfolio/exporter.php');
+require_once($CFG->libdir . '/portfolio/caller.php');
+require_once($CFG->libdir . '/portfolio/plugin.php');
 
 $dataid        = optional_param('id', 0, PARAM_INT);                          // id of partially completed export. corresponds to a record in portfolio_tempdata
 $type          = optional_param('type', null, PARAM_SAFEDIR);                 // if we're returning from an external system (postcontrol) for a single-export only plugin
@@ -223,6 +223,8 @@ if (!$exporter->get('instance')) {
         $instance = array_shift(array_keys($options));
         redirect($CFG->wwwroot . '/portfolio/add.php?id= ' . $exporter->get('id') . '&instance=' . $instance . '&sesskey=' . sesskey());
     }
+    // be very selective about not including this unless we really need to
+    require_once($CFG->libdir . '/portfolio/forms.php');
     $mform = new portfolio_instance_select('', array('id' => $exporter->get('id'), 'caller' => $exporter->get('caller'), 'options' => $options));
     if ($mform->is_cancelled()) {
         $exporter->cancel_request();

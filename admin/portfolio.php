@@ -2,6 +2,7 @@
 
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->libdir . '/portfoliolib.php');
+require_once($CFG->libdir . '/portfolio/forms.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 $edit    = optional_param('edit', 0, PARAM_INT);

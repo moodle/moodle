@@ -281,7 +281,7 @@ class portfolio_exporter {
     * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
     */
     public function process_stage_config() {
-        global $OUTPUT;
+        global $OUTPUT, $CFG;
         $pluginobj = $callerobj = null;
         if ($this->instance->has_export_config()) {
             $pluginobj = $this->instance;
@@ -306,6 +306,7 @@ class portfolio_exporter {
                 'formats' => $formats,
                 'expectedtime' => $expectedtime,
             );
+            require_once($CFG->libdir . '/portfolio/forms.php');
             $mform = new portfolio_export_form('', $customdata);
             if ($mform->is_cancelled()){
                 $this->cancel_request();
@@ -659,6 +660,9 @@ class portfolio_exporter {
     public static function rewaken_object($id) {
         global $DB, $CFG;
         require_once($CFG->libdir . '/filelib.php');
+        require_once($CFG->libdir . '/portfolio/exporter.php');
+        require_once($CFG->libdir . '/portfolio/caller.php');
+        require_once($CFG->libdir . '/portfolio/plugin.php');
         if (!$data = $DB->get_record('portfolio_tempdata', array('id' => $id))) {
             // maybe it's been finished already by a pull plugin
             // so look in the logs
@@ -713,7 +717,7 @@ class portfolio_exporter {
             throw new portfolio_exception('notyours', 'portfolio');
         }
         if (!$readonly && $this->get('instance') && !$this->get('instance')->allows_multiple_exports()
-            && ($already = portfolio_exporter::existing_exports($this->get('user')->id, $this->get('instance')->get('plugin')))
+            && ($already = portfolio_existing_exports($this->get('user')->id, $this->get('instance')->get('plugin')))
             && array_shift(array_keys($already)) != $this->get('id')
         ) {
             $a = (object)array(
@@ -846,40 +850,6 @@ class portfolio_exporter {
         echo $OUTPUT->continue_button($CFG->wwwroot);
         echo $OUTPUT->footer();
         exit;
-    }
-
-    /**
-     * return a list of current exports for the given user
-     * this will not go through and call rewaken_object, because it's heavy
-     * it's really just used to figure out what exports are currently happening.
-     * this is useful for plugins that don't support multiple exports per session
-     *
-     * @param int $userid  the user to check for
-     * @param string $type (optional) the portfolio plugin to filter by
-     *
-     * @return array
-     */
-    public static function existing_exports($userid, $type=null) {
-        global $DB;
-        $sql = 'SELECT t.*,t.instance,i.plugin,i.name FROM {portfolio_tempdata} t JOIN {portfolio_instance} i ON t.instance = i.id WHERE t.userid = ? ';
-        $values = array($userid);
-        if ($type) {
-            $sql .= ' AND i.plugin = ?';
-            $values[] = $type;
-        }
-        return $DB->get_records_sql($sql, $values);
-    }
-
-    /**
-     * Return an array of existing exports by type for a given user.
-     * This is much more lightweight than {@see existing_exports} because it only returns the types, rather than the whole serialised data
-     * so can be used for checking availability of multiple plugins at the same time.
-     */
-    public static function existing_exports_by_plugin($userid) {
-        global $DB;
-        $sql = 'SELECT t.id,i.plugin FROM {portfolio_tempdata} t JOIN {portfolio_instance} i ON t.instance = i.id WHERE t.userid = ? ';
-        $values = array($userid);
-        return $DB->get_records_sql_menu($sql, $values);
     }
 
     public static function print_cleaned_export($log, $instance=null) {

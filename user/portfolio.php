@@ -30,6 +30,7 @@ if (empty($CFG->enableportfolios)) {
 }
 
 require_once($CFG->libdir . '/portfoliolib.php');
+require_once($CFG->libdir . '/portfolio/forms.php');
 
 $config = optional_param('config', 0, PARAM_INT);
 $hide = optional_param('hide', 0, PARAM_INT);
