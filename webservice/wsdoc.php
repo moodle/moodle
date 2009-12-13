@@ -226,15 +226,21 @@ class webservice_documentation_generator {
      * Generate and display the documentation
      */
     protected function display_documentation_html() {
-        global $PAGE, $OUTPUT, $SITE;
+        global $PAGE, $OUTPUT, $SITE, $USER;
 
         $PAGE->set_url('/webservice/wsdoc');
         $PAGE->set_docs_path('');
         $PAGE->set_title($SITE->fullname." ".get_string('wsdocumentation', 'webservice'));
         $PAGE->set_heading($SITE->fullname." ".get_string('wsdocumentation', 'webservice'));
         $PAGE->set_generaltype('popup');
-
+        //unlog temporarly the user in order to not trigger environment.php called by Moodle header.
+        //environment.php checkes the sessionkey that we don't have here.
+        //emvrionment.php is just used to detect the flash player. We don't need
+        //to check the flash player version.
+        $userid = $USER->id;
+        $USER->id = null;
         echo $OUTPUT->header();
+        $USER->id = $userid;
         $renderer = $PAGE->theme->get_renderer('core_wsdoc',$OUTPUT);
         echo $renderer->documentation_html($this->functions, $this->username);
         echo $OUTPUT->footer();
