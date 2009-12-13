@@ -43,7 +43,7 @@ class moodle_group_external extends external_api {
                             'description' => new external_value(PARAM_RAW, 'group description text'),
                             'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase'),
                         )
-                    )
+                    ), 'List of group object. A group has a courseid, a name, a description and an enrolment key.'
                 )
             )
         );
@@ -103,7 +103,7 @@ class moodle_group_external extends external_api {
                     'description' => new external_value(PARAM_RAW, 'group description text'),
                     'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase'),
                 )
-            )
+            ), 'List of group object. A group has an id, a courseid, a name, a description and an enrolment key.'
         );
     }
 
@@ -114,7 +114,8 @@ class moodle_group_external extends external_api {
     public static function get_groups_parameters() {
         return new external_function_parameters(
             array(
-                'groupids' => new external_multiple_structure(new external_value(PARAM_INT, 'Group ID')),
+                'groupids' => new external_multiple_structure(new external_value(PARAM_INT, 'Group ID')
+                        ,'List of group id. A group id is an integer.'),
             )
         );
     }

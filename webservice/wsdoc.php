@@ -19,115 +19,260 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-// TODO: this needs to be rewritten to use the new description format
-//       the problem here is that the list of functions is different for each use or even token
-//       I guess this should be moved to server itself and it should require user auth,
-//       SOAP does already support WSDL when parameters &wsdl=1 used
-die('TODO');
 
-/**
- * This file generate a web service documentation in HTML
- * This documentation describe how to call a Moodle Web Service
- */
+// disable moodle specific debug messages and any errors in output
+define('NO_DEBUG_DISPLAY', true);
+define('NO_MOODLE_COOKIES', true);
+
 require_once('../config.php');
+require_once('./wsdocrenderer.php');
 require_once('lib.php');
-$protocol = optional_param('protocol',"soap",PARAM_ALPHA);
-$username = optional_param('username',"",PARAM_ALPHA);
-$password = optional_param('password',"",PARAM_ALPHA);
-
-/// TODO Retrieve user (authentication)
-$user = "";
-
-/// PAGE settings
-$PAGE->set_course($COURSE);
-$PAGE->set_url('webservice/wsdoc.php');
-$PAGE->set_title(get_string('wspagetitle', 'webservice'));
-$PAGE->set_heading(get_string('wspagetitle', 'webservice'));
-$PAGE->set_generaltype("form");
-
-// Display the documentation
-echo $OUTPUT->header();
-generate_documentation($protocol); //documentation relatif to the protocol
-generate_functionlist($protocol, $user); //documentation relatif to the available function
-echo $OUTPUT->footer();
-
-
-function generate_functionlist($protocol, $user) {
-
-    /// retrieve all function that the user can access
-    /// =>
-    /// retrieve all function that are available into enable services that
-    /// have (no restriction user or the user is into the restricted user list)
-    ///      and (no required capability or the user has the required capability)
-
-        // do SQL request here
-
-    /// load once all externallib.php of the retrieved functions
-
-    /// foreach retrieved functions display the description
-
-        // in order to display the description we need to use an algo similar to the validation
-        // every time we get a scalar value, we need to convert it into a human readable value as
-        // PARAM_INT => 'integer' or PARAM_TEXT => 'string' or PARAM_BOOL => 'boolean' ...
-
-}
 
 
 /**
- * Generate documentation specific to a protocol
- * @param string $protocol
+ * This class generate the web service documentation specific to one
+ * web service user
+ * @package   webservice
+ * @copyright 2009 Moodle Pty Ltd (http://moodle.com)
+ * @author    Jerome Mouneyrac
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-function generate_documentation($protocol) {
-    switch ($protocol) {
+class webservice_documentation_generator {
 
-        case "soap":
-            $documentation = get_string('soapdocumentation','webservice');
-            break;
-        case "xmlrpc":
-            $documentation = get_string('xmlrpcdocumentation','webservice');
-            break;
-        default:
-            break;
+    /** @property array all external function description
+     *  they  */
+    protected $functions;
+
+     /** @property string $username name of local user */
+    protected $username = null;
+
+    /** @property string $password password of the local user */
+    protected $password = null;
+
+    /**
+     * Contructor
+     */
+    public function __construct() {
+        $this->functionsdescriptions = array();
+        $this->functions = array();
     }
-    echo $documentation;
-    echo "<strong style=\"color:orange\">".get_string('wsuserreminder','webservice')."</strong>";
+
+    /**
+     * Run the documentation generation
+     * @param bool $simple use simple authentication
+     * @return void
+     */
+    public function run() {
+
+        // init all properties from the request data
+        $this->get_authentication_parameters();
+
+        // this sets up $USER TODO: and $SESSION for the environment.php
+        try {
+            $this->authenticate_user();
+        } catch(moodle_exception $e) {
+            $errormessage = $e->debuginfo;
+            $displayloginpage = true;
+        }
+
+        if (!empty($displayloginpage)){
+            $this->display_login_page_html($errormessage);
+        } else {
+            // make a descriptions list of all function that user is allowed to excecute
+            $this->generate_documentation();
+
+            //finally display the documentation
+            $this->display_documentation_html();
+        }
+
+        die;
+    }
+
+
+///////////////////////////
+/////// CLASS METHODS /////
+///////////////////////////
+
+    /**
+     * This method parses the $_REQUEST superglobal and looks for
+     * the following information:
+     *  user authentication - username+password
+     * @return void
+     */
+    protected function get_authentication_parameters() {
+            if (isset($_REQUEST['wsusername'])) {
+                $this->username = $_REQUEST['wsusername'];
+            }
+            if (isset($_REQUEST['wspassword'])) {
+                $this->password = $_REQUEST['wspassword'];
+            }
+    }
+
+    /**
+     * Generate the documentation specific to the auhenticated webservice user
+     * @return void
+     */
+    protected function generate_documentation() {
+        global $USER, $DB;
+
+    /// first of all get a complete list of services user is allowed to access
+        $params = array();
+        $wscond1 = '';
+        $wscond2 = '';
+
+        // make sure the function is listed in at least one service user is allowed to use
+        // allow access only if:
+        //  1/ entry in the external_services_users table if required
+        //  2/ validuntil not reached
+        //  3/ has capability if specified in service desc
+        //  4/ iprestriction
+
+        $sql = "SELECT s.*, NULL AS iprestriction
+                  FROM {external_services} s
+                  JOIN {external_services_functions} sf ON (sf.externalserviceid = s.id AND s.restrictedusers = 0)
+                 WHERE s.enabled = 1 $wscond1
+
+                 UNION
+
+                SELECT s.*, su.iprestriction
+                  FROM {external_services} s
+                  JOIN {external_services_functions} sf ON (sf.externalserviceid = s.id AND s.restrictedusers = 1)
+                  JOIN {external_services_users} su ON (su.externalserviceid = s.id AND su.userid = :userid)
+                 WHERE s.enabled = 1 AND su.validuntil IS NULL OR su.validuntil < :now $wscond2";
+
+        $params = array_merge($params, array('userid'=>$USER->id, 'now'=>time()));
+
+        $serviceids = array();
+        $rs = $DB->get_recordset_sql($sql, $params);
+
+        // make sure user may access at least one service
+        $remoteaddr = getremoteaddr();
+        $allowed = false;
+        foreach ($rs as $service) {
+            if (isset($serviceids[$service->id])) {
+                continue;
+            }
+            if ($service->requiredcapability and !has_capability($service->requiredcapability, $this->restricted_context)) {
+                continue; // cap required, sorry
+            }
+            if ($service->iprestriction and !address_in_subnet($remoteaddr, $service->iprestriction)) {
+                continue; // wrong request source ip, sorry
+            }
+            $serviceids[$service->id] = $service->id;
+        }
+        $rs->close();
+
+        // now get the list of all functions
+        if ($serviceids) {
+            list($serviceids, $params) = $DB->get_in_or_equal($serviceids);
+            $sql = "SELECT f.*
+                      FROM {external_functions} f
+                     WHERE f.name IN (SELECT sf.functionname
+                                        FROM {external_services_functions} sf
+                                       WHERE sf.externalserviceid $serviceids)";
+            $functions = $DB->get_records_sql($sql, $params);
+        } else {
+            $functions = array();
+        }
+
+        foreach ($functions as $function) {
+            $this->functions[$function->name] = external_function_info($function);
+        }
+    }
+
+     /**
+     * Authenticate user using username+password
+     * This function sets up $USER global.
+     * called into the Moodle header
+     * @return void
+     */
+    protected function authenticate_user() {
+        global $CFG, $DB, $USER;
+
+        if (!NO_MOODLE_COOKIES) {
+            throw new coding_exception('Cookies must be disabled!');
+        }
+
+        if (!is_enabled_auth('webservice')) {
+            throw new webservice_access_exception('WS auth not enabled');
+        }
+
+        if (!$auth = get_auth_plugin('webservice')) {
+            throw new webservice_access_exception('WS auth missing');
+        }
+        
+        if (!$this->username) {
+            throw new webservice_access_exception('Missing username');
+        }
+
+        if (!$this->password) {
+            throw new webservice_access_exception('Missing password');
+        }
+
+        if (!$auth->user_login_webservice($this->username, $this->password)) {
+            throw new webservice_access_exception('Wrong username or password');
+        }
+
+        $USER = $DB->get_record('user', array('username'=>$this->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);
+
+
+    }
+
+////////////////////////////////////////////////
+///// DISPLAY METHODS                      /////
+////////////////////////////////////////////////
+
+    /**
+     * Generate and display the documentation
+     */
+    protected function display_documentation_html() {
+        global $PAGE, $OUTPUT, $SITE;
+
+        $PAGE->set_url('/webservice/wsdoc');
+        $PAGE->set_docs_path('');
+        $PAGE->set_title($SITE->fullname." ".get_string('wsdocumentation', 'webservice'));
+        $PAGE->set_heading($SITE->fullname." ".get_string('wsdocumentation', 'webservice'));
+        $PAGE->set_generaltype('popup');
+
+        echo $OUTPUT->header();
+        $renderer = $PAGE->theme->get_renderer('core_wsdoc',$OUTPUT);
+        echo $renderer->documentation_html($this->functions, $this->username);
+        echo $OUTPUT->footer();
+
+    }
+
+    /**
+     * Display login page to the web service documentation
+     * @global <type> $PAGE
+     * @global <type> $OUTPUT
+     * @global <type> $SITE
+     * @global <type> $CFG
+     * @param string $errormessage error message displayed if wrong login
+     */
+     protected function display_login_page_html($errormessage) {
+        global $PAGE, $OUTPUT, $SITE, $CFG;
+
+        $PAGE->set_url('/webservice/wsdoc');
+        $PAGE->set_docs_path('');
+        $PAGE->set_title($SITE->fullname." ".get_string('wsdocumentation', 'webservice'));
+        $PAGE->set_heading($SITE->fullname." ".get_string('wsdocumentation', 'webservice'));
+        $PAGE->set_generaltype('popup');
+
+        echo $OUTPUT->header();
+        $renderer = $PAGE->theme->get_renderer('core_wsdoc',$OUTPUT);
+        echo $renderer->login_page_html($errormessage);
+        echo $OUTPUT->footer();
+
+    }
 
 }
 
 
-/**
- * Convert a Moodle type (PARAM_ALPHA, PARAM_NUMBER,...) as a SOAP type (string, interger,...)
- * @param integer $moodleparam
- * @return string  SOAP type
- */
-function converterMoodleParamIntoWsParam($moodleparam) {
-    switch ($moodleparam) {
-        case PARAM_NUMBER:
-            return "integer";
-            break;
-        case PARAM_INT:
-            return "integer";
-            break;
-        case PARAM_BOOL:
-            return "boolean";
-            break;
-        case PARAM_ALPHANUM:
-            return "string";
-            break;
-        case PARAM_ALPHA:
-            return "string";
-            break;
-        case PARAM_RAW:
-            return "string";
-            break;
-        case PARAM_ALPHANUMEXT:
-            return "string";
-            break;
-        case PARAM_NOTAGS:
-            return "string";
-            break;
-        case PARAM_TEXT:
-            return "string";
-            break;
-    }
-}
+///////////////////////////
+/////// RUN THE SCRIPT ////
+///////////////////////////
+
+//run the documentation generator
+$generator = new webservice_documentation_generator();
+$generator->run();
+die;
