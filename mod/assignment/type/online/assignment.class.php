@@ -338,10 +338,12 @@ class assignment_online extends assignment_base {
     }
 
     public function send_file($filearea, $args) {
+        global $USER;
         require_capability('mod/assignment:view', $this->context);
 
         $fullpath = $this->context->id.$filearea.implode('/', $args);
 
+        $fs = get_file_storage();
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
             send_file_not_found();
         }
