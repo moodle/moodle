@@ -555,7 +555,7 @@ function hotpot_charcode_to_utf8($charcode) {
     }
     if ($charcode <= 0x7FF) {
         // 2-byte char
-        return chr(($charcode >> 0x06) + 0xC0).chr(($charcode & 0x3F) + 128);
+        return chr(($charcode >> 0x06) + 0xC0).chr(($charcode & 0x3F) + 0x80);
     }
     if ($charcode <= 0xFFFF) {
         // 3-byte char
