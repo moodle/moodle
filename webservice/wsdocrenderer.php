@@ -207,8 +207,9 @@ EOF;
             return $return;
         } else if ($paramdescription instanceof external_single_structure) {
             $singlestructuredesc = "";
+            $initialparamstring = $paramstring;
             foreach ($paramdescription->keys as $attributname => $attribut) {
-                $paramstring = $paramstring.'['.$attributname.']';
+                $paramstring = $initialparamstring.'['.$attributname.']';
                 $singlestructuredesc .= $this->rest_param_description_html($paramdescription->keys[$attributname], $paramstring);
             }
             return $singlestructuredesc;
