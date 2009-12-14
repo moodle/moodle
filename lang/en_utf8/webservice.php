@@ -43,6 +43,7 @@ $string['required'] = 'Required';
 $string['requiredcapability'] = 'Required capability';
 $string['response'] = 'Response';
 $string['restcode'] = 'REST';
+$string['restparam'] = 'REST (POST parameters)';
 $string['restrictedusers'] = 'Authorised users only';
 $string['selectedcapabilitydoesntexit'] = 'The currently set required capability ($a) doesn\'t exist anymore. Please change it and save the changes.';
 $string['selectedcapability'] = 'Selected';
@@ -56,8 +57,7 @@ $string['testclient'] = 'Web service test client';
 $string['validuntil'] = 'Valid until';
 $string['webservices'] = 'Web services';
 $string['wsdocumentation'] = 'Web service documentation';
-$string['wsdocumentationintro'] = 'Following a listing of web service functions available for the username <b>$a</b>.<br/>In order to create a client we advice you to read the <a href=\"http://docs.moodle.org/en/Development:Creating_a_web_service_and_a_web_service_function#Create_your_own_client\">Moodle documentation</a>
-    <br/><br/>For REST parameters convert the XML-RPC structures into POST.';
+$string['wsdocumentationintro'] = 'Following a listing of web service functions available for the username <b>$a</b>.<br/>In order to create a client we advice you to read the <a href=\"http://docs.moodle.org/en/Development:Creating_a_web_service_and_a_web_service_function#Create_your_own_client\">Moodle documentation</a>';
 $string['wsdocumentationlogin'] = 'Enter your web service username and password.';
 $string['wspassword'] = 'Web service password';
 $string['wsusername'] = 'Web service username';

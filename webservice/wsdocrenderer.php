@@ -189,6 +189,47 @@ EOF;
         return $restresponsehtml;
     }
 
+
+     /**
+     * Create indented REST param description
+     * @param object $paramdescription
+     * @param string $indentation composed by space only
+     * @return string the html to diplay
+     */
+    public function rest_param_description_html($paramdescription, $paramstring) {
+        $brakeline = <<<EOF
+
+
+EOF;
+        if ($paramdescription instanceof external_multiple_structure) {
+            $paramstring = $paramstring.'[0]';
+            $return = $this->rest_param_description_html($paramdescription->content, $paramstring);
+            return $return;
+        } else if ($paramdescription instanceof external_single_structure) {
+            $singlestructuredesc = "";
+            foreach ($paramdescription->keys as $attributname => $attribut) {
+                $paramstring = $paramstring.'['.$attributname.']';
+                $singlestructuredesc .= $this->rest_param_description_html($paramdescription->keys[$attributname], $paramstring);
+            }
+            return $singlestructuredesc;
+        } else {
+            $paramstring = $paramstring.'=';
+            switch($paramdescription->type) {
+                case PARAM_BOOL: // 0 or 1 only for now
+                case PARAM_INT:
+                    $type = 'int';
+                    break;
+                case PARAM_FLOAT;
+                    $type = 'double';
+                    break;
+                default:
+                    $type = 'string';
+            }
+            return $paramstring." ".$type.$brakeline;
+        }
+    }
+
+
     /**
      * This display all the documentation
      * @param array $functions contains all decription objects
@@ -241,6 +282,12 @@ EOF;
                 $documentationhtml .= "<div style=\"border:solid 1px #DEDEDE;background:#DFEEE7;color:#222222;padding:4px;\">";
                 $documentationhtml .= '<b>'.get_string('phpparam', 'webservice').'</b><br/>';
                 $documentationhtml .= $brakeline.'['.$paramname.'] =>'.htmlentities($this->xmlrpc_param_description_html($paramdesc)). $brakeline. $brakeline;
+                $documentationhtml .= "</div><br/>";
+                $documentationhtml .= "</pre>";
+                 $documentationhtml .= "<pre>";
+                $documentationhtml .= "<div style=\"border:solid 1px #DEDEDE;background:#FEEBE5;color:#222222;padding:4px;\">";
+                $documentationhtml .= '<b>'.get_string('restparam', 'webservice').'</b><br/>';
+                $documentationhtml .= $brakeline.htmlentities($this->rest_param_description_html($paramdesc,$paramname)). $brakeline. $brakeline;
                 $documentationhtml .= "</div>";
                 $documentationhtml .= "</pre>";
                 $documentationhtml .= "</span>";
