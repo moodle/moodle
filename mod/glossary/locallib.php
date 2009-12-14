@@ -29,7 +29,11 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
 
     private $glossary;
     private $exportdata;
+
     /**
+     * return array of expected call back arguments
+     * and whether they are required or not
+     *
      * @return array
      */
     public static function expected_callbackargs() {
@@ -37,8 +41,11 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
             'id' => true,
         );
     }
+
     /**
-     * @return global
+     * load up all data required for this export.
+     *
+     * @return void
      */
     public function load_data() {
         global $DB;
@@ -61,19 +68,27 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
     }
 
     /**
-     * @return string
+     * how long might we expect this export to take
+     *
+     * @return constant one of PORTFOLIO_TIME_XX
      */
     public function expected_time() {
         return portfolio_expected_time_db(count($this->exportdata['entries']));
     }
+
     /**
+     * return the sha1 of this content
+     *
      * @return string
      */
     public function get_sha1() {
         return sha1(serialize($this->exportdata));
     }
+
     /**
-     * @return object
+     * prepare the package ready to be passed off to the portfolio plugin
+     *
+     * @return void
      */
     public function prepare_package() {
         $entries = $this->exportdata['entries'];
@@ -97,24 +112,35 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
         }
         // TODO detect format here
         $csv = glossary_generate_export_csv($entries, $aliases, $categories);
-        return $this->exporter->write_new_file($csv, clean_filename($this->cm->name) . '.csv', false);
+        $this->exporter->write_new_file($csv, clean_filename($this->cm->name) . '.csv', false);
         // TODO when csv, what do we do with attachments?!
     }
+
     /**
-     * @return bool
+     * make sure that the current user is allowed to do this
+     *
+     * @return boolean
      */
     public function check_permissions() {
         return has_capability('mod/glossary:export', get_context_instance(CONTEXT_MODULE, $this->cm->id));
     }
+
     /**
+     * return a nice name to be displayed about this export location
+     *
      * @return string
      */
     public static function display_name() {
         return get_string('modulename', 'glossary');
     }
 
+    /**
+     * what formats this function *generally* supports
+     *
+     * @return array
+     */
     public static function base_supported_formats() {
-        return array(PORTFOLIO_FORMAT_FILE);
+        return array(PORTFOLIO_FORMAT_SPREADSHEET, PORTFOLIO_FORMAT_LEAP2A);
     }
 }
 
@@ -211,6 +237,6 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base { // 
     }
 
     public static function base_supported_formats() {
-        return array(PORTFOLIO_FORMAT_RICHHTML, PORTFOLIO_FORMAT_PLAINHTML);
+        return array(PORTFOLIO_FORMAT_RICHHTML);
     }
 }
