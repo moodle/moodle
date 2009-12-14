@@ -67,7 +67,7 @@ class webservice_documentation_generator {
         // init all properties from the request data
         $this->get_authentication_parameters();
 
-        // this sets up $USER TODO: and $SESSION for the environment.php
+        // this sets up $USER
         try {
             $this->authenticate_user();
         } catch(moodle_exception $e) {

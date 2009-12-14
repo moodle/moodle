@@ -34,19 +34,19 @@ class moodle_core_wsdoc_renderer extends moodle_renderer_base {
      * @param object $params a part of parameter/return description
      * @return string the html to display
      */
-    public function detailed_html_description($params) {
+    public function detailed_description_html($params) {
         $paramdesc = "";
         if (!empty($params->desc)) {
             $paramdesc = "<span style=\"color:#2A33A6\"><i>//".$params->desc."</i></span><br/>";
         }
         if ($params instanceof external_multiple_structure) {
 
-            return $paramdesc."list of ( <br/>". $this->detailed_html_description($params->content).")";
+            return $paramdesc."list of ( <br/>". $this->detailed_description_html($params->content).")";
         } else if ($params instanceof external_single_structure) {
             //var_dump($params->keys);
             $singlestructuredesc = $paramdesc."object {<br/>";
             foreach ($params->keys as $attributname => $attribut) {
-                $singlestructuredesc .= "<b>".$attributname."</b> ".$this->detailed_html_description($params->keys[$attributname]);
+                $singlestructuredesc .= "<b>".$attributname."</b> ".$this->detailed_description_html($params->keys[$attributname]);
             }
             $singlestructuredesc .= "} <br/>";
             return $singlestructuredesc;
@@ -112,6 +112,53 @@ EOF;
         }
     }
 
+     /**
+     * Create indented XML-RPC  param description
+     * @param object $paramdescription
+     * @param string $indentation composed by space only
+     * @return string the html to diplay
+     */
+    public function xmlrpc_param_description_html($paramdescription, $indentation = "") {
+        $indentation = $indentation . "    ";
+        $brakeline = <<<EOF
+
+
+EOF;
+        if ($paramdescription instanceof external_multiple_structure) {
+            $return  = $brakeline.$indentation."Array ";
+            $indentation = $indentation . "    ";
+            $return .= $brakeline.$indentation."(";
+            $return .= $brakeline.$indentation."[0] =>";
+            $return .= $this->xmlrpc_param_description_html($paramdescription->content, $indentation);
+            $return .= $brakeline.$indentation.")";
+            return $return;
+        } else if ($paramdescription instanceof external_single_structure) {
+            $singlestructuredesc = $brakeline.$indentation."Array ";
+            $keyindentation = $indentation."    ";
+            $singlestructuredesc  .= $brakeline.$keyindentation."(";
+            foreach ($paramdescription->keys as $attributname => $attribut) {
+                $singlestructuredesc .= $brakeline.$keyindentation."[".$attributname."] =>".
+                        $this->xmlrpc_param_description_html($paramdescription->keys[$attributname], $keyindentation).
+                        $keyindentation;
+            }
+            $singlestructuredesc .= $brakeline.$keyindentation.")";
+            return $singlestructuredesc;
+        } else {
+            switch($paramdescription->type) {
+                case PARAM_BOOL: // 0 or 1 only for now
+                case PARAM_INT:
+                    $type = 'int';
+                    break;
+                case PARAM_FLOAT;
+                    $type = 'double';
+                    break;
+                default:
+                    $type = 'string';
+            }
+            return " ".$type;
+        }
+    }
+
     /**
      * Return the REST response (xml code display in <pre> tag)
      * @param string $functionname
@@ -119,12 +166,16 @@ EOF;
      * @return string the html to diplay
      */
     public function rest_response_html($functionname, $returndescription) {
+        $brakeline = <<<EOF
+
+
+EOF;
 
         $restresponsehtml = "";
 
         $restresponsehtml .= "<pre>";
         $restresponsehtml .= "<div style=\"border:solid 1px #DEDEDE;background:#FEEBE5;color:#222222;padding:4px;\">";
-        $restresponsehtml .= '<b>REST code</b><br/>';
+        $restresponsehtml .= '<b>'.get_string('restcode', 'webservice').'</b><br/>';
         $brakeline = <<<EOF
 
 
@@ -132,7 +183,7 @@ EOF;
         $content  = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>".$brakeline."<RESPONSE>".$brakeline;
         $content .= $this->description_in_indented_xml_format($returndescription);
         $content .="</RESPONSE>".$brakeline;
-        $restresponsehtml .= htmlentities($content);
+        $restresponsehtml .= $brakeline.htmlentities($content).$brakeline;
         $restresponsehtml .= "</div>";
         $restresponsehtml .= "</pre>";
         return $restresponsehtml;
@@ -145,6 +196,11 @@ EOF;
      * @return string the html to diplay
      */
     public function documentation_html($functions, $username) {
+
+        $brakeline = <<<EOF
+
+
+EOF;
 
         $documentationhtml = "";
 
@@ -177,14 +233,14 @@ EOF;
                 $documentationhtml .= "<pre>";
                 $documentationhtml .= print_collapsible_region_start('', 'aera_'.$functionname."_".$paramname,'<b>'.get_string('xmlrpcstructure', 'webservice').'</b>',false,true,true);
                 //echo '<b>'.get_string('xmlrpcstructure', 'webservice').'</b><br/>';
-                $documentationhtml .= $this->detailed_html_description($paramdesc);
+                $documentationhtml .= $brakeline.$this->detailed_description_html($paramdesc);
                 $documentationhtml .= print_collapsible_region_end(true);
                 $documentationhtml .= "</pre>";
                 $documentationhtml .= "</div><br/>";
                 $documentationhtml .= "<pre>";
-                $documentationhtml .= "<div style=\"border:solid 1px #DEDEDE;background:#FEEBE5;color:#222222;padding:4px;\">";
-                $documentationhtml .= '<b>'.get_string('restcode', 'webservice').'</b><br/>';
-                $documentationhtml .= htmlentities($this->description_in_indented_xml_format($paramdesc));
+                $documentationhtml .= "<div style=\"border:solid 1px #DEDEDE;background:#DFEEE7;color:#222222;padding:4px;\">";
+                $documentationhtml .= '<b>'.get_string('phpparam', 'webservice').'</b><br/>';
+                $documentationhtml .= $brakeline.'['.$paramname.'] =>'.htmlentities($this->xmlrpc_param_description_html($paramdesc)). $brakeline. $brakeline;
                 $documentationhtml .= "</div>";
                 $documentationhtml .= "</pre>";
                 $documentationhtml .= "</span>";
@@ -202,11 +258,17 @@ EOF;
                 $documentationhtml .= "<pre>";
                 $documentationhtml .= print_collapsible_region_start('', 'aera_'.$functionname."_xmlrpc_return",'<b>'.get_string('xmlrpcstructure', 'webservice').'</b>',false,true,true);
                 //echo '<b>'.get_string('xmlrpcstructure', 'webservice').'</b><br/>';
-                $documentationhtml .= $this->detailed_html_description($description->returns_desc);
+                $documentationhtml .= $brakeline.$this->detailed_description_html($description->returns_desc);
                 $documentationhtml .= print_collapsible_region_end(true);
                 $documentationhtml .= "</pre>";
                 $documentationhtml .= "</div><br/>";
-                $documentationhtml .=$this->rest_response_html($functionname, $description->returns_desc);
+                $documentationhtml .= "<pre>";
+                $documentationhtml .= "<div style=\"border:solid 1px #DEDEDE;background:#DFEEE7;color:#222222;padding:4px;\">";
+                $documentationhtml .= '<b>'.get_string('phpresponse', 'webservice').'</b><br/>';
+                $documentationhtml .= htmlentities($this->xmlrpc_param_description_html($description->returns_desc)).$brakeline.$brakeline;
+                $documentationhtml .= "</div>";
+                $documentationhtml .= "</pre><br/>";
+                $documentationhtml .= $this->rest_response_html($functionname, $description->returns_desc);
             }
             $documentationhtml .= "</span>";
             $documentationhtml .= "<br/><br/>";
@@ -250,7 +312,7 @@ EOF;
 //        echo get_string('error','webservice',$errormessage);
 //        echo "<br/><br/>";
 
-        //login form - we cannot use moodle form are we don't have sessionkey
+        //login form - we cannot use moodle form as we don't have sessionkey
         $form = new html_form();
         $form->url = new moodle_url($CFG->wwwroot.'/webservice/wsdoc.php', array()); // Required
         $form->button = new html_button();
