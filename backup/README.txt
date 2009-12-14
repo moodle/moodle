@@ -1,5 +1,5 @@
 README
-----------
+------
 
 This directory contains my try to create a backup/recover
 admin option to moodle. I don't know when and how it'll be
