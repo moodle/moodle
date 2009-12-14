@@ -163,8 +163,11 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base { // 
             'id'      => true,
         );
     }
+
     /**
-     * @global object
+     * load up all data required for this export.
+     *
+     * @return void
      */
     public function load_data() {
         global $DB;
@@ -190,28 +193,40 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base { // 
         $fs = get_file_storage();
         $this->multifiles = $fs->get_area_files($context->id, 'glossary_attachment', $this->entry->id, "timemodified", false);
     }
+
     /**
-     * @return string
+     * how long might we expect this export to take
+     *
+     * @return constant one of PORTFOLIO_TIME_XX
      */
     public function expected_time() {
         return PORTFOLIO_TIME_LOW;
     }
+
     /**
-     * @return bool
+     * make sure that the current user is allowed to do this
+     *
+     * @return boolean
      */
     public function check_permissions() {
         $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
         return has_capability('mod/glossary:exportentry', $context)
             || ($this->entry->userid == $this->user->id && has_capability('mod/glossary:exportownentry', $context));
     }
+
     /**
+     * return a nice name to be displayed about this export location
+     *
      * @return string
      */
     public static function display_name() {
         return get_string('modulename', 'glossary');
     }
+
     /**
-     * @return object
+     * prepare the package ready to be passed off to the portfolio plugin
+     *
+     * @return void
      */
     public function prepare_package() {
         define('PORTFOLIO_INTERNAL', true);
@@ -226,7 +241,10 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base { // 
         }
         return $this->exporter->write_new_file($content, clean_filename($this->entry->concept) . '.html', !empty($files));
     }
+
     /**
+     * return the sha1 of this content
+     *
      * @return string
      */
     public function get_sha1() {
@@ -236,6 +254,11 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base { // 
         return sha1(serialize($this->entry));
     }
 
+    /**
+     * what formats this function *generally* supports
+     *
+     * @return array
+     */
     public static function base_supported_formats() {
         return array(PORTFOLIO_FORMAT_RICHHTML);
     }
