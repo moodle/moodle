@@ -932,6 +932,7 @@ class global_navigation extends navigation_node {
          */
         $sitekeys = array();
         $this->load_course_activities($sitekeys, $SITE);
+        $this->load_section_activities($sitekeys, false, $SITE);
         switch ($contextlevel) {
             case CONTEXT_SYSTEM:
                 $this->cache->volatile();
