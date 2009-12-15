@@ -81,7 +81,7 @@ class repository_upload extends repository {
      * @param bool $override override file if exists
      * @return mixed stored_file object or false if error; may throw exception if duplicate found
      */
-    public function upload_to_filepool($elname, $filearea='user_draft', $filepath='/', $itemid='', $filename = '', $override = false) {
+    public function upload_to_filepool($elname, $filearea='user_draft', $filepath='/', $itemid='', $filename = '', $override = true) {
         global $USER;
 
         if ($filepath !== '/') {
