@@ -74,6 +74,11 @@ abstract class portfolio_caller_base {
     */
     protected $multifiles;
 
+    /**
+     * set this for generated-file exports
+     */
+    protected $intendedmimetype;
+
     public function __construct($callbackargs) {
         $expected = call_user_func(array(get_class($this), 'expected_callbackargs'));
         foreach ($expected as $key => $required) {
@@ -471,6 +476,14 @@ abstract class portfolio_caller_base {
             }
         }
         $this->supportedformats[] = $format;
+    }
+
+    public function get_mimetype() {
+        if ($this->singlefile instanceof stored_file) {
+            return $this->singlefile->get_mimetype();
+        } else if (!empty($this->intendedmimetype)) {
+            return $this->intendedmimetype;
+        }
     }
 
     /**

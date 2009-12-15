@@ -213,3 +213,8 @@ define('PORTFOLIO_ADD_ICON_LINK', 3);
 */
 define('PORTFOLIO_ADD_TEXT_LINK', 4);
 
+/**
+ * hacky way to turn the button class into a url to redirect to
+ * this replaces the old portfolio_fake_add_url function
+ */
+define('PORTFOLIO_ADD_FAKE_URL', 5);

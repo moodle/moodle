@@ -98,11 +98,16 @@ if($mform->is_cancelled()) {
 }
 
 if (array_key_exists('portfolio', $formdata) && !empty($formdata['portfolio'])) {
-    // fake  portfolio callback stuff and redirect
+    // fake portfolio callback stuff and redirect
     $formdata['id'] = $cm->id;
-    $formdata['exporttype'] = 'csv'; // force for now
     require_once($CFG->libdir . '/portfoliolib.php');
-    $url = portfolio_fake_add_url($formdata['portfolio'], 'data_portfolio_caller', '/mod/data/locallib.php', $formdata, array(PORTFOLIO_FORMAT_SPREADSHEET));
+    $button = new portfolio_add_button();
+    $button->set_callback_options('data_portfolio_caller', $formdata, '/mod/data/locallib.php');
+    if ($formdata['exporttype'] == 'csv') {
+        $button->set_format_by_intended_file('csv'); // so we can do mime checking
+    }
+    $url = $button->to_html(PORTFOLIO_ADD_FAKE_URL);
+    $url .= '&instance=' . $formdata['portfolio']; // add on the instance since we know it
     redirect($url);
 }
 

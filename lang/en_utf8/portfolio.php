@@ -83,7 +83,6 @@ $string['instancenotdelete'] = 'Failed to delete portfolio';
 $string['instancesaved'] = 'Portfolio saved successfully';
 $string['invalidaddformat'] = 'Invalid add format passed to portfolio_add_button. ($a) Must be one of PORTFOLIO_ADD_XXX';
 $string['invalidtempid'] = 'Invalid export id. maybe it has expired';
-$string['invalidfileargument'] = 'Invalid file argument passed to portfolio_format_from_file - must be stored_file object';
 $string['invalidfileareaargs'] = 'Invalid file area arguments passed to set_file_and_format_data - must contain contextid, filearea and itemid';
 $string['invalidsha1file'] = 'Invalid call to get_sha1_file - either single or multifiles must be set';
 $string['invalidpreparepackagefile'] = 'Invalid call to prepare_package_file - either single or multifiles must be set';

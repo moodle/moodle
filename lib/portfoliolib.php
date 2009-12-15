@@ -84,6 +84,7 @@ class portfolio_add_button {
     private $formats;
     private $instances;
     private $file; // for single-file exports
+    private $intendedmimetype; // for writing specific types of files
 
     /**
     * constructor. either pass the options here or set them using the helper methods.
@@ -163,7 +164,8 @@ class portfolio_add_button {
     * @param array $formats if the calling code knows better than the static method on the calling class (base_supported_formats)
     *                       eg, if it's going to be a single file, or if you know it's HTML, you can pass it here instead
     *                       this is almost always the case so you should always use this.
-    *                       {@see portfolio_format_from_file} for how to get the appropriate formats to pass here for uploaded files.
+    *                       {@see portfolio_format_from_mimetype} for how to get the appropriate formats to pass here for uploaded files.
+    *                       or just call set_format_by_file instead
     */
     public function set_formats($formats=null) {
         if (is_string($formats)) {
@@ -179,6 +181,10 @@ class portfolio_add_button {
         $this->formats = portfolio_most_specific_formats($formats, $callerformats);
     }
 
+    /**
+     * reset formats to the default
+     * which is usually what base_supported_formats returns
+     */
     public function reset_formats() {
         $this->set_formats();
     }
@@ -195,13 +201,33 @@ class portfolio_add_button {
      */
     public function set_format_by_file(stored_file $file, $extraformats=null) {
         $this->file = $file;
+        $fileformat = portfolio_format_from_mimetype($file->get_mimetype());
         if (is_string($extraformats)) {
-            $this->set_formats(array(portfolio_format_from_file($file), $extraformats));
-        } else if (is_array($extraformats)) {
-            $this->set_formats(array_merge(array(portfolio_format_from_file($file)), $extraformats));
-        } else  {
-            $this->set_formats(portfolio_format_from_file($file));
+            $extraformats = array($extraformats);
+        } else if (!is_array($extraformats)) {
+            $extraformats = array();
         }
+        $this->set_formats(array_merge(array($fileformat), $extraformats));
+    }
+
+    /**
+     * correllary to set_format_by_file, but this is used when we don't yet have a stored_file
+     * when we're writing out a new type of file (like csv or pdf)
+     *
+     * @param string $extn the file extension we intend to generate
+     * @param mixed        $extraformats any additional formats other than by mimetype
+     *                                  eg leap2a etc
+     */
+    public function set_format_by_intended_file($extn, $extraformats=null) {
+        $mimetype = mimeinfo('type', 'something. ' . $extn);
+        $fileformat = portfolio_format_from_mimetype($mimetype);
+        $this->intendedmimetype = $fileformat;
+        if (is_string($extraformats)) {
+            $extraformats = array($extraformats);
+        } else if (!is_array($extraformats)) {
+            $extraformats = array();
+        }
+        $this->set_formats(array_merge(array($fileformat), $extraformats));
     }
 
     /*
@@ -238,8 +264,7 @@ class portfolio_add_button {
             // use the caller defaults
             $this->set_formats();
         }
-        $formoutput = '<form method="post" action="' . $CFG->wwwroot . '/portfolio/add.php" id="portfolio-add-button">' . "\n";
-        $linkoutput = '<a href="' . $CFG->wwwroot . '/portfolio/add.php?';
+        $url = new moodle_url('/portfolio/add.php');
         foreach ($this->callbackargs as $key => $value) {
             if (!empty($value) && !is_string($value) && !is_numeric($value)) {
                 $a->key = $key;
@@ -247,18 +272,19 @@ class portfolio_add_button {
                 debugging(get_string('nonprimative', 'portfolio', $a));
                 return;
             }
-            $linkoutput .= 'ca_' . $key . '=' . $value . '&amp;';
-            $formoutput .= "\n" . '<input type="hidden" name="ca_' . $key . '" value="' . $value . '" />';
+            $url->param('ca_' . $key, $value);
         }
-        $formoutput .= "\n" . '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
-        $linkoutput .= 'sesskey=' . sesskey() . '&amp;';
-        $formoutput .= "\n" . '<input type="hidden" name="callbackfile" value="' . $this->callbackfile . '" />';
-        $formoutput .= "\n" . '<input type="hidden" name="callbackclass" value="' . $this->callbackclass . '" />';
-        $formoutput .= "\n" . '<input type="hidden" name="course" value="' . (!empty($COURSE) ? $COURSE->id : 0) . '" />';
-        $formoutput .= "\n" . '<input type="hidden" name="callerformats" value="' . implode(',', $this->formats) . '" />';
-        $linkoutput .= 'callbackfile=' . $this->callbackfile . '&amp;callbackclass='
-            . $this->callbackclass . '&amp;course=' . (!empty($COURSE) ? $COURSE->id : 0)
-            . '&amp;callerformats=' . implode(',', $this->formats);
+        $url->param('sesskey', sesskey());
+        $url->param('callbackfile', $this->callbackfile);
+        $url->param('callbackclass', $this->callbackclass);
+        $url->param('course', (!empty($COURSE)) ? $COURSE->id : 0);
+        $url->param('callerformats', implode(',', $this->formats));
+        $mimetype = null;
+        if ($this->file instanceof stored_file) {
+            $mimetype = $this->file->get_mimetype();
+        } else if ($this->intendedmimetype) {
+            $mimetype = $this->intendedmimetype;
+        }
         $selectoutput = '';
         if (count($this->instances) == 1) {
             $tmp = array_values($this->instances);
@@ -279,18 +305,21 @@ class portfolio_add_button {
                 debugging(get_string('singleinstancenomultiallowed', 'portfolio'));
                 return;
             }
-            if ($this->file && $this->file instanceof stored_file && !$instance->file_mime_check($this->file->get_mimetype())) {
-                // bail, we have a specific file and this plugin doesn't support it
-                debugging(get_string('mimecheckfail', 'portfolio', (object)array('plugin' => $instance->get('plugin'), 'mimetype' => $this->file->get_mimetype())));
+            if ($mimetype&& !$instance->file_mime_check($mimetype)) {
+                // bail, we have a specific file or mimetype and this plugin doesn't support it
+                debugging(get_string('mimecheckfail', 'portfolio', (object)array('plugin' => $instance->get('plugin'), 'mimetype' => $mimetype)));
                 return;
             }
-            $formoutput .= "\n" . '<input type="hidden" name="instance" value="' . $instance->get('id') . '" />';
-            $linkoutput .= '&amp;instance=' . $instance->get('id');
+            $url->param('instance', $instance->get('id'));
         }
         else {
-            if (!$selectoutput = portfolio_instance_select($this->instances, $this->formats, $this->file, $this->callbackclass, 'instance', true)) {
+            if (!$selectoutput = portfolio_instance_select($this->instances, $this->formats, $this->callbackclass, $mimetype, 'instance', true)) {
                 return;
             }
+        }
+        // if we just want a url to redirect to, do it now
+        if ($format == PORTFOLIO_ADD_FAKE_URL) {
+            return $url->out(false, array(), false);
         }
 
         if (empty($addstr)) {
@@ -299,6 +328,11 @@ class portfolio_add_button {
         if (empty($format)) {
             $format = PORTFOLIO_ADD_FULL_FORM;
         }
+
+        $formoutput = '<form method="post" action="' . $CFG->wwwroot . '/portfolio/add.php" id="portfolio-add-button">' . "\n";
+        $formoutput .= $url->hidden_params_out();
+        $linkoutput = '<a href="' . $url->out();
+
         switch ($format) {
             case PORTFOLIO_ADD_FULL_FORM:
                 $formoutput .= $selectoutput;
@@ -316,6 +350,8 @@ class portfolio_add_button {
             case PORTFOLIO_ADD_TEXT_LINK:
                 $linkoutput .= '">' . $addstr .'</a>';
             break;
+            case PORTFOLIO_ADD_FAKE_URL:
+                return urldecode($linkoutput);
             default:
                 debugging(get_string('invalidaddformat', 'portfolio', $format));
         }
@@ -383,14 +419,14 @@ class portfolio_add_button {
 * @param array          $instances      array of portfolio plugin instance objects - the instances to put in the menu
 * @param array          $callerformats  array of PORTFOLIO_FORMAT_XXX constants - the formats the caller supports (this is used to filter plugins)
 * @param array          $callbackclass  the callback class name - used for debugging only for when there are no common formats
-* @param stored_file    $file           if we already know we have exactly one file, pass it here to do mime filtering.
+* @param mimetype       $mimetype       if we already know we have exactly one file, or are going to write one, pass it here to do mime filtering.
 * @param string         $selectname     the name of the select element. Optional, defaults to instance.
 * @param boolean        $return         whether to print or return the output. Optional, defaults to print.
 * @param booealn        $returnarray    if returning, whether to return the HTML or the array of options. Optional, defaults to HTML.
 *
 * @return string the html, from <select> to </select> inclusive.
 */
-function portfolio_instance_select($instances, $callerformats, $callbackclass, $file=null, $selectname='instance', $return=false, $returnarray=false) {
+function portfolio_instance_select($instances, $callerformats, $callbackclass, $mimetype=null, $selectname='instance', $return=false, $returnarray=false) {
     global $CFG, $USER;
 
     if (empty($CFG->enableportfolios)) {
@@ -422,8 +458,8 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass, $
             // bail, already exporting something with this plugin and it doesn't support multiple exports
             continue;
         }
-        if ($file && $file instanceof stored_file && !$instance->file_mime_check($file->get_mimetype())) {
-            debugging(get_string('mimecheckfail', 'portfolio', (object)array('plugin' => $instance->get('plugin'), 'mimetype' => $this->file->get_mimetype())));
+        if ($mimetype && !$instance->file_mime_check($mimetype)) {
+            debugging(get_string('mimecheckfail', 'portfolio', (object)array('plugin' => $instance->get('plugin'), 'mimetype' => $mimetype())));
             // bail, we have a specific file and this plugin doesn't support it
             continue;
         }
@@ -516,23 +552,20 @@ function portfolio_supported_formats() {
 * This function returns the revelant portfolio export format
 * which is used to determine which portfolio plugins can be used
 * for exporting this content
-* according to the mime type of the given file
-* this only works when exporting exactly <b>one</b> file
+* according to the given mime type
+* this only works when exporting exactly <b>one</b> file, or generating a new one
+* (like a pdf or csv export)
 *
-* @param stored_file $file file to check mime type for
+* @param string $mimetype (usually $file->get_mimetype())
 *
 * @return string the format constant (see PORTFOLIO_FORMAT_XXX constants)
 */
-function portfolio_format_from_file(stored_file $file) {
+function portfolio_format_from_mimetype($mimetype) {
     global $CFG;
     static $alreadymatched;
     if (empty($alreadymatched)) {
         $alreadymatched = array();
     }
-    if (!($file instanceof stored_file)) {
-        throw new portfolio_exception('invalidfileargument', 'portfolio');
-    }
-    $mimetype = $file->get_mimetype();
     if (array_key_exists($mimetype, $alreadymatched)) {
         return $alreadymatched[$mimetype];
     }
@@ -861,33 +894,6 @@ function portfolio_report_insane($insane, $instances=false, $return=false) {
     }
     echo $output;
 }
-
-/**
-* fake the url to portfolio/add.php from data from somewhere else
-* you should use portfolio_add_button instead 99% of the time
-*
-* @param int    $instanceid   instanceid (optional, will force a new screen if not specified)
-* @param string $classname    callback classname
-* @param string $classfile    file containing the callback class definition
-* @param array  $callbackargs arguments to pass to the callback class
-*/
-function portfolio_fake_add_url($instanceid, $classname, $classfile, $callbackargs, $formats) {
-    global $CFG;
-    $url = $CFG->wwwroot . '/portfolio/add.php?instance=' . $instanceid . '&callbackclass=' . $classname . '&callbackfile=' . $classfile . '&sesskey=' . sesskey();
-
-    if (is_object($callbackargs)) {
-        $callbackargs = (array)$callbackargs;
-    }
-    if (!is_array($callbackargs) || empty($callbackargs)) {
-        return $url;
-    }
-    foreach ($callbackargs as $key => $value) {
-        $url .= '&ca_' . $key . '=' . urlencode($value);
-    }
-    $url .= '&callerformats=' . implode(',', $formats);
-    return $url;
-}
-
 
 
 /**

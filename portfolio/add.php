@@ -211,7 +211,7 @@ if (!$exporter->get('instance')) {
         portfolio_instances(),
         $exporter->get('caller')->supported_formats(),
         get_class($exporter->get('caller')),
-        $exporter->get('caller')->get('singlefile'),
+        $exporter->get('caller')->get_mimetype(),
         'instance',
         true,
         true

@@ -301,7 +301,7 @@ class data_portfolio_caller extends portfolio_module_caller_base {
             }
         }
         if (count($includedfiles) == 1 && count($fields) == 1) {
-            $formats= array(portfolio_format_from_file($includedfiles[0]));
+            $formats= array(portfolio_format_from_mimetype($includedfiles[0]->get_mimetype()));
         } else if (count($includedfiles) > 0) {
             $formats = array(PORTFOLIO_FORMAT_RICHHTML);
         }
@@ -309,6 +309,6 @@ class data_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public static function base_supported_formats() {
-        return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_RICHHTML, PORTFOLIO_FORMAT_PLAINHTML);
+        return array(PORTFOLIO_FORMAT_SPREADSHEET, PORTFOLIO_FORMAT_RICHHTML, PORTFOLIO_FORMAT_PLAINHTML);
     }
 }
