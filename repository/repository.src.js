@@ -1073,7 +1073,8 @@ repository_client.end = function(client_id, obj) {
         repository_client.files[client_id] = 0;
     }
     if(fp.env=='filepicker') {
-        fp.target.value = obj['id'];
+        if (fp.target)
+            fp.target.value = obj['id'];
     }else if(fp.env=='editor'){
         if (obj['type'] == 'link') {
             fp.target.value = obj['url']+'#'+new_filename;

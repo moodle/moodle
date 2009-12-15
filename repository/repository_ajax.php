@@ -65,28 +65,6 @@
 
 /// Check for actions that do not need repository ID
     switch ($action) {
-        // delete a file from filemanger
-        case 'delete':
-            try {
-                if (!$context = get_context_instance(CONTEXT_USER, $USER->id)) {
-                }
-                $contextid = $context->id;
-                $fs = get_file_storage();
-                if ($file = $fs->get_file($contextid, 'user_draft', $itemid, '/', $title)) {
-                    if($result = $file->delete()) {
-                        echo $client_id;
-                    } else {
-                        echo '';
-                    }
-                } else {
-                    echo '';
-                }
-                exit;
-            } catch (repository_exception $e) {
-                $err->e = $e->getMessage();
-                die(json_encode($err));
-            }
-            break;
         case 'gsearch': //  Global Search
             $params = array();
             $params['context'] = array(get_context_instance_by_id($contextid), get_system_context());
@@ -230,7 +208,7 @@ EOD;
         case 'download':
             try {
                 // we have two special repoisitory type need to deal with
-                if ($repo->options['type'] == 'local' or $repo->options['type'] == 'draft') {
+                if ($repo->options['type'] == 'local') {
                     $fileinfo = $repo->move_to_draft($file, $title, $itemid, $save_path);
                     $info = array();
                     $info['client_id'] = $client_id;
