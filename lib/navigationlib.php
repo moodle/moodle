@@ -1168,7 +1168,9 @@ class global_navigation extends navigation_node {
                 }
             }
             $path = $keys;
-            $path[] = $sections[$module->sectionnum]->id;
+            if ($course->id !== SITEID) {
+                $path[] = $sections[$module->sectionnum]->id;
+            }
             $this->add_to_path($path, $module->id, $module->name, $module->name, $type, $url, $icon);
             $child = $this->find_child($module->id, $type);
             if ($child != false) {
