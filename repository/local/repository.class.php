@@ -158,12 +158,13 @@ class repository_local extends repository {
         $filename   = $params['filename'];
         $fileitemid = $params['itemid'];
         $context    = get_context_instance_by_id($contextid);
-        $file_info  = $browser->get_file_info($context, $filearea, $fileitemid, $filepath, $filename);
+        $file_info = $browser->get_file_info($context, $filearea, $fileitemid, $filepath, $filename);
         $file_info->copy_to_storage($user_context->id, 'user_draft', $itemid, $save_path, $title);
 
         $ret['itemid'] = $itemid;
         $ret['title']  = $title;
         $ret['contextid'] = $user_context->id;
+        $ret['filesize'] = $file_info->get_filesize();
 
         return $ret;
     }

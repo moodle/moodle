@@ -237,7 +237,7 @@ EOD;
                     $info['file'] = $fileinfo['title'];
                     $info['id'] = $itemid;
                     $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
-                    $filesize = $fileinfo->get_filesize();
+                    $filesize = $fileinfo['filesize'];
                     if (($maxbytes!==-1) && ($filesize > $maxbytes)) {
                         $fileinfo->delete();
                         throw new file_exception('maxbytes');
