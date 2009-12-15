@@ -109,7 +109,7 @@ class assignment_online extends assignment_base {
                     $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $this->context->id, 'assignment_online_submission', $this->assignment->id);
                     echo format_text($text, $submission->data2);
                     $button = new portfolio_add_button();
-                    $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/lib.php');
+                    $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/locallib.php');
                     $button->set_formats(PORTFOLIO_FORMAT_PLAINHTML); //TODO this might have files?
                     $button->render();
                 } else if (!has_capability('mod/assignment:submit', $context)) { //fix for #4604
