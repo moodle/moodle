@@ -659,6 +659,9 @@ abstract class repository {
         $repositories = array();
         $ft = new file_type_to_ext();
         foreach ($records as $record) {
+            if (!file_exists($CFG->dirroot . '/repository/'. $record->repositorytype.'/repository.class.php')) {
+                continue;
+            }
             require_once($CFG->dirroot . '/repository/'. $record->repositorytype.'/repository.class.php');
             $options['visible'] = $record->visible;
             $options['name']    = $record->name;
@@ -1774,12 +1777,12 @@ function repository_head_setup() {
     $PAGE->requires->yui_lib('button')->in_head();
     $PAGE->requires->yui_lib('selector')->in_head();
 
-    //TODO: remove the ->in_head() once we refactor the inline script tags in repo code
-    $PAGE->requires->js('repository/repository.src.js')->in_head();
-
     //TODO: remove following after we moe the content of file
     //      proper place (==themes)
     $PAGE->requires->css('repository/repository.css');
+
+    //TODO: remove the ->in_head() once we refactor the inline script tags in repo code
+    $PAGE->requires->js('repository/repository.src.js')->in_head();
 }
 
 /**
