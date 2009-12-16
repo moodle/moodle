@@ -44,7 +44,7 @@ class moodle_mod_lesson_renderer extends moodle_renderer_base {
     /**
      * Magic method used to pass calls otherwise meant for the standard renderer
      * to it to ensure we don't go causing unnessecary greif.
-     * 
+     *
      * @param string $method
      * @param array $arguments
      * @return mixed
@@ -394,7 +394,7 @@ class moodle_mod_lesson_renderer extends moodle_renderer_base {
 
         $addquestionurl = new moodle_url($CFG->wwwroot.'/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
         $links[] = html_link::make($addquestionurl, get_string('addaquestionpagehere', 'lesson'));
-        
+
         foreach ($links as $key=>$link) {
             $links[$key] = $this->output->link($link);
         }
@@ -471,7 +471,7 @@ class moodle_mod_lesson_renderer extends moodle_renderer_base {
                 $options[$link->url->param('qtype')] = $link->text;
             }
             $options[0] = get_string('question', 'lesson');
-            
+
             $addpageurl = new moodle_url($CFG->wwwroot.'/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id, 'sesskey'=>sesskey()));
             $addpageselect = html_select::make_popup_form($addpageurl, 'qtype', $options, 'addpageafter'.$page->id);
             $addpageselect->nothinglabel = get_string('addanewpage', 'lesson').'...';
@@ -556,7 +556,7 @@ class moodle_mod_lesson_renderer extends moodle_renderer_base {
         if (has_capability('mod/lesson:manage', $context)) {
             return $this->output->notification(get_string('progressbarteacherwarning2', 'lesson'));
         }
-        
+
         if (!isset($USER->modattempts[$lesson->id])) {
             // all of the lesson pages
             $pages = $lesson->load_all_pages();
@@ -572,7 +572,7 @@ class moodle_mod_lesson_renderer extends moodle_renderer_base {
                 $ntries = 0;  // may not be necessary
             }
 
-            
+
             $viewedpageids = array();
             if ($attempts = $lesson->get_attempts($ntries, true)) {
                 $viewedpageids = array_merge($viewedpageids, array_keys($attempts));
@@ -613,7 +613,7 @@ class moodle_mod_lesson_renderer extends moodle_renderer_base {
         $table = new html_table();
         $table->set_classes(array('progress_bar_table', 'center'));
         $table->data = array(html_table_row::make($cells));
-        
+
         return $this->output->box($this->output->table($table), 'progress_bar');
     }
 

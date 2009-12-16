@@ -78,7 +78,7 @@ if ($data = $mform->get_data()) {
     // extract package content
     $packer = get_file_packer('application/zip');
     $package->extract_to_storage($packer, $context->id, 'lesson_imported_files', $lesson->id, '/');
-    
+
     $fs = get_file_storage();
     if ($files = $fs->get_area_files($context->id, 'lesson_imported_files', $lesson->id)) {
 

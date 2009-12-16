@@ -248,7 +248,7 @@ class repository_flickr_public extends repository {
 
         if (!empty($SESSION->{$this->sess_tag})         // use tag to search
             or !empty($SESSION->{$this->sess_text})     // use keyword to search
-            or !empty($this->nsid)/*use pre-defined accound*/) {                   
+            or !empty($this->nsid)/*use pre-defined accound*/) {
             $photos = $this->flickr->photos_search(array(
                 'tags'=>$SESSION->{$this->sess_tag},
                 'page'=>$page,

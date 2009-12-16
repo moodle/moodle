@@ -52,7 +52,7 @@ if ($edit) {
     $qtype = $editpage->qtype;
     $edit = true;
 } else {
-    $edit = false;    
+    $edit = false;
 }
 
 $jumpto = lesson_page::get_jumptooptions($pageid, $lesson);
@@ -71,7 +71,7 @@ if ($edit) {
     // this is used by endofbranch, cluster, and endofcluster to skip the creation form.
     // IT SHOULD ALWAYS CALL require_sesskey();
     $mform->construction_override($pageid, $lesson);
-    
+
     $defaultpage = new stdClass;
     $defaultpage->id = $cm->id;
     $defaultpage->pageid = $pageid;

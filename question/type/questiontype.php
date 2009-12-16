@@ -1091,7 +1091,7 @@ class default_questiontype {
         } else {
             $eventtest = 'event IN (' . QUESTION_EVENTS_GRADED . ')';
         }
-        $states = $DB->get_records_select('question_states', 
+        $states = $DB->get_records_select('question_states',
                 'attempt = :aid AND question = :qid AND ' . $eventtest, $params, 'seq_number ASC');
         if (count($states) <= 1) {
             return '';

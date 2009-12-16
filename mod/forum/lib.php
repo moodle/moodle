@@ -8340,7 +8340,7 @@ class forum_existing_subscriber_selector extends forum_subscriber_selector_base 
         if (!$subscribers = $DB->get_records_sql($fields.$from.' WHERE '.$wherecondition.$order, $params)) {
             $subscribers = array();
         }
-        
+
         return array(get_string("existingsubscribers", 'forum') => $subscribers);
     }
 

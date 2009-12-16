@@ -83,7 +83,7 @@ class lesson_page_type_multichoice extends lesson_page {
         if (!$data) {
             redirect(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$PAGE->cm->id, 'pageid'=>$this->properties->id)));
         }
-        
+
         if ($this->properties->qoption) {
             // MULTIANSWER allowed, user's answer is an array
 
@@ -96,7 +96,7 @@ class lesson_page_type_multichoice extends lesson_page {
             foreach ($studentanswers as $key => $useranswer) {
                 $studentanswers[$key] = clean_param($useranswer, PARAM_INT);
             }
-            
+
             // get what the user answered
             $result->userresponse = implode(",", $studentanswers);
 
@@ -209,7 +209,7 @@ class lesson_page_type_multichoice extends lesson_page {
             }
         } else {
             // only one answer allowed
-            
+
             if (empty($data->answerid) && !is_int($data->answerid)) {
                 $result->noanswer = true;
                 return $result;
@@ -268,7 +268,7 @@ class lesson_page_type_multichoice extends lesson_page {
             $cells[] = "<span class=\"label\">".get_string("response", "lesson")." $i</span>";
             $cells[] = format_text($answer->response, FORMAT_MOODLE, $options);
             $table->data[] = html_table_row::make($cells);
-            
+
             $cells = array();
             $cells[] = "<span class=\"label\">".get_string("score", "lesson").'</span>';
             $cells[] = $answer->score;

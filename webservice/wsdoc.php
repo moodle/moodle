@@ -200,7 +200,7 @@ class webservice_documentation_generator {
         if (!$auth = get_auth_plugin('webservice')) {
             throw new webservice_access_exception('WS auth missing');
         }
-        
+
         if (!$this->username) {
             throw new webservice_access_exception('Missing username');
         }

@@ -138,7 +138,7 @@ class lesson_page_type_matching extends lesson_page {
         if (!$data) {
             redirect(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$PAGE->cm->id, 'pageid'=>$this->properties->id)));
         }
-        
+
         $response = $data->response;
         if (!is_array($response)) {
             $result->noanswer = true;
@@ -228,7 +228,7 @@ class lesson_page_type_matching extends lesson_page {
         $options->para = false;
         $i = 1;
         $n = 0;
-        
+
         foreach ($answers as $answer) {
             if ($n < 2) {
                 if ($answer->answer != NULL) {

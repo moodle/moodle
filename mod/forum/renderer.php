@@ -26,7 +26,7 @@
 /**
  * A custom renderer class that extends the moodle_renderer_base and
  * is used by the forum module.
- * 
+ *
  * @package mod-forum
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -84,7 +84,7 @@ class moodle_mod_forum_renderer extends moodle_renderer_base {
         $table->set_classes(array('subscribertable','boxaligncenter'));
         $table->data = array(html_table_row::make(array($existingcell, $actioncell, $potentialcell)));
         $output .= $this->output->table($table);
-        
+
         $output .= $this->output_end_tag('form');
         return $output;
     }
@@ -131,6 +131,6 @@ class moodle_mod_forum_renderer extends moodle_renderer_base {
         $output .= $this->output->box_end();
         return $output;
     }
-        
+
 
 }

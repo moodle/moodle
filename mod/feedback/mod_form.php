@@ -76,7 +76,7 @@ class mod_feedback_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'aftersubmithdr', get_string('after_submit', 'feedback'));
-        
+
         $mform->addElement('editor', 'page_after_submit', get_string("page_after_submit", "feedback"), null, null);
         $mform->setType('page_after_submit', PARAM_RAW);
 

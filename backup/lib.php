@@ -615,7 +615,7 @@
         // this needs to happen before restore_setup_for_check
         // which for some reason reads the session
         $SESSION->restore =& $restore;
-        // rename the things that are called differently 
+        // rename the things that are called differently
         $SESSION->restore->restore_course_files = $restore->course_files;
         $SESSION->restore->restore_site_files   = $restore->site_files;
         $SESSION->restore->backup_version       = $restore->info->backup_backup_version;

@@ -862,7 +862,7 @@ class theme_config {
         if (!$dir = theme_config::find_theme_location($themename)) {
             return null;
         }
-        
+
         $THEME = new object();
         $THEME->name     = $themename;
         $THEME->dir      = $dir;
@@ -900,7 +900,7 @@ class theme_config {
             //legacy theme - needs to be upgraded - upgrade info is displayed on the admin settings page
             return null;
         }
-        
+
         return $dir;
     }
 

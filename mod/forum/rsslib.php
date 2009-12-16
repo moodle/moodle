@@ -247,7 +247,7 @@
     /**
      * This function returns "items" record array to be used to build the rss feed
      * for a Type=posts forum
-     * 
+     *
      * @param object $forum
      * @param int $newsince
      */

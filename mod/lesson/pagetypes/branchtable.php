@@ -106,7 +106,7 @@ class lesson_page_type_branchtable extends lesson_page {
         if ($this->lesson->slideshow) {
             $output .= $renderer->slideshow_end();
         }
-        
+
         return $output;
     }
 

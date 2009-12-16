@@ -17,7 +17,7 @@
 
 /**
  * Capability definitions for the forum module.
- * 
+ *
  * The capabilities are loaded into the database table when the module is
  * installed or updated. Whenever the capability definitions are updated,
  * the module version number should be bumped up.

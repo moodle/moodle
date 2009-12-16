@@ -528,7 +528,7 @@ function hotpot_charcode_to_utf8($charcode) {
         return chr(($charcode >> 0x12) + 0xF0).chr((($charcode >> 0x0C) & 0x3F) + 0x80).chr((($charcode >> 0x06) & 0x3F) + 0x80).chr(($charcode & 0x3F) + 0x80);
     }
     // unidentified char code !!
-    return ' '; 
+    return ' ';
 }
 
 function hotpot_convert_relative_urls($str, $baseurl, $filename) {

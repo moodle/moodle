@@ -21,7 +21,7 @@
  * @package mod-forum
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */ 
+ */
 
 require_once('../../config.php');
 require_once('lib.php');

@@ -265,7 +265,7 @@ if ($pageid != LESSON_EOL) {
         $DB->delete_records('lesson_branch', array('userid' => $USER->id, 'lessonid' => $lesson->id, 'retry' => $retries));
     }
 
-    $page = $lesson->load_page($pageid);    
+    $page = $lesson->load_page($pageid);
     // Check if the page is of a special type and if so take any nessecary action
     $newpageid = $page->callback_on_view($canmanage);
     if (is_numeric($newpageid)) {

@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * This script can set environment variables in the current session
  */
 
@@ -12,5 +12,3 @@ if (!empty($SESSION)) {
         $SESSION->flashversion = $flashversion;
     }
 }
-
-?>

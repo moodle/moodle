@@ -97,7 +97,7 @@ class lesson_page_type_essay extends lesson_page {
             $result->noanswer = true;
             return $result;
         }
-        
+
         $answers = $this->get_answers();
         foreach ($answers as $answer) {
             $result->answerid = $answer->id;

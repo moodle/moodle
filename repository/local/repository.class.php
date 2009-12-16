@@ -181,7 +181,7 @@ class repository_local extends repository {
     /**
      * Local file don't support to link to external links
      *
-     * @return int 
+     * @return int
      */
     public function supported_returntypes() {
         return FILE_INTERNAL;

@@ -52,7 +52,7 @@ function lesson_save_question_options($question, $lesson) {
         $lesson = new lesson($lesson);
     }
     $manager = lesson_page_type_manager::get($lesson);
-    
+
     $timenow = time();
     switch ($question->qtype) {
         case LESSON_PAGE_SHORTANSWER:

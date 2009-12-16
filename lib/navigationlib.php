@@ -925,7 +925,7 @@ class global_navigation extends navigation_node {
             $contextlevel = 10;
         }
         $depth = 0;
-        
+
         /**
          * We always want to load the front page activities into the tree, these
          * will appear at the bottom of the opening (site) node.

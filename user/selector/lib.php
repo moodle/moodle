@@ -65,7 +65,7 @@ abstract class user_selector_base {
     protected $searchanywhere = false;
     // This is used by get selected users,
     protected $validatinguserids = null;
-    
+
     // Used to ensure we only output the search options for one user selector on
     // each page.
     private static $searchoptionsoutput = false;

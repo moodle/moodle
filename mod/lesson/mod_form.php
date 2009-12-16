@@ -35,7 +35,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         $this->course = $course;
         parent::moodleform_mod($current, $section, $cm, $course);
     }
-    
+
     function definition() {
         global $CFG, $COURSE, $DB;
 

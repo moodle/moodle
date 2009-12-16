@@ -503,7 +503,7 @@ function lesson_grade_item_update($lesson, $grades=NULL) {
  */
 function lesson_grade_item_delete($lesson) {
     global $CFG;
-    
+
 }
 
 
@@ -908,7 +908,7 @@ function lesson_pluginfile($course, $cminfo, $context, $filearea, $args, $forced
     if (!$cminfo->uservisible) {
         return false;
     }
-    
+
     $fileareas = lesson_get_file_areas();
     if (!array_key_exists($filearea, $fileareas)) {
         return false;
@@ -1195,7 +1195,7 @@ abstract class lesson_base {
  * These properties are calculated
  * @property int $firstpageid Id of the first page of this lesson (prevpageid=0)
  * @property int $lastpageid Id of the last page of this lesson (nextpageid=0)
- * 
+ *
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1298,7 +1298,7 @@ class lesson extends lesson_base {
             $messages = $SESSION->lesson_messages[$this->properties->id];
             unset($SESSION->lesson_messages[$this->properties->id]);
         }
-        
+
         return $messages;
     }
 
@@ -1390,7 +1390,7 @@ class lesson extends lesson_base {
         }
         return $this->firstpageid;
     }
-    
+
     /**
      * Returns the id of the last page of this lesson. (nextpageid = 0)
      * @return int
@@ -1713,7 +1713,7 @@ class lesson extends lesson_base {
             foreach ($attempts as $attempt) {
                 $seenpages[$attempt->pageid] = $attempt->pageid;
             }
-            
+
         }
 
         // get the lesson pages
@@ -1927,7 +1927,7 @@ abstract class lesson_page extends lesson_base {
     /**
      * Creates a new lesson_page within the database and returns the correct pagetype
      * object to use to interact with the new lesson
-     * 
+     *
      * @final
      * @static
      * @param object $properties
@@ -2386,7 +2386,7 @@ abstract class lesson_page extends lesson_base {
         }
         return false;
     }
-    
+
     /**
      * Checks to see if a page has been answered previously
      * @param int $nretakes
@@ -2439,7 +2439,7 @@ abstract class lesson_page extends lesson_base {
         $this->answers = $answers;
         return $answers;
     }
-    
+
     /**
      * This method MUST be overriden by all question page types, or page types that
      * wish to score a page.
@@ -2450,7 +2450,7 @@ abstract class lesson_page extends lesson_base {
      * $result = parent::check_answer();
      * </code>
      * before modifiying it as required.
-     * 
+     *
      * @return stdClass
      */
     public function check_answer() {
@@ -2470,15 +2470,15 @@ abstract class lesson_page extends lesson_base {
 
     /**
      * True if the page uses a custom option
-     * 
+     *
      * Should be override and set to true if the page uses a custom option.
-     * 
+     *
      * @return bool
      */
     public function has_option() {
         return false;
     }
-    
+
     /**
      * Returns the maximum number of answers for this page given the maximum number
      * of answers permitted by the lesson.
@@ -2511,7 +2511,7 @@ abstract class lesson_page extends lesson_base {
         }
         return $properties;
     }
-    
+
     /**
      * Returns an array of options to display whn choosing the jumpto for a page/answer
      * @static
@@ -2530,7 +2530,7 @@ abstract class lesson_page extends lesson_base {
         if ($pageid == 0) {
             return $jump;
         }
-        
+
         $pages = $lesson->load_all_pages();
         if ($pages[$pageid]->qtype == LESSON_PAGE_BRANCHTABLE || $lesson->is_sub_page_of_type($pageid, array(LESSON_PAGE_BRANCHTABLE), array(LESSON_PAGE_ENDOFBRANCH, LESSON_PAGE_CLUSTER))) {
             $jump[LESSON_UNSEENBRANCHPAGE] = get_string("unseenpageinbranch", "lesson");
@@ -2711,7 +2711,7 @@ abstract class lesson_page extends lesson_base {
  * @property int $timemodified A timestamp of when the answer was modified
  * @property string $answer The answer itself
  * @property string $response The response the user sees if selecting this answer
- * 
+ *
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2785,7 +2785,7 @@ class lesson_page_type_manager {
 
     /**
      * Finds and loads all lesson page types in mod/lesson/pagetypes
-     * 
+     *
      * @param lesson $lesson
      */
     public function load_lesson_types(lesson $lesson) {
@@ -2803,7 +2803,7 @@ class lesson_page_type_manager {
                 $this->types[$pagetype->typeid] = $pagetype;
             }
         }
-        
+
     }
 
     /**

@@ -22,7 +22,7 @@
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
- 
+
  /** End of Branch page */
 define("LESSON_PAGE_ENDOFBRANCH",   "21");
 
@@ -63,7 +63,7 @@ class lesson_page_type_endofbranch extends lesson_page {
             $jumpto = lesson_unseen_branch_jump($this->lesson, $USER->id);
 
         } elseif ($jumpto == LESSON_CLUSTERJUMP) {
-            
+
             if (!$canmanage) {
                 $jumpto = $this->lesson->cluster_jump($pageid);
             } else {
@@ -73,7 +73,7 @@ class lesson_page_type_endofbranch extends lesson_page {
                     $jumpto = $this->properties->nextpageid;
                 }
             }
-            
+
         } else if ($answer->jumpto == LESSON_NEXTPAGE) {
 
             if ($this->properties->nextpageid == 0) {
@@ -89,7 +89,7 @@ class lesson_page_type_endofbranch extends lesson_page {
         } else if ($jumpto == LESSON_PREVIOUSPAGE) {
 
             $jumpto = $this->properties->prevpageid;
-            
+
         }
         redirect(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$PAGE->cm->id,'pageid'=>$jumpto)));
     }
@@ -98,7 +98,7 @@ class lesson_page_type_endofbranch extends lesson_page {
     }
     public function update($properties) {
         global $DB, $PAGE;
-        
+
         $properties->id = $this->properties->id;
         $properties->lessonid = $this->lesson->id;
         if (empty($properties->qoption)) {
@@ -196,7 +196,7 @@ class lesson_add_page_form_endofbranch extends lesson_add_page_form_base {
                 print_error('cannotfindpagerecord', 'lesson');
             }
         }
-        
+
         if ($btpage->qtype == LESSON_PAGE_BRANCHTABLE) {
             $newpage = new stdClass;
             $newpage->lessonid = $lesson->id;

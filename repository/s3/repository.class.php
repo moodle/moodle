@@ -121,12 +121,12 @@ class repository_s3 extends repository {
     public function check_login() {
         return true;
     }
-                    
+
     /**
      * S3 doesn't provide search
      *
      * @return bool
-     */             
+     */
     public function global_search() {
         return false;
     }
@@ -147,7 +147,7 @@ class repository_s3 extends repository {
      * S3 plugins doesn't support return links of files
      *
      * @return int
-     */             
+     */
     public function supported_returntypes() {
         return FILE_INTERNAL;
     }

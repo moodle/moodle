@@ -485,7 +485,7 @@ function report_security_check_passwordsaltmain($detailed=false) {
     $result->details = null;
     $result->status  = null;
     $result->link    = null;
-    
+
     if (empty($CFG->passwordsaltmain)) {
         $result->status = REPORT_SECURITY_WARNING;
         $result->info   = get_string('check_passwordsaltmain_warning', 'report_security');
@@ -1127,8 +1127,8 @@ function report_security_check_riskbackup($detailed=false) {
     $sql = "SELECT DISTINCT r.*
               FROM {role} r
               JOIN {role_capabilities} rc ON rc.roleid = r.id
-             WHERE rc.capability = :capability 
-               AND rc.contextid  = :contextid 
+             WHERE rc.capability = :capability
+               AND rc.contextid  = :contextid
                AND rc.permission = :permission";
     $systemroles = $DB->get_records_sql($sql, $params);
 
@@ -1136,8 +1136,8 @@ function report_security_check_riskbackup($detailed=false) {
     $sql = "SELECT DISTINCT r.*, rc.contextid
               FROM {role} r
               JOIN {role_capabilities} rc ON rc.roleid = r.id
-             WHERE rc.capability = :capability 
-               AND rc.contextid <> :contextid 
+             WHERE rc.capability = :capability
+               AND rc.contextid <> :contextid
                AND rc.permission = :permission";
     $overriddenroles = $DB->get_records_sql($sql, $params);
 

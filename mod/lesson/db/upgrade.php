@@ -35,7 +35,7 @@
  *
  * Please do not forget to use upgrade_set_timeout()
  * before any action that may take longer time to finish.
- * 
+ *
  * @package   lesson
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 o
@@ -87,7 +87,7 @@ function xmldb_lesson_upgrade($oldversion) {
     }
 
     if ($result && $oldversion < 2009120400) {
-        
+
         /**
          * Move any media files associated with the lesson to use the new file
          * API methods and structures.
@@ -112,7 +112,7 @@ function xmldb_lesson_upgrade($oldversion) {
                 $i++;
                 upgrade_set_timeout(60); // set up timeout, may also abort execution
                 $pbar->update($i, $count, "Migrating lesson mediafiles - $i/$count.");
-                
+
                 $filepath = $CFG->dataroot.'/'.$lesson->course.'/'.$CFG->moddata.'/lesson/'.$lesson->mediafile;
                 if (!is_readable($filepath)) {
                     //file missing??

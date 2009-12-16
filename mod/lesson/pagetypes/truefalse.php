@@ -130,7 +130,7 @@ class lesson_page_type_truefalse extends lesson_page {
             $cells[] = "<span class=\"label\">".get_string("jump", "lesson").'</span>';
             $cells[] = $this->get_jump_name($answer->jumpto);
             $table->data[] = html_table_row::make($cells);
-            
+
             if ($i === 1){
                 $table->data[count($table->data)-1]->cells[0]->style = 'width:20%;';
             }
@@ -313,5 +313,5 @@ class lesson_display_answer_form_truefalse extends moodleform {
 
         $this->add_action_buttons(null, get_string("pleasecheckoneanswer", "lesson"));
     }
-    
+
 }

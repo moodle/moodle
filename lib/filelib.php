@@ -2756,7 +2756,7 @@ class curl_cache {
 
 /**
  * This class is used to parse lib/file/file_types.mm which help get file
- * extensions by file types. 
+ * extensions by file types.
  * The file_types.mm file can be edited by freemind in graphic environment.
  *
  * @package moodlecore

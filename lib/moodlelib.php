@@ -6972,7 +6972,7 @@ function plugin_supports($type, $name, $feature, $default=null) {
             return false;
         }
         include_once("$CFG->dirroot/mod/$name/lib.php");
-        
+
         $function = $name.'_supports';
 
     } else {
@@ -6983,12 +6983,12 @@ function plugin_supports($type, $name, $feature, $default=null) {
         if (!$dir = get_plugin_directory($type, $name)) {
             throw new coding_exception("Unsupported plugin type or name ($type/$name)");
         }
-    
+
         $libfile = $dir.'/lib.php';
         if (file_exists($libfile)) {
             include_once($libfile);
         }
-    
+
         $function = $type.'_'.$name.'_supports';
     }
 
