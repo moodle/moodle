@@ -1,0 +1,18 @@
+/*
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 3.0.0
+build: 1549
+*/
+.yui-skin-sam .yui-slider-rail-x {
+    background: url("rail-classic-x.png") repeat-x 0 7px;
+    min-height: 19px;
+    *height: 19px;
+}
+
+.yui-skin-sam .yui-slider-rail-y {
+    background: url("rail-classic-y.png") repeat-y 7px 0;
+    min-width: 19px;
+    *width: 19px;
+}
