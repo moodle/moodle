@@ -43,7 +43,6 @@ class assignment_online extends assignment_base {
 
 /// prepare form and process submitted data
         $mformdata = new stdClass;
-        $mformdata->assignmentid = $this->assignment->id;
         $mformdata->context = $this->context;
         $mformdata->maxbytes = $this->course->maxbytes;
         $mform = new mod_assignment_online_edit_form(null, $mformdata);
@@ -106,7 +105,7 @@ class assignment_online extends assignment_base {
             } else {
                 echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter', 'online');
                 if ($submission && has_capability('mod/assignment:exportownsubmission', $this->context)) {
-                    $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $this->context->id, 'assignment_online_submission', $this->assignment->id);
+                    $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $this->context->id, 'assignment_online_submission', $USER->id);
                     echo format_text($text, $submission->data2);
                     $button = new portfolio_add_button();
                     $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/locallib.php');
@@ -360,6 +359,7 @@ class assignment_online extends assignment_base {
 class mod_assignment_online_edit_form extends moodleform {
 
     public function set_data($data) {
+        global $USER;
         $editoroptions = $this->get_editor_options();
         if (!isset($data->text)) {
             $data->text = '';
@@ -369,15 +369,16 @@ class mod_assignment_online_edit_form extends moodleform {
         } else {
             $data->textformat = $data->format;
         }
-        $data = file_prepare_standard_editor($data, 'text', $editoroptions, $this->_customdata->context, $editoroptions['filearea'], $this->_customdata->assignmentid);
+        $data = file_prepare_standard_editor($data, 'text', $editoroptions, $this->_customdata->context, $editoroptions['filearea'], $USER->id);
         return parent::set_data($data);
     }
 
     public function get_data() {
+        global $USER;
         $data = parent::get_data();
         if ($data) {
             $editoroptions = $this->get_editor_options();
-            $data = file_postupdate_standard_editor($data, 'text', $editoroptions, $this->_customdata->context, $editoroptions['filearea'], $this->_customdata->assignmentid);
+            $data = file_postupdate_standard_editor($data, 'text', $editoroptions, $this->_customdata->context, $editoroptions['filearea'], $USER->id);
             $data->format = $data->textformat;
         }
         return $data;
