@@ -654,7 +654,7 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts) {
     $returnurl_addtoquiz = new moodle_url($pageurl->out(true), array('addonpage' => $page));
 
     // Print a button linking to the choose question type page.
-    $newquestionparams = array('returnurl' => $returnurl_addtoquiz->out(false),
+    $newquestionparams = array('returnurl' => $returnurl_addtoquiz->out(),
             'cmid' => $quiz->cmid, 'appendqnumstring' => 'addquestion');
     create_new_question_button($defaultcategory->id, $newquestionparams, get_string('addaquestion', 'quiz'),
             get_string('createquestionandadd', 'quiz'), $hasattempts);

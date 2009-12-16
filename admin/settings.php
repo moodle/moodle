@@ -97,7 +97,7 @@ if (empty($SITE->fullname)) {
             $caption = get_string('blocksediton');
             $options['adminedit'] = 'on';
         }
-        $buttons = $OUTPUT->button(html_form::make_button($PAGE->url->out(false), $options, $caption, 'get'));
+        $buttons = $OUTPUT->button(html_form::make_button($PAGE->url->out(), $options, $caption, 'get'));
     }
 
     $visiblepathtosection = array_reverse($settingspage->visiblepath);

@@ -1378,8 +1378,8 @@ class moodle_page {
      * @return string URL for this page without parameters.
      */
     function url_get_path() {
-        debugging('Call to deprecated method moodle_page::url_get_path. Use $this->url->out(false) instead.');
-        return $this->url->out(false);
+        debugging('Call to deprecated method moodle_page::url_get_path. Use $this->url->out() instead.');
+        return $this->url->out();
     }
 
     /**

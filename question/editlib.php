@@ -1535,7 +1535,7 @@ function question_edit_setup($edittab, $requirecmid = false, $requirecourseid = 
     //$thispageurl is used to construct urls for all question edit pages we link to from this page. It contains an array
     //of parameters that are passed from page to page.
     $thispageurl = new moodle_url();
-    $thispageurl->remove_params(); // We are going to explicity add back everything important - this avoids unwanted params from being retained.
+    $thispageurl->remove_all_params(); // We are going to explicity add back everything important - this avoids unwanted params from being retained.
 
     if ($requirecmid){
         $cmid =required_param('cmid', PARAM_INT);

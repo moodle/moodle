@@ -170,7 +170,7 @@ case 'sign':
         $list = $repo->get_listing($req_path, $curr_page);
         $dynload = !empty($list['dynload'])?true:false;
         if (!empty($list['upload'])) {
-            echo '<form action="'.$url->out(false).'" method="post" enctype="multipart/form-data" style="display:inline">';
+            echo '<form action="'.$url->out().'" method="post" enctype="multipart/form-data" style="display:inline">';
             echo '<label>'.$list['upload']['label'].': </label>';
             echo '<input type="file" name="repo_upload_file" /><br />';
             echo '<input type="hidden" name="action" value="upload" /><br />';
