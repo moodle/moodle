@@ -1293,7 +1293,7 @@ function user_preference_allow_ajax_update($name, $paramtype) {
     global $USER, $PAGE;
 
     // Make sure that the required JavaScript libraries are loaded.
-    $PAGE->requires->yui_lib('connection');
+    $PAGE->requires->yui2_lib('connection');
 
     // Record in the session that this user_preference is allowed to updated remotely.
     $USER->ajax_updatable_user_prefs[$name] = $paramtype;

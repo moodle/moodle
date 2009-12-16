@@ -2127,7 +2127,7 @@ function get_html_head_contributions($questionlist, &$questions, &$states) {
     global $CFG, $PAGE, $QTYPES;
 
     // The question engine's own JavaScript.
-    $PAGE->requires->yui_lib('connection');
+    $PAGE->requires->yui2_lib('connection');
     $PAGE->requires->js('question/qengine.js');
     question_init_qengine_js();
 

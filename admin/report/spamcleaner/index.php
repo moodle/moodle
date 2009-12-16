@@ -41,8 +41,8 @@ $id = optional_param('id', '', PARAM_INT);
 
 require_login();
 admin_externalpage_setup('reportspamcleaner');
-$PAGE->requires->yui_lib('json');
-$PAGE->requires->yui_lib('connection');
+$PAGE->requires->yui2_lib('json');
+$PAGE->requires->yui2_lib('connection');
 
 // Implement some AJAX calls
 

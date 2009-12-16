@@ -1567,7 +1567,7 @@ function get_emoticons_list_for_help_file() {
         $fieldname = 'message';
     }
 
-    $PAGE->requires->yui_lib('event');
+    $PAGE->requires->yui2_lib('event');
     $PAGE->requires->js_function_call('emoticons_help.init', array($formname, $fieldname, 'emoticonlist'));
     return $output;
 
@@ -2048,7 +2048,7 @@ function print_collapsible_region_start($classes, $id, $caption, $userpref = fal
     global $CFG, $PAGE, $OUTPUT;
 
     // Include required JavaScript libraries.
-    $PAGE->requires->yui_lib('animation');
+    $PAGE->requires->yui2_lib('animation');
 
     // Work out the initial state.
     if (is_string($userpref)) {

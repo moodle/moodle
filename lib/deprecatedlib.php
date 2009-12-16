@@ -1672,11 +1672,11 @@ function use_html_editor($name='', $editorhidebuttons='', $id='') {
 
 /**
  * The old method that was used to include JavaScript libraries.
- * Please use $PAGE->requires->js() or $PAGE->requires->yui_lib() instead.
+ * Please use $PAGE->requires->js() or $PAGE->requires->yui2_lib() instead.
  *
  * @param mixed $lib The library or libraries to load (a string or array of strings)
  *      There are three way to specify the library:
- *      1. a shorname like 'yui_yahoo'. This translates into a call to $PAGE->requires->yui_lib('yahoo')->asap();
+ *      1. a shorname like 'yui_yahoo'. This translates into a call to $PAGE->requires->yui2_lib('yahoo')->asap();
  *      2. the path to the library relative to wwwroot, for example 'lib/javascript-static.js'
  *      3. (legacy) a full URL like $CFG->wwwroot . '/lib/javascript-static.js'.
  *      2. and 3. lead to a call $PAGE->requires->js('/lib/javascript-static.js').
@@ -1694,10 +1694,10 @@ function require_js($lib) {
 
     // TODO uncomment this once we have eliminated the remaining calls to require_js from core.
     //debugging('Call to deprecated function require_js. Please use $PAGE->requires->js() ' .
-    //        'or $PAGE->requires->yui_lib() instead.', DEBUG_DEVELOPER);
+    //        'or $PAGE->requires->yui2_lib() instead.', DEBUG_DEVELOPER);
 
     if (strpos($lib, 'yui_') === 0) {
-        echo $PAGE->requires->yui_lib(substr($lib, 4))->asap();
+        echo $PAGE->requires->yui2_lib(substr($lib, 4))->asap();
     } else if (preg_match('/^https?:/', $lib)) {
         echo $PAGE->requires->js(str_replace($CFG->wwwroot, '', $lib))->asap();
     } else {

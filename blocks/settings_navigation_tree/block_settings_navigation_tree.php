@@ -87,7 +87,7 @@ class block_settings_navigation_tree extends block_tree {
         if ($this->contentgenerated === true) {
             return true;
         }
-        $this->page->requires->yui_lib('dom');
+        $this->page->requires->yui2_lib('dom');
         $this->page->requires->js('lib/javascript-navigation.js');
         block_settings_navigation_tree::$navcount++;
 

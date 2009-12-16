@@ -28,12 +28,12 @@ admin_externalpage_setup('comments');
 $context = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/comment:delete', $context);
 
-$PAGE->requires->yui_lib('yahoo')->in_head();
-$PAGE->requires->yui_lib('dom')->in_head();
-$PAGE->requires->yui_lib('event')->in_head();
-$PAGE->requires->yui_lib('animation')->in_head();
-$PAGE->requires->yui_lib('json')->in_head();
-$PAGE->requires->yui_lib('connection')->in_head();
+$PAGE->requires->yui2_lib('yahoo')->in_head();
+$PAGE->requires->yui2_lib('dom')->in_head();
+$PAGE->requires->yui2_lib('event')->in_head();
+$PAGE->requires->yui2_lib('animation')->in_head();
+$PAGE->requires->yui2_lib('json')->in_head();
+$PAGE->requires->yui2_lib('connection')->in_head();
 $PAGE->requires->js('comment/admin.js')->in_head();
 
 $action     = optional_param('action', '', PARAM_ALPHA);

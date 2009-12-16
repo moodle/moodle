@@ -50,8 +50,8 @@
 require_once('../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/editlib.php');
 require_once($CFG->dirroot . '/question/category_class.php');
-$PAGE->requires->yui_lib('container');
-$PAGE->requires->yui_lib('dragdrop');
+$PAGE->requires->yui2_lib('container');
+$PAGE->requires->yui2_lib('dragdrop');
 
 /**
  * Callback function called from question_list() function

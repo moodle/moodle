@@ -13,7 +13,7 @@ require_once('lib.php');
 
 ini_set('include_path', $CFG->libdir.'/pear'.PATH_SEPARATOR.ini_get('include_path'));
 
-$PAGE->requires->yui_lib('connection');
+$PAGE->requires->yui2_lib('connection');
 $PAGE->requires->js('group/clientlib.js');
 
 $courseid = required_param('id', PARAM_INT);

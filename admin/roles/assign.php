@@ -256,7 +256,7 @@
     }
 
 /// Print the header and tabs
-    $PAGE->requires->yui_lib('dom-event');
+    $PAGE->requires->yui2_lib('dom-event');
     $PAGE->requires->js($CFG->admin . '/roles/roles.js');
     if ($context->contextlevel == CONTEXT_USER) {
         $user = $DB->get_record('user', array('id'=>$userid));

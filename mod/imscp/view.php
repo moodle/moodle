@@ -46,14 +46,14 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 add_to_log($course->id, 'imscp', 'view', 'view.php?id='.$cm->id, $imscp->id, $cm->id);
 
 $PAGE->set_url('mod/imscp/view.php', array('id' => $cm->id));
-$PAGE->requires->yui_lib('json')->in_head();
-$PAGE->requires->yui_lib('event')->in_head();
-$PAGE->requires->yui_lib('treeview')->in_head();
-$PAGE->requires->yui_lib('layout')->in_head();
-$PAGE->requires->yui_lib('button')->in_head();
-$PAGE->requires->yui_lib('container')->in_head();
-$PAGE->requires->yui_lib('dragdrop')->in_head();
-$PAGE->requires->yui_lib('resize')->in_head();
+$PAGE->requires->yui2_lib('json')->in_head();
+$PAGE->requires->yui2_lib('event')->in_head();
+$PAGE->requires->yui2_lib('treeview')->in_head();
+$PAGE->requires->yui2_lib('layout')->in_head();
+$PAGE->requires->yui2_lib('button')->in_head();
+$PAGE->requires->yui2_lib('container')->in_head();
+$PAGE->requires->yui2_lib('dragdrop')->in_head();
+$PAGE->requires->yui2_lib('resize')->in_head();
 $PAGE->requires->js('mod/imscp/functions.js')->in_head();
 
 $PAGE->requires->string_for_js('navigation', 'imscp');

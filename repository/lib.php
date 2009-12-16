@@ -1763,19 +1763,19 @@ function repository_setup_default_plugins() {
 function repository_head_setup() {
     global $PAGE;
 
-    $PAGE->requires->yui_lib('yahoo')->in_head();
-    $PAGE->requires->yui_lib('dom')->in_head();
-    $PAGE->requires->yui_lib('element')->in_head();
-    $PAGE->requires->yui_lib('event')->in_head();
-    $PAGE->requires->yui_lib('json')->in_head();
-    $PAGE->requires->yui_lib('treeview')->in_head();
-    $PAGE->requires->yui_lib('dragdrop')->in_head();
-    $PAGE->requires->yui_lib('container')->in_head();
-    $PAGE->requires->yui_lib('resize')->in_head();
-    $PAGE->requires->yui_lib('layout')->in_head();
-    $PAGE->requires->yui_lib('connection')->in_head();
-    $PAGE->requires->yui_lib('button')->in_head();
-    $PAGE->requires->yui_lib('selector')->in_head();
+    $PAGE->requires->yui2_lib('yahoo')->in_head();
+    $PAGE->requires->yui2_lib('dom')->in_head();
+    $PAGE->requires->yui2_lib('element')->in_head();
+    $PAGE->requires->yui2_lib('event')->in_head();
+    $PAGE->requires->yui2_lib('json')->in_head();
+    $PAGE->requires->yui2_lib('treeview')->in_head();
+    $PAGE->requires->yui2_lib('dragdrop')->in_head();
+    $PAGE->requires->yui2_lib('container')->in_head();
+    $PAGE->requires->yui2_lib('resize')->in_head();
+    $PAGE->requires->yui2_lib('layout')->in_head();
+    $PAGE->requires->yui2_lib('connection')->in_head();
+    $PAGE->requires->yui2_lib('button')->in_head();
+    $PAGE->requires->yui2_lib('selector')->in_head();
 
     //TODO: remove the ->in_head() once we refactor the inline script tags in repo code
     $PAGE->requires->js('repository/repository.src.js')->in_head();

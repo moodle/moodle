@@ -266,7 +266,7 @@ function url_display_embed($url, $cm, $course) {
     } else {
         // anything else - just try object tag enlarged as much as possible
         $code = resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype);
-        $PAGE->requires->yui_lib('dom')->in_head();
+        $PAGE->requires->yui2_lib('dom')->in_head();
         $PAGE->requires->js('mod/url/functions.js')->in_head();
         $PAGE->requires->js_function_call('url_init_object');
     }

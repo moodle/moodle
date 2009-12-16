@@ -158,9 +158,9 @@
                                                              // Course-based switches
 
             if (ajaxenabled($CFG->ajaxtestedbrowsers)) {     // Browser, user and site-based switches
-                $PAGE->requires->yui_lib('dragdrop')->asap();
-                $PAGE->requires->yui_lib('connection')->asap();
-                $PAGE->requires->yui_lib('selector')->asap();
+                $PAGE->requires->yui2_lib('dragdrop')->asap();
+                $PAGE->requires->yui2_lib('connection')->asap();
+                $PAGE->requires->yui2_lib('selector')->asap();
                 $PAGE->requires->js('lib/ajax/block_classes.js')->asap();
                 $PAGE->requires->js('lib/ajax/section_classes.js')->asap();
 
@@ -178,7 +178,7 @@
 
     $completion = new completion_info($course);
     if ($completion->is_enabled() && ajaxenabled()) {
-        $PAGE->requires->yui_lib('connection')->asap();
+        $PAGE->requires->yui2_lib('connection')->asap();
         $PAGE->requires->js('course/completion.js')->asap();
         $PAGE->requires->js_function_call('completion_init')->on_dom_ready();
         $PAGE->requires->data_for_js('completion_strsaved', get_string('saved', 'completion'));

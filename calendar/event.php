@@ -200,7 +200,7 @@ if ($data) {
     redirect($eventurl);
                 }
 
-$PAGE->requires->yui_lib('animation');
+$PAGE->requires->yui2_lib('animation');
 $PAGE->requires->js('calendar/calendar.js');
 
 $PAGE->navbar->add($strcalendar, $link);

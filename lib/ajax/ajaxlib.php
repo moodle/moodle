@@ -51,7 +51,7 @@ function setup_core_javascript(page_requirements_manager $requires) {
     $requires->data_for_js('moodle_cfg', $config)->in_head();
 
     if (debugging('', DEBUG_DEVELOPER)) {
-        $requires->yui_lib('logger');
+        $requires->yui2_lib('logger');
     }
 
     $requires->skip_link_to('maincontent', get_string('tocontent', 'access'));
@@ -59,8 +59,8 @@ function setup_core_javascript(page_requirements_manager $requires) {
     // Note that, as a short-cut, the code
     // $js = "document.body.className += ' jsenabled';\n";
     // is hard-coded in {@link page_requirements_manager::get_top_of_body_code)
-    $requires->yui_lib('container');
-    $requires->yui_lib('connection');
+    $requires->yui2_lib('container');
+    $requires->yui2_lib('connection');
     $requires->string_for_js('confirmation', 'admin');
     $requires->string_for_js('cancel', 'moodle');
     $requires->string_for_js('yes', 'moodle');
@@ -154,14 +154,14 @@ class page_requirements_manager {
      * of other libraries) it will only be linked to once.
      *
      * @param $libname the name of the YUI library you require. For example 'autocomplete'.
-     * @return required_yui_lib A requried_yui_lib object. This allows you to control when the
-     *      link to the script is output by calling methods like {@link required_yui_lib::asap()} or
-     *      {@link required_yui_lib::in_head()}.
+     * @return required_yui2_lib A required_yui2_lib object. This allows you to control when the
+     *      link to the script is output by calling methods like {@link required_yui2_lib::asap()} or
+     *      {@link required_yui2_lib::in_head()}.
      */
-    public function yui_lib($libname) {
+    public function yui2_lib($libname) {
         $key = 'yui:' . $libname;
         if (!isset($this->linkedrequirements[$key])) {
-            $this->linkedrequirements[$key] = new required_yui_lib($this, $libname);
+            $this->linkedrequirements[$key] = new required_yui2_lib($this, $libname);
         }
         return $this->linkedrequirements[$key];
     }
@@ -370,7 +370,7 @@ class page_requirements_manager {
     public function event_handler($id, $event, $function, $arguments=array()) {
         $requirement = new required_event_handler($this, $id, $event, $function, $arguments);
         $this->requiredjscode[] = $requirement;
-        $this->linkedrequirements[] = new required_yui_lib($this, 'event');
+        $this->linkedrequirements[] = new required_yui2_lib($this, 'event');
         return $requirement;
     }
 
@@ -689,7 +689,7 @@ class required_js extends linked_requirement {
  *
  * The methods {@link asap()}, {@link in_head()} and {@link at_top_of_body()}
  * are indented to be used as a fluid API, so you can say things like
- *     $PAGE->requires->yui_lib('autocomplete')->in_head();
+ *     $PAGE->requires->yui2_lib('autocomplete')->in_head();
  *
  * This class (with the help of {@link ajax_resolve_yui2_lib()}) knows about the
  * dependancies between the different YUI libraries, and will include all the
@@ -704,13 +704,13 @@ class required_js extends linked_requirement {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
  */
-class required_yui_lib extends linked_requirement {
+class required_yui2_lib extends linked_requirement {
     protected $jss = array();
 
     /**
      * Constructor. Normally instances of this class should not be created
      * directly. Client code should create them via the page_requirements_manager
-     * method {@link page_requirements_manager::yui_lib()}.
+     * method {@link page_requirements_manager::yui2_lib()}.
      *
      * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
      * @param string $libname The name of the YUI library you want. See the array
@@ -739,7 +739,7 @@ class required_yui_lib extends linked_requirement {
      * is responsible for outputting this HTML promptly. For example, a good way to
      * call this method is like
      * <pre>
-     *     echo $PAGE->requires->yui_lib(...)->asap();
+     *     echo $PAGE->requires->yui2_lib(...)->asap();
      * </pre>
      */
     public function asap() {
@@ -848,7 +848,7 @@ class required_skip_link extends linked_requirement {
     /**
      * Constructor. Normally instances of this class should not be created directly.
      * Client code should create them via the page_requirements_manager
-     * method {@link page_requirements_manager::yui_lib()}.
+     * method {@link page_requirements_manager::yui2_lib()}.
      *
      * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
      * @param string $target the name of the anchor in the page we are linking to.
@@ -1015,7 +1015,7 @@ class required_js_function_call extends required_js_code {
         if ($this->is_done() || $this->when < page_requirements_manager::WHEN_AT_END) {
             return;
         }
-        $this->manager->yui_lib('event');
+        $this->manager->yui2_lib('event');
         $this->when = page_requirements_manager::WHEN_ON_DOM_READY;
     }
 

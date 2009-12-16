@@ -69,8 +69,8 @@ function form_init_date_js() {
     global $PAGE;
     static $done = false;
     if (!$done) {
-        $PAGE->requires->yui_lib('calendar');
-        $PAGE->requires->yui_lib('container');
+        $PAGE->requires->yui2_lib('calendar');
+        $PAGE->requires->yui2_lib('container');
         $PAGE->requires->js_function_call('init_date_selectors',
                 array(get_string('firstdayofweek')));
         $done = true;
@@ -2158,7 +2158,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
 
         if (isset($this->_advancedElements[$name])){
-            $PAGE->requires->yui_lib('event');
+            $PAGE->requires->yui2_lib('event');
             // this is tricky - the first submit button on form is "clicked" if user presses enter
             // we do not want to "submit" using advanced button if javascript active
             $button_nojs = '<input name="'.$elementName.'" id="'.$elementName.(string)$advformcount.'" class="showadvancedbtn" value="'.$buttonlabel.'" type="submit" />';

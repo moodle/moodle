@@ -37,9 +37,9 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         require_once("$CFG->dirroot/repository/lib.php");
 
         // has to require these js files before head
-        $PAGE->requires->yui_lib('menu');
-        $PAGE->requires->yui_lib('connection');
-        $PAGE->requires->yui_lib('json');
+        $PAGE->requires->yui2_lib('menu');
+        $PAGE->requires->yui2_lib('connection');
+        $PAGE->requires->yui2_lib('json');
 
         $options = (array)$options;
         foreach ($options as $name=>$value) {

@@ -105,9 +105,9 @@ abstract class user_selector_base {
         $this->searchanywhere = $this->initialise_option('userselector_searchanywhere', $this->searchanywhere);
 
         // Required JavaScript code.
-        $PAGE->requires->yui_lib('json');
-        $PAGE->requires->yui_lib('connection');
-        $PAGE->requires->yui_lib('datasource');
+        $PAGE->requires->yui2_lib('json');
+        $PAGE->requires->yui2_lib('connection');
+        $PAGE->requires->yui2_lib('datasource');
         $PAGE->requires->js('user/selector/script.js');
     }
 

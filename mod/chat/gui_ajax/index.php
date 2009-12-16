@@ -58,14 +58,14 @@ $str_themes = get_string('themes');
 
 $PAGE->set_pagelayout('popup');
 $PAGE->set_title('Chat');
-$PAGE->requires->yui_lib('dragdrop');
-$PAGE->requires->yui_lib('resize');
-$PAGE->requires->yui_lib('layout');
-$PAGE->requires->yui_lib('container');
-$PAGE->requires->yui_lib('connection');
-$PAGE->requires->yui_lib('json');
-$PAGE->requires->yui_lib('animation');
-$PAGE->requires->yui_lib('menu');
+$PAGE->requires->yui2_lib('dragdrop');
+$PAGE->requires->yui2_lib('resize');
+$PAGE->requires->yui2_lib('layout');
+$PAGE->requires->yui2_lib('container');
+$PAGE->requires->yui2_lib('connection');
+$PAGE->requires->yui2_lib('json');
+$PAGE->requires->yui2_lib('animation');
+$PAGE->requires->yui2_lib('menu');
 
 if (!file_exists(dirname(__FILE__) . '/theme/'.$theme.'/chat.css')) {
     $theme = 'bubble';
@@ -91,7 +91,7 @@ $PAGE->requires->string_for_js('beep', 'chat');
 $PAGE->requires->string_for_js('talk', 'chat');
 
 $PAGE->requires->js('mod/chat/gui_ajax/script.js');
-$PAGE->requires->yui_lib('animation')->in_head();
+$PAGE->requires->yui2_lib('animation')->in_head();
 
 $PAGE->add_body_class('yui-skin-sam');
 $PAGE->set_pagelayout('embedded');

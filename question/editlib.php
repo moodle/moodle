@@ -816,7 +816,7 @@ class question_bank_view {
         $this->init_columns($this->wanted_columns());
         $this->init_sort();
 
-        $PAGE->requires->yui_lib('container');
+        $PAGE->requires->yui2_lib('container');
     }
 
     protected function wanted_columns() {
@@ -1935,8 +1935,8 @@ function create_new_question_button($categoryid, $params, $caption, $tooltip = '
     echo $OUTPUT->button($form);
 
     echo $OUTPUT->help_icon(moodle_help_icon::make('types', get_string('createnewquestion', 'question'), 'question'));
-    $PAGE->requires->yui_lib('dragdrop');
-    $PAGE->requires->yui_lib('container');
+    $PAGE->requires->yui2_lib('dragdrop');
+    $PAGE->requires->yui2_lib('container');
     if (!$choiceformprinted) {
         echo '<div id="qtypechoicecontainer">';
         print_choose_qtype_to_add_form(array());

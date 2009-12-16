@@ -69,9 +69,9 @@
     require_course_login($course, true, $cm);
 
 /// Add ajax-related libs
-    $PAGE->requires->yui_lib('event');
-    $PAGE->requires->yui_lib('connection');
-    $PAGE->requires->yui_lib('json');
+    $PAGE->requires->yui2_lib('event');
+    $PAGE->requires->yui2_lib('connection');
+    $PAGE->requires->yui2_lib('json');
     $PAGE->requires->js('mod/forum/rate_ajax.js');
 
     // move this down fix for MDL-6926

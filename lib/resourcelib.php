@@ -172,7 +172,7 @@ function resourcelib_embed_mp3($fullurl, $title, $clicktoopen) {
 </div>
 OET;
 
-    $PAGE->requires->yui_lib('dom')->in_head();
+    $PAGE->requires->yui2_lib('dom')->in_head();
     $PAGE->requires->js('lib/ufo.js')->in_head();
     $PAGE->requires->js('lib/resourcelib.js')->in_head();
     $code .= $PAGE->requires->data_for_js('FO', $ufoargs)->asap();
@@ -218,7 +218,7 @@ function resourcelib_embed_flashvideo($fullurl, $title, $clicktoopen) {
 </div>
 EOT;
 
-    $PAGE->requires->yui_lib('dom')->in_head();
+    $PAGE->requires->yui2_lib('dom')->in_head();
     $PAGE->requires->js('lib/ufo.js')->in_head();
     $PAGE->requires->js('lib/resourcelib.js')->in_head();
     $code .= $PAGE->requires->data_for_js('FO', $ufoargs)->asap();

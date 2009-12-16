@@ -34,7 +34,7 @@ define('REPORT_SECURITY_CRITICAL', 'critical');
 
 function report_security_hide_timearning() {
      global $PAGE;
-     $PAGE->requires->yui_lib('dom');
+     $PAGE->requires->yui2_lib('dom');
      $PAGE->requires->js_function_call('YAHOO.util.Dom.addClass', Array('timewarning', 'timewarninghidden'));
 }
 

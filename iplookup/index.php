@@ -155,7 +155,7 @@ if (empty($CFG->googlemapkey)) {
 
     $PAGE->requires->js("http://maps.google.com/maps?file=api&amp;v=2&amp;key=$CFG->googlemapkey", true)->in_head();
     $PAGE->requires->js('/iplookup/functions.js')->in_head();
-    $PAGE->requires->yui_lib('event');
+    $PAGE->requires->yui2_lib('event');
     $PAGE->requires->js_function_call('iplookup_load', array($latitude, $longitude));
 
     $PAGE->set_title(get_string('iplookup', 'admin').': '.$info);

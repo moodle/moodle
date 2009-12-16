@@ -155,7 +155,7 @@ $PAGE->set_heading($strcalendar);
 $PAGE->set_headingmenu(user_login_string($site));
 $PAGE->set_button($prefsbutton);
 
-$PAGE->requires->yui_lib('animation');
+$PAGE->requires->yui2_lib('animation');
 $PAGE->requires->js('calendar/calendar.js');
 
 echo $OUTPUT->header();

@@ -54,7 +54,7 @@ class MoodleQuickForm_searchableselector extends MoodleQuickForm_select{
         } else {
             // Javascript for the search/selection fields
             global $PAGE;
-            $PAGE->requires->yui_lib('event');
+            $PAGE->requires->yui2_lib('event');
             $PAGE->requires->js('lib/form/searchableselector.js');
             $PAGE->requires->js_function_call('selector.filter_init', array(get_string('search'),$this->getAttribute('id')));
 

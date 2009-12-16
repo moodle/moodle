@@ -33,8 +33,8 @@ $PAGE->set_context($systemcontext);
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
 $PAGE->set_pagelayout('form');
 
-$PAGE->requires->yui_lib('animation');
-$PAGE->requires->yui_lib('autocomplete');
+$PAGE->requires->yui2_lib('animation');
+$PAGE->requires->yui2_lib('autocomplete');
 
 $tagname = tag_display_name($tag);
 

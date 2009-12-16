@@ -330,8 +330,8 @@ class core_renderer extends renderer_base {
 
         // Perform a browser environment check for the flash version.  Should only run once per login session.
         if (isloggedin() && !empty($CFG->excludeoldflashclients) && empty($SESSION->flashversion)) {
-            $this->page->requires->yui_lib('event')->in_head();
-            $this->page->requires->yui_lib('connection')->in_head();
+            $this->page->requires->yui2_lib('event')->in_head();
+            $this->page->requires->yui2_lib('connection')->in_head();
             $this->page->requires->js('lib/swfobject/swfobject.js')->in_head();
             $this->page->requires->js('lib/flashdetect/flashdetect.js')->in_head();
             $this->page->requires->js_function_call('setflashversiontosession', array($CFG->wwwroot, sesskey()));
@@ -688,8 +688,8 @@ class core_renderer extends renderer_base {
         if ($bc->collapsible != block_contents::NOT_HIDEABLE) {
             $userpref = 'block' . $bc->blockinstanceid . 'hidden';
             user_preference_allow_ajax_update($userpref, PARAM_BOOL);
-            $this->page->requires->yui_lib('dom');
-            $this->page->requires->yui_lib('event');
+            $this->page->requires->yui2_lib('dom');
+            $this->page->requires->yui2_lib('event');
             $plaintitle = strip_tags($bc->title);
             $this->page->requires->js_function_call('new block_hider', array($bc->id, $userpref,
                     get_string('hideblocka', 'access', $plaintitle), get_string('showblocka', 'access', $plaintitle),
@@ -1905,7 +1905,7 @@ class core_renderer extends renderer_base {
         $output .= $this->output_end_tag('table') . "\n";
 
         if ($table->rotateheaders && can_use_rotated_text()) {
-            $this->page->requires->yui_lib('event');
+            $this->page->requires->yui2_lib('event');
             $this->page->requires->js('course/report/progress/textrotate.js');
         }
 

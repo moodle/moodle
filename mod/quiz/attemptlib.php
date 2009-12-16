@@ -737,8 +737,8 @@ class quiz_attempt extends quiz {
         global $PAGE;
         // The JS does important things like navigation and so must be initialised
         // as seen as possible, particularly if the page is loading slowly.
-        $PAGE->requires->yui_lib('dom')->in_head();
-        $PAGE->requires->yui_lib('event')->in_head();
+        $PAGE->requires->yui2_lib('dom')->in_head();
+        $PAGE->requires->yui2_lib('event')->in_head();
         $PAGE->requires->js('mod/quiz/quiz.js')->in_head();
         get_html_head_contributions($this->get_question_ids($page), $this->questions, $this->states);
     }

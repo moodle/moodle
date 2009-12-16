@@ -110,12 +110,12 @@ $reportname = get_string('modulename', 'gradereport_grader');
 // Initialise the grader report object
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
 
-$PAGE->requires->yui_lib('event');
-$PAGE->requires->yui_lib('json');
-$PAGE->requires->yui_lib('connection');
-$PAGE->requires->yui_lib('dragdrop');
-$PAGE->requires->yui_lib('element');
-$PAGE->requires->yui_lib('container');
+$PAGE->requires->yui2_lib('event');
+$PAGE->requires->yui2_lib('json');
+$PAGE->requires->yui2_lib('connection');
+$PAGE->requires->yui2_lib('dragdrop');
+$PAGE->requires->yui2_lib('element');
+$PAGE->requires->yui2_lib('container');
 $PAGE->requires->js('grade/report/grader/functions.js');
 $PAGE->requires->js('grade/report/grader/grader.js');
 $PAGE->requires->js('lib/overlib/overlib.js')->in_head();
