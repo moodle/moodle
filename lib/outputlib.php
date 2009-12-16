@@ -600,8 +600,8 @@ class theme_config {
 
         //YUI sheets
         $yui_sheets = "/*** Standard YUI sheets ***/\n\n";
-        $yui_sheets .= file_get_contents("$CFG->libdir/yui/reset-fonts-grids/reset-fonts-grids.css");
-        $items = new DirectoryIterator("$CFG->libdir/yui/assets/skins/sam");
+        $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui2version/reset-fonts-grids/reset-fonts-grids.css");
+        $items = new DirectoryIterator("$CFG->libdir/yui/$CFG->yui2version/assets/skins/sam");
         foreach ($items as $item) {
             if ($item->isDot() or !$item->isFile()) {
                 continue;
@@ -610,7 +610,7 @@ class theme_config {
             if (substr($filename, -4) !== '.css') {
                 continue;
             }
-            $yui_sheets .= file_get_contents("$CFG->libdir/yui/assets/skins/sam/$filename");
+            $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui2version/assets/skins/sam/$filename");
         }
         unset($item);
         unset($items);
@@ -798,7 +798,7 @@ class theme_config {
                     return $imagefile;
                 }
             }
-            if ($imagefile = $this->image_exists("$CFG->libdir/yui/assets/skins/sam/$image")) {
+            if ($imagefile = $this->image_exists("$CFG->libdir/yui/$CFG->yui2version/assets/skins/sam/$image")) {
                 return $imagefile;
             }
             return null;

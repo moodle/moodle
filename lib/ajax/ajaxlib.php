@@ -691,7 +691,7 @@ class required_js extends linked_requirement {
  * are indented to be used as a fluid API, so you can say things like
  *     $PAGE->requires->yui_lib('autocomplete')->in_head();
  *
- * This class (with the help of {@link ajax_resolve_yui_lib()}) knows about the
+ * This class (with the help of {@link ajax_resolve_yui2_lib()}) knows about the
  * dependancies between the different YUI libraries, and will include all the
  * other libraries required by the one you ask for.
  *
@@ -714,13 +714,13 @@ class required_yui_lib extends linked_requirement {
      *
      * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
      * @param string $libname The name of the YUI library you want. See the array
-     * defined in {@link ajax_resolve_yui_lib()} for a list of known libraries.
+     * defined in {@link ajax_resolve_yui2_lib()} for a list of known libraries.
      */
     public function __construct(page_requirements_manager $manager, $libname) {
         parent::__construct($manager, '');
         $this->when = page_requirements_manager::WHEN_AT_END;
 
-        $jsurls = ajax_resolve_yui_lib($libname);
+        $jsurls = ajax_resolve_yui2_lib($libname);
         foreach ($jsurls as $jsurl) {
             $this->jss[] = $manager->js($jsurl, true);
         }
@@ -1150,54 +1150,64 @@ function ajax_generate_script_tag($js) {
  * @return an array of the JavaScript URLs that must be loaded to make this library work,
  *      in the order they should be loaded.
  */
-function ajax_resolve_yui_lib($libname) {
+function ajax_resolve_yui2_lib($libname) {
     global $CFG;
 
     // Note, we always use yahoo-dom-event, even if we are only asked for part of it.
     // because another part of the code may later ask for other bits. It is easier, and
     // not very inefficient, just to always use (and get browsers to cache) the combined file.
     static $translatelist = array(
-        'yahoo'          => array('yahoo-dom-event'),
-        'animation'      => array('yahoo-dom-event', 'animation'),
-        'autocomplete'   => array('yahoo-dom-event', 'datasource', 'autocomplete'),
-        'button'         => array('yahoo-dom-event', 'element', 'button'),
-        'calendar'       => array('yahoo-dom-event', 'calendar'),
-        'carousel'       => array('yahoo-dom-event', 'element', 'carousel'),
-        'charts'         => array('yahoo-dom-event', 'element', 'datasource', 'json', 'charts'),
-        'colorpicker'    => array('utilities', 'slider', 'colorpicker'),
-        'connection'     => array('yahoo-dom-event', 'connection'),
-        'container'      => array('yahoo-dom-event', 'container'),
-        'cookie'         => array('yahoo-dom-event', 'cookie'),
-        'datasource'     => array('yahoo-dom-event', 'datasource'),
-        'datatable'      => array('yahoo-dom-event', 'element', 'datasource', 'datatable'),
-        'dom'            => array('yahoo-dom-event'),
-        'dom-event'      => array('yahoo-dom-event'),
-        'dragdrop'       => array('yahoo-dom-event', 'dragdrop'),
-        'editor'         => array('yahoo-dom-event', 'element', 'container', 'menu', 'button', 'editor'),
-        'element'        => array('yahoo-dom-event', 'element'),
-        'event'          => array('yahoo-dom-event'),
-        'get'            => array('yahoo-dom-event', 'get'),
-        'history'        => array('yahoo-dom-event', 'history'),
-        'imagecropper'   => array('yahoo-dom-event', 'dragdrop', 'element', 'resize', 'imagecropper'),
-        'imageloader'    => array('yahoo-dom-event', 'imageloader'),
-        'json'           => array('yahoo-dom-event', 'json'),
-        'layout'         => array('yahoo-dom-event', 'dragdrop', 'element', 'layout'),
-        'logger'         => array('yahoo-dom-event', 'logger'),
-        'menu'           => array('yahoo-dom-event', 'container', 'menu'),
-        'paginator'      => array('yahoo-dom-event', 'element', 'paginator'),
-        'profiler'       => array('yahoo-dom-event', 'profiler'),
-        'profilerviewer' => array('yuiloader-dom-event', 'element', 'profiler', 'profilerviewer'),
-        'resize'         => array('yahoo-dom-event', 'dragdrop', 'element', 'resize'),
-        'selector'       => array('yahoo-dom-event', 'selector'),
-        'simpleeditor'   => array('yahoo-dom-event', 'element', 'container', 'simpleeditor'),
-        'slider'         => array('yahoo-dom-event', 'gragdrop', 'slider'),
-        'stylesheet'     => array('yahoo-dom-event', 'stylesheet'),
-        'tabview'        => array('yahoo-dom-event', 'element', 'tabview'),
-        'treeview'       => array('yahoo-dom-event', 'treeview'),
-        'uploader'       => array('yahoo-dom-event', 'element', 'uploader'),
-        'utilities'      => array('yahoo-dom-event', 'connection', 'animation', 'dragdrop', 'element', 'get'),
-        'yuiloader'      => array('yuiloader'),
-        'yuitest'        => array('yahoo-dom-event', 'logger', 'yuitest'),
+        'animation'        => array('yahoo-dom-event', 'animation'),
+        'autocomplete'     => array('yahoo-dom-event', 'datasource', 'autocomplete'),
+        'button'           => array('yahoo-dom-event', 'element', 'button'),
+        'calendar'         => array('yahoo-dom-event', 'calendar'),
+        'carousel'         => array('yahoo-dom-event', 'element', 'carousel'),
+        'charts'           => array('yahoo-dom-event', 'element', 'datasource', 'json', 'charts'),
+        'colorpicker'      => array('yahoo-dom-event', 'dragdrop', 'element', 'slider', 'colorpicker'),
+        'connection'       => array('yahoo-dom-event', 'connection'),
+        'container'        => array('yahoo-dom-event', 'container'),
+        'cookie'           => array('yahoo-dom-event', 'cookie'),
+        'datasource'       => array('yahoo-dom-event', 'datasource'),
+        'datatable'        => array('yahoo-dom-event', 'element', 'datasource', 'datatable'),
+        'datemath'         => array('yahoo-dom-event', 'datemath'),
+        'dom'              => array('yahoo-dom-event'),
+        'dom-event'        => array('yahoo-dom-event'),
+        'dragdrop'         => array('yahoo-dom-event', 'dragdrop'),
+        'editor'           => array('yahoo-dom-event', 'element', 'container', 'menu', 'button', 'editor'),
+        'element'          => array('yahoo-dom-event', 'element'),
+        'element-delegate' => array('yahoo-dom-event', 'element', 'element-delegate'),
+        'event'            => array('yahoo-dom-event'),
+        'event-delegate'   => array('yahoo-dom-event', 'event-delegate'),
+        'event-mouseenter' => array('yahoo-dom-event', 'event-mouseenter'),
+        'event-simulate'   => array('yahoo-dom-event', 'event-simulate'),
+        'get'              => array('yahoo-dom-event', 'get'),
+        'history'          => array('yahoo-dom-event', 'history'),
+        'imagecropper'     => array('yahoo-dom-event', 'dragdrop', 'element', 'resize', 'imagecropper'),
+        'imageloader'      => array('yahoo-dom-event', 'imageloader'),
+        'json'             => array('yahoo-dom-event', 'json'),
+        'layout'           => array('yahoo-dom-event', 'dragdrop', 'element', 'layout'),
+        'logger'           => array('yahoo-dom-event', 'logger'),
+        'menu'             => array('yahoo-dom-event', 'container', 'menu'),
+        'paginator'        => array('yahoo-dom-event', 'element', 'paginator'),
+        'profiler'         => array('yahoo-dom-event', 'profiler'),
+        'profilerviewer'   => array('yuiloader-dom-event', 'element', 'profiler', 'profilerviewer'),
+        'progressbar'      => array('yahoo-dom-event', 'progressbar'),
+        'resize'           => array('yahoo-dom-event', 'dragdrop', 'element', 'resize'),
+        'selector'         => array('yahoo-dom-event', 'selector'),
+        'simpleeditor'     => array('yahoo-dom-event', 'element', 'container', 'simpleeditor'),
+        'slider'           => array('yahoo-dom-event', 'gragdrop', 'slider'),
+        'storage'          => array('yahoo-dom-event', 'cookie', 'storage'),
+        'stylesheet'       => array('yahoo-dom-event', 'stylesheet'),
+        'swf'              => array('yahoo-dom-event', 'swf'),
+        'swfdetect'        => array('yahoo-dom-event', 'swfdetect'),
+        'swfstore'         => array('yahoo-dom-event', 'cookie', 'swfstore'),
+        'tabview'          => array('yahoo-dom-event', 'element', 'tabview'),
+        'treeview'         => array('yahoo-dom-event', 'treeview'),
+        'uploader'         => array('yahoo-dom-event', 'element', 'uploader'),
+        'utilities'        => array('yahoo-dom-event', 'connection', 'animation', 'dragdrop', 'element', 'get'),
+        'yahoo'            => array('yahoo-dom-event'),
+        'yuiloader'        => array('yuiloader'),
+        'yuitest'          => array('yahoo-dom-event', 'logger', 'yuitest'),
     );
     if (!isset($translatelist[$libname])) {
         throw new coding_exception('Unknown YUI library ' . $libname);
@@ -1211,26 +1221,28 @@ function ajax_resolve_yui_lib($libname) {
     } else {
         $suffix = '-min.js';
     }
-    $libpath = $CFG->httpswwwroot . '/lib/yui/';
 
-    $externalyui = !empty($CFG->useexternalyui);
-    if ($externalyui) {
-        include($CFG->libdir.'/yui/version.php'); // Sets $yuiversion.
-        $libpath = 'http://yui.yahooapis.com/' . $yuiversion . '/build/';
+    if (!empty($CFG->useexternalyui)) {
+        $libpath = 'http://yui.yahooapis.com/' . $CFG->yui2version . '/build/';
+    } else {
+        $libpath = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui2version;
     }
 
     $jsurls = array();
     foreach ($jsnames as $js) {
         if ($js == 'yahoo-dom-event') {
             if ($debugging) {
-                $jsurls[] = $libpath . 'yahoo/yahoo' . $suffix;
-                $jsurls[] = $libpath . 'dom/dom' . $suffix;
-                $jsurls[] = $libpath . 'event/event' . $suffix;
+                $jsurls[] = $libpath . '/yahoo/yahoo' . $suffix;
+                $jsurls[] = $libpath . '/dom/dom' . $suffix;
+                $jsurls[] = $libpath . '/event/event' . $suffix;
             } else {
-                $jsurls[] = $libpath . $js . '/' . $js . '.js';
+                $jsurls[] = $libpath . '/'. $js . '/' . $js . '.js';
             }
+        } else if ($js == 'connection') {
+            $jsurls[] = $libpath . '/' . $js . '/' . $js . $suffix;
+            $jsurls[] = $libpath . '/' . $js . '/' . $js . '_core' . $suffix;
         } else {
-            $jsurls[] = $libpath . $js . '/' . $js . $suffix;
+            $jsurls[] = $libpath . '/' . $js . '/' . $js . $suffix;
         }
     }
 

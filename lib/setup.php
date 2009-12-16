@@ -245,6 +245,9 @@ if (!isset($CFG->prefix)) {   // Just in case it isn't defined in config.php
     $CFG->prefix = '';
 }
 
+// exact version of currently used yui2 and 3 library
+$CFG->yui2version = '2.8.0r4';
+
 // Load up standard libraries
 require_once($CFG->libdir .'/textlib.class.php');   // Functions to handle multibyte strings
 require_once($CFG->libdir .'/filterlib.php');       // Functions for filtering test as it is output
