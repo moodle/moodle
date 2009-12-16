@@ -54,7 +54,7 @@ class block_social_activities extends block_list {
                         if (!empty($cm->icon)) {
                             $icon = $OUTPUT->old_icon_url($cm->icon);
                         } else {
-                            $icon = $OUTPUT->mod_icon_url('icon', $cm->modname);
+                            $icon = $OUTPUT->old_icon_url('icon', $cm->modname);
                         }
                         $this->content->icons[] = '<img src="'.$icon.'" class="icon" alt="" />';
                     }
@@ -133,7 +133,7 @@ class block_social_activities extends block_list {
                     if (!empty($modinfo->cms[$modnumber]->icon)) {
                         $icon = $OUTPUT->old_icon_url($modinfo->cms[$modnumber]->icon);
                     } else {
-                        $icon = $OUTPUT->mod_icon_url('icon', $mod->modname);
+                        $icon = $OUTPUT->old_icon_url('icon', $mod->modname);
                     }
 
                     if ($mod->modname == 'label') {

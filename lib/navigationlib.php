@@ -1092,7 +1092,7 @@ class global_navigation extends navigation_node {
             $icon = null;
             if (!in_array($module->modname, $resources)) {
                 if ($module->icon=='') {
-                    $icon = $OUTPUT->mod_icon_url('icon', $module->modname);
+                    $icon = $OUTPUT->old_icon_url('icon', $module->modname);
                 }
                 $url = new moodle_url($CFG->wwwroot.'/mod/'.$module->modname.'/view.php', array('id'=>$module->id));
                 $type = navigation_node::TYPE_ACTIVITY;
@@ -1154,7 +1154,7 @@ class global_navigation extends navigation_node {
             $icon = null;
             if (!in_array($module->modname, $resources)) {
                 if ($module->icon=='') {
-                    $icon = $OUTPUT->mod_icon_url('icon', $module->modname);
+                    $icon = $OUTPUT->old_icon_url('icon', $module->modname);
                 }
                 $url = new moodle_url($CFG->wwwroot.'/mod/'.$module->modname.'/view.php', array('id'=>$module->id));
                 $type = navigation_node::TYPE_ACTIVITY;
@@ -2026,7 +2026,7 @@ class limited_global_navigation extends global_navigation {
             $icon = null;
             if (!in_array($module->modname, $resources)) {
                 if ($module->icon=='') {
-                    $icon = $OUTPUT->mod_icon_url('icon', $module->modname);
+                    $icon = $OUTPUT->old_icon_url('icon', $module->modname);
                 }
                 $url = new moodle_url($CFG->wwwroot.'/mod/'.$module->modname.'/view.php', array('id'=>$module->id));
                 $type = navigation_node::TYPE_ACTIVITY;

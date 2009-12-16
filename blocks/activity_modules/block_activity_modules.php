@@ -54,7 +54,7 @@ class block_activity_modules extends block_list {
                 $this->content->icons[] = '<img src="'.$OUTPUT->old_icon_url('f/html') . '" class="icon" alt="" />';
             } else {
                 $this->content->items[] = '<a href="'.$CFG->wwwroot.'/mod/'.$modname.'/index.php?id='.$course->id.'">'.$modfullname.'</a>';
-                $this->content->icons[] = '<img src="'.$OUTPUT->mod_icon_url('icon', $modname) . '" class="icon" alt="" />';
+                $this->content->icons[] = '<img src="'.$OUTPUT->old_icon_url('icon', $modname) . '" class="icon" alt="" />';
             }
         }
 

@@ -262,7 +262,7 @@ class blog_entry {
 
                     $associcon = new moodle_action_icon();
                     $associcon->link->url = new moodle_url($CFG->wwwroot.'/mod/'.$modname.'/view.php', array('id' => $modinfo->id));
-                    $associcon->image->src = $OUTPUT->mod_icon_url('icon', $modname);
+                    $associcon->image->src = $OUTPUT->old_icon_url('icon', $modname);
                     $associcon->linktext = $DB->get_field($modname, 'name', array('id' => $modinfo->instance));
                     $assocstr .= $OUTPUT->action_icon($associcon);
                     $assocstr .= ', ';

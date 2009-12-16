@@ -620,7 +620,7 @@
         $helpicon->page = 'mods';
         $helpicon->text = $pageheading;
         $helpicon->module = $module->name;
-        echo $OUTPUT->heading_with_help($helpicon, $OUTPUT->mod_icon_url('icon', $module->name));
+        echo $OUTPUT->heading_with_help($helpicon, $OUTPUT->old_icon_url('icon', $module->name));
 
         $mform->display();
 

@@ -198,7 +198,7 @@ foreach($activities as $activity) {
         print '<th scope="col" class="'.$activity->datepassedclass.'">'.
             '<a href="'.$CFG->wwwroot.'/mod/'.$activity->modname.
             '/view.php?id='.$activity->id.'">'.
-            '<img src="'.$OUTPUT->mod_icon_url('icon', $activity->modname).'/icon.gif" alt="'.
+            '<img src="'.$OUTPUT->old_icon_url('icon', $activity->modname).'/icon.gif" alt="'.
             get_string('modulename',$activity->modname).'" /> <span class="completion-activityname">'.
             format_string($activity->name).'</span></a>';
         if($activity->completionexpected) {

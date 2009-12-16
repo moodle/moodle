@@ -367,7 +367,7 @@ echo $OUTPUT->footer();
 function print_outline_row($mod, $instance, $result) {
     global $OUTPUT;
 
-    $image = "<img src=\"" . $OUTPUT->mod_icon_url('icon', $mod->modname) . "\" class=\"icon\" alt=\"$mod->modfullname\" />";
+    $image = "<img src=\"" . $OUTPUT->old_icon_url('icon', $mod->modname) . "\" class=\"icon\" alt=\"$mod->modfullname\" />";
 
     echo "<tr>";
     echo "<td valign=\"top\">$image</td>";

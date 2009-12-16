@@ -1245,7 +1245,7 @@ class grade_structure {
 
                 } else if ($element['object']->itemtype == 'mod') {
                     $strmodname = get_string('modulename', $element['object']->itemmodule);
-                    return '<img src="'.$OUTPUT->mod_icon_url('icon',
+                    return '<img src="'.$OUTPUT->old_icon_url('icon',
                             $element['object']->itemmodule) . '" ' .
                             'class="icon itemicon" title="' .s($strmodname).
                             '" alt="' .s($strmodname).'"/>';
