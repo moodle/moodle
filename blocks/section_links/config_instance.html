@@ -1,19 +1,19 @@
 <?php
 $numberofsections = array();
 for ($i = 1; $i < 53; $i++){
-	$numberofsections[$i] = $i;
+    $numberofsections[$i] = $i;
 }
 
 $increments = array();
 
 for ($i = 1; $i < 11; $i++){
-	$increments[$i] = $i;
+    $increments[$i] = $i;
 }
 
 if(isset($this->config)){
-	$config = $this->config;
+    $config = $this->config;
 } else{
-	$config = get_config('blocks/section_links');
+    $config = get_config('blocks/section_links');
 }
 
 $selected = array();
@@ -40,28 +40,28 @@ if (!empty($config->numsections2)) {
 <?php
 for($i = 1; $i < 3; $i++){
 ?>
-	<tr valign="top">
-	    <td align="right">
-	        <?php print_string('numsections'.$i, 'block_section_links'); ?>:
-	    </td>
-	    <td>
-	        <?php choose_from_menu($numberofsections, 'numsections'.$i, $selected[$i][0]); ?>
-	    </td>
-	    <td>
-	        <?php print_string('numsectionsdesc'.$i, 'block_section_links'); ?>
-	    </td>
-	</tr>
-	<tr valign="top">
-	    <td align="right">
-	        <?php print_string('incby'.$i, 'block_section_links'); ?>:
-	    </td>
-	    <td>
-	        <?php choose_from_menu($increments, 'incby'.$i, $selected[$i][1]); ?>
-	    </td>
-	    <td>
-	        <?php print_string('incbydesc'.$i, 'block_section_links'); ?>
-	    </td>
-	</tr>	
+    <tr valign="top">
+        <td align="right">
+            <?php print_string('numsections'.$i, 'block_section_links'); ?>:
+        </td>
+        <td>
+            <?php choose_from_menu($numberofsections, 'numsections'.$i, $selected[$i][0]); ?>
+        </td>
+        <td>
+            <?php print_string('numsectionsdesc'.$i, 'block_section_links'); ?>
+        </td>
+    </tr>
+    <tr valign="top">
+        <td align="right">
+            <?php print_string('incby'.$i, 'block_section_links'); ?>:
+        </td>
+        <td>
+            <?php choose_from_menu($increments, 'incby'.$i, $selected[$i][1]); ?>
+        </td>
+        <td>
+            <?php print_string('incbydesc'.$i, 'block_section_links'); ?>
+        </td>
+    </tr>
 <?php }
 ?>
 <tr>

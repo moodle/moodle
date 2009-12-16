@@ -86,7 +86,7 @@ if ($courses = coursetag_get_tagged_courses($tag->id)) {
 
     foreach ($courses as $course) {
         print_course($course);
-	}
+    }
 
     echo $OUTPUT->box_end();
 }

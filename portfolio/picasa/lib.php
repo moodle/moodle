@@ -23,7 +23,7 @@ class portfolio_plugin_picasa extends portfolio_plugin_push_base {
         // we send the files as they are, no prep required
         return true;
     }
-	
+
     public function get_interactive_continue_url(){
         return 'http://picasaweb.google.com/';
     }

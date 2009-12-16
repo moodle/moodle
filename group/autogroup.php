@@ -92,11 +92,11 @@ if ($editform->is_cancelled()) {
 
     // Plan the allocation
     if ($data->groupby == 'groups') {
-    	$numgrps    = $data->number;
+        $numgrps    = $data->number;
         $userpergrp = floor($usercnt/$numgrps);
 
     } else { // members
-    	$numgrps    = ceil($usercnt/$data->number);
+        $numgrps    = ceil($usercnt/$data->number);
         $userpergrp = $data->number;
 
         if (!empty($data->nosmallgroups) and $usercnt % $data->number != 0) {
@@ -194,7 +194,7 @@ if ($editform->is_cancelled()) {
         }
 
         // Save the groups data
-    	foreach ($groups as $key=>$group) {
+        foreach ($groups as $key=>$group) {
             if (groups_get_group_by_name($courseid, $group['name'])) {
                 $error = get_string('groupnameexists', 'group', $group['name']);
                 $failed = true;
@@ -244,7 +244,7 @@ if ($error != '') {
 $editform->display();
 
 if($preview !== '') {
-	echo $OUTPUT->heading(get_string('groupspreview', 'group'));
+    echo $OUTPUT->heading(get_string('groupspreview', 'group'));
 
     echo $preview;
 }

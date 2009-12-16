@@ -63,7 +63,7 @@ class auth_plugin_cas extends auth_plugin_base {
      * @return bool Authentication success or failure.
      */
     function user_login ($username, $password) {
-		$this->connectCAS();
+        $this->connectCAS();
         return phpCAS::isAuthenticated() && (trim(moodle_strtolower(phpCAS::getUser())) == $username);
     }
     /**
@@ -91,43 +91,43 @@ class auth_plugin_cas extends auth_plugin_base {
     function loginpage_hook() {
       global $frm;
       global $CFG;
-	  global $SESSION, $OUTPUT;
+      global $SESSION, $OUTPUT;
 
       $site = get_site();
       $CASform = get_string("CASform","auth_cas");
       $username = optional_param("username", '', PARAM_RAW);
 
       if (!empty($username)) {
-		  if (strstr($SESSION->wantsurl,'ticket') || strstr($SESSION->wantsurl,'NOCAS'))
-			  unset($SESSION->wantsurl);
-          return;		
+          if (strstr($SESSION->wantsurl,'ticket') || strstr($SESSION->wantsurl,'NOCAS'))
+              unset($SESSION->wantsurl);
+          return;
         }
 
 
-		
-		// Test si cas activ� et param�tres non remplis
-	  if (empty($this->config->hostname)) {
-		  return;
-		  }
+
+        // Test si cas activ� et param�tres non remplis
+      if (empty($this->config->hostname)) {
+          return;
+          }
 
 // Connection to CAS server
-	 $this->connectCAS();
+     $this->connectCAS();
 
-	  // Gestion de la connection CAS si acc�s direct d'un ent ou autre	
-	 if (phpCAS::checkAuthentication()) {
-		$frm->username=phpCAS::getUser();
-//		if (phpCAS::getUser()=='esup9992')
-//			$frm->username='erhar0062';
-		$frm->password="passwdCas";		
-		return;
-	 }	 	
+      // Gestion de la connection CAS si acc�s direct d'un ent ou autre
+     if (phpCAS::checkAuthentication()) {
+        $frm->username=phpCAS::getUser();
+//        if (phpCAS::getUser()=='esup9992')
+//            $frm->username='erhar0062';
+        $frm->password="passwdCas";
+        return;
+     }
 
-	  if ($_GET["loginguest"]== true) {
-			$frm->username="guest";
-			$frm->password="guest";
-			return;
-	  }		
-	
+      if ($_GET["loginguest"]== true) {
+            $frm->username="guest";
+            $frm->password="guest";
+            return;
+      }
+
      if ($this->config->multiauth) {
           $authCAS = optional_param("authCAS", '', PARAM_RAW);
           if ($authCAS=="NOCAS")
@@ -144,7 +144,7 @@ class auth_plugin_cas extends auth_plugin_base {
             include($CFG->dirroot."/auth/cas/cas_form.html");
             echo $OUTPUT->footer();
             exit();
-		 }
+         }
      }
 // CAS authentication
      if (!phpCAS::isAuthenticated())
@@ -158,11 +158,11 @@ class auth_plugin_cas extends auth_plugin_base {
      */
     function prelogout_hook() {
         global $CFG;
-	  if ($this->config->logoutcas ) {
-	        $backurl = $CFG->wwwroot;
-		  $this->connectCAS();
-	        phpCAS::logout($backurl);
-	     }
+      if ($this->config->logoutcas ) {
+            $backurl = $CFG->wwwroot;
+          $this->connectCAS();
+            phpCAS::logout($backurl);
+         }
     }
     /**
      * Connect to the cas (clientcas connection or proxycas connection
@@ -171,20 +171,20 @@ class auth_plugin_cas extends auth_plugin_base {
      *
      */
     function connectCAS() {
-	
-	global $PHPCAS_CLIENT;
+
+    global $PHPCAS_CLIENT;
 // mode proxy CAS
 if ( !is_object($PHPCAS_CLIENT) ) {
-	if  ($this->config->proxycas) {
-	    phpCAS::proxy($this->config->casversion, $this-> config->hostname, (int) $this->config->port, $this->config->baseuri);
-	}
-// mode client CAS
-	else {
-	    phpCAS::client($this->config->casversion, $this-> config->hostname, (int) $this->config->port, $this->config->baseuri);
-	}
+    if  ($this->config->proxycas) {
+        phpCAS::proxy($this->config->casversion, $this-> config->hostname, (int) $this->config->port, $this->config->baseuri);
     }
-	
-	}
+// mode client CAS
+    else {
+        phpCAS::client($this->config->casversion, $this-> config->hostname, (int) $this->config->port, $this->config->baseuri);
+    }
+    }
+
+    }
     /**
      * Prints a form for configuring this authentication plugin.
      *
@@ -974,16 +974,16 @@ if (!empty($this->config->attrcreators)) {
     $filter = "(& (".$this->config->user_attribute."=$username)(|";
     foreach ($attrs as $attr){
         if(strpos($attr, "="))
-        	$filter .= "($attr)";
+            $filter .= "($attr)";
         else
-        	$filter .= "(".$this->config->memberattribute."=$attr)";
+            $filter .= "(".$this->config->memberattribute."=$attr)";
     }
     $filter .= "))";
     //search
     $result = $this->ldap_get_userlist($filter);
     if (count($result)!=0)
-    	return true;
- 	}
+        return true;
+     }
 
     return false;
     }
@@ -1089,7 +1089,7 @@ if (!empty($this->config->attrcreators)) {
         do {
             $attributes = @ldap_get_attributes($conn, $entry);
             for ($j=0; $j<$attributes['count']; $j++) {
-                $values = ldap_get_values_len($conn, $entry,$attributes[$j]);				
+                $values = ldap_get_values_len($conn, $entry,$attributes[$j]);
 
                 if (is_array($values)) {
                 $fresult[$i][strtolower($attributes[$j])] = $values;

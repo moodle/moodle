@@ -477,14 +477,14 @@ WHERE
 
         // Try with no activities
         $DB->expectAt(0,'get_records_select',array('course_modules',
-        	  'course=42 AND completion<>'.COMPLETION_TRACKING_NONE));
+              'course=42 AND completion<>'.COMPLETION_TRACKING_NONE));
         $DB->setReturnValueAt(0,'get_records_select',array());
         $result=$c->get_activities();
         $this->assertEqual(array(),$result);
 
         // Try with an activity (need to fake up modinfo for it as well)
         $DB->expectAt(1,'get_records_select',array('course_modules',
-        	  'course=42 AND completion<>'.COMPLETION_TRACKING_NONE));
+              'course=42 AND completion<>'.COMPLETION_TRACKING_NONE));
         $DB->setReturnValueAt(1,'get_records_select',array(
             13=>(object)array('id'=>13)
         ));

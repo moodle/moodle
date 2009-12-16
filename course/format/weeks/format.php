@@ -173,7 +173,7 @@
 
             echo '<li id="section-'.$section.'" class="section main'.$sectionstyle.'" >';
 
-	    echo '<div class="left side">&nbsp;'.$currenttext.'</div>';
+            echo '<div class="left side">&nbsp;'.$currenttext.'</div>';
 
             // Note, 'right side' is BEFORE content.
             echo '<div class="right side">';

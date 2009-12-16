@@ -18,17 +18,17 @@
 <div id="page">
 
 <!-- First, let's wrap the sides -->
-	<div id="wrapper-t">
-		<div id="wrapper-l">
-			<div id="wrapper-r">
-				<div id="wrapper-b">
-				
-				<!-- Now, let's cap the corners -->
-				
-					<div id="wrapper-tl">
-						<div id="wrapper-tr">
-							<div id="wrapper-bl">
-								<div id="wrapper-br">
+    <div id="wrapper-t">
+        <div id="wrapper-l">
+            <div id="wrapper-r">
+                <div id="wrapper-b">
+                
+                <!-- Now, let's cap the corners -->
+                
+                    <div id="wrapper-tl">
+                        <div id="wrapper-tr">
+                            <div id="wrapper-bl">
+                                <div id="wrapper-br">
 
 <?php //Accessibility: 'headermain' is now H1, see theme/standard/styles_layout.css: .headermain
       if ($home) {  // This is what gets printed on the home page only
@@ -36,16 +36,16 @@
     <?php echo $OUTPUT->container_start('clearfix header-home'); ?>
 
     <div id="header-t">
-    	<div id="header-r">
-    		<div id="header-l">
-    			<div id="header-m" class="clearfix home">
-    				<h1 class="headermain"><?php echo $heading ?><br />
-	  	      	<span><?php echo $COURSE->summary //Retrieves Site Description from Front Page -> Front Page Settings ?></span>
-						</h1>
-	  	      <div class="headermenu"><?php echo $menu ?></div>
-  				</div>
-    		</div>
-    	</div>
+        <div id="header-r">
+            <div id="header-l">
+                <div id="header-m" class="clearfix home">
+                    <h1 class="headermain"><?php echo $heading ?><br />
+                    <span><?php echo $COURSE->summary //Retrieves Site Description from Front Page -> Front Page Settings ?></span>
+                        </h1>
+                <div class="headermenu"><?php echo $menu ?></div>
+                  </div>
+            </div>
+        </div>
     </div>
 
     <?php echo $OUTPUT->container_end(); ?>
@@ -53,15 +53,15 @@
 ?>
     <?php echo $OUTPUT->container_start('clearfix header'); ?>
     <div id="header-t">
-    	<div id="header-r">
-    		<div id="header-l">
-    			<div id="header-m" class="clearfix">
-		        <h1 class="headermain"><?php echo $heading ?></h1>
-    		    <div class="headermenu"><?php echo $menu ?></div>
-					</div>
-				</div>
-			</div>
-		</div>
+        <div id="header-r">
+            <div id="header-l">
+                <div id="header-m" class="clearfix">
+                <h1 class="headermain"><?php echo $heading ?></h1>
+                <div class="headermenu"><?php echo $menu ?></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     <?php echo $OUTPUT->container_end(); ?>
 <?php } ?>
 <?php //Accessibility: breadcrumb trail/navbar now a DIV, not a table.

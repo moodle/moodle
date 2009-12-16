@@ -95,12 +95,12 @@ function completion_toggle(e) {
 function completion_set_progressicon_visibility(spanid,displaystatus) {
     // Check if the progress icon exists
     if (document.getElementById(spanid)!= null) {
-        if (displaystatus=='show') {	
+        if (displaystatus=='show') {
             document.getElementById(spanid).style.display="block";
         }
         else if (displaystatus=='hide') {
             document.getElementById(spanid).style.display="none";
-        	
+
         }
         else {
             alert ("An error occurred when calling completion_set_progressicon_visibility() function.");

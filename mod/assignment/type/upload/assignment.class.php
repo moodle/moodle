@@ -961,9 +961,9 @@ class assignment_upload extends assignment_base {
             return false;
         }
 
-		if ($this->is_finalized($submission)) {
-		    return false;
-		}
+        if ($this->is_finalized($submission)) {
+            return false;
+        }
 
         if (has_capability('mod/assignment:grade', $this->context)) {
             return true;

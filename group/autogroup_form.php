@@ -89,7 +89,7 @@ class autogroup_form extends moodleform {
 
 
     function validation($data, $files) {
-    	global $CFG, $COURSE;
+        global $CFG, $COURSE;
         $errors = parent::validation($data, $files);
 
         if ($data['allocateby'] != 'no') {
@@ -102,7 +102,7 @@ class autogroup_form extends moodleform {
                 $usercnt = count($users);
 
                 if ($data['number'] > $usercnt || $data['number'] < 1) {
-                	$errors['number'] = get_string('toomanygroups', 'group', $usercnt);
+                    $errors['number'] = get_string('toomanygroups', 'group', $usercnt);
                 }
             }
         }

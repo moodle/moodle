@@ -1,6 +1,6 @@
 <div style="text-align:center;">
-	<h2 style="margin-bottom:2px;">Anomaly Theme Pack</h2>
-	<h3 style="margin:0">by <a href="http://newschoollearning.com" title="NewSchool Learning: Standards Based Moodle Designs">Patrick Malley</a></h3><h4 style="margin:3px">Version: 20090119</h4>
+    <h2 style="margin-bottom:2px;">Anomaly Theme Pack</h2>
+    <h3 style="margin:0">by <a href="http://newschoollearning.com" title="NewSchool Learning: Standards Based Moodle Designs">Patrick Malley</a></h3><h4 style="margin:3px">Version: 20090119</h4>
 </div>
 <div>&nbsp;
 </div>
@@ -11,9 +11,9 @@
 
 <p>The default color for this theme is green. To select a different color variant: </p>
 <ol>
-	<li>Remane styles_select.css to styles_green.css.</li>
-	<li>Rename the styles_[color].css variant that you would like to use to styles_select.css.</li>
-	<li>That's it. Where you expecting something trickier?</li>
+    <li>Remane styles_select.css to styles_green.css.</li>
+    <li>Rename the styles_[color].css variant that you would like to use to styles_select.css.</li>
+    <li>That's it. Where you expecting something trickier?</li>
 </ol>
 
 <h3 style="margin-bottom:5px; margin-top:5px;">Editing your Site Tagline</h3>
@@ -22,18 +22,18 @@
 
 <p>Here's the code in header.html that is responsible for this (highlighted in red; found on line 58):</p>
 
-		<code style="display:block; padding:10px; margin:10px; background:#f6f6f6; border:1px solid #eee;">
-			&lt;h1 class=&quot;headermain&quot;&gt;&lt;?php echo $heading ?&gt;<span style="color:#ff0000">&lt;br /&gt;&lt;span&gt;&lt;?php echo $COURSE-&gt;summary //Retrieves Site Description from Front Page -&gt; Front Page Settings ?&gt;&lt;/span&gt;</span>&lt;/h1&gt;
-		</code>
+        <code style="display:block; padding:10px; margin:10px; background:#f6f6f6; border:1px solid #eee;">
+            &lt;h1 class=&quot;headermain&quot;&gt;&lt;?php echo $heading ?&gt;<span style="color:#ff0000">&lt;br /&gt;&lt;span&gt;&lt;?php echo $COURSE-&gt;summary //Retrieves Site Description from Front Page -&gt; Front Page Settings ?&gt;&lt;/span&gt;</span>&lt;/h1&gt;
+        </code>
 <p>If you don't want to show a tagline, simply delete the code highlighted in red above from header.html and save.</p>
 
 <p>If you want to show a tagline, BUT would prefer your tagline to be something other than your site description, you can manually enter your Tagline into header.html in the same sort of way.</p>
 
 <p>For example, if I wanted to display my tagline - Standards Based Moodle Designs - I would edit the above code as follows:</p>
 
-		<code style="display:block; padding:10px; margin:10px; background:#f6f6f6; border:1px solid #eee;">
-		&lt;h1 class=&quot;headermain&quot;&gt;&lt;?php echo $heading ?&gt;&lt;br /&gt;&lt;span&gt;<span style="color:#ff0000;">Standards Based Moodle Designs</span>&lt;/span&gt;&lt;/h1&gt;
-		</code>
+        <code style="display:block; padding:10px; margin:10px; background:#f6f6f6; border:1px solid #eee;">
+        &lt;h1 class=&quot;headermain&quot;&gt;&lt;?php echo $heading ?&gt;&lt;br /&gt;&lt;span&gt;<span style="color:#ff0000;">Standards Based Moodle Designs</span>&lt;/span&gt;&lt;/h1&gt;
+        </code>
 
 <h3 style="margin-bottom:5px; margin-top:5px;">Licensing</h3>
 

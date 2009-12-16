@@ -1041,29 +1041,29 @@ class question_calculated_qtype extends default_questiontype {
         }
     }
 
-		/**
-		* This function get the dataset items using id as unique parameter and return an
-		* array with itemnumber as index sorted ascendant
-		* If the multiple records with the same itemnumber exist, only the newest one
-		* i.e with the greatest id is used, the others are ignored but not deleted.
-		* MDL-19210
-		*/
+    /**
+    * This function get the dataset items using id as unique parameter and return an
+    * array with itemnumber as index sorted ascendant
+    * If the multiple records with the same itemnumber exist, only the newest one
+    * i.e with the greatest id is used, the others are ignored but not deleted.
+    * MDL-19210
+    */
     function get_database_dataset_items($definition){
-    	global $CFG, $DB;
-    		$databasedataitems = $DB->get_records_sql( // Use number as key!!
-                        " SELECT id , itemnumber, definition,  value
-                          FROM {question_dataset_items}
-                          WHERE definition = $definition order by id DESC ", array($definition));
-      	$dataitems = Array();
-       	foreach($databasedataitems as $id => $dataitem  ){
-       	if (!isset($dataitems[$dataitem->itemnumber])){
-       		    $dataitems[$dataitem->itemnumber] = $dataitem ;
-       		  }else {
-       		  	// deleting the unused records could be added here
-       		  }
-       	}
-       	ksort($dataitems);
-       	return $dataitems ;
+        global $CFG, $DB;
+        $databasedataitems = $DB->get_records_sql( // Use number as key!!
+                    " SELECT id , itemnumber, definition,  value
+                      FROM {question_dataset_items}
+                      WHERE definition = $definition order by id DESC ", array($definition));
+        $dataitems = Array();
+        foreach($databasedataitems as $id => $dataitem  ){
+        if (!isset($dataitems[$dataitem->itemnumber])){
+                $dataitems[$dataitem->itemnumber] = $dataitem ;
+            }else {
+                // deleting the unused records could be added here
+            }
+        }
+        ksort($dataitems);
+        return $dataitems ;
     }
 
     function save_dataset_items($question, $fromform){

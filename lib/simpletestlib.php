@@ -188,20 +188,20 @@ class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
 }
 
 abstract class XMLStructureExpectation extends SimpleExpectation {
-	/**
-	 * Parse a string as XML and return a DOMDocument;
-	 * @param $html
-	 * @return unknown_type
-	 */
+    /**
+     * Parse a string as XML and return a DOMDocument;
+     * @param $html
+     * @return unknown_type
+     */
     protected function load_xml($html) {
-    	$prevsetting = libxml_use_internal_errors(true);
-    	$parser = new DOMDocument();
-    	if (!$parser->loadXML('<html>' . $html . '</html>')) {
-    		$parser = new DOMDocument();
-    	}
+        $prevsetting = libxml_use_internal_errors(true);
+        $parser = new DOMDocument();
+        if (!$parser->loadXML('<html>' . $html . '</html>')) {
+            $parser = new DOMDocument();
+        }
         libxml_clear_errors();
-    	libxml_use_internal_errors($prevsetting);
-    	return $parser;
+        libxml_use_internal_errors($prevsetting);
+        return $parser;
     }
 }
 /**

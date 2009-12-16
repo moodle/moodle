@@ -240,7 +240,7 @@ function authorize_process_csv($filename)
         $eventdata->fullmessage       = $ignoredlines;
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
-        $eventdata->smallmessage      = '';			
+        $eventdata->smallmessage      = '';
         message_send($eventdata);
     }
 

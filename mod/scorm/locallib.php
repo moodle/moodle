@@ -460,7 +460,7 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
  *
  */
 function scorm_get_sco_runtime($scormid, $scoid, $userid, $attempt=1) {
-	global $DB;
+    global $DB;
 
     $timedata = new object();
     $sql = !empty($scoid) ? "userid=$userid AND scormid=$scormid AND scoid=$scoid AND attempt=$attempt" : "userid=$userid AND scormid=$scormid AND attempt=$attempt";

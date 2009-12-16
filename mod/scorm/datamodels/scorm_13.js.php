@@ -695,8 +695,8 @@ function SCORMapi1_3() {
                                                 }
                                              break;
                                          case 'cmi.interactions.n.correct_responses.n.pattern':
-											 subel= subelement.split('.');
-											 subel1= 'cmi.interactions.'+subel[2];
+	                                         subel= subelement.split('.');
+                                             subel1= 'cmi.interactions.'+subel[2];
 
                                                 if (typeof eval(subel1+'.type') == "undefined") {
                                                     errorCode="408";

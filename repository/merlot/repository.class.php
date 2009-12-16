@@ -77,7 +77,7 @@ class repository_merlot extends repository {
         $this->api = 'http://www.merlot.org/merlot/materials.rest?keywords=' . urlencode($keyword) . '&licenseKey='.$this->licensekey;
         $c = new curl(array('cache'=>true, 'module_cache'=>'repository'));
         $content = $c->get($this->api);
-		$xml = simplexml_load_string($content);
+        $xml = simplexml_load_string($content);
         foreach ($xml->results->material as $entry) {
             $list[] = array(
                 'title'=>(string)$entry->title,

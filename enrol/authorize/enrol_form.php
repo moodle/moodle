@@ -60,7 +60,7 @@ class enrol_authorize_form extends moodleform
             $endyear = $startyear + 20;
             $yearsmenu = array('' => get_string('choose'));
             for ($i = $startyear; $i < $endyear; $i++) {
-            	$yearsmenu[$i] = $i;
+                $yearsmenu[$i] = $i;
             }
             $ccexpiregrp = array();
             $ccexpiregrp[] = &$mform->createElement('select', 'ccexpiremm', '', $monthsmenu);

@@ -28,10 +28,10 @@ class repository_alfresco extends repository {
                 // deal with user logging in
                 if (empty($SESSION->{$this->sessname}) && !empty($this->username) && !empty($this->password)) {
                     $this->ticket = $this->instance->authenticate($this->username, $this->password);
-                    $SESSION->{$this->sessname} = $this->ticket;	
+                    $SESSION->{$this->sessname} = $this->ticket;
                 } else {
                     if (!empty($SESSION->{$this->sessname})) {
-                        $this->ticket = $SESSION->{$this->sessname}; 	
+                        $this->ticket = $SESSION->{$this->sessname};
                     }
                 }
                 $this->user_session = $this->instance->createSession($this->ticket);
@@ -152,7 +152,7 @@ class repository_alfresco extends repository {
     public function print_search($client_id) {
         $str = parent::print_search($client_id);
         $str .= '<label>Space: </label><br /><select name="space">';
-        foreach ($this->user_session->stores as $v) {	
+        foreach ($this->user_session->stores as $v) {
             $str .= '<option ';
             if ($v->__toString() === 'workspace://SpacesStore') {
                 $str .= 'selected ';
@@ -169,7 +169,7 @@ class repository_alfresco extends repository {
     public function search($search_text) {
         global $CFG;
         $space = optional_param('space', 'workspace://SpacesStore', PARAM_RAW);
-        $currentStore = $this->user_session->getStoreFromString($space);	
+        $currentStore = $this->user_session->getStoreFromString($space);
         $nodes = $this->user_session->query($currentStore, $search_text);
         $ret = array();
         $ret['list'] = array();

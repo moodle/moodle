@@ -92,7 +92,7 @@ class ContainsTagWithAttribute_test extends UnitTestCase {
     }
 
     function test_real_regression1() {
-    	$expectation = new ContainsTagWithAttribute('label', 'for', 'html_select4ac387224bf9d');
+        $expectation = new ContainsTagWithAttribute('label', 'for', 'html_select4ac387224bf9d');
         $html = '<label for="html_select4ac387224bf9d">Cool menu</label><select name="mymenu" id="html_select4ac387224bf9d" class="menumymenu select"> <option value="0">Choose...</option><option value="10">ten</option><option value="c2">two</option></select>';
         $this->assert($expectation, $html);
     }

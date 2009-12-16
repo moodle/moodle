@@ -4,12 +4,12 @@ $configs = array();
 $numberofsections = array();
 
 for ($i = 1; $i < 53; $i++){
-	$numberofsections[$i] = $i;
+    $numberofsections[$i] = $i;
 }
 $increments = array();
 
 for ($i = 1; $i < 11; $i++){
-	$increments[$i] = $i;
+    $increments[$i] = $i;
 }
 
 $selected = array(1 => array(22,2), 

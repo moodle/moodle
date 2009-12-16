@@ -530,7 +530,7 @@ function groups_get_possible_roles($context) {
  * @return array An array of the users
  */
 function groups_get_potential_members($courseid, $roleid = null, $orderby = 'lastname,firstname') {
-	global $DB;
+    global $DB;
 
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);
@@ -606,7 +606,7 @@ function groups_parse_name($format, $groupnumber) {
         }
         $str = str_replace('@', $letter, $format);
     } else {
-    	$str = str_replace('#', $groupnumber+1, $format);
+        $str = str_replace('#', $groupnumber+1, $format);
     }
     return($str);
 }

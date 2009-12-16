@@ -49,17 +49,17 @@ class qformat_blackboard extends qformat_default {
 function process_essay($xml, &$questions ) {
 
     if (isset($xml["POOL"]["#"]["QUESTION_ESSAY"])) {
-    	$essayquestions = $xml["POOL"]["#"]["QUESTION_ESSAY"];
+        $essayquestions = $xml["POOL"]["#"]["QUESTION_ESSAY"];
     }
     else {
-    	return;
-    }	
+        return;
+    }
 
     foreach ($essayquestions as $essayquestion) {
 
         $question = $this->defaultquestion();
 
-        $question->qtype = ESSAY;	
+        $question->qtype = ESSAY;
 
         // determine if the question is already escaped html
         $ishtml = $essayquestion["#"]["BODY"][0]["#"]["FLAGS"][0]["#"]["ISHTML"][0]["@"]["value"];
@@ -76,7 +76,7 @@ function process_essay($xml, &$questions ) {
         $question->fraction = 0;
 
         $questions[] = $question;
-    } 	
+    }
 }
 
 //----------------------------------------

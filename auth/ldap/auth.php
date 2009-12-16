@@ -1567,8 +1567,8 @@ class auth_plugin_ldap extends auth_plugin_base {
             }
 
             if ($bindresult) {
-		// Set the connection counter so we can call PHP's ldap_close()
-		// when we call $this->ldap_close() for the last 'open' connection.
+        // Set the connection counter so we can call PHP's ldap_close()
+        // when we call $this->ldap_close() for the last 'open' connection.
                 $this->ldapconns = 1;
                 $this->ldapconnection = $connresult;
                 return $connresult;

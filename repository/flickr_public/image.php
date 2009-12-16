@@ -1,13 +1,13 @@
 <?php
 class moodle_image {
-	private $imagepath;
-	private $info;
-	private $width;
-	private $height;
-	private $image;
-	private $backup;
+    private $imagepath;
+    private $info;
+    private $width;
+    private $height;
+    private $image;
+    private $backup;
 
-	function __construct($img) {
+    function __construct($img) {
         if(!function_exists('imagecreatefrompng')
             and !function_exists('imagecreatefromjpeg')) {
             throw new moodle_exception('gdnotexist');
@@ -15,12 +15,12 @@ class moodle_image {
         if(!file_exists($img) or !is_readable($img)) {
             throw new moodle_exception('invalidfile');
         }
-		
-		$this->imagepath = $img;
-        unset($img);
-		$this->info = getimagesize($this->imagepath);
 
-		switch($this->info['mime']) {
+        $this->imagepath = $img;
+        unset($img);
+        $this->info = getimagesize($this->imagepath);
+
+        switch($this->info['mime']) {
         case 'image/jpeg':
             $this->image = imagecreatefromjpeg($this->imagepath);
             break;
@@ -32,21 +32,21 @@ class moodle_image {
             break;
         default:
             break;
-		}
-		$this->width  = imagesx($this->image);
-		$this->height = imagesy($this->image);
-	}
+        }
+        $this->width  = imagesx($this->image);
+        $this->height = imagesy($this->image);
+    }
 
-	function destroy() {
-		 imagedestroy($this->image);
-		 imagedestroy($this->backup);
+    function destroy() {
+         imagedestroy($this->image);
+         imagedestroy($this->backup);
          return true;
-	}
+    }
 
-	function undo() {
-		$this->image = $this->backup;
-		return $this;
-	}
+    function undo() {
+        $this->image = $this->backup;
+        return $this;
+    }
 
     function watermark($text='', $pos=array(), $options=array()) {
         global $CFG;
@@ -81,12 +81,12 @@ class moodle_image {
         return $this;
     }
 
-	function rotate($angle=0, $bgcolor=0) {
-		$this->image = imagerotate($this->image, $angle, $bgcolor);
-		return $this;
-	}
-	
-	function resize($w, $h, $use_resize = true) {
+    function rotate($angle=0, $bgcolor=0) {
+        $this->image = imagerotate($this->image, $angle, $bgcolor);
+        return $this;
+    }
+
+    function resize($w, $h, $use_resize = true) {
         if(empty($h) && !empty($w)) {
             $h = $this->height * ($w/$this->width);
         }
@@ -97,11 +97,11 @@ class moodle_image {
         imagealphablending($new_img, false);
         imagecopyresampled($new_img /* dst */, $this->image /* src */, 0, 0, 0, 0, $w, $h, $this->width, $this->height);
         $this->image = $new_img;
-		return $this;
-	}
+        return $this;
+    }
 
-	function saveas($imagepath) {
-		switch($this->info['mime']) {
+    function saveas($imagepath) {
+        switch($this->info['mime']) {
         case 'image/jpeg':
             return imagejpeg($this->image, $imagepath);
             break;
@@ -113,17 +113,17 @@ class moodle_image {
             break;
         default:
             break;
-		}
+        }
         if(!$this->destroy()) {
             return false;
         } else {
             return $this;
         }
-	}
+    }
 
-	function display() {
-		header('Content-type: '.$this->info['mime']);
-		switch($this->info['mime']) {
+    function display() {
+        header('Content-type: '.$this->info['mime']);
+        switch($this->info['mime']) {
         case 'image/png':
             imagepng($this->image);
             break;
@@ -135,9 +135,9 @@ class moodle_image {
             break;
         default:
             break;
-		}
-		$this->destroy();
-		return $this;
-	}
+        }
+        $this->destroy();
+        return $this;
+    }
 }
 

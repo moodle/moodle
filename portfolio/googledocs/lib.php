@@ -30,7 +30,7 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
         // we send the files as they are, no prep required
         return true;
     }
-	
+
     public function get_interactive_continue_url(){
         return 'http://docs.google.com/';
     }

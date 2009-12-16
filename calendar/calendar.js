@@ -15,7 +15,7 @@ YAHOO.moodle.container.calendarpanels = [];
  * has been resolved.
  */
 YAHOO.util.Event.onDOMReady(function () {
-	//TODO: remove this hack MDL-20204
+    //TODO: remove this hack MDL-20204
     var animationlib = document.createElement('script');
     animationlib.setAttribute('type','text/javascript');
     animationlib.setAttribute('src',moodle_cfg.wwwroot+'/lib/yui/2.8.0r4/animation/animation-min.js');

@@ -217,7 +217,6 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
     * @param PARAM_ALPHA $wizardnow should be added as we are coming from question2.php
     */
     function save_question($question, $form, $course) {
-    	
         $question = default_questiontype::save_question($question, $form, $course);
         return $question;
     }

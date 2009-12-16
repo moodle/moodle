@@ -1451,7 +1451,7 @@ class question_bank_view {
                     if ($questionlist = explode(',', $deleteselected)) {
                         // for each question either hide it if it is in use or delete it
                         foreach ($questionlist as $questionid) {
-                        	$questionid = (int)$questionid;
+                            $questionid = (int)$questionid;
                             question_require_capability_on($questionid, 'edit');
                             if ($DB->record_exists('quiz_question_instances', array('question' => $questionid))) {
                                 if (!$DB->set_field('question', 'hidden', 1, array('id' => $questionid))) {

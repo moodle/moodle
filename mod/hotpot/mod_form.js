@@ -33,9 +33,9 @@ function AddWhiteSpace(BeforeOrAfter, id) {
             obj = obj.parentNode;
         }
         if (obj) {
-			switch (BeforeOrAfter) {
-				case 'before': obj.style.marginTop = '1.8em'; break;
-				case 'after': obj.style.marginBottom = '0.8em'; break;
+            switch (BeforeOrAfter) {
+                case 'before': obj.style.marginTop = '1.8em'; break;
+                case 'after': obj.style.marginBottom = '0.8em'; break;
             }
         }
     }

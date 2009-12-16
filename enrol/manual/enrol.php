@@ -329,7 +329,7 @@ function cron() {
                             $eventdata->fullmessage       = $strexpirynotifystudentsemail;
                             $eventdata->fullmessageformat = FORMAT_PLAIN;
                             $eventdata->fullmessagehtml   = '';
-                            $eventdata->smallmessage      = '';			
+                            $eventdata->smallmessage      = '';
                             message_send($eventdata);
                         }
                     }
@@ -354,7 +354,7 @@ function cron() {
                         $eventdata->fullmessage       = $strexpirynotifyemail;
                         $eventdata->fullmessageformat = FORMAT_PLAIN;
                         $eventdata->fullmessagehtml   = '';
-                        $eventdata->smallmessage      = '';			
+                        $eventdata->smallmessage      = '';
                         message_send($eventdata);
                     }
                 }

@@ -246,7 +246,7 @@ function get_access_icons($course) {
                                     $eventdata->fullmessage       = get_string('enrolmentnewuser', '', $a);
                                     $eventdata->fullmessageformat = FORMAT_PLAIN;
                                     $eventdata->fullmessagehtml   = '';
-                                    $eventdata->smallmessage      = '';			
+                                    $eventdata->smallmessage      = '';
                                     message_send($eventdata);
                                 }
                             }

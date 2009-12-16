@@ -38,7 +38,7 @@ class moodlesimplepie_test extends UnitTestCase {
 
         $this->assertFalse($feed->error(), "Failed to load the sample RSS file. Please check your proxy settings in Moodle. %s");
         if ($feed->error()) {
-        	return;
+            return;
         }
 
         $this->assertEqual($feed->get_title(), 'Moodle News');
@@ -58,7 +58,7 @@ class moodlesimplepie_test extends UnitTestCase {
 
         $this->assertTrue($itemone = $feed->get_item(0));
         if (!$itemone) {
-        	return;
+            return;
         }
 
         $this->assertEqual($itemone->get_title(), 'Google HOP contest encourages pre-University students to work on Moodle');

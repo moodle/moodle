@@ -783,7 +783,7 @@ class securewindow_access_rule extends quiz_access_rule_base {
 class safebrowser_access_rule extends quiz_access_rule_base {
     public function prevent_access() {
         if (!$this->_quizobj->is_preview_user() && !quiz_check_safe_browser()) {
-            return get_string('safebrowsererror', 'quiz');	
+            return get_string('safebrowsererror', 'quiz');
         } else {
             return false;
         }

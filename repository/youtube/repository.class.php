@@ -31,9 +31,9 @@ class repository_youtube extends repository {
         $this->feed_url = 'http://gdata.youtube.com/feeds/api/videos?q=' . urlencode($keyword) . '&format=5&start-index=' . $start . '&max-results=' .$max . '&orderby=' . $sort;
         $c = new curl(array('cache'=>true, 'module_cache'=>'repository'));
         $content = $c->get($this->feed_url);
-		$xml = simplexml_load_string($content);
+        $xml = simplexml_load_string($content);
         $media = $xml->entry->children('http://search.yahoo.com/mrss/');
-	    $links = $xml->children('http://www.w3.org/2005/Atom');
+        $links = $xml->children('http://www.w3.org/2005/Atom');
         foreach ($xml->entry as $entry) {
             $media = $entry->children('http://search.yahoo.com/mrss/');
             $title = $media->group->title;

@@ -696,7 +696,7 @@ div.loginbox.twocolumns div.loginpanel {
 .weeks-format #right-column,
 .topics-format #left-column,
 .topics-format #right-column {
-	width: 15.5em;
+    width: 15.5em;
 }
 .weeks-format,
 .topics-format {

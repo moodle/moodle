@@ -182,7 +182,7 @@ while ($section <= $course->numsections) {
         // Note, 'right side' is BEFORE content.
         echo '<div class="right side">';
 
-        if ($displaysection == $section) {	// Show the zoom boxes
+        if ($displaysection == $section) {    // Show the zoom boxes
             echo '<a href="view.php?id='.$course->id.'&amp;topic=0#section-'.$section.'" title="'.$strshowalltopics.'">'.
                  '<img src="'.$OUTPUT->pix_url('i/all') . '" class="icon" alt="'.$strshowalltopics.'" /></a><br />';
         } else {

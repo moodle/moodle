@@ -313,12 +313,12 @@ table.calendarmonth tr td  {
 }
 
 #course-view .section td.content ul.section.img-text {
-	line-height: 22px;
+    line-height: 22px;
 }
 
 #course-view .section td.content ul.section.img-text li.activity.label {
-	line-height: 16px;
-	margin-bottom: 5px;
+    line-height: 16px;
+    margin-bottom: 5px;
 }
 
 .coursebox .info .name {
@@ -340,7 +340,7 @@ table.calendarmonth tr td  {
 }
 
 .glossarypost.continuous {
-	padding: 5px;
+    padding: 5px;
 }
 
 /***

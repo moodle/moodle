@@ -28,10 +28,10 @@ class question_dataset_dependent_definitions_form extends moodleform {
         global $QTYPES, $DB;
         $this->question = $question;
         $this->qtypeobj =& $QTYPES[$this->question->qtype];
-				// Validate the question category.
-				if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
-				    print_error('categorydoesnotexist', 'question', $returnurl);
-				}
+        // Validate the question category.
+        if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
+            print_error('categorydoesnotexist', 'question', $returnurl);
+        }
         $this->category = $category;
         $this->categorycontext = get_context_instance_by_id($category->contextid);
         parent::moodleform($submiturl);
