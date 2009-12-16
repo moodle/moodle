@@ -290,9 +290,10 @@ class moodle_url {
      * @param array $params these params override anything in the query string
      *      where params have the same name.
      */
-    public function __construct($url = null, $params = array()) {
+    public function __construct($url = null, array $params = null) {
         if ($url === '') {
             // Leave URL blank.
+
         } else if (is_a($url, 'moodle_url')) {
             $this->scheme = $url->scheme;
             $this->host = $url->host;
@@ -302,6 +303,7 @@ class moodle_url {
             $this->path = $url->path;
             $this->fragment = $url->fragment;
             $this->params = $url->params;
+
         } else {
             if ($url === null) {
                 global $ME;
@@ -322,23 +324,34 @@ class moodle_url {
                 $this->$key = $value;
             }
         }
+
         $this->params($params);
     }
 
     /**
-     * Add an array of params to the params for this page.
+     * Add an array of params to the params for this url.
      *
      * The added params override existing ones if they have the same name.
      *
      * @param array $params Defaults to null. If null then returns all params.
      * @return array Array of Params for url.
      */
-    public function params($params = null) {
-        if (!is_null($params)) {
-            return $this->params = $params + $this->params;
-        } else {
-            return $this->params;
+    public function params(array $params = null) {
+        $params = (array)$params;
+
+        foreach ($params as $key=>$value) {
+            if (is_int($key)) {
+                throw new coding_error('Url parameters can not have numeric keys!');
+            }
+            if (is_array($value)) {
+                throw new coding_error('Url parameters values can not be arrays!');
+            }
+            if (is_object($value) and !method_exists($value, '__toString')) {
+                throw new coding_error('Url parameters values can not be objects, unless __toString() is defined!');
+            }
+            $this->params[$key] = (string)$value;
         }
+        return $this->params;
     }
 
     /**
@@ -350,40 +363,69 @@ class moodle_url {
      *
      * @param mixed $params either an array of param names, or a string param name,
      * @param string $params,... any number of additional param names.
+     * @return array url parameters
      */
-    public function remove_params($params = NULL) {
-        if (empty($params)) {
-            $this->params = array();
-            return;
-        }
+    public function remove_params($params = null) {
         if (!is_array($params)) {
             $params = func_get_args();
         }
         foreach ($params as $param) {
-            if (isset($this->params[$param])) {
-                unset($this->params[$param]);
-            }
+            unset($this->params[$param]);
         }
+        return $this->params;
     }
 
     /**
-     * Add a param to the params for this page.
+     * Remove all url parameters
+     * @param $params
+     * @return void
+     */
+    public function remove_all_params($params = null) {
+        $this->params = array();
+    }
+
+    /**
+     * Add a param to the params for this url.
      *
-     * The added param overrides existing one if theyhave the same name.
+     * The added param overrides existing one if they have the same name.
      *
      * @param string $paramname name
-     * @param string $param Param value. Defaults to null. If null then return value of param 'name'
-     * @return void|string If $param was null then the value of $paramname was returned
-     *      (null is returned if that param does not exist).
+     * @param string $newvalue Param value. If new value specified current value is overriden or parameter is added
+     * @return mixed string parameter value, null if parameter does not exist
      */
-    public function param($paramname, $param = null) {
-        if (!is_null($param)) {
-            $this->params = array($paramname => $param) + $this->params;
-        } else if (array_key_exists($paramname, $this->params)) {
+    public function param($paramname, $newvalue = '') {
+        if (func_num_args() > 1) {
+            // set new value
+            $this->params(array($paramname=>$newvalue));
+        }
+        if (isset($this->params[$paramname])) {
             return $this->params[$paramname];
         } else {
             return null;
         }
+    }
+
+    /**
+     * Merges parameters and validates them
+     * @param array $overrideparams
+     * @return array merged parameters
+     */
+    protected function merge_overrideparams(array $overrideparams = null) {
+        $overrideparams = (array)$overrideparams;
+        $params = $this->params;
+        foreach ($overrideparams as $key=>$value) {
+            if (is_int($key)) {
+                throw new coding_error('Overriden parameters can not have numeric keys!');
+            }
+            if (is_array($value)) {
+                throw new coding_error('Overriden parameters values can not be arrays!');
+            }
+            if (is_object($value) and !method_exists($value, '__toString')) {
+                throw new coding_error('Overriden parameters values can not be objects, unless __toString() is defined!');
+            }
+            $params[$key] = (string)$value;
+        }
+        return $params;
     }
 
     /**
@@ -394,9 +436,9 @@ class moodle_url {
      * @param boolean $escaped Use &amp; as params separator instead of plain &
      * @return string query string that can be added to a url.
      */
-    public function get_query_string($overrideparams = array(), $escaped = true) {
+    public function get_query_string(array $overrideparams = null, $escaped = true) {
         $arr = array();
-        $params = $overrideparams + $this->params;
+        $params = $this->merge_overrideparams($overrideparams);
         foreach ($params as $key => $val) {
            $arr[] = urlencode($key)."=".urlencode($val);
         }
@@ -416,10 +458,12 @@ class moodle_url {
      *      override existing ones with the same name.
      * @return string html for form elements.
      */
-    public function hidden_params_out($exclude = array(), $indent = 0, $overrideparams=array()) {
+    public function hidden_params_out(array $exclude = null, $indent = 0, array $overrideparams = null) {
+        $exclude = (array)$exclude;
+        $params = $this->merge_overrideparams($overrideparams);
+
         $tabindent = str_repeat("\t", $indent);
         $str = '';
-        $params = $overrideparams + $this->params;
         foreach ($params as $key => $val) {
             if (FALSE === array_search($key, $exclude)) {
                 $val = s($val);
@@ -427,6 +471,14 @@ class moodle_url {
             }
         }
         return $str;
+    }
+
+    /**
+     * Shortcut for printing of encoded URL.
+     * @return string
+     */
+    public function __toString() {
+        $this->out(false, null, true);
     }
 
     /**
@@ -440,7 +492,7 @@ class moodle_url {
      * @param boolean $escaped Use &amp; as params separator instead of plain &
      * @return string Resulting URL
      */
-    public function out($omitquerystring = false, $overrideparams = array(), $escaped = true) {
+    public function out($omitquerystring = false, array $overrideparams = null, $escaped = true) {
         $uri = $this->scheme ? $this->scheme.':'.((strtolower($this->scheme) == 'mailto') ? '':'//'): '';
         $uri .= $this->user ? $this->user.($this->pass? ':'.$this->pass:'').'@':'';
         $uri .= $this->host ? $this->host : '';
@@ -489,7 +541,8 @@ class moodle_url {
      * @param array $overrideparams Allows you to override params
      * @return string url
      */
-    public function out_action($overrideparams = array()) {
+    public function out_action(array $overrideparams = null) {
+        $overrideparams = (array)$overrideparams;
         $overrideparams = array('sesskey'=> sesskey()) + $overrideparams;
         return $this->out(false, $overrideparams);
     }
