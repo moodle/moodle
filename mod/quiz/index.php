@@ -52,6 +52,9 @@
         if (quiz_has_feedback($quiz)) {
             $showfeedback=true;
         }
+        if($showclosingheader && $showfeedback) {
+            break;
+        }
     }
 
 // Configure table for displaying the list of instances.
