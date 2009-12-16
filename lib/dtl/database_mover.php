@@ -42,7 +42,7 @@ class database_mover extends database_exporter {
      * @see export_database).
      */
     public function __construct(moodle_database $mdb_source, moodle_database $mdb_target,
-            $check_schema = true, moodle_progress_trace $feeback = null) {
+            $check_schema = true, progress_trace $feeback = null) {
         if (empty($feeback)) {
             $this->feeback = new null_progress_trace();
         } else {

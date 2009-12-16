@@ -3441,7 +3441,7 @@ EOT;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package moodlecore
  */
-abstract class moodle_progress_trace {
+abstract class progress_trace {
     /**
      * Ouput an progress message in whatever format.
      * @param string $message the message to output.
@@ -3457,12 +3457,12 @@ abstract class moodle_progress_trace {
 }
 
 /**
- * This subclass of moodle_progress_trace does not ouput anything.
+ * This subclass of progress_trace does not ouput anything.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package moodlecore
  */
-class null_progress_trace extends moodle_progress_trace {
+class null_progress_trace extends progress_trace {
     /**
      * Does Nothing
      *
@@ -3475,12 +3475,12 @@ class null_progress_trace extends moodle_progress_trace {
 }
 
 /**
- * This subclass of moodle_progress_trace outputs to plain text.
+ * This subclass of progress_trace outputs to plain text.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package moodlecore
  */
-class text_progress_trace extends moodle_progress_trace {
+class text_progress_trace extends progress_trace {
     /**
      * Output the trace message
      *
@@ -3495,12 +3495,12 @@ class text_progress_trace extends moodle_progress_trace {
 }
 
 /**
- * This subclass of moodle_progress_trace outputs as HTML.
+ * This subclass of progress_trace outputs as HTML.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package moodlecore
  */
-class html_progress_trace extends moodle_progress_trace {
+class html_progress_trace extends progress_trace {
     /**
      * Output the trace message
      *
@@ -3520,7 +3520,7 @@ class html_progress_trace extends moodle_progress_trace {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package moodlecore
  */
-class html_list_progress_trace extends moodle_progress_trace {
+class html_list_progress_trace extends progress_trace {
     /** @var int */
     protected $currentdepth = -1;
 
