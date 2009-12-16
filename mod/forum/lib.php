@@ -3708,7 +3708,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
                     echo '</a>';
                     echo '<a title="'.$strmarkalldread.'" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
                          $forum->id.'&amp;d='.$post->discussion.'&amp;mark=read&amp;returnpage=view.php">' .
-                         '<img src="'.$OUTPUT->old_icon_url('t/clear') . '" class="iconsmall" alt="'.$strmarkalldread.'" /></a>';
+                         '<img src="'.$OUTPUT->pix_url('t/clear') . '" class="iconsmall" alt="'.$strmarkalldread.'" /></a>';
                     echo '</span>';
                 } else {
                     echo '<span class="read">';
@@ -4354,7 +4354,7 @@ function forum_print_attachments($post, $cm, $type) {
         foreach ($files as $file) {
             $filename = $file->get_filename();
             $mimetype = $file->get_mimetype();
-            $iconimage = '<img src="'.$OUTPUT->old_icon_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />';
+            $iconimage = '<img src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />';
             $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/forum_attachment/'.$post->id.'/'.$filename);
 
             if ($type == 'html') {
@@ -5651,7 +5651,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
                     echo '&nbsp;<a title="'.get_string('markallread', 'forum').
                          '" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
                          $forum->id.'&amp;mark=read&amp;returnpage=view.php">'.
-                         '<img src="'.$OUTPUT->old_icon_url('t/clear') . '" class="iconsmall" alt="'.get_string('markallread', 'forum').'" /></a>';
+                         '<img src="'.$OUTPUT->pix_url('t/clear') . '" class="iconsmall" alt="'.get_string('markallread', 'forum').'" /></a>';
                 }
                 echo '</th>';
             }
@@ -5886,7 +5886,7 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
             echo '<div class="ratingsubmit">';
             echo '<input type="submit" id="forumpostratingsubmit" value="'.get_string('sendinratings', 'forum').'" />';
             if (ajaxenabled() && !empty($CFG->forum_ajaxrating)) { /// AJAX enabled, standard submission form
-                $PAGE->requires->js_function_call('add_menu_listeners', array($OUTPUT->old_icon_url('i/loading_small')))->on_dom_ready();
+                $PAGE->requires->js_function_call('add_menu_listeners', array($OUTPUT->pix_url('i/loading_small')))->on_dom_ready();
             }
             if ($forum->scale < 0) {
                 if ($scale = $DB->get_record("scale", array("id" => abs($forum->scale)))) {
@@ -6199,7 +6199,7 @@ function forum_print_recent_mod_activity($activity, $courseid, $detail, $modname
     echo '<div class="title">';
     if ($detail) {
         $aname = s($activity->name);
-        echo "<img src=\"" . $OUTPUT->old_icon_url('icon', $activity->type) . "\" ".
+        echo "<img src=\"" . $OUTPUT->pix_url('icon', $activity->type) . "\" ".
              "class=\"icon\" alt=\"{$aname}\" />";
     }
     echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d={$activity->content->discussion}"
@@ -7991,7 +7991,7 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
     $navref->get($discussionkey)->mainnavonly = true;
 
     foreach ($discussions as $discussion) {
-        $icon = $OUTPUT->old_icon_url('i/feedback');
+        $icon = $OUTPUT->pix_url('i/feedback');
         $url = new moodle_url($CFG->wwwroot.'/mod/forum/discuss.php', array('d'=>$discussion->discussion));
         $navref->get($discussionkey)->add($discussion->subject, $url, navigation_node::TYPE_SETTING, null, null, $icon);
     }
@@ -8019,7 +8019,7 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
         $recentkey = $navref->add(get_string('recentactivity').' ('.count($recentposts).')');
         $navref->get($recentkey)->mainnavonly = true;
         foreach ($recentposts as $post) {
-            $icon = $OUTPUT->old_icon_url('i/feedback');
+            $icon = $OUTPUT->pix_url('i/feedback');
             $url = new moodle_url($CFG->wwwroot.'/mod/forum/discuss.php', array('d'=>$post->content->discussion));
             $title = $post->content->subject."\n".userdate($post->timestamp, get_string('strftimerecent', 'langconfig'))."\n".$post->user->firstname.' '.$post->user->lastname;
             $navref->get($recentkey)->add($title, $url, navigation_node::TYPE_SETTING, null, null, $icon);
@@ -8141,7 +8141,7 @@ function forum_extend_settings_navigation($settingsnav, $module=null) {
             $userid = $USER->id;
         }
         $url = new moodle_url(rss_get_url($PAGE->course->id, $userid, "forum", $forumobject->id));
-        $forum->add($string, $url, settings_navigation::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/rss'));
+        $forum->add($string, $url, settings_navigation::TYPE_SETTING, null, null, $OUTPUT->pix_url('i/rss'));
     }
 
     return $forumkey;

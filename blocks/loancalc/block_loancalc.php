@@ -11,7 +11,7 @@ class block_loancalc extends block_base {
     function get_content() {
         global $CFG, $OUTPUT;
 
-        $calc = $OUTPUT->old_icon_url('i/calc');
+        $calc = $OUTPUT->pix_url('i/calc');
 
         $this->content->text = '
         <script type="text/javascript">

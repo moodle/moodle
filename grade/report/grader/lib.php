@@ -503,7 +503,7 @@ class grade_report_grader extends grade_report {
         $string = ${'str' . $showhide};
 
         $toggleicon = new moodle_action_icon();
-        $toggleicon->image->src = $OUTPUT->old_icon_url($imagename);
+        $toggleicon->image->src = $OUTPUT->pix_url($imagename);
         $toggleicon->image->add_class('iconsmall');
         $toggleicon->alt = $string;
         $toggleicon->title = $string;
@@ -617,7 +617,7 @@ class grade_report_grader extends grade_report {
                 $userreporticon = new moodle_action_icon();
                 $userreporticon->link->url = new moodle_url($CFG->wwwroot.'/grade/report/user/index.php', array('userid' => $user->id, 'id' => $this->course->id));
                 $userreporticon->image->add_class('iconsmall');
-                $userreporticon->image->src = $OUTPUT->old_icon_url('t/grades');
+                $userreporticon->image->src = $OUTPUT->pix_url('t/grades');
                 $userreporticon->image->alt = $strgradesforuser;
                 $userreportcell->text = $OUTPUT->action_icon($userreporticon);
                 $userrow->cells[] = $userreportcell;
@@ -1417,15 +1417,15 @@ class grade_report_grader extends grade_report {
             $contractexpandicon = new moodle_action_icon();
             $contractexpandicon->link->url = new moodle_url($this->gpr->get_return_url(null, array('target'=>$element['eid'], 'action'=>'switch_minus', 'sesskey'=>sesskey())));
             $contractexpandicon->image->add_class('iconsmall');
-            $contractexpandicon->image->src = $OUTPUT->old_icon_url('t/switch_minus');
+            $contractexpandicon->image->src = $OUTPUT->pix_url('t/switch_minus');
             $contractexpandicon->image->alt = $strswitchminus;
 
             if (in_array($element['object']->id, $this->collapsed['aggregatesonly'])) {
-                $contractexpandicon->image->src = $OUTPUT->old_icon_url('t/switch_plus');
+                $contractexpandicon->image->src = $OUTPUT->pix_url('t/switch_plus');
                 $contractexpandicon->image->alt = $strswitchplus;
                 $contractexpandicon->link->url->param('action', 'switch_plus');
             } elseif (in_array($element['object']->id, $this->collapsed['gradesonly'])) {
-                $contractexpandicon->image->src = $OUTPUT->old_icon_url('t/switch_whole');
+                $contractexpandicon->image->src = $OUTPUT->pix_url('t/switch_whole');
                 $contractexpandicon->image->alt = $strswitchwhole;
                 $contractexpandicon->link->url->param('action', 'switch_whole');
             }

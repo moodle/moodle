@@ -61,13 +61,13 @@ if ($keys) {
         $icon->image->add_class('iconsmall');
 
         $editicon = clone($icon);
-        $editicon->image->src = $OUTPUT->old_icon_url('t/edit');
+        $editicon->image->src = $OUTPUT->pix_url('t/edit');
         $editicon->image->title = $stredit;
         $editicon->image->alt = $stredit;
         $buttons = $OUTPUT->action_icon($editicon);
 
         $deleteicon = clone($icon);
-        $deleteicon->image->src = $OUTPUT->old_icon_url('t/delete');
+        $deleteicon->image->src = $OUTPUT->pix_url('t/delete');
         $deleteicon->image->title = $strdelete;
         $deleteicon->image->alt = $strdelete;
         $deleteicon->link->url->param('delete', 1);

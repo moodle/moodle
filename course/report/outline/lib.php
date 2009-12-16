@@ -35,6 +35,6 @@ function outline_report_extend_navigation($navigation, $course, $context) {
     global $CFG, $OUTPUT;
     if (has_capability('coursereport/outline:view', $context)) {
         $url = new moodle_url($CFG->wwwroot.'/course/report/outline/index.php', array('id'=>$course->id));
-        $navigation->add(get_string( 'activityreport' ), $url, navigation_node::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/report'));
+        $navigation->add(get_string( 'activityreport' ), $url, navigation_node::TYPE_SETTING, null, null, $OUTPUT->pix_url('i/report'));
     }
 }

@@ -431,7 +431,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
                     echo '<div class="quizpagedelete">';
                     echo '<a title="' . get_string('removeemptypage', 'quiz') . '" href="' .
                             $pageurl->out_action(array('deleteemptypage' => $i - 1)) .
-                            '"><img src="' . $OUTPUT->old_icon_url('t/delete') . '" ' .
+                            '"><img src="' . $OUTPUT->pix_url('t/delete') . '" ' .
                             'class="iconsmall" alt="' . $strremove . '" /></a>';
                     echo '</div>';
                 }
@@ -492,7 +492,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
                     }
                     echo "<a title=\"$strmoveup\" href=\"" .
                             $pageurl->out_action(array('up' => $question->id)) . "\"><img
-                             src=\"" . $OUTPUT->old_icon_url('t/up') . "\" class=\"iconsmall
+                             src=\"" . $OUTPUT->pix_url('t/up') . "\" class=\"iconsmall
                             $upbuttonclass\" alt=\"$strmoveup\" /></a>";
                 }
 
@@ -501,7 +501,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
                 if (!$hasattempts) {
                     echo "<a title=\"$strmovedown\" href=\"" .
                             $pageurl->out_action(array('down' => $question->id)) . "\"><img
-                            src=\"" . $OUTPUT->old_icon_url('t/down') . "\" class=\"iconsmall\"" .
+                            src=\"" . $OUTPUT->pix_url('t/down') . "\" class=\"iconsmall\"" .
                             " alt=\"$strmovedown\" /></a>";
                 }
             }
@@ -510,7 +510,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
                 if (!$hasattempts) {
                     echo "<a title=\"$strremove\" href=\"" .
                             $pageurl->out_action(array('remove' => $question->id)) . "\">
-                            <img src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" " .
+                            <img src=\"" . $OUTPUT->pix_url('t/delete') . "\" " .
                             "class=\"iconsmall\" alt=\"$strremove\" /></a>";
                 }
             }
@@ -910,7 +910,7 @@ function print_random_option_icon($question) {
         $icon = 'nosubcat';
         $tooltip = get_string('randomnosubcat', 'quiz');
     }
-    echo '<img src="' . $OUTPUT->old_icon_url('i/' . $icon) . '" alt="' .
+    echo '<img src="' . $OUTPUT->pix_url('i/' . $icon) . '" alt="' .
             $tooltip . '" title="' . $tooltip . '" class="uihint" />';
 
 }

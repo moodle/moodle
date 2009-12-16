@@ -60,7 +60,7 @@ class data_field_file extends data_field_base {
             // Print icon if file already exists
             $browser = get_file_browser();
             $src     = file_encode_url($CFG->wwwroot.'/pluginfile.php', $this->context->id.'/data_content/'.$content->id.'/'.$file->get_filename());
-            $str .= '<img src="'.$OUTPUT->old_icon_url(file_mimetype_icon($file->get_mimetype())).'" class="icon" alt="'.$file->get_mimetype().'" />'.
+            $str .= '<img src="'.$OUTPUT->pix_url(file_mimetype_icon($file->get_mimetype())).'" class="icon" alt="'.$file->get_mimetype().'" />'.
                     '<a href="'.$src.'" >'.s($file->get_filename()).'</a>';
         }
         return $str;
@@ -121,7 +121,7 @@ class data_field_file extends data_field_base {
         $width  = $this->field->param1 ? ' width  = "'.s($this->field->param1).'" ':' ';
         $height = $this->field->param2 ? ' height = "'.s($this->field->param2).'" ':' ';
 
-        $str = '<img src="'.$OUTPUT->old_icon_url(file_mimetype_icon($file->get_mimetype())).'" height="16" width="16" alt="'.$file->get_mimetype().'" />&nbsp;'.
+        $str = '<img src="'.$OUTPUT->pix_url(file_mimetype_icon($file->get_mimetype())).'" height="16" width="16" alt="'.$file->get_mimetype().'" />&nbsp;'.
                '<a href="'.$src.'" >'.s($name).'</a>';
         return $str;
     }

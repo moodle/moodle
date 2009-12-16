@@ -131,7 +131,7 @@ echo $OUTPUT->header();
         $edittagthisunit = get_string('edittagthisunit', $tagslang);
         $arrowtitle = get_string('arrowtitle', $tagslang);
         $sesskey = sesskey();
-        $leftarrow = $OUTPUT->old_icon_url('t/arrow_left');
+        $leftarrow = $OUTPUT->pix_url('t/arrow_left');
         $outstr .= <<<EOT
             <form action="$CFG->wwwroot/tag/coursetags_edit.php" method="post" id="coursetag">
                 <div style="display: none;">

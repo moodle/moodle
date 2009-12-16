@@ -300,42 +300,42 @@
                 // checks whether user can update course settings
                 if (has_capability('moodle/course:update', $coursecontext)) {
                     echo "<a title=\"".get_string("settings")."\" href=\"$CFG->wwwroot/course/edit.php?id=$course->id\">\n<img".
-                        " src=\"" . $OUTPUT->old_icon_url('t/edit') . "\" class=\"iconsmall\" alt=\"".get_string("settings")."\" /></a>\n ";
+                        " src=\"" . $OUTPUT->pix_url('t/edit') . "\" class=\"iconsmall\" alt=\"".get_string("settings")."\" /></a>\n ";
                 }
 
                 // checks whether user can do role assignment
                 if (has_capability('moodle/role:assign', $coursecontext)) {
                     echo'<a title="'.get_string('assignroles', 'role').'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$coursecontext->id.'">';
-                    echo '<img src="'.$OUTPUT->old_icon_url('i/roles') . '" class="iconsmall" alt="'.get_string('assignroles', 'role').'" /></a> ' . "\n";
+                    echo '<img src="'.$OUTPUT->pix_url('i/roles') . '" class="iconsmall" alt="'.get_string('assignroles', 'role').'" /></a> ' . "\n";
                 }
 
                 // checks whether user can delete course
                 if (has_capability('moodle/course:delete', $coursecontext)) {
                     echo "<a title=\"".get_string("delete")."\" href=\"delete.php?id=$course->id\">\n<img".
-                        " src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" class=\"iconsmall\" alt=\"".get_string("delete")."\" /></a>\n ";
+                        " src=\"" . $OUTPUT->pix_url('t/delete') . "\" class=\"iconsmall\" alt=\"".get_string("delete")."\" /></a>\n ";
                 }
 
                 // checks whether user can change visibility
                 if (has_capability('moodle/course:visibility', $coursecontext)) {
                     if (!empty($course->visible)) {
                         echo "<a title=\"".get_string("hide")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;hide=$course->id&amp;sesskey=".sesskey()."\">\n<img".
-                            " src=\"" . $OUTPUT->old_icon_url('t/hide') . "\" class=\"iconsmall\" alt=\"".get_string("hide")."\" /></a>\n ";
+                            " src=\"" . $OUTPUT->pix_url('t/hide') . "\" class=\"iconsmall\" alt=\"".get_string("hide")."\" /></a>\n ";
                     } else {
                         echo "<a title=\"".get_string("show")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;show=$course->id&amp;sesskey=".sesskey()."\">\n<img".
-                            " src=\"" . $OUTPUT->old_icon_url('t/show') . "\" class=\"iconsmall\" alt=\"".get_string("show")."\" /></a>\n ";
+                            " src=\"" . $OUTPUT->pix_url('t/show') . "\" class=\"iconsmall\" alt=\"".get_string("show")."\" /></a>\n ";
                     }
                 }
 
                 // checks whether user can do site backup
                 if (has_capability('moodle/site:backup', $coursecontext)) {
                     echo "<a title=\"".get_string("backup")."\" href=\"../backup/backup.php?id=$course->id\">\n<img".
-                        " src=\"" . $OUTPUT->old_icon_url('t/backup') . "\" class=\"iconsmall\" alt=\"".get_string("backup")."\" /></a>\n ";
+                        " src=\"" . $OUTPUT->pix_url('t/backup') . "\" class=\"iconsmall\" alt=\"".get_string("backup")."\" /></a>\n ";
                 }
 
                 // checks whether user can do restore
                 if (has_capability('moodle/site:restore', $coursecontext)) {
                     echo "<a title=\"".get_string("restore")."\" href=\"../files/index.php?id=$course->id&amp;wdir=/backupdata\">\n<img".
-                        " src=\"" . $OUTPUT->old_icon_url('t/restore') . "\" class=\"iconsmall\" alt=\"".get_string("restore")."\" /></a>\n ";
+                        " src=\"" . $OUTPUT->pix_url('t/restore') . "\" class=\"iconsmall\" alt=\"".get_string("restore")."\" /></a>\n ";
                 }
 
                 echo "</td>\n</tr>\n";

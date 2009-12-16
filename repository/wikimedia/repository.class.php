@@ -15,7 +15,7 @@ class repository_wikimedia extends repository {
         foreach ($result as $title=>$url) {
             $list['list'][] = array(
                 'title'=>substr($title, 5),
-                'thumbnail'=>$OUTPUT->old_icon_url(file_extension_icon('xx.jpg', 32)),
+                'thumbnail'=>$OUTPUT->pix_url(file_extension_icon('xx.jpg', 32)),
                 // plugin-dependent unique path to the file (id, url, path, etc.)
                 'source'=>$url,
                 // the accessible url of the file

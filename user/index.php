@@ -343,7 +343,7 @@
                     $editgroupaction = new moodle_action_icon();
                     $editgroupaction->link->url = new moodle_url($CFG->wwwroot.'/group/group.php', array('id' => $group->id, 'courseid' => $group->courseid));
                     $editgroupaction->link->title = get_string('editgroupprofile');
-                    $editgroupaction->image->src = $OUTPUT->old_icon_url('t/edit');
+                    $editgroupaction->image->src = $OUTPUT->pix_url('t/edit');
                     $editgroupaction->image->alt = get_string('editgroupprofile');
 
                     $contentheading .= '&nbsp;' . $OUTPUT->action_icon($editgroupaction);
@@ -649,13 +649,13 @@
         $heading .= ": $a->number";
         if (user_can_assign($context, $roleid)) {
             $heading .= ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?roleid='.$roleid.'&amp;contextid='.$context->id.'">';
-            $heading .= '<img src="'.$OUTPUT->old_icon_url('i/edit') . '" class="icon" alt="" /></a>';
+            $heading .= '<img src="'.$OUTPUT->pix_url('i/edit') . '" class="icon" alt="" /></a>';
         }
         echo $OUTPUT->heading($heading, 3);
     } else {
         if ($course->id != SITEID && has_capability('moodle/role:assign', $context)) {
             $editlink  = ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">';
-            $editlink .= '<img src="'.$OUTPUT->old_icon_url('i/edit') . '" class="icon" alt="" /></a>';
+            $editlink .= '<img src="'.$OUTPUT->pix_url('i/edit') . '" class="icon" alt="" /></a>';
         } else {
             $editlink = '';
         }
@@ -878,7 +878,7 @@
                 $user = make_context_subobj($user);
                 if ( !empty($user->hidden) ) {
                 // if the assignment is hidden, display icon
-                    $hidden = " <img src=\"" . $OUTPUT->old_icon_url('t/show') . "\" title=\"".get_string('userhashiddenassignments', 'role')."\" alt=\"".get_string('hiddenassign')."\" class=\"hide-show-image\"/>";
+                    $hidden = " <img src=\"" . $OUTPUT->pix_url('t/show') . "\" title=\"".get_string('userhashiddenassignments', 'role')."\" alt=\"".get_string('hiddenassign')."\" class=\"hide-show-image\"/>";
                 } else {
                     $hidden = '';
                 }

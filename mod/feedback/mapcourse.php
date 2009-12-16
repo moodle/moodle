@@ -118,7 +118,7 @@ if($coursemap = feedback_get_courses_from_sitecourse_map($feedback->id)) {
     $table->setup();
 
     foreach ($coursemap as $cmap) {
-        $table->add_data(array('<a href="'.htmlspecialchars('unmapcourse.php?id='.$id.'&cmapid='.$cmap->id).'"><img src="'.$OUTPUT->old_icon_url('t/delete') . '" alt="Delete" /></a> ('.$cmap->shortname.') '.$cmap->fullname));
+        $table->add_data(array('<a href="'.htmlspecialchars('unmapcourse.php?id='.$id.'&cmapid='.$cmap->id).'"><img src="'.$OUTPUT->pix_url('t/delete') . '" alt="Delete" /></a> ('.$cmap->shortname.') '.$cmap->fullname));
     }
 
     $table->print_html();

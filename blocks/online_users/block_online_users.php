@@ -154,7 +154,7 @@ class block_online_users extends block_base {
                 }
                 if ($canshowicon and ($USER->id != $user->id) and  $user->username != 'guest') {  // Only when logged in and messaging active etc
                     $this->content->text .= '<div class="message"><a title="'.get_string('messageselectadd').'" href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="this.target=\'message_'.$user->id.'\';return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">'
-                        .'<img class="iconsmall" src="'.$OUTPUT->old_icon_url('t/message') . '" alt="'. get_string('messageselectadd') .'" /></a></div>';
+                        .'<img class="iconsmall" src="'.$OUTPUT->pix_url('t/message') . '" alt="'. get_string('messageselectadd') .'" /></a></div>';
                 }
                 $this->content->text .= "</li>\n";
             }

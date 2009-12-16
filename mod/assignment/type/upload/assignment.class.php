@@ -291,7 +291,7 @@ class assignment_upload extends assignment_base {
                 $found = true;
                 $mimetype = $file->get_mimetype();
                 $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
-                $output .= '<a href="'.$path.'" ><img class="icon" src="'.$OUTPUT->old_icon_url(file_mimetype_icon($mimetype)).'" alt="'.$mimetype.'" />'.s($filename).'</a>&nbsp;';
+                $output .= '<a href="'.$path.'" ><img class="icon" src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" alt="'.$mimetype.'" />'.s($filename).'</a>&nbsp;';
 
             }
 
@@ -350,13 +350,13 @@ class assignment_upload extends assignment_base {
                 $filename = $file->get_filename();
                 $mimetype = $file->get_mimetype();
                 $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
-                $output .= '<a href="'.$path.'" ><img src="'.$OUTPUT->old_icon_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />'.s($filename).'</a>';
+                $output .= '<a href="'.$path.'" ><img src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />'.s($filename).'</a>';
 
                 if ($candelete) {
                     $delurl  = "$CFG->wwwroot/mod/assignment/delete.php?id={$this->cm->id}&amp;file=".rawurlencode($filename)."&amp;userid={$submission->userid}&amp;mode=$mode&amp;offset=$offset";
 
                     $output .= '<a href="'.$delurl.'">&nbsp;'
-                              .'<img title="'.$strdelete.'" src="'.$OUTPUT->old_icon_url('t/delete') . '" class="iconsmall" alt="" /></a> ';
+                              .'<img title="'.$strdelete.'" src="'.$OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt="" /></a> ';
                 }
 
                 if (has_capability('mod/assignment:exportownsubmission', $this->context)) {
@@ -412,13 +412,13 @@ class assignment_upload extends assignment_base {
                 $mimetype = $file->get_mimetype();
                 $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_response/'.$userid.'/'.$filename);
 
-                $output .= '<a href="'.$path.'" ><img src="'.$OUTPUT->old_icon_url(file_mimetype_icon($mimetype)).'" alt="'.$mimetype.'" />'.$filename.'</a>';
+                $output .= '<a href="'.$path.'" ><img src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" alt="'.$mimetype.'" />'.$filename.'</a>';
 
                 if ($candelete) {
                     $delurl  = "$CFG->wwwroot/mod/assignment/delete.php?id={$this->cm->id}&amp;file=".rawurlencode($filename)."&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset&amp;action=response";
 
                     $output .= '<a href="'.$delurl.'">&nbsp;'
-                              .'<img title="'.$strdelete.'" src="'.$OUTPUT->old_icon_url('t/delete') . '" class="iconsmall" alt=""/></a> ';
+                              .'<img title="'.$strdelete.'" src="'.$OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt=""/></a> ';
                 }
 
                 $output .= '&nbsp;';
@@ -1090,7 +1090,7 @@ class assignment_upload extends assignment_base {
                     $filename = $file->get_filename();
                     $mimetype = $file->get_mimetype();
                     $link = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$USER->id.'/'.$filename);
-                    $node->get($filekey)->add($filename, $link, navigation_node::TYPE_SETTING, null, null, $OUTPUT->old_icon_url(file_mimetype_icon($mimetype)));
+                    $node->get($filekey)->add($filename, $link, navigation_node::TYPE_SETTING, null, null, $OUTPUT->pix_url(file_mimetype_icon($mimetype)));
                 }
             }
         }

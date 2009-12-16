@@ -206,7 +206,7 @@ class repository_mahara extends repository {
         $list = array();
          if (!empty($filesandfolders['folders'])) {
             foreach ($filesandfolders['folders'] as $folder) {
-                $list[] =  array('path'=>$folder['id'], 'title'=>$folder['title'], 'date'=>$folder['mtime'], 'size'=>'0', 'children'=>array(), 'thumbnail' => $OUTPUT->old_icon_url('f/folder'));
+                $list[] =  array('path'=>$folder['id'], 'title'=>$folder['title'], 'date'=>$folder['mtime'], 'size'=>'0', 'children'=>array(), 'thumbnail' => $OUTPUT->pix_url('f/folder'));
             }
         }
         if (!empty($filesandfolders['files'])) {
@@ -214,7 +214,7 @@ class repository_mahara extends repository {
                 if ($file['artefacttype'] == 'image') {
                     $thumbnail = $host->wwwroot."/artefact/file/download.php?file=".$file['id']."&size=70x55";
                 } else {
-                    $thumbnail = $OUTPUT->old_icon_url(file_extension_icon( $file['title'], 32));
+                    $thumbnail = $OUTPUT->pix_url(file_extension_icon( $file['title'], 32));
                 }
                 $list[] = array( 'title'=>$file['title'], 'date'=>$file['mtime'], 'source'=>$file['id'], 'thumbnail' => $thumbnail);
             }

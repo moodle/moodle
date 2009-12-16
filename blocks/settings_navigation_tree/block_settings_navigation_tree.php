@@ -145,7 +145,7 @@ class block_settings_navigation_tree extends block_tree {
             $url->param('regenerate','navigation');
             $reloadicon->link->url = $url;
             $reloadicon->link->add_class('customcommand');
-            $reloadicon->image->src = $OUTPUT->old_icon_url('t/reload');
+            $reloadicon->image->src = $OUTPUT->pix_url('t/reload');
             $reloadicon->alt = get_string('reload');
             $reloadicon->title = get_string('reload');
 
@@ -158,12 +158,12 @@ class block_settings_navigation_tree extends block_tree {
                 $moveicon->link->add_classes('moveto customcommand requiresjs');
                 $moveicon->link->url = $this->page->url;
                 if ($this->docked) {
-                    $moveicon->image->src = $OUTPUT->old_icon_url('t/movetoblock');
+                    $moveicon->image->src = $OUTPUT->pix_url('t/movetoblock');
                     $moveicon->image->alt = $toggleblockdisplay;
                     $moveicon->image->title = $toggleblockdisplay;
                     $moveicon->link->url->param('undock', $this->instance->id);
                 } else {
-                    $moveicon->image->src = $OUTPUT->old_icon_url('t/movetosidetab');
+                    $moveicon->image->src = $OUTPUT->pix_url('t/movetosidetab');
                     $moveicon->image->alt = $togglesidetabdisplay;
                     $moveicon->image->title = $togglesidetabdisplay;
                     $moveicon->link->url->param('dock', $this->instance->id);

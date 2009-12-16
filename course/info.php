@@ -47,11 +47,11 @@
         echo $OUTPUT->box_start('generalbox icons');
         if ($course->guest) {
             $strallowguests = get_string('allowguests');
-            echo "<div><img alt=\"\" class=\"icon guest\" src=\"" . $OUTPUT->old_icon_url('i/guest') . "\" />&nbsp;$strallowguests</div>";
+            echo "<div><img alt=\"\" class=\"icon guest\" src=\"" . $OUTPUT->pix_url('i/guest') . "\" />&nbsp;$strallowguests</div>";
         }
         if ($course->password) {
             $strrequireskey = get_string('requireskey');
-            echo "<div><img alt=\"\" class=\"icon key\" src=\"" . $OUTPUT->old_icon_url('i/key') . "\" />&nbsp;$strrequireskey</div>";
+            echo "<div><img alt=\"\" class=\"icon key\" src=\"" . $OUTPUT->pix_url('i/key') . "\" />&nbsp;$strrequireskey</div>";
         }
         echo $OUTPUT->box_end();
     }

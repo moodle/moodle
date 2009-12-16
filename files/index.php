@@ -254,7 +254,7 @@ function displaydir($file_info) {
 
         echo "<tr class=\"folder\">";
         print_cell();
-        print_cell('left', '<a href="index.php?'.$params.'"><img src="'.$OUTPUT->old_icon_url('f/parent') . '" class="icon" alt="" />&nbsp;'.get_string('parentfolder').'</a>', 'name');
+        print_cell('left', '<a href="index.php?'.$params.'"><img src="'.$OUTPUT->pix_url('f/parent') . '" class="icon" alt="" />&nbsp;'.get_string('parentfolder').'</a>', 'name');
         print_cell();
         print_cell();
         print_cell();
@@ -279,11 +279,11 @@ function displaydir($file_info) {
 
                 echo "<tr class=\"folder\">";
                 print_cell();
-                print_cell("left", "<a href=\"index.php?$params\"><img src=\"" . $OUTPUT->old_icon_url('f/folder') . "\" class=\"icon\" alt=\"$strfolder\" />&nbsp;".s($filename)."</a>", 'name');
+                print_cell("left", "<a href=\"index.php?$params\"><img src=\"" . $OUTPUT->pix_url('f/folder') . "\" class=\"icon\" alt=\"$strfolder\" />&nbsp;".s($filename)."</a>", 'name');
                 print_cell("right", $filesize, 'size');
                 print_cell("right", $filedate, 'date');
                 if ($parentwritable) {
-                    print_cell("right", "<a href=\"index.php?$params&amp;sesskey=".sesskey()."&amp;delete=1\"><img src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" class=\"iconsmall\" alt=\"$strdelete\" /></a>", 'command');
+                    print_cell("right", "<a href=\"index.php?$params&amp;sesskey=".sesskey()."&amp;delete=1\"><img src=\"" . $OUTPUT->pix_url('t/delete') . "\" class=\"iconsmall\" alt=\"$strdelete\" /></a>", 'command');
                 } else {
                     print_cell();
                 }
@@ -292,13 +292,13 @@ function displaydir($file_info) {
             } else {
 
                 if ($downloadurl = $child_info->get_url(true)) {
-                    $downloadurl = "&nbsp;<a href=\"$downloadurl\" title=\"" . get_string('downloadfile') . "\"><img src=\"" . $OUTPUT->old_icon_url('t/down') . "\" class=\"iconsmall\" alt=\"$strdownload\" /></a>";
+                    $downloadurl = "&nbsp;<a href=\"$downloadurl\" title=\"" . get_string('downloadfile') . "\"><img src=\"" . $OUTPUT->pix_url('t/down') . "\" class=\"iconsmall\" alt=\"$strdownload\" /></a>";
                 } else {
                     $downloadurl = '';
                 }
 
                 if ($viewurl = $child_info->get_url()) {
-                    $link = html_link::make($viewurl, "display", "<img src=\"" . $OUTPUT->old_icon_url('t/preview') . "\" class=\"iconsmall\" alt=\"$strfile\" />&nbsp;");
+                    $link = html_link::make($viewurl, "display", "<img src=\"" . $OUTPUT->pix_url('t/preview') . "\" class=\"iconsmall\" alt=\"$strfile\" />&nbsp;");
                     $link->add_action(new popup_action('click', $link->url, 'display', array('height' => 480, 'width' => 640)));
                     $viewurl = "&nbsp;".$OUTPUT->link($link);
                 } else {
@@ -309,11 +309,11 @@ function displaydir($file_info) {
 
                 echo "<tr class=\"file\">";
                 print_cell();
-                print_cell("left", "<img src=\"" . $OUTPUT->old_icon_url(file_mimetype_icon($mimetype)) . "\" class=\"icon\" alt=\"$strfile\" />&nbsp;".s($filename).$downloadurl.$viewurl, 'name');
+                print_cell("left", "<img src=\"" . $OUTPUT->pix_url(file_mimetype_icon($mimetype)) . "\" class=\"icon\" alt=\"$strfile\" />&nbsp;".s($filename).$downloadurl.$viewurl, 'name');
                 print_cell("right", $filesize, 'size');
                 print_cell("right", $filedate, 'date');
                 if ($parentwritable) {
-                    print_cell("right", "<a href=\"index.php?$params&amp;sesskey=".sesskey()."&amp;delete=1\"><img src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" class=\"iconsmall\" alt=\"$strdelete\" /></a>", 'command');
+                    print_cell("right", "<a href=\"index.php?$params&amp;sesskey=".sesskey()."&amp;delete=1\"><img src=\"" . $OUTPUT->pix_url('t/delete') . "\" class=\"iconsmall\" alt=\"$strdelete\" /></a>", 'command');
                 } else {
                     print_cell();
                 }

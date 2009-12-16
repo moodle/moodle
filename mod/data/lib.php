@@ -430,7 +430,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         global $OUTPUT;
 
         $str = '<a href="field.php?d='.$this->data->id.'&amp;fid='.$this->field->id.'&amp;mode=display&amp;sesskey='.sesskey().'">';
-        $str .= '<img src="'.$OUTPUT->old_icon_url('/field/' . $this->type . '/icon', 'data') . '" ';
+        $str .= '<img src="'.$OUTPUT->pix_url('/field/' . $this->type . '/icon', 'data') . '" ';
         $str .= 'height="'.$this->iconheight.'" width="'.$this->iconwidth.'" alt="'.$this->type.'" title="'.$this->type.'" /></a>';
         return $str;
     }
@@ -1223,9 +1223,9 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
         $patterns[]='##delete##';
         if (has_capability('mod/data:manageentries', $context) or data_isowner($record->id)) {
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/edit.php?d='
-                             .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->old_icon_url('t/edit') . '" class="iconsmall" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
+                             .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('t/edit') . '" class="iconsmall" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
-                             .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->old_icon_url('t/delete') . '" class="iconsmall" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
+                             .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
         } else {
             $replacement[] = '';
             $replacement[] = '';
@@ -1236,7 +1236,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
             $moreurl .= '&amp;filter=1';
         }
         $patterns[]='##more##';
-        $replacement[] = '<a href="' . $moreurl . '"><img src="' . $OUTPUT->old_icon_url('i/search') . '" class="iconsmall" alt="' . get_string('more', 'data') . '" title="' . get_string('more', 'data') . '" /></a>';
+        $replacement[] = '<a href="' . $moreurl . '"><img src="' . $OUTPUT->pix_url('i/search') . '" class="iconsmall" alt="' . get_string('more', 'data') . '" title="' . get_string('more', 'data') . '" /></a>';
 
         $patterns[]='##moreurl##';
         $replacement[] = $moreurl;
@@ -1268,7 +1268,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
 
         $patterns[]='##approve##';
         if (has_capability('mod/data:approve', $context) && ($data->approval) && (!$record->approved)){
-            $replacement[] = '<span class="approve"><a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->old_icon_url('i/approve') . '" class="icon" alt="'.get_string('approve').'" /></a></span>';
+            $replacement[] = '<span class="approve"><a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('i/approve') . '" class="icon" alt="'.get_string('approve').'" /></a></span>';
         } else {
             $replacement[] = '';
         }

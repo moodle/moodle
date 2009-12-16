@@ -24,7 +24,7 @@ class block_course_list extends block_list {
         $this->content->icons = array();
         $this->content->footer = '';
 
-        $icon  = "<img src=\"" . $OUTPUT->old_icon_url('i/course') . "\"".
+        $icon  = "<img src=\"" . $OUTPUT->pix_url('i/course') . "\"".
                  " class=\"icon\" alt=\"".get_string("coursecategory")."\" />";
 
         $adminseesall = true;
@@ -116,7 +116,7 @@ class block_course_list extends block_list {
             return;
         }
 
-        $icon  = '<img src="'.$OUTPUT->old_icon_url('i/mnethost') . '" class="icon" alt="'.get_string('course').'" />';
+        $icon  = '<img src="'.$OUTPUT->pix_url('i/mnethost') . '" class="icon" alt="'.get_string('course').'" />';
 
         // only for logged in users!
         if (!isloggedin() || isguestuser()) {

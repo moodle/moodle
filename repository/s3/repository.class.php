@@ -72,7 +72,7 @@ class repository_s3 extends repository {
                 $folder = array(
                     'title' => $bucket,
                     'children' => array(),
-                    'thumbnail'=>$OUTPUT->old_icon_url('f/folder-32'),
+                    'thumbnail'=>$OUTPUT->pix_url('f/folder-32'),
                     'path'=>$bucket
                     );
                 $tree[] = $folder;
@@ -86,7 +86,7 @@ class repository_s3 extends repository {
                     'size'=>$file['size'],
                     'date'=>userdate($file['time']),
                     'source'=>$path.'/'.$file['name'],
-                    'thumbnail' => $OUTPUT->old_icon_url(file_extension_icon($file['name'], 32))
+                    'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file['name'], 32))
                     );
             }
         }

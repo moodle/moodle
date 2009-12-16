@@ -100,7 +100,7 @@ class question_category_list_item extends list_item {
 
         if (count($this->parentlist->records)!=1){ // don't allow delete if this is the last category in this context.
             $item .=  '<a title="' . $str->delete . '" href="'.$this->parentlist->pageurl->out_action(array('delete'=>$this->id)).'">
-                    <img src="' . $OUTPUT->old_icon_url('t/delete') . '" class="iconsmall" alt="' .$str->delete. '" /></a>';
+                    <img src="' . $OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt="' .$str->delete. '" /></a>';
         }
 
         return $item;

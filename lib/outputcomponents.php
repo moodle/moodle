@@ -1923,7 +1923,7 @@ class moodle_user_picture extends moodle_html_component {
             $this->image->src = new moodle_url(get_file_url($this->user->id.'/'.$file.'.jpg', null, 'user'));
         } else { // Print default user pictures (use theme version if available)
             $this->add_class('defaultuserpic');
-            $this->image->src = $OUTPUT->old_icon_url('u/' . $file);
+            $this->image->src = $OUTPUT->pix_url('u/' . $file);
         }
 
         if ($this->alttext) {
@@ -2040,7 +2040,7 @@ class moodle_help_icon extends labelled_html_component {
             if ($image instanceof moodle_url) {
                 $this->image->src = $image->out();
             } else if ($image === true) {
-                $this->image->src = $OUTPUT->old_icon_url('help');
+                $this->image->src = $OUTPUT->pix_url('help');
             } else if (is_string($image)) {
                 $this->image->src = $image;
             }
@@ -2056,7 +2056,7 @@ class moodle_help_icon extends labelled_html_component {
             if (!($this->image instanceof html_image)) {
                 $this->image = new html_image();
             }
-            $this->image->src = $OUTPUT->old_icon_url('help');
+            $this->image->src = $OUTPUT->pix_url('help');
         }
 
         parent::prepare();
@@ -2233,7 +2233,7 @@ class block_contents extends moodle_html_component {
     /**
      * A (possibly empty) array of editing controls. Each element of this array
      * should be an array('url' => $url, 'icon' => $icon, 'caption' => $caption).
-     * $icon is the icon name. Fed to $OUTPUT->old_icon_url.
+     * $icon is the icon name. Fed to $OUTPUT->pix_url.
      * @var array
      */
     public $controls = array();

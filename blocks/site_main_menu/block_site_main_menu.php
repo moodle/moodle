@@ -50,9 +50,9 @@ class block_site_main_menu extends block_list {
                             ' href="'.$CFG->wwwroot.'/mod/'.$cm->modname.'/view.php?id='.$cm->id.'">'.$instancename.'</a>';
                         //Accessibility: incidental image - should be empty Alt text
                         if (!empty($cm->icon)) {
-                            $icon = $OUTPUT->old_icon_url($cm->icon);
+                            $icon = $OUTPUT->pix_url($cm->icon);
                         } else {
-                            $icon = $OUTPUT->old_icon_url('icon', $cm->modname);
+                            $icon = $OUTPUT->pix_url('icon', $cm->modname);
                         }
                         $this->content->icons[] = '<img src="'.$icon.'" class="icon" alt="" />';
                     }
@@ -80,7 +80,7 @@ class block_site_main_menu extends block_list {
         $editbuttons = '';
 
         if ($ismoving) {
-            $this->content->icons[] = '<img src="'.$OUTPUT->old_icon_url('t/move') . '" class="iconsmall" alt="" />';
+            $this->content->icons[] = '<img src="'.$OUTPUT->pix_url('t/move') . '" class="iconsmall" alt="" />';
             $this->content->items[] = $USER->activitycopyname.'&nbsp;(<a href="'.$CFG->wwwroot.'/course/mod.php?cancelcopy=true&amp;sesskey='.sesskey().'">'.$strcancel.'</a>)';
         }
 
@@ -110,7 +110,7 @@ class block_site_main_menu extends block_list {
                             continue;
                         }
                         $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.sesskey().'">'.
-                            '<img style="height:16px; width:80px; border:0px" src="'.$OUTPUT->old_icon_url('movehere') . '" alt="'.$strmovehere.'" /></a>';
+                            '<img style="height:16px; width:80px; border:0px" src="'.$OUTPUT->pix_url('movehere') . '" alt="'.$strmovehere.'" /></a>';
                         $this->content->icons[] = '';
                     }
                     $instancename = $modinfo->cms[$modnumber]->name;
@@ -122,9 +122,9 @@ class block_site_main_menu extends block_list {
                         $extra = '';
                     }
                     if (!empty($modinfo->cms[$modnumber]->icon)) {
-                        $icon = $OUTPUT->old_icon_url($modinfo->cms[$modnumber]->icon);
+                        $icon = $OUTPUT->pix_url($modinfo->cms[$modnumber]->icon);
                     } else {
-                        $icon = $OUTPUT->old_icon_url('icon', $mod->modname);
+                        $icon = $OUTPUT->pix_url('icon', $mod->modname);
                     }
 
                     if ($mod->modname == 'label') {
@@ -142,7 +142,7 @@ class block_site_main_menu extends block_list {
 
         if ($ismoving) {
             $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.sesskey().'">'.
-                                      '<img style="height:16px; width:80px; border:0px" src="'.$OUTPUT->old_icon_url('movehere') . '" alt="'.$strmovehere.'" /></a>';
+                                      '<img style="height:16px; width:80px; border:0px" src="'.$OUTPUT->pix_url('movehere') . '" alt="'.$strmovehere.'" /></a>';
             $this->content->icons[] = '';
         }
 

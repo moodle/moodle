@@ -109,7 +109,7 @@ class repository_local extends repository {
                             'date' => '',
                             'path' => $params,
                             'children'=>array(),
-                            'thumbnail' => $OUTPUT->old_icon_url('f/folder-32') . ''
+                            'thumbnail' => $OUTPUT->pix_url('f/folder-32') . ''
                         );
                         $list[] = $node;
                     } else {
@@ -120,7 +120,7 @@ class repository_local extends repository {
                             'size' => 0,
                             'date' => '',
                             'source'=> $params,
-                            'thumbnail' => $OUTPUT->old_icon_url($icon),
+                            'thumbnail' => $OUTPUT->pix_url($icon),
                         );
                         $list[] = $node;
                     }

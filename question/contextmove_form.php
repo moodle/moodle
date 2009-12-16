@@ -26,7 +26,7 @@ class question_context_move_form extends moodleform {
             $i = 0;
             foreach (array_keys($urls) as $url){
                 $icontype = mimeinfo('type', $url);
-                $img = "<img src=\"" . $OUTPUT->old_icon_url(file_extension_icon($url)) . "\"  class=\"icon\" alt=\"$icontype\" />";
+                $img = "<img src=\"" . $OUTPUT->pix_url(file_extension_icon($url)) . "\"  class=\"icon\" alt=\"$icontype\" />";
                 if (in_array($url, $brokenurls)){
                     $mform->addElement('select', "urls[$i]", $img.$url, $brokenfileoptions);
                 } else {

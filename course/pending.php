@@ -107,7 +107,7 @@ if (empty($pending)) {
 
     // Loop over requested courses.
     $keyicon = new html_image();
-    $keyicon->src = $OUTPUT->old_icon_url('i/key');
+    $keyicon->src = $OUTPUT->pix_url('i/key');
     $keyicon->alt = $strrequireskey;
     $keyicon->add_class('icon');
     $keyicon = $OUTPUT->image($keyicon);

@@ -1025,11 +1025,11 @@ class flexible_table {
             if($this->is_collapsible) {
                 if(!empty($this->sess->collapse[$column])) {
                     // some headers contain < br/> tags, do not include in title
-                    $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_SHOW].'='.$column.'"><img src="'.$OUTPUT->old_icon_url('t/switch_plus') . '" title="'.get_string('show').' '.strip_tags($this->headers[$index]).'" alt="'.get_string('show').'" /></a>';
+                    $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_SHOW].'='.$column.'"><img src="'.$OUTPUT->pix_url('t/switch_plus') . '" title="'.get_string('show').' '.strip_tags($this->headers[$index]).'" alt="'.get_string('show').'" /></a>';
                 }
                 else if($this->headers[$index] !== NULL) {
                     // some headers contain < br/> tags, do not include in title
-                    $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_HIDE].'='.$column.'"><img src="'.$OUTPUT->old_icon_url('t/switch_minus') . '" title="'.get_string('hide').' '.strip_tags($this->headers[$index]).'" alt="'.get_string('hide').'" /></a>';
+                    $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_HIDE].'='.$column.'"><img src="'.$OUTPUT->pix_url('t/switch_minus') . '" title="'.get_string('hide').' '.strip_tags($this->headers[$index]).'" alt="'.get_string('hide').'" /></a>';
                 }
             }
 
@@ -1048,22 +1048,22 @@ class flexible_table {
                     if($primary_sort_column == 'firstname') {
                         $lsortorder = get_string('asc');
                         if($primary_sort_order == SORT_ASC) {
-                            $icon_sort_first = ' <img src="'.$OUTPUT->old_icon_url('t/down') . '" alt="'.get_string('asc').'" />';
+                            $icon_sort_first = ' <img src="'.$OUTPUT->pix_url('t/down') . '" alt="'.get_string('asc').'" />';
                             $fsortorder = get_string('asc');
                         }
                         else {
-                            $icon_sort_first = ' <img src="'.$OUTPUT->old_icon_url('t/up') . '" alt="'.get_string('desc').'" />';
+                            $icon_sort_first = ' <img src="'.$OUTPUT->pix_url('t/up') . '" alt="'.get_string('desc').'" />';
                             $fsortorder = get_string('desc');
                         }
                     }
                     else if($primary_sort_column == 'lastname') {
                         $fsortorder = get_string('asc');
                         if($primary_sort_order == SORT_ASC) {
-                            $icon_sort_last = ' <img src="'.$OUTPUT->old_icon_url('t/down') . '" alt="'.get_string('asc').'" />';
+                            $icon_sort_last = ' <img src="'.$OUTPUT->pix_url('t/down') . '" alt="'.get_string('asc').'" />';
                             $lsortorder = get_string('asc');
                         }
                         else {
-                            $icon_sort_last = ' <img src="'.$OUTPUT->old_icon_url('t/up') . '" alt="'.get_string('desc').'" />';
+                            $icon_sort_last = ' <img src="'.$OUTPUT->pix_url('t/up') . '" alt="'.get_string('desc').'" />';
                             $lsortorder = get_string('desc');
                         }
                     } else {
@@ -1083,11 +1083,11 @@ class flexible_table {
                 if($this->is_sortable($column)) {
                     if($primary_sort_column == $column) {
                         if($primary_sort_order == SORT_ASC) {
-                            $icon_sort = ' <img src="'.$OUTPUT->old_icon_url('t/down') . '" alt="'.get_string('asc').'" />';
+                            $icon_sort = ' <img src="'.$OUTPUT->pix_url('t/down') . '" alt="'.get_string('asc').'" />';
                             $localsortorder = get_string('asc');
                         }
                         else {
-                            $icon_sort = ' <img src="'.$OUTPUT->old_icon_url('t/up') . '" alt="'.get_string('desc').'" />';
+                            $icon_sort = ' <img src="'.$OUTPUT->pix_url('t/up') . '" alt="'.get_string('desc').'" />';
                             $localsortorder = get_string('desc');
                         }
                     } else {

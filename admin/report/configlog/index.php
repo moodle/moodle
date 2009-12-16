@@ -46,7 +46,7 @@ foreach ($columns as $column=>$strcolumn) {
         } else {
             $columnicon = $dir == 'ASC' ? 'down':'up';
         }
-        $columnicon = " <img src=\"" . $OUTPUT->old_icon_url('t/' . $columnicon) . "\" alt=\"\" />";
+        $columnicon = " <img src=\"" . $OUTPUT->pix_url('t/' . $columnicon) . "\" alt=\"\" />";
 
     }
     $hcolumns[$column] = "<a href=\"index.php?sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">".$strcolumn."</a>$columnicon";

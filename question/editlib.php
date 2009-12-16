@@ -241,9 +241,9 @@ abstract class question_bank_column_base {
     protected function get_sort_icon($reverse) {
         global $OUTPUT;
         if ($reverse) {
-            return ' <img src="' . $OUTPUT->old_icon_url('t/up') . '" alt="' . get_string('desc') . '" />';
+            return ' <img src="' . $OUTPUT->pix_url('t/up') . '" alt="' . get_string('desc') . '" />';
         } else {
-            return ' <img src="' . $OUTPUT->old_icon_url('t/down') . '" alt="' . get_string('asc') . '" />';
+            return ' <img src="' . $OUTPUT->pix_url('t/down') . '" alt="' . get_string('asc') . '" />';
         }
     }
 
@@ -578,7 +578,7 @@ abstract class question_bank_action_column_base extends question_bank_column_bas
     protected function print_icon($icon, $title, $url) {
         global $OUTPUT;
         echo '<a title="' . $title . '" href="' . $url . '">
-                <img src="' . $OUTPUT->old_icon_url($icon) . '" class="iconsmall" alt="' . $title . '" /></a>';
+                <img src="' . $OUTPUT->pix_url($icon) . '" class="iconsmall" alt="' . $title . '" /></a>';
     }
 
     public function get_required_fields() {
@@ -627,7 +627,7 @@ class question_bank_preview_action_column extends question_bank_action_column_ba
         if (question_has_capability_on($question, 'use')) {
             parse_str(QUESTION_PREVIEW_POPUP_OPTIONS, $options);
             $image = new html_image();
-            $image->src = $OUTPUT->old_icon_url('t/preview');
+            $image->src = $OUTPUT->pix_url('t/preview');
             $image->add_class('iconsmall');
             $image->alt = $this->strpreview;
 

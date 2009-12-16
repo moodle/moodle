@@ -81,8 +81,8 @@ function folder_get_file_link($file, $folder, $context) {
     $path        = '/'.$context->id.'/folder_content/'.$folder->revision.$file->get_filepath().$file->get_filename();
     $viewurl     = file_encode_url($urlbase, $path, false);
     $downloadurl = file_encode_url($urlbase, $path, true);
-    $downicon    = $OUTPUT->old_icon_url('t/down');
-    $mimeicon    = $OUTPUT->old_icon_url(file_mimetype_icon($file->get_mimetype()));
+    $downicon    = $OUTPUT->pix_url('t/down');
+    $mimeicon    = $OUTPUT->pix_url(file_mimetype_icon($file->get_mimetype()));
 
     $downloadurl = "&nbsp;<a href=\"$downloadurl\" title=\"" . get_string('downloadfile') . "\"><img src=\"$downicon\" class=\"iconsmall\" alt=\"$strdownload\" /></a>";
     return "<a href=\"$viewurl\" title=\"\"><img src=\"$mimeicon\" class=\"icon\" alt=\"$strfile\" />&nbsp;".s($file->get_filename()).'</a>'.$downloadurl;

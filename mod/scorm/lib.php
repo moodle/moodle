@@ -383,7 +383,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                     if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
                         $sublist++;
                     } else {
-                        $report .= '<img src="'.$OUTPUT->old_icon_url('pix/spacer', 'scorm').'" alt="" />';
+                        $report .= '<img src="'.$OUTPUT->pix_url('pix/spacer', 'scorm').'" alt="" />';
                     }
 
                     if ($sco->launch) {
@@ -395,7 +395,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                                 $usertrack->status = 'notattempted';
                             }
                             $strstatus = get_string($usertrack->status,'scorm');
-                            $report .= "<img src='".$OUTPUT->old_icon_url('pix/'.$usertrack->status, 'scorm')."' alt='$strstatus' title='$strstatus' />";
+                            $report .= "<img src='".$OUTPUT->pix_url('pix/'.$usertrack->status, 'scorm')."' alt='$strstatus' title='$strstatus' />";
                             if ($usertrack->timemodified != 0) {
                                 if ($usertrack->timemodified > $lastmodify) {
                                     $lastmodify = $usertrack->timemodified;
@@ -406,9 +406,9 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                             }
                         } else {
                             if ($sco->scormtype == 'sco') {
-                                $report .= '<img src="'.$OUTPUT->old_icon_url('pix/notattempted', 'scorm').'" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
+                                $report .= '<img src="'.$OUTPUT->pix_url('pix/notattempted', 'scorm').'" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
                             } else {
-                                $report .= '<img src="'.$OUTPUT->old_icon_url('pix/asset', 'scorm').'" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
+                                $report .= '<img src="'.$OUTPUT->pix_url('pix/asset', 'scorm').'" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
                             }
                         }
                         $report .= "&nbsp;$sco->title $score$totaltime</li>\n";

@@ -66,7 +66,7 @@ class repository_filesystem extends repository {
                             'source' => $path.'/'.$file,
                             'size' => filesize($this->root_path.$file),
                             'date' => time(),
-                            'thumbnail' => $OUTPUT->old_icon_url(file_extension_icon($this->root_path.$file, 32))
+                            'thumbnail' => $OUTPUT->pix_url(file_extension_icon($this->root_path.$file, 32))
                         );
                     } else {
                         if (!empty($path)) {
@@ -77,7 +77,7 @@ class repository_filesystem extends repository {
                         $list['list'][] = array(
                             'title' => $file,
                             'children' => array(),
-                            'thumbnail' => $OUTPUT->old_icon_url('f/folder-32'),
+                            'thumbnail' => $OUTPUT->pix_url('f/folder-32'),
                             'path' => $current_path
                             );
                     }

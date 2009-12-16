@@ -345,7 +345,7 @@
                 if ($listing->doctype == 'user'){ // A special handle for users
                     $icon = $OUTPUT->user_picture(moodle_user_picture($listing->userid, 0));
                 } else {
-                    $iconpath = $OUTPUT->old_icon_url('icon', $listing->doctype);
+                    $iconpath = $OUTPUT->pix_url('icon', $listing->doctype);
                     $icon = "<img align=\"top\" src=\"".$iconpath."\" class=\"activityicon\" alt=\"\"/>";
                 }
                 $coursename = $DB->get_field('course', 'fullname', array('id' => $listing->courseid));

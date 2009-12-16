@@ -42,7 +42,7 @@ function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
     }
 
     $rsspath = rss_get_url($courseid, $userid, $modulename, $id);
-    $rsspix = $OUTPUT->old_icon_url('i/rss');
+    $rsspix = $OUTPUT->pix_url('i/rss');
 
     return '<a href="'. $rsspath .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="'.get_string('rss').'" /></a>';
 
@@ -214,7 +214,7 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
        */
 
         //write image info
-        $rsspix = $OUTPUT->old_icon_url('i/rsssitelogo');
+        $rsspix = $OUTPUT->pix_url('i/rsssitelogo');
 
         //write the info
         $result .= rss_start_tag('image', 2, true);

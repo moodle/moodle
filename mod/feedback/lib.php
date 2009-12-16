@@ -329,7 +329,7 @@ function feedback_print_recent_mod_activity($activity, $courseid, $detail, $modn
     if ($detail) {
         $modname = $modnames[$activity->type];
         echo '<div class="title">';
-        echo "<img src=\"" . $OUTPUT->old_icon_url('icon', $activity->type) . "\" ".
+        echo "<img src=\"" . $OUTPUT->pix_url('icon', $activity->type) . "\" ".
              "class=\"icon\" alt=\"$modname\" />";
         echo "<a href=\"$CFG->wwwroot/mod/feedback/view.php?id={$activity->cmid}\">{$activity->name}</a>";
         echo '</div>';

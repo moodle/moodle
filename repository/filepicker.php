@@ -525,7 +525,7 @@ default:
             } else {
                 // a folder
                 echo '<li>';
-                echo '<img src="'.$OUTPUT->old_icon_url('f/folder') . '" class="iconsmall" />';
+                echo '<img src="'.$OUTPUT->pix_url('f/folder') . '" class="iconsmall" />';
 
                 $url->param('action', 'browse');
                 $url->param('draftpath', $file->get_filepath());

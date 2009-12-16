@@ -611,9 +611,9 @@
                     if (LANG_DISPLAY_MISSING_LINKS) {
                         $missingtarget = '<a name="missing'.$missingcounter.'"></a>';
                         $missingnext = '<a href="#missing'.($missingcounter+1).'">'.
-                        '<img src="' . $OUTPUT->old_icon_url('t/down') . '" class="iconsmall" alt="'.$strnext.'" /></a>';
+                        '<img src="' . $OUTPUT->pix_url('t/down') . '" class="iconsmall" alt="'.$strnext.'" /></a>';
                         $missingprev = '<a href="#missing'.($missingcounter-1).'">'.
-                        '<img src="' . $OUTPUT->old_icon_url('t/up') . '" class="iconsmall" alt="'.$strprev.'" /></a>';
+                        '<img src="' . $OUTPUT->pix_url('t/up') . '" class="iconsmall" alt="'.$strprev.'" /></a>';
                     }
                 } else {
                     // the string is translated in the pack being processed
@@ -624,9 +624,9 @@
                         if (LANG_DISPLAY_MISSING_LINKS) {
                             $missingtarget = '<a name="missing'.$missingcounter.'"></a>';
                             $missingnext = '<a href="#missing'.($missingcounter+1).'">'.
-                            '<img src="' . $OUTPUT->old_icon_url('t/down') . '" class="iconsmall" alt="'.$strnext.'" /></a>';
+                            '<img src="' . $OUTPUT->pix_url('t/down') . '" class="iconsmall" alt="'.$strnext.'" /></a>';
                             $missingprev = '<a href="#missing'.($missingcounter-1).'">'.
-                            '<img src="' . $OUTPUT->old_icon_url('t/up') . '" class="iconsmall" alt="'.$strprev.'" /></a>';
+                            '<img src="' . $OUTPUT->pix_url('t/up') . '" class="iconsmall" alt="'.$strprev.'" /></a>';
                         }
                     }
                 }

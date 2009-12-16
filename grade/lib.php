@@ -1222,7 +1222,7 @@ class grade_structure {
 
                 if ($element['object']->is_calculated()) {
                     $strcalc = get_string('calculatedgrade', 'grades');
-                    return '<img src="'.$OUTPUT->old_icon_url('i/calc') . '" class="icon itemicon" title="'.
+                    return '<img src="'.$OUTPUT->pix_url('i/calc') . '" class="icon itemicon" title="'.
                             s($strcalc).'" alt="'.s($strcalc).'"/>';
 
                 } else if (($is_course or $is_category) and ($is_scale or $is_value)) {
@@ -1234,18 +1234,18 @@ class grade_structure {
                             case GRADE_AGGREGATE_WEIGHTED_MEAN2:
                             case GRADE_AGGREGATE_EXTRACREDIT_MEAN:
                                 $stragg = get_string('aggregation', 'grades');
-                                return '<img src="'.$OUTPUT->old_icon_url('i/agg_mean') . '" ' .
+                                return '<img src="'.$OUTPUT->pix_url('i/agg_mean') . '" ' .
                                         'class="icon itemicon" title="'.s($stragg).'" alt="'.s($stragg).'"/>';
                             case GRADE_AGGREGATE_SUM:
                                 $stragg = get_string('aggregation', 'grades');
-                                return '<img src="'.$OUTPUT->old_icon_url('i/agg_sum') . '" ' .
+                                return '<img src="'.$OUTPUT->pix_url('i/agg_sum') . '" ' .
                                         'class="icon itemicon" title="'.s($stragg).'" alt="'.s($stragg).'"/>';
                         }
                     }
 
                 } else if ($element['object']->itemtype == 'mod') {
                     $strmodname = get_string('modulename', $element['object']->itemmodule);
-                    return '<img src="'.$OUTPUT->old_icon_url('icon',
+                    return '<img src="'.$OUTPUT->pix_url('icon',
                             $element['object']->itemmodule) . '" ' .
                             'class="icon itemicon" title="' .s($strmodname).
                             '" alt="' .s($strmodname).'"/>';
@@ -1253,12 +1253,12 @@ class grade_structure {
                 } else if ($element['object']->itemtype == 'manual') {
                     if ($element['object']->is_outcome_item()) {
                         $stroutcome = get_string('outcome', 'grades');
-                        return '<img src="'.$OUTPUT->old_icon_url('i/outcomes') . '" ' .
+                        return '<img src="'.$OUTPUT->pix_url('i/outcomes') . '" ' .
                                 'class="icon itemicon" title="'.s($stroutcome).
                                 '" alt="'.s($stroutcome).'"/>';
                     } else {
                         $strmanual = get_string('manualitem', 'grades');
-                        return '<img src="'.$OUTPUT->old_icon_url('t/manual_item') . '" '.
+                        return '<img src="'.$OUTPUT->pix_url('t/manual_item') . '" '.
                                 'class="icon itemicon" title="'.s($strmanual).
                                 '" alt="'.s($strmanual).'"/>';
                     }
@@ -1267,7 +1267,7 @@ class grade_structure {
 
             case 'category':
                 $strcat = get_string('category', 'grades');
-                return '<img src="'.$OUTPUT->old_icon_url('f/folder') . '" class="icon itemicon" ' .
+                return '<img src="'.$OUTPUT->pix_url('f/folder') . '" class="icon itemicon" ' .
                         'title="'.s($strcat).'" alt="'.s($strcat).'" />';
         }
 
@@ -1459,7 +1459,7 @@ class grade_structure {
             $url = $gpr->add_url_params($url);
             $editicon = new moodle_action_icon();
             $editicon->link->url = $url;
-            $editicon->image->src = $OUTPUT->old_icon_url('t/edit');
+            $editicon->image->src = $OUTPUT->pix_url('t/edit');
             $editicon->image->alt = $stredit;
             $editicon->image->title = $stredit;
             $editicon->image->add_class('iconsmall');
@@ -1508,13 +1508,13 @@ class grade_structure {
             }
 
             $hideicon->link->url->param('action', 'show');
-            $hideicon->image->src = $OUTPUT->old_icon_url('t/' . $icon);
+            $hideicon->image->src = $OUTPUT->pix_url('t/' . $icon);
             $hideicon->image->alt = $strshow;
             $hideicon->image->title = $tooltip;
 
         } else {
             $hideicon->link->url->param('action', 'hide');
-            $hideicon->image->src = $OUTPUT->old_icon_url('t/hide');
+            $hideicon->image->src = $OUTPUT->pix_url('t/hide');
             $hideicon->image->alt = $strhide;
             $hideicon->image->title = $strhide;
         }
@@ -1553,7 +1553,7 @@ class grade_structure {
             $strnonunlockable = get_string('nonunlockableverbose', 'grades', $strparamobj);
 
             $lockicon = new html_image();
-            $lockicon->image->src = $OUTPUT->old_icon_url('t/unlock_gray');
+            $lockicon->image->src = $OUTPUT->pix_url('t/unlock_gray');
             $lockicon->image->alt = s($strnonunlockable);
             $lockicon->image->title = s($strnonunlockable);
             $lockicon->image->add_class('iconsmall');
@@ -1575,7 +1575,7 @@ class grade_structure {
             }
             $lockicon->link->url->param('action', 'unlock');
             $lockicon->link->add_class('lock');
-            $lockicon->image->src = $OUTPUT->old_icon_url('t/'.$icon);
+            $lockicon->image->src = $OUTPUT->pix_url('t/'.$icon);
             $lockicon->image->alt = $strunlock;
             $lockicon->image->title = $tooltip;
             $action  = $OUTPUT->action_icon($lockicon);
@@ -1588,7 +1588,7 @@ class grade_structure {
 
             $lockicon->link->url->param('action', 'lock');
             $lockicon->link->add_class('lock');
-            $lockicon->image->src = $OUTPUT->old_icon_url('t/lock');
+            $lockicon->image->src = $OUTPUT->pix_url('t/lock');
             $lockicon->image->alt = $strlock;
             $lockicon->image->title = $strlock;
             $action  = $OUTPUT->action_icon($lockicon);
@@ -1633,7 +1633,7 @@ class grade_structure {
                         array('courseid' => $this->courseid, 'id' => $object->id));
 
                 $calcicon->link->url = $gpr->add_url_params($calcicon->link->url);
-                $calcicon->image->src = $OUTPUT->old_icon_url($icon);
+                $calcicon->image->src = $OUTPUT->pix_url($icon);
                 $calcicon->add_class('iconsmall');
                 $calcicon->alt = $streditcalculation;
                 $calcicon->title = $streditcalculation;
@@ -2267,7 +2267,7 @@ function grade_button($type, $courseid, $object) {
         $icon->link->url = new moodle_url('edit.php', array('courseid' => $courseid, 'id' => $object->id));
     }
 
-    $icon->image->src = $OUTPUT->old_icon_url('t/'.$type);
+    $icon->image->src = $OUTPUT->pix_url('t/'.$type);
     $icon->image->add_class('iconsmall');
     $icon->image->title = ${'str'.$type};
     $icon->image->alt = ${'str'.$type};

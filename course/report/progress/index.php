@@ -198,7 +198,7 @@ foreach($activities as $activity) {
         print '<th scope="col" class="'.$activity->datepassedclass.'">'.
             '<a href="'.$CFG->wwwroot.'/mod/'.$activity->modname.
             '/view.php?id='.$activity->id.'">'.
-            '<img src="'.$OUTPUT->old_icon_url('icon', $activity->modname).'/icon.gif" alt="'.
+            '<img src="'.$OUTPUT->pix_url('icon', $activity->modname).'/icon.gif" alt="'.
             get_string('modulename',$activity->modname).'" /> <span class="completion-activityname">'.
             format_string($activity->name).'</span></a>';
         if($activity->completionexpected) {
@@ -267,7 +267,7 @@ foreach($progress->users as $user) {
             print $sep.csv_quote($describe).$sep.csv_quote($date);
         } else {
             print '<td class="completion-progresscell '.$activity->datepassedclass.'">'.
-                '<img src="'.$OUTPUT->old_icon_url('i/'.$completionicon).
+                '<img src="'.$OUTPUT->pix_url('i/'.$completionicon).
                 '" alt="'.$describe.'" title="'.$fulldescribe.'" /></td>';
         }
     }

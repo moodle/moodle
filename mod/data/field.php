@@ -290,10 +290,10 @@ if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          /// 
                 shorten_text($field->field->description, 30),
 
                 '<a href="field.php?d='.$data->id.'&amp;mode=display&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
-                '<img src="'.$OUTPUT->old_icon_url('t/edit') . '" class="iconsmall" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'.
+                '<img src="'.$OUTPUT->pix_url('t/edit') . '" class="iconsmall" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'.
                 '&nbsp;'.
                 '<a href="field.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
-                '<img src="'.$OUTPUT->old_icon_url('t/delete') . '" class="iconsmall" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>'
+                '<img src="'.$OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>'
 
                 );
             }

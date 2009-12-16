@@ -40,10 +40,10 @@ if (has_capability('mod/quiz:viewreports', $context)) {
 }
 if (has_capability('mod/quiz:preview', $context)) {
     $strpreview = get_string('preview', 'quiz');
-    $row[] = new tabobject('preview', "$CFG->wwwroot/mod/quiz/startattempt.php?cmid=$cm->id&amp;sesskey=" . sesskey(), "<img src=\"" . $OUTPUT->old_icon_url('t/preview') . "\" class=\"iconsmall\" alt=\"$strpreview\" /> $strpreview", $strpreview);
+    $row[] = new tabobject('preview', "$CFG->wwwroot/mod/quiz/startattempt.php?cmid=$cm->id&amp;sesskey=" . sesskey(), "<img src=\"" . $OUTPUT->pix_url('t/preview') . "\" class=\"iconsmall\" alt=\"$strpreview\" /> $strpreview", $strpreview);
 }
 if (has_capability('mod/quiz:manage', $context)) {
-    $row[] = new tabobject('edit', "$CFG->wwwroot/mod/quiz/edit.php?cmid=$cm->id", "<img src=\"" . $OUTPUT->old_icon_url('t/edit') . "\" class=\"iconsmall\" alt=\"$stredit\" /> $stredit",$stredit);
+    $row[] = new tabobject('edit', "$CFG->wwwroot/mod/quiz/edit.php?cmid=$cm->id", "<img src=\"" . $OUTPUT->pix_url('t/edit') . "\" class=\"iconsmall\" alt=\"$stredit\" /> $stredit",$stredit);
 }
 
 if ($currenttab == 'info' && count($row) == 1) {

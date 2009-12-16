@@ -107,7 +107,7 @@
             $activitycell = new html_table_cell();
             $activitycell->add_class('activity');
 
-            $activityicon = html_image::make($OUTPUT->old_icon_url('icon', $cm->modname));
+            $activityicon = html_image::make($OUTPUT->pix_url('icon', $cm->modname));
             $activityicon->add_class('icon');
             $activityicon->alt = $modulename;
 

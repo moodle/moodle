@@ -1468,7 +1468,7 @@ function question_get_feedback_image($fraction, $selected=true) {
         $size = 'small';
     }
     $class = question_get_feedback_class($fraction);
-    return '<img src="' . $OUTPUT->old_icon_url('i/' . $icons[$class] . '_' . $size) .
+    return '<img src="' . $OUTPUT->pix_url('i/' . $icons[$class] . '_' . $size) .
             '" alt="' . get_string($class, 'quiz') . '" class="icon" />';
 }
 
@@ -2099,8 +2099,8 @@ function question_init_qengine_js() {
     global $CFG, $PAGE, $OUTPUT;
     $config = array(
         'actionurl' => $CFG->wwwroot . '/question/toggleflag.php',
-        'flagicon' => $OUTPUT->old_icon_url('i/flagged'),
-        'unflagicon' => $OUTPUT->old_icon_url('i/unflagged'),
+        'flagicon' => $OUTPUT->pix_url('i/flagged'),
+        'unflagicon' => $OUTPUT->pix_url('i/unflagged'),
         'flagtooltip' => get_string('clicktoflag', 'question'),
         'unflagtooltip' => get_string('clicktounflag', 'question'),
         'flaggedalt' => get_string('flagged', 'question'),

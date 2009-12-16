@@ -120,14 +120,14 @@ foreach($feeds as $feed) {
     $editaction = new moodle_action_icon();
     $editaction->link->url = $CFG->wwwroot .'/blocks/rss_client/editfeed.php?rssid=' . $feed->id . $extraparams;
     $editaction->link->title = get_string('edit');
-    $editaction->image->src = $OUTPUT->old_icon_url('t/edit');
+    $editaction->image->src = $OUTPUT->pix_url('t/edit');
     $editaction->image->alt = get_string('edit');
 
     $deleteaction = new moodle_action_icon();
     $deleteaction->link->url = $CFG->wwwroot .'/blocks/rss_client/managefeeds.php?deleterssid=' . $feed->id .
             '&sesskey=' . sesskey() . $extraparams;
     $deleteaction->link->title = get_string('delete');
-    $deleteaction->image->src = $OUTPUT->old_icon_url('t/delete');
+    $deleteaction->image->src = $OUTPUT->pix_url('t/delete');
     $deleteaction->image->alt = get_string('delete');
     $deleteaction->link->add_confirm_action(get_string('deletefeedconfirm', 'block_rss_client'));
 

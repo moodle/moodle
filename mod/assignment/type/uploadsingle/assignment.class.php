@@ -22,7 +22,7 @@ class assignment_uploadsingle extends assignment_base {
                 $found = true;
                 $mimetype = $file->get_mimetype();
                 $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
-                $output .= '<a href="'.$path.'" ><img class="icon" src="'.$OUTPUT->old_icon_url(file_mimetype_icon($mimetype)).'" alt="'.$mimetype.'" />'.s($filename).'</a><br />';
+                $output .= '<a href="'.$path.'" ><img class="icon" src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" alt="'.$mimetype.'" />'.s($filename).'</a><br />';
             }
         }
 
@@ -214,7 +214,7 @@ class assignment_uploadsingle extends assignment_base {
                     $filename = $file->get_filename();
                     $mimetype = $file->get_mimetype();
                     $link = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$USER->id.'/'.$filename);
-                    $node->get($filekey)->add($filename, $link, navigation_node::TYPE_SETTING, null, null, $OUTPUT->old_icon_url(file_mimetype_icon($mimetype)));
+                    $node->get($filekey)->add($filename, $link, navigation_node::TYPE_SETTING, null, null, $OUTPUT->pix_url(file_mimetype_icon($mimetype)));
                 }
             }
         }

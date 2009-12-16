@@ -12,7 +12,7 @@ define('NO_DEBUG_DISPLAY', true);
     if (!empty($CFG->forcelogin) and !isloggedin()) {
         // protect images if login required and not logged in;
         // do not use require_login() because it is expensive and not suitable here anyway
-        redirect($OUTPUT->old_icon_url('u/f1'));
+        redirect($OUTPUT->pix_url('u/f1'));
     }
 
     $relativepath = get_file_argument();
@@ -32,4 +32,4 @@ define('NO_DEBUG_DISPLAY', true);
     }
 
     // picture was deleted - use default instead
-    redirect($OUTPUT->old_icon_url('u/f1'));
+    redirect($OUTPUT->pix_url('u/f1'));

@@ -478,7 +478,7 @@ class moodle_url {
      * @return string
      */
     public function __toString() {
-        $this->out(false, null, true);
+        return $this->out(false, null, true);
     }
 
     /**
@@ -506,6 +506,15 @@ class moodle_url {
         }
         $uri .= $this->fragment ? '#'.$this->fragment : '';
         return $uri;
+    }
+
+    /**
+     * Returns url in raw form without any escaping,
+     * useful especially when including urls and images in javascript.
+     * @return string
+     */
+    public function out_raw() {
+        $this->out(false, null, false);
     }
 
     /**
@@ -1560,7 +1569,7 @@ function replace_smilies(&$text) {
             $alttext = get_string($image, 'pix');
             $alttext = preg_replace('/^\[\[(.*)\]\]$/', '$1', $alttext); /// Clean alttext in case there isn't lang string for it.
             $e[$lang][] = $emoticon;
-            $img[$lang][] = '<img alt="'. $alttext .'" width="15" height="15" src="'. $OUTPUT->old_icon_url('s/' . $image) . '" />';
+            $img[$lang][] = '<img alt="'. $alttext .'" width="15" height="15" src="'. $OUTPUT->pix_url('s/' . $image) . '" />';
         }
     }
 
@@ -1608,7 +1617,7 @@ function get_emoticons_list_for_help_file() {
     $output = '<ul id="emoticonlist">';
     foreach ($items as $item) {
         $item = explode('{:}', $item);
-        $output .= '<li><img src="' . $OUTPUT->old_icon_url('s/' . $item[1]) . '" alt="' .
+        $output .= '<li><img src="' . $OUTPUT->pix_url('s/' . $item[1]) . '" alt="' .
                 $item[0] . '" /><code>' . $item[0] . '</code></li>';
     }
     $output .= '</ul>';
@@ -2124,7 +2133,7 @@ function print_collapsible_region_start($classes, $id, $caption, $userpref = fal
     $output .= '</div><div id="' . $id . '_inner" class="collapsibleregioninner">';
     $PAGE->requires->js_function_call('new collapsible_region',
             array($id, $userpref, get_string('clicktohideshow'),
-            $OUTPUT->old_icon_url('t/collapsed'), $OUTPUT->old_icon_url('t/expanded')));
+            $OUTPUT->pix_url('t/collapsed'), $OUTPUT->pix_url('t/expanded')));
 
     if ($return) {
         return $output;
@@ -2480,7 +2489,7 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
         $class = 'activity '.$mod->modname;
         $class .= ($cmid == $mod->id) ? ' selected' : '';
         $menu[] = '<li class="'.$class.'">'.
-                  '<img src="'.$OUTPUT->old_icon_url('icon', $mod->modname) . '" alt="" />'.
+                  '<img src="'.$OUTPUT->pix_url('icon', $mod->modname) . '" alt="" />'.
                   '<a href="'.$CFG->wwwroot.'/mod/'.$url.'">'.$mod->name.'</a></li>';
     }
 
@@ -2527,7 +2536,7 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true, $ret
     }
     $output .= $OUTPUT->select(html_select::make($grades, $name, $current, false));
 
-    $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$strscales.'" src="'.$OUTPUT->old_icon_url('help') . '" /></span>';
+    $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$strscales.'" src="'.$OUTPUT->pix_url('help') . '" /></span>';
     $link = html_link::make('/course/scales.php?id='. $courseid .'&list=true', $linkobject);
     $link->add_action(new popup_action('click', $link->url, 'ratingscales', array('height' => 400, 'width' => 500)));
     $link->title = $strscales;
@@ -2618,7 +2627,7 @@ function editorhelpbutton(){
     $alttag = join (', ', $titles);
 
     $paramstring = join('&', $urlparams);
-    $linkobject = '<img alt="'.$alttag.'" class="iconhelp" src="'.$OUTPUT->old_icon_url('help') . '" />';
+    $linkobject = '<img alt="'.$alttag.'" class="iconhelp" src="'.$OUTPUT->pix_url('help') . '" />';
     $link = html_link::make(s('/lib/form/editorhelp.php?'.$paramstring), $linkobject);
     $link->add_action(new popup_action('click', $link->url, 'popup', array('height' => 400, 'width' => 500)));
     $link->title = $alttag;
@@ -2646,7 +2655,7 @@ function emoticonhelpbutton($form, $field, $return = false) {
     $SESSION->inserttextform = $form;
     $SESSION->inserttextfield = $field;
     $helpicon = moodle_help_icon::make('emoticons2', get_string('helpemoticons'), 'moodle', true);
-    $helpicon->image->src = $OUTPUT->old_icon_url('s/smiley');
+    $helpicon->image->src = $OUTPUT->pix_url('s/smiley');
     $helpicon->image->add_class('emoticon');
     $helpicon->style = "margin-left:3px; padding-right:1px;width:15px;height:15px;";
     $help = $OUTPUT->help_icon($helpicon);

@@ -460,7 +460,7 @@ class embedded_cloze_qtype extends default_questiontype {
                     echo "<input $style $readonly $popup name=\"$inputname\"";
                     echo "  type=\"text\" value=\"".s($response)."\" ".$styleinfo." /> ";
                     if (!empty($feedback) && !empty($USER->screenreader)) {
-                        echo "<img src=\"" . $OUTPUT->old_icon_url('i/feedback') . "\" alt=\"$feedback\" />";
+                        echo "<img src=\"" . $OUTPUT->pix_url('i/feedback') . "\" alt=\"$feedback\" />";
                     }
                     echo $feedbackimg;
                     break;
@@ -487,7 +487,7 @@ class embedded_cloze_qtype extends default_questiontype {
                         echo $outputoptions;
                         echo '</select></span>';
                         if (!empty($feedback) && !empty($USER->screenreader)) {
-                            echo "<img src=\"" . $OUTPUT->old_icon_url('i/feedback') . "\" alt=\"$feedback\" />";
+                            echo "<img src=\"" . $OUTPUT->pix_url('i/feedback') . "\" alt=\"$feedback\" />";
                         }
                         echo $feedbackimg;
                     }else if ($wrapped->options->layout == 1 || $wrapped->options->layout == 2){

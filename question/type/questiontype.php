@@ -1016,7 +1016,7 @@ class default_questiontype {
         } else {
             $img = 'i/unflagged';
         }
-        return '<img ' . $id . 'src="' . $OUTPUT->old_icon_url($img) .
+        return '<img ' . $id . 'src="' . $OUTPUT->pix_url($img) .
                 '" alt="' . get_string('flagthisquestion', 'question') . '" />';
     }
 
@@ -1050,7 +1050,7 @@ class default_questiontype {
 
     /// Work out the contents of the link.
         $stredit = get_string('edit');
-        $linktext = '<img src="' . $OUTPUT->old_icon_url('t/edit') . '" alt="' . $stredit . '" />';
+        $linktext = '<img src="' . $OUTPUT->pix_url('t/edit') . '" alt="' . $stredit . '" />';
 
         if (!empty($cmoptions->thispageurl)) {
         /// The module allow editing in the same window, print an ordinary link.

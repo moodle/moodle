@@ -388,11 +388,11 @@ function get_access_icons($course) {
 
     if (!empty($course->guest)) {
         $str .= '<a title="'.$strallowguests.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-        $str .= '<img class="accessicon" alt="'.$strallowguests.'" src="'.$OUTPUT->old_icon_url('i/guest') . '" /></a>&nbsp;&nbsp;';
+        $str .= '<img class="accessicon" alt="'.$strallowguests.'" src="'.$OUTPUT->pix_url('i/guest') . '" /></a>&nbsp;&nbsp;';
     }
     if (!empty($course->password)) {
         $str .= '<a title="'.$strrequireskey.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-        $str .= '<img class="accessicon" alt="'.$strrequireskey.'" src="'.$OUTPUT->old_icon_url('i/key') . '" /></a>';
+        $str .= '<img class="accessicon" alt="'.$strrequireskey.'" src="'.$OUTPUT->pix_url('i/key') . '" /></a>';
     }
 
     return $str;

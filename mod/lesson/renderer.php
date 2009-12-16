@@ -452,16 +452,16 @@ class moodle_mod_lesson_renderer extends moodle_renderer_base {
 
         if ($printmove) {
             $printmovehtml = new moodle_url($CFG->wwwroot.'/mod/lesson/lesson.php', array('id'=>$this->page->cm->id, 'action'=>'move', 'pageid'=>$page->id, 'sesskey'=>sesskey()));
-            $actions[] = html_link::make($printmovehtml, '<img src="'.$this->output->old_icon_url('t/move').'" class="iconsmall" alt="'.get_string('move').'" />');
+            $actions[] = html_link::make($printmovehtml, '<img src="'.$this->output->pix_url('t/move').'" class="iconsmall" alt="'.get_string('move').'" />');
         }
         $url = new moodle_url($CFG->wwwroot.'/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id, 'edit'=>1));
-        $actions[] = html_link::make($url, '<img src="'.$this->output->old_icon_url('t/edit').'" class="iconsmall" alt="'.get_string('update').'" />');
+        $actions[] = html_link::make($url, '<img src="'.$this->output->pix_url('t/edit').'" class="iconsmall" alt="'.get_string('update').'" />');
 
         $url = new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id));
-        $actions[] = html_link::make($url, '<img src="'.$this->output->old_icon_url('t/preview').'" class="iconsmall" alt="'.get_string('preview').'" />');
+        $actions[] = html_link::make($url, '<img src="'.$this->output->pix_url('t/preview').'" class="iconsmall" alt="'.get_string('preview').'" />');
 
         $url = new moodle_url($CFG->wwwroot.'/mod/lesson/lesson.php', array('id'=>$this->page->cm->id, 'action'=>'confirmdelete', 'pageid'=>$page->id, 'sesskey'=>sesskey()));
-        $actions[] = html_link::make($url, '<img src="'.$this->output->old_icon_url('t/delete').'" class="iconsmall" alt="'.get_string('delete').'" />');
+        $actions[] = html_link::make($url, '<img src="'.$this->output->pix_url('t/delete').'" class="iconsmall" alt="'.get_string('delete').'" />');
 
         if ($printaddpage) {
             $options = array();

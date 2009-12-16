@@ -140,7 +140,7 @@
             } else {
                 $columnicon = $dir == "ASC" ? "down":"up";
             }
-            $columnicon = " <img src=\"" . $OUTPUT->old_icon_url('t/' . $columnicon) . "\" alt=\"\" />";
+            $columnicon = " <img src=\"" . $OUTPUT->pix_url('t/' . $columnicon) . "\" alt=\"\" />";
 
         }
         $$column = "<a href=\"user.php?sort=$column&amp;dir=$columndir\">".$string[$column]."</a>$columnicon";

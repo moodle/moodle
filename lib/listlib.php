@@ -603,12 +603,12 @@ class list_item {
     function image_icon($action, $url, $icon) {
         global $OUTPUT;
         return '<a title="' . $action .'" href="'.$url.'">
-                <img src="' . $OUTPUT->old_icon_url('t/'.$icon) . '" class="iconsmall" alt="' . $action. '" /></a> ';
+                <img src="' . $OUTPUT->pix_url('t/'.$icon) . '" class="iconsmall" alt="' . $action. '" /></a> ';
     }
 
     function image_spacer() {
         global $OUTPUT;
-        return '<img src="' . $OUTPUT->old_icon_url('spacer') . '" class="iconsmall" alt="" />';
+        return '<img src="' . $OUTPUT->pix_url('spacer') . '" class="iconsmall" alt="" />';
     }
 
     /**

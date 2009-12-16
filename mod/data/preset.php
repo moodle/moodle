@@ -394,7 +394,7 @@ foreach ($presets as $id => $preset) {
     $dellink = '';
     if ($preset->userid > 0 and ($preset->userid == $USER->id || has_capability('mod/data:manageuserpresets', $context))) {
         $dellink = '&nbsp;<a href="preset.php?d='.$data->id.'&amp;action=confirmdelete&amp;fullname='.$fullname.'&amp;sesskey='.sesskey().'">'.
-                   '<img src="'.$OUTPUT->old_icon_url('t/delete') . '" class="iconsmall" alt="'.$strdelete.' '.$desc.'" /></a>';
+                   '<img src="'.$OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt="'.$strdelete.' '.$desc.'" /></a>';
     }
 
     echo '<input type="radio" name="fullname" id="usepreset'.$i.'" value="'.$fullname.'" /><label for="usepreset'.$i++.'">'.$desc.'</label>'.$dellink.'<br />';

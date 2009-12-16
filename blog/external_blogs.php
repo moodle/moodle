@@ -72,12 +72,12 @@ if (!empty($blogs)) {
     $table->head = array(get_string('name'), get_string('url'), get_string('timefetched', 'blog'), get_string('valid', 'blog'), get_string('actions'));
 
     foreach ($blogs as $blog) {
-        $validicon = html_image::make($OUTPUT->old_icon_url('i/tick_green_big'));
+        $validicon = html_image::make($OUTPUT->pix_url('i/tick_green_big'));
         $validicon->alt = get_string('feedisvalid', 'blog');
         $validicon->title = get_string('feedisvalid', 'blog');
 
         if ($blog->failedlastsync) {
-            $validicon->src = $OUTPUT->old_icon_url('i/cross_red_big');
+            $validicon->src = $OUTPUT->pix_url('i/cross_red_big');
             $validicon->alt = get_string('feedisinvalid', 'blog');
             $validicon->title = get_string('feedisinvalid', 'blog');
         }
@@ -85,13 +85,13 @@ if (!empty($blogs)) {
         $editicon = new moodle_action_icon;
         $editicon->link->url = new moodle_url($CFG->wwwroot.'/blog/external_blog_edit.php', array('id' => $blog->id));
         $editicon->link->title = get_string('editexternalblog', 'blog');
-        $editicon->image->src = $OUTPUT->old_icon_url('t/edit');
+        $editicon->image->src = $OUTPUT->pix_url('t/edit');
         $editicon->image->alt = get_string('editexternalblog', 'blog');
 
         $deleteicon = new moodle_action_icon;
         $deleteicon->link->url = new moodle_url($CFG->wwwroot.'/blog/external_blogs.php', array('delete' => $blog->id, 'sesskey' => sesskey()));
         $deleteicon->link->title = get_string('deleteexternalblog', 'blog');
-        $deleteicon->image->src = $OUTPUT->old_icon_url('t/delete');
+        $deleteicon->image->src = $OUTPUT->pix_url('t/delete');
         $deleteicon->image->alt = get_string('deleteexternalblog', 'blog');
         $deleteicon->add_confirm_action(get_string('externalblogdeleteconfirm', 'blog'));
         $icons = $OUTPUT->action_icon($editicon) . $OUTPUT->action_icon($deleteicon);

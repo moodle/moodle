@@ -325,7 +325,7 @@ class google_docs {
                     'url' => "{$gdoc->link[0]->attributes()->href}",
                     'source' => $source,
                     'date'   => usertime(strtotime($gdoc->updated)),
-                    'thumbnail' => $OUTPUT->old_icon_url(file_extension_icon($title, 32))
+                    'thumbnail' => $OUTPUT->pix_url(file_extension_icon($title, 32))
                 );
             }
         }

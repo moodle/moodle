@@ -790,7 +790,7 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentbeforei
         $questionparams = array('returnurl' => $returnurl, 'cmid' => $cmid, 'id' => $question->id);
         $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
         return '<a title="' . $action . '" href="' . $questionurl->out() . '">' . $contentbeforeicon .
-                '<img src="' . $OUTPUT->old_icon_url($icon) . '" alt="' . $action . '" /></a>';
+                '<img src="' . $OUTPUT->pix_url($icon) . '" alt="' . $action . '" /></a>';
     } else {
         return $contentbeforeicon;
     }
@@ -824,7 +824,7 @@ function quiz_question_preview_button($quiz, $question, $label = false) {
 
     // Build the icon.
     $image = new html_image();
-    $image->src = $OUTPUT->old_icon_url('t/preview');
+    $image->src = $OUTPUT->pix_url('t/preview');
     $image->add_class('iconsmall');
     $image->alt = $strpreviewquestion;
 

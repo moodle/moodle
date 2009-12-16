@@ -605,7 +605,7 @@ function message_contact_link($userid, $linktype='add', $return=false, $script="
     $output = '<span class="'.$linktype.'">'.
               '<a href="'.$script.'&amp;'.$command.'='.$userid.
               '&amp;sesskey='.sesskey().'" title="'.s($string).'">'.
-              '<img src="'.$OUTPUT->old_icon_url($icon).'" class="iconsmall" alt="'.s($alttext).'" />'.
+              '<img src="'.$OUTPUT->pix_url($icon).'" class="iconsmall" alt="'.s($alttext).'" />'.
               $text.'</a></span>';
 
     if ($return) {
@@ -636,9 +636,9 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
     }
 
     if ($linktext == 'icon') {  // Icon only
-        $fulllink = '<img src="'.$OUTPUT->old_icon_url('t/log') . '" class="iconsmall" alt="'.$strmessagehistory.'" />';
+        $fulllink = '<img src="'.$OUTPUT->pix_url('t/log') . '" class="iconsmall" alt="'.$strmessagehistory.'" />';
     } else if ($linktext == 'both') {  // Icon and standard name
-        $fulllink = '<img src="'.$OUTPUT->old_icon_url('t/log') . '" class="iconsmall" alt="" />';
+        $fulllink = '<img src="'.$OUTPUT->pix_url('t/log') . '" class="iconsmall" alt="" />';
         $fulllink .= '&nbsp;'.$strmessagehistory;
     } else if ($linktext) {    // Custom name
         $fulllink = $linktext;

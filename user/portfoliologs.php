@@ -89,7 +89,7 @@ if (count($queued) > 0) {
 
         $cancel = new moodle_action_icon();
         $cancel->link->url = new moodle_url($base . '&cancel=1');
-        $cancel->image->src = $OUTPUT->old_icon_url('t/stop');
+        $cancel->image->src = $OUTPUT->pix_url('t/stop');
         $cancel->linktext = get_string('cancel');
 
         $iconstr = $OUTPUT->action_icon($cancel);
@@ -97,7 +97,7 @@ if (count($queued) > 0) {
         if (!$e->get('queued') && $e->get('expirytime') > $now) {
             $continue = new moodle_action_icon();
             $continue->link->url = new moodle_url($base);
-            $continue->image->src = $OUTPUT->old_icon_url('t/go');
+            $continue->image->src = $OUTPUT->pix_url('t/go');
             $continue->linktext = get_string('continue');
             $iconstr .= '&nbsp;' . $OUTPUT->action_icon($continue);
         }

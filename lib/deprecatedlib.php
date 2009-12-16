@@ -2869,7 +2869,7 @@ function print_arrow($direction='up', $strsort=null, $return=false) {
         $strsort  = get_string('sort' . $sortdir, 'grades');
     }
 
-    $return = ' <img src="'.$OUTPUT->old_icon_url('t/' . $direction) . '" alt="'.$strsort.'" /> ';
+    $return = ' <img src="'.$OUTPUT->pix_url('t/' . $direction) . '" alt="'.$strsort.'" /> ';
 
     if ($return) {
         return $return;

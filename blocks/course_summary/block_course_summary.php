@@ -35,7 +35,7 @@ class block_course_summary extends block_base {
             } else {
                 $editpage = $CFG->wwwroot.'/course/edit.php?id='.$this->page->course->id;
             }
-            $this->content->text .= "<div class=\"editbutton\"><a href=\"$editpage\"><img src=\"" . $OUTPUT->old_icon_url('t/edit') . "\" alt=\"".get_string('edit')."\" /></a></div>";
+            $this->content->text .= "<div class=\"editbutton\"><a href=\"$editpage\"><img src=\"" . $OUTPUT->pix_url('t/edit') . "\" alt=\"".get_string('edit')."\" /></a></div>";
         }
         $this->content->footer = '';
 

@@ -198,7 +198,7 @@ class assignment_online extends assignment_base {
         $popup = $OUTPUT->link($link);
 
         $output = '<div class="files">'.
-                  '<img src="'.$OUTPUT->old_icon_url('f/html') . '" class="icon" alt="html" />'.
+                  '<img src="'.$OUTPUT->pix_url('f/html') . '" class="icon" alt="html" />'.
                   $popup .
                   '</div>';
                   return $output;
@@ -217,7 +217,7 @@ class assignment_online extends assignment_base {
         $popup = $OUTPUT->link($link);
 
         $output = '<div class="files">'.
-                  '<img align="middle" src="'.$OUTPUT->old_icon_url('f/html') . '" height="16" width="16" alt="html" />'.
+                  '<img align="middle" src="'.$OUTPUT->pix_url('f/html') . '" height="16" width="16" alt="html" />'.
                   $popup .
                   '</div>';
 

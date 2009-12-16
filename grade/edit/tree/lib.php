@@ -137,7 +137,7 @@ class grade_edit_tree {
             if ($this->element_deletable($element)) {
                 $actionicon = new moodle_action_icon();
                 $actionicon->link->url = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'delete', 'eid' => $eid, 'sesskey' => sesskey()));
-                $actionicon->image->src = $OUTPUT->old_icon_url('t/delete');
+                $actionicon->image->src = $OUTPUT->pix_url('t/delete');
                 $actionicon->image->alt = get_string('delete');
                 $actionicon->image->title = get_string('delete');
                 $actionicon->image->add_class('iconsmall');
@@ -146,7 +146,7 @@ class grade_edit_tree {
 
             $actionicon = new moodle_action_icon();
             $actionicon->link->url = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'moveselect', 'eid' => $eid, 'sesskey' => sesskey()));
-            $actionicon->image->src = $OUTPUT->old_icon_url('t/move');
+            $actionicon->image->src = $OUTPUT->pix_url('t/move');
             $actionicon->image->alt = get_string('move');
             $actionicon->image->title = get_string('move');
             $actionicon->image->add_class('iconsmall');
@@ -224,7 +224,7 @@ class grade_edit_tree {
                         $moveicon->link->url->params($first);
                     }
                     $moveicon->image->add_class('movetarget');
-                    $moveicon->image->src = $OUTPUT->old_icon_url('movehere');
+                    $moveicon->image->src = $OUTPUT->pix_url('movehere');
                     $moveicon->image->alt = $strmovehere;
                     $moveicon->image->title = $strmovehere;
 

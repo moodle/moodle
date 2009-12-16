@@ -82,11 +82,11 @@ if ($groupings = $DB->get_records('groupings', array('courseid'=>$course->id), '
         $line[2] = $DB->count_records('course_modules', array('course'=>$course->id, 'groupingid'=>$grouping->id));
 
         $buttons  = "<a title=\"$stredit\" href=\"grouping.php?id=$grouping->id\"><img".
-                    " src=\"" . $OUTPUT->old_icon_url('t/edit') . "\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
+                    " src=\"" . $OUTPUT->pix_url('t/edit') . "\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
         $buttons .= "<a title=\"$strdelete\" href=\"grouping.php?id=$grouping->id&amp;delete=1\"><img".
-                    " src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
+                    " src=\"" . $OUTPUT->pix_url('t/delete') . "\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
         $buttons .= "<a title=\"$strmanagegrping\" href=\"assign.php?id=$grouping->id\"><img".
-                    " src=\"" . $OUTPUT->old_icon_url('i/group') . "\" class=\"icon\" alt=\"$strmanagegrping\" /></a> ";
+                    " src=\"" . $OUTPUT->pix_url('i/group') . "\" class=\"icon\" alt=\"$strmanagegrping\" /></a> ";
 
         $line[3] = $buttons;
         $data[] = $line;

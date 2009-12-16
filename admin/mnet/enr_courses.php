@@ -32,7 +32,7 @@
     echo '<div id="trustedhosts"><!-- See theme/standard/styles_layout.css #trustedhosts .generaltable for rules -->'
            . '<table class="generaltable">';
 
-    $icon  = "<img src=\"" . $OUTPUT->old_icon_url('i/course') . "\"".
+    $icon  = "<img src=\"" . $OUTPUT->pix_url('i/course') . "\"".
     " class=\"icon\" alt=\"".get_string("course")."\" />";
 
     foreach ($courses as $course) {

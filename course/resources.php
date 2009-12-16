@@ -125,9 +125,9 @@ foreach ($cms as $cm) {
 
     $extra = empty($cm->extra) ? '' : $cm->extra;
     if (!empty($cm->icon)) {
-        $icon = '<img src="'.$OUTPUT->old_icon_url($cm->icon).'" class="activityicon" alt="" /> ';
+        $icon = '<img src="'.$OUTPUT->pix_url($cm->icon).'" class="activityicon" alt="" /> ';
     } else {
-        $icon = '<img src="'.$OUTPUT->old_icon_url('icon', $cm->modname).'" class="activityicon" alt="" /> ';
+        $icon = '<img src="'.$OUTPUT->pix_url('icon', $cm->modname).'" class="activityicon" alt="" /> ';
     }
 
     $class = $cm->visible ? '' : 'class="dimmed"'; // hidden modules are dimmed

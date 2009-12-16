@@ -149,12 +149,6 @@ class renderer_base {
         return $classes;
     }
 
-    /** OBSOLETED: to be removed soon */
-    public function old_icon_url($iconname, $component='moodle', $escaped=true) {
-        $url = $this->page->theme->pix_url($iconname, $component);
-        return $url->out(false, array(), $escaped);
-    }
-
     /**
      * Return the moodle_url for an image
      *

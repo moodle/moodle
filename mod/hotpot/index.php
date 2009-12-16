@@ -307,10 +307,10 @@
                     // Show the zoom boxes
                     if ($displaysection==$hotpot->section) {
                         $strshowall = get_string('showall'.$course->format);
-                        $printsection .= '<br /><a href="index.php?id='.$course->id.'&amp;section=all" title="'.$strshowall.'"><img src="'.$OUTPUT->old_icon_url('i/all') . '" style="height:25px; width:16px; border:0px" alt="'.$strshowall.'" /></a><br />';
+                        $printsection .= '<br /><a href="index.php?id='.$course->id.'&amp;section=all" title="'.$strshowall.'"><img src="'.$OUTPUT->pix_url('i/all') . '" style="height:25px; width:16px; border:0px" alt="'.$strshowall.'" /></a><br />';
                     } else {
                         $strshowone = get_string('showonly'.preg_replace('|s$|', '', $course->format, 1), '', $hotpot->section);
-                        $printsection .=  '<br /><a href="index.php?id='.$course->id.'&amp;section='.$hotpot->section.'" title="'.$strshowone.'"><img src="'.$OUTPUT->old_icon_url('i/one') . '" class="icon" alt="'.$strshowone.'" /></a><br />';
+                        $printsection .=  '<br /><a href="index.php?id='.$course->id.'&amp;section='.$hotpot->section.'" title="'.$strshowone.'"><img src="'.$OUTPUT->pix_url('i/one') . '" class="icon" alt="'.$strshowone.'" /></a><br />';
                     }
                 }
             }

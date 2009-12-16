@@ -239,7 +239,7 @@ class blog_entry {
                 if ($contextrec->contextlevel ==  CONTEXT_COURSE) {
                     $associcon = new moodle_action_icon();
                     $associcon->link->url = new moodle_url($CFG->wwwroot.'/course/view.php', array('id' => $contextrec->instanceid));
-                    $associcon->image->src = $OUTPUT->old_icon_url('i/course');
+                    $associcon->image->src = $OUTPUT->pix_url('i/course');
                     $associcon->linktext = $DB->get_field('course', 'shortname', array('id' => $contextrec->instanceid));
                     $assocstr .= $OUTPUT->action_icon($associcon);
                     $hascourseassocs = true;
@@ -262,7 +262,7 @@ class blog_entry {
 
                     $associcon = new moodle_action_icon();
                     $associcon->link->url = new moodle_url($CFG->wwwroot.'/mod/'.$modname.'/view.php', array('id' => $modinfo->id));
-                    $associcon->image->src = $OUTPUT->old_icon_url('icon', $modname);
+                    $associcon->image->src = $OUTPUT->pix_url('icon', $modname);
                     $associcon->linktext = $DB->get_field($modname, 'name', array('id' => $modinfo->instance));
                     $assocstr .= $OUTPUT->action_icon($associcon);
                     $assocstr .= ', ';
@@ -499,7 +499,7 @@ class blog_entry {
             $type     = mimeinfo_from_type("type", $mimetype);
 
             $image = new html_image();
-            $image->src = $OUTPUT->old_icon_url("/f/$icon");
+            $image->src = $OUTPUT->pix_url("/f/$icon");
             $image->add_class('icon');
             $image->alt = $filename;
 

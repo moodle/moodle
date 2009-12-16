@@ -109,7 +109,7 @@ if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing())
 
     if ($PAGE->user_is_editing() && has_capability('moodle/course:update', $coursecontext)) {
         echo '<a title="'.$streditsummary.'" '.
-             ' href="editsection.php?id='.$thissection->id.'"><img src="'.$OUTPUT->old_icon_url('t/edit') . '" '.
+             ' href="editsection.php?id='.$thissection->id.'"><img src="'.$OUTPUT->pix_url('t/edit') . '" '.
              ' class="icon edit" alt="'.$streditsummary.'" /></a>';
     }
     echo '</div>';
@@ -184,36 +184,36 @@ while ($section <= $course->numsections) {
 
         if ($displaysection == $section) {	// Show the zoom boxes
             echo '<a href="view.php?id='.$course->id.'&amp;topic=0#section-'.$section.'" title="'.$strshowalltopics.'">'.
-                 '<img src="'.$OUTPUT->old_icon_url('i/all') . '" class="icon" alt="'.$strshowalltopics.'" /></a><br />';
+                 '<img src="'.$OUTPUT->pix_url('i/all') . '" class="icon" alt="'.$strshowalltopics.'" /></a><br />';
         } else {
             $strshowonlytopic = get_string("showonlytopic", "", $section);
             echo '<a href="view.php?id='.$course->id.'&amp;topic='.$section.'" title="'.$strshowonlytopic.'">'.
-                 '<img src="'.$OUTPUT->old_icon_url('i/one') . '" class="icon" alt="'.$strshowonlytopic.'" /></a><br />';
+                 '<img src="'.$OUTPUT->pix_url('i/one') . '" class="icon" alt="'.$strshowonlytopic.'" /></a><br />';
         }
 
         if ($PAGE->user_is_editing() && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
 
             if ($course->marker == $section) {  // Show the "light globe" on/off
-                echo '<a href="view.php?id='.$course->id.'&amp;marker=0&amp;sesskey='.sesskey().'#section-'.$section.'" title="'.$strmarkedthistopic.'">'.'<img src="'.$OUTPUT->old_icon_url('i/marked') . '" alt="'.$strmarkedthistopic.'" /></a><br />';
+                echo '<a href="view.php?id='.$course->id.'&amp;marker=0&amp;sesskey='.sesskey().'#section-'.$section.'" title="'.$strmarkedthistopic.'">'.'<img src="'.$OUTPUT->pix_url('i/marked') . '" alt="'.$strmarkedthistopic.'" /></a><br />';
             } else {
-                echo '<a href="view.php?id='.$course->id.'&amp;marker='.$section.'&amp;sesskey='.sesskey().'#section-'.$section.'" title="'.$strmarkthistopic.'">'.'<img src="'.$OUTPUT->old_icon_url('i/marker') . '" alt="'.$strmarkthistopic.'" /></a><br />';
+                echo '<a href="view.php?id='.$course->id.'&amp;marker='.$section.'&amp;sesskey='.sesskey().'#section-'.$section.'" title="'.$strmarkthistopic.'">'.'<img src="'.$OUTPUT->pix_url('i/marker') . '" alt="'.$strmarkthistopic.'" /></a><br />';
             }
 
             if ($thissection->visible) {        // Show the hide/show eye
                 echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.sesskey().'#section-'.$section.'" title="'.$strtopichide.'">'.
-                     '<img src="'.$OUTPUT->old_icon_url('i/hide') . '" class="icon hide" alt="'.$strtopichide.'" /></a><br />';
+                     '<img src="'.$OUTPUT->pix_url('i/hide') . '" class="icon hide" alt="'.$strtopichide.'" /></a><br />';
             } else {
                 echo '<a href="view.php?id='.$course->id.'&amp;show='.$section.'&amp;sesskey='.sesskey().'#section-'.$section.'" title="'.$strtopicshow.'">'.
-                     '<img src="'.$OUTPUT->old_icon_url('i/show') . '" class="icon hide" alt="'.$strtopicshow.'" /></a><br />';
+                     '<img src="'.$OUTPUT->pix_url('i/show') . '" class="icon hide" alt="'.$strtopicshow.'" /></a><br />';
             }
             if ($section > 1) {                       // Add a arrow to move section up
                 echo '<a href="view.php?id='.$course->id.'&amp;random='.rand(1,10000).'&amp;section='.$section.'&amp;move=-1&amp;sesskey='.sesskey().'#section-'.($section-1).'" title="'.$strmoveup.'">'.
-                     '<img src="'.$OUTPUT->old_icon_url('t/up') . '" class="icon up" alt="'.$strmoveup.'" /></a><br />';
+                     '<img src="'.$OUTPUT->pix_url('t/up') . '" class="icon up" alt="'.$strmoveup.'" /></a><br />';
             }
 
             if ($section < $course->numsections) {    // Add a arrow to move section down
                 echo '<a href="view.php?id='.$course->id.'&amp;random='.rand(1,10000).'&amp;section='.$section.'&amp;move=1&amp;sesskey='.sesskey().'#section-'.($section+1).'" title="'.$strmovedown.'">'.
-                     '<img src="'.$OUTPUT->old_icon_url('t/down') . '" class="icon down" alt="'.$strmovedown.'" /></a><br />';
+                     '<img src="'.$OUTPUT->pix_url('t/down') . '" class="icon down" alt="'.$strmovedown.'" /></a><br />';
             }
         }
         echo '</div>';
@@ -232,7 +232,7 @@ while ($section <= $course->numsections) {
 
             if ($PAGE->user_is_editing() && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
                 echo ' <a title="'.$streditsummary.'" href="editsection.php?id='.$thissection->id.'">'.
-                     '<img src="'.$OUTPUT->old_icon_url('t/edit') . '" class="icon edit" alt="'.$streditsummary.'" /></a><br /><br />';
+                     '<img src="'.$OUTPUT->pix_url('t/edit') . '" class="icon edit" alt="'.$streditsummary.'" /></a><br /><br />';
             }
             echo '</div>';
 

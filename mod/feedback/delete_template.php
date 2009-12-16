@@ -116,7 +116,7 @@ if($shoulddelete == 1) {
             echo '<tr><td align="center">'.$template->name.'</td>';
             echo '<td align="center">';
             echo '<form action="'.$ME.'" method="post">';
-            echo '<input title="'.get_string('delete_template','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/delete') . '" hspace="1" height="11" width="11" border="0" />';
+            echo '<input title="'.get_string('delete_template','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/delete') . '" hspace="1" height="11" width="11" border="0" />';
             echo '<input type="hidden" name="deletetempl" value="'.$template->id.'" />';
             echo '<input type="hidden" name="shoulddelete" value="1" />';
             echo '<input type="hidden" name="id" value="'.$id.'" />';

@@ -566,7 +566,7 @@ function file_get_draft_area_files($draftitemid, $filepath = '/') {
 
             $icon = mimeinfo_from_type('icon', $file->get_mimetype());
             $icon = str_replace('.gif', '', $icon);
-            $item->icon = $OUTPUT->old_icon_url('f/' . $icon);
+            $item->icon = $OUTPUT->pix_url('f/' . $icon);
 
             if ($icon == 'zip') {
                 $item->type = 'zip';
@@ -576,7 +576,7 @@ function file_get_draft_area_files($draftitemid, $filepath = '/') {
 
             if ($file->is_directory()) {
                 $item->filesize = 0;
-                $item->icon = $OUTPUT->old_icon_url('f/folder');
+                $item->icon = $OUTPUT->pix_url('f/folder');
                 $item->type = 'folder';
                 $foldername = explode('/', trim($item->filepath, '/'));
                 $item->fullname = trim(array_pop($foldername), '/');
@@ -1275,12 +1275,12 @@ function mimeinfo_from_icon($element, $icon, $all=false) {
 /**
  * Returns the relative icon path for a given mime type
  *
- * This function should be used in conjuction with $OUTPUT->old_icon_url to produce
+ * This function should be used in conjuction with $OUTPUT->pix_url to produce
  * a return the full path to an icon.
  *
  * <code>
  * $mimetype = 'image/jpg';
- * $icon = $OUTPUT->old_icon_url(file_mimetype_icon($mimetype));
+ * $icon = $OUTPUT->pix_url(file_mimetype_icon($mimetype));
  * echo '<img src="'.$icon.'" alt="'.$mimetype.'" />';
  * </code>
  *
@@ -1303,12 +1303,12 @@ function file_mimetype_icon($mimetype, $size=null) {
 /**
  * Returns the relative icon path for a given file name
  *
- * This function should be used in conjuction with $OUTPUT->old_icon_url to produce
+ * This function should be used in conjuction with $OUTPUT->pix_url to produce
  * a return the full path to an icon.
  *
  * <code>
  * $filename = 'jpg';
- * $icon = $OUTPUT->old_icon_url(file_extension_icon($filename));
+ * $icon = $OUTPUT->pix_url(file_extension_icon($filename));
  * echo '<img src="'.$icon.'" alt="blah" />';
  * </code>
  *

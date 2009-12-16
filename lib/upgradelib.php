@@ -1025,7 +1025,7 @@ function print_upgrade_reload($url) {
 
     echo "<br />";
     echo '<div class="continuebutton">';
-    echo '<a href="'.$url.'" title="'.get_string('reload').'" ><img src="'.$OUTPUT->old_icon_url('i/reload') . '" alt="" /> '.get_string('reload').'</a>';
+    echo '<a href="'.$url.'" title="'.get_string('reload').'" ><img src="'.$OUTPUT->pix_url('i/reload') . '" alt="" /> '.get_string('reload').'</a>';
     echo '</div><br />';
 }
 

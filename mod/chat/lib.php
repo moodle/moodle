@@ -1268,7 +1268,7 @@ function chat_extend_navigation($navigation, $course, $module, $cm) {
         foreach ($links as $link) {
             $link->add_action(new popup_action('click', $link->url, 'chat'.$course->id.$cm->instance.$currentgroup, array('height' => 500, 'width' => 700)));
             $link->title = get_string('modulename', 'chat');
-            $navigation->add($link->title, $link, navigation_node::TYPE_ACTIVITY, null ,null, $OUTPUT->old_icon_url('c/group'));
+            $navigation->add($link->title, $link, navigation_node::TYPE_ACTIVITY, null ,null, $OUTPUT->pix_url('c/group'));
         }
     }
 
@@ -1278,7 +1278,7 @@ function chat_extend_navigation($navigation, $course, $module, $cm) {
         $users = $navigation->get($userskey);
         foreach ($chatusers as $chatuser) {
             $userlink = new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$chatuser->id,'course'=>$course->id));
-            $users->add(fullname($chatuser).' '.format_time(time() - $chatuser->lastmessageping), $userlink, navigation_node::TYPE_USER, null, null, $OUTPUT->old_icon_url('c/user'));
+            $users->add(fullname($chatuser).' '.format_time(time() - $chatuser->lastmessageping), $userlink, navigation_node::TYPE_USER, null, null, $OUTPUT->pix_url('c/user'));
         }
     }
 }

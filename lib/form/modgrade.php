@@ -62,7 +62,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_select{
                     $grades[$i] = $i;
                 }
                 $this->load($grades);
-                $linkobject = '<span class="helplink"><img height="17" width="17" alt="'.$strscales.'" src="'.$OUTPUT->old_icon_url('help') . '" /></span>';
+                $linkobject = '<span class="helplink"><img height="17" width="17" alt="'.$strscales.'" src="'.$OUTPUT->pix_url('help') . '" /></span>';
                 $this->setHelpButton(array('/course/scales.php?id='. $COURSE->id .'&amp;list=true', 'ratingscales',
                                      $linkobject, 400, 500, $strscales, 'none', true), 'link_to_popup_window');
                 return $result;

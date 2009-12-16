@@ -168,10 +168,10 @@
 
         if ($blocks[$blockid]->visible) {
             $visible = '<a href="blocks.php?hide='.$blockid.'&amp;sesskey='.sesskey().'" title="'.$strhide.'">'.
-                       '<img src="'.$OUTPUT->old_icon_url('i/hide') . '" class="icon" alt="'.$strhide.'" /></a>';
+                       '<img src="'.$OUTPUT->pix_url('i/hide') . '" class="icon" alt="'.$strhide.'" /></a>';
         } else {
             $visible = '<a href="blocks.php?show='.$blockid.'&amp;sesskey='.sesskey().'" title="'.$strshow.'">'.
-                       '<img src="'.$OUTPUT->old_icon_url('i/show') . '" class="icon" alt="'.$strshow.'" /></a>';
+                       '<img src="'.$OUTPUT->pix_url('i/show') . '" class="icon" alt="'.$strshow.'" /></a>';
             $class = ' class="dimmed_text"'; // Leading space required!
         }
 

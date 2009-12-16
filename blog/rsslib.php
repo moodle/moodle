@@ -35,7 +35,7 @@ function blog_rss_print_link($filtertype, $filterselect, $tagid=0, $tooltiptext=
     }
 
     $path .= '/rss.xml';
-    $rsspix = $OUTPUT->old_icon_url('i/rss');
+    $rsspix = $OUTPUT->pix_url('i/rss');
 
     require_once($CFG->libdir.'/filelib.php');
     $path = get_file_url($path, null, 'rssfile');

@@ -341,11 +341,11 @@ class portfolio_add_button {
             break;
             case PORTFOLIO_ADD_ICON_FORM:
                 $formoutput .= $selectoutput;
-                $formoutput .= "\n" . '<input type="image" src="' . $OUTPUT->old_icon_url('t/portfolio') . '" alt=' . $addstr .'" />';
+                $formoutput .= "\n" . '<input type="image" src="' . $OUTPUT->pix_url('t/portfolio') . '" alt=' . $addstr .'" />';
                 $formoutput .= "\n" . '</form>';
             break;
             case PORTFOLIO_ADD_ICON_LINK:
-                $linkoutput .= '"><img src="' . $OUTPUT->old_icon_url('t/portfolio') . '" alt=' . $addstr .'" /></a>';
+                $linkoutput .= '"><img src="' . $OUTPUT->pix_url('t/portfolio') . '" alt=' . $addstr .'" /></a>';
             break;
             case PORTFOLIO_ADD_TEXT_LINK:
                 $linkoutput .= '">' . $addstr .'</a>';

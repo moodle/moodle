@@ -329,7 +329,7 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
 
    /// Moodle Icon Handling
    global $CFG;
-   $p_icon = $OUTPUT->old_icon_url(file_extension_icon($id));
+   $p_icon = $OUTPUT->pix_url(file_extension_icon($id));
    $p_icon_t = '';
 
    $info->id = $id;

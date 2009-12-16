@@ -234,7 +234,7 @@ class block_tags extends block_base {
                     $arrowtitle = get_string('arrowtitle', $tagslang);
                     $coursetaghelpbutton = $OUTPUT->help_icon(moodle_help_icon::make('addtags', 'adding tags', $tagslang));
                     $sesskey = sesskey();
-                    $arrowright = $OUTPUT->old_icon_url('t/arrow_left');
+                    $arrowright = $OUTPUT->pix_url('t/arrow_left');
                     $this->content->footer .= <<<EOT
                         <hr />
                         <form action="{$CFG->wwwroot}/tag/coursetags_add.php" method="post" id="coursetag"

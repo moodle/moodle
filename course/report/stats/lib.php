@@ -87,7 +87,7 @@ function stats_report_extend_navigation($navigation, $course, $context) {
     if (has_capability('coursereport/stats:view', $context)) {
         if (!empty($CFG->enablestats)) {
             $url = new moodle_url($CFG->wwwroot.'/course/report/stats/index.php', array('id'=>$course->id));
-            $navigation->add(get_string('stats'), $url, navigation_node::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/report'));
+            $navigation->add(get_string('stats'), $url, navigation_node::TYPE_SETTING, null, null, $OUTPUT->pix_url('i/report'));
         }
     }
 }

@@ -41,7 +41,7 @@ function min_optional_param($name, $default, $type) {
         $value = $_GET[$name];
 
     } else if (isset($_GET['amp;'.$name])) {
-        // very, very, very ugly hack, unforunately $OUTPUT->old_icon_url() is not used properly in javascript code :-(
+        // very, very, very ugly hack, unforunately $OUTPUT->pix_url() is not used properly in javascript code :-(
         $value = $_GET['amp;'.$name];
     }
     switch($type) {

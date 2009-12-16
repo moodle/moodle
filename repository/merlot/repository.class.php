@@ -81,7 +81,7 @@ class repository_merlot extends repository {
         foreach ($xml->results->material as $entry) {
             $list[] = array(
                 'title'=>(string)$entry->title,
-                'thumbnail'=>$OUTPUT->old_icon_url('f/unknown-32'),
+                'thumbnail'=>$OUTPUT->pix_url('f/unknown-32'),
                 'date'=>userdate((int)$entry->creationDate),
                 'size'=>'',
                 'source'=>(string)$entry->URL

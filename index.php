@@ -125,7 +125,7 @@
             if ($editing) {
                 $streditsummary = get_string('editsummary');
                 echo "<a title=\"$streditsummary\" ".
-                     " href=\"course/editsection.php?id=$section->id\"><img src=\"" . $OUTPUT->old_icon_url('t/edit') . "\" ".
+                     " href=\"course/editsection.php?id=$section->id\"><img src=\"" . $OUTPUT->pix_url('t/edit') . "\" ".
                      " class=\"iconsmall\" alt=\"$streditsummary\" /></a><br /><br />";
             }
 

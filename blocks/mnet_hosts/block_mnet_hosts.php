@@ -82,7 +82,7 @@ class block_mnet_hosts extends block_list {
 
         if ($hosts) {
             foreach ($hosts as $host) {
-            $icon  = '<img src="'.$OUTPUT->old_icon_url('i/'.$host->application.'_host') . '"'.
+            $icon  = '<img src="'.$OUTPUT->pix_url('i/'.$host->application.'_host') . '"'.
                 ' class="icon" alt="'.get_string('server', 'block_mnet_hosts').'" />';
 
                 $this->content->icons[]=$icon;
