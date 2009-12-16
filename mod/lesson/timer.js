@@ -73,11 +73,9 @@
         current = currentDate.getTime();
         current = Math.floor(current/1000);
 
+        var myclock = '<font style="color:'+myfont_color+'; font-family:'+myfont_face+'; font-size:'+myfont_size+'pt;">';
         if (current > starttime + testlength) {
-            myclock = '';
-            myclock += '<font style="color:'+myfont_color+'; font-family:'+myfont_face+'; font-size:'+myfont_size+'pt;">';
             myclock += "Time is up";
-            myclock += '</font>';
             stopclock = 1;
         } else {
             timeleft = starttime + testlength - current;
@@ -92,11 +90,9 @@
             if (minutes < 10) {
                 minutes = "0"+minutes;
             }
-            myclock = '';
-            myclock += '<font style="color:'+myfont_color+'; font-family:'+myfont_face+'; font-size:'+myfont_size+'pt;">';
             myclock += hours+":"+minutes+":"+secs;
-            myclock += '</font>';
         }
+        myclock += '</font>';
 
         if (old == "true") {
             document.write(myclock);

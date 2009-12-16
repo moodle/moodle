@@ -1,24 +1,45 @@
 <?php
 
-// This file keeps track of upgrades to
-// the lesson module
+// This file is part of Moodle - http://moodle.org/
 //
-// Sometimes, changes between versions involve
-// alterations to database structures and other
-// major things that may break installations.
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-// The upgrade function in this file will attempt
-// to perform all the necessary actions to upgrade
-// your older installtion to the current version.
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-// If there's something it cannot do itself, it
-// will tell you what you need to do.
-//
-// The commands in here will all be database-neutral,
-// using the methods of database_manager class
-//
-// Please do not forget to use upgrade_set_timeout()
-// before any action that may take longer time to finish.
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This file keeps track of upgrades to
+ * the lesson module
+ *
+ * Sometimes, changes between versions involve
+ * alterations to database structures and other
+ * major things that may break installations.
+ *
+ * The upgrade function in this file will attempt
+ * to perform all the necessary actions to upgrade
+ * your older installtion to the current version.
+ *
+ * If there's something it cannot do itself, it
+ * will tell you what you need to do.
+ *
+ * The commands in here will all be database-neutral,
+ * using the methods of database_manager class
+ *
+ * Please do not forget to use upgrade_set_timeout()
+ * before any action that may take longer time to finish.
+ * 
+ * @package   lesson
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 o
+ */
 
 function xmldb_lesson_upgrade($oldversion) {
     global $CFG, $DB;
@@ -51,6 +72,89 @@ function xmldb_lesson_upgrade($oldversion) {
         lesson_upgrade_grades();
 
         upgrade_mod_savepoint($result, 2008112601, 'lesson');
+    }
+
+    if ($result && $oldversion < 2009111600) {
+        /**
+         * Change the grade field within lesson_answers to an unsigned int and increment
+         * the length by one to ensure that no values are changed (reduced)
+         */
+        $table = new xmldb_table('lesson_answers');
+        $field = new xmldb_field('grade');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '4', false, XMLDB_NOTNULL, null, '0', 'jumpto');
+        $dbman->change_field_type($table, $field);
+        upgrade_mod_savepoint($result, 2009111600, 'lesson');
+    }
+
+    if ($result && $oldversion < 2009120400) {
+        
+        /**
+         * Move any media files associated with the lesson to use the new file
+         * API methods and structures.
+         */
+        $lessons = $DB->get_records_select('lesson', 'mediafile != \'\'');
+
+        $empty = $DB->sql_empty(); // silly oracle empty string handling workaround
+        $sqlfrom = "FROM {lesson} l
+                    JOIN {modules} m ON m.name = 'lesson'
+                    JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = l.id)
+                   WHERE l.mediafile <> '$empty'";
+
+        $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom");
+
+        if ($count > 0 && $rs = $DB->get_recordset_sql("SELECT l.id, l.mediafile, l.course, cm.id AS cmid $sqlfrom ORDER BY l.course, l.id")) {
+
+            $pbar = new progress_bar('migratelessonfiles', 500, true);
+            $fs = get_file_storage();
+
+            $i = 0;
+            foreach ($rs as $lesson) {
+                $i++;
+                upgrade_set_timeout(60); // set up timeout, may also abort execution
+                $pbar->update($i, $count, "Migrating lesson mediafiles - $i/$count.");
+                
+                $filepath = $CFG->dataroot.'/'.$lesson->course.'/'.$CFG->moddata.'/lesson/'.$lesson->mediafile;
+                if (!is_readable($filepath)) {
+                    //file missing??
+                    echo $OUTPUT->notification("File not readable, skipping: ".$filepath);
+                    $DB->set_field('lesson', 'mediafile', '', array('id'=>$lesson->id));
+                    continue;
+                }
+
+                $filearea = 'lesson_media_file';
+                $filename = clean_param($lesson->mediafile, PARAM_FILE);
+                if ($filename === '') {
+                    echo $OUTPUT->notification("Unsupported lesson filename, skipping: ".$filepath);
+                    $DB->set_field('lesson', 'mediafile', '', array('id'=>$lesson->id));
+                    continue;
+                }
+
+                $context = get_context_instance(CONTEXT_MODULE, $lesson->cmid);
+                if (!$fs->file_exists($context->id, $filearea, $lesson->id, '/', $filename)) {
+                    $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$lesson->id, 'filepath'=>'/', 'filename'=>$filename);
+                    if ($fs->create_file_from_pathname($file_record, $filepath)) {
+                        if ($DB->set_field('lesson', 'mediafile', $filename, array('id'=>$lesson->id))) {
+                            unlink($filepath);
+                        }
+                    }
+                }
+
+                // remove dir if empty
+                @rmdir("$CFG->dataroot/$post->course/$CFG->moddata/lesson");
+            }
+        }
+
+        upgrade_mod_savepoint($result, 2009120400, 'lesson');
+    }
+
+    if ($result && $oldversion < 2009120800) {
+        /**
+         * Drop the lesson_default table, as of Moodle 2.0 it is no longer used
+         * the module now has a settings.php instead
+         */
+        $table = new xmldb_table('lesson_default');
+        $dbman->drop_table($table);
+        upgrade_mod_savepoint($result, 2009120800, 'lesson');
     }
 
     return $result;

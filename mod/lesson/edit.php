@@ -1,310 +1,72 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Provides the interface for overall authoring of lessons
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 
-    require_once('../../config.php');
-    require_once('locallib.php');
-    require_once('lib.php');
+require_once('../../config.php');
+require_once($CFG->dirroot.'/mod/lesson/locallib.php');
 
-    $id      = required_param('id', PARAM_INT);             // Course Module ID
-    $display = optional_param('display', 0, PARAM_INT);
-    $mode    = optional_param('mode', get_user_preferences('lesson_view', 'collapsed'), PARAM_ALPHA);
-    $pageid = optional_param('pageid', 0, PARAM_INT);
+try {
+    $cm = get_coursemodule_from_id('lesson', required_param('id', PARAM_INT), 0, false, MUST_EXIST);;
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+} catch (Exception $e) {
+    print_error('invalidcoursemodule');
+}
+require_login($course, false, $cm);
 
-    if ($mode != 'single') {
-        set_user_preference('lesson_view', $mode);
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('mod/lesson:manage', $context);
+
+$mode    = optional_param('mode', get_user_preferences('lesson_view', 'collapsed'), PARAM_ALPHA);
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/lesson/edit.php', array('id'=>$cm->id,'mode'=>$mode)));
+
+if ($mode != get_user_preferences('lesson_view', 'collapsed') && $mode !== 'single') {
+    set_user_preference('lesson_view', $mode);
+}
+
+$lessonoutput = $PAGE->theme->get_renderer('mod_lesson', $PAGE);
+$PAGE->navbar->add(get_string('edit'));
+echo $lessonoutput->header($lesson, $mode);
+if (!$lesson->has_pages()) {
+    // There are no pages; give teacher some options
+    require_capability('mod/lesson:edit', $context);
+    echo $lessonoutput->add_first_page_links($lesson);
+} else {
+    switch ($mode) {
+        case 'collapsed':
+            echo $lessonoutput->display_edit_collapsed($lesson, $lesson->firstpageid);
+            break;
+        case 'single':
+            $pageid =  required_param('pageid', PARAM_INT);
+            $PAGE->url->param('pageid', $pageid);
+            $singlepage = $lesson->load_page($pageid);
+            echo $lessonoutput->display_edit_full($lesson, $singlepage->id, $singlepage->prevpageid, true);
+            break;
+        case 'full':
+            echo $lessonoutput->display_edit_full($lesson, $lesson->firstpageid, 0);
+            break;
     }
+}
 
-    list($cm, $course, $lesson) = lesson_get_basics($id);
-
-    if ($firstpage = $DB->get_record('lesson_pages', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
-        if (!$pages = $DB->get_records('lesson_pages', array('lessonid' => $lesson->id))) {
-            print_error('cannotfindrecords', 'lesson');
-        }
-    }
-
-    if ($pageid) {
-        if (!$singlepage = $DB->get_record('lesson_pages', array('id' => $pageid))) {
-            print_error('invalidpageid', 'lesson');
-        }
-    }
-
-    require_login($course->id, false, $cm);
-
-    $url = new moodle_url($CFG->wwwroot.'/mod/lesson/edit.php', array('id'=>$id,'mode'=>$mode));
-    if ($display !== 0) {
-        $url->param('display', $display);
-    }
-    if ($pageid !== 0) {
-        $url->param('pageid', $pageid);
-    }
-    $PAGE->set_url($url);
-    $PAGE->navbar->add(get_string('edit'));
-
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    require_capability('mod/lesson:manage', $context);
-
-    lesson_print_header($cm, $course, $lesson, $mode);
-
-    if (empty($firstpage)) {
-        // There are no pages; give teacher some options
-        if (has_capability('mod/lesson:edit', $context)) {
-            echo $OUTPUT->box( "<table cellpadding=\"5\" border=\"0\">\n<tr><th scope=\"col\">".get_string("whatdofirst", "lesson")."</th></tr><tr><td>".
-                "<a href=\"import.php?id=$cm->id&amp;pageid=0\">".
-                get_string("importquestions", "lesson")."</a></td></tr><tr><td>".
-                "<a href=\"importppt.php?id=$cm->id&amp;pageid=0\">".
-                get_string("importppt", "lesson")."</a></td></tr><tr><td>".
-                "<a href=\"lesson.php?id=$cm->id&amp;action=addbranchtable&amp;pageid=0&amp;firstpage=1\">".
-                get_string("addabranchtable", "lesson")."</a></td></tr><tr><td>".
-                "<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=0&amp;firstpage=1\">".
-                get_string("addaquestionpage", "lesson").
-                "</a></td></tr></table>\n", 'center', '20%');
-        }
-    } else {
-        // Set some standard variables
-        $pageid = $firstpage->id;
-        $prevpageid = 0;
-        $npages = count($pages);
-
-        switch ($mode) {
-            case 'collapsed':
-                $table = new html_table();
-                $table->head = array(get_string('pagetitle', 'lesson'), get_string('qtype', 'lesson'), get_string('jumps', 'lesson'), get_string('actions', 'lesson'));
-                $table->align = array('left', 'left', 'left', 'center');
-                $table->wrap = array('', 'nowrap', '', 'nowrap');
-                $table->tablealign = 'center';
-                $table->cellspacing = 0;
-                $table->cellpadding = '2px';
-                $table->data = array();
-
-                while ($pageid != 0) {
-                    $page = $pages[$pageid];
-
-                    if ($page->qtype == LESSON_MATCHING) {
-                        // The jumps for matching question type is stored
-                        // in the 3rd and 4rth answer record.
-                        $limitfrom = $limitnum = 2;
-                    } else {
-                        $limitfrom = $limitnum = '';
-                    }
-
-                    $jumps = array();
-                    $params = array ("lessonid" => $lesson->id, "pageid" => $pageid);
-                    if($answers = $DB->get_records_select("lesson_answers", "lessonid = :lessonid and pageid = :pageid", $params, 'id', '*', $limitfrom, $limitnum)) {
-                        foreach ($answers as $answer) {
-                            $jumps[] = lesson_get_jump_name($answer->jumpto);
-                        }
-                    }
-
-                    $table->data[] = array("<a href=\"$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id&amp;mode=single&amp;pageid=".$page->id."\">".format_string($pages[$pageid]->title,true).'</a>',
-                                           lesson_get_qtype_name($page->qtype),
-                                           implode("<br />\n", $jumps),
-                                           lesson_print_page_actions($cm->id, $page, $npages, true, true)
-                                          );
-                    $pageid = $page->nextpageid;
-                }
-
-                echo $OUTPUT->table($table);
-                break;
-
-            case 'single':
-                // Only viewing a single page in full - change some variables to display just one
-                $prevpageid = $singlepage->prevpageid;
-                $pageid     = $singlepage->id;
-
-                $pages = array();
-                $pages[$singlepage->id] = $singlepage;
-
-            case 'full':
-                echo '<table class="boxaligncenter" cellpadding="5" border="0" style="width:80%;">
-                         <tr>
-                             <td align="left">';
-                lesson_print_add_links($cm->id, $prevpageid);
-                echo '       </td>
-                         </tr>';
-
-                while ($pageid != 0) {
-                    $page = $pages[$pageid];
-
-                    echo "<tr><td>\n";
-                    echo "<table style=\"width:100%;\" border=\"1\" class=\"generalbox\"><tr><th colspan=\"2\" scope=\"col\">".format_string($page->title)."&nbsp;&nbsp;\n";
-                    lesson_print_page_actions($cm->id, $page, $npages);
-                    echo "</th></tr>\n";
-                    echo "<tr><td colspan=\"2\">\n";
-                    $options = new stdClass;
-                    $options->noclean = true;
-                    echo format_text($page->contents, FORMAT_MOODLE, $options);
-                    echo "</td></tr>\n";
-                    // get the answers in a set order, the id order
-                    if ($answers = $DB->get_records("lesson_answers", array("pageid" => $page->id), "id")) {
-                        echo "<tr><td colspan=\"2\" align=\"center\"><strong>\n";
-                        echo lesson_get_qtype_name($page->qtype);
-                        switch ($page->qtype) {
-                            case LESSON_SHORTANSWER :
-                                if ($page->qoption) {
-                                    echo " - ".get_string("casesensitive", "lesson");
-                                }
-                                break;
-                            case LESSON_MULTICHOICE :
-                                if ($page->qoption) {
-                                    echo " - ".get_string("multianswer", "lesson");
-                                }
-                                break;
-                            case LESSON_MATCHING :
-                                echo get_string("firstanswershould", "lesson");
-                                break;
-                        }
-                        echo "</strong></td></tr>\n";
-                        $i = 1;
-                        $n = 0;
-                        $options = new stdClass;
-                        $options->noclean = true;
-                        $options->para = false;
-                        foreach ($answers as $answer) {
-                            switch ($page->qtype) {
-                                case LESSON_MULTICHOICE:
-                                case LESSON_TRUEFALSE:
-                                case LESSON_SHORTANSWER:
-                                case LESSON_NUMERICAL:
-                                    echo "<tr><td align=\"right\" valign=\"top\" style=\"width:20%;\">\n";
-                                    if ($lesson->custom) {
-                                        // if the score is > 0, then it is correct
-                                        if ($answer->score > 0) {
-                                            echo '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
-                                        } else {
-                                            echo '<span class="label">'.get_string("answer", "lesson")." $i</span>: \n";
-                                        }
-                                    } else {
-                                        if (lesson_iscorrect($page->id, $answer->jumpto)) {
-                                            // underline correct answers
-                                            echo '<span class="correct">'.get_string("answer", "lesson")." $i</span>: \n";
-                                        } else {
-                                            echo '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
-                                        }
-                                    }
-                                    echo "</td><td style=\"width:80%;\">\n";
-                                    echo format_text($answer->answer, FORMAT_MOODLE, $options);
-                                    echo "</td></tr>\n";
-                                    echo "<tr><td align=\"right\" valign=\"top\"><span class=\"label\">".get_string("response", "lesson")." $i</span>: \n";
-                                    echo "</td><td>\n";
-                                    echo format_text($answer->response, FORMAT_MOODLE, $options);
-                                    echo "</td></tr>\n";
-                                    break;
-                                case LESSON_MATCHING:
-                                    if ($n < 2) {
-                                        if ($answer->answer != NULL) {
-                                            if ($n == 0) {
-                                                echo "<tr><td align=\"right\" valign=\"top\"><span class=\"label\">".get_string("correctresponse", "lesson")."</span>: \n";
-                                                echo "</td><td>\n";
-                                                echo format_text($answer->answer, FORMAT_MOODLE, $options);
-                                                echo "</td></tr>\n";
-                                            } else {
-                                                echo "<tr><td align=\"right\" valign=\"top\"><span class=\"label\">".get_string("wrongresponse", "lesson")."</span>: \n";
-                                                echo "</td><td>\n";
-                                                echo format_text($answer->answer, FORMAT_MOODLE, $options);
-                                                echo "</td></tr>\n";
-                                            }
-                                        }
-                                        $n++;
-                                        $i--;
-                                    } else {
-                                        echo "<tr><td align=\"right\" valign=\"top\" style=\"width:20%;\">\n";
-                                        if ($lesson->custom) {
-                                            // if the score is > 0, then it is correct
-                                            if ($answer->score > 0) {
-                                                echo '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
-                                            } else {
-                                                echo '<span class="label">'.get_string("answer", "lesson")." $i</span>: \n";
-                                            }
-                                        } else {
-                                            if (lesson_iscorrect($page->id, $answer->jumpto)) {
-                                                // underline correct answers
-                                                echo '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
-                                            } else {
-                                                echo '<span class="label">'.get_string("answer", "lesson")." $i</span>: \n";
-                                            }
-                                        }
-                                        echo "</td><td style=\"width:80%;\">\n";
-                                        echo format_text($answer->answer, FORMAT_MOODLE, $options);
-                                        echo "</td></tr>\n";
-                                        echo "<tr><td align=\"right\" valign=\"top\"><span class=\"label\">".get_string("matchesanswer", "lesson")." $i</span>: \n";
-                                        echo "</td><td>\n";
-                                        echo format_text($answer->response, FORMAT_MOODLE, $options);
-                                        echo "</td></tr>\n";
-                                    }
-                                    break;
-                                case LESSON_BRANCHTABLE:
-                                    echo "<tr><td align=\"right\" valign=\"top\" style=\"width:20%;\">\n";
-                                    echo '<span class="label">'.get_string("description", "lesson")." $i</span>: \n";
-                                    echo "</td><td style=\"width:80%;\">\n";
-                                    echo format_text($answer->answer, FORMAT_MOODLE, $options);
-                                    echo "</td></tr>\n";
-                                    break;
-                            }
-
-                            $jumptitle = lesson_get_jump_name($answer->jumpto);
-                            if ($page->qtype == LESSON_MATCHING) {
-                                if ($i == 1) {
-                                    echo "<tr><td align=\"right\" style=\"width:20%;\"><span class=\"label\">".get_string("correctanswerscore", "lesson");
-                                    echo "</span>: </td><td style=\"width:80%;\">\n";
-                                    echo "$answer->score</td></tr>\n";
-                                    echo "<tr><td align=\"right\" style=\"width:20%;\"><span class=\"label\">".get_string("correctanswerjump", "lesson");
-                                    echo "</span>:</td><td style=\"width:80%;\">\n";
-                                    echo "$jumptitle</td></tr>\n";
-                                } elseif ($i == 2) {
-                                    echo "<tr><td align=\"right\" style=\"width:20%;\"><span class=\"label\">".get_string("wronganswerscore", "lesson");
-                                    echo "</span>: </td><td style=\"width:80%;\">\n";
-                                    echo "$answer->score</td></tr>\n";
-                                    echo "<tr><td align=\"right\" style=\"width:20%;\"><span class=\"label\">".get_string("wronganswerjump", "lesson");
-                                    echo "</span>: </td><td style=\"width:80%;\">\n";
-                                    echo "$jumptitle</td></tr>\n";
-                                }
-                            } else {
-                                if ($lesson->custom and
-                                    $page->qtype != LESSON_BRANCHTABLE and
-                                    $page->qtype != LESSON_ENDOFBRANCH and
-                                    $page->qtype != LESSON_CLUSTER and
-                                    $page->qtype != LESSON_ENDOFCLUSTER) {
-                                    echo "<tr><td align=\"right\" style=\"width:20%;\"><span class=\"label\">".get_string("score", "lesson")." $i";
-                                    echo "</span>: </td><td style=\"width:80%;\">\n";
-                                    echo "$answer->score</td></tr>\n";
-                                }
-                                echo "<tr><td align=\"right\" style=\"width:20%;\"><span class=\"label\">".get_string("jump", "lesson")." $i";
-                                echo "</span>: </td><td style=\"width:80%;\">\n";
-                                echo "$jumptitle</td></tr>\n";
-                            }
-                            $i++;
-                        }
-                    }
-                    echo "</table></td></tr>\n<tr><td align=\"left\">";
-                    lesson_print_add_links($cm->id, $page->id);
-                    echo "</td></tr><tr><td>\n";
-                    // check the prev links - fix (silently) if necessary - there was a bug in
-                    // versions 1 and 2 when add new pages. Not serious then as the backwards
-                    // links were not used in those versions
-                    if ($page->prevpageid != $prevpageid) {
-                        // fix it
-                        $DB->set_field("lesson_pages", "prevpageid", $prevpageid, array("id" => $page->id));
-                        debugging("<p>***prevpageid of page $page->id set to $prevpageid***");
-                    }
-
-                    if (count($pages) == 1) {
-                        echo "</td></tr>";
-                        break;
-                    }
-
-                    $prevpageid = $page->id;
-                    $pageid = $page->nextpageid;
-                    echo "</td></tr>";
-                }
-                echo "</table>";
-                break;
-        }
-    }
-
-    echo $OUTPUT->footer();
-
+echo $lessonoutput->footer();

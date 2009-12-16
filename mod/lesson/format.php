@@ -1,31 +1,292 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * format.php  - Default format class for file imports/exports. Doesn't do
  * everything on it's own -- it needs to be extended.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * Included by import.ph
+ *
  * @package lesson
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 
-// Included by import.php
+/**
+ * Given some question info and some data about the the answers
+ * this function parses, organises and saves the question
+ *
+ * This is only used when IMPORTING questions and is only called
+ * from format.php
+ * Lifted from mod/quiz/lib.php -
+ *    1. all reference to oldanswers removed
+ *    2. all reference to quiz_multichoice table removed
+ *    3. In SHORTANSWER questions usecase is store in the qoption field
+ *    4. In NUMERIC questions store the range as two answers
+ *    5. TRUEFALSE options are ignored
+ *    6. For MULTICHOICE questions with more than one answer the qoption field is true
+ *
+ * @param opject $question Contains question data like question, type and answers.
+ * @return object Returns $result->error or $result->notice.
+ **/
+function lesson_save_question_options($question, $lesson) {
+    global $DB;
+
+    // These lines are required to ensure that all page types have
+    // been loaded for the following switch
+    if (!($lesson instanceof lesson)) {
+        $lesson = new lesson($lesson);
+    }
+    $manager = lesson_page_type_manager::get($lesson);
+    
+    $timenow = time();
+    switch ($question->qtype) {
+        case LESSON_PAGE_SHORTANSWER:
+
+            $answers = array();
+            $maxfraction = -1;
+
+            // Insert all the new answers
+            foreach ($question->answer as $key => $dataanswer) {
+                if ($dataanswer != "") {
+                    $answer = new stdClass;
+                    $answer->lessonid   = $question->lessonid;
+                    $answer->pageid   = $question->id;
+                    if ($question->fraction[$key] >=0.5) {
+                        $answer->jumpto = LESSON_NEXTPAGE;
+                    }
+                    $answer->timecreated   = $timenow;
+                    $answer->grade = $question->fraction[$key] * 100;
+                    $answer->answer   = $dataanswer;
+                    $answer->response = $question->feedback[$key];
+                    $answer->id = $DB->insert_record("lesson_answers", $answer);
+                    $answers[] = $answer->id;
+                    if ($question->fraction[$key] > $maxfraction) {
+                        $maxfraction = $question->fraction[$key];
+                    }
+                }
+            }
+
+
+            /// Perform sanity checks on fractional grades
+            if ($maxfraction != 1) {
+                $maxfraction = $maxfraction * 100;
+                $result->notice = get_string("fractionsnomax", "quiz", $maxfraction);
+                return $result;
+            }
+            break;
+
+        case LESSON_PAGE_NUMERICAL:   // Note similarities to SHORTANSWER
+
+            $answers = array();
+            $maxfraction = -1;
+
+
+            // for each answer store the pair of min and max values even if they are the same
+            foreach ($question->answer as $key => $dataanswer) {
+                if ($dataanswer != "") {
+                    $answer = new stdClass;
+                    $answer->lessonid   = $question->lessonid;
+                    $answer->pageid   = $question->id;
+                    $answer->jumpto = LESSON_NEXTPAGE;
+                    $answer->timecreated   = $timenow;
+                    $answer->grade = $question->fraction[$key] * 100;
+                    $min = $question->answer[$key] - $question->tolerance[$key];
+                    $max = $question->answer[$key] + $question->tolerance[$key];
+                    $answer->answer   = $min.":".$max;
+                    // $answer->answer   = $question->min[$key].":".$question->max[$key]; original line for min/max
+                    $answer->response = $question->feedback[$key];
+                    $answer->id = $DB->insert_record("lesson_answers", $answer);
+
+                    $answers[] = $answer->id;
+                    if ($question->fraction[$key] > $maxfraction) {
+                        $maxfraction = $question->fraction[$key];
+                    }
+                }
+            }
+
+            /// Perform sanity checks on fractional grades
+            if ($maxfraction != 1) {
+                $maxfraction = $maxfraction * 100;
+                $result->notice = get_string("fractionsnomax", "quiz", $maxfraction);
+                return $result;
+            }
+        break;
+
+
+        case LESSON_PAGE_TRUEFALSE:
+
+            // the truth
+            $answer->lessonid   = $question->lessonid;
+            $answer->pageid = $question->id;
+            $answer->timecreated   = $timenow;
+            $answer->answer = get_string("true", "quiz");
+            $answer->grade = $question->answer * 100;
+            if ($answer->grade > 50 ) {
+                $answer->jumpto = LESSON_NEXTPAGE;
+            }
+            if (isset($question->feedbacktrue)) {
+                $answer->response = $question->feedbacktrue;
+            }
+            $true->id = $DB->insert_record("lesson_answers", $answer);
+
+            // the lie
+            $answer = new stdClass;
+            $answer->lessonid   = $question->lessonid;
+            $answer->pageid = $question->id;
+            $answer->timecreated   = $timenow;
+            $answer->answer = get_string("false", "quiz");
+            $answer->grade = (1 - (int)$question->answer) * 100;
+            if ($answer->grade > 50 ) {
+                $answer->jumpto = LESSON_NEXTPAGE;
+            }
+            if (isset($question->feedbackfalse)) {
+                $answer->response = $question->feedbackfalse;
+            }
+            $false->id = $DB->insert_record("lesson_answers", $answer);
+
+          break;
+
+        case LESSON_PAGE_MULTICHOICE:
+
+            $totalfraction = 0;
+            $maxfraction = -1;
+
+            $answers = array();
+
+            // Insert all the new answers
+            foreach ($question->answer as $key => $dataanswer) {
+                if ($dataanswer != "") {
+                    $answer = new stdClass;
+                    $answer->lessonid   = $question->lessonid;
+                    $answer->pageid   = $question->id;
+                    $answer->timecreated   = $timenow;
+                    $answer->grade = $question->fraction[$key] * 100;
+                    // changed some defaults
+                    /* Original Code
+                    if ($answer->grade > 50 ) {
+                        $answer->jumpto = LESSON_NEXTPAGE;
+                    }
+                    Replaced with:                    */
+                    if ($answer->grade > 50 ) {
+                        $answer->jumpto = LESSON_NEXTPAGE;
+                        $answer->score = 1;
+                    }
+                    // end Replace
+                    $answer->answer   = $dataanswer;
+                    $answer->response = $question->feedback[$key];
+                    $answer->id = $DB->insert_record("lesson_answers", $answer);
+                    // for Sanity checks
+                    if ($question->fraction[$key] > 0) {
+                        $totalfraction += $question->fraction[$key];
+                    }
+                    if ($question->fraction[$key] > $maxfraction) {
+                        $maxfraction = $question->fraction[$key];
+                    }
+                }
+            }
+
+            /// Perform sanity checks on fractional grades
+            if ($question->single) {
+                if ($maxfraction != 1) {
+                    $maxfraction = $maxfraction * 100;
+                    $result->notice = get_string("fractionsnomax", "quiz", $maxfraction);
+                    return $result;
+                }
+            } else {
+                $totalfraction = round($totalfraction,2);
+                if ($totalfraction != 1) {
+                    $totalfraction = $totalfraction * 100;
+                    $result->notice = get_string("fractionsaddwrong", "quiz", $totalfraction);
+                    return $result;
+                }
+            }
+        break;
+
+        case LESSON_PAGE_MATCHING:
+
+            $subquestions = array();
+
+            $defaultanswer = new stdClass;
+            $defaultanswer->lessonid   = $question->lessonid;
+            $defaultanswer->pageid   = $question->id;
+            $defaultanswer->timecreated   = $timenow;
+            $defaultanswer->grade = 0;
+
+            // The first answer should always be the correct answer
+            $correctanswer = clone($defaultanswer);
+            $correctanswer->answer = get_string('thatsthecorrectanswer', 'lesson');
+            $DB->insert_record("lesson_answers", $correctanswer);
+
+            // The second answer should always be the wrong answer
+            $wronganswer = clone($defaultanswer);
+            $wronganswer->answer = get_string('thatsthewronganswer', 'lesson');
+            $DB->insert_record("lesson_answers", $wronganswer);
+
+            $i = 0;
+            // Insert all the new question+answer pairs
+            foreach ($question->subquestions as $key => $questiontext) {
+                $answertext = $question->subanswers[$key];
+                if (!empty($questiontext) and !empty($answertext)) {
+                    $answer = clone($defaultanswer);
+                    $answer->answer = $questiontext;
+                    $answer->response   = $answertext;
+                    if ($i == 0) {
+                        // first answer contains the correct answer jump
+                        $answer->jumpto = LESSON_NEXTPAGE;
+                    }
+                    $subquestion->id = $DB->insert_record("lesson_answers", $answer);
+                    $subquestions[] = $subquestion->id;
+                    $i++;
+                }
+            }
+
+            if (count($subquestions) < 3) {
+                $result->notice = get_string("notenoughsubquestions", "quiz");
+                return $result;
+            }
+            break;
+        default:
+            $result->error = "Unsupported question type ($question->qtype)!";
+            return $result;
+    }
+    return true;
+}
+
 
 class qformat_default {
 
     var $displayerrors = true;
     var $category = NULL;
     var $questionids = array();
-    var $qtypeconvert = array(NUMERICAL   => LESSON_NUMERICAL,
-                              MULTICHOICE => LESSON_MULTICHOICE,
-                              TRUEFALSE   => LESSON_TRUEFALSE,
-                              SHORTANSWER => LESSON_SHORTANSWER,
-                              MATCH       => LESSON_MATCHING
+    var $qtypeconvert = array(NUMERICAL   => LESSON_PAGE_NUMERICAL,
+                              MULTICHOICE => LESSON_PAGE_MULTICHOICE,
+                              TRUEFALSE   => LESSON_PAGE_TRUEFALSE,
+                              SHORTANSWER => LESSON_PAGE_SHORTANSWER,
+                              MATCH       => LESSON_PAGE_MATCHING
                               );
 
-/// Importing functions
+    // Importing functions
+    function provide_import() {
+        return false;
+    }
 
     function importpreprocess() {
-    /// Does any pre-processing that may be desired
-
+        // Does any pre-processing that may be desired
         return true;
     }
 
@@ -48,6 +309,8 @@ class qformat_default {
         echo $OUTPUT->notification(get_string('importcount', 'lesson', sizeof($questions)));
 
         $count = 0;
+
+        $unsupportedquestions = 0;
 
         foreach ($questions as $question) {   // Process and store each question
             switch ($question->qtype) {
@@ -124,7 +387,7 @@ class qformat_default {
 
                     $question->lessonid = $lesson->id; // needed for foreign key
                     $question->qtype = $this->qtypeconvert[$question->qtype];
-                    $result = lesson_save_question_options($question);
+                    $result = lesson_save_question_options($question, $lesson);
 
                     if (!empty($result->error)) {
                         echo $OUTPUT->notification($result->error);
@@ -138,9 +401,13 @@ class qformat_default {
                     break;
             // the Bad ones
                 default :
-                    echo $OUTPUT->notification(get_string('unsupportedqtype', 'lesson', $question->qtype));
+                    $unsupportedquestions++;
+                    break;
             }
 
+        }
+        if ($unsupportedquestions) {
+            echo $OUTPUT->notification(get_string('unknownqtypesnotimported', 'lesson', $unsupportedquestions));
         }
         return true;
     }
@@ -213,7 +480,7 @@ class qformat_default {
         global $CFG;
 
         $question = new stdClass();
-        $question->shuffleanswers = $CFG->quiz_shuffleanswers;
+        $question->shuffleanswers = get_config('quiz', 'shuffleanswers');
         $question->defaultgrade = 1;
         $question->image = "";
         $question->usecase = 0;
@@ -232,10 +499,9 @@ class qformat_default {
     }
 
     function importpostprocess() {
-    /// Does any post-processing that may be desired
-    /// Argument is a simple array of question ids that
-    /// have just been added.
-
+        /// Does any post-processing that may be desired
+        /// Argument is a simple array of question ids that
+        /// have just been added.
         return true;
     }
 

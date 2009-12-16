@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/lesson/db" VERSION="20070223" COMMENT="XMLDB file for Moodle mod/lesson"
+<XMLDB PATH="mod/lesson/db" VERSION="20091208" COMMENT="XMLDB file for Moodle mod/lesson"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -48,7 +48,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="deadline"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
@@ -80,7 +80,7 @@
         <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="pageid"/>
         <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="lessonid" NEXT="jumpto"/>
         <FIELD NAME="jumpto" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="pageid" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="jumpto" NEXT="score"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="jumpto" NEXT="score"/>
         <FIELD NAME="score" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="grade" NEXT="flags"/>
         <FIELD NAME="flags" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="score" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="flags" NEXT="timemodified"/>
@@ -116,7 +116,7 @@
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="lesson_grades" COMMENT="Defines lesson_grades" PREVIOUS="lesson_attempts" NEXT="lesson_default">
+    <TABLE NAME="lesson_grades" COMMENT="Defines lesson_grades" PREVIOUS="lesson_attempts" NEXT="lesson_timer">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="lessonid"/>
         <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
@@ -133,47 +133,7 @@
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="lesson_default" COMMENT="Defines lesson_default" PREVIOUS="lesson_grades" NEXT="lesson_timer">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="practice"/>
-        <FIELD NAME="practice" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course" NEXT="modattempts"/>
-        <FIELD NAME="modattempts" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="practice" NEXT="usepassword"/>
-        <FIELD NAME="usepassword" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="modattempts" NEXT="password"/>
-        <FIELD NAME="password" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="usepassword" NEXT="conditions"/>
-        <FIELD NAME="conditions" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="password" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="conditions" NEXT="custom"/>
-        <FIELD NAME="custom" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="grade" NEXT="ongoing"/>
-        <FIELD NAME="ongoing" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="custom" NEXT="usemaxgrade"/>
-        <FIELD NAME="usemaxgrade" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="ongoing" NEXT="maxanswers"/>
-        <FIELD NAME="maxanswers" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="4" SEQUENCE="false" PREVIOUS="usemaxgrade" NEXT="maxattempts"/>
-        <FIELD NAME="maxattempts" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="5" SEQUENCE="false" PREVIOUS="maxanswers" NEXT="review"/>
-        <FIELD NAME="review" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="maxattempts" NEXT="nextpagedefault"/>
-        <FIELD NAME="nextpagedefault" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="review" NEXT="feedback"/>
-        <FIELD NAME="feedback" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="nextpagedefault" NEXT="minquestions"/>
-        <FIELD NAME="minquestions" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedback" NEXT="maxpages"/>
-        <FIELD NAME="maxpages" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="minquestions" NEXT="timed"/>
-        <FIELD NAME="timed" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="maxpages" NEXT="maxtime"/>
-        <FIELD NAME="maxtime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timed" NEXT="retake"/>
-        <FIELD NAME="retake" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="maxtime" NEXT="mediaheight"/>
-        <FIELD NAME="mediaheight" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="100" SEQUENCE="false" PREVIOUS="retake" NEXT="mediawidth"/>
-        <FIELD NAME="mediawidth" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="650" SEQUENCE="false" PREVIOUS="mediaheight" NEXT="mediaclose"/>
-        <FIELD NAME="mediaclose" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="mediawidth" NEXT="slideshow"/>
-        <FIELD NAME="slideshow" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="mediaclose" NEXT="width"/>
-        <FIELD NAME="width" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="640" SEQUENCE="false" PREVIOUS="slideshow" NEXT="height"/>
-        <FIELD NAME="height" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="480" SEQUENCE="false" PREVIOUS="width" NEXT="bgcolor"/>
-        <FIELD NAME="bgcolor" TYPE="char" LENGTH="7" NOTNULL="false" DEFAULT="#FFFFFF" SEQUENCE="false" PREVIOUS="height" NEXT="displayleft"/>
-        <FIELD NAME="displayleft" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="bgcolor" NEXT="displayleftif"/>
-        <FIELD NAME="displayleftif" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="displayleft" NEXT="progressbar"/>
-        <FIELD NAME="progressbar" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="displayleftif" NEXT="highscores"/>
-        <FIELD NAME="highscores" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="progressbar" NEXT="maxhighscores"/>
-        <FIELD NAME="maxhighscores" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="highscores"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="lesson_timer" COMMENT="lesson timer for each lesson" PREVIOUS="lesson_default" NEXT="lesson_branch">
+    <TABLE NAME="lesson_timer" COMMENT="lesson timer for each lesson" PREVIOUS="lesson_grades" NEXT="lesson_branch">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="lessonid"/>
         <FIELD NAME="lessonid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>

@@ -1,32 +1,49 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * This php script contains all the stuff to restore lesson mods
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package lesson
+ * @package   lesson
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  **/
 
     //This is the "graphical" structure of the lesson mod:
     //
-    //          lesson_default                  lesson ----------------------------|--------------------------|--------------------------|
-    //     (UL, pk->id,fk->courseid)         (CL,pk->id)                           |                          |                          |
-    //                                             |                               |                          |                          |
-    //                                             |                         lesson_grades              lesson_high_scores         lesson_timer
-    //                                             |                  (UL, pk->id,fk->lessonid)    (UL, pk->id,fk->lessonid)   (UL, pk->id,fk->lessonid)
-    //                                             |
-    //                                             |
-    //                                      lesson_pages---------------------------|
-    //                                  (CL,pk->id,fk->lessonid)                   |
-    //                                             |                               |
-    //                                             |                         lesson_branch
-    //                                             |                   (UL, pk->id,fk->pageid)
-    //                                       lesson_answers
-    //                                    (CL,pk->id,fk->pageid)
-    //                                             |
-    //                                             |
-    //                                             |
-    //                                       lesson_attempts
-    //                                  (UL,pk->id,fk->answerid)
+    //           lesson ----------------------------|--------------------------|--------------------------|
+    //        (CL,pk->id)                           |                          |                          |
+    //              |                               |                          |                          |
+    //              |                         lesson_grades              lesson_high_scores         lesson_timer
+    //              |                  (UL, pk->id,fk->lessonid)    (UL, pk->id,fk->lessonid)   (UL, pk->id,fk->lessonid)
+    //              |
+    //              |
+    //       lesson_pages---------------------------|
+    //   (CL,pk->id,fk->lessonid)                   |
+    //              |                               |
+    //              |                         lesson_branch
+    //              |                   (UL, pk->id,fk->pageid)
+    //        lesson_answers
+    //     (CL,pk->id,fk->pageid)
+    //              |
+    //              |
+    //              |
+    //        lesson_attempts
+    //   (UL,pk->id,fk->answerid)
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -127,12 +144,6 @@
                             return false;
                         }
                     }
-                    // restore the default for the course.  Only do this once by checking for an id for lesson_default
-                    $lessondefault = backup_getid($restore->backup_unique_code,'lesson_default',$restore->course_id);
-                    if (!$lessondefault) {
-                        $status = lesson_default_restore_mods($info,$restore);
-                    }
-
                 }
             } else {
                 $status = false;
@@ -590,85 +601,6 @@
 
                 //The structure is equal to the db, so insert the lesson_grade
                 $newid = $DB->insert_record ("lesson_high_scores",$highscore);
-
-                //Do some output
-                if (($i+1) % 50 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 1000 == 0) {
-                            echo "<br/>";
-                        }
-                    }
-                    backup_flush(300);
-                }
-
-                if (!$newid) {
-                    $status = false;
-                }
-            }
-        }
-
-        return $status;
-    }
-
-    //This function restores the lesson_default
-    function lesson_default_restore_mods($info, $restore) {
-        global $CFG, $DB;
-
-        $status = true;
-
-        //Get the default array (optional)
-        if (isset($info['MOD']['#']['DEFAULTS'])) {
-            $defaults = $info['MOD']['#']['DEFAULTS'];
-
-            //Iterate over defaults (should only be 1!)
-            for($i = 0; $i < sizeof($defaults); $i++) {
-                $default_info = $defaults[$i];
-                //traverse_xmlize($default_info);                       //Debug
-                //print_object ($GLOBALS['traverse_array']);            //Debug
-                //$GLOBALS['traverse_array']="";                        //Debug
-
-                //Now, build the lesson_default record structure
-                $default->course = $restore->course_id;
-                $default->practice = backup_todb($default_info['#']['PRACTICE']['0']['#']);
-                $default->modattempts = backup_todb($default_info['#']['MODATTEMPTS']['0']['#']);
-                $default->usepassword = backup_todb($default_info['#']['USEPASSWORD']['0']['#']);
-                $default->password = backup_todb($default_info['#']['PASSWORD']['0']['#']);
-                $default->conditions = backup_todb($default_info['#']['CONDITIONS']['0']['#']);
-                $default->grade = backup_todb($default_info['#']['GRADE']['0']['#']);
-                $default->custom = backup_todb($default_info['#']['CUSTOM']['0']['#']);
-                $default->ongoing = backup_todb($default_info['#']['ONGOING']['0']['#']);
-                $default->usemaxgrade = backup_todb($default_info['#']['USEMAXGRADE']['0']['#']);
-                $default->maxanswers = backup_todb($default_info['#']['MAXANSWERS']['0']['#']);
-                $default->maxattempts = backup_todb($default_info['#']['MAXATTEMPTS']['0']['#']);
-                $default->review = backup_todb($default_info['#']['REVIEW']['0']['#']);
-                $default->nextpagedefault = backup_todb($default_info['#']['NEXTPAGEDEFAULT']['0']['#']);
-                $default->feedback = backup_todb($default_info['#']['FEEDBACK']['0']['#']);
-                $default->minquestions = backup_todb($default_info['#']['MINQUESTIONS']['0']['#']);
-                $default->maxpages = backup_todb($default_info['#']['MAXPAGES']['0']['#']);
-                $default->timed = backup_todb($default_info['#']['TIMED']['0']['#']);
-                $default->maxtime = backup_todb($default_info['#']['MAXTIME']['0']['#']);
-                $default->retake = backup_todb($default_info['#']['RETAKE']['0']['#']);
-                $default->mediaheight = backup_todb($default_info['#']['MEDIAHEIGHT']['0']['#']);
-                $default->mediawidth = backup_todb($default_info['#']['MEDIAWIDTH']['0']['#']);
-                $default->mediaclose = backup_todb($default_info['#']['MEDIACLOSE']['0']['#']);
-                $default->slideshow = backup_todb($default_info['#']['SLIDESHOW']['0']['#']);
-                $default->width = backup_todb($default_info['#']['WIDTH']['0']['#']);
-                $default->height = backup_todb($default_info['#']['HEIGHT']['0']['#']);
-                $default->bgcolor = backup_todb($default_info['#']['BGCOLOR']['0']['#']);
-                $default->displayleft = backup_todb($default_info['#']['DISPLAYLEFT']['0']['#']);
-                $default->displayleftif = backup_todb($default_info['#']['DISPLAYLEFTIF']['0']['#']);
-                $default->progressbar = backup_todb($default_info['#']['PROGRESSBAR']['0']['#']);
-                $default->highscores = backup_todb($default_info['#']['HIGHSCORES']['0']['#']);
-                $default->maxhighscores = backup_todb($default_info['#']['MAXHIGHSCORES']['0']['#']);
-
-                //The structure is equal to the db, so insert the lesson_grade
-                $newid = $DB->insert_record ("lesson_default",$default);
-
-                if ($newid) {
-                    backup_putid($restore->backup_unique_code,'lesson_default',
-                                 $restore->course_id, $newid);
-                }
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
