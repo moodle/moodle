@@ -24,25 +24,25 @@
  */
 
 /**
- * A custom renderer class that extends the moodle_renderer_base and
+ * A custom renderer class that extends the renderer_base and
  * is used by the forum module.
  *
  * @package mod-forum
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
-class moodle_mod_forum_renderer extends moodle_renderer_base {
+class mod_forum_renderer extends renderer_base {
 
     /**
      * A reference to the current general renderer probably {@see moodle_core_renderer}
-     * @var moodle_renderer_base
+     * @var renderer_base
      */
     protected $output;
 
     /**
      * Contructor method, calls the parent constructor
      * @param moodle_page $page
-     * @param moodle_renderer_base $output Probably moodle_core_renderer
+     * @param renderer_base $output Probably moodle_core_renderer
      */
     public function __construct($page, $output) {
         parent::__construct($page);

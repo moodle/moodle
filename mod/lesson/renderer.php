@@ -23,18 +23,18 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 
-class moodle_mod_lesson_renderer extends moodle_renderer_base {
+class mod_lesson_renderer extends renderer_base {
 
     /**
      * A reference to the current general renderer probably {@see moodle_core_renderer}
-     * @var moodle_renderer_base
+     * @var renderer_base
      */
     protected $output;
 
     /**
      * Contructor method, calls the parent constructor
      * @param moodle_page $page
-     * @param moodle_renderer_base $output Probably moodle_core_renderer
+     * @param renderer_base $output Probably moodle_core_renderer
      */
     public function __construct($page, $output) {
         parent::__construct($page);

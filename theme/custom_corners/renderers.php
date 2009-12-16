@@ -82,7 +82,7 @@ class custom_corners_core_renderer extends moodle_core_renderer {
     }
 
     public function box_start($classes = 'generalbox', $id = '') {
-        list($start, $end) = $this->custom_corners_divs('ccbox box ' . moodle_renderer_base::prepare_classes($classes), $id);
+        list($start, $end) = $this->custom_corners_divs('ccbox box ' . renderer_base::prepare_classes($classes), $id);
         $this->opencontainers->push('box', $end);
         $this->wraplevel += 1;
         return $start;
@@ -94,7 +94,7 @@ class custom_corners_core_renderer extends moodle_core_renderer {
     }
 
     public function container_start($classes = '', $id = '') {
-        list($start, $end) = $this->custom_corners_divs(moodle_renderer_base::prepare_classes($classes), $id);
+        list($start, $end) = $this->custom_corners_divs(renderer_base::prepare_classes($classes), $id);
         $this->opencontainers->push('container', $end);
         $this->wraplevel += 1;
         return $start;

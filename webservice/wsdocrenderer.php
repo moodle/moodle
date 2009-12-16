@@ -27,7 +27,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class moodle_core_wsdoc_renderer extends moodle_renderer_base {
+class core_wsdoc_renderer extends renderer_base {
 
     /**
      * Create documentation for a description object
