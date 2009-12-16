@@ -20,7 +20,7 @@
 // before any action that may take longer time to finish.
 
 function xmldb_main_upgrade($oldversion) {
-    global $CFG, $THEME, $USER, $DB, $OUTPUT;
+    global $CFG, $USER, $DB, $OUTPUT;
 
     require_once($CFG->libdir.'/db/upgradelib.php'); // Core Upgrade-related functions
 

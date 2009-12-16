@@ -26,6 +26,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// special support for highly optimised scripts that do not need libraries and DB connection
+if (defined('ABORT_AFTER_CONFIG')) {
+    if (!defined('ABORT_AFTER_CONFIG_CANCEL')) {
+        require_once("$CFG->dirroot/lib/configonlylib.php");
+        return;
+    }
+}
+
 /**
  * Holds the core settings that affect how Moodle works. Some of its fields
  * are set in config.php, and the rest are loaded from the config table.
@@ -94,7 +102,7 @@ global $PAGE;
 global $COURSE;
 
 /**
- * $OUTPUT is an instance of moodle_core_renderer or one of its subclasses. Use
+ * $OUTPUT is an instance of core_renderer or one of its subclasses. Use
  * it to generate HTML for output.
  *
  * $OUTPUT is initialised the first time it is used. See {@link bootstrap_renderer}
@@ -202,15 +210,9 @@ $CFG->config_php_settings = (array)$CFG;
 // Set up some paths.
 $CFG->libdir   = $CFG->dirroot .'/lib';
 
-if (!isset($CFG->themedir)) {
-    $CFG->themedir = $CFG->dirroot.'/theme';
-    $CFG->themewww = $CFG->wwwroot.'/theme';
-}
-
 // Set httpswwwroot default value (this variable will replace $CFG->wwwroot
 // inside some URLs used in HTTPSPAGEREQUIRED pages.
 $CFG->httpswwwroot = $CFG->wwwroot;
-$CFG->httpsthemewww = $CFG->themewww;
 
 require_once($CFG->libdir .'/setuplib.php');        // Functions that MUST be loaded first
 

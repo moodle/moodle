@@ -55,15 +55,14 @@ $PAGE->requires->yui_lib('container')->in_head();
 $PAGE->requires->yui_lib('dragdrop')->in_head();
 $PAGE->requires->yui_lib('resize')->in_head();
 $PAGE->requires->js('mod/imscp/functions.js')->in_head();
-$PAGE->requires->css('mod/imscp/style.css');
 
 $PAGE->requires->string_for_js('navigation', 'imscp');
 $PAGE->requires->string_for_js('toc', 'imscp');
 $PAGE->requires->string_for_js('hide', 'moodle');
 $PAGE->requires->string_for_js('show', 'moodle');
 
-// TODO: ugly hack for a page layout without footer and blocks
-$PAGE->set_generaltype('topframe');
+//TODO: find some better way to disable blocks and minimise footer - pagetype just for this does not seem like a good solution
+//$PAGE->set_pagelayout('maxcontent');
 
 $PAGE->set_title($course->shortname.': '.$imscp->name);
 $PAGE->set_heading($course->fullname);

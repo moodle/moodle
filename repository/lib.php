@@ -1777,12 +1777,9 @@ function repository_head_setup() {
     $PAGE->requires->yui_lib('button')->in_head();
     $PAGE->requires->yui_lib('selector')->in_head();
 
-    //TODO: remove following after we moe the content of file
-    //      proper place (==themes)
-    $PAGE->requires->css('repository/repository.css');
-
     //TODO: remove the ->in_head() once we refactor the inline script tags in repo code
     $PAGE->requires->js('repository/repository.src.js')->in_head();
+
 }
 
 /**

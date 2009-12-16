@@ -19,7 +19,10 @@
 /**
  * Configuration for Moodle's standard theme.
  *
- * There is documentation of all the things that can be configured here at
+ * DO NOT COPY THIS INTO NEW THEMES! Instead use some other theme as a base
+ * for your experiments.
+ *
+ * Options related to theme customisations can be found at
  * http://phpdocs.moodle.org/HEAD/moodlecore/theme_config.html
  *
  * For an overview of how Moodle themes work, Please see
@@ -30,83 +33,113 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$THEME->sheets = array('styles_layout', 'styles_fonts', 'styles_color');
 
-$THEME->parent = null;
-$THEME->parentsheets = false;
+$THEME->parents = array();
 
-$THEME->standardsheets = true;
-$THEME->pluginsheets = array('mod', 'block', 'format', 'gradereport');
+// TODO: All old styles are now moved into this standard theme because
+//       we need to go through all these and fix them.
+//       This means we will gradually put these back into plugins
+//       directories
+$THEME->sheets = array('styles_layout', 'styles_fonts', 'styles_color', 'styles_moz',
+    'block_blog_tags',
+    'block_calendar_month',
+    'block_calendar_upcoming',
+    'block_course_summary',
+    'block_login',
+    'block_news_items',
+    'block_quiz_results',
+    'block_rss_client',
+    'block_search_forums',
+    'block_tags',
+    'blog_tags',
+    'gradebook',
+    'mod_assignment',
+    'mod_chat',
+    'mod_choice',
+    'mod_data',
+    'mod_feedback',
+    'mod_folder',
+    'mod_forum',
+    'mod_glossary',
+    'mod_lesson',
+    'mod_page',
+    'mod_quiz',
+    'mod_resource',
+    'mod_scorm',
+    'mod_survey',
+    'mod_wiki',
+);
 
-$THEME->metainclude = false;
-$THEME->parentmetainclude = false;
-$THEME->standardmetainclude = true;
-
-$THEME->custompix = false;
+$THEME->editor_sheets = array('styles_tinymce');
 
 $THEME->layouts = array(
-    // Most pages. Put this first, so if we encounter an unknown page type, this is used.
+    // Most pages - if we encounter an unknown or a missing page type, this one is used.
     'normal' => array(
-        'layout' => 'layout.php',
+        'theme' => 'standard',
+        'file' => 'normal.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post'
+    ),
+    // Course page
+    'course' => array(
+        'theme' => 'standard',
+        'file' => 'normal.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post'
     ),
     // The site home page.
     'home' => array(
-        'layout' => 'layout-home.php',
+        'theme' => 'standard',
+        'file' => 'home.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post'
     ),
+    // Server administration scripts.
+    'admin' => array(
+        'theme' => 'standard',
+        'file' => 'normal.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre'
+    ),
+    // My moodle page
+    'my' => array(
+        'theme' => 'standard',
+        'file' => 'normal.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post'
+    ),
+
     // Settings form pages, like course of module settings.
     'form' => array(
-        'layout' => 'layout.php',
+        'theme' => 'standard',
+        'file' => 'normal.php',
         'regions' => array(),
     ),
-    // Pages that appear in pop-up windows.
+    // Pages that appear in pop-up windows - no navigation, no blocks, no header.
     'popup' => array(
-        'layout' => 'layout-popup.php',
+        'theme' => 'standard',
+        'file' => 'minimal.php',
         'regions' => array(),
     ),
-    // Legacy frameset pages
-    'topframe' => array(
-        'layout' => 'layout-topframe.php',
-        'regions' => array(),
-    ),
-    // Used during upgrade and install, and for the 'This site is undergoing maintenance' message.
-    // This must not have any blocks, and it is good idea if it does not have links to
-    // other places - for example there should not be a home link in the footer..
-    'maintenance' => array(
-        'layout' => 'layout-popup.php',
+    // No blocks and minimal footer - used for legacy frame layouts only!
+    'frametop' => array(
+        'theme' => 'standard',
+        'file' => 'frametop.php',
         'regions' => array(),
     ),
     // Embeded pages, like iframe embeded in moodleform
     'embedded' => array(
-        'layout' => 'layout-embedded.php',
+        'theme' => 'standard',
+        'file' => 'embedded.php',
         'regions' => array(),
-    )
+    ),
+    // Used during upgrade and install, and for the 'This site is undergoing maintenance' message.
+    // This must not have any blocks, and it is good idea if it does not have links to
+    // other places - for example there should not be a home link in the footer...
+    'maintenance' => array(
+        'theme' => 'standard',
+        'file' => 'minimal.php',
+        'regions' => array(),
+    ),
 );
 
-$THEME->resource_mp3player_colors =
- 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
- 'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
- 'font=Arial&fontColour=3333FF&buffer=10&waitForPlay=no&autoPlay=yes';
-$THEME->filter_mediaplugin_colors =
- 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
- 'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
- 'waitForPlay=yes';
-
-//$THEME->rarrow = '&#x25BA;' //OR '&rarr;';
-//$THEME->larrow = '&#x25C4;' //OR '&larr;';
-//$CFG->block_search_button = link_arrow_right(get_string('search'), $url='', $accesshide=true);
-
-$THEME->navmenuwidth = 50;
-// You can use this to control the cutoff point for strings
-// in the navmenus (list of activities in popup menu etc)
-// Default is 50 characters wide.
-
-$THEME->makenavmenulist = false;
-// By setting this to true, then you will have access to a
-// new variable in your header.html and footer.html called
-// $navmenulist ... this contains a simple XHTML menu of
-// all activities in the current course, mostly useful for
-// creating popup navigation menus and so on.

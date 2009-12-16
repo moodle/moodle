@@ -37,7 +37,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class moodle_renderer_base {
+class renderer_base {
     /** @var xhtml_container_stack the xhtml_container_stack to use. */
     protected $opencontainers;
     /** @var moodle_page the page we are rendering for. */
@@ -149,31 +149,27 @@ class moodle_renderer_base {
         return $classes;
     }
 
-    /**
-     * Return the URL for an icon identified as in pre-Moodle 2.0 code.
-     *
-     * Suppose you have old code like $url = "$CFG->pixpath/i/course.gif";
-     * then old_icon_url('i/course'); will return the equivalent URL that is correct now.
-     *
-     * @param string $iconname the name of the icon.
-     * @return string the URL for that icon.
-     */
-    public function old_icon_url($iconname) {
-        return $this->page->theme->old_icon_url($iconname);
+    /** OBSOLETED: to be removed soon */
+    public function old_icon_url($iconname, $component='moodle', $escaped=true) {
+        $url = $this->page->theme->image_url($iconname, $component);
+        return $url->out(false, array(), $escaped);
+    }
+
+    /** OBSOLETED: to be removed soon */
+    public function mod_icon_url($iconname, $component, $escaped=true) {
+        $url = $this->page->theme->image_url($iconname, $component);
+        return $url->out(false, array(), $escaped);
     }
 
     /**
-     * Return the URL for an icon identified as in pre-Moodle 2.0 code.
+     * Return the moodle_url for an image
      *
-     * Suppose you have old code like $url = "$CFG->modpixpath/$mod/icon.gif";
-     * then mod_icon_url('icon', $mod); will return the equivalent URL that is correct now.
-     *
-     * @param string $iconname the name of the icon.
-     * @param string $module the module the icon belongs to.
-     * @return string the URL for that icon.
+     * @param string $imagename the name of the image
+     * @param string $component full plugin name
+     * @return moodle_url
      */
-    public function mod_icon_url($iconname, $module) {
-        return $this->page->theme->mod_icon_url($iconname, $module);
+    public function image_url($imagename, $component='moodle') {
+        return $this->page->theme->image_url($imagename, $component);
     }
 
     /**
@@ -220,198 +216,13 @@ class moodle_renderer_base {
 
 
 /**
- * This is the templated renderer which copies the API of another class, replacing
- * all methods calls with instantiation of a template.
- *
- * When the method method_name is called, this class will search for a template
- * called method_name.php in the folders in $searchpaths, taking the first one
- * that it finds. Then it will set up variables for each of the arguments of that
- * method, and render the template. This is implemented in the {@link __call()}
- * PHP magic method.
- *
- * Methods like print_box_start and print_box_end are handles specially, and
- * implemented in terms of the print_box.php method.
+ * The standard implementation of the core_renderer interface.
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class template_renderer extends moodle_renderer_base {
-    /** @var ReflectionClass information about the class whose API we are copying. */
-    protected $copiedclass;
-    /** @var array of places to search for templates. */
-    protected $searchpaths;
-    protected $rendererfactory;
-
-    /**
-     * Magic word used when breaking apart container templates to implement
-     * _start and _end methods.
-     */
-    const CONTENTSTOKEN = '-@#-Contents-go-here-#@-';
-
-    /**
-     * Constructor
-     * @param string $copiedclass the name of a class whose API we should be copying.
-     * @param array $searchpaths a list of folders to search for templates in.
-     * @param moodle_page $page the page we are doing output for.
-     */
-    public function __construct($copiedclass, $searchpaths, $page) {
-        parent::__construct($page);
-        $this->copiedclass = new ReflectionClass($copiedclass);
-        $this->searchpaths = $searchpaths;
-    }
-
-    /**
-     * PHP magic method implementation. Do not use this method directly.
-     * @param string $method The method to call
-     * @param array $arguments The arguments to pass to the method
-     * @return mixed The return value of the called method
-     */
-    public function __call($method, $arguments) {
-        if (substr($method, -6) == '_start') {
-            return $this->process_start(substr($method, 0, -6), $arguments);
-        } else if (substr($method, -4) == '_end') {
-            return $this->process_end(substr($method, 0, -4), $arguments);
-        } else {
-            return $this->process_template($method, $arguments);
-        }
-    }
-
-    /**
-     * Render the template for a given method of the renderer class we are copying,
-     * using the arguments passed.
-     * @param string $method the method that was called.
-     * @param array $arguments the arguments that were passed to it.
-     * @return string the HTML to be output.
-     */
-    protected function process_template($method, $arguments) {
-        if (!$this->copiedclass->hasMethod($method) ||
-                !$this->copiedclass->getMethod($method)->isPublic()) {
-            throw new coding_exception('Unknown method ' . $method);
-        }
-
-        // Find the template file for this method.
-        $template = $this->find_template($method);
-
-        // Use the reflection API to find out what variable names the arguments
-        // should be stored in, and fill in any missing ones with the defaults.
-        $namedarguments = array();
-        $expectedparams = $this->copiedclass->getMethod($method)->getParameters();
-        foreach ($expectedparams as $param) {
-            $paramname = $param->getName();
-            if (!empty($arguments)) {
-                $namedarguments[$paramname] = array_shift($arguments);
-            } else if ($param->isDefaultValueAvailable()) {
-                $namedarguments[$paramname] = $param->getDefaultValue();
-            } else {
-                throw new coding_exception('Missing required argument ' . $paramname);
-            }
-        }
-
-        // Actually render the template.
-        return $this->render_template($template, $namedarguments);
-    }
-
-    /**
-     * Actually do the work of rendering the template.
-     * @param string $_template the full path to the template file.
-     * @param array $_namedarguments an array variable name => value, the variables
-     *      that should be available to the template.
-     * @return string the HTML to be output.
-     */
-    protected function render_template($_template, $_namedarguments) {
-        // Note, we intentionally break the coding guidelines with regards to
-        // local variable names used in this function, so that they do not clash
-        // with the names of any variables being passed to the template.
-
-        global $CFG, $SITE, $THEME, $USER;
-        // The next lines are a bit tricky. The point is, here we are in a method
-        // of a renderer class, and this object may, or may not, be the same as
-        // the global $OUTPUT object. When rendering the template, we want to use
-        // this object. However, people writing Moodle code expect the current
-        // renderer to be called $OUTPUT, not $this, so define a variable called
-        // $OUTPUT pointing at $this. The same comment applies to $PAGE and $COURSE.
-        $OUTPUT = $this;
-        $PAGE = $this->page;
-        $COURSE = $this->page->course;
-
-        // And the parameters from the function call.
-        extract($_namedarguments);
-
-        // Include the template, capturing the output.
-        ob_start();
-        include($_template);
-        $_result = ob_get_contents();
-        ob_end_clean();
-
-        return $_result;
-    }
-
-    /**
-     * Searches the folders in {@link $searchpaths} to try to find a template for
-     * this method name. Throws an exception if one cannot be found.
-     * @param string $method the method name.
-     * @return string the full path of the template to use.
-     */
-    protected function find_template($method) {
-        foreach ($this->searchpaths as $path) {
-            $filename = $path . '/' . $method . '.php';
-            if (file_exists($filename)) {
-                return $filename;
-            }
-        }
-        throw new coding_exception('Cannot find template for ' . $this->copiedclass->getName() . '::' . $method);
-    }
-
-    /**
-     * Handle methods like print_box_start by using the print_box template,
-     * splitting the result, pushing the end onto the stack, then returning the start.
-     * @param string $method the method that was called, with _start stripped off.
-     * @param array $arguments the arguments that were passed to it.
-     * @return string the HTML to be output.
-     */
-    protected function process_start($method, $arguments) {
-        array_unshift($arguments, self::CONTENTSTOKEN);
-        $html = $this->process_template($method, $arguments);
-        list($start, $end) = explode(self::CONTENTSTOKEN, $html, 2);
-        $this->opencontainers->push($method, $end);
-        return $start;
-    }
-
-    /**
-     * Handle methods like print_box_end, we just need to pop the end HTML from
-     * the stack.
-     * @param string $method the method that was called, with _end stripped off.
-     * @param array $arguments not used. Assumed to be irrelevant.
-     * @return string the HTML to be output.
-     */
-    protected function process_end($method, $arguments) {
-        return $this->opencontainers->pop($method);
-    }
-
-    /**
-     * @return array the list of paths where this class searches for templates.
-     */
-    public function get_search_paths() {
-        return $this->searchpaths;
-    }
-
-    /**
-     * @return string the name of the class whose API we are copying.
-     */
-    public function get_copied_class() {
-        return $this->copiedclass->getName();
-    }
-}
-
-/**
- * The standard implementation of the moodle_core_renderer interface.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class moodle_core_renderer extends moodle_renderer_base {
+class core_renderer extends renderer_base {
     /** @var string used in {@link header()}. */
     const PERFORMANCE_INFO_TOKEN = '%%PERFORMANCEINFO%%';
     /** @var string used in {@link header()}. */
@@ -510,7 +321,14 @@ class moodle_core_renderer extends moodle_renderer_base {
             }
         }
 
-        /// Perform a browser environment check for the flash version.  Should only run once per login session.
+        // Get the theme stylesheet - this has to be always first CSS, this loads also styles.css from all plugins;
+        // any other custom CSS can not be overridden via themes and is highly discouraged
+        $urls = $this->page->theme->css_urls();
+        foreach ($urls as $url) {
+            $output .= '<link rel="stylesheet" type="text/css" href="' . $url->out() . '" />' . "\n";
+        }
+
+        // Perform a browser environment check for the flash version.  Should only run once per login session.
         if (isloggedin() && !empty($CFG->excludeoldflashclients) && empty($SESSION->flashversion)) {
             $this->page->requires->yui_lib('event')->in_head();
             $this->page->requires->yui_lib('connection')->in_head();
@@ -518,9 +336,6 @@ class moodle_core_renderer extends moodle_renderer_base {
             $this->page->requires->js('lib/flashdetect/flashdetect.js')->in_head();
             $this->page->requires->js_function_call('setflashversiontosession', array($CFG->wwwroot, sesskey()));
         }
-
-        // Add the meta tags from the themes if any were requested.
-        $output .= $this->page->theme->get_meta_tags($this->page);
 
         // Get any HTML from the page_requirements_manager.
         $output .= $this->page->requires->get_head_code();
@@ -698,28 +513,22 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         $this->page->set_state(moodle_page::STATE_PRINTING_HEADER);
 
-        // Find the appropriate page template, based on $this->page->generaltype.
-        $templatefile = $this->page->theme->template_for_page($this->page->generaltype);
+        // Find the appropriate page layout file, based on $this->page->pagelayout.
+        $layoutfile = $this->page->theme->layout_file($this->page->pagelayout);
+        // Render the layout using the layout file.
+        $rendered = $this->render_page_layout($layoutfile);
 
-        if ($templatefile) {
-            // Render the template.
-            $template = $this->render_page_template($templatefile);
-        } else {
-            // New style template not found, fall back to using header.html and footer.html.
-            $template = $this->handle_legacy_theme();
-        }
-
-        // Slice the template output into header and footer.
-        $cutpos = strpos($template, self::MAIN_CONTENT_TOKEN);
+        // Slice the rendered output into header and footer.
+        $cutpos = strpos($rendered, self::MAIN_CONTENT_TOKEN);
         if ($cutpos === false) {
-            throw new coding_exception('Layout template ' . $templatefile .
+            throw new coding_exception('page layout file ' . $layoutfile .
                     ' does not contain the string "' . self::MAIN_CONTENT_TOKEN . '".');
         }
-        $header = substr($template, 0, $cutpos);
-        $footer = substr($template, $cutpos + strlen(self::MAIN_CONTENT_TOKEN));
+        $header = substr($rendered, 0, $cutpos);
+        $footer = substr($rendered, $cutpos + strlen(self::MAIN_CONTENT_TOKEN));
 
         if (empty($this->contenttype)) {
-            debugging('The layout template did not call $OUTPUT->doctype()');
+            debugging('The page layout file did not call $OUTPUT->doctype()');
             $header = $this->doctype() . $header;
         }
 
@@ -732,17 +541,15 @@ class moodle_core_renderer extends moodle_renderer_base {
     }
 
     /**
-     * Renders and outputs the page template.
-     * @param string $templatefile The name of the template's file
-     * @param array $menu The menu that will be used in the included file
-     * @param array $navigation The navigation that will be used in the included file
+     * Renders and outputs the page layout file.
+     * @param string $layoutfile The name of the layout file
      * @return string HTML code
      */
-    protected function render_page_template($templatefile) {
+    protected function render_page_layout($layoutfile) {
         global $CFG, $SITE, $THEME, $USER;
         // The next lines are a bit tricky. The point is, here we are in a method
         // of a renderer class, and this object may, or may not, be the same as
-        // the global $OUTPUT object. When rendering the template, we want to use
+        // the global $OUTPUT object. When rendering the page layout file, we want to use
         // this object. However, people writing Moodle code expect the current
         // renderer to be called $OUTPUT, not $this, so define a variable called
         // $OUTPUT pointing at $this. The same comment applies to $PAGE and $COURSE.
@@ -750,131 +557,11 @@ class moodle_core_renderer extends moodle_renderer_base {
         $PAGE = $this->page;
         $COURSE = $this->page->course;
 
-        // Required for legacy template uses
-        $navigation = $this->page->has_navbar();
-
         ob_start();
-        include($templatefile);
-        $template = ob_get_contents();
+        include($layoutfile);
+        $rendered = ob_get_contents();
         ob_end_clean();
-        return $template;
-    }
-
-    /**
-     * Renders and outputs a legacy template.
-     * @param array $navigation The navigation that will be used in the included file
-     * @param array $menu The menu that will be used in the included file
-     * @return string HTML code
-     */
-    protected function handle_legacy_theme() {
-        global $CFG, $SITE, $USER;
-        // Set a pretend global from the properties of this class.
-        // See the comment in render_page_template for a fuller explanation.
-        $COURSE = $this->page->course;
-        $THEME = $this->page->theme;
-        $OUTPUT = $this;
-
-        // Set up local variables that header.html expects.
-        $direction = $this->htmlattributes();
-        $title = $this->page->title;
-        $heading = $this->page->heading;
-        $focus = $this->page->focuscontrol;
-        $button = $this->page->button;
-        $pageid = $this->page->pagetype;
-        $pageclass = $this->page->bodyclasses;
-        $bodytags = ' class="' . $pageclass . '" id="' . $pageid . '"';
-        $home = $this->page->generaltype == 'home';
-        $menu = $this->page->headingmenu;
-
-        $meta = $this->standard_head_html();
-        // The next line is a nasty hack. having set $meta to standard_head_html, we have already
-        // got the contents of include($CFG->javascript). However, legacy themes are going to
-        // include($CFG->javascript) again. We want to make sure that when they do, nothing is output.
-        $CFG->javascript = $CFG->libdir . '/emptyfile.php';
-
-        // Set up local variables that footer.html expects.
-        $homelink = $this->home_link();
-        $loggedinas = $this->login_info();
-        $course = $this->page->course;
-        $performanceinfo = self::PERFORMANCE_INFO_TOKEN;
-
-        $navigation = $this->page->has_navbar();
-        if (!$menu && $navigation) {
-            $menu = $loggedinas;
-        }
-
-        if (!empty($this->page->theme->layouttable)) {
-            $lt = $this->page->theme->layouttable;
-        } else {
-            $lt = array('left', 'middle', 'right');
-        }
-
-        if (!empty($this->page->theme->block_l_max_width)) {
-            $preferredwidthleft = $this->page->theme->block_l_max_width;
-        } else {
-            $preferredwidthleft = 210;
-        }
-        if (!empty($this->page->theme->block_r_max_width)) {
-            $preferredwidthright = $this->page->theme->block_r_max_width;
-        } else {
-            $preferredwidthright = 210;
-        }
-
-        ob_start();
-        include($this->page->theme->dir . '/header.html');
-
-        echo '<table id="layout-table"><tr>';
-        foreach ($lt as $column) {
-            if ($column == 'left' && $this->page->blocks->region_has_content(BLOCK_POS_LEFT, $this)) {
-                echo '<td id="left-column" class="block-region" style="width: ' . $preferredwidthright . 'px; vertical-align: top;">';
-                echo $this->container_start();
-                echo $this->blocks_for_region(BLOCK_POS_LEFT);
-                echo $this->container_end();
-                echo '</td>';
-
-            } else if ($column == 'middle') {
-                echo '<td id="middle-column" style="vertical-align: top;">';
-                echo $this->container_start();
-                echo $this->skip_link_target();
-                echo self::MAIN_CONTENT_TOKEN;
-                echo $this->container_end();
-                echo '</td>';
-
-            } else if ($column == 'right' && $this->page->blocks->region_has_content(BLOCK_POS_RIGHT, $this)) {
-                echo '<td id="right-column" class="block-region" style="width: ' . $preferredwidthright . 'px; vertical-align: top;">';
-                echo $this->container_start();
-                echo $this->blocks_for_region(BLOCK_POS_RIGHT);
-                echo $this->container_end();
-                echo '</td>';
-            }
-        }
-        echo '</tr></table>';
-
-        $menu = str_replace('navmenu', 'navmenufooter', $menu);
-        include($THEME->dir . '/footer.html');
-
-        $output = ob_get_contents();
-        ob_end_clean();
-
-        // Put in the start of body code. Bit of a hack, put it in before the first
-        // <div or <table.
-        $divpos = strpos($output, '<div');
-        $tablepos = strpos($output, '<table');
-        if ($divpos === false || ($tablepos !== false && $tablepos < $divpos)) {
-            $pos = $tablepos;
-        } else {
-            $pos = $divpos;
-        }
-        $output = substr($output, 0, $divpos) . $this->standard_top_of_body_html() .
-                substr($output, $divpos);
-
-        // Put in the end token before the end of body.
-        $output = str_replace('</body>', self::END_HTML_TOKEN . '</body>', $output);
-
-        // Make sure we use the correct doctype.
-        $output = preg_replace('/(<!DOCTYPE.+?>)/s', $this->doctype(), $output);
-
-        return $output;
+        return $rendered;
     }
 
     /**
@@ -926,7 +613,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         foreach ($controls as $control) {
             $controlshtml[] = $this->output_tag('a', array('class' => 'icon',
                     'title' => $control['caption'], 'href' => $control['url']),
-                    $this->output_empty_tag('img',  array('src' => $this->old_icon_url($control['icon']),
+                    $this->output_empty_tag('img',  array('src' => $this->image_url($control['icon'])->out(false, array(), false),
                     'alt' => $control['caption'])));
         }
         return $this->output_tag('div', array('class' => 'commands'), implode('', $controlshtml));
@@ -1006,7 +693,7 @@ class moodle_core_renderer extends moodle_renderer_base {
             $plaintitle = strip_tags($bc->title);
             $this->page->requires->js_function_call('new block_hider', array($bc->id, $userpref,
                     get_string('hideblocka', 'access', $plaintitle), get_string('showblocka', 'access', $plaintitle),
-                    $this->old_icon_url('t/switch_minus'), $this->old_icon_url('t/switch_plus')));
+                    $this->image_url('t/switch_minus')->out(false, array(), false), $this->image_url('t/switch_plus')->out(false, array(), false)));
         }
     }
 
@@ -1264,7 +951,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         if (!empty($iconpath)) {
             $icon->image->src = $iconpath;
         } else {
-            $icon->image->src = $this->old_icon_url('docs');
+            $icon->image->src = $this->image_url('docs')->out(false, array(), false);
         }
 
         if (!empty($CFG->doctonewwindow)) {
@@ -1391,7 +1078,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         $image = clone($image);
 
         if (empty($image->src)) {
-            $image->src = $this->old_icon_url('spacer');
+            $image->src = $this->image_url('spacer')->out(false, array(), false);
         }
 
         $image->prepare();
@@ -1947,12 +1634,12 @@ class moodle_core_renderer extends moodle_renderer_base {
 
             // Header not yet printed
             if (isset($_SERVER['SERVER_PROTOCOL'])) {
-				// server protocol should be always present, because this render
-				// can not be used from command line or when outputting custom XML
+                // server protocol should be always present, because this render
+                // can not be used from command line or when outputting custom XML
                 @header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             }
             $this->page->set_url(''); // no url
-            //$this->page->set_generaltype('form'); //TODO: MDL-20676 blocks on error pages are weird, unfortunately it somehow detect the geenralpagetype from URL :-(
+            //$this->page->set_pagelayout('form'); //TODO: MDL-20676 blocks on error pages are weird, unfortunately it somehow detect the geenralpagetype from URL :-(
             $this->page->set_title(get_string('error'));
             $output .= $this->header();
         }
@@ -1996,7 +1683,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      */
     public function notification($message, $classes = 'notifyproblem') {
         return $this->output_tag('div', array('class' =>
-                moodle_renderer_base::prepare_classes($classes)), clean_text($message));
+                renderer_base::prepare_classes($classes)), clean_text($message));
     }
 
     /**
@@ -2139,7 +1826,7 @@ class moodle_core_renderer extends moodle_renderer_base {
             $oddeven    = 1;
             $keys       = array_keys($table->data);
             $lastrowkey = end($keys);
-            $output .= $this->output_start_tag('tbody', array('class' => moodle_renderer_base::prepare_classes($table->bodyclasses))) . "\n";
+            $output .= $this->output_start_tag('tbody', array('class' => renderer_base::prepare_classes($table->bodyclasses))) . "\n";
 
             foreach ($table->data as $key => $row) {
                 if (($row === 'hr') && ($countcols)) {
@@ -2248,7 +1935,7 @@ class moodle_core_renderer extends moodle_renderer_base {
             throw new coding_exception('Heading level must be an integer between 1 and 6.');
         }
         return $this->output_tag('h' . $level,
-                array('id' => $id, 'class' => moodle_renderer_base::prepare_classes($classes)), $text);
+                array('id' => $id, 'class' => renderer_base::prepare_classes($classes)), $text);
     }
 
     /**
@@ -2271,7 +1958,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     public function box_start($classes = 'generalbox', $id = '') {
         $this->opencontainers->push('box', $this->output_end_tag('div'));
         return $this->output_start_tag('div', array('id' => $id,
-                'class' => 'box ' . moodle_renderer_base::prepare_classes($classes)));
+                'class' => 'box ' . renderer_base::prepare_classes($classes)));
     }
 
     /**
@@ -2302,7 +1989,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     public function container_start($classes = '', $id = '') {
         $this->opencontainers->push('container', $this->output_end_tag('div'));
         return $this->output_start_tag('div', array('id' => $id,
-                'class' => moodle_renderer_base::prepare_classes($classes)));
+                'class' => renderer_base::prepare_classes($classes)));
     }
 
     /**
@@ -2382,7 +2069,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     public function navbar() {
         return $this->page->navbar->content();
     }
-    }
+}
 
 
 /// RENDERERS
@@ -2396,7 +2083,7 @@ class moodle_core_renderer extends moodle_renderer_base {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class cli_core_renderer extends moodle_core_renderer {
+class cli_core_renderer extends core_renderer {
     /**
      * Returns the page header.
      * @return string HTML fragment

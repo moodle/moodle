@@ -5185,6 +5185,12 @@ function admin_externalpage_setup($section, $extrabutton = '',
     $adminroot = admin_get_root(false, false); // settings not required for external pages
     $extpage = $adminroot->locate($section);
 
+    if ($section === 'upgradesettings') {
+        $PAGE->set_pagelayout('maintenance');
+    } else {
+        $PAGE->set_pagelayout('admin');
+    }
+
     $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
     // $PAGE->set_extra_button($extrabutton); TODO
 
@@ -5222,7 +5228,7 @@ function admin_externalpage_setup($section, $extrabutton = '',
  * @param string $focus focus element
  */
 function admin_externalpage_print_header($focus='') {
-    global $CFG, $PAGE, $SITE, $THEME, $OUTPUT;
+    global $CFG, $PAGE, $SITE, $OUTPUT;
 
     if (!is_string($focus)) {
         $focus = ''; // BC compatibility, there used to be adminroot parameter

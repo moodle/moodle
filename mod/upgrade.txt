@@ -19,6 +19,10 @@ required changes in code:
 * migrate custom resource module subtypes into separate modules
 * migrate to new comments subsystem
 * use new $PAGE and $OUTPUT instead of old weblib functions
+* theme changes: move plugin styles into mod/xxx/styles.css and use new css markers for images,
+                 move all images into new mod/xxx/pix/ directory and use new outputlib api
+                 move module icon to mod/xxx/pix/icon.gif
+
 
 optional - no changes needed in older code:
 * portfolio support

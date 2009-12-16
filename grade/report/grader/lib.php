@@ -217,8 +217,8 @@ class grade_report_grader extends grade_report {
                     if ($bounded > $finalgrade) {
                     $errorstr = 'lessthanmin';
                     } else if ($bounded < $finalgrade) {
-                    	$errorstr = 'morethanmax';
-                	}
+                        $errorstr = 'morethanmax';
+                    }
                 }
                 if ($errorstr) {
                     $user = $DB->get_record('user', array('id' => $userid), 'id, firstname, lastname');

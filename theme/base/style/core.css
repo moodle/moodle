@@ -1,0 +1,136 @@
+/***
+ * Accessibility features
+ **/
+
+/*Accessibility: text 'seen' by screen readers but not visual users. */
+.accesshide {
+  position:absolute;
+  top:-100000px;
+  left:10px;
+  font-weight:normal;
+  font-size:1em;
+}
+span.hide,
+div.hide {
+  display:none;
+}
+
+/*Accessibility: Skip block link, for keyboard-only users. */
+a.skip-block, a.skip {
+  position: absolute;
+  top: -1000em;
+  font-size: 0.85em;
+}
+a.skip-block:focus, a.skip-block:active,
+a.skip:focus, a.skip:active {
+  position: static;
+  display: block;
+}
+.skip-block-to {
+  display: block;
+  height: 1px;
+  overflow: hidden;
+}
+
+a.skip-block {
+  text-decoration:none;
+}
+
+/***
+ * General
+ **/
+
+.clearer {
+  clear:both;
+  margin:0;
+  padding:0;
+  height:1px;
+  border:none;
+  background:transparent;
+  display:block;
+}
+
+.clearfix:after {
+  min-width: 0;
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+.generalbox {
+  border-width: 1px;
+  border-style: solid;
+}
+
+.boxaligncenter {
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.boxalignright {
+  margin-left:auto;
+  margin-right:0;
+}
+
+.boxalignleft {
+  margin-left:0;
+  margin-right:auto;
+}
+
+.boxwidthnarrow {
+  width: 30%
+}
+
+.boxwidthnormal {
+  width: 50%
+}
+
+.boxwidthwide {
+  width: 80%
+}
+
+.mdl-align {
+  text-align: center;
+}
+.mdl-left {
+  text-align: left;
+}
+.mdl-right {
+  text-align: right;
+}
+
+/***
+ * Header
+ **/
+
+.breadcrumb ul {
+  padding:0;
+  margin:0;
+  text-indent:0;
+  list-style:none;
+}
+.breadcrumb li {
+  display:inline;
+}
+
+.navbar .navbutton div,
+.navbar .navbutton form {
+  display:inline;
+}
+
+/***
+ ** Course stuff
+ **/
+
+.section_add_menus .horizontal div,
+.section_add_menus .horizontal form {
+  display:inline;
+}
+
+.course-content .section .activity img.activityicon {
+  vertical-align:middle;
+  height:16px;
+  width:16px;
+}

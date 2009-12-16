@@ -1334,7 +1334,7 @@ if (isset($argv) && isset($argc)) {
     require_capability('moodle/site:config', $systemcontext);
 
     $PAGE->set_url($CFG->wwwroot.'/admin/generator.php');
-    $PAGE->set_generaltype('form');
+    $PAGE->set_pagelayout('form');
     $generator = new generator_web();
     $generator->setup();
     $generator->display();

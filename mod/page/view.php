@@ -57,7 +57,7 @@ $PAGE->set_url('mod/page/view.php', array('id' => $cm->id));
 $options = empty($page->displayoptions) ? array() : unserialize($page->displayoptions);
 
 if ($inpopup and $page->display == RESOURCELIB_DISPLAY_POPUP) {
-    $PAGE->set_generaltype('popup');
+    $PAGE->set_pagelayout('popup');
     $PAGE->set_title($course->shortname.': '.$page->name);
     if (!empty($options['printheading'])) {
         $PAGE->set_heading($page->name);

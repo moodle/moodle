@@ -585,7 +585,7 @@ function get_current_group($courseid, $full = false) {
  * @return void, always throws moodle_exception
  */
 function error($message, $link='') {
-	throw new moodle_exception('notlocalisederrormessage', 'error', $link, $message, 'error() is a deprecated function, please call print_error() instead of error()');
+    throw new moodle_exception('notlocalisederrormessage', 'error', $link, $message, 'error() is a deprecated function, please call print_error() instead of error()');
 }
 
 
@@ -1720,33 +1720,6 @@ function make_mod_upload_directory($courseid) {
     return make_upload_directory($courseid .'/'. $CFG->moddata);
 }
 
-
-/**
- * This is a slight variatoin on the standard_renderer_factory that uses
- * custom_corners_core_renderer instead of moodle_core_renderer.
- *
- * This generates the slightly different HTML that the custom_corners theme expects.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated Required to make the old $THEME->customcorners setting work.
- */
-class custom_corners_renderer_factory extends standard_renderer_factory {
-    public function __construct($theme) {
-        parent::__construct($theme);
-        global $CFG;
-        require_once($CFG->themedir . '/custom_corners/renderers.php');
-    }
-    /* Implement the subclass method. */
-    public function get_renderer($module, $page, $subtype=null) {
-        if ($module == 'core') {
-            return new custom_corners_core_renderer($page);
-        }
-        return parent::get_renderer($module, $page, $subtype);
-    }
-}
-
-
 /**
  * Used to be used for setting up the theme. No longer used by core code, and
  * should not have been used elsewhere.
@@ -1775,25 +1748,6 @@ function current_theme() {
     // TODO, uncomment this once we have eliminated all references to current_theme in core code.
     // debugging('current_theme is deprecated, use $PAGE->theme->name instead', DEBUG_DEVELOPER);
     return $PAGE->theme->name;
-}
-
-/**
- * This used to be the thing that theme styles.php files used to do all the work.
- * This is now handled differently. You should copy theme/standard/styes.php
- * into your theme.
- *
- * @deprecated
- * @param int $lastmodified Always gets set to now
- * @param int $lifetime The max-age header setting (seconds) defaults to 300
- * @param string $themename The name of the theme to use (optional) defaults to current theme
- * @param string $forceconfig Force a particular theme config (optional)
- * @param string $lang Load styles for the specified language (optional)
- */
-function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $forceconfig='', $lang='') {
-    global $CFG, $PAGE, $THEME, $showdeprecatedstylesheetsetupwarning;
-    $showdeprecatedstylesheetsetupwarning = true;
-    include($CFG->dirroot . '/theme/styles.php');
-    exit;
 }
 
 /**
@@ -1895,7 +1849,7 @@ function print_heading($text, $deprecated = '', $size = 2, $class = 'main', $ret
 function print_heading_block($heading, $class='', $return=false) {
     global $OUTPUT;
     debugging('print_heading_with_block() has been deprecated. Please change your code to use $OUTPUT->heading().');
-    $output = $OUTPUT->heading($heading, 2, 'headingblock header ' . moodle_renderer_base::prepare_classes($class));
+    $output = $OUTPUT->heading($heading, 2, 'headingblock header ' . renderer_base::prepare_classes($class));
     if ($return) {
         return $output;
     } else {
@@ -2010,6 +1964,13 @@ function print_container_start($clearfix=false, $classes='', $idbase='', $return
     } else {
         echo $output;
     }
+}
+
+/**
+ * Deprecated, now handled automatically in themes
+ */
+function check_theme_arrows() {
+    debugging('check_theme_arrows() has been deprecated, do not use it anymore, it is now automatic.');
 }
 
 /**
@@ -2193,7 +2154,7 @@ function print_footer($course = NULL, $usercourse = NULL, $return = false) {
     // TODO check arguments.
     if (is_string($course)) {
         debugging("Magic values like 'home', 'empty' passed to print_footer no longer have any effect. " .
-                'To achieve a similar effect, call $PAGE->set_generaltype before you call print_header.', DEBUG_DEVELOPER);
+                'To achieve a similar effect, call $PAGE->set_pagelayout before you call print_header.', DEBUG_DEVELOPER);
     } else if (!empty($course->id) && $course->id != $PAGE->course->id) {
         throw new coding_exception('The $course object you passed to print_footer does not match $PAGE->course.');
     }
@@ -3702,8 +3663,6 @@ function build_navigation($extranavlinks, $cm = null) {
  * @return string
  */
 function navmenu($course, $cm=NULL, $targetwindow='self') {
-    global $CFG, $THEME, $USER, $DB, $OUTPUT;
-
     // This function has been deprecated with the creation of the global nav in
     // moodle 2.0
 
@@ -3776,7 +3735,7 @@ function delete_event($id) {
 /**
  * Call this function to hide an event in the calendar table
  * the event will be identified by the id field of the $event object.
- * 
+ *
  * @param object $event An object representing an event from the calendar table. The event will be identified by the id field.
  * @return true
  */

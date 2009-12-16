@@ -60,8 +60,6 @@
 
     // TODO log this page view.
 
-    $localcss = '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.
-            '/lib/yui/container/assets/container.css" />';
     $context = $contexts->lowest();
     $streditingquestions = get_string('editquestions', "quiz");
     if ($cm!==null) {

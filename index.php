@@ -78,17 +78,18 @@
         $select = html_select::make_popup_form($CFG->wwwroot .'/index.php', 'lang', $langs, 'chooselang', $currlang);
         $select->nothinglabel = false;
         $select->set_label(get_accesshide(get_string('language')));
-        $langmenu = $OUTPUT->select($select);
+        //TODO: MDL-21123
+        $langmenu = '<div class="langmenu">'.$OUTPUT->select($select).'</div>';
     }
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
     $PAGE->set_url('');
     $PAGE->set_docs_path('');
-    $PAGE->set_generaltype('home');
+    $PAGE->set_pagelayout('home');
     $editing = $PAGE->user_is_editing();
     $PAGE->set_title($SITE->fullname);
     $PAGE->set_heading($SITE->fullname);
-    $PAGE->set_headingmenu(user_login_string($SITE) . $langmenu);
-    echo $OUTPUT->header();
+    $PAGE->set_headingmenu($langmenu);
+    echo $OUTPUT->header($langmenu);
 
 /// Print Section
     if ($SITE->numsections > 0) {

@@ -32,7 +32,7 @@
         $pageurl->param('quizid', $quizid);
     }
     $PAGE->set_url($pageurl);
-    $PAGE->set_generaltype('popup');
+    $PAGE->set_pagelayout('popup');
 
     // Test if we are continuing an attempt at a question
     $continue = optional_param('continue', 0, PARAM_BOOL);

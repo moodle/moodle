@@ -1,0 +1,123 @@
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
+/**
+ * Configuration for Moodle's standard theme.
+ *
+ * DO NOT COPY THIS INTO NEW THEMES! Instead use some other theme as a base
+ * for your experiments.
+ *
+ * Options related to theme customisations can be found at
+ * http://phpdocs.moodle.org/HEAD/moodlecore/theme_config.html
+ *
+ * For an overview of how Moodle themes work, Please see
+ * http://docs.moodle.org/en/Developement:How_Moodle_outputs_HTML
+ *
+ * @package   moodlecore
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+$THEME->parents = array();
+
+$THEME->sheets = array(
+    'pagelayout',
+    'core',
+    'blocks',
+    'course',
+    'block_calendar_month',
+);
+
+$THEME->editor_sheets = array();
+
+$THEME->layouts = array(
+    // Most pages - if we encounter an unknown or a missing page type, this one is used.
+    'normal' => array(
+        'theme' => 'base',
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post'
+    ),
+    // Course page
+    'course' => array(
+        'theme' => 'base',
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post'
+    ),
+    // The site home page.
+    'home' => array(
+        'theme' => 'base',
+        'file' => 'home.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post'
+    ),
+    // Server administration scripts.
+    'admin' => array(
+        'theme' => 'base',
+        'file' => 'general.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre'
+    ),
+    // My moodle page
+    'my' => array(
+        'theme' => 'base',
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post'
+    ),
+
+    // Settings form pages, like course of module settings.
+    'form' => array(
+        'theme' => 'base',
+        'file' => 'general.php',
+        'regions' => array(),
+    ),
+    // Pages that appear in pop-up windows - no navigation, no blocks, no header.
+    'popup' => array(
+        'theme' => 'base',
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true),
+    ),
+    // No blocks and minimal footer - used for legacy frame layouts only!
+    'frametop' => array(
+        'theme' => 'base',
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('nofooter'),
+    ),
+    // Embeded pages, like iframe embeded in moodleform
+    'embedded' => array(
+        'theme' => 'base',
+        'file' => 'embedded.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true),
+    ),
+    // Used during upgrade and install, and for the 'This site is undergoing maintenance' message.
+    // This must not have any blocks, and it is good idea if it does not have links to
+    // other places - for example there should not be a home link in the footer...
+    'maintenance' => array(
+        'theme' => 'base',
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true),
+    ),
+);
+

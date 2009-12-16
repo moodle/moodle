@@ -16,180 +16,134 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file is responsible for serving the CSS of each theme.
- *
- * It should not be linked to directly. Instead, it gets included by
- * theme/themename/styles.php. See theme/standard/styles.php as an example.
- *
- * In this script, we are serving the styles for theme $themename, but we are
- * serving them on behalf of theme $fortheme.
- *
- * To understand this, image that the currently selected theme is standardwhite.
- * This theme uses both its own stylesheets, and also the ones from the standard theme.
- * So, when we are serving theme/standard/styles.php, we need to use the config in
- * theme/standardwhite/config.php to control the settings. This is controled by the
- * for=... parameter in the URL.
- *
- * In case you are wondering, in the above scenario, we have to serve the standard
- * theme CSS with a URL like theme/standard/styles.php, so that relative links from
- * the CSS to images in the theme folder will work.
+ * This file is responsible for serving the one huge CSS of each theme.
  *
  * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright 2009 Petr Skoda (skodak)  {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (empty($themename)) {
-    die('Direct access to this script is forbidden.');
-    // This script should only be required by theme/themename/styles.php.
+// we need just the values from config.php and minlib.php
+define('ABORT_AFTER_CONFIG', true);
+require('../config.php'); // this stops immediately at the beginning of lib/setup.php
+
+$themename = min_optional_param('theme', 'standard', 'SAFEDIR');
+$type      = min_optional_param('type', 'all', 'SAFEDIR');
+$rev       = min_optional_param('rev', 0, 'INT');
+
+if (!in_array($type, array('all', 'ie', 'editor', 'yui', 'plugins', 'parents', 'theme'))) {
+    header('HTTP/1.0 404 not found');
+    die('Theme was not found, sorry.');
 }
 
-// These may already be defined if we got here via style_sheet_setup in lib/deprecatedlib.php
-if (!defined('NO_MOODLE_COOKIES')) {
-    define('NO_MOODLE_COOKIES', true); // Session not used here
-}
-if (!defined('NO_UPGRADE_CHECK')) {
-    define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check
-}
-require_once(dirname(__FILE__) . '/../config.php');
-
-
-$fortheme = required_param('for', PARAM_FILE);
-$pluginsheets = optional_param('pluginsheets', '', PARAM_BOOL);
-
-// Load the configuration of the selected theme. (See comment at the top of the file.)
-$PAGE->force_theme($fortheme);
-
-$DEFAULT_SHEET_LIST = array('styles_layout', 'styles_fonts', 'styles_color');
-
-// Fix for IE6 caching - we don't want the filemtime('styles.php'), instead use now.
-$lastmodified = time();
-
-// Set the correct content type. (Should we also be specifying charset here?)
-header('Content-type: text/css');
-header('Last-Modified: ' . gmdate("D, d M Y H:i:s", $lastmodified) . ' GMT');
-header('Pragma: ');
-
-// Set the caching for these style sheets
-if (debugging('', DEBUG_DEVELOPER)) {        // Use very short caching time
-    header('Cache-Control: max-age=60');     // One minute
-    header('Expires: ' . gmdate("D, d M Y H:i:s", $lastmodified + 60) . ' GMT');
-} else if ($themename == 'standard') {       // Give this one extra long caching MDL-19953
-    header('Cache-Control: max-age=172801'); // Two days plus one second
-    header('Expires: ' . gmdate("D, d M Y H:i:s", $lastmodified + 172801) . ' GMT');
-} else {                                     // Use whatever time the theme has set
-    header('Cache-Control: max-age='.$THEME->csslifetime);
-    header('Expires: ' . gmdate("D, d M Y H:i:s", $lastmodified + $THEME->csslifetime) . ' GMT');
+if (!file_exists("$CFG->dirroot/theme/$themename/config.php") and !file_exists("$CFG->dataroot/theme/$themename/config.php")) {
+    header('HTTP/1.0 404 not found');
+    die('Theme was not found, sorry.');
 }
 
-if (!empty($showdeprecatedstylesheetsetupwarning)) {
-    echo <<<END
-
-/***************************************************************
- ***************************************************************
- ****                                                       ****
- **** WARNING! This theme uses an old-fashioned styles.php  ****
- **** file. It should be updated by copying styles.php from ****
- **** the standard theme of a recent version of Moodle.     ****
- ****                                                       ****
- ***************************************************************
- ***************************************************************/
-
-
-
-END;
+if ($type === 'ie') {
+    send_ie_css($themename, $rev);
 }
 
-// This is a bit tricky, but the following initialisation code may output
-// notices or debug developer warnings (for example, if the theme uses some
-// Deprecated settings in it config.php file. Therefore start a CSS comment
-// so that any debugging output does not break the CSS. This comment is closed
-// below.
-echo '/*';
+$candidatesheet = "$CFG->dataroot/cache/theme/$themename/css/$type.css";
 
-
-
-// We will build up a list of CSS file path names, then concatenate them all.
-$files = array();
-
-// If this theme wants plugin sheets, include them. Do this first, so styles
-// here can be overridden by theme CSS.
-if ($pluginsheets) {
-    foreach ($THEME->pluginsheets as $plugintype) {
-        $files = array_merge($files, get_sheets_for_plugin_type($plugintype));
+if (file_exists($candidatesheet)) {
+    if (!empty($_SERVER['HTTP_IF_NONE_MATCH'])) {
+        // we do not actually need to verify the etag value because our files
+        // never change in cache because we increment the rev parameter
+        header('HTTP/1.1 304 Not Modified');
+        die;
     }
+    send_cached_css($candidatesheet, $rev);
 }
 
-// Now work out which stylesheets we shold be serving from this theme.
-if ($themename == $fortheme) {
-    $themesheets = $THEME->sheets;
+//=================================================================================
+// ok, now we need to start normal moodle script, we need to load all libs and $DB
+define('ABORT_AFTER_CONFIG_CANCEL', true);
 
-} else if (!empty($THEME->parent) && $themename == $THEME->parent) {
-    if ($THEME->parentsheets === true) {
-        // Use all the sheets we have.
-        $themesheets = $DEFAULT_SHEET_LIST;
-    } else if (!empty($THEME->parentsheets)) {
-        $themesheets = $THEME->parentsheets;
-    } else {
-        $themesheets = array();
-    }
+define('NO_MOODLE_COOKIES', true); // Session not used here
+define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check
 
-} else if ($themename == 'standard') {
-    if ($THEME->standardsheets === true) {
-        // Use all the sheets we have.
-        $themesheets = $DEFAULT_SHEET_LIST;
-    } else if (!empty($THEME->standardsheets)) {
-        $themesheets = $THEME->standardsheets;
-    } else {
-        $themesheets = array();
-    }
-}
+require("$CFG->dirroot/lib/setup.php");
 
-// Conver the theme stylessheet names to file names.
-foreach ($themesheets as $sheet) {
-    $files[] = $CFG->themedir . '/' . $themename . '/' . $sheet . '.css';
-}
+$theme = theme_config::load($themename);
 
-if (empty($files)) {
-    echo " The $fortheme theme does not require anything from the $themename theme. */\n\n";
-    exit;
-}
-
-// Output a commen with a summary of the included files.
-echo <<<END
-
- * Styles from theme '$themename' for theme '$fortheme'
- *
- * Files included here:
- *
-
-END;
-$toreplace = array($CFG->dirroot . '/', $CFG->themedir . '/');
-foreach ($files as $file) {
-    echo ' *   ' . str_replace($toreplace, '', $file) . "\n";
-}
-echo " */\n\n";
-
-if (!empty($THEME->cssoutputfunction)) {
-    call_user_func($THEME->cssoutputfunction, $files, $toreplace);
-
+if ($type === 'editor') {
+    $css = $theme->editor_css_content();
+    store_css($candidatesheet, $css);
 } else {
-    foreach ($files as $file) {
-        $shortname = str_replace($toreplace, '', $file);
-        echo '/******* ' . $shortname . " start *******/\n\n";
-        @include_once($file);
-        echo '/******* ' . $shortname . " end *******/\n\n";
+    $css = $theme->css_content();
+    foreach ($css as $key=>$value) {
+        $sheet = '';
+        foreach($value as $val) {
+            if (is_array($val)) {
+                $sheet .= "\n\n".implode("\n\n", $val);
+            } else {
+                $sheet .= "\n\n".$val;
+            }
+        }
+        $css[$key] = $sheet;
+        $cssfile = "$CFG->dataroot/cache/theme/$themename/css/$key.css";
+        store_css($cssfile, $sheet);
     }
+    $css = implode('', $css);
+    $cssfile = "$CFG->dataroot/cache/theme/$themename/css/all.css";
+    store_css($cssfile, $css);
 }
 
-function get_sheets_for_plugin_type($type) {
-    $files = array();
-    $mods = get_plugin_list($type);
-    foreach ($mods as $moddir) {
-        $file = $moddir . '/styles.php';
-        if (file_exists($file)) {
-            $files[] = $file;
-        }
-    }
-    return $files;
+send_cached_css($candidatesheet, $rev);
+
+
+//=================================================================================
+//=== utility functions ==
+// we are not using filelib because we need to fine tune all header
+// parameters to get the best performance.
+
+function store_css($csspath, $css) {
+    check_dir_exists(dirname($csspath), true, true);
+    $fp = fopen($csspath, 'w');
+    fwrite($fp, $css);
+    fclose($fp);
+}
+
+function send_ie_css($themename, $rev) {
+    $lifetime = 60*60*24*3;
+
+    $css = <<<EOF
+/** Unfortunately IE6/7 does not support more than 4096 selectors in one CSS file, which means we have to use some ugly hacks :-( **/
+@import url(styles.php?theme=$themename&rev=$rev&type=yui);
+@import url(styles.php?theme=$themename&rev=$rev&type=plugins);
+@import url(styles.php?theme=$themename&rev=$rev&type=parents);
+@import url(styles.php?theme=$themename&rev=$rev&type=theme);
+
+EOF;
+
+    header('Etag: '.md5($rev));
+    header('Content-Disposition: inline; filename="styles.php"');
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
+    header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+    header('Pragma: ');
+    header('Accept-Ranges: none');
+    header('Content-Type: text/css');
+    header('Content-Length: '.strlen($css));
+
+    while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
+    echo $css;
+    die;
+}
+
+function send_cached_css($csspath, $rev) {
+    $lifetime = 60*60*24*20;
+
+    header('Content-Disposition: inline; filename="styles.php"');
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($csspath)) .' GMT');
+    header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+    header('Pragma: ');
+    header('Accept-Ranges: none');
+    header('Content-Type: text/css');
+    header('Content-Length: '.filesize($csspath));
+
+    while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
+    readfile($csspath);
+    die;
 }

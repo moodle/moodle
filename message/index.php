@@ -68,7 +68,7 @@ $PAGE->set_url($url);
 
 /// Popup a window if required and quit (usually from external links).
 if ($popup) {
-    $PAGE->set_generaltype('popup');
+    $PAGE->set_pagelayout('popup');
     $OUTPUT->header();
     echo $PAGE->requires->js_function_call('openpopup', Array('/message/index.php', 'message', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0))->asap();
     redirect("$CFG->wwwroot/", '', 0);
@@ -99,7 +99,7 @@ if ($tab == 'contacts') {
     $PAGE->set_periodic_refresh_delay($CFG->message_contacts_refresh);
 }
 
-$PAGE->set_generaltype('popup');
+$PAGE->set_pagelayout('popup');
 $PAGE->set_title(get_string('messages', 'message').' - '.format_string($SITE->fullname));
 echo $OUTPUT->header();
 echo '<table cellspacing="2" cellpadding="2" border="0" width="95%" class="boxaligncenter">';

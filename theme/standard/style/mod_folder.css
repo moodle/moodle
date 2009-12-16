@@ -1,0 +1,10 @@
+/***
+ ***
+ *** Modules: Folder
+ ***/
+
+#mod-folder-view .foldertree {
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}

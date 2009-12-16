@@ -1,0 +1,162 @@
+
+#page {
+ /* 100% page width */
+ margin: auto 0px;
+ width: auto;
+}
+
+/***
+ * Three column layout
+ * based on: http://matthewjamestaylor.com/blog/ultimate-3-column-holy-grail-pixels.htm
+ ***/
+
+.pagelayout-pre-post .regions-outer {
+    position:relative;      /* This fixes the IE7 overflow hidden bug and stops the layout jumping out of place */
+    clear:both;
+    float:left;
+    width:100%;             /* width of whole page */
+    overflow:hidden;        /* This chops off any overhanging divs */
+}
+
+.pagelayout-pre-post #regions {
+    float:left;
+    width:200%;
+    margin-left:-200px;     /* Width of right column */
+    position:relative;
+    right:100%;
+    /* content background colour goes here */
+}
+.pagelayout-pre-post .regions-inner {
+    float:left;
+    width:100%;
+    margin-left:-50%;
+    position:relative;
+    left:400px;             /* Left column width + right column width */
+    /* side-pre background colour goes here */
+}
+.pagelayout-pre-post .contentwrap {
+    float:left;
+    width:50%;
+    position:relative;
+    right:200px;            /* Width of left column */
+    padding-bottom:1em;     /* Centre column bottom padding. Leave it out if it's zero */
+}
+.pagelayout-pre-post #content {
+    margin:0 205px;         /* Centre column side padding:
+                            Left padding = left column width + centre column left padding width
+                            Right padding = right column width + centre column right padding width */
+    position:relative;
+    left:200%;
+    overflow:hidden;
+}
+.pagelayout-pre-post #region-side-pre {
+    float:left;
+    float:right;            /* This overrides the float:left above */
+    width:190px;            /* Width of left column content (left column width minus left and right padding) */
+    position:relative;
+    right:5px;             /* Width of the left-had side padding on the left column */
+}
+.pagelayout-pre-post #region-side-post {
+    float:left;
+    float:right;            /* This overrides the float:left above */
+    width:190px;            /* Width of right column content (right column width minus left and right padding) */
+    margin-right:15px;      /* Width of right column right-hand padding + left column left and right padding */
+    position:relative;
+    left:50%;
+    /* side-post background colour goes here */
+}
+
+/***
+ * Two column layout (blocks left)
+ * based on: http://matthewjamestaylor.com/blog/ultimate-2-column-left-menu-pixels.htm
+ ***/
+
+.pagelayout-pre .regions-outer {
+    width: 100%;
+}
+.pagelayout-pre #regions {
+    position:relative;      /* This fixes the IE7 overflow hidden bug and stops the layout jumping out of place */
+    clear:both;
+    float:left;
+    width:100%;         /* width of whole page */
+    overflow:hidden;    /* This chops off any overhanging divs */
+}
+.pagelayout-pre .regions-inner {
+    float:left;
+    width:200%;
+    position:relative;
+    left:200px;
+    /* content background colour goes here */
+}
+.pagelayout-pre .contentwrap {
+    float:right;
+    width:50%;
+    position:relative;
+    right:200px;
+    padding-bottom:1em;
+}
+.pagelayout-pre #content {
+    margin:0 5px 0 205px;
+    position:relative;
+    right:100%;
+    overflow:hidden;
+}
+.pagelayout-pre #region-side-pre {
+    float:left;
+    width:190px;
+    position:relative;
+    right:195px;
+    /* side-pre background colour goes here */
+}
+
+/***
+ * Two column layout (blocks right)
+ * based on: http://matthewjamestaylor.com/blog/ultimate-2-column-right-menu-pixels.htm
+ ***/
+
+.pagelayout-pre .regions-outer {
+    width: 100%;
+}
+.pagelayout-post #regions {
+    position:relative;      /* This fixes the IE7 overflow hidden bug and stops the layout jumping out of place */
+    clear:both;
+    float:left;
+    width:100%;         /* width of whole page */
+    overflow:hidden;    /* This chops off any overhanging divs */
+}
+.pagelayout-post .regions-inner {
+    float:left;
+    width:200%;
+    margin-left:-200px;
+    position:relative;
+    right:100%;
+    background:#fff;
+}
+.pagelayout-post .contentwrap {
+    float:left;
+    width:50%;
+    position:relative;
+    left:50%;
+    padding-bottom:1em;
+}
+.pagelayout-post #content {
+    margin:0 5px 0 205px;
+    overflow:hidden;
+}
+.pagelayout-post #region-side-post {
+    float:right;
+    width:190px;
+    position:relative;
+    left:195px;
+}
+
+/***
+ * One columns layout - no blocks
+ ***/
+
+.pagelayout .regions-outer {
+    width: 100%;
+}
+.pagelayout #content {
+    margin: 0 5px 0 5px;
+}

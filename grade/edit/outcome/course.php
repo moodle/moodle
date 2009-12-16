@@ -129,7 +129,6 @@ if ($data = data_submitted() and confirm_sesskey()) {
 /// Print header
 print_grade_page_head($COURSE->id, 'outcome', 'course');
 
-check_theme_arrows();
 require('course_form.html');
 
 echo $OUTPUT->footer();

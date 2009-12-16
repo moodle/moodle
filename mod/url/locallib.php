@@ -139,7 +139,7 @@ function url_display_frame($url, $cm, $course) {
     $frame = optional_param('frameset', 'main', PARAM_ALPHA);
 
     if ($frame === 'top') {
-        $PAGE->set_generaltype('topframe');
+        $PAGE->set_pagelayout('frametop');
         url_print_header($url, $cm, $course);
         url_print_heading($url, $cm, $course);
         url_print_intro($url, $cm, $course);

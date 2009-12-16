@@ -815,7 +815,7 @@ class block_tree extends block_list {
      *
      * Also adds the required javascript call to the page output.
      *
-     * @param moodle_core_renderer $output
+     * @param core_renderer $output
      * @return string HTML
      */
     protected function formatted_contents($output) {

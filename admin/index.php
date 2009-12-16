@@ -107,7 +107,7 @@ $origxmlstrictheaders = !empty($CFG->xmlstrictheaders);
 $CFG->xmlstrictheaders = false;
 
 if (!core_tables_exist()) {
-    $PAGE->set_generaltype('maintenance');
+    $PAGE->set_pagelayout('maintenance');
 
     // fake some settings
     $CFG->docroot = 'http://docs.moodle.org';
@@ -188,7 +188,7 @@ if (empty($CFG->version)) {
 }
 
 if ($version > $CFG->version) {  // upgrade
-    $PAGE->set_generaltype('maintenance');
+    $PAGE->set_pagelayout('maintenance');
 
     $a->oldversion = "$CFG->release ($CFG->version)";
     $a->newversion = "$release ($version)";

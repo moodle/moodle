@@ -25,5 +25,4 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$themename = basename(dirname(__FILE__));
-require_once(dirname(__FILE__) . '/../../theme/styles.php');
+die('Not converted yet...');

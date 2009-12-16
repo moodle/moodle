@@ -52,7 +52,7 @@
     }
 
     if ($user->deleted) {
-        $PAGE->set_generaltype('popup');
+        $PAGE->set_pagelayout('popup');
         $PAGE->set_title(get_string('discussion', 'message').': '.fullname($user));
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('userdeleted'), 1);
@@ -72,7 +72,7 @@
      <head>
        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
        <title><?php echo get_string('discussion', 'message').': '.fullname($user) ?></title>
-       <link rel="shortcut icon" href="<?php echo $CFG->wwwroot.'/theme/'.$PAGE->theme->name; ?>/favicon.ico" />
+       <link rel="shortcut icon" href="<?php echo $CFG->wwwroot.'/theme/'.$PAGE->theme->name; ?>/pix/favicon.ico" />
      </head>
      <frameset rows="110,*,0,220">
        <noframes><body><?php
@@ -160,7 +160,7 @@
     $userfullname = fullname($user);
     $mefullname   = fullname($USER);
 
-    $PAGE->set_generaltype('popup');
+    $PAGE->set_pagelayout('popup');
     $PAGE->set_title(get_string('discussion', 'message').': '.fullname($user));
     echo $OUTPUT->header();
 

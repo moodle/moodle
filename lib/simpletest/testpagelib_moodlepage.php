@@ -177,9 +177,9 @@ class moodle_page_test extends UnitTestCase {
 
     public function test_set_state_normal_path() {
         $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM));
-    	$this->testpage->set_course($this->create_a_course());
+        $this->testpage->set_course($this->create_a_course());
 
-    	$this->assertEqual(moodle_page::STATE_BEFORE_HEADER, $this->testpage->state);
+        $this->assertEqual(moodle_page::STATE_BEFORE_HEADER, $this->testpage->state);
 
         $this->testpage->set_state(moodle_page::STATE_PRINTING_HEADER);
         $this->assertEqual(moodle_page::STATE_PRINTING_HEADER, $this->testpage->state);
@@ -377,16 +377,16 @@ class moodle_page_test extends UnitTestCase {
         $this->assertEqual('a title', $this->testpage->title);
     }
 
-    public function test_default_generaltype() {
+    public function test_default_pagelayout() {
         // Exercise SUT and Validate
-        $this->assertEqual('normal', $this->testpage->generaltype);
+        $this->assertEqual('normal', $this->testpage->pagelayout);
     }
 
-    public function test_set_generaltype() {
+    public function test_set_pagelayout() {
         // Exercise SUT
-        $this->testpage->set_generaltype('type');
+        $this->testpage->set_pagelayout('type');
         // Validate
-        $this->assertEqual('type', $this->testpage->generaltype);
+        $this->assertEqual('type', $this->testpage->pagelayout);
     }
 }
 

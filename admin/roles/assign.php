@@ -310,7 +310,6 @@
         }
 
     /// Print the form.
-        check_theme_arrows();
 ?>
 <form id="assignform" method="post" action="<?php echo $baseurl . '&amp;roleid=' . $roleid ?>"><div>
   <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />

@@ -55,7 +55,7 @@ if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
 }
 $PAGE->set_url('blocks/rss_client/viewfeed.php', $urlparams);
-$PAGE->set_generaltype('popup');
+$PAGE->set_pagelayout('popup');
 
 $rssrecord = $DB->get_record('block_rss_client', array('id' => $rssid), '*', MUST_EXIST);
 

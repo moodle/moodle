@@ -134,7 +134,7 @@ function resource_display_frame($resource, $cm, $course, $file) {
     $frame = optional_param('frameset', 'main', PARAM_ALPHA);
 
     if ($frame === 'top') {
-        $PAGE->set_generaltype('topframe');
+        $PAGE->set_pagelayout('frametop');
         resource_print_header($resource, $cm, $course);
         resource_print_heading($resource, $cm, $course);
         resource_print_intro($resource, $cm, $course);

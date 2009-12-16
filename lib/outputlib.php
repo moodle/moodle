@@ -16,6 +16,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Functions for generating the HTML that Moodle should output.
+ *
+ * Please see http://docs.moodle.org/en/Developement:How_Moodle_outputs_HTML
+ * for an overview.
+ *
+ * @package   moodlecore
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
  * This constant is used for html attributes which need to have an empty
  * value and still be output by the renderers (e.g. alt="");
  *
@@ -29,15 +40,46 @@ require_once($CFG->libdir.'/outputfactories.php');
 require_once($CFG->libdir.'/outputrenderers.php');
 
 /**
- * Functions for generating the HTML that Moodle should output.
- *
- * Please see http://docs.moodle.org/en/Developement:How_Moodle_outputs_HTML
- * for an overview.
- *
- * @package   moodlecore
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Invalidate all server and client side caches.
+ * @return void
  */
+function theme_reset_all_caches() {
+    global $CFG;
+    require_once("$CFG->libdir/filelib.php");
+
+    set_config('themerev', empty($CFG->themerev) ? 1 : $CFG->themerev+1);
+    fulldelete("$CFG->dataroot/cache/theme");
+}
+
+/**
+ * Enable or disable theme designer mode.
+ * @param bool $state
+ * @return void
+ */
+function theme_set_designer_mod($state) {
+    theme_reset_all_caches();
+    set_config('themedesignermode', (int)!empty($state));
+}
+
+/**
+ * Returns current theme revision number.
+ * @return int
+ */
+function theme_get_revision() {
+    global $CFG;
+
+    if (empty($CFG->themedesignermode)) {
+        if (empty($CFG->themerev)) {
+            return -1;
+        } else {
+            return $CFG->themerev;
+        }
+
+    } else {
+        return -1;
+    }
+}
+
 
 /**
  * This class represents the configuration variables of a Moodle theme.
@@ -60,144 +102,74 @@ require_once($CFG->libdir.'/outputrenderers.php');
  */
 class theme_config {
     /**
-     * @var string the name of this theme. Set automatically when this theme is
-     * loaded. Please do not try to set this in your theme's config.php file.
-     */
-    public $name;
-
-    /**
-     * @var string the folder where this themes files are stored. This is set
-     * automatically when the theme is loaded to $CFG->themedir . '/' . $this->name.
-     * Please do not try to set this in your theme's config.php file.
-     */
-    public $dir;
-
-    /**
-     * @var array The names of all the stylesheets from this theme that you would
-     * like included, in order. Give the names of the files without .css.
-     */
-    public $sheets = array('styles_layout', 'styles_fonts', 'styles_color');
-
-    /**
-     * You can base your theme on another theme by linking to the other theme as
-     * a parent. This lets you use the CSS from the other theme
-     * (see {@link $parentsheets}), or layout templates (see {@link $layouts}).
+     * You can base your theme on other themes by linking to the other theme as
+     * parents. This lets you use the CSS and layouts from the other themes
+     * (see {@link $layouts}).
      * That makes it easy to create a new theme that is similar to another one
      * but with a few changes. In this theme's CSS you only need to override
      * those rules you want to change.
+     *
+     * @var array
      */
-    public $parent = null;
+    public $parents;
 
     /**
-     * @var boolean|array Whether and which stylesheets from the parent theme
-     * to use in this theme. (Ignored if parent is null)
+     * The names of all the stylesheets from this theme that you would
+     * like included, in order. Give the names of the files without .css.
      *
-     * Possible values are:
-     *      false - no parent theme CSS.
-     *      true - include all the normal parent theme CSS. Currently this means
-     *             array('styles_layout', 'styles_fonts', 'styles_color').
-     *      array - include just the listed stylesheets. Give the files names
-     *              without the .css, as in the above example.
+     * @var array
      */
-    public $parentsheets = false;
+    public $sheets = array();
 
     /**
-     * @var boolean|array Whether and which stylesheets from the standard theme
-     * to use in this theme.
+     * The names of all the stylesheets from parents that should be expcluded.
+     * true value may be used to specify all parents or all themes from one parent.
+     * If no value specified value from parent theme used.
      *
-     * The advantages of using the standard stylesheets in your theme is that
-     * they give you a good basic layout, and when the Moodle core code is
-     * updated with new features, the standard theme CSS will be updated to match
-     * the changes in the code. Therefore, your theme is less likely to break
-     * when you upgrade Moodle.
-     *
-     * Possible values are:
-     *      false - no standard theme CSS.
-     *      true - include all the main standard theme CSS. Currently this means
-     *             array('styles_layout', 'styles_fonts', 'styles_color').
-     *      array - include just the listed stylesheets. Give the files names
-     *              without the .css, as in the above example.
+     * @var array or arrays, true means all, null means use value from parent
      */
-    public $standardsheets = true;
+    public $parents_exclude_sheets = null;
 
     /**
-     * @var array use the CSS fragments from these types of plugins.
+     * List of plugin sheets to be excluded.
+     * If no value specified value from parent theme used.
      *
-     * All the plugins of the given types will be searched for a file called
-     * styles.php and, if found, these will be included with the CSS for this theme.
-     *
-     * This allows modules to provide some basic CSS so they work out of the box.
-     * You are strongly advised to leave this enabled, otherwise you will have to
-     * provide styling in your theme for every installed block, activity, course
-     * format, ... in your Moodle site.
-     *
-     * This setting is an array of plugin types, as in the {@link get_plugin_types()}
-     * function. The default value has been chosen to be the same as Moodle 1.9.
-     * This is not necessarily the best choice.
-     *
-     * The plugin CSS is included first, before any theme CSS. To be precise,
-     * if $standardsheets is true, the plugin CSS is included with the
-     * standard theme's CSS, otherwise if $parentsheets is true, the plugin CSS
-     * will be included with the parent theme's CSS, otherwise the plugin CSS
-     * will be include with this theme's CSS.
+     * @var array of full plugin names, null means use value from parent
      */
-    public $pluginsheets = array('mod', 'block', 'format', 'gradereport');
+    public $plugins_exclude_sheets = null;
 
     /**
-     * @var boolean When this is true then Moodle will try to include a file
-     * meta.php from this theme into the <head></head> part of the page.
-     */
-    public $metainclude = false;
-
-    /**
-     * @var boolean When this is true, and when this theme has a parent, then
-     * Moodle will try to include a file meta.php from the parent theme into the
-     * <head></head> part of the page.
-     */
-    public $parentmetainclude = false;
-
-    /**
-     * @var boolean When this is true then Moodle will try to include the file
-     * meta.php from the standard theme into the <head></head> part of the page.
-     */
-    public $standardmetainclude = true;
-
-    /**
-     * If true, then this theme must have a "pix" subdirectory that contains
-     * copies of all files from the moodle/pix directory, plus a "pix/mod"
-     * directory containing all the icons for all the activity modules.
+     * List of style sheets that are included in the text editor bodies.
+     * Sheets from parent themes are used automatically and can not be excluded.
      *
-     * @var boolean
+     * @var array
      */
-    public $custompix = false;
+    public $editor_sheets = array();
 
     /**
-     * Which template to use for each general type of page.
+     * Which file to use for each page layout.
      *
-     * This is an array of arrays. The keys of the outer array are the different
-     * types of page. Pages in Moodle are categorised into one of a short list of
-     * types like 'normal', 'home', 'popup', 'form', .... The most reliable way
-     * to get a complete list is to look at
-     * {@link http://cvs.moodle.org/moodle/theme/standard/config.php?view=markup the standard theme config.php file}.
+     * This is an array of arrays. The keys of the outer array are the different layouts.
+     * Pages in Moodle are using several different layouts like 'normal', 'course', 'home',
+     * 'popup', 'form', .... The most reliable way to get a complete list is to look at
+     * {@link http://cvs.moodle.org/moodle/theme/base/config.php?view=markup the base theme config.php file}.
      * That file also has a good example of how to set this setting.
      *
-     * If Moodle encounters a general type of page that is not listed in your theme,
-     * then it will use the first layout. Therefore, should probably put 'normal'
-     * first in this array.
-     *
-     * For each page type, the value in the outer array is an array that describes
+     * For each layout, the value in the outer array is an array that describes
      * how you want that type of page to look. For example
      * <pre>
      *   $THEME->layouts = array(
-     *       // Most pages. Put this first, so if we encounter an unknown page type, this is used.
+     *       // Most pages - if we encounter an unknown or amissing page type, this one is used.
      *       'normal' => array(
-     *           'layout' => 'parent:layout.php',
+     *           'theme' = 'mytheme',
+     *           'file' => 'normal.php',
      *           'regions' => array('side-pre', 'side-post'),
      *           'defaultregion' => 'side-post'
      *       ),
      *       // The site home page.
      *       'home' => array(
-     *           'layout' => 'layout-home.php',
+     *           'theme' = 'mytheme',
+     *           'file' => 'home.php',
      *           'regions' => array('side-pre', 'side-post'),
      *           'defaultregion' => 'side-post'
      *       ),
@@ -205,19 +177,9 @@ class theme_config {
      *   );
      * </pre>
      *
-     * 'layout' is the layout template to use for this type of page. You can
-     * specify this in one of three ways:
-     * <ol>
-     * <li><b>filename</b> for example 'layout-home.php' as above. Use that file from this theme.</li>
-     * <li><b>parent:filename</b> for example 'parent:layout.php' as above. Use the
-     *      specified file from the parent theme. (Obviously, you can only do this
-     *      if this theme has a parent!)</li>
-     * <li><b>standard:filename</b> for example 'standard:layout-popup.php'. Use
-     *      the specified file from the standard theme.</li>
-     * </ol>
-     * To promote consistency, you are encouraged to call your layout files
-     * layout.php or layout-something.php.
-     *
+     * 'theme' name of the theme where is the layout located
+     * 'file' is the layout file to use for this type of page.
+     * layout files are stored in layout subfolder
      * 'regions' This lists the regions on the page where blocks may appear. For
      * each region you list here, your layout file must include a call to
      * <pre>
@@ -236,13 +198,6 @@ class theme_config {
      */
     public $layouts = array();
 
-    /*
-     * Time in seconds to cache the CSS style sheets for the chosen theme
-     *
-     * @var integer
-     */
-    public $csslifetime = 1800;
-
     /**
      * With this you can control the colours of the big MP3 player
      * that is used for MP3 resources.
@@ -252,27 +207,12 @@ class theme_config {
     public $resource_mp3player_colors = 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&font=Arial&fontColour=3333FF&buffer=10&waitForPlay=no&autoPlay=yes';
 
     /**
-     *  With this you can control the colours of the small MP3 player
-     * that is used elsewhere
-     *.
+     * With this you can control the colours of the small MP3 player
+     * that is used elsewhere.
+     *
      * @var string
      */
     public $filter_mediaplugin_colors = 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&waitForPlay=yes';
-
-    /**
-     *$THEME->rarrow = '&#x25BA;' //OR '&rarr;';
-     *$THEME->larrow = '&#x25C4;' //OR '&larr;';
-     *$CFG->block_search_button = link_arrow_right(get_string('search'), $url='', $accesshide=true);
-     *
-     * Accessibility: Right and left arrow-like characters are
-     * used in the breadcrumb trail, course navigation menu
-     * (previous/next activity), calendar, and search forum block.
-     *
-     * If the theme does not set characters, appropriate defaults
-     * are set by (lib/weblib.php:check_theme_arrows). The suggestions
-     * above are 'silent' in a screen-reader like JAWS. Please DO NOT
-     * use &lt; &gt; &raquo; - these are confusing for blind users.
-     */
 
     /**
      * Name of the renderer factory class to use.
@@ -287,8 +227,7 @@ class theme_config {
      * <ul>
      * <li>{@link standard_renderer_factory} - the default.</li>
      * <li>{@link theme_overridden_renderer_factory} - use this if you want to write
-     *      your own custom renderers in a renderers.php file in this theme (or the parent theme).</li>
-     * <li>{@link template_renderer_factory} - highly experimental! Do not use (yet).</li>
+     *      your own custom renderers in a lib.php file in this theme (or the parent theme).</li>
      * </ul>
      *
      * @var string name of a class implementing the {@link renderer_factory} interface.
@@ -296,63 +235,76 @@ class theme_config {
     public $rendererfactory = 'standard_renderer_factory';
 
     /**
-     * Name of the icon finder class to use.
+     * Function to do custom CSS post-processing.
      *
-     * This is an advanced feature. controls how Moodle converts from the icon
-     * names used in the code to URLs to embed in the HTML. You should not ever
-     * need to change this.
-     *
-     * @var string name of a class implementing the {@link icon_finder} interface.
-     */
-    public $iconfinder = 'pix_icon_finder';
-
-    /**
-     * Function to do custom CSS processing.
-     *
-     * This is an advanced feature. If you want to do custom processing on the
+     * This is an advanced feature. If you want to do custom post-processing on the
      * CSS before it is output (for example, to replace certain variable names
      * with particular values) you can give the name of a function here.
      *
-     * There are two functions available that you may wish to use (defined in lib/outputlib.php):
-     * <ul>
-     * <li>{@link output_css_replacing_constants}</li>
-     * <li>{@link output_css_for_css_edit}</li>
-     * </ul>
-     *
-     * If you wish to write your own function, look at those two as examples,
-     * and it should be clear what you have to do.
-     *
      * @var string the name of a function.
      */
-    public $customcssoutputfunction = null;
+    public $csspostprocess = null;
 
     /**
-     * You can use this to control the cutoff point for strings
-     * in the navmenus (list of activities in popup menu etc)
-     * Default is 50 characters wide.
+     * Accessibility: Right arrow-like character is
+     * used in the breadcrumb trail, course navigation menu
+     * (previous/next activity), calendar, and search forum block.
+     * If the theme does not set characters, appropriate defaults
+     * are set automatically. Please DO NOT
+     * use &lt; &gt; &raquo; - these are confusing for blind users.
+     *
+     * @var string
      */
-    public $navmenuwidth = 50;
+    public $rarrow = null;
 
     /**
-     * By setting this to true, then you will have access to a
-     * new variable in your header.html and footer.html called
-     * $navmenulist ... this contains a simple XHTML menu of
-     * all activities in the current course, mostly useful for
-     * creating popup navigation menus and so on.
+     * Accessibility: Right arrow-like character is
+     * used in the breadcrumb trail, course navigation menu
+     * (previous/next activity), calendar, and search forum block.
+     * If the theme does not set characters, appropriate defaults
+     * are set automatically. Please DO NOT
+     * use &lt; &gt; &raquo; - these are confusing for blind users.
+     *
+     * @var string
      */
-    public $makenavmenulist = false;
+    public $larrow = null;
+
+
+    //==Following properties are not configurable from theme config.php==
 
     /**
-     * @var renderer_factory Instance of the renderer_factory implementation
+     * The name of this theme. Set automatically when this theme is
+     * loaded. This can not be set in theme config.php
+     * @var string
+     */
+    public $name;
+
+    /**
+     * the folder where this themes files are stored. This is set
+     * automatically. This can not be set in theme config.php
+     * @var string
+     */
+    public $dir;
+
+    /**
+     * Theme settings stored in config_plugins table.
+     * This can not be set in theme config.php
+     * @var object
+     */
+    public $setting = null;
+
+    /**
+     * Instance of the renderer_factory implementation
      * we are using. Implementation detail.
+     * @var renderer_factory
      */
     protected $rf = null;
 
     /**
-     * @var renderer_factory Instance of the icon_finder implementation we are
-     * using. Implementation detail.
-     */
-    protected $if = null;
+     * List of parent config objects.
+     * @var array list of parent configs
+     **/
+    protected $parent_configs = array();
 
     /**
      * Load the config.php file for a particular theme, and return an instance
@@ -364,25 +316,587 @@ class theme_config {
     public static function load($themename) {
         global $CFG;
 
+        // load theme settings from db
+        try {
+            $settings = get_config('theme_'.$themename);
+        } catch (dml_exception $e) {
+            // most probably not installed yet
+            $settings = new object();
+        }
+
+        if ($config = theme_config::find_theme_config($themename, $settings)) {
+            return new theme_config($config);
+        } else {
+            // bad luck, the requested theme has some problems - admin see details in theme config
+            return new theme_config(theme_config::find_theme_config('standard', $settings)); // TODO: use some other default
+        }
+    }
+
+    /**
+     * Theme diagnostic code. It is very problematic to send debug output
+     * to the actual CSS file, instead this functions is supposed to
+     * diagnose given theme and highlisht all potential problems.
+     * This information should be available from the theme selection page
+     * or some other debug page for theme designers.
+     *
+     * @param string $themename
+     * @return array description of problems
+     */
+    public static function diagnose($themename) {
+        //TODO:
+        return array();
+    }
+
+    /**
+     * Private constructor, can be called only from the factory method.
+     * @param stdClass $config
+     */
+    private function __construct($config) {
+        global $CFG; //needed for included lib.php files
+
+        $this->settings = $config->settings;
+        $this->name     = $config->name;
+        $this->dir      = $config->dir;
+
+        if ($this->name != 'base') {
+            $baseconfig = theme_config::find_theme_config('base', $this->settings);
+        } else {
+            $baseconfig = $config;
+        }
+
+        $configurable = array('parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'layouts', 'resource_mp3player_colors',
+                              'filter_mediaplugin_colors', 'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow');
+
+        foreach ($config as $key=>$value) {
+            if (in_array($key, $configurable)) {
+                $this->$key = $value;
+            }
+        }
+
+        // verify all parents and load configs and renderers
+        foreach ($this->parents as $parent) {
+            if ($parent == 'base') {
+                $parent_config = $baseconfig;
+            } else if (!$parent_config = theme_config::find_theme_config($parent, $this->settings)) {
+                // this is not good - better exclude faulty parents
+                continue;
+            }
+            $libfile = $parent_config->dir.'/lib.php';
+            if (is_readable($libfile)) {
+                // theme may store various function here
+                include_once($libfile);
+            }
+            $renderersfile = $parent_config->dir.'/renderers.php';
+            if (is_readable($renderersfile)) {
+                // may contain core and plugin renderers and renderer factory
+                include_once($renderersfile);
+            }
+            $this->parent_configs[$parent] = $parent_config;
+            $rendererfile = $parent_config->dir.'/renderers.php';
+            if (is_readable($rendererfile)) {
+                 // may contain core and plugin renderers and renderer factory
+                include_once($rendererfile);
+            }
+        }
+        $libfile = $this->dir.'/lib.php';
+        if (is_readable($libfile)) {
+            // theme may store various function here
+            include_once($libfile);
+        }
+        $rendererfile = $this->dir.'/renderers.php';
+        if (is_readable($rendererfile)) {
+            // may contain core and plugin renderers and renderer factory
+            include_once($rendererfile);
+        }
+
+        // cascade all layouts properly
+        foreach ($baseconfig->layouts as $layout=>$value) {
+            if (!isset($this->layouts[$layout])) {
+                foreach ($this->parent_configs as $parent_config) {
+                    if (isset($parent_config->layouts[$layout])) {
+                        $this->layouts[$layout] = $parent_config->layouts[$layout];
+                        continue 2;
+                    }
+                }
+                $this->layouts[$layout] = $value;
+            }
+        }
+
+        //fix arrows if needed
+        $this->check_theme_arrows();
+    }
+
+    /*
+     * Checks if arrows $THEME->rarrow, $THEME->larrow have been set (theme/-/config.php).
+     * If not it applies sensible defaults.
+     *
+     * Accessibility: right and left arrow Unicode characters for breadcrumb, calendar,
+     * search forum block, etc. Important: these are 'silent' in a screen-reader
+     * (unlike &gt; &raquo;), and must be accompanied by text.
+     */
+    private function check_theme_arrows() {
+        if (!isset($this->rarrow) and !isset($this->larrow)) {
+            // Default, looks good in Win XP/IE 6, Win/Firefox 1.5, Win/Netscape 8...
+            // Also OK in Win 9x/2K/IE 5.x
+            $this->rarrow = '&#x25BA;';
+            $this->larrow = '&#x25C4;';
+            if (empty($_SERVER['HTTP_USER_AGENT'])) {
+                $uagent = '';
+            } else {
+                $uagent = $_SERVER['HTTP_USER_AGENT'];
+            }
+            if (false !== strpos($uagent, 'Opera')
+                || false !== strpos($uagent, 'Mac')) {
+                // Looks good in Win XP/Mac/Opera 8/9, Mac/Firefox 2, Camino, Safari.
+                // Not broken in Mac/IE 5, Mac/Netscape 7 (?).
+                $this->rarrow = '&#x25B6;';
+                $this->larrow = '&#x25C0;';
+            }
+            elseif (false !== strpos($uagent, 'Konqueror')) {
+                $this->rarrow = '&rarr;';
+                $this->larrow = '&larr;';
+            }
+            elseif (isset($_SERVER['HTTP_ACCEPT_CHARSET'])
+                && false === stripos($_SERVER['HTTP_ACCEPT_CHARSET'], 'utf-8')) {
+                // (Win/IE 5 doesn't set ACCEPT_CHARSET, but handles Unicode.)
+                // To be safe, non-Unicode browsers!
+                $this->rarrow = '&gt;';
+                $this->larrow = '&lt;';
+            }
+
+        /// RTL support - in RTL languages, swap r and l arrows
+            if (right_to_left()) {
+                $t = $this->rarrow;
+                $this->rarrow = $this->larrow;
+                $this->larrow = $t;
+            }
+        }
+    }
+
+    /**
+     * Returns output renderer prefixes, these are used when looking
+     * for the overriden renderers in themes.
+     * @return array
+     */
+    public function renderer_prefixes() {
+        global $CFG; // just in case the included files need it
+
+        $prefixes = array();
+
+        foreach ($this->parent_configs as $parent) {
+            $prefixes[] = 'theme_'.$parent->name;
+        }
+
+        return $prefixes;
+    }
+
+    /**
+     * Returns the stylesheet URL of this editor content
+     * @param bool $encoded false means use & and true use &amp; in URLs
+     * @return string
+     */
+    public function editor_css_url($encoded=true) {
+        global $CFG;
+
+        $rev = theme_get_revision();
+
+        if ($rev > -1) {
+            $params = array('theme'=>$this->name,'rev'=>$rev, 'type'=>'editor');
+            return new moodle_url($CFG->httpswwwroot.'/theme/styles.php', $params);
+        } else {
+            $params = array('theme'=>$this->name, 'type'=>'editor');
+            return new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', $params);
+        }
+    }
+
+    /**
+     * Returns the content of the CSS to be used in editor content
+     * @return string
+     */
+    public function editor_css_content() {
+        global $CFG;
+
+        $css = '';
+
+        // first editor plugins
+        $plugins = get_plugin_list('editor');
+        foreach ($plugins as $plugin=>$fulldir) {
+            $sheetfile = "$fulldir/editor_styles.css";
+            if (is_readable($sheetfile)) {
+                $css .= "/*** Editor $plugin content CSS ***/\n\n" . file_get_contents($sheetfile) . "\n\n";
+            }
+        }
+        // then parent themes
+        foreach (array_reverse($this->parent_configs) as $parent_config) { // base first, the immediate parent last
+            if (empty($parent_config->editor_sheets)) {
+                continue;
+            }
+            foreach ($parent_config->editor_sheets as $sheet) {
+                $sheetfile = "$parent_config->dir/$sheet.css";
+                if (is_readable($sheetfile)) {
+                    $css .= "/*** Parent theme $parent/$sheet ***/\n\n" . file_get_contents($sheetfile) . "\n\n";
+                }
+            }
+        }
+        // finally this theme
+        if (!empty($this->editor_sheets)) {
+            foreach ($this->editor_sheets as $sheet) {
+                $sheetfile = "$this->dir/$sheet.css";
+                if (is_readable($sheetfile)) {
+                    $css .= "/*** Theme $sheet ***/\n\n" . file_get_contents($sheetfile) . "\n\n";
+                }
+            }
+        }
+
+        return $this->post_process($css);
+    }
+
+    /**
+     * Get the stylesheet URL of this theme
+     * @param bool $encoded false means use & and true use &amp; in URLs
+     * @return string
+     */
+    public function css_urls() {
+        global $CFG;
+
+        $rev = theme_get_revision();
+
+        if ($rev > -1) {
+            $params = array('theme'=>$this->name,'rev'=>$rev);
+            if (check_browser_version('MSIE', 5) and !check_browser_version('MSIE', 8)) {
+                $params['type'] = 'ie';
+            }
+            return array(new moodle_url($CFG->httpswwwroot.'/theme/styles.php', $params));
+
+        } else {
+            // this is painfully slow, but it should not matter much ;-)
+            $css = $this->css_content();
+            $url = $CFG->httpswwwroot.'/theme/styles_debug.php';
+            $urls = array();
+            $urls[] = new moodle_url($url, array('theme'=>$this->name,'type'=>'yui'));
+            foreach ($css['plugins'] as $plugin=>$unused) {
+                $urls[] = new moodle_url($url, array('theme'=>$this->name,'type'=>'plugin', 'subtype'=>$plugin));
+            }
+            foreach ($css['parents'] as $parent=>$sheets) {
+                foreach ($sheets as $sheet=>$unused2) {
+                    $urls[] = new moodle_url($url, array('theme'=>$this->name,'type'=>'parent', 'subtype'=>$parent, 'sheet'=>$sheet));
+                }
+            }
+            foreach ($css['theme'] as $sheet=>$unused) {
+                $urls[] = new moodle_url($url, array('theme'=>$this->name,'type'=>'theme', 'sheet'=>$sheet));
+            }
+            return $urls;
+        }
+    }
+
+    /**
+     * Returns the content of the one huge CSS merged from all style sheets.
+     * @return string
+     */
+    public function css_content() {
+        global $CFG;
+
+        $css = array('yui'=>array(), 'plugins'=>array(), 'parents'=>array(), 'theme'=>array());
+
+        //YUI sheets
+        $yui_sheets = "/*** Standard YUI sheets ***/\n\n";
+        $yui_sheets .= file_get_contents("$CFG->libdir/yui/reset-fonts-grids/reset-fonts-grids.css");
+        $items = new DirectoryIterator("$CFG->libdir/yui/assets/skins/sam");
+        foreach ($items as $item) {
+            if ($item->isDot() or !$item->isFile()) {
+                continue;
+            }
+            $filename = $item->getFilename();
+            if (substr($filename, -4) !== '.css') {
+                continue;
+            }
+            $yui_sheets .= file_get_contents("$CFG->libdir/yui/assets/skins/sam/$filename");
+        }
+        unset($item);
+        unset($items);
+        $yui_sheets = preg_replace('/([a-z-]+)\.(png|gif)/', '[[pix:yui|$1]]', $yui_sheets);
+        $css['yui'][] = $this->post_process($yui_sheets);
+
+        // get plugin sheets
+        $excludes = null;
+        if (is_array($this->plugins_exclude_sheets) or $this->plugins_exclude_sheets === true) {
+            $excludes = $this->plugins_exclude_sheets;
+        } else {
+            foreach ($this->parent_configs as $parent_config) { // the immediate parent first, base last
+                if (!isset($parent_config->plugins_exclude_sheets)) {
+                    continue;
+                }
+                if (is_array($parent_config->plugins_exclude_sheets) or $parent_config->plugins_exclude_sheets === true) {
+                    $excludes = $parent_config->plugins_exclude_sheets;
+                    break;
+                }
+            }
+        }
+        if ($excludes !== true) {
+            foreach (get_plugin_types() as $type=>$unused) {
+                if ($type === 'theme') {
+                    continue;
+                }
+                if (!empty($excludes[$type]) and $excludes[$type] === true) {
+                    continue;
+                }
+                $plugins = get_plugin_list($type);
+                foreach ($plugins as $plugin=>$fulldir) {
+                    if (!empty($excludes[$type]) and is_array($excludes[$type])
+                        and in_array($plugin, $excludes[$type])) {
+                        continue;
+                    }
+                    $sheetfile = "$fulldir/styles.css";
+                    if (is_readable($sheetfile)) {
+                        $css['plugins'][$type.'_'.$plugin] = $this->post_process("/*** Standard plugin $type/$plugin ***/\n\n" . file_get_contents($sheetfile));
+                    }
+                }
+            }
+        }
+
+        // find out wanted parent sheets
+        $excludes = null;
+        if (is_array($this->parents_exclude_sheets) or $this->parents_exclude_sheets === true) {
+            $excludes = $this->parents_exclude_sheets;
+        } else {
+            foreach ($this->parent_configs as $parent_config) { // the immediate parent first, base last
+                if (!isset($parent_config->parents_exclude_sheets)) {
+                    continue;
+                }
+                if (is_array($parent_config->parents_exclude_sheets) or $parent_config->parents_exclude_sheets === true) {
+                    $excludes = $parent_config->parents_exclude_sheets;
+                    break;
+                }
+            }
+        }
+        if ($excludes !== true) {
+            foreach (array_reverse($this->parent_configs) as $parent_config) { // base first, the immediate parent last
+                $parent = $parent_config->name;
+                if (empty($parent_config->sheets)) {
+                    continue;
+                }
+                if (!empty($excludes[$parent]) and $excludes[$parent] === true) {
+                    continue;
+                }
+                foreach ($parent_config->sheets as $sheet) {
+                    if (!empty($excludes[$parent]) and is_array($excludes[$parent])
+                        and in_array($sheet, $excludes[$parent])) {
+                        continue;
+                    }
+                    $sheetfile = "$parent_config->dir/style/$sheet.css";
+                    if (is_readable($sheetfile)) {
+                        $css['parents'][$parent][$sheet] = $this->post_process("/*** Parent theme $parent/$sheet ***/\n\n" . file_get_contents($sheetfile));
+                    }
+                }
+            }
+        }
+
+        // current theme sheets
+        if (is_array($this->sheets)) {
+            foreach ($this->sheets as $sheet) {
+                $sheetfile = "$this->dir/style/$sheet.css";
+                if (is_readable($sheetfile)) {
+                    $css['theme'][$sheet] = $this->post_process("/*** This theme $sheet ***/\n\n" . file_get_contents($sheetfile));
+                }
+            }
+        }
+
+        return $css;
+    }
+
+    protected function post_process($css) {
+        // now resolve all image locations
+        if (preg_match_all('/\[\[pix:([a-z_]+\|)?([^\]]+)\]\]/', $css, $matches, PREG_SET_ORDER)) {
+            $replaced = array();
+            foreach ($matches as $match) {
+                if (isset($replaced[$match[0]])) {
+                    continue;
+                }
+                $replaced[$match[0]] = true;
+                $imagename = $match[2];
+                $component = rtrim($match[1], '|');
+                $css = str_replace($match[0], $this->image_url($imagename, $component)->out(false, array(), false), $css);
+            }
+        }
+
+        // now resolve all theme settings or do any other postprocessing
+        $csspostprocess = $this->csspostprocess;
+        if (function_exists($csspostprocess)) {
+            $css = $csspostprocess($css, $this);
+        }
+
+        return $css;
+    }
+
+    /**
+     * Return the URL for an image
+     *
+     * @param string $imagename the name of the icon.
+     * @param string $component, specification of one plugin like in get_string()
+     * @return moodle_url
+     */
+    public function image_url($imagename, $component) {
+        global $CFG;
+
+        $params = array('theme'=>$this->name, 'image'=>$imagename);
+
+        $rev = theme_get_revision();
+        if ($rev != -1) {
+            $params['rev'] = $rev;
+        }
+        if (!empty($component) and $component !== 'moodle'and $component !== 'core') {
+            $params['component'] = $component;
+        }
+
+        return new moodle_url("$CFG->httpswwwroot/theme/image.php", $params);
+    }
+
+    /**
+     * Resolves the real image location.
+     * @param string $image name of image, may contain relative path
+     * @param string $component
+     * @return string full file path
+     */
+    public function resolve_image_location($image, $component) {
+        global $CFG;
+
+        if ($component === 'moodle' or $component === 'core' or empty($component)) {
+            if ($imagefile = $this->image_exists("$this->dir/pix_core/$image")) {
+                return $imagefile;
+            }
+            foreach (array_reverse($this->parent_configs) as $parent_config) { // base first, the immediate parent last
+                if ($imagefile = $this->image_exists("$parent_config->dir/pix_core/$image")) {
+                    return $imagefile;
+                }
+            }
+            if ($imagefile = $this->image_exists("$CFG->dirroot/pix/$image")) {
+                return $imagefile;
+            }
+            return null;
+
+        } else if ($component === 'theme') { //exception
+            if ($image === 'favicon') {
+                return "$this->dir/pix/favicon.ico";
+            }
+            if ($imagefile = $this->image_exists("$this->dir/pix/$image")) {
+                return $imagefile;
+            }
+            foreach (array_reverse($this->parent_configs) as $parent_config) { // base first, the immediate parent last
+                if ($imagefile = $this->image_exists("$parent_config->dir/pix/$image")) {
+                    return $imagefile;
+                }
+            }
+            return null;
+
+        } else if ($component === 'yui') {
+            // yui CSS files are parsed automatically and altered on the fly
+            if ($imagefile = $this->image_exists("$this->dir/pix_yui/$image")) {
+                return $imagefile;
+            }
+            foreach (array_reverse($this->parent_configs) as $parent_config) { // base first, the immediate parent last
+                if ($imagefile = $this->image_exists("$parent_config->dir/pix_yui/$image")) {
+                    return $imagefile;
+                }
+            }
+            if ($imagefile = $this->image_exists("$CFG->libdir/yui/assets/skins/sam/$image")) {
+                return $imagefile;
+            }
+            return null;
+
+        } else {
+            if (strpos($component, '_') === false) {
+                $component = 'mod_'.$component;
+            }
+            list($type, $plugin) = explode('_', $component, 2);
+
+            if ($imagefile = $this->image_exists("$this->dir/pix_plugins/$type/$plugin/$image")) {
+                return $imagefile;
+            }
+            foreach (array_reverse($this->parent_configs) as $parent_config) { // base first, the immediate parent last
+                if ($imagefile = $this->image_exists("$parent_config->dir/pix_plugins/$type/$plugin/$image")) {
+                    return $imagefile;
+                }
+            }
+            $dir = get_plugin_directory($type, $plugin);
+            if ($imagefile = $this->image_exists("$dir/pix/$image")) {
+                return $imagefile;
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Checks if file with any image extension exists.
+     * @param string $filepath
+     * @return string image name with extension
+     */
+    private static function image_exists($filepath) {
+        if (file_exists("$filepath.gif")) {
+            return "$filepath.gif";
+        } else  if (file_exists("$filepath.png")) {
+            return "$filepath.png";
+        } else  if (file_exists("$filepath.jpg")) {
+            return "$filepath.jpg";
+        } else  if (file_exists("$filepath.jpeg")) {
+            return "$filepath.jpeg";
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Loads the theme config from config.php file.
+     * @param string $themename
+     * @param object $settings from config_plugins table
+     * @return object
+     */
+    private static function find_theme_config($themename, $settings) {
         // We have to use the variable name $THEME (upper case) because that
         // is what is used in theme config.php files.
 
-        // Set some other standard properties of the theme.
-        $THEME = new theme_config;
-        $THEME->name = $themename;
-        $THEME->dir = $CFG->themedir . '/' . $themename;
-
-        // Load up the theme config
-        $configfile = $THEME->dir . '/config.php';
-        if (!is_readable($configfile)) {
-            throw new coding_exception('Cannot use theme ' . $themename .
-                    '. The file ' . $configfile . ' does not exist or is not readable.');
+        if (!$dir = theme_config::find_theme_location($themename)) {
+            return null;
         }
-        include($configfile);
+        
+        $THEME = new object();
+        $THEME->name     = $themename;
+        $THEME->dir      = $dir;
+        $THEME->settings = $settings;
 
-        $THEME->update_legacy_information();
+        global $CFG; // just in case somebody tries to use $CFG in theme config
+        include("$THEME->dir/config.php");
+
+        // verify the theme configuration is OK
+        if (!is_array($THEME->parents)) {
+            // parents option is mandatory now
+            return null;
+        }
 
         return $THEME;
+    }
+
+    /**
+     * Finds the theme location and verifies the theme has all needed files
+     * and is not obsoleted.
+     * @param string $themename
+     * @return string full dir path or null if not found
+     */
+    private static function find_theme_location($themename) {
+        global $CFG;
+
+        if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
+            $dir = "$CFG->dirroot/theme/$themename";
+
+        } else {
+            return null;
+        }
+
+        if (file_exists("$dir/styles.php")) {
+            //legacy theme - needs to be upgraded - upgrade info is displayed on the admin settings page
+            return null;
+        }
+        
+        return $dir;
     }
 
     /**
@@ -390,7 +904,7 @@ class theme_config {
      * @param string $module the name of part of moodle. E.g. 'core', 'quiz', 'qtype_multichoice'.
      * @param moodle_page $page the page we are rendering
      * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
-     * @return moodle_renderer_base the requested renderer.
+     * @return renderer_base the requested renderer.
      */
     public function get_renderer($module, $page, $subtype=null) {
         if (is_null($this->rf)) {
@@ -406,213 +920,72 @@ class theme_config {
     }
 
     /**
-     * Get the renderer for a part of Moodle for this theme.
-     * @return moodle_renderer_base the requested renderer.
-     */
-    protected function get_icon_finder() {
-        if (is_null($this->if)) {
-            $classname = $this->iconfinder;
-            $this->if = new $classname($this);
-        }
-        return $this->if;
-    }
-
-    /**
-     * Return the URL for an icon identified as in pre-Moodle 2.0 code.
-     *
-     * Suppose you have old code like $url = "$CFG->pixpath/i/course.gif";
-     * then old_icon_url('i/course'); will return the equivalent URL that is correct now.
-     *
-     * @param string $iconname the name of the icon.
-     * @return string the URL for that icon.
-     */
-    public function old_icon_url($iconname) {
-        return $this->get_icon_finder()->old_icon_url($iconname);
-    }
-
-    /**
-     * Return the URL for an icon identified as in pre-Moodle 2.0 code.
-     *
-     * Suppose you have old code like $url = "$CFG->modpixpath/$mod/icon.gif";
-     * then mod_icon_url('icon', $mod); will return the equivalent URL that is correct now.
-     *
-     * @param string $iconname the name of the icon.
-     * @param string $module the module the icon belongs to.
-     * @return string the URL for that icon.
-     */
-    public function mod_icon_url($iconname, $module) {
-        return $this->get_icon_finder()->mod_icon_url($iconname, $module);
-    }
-
-    /**
-     * Get the list of stylesheet URLs that need to go in the header for this theme.
-     * @return array of URLs.
-     */
-    public function get_stylesheet_urls() {
-        global $CFG;
-
-        // We need to tell the CSS that is being included (for example the standard
-        // theme CSS) which theme it is being included for. Prepare the necessary param.
-        $param = '?for=' . $this->name;
-
-        // Stylesheets, in order (standard, parent, this - some of which may be the same).
-        $stylesheets = array();
-        if ($this->name != 'standard' && $this->standardsheets) {
-            $stylesheets[] = $CFG->httpsthemewww . '/standard/styles.php' . $param;
-        }
-        if (!empty($this->parent)) {
-            $stylesheets[] = $CFG->httpsthemewww . '/' . $this->parent . '/styles.php' . $param;
-        }
-        $stylesheets[] = $CFG->httpsthemewww . '/' . $this->name . '/styles.php' . $param;
-
-        // Additional styles for right-to-left languages, if applicable.
-        if (right_to_left()) {
-            $stylesheets[] = $CFG->httpsthemewww . '/standard/rtl.css';
-
-            if (!empty($this->parent) && file_exists($CFG->themedir . '/' . $this->parent . '/rtl.css')) {
-                $stylesheets[] = $CFG->httpsthemewww . '/' . $this->parent . '/rtl.css';
-            }
-
-            if (file_exists($this->dir . '/rtl.css')) {
-                $stylesheets[] = $CFG->httpsthemewww . '/' . $this->name . '/rtl.css';
-            }
-        }
-
-        // If the theme wants pluginsheets, get them included in the first (most
-        // general) stylesheet we are including. That is, process them with the
-        // standard CSS if we are using that, else with the parent CSS, else with
-        // our own CSS.
-        if (!empty($this->pluginsheets)) {
-            $stylesheets[0] .= '&amp;pluginsheets=1';
-        }
-
-        return $stylesheets;
-    }
-
-    /**
-     * Get the meta tags from one theme to got in the <head> of the HTML.
-     * @param string $themename the name of the theme to get meta tags from.
-     * @param string $page that page whose <head> is being output.
-     * @return string HTML code.
-     */
-    protected function get_theme_meta_tags($themename, $page) {
-        global $CFG;
-        // At least one theme's meta.php expects to have $PAGE visible.
-        $PAGE = $page;
-        $filename = $CFG->themedir . '/' . $themename . '/meta.php';
-        if (file_exists($filename)) {
-            ob_start();
-            include_once($filename);
-            $metatags = ob_get_contents();
-            ob_end_clean();
-        }
-        return $metatags;
-    }
-
-    /**
-     * Get all the meta tags (from this theme, standard, parent) that this theme
-     * wants in the <head> of the HTML.
-     *
-     * @param string $page that page whose <head> is being output.
-     * @return string HTML code.
-     */
-    public function get_meta_tags($page) {
-        $metatags = '';
-        if ($this->standardmetainclude) {
-            $metatags .= $this->get_theme_meta_tags('standard', $page);
-        }
-        if ($this->parent && $this->parentmetainclude) {
-            $metatags .= $this->get_theme_meta_tags($this->parent, $page);
-        }
-        if ($this->metainclude) {
-            $metatags .= $this->get_theme_meta_tags($this->name, $page);
-        }
-        return $metatags;
-    }
-
-    /**
      * Get the information from {@link $layouts} for this type of page.
-     * @param string $generaltype the general type of the page.
+     * @param string $pagelayout the the page layout name.
      * @return array the appropriate part of {@link $layouts}.
      */
-    protected function layout_info_for_page($generaltype) {
-        if (array_key_exists($generaltype, $this->layouts)) {
-            return $this->layouts[$generaltype];
+    protected function layout_info_for_page($pagelayout) {
+        if (array_key_exists($pagelayout, $this->layouts)) {
+            return $this->layouts[$pagelayout];
         } else {
-            return reset($this->layouts);
+            return $this->layouts['normal'];
         }
     }
 
     /**
-     * Given the settings of this theme, and the page generaltype, return the
-     * full path of the page layout template to use.
+     * Given the settings of this theme, and the page pagelayout, return the
+     * full path of the page layout file to use.
      *
-     * Used by {@link moodle_core_renderer::header()}. If an appropriate new-style
-     * template cannot be found, returns false to signal that the old-style
-     * header.html and footer.html files should be used.
+     * Used by {@link core_renderer::header()}.
      *
-     * @param string $generaltype the general type of the page.
-     * @return string Full path to the template to use, or false if a new-style
-     * template cannot be found.
+     * @param string $pagelayout the the page layout name.
+     * @return string Full path to the lyout file to use
      */
-    public function template_for_page($generaltype) {
+    public function layout_file($pagelayout) {
         global $CFG;
 
-        // Legacy fallback.
-        if (empty($this->layouts)) {
-            return false;
-        }
+        $layoutinfo = $this->layout_info_for_page($pagelayout);
+        $layoutfile = $layoutinfo['file'];
+        $theme = $layoutinfo['theme'];
 
-        $layoutinfo = $this->layout_info_for_page($generaltype);
-        $templatefile = $layoutinfo['layout'];
+        if ($dir = $this->find_theme_location($theme)) {
+            $path = "$dir/layout/$layoutfile";
 
-        // Parse the name that was found.
-        if (strpos($templatefile, 'standard:') === 0) {
-            $templatepath = $CFG->themedir . '/standard/' . substr($templatefile, 9);
-        } else if (strpos($templatefile, 'parent:') === 0) {
-            if (empty($this->parent)) {
-                throw new coding_exception('This theme (' . $this->name .
-                        ') does not have a parent. You cannot specify a layout template like ' .
-                        $templatefile);
+            // Check the template exists, return general base theme template if not.
+            if (is_readable($path)) {
+                return $path;
             }
-            $templatepath = $CFG->themedir . '/' . $this->parent . '/' . substr($templatefile, 7);
-        } else {
-            $templatepath = $this->dir . '/' . $templatefile;
         }
 
-        // Check the template exists.
-        if (!is_readable($templatepath)) {
-            throw new coding_exception('The template ' . $templatefile . ' (' . $templatepath .
-                    ') for page type ' . $generaltype . ' cannot be found in this theme (' .
-                    $this->name . ')');
-        }
+        // fallback to standard normal layout
+        return "$CFG->dirroot/theme/base/layout/general.php";
+    }
 
-        return $templatepath;
+    /**
+     * Returns auxiliary page layout options specified in layout configuration array.
+     * @param string $pagelayout
+     * @return array
+     */
+    public function pagelayout_options($pagelayout) {
+        $info = $this->layout_info_for_page($pagelayout);
+        if (!empty($info['options'])) {
+            return $info['options'];
+        }
+        return array();
     }
 
     /**
      * Inform a block_manager about the block regions this theme wants on this
-     * type of page.
-     * @param string $generaltype the general type of the page.
+     * page layout.
+     * @param string $pagelayout the general type of the page.
      * @param block_manager $blockmanager the block_manger to set up.
      * @return void
      */
-    public function setup_blocks($generaltype, $blockmanager) {
-        // Legacy fallback.
-        if (empty($this->layouts)) {
-            if (!in_array($generaltype, array('form', 'popup', 'maintenance'))) {
-                $blockmanager->add_regions(array(BLOCK_POS_LEFT, BLOCK_POS_RIGHT));
-                $blockmanager->set_default_region(BLOCK_POS_RIGHT);
-            }
-            return;
-        }
-
-        $layoutinfo = $this->layout_info_for_page($generaltype);
+    public function setup_blocks($pagelayout, $blockmanager) {
+        $layoutinfo = $this->layout_info_for_page($pagelayout);
         if (!empty($layoutinfo['regions'])) {
             $blockmanager->add_regions($layoutinfo['regions']);
             $blockmanager->set_default_region($layoutinfo['defaultregion']);
-        } else {
-        	$blockmanager->set_default_region('');
         }
     }
 
@@ -621,126 +994,17 @@ class theme_config {
      * @return array internal region name => human readable name.
      */
     public function get_all_block_regions() {
-        // Legacy fallback.
-        if (empty($this->layouts)) {
-            return array(
-                'side-pre' => get_string('region-side-pre', 'theme_standard'),
-                'side-post' => get_string('region-side-post', 'theme_standard'),
-            );
-        }
-
         $regions = array();
+        //TODO: this is weird because the regions from different layouts override each other
         foreach ($this->layouts as $layoutinfo) {
-            $ownertheme = $this->name;
-            if (strpos($layoutinfo['layout'], 'standard:') === 0) {
-                $ownertheme = 'standard';
-            } else if (strpos($layoutinfo['layout'], 'parent:') === 0) {
-                $ownertheme = $this->parent;
-            }
-
             foreach ($layoutinfo['regions'] as $region) {
-                $regions[$region] = get_string('region-' . $region, 'theme_' . $ownertheme);
+                $regions[$region] = get_string('region-' . $region, 'theme_' . $layoutinfo['theme']);
             }
         }
         return $regions;
     }
-
-    /**
-     * Helper method used by {@link update_legacy_information()}. Update one entry
-     * in the $this->pluginsheets array, based on the legacy $property propery.
-     * @param string $plugintype e.g. 'mod'.
-     * @param string $property e.g. 'modsheets'.
-     * @return void
-     */
-    protected function update_legacy_plugin_sheets($plugintype, $property) {
-        // In Moodle 1.9, modsheets etc. were ignored if standardsheets was false.
-        if (!empty($this->standardsheets) && property_exists($this, $property)) {
-            debugging('$THEME->' . $property . ' is deprecated. Please use the new $THEME->pluginsheets instead.', DEBUG_DEVELOPER);
-            if (!empty($this->$property) && !in_array($plugintype, $this->pluginsheets)) {
-                $this->pluginsheets[] = $plugintype;
-            } else if (empty($this->$property) && in_array($plugintype, $this->pluginsheets)) {
-                unset($this->pluginsheets[array_search($plugintype, $this->pluginsheets)]);
-            }
-        }
-    }
-
-    /**
-     * This method looks a the settings that have been loaded, to see whether
-     * any legacy things are being used, and outputs warning and tries to update
-     * things to use equivalent newer settings.
-     * @return void
-     */
-    protected function update_legacy_information() {
-        global $CFG;
-
-        $this->update_legacy_plugin_sheets('mod', 'modsheets');
-        $this->update_legacy_plugin_sheets('block', 'blocksheets');
-        $this->update_legacy_plugin_sheets('format', 'formatsheets');
-        $this->update_legacy_plugin_sheets('gradereport', 'gradereportsheets');
-
-        if (!empty($this->langsheets)) {
-            debugging('$THEME->langsheets is no longer supported. No languages were ' .
-                    'using it for anything, and it did not seem to serve any purpose.', DEBUG_DEVELOPER);
-        }
-
-        if (!empty($this->customcorners)) {
-            // $THEME->customcorners is deprecated but we provide support for it via the
-            // custom_corners_renderer_factory class in lib/deprecatedlib.php
-            debugging('$THEME->customcorners is deprecated. Please use the new $THEME->rendererfactory ' .
-                    'to control HTML generation. Please use $this->rendererfactory = \'custom_corners_renderer_factory\'; ' .
-                    'in your config.php file instead.', DEBUG_DEVELOPER);
-            $this->rendererfactory = 'custom_corners_renderer_factory';
-        }
-
-        if (!empty($this->cssconstants)) {
-            debugging('$THEME->cssconstants is deprecated. Please use ' .
-                    '$THEME->customcssoutputfunction = \'output_css_replacing_constants\'; ' .
-                    'in your config.php file instead.', DEBUG_DEVELOPER);
-            $this->customcssoutputfunction = 'output_css_replacing_constants';
-        }
-
-        if (!empty($this->CSSEdit)) {
-            debugging('$THEME->CSSEdit is deprecated. Please use ' .
-                    '$THEME->customcssoutputfunction = \'output_css_for_css_edit\'; ' .
-                    'in your config.php file instead.', DEBUG_DEVELOPER);
-            $this->customcssoutputfunction = 'output_css_for_css_edit';
-        }
-
-        if (!empty($CFG->smartpix)) {
-            $this->iconfinder = 'smartpix_icon_finder';
-        } else if ($this->custompix) {
-            $this->iconfinder = 'theme_icon_finder';
-        }
-    }
-
-    /**
-     * Set the variable $CFG->pixpath and $CFG->modpixpath to be the right
-     * ones for this theme. These should no longer be used, but legacy code
-     * might still rely on them.
-     * @return void
-     */
-    public function setup_legacy_pix_paths() {
-        global $CFG;
-        if (!empty($CFG->smartpix)) {
-            if ($CFG->slasharguments) {
-                // Use this method if possible for better caching
-                $extra = '';
-            } else {
-                $extra = '?file=';
-            }
-            $CFG->pixpath = $CFG->httpswwwroot . '/pix/smartpix.php' . $extra . '/' . $this->name;
-            $CFG->modpixpath = $CFG->httpswwwroot . '/pix/smartpix.php' . $extra . '/' . $this->name . '/mod';
-
-        } else if (empty($THEME->custompix)) {
-            $CFG->pixpath = $CFG->httpswwwroot . '/pix';
-            $CFG->modpixpath = $CFG->httpswwwroot . '/mod';
-
-        } else {
-            $CFG->pixpath = $CFG->httpsthemewww . '/' . $this->name . '/pix';
-            $CFG->modpixpath = $CFG->httpsthemewww . '/' . $this->name . '/pix/mod';
-        }
-    }
 }
+
 
 /**
  * This class keeps track of which HTML tags are currently open.
@@ -890,313 +1154,5 @@ class xhtml_container_stack {
      */
     protected function output_log() {
         return '<ul>' . implode("\n", $this->log) . '</ul>';
-    }
-}
-
-/**
- * An icon finder is responsible for working out the correct URL for an icon.
- *
- * A icon finder must also have a constructor that takes a theme object.
- * (See {@link standard_icon_finder::__construct} for an example.)
- *
- * Note that we are planning to change the Moodle icon naming convention before
- * the Moodle 2.0 release. Therefore, this API will probably change.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-interface icon_finder {
-    /**
-     * Return the URL for an icon identified as in pre-Moodle 2.0 code.
-     *
-     * Suppose you have old code like $url = "$CFG->pixpath/i/course.gif";
-     * then old_icon_url('i/course'); will return the equivalent URL that is correct now.
-     *
-     * @param string $iconname the name of the icon.
-     * @return string the URL for that icon.
-     */
-    public function old_icon_url($iconname);
-
-    /**
-     * Return the URL for an icon identified as in pre-Moodle 2.0 code.
-     *
-     * Suppose you have old code like $url = "$CFG->modpixpath/$mod/icon.gif";
-     * then mod_icon_url('icon', $mod); will return the equivalent URL that is correct now.
-     *
-     * @param string $iconname the name of the icon.
-     * @param string $module the module the icon belongs to.
-     * @return string the URL for that icon.
-     */
-    public function mod_icon_url($iconname, $module);
-}
-
-/**
- * This icon finder implements the old scheme that was used when themes that had
- * $THEME->custompix = false.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class pix_icon_finder implements icon_finder {
-    /**
-     * Constructor
-     * @param theme_config $theme the theme we are finding icons for (which is irrelevant).
-     */
-    public function __construct($theme) {
-    }
-
-    /**
-     * Implement interface method.
-     * @param string $iconname the name of the icon.
-     * @return string the URL for that icon.
-     */
-    public function old_icon_url($iconname) {
-        global $CFG;
-        if (file_exists($CFG->dirroot . '/pix/' . $iconname . '.png')) {
-            return $CFG->httpswwwroot . '/pix/' . $iconname . '.png';
-        } else {
-            return $CFG->httpswwwroot . '/pix/' . $iconname . '.gif';
-        }
-    }
-
-    /**
-     * Implement interface method.
-     * @param string $iconname the name of the icon.
-     * @param string $module the module the icon belongs to.
-     * @return string the URL for that icon.
-     */
-    public function mod_icon_url($iconname, $module) {
-        global $CFG;
-        if (file_exists($CFG->dirroot . '/mod/' . $module . '/' . $iconname . '.png')) {
-            return $CFG->httpswwwroot . '/mod/' . $module . '/' . $iconname . '.png';
-        } else {
-            return $CFG->httpswwwroot . '/mod/' . $module . '/' . $iconname . '.gif';
-        }
-    }
-}
-
-
-/**
- * This icon finder implements the old scheme that was used for themes that had
- * $THEME->custompix = true.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class theme_icon_finder implements icon_finder {
-    protected $themename;
-    /**
-     * Constructor
-     * @param theme_config $theme the theme we are finding icons for.
-     */
-    public function __construct($theme) {
-        $this->themename = $theme->name;
-    }
-
-    /**
-     * Implement interface method.
-     * @param string $iconname the name of the icon.
-     * @return string the URL for that icon.
-     */
-    public function old_icon_url($iconname) {
-        global $CFG;
-        if (file_exists($CFG->themedir . '/' . $this->themename . '/pix/' . $iconname . '.png')) {
-            return $CFG->httpsthemewww . '/' . $this->themename . '/pix/' . $iconname . '.png';
-        } else {
-            return $CFG->httpsthemewww . '/' . $this->themename . '/pix/' . $iconname . '.gif';
-        }
-    }
-
-    /**
-     * Implement interface method.
-     * @param string $iconname the name of the icon.
-     * @param string $module the module the icon belongs to.
-     * @return string the URL for that icon.
-     */
-    public function mod_icon_url($iconname, $module) {
-        global $CFG;
-        if (file_exists($CFG->themedir . '/' . $this->themename . '/pix/mod/' . $module . '/' . $iconname . '.png')) {
-            return $CFG->httpsthemewww . '/' . $this->themename . '/pix/mod/' . $module . '/' . $iconname . '.png';
-        } else {
-            return $CFG->httpsthemewww . '/' . $this->themename . '/pix/mod/' . $module . '/' . $iconname . '.gif';
-        }
-    }
-}
-
-
-/**
- * This icon finder implements the algorithm in pix/smartpix.php.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class smartpix_icon_finder extends pix_icon_finder {
-    protected $places = array();
-
-    /**
-     * Constructor
-     * @param theme_config $theme the theme we are finding icons for.
-     */
-    public function __construct($theme) {
-        global $CFG;
-        $this->places[$CFG->themedir . '/' . $theme->name . '/pix/'] =
-                $CFG->httpsthemewww . '/' . $theme->name . '/pix/';
-        if (!empty($theme->parent)) {
-            $this->places[$CFG->themedir . '/' . $theme->parent . '/pix/'] =
-                    $CFG->httpsthemewww . '/' . $theme->parent . '/pix/';
-        }
-    }
-
-    /**
-     * Implement interface method.
-     * @param string $iconname the name of the icon.
-     * @return string the URL for that icon.
-     */
-    public function old_icon_url($iconname) {
-        foreach ($this->places as $dirroot => $urlroot) {
-            if (file_exists($dirroot . $iconname . '.png')) {
-                return $dirroot . $iconname . '.png';
-            } else if (file_exists($dirroot . $iconname . '.gif')) {
-                return $dirroot . $iconname . '.gif';
-            }
-        }
-        return parent::old_icon_url($iconname);
-    }
-
-    /**
-     * Implement interface method.
-     * @param string $iconname the name of the icon.
-     * @param string $module the module the icon belongs to.
-     * @return string the URL for that icon.
-     */
-    public function mod_icon_url($iconname, $module) {
-        foreach ($this->places as $dirroot => $urlroot) {
-            if (file_exists($dirroot . 'mod/' . $iconname . '.png')) {
-                return $dirroot . 'mod/' . $iconname . '.png';
-            } else if (file_exists($dirroot . 'mod/' . $iconname . '.gif')) {
-                return $dirroot . 'mod/' . $iconname . '.gif';
-            }
-        }
-        return parent::old_icon_url($iconname, $module);
-    }
-}
-
-
-/**
- * Output CSS while replacing constants/variables. See MDL-6798 for details
- *
- * Information from Urs Hunkler:
- *
- * This is an adaptation of Shaun Inman's "CSS Server-side Constants" for Moodle.
- * http://www.shauninman.com/post/heap/2005/08/09/css_constants
- *
- * To use, specify $THEME->customcssoutputfunction = 'output_css_replacing_constants';
- * in your theme's config.php file.
- *
- * The constant definitions are written into a separate CSS file named like
- * constants.css and loaded first in config.php. You can use constants for any
- * CSS properties. The constant definition looks like:
- * <code>
- * \@server constants {
- *   fontColor: #3a2830;
- *   aLink: #116699;
- *   aVisited: #AA2200;
- *   aHover: #779911;
- *   pageBackground: #FFFFFF;
- *   backgroundColor: #EEEEEE;
- *   backgroundSideblockHeader: #a8a4e9;
- *   fontcolorSideblockHeader: #222222;
- *   color1: #98818b;
- *   color2: #bd807b;
- *   color3: #f9d1d7;
- *   color4: #e8d4d8;
- * }
- * </code>
- *
- * The lines in the CSS files using CSS constants look like:
- * <code>
- * body {
- *   font-size: 100%;
- *   background-color: pageBackground;
- *   color: fontColor;
- *   font-family: 'Bitstream Vera Serif', georgia, times, serif;
- *   margin: 0;
- *   padding: 0;
- * }
- * div#page {
- *   margin: 0 10px;
- *   padding-top: 5px;
- *   border-top-width: 10px;
- *   border-top-style: solid;
- *   border-top-color: color3;
- * }
- * div.clearer {
- *   clear: both;
- * }
- * a:link {
- *   color: aLink;
- * }
- * </code>
- *
- * @param array $files an array of the CSS fields that need to be output.
- * @param array $toreplace for convenience. If you are going to output the names
- *      of the css files, for debugging purposes, then you should output
- *      str_replace($toreplace, '', $file); because it looks prettier.
- * @return void
- */
-function output_css_replacing_constants($files, $toreplace) {
-    // Get all the CSS.
-    ob_start();
-    foreach ($files as $file) {
-        $shortname = str_replace($toreplace, '', $file);
-        echo '/******* ' . $shortname . " start *******/\n\n";
-        @include_once($file);
-        echo '/******* ' . $shortname . " end *******/\n\n";
-    }
-    $css = ob_get_contents();
-    ob_end_clean();
-
-    if (preg_match_all("/@server\s+(?:variables|constants)\s*\{\s*([^\}]+)\s*\}\s*/i", $css, $matches)) {
-        $variables = array();
-        foreach ($matches[0] as $key => $server) {
-            $css = str_replace($server, '', $css);
-            preg_match_all("/([^:\}\s]+)\s*:\s*([^;\}]+);/", $matches[1][$key], $vars);
-            foreach ($vars[1] as $var => $value) {
-                $variables[$value] = $vars[2][$var];
-            }
-        }
-        $css = str_replace(array_keys($variables), array_values($variables), $css);
-    }
-    echo $css;
-}
-
-/**
- * This CSS output function will link to CSS files rather than including them
- * inline.
- *
- * The single CSS files can then be edited and saved with interactive
- * CSS editors like CSSEdit. Any files that have a .php extension are still included
- * inline.
- *
- * @param array $files an array of the CSS fields that need to be output.
- * @param array $toreplace for convenience. If you are going to output the names
- *      of the css files, for debugging purposes, then you should output
- *      str_replace($toreplace, '', $file); because it looks prettier.
- * @return void
- */
-function output_css_for_css_edit($files, $toreplace) {
-    foreach ($files as $file) {
-        $shortname = str_replace($toreplace, '', $file);
-        echo '/* @group ' . $shortname . " */\n\n";
-        if (strpos($file, '.css') !== false) {
-            echo '@import url("' . $file . '");'."\n\n";
-        } else {
-            @include_once($file);
-        }
-        echo "/* @end */\n\n";
     }
 }

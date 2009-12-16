@@ -430,7 +430,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         global $OUTPUT;
 
         $str = '<a href="field.php?d='.$this->data->id.'&amp;fid='.$this->field->id.'&amp;mode=display&amp;sesskey='.sesskey().'">';
-        $str .= '<img src="'.$OUTPUT->mod_icon_url('/field/' . $this->type . '/icon', 'data') . '" ';
+        $str .= '<img src="'.$OUTPUT->old_icon_url('/field/' . $this->type . '/icon', 'data') . '" ';
         $str .= 'height="'.$this->iconheight.'" width="'.$this->iconwidth.'" alt="'.$this->type.'" title="'.$this->type.'" /></a>';
         return $str;
     }

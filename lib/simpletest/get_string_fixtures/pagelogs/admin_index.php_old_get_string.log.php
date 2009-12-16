@@ -665,8 +665,6 @@ old_get_string('experimental', 'admin', NULL);
 old_get_string('experimentalsettings', 'admin', NULL);
 old_get_string('enableglobalsearch', 'admin', NULL);
 old_get_string('configenableglobalsearch', 'admin', NULL);
-old_get_string('smartpix', 'admin', NULL);
-old_get_string('configsmartpix', 'admin', NULL);
 old_get_string('enablehtmlpurifier', 'admin', NULL);
 old_get_string('configenablehtmlpurifier', 'admin', NULL);
 old_get_string('experimentalsplitrestore', 'admin', NULL);

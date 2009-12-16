@@ -113,7 +113,7 @@ if(preg_match('~(##emoticons_html##)~', $output, $matches)) {
 }
 
 // Do the main output.
-$PAGE->set_generaltype('popup');
+$PAGE->set_pagelayout('popup');
 $PAGE->set_title($title);
 echo $OUTPUT->header();
 echo $OUTPUT->box_start();

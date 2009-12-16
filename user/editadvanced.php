@@ -46,7 +46,7 @@ if (!$course = $DB->get_record('course', array('id'=>$course))) {
 }
 if (!empty($USER->newadminuser)) {
     $PAGE->set_course($SITE);
-    $PAGE->set_generaltype('maintenance');
+    $PAGE->set_pagelayout('maintenance');
 } else {
     require_login($course);
 }

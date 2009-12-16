@@ -953,12 +953,12 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             $mainglossary = $DB->get_record('glossary', array('mainglossary'=>1,'course'=>$course->id));
             if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
                 $output = true;
-                $return .= ' <a title="'.get_string('exporttomainglossary','glossary') . '" href="exportentry.php?id='.$entry->id.'&amp;prevmode='.$mode.'&amp;hook='.urlencode($hook).'"><img src="export.gif" class="iconsmall" alt="'.get_string('exporttomainglossary','glossary').$altsuffix.'" /></a>';
+                $return .= ' <a title="'.get_string('exporttomainglossary','glossary') . '" href="exportentry.php?id='.$entry->id.'&amp;prevmode='.$mode.'&amp;hook='.urlencode($hook).'"><img src="'.$OUTPUT->old_icon_url('export', 'glossary').'" class="iconsmall" alt="'.get_string('exporttomainglossary','glossary').$altsuffix.'" /></a>';
             }
         }
 
         if ( $entry->sourceglossaryid ) {
-            $icon = "minus.gif";   // graphical metaphor (minus) for deleting an imported entry
+            $icon = $OUTPUT->old_icon_url('minus', 'glossary');   // graphical metaphor (minus) for deleting an imported entry
         } else {
             $icon = $OUTPUT->old_icon_url('t/delete');
         }
@@ -1643,7 +1643,7 @@ function glossary_print_sorting_links($cm, $mode, $sortkey = '',$sortorder = '')
              $neworder = '&amp;sortorder=asc';
              $newordertitle = get_string('changeto', 'glossary', $asc);
          }
-         $icon = " <img src=\"$sortorder.gif\" class=\"icon\" alt=\"$newordertitle\" />";
+         $icon = " <img src=\"".$OUTPUT->old_icon_url($sortorder, 'glossary')."\" class=\"icon\" alt=\"$newordertitle\" />";
      } else {
          if ( $sortkey != 'CREATION' and $sortkey != 'UPDATE' and
                $sortkey != 'FIRSTNAME' and $sortkey != 'LASTNAME' ) {
@@ -1652,7 +1652,7 @@ function glossary_print_sorting_links($cm, $mode, $sortkey = '',$sortorder = '')
          } else {
              $newordertitle = $desc;
              $neworder = '&amp;sortorder=desc';
-             $icon = ' <img src="asc.gif" class="icon" alt="'.$newordertitle.'" />';
+             $icon = ' <img src="'.$OUTPUT->old_icon_url('asc', 'glossary').'" class="icon" alt="'.$newordertitle.'" />';
          }
      }
      $ficon     = '';

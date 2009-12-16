@@ -8,7 +8,7 @@ require_once($CFG->dirroot.'/mod/forum/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 admin_externalpage_setup('bloglevelupgrade');
-$PAGE->set_generaltype('maintenance');
+$PAGE->set_pagelayout('maintenance');
 
 $go = optional_param('go', 0, PARAM_BOOL);
 

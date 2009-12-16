@@ -36,7 +36,7 @@ if (empty($CFG->messaging)) {
     print_error('disabled', 'message');
 }
 
-$PAGE->set_generaltype('popup');
+$PAGE->set_pagelayout('popup');
 $PAGE->set_title(get_string('messages', 'message').' - '.format_string($SITE->fullname));
 $PAGE->set_url(new moodle_url($CFG->wwwroot.'/message/refresh.php'));
 header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');

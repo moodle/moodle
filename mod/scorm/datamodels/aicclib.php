@@ -435,9 +435,9 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 if (isset($_COOKIE['hide:SCORMitem'.$nextsco->id])) {
                     $icon = 'plus';
                 }
-                $result->toc .= '<a href="javascript:expandCollide(\'img'.$sublist.'\',\'s'.$sublist.'\','.$nextsco->id.');"><img id="img'.$sublist.'" src="'.$OUTPUT->mod_icon_url('pix/' . $icon, 'scorm').'" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
+                $result->toc .= '<a href="javascript:expandCollide(\'img'.$sublist.'\',\'s'.$sublist.'\','.$nextsco->id.');"><img id="img'.$sublist.'" src="'.$OUTPUT->old_icon_url('pix/' . $icon, 'scorm').'" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
             } else if ($isvisible) {
-                $result->toc .= '<img src="'.$OUTPUT->mod_icon_url('pix/spacer', 'scorm').'" alt="" />';
+                $result->toc .= '<img src="'.$OUTPUT->old_icon_url('pix/spacer', 'scorm').'" alt="" />';
             }
             if (empty($sco->title)) {
                 $sco->title = $sco->identifier;
@@ -454,9 +454,9 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         $usertrack = $usertracks[$sco->identifier];
                         $strstatus = get_string($usertrack->status,'scorm');
                         if ($sco->scormtype == 'sco') {
-                            $statusicon = '<img src="'.$OUTPUT->mod_icon_url('pix/' . $usertrack->status, 'scorm').'" alt="'.$strstatus.'" title="'.$strstatus.'" />';
+                            $statusicon = '<img src="'.$OUTPUT->old_icon_url('pix/' . $usertrack->status, 'scorm').'" alt="'.$strstatus.'" title="'.$strstatus.'" />';
                         } else {
-                            $statusicon = '<img src="'.$OUTPUT->mod_icon_url('pix/assetc', 'scorm').'" alt="'.get_string('assetlaunched','scorm').'" title="'.get_string('assetlaunched','scorm').'" />';
+                            $statusicon = '<img src="'.$OUTPUT->old_icon_url('pix/assetc', 'scorm').'" alt="'.get_string('assetlaunched','scorm').'" title="'.get_string('assetlaunched','scorm').'" />';
                         }
 
                         if (($usertrack->status == 'notattempted') || ($usertrack->status == 'incomplete') || ($usertrack->status == 'browsed')) {
@@ -470,7 +470,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         }
                         $strsuspended = get_string('suspended','scorm');
                         if (isset($usertrack->{'cmi.core.exit'}) && ($usertrack->{'cmi.core.exit'} == 'suspend')) {
-                            $statusicon = '<img src="'.$OUTPUT->mod_icon_url('pix/suspend', 'scorm').'" alt="'.$strstatus.' - '.$strsuspended.'" title="'.$strstatus.' - '.$strsuspended.'" />';
+                            $statusicon = '<img src="'.$OUTPUT->old_icon_url('pix/suspend', 'scorm').'" alt="'.$strstatus.' - '.$strsuspended.'" title="'.$strstatus.' - '.$strsuspended.'" />';
                         }
                     } else {
                         if ($play && empty($scoid)) {
@@ -478,9 +478,9 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         }
                         $incomplete = true;
                         if ($sco->scormtype == 'sco') {
-                            $statusicon = '<img src="'.$OUTPUT->mod_icon_url('pix/notattempted', 'scorm').'" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
+                            $statusicon = '<img src="'.$OUTPUT->old_icon_url('pix/notattempted', 'scorm').'" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
                         } else {
-                            $statusicon = '<img src="'.$OUTPUT->mod_icon_url('pix/asset', 'scorm').'" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
+                            $statusicon = '<img src="'.$OUTPUT->old_icon_url('pix/asset', 'scorm').'" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
                         }
                     }
                     if ($sco->id == $scoid) {

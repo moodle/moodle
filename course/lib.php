@@ -1383,12 +1383,12 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 if (!empty($customicon)) {
                     if (substr($customicon, 0, 4) === 'mod/') {
                         list($modname, $iconname) = explode('/', substr($customicon, 4), 2);
-                        $icon = $OUTPUT->mod_icon_url(str_replace(array('.gif', '.png'), '', $customicon), $modname);
+                        $icon = $OUTPUT->old_icon_url(str_replace(array('.gif', '.png'), '', $customicon), $modname);
                     } else {
                         $icon = $OUTPUT->old_icon_url(str_replace(array('.gif', '.png'), '', $customicon));
                     }
                 } else {
-                    $icon = $OUTPUT->mod_icon_url('icon', $mod->modname);
+                    $icon = $OUTPUT->old_icon_url('icon', $mod->modname);
                 }
 
                 //Accessibility: for files get description via icon, this is very ugly hack!
@@ -2924,12 +2924,12 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     $leftright = '';
     if (has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $mod->course))) {
 
-	    if (right_to_left()) {   // Exchange arrows on RTL
-		    $rightarrow = 't/left';
-		    $leftarrow  = 't/right';
-	    } else {
-	        $rightarrow = 't/right';
-	        $leftarrow  = 't/left';
+        if (right_to_left()) {   // Exchange arrows on RTL
+            $rightarrow = 't/left';
+            $leftarrow  = 't/right';
+        } else {
+            $rightarrow = 't/right';
+            $leftarrow  = 't/left';
         }
 
         if ($indent > 0) {

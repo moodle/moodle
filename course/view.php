@@ -90,6 +90,7 @@
     }
 
     $PAGE->set_url('course/view.php', array('id' => $course->id));
+    $PAGE->set_pagelayout('course');
     $PAGE->set_pagetype('course-view-' . $course->format);
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
 
@@ -197,7 +198,8 @@
     $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
     $PAGE->set_heading($course->fullname);
     $PAGE->set_button($buttons);
-    $PAGE->set_headingmenu(user_login_string($course, $USER));
+    //TODO: MDL-21123 this should be done in course page layout, not here with this ugly hack!
+    //$PAGE->set_headingmenu(user_login_string($course, $USER));
     echo $OUTPUT->header();
 
     if ($completion->is_enabled() && ajaxenabled()) {

@@ -167,9 +167,9 @@ class block_manager {
      * @return array the internal names of the regions on this page where block may appear.
      */
     public function get_regions() {
-    	if (is_null($this->defaultregion)) {
+        if (is_null($this->defaultregion)) {
             $this->page->initialise_theme_and_output();
-    	}
+        }
         return array_keys($this->regions);
     }
 
@@ -303,7 +303,7 @@ class block_manager {
      * output the blocks anyway, so we are not doing wasted effort.)
      *
      * @param string $region a block region that exists on this page.
-     * @param object $output a moodle_core_renderer. normally the global $OUTPUT.
+     * @param object $output a core_renderer. normally the global $OUTPUT.
      * @return boolean Whether there is anything in this region.
      */
     public function region_has_content($region, $output) {
@@ -781,7 +781,7 @@ class block_manager {
      * Return an array of content objects from a set of block instances
      *
      * @param array $instances An array of block instances
-     * @param moodle_renderer_base The renderer to use.
+     * @param renderer_base The renderer to use.
      * @param string $region the region name.
      * @return array An array of block_content (and possibly block_move_target) objects.
      */
@@ -1056,7 +1056,7 @@ class block_manager {
         }
 
         $editpage = new moodle_page();
-        $editpage->set_generaltype('form');
+        $editpage->set_pagelayout('form');
         $editpage->set_course($this->page->course);
         $editpage->set_context($block->context);
         $editurlbase = str_replace($CFG->wwwroot . '/', '', $this->page->url->out(true));
@@ -1455,11 +1455,11 @@ function blocks_remove_inappropriate($course) {
     return;
     $blockmanager = blocks_get_by_page($page);
 
-    if(empty($blockmanager)) {
+    if (empty($blockmanager)) {
         return;
     }
 
-    if(($pageformat = $page->pagetype) == NULL) {
+    if (($pageformat = $page->pagetype) == NULL) {
         return;
     }
 

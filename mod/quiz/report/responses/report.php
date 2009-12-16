@@ -133,7 +133,6 @@ class quiz_responses_report extends quiz_default_report {
         if (!$table->is_downloading()) {
 
             // Only print headers if not asked to download data
-            $PAGE->requires->css('mod/quiz/report/responses/styles.css');
             $this->print_header_and_tabs($cm, $course, $quiz, 'responses', '');
         }
 

@@ -84,9 +84,10 @@ header("Refresh: $CFG->chat_refresh_room; url=$refreshurl");
 
 /// required stylesheets
 $stylesheetshtml = '';
-foreach ($CFG->stylesheets as $stylesheet) {
+/*foreach ($CFG->stylesheets as $stylesheet) {
+    //TODO: MDL-21120
     $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />';
-}
+}*/
 
 // use ob to be able to send Content-Length headers
 // needed for Keep-Alive to work

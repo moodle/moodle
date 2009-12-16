@@ -719,7 +719,7 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
 }
 
 function calendar_top_controls($type, $data) {
-    global $CFG, $CALENDARDAYS, $THEME;
+    global $CFG, $CALENDARDAYS;
     $content = '';
     if(!isset($data['d'])) {
         $data['d'] = 1;

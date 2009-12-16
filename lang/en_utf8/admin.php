@@ -304,6 +304,8 @@ $string['configsupportemail'] = 'This email address will be published to users o
 $string['configsupportname'] = 'This is the name of a person or other entity offering general help via the support email or web address.';
 $string['configsupportpage'] = 'This web address will be published to users of this site as the one to go to when they need general help (for example, when new users create their own accounts).  If this address is left blank then no link will be supplied.';
 $string['configteacherassignteachers'] = 'Should ordinary teachers be allowed to assign other teachers within courses they teach?  If \'No\', then only course creators and admins can assign teachers.';
+$string['configthemedesignermode'] = 'All theme images and CSS are cached in browsers and in server for a very long time. Turn on this setting if you are developing or tweaking themes. This setting is also suitable for developers.
+You can invalidate all theme caches manually from the theme selection page too. WARNING: enabling of theme designer mode affects the server performance severly!';
 $string['configthemelist'] = 'Leave this blank to allow any valid theme to be used.  If you want to shorten the theme menu, you can specify a comma-separated list of names here (Don\'t use spaces!).
 For example:  standard,orangewhite.';
 $string['configtimezone'] = 'You can set the default timezone here.  This is the only the DEFAULT timezone for displaying dates - each user can override this by setting their own in their profile. \"Server time\" here will make Moodle default to the server\'s operating system setting, but \"Server time\" in the user profile will make the user default to this timezone setting.  Cronjobs that depend on a time of day to run will use this timezone.';
@@ -851,7 +853,9 @@ $string['tablenosave'] = 'Changes in table above are saved automatically.';
 $string['tablesnosave'] = 'Changes in tables above are saved automatically.';
 $string['tabselectedtofront'] = 'On tables with tabs, should the row with the currently selected tab be placed at the front';
 $string['tabselectedtofronttext'] = 'Bring selected tab row to front';
+$string['themedesignermode'] = 'Theme designer mode';
 $string['themelist'] = 'Theme list';
+$string['themeresetcaches'] = 'Invalidate theme caches';
 $string['themeselector'] = 'Theme Selector';
 $string['themesettings'] = 'Theme settings';
 $string['therewereerrors'] = 'There were errors in your data';

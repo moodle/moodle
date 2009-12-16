@@ -1267,7 +1267,7 @@ function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
 
     if ($detail) {
         // activity icon
-        $src = "" . $OUTPUT->mod_icon_url('icon', $activity->type) . "";
+        $src = "" . $OUTPUT->old_icon_url('icon', $activity->type) . "";
         print '<img src="'.$src.'" class="icon" alt="'.$activity->type.'" /> ';
 
         // link to activity

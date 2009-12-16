@@ -6439,16 +6439,9 @@ function get_list_of_themes() {
         $themelist = array_keys(get_plugin_list("theme"));
     }
 
-    foreach ($themelist as $key => $theme) {
-        if (!file_exists("$CFG->themedir/$theme/config.php")) {   // bad folder
-            continue;
-        }
-        $THEME = new object();    // Note this is not the global one!!  :-)
-        include("$CFG->themedir/$theme/config.php");
-        if (!isset($THEME->sheets)) {   // Not a valid 1.5 theme
-            continue;
-        }
-        $themes[$theme] = $theme;
+    foreach ($themelist as $key => $themename) {
+        $theme = theme_config::load($themename);
+        $themes[$themename] = $theme;
     }
     asort($themes);
 
@@ -6709,7 +6702,12 @@ function get_component_directory($component, $fullpaths=true) {
     if ($component == 'moodle') {
         $path = ($fullpaths ? $CFG->libdir : 'lib');
     } else {
-        list($type, $plugin) = explode('_', $component, 2);
+        if (strpos($component, '_') === false) {
+            $type   = 'mod';
+            $plugin = $component;
+        } else {
+            list($type, $plugin) = explode('_', $component, 2);
+        }
         $path = get_plugin_directory($type, $plugin, $fullpaths);
     }
 
@@ -6747,7 +6745,8 @@ function get_plugin_types($fullpaths=true) {
                       'repository'    => 'repository',
                       'portfolio'     => 'portfolio',
                       'qtype'         => 'question/type',
-                      'qformat'       => 'question/format');
+                      'qformat'       => 'question/format',
+                      'theme'         => 'theme'); // this is a bit hacky, themes may be in dataroot too
 
         $mods = get_plugin_list('mod');
         foreach ($mods as $mod => $moddir) {
@@ -6759,19 +6758,13 @@ function get_plugin_types($fullpaths=true) {
             }
         }
 
-        // do not include themes if in non-standard location
-        if (empty($CFG->themedir) or $CFG->themedir === $CFG->dirroot.'/theme') {
-            $info['theme'] = 'theme';
-        }
-
-        // local is always last
+        // local is always last!
         $info['local'] = 'local';
 
         $fullinfo = array();
         foreach ($info as $type => $dir) {
             $fullinfo[$type] = $CFG->dirroot.'/'.$dir;
         }
-        $fullinfo['theme'] = $CFG->themedir;
     }
 
     return ($fullpaths ? $fullinfo : $info);
@@ -6780,10 +6773,9 @@ function get_plugin_types($fullpaths=true) {
 /**
  * Simplified version of get_list_of_plugins()
  * @param string $plugintype type of plugin
- * @param bool $fullpaths false means relative paths from dirroot
  * @return array name=>fulllocation pairs of plugins of given type
  */
-function get_plugin_list($plugintype, $fullpaths=true) {
+function get_plugin_list($plugintype) {
     global $CFG;
 
     $ignored = array('CVS', '_vti_cnf', 'simpletest', 'db');
@@ -6799,40 +6791,53 @@ function get_plugin_list($plugintype, $fullpaths=true) {
         $plugintype = 'mod';
     }
 
+    $fulldirs = array();
+
     if ($plugintype === 'mod') {
         // mod is an exception because we have to call this function from get_plugin_types()
-        $fulldir = $CFG->dirroot.'/mod';
-        $dir = $fullpaths ? $fulldir : 'mod';
+        $fulldirs[] = $CFG->dirroot.'/mod';
+
+    } else if ($plugintype === 'theme') {
+        // themes are an exception because they may be stored also in dataroot
+        $fulldirs[] = $CFG->dirroot.'/theme';
 
     } else {
-        $fulltypes = get_plugin_types(true);
-        $types     = get_plugin_types($fullpaths);
+        $types = get_plugin_types(true);
         if (!array_key_exists($plugintype, $types)) {
             return array();
         }
-        $fulldir = $fulltypes[$plugintype];
-        $dir     = $types[$plugintype];
+        $fulldir = $types[$plugintype];
         if (!file_exists($fulldir)) {
             return array();
         }
+        $fulldirs[] = $fulldir;
     }
 
     $result = array();
 
-    $items = new DirectoryIterator($fulldir);
-    foreach ($items as $item) {
-        if ($item->isDot() or !$item->isDir()) {
+    //TODO: MDL-20799 add themedir support
+
+    foreach ($fulldirs as $fulldir) {
+        if (!is_dir($fulldir)) {
             continue;
         }
-        $pluginname = $item->getFilename();
-        if (in_array($pluginname, $ignored)) {
-            continue;
+        $items = new DirectoryIterator($fulldir);
+        foreach ($items as $item) {
+            if ($item->isDot() or !$item->isDir()) {
+                continue;
+            }
+            $pluginname = $item->getFilename();
+            if (in_array($pluginname, $ignored)) {
+                continue;
+            }
+            if ($pluginname !== clean_param($pluginname, PARAM_SAFEDIR)) {
+                // better ignore plugins with problematic names here
+                continue;
+            }
+            $result[$pluginname] = $fulldir.'/'.$pluginname;
+            unset($item);
         }
-        if ($pluginname !== clean_param($pluginname, PARAM_SAFEDIR)) {
-            // better ignore plugins with problematic names here
-            continue;
-        }
-        $result[$pluginname] = $dir.'/'.$pluginname;
+        unset($items);
     }
 
     ksort($result);
@@ -6858,14 +6863,8 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
     $plugins = array();
 
     if (empty($basedir)) {
-        // This switch allows us to use the appropiate theme directory - and potentialy alternatives for other plugins
-        switch ($directory) {
-            case "theme":
-                $basedir = $CFG->themedir;
-                break;
-            default:
-                $basedir = $CFG->dirroot .'/'. $directory;
-        }
+        // TODO: MDL-20799 megre theme with themedir if defined
+        $basedir = $CFG->dirroot .'/'. $directory;
 
     } else {
         $basedir = $basedir .'/'. $directory;
@@ -6966,37 +6965,37 @@ function plugin_supports($type, $name, $feature, $default=null) {
     $name = clean_param($name, PARAM_SAFEDIR); //bit of extra security
 
     if ($type === 'mod') {
-    	// we need this special case because we support subplugins in modules,
-    	// otherwise it would end up in infinite loop
-    	if ($name === 'NEWMODULE') {
-    		//somebody forgot to rename the module template
-    		return false;
-    	}
-    	include_once("$CFG->dirroot/mod/$name/lib.php");
-    	
+        // we need this special case because we support subplugins in modules,
+        // otherwise it would end up in infinite loop
+        if ($name === 'NEWMODULE') {
+            //somebody forgot to rename the module template
+            return false;
+        }
+        include_once("$CFG->dirroot/mod/$name/lib.php");
+        
         $function = $name.'_supports';
 
     } else {
-    	if ($feature == FEATURE_MOD_SUBPLUGINS) {
-    		//sorry only modules
-    		return false;
-    	}
-	    if (!$dir = get_plugin_directory($type, $name)) {
-	        throw new coding_exception("Unsupported plugin type or name ($type/$name)");
-	    }
-	
-	    $libfile = $dir.'/lib.php';
-	    if (file_exists($libfile)) {
-	    	include_once($libfile);
-	    }
-	
-	    $function = $type.'_'.$name.'_supports';
+        if ($feature == FEATURE_MOD_SUBPLUGINS) {
+            //sorry only modules
+            return false;
+        }
+        if (!$dir = get_plugin_directory($type, $name)) {
+            throw new coding_exception("Unsupported plugin type or name ($type/$name)");
+        }
+    
+        $libfile = $dir.'/lib.php';
+        if (file_exists($libfile)) {
+            include_once($libfile);
+        }
+    
+        $function = $type.'_'.$name.'_supports';
     }
 
     if (function_exists($function)) {
         $supports = $function($feature);
         if (is_null($supports)) {
-        	// plugin does not know - use default
+            // plugin does not know - use default
             return $default;
         } else {
             return $supports;

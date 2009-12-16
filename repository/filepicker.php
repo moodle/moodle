@@ -35,7 +35,7 @@ set_time_limit(0);
 require_login();
 
 // disable blocks in this page
-$PAGE->set_generaltype('embedded');
+$PAGE->set_pagelayout('embedded');
 
 // general parameters
 $action      = optional_param('action', '',        PARAM_ALPHA);

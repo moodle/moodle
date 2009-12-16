@@ -35,7 +35,6 @@ $toggle        = optional_param('toggle', NULL, PARAM_INT);
 $toggle_type   = optional_param('toggle_type', 0, PARAM_ALPHANUM);
 
 $PAGE->set_url('grade/report/grader/index.php', compact('courseid', 'page', 'perpageurl', 'edit', 'sortitemid'));
-$PAGE->requires->css('lib/yui/container/assets/skins/sam/container.css');
 
 /// basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {

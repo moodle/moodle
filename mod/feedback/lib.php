@@ -329,13 +329,13 @@ function feedback_print_recent_mod_activity($activity, $courseid, $detail, $modn
     if ($detail) {
         $modname = $modnames[$activity->type];
         echo '<div class="title">';
-        echo "<img src=\"" . $OUTPUT->mod_icon_url('icon', $activity->type) . "\" ".
+        echo "<img src=\"" . $OUTPUT->old_icon_url('icon', $activity->type) . "\" ".
              "class=\"icon\" alt=\"$modname\" />";
         echo "<a href=\"$CFG->wwwroot/mod/feedback/view.php?id={$activity->cmid}\">{$activity->name}</a>";
         echo '</div>';
     }
 
-	echo '<div class="title">';
+    echo '<div class="title">';
     echo '</div>';
 
     echo '<div class="user">';
@@ -970,7 +970,7 @@ function feedback_create_item($data) {
 
     $item->template=0;
     if (isset($data->templateid)) {
-	    	$item->template = intval($data->templateid);
+            $item->template = intval($data->templateid);
     }
 
     $itemname = trim($data->itemname);
@@ -1024,7 +1024,7 @@ function feedback_update_item($item, $data = null){
 
         $item->required=0;
         if (isset($data->required)) {
-	    	$item->required=$data->required;
+            $item->required=$data->required;
         }
     }else {
         $item->name = $item->name;
@@ -2299,7 +2299,7 @@ function feedback_print_errors() {
     feedback_init_feedback_session();
 
     if(empty($SESSION->feedback->errors)) {
-		return;
+        return;
     }
 
     echo $OUTPUT->box_start('generalbox errorboxcontent boxaligncenter boxwidthnormal');

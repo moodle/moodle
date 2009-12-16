@@ -783,9 +783,10 @@ function forum_cron() {
                 $headerdata->userprefs = '<a target="_blank" href="'.$headerdata->userprefs.'">'.get_string('digestmailprefs', 'forum').'</a>';
 
                 $posthtml = "<head>";
-                foreach ($CFG->stylesheets as $stylesheet) {
+/*                foreach ($CFG->stylesheets as $stylesheet) {
+                    //TODO: MDL-21120
                     $posthtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
-                }
+                }*/
                 $posthtml .= "</head>\n<body id=\"email\">\n";
                 $posthtml .= '<p>'.get_string('digestmailheader', 'forum', $headerdata).'</p><br /><hr size="1" noshade="noshade" />';
 
@@ -1055,9 +1056,10 @@ function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfro
     $canunsubscribe = ! forum_is_forcesubscribed($forum);
 
     $posthtml = '<head>';
-    foreach ($CFG->stylesheets as $stylesheet) {
+/*    foreach ($CFG->stylesheets as $stylesheet) {
+        //TODO: MDL-21120
         $posthtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
-    }
+    }*/
     $posthtml .= '</head>';
     $posthtml .= "\n<body id=\"email\">\n\n";
 
@@ -6197,7 +6199,7 @@ function forum_print_recent_mod_activity($activity, $courseid, $detail, $modname
     echo '<div class="title">';
     if ($detail) {
         $aname = s($activity->name);
-        echo "<img src=\"" . $OUTPUT->mod_icon_url('icon', $activity->type) . "\" ".
+        echo "<img src=\"" . $OUTPUT->old_icon_url('icon', $activity->type) . "\" ".
              "class=\"icon\" alt=\"{$aname}\" />";
     }
     echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d={$activity->content->discussion}"

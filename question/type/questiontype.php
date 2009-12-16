@@ -875,13 +875,6 @@ class default_questiontype {
         if (file_exists($plugindir . '/script.php')) {
             $PAGE->requires->js($plugindirrel . '/script.php');
         }
-
-        if (file_exists($plugindir . '/styles.css')) {
-            $PAGE->requires->css($plugindirrel . '/styles.css');
-        }
-        if (file_exists($plugindir . '/styles.php')) {
-            $PAGE->requires->css($plugindirrel . '/styles.php');
-        }
     }
 
     /**

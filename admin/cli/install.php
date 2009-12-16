@@ -110,7 +110,6 @@ $CFG->dirroot              = str_replace('\\', '/', dirname(dirname(dirname(__FI
 $CFG->libdir               = "$CFG->dirroot/lib";
 $CFG->wwwroot              = "http://localhost";
 $CFG->httpswwwroot         = $CFG->wwwroot;
-$CFG->httpsthemewww        = $CFG->wwwroot;
 $CFG->dataroot             = str_replace('\\', '/', dirname(dirname(dirname(__FILE__))).'/moodledata');
 $CFG->docroot              = 'http://docs.moodle.org';
 $CFG->directorypermissions = 00777;
@@ -262,7 +261,6 @@ if ($interactive) {
 }
 $CFG->wwwroot       = $wwwroot;
 $CFG->httpswwwroot  = $CFG->wwwroot;
-$CFG->httpsthemewww = $CFG->wwwroot;
 
 
 //We need dataroot before lang download

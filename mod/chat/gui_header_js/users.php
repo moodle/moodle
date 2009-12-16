@@ -24,7 +24,7 @@ if (!$USER = $DB->get_record('user', array('id'=>$chatuser->userid))) { // no op
     print_error('invaliduser');
 }
 
-$PAGE->set_generaltype('embedded');
+$PAGE->set_pagelayout('embedded');
 
 $USER->description = '';
 

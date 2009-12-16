@@ -48,7 +48,7 @@ var $errormsg;
 * @param    course  current course object
 */
 function print_entry($course) {
-    global $CFG, $USER, $SESSION, $THEME, $OUTPUT, $PAGE;
+    global $CFG, $USER, $SESSION, $OUTPUT, $PAGE;
 
     $strloginto = get_string('loginto', '', $course->shortname);
     $strcourses = get_string('courses');
@@ -134,7 +134,7 @@ function print_entry($course) {
 * @param    course  the current course, as an object
 */
 function check_entry($form, $course) {
-    global $CFG, $USER, $SESSION, $THEME;
+    global $CFG, $USER, $SESSION;
 
     if (empty($form->password)) {
         $form->password = '';

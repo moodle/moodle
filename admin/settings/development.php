@@ -9,7 +9,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     $temp = new admin_settingpage('experimentalsettings', get_string('experimentalsettings', 'admin'));
     $temp->add(new admin_setting_configcheckbox('enableglobalsearch', get_string('enableglobalsearch', 'admin'), get_string('configenableglobalsearch', 'admin'), 0));
-    $temp->add(new admin_setting_configcheckbox('smartpix', get_string('smartpix', 'admin'), get_string('configsmartpix', 'admin'), 0));
     $item = new admin_setting_configcheckbox('enablehtmlpurifier', get_string('enablehtmlpurifier', 'admin'), get_string('configenablehtmlpurifier', 'admin'), 0);
     $item->set_updatedcallback('reset_text_filters_cache');
     $temp->add($item);

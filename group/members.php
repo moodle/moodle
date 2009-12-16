@@ -87,7 +87,6 @@ $PAGE->set_title("$course->shortname: $strgroups");
 $PAGE->set_heading($course->fullname);
 $PAGE->set_headingmenu(user_login_string($course, $USER));
 echo $OUTPUT->header();
-check_theme_arrows();
 ?>
 
 <div id="addmembersform">

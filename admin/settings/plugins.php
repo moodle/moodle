@@ -4,10 +4,7 @@
  * Please note that is file is always loaded last - it means that you can inject entries into other categories too.
  */
 
-if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) {
-
-    require_once($CFG->libdir. '/portfoliolib.php');
-
+if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('modsettings', get_string('activitymodules')));
     $ADMIN->add('modsettings', new admin_page_managemods());
     if ($modules = $DB->get_records('modules')) {
@@ -136,6 +133,9 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
         }
     }
 
+
+    //== Portfolio settings ==
+    require_once($CFG->libdir. '/portfoliolib.php');
     $catname = get_string('portfolios', 'portfolio');
     $manage = get_string('manageportfolios', 'portfolio');
     $url = "$CFG->wwwroot/$CFG->admin/portfolio.php";
@@ -222,9 +222,7 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
     $ADMIN->add('repositorysettings', new admin_externalpage('repositoryinstanceedit',
         get_string('editrepositoryinstance', 'repository'), $url, 'moodle/site:config', true),
         '', $url);
-    foreach (repository::get_types()
-        as $repositorytype)
-    {
+    foreach (repository::get_types() as $repositorytype) {
       //display setup page for plugins with: general options or multiple instances (e.g. has instance config)
       $typeoptionnames = repository::static_function($repositorytype->get_typename(), 'get_type_option_names');
       $instanceoptionnames = repository::static_function($repositorytype->get_typename(), 'get_instance_option_names');
@@ -236,6 +234,7 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
                         'moodle/site:config');
         }
     }
+}
 
     // Web services
     $ADMIN->add('modules', new admin_category('webservicesettings', get_string('webservices', 'webservice')));
@@ -264,6 +263,7 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
         }
     }
 
+if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) {
     // Question type settings.
     $ADMIN->add('modules', new admin_category('qtypesettings', get_string('questiontypes', 'admin')));
     $ADMIN->add('qtypesettings', new admin_page_manageqtypes());

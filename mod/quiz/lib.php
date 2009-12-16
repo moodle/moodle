@@ -838,7 +838,7 @@ function quiz_print_recent_mod_activity($activity, $courseid, $detail, $modnames
     if ($detail) {
         $modname = $modnames[$activity->type];
         echo '<div class="title">';
-        echo "<img src=\"" . $OUTPUT->mod_icon_url('icon', $activity->type) . "\" ".
+        echo "<img src=\"" . $OUTPUT->old_icon_url('icon', $activity->type) . "\" ".
              "class=\"icon\" alt=\"$modname\" />";
         echo "<a href=\"$CFG->wwwroot/mod/quiz/view.php?id={$activity->cmid}\">{$activity->name}</a>";
         echo '</div>';

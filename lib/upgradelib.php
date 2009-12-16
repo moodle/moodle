@@ -949,7 +949,7 @@ function upgrade_started($preinstall=false) {
     } else {
         if (!CLI_SCRIPT and !$PAGE->headerprinted) {
             $strupgrade  = get_string('upgradingversion', 'admin');
-            $PAGE->set_generaltype('maintenance');
+            $PAGE->set_pagelayout('maintenance');
             upgrade_get_javascript();
             $PAGE->set_title($strupgrade.' - Moodle '.$CFG->target_release);
             $PAGE->set_heading($strupgrade);

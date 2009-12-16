@@ -32,6 +32,7 @@ $testcookies = optional_param('testcookies', 0, PARAM_BOOL); // request cookie t
 
 $context = get_context_instance(CONTEXT_SYSTEM);
 $PAGE->set_course($SITE);
+$PAGE->set_pagelayout('form');
 
 /// Initialize variables
 $errormsg = '';

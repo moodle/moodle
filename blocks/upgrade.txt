@@ -11,6 +11,9 @@ required changes in code:
 * move post instalation code from install() method into db/install.php
 * completely rewrite file handling
 * rewrite backup/restore
+* theme changes: move plugin styles into blocks/xxx/styles.css and use new css markers for images,
+                 move all images into new blocks/xxx/pix/ directory and use new outputlib api
+
 
 optional - no changes needed in older code:
 *

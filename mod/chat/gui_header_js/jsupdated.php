@@ -79,9 +79,10 @@ header('Content-Type: text/html; charset=utf-8');
 
 /// required stylesheets
 $stylesheetshtml = '';
-foreach ($CFG->stylesheets as $stylesheet) {
+/*foreach ($CFG->stylesheets as $stylesheet) {
+    //TODO: MDL-21120
     $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />';
-}
+}*/
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

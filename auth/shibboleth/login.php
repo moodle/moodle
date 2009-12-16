@@ -29,7 +29,7 @@ httpsrequired();
         $select = html_select::make_popup_form("$CFG->httpswwwroot/login/index.php", 'lang', $langs, 'chooselang', $currlang);
         $select->nothinglabel = false;
         $select->set_label(get_accesshide(get_string('language')));
-        $langmenu = $OUTPUT->select($select);
+        $langmenu = '<div class="langmenu">'.$OUTPUT->select($select).'</div>';
     }
 
     $loginsite = get_string("loginsite");
@@ -82,7 +82,7 @@ httpsrequired();
     $PAGE->set_title("$site->fullname: $loginsite");
     $PAGE->set_heading($site->fullname);
     $PAGE->set_focuscontrol('idp');
-    $PAGE->set_headingmenu('<div class="langmenu">'.$langmenu.'</div>');
+    $PAGE->set_headingmenu($langmenu);
 
     echo $OUTPUT->header();
     include("index_form.html");

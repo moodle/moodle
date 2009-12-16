@@ -296,22 +296,6 @@ class page_requirements_manager_test extends ajaxlib_unit_test_base {
         $this->assertTrue($this->requires->is_top_of_body_done());
     }
 
-    public function test_requiring_css() {
-        global $CFG;
-        $cssfile = 'theme/standard/styles_layout.css'; // Just needs to be a CSS file that exists.
-        $this->requires->css($cssfile);
-
-        $html = $this->requires->get_head_code();
-        $this->assertContains($html, $CFG->httpswwwroot . '/' . $cssfile);
-    }
-
-    public function test_nonexistant_css_throws_exception() {
-        $cssfile = 'css/file/that/does/not/exist.css';
-
-        $this->expectException();
-        $this->requires->css($cssfile);
-    }
-
     public function test_requiring_js() {
         global $CFG;
         $jsfile = 'lib/javascript-static.js'; // Just needs to be a JS file that exists.
@@ -331,10 +315,10 @@ class page_requirements_manager_test extends ajaxlib_unit_test_base {
     }
 
     public function test_nonexistant_js_throws_exception() {
-        $cssfile = 'js/file/that/does/not/exist.js';
+        $jsfile = 'js/file/that/does/not/exist.js';
 
         $this->expectException();
-        $this->requires->js($cssfile);
+        $this->requires->js($jsfile);
     }
 
     public function test_requiring_skip_link() {

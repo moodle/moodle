@@ -9288,9 +9288,10 @@ WHERE
         $restorelog_file = fopen("$dest_dir/restorelog.html","a");
         //Add the stylesheet
         $stylesheetshtml = '';
-        foreach ($CFG->stylesheets as $stylesheet) {
+/*        foreach ($CFG->stylesheets as $stylesheet) {
+            //TODO: MDL-21120
             $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
-        }
+        }*/
         ///Accessibility: added the 'lang' attribute to $direction, used in theme <html> tag.
         $languagehtml = get_html_lang($dir=true);
 
@@ -9299,7 +9300,7 @@ WHERE
         fwrite ($restorelog_file," \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">  ");
         fwrite ($restorelog_file,"<html dir=\"ltr\".$languagehtml.");
         fwrite ($restorelog_file,"<head>");
-        fwrite ($restorelog_file,$stylesheetshtml);
+//        fwrite ($restorelog_file,$stylesheetshtml);
         fwrite ($restorelog_file,"<title>".$course_header->course_shortname." Restored </title>");
         fwrite ($restorelog_file,"</head><body><br/><h1>The following changes were made during the Restoration of this Course.</h1><br/><br/>");
         fwrite ($restorelog_file,"The Course ShortName is now - ".$course_header->course_shortname." The FullName is now - ".$course_header->course_fullname."<br/><br/>");

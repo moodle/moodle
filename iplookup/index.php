@@ -39,7 +39,7 @@ if (isset($CFG->iplookup)) {
 }
 
 $PAGE->set_url('iplookup/index.php', array('id'=>$ip, 'user'=>$user));
-$PAGE->set_generaltype('popup');
+$PAGE->set_pagelayout('popup');
 
 $info = array($ip);
 $note = array();

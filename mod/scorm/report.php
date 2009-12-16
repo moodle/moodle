@@ -267,7 +267,7 @@
                                     $detailslink = '&nbsp;';
                                 }
                                 $strstatus = get_string($trackdata->status,'scorm');
-                                $row[] = '<img src="'.$OUTPUT->mod_icon_url('pix/' . $trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.
+                                $row[] = '<img src="'.$OUTPUT->old_icon_url('pix/' . $trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.
                                          $strstatus.'" />&nbsp;'.format_string($sco->title);
                                 $row[] = get_string($trackdata->status,'scorm');
                                 $row[] = $trackdata->total_time;
@@ -310,7 +310,7 @@
                 $trackdata->total_time = '';
             }
             $strstatus = get_string($trackdata->status,'scorm');
-            echo '<img src="'.$$OUTPUT->mod_icon_url('pix/'.$trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.
+            echo '<img src="'.$$OUTPUT->old_icon_url('pix/'.$trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.
             $strstatus.'" />&nbsp;'.$trackdata->total_time.'<br />'.$scoreview.'<br />';
             echo '</div>'."\n";
             echo '<hr /><h2>'.get_string('details','scorm').'</h2>';

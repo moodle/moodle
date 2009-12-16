@@ -22,38 +22,32 @@
 require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-$choose = optional_param('choose', '', PARAM_FILE);
+$choose = optional_param('choose', '', PARAM_SAFEDIR);
+$reset  = optional_param('reset', 0, PARAM_BOOL);
 
 admin_externalpage_setup('themeselector');
 
 unset($SESSION->theme);
 
-if ($choose and confirm_sesskey()) {
+if ($reset and confirm_sesskey()) {
+    theme_reset_all_caches();
+
+} else if ($choose and confirm_sesskey()) {
     // The user has chosen one theme from the list of all themes, show a
     // 'You have chosen a new theme' confirmation page.
 
-    if (!is_dir($CFG->themedir .'/'. $choose)) {
-        print_error('themenotinstall');
-    }
+    $theme = theme_config::load($choose);
+    $choose = $theme->name;
 
     set_config('theme', $choose);
 
     admin_externalpage_print_header();
     echo $OUTPUT->heading(get_string('themesaved'));
 
-    $readmehtml = $CFG->themedir . '/' . $choose . '/README.html';
-    $readmetxt = $CFG->themedir . '/' . $choose . '/README.txt';
-    if (is_readable($readmehtml)) {
-        echo $OUTPUT->box_start();
-        readfile($readmehtml);
-        echo $OUTPUT->box_end();
-
-    } else if (is_readable($readmetxt)) {
-        echo $OUTPUT->box_start();
-        $text = file_get_contents($readmetxt);
-        echo format_text($text, FORMAT_MOODLE);
-        echo $OUTPUT->box_end();
-    }
+    echo $OUTPUT->box_start();
+    $text = get_string('choosereadme', 'theme_'.$CFG->theme);
+    echo format_text($text, FORMAT_MOODLE);
+    echo $OUTPUT->box_end();
 
     echo $OUTPUT->continue_button($CFG->wwwroot . '/' . $CFG->admin . '/index.php');
 
@@ -65,19 +59,25 @@ if ($choose and confirm_sesskey()) {
 admin_externalpage_print_header('themeselector');
 echo $OUTPUT->heading(get_string('themes'));
 
+echo $OUTPUT->button(html_form::make_button('index.php', array('sesskey'=>sesskey(),'reset'=>1), get_string('themeresetcaches', 'admin')));
+
 $table = new html_table();
 $table->id = 'adminthemeselector';
 $table->head = array(get_string('theme'), get_string('info'));
 
 $themes = get_plugin_list('theme');
-$sesskey = sesskey();
+
 foreach ($themes as $themename => $themedir) {
 
     // Load the theme config.
     try {
         $theme = theme_config::load($themename);
-    } catch (coding_exception $e) {
+    } catch (Exception $e) {
         // Bad theme, just skip it for now.
+        continue;
+    }
+    if ($themename !== $theme->name) {
+        //obsoleted or broken theme, just skip for now
         continue;
     }
 
@@ -85,51 +85,17 @@ foreach ($themes as $themename => $themedir) {
     $row = array();
     $infoitems = array();
 
-    // Preview link.
-    $infoitems['preview'] = '<a href="preview.php?preview=' . $themename . '">' . get_string('preview') . '</a>';
 
-    // First cell (a preview) and also a link to the screenshot, if there is one.
-    $screenshotpath = '';
-    if (file_exists($theme->dir . '/screenshot.png')) {
-        $screenshotpath = $themename . '/screenshot.png';
-    } else if (file_exists($theme->dir . '/screenshot.jpg')) {
-        $screenshotpath = $themename . '/screenshot.jpg';
-    }
-    if ($screenshotpath) {
-        $infoitems['screenshot'] = '<a href="' . $CFG->themewww .'/'. $screenshotpath . '">' .
-                get_string('screenshot') . '</a>';
-    }
-
-    // Link to the themes's readme.
-    $readmeurl = '';
-    if (file_exists($theme->dir . '/README.html')) {
-        $readmeurl = $CFG->themewww .'/'. $themename .'/README.html';
-    } else if (file_exists($theme->dir . '/README.txt')) {
-        $readmeurl = $CFG->themewww .'/'. $themename .'/README.txt';
-    }
-    if ($readmeurl) {
-        $link = html_link::make($readmeurl, get_string('info'));
-        $link->add_action(new popup_action('click', $link->url, $themename));
-        $infoitems['readme'] = $OUTPUT->link($link);
-    }
+    // link to the screenshot, now mandatory - the image path is hardcoded because we need image from other themes, not the current one
+    $screenshotpath = "$CFG->wwwroot/theme/image.php?theme=$themename&image=screenshot&component=theme";
 
     // Contents of the first screenshot/preview cell.
-    if ($screenshotpath) {
-        $row[] = '<object type="text/html" data="' . $CFG->themewww .'/' . $screenshotpath .
-                '" height="200" width="400">' . $themename . '</object>';
-    } else {
-        $row[] = '<object type="text/html" data="preview.php?preview=' . $themename .
-                '" height="200" width="400">' . $themename . '</object>';
-    }
+    $row[] = "<img src=\"$screenshotpath\" alt=\"$themename\" />";
 
     // Contents of the second cell.
     $infocell = $OUTPUT->heading($themename, 3);
-    if ($infoitems) {
-        $infocell .= "<ul>\n<li>" . implode("</li>\n<li>", $infoitems) . "</li>\n</ul>\n";
-    }
     if ($themename != $CFG->theme) {
-        $infocell .= $OUTPUT->button(html_form::make_button('index.php', array('choose' => $themename, 'sesskey' => $sesskey),
-                get_string('choose'), 'get'));
+        $infocell .= $OUTPUT->button(html_form::make_button('index.php', array('choose' => $themename, 'sesskey' => sesskey()), get_string('choose'), 'get'));
 
     }
     $row[] = $infocell;
@@ -143,4 +109,4 @@ foreach ($themes as $themename => $themedir) {
 echo $OUTPUT->table($table);
 
 echo $OUTPUT->footer();
-?>
+

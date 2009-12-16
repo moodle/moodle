@@ -56,7 +56,7 @@ $str_title = format_string($course->shortname) . ": ".format_string($chat->name,
 $str_send  = get_string('send', 'chat');
 $str_themes = get_string('themes');
 
-$PAGE->set_generaltype('popup');
+$PAGE->set_pagelayout('popup');
 $PAGE->set_title('Chat');
 $PAGE->requires->yui_lib('dragdrop');
 $PAGE->requires->yui_lib('resize');
@@ -93,9 +93,8 @@ $PAGE->requires->string_for_js('talk', 'chat');
 $PAGE->requires->js('mod/chat/gui_ajax/script.js');
 $PAGE->requires->yui_lib('animation')->in_head();
 
-$PAGE->requires->css('mod/chat/gui_ajax/theme/'.$theme.'/chat.css');
 $PAGE->add_body_class('yui-skin-sam');
-$PAGE->set_generaltype('embedded');
+$PAGE->set_pagelayout('embedded');
 
 echo $OUTPUT->header();
 $intro = format_text($chat->intro, $chat->introformat);

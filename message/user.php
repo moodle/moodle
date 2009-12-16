@@ -86,7 +86,7 @@ if ($unblockcontact and confirm_sesskey()) {
 }
 
 //$PAGE->set_title('Message History');
-$PAGE->set_generaltype('popup');
+$PAGE->set_pagelayout('popup');
 echo $OUTPUT->header();
 echo '<table width="100%" cellpadding="0" cellspacing="0"><tr>';
 echo '<td width="100">';

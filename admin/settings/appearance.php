@@ -8,6 +8,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // "themesettings" settingpage
     $temp = new admin_settingpage('themesettings', get_string('themesettings', 'admin'));
     $temp->add(new admin_setting_configtext('themelist', get_string('themelist', 'admin'), get_string('configthemelist','admin'), '', PARAM_NOTAGS));
+    $setting = new admin_setting_configcheckbox('themedesignermode', get_string('themedesignermode', 'admin'), get_string('configthemedesignermode', 'admin'), 0);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $temp->add($setting);
     $temp->add(new admin_setting_configcheckbox('allowuserthemes', get_string('allowuserthemes', 'admin'), get_string('configallowuserthemes', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('allowcoursethemes', get_string('allowcoursethemes', 'admin'), get_string('configallowcoursethemes', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('allowcategorythemes',  get_string('allowcategorythemes', 'admin'), get_string('configallowcategorythemes', 'admin'), 0));
@@ -22,6 +25,14 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
         )));
     $ADMIN->add('themes', $temp);
     $ADMIN->add('themes', new admin_externalpage('themeselector', get_string('themeselector','admin'), $CFG->wwwroot . '/theme/index.php'));
+
+    // settings for each theme
+    foreach (get_plugin_list('theme') as $theme => $themedir) {
+        $settings_path = "$themedir/settings.php";
+        if (file_exists($settings_path)) {
+            include($settings_path);
+        }
+    }
 
     // calendar
     $temp = new admin_settingpage('calendar', get_string('calendarsettings','admin'));
@@ -132,3 +143,4 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $ADMIN->add('appearance', new admin_externalpage('managetags', get_string('managetags', 'tag'), "$CFG->wwwroot/tag/manage.php"));
 
 } // end of speedup
+

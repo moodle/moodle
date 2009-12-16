@@ -31,7 +31,7 @@ $PAGE->set_url('tag/index.php', array('id' => $tag->id));
 $PAGE->set_subpage($tag->id);
 $PAGE->set_context($systemcontext);
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
-$PAGE->set_generaltype('form');
+$PAGE->set_pagelayout('form');
 
 $PAGE->requires->yui_lib('animation');
 $PAGE->requires->yui_lib('autocomplete');

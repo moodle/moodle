@@ -73,8 +73,6 @@ $alloweduserselector = new service_user_selector('removeselect', array('servicei
                 }
         }
 /// Print the form.
-    check_theme_arrows();
-
 /// display the UI
 ?>
 <form id="assignform" method="post" action="service_users.php?id=<?php echo $id ?>"><div>

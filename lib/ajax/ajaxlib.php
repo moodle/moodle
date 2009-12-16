@@ -32,7 +32,7 @@
  * @param page_requirements_manager $requires The page_requirements_manager to initialise.
  */
 function setup_core_javascript(page_requirements_manager $requires) {
-    global $CFG, $OUTPUT;
+    global $CFG, $OUTPUT, $PAGE;
 
     // JavaScript should always work with $CFG->httpswwwroot rather than $CFG->wwwroot.
     // Otherwise, in some situations, users will get warnings about insecure content
@@ -41,7 +41,9 @@ function setup_core_javascript(page_requirements_manager $requires) {
     $config = array(
         'wwwroot' => $CFG->httpswwwroot, // Yes, really. See above.
         'sesskey' => sesskey(),
-        'loadingicon' => $OUTPUT->old_icon_url('i/loading_small')
+        'loadingicon' => $OUTPUT->old_icon_url('i/loading_small', 'moodle', false),
+        'themerev' => theme_get_revision(),
+        'theme' => $PAGE->theme->name,
     );
     if (debugging('', DEBUG_DEVELOPER)) {
         $config['developerdebug'] = true;
@@ -74,7 +76,7 @@ function setup_core_javascript(page_requirements_manager $requires) {
  *
  * Typical useage would be
  * <pre>
- *     $PAGE->requires->css('mod/mymod/styles.css');
+ *     $PAGE->requires->css('mod/mymod/userstyles.php?id='.$id); // not overriddable via themes!
  *     $PAGE->requires->js('mod/mymod/script.js');
  *     $PAGE->requires->js('mod/mymod/small_but_urgent.js')->in_head();
  *     $PAGE->requires->js_function_call('init_mymod', array($data))->on_dom_ready();
@@ -147,11 +149,6 @@ class page_requirements_manager {
      * By default the link is put at the end of the page, since this gives best page-load
      * performance. Optional dependencies are not loaded automatically - if you want
      * them you will need to load them first with other calls to this method.
-     *
-     * If the YUI library you ask for requires one or more CSS files, and if
-     * <head> has already been printed, then an exception will be thrown.
-     * Therefore, you are strongly advised to request all the YUI libraries you
-     * will need before output is started.
      *
      * Even if a particular library is requested more than once (perhaps as a dependancy
      * of other libraries) it will only be linked to once.
@@ -696,10 +693,7 @@ class required_js extends linked_requirement {
  *
  * This class (with the help of {@link ajax_resolve_yui_lib()}) knows about the
  * dependancies between the different YUI libraries, and will include all the
- * other libraries required by the one you ask for. It also knows which YUI
- * libraries require css files. If the library you ask for requires CSS files,
- * then you should ask for it before <head> is output, or an exception will
- * be thrown.
+ * other libraries required by the one you ask for.
  *
  * By default JavaScript files are included at the end of the HTML.
  * This is recommended practice because it means that the web browser will only
@@ -726,14 +720,9 @@ class required_yui_lib extends linked_requirement {
         parent::__construct($manager, '');
         $this->when = page_requirements_manager::WHEN_AT_END;
 
-        list($jsurls, $cssurls) = ajax_resolve_yui_lib($libname);
+        $jsurls = ajax_resolve_yui_lib($libname);
         foreach ($jsurls as $jsurl) {
             $this->jss[] = $manager->js($jsurl, true);
-        }
-        foreach ($cssurls as $cssurl) {
-            // this might be a bit problematic because it requires yui to be
-            // requested before print_header() - this was not required in 1.9.x
-            $manager->css($cssurl, true);
         }
     }
 
@@ -1150,8 +1139,7 @@ function ajax_generate_script_tag($js) {
 
 
 /**
- * Given the name of a YUI library, return a list of the .js and .css files that
- * it requries.
+ * Given the name of a YUI library, return a list of the .js that it requries.
  *
  * This method takes note of the $CFG->useexternalyui setting.
  *
@@ -1159,10 +1147,8 @@ function ajax_generate_script_tag($js) {
  * the -debug version of the YUI files, otherwise it will return links to the -min versions.
  *
  * @param string $libname the name of a YUI library, for example 'autocomplete'.
- * @return array with two elementes. The first is an array of the JavaScript URLs
- *      that must be loaded to make this library work, in the order they should be
- *      loaded. The second element is a (possibly empty) list of CSS files that
- *      need to be loaded.
+ * @return an array of the JavaScript URLs that must be loaded to make this library work,
+ *      in the order they should be loaded.
  */
 function ajax_resolve_yui_lib($libname) {
     global $CFG;
@@ -1171,99 +1157,53 @@ function ajax_resolve_yui_lib($libname) {
     // because another part of the code may later ask for other bits. It is easier, and
     // not very inefficient, just to always use (and get browsers to cache) the combined file.
     static $translatelist = array(
-        'yahoo' => 'yahoo-dom-event',
-        'animation' => array('yahoo-dom-event', 'animation'),
-        'autocomplete' => array(
-                'js' => array('yahoo-dom-event', 'datasource', 'autocomplete'),
-                'css' => array('autocomplete/assets/skins/sam/autocomplete.css')),
-        'button' => array(
-                'js' => array('yahoo-dom-event', 'element', 'button'),
-                'css' => array('button/assets/skins/sam/button.css')),
-        'calendar' => array(
-                'js' => array('yahoo-dom-event', 'calendar'),
-                'css' => array('calendar/assets/skins/sam/calendar.css')),
-        'carousel' => array(
-                'js' => array('yahoo-dom-event', 'element', 'carousel'),
-                'css' => array('carousel/assets/skins/sam/carousel.css')),
-        'charts' => array('yahoo-dom-event', 'element', 'datasource', 'json', 'charts'),
-        'colorpicker' => array(
-                'js' => array('utilities', 'slider', 'colorpicker'),
-                'css' => array('colorpicker/assets/skins/sam/colorpicker.css')),
-        'connection' => array('yahoo-dom-event', 'connection'),
-        'container' => array(
-                'js' => array('yahoo-dom-event', 'container'),
-                'css' => array('container/assets/skins/sam/container.css')),
-        'cookie' => array('yahoo-dom-event', 'cookie'),
-        'datasource' => array('yahoo-dom-event', 'datasource'),
-        'datatable' => array(
-                'js' => array('yahoo-dom-event', 'element', 'datasource', 'datatable'),
-                'css' => array('datatable/assets/skins/sam/datatable.css')),
-        'dom' => 'yahoo-dom-event',
-        'dom-event' => 'yahoo-dom-event',
-        'dragdrop' => array('yahoo-dom-event', 'dragdrop'),
-        'editor' => array(
-                'js' => array('yahoo-dom-event', 'element', 'container', 'menu', 'button', 'editor'),
-                'css' => array('assets/skins/sam/skin.css')),
-        'element' => array('yahoo-dom-event', 'element'),
-        'event' => 'yahoo-dom-event',
-        'get' => array('yahoo-dom-event', 'get'),
-        'history' => array('yahoo-dom-event', 'history'),
-        'imagecropper' => array(
-                'js' => array('yahoo-dom-event', 'dragdrop', 'element', 'resize', 'imagecropper'),
-                'css' => array('assets/skins/sam/resize.css', 'assets/skins/sam/imagecropper.css')),
-        'imageloader' => array('yahoo-dom-event', 'imageloader'),
-        'json' => array('yahoo-dom-event', 'json'),
-        'layout' => array(
-                'js' => array('yahoo-dom-event', 'dragdrop', 'element', 'layout'),
-                'css' => array('reset-fonts-grids/reset-fonts-grids.css', 'assets/skins/sam/layout.css')),
-        'logger' => array(
-                'js' => array('yahoo-dom-event', 'logger'),
-                'css' => array('logger/assets/skins/sam/logger.css')),
-        'menu' => array(
-                'js' => array('yahoo-dom-event', 'container', 'menu'),
-                'css' => array('menu/assets/skins/sam/menu.css')),
-        'paginator' => array(
-                'js' => array('yahoo-dom-event', 'element', 'paginator'),
-                'css' => array('paginator/assets/skins/sam/paginator.css')),
-        'profiler' => array('yahoo-dom-event', 'profiler'),
+        'yahoo'          => array('yahoo-dom-event'),
+        'animation'      => array('yahoo-dom-event', 'animation'),
+        'autocomplete'   => array('yahoo-dom-event', 'datasource', 'autocomplete'),
+        'button'         => array('yahoo-dom-event', 'element', 'button'),
+        'calendar'       => array('yahoo-dom-event', 'calendar'),
+        'carousel'       => array('yahoo-dom-event', 'element', 'carousel'),
+        'charts'         => array('yahoo-dom-event', 'element', 'datasource', 'json', 'charts'),
+        'colorpicker'    => array('utilities', 'slider', 'colorpicker'),
+        'connection'     => array('yahoo-dom-event', 'connection'),
+        'container'      => array('yahoo-dom-event', 'container'),
+        'cookie'         => array('yahoo-dom-event', 'cookie'),
+        'datasource'     => array('yahoo-dom-event', 'datasource'),
+        'datatable'      => array('yahoo-dom-event', 'element', 'datasource', 'datatable'),
+        'dom'            => array('yahoo-dom-event'),
+        'dom-event'      => array('yahoo-dom-event'),
+        'dragdrop'       => array('yahoo-dom-event', 'dragdrop'),
+        'editor'         => array('yahoo-dom-event', 'element', 'container', 'menu', 'button', 'editor'),
+        'element'        => array('yahoo-dom-event', 'element'),
+        'event'          => array('yahoo-dom-event'),
+        'get'            => array('yahoo-dom-event', 'get'),
+        'history'        => array('yahoo-dom-event', 'history'),
+        'imagecropper'   => array('yahoo-dom-event', 'dragdrop', 'element', 'resize', 'imagecropper'),
+        'imageloader'    => array('yahoo-dom-event', 'imageloader'),
+        'json'           => array('yahoo-dom-event', 'json'),
+        'layout'         => array('yahoo-dom-event', 'dragdrop', 'element', 'layout'),
+        'logger'         => array('yahoo-dom-event', 'logger'),
+        'menu'           => array('yahoo-dom-event', 'container', 'menu'),
+        'paginator'      => array('yahoo-dom-event', 'element', 'paginator'),
+        'profiler'       => array('yahoo-dom-event', 'profiler'),
         'profilerviewer' => array('yuiloader-dom-event', 'element', 'profiler', 'profilerviewer'),
-        'resize' => array(
-                'js' => array('yahoo-dom-event', 'dragdrop', 'element', 'resize'),
-                'css' => array('assets/skins/sam/resize.css')),
-        'selector' => array('yahoo-dom-event', 'selector'),
-        'simpleeditor' => array(
-                'js' => array('yahoo-dom-event', 'element', 'container', 'simpleeditor'),
-                'css' => array('assets/skins/sam/skin.css')),
-        'slider' => array('yahoo-dom-event', 'gragdrop', 'slider'),
-        'stylesheet' => array('yahoo-dom-event', 'stylesheet'),
-        'tabview' => array(
-                'js' => array('yahoo-dom-event', 'element', 'tabview'),
-                'css' => array('assets/skins/sam/skin.css')),
-        'treeview' => array(
-                'js' => array('yahoo-dom-event', 'treeview'),
-                'css' => array('treeview/assets/skins/sam/treeview.css')),
-        'uploader' => array('yahoo-dom-event', 'element', 'uploader'),
-        'utilities' => array('yahoo-dom-event', 'connection', 'animation', 'dragdrop', 'element', 'get'),
-        'yuiloader' => 'yuiloader',
-        'yuitest' => array(
-                'js' => array('yahoo-dom-event', 'logger', 'yuitest'),
-                'css' => array('logger/assets/logger.css', 'yuitest/assets/testlogger.css')),
+        'resize'         => array('yahoo-dom-event', 'dragdrop', 'element', 'resize'),
+        'selector'       => array('yahoo-dom-event', 'selector'),
+        'simpleeditor'   => array('yahoo-dom-event', 'element', 'container', 'simpleeditor'),
+        'slider'         => array('yahoo-dom-event', 'gragdrop', 'slider'),
+        'stylesheet'     => array('yahoo-dom-event', 'stylesheet'),
+        'tabview'        => array('yahoo-dom-event', 'element', 'tabview'),
+        'treeview'       => array('yahoo-dom-event', 'treeview'),
+        'uploader'       => array('yahoo-dom-event', 'element', 'uploader'),
+        'utilities'      => array('yahoo-dom-event', 'connection', 'animation', 'dragdrop', 'element', 'get'),
+        'yuiloader'      => array('yuiloader'),
+        'yuitest'        => array('yahoo-dom-event', 'logger', 'yuitest'),
     );
     if (!isset($translatelist[$libname])) {
         throw new coding_exception('Unknown YUI library ' . $libname);
     }
 
-    $data = $translatelist[$libname];
-    if (!is_array($data)) {
-        $jsnames = array($data);
-        $cssfiles = array();
-    } else if (isset($data['js']) && isset($data['css'])) {
-        $jsnames = $data['js'];
-        $cssfiles = $data['css'];
-    } else {
-        $jsnames = $data;
-        $cssfiles = array();
-    }
+    $jsnames = $translatelist[$libname];
 
     $debugging = debugging('', DEBUG_DEVELOPER);
     if ($debugging) {
@@ -1294,12 +1234,7 @@ function ajax_resolve_yui_lib($libname) {
         }
     }
 
-    $cssurls = array();
-    foreach ($cssfiles as $css) {
-        $cssurls[] = $libpath . $css;
-    }
-
-    return array($jsurls, $cssurls);
+    return $jsurls;
 }
 
 /**

@@ -147,7 +147,6 @@ echo $OUTPUT->header();
           </select></td>
       <td valign="top">
 
-        <?php check_theme_arrows(); ?>
         <p class="arrow_button">
             <input name="add" id="add" type="submit" value="<?php echo '&nbsp;'.$THEME->larrow.' &nbsp; &nbsp; '.get_string('add'); ?>" title="<?php print_string('add'); ?>" />
             <br />

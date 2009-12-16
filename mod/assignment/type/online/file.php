@@ -39,7 +39,7 @@ if ($assignment->assignmenttype != 'online') {
 $assignmentinstance = new assignment_online($cm->id, $assignment, $cm, $course);
 
 if ($submission = $assignmentinstance->get_submission($user->id)) {
-    $PAGE->set_generaltype('popup');
+    $PAGE->set_pagelayout('popup');
     $PAGE->set_title(fullname($user,true).': '.$assignment->name);
     echo $OUTPUT->header();
     echo $OUTPUT->box_start('generalbox boxaligcenter', 'dates');

@@ -115,7 +115,7 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
         question_edit_setup('editq', true);
 $PAGE->set_url('mod/quiz/edit.php', $thispageurl->params());
-$PAGE->set_generaltype('form');
+$PAGE->set_pagelayout('form');
 
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategoryid = $defaultcategoryobj->id;

@@ -283,7 +283,7 @@ class html_label extends moodle_html_component {
 
 /**
  * This class hold all the information required to describe a <select> menu that
- * will be printed by {@link moodle_core_renderer::select()}. (Or by an overridden
+ * will be printed by {@link core_renderer::select()}. (Or by an overridden
  * version of that method in a subclass.)
  *
  * This component can also hold enough metadata to be used as a popup form. It just
@@ -915,7 +915,7 @@ class html_field extends labelled_html_component {
 
 /**
  * Holds all the information required to render a <table> by
- * {@see moodle_core_renderer::table()} or by an overridden version of that
+ * {@see core_renderer::table()} or by an overridden version of that
  * method in a subclass.
  *
  * Example of usage:

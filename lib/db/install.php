@@ -49,7 +49,7 @@ function xmldb_main_install() {
         'enrol_plugins_enabled' => 'manual',
         'style'                 => 'default',
         'template'              => 'default',
-        'theme'                 => 'standardwhite',
+        'theme'                 => 'standard', //TODO: MDL-20204 replace with some new default theme when implemented
         'filter_multilang_converted' => 1,
         'siteidentifier'        => random_string(32).get_host_from_url($CFG->wwwroot),
         'backup_version'        => 2008111700,
@@ -216,4 +216,6 @@ function xmldb_main_install() {
     set_role_contextlevels($guestrole,          get_default_contextlevels('guest'));
     set_role_contextlevels($userrole,           get_default_contextlevels('user'));
 
+    // init themes
+    set_config('themerev', 1);
 }

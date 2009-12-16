@@ -749,7 +749,6 @@ function quiz_print_singlequestion($question, $returnurl, $quiz) {
  */
 function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktool) {
     global $DB, $QTYPES, $THEME, $OUTPUT;
-    check_theme_arrows();
     echo '<div class="quiz_randomquestion">';
 
     if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {

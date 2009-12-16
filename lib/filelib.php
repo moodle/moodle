@@ -2068,9 +2068,10 @@ function file_modify_html_header($text) {
     global $CFG;
 
     $stylesheetshtml = '';
-    foreach ($CFG->stylesheets as $stylesheet) {
+/*    foreach ($CFG->stylesheets as $stylesheet) {
+        //TODO: MDL-21120
         $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
-    }
+    }*/
 
     $ufo = '';
     if (filter_is_enabled('filter/mediaplugin')) {

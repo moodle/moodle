@@ -433,7 +433,7 @@ class navigation_node {
                 $link->add_class('dimmed');
             }
 
-            if (!empty($CFG->framename) && ($PAGE->generaltype=='topframe' || $CFG->framename!='_top')) {
+            if (!empty($CFG->framename) && ($PAGE->pagelayout=='topframe' || $CFG->framename!='_top')) {
                 $breakoutaction = new breakout_of_frame_action();
                 $link->add_action($breakoutaction);
             }

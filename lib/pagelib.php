@@ -39,7 +39,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
  *
- * @property-read string $generaltype the general type of page this is. For example 'normal', 'popup', 'home'.
+ * @property-read string $pagelayout the general type of page this is. For example 'normal', 'popup', 'home'.
  *      Allows the theme to display things differently, if it wishes to.
  * @property-read string $title the title that should go in the <head> section of the HTML of this page.
  * @property-read string $heading the main heading that should be displayed at the top of the <body>.
@@ -99,7 +99,14 @@ class moodle_page {
 
     protected $_pagetype = null;
 
-    protected $_generaltype = 'normal';
+    protected $_pagelayout = 'normal';
+
+    /**
+     * List of theme layeout options, these are ignored by core.
+     * To be used in individual theme layout files only.
+     * @var array
+     */
+    protected $_layout_options = array();
 
     protected $_subpage = '';
 
@@ -156,7 +163,7 @@ class moodle_page {
      * This is simply to improve backwards compatability. If old code relies on
      * a page class that implements print_header, or complex logic in
      * user_allowed_editing then we stash an instance of that other class here,
-     * and delegate to it in certani situations.
+     * and delegate to it in certain situations.
      */
     protected $_legacypageobject = null;
 
@@ -284,12 +291,20 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->generaltype syntax. {@link __get()}.
+     * Please do not call this method directly, use the ->pagelayout syntax. {@link __get()}.
      * @return string the general type of page this is. For example 'normal', 'popup', 'home'.
      *      Allows the theme to display things differently, if it wishes to.
      */
-    public function get_generaltype() {
-        return $this->_generaltype;
+    public function get_pagelayout() {
+        return $this->_pagelayout;
+    }
+
+    /**
+     * Please do not call this method directly, use the ->layout_tions syntax. {@link __get()}.
+     * @return returns arrys with options for layout file
+     */
+    public function get_layout_options() {
+        return $this->_layout_options;
     }
 
     /**
@@ -373,7 +388,7 @@ class moodle_page {
      * @return blocks_manager the blocks manager object for this page.
      */
     public function get_blocks() {
-        global $CFG, $THEME;
+        global $CFG;
         if (is_null($this->_blocks)) {
             if (!empty($CFG->blockmanagerclass)) {
                 $classname = $CFG->blockmanagerclass;
@@ -549,7 +564,7 @@ class moodle_page {
      */
     public function debug_summary() {
         $summary = '';
-        $summary .= 'General type: ' . $this->generaltype . '. ';
+        $summary .= 'General type: ' . $this->pagelayout . '. ';
         if (!during_initial_install()) {
             $summary .= 'Context ' . print_context_name($this->context) . ' (context id ' . $this->context->id . '). ';
         }
@@ -682,14 +697,13 @@ class moodle_page {
     }
 
     /**
-     * @param string $generaltype the general type of page this is. For example 'popup', 'home'.
+     * @param string $pagelayout the page layout this is. For example 'popup', 'home'.
      * This properly defaults to 'normal', so you only need to call this function if
-     * you want something different. The exact range of supported page types is not
-     * strictly defined, this value is just passed to the theme. However, at the moment
-     * only 'normal', 'popup' amd 'home' are used.
+     * you want something different. The exact range of supported layouts is specified
+     * in the standard theme.
      */
-    public function set_generaltype($generaltype) {
-        $this->_generaltype = $generaltype;
+    public function set_pagelayout($pagelayout) {
+        $this->_pagelayout = $pagelayout;
     }
 
     /**
@@ -951,10 +965,8 @@ class moodle_page {
         if (!empty($CFG->loginhttps)) {
             $HTTPSPAGEREQUIRED = true;
             $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
-            $CFG->httpsthemewww = str_replace('http:', 'https:', $CFG->themewww);
         } else {
             $CFG->httpswwwroot = $CFG->wwwroot;
-            $CFG->httpsthemewww = $CFG->themewww;
         }
     }
 
@@ -995,21 +1007,6 @@ class moodle_page {
         // Show the messaging popup, if there are messages.
         message_popup_window();
 
-        // Add any stylesheets required using the horrible legacy mechanism.
-        if (!empty($CFG->stylesheets)) {
-            debugging('Some code on this page is using the horrible legacy mechanism $CFG->stylesheets to include links to ' .
-                    'extra stylesheets. This is deprecated. Please use $PAGE->requires->css(...) instead.', DEBUG_DEVELOPER);
-            foreach ($CFG->stylesheets as $stylesheet) {
-                $this->requires->css($stylesheet, true);
-            }
-        }
-
-        // Require theme stylesheets.
-        $stylesheets = $this->theme->get_stylesheet_urls();
-        foreach ($stylesheets as $stylesheet) {
-            $this->requires->css($stylesheet, true);
-        }
-
         $this->initialise_standard_body_classes();
     }
 
@@ -1035,15 +1032,14 @@ class moodle_page {
         if (is_null($this->_theme)) {
             $themename = $this->resolve_theme();
             $this->_theme = theme_config::load($themename);
+            $this->_layout_options = $this->_theme->pagelayout_options($this->pagelayout);
         }
 
-        $this->_theme->setup_blocks($this->generaltype, $this->blocks);
+        $this->_theme->setup_blocks($this->pagelayout, $this->blocks);
 
         if ($this === $PAGE) {
             $THEME = $this->_theme;
             $OUTPUT = $this->_theme->get_renderer('core', $this);
-            // Support legacy code.
-            $this->_theme->setup_legacy_pix_paths();
         }
 
         $this->_wherethemewasinitialised = debug_backtrace();

@@ -120,7 +120,7 @@ class repository_local extends repository {
                             'size' => 0,
                             'date' => '',
                             'source'=> $params,
-                            'thumbnail' => $OUTPUT->old_icon_url($icon)
+                            'thumbnail' => $OUTPUT->old_icon_url($icon),
                         );
                         $list[] = $node;
                     }

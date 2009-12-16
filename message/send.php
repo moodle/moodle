@@ -37,7 +37,7 @@ if (empty($CFG->messaging)) {
 
 if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTEM))) {
 
-    $PAGE->set_generaltype('popup');
+    $PAGE->set_pagelayout('popup');
     $PAGE->set_title('send');
     $PAGE->requires->js('message/message.js');
 

@@ -92,7 +92,6 @@ class moodle_mod_lesson_renderer extends moodle_renderer_base {
         }
 
     /// Header setup
-        $this->page->requires->css('mod/lesson/lesson.css');
         $this->page->set_title($title);
         $this->page->set_heading($this->page->course->fullname);
         $this->page->set_button($buttons);

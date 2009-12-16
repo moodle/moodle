@@ -171,7 +171,7 @@
                 location = "<?php echo $result ?>";
             }
             else {
-                document.body.innerHTML = "<p><?php echo get_string('activityloading', 'scorm');?> <span id='countdown'><?php echo $delayseconds ?></span> <?php echo get_string('numseconds');?>. &nbsp; <img src='<?php echo $OUTPUT->mod_icon_url('pix/wait', 'scorm') ?>'><p>";
+                document.body.innerHTML = "<p><?php echo get_string('activityloading', 'scorm');?> <span id='countdown'><?php echo $delayseconds ?></span> <?php echo get_string('numseconds');?>. &nbsp; <img src='<?php echo $OUTPUT->old_icon_url('pix/wait', 'scorm') ?>'><p>";
                 var e = document.getElementById("countdown");
                 var cSeconds = parseInt(e.innerHTML);
                 var timer = setInterval(function() {

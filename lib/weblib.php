@@ -1910,68 +1910,7 @@ function user_login_string($course=NULL, $user=NULL) {
 }
 
 /**
- * Tests whether $THEME->rarrow, $THEME->larrow have been set (theme/-/config.php).
- * If not it applies sensible defaults.
- *
- * Accessibility: right and left arrow Unicode characters for breadcrumb, calendar,
- * search forum block, etc. Important: these are 'silent' in a screen-reader
- * (unlike &gt; &raquo;), and must be accompanied by text.
- *
- * @global object
- * @uses $_SERVER
- */
-function check_theme_arrows() {
-    global $THEME;
-
-    if (!isset($THEME->rarrow) and !isset($THEME->larrow)) {
-        // Default, looks good in Win XP/IE 6, Win/Firefox 1.5, Win/Netscape 8...
-        // Also OK in Win 9x/2K/IE 5.x
-        $THEME->rarrow = '►'; // &#x25BA;
-        $THEME->larrow = '◄'; // &#x25C4;
-        if (empty($_SERVER['HTTP_USER_AGENT'])) {
-            $uagent = '';
-        } else {
-            $uagent = $_SERVER['HTTP_USER_AGENT'];
-        }
-        if (false !== strpos($uagent, 'Opera')
-            || false !== strpos($uagent, 'Mac')) {
-            // Looks good in Win XP/Mac/Opera 8/9, Mac/Firefox 2, Camino, Safari.
-            // Not broken in Mac/IE 5, Mac/Netscape 7 (?).
-            $THEME->rarrow = '▶'; // &#x25B6;
-            $THEME->larrow = '◀'; // &#x25C0;
-        }
-        elseif (false !== strpos($uagent, 'Konqueror')) {
-            $THEME->rarrow = '→'; // &rarr;
-            $THEME->larrow = '←'; // &larr;
-        }
-        elseif (isset($_SERVER['HTTP_ACCEPT_CHARSET'])
-            && false === stripos($_SERVER['HTTP_ACCEPT_CHARSET'], 'utf-8')) {
-            // (Win/IE 5 doesn't set ACCEPT_CHARSET, but handles Unicode.)
-            // To be safe, non-Unicode browsers!
-            $THEME->rarrow = '&gt;';
-            $THEME->larrow = '&lt;';
-        }
-
-    /// RTL support - in RTL languages, swap r and l arrows
-        if (right_to_left()) {
-            $t = $THEME->rarrow;
-            $THEME->rarrow = $THEME->larrow;
-            $THEME->larrow = $t;
-        }
-    } else {
-        if (strpos($THEME->rarrow, '&')===0 && strrpos($THEME->rarrow, ';')===strlen($THEME->rarrow)-1) {
-            $THEME->rarrow = html_entity_decode($THEME->rarrow, ENT_QUOTES, 'utf-8');
-        }
-        if (strpos($THEME->larrow, '&')===0 && strrpos($THEME->larrow, ';')===strlen($THEME->larrow)-1) {
-            $THEME->larrow = html_entity_decode($THEME->larrow, ENT_QUOTES, 'utf-8');
-        }
-    }
-}
-
-
-/**
  * Return the right arrow with text ('next'), and optionally embedded in a link.
- * See function above, check_theme_arrows.
  *
  * @global object
  * @param string $text HTML/plain text label (set to blank only for breadcrumb separator cases).
@@ -1982,7 +1921,6 @@ function check_theme_arrows() {
  */
 function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
     global $THEME;
-    check_theme_arrows();
     $arrowclass = 'arrow ';
     if (! $url) {
         $arrowclass .= $addclass;
@@ -2007,7 +1945,6 @@ function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
 
 /**
  * Return the left arrow with text ('previous'), and optionally embedded in a link.
- * See function above, check_theme_arrows.
  *
  * @global object
  * @param string $text HTML/plain text label (set to blank only for breadcrumb separator cases).
@@ -2018,7 +1955,6 @@ function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
  */
 function link_arrow_left($text, $url='', $accesshide=false, $addclass='') {
     global $THEME;
-    check_theme_arrows();
     $arrowclass = 'arrow ';
     if (! $url) {
         $arrowclass .= $addclass;
@@ -2802,7 +2738,7 @@ function redirect($url, $message='', $delay=-1) {
     }
 
     // Include a redirect message, even with a HTTP redirect, because that is recommended practice.
-    $PAGE->set_generaltype('embedded');  // No header and footer needed
+    $PAGE->set_pagelayout('embedded');  // No header and footer needed
     $CFG->docroot = false; // to prevent the link to moodle docs from being displayed on redirect page.
     echo $OUTPUT->redirect_message($encodedurl, $message, $delay, $debugdisableredirect);
     exit;
@@ -2908,7 +2844,7 @@ function print_maintenance_message() {
     global $CFG, $SITE, $PAGE, $OUTPUT;
 
     $PAGE->set_pagetype('maintenance-message');
-    $PAGE->set_generaltype('maintenance');
+    $PAGE->set_pagelayout('maintenance');
     $PAGE->set_title(strip_tags($SITE->fullname));
     $PAGE->set_heading($SITE->fullname);
     echo $OUTPUT->header();

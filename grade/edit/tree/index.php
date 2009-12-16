@@ -36,7 +36,6 @@ $PAGE->requires->yui_lib('element');
 $PAGE->requires->yui_lib('container');
 $PAGE->requires->yui_lib('animation');
 $PAGE->requires->js('grade/edit/tree/functions.js');
-$PAGE->requires->css('/grade/edit/tree/tree.css');
 
 $courseid        = required_param('id', PARAM_INT);
 $action          = optional_param('action', 0, PARAM_ALPHA);
