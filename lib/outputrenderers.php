@@ -151,7 +151,7 @@ class renderer_base {
 
     /** OBSOLETED: to be removed soon */
     public function old_icon_url($iconname, $component='moodle', $escaped=true) {
-        $url = $this->page->theme->image_url($iconname, $component);
+        $url = $this->page->theme->pix_url($iconname, $component);
         return $url->out(false, array(), $escaped);
     }
 
@@ -162,8 +162,8 @@ class renderer_base {
      * @param string $component full plugin name
      * @return moodle_url
      */
-    public function image_url($imagename, $component='moodle') {
-        return $this->page->theme->image_url($imagename, $component);
+    public function pix_url($imagename, $component='moodle') {
+        return $this->page->theme->pix_url($imagename, $component);
     }
 
     /**
@@ -607,7 +607,7 @@ class core_renderer extends renderer_base {
         foreach ($controls as $control) {
             $controlshtml[] = $this->output_tag('a', array('class' => 'icon',
                     'title' => $control['caption'], 'href' => $control['url']),
-                    $this->output_empty_tag('img',  array('src' => $this->image_url($control['icon'])->out(false, array(), false),
+                    $this->output_empty_tag('img',  array('src' => $this->pix_url($control['icon'])->out(false, array(), false),
                     'alt' => $control['caption'])));
         }
         return $this->output_tag('div', array('class' => 'commands'), implode('', $controlshtml));
@@ -687,7 +687,7 @@ class core_renderer extends renderer_base {
             $plaintitle = strip_tags($bc->title);
             $this->page->requires->js_function_call('new block_hider', array($bc->id, $userpref,
                     get_string('hideblocka', 'access', $plaintitle), get_string('showblocka', 'access', $plaintitle),
-                    $this->image_url('t/switch_minus')->out(false, array(), false), $this->image_url('t/switch_plus')->out(false, array(), false)));
+                    $this->pix_url('t/switch_minus')->out(false, array(), false), $this->pix_url('t/switch_plus')->out(false, array(), false)));
         }
     }
 
@@ -945,7 +945,7 @@ class core_renderer extends renderer_base {
         if (!empty($iconpath)) {
             $icon->image->src = $iconpath;
         } else {
-            $icon->image->src = $this->image_url('docs')->out(false, array(), false);
+            $icon->image->src = $this->pix_url('docs')->out(false, array(), false);
         }
 
         if (!empty($CFG->doctonewwindow)) {
@@ -1072,7 +1072,7 @@ class core_renderer extends renderer_base {
         $image = clone($image);
 
         if (empty($image->src)) {
-            $image->src = $this->image_url('spacer')->out(false, array(), false);
+            $image->src = $this->pix_url('spacer')->out(false, array(), false);
         }
 
         $image->prepare();

@@ -720,7 +720,7 @@ class theme_config {
                 $replaced[$match[0]] = true;
                 $imagename = $match[2];
                 $component = rtrim($match[1], '|');
-                $css = str_replace($match[0], $this->image_url($imagename, $component)->out(false, array(), false), $css);
+                $css = str_replace($match[0], $this->pix_url($imagename, $component)->out(false, array(), false), $css);
             }
         }
 
@@ -740,7 +740,7 @@ class theme_config {
      * @param string $component, specification of one plugin like in get_string()
      * @return moodle_url
      */
-    public function image_url($imagename, $component) {
+    public function pix_url($imagename, $component) {
         global $CFG;
 
         $params = array('theme'=>$this->name, 'image'=>$imagename);

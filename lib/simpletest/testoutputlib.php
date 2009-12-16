@@ -789,7 +789,7 @@ class core_renderer_test extends UnitTestCase {
                  'alt' => ''
                  )), $html);
         $spacer = new html_image();
-        $spacer->src = $this->renderer->image_url('myspacer');
+        $spacer->src = $this->renderer->pix_url('myspacer');
         $spacer->alt = 'sometext';
         $spacer->add_class('my');
 
@@ -797,7 +797,7 @@ class core_renderer_test extends UnitTestCase {
 
         $this->assert(new ContainsTagWithAttributes('img', array(
                  'class' => 'my image spacer',
-                 'src' => $this->renderer->image_url('myspacer'),
+                 'src' => $this->renderer->pix_url('myspacer'),
                  'alt' => 'sometext')), $html);
 
     }
@@ -899,7 +899,7 @@ class core_renderer_test extends UnitTestCase {
         $this->assert(new ContainsTagWithAttribute('div', 'class', 'heading-with-help'), $html);
         $this->assert(new ContainsTagWithAttribute('span', 'class', 'helplink'), $html);
         $this->assert(new ContainsTagWithAttribute('h2', 'class', 'main help'), $html);
-        $this->assert(new ContainsTagWithAttributes('img', array('class' => 'iconhelp image', 'src' => $this->renderer->image_url('help'))), $html);
+        $this->assert(new ContainsTagWithAttributes('img', array('class' => 'iconhelp image', 'src' => $this->renderer->pix_url('help'))), $html);
         $this->assert(new ContainsTagWithContents('h2', 'Cool help text'), $html);
 
         $helpicon = clone($originalicon);
@@ -909,7 +909,7 @@ class core_renderer_test extends UnitTestCase {
         $this->assert(new ContainsTagWithAttribute('div', 'class', 'heading-with-help'), $html);
         $this->assert(new ContainsTagWithAttribute('span', 'class', 'helplink'), $html);
         $this->assert(new ContainsTagWithAttribute('h2', 'class', 'main help'), $html);
-        $this->assert(new ContainsTagWithAttributes('img', array('class' => 'iconhelp image', 'src' => $this->renderer->image_url('help'))), $html);
+        $this->assert(new ContainsTagWithAttributes('img', array('class' => 'iconhelp image', 'src' => $this->renderer->pix_url('help'))), $html);
         $this->assert(new ContainsTagWithContents('h2', 'Cool help text'), $html);
     }
 }
