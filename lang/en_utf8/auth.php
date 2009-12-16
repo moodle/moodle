@@ -417,4 +417,10 @@ $string['getanothercaptcha'] = 'Get another CAPTCHA';
 $string['getanaudiocaptcha'] = 'Get an audio CAPTCHA';
 $string['getanimagecaptcha'] = 'Get an image CAPTCHA';
 $string['recaptcha'] = 'reCAPTCHA';
+$string['informminpasswordlength'] = 'at least $a characters';
+$string['informminpassworddigits'] = 'at least $a digit(s)';
+$string['informminpasswordlower'] = 'at least $a lower case letter(s)';
+$string['informminpasswordnonalphanum'] = 'at least $a non-alphanumeric character(s)';
+$string['informminpasswordupper'] = 'at least $a upper case letter(s)';
+$string['informpasswordpolicy'] = 'Your password must have $a';
 ?>

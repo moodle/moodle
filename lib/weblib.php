@@ -3497,7 +3497,8 @@ function user_login_string($course=NULL, $user=NULL) {
         } else if (!empty($user->access['rsw'][$context->path])) {
             $rolename = '';
             if ($role = get_record('role', 'id', $user->access['rsw'][$context->path])) {
-                $rolename = ': '.format_string($role->name);
+                $rolename = join("", role_fix_names(array($role->id=>$role->name), $context));
+                $rolename = ': '.format_string($rolename);
             }
             $loggedinas = get_string('loggedinas', 'moodle', $username).$rolename.
                       " (<a $CFG->frametarget
@@ -6442,16 +6443,20 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
         if ($list) {
             $row = 0;
             //Accessibility: replaced unnecessary table with list, see themes/standard/styles_layout.css
-            echo "\n<ul class='list'>\n";
-            foreach ($list as $key => $string) {
+            echo "\n<ul class='list'>\n";            
+            foreach ($list as $key => $string) {                
                 echo '<li class="r'. $row .'">';
-                if ($icons) {                    
-                    $newstring = str_replace('">', '">'.$icons[$key].'&nbsp;', $string);
-                    $newstring = str_replace('" >', '">'.$icons[$key].'&nbsp;', $newstring);
+                if ($icons) {           // Hacky way to insert the icon into the link.  See MDL-6820
+                    $splitstring = explode ('</a>', $string);                    
+                    $splitstring[0] = str_replace('">', '">'.$icons[$key].'&nbsp;', $splitstring[0]);
+                    $splitstring[0] = str_replace('" >', '">'.$icons[$key].'&nbsp;', $splitstring[0]);                    
+                    $newstring = implode ('</a>', $splitstring);
+                    
+                    // Make block icon clickable if configured and there is html in the block text                    
                     if ($newstring == $string) {  // No link found, so insert before the string
-                        $newstring = $icons[$key].'&nbsp;'.$string;
+                        $newstring = $icons[$key].'&nbsp;'.$string;                        
                     }
-                    $string = $newstring;                    
+                    $string = $newstring;
                 }
                 echo '<div class="column c1">' . $string . '</div>';
                 echo "</li>\n";
