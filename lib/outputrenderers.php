@@ -1639,7 +1639,7 @@ class core_renderer extends renderer_base {
                 @header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             }
             $this->page->set_url(''); // no url
-            //$this->page->set_pagelayout('form'); //TODO: MDL-20676 blocks on error pages are weird, unfortunately it somehow detect the geenralpagetype from URL :-(
+            //$this->page->set_pagelayout('form'); //TODO: MDL-20676 blocks on error pages are weird, unfortunately it somehow detect the pagelayout from URL :-(
             $this->page->set_title(get_string('error'));
             $output .= $this->header();
         }
