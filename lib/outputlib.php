@@ -599,8 +599,13 @@ class theme_config {
         $css = array('yui'=>array(), 'plugins'=>array(), 'parents'=>array(), 'theme'=>array());
 
         //YUI sheets
-        $yui_sheets = "/*** Standard YUI sheets ***/\n\n";
-        $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui2version/reset-fonts-grids/reset-fonts-grids.css");
+        $yui_sheets = "/*** YUI reset sheets and grids ***/\n\n";
+        $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui3version/cssreset/reset-min.css");
+        $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui3version/cssbase/base-min.css");
+        $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui3version/cssfonts/fonts-min.css");
+        $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui3version/cssgrids/grids-min.css");
+
+        $yui_sheets .= "/*** Standard YUI sheets ***/\n\n";
         $items = new DirectoryIterator("$CFG->libdir/yui/$CFG->yui2version/assets/skins/sam");
         foreach ($items as $item) {
             if ($item->isDot() or !$item->isFile()) {

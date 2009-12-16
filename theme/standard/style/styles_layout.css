@@ -46,6 +46,11 @@ body {
  padding: 4px;
 }
 
+/* ugly ugly hack, undo the CSS reset from YUI for now */
+ul li {
+ list-style-type: none;
+}
+
 #layout-table {
   width:100%;
   border-collapse:separate;
@@ -57,6 +62,10 @@ body {
 #layout-table #region-side-post
 {
   vertical-align:top;
+}
+
+#layout-table td {
+ border: 0px;
 }
 
 #layout-table #content {
