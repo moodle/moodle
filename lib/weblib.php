@@ -6470,17 +6470,8 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
             echo "\n<ul class='list'>\n";            
             foreach ($list as $key => $string) {                
                 echo '<li class="r'. $row .'">';
-                if ($icons) {           // Hacky way to insert the icon into the link.  See MDL-6820
-                    $splitstring = explode ('</a>', $string);                    
-                    $splitstring[0] = str_replace('">', '">'.$icons[$key].'&nbsp;', $splitstring[0]);
-                    $splitstring[0] = str_replace('" >', '">'.$icons[$key].'&nbsp;', $splitstring[0]);                    
-                    $newstring = implode ('</a>', $splitstring);
-                    
-                    // Make block icon clickable if configured and there is html in the block text                    
-                    if ($newstring == $string) {  // No link found, so insert before the string
-                        $newstring = $icons[$key].'&nbsp;'.$string;                        
-                    }
-                    $string = $newstring;
+                if ($icons) {
+                   echo '<div class="icon column c0">'. $icons[$key] .'</div>';
                 }
                 echo '<div class="column c1">' . $string . '</div>';
                 echo "</li>\n";
