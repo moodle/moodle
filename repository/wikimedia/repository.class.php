@@ -33,26 +33,18 @@ class repository_wikimedia extends repository {
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
         parent::__construct($repositoryid, $context, $options);
         $this->keyword = optional_param('wikimedia_keyword', '', PARAM_RAW);
+        if (empty($this->keyword)) {   
+            $this->keyword = optional_param('s', '', PARAM_RAW);
+        }
     }
     public function get_listing($path = '', $page = '') {
-        global $OUTPUT;
         $client = new wikimedia;
-        $result = $client->search_images($this->keyword);
         $list = array();
-        $list['list'] = array();
-        foreach ($result as $title=>$url) {
-            $list['list'][] = array(
-                'title'=>substr($title, 5),
-                'thumbnail'=>$OUTPUT->pix_url(file_extension_icon('xx.jpg', 32)),
-                // plugin-dependent unique path to the file (id, url, path, etc.)
-                'source'=>$url,
-                // the accessible url of the file
-                'url'=>$url
-            );
-        }
+        $list['list'] = $client->search_images($this->keyword);
+        $list['nologin'] = true;
         return $list;
     }
-    // login
+   // login
     public function check_login() {
         return !empty($this->keyword);
     }
@@ -75,15 +67,16 @@ class repository_wikimedia extends repository {
     public function global_search() {
         return false;
     }
-    public function search($text) {
+    public function search($search_text) {
+        $client = new wikimedia;
         $search_result = array();
-        $search_result['list'] = array();
+        $search_result['list'] = $client->search_images($search_text);
         return $search_result;
     }
     // when logout button on file picker is clicked, this function will be
     // called.
     public function logout() {
-        return true;
+        return $this->print_login();
     }
     public static function get_type_option_names() {
         return null;

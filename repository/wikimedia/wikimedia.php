@@ -17,14 +17,20 @@
 
 /**
  * wikimedia class
- * A class used to browse images from wikimedia
+ * class for communication with Wikimedia Commons API
  *
- * @author Dongsheng Cai <dongsheng@moodle.com>
+ * @author Dongsheng Cai <dongsheng@moodle.com>, Raul Kern <raunator@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
+*/
+
+define('WIKIMEDIA_THUMBS_PER_PAGE', 24);
+define('WIKIMEDIA_FILE_NS', 6);
+define('WIKIMEDIA_IMAGE_SIDE_LENGTH', 1024);
+
 class wikimedia {
     private $_conn  = null;
     private $_param = array();
+    
     public function __construct($url = '') {
         if (empty($url)) {
             $this->api = 'http://commons.wikimedia.org/w/api.php';
@@ -90,21 +96,92 @@ class wikimedia {
         }
         return $image_urls;
     }
-    public function search_images($title) {
-        $image_urls = array();
+    /**
+     * Generate thumbnail URL from image URL.
+     *
+     * @param string $image_url
+     * @param int $orig_width
+     * @param int $orig_height
+     * @param int $thumb_width
+     * @global object OUTPUT
+     * @return string
+     */
+    public function get_thumb_url($image_url, $orig_width, $orig_height, $thumb_width=75) {
+        global $OUTPUT;
+    
+        if ($orig_width <= $thumb_width AND $orig_height <= $thumb_width) {
+            return $image_url;
+        } else {
+            $thumb_url = '';
+            $commons_main_dir = 'http://upload.wikimedia.org/wikipedia/commons/';
+            if ($image_url) {
+                $short_path = str_replace($commons_main_dir, '', $image_url);
+                $extension = pathinfo($short_path, PATHINFO_EXTENSION); 
+                if (strcmp($extension, 'gif') == 0) {  //no thumb for gifs
+                    return $OUTPUT->pix_url(file_extension_icon('xx.jpg', 32));
+                }
+                $dir_parts = explode('/', $short_path);
+                $file_name = end($dir_parts);
+                if ($orig_height > $orig_width) {
+                    $thumb_width = round($thumb_width * $orig_width/$orig_height);
+                }
+                $thumb_url = $commons_main_dir . 'thumb/' . implode('/', $dir_parts) . '/'. $thumb_width .'px-' . $file_name;
+                if (strcmp($extension, 'svg') == 0) {  //png thumb for svg-s
+                    $thumb_url .= '.png';
+                }
+            }
+            return $thumb_url;
+        }
+    }
+    /**
+     * Search for images and return photos array.
+     *
+     * @param string $keyword
+     * @return array
+     */
+    public function search_images($keyword) {
+        $files_array = array();
         $this->_param['action'] = 'query';
         $this->_param['generator'] = 'search';
-        $this->_param['gsrsearch'] = $title;
-        $this->_param['gsrnamespace'] = 6;
+        $this->_param['gsrsearch'] = $keyword;
+        $this->_param['gsrnamespace'] = WIKIMEDIA_FILE_NS;
+        $this->_param['gsrlimit'] = WIKIMEDIA_THUMBS_PER_PAGE;
         $this->_param['prop']   = 'imageinfo';
-        $this->_param['iiprop'] = 'url';
-        $content = $this->_conn->post($this->api, $this->_param);
+        $this->_param['iiprop'] = 'url|dimensions|mime';
+        $this->_param['iiurlwidth'] = WIKIMEDIA_IMAGE_SIDE_LENGTH;
+        $this->_param['iiurlheight'] = WIKIMEDIA_IMAGE_SIDE_LENGTH;
+        //didn't work with POST
+        $content = $this->_conn->get($this->api, $this->_param);
         $result = unserialize($content);
         if (!empty($result['query']['pages'])) {
             foreach ($result['query']['pages'] as $page) {
-                $image_urls[$page['title']] = $page['imageinfo'][0]['url'];
+                $title = $page['title'];
+                $file_type = $page['imageinfo'][0]['mime'];
+                $image_types = array('image/jpeg', 'image/png', 'image/gif', 'image/svg+xml');
+                if (in_array($file_type, $image_types)) {  //is image
+                    $thumbnail = $this->get_thumb_url($page['imageinfo'][0]['url'], $page['imageinfo'][0]['width'], $page['imageinfo'][0]['height']);
+                    $source = $page['imageinfo'][0]['thumburl'];        //upload scaled down image
+                    $extension = pathinfo($title, PATHINFO_EXTENSION);
+                    if (strcmp($extension, 'svg') == 0) {               //upload png version of svg-s
+                        $title .= '.png';
+                    }
+                } else {                                   //other file types
+                    $thumbnail = '';
+                    $source = $page['imageinfo'][0]['url'];
+                }
+                $files_array[] = array(
+                    'title'=>substr($title, 5),         //chop off 'File:'
+                    'thumbnail'=>$thumbnail,
+                    'thumbnail_width'=>120,
+                    'thumbnail_height'=>120,
+                    // plugin-dependent unique path to the file (id, url, path, etc.)
+                    'source'=>$source,
+                    // the accessible url of the file
+                    'url'=>$page['imageinfo'][0]['descriptionurl']
+                );
             }
         }
-        return $image_urls;
+        return $files_array;
     }
+
 }
