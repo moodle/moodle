@@ -384,7 +384,7 @@ function install_css_styles() {
     @header('Expires: Mon, 20 Aug 1969 09:23:00 GMT');
     @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-//TODO: add rtl support here
+//TODO: add rtl support here, make it match new default theme MDL-21149
 
     echo '
 

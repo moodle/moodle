@@ -320,7 +320,7 @@ class theme_config {
         try {
             $settings = get_config('theme_'.$themename);
         } catch (dml_exception $e) {
-            // most probably not installed yet
+            // most probably moodle tables not created yet
             $settings = new object();
         }
 
@@ -328,7 +328,7 @@ class theme_config {
             return new theme_config($config);
         } else {
             // bad luck, the requested theme has some problems - admin see details in theme config
-            return new theme_config(theme_config::find_theme_config('standard', $settings)); // TODO: use some other default
+            return new theme_config(theme_config::find_theme_config('standard', $settings)); // TODO: use some other default MDL-21149
         }
     }
 
