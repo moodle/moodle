@@ -4252,7 +4252,6 @@ table.mod_index {
 /* the style of the text label in ygTextNode */
 .file-picker .ygtvlabel, .file-picker .ygtvlabel:link, .file-picker .ygtvlabel:visited, .file-picker .ygtvlabel:hover { margin-left:2px; text-decoration: none; }
 
-
 .file-picker{font-size:12px;}
 .file-picker strong{background:#FFFFCC}
 .file-picker a{color: #336699}
@@ -4287,6 +4286,28 @@ table.mod_index {
 .file-picker .fp-msg {padding: 2em 0; margin: 3em 5px;text-align:center;background: green}
 /* file picker search dialog */
 .file-picker div.bd{text-align:left}
+
+/*********** File manager **********/
+.filemanager-toolbar{margin: 5px 0;}
+.filemanager-toolbar a:link, .filemanager-toolbar a:visited {
+    border: 1px solid grey;
+    background: #ccc;
+    color: black;
+    padding: 3px;
+}
+.filemanager-toolbar a:hover {background: white; text-decoration: none;}
+.fm-breadcrumb {margin:0;}
+.filemanager-container {padding: 5px; margin: 6px 0;}
+.filemanager-container ul{margin:0; padding:0; list-style-type:none;}
+.filemanager-container li{clear:both;}
+#fm-move-div {margin: 6px;}
+#fm-move-div strong{color:red;}
+.fm-file-menu {width:18px;height:18px;float:left;}
+.fm-file-menu img { width: 16px;}
+.fm-file-name {float:left;}
+.fm-file-entry{border: 1px solid red;}
+.fm-operation {font-weight: bold;}
+
 
 
 /* TODO: Fix IE6 somehow
