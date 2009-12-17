@@ -104,9 +104,9 @@ $table->setup();
 
 foreach($feeds as $feed) {
     if (!empty($feed->preferredtitle)) {
-        $feedtitle = $feed->preferredtitle;
+        $feedtitle = s($feed->preferredtitle);
     } else {
-        $feedtitle =  $feed->title;
+        $feedtitle =  s($feed->title);
     }
 
     $viewlink = new html_link();
