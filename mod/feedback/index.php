@@ -36,7 +36,7 @@ echo $OUTPUT->header();
 /// Get all the appropriate data
 
 if (! $feedbacks = get_all_instances_in_course("feedback", $course)) {
-    notice("There are no feedbacks", htmlspecialchars('../../course/view.php?id='.$course->id));
+    notice(get_string('thereareno', 'moodle', $strfeedbacks), new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
     die;
 }
 
