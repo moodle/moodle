@@ -17,6 +17,7 @@
 
 /**
  * repository_alfresco class
+ * This is a class used to browse files from alfresco
  *
  * @since 2.0
  * @package moodlecore
@@ -42,6 +43,12 @@ class repository_alfresco extends repository {
             require_once($CFG->libdir . '/alfresco/Service/SpacesStore.php');
             require_once($CFG->libdir . '/alfresco/Service/Node.php');
             // setup alfresco instance
+            $server_url = '';
+            if (!empty($this->options['alfresco_url'])) {
+                $server_url = $this->options['alfresco_url'];
+            } else {
+                return;
+            }
             $this->instance = new Alfresco_Repository($this->options['alfresco_url']);
             $this->username   = optional_param('al_username', '', PARAM_RAW);
             $this->password   = optional_param('al_password', '', PARAM_RAW);
@@ -65,6 +72,7 @@ class repository_alfresco extends repository {
             $this->disabled = true;
         }
     }
+
     public function print_login() {
         if ($this->options['ajax']) {
             $user_field->label = get_string('username', 'repository_alfresco').': ';
@@ -118,17 +126,25 @@ class repository_alfresco extends repository {
         return $result;
     }
 
+    /**
+     * Get a file list from alfresco
+     *
+     * @param string $uuid a unique id of directory in alfresco
+     * @param string $path path to a directory
+     * @return array
+     */
     public function get_listing($uuid = '', $path = '') {
         global $CFG, $SESSION, $OUTPUT;
         $ret = array();
         $ret['dynload'] = true;
         $ret['list'] = array();
-        $url = $this->options['alfresco_url'];
+        $server_url = $this->options['alfresco_url'];
         $pattern = '#^(.*)api#';
-        preg_match($pattern, $url, $matches);
-        $ret['manage'] = $matches[1].'faces/jsp/dashboards/container.jsp';
+        if ($return = preg_match($pattern, $server_url, $matches)) {
+            $ret['manage'] = $matches[1].'faces/jsp/dashboards/container.jsp';
+        }
 
-        $ret['path'] = array(array('name'=>'Root', 'path'=>''));
+        $ret['path'] = array(array('name'=>get_string('repositoryname', 'repository_alfresco'), 'path'=>''));
 
         try {
             if (empty($uuid)) {
@@ -136,11 +152,20 @@ class repository_alfresco extends repository {
             } else {
                 $this->current_node = $this->user_session->getNode($this->store, $uuid);
             }
+
             $folder_filter = "{http://www.alfresco.org/model/content/1.0}folder";
             $file_filter = "{http://www.alfresco.org/model/content/1.0}content";
+
+            // top level sites folder
+            $sites_filter = "{http://www.alfresco.org/model/content/1.0}sites";
+            // individual site
+            $site_filter = "{http://www.alfresco.org/model/content/1.0}site";
+
             foreach ($this->current_node->children as $child)
             {
-                if ($child->child->type == $folder_filter)
+                if ($child->child->type == $folder_filter or
+                    $child->child->type == $sites_filter or
+                    $child->child->type == $site_filter)
                 {
                     $ret['list'][] = array('title'=>$child->child->cm_name,
                         'path'=>$child->child->id,
@@ -159,6 +184,13 @@ class repository_alfresco extends repository {
         return $ret;
     }
 
+    /**
+     * Download a file from alfresco
+     *
+     * @param string $uuid a unique id of directory in alfresco
+     * @param string $path path to a directory
+     * @return array
+     */
     public function get_file($uuid, $file = '') {
         global $CFG;
         $node = $this->user_session->getNode($this->store, $uuid);
@@ -187,6 +219,12 @@ class repository_alfresco extends repository {
         return $str;
     }
 
+    /**
+     * Look for a file
+     *
+     * @param string $search_text
+     * @return array
+     */
     public function search($search_text) {
         global $CFG;
         $space = optional_param('space', 'workspace://SpacesStore', PARAM_RAW);
@@ -200,10 +238,20 @@ class repository_alfresco extends repository {
         return $ret;
     }
 
+    /**
+     * Enable mulit-instance
+     *
+     * @return array
+     */
     public static function get_instance_option_names() {
         return array('alfresco_url');
     }
 
+    /**
+     * define a configuration form
+     *
+     * @return bool
+     */
     public function instance_config_form(&$mform) {
         if (!class_exists('SoapClient')) {
             $mform->addElement('static', null, get_string('notice'), get_string('soapmustbeenabled', 'repository_alfresco'));
@@ -214,6 +262,12 @@ class repository_alfresco extends repository {
         $mform->addRule('alfresco_url', get_string('required'), 'required', null, 'client');
         return false;
     }
+
+    /**
+     * Check if SOAP extension enabled
+     *
+     * @return bool
+     */
     public static function plugin_init() {
         if (!class_exists('SoapClient')) {
             print_error('soapmustbeenabled', 'repository_alfresco');
