@@ -2157,7 +2157,7 @@ function print_collapsible_region_start($classes, $id, $caption, $userpref = fal
     $output .= '</div><div id="' . $id . '_inner" class="collapsibleregioninner">';
     $PAGE->requires->js_function_call('new collapsible_region',
             array($id, $userpref, get_string('clicktohideshow'),
-            $OUTPUT->pix_url('t/collapsed'), $OUTPUT->pix_url('t/expanded')));
+            $OUTPUT->pix_url('t/collapsed')->out(false, null, false), $OUTPUT->pix_url('t/expanded')->out(false, null, false)));
 
     if ($return) {
         return $output;
