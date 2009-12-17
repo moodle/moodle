@@ -343,7 +343,7 @@ class theme_config {
      * @return array description of problems
      */
     public static function diagnose($themename) {
-        //TODO:
+        //TODO: MDL-21108
         return array();
     }
 
