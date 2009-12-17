@@ -25,7 +25,6 @@ define('NO_DEBUG_DISPLAY', true);
 define('NO_MOODLE_COOKIES', true);
 
 require_once('../config.php');
-require_once('./wsdocrenderer.php');
 require_once('lib.php');
 
 
@@ -241,7 +240,7 @@ class webservice_documentation_generator {
         $USER->id = null;
         echo $OUTPUT->header();
         $USER->id = $userid;
-        $renderer = $PAGE->theme->get_renderer('core_wsdoc',$OUTPUT);
+        $renderer = $PAGE->find_renderer('core', 'wsdoc');
         echo $renderer->documentation_html($this->functions, $this->username);
         echo $OUTPUT->footer();
 
@@ -265,7 +264,7 @@ class webservice_documentation_generator {
         $PAGE->set_pagelayout('popup');
 
         echo $OUTPUT->header();
-        $renderer = $PAGE->theme->get_renderer('core_wsdoc',$OUTPUT);
+        $renderer = $PAGE->find_renderer('core', 'wsdoc');
         echo $renderer->login_page_html($errormessage);
         echo $OUTPUT->footer();
 

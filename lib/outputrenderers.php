@@ -47,7 +47,7 @@ class renderer_base {
      * Constructor
      * @param moodle_page $page the page we are doing output for.
      */
-    public function __construct($page) {
+    public function __construct(moodle_page $page) {
         $this->opencontainers = $page->opencontainers;
         $this->page = $page;
     }
@@ -2072,7 +2072,7 @@ class core_renderer extends renderer_base {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class cli_core_renderer extends core_renderer {
+class core_renderer_cli extends core_renderer {
     /**
      * Returns the page header.
      * @return string HTML fragment

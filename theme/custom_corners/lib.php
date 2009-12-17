@@ -16,11 +16,12 @@ class custom_corners_renderer_factory extends standard_renderer_factory {
         global $CFG;
         require_once($CFG->themedir . '/custom_corners/renderers.php');
     }
+
     /* Implement the subclass method. */
-    public function get_renderer($module, $page, $subtype=null) {
+    public function get_renderer(moodle_page $page, $module, $subtype=null) {
         if ($module == 'core') {
             return new custom_corners_core_renderer($page);
         }
-        return parent::get_renderer($module, $page, $subtype);
+        return parent::get_renderer($page, $module, $subtype);
     }
 }

@@ -30,6 +30,21 @@
 class core_wsdoc_renderer extends renderer_base {
 
     /**
+     * A reference to the current general renderer probably {@see core_renderer}
+     * @var renderer_base
+     */
+    protected $output;
+
+    /**
+     * Contructor method, calls the parent constructor
+     * @param moodle_page $page
+     */
+    public function __construct(moodle_page $page) {
+        $this->output = $page->find_renderer('core');
+        parent::__construct($page);
+    }
+
+    /**
      * Create documentation for a description object
      * @param object $params a part of parameter/return description
      * @return string the html to display

@@ -34,7 +34,7 @@
 class mod_forum_renderer extends renderer_base {
 
     /**
-     * A reference to the current general renderer probably {@see moodle_core_renderer}
+     * A reference to the current general renderer probably {@see core_renderer}
      * @var renderer_base
      */
     protected $output;
@@ -42,11 +42,10 @@ class mod_forum_renderer extends renderer_base {
     /**
      * Contructor method, calls the parent constructor
      * @param moodle_page $page
-     * @param renderer_base $output Probably moodle_core_renderer
      */
-    public function __construct($page, $output) {
+    public function __construct(moodle_page $page) {
+        $this->output = $page->find_renderer('core');
         parent::__construct($page);
-        $this->output = $output;
     }
 
     /**

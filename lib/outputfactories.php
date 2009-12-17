@@ -61,12 +61,12 @@ interface renderer_factory {
      * $subtype parameter. For example workshop_renderer,
      * workshop_allocation_manual_renderer etc.
      *
-     * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
      * @param moodle_page $page the page the renderer is outputting content for.
+     * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
      * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
      * @return object an object implementing the requested renderer interface.
      */
-    public function get_renderer($component, $page, $subtype=null);
+    public function get_renderer(moodle_page $page, $component, $subtype=null);
 }
 
 
@@ -86,6 +86,8 @@ interface renderer_factory {
 abstract class renderer_factory_base implements renderer_factory {
     /** @var theme_config the theme we belong to. */
     protected $theme;
+    /** @var hardcoded list of core subtypes and their locations */
+    protected $core_subtypes = array('webservice'=>'webservice');
 
     /**
      * Constructor.
@@ -106,27 +108,37 @@ abstract class renderer_factory_base implements renderer_factory {
      * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
      * @return string the name of the standard renderer class for that module.
      */
-    protected function standard_renderer_class_for_plugin($component, $subtype=null) {
+    protected function standard_renderer_classname($component, $subtype=null) {
         global $CFG; // needed in incldued files
 
         if ($component !== 'core') {
-            // renderers are stored in lib.php files like the rest of standard functions and classes
-            $libfile = get_component_directory($component) . '/renderer.php';
-            if (file_exists($libfile)) {
-                include_once($libfile);
+            // standardize component names
+            if (strpos($component, '_') === false) {
+                $component = $component.'_mod';
+            }
+            // renderers are stored in renderer.php files
+            if (!$compdirectory = get_component_directory($component)) {
+                throw new coding_exception('Invalid component specified in renderer request');
+            }
+            $rendererfile = $compdirectory . '/renderer.php';
+            if (file_exists($rendererfile)) {
+                include_once($rendererfile);
+            }
+
+        } else if (!empty($subtype)) {
+            if (!isset($this->core_subtypes[$subtype])) {
+                throw new coding_exception('Invalid core subtype "'.$subtype.'" in renderer request');
+            }
+            $rendererfile = $CFG->dirroot . '/' . $this->core_subtypes[$subtype] . '/renderer.php';
+            if (file_exists($rendererfile)) {
+                include_once($rendererfile);
             }
         }
 
-        if (strpos($component, 'mod_') === 0) {
-            $component = substr($component, 4);
-        }
-        if (is_null($subtype)) {
+        if (empty($subtype)) {
             $class = $component . '_renderer';
         } else {
             $class = $component . '_' . $subtype . '_renderer';
-        }
-        if (!class_exists($class)) {
-            throw new coding_exception('Request for an unknown renderer class ' . $class);
         }
         return $class;
     }
@@ -144,43 +156,45 @@ abstract class renderer_factory_base implements renderer_factory {
 class standard_renderer_factory extends renderer_factory_base {
     /**
      * Implement the subclass method
-     * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
      * @param moodle_page $page the page the renderer is outputting content for.
+     * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
      * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
      * @return object an object implementing the requested renderer interface.
      */
-    public function get_renderer($component, $page, $subtype=null) {
-        if ($component === 'core') {
-            return new core_renderer($page);
-        } else {
-            $class = $this->standard_renderer_class_for_plugin($component, $subtype);
-            return new $class($page, $this->get_renderer('core', $page));
+    public function get_renderer(moodle_page $page, $component, $subtype=null) {
+        $classname = $this->standard_renderer_classname($component, $subtype);
+        if (!class_exists($classname)) {
+            throw new coding_exception('Request for an unknown renderer class ' . $classname);
         }
+        return new $classname($page);
     }
 }
 
 
 /**
  * This is a slight variation on the standard_renderer_factory used by CLI scripts.
+ * CLI renderers use suffic '_cli' added to the standard renderer names
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class cli_renderer_factory extends standard_renderer_factory {
+class cli_renderer_factory extends renderer_factory_base {
     /**
      * Implement the subclass method
-     * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
      * @param moodle_page $page the page the renderer is outputting content for.
+     * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
      * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
      * @return object an object implementing the requested renderer interface.
      */
-    public function get_renderer($component, $page, $subtype=null) {
-        if ($component === 'core') {
-            return new cli_core_renderer($page);
-        } else {
-            parent::get_renderer($component, $page, $subtype);
+    public function get_renderer(moodle_page $page, $component, $subtype=null) {
+        $classname = $this->standard_renderer_classname($component, $subtype);
+        if (class_exists($classname . '_cli')) {
+            $classname = $classname . '_cli';
+        } else if (!class_exists($classname)) {
+            throw new coding_exception('Request for an unknown renderer class ' . $classname);
         }
+        return new $classname($page);
     }
 }
 
@@ -199,7 +213,8 @@ class cli_renderer_factory extends standard_renderer_factory {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class theme_overridden_renderer_factory extends standard_renderer_factory {
+class theme_overridden_renderer_factory extends renderer_factory_base {
+
     protected $prefixes = array();
 
     /**
@@ -214,32 +229,26 @@ class theme_overridden_renderer_factory extends standard_renderer_factory {
 
     /**
      * Implement the subclass method
-     * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
      * @param moodle_page $page the page the renderer is outputting content for.
+     * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
      * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
      * @return object an object implementing the requested renderer interface.
      */
-    public function get_renderer($component, $page, $subtype=null) {
-        if (strpos($component, 'mod_') === 0) {
-            $component = substr($component, 4);
+    public function get_renderer(moodle_page $page, $component, $subtype=null) {
+        $classname = $this->standard_renderer_classname($component, $subtype);
+        if (!class_exists($classname)) {
+            // standard renderer must always exist
+            throw new coding_exception('Request for an unknown renderer class ' . $classname);
         }
 
         foreach ($this->prefixes as $prefix) {
-            // theme lib.php files are loaded automatically
-            if (is_null($subtype)) {
-                $classname = $prefix . '_' . $component . '_renderer';
-            } else {
-                $classname = $prefix . '_' . $component . '_' . $subtype . '_renderer';
-            }
-            if (class_exists($classname)) {
-                if ($component === 'core') {
-                    return new $classname($page);
-                } else {
-                    return new $classname($page, $this->get_renderer('core', $page));
-                }
+            // theme lib.php and renderers.php files are loaded automatically
+            if (class_exists($prefix . '_' . $classname)) {
+                $classname = $prefix . '_' . $classname;
+                return new $classname($page);
             }
         }
         // use standard renderes if themes do not contain overridden renderer
-        return parent::get_renderer($component, $page, $subtype);
+        return new $classname($page);
     }
 }

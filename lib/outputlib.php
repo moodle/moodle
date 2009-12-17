@@ -906,12 +906,12 @@ class theme_config {
 
     /**
      * Get the renderer for a part of Moodle for this theme.
-     * @param string $module the name of part of moodle. E.g. 'core', 'quiz', 'qtype_multichoice'.
      * @param moodle_page $page the page we are rendering
+     * @param string $module the name of part of moodle. E.g. 'core', 'quiz', 'qtype_multichoice'.
      * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
      * @return renderer_base the requested renderer.
      */
-    public function get_renderer($module, $page, $subtype=null) {
+    public function get_renderer(moodle_page $page, $component, $subtype=null) {
         if (is_null($this->rf)) {
             if (CLI_SCRIPT) {
                 $classname = 'cli_renderer_factory';
@@ -921,7 +921,7 @@ class theme_config {
             $this->rf = new $classname($this);
         }
 
-        return $this->rf->get_renderer($module, $page, $subtype);
+        return $this->rf->get_renderer($page, $component, $subtype);
     }
 
     /**

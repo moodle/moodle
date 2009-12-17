@@ -45,7 +45,7 @@ if ($mode != get_user_preferences('lesson_view', 'collapsed') && $mode !== 'sing
     set_user_preference('lesson_view', $mode);
 }
 
-$lessonoutput = $PAGE->theme->get_renderer('mod_lesson', $PAGE);
+$lessonoutput = $PAGE->find_renderer('mod_lesson');
 $PAGE->navbar->add(get_string('edit'));
 echo $lessonoutput->header($lesson, $mode);
 if (!$lesson->has_pages()) {

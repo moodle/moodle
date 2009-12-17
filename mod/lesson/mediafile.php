@@ -52,7 +52,7 @@ try {
 require_login($course, false, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-$lessonoutput = $PAGE->theme->get_renderer('mod_lesson', $PAGE);
+$lessonoutput = $PAGE->find_renderer('mod_lesson');
 
 // Get the mimetype
 $mimetype = mimeinfo("type", $lesson->mediafile);

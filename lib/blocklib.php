@@ -1147,7 +1147,7 @@ class block_manager {
             $editpage->set_title($strheading);
             $editpage->set_heading($strheading);
 
-            $output = $editpage->theme->get_renderer('core', $editpage);
+            $output = $editpage->find_renderer('core');
             echo $output->header();
             echo $output->heading($strheading, 2);
             $mform->display();

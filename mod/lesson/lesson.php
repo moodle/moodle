@@ -52,7 +52,7 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/lesson:edit', $context);
 require_sesskey();
 
-$lessonoutput = $PAGE->theme->get_renderer('mod_lesson', $PAGE);
+$lessonoutput = $PAGE->find_renderer('mod_lesson');
 
 /// Process the action
 switch ($action) {

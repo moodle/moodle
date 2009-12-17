@@ -75,7 +75,7 @@ if ($pageid !== NULL) {
 }
 $PAGE->set_url($url);
 $PAGE->navbar->add(get_string('reports', 'lesson'), new moodle_url($CFG->wwwroot.'/mod/lesson/report.php', array('id'=>$id)));
-$lessonoutput = $PAGE->theme->get_renderer('mod_lesson', $PAGE);
+$lessonoutput = $PAGE->find_renderer('mod_lesson');
 
 /// Process any form data before fetching attempts, grades and times
 if (has_capability('mod/lesson:edit', $context) && $form = data_submitted() && confirm_sesskey()) {
