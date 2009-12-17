@@ -9217,3 +9217,45 @@ function check_consecutive_identical_characters($password, $maxchars) {
     return true;
 }
 
+/**
+ * helper function to do partial function binding
+ * so we can use it for preg_replace_callback, for example
+ * this works with php functions, user functions, static methods and class methods
+ * it returns you a callback that you can pass on like so:
+ *
+ * $callback = partial('somefunction', $arg1, $arg2);
+ *     or
+ * $callback = partial(array('someclass', 'somestaticmethod'), $arg1, $arg2);
+ *     or even
+ * $obj = new someclass();
+ * $callback = partial(array($obj, 'somemethod'), $arg1, $arg2);
+ *
+ * and then the arguments that are passed through at calltime are appended to the argument list.
+ *
+ * @param mixed $function a php callback
+ * $param mixed $arg1.. $argv arguments to partially bind with
+ *
+ * @return callback
+ */
+function partial() {
+    if (!class_exists('partial')) {
+        class partial{
+            var $values = array();
+            var $func;
+
+            function __construct($func, $args) {
+                $this->values = $args;
+                $this->func = $func;
+            }
+
+            function method() {
+                $args = func_get_args();
+                return call_user_func_array($this->func, array_merge($this->values, $args));
+            }
+        }
+    }
+    $args = func_get_args();
+    $func = array_shift($args);
+    $p = new partial($func, $args);
+    return array($p, 'method');
+}
