@@ -1336,6 +1336,10 @@ table.explainpermissions .cell {
   margin:auto;
 }
 
+#admin-mnet-index .generalbox table {
+  width:100%;
+}
+
 #admin-index .adminerror,
 #admin-index .adminwarning {
   text-align:center;
