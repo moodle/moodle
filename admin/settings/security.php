@@ -47,6 +47,7 @@ $ADMIN->add('security', $temp);
 // "httpsecurity" settingpage
 $temp = new admin_settingpage('httpsecurity', get_string('httpsecurity', 'admin'));
 $temp->add(new admin_setting_configcheckbox('loginhttps', get_string('loginhttps', 'admin'), get_string('configloginhttps', 'admin'), 0));
+$temp->add(new admin_setting_configtext('excludeoldflashclients', get_string('excludeoldflashclients', 'admin'), get_string('configexcludeoldflashclients', 'admin'), '10.0.12', PARAM_TEXT));
 $ADMIN->add('security', $temp);
 
 
