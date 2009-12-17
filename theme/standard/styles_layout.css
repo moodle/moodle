@@ -1013,7 +1013,7 @@ body#admin-modules table.generaltable td.c0
   margin:auto;
 }
 
-.generalboxcontent table{
+#admin-mnet-index .generalbox table{
   width:100%;
 }
 
