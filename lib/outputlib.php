@@ -1116,30 +1116,6 @@ class xhtml_container_stack {
     }
 
     /**
-     * Emergency fallback. If we get to the end of processing and not all
-     * containers have been closed, output the rest with a developer debug warning.
-     * @return void
-     */
-    public function __destruct() {
-        if (empty($this->opencontainers)) {
-            return;
-        }
-
-        // TODO: MDL-20625 this looks dangerous and problematic because we never know
-        //       the order of calling of constructors ==> the transaction warning will not be included
-
-        // It seems you cannot rely on $CFG, and hence the debugging function here,
-        // becuase $CFG may be destroyed before this object is.
-        if ($this->isdebugging) {
-            echo '<div class="notifytiny"><p>Some containers were left open. This suggests there is a nesting problem.</p>' .
-                    $this->output_log() . '</div>';
-        }
-        echo $this->pop_all_but_last();
-        $container = array_pop($this->opencontainers);
-        echo $container->closehtml;
-    }
-
-    /**
      * Adds an entry to the log.
      * @param string $action The name of the action
      * @param string $type The type of action
