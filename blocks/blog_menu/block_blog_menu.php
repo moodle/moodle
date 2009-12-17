@@ -54,7 +54,7 @@ class block_blog_menu extends block_base {
     function get_content() {
         global $CFG, $USER, $PAGE, $OUTPUT;
 
-        $context = $PAGE->get_context();
+        $context = $PAGE->context;
 
         // don't display menu block if block is set at site level, and user is not logged in
         if (empty($CFG->bloglevel) || ($CFG->bloglevel < BLOG_GLOBAL_LEVEL && !(isloggedin() && !isguestuser()))) {

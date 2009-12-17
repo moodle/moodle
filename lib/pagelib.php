@@ -174,11 +174,11 @@ class moodle_page {
      * @return renderer_base
      */
     public function find_renderer($component, $subtype = null) {
-        return $this->get_theme()->get_renderer($this, $component, $subtype);
+        return $this->magic_get_theme()->get_renderer($this, $component, $subtype);
     }
 
 /// Getter methods =============================================================
-/// Due to the __get magic below, you normally do not call these as $PAGE->get_x
+/// Due to the __get magic below, you normally do not call these as $PAGE->magic_get_x
 /// methods, but instead use the $PAGE->x syntax.
 
     /**
@@ -188,7 +188,7 @@ class moodle_page {
      * and its friends like print_header, to check that everything is working as
      * expected. Also accessible as $PAGE->state.
      */
-    public function get_state() {
+    protected function magic_get_state() {
         return $this->_state;
     }
 
@@ -196,7 +196,7 @@ class moodle_page {
      * Please do not call this method directly, use the ->headerprinted syntax. {@link __get()}.
      * @return boolean has the header already been printed?
      */
-    public function get_headerprinted() {
+    protected function magic_get_headerprinted() {
         return $this->_state >= self::STATE_IN_BODY;
     }
 
@@ -208,7 +208,7 @@ class moodle_page {
      * course table. (Also available as $COURSE global.) If we are not inside
      * an actual course, this will be the site course.
      */
-    public function get_course() {
+    protected function magic_get_course() {
         global $SITE;
         if (is_null($this->_course)) {
             return $SITE;
@@ -223,7 +223,7 @@ class moodle_page {
      * by get_coursemodule_from_id or get_coursemodule_from_instance,
      * so the extra modname and name fields are present.
      */
-    public function get_cm() {
+    protected function magic_get_cm() {
         return $this->_cm;
     }
 
@@ -233,7 +233,7 @@ class moodle_page {
      * the forum or quiz table) that this page belongs to. Will be null
      * if this page is not within a module.
      */
-    public function get_activityrecord() {
+    protected function magic_get_activityrecord() {
         if (is_null($this->_module) && !is_null($this->_cm)) {
             $this->load_activity_record();
         }
@@ -245,7 +245,7 @@ class moodle_page {
      * @return string|null the The type of activity we are in, for example 'forum' or 'quiz'.
      * Will be null if this page is not within a module.
      */
-    public function get_activityname() {
+    protected function magic_get_activityname() {
         if (is_null($this->_cm)) {
             return null;
         }
@@ -257,7 +257,7 @@ class moodle_page {
      * @return mixed the category that the page course belongs to. If there isn't one
      * (that is, if this is the front page course) returns null.
      */
-    public function get_category() {
+    protected function magic_get_category() {
         $this->ensure_category_loaded();
         if (!empty($this->_categories)) {
             return reset($this->_categories);
@@ -273,7 +273,7 @@ class moodle_page {
      * the top-level category. This may be the empty array if we are in the
      * front page course.
      */
-    public function get_categories() {
+    protected function magic_get_categories() {
         $this->ensure_categories_loaded();
         return $this->_categories;
     }
@@ -282,7 +282,7 @@ class moodle_page {
      * Please do not call this method directly, use the ->context syntax. {@link __get()}.
      * @return object the main context to which this page belongs.
      */
-    public function get_context() {
+    protected function magic_get_context() {
         if (is_null($this->_context)) {
             throw new coding_exception('$PAGE->context accessed before it was known.');
         }
@@ -293,7 +293,7 @@ class moodle_page {
      * Please do not call this method directly, use the ->pagetype syntax. {@link __get()}.
      * @return string e.g. 'my-index' or 'mod-quiz-attempt'. Same as the id attribute on <body>.
      */
-    public function get_pagetype() {
+    protected function magic_get_pagetype() {
         if (is_null($this->_pagetype) || isset($CFG->pagepath)) {
             $this->initialise_default_pagetype();
         }
@@ -305,7 +305,7 @@ class moodle_page {
      * @return string the general type of page this is. For example 'normal', 'popup', 'home'.
      *      Allows the theme to display things differently, if it wishes to.
      */
-    public function get_pagelayout() {
+    protected function magic_get_pagelayout() {
         return $this->_pagelayout;
     }
 
@@ -313,7 +313,7 @@ class moodle_page {
      * Please do not call this method directly, use the ->layout_tions syntax. {@link __get()}.
      * @return returns arrys with options for layout file
      */
-    public function get_layout_options() {
+    protected function magic_get_layout_options() {
         return $this->_layout_options;
     }
 
@@ -321,7 +321,7 @@ class moodle_page {
      * Please do not call this method directly, use the ->subpage syntax. {@link __get()}.
      * @return string|null The subpage identifier, if any.
      */
-    public function get_subpage() {
+    protected function magic_get_subpage() {
         return $this->_subpage;
     }
 
@@ -329,7 +329,7 @@ class moodle_page {
      * Please do not call this method directly, use the ->bodyclasses syntax. {@link __get()}.
      * @return string the class names to put on the body element in the HTML.
      */
-    public function get_bodyclasses() {
+    protected function magic_get_bodyclasses() {
         return implode(' ', array_keys($this->_bodyclasses));
     }
 
@@ -337,7 +337,7 @@ class moodle_page {
      * Please do not call this method directly, use the ->title syntax. {@link __get()}.
      * @return string the title that should go in the <head> section of the HTML of this page.
      */
-    public function get_title() {
+    protected function magic_get_title() {
         return $this->_title;
     }
 
@@ -345,7 +345,7 @@ class moodle_page {
      * Please do not call this method directly, use the ->heading syntax. {@link __get()}.
      * @return string the main heading that should be displayed at the top of the <body>.
      */
-    public function get_heading() {
+    protected function magic_get_heading() {
         return $this->_heading;
     }
 
@@ -353,7 +353,7 @@ class moodle_page {
      * Please do not call this method directly, use the ->heading syntax. {@link __get()}.
      * @return string The menu (or actions) to display in the heading
      */
-    public function get_headingmenu() {
+    protected function magic_get_headingmenu() {
         return $this->_headingmenu;
     }
 
@@ -361,7 +361,7 @@ class moodle_page {
      * Please do not call this method directly, use the ->docspath syntax. {@link __get()}.
      * @return string the path to the Moodle docs for this page.
      */
-    public function get_docspath() {
+    protected function magic_get_docspath() {
         if (is_string($this->_docspath)) {
             return $this->_docspath;
         } else {
@@ -374,7 +374,7 @@ class moodle_page {
      * @return moodle_url the clean URL required to load the current page. (You
      * should normally use this in preference to $ME or $FULLME.)
      */
-    public function get_url() {
+    protected function magic_get_url() {
         global $FULLME;
         if (is_null($this->_url)) {
             debugging('This page did not call $PAGE->set_url(...). Using '.s($FULLME), DEBUG_DEVELOPER);
@@ -389,7 +389,7 @@ class moodle_page {
      * The list of alternate versions of this page.
      * @return array mime type => object with ->url and ->title.
      */
-    public function get_alternateversions() {
+    protected function magic_get_alternateversions() {
         return $this->_alternateversions;
     }
 
@@ -397,7 +397,7 @@ class moodle_page {
      * Please do not call this method directly, use the ->blocks syntax. {@link __get()}.
      * @return blocks_manager the blocks manager object for this page.
      */
-    public function get_blocks() {
+    protected function magic_get_blocks() {
         global $CFG;
         if (is_null($this->_blocks)) {
             if (!empty($CFG->blockmanagerclass)) {
@@ -414,7 +414,7 @@ class moodle_page {
      * Please do not call this method directly, use the ->requires syntax. {@link __get()}.
      * @return page_requirements_manager tracks the JavaScript, CSS files, etc. required by this page.
      */
-    public function get_requires() {
+    protected function magic_get_requires() {
         global $CFG;
         if (is_null($this->_requires)) {
             $this->_requires = new page_requirements_manager();
@@ -426,7 +426,7 @@ class moodle_page {
      * Please do not call this method directly, use the ->cacheable syntax. {@link __get()}.
      * @return boolean can this page be cached by the user's browser.
      */
-    public function get_cacheable() {
+    protected function magic_get_cacheable() {
         return $this->_cacheable;
     }
 
@@ -434,7 +434,7 @@ class moodle_page {
      * Please do not call this method directly, use the ->focuscontrol syntax. {@link __get()}.
      * @return string the id of the HTML element to be focussed when the page has loaded.
      */
-    public function get_focuscontrol() {
+    protected function magic_get_focuscontrol() {
         return $this->_focuscontrol;
     }
 
@@ -442,7 +442,7 @@ class moodle_page {
      * Please do not call this method directly, use the ->button syntax. {@link __get()}.
      * @return string the HTML to go where the Turn editing on button normaly goes.
      */
-    public function get_button() {
+    protected function magic_get_button() {
         return $this->_button;
     }
 
@@ -450,7 +450,7 @@ class moodle_page {
      * Please do not call this method directly, use the ->theme syntax. {@link __get()}.
      * @return string the initialised theme for this page.
      */
-    public function get_theme() {
+    protected function magic_get_theme() {
         if (is_null($this->_theme)) {
             $this->initialise_theme_and_output();
         }
@@ -462,7 +462,7 @@ class moodle_page {
      * {@link __get()}
      * @return int The periodic refresh delay to use with meta refresh
      */
-    public function get_periodicrefreshdelay() {
+    protected function magic_get_periodicrefreshdelay() {
         return $this->_periodicrefreshdelay;
     }
 
@@ -471,7 +471,7 @@ class moodle_page {
      * @return xhtml_container_stack tracks XHTML tags on this page that have been opened but not closed.
      *      mainly for internal use by the rendering code.
      */
-    public function get_opencontainers() {
+    protected function magic_get_opencontainers() {
         if (is_null($this->_opencontainers)) {
             $this->_opencontainers = new xhtml_container_stack();
         }
@@ -482,7 +482,7 @@ class moodle_page {
      * Return the navigation object
      * @return global_navigation
      */
-    public function get_navigation() {
+    protected function magic_get_navigation() {
         if ($this->_navigation === null) {
             $this->_navigation = new global_navigation();
         }
@@ -493,12 +493,42 @@ class moodle_page {
      * Return a navbar object
      * @return navbar
      */
-    public function get_navbar() {
+    protected function magic_get_navbar() {
         if ($this->_navbar === null) {
             $this->_navbar = new navbar($this);
         }
         return $this->_navbar;
     }
+
+    /**
+     * Returns the settings navigation object
+     * @return settings_navigation
+     */
+    protected function magic_get_settingsnav() {
+        if ($this->_settingsnav === null) {
+            $this->_settingsnav = new settings_navigation($this);
+            $this->_settingsnav->initialise();
+        }
+        return $this->_settingsnav;
+    }
+
+    /**
+     * PHP overloading magic to make the $PAGE->course syntax work by redirecting
+     * it to the corresponding $PAGE->magic_get_course() method if there is one, and
+     * throwing an exception if not.
+     * @var string field name
+     * @return mixed
+     */
+    public function __get($field) {
+        $getmethod = 'magic_get_' . $field;
+        if (method_exists($this, $getmethod)) {
+            return $this->$getmethod();
+        } else {
+            throw new coding_exception('Unknown field ' . $field . ' of $PAGE.');
+        }
+    }
+
+/// Other information getting methods ==========================================
 
     /**
      * Checks to see if there are any items on the navbar object
@@ -510,36 +540,6 @@ class moodle_page {
         }
         return $this->_navbar->has_items();
     }
-
-    /**
-     * Returns the settings navigation object
-     * @return settings_navigation
-     */
-    public function get_settingsnav() {
-        if ($this->_settingsnav === null) {
-            $this->_settingsnav = new settings_navigation($this);
-            $this->_settingsnav->initialise();
-        }
-        return $this->_settingsnav;
-    }
-
-    /**
-     * PHP overloading magic to make the $PAGE->course syntax work by redirecting
-     * it to the corresponding $PAGE->get_course() method if there is one, and
-     * throwing an exception if not.
-     *
-     *
-     */
-    public function __get($field) {
-        $getmethod = 'get_' . $field;
-        if (method_exists($this, $getmethod)) {
-            return $this->$getmethod();
-        } else {
-            throw new coding_exception('Unknown field ' . $field . ' of $PAGE.');
-        }
-    }
-
-/// Other information getting methods ==========================================
 
     /**
      * @return boolean should the current user see this page in editing mode.

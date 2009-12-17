@@ -74,7 +74,7 @@ class block_blog_recent extends block_base {
         $this->content = new stdClass();
         $this->content->footer = '';
 
-        $context = $PAGE->get_context();
+        $context = $PAGE->context;
 
         $blogheaders = blog_get_headers();
 

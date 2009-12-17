@@ -231,7 +231,7 @@ function blog_get_context_url($context=null) {
 
     if (empty($context)) {
         global $PAGE;
-        $context = $PAGE->get_context();
+        $context = $PAGE->context;
     }
 
     // Change contextlevel to SYSTEM if viewing the site course
