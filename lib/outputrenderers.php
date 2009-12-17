@@ -202,6 +202,27 @@ class renderer_base {
     }
 }
 
+/**
+ * Basis for all plugin renderers.
+ *
+ * @author Petr Škoda
+ */
+class plugin_renderer_base extends renderer_base {
+    /**
+     * A reference to the current general renderer probably {@see core_renderer}
+     * @var renderer_base
+     */
+    protected $output;
+
+    /**
+     * Contructor method, calls the parent constructor
+     * @param moodle_page $page
+     */
+    public function __construct(moodle_page $page) {
+        $this->output = $page->get_renderer('core');
+        parent::__construct($page);
+    }
+}
 
 /**
  * The standard implementation of the core_renderer interface.

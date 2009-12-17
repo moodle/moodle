@@ -24,30 +24,14 @@
  */
 
 /**
- * A custom renderer class that extends the renderer_base and
+ * A custom renderer class that extends the plugin_renderer_base and
  * is used by the forum module.
  *
  * @package mod-forum
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
-class mod_forum_renderer extends renderer_base {
-
-    /**
-     * A reference to the current general renderer probably {@see core_renderer}
-     * @var renderer_base
-     */
-    protected $output;
-
-    /**
-     * Contructor method, calls the parent constructor
-     * @param moodle_page $page
-     */
-    public function __construct(moodle_page $page) {
-        $this->output = $page->get_renderer('core');
-        parent::__construct($page);
-    }
-
+class mod_forum_renderer extends plugin_renderer_base {
     /**
      * This method is used to generate HTML for a subscriber selection form that
      * uses two user_selector controls

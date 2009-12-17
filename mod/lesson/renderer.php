@@ -23,23 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 
-class mod_lesson_renderer extends renderer_base {
-
-    /**
-     * A reference to the current general renderer probably {@see moodle_core_renderer}
-     * @var renderer_base
-     */
-    protected $output;
-
-    /**
-     * Contructor method, calls the parent constructor
-     * @param moodle_page $page
-     */
-    public function __construct(moodle_page $page) {
-        $this->output = $page->get_renderer('core');
-        parent::__construct($page);
-    }
-
+class mod_lesson_renderer extends plugin_renderer_base {
     /**
      * Magic method used to pass calls otherwise meant for the standard renderer
      * to it to ensure we don't go causing unnessecary greif.

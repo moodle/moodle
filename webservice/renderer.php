@@ -27,23 +27,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class core_wsdoc_renderer extends renderer_base {
-
-    /**
-     * A reference to the current general renderer probably {@see core_renderer}
-     * @var renderer_base
-     */
-    protected $output;
-
-    /**
-     * Contructor method, calls the parent constructor
-     * @param moodle_page $page
-     */
-    public function __construct(moodle_page $page) {
-        $this->output = $page->get_renderer('core');
-        parent::__construct($page);
-    }
-
+class core_wsdoc_renderer extends plugin_renderer_base {
     /**
      * Create documentation for a description object
      * @param object $params a part of parameter/return description
