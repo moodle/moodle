@@ -552,7 +552,7 @@
         $sql = "timefetched < ? - ? OR timefetched = 0";
         $externalblogs = $DB->get_records_select('blog_external', $sql, array(mktime(), $CFG->externalblogcrontime));
 
-        foreach ($external_blogs as $eb) {
+        foreach ($externalblogs as $eb) {
             blog_sync_external_entries($eb);
         }
     }

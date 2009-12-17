@@ -918,7 +918,8 @@ function portfolio_handle_event($eventdata) {
 * @todo add hooks in the plugins - either per instance or per plugin
 */
 function portfolio_cron() {
-    global $DB;
+    global $DB, $CFG;
+
     require_once($CFG->libdir . '/portfolio/exporter.php');
     if ($expired = $DB->get_records_select('portfolio_tempdata', 'expirytime < ?', array(time()), '', 'id')) {
         foreach ($expired as $d) {
