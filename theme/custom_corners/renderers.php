@@ -37,7 +37,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class custom_corners_core_renderer extends moodle_core_renderer {
+class custom_corners_core_renderer extends core_renderer {
     protected $wraplevel = 1;
 
     protected function custom_corners_divs($classes = '', $idbase = '') {

@@ -42,14 +42,18 @@ class renderer_base {
     protected $opencontainers;
     /** @var moodle_page the page we are rendering for. */
     protected $page;
+    /** @var requested rendering target conatnt */
+    protected $target;
 
     /**
      * Constructor
      * @param moodle_page $page the page we are doing output for.
+     * @param string $target one of rendering target constants
      */
-    public function __construct(moodle_page $page) {
+    public function __construct(moodle_page $page, $target) {
         $this->opencontainers = $page->opencontainers;
         $this->page = $page;
+        $this->target = $target;
     }
 
     /**
@@ -156,7 +160,7 @@ class renderer_base {
      * @param string $component full plugin name
      * @return moodle_url
      */
-    public function pix_url($imagename, $component='moodle') {
+    public function pix_url($imagename, $component = 'moodle') {
         return $this->page->theme->pix_url($imagename, $component);
     }
 
@@ -202,10 +206,13 @@ class renderer_base {
     }
 }
 
+
 /**
  * Basis for all plugin renderers.
  *
- * @author Petr Škoda
+ * @author    Petr Skoda (skodak)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
  */
 class plugin_renderer_base extends renderer_base {
     /**
@@ -217,10 +224,11 @@ class plugin_renderer_base extends renderer_base {
     /**
      * Contructor method, calls the parent constructor
      * @param moodle_page $page
+     * @param string $target one of rendering target constants
      */
-    public function __construct(moodle_page $page) {
-        $this->output = $page->get_renderer('core');
-        parent::__construct($page);
+    public function __construct(moodle_page $page, $target) {
+        $this->output = $page->get_renderer('core', null, $target);
+        parent::__construct($page, $target);
     }
 
     /**
@@ -230,6 +238,8 @@ class plugin_renderer_base extends renderer_base {
      * @param string $method
      * @param array $arguments
      * @return mixed
+     *
+     * TODO: this might not be the best idea, see MDL-21148 for pros&cons
      */
     public function __call($method, $arguments) {
         if (method_exists($this->output, $method)) {
@@ -239,6 +249,7 @@ class plugin_renderer_base extends renderer_base {
         }
     }
 }
+
 
 /**
  * The standard implementation of the core_renderer interface.

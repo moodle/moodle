@@ -27,6 +27,21 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/** General rendering target, usually normal browser page */
+define('RENDERER_TARGET_GENERAL', 'general');
+
+/** Plain text rendering for CLI scripts and cron */
+define('RENDERER_TARGET_CLI', 'cli');
+
+/** Plain text rendering intended for sending via email */
+define('RENDERER_TARGET_TEXTEMAIL', 'textemail');
+
+/** Rich text html rendering intended for sending via email */
+define('RENDERER_TARGET_HTMLEMAIL', 'htmlemail');
+
+/* note: maybe we could define portfolio export target too */
+
+
 /**
  * A renderer factory is just responsible for creating an appropriate renderer
  * for any given part of Moodle.
@@ -64,9 +79,10 @@ interface renderer_factory {
      * @param moodle_page $page the page the renderer is outputting content for.
      * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
      * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
+     * @param string $target one of rendering target constants
      * @return object an object implementing the requested renderer interface.
      */
-    public function get_renderer(moodle_page $page, $component, $subtype=null);
+    public function get_renderer(moodle_page $page, $component, $subtype=null, $target=null);
 }
 
 
@@ -86,8 +102,9 @@ interface renderer_factory {
 abstract class renderer_factory_base implements renderer_factory {
     /** @var theme_config the theme we belong to. */
     protected $theme;
-    /** @var hardcoded list of core subtypes and their locations */
-    protected $core_subtypes = array('webservice'=>'webservice');
+
+    /** @var hardcoded list of core subtypes and their locations, add more if ßneeded */
+    protected $core_subtypes = array('webservice' => 'webservice');
 
     /**
      * Constructor.
@@ -95,6 +112,27 @@ abstract class renderer_factory_base implements renderer_factory {
      */
     public function __construct(theme_config $theme) {
         $this->theme = $theme;
+    }
+
+    /**
+     * Returns suffix of renderer class expected for given target.
+     * @param string $target one of the renderer target constants, target is guessed if null used
+     * @return array two element array, first element is target, second the target suffix string
+     */
+    protected function get_target_suffix($target) {
+        if (empty($target) and CLI_SCRIPT) {
+            // automatically guessed default for all CLI scripts
+            $target = RENDERER_TARGET_CLI;
+        }
+
+        switch ($target) {
+            case RENDERER_TARGET_CLI: $suffix = '_cli'; break;
+            case RENDERER_TARGET_TEXTEMAIL: $suffix = '_textemail'; break;
+            case RENDERER_TARGET_HTMLEMAIL: $suffix = '_htmlemail'; break;
+            default: $target = RENDERER_TARGET_GENERAL; $suffix = '';
+        }
+
+        return array($target, $suffix);
     }
 
     /**
@@ -108,13 +146,13 @@ abstract class renderer_factory_base implements renderer_factory {
      * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
      * @return string the name of the standard renderer class for that module.
      */
-    protected function standard_renderer_classname($component, $subtype=null) {
+    protected function standard_renderer_classname($component, $subtype = null) {
         global $CFG; // needed in incldued files
 
         if ($component !== 'core') {
             // standardize component names
             if (strpos($component, '_') === false) {
-                $component = $component.'_mod';
+                $component = 'mod_' . $component;
             }
             // renderers are stored in renderer.php files
             if (!$compdirectory = get_component_directory($component)) {
@@ -127,7 +165,7 @@ abstract class renderer_factory_base implements renderer_factory {
 
         } else if (!empty($subtype)) {
             if (!isset($this->core_subtypes[$subtype])) {
-                throw new coding_exception('Invalid core subtype "'.$subtype.'" in renderer request');
+                throw new coding_exception('Invalid core subtype "' . $subtype . '" in renderer request');
             }
             $rendererfile = $CFG->dirroot . '/' . $this->core_subtypes[$subtype] . '/renderer.php';
             if (file_exists($rendererfile)) {
@@ -159,42 +197,23 @@ class standard_renderer_factory extends renderer_factory_base {
      * @param moodle_page $page the page the renderer is outputting content for.
      * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
      * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
+     * @param string $target one of rendering target constants
      * @return object an object implementing the requested renderer interface.
      */
-    public function get_renderer(moodle_page $page, $component, $subtype=null) {
+    public function get_renderer(moodle_page $page, $component, $subtype = null, $target = null) {
         $classname = $this->standard_renderer_classname($component, $subtype);
         if (!class_exists($classname)) {
             throw new coding_exception('Request for an unknown renderer class ' . $classname);
         }
-        return new $classname($page);
-    }
-}
 
-
-/**
- * This is a slight variation on the standard_renderer_factory used by CLI scripts.
- * CLI renderers use suffic '_cli' added to the standard renderer names
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class cli_renderer_factory extends renderer_factory_base {
-    /**
-     * Implement the subclass method
-     * @param moodle_page $page the page the renderer is outputting content for.
-     * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
-     * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
-     * @return object an object implementing the requested renderer interface.
-     */
-    public function get_renderer(moodle_page $page, $component, $subtype=null) {
-        $classname = $this->standard_renderer_classname($component, $subtype);
-        if (class_exists($classname . '_cli')) {
-            $classname = $classname . '_cli';
-        } else if (!class_exists($classname)) {
-            throw new coding_exception('Request for an unknown renderer class ' . $classname);
+        list($target, $suffix) = $this->get_target_suffix($target);
+        if (class_exists($classname . $suffix)) {
+            // use the specialised renderer for given target, default renderer might also decide
+            // to implement support for more targets
+            $classname = $classname . $suffix;
         }
-        return new $classname($page);
+
+        return new $classname($page, $target);
     }
 }
 
@@ -232,23 +251,43 @@ class theme_overridden_renderer_factory extends renderer_factory_base {
      * @param moodle_page $page the page the renderer is outputting content for.
      * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
      * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
+     * @param string $target one of rendering target constants
      * @return object an object implementing the requested renderer interface.
      */
-    public function get_renderer(moodle_page $page, $component, $subtype=null) {
+    public function get_renderer(moodle_page $page, $component, $subtype = null, $target = null) {
         $classname = $this->standard_renderer_classname($component, $subtype);
         if (!class_exists($classname)) {
             // standard renderer must always exist
             throw new coding_exception('Request for an unknown renderer class ' . $classname);
         }
 
+        list($target, $suffix) = $this->get_target_suffix($target);
+
+        // theme lib.php and renderers.php files are loaded automatically
+        // when loading the theme configs
+
+        // first try the renderers with correct suffix
         foreach ($this->prefixes as $prefix) {
-            // theme lib.php and renderers.php files are loaded automatically
-            if (class_exists($prefix . '_' . $classname)) {
-                $classname = $prefix . '_' . $classname;
-                return new $classname($page);
+            if (class_exists($prefix . '_' . $classname . $suffix)) {
+                $classname = $prefix . '_' . $classname . $suffix;
+                return new $classname($page, $target);
             }
         }
-        // use standard renderes if themes do not contain overridden renderer
-        return new $classname($page);
+        if (class_exists($classname . $suffix)) {
+            // use the specialised renderer for given target, default renderer might also decide
+            // to implement support for more targets
+            $classname = $classname . $suffix;
+            return new $classname($page, $target);
+        }
+
+        // then try general renderer
+        foreach ($this->prefixes as $prefix) {
+            if (class_exists($prefix . '_' . $classname)) {
+                $classname = $prefix . '_' . $classname;
+                return new $classname($page, $target);
+            }
+        }
+
+        return new $classname($page, $target);
     }
 }

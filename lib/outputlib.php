@@ -909,19 +909,16 @@ class theme_config {
      * @param moodle_page $page the page we are rendering
      * @param string $module the name of part of moodle. E.g. 'core', 'quiz', 'qtype_multichoice'.
      * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
+     * @param string $target one of rendering target constants
      * @return renderer_base the requested renderer.
      */
-    public function get_renderer(moodle_page $page, $component, $subtype=null) {
+    public function get_renderer(moodle_page $page, $component, $subtype = null, $target = null) {
         if (is_null($this->rf)) {
-            if (CLI_SCRIPT) {
-                $classname = 'cli_renderer_factory';
-            } else {
-                $classname = $this->rendererfactory;
-            }
+            $classname = $this->rendererfactory;
             $this->rf = new $classname($this);
         }
 
-        return $this->rf->get_renderer($page, $component, $subtype);
+        return $this->rf->get_renderer($page, $component, $subtype, $target);
     }
 
     /**

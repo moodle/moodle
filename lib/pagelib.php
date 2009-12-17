@@ -524,10 +524,11 @@ class moodle_page {
      * Returns instance of page renderer
      * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
      * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
+     * @param string $target one of rendering target constants
      * @return renderer_base
      */
-    public function get_renderer($component, $subtype = null) {
-        return $this->magic_get_theme()->get_renderer($this, $component, $subtype);
+    public function get_renderer($component, $subtype = null, $target = null) {
+        return $this->magic_get_theme()->get_renderer($this, $component, $subtype, $target);
     }
 
     /**

@@ -27,7 +27,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class core_wsdoc_renderer extends plugin_renderer_base {
+class core_webservice_renderer extends plugin_renderer_base {
     /**
      * Create documentation for a description object
      * @param object $params a part of parameter/return description

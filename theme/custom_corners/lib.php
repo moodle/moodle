@@ -2,7 +2,7 @@
 
 /**
  * This is a slight variatoin on the standard_renderer_factory that uses
- * custom_corners_core_renderer instead of moodle_core_renderer.
+ * custom_corners_core_renderer instead of core_renderer.
  *
  * This generates the slightly different HTML that the custom_corners theme expects.
  *
@@ -18,10 +18,10 @@ class custom_corners_renderer_factory extends standard_renderer_factory {
     }
 
     /* Implement the subclass method. */
-    public function get_renderer(moodle_page $page, $module, $subtype=null) {
-        if ($module == 'core') {
-            return new custom_corners_core_renderer($page);
+    public function get_renderer(moodle_page $page, $component, $subtype = null, $target = null) {
+        if ($component == 'core' and empty($subtype)) {
+            return new custom_corners_core_renderer($page, $target);
         }
-        return parent::get_renderer($page, $module, $subtype);
+        return parent::get_renderer($page, $component, $subtype, $target);
     }
 }
