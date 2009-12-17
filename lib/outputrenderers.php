@@ -1879,7 +1879,7 @@ class core_renderer extends renderer_base {
                                 'class' => $cell->get_classes_string(),
                                 'abbr' => $cell->abbr,
                                 'scope' => $cell->scope,
-                                'title' => html_entity_decode($cell->title));
+                                'title' => $cell->title);
                         $tagtype = 'td';
                         if ($cell->header === true) {
                             $tagtype = 'th';
