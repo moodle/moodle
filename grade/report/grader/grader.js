@@ -6,11 +6,11 @@ YAHOO.graderreport.init = function() {
     var rows = YAHOO.util.Dom.getElementsByClassName('heading_name_row');
     if(rows && rows.length>0)
     {
-        var header_cell_region = YAHOO.util.Dom.getRegion(rows[rows.length-1].firstChild);
+        var header_cell_region = YAHOO.util.Dom.getRegion(rows[rows.length-1]);
         if(header_cell_region)
         {
             var height = header_cell_region.bottom - header_cell_region.top;
-            if(!isNan(height))
+            if(!isNaN(height))
             {
                 YAHOO.util.Dom.setStyle('studentheader', 'height', height + 'px');
             }
