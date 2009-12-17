@@ -186,18 +186,20 @@ class page_requirements_manager {
     public function css($stylesheet, $fullurl = false) {
         global $CFG;
 
-        if ($this->headdone) {
-            throw new coding_exception('Cannot require a CSS file after &lt;head> has been printed.', $stylesheet);
-        }
-        if (!$fullurl) {
-            if (!file_exists($CFG->dirroot . '/' . strtok($stylesheet, '?'))) {
-                throw new coding_exception('Attempt to require a CSS file that does not exist.', $stylesheet);
-            }
-            $url = $CFG->httpswwwroot . '/' . $stylesheet;
+        if (isset($this->linkedrequirements[$url])) {
+            return;
         } else {
-            $url = $stylesheet;
-        }
-        if (!isset($this->linkedrequirements[$url])) {
+            if ($this->headdone) {
+                throw new coding_exception('Cannot require a CSS file after &lt;head> has been printed.', $stylesheet);
+            }
+            if (!$fullurl) {
+                if (!file_exists($CFG->dirroot . '/' . strtok($stylesheet, '?'))) {
+                    throw new coding_exception('Attempt to require a CSS file that does not exist.', $stylesheet);
+                }
+                $url = $CFG->httpswwwroot . '/' . $stylesheet;
+            } else {
+                $url = $stylesheet;
+            }
             $this->linkedrequirements[$url] = new required_css($this, $url);
         }
     }
@@ -1239,8 +1241,10 @@ function ajax_resolve_yui2_lib($libname) {
                 $jsurls[] = $libpath . '/'. $js . '/' . $js . '.js';
             }
         } else if ($js == 'connection') {
+            // connection.js provides full features of HTTP transaction
             $jsurls[] = $libpath . '/' . $js . '/' . $js . $suffix;
-            $jsurls[] = $libpath . '/' . $js . '/' . $js . '_core' . $suffix;
+            // connnection_core.js prvides base HTTP transaction support
+            //$jsurls[] = $libpath . '/' . $js . '/' . $js . '_core' . $suffix;
         } else {
             $jsurls[] = $libpath . '/' . $js . '/' . $js . $suffix;
         }
