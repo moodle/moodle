@@ -222,6 +222,22 @@ class plugin_renderer_base extends renderer_base {
         $this->output = $page->get_renderer('core');
         parent::__construct($page);
     }
+
+    /**
+     * Magic method used to pass calls otherwise meant for the standard renderer
+     * to it to ensure we don't go causing unnessecary greif.
+     *
+     * @param string $method
+     * @param array $arguments
+     * @return mixed
+     */
+    public function __call($method, $arguments) {
+        if (method_exists($this->output, $method)) {
+            return call_user_func_array(array($this->output, $method), $arguments);
+        } else {
+            throw new coding_exception('Unknown method called against '.__CLASS__.' :: '.$method);
+        }
+    }
 }
 
 /**
