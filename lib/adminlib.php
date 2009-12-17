@@ -5998,11 +5998,11 @@ class admin_setting_managerepository extends admin_setting {
                     $params['onlyvisible'] = false;
                     $params['type'] = $i->get_typename();
                     $admininstancenumber = count(repository::static_function($i->get_typename(),
-                        'get_instances', array($params)));
+                        'get_instances', $params));
                     $admininstancenumbertext =   " <br/> ". $admininstancenumber .
                         " " . get_string('instancesforadmin', 'repository');
                     $params['context'] = array();
-                    $instancenumber =  count(repository::static_function($i->get_typename(), 'get_instances', array($params))) - $admininstancenumber;
+                    $instancenumber =  count(repository::static_function($i->get_typename(), 'get_instances', $params)) - $admininstancenumber;
                     $instancenumbertext =  "<br/>" . $instancenumber .
                         " " . get_string('instancesforothers', 'repository');
                 } else {
