@@ -19,6 +19,13 @@ $string['cannotsavezipfile'] = 'ZIP dosyası kaydedilemedi.';
 $string['cannotunzipfile'] = 'Dosya arşivi açılamadı.';
 $string['chooselanguagehead'] = 'Bir dil seçin';
 $string['chooselanguagesub'] = 'Lütfen, SADECE kurulum için bir dil seçin. Site ve kullanıcı dillerini sonraki ekranda seçebilirsiniz.';
+$string['cliincorrectvalueerror'] = 'Hata, \"$a->option\" için geçeriz değer (\"$a->value\")';
+$string['cliincorrectvalueretry'] = 'Geçersiz değer, lütfen tekrar deneyin';
+$string['clitypevalue'] = 'değeri yazın';
+$string['clitypevaluedefault'] = 'değeri yazın, varsayılan değeri ($a) kullanmak için Enter tuşuna basın';
+$string['cliunknowoption'] = 'Tanınmayan seçenekler:
+$a
+. Lütfen --help seçeneğini kullanın.';
 $string['dataroot'] = 'Veri Dizini';
 $string['dirroot'] = 'Moodle Dizini';
 $string['environment'] = 'Ortam';
