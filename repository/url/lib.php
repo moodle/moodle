@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2008, David R. Nadeau, NadeauSoftware.com.
  * All rights reserved.
