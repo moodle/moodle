@@ -6,7 +6,7 @@
     require_once('lib.php');
     require_once($CFG->libdir.'/adminlib.php');
 
-    $id = optional_param('id', 0, PARAM_INT);// Course ID
+    $id = required_param('id', PARAM_INT);// Course ID
 
     if (!$course = get_record('course', 'id', $id) ) {
         error('That\'s an invalid course id'.$id);
@@ -21,7 +21,7 @@
     $strreports = get_string('reports');
 
     if ($course->id == SITEID) {
-        admin_externalpage_setup('reportloglive');
+        admin_externalpage_setup('reportloglive','',array('id' => $course->id));
         admin_externalpage_print_header();
 
     } else {
