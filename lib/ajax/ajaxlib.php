@@ -1240,11 +1240,6 @@ function ajax_resolve_yui2_lib($libname) {
             } else {
                 $jsurls[] = $libpath . '/'. $js . '/' . $js . '.js';
             }
-        } else if ($js == 'connection') {
-            // connection.js provides full features of HTTP transaction
-            $jsurls[] = $libpath . '/' . $js . '/' . $js . $suffix;
-            // connnection_core.js prvides base HTTP transaction support
-            //$jsurls[] = $libpath . '/' . $js . '/' . $js . '_core' . $suffix;
         } else {
             $jsurls[] = $libpath . '/' . $js . '/' . $js . $suffix;
         }
