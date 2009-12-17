@@ -56,7 +56,7 @@ unset($SESSION->fromdiscussion);
 
 add_to_log($course->id, "forum", "view subscribers", "subscribers.php?id=$forum->id", $forum->id, $cm->id);
 
-$forumoutput = $PAGE->find_renderer('mod_forum');
+$forumoutput = $PAGE->get_renderer('mod_forum');
 $currentgroup = groups_get_activity_group($cm);
 $options = array('forumid'=>$forum->id, 'currentgroup'=>$currentgroup, 'context'=>$context);
 $existingselector = new forum_existing_subscriber_selector('existingsubscribers', $options);

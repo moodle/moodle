@@ -161,7 +161,7 @@ switch ($mode) {
 // Log it
 add_to_log($course->id, 'lesson', 'view highscores', "highscores.php?id=$cm->id", $lesson->name, $cm->id);
 
-$lessonoutput = $PAGE->find_renderer('mod_lesson');
+$lessonoutput = $PAGE->get_renderer('mod_lesson');
 echo $lessonoutput->header($lesson, 'highscores');
 
 switch ($mode) {

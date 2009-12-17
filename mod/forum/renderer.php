@@ -44,7 +44,7 @@ class mod_forum_renderer extends renderer_base {
      * @param moodle_page $page
      */
     public function __construct(moodle_page $page) {
-        $this->output = $page->find_renderer('core');
+        $this->output = $page->get_renderer('core');
         parent::__construct($page);
     }
 

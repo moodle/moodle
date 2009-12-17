@@ -51,7 +51,7 @@ $PAGE->set_url($url);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 $canmanage = has_capability('mod/lesson:manage', $context);
 
-$lessonoutput = $PAGE->find_renderer('mod_lesson');
+$lessonoutput = $PAGE->get_renderer('mod_lesson');
 
 /// Check these for students only TODO: Find a better method for doing this!
 ///     Check lesson availability

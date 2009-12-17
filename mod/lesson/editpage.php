@@ -98,7 +98,7 @@ if ($data = $mform->get_data()) {
     redirect(new moodle_url($CFG->wwwroot.'/mod/lesson/edit.php', array('id'=>$cm->id)));
 }
 
-$lessonoutput = $PAGE->find_renderer('mod_lesson');
+$lessonoutput = $PAGE->get_renderer('mod_lesson');
 echo $lessonoutput->header($lesson);
 $mform->display();
 echo $lessonoutput->footer();

@@ -167,17 +167,7 @@ class moodle_page {
      */
     protected $_legacypageobject = null;
 
-    /**
-     * Returns instance of page renderer
-     * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
-     * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
-     * @return renderer_base
-     */
-    public function find_renderer($component, $subtype = null) {
-        return $this->magic_get_theme()->get_renderer($this, $component, $subtype);
-    }
-
-/// Getter methods =============================================================
+/// Magic getter methods =============================================================
 /// Due to the __get magic below, you normally do not call these as $PAGE->magic_get_x
 /// methods, but instead use the $PAGE->x syntax.
 
@@ -529,6 +519,16 @@ class moodle_page {
     }
 
 /// Other information getting methods ==========================================
+
+    /**
+     * Returns instance of page renderer
+     * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
+     * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
+     * @return renderer_base
+     */
+    public function get_renderer($component, $subtype = null) {
+        return $this->magic_get_theme()->get_renderer($this, $component, $subtype);
+    }
 
     /**
      * Checks to see if there are any items on the navbar object
@@ -1049,7 +1049,7 @@ class moodle_page {
 
         if ($this === $PAGE) {
             $THEME = $this->_theme;
-            $OUTPUT = $this->find_renderer('core');
+            $OUTPUT = $this->get_renderer('core');
         }
 
         $this->_wherethemewasinitialised = debug_backtrace();

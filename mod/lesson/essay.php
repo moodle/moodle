@@ -277,7 +277,7 @@ switch ($mode) {
 // Log it
 add_to_log($course->id, 'lesson', 'view grade', "essay.php?id=$cm->id", get_string('manualgrading', 'lesson'), $cm->id);
 
-$lessonoutput = $PAGE->find_renderer('mod_lesson');
+$lessonoutput = $PAGE->get_renderer('mod_lesson');
 echo $lessonoutput->header($lesson, 'essay');
 
 switch ($mode) {

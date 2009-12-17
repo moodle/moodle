@@ -240,7 +240,7 @@ class webservice_documentation_generator {
         $USER->id = null;
         echo $OUTPUT->header();
         $USER->id = $userid;
-        $renderer = $PAGE->find_renderer('core', 'wsdoc');
+        $renderer = $PAGE->get_renderer('core', 'wsdoc');
         echo $renderer->documentation_html($this->functions, $this->username);
         echo $OUTPUT->footer();
 
@@ -264,7 +264,7 @@ class webservice_documentation_generator {
         $PAGE->set_pagelayout('popup');
 
         echo $OUTPUT->header();
-        $renderer = $PAGE->find_renderer('core', 'wsdoc');
+        $renderer = $PAGE->get_renderer('core', 'wsdoc');
         echo $renderer->login_page_html($errormessage);
         echo $OUTPUT->footer();
 
