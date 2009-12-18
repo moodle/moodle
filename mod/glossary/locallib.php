@@ -33,6 +33,7 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
 
     private $glossary;
     private $exportdata;
+    private $keyedfiles = array(); // keyed on entry
 
     /**
      * return array of expected call back arguments
@@ -69,7 +70,16 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
             WHERE ec.entryid ' . $where, $params);
 
         $this->exportdata = array('entries' => $entries, 'aliases' => $aliases, 'categoryentries' => $categoryentries);
-        //todo files - both attachments and entry files
+        $fs = get_file_storage();
+        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $this->multifiles = array();
+        foreach (array_keys($entries) as $entry) {
+            $this->keyedfiles[$entry] = array_merge(
+                $fs->get_area_files($context->id, 'glossary_attachment', $entry, "timemodified", false),
+                $fs->get_area_files($context->id, 'glossary_entry', $entry, "timemodified", false)
+            );
+            $this->multifiles = array_merge($this->multifiles, $this->keyedfiles[$entry]);
+        }
     }
 
     /**
@@ -78,7 +88,9 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
      * @return constant one of PORTFOLIO_TIME_XX
      */
     public function expected_time() {
-        return portfolio_expected_time_db(count($this->exportdata['entries']));
+        $filetime = portfolio_expected_time_file($this->multifiles);
+        $dbtime   = portfolio_expected_time_db(count($this->exportdata['entries']));
+        return ($filetime > $dbtime) ? $filetime : $dbtime;
     }
 
     /**
@@ -87,7 +99,11 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
      * @return string
      */
     public function get_sha1() {
-        return sha1(serialize($this->exportdata));
+        $file = '';
+        if ($this->multifiles) {
+            $file = $this->get_sha1_file();
+        }
+        return sha1(serialize($this->exportdata) . $file);
     }
 
     /**
@@ -120,8 +136,35 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
             $this->exporter->write_new_file($csv, clean_filename($this->cm->name) . '.csv', false);
             return;
         } else if ($this->get('exporter')->get('formatclass') == PORTFOLIO_FORMAT_LEAP2A) {
-//todo
+            global $USER, $DB;
+            $writer = $this->get('exporter')->get('format')->leap2a_writer($USER);
+            $format = $this->exporter->get('format');
+            $filename = $this->get('exporter')->get('format')->manifest_name();
+            foreach ($entries as $e) {
+                $content = glossary_entry_portfolio_caller::entry_content($this->course, $this->cm, $this->glossary, $e, (array_key_exists($e->id, $aliases) ? $aliases[$e->id] : array()), $format);
+                $entry = new portfolio_format_leap2a_entry('glossaryentry' . $e->id, $e->concept, 'entry', $content);
+                $entry->author    = $DB->get_record('user', array('id' => $e->userid), 'id,firstname,lastname,email');
+                $entry->published = $e->timecreated;
+                $entry->updated   = $e->timemodified;
+                if (!empty($this->keyedfiles[$e->id])) {
+                    $entry->add_attachments($this->keyedfiles[$e->id]);
+                    foreach ($this->keyedfiles[$e->id] as $file) {
+                        $this->exporter->copy_existing_file($file);
+                    }
+                }
+                if (!empty($categories[$e->id])) {
+                    foreach ($categories[$e->id] as $cat) {
+                        // this essentially treats them as plain tags
+                        // leap has the idea of category schemes
+                        // but I think this is overkill here
+                        $entry->add_category($cat);
+                    }
+                }
+                $writer->add_entry($entry);
+            }
+            $content = $writer->to_xml();
         }
+        $this->exporter->write_new_file($content, $filename, true);
     }
 
     /**
