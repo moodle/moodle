@@ -21,7 +21,6 @@
 
 
 // disable moodle specific debug messages and any errors in output
-define('NO_DEBUG_DISPLAY', true);
 define('NO_MOODLE_COOKIES', true);
 
 require_once('../config.php');
@@ -38,8 +37,7 @@ require_once('lib.php');
  */
 class webservice_documentation_generator {
 
-    /** @property array all external function description
-     *  they  */
+    /** @property array all external function description*/
     protected $functions;
 
      /** @property string $username name of local user */
@@ -47,6 +45,9 @@ class webservice_documentation_generator {
 
     /** @property string $password password of the local user */
     protected $password = null;
+
+    /** @property object $webserviceuser authenticated web service user */
+    protected $webserviceuser = null;
 
     /**
      * Contructor
@@ -66,7 +67,7 @@ class webservice_documentation_generator {
         // init all properties from the request data
         $this->get_authentication_parameters();
 
-        // this sets up $USER
+        // this sets up $this->webserviceuser
         try {
             $this->authenticate_user();
         } catch(moodle_exception $e) {
@@ -112,7 +113,7 @@ class webservice_documentation_generator {
      * @return void
      */
     protected function generate_documentation() {
-        global $USER, $DB;
+        global $DB;
 
     /// first of all get a complete list of services user is allowed to access
         $params = array();
@@ -139,13 +140,12 @@ class webservice_documentation_generator {
                   JOIN {external_services_users} su ON (su.externalserviceid = s.id AND su.userid = :userid)
                  WHERE s.enabled = 1 AND su.validuntil IS NULL OR su.validuntil < :now $wscond2";
 
-        $params = array_merge($params, array('userid'=>$USER->id, 'now'=>time()));
+        $params = array_merge($params, array('userid'=>$this->webserviceuser->id, 'now'=>time()));
 
         $serviceids = array();
         $rs = $DB->get_recordset_sql($sql, $params);
 
         // make sure user may access at least one service
-        $remoteaddr = getremoteaddr();
         $allowed = false;
         foreach ($rs as $service) {
             if (isset($serviceids[$service->id])) {
@@ -153,9 +153,6 @@ class webservice_documentation_generator {
             }
             if ($service->requiredcapability and !has_capability($service->requiredcapability, $this->restricted_context)) {
                 continue; // cap required, sorry
-            }
-            if ($service->iprestriction and !address_in_subnet($remoteaddr, $service->iprestriction)) {
-                continue; // wrong request source ip, sorry
             }
             $serviceids[$service->id] = $service->id;
         }
@@ -181,12 +178,12 @@ class webservice_documentation_generator {
 
      /**
      * Authenticate user using username+password
-     * This function sets up $USER global.
+     * This function sets up $this->webserviceuser.
      * called into the Moodle header
      * @return void
      */
     protected function authenticate_user() {
-        global $CFG, $DB, $USER;
+        global $CFG, $DB;
 
         if (!NO_MOODLE_COOKIES) {
             throw new coding_exception('Cookies must be disabled!');
@@ -212,7 +209,7 @@ class webservice_documentation_generator {
             throw new webservice_access_exception('Wrong username or password');
         }
 
-        $USER = $DB->get_record('user', array('username'=>$this->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);
+        $this->webserviceuser = $DB->get_record('user', array('username'=>$this->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);
 
 
     }
@@ -225,33 +222,32 @@ class webservice_documentation_generator {
      * Generate and display the documentation
      */
     protected function display_documentation_html() {
-        global $PAGE, $OUTPUT, $SITE, $USER;
+        global $PAGE, $OUTPUT, $SITE;
 
         $PAGE->set_url('/webservice/wsdoc');
         $PAGE->set_docs_path('');
         $PAGE->set_title($SITE->fullname." ".get_string('wsdocumentation', 'webservice'));
         $PAGE->set_heading($SITE->fullname." ".get_string('wsdocumentation', 'webservice'));
         $PAGE->set_pagelayout('popup');
-        //unlog temporarly the user in order to not trigger environment.php called by Moodle header.
-        //environment.php checkes the sessionkey that we don't have here.
-        //emvrionment.php is just used to detect the flash player. We don't need
-        //to check the flash player version.
-        $userid = $USER->id;
-        $USER->id = null;
+
         echo $OUTPUT->header();
-        $USER->id = $userid;
-        $renderer = $PAGE->get_renderer('core', 'wsdoc');
-        echo $renderer->documentation_html($this->functions, $this->username);
+
+        $activatedprotocol = array();
+        $activatedprotocol['rest'] = webservice_protocol_is_enabled('rest');
+        $activatedprotocol['xmlrpc'] = webservice_protocol_is_enabled('xmlrpc');
+        $renderer = $PAGE->get_renderer('core', 'webservice');
+        echo $renderer->documentation_html($this->functions, $this->username, $activatedprotocol);
+
         echo $OUTPUT->footer();
 
     }
 
     /**
      * Display login page to the web service documentation
-     * @global <type> $PAGE
-     * @global <type> $OUTPUT
-     * @global <type> $SITE
-     * @global <type> $CFG
+     * @global object $PAGE
+     * @global object $OUTPUT
+     * @global object $SITE
+     * @global object $CFG
      * @param string $errormessage error message displayed if wrong login
      */
      protected function display_login_page_html($errormessage) {

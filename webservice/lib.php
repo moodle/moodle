@@ -195,7 +195,7 @@ abstract class webservice_server implements webservice_server_interface {
  */
 abstract class webservice_zend_server extends webservice_server {
 
-    /** @property string name of the zend server class */
+    /** @property string name of the zend server class : Zend_XmlRpc_Server, Zend_Soap_Server, Zend_Soap_AutoDiscover, ...*/
     protected $zend_class;
 
     /** @property object Zend server instance */

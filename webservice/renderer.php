@@ -28,7 +28,7 @@
  */
 
 class core_webservice_renderer extends plugin_renderer_base {
-    /**
+     /**
      * Create documentation for a description object
      * @param object $params a part of parameter/return description
      * @return string the html to display
@@ -63,8 +63,6 @@ class core_webservice_renderer extends plugin_renderer_base {
             }
             return $type." ".$paramdesc;
         }
-
-
     }
 
     /**
@@ -236,7 +234,7 @@ EOF;
      * @param string $username
      * @return string the html to diplay
      */
-    public function documentation_html($functions, $username) {
+    public function documentation_html($functions, $username, $activatedprotocol) {
 
         $brakeline = <<<EOF
 
@@ -245,7 +243,7 @@ EOF;
 
         $documentationhtml = "";
 
-        $documentationhtml .= "<table style=\"margin-left:auto; margin-right:auto;\"><tr><td>";
+        $documentationhtml .= "<table style=\"margin-left:auto; margin-right:auto;\"><tr><td style=\"text-align=left\">";
         $documentationhtml .= get_string('wsdocumentationintro', 'webservice', $username);
         $documentationhtml .= "<br/><br/><br/>";
 
@@ -258,38 +256,36 @@ EOF;
             $documentationhtml .= "</div>";
             $documentationhtml .= "<br/><br/>";
 
-            $documentationhtml .= "<span style=\"color:#EA33A6\">Authentication</span><br/>";
-            $documentationhtml .= "<span style=\"font-size:80%\">";
-            $documentationhtml .= get_string('requireauthentication', 'webservice'/*,$description->type*/);
-            $documentationhtml .= "</span>";
-            $documentationhtml .= "<br/><br/>";
-
             $documentationhtml .= "<span style=\"color:#EA33A6\">".get_string('arguments', 'webservice')."</span><br/>";
             foreach ($description->parameters_desc->keys as $paramname => $paramdesc) {
                 $documentationhtml .= "<span style=\"font-size:80%\">";
                 $required = $paramdesc->required?get_string('required', 'webservice'):get_string('optional', 'webservice');
                 $documentationhtml .= "<b>".$paramname . "</b> (" .$required. ")<br/>";
                 $documentationhtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".$paramdesc->desc." <br/><br/>";
+                $documentationhtml .= "<pre>";
                 $documentationhtml .= "<div style=\"border:solid 1px #DEDEDE;background:#FFF1BC;color:#222222;padding:4px;\">";
-                $documentationhtml .= "<pre>";
-                $documentationhtml .= print_collapsible_region_start('', 'aera_'.$functionname."_".$paramname,'<b>'.get_string('xmlrpcstructure', 'webservice').'</b>',false,true,true);
-                //echo '<b>'.get_string('xmlrpcstructure', 'webservice').'</b><br/>';
+                //$documentationhtml .= print_collapsible_region_start('', 'aera_'.$functionname."_".$paramname,'<b>'.get_string('generalstructure', 'webservice').'</b>',false,true,true);
+                $documentationhtml .= '<b>'.get_string('generalstructure', 'webservice').'</b><br/>';
                 $documentationhtml .= $brakeline.$this->detailed_description_html($paramdesc);
-                $documentationhtml .= print_collapsible_region_end(true);
-                $documentationhtml .= "</pre>";
-                $documentationhtml .= "</div><br/>";
-                $documentationhtml .= "<pre>";
-                $documentationhtml .= "<div style=\"border:solid 1px #DEDEDE;background:#DFEEE7;color:#222222;padding:4px;\">";
-                $documentationhtml .= '<b>'.get_string('phpparam', 'webservice').'</b><br/>';
-                $documentationhtml .= $brakeline.'['.$paramname.'] =>'.htmlentities($this->xmlrpc_param_description_html($paramdesc)). $brakeline. $brakeline;
-                $documentationhtml .= "</div><br/>";
-                $documentationhtml .= "</pre>";
-                 $documentationhtml .= "<pre>";
-                $documentationhtml .= "<div style=\"border:solid 1px #DEDEDE;background:#FEEBE5;color:#222222;padding:4px;\">";
-                $documentationhtml .= '<b>'.get_string('restparam', 'webservice').'</b><br/>';
-                $documentationhtml .= $brakeline.htmlentities($this->rest_param_description_html($paramdesc,$paramname)). $brakeline. $brakeline;
+                //$documentationhtml .= print_collapsible_region_end(true);
                 $documentationhtml .= "</div>";
-                $documentationhtml .= "</pre>";
+                $documentationhtml .= "</pre><br/>";
+                if (!empty($activatedprotocol['xmlrpc'])) {
+                    $documentationhtml .= "<pre>";
+                    $documentationhtml .= "<div style=\"border:solid 1px #DEDEDE;background:#DFEEE7;color:#222222;padding:4px;\">";
+                    $documentationhtml .= '<b>'.get_string('phpparam', 'webservice').'</b><br/>';
+                    $documentationhtml .= $brakeline.'['.$paramname.'] =>'.htmlentities($this->xmlrpc_param_description_html($paramdesc)). $brakeline. $brakeline;
+                    $documentationhtml .= "</div><br/>";
+                    $documentationhtml .= "</pre>";
+                }
+                if (!empty($activatedprotocol['rest'])) {
+                    $documentationhtml .= "<pre>";
+                    $documentationhtml .= "<div style=\"border:solid 1px #DEDEDE;background:#FEEBE5;color:#222222;padding:4px;\">";
+                    $documentationhtml .= '<b>'.get_string('restparam', 'webservice').'</b><br/>';
+                    $documentationhtml .= $brakeline.htmlentities($this->rest_param_description_html($paramdesc,$paramname)). $brakeline. $brakeline;
+                    $documentationhtml .= "</div>";
+                    $documentationhtml .= "</pre>";
+                }
                 $documentationhtml .= "</span>";
             }
             $documentationhtml .= "<br/><br/>";
@@ -301,44 +297,58 @@ EOF;
             }
 
             if (!empty($description->returns_desc)) {
+                $documentationhtml .= "<pre>";
                 $documentationhtml .= "<div style=\"border:solid 1px #DEDEDE;background:#FFF1BC;color:#222222;padding:4px;\">";
-                $documentationhtml .= "<pre>";
-                $documentationhtml .= print_collapsible_region_start('', 'aera_'.$functionname."_xmlrpc_return",'<b>'.get_string('xmlrpcstructure', 'webservice').'</b>',false,true,true);
-                //echo '<b>'.get_string('xmlrpcstructure', 'webservice').'</b><br/>';
+                //$documentationhtml .= print_collapsible_region_start('', 'aera_'.$functionname."_xmlrpc_return",'<b>'.get_string('generalstructure', 'webservice').'</b>',false,true,true);
+                $documentationhtml .= '<b>'.get_string('generalstructure', 'webservice').'</b><br/>';
                 $documentationhtml .= $brakeline.$this->detailed_description_html($description->returns_desc);
-                $documentationhtml .= print_collapsible_region_end(true);
-                $documentationhtml .= "</pre>";
-                $documentationhtml .= "</div><br/>";
-                $documentationhtml .= "<pre>";
-                $documentationhtml .= "<div style=\"border:solid 1px #DEDEDE;background:#DFEEE7;color:#222222;padding:4px;\">";
-                $documentationhtml .= '<b>'.get_string('phpresponse', 'webservice').'</b><br/>';
-                $documentationhtml .= htmlentities($this->xmlrpc_param_description_html($description->returns_desc)).$brakeline.$brakeline;
+                //$documentationhtml .= print_collapsible_region_end(true);
                 $documentationhtml .= "</div>";
                 $documentationhtml .= "</pre><br/>";
-                $documentationhtml .= $this->rest_response_html($functionname, $description->returns_desc);
+                if (!empty($activatedprotocol['xmlrpc'])) {
+                    $documentationhtml .= "<pre>";
+                    $documentationhtml .= "<div style=\"border:solid 1px #DEDEDE;background:#DFEEE7;color:#222222;padding:4px;\">";
+                    $documentationhtml .= '<b>'.get_string('phpresponse', 'webservice').'</b><br/>';
+                    $documentationhtml .= htmlentities($this->xmlrpc_param_description_html($description->returns_desc)).$brakeline.$brakeline;
+                    $documentationhtml .= "</div>";
+                    $documentationhtml .= "</pre><br/>";
+                }
+                if (!empty($activatedprotocol['rest'])) {
+                    $documentationhtml .= $this->rest_response_html($functionname, $description->returns_desc);
+                }
             }
             $documentationhtml .= "</span>";
             $documentationhtml .= "<br/><br/>";
 
 
+            if (!empty($activatedprotocol['rest'])) {
+                $documentationhtml .= "<span style=\"color:#EA33A6\">".get_string('errorcodes', 'webservice')."</span><br/>";
+                $documentationhtml .= "<span style=\"font-size:80%\">";
+                $documentationhtml .= "<pre>";
+                $documentationhtml .= "<div style=\"border:solid 1px #DEDEDE;background:#FEEBE5;color:#222222;padding:4px;\">";
 
-            $documentationhtml .= "<span style=\"color:#EA33A6\">".get_string('errorcodes', 'webservice')."</span><br/>";
-            $documentationhtml .= "<span style=\"font-size:80%\">";
-            $documentationhtml .= get_string('noerrorcode', 'webservice');
+                $documentationhtml .= '<b>'.get_string('restexception', 'webservice').'</b><br/>';
+                $errormessage = get_string('invalidparameter', 'debug');
+                $restexceptiontext =<<<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<EXCEPTION class="invalid_parameter_exception">
+    <MESSAGE>{$errormessage}</MESSAGE>
+    <DEBUGINFO></DEBUGINFO>
+</EXCEPTION>
+EOF;
+                $documentationhtml .= $brakeline.htmlentities($restexceptiontext);
+                $documentationhtml .= "</div>";
+                $documentationhtml .= "</pre><br/>";
             $documentationhtml .= "</span>";
-            $documentationhtml .= "<br/><br/>";
-
-
-            $documentationhtml .= "<span style=\"color:#EA33A6\">".get_string('apiexplorer', 'webservice')."</span><br/>";
-            $documentationhtml .= "<span style=\"font-size:80%\">";
-            $documentationhtml .= get_string('apiexplorernotavalaible', 'webservice');
-            $documentationhtml .= "</span>";
+            }
             $documentationhtml .= "<br/><br/>";
 
             $documentationhtml .= print_collapsible_region_end(true);
         }
 
-        $documentationhtml .= "</td></tr></table>";
+        $documentationhtml .= "</td>";
+
+        $documentationhtml .= "</tr></table>";
         return $documentationhtml;
 
     }
@@ -382,7 +392,6 @@ EOF;
         $contents .= "<br/><br/>";
 
         $htmlloginpage .= $OUTPUT->form($form, $contents);
-
 
         $htmlloginpage .= "</td></tr></table>";
         return $htmlloginpage;
