@@ -70,13 +70,16 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
             throw new portfolio_caller_exception('notexportable', 'portfolio', $this->get_return_url());
         }
 
+        if (is_callable(array($this->assignment, 'portfolio_load_data'))) {
+            return $this->assignment->portfolio_load_data($this);
+        }
         $this->set_file_and_format_data($this->fileid, $this->assignment->context->id, 'assignment_submission', $this->user->id, 'timemodified', false);
     }
 
     public function prepare_package() {
-        global $CFG;
+        global $CFG, $DB;
         if (is_callable(array($this->assignment, 'portfolio_prepare_package'))) {
-            return $this->assignment->portfolio_prepare_package($this->exporter, $this->user->id);
+            return $this->assignment->portfolio_prepare_package($this->exporter, $this->user);
         }
         if ($this->exporter->get('formatclass') == PORTFOLIO_FORMAT_LEAP2A) {
             $leapwriter = $this->exporter->get('format')->leap2a_writer();
@@ -93,6 +96,9 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
                 $id = $baseid . $file->get_id();
                 $entry = new portfolio_format_leap2a_entry($id, $file->get_filename(), 'resource',  $file);
                 $entry->add_category('offline', 'resource_type');
+                $entry->published = $file->get_timecreated();
+                $entry->updated = $file->get_timemodified();
+                $entry->author = $this->user;
                 $leapwriter->add_entry($entry);
                 $this->exporter->copy_existing_file($file);
             }
@@ -104,7 +110,7 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
     public function get_sha1() {
         global $CFG;
         if (is_callable(array($this->assignment, 'portfolio_get_sha1'))) {
-            return $this->assignment->portfolio_get_sha1($this->user->id);
+            return $this->assignment->portfolio_get_sha1($this);
         }
         return $this->get_sha1_file();
     }

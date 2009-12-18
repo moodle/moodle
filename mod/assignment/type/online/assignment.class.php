@@ -110,7 +110,12 @@ class assignment_online extends assignment_base {
                     echo format_text($text, $submission->data2);
                     $button = new portfolio_add_button();
                     $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/locallib.php');
-                    $button->set_formats(PORTFOLIO_FORMAT_PLAINHTML); //TODO this might have files?
+                    $fs = get_file_storage();
+                    if ($files = $fs->get_area_files($this->context->id, 'assignment_online_submission', $submission->id, "timemodified", false)) {
+                        $button->set_formats(PORTFOLIO_FORMAT_RICHHTML);
+                    } else {
+                        $button->set_formats(PORTFOLIO_FORMAT_PLAINHTML);
+                    }
                     $button->render();
                 } else if (!has_capability('mod/assignment:submit', $context)) { //fix for #4604
                     echo '<div style="text-align:center">'. get_string('guestnosubmit', 'assignment').'</div>';
@@ -279,25 +284,52 @@ class assignment_online extends assignment_base {
         return true;
     }
 
-    function portfolio_get_sha1($userid=0) {
-        $submission = $this->get_submission($userid);
-        return sha1(format_text($submission->data1, $submission->data2));
+    function portfolio_load_data($caller) {
+        $submission = $this->get_submission();
+        $fs = get_file_storage();
+        if ($files = $fs->get_area_files($this->context->id, 'assignment_online_submission', $submission->id, "timemodified", false)) {
+            $caller->set('multifiles', $files);
+        }
     }
 
-    function portfolio_prepare_package($exporter, $userid=0) {
-        $submission = $this->get_submission($userid);
+    function portfolio_get_sha1($caller) {
+        $submission = $this->get_submission();
+        $textsha1 = sha1(format_text($submission->data1, $submission->data2));
+        $filesha1 = '';
+        try {
+            $filesha1 = $caller->get_sha1_file();
+        } catch (portfolio_caller_exception $e) {} // no files
+        return sha1($textsha1 . $filesha1);
+    }
+
+    function portfolio_prepare_package($exporter, $user) {
+        $submission = $this->get_submission($user->id);
         $html = format_text($submission->data1, $submission->data2);
-        if ($exporter->get('formatclass') == PORTFOLIO_FORMAT_PLAINHTML) {
-            return $exporter->write_new_file($html, 'assignment.html', false);
+        $html = portfolio_rewrite_pluginfile_urls($html, $this->context->id, 'assignment_online_submission', $submission->id, $exporter->get('format'));
+        if (in_array($exporter->get('formatclass'), array(PORTFOLIO_FORMAT_PLAINHTML, PORTFOLIO_FORMAT_RICHHTML))) {
+            if ($files = $exporter->get('caller')->get('multifiles')) {
+                foreach ($files as $f) {
+                    $exporter->copy_existing_file($file);
+                }
+            }
+            return $exporter->write_new_file($html, 'assignment.html', !empty($files));
         } else if ($exporter->get('formatclass') == PORTFOLIO_FORMAT_LEAP2A) {
             $leapwriter = $exporter->get('format')->leap2a_writer();
-            $entry = new portfolio_format_leap2a_entry('assignmentonline' . $this->assignment->id, $this->assignment->name, 'resource', $html); // TODO entry?
+            $entry = new portfolio_format_leap2a_entry('assignmentonline' . $this->assignment->id, $this->assignment->name, 'resource', $html);
             $entry->add_category('web', 'resource_type');
+            $entry->published = $submission->timecreated;
+            $entry->updated = $submission->timemodified;
+            $entry->author = $user;
             $leapwriter->add_entry($entry);
-            return $exporter->write_new_file($leapwriter->to_xml(), $exporter->get('format')->manifest_name(), true);
-            //TODO attached files?!
+            if ($files = $exporter->get('caller')->get('multifiles')) {
+                foreach ($files as $f) {
+                    $exporter->copy_existing_file($f);
+                    $entry->add_attachment($f);
+                }
+            }
+            $exporter->write_new_file($leapwriter->to_xml(), $exporter->get('format')->manifest_name(), true);
         } else {
-            die('wtf ;' . $exporter->get('formatclass'));
+            debugging('invalid format class: ' . $exporter->get('formatclass'));
         }
     }
 
