@@ -14,7 +14,7 @@ class assignment_online extends assignment_base {
 
     function view() {
 
-        global $USER, $OUTPUT;
+        global $OUTPUT;
 
         $edit  = optional_param('edit', 0, PARAM_BOOL);
         $saved = optional_param('saved', 0, PARAM_BOOL);
@@ -45,6 +45,7 @@ class assignment_online extends assignment_base {
         $mformdata = new stdClass;
         $mformdata->context = $this->context;
         $mformdata->maxbytes = $this->course->maxbytes;
+        $mformdata->submission = $submission;
         $mform = new mod_assignment_online_edit_form(null, $mformdata);
 
         $defaults = new object();
@@ -105,7 +106,7 @@ class assignment_online extends assignment_base {
             } else {
                 echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter', 'online');
                 if ($submission && has_capability('mod/assignment:exportownsubmission', $this->context)) {
-                    $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $this->context->id, 'assignment_online_submission', $USER->id);
+                    $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $this->context->id, 'assignment_online_submission', $submission->id);
                     echo format_text($text, $submission->data2);
                     $button = new portfolio_add_button();
                     $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/locallib.php');
@@ -359,7 +360,6 @@ class assignment_online extends assignment_base {
 class mod_assignment_online_edit_form extends moodleform {
 
     public function set_data($data) {
-        global $USER;
         $editoroptions = $this->get_editor_options();
         if (!isset($data->text)) {
             $data->text = '';
@@ -369,16 +369,29 @@ class mod_assignment_online_edit_form extends moodleform {
         } else {
             $data->textformat = $data->format;
         }
-        $data = file_prepare_standard_editor($data, 'text', $editoroptions, $this->_customdata->context, $editoroptions['filearea'], $USER->id);
+
+        if (!empty($this->_customdata->submission->id)) {
+            $itemid = $this->_customdata->submission->id;
+        } else {
+            $itemid = null;
+        }
+
+        $data = file_prepare_standard_editor($data, 'text', $editoroptions, $this->_customdata->context, $editoroptions['filearea'], $itemid);
         return parent::set_data($data);
     }
 
     public function get_data() {
-        global $USER;
         $data = parent::get_data();
+
+        if (!empty($this->_customdata->submission->id)) {
+            $itemid = $this->_customdata->submission->id;
+        } else {
+            $itemid = null;
+        }
+
         if ($data) {
             $editoroptions = $this->get_editor_options();
-            $data = file_postupdate_standard_editor($data, 'text', $editoroptions, $this->_customdata->context, $editoroptions['filearea'], $USER->id);
+            $data = file_postupdate_standard_editor($data, 'text', $editoroptions, $this->_customdata->context, $editoroptions['filearea'], $itemid);
             $data->format = $data->textformat;
         }
         return $data;
