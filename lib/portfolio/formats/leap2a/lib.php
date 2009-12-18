@@ -332,6 +332,16 @@ class portfolio_format_leap2a_entry {
     }
 
     /**
+     * helper function to add a bunch of files at the same time
+     * useful for passing $this->multifiles straight through from the portfolio_caller
+     */
+    public function add_attachments(array $files) {
+        foreach ($files as $file) {
+            $this->add_attachment($file);
+        }
+    }
+
+    /**
      * add a category to this entry
      * http://wiki.cetis.ac.uk/2009-03/LEAP2A_categories
      *
