@@ -185,20 +185,21 @@ class page_requirements_manager {
      */
     public function css($stylesheet, $fullurl = false) {
         global $CFG;
+        if (!$fullurl) {
+            if (!file_exists($CFG->dirroot . '/' . strtok($stylesheet, '?'))) {
+                throw new coding_exception('Attempt to require a CSS file that does not exist.', $stylesheet);
+            }
+            $url = $CFG->httpswwwroot . '/' . $stylesheet;
+        } else {
+            $url = $stylesheet;
+        }
 
         if (isset($this->linkedrequirements[$url])) {
+            // already required, ignore it
             return;
         } else {
             if ($this->headdone) {
                 throw new coding_exception('Cannot require a CSS file after &lt;head> has been printed.', $stylesheet);
-            }
-            if (!$fullurl) {
-                if (!file_exists($CFG->dirroot . '/' . strtok($stylesheet, '?'))) {
-                    throw new coding_exception('Attempt to require a CSS file that does not exist.', $stylesheet);
-                }
-                $url = $CFG->httpswwwroot . '/' . $stylesheet;
-            } else {
-                $url = $stylesheet;
             }
             $this->linkedrequirements[$url] = new required_css($this, $url);
         }
