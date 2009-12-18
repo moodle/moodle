@@ -29,25 +29,22 @@
  */
 
 /**
-* the most basic type - pretty much everything is a subtype
-*/
-class portfolio_format_file {
+ * base class to inherit from
+ * do not use this anywhere in supported_formats
+ */
+abstract class portfolio_format {
 
     /**
      * array of mimetypes this format supports
      */
-    public static function mimetypes() {
-        return array(null);
-    }
+    public static abstract function mimetypes();
 
     /**
      * for multipart formats, eg html with attachments,
      * we need to have a directory to place associated files in
      * inside the zip file. this is the name of that directory
      */
-    public static function get_file_directory() {
-        return null;
-    }
+    public static abstract function get_file_directory();
 
     /**
      * given a file, return a snippet of markup in whatever format
@@ -55,9 +52,40 @@ class portfolio_format_file {
      * usually involves the path given by {@link get_file_directory}
      * this is not supported in subclasses of portfolio_format_file
      * since they're all just single files.
+     *
+     * @param stored_file $file
+     * @param array       $options array of options to pass. can contain:
+     *              attributes => hash of existing html attributes (eg title, height, width, etc)
+     *                    and whatever the sub class adds into this list
+     *
+     * @return string some html or xml or whatever
      */
-    public static function file_output($file) {
-        throw new portfolio_exception('fileoutputnotsupported', 'portfolio');
+    public static abstract function file_output($file, $options=null);
+
+    public static function make_tag($file, $path, $attributes) {
+        $srcattr = 'href';
+        $tag     = 'a';
+        $content = $file->get_filename();
+        if (in_array($file->get_mimetype(), portfolio_format_image::mimetypes())) {
+            $srcattr = 'src';
+            $tag     = 'img';
+            $content = '';
+        }
+
+        $attributes[$srcattr] = $path; // this will override anything we might have been passed (which is good)
+        $dom = new DomDocument();
+        $elem = null;
+        if ($content) {
+            $elem = $dom->createElement($tag, $content);
+        } else {
+            $elem = $dom->createElement($tag);
+        }
+
+        foreach ($attributes as $key => $value) {
+            $elem->setAttribute($key, $value);
+        }
+        $dom->appendChild($elem);
+        return $dom->saveXML($elem);
     }
 
     /**
@@ -81,6 +109,24 @@ class portfolio_format_file {
      */
     public static function conflicts($format) {
         return false;
+    }
+}
+
+/**
+* the most basic type - pretty much everything is a subtype
+*/
+class portfolio_format_file extends portfolio_format {
+
+    public static function mimetypes() {
+        return array();
+    }
+
+    public static function get_file_directory() {
+        throw new portfolio_exception('fileoutputnotsupported', 'portfolio');
+    }
+
+    public static function file_output($file, $options=null) {
+        throw new portfolio_exception('fileoutputnotsupported', 'portfolio');
     }
 }
 
@@ -145,26 +191,11 @@ class portfolio_format_text extends portfolio_format_file {
  * base class for rich formats.
  * these are multipart - eg things with attachments
  */
-abstract class portfolio_format_rich {
+abstract class portfolio_format_rich extends portfolio_format {
+
     public static function mimetypes() {
-        return array(null);
+        return array();
     }
-
-    public static function conflicts($format) {
-        return false;
-    }
-
-    /**
-     * given a file, return a snippet of markup in whatever format
-     * to link to that file.
-     * usually involves the path given by {@link get_file_directory}
-     * this is not supported in subclasses of portfolio_format_file
-     * since they're all just single files.
-     *
-     * @param stored_file $file the file to link to
-     * @param mixed       $extras any extra arguments
-     */
-    public static abstract function file_output($file, $extras=null);
 
 }
 
@@ -174,14 +205,15 @@ abstract class portfolio_format_rich {
  */
 class portfolio_format_richhtml extends portfolio_format_rich {
     public static function get_file_directory() {
-        return 'site_files';
+        return 'site_files/';
     }
-    public static function file_output($file, $extras=null) {
-        $path = self::get_file_directory() . '/' . $file->get_filename();
-        if (in_array($file->get_mimetype(), portfolio_format_image::mimetypes())) {
-            return '<img src="' . $path . '" alt="' . $file->get_filename() . '" />';
+    public static function file_output($file, $options=null) {
+        $path = self::get_file_directory() . $file->get_filename();
+        $attributes = array();
+        if (!empty($options['attributes']) && is_array($options['attributes'])) {
+            $attributes = $options['attributes'];
         }
-        return '<a href="' . $path . '">' . $file->get_filename() . '</a>';
+        return self::make_tag($file, $path, $attributes);
     }
     public static function conflicts($format) { // TODO revisit the conflict with file, since we zip here
         return ($format == PORTFOLIO_FORMAT_PLAINHTML || $format == PORTFOLIO_FORMAT_FILE);
@@ -199,16 +231,25 @@ class portfolio_format_leap2a extends portfolio_format_rich {
      * return the link to a file
      *
      * @param stored_file $file
-     * @param boolean $entry whether the file is a LEAP2A entry or just a bundled file (default false)
+     * @param array       $options can contain the same as normal, with the addition of:
+     *             entry => whether the file is a LEAP2A entry or just a bundled file (default false)
      */
-    public static function file_output($file, $entry=false) {
+    public static function file_output($file, $options=null) {
         $id = '';
-        if ($entry) {
-            $id = 'portfolio:file' . $file->get_id;
-        } else {
-            $id = self::get_file_directory() . '/' . $file->get_filename();
+        if (!is_array($options)) {
+            $options = array();
         }
-        return '<a rel="enclosure" href="' . $id . '">' . $file->get_filename() . '</a>';
+        if (!empty($options['entry'])) {
+            $path = 'portfolio:file' . $file->get_id;
+        } else {
+            $path = self::get_file_directory() . $file->get_filename();
+        }
+        $attributes = array();
+        if (!empty($options['attributes']) && is_array($options['attributes'])) {
+            $attributes = $options['attributes'];
+        }
+        $attributes['rel']    = 'enclosure';
+        return self::make_tag($file, $path, $attributes);
     }
 
     public static function leap2a_writer(stdclass $user=null) {

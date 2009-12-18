@@ -1154,3 +1154,69 @@ function portfolio_existing_exports_by_plugin($userid) {
     $values = array($userid);
     return $DB->get_records_sql_menu($sql, $values);
 }
+
+
+/**
+ * callback function from {@link portfolio_rewrite_pluginfile_urls}
+ * looks through preg_replace matches and replaces content with whatever the active portfolio export format says
+ */
+function portfolio_rewrite_pluginfile_url_callback($contextid,  $filearea, $itemid, $format, $options, $matches) {
+    $matches = $matches[0]; // no internal matching
+    $dom = new DomDocument();
+    if (!$dom->loadXML($matches)) {
+        return $matches;
+    }
+    $attributes = array();
+    foreach ($dom->documentElement->attributes as $attr => $node) {
+        $attributes[$attr] = $node->value;
+    }
+    // now figure out the file
+    $fs = get_file_storage();
+    $key = 'href';
+    if (!array_key_exists('href', $attributes) && array_key_exists('src', $attributes)) {
+        $key = 'src';
+    }
+    if (!array_key_exists($key, $attributes)) {
+        debugging('Couldn\'t find an attribute to use that contains @@PLUGINFILE@@ in portfolio_rewrite_pluginfile');
+        return $matches;
+    }
+    $filename = substr($attributes[$key], strpos($attributes[$key], '@@PLUGINFILE@@') + strlen('@@PLUGINFILE@@'));
+    $filepath = '/';
+    if (strpos($filename, '/') !== 0) {
+        $bits = explode('/', $filename);
+        $filename = array_pop($bits);
+        $filepath = implode('/', $bits);
+    }
+    if (!$file = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename)) {
+        debugging("Couldn\t find a file from the embedded path info context $contextid filearea $filearea itemid $itemid filepath $filepath name $filename");
+        return $matches;
+    }
+    if (empty($options)) {
+        $options = array();
+    }
+    $options['attributes'] = $attributes;
+    return $format->file_output($file, $options);
+}
+
+
+/**
+ * go through all the @@PLUGINFILE@@ matches in some text,
+ * extract the file information and pass it back to the portfolio export format
+ * to regenerate the html to output
+ *
+ * @param string           $text the text to search through
+ * @param int              $contextid normal file_area arguments
+ * @param string           $filearea  normal file_area arguments
+ * @param int              $itemid    normal file_area arguments
+ * @param portfolio_format $format    the portfolio export format
+ * @param array            $options   extra options to pass through to the file_output function in the format (optional)
+ *
+ * @return string
+ */
+function portfolio_rewrite_pluginfile_urls($text, $contextid, $filearea, $itemid, $format, $options=null) {
+    $pattern = '/(<[^<]*?="@@PLUGINFILE@@\/[^>]*?(?:\/>|>.*?<\/[^>]*?>))/';
+    $callback = partial('portfolio_rewrite_pluginfile_url_callback', $contextid, $filearea, $itemid, $format, $options);
+    return preg_replace_callback($pattern, $callback, $text);
+}
+// this function has to go last, because the regexp screws up syntax highlighting in some editors
+
