@@ -18,7 +18,7 @@ if(isset($this->config)){
 
 $selected = array();
 if (!empty($config->numsections1)) {
-    if (!empty($config->incby1)) {
+    if (empty($config->incby1)) {
         $config->incby1 = 2;
     }
     $selected[1] = array($config->numsections1, $config->incby1);
@@ -27,7 +27,7 @@ if (!empty($config->numsections1)) {
 }
 
 if (!empty($config->numsections2)) {
-    if (!empty($config->incby1)) {
+    if (empty($config->incby1)) {
         $config->incby1 = 5;
     }
     $selected[2] = array($config->numsections2, $config->incby2);

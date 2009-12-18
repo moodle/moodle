@@ -73,7 +73,7 @@ class block_section_links extends block_base {
         }
 
         if(!empty($config->numsections2) and ($course->numsections > $config->numsections2)) {
-            $inc = $config->incby1;
+            $inc = $config->incby2;
         } else {
             if ($course->numsections > 40) {
                 $inc = 5;
