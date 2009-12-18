@@ -4,8 +4,6 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 // Unit tests for scorm_formatdatetime function from locallib.php
-// Please note that they're made to work only with English language strings,
-// so you have to set up English in Moodle settings first.
 
 // Make sure the code being tested is accessible.
 require_once($CFG->dirroot . '/mod/scorm/locallib.php'); // Include the code to test
