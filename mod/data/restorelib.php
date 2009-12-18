@@ -84,6 +84,7 @@ function data_restore_mods($mod,$restore) {
         $database->rsstitletemplate = backup_todb($info['MOD']['#']['RSSTITLETEMPLATE']['0']['#']);
         $database->csstemplate = backup_todb($info['MOD']['#']['CSSTEMPLATE']['0']['#']);
         $database->jstemplate = backup_todb($info['MOD']['#']['JSTEMPLATE']['0']['#']);
+        $database->asearchtemplate = backup_todb($info['MOD']['#']['ASEARCHTEMPLATE']['0']['#']);
         $database->approval = backup_todb($info['MOD']['#']['APPROVAL']['0']['#']);
         $database->scale = backup_todb($info['MOD']['#']['SCALE']['0']['#']);
         $database->assessed = backup_todb($info['MOD']['#']['ASSESSED']['0']['#']);
