@@ -15,8 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once($CFG->libdir . '/portfolio/caller.php');
-
 /**
  * Library of functions and constants for module glossary
  * outside of what is required for the core moodle api
@@ -24,6 +22,12 @@ require_once($CFG->libdir . '/portfolio/caller.php');
  * @package   mod-glossary
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+require_once($CFG->libdir . '/portfolio/caller.php');
+
+/**
+ * class to handle exporting an entire glossary database
  */
 class glossary_full_portfolio_caller extends portfolio_module_caller_base {
 
@@ -65,6 +69,7 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
             WHERE ec.entryid ' . $where, $params);
 
         $this->exportdata = array('entries' => $entries, 'aliases' => $aliases, 'categoryentries' => $categoryentries);
+        //todo files - both attachments and entry files
     }
 
     /**
@@ -110,10 +115,13 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
                 $categories[$cat->entryid][] = $cat->name;
             }
         }
-        // TODO detect format here
-        $csv = glossary_generate_export_csv($entries, $aliases, $categories);
-        $this->exporter->write_new_file($csv, clean_filename($this->cm->name) . '.csv', false);
-        // TODO when csv, what do we do with attachments?!
+        if ($this->get('exporter')->get('formatclass') == PORTFOLIO_FORMAT_SPREADSHEET) {
+            $csv = glossary_generate_export_csv($entries, $aliases, $categories);
+            $this->exporter->write_new_file($csv, clean_filename($this->cm->name) . '.csv', false);
+            return;
+        } else if ($this->get('exporter')->get('formatclass') == PORTFOLIO_FORMAT_LEAP2A) {
+//todo
+        }
     }
 
     /**
@@ -145,11 +153,13 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
 }
 
 /**
+ * class to export a single glossary entry
+ *
  * @package   mod-glossary
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class glossary_entry_portfolio_caller extends portfolio_module_caller_base { // TODO files support
+class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
 
     private $glossary;
     private $entry;
@@ -184,14 +194,22 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base { // 
             // in case we don't have USER this will make the entry be printed
             $this->entry->approved = true;
         }
+        $this->categories = $DB->get_records_sql('SELECT ec.entryid, c.name FROM {glossary_entries_categories} ec
+            JOIN {glossary_categories} c
+            ON c.id = ec.categoryid
+            WHERE ec.entryid = ?', array($this->entryid));
         $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
         if ($this->entry->sourceglossaryid == $this->cm->instance) {
             if ($maincm = get_coursemodule_from_instance('glossary', $this->entry->glossaryid)) {
                 $context = get_context_instance(CONTEXT_MODULE, $maincm->id);
             }
         }
+        $this->aliases = $DB->get_records('glossary_alias', array('entryid'=>$this->entryid));
         $fs = get_file_storage();
-        $this->multifiles = $fs->get_area_files($context->id, 'glossary_attachment', $this->entry->id, "timemodified", false);
+        $this->multifiles = array_merge(
+            $fs->get_area_files($context->id, 'glossary_attachment', $this->entry->id, "timemodified", false),
+            $fs->get_area_files($context->id, 'glossary_entry', $this->entry->id, "timemodified", false)
+        );
     }
 
     /**
@@ -229,17 +247,38 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base { // 
      * @return void
      */
     public function prepare_package() {
-        define('PORTFOLIO_INTERNAL', true);
-        ob_start();
-        $entry = clone $this->entry;
-        glossary_print_entry($this->get('course'), $this->cm, $this->glossary, $entry, null, null, false);
-        $content = ob_get_clean();
+        global $DB;
+        $format = $this->exporter->get('format');
+        $content = self::entry_content($this->course, $this->cm, $this->glossary, $this->entry, $this->aliases, $format);
+        $filename = clean_filename($this->entry->concept) . '.html';
+        if ($this->exporter->get('formatclass') == PORTFOLIO_FORMAT_LEAP2A) {
+            global $USER;
+            $writer = $this->get('exporter')->get('format')->leap2a_writer($USER);
+            $filename = $this->get('exporter')->get('format')->manifest_name();
+            $entry = new portfolio_format_leap2a_entry('glossaryentry' . $this->entry->id, $this->entry->concept, 'entry', $content);
+            $entry->author = $DB->get_record('user', array('id' => $this->entry->userid), 'id,firstname,lastname,email');
+            $entry->published = $this->entry->timecreated;
+            $entry->updated = $this->entry->timemodified;
+            if ($this->multifiles) {
+                $entry->add_attachments($this->multifiles);
+            }
+            if ($this->categories) {
+                foreach ($this->categories as $cat) {
+                    // this essentially treats them as plain tags
+                    // leap has the idea of category schemes
+                    // but I think this is overkill here
+                    $entry->add_category($cat->name);
+                }
+            }
+            $writer->add_entry($entry);
+            $content = $writer->to_xml();
+        }
         if ($this->multifiles) {
             foreach ($this->multifiles as $file) {
                 $this->exporter->copy_existing_file($file);
             }
         }
-        return $this->exporter->write_new_file($content, clean_filename($this->entry->concept) . '.html', !empty($files));
+        return $this->exporter->write_new_file($content, $filename, !empty($this->multifiles));
     }
 
     /**
@@ -260,6 +299,82 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base { // 
      * @return array
      */
     public static function base_supported_formats() {
-        return array(PORTFOLIO_FORMAT_RICHHTML);
+        return array(PORTFOLIO_FORMAT_RICHHTML, PORTFOLIO_FORMAT_PLAINHTML, PORTFOLIO_FORMAT_LEAP2A);
+    }
+
+    /**
+     * helper function to get the html content of an entry
+     * for both this class and the full glossary exporter
+     * this is a very simplified version of the dictionary format output,
+     * but with its 500 levels of indirection removed
+     * and file rewriting handled by the portfolio export format.
+     *
+     * @param stdclass $course
+     * @param stdclass $cm
+     * @param stdclass $glossary
+     * @param stdclass $entry
+     *
+     * @return string
+     */
+    public static function entry_content($course, $cm, $glossary, $entry, $aliases, $format) {
+        global $OUTPUT, $DB;
+        $entry = clone $entry;
+        $options = new object();
+        $options->para = false;
+        $options->trusted = $entry->definitiontrust;
+
+        $output = '<table class="glossarypost dictionary" cellspacing="0">' . "\n";
+        $output .= '<tr valign="top">' . "\n";
+        $output .= '<td class="entry">' . "\n";
+
+        $output .= '<div class="concept">';
+        $output .= format_text($OUTPUT->heading('<span class="nolink">' . $entry->concept . '</span>', 3, 'nolink'), FORMAT_MOODLE, $options);
+        $output .= '</div> ' . "\n";
+
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+        $entry->definition = portfolio_rewrite_pluginfile_urls($entry->definition, $context->id, 'glossary_entry', $entry->id, $format);
+
+        $output .= format_text($entry->definition, $entry->definitionformat, $options);
+        if (isset($entry->footer)) {
+            $output .= $entry->footer;
+        }
+
+        $output .= '</td></tr>' . "\n";
+
+        if (!empty($aliases)) {
+            $output .= '<tr valign="top"><td class="entrylowersection">';
+            $key = (count($aliases) == 1) ? 'alias' : 'aliases';
+            $output .= get_string($key, 'glossary') . ': ';
+            foreach ($aliases as $alias) {
+                $output .= s($alias) . ',';
+            }
+            $output .= substr($output, 0, -1);
+            $output .= '</td></tr>' . "\n";
+        }
+
+        if ($entry->sourceglossaryid == $cm->instance) {
+            if (!$maincm = get_coursemodule_from_instance('glossary', $entry->glossaryid)) {
+                return '';
+            }
+            $filecontext = get_context_instance(CONTEXT_MODULE, $maincm->id);
+
+        } else {
+            $filecontext = $context;
+        }
+        $fs = get_file_storage();
+        if ($files = $fs->get_area_files($filecontext->id, 'glossary_attachment', $entry->id, "timemodified", false)) {
+            $output .= '<table border="0" width="100%"><tr><td>' . "\n";
+
+            foreach ($files as $file) {
+                $output .= $format->file_output($file);
+            }
+            $output .= '</td></tr></table>' . "\n";
+        }
+
+        $output .= '</table>' . "\n";
+
+        return $output;
     }
 }
+
