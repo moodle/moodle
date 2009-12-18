@@ -454,7 +454,7 @@ function scorm_grade_user_attempt($scorm, $userid, $attempt=1, $time=false) {
             if (($userdata->status == 'completed') || ($userdata->status == 'passed')) {
                 $attemptscore->scoes++;
             }
-            if (!empty($userdata->score_raw)) {
+            if (isset($userdata->score_raw)) {
                 $attemptscore->values++;
                 $attemptscore->sum += $userdata->score_raw;
                 $attemptscore->max = ($userdata->score_raw > $attemptscore->max)?$userdata->score_raw:$attemptscore->max;
