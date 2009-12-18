@@ -1788,6 +1788,7 @@ class grade_item extends grade_object {
 
         // update in db if changed
         if (grade_floats_different($grade->finalgrade, $oldfinalgrade)) {
+            $grade->timemodified = time();
             $grade->update('compute');
         }
 
