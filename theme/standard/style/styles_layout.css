@@ -3522,7 +3522,7 @@ body.jsenabled #qtypechoicecontainer {
 
 .tabrow0 a:link:hover,
 .tabrow0 a:visited:hover {
-  background-image: url([[pix:theme|left_hover]]);
+  background-image: url([[pix:theme|tab/left_hover]]);
 }
 
 .tabrow0 .here a:link:hover,
