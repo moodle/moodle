@@ -201,10 +201,11 @@ function SCORMapi1_2() {
                 <?php
                     if (scorm_debugging($scorm)) {
                         //echo 'alert("Finished SCORM 1.2");';
+                        echo 'LogAPICall("LMSResult", param, "", result);';
                         echo 'LogAPICall("LMSFinish", param, "", 0);';
                     }
                 ?>
-                return "true";
+                return result;
             } else {
                 errorCode = "301";
             }
