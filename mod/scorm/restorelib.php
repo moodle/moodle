@@ -120,6 +120,9 @@
                 if ($scorm->height == 0) {
                     $scorm->height = 500;
                 }
+                if (!empty($info['MOD']['#']['OPTIONS']['0']['#'])) {
+                    $scorm->options = backup_todb($info['MOD']['#']['OPTIONS']['0']['#']);
+                }
             }
             $scorm->timemodified = time();
 
