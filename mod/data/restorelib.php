@@ -93,6 +93,14 @@ function data_restore_mods($mod,$restore) {
             $database->assesspublic = backup_todb($info['MOD']['#']['ASSESSPUBLIC']['0']['#']);
         }
 
+        // We have to recode the scale field if it's <0 (positive is a grade, not a scale)
+        if ($database->scale < 0) {
+            $scale = backup_getid($restore->backup_unique_code, 'scale', abs($database->scale));
+            if ($scale) {
+                $database->scale = -($scale->new_id);
+            }
+        }
+
         $newid = insert_record ('data', $database);
 
         //Do some output
