@@ -48,22 +48,10 @@
             $scorm->reference = backup_todb($info['MOD']['#']['REFERENCE']['0']['#']);
             $scorm->version = backup_todb($info['MOD']['#']['VERSION']['0']['#']);
             $scorm->md5hash = backup_todb($info['MOD']['#']['MD5HASH']['0']['#']);
-            $scorm->maxgrade = backup_todb($info['MOD']['#']['MAXGRADE']['0']['#']);
-            if (!is_int($scorm->maxgrade)) {
-                $scorm->maxgrade = 0;
-            }
-            $scorm->updatefreq = backup_todb($info['MOD']['#']['UPDATEFREQ']['0']['#']);
-            if (!is_int($scorm->updatefreq)) {
-                $scorm->updatefreq = 0;
-            }
-            $scorm->maxattempt = backup_todb($info['MOD']['#']['MAXATTEMPT']['0']['#']);
-            if (!is_int($scorm->maxattempt)) {
-                $scorm->maxattempt = 0;
-            }
-            $scorm->grademethod = backup_todb($info['MOD']['#']['GRADEMETHOD']['0']['#']);
-            if (!is_int($scorm->grademethod)) {
-                $scorm->grademethod = 0;
-            }
+            $scorm->maxgrade = (double)backup_todb($info['MOD']['#']['MAXGRADE']['0']['#']);
+            $scorm->updatefreq = (int)backup_todb($info['MOD']['#']['UPDATEFREQ']['0']['#']);
+            $scorm->maxattempt = (int)backup_todb($info['MOD']['#']['MAXATTEMPT']['0']['#']);
+            $scorm->grademethod = (int)backup_todb($info['MOD']['#']['GRADEMETHOD']['0']['#']);
             if ($restore->backup_version < 2005041500) {
                 $scorm->datadir = substr(backup_todb($info['MOD']['#']['DATADIR']['0']['#']),1);
             } else {
