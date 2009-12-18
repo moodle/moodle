@@ -19,6 +19,7 @@ $string['doesnotcontain'] = 'doesn\'t contain';
 $string['endswith'] = 'ends with';
 $string['firstaccess'] = 'First access';
 $string['globalrolelabel'] = '$a->label is $a->value';
+$string['includenever'] = 'Never included';
 $string['isanyvalue'] = 'is any value';
 $string['isafter'] = 'is after';
 $string['isbefore'] = 'is before';
