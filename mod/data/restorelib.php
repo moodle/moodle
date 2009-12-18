@@ -221,7 +221,11 @@ function data_records_restore_mods ($old_data_id, $new_data_id, $info, $restore)
 
     $status = true;
 
-    $records = $info['MOD']['#']['RECORDS']['0']['#']['RECORD'];
+    $records = isset($info['MOD']['#']['RECORDS']['0']['#']['RECORD']) ? $info['MOD']['#']['RECORDS']['0']['#']['RECORD'] : array();
+
+    if (empty($records)) { // no records to restore
+        return true;
+    }
 
     for ($i = 0; $i < sizeof($records); $i++) {
 
@@ -381,7 +385,7 @@ function data_ratings_restore_mods ($oldid, $newid, $info, $rec_info) {
 
     $status = true;
 
-    $ratings= $rec_info['#']['RATINGS']['0']['#']['RATING'];
+    $ratings= isset($rec_info['#']['RATINGS']['0']['#']['RATING']) ? $rec_info['#']['RATINGS']['0']['#']['RATING'] : array();
 
     if (empty($ratings)) { // no ratings to restore
         return true;
@@ -407,7 +411,7 @@ function data_comments_restore_mods ($oldid, $newid, $info, $rec_info) {
 
     $status = true;
 
-    $comments= $rec_info['#']['COMMENTS']['0']['#']['COMMENT'];
+    $comments= isset($rec_info['#']['COMMENTS']['0']['#']['COMMENT']) ? $rec_info['#']['COMMENTS']['0']['#']['COMMENT'] : array();
 
     if (empty($comments)) { // no comments to restore
         return true;
