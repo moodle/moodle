@@ -57,6 +57,7 @@ class MoodleQuickForm_select extends HTML_QuickForm_select{
      * @param string $function function name to call to get html
      */
     function setHelpButton($helpbuttonargs, $function='helpbutton'){
+        global $OUTPUT;
         if (!is_array($helpbuttonargs)){
             $helpbuttonargs=array($helpbuttonargs);
         }else{
@@ -67,8 +68,10 @@ class MoodleQuickForm_select extends HTML_QuickForm_select{
         if ('helpbutton' == $function){
             $defaultargs=array('', '', 'moodle', true, false, '', true);
             $helpbuttonargs=$helpbuttonargs + $defaultargs ;
+            $this->_helpbutton=$OUTPUT->help_icon(call_user_func_array('moodle_help_icon::make', $helpbuttonargs));
+        } else {
+            $this->_helpbutton=call_user_func_array($function, $helpbuttonargs);
         }
-        $this->_helpbutton=call_user_func_array($function, $helpbuttonargs);
     }
     /**
      * get html for help button
