@@ -537,7 +537,7 @@ class grade_report_grader extends grade_report {
 
         $colspan = 1;
 
-        if (has_capability('gradereport/user:view', $this->context)) {
+        if (has_capability('gradereport/'.$CFG->grade_profilereport.':view', $this->context)) {
             $colspan++;
         }
 
@@ -564,7 +564,7 @@ class grade_report_grader extends grade_report {
         $studentheader->scope = 'col';
         $studentheader->header = true;
         $studentheader->id = 'studentheader';
-        if (has_capability('gradereport/user:view', $this->context)) {
+        if (has_capability('gradereport/'.$CFG->grade_profilereport.':view', $this->context)) {
             $studentheader->colspan = 2;
         }
         $studentheader->text = $arrows['studentname'];
@@ -608,14 +608,14 @@ class grade_report_grader extends grade_report {
 
             $userrow->cells[] = $usercell;
 
-            if (has_capability('gradereport/user:view', $this->context)) {
+            if (has_capability('gradereport/'.$CFG->grade_profilereport.':view', $this->context)) {
                 $userreportcell = new html_table_cell();
                 $userreportcell->add_class('userreport');
                 $userreportcell->header = true;
                 $a->user = fullname($user);
                 $strgradesforuser = get_string('gradesforuser', 'grades', $a);
                 $userreporticon = new moodle_action_icon();
-                $userreporticon->link->url = new moodle_url($CFG->wwwroot.'/grade/report/user/index.php', array('userid' => $user->id, 'id' => $this->course->id));
+                $userreporticon->link->url = new moodle_url($CFG->wwwroot.'/grade/report/'.$CFG->grade_profilereport.'/index.php', array('userid' => $user->id, 'id' => $this->course->id));
                 $userreporticon->image->add_class('iconsmall');
                 $userreporticon->image->src = $OUTPUT->pix_url('t/grades');
                 $userreporticon->image->alt = $strgradesforuser;
