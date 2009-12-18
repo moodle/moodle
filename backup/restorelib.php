@@ -1729,7 +1729,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         $restoreall = true;  // set to false if any grade_item is not selected/restored
         $importing  = !empty($SESSION->restore->importing); // there should not be a way to import old backups, but anyway ;-)
 
-        if ($importing || $restore->users == 2) {
+        if ($importing) {
             $restoreall = false;
 
         } else {
@@ -1920,7 +1920,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         $restoreall = true;  // set to false if any grade_item is not selected/restored or already exist
         $importing  = !empty($SESSION->restore->importing);
 
-        if ($importing || $restore->users == 2) {
+        if ($importing) {
             $restoreall = false;
 
         } else {
