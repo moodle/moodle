@@ -59,7 +59,7 @@ switch ($action) {
     case 'confirmdelete':
         $thispage = $lesson->load_page($pageid);
 
-        echo $lessonoutput->header($lesson);
+        echo $lessonoutput->header($lesson, $cm);
         echo $OUTPUT->heading(get_string("deletingpage", "lesson", format_string($thispage->title)));
         // print the jumps to this page
         $params = array("lessonid" => $lesson->id, "pageid" => $pageid);
@@ -80,7 +80,7 @@ switch ($action) {
 
         $title = $DB->get_field("lesson_pages", "title", array("id" => $pageid));
 
-        echo $lessonoutput->header($lesson);
+        echo $lessonoutput->header($lesson, $cm);
         echo $OUTPUT->heading(get_string("moving", "lesson", format_string($title)));
 
         $params = array ("lessonid" => $lesson->id, "prevpageid" => 0);

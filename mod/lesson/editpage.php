@@ -99,6 +99,6 @@ if ($data = $mform->get_data()) {
 }
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
-echo $lessonoutput->header($lesson);
+echo $lessonoutput->header($lesson, $cm);
 $mform->display();
 echo $lessonoutput->footer();

@@ -156,7 +156,7 @@ $PAGE->set_subpage($page->id);
 
 /// Print the header, heading and tabs
 lesson_add_pretend_blocks($PAGE, $cm, $lesson, $timer);
-echo $lessonoutput->header($lesson, 'view', true, $page->id);
+echo $lessonoutput->header($lesson, $cm, 'view', true, $page->id);
 
 if ($lesson->displayleft) {
     echo '<a name="maincontent" id="maincontent" title="'.get_string('anchortitle', 'lesson').'"></a>';

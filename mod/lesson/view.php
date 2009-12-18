@@ -60,7 +60,7 @@ $lessonoutput = $PAGE->get_renderer('mod_lesson');
 ///     Check for high scores
 if (!$canmanage) {
     if (!$lesson->is_accessible()) {  // Deadline restrictions
-        echo $lessonoutput->header($lesson);
+        echo $lessonoutput->header($lesson, $cm);
         if ($lesson->deadline != 0 && time() > $lesson->deadline) {
             echo $lessonoutput->lesson_inaccessible(get_string('lessonclosed', 'lesson', userdate($lesson->deadline)));
         } else {
@@ -78,7 +78,7 @@ if (!$canmanage) {
                 redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id");
             }
         } else {
-            echo $lessonoutput->header($lesson);
+            echo $lessonoutput->header($lesson, $cm);
             echo $lessonoutput->login_prompt($lesson, optional_param('userpassword', 0, PARAM_CLEAN));
             echo $lessonoutput->footer();
             exit();
@@ -131,7 +131,7 @@ if (!$canmanage) {
             }
 
             if (!empty($errors)) {  // print out the errors if any
-                echo $lessonoutput->header($lesson);
+                echo $lessonoutput->header($lesson, $cm);
                 echo $lessonoutput->dependancy_errors($dependentlesson, $errors);
                 echo $lessonoutput->footer();
                 exit();
@@ -215,7 +215,7 @@ if (empty($pageid)) {
         }
     }
     if (isset($lastpageseen) && $DB->count_records('lesson_attempts', array('lessonid'=>$lesson->id, 'userid'=>$USER->id, 'retry'=>$retries)) > 0) {
-        echo $lessonoutput->header($lesson);
+        echo $lessonoutput->header($lesson, $cm);
         if ($lesson->timed) {
             if ($lesson->retake) {
                 $continuelink = html_form::make_button($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no'), get_string('continue', 'lesson'), 'get');
@@ -233,7 +233,7 @@ if (empty($pageid)) {
 
     if ($attemptflag) {
         if (!$lesson->retake) {
-            echo $lessonoutput->header($lesson, 'view');
+            echo $lessonoutput->header($lesson, $cm, 'view');
             $courselink = html_form::make_button($CFG->wwwroot.'/course/view.php', array('id'=>$PAGE->course->id), get_string('returntocourse', 'lesson'), 'get');
             echo $lessonoutput->message(get_string("noretake", "lesson"), $courselink);
             echo $lessonoutput->footer();
@@ -370,7 +370,7 @@ if ($pageid != LESSON_EOL) {
     }
 
     lesson_add_pretend_blocks($PAGE, $cm, $lesson, $timer);
-    echo $lessonoutput->header($lesson, $currenttab, $extraeditbuttons, $lessonpageid);
+    echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid);
     if ($attemptflag) {
         echo $OUTPUT->heading(get_string('attempt', 'lesson', $retries));
     }
@@ -559,7 +559,7 @@ if ($pageid != LESSON_EOL) {
     $lessoncontent .= $OUTPUT->link($link);
 
     lesson_add_pretend_blocks($PAGE, $cm, $lesson, $timer);
-    echo $lessonoutput->header($lesson, $currenttab, $extraeditbuttons, $lessonpageid);
+    echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid);
     echo $lessoncontent;
     echo $lessonoutput->footer();
 }

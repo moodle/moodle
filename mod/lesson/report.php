@@ -139,7 +139,7 @@ if (! $times = $DB->get_records('lesson_timer', array('lessonid' => $lesson->id)
     $times = array();
 }
 
-echo $lessonoutput->header($lesson, $action);
+echo $lessonoutput->header($lesson, $cm, $action);
 
 $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
 if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {

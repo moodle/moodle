@@ -551,3 +551,30 @@ function lesson_menu_block_contents($cmid, $lesson) {
 
     return $bc;
 }
+
+/**
+ * Adds header buttons to the page for the lesson
+ *
+ * @param object $cm
+ * @param object $context
+ * @param bool $extraeditbuttons
+ * @param int $lessonpageid
+ */
+function lesson_add_header_buttons($cm, $context, $extraeditbuttons=false, $lessonpageid=null) {
+    global $CFG, $PAGE, $OUTPUT;
+    if (has_capability('mod/lesson:edit', $context)) {
+        $buttons = $OUTPUT->update_module_button($cm->id, 'lesson');
+        if ($extraeditbuttons) {
+            if ($lessonpageid === null) {
+                print_error('invalidpageid', 'lesson');
+            }
+            if (!empty($lessonpageid) && $lessonpageid != LESSON_EOL) {
+                $options = array('id'=>$cm->id, 'redirect'=>'navigation', 'pageid'=>$lessonpageid);
+                $buttonform = html_form::make_button($CFG->wwwroot.'/mod/lesson/lesson.php', $options, get_string('editpagecontent', 'lesson'));
+                $buttons .= $OUTPUT->button($buttonform);
+            }
+            $buttons = $OUTPUT->box($buttons, 'edit_buttons');
+        }
+        $PAGE->set_button($buttons);
+    }
+}

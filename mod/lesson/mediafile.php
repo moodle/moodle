@@ -60,7 +60,7 @@ $mimetype = mimeinfo("type", $lesson->mediafile);
 if ($printclose) {  // this is for framesets
     if ($lesson->mediaclose) {
         $PAGE->set_title($course->shortname);
-        echo $lessonoutput->header($lesson);
+        echo $lessonoutput->header($lesson, $cm);
         echo $OUTPUT->box('<form><div><input type="button" onclick="top.close();" value="'.get_string("closewindow").'" /></div></form>', 'lessonmediafilecontrol');
         echo $lessonoutput->footer();
     }
@@ -70,7 +70,7 @@ if ($printclose) {  // this is for framesets
 $mediafilehtml = lesson_get_media_html($lesson, $context);
 
 $PAGE->set_title($course->shortname);
-echo $lessonoutput->header($lesson);
+echo $lessonoutput->header($lesson, $cm);
 // print the embedded media html code
 echo $OUTPUT->box($mediafilehtml);
 

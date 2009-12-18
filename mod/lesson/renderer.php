@@ -33,35 +33,19 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @param int $lessonpageid
      * @return string
      */
-    public function header($lesson, $currenttab = '', $extraeditbuttons = false, $lessonpageid = null) {
+    public function header($lesson, $cm, $currenttab = '', $extraeditbuttons = false, $lessonpageid = null) {
         global $CFG;
 
-        $activityname = format_string($lesson->name, true, $this->page->course->id);
+        $activityname = format_string($lesson->name, true, $lesson->course);
         $title = $this->page->course->shortname.": ".$activityname;
 
         // Build the buttons
-        $context = get_context_instance(CONTEXT_MODULE, $this->page->cm->id);
-        if (has_capability('mod/lesson:edit', $context)) {
-            $buttons = $this->output->update_module_button($this->page->cm->id, 'lesson');
-            if ($extraeditbuttons) {
-                if ($lessonpageid === null) {
-                    print_error('invalidpageid', 'lesson');
-                }
-                if (!empty($lessonpageid) && $lessonpageid != LESSON_EOL) {
-                    $options = array('id'=>$this->page->cm->id, 'redirect'=>'navigation', 'pageid'=>$lessonpageid);
-                    $buttonform = html_form::make_button($CFG->wwwroot.'/mod/lesson/lesson.php', $options, get_string('editpagecontent', 'lesson'));
-                    $buttons .= $this->output->button($buttonform);
-                }
-                $buttons = $this->output->box($buttons, 'edit_buttons');
-            }
-        } else {
-            $buttons = '&nbsp;';
-        }
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     /// Header setup
         $this->page->set_title($title);
         $this->page->set_heading($this->page->course->fullname);
-        $this->page->set_button($buttons);
+        lesson_add_header_buttons($cm, $context, $extraeditbuttons, $lessonpageid);
         $output = $this->output->header();
 
         if (has_capability('mod/lesson:manage', $context)) {
