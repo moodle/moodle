@@ -32,8 +32,11 @@ class user_filter_date extends user_filter_type {
 
         $objs[] =& $mform->createElement('checkbox', $this->_name.'_sck', null, get_string('isafter', 'filters'));
         $objs[] =& $mform->createElement('date_selector', $this->_name.'_sdt', null);
+        $objs[] =& $mform->createElement('static', $this->_name.'_break', null, '<br>');
         $objs[] =& $mform->createElement('checkbox', $this->_name.'_eck', null, get_string('isbefore', 'filters'));
         $objs[] =& $mform->createElement('date_selector', $this->_name.'_edt', null);
+        $objs[] = & $mform->createElement('checkbox', $this->_name.'_never', null, get_string('includenever', 'filters'));
+        
         $grp =& $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
         $grp->setHelpButton(array('date',$this->_label,'filters'));
 
@@ -41,12 +44,19 @@ class user_filter_date extends user_filter_type {
             $mform->setAdvanced($this->_name.'_grp');
         }
 
+        if ($this->_advanced) {
+            $mform->setAdvanced($this->_name.'_grp');
+        }
+
+
         $mform->disabledIf($this->_name.'_sdt[day]', $this->_name.'_sck', 'notchecked');
         $mform->disabledIf($this->_name.'_sdt[month]', $this->_name.'_sck', 'notchecked');
         $mform->disabledIf($this->_name.'_sdt[year]', $this->_name.'_sck', 'notchecked');
         $mform->disabledIf($this->_name.'_edt[day]', $this->_name.'_eck', 'notchecked');
         $mform->disabledIf($this->_name.'_edt[month]', $this->_name.'_eck', 'notchecked');
         $mform->disabledIf($this->_name.'_edt[year]', $this->_name.'_eck', 'notchecked');
+
+        $mform->disabledIf($this->_name.'_never', $this->_name.'_eck', 'notchecked');
     }
 
     /**
@@ -59,6 +69,7 @@ class user_filter_date extends user_filter_type {
         $sdt = $this->_name.'_sdt';
         $eck = $this->_name.'_eck';
         $edt = $this->_name.'_edt';
+        $never = $this->_name.'_never';
 
         if (!array_key_exists($sck, $formdata) and !array_key_exists($eck, $formdata)) {
             return false;
@@ -75,6 +86,12 @@ class user_filter_date extends user_filter_type {
         } else {
             $data['before'] = 0;
         }
+        if (array_key_exists($never, $formdata)) {
+            $data['never'] = $formdata->$never;
+        } else {
+            $data['never'] = 0;
+        }
+        
         return $data;
     }
 
@@ -86,17 +103,26 @@ class user_filter_date extends user_filter_type {
     function get_sql_filter($data) {
         $after  = (int)$data['after'];
         $before = (int)$data['before'];
+        $never  = (int)$data['never'];
+
         $field  = $this->_field;
 
         if (empty($after) and empty($before)) {
             return array('', array());
         }
 
-        $res = "$field > 0" ;
+        $res = '';
+
+        if (!empty($never)) {
+            $res .= " $field >= 0 " ;
+        } else {
+            $res .= " $field > 0 " ;
+        }
 
         if ($after) {
             $res .= " AND $field >= $after";
         }
+
         if ($before) {
             $res .= " AND $field <= $before";
         }
@@ -111,21 +137,28 @@ class user_filter_date extends user_filter_type {
     function get_label($data) {
         $after  = $data['after'];
         $before = $data['before'];
+        $never = $data['never'];
         $field  = $this->_field;
 
         $a = new object();
         $a->label  = $this->_label;
         $a->after  = userdate($after);
         $a->before = userdate($before);
-
+        
+        if ($never) {
+            $strnever = ' ('.get_string('includenever', 'filters').')';
+        } else {
+            $strnever = '';
+        }
+        
         if ($after and $before) {
-            return get_string('datelabelisbetween', 'filters', $a);
+            return get_string('datelabelisbetween', 'filters', $a).$strnever;
 
         } else if ($after) {
-            return get_string('datelabelisafter', 'filters', $a);
+            return get_string('datelabelisafter', 'filters', $a).$strnever;;
 
         } else if ($before) {
-            return get_string('datelabelisbefore', 'filters', $a);
+            return get_string('datelabelisbefore', 'filters', $a).$strnever;;
         }
         return '';
     }

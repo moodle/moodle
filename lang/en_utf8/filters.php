@@ -28,6 +28,7 @@ $string['filtersettingsin'] = 'Filter settings in $a';
 $string['firstaccess'] = 'First access';
 $string['globalrolelabel'] = '$a->label is $a->value';
 $string['isactive'] = 'Active?';
+$string['includenever'] = 'Never included';
 $string['isanyvalue'] = 'is any value';
 $string['isafter'] = 'is after';
 $string['isbefore'] = 'is before';
