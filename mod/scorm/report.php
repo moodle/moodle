@@ -270,7 +270,7 @@
                                 $row[] = '<img src="'.$OUTPUT->pix_url('pix/' . $trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.
                                          $strstatus.'" />&nbsp;'.format_string($sco->title);
                                 $row[] = get_string($trackdata->status,'scorm');
-                                $row[] = $trackdata->total_time;
+                                $row[] = scorm_format_date_time($trackdata->total_time);
                                 $row[] = $score;
                                 $row[] = $detailslink;
                             } else {
@@ -311,7 +311,7 @@
             }
             $strstatus = get_string($trackdata->status,'scorm');
             echo '<img src="'.$$OUTPUT->pix_url('pix/'.$trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.
-            $strstatus.'" />&nbsp;'.$trackdata->total_time.'<br />'.$scoreview.'<br />';
+            $strstatus.'" />&nbsp;'.scorm_format_date_time($trackdata->total_time).'<br />'.$scoreview.'<br />';
             echo '</div>'."\n";
             echo '<hr /><h2>'.get_string('details','scorm').'</h2>';
 
@@ -344,7 +344,11 @@
                     $printedelements[]=$element;
                     $row = array();
                     $row[] = get_string($key,'scorm');
-                    $row[] = s($trackdata->$element);
+                    if ($key == 'time') {
+                        $row[] = s(scorm_format_date_time($trackdata->$element));
+                    } else {
+                        $row[] = s($trackdata->$element);
+                    }
                     $table->data[] = $row;
                 }
             }
@@ -453,7 +457,11 @@
                         $existelements = true;
                         $row = array();
                         $row[] = get_string($element,'scorm') != '[['.$element.']]' ? get_string($element,'scorm') : $element;
-                        $row[] = s($value);
+                        if (strpos($element, '_time') === false) {
+                            $row[] = s($value);
+                        } else {
+                            $row[] = s(scorm_format_date_time($value));
+                        }
                         $table->data[] = $row;
                     }
                 }
