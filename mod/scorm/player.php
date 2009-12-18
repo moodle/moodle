@@ -14,6 +14,11 @@
     $currentorg = optional_param('currentorg', '', PARAM_RAW); // selected organization
     $newattempt = optional_param('newattempt', 'off', PARAM_ALPHA); // the user request to start a new attempt
 
+    //IE 6 Bug workaround
+    if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6') !== false && ini_get('zlib.output_compression') == 'On') {
+        ini_set('zlib.output_compression', 'Off');
+    }
+
     if (!empty($id)) {
         if (! $cm = get_coursemodule_from_id('scorm', $id)) {
             print_error('invalidcoursemodule');
