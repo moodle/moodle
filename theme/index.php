@@ -87,7 +87,7 @@ foreach ($themes as $themename => $themedir) {
 
 
     // link to the screenshot, now mandatory - the image path is hardcoded because we need image from other themes, not the current one
-    $screenshotpath = "$CFG->wwwroot/theme/image.php?theme=$themename&image=screenshot&component=theme";
+    $screenshotpath = "$CFG->wwwroot/theme/image.php?theme=$themename&amp;image=screenshot&amp;component=theme";
 
     // Contents of the first screenshot/preview cell.
     $row[] = "<img src=\"$screenshotpath\" alt=\"$themename\" />";
