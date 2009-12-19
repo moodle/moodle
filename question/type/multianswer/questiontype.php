@@ -390,7 +390,7 @@ class embedded_cloze_qtype extends default_questiontype {
 
                 // Set up a default chosenanswer so that all non-empty wrong
                 // answers are highlighted red
-                if (empty($chosenanswer) && !empty($response)) {
+                if (empty($chosenanswer) && $response != '') {
                     $chosenanswer = new stdClass;
                     $chosenanswer->fraction = 0.0;
                 }
