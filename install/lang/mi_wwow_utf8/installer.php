@@ -35,6 +35,10 @@ $string['configfilewritten'] = 'kua tika te waihanga i te config.php';
 $string['configurationcompletehead'] = 'Kua oti te whirihora';
 $string['configurationcompletesub'] = 'I ngana  atu a Moodle ki te tiaki i tō whirihoranga ki rō kōnae i te pūtake o tō utanga o Moodle.';
 $string['continue'] = 'Haere Tonu';
+$string['ctyperecommended'] = 'Ko te whakauru i te kōwhiri toronga ctype PHP e tino tūtohua nuitia ana hei whakapai ake i te whakamahinga tūnga, mehemea rā tō tūnga e tautoko ana i ngā reo kore rātini.';
+$string['ctyperequired'] = 'Ko te toronga ctype PHP e tino hiahiatia ana e Mūtara, hei whakapai ake whakamahinga tūnga me te tuku i ngā reo maha hototahitanga.';
+$string['curlrecommended'] = 'Ko te tāuta i te kōwhiri puna cURL e tino tūtohutia ana hei whakaāhei Mūtara taumahi whatunga';
+$string['customcheck'] = 'ko ētahi atu tirotirohanga';
 $string['database'] = 'Pātengi Raraunga';
 $string['databasecreationsettingshead'] = 'Īnāianei me whirihora e koe ngā tautuhinga pātengi raraunga ki te wāhi penapena i te nuinga o ngā raraunga Moodle. Ka waihanga aunoatia tēnei pātengi raraunga e te pūtāuta Moodle4Windows me ngā tautuhinga o raro ake nei.';
 $string['databasecreationsettingssub'] = '<b>Momo:</b> He mea whakapūmau ki \"mysql\" e te pūtāuta<br /><b>Kaihautū:</b> He mea whakapūmau ki \"localhost\" e te pūtāuta<br /><b>Ingoa:</b> ingoa pātengi raraunga, arā, moodle<br /><b>Kaiwhakamahi:</b> He mea whakapūmau ki \"root\" e te pūtāuta<br /><b>Kupuhipa:</b> tō kupuhipa pātengi raraunga<br /><b>Kuhimua o Ngā Ripanga:</b> kuhimua kōwhiri mō ngā ingoa ripanga katoa';
@@ -43,11 +47,19 @@ $string['databasesettingssub'] = '<<b>Momo:</b> mysql, postgres7 rānei<br /><b>
 $string['databasesettingssub_mssql'] = '<b>Momo:</b> SQL*Server (non UTF-8) <b><font color=\"red\">Hei whakamātau! (kaua e whakamahia kia ngao)</font></b><br /><br /> <b>Kaihautū:</b> arā localhost, db.isp.com rānei<br />  <b>Ingoa:</b> ingoa pātengi raraunga, pēnei ake i a moodle<br /><b>Kaiwhakamahi:</b> tō ingoa kaiwhakamahi pātengi raraunga<br /> <b>Kupuhipa:</b> tō kupuhipa pātengi raraunga<br /><b>Kuhimua o Ngā Ripanga:</b> kuhimua hei whakamahi ki ngā ingoa ripanga katoa (whakahauanga)';
 $string['databasesettingssub_mssql_n'] = '<b>Momo:</b> SQL*Server (UTF-8 enabled) <br /> <b>Kaihautū:</b> arā localhost, db.isp.com rānei<br />  <b>Ingoa:</b> ingoa pātengi raraunga, pēnei ake i a moodle<br /><b>Kaiwhakamahi:</b> tō ingoa kaiwhakamahi pātengi raraunga<br /> <b>Kupuhipa:</b> tō kupuhipa pātengi raraunga<br /><b>Kuhimua o Ngā Ripanga:</b> kuhimua hei whakamahi ki ngā ingoa ripanga katoa (whakahauanga)';
 $string['databasesettingssub_mysql'] = '<b>Momo:</b> MySQL <br /> <b>Kaihautū:</b> arā localhost, db.isp.com rānei<br />  <b>Ingoa:</b> ingoa pātengi raraunga, pēnei ake i a moodle<br /><b>Kaiwhakamahi:</b> tō ingoa kaiwhakamahi pātengi raraunga<br /> <b>Kupuhipa:</b> tō kupuhipa pātengi raraunga<br /><b>Kuhimua o Ngā Ripanga:</b> kuhimua hei whakamahi ki ngā ingoa ripanga katoa (kōwhiringa)';
+$string['databasesettingssub_mysqli'] = '<b>Momo:</b> Pai ake TakuSQL<br />
+<b>Kaihautū:</b> eg kaihautūpaetata ko db.isp.com rānei<br />
+<b>Ingoa:</b> ingoa patengi raraunga, eg mūtara<br />
+<b>Kaiwhakamahi:</b> Ko tō patengi raraunga ingoa kaiwhakamahi<br />
+<b>Kupuhipa:</b> tō patengi raraunga kupuhipa<br />
+<b>Ripanga Kuhimua:</b> ripanga hei whakamahi kmō ngā ripanga ingoa katoa (Kōwhiri)';
 $string['databasesettingssub_oci8po'] = '<b>Momo:</b> Oracle <br /><b>Kaihautū:</b> kāore i te whakamahia, waihotia kia wātea<br /> <b>Ingoa:</b> given name of the tnsnames.ora connection<br/><b>Kaiwhakamahi:</b> tō ingoa kaiwhakamahi pātengi raraunga<br /> <b>Kupuhipa:</b> tō kupuhipa pātengi raraunga<br /><b>Kuhimua o Ngā Ripanga:</b>kuhimua hei whakamahi ki ngā ingoa ripanga katoa (whakahauanga, 2cc max)';
 $string['databasesettingssub_odbc_mssql'] = '<b>Momo:</b>  SQL*Server (over ODBC) <b><font color=\"red\">Hei whakamātau. (kaua e whakamahia kia ngao)</font></b><br />  <b>Kaihautū:</b> given name of the DSN in the ODBC control panel<br />  <b>Ingoa:</b> ingoa pātengi raraunga, pēnei ake i a moodle<br /> <b>Kaiwhakamahi:</b> tō ingoa kaiwhakamahi pātengi raraunga<br /> <b>Kupuhipa:</b> tō kupuhipa pātengi raraunga<br /><b>Kuhimua o Ngā Ripanga:</b> kuhimua hei whakamahi ki ngā ingoa ripanga katoa (whakahauanga)';
 $string['databasesettingssub_postgres7'] = '<b>Momo:</b> PostgreSQL<br /><b>Kaihautū:</b> arā localhost, db.isp.com rānei<br />  <b>Ingoa:</b> ingoa pātengi raraunga, pēnei ake i a moodle<br /><b>Kaiwhakamahi:</b> tō ingoa kaiwhakamahi pātengi raraunga<br /> <b>Kupuhipa:</b> tō kupuhipa pātengi raraunga<br /><b>Kuhimua o Ngā Ripanga:</b> kuhimua hei whakamahi ki ngā ingoa ripanga katoa (whakahauanga)';
+$string['databasesettingswillbecreated'] = '<b>Note:</b> Ko te kaitāuta ka ngana ki te waihanga te patengi raraunga aunoa ki te kore tētahi i te ora.';
 $string['dataroot'] = 'Whaiaronga Raraunga';
 $string['datarooterror'] = 'Kāore te \'Whaiaronga Raraunga\' i whakapūtāhia e koe i kitea, i taea rānei te waihanga. Whakatikahia te ara, waihanga ā-ringa rānei i te whaiaronga.';
+$string['datarootpublicerror'] = 'Ko te \'Raraunga Whaiaronga\' i tautuhia e koe e āhei ana ki te ipurangi, me tino whakamahi koe i tētahi atu raraunga.';
 $string['dbconnectionerror'] = 'Kāore i taea te tūhono ki te pātengi raraunga i whakapūtāhia. Takina ō tautuhinga pātengi raraunga.';
 $string['dbcreationerror'] = 'Hapa waihanga pātengi raraunga. Kāore i taea tērā ingoa pātengi raraunga te waihanga ki ngā tautuhinga i homai';
 $string['dbhost'] = 'Tūmau Kaihautū';
@@ -69,8 +81,10 @@ $string['downloadlanguagenotneeded'] = 'Ka taea te tāuta tonu mā te whakamahi 
 $string['downloadlanguagesub'] = 'Ināianei ka taea e koe te tiki ake i tētahi pōkai reo me te tāuta tonu i roto i tēnei reo.<br /><br />Ki te kore e taea te tiki ake i te pōkai reo, ka tāuta tonu i roto i te reo Ingarihi. (Inā mutu te tāuta kātahi ka taea te tiki ake me te tāuta i ētahi atu pōkai reo).';
 $string['environmenterrortodo'] = 'Me ea koe i ngā raru taiao katoa (hapa) i kitea i runga, i mua i te tāutatanga o tēnei putanga o Moodle!';
 $string['environmenthead'] = 'E taki ana i tō taiao …';
+$string['environmentrecommendcustomcheck'] = 'Ki te whara tēnei whakamātau, e tohu ana i tētahi raruraru pea.';
 $string['environmentrecommendinstall'] = 'e tūtohutia ana kia tāuta/whakahohe';
 $string['environmentrecommendversion'] = 'putanga $a->needed hiahiatia ana e tūtohu ana, ā, kei te whakahaere koe i te $a->current';
+$string['environmentrequirecustomcheck'] = 'Me puta koe i tēnei whakamātau';
 $string['environmentrequireinstall'] = 'e hiahiatia ana kia tāuta/whakahohe.';
 $string['environmentrequireversion'] = 'putanga $a->needed hiahiatia ana, ā, kei te whakahaere koe i te $a->current';
 $string['environmentsub'] = 'E taki ana mehemea he tika āu wae pūnaha maha mō ngā hiahiatanga o tēnei pūnaha';
@@ -86,6 +100,8 @@ $string['gdversionhelp'] = '<p>Te āhua nei kāore tō tūmau i tāuta i te GD.<
 $string['globalsquotes'] = 'Whakamahinga Haumaru Kore o ngā Globals';
 $string['globalsquoteserror'] = 'Whakatikahia ō tautuhinga PHP:disable register_globals whakahohe hoki/rānei magic_quotes_gpc';
 $string['globalsquoteshelp'] = '<p>Kāore i te tūtohu te kohinga o ngā Magic Quotes GPC mono me ngā Register Globals hohe i te wā kotahi.</p><p>Ko te tautuhinga e tūtohutia ana ko te  <b>magic_quotes_gpc = On</b> me te <b>register_globals = Off</b> i roto i tō php.ini</p><p>Ki te kore tō āheitanga ki tō php.ini, ka taea pea te waiho i te rārangi e whai ake i roto i tētahi kōnae e karangatia nei .htaccess i roto i te whaiaronga Moodle:<blockquote>php_value magic_quotes_gpc On</blockquote><blockquote>php_value register_globals Off</blockquote></p>';
+$string['globalswarning'] = '<p><strong> Haumarutanga tūpato !</strong></p><p> Kia whakamahi tōtikangia, me whiwhi a Mūtara <br /> 
+< kia mahia e `koe ētahi whhakarerekētanga ki tō tautuhinga o ināianei.</p><p> Me tautuhi koe i te  <em>must</em> </em> <code>register_globals=off</code>.</p><p> Ko tēnei tautuhinga kua pumana mā te whakatika i tō <code>php.ini</code>, Apache/IIS <br />configuration rānei <code>.htaccess</code> file.</p>';
 $string['help'] = 'Āwhina';
 $string['iconvrecommended'] = 'Kia pai ake ai te mahinga o te pae, me tāuta te puna ICONV (kei a koe), inā koa kei te tautoko tō pae i ngā reo rātini-kore.';
 $string['info'] = 'Mōhiohio';
@@ -110,6 +126,8 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Engari, ka taea e koe tō MySQL 4.1.12 (pai ake rānei) te whakamahi tonu mēnā kei te whakamahi tō pae i ngā reo (rātini) iso-8859-1 ANAKE.';
 $string['mysql416required'] = 'Me whiwhi putanga MySQL 4.1.16 kia āhei ai ngā raraunga katoa te whakatahuri ki UTF-8 ā muri ake nei.';
 $string['mysqlextensionisnotpresentinphp'] = 'Kāore i tika te whirihoratanga o te PHP me te toronga MySQL kia taea te whakawhiti me te MySQL. Taki koe i tō kōnae php.ini, whakahiato anō rānei i te PHP.';
+$string['mysqli'] = 'Pai ake MySQL (mysqli)';
+$string['mysqliextensionisnotpresentinphp'] = 'Kāore te PHP kia āta whirihoratia mā te toronga me te torongsa  MySQLi kia taea e ia te whakapā ki te MySQL. Taki koa tō php.ini kōnae me kohikohi anōtia PHP. or recompile PHP. Ko te toronga MySQLi kāore i te wātea mō PHP 4.';
 $string['name'] = 'Ingoa';
 $string['next'] = 'Panuku';
 $string['oci8po'] = 'Oracle (oci8po)';
@@ -117,6 +135,7 @@ $string['ociextensionisnotpresentinphp'] = 'Kāore i tika te whirihora o PHP me 
 $string['odbcextensionisnotpresentinphp'] = 'Kāore i tika te whirihora o PHP me te toronga OCI8 kia taea te whakawhiti me te tūmau SQL*. Taki koa i tō kōnae php.ini whakahiato anō rānei i PHP.';
 $string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
 $string['ok'] = 'ĀE';
+$string['opensslrecommended'] = 'Ko te tāuta i ngā kōwhiri puna OpenSSL e tino tūtohutia ana- e whakaāheitia ana  te taumahitanga o te whatunga';
 $string['parentlanguage'] = '<< Ngā Kaiwhakamāori: Ki te whai Reo Matua, e tika ana kia whakamahia e Moodle ki te ngaro ētahi rārangi mai i tō pōkai reo,  tō reo, tena whakapūtā te waehere ki konei. Ki te waiho kia wātea ka whakamahia te Pākehā. Hei tauira: nl >>';
 $string['pass'] = 'Hipa';
 $string['password'] = 'Kupuhipa';
@@ -126,13 +145,19 @@ $string['phpversion'] = 'Putanga PHP';
 $string['phpversionerror'] = 'Kia 4.1.0 neke atu ranei te putanga PHP';
 $string['phpversionhelp'] = '<p>E hiahiatia ana e Moodle kia  4.1.0 neke atu rānei te putanga PHP.</p><p>I tēnei wā kei te whakahaere koe i te putanga $a</p><p>Me whakahōu te PHP, nuku rānei ki tētahi kaihautū me te putanga hōu PHP hōu ake!</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
+$string['postgresqlwarning'] = '<strong>Note:</strong> Mēna ka rongo koe i ētahi raruraru hono ka taea e koe te ngana ki te whakatau i te Tūmau  kaihautū āpure hei kaihautū =\'postgresql_host\' port=\'5432\' dbname=\'postgresql_database_name\' user=\'postgresql_user\' password=\'postgresql_user_password\'
+< me te waiho poka i te Patengi Raraunga, Kaiwhakamahi me te āpure.  He mōhiohio i tua atu i <a href=\"http://docs.moodle.org/en/Installing_Postgres_for_PHP\">Moodle Docs</a>';
 $string['previous'] = 'Tōmua';
+$string['qtyperqpwillberemoved'] = 'I te wā o te whakahou, ka tangohia te momo pātai RQP. Kāore koe i te whakamahi i te momo pātai, nō reira e tika ana e kore koe e raruraru.';
+$string['qtyperqpwillberemovedanyway'] = 'I te wā o te whakahou, ka tangohia te momo pātai RQP. He pātai RQP kei tō patengi raraunga, ā, ka mutu ēnei ki te mahi, me ka kore ana koe e tāuta anō i tō waehere mai i mua i tō mahi tonu i tō whakahou i: //moodle.org/mod/data/view.php?d=13&amp;rid=797';
+$string['remotedownloaderror'] = 'Tiki ake o to mōtete ki te tūmau i hinga, manatoko koa i ō tautuhinga takawaenga, PHP cURL  toronga kei te tino tutohua.<br /><br /> Me tiki ake koe i te <a href=\"$a->url\">$a->url</a> kōnae ā-ringa, tāruangia ki te  \"$a->dest\"  i tō tūmau me te pōutāpeta ki reira.';
 $string['remotedownloadnotallowed'] = 'Kāore e taea ngā wae o tō tūmau te tikiake (kua monokia te allow_url_fopen). <br /><br />Me tikiake-ā-ringa te kōnae <a href=\"$a->url\">$a->url</a>, tāruatia ki \"$a->dest\", ā, whewherahia i reira';
 $string['report'] = 'Pūrongo';
 $string['restricted'] = 'Kāore he āheitanga';
 $string['safemode'] = 'Aratau Haumaru';
 $string['safemodeerror'] = 'Ka raru pea te Moodle ki te kā te aratau haumaru';
 $string['safemodehelp'] = '<p>Ka nui pea ngā raru ki Moodle ki te kā te aratau haumaru, ā, ko te raru nui, ko te korenga e whakaaetia o te waihanga kōnae hōu.</p> <p>Ko ētahi kaihautū tukutuku tūmatanui \'hopohopo rawa\' anake ngā mea e whakahohe ake ana i te aratau haumaru, ā, ki te pērā, me rapu tētahi kamupene kaihautū tukutuku anō mō tō pae Moodle.</p> <p>Na, ka taea tonu te tāuta, engari ka puta ētahi raru.</p>';
+$string['serverchecks'] = 'Tūmau tirotirohia';
 $string['sessionautostart'] = 'Wātū Tīmata Aunoa';
 $string['sessionautostarterror'] = 'Ko te tikanga kua weto tēnei';
 $string['sessionautostarthelp'] = '<p>E hiahiatia ana e Moodle te tautoko wātū hei mahi.</p> <p>Ka taea te whakahohe i ngā wātū i roto i te kōnaephp.ini ... Tirohia te tawhā session.auto_start.</p>';
@@ -156,4 +181,6 @@ $string['wrongsourcebase'] = 'Ehara tēnei tumu URL pūtake i te tika';
 $string['wrongzipfilename'] = 'Ehara tēnei ingoakōnae ZIP i te tika';
 $string['wwwroot'] = 'Wāhitau Tukutuku';
 $string['wwwrooterror'] = 'Te āhua nei kāore te wāhitau tukutuku i te tika - kāore tēnei tāutanga o Moodle i reira.';
+$string['xmlrpcrecommended'] = 'Tāuta i ngā kōwhiri xmlrpc toronga e whaipainga ana mō te  mahinga whatunga Mūtara.';
+$string['ziprequired'] = 'Ko te toronga Zip PHP e hiahiatia ana ināianei e Mūtara, ko ngā ā-rua info-ZIP i te puna PclZip kua mutu rawa atu te whakamahi.';
 ?>
