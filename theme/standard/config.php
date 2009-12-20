@@ -148,3 +148,5 @@ $THEME->layouts = array(
     ),
 );
 
+/** List of javascript files that need to included on each page */
+$THEME->javascripts = array();

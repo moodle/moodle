@@ -365,6 +365,10 @@ class core_renderer extends renderer_base {
             $output .= '<link rel="stylesheet" type="text/css" href="' . $url->out() . '" />' . "\n";
         }
 
+        // Get the theme javascript
+        $jsurl = $this->page->theme->javascript_url();
+        $this->page->requires->js($jsurl->out_raw(), true)->in_head();
+
         // Perform a browser environment check for the flash version.  Should only run once per login session.
         if (isloggedin() && !empty($CFG->excludeoldflashclients) && empty($SESSION->flashversion)) {
             $this->page->requires->yui2_lib('event')->in_head();

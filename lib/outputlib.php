@@ -147,6 +147,23 @@ class theme_config {
     public $editor_sheets = array();
 
     /**
+     * The names of all the javascript files this theme that you would
+     * like included, in order. Give the names of the files without .js.
+     *
+     * @var array
+     */
+    public $javascripts = array();
+
+    /**
+     * The names of all the javascript files from parents that should be expcluded.
+     * true value may be used to specify all parents or all themes from one parent.
+     * If no value specified value from parent theme used.
+     *
+     * @var array or arrays, true means all, null means use value from parent
+     */
+    public $parents_exclude_javascripts = null;
+
+    /**
      * Which file to use for each page layout.
      *
      * This is an array of arrays. The keys of the outer array are the different layouts.
@@ -364,7 +381,8 @@ class theme_config {
             $baseconfig = $config;
         }
 
-        $configurable = array('parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'layouts', 'resource_mp3player_colors',
+        $configurable = array('parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'javascripts',  
+                              'parents_exclude_javascripts', 'layouts', 'resource_mp3player_colors',
                               'filter_mediaplugin_colors', 'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow');
 
         foreach ($config as $key=>$value) {
@@ -554,7 +572,7 @@ class theme_config {
     /**
      * Get the stylesheet URL of this theme
      * @param bool $encoded false means use & and true use &amp; in URLs
-     * @return string
+     * @return array of moodle_url
      */
     public function css_urls() {
         global $CFG;
@@ -587,6 +605,20 @@ class theme_config {
             }
             return $urls;
         }
+    }
+
+    /**
+     * Get the javascript URL of this theme
+     * @param bool $encoded false means use & and true use &amp; in URLs
+     * @return moodle_url
+     */
+    public function javascript_url() {
+        global $CFG;
+
+        $rev = theme_get_revision();
+
+        $params = array('theme'=>$this->name,'rev'=>$rev);
+        return new moodle_url($CFG->httpswwwroot.'/theme/javascripts.php', $params);
     }
 
     /**
