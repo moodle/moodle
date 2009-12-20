@@ -367,7 +367,7 @@ class core_renderer extends renderer_base {
 
         // Get the theme javascript
         $jsurl = $this->page->theme->javascript_url();
-        $this->page->requires->js($jsurl->out_raw(), true)->in_head();
+        $this->page->requires->js($jsurl->out(), true)->in_head();
 
         // Perform a browser environment check for the flash version.  Should only run once per login session.
         if (isloggedin() && !empty($CFG->excludeoldflashclients) && empty($SESSION->flashversion)) {

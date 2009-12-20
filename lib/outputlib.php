@@ -381,7 +381,7 @@ class theme_config {
             $baseconfig = $config;
         }
 
-        $configurable = array('parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'javascripts',  
+        $configurable = array('parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'javascripts',
                               'parents_exclude_javascripts', 'layouts', 'resource_mp3player_colors',
                               'filter_mediaplugin_colors', 'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow');
 
@@ -608,20 +608,6 @@ class theme_config {
     }
 
     /**
-     * Get the javascript URL of this theme
-     * @param bool $encoded false means use & and true use &amp; in URLs
-     * @return moodle_url
-     */
-    public function javascript_url() {
-        global $CFG;
-
-        $rev = theme_get_revision();
-
-        $params = array('theme'=>$this->name,'rev'=>$rev);
-        return new moodle_url($CFG->httpswwwroot.'/theme/javascripts.php', $params);
-    }
-
-    /**
      * Returns the content of the one huge CSS merged from all style sheets.
      * @return string
      */
@@ -739,6 +725,30 @@ class theme_config {
         }
 
         return $css;
+    }
+
+
+    /**
+     * Get the javascript URL of this theme
+     * @param bool $encoded false means use & and true use &amp; in URLs
+     * @return moodle_url
+     */
+    public function javascript_url() {
+        global $CFG;
+
+        $rev = theme_get_revision();
+
+        $params = array('theme'=>$this->name,'rev'=>$rev);
+        return new moodle_url($CFG->httpswwwroot.'/theme/javascripts.php', $params);
+    }
+
+    /**
+     * Returns the content of the one huge javascript file merged from all theme javascript files.
+     * @return string
+     */
+    public function javascript_content() {
+        //TODO: load contents of all theme JS files
+        return '/*not yet fully implemented*/';
     }
 
     protected function post_process($css) {
