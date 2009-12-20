@@ -74,7 +74,7 @@ class question_dataset_dependent_items_form extends moodleform {
         $j = (($this->noofitems) * count($this->datasetdefs))+1;
         foreach ($this->datasetdefs as $defkey => $datasetdef){
             $mform->addElement('text', "number[$j]", get_string('param', 'qtype_datasetdependent', $datasetdef->name));
-            $this->qtypeobj->custom_generator_tools_part(&$mform, $idx, $j);
+            $this->qtypeobj->custom_generator_tools_part($mform, $idx, $j);
             $idx++;
             $mform->addElement('hidden', "definition[$j]");
             $mform->addElement('hidden', "itemid[$j]");
