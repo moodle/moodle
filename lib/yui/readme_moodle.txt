@@ -6,6 +6,9 @@ from:
 
 Changes: NONE
 
+Notes:
+* current YUI versions numbers have to be specified in lib/setup.php
+
 Added to Moodle 13 July 2006
 Updated to YUI 0.12.0, 23 November 2006
 Updated to YUI 0.12.1, 8 January 2007
@@ -15,3 +18,4 @@ Updated to YUI 2.5.2, 25 July 2008
 Updated to YUI 2.6.0, 03 October 2008
 Updated to YUI 2.7.0, 14 May 2009 (2.0dev only)
 Updated to YUI 2.8.0r4+3.0.0, 12 December 2009 (2.0dev only)
+

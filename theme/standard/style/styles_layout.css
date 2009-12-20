@@ -33,22 +33,8 @@
  *** Core
  ***/
 
-h1.main,
-h2.main,
-h3.main,
-h4.main,
-h5.main,
-h6.main {
-  text-align: center;
-}
-
 body {
  padding: 4px;
-}
-
-/* ugly ugly hack, undo the CSS reset from YUI for now */
-ul li {
- list-style-type: none;
 }
 
 #layout-table {

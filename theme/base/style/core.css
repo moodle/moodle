@@ -1,3 +1,15 @@
+
+/* custom moodle style resets, differencies from the YUI reset */
+
+.dir-ltr {
+  text-align: left;
+}
+
+.dir-rtl {
+  text-align: right;
+}
+
+
 /***
  * Accessibility features
  **/

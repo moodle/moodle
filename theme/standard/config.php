@@ -40,7 +40,12 @@ $THEME->parents = array();
 //       we need to go through all these and fix them.
 //       This means we will gradually put these back into plugins
 //       directories
-$THEME->sheets = array('styles_layout', 'styles_fonts', 'styles_color', 'styles_moz',
+$THEME->sheets = array(
+    'styles_hacks',
+    'styles_layout',
+    'styles_fonts',
+    'styles_color',
+    'styles_moz',
     'block_blog_tags',
     'block_calendar_month',
     'block_calendar_upcoming',
