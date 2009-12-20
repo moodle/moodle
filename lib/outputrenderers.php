@@ -238,10 +238,11 @@ class plugin_renderer_base extends renderer_base {
      * @param string $method
      * @param array $arguments
      * @return mixed
-     *
-     * TODO: this might not be the best idea, see MDL-21148 for pros&cons
      */
     public function __call($method, $arguments) {
+        if (method_exists('renderer_base', $method)) {
+            throw new coding_exception('Protected method called against '.__CLASS__.' :: '.$method);
+        }
         if (method_exists($this->output, $method)) {
             return call_user_func_array(array($this->output, $method), $arguments);
         } else {
