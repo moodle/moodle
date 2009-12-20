@@ -514,7 +514,7 @@ class moodle_url {
      * @return string
      */
     public function out_raw() {
-        $this->out(false, null, false);
+        return $this->out(false, null, false);
     }
 
     /**
