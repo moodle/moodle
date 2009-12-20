@@ -533,10 +533,19 @@ $SESSION = &$_SESSION['SESSION'];
 $USER    = &$_SESSION['USER'];
 
 // Process theme change in the URL.
-if (!empty($CFG->allowthemechangeonurl) && ($urlthemename = optional_param('theme', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
+if (!empty($CFG->allowthemechangeonurl) and !empty($_GET['theme'])) {
+    // we have to use _GET directly because we do not want this to interfere with _POST
+    $urlthemename = optional_param('theme', '', PARAM_SAFEDIR);
     try {
-        theme_config::load($urlthemename); // Makes sure the theme can be loaded without errors.
-        $SESSION->theme = $urlthemename;
+        $themeconfig = theme_config::load($urlthemename);
+        // Makes sure the theme can be loaded without errors.
+        if ($themeconfig->name === $urlthemename) {
+            $SESSION->theme = $urlthemename;
+        } else {
+            unset($SESSION->theme);
+        }
+        unset($themeconfig);
+        unset($urlthemename);
     } catch (Exception $e) {
         debugging('Failed to set the theme from the URL.', DEBUG_DEVELOPER, $e->getTrace());
     }
