@@ -29,11 +29,22 @@
 
 class core_webservice_renderer extends plugin_renderer_base {
      /**
-     * Create documentation for a description object
+     * Return documentation for a ws description object
+     * ws description object can be 'external_multiple_structure', 'external_single_structure' or 'external_value'
+     * Example of documentation for moodle_group_create_groups function:
+       list of (
+       object {
+       courseid int //id of course
+       name string //multilang compatible name, course unique
+       description string //group description text
+       enrolmentkey string //group enrol secret phrase
+       }
+       )
      * @param object $params a part of parameter/return description
      * @return string the html to display
      */
     public function detailed_description_html($params) {
+    /// retrieve the description of the description object
         $paramdesc = "";
         if (!empty($params->desc)) {
             $paramdesc .= $this->output_start_tag('span', array('style' => "color:#2A33A6"));
@@ -43,11 +54,12 @@ class core_webservice_renderer extends plugin_renderer_base {
             $paramdesc .= $this->output_end_tag('span');
             $paramdesc .= $this->output_empty_tag('br', array());
         }
-        if ($params instanceof external_multiple_structure) {
 
+    /// description object is a list
+        if ($params instanceof external_multiple_structure) {
             return $paramdesc . "list of ( " . $this->output_empty_tag('br', array()) . $this->detailed_description_html($params->content) . ")";
         } else if ($params instanceof external_single_structure) {
-            //var_dump($params->keys);
+    /// description object is an object
             $singlestructuredesc = $paramdesc."object {". $this->output_empty_tag('br', array());
             foreach ($params->keys as $attributname => $attribut) {
                 $singlestructuredesc .= $this->output_start_tag('b', array());
@@ -59,6 +71,7 @@ class core_webservice_renderer extends plugin_renderer_base {
             $singlestructuredesc .= $this->output_empty_tag('br', array());
             return $singlestructuredesc;
         } else {
+    /// description object is a primary type (string, integer)
             switch($params->type) {
                 case PARAM_BOOL: // 0 or 1 only for now
                 case PARAM_INT:
@@ -75,7 +88,7 @@ class core_webservice_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Create description in indented xml format
+     * Return a description object in indented xml format (for REST response)
      * It is indented in order to be displayed into <pre> tag
      * @param object $returndescription
      * @param string $indentation composed by space only
@@ -87,12 +100,14 @@ class core_webservice_renderer extends plugin_renderer_base {
 
 
 EOF;
+    /// description object is a list
         if ($returndescription instanceof external_multiple_structure) {
             $return  = $indentation."<MULTIPLE>".$brakeline;
             $return .= $this->description_in_indented_xml_format($returndescription->content, $indentation);
             $return .= $indentation."</MULTIPLE>".$brakeline;
             return $return;
         } else if ($returndescription instanceof external_single_structure) {
+    /// description object is an object
             $singlestructuredesc = $indentation."<SINGLE>".$brakeline;
             $keyindentation = $indentation."    ";
             foreach ($returndescription->keys as $attributname => $attribut) {
@@ -103,6 +118,7 @@ EOF;
             $singlestructuredesc .= $indentation."</SINGLE>".$brakeline;
             return $singlestructuredesc;
         } else {
+    /// description object is a primary type (string, integer)
             switch($returndescription->type) {
                 case PARAM_BOOL: // 0 or 1 only for now
                 case PARAM_INT:
@@ -130,6 +146,7 @@ EOF;
 
 
 EOF;
+    /// description object is a list
         if ($paramdescription instanceof external_multiple_structure) {
             $return  = $brakeline.$indentation."Array ";
             $indentation = $indentation . "    ";
@@ -139,6 +156,7 @@ EOF;
             $return .= $brakeline.$indentation.")";
             return $return;
         } else if ($paramdescription instanceof external_single_structure) {
+    /// description object is an object
             $singlestructuredesc = $brakeline.$indentation."Array ";
             $keyindentation = $indentation."    ";
             $singlestructuredesc  .= $brakeline.$keyindentation."(";
@@ -150,6 +168,7 @@ EOF;
             $singlestructuredesc .= $brakeline.$keyindentation.")";
             return $singlestructuredesc;
         } else {
+    /// description object is a primary type (string, integer)
             switch($paramdescription->type) {
                 case PARAM_BOOL: // 0 or 1 only for now
                 case PARAM_INT:
@@ -165,8 +184,15 @@ EOF;
         }
     }
 
+    /**
+     * Return the html of a colored box with content
+     * @param string $title - the title of the box
+     * @param string $content - the content to displayed
+     * @param string $rgb - the background color of the box
+     * @return <type>
+     */
     public function colored_box_with_pre_tag($title, $content, $rgb = 'FEEBE5') {
-        $coloredbox = $this->output_start_tag('ins', array());
+        $coloredbox = $this->output_start_tag('ins', array()); //TODO: this tag removes xhtml strict error but cause warning
         $coloredbox .= $this->output_start_tag('div', array('style' => "border:solid 1px #DEDEDE;background:#".$rgb.";color:#222222;padding:4px;"));
         $coloredbox .= $this->output_start_tag('pre', array());
         $coloredbox .= $this->output_start_tag('b', array());
@@ -182,7 +208,7 @@ EOF;
 
 
      /**
-     * Create indented REST param description
+     * Return indented REST param description
      * @param object $paramdescription
      * @param string $indentation composed by space only
      * @return string the html to diplay
@@ -192,11 +218,13 @@ EOF;
 
 
 EOF;
+    /// description object is a list
         if ($paramdescription instanceof external_multiple_structure) {
             $paramstring = $paramstring.'[0]';
             $return = $this->rest_param_description_html($paramdescription->content, $paramstring);
             return $return;
         } else if ($paramdescription instanceof external_single_structure) {
+    /// description object is an object
             $singlestructuredesc = "";
             $initialparamstring = $paramstring;
             foreach ($paramdescription->keys as $attributname => $attribut) {
@@ -205,6 +233,7 @@ EOF;
             }
             return $singlestructuredesc;
         } else {
+    /// description object is a primary type (string, integer)
             $paramstring = $paramstring.'=';
             switch($paramdescription->type) {
                 case PARAM_BOOL: // 0 or 1 only for now
@@ -234,6 +263,7 @@ EOF;
 
 
 EOF;
+    /// Some general information
         $documentationhtml = $this->output_start_tag('table', array('style' => "margin-left:auto; margin-right:auto;"));
         $documentationhtml .= $this->output_start_tag('tr', array());
         $documentationhtml .= $this->output_start_tag('td', array());
@@ -241,10 +271,12 @@ EOF;
         $documentationhtml .= $this->output_empty_tag('br', array());
         $documentationhtml .= $this->output_empty_tag('br', array());
         $documentationhtml .= $this->output_empty_tag('br', array());
-
+        
+    /// each functions will be display into a collapsible region
         foreach ($functions as $functionname => $description) {
-            $documentationhtml .= print_collapsible_region_start('', 'aera_'.$functionname,"<strong>".$functionname."</strong>",false,true,true);
+            $documentationhtml .= print_collapsible_region_start('', 'aera_'.$functionname, $this->output_start_tag('strong', array()).$functionname.$this->output_end_tag('strong'),false,true,true);
 
+        /// function global description
             $documentationhtml .= $this->output_empty_tag('br', array());
             $documentationhtml .= $this->output_start_tag('div', array('style' => 'border:solid 1px #DEDEDE;background:#E2E0E0;color:#222222;padding:4px;'));
             $documentationhtml .= $description->description;
@@ -252,25 +284,30 @@ EOF;
             $documentationhtml .= $this->output_empty_tag('br', array());
             $documentationhtml .= $this->output_empty_tag('br', array());
 
+        /// function arguments documentation
             $documentationhtml .= $this->output_start_tag('span', array('style' => 'color:#EA33A6'));
             $documentationhtml .= get_string('arguments', 'webservice');
             $documentationhtml .= $this->output_end_tag('span');
             $documentationhtml .= $this->output_empty_tag('br', array());
             foreach ($description->parameters_desc->keys as $paramname => $paramdesc) {
+            /// a argument documentation
                 $documentationhtml .= $this->output_start_tag('span', array('style' => 'font-size:80%'));
                 $required = $paramdesc->required?get_string('required', 'webservice'):get_string('optional', 'webservice');
                 $documentationhtml .= $this->output_start_tag('b', array());
                 $documentationhtml .= $paramname;
                 $documentationhtml .= $this->output_end_tag('b');
-                $documentationhtml .= " (" .$required. ")";
+                $documentationhtml .= " (" .$required. ")"; // argument is required or optional ?
                 $documentationhtml .= $this->output_empty_tag('br', array());
-                $documentationhtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".$paramdesc->desc;
+                $documentationhtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".$paramdesc->desc; // argument description
                 $documentationhtml .= $this->output_empty_tag('br', array());
                 $documentationhtml .= $this->output_empty_tag('br', array());
+                ///general structure of the argument
                 $documentationhtml .= $this->colored_box_with_pre_tag(get_string('generalstructure', 'webservice'), $this->detailed_description_html($paramdesc), 'FFF1BC');
+                ///xml-rpc structure of the argument in PHP format
                 if (!empty($activatedprotocol['xmlrpc'])) {
                     $documentationhtml .= $this->colored_box_with_pre_tag(get_string('phpparam', 'webservice'), htmlentities('['.$paramname.'] =>'.$this->xmlrpc_param_description_html($paramdesc)), 'DFEEE7');
                 }
+                ///POST format for the REST protocol for the argument
                 if (!empty($activatedprotocol['rest'])) {
                     $documentationhtml .= $this->colored_box_with_pre_tag(get_string('restparam', 'webservice'), htmlentities($this->rest_param_description_html($paramdesc,$paramname)), 'FEEBE5');
                 }
@@ -279,22 +316,27 @@ EOF;
             $documentationhtml .= $this->output_empty_tag('br', array());
             $documentationhtml .= $this->output_empty_tag('br', array());
 
+
+        /// function response documentation
             $documentationhtml .= $this->output_start_tag('span', array('style' => 'color:#EA33A6'));
             $documentationhtml .= get_string('response', 'webservice');
             $documentationhtml .= $this->output_end_tag('span');
             $documentationhtml .= $this->output_empty_tag('br', array());
+            /// function response description
             $documentationhtml .= $this->output_start_tag('span', array('style' => 'font-size:80%'));
             if (!empty($description->returns_desc->desc)) {
                 $documentationhtml .= $description->returns_desc->desc;
                 $documentationhtml .= $this->output_empty_tag('br', array());
                 $documentationhtml .= $this->output_empty_tag('br', array());
             }
-
             if (!empty($description->returns_desc)) {
+                ///general structure of the response
                 $documentationhtml .= $this->colored_box_with_pre_tag(get_string('generalstructure', 'webservice'), $this->detailed_description_html($description->returns_desc), 'FFF1BC');
+                ///xml-rpc structure of the response in PHP format
                 if (!empty($activatedprotocol['xmlrpc'])) {
                      $documentationhtml .= $this->colored_box_with_pre_tag(get_string('phpresponse', 'webservice'), htmlentities($this->xmlrpc_param_description_html($description->returns_desc)), 'DFEEE7');
                 }
+                ///XML response for the REST protocol
                 if (!empty($activatedprotocol['rest'])) {
                     $restresponse  = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>".$brakeline."<RESPONSE>".$brakeline;
                     $restresponse .= $this->description_in_indented_xml_format($description->returns_desc);
@@ -306,7 +348,7 @@ EOF;
             $documentationhtml .= $this->output_empty_tag('br', array());
             $documentationhtml .= $this->output_empty_tag('br', array());
 
-
+       /// function errors documentation for REST protocol
             if (!empty($activatedprotocol['rest'])) {
                 $documentationhtml .= $this->output_start_tag('span', array('style' => 'color:#EA33A6'));
                 $documentationhtml .= get_string('errorcodes', 'webservice');
@@ -332,6 +374,7 @@ EOF;
             $documentationhtml .= print_collapsible_region_end(true);
         }
 
+     /// close the table and return the documentation
         $documentationhtml .= $this->output_end_tag('td');
         $documentationhtml .= $this->output_end_tag('tr');
         $documentationhtml .= $this->output_end_tag('table');
