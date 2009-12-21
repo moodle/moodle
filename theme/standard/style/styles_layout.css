@@ -461,7 +461,7 @@ form.popupform label {
   width: 90%;
 }
 .groupmanagementtable td {
-  vertical-align: middle;
+  vertical-align: top;
 }
 .groupmanagementtable p {
   text-align: left;
