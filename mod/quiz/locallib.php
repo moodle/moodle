@@ -474,7 +474,7 @@ function quiz_feedback_for_grade($grade, $quizid) {
 }
 
 /**
- * @param integer $quizid the id of the quiz object.
+ * @param object $quiz the quiz database row.
  * @return boolean Whether this quiz has any non-blank feedback text.
  */
 function quiz_has_feedback($quiz) {
