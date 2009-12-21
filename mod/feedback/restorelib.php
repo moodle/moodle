@@ -26,6 +26,7 @@
     //
     //-----------------------------------------------------------
 
+    require_once($CFG->dirroot.'/calendar/lib.php');
     define('FEEDBACK_MULTICHOICERESTORE_TYPE_SEP', '>>>>>');
 
     function feedback_restore_mods($mod,$restore) {
@@ -84,7 +85,7 @@
                   $event->timeduration = 0;
                 }
 
-                add_event($event);
+                calendar_event::create($event);
             }
 
             // the close-event
@@ -102,7 +103,7 @@
                 $event->visible      = instance_is_visible('feedback', $feedback);
                 $event->timeduration = 0;
 
-                add_event($event);
+                calendar_event::create($event);
              }
 
             //Do some output

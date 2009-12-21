@@ -13,7 +13,21 @@ class feedback_label_form extends feedback_item_form {
 
         $mform->addElement('hidden', 'itemname', $this->type);
         $mform->setType('itemname', PARAM_INT);
-        $this->area = $mform->addElement('htmleditor', 'presentation', '', array('rows'=>20));
+        $mform->addElement('editor', 'presentation', '', null, null);
+        $mform->setType('presentation', PARAM_CLEANHTML);
+    }
+
+    function get_data() {
+        $data = parent::get_data();
+        if ($data) {
+            $data->presentation = $data->presentation['text'];
+        }
+        return $data;
+    }
+
+    function set_data($data) {
+        $data->presentation = array('text'=>$data->presentation, 'format'=>FORMAT_HTML, 'itemid'=>0);
+        return parent::set_data($data);
     }
 }
 

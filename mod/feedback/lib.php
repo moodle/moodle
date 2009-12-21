@@ -976,8 +976,11 @@ function feedback_create_item($data) {
     $itemname = trim($data->itemname);
     $item->name = ($itemname ? $data->itemname : get_string('no_itemname', 'feedback'));
 
-    $itemlabel = trim($data->itemlabel);
-    $item->label = ($itemlabel ? $data->itemlabel : get_string('no_itemlabel', 'feedback'));
+    if (!empty($data->itemlabel)) {
+        $item->label = trim($data->itemlabel);
+    } else {
+        $item->label = get_string('no_itemlabel', 'feedback');
+    }
 
     //get the used class from item-typ
     $itemclass = 'feedback_item_'.$data->typ;
@@ -1013,8 +1016,11 @@ function feedback_update_item($item, $data = null){
         $itemname = trim($data->itemname);
         $item->name = ($itemname ? $data->itemname : get_string('no_itemname', 'feedback'));
 
-        $itemlabel = trim($data->itemlabel);
-        $item->label = ($itemlabel ? $data->itemlabel : get_string('no_itemlabel', 'feedback'));
+        if (!empty($data->itemlabel)) {
+            $item->label = trim($data->itemlabel);
+        } else {
+            $item->label = get_string('no_itemlabel', 'feedback');
+        }
 
         //get the used class from item-typ
         $itemclass = 'feedback_item_'.$data->typ;

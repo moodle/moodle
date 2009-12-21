@@ -82,73 +82,6 @@ if($itemid and $item = $DB->get_record('feedback_item', array('id'=>$itemid))) {
 
 require_once($CFG->dirroot.'/mod/feedback/item/'.$typ.'/lib.php');
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-if(isset($formdata->cancel)){
-    redirect(htmlspecialchars('edit.php?id=' . $id));
-}
-
-// if(isset($formdata->editcancel) AND $formdata->editcancel == 1){
-    // redirect(htmlspecialchars('edit.php?id=' . $id));
-// }
-
-if(isset($formdata->saveitem) AND $formdata->saveitem == 1){
-    $newposition = $formdata->position;
-    $formdata->position = $newposition + 1;
-
-    if (!$newitemid = feedback_create_item($formdata)) {
-        $SESSION->feedback->errors[] = get_string('item_creation_failed', 'feedback');
-    }else {
-        $newitem = $DB->get_record('feedback_item', array('id'=>$newitemid));
-        if (!feedback_move_item($newitem, $newposition)){
-            $SESSION->feedback->errors[] = get_string('item_creation_failed', 'feedback');
-        }else {
-            redirect(htmlspecialchars('edit.php?id='.$id));
-        }
-    }
-}
-
-if(isset($formdata->updateitem) AND $formdata->updateitem == 1){
-    //update the item and go back
-    if (!feedback_update_item($item, $formdata)) {
-        $SESSION->feedback->errors[] = get_string('item_update_failed', 'feedback');
-    } else {
-        if (!feedback_move_item($item, $formdata->position)){
-            $SESSION->feedback->errors[] = get_string('item_update_failed', 'feedback');
-        }else {
-            redirect(htmlspecialchars('edit.php?id='.$id));
-        }
-    }
-}
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-/// Print the page header
-$strfeedbacks = get_string("modulenameplural", "feedback");
-$strfeedback  = get_string("modulename", "feedback");
-
-$PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
-$PAGE->navbar->add(format_string($feedback->name));
-
-$PAGE->set_title(format_string($feedback->name));
-$PAGE->set_button($OUTPUT->update_module_button($cm->id, 'feedback'));
-echo $OUTPUT->header();
-
-/// print the tabs
-include('tabs.php');
-
-/// Print the main part of the page
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-echo $OUTPUT->heading(format_text($feedback->name));
-
-
-//print errormsg
-if(isset($error)){echo $error;}
-
-feedback_print_errors();
-
 //new formdefinition
 $itemclass = 'feedback_item_'.$typ;
 $itemobj = new $itemclass();
@@ -195,6 +128,59 @@ if(!empty($item->id)){
 // $i_form->addElement('cancel');
 $buttonarray[] = &$i_form->createElement('cancel');
 $i_form->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+
+////////////////////////////////////////////////////////////////////////////////////
+$item_form->set_data($item);
+if ($formdata = $item_form->get_data()) {
+    if (isset($formdata->cancel)){
+        redirect(htmlspecialchars('edit.php?id=' . $id));
+    } else if (isset($formdata->saveitem) AND $formdata->saveitem == 1) {
+        $newposition = $formdata->position;
+        $formdata->position = $newposition + 1;
+
+        if (!$newitemid = feedback_create_item($formdata)) {
+            $SESSION->feedback->errors[] = get_string('item_creation_failed', 'feedback');
+        }else {
+            $newitem = $DB->get_record('feedback_item', array('id'=>$newitemid));
+            if (!feedback_move_item($newitem, $newposition)){
+                $SESSION->feedback->errors[] = get_string('item_creation_failed', 'feedback');
+            }else {
+                redirect(htmlspecialchars('edit.php?id='.$id));
+            }
+        }
+    } else if (isset($formdata->updateitem) AND $formdata->updateitem == 1) {
+        //update the item and go back
+        if (!feedback_update_item($item, $formdata)) {
+            $SESSION->feedback->errors[] = get_string('item_update_failed', 'feedback');
+        } else {
+            if (!feedback_move_item($item, $formdata->position)){
+                $SESSION->feedback->errors[] = get_string('item_update_failed', 'feedback');
+            }else {
+                redirect(htmlspecialchars('edit.php?id='.$id));
+            }
+        }
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////
+/// Print the page header
+$strfeedbacks = get_string("modulenameplural", "feedback");
+$strfeedback  = get_string("modulename", "feedback");
+
+$PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
+$PAGE->navbar->add(format_string($feedback->name));
+
+$PAGE->set_title(format_string($feedback->name));
+$PAGE->set_button($OUTPUT->update_module_button($cm->id, 'feedback'));
+echo $OUTPUT->header();
+/// print the tabs
+include('tabs.php');
+/// Print the main part of the page
+echo $OUTPUT->heading(format_text($feedback->name));
+//print errormsg
+if(isset($error)) {
+    echo $error;
+}
+feedback_print_errors();
 $item_form->display();
 
 /*
