@@ -249,6 +249,7 @@ if ($hassiteconfig) {
     if (empty($CFG->enablewebservices)) {
         $temp->add(new admin_setting_heading('webservicesaredisabled', '', get_string('disabledwarning', 'webservice')));
     }
+    $temp->add(new admin_setting_configcheckbox('enablewsdocumentation', get_string('enablewsdocumentation', 'admin'), get_string('configenablewsdocumentation', 'admin'), false));
     $ADMIN->add('webservicesettings', $temp);
     $webservices_available = get_plugin_list('webservice');
     $active_webservices = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);

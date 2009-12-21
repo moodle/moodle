@@ -59,7 +59,6 @@ class webservice_documentation_generator {
 
     /**
      * Run the documentation generation
-     * @param bool $simple use simple authentication
      * @return void
      */
     public function run() {
@@ -222,14 +221,17 @@ class webservice_documentation_generator {
      * Generate and display the documentation
      */
     protected function display_documentation_html() {
-        global $PAGE, $OUTPUT, $SITE;
+        global $PAGE, $OUTPUT, $SITE, $CFG;
 
         $PAGE->set_url('/webservice/wsdoc');
         $PAGE->set_docs_path('');
         $PAGE->set_title($SITE->fullname." ".get_string('wsdocumentation', 'webservice'));
         $PAGE->set_heading($SITE->fullname." ".get_string('wsdocumentation', 'webservice'));
         $PAGE->set_pagelayout('popup');
+        $PAGE->set_pagetype('webservice-doc-generator');
 
+        $PAGE->requires->css('webservice/wsdoc.css');
+    
         echo $OUTPUT->header();
 
         $activatedprotocol = array();
@@ -258,10 +260,15 @@ class webservice_documentation_generator {
         $PAGE->set_title($SITE->fullname." ".get_string('wsdocumentation', 'webservice'));
         $PAGE->set_heading($SITE->fullname." ".get_string('wsdocumentation', 'webservice'));
         $PAGE->set_pagelayout('popup');
+        $PAGE->set_pagetype('webservice-doc-generator-login');
+        
+        $PAGE->requires->css('webservice/wsdoc.css');
 
         echo $OUTPUT->header();
-        $renderer = $PAGE->get_renderer('core', 'wsdoc');
+
+        $renderer = $PAGE->get_renderer('core', 'webservice');
         echo $renderer->login_page_html($errormessage);
+        
         echo $OUTPUT->footer();
 
     }
@@ -272,6 +279,11 @@ class webservice_documentation_generator {
 ///////////////////////////
 /////// RUN THE SCRIPT ////
 ///////////////////////////
+
+if (empty($CFG->enablewsdocumentation)) {
+    echo get_string('wsdocumentationdisable', 'webservice');
+    die;
+}
 
 //run the documentation generator
 $generator = new webservice_documentation_generator();
