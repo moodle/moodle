@@ -36,18 +36,27 @@ class core_webservice_renderer extends plugin_renderer_base {
     public function detailed_description_html($params) {
         $paramdesc = "";
         if (!empty($params->desc)) {
-            $paramdesc = "<span style=\"color:#2A33A6\"><i>//".$params->desc."</i></span><br/>";
+            $paramdesc .= $this->output_start_tag('span', array('style' => "color:#2A33A6"));
+            $paramdesc .= $this->output_start_tag('i', array());
+            $paramdesc .= "//".$params->desc;
+            $paramdesc .= $this->output_end_tag('i');
+            $paramdesc .= $this->output_end_tag('span');
+            $paramdesc .= $this->output_empty_tag('br', array());
         }
         if ($params instanceof external_multiple_structure) {
 
-            return $paramdesc."list of ( <br/>". $this->detailed_description_html($params->content).")";
+            return $paramdesc . "list of ( " . $this->output_empty_tag('br', array()) . $this->detailed_description_html($params->content) . ")";
         } else if ($params instanceof external_single_structure) {
             //var_dump($params->keys);
-            $singlestructuredesc = $paramdesc."object {<br/>";
+            $singlestructuredesc = $paramdesc."object {". $this->output_empty_tag('br', array());
             foreach ($params->keys as $attributname => $attribut) {
-                $singlestructuredesc .= "<b>".$attributname."</b> ".$this->detailed_description_html($params->keys[$attributname]);
+                $singlestructuredesc .= $this->output_start_tag('b', array());
+                $singlestructuredesc .= $attributname;
+                $singlestructuredesc .= $this->output_end_tag('b');
+                $singlestructuredesc .= " ".$this->detailed_description_html($params->keys[$attributname]);
             }
-            $singlestructuredesc .= "} <br/>";
+            $singlestructuredesc .= "} ";
+            $singlestructuredesc .= $this->output_empty_tag('br', array());
             return $singlestructuredesc;
         } else {
             switch($params->type) {
@@ -156,33 +165,19 @@ EOF;
         }
     }
 
-    /**
-     * Return the REST response (xml code display in <pre> tag)
-     * @param string $functionname
-     * @param object $returndescription
-     * @return string the html to diplay
-     */
-    public function rest_response_html($functionname, $returndescription) {
-        $brakeline = <<<EOF
-
-
-EOF;
-
-        $restresponsehtml = "";
-
-        $restresponsehtml .= "<ins><div style=\"border:solid 1px #DEDEDE;background:#FEEBE5;color:#222222;padding:4px;\">";
-        $restresponsehtml .= "<pre>";
-        $restresponsehtml .= '<b>'.get_string('restcode', 'webservice').'</b><br/>';
-        $brakeline = <<<EOF
-
-
-EOF;
-        $content  = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>".$brakeline."<RESPONSE>".$brakeline;
-        $content .= $this->description_in_indented_xml_format($returndescription);
-        $content .="</RESPONSE>".$brakeline;
-        $restresponsehtml .= $brakeline.htmlentities($content).$brakeline;
-        $restresponsehtml .= "</pre></div></ins>";
-        return $restresponsehtml;
+    public function colored_box_with_pre_tag($title, $content, $rgb = 'FEEBE5') {
+        $coloredbox = $this->output_start_tag('ins', array());
+        $coloredbox .= $this->output_start_tag('div', array('style' => "border:solid 1px #DEDEDE;background:#".$rgb.";color:#222222;padding:4px;"));
+        $coloredbox .= $this->output_start_tag('pre', array());
+        $coloredbox .= $this->output_start_tag('b', array());
+        $coloredbox .= $title;
+        $coloredbox .= $this->output_end_tag('b', array());
+        $coloredbox .= $this->output_empty_tag('br', array());
+        $coloredbox .= "\n".$content."\n";
+        $coloredbox .= $this->output_end_tag('pre', array());
+        $coloredbox .= $this->output_end_tag('div', array());
+        $coloredbox .= $this->output_end_tag('ins', array());
+        return $coloredbox;
     }
 
 
@@ -239,84 +234,86 @@ EOF;
 
 
 EOF;
-
-        $documentationhtml = "";
-
-        $documentationhtml .= "<table style=\"margin-left:auto; margin-right:auto;\"><tr><td style=\"text-align=left\">";
+        $documentationhtml = $this->output_start_tag('table', array('style' => "margin-left:auto; margin-right:auto;"));
+        $documentationhtml .= $this->output_start_tag('tr', array());
+        $documentationhtml .= $this->output_start_tag('td', array());
         $documentationhtml .= get_string('wsdocumentationintro', 'webservice', $username);
-        $documentationhtml .= "<br/><br/><br/>";
+        $documentationhtml .= $this->output_empty_tag('br', array());
+        $documentationhtml .= $this->output_empty_tag('br', array());
+        $documentationhtml .= $this->output_empty_tag('br', array());
 
         foreach ($functions as $functionname => $description) {
             $documentationhtml .= print_collapsible_region_start('', 'aera_'.$functionname,"<strong>".$functionname."</strong>",false,true,true);
 
-            $documentationhtml .= "<br/>";
-            $documentationhtml .= "<div style=\"border:solid 1px #DEDEDE;background:#E2E0E0;color:#222222;padding:4px;\">";
+            $documentationhtml .= $this->output_empty_tag('br', array());
+            $documentationhtml .= $this->output_start_tag('div', array('style' => 'border:solid 1px #DEDEDE;background:#E2E0E0;color:#222222;padding:4px;'));
             $documentationhtml .= $description->description;
-            $documentationhtml .= "</div>";
-            $documentationhtml .= "<br/><br/>";
+            $documentationhtml .= $this->output_end_tag('div');
+            $documentationhtml .= $this->output_empty_tag('br', array());
+            $documentationhtml .= $this->output_empty_tag('br', array());
 
-            $documentationhtml .= "<span style=\"color:#EA33A6\">".get_string('arguments', 'webservice')."</span><br/>";
+            $documentationhtml .= $this->output_start_tag('span', array('style' => 'color:#EA33A6'));
+            $documentationhtml .= get_string('arguments', 'webservice');
+            $documentationhtml .= $this->output_end_tag('span');
+            $documentationhtml .= $this->output_empty_tag('br', array());
             foreach ($description->parameters_desc->keys as $paramname => $paramdesc) {
-                $documentationhtml .= "<span style=\"font-size:80%\">";
+                $documentationhtml .= $this->output_start_tag('span', array('style' => 'font-size:80%'));
                 $required = $paramdesc->required?get_string('required', 'webservice'):get_string('optional', 'webservice');
-                $documentationhtml .= "<b>".$paramname . "</b> (" .$required. ")<br/>";
-                $documentationhtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".$paramdesc->desc." <br/><br/>";
-                $documentationhtml .= "<ins><div style=\"border:solid 1px #DEDEDE;background:#FFF1BC;color:#222222;padding:4px;\">";
-                $documentationhtml .= "<pre>";
-                $documentationhtml .= '<b>'.get_string('generalstructure', 'webservice').'</b><br/>';
-                $documentationhtml .= $brakeline.$this->detailed_description_html($paramdesc);
-                $documentationhtml .= "</pre></div></ins><br/>";
+                $documentationhtml .= $this->output_start_tag('b', array());
+                $documentationhtml .= $paramname;
+                $documentationhtml .= $this->output_end_tag('b');
+                $documentationhtml .= " (" .$required. ")";
+                $documentationhtml .= $this->output_empty_tag('br', array());
+                $documentationhtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".$paramdesc->desc;
+                $documentationhtml .= $this->output_empty_tag('br', array());
+                $documentationhtml .= $this->output_empty_tag('br', array());
+                $documentationhtml .= $this->colored_box_with_pre_tag(get_string('generalstructure', 'webservice'), $this->detailed_description_html($paramdesc), 'FFF1BC');
                 if (!empty($activatedprotocol['xmlrpc'])) {
-                    $documentationhtml .= "<ins><div style=\"border:solid 1px #DEDEDE;background:#DFEEE7;color:#222222;padding:4px;\">";
-                    $documentationhtml .= "<pre>";
-                    $documentationhtml .= '<b>'.get_string('phpparam', 'webservice').'</b><br/>';
-                    $documentationhtml .= $brakeline.'['.$paramname.'] =>'.htmlentities($this->xmlrpc_param_description_html($paramdesc)). $brakeline. $brakeline;
-                    $documentationhtml .= "</pre></div></ins><br/>";
+                    $documentationhtml .= $this->colored_box_with_pre_tag(get_string('phpparam', 'webservice'), htmlentities('['.$paramname.'] =>'.$this->xmlrpc_param_description_html($paramdesc)), 'DFEEE7');
                 }
                 if (!empty($activatedprotocol['rest'])) {
-                    $documentationhtml .= "<ins><div style=\"border:solid 1px #DEDEDE;background:#FEEBE5;color:#222222;padding:4px;\">";
-                    $documentationhtml .= "<pre>";
-                    $documentationhtml .= '<b>'.get_string('restparam', 'webservice').'</b><br/>';
-                    $documentationhtml .= $brakeline.htmlentities($this->rest_param_description_html($paramdesc,$paramname)). $brakeline. $brakeline;
-                    $documentationhtml .= "</pre></div></ins>";
+                    $documentationhtml .= $this->colored_box_with_pre_tag(get_string('restparam', 'webservice'), htmlentities($this->rest_param_description_html($paramdesc,$paramname)), 'FEEBE5');
                 }
-                $documentationhtml .= "</span>";
+                $documentationhtml .= $this->output_end_tag('span');
             }
-            $documentationhtml .= "<br/><br/>";
+            $documentationhtml .= $this->output_empty_tag('br', array());
+            $documentationhtml .= $this->output_empty_tag('br', array());
 
-            $documentationhtml .= "<span style=\"color:#EA33A6\">".get_string('response', 'webservice')."</span><br/>";
-            $documentationhtml .= "<span style=\"font-size:80%\">";
+            $documentationhtml .= $this->output_start_tag('span', array('style' => 'color:#EA33A6'));
+            $documentationhtml .= get_string('response', 'webservice');
+            $documentationhtml .= $this->output_end_tag('span');
+            $documentationhtml .= $this->output_empty_tag('br', array());
+            $documentationhtml .= $this->output_start_tag('span', array('style' => 'font-size:80%'));
             if (!empty($description->returns_desc->desc)) {
-                $documentationhtml .= $description->returns_desc->desc."<br/><br/>";
+                $documentationhtml .= $description->returns_desc->desc;
+                $documentationhtml .= $this->output_empty_tag('br', array());
+                $documentationhtml .= $this->output_empty_tag('br', array());
             }
 
             if (!empty($description->returns_desc)) {
-                $documentationhtml .= "<ins><div style=\"border:solid 1px #DEDEDE;background:#FFF1BC;color:#222222;padding:4px;\">";
-                $documentationhtml .= "<pre>";
-                $documentationhtml .= '<b>'.get_string('generalstructure', 'webservice').'</b><br/>';
-                $documentationhtml .= $brakeline.$this->detailed_description_html($description->returns_desc);
-                $documentationhtml .= "</pre></div></ins><br/>";
+                $documentationhtml .= $this->colored_box_with_pre_tag(get_string('generalstructure', 'webservice'), $this->detailed_description_html($description->returns_desc), 'FFF1BC');
                 if (!empty($activatedprotocol['xmlrpc'])) {
-                    $documentationhtml .= "<ins><div style=\"border:solid 1px #DEDEDE;background:#DFEEE7;color:#222222;padding:4px;\">";
-                    $documentationhtml .= "<pre>";
-                    $documentationhtml .= '<b>'.get_string('phpresponse', 'webservice').'</b><br/>';
-                    $documentationhtml .= htmlentities($this->xmlrpc_param_description_html($description->returns_desc)).$brakeline.$brakeline;
-                    $documentationhtml .= "</pre></div></ins><br/>";
+                     $documentationhtml .= $this->colored_box_with_pre_tag(get_string('phpresponse', 'webservice'), htmlentities($this->xmlrpc_param_description_html($description->returns_desc)), 'DFEEE7');
                 }
                 if (!empty($activatedprotocol['rest'])) {
-                    $documentationhtml .= $this->rest_response_html($functionname, $description->returns_desc);
+                    $restresponse  = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>".$brakeline."<RESPONSE>".$brakeline;
+                    $restresponse .= $this->description_in_indented_xml_format($description->returns_desc);
+                    $restresponse .="</RESPONSE>".$brakeline;
+                    $documentationhtml .= $this->colored_box_with_pre_tag(get_string('restcode', 'webservice'), htmlentities($restresponse), 'FEEBE5');
                 }
             }
-            $documentationhtml .= "</span>";
-            $documentationhtml .= "<br/><br/>";
+            $documentationhtml .= $this->output_end_tag('span');
+            $documentationhtml .= $this->output_empty_tag('br', array());
+            $documentationhtml .= $this->output_empty_tag('br', array());
 
 
             if (!empty($activatedprotocol['rest'])) {
-                $documentationhtml .= "<span style=\"color:#EA33A6\">".get_string('errorcodes', 'webservice')."</span><br/>";
-                $documentationhtml .= "<br/><span style=\"font-size:80%\">";
-                $documentationhtml .= "<ins><div style=\"border:solid 1px #DEDEDE;background:#FEEBE5;color:#222222;padding:4px;\">";
-                $documentationhtml .= "<pre>";
-                $documentationhtml .= '<b>'.get_string('restexception', 'webservice').'</b><br/>';
+                $documentationhtml .= $this->output_start_tag('span', array('style' => 'color:#EA33A6'));
+                $documentationhtml .= get_string('errorcodes', 'webservice');
+                $documentationhtml .= $this->output_end_tag('span');
+                $documentationhtml .= $this->output_empty_tag('br', array());
+                $documentationhtml .= $this->output_empty_tag('br', array());
+                $documentationhtml .= $this->output_start_tag('span', array('style' => 'font-size:80%'));
                 $errormessage = get_string('invalidparameter', 'debug');
                 $restexceptiontext =<<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -325,18 +322,19 @@ EOF;
     <DEBUGINFO></DEBUGINFO>
 </EXCEPTION>
 EOF;
-                $documentationhtml .= $brakeline.htmlentities($restexceptiontext);
-                $documentationhtml .= "</pre></div></ins><br/>";
-            $documentationhtml .= "</span>";
+                $documentationhtml .= $this->colored_box_with_pre_tag(get_string('restexception', 'webservice'), htmlentities($restexceptiontext), 'FEEBE5');
+
+            $documentationhtml .= $this->output_end_tag('span');
             }
-            $documentationhtml .= "<br/><br/>";
+            $documentationhtml .= $this->output_empty_tag('br', array());
+            $documentationhtml .= $this->output_empty_tag('br', array());
 
             $documentationhtml .= print_collapsible_region_end(true);
         }
 
-        $documentationhtml .= "</td>";
-
-        $documentationhtml .= "</tr></table>";
+        $documentationhtml .= $this->output_end_tag('td');
+        $documentationhtml .= $this->output_end_tag('tr');
+        $documentationhtml .= $this->output_end_tag('table');
         return $documentationhtml;
 
     }
@@ -349,13 +347,18 @@ EOF;
     public function login_page_html($errormessage) {
         global $CFG, $OUTPUT;
 
-        $htmlloginpage = "";
-        $htmlloginpage .= "<table style=\"margin-left:auto; margin-right:auto;\"><tr><td>";
+        $htmlloginpage = $this->output_start_tag('table', array('style' => "margin-left:auto; margin-right:auto;"));
+        $htmlloginpage .= $this->output_start_tag('tr', array());
+        $htmlloginpage .= $this->output_start_tag('td', array());
         $htmlloginpage .= get_string('wsdocumentationlogin', 'webservice');
-        $htmlloginpage .= "<br/><br/><br/>";
+        $htmlloginpage .= $this->output_empty_tag('br', array());
+        $htmlloginpage .= $this->output_empty_tag('br', array());
+        $htmlloginpage .= $this->output_empty_tag('br', array());
 
-//        echo get_string('error','webservice',$errormessage);
-//        echo "<br/><br/>";
+//        /// Display detailed error message when can't login
+//        $htmlloginpage .= get_string('error','webservice',$errormessage);
+//        $htmlloginpage .= $this->output_empty_tag('br', array());
+//        $htmlloginpage .= $this->output_empty_tag('br', array());
 
         //login form - we cannot use moodle form as we don't have sessionkey
         $form = new html_form();
@@ -377,11 +380,15 @@ EOF;
         $field->value = get_string('wspassword', 'webservice');
         $field->style = 'width: 30em;';
         $contents .= $OUTPUT->textfield($field);
-        $contents .= "<br/><br/>";
+        $contents .= $this->output_empty_tag('br', array());
+        $contents .= $this->output_empty_tag('br', array());
 
         $htmlloginpage .= $OUTPUT->form($form, $contents);
 
-        $htmlloginpage .= "</td></tr></table>";
+        $htmlloginpage .= $this->output_end_tag('td');
+        $htmlloginpage .= $this->output_end_tag('tr');
+        $htmlloginpage .= $this->output_end_tag('table');
+
         return $htmlloginpage;
 
     }
