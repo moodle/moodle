@@ -6174,44 +6174,48 @@ class admin_setting_manageexternalservices extends admin_setting {
         $euurl = "$CFG->wwwroot/$CFG->admin/webservice/service_users.php";
 
         // built in services
-        $return = $OUTPUT->heading(get_string('servicesbuiltin', 'webservice'), 3, 'main');
+         $services = $DB->get_records_select('external_services', 'component IS NOT NULL', null, 'name');
+         $return = "";
+         if (!empty($services)) {
+            $return .= $OUTPUT->heading(get_string('servicesbuiltin', 'webservice'), 3, 'main');
 
-        $services = $DB->get_records_select('external_services', 'component IS NOT NULL', null, 'name');
 
-        $table = new html_table();
-        $table->head  = array($strservice, $strplugin, $strfunctions, $strusers, $stredit);
-        $table->align = array('left', 'left', 'center', 'center', 'center');
-        $table->size = array('30%', '20%', '20%', '20%', '10%');
-        $table->width = '100%';
-        $table->data  = array();
 
-        // iterate through auth plugins and add to the display table
-        foreach ($services as $service) {
-            $name = $service->name;
+            $table = new html_table();
+            $table->head  = array($strservice, $strplugin, $strfunctions, $strusers, $stredit);
+            $table->align = array('left', 'left', 'center', 'center', 'center');
+            $table->size = array('30%', '20%', '20%', '20%', '10%');
+            $table->width = '100%';
+            $table->data  = array();
 
-            // hide/show link
-            if ($service->enabled) {
-                $displayname = "<span>$name</span>";
-            } else {
-                $displayname = "<span class=\"dimmed_text\">$name</span>";
+            // iterate through auth plugins and add to the display table
+            foreach ($services as $service) {
+                $name = $service->name;
+
+                // hide/show link
+                if ($service->enabled) {
+                    $displayname = "<span>$name</span>";
+                } else {
+                    $displayname = "<span class=\"dimmed_text\">$name</span>";
+                }
+
+                $plugin = $service->component;
+
+                $functions = "<a href=\"$efurl?id=$service->id\">$strfunctions</a>";
+
+                if ($service->restrictedusers) {
+                    $users = "<a href=\"$euurl?id=$service->id\">$strserviceusers</a>";
+                } else {
+                    $users = '-';
+                }
+
+                $edit = "<a href=\"$esurl?id=$service->id\">$stredit</a>";
+
+                // add a row to the table
+                $table->data[] = array($displayname, $plugin, $functions, $users, $edit);
             }
-
-            $plugin = $service->component;
-
-            $functions = "<a href=\"$efurl?id=$service->id\">$strfunctions</a>";
-
-            if ($service->restrictedusers) {
-                $users = "<a href=\"$euurl?id=$service->id\">$strserviceusers</a>";
-            } else {
-                $users = '-';
-            }
-
-            $edit = "<a href=\"$esurl?id=$service->id\">$stredit</a>";
-
-            // add a row to the table
-            $table->data[] = array($displayname, $plugin, $functions, $users, $edit);
+            $return .= $OUTPUT->table($table);
         }
-        $return .= $OUTPUT->table($table);
 
         // Custom services
         $return .= $OUTPUT->heading(get_string('servicescustom', 'webservice'), 3, 'main');
