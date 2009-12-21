@@ -116,6 +116,10 @@ echo $OUTPUT->header();
           </p>
           <?php $potentialmembersselector->display(); ?>
       </td>
+      <td>
+        <p><?php echo($strusergroupmembership) ?></p>
+        <div id="group-usersummary"></div>
+      </td>
     </tr>
     <tr><td colspan="3" id='backcell'>
         <input type="submit" name="cancel" value="<?php print_string('backtogroups', 'group'); ?>" />
@@ -126,6 +130,9 @@ echo $OUTPUT->header();
 </div>
 
 <?php
+    //outputs the JS array used to display the other groups users are in
+    $potentialmembersselector->print_user_summaries($course->id);
+
     //this must be after calling display() on the selectors so their setup JS executes first
     $PAGE->requires->js_function_call('init_add_remove_members_page');
 

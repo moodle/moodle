@@ -202,6 +202,29 @@ var removeLoaderImgs = function (elClass, parentId) {
     }
 };
 
+function updateUserSummary() {
+     var selectEl = document.getElementById('addselect');
+     var summaryDiv = document.getElementById('group-usersummary');
+     var length = selectEl.length;
+     var selectCnt = 0;
+     var selectIdx = -1;
+
+     for(i=0;i<length;i++) {
+         if (selectEl.options[i].selected) {
+                 selectCnt++;
+             selectIdx = i;
+         }
+     }
+
+     if (selectCnt == 1 && userSummaries[selectIdx]) {
+         summaryDiv.innerHTML = userSummaries[selectIdx];
+     } else {
+         summaryDiv.innerHTML = '';
+     }
+
+     return(true);
+}
+
 function init_add_remove_members_page() {
     var addselect = user_selector.get('addselect');
     document.getElementById('add').disabled = addselect.is_selection_empty();
@@ -214,4 +237,7 @@ function init_add_remove_members_page() {
     removeselect.subscribe('selectionchanged', function(isempty) {
         document.getElementById('remove').disabled = isempty;
     });
+
+    addselect = document.getElementById('addselect');
+    addselect.onchange = updateUserSummary;
 }

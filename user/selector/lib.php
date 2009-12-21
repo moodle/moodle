@@ -718,13 +718,76 @@ class group_members_selector extends groups_user_selector_base {
 
 /**
  * User selector subclass for the list of users who are not in a certain group.
- * Used on the add group memebers page.
+ * Used on the add group members page.
  */
 class group_non_members_selector extends groups_user_selector_base {
     const MAX_USERS_PER_PAGE = 100;
 
+    /**
+     * An array of user ids populated by find_users() used in print_user_summaries()
+     */
+    private $potentialmembersids = array();
+
     public function output_user($user) {
         return parent::output_user($user) . ' (' . $user->numgroups . ')';
+    }
+
+    /**
+     * Outputs a Javascript array containing the other groups non-members are in.
+     * Used on the add group members page.
+     */
+    public function print_user_summaries($courseid) {
+        global $DB;
+
+        echo <<<END
+        <script type="text/javascript">
+//<![CDATA[
+var userSummaries = Array(
+END;
+        // Get other groups user already belongs to
+        $usergroups = array();
+        $potentialmembersids = $this->potentialmembersids;
+        if( empty($potentialmembersids)==false ) {
+            list($membersidsclause, $params) = $DB->get_in_or_equal($potentialmembersids, SQL_PARAMS_NAMED, 'pm0');
+            $sql = "SELECT u.id AS userid, g.*
+                   FROM {user} u
+                   JOIN {groups_members} gm ON u.id = gm.userid
+                   JOIN {groups} g ON gm.groupid = g.id
+                  WHERE u.id $membersidsclause AND g.courseid = :courseid ";
+            $params['courseid'] = $courseid;
+            if ($rs = $DB->get_recordset_sql($sql, $params)) {
+                foreach ($rs as $usergroup) {
+                    $usergroups[$usergroup->userid][$usergroup->id] = $usergroup;
+                }
+                $rs->close();
+            }
+
+            $membercnt = count($potentialmembersids);
+            $i=1;
+            foreach ($potentialmembersids as $userid) {
+             if (isset($usergroups[$userid])) {
+                 $usergrouplist = '<ul>';
+
+                 foreach ($usergroups[$userid] as $groupitem) {
+                     $usergrouplist .= '<li>'.addslashes_js(format_string($groupitem->name)).'</li>';
+                 }
+                 $usergrouplist .= '</ul>';
+             }
+             else {
+                 $usergrouplist = '';
+             }
+             echo "'$usergrouplist'";
+             if ($i < $membercnt) {
+                 echo ', ';
+             }
+             $i++;
+            }
+        }
+echo <<<END
+);
+//]]>
+</script>
+END;
     }
 
     public function find_users($search) {
@@ -769,6 +832,19 @@ class group_non_members_selector extends groups_user_selector_base {
         array_unshift($params, $this->courseid);
         $rs = $DB->get_recordset_sql($fields . $sql . $orderby, $params);
         $roles =  groups_calculate_role_people($rs, $context);
+
+        //don't hold onto user IDs if we're doing validation
+        if( empty($this->validatinguserids) ) {
+            if($roles) {
+                foreach($roles as $k=>$v) {
+                    if($v) {
+                        foreach($v->users as $uid=>$userobject) {
+                            $this->potentialmembersids[] = $uid;
+                        }
+                    }
+                }
+            }
+        }
 
         return $this->convert_array_format($roles, $search);
     }
