@@ -405,7 +405,8 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         if (isset($teststate->responses['unit'])){
             $testresponses .= $teststate->responses['unit'];
         }
-                         //   echo "<p> compare response $responses || $testresponses  <pre>";print_r($state);echo "</pre></p>";
+     //    echo "<p> compare response $responses || $testresponses  <pre>";print_r($state);echo "</pre></p>";
+
         if ( isset($responses)  && isset($testresponses )) {
 
             return $responses == $testresponses ;
@@ -666,36 +667,54 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     }
     function edit_numerical_options(&$mform, &$that){
         $mform->addElement('header', 'unithandling', get_string("Units handling", 'qtype_numerical'));
-        $currentgrp1 = array();
+     //   $mform->addElement('checkbox', 'usecurrentcat1', get_string('Don\'t use unit','qtype_numerical'), get_string('leave Unit(s) input field empty ','qtype_numerical'));
+        $mform->addElement('radio', 'showunits', 'No unit display', get_string("Only numerical answer will be graded: leave Unit No1 empty", 'qtype_numerical'),3);
+        $mform->addElement('radio', 'showunits', 'Display unit ', get_string('NON editable text of Unit No1', 'qtype_numerical'),2);
+        $mform->addElement('radio', 'showunits', 'Edit unit  ', get_string('Editable text input element', 'qtype_numerical'),0);
+        $mform->addElement('radio', 'showunits', 'Select units ', get_string('Choice radio element of 2 Units minimum', 'qtype_numerical'),1);
+        $unitslefts = array('0' => get_string('rigth as 1.00cm', 'qtype_numerical'),'1' => get_string('left as $1.00', 'qtype_numerical'));
+        $mform->addElement('select', 'unitsleft', 'Unit position' , $unitslefts );
+         $currentgrp1 = array();
 
         $currentgrp1[] =& $mform->createElement('text', 'unitpenalty', get_string('Penalty for bad unit', 'qtype_numerical') ,
                 array('size' => 3));
-        $currentgrp1[] =& $mform->createElement('static', 'penalty1','hello', get_string('as decimal fraction (0-1) of', 'qtype_numerical'));
+        $currentgrp1[] =& $mform->createElement('static', 'penalty1','', get_string('as decimal fraction (0-1) of', 'qtype_numerical'));
         $mform->addGroup($currentgrp1, 'penaltygrp', get_string('Penalty for bad unit', 'qtype_numerical'), null, false);
         $mform->setType('unitpenalty', PARAM_NUMBER);
         //$mform->addRule('unitpenalty', null, 'required', null, 'client');
         $mform->setDefault('unitpenalty', 0.1);
         $currentgrp = array();
-        $currentgrp[] =& $mform->createElement('radio', 'unitgradingtype', 'or', get_string('question grade', 'qtype_numerical'),1);
-        $currentgrp[] =& $mform->createElement('radio', 'unitgradingtype', '', get_string(' response grade', 'qtype_numerical'),2);
+        $unitgradingtypes = array('1' => get_string('question grade', 'qtype_numerical'), '2' => get_string(' response grade', 'qtype_numerical'));
+        $mform->addElement('select', 'unitgradingtype', '' , $unitgradingtypes );
+     /*   $currentgrp[] =& $mform->createElement('radio', 'unitgradingtype', 'or', get_string('question grade', 'qtype_numerical'),1);
+        $currentgrp[] =& $mform->createElement('radio', 'unitgradingtype', '', get_string(' response grade', 'qtype_numerical'),2);;*/
         $mform->setDefault('unitgradingtype', 1);
-        $mform->addGroup($currentgrp, 'penaltychoicegrp', '',' or ', false);
-        $mform->setHelpButton('penaltychoicegrp', array('penaltygrp', get_string('unitpenalty', 'qtype_numerical'), 'qtype_numerical'));
-        $mform->addElement('radio', 'showunits', 'Edit unit  ', get_string('Editable text input element', 'qtype_numerical'),0);
-        $mform->addElement('radio', 'showunits', 'Select units ', get_string('Choice radio element', 'qtype_numerical'),1);
-        $mform->addElement('radio', 'showunits', 'Display unit ', get_string('NON editable text of Unit No1', 'qtype_numerical'),2);
-        $mform->addElement('radio', 'showunits', 'No unit display', get_string("Only numerical answer will be graded leave Unit No1 empty", 'qtype_numerical'),3);
+      //  $mform->addGroup($currentgrp, 'penaltychoicegrp', '',' or ', false);
+        $mform->setHelpButton('unitgradingtype', array('penaltygrp', get_string('unitpenalty', 'qtype_numerical'), 'qtype_numerical'));
         $mform->setDefault('showunits', 0);
         $currentgrp = array();
-        $leftgrp[] =& $mform->createElement('radio', 'unitsleft', '', get_string('left as $1.00', 'qtype_numerical'),1);
-        $leftgrp[] =& $mform->createElement('radio', 'unitsleft', '', get_string('rigth as 1.00cm', 'qtype_numerical'),0);
-        $mform->addGroup($leftgrp, 'unitsleft', 'Unit position',' or ', false);
+       /*  $leftgrp[] =& $mform->createElement('radio', 'unitsleft', '', get_string('left as $1.00', 'qtype_numerical'),1);
+        $leftgrp[] =& $mform->createElement('radio', 'unitsleft', '', get_string('rigth as 1.00cm', 'qtype_numerical'),0);*/
+       // $mform->addGroup($leftgrp, 'unitsleft', 'Unit position',' or ', false);
         $mform->setDefault('unitsleft', 0);
         $mform->addElement('htmleditor', 'instructions', get_string('instructions', 'quiz'),
                 array('rows' => 10, 'course' => $that->coursefilesid));
+                $mform->setAdvanced('instructions',true);
         $mform->setType('instructions', PARAM_RAW);
         $mform->setHelpButton('instructions', array('instructions', get_string('instructions', 'quiz'), 'quiz'));
-
+       // $mform->disabledIf('showunits', 'usecurrentcat1', 'checked');
+        $mform->disabledIf('addunits', 'showunits','eq','3');
+        $mform->disabledIf('addunits', 'showunits','eq','2');
+        $mform->disabledIf('unitpenalty', 'showunits','eq','3');
+        $mform->disabledIf('unitpenalty', 'showunits','eq','2');
+        $mform->disabledIf('unitgradingtype', 'showunits','eq','3');
+        $mform->disabledIf('unitgradingtype', 'showunits','eq','2');
+        $mform->disabledIf('instructions', 'showunits','eq','3');
+        $mform->disabledIf('instructions', 'showunits','eq','2');
+        
+       // $mform->disabledIf('usecurrentcat1', 'showunits','eq','3');
+       // $mform->disabledIf('usecurrentcat1', 'units[0]','eq','3');
+       
 
     }
 
