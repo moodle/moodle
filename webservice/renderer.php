@@ -290,12 +290,18 @@ EOF;
         
     /// each functions will be displayed into a collapsible region (opened if printableformat = true)
         foreach ($functions as $functionname => $description) {
-            $documentationhtml .= print_collapsible_region_start('',
+
+            if (empty($printableformat)) {
+                $documentationhtml .= print_collapsible_region_start('',
                                                                  'aera_'.$functionname,
                                                                  $this->output_start_tag('strong', array()).$functionname.$this->output_end_tag('strong'),
                                                                  false,
                                                                  !$printableformat,
                                                                  true);
+            } else {
+                $documentationhtml .= $this->output_tag('strong', array(), $functionname);
+                $documentationhtml .= $this->output_empty_tag('br', array());
+            }
 
         /// function global description
             $documentationhtml .= $this->output_empty_tag('br', array());
@@ -405,8 +411,9 @@ EOF;
             }
             $documentationhtml .= $this->output_empty_tag('br', array());
             $documentationhtml .= $this->output_empty_tag('br', array());
-
-            $documentationhtml .= print_collapsible_region_end(true);
+            if (empty($printableformat)) {
+                $documentationhtml .= print_collapsible_region_end(true);
+            }
         }
 
      /// close the table and return the documentation
