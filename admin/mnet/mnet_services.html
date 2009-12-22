@@ -17,11 +17,12 @@ print_simple_box_start("center", "");
 <?php 
     foreach($myservices as $name => $versions) {
     $version = current($versions);
+    $langmodule = ($version['parent_type'] == 'mod' ? '' : ($version['parent_type'] . '_')) . $version['parent'];
 ?>
 <tr>
     <td align="left" valign="top" colspan="2">
-    <h3><?php echo get_string($name.'_name', $version['parent_type'].'_'.$version['parent'] , $mnet_peer->name); ?></h3>
-    <?php echo get_string($name.'_description', $version['parent_type'].'_'.$version['parent'], $mnet_peer->name); ?>
+    <h3><?php echo get_string($name.'_name', $langmodule , $mnet_peer->name); ?></h3>
+    <?php echo get_string($name.'_description', $langmodule, $mnet_peer->name); ?>
 <?php
         $breakstring = '';
         foreach($versions as $version){
