@@ -60,7 +60,7 @@ $string['validuntil'] = 'Valid until';
 $string['webservices'] = 'Web services';
 $string['wsdocumentation'] = 'Web service documentation';
 $string['wsdocumentationdisable'] = 'Web service documentation is disabled.';
-$string['wsdocumentationintro'] = 'Following a listing of web service functions available for the username <b>$a</b>.<br/>In order to create a client we advice you to read the <a href=\"http://docs.moodle.org/en/Development:Creating_a_web_service_and_a_web_service_function#Create_your_own_client\">Moodle documentation</a>';
+$string['wsdocumentationintro'] = 'Following is a listing of web service functions available for the username <b>$a</b>.<br/>To create a client we advise you to read the <a href=\"http://docs.moodle.org/en/Development:Creating_a_web_service_and_a_web_service_function#Create_your_own_client\">Moodle documentation</a>';
 $string['wsdocumentationlogin'] = 'Enter your web service username and password.';
 $string['wspassword'] = 'Web service password';
 $string['wsusername'] = 'Web service username';
