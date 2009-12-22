@@ -35,6 +35,7 @@ $string['phpresponse'] = 'XML-RPC (PHP structure)';
 $string['postrestparam'] = 'PHP code for REST (POST request)';
 $string['potusers'] = 'Not authorised users';
 $string['potusersmatching'] = 'Not authorised users matching';
+$string['print'] = 'Print All';
 $string['protocol'] = 'Protocol';
 $string['removefunction'] = 'Remove';
 $string['removefunctionconfirm'] = 'Do you really want to remove function \"$a->function\" from service \"$a->service\"?';

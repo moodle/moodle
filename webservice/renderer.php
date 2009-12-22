@@ -255,10 +255,13 @@ EOF;
      * This display all the documentation
      * @param array $functions contains all decription objects
      * @param string $username
+     * @param string $password
+     * @param boolean $printableformat true if we want to display the documentation in a printable format
+     * @param array $activatedprotocol
      * @return string the html to diplay
      */
-    public function documentation_html($functions, $username, $activatedprotocol) {
-
+    public function documentation_html($functions, $username, $password, $printableformat, $activatedprotocol) {
+        global $OUTPUT, $CFG;
         $brakeline = <<<EOF
 
 
@@ -270,11 +273,29 @@ EOF;
         $documentationhtml .= get_string('wsdocumentationintro', 'webservice', $username);
         $documentationhtml .= $this->output_empty_tag('br', array());
         $documentationhtml .= $this->output_empty_tag('br', array());
+        
+
+    /// Print button
+        $form = new html_form();
+        $parameters = array ('wsusername' => $username, 'wspassword' => $password, 'print' => true);
+        $form->url = new moodle_url($CFG->wwwroot.'/webservice/wsdoc.php', $parameters); // Required
+        $form->button = new html_button();
+        $form->button->text = get_string('print','webservice'); // Required
+        $form->button->disabled = false;
+        $form->button->title = get_string('print','webservice');
+        $form->method = 'post';
+        $documentationhtml .= $OUTPUT->button($form);
         $documentationhtml .= $this->output_empty_tag('br', array());
         
-    /// each functions will be display into a collapsible region
+        
+    /// each functions will be displayed into a collapsible region (opened if printableformat = true)
         foreach ($functions as $functionname => $description) {
-            $documentationhtml .= print_collapsible_region_start('', 'aera_'.$functionname, $this->output_start_tag('strong', array()).$functionname.$this->output_end_tag('strong'),false,true,true);
+            $documentationhtml .= print_collapsible_region_start('',
+                                                                 'aera_'.$functionname,
+                                                                 $this->output_start_tag('strong', array()).$functionname.$this->output_end_tag('strong'),
+                                                                 false,
+                                                                 !$printableformat,
+                                                                 true);
 
         /// function global description
             $documentationhtml .= $this->output_empty_tag('br', array());
@@ -302,14 +323,20 @@ EOF;
                 $documentationhtml .= $this->output_empty_tag('br', array());
                 $documentationhtml .= $this->output_empty_tag('br', array());
                 ///general structure of the argument
-                $documentationhtml .= $this->colored_box_with_pre_tag(get_string('generalstructure', 'webservice'), $this->detailed_description_html($paramdesc), 'FFF1BC');
+                $documentationhtml .= $this->colored_box_with_pre_tag(get_string('generalstructure', 'webservice'), 
+                                                                      $this->detailed_description_html($paramdesc),
+                                                                      'FFF1BC');
                 ///xml-rpc structure of the argument in PHP format
                 if (!empty($activatedprotocol['xmlrpc'])) {
-                    $documentationhtml .= $this->colored_box_with_pre_tag(get_string('phpparam', 'webservice'), htmlentities('['.$paramname.'] =>'.$this->xmlrpc_param_description_html($paramdesc)), 'DFEEE7');
+                    $documentationhtml .= $this->colored_box_with_pre_tag(get_string('phpparam', 'webservice'), 
+                                                                          htmlentities('['.$paramname.'] =>'.$this->xmlrpc_param_description_html($paramdesc)),
+                                                                          'DFEEE7');
                 }
                 ///POST format for the REST protocol for the argument
                 if (!empty($activatedprotocol['rest'])) {
-                    $documentationhtml .= $this->colored_box_with_pre_tag(get_string('restparam', 'webservice'), htmlentities($this->rest_param_description_html($paramdesc,$paramname)), 'FEEBE5');
+                    $documentationhtml .= $this->colored_box_with_pre_tag(get_string('restparam', 'webservice'), 
+                                                                          htmlentities($this->rest_param_description_html($paramdesc,$paramname)),
+                                                                          'FEEBE5');
                 }
                 $documentationhtml .= $this->output_end_tag('span');
             }
@@ -331,17 +358,23 @@ EOF;
             }
             if (!empty($description->returns_desc)) {
                 ///general structure of the response
-                $documentationhtml .= $this->colored_box_with_pre_tag(get_string('generalstructure', 'webservice'), $this->detailed_description_html($description->returns_desc), 'FFF1BC');
+                $documentationhtml .= $this->colored_box_with_pre_tag(get_string('generalstructure', 'webservice'), 
+                                                                      $this->detailed_description_html($description->returns_desc),
+                                                                      'FFF1BC');
                 ///xml-rpc structure of the response in PHP format
                 if (!empty($activatedprotocol['xmlrpc'])) {
-                     $documentationhtml .= $this->colored_box_with_pre_tag(get_string('phpresponse', 'webservice'), htmlentities($this->xmlrpc_param_description_html($description->returns_desc)), 'DFEEE7');
+                     $documentationhtml .= $this->colored_box_with_pre_tag(get_string('phpresponse', 'webservice'),
+                                                                           htmlentities($this->xmlrpc_param_description_html($description->returns_desc)),
+                                                                           'DFEEE7');
                 }
                 ///XML response for the REST protocol
                 if (!empty($activatedprotocol['rest'])) {
                     $restresponse  = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>".$brakeline."<RESPONSE>".$brakeline;
                     $restresponse .= $this->description_in_indented_xml_format($description->returns_desc);
                     $restresponse .="</RESPONSE>".$brakeline;
-                    $documentationhtml .= $this->colored_box_with_pre_tag(get_string('restcode', 'webservice'), htmlentities($restresponse), 'FEEBE5');
+                    $documentationhtml .= $this->colored_box_with_pre_tag(get_string('restcode', 'webservice'), 
+                                                                          htmlentities($restresponse),
+                                                                          'FEEBE5');
                 }
             }
             $documentationhtml .= $this->output_end_tag('span');
@@ -364,7 +397,9 @@ EOF;
     <DEBUGINFO></DEBUGINFO>
 </EXCEPTION>
 EOF;
-                $documentationhtml .= $this->colored_box_with_pre_tag(get_string('restexception', 'webservice'), htmlentities($restexceptiontext), 'FEEBE5');
+                $documentationhtml .= $this->colored_box_with_pre_tag(get_string('restexception', 'webservice'), 
+                                                                      htmlentities($restexceptiontext),
+                                                                      'FEEBE5');
 
             $documentationhtml .= $this->output_end_tag('span');
             }
@@ -378,6 +413,7 @@ EOF;
         $documentationhtml .= $this->output_end_tag('td');
         $documentationhtml .= $this->output_end_tag('tr');
         $documentationhtml .= $this->output_end_tag('table');
+
         return $documentationhtml;
 
     }
