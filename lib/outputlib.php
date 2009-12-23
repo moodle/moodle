@@ -708,7 +708,7 @@ class theme_config {
                     }
                     $sheetfile = "$parent_config->dir/style/$sheet.css";
                     if (is_readable($sheetfile)) {
-                        $css['parents'][$parent][$sheet] = $this->post_process("/*** Parent theme $parent/$sheet ***/\n\n" . file_get_contents($sheetfile));
+                        $css['parents'][$parent][$sheet] = $this->post_process("/*** Parent theme $parent/style/$sheet.css ***/\n\n" . file_get_contents($sheetfile));
                     }
                 }
             }
@@ -719,7 +719,7 @@ class theme_config {
             foreach ($this->sheets as $sheet) {
                 $sheetfile = "$this->dir/style/$sheet.css";
                 if (is_readable($sheetfile)) {
-                    $css['theme'][$sheet] = $this->post_process("/*** This theme $sheet ***/\n\n" . file_get_contents($sheetfile));
+                    $css['theme'][$sheet] = $this->post_process("/*** This theme $this->name/style/$sheet ***/\n\n" . file_get_contents($sheetfile));
                 }
             }
         }
@@ -747,8 +747,55 @@ class theme_config {
      * @return string
      */
     public function javascript_content() {
-        //TODO: load contents of all theme JS files
-        return '/*not yet fully implemented*/';
+        $js = array();
+        // find out wanted parent javascripts
+        $excludes = null;
+        if (is_array($this->parents_exclude_javascripts) or $this->parents_exclude_javascripts === true) {
+            $excludes = $this->parents_exclude_javascripts;
+        } else {
+            foreach ($this->parent_configs as $parent_config) { // the immediate parent first, base last
+                if (!isset($parent_config->parents_exclude_javascripts)) {
+                    continue;
+                }
+                if (is_array($parent_config->parents_exclude_javascripts) or $parent_config->parents_exclude_javascripts === true) {
+                    $excludes = $parent_config->parents_exclude_javascripts;
+                    break;
+                }
+            }
+        }
+        if ($excludes !== true) {
+            foreach (array_reverse($this->parent_configs) as $parent_config) { // base first, the immediate parent last
+                $parent = $parent_config->name;
+                if (empty($parent_config->javascripts)) {
+                    continue;
+                }
+                if (!empty($excludes[$parent]) and $excludes[$parent] === true) {
+                    continue;
+                }
+                foreach ($parent_config->javascripts as $javascript) {
+                    if (!empty($excludes[$parent]) and is_array($excludes[$parent])
+                        and in_array($javascript, $excludes[$parent])) {
+                        continue;
+                    }
+                    $javascriptfile = "$parent_config->dir/javascript/$javascript.js";
+                    if (is_readable($javascriptfile)) {
+                        $js[] = "/*** Parent theme $parent/javascript/$javascript.js ***/\n\n" . file_get_contents($javascriptfile);
+                    }
+                }
+            }
+        }
+
+        // current theme javascripts
+        if (is_array($this->javascripts)) {
+            foreach ($this->javascripts as $javascript) {
+                $javascriptfile = "$this->dir/javascript/$javascript.js";
+                if (is_readable($javascriptfile)) {
+                    $js[] = "/*** This theme $this->name/javascript/$javascript.js ***/\n\n" . file_get_contents($javascriptfile);
+                }
+            }
+        }
+
+        return implode("\n\n", $js);
     }
 
     protected function post_process($css) {
