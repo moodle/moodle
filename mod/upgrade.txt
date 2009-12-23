@@ -22,6 +22,7 @@ required changes in code:
 * theme changes: move plugin styles into mod/xxx/styles.css and use new css markers for images,
                  move all images into new mod/xxx/pix/ directory and use new outputlib api
                  move module icon to mod/xxx/pix/icon.gif
+                 old global $THEME is fully replaced by $OUTPUT
 
 
 optional - no changes needed in older code:

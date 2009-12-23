@@ -944,18 +944,13 @@ class moodle_page {
     /**
      * Force this page to use a particular theme.
      *
-     * Please use this cautiously. It is only intended to be used by the themes selector
-     * admin page, and theme/styles.php.
+     * Please use this cautiously. It is only intended to be used by the themes selector admin page.
      *
      * @param $themename the name of the theme to use.
      */
     public function force_theme($themename) {
-        global $PAGE, $THEME;
         $this->ensure_theme_not_set();
         $this->_theme = theme_config::load($themename);
-        if ($this === $PAGE) {
-            $THEME = $this->_theme;
-        }
     }
 
     /**
@@ -1025,10 +1020,10 @@ class moodle_page {
      *
      * Make sure the right theme for this page is loaded. Tell our
      * blocks_manager about the theme block regions, and then, if
-     * we are $PAGE, set up the globals $THEME and $OUTPUT.
+     * we are $PAGE, set up the global $OUTPUT.
      */
     public function initialise_theme_and_output() {
-        global $OUTPUT, $PAGE, $SITE, $THEME;
+        global $OUTPUT, $PAGE, $SITE;
 
         if (!empty($this->_wherethemewasinitialised)) {
             return;
@@ -1047,7 +1042,6 @@ class moodle_page {
         $this->_theme->setup_blocks($this->pagelayout, $this->blocks);
 
         if ($this === $PAGE) {
-            $THEME = $this->_theme;
             $OUTPUT = $this->get_renderer('core');
         }
 

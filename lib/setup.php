@@ -110,18 +110,12 @@ global $COURSE;
  * to change something that affects the current theme ($PAGE->course, logged in use,
  * httpsrequried ... will result in an exception.)
  *
+ * Please note the $OUTPUT is replacing the old global $THEME object.
+ *
  * @global object $OUTPUT
  * @name $OUTPUT
  */
 global $OUTPUT;
-
-/**
- * $THEME is a global that defines the current theme.
- *
- * @global theme_config $THEME
- * @name THEME
- */
-global $THEME;
 
 /**
  * Shared memory cache.

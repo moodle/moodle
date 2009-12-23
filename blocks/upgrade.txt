@@ -13,6 +13,7 @@ required changes in code:
 * rewrite backup/restore
 * theme changes: move plugin styles into blocks/xxx/styles.css and use new css markers for images,
                  move all images into new blocks/xxx/pix/ directory and use new outputlib api
+                 old global $THEME is fully replaced by $OUTPUT
 
 
 optional - no changes needed in older code:
