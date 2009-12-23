@@ -34,7 +34,7 @@
     $param->moveto = optional_param('moveto', 0, PARAM_INT);
     $param->edit = optional_param('edit', 0, PARAM_INT);
 
-    $url = new moodle_url($thispageurl);
+    $url = new moodle_url($CFG->wwwroot.$thispageurl);
     foreach ((array)$param as $key=>$value) {
         if (($key !== 'cancel' && $value !== 0) || ($key === 'cancel' && $value !== '')) {
             $url->param($key, $value);
@@ -87,17 +87,6 @@
         $thispageurl->remove_params('cat', 'category');
         redirect($thispageurl);
     }
-    if ($cm!==null) {
-        // Page header
-        $strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())
-            ? $OUTPUT->update_module_button($cm->id, $cm->modname)
-            : "";
-        $PAGE->navbar->add(get_string('modulenameplural', $cm->modname), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/index.php', array('id'=>$COURSE->id)));
-        $PAGE->navbar->add(format_string($module->name), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id)));
-    } else {
-        // Print basic page layout.
-        $strupdatemodule = '';
-    }
 
     if (!$param->edit){
         $PAGE->navbar->add($streditingcategories);
@@ -107,7 +96,6 @@
     }
 
     $PAGE->set_title($streditingcategories);
-    $PAGE->set_button($strupdatemodule);
     echo $OUTPUT->header();
 
     // print tabs

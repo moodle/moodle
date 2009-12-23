@@ -169,23 +169,10 @@ if ($contextmoveform->is_cancelled()){
 }
 
 $streditingcategories = get_string('editcategories', 'quiz');
-if ($cmid) {
-    // Page header
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $strupdatemodule = has_capability('moodle/course:manageactivities', $context)
-        ? $OUTPUT->update_module_button($cm->id, $cm->modname)
-        : "";
-    $PAGE->navbar->add(get_string('modulenameplural', $cm->modname), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/index.php', array('id'=>$COURSE->id)));
-    $PAGE->navbar->add(format_string($module->name), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id)));
-} else {
-    // Print basic page layout.
-    $strupdatemodule = '';
-}
 $strmovingquestions = get_string('movingquestions', 'question');
 $PAGE->set_url($thispageurl->out());
 $PAGE->navbar->add($strmovingquestions);
 $PAGE->set_title($strmovingquestions);
-$PAGE->set_button($strupdatemodule);
 echo $OUTPUT->header();
 
 // print tabs

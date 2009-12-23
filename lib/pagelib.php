@@ -1630,7 +1630,7 @@ class page_generic_activity extends page_base {
             $title = str_replace($search, $replace, $title);
         }
 
-        $buttons = '<table><tr><td>'.update_module_button($this->modulerecord->id, $this->course->id, get_string('modulename', $this->activityname)).'</td>';
+        $buttons = '<table><tr><td>'.$OUTPUT->update_module_button($this->modulerecord->id, $this->activityname).'</td>';
         if ($this->user_allowed_editing() && !empty($CFG->showblocksonmodpages)) {
             $buttons .= '<td><form '.$CFG->frametarget.' method="get" action="view.php"><div>'.
                 '<input type="hidden" name="id" value="'.$this->modulerecord->id.'" />'.

@@ -86,7 +86,6 @@ if ($cm !== null) {
     }
     $PAGE->navbar->add($chooseqtype);
     $PAGE->set_title($chooseqtype);
-    $PAGE->set_button($OUTPUT->update_module_button($cm->id, $cm->modname));
     echo $OUTPUT->header();
 } else {
     $PAGE->navbar->add(get_string('questionbank', 'question'),$returnurl);

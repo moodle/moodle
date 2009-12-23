@@ -279,12 +279,7 @@ if ($mform->is_cancelled()){
     $PAGE->set_title($streditingquestion);
     if ($cm !== null) {
         $strmodule = get_string('modulename', $cm->modname);
-        $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $COURSE->id))
-            ? $OUTPUT->update_module_button($cm->id, $strmodule)
-            : "";
-
         $streditingmodule = get_string('editinga', 'moodle', $strmodule);
-
         $PAGE->navbar->add(get_string('modulenameplural', $cm->modname), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/index.php', array('id'=>$cm->course)));
         $PAGE->navbar->add(format_string($module->name), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id)));
         if (stripos($returnurl, "$CFG->wwwroot/mod/{$cm->modname}/view.php")!== 0){
@@ -292,7 +287,6 @@ if ($mform->is_cancelled()){
             $PAGE->navbar->add($streditingmodule, $returnurl);
         }
         $PAGE->navbar->add($streditingquestion);
-        $PAGE->set_button($strupdatemodule);
         echo $OUTPUT->header();
 
     } else {
