@@ -422,5 +422,5 @@ $string['informminpassworddigits'] = 'at least $a digit(s)';
 $string['informminpasswordlower'] = 'at least $a lower case letter(s)';
 $string['informminpasswordnonalphanum'] = 'at least $a non-alphanumeric character(s)';
 $string['informminpasswordupper'] = 'at least $a upper case letter(s)';
-$string['informpasswordpolicy'] = 'Your password must have $a';
+$string['informpasswordpolicy'] = 'The password must have $a';
 ?>
