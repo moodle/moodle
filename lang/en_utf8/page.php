@@ -13,6 +13,7 @@ $string['legacyfilesactive'] = 'Active';
 $string['legacyfilesdone'] = 'Finished';
 $string['modulename'] = 'Page';
 $string['modulenameplural'] = 'Pages';
+$string['pageadministration'] = 'Page administration';
 $string['popupheight'] = 'Popup height (in pixels)';
 $string['popupheightexplain'] = 'Specifies default height of popup windows.';
 $string['popupwidth'] = 'Popup width (in pixels)';

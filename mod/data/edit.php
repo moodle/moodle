@@ -131,7 +131,6 @@ if ($rid) {
 }
 
 $PAGE->set_title($data->name);
-$PAGE->set_button($OUTPUT->update_module_button($cm->id, 'data'));
 echo $OUTPUT->header();
 
 /// Check to see if groups are being used here

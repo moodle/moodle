@@ -73,7 +73,6 @@ $PAGE->navbar->add($strglossaries, new moodle_url($CFG->wwwroot.'/mod/glossary/i
 $PAGE->navbar->add(format_string($glossary->name),  new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->id,'tab'=>'GLOSSARY_CATEGORY_VIEW')));
 $PAGE->navbar->add(get_string("categories","glossary"));
 $PAGE->set_title(format_string($glossary->name));
-$PAGE->set_button($OUTPUT->update_module_button($cm->id, 'glossary'));
 echo $OUTPUT->header();
 
 if ( $hook >0 ) {

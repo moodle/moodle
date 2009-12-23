@@ -67,7 +67,6 @@ $PAGE->requires->string_for_js('show', 'moodle');
 $PAGE->set_title($course->shortname.': '.$imscp->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_activity_record($imscp);
-$PAGE->set_button($OUTPUT->update_module_button($cm->id, 'imscp'));
 echo $OUTPUT->header();
 
 // verify imsmanifest was parsed properly

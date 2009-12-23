@@ -83,7 +83,6 @@ if($mform->is_cancelled()) {
 } elseif (!$formdata = (array) $mform->get_data()) {
     // build header to match the rest of the UI
     $PAGE->set_title($data->name);
-    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'data'));
     echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($data->name));
 

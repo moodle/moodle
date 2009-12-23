@@ -152,7 +152,6 @@ if ($do_show == 'edit') {
 }
 $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/feedback/edit.php', array('id'=>$cm->id, 'do_show'=>$do_show)));
 $PAGE->set_title(format_string($feedback->name));
-$PAGE->set_button($OUTPUT->update_module_button($cm->id, 'feedback'));
 echo $OUTPUT->header();
 
 /// print the tabs

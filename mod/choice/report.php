@@ -53,7 +53,6 @@
     if (!$download) {
         $PAGE->navbar->add($strresponses);
         $PAGE->set_title(format_string($choice->name).": $strresponses");
-        $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'choice'));
         echo $OUTPUT->header();
         /// Check to see if groups are being used in this choice
         $groupmode = groups_get_activity_groupmode($cm);

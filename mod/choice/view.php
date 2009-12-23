@@ -43,7 +43,6 @@
     }
 
     $PAGE->set_title(format_string($choice->name));
-    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'choice'));
     echo $OUTPUT->header();
 
 /// Submit any new data if there is any

@@ -119,7 +119,6 @@
 
     $PAGE->set_title("$course->shortname: ".format_string($survey->name));
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'survey'));
     echo $OUTPUT->header();
 
 /// Check to see if groups are being used in this survey

@@ -315,21 +315,6 @@ class quiz {
     }
 
     // Bits of content =====================================================================
-    /**
-     * @return string the HTML snipped that needs to be supplied to print_header_simple
-     * as the $button parameter.
-     */
-    public function update_module_button() {
-        global $OUTPUT ;
-        if (has_capability('moodle/course:manageactivities',
-                get_context_instance(CONTEXT_COURSE, $this->course->id))) {
-
-
-            return $OUTPUT->update_module_button($this->cm->id, 'quiz');
-        } else {
-            return '';
-        }
-    }
 
     /**
      * @param string $title the name of this particular quiz page.

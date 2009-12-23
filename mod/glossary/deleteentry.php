@@ -103,7 +103,6 @@ if ($confirm and confirm_sesskey()) { // the operation was confirmed.
 
 } else {        // the operation has not been confirmed yet so ask the user to do so
     $PAGE->set_title(format_string($glossary->name));
-    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'glossary'));
     echo $OUTPUT->header();
     $areyousure = "<b>".format_string($entry->concept)."</b><p>$strareyousuredelete</p>";
     $linkyes    = 'deleteentry.php';

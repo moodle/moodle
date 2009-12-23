@@ -70,7 +70,6 @@ if ($inpopup and $page->display == RESOURCELIB_DISPLAY_POPUP) {
     $PAGE->set_title($course->shortname.': '.$page->name);
     $PAGE->set_heading($course->fullname);
     $PAGE->set_activity_record($page);
-    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'page'));
     echo $OUTPUT->header();
 
     if (!empty($options['printheading'])) {

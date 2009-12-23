@@ -186,7 +186,6 @@ class assignment_base {
 
         $PAGE->set_title($this->pagetitle);
         $PAGE->set_heading($this->course->fullname);
-        $PAGE->set_button($OUTPUT->update_module_button($this->cm->id, 'assignment'));
 
         echo $OUTPUT->header();
 
@@ -1126,7 +1125,6 @@ class assignment_base {
         add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->cm->id, $this->assignment->id, $this->cm->id);
         $PAGE->navbar->add($this->strsubmissions);
         $PAGE->set_title(format_string($this->assignment->name,true));
-        $PAGE->set_button( update_module_button($cm->id, $course->id, $this->strassignment));
         echo $OUTPUT->header();
 
         $course_context = get_context_instance(CONTEXT_COURSE, $course->id);

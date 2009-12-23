@@ -59,7 +59,6 @@
 
     $strsurvey = get_string("modulename", "survey");
     $PAGE->set_title(format_string($survey->name));
-    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'survey'));
     echo $OUTPUT->header();
 
 /// Check to see if groups are being used in this survey

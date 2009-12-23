@@ -99,7 +99,6 @@
     } else {
         $attemptobj->navigation($strreviewtitle);
         $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
-        $PAGE->set_button($attemptobj->update_module_button());
         echo $OUTPUT->header();
     }
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib

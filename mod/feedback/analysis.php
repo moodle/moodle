@@ -65,7 +65,6 @@ $strfeedback  = get_string("modulename", "feedback");
 
 $PAGE->navbar->add(get_string('analysis','feedback'));
 $PAGE->set_title(format_string($feedback->name));
-$PAGE->set_button($OUTPUT->update_module_button($cm->id, 'feedback'));
 echo $OUTPUT->header();
 
 /// print the tabs

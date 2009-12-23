@@ -59,7 +59,6 @@ if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
 } else {
     $attemptobj->navigation($title);
     $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
-    $PAGE->set_button($attemptobj->update_module_button());
     echo $OUTPUT->header();
 }
 

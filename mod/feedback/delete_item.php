@@ -62,7 +62,6 @@
     $PAGE->navbar->add(format_string($feedback->name));
 
     $PAGE->set_title(format_string($feedback->name));
-    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'feedback'));
     echo $OUTPUT->header();
 
     /// Print the main part of the page

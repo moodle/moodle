@@ -72,18 +72,17 @@
     // The code will be much nicer than this eventually.
     $title = $course->shortname . ': ' . format_string($quiz->name);
 
-    $buttons = '<table><tr><td>'.$OUTPUT->update_module_button($cm->id, $cm->modname).'</td>';
     if ($PAGE->user_allowed_editing() && !empty($CFG->showblocksonmodpages)) {
-        $buttons .= '<td><form '.$CFG->frametarget.' method="get" action="view.php"><div>'.
+        $buttons = '<table><tr><td><form '.$CFG->frametarget.' method="get" action="view.php"><div>'.
             '<input type="hidden" name="id" value="'.$cm->id.'" />'.
             '<input type="hidden" name="edit" value="'.($PAGE->user_is_editing()?'off':'on').'" />'.
-            '<input type="submit" value="'.get_string($PAGE->user_is_editing()?'blockseditoff':'blocksediton').'" /></div></form></td>';
+            '<input type="submit" value="'.get_string($PAGE->user_is_editing()?'blockseditoff':'blocksediton').'" /></div></form></td></tr></table>';
+        $PAGE->set_button($buttons);
     }
-    $buttons .= '</tr></table>';
 
     $PAGE->set_title($title);
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_button($buttons);
+    
     echo $OUTPUT->header();
 
 /// Print heading and tabs (if there is more than one).

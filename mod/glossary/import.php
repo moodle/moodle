@@ -68,7 +68,6 @@ $strimportentries = get_string('importentriesfromxml', 'glossary');
 $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/glossary/import.php', array('id'=>$cm->id, 'mode'=>$mode, 'hook'=>$hook)));
 $PAGE->navbar->add($strimportentries);
 $PAGE->set_title(format_string($glossary->name));
-$PAGE->set_button($OUTPUT->update_module_button($cm->id, 'glossary'));
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strimportentries);

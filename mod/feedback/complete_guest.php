@@ -131,7 +131,6 @@ $PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/in
 $PAGE->navbar->add(format_string($feedback->name));
 
 $PAGE->set_title(format_string($feedback->name));
-$PAGE->set_button($OUTPUT->update_module_button($cm->id, 'feedback'));
 echo $OUTPUT->header();
 
 //ishidden check. hidden feedbacks except feedbacks on mainsite are only accessible with related capabilities

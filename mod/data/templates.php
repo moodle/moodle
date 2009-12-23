@@ -91,7 +91,6 @@ $bodytag .= '" ';
 $PAGE->navbar->add(get_string($mode,'data'));
 $PAGE->requires->js('mod/data/data.js');
 $PAGE->set_title($data->name);
-$PAGE->set_button($OUTPUT->update_module_button($cm->id, 'data'));
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($data->name));
 

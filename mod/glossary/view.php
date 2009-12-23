@@ -230,7 +230,6 @@ $strwaitingapproval = get_string('waitingapproval', 'glossary');
 
 /// If we are in approval mode, prit special header
 $PAGE->set_title(format_string($glossary->name));
-$PAGE->set_button($OUTPUT->update_module_button($cm->id, 'glossary'));
 $url = new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->id));
 if (isset($mode)) {
     $url->param('mode', $mode);

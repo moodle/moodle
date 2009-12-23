@@ -286,3 +286,53 @@ function url_get_coursemodule_info($coursemodule) {
     return $info;
 }
 
+/**
+ * This function extends the global navigaiton for the site.
+ * It is important to note that you should not rely on PAGE objects within this
+ * body of code as there is no guarantee that during an AJAX request they are
+ * available
+ *
+ * @param navigation_node $navigation The url node within the global navigation
+ * @param stdClass $course The course object returned from the DB
+ * @param stdClass $module The module object returned from the DB
+ * @param stdClass $cm The course module isntance returned from the DB
+ */
+function url_extend_navigation($navigation, $course, $module, $cm) {
+    /**
+     * This is currently just a stub so that it can be easily expanded upon.
+     * When expanding just remove this comment and the line below and then add
+     * you content.
+     */
+    $navigation->nodetype = navigation_node::NODETYPE_LEAF;
+}
+
+/**
+ * This function extends the settings navigation block for the site.
+ *
+ * It is safe to rely on PAGE here as we will only ever be within the module
+ * context when this is called.
+ *
+ * @param settings_navigation $settings
+ * @param stdClass $module
+ */
+function url_extend_settings_navigation($settings, $module) {
+    global $PAGE, $CFG, $DB;
+
+    // Load the url instance from the database
+    $url = $DB->get_record('url', array('id'=>$PAGE->cm->instance));
+    // Add a url node to the settings navigation.
+    $urlnavkey = $settings->add(get_string('urladministration', 'url'));
+    $urlnav = $settings->get($urlnavkey);
+    $urlnav->forceopen = true;
+
+    // If the user has the capability add an update this module link for the url instance
+    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
+        $url = new moodle_url($CFG->wwwroot.'/course/mod.php', array('update'=>$PAGE->cm->id, 'return'=>true, 'sesskey'=>sesskey()));
+        $urlnav->add(get_string('updatethis', '', get_string('modulename', 'url')), $url);
+    }
+
+    // Check if any children have been added. If not remove the node to save on clutter.
+    if (count($urlnav->children)<1) {
+        $settings->remove_child($urlnavkey);
+    }
+}

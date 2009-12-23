@@ -127,7 +127,6 @@ $strfeedback  = get_string("modulename", "feedback");
 $PAGE->navbar->add(get_string('feedback:complete', 'feedback'));
 $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/feedback/complete.php', array('id'=>$cm->id, 'gopage'=>$gopage, 'courseid'=>$course->id)));
 $PAGE->set_title(format_string($feedback->name));
-$PAGE->set_button($OUTPUT->update_module_button($cm->id, 'feedback'));
 echo $OUTPUT->header();
 
 //ishidden check.

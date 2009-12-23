@@ -1984,7 +1984,6 @@ function data_print_header($course, $cm, $data, $currenttab='') {
     global $CFG, $displaynoticegood, $displaynoticebad, $OUTPUT, $PAGE;
 
     $PAGE->set_title($data->name);
-    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'data'));
     echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($data->name));
 
