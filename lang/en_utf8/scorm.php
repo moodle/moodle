@@ -155,6 +155,7 @@ $string['scorm:savetrack'] = 'Save tracks';
 $string['scorm:skipview'] = 'Skip overview';
 $string['scorm:viewreport'] = 'View reports';
 $string['scorm:viewscores'] = 'View scores';
+$string['scormadministration'] = 'SCORM/AICC administration';
 $string['scormclose'] = 'Until';
 $string['scormcourse'] = 'Learning Course';
 $string['scormopen'] = 'Open';

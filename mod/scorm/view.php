@@ -61,7 +61,6 @@
     //
     $PAGE->set_title($pagetitle);
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'scorm'));
     echo $OUTPUT->header();
 
     if (has_capability('mod/scorm:viewreport', $context)) {
