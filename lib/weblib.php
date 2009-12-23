@@ -740,13 +740,13 @@ function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
  *      to reload the parent window before this one closes.
  */
 function close_window($delay = 0, $reloadopener = false) {
-    global $THEME, $PAGE, $OUTPUT;
+    global $PAGE, $OUTPUT;
 
     if (!$PAGE->headerprinted) {
         $PAGE->set_title(get_string('closewindow'));
         echo $OUTPUT->header();
     } else {
-        print_container_end_all(false, $THEME->open_header_containers);
+        $OUTPUT->container_end_all(false);
     }
 
     if ($reloadopener) {
@@ -2183,106 +2183,6 @@ function print_collapsible_region_end($return = false) {
 }
 
 /**
- * Returns number of currently open containers
- *
- * @global object
- * @return int number of open containers
- */
-function open_containers() {
-    global $THEME;
-
-    if (!isset($THEME->open_containers)) {
-        $THEME->open_containers = array();
-    }
-
-    return count($THEME->open_containers);
-}
-
-/**
- * Force closing of open containers
- *
- * @param boolean $return, return as string or just print it
- * @param int $keep number of containers to be kept open - usually theme or page containers
- * @return mixed string or void
- */
-function print_container_end_all($return=false, $keep=0) {
-    global $OUTPUT;
-    $output = '';
-    while (open_containers() > $keep) {
-        $output .= $OUTPUT->container_end();
-    }
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-/**
- * Internal function - do not use directly!
- * Starting part of the surrounding divs for custom corners
- *
- * @param boolean $clearfix, add CLASS "clearfix" to the inner div against collapsing
- * @param string $classes
- * @param mixed $idbase, optionally, define one idbase to be added to all the elements in the corners
- * @return string
- */
-function _print_custom_corners_start($clearfix=false, $classes='', $idbase='') {
-/// Analise if we want ids for the custom corner elements
-    $id = '';
-    $idbt = '';
-    $idi1 = '';
-    $idi2 = '';
-    $idi3 = '';
-
-    if ($idbase) {
-        $id   = 'id="'.$idbase.'" ';
-        $idbt = 'id="'.$idbase.'-bt" ';
-        $idi1 = 'id="'.$idbase.'-i1" ';
-        $idi2 = 'id="'.$idbase.'-i2" ';
-        $idi3 = 'id="'.$idbase.'-i3" ';
-    }
-
-/// Calculate current level
-    $level = open_containers();
-
-/// Output begins
-    $output = '<div '.$id.'class="wrap wraplevel'.$level.' '.$classes.'">'."\n";
-    $output .= '<div '.$idbt.'class="bt"><div>&nbsp;</div></div>';
-    $output .= "\n";
-    $output .= '<div '.$idi1.'class="i1"><div '.$idi2.'class="i2">';
-    $output .= (!empty($clearfix)) ? '<div '.$idi3.'class="i3 clearfix">' : '<div '.$idi3.'class="i3">';
-
-    return $output;
-}
-
-
-/**
- * Internal function - do not use directly!
- * Ending part of the surrounding divs for custom corners
- *
- * @param string $idbase
- * @return string HTML sttring
- */
-function _print_custom_corners_end($idbase) {
-/// Analise if we want ids for the custom corner elements
-    $idbb = '';
-
-    if ($idbase) {
-        $idbb = 'id="' . $idbase . '-bb" ';
-    }
-
-/// Output begins
-    $output = '</div></div></div>';
-    $output .= "\n";
-    $output .= '<div '.$idbb.'class="bb"><div>&nbsp;</div></div>'."\n";
-    $output .= '</div>';
-
-    return $output;
-}
-
-
-/**
  * Print a specified group's avatar.
  *
  * @global object
@@ -2740,7 +2640,7 @@ function modgradehelpbutton($courseid){
  * @return void This function simply exits
  */
 function notice ($message, $link='', $course=NULL) {
-    global $CFG, $SITE, $THEME, $COURSE, $PAGE, $OUTPUT;
+    global $CFG, $SITE, $COURSE, $PAGE, $OUTPUT;
 
     $message = clean_text($message);   // In case nasties are in here
 
@@ -2754,7 +2654,7 @@ function notice ($message, $link='', $course=NULL) {
         $PAGE->set_title(get_string('notice'));
         echo $OUTPUT->header();
     } else {
-        print_container_end_all(false, $THEME->open_header_containers);
+        echo $OUTPUT->container_end_all(false);
     }
 
     echo $OUTPUT->box($message, 'generalbox', 'notice');

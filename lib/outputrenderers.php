@@ -612,7 +612,7 @@ class core_renderer extends renderer_base {
     public function footer() {
         global $CFG, $DB;
 
-        $output = $this->opencontainers->pop_all_but_last(true);
+        $output = $this->container_end_all(true);
 
         $footer = $this->opencontainers->pop('header/footer');
 
@@ -639,6 +639,18 @@ class core_renderer extends renderer_base {
 
 
         return $output . $footer;
+    }
+
+    /**
+     * Close all but the last open container. This is useful in places like error
+     * handling, where you want to close all the open containers (apart from <body>)
+     * before outputting the error message.
+     * @param bool $shouldbenone assert that the stack should be empty now - causes a
+     *      developer debug warning if it isn't.
+     * @return string the HTML required to close any open containers inside <body>.
+     */
+    public function container_end_all($shouldbenone = false) {
+        return $this->opencontainers->pop_all_but_last($shouldbenone);
     }
 
     /**
