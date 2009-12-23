@@ -114,7 +114,7 @@ if ($mform->is_cancelled()) {
         $scale->courseid = !empty($data->standard) ? 0 : $courseid;
         $scale->insert();
         $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $systemcontext, 'grade_scale', $scale->id);
-        $DB->set_field($scale->table, 'description', $data->description, array('id'=>$outcome->id));
+        $DB->set_field($scale->table, 'description', $data->description, array('id'=>$scale->id));
     } else {
         $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $systemcontext, 'grade_scale', $id);
         grade_scale::set_properties($scale, $data);
