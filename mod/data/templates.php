@@ -151,6 +151,22 @@ if (empty($data->addtemplate) and empty($data->singletemplate) and
     data_generate_default_template($data, 'rsstemplate');
 }
 
+editors_head_setup();
+$format = FORMAT_HTML;
+$editor = get_preferred_texteditor($format);
+$strformats = format_text_menu();
+$formats =  $editor->get_supported_formats();
+foreach ($formats as $fid) {
+    $formats[$fid] = $strformats[$fid];
+}
+$options = array();
+$options['trusttext'] = false;
+$options['forcehttps'] = false;
+$options['subdirs'] = false;
+$options['maxfiles'] = 0;
+$options['maxbytes'] = 0;
+$options['changeformat'] = 0;
+$options['noclean'] = false;
 
 echo '<form id="tempform" action="templates.php?d='.$data->id.'&amp;mode='.$mode.'" method="post">';
 echo '<div>';
@@ -172,7 +188,11 @@ if ($mode == 'listtemplate'){
     echo '<td>&nbsp;</td>';
     echo '<td>';
     echo '<div style="text-align:center"><label for="edit-listtemplateheader">'.get_string('header','data').'</label></div>';
-    print_textarea($usehtmleditor, 10, 72, 0, 0, 'listtemplateheader', $data->listtemplateheader);
+
+    $field = 'listtemplateheader';
+    $editor->use_editor($field, $options);
+    echo '<div><textarea id="'.$field.'" name="'.$field.'" rows="15" cols="80">'.s($data->listtemplateheader).'</textarea></div>';
+
     echo '</td>';
     echo '</tr>';
 }
@@ -263,7 +283,9 @@ if ($mode == 'listtemplate'){
     echo '<div style="text-align:center"><label for="edit-template">'.get_string($mode,'data').'</label></div>';
 }
 
-print_textarea($usehtmleditor, 20, 72, 0, 0, 'template', $data->{$mode});
+$field = 'template';
+$editor->use_editor($field, $options);
+echo '<div><textarea id="'.$field.'" name="'.$field.'" rows="15" cols="80">'.s($data->{$mode}).'</textarea></div>';
 echo '</td>';
 echo '</tr>';
 
@@ -272,7 +294,10 @@ if ($mode == 'listtemplate'){
     echo '<td>&nbsp;</td>';
     echo '<td>';
     echo '<div style="text-align:center"><label for="edit-listtemplatefooter">'.get_string('footer','data').'</label></div>';
-    print_textarea($usehtmleditor, 10, 72, 0, 0, 'listtemplatefooter', $data->listtemplatefooter);
+
+    $field = 'listtemplatefooter';
+    $editor->use_editor($field, $options);
+    echo '<div><textarea id="'.$field.'" name="'.$field.'" rows="15" cols="80">'.s($data->listtemplatefooter).'</textarea></div>';
     echo '</td>';
     echo '</tr>';
 } else if ($mode == 'rsstemplate') {
@@ -280,7 +305,10 @@ if ($mode == 'listtemplate'){
     echo '<td>&nbsp;</td>';
     echo '<td>';
     echo '<div style="text-align:center"><label for="edit-rsstitletemplate">'.get_string('rsstitletemplate','data').'</label></div>';
-    print_textarea($usehtmleditor, 10, 72, 0, 0, 'rsstitletemplate', $data->rsstitletemplate);
+
+    $field = 'rsstitletemplate';
+    $editor->use_editor($field, $options);
+    echo '<div><textarea id="'.$field.'" name="'.$field.'" rows="15" cols="80">'.s($data->rsstitletemplate).'</textarea></div>';
     echo '</td>';
     echo '</tr>';
 }

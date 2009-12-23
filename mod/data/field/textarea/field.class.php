@@ -21,44 +21,61 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+require_once($CFG->dirroot.'/lib/filelib.php');
+require_once($CFG->dirroot.'/repository/lib.php');
+
 class data_field_textarea extends data_field_base {
 
     var $type = 'textarea';
 
     function display_add_field($recordid=0) {
-        global $CFG, $DB, $OUTPUT;
+        global $CFG, $DB, $OUTPUT, $PAGE;
 
         $text   = '';
         $format = 0;
 
-        if ($recordid){
-            if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
-                $text   = $content->content;
-                $format = $content->content1;
-            }
-        }
-
         $str = '<div title="'.$this->field->description.'">';
 
-        if (can_use_html_editor()) {
-            // Show a rich text html editor.
-            $str .= $this->gen_textarea(true, $text);
-            $str .= $OUTPUT->help_icon(moodle_help_icon::make("richtext2", get_string("helprichtext"), 'moodle', true));
-            $str .= '<input type="hidden" name="field_' . $this->field->id . '_content1' . '" value="' . FORMAT_HTML . '" />';
+        editors_head_setup();
 
+        $options = array();
+        $options['trusttext'] = false;
+        $options['forcehttps'] = false;
+        $options['subdirs'] = false;
+        $options['maxfiles'] = 0;
+        $options['maxbytes'] = 0;
+        $options['changeformat'] = 0;
+        $options['noclean'] = false;
+
+        $itemid = $this->field->id;
+        $field = 'field_'.$itemid;
+
+        if ($recordid && $content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))){
+            $text   = $content->content;
+            $format = $content->content1;
+        } else if (can_use_html_editor()) {
+            $format = FORMAT_HTML;
         } else {
-            // Show a normal textarea. Also let the user specify the format to be used.
-            $str .= $this->gen_textarea(false, $text);
-
-            // Get the available text formats for this field.
-            $formatsForField = format_text_menu();
-            $str .= '<br />';
-            $select = html_select( $formatsForField, 'field_' . $this->field->id . '_content1', $format);
-            $select->nothingvalue = '';
-            $str .= $OUTPUT->select($select);
-
-            $str .= $OUTPUT->help_icon(moodle_help_icon::make('textformat', get_string('helpformatting'), 'moodle'));
+            $format = FORMAT_PLAIN;
         }
+
+        $editor = get_preferred_texteditor($format);
+        $strformats = format_text_menu();
+        $formats =  $editor->get_supported_formats();
+        foreach ($formats as $fid) {
+            $formats[$fid] = $strformats[$fid];
+        }
+        $editor->use_editor($field, $options);
+        $str .= '<div><textarea id="'.$field.'" name="'.$field.'" rows="15" cols="80">'.s($text).'</textarea></div>';
+        $str .= '<div><select name="'.$field.'_content1">';
+        foreach ($formats as $key=>$desc) {
+            $selected = ($format == $key) ? 'selected="selected"' : '';
+            $str .= '<option value="'.s($key).'" '.$selected.'>'.$desc.'</option>';
+        }
+        $str .= '</select>';
+        $str .= $OUTPUT->help_icon(moodle_help_icon::make('textformat', get_string('helpformatting'), 'moodle'));
+        $str .= '</div>';
+
         $str .= '</div>';
         return $str;
     }
@@ -82,12 +99,6 @@ class data_field_textarea extends data_field_base {
         $name = "df_picture_$i";
         return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content $ILIKE :$name) ", array($name=>"%$value%"));
     }
-
-    function gen_textarea($usehtmleditor, $text='') {
-        return print_textarea($usehtmleditor, $this->field->param3, $this->field->param2,
-                              '', '', 'field_'.$this->field->id, $text, '', true, 'field_' . $this->field->id);
-    }
-
 
     function print_after_form() {
     }
