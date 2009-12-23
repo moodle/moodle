@@ -28,6 +28,8 @@
 
 /** Require {@link eventslib.php} */
 require_once($CFG->libdir . '/eventslib.php');
+/** Require {@link calendar/lib.php} */
+require_once($CFG->dirroot . '/calendar/lib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////////////
 
@@ -183,7 +185,8 @@ function quiz_delete_instance($id) {
 
     $events = $DB->get_records('event', array('modulename' => 'quiz', 'instance' => $quiz->id));
     foreach($events as $event) {
-        delete_event($event->id);
+        $event = calendar_event::load($event);
+        $event->delete();
     }
 
     quiz_grade_item_delete($quiz);
@@ -650,7 +653,8 @@ function quiz_refresh_events($courseid = 0) {
                 $event2old = array_shift($events);
                 if (!empty($events)) {
                     foreach ($events as $badevent) {
-                        delete_event($badevent->id);
+                        $badevent = calendar_event::load($badevent);
+                        $badevent->delete();
                     }
                 }
             }
@@ -682,21 +686,24 @@ function quiz_refresh_events($courseid = 0) {
 
             if (empty($event2old->id)) {
                 unset($event2->id);
-                add_event($event2);
+                calendar_event::create($event2);
             } else {
                 $event2->id = $event2old->id;
-                update_event($event2);
+                $event2 = calendar_event::load($event2);
+                $event2->update($event2);
             }
         } else if (!empty($event2old->id)) {
-            delete_event($event2old->id);
+            $event2old = calendar_event::load($event2old);
+            $event2old->delete();
         }
 
         if (empty($event->id)) {
             if (!empty($event->timestart)) {
-                add_event($event);
+                calendar_event::create($event);
             }
         } else {
-            update_event($event);
+            $event = calendar_event::load($event);
+            $event->update($event);
         }
 
     }
@@ -1076,7 +1083,8 @@ function quiz_after_add_or_update($quiz) {
     // there are at most two events, and this keeps the code simpler.
     if ($events = $DB->get_records('event', array('modulename'=>'quiz', 'instance'=>$quiz->id))) {
         foreach($events as $event) {
-            delete_event($event->id);
+            $event2old = calendar_event::load($event);
+            $event2old->delete();
         }
     }
 
@@ -1095,20 +1103,20 @@ function quiz_after_add_or_update($quiz) {
     if ($quiz->timeclose and $quiz->timeopen and $event->timeduration <= QUIZ_MAX_EVENT_LENGTH) {
         // Single event for the whole quiz.
         $event->name = $quiz->name;
-        add_event($event);
+        calendar_event::create($event);
     } else {
         // Separate start and end events.
         $event->timeduration  = 0;
         if ($quiz->timeopen) {
             $event->name = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
-            add_event($event);
+            calendar_event::create($event);
             unset($event->id); // So we can use the same object for the close event.
         }
         if ($quiz->timeclose) {
             $event->name      = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
             $event->timestart = $quiz->timeclose;
             $event->eventtype = 'close';
-            add_event($event);
+            calendar_event::create($event);
         }
     }
 
