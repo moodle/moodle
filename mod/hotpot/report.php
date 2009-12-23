@@ -444,7 +444,6 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
 
     $PAGE->set_title(format_string($course->shortname) . ": $hotpot->name");
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'hotpot'));
     echo $OUTPUT->header();
 
     $course_context = get_context_instance(CONTEXT_COURSE, $course->id);

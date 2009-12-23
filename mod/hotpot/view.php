@@ -47,7 +47,6 @@
     $title = format_string($course->shortname.': '.$hotpot->name, true);
     $heading = $course->fullname;
 
-    $button = $OUTPUT->update_module_button($cm->id, 'hotpot');
     $button = '<div style="font-size:0.75em;">'.$button.'</div>';
     $loggedinas = '<span class="logininfo">'.user_login_string($course, $USER).'</span>';
 

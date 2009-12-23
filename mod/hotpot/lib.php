@@ -2984,3 +2984,54 @@ function hotpot_reset_course_form_definition(&$mform) {
 function hotpot_reset_course_form_defaults($course) {
     return array('reset_hotpot_deleteallattempts' => 1);
 }
+
+/**
+ * This function extends the global navigaiton for the site.
+ * It is important to note that you should not rely on PAGE objects within this
+ * body of code as there is no guarantee that during an AJAX request they are
+ * available
+ *
+ * @param navigation_node $navigation The hotpot node within the global navigation
+ * @param stdClass $course The course object returned from the DB
+ * @param stdClass $module The module object returned from the DB
+ * @param stdClass $cm The course module isntance returned from the DB
+ */
+function hotpot_extend_navigation($navigation, $course, $module, $cm) {
+    /**
+     * This is currently just a stub so that it can be easily expanded upon.
+     * When expanding just remove this comment and the line below and then add
+     * you content.
+     */
+    $navigation->nodetype = navigation_node::NODETYPE_LEAF;
+}
+
+/**
+ * This function extends the settings navigation block for the site.
+ *
+ * It is safe to rely on PAGE here as we will only ever be within the module
+ * context when this is called.
+ *
+ * @param settings_navigation $settings
+ * @param stdClass $module
+ */
+function hotpot_extend_settings_navigation($settings, $module) {
+    global $PAGE, $CFG, $DB;
+
+    // Load the hotpot instance from the database
+    $hotpot = $DB->get_record('hotpot', array('id'=>$PAGE->cm->instance));
+    // Add a hotpot node to the settings navigation.
+    $hotpotnavkey = $settings->add(get_string('hotpotadministration', 'hotpot'));
+    $hotpotnav = $settings->get($hotpotnavkey);
+    $hotpotnav->forceopen = true;
+
+    // If the user has the capability add an update this module link for the hotpot instance
+    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
+        $url = new moodle_url($CFG->wwwroot.'/course/mod.php', array('update'=>$PAGE->cm->id, 'return'=>true, 'sesskey'=>sesskey()));
+        $hotpotnav->add(get_string('updatethis', '', get_string('modulename', 'hotpot')), $url);
+    }
+
+    // Check if any children have been added. If not remove the node to save on clutter.
+    if (count($hotpotnav->children)<1) {
+        $settings->remove_child($hotpotnav);
+    }
+}

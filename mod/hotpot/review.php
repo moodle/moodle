@@ -59,7 +59,6 @@
     $PAGE->requires->js('lib/overlib/overlib_cssstyle.js')->in_head();
     $PAGE->set_title(format_string($course->shortname) . ": $hotpot->name");
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'hotpot'));
     echo $OUTPUT->header();
     print '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
     echo $OUTPUT->heading($hotpot->name);

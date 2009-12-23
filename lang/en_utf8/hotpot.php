@@ -54,6 +54,7 @@ $string['hotpot:deleteattempt'] = 'Delete quiz attempts';
 $string['hotpot:grade'] = 'Modify grades';
 $string['hotpot:view'] = 'Use quiz';
 $string['hotpot:viewreport'] = 'View reports';
+$string['hotpotadministration'] = 'Hot Potatoes quiz administration';
 $string['hotpotcloses'] = 'Hot Potatoes quiz closes';
 $string['hotpotopens'] = 'Hot Potatoes quiz opens';
 $string['ignored'] = 'Ignored';
