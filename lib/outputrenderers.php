@@ -2137,6 +2137,22 @@ class core_renderer extends renderer_base {
     public function larrow() {
         return $this->page->theme->larrow;
     }
+
+    /**
+     * Returns the colours of the small MP3 player
+     * @return string
+     */
+    public function filter_mediaplugin_colors() {
+        return $this->page->theme->filter_mediaplugin_colors;
+    }
+
+    /**
+     * Returns the colours of the big MP3 player
+     * @return string
+     */
+    public function resource_mp3player_colors() {
+        return $this->page->theme->resource_mp3player_colors;
+    }
 }
 
 

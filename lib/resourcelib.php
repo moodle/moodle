@@ -136,15 +136,10 @@ function resourcelib_embed_image($fullurl, $title) {
  * @return string html
  */
 function resourcelib_embed_mp3($fullurl, $title, $clicktoopen) {
-    global $CFG, $THEME, $PAGE;
+    global $CFG, $OUTPUT, $PAGE;
 
-    if (!empty($THEME->resource_mp3player_colors)) {
-        $c = $THEME->resource_mp3player_colors;   // You can set this up in your theme/xxx/config.php
-    } else {
-        $c = 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
-             'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
-             'font=Arial&fontColour=FF33FF&buffer=10&waitForPlay=no&autoPlay=yes';
-    }
+    $c = $OUTPUT->resource_mp3player_colors();   // You can set this up in your theme/xxx/config.php
+
     $c .= '&volText='.get_string('vol', 'resource').'&panText='.get_string('pan','resource');
     $id = 'filter_mp3_'.time(); //we need something unique because it might be stored in text cache
 

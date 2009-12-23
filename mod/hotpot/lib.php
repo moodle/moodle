@@ -1251,13 +1251,9 @@ function hotpot_get_recent_mod_activity(&$activities, &$index, $sincetime, $cour
  */
 function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
 
-    global $CFG, $THEME, $USER, $OUTPUT;
+    global $CFG, $USER, $OUTPUT;
 
-    if (isset($THEME->cellcontent2)) {
-        $bgcolor =  ' bgcolor="'.$THEME->cellcontent2.'"';
-    } else {
-        $bgcolor = '';
-    }
+    $bgcolor = '';
 
     print '<table border="0" cellpadding="3" cellspacing="0">';
 

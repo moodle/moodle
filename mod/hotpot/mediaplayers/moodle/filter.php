@@ -11,17 +11,13 @@
 /// courseid and the text to be filtered (in HTML form).
 
 function hotpot_mediaplayer_moodle(&$hotpot, $text) {
-    global $CFG, $THEME;
+    global $CFG, $OUTPUT;
 
     if ($CFG->filter_mediaplugin_enable_mp3) {
         static $c;
 
         if (empty($c)) {
-            if (!empty($THEME->filter_mediaplugin_colors)) {
-                $c = $THEME->filter_mediaplugin_colors;   // You can set this up in your theme/xxx/config.php
-            } else {
-                $c = 'bgColour=000000&amp;btnColour=ffffff&amp;btnBorderColour=cccccc&amp;iconColour=000000&amp;iconOverColour=00cc00&amp;trackColour=cccccc&amp;handleColour=ffffff&amp;loaderColour=ffffff&amp;waitForPlay=yes&amp;';
-            }
+            $c = $OUTPUT->filter_mediaplugin_colors();   // You can set this up in your theme/xxx/config.php
         }
         // $c = htmlentities($c);  // Commented out pending bug 5223
         $search = '/<a(.*?)href=\"([^<]+)\.mp3\"([^>]*)>(.*?)<\/a>/is';

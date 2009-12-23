@@ -129,15 +129,9 @@ class mediaplugin_filter extends moodle_text_filter {
 /// callback filter functions
 
 function mediaplugin_filter_mp3_callback($link) {
-    global $CFG, $THEME, $PAGE;
+    global $CFG, $OUTPUT, $PAGE;
 
-    if (!empty($THEME->filter_mediaplugin_colors)) {
-        $c = $THEME->filter_mediaplugin_colors;   // You can set this up in your theme/xxx/config.php
-    } else {
-        $c = 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
-             'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
-             'waitForPlay=yes';
-    }
+    $c = $OUTPUT->filter_mediaplugin_colors();   // You can set this up in your theme/xxx/config.php
 
     static $count = 0;
     $count++;
