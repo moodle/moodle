@@ -32,10 +32,7 @@ $mode    = optional_param('mode', "todaylogs", PARAM_ALPHA);
 $page    = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 100, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/course/user.php', array('id'=>$id,'user'=>$user));
-if ($mode !== 'todaylogs') {
-    $url->param('mode', $mode);
-}
+$url = new moodle_url($CFG->wwwroot.'/course/user.php', array('id'=>$id,'user'=>$user, 'mode'=>$mode));
 if ($page !== 0) {
     $url->param('page', $page);
 }
@@ -138,10 +135,8 @@ $link = null;
 if ($course->id != SITEID && has_capability('moodle/course:viewparticipants', $coursecontext)) {
     $link = new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$course->id));
 }
-$PAGE->navbar->add($strparticipants, $link);
-$PAGE->navbar->add($fullname, new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id, 'course'=>$course->id)));
-$PAGE->navbar->add($stractivityreport);
-$PAGE->navbar->add($strmode);
+
+$PAGE->navigation->extend_for_user($user);
 $PAGE->set_title("$course->shortname: $stractivityreport ($mode)");
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();

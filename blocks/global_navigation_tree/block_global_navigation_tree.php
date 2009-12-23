@@ -323,8 +323,9 @@ class block_global_navigation_tree extends block_tree {
         // If we have `more than nothing` in the history display it :D
         if ($historycount > 0) {
             // Add a branch to hold the users history
-            $myhistorybranch = $PAGE->navigation->add(get_string('showmyhistorytitle', $this->blockname), null, navigation_node::TYPE_CATEGORY, null, 'myhistory');
-            $PAGE->navigation->get($myhistorybranch)->children = array_reverse($history);
+            $mymoodle = $PAGE->navigation->get('mymoodle', navigation_node::TYPE_CUSTOM);
+            $myhistorybranch = $mymoodle->add(get_string('showmyhistorytitle', $this->blockname), null, navigation_node::TYPE_CUSTOM, null, 'myhistory');
+            $mymoodle->get($myhistorybranch)->children = array_reverse($history);
         }
 
         // Cache the history (or update the cached history as it is)
@@ -363,9 +364,10 @@ class block_global_navigation_tree extends block_tree {
         }
 
         // Add a branch labelled something like My Courses
-        $mycoursesbranch = $PAGE->navigation->add(get_string('mycourses'), null,navigation_node::TYPE_CATEGORY, null, 'mycourses');
-        $PAGE->navigation->add_courses($courses, $mycoursesbranch);
-        $PAGE->navigation->get($mycoursesbranch)->type = navigation_node::TYPE_SETTING;
+        $mymoodle = $PAGE->navigation->get('mymoodle', navigation_node::TYPE_CUSTOM);
+        $mycoursesbranch = $mymoodle->add(get_string('mycourses'), null,navigation_node::TYPE_CATEGORY, null, 'mycourses');
+        $PAGE->navigation->add_courses($courses, 'mycourses');
+        $mymoodle->get($mycoursesbranch)->type = navigation_node::TYPE_CUSTOM;
         return true;
     }
 

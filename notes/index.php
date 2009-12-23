@@ -25,7 +25,7 @@ if ($userid !== 0) {
 if ($filtertype !== '') {
     $url->param('filtertype', $filtertype);
 }
-if ($filterselect !== '') {
+if ($filterselect !== 0) {
     $url->param('filterselect', $filterselect);
 }
 $PAGE->set_url($url);
@@ -86,11 +86,12 @@ $link = null;
 if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
     $link = new moodle_url($CFG->wwwroot.'/user/index.php',array('id'=>$course->id));
 }
-$PAGE->navbar->add(get_string('participants'), $link);
 if ($userid) {
-    $PAGE->navbar->add(fullname($user), new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id,'course'=>$course->id)));
+    $PAGE->navigation->extend_for_user($user);
+} else {
+    $PAGE->navbar->add(get_string('participants'), $link);
+    $PAGE->navbar->add($strnotes);
 }
-$PAGE->navbar->add($strnotes);
 $PAGE->set_title($course->shortname . ': ' . $strnotes);
 $PAGE->set_heading($course->fullname);
 

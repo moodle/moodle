@@ -89,11 +89,8 @@ $link = null;
 if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $course->id)) || has_capability('moodle/site:viewparticipants', $syscontext)) {
     $link = new moodle_url($CFG->wwwroot.'/user/index.php',array('id'=>$course->id));
 }
-$PAGE->navbar->add($strparticipants, $link);
-$PAGE->navbar->add($fullname, new moodle_url($CFG->wwwroot.'/user/view.php',array('id'=>$user->id,'course'=>$course->id)));
-$PAGE->navbar->add($strforumposts);
-$PAGE->navbar->add($strmode);
 
+$PAGE->navigation->extend_for_user($user);
 $PAGE->set_title("$course->shortname: $fullname: $strmode");
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();

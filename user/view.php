@@ -38,7 +38,7 @@ if (empty($id)) {         // See your own profile by default
 }
 
 $url = new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$id));
-if ($course !== 0) {
+if ($course != SITEID) {
     $url->param('course', $course);
 }
 if ($enable !== 0) {
@@ -61,13 +61,6 @@ if (! $course = $DB->get_record("course", array("id"=>$course))) {
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 if ($SITE->shortname === '' and has_capability('moodle/site:config', $systemcontext)) {
     redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
-}
-
-/// Set up page URL for blocks etc
-if ($course->id == SITEID) {
-    $PAGE->set_url('user/view.php', array('id' => $user->id));
-} else {
-    $PAGE->set_url('user/view.php', array('id' => $user->id, 'course' => $course->id));
 }
 
 /// Make sure the current user is allowed to see this user
@@ -111,13 +104,8 @@ $link = null;
 if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
     $link = new moodle_url($CFG->wwwroot."/user/index.php", array('id'=>$course->id));
 }
-if ($course->id===SITEID) {
-    $PAGE->navbar->ignore_active();
-}
-$PAGE->navbar->add($strparticipants, $link);
 
 /// If the user being shown is not ourselves, then make sure we are allowed to see them!
-
 if (!$currentuser) {
 
     $PAGE->set_title("$strpersonalprofile: ");
@@ -170,7 +158,7 @@ if (!$currentuser) {
 
 /// We've established they can see the user's name at least, so what about the rest?
 
-$PAGE->navbar->add($struser);
+$PAGE->navigation->extend_for_user($user);
 $PAGE->set_title("$course->fullname: $strpersonalprofile: $fullname");
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
