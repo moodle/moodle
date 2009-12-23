@@ -2711,6 +2711,27 @@ function editorshortcutshelpbutton() {
 }
 
 /**
+ * Returns html code to be used as help icon of modgrade form element
+ *
+ * Is used as a callback in modgrade setHelpButton()
+ *
+ * @param int $courseid id of the course the scales should be shown from
+ * @return string to be echoed
+ */
+function modgradehelpbutton($courseid){
+    global $CFG, $OUTPUT;
+
+    $url = new moodle_url($CFG->wwwroot .'/course/scales.php', array('id' => $courseid, 'list' => true));
+    $link = new html_link();
+    $link->url = $url;
+    $link->text = '<span class="helplink"><img alt="' . get_string('scales') . '" class="iconhelp" src="' . $OUTPUT->pix_url('help') . '" /></span>';
+    $link->add_action(new popup_action('click', $link->url, 'ratingscales', array('height' => 400, 'width' => 500)));
+    $link->title = get_string('newwindow');
+
+    return $OUTPUT->link($link);
+}
+
+/**
  * Print a message and exit.
  *
  * @param string $message The message to print in the notice
