@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 // no chaching
 define('NO_MOODLE_COOKIES', true); // Session not used here
 define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check
@@ -33,7 +34,11 @@ $type      = required_param('type', PARAM_SAFEDIR);
 $subtype   = optional_param('subtype', '', PARAM_SAFEDIR);
 $sheet     = optional_param('sheet', '', PARAM_SAFEDIR);
 
-if (!file_exists("$CFG->dirroot/theme/$themename/config.php") and !file_exists("$CFG->dataroot/theme/$themename/config.php")) {
+if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
+    // exists
+} else if (!empty($CFG->themedir) and file_exists("$CFG->themedir/$themename/config.php")) {
+    // exists
+} else {
     css_not_found();
 }
 

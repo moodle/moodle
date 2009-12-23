@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 // we need just the values from config.php and minlib.php
 define('ABORT_AFTER_CONFIG', true);
 require('../config.php'); // this stops immediately at the beginning of lib/setup.php
@@ -36,7 +37,11 @@ if (empty($component) or empty($image)) {
     image_not_found();
 }
 
-if (!file_exists("$CFG->dirroot/theme/$themename/config.php") and !file_exists("$CFG->dataroot/theme/$themename/config.php")) {
+if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
+    // exists
+} else if (!empty($CFG->themedir) and file_exists("$CFG->themedir/$themename/config.php")) {
+    // exists
+} else {
     image_not_found();
 }
 

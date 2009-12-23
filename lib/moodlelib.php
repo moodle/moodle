@@ -714,7 +714,9 @@ function clean_param($param, $type) {
 
         case PARAM_THEME:
             $param = clean_param($param, PARAM_SAFEDIR);
-            if (file_exists($CFG->dirroot.'/theme/'.$param)) {
+            if (file_exists("$CFG->dirroot/theme/$param/config.php")) {
+                return $param;
+            } else if (!empty($CFG->themedir) and file_exists("$CFG->themedir/$param/config.php")) {
                 return $param;
             } else {
                 return '';  // Specified theme is not installed
@@ -6798,8 +6800,11 @@ function get_plugin_list($plugintype) {
         $fulldirs[] = $CFG->dirroot.'/mod';
 
     } else if ($plugintype === 'theme') {
-        // themes are an exception because they may be stored also in dataroot
         $fulldirs[] = $CFG->dirroot.'/theme';
+        // themes are special because they may be stored also in separate directory
+        if (!empty($CFG->themedir) and file_exists($CFG->themedir) and is_dir($CFG->themedir) ) {
+            $fulldirs[] = $CFG->themedir;
+        }
 
     } else {
         $types = get_plugin_types(true);
@@ -6814,8 +6819,6 @@ function get_plugin_list($plugintype) {
     }
 
     $result = array();
-
-    //TODO: MDL-20799 add themedir support
 
     foreach ($fulldirs as $fulldir) {
         if (!is_dir($fulldir)) {
@@ -6863,7 +6866,6 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
     $plugins = array();
 
     if (empty($basedir)) {
-        // TODO: MDL-20799 megre theme with themedir if defined
         $basedir = $CFG->dirroot .'/'. $directory;
 
     } else {

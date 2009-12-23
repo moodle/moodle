@@ -31,7 +31,11 @@ require('../config.php'); // this stops immediately at the beginning of lib/setu
 $themename = min_optional_param('theme', 'standard', 'SAFEDIR');
 $rev       = min_optional_param('rev', 0, 'INT');
 
-if (!file_exists("$CFG->dirroot/theme/$themename/config.php") and !file_exists("$CFG->dataroot/theme/$themename/config.php")) {
+if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
+    // exists
+} else if (!empty($CFG->themedir) and file_exists("$CFG->themedir/$themename/config.php")) {
+    // exists
+} else {
     header('HTTP/1.0 404 not found');
     die('Theme was not found, sorry.');
 }

@@ -330,8 +330,6 @@ $CFG->admin = 'admin';
 //
 //     $CFG->emailconnectionerrorsto = 'your@emailaddress.com';
 //
-// NOTE: if you are using custompix in your theme, see /fixpix.php.
-//
 // Set the priority of themes from highest to lowest. This is useful (for
 // example) in sites where the user theme should override all other theme
 // settings for accessibility reasons. You can also disable types of themes
@@ -340,7 +338,11 @@ $CFG->admin = 'admin';
 // NOTE: course, category, session, user themes still require the
 // respective settings to be enabled
 //
-
+// It is possible to add extra themes directory stored outside of $CFG->dirroot.
+// This local directory does not have to be accessible from internet.
+//
+//     $CFG->themedir = '/location/of/extra/themes';
+//
 //=========================================================================
 // 8. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
