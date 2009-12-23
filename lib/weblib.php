@@ -2006,12 +2006,12 @@ function user_login_string($course=NULL, $user=NULL) {
  * @return string HTML string.
  */
 function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
-    global $THEME;
+    global $OUTPUT; //TODO: move to output renderer
     $arrowclass = 'arrow ';
     if (! $url) {
         $arrowclass .= $addclass;
     }
-    $arrow = '<span class="'.$arrowclass.'">'.$THEME->rarrow.'</span>';
+    $arrow = '<span class="'.$arrowclass.'">'.$OUTPUT->rarrow().'</span>';
     $htmltext = '';
     if ($text) {
         $htmltext = '<span class="arrow_text">'.$text.'</span>&nbsp;';
@@ -2040,12 +2040,12 @@ function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
  * @return string HTML string.
  */
 function link_arrow_left($text, $url='', $accesshide=false, $addclass='') {
-    global $THEME;
+    global $OUTPUT; // TODO: move to utput renderer
     $arrowclass = 'arrow ';
     if (! $url) {
         $arrowclass .= $addclass;
     }
-    $arrow = '<span class="'.$arrowclass.'">'.$THEME->larrow.'</span>';
+    $arrow = '<span class="'.$arrowclass.'">'.$OUTPUT->larrow().'</span>';
     $htmltext = '';
     if ($text) {
         $htmltext = '&nbsp;<span class="arrow_text">'.$text.'</span>';

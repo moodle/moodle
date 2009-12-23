@@ -59,14 +59,14 @@ $PAGE->requires->yui2_lib('dragdrop');
  * Displays button in form with checkboxes for each question.
  */
 function module_specific_buttons($cmid, $cmoptions) {
-    global $THEME;
+    global $OUTPUT;
     if ($cmoptions->hasattempts) {
         $disabled = 'disabled="disabled" ';
     } else {
         $disabled = '';
     }
     $straddtoquiz = get_string('addtoquiz', 'quiz');
-    $out = '<input type="submit" name="add" value="' . $THEME->larrow . ' ' . $straddtoquiz .
+    $out = '<input type="submit" name="add" value="' . $OUTPUT->larrow() . ' ' . $straddtoquiz .
             '" ' . $disabled . "/>\n";
     return $out;
 }

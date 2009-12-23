@@ -587,7 +587,7 @@ class core_renderer extends renderer_base {
      * @return string HTML code
      */
     protected function render_page_layout($layoutfile) {
-        global $CFG, $SITE, $THEME, $USER;
+        global $CFG, $SITE, $USER;
         // The next lines are a bit tricky. The point is, here we are in a method
         // of a renderer class, and this object may, or may not, be the same as
         // the global $OUTPUT object. When rendering the page layout file, we want to use
@@ -2110,6 +2110,32 @@ class core_renderer extends renderer_base {
      */
     public function navbar() {
         return $this->page->navbar->content();
+    }
+
+    /**
+     * Accessibility: Right arrow-like character is
+     * used in the breadcrumb trail, course navigation menu
+     * (previous/next activity), calendar, and search forum block.
+     * If the theme does not set characters, appropriate defaults
+     * are set automatically. Please DO NOT
+     * use &lt; &gt; &raquo; - these are confusing for blind users.
+     * @return string
+     */
+    public function rarrow() {
+        return $this->page->theme->rarrow;
+    }
+
+    /**
+     * Accessibility: Right arrow-like character is
+     * used in the breadcrumb trail, course navigation menu
+     * (previous/next activity), calendar, and search forum block.
+     * If the theme does not set characters, appropriate defaults
+     * are set automatically. Please DO NOT
+     * use &lt; &gt; &raquo; - these are confusing for blind users.
+     * @return string
+     */
+    public function larrow() {
+        return $this->page->theme->larrow;
     }
 }
 

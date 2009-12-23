@@ -1,6 +1,9 @@
 <?php
     // Allows the admin to configure services for remote hosts
 
+die;
+//TODO: this code needs to be redesigned, see MDL-21137
+
     require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
     require_once($CFG->libdir.'/adminlib.php');
     include_once($CFG->dirroot.'/mnet/lib.php');

@@ -748,7 +748,7 @@ function quiz_print_singlequestion($question, $returnurl, $quiz) {
  * @param boolean $quiz_qbanktool Indicate to this function if the question bank window open
  */
 function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktool) {
-    global $DB, $QTYPES, $THEME, $OUTPUT;
+    global $DB, $QTYPES, $OUTPUT;
     echo '<div class="quiz_randomquestion">';
 
     if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
@@ -762,7 +762,7 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktoo
     echo ' ' . get_string('randomfromcategory', 'quiz') . '</div>';
 
     $a = new stdClass;
-    $a->arrow = $THEME->rarrow;
+    $a->arrow = $OUTPUT->rarrow();
     $strshowcategorycontents = get_string('showcategorycontents', 'quiz', $a);
 
     $openqbankurl = $pageurl->out(false, array('qbanktool' => 1,
