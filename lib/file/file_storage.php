@@ -1033,11 +1033,25 @@ class file_storage {
      * Cron cleanup job.
      */
     public function cron() {
-        global $CFG;
+        global $CFG, $DB;
         // remove trash pool files once a day
         // if you want to disable purging of trash put $CFG->fileslastcleanup=time(); into config.php
         if (empty($CFG->fileslastcleanup) or $CFG->fileslastcleanup < time() - 60*60*24) {
             require_once($CFG->libdir.'/filelib.php');
+            // Delete files that are associated with a context that no longer exists.
+            mtrace('Cleaning up files from deleted contexts... ', '');
+            $sql = "SELECT DISTINCT f.contextid
+                    FROM {files} f
+                    LEFT OUTER JOIN {context} c ON f.contextid = c.id
+                    WHERE c.id IS NULL";
+            if ($rs = $DB->get_recordset_sql($sql)) {
+                $fs = get_file_storage();
+                foreach ($rs as $ctx) {
+                    $fs->delete_area_files($ctx->contextid);
+                }
+            }
+            mtrace('done.');
+
             mtrace('Deleting trash files... ', '');
             fulldelete($this->trashdir);
             set_config('fileslastcleanup', time());
