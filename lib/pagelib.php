@@ -955,8 +955,6 @@ class moodle_page {
         $this->_theme = theme_config::load($themename);
         if ($this === $PAGE) {
             $THEME = $this->_theme;
-            // Support legacy code.
-            $this->_theme->setup_legacy_pix_paths();
         }
     }
 
