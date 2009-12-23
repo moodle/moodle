@@ -432,8 +432,6 @@
         }
     }
 
-    require_once($CFG->dirroot . '/blocks/extrafields/admin_user.php');
-
 
     admin_externalpage_print_footer($adminroot);
 
