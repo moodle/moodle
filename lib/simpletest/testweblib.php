@@ -100,48 +100,87 @@ END;
 
     function test_convert_urls_into_links() {
         $texts = array (
-                     'URL: http://moodle.org/s/i=1&j=2' => 'URL: <a href="http://moodle.org/s/i=1&j=2" target="_blank">http://moodle.org/s/i=1&j=2</a>',
-                     'URL: www.moodle.org/s/i=1&amp;j=2' => 'URL: <a href="http://www.moodle.org/s/i=1&amp;j=2" target="_blank">www.moodle.org/s/i=1&amp;j=2</a>',
-                     'URL: https://moodle.org/s/i=1&j=2' => 'URL: <a href="https://moodle.org/s/i=1&j=2" target="_blank">https://moodle.org/s/i=1&j=2</a>',
-                     'URL: http://moodle.org:8080/s/i=1' => 'URL: <a href="http://moodle.org:8080/s/i=1" target="_blank">http://moodle.org:8080/s/i=1</a>',
+                     //just a url
                      'http://moodle.org - URL' => '<a href="http://moodle.org" target="_blank">http://moodle.org</a> - URL',
                      'www.moodle.org - URL' => '<a href="http://www.moodle.org" target="_blank">www.moodle.org</a> - URL',
+                     //url with params
+                     'URL: http://moodle.org/s/i=1&j=2' => 'URL: <a href="http://moodle.org/s/i=1&j=2" target="_blank">http://moodle.org/s/i=1&j=2</a>',
+                     //url with escaped params
+                     'URL: www.moodle.org/s/i=1&amp;j=2' => 'URL: <a href="http://www.moodle.org/s/i=1&amp;j=2" target="_blank">www.moodle.org/s/i=1&amp;j=2</a>',
+                     //https url with params
+                     'URL: https://moodle.org/s/i=1&j=2' => 'URL: <a href="https://moodle.org/s/i=1&j=2" target="_blank">https://moodle.org/s/i=1&j=2</a>',
+                     //url with port and params
+                     'URL: http://moodle.org:8080/s/i=1' => 'URL: <a href="http://moodle.org:8080/s/i=1" target="_blank">http://moodle.org:8080/s/i=1</a>',
+                     //url in brackets
                      '(http://moodle.org) - URL' => '(<a href="http://moodle.org" target="_blank">http://moodle.org</a>) - URL',
                      '(www.moodle.org) - URL' => '(<a href="http://www.moodle.org" target="_blank">www.moodle.org</a>) - URL',
+                     //url in square brackets
                      '[http://moodle.org] - URL' => '[<a href="http://moodle.org" target="_blank">http://moodle.org</a>] - URL',
                      '[www.moodle.org] - URL' => '[<a href="http://www.moodle.org" target="_blank">www.moodle.org</a>] - URL',
+                     //url in brackets with anchor
                      '[http://moodle.org/main#anchor] - URL' => '[<a href="http://moodle.org/main#anchor" target="_blank">http://moodle.org/main#anchor</a>] - URL',
                      '[www.moodle.org/main#anchor] - URL' => '[<a href="http://www.moodle.org/main#anchor" target="_blank">www.moodle.org/main#anchor</a>] - URL',
+                     //brackets within the url
                      'URL: http://cc.org/url_(withpar)_go/?i=2' => 'URL: <a href="http://cc.org/url_(withpar)_go/?i=2" target="_blank">http://cc.org/url_(withpar)_go/?i=2</a>',
                      'URL: www.cc.org/url_(withpar)_go/?i=2' => 'URL: <a href="http://www.cc.org/url_(withpar)_go/?i=2" target="_blank">www.cc.org/url_(withpar)_go/?i=2</a>',
                      'URL: http://cc.org/url_(with)_(par)_go/?i=2' => 'URL: <a href="http://cc.org/url_(with)_(par)_go/?i=2" target="_blank">http://cc.org/url_(with)_(par)_go/?i=2</a>',
                      'URL: www.cc.org/url_(with)_(par)_go/?i=2' => 'URL: <a href="http://www.cc.org/url_(with)_(par)_go/?i=2" target="_blank">www.cc.org/url_(with)_(par)_go/?i=2</a>',
+                     'http://en.wikipedia.org/wiki/Slash_(punctuation)'=>'<a href="http://en.wikipedia.org/wiki/Slash_(punctuation)" target="_blank">http://en.wikipedia.org/wiki/Slash_(punctuation)</a>',
+                     'http://en.wikipedia.org/wiki/%28#Parentheses_.28_.29 - URL' => '<a href="http://en.wikipedia.org/wiki/%28#Parentheses_.28_.29" target="_blank">http://en.wikipedia.org/wiki/%28#Parentheses_.28_.29</a> - URL',
+                     'http://en.wikipedia.org/wiki/(#Parentheses_.28_.29 - URL' => '<a href="http://en.wikipedia.org/wiki/(#Parentheses_.28_.29" target="_blank">http://en.wikipedia.org/wiki/(#Parentheses_.28_.29</a> - URL',
+                     //escaped brackets in url
+                     'http://en.wikipedia.org/wiki/Slash_%28punctuation%29'=>'<a href="http://en.wikipedia.org/wiki/Slash_%28punctuation%29" target="_blank">http://en.wikipedia.org/wiki/Slash_%28punctuation%29</a>',
+                     //anchor tag
                      'URL: <a href="http://moodle.org">http://moodle.org</a>' => 'URL: <a href="http://moodle.org">http://moodle.org</a>',
                      'URL: <a href="http://moodle.org">www.moodle.org</a>' => 'URL: <a href="http://moodle.org">www.moodle.org</a>',
                      'URL: <a href="http://moodle.org"> http://moodle.org</a>' => 'URL: <a href="http://moodle.org"> http://moodle.org</a>',
                      'URL: <a href="http://moodle.org"> www.moodle.org</a>' => 'URL: <a href="http://moodle.org"> www.moodle.org</a>',
+                     //escaped anchor tag
+                     htmlspecialchars('escaped anchor tag <a href="http://moodle.org">www.moodle.org</a>') => 'escaped anchor tag &lt;a href="http://moodle.org"&gt; www.moodle.org&lt;/a&gt;',
+                     //trailing fullstop
                      'URL: http://moodle.org/s/i=1&j=2.' => 'URL: <a href="http://moodle.org/s/i=1&j=2" target="_blank">http://moodle.org/s/i=1&j=2</a>.',
                      'URL: www.moodle.org/s/i=1&amp;j=2.' => 'URL: <a href="http://www.moodle.org/s/i=1&amp;j=2" target="_blank">www.moodle.org/s/i=1&amp;j=2</a>.',
+                     //trailing unmatched bracket
                      'URL: http://moodle.org)<br />' => 'URL: <a href="http://moodle.org" target="_blank">http://moodle.org</a>)<br />',
+                     //partially escaped html
                      'URL: <p>text www.moodle.org&lt;/p> text' => 'URL: <p>text <a href="http://www.moodle.org" target="_blank">www.moodle.org</a>&lt;/p> text',
+                     //decimal url parameter
                      'URL: www.moodle.org?u=1.23' => 'URL: <a href="http://www.moodle.org?u=1.23" target="_blank">www.moodle.org?u=1.23</a>',
+                     //escaped space in url
                      'URL: www.moodle.org?u=test+param&' => 'URL: <a href="http://www.moodle.org?u=test+param&" target="_blank">www.moodle.org?u=test+param&</a>',
+                     //odd characters in url param
                      'URL: www.moodle.org?param=:)' => 'URL: <a href="http://www.moodle.org?param=:)" target="_blank">www.moodle.org?param=:)</a>',
+                     //multiple urls
                      'URL: http://moodle.org www.moodle.org'
                      => 'URL: <a href="http://moodle.org" target="_blank">http://moodle.org</a> <a href="http://www.moodle.org" target="_blank">www.moodle.org</a>',
+                     //containing anchor tags including a class parameter and a url to convert
                      'URL: <a href="http://moodle.org">http://moodle.org</a> www.moodle.org <a class="customclass" href="http://moodle.org">http://moodle.org</a>'
                      => 'URL: <a href="http://moodle.org">http://moodle.org</a> <a href="http://www.moodle.org" target="_blank">www.moodle.org</a> <a class="customclass" href="http://moodle.org">http://moodle.org</a>',
+                     //subdomain
                      'http://subdomain.moodle.org - URL' => '<a href="http://subdomain.moodle.org" target="_blank">http://subdomain.moodle.org</a> - URL',
+                     //multiple subdomains
                      'http://subdomain.subdomain.moodle.org - URL' => '<a href="http://subdomain.subdomain.moodle.org" target="_blank">http://subdomain.subdomain.moodle.org</a> - URL',
+                     //looks almost like a link but isnt
                      'This contains http, http:// and www but no actual links.'=>'This contains http, http:// and www but no actual links.',
+                     //no link at all
                      'This is a story about moodle.coming to a cinema near you.'=>'This is a story about moodle.coming to a cinema near you.',
-                     'http://en.wikipedia.org/wiki/Slash_%28punctuation%29'=>'<a href="http://en.wikipedia.org/wiki/Slash_%28punctuation%29" target="_blank">http://en.wikipedia.org/wiki/Slash_%28punctuation%29</a>',
-                     'http://en.wikipedia.org/wiki/Slash_(punctuation)'=>'<a href="http://en.wikipedia.org/wiki/Slash_(punctuation)" target="_blank">http://en.wikipedia.org/wiki/Slash_(punctuation)</a>',
-                     'http://en.wikipedia.org/wiki/%28#Parentheses_.28_.29 - URL' => '<a href="http://en.wikipedia.org/wiki/%28#Parentheses_.28_.29" target="_blank">http://en.wikipedia.org/wiki/%28#Parentheses_.28_.29</a> - URL',
-                     'http://en.wikipedia.org/wiki/(#Parentheses_.28_.29 - URL' => '<a href="http://en.wikipedia.org/wiki/(#Parentheses_.28_.29" target="_blank">http://en.wikipedia.org/wiki/(#Parentheses_.28_.29</a> - URL',
+                     //utf 8 characters
                      'http://Iñtërnâtiônàlizætiøn.com?ô=nëø'=>'<a href="http://Iñtërnâtiônàlizætiøn.com?ô=nëø" target="_blank">http://Iñtërnâtiônàlizætiøn.com?ô=nëø</a>',
                      'www.Iñtërnâtiônàlizætiøn.com?ô=nëø'=>'<a href="http://www.Iñtërnâtiônàlizætiøn.com?ô=nëø" target="_blank">www.Iñtërnâtiônàlizætiøn.com?ô=nëø</a>',
-                     'moodle.org' => 'moodle.org',//too hard to identify without additional regexs
+                     //too hard to identify without additional regexs
+                     'moodle.org' => 'moodle.org',
+                     //some text with no link between related html tags
+                     '<b>no link here</b>' => '<b>no link here</b>',
+                     //some text with a link between related html tags
+                     '<b>a link here www.moodle.org</b>' => '<b>a link here <a href="http://www.moodle.org" target="_blank">www.moodle.org</a></b>',
+                     //some text containing a link within unrelated tags
+                     '<br />This is some text. www.moodle.com then some more text<br />' => '<br />This is some text. <a href="http://www.moodle.com" target="_blank">www.moodle.com</a> then some more text<br />',
+                     //check we aren't modifying img tags
+                     'image<img src="http://moodle.org/logo/logo-240x60.gif" />' => 'image<img src="http://moodle.org/logo/logo-240x60.gif" />',
+                     //partially escaped img tag
+                     'partially escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" />' => 'partially escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" />',
+                     //fully escaped img tag
+                     htmlspecialchars('fully escaped img tag <img src="http://moodle.org/logo/logo-240x60.gif" />') => 'fully escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" /&gt;',
                  );
        foreach ($texts as $text => $correctresult) {
             if(mb_detect_encoding($text)=='UTF-8') {
@@ -165,6 +204,7 @@ END;
             $this->assertEqual($text, $correctresult, $msg);
         }
 
+        //performance testing
         $reps = 1000;
 
         $time_start = microtime(true);
