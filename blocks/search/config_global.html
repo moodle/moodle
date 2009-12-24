@@ -96,8 +96,8 @@ global $DB;
     </tr>
 </table>
 
-<fieldset name="">
-<legend align="top"><?php print_string('pdfhandling', 'block_search') ?></legend>
+<fieldset class="">
+<legend align="top"><?php print_string('pdfhandling', 'block_search') ?></legend> 
 <table cellspacing="5" width="90%">
     <tr>
         <td valign="top" align="right">
@@ -120,8 +120,8 @@ global $DB;
 </table>
 </fieldset>
 
-<fieldset name="">
-<legend align="top"><?php print_string('wordhandling', 'block_search') ?></legend>
+<fieldset class="">
+<legend align="top"><?php print_string('wordhandling', 'block_search') ?></legend> 
 <table cellspacing="5" width="90%">
     <tr>
         <td valign="top" align="right">
@@ -171,8 +171,8 @@ if (!empty($types)){
         $type = trim($type);
         if (preg_match("/\\b$type\\b/i", $defaultfiletypes)) continue;
 ?>
-<fieldset name="">
-<legend align="top"><?php echo get_string('handlingfor', 'block_search').' '.$utype ?></legend>
+<fieldset class="">
+<legend align="top"><?php echo get_string('handlingfor', 'block_search').' '.$utype ?></legend> 
 <table cellspacing="5" width="90%">
     <tr>
         <td valign="top" align="right">
@@ -207,8 +207,8 @@ if (!empty($types)){
 }
 ?>
 
-<fieldset name="">
-<legend align="top"><?php echo get_string('searchdiscovery', 'block_search') ?></legend>
+<fieldset class="">
+<legend align="top"><?php echo get_string('searchdiscovery', 'block_search') ?></legend> 
 <table>
     <tr>
         <td>
@@ -223,8 +223,8 @@ if (!empty($types)){
 </table>
 </fieldset>
 
-<fieldset name="">
-<legend align="top"><?php echo get_string('modulessearchswitches', 'block_search') ?></legend>
+<fieldset class="">
+<legend align="top"><?php echo get_string('modulessearchswitches', 'block_search') ?></legend> 
 <table cellspacing="5" width="90%">
     <tr valign="top">
         <td align="left">
@@ -256,8 +256,8 @@ if (!$found_searchable_modules) {
 </table>
 </fieldset>
 
-<fieldset name="">
-<legend align="top"><?php echo get_string('blockssearchswitches', 'block_search') ?></legend>
+<fieldset class="">
+<legend align="top"><?php echo get_string('blockssearchswitches', 'block_search') ?></legend> 
 <table cellspacing="5" width="90%">
     <tr valign="top">
         <td align="left">
