@@ -1720,10 +1720,16 @@ function html_to_text($html) {
  * @param string $text Passed in by reference. The string to be searched for urls.
  */
 function convert_urls_into_links(&$text) {
-    $filterignoretagsopen  = array('<a\s[^>]+?>');
-    $filterignoretagsclose = array('</a>');
+    //I've added img tags to this list of tags to ignore.
+    //See MDL-21168 for more info. A better way to ignore tags whether or not
+    //they are escaped partially or completely would be desirable. For example:
+    //<a href="blah">
+    //&lt;a href="blah"&gt;
+    //&lt;a href="blah">
+    $filterignoretagsopen  = array('<a\s[^>]+?>', '<img\s[^>]+?>');
+    $filterignoretagsclose = array('</a>','');
     filter_save_ignore_tags($text,$filterignoretagsopen,$filterignoretagsclose,$ignoretags);
-    
+
     // Check if we support unicode modifiers in regular expressions. Cache it.
     // TODO: this check should be a environment requirement in Moodle 2.0, as far as unicode
     // chars are going to arrive to URLs officially really soon (2010?)
