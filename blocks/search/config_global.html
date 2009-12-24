@@ -122,7 +122,7 @@ if (!isset($CFG->block_search_softlock)){
     </tr>
 </table>
 
-<fieldset name="">
+<fieldset class="">
 <legend align="top"><?php print_string('pdfhandling', 'block_search') ?></legend> 
 <table cellspacing="5" width="90%">
     <tr>
@@ -147,7 +147,7 @@ if (!isset($CFG->block_search_softlock)){
 </table>
 </fieldset>
 
-<fieldset name="">
+<fieldset class="">
 <legend align="top"><?php print_string('wordhandling', 'block_search') ?></legend> 
 <table cellspacing="5" width="90%">
     <tr>
@@ -198,7 +198,7 @@ if (!empty($types)){
         $type = trim($type);
         if (preg_match("/\\b$type\\b/i", $defaultfiletypes)) continue;
 ?>
-<fieldset name="">
+<fieldset class="">
 <legend align="top"><?php echo get_string('handlingfor', 'block_search').' '.$utype ?></legend> 
 <table cellspacing="5" width="90%">
     <tr>
@@ -234,7 +234,7 @@ if (!empty($types)){
 }
 ?>
 
-<fieldset name="">
+<fieldset class="">
 <legend align="top"><?php echo get_string('searchdiscovery', 'block_search') ?></legend> 
 <table>
     <tr>
@@ -250,7 +250,7 @@ if (!empty($types)){
 </table>
 </fieldset>
 
-<fieldset name="">
+<fieldset class="">
 <legend align="top"><?php echo get_string('modulessearchswitches', 'block_search') ?></legend> 
 <table cellspacing="5" width="90%">
     <tr valign="top">
@@ -283,7 +283,7 @@ if (!$found_searchable_modules) {
 </table>
 </fieldset>
 
-<fieldset name="">
+<fieldset class="">
 <legend align="top"><?php echo get_string('blockssearchswitches', 'block_search') ?></legend> 
 <table cellspacing="5" width="90%">
     <tr valign="top">
