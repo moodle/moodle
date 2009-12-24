@@ -5,31 +5,14 @@
 /// how Moodle uses this theme.
 ////////////////////////////////////////////////////////////////////////////////
 
+$THEME->name = 'anomaly';
 
-$THEME->sheets = array('styles', 'styles_select');
-
+$THEME->sheets = array('styles', 'styles_layout', 'styles_select');
 /// This variable is an array containing the names of all the
 /// stylesheet files you want included in this theme, and in what order
 ////////////////////////////////////////////////////////////////////////////////
 
-
-$THEME->standardsheets = true;
-
-/// This variable can be set to an array containing
-/// filenames from the *STANDARD* theme.  If the
-/// array exists, it will be used to choose the
-/// files to include in the standard style sheet.
-/// When false, then no files are used.
-/// When true or NON-EXISTENT, then ALL standard files are used.
-/// This parameter can be used, for example, to prevent
-/// having to override too many classes.
-/// Note that the trailing .css should not be included
-/// eg $THEME->standardsheets = array('styles_layout','styles_fonts','styles_color');
-////////////////////////////////////////////////////////////////////////////////
-
-
-$THEME->parent = '';
-
+$THEME->parents = array('standard');
 /// This variable can be set to the name of a parent theme
 /// which you want to have included before the current theme.
 /// This can make it easy to make modifications to another
@@ -38,76 +21,12 @@ $THEME->parent = '';
 /// is not used.
 ////////////////////////////////////////////////////////////////////////////////
 
-
-$THEME->parentsheets = false;
-
-/// This variable can be set to an array containing
-/// filenames from a chosen *PARENT* theme.  If the
-/// array exists, it will be used to choose the
-/// files to include in the standard style sheet.
-/// When false, then no files are used.
-/// When true or NON-EXISTENT, then ALL standard files are used.
-/// This parameter can be used, for example, to prevent
-/// having to override too many classes.
-/// Note that the trailing .css should not be included
-/// eg $THEME->parentsheets = array('styles_layout','styles_fonts','styles_color');
-////////////////////////////////////////////////////////////////////////////////
-
-$THEME->pluginsheets = array('mod', 'block', 'format', 'gradereport');
-
-/// All the plugins of the given types will be searched for a file called
-/// styles.php and, if found, these will be included with the CSS for this theme.
-
-
-$THEME->metainclude = false;
-
-/// When this is enabled (or not set!) then Moodle will try
-/// to include a file meta.php from this theme into the
-/// <head></head> part of the page.
-
-
-$THEME->standardmetainclude = true;
-
-
-/// When this is enabled (or not set!) then Moodle will try
-/// to include a file meta.php from the standard theme into the
-/// <head></head> part of the page.
-
-
-$THEME->parentmetainclude = false;
-
-/// When this is enabled (or not set!) then Moodle will try
-/// to include a file meta.php from the parent theme into the
-/// <head></head> part of the page.
-
-
-$THEME->block_l_max_width = 200;
-$THEME->block_r_max_width = 200;
-/// Deprecated, but needed until this themes is updated to use layout.php
-
-
-$THEME->navmenuwidth = 50;
-
-/// You can use this to control the cutoff point for strings
-/// in the navmenus (list of activities in popup menu etc)
-/// Default is 50 characters wide.
-
-
-$THEME->makenavmenulist = false;
-
-/// By setting this to true, then you will have access to a
-/// new variable in your header.html and footer.html called
-/// $navmenulist ... this contains a simple XHTML menu of
-/// all activities in the current course, mostly useful for
-/// creating popup navigation menus and so on.
-
-
+$THEME->parents_exclude_sheets = array('standard'=>array('styles_moz'));
 
 $THEME->resource_mp3player_colors =
  'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
  'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
  'font=Arial&fontColour=3333FF&buffer=10&waitForPlay=no&autoPlay=yes';
-
 /// With this you can control the colours of the "big" MP3 player
 /// that is used for MP3 resources.
 
@@ -116,31 +35,81 @@ $THEME->filter_mediaplugin_colors =
  'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
  'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
  'waitForPlay=yes';
-
 /// ...And this controls the small embedded player
 
+$THEME->editor_sheets = array('styles_tinymce');
 
-$THEME->custompix = false;
+$THEME->layouts = array(
+    // Most pages - if we encounter an unknown or a missing page type, this one is used.
+    'normal' => array(
+        'theme' => 'anomaly',
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post'
+    ),
+    // Course page
+    'course' => array(
+        'theme' => 'anomaly',
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post'
+    ),
+    // The site home page.
+    'home' => array(
+        'theme' => 'anomaly',
+        'file' => 'home.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post'
+    ),
+    // Server administration scripts.
+    'admin' => array(
+        'theme' => 'anomaly',
+        'file' => 'general.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre'
+    ),
+    // My moodle page
+    'my' => array(
+        'theme' => 'anomaly',
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post'
+    ),
 
-/// If true, then this theme must have a "pix"
-/// subdirectory that contains copies of all
-/// files from the moodle/pix directory, plus a
-/// "pix/mod" directory containing all the icons
-/// for all the activity modules.
-
-
-///$THEME->rarrow = '&#x25BA;' //OR '&rarr;';
-///$THEME->larrow = '&#x25C4;' //OR '&larr;';
-///$CFG->block_search_button = link_arrow_right(get_string('search'), $url='', $accesshide=true);
-///
-/// Accessibility: Right and left arrow-like characters are
-/// used in the breadcrumb trail, course navigation menu
-/// (previous/next activity), calendar, and search forum block.
-///
-/// If the theme does not set characters, appropriate defaults
-/// are set by (lib/weblib.php:check_theme_arrows). The suggestions
-/// above are 'silent' in a screen-reader like JAWS. Please DO NOT
-/// use &lt; &gt; &raquo; - these are confusing for blind users.
-////////////////////////////////////////////////////////////////////////////////
-
-
+    // Settings form pages, like course of module settings.
+    'form' => array(
+        'theme' => 'anomaly',
+        'file' => 'general.php',
+        'regions' => array(),
+    ),
+    // Pages that appear in pop-up windows - no navigation, no blocks, no header.
+    'popup' => array(
+        'theme' => 'anomaly',
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>true),
+    ),
+    // No blocks and minimal footer - used for legacy frame layouts only!
+    'frametop' => array(
+        'theme' => 'anomaly',
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('nofooter', 'noblocks'=>true),
+    ),
+    // Embeded pages, like iframe embeded in moodleform
+    'embedded' => array(
+        'theme' => 'anomaly',
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>true),
+    ),
+    // Used during upgrade and install, and for the 'This site is undergoing maintenance' message.
+    // This must not have any blocks, and it is good idea if it does not have links to
+    // other places - for example there should not be a home link in the footer...
+    'maintenance' => array(
+        'theme' => 'anomaly',
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>true),
+    ),
+);

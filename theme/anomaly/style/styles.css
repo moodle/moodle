@@ -1,9 +1,7 @@
-
 /* Core */
-
-body {
-  padding:0;
-  margin:0;
+html, body {
+    text-align: left;
+    background:#C8C9C7;
 }
 
 body, p, th, td, li {
@@ -19,6 +17,7 @@ p {
 
 #page {
   margin:25px 4%;
+  background: #fff;
 }
 
 #layout-table {
@@ -79,7 +78,6 @@ h1.headermain span p {
 
 #content {
   margin:0 11px;
-  background: #fff;
   padding:10px 0 25px;
 }
 
@@ -103,7 +101,7 @@ h2.headingblock {
 .sideblock .header {
   padding:7px 8px 0;
   border:none;
-  background:url(images/sideblock_t.jpg) no-repeat 0 0;
+  background:url([[pix:theme|sideblock_t]]) no-repeat 0 0;
 }
 
 .sideblock .title h2 {
@@ -118,12 +116,12 @@ h2.headingblock {
 }
 
 .sideblock {
-  background:url(images/sideblock_b.jpg) no-repeat 0 100%;
+  background:url([[pix:theme|sideblock_b]]) no-repeat 0 100%;
   padding-bottom:11px;
 }
 
 .block_login .header {
-  background:url(images/sideblock-y_t.jpg) no-repeat 0 0;
+  background:url([[pix:theme|sideblock-y_t]]) no-repeat 0 0;
 }
 
 .block_login .content {
@@ -132,7 +130,7 @@ h2.headingblock {
 }
 
 .block_login {
-  background:url(images/sideblock-y_b.jpg) no-repeat 0 100%;
+  background:url([[pix:theme|sideblock-y_b]]) no-repeat 0 100%;
 }
 
 #right-column .hidden .header,
@@ -254,7 +252,6 @@ h2.headingblock {
 }
 
 /* Tables */
-
 #participants th,
 #user-grade th,
 .logtable th,
@@ -264,7 +261,6 @@ h2.headingblock {
 .forumheaderlist th {
   background:#f2f2f2;
   border-bottom:1px solid #bbb;
-
 }
 
 /* Login */
@@ -291,8 +287,8 @@ h2.headingblock {
 /* Footer */
 
 #footer {
-  margin:0 !important;
   color:#ccc;
+  margin:0 !important;
 }
 #footer-logo {
   float:left;
@@ -325,4 +321,8 @@ h2.headingblock {
 
 .admin #page {
   min-width: 700px;
+}
+
+#region-side-pre, #region-side-post {
+    width:200px;
 }

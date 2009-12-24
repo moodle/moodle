@@ -1,0 +1,11 @@
+td,
+th {
+    padding:0px;
+}
+table.minicalendar {
+    border-width:0px;
+}
+table.minicalendar th {
+    padding:0px;
+    border-width:0px;
+}
