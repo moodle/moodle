@@ -799,9 +799,8 @@ function lesson_extend_navigation($navigation, $course, $module, $cm) {
  * @param stdClass $module
  */
 function lesson_extend_settings_navigation($settings, $module) {
-    global $PAGE, $CFG, $DB, $USER, $OUTPUT;
+    global $PAGE, $CFG, $USER, $OUTPUT;
 
-    $lesson = $DB->get_record('lesson', array('id'=>$PAGE->cm->instance));
     $lessonnavkey = $settings->add(get_string('lessonadministration', 'lesson'));
     $lessonnav = $settings->get($lessonnavkey);
     $lessonnav->forceopen = true;

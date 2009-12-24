@@ -822,9 +822,8 @@ function survey_extend_navigation($navigation, $course, $module, $cm) {
  * @param stdClass $module
  */
 function survey_extend_settings_navigation($settings, $module) {
-    global $PAGE, $CFG, $DB, $USER, $OUTPUT;
+    global $PAGE, $CFG, $OUTPUT;
 
-    $survey = $DB->get_record('quiz', array('id'=>$PAGE->cm->instance));
     $surveynavkey = $settings->add(get_string('surveyadministration', 'survey'));
     $surveynav = $settings->get($surveynavkey);
     $surveynav->forceopen = true;

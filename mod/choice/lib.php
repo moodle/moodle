@@ -927,9 +927,8 @@ function choice_supports($feature) {
 }
 
 function choice_extend_settings_navigation($settings, $module) {
-    global $PAGE, $USER, $OUTPUT, $CFG, $DB;
+    global $PAGE, $OUTPUT, $CFG;
 
-    $choice = $DB->get_record('choice', array('id'=>$PAGE->cm->instance));
     $choicenavkey = $settings->add(get_string('choiceadministration', 'choice'));
     $choicenav = $settings->get($choicenavkey);
     $choicenav->forceopen = true;
@@ -940,6 +939,9 @@ function choice_extend_settings_navigation($settings, $module) {
         if ($groupmode) {
             groups_get_activity_group($PAGE->cm, true);
         }
+        // We only actually need the choice id here
+        $choice = new stdClass;
+        $choice->id = $PAGE->cm->instance;
         $allresponses = choice_get_response_data($choice, $PAGE->cm, $groupmode);   // Big function, approx 6 SQL calls per user
 
         $responsecount =0;

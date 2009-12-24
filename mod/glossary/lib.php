@@ -2684,12 +2684,11 @@ function glossary_extend_navigation($navigation, $course, $module, $cm) {
 }
 
 function glossary_extend_settings_navigation($settings, $module) {
-    global $PAGE, $DB, $CFG, $USER;
+    global $PAGE, $DB, $CFG;
 
     $mode = optional_param('mode', '', PARAM_ALPHA);
     $hook = optional_param('hook', 'ALL', PARAM_CLEAN);
 
-    $glossary = $DB->get_record('glossary', array('id'=>$PAGE->cm->instance));
     $glossarynavkey = $settings->add(get_string('glossaryadministration', 'glossary'));
     $glossarynav = $settings->get($glossarynavkey);
     $glossarynav->forceopen = true;
@@ -2702,7 +2701,7 @@ function glossary_extend_settings_navigation($settings, $module) {
         $glossarynav->add(get_string('exportentries', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/export.php', array('id'=>$PAGE->cm->id, 'mode'=>$mode, 'hook'=>$hook)));
     }
 
-    if (has_capability('mod/glossary:approve', $PAGE->cm->context) && ($hiddenentries = $DB->count_records('glossary_entries', array('glossaryid'=>$glossary->id, 'approved'=>0)))) {
+    if (has_capability('mod/glossary:approve', $PAGE->cm->context) && ($hiddenentries = $DB->count_records('glossary_entries', array('glossaryid'=>$PAGE->cm->instance, 'approved'=>0)))) {
         $glossarynav->add(get_string('waitingapproval', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$PAGE->cm->id, 'mode'=>'approval')));
     }
 

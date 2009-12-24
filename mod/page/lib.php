@@ -410,10 +410,8 @@ function page_extend_navigation($navigation, $course, $module, $cm) {
  * @param stdClass $module
  */
 function page_extend_settings_navigation($settings, $module) {
-    global $PAGE, $CFG, $DB;
+    global $PAGE, $CFG;
 
-    // Load the page instance from the database
-    $page = $DB->get_record('page', array('id'=>$PAGE->cm->instance));
     // Add a page node to the settings navigation.
     $pagenavkey = $settings->add(get_string('pageadministration', 'page'));
     $pagenav = $settings->get($pagenavkey);

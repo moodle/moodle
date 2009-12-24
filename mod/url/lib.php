@@ -316,10 +316,8 @@ function url_extend_navigation($navigation, $course, $module, $cm) {
  * @param stdClass $module
  */
 function url_extend_settings_navigation($settings, $module) {
-    global $PAGE, $CFG, $DB;
+    global $PAGE, $CFG;
 
-    // Load the url instance from the database
-    $url = $DB->get_record('url', array('id'=>$PAGE->cm->instance));
     // Add a url node to the settings navigation.
     $urlnavkey = $settings->add(get_string('urladministration', 'url'));
     $urlnav = $settings->get($urlnavkey);

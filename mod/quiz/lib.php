@@ -1453,9 +1453,8 @@ function quiz_extend_navigation($navigation, $course, $module, $cm) {
  * @param stdClass $module
  */
 function quiz_extend_settings_navigation($settings, $module) {
-    global $PAGE, $CFG, $DB, $USER, $OUTPUT;
+    global $PAGE, $CFG, $OUTPUT;
 
-    $quiz = $DB->get_record('quiz', array('id'=>$PAGE->cm->instance));
     $quiznavkey = $settings->add(get_string('quizadministration', 'quiz'));
     $quiznav = $settings->get($quiznavkey);
     $quiznav->forceopen = true;
@@ -1465,13 +1464,13 @@ function quiz_extend_settings_navigation($settings, $module) {
         $quiznav->add(get_string('info', 'quiz'), $url, navigation_node::TYPE_SETTING, null, null, $OUTPUT->pix_url('i/info'));
     }
     if (has_capability('mod/quiz:viewreports', $PAGE->cm->context)) {
-        $url = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', array('q'=>$quiz->id));
+        $url = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', array('q'=>$PAGE->cm->instance));
         $reportkey = $quiznav->add(get_string('results', 'quiz'), $url, navigation_node::TYPE_SETTING, null, null, $OUTPUT->pix_url('i/report'));
 
         require_once($CFG->dirroot.'/mod/quiz/report/reportlib.php');
         $reportlist = quiz_report_list($PAGE->cm->context);
         foreach ($reportlist as $report) {
-            $url = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', array('q'=>$quiz->id, 'mode'=>$report));
+            $url = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', array('q'=>$PAGE->cm->instance, 'mode'=>$report));
             $quiznav->get($reportkey)->add(get_string($report, 'quiz_'.$report), $url, navigation_node::TYPE_SETTING, null, null, $OUTPUT->pix_url('i/item'));
         }
     }

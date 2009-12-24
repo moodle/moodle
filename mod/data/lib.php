@@ -2860,9 +2860,12 @@ function data_extend_navigation($navigation, $course, $module, $cm) {
 }
 
 function data_extend_settings_navigation($settings, $module) {
-    global $PAGE, $USER, $OUTPUT, $CFG, $DB;
+    global $PAGE, $OUTPUT, $CFG;
 
-    $data = $DB->get_record('data', array('id'=>$PAGE->cm->instance));
+    // We only actually need the id here for functions
+    $data = new stdClass;
+    $data->id = $PAGE->cm->instance;
+
     $datanavkey = $settings->add(get_string('dataadministration', 'data'));
     $datanav = $settings->get($datanavkey);
     $datanav->forceopen = true;

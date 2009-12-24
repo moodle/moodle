@@ -404,10 +404,8 @@ function imscp_extend_navigation($navigation, $course, $module, $cm) {
  * @param stdClass $module
  */
 function imscp_extend_settings_navigation($settings, $module) {
-    global $PAGE, $CFG, $DB;
+    global $PAGE, $CFG;
 
-    // Load the imscp instance from the database
-    $imscp = $DB->get_record('imscp', array('id'=>$PAGE->cm->instance));
     // Add a imscp node to the settings navigation.
     $imscpnavkey = $settings->add(get_string('imscpadministration', 'imscp'));
     $imscpnav = $settings->get($imscpnavkey);

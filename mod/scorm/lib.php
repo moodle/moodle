@@ -969,10 +969,8 @@ function scorm_extend_navigation($navigation, $course, $module, $cm) {
  * @param stdClass $module
  */
 function scorm_extend_settings_navigation($settings, $module) {
-    global $PAGE, $CFG, $DB;
+    global $PAGE, $CFG;
 
-    // Load the scorm instance from the database
-    $scorm = $DB->get_record('scorm', array('id'=>$PAGE->cm->instance));
     // Add a scorm node to the settings navigation.
     $scormnavkey = $settings->add(get_string('scormadministration', 'scorm'));
     $scormnav = $settings->get($scormnavkey);

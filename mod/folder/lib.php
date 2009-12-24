@@ -337,10 +337,8 @@ function folder_extend_navigation($navigation, $course, $module, $cm) {
  * @param stdClass $module
  */
 function folder_extend_settings_navigation($settings, $module) {
-    global $PAGE, $CFG, $DB;
+    global $PAGE, $CFG;
 
-    // Load the folder instance from the database
-    $folder = $DB->get_record('folder', array('id'=>$PAGE->cm->instance));
     // Add a folder node to the settings navigation.
     $foldernavkey = $settings->add(get_string('folderadministration', 'folder'));
     $foldernav = $settings->get($foldernavkey);
