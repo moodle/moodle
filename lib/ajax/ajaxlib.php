@@ -137,13 +137,17 @@ class page_requirements_manager {
             $this->yui3loader->base = 'http://yui.yahooapis.com/' . $CFG->yui3version . '/build/';
             $this->yui2loader->base = 'http://yui.yahooapis.com/' . $CFG->yui2version . '/build/';
         } else {
-            $this->yui3loader->base = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui3version . '/';
-            $this->yui2loader->base = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui2version . '/';
+            $this->yui3loader->base = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui3version . '/build/';
+            $this->yui2loader->base = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui2version . '/build/';
         }
 
         // This file helps to minimise number of http requests and implements proper caching
-        //$this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php?file=';
-        //$this->yui2loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php?file=';
+        $this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php?';
+        $this->yui2loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php?';
+
+        // enable combo loader? this significantly helps with caching and performance
+        $this->yui3loader->combine = !empty($CFG->yuicomboloading);
+        $this->yui2loader->combine = !empty($CFG->yuicomboloading);
     }
 
     /**

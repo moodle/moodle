@@ -37,9 +37,9 @@ if (count($parts) != 2) {
 list($version, $image) = $parts;
 
 if ($version == $CFG->yui3version) {
-    $imagepath = "$CFG->dirroot/lib/yui/$CFG->yui3version/assets/skins/sam/$image";
+    $imagepath = "$CFG->dirroot/lib/yui/$CFG->yui3version/build/assets/skins/sam/$image";
 } else if ($version == $CFG->yui2version) {
-    $imagepath = "$CFG->dirroot/lib/yui/$CFG->yui2version/assets/skins/sam/$image";
+    $imagepath = "$CFG->dirroot/lib/yui/$CFG->yui2version/build/assets/skins/sam/$image";
 } else {
     yui_image_not_found();
 }

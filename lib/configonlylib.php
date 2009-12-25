@@ -45,6 +45,18 @@ function min_optional_param($name, $default, $type) {
         $value = $_GET['amp;'.$name];
     }
 
+    return min_clean_param($value, $type);
+}
+
+/**
+ * Minimalistic parameter cleaning function.
+ * Can not use optional param because moodlelib.php is not loaded yet
+ * @param string $name
+ * @param mixed $default
+ * @param string $type
+ * @return mixed
+ */
+function min_clean_param($value, $type) {
     switch($type) {
         case 'RAW':      break;
         case 'INT':      $value = (int)$value;
@@ -60,4 +72,3 @@ function min_optional_param($name, $default, $type) {
 
     return $value;
 }
-
