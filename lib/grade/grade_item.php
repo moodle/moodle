@@ -1331,7 +1331,7 @@ class grade_item extends grade_object {
 
             if ($grade_category->aggregatesubcats) {
                 // return all children excluding category items
-                $params[] = $grade_category->id;
+                $params[] = '%/' . $grade_category->id . '/%';
                 $sql = "SELECT gi.id
                           FROM {grade_items} gi
                          WHERE $gtypes
@@ -1339,8 +1339,7 @@ class grade_item extends grade_object {
                                AND gi.categoryid IN (
                                   SELECT gc.id
                                     FROM {grade_categories} gc
-                                   WHERE gc.path LIKE '%/?/%')";
-
+                                   WHERE gc.path LIKE ?)";
             } else {
                 $params[] = $grade_category->id;
                 $params[] = $grade_category->id;
