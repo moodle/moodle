@@ -48,56 +48,56 @@ $string['databasecreationsettingssub'] = '<b>Typ:</b> vom Installer festgelegt a
 <b>Host:</b> vom Installer festgelegt auf  \"localhost\"<br />
 <b>Name:</b> Datenbankname, z.B. moodle<br />
 <b>Nutzer:</b> vom Installer festgelegt auf  \"root\"<br />
-<b>Passwort:</b> Ihr Datenbankpasswort<br />
+<b>Kennwort:</b> Ihr Kennwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> optionaler Prefix für alle Tabellennamen';
-$string['databasesettingshead'] = 'Sie müssen nun die Einstellungen für die Datenbank konfigurieren, in der die meisten Moodle-Daten abgelegt werden. Diese Datenbank muss bereits vorher angelegt und mit Nutzernamen und Passwort versehen worden sein, um auf sie zugreifen zu können.';
+$string['databasesettingshead'] = 'Sie müssen nun die Einstellungen für die Datenbank konfigurieren, in der die meisten Moodle-Daten gespeichert werden. Diese Datenbank muss bereits angelegt sein. Außerdem muss ein Nutzer mit Anmeldenamen und Kennwort existieren, der auf die Datenbank zugreifen darf.';
 $string['databasesettingssub'] = '<b>Typ:</b> mysql oder postgres7<br />
 <b>Host:</b> z.B. localhost oder db.isp.com<br />
 <b>Name:</b> Datenbankname, z.B. moodle<br />
-<b>Nutzer:</b> Ihr Benutzername für die Datenbank<br />
-<b>Passwort:</b> Ihr Passwort für die Datenbank<br />
+<b>Nutzer:</b> Ihr Anmeldename für die Datenbank<br />
+<b>Kennwort:</b> Ihr Kennwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> optionaler Prefix für alle Tabellennamen';
 $string['databasesettingssub_mssql'] = '<b>Typ:</b> SQL*Server (ohne UTF-8)<b><strong class=\"errormsg\">Experimentell! (nicht für Produktivumgebungen)</strong></b><br /><br />
 <b>Host:</b> z.B. localhost oder db.isp.com<br />
 <b>Name:</b> Datenbankname, z.B. moodle<br />
-<b>Nutzer:</b> Ihr Benutzername für die Datenbank<br />
-<b>Passwort:</b> Ihr Passwort für die Datenbank<br />
+<b>Nutzer:</b> Ihr Anmeldename für die Datenbank<br />
+<b>Kennwort:</b> Ihr Kennwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellennamen (notwendig)';
 $string['databasesettingssub_mssql_n'] = '<b>Typ:</b> SQL*Server (mit UTF-8)<br />
 <b>Host:</b> z.B. localhost oder db.isp.com<br />
 <b>Name:</b> Datenbankname, z.B. moodle<br />
 <b>Nutzer:</b> Ihr Anmeldename für die Datenbank<br />
-<b>Passwort:</b> Ihr Passwort für die Datenbank<br />
+<b>Kennwort:</b> Ihr Kennwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellen (notwendig)';
 $string['databasesettingssub_mysql'] = '<b>Typ:</b> MySQL<br />
 <b>Host:</b> z.B. localhost oder db.isp.com<br />
 <b>Name:</b> Datenbankname, z.B. moodle<br />
-<b>Nutzer:</b> Ihr Benutzername für die Datenbank<br />
-<b>Passwort:</b> Ihr Passwort für die Datenbank<br />
+<b>Nutzer:</b> Ihr Anmeldename für die Datenbank<br />
+<b>Kennwort:</b> Ihr Kennwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellen (optional)';
 $string['databasesettingssub_mysqli'] = '<b>Typ:</b> Improved MySQL<br />
 <b>Host:</b> z.B. localhost oder db.domain.com<br />
 <b>Name:</b> Datenbank-Name, z.B moodle<br />
-<b>Nutzer:</b> Ihr Benutzername für die Datenbank<br />
-<b>Passwort:</b> Ihr Passwort für die Datenbank<br />
+<b>Nutzer:</b> Ihr Anmeldename für die Datenbank<br />
+<b>Kennwort:</b> Ihr Kennwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellen (optional)';
 $string['databasesettingssub_oci8po'] = '<b>Typ:</b> Oracle<br />
 <b>Host:</b> unbenutzt - muss leer bleiben!<br />
 <b>Name:</b> vorgegebener Verbindungname zu tnsnames.ora<br />
-<b>Nutzer:</b> Ihr Benutzername für die Datenbank<br />
-<b>Passwort:</b> Ihr Passwort für die Datenbank<br />
+<b>Nutzer:</b> Ihr Anmeldename für die Datenbank<br />
+<b>Kennwort:</b> Ihr Kennwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellen (notwendig, 2cc. max)';
 $string['databasesettingssub_odbc_mssql'] = '<b>Typ:</b> SQL*Server (over ODBC) <b><font color=\"red\">Experimentell! (nicht für den produktiven Einsatz)</font></b><br />
 <b>Host:</b> vorgegebener DSN-Name im ODBC-Kontrolldialog<br />
 <b>Name:</b> Datenbankname, z.B. moodle<br />
-<b>Nutzer:</b> Ihr Benutzername für die Datenbank<br />
-<b>Passwort:</b> Ihr Passwort für die Datenbank<br />
+<b>Nutzer:</b> Ihr Anmeldename für die Datenbank<br />
+<b>Kennwort:</b> Ihr Kennwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellen (notwendig)';
 $string['databasesettingssub_postgres7'] = '<b>Typ:</b> PostgreSQL<br />
 <b>Host:</b> z.B. localhost oder db.isp.com<br />
 <b>Name:</b> Datenbankname, z.B. moodle<br />
-<b>Nutzer:</b> Ihr Benutzername für die Datenbank<br />
-<b>Passwort:</b> Ihr Passwort für die Datenbank<br />
+<b>Nutzer:</b> Ihr Anmeldename für die Datenbank<br />
+<b>Kennwort:</b> Ihr Kennwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellen (notwendig)';
 $string['databasesettingswillbecreated'] = '<b>Hinweis: </b> Das Installationsprogramm wird versuchen, automatisch eine Datenbank anzulegen, sofern diese noch nicht besteht.';
 $string['dataroot'] = 'Daten-Verzeichnis';
@@ -200,7 +200,7 @@ $string['mysqlextensionisnotpresentinphp'] = 'PHP wurde nicht richtig konfigurie
 $string['mysqli'] = 'Improved MySQL (mysqli)';
 $string['mysqliextensionisnotpresentinphp'] = 'PHP wurde nicht ordnungsgemäß für die MySQLi-Erweiterung konfiguriert, um mit MySQL zu kommunizieren. Bitte überprüfen Sie die Datei php.ini oder übersetzen Sie PHP neu. Die MySQLi-Erweiterung ist nicht für PHP4 verfügbar.';
 $string['name'] = 'Name';
-$string['next'] = 'Nächste';
+$string['next'] = 'Weiter';
 $string['oci8po'] = 'Oracle (oci8po)';
 $string['ociextensionisnotpresentinphp'] = 'PHP wurde nicht richtig konfiguriert, um über die OCI8-Erweiterung mit Oracle zu kommunizieren. Bitte prüfen Sie die Datei php.ini oder kompilieren Sie PHP neu.';
 $string['odbcextensionisnotpresentinphp'] = 'PHP wurde nicht richtig konfiguriert, um über die ODBC-Erweiterung mit SQL*Server zu kommunizieren. Bitte prüfen Sie die Datei php.ini oder kompilieren Sie PHP neu.';
@@ -213,14 +213,14 @@ $string['password'] = 'Kennwort';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP wurde nicht richtig konfiguriert, um über die PGSQL-Erweiterung mit PostgreSQL zu kommunizieren. Bitte prüfen Sie die Datei php.ini oder kompilieren Sie PHP neu.';
 $string['php50restricted'] = 'PHP 5.0.x hat eine Reihe bekannter Fehler! Sie sollten die Versionen 5.1.x bzw. 4.3.x/4.4.x benutzen.';
 $string['phpversion'] = 'PHP-Version';
-$string['phpversionerror'] = 'PHP muss mindestens in der Version 4.3.0 oder 5.1.0 installiert sein (5.0.x weist eine Reihe bekannter Fehler auf).'; // ORPHANED
+$string['phpversionerror'] = 'PHP muss mindestens in der Version 4.3.0 oder 5.1.0 installiert sein (5.0.x weist eine Reihe bekannter Fehler auf).';
 $string['phpversionhelp'] = '<p>Moodle erwartet PHP mindestens in der Version 4.3.0/4.4.0 oder 5.1.0 (5.0.x weist eine Reihe bekannter Fehler auf).</p>
 <p>Sie nutzen zur Zeit die Version $a.</p>
 <p>Sie müssen Ihre PHP-Verson aktualisieren oder auf einen Rechner wechseln, der eine neuere Version von PHP nutzt.<br />
 (Im Falle von 5.0.x könnten Sie auch zu einer Version 4.3.x/4.4.x downgraden)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
-$string['postgresqlwarning'] = '<strong>Hinweis:</strong> Falls Sie Verbindungsprobleme bemerken, könnten Sie versuchen im Feld \'Host\' folgende Einträge zu setzen: \"host=\'postgresql_host\' port=\'5432\' dbname=\'postgresql_database_name\' user=\'postgresql_user\' password=\'postgresql_user_password\'\". Die Felder Name der Datenbank, Nutzer und Passwort bleiben leer. Weitere Informationen finden Sie in den <a href=\"http://docs.moodle.org/en/Installing_Postgres_for_PHP\">Moodle Docs</a>'; // ORPHANED
-$string['previous'] = 'Frühere';
+$string['postgresqlwarning'] = '<strong>Hinweis:</strong> Falls Sie Verbindungsprobleme bemerken, könnten Sie versuchen im Feld \'Host\' folgende Einträge zu setzen: \"host=\'postgresql_host\' port=\'5432\' dbname=\'postgresql_database_name\' user=\'postgresql_user\' password=\'postgresql_user_password\'\". Die Felder Name der Datenbank, Nutzer und Kennwort bleiben leer. Weitere Informationen finden Sie in den <a href=\"http://docs.moodle.org/en/Installing_Postgres_for_PHP\">Moodle Docs</a>';
+$string['previous'] = 'zurück';
 $string['qtyperqpwillberemoved'] = 'Während des Updates wird der Fragentyp RQP entfernt. Da Sie diesen Fragentyp nicht benutzen, sollten Sie keinerlei Probleme bekommen.';
 $string['qtyperqpwillberemovedanyway'] = 'Während des Updates wird der Fragentyp RQP entfernt. Sie haben einige RQP Fragen in Ihrer Datenbank, die nicht mehr funktionieren werden, falls Sie nicht den dafür notwendigen Code vor der Fortsetzung dieses Updates installieren. http://moodle.org/mod/data/view.php?d=13&amp;rid=797';
 $string['remotedownloaderror'] = 'Der Download auf Ihren Server konnte nicht ausgeführt werden. Prüfen Sie bitte die Proxy-Einstellungen, die PHP CURL Erweiterung wird dringend empfohlen.<br /><br />Die Datei <a href=\"$a->url\">$a->url</a> muss nun manuell herunter geladen, entpackt und auf den Server nach \"$a->dest\" kopiert werden. there.';
