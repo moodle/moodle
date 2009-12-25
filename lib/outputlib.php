@@ -892,6 +892,10 @@ class theme_config {
                     return $imagefile;
                 }
             }
+            if ($imagefile = $this->image_exists("$CFG->libdir/yui/$CFG->yui3version/assets/skins/sam/$image")) {
+                // YUI3 takes precedence
+                return $imagefile;
+            }
             if ($imagefile = $this->image_exists("$CFG->libdir/yui/$CFG->yui2version/assets/skins/sam/$image")) {
                 return $imagefile;
             }
