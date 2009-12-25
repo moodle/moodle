@@ -105,7 +105,7 @@ class page_requirements_manager {
     protected $headdone = false;
     protected $topofbodydone = false;
 
-    /** YUI PHPLoader instance responsible for YUI3 laoding in HEAD */ 
+    /** YUI PHPLoader instance responsible for YUI3 laoding in HEAD */
     protected $yui3loader;
 
     /**
@@ -123,7 +123,7 @@ class page_requirements_manager {
             $this->yui3loader->filter = YUI_DEBUG; // alternatively we could use just YUI_RAW here
         } else {
             $this->yui3loader->filter = null;
-        }        
+        }
         if (!empty($CFG->useexternalyui)) {
             $this->yui3loader->base = 'http://yui.yahooapis.com/' . $CFG->yui3version . '/build/';
         } else {
@@ -134,7 +134,7 @@ class page_requirements_manager {
         // This file helps to minimise number of http requests
         //$this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yuicomboloader.php?';
 
-        $this->yui3loader->load('cssreset', 'cssbase', 'cssfonts', 'cssgrids');       
+        $this->yui3loader->load('cssreset', 'cssbase', 'cssfonts', 'cssgrids');
     }
 
     /**
