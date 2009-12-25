@@ -591,7 +591,7 @@ class theme_config {
             $css = $this->css_content();
             $url = $CFG->httpswwwroot.'/theme/styles_debug.php';
             $urls = array();
-            $urls[] = new moodle_url($url, array('theme'=>$this->name,'type'=>'yui'));
+            $urls[] = new moodle_url($url, array('theme'=>$this->name,'type'=>'yui2'));
             foreach ($css['plugins'] as $plugin=>$unused) {
                 $urls[] = new moodle_url($url, array('theme'=>$this->name,'type'=>'plugin', 'subtype'=>$plugin));
             }
@@ -614,16 +614,10 @@ class theme_config {
     public function css_content() {
         global $CFG;
 
-        $css = array('yui'=>array(), 'plugins'=>array(), 'parents'=>array(), 'theme'=>array());
+        $css = array('yui2'=>array(), 'plugins'=>array(), 'parents'=>array(), 'theme'=>array());
 
-        //YUI sheets
-        $yui_sheets = "/*** YUI3 reset sheets and grids ***/\n\n";
-        $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui3version/cssreset/reset-min.css");
-        $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui3version/cssbase/base-min.css");
-        $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui3version/cssfonts/fonts-min.css");
-        $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui3version/cssgrids/grids-min.css");
-
-        $yui_sheets .= "\n\n/*** Standard YUI2 sheets ***/\n\n";
+        // legacy YUI2 stylesheets, YUI3 stylesheets are loaded on the fly
+        $yui2_sheets = "\n\n/*** Standard YUI2 sheets ***/\n\n";
         $items = new DirectoryIterator("$CFG->libdir/yui/$CFG->yui2version/assets/skins/sam");
         foreach ($items as $item) {
             if ($item->isDot() or !$item->isFile()) {
@@ -633,28 +627,13 @@ class theme_config {
             if (substr($filename, -4) !== '.css') {
                 continue;
             }
-            $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui2version/assets/skins/sam/$filename");
+            $yui2_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui2version/assets/skins/sam/$filename");
         }
         unset($item);
         unset($items);
 
-        $yui_sheets .= "\n\n/*** Standard YUI3 sheets ***/\n\n";
-        $items = new DirectoryIterator("$CFG->libdir/yui/$CFG->yui3version/assets/skins/sam");
-        foreach ($items as $item) {
-            if ($item->isDot() or !$item->isFile()) {
-                continue;
-            }
-            $filename = $item->getFilename();
-            if (substr($filename, -4) !== '.css') {
-                continue;
-            }
-            $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui3version/assets/skins/sam/$filename");
-        }
-        unset($item);
-        unset($items);
-
-        $yui_sheets = preg_replace('/([a-z-]+)\.(png|gif)/', '[[pix:yui|$1]]', $yui_sheets);
-        $css['yui'][] = $this->post_process($yui_sheets);
+        $yui2_sheets = preg_replace('/([a-z-]+)\.(png|gif)/', '[[pix:yui2|$1]]', $yui2_sheets);
+        $css['yui2'][] = $this->post_process($yui2_sheets);
 
         // get all plugin sheets
         $excludes = null;
@@ -898,20 +877,9 @@ class theme_config {
             }
             return null;
 
-        } else if ($component === 'yui') {
-            // yui CSS files are parsed automatically and altered on the fly
-            if ($imagefile = $this->image_exists("$this->dir/pix_yui/$image")) {
-                return $imagefile;
-            }
-            foreach (array_reverse($this->parent_configs) as $parent_config) { // base first, the immediate parent last
-                if ($imagefile = $this->image_exists("$parent_config->dir/pix_yui/$image")) {
-                    return $imagefile;
-                }
-            }
-            if ($imagefile = $this->image_exists("$CFG->libdir/yui/$CFG->yui3version/assets/skins/sam/$image")) {
-                // YUI3 takes precedence
-                return $imagefile;
-            }
+        } else if ($component === 'yui2') {
+            // YUI2 is here for legacy reasons only, YUI3 images are not handled here
+            // yui images need to be overriden with CSS using proper selectors
             if ($imagefile = $this->image_exists("$CFG->libdir/yui/$CFG->yui2version/assets/skins/sam/$image")) {
                 return $imagefile;
             }

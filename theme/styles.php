@@ -32,7 +32,7 @@ $themename = min_optional_param('theme', 'standard', 'SAFEDIR');
 $type      = min_optional_param('type', 'all', 'SAFEDIR');
 $rev       = min_optional_param('rev', 0, 'INT');
 
-if (!in_array($type, array('all', 'ie', 'editor', 'yui', 'plugins', 'parents', 'theme'))) {
+if (!in_array($type, array('all', 'ie', 'editor', 'yui2', 'plugins', 'parents', 'theme'))) {
     header('HTTP/1.0 404 not found');
     die('Theme was not found, sorry.');
 }
@@ -116,7 +116,7 @@ function send_ie_css($themename, $rev) {
 
     $css = <<<EOF
 /** Unfortunately IE6/7 does not support more than 4096 selectors in one CSS file, which means we have to use some ugly hacks :-( **/
-@import url(styles.php?theme=$themename&rev=$rev&type=yui);
+@import url(styles.php?theme=$themename&rev=$rev&type=yui2);
 @import url(styles.php?theme=$themename&rev=$rev&type=plugins);
 @import url(styles.php?theme=$themename&rev=$rev&type=parents);
 @import url(styles.php?theme=$themename&rev=$rev&type=theme);

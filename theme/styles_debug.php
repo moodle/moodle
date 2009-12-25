@@ -56,8 +56,8 @@ if ($type === 'editor') {
 
 $css = $theme->css_content();
 
-if ($type === 'yui') {
-    send_uncached_css(reset($css['yui']));
+if ($type === 'yui2') {
+    send_uncached_css(reset($css['yui2']));
 
 } else if ($type === 'plugin') {
     if (isset($css['plugins'][$subtype])) {

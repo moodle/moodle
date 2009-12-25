@@ -362,7 +362,7 @@ class core_renderer extends renderer_base {
         // any other custom CSS can not be overridden via themes and is highly discouraged
         $urls = $this->page->theme->css_urls();
         foreach ($urls as $url) {
-            $output .= '<link rel="stylesheet" type="text/css" href="' . $url->out() . '" />' . "\n";
+            $this->page->requires->css($url->out(), true);
         }
 
         // Get the theme javascript

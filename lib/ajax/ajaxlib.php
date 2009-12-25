@@ -133,6 +133,8 @@ class page_requirements_manager {
 
         // This file helps to minimise number of http requests
         //$this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yuicomboloader.php?';
+
+        $this->yui3loader->load('cssreset', 'cssbase', 'cssfonts', 'cssgrids');       
     }
 
     /**
@@ -463,7 +465,7 @@ class page_requirements_manager {
      * @return string
      */
     protected function get_yui3lib_code() {
-        return $this->yui3loader->script();
+        return $this->yui3loader->css().$this->yui3loader->script();
     }
 
     /**
