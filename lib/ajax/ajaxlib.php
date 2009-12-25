@@ -105,6 +105,36 @@ class page_requirements_manager {
     protected $headdone = false;
     protected $topofbodydone = false;
 
+    /** YUI PHPLoader instance responsible for YUI3 laoding in HEAD */ 
+    protected $yui3loader;
+
+    /**
+     * Page requirements constructor.
+     */
+    public function __construct() {
+        global $CFG;
+        require_once("$CFG->libdir/yui/phploader/phploader/loader.php");
+
+        $this->yui3loader = new YAHOO_util_Loader($CFG->yui3version);
+
+        // set up some loader options
+        $this->yui3loader->loadOptional = false;
+        if (debugging('', DEBUG_DEVELOPER)) {
+            $this->yui3loader->filter = YUI_DEBUG; // alternatively we could use just YUI_RAW here
+        } else {
+            $this->yui3loader->filter = null;
+        }        
+        if (!empty($CFG->useexternalyui)) {
+            $this->yui3loader->base = 'http://yui.yahooapis.com/' . $CFG->yui3version . '/build/';
+        } else {
+            $this->yui3loader->base = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui3version . '/';
+            $libpath = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui2version;
+        }
+
+        // This file helps to minimise number of http requests
+        //$this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yuicomboloader.php?';
+    }
+
     /**
      * Ensure that the specified JavaScript file is linked to from this page.
      *
@@ -143,7 +173,7 @@ class page_requirements_manager {
     }
 
     /**
-     * Ensure that the specified YUI library file, and all its required dependancies,
+     * Ensure that the specified YUI2 library file, and all its required dependancies,
      * are linked to from this page.
      *
      * By default the link is put at the end of the page, since this gives best page-load
@@ -153,7 +183,7 @@ class page_requirements_manager {
      * Even if a particular library is requested more than once (perhaps as a dependancy
      * of other libraries) it will only be linked to once.
      *
-     * @param $libname the name of the YUI library you require. For example 'autocomplete'.
+     * @param $libname the name of the YUI2 library you require. For example 'autocomplete'.
      * @return required_yui2_lib A required_yui2_lib object. This allows you to control when the
      *      link to the script is output by calling methods like {@link required_yui2_lib::asap()} or
      *      {@link required_yui2_lib::in_head()}.
@@ -164,6 +194,22 @@ class page_requirements_manager {
             $this->linkedrequirements[$key] = new required_yui2_lib($this, $libname);
         }
         return $this->linkedrequirements[$key];
+    }
+
+    /**
+     * Ensure that the specified YUI3 library file, and all its required dependancies,
+     * are laoded automatically on this page.
+     * @param string|array $libname the name of the YUI3 library you require. For example 'overlay'.
+     * @return void
+     */
+    public function yui3_lib($libname) {
+        if ($this->headdone) {
+            throw new coding_exception('YUI3 libraries can be preloaded by PHP only from HEAD, please use YUI autoloading instead: ', $stylesheet);
+        }
+        $libnames = (array)$libname;
+        foreach ($libnames as $lib) {
+            $this->yui3loader->load($lib);
+        }
     }
 
     /**
@@ -410,6 +456,17 @@ class page_requirements_manager {
     }
 
     /**
+     * Returns basic YUI3 JS loading code.
+     *
+     * Please note this can be used only from WHEN_IN_HEAD.
+     *
+     * @return string
+     */
+    protected function get_yui3lib_code() {
+        return $this->yui3loader->script();
+    }
+
+    /**
      * Generate any HTML that needs to go inside the <head> tag.
      *
      * Normally, this method is called automatically by the code that prints the
@@ -419,7 +476,8 @@ class page_requirements_manager {
      */
     public function get_head_code() {
         setup_core_javascript($this);
-        $output = $this->get_linked_resources_code(self::WHEN_IN_HEAD);
+        $output = $this->get_yui3lib_code();
+        $output .= $this->get_linked_resources_code(self::WHEN_IN_HEAD);
         $js = $this->get_javascript_code(self::WHEN_IN_HEAD);
         $output .= ajax_generate_script_tag($js);
         $this->headdone = true;
@@ -681,7 +739,6 @@ class required_js extends linked_requirement {
         $this->when = page_requirements_manager::WHEN_TOP_OF_BODY;
     }
 }
-
 
 /**
  * A subclass of {@link linked_requirement} to represent a requried YUI library.
@@ -1213,7 +1270,7 @@ function ajax_resolve_yui2_lib($libname) {
         'yuitest'          => array('yahoo-dom-event', 'logger', 'yuitest'),
     );
     if (!isset($translatelist[$libname])) {
-        throw new coding_exception('Unknown YUI library ' . $libname);
+        throw new coding_exception('Unknown YUI2 library ' . $libname);
     }
 
     $jsnames = $translatelist[$libname];
@@ -1226,7 +1283,7 @@ function ajax_resolve_yui2_lib($libname) {
     }
 
     if (!empty($CFG->useexternalyui)) {
-        $libpath = 'http://yui.yahooapis.com/' . $CFG->yui2version . '/build/';
+        $libpath = 'http://yui.yahooapis.com/' . $CFG->yui2version . '/build';
     } else {
         $libpath = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui2version;
     }
