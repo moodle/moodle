@@ -632,7 +632,8 @@ class theme_config {
         unset($item);
         unset($items);
 
-        $yui2_sheets = preg_replace('/([a-z-]+)\.(png|gif)/', '[[pix:yui2|$1]]', $yui2_sheets);
+        // search for all images in yui2 CSS and serve them through the yui_image.php script
+        $yui2_sheets = preg_replace('/([a-z-]+)\.(png|gif)/', 'yui_image.php?file='.$CFG->yui2version.'/$1.$2', $yui2_sheets);
         $css['yui2'][] = $this->post_process($yui2_sheets);
 
         // get all plugin sheets
@@ -874,14 +875,6 @@ class theme_config {
                 if ($imagefile = $this->image_exists("$parent_config->dir/pix/$image")) {
                     return $imagefile;
                 }
-            }
-            return null;
-
-        } else if ($component === 'yui2') {
-            // YUI2 is here for legacy reasons only, YUI3 images are not handled here
-            // yui images need to be overriden with CSS using proper selectors
-            if ($imagefile = $this->image_exists("$CFG->libdir/yui/$CFG->yui2version/assets/skins/sam/$image")) {
-                return $imagefile;
             }
             return null;
 

@@ -44,12 +44,20 @@ function min_optional_param($name, $default, $type) {
         // very, very, very ugly hack, unforunately $OUTPUT->pix_url() is not used properly in javascript code :-(
         $value = $_GET['amp;'.$name];
     }
+
     switch($type) {
-        case 'INT':      $value = (int)$value; break;
-        case 'SAFEDIR':  $value = preg_replace('/[^a-zA-Z0-9_-]/', '', $value); break;
-        case 'SAFEPATH': $value = preg_replace('/[^a-zA-Z0-9\/_-]/', '', $value); break;
+        case 'RAW':      break;
+        case 'INT':      $value = (int)$value;
+                         break;
+        case 'SAFEDIR':  $value = preg_replace('/[^a-zA-Z0-9_-]/', '', $value);
+                         break;
+        case 'SAFEPATH': $value = preg_replace('/[^a-zA-Z0-9\/\._-]/', '', $value);
+                         $value = preg_replace('/\.+/', '.', $value);
+                         $value = preg_replace('#/+#', '/', $value);
+                         break;
         default:         die("Coding error: incorrent parameter type specified ($type).");
     }
+
     return $value;
 }
 

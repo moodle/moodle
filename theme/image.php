@@ -121,7 +121,7 @@ if ($rev > -1) {
 // parameters to get the best performance.
 
 function send_cached_image($imagepath, $rev) {
-    $lifetime = 60*60*24*3;
+    $lifetime = 60*60*24*3; // 3 days
     $pathinfo = pathinfo($imagepath);
     $imagename = $pathinfo['filename'].'.'.$pathinfo['extension'];
 

@@ -26,14 +26,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// special support for highly optimised scripts that do not need libraries and DB connection
-if (defined('ABORT_AFTER_CONFIG')) {
-    if (!defined('ABORT_AFTER_CONFIG_CANCEL')) {
-        require_once("$CFG->dirroot/lib/configonlylib.php");
-        return;
-    }
-}
-
 /**
  * Holds the core settings that affect how Moodle works. Some of its fields
  * are set in config.php, and the rest are loaded from the config table.
@@ -47,6 +39,21 @@ if (defined('ABORT_AFTER_CONFIG')) {
  * @name $CFG
  */
 global $CFG;
+
+// Set up some paths.
+$CFG->libdir = $CFG->dirroot .'/lib';
+
+// exact version of currently used yui2 and 3 library
+$CFG->yui2version = '2.8.0r4';
+$CFG->yui3version = '3.0.0';
+
+// special support for highly optimised scripts that do not need libraries and DB connection
+if (defined('ABORT_AFTER_CONFIG')) {
+    if (!defined('ABORT_AFTER_CONFIG_CANCEL')) {
+        require_once("$CFG->dirroot/lib/configonlylib.php");
+        return;
+    }
+}
 
 /**
  * Database connection. Used for all access to the database.
@@ -201,9 +208,6 @@ if (!isset($_SERVER['REMOTE_ADDR']) && isset($_SERVER['argv'][0])) {
 // Store settings from config.php in array in $CFG - we can use it later to detect problems and overrides
 $CFG->config_php_settings = (array)$CFG;
 
-// Set up some paths.
-$CFG->libdir   = $CFG->dirroot .'/lib';
-
 // Set httpswwwroot default value (this variable will replace $CFG->wwwroot
 // inside some URLs used in HTTPSPAGEREQUIRED pages.
 $CFG->httpswwwroot = $CFG->wwwroot;
@@ -238,10 +242,6 @@ if (!isset($CFG->admin)) {   // Just in case it isn't defined in config.php
 if (!isset($CFG->prefix)) {   // Just in case it isn't defined in config.php
     $CFG->prefix = '';
 }
-
-// exact version of currently used yui2 and 3 library
-$CFG->yui2version = '2.8.0r4';
-$CFG->yui3version = '3.0.0';
 
 // Load up standard libraries
 require_once($CFG->libdir .'/textlib.class.php');   // Functions to handle multibyte strings

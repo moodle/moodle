@@ -141,9 +141,9 @@ class page_requirements_manager {
             $this->yui2loader->base = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui2version . '/';
         }
 
-        // This file helps to minimise number of http requests
-        //$this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yuicomboloader.php?';
-        //$this->yui2loader->comboBase = $CFG->httpswwwroot . '/theme/yuicomboloader.php?';
+        // This file helps to minimise number of http requests and implements proper caching
+        //$this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php?file=';
+        //$this->yui2loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php?file=';
     }
 
     /**
