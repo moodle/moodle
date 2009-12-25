@@ -617,13 +617,13 @@ class theme_config {
         $css = array('yui'=>array(), 'plugins'=>array(), 'parents'=>array(), 'theme'=>array());
 
         //YUI sheets
-        $yui_sheets = "/*** YUI reset sheets and grids ***/\n\n";
+        $yui_sheets = "/*** YUI3 reset sheets and grids ***/\n\n";
         $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui3version/cssreset/reset-min.css");
         $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui3version/cssbase/base-min.css");
         $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui3version/cssfonts/fonts-min.css");
         $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui3version/cssgrids/grids-min.css");
 
-        $yui_sheets .= "/*** Standard YUI sheets ***/\n\n";
+        $yui_sheets .= "\n\n/*** Standard YUI2 sheets ***/\n\n";
         $items = new DirectoryIterator("$CFG->libdir/yui/$CFG->yui2version/assets/skins/sam");
         foreach ($items as $item) {
             if ($item->isDot() or !$item->isFile()) {
@@ -637,10 +637,26 @@ class theme_config {
         }
         unset($item);
         unset($items);
+
+        $yui_sheets .= "\n\n/*** Standard YUI3 sheets ***/\n\n";
+        $items = new DirectoryIterator("$CFG->libdir/yui/$CFG->yui3version/assets/skins/sam");
+        foreach ($items as $item) {
+            if ($item->isDot() or !$item->isFile()) {
+                continue;
+            }
+            $filename = $item->getFilename();
+            if (substr($filename, -4) !== '.css') {
+                continue;
+            }
+            $yui_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui3version/assets/skins/sam/$filename");
+        }
+        unset($item);
+        unset($items);
+
         $yui_sheets = preg_replace('/([a-z-]+)\.(png|gif)/', '[[pix:yui|$1]]', $yui_sheets);
         $css['yui'][] = $this->post_process($yui_sheets);
 
-        // get plugin sheets
+        // get all plugin sheets
         $excludes = null;
         if (is_array($this->plugins_exclude_sheets) or $this->plugins_exclude_sheets === true) {
             $excludes = $this->plugins_exclude_sheets;
