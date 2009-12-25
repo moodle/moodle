@@ -178,12 +178,12 @@ EOD;
         self::$comment_context = optional_param('comment_context', '', PARAM_INT);
         self::$comment_area    = optional_param('comment_area',    '', PARAM_ALPHAEXT);
 
-        $PAGE->requires->yui2_lib('yahoo')->in_head();
-        $PAGE->requires->yui2_lib('dom')->in_head();
-        $PAGE->requires->yui2_lib('event')->in_head();
-        $PAGE->requires->yui2_lib('animation')->in_head();
-        $PAGE->requires->yui2_lib('json')->in_head();
-        $PAGE->requires->yui2_lib('connection')->in_head();
+        $PAGE->requires->yui2_lib('yahoo');
+        $PAGE->requires->yui2_lib('dom');
+        $PAGE->requires->yui2_lib('event');
+        $PAGE->requires->yui2_lib('animation');
+        $PAGE->requires->yui2_lib('json');
+        $PAGE->requires->yui2_lib('connection');
         $PAGE->requires->js('comment/comment.js')->in_head();
         $PAGE->requires->string_for_js('addcomment', 'moodle');
         $PAGE->requires->string_for_js('deletecomment', 'moodle');

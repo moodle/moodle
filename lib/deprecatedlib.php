@@ -1676,7 +1676,7 @@ function use_html_editor($name='', $editorhidebuttons='', $id='') {
  *
  * @param mixed $lib The library or libraries to load (a string or array of strings)
  *      There are three way to specify the library:
- *      1. a shorname like 'yui_yahoo'. This translates into a call to $PAGE->requires->yui2_lib('yahoo')->asap();
+ *      1. a shorname like 'yui_yahoo'. This translates into a call to $PAGE->requires->yui2_lib('yahoo');
  *      2. the path to the library relative to wwwroot, for example 'lib/javascript-static.js'
  *      3. (legacy) a full URL like $CFG->wwwroot . '/lib/javascript-static.js'.
  *      2. and 3. lead to a call $PAGE->requires->js('/lib/javascript-static.js').
@@ -1696,7 +1696,7 @@ function require_js($lib) {
               'or $PAGE->requires->yui2_lib() instead.', DEBUG_DEVELOPER);
 
     if (strpos($lib, 'yui_') === 0) {
-        echo $PAGE->requires->yui2_lib(substr($lib, 4))->asap();
+        $PAGE->requires->yui2_lib(substr($lib, 4));
     } else if (preg_match('/^https?:/', $lib)) {
         echo $PAGE->requires->js(str_replace($CFG->wwwroot, '', $lib))->asap();
     } else {

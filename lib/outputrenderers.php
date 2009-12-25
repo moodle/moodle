@@ -371,8 +371,8 @@ class core_renderer extends renderer_base {
 
         // Perform a browser environment check for the flash version.  Should only run once per login session.
         if (isloggedin() && !empty($CFG->excludeoldflashclients) && empty($SESSION->flashversion)) {
-            $this->page->requires->yui2_lib('event')->in_head();
-            $this->page->requires->yui2_lib('connection')->in_head();
+            $this->page->requires->yui2_lib('event');
+            $this->page->requires->yui2_lib('connection');
             $this->page->requires->js('lib/swfobject/swfobject.js')->in_head();
             $this->page->requires->js('lib/flashdetect/flashdetect.js')->in_head();
             $this->page->requires->js_function_call('setflashversiontosession', array($CFG->wwwroot, sesskey()));

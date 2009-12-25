@@ -110,8 +110,10 @@ class page_requirements_manager {
     protected $headdone = false;
     protected $topofbodydone = false;
 
-    /** YUI PHPLoader instance responsible for YUI3 laoding in HEAD */
+    /** YUI PHPLoader instance responsible for YUI3 laoding in page head only */
     protected $yui3loader;
+    /** YUI PHPLoader instance responsible for YUI2 laoding */
+    protected $yui2loader;
 
     /**
      * Page requirements constructor.
@@ -121,23 +123,27 @@ class page_requirements_manager {
         require_once("$CFG->libdir/yui/phploader/phploader/loader.php");
 
         $this->yui3loader = new YAHOO_util_Loader($CFG->yui3version);
+        $this->yui2loader = new YAHOO_util_Loader($CFG->yui2version);
 
         // set up some loader options
-        $this->yui3loader->loadOptional = false;
         if (debugging('', DEBUG_DEVELOPER)) {
             $this->yui3loader->filter = YUI_DEBUG; // alternatively we could use just YUI_RAW here
+            $this->yui2loader->filter = YUI_DEBUG; // alternatively we could use just YUI_RAW here
         } else {
             $this->yui3loader->filter = null;
+            $this->yui2loader->filter = null;
         }
         if (!empty($CFG->useexternalyui)) {
             $this->yui3loader->base = 'http://yui.yahooapis.com/' . $CFG->yui3version . '/build/';
+            $this->yui2loader->base = 'http://yui.yahooapis.com/' . $CFG->yui2version . '/build/';
         } else {
             $this->yui3loader->base = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui3version . '/';
-            $libpath = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui2version;
+            $this->yui2loader->base = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui2version . '/';
         }
 
         // This file helps to minimise number of http requests
         //$this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yuicomboloader.php?';
+        //$this->yui2loader->comboBase = $CFG->httpswwwroot . '/theme/yuicomboloader.php?';
     }
 
     /**
@@ -188,22 +194,23 @@ class page_requirements_manager {
      * Even if a particular library is requested more than once (perhaps as a dependancy
      * of other libraries) it will only be linked to once.
      *
-     * @param $libname the name of the YUI2 library you require. For example 'autocomplete'.
-     * @return required_yui2_lib A required_yui2_lib object. This allows you to control when the
-     *      link to the script is output by calling methods like {@link required_yui2_lib::asap()} or
-     *      {@link required_yui2_lib::in_head()}.
+     * The library is leaded as soon as possible, if $OUTPUT->header() not used yet it
+     * is put into the page header, otherwise it is loaded in the page footer. 
+     *
+     * @param string|array $libname the name of the YUI2 library you require. For example 'autocomplete'.
+     * @return void
      */
     public function yui2_lib($libname) {
-        $key = 'yui:' . $libname;
-        if (!isset($this->linkedrequirements[$key])) {
-            $this->linkedrequirements[$key] = new required_yui2_lib($this, $libname);
+        $libnames = (array)$libname;
+        foreach ($libnames as $lib) {
+            $this->yui2loader->load($lib);
         }
-        return $this->linkedrequirements[$key];
     }
 
     /**
      * Ensure that the specified YUI3 library file, and all its required dependancies,
      * are laoded automatically on this page.
+     *
      * @param string|array $libname the name of the YUI3 library you require. For example 'overlay'.
      * @return void
      */
@@ -424,7 +431,7 @@ class page_requirements_manager {
     public function event_handler($id, $event, $function, $arguments=array()) {
         $requirement = new required_event_handler($this, $id, $event, $function, $arguments);
         $this->requiredjscode[] = $requirement;
-        $this->linkedrequirements[] = new required_yui2_lib($this, 'event');
+        $this->yui2_lib('event');
         return $requirement;
     }
 
@@ -462,13 +469,27 @@ class page_requirements_manager {
 
     /**
      * Returns basic YUI3 JS loading code.
-     *
-     * Please note this can be used only from WHEN_IN_HEAD.
+     * YUI3 is using autoloading of both CSS and JS code.
      *
      * @return string
      */
-    protected function get_yui3lib_code() {
-        return $this->yui3loader->css().$this->yui3loader->script();
+    protected function get_yui3lib_headcode() {
+        return $this->yui3loader->css() . $this->yui3loader->script();
+    }
+
+    /**
+     * Returns basic YUI2 JS loading code.
+     * It can be called manually at any time.
+     *
+     * @return string JS embedding code
+     */
+    public function get_yui2lib_code() {
+        // All YUI2 CSS is loaded automatically
+        if ($this->headdone) {
+            return $this->yui2loader->script_embed();
+        } else {
+            return $this->yui2loader->script();
+        }
     }
 
     /**
@@ -481,7 +502,8 @@ class page_requirements_manager {
      */
     public function get_head_code() {
         setup_core_javascript($this);
-        $output = $this->get_yui3lib_code();
+        $output = $this->get_yui3lib_headcode();
+        $output .= $this->get_yui2lib_code();
         $output .= $this->get_linked_resources_code(self::WHEN_IN_HEAD);
         $js = $this->get_javascript_code(self::WHEN_IN_HEAD);
         $output .= ajax_generate_script_tag($js);
@@ -515,7 +537,8 @@ class page_requirements_manager {
      * @return string the HTML code to to at the end of the page.
      */
     public function get_end_code() {
-        $output = $this->get_linked_resources_code(self::WHEN_AT_END);
+        $output = $this->get_yui2lib_code();
+        $output .= $this->get_linked_resources_code(self::WHEN_AT_END);
 
         if (!empty($this->stringsforjs)) {
             array_unshift($this->requiredjscode, new required_data_for_js($this, 'mstr', $this->stringsforjs));
@@ -742,127 +765,6 @@ class required_js extends linked_requirement {
             throw new coding_exception('Too late to ask for a JavaScript file to be linked to from the top of &lt;body>.');
         }
         $this->when = page_requirements_manager::WHEN_TOP_OF_BODY;
-    }
-}
-
-/**
- * A subclass of {@link linked_requirement} to represent a requried YUI library.
- *
- * You should not create instances of this class directly. Instead you should
- * work with a {@link page_requirements_manager} - and probably the only
- * page_requirements_manager you will ever need is the one at $PAGE->requires.
- *
- * The methods {@link asap()}, {@link in_head()} and {@link at_top_of_body()}
- * are indented to be used as a fluid API, so you can say things like
- *     $PAGE->requires->yui2_lib('autocomplete')->in_head();
- *
- * This class (with the help of {@link ajax_resolve_yui2_lib()}) knows about the
- * dependancies between the different YUI libraries, and will include all the
- * other libraries required by the one you ask for.
- *
- * By default JavaScript files are included at the end of the HTML.
- * This is recommended practice because it means that the web browser will only
- * start loading the javascript files after the rest of the page is loaded, and
- * that gives the best performance for users.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- */
-class required_yui2_lib extends linked_requirement {
-    protected $jss = array();
-
-    /**
-     * Constructor. Normally instances of this class should not be created
-     * directly. Client code should create them via the page_requirements_manager
-     * method {@link page_requirements_manager::yui2_lib()}.
-     *
-     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
-     * @param string $libname The name of the YUI library you want. See the array
-     * defined in {@link ajax_resolve_yui2_lib()} for a list of known libraries.
-     */
-    public function __construct(page_requirements_manager $manager, $libname) {
-        parent::__construct($manager, '');
-        $this->when = page_requirements_manager::WHEN_AT_END;
-
-        $jsurls = ajax_resolve_yui2_lib($libname);
-        foreach ($jsurls as $jsurl) {
-            $this->jss[] = $manager->js($jsurl, true);
-        }
-    }
-
-    public function get_html() {
-        // Since we create a required_js for each of our files, that will generate the HTML.
-        return '';
-    }
-
-    /**
-     * Indicate that the link to this YUI library file should be output as soon as
-     * possible. The comment above {@link required_js::asap()} applies to this method too.
-     *
-     * @return string The HTML required to include this JavaScript file. The caller
-     * is responsible for outputting this HTML promptly. For example, a good way to
-     * call this method is like
-     * <pre>
-     *     echo $PAGE->requires->yui2_lib(...)->asap();
-     * </pre>
-     */
-    public function asap() {
-        if ($this->is_done()) {
-            return;
-        }
-
-        if (!$this->manager->is_head_done()) {
-            $this->in_head();
-            return '';
-        }
-
-        $output = '';
-        foreach ($this->jss as $requiredjs) {
-            $output .= $requiredjs->asap();
-        }
-        $this->mark_done();
-        return $output;
-    }
-
-    /**
-     * Indicate that the links to this  YUI library should be output in the
-     * <head> section of the HTML. If it too late for this request to be
-     * satisfied, an exception is thrown.
-     */
-    public function in_head() {
-        if ($this->is_done() || $this->when <= page_requirements_manager::WHEN_IN_HEAD) {
-            return;
-        }
-
-        if ($this->manager->is_head_done()) {
-            throw new coding_exception('Too late to ask for a YUI library to be linked to from &lt;head>.');
-        }
-
-        $this->when = page_requirements_manager::WHEN_IN_HEAD;
-        foreach ($this->jss as $requiredjs) {
-            $requiredjs->in_head();
-        }
-    }
-
-    /**
-     * Indicate that the links to this YUI library should be output in the
-     * <head> section of the HTML. If it too late for this request to be
-     * satisfied, an exception is thrown.
-     */
-    public function at_top_of_body() {
-        if ($this->is_done() || $this->when <= page_requirements_manager::WHEN_TOP_OF_BODY) {
-            return;
-        }
-
-        if ($this->manager->is_top_of_body_done()) {
-            throw new coding_exception('Too late to ask for a YUI library to be linked to from the top of &lt;body>.');
-        }
-
-        $this->when = page_requirements_manager::WHEN_TOP_OF_BODY;
-        foreach ($this->jss as $requiredjs) {
-            $output .= $requiredjs->at_top_of_body();
-        }
     }
 }
 
@@ -1202,114 +1104,6 @@ function ajax_generate_script_tag($js) {
     }
 }
 
-
-/**
- * Given the name of a YUI library, return a list of the .js that it requries.
- *
- * This method takes note of the $CFG->useexternalyui setting.
- *
- * If $CFG->debug is set to DEBUG_DEVELOPER then this method will return links to
- * the -debug version of the YUI files, otherwise it will return links to the -min versions.
- *
- * @param string $libname the name of a YUI library, for example 'autocomplete'.
- * @return an array of the JavaScript URLs that must be loaded to make this library work,
- *      in the order they should be loaded.
- */
-function ajax_resolve_yui2_lib($libname) {
-    global $CFG;
-
-    // Note, we always use yahoo-dom-event, even if we are only asked for part of it.
-    // because another part of the code may later ask for other bits. It is easier, and
-    // not very inefficient, just to always use (and get browsers to cache) the combined file.
-    static $translatelist = array(
-        'animation'        => array('yahoo-dom-event', 'animation'),
-        'autocomplete'     => array('yahoo-dom-event', 'datasource', 'autocomplete'),
-        'button'           => array('yahoo-dom-event', 'element', 'button'),
-        'calendar'         => array('yahoo-dom-event', 'calendar'),
-        'carousel'         => array('yahoo-dom-event', 'element', 'carousel'),
-        'charts'           => array('yahoo-dom-event', 'element', 'datasource', 'json', 'charts'),
-        'colorpicker'      => array('yahoo-dom-event', 'dragdrop', 'element', 'slider', 'colorpicker'),
-        'connection'       => array('yahoo-dom-event', 'connection'),
-        'container'        => array('yahoo-dom-event', 'container'),
-        'cookie'           => array('yahoo-dom-event', 'cookie'),
-        'datasource'       => array('yahoo-dom-event', 'datasource'),
-        'datatable'        => array('yahoo-dom-event', 'element', 'datasource', 'datatable'),
-        'datemath'         => array('yahoo-dom-event', 'datemath'),
-        'dom'              => array('yahoo-dom-event'),
-        'dom-event'        => array('yahoo-dom-event'),
-        'dragdrop'         => array('yahoo-dom-event', 'dragdrop'),
-        'editor'           => array('yahoo-dom-event', 'element', 'container', 'menu', 'button', 'editor'),
-        'element'          => array('yahoo-dom-event', 'element'),
-        'element-delegate' => array('yahoo-dom-event', 'element', 'element-delegate'),
-        'event'            => array('yahoo-dom-event'),
-        'event-delegate'   => array('yahoo-dom-event', 'event-delegate'),
-        'event-mouseenter' => array('yahoo-dom-event', 'event-mouseenter'),
-        'event-simulate'   => array('yahoo-dom-event', 'event-simulate'),
-        'get'              => array('yahoo-dom-event', 'get'),
-        'history'          => array('yahoo-dom-event', 'history'),
-        'imagecropper'     => array('yahoo-dom-event', 'dragdrop', 'element', 'resize', 'imagecropper'),
-        'imageloader'      => array('yahoo-dom-event', 'imageloader'),
-        'json'             => array('yahoo-dom-event', 'json'),
-        'layout'           => array('yahoo-dom-event', 'dragdrop', 'element', 'layout'),
-        'logger'           => array('yahoo-dom-event', 'logger'),
-        'menu'             => array('yahoo-dom-event', 'container', 'menu'),
-        'paginator'        => array('yahoo-dom-event', 'element', 'paginator'),
-        'profiler'         => array('yahoo-dom-event', 'profiler'),
-        'profilerviewer'   => array('yuiloader-dom-event', 'element', 'profiler', 'profilerviewer'),
-        'progressbar'      => array('yahoo-dom-event', 'progressbar'),
-        'resize'           => array('yahoo-dom-event', 'dragdrop', 'element', 'resize'),
-        'selector'         => array('yahoo-dom-event', 'selector'),
-        'simpleeditor'     => array('yahoo-dom-event', 'element', 'container', 'simpleeditor'),
-        'slider'           => array('yahoo-dom-event', 'gragdrop', 'slider'),
-        'storage'          => array('yahoo-dom-event', 'cookie', 'storage'),
-        'stylesheet'       => array('yahoo-dom-event', 'stylesheet'),
-        'swf'              => array('yahoo-dom-event', 'swf'),
-        'swfdetect'        => array('yahoo-dom-event', 'swfdetect'),
-        'swfstore'         => array('yahoo-dom-event', 'cookie', 'swfstore'),
-        'tabview'          => array('yahoo-dom-event', 'element', 'tabview'),
-        'treeview'         => array('yahoo-dom-event', 'treeview'),
-        'uploader'         => array('yahoo-dom-event', 'element', 'uploader'),
-        'utilities'        => array('yahoo-dom-event', 'connection', 'animation', 'dragdrop', 'element', 'get'),
-        'yahoo'            => array('yahoo-dom-event'),
-        'yuiloader'        => array('yuiloader'),
-        'yuitest'          => array('yahoo-dom-event', 'logger', 'yuitest'),
-    );
-    if (!isset($translatelist[$libname])) {
-        throw new coding_exception('Unknown YUI2 library ' . $libname);
-    }
-
-    $jsnames = $translatelist[$libname];
-
-    $debugging = debugging('', DEBUG_DEVELOPER);
-    if ($debugging) {
-        $suffix = '-debug.js';
-    } else {
-        $suffix = '-min.js';
-    }
-
-    if (!empty($CFG->useexternalyui)) {
-        $libpath = 'http://yui.yahooapis.com/' . $CFG->yui2version . '/build';
-    } else {
-        $libpath = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui2version;
-    }
-
-    $jsurls = array();
-    foreach ($jsnames as $js) {
-        if ($js == 'yahoo-dom-event') {
-            if ($debugging) {
-                $jsurls[] = $libpath . '/yahoo/yahoo' . $suffix;
-                $jsurls[] = $libpath . '/dom/dom' . $suffix;
-                $jsurls[] = $libpath . '/event/event' . $suffix;
-            } else {
-                $jsurls[] = $libpath . '/'. $js . '/' . $js . '.js';
-            }
-        } else {
-            $jsurls[] = $libpath . '/' . $js . '/' . $js . $suffix;
-        }
-    }
-
-    return $jsurls;
-}
 
 /**
  * Return the HTML required to link to a JavaScript file.

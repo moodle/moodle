@@ -91,7 +91,7 @@ $PAGE->requires->string_for_js('beep', 'chat');
 $PAGE->requires->string_for_js('talk', 'chat');
 
 $PAGE->requires->js('mod/chat/gui_ajax/script.js');
-$PAGE->requires->yui2_lib('animation')->in_head();
+$PAGE->requires->yui2_lib('animation');
 
 $PAGE->add_body_class('yui-skin-sam');
 $PAGE->set_pagelayout('embedded');

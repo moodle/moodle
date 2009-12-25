@@ -1,6 +1,7 @@
 <?php
 
-echo $PAGE->requires->yui2_lib('animation')->asap(); ?>
+$PAGE->requires->yui2_lib('animation');
+echo $PAGE->requires->get_yui2lib_code(); ?>
 
 <!--[if IE 7]>
     <link rel="stylesheet" type="text/css" href="<?php echo $CFG->httpsthemewww ?>/lines/styles_ie7.css" />
