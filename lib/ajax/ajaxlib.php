@@ -54,6 +54,11 @@ function setup_core_javascript(page_requirements_manager $requires) {
         $requires->yui2_lib('logger');
     }
 
+    // YUI3 init code
+    $requires->yui3_lib(array('cssreset', 'cssbase', 'cssfonts', 'cssgrids')); // full CSS reset
+    $requires->yui3_lib('yui'); // allows autoloading of everything else
+
+
     $requires->skip_link_to('maincontent', get_string('tocontent', 'access'));
 
     // Note that, as a short-cut, the code
@@ -133,8 +138,6 @@ class page_requirements_manager {
 
         // This file helps to minimise number of http requests
         //$this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yuicomboloader.php?';
-
-        $this->yui3loader->load('cssreset', 'cssbase', 'cssfonts', 'cssgrids');
     }
 
     /**
