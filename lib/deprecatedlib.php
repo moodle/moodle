@@ -1692,9 +1692,8 @@ function require_js($lib) {
         return;
     }
 
-    // TODO uncomment this once we have eliminated the remaining calls to require_js from core.
-    //debugging('Call to deprecated function require_js. Please use $PAGE->requires->js() ' .
-    //        'or $PAGE->requires->yui2_lib() instead.', DEBUG_DEVELOPER);
+    debugging('Call to deprecated function require_js. Please use $PAGE->requires->js() ' .
+              'or $PAGE->requires->yui2_lib() instead.', DEBUG_DEVELOPER);
 
     if (strpos($lib, 'yui_') === 0) {
         echo $PAGE->requires->yui2_lib(substr($lib, 4))->asap();
