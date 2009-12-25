@@ -1343,8 +1343,12 @@ class grade_item extends grade_object {
             } else {
                 $params[] = $grade_category->id;
                 $params[] = $grade_category->id;
-                $params[] = GRADE_TYPE_VALUE;
-                $params[] = GRADE_TYPE_SCALE;
+                if (empty($CFG->grade_includescalesinaggregation)) {
+                    $params[] = GRADE_TYPE_VALUE;
+                } else {
+                    $params[] = GRADE_TYPE_VALUE;
+                    $params[] = GRADE_TYPE_SCALE;
+                }
                 $sql = "SELECT gi.id
                           FROM {grade_items} gi
                          WHERE $gtypes
