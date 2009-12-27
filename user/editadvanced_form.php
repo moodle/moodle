@@ -104,9 +104,7 @@ class user_editadvanced_form extends moodleform {
         if (!empty($CFG->gdversion)) {
             $image_el =& $mform->getElement('currentpicture');
             if ($user and $user->picture) {
-                $userpic = moodle_user_picture::make($user, SITEID);
-                $userpic->alttext = true;
-                $image_el->setValue($OUTPUT->user_picture($userpic));
+                $image_el->setValue($OUTPUT->user_picture($user, array('courseid'=>SITEID)));
             } else {
                 $image_el->setValue(get_string('none'));
             }

@@ -123,7 +123,7 @@ class quiz_report_overview_table extends table_sql {
         $user->firstname = $attempt->firstname;
         $user->imagealt = $attempt->imagealt;
         $user->picture = $attempt->picture;
-        return $OUTPUT->user_picture(moodle_user_picture::make($user, $COURSE->id));
+        return $OUTPUT->user_picture($user);
     }
 
 

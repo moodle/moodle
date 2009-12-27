@@ -140,16 +140,14 @@ class block_online_users extends block_base {
             foreach ($users as $user) {
                 $this->content->text .= '<li class="listentry">';
                 $timeago = format_time(time() - $user->lastaccess); //bruno to calculate correctly on frontpage
-                $userpic = moodle_user_picture::make($user, $this->page->course->id);
-                $userpic->size = 16;
 
                 if ($user->username == 'guest') {
-                    $this->content->text .= '<div class="user">'.$OUTPUT->user_picture($userpic);
+                    $this->content->text .= '<div class="user">'.$OUTPUT->user_picture($user, array('size'=>16));
                     $this->content->text .= get_string('guestuser').'</div>';
 
                 } else {
                     $this->content->text .= '<div class="user"><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->page->course->id.'" title="'.$timeago.'">';
-                    $this->content->text .= '<div class="user">'.$OUTPUT->user_picture($userpic);
+                    $this->content->text .= '<div class="user">'.$OUTPUT->user_picture($user, array('size'=>16));
                     $this->content->text .= $user->fullname.'</a></div>';
                 }
                 if ($canshowicon and ($USER->id != $user->id) and  $user->username != 'guest') {  // Only when logged in and messaging active etc

@@ -1367,7 +1367,7 @@ class html_image extends labelled_html_component {
             throw new coding_exception('html_image requires a $src value (moodle_url).');
         }
 
-        $this->add_class('image');
+        $this->add_class('image'); //TODO. remove this like somehow
         parent::prepare($output, $page, $target);
     }
 
@@ -1817,43 +1817,38 @@ class moodle_paging_bar extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class moodle_user_picture extends moodle_html_component {
+class user_picture extends html_image {
     /**
-     * @var mixed $user A userid or a user object with at least fields id, picture, imagealrt, firstname and lastname set.
+     * @var mixed $user A user object with at least fields id, picture, imagealt, firstname and lastname set.
      */
     public $user;
     /**
-     * @var int $courseid The course id. Used when constructing the link to the user's profile.
+     * @var int $courseid The course id. Used when constructing the link to the user's profile,
+     * page course id used if not specified.
      */
     public $courseid;
     /**
-     * @var html_image $image A custom image used as the user picture.
+     * @var bool $link add course profile link to image
      */
-    public $image;
-    /**
-     * @var mixed $url False: picture not enclosed in a link. True: default link. moodle_url: custom link.
-     */
-    public $url;
+    public $link = true;
     /**
      * @var int $size Size in pixels. Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatibility
      */
-    public $size;
+    public $size = 35;
     /**
-     * @var boolean $alttext add non-blank alt-text to the image. (Default true, set to false for purely
+     * @var boolean $alttext add non-blank alt-text to the image.
+     * Default true, set to false when image alt just duplicates text in screenreaders.
      */
     public $alttext = true;
     /**
-     * @var boolean $popup Whether or not to open the link in a popup window
+     * @var boolean $popup Whether or not to open the link in a popup window.
      */
     public $popup = false;
 
     /**
-     * Constructor: sets up the other components in case they are needed
-     * @return void
+     * @var link to profile if link requested
      */
-    public function __construct() {
-        $this->image = new html_image();
-    }
+    public $url;
 
     /**
      * @see lib/moodle_html_component#prepare()
@@ -1863,55 +1858,52 @@ class moodle_user_picture extends moodle_html_component {
         global $CFG, $DB;
 
         if (empty($this->user)) {
-            throw new coding_exception('A moodle_user_picture object must have a $user object before being rendered.');
+            throw new coding_exception('A user_picture object must have a $user object before being rendered.');
+        }
+
+        if (empty($this->user->id)) {
+            throw new coding_exception('User id missing in $user object.');
         }
 
         if (empty($this->courseid)) {
-            throw new coding_exception('A moodle_user_picture object must have a courseid value before being rendered.');
+            $courseid = $page->course->id;
+        } else {
+            $courseid = $this->courseid;
         }
 
-        if (!($this->image instanceof html_image)) {
-            debugging('moodle_user_picture::image must be an instance of html_image', DEBUG_DEVELOPER);
-        }
-
+        // only touch the DB if we are missing data and complain loudly...
         $needrec = false;
-        // only touch the DB if we are missing data...
-        if (is_object($this->user)) {
-            // Note - both picture and imagealt _can_ be empty
-            // what we are trying to see here is if they have been fetched
-            // from the DB. We should use isset() _except_ that some installs
-            // have those fields as nullable, and isset() will return false
-            // on null. The only safe thing is to ask array_key_exists()
-            // which works on objects. property_exists() isn't quite
-            // what we want here...
-            if (! (array_key_exists('picture', $this->user)
-                   && ($this->alttext && array_key_exists('imagealt', $this->user)
-                       || (isset($this->user->firstname) && isset($this->user->lastname)))) ) {
+
+        if (!array_key_exists('picture', $this->user)) {
+            $needrec = true;
+            debugging('Missing picture property in $user object, this is a performance problem that needs to be fixed by a developer.', DEBUG_DEVELOPER);
+        }
+        if ($this->alttext) {
+            if (!array_key_exists('firstname', $this->user) || !array_key_exists('lastname', $this->user) || !array_key_exists('imagealt', $this->user)) {
                 $needrec = true;
-                $this->user = $this->user->id;
+                debugging('Missing firstname, lastname or imagealt property in $user object, this is a performance problem that needs to be fixed by a developer.', DEBUG_DEVELOPER);
+            }
+        }
+
+        if ($needrec) {
+            $this->user = $DB->get_record('user', array('id'=>$this->user->id), 'id, firstname, lastname, imagealt');
+        }
+
+        if ($this->alttext) {
+            if (!empty($user->imagealt)) {
+                $this->alt = $user->imagealt;
+            } else {
+                $this->alt = get_string('pictureof', '', fullname($this->user));
             }
         } else {
-            if ($this->alttext) {
-                // we need firstname, lastname, imagealt, can't escape...
-                $needrec = true;
-            } else {
-                $userobj = new StdClass; // fake it to save DB traffic
-                $userobj->id = $this->user;
-                $userobj->picture = $this->image->src;
-                $this->user = clone($userobj);
-                unset($userobj);
-            }
-        }
-        if ($needrec) {
-            $this->user = $DB->get_record('user', array('id' => $this->user), 'id,firstname,lastname,imagealt');
+            $this->alt = HTML_ATTR_EMPTY;
         }
 
-        if ($this->url === true) {
-            $this->url = new moodle_url('/user/view.php', array('id' => $this->user->id, 'course' => $this->courseid));
-        }
-
-        if (!empty($this->url) && $this->popup) {
-            $this->add_action(new popup_action('click', $this->url));
+        if ($this->link) {
+            $this->url = new moodle_url('/user/view.php', array('id' => $this->user->id, 'course' => $courseid));
+        } else {
+            $this->url = null;
+            $this->popup = false;
         }
 
         if (empty($this->size)) {
@@ -1927,41 +1919,21 @@ class moodle_user_picture extends moodle_html_component {
         }
 
         if (!empty($this->size)) {
-            $this->image->width = $this->size;
-            $this->image->height = $this->size;
+            $this->width = $this->size;
+            $this->height = $this->size;
         }
 
         $this->add_class('userpicture');
 
-        if (empty($this->image->src) && !empty($this->user->picture)) {
-            $this->image->src = $this->user->picture;
-        }
-
-        if (!empty($this->image->src)) {
+        if (!empty($this->user->picture)) {
             require_once($CFG->libdir.'/filelib.php');
-            $this->image->src = new moodle_url(get_file_url($this->user->id.'/'.$file.'.jpg', null, 'user'));
+            $this->src = new moodle_url(get_file_url($this->user->id.'/'.$file.'.jpg', null, 'user'));
         } else { // Print default user pictures (use theme version if available)
             $this->add_class('defaultuserpic');
-            $this->image->src = $output->pix_url('u/' . $file);
-        }
-
-        if ($this->alttext) {
-            if (!empty($this->user->imagealt)) {
-                $this->image->alt = $this->user->imagealt;
-            } else {
-                // No alt text when there is nothing useful (accessibility)
-                $this->image->alt = HTML_ATTR_EMPTY;
-            }
+            $this->src = $output->pix_url('u/' . $file);
         }
 
         parent::prepare($output, $page, $target);
-    }
-
-    public static function make($user, $courseid) {
-        $userpic = new moodle_user_picture();
-        $userpic->user = $user;
-        $userpic->courseid = $courseid;
-        return $userpic;
     }
 }
 

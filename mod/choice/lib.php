@@ -477,7 +477,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                     foreach ($allresponses[0] as $user) {
                         echo "<tr>";
                         echo "<td class=\"picture\">";
-                        echo $OUTPUT->user_picture(moodle_user_picture::make($user->id, $course->id));
+                        echo $OUTPUT->user_picture($user, array('courseid'=>$course->id));
                         echo "</td><td class=\"fullname\">";
                         echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">";
                         echo fullname($user, $hascapfullnames);
@@ -503,7 +503,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                                 echo '<input type="checkbox" name="attemptid[]" value="'. $user->id. '" />';
                             }
                             echo '</td><td class="picture">';
-                            echo $OUTPUT->user_picture(moodle_user_picture::make($user->id, $course->id));
+                            echo $OUTPUT->user_picture($user, array('courseid'=>$course->id));
                             echo '</td><td class="fullname">';
                             echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">";
                             echo fullname($user, $hascapfullnames);

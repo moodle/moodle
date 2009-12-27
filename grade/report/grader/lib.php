@@ -601,7 +601,7 @@ class grade_report_grader extends grade_report {
             $usercell->add_action('click', 'yui_set_row');
 
             if ($showuserimage) {
-                $usercell->text = $OUTPUT->container($OUTPUT->user_picture(moodle_user_picture::make($user, $this->courseid)), 'userpic');
+                $usercell->text = $OUTPUT->container($OUTPUT->user_picture($user), 'userpic');
             }
 
             $usercell->text .= $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/user/view.php', array('id' => $user->id, 'course' => $this->course->id)), fullname($user)));

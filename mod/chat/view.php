@@ -178,7 +178,7 @@
             $lastping = $timenow - $chatuser->lastmessageping;
             echo '<tr><td class="chatuserimage">';
             echo "<a href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&amp;course=$chat->course\">";
-            echo $OUTPUT->user_picture(moodle_user_picture::make($chatuser, $COURSE->id));
+            echo $OUTPUT->user_picture($chatuser);
             echo '</a></td><td class="chatuserdetails">';
             echo '<p>';
             echo fullname($chatuser).'<br />';

@@ -116,7 +116,7 @@ class assignment_upload extends assignment_base {
 
         echo '<tr>';
         echo '<td class="left picture">';
-        echo $OUTPUT->user_picture(moodle_user_picture::make($teacher, $this->course->id));
+        echo $OUTPUT->user_picture($teacher);
         echo '</td>';
         echo '<td class="topic">';
         echo '<div class="from">';

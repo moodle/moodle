@@ -766,7 +766,7 @@
                     $row->cells[0] = new html_table_cell();
                     $row->cells[0]->add_class('left side');
 
-                    $row->cells[0]->text = $OUTPUT->user_picture(moodle_user_picture::make($user, $course->id));
+                    $row->cells[0]->text = $OUTPUT->user_picture($user, array('courseid'=>$course->id));
                     $row->cells[1] = new html_table_cell();
                     $row->cells[1]->add_class('content');
 
@@ -913,9 +913,7 @@
                     $profilelink = '<strong>'.fullname($user).'</strong>';
                 }
 
-                $userpic = moodle_user_picture::make($user, $course->id);
-                $userpic->link = $piclink;
-                $data = array ($OUTPUT->user_picture($userpic), $profilelink . $hidden);
+                $data = array ($OUTPUT->user_picture($user, array('courseid'=>$course->id)), $profilelink . $hidden);
 
                 if ($mode === MODE_BRIEF && !isset($hiddenfields['city'])) {
                     $data[] = $user->city;

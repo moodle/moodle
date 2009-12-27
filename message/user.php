@@ -90,10 +90,7 @@ $PAGE->set_pagelayout('popup');
 echo $OUTPUT->header();
 echo '<table width="100%" cellpadding="0" cellspacing="0"><tr>';
 echo '<td width="100">';
-$userpic = moodle_user_picture::make($user, SITEID);
-$userpic->size = 48;
-$userpic->link = true;
-echo $OUTPUT->user_picture($userpic) .'</td>';
+echo $OUTPUT->user_picture($user, array('size'=>48, 'courseid'=>SITEID)) .'</td>';
 echo '<td valign="middle" align="center">';
 
 echo '<div class="name">'.fullname($user).'</div>';

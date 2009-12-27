@@ -299,7 +299,7 @@ class assignment_base {
         echo '<tr>';
         echo '<td class="left picture">';
         if ($teacher) {
-            echo $OUTPUT->user_picture(moodle_user_picture::make($teacher, $this->course->id));
+            echo $OUTPUT->user_picture($teacher);
         }
         echo '</td>';
         echo '<td class="topic">';
@@ -947,7 +947,7 @@ class assignment_base {
             global $USER;
             $teacher = $USER;
         }
-        echo $OUTPUT->user_picture(moodle_user_picture::make($teacher, $this->course->id));
+        echo $OUTPUT->user_picture($teacher);
         echo '</td>';
         echo '<td class="content">';
         echo '<form id="submitform" action="submissions.php" method="post">';
@@ -1040,7 +1040,7 @@ class assignment_base {
         ///End of teacher info row, Start of student info row
         echo '<tr>';
         echo '<td class="picture user">';
-        echo $OUTPUT->user_picture(moodle_user_picture::make($user, $this->course->id));
+        echo $OUTPUT->user_picture($user);
         echo '</td>';
         echo '<td class="topic">';
         echo '<div class="from">';
@@ -1259,7 +1259,7 @@ class assignment_base {
 
             /// Calculate user status
                 $auser->status = ($auser->timemarked > 0) && ($auser->timemarked >= $auser->timemodified);
-                $picture = $OUTPUT->user_picture(moodle_user_picture::make($auser, $course->id));
+                $picture = $OUTPUT->user_picture($auser);
 
                 if (empty($auser->submissionid)) {
                     $auser->grade = -1; //no submission yet
@@ -2889,7 +2889,7 @@ function assignment_print_recent_mod_activity($activity, $courseid, $detail, $mo
     echo '<table border="0" cellpadding="3" cellspacing="0" class="assignment-recent">';
 
     echo "<tr><td class=\"userpicture\" valign=\"top\">";
-    echo $OUTPUT->user_picture(moodle_user_picture::make($activity->user, $courseid));
+    echo $OUTPUT->user_picture($activity->user);
     echo "</td><td>";
 
     if ($detail) {

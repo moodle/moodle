@@ -2661,26 +2661,23 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
  * @return string|void String or nothing, depending on $return.
  */
 function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=false, $link=true, $target='', $alttext=true) {
-    global $CFG, $DB, $OUTPUT;
+    global $OUTPUT;
 
-    debugging('print_user_picture() has been deprecated. Please change your code to use $OUTPUT->user_picture($user, $courseid).');
+    debugging('print_user_picture() has been deprecated. Please change your code to use $OUTPUT->user_picture($user, array(\'courseid\'=>$courseid).');
 
-    $userpic = new moodle_user_picture();
-    $userpic->user = $user;
-    $userpic->courseid = $courseid;
-    $userpic->size = $size;
-    $userpic->link = $link;
-    $userpic->alttext = $alttext;
-
-    if (!empty($picture)) {
-        $userpic->image->src = $picture;
+    if (!is_object($user)) {
+        $userid = $user;
+        $user = new object();
+        $user->id = $userid;
     }
 
-    if (!empty($target)) {
-        $userpic->add_action(new popup_action('click', new moodle_url($target)));
+    if (empty($user->picture) and $picture) {
+        $user->picture = $picture;
     }
 
-    $output = $OUTPUT->user_picture($userpic);
+    $options = array('size'=>$size, 'link'=>$link, 'alttext'=>$alttext, 'courseid'=>$courseid, 'popup'=>!empty($target));
+
+    $output = $OUTPUT->user_picture($user, $options);
 
     if ($return) {
         return $output;

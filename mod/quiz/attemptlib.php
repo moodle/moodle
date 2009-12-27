@@ -1062,7 +1062,7 @@ abstract class quiz_nav_panel_base {
         $user = $DB->get_record('user', array('id' => $this->attemptobj->get_userid()));
         $output = '';
         $output .= '<div id="user-picture" class="clearfix">';
-        $output .= $OUTPUT->user_picture(moodle_user_picture::make($user, $this->attemptobj->get_courseid()));
+        $output .= $OUTPUT->user_picture($user, array('courseid'=>$this->attemptobj->get_courseid()));
         $output .= ' ' . fullname($user);
         $output .= '</div>';
         return $output;

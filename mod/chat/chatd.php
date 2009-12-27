@@ -281,7 +281,7 @@ EOD;
             $popuppar = '\'/user/view.php?id='.$userinfo['user']->id.'&amp;course='.$userinfo['courseid'].'\',\'user'.$userinfo['chatuser']->id.'\',\'\'';
             echo '<tr><td width="35">';
             echo '<a target="_new" onclick="return openpopup('.$popuppar.');" href="'.$CFG->wwwroot.'/user/view.php?id='.$userinfo['chatuser']->id.'&amp;course='.$userinfo['courseid'].'">';
-            echo $OUTPUT->user_picture(moodle_user_picture::make($userinfo['user'], 0));
+            echo $OUTPUT->user_picture($userinfo['user'], array('courseid'=>$userinfo['courseid']));
             echo "</a></td><td valign=\"center\">";
             echo "<p><font size=\"1\">";
             echo fullname($userinfo['user'])."<br />";

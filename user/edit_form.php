@@ -79,9 +79,7 @@ class user_edit_form extends moodleform {
             if (!empty($CFG->gdversion)) {
                 $image_el =& $mform->getElement('currentpicture');
                 if ($user and $user->picture) {
-                    $userpic = moodle_user_picture::make($user, SITEID);
-                    $userpic->size = 64;
-                    $image_el->setValue($OUTPUT->user_picture($userpic));
+                    $image_el->setValue($OUTPUT->user_picture($user, array('courseid'=>SITEID, 'size'=>64)));
                 } else {
                     $image_el->setValue(get_string('none'));
                 }

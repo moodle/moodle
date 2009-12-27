@@ -145,7 +145,7 @@ if($do_show == 'showentries'){
                     <table width="100%">
                         <tr>
                             <td align="left">
-                                <?php echo $OUTPUT->user_picture(moodle_user_picture::make($student, $course->id));?>
+                                <?php echo $OUTPUT->user_picture($student, array('courseid'=>$course->id));?>
                             </td>
                             <td align="left">
                                 <?php echo fullname($student);?>

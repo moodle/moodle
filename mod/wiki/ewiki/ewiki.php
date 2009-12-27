@@ -1281,9 +1281,7 @@ function ewiki_page_info($id, &$data, $action) {
                  if (!isset($COURSE->id)) {
                      $COURSE->id = SITEID;
                  }
-                 $userpic = moodle_user_picture::make($user->id, $COURSE->id);
-                 $userpic->link = true;
-                 $picture = $OUTPUT->user_picture($userpic);
+                 $picture = $OUTPUT->user_picture($user);
                  $value = $picture . $OUTPUT->link("$CFG->wwwroot/user/view.php?id=$user->id&course=$COURSE->id", fullname($user));
              } else {
                  continue;

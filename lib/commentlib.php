@@ -396,11 +396,7 @@ EOD;
                 $user->lastname  = $c->lastname;
                 $user->imagealt  = $c->imagealt;
                 $c->content = format_text($c->content, $c->format);
-                $userpic = moodle_user_picture::make($user, $this->course->id);
-                $userpic->link = true;
-                $userpic->size = 18;
-                $userpic->alttext = true;
-                $c->avatar = $OUTPUT->user_picture($userpic);
+                $c->avatar = $OUTPUT->user_picture($user, array('size'=>18));
                 if (($USER->id == $c->userid) || !empty($candelete)) {
                     $c->delete = true;
                 }
@@ -485,9 +481,7 @@ EOD;
             $newcmt->time = userdate($now, get_string('strftimerecent', 'langconfig'));
             $newcmt->username = fullname($USER);
             $newcmt->content = format_text($newcmt->content);
-            $userpic = moodle_user_picture::make($USER, $this->course->id);
-            $userpic->size = 16;
-            $newcmt->avatar = $OUTPUT->user_picture($userpic);
+            $newcmt->avatar = $OUTPUT->user_picture($user, array('size'=>16));
             return $newcmt;
         } else {
             throw new comment_exception('dbupdatefailed');

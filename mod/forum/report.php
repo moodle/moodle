@@ -99,7 +99,7 @@ if (!$ratings = forum_get_ratings($post->id, $sqlsort)) {
     foreach ($ratings as $rating) {
         echo '<tr class="forumpostheader">';
         echo "<td>";
-        echo $OUTPUT->user_picture(moodle_user_picture::make($rating, $forum->course));
+        echo $OUTPUT->user_picture($rating, array('courseid'=>$forum->course));
         echo '</td><td>'.fullname($rating).'</td>';
         echo '<td style="white-space:nowrap" align="center" class="rating">'.$scalemenu[$rating->rating]."</td>";
         echo '<td style="white-space:nowrap" align="center" class="time">'.userdate($rating->time)."</td>";

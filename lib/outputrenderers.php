@@ -1177,58 +1177,61 @@ class core_renderer extends renderer_base {
      *
      * This method can be used in two ways:
      * <pre>
-     * // Option 1:
-     * $userpic = new moodle_user_picture();
-     * // Set properties of $userpic
-     * $OUTPUT->user_picture($userpic);
-     *
-     * // Option 2: (shortcut for simple cases)
+     * // Option 1: (shortcut for simple cases, preferred way)
      * // $user has come from the DB and has fields id, picture, imagealt, firstname and lastname
-     * $OUTPUT->user_picture($user, $COURSE->id);
+     * $OUTPUT->user_picture($user, array('popup'=>true));
+     *
+     * // Option 2: (not recommended)
+     * $userpic = new user_picture();
+     * // Set properties of $userpic
+     * $userpic->user = $user;
+     * $userpic->popup = true;
+     * $OUTPUT->user_picture($userpic);
      * </pre>
      *
-     * @param object $userpic Object with at least fields id, picture, imagealt, firstname, lastname
-     *     If any of these are missing, or if a userid is passed, the database is queried. Avoid this
+     * @param object $user_or_userpicture Object with at least fields id, picture, imagealt, firstname, lastname
+     *     If any of these are missing, the database is queried. Avoid this
      *     if at all possible, particularly for reports. It is very bad for performance.
-     *     A moodle_user_picture object is a better parameter.
-     * @param int $courseid courseid Used when constructing the link to the user's profile. Required if $userpic
-     *     is not a moodle_user_picture object
+     * @param array $options associative array with user picture options, used only if not a user_picture object,
+     *     options are:
+     *     - courseid=$this->page->course->id (course id of user profile in link)
+     *     - size=35 (size of image)
+     *     - link=true (make image clickable - the link leads to user profile)
+     *     - popup=false (open in popup)
+     *     - alttext=true (add image alt attribute)
      * @return string HTML fragment
      */
-    public function user_picture($userpic, $courseid=null) {
-        // Instantiate a moodle_user_picture object if $user is not already one
-        if (!($userpic instanceof moodle_user_picture)) {
-            if (empty($courseid)) {
-                throw new coding_exception('Called $OUTPUT->user_picture with a $user object but no $courseid.');
-            }
+    public function user_picture(stdClass $user_or_userpicture, array $options = null) {
 
-            $user = $userpic;
-            $userpic = new moodle_user_picture();
-            $userpic->user = $user;
-            $userpic->courseid = $courseid;
+        if ($user_or_userpicture instanceof user_picture) {
+            // we need a clone because prepare() should not be called repeatedly
+            $userpic = clone($user_or_userpicture);
+
         } else {
-            $userpic = clone($userpic);
+            $userpic = new user_picture();
+            $userpic->user = $user_or_userpicture;
+            $options = (array)$options;
+            $allowed = array('courseid', 'size', 'link', 'popup', 'alttext');
+            foreach ($allowed as $key) {
+                if (array_key_exists($key, $options)) {
+                    $userpic->$key = $options[$key];
+                }
+            }
         }
 
         $userpic->prepare($this, $this->page, $this->target);
 
-        $output = $this->image($userpic->image);
+        // get the image html output fisrt, then wrap it in link if needed
+        $output = $this->image($userpic);
 
-        if (!empty($userpic->url)) {
-            $actions = $userpic->get_actions();
-            if ($userpic->popup && !empty($actions)) {
-                $link = new html_link();
-                $link->url = $userpic->url;
-                $link->text = fullname($userpic->user);
-                $link->title = fullname($userpic->user);
-
-                foreach ($actions as $action) {
-                    $link->add_action($action);
-                }
-                $output = $this->link_to_popup($link, $userpic->image);
-            } else {
-                $output = $this->link(prepare_url($userpic->url), $output);
+        if ($userpic->link) {
+            $link = new html_link();
+            $link->url  = $userpic->url;
+            $link->text = $output;
+            if ($userpic->popup) {
+                $link->add_action(new popup_action('click', $userpic->url));
             }
+            $output = $this->link($link);
         }
 
         return $output;

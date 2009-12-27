@@ -174,9 +174,9 @@
                         if (has_capability('mod/scorm:deleteresponses',$contextmodule)) {
                             $row[] = '<input type="checkbox" name="attemptid[]" value="'. $scouser->userid . ':' . $a . '" />';
                         }
-                        $userpic = moodle_user_picture::make($scouser->userid, $course->id);
-                        $userpic->image->src = $userdata->picture;
-                        $row[] = $OUTPUT->user_picture($userpic);
+                        //TODO: fetch the user details elsewhere - this is a performance problem!!
+                        $user = (object)array('id'=>$scouser->id);
+                        $row[] = $OUTPUT->user_picture($user, array('courseid'=>$course->id));
                         $row[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$scouser->userid.'&amp;course='.$course->id.'">'.
                                  fullname($userdata).'</a>';
                         $row[] = '<a href="report.php?a='.$scorm->id.'&amp;user='.$scouser->userid.'&amp;attempt='.$a.'">'.$a.'</a>';
@@ -228,9 +228,7 @@
                     if (!empty($userdata)) {
                         echo $OUTPUT->box_start('generalbox boxaligncenter');
                         echo '<div class="mdl-align">'."\n";
-                        $userpic = moodle_user_picture::make($user, $course->id);
-                        $userpic->image->src = $userdata->picture;
-                        echo $OUTPUT->user_picture($userpic);
+                        echo $OUTPUT->user_picture($user, array('courseid'=>$course->id));
                         echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id\">".
                              "$userdata->firstname $userdata->lastname</a><br />";
                         echo get_string('attempt','scorm').': '.$attempt;
@@ -292,9 +290,7 @@
             //print_heading(format_string($sco->title));
             echo $OUTPUT->heading('<a href="'.$CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;mode=browse&amp;scoid='.$sco->id.'" target="_new">'.format_string($sco->title).'</a>');
             echo '<div class="mdl-align">'."\n";
-            $userpic = moodle_user_picture::make($user, $course->id);
-            $userpic->image->src = $userdata->picture;
-            echo $OUTPUT->user_picture($userpic);
+            echo $OUTPUT->user_picture($user, array('courseid'=>$course->id));
             echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id\">".
                  "$userdata->firstname $userdata->lastname</a><br />";
             $scoreview = '';

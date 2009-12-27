@@ -138,7 +138,7 @@ class blog_entry {
 
         $picturecell = new html_table_cell();
         $picturecell->add_classes('picture left');
-        $picturecell->text = $OUTPUT->user_picture(moodle_user_picture::make($user, SITEID));
+        $picturecell->text = $OUTPUT->user_picture($user);
 
         $table->head[] = $picturecell;
 

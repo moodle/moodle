@@ -83,7 +83,7 @@
     if ($attemptobj->get_userid() <> $USER->id) {
         // Print user picture and name
         $student = $DB->get_record('user', array('id' => $attemptobj->get_userid()));
-        $picture = $OUTPUT->user_picture(moodle_user_picture::make($student, $attemptobj->get_courseid()));
+        $picture = $OUTPUT->user_picture($student, array('courseid'=>$attemptobj->get_courseid()));
         $rows[] = '<tr><th scope="row" class="cell">' . $picture . '</th><td class="cell"><a href="' .
                 $CFG->wwwroot . '/user/view.php?id=' . $student->id . '&amp;course=' . $attemptobj->get_courseid() . '">' .
                 fullname($student, true) . '</a></td></tr>';

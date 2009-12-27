@@ -354,10 +354,7 @@ function message_print_search_results($frm) {
                 $strhistory = message_history_link($user->id, 0, true, '', '', 'icon');
 
                 echo '<tr><td class="pix">';
-                $userpic = moodle_user_picture::make($user, SITEID);
-                $userpic->size = 20;
-                $userpic->link = true;
-                echo $OUTPUT->user_picture($userpic);
+                echo $OUTPUT->user_picture($user, array('size'=>20, 'courseid'=>SITEID));
                 echo '</td>';
                 echo '<td class="contact">';
                 $popupoptions = array(
@@ -529,14 +526,11 @@ function message_print_search_results($frm) {
 
 function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
     global $USER, $OUTPUT;
-    $userpic = moodle_user_picture::make($USER, SITEID);
-    $userpic->size = 20;
-    $userpic->link = true;
 
     if ($user === false) {
-        echo $OUTPUT->user_picture($userpic);
+        echo $OUTPUT->user_picture($USER, array('size'=>20, 'courseid'=>SITEID));
     } else {
-        echo $OUTPUT->user_picture($userpic);
+        echo $OUTPUT->user_picture($USE, array('size'=>20, 'courseid'=>SITEID));
         echo '&nbsp;';
         if ($iscontact) {
             message_contact_link($user->id, 'remove');
@@ -1072,10 +1066,7 @@ function message_print_contactlist_user($contact, $incontactlist = true){
     $strhistory = message_history_link($contact->id, 0, true, '', '', 'icon');
 
     echo '<tr><td class="pix">';
-    $userpic = moodle_user_picture::make($contact, SITEID);
-    $userpic->size = 20;
-    $userpic->link = true;
-    echo $OUTPUT->user_picture($userpic);
+    echo $OUTPUT->user_picture($contact, array('size'=>20, 'courseid'=>SITEID));
     echo '</td>';
     echo '<td class="contact">';
 

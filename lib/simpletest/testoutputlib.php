@@ -879,7 +879,7 @@ class core_renderer_test extends UnitTestCase {
         $user->picture = false;
         $user->imagealt = false;
         $user->id = 1;
-        $userpic = new moodle_user_picture();
+        $userpic = new user_picture();
         $userpic->user = $user;
         $userpic->courseid = 1;
         $userpic->url = true;

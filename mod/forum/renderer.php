@@ -93,7 +93,7 @@ class mod_forum_renderer extends plugin_renderer_base {
             $table->tablealign = 'center';
             $table->data = array();
             foreach ($users as $user) {
-                $table->data[] = array($this->output->user_picture(moodle_user_picture::make($user, $course->id)), fullname($user), $user->email);
+                $table->data[] = array($this->output->user_picture($user, array('courseid'=>$course->id)), fullname($user), $user->email);
             }
             $output .= $this->output->table($table);
         }

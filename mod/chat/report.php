@@ -212,7 +212,7 @@
                 arsort($sessionusers);
                 foreach ($sessionusers as $sessionuser => $usermessagecount) {
                     if ($user = $DB->get_record('user', array('id'=>$sessionuser))) {
-                        $OUTPUT->user_picture(moodle_user_picture::make($user, $course->id));
+                        $OUTPUT->user_picture($user, array('courseid'=>$course->id));
                         echo '&nbsp;'.fullname($user, true); // XXX TODO  use capability instead of true
                         echo "&nbsp;($usermessagecount)<br />";
                     }

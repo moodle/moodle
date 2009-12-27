@@ -120,9 +120,7 @@ echo '<h1>'.get_string('participants').'</h1>';
 echo '<div id="participants"><ul>';
 foreach($chatusers as $chu) {
     echo '<li>';
-    $userpic = moodle_user_picture::make($chu->id, $course->id);
-    $userpic->size = 24;
-    echo $OUTPUT->user_picture($userpic);
+    echo $OUTPUT->user_picture($chu, array('size'=>24, 'courseid'=>$course->id));
     echo '<div class="userinfo">';
     echo fullname($chu).' ';
     if ($idle = time() - $chu->lastmessageping) {

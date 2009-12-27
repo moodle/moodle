@@ -15,7 +15,7 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
 
         //Use this function to show author's image
         //Comments: Configuration not supported
-        echo $OUTPUT->user_picture(moodle_user_picture::make($user, $course->id));
+        echo $OUTPUT->user_picture($user, array('courseid'=>$course->id));
 
         //Line separator to show this template fine. :-)
         echo '<br />';

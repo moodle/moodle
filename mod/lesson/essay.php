@@ -347,7 +347,7 @@ switch ($mode) {
             $url = new moodle_url($CFG->wwwroot.'/mod/lesson/essay.php', array('id'=>$cm->id,'mode'=>'email','userid'=>$userid,'sesskey'=>sesskey()));
             $emaillink = $OUTPUT->link(html_link::make($url, get_string('emailgradedessays', 'lesson')));
 
-            $table->data[] = array($OUTPUT->user_picture(moodle_user_picture::make($users[$userid], $course->id)).$studentname, implode("<br />", $essaylinks), $emaillink);
+            $table->data[] = array($OUTPUT->user_picture($users[$userid], array('courseid'=>$course->id)).$studentname, implode("<br />", $essaylinks), $emaillink);
         }
 
         // email link for all users

@@ -351,10 +351,8 @@
                 } else {
                     $answer2 = "&nbsp;";
                 }
-                $userpic = moodle_user_picture::make($a, $course->id);
-                $userpic->link = true;
                 $table->data[] = array(
-                       $OUTPUT->user_picture($userpic),
+                       $OUTPUT->user_picture($a, array('courseid'=>$course->id)),
                        "<a href=\"report.php?id=$id&amp;action=student&amp;student=$a->userid\">".fullname($a)."</a>",
                        userdate($a->time),
                        $answer1, $answer2);
@@ -402,7 +400,7 @@
          }
 
          echo "<p <p class=\"centerpara\">";
-         echo $OUTPUT->user_picture(moodle_user_picture::make($user->id, $course->id));
+         echo $OUTPUT->user_picture($user, array('courseid'=>$course->id));
          echo "</p>";
 
          $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));

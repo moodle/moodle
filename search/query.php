@@ -343,7 +343,9 @@
             foreach ($hits as $listing) {
 
                 if ($listing->doctype == 'user'){ // A special handle for users
-                    $icon = $OUTPUT->user_picture(moodle_user_picture($listing->userid, 0));
+                    //TODO: this is a performance problem, fetch data elsewhere
+                    $user = (object)array('id'=>$listing->userid);
+                    $icon = $OUTPUT->user_picture($user);
                 } else {
                     $iconpath = $OUTPUT->pix_url('icon', $listing->doctype);
                     $icon = "<img align=\"top\" src=\"".$iconpath."\" class=\"activityicon\" alt=\"\"/>";

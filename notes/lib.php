@@ -189,7 +189,7 @@ function note_print($note, $detail = NOTES_SHOW_FULL) {
     if ($detail & NOTES_SHOW_HEAD) {
         echo '<div class="header">';
         echo '<div class="user">';
-        echo $OUTPUT->user_picture(moodle_user_picture::make($user, $note->courseid));
+        echo $OUTPUT->user_picture($user, array('courseid'=>$note->courseid));
         echo fullname($user) . '</div>';
         echo '<div class="info">' .
             get_string('bynameondate', 'notes', $authoring) .

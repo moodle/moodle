@@ -775,14 +775,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     $USER->timezone = $tz;
     $message->strtime = userdate($message->timestamp, get_string('strftimemessage', 'chat'), $tz);
 
-    $userpic = new moodle_user_picture();
-    $userpic->user = $sender;
-    $userpic->courseid = $courseid;
-    $userpic->size = false;
-    $userpic->link = false;
-    $userpic->alttext = true;
-    $userpic->image->src = $sender->picture;
-    $message->picture = $OUTPUT->user_picture($userpic);
+    $message->picture = $OUTPUT->user_picture($sender, array('size'=>false, 'courseid'=>$courseid, 'link'=>false));
 
     if ($courseid) {
         $message->picture = "<a onclick=\"window.open('$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid')\" href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
@@ -945,7 +938,7 @@ function chat_format_message_theme ($message, $courseid, $currentuser, $theme = 
     }
 
     $message->strtime = userdate($message->timestamp, get_string('strftimemessage', 'chat'), $tz);
-    $message->picture = $OUTPUT->user_picture(moodle_user_picture::make($sender, $courseid));
+    $message->picture = $OUTPUT->user_picture($sender, array('courseid'=>$courseid));
 
     $message->picture = "<a target='_blank' href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
 
@@ -1076,7 +1069,7 @@ function chat_format_userlist($users, $course) {
         $item = array();
         $item['name'] = fullname($user);
         $item['url'] = $CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id;
-        $item['picture'] = $OUTPUT->user_picture(moodle_user_picture::make($user, $COURSE->id));
+        $item['picture'] = $OUTPUT->user_picture($user);
         $item['id'] = $user->id;
         $result[] = $item;
     }

@@ -446,7 +446,7 @@ if ($allentries) {
                     echo '<th align="left">';
 
                     $user = $DB->get_record("user", array("id"=>$entry->userid));
-                    echo $OUTPUT->user_picture(moodle_user_picture::make($user, $course->id));
+                    echo $OUTPUT->user_picture($user, array('courseid'=>$course->id));
                     $pivottoshow = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
                 } else {
                     echo '<th >';

@@ -1258,7 +1258,7 @@ function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
     print '<table border="0" cellpadding="3" cellspacing="0">';
 
     print '<tr><td'.$bgcolor.' class="forumpostpicture" width="35" valign="top">';
-    echo $OUTPUT->user_picture(moodle_user_picture::make($activity->user, $course));
+    echo $OUTPUT->user_picture($activity->user, array('courseid'=>$course));
     print '</td><td width="100%"><font size="2">';
 
     if ($detail) {

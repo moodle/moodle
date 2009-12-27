@@ -506,7 +506,7 @@ if ($action == 'reportoverview') {
 
             $gradeinfo = lesson_grade($lesson, $try, $user->id);
 
-            $table->data[] = array(get_string('name').':', $OUTPUT->user_picture(moodle_user_picture::make($user, $course->id)).fullname($user, true));
+            $table->data[] = array(get_string('name').':', $OUTPUT->user_picture($user, array('courseid'=>$course->id)).fullname($user, true));
             $table->data[] = array(get_string("timetaken", "lesson").":", format_time($timetotake));
             $table->data[] = array(get_string("completed", "lesson").":", userdate($completed));
             $table->data[] = array(get_string('rawgrade', 'lesson').':', $gradeinfo->earned.'/'.$gradeinfo->total);

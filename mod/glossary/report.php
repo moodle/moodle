@@ -75,9 +75,7 @@ if (!$ratings = glossary_get_ratings($entry->id, $sqlsort)) {
             echo '<tr>';
         }
         echo '<td class="picture">';
-        $userpic = moodle_user_picture::make($rating, $glossary->course);
-        $userpic->link = true;
-        echo $OUTPUT->user_picture($userpic);
+        echo $OUTPUT->user_picture($rating, array('courseid'=>$glossary->course));
         echo '</td>';
         echo '<td class="author"><a href="'.$CFG->wwwroot.'/user/view.php?id='.$rating->id.'&amp;course='.$glossary->course.'">'.fullname($rating).'</a></td>';
         echo '<td style="white-space:nowrap" align="center" class="rating">'.$scalemenu[$rating->rating].'</td>';

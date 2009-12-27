@@ -235,9 +235,7 @@ if (is_mnet_remote_user($user)) {
 echo '<table width="80%" class="userinfobox" summary="">';
 echo '<tr>';
 echo '<td class="side">';
-$userpic = moodle_user_picture::make($user, $course->id);
-$userpic->size = 100;
-echo $OUTPUT->user_picture($userpic);
+echo $OUTPUT->user_picture($user, array('courseid'=>$course->id, 'size'=>100));
 echo '</td><td class="content">';
 
 // Print the description

@@ -3141,7 +3141,7 @@ function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfro
     $output = '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
 
     $output .= '<tr class="header"><td width="35" valign="top" class="picture left">';
-    $output .= $OUTPUT->user_picture(moodle_user_picture::make($userfrom, $course->id));
+    $output .= $OUTPUT->user_picture($userfrom, array('courseid'=>$course->id));
     $output .= '</td>';
 
     if ($post->parent) {
@@ -3359,7 +3359,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $postuser->picture   = $post->picture;
 
     echo '<tr class="header"><td class="picture left">';
-    echo $OUTPUT->user_picture(moodle_user_picture::make($postuser, $course->id));
+    echo $OUTPUT->user_picture($postuser, array('courseid'=>$course->id));
     echo '</td>';
 
     if ($post->parent) {
@@ -3668,7 +3668,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     $postuser->picture = $post->picture;
 
     echo '<td class="picture">';
-    echo $OUTPUT->user_picture(moodle_user_picture::make($postuser, $forum->course));
+    echo $OUTPUT->user_picture($postuser, array('courseid'=>$forum->course));
     echo "</td>\n";
 
     // User name
@@ -6193,7 +6193,7 @@ function forum_print_recent_mod_activity($activity, $courseid, $detail, $modname
     echo '<table border="0" cellpadding="3" cellspacing="0" class="forum-recent">';
 
     echo "<tr><td class=\"userpicture\" valign=\"top\">";
-    echo $OUTPUT->user_picture(moodle_user_picture::make($activity->user, $courseid));
+    echo $OUTPUT->user_picture($activity->user, array('courseid'=>$courseid));
     echo "</td><td class=\"$class\">";
 
     echo '<div class="title">';

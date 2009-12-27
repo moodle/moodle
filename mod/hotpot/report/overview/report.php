@@ -48,7 +48,10 @@ class hotpot_report extends hotpot_default_report {
 			$picture = '';
 			$name = fullname($u);
 			if ($is_html) {
-				$picture = $OUTPUT->user_picture(moodle_user_picture::make($u->userid, $course->id));
+			    //grrrr
+			    $usr = clone($u);
+			    $u->id = $u->userid;
+				$picture = $OUTPUT->user_picture($usr, array('courseid'=>$course->id));
 				$name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&amp;course='.$course->id.'">'.$name.'</a>';
 			}
 			$grade = isset($user->grade) && $user->grade<>'&nbsp;' ? $user->grade : $spacer;
