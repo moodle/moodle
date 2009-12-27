@@ -204,6 +204,23 @@ class renderer_base {
         }
         return $output;
     }
+
+    /**
+     * Helper function for applying of html_component options
+     * @param html_component $component
+     * @param array $options
+     * @return void
+     */
+    protected function apply_component_options(html_component $component, array $options = null) {
+        $options = (array)$options;
+        foreach ($options as $key => $value) {
+            if ($key === 'class' or $key === 'classes') {
+                $component->add_classes($value);
+            } else if (array_key_exists($key, $component)) {
+                $component->$key = $value;
+            }
+        }
+    }
 }
 
 
@@ -1123,21 +1140,25 @@ class core_renderer extends renderer_base {
     /**
      * Creates and returns a spacer image with optional line break.
      *
-     * @param html_image $image Subclass of html_component
-     *
+     * @param array $options id, alt, width=1, height=1, etc.
+     *              special options br=false (break after spacer)
      * @return string HTML fragment
      */
-    public function spacer($image) {
-        $image = clone($image);
-
-        if (empty($image->src)) {
-            $image->src = $this->pix_url('spacer')->out(false, array(), false);
+    public function spacer(array $options = null) {
+        $options = (array)$options;
+        if (empty($options['width'])) {
+            $options['width'] = 1;
         }
+        if (empty($options['height'])) {
+            $options['height'] = 1;
+        }
+        $options['class'] = 'spacer';
 
-        $image->prepare($this, $this->page, $this->target);
-        $image->add_class('spacer');
+        $output = $this->image($this->pix_url('spacer'), $options);
 
-        $output = $this->image($image);
+        if (!empty($options['br'])) {
+            $output .= '<br />';
+        }
 
         return $output;
     }
@@ -1145,16 +1166,31 @@ class core_renderer extends renderer_base {
     /**
      * Creates and returns an image.
      *
-     * @param html_image $image Subclass of html_component
+     * @param html_image|moodle_url|string $image_or_url image or url of the image
+     * @param array $options image attributes such as title, id, alt, widht, height
      *
      * @return string HTML fragment
      */
-    public function image($image) {
-        if ($image === false) {
+    public function image($image_or_url, array $options = null) {
+        if ($image_or_url === false) {
             return false;
+
+        } else if ($image_or_url instanceof html_image) {
+            $image = clone($image_or_url);
+
+        } else {
+            if ($image_or_url instanceof moodle_url) {
+                $image = new html_image();
+                $image->src = clone($image_or_url);
+            } else {
+                // must be a string
+                $image = new html_image();
+                $image->src = new moodle_url($image_or_url);
+            }
+
+            $this->apply_component_options($image, $options);
         }
 
-        $image = clone($image);
         $image->prepare($this, $this->page, $this->target);
 
         $this->prepare_event_handlers($image);
@@ -1166,9 +1202,15 @@ class core_renderer extends renderer_base {
                             'title' => $image->title,
                             'id' => $image->id);
 
-        if (!empty($image->height) || !empty($image->width)) {
-            $attributes['style'] .= $this->prepare_legacy_width_and_height($image);
+        // do not use prepare_legacy_width_and_height() here,
+        // xhtml strict allows width&height and inline styles break theming too!
+        if (!empty($image->height)) {
+            $attributes['height'] = $image->height;
         }
+        if (!empty($image->width)) {
+            $attributes['width'] = $image->width;
+        }
+
         return $this->output_empty_tag('img', $attributes);
     }
 
@@ -1189,7 +1231,7 @@ class core_renderer extends renderer_base {
      * $OUTPUT->user_picture($userpic);
      * </pre>
      *
-     * @param object $user_or_userpicture Object with at least fields id, picture, imagealt, firstname, lastname
+     * @param object|user_picture $user_or_userpicture Object with at least fields id, picture, imagealt, firstname, lastname
      *     If any of these are missing, the database is queried. Avoid this
      *     if at all possible, particularly for reports. It is very bad for performance.
      * @param array $options associative array with user picture options, used only if not a user_picture object,
@@ -1199,6 +1241,7 @@ class core_renderer extends renderer_base {
      *     - link=true (make image clickable - the link leads to user profile)
      *     - popup=false (open in popup)
      *     - alttext=true (add image alt attribute)
+     *     - etc.
      * @return string HTML fragment
      */
     public function user_picture(stdClass $user_or_userpicture, array $options = null) {
@@ -1210,13 +1253,7 @@ class core_renderer extends renderer_base {
         } else {
             $userpic = new user_picture();
             $userpic->user = $user_or_userpicture;
-            $options = (array)$options;
-            $allowed = array('courseid', 'size', 'link', 'popup', 'alttext');
-            foreach ($allowed as $key) {
-                if (array_key_exists($key, $options)) {
-                    $userpic->$key = $options[$key];
-                }
-            }
+            $this->apply_component_options($userpic, $options);
         }
 
         $userpic->prepare($this, $this->page, $this->target);

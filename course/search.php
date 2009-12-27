@@ -239,10 +239,7 @@
                 $course->summary .= $displaylist[$course->category];
                 $course->summary .= "</a></p>";
                 print_course($course, $search);
-                $spacer = new html_image();
-                $spacer->height = 5;
-                $spacer->width = 5;
-                echo $OUTPUT->spacer($spacer) . '<br />';
+                echo $OUTPUT->spacer(array('height'=>5, 'width'=>5, 'br'=>true)); // should be done with CSS instead
             }
         } else {
         /// Show editing UI.

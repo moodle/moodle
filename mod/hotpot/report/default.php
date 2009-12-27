@@ -352,10 +352,7 @@ class hotpot_default_report {
             $this->print_html_finish($table);
 
             if (($i+1)<$count) {
-                $spacer = new html_image();
-                $spacer->height = 30;
-                $spacer->width = 10;
-                echo $OUTPUT->spacer($spacer) . '<br />';
+                echo $OUTPUT->spacer(array('height'=>30, 'width'=>10, 'br'=>true)); // should be done with CSS instead
             }
         }
     }

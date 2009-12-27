@@ -103,9 +103,7 @@
         } else {
 
             echo $OUTPUT->box(format_module_intro('survey', $survey, $cm->id), 'generalbox', 'intro');
-            $spacer = new html_image();
-            $spacer->height = 30;
-            echo $OUTPUT->spacer(clone($spacer)) . '<br />';
+            echo $OUTPUT->spacer(array('height'=>30, 'width'=>1, 'br'=>true)); // should be done with CSS instead
 
             $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));
             $questionorder = explode(",", $survey->questions);

@@ -167,10 +167,7 @@
     }
     echo $OUTPUT->box_end();
 
-    $spacer = new html_image();
-    $spacer->height = 30;
-    $spacer->width = 30;
-    echo $OUTPUT->spacer($spacer) . '<br />';
+    echo $OUTPUT->spacer(array('height'=>30, 'width'=>30, 'br'=>true)); // should be done with CSS instead
 
 
 /// Print the menu across the top
@@ -307,10 +304,7 @@
 
                     echo $OUTPUT->table($table);
 
-                    $spacer = new html_image();
-                    $spacer->height = 30;
-                    $spacer->width = 1;
-                    echo $OUTPUT->spacer($spacer);
+                    echo $OUTPUT->spacer(array('height'=>30)); // should be done with CSS instead
                 }
             }
         }

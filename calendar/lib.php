@@ -545,10 +545,7 @@ function calendar_print_event($event, $showactions=true) {
     if (!empty($event->icon)) {
         echo $event->icon;
     } else {
-        $spacer = new html_image();
-        $spacer->height = 16;
-        $spacer->width = 16;
-        echo $OUTPUT->spacer($spacer) . '<br />';
+        echo $OUTPUT->spacer(array('height'=>16, 'width'=>16, 'br'=>true)); // should be done with CSS instead
     }
     echo '</td>';
     echo '<td class="topic">';

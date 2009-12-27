@@ -72,14 +72,14 @@ if (!empty($blogs)) {
     $table->head = array(get_string('name'), get_string('url'), get_string('timefetched', 'blog'), get_string('valid', 'blog'), get_string('actions'));
 
     foreach ($blogs as $blog) {
-        $validicon = html_image::make($OUTPUT->pix_url('i/tick_green_big'));
-        $validicon->alt = get_string('feedisvalid', 'blog');
-        $validicon->title = get_string('feedisvalid', 'blog');
-
         if ($blog->failedlastsync) {
-            $validicon->src = $OUTPUT->pix_url('i/cross_red_big');
+            $validicon = html_image::make($OUTPUT->pix_url('i/cross_red_big'));
             $validicon->alt = get_string('feedisinvalid', 'blog');
             $validicon->title = get_string('feedisinvalid', 'blog');
+        } else {
+            $validicon = html_image::make($OUTPUT->pix_url('i/tick_green_big'));
+            $validicon->alt = get_string('feedisvalid', 'blog');
+            $validicon->title = get_string('feedisvalid', 'blog');
         }
 
         $editicon = new moodle_action_icon;

@@ -106,9 +106,7 @@ require_once($CFG->dirroot.'/search/lib.php');
         }
 
         echo $OUTPUT->table($admin_table);
-        $spacer = new html_image();
-        $spacer->height = 20;
-        echo $OUTPUT->spacer(clone($spacer)) . '<br />';
+        echo $OUTPUT->spacer(array('height'=>20, 'br'=>true)); // should be done with CSS instead
         echo $OUTPUT->heading($solutionsstr);
 
         unset($admin_table->data);

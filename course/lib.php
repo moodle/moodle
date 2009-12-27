@@ -1349,10 +1349,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             }
 
             if ($mod->indent) {
-                $spacer = new html_image();
-                $spacer->height = 12;
-                $spacer->width = 20 * $mod->indent;
-                echo $OUTPUT->spacer($spacer);
+                echo $OUTPUT->spacer(array('height'=>12, 'width'=>(20 * $mod->indent))); // should be done with CSS instead
             }
 
             $extra = '';
@@ -1968,10 +1965,8 @@ function print_category_info($category, $depth, $showcourses = false) {
             $indent = $depth*30;
             $rows = count($courses) + 1;
             echo '<td class="category indentation" rowspan="'.$rows.'" valign="top">';
-            $spacer = new html_image();
-            $spacer->height = 10;
-            $spacer->width = $indent;
-            echo $OUTPUT->spacer($spacer) . '<br />';
+
+            echo $OUTPUT->spacer(array('height'=>10, 'width'=>$indent, 'br'=>true)); // should be done with CSS instead
             echo '</td>';
         }
 
@@ -2024,10 +2019,7 @@ function print_category_info($category, $depth, $showcourses = false) {
         if ($depth) {
             $indent = $depth*20;
             echo '<td class="category indentation" valign="top">';
-            $spacer = new html_image();
-            $spacer->height = 10;
-            $spacer->width = $indent;
-            echo $OUTPUT->spacer($spacer) . '<br />';
+            echo $OUTPUT->spacer(array('height'=>10, 'width'=>$indent, 'br'=>true)); // should be done with CSS instead
             echo '</td>';
         }
 

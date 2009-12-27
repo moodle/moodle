@@ -1357,6 +1357,14 @@ class html_image extends labelled_html_component {
      * @var string $src The path to the image being used
      */
     public $src;
+    /**
+     * @var int $width of image
+     */
+    public $width;
+    /**
+     * @var int $height of image
+     */
+    public $height;
 
     /**
      * @see lib/html_component#prepare()
@@ -1367,7 +1375,7 @@ class html_image extends labelled_html_component {
             throw new coding_exception('html_image requires a $src value (moodle_url).');
         }
 
-        $this->add_class('image'); //TODO. remove this like somehow
+        // no general class here, use custom class instead or img element directly in css selectors
         parent::prepare($output, $page, $target);
     }
 

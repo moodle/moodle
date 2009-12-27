@@ -150,10 +150,7 @@ function hotpot_print_review_buttons(&$course, &$hotpot, &$attempt, $context) {
     }
     print "</td>\n</tr>\n";
     print '<tr><td colspan="'.$colspan.'">';
-    $spacer = new html_image();
-    $spacer->height = 4;
-    $spacer->width = 1;
-    echo $OUTPUT->spacer($spacer);
+    echo $OUTPUT->spacer(array('height'=>4, 'width'=>1)); // should be done with CSS instead
     print "</td></tr>\n";
     print "</table>\n";
 }

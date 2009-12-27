@@ -6025,22 +6025,21 @@ class admin_setting_managerepository extends admin_setting {
 
             // display up/down link
             $updown = '';
-            $spacer = new html_image();
-            $spacer->height = 15;
-            $spacer->width = 15;
+            $spacer = $OUTPUT->spacer(array('height'=>15, 'width'=>15)); // should be done with CSS instead
+
             if ($updowncount > 1) {
                 $updown .= "<a href=\"$this->baseurl&amp;move=up&amp;type=".$i->get_typename()."\">";
                 $updown .= "<img src=\"" . $OUTPUT->pix_url('t/up') . "\" alt=\"up\" /></a>&nbsp;";
             }
             else {
-                $updown .= $OUTPUT->spacer($spacer);
+                $updown .= $spacer;
             }
             if ($updowncount < count($instances)) {
                 $updown .= "<a href=\"$this->baseurl&amp;move=down&amp;type=".$i->get_typename()."\">";
                 $updown .= "<img src=\"" . $OUTPUT->pix_url('t/down') . "\" alt=\"down\" /></a>";
             }
             else {
-                $updown .= $OUTPUT->spacer($spacer);
+                $updown .= $spacer;
             }
 
             $updowncount++;

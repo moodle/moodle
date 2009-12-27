@@ -2613,15 +2613,7 @@ function print_spacer($height=1, $width=1, $br=true, $return=false) {
 
     debugging('print_spacer() has been deprecated. Please change your code to use $OUTPUT->spacer().');
 
-    $spacer = new html_image();
-    $spacer->height = $height;
-    $spacer->width = $width;
-
-    $output = $OUTPUT->spacer($spacer);
-
-    if ($br) {
-        $output .= '<br />';
-    }
+    $output = $OUTPUT->spacer(array('height'=>$height, 'width'=>$width, 'br'=>$br));
 
     if ($return) {
         return $output;

@@ -225,9 +225,7 @@ if (!empty($activities)) {
         if (($activity->type == 'section') && ($param->sortby == 'default')) {
             if ($inbox) {
                 echo $OUTPUT->box_end();
-                $spacer = new html_image();
-                $spacer->height = 30;
-                echo $OUTPUT->spacer($spacer) . '<br />';
+                echo $OUTPUT->spacer(array('height'=>30, 'br'=>true)); // should be done with CSS instead
             }
             echo $OUTPUT->box_start();
             echo "<h2>$activity->name</h2>";
