@@ -2049,6 +2049,9 @@ function get_login_url($loginguest=false) {
  * If $cm is given and the coursemodule is hidden and the user is not a teacher
  * in the course then the user is redirected to the course home page.
  *
+ * When $cm parameter specified, this function sets page layout to 'module'.
+ * You need to change it manually later if some other layout needed. 
+ *
  * @global object
  * @global object
  * @global object
@@ -2083,6 +2086,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
         }
         if ($cm) {
             $PAGE->set_cm($cm, $course);
+            $PAGE->set_pagelayout('incourse');
         } else {
             $PAGE->set_course($course);
         }
@@ -2388,6 +2392,7 @@ function require_course_login($courseorid, $autologinguest=true, $cm=null, $setw
                 }
                 if ($cm) {
                     $PAGE->set_cm($cm, $course);
+                    $PAGE->set_pagelayout('incourse');
                 } else {
                     $PAGE->set_course($course);
                 }

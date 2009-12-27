@@ -44,6 +44,7 @@ if ($id) {
 }
 
 require_course_login($course);
+$PAGE->set_pagelayout('incourse');
 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
 

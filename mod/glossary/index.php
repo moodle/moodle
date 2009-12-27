@@ -17,6 +17,7 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
 }
 
 require_course_login($course);
+$PAGE->set_pagelayout('incourse');
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
 add_to_log($course->id, "glossary", "view all", "index.php?id=$course->id", "");

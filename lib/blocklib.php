@@ -1056,7 +1056,7 @@ class block_manager {
         }
 
         $editpage = new moodle_page();
-        $editpage->set_pagelayout('form');
+        $editpage->set_pagelayout('base');
         $editpage->set_course($this->page->course);
         $editpage->set_context($block->context);
         $editurlbase = str_replace($CFG->wwwroot . '/', '', $this->page->url->out(true));

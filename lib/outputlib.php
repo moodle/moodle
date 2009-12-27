@@ -177,7 +177,7 @@ class theme_config {
      * <pre>
      *   $THEME->layouts = array(
      *       // Most pages - if we encounter an unknown or amissing page type, this one is used.
-     *       'normal' => array(
+     *       'standard' => array(
      *           'theme' = 'mytheme',
      *           'file' => 'normal.php',
      *           'regions' => array('side-pre', 'side-post'),
@@ -999,7 +999,8 @@ class theme_config {
         if (array_key_exists($pagelayout, $this->layouts)) {
             return $this->layouts[$pagelayout];
         } else {
-            return $this->layouts['normal'];
+            debugging('Invalid page layout specified: ' . $pagelayout);
+            return $this->layouts['standard'];
         }
     }
 
@@ -1028,6 +1029,7 @@ class theme_config {
             }
         }
 
+        debugging('Can not find layout file for: ' . $pagelayout);
         // fallback to standard normal layout
         return "$CFG->dirroot/theme/base/layout/general.php";
     }

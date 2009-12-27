@@ -99,7 +99,7 @@ class moodle_page {
 
     protected $_pagetype = null;
 
-    protected $_pagelayout = 'normal';
+    protected $_pagelayout = 'base';
 
     /**
      * List of theme layeout options, these are ignored by core.
@@ -292,7 +292,7 @@ class moodle_page {
 
     /**
      * Please do not call this method directly, use the ->pagelayout syntax. {@link __get()}.
-     * @return string the general type of page this is. For example 'normal', 'popup', 'home'.
+     * @return string the general type of page this is. For example 'standard', 'popup', 'home'.
      *      Allows the theme to display things differently, if it wishes to.
      */
     protected function magic_get_pagelayout() {
@@ -709,7 +709,7 @@ class moodle_page {
 
     /**
      * @param string $pagelayout the page layout this is. For example 'popup', 'home'.
-     * This properly defaults to 'normal', so you only need to call this function if
+     * This properly defaults to 'base', so you only need to call this function if
      * you want something different. The exact range of supported layouts is specified
      * in the standard theme.
      */
@@ -1174,6 +1174,8 @@ class moodle_page {
         $this->add_body_class('lang-' . current_language());
         $this->add_body_class('yui-skin-sam'); // Make YUI happy, if it is used.
         $this->add_body_class($this->url_to_class_name($CFG->wwwroot));
+
+        $this->add_body_class('pagelayout-' . $this->_pagelayout); // extra class describing current page layout
 
         if (!during_initial_install()) {
             $this->add_body_class('course-' . $this->_course->id);

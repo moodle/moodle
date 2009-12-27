@@ -84,7 +84,7 @@
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
     $PAGE->set_url('');
     $PAGE->set_docs_path('');
-    $PAGE->set_pagelayout('home');
+    $PAGE->set_pagelayout('frontpage');
     $editing = $PAGE->user_is_editing();
     $PAGE->set_title($SITE->fullname);
     $PAGE->set_heading($SITE->fullname);

@@ -22,7 +22,7 @@
 
     $PAGE->set_context(get_context_instance(CONTEXT_USER, $USER->id));
     $PAGE->set_url('my/index.php');
-    $PAGE->set_pagelayout('my');
+    $PAGE->set_pagelayout('mydashboard');
     $PAGE->set_blocks_editing_capability('moodle/my:manageblocks');
 
     if (($edit != -1) and $PAGE->user_allowed_editing()) {

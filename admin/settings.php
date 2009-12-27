@@ -12,6 +12,7 @@ require_login(0, false);
 $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 $PAGE->set_url($CFG->admin . '/settings.php', array('section' => $section));
 $PAGE->set_pagetype('admin-setting-' . $section);
+$PAGE->set_pagelayout('admin');
 $PAGE->navigation->clear_cache();
 
 $adminroot = admin_get_root(); // need all settings

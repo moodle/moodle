@@ -21,6 +21,7 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
 $capabilities = feedback_load_course_capabilities($course->id);
 
 require_login($course->id);
+$PAGE->set_pagelayout('incourse');
 
 add_to_log($course->id, 'feedback', 'view all', htmlspecialchars('index.php?id='.$course->id), $course->id);
 

@@ -15,6 +15,7 @@
     }
 
     require_course_login($course);
+    $PAGE->set_pagelayout('incourse');
 
     add_to_log($course->id, "wiki", "view all", "index.php?id=$course->id", "");
 

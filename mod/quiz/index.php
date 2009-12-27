@@ -16,6 +16,8 @@
     }
     $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
     require_login($course->id);
+    $PAGE->set_pagelayout('incourse');
+
     add_to_log($course->id, "quiz", "view all", "index.php?id=$course->id", "");
 
 // Print the header

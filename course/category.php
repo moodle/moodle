@@ -167,6 +167,7 @@
         $PAGE->set_title("$site->shortname: $category->name");
         $PAGE->set_heading("$site->fullname: $strcourses");
         $PAGE->set_button(print_course_search('', true, 'navbar'));
+        $PAGE->set_pagelayout('coursecategory');
         echo $OUTPUT->header();
     }
 

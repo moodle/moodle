@@ -43,7 +43,7 @@ if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_login($course->id, false, $cm);
 require_capability('mod/chat:chat',$context);
-$PAGE->set_pagelayout('form');
+$PAGE->set_pagelayout('base');
 
 /// Check to see if groups are being used here
  if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used

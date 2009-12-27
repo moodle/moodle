@@ -78,48 +78,73 @@ $THEME->sheets = array(
 $THEME->editor_sheets = array('styles_tinymce');
 
 $THEME->layouts = array(
-    // Most pages - if we encounter an unknown or a missing page type, this one is used.
-    'normal' => array(
+    // Most backwards compatible layout without the blocks - this is the layout used by default
+    'base' => array(
+        'theme' => 'standard',
+        'file' => 'normal.php',
+        'regions' => array(),
+    ),
+    // Standard layout with blocks, this is recommended for most pages with general information
+    'standard' => array(
         'theme' => 'standard',
         'file' => 'normal.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-post',
     ),
-    // Course page
+    // Main course page
     'course' => array(
         'theme' => 'standard',
         'file' => 'normal.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-post',
+    ),
+    'coursecategory' => array(
+        'theme' => 'base',
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post',
+    ),
+    // Standard module pages - default page layout if $cm specified in require_login()
+    'module' => array(
+        'theme' => 'standard',
+        'file' => 'normal.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post',
     ),
     // The site home page.
-    'home' => array(
+    'frontpage' => array(
         'theme' => 'standard',
         'file' => 'home.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-post',
     ),
     // Server administration scripts.
     'admin' => array(
         'theme' => 'standard',
         'file' => 'normal.php',
         'regions' => array('side-pre'),
-        'defaultregion' => 'side-pre'
+        'defaultregion' => 'side-pre',
     ),
-    // My moodle page
-    'my' => array(
+    // My dashboard page
+    'mydashboard' => array(
+        'theme' => 'standard',
+        'file' => 'normal.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post',
+    ),
+    // My public page
+    'mypublic' => array(
         'theme' => 'standard',
         'file' => 'normal.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post'
     ),
-
-    // Settings form pages, like course of module settings.
-    'form' => array(
+    'login' => array(
         'theme' => 'standard',
         'file' => 'normal.php',
         'regions' => array(),
     ),
+    
     // Pages that appear in pop-up windows - no navigation, no blocks, no header.
     'popup' => array(
         'theme' => 'standard',
@@ -132,7 +157,7 @@ $THEME->layouts = array(
         'file' => 'frametop.php',
         'regions' => array(),
     ),
-    // Embeded pages, like iframe embeded in moodleform
+    // Embeded pages, like iframe/object embeded in moodleform - it needs as much space as possible
     'embedded' => array(
         'theme' => 'standard',
         'file' => 'embedded.php',

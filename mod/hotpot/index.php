@@ -15,6 +15,7 @@
     }
 
     require_login($course->id);
+    $PAGE->set_pagelayout('incourse');
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);

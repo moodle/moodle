@@ -35,7 +35,7 @@
     $return = optional_param('return', 0, PARAM_BOOL);    //return to course/view.php if false or mod/modname/view.php if true
     $type   = optional_param('type', '', PARAM_ALPHANUM); //TODO: hopefully will be removed in 2.0
 
-    $PAGE->set_pagelayout('form');
+    $PAGE->set_pagelayout('base');
 
     $url = new moodle_url($CFG->wwwroot.'/course/modedit.php');
     if (!empty($add)) {
