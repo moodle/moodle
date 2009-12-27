@@ -684,7 +684,7 @@ class core_renderer extends renderer_base {
      */
     function block($bc, $region) {
         $bc = clone($bc); // Avoid messing up the object passed in.
-        $bc->prepare();
+        $bc->prepare($this, $this->page, $this->target);
 
         $skiptitle = strip_tags($bc->title);
         if (empty($skiptitle)) {
@@ -822,7 +822,7 @@ class core_renderer extends renderer_base {
                 return $this->link_to_popup($link);
             }
 
-            $link->prepare();
+            $link->prepare($this, $this->page, $this->target);
             $this->prepare_event_handlers($link);
 
             // A disabled link is rendered as formatted text
@@ -912,7 +912,7 @@ class core_renderer extends renderer_base {
             throw new coding_exception('$OUTPUT->button($form) requires $form to have a button (html_button) value');
         }
         $form = clone($form);
-        $form->button->prepare();
+        $form->button->prepare($this, $this->page, $this->target);
 
         $this->prepare_event_handlers($form->button);
 
@@ -940,7 +940,7 @@ class core_renderer extends renderer_base {
      */
     public function form($form, $contents=null) {
         $form = clone($form);
-        $form->prepare();
+        $form->prepare($this, $this->page, $this->target);
         $this->prepare_event_handlers($form);
         $buttonoutput = null;
 
@@ -949,7 +949,7 @@ class core_renderer extends renderer_base {
         } else if (empty($contents)) {
             $contents = $this->output_empty_tag('input', array('type' => 'submit', 'value' => get_string('ok')));
         } else if (!empty($form->button)) {
-            $form->button->prepare();
+            $form->button->prepare($this, $this->page, $this->target);
             $this->prepare_event_handlers($form->button);
 
             $buttonattributes = array('class' => $form->button->get_classes_string(),
@@ -1023,7 +1023,7 @@ class core_renderer extends renderer_base {
      */
     public function action_icon($icon) {
         $icon = clone($icon);
-        $icon->prepare();
+        $icon->prepare($this, $this->page, $this->target);
         $imageoutput = $this->image($icon->image);
 
         if ($icon->linktext) {
@@ -1060,7 +1060,7 @@ class core_renderer extends renderer_base {
     public function help_icon($icon) {
         global $COURSE;
         $icon = clone($icon);
-        $icon->prepare();
+        $icon->prepare($this, $this->page, $this->target);
 
         $popup = new popup_action('click', $icon->link->url);
         $icon->link->add_action($popup);
@@ -1102,7 +1102,7 @@ class core_renderer extends renderer_base {
             }
         }
 
-        $link->prepare();
+        $link->prepare($this, $this->page, $this->target);
         $this->prepare_event_handlers($link);
 
         if (empty($link->url)) {
@@ -1134,7 +1134,7 @@ class core_renderer extends renderer_base {
             $image->src = $this->pix_url('spacer')->out(false, array(), false);
         }
 
-        $image->prepare();
+        $image->prepare($this, $this->page, $this->target);
         $image->add_class('spacer');
 
         $output = $this->image($image);
@@ -1155,7 +1155,7 @@ class core_renderer extends renderer_base {
         }
 
         $image = clone($image);
-        $image->prepare();
+        $image->prepare($this, $this->page, $this->target);
 
         $this->prepare_event_handlers($image);
 
@@ -1210,7 +1210,7 @@ class core_renderer extends renderer_base {
             $userpic = clone($userpic);
         }
 
-        $userpic->prepare();
+        $userpic->prepare($this, $this->page, $this->target);
 
         $output = $this->image($userpic->image);
 
@@ -1287,7 +1287,7 @@ class core_renderer extends renderer_base {
      */
     public function htmllist($list) {
         $list = clone($list);
-        $list->prepare();
+        $list->prepare($this, $this->page, $this->target);
 
         $this->prepare_event_handlers($list);
 
@@ -1305,7 +1305,7 @@ class core_renderer extends renderer_base {
                 $output .= $this->htmllist($listitem) . "\n";
                 $output .= $this->output_end_tag('li') . "\n";
             } else if ($listitem instanceof html_list_item) {
-                $listitem->prepare();
+                $listitem->prepare($this, $this->page, $this->target);
                 $this->prepare_event_handlers($listitem);
                 $output .= $this->output_tag('li', array('class' => $listitem->get_classes_string()), $listitem->value) . "\n";
             } else {
@@ -1336,7 +1336,7 @@ class core_renderer extends renderer_base {
         }
 
         $span = clone($span);
-        $span->prepare();
+        $span->prepare($this, $this->page, $this->target);
         $this->prepare_event_handlers($span);
         $attributes = array('class' => $span->get_classes_string(),
                             'alt' => $span->alt,
@@ -1362,7 +1362,7 @@ class core_renderer extends renderer_base {
         $closeform->method = 'get';
         $closeform->button->text = $text;
         $closeform->button->add_action('click', 'close_window');
-        $closeform->button->prepare();
+        $closeform->button->prepare($this, $this->page, $this->target);
         return $this->container($this->button($closeform), 'closewindow');
     }
 
@@ -1399,7 +1399,7 @@ class core_renderer extends renderer_base {
      */
     public function select($select) {
         $select = clone($select);
-        $select->prepare();
+        $select->prepare($this, $this->page, $this->target);
 
         $this->prepare_event_handlers($select);
 
@@ -1496,7 +1496,7 @@ class core_renderer extends renderer_base {
             throw new coding_exception('$OUTPUT->radio($option) only accepts a html_select_option object as param.');
         }
         $option = clone($option);
-        $option->prepare();
+        $option->prepare($this, $this->page, $this->target);
         $option->label->for = $option->id;
         $this->prepare_event_handlers($option);
 
@@ -1535,7 +1535,7 @@ class core_renderer extends renderer_base {
             throw new coding_exception('$OUTPUT->checkbox($option) only accepts a html_select_option object as param.');
         }
         $option = clone($option);
-        $option->prepare();
+        $option->prepare($this, $this->page, $this->target);
 
         $option->label->for = $option->id;
         $this->prepare_event_handlers($option);
@@ -1573,7 +1573,7 @@ class core_renderer extends renderer_base {
      */
     public function select_option($option) {
         $option = clone($option);
-        $option->prepare();
+        $option->prepare($this, $this->page, $this->target);
         $this->prepare_event_handlers($option);
 
         if ($option instanceof html_select_option) {
@@ -1610,7 +1610,7 @@ class core_renderer extends renderer_base {
      */
     public function field($field) {
         $field = clone($field);
-        $field->prepare();
+        $field->prepare($this, $this->page, $this->target);
         $this->prepare_event_handlers($field);
         $label = '';
         if (!empty($field->label->text)) {
@@ -1635,7 +1635,7 @@ class core_renderer extends renderer_base {
      */
     public function label($label) {
         $label = clone($label);
-        $label->prepare();
+        $label->prepare($this, $this->page, $this->target);
         $this->prepare_event_handlers($label);
         return $this->output_tag('label', array('for' => $label->for, 'class' => $label->get_classes_string()), $label->text);
     }
@@ -1767,7 +1767,7 @@ class core_renderer extends renderer_base {
     public function paging_bar($pagingbar) {
         $output = '';
         $pagingbar = clone($pagingbar);
-        $pagingbar->prepare();
+        $pagingbar->prepare($this, $this->page, $this->target);
 
         if ($pagingbar->totalcount > $pagingbar->perpage) {
             $output .= get_string('page') . ':';
@@ -1808,7 +1808,7 @@ class core_renderer extends renderer_base {
      */
     public function table(html_table $table) {
         $table = clone($table);
-        $table->prepare();
+        $table->prepare($this, $this->page, $this->target);
         $attributes = array(
                 'id'            => $table->id,
                 'width'         => $table->width,

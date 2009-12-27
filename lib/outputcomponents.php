@@ -117,10 +117,15 @@ class moodle_html_component {
 
     /**
      * Perform any cleanup or final processing that should be done before an
-     * instance of this class is output.
+     * instance of this class is output. This method is supposed to be called
+     * only from renderers.
+     *
+     * @param renderer_base $output output renderer
+     * @param moodle_page $page
+     * @param string $target rendering target
      * @return void
      */
-    public function prepare() {
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
         $this->classes = array_unique(self::clean_classes($this->classes));
     }
 
@@ -206,6 +211,7 @@ class moodle_html_component {
     }
 }
 
+
 class labelled_html_component extends moodle_html_component {
     /**
      * @var mixed $label The label for that component. String or html_label object
@@ -273,13 +279,14 @@ class html_label extends moodle_html_component {
      * @see moodle_html_component::prepare()
      * @return void
      */
-    public function prepare() {
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
         if (empty($this->text)) {
             throw new coding_exception('html_label must have a $text value.');
         }
-        parent::prepare();
+        parent::prepare($output, $page, $target);
     }
 }
+
 
 /**
  * This class hold all the information required to describe a <select> menu that
@@ -373,7 +380,7 @@ class html_select extends labelled_html_component {
      * @see moodle_html_component::prepare()
      * @return void
      */
-    public function prepare() {
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
         global $CFG;
 
         // name may contain [], which would make an invalid id. e.g. numeric question type editing form, assignment quickgrading
@@ -399,7 +406,7 @@ class html_select extends labelled_html_component {
         $this->add_class('select');
 
         $this->initialise_options();
-        parent::prepare();
+        parent::prepare($output, $page, $target);
     }
 
     /**
@@ -565,8 +572,6 @@ class html_select extends labelled_html_component {
      * @return void
      */
     public function override_option_values($options) {
-        global $PAGE;
-
         $originalcount = count($options);
         $this->initialise_options();
         $newcount = count($this->options);
@@ -582,7 +587,7 @@ class html_select extends labelled_html_component {
 
                     $optionurl = new moodle_url(key($options));
 
-                    if ($optionurl->compare($PAGE->url, URL_MATCH_PARAMS)) {
+                    if ($optionurl->compare($page->url, URL_MATCH_PARAMS)) {
                         $this->options[$optkey]->options[$key]->selected = 'selected';
                     }
                 }
@@ -591,7 +596,7 @@ class html_select extends labelled_html_component {
                 $this->options[$optkey]->value = key($options);
                 $optionurl = new moodle_url(key($options));
 
-                if ($optionurl->compare($PAGE->url, URL_MATCH_PARAMS)) {
+                if ($optionurl->compare($page->url, URL_MATCH_PARAMS)) {
                     $this->options[$optkey]->selected = 'selected';
                 }
                 next($options);
@@ -747,6 +752,7 @@ class html_select extends labelled_html_component {
     }
 }
 
+
 /**
  * This class represents a select option element
  *
@@ -780,7 +786,7 @@ class html_select_option extends labelled_html_component {
      * @see moodle_html_component::prepare()
      * @return void
      */
-    public function prepare() {
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
         if (empty($this->text) && (string)$this->text!=='0') {
             throw new coding_exception('html_select_option requires a $text value.');
         }
@@ -794,7 +800,7 @@ class html_select_option extends labelled_html_component {
             $this->generate_id();
         }
 
-        parent::prepare();
+        parent::prepare($output, $page, $target);
     }
 
     /**
@@ -816,6 +822,7 @@ class html_select_option extends labelled_html_component {
     }
 }
 
+
 /**
  * This class represents a select optgroup element
  *
@@ -833,16 +840,17 @@ class html_select_optgroup extends moodle_html_component {
      */
     public $options = array();
 
-    public function prepare() {
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
         if (empty($this->text)) {
             throw new coding_exception('html_select_optgroup requires a $text value.');
         }
         if (empty($this->options)) {
             throw new coding_exception('html_select_optgroup requires at least one html_select_option object');
         }
-        parent::prepare();
+        parent::prepare($output, $page, $target);
     }
 }
+
 
 /**
  * This class represents an input field
@@ -881,14 +889,14 @@ class html_field extends labelled_html_component {
      * @see moodle_html_component::prepare()
      * @return void
      */
-    public function prepare() {
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
         if (empty($this->style)) {
             $this->style = 'width: 4em;';
         }
         if (empty($this->id)) {
             $this->generate_id();
         }
-        parent::prepare();
+        parent::prepare($output, $page, $target);
     }
 
     /**
@@ -912,6 +920,7 @@ class html_field extends labelled_html_component {
         return $field;
     }
 }
+
 
 /**
  * Holds all the information required to render a <table> by
@@ -1068,7 +1077,7 @@ class html_table extends labelled_html_component {
      * @see moodle_html_component::prepare()
      * @return void
      */
-    public function prepare() {
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
         if (!empty($this->align)) {
             foreach ($this->align as $key => $aa) {
                 if ($aa) {
@@ -1121,7 +1130,7 @@ class html_table extends labelled_html_component {
         } else {
             $this->rotateheaders = false; // Makes life easier later.
         }
-        parent::prepare();
+        parent::prepare($output, $page, $target);
     }
     /**
      * @param string $name The name of the variable to set
@@ -1138,6 +1147,7 @@ class html_table extends labelled_html_component {
         }
     }
 }
+
 
 /**
  * Component representing a table row.
@@ -1156,8 +1166,8 @@ class html_table_row extends moodle_html_component {
      * @see lib/moodle_html_component#prepare()
      * @return void
      */
-    public function prepare() {
-        parent::prepare();
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
+        parent::prepare($output, $page, $target);
     }
 
     /**
@@ -1179,6 +1189,7 @@ class html_table_row extends moodle_html_component {
         return $row;
     }
 }
+
 
 /**
  * Component representing a table cell.
@@ -1217,13 +1228,14 @@ class html_table_cell extends moodle_html_component {
      * @see lib/moodle_html_component#prepare()
      * @return void
      */
-    public function prepare() {
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
         if ($this->header && empty($this->scope)) {
             $this->scope = 'col';
         }
-        parent::prepare();
+        parent::prepare($output, $page, $target);
     }
 }
+
 
 /**
  * Component representing a XHTML link.
@@ -1258,8 +1270,7 @@ class html_link extends moodle_html_component {
      * @see lib/moodle_html_component#prepare() Disables the link if it links to the current page.
      * @return void
      */
-    public function prepare() {
-        global $PAGE;
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
         // We can't accept an empty text value
         if (empty($this->text)) {
             throw new coding_exception('A html_link must have a descriptive text value!');
@@ -1269,10 +1280,10 @@ class html_link extends moodle_html_component {
             $this->url = new moodle_url($this->url);
         }
 
-        if ($this->url->compare($PAGE->url, URL_MATCH_PARAMS) && $this->disableifcurrent) {
+        if ($this->url->compare($page->url, URL_MATCH_PARAMS) && $this->disableifcurrent) {
             $this->disabled = true;
         }
-        parent::prepare();
+        parent::prepare($output, $page, $target);
     }
 
     /**
@@ -1289,6 +1300,7 @@ class html_link extends moodle_html_component {
         return $link;
     }
 }
+
 
 /**
  * Component representing a XHTML button (input of type 'button').
@@ -1314,7 +1326,7 @@ class html_button extends labelled_html_component {
      * @see lib/moodle_html_component#prepare()
      * @return void
      */
-    public function prepare() {
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
         $this->add_class('singlebutton');
 
         if (empty($this->text)) {
@@ -1325,7 +1337,7 @@ class html_button extends labelled_html_component {
             $this->disabled = 'disabled';
         }
 
-        parent::prepare();
+        parent::prepare($output, $page, $target);
     }
 }
 
@@ -1350,13 +1362,13 @@ class html_image extends labelled_html_component {
      * @see lib/moodle_html_component#prepare()
      * @return void
      */
-    public function prepare() {
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
         if (empty($this->src)) {
             throw new coding_exception('html_image requires a $src value (moodle_url).');
         }
 
         $this->add_class('image');
-        parent::prepare();
+        parent::prepare($output, $page, $target);
     }
 
     /**
@@ -1370,6 +1382,7 @@ class html_image extends labelled_html_component {
         return $image;
     }
 }
+
 
 /**
  * Component representing a textarea.
@@ -1404,7 +1417,7 @@ class html_textarea extends moodle_html_component {
      * @see lib/moodle_html_component#prepare()
      * @return void
      */
-    public function prepare() {
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
         $this->add_class('form-textarea');
 
         if (empty($this->id)) {
@@ -1418,9 +1431,10 @@ class html_textarea extends moodle_html_component {
             $this->value = htmlspecialchars($value);
         }
 
-        parent::prepare();
+        parent::prepare($output, $page, $target);
     }
 }
+
 
 /**
  * Component representing a simple form wrapper. Its purpose is mainly to enclose
@@ -1473,7 +1487,7 @@ class html_form extends moodle_html_component {
      * @see lib/moodle_html_component#prepare()
      * @return void
      */
-    public function prepare() {
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
 
         if (empty($this->url)) {
             throw new coding_exception('A html_form must have a $url value (string or moodle_url).');
@@ -1487,7 +1501,7 @@ class html_form extends moodle_html_component {
             $this->url->param('sesskey', sesskey());
         }
 
-        parent::prepare();
+        parent::prepare($output, $page, $target);
     }
 
     public static function make_button($url, $options, $label='OK', $method='post') {
@@ -1498,6 +1512,7 @@ class html_form extends moodle_html_component {
         return $form;
     }
 }
+
 
 /**
  * Component representing a list.
@@ -1530,8 +1545,8 @@ class html_list extends moodle_html_component {
      * @see lib/moodle_html_component#prepare()
      * @return void
      */
-    public function prepare() {
-        parent::prepare();
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
+        parent::prepare($output, $page, $target);
     }
 
     /**
@@ -1581,6 +1596,7 @@ class html_list extends moodle_html_component {
     }
 }
 
+
 /**
  * Component representing a list item.
  *
@@ -1598,10 +1614,11 @@ class html_list_item extends moodle_html_component {
      * @see lib/moodle_html_component#prepare()
      * @return void
      */
-    public function prepare() {
-        parent::prepare();
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
+        parent::prepare($output, $page, $target);
     }
 }
+
 
 /**
  * Component representing a span element. It has no special attributes, so
@@ -1620,12 +1637,13 @@ class html_span extends moodle_html_component {
      * @see lib/moodle_html_component#prepare()
      * @return void
      */
-    public function prepare() {
-        parent::prepare();
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
+        parent::prepare($output, $page, $target);
     }
 }
 
 /// Complex components aggregating simpler components
+
 
 /**
  * Component representing a paging bar.
@@ -1685,7 +1703,7 @@ class moodle_paging_bar extends moodle_html_component {
      * @see lib/moodle_html_component#prepare()
      * @return void
      */
-    public function prepare() {
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
         if (!isset($this->totalcount) || is_null($this->totalcount)) {
             throw new coding_exception('moodle_paging_bar requires a totalcount value.');
         }
@@ -1791,6 +1809,7 @@ class moodle_paging_bar extends moodle_html_component {
     }
 }
 
+
 /**
  * Component representing a user picture.
  *
@@ -1840,8 +1859,8 @@ class moodle_user_picture extends moodle_html_component {
      * @see lib/moodle_html_component#prepare()
      * @return void
      */
-    public function prepare() {
-        global $CFG, $DB, $OUTPUT;
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
+        global $CFG, $DB;
 
         if (empty($this->user)) {
             throw new coding_exception('A moodle_user_picture object must have a $user object before being rendered.');
@@ -1923,7 +1942,7 @@ class moodle_user_picture extends moodle_html_component {
             $this->image->src = new moodle_url(get_file_url($this->user->id.'/'.$file.'.jpg', null, 'user'));
         } else { // Print default user pictures (use theme version if available)
             $this->add_class('defaultuserpic');
-            $this->image->src = $OUTPUT->pix_url('u/' . $file);
+            $this->image->src = $output->pix_url('u/' . $file);
         }
 
         if ($this->alttext) {
@@ -1935,7 +1954,7 @@ class moodle_user_picture extends moodle_html_component {
             }
         }
 
-        parent::prepare();
+        parent::prepare($output, $page, $target);
     }
 
     public static function make($user, $courseid) {
@@ -1945,6 +1964,7 @@ class moodle_user_picture extends moodle_html_component {
         return $userpic;
     }
 }
+
 
 /**
  * Component representing a help icon.
@@ -1994,8 +2014,8 @@ class moodle_help_icon extends labelled_html_component {
      * @see lib/moodle_html_component#prepare()
      * @return void
      */
-    public function prepare() {
-        global $COURSE, $OUTPUT, $CFG;
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
+        global $CFG;
 
         if (empty($this->page)) {
             throw new coding_exception('A moodle_help_icon object requires a $page parameter');
@@ -2011,8 +2031,8 @@ class moodle_help_icon extends labelled_html_component {
         $this->link->url = new moodle_url($CFG->wwwroot.'/help.php', array('module' => $this->module, 'file' => $this->page .'.html'));
 
         // fix for MDL-7734
-        if (!empty($COURSE->lang)) {
-            $this->link->url->param('forcelang', $COURSE->lang);
+        if (!empty($page->course->lang)) {
+            $this->link->url->param('forcelang', $page->course->lang);
         }
 
         // Catch references to the old text.html and emoticons.html help files that
@@ -2040,7 +2060,7 @@ class moodle_help_icon extends labelled_html_component {
             if ($image instanceof moodle_url) {
                 $this->image->src = $image->out();
             } else if ($image === true) {
-                $this->image->src = $OUTPUT->pix_url('help');
+                $this->image->src = $output->pix_url('help');
             } else if (is_string($image)) {
                 $this->image->src = $image;
             }
@@ -2056,10 +2076,10 @@ class moodle_help_icon extends labelled_html_component {
             if (!($this->image instanceof html_image)) {
                 $this->image = new html_image();
             }
-            $this->image->src = $OUTPUT->pix_url('help');
+            $this->image->src = $output->pix_url('help');
         }
 
-        parent::prepare();
+        parent::prepare($output, $page, $target);
     }
 
     /**
@@ -2090,6 +2110,7 @@ class moodle_help_icon extends labelled_html_component {
         return $helpbutton;
     }
 }
+
 
 /**
  * Component representing an icon linking to a Moodle page.
@@ -2125,7 +2146,7 @@ class moodle_action_icon extends labelled_html_component {
      * @see lib/moodle_html_component#prepare()
      * @return void
      */
-    public function prepare() {
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
         $this->image->add_class('action-icon');
 
         if (!empty($this->actions)) {
@@ -2135,7 +2156,7 @@ class moodle_action_icon extends labelled_html_component {
             unset($this->actions);
         }
 
-        parent::prepare();
+        parent::prepare($output, $page, $target);
 
         if (empty($this->image->src)) {
             throw new coding_exception('moodle_action_icon->image->src must not be empty');
@@ -2148,6 +2169,7 @@ class moodle_action_icon extends labelled_html_component {
         }
     }
 }
+
 
 /**
  * This class represents how a block appears on a page.
@@ -2242,7 +2264,7 @@ class block_contents extends moodle_html_component {
      * @see moodle_html_component::prepare()
      * @return void
      */
-    public function prepare() {
+    public function prepare(renderer_base $output, moodle_page $page, $target) {
         $this->skipid = self::$idcounter;
         self::$idcounter += 1;
         $this->add_class('sideblock');
@@ -2255,9 +2277,10 @@ class block_contents extends moodle_html_component {
         if (!empty($this->controls)) {
             $this->add_class('block_with_controls');
         }
-        parent::prepare();
+        parent::prepare($output, $page, $target);
     }
 }
+
 
 /**
  * This class represents a target for where a block can go when it is being moved.
