@@ -165,11 +165,11 @@ class renderer_base {
     }
 
     /**
-     * A helper function that takes a moodle_html_component subclass as param.
+     * A helper function that takes a html_component subclass as param.
      * If that component has an id attribute and an array of valid component_action objects,
      * it sets up the appropriate event handlers.
      *
-     * @param moodle_html_component $component
+     * @param html_component $component
      * @return void;
      */
     protected function prepare_event_handlers(&$component) {
@@ -184,10 +184,10 @@ class renderer_base {
     }
 
     /**
-     * Given a moodle_html_component with height and/or width set, translates them
+     * Given a html_component with height and/or width set, translates them
      * to appropriate CSS rules.
      *
-     * @param moodle_html_component $component
+     * @param html_component $component
      * @return string CSS rules
      */
     protected function prepare_legacy_width_and_height($component) {
@@ -195,11 +195,11 @@ class renderer_base {
         if (!empty($component->height)) {
             // We need a more intelligent way to handle these warnings. If $component->height have come from
             // somewhere in deprecatedlib.php, then there is no point outputting a warning here.
-            // debugging('Explicit height given to moodle_html_component leads to inline css. Use a proper CSS class instead.', DEBUG_DEVELOPER);
+            // debugging('Explicit height given to html_component leads to inline css. Use a proper CSS class instead.', DEBUG_DEVELOPER);
             $output .= "height: {$component->height}px;";
         }
         if (!empty($component->width)) {
-            // debugging('Explicit width given to moodle_html_component leads to inline css. Use a proper CSS class instead.', DEBUG_DEVELOPER);
+            // debugging('Explicit width given to html_component leads to inline css. Use a proper CSS class instead.', DEBUG_DEVELOPER);
             $output .= "width: {$component->width}px;";
         }
         return $output;
@@ -1078,7 +1078,7 @@ class core_renderer extends renderer_base {
     /**
      * Creates and returns a button to a popup window
      *
-     * @param html_link $link Subclass of moodle_html_component
+     * @param html_link $link Subclass of html_component
      * @param moodle_popup $popup A moodle_popup object
      * @param html_image $image An optional image replacing the link text
      *
@@ -1123,7 +1123,7 @@ class core_renderer extends renderer_base {
     /**
      * Creates and returns a spacer image with optional line break.
      *
-     * @param html_image $image Subclass of moodle_html_component
+     * @param html_image $image Subclass of html_component
      *
      * @return string HTML fragment
      */
@@ -1145,7 +1145,7 @@ class core_renderer extends renderer_base {
     /**
      * Creates and returns an image.
      *
-     * @param html_image $image Subclass of moodle_html_component
+     * @param html_image $image Subclass of html_component
      *
      * @return string HTML fragment
      */
@@ -1906,7 +1906,7 @@ class core_renderer extends renderer_base {
 
                     $oddeven = $oddeven ? 0 : 1;
                     if (isset($table->rowclasses[$key])) {
-                        $row->add_classes(array_unique(moodle_html_component::clean_classes($table->rowclasses[$key])));
+                        $row->add_classes(array_unique(html_component::clean_classes($table->rowclasses[$key])));
                     }
 
                     $row->add_class('r' . $oddeven);
@@ -1927,7 +1927,7 @@ class core_renderer extends renderer_base {
                         }
 
                         if (isset($table->colclasses[$key])) {
-                            $cell->add_classes(array_unique(moodle_html_component::clean_classes($table->colclasses[$key])));
+                            $cell->add_classes(array_unique(html_component::clean_classes($table->colclasses[$key])));
                         }
 
                         $cell->add_classes('cell');

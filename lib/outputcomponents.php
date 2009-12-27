@@ -35,7 +35,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class moodle_html_component {
+class html_component {
     /**
      * @var string value to use for the id attribute of this HTML tag.
      */
@@ -163,7 +163,7 @@ class moodle_html_component {
             $this->actions[] = $event;
         } else {
             if (empty($jsfunction)) {
-                throw new coding_exception('moodle_html_component::add_action requires a JS function argument if the first argument is a string event');
+                throw new coding_exception('html_component::add_action requires a JS function argument if the first argument is a string event');
             }
             $this->actions[] = new component_action($event, $jsfunction, $jsfunctionargs);
         }
@@ -212,7 +212,7 @@ class moodle_html_component {
 }
 
 
-class labelled_html_component extends moodle_html_component {
+class labelled_html_component extends html_component {
     /**
      * @var mixed $label The label for that component. String or html_label object
      */
@@ -265,7 +265,7 @@ class labelled_html_component extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_label extends moodle_html_component {
+class html_label extends html_component {
     /**
      * @var string $text The text to display in the label
      */
@@ -276,7 +276,7 @@ class html_label extends moodle_html_component {
     public $for;
 
     /**
-     * @see moodle_html_component::prepare()
+     * @see html_component::prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -377,7 +377,7 @@ class html_select extends labelled_html_component {
     public $rendertype = 'menu';
 
     /**
-     * @see moodle_html_component::prepare()
+     * @see html_component::prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -783,7 +783,7 @@ class html_select_option extends labelled_html_component {
     }
 
     /**
-     * @see moodle_html_component::prepare()
+     * @see html_component::prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -830,7 +830,7 @@ class html_select_option extends labelled_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_select_optgroup extends moodle_html_component {
+class html_select_optgroup extends html_component {
     /**
      * @var string $text The display value of the optgroup
      */
@@ -886,7 +886,7 @@ class html_field extends labelled_html_component {
     }
 
     /**
-     * @see moodle_html_component::prepare()
+     * @see html_component::prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -1074,7 +1074,7 @@ class html_table extends labelled_html_component {
 
 
     /**
-     * @see moodle_html_component::prepare()
+     * @see html_component::prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -1156,14 +1156,14 @@ class html_table extends labelled_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_table_row extends moodle_html_component {
+class html_table_row extends html_component {
     /**
      * @var array $cells Array of html_table_cell objects
      */
     public $cells = array();
 
     /**
-     * @see lib/moodle_html_component#prepare()
+     * @see lib/html_component#prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -1198,7 +1198,7 @@ class html_table_row extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_table_cell extends moodle_html_component {
+class html_table_cell extends html_component {
     /**
      * @var string $text The contents of the cell
      */
@@ -1225,7 +1225,7 @@ class html_table_cell extends moodle_html_component {
     public $header = null;
 
     /**
-     * @see lib/moodle_html_component#prepare()
+     * @see lib/html_component#prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -1244,7 +1244,7 @@ class html_table_cell extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_link extends moodle_html_component {
+class html_link extends html_component {
     /**
      * URL can be simple text or a moodle_url object
      * @var mixed $url
@@ -1267,7 +1267,7 @@ class html_link extends moodle_html_component {
     public $disableifcurrent = false;
 
     /**
-     * @see lib/moodle_html_component#prepare() Disables the link if it links to the current page.
+     * @see lib/html_component#prepare() Disables the link if it links to the current page.
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -1323,7 +1323,7 @@ class html_button extends labelled_html_component {
     public $disabled = false;
 
     /**
-     * @see lib/moodle_html_component#prepare()
+     * @see lib/html_component#prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -1359,7 +1359,7 @@ class html_image extends labelled_html_component {
     public $src;
 
     /**
-     * @see lib/moodle_html_component#prepare()
+     * @see lib/html_component#prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -1391,7 +1391,7 @@ class html_image extends labelled_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_textarea extends moodle_html_component {
+class html_textarea extends html_component {
     /**
      * @param string $name Name to use for the textarea element.
      */
@@ -1414,7 +1414,7 @@ class html_textarea extends moodle_html_component {
     public $usehtmleditor;
 
     /**
-     * @see lib/moodle_html_component#prepare()
+     * @see lib/html_component#prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -1444,7 +1444,7 @@ class html_textarea extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_form extends moodle_html_component {
+class html_form extends html_component {
     /**
      * @var string $method post or get
      */
@@ -1484,7 +1484,7 @@ class html_form extends moodle_html_component {
     }
 
     /**
-     * @see lib/moodle_html_component#prepare()
+     * @see lib/html_component#prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -1524,7 +1524,7 @@ class html_form extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_list extends moodle_html_component {
+class html_list extends html_component {
 
     /**
      * @var array $items An array of html_list_item or html_list objects
@@ -1542,7 +1542,7 @@ class html_list extends moodle_html_component {
     public $text = false;
 
     /**
-     * @see lib/moodle_html_component#prepare()
+     * @see lib/html_component#prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -1604,14 +1604,14 @@ class html_list extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_list_item extends moodle_html_component {
+class html_list_item extends html_component {
     /**
      * @var string $value The value of the list item
      */
     public $value;
 
     /**
-     * @see lib/moodle_html_component#prepare()
+     * @see lib/html_component#prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -1628,13 +1628,13 @@ class html_list_item extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_span extends moodle_html_component {
+class html_span extends html_component {
     /**
      * @var string $text The contents of the span
      */
     public $contents;
     /**
-     * @see lib/moodle_html_component#prepare()
+     * @see lib/html_component#prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -1652,7 +1652,7 @@ class html_span extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class moodle_paging_bar extends moodle_html_component {
+class moodle_paging_bar extends html_component {
     /**
      * @var int $maxdisplay The maximum number of pagelinks to display
      */
@@ -1700,7 +1700,7 @@ class moodle_paging_bar extends moodle_html_component {
     public $pagelinks = array();
 
     /**
-     * @see lib/moodle_html_component#prepare()
+     * @see lib/html_component#prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -1851,7 +1851,7 @@ class user_picture extends html_image {
     public $url;
 
     /**
-     * @see lib/moodle_html_component#prepare()
+     * @see lib/html_component#prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -1983,7 +1983,7 @@ class moodle_help_icon extends labelled_html_component {
     }
 
     /**
-     * @see lib/moodle_html_component#prepare()
+     * @see lib/html_component#prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -2115,7 +2115,7 @@ class moodle_action_icon extends labelled_html_component {
     }
 
     /**
-     * @see lib/moodle_html_component#prepare()
+     * @see lib/html_component#prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -2158,7 +2158,7 @@ class moodle_action_icon extends labelled_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class block_contents extends moodle_html_component {
+class block_contents extends html_component {
     /** @var int used to set $skipid. */
     protected static $idcounter = 1;
 
@@ -2233,7 +2233,7 @@ class block_contents extends moodle_html_component {
     public $controls = array();
 
     /**
-     * @see moodle_html_component::prepare()
+     * @see html_component::prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
@@ -2265,7 +2265,7 @@ class block_contents extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class block_move_target extends moodle_html_component {
+class block_move_target extends html_component {
     /**
      * List of hidden form fields.
      * @var array
