@@ -478,7 +478,11 @@ class page_requirements_manager {
      * @return string
      */
     protected function get_yui3lib_headcode() {
-        return $this->yui3loader->css() . $this->yui3loader->script();
+        $code = $this->yui3loader->css() . $this->yui3loader->script();
+        // unfortunately yui loader does not produce xhtml strict code, so let's fix it for now
+        $code = str_replace('&amp;', '&', $code);
+        $code = str_replace('&', '&amp;', $code);
+        return $code;
     }
 
     /**
@@ -490,10 +494,13 @@ class page_requirements_manager {
     public function get_yui2lib_code() {
         // All YUI2 CSS is loaded automatically
         if ($this->headdone) {
-            return $this->yui2loader->script_embed();
+            $code = $this->yui2loader->script_embed();
         } else {
-            return $this->yui2loader->script();
+            $code = $this->yui2loader->script();
         }
+        $code = str_replace('&amp;', '&', $code);
+        $code = str_replace('&', '&amp;', $code);
+        return $code;
     }
 
     /**
