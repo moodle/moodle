@@ -1325,7 +1325,7 @@ class generator_form extends moodleform {
     }
 }
 
-if (isset($argv) && isset($argc)) {
+if (CLI_SCRIPT) {
     $generator = new generator_cli($argv, $argc);
     $generator->generate_data();
 } elseif (strstr($_SERVER['REQUEST_URI'], 'generator.php')) {
@@ -1334,7 +1334,7 @@ if (isset($argv) && isset($argc)) {
     require_capability('moodle/site:config', $systemcontext);
 
     $PAGE->set_url($CFG->wwwroot.'/admin/generator.php');
-    $PAGE->set_pagelayout('form');
+    $PAGE->set_pagelayout('base');
     $generator = new generator_web();
     $generator->setup();
     $generator->display();
