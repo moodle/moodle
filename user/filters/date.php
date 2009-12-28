@@ -44,11 +44,6 @@ class user_filter_date extends user_filter_type {
             $mform->setAdvanced($this->_name.'_grp');
         }
 
-        if ($this->_advanced) {
-            $mform->setAdvanced($this->_name.'_grp');
-        }
-
-
         $mform->disabledIf($this->_name.'_sdt[day]', $this->_name.'_sck', 'notchecked');
         $mform->disabledIf($this->_name.'_sdt[month]', $this->_name.'_sck', 'notchecked');
         $mform->disabledIf($this->_name.'_sdt[year]', $this->_name.'_sck', 'notchecked');
