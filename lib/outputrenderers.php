@@ -170,7 +170,7 @@ class renderer_base {
      * @param html_component $component
      * @return void;
      */
-    protected function prepare_event_handlers(&$component) {
+    protected function prepare_event_handlers(html_component $component) {
         $actions = $component->get_actions();
         if (!empty($actions) && is_array($actions) && $actions[0] instanceof component_action) {
             foreach ($actions as $action) {
