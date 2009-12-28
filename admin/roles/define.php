@@ -65,7 +65,7 @@
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
     require_login();
     require_capability('moodle/role:manage', $systemcontext);
-    admin_externalpage_setup('defineroles', '', array($action, $roleid), $defineurl);
+    admin_externalpage_setup('defineroles', '', array('action' => $action, 'roleid' => $roleid), $defineurl);
 
 /// Handle the cancel button.
     if (optional_param('cancel', false, PARAM_BOOL)) {
