@@ -71,7 +71,7 @@ class renderer_base {
      * @param string $contents What goes between the opening and closing tags
      * @return string HTML fragment
      */
-    protected function output_tag($tagname, $attributes, $contents) {
+    protected function output_tag($tagname, array $attributes = null, $contents) {
         return $this->output_start_tag($tagname, $attributes) . $contents .
                 $this->output_end_tag($tagname);
     }
@@ -82,7 +82,7 @@ class renderer_base {
      * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
      * @return string HTML fragment
      */
-    protected function output_start_tag($tagname, $attributes) {
+    protected function output_start_tag($tagname, array $attributes = null) {
         return '<' . $tagname . $this->output_attributes($attributes) . '>';
     }
 
@@ -101,7 +101,7 @@ class renderer_base {
      * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
      * @return string HTML fragment
      */
-    protected function output_empty_tag($tagname, $attributes) {
+    protected function output_empty_tag($tagname, array $attributes = null) {
         return '<' . $tagname . $this->output_attributes($attributes) . ' />';
     }
 
@@ -130,10 +130,8 @@ class renderer_base {
      *       The values will be escaped with {@link s()}
      * @return string HTML fragment
      */
-    protected function output_attributes($attributes) {
-        if (empty($attributes)) {
-            $attributes = array();
-        }
+    protected function output_attributes(array $attributes = null) {
+        $attributes = (array)$attributes;
         $output = '';
         foreach ($attributes as $name => $value) {
             $output .= $this->output_attribute($name, $value);
@@ -190,7 +188,7 @@ class renderer_base {
      * @param html_component $component
      * @return string CSS rules
      */
-    protected function prepare_legacy_width_and_height($component) {
+    protected function prepare_legacy_width_and_height(html_component $component) {
         $output = '';
         if (!empty($component->height)) {
             // We need a more intelligent way to handle these warnings. If $component->height have come from
