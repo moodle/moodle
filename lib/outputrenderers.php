@@ -822,48 +822,40 @@ class core_renderer extends renderer_base {
      * Given a html_link object, outputs an <a> tag that uses the object's attributes.
      *
      * @param mixed $link A html_link object or a string URL (text param required in second case)
-     * @param string $text A descriptive text for the link. If $link is a html_link, this is not required.
+     * @param string $text A descriptive text for the link. If $link is a html_link, this is ignored.
+     * @param array $options a tag attributes and link otpions. If $link is a html_link, this is ignored.
      * @return string HTML fragment
      */
-    public function link($link, $text=null) {
+    public function link($link_or_url, $text = null, array $options = null) {
         global $CFG;
 
-        $attributes = array();
-
-        if (is_a($link, 'html_link')) {
-            $link = clone($link);
-
-            if ($link->has_action('popup_action')) {
-                return $this->link_to_popup($link);
-            }
-
-            $link->prepare($this, $this->page, $this->target);
-            $this->prepare_event_handlers($link);
-
-            // A disabled link is rendered as formatted text
-            if ($link->disabled) {
-                return $this->container($link->text, 'currentlink');
-            }
-
-            $attributes['href'] = prepare_url($link->url);
-            $attributes['class'] = $link->get_classes_string();
-            $attributes['title'] = $link->title;
-            $attributes['id'] = $link->id;
-
-            $text = $link->text;
-
-        } else if (empty($text)) {
-            throw new coding_exception('$OUTPUT->link() must have a string as second parameter if the first param ($link) is a string');
-
+        if ($link_or_url instanceof html_link) {
+            $link = clone($link_or_url);
         } else {
-            $attributes['href'] = prepare_url($link);
+            $link = new html_link($link_or_url, $text, $options);
         }
 
+        $link->prepare($this, $this->page, $this->target);
+
+        // A disabled link is rendered as formatted text
+        if ($link->disabled) {
+            return $this->container($link->text, 'currentlink');
+        }
+
+        $this->prepare_event_handlers($link);
+
+        $attributes = array('href'  => prepare_url($link->url),
+                            'class' => $link->get_classes_string(),
+                            'title' => $link->title,
+                            'style' => $link->style,
+                            'id'    => $link->id);
+
         if (!empty($CFG->frametarget)) {
+            //TODO: this seems wrong, we have to use onclick hack in order to be xhtml strict...
             $attributes['target'] = $CFG->framename;
         }
 
-        return $this->output_tag('a', $attributes, $text);
+        return $this->output_tag('a', $attributes, $link->text);
     }
 
    /**
@@ -1100,6 +1092,8 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     public function link_to_popup($link, $image=null) {
+        //TODO: decide if this should be removed completely, because link() already handles this
+        //      we could also add html_link::make_popup() factory method
         $link = clone($link);
 
         // Use image if one is given
@@ -1112,7 +1106,7 @@ class core_renderer extends renderer_base {
 
             $link->text = $this->image($image);
 
-            if (!empty($link->linktext)) {
+            if (!empty($link->linktext)) { // TODO: this is weird!
                 $link->text = "$link->title &#160; $link->text";
             }
         }

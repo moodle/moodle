@@ -1269,9 +1269,9 @@ class html_link extends html_component {
     public $url;
 
     /**
-     * @var string $text The text that will appear between the link tags
+     * @var string $text The HTML text that will appear between the link tags
      */
-    public $text;
+    public $text = '';
 
     /**
      * @var boolean $disabled Whether or not this link is disabled (will be rendered as plain text)
@@ -1284,12 +1284,37 @@ class html_link extends html_component {
     public $disableifcurrent = false;
 
     /**
+     * New link constructor.
+     *
+     * @param moodle_url|string $url url of the image
+     * @param array $options link attributes such as title, id, disabled, disableifcurrent, etc.
+     */
+    public function __construct($url = null, $text = '', array $options = null) {
+        parent::__construct($options);
+
+        if (is_null($url)) {
+            // to be filled later
+
+        } else if ($url instanceof moodle_url) {
+            $this->src = clone($url);
+
+        } else if (is_string($url)) {
+            $this->src = new moodle_url($url);
+
+        } else {
+            throw new coding_style_exception('Image can be constructed only from moodle_url or string url.');
+        }
+
+        $this->text = $text;
+    }
+
+    /**
      * @see lib/html_component#prepare() Disables the link if it links to the current page.
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
         // We can't accept an empty text value
-        if (empty($this->text)) {
+        if ($this->text === '' or is_null($this->text)) { // 0 is valid value, do not use empty()
             throw new coding_exception('A html_link must have a descriptive text value!');
         }
 
@@ -1297,9 +1322,10 @@ class html_link extends html_component {
             $this->url = new moodle_url($this->url);
         }
 
-        if ($this->url->compare($page->url, URL_MATCH_PARAMS) && $this->disableifcurrent) {
+        if ($this->disableifcurrent and $this->url->compare($page->url, URL_MATCH_PARAMS)) {
             $this->disabled = true;
         }
+
         parent::prepare($output, $page, $target);
     }
 
@@ -1310,11 +1336,7 @@ class html_link extends html_component {
      * @return html_link The link component
      */
     public static function make($url, $text) {
-        $link = new html_link();
-        $link->url = $url;
-        $link->text = $text;
-
-        return $link;
+        return new html_link($url, $text);
     }
 }
 
