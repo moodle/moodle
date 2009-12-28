@@ -185,7 +185,7 @@ if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $pe
         }
 
         if ($course->id == SITEID && has_capability('moodle/site:config', $syscontext)) {
-            $postcoursename = $DB->get_field('course', array('shortname' => 'id'), $forum->course);
+            $postcoursename = $DB->get_field('course', 'shortname', array('id'=>$forum->course));
             $fullsubject = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$forum->course.'">'.$postcoursename.'</a> -> '. $fullsubject;
         }
 
