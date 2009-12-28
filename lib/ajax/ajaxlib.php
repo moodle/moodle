@@ -26,54 +26,6 @@
 
 
 /**
- * Initialise a {@link page_requirements_manager} with the bits of JavaScript that every
- * Moodle page should have.
- *
- * @param page_requirements_manager $requires The page_requirements_manager to initialise.
- */
-function setup_core_javascript(page_requirements_manager $requires) {
-    global $CFG, $OUTPUT, $PAGE;
-
-    // JavaScript should always work with $CFG->httpswwwroot rather than $CFG->wwwroot.
-    // Otherwise, in some situations, users will get warnings about insecure content
-    // on sercure pages from their web browser.
-
-    $config = array(
-        'wwwroot' => $CFG->httpswwwroot, // Yes, really. See above.
-        'sesskey' => sesskey(),
-        'loadingicon' => $OUTPUT->pix_url('i/loading_small', 'moodle')->out_raw(),
-        'themerev' => theme_get_revision(),
-        'theme' => $PAGE->theme->name,
-    );
-    if (debugging('', DEBUG_DEVELOPER)) {
-        $config['developerdebug'] = true;
-    }
-    $requires->data_for_js('moodle_cfg', $config)->in_head();
-
-    if (debugging('', DEBUG_DEVELOPER)) {
-        $requires->yui2_lib('logger');
-    }
-
-    // YUI3 init code
-    $requires->yui3_lib(array('cssreset', 'cssbase', 'cssfonts', 'cssgrids')); // full CSS reset
-    $requires->yui3_lib('yui'); // allows autoloading of everything else
-
-
-    $requires->skip_link_to('maincontent', get_string('tocontent', 'access'));
-
-    // Note that, as a short-cut, the code
-    // $js = "document.body.className += ' jsenabled';\n";
-    // is hard-coded in {@link page_requirements_manager::get_top_of_body_code)
-    $requires->yui2_lib('container');
-    $requires->yui2_lib('connection');
-    $requires->string_for_js('confirmation', 'admin');
-    $requires->string_for_js('cancel', 'moodle');
-    $requires->string_for_js('yes', 'moodle');
-    $requires->js_function_call('init_help_icons');
-}
-
-
-/**
  * This class tracks all the things that are needed by the current page.
  *
  * Normally, the only instance of this  class you will need to work with is the
@@ -110,16 +62,19 @@ class page_requirements_manager {
     protected $headdone = false;
     protected $topofbodydone = false;
 
-    /** YUI PHPLoader instance responsible for YUI3 laoding in page head only */
-    protected $yui3loader;
-    /** YUI PHPLoader instance responsible for YUI2 laoding */
+    /** YUI PHPLoader instance responsible for YUI2 loading from PHP only */
     protected $yui2loader;
+    /** YUI PHPLoader instance responsible for YUI3 loading from PHP only */
+    protected $yui3loader;
+    /** YUI PHPLoader instance responsible for YUI3 loading from javascript */
+    protected $json_yui3loader;
 
     /**
      * Page requirements constructor.
      */
     public function __construct() {
         global $CFG;
+
         require_once("$CFG->libdir/yui/phploader/phploader/loader.php");
 
         $this->yui3loader = new YAHOO_util_Loader($CFG->yui3version);
@@ -136,18 +91,84 @@ class page_requirements_manager {
         if (!empty($CFG->useexternalyui)) {
             $this->yui3loader->base = 'http://yui.yahooapis.com/' . $CFG->yui3version . '/build/';
             $this->yui2loader->base = 'http://yui.yahooapis.com/' . $CFG->yui2version . '/build/';
+            $this->yui3loader->comboBase = 'http://yui.yahooapis.com/combo?';
+            $this->yui2loader->comboBase = 'http://yui.yahooapis.com/combo?';
         } else {
             $this->yui3loader->base = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui3version . '/build/';
             $this->yui2loader->base = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui2version . '/build/';
+            $this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php?';
+            $this->yui2loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php?';
         }
 
-        // This file helps to minimise number of http requests and implements proper caching
-        $this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php?';
-        $this->yui2loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php?';
-
-        // enable combo loader? this significantly helps with caching and performance
+        // enable combo loader? this significantly helps with caching and performance!
         $this->yui3loader->combine = !empty($CFG->yuicomboloading);
         $this->yui2loader->combine = !empty($CFG->yuicomboloading);
+
+        // set up JS loader helper object
+        $this->json_yui3loader = new stdClass();
+        $this->json_yui3loader->base      = $this->yui3loader->base;
+        $this->json_yui3loader->comboBase = $this->yui3loader->comboBase;
+        $this->json_yui3loader->combine   = $this->yui3loader->combine;
+        $this->json_yui3loader->filter    = ($this->yui3loader->filter == YUI_DEBUG) ? 'debug' : '';
+    }
+
+    /**
+     * Initialise with the bits of JavaScript that every Moodle page should have.
+     *
+     * @param moodle_page $page
+     * @param core_renderer $output
+     */
+    function setup_core_javascript(moodle_page $page, core_renderer $output) {
+        global $CFG;
+
+        // JavaScript should always work with $CFG->httpswwwroot rather than $CFG->wwwroot.
+        // Otherwise, in some situations, users will get warnings about insecure content
+        // on sercure pages from their web browser.
+
+        //TODO: problem here is we may need this in some included JS - move this somehow to the very beginning
+        //      right after the YUI loading
+        $config = array(
+            'wwwroot'             => $CFG->httpswwwroot, // Yes, really. See above.
+            'sesskey'             => sesskey(),
+            'loadingicon'         => $output->pix_url('i/loading_small', 'moodle')->out_raw(),
+            'themerev'            => theme_get_revision(),
+            'theme'               => $page->theme->name,
+            'yui2loaderBase'      => $this->yui2loader->base,
+            'yui3loaderBase'      => $this->yui3loader->base,
+            'yui2loaderComboBase' => $this->yui2loader->comboBase,
+            'yui3loaderComboBase' => $this->yui3loader->comboBase,
+            'yuicombine'          => (int)$this->yui3loader->combine,
+            'yuifilter'           => debugging('', DEBUG_DEVELOPER) ? 'debug' : '',
+
+        );
+        if (debugging('', DEBUG_DEVELOPER)) {
+            $config['developerdebug'] = true;
+        }
+        $this->data_for_js('moodle_cfg', $config)->in_head();
+
+        // note: in JavaScript use "YUI(yui3loader).use('overlay', function(Y) { .... });"
+        $this->data_for_js('yui3loader', $this->json_yui3loader)->in_head();
+
+        if (debugging('', DEBUG_DEVELOPER)) {
+            $this->yui2_lib('logger');
+        }
+
+        // YUI3 init code
+        $this->yui3_lib(array('cssreset', 'cssbase', 'cssfonts', 'cssgrids')); // full CSS reset
+        $this->yui3_lib(array('yui', 'loader')); // allows autoloading of everything else
+
+
+        $this->skip_link_to('maincontent', get_string('tocontent', 'access'));
+
+        // Note that, as a short-cut, the code
+        // $js = "document.body.className += ' jsenabled';\n";
+        // is hard-coded in {@link page_requirements_manager::get_top_of_body_code)
+        $this->yui2_lib('container');
+        $this->yui2_lib('connection');
+        $this->string_for_js('confirmation', 'admin');
+        $this->string_for_js('cancel', 'moodle');
+        $this->string_for_js('yes', 'moodle');
+        $this->js_function_call('init_help_icons');
     }
 
     /**
@@ -199,7 +220,7 @@ class page_requirements_manager {
      * of other libraries) it will only be linked to once.
      *
      * The library is leaded as soon as possible, if $OUTPUT->header() not used yet it
-     * is put into the page header, otherwise it is loaded in the page footer. 
+     * is put into the page header, otherwise it is loaded in the page footer.
      *
      * @param string|array $libname the name of the YUI2 library you require. For example 'autocomplete'.
      * @return void
@@ -511,8 +532,10 @@ class page_requirements_manager {
      *
      * @return string the HTML code to to inside the <head> tag.
      */
-    public function get_head_code() {
-        setup_core_javascript($this);
+    public function get_head_code($page, $output) {
+        // note: the $page and $output are not stored here because it would
+        // create circular references in memory which prevents garbage collection
+        $this->setup_core_javascript($page, $output);
         $output = $this->get_yui3lib_headcode();
         $output .= $this->get_yui2lib_code();
         $output .= $this->get_linked_resources_code(self::WHEN_IN_HEAD);

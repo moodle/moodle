@@ -33,6 +33,8 @@ if (!$parts = combo_params()) {
     combo_not_found();
 }
 
+$parts = trim($parts, '&');
+
 // find out what we are serving - only one type per request
 $content = '';
 if (substr($parts, -3) === '.js') {
@@ -46,6 +48,9 @@ if (substr($parts, -3) === '.js') {
 $parts = explode('&', $parts);
 
 foreach ($parts as $part) {
+    if (empty($part)) {
+        continue;
+    }
     $part = min_clean_param($part, 'SAFEPATH');
     $bits = explode('/', $part);
     if (count($bits) < 2) {
@@ -81,6 +86,7 @@ function combo_send_cached($content, $mimetype) {
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
+    header('Cache-Control: max-age=315360000');
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
     header('Content-Length: '.strlen($content));

@@ -394,7 +394,7 @@ class core_renderer extends renderer_base {
         }
 
         // Get any HTML from the page_requirements_manager.
-        $output .= $this->page->requires->get_head_code();
+        $output .= $this->page->requires->get_head_code($this->page, $this);
 
         // List alternate versions.
         foreach ($this->page->alternateversions as $type => $alt) {
