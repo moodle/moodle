@@ -209,7 +209,7 @@ class renderer_base {
      * @param array $options
      * @return void
      */
-    protected function apply_component_options(html_component $component, array $options = null) {
+    public static function apply_component_options(html_component $component, array $options = null) {
         $options = (array)$options;
         foreach ($options as $key => $value) {
             if ($key === 'class' or $key === 'classes') {
@@ -1172,21 +1172,12 @@ class core_renderer extends renderer_base {
     public function image($image_or_url, array $options = null) {
         if ($image_or_url === false) {
             return false;
+        }
 
-        } else if ($image_or_url instanceof html_image) {
+        if ($image_or_url instanceof html_image) {
             $image = clone($image_or_url);
-
         } else {
-            if ($image_or_url instanceof moodle_url) {
-                $image = new html_image();
-                $image->src = clone($image_or_url);
-            } else {
-                // must be a string
-                $image = new html_image();
-                $image->src = new moodle_url($image_or_url);
-            }
-
-            $this->apply_component_options($image, $options);
+            $image = new html_image($image_or_url, $options);
         }
 
         $image->prepare($this, $this->page, $this->target);
@@ -1247,11 +1238,8 @@ class core_renderer extends renderer_base {
         if ($user_or_userpicture instanceof user_picture) {
             // we need a clone because prepare() should not be called repeatedly
             $userpic = clone($user_or_userpicture);
-
         } else {
-            $userpic = new user_picture();
-            $userpic->user = $user_or_userpicture;
-            $this->apply_component_options($userpic, $options);
+            $userpic = new user_picture($user_or_userpicture, $options);
         }
 
         $userpic->prepare($this, $this->page, $this->target);

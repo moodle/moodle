@@ -63,6 +63,15 @@ class html_component {
     protected $actions = array();
 
     /**
+     * Compoment constructor.
+     * @param array $options image attributes such as title, id, alt, style, class
+     */
+    public function __construct(array $options = null) {
+        // not implemented in this class because we want to set only public properties of this component
+        renderer_base::apply_component_options($this, $options);
+    }
+
+    /**
      * Ensure some class names are an array.
      * @param mixed $classes either an array of class names or a space-separated
      *      string containing class names.
@@ -217,6 +226,14 @@ class labelled_html_component extends html_component {
      * @var mixed $label The label for that component. String or html_label object
      */
     public $label;
+
+    /**
+     * Compoment constructor.
+     * @param array $options image attributes such as title, id, alt, style, class
+     */
+    public function __construct(array $options = null) {
+        parent::__construct($options);
+    }
 
     /**
      * Adds a descriptive label to the component.
@@ -509,7 +526,7 @@ class html_select extends labelled_html_component {
      * @param int $step minute spacing
      * @return array Instantiated date/time selectors
      */
-    public function make_time_selectors($selectors, $currenttime=0, $step=5) {
+    public static function make_time_selectors($selectors, $currenttime=0, $step=5) {
         $selects = array();
         foreach ($selectors as $type => $name) {
             $selects[] = html_select::make_time_selector($type, $name, $currenttime, $step);
@@ -526,7 +543,7 @@ class html_select extends labelled_html_component {
      * @param string $selected The option that is initially selected
      * @return html_select A menu initialised as a popup form.
      */
-    public function make_popup_form($baseurl, $name, $options, $formid, $selected=null) {
+    public static function make_popup_form($baseurl, $name, $options, $formid, $selected=null) {
         global $CFG;
 
         $selectedurl = null;
@@ -811,7 +828,7 @@ class html_select_option extends labelled_html_component {
      * @param string $alt
      * @return html_select_option A component ready for $OUTPUT->checkbox()
      */
-    public function make_checkbox($value, $checked, $label, $alt='') {
+    public static function make_checkbox($value, $checked, $label, $alt='') {
         $checkbox = new html_select_option();
         $checkbox->value = $value;
         $checkbox->selected = $checked;
@@ -1175,7 +1192,7 @@ class html_table_row extends html_component {
      * @param array $cells
      * @return html_table_row
      */
-    public function make($cells=array()) {
+    public static function make($cells=array()) {
         $row = new html_table_row();
         foreach ($cells as $celltext) {
             if (!($celltext instanceof html_table_cell)) {
@@ -1292,7 +1309,7 @@ class html_link extends html_component {
      * @param string $text The text of the link
      * @return html_link The link component
      */
-    public function make($url, $text) {
+    public static function make($url, $text) {
         $link = new html_link();
         $link->url = $url;
         $link->text = $text;
@@ -1350,10 +1367,6 @@ class html_button extends labelled_html_component {
  */
 class html_image extends labelled_html_component {
     /**
-     * @var string $alt A descriptive text
-     */
-    public $alt = HTML_ATTR_EMPTY;
-    /**
      * @var string $src The path to the image being used
      */
     public $src;
@@ -1367,6 +1380,29 @@ class html_image extends labelled_html_component {
     public $height;
 
     /**
+     * New image constructor.
+     *
+     * @param moodle_url|string $url url of the image
+     * @param array $options image attributes such as title, id, alt, widht, height
+     */
+    public function __construct($url = null, array $options = null) {
+        parent::__construct($options);
+
+        if (is_null($url)) {
+            // to be filled later
+
+        } else if ($url instanceof moodle_url) {
+            $this->src = clone($url);
+
+        } else if (is_string($url)) {
+            $this->src = new moodle_url($url);
+
+        } else {
+            throw new coding_style_exception('Image can be constructed only from moodle_url or string url.');
+        }
+    }
+
+    /**
      * @see lib/html_component#prepare()
      * @return void
      */
@@ -1377,6 +1413,11 @@ class html_image extends labelled_html_component {
 
         // no general class here, use custom class instead or img element directly in css selectors
         parent::prepare($output, $page, $target);
+
+        if ($this->alt === '') {
+            // needs to be set for accessibility reasons
+            $this->alt = HTML_ATTR_EMPTY;
+        }
     }
 
     /**
@@ -1384,10 +1425,8 @@ class html_image extends labelled_html_component {
      *
      * @param mixed $url The URL to the image (string or moodle_url)
      */
-    public function make($url) {
-        $image = new html_image();
-        $image->src = $url;
-        return $image;
+    public static function make($url) {
+        return new html_image($url);
     }
 }
 
@@ -1512,9 +1551,12 @@ class html_form extends html_component {
         parent::prepare($output, $page, $target);
     }
 
-    public static function make_button($url, $options, $label='OK', $method='post') {
+    public static function make_button($url, $params, $label=null, $method='post') {
+        if ($label === null) {
+            $label = get_string('ok');
+        }
         $form = new html_form();
-        $form->url = new moodle_url($url, $options);
+        $form->url = new moodle_url($url, $params);
         $form->button->text = $label;
         $form->method = $method;
         return $form;
@@ -1807,7 +1849,7 @@ class moodle_paging_bar extends html_component {
      * @param mixed $baseurl If this  is a string then it is the url which will be appended with $pagevar, an equals sign and the page number.
      *                          If this is a moodle_url object then the pagevar param will be replaced by the page no, for each page.
      */
-    public function make($totalcount, $page, $perpage, $baseurl) {
+    public static function make($totalcount, $page, $perpage, $baseurl) {
         $pagingbar = new moodle_paging_bar();
         $pagingbar->totalcount = $totalcount;
         $pagingbar->page = $page;
@@ -1857,6 +1899,20 @@ class user_picture extends html_image {
      * @var link to profile if link requested
      */
     public $url;
+
+    /**
+     * User picture constructor.
+     *
+     * @param object $user user record with at least id, picture, imagealt, firstname and lastname set.
+     * @param array $options such as link, size, link, ...
+     */
+    public function __construct(stdClass $user = null, array $options = null) {
+        parent::__construct(null, $options);
+
+        if ($user) {
+            $this->user = $user;
+        }
+    }
 
     /**
      * @see lib/html_component#prepare()
