@@ -818,16 +818,28 @@ class moodle_page {
      */
     public function set_url($url, $params = array()) {
         global $CFG;
+
         if ($url instanceof moodle_url) {
-            $shorturl = str_replace($CFG->wwwroot . '/', '', $url->out(true));
-            $this->_url = clone($url);
             if (!empty($params)) {
                 throw new coding_exception('Cannot pass params together with moodle_url to moodle_page::set_url().');
             }
-        } else {
-            $shorturl = $url;
-            $this->_url = new moodle_url($CFG->wwwroot . '/' . $url, $params);
+            $this->_url = clone($url);
+
+        } else if (is_string($url)) {
+            if (strpos($url, 'http') === 0) {
+                $this->_url = new moodle_url($url, $params);
+            } else {
+                // we have to use httpswwwroot here, because of loginhttps pages
+                $this->_url = new moodle_url($CFG->httpswwwroot . '/' . $url, $params);
+            }
         }
+
+        $fullurl = $this->_url->out(true);
+        if (strpos($fullurl, "$CFG->httpswwwroot/") !== 0) {
+            debugging('Most probably incorrect set_page() url argument, it does not match the httpswwwroot!');
+        }
+        $shorturl = str_replace("$CFG->httpswwwroot/", '', $fullurl);
+
         if (is_null($this->_pagetype)) {
             $this->initialise_default_pagetype($shorturl);
         }
