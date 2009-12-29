@@ -97,6 +97,7 @@ $THEME->layouts = array(
         'file' => 'normal.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
+        'options' => array('langmenu'=>true),
     ),
     'coursecategory' => array(
         'theme' => 'base',
@@ -131,6 +132,7 @@ $THEME->layouts = array(
         'file' => 'normal.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
+        'options' => array('langmenu'=>true),
     ),
     // My public page
     'mypublic' => array(
@@ -143,6 +145,7 @@ $THEME->layouts = array(
         'theme' => 'standard',
         'file' => 'normal.php',
         'regions' => array(),
+        'options' => array('langmenu'=>true),
     ),
     
     // Pages that appear in pop-up windows - no navigation, no blocks, no header.

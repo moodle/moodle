@@ -38,7 +38,6 @@
     $PAGE->set_heading('Course info');
     $PAGE->set_course($course);
     $PAGE->navbar->add(get_string('summary'));
-    $PAGE->set_headingmenu(user_login_string());
 
     echo $OUTPUT->header();
     echo $OUTPUT->heading('<a href="view.php?id='.$course->id.'">'.format_string($course->fullname) . '</a><br />(' . format_string($course->shortname) . ')');

@@ -69,18 +69,6 @@
     $PAGE->set_pagetype('site-index');
     $PAGE->set_course($SITE);
 
-    if (empty($CFG->langmenu)) {
-        $langmenu = '';
-    } else {
-        $currlang = current_language();
-        $langs = get_list_of_languages();
-
-        $select = html_select::make_popup_form($CFG->wwwroot .'/index.php', 'lang', $langs, 'chooselang', $currlang);
-        $select->nothinglabel = false;
-        $select->set_label(get_accesshide(get_string('language')));
-        //TODO: MDL-21123
-        $langmenu = '<div class="langmenu">'.$OUTPUT->select($select).'</div>';
-    }
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
     $PAGE->set_url('');
     $PAGE->set_docs_path('');
@@ -88,8 +76,7 @@
     $editing = $PAGE->user_is_editing();
     $PAGE->set_title($SITE->fullname);
     $PAGE->set_heading($SITE->fullname);
-    $PAGE->set_headingmenu($langmenu);
-    echo $OUTPUT->header($langmenu);
+    echo $OUTPUT->header();
 
 /// Print Section
     if ($SITE->numsections > 0) {

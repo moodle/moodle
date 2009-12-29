@@ -68,7 +68,6 @@ $PAGE->navbar->add($strpreferences, new moodle_url($CFG->wwwroot.'/calendar/view
 
 $PAGE->set_title("$site->shortname: $strcalendar: $strpreferences");
 $PAGE->set_heading($strcalendar);
-$PAGE->set_headingmenu(user_login_string($site));
 
 echo $OUTPUT->header();
 

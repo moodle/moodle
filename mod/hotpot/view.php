@@ -48,12 +48,10 @@
     $heading = $course->fullname;
 
     $button = '<div style="font-size:0.75em;">'.$button.'</div>';
-    $loggedinas = '<span class="logininfo">'.user_login_string($course, $USER).'</span>';
 
     $PAGE->set_title($title);
     $PAGE->set_heading($heading);
     $PAGE->set_button($button);
-    $PAGE->set_headingmenu($loggedinas);
 
     $time = time();
     $hppassword = optional_param('hppassword', '', PARAM_RAW);

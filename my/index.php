@@ -44,23 +44,10 @@
 
     $header = $SITE->shortname . ': ' . $strmymoodle;
     $PAGE->navbar->add($strmymoodle);
-    $loggedinas = user_login_string();
-
-    if (empty($CFG->langmenu)) {
-        $langmenu = '';
-    } else {
-        $currlang = current_language();
-        $langs = get_list_of_languages();
-        $select = html_select::make_popup_form($CFG->wwwroot .'/my/index.php', 'lang', $langs, 'chooselang', $currlang);
-        $select->nothinglabel = false;
-        $select->set_label(get_accesshide(get_string('language')));
-        $langmenu = $OUTPUT->select($select);
-    }
 
     $PAGE->set_title($strmymoodle);
     $PAGE->set_heading($header);
     $PAGE->set_button($button);
-    $PAGE->set_headingmenu($loggedinas . $langmenu);
     echo $OUTPUT->header();
 
 /// The main overview in the middle of the page

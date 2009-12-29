@@ -2170,6 +2170,23 @@ function print_footer($course = NULL, $usercourse = NULL, $return = false) {
 }
 
 /**
+ * Returns text to be displayed to the user which reflects their login status
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_COURSE
+ * @param course $course {@link $COURSE} object containing course information
+ * @param user $user {@link $USER} object containing user information
+ * @return string HTML
+ */
+function user_login_string($course='ignored', $user='ignored') {
+    debugging('user_login_info() has been deprecated. User login info is now handled via themes layouts.');
+    return '';
+}
+
+/**
  * Prints a nice side block with an optional header.  The content can either
  * be a block of HTML or a list of text with optional icons.
  *

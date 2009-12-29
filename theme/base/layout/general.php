@@ -23,7 +23,13 @@ echo $OUTPUT->doctype() ?>
 <?php if ($PAGE->heading) { ?>
     <div id="header" class="clearfix">
         <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
-        <div class="headermenu"><?php echo $PAGE->headingmenu ?></div>
+        <div class="headermenu"><?php
+            echo $OUTPUT->login_info();
+            if (!empty($PAGE->layout_options['langmenu'])) {
+                echo $OUTPUT->lang_menu();
+            }
+            echo $PAGE->headingmenu
+         ?></div>
     </div>
 <?php } ?>
 

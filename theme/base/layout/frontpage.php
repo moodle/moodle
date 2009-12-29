@@ -24,11 +24,9 @@ echo $OUTPUT->doctype() ?>
     <div id="header-home" class="clearfix">
         <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
         <div class="headermenu"><?php
-        if ($PAGE->headingmenu) {
-            echo $PAGE->headingmenu;
-        } else {
             echo $OUTPUT->login_info();
-        }
+            echo $OUTPUT->lang_menu();
+            echo $PAGE->headingmenu;
         ?></div>
     </div>
 <!-- END OF HEADER -->

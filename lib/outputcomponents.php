@@ -556,10 +556,6 @@ class html_select extends labelled_html_component {
             $selectedurl = $baseurl->out(false, array($name => $selected), false);
         }
 
-        if (!($baseurl instanceof moodle_url)) {
-            $baseurl = new moodle_url($baseurl);
-        }
-
         // Replace real value by formatted URLs
         foreach ($options as $value => $label) {
             $options[$baseurl->out(false, array($name => $value), false)] = $label;

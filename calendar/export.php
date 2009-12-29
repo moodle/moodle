@@ -133,7 +133,6 @@ $PAGE->navbar->add($pagetitle);
 
 $PAGE->set_title($site->shortname.': '.$strcalendar.': '.$pagetitle);
 $PAGE->set_heading($strcalendar);
-$PAGE->set_headingmenu(user_login_string($site));
 $PAGE->set_button($prefsbutton);
 $PAGE->set_focuscontrol('eventform.name');
 

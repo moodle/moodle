@@ -198,8 +198,6 @@
     $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
     $PAGE->set_heading($course->fullname);
     $PAGE->set_button($buttons);
-    //TODO: MDL-21123 this should be done in course page layout, not here with this ugly hack!
-    //$PAGE->set_headingmenu(user_login_string($course, $USER));
     echo $OUTPUT->header();
 
     if ($completion->is_enabled() && ajaxenabled()) {

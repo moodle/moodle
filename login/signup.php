@@ -69,23 +69,12 @@ if ($mform_signup->is_cancelled()) {
 $newaccount = get_string('newaccount');
 $login      = get_string('login');
 
-if (empty($CFG->langmenu)) {
-    $langmenu = '';
-} else {
-    $currlang = current_language();
-    $langs    = get_list_of_languages();
-    $select = html_select::make_popup_form("$CFG->wwwroot/login/signup.php", 'lang', $langs, 'chooselang', $currlang);
-    $select->nothinglabel = false;
-    $langmenu = $OUTPUT->select($select);
-}
-
 $PAGE->navbar->add($login);
 $PAGE->navbar->add($newaccount);
 $PAGE->set_url(new moodle_url($CFG->wwwroot.'/login/signup.php'));
 $PAGE->set_title($newaccount);
 $PAGE->set_heading($newaccount);
 $PAGE->set_focuscontrol($mform_signup->focus());
-$PAGE->set_headingmenu("<div class=\"langmenu\">$langmenu</div>");
 
 echo $OUTPUT->header();
 $mform_signup->display();

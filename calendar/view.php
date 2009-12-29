@@ -152,7 +152,6 @@ $prefsbutton = calendar_preferences_button();
 // Print title and header
 $PAGE->set_title("$site->shortname: $strcalendar: $pagetitle");
 $PAGE->set_heading($strcalendar);
-$PAGE->set_headingmenu(user_login_string($site));
 $PAGE->set_button($prefsbutton);
 
 $PAGE->requires->yui2_lib('animation');

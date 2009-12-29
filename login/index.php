@@ -61,19 +61,9 @@ httpsrequired();
 
 $PAGE->set_url("$CFG->httpswwwroot/login/index.php");
 
+
 /// Define variables used in page
 $site = get_site();
-
-if (empty($CFG->langmenu)) {
-    $langmenu = "";
-} else {
-    $currlang = current_language();
-    $langs    = get_list_of_languages();
-    $select = html_select::make_popup_form("$CFG->httpswwwroot/login/index.php", 'lang', $langs, 'chooselang', $currlang);
-    $select->nothinglabel = false;
-    $select->set_label(get_accesshide(get_string('language')));
-    $langmenu = $OUTPUT->select($select);
-}
 
 $loginsite = get_string("loginsite");
 $PAGE->navbar->add($loginsite);
@@ -221,7 +211,6 @@ if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    /
             $days2expire = $userauth->password_expire($USER->username);
             $PAGE->set_title("$site->fullname: $loginsite");
             $PAGE->set_heading("$site->fullname");
-            $PAGE->set_headingmenu("<div class=\"langmenu\">$langmenu</div>");
             if (intval($days2expire) > 0 && intval($days2expire) < intval($userauth->config->expiration_warning)) {
                 echo $OUTPUT->header();
                 echo $OUTPUT->confirm(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo);
@@ -325,7 +314,6 @@ if (!empty($CFG->registerauth) or is_enabled_auth('none') or !empty($CFG->auth_i
 
 $PAGE->set_title("$site->fullname: $loginsite");
 $PAGE->set_heading("$site->fullname");
-$PAGE->set_headingmenu("<div class=\"langmenu\">$langmenu</div>");
 $PAGE->set_focuscontrol($focus);
 
 echo $OUTPUT->header();

@@ -498,6 +498,7 @@ class moodle_url {
         $uri .= $this->host ? $this->host : '';
         $uri .= $this->port ? ':'.$this->port : '';
         $uri .= $this->path ? $this->path : '';
+
         if (!$omitquerystring) {
             $querystring = $this->get_query_string($overrideparams, $escaped);
             if ($querystring) {
@@ -1904,101 +1905,6 @@ function send_headers($contenttype, $cacheable = true) {
         @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
     }
     @header('Accept-Ranges: none');
-}
-
-/**
- * Returns text to be displayed to the user which reflects their login status
- *
- * @global object
- * @global object
- * @global object
- * @global object
- * @uses CONTEXT_COURSE
- * @param course $course {@link $COURSE} object containing course information
- * @param user $user {@link $USER} object containing user information
- * @return string HTML
- */
-function user_login_string($course=NULL, $user=NULL) {
-    global $USER, $CFG, $SITE, $DB;
-
-    if (during_initial_install()) {
-        return '';
-    }
-
-    if (empty($user) and !empty($USER->id)) {
-        $user = $USER;
-    }
-
-    if (empty($course)) {
-        $course = $SITE;
-    }
-
-    if (session_is_loggedinas()) {
-        $realuser = session_get_realuser();
-        $fullname = fullname($realuser, true);
-        $realuserinfo = " [<a $CFG->frametarget
-        href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;return=1&amp;sesskey=".sesskey()."\">$fullname</a>] ";
-    } else {
-        $realuserinfo = '';
-    }
-
-    $loginurl = get_login_url();
-
-    if (empty($course->id)) {
-        // $course->id is not defined during installation
-        return '';
-    } else if (!empty($user->id)) {
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
-
-        $fullname = fullname($user, true);
-        $username = "<a $CFG->frametarget href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
-        if (is_mnet_remote_user($user) and $idprovider = $DB->get_record('mnet_host', array('id'=>$user->mnethostid))) {
-            $username .= " from <a $CFG->frametarget href=\"{$idprovider->wwwroot}\">{$idprovider->name}</a>";
-        }
-        if (isset($user->username) && $user->username == 'guest') {
-            $loggedinas = $realuserinfo.get_string('loggedinasguest').
-                      " (<a $CFG->frametarget href=\"$loginurl\">".get_string('login').'</a>)';
-        } else if (!empty($user->access['rsw'][$context->path])) {
-            $rolename = '';
-            if ($role = $DB->get_record('role', array('id'=>$user->access['rsw'][$context->path]))) {
-                $rolename = ': '.format_string($role->name);
-            }
-            $loggedinas = get_string('loggedinas', 'moodle', $username).$rolename.
-                      " (<a $CFG->frametarget
-                      href=\"$CFG->wwwroot/course/view.php?id=$course->id&amp;switchrole=0&amp;sesskey=".sesskey()."\">".get_string('switchrolereturn').'</a>)';
-        } else {
-            $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username).' '.
-                      " (<a $CFG->frametarget href=\"$CFG->wwwroot/login/logout.php?sesskey=".sesskey()."\">".get_string('logout').'</a>)';
-        }
-    } else {
-        $loggedinas = get_string('loggedinnot', 'moodle').
-                      " (<a $CFG->frametarget href=\"$loginurl\">".get_string('login').'</a>)';
-    }
-
-    $loggedinas = '<div class="logininfo">'.$loggedinas.'</div>';
-
-    if (isset($SESSION->justloggedin)) {
-        unset($SESSION->justloggedin);
-        if (!empty($CFG->displayloginfailures)) {
-            if (!empty($USER->username) and $USER->username != 'guest') {
-                if ($count = count_login_failures($CFG->displayloginfailures, $USER->username, $USER->lastlogin)) {
-                    $loggedinas .= '&nbsp;<div class="loginfailures">';
-                    if (empty($count->accounts)) {
-                        $loggedinas .= get_string('failedloginattempts', '', $count);
-                    } else {
-                        $loggedinas .= get_string('failedloginattemptsall', '', $count);
-                    }
-                    if (has_capability('coursereport/log:view', get_context_instance(CONTEXT_SYSTEM))) {
-                        $loggedinas .= ' (<a href="'.$CFG->wwwroot.'/course/report/log/index.php'.
-                                             '?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
-                    }
-                    $loggedinas .= '</div>';
-                }
-            }
-        }
-    }
-
-    return $loggedinas;
 }
 
 /**

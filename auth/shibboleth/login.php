@@ -21,17 +21,6 @@ httpsrequired();
 /// Define variables used in page
     $site = get_site();
 
-    if (empty($CFG->langmenu)) {
-        $langmenu = "";
-    } else {
-        $currlang = current_language();
-        $langs    = get_list_of_languages();
-        $select = html_select::make_popup_form("$CFG->httpswwwroot/login/index.php", 'lang', $langs, 'chooselang', $currlang);
-        $select->nothinglabel = false;
-        $select->set_label(get_accesshide(get_string('language')));
-        $langmenu = '<div class="langmenu">'.$OUTPUT->select($select).'</div>';
-    }
-
     $loginsite = get_string("loginsite");
 
     $loginurl = (!empty($CFG->alternateloginurl)) ? $CFG->alternateloginurl : '';
@@ -82,7 +71,6 @@ httpsrequired();
     $PAGE->set_title("$site->fullname: $loginsite");
     $PAGE->set_heading($site->fullname);
     $PAGE->set_focuscontrol('idp');
-    $PAGE->set_headingmenu($langmenu);
 
     echo $OUTPUT->header();
     include("index_form.html");

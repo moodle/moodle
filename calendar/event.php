@@ -207,7 +207,6 @@ $PAGE->navbar->add($strcalendar, $link);
 $PAGE->navbar->add($title);
 $PAGE->set_title($site->shortname.': '.$strcalendar.': '.$title);
 $PAGE->set_heading($strcalendar);
-$PAGE->set_headingmenu(user_login_string($site));
 
 echo $OUTPUT->header();
 

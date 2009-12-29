@@ -458,8 +458,80 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment.
      */
     public function login_info() {
-        global $USER;
-        return user_login_string($this->page->course, $USER);
+        global $USER, $CFG, $DB;
+    
+        if (during_initial_install()) {
+            return '';
+        }
+    
+        $course = $this->page->course;
+    
+        if (session_is_loggedinas()) {
+            $realuser = session_get_realuser();
+            $fullname = fullname($realuser, true);
+            $realuserinfo = " [<a $CFG->frametarget
+            href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;return=1&amp;sesskey=".sesskey()."\">$fullname</a>] ";
+        } else {
+            $realuserinfo = '';
+        }
+    
+        $loginurl = get_login_url();
+    
+        if (empty($course->id)) {
+            // $course->id is not defined during installation
+            return '';
+        } else if (!empty($USER->id)) {
+            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    
+            $fullname = fullname($USER, true);
+            $username = "<a $CFG->frametarget href=\"$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id\">$fullname</a>";
+            if (is_mnet_remote_user($USER) and $idprovider = $DB->get_record('mnet_host', array('id'=>$USER->mnethostid))) {
+                $username .= " from <a $CFG->frametarget href=\"{$idprovider->wwwroot}\">{$idprovider->name}</a>";
+            }
+            if (isset($USER->username) && $USER->username == 'guest') {
+                $loggedinas = $realuserinfo.get_string('loggedinasguest').
+                          " (<a $CFG->frametarget href=\"$loginurl\">".get_string('login').'</a>)';
+            } else if (!empty($USER->access['rsw'][$context->path])) {
+                $rolename = '';
+                if ($role = $DB->get_record('role', array('id'=>$USER->access['rsw'][$context->path]))) {
+                    $rolename = ': '.format_string($role->name);
+                }
+                $loggedinas = get_string('loggedinas', 'moodle', $username).$rolename.
+                          " (<a $CFG->frametarget
+                          href=\"$CFG->wwwroot/course/view.php?id=$course->id&amp;switchrole=0&amp;sesskey=".sesskey()."\">".get_string('switchrolereturn').'</a>)';
+            } else {
+                $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username).' '.
+                          " (<a $CFG->frametarget href=\"$CFG->wwwroot/login/logout.php?sesskey=".sesskey()."\">".get_string('logout').'</a>)';
+            }
+        } else {
+            $loggedinas = get_string('loggedinnot', 'moodle').
+                          " (<a $CFG->frametarget href=\"$loginurl\">".get_string('login').'</a>)';
+        }
+    
+        $loggedinas = '<div class="logininfo">'.$loggedinas.'</div>';
+    
+        if (isset($SESSION->justloggedin)) {
+            unset($SESSION->justloggedin);
+            if (!empty($CFG->displayloginfailures)) {
+                if (!empty($USER->username) and $USER->username != 'guest') {
+                    if ($count = count_login_failures($CFG->displayloginfailures, $USER->username, $USER->lastlogin)) {
+                        $loggedinas .= '&nbsp;<div class="loginfailures">';
+                        if (empty($count->accounts)) {
+                            $loggedinas .= get_string('failedloginattempts', '', $count);
+                        } else {
+                            $loggedinas .= get_string('failedloginattemptsall', '', $count);
+                        }
+                        if (has_capability('coursereport/log:view', get_context_instance(CONTEXT_SYSTEM))) {
+                            $loggedinas .= ' (<a href="'.$CFG->wwwroot.'/course/report/log/index.php'.
+                                                 '?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
+                        }
+                        $loggedinas .= '</div>';
+                    }
+                }
+            }
+        }
+    
+        return $loggedinas;
     }
 
     /**
@@ -666,6 +738,35 @@ class core_renderer extends renderer_base {
      */
     public function container_end_all($shouldbenone = false) {
         return $this->opencontainers->pop_all_but_last($shouldbenone);
+    }
+
+    /**
+     * Returns lang menu or '', this method also checks forcing of languages in courses.
+     * @return string
+     */
+    public function lang_menu() {
+        global $CFG;
+
+        if (empty($CFG->langmenu)) {
+            return '';
+        }
+
+        if ($this->page->course != SITEID and !empty($this->page->course->lang)) {
+            // do not show lang menu if language forced
+            return '';
+        }
+
+        $currlang = current_language();
+        $langs = get_list_of_languages();
+        
+        if (count($langs) < 2) {
+            return '';
+        }
+
+        $select = html_select::make_popup_form($this->page->url, 'lang', $langs, 'chooselang', $currlang);
+        $select->nothinglabel = false;
+        $select->set_label(get_accesshide(get_string('language')));
+        return '<div class="langmenu">'.$this->select($select).'</div>';
     }
 
     /**
@@ -1028,7 +1129,7 @@ class core_renderer extends renderer_base {
      * @param moodle_action_icon $icon A moodle_action_icon object
      * @return string HTML fragment
      */
-    public function action_icon($icon) {
+    public function action_icon(moodle_action_icon $icon) {
         $icon = clone($icon);
         $icon->prepare($this, $this->page, $this->target);
         $imageoutput = $this->image($icon->image);
