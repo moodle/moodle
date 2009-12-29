@@ -146,7 +146,7 @@ class block_settings_navigation_tree extends block_tree {
             $reloadicon->link->url = $url;
             $reloadicon->link->add_class('customcommand');
             $reloadicon->image->src = $OUTPUT->pix_url('t/reload');
-            $reloadicon->alt = get_string('reload');
+            $reloadicon->image->alt = get_string('reload');
             $reloadicon->title = get_string('reload');
 
             $this->content->footer .= $OUTPUT->action_icon($reloadicon);
