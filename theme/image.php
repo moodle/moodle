@@ -121,24 +121,25 @@ if ($rev > -1) {
 // parameters to get the best performance.
 
 function send_cached_image($imagepath, $rev) {
-    $lifetime = 60*60*24*3; // 3 days
+    $lifetime = 60*60*24*30; // 30 days
     $pathinfo = pathinfo($imagepath);
     $imagename = $pathinfo['filename'].'.'.$pathinfo['extension'];
 
     switch($pathinfo['extension']) {
-        case 'gif' : $mimetype = 'image/gif'; break;
-        case 'png' : $mimetype = 'image/png'; break;
-        case 'jpg' : $mimetype = 'image/jpeg'; break;
+        case 'gif'  : $mimetype = 'image/gif'; break;
+        case 'png'  : $mimetype = 'image/png'; break;
+        case 'jpg'  : $mimetype = 'image/jpeg'; break;
         case 'jpeg' : $mimetype = 'image/jpeg'; break;
-        case 'ico' : $mimetype = 'image/vnd.microsoft.icon'; break;
+        case 'ico'  : $mimetype = 'image/vnd.microsoft.icon'; break;
         default: $mimetype = 'document/unknown';
     }
 
     header('Etag: '.md5("$rev/$imagepath"));
     header('Content-Disposition: inline; filename="'.$imagename.'"');
-    header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($imagepath)) .' GMT');
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
+    header('Cache-Control: max-age='.$lifetime);
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
     header('Content-Length: '.filesize($imagepath));
@@ -153,17 +154,17 @@ function send_uncached_image($imagepath) {
     $imagename = $pathinfo['filename'].'.'.$pathinfo['extension'];
 
     switch($pathinfo['extension']) {
-        case 'gif' : $mimetype = 'image/gif'; break;
-        case 'png' : $mimetype = 'image/png'; break;
-        case 'jpg' : $mimetype = 'image/jpeg'; break;
+        case 'gif'  : $mimetype = 'image/gif'; break;
+        case 'png'  : $mimetype = 'image/png'; break;
+        case 'jpg'  : $mimetype = 'image/jpeg'; break;
         case 'jpeg' : $mimetype = 'image/jpeg'; break;
-        case 'ico' : $mimetype = 'image/vnd.microsoft.icon'; break;
+        case 'ico'  : $mimetype = 'image/vnd.microsoft.icon'; break;
         default: $mimetype = 'document/unknown';
     }
 
     header('Content-Disposition: inline; filename="'.$imagename.'"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
-    header('Expires: '. gmdate('D, d M Y H:i:s', time() + 2) .' GMT');
+    header('Expires: '. gmdate('D, d M Y H:i:s', time() + 15) .' GMT');
     header('Pragma: ');
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
