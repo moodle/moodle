@@ -59,7 +59,7 @@ foreach ($parts as $part) {
     }
     $version = $bits[0];
     if ($version != $CFG->yui3version and $version != $CFG->yui2version) {
-        $content .= "\n// Wrong combo version $part!\n";
+        $content .= "\n// Wrong yui version $part!\n";
         continue;
     }
     $contentfile = "$CFG->libdir/yui/$part";
