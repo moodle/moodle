@@ -32,11 +32,11 @@ class user_filter_date extends user_filter_type {
 
         $objs[] =& $mform->createElement('checkbox', $this->_name.'_sck', null, get_string('isafter', 'filters'));
         $objs[] =& $mform->createElement('date_selector', $this->_name.'_sdt', null);
-        $objs[] =& $mform->createElement('static', $this->_name.'_break', null, '<br>');
+        $objs[] =& $mform->createElement('static', $this->_name.'_break', null, '<br/>');
         $objs[] =& $mform->createElement('checkbox', $this->_name.'_eck', null, get_string('isbefore', 'filters'));
         $objs[] =& $mform->createElement('date_selector', $this->_name.'_edt', null);
         $objs[] = & $mform->createElement('checkbox', $this->_name.'_never', null, get_string('includenever', 'filters'));
-        
+
         $grp =& $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
         $grp->setHelpButton(array('date',$this->_label,'filters'));
 
@@ -86,7 +86,7 @@ class user_filter_date extends user_filter_type {
         } else {
             $data['never'] = 0;
         }
-        
+
         return $data;
     }
 
@@ -139,13 +139,13 @@ class user_filter_date extends user_filter_type {
         $a->label  = $this->_label;
         $a->after  = userdate($after);
         $a->before = userdate($before);
-        
+
         if ($never) {
             $strnever = ' ('.get_string('includenever', 'filters').')';
         } else {
             $strnever = '';
         }
-        
+
         if ($after and $before) {
             return get_string('datelabelisbetween', 'filters', $a).$strnever;
 
