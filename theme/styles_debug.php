@@ -32,6 +32,10 @@ $type      = min_optional_param('type', 'all', 'SAFEDIR');
 $subtype   = min_optional_param('subtype', '', 'SAFEDIR');
 $sheet     = min_optional_param('sheet', '', 'SAFEDIR');
 
+if (!defined('THEME_DESIGNER_CACHE_LIFETIME')) {
+    define('THEME_DESIGNER_CACHE_LIFETIME', 4); // this can be also set in config.php
+}
+
 if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
     // exists
 } else if (!empty($CFG->themedir) and file_exists("$CFG->themedir/$themename/config.php")) {
@@ -77,7 +81,7 @@ css_not_found();
 // we are not using filelib because we need to fine tune all header
 // parameters to get the best performance.
 
-function send_uncached_css($css, $lifetime = 2) {
+function send_uncached_css($css, $lifetime = THEME_DESIGNER_CACHE_LIFETIME) {
     header('Content-Disposition: inline; filename="styles_debug.php"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');

@@ -590,13 +590,16 @@ class theme_config {
             // find out the current CSS and cache it now for 5 seconds
             // the point is to construct the CSS only once and pass it through the
             // dataroot to the script that actually serves the sheets
+            if (!defined('THEME_DESIGNER_CACHE_LIFETIME')) {
+                define('THEME_DESIGNER_CACHE_LIFETIME', 4); // this can be also set in config.php
+            }
             $candidatesheet = "$CFG->dataroot/cache/theme/$this->name/designer.ser";
             if (!file_exists($candidatesheet)) {
                 $css = $this->css_content();
                 check_dir_exists(dirname($candidatesheet), true, true);
                 file_put_contents($candidatesheet, serialize($css));
 
-            } else if (filemtime($candidatesheet) > time() - 5) {
+            } else if (filemtime($candidatesheet) > time() - THEME_DESIGNER_CACHE_LIFETIME) {
                 if ($css = file_get_contents($candidatesheet)) {
                     $css = unserialize($css);
                 } else {
