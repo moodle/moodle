@@ -499,7 +499,7 @@ class theme_config {
     public function renderer_prefixes() {
         global $CFG; // just in case the included files need it
 
-        $prefixes = array();
+        $prefixes = array('theme_'.$this->name);
 
         foreach ($this->parent_configs as $parent) {
             $prefixes[] = 'theme_'.$parent->name;
