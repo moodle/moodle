@@ -54,15 +54,18 @@ foreach ($parts as $part) {
     $part = min_clean_param($part, 'SAFEPATH');
     $bits = explode('/', $part);
     if (count($bits) < 2) {
-        combo_not_found();
+        $content .= "\n// Wrong combo resource $part!\n";
+        continue;
     }
     $version = $bits[0];
     if ($version != $CFG->yui3version and $version != $CFG->yui2version) {
-        combo_not_found();
+        $content .= "\n// Wrong combo version $part!\n";
+        continue;
     }
     $contentfile = "$CFG->libdir/yui/$part";
     if (!file_exists($contentfile) or !is_file($contentfile)) {
-        combo_not_found();
+        $content .= "\n// Combo resource $part not found!\n";
+        continue;
     }
     $filecontent = file_get_contents($contentfile);
 
