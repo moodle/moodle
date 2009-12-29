@@ -587,8 +587,29 @@ class theme_config {
             return array(new moodle_url($CFG->httpswwwroot.'/theme/styles.php', $params));
 
         } else {
-            // this is painfully slow, but it should not matter much ;-)
-            $css = $this->css_content();
+            // find out the current CSS and cache it now for 5 seconds
+            // the point is to construct the CSS only once and pass it through the
+            // dataroot to the script that actually serves the sheets
+            $candidatesheet = "$CFG->dataroot/cache/theme/$this->name/designer.ser";
+            if (!file_exists($candidatesheet)) {
+                $css = $this->css_content();
+                check_dir_exists(dirname($candidatesheet), true, true);
+                file_put_contents($candidatesheet, serialize($css));
+
+            } else if (filemtime($candidatesheet) > time() - 5) {
+                if ($css = file_get_contents($candidatesheet)) {
+                    $css = unserialize($css);
+                } else {
+                    unlink($candidatesheet);
+                    $css = $this->css_content();
+                }
+
+            } else {
+                unlink($candidatesheet);
+                $css = $this->css_content();
+                file_put_contents($candidatesheet, serialize($css));
+            }
+
             $url = $CFG->httpswwwroot.'/theme/styles_debug.php';
             $urls = array();
             $urls[] = new moodle_url($url, array('theme'=>$this->name,'type'=>'yui2'));

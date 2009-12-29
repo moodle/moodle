@@ -24,15 +24,13 @@
  */
 
 
-// no chaching
-define('NO_MOODLE_COOKIES', true); // Session not used here
-define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check
-require('../config.php');
+define('ABORT_AFTER_CONFIG', true);
+require('../config.php'); // this stops immediately at the beginning of lib/setup.php
 
-$themename = required_param('theme', PARAM_SAFEDIR);
-$type      = required_param('type', PARAM_SAFEDIR);
-$subtype   = optional_param('subtype', '', PARAM_SAFEDIR);
-$sheet     = optional_param('sheet', '', PARAM_SAFEDIR);
+$themename = min_optional_param('theme', 'standard', 'SAFEDIR');
+$type      = min_optional_param('type', 'all', 'SAFEDIR');
+$subtype   = min_optional_param('subtype', '', 'SAFEDIR');
+$sheet     = min_optional_param('sheet', '', 'SAFEDIR');
 
 if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
     // exists
@@ -42,19 +40,17 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
     css_not_found();
 }
 
-if (theme_get_revision() > -1) {
-    //bad luck - this should not happen!
+$candidatesheet = "$CFG->dataroot/cache/theme/$themename/designer.ser";
+
+if (!file_exists($candidatesheet)) {
     css_not_found();
 }
 
-$theme = theme_config::load($themename);
-
-if ($type === 'editor') {
-    $css = $theme->editor_css_content();
-    send_uncached_css($css);
+if (!$css = file_get_contents($candidatesheet)) {
+    css_not_found();
 }
 
-$css = $theme->css_content();
+$css = unserialize($css);
 
 if ($type === 'yui2') {
     send_uncached_css(reset($css['yui2']));
@@ -66,7 +62,7 @@ if ($type === 'yui2') {
 
 } else if ($type === 'parent') {
     if (isset($css['parents'][$subtype][$sheet])) {
-        send_uncached_css($css['parents'][$subtype][$sheet]);
+        send_uncached_css($css['parents'][$subtype][$sheet], 30); // parent sheets are not supposed to change much, right?
     }
 
 } else if ($type === 'theme') {
@@ -81,10 +77,10 @@ css_not_found();
 // we are not using filelib because we need to fine tune all header
 // parameters to get the best performance.
 
-function send_uncached_css($css) {
+function send_uncached_css($css, $lifetime = 2) {
     header('Content-Disposition: inline; filename="styles_debug.php"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
-    header('Expires: '. gmdate('D, d M Y H:i:s', time() + 2) .' GMT');
+    header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
     header('Accept-Ranges: none');
     header('Content-Type: text/css');
