@@ -625,7 +625,7 @@ class theme_config {
                 }
             }
             foreach ($css['theme'] as $sheet=>$unused) {
-                $urls[] = new moodle_url($url, array('theme'=>$this->name,'type'=>'theme', 'sheet'=>$sheet));
+                $urls[] = new moodle_url($url, array('sheet'=>$sheet, 'theme'=>$this->name, 'type'=>'theme')); // sheet first in order to make long urls easier to read
             }
             return $urls;
         }
