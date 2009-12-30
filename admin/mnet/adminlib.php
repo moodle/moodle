@@ -64,7 +64,7 @@ function mnet_get_functions($type, $parentname) {
         foreach($rpcrecords as $rpc) {
             if (!array_key_exists($rpc->function_name, $methodServiceArray)) {
                 $rpc->enabled = 0;
-                update_record('mnet_rpc', $rpc);
+                update_record('mnet_rpc', addslashes_recursive($rpc));
             }
         }
     }
