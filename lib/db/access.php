@@ -191,6 +191,17 @@ $moodle_capabilities = array(
         )
     ),
 
+    'moodle/restore:createuser' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'admin' => CAP_ALLOW
+        )
+    ),
+
     'moodle/restore:userinfo' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_CONFIG,
