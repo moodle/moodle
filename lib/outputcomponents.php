@@ -2060,7 +2060,7 @@ class help_icon extends html_image {
 
         $this->helppage  = $helppage;
         $this->text      = $text;
-        $this->component = $component;
+        $this->component = $module;
         $this->linktext  = $linktext;
 
         $this->link = new html_link();
