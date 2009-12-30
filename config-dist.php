@@ -180,6 +180,21 @@ $CFG->admin = 'admin';
 // shared out from your site/institution!
 //      $CFG->includeuserpasswordsinbackup = true;
 //
+// Completely disable user creation on restore, bypassing any right granted
+// via roles/capabilities. By enabling this setting any restore process
+// requiring users to be created will be stopped before any further action.
+//     $CFG->disableusercreationonrestore = true;
+//
+// Modify the restore process in order to force the "user checks" to assume
+// that the backup was originated in a different site so detection of matching
+// users is performed with some different (more "relaxed") rules. *Only* useful
+// if the backup file has been generated with Moodle < 1.9.4 and the site has
+// been rebuilt from scratch using backup files (not the best way, btw). If you
+// are getting user conflicts on restore, try to restore the backup to a different
+// site, backup it again and then restore on target server instead of enabling this
+// setting permanently!
+//    $CFG->forcedifferentsitecheckingusersonrestore = true;
+//
 // Prevent stats processing and hide the GUI
 //      $CFG->disablestatsprocessing = true;
 //

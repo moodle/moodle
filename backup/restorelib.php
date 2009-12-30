@@ -742,7 +742,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         }
 
         // Handle checks from same site backups
-        if (backup_is_same_site($restore)) {
+        if (backup_is_same_site($restore) && empty($CFG->forcedifferentsitecheckingusersonrestore)) {
 
             // 1A - If match by id and username and mnethost => ok, return target user
             if ($rec = $DB->get_record('user', array('id'=>$user->id, 'username'=>$user->username, 'mnethostid'=>$user->mnethostid))) {
@@ -950,7 +950,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $user = $rec->info;
 
             // Find the correct mnethostid for user before performing any further check
-            if (empty($user->mnethosturl) || $user->mnethosturl===$CFG->wwwroot) {
+            if (empty($user->mnethosturl) || $user->mnethosturl === $CFG->wwwroot) {
                 $user->mnethostid = $CFG->mnet_localhost_id;
             } else {
                 // fast url-to-id lookups
@@ -965,13 +965,18 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $usercheck = restore_check_user($restore, $user);
 
             if (is_object($usercheck)) { // No problem, we have found one user in DB to be mapped to
+                // Annotate it, for later process by restore_create_users(). Set new_id to mapping user->id
+                backup_putid($restore->backup_unique_code, 'user', $userid, $usercheck->id, $user);
 
             } else if ($usercheck === false) { // Found conflict, report it as problem
                 $problems[] = get_string('restoreuserconflict', '', $user->username);
                 $status = false;
 
             } else if ($usercheck === true) { // User needs to be created, check if we are able
-                if (!$cancreateuser) { // Cannot create, report as problem
+                if ($cancreateuser) { // Can create user, annotate it, for later process by restore_create_users(). Set new_id to 0
+                    backup_putid($restore->backup_unique_code, 'user', $userid, 0, $user);
+
+                } else { // Cannot create user, report it as problem
 
                     $problems[] = get_string('restorecannotcreateuser', '', $user->username);
                     $status = false;
@@ -2830,25 +2835,17 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         $authcache = array(); // Cache to get some bits from authentication plugins
 
         $status = true;
-        //Check it exists
-        if (!file_exists($xml_file)) {
-            $status = false;
-        }
-        //Get info from xml
-        if ($status) {
-            //info will contain the old_id of every user
-            //in backup_ids->info will be the real info (serialized)
-            $info = restore_read_xml_users($restore,$xml_file);
-        }
 
-        //Now, get evey user_id from $info and user data from $backup_ids
-        //and create the necessary db structures
+        // Users have already been checked by restore_precheck_users() so they are loaded
+        // in backup_ids table. They don't need to be loaded (parsed) from XML again. Also, note
+        // the same function has performed the needed modifications in the $user->mnethostid field
+        // so we don't need to do it again here at all. Just some checks.
 
-        if (!empty($info->users)) {
+        // Get users ids from backup_ids table
+        $userids = $DB->get_fieldset_select('backup_ids', 'old_id', 'backup_code = ? AND table_name = ?', array($restore->backup_unique_code, 'user'));
 
-        /// Grab mnethosts keyed by wwwroot, to map to id
-            $mnethosts = $DB->get_records('mnet_host', null,
-                                     'wwwroot', 'wwwroot, id');
+        // Have users to process, proceed with them
+        if (!empty($userids)) {
 
         /// Get languages for quick search later
             $languages = get_list_of_languages();
@@ -2858,9 +2855,22 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         /// Init trailing messages
             $messages = array();
-            foreach ($info->users as $userid) {
-                $rec = backup_getid($restore->backup_unique_code,"user",$userid);
-                $user = $rec->info;
+            foreach ($userids as $userid) {
+                // Defaults
+                $user_exists = false; // By default user does not exist
+                $newid = null;        // By default, there is not newid
+
+                // Get record from backup_ids
+                $useridsdbrec = backup_getid($restore->backup_unique_code, 'user', $userid);
+
+                // Based in restore_precheck_users() calculations, if the user exists
+                // new_id must contain the id of the matching user
+                if (!empty($useridsdbrec->new_id)) {
+                    $user_exists = true;
+                    $newid = $useridsdbrec->new_id;
+                }
+
+                $user = $useridsdbrec->info;
                 foreach (array_keys(get_object_vars($user)) as $field) {
                     if (!is_array($user->$field)) {
                         $user->$field = backup_todb($user->$field);
@@ -2908,31 +2918,12 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 //Has role teacher or student or needed
                 $is_course_user = ($is_teacher or $is_student or $is_needed);
 
-                // in case we are restoring to same server, look for user by id and username
-                // it should return record always, but in sites rebuilt from scratch
-                // and being reconstructed using course backups
-                $user_data = false;
-                if (backup_is_same_site($restore)) {
-                    $user_data = $DB->get_record('user', array('id'=>$user->id, 'username'=>$user->username));
-                }
-
                 // Only try to perform mnethost/auth modifications if restoring to another server
                 // or if, while restoring to same server, the user doesn't exists yet (rebuilt site)
                 //
                 // So existing user data in same server *won't be modified by restore anymore*,
                 // under any circumpstance. If somehting is wrong with existing data, it's server fault.
-                if (!backup_is_same_site($restore) || (backup_is_same_site($restore) && !$user_data)) {
-                    //Calculate mnethostid
-                    if (empty($user->mnethosturl) || $user->mnethosturl===$CFG->wwwroot) {
-                        $user->mnethostid = $CFG->mnet_localhost_id;
-                    } else {
-                        // fast url-to-id lookups
-                        if (isset($mnethosts[$user->mnethosturl])) {
-                            $user->mnethostid = $mnethosts[$user->mnethosturl]->id;
-                        } else {
-                            $user->mnethostid = $CFG->mnet_localhost_id;
-                        }
-                    }
+                if (!backup_is_same_site($restore) || (backup_is_same_site($restore) && !$user_exists)) {
                     //Arriving here, any user with mnet auth and using $CFG->mnet_localhost_id is wrong
                     //as own server cannot be accesed over mnet. Change auth to manual and inform about the switch
                     if ($user->auth == 'mnet' && $user->mnethostid == $CFG->mnet_localhost_id) {
@@ -2950,21 +2941,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     }
                 }
                 unset($user->mnethosturl);
-
-                //To store user->id along all the iteration
-                $newid=null;
-                //check if it exists (by username) and get its id
-                $user_exists = true;
-                if (!backup_is_same_site($restore) || !$user_data) { /// Restoring to another server, or rebuilding site (failed id&
-                                                                     /// login search above), look for existing user based on fields
-                    $user_data = $DB->get_record('user', array('username'=>$user->username, 'mnethostid'=>$user->mnethostid));
-                }
-
-                if (!$user_data) {
-                    $user_exists = false;
-                } else {
-                    $newid = $user_data->id;
-                }
 
                 //Flags to see what parts are we going to restore
                 $create_user = true;
@@ -3245,7 +3221,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     }
                     backup_flush(300);
                 }
-            } /// End of loop over all the users loaded from xml
+            } /// End of loop over all the users loaded from backup_ids table
 
         /// Inform about all the messages geerated while restoring users
             if (!defined('RESTORE_SILENTLY')) {
@@ -8487,7 +8463,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         // Precheck the users section, detecting various situations that can lead to problems, so
         // we stop restore before performing any further action
-        /*
         if (!defined('RESTORE_SILENTLY')) {
             echo '<li>'.get_string('restoreusersprecheck').'</li>';
         }
@@ -8501,7 +8476,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             return false;
         }
-        */
 
         //If we've selected to restore into new course
         //create it (course)
