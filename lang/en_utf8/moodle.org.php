@@ -83,6 +83,7 @@ $string['moodletrackertitle'] = 'Moodle Tracker';
 $string['moodletraining'] = 'Moodle Training';
 $string['mycoursesintro'] = 'You are currently enrolled in the following \"courses\" on this community site, each containing one or more forums.';
 $string['nameabout'] = 'About';
+$string['nameaboutmoodle'] = 'About Moodle';
 $string['namecommercial'] = 'Commercial services';
 $string['namecommunity'] = 'Community';
 $string['namecontact'] = 'Contact';
