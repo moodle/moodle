@@ -8,7 +8,7 @@ $string['aboutoverview'] = '
 <ul>
 <li>Moodle has features that allow it to scale to very large deployments and hundreds of thousands of students, yet it can also be used for a primary school or an education hobbyist.</li>
 <li>Many institutions use it as their platform to conduct fully online courses, while some use it simply to augment face-to-face courses (known as blended learning).</li>
-<li>Many of our users love to use the many activity modules (such as Forums, Wikis, Databases and so on) to build richly collaborative communities of learning around their subject matter (in the social constructionist tradition), while others prefer to use Moodle as a way to deliver content to students (such as standard SCORM packages) and assess learning using assignments or quizzes.</li>
+<li>Many of our users love to use the activity modules (such as forums, databases and wikis) to build richly collaborative communities of learning around their subject matter (in the social constructionist tradition), while others prefer to use Moodle as a way to deliver content to students (such as standard SCORM packages) and assess learning using assignments or quizzes.</li>
 </ul>
 ';
 $string['aboutoverviewtitle'] = 'What is Moodle?';
@@ -19,10 +19,9 @@ $string['communityintro'] = 'Moodle has a large and diverse user community with 
 $string['conferencecenter'] = 'Moodle Conference Center';
 $string['connectedsites'] = 'Some Moodle sites have been connected to moodle.org using Moodle Networking, so you can log in there directly once you are authenticated here.';
 $string['connectedsitestitle'] = 'Connected sites';
-$string['contactcommunity'] = 'All other queries should go to the Moodle Community Manager.';
 $string['contactintro'] = 'Please choose from the following contact options:';
 $string['contactlogin'] = 'For all other queries, log in to this site and then use the contact form which will appear on this page.';
-$string['contactsent'] = 'Your message was sent via email to the Moodle Community manager.';
+$string['contactsent'] = 'Your message was sent via email to the Moodle Community Manager.';
 $string['contactsupporttitle'] = 'Support';
 $string['contactsupport'] = 'For support with using Moodle software, please see our support page which lists many helpful resources available to you.';
 $string['contactmoodleorgtitle'] = 'Moodle.org';
@@ -30,17 +29,17 @@ $string['contactmoodleorgemail'] = 'For problems with moodle.org account confirm
 $string['contactmoodleorgother'] = 'For all other queries, please use the contact form below.';
 $string['contactmoodleorglogin'] =  'Log in to this site now';
 $string['contactmoodlecomtitle'] = 'Moodle.com';
-$string['contactmoodlecom'] = 'For any queries relating to licensing, trademark or commercial issues, as well as major Moodle developments, please contact the help desk on <a href=\"http://moodle.com/\">Moodle.com</a>';
-$string['contactmoodlecomhelpdesk'] = 'Moodle.com Helpdesk';
+$string['contactmoodlecom'] = 'For any queries relating to licensing, trademark or commercial issues, as well as major Moodle developments, please contact the helpdesk on <a href=\"http://moodle.com/\">Moodle.com</a>';
+$string['contactmoodlecomhelpdesk'] = 'Moodle.com helpdesk';
 $string['contactbugstitle'] = 'Bug reporting';
-$string['contactbugs'] = 'You can report problems in Moodle software and on any moodle.org site by filing a bug in the Moodle Tracker.';
-$string['contactsecurity'] = 'Security issues can also be posted safely in the tracker, providing you set the security level appropriately.';
+$string['contactbugs'] = 'You can report problems in Moodle software and on any moodle.org site by creating a new issue in the Moodle Tracker.';
+$string['contactsecurity'] = 'Security issues can also be reported safely in the tracker, providing you set the security level appropriately.';
 $string['developercontributors'] = 'Credits';
 $string['developerlist'] = 'Full list of developers with write access';
 $string['developermeetings'] = 'Developer meetings';
 $string['developers'] = 'The main development of Moodle is led by the core team at Moodle.com, helped by hundreds of other developers around the world.  Many of these developers are also directly responsible for various modules and plugins.';
 $string['developerstitle'] = 'Developers';
-$string['developmentdocs'] = 'The bulk of our documentation is in Moodle Docs - including specifications, brainstorms, procedures, standards and finished user guides.';
+$string['developmentdocs'] = 'The bulk of our documentation is in Moodle Docs - including specifications, brainstorms, procedures, standards and user guides.';
 $string['developmentdocstitle'] = 'Developer documentation';
 $string['developmentintro'] = 'We aim for a transparent and open development process that invites the whole user community to contribute.  We welcome PHP programmers of course, but you can also contribute through discussions, testing, feedback and documentation.';
 $string['developmenttracker'] = 'All development issues (such as bugs, new features and improvements) are recorded and managed in the Moodle Tracker. You can see who is working on what, and contribute to any conversation. You should search in the tracker first if you are trying to find out about specific issues, and please make sure you <strong>vote</strong> on the issues you most want to see fixed, as your votes help determine development priorities.';
@@ -53,7 +52,7 @@ $string['downloadcvstitle'] = 'Moodle via CVS';
 $string['downloadintro'] = 'Moodle is open source under the <a href=\"http://docs.moodle.org/en/License\">GPL licence</a>.  Everything we produce is available for you to download and use for free.';
 $string['downloadlang'] = 'In current versions of Moodle, adding support for new languages has been automated from the administration menu within your site.  However, for some older versions of Moodle, new language packs need to be downloaded manually.';
 $string['downloadlangtitle'] = 'Language packs';
-$string['downloadlogotitle'] = 'Moodle Logos';
+$string['downloadlogotitle'] = 'Moodle logos';
 $string['downloadmac'] = 'If you don\'t have a web server set up already, these all-in-one packages make it very easy to install Moodle on any Apple computer running Mac OS X.';
 $string['downloadmactitle'] = 'Moodle for Mac OS X';
 $string['downloadmodules'] = 'Browse through our comprehensive database of extra modules and plugins that can be added to your Moodle site to give it extra functionality beyond the core packages.';
@@ -84,7 +83,6 @@ $string['moodletrackertitle'] = 'Moodle Tracker';
 $string['moodletraining'] = 'Moodle Training';
 $string['mycoursesintro'] = 'You are currently enrolled in the following \"courses\" on this community site, each containing one or more forums.';
 $string['nameabout'] = 'About';
-$string['nameaboutmoodle'] = 'About Moodle';
 $string['namecommercial'] = 'Commercial services';
 $string['namecommunity'] = 'Community';
 $string['namecontact'] = 'Contact';
@@ -93,7 +91,6 @@ $string['namedocumentation'] = 'Documentation';
 $string['namedownloads'] = 'Downloads';
 $string['nameevents'] = 'Events';
 $string['nameforums'] = 'Forums';
-$string['namehome'] = 'Home page';
 $string['namemycourses'] = 'My courses';
 $string['namenetwork'] = 'Connected sites';
 $string['namenews'] = 'News';
@@ -101,7 +98,7 @@ $string['namesecurity'] = 'Security news';
 $string['namesupport'] = 'Support';
 $string['networkintro'] = 'The following Moodle sites have been connected to moodle.org using Moodle networking, so you can log in there directly from here.';
 $string['newsbuzz'] = 'Moodle Buzz';
-$string['newsbuzzdetail'] = 'Moodle-related publications from the world';
+$string['newsbuzzdetail'] = 'Moodle-related publications from around the world';
 $string['newscalendar'] = 'Calendar';
 $string['newscalendardetail'] = 'Moodle-related events in the future';
 $string['newsofficial'] = 'Official news about Moodle';
@@ -111,7 +108,6 @@ $string['newsrecent'] = 'Recent news';
 $string['newssecurity'] = 'Security news';
 $string['newssecuritydetail'] = 'Important information about security issues';
 $string['noenrolledcoursesyet'] = 'You haven\'t enrolled in any courses on this site yet';
-$string['overview'] = 'Overview';
 $string['overviewabout'] = 'An overview about Moodle';
 $string['overviewcommunity'] = 'An overview of the Moodle community';
 $string['overviewdevelopment'] = 'An overview of Moodle development';
