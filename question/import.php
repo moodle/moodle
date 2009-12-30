@@ -151,11 +151,7 @@
         }
     }
 
-    $helpicon = new moodle_help_icon();
-    $helpicon->text = $txt->importquestions;
-    $helpicon->page = 'import';
-    $helpicon->module = 'quiz';
-    echo $OUTPUT->heading_with_help($helpicon);
+    echo $OUTPUT->heading_with_help($txt->importquestions, 'import', 'quiz');
 
     /// Print upload form
     $import_form->display();

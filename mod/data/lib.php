@@ -1549,7 +1549,7 @@ function data_print_ratings($data, $record) {
 
             if ($data->scale < 0) {
                 if ($scale = $DB->get_record('scale', array('id'=>abs($data->scale)))) {
-                    echo $OUTPUT->help_button(moodle_help_icon::make_scale_menu($data->course, $scale));
+                    echo $OUTPUT->help_icon_scale($data->course, $scale);
                 }
             }
 
@@ -2214,7 +2214,7 @@ class PresetImporter {
 
         if (!empty($currentfields) && !empty($newfields)) {
             echo "<h3>$strfieldmappings ";
-            echo $OUTPUT->help_icon(moodle_help_icon::make('fieldmappings', $strfieldmappings, 'data'));
+            echo $OUTPUT->help_icon('fieldmappings', $strfieldmappings, 'data');
             echo '</h3><table>';
 
             foreach ($newfields as $nid => $newfield) {

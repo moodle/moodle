@@ -459,13 +459,13 @@ class core_renderer extends renderer_base {
      */
     public function login_info() {
         global $USER, $CFG, $DB;
-    
+
         if (during_initial_install()) {
             return '';
         }
-    
+
         $course = $this->page->course;
-    
+
         if (session_is_loggedinas()) {
             $realuser = session_get_realuser();
             $fullname = fullname($realuser, true);
@@ -474,15 +474,15 @@ class core_renderer extends renderer_base {
         } else {
             $realuserinfo = '';
         }
-    
+
         $loginurl = get_login_url();
-    
+
         if (empty($course->id)) {
             // $course->id is not defined during installation
             return '';
         } else if (!empty($USER->id)) {
             $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    
+
             $fullname = fullname($USER, true);
             $username = "<a $CFG->frametarget href=\"$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id\">$fullname</a>";
             if (is_mnet_remote_user($USER) and $idprovider = $DB->get_record('mnet_host', array('id'=>$USER->mnethostid))) {
@@ -507,9 +507,9 @@ class core_renderer extends renderer_base {
             $loggedinas = get_string('loggedinnot', 'moodle').
                           " (<a $CFG->frametarget href=\"$loginurl\">".get_string('login').'</a>)';
         }
-    
+
         $loggedinas = '<div class="logininfo">'.$loggedinas.'</div>';
-    
+
         if (isset($SESSION->justloggedin)) {
             unset($SESSION->justloggedin);
             if (!empty($CFG->displayloginfailures)) {
@@ -530,7 +530,7 @@ class core_renderer extends renderer_base {
                 }
             }
         }
-    
+
         return $loggedinas;
     }
 
@@ -758,7 +758,7 @@ class core_renderer extends renderer_base {
 
         $currlang = current_language();
         $langs = get_list_of_languages();
-        
+
         if (count($langs) < 2) {
             return '';
         }
@@ -1145,89 +1145,70 @@ class core_renderer extends renderer_base {
     /*
      * Centered heading with attached help button (same title text)
      * and optional icon attached
-     * @param moodle_help_icon $helpicon A moodle_help_icon object
-     * @param mixed $image An image URL or a html_image object
+     * @param string $text A heading text
+     * @param string $page The keyword that defines a help page
+     * @param string $component component name
+     * @param string|moodle_url $icon
+     * @param string $iconalt icon alt text
      * @return string HTML fragment
      */
-    public function heading_with_help($helpicon, $image=false) {
-        if (!($image instanceof html_image) && !empty($image)) {
-            $htmlimage = new html_image();
-            $htmlimage->src = $image;
-            $image = $htmlimage;
+    public function heading_with_help($text, $helppage, $component='moodle', $icon='', $iconalt='') {
+        $image = '';
+        if ($icon) {
+            if ($icon instanceof moodle_url) {
+                $image = $this->image($icon, array('class'=>'icon', 'alt'=>$iconalt));
+            } else {
+                $image = $this->image($this->pix_url($icon, $component), array('class'=>'icon', 'alt'=>$iconalt));
+            }
         }
-        return $this->container($this->image($image) . $this->heading($helpicon->text, 2, 'main help') . $this->help_icon($helpicon), 'heading-with-help');
+
+        $help = $this->help_icon($helppage, $text, $component);
+
+        return $this->heading($image.$text.$help, 2, 'main help');
     }
 
     /**
      * Print a help icon.
      *
-     * @param moodle_help_icon $helpicon A moodle_help_icon object, subclass of html_link
-     *
+     * @param string $page The keyword that defines a help page
+     * @param string $text A descriptive text
+     * @param string $component component name
+     * @param bool $linktext show extra descriptive text
+
      * @return string  HTML fragment
      */
-    public function help_icon($icon) {
-        global $COURSE;
-        $icon = clone($icon);
+    public function help_icon($helppage, $text=null, $component='moodle', $linktext=false) {
+        $icon = new help_icon($helppage, $text, $component, $linktext);
+
         $icon->prepare($this, $this->page, $this->target);
 
-        $popup = new popup_action('click', $icon->link->url);
-        $icon->link->add_action($popup);
-
-        $image = null;
-
-        if (!empty($icon->image)) {
-            $image = $icon->image;
-            $image->add_class('iconhelp');
+        $icon->link->text = $this->image($icon);
+        if ($icon->linktext) {
+            $icon->link->text .= $icon->text;
         }
 
-        return $this->output_tag('span', array('class' => 'helplink'), $this->link_to_popup($icon->link, $image));
+        return $this->output_tag('span', array('class' => 'helplink'), $this->link($icon->link));
     }
 
     /**
-     * Creates and returns a button to a popup window
+     * Print scale help icon.
      *
-     * @param html_link $link Subclass of html_component
-     * @param moodle_popup $popup A moodle_popup object
-     * @param html_image $image An optional image replacing the link text
-     *
-     * @return string HTML fragment
+     * @param int $courseid
+     * @param object $scale instance
+     * @return string  HTML fragment
      */
-    public function link_to_popup($link, $image=null) {
-        //TODO: decide if this should be removed completely, because link() already handles this
-        //      we could also add html_link::make_popup() factory method
-        $link = clone($link);
+    public function help_icon_scale($courseid, stdClass $scale) {
+        global $CFG;
 
-        // Use image if one is given
-        if (!empty($image) && $image instanceof html_image) {
+        $title = get_string('helpprefix2', '', $scale->name) .' ('.get_string('newwindow').')';
 
-            if (empty($image->alt) || $image->alt == HTML_ATTR_EMPTY) {
-                $image->alt = $link->text;
-                $image->title = $link->text;
-            }
+        $icon = $this->image($this->pix_url('help'), array('class'=>'iconhelp', 'alt'=>get_string('scales')));
 
-            $link->text = $this->image($image);
+        $link = new html_link(new moodle_url($CFG->wwwroot.'/course/scales.php', array('id' => $courseid, 'list' => true, 'scaleid' => $scale->id)), $icon);
+        $popupaction = new popup_action('click', $link->url, 'ratingscale');
+        $link->add_action($popupaction);
 
-            if (!empty($link->linktext)) { // TODO: this is weird!
-                $link->text = "$link->title &#160; $link->text";
-            }
-        }
-
-        $link->prepare($this, $this->page, $this->target);
-        $this->prepare_event_handlers($link);
-
-        if (empty($link->url)) {
-            throw new coding_exception('Called $OUTPUT->link_to_popup($link) method without $link->url set.');
-        }
-
-        $linkurl = prepare_url($link->url);
-
-        $tagoptions = array(
-                'title' => $link->title,
-                'id' => $link->id,
-                'href' => ($linkurl) ? $linkurl : prepare_url($popup->url),
-                'class' => $link->get_classes_string());
-
-        return $this->output_tag('a', $tagoptions, $link->text);
+        return $this->output_tag('span', array('class' => 'helplink'), $this->link($link));
     }
 
     /**
@@ -1499,7 +1480,7 @@ class core_renderer extends renderer_base {
      * html_select::set_label($label) passing a html_label object
      *
      * To add a help icon, use html_select::set_help($page, $text, $linktext) or
-     * html_select::set_help($helpicon) passing a moodle_help_icon object
+     * html_select::set_help($helpicon) passing a help_icon object
      *
      * If you html_select::$rendertype to "radio", it will render radio buttons
      * instead of a <select> menu, unless $multiple is true, in which case it
@@ -1558,8 +1539,8 @@ class core_renderer extends renderer_base {
             $html .= $this->label($select->label);
         }
 
-        if (!empty($select->helpicon) && $select->helpicon instanceof moodle_help_icon) {
-            $html .= $this->help_icon($select->helpicon);
+        if ($select->helpicon) {
+            $html .= $this->help_icon($select->helpicon['helppage'], $select->helpicon['text'], $select->helpicon['component']);
         }
 
         if ($select->rendertype == 'menu') {

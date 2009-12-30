@@ -34,29 +34,7 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
      * @param string $function function name to call to get html
      */
     function setHelpButton($helpbuttonargs, $function='helpbutton'){
-        global $SESSION;
-        if (!is_array($helpbuttonargs)) {
-            $helpbuttonargs = array($helpbuttonargs);
-        } else {
-            $helpbuttonargs = $helpbuttonargs;
-        }
-        //we do this to to return html instead of printing it
-        //without having to specify it in every call to make a button.
-        if ('helpbutton' == $function){
-            $defaultargs = array('', '', 'moodle', true, false, '', true);
-            $helpbuttonargs = $helpbuttonargs + $defaultargs ;
-            if (in_array($helpbuttonargs[0], array('emoticons2', 'text2', 'richtext2'))) {
-                $SESSION->inserttextform = $this->_formid;
-                $SESSION->inserttextfield = $this->getAttribute('name');
-            }
-        } else if ('editorhelpbutton' == $function) {
-            $specialhelp = array_intersect($helpbuttonargs, array('emoticons2', 'text2', 'richtext2'));
-            if (!empty($specialhelp)) {
-                $SESSION->inserttextform = $this->_formid;
-                $SESSION->inserttextfield = $this->getAttribute('name');
-            }
-        }
-        $this->_helpbutton = call_user_func_array($function, $helpbuttonargs);
+        debugging('component setHelpButton() is not used any more, please use $mform->setHelpButton() instead');
     }
     /**
      * get html for help button

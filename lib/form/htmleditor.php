@@ -47,18 +47,7 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
      * @param string $function function name to call to get html
      */
     function setHelpButton($helpbuttonargs, $function='helpbutton'){
-        if (!$this->_canUseHtmlEditor){
-            if ('editorhelpbutton' == $function){
-                $key = array_search('richtext2', $helpbuttonargs);
-                if ($key !== FALSE){
-                    array_splice($helpbuttonargs, $key, 1, array('text2', 'emoticons2'));
-                }
-            } elseif ('helpbutton' == $function && $helpbuttonargs[0] == 'richtext2' && ((!isset($helpbuttonargs[2])) || $helpbuttonargs[2] == 'moodle')){
-                //replace single 'richtext' help button with text and emoticon button when htmleditor off.
-                return $this->setHelpButton(array('text2', 'emoticons2'), 'editorhelpbutton');
-            }
-        }
-        return parent::setHelpButton($helpbuttonargs, $function);
+        debugging('component setHelpButton() is not used any more, please use $mform->setHelpButton() instead');
     }
 
     function toHtml(){

@@ -988,7 +988,7 @@
             $displaylist['groupextendenrol.php'] = get_string('groupextendenrol');
         }
 
-        echo $OUTPUT->help_icon(moodle_help_icon::make("participantswithselectedusers", get_string("withselectedusers")));
+        echo $OUTPUT->help_icon("participantswithselectedusers", get_string("withselectedusers"));
         $select = new html_select();
         $select->options = $displaylist;
         $select->name = "formaction";

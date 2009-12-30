@@ -131,7 +131,7 @@ if (!isset($frm->acceptechecktypes)) {
 <tr valign="top">
     <td align="right">an_authcode:</td>
     <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->an_authcode), get_string("adminauthcode", "enrol_authorize")), 'an_authcode');  ?>
-        <?php echo $OUTPUT->help_icon(moodle_help_icon::make('authorize/authcode', 'authcode', 'enrol')); ?><br />
+        <?php echo $OUTPUT->help_icon('authorize/authcode', 'authcode', 'enrol'); ?><br />
     </td>
 </tr>
 
@@ -177,20 +177,20 @@ if (!isset($frm->acceptechecktypes)) {
 </tr>
 
 <tr valign="top"><td colspan="2"><h4><?php print_string("adminauthorizeccapture", "enrol_authorize") ?>
-                                     <?php echo $OUTPUT->help_icon(moodle_help_icon::make('authorize/orderreview', 'orderreview', 'enrol')); ?>
+                                     <?php echo $OUTPUT->help_icon('authorize/orderreview', 'orderreview', 'enrol'); ?>
                                  </h4></td></tr>
 
 <tr valign="top">
     <td align="right">an_review:</td>
     <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->an_review), get_string("adminreview", "enrol_authorize")), 'an_review'); ?>
-        <?php echo $OUTPUT->help_icon(moodle_help_icon::make('authorize/review', get_string('adminhelpreviewtitle', 'enrol_authorize'), 'enrol')); ?><br />
+        <?php echo $OUTPUT->help_icon('authorize/review', get_string('adminhelpreviewtitle', 'enrol_authorize'), 'enrol'); ?><br />
     </td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_capture_day:</td>
     <td><input type="text" name="an_capture_day" size="2" maxlength="2" value="<?php p($frm->an_capture_day) ?>" />
-        <?php echo $OUTPUT->help_icon(moodle_help_icon::make('authorize/captureday', get_string('adminhelpcapturetitle', 'enrol_authorize'), 'enrol')); ?><br />
+        <?php echo $OUTPUT->help_icon('authorize/captureday', get_string('adminhelpcapturetitle', 'enrol_authorize'), 'enrol'); ?><br />
         <?php print_string("reviewday", "enrol_authorize", $frm->an_capture_day) ?></td>
 </tr>
 

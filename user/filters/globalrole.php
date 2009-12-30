@@ -33,7 +33,7 @@ class user_filter_globalrole extends user_filter_type {
      */
     function setupForm(&$mform) {
         $obj =& $mform->addElement('select', $this->_name, $this->_label, $this->get_roles());
-        $obj->setHelpButton(array('globalrole', $this->_label, 'filters'));
+        $mform->setHelpButton($this->_name, array('globalrole', $this->_label, 'filters'));
         $mform->setDefault($this->_name, 0);
         if ($this->_advanced) {
             $mform->setAdvanced($this->_name);

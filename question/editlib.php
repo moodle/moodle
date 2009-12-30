@@ -625,16 +625,14 @@ class question_bank_preview_action_column extends question_bank_action_column_ba
     protected function display_content($question, $rowclasses) {
         global $OUTPUT;
         if (question_has_capability_on($question, 'use')) {
-            parse_str(QUESTION_PREVIEW_POPUP_OPTIONS, $options);
-            $image = new html_image();
-            $image->src = $OUTPUT->pix_url('t/preview');
-            $image->add_class('iconsmall');
-            $image->alt = $this->strpreview;
+            // Build the icon.
+            $image = $OUTPUT->image($OUTPUT->pix_url('t/preview'), array('class'=>'iconsmall', 'alt'=>$this->strpreview));
 
-            $link = html_link::make($this->qbank->preview_question_url($question->id), $this->strpreview);
+            $link = new html_link($this->qbank->preview_question_url($question->id), $image, array('title' => $this->strpreview));
+            parse_str(QUESTION_PREVIEW_POPUP_OPTIONS, $options);
             $link->add_action(new popup_action('click', $link->url, 'questionpreview', $options));
-            $link->title = $this->strpreview;
-            echo $OUTPUT->link_to_popup($link, $image);
+        
+            echo $OUTPUT->link($link);
         }
     }
 
@@ -1934,7 +1932,7 @@ function create_new_question_button($categoryid, $params, $caption, $tooltip = '
     $form->button->disabled = $disabled;
     echo $OUTPUT->button($form);
 
-    echo $OUTPUT->help_icon(moodle_help_icon::make('types', get_string('createnewquestion', 'question'), 'question'));
+    echo $OUTPUT->help_icon('types', get_string('createnewquestion', 'question'), 'question');
     $PAGE->requires->yui2_lib('dragdrop');
     $PAGE->requires->yui2_lib('container');
     if (!$choiceformprinted) {

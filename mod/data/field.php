@@ -306,7 +306,7 @@ if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          /// 
     echo '<label for="fieldform_jump">'.get_string('newfield','data').'</label>';
     $popupurl = $CFG->wwwroot.'/mod/data/field.php?d='.$data->id.'&mode=new&sesskey='.  sesskey();
     echo $OUTPUT->select(html_select::make_popup_form($popupurl, 'newtype', $menufield, "fieldform"));
-    echo $OUTPUT->help_icon(moodle_help_icon::make('fields', get_string('addafield','data'), 'data'));
+    echo $OUTPUT->help_icon('fields', get_string('addafield','data'), 'data');
     echo '</div>';
 
     echo '<div class="sortdefault">';

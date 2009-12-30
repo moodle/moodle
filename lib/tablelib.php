@@ -920,7 +920,7 @@ class flexible_table {
             $select = html_select::make($downloadoptions, 'download', $this->defaultdownloadformat, false);
             $select->nothingvalue = '';
             $html .= $OUTPUT->select($select);
-            $html .= $OUTPUT->help_icon(moodle_help_icon::make('tableexportformats', get_string('tableexportformats', 'table')));
+            $html .= $OUTPUT->help_icon('tableexportformats', get_string('tableexportformats', 'table'));
             $html .= '</div></form>';
 
             return $html;

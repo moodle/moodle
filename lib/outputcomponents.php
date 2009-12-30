@@ -385,7 +385,7 @@ class html_select extends labelled_html_component {
      */
     public $form;
     /**
-     * @var moodle_help_icon $form An optional moodle_help_icon component
+     * @var help_icon $array help icon params
      */
     public $helpicon;
     /**
@@ -621,34 +621,21 @@ class html_select extends labelled_html_component {
     /**
      * Adds a help icon next to the select menu.
      *
-     * This can be used in two ways:
-     *
      * <pre>
-     * $select->set_help_icon($page, $text, $linktext);
-     * // OR
-     * $helpicon = new moodle_help_icon();
-     * $helpicon->page = $page;
-     * $helpicon->text = $text;
-     * $helpicon->linktext = $linktext;
-     * $select->set_help_icon($helpicon);
+     * $select->set_help_icon($page, $text, $component);
      * </pre>
      *
-     * Use the second form when you need to add additional HTML attributes
-     * to the label and/or JS actions.
-     *
-     * @param mixed $page Either the keyword that defines a help page or a moodle_help_icon object
+     * @param string $helppage Either the keyword that defines a help page or a help_icon object
      * @param text  $text The text of the help icon
+     * @param component $component
      * @param boolean $linktext Whether or not to show text next to the icon
      * @return void
      */
-    public function set_help_icon($page, $text, $linktext=false) {
-        if ($page instanceof moodle_help_icon) {
-            $this->helpicon = $page;
-        } else if (!empty($page)) {
-            $this->helpicon = new moodle_help_icon();
-            $this->helpicon->page = $page;
-            $this->helpicon->text = $text;
-            $this->helpicon->linktext = $linktext;
+    public function set_help_icon($helppage='', $text='', $component='moodle') {
+        if ($helppage) {
+            $this->helpicon = array('helppage'=>$helppage, 'text'=>$text, 'component'=>$component);
+        } else {
+            $this->helpicon = null;
         }
     }
 
@@ -1292,10 +1279,10 @@ class html_link extends html_component {
             // to be filled later
 
         } else if ($url instanceof moodle_url) {
-            $this->src = clone($url);
+            $this->url = clone($url);
 
         } else if (is_string($url)) {
-            $this->src = new moodle_url($url);
+            $this->url = new moodle_url($url);
 
         } else {
             throw new coding_style_exception('Image can be constructed only from moodle_url or string url.');
@@ -1403,17 +1390,17 @@ class html_image extends labelled_html_component {
      * @param moodle_url|string $url url of the image
      * @param array $options image attributes such as title, id, alt, widht, height
      */
-    public function __construct($url = null, array $options = null) {
+    public function __construct($src = null, array $options = null) {
         parent::__construct($options);
 
-        if (is_null($url)) {
+        if (is_null($src)) {
             // to be filled later
 
-        } else if ($url instanceof moodle_url) {
-            $this->src = clone($url);
+        } else if ($src instanceof moodle_url) {
+            $this->src = clone($src);
 
-        } else if (is_string($url)) {
-            $this->src = new moodle_url($url);
+        } else if (is_string($src)) {
+            $this->src = new moodle_url($src);
 
         } else {
             throw new coding_style_exception('Image can be constructed only from moodle_url or string url.');
@@ -1443,8 +1430,8 @@ class html_image extends labelled_html_component {
      *
      * @param mixed $url The URL to the image (string or moodle_url)
      */
-    public static function make($url) {
-        return new html_image($url);
+    public static function make($src) {
+        return new html_image($src);
     }
 }
 
@@ -2027,11 +2014,11 @@ class user_picture extends html_image {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class moodle_help_icon extends labelled_html_component {
+class help_icon extends html_image {
+    public $page;
     /**
-     * @var html_link $link A html_link object that will hold the URL info
+     * @var string $module Which module is the page defined in
      */
-    public $link;
     /**
      * @var string $text A descriptive text
      */
@@ -2039,29 +2026,46 @@ class moodle_help_icon extends labelled_html_component {
     /**
      * @var string $page  The keyword that defines a help page
      */
-    public $page;
-    /**
-     * @var string $module Which module is the page defined in
-     */
-    public $module = 'moodle';
+    public $component = 'moodle';
     /**
      * @var boolean $linktext Whether or not to show text next to the icon
      */
     public $linktext = false;
+
     /**
-     * @var mixed $image The help icon. Can be set to true (will use default help icon),
-     *                   false (will not use any icon), the URL to an image, or a full
-     *                   html_image object.
+     * @var html_link $link A html_link object that will hold the URL info
      */
-    public $image;
+    public $link;
 
     /**
      * Constructor: sets up the other components in case they are needed
+     * @param string $page  The keyword that defines a help page
+     * @param string $text A descriptive text
+     * @param string $component
+     * @param bool $linktext add extra text to icon
      * @return void
      */
-    public function __construct() {
+    public function __construct($helppage, $text, $component='moodle', $linktext=false) {
+        global $CFG;
+
+        if (empty($helppage)) {
+            throw new coding_exception('A help_icon object requires a $helppage parameter');
+        }
+
+        if (empty($text)) {
+            throw new coding_exception('A help_icon object requires a $text parameter');
+        }
+
+        parent::__construct(null, array('class'=>'iconhelp'));
+
+        $this->helppage  = $helppage;
+        $this->text      = $text;
+        $this->component = $component;
+        $this->linktext  = $linktext;
+
         $this->link = new html_link();
-        $this->image = new html_image();
+        $this->link->url = new moodle_url($CFG->wwwroot.'/help.php', array('module' => $this->component, 'file' => $this->helppage .'.html'));
+        // Warn users about new window for Accessibility
     }
 
     /**
@@ -2071,97 +2075,24 @@ class moodle_help_icon extends labelled_html_component {
     public function prepare(renderer_base $output, moodle_page $page, $target) {
         global $CFG;
 
-        if (empty($this->page)) {
-            throw new coding_exception('A moodle_help_icon object requires a $page parameter');
+        if (empty($this->link->title)) {
+            $this->link->title = get_string('helpprefix2', '', trim($this->text, ". \t")) .' ('.get_string('newwindow').')';
         }
 
-        if (empty($this->text) && empty($this->link->text)) {
-            throw new coding_exception('A moodle_help_icon object (or its $link attribute) requires a $text parameter');
-        } else if (!empty($this->text) && empty($this->link->text)) {
-            $this->link->text = $this->text;
+        if (empty($this->src)) {
+            $this->src = $output->pix_url('help');
         }
 
-        // fix for MDL-7734
-        $this->link->url = new moodle_url($CFG->wwwroot.'/help.php', array('module' => $this->module, 'file' => $this->page .'.html'));
-
-        // fix for MDL-7734
-        if (!empty($page->course->lang)) {
-            $this->link->url->param('forcelang', $page->course->lang);
-        }
-
-        // Catch references to the old text.html and emoticons.html help files that
-        // were renamed in MDL-13233.
-        if (in_array($this->page, array('text', 'emoticons', 'richtext'))) {
-            $oldname = $this->page;
-            $this->page .= '2';
-            debugging("You are referring to the old help file '$oldname'. " .
-                    "This was renamed to '$this->page' because of MDL-13233. " .
-                    "Please update your code.", DEBUG_DEVELOPER);
-        }
-
-        if ($this->module == '') {
-            $this->module = 'moodle';
-        }
-
-        // Warn users about new window for Accessibility
-        $this->title = get_string('helpprefix2', '', trim($this->text, ". \t")) .' ('.get_string('newwindow').')';
-
-        // Prepare image and linktext
-        if ($this->image && !($this->image instanceof html_image)) {
-            $image = fullclone($this->image);
-            $this->image = new html_image();
-
-            if ($image instanceof moodle_url) {
-                $this->image->src = $image->out();
-            } else if ($image === true) {
-                $this->image->src = $output->pix_url('help');
-            } else if (is_string($image)) {
-                $this->image->src = $image;
-            }
+        if ($this->linktext) {
+            $this->image->alt = get_string('helpwiththis');
+        } else {
             $this->image->alt = $this->text;
-
-            if ($this->linktext) {
-                $this->image->alt = get_string('helpwiththis');
-            } else {
-                $this->image->alt = $this->title;
-            }
-            $this->image->add_class('iconhelp');
-        } else if (empty($this->image->src)) {
-            if (!($this->image instanceof html_image)) {
-                $this->image = new html_image();
-            }
-            $this->image->src = $output->pix_url('help');
         }
+
+        $popup = new popup_action('click', $this->link->url);
+        $this->link->add_action($popup);
 
         parent::prepare($output, $page, $target);
-    }
-
-    /**
-     * This is a shortcut for creating a help_icon with only the 2 required params
-     * @param string $page  The keyword that defines a help page
-     * @param string $text A descriptive text
-     * @return moodle_help_icon A moodle_help_icon object with the two common fields initialised.
-     */
-    public static function make($page, $text, $module='moodle', $linktext=false) {
-        $helpicon = new moodle_help_icon();
-        $helpicon->page = $page;
-        $helpicon->text = $text;
-        $helpicon->module = $module;
-        $helpicon->linktext = $linktext;
-        return $helpicon;
-    }
-
-    public static function make_scale_menu($courseid, $scale) {
-        $helpbutton = new moodle_help_icon();
-        $strscales = get_string('scales');
-        $helpbutton->image->alt = $scale->name;
-        $helpbutton->link->url = new moodle_url('/course/scales.php', array('id' => $courseid, 'list' => true, 'scaleid' => $scale->id));
-        $popupaction = new popup_action('click', $helpbutton->url, 'ratingscale', $popupparams);
-        $popupaction->width = 500;
-        $popupaction->height = 400;
-        $helpbutton->link->add_action($popupaction);
-        $helpbutton->link->title = $scale->name;
-        return $helpbutton;
     }
 }
 

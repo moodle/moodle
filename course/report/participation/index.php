@@ -126,7 +126,7 @@
     echo $OUTPUT->select(html_select::make($roleoptions,'roleid',$roleid,false));
     echo '<label for="menuaction">'.get_string('showactions').'</label>'."\n";
     echo $OUTPUT->select(html_select::make($actionoptions,'action',$action,false));
-    echo $OUTPUT->help_icon(moodle_help_icon::make('participationreport',get_string('participationreport')));
+    echo $OUTPUT->help_icon('participationreport', get_string('participationreport'));
     echo '<input type="submit" value="'.get_string('go').'" />'."\n</div></form>\n";
 
     $baseurl =  $CFG->wwwroot.'/course/report/participation/index.php?id='.$course->id.'&amp;roleid='
@@ -281,7 +281,7 @@
         $select->label = get_string("withselectedusers");
         $select->add_action('change', 'conditionalsubmit', array('formid' => 'studentsform'));
         echo $OUTPUT->select($select);
-        echo $OUTPUT->help_icon(moodle_help_icon::make("participantswithselectedusers", get_string("withselectedusers")));
+        echo $OUTPUT->help_icon("participantswithselectedusers", get_string("withselectedusers"));
         echo '<input type="submit" value="' . get_string('ok') . '" />'."\n";
         echo '</div>'."\n";
         echo '</form>'."\n";

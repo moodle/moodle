@@ -649,7 +649,7 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
     public function get_header_cell() {
         global $OUTPUT;
         $headercell = clone($this->headercell);
-        $headercell->text = get_string('aggregation', 'grades').$OUTPUT->help_icon(moodle_help_icon::make('aggregation', 'aggregation', 'grade'));
+        $headercell->text = get_string('aggregation', 'grades').$OUTPUT->help_icon('aggregation', 'aggregation', 'grade');
         return $headercell;
     }
 
@@ -706,7 +706,7 @@ class grade_edit_tree_column_extracredit extends grade_edit_tree_column {
     public function get_header_cell() {
         global $OUTPUT;
         $headercell = clone($this->headercell);
-        $headercell->text = get_string('extracredit', 'grades').$OUTPUT->help_icon(moodle_help_icon::make('aggregationcoefcombo', 'aggregationcoefcombo', 'grade'));
+        $headercell->text = get_string('extracredit', 'grades').$OUTPUT->help_icon('aggregationcoefcombo', 'aggregationcoefcombo', 'grade');
         return $headercell;
     }
 
@@ -748,7 +748,7 @@ class grade_edit_tree_column_weight extends grade_edit_tree_column {
     public function get_header_cell() {
         global $OUTPUT;
         $headercell = clone($this->headercell);
-        $headercell->text = get_string('weightuc', 'grades').$OUTPUT->help_icon(moodle_help_icon::make('aggregationcoefweight', 'aggregationcoefweight', 'grade'));
+        $headercell->text = get_string('weightuc', 'grades').$OUTPUT->help_icon('aggregationcoefweight', 'aggregationcoefweight', 'grade');
         return $headercell;
     }
 
@@ -846,7 +846,7 @@ class grade_edit_tree_column_aggregateonlygraded extends grade_edit_tree_column_
         $headercell = clone($this->headercell);
         $headercell->style .= 'width: 40px;';
         $headercell->text = get_string('aggregateonlygraded', 'grades')
-                . $OUTPUT->help_icon(moodle_help_icon::make('aggregateonlygraded', 'aggregateonlygraded', 'grade'));
+                . $OUTPUT->help_icon('aggregateonlygraded', 'aggregateonlygraded', 'grade');
         return $headercell;
     }
 
@@ -892,7 +892,7 @@ class grade_edit_tree_column_aggregatesubcats extends grade_edit_tree_column_cat
         $headercell = clone($this->headercell);
         $headercell->style .= 'width: 40px;';
         $headercell->text = get_string('aggregatesubcats', 'grades')
-              .$OUTPUT->help_icon(moodle_help_icon::make('aggregatesubcats', 'aggregatesubcats', 'grade'));
+              .$OUTPUT->help_icon('aggregatesubcats', 'aggregatesubcats', 'grade');
         return $headercell;
     }
 
@@ -938,7 +938,7 @@ class grade_edit_tree_column_aggregateoutcomes extends grade_edit_tree_column_ca
         $headercell = clone($this->headercell);
         $headercell->style .= 'width: 40px;';
         $headercell->text = get_string('aggregateoutcomes', 'grades')
-              .$OUTPUT->help_icon(moodle_help_icon::make('aggregateoutcomes', 'aggregateoutcomes', 'grade'));
+              .$OUTPUT->help_icon('aggregateoutcomes', 'aggregateoutcomes', 'grade');
         return $headercell;
     }
 
@@ -990,7 +990,7 @@ class grade_edit_tree_column_droplow extends grade_edit_tree_column_category {
     public function get_header_cell() {
         global $OUTPUT;
         $headercell = clone($this->headercell);
-        $headercell->text = get_string('droplow', 'grades').$OUTPUT->help_icon(moodle_help_icon::make('droplow', 'droplow', 'grade'));
+        $headercell->text = get_string('droplow', 'grades').$OUTPUT->help_icon('droplow', 'droplow', 'grade');
         return $headercell;
     }
 
@@ -1026,7 +1026,7 @@ class grade_edit_tree_column_keephigh extends grade_edit_tree_column_category {
     public function get_header_cell() {
         global $OUTPUT;
         $headercell = clone($this->headercell);
-        $headercell->text = get_string('keephigh', 'grades').$OUTPUT->help_icon(moodle_help_icon::make('keephigh', 'keephigh', 'grade'));
+        $headercell->text = get_string('keephigh', 'grades').$OUTPUT->help_icon('keephigh', 'keephigh', 'grade');
         return $headercell;
     }
 
@@ -1062,7 +1062,7 @@ class grade_edit_tree_column_multfactor extends grade_edit_tree_column {
     public function get_header_cell() {
         global $OUTPUT;
         $headercell = clone($this->headercell);
-        $headercell->text = get_string('multfactor', 'grades').$OUTPUT->help_icon(moodle_help_icon::make('multfactor', 'multfactor', 'grade'));
+        $headercell->text = get_string('multfactor', 'grades').$OUTPUT->help_icon('multfactor', 'multfactor', 'grade');
         return $headercell;
     }
 
@@ -1104,7 +1104,7 @@ class grade_edit_tree_column_plusfactor extends grade_edit_tree_column {
     public function get_header_cell() {
         global $OUTPUT;
         $headercell = clone($this->headercell);
-        $headercell->text = get_string('plusfactor', 'grades').$OUTPUT->help_icon(moodle_help_icon::make('plusfactor', 'plusfactor', 'grade'));
+        $headercell->text = get_string('plusfactor', 'grades').$OUTPUT->help_icon('plusfactor', 'plusfactor', 'grade');
         return $headercell;
     }
 

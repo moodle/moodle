@@ -455,7 +455,7 @@ function lesson_mediafile_block_contents($cmid, $lesson) {
     $link->title = get_string('mediafilepopup', 'lesson');
     $content = $OUTPUT->link($link);
 
-    $content .= $OUTPUT->help_icon(moodle_help_icon::make("mediafilestudent", get_string("mediafile", "lesson"), "lesson"));
+    $content .= $OUTPUT->help_icon("mediafilestudent", get_string("mediafile", "lesson"), "lesson");
 
     $bc = new block_contents();
     $bc->title = get_string('linkedmedia', 'lesson');

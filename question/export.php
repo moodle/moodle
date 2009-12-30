@@ -119,11 +119,7 @@
     }
 
     /// Display export form
-    $helpicon = new moodle_help_icon();
-    $helpicon->text = $strexportquestions;
-    $helpicon->page = 'export';
-    $helpicon->module = 'quiz';
-    echo $OUTPUT->heading_with_help($helpicon);
+    echo $OUTPUT->heading_with_help($strexportquestions, 'export', 'quiz');
 
     $export_form->display();
 

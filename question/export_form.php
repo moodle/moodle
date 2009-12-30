@@ -16,7 +16,7 @@ class question_export_form extends moodleform {
         $radioarray = array();
         foreach ($fileformatnames as $shortname => $fileformatname) {
             $radioelement = &MoodleQuickForm::createElement('radio','format','',$fileformatname,$shortname);
-            $radioelement->setHelpButton(array("$shortname",$fileformatname,"qformat_$shortname"));
+            $mform->setHelpButton('format', array("$shortname",$fileformatname,"qformat_$shortname"));
             $radioarray[] = $radioelement;
         }
         $mform->addGroup($radioarray,'format','',array('<br />'),false);

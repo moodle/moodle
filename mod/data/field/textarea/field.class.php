@@ -73,7 +73,7 @@ class data_field_textarea extends data_field_base {
             $str .= '<option value="'.s($key).'" '.$selected.'>'.$desc.'</option>';
         }
         $str .= '</select>';
-        $str .= $OUTPUT->help_icon(moodle_help_icon::make('textformat', get_string('helpformatting'), 'moodle'));
+        $str .= $OUTPUT->help_icon('textformat', get_string('helpformatting'), 'moodle');
         $str .= '</div>';
 
         $str .= '</div>';

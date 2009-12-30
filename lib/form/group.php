@@ -30,21 +30,7 @@ class MoodleQuickForm_group extends HTML_QuickForm_group{
      * @param string $function function name to call to get html
      */
     function setHelpButton($helpbuttonargs, $function='helpbutton'){
-        global $OUTPUT;
-        if (!is_array($helpbuttonargs)){
-            $helpbuttonargs=array($helpbuttonargs);
-        }else{
-            $helpbuttonargs=$helpbuttonargs;
-        }
-        //we do this to to return html instead of printing it
-        //without having to specify it in every call to make a button.
-        if ($function == 'helpbutton') {
-            $defaultargs=array('', '', 'moodle', true, false, '', true);
-            $helpbuttonargs=$helpbuttonargs + $defaultargs ;
-            $this->_helpbutton=$OUTPUT->help_icon(call_user_func_array('moodle_help_icon::make', $helpbuttonargs));
-        } else {
-            $this->_helpbutton=call_user_func_array($function, $helpbuttonargs);
-        }
+        debugging('component setHelpButton() is not used any more, please use $mform->setHelpButton() instead');
     }
     /**
      * set html for help button

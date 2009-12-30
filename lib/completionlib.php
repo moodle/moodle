@@ -169,7 +169,7 @@ class completion_info {
         global $PAGE, $OUTPUT;
         if ($this->is_enabled() && !$PAGE->user_is_editing() && isloggedin() && !isguestuser()) {
             echo '<span id = "completionprogressid" class="completionprogress">'.get_string('yourprogress','completion').' ';
-            echo $OUTPUT->help_icon(moodle_help_icon::make('completionicons',get_string('completionicons','completion'),'completion'));
+            echo $OUTPUT->help_icon('completionicons',get_string('completionicons','completion'),'completion');
             echo '</span>';
         }
     }

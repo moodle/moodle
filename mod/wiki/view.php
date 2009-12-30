@@ -365,7 +365,7 @@
 
         /// Formatting Rules
         echo '<td class="howtowiki">';
-        echo $OUTPUT->help_icon(moodle_help_icon::make('howtowiki', get_string('howtowiki', 'wiki'), 'wiki'));
+        echo $OUTPUT->help_icon('howtowiki', get_string('howtowiki', 'wiki'), 'wiki');
         echo '</td>';
 
         echo '</tr></table>';

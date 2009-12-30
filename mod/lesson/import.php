@@ -62,11 +62,7 @@ $mform->set_data($data);
     $PAGE->set_heading($strimportquestions);
     echo $OUTPUT->header();
 
-$helpicon = new moodle_help_icon();
-$helpicon->text = $strimportquestions;
-$helpicon->page = "import";
-$helpicon->module = "lesson";
-echo $OUTPUT->heading_with_help($helpicon);
+echo $OUTPUT->heading_with_help($strimportquestions, 'import', 'lesson' );
 
 if ($data = $mform->get_data()) {
 

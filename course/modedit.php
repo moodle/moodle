@@ -616,11 +616,7 @@
             require($CFG->dirroot.'/'.$CFG->admin.'/roles/tabs.php');
         }
 
-        $helpicon = new moodle_help_icon();
-        $helpicon->page = 'mods';
-        $helpicon->text = $pageheading;
-        $helpicon->module = $module->name;
-        echo $OUTPUT->heading_with_help($helpicon, $OUTPUT->pix_url('icon', $module->name));
+        echo $OUTPUT->heading_with_help($pageheading, 'mods', $module->name, 'icon');
 
         $mform->display();
 

@@ -296,10 +296,7 @@
     }
 
     /// Print heading.
-    $helpicon = new moodle_help_icon();
-    $helpicon->text = $title;
-    $helpicon->page = 'assignroles';
-    echo $OUTPUT->heading_with_help($helpicon);
+    echo $OUTPUT->heading_with_help($title, 'assignroles');
 
     if ($roleid) {
     /// Show UI for assigning a particular role to users.
@@ -330,7 +327,7 @@
               if ($hidden) { echo 'checked="checked" '; } ?>/>
               <label for="hidden" title="<?php print_string('createhiddenassign', 'role'); ?>">
                   <?php print_string('hidden', 'role'); ?>
-                  <?php echo $OUTPUT->help_icon(moodle_help_icon::make('hiddenassign', get_string('createhiddenassign', 'role'))); ?>
+                  <?php echo $OUTPUT->help_icon('hiddenassign', get_string('createhiddenassign', 'role')); ?>
               </label></p>
 
               <p><label for="extendperiod"><?php print_string('enrolperiod') ?></label><br />

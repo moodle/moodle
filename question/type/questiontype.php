@@ -228,11 +228,7 @@ class default_questiontype {
         global $OUTPUT;
         $heading = $this->get_heading(empty($question->id));
 
-        $helpicon = new moodle_help_icon();
-        $helpicon->text = $heading;
-        $helpicon->page = $this->name();
-        $helpicon->module = $this->plugin_name();
-        echo $OUTPUT->heading_with_help($helpicon);
+        echo $OUTPUT->heading_with_help($heading, $this->name(), $this->plugin_name());
 
         $permissionstrs = array();
         if (!empty($question->id)){

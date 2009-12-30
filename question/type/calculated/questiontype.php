@@ -573,18 +573,10 @@ class question_calculated_qtype extends default_questiontype {
                 return;
                 break;
             case 'datasetdefinitions':
-                $helpicon = new moodle_help_icon();
-                $helpicon->text = get_string("choosedatasetproperties", "quiz");
-                $helpicon->page = 'questiondatasets';
-                $helpicon->module = 'quiz';
-                echo $OUTPUT->heading_with_help($helpicon);
+                echo $OUTPUT->heading_with_help(get_string("choosedatasetproperties", "quiz"), 'questiondatasets', 'quiz');
                 break;
             case 'datasetitems':
-                $helpicon = new moodle_help_icon();
-                $helpicon->text = get_string("editdatasets", "quiz");
-                $helpicon->page = 'questiondatasets';
-                $helpicon->module = 'quiz';
-                echo $OUTPUT->heading_with_help($helpicon);
+                echo $OUTPUT->heading_with_help(get_string("editdatasets", "quiz"), 'questiondatasets', 'quiz');
                 break;
         }
 

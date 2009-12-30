@@ -2,7 +2,6 @@
 /**
  * This script calculates various statistics about student attempts
  *
- * @version $Id$
  * @author Martin Dougiamas, Jamie Pratt, Tim Hunt and others.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz
@@ -422,7 +421,7 @@ class quiz_statistics_report extends quiz_default_report {
             $select = html_select::make($downloadoptions, 'download', $this->table->defaultdownloadformat, false);
             $select->nothingvalue = '';
             $quizinformationtablehtml .= $OUTPUT->select($select);;
-            $quizinformationtablehtml .= $OUTPUT->help_icon(moodle_help_icon::make('tableexportformats', get_string('tableexportformats', 'table')));
+            $quizinformationtablehtml .= $OUTPUT->help_icon('tableexportformats', get_string('tableexportformats', 'table'));
             $quizinformationtablehtml .= '</div></form>';
         }
         $quizinformationtablehtml .= $OUTPUT->table($quizinformationtable);

@@ -79,10 +79,7 @@ $PAGE->navbar->add($stredit);
 $PAGE->set_focuscontrol('theform.summary');
 echo $OUTPUT->header();
 
-$helpicon = new moodle_help_icon();
-$helpicon->text = $strsummaryof;
-$helpicon->page = 'summaries';
-echo $OUTPUT->heading_with_help($helpicon);
+echo $OUTPUT->heading_with_help($strsummaryof, 'summaries');
 
 $mform->display();
 echo $OUTPUT->footer();

@@ -138,10 +138,7 @@
     }
 
 /// Print heading.
-    $helpicon = new moodle_help_icon();
-    $helpicon->text = $title;
-    $helpicon->page = 'checkpermissions';
-    echo $OUTPUT->heading_with_help($helpicon);
+    echo $OUTPUT->heading_with_help($title, 'checkpermissions');
 
 /// If a user has been chosen, show all the permissions for this user.
     $reportuser = $userselector->get_selected_user();

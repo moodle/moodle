@@ -142,11 +142,7 @@ if($check_anonymously) {
         echo '</table>';
     }
 }else {
-    $helpicon = new moodle_help_icon();
-    $helpicon->text = get_string('insufficient_responses_for_this_group', 'feedback');
-    $helpicon->page = 'insufficient_responses';
-    $helpicon->module = 'feedback';
-    echo $OUTPUT->heading_with_help($helpicon);
+    echo $OUTPUT->heading_with_help(get_string('insufficient_responses_for_this_group', 'feedback'), 'insufficient_responses', 'feedback');
 }
 echo '</td></tr></table></div>';
 echo $OUTPUT->box_end();

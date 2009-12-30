@@ -42,8 +42,8 @@ echo $OUTPUT->header();
     <form action="../empty.php" method="post" target="empty" id="inputForm"
           onsubmit="return empty_field_and_submit()" style="margin:0">
         <input type="text" id="input_chat_message" name="chat_message" size="50" value="" />
-        <?php echo $OUTPUT->help_icon(moodle_help_icon::make('chatting', get_string('helpchatting', 'chat'), 'chat', true)); ?><br />
-        <input type="checkbox" id="auto" size="50" value="" checked='true' /><label for="auto"><?php echo get_string('autoscroll', 'chat');?></label>
+        <?php echo $OUTPUT->help_icon('chatting', get_string('helpchatting', 'chat'), 'chat', true); ?><br />
+        <input type="checkbox" id="auto" size="50" value="" checked="checked" /><label for="auto"><?php echo get_string('autoscroll', 'chat');?></label>
     </form>
 
     <form action="insert.php" method="post" target="empty" id="sendForm">

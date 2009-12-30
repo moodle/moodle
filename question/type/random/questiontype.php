@@ -89,11 +89,7 @@ class random_qtype extends default_questiontype {
 
     function display_question_editing_page(&$mform, $question, $wizardnow){
         $heading = $this->get_heading(empty($question->id));
-        $helpicon = new moodle_help_icon();
-        $helpicon->text = $heading;
-        $helpicon->page = $this->name();
-        $helpicon->module = $this->plugin_name();
-        echo $OUTPUT->heading_with_help($helpicon);
+        echo $OUTPUT->heading_with_help($heading, $this->name(), $this->plugin_name());
         $mform->display();
     }
 

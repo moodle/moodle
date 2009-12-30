@@ -112,7 +112,7 @@ if($do_show == 'showentries'){
         if($feedback->course == SITEID){
             echo '<div class="mdl-align"><a href="'.htmlspecialchars('analysis_course.php?id=' . $id . '&courseid='.$courseid).'">';
             echo get_string('course') .' '. get_string('analysis', 'feedback') . ' ('.get_string('completed_feedbacks', 'feedback').': '.intval($completedFeedbackCount).')</a>';
-            echo $OUTPUT->help_icon(moodle_help_icon::make('viewcompleted', '', 'feedback', true));
+            echo $OUTPUT->help_icon('viewcompleted', '', 'feedback', true);
             echo '</div>';
         }else {
             echo '<div class="mdl-align"><a href="'.htmlspecialchars('analysis.php?id=' . $id . '&courseid='.$courseid).'">';

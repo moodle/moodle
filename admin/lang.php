@@ -496,7 +496,7 @@
         $select->nothinglabel = $strchoosefiletoedit;
         $select->set_label($selectionlabel);
         echo $OUTPUT->select($select);
-        echo $OUTPUT->help_icon(moodle_help_icon::make('langswitchstorage', $strfilestoredinhelp));
+        echo $OUTPUT->help_icon('langswitchstorage', $strfilestoredinhelp);
         echo $OUTPUT->box_end();
 
         if ($currentfile <> '') {
@@ -763,7 +763,7 @@
         $select->nothinglabel = $strchoosefiletoedit;
         $select->set_label($selectionlabel);
         echo $OUTPUT->select($select);
-        echo $OUTPUT->help_icon(moodle_help_icon::make('langswitchstorage', $strfilestoredinhelp));
+        echo $OUTPUT->help_icon('langswitchstorage', $strfilestoredinhelp);
         echo $OUTPUT->box_end();
 
         if (!empty($currentfile)) {
@@ -812,11 +812,11 @@
             echo '<div>';
 
             if ($uselocal) {
-                $strsavetotitle = $strlanglocalpackage . $OUTPUT->help_icon(moodle_help_icon::make('langpackages', $strlanglocalpackage));
-                $straltdirtitle = $strlangmasterpackage . $OUTPUT->help_icon(moodle_help_icon::make('langpackages', $strlangmasterpackage));
+                $strsavetotitle = $strlanglocalpackage . $OUTPUT->help_icon('langpackages', $strlanglocalpackage);
+                $straltdirtitle = $strlangmasterpackage . $OUTPUT->help_icon('langpackages', $strlangmasterpackage);
             } else {
-                $straltdirtitle = $strlanglocalpackage . $OUTPUT->help_icon(moodle_help_icon::make('langpackages', $strlanglocalpackage));
-                $strsavetotitle = $strlangmasterpackage . $OUTPUT->help_icon(moodle_help_icon::make('langpackages', $strlangmasterpackage));
+                $straltdirtitle = $strlanglocalpackage . $OUTPUT->help_icon('langpackages', $strlanglocalpackage);
+                $strsavetotitle = $strlangmasterpackage . $OUTPUT->help_icon('langpackages', $strlangmasterpackage);
 
             }
 
@@ -876,7 +876,7 @@
             }
             if (is_readable($ensrc)) {
                 echo '<fieldset><legend>'.$strlangmasterenglish;
-                echo $OUTPUT->help_icon(moodle_help_icon::make('langpackages', $strlangmasterenglish));
+                echo $OUTPUT->help_icon('langpackages', $strlangmasterenglish);
                 echo '</legend>';
                 echo "<div class='mdl-align'>\n<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"\">";
                 echo htmlspecialchars(file_get_contents($ensrc));

@@ -107,10 +107,7 @@ if (empty($iid)) {
     } else {
         admin_externalpage_print_header();
 
-        $helpicon = new moodle_help_icon();
-        $helpicon->text = get_string('uploadusers');
-        $helpicon->page = 'uploadusers3';
-        echo $OUTPUT->heading_with_help($helpicon);
+        echo $OUTPUT->heading_with_help(get_string('uploadusers'), 'uploadusers3');
 
         $mform->display();
         echo $OUTPUT->footer();
@@ -749,10 +746,7 @@ admin_externalpage_print_header();
 
 /// Print the form
 
-$helpicon = new moodle_help_icon();
-$helpicon->text = get_string('uploaduserspreview', 'admin');
-$helpicon->page = 'uploadusers2';
-echo $OUTPUT->heading_with_help($helpicon);
+echo $OUTPUT->heading_with_help(get_string('uploaduserspreview', 'admin'), 'uploadusers2');
 
 $ci = 0;
 $ri = 0;

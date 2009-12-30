@@ -175,10 +175,7 @@
         include_once('tabs.php');
     }
 
-    $helpicon = new moodle_help_icon();
-    $helpicon->text = $title;
-    $helpicon->page = 'overrides';
-    echo $OUTPUT->heading_with_help($helpicon);
+    echo $OUTPUT->heading_with_help($title, 'overrides');
 
     if ($roleid) {
     /// Show UI for overriding roles.

@@ -205,12 +205,7 @@ $PAGE->set_heading($strimportppt);
 echo $OUTPUT->header();
 
 /// Print upload form
-$helpicon = new moodle_help_icon();
-$helpicon->text = $strimportppt;
-$helpicon->page = "importppt";
-$helpicon->module = "lesson";
-
-echo $OUTPUT->heading_with_help($helpicon);
+echo $OUTPUT->heading_with_help($strimportppt, 'importppt', 'lesson');
 echo $OUTPUT->box_start('generalbox boxaligncenter');
 $mform->display();
 echo $OUTPUT->box_end();

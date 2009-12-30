@@ -49,13 +49,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $output = $this->output->header();
 
         if (has_capability('mod/lesson:manage', $context)) {
-
-            $helpicon = new moodle_help_icon();
-            $helpicon->text = $activityname;
-            $helpicon->page = "overview";
-            $helpicon->module = "lesson";
-
-            $output .= $this->output->heading_with_help($helpicon);
+            $output .= $this->output->heading_with_help($activityname, 'overview', 'lesson');
 
             if (!empty($currenttab)) {
                 ob_start();

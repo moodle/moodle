@@ -136,7 +136,7 @@ if($capabilities->mapcourse) {
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<input type="hidden" name="id" value="'.$id.'" />';
         echo '<button type="submit">'.get_string('mapcourses', 'feedback').'</button>';
-        echo $OUTPUT->help_icon(moodle_help_icon::make('mapcourse', '', 'feedback', true));
+        echo $OUTPUT->help_icon('mapcourse', '', 'feedback', true);
         echo '</form>';
         echo '<br />';
         echo '</div>';

@@ -357,11 +357,7 @@
     // Do the Action
     # "setpageflags", "removepages", "strippages", "checklinks", "revertpages"
 
-    $helpicon = new moodle_help_icon();
-    $helpicon->text = get_string($action,"wiki");
-    $helpicon->page = $action;
-    $helpicon->module = "wiki";
-    echo $OUTPUT->heading_with_help($helpicon);
+    echo $OUTPUT->heading_with_help(get_string($action,"wiki"), $action, 'wiki');
 
     include $action.".html";
     echo $OUTPUT->box_end();

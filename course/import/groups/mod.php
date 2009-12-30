@@ -35,10 +35,7 @@ $strusers = get_string("users");
 $strusersnew = get_string("usersnew");
 $strimportgroups = get_string("importgroups");
 
-$helpicon = new moodle_help_icon();
-$helpicon->text = $strimportgroups;
-$helpicon->page = 'uploadgroups';
-echo $OUTPUT->heading_with_help($helpicon);
+echo $OUTPUT->heading_with_help($strimportgroups, 'uploadgroups');
 
 $maxuploadsize = get_max_upload_file_size();
 echo '<p align="center">';

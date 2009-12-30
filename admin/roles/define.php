@@ -120,10 +120,7 @@
     } else if ($action == 'edit') {
         $title = get_string('editingrolex', 'role', $rolenames[$roleid]->localname);
     }
-    $helpicon = new moodle_help_icon();
-    $helpicon->text = $title;
-    $helpicon->page = 'roles';
-    echo $OUTPUT->heading_with_help($helpicon);
+    echo $OUTPUT->heading_with_help($title, 'roles');
 
 /// Work out some button labels.
     if ($action == 'add' || $action == 'duplicate') {

@@ -1334,26 +1334,26 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * @param string $function - function to generate html from the arguments in $button
      * @param string $function
      */
-    function setHelpButton($elementname, $button, $suppresscheck=false, $function='helpbutton'){
+    function setHelpButton($elementname, $buttonargs, $suppresscheck=false, $function='helpbutton'){
         global $OUTPUT;
-        if (array_key_exists($elementname, $this->_elementIndex)){
+        if ($function !== 'helpbutton') {
+            debugging('parameter $function in moodle_form::setHelpButton() is not supported any more');
+        }
+
+        $buttonargs = (array)$buttonargs;
+
+        if (array_key_exists($elementname, $this->_elementIndex)) {
             //_elements has a numeric index, this code accesses the elements by name
-            $element=&$this->_elements[$this->_elementIndex[$elementname]];
-            $buttonparams = array('page', 'text', 'module', 'image', 'linktext', 'text', 'return', 'imagetext');
-            $helpiconoptions = array('page' => null, 'text' => null, 'module' => 'moodle', 'image' => null, 'linktext' => false);
+            $element = $this->_elements[$this->_elementIndex[$elementname]];
 
-            foreach ($button as $key => $val) {
-                if (isset($button[$key])) {
-                    $helpiconoptions[$buttonparams[$key]] = $val;
-                }
-            }
-            $helpicon = moodle_help_icon::make($helpiconoptions['page'], $helpiconoptions['text'], $helpiconoptions['module'], $helpiconoptions['linktext']);
-            if (!$helpiconoptions['image']) {
-                $helpicon->image = false;
-            }
+            $page     = isset($buttonargs[0]) ? $buttonargs[0] : null;
+            $text     = isset($buttonargs[1]) ? $buttonargs[1] : null;
+            $module   = isset($buttonargs[2]) ? $buttonargs[2] : 'moodle';
+            $linktext = isset($buttonargs[3]) ? $buttonargs[3] : false;
 
-            $element->_helpbutton = $OUTPUT->help_icon($helpicon);
-        }elseif (!$suppresscheck){
+            $element->_helpbutton = $OUTPUT->help_icon($page, $text, $module, $linktext);
+
+        } else if (!$suppresscheck) {
             print_error('nonexistentformelements', 'form', '', $elementname);
         }
     }

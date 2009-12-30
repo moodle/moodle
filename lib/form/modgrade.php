@@ -62,7 +62,8 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_select{
                     $grades[$i] = $i;
                 }
                 $this->load($grades);
-                $this->setHelpButton(array($COURSE->id), 'modgradehelpbutton');
+                //TODO: rewrite mod grading support in modforms 
+                // $this->setHelpButton(array($COURSE->id), 'modgradehelpbutton');
                 return $result;
         }
         return parent::onQuickFormEvent($event, $arg, $caller);

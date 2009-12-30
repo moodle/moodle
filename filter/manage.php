@@ -125,10 +125,7 @@ if ($context->contextlevel == CONTEXT_COURSE and $context->instanceid == SITEID)
 }
 
 /// Print heading.
-$helpicon = new moodle_help_icon();
-$helpicon->text = $title;
-$helpicon->page = 'localfiltersettings';
-echo $OUTPUT->heading_with_help($helpicon);
+echo $OUTPUT->heading_with_help($title, 'localfiltersettings');
 
 if (empty($availablefilters)) {
     echo '<p class="centerpara">' . get_string('nofiltersenabled', 'filters') . "</p>\n";

@@ -52,34 +52,6 @@ class MoodleQuickForm_format extends MoodleQuickForm_select{
     } //end constructor
 
     /**
-     * Add a single button.
-     *
-     * @param string $elementname name of the element to add the item to
-     * @param array $button arguments to pass to function $function
-     * @param boolean $suppresscheck whether to throw an error if the element
-     *                                  doesn't exist.
-     * @param string $function - function to generate html from the arguments in $button
-     * @param string $function
-     */
-    function setHelpButton($button, $function='helpbutton'){
-        global $OUTPUT;
-        //_elements has a numeric index, this code accesses the elements by name
-        $buttonparams = array('page', 'text', 'module', 'image', 'linktext', 'text', 'return', 'imagetext');
-        $helpiconoptions = array('page' => null, 'text' => null, 'module' => 'moodle', 'image' => null, 'linktext' => false);
-
-        foreach ($button as $key => $val) {
-            if (isset($button[$key])) {
-                $helpiconoptions[$buttonparams[$key]] = $val;
-            }
-        }
-        $helpicon = moodle_help_icon::make($helpiconoptions['page'], $helpiconoptions['text'], $helpiconoptions['module'], $helpiconoptions['linktext']);
-        if (!$helpiconoptions['image']) {
-            $helpicon->image = false;
-        }
-
-        $this->_helpbutton = $OUTPUT->help_icon($helpicon);
-    }
-    /**
      * Called by HTML_QuickForm whenever form event is made on this element
      *
      * @param     string    $event  Name of event
@@ -95,7 +67,7 @@ class MoodleQuickForm_format extends MoodleQuickForm_select{
             case 'createElement':
                 $menu = format_text_menu();
                 $this->load($menu);
-                $this->setHelpButton(array('textformat', get_string('helpformatting')));
+                //$this->setHelpButton(array('textformat', get_string('helpformatting')));
                 break;
             case 'updateValue' :
                 $value = $this->_findValue($caller->_constantValues);

@@ -2443,54 +2443,10 @@ function print_table($table, $return=false) {
  * @param string $class class added to the element
  * @return string html code to display a link to a popup window.
  */
-function link_to_popup_window ($url, $name=null, $linkname=null,
-                               $height=400, $width=500, $title=null,
-                               $options=null, $return=false) {
-    global $OUTPUT;
+function link_to_popup_window ($url, $name=null, $linkname=null, $height=400, $width=500, $title=null, $options=null, $return=false) {
+    debugging('link_to_popup_window() has been removed. Please change your code to use $OUTPUT->link(). Please note popups are discouraged for accessibility reasons');
 
-    debugging('link_to_popup_window() has been deprecated. Please change your code to use $OUTPUT->link().');
-
-    if ($options == 'none') {
-        $options = null;
-    }
-
-    if (empty($linkname)) {
-        throw new coding_exception('A link must have a descriptive text value! See $OUTPUT->link_to_popup() for usage.');
-    }
-
-    // Create a html_link object
-    $link = html_link::make($url, $linkname);
-    $link->title = $title;
-
-    // Parse the $options string
-    $popupparams = array();
-    if (!empty($options)) {
-        $optionsarray = explode(',', $options);
-        foreach ($optionsarray as $option) {
-            if (strstr($option, '=')) {
-                $parts = explode('=', $option);
-                if ($parts[1] == '0') {
-                    $popupparams[$parts[0]] = false;
-                } else {
-                    $popupparams[$parts[0]] = $parts[1];
-                }
-            } else {
-                $popupparams[$option] = true;
-            }
-        }
-    }
-
-    $popupaction = new popup_action('click', $url, $name, $popupparams);
-    $link->add_action($popupaction);
-
-    // Call the output method
-    $output = $OUTPUT->link($link);
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    return $OUTPUT->link($url, $name);
 }
 
 /**
@@ -2523,7 +2479,7 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
     }
 
     if (empty($linkname)) {
-        throw new coding_exception('A link must have a descriptive text value! See $OUTPUT->link_to_popup() for usage.');
+        throw new coding_exception('A link must have a descriptive text value! See $OUTPUT->link() for usage.');
     }
 
     // Create a html_button object
@@ -2796,35 +2752,131 @@ function helpbutton($page, $title, $module='moodle', $image=true, $linktext=fals
 
     global $OUTPUT;
 
-    if (!empty($text)) {
-        throw new coding_exception('The $text parameter has been deprecated. Please update your code and use $OUTPUT->help_icon() instead. <br />' .
-            "You will also need to copy the following text into a proper html help file if not already done so: <p>$text</p>");
-    }
+    $output = $OUTPUT->help_icon($page, $title, $module, $linktext);
 
-    if (!empty($imagetext)) {
-        throw new coding_exception('The $imagetext parameter has been deprecated. Please update your code and use $OUTPUT->help_icon() instead.');
-    }
-
-    $helpicon = new moodle_help_icon();
-    $helpicon->page = $page;
-    $helpicon->text = $title;
-    $helpicon->module = $module;
-    $helpicon->linktext = $linktext;
-
-    // If image is true, the defaults are handled by the helpicon's prepare method
-    if (!$image) {
-        $helpicon->image = false;
-    }
-
-    $output = $OUTPUT->help_icon($helpicon);
+    // hide image with CSS if needed
 
     if ($return) {
         return $output;
     } else {
         echo $output;
     }
-
 }
+
+/**
+ * Print a help button.
+ *
+ * Prints a special help button that is a link to the "live" emoticon popup
+ *
+ * @todo Finish documenting this function
+ *
+ * @global object
+ * @global object
+ * @param string $form ?
+ * @param string $field ?
+ * @param boolean $return If true then the output is returned as a string, if false it is printed to the current page.
+ * @return string|void Depending on value of $return
+ */
+function emoticonhelpbutton($form, $field, $return = false) {
+    /// TODO: MDL-21215
+
+    debugging('emoticonhelpbutton() was removed, new text editors will implement this feature');
+}
+
+/**
+ * Returns a string of html with an image of a help icon linked to a help page on a number of help topics.
+ * Should be used only with htmleditor or textarea.
+ *
+ * @global object
+ * @global object
+ * @param mixed $helptopics variable amount of params accepted. Each param may be a string or an array of arguments for
+ *                  helpbutton.
+ * @return string Link to help button
+ */
+function editorhelpbutton(){
+    return '';
+
+    /// TODO: MDL-21215
+
+    global $CFG, $SESSION, $OUTPUT;
+    $items = func_get_args();
+    $i = 1;
+    $urlparams = array();
+    $titles = array();
+    foreach ($items as $item){
+        if (is_array($item)){
+            $urlparams[] = "keyword$i=".urlencode($item[0]);
+            $urlparams[] = "title$i=".urlencode($item[1]);
+            if (isset($item[2])){
+                $urlparams[] = "module$i=".urlencode($item[2]);
+            }
+            $titles[] = trim($item[1], ". \t");
+        } else if (is_string($item)) {
+            $urlparams[] = "button$i=".urlencode($item);
+            switch ($item) {
+                case 'reading' :
+                    $titles[] = get_string("helpreading");
+                    break;
+                case 'writing' :
+                    $titles[] = get_string("helpwriting");
+                    break;
+                case 'questions' :
+                    $titles[] = get_string("helpquestions");
+                    break;
+                case 'emoticons2' :
+                    $titles[] = get_string("helpemoticons");
+                    break;
+                case 'richtext2' :
+                    $titles[] = get_string('helprichtext');
+                    break;
+                case 'text2' :
+                    $titles[] = get_string('helptext');
+                    break;
+                default :
+                    print_error('unknownhelp', '', '', $item);
+            }
+        }
+        $i++;
+    }
+    if (count($titles)>1){
+        //join last two items with an 'and'
+        $a = new object();
+        $a->one = $titles[count($titles) - 2];
+        $a->two = $titles[count($titles) - 1];
+        $titles[count($titles) - 2] = get_string('and', '', $a);
+        unset($titles[count($titles) - 1]);
+    }
+    $alttag = join (', ', $titles);
+
+    $paramstring = join('&', $urlparams);
+    $linkobject = '<img alt="'.$alttag.'" class="iconhelp" src="'.$OUTPUT->pix_url('help') . '" />';
+    $link = html_link::make(s('/lib/form/editorhelp.php?'.$paramstring), $linkobject);
+    $link->add_action(new popup_action('click', $link->url, 'popup', array('height' => 400, 'width' => 500)));
+    $link->title = $alttag;
+    return $OUTPUT->link($link);
+}
+
+/**
+ * Print a help button.
+ *
+ * Prints a special help button for html editors (htmlarea in this case)
+ *
+ * @todo Write code into this function! detect current editor and print correct info
+ * @global object
+ * @return string Only returns an empty string at the moment
+ */
+function editorshortcutshelpbutton() {
+    /// TODO: MDL-21215
+
+    global $CFG;
+    //TODO: detect current editor and print correct info
+/*    $imagetext = '<img src="' . $CFG->httpswwwroot . '/lib/editor/htmlarea/images/kbhelp.gif" alt="'.
+        get_string('editorshortcutkeys').'" class="iconkbhelp" />';
+
+    return helpbutton('editorshortcuts', get_string('editorshortcutkeys'), 'moodle', true, false, '', true, $imagetext);*/
+    return '';
+}
+
 
 /**
  * Returns an image of an up or down arrow, used for column sorting. To avoid unnecessary DB accesses, please
@@ -3143,10 +3195,10 @@ function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$
  * @return string|bool Depending on value of $return
  */
 function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
-    // debugging('print_scale_menu_helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_button($scaleselect).');
+    // debugging('print_scale_menu_helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_scale($courseid, $scale).');
     global $OUTPUT;
 
-    $output = $OUTPUT->help_button(help_button::make_scale_menu($courseid, $scale));
+    $output = $OUTPUT->help_icon_scale($courseid, $scale);
 
     if ($return) {
         return $output;
@@ -3451,17 +3503,15 @@ function print_heading_with_help($text, $helppage, $module='moodle', $icon=false
 
     global $OUTPUT;
 
-    $helpicon = new moodle_help_icon();
-    $helpicon->page = $helppage;
-    $helpicon->text = $text;
-    $helpicon->module = $module;
-
     // Extract the src from $icon if it exists
     if (preg_match('/src="([^"]*)"/', $icon, $matches)) {
         $icon = $matches[1];
+        $icon = moodle_url($icon);
+    } else {
+        $icon = '';
     }
 
-    $output = $OUTPUT->heading_with_help($helpicon, $icon);
+    $output = $OUTPUT->heading_with_help($text, $helppage, $module, $icon);
 
     if ($return) {
         return $output;

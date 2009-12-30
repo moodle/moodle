@@ -3026,7 +3026,7 @@ function print_groupmode_setting($form, $course=NULL) {
         $select = html_select::make($choices, 'groupmode', $groupmode, false);
         $select->disabled = $course->groupmodeforce;
         echo $OUTPUT->select($select);
-        echo $OUTPUT->help_icon(moodle_help_icon::make('groupmode', get_string('groupmode')));
+        echo $OUTPUT->help_icon('groupmode', get_string('groupmode'));
         echo '</td></tr>';
     }
 }

@@ -500,7 +500,7 @@ if ($ratingsmenuused) {
     echo "<div class=\"boxaligncenter\"><input type=\"submit\" value=\"".get_string("sendinratings", "glossary")."\" />";
     if ($glossary->scale < 0) {
         if ($scale = $DB->get_record("scale", array("id"=>abs($glossary->scale)))) {
-            echo $OUTPUT->help_button(help_button::make_scale_menu($course->id, $scale));
+            echo $OUTPUT->help_icon_scale($course->id, $scale);
         }
     }
     echo "</div>";
