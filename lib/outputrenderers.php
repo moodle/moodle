@@ -1958,7 +1958,7 @@ class core_renderer extends renderer_base {
                 }
                 if ($table->rotateheaders) {
                     // we need to wrap the heading content
-                    $heading->text = $this->output_tag('span', '', $heading->text);
+                    $heading->text = $this->output_tag('span', null, $heading->text);
                 }
 
                 $attributes = array(
