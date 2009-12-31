@@ -73,13 +73,9 @@ if (!empty($blogs)) {
 
     foreach ($blogs as $blog) {
         if ($blog->failedlastsync) {
-            $validicon = html_image::make($OUTPUT->pix_url('i/cross_red_big'));
-            $validicon->alt = get_string('feedisinvalid', 'blog');
-            $validicon->title = get_string('feedisinvalid', 'blog');
+            $validicon = $OUTPUT->image('i/cross_red_big', array('alt'=>get_string('feedisinvalid', 'blog'), 'title'=>get_string('feedisinvalid', 'blog')));
         } else {
-            $validicon = html_image::make($OUTPUT->pix_url('i/tick_green_big'));
-            $validicon->alt = get_string('feedisvalid', 'blog');
-            $validicon->title = get_string('feedisvalid', 'blog');
+            $validicon = $OUTPUT->image('i/tick_green_big', array('alt'=>get_string('feedisvalid', 'blog'), 'title'=>get_string('feedisvalid', 'blog')));
         }
 
         $editicon = new moodle_action_icon;
@@ -95,7 +91,7 @@ if (!empty($blogs)) {
         $deleteicon->image->alt = get_string('deleteexternalblog', 'blog');
         $deleteicon->add_confirm_action(get_string('externalblogdeleteconfirm', 'blog'));
         $icons = $OUTPUT->action_icon($editicon) . $OUTPUT->action_icon($deleteicon);
-        $table->data[] = html_table_row::make(array($blog->name, $blog->url, userdate($blog->timefetched), $OUTPUT->image($validicon), $icons));
+        $table->data[] = html_table_row::make(array($blog->name, $blog->url, userdate($blog->timefetched), $validicon, $icons));
     }
     echo $OUTPUT->table($table);
 }

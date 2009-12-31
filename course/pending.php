@@ -106,11 +106,7 @@ if (empty($pending)) {
     $strrequireskey = get_string('requireskey');
 
     // Loop over requested courses.
-    $keyicon = new html_image();
-    $keyicon->src = $OUTPUT->pix_url('i/key');
-    $keyicon->alt = $strrequireskey;
-    $keyicon->add_class('icon');
-    $keyicon = $OUTPUT->image($keyicon);
+    $keyicon = $OUTPUT->image('i/key', array('alt'=>$strrequireskey, 'class'=>'icon'));
 
     foreach ($pending as $course) {
         $course = new course_request($course);

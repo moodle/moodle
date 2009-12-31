@@ -411,9 +411,8 @@ class navigation_node {
         }
 
         if ($this->icon!==null) {
-            $icon = new html_image();
-            $icon->src = $this->icon;
-            $content = $OUTPUT->image($icon).' '.$content;
+            $icon = $OUTPUT->image($this->icon, array('alt'=>'', 'class'=>'icon'));
+            $content = $icon.$content; // use CSS for spacing of icons
         } else if ($this->helpbutton!==null) {
             $content = sprintf('%s<span class="clearhelpbutton">%s</span>',trim($this->helpbutton),$content);
         }

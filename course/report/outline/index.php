@@ -107,16 +107,14 @@
             $activitycell = new html_table_cell();
             $activitycell->add_class('activity');
 
-            $activityicon = html_image::make($OUTPUT->pix_url('icon', $cm->modname));
-            $activityicon->add_class('icon');
-            $activityicon->alt = $modulename;
+            $activityicon = $OUTPUT->image($OUTPUT->pix_url('icon', $cm->modname), array('alt'=>$modulename, 'class'=>'icon'));
 
             $activitylink = html_link::make("$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id", format_string($cm->name));
             if (!$cm->visible) {
                 $activitylink->add_class('dimmed');
             }
 
-            $activitycell->text = $OUTPUT->image($activityicon) . $OUTPUT->link($activitylink);
+            $activitycell->text = $activityicon . $OUTPUT->link($activitylink);
 
             $reportrow->cells[] = $activitycell;
 

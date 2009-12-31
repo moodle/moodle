@@ -498,10 +498,7 @@ class blog_entry {
             $icon     = substr(mimeinfo_from_type("icon", $mimetype), 0, -4);
             $type     = mimeinfo_from_type("type", $mimetype);
 
-            $image = new html_image();
-            $image->src = $OUTPUT->pix_url("/f/$icon");
-            $image->add_class('icon');
-            $image->alt = $filename;
+            $image = $OUTPUT->image("/f/$icon", array('alt'=>$filename, 'class'=>'icon'));
 
             if ($return == "html") {
                 $output .= $OUTPUT->link(html_link::make($ffurl, $OUTPUT->image($image)));
@@ -512,12 +509,10 @@ class blog_entry {
 
             } else {
                 if (in_array($type, array('image/gif', 'image/jpeg', 'image/png'))) {    // Image attachments don't get printed as links
-                    $image = new html_image();
-                    $image->src = $ffurl;
-                    $image->alt = $filename;
+                    $image = $OUTPUT->image($ffurl, array('alt'=>$filename));
                     $imagereturn .= "<br />" . $OUTPUT->image($image);
                 } else {
-                    $imagereturn .= $OUTPUT->link(html_link::make($ffurl, $OUTPUT->image($image)));
+                    $imagereturn .= $OUTPUT->link(html_link::make($ffurl, $image));
                     $imagereturn .= filter_text($OUTPUT->link(html_link::make($ffurl, $filename)));
                 }
             }

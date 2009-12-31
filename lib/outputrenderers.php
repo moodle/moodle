@@ -1240,20 +1240,26 @@ class core_renderer extends renderer_base {
     /**
      * Creates and returns an image.
      *
-     * @param html_image|moodle_url|string $image_or_url image or url of the image
+     * @param html_image|moodle_url|string $image_or_url image or url of the image,
+     *        it is also possible to use short pix name for core images
      * @param array $options image attributes such as title, id, alt, widht, height
      *
      * @return string HTML fragment
      */
     public function image($image_or_url, array $options = null) {
-        if ($image_or_url === false) {
-            return false;
+        if (empty($image_or_url)) {
+            throw new coding_exception('Empty $image_or_url value in $OUTPTU->image()');
         }
 
         if ($image_or_url instanceof html_image) {
             $image = clone($image_or_url);
         } else {
-            $image = new html_image($image_or_url, $options);
+            if (strpos($image_or_url, 'http')) {
+                $url = new moodle_url($image_or_url);
+            } else {
+                $url = $this->pix_url($image_or_url, 'moodle');
+            }
+            $image = new html_image($url, $options);
         }
 
         $image->prepare($this, $this->page, $this->target);
@@ -1261,11 +1267,11 @@ class core_renderer extends renderer_base {
         $this->prepare_event_handlers($image);
 
         $attributes = array('class' => $image->get_classes_string(),
-                            'src' => prepare_url($image->src),
-                            'alt' => $image->alt,
+                            'src'   => prepare_url($image->src),
+                            'alt'   => $image->alt,
                             'style' => $image->style,
                             'title' => $image->title,
-                            'id' => $image->id);
+                            'id'    => $image->id);
 
         // do not use prepare_legacy_width_and_height() here,
         // xhtml strict allows width&height and inline styles break theming too!

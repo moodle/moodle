@@ -1424,15 +1424,6 @@ class html_image extends labelled_html_component {
             $this->alt = HTML_ATTR_EMPTY;
         }
     }
-
-    /**
-     * Shortcut for initialising a html_image.
-     *
-     * @param mixed $url The URL to the image (string or moodle_url)
-     */
-    public static function make($src) {
-        return new html_image($src);
-    }
 }
 
 
@@ -2060,7 +2051,7 @@ class help_icon extends html_image {
 
         $this->helppage  = $helppage;
         $this->text      = $text;
-        $this->component = $module;
+        $this->component = $component;
         $this->linktext  = $linktext;
 
         $this->link = new html_link();
