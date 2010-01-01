@@ -219,6 +219,11 @@ init_performance_info();
 
 // Put $OUTPUT in place, so errors can be displayed.
 $OUTPUT = new bootstrap_renderer();
+if (false) {
+    // this is a funny trick to make Eclipse believe that $OUTPUT contains
+    // aninstance of core_renderer which in turn fixes autocompletion ;-)
+    $OUTPUT = new core_renderer(null, null);
+}
 
 // set handler for uncaught exceptions - equivalent to print_error() call
 set_exception_handler('default_exception_handler');
