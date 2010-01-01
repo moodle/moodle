@@ -26,6 +26,7 @@ $string['environmentrequireinstall'] = 'det er nødvendigt at installere/aktiver
 $string['environmentrequireversion'] = 'version $a->needed er nødvendigt og du kører $a->current';
 $string['installation'] = 'Installation';
 $string['language'] = 'Sprog';
+$string['parentlanguage'] = '<< OVERSÆTTERE: Hvis din sprogpakke har en moderpakke som Moodle skal bruge hvor der er uoversatte strenge, kan du angive det her. Hvis ikke du udfylder dette felt vil den tilsvarende engelske streng blive brugt. Eksempel: nl >>';
 $string['phpversion'] = 'PHP version';
 $string['reload'] = 'Genindlæs';
 $string['thischarset'] = 'UTF-8';
