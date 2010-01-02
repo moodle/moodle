@@ -2089,65 +2089,6 @@ class help_icon extends html_image {
 
 
 /**
- * Component representing an icon linking to a Moodle page.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class moodle_action_icon extends labelled_html_component {
-    /**
-     * @var string $linktext Optional text to display next to the icon
-     */
-    public $linktext;
-    /**
-     * @var html_image $image The icon
-     */
-    public $image;
-    /**
-     * @var html_link $link The link
-     */
-    public $link;
-
-    /**
-     * Constructor: sets up the other components in case they are needed
-     * @return void
-     */
-    public function __construct() {
-        $this->image = new html_image();
-        $this->link = new html_link();
-    }
-
-    /**
-     * @see lib/html_component#prepare()
-     * @return void
-     */
-    public function prepare(renderer_base $output, moodle_page $page, $target) {
-        $this->image->add_class('action-icon');
-
-        if (!empty($this->actions)) {
-            foreach ($this->actions as $action) {
-                $this->link->add_action($action);
-            }
-            unset($this->actions);
-        }
-
-        parent::prepare($output, $page, $target);
-
-        if (empty($this->image->src)) {
-            throw new coding_exception('moodle_action_icon->image->src must not be empty');
-        }
-
-        if (empty($this->image->alt) && !empty($this->linktext)) {
-            $this->image->alt = $this->linktext;
-        } else if (empty($this->image->alt)) {
-            debugging('moodle_action_icon->image->alt should not be empty.', DEBUG_DEVELOPER);
-        }
-    }
-}
-
-
-/**
  * This class represents how a block appears on a page.
  *
  * During output, each block instance is asked to return a block_contents object,

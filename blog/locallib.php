@@ -237,11 +237,9 @@ class blog_entry {
             foreach ($blogassociations as $assocrec) {
                 $contextrec = $DB->get_record('context', array('id' => $assocrec->contextid));
                 if ($contextrec->contextlevel ==  CONTEXT_COURSE) {
-                    $associcon = new moodle_action_icon();
-                    $associcon->link->url = new moodle_url($CFG->wwwroot.'/course/view.php', array('id' => $contextrec->instanceid));
-                    $associcon->image->src = $OUTPUT->pix_url('i/course');
-                    $associcon->linktext = $DB->get_field('course', 'shortname', array('id' => $contextrec->instanceid));
-                    $assocstr .= $OUTPUT->action_icon($associcon);
+                    $url = new moodle_url($CFG->wwwroot.'/course/view.php', array('id' => $contextrec->instanceid));
+                    $text = $DB->get_field('course', 'shortname', array('id' => $contextrec->instanceid)); //TODO: performance!!!!
+                    $assocstr .= $OUTPUT->action_icon($associconurl, $text, 'i/course');
                     $hascourseassocs = true;
                     $assoctype = get_string('course');
                 }
@@ -260,11 +258,9 @@ class blog_entry {
                     $modinfo = $DB->get_record('course_modules', array('id' => $contextrec->instanceid));
                     $modname = $DB->get_field('modules', 'name', array('id' => $modinfo->module));
 
-                    $associcon = new moodle_action_icon();
-                    $associcon->link->url = new moodle_url($CFG->wwwroot.'/mod/'.$modname.'/view.php', array('id' => $modinfo->id));
-                    $associcon->image->src = $OUTPUT->pix_url('icon', $modname);
-                    $associcon->linktext = $DB->get_field($modname, 'name', array('id' => $modinfo->instance));
-                    $assocstr .= $OUTPUT->action_icon($associcon);
+                    $url = new moodle_url($CFG->wwwroot.'/mod/'.$modname.'/view.php', array('id' => $modinfo->id));
+                    $text = $DB->get_field($modname, 'name', array('id' => $modinfo->instance)); //TODO: performance!!!!
+                    $assocstr .= $OUTPUT->action_icon($associconurl, $text, $OUTPUT->pix_url('icon', $modname));
                     $assocstr .= ', ';
                     $assoctype = get_string('modulename', $modname);
 

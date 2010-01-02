@@ -307,16 +307,14 @@ case 'plugins':
     echo '<ul>';
     foreach($repos as $repo) {
         $info = $repo->get_meta();
-        $icon = new moodle_action_icon();
-        $icon->image->src = $info->icon;
-        $icon->image->style = 'height: 16px; width: 16px;';
-        $icon->link->url = clone($url);
-        $icon->link->url->params(array('action' => 'list', 'repo_id' => $info->id, 'draftpath'=>$draftpath));
-        $icon->linktext = $info->name;
+
+        $aurl = clone($url);
+        $aurl->params(array('action' => 'list', 'repo_id' => $info->id, 'draftpath'=>$draftpath));
+
         if ($env == 'filemanager' && $info->type == 'draft') {
             continue;
         }
-        echo '<li>' . $OUTPUT->action_icon($icon) . '</li>';
+        echo '<li>' . $OUTPUT->action_icon($aurl, $info->name, $info->icon, array('class'=>'smallicon')) . '</li>'; // no hardcoded styles!
     }
     echo '</ul>';
     echo '</div>';

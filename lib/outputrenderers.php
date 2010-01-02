@@ -1099,47 +1099,67 @@ class core_renderer extends renderer_base {
      * Also contains an icon by default. Shown to teachers and admin only.
      * @param string $path The page link after doc root and language, no leading slash.
      * @param string $text The text to be displayed for the link
-     * @param string $iconpath The path to the icon to be displayed
+     * @retrun string
      */
-    public function doc_link($path, $text=false, $iconpath=false) {
-        global $CFG, $OUTPUT;
-        $icon = new moodle_action_icon();
-        $icon->linktext = $text;
-        $icon->image->alt = $text;
-        $icon->image->add_class('iconhelp');
-        $icon->link->url = new moodle_url(get_docs_url($path));
+    public function doc_link($path, $text) {
+        global $CFG;
 
-        if (!empty($iconpath)) {
-            $icon->image->src = $iconpath;
-        } else {
-            $icon->image->src = $this->pix_url('docs')->out(false, array(), false);
-        }
+        $options = array('class'=>'iconhelp', 'alt'=>$text);
+        $url = new moodle_url(get_docs_url($path));
+
+        $icon = $this->icon('docs', $options);
+
+        $link = new html_link($url, $icon.$text);
 
         if (!empty($CFG->doctonewwindow)) {
-            $icon->add_action(new popup_action('click', $icon->link->url));
+            $link->add_action(new popup_action('click', $url));
         }
 
-        return $this->action_icon($icon);
-
+        return $this->link($link);
     }
 
     /**
      * Given a moodle_action_icon object, outputs an image linking to an action (URL or AJAX).
      *
-     * @param moodle_action_icon $icon A moodle_action_icon object
+     * @param mixed $link A html_link object or a string URL (text param required in second case)
+     * @param string $title link title and also image alt if no alt specified in $options
+     * @param html_image|moodle_url|string $image_or_url image or url of the image,
+     *        it is also possible to use short pix name for core images
+     * @param array $options image attributes such as title, id, alt, widht, height
+     * @param bool $linktext show title next to image in link
      * @return string HTML fragment
      */
-    public function action_icon(moodle_action_icon $icon) {
-        $icon = clone($icon);
-        $icon->prepare($this, $this->page, $this->target);
-        $imageoutput = $this->image($icon->image);
-
-        if ($icon->linktext) {
-            $imageoutput .= $icon->linktext;
+    public function action_icon($url_or_link, $title, $image_or_url, array $options = null, $linktext=false) {
+        $options = (array)$options;
+        if (empty($options['class'])) {
+            // let ppl override the class via $options
+            $options['class'] = 'action-icon';
         }
-        $icon->link->text = $imageoutput;
 
-        return $this->link($icon->link);
+        if (empty($title)) {
+            debugging('$title should not be empty in action_icon() call');
+        }
+
+        if (!$linktext) {
+            $options['alt'] = $itle;
+        }
+
+        $icon = $this->icon($image_or_url, $options);
+
+        if ($linktext) {
+            $icon = $icon.$itle;
+        }
+
+        if ($url_or_link instanceof html_link) {
+            $link = clone($url_or_link);
+            $link->text = ($icon);
+            $url = $link->url;
+        } else {
+            $link = new html_link($url, $icon);
+        }
+        $link->add_action(new popup_action('click', $url));
+
+        return $this->link($link);
     }
 
     /*

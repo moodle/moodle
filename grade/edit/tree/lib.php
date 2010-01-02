@@ -135,22 +135,12 @@ class grade_edit_tree {
 
         if ($element['type'] == 'item' or ($element['type'] == 'category' and $element['depth'] > 1)) {
             if ($this->element_deletable($element)) {
-                $actionicon = new moodle_action_icon();
-                $actionicon->link->url = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'delete', 'eid' => $eid, 'sesskey' => sesskey()));
-                $actionicon->image->src = $OUTPUT->pix_url('t/delete');
-                $actionicon->image->alt = get_string('delete');
-                $actionicon->image->title = get_string('delete');
-                $actionicon->image->add_class('iconsmall');
-                $actions .= $OUTPUT->action_icon($actionicon);
+                $aurl = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'delete', 'eid' => $eid, 'sesskey' => sesskey()));
+                $actions .= $OUTPUT->action_icon($aurl, get_string('delete'), 't/delete', array('class'=>'iconsmall'));
             }
 
-            $actionicon = new moodle_action_icon();
-            $actionicon->link->url = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'moveselect', 'eid' => $eid, 'sesskey' => sesskey()));
-            $actionicon->image->src = $OUTPUT->pix_url('t/move');
-            $actionicon->image->alt = get_string('move');
-            $actionicon->image->title = get_string('move');
-            $actionicon->image->add_class('iconsmall');
-            $actions .= $OUTPUT->action_icon($actionicon);
+            $aurl = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'moveselect', 'eid' => $eid, 'sesskey' => sesskey()));
+            $actions .= $OUTPUT->action_icon($aurl, get_string('move'), 't/move', array('class'=>'iconsmall'));
         }
 
         $actions .= $this->gtree->get_hiding_icon($element, $this->gpr);
@@ -218,19 +208,14 @@ class grade_edit_tree {
                     $strmovehere = get_string('movehere');
                     $actions = ''; // no action icons when moving
 
-                    $moveicon = new moodle_action_icon();
-                    $moveicon->link->url = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'move', 'eid' => $this->moving, 'moveafter' => $child_eid, 'sesskey' => sesskey()));
+                    $aurl = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'move', 'eid' => $this->moving, 'moveafter' => $child_eid, 'sesskey' => sesskey()));
                     if ($first) {
-                        $moveicon->link->url->params($first);
+                        $aurl->params($first);
                     }
-                    $moveicon->image->add_class('movetarget');
-                    $moveicon->image->src = $OUTPUT->pix_url('movehere');
-                    $moveicon->image->alt = $strmovehere;
-                    $moveicon->image->title = $strmovehere;
 
                     $cell = new html_table_cell();
                     $cell->colspan = 12;
-                    $cell->text = $OUTPUT->action_icon($moveicon);
+                    $cell->text = $OUTPUT->action_icon($aurl, $strmovehere, 'movehere', array('class'=>'movetarget'));
 
                     $moveto = html_table_row::make(array($cell));
                 }

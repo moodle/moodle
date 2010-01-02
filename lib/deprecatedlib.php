@@ -2947,7 +2947,7 @@ function print_arrow($direction='up', $strsort=null, $return=false) {
  * @param string $iconpath The path to the icon to be displayed
  * @return string Either the link or an empty string
  */
-function doc_link($path='', $text='', $iconpath='') {
+function doc_link($path='', $text='', $iconpath='ignored') {
     global $CFG, $OUTPUT;
 
     debugging('doc_link() has been deprecated. Please change your code to use $OUTPUT->doc_link().');
@@ -2956,7 +2956,7 @@ function doc_link($path='', $text='', $iconpath='') {
         return '';
     }
 
-    return $OUTPUT->doc_link($path, $text, $iconpath);
+    return $OUTPUT->doc_link($path, $text);
 }
 
 /**

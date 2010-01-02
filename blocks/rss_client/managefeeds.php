@@ -117,21 +117,15 @@ foreach($feeds as $feed) {
         '<div class="url">' . $OUTPUT->link($feed->url, $feed->url) .'</div>' .
         '<div class="description">' . $feed->description . '</div>';
 
-    $editaction = new moodle_action_icon();
-    $editaction->link->url = $CFG->wwwroot .'/blocks/rss_client/editfeed.php?rssid=' . $feed->id . $extraparams;
-    $editaction->link->title = get_string('edit');
-    $editaction->image->src = $OUTPUT->pix_url('t/edit');
-    $editaction->image->alt = get_string('edit');
+    $editurl = $CFG->wwwroot .'/blocks/rss_client/editfeed.php?rssid=' . $feed->id . $extraparams;
+    $editaction = $OUTPUT->action_icon($editurl, get_string('edit'), 't/edit');
 
-    $deleteaction = new moodle_action_icon();
-    $deleteaction->link->url = $CFG->wwwroot .'/blocks/rss_client/managefeeds.php?deleterssid=' . $feed->id .
-            '&sesskey=' . sesskey() . $extraparams;
-    $deleteaction->link->title = get_string('delete');
-    $deleteaction->image->src = $OUTPUT->pix_url('t/delete');
-    $deleteaction->image->alt = get_string('delete');
-    $deleteaction->link->add_confirm_action(get_string('deletefeedconfirm', 'block_rss_client'));
+    $deleteurl = $CFG->wwwroot .'/blocks/rss_client/managefeeds.php?deleterssid=' . $feed->id . '&sesskey=' . sesskey() . $extraparams;
+    $deletelink = new html_link($deleteurl);
+    $deletelink->add_confirm_action(get_string('deletefeedconfirm', 'block_rss_client'));
+    $deleteaction = $OUTPUT->action_icon($deletelink, get_string('delete'), 't/delete');
 
-    $feedicons = $OUTPUT->action_icon($editaction) . ' ' . $OUTPUT->action_icon($deleteaction);
+    $feedicons = $editaction . ' ' . $deleteaction;
 
     $table->add_data(array($feedinfo, $feedicons));
 }

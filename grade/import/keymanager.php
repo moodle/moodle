@@ -53,23 +53,13 @@ if ($keys = $DB->get_records_select('user_private_key', "script='grade/import' A
         $line[1] = $key->iprestriction;
         $line[2] = empty($key->validuntil) ? get_string('always') : userdate($key->validuntil);
 
-        $icon = new moodle_action_icon();
-        $icon->link->url = new moodle_url('key.php', array('id' => $key->id));
-        $icon->image->add_class('iconsmall');
+        $url = new moodle_url('key.php', array('id' => $key->id));
 
-        $editicon = clone($icon);
-        $editicon->image->src = $OUTPUT->pix_url('t/edit');
-        $editicon->image->title = $stredit;
-        $editicon->image->alt = $stredit;
-        $buttons = $OUTPUT->action_icon($editicon);
+        $buttons = $OUTPUT->action_icon($url, $stredit, 't/edit');
 
-        $deleteicon = clone($icon);
-        $deleteicon->image->src = $OUTPUT->pix_url('t/delete');
-        $deleteicon->image->title = $strdelete;
-        $deleteicon->image->alt = $strdelete;
-        $deleteicon->link->url->param('delete', 1);
-        $deleteicon->link->url->param('sesskey', sesskey());
-        $buttons .= $OUTPUT->action_icon($deleteicon);
+        $url->param('delete', 1);
+        $url->param('sesskey', sesskey());
+        $buttons .= $OUTPUT->action_icon($url, $strdelete, 't/delete');
 
         $line[3] = $buttons;
         $data[] = $line;

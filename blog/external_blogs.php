@@ -78,20 +78,14 @@ if (!empty($blogs)) {
             $validicon = $OUTPUT->image('i/tick_green_big', array('alt'=>get_string('feedisvalid', 'blog'), 'title'=>get_string('feedisvalid', 'blog')));
         }
 
-        $editicon = new moodle_action_icon;
-        $editicon->link->url = new moodle_url($CFG->wwwroot.'/blog/external_blog_edit.php', array('id' => $blog->id));
-        $editicon->link->title = get_string('editexternalblog', 'blog');
-        $editicon->image->src = $OUTPUT->pix_url('t/edit');
-        $editicon->image->alt = get_string('editexternalblog', 'blog');
+        $editurl = new moodle_url($CFG->wwwroot.'/blog/external_blog_edit.php', array('id' => $blog->id));
+        $editicon = $OUTPUT->action_icon($editurl, get_string('editexternalblog', 'blog'), 't/edit');
 
-        $deleteicon = new moodle_action_icon;
-        $deleteicon->link->url = new moodle_url($CFG->wwwroot.'/blog/external_blogs.php', array('delete' => $blog->id, 'sesskey' => sesskey()));
-        $deleteicon->link->title = get_string('deleteexternalblog', 'blog');
-        $deleteicon->image->src = $OUTPUT->pix_url('t/delete');
-        $deleteicon->image->alt = get_string('deleteexternalblog', 'blog');
-        $deleteicon->add_confirm_action(get_string('externalblogdeleteconfirm', 'blog'));
-        $icons = $OUTPUT->action_icon($editicon) . $OUTPUT->action_icon($deleteicon);
-        $table->data[] = html_table_row::make(array($blog->name, $blog->url, userdate($blog->timefetched), $validicon, $icons));
+        $deletelink = new html_link(new moodle_url($CFG->wwwroot.'/blog/external_blog_edit.php', array('id' => $blog->id, 'sesskey'=>sesskey())));
+        $deletelink->add_confirm_action(get_string('externalblogdeleteconfirm', 'blog'));
+        $deleteicon = $OUTPUT->action_icon($deletelink, get_string('deleteexternalblog', 'blog'), 't/delete');
+
+        $table->data[] = html_table_row::make(array($blog->name, $blog->url, userdate($blog->timefetched), $validicon, $editicon . $deleteicon));
     }
     echo $OUTPUT->table($table);
 }

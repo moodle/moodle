@@ -224,16 +224,10 @@
 
 /// Display helper functions ===================================================
 
-function action_url($filterpath, $action) {
+function filters_action_url($filterpath, $action) {
     global $returnurl;
     return $returnurl . '?sesskey=' . sesskey() . '&amp;filterpath=' .
             urlencode($filterpath) . '&amp;action=' . $action;
-}
-
-function action_icon($url, $icon, $straction) {
-    global $CFG, $OUTPUT;
-    return '<a href="' . $url . '" title="' . $straction . '">' .
-            '<img src="' . $OUTPUT->pix_url('t/' . $icon) . '" alt="' . $straction . '" /></a> ';
 }
 
 function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings) {
@@ -249,7 +243,7 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
     }
 
     // Disable/off/on
-    $select = html_select::make_popup_form(action_url($filter, 'setstate'), 'newstate', $activechoices, 'active' . basename($filter), $filterinfo->active);
+    $select = html_select::make_popup_form(filters_action_url($filter, 'setstate'), 'newstate', $activechoices, 'active' . basename($filter), $filterinfo->active);
     $select->nothinglabel = false;
     $select->form->button->text = get_string('save', 'admin');
     $row[] = $OUTPUT->select($select);
@@ -259,12 +253,12 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
     $spacer = '<img src="' . $OUTPUT->pix_url('spacer') . '" class="iconsmall" alt="" /> ';
     if ($filterinfo->active != TEXTFILTER_DISABLED) {
         if (!$isfirstrow) {
-            $updown .= action_icon(action_url($filter, 'up'), 'up', get_string('up'));
+            $updown .= $OUTPUT->action_icon(filters_action_url($filter, 'up'), get_string('up'), 't/up');
         } else {
             $updown .= $spacer;
         }
         if (!$islastactive) {
-            $updown .= action_icon(action_url($filter, 'down'), 'down', get_string('down'));
+            $updown .= $OUTPUT->action_icon(filters_action_url($filter, 'down'), get_string('down'), 't/down');
         } else {
             $updown .= $spacer;
         }
@@ -272,7 +266,7 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
     $row[] = $updown;
 
     // Apply to strings.
-    $select = html_select::make_popup_form(action_url($filter, 'setapplyto'), 'stringstoo', $applytochoices, 'applyto' . basename($filter), $applytostrings);
+    $select = html_select::make_popup_form(filters_action_url($filter, 'setapplyto'), 'stringstoo', $applytochoices, 'applyto' . basename($filter), $applytostrings);
     $select->nothinglabel = false;
     $select->disabled = $filterinfo->active == TEXTFILTER_DISABLED;
     $select->form->button->text = get_string('save', 'admin');
@@ -288,7 +282,7 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
 
     // Delete
     if (substr($filter, 0, 4) != 'mod/') {
-        $row[] = '<a href="' . action_url($filter, 'delete') . '">' . get_string('delete') . '</a>';
+        $row[] = '<a href="' . filters_action_url($filter, 'delete') . '">' . get_string('delete') . '</a>';
     } else {
         $row[] = '';
     }

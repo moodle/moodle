@@ -84,22 +84,12 @@ if (count($queued) > 0) {
         $e = portfolio_exporter::rewaken_object($q->id);
         $e->verify_rewaken(true);
         $queued = $e->get('queued');
-        $base = $CFG->wwwroot . '/portfolio/add.php?id=' . $q->id . '&logreturn=1&sesskey=' . sesskey();
-        $iconstr = '';
+        $baseurl = new moodle_url($CFG->wwwroot . '/portfolio/add.php', array('id'=>$q->id, 'logreturn'=>1, 'sesskey'=>sesskey()));
 
-        $cancel = new moodle_action_icon();
-        $cancel->link->url = new moodle_url($base . '&cancel=1');
-        $cancel->image->src = $OUTPUT->pix_url('t/stop');
-        $cancel->linktext = get_string('cancel');
-
-        $iconstr = $OUTPUT->action_icon($cancel);
+        $iconstr = $OUTPUT->action_icon(new moodle_url($baseurl, array('cancel'=>1)), get_string('cancel'), 't/stop');
 
         if (!$e->get('queued') && $e->get('expirytime') > $now) {
-            $continue = new moodle_action_icon();
-            $continue->link->url = new moodle_url($base);
-            $continue->image->src = $OUTPUT->pix_url('t/go');
-            $continue->linktext = get_string('continue');
-            $iconstr .= '&nbsp;' . $OUTPUT->action_icon($continue);
+            $iconstr .= '&nbsp;' . $OUTPUT->action_icon($baseurl, get_string('continue'), 't/go');
         }
         $table->data[] = array(
             $e->get('caller')->display_name(),

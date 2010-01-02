@@ -773,7 +773,7 @@ function close_window($delay = 0, $reloadopener = false) {
  * @param string $iconpath The path to the icon to be displayed
  * @return string The link to user documentation for this current page
  */
-function page_doc_link($text='', $iconpath='') {
+function page_doc_link($text='') {
     global $CFG, $PAGE, $OUTPUT;
 
     if (empty($CFG->docroot) || during_initial_install()) {
@@ -787,7 +787,7 @@ function page_doc_link($text='', $iconpath='') {
     if (!$path) {
         return '';
     }
-    return $OUTPUT->doc_link($path, $text, $iconpath);
+    return $OUTPUT->doc_link($path, $text);
 }
 
 

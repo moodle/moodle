@@ -1456,14 +1456,7 @@ class grade_structure {
         }
 
         if ($url) {
-            $url = $gpr->add_url_params($url);
-            $editicon = new moodle_action_icon();
-            $editicon->link->url = $url;
-            $editicon->image->src = $OUTPUT->pix_url('t/edit');
-            $editicon->image->alt = $stredit;
-            $editicon->image->title = $stredit;
-            $editicon->image->add_class('iconsmall');
-            return $OUTPUT->action_icon($editicon);
+            return $OUTPUT->action_icon($gpr->add_url_params($url), $stredit, 't/edit', array('class'=>'iconsmall'));
 
         } else {
             return '';
@@ -1490,37 +1483,29 @@ class grade_structure {
         $strshow = get_string('showverbose', 'grades', $strparams);
         $strhide = get_string('hideverbose', 'grades', $strparams);
 
-        $hideicon = new moodle_action_icon();
-        $hideicon->image->add_class('iconsmall');
-        $hideicon->link->add_class('hide');
-        $hideicon->link->url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/action.php',
-                array('id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']));
+        $url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/action.php', array('id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']));
+        $url = $gpr->add_url_params($url);
 
         if ($element['object']->is_hidden()) {
-            $icon = 'show';
+            $type = 'show';
             $tooltip = $strshow;
 
             // Change the icon and add a tooltip showing the date
             if ($element['type'] != 'category' and $element['object']->get_hidden() > 1) {
-                $icon = 'hiddenuntil';
+                $type = 'hiddenuntil';
                 $tooltip = get_string('hiddenuntildate', 'grades',
                         userdate($element['object']->get_hidden()));
             }
 
-            $hideicon->link->url->param('action', 'show');
-            $hideicon->image->src = $OUTPUT->pix_url('t/' . $icon);
-            $hideicon->image->alt = $strshow;
-            $hideicon->image->title = $tooltip;
+            $url->param('action', 'show');
+            $hideicon = $OUTPUT->action_icon($url, $title, 't/'.$type, array('alt'=>$strshow, 'class'=>'iconsmall'));
 
         } else {
-            $hideicon->link->url->param('action', 'hide');
-            $hideicon->image->src = $OUTPUT->pix_url('t/hide');
-            $hideicon->image->alt = $strhide;
-            $hideicon->image->title = $strhide;
+            $url->param('action', 'hide');
+            $hideicon = $OUTPUT->action_icon($url, $strhide, 't/hide', array('class'=>'iconsmall'));
         }
 
-        $hideicon->link->url = $gpr->add_url_params($hideicon->link->url);
-        return $OUTPUT->action_icon($hideicon);
+        return $hideicon;
     }
 
     /**
@@ -1538,13 +1523,8 @@ class grade_structure {
         $strunlock = get_string('unlockverbose', 'grades', $strparams);
         $strlock = get_string('lockverbose', 'grades', $strparams);
 
-        $lockicon = new moodle_action_icon();
-        $lockicon->link->url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/action.php', array(
-                'id' => $this->courseid,
-                'sesskey' => sesskey(),
-                'eid' => $element['eid']));
-        $lockicon->link->url = $gpr->add_url_params($lockicon->link->url);
-        $lockicon->image->add_class('iconsmall');
+        $url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/action.php', array('id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']));
+        $url = $gpr->add_url_params($url);
 
         // Don't allow an unlocking action for a grade whose grade item is locked: just print a state icon
         if ($element['type'] == 'grade' && $element['object']->grade_item->is_locked()) {
@@ -1553,42 +1533,34 @@ class grade_structure {
             $strnonunlockable = get_string('nonunlockableverbose', 'grades', $strparamobj);
 
             $action = $OUTPUT->image('t/unlock_gray', array('alt'=>$strnonunlockable, 'title'=>$strnonunlockable, 'class'=>'iconsmall'));
-            $action = $OUTPUT->image($lockicon);
+
         } else if ($element['object']->is_locked()) {
-            $icon = 'unlock';
+            $type = 'unlock';
             $tooltip = $strunlock;
 
             // Change the icon and add a tooltip showing the date
             if ($element['type'] != 'category' and $element['object']->get_locktime() > 1) {
-                $icon = 'locktime';
+                $type = 'locktime';
                 $tooltip = get_string('locktimedate', 'grades',
                         userdate($element['object']->get_locktime()));
             }
 
-            if (!has_capability('moodle/grade:manage', $this->context) and
-                !has_capability('moodle/grade:unlock', $this->context)) {
-                return '';
+            if (!has_capability('moodle/grade:manage', $this->context) and !has_capability('moodle/grade:unlock', $this->context)) {
+                $action = '';
+            } else {
+                $url->param('action', 'unlock');
+                $action = $OUTPUT->action_icon($url, $tooltip, 't/'.$type, array('alt'=>$strunlock, 'class'=>'smallicon'));
             }
-            $lockicon->link->url->param('action', 'unlock');
-            $lockicon->link->add_class('lock');
-            $lockicon->image->src = $OUTPUT->pix_url('t/'.$icon);
-            $lockicon->image->alt = $strunlock;
-            $lockicon->image->title = $tooltip;
-            $action  = $OUTPUT->action_icon($lockicon);
 
         } else {
-            if (!has_capability('moodle/grade:manage', $this->context) and
-                !has_capability('moodle/grade:lock', $this->context)) {
-                return '';
+            if (!has_capability('moodle/grade:manage', $this->context) and !has_capability('moodle/grade:lock', $this->context)) {
+                $action = '';
+            } else {
+                $url->param('action', 'lock');
+                $action = $OUTPUT->action_icon($url, $strlock, 't/lock', array('class'=>'smallicon'));
             }
-
-            $lockicon->link->url->param('action', 'lock');
-            $lockicon->link->add_class('lock');
-            $lockicon->image->src = $OUTPUT->pix_url('t/lock');
-            $lockicon->image->alt = $strlock;
-            $lockicon->image->title = $strlock;
-            $action  = $OUTPUT->action_icon($lockicon);
         }
+
         return $action;
     }
 
@@ -1624,16 +1596,9 @@ class grade_structure {
                     $icon = 't/calc_off';
                 }
 
-                $calcicon = new moodle_action_icon();
-                $calcicon->link->url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/calculation.php',
-                        array('courseid' => $this->courseid, 'id' => $object->id));
-
-                $calcicon->link->url = $gpr->add_url_params($calcicon->link->url);
-                $calcicon->image->src = $OUTPUT->pix_url($icon);
-                $calcicon->add_class('iconsmall');
-                $calcicon->alt = $streditcalculation;
-                $calcicon->title = $streditcalculation;
-                return $OUTPUT->action_icon($calcicon) . "\n";
+                $url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/calculation.php', array('courseid' => $this->courseid, 'id' => $object->id));
+                $url = $gpr->add_url_params($url);
+                return $OUTPUT->action_icon($url, $streditcalculation, $icon, array('class'=>'smallicon')) . "\n";
             }
         }
 
@@ -2255,19 +2220,12 @@ function grade_button($type, $courseid, $object) {
     $strdelete = get_string('delete');
     $stredit   = get_string('edit');
 
-    $icon = new moodle_action_icon();
-
     if ($type == 'delete') {
-        $icon->link->url = new moodle_url('index.php', array('id' => $courseid, $objectidstring => $object->id, 'action' => 'delete', 'sesskey' => sesskey()));
+        $url = new moodle_url('index.php', array('id' => $courseid, $objectidstring => $object->id, 'action' => 'delete', 'sesskey' => sesskey()));
     } else if ($type == 'edit') {
-        $icon->link->url = new moodle_url('edit.php', array('courseid' => $courseid, 'id' => $object->id));
+        $url = new moodle_url('edit.php', array('courseid' => $courseid, 'id' => $object->id));
     }
 
-    $icon->image->src = $OUTPUT->pix_url('t/'.$type);
-    $icon->image->add_class('iconsmall');
-    $icon->image->title = ${'str'.$type};
-    $icon->image->alt = ${'str'.$type};
-
-    return $OUTPUT->action_icon($icon);
+    return $OUTPUT->action_icon($url, ${'str'.$type}, 't/'.$type, array('class'=>'iconsmall'));
 
 }

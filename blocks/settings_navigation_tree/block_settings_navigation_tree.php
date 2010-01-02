@@ -140,35 +140,23 @@ class block_settings_navigation_tree extends block_tree {
                 $this->content->footer = '';
             }
 
-            $reloadicon = new moodle_action_icon();
-            $url = $this->page->url;
-            $url->param('regenerate','navigation');
-            $reloadicon->link->url = $url;
-            $reloadicon->link->add_class('customcommand');
-            $reloadicon->image->src = $OUTPUT->pix_url('t/reload');
-            $reloadicon->image->alt = get_string('reload');
-            $reloadicon->title = get_string('reload');
+            $reloadicon = $OUTPUT->action_icon($this->page->url, get_string('reload'), 't/reload', array('class'=>'customcommand'));
 
-            $this->content->footer .= $OUTPUT->action_icon($reloadicon);
+            $this->content->footer .= $reloadicon;
 
             if (!empty($this->config->enablesidebarpopout) && $this->config->enablesidebarpopout == 'yes') {
                 user_preference_allow_ajax_update('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, PARAM_INT);
 
-                $moveicon = new moodle_action_icon();
-                $moveicon->link->add_classes('moveto customcommand requiresjs');
-                $moveicon->link->url = $this->page->url;
+                $movelink = new html_link($this->page->url);
+                $movelink->add_classes('moveto customcommand requiresjs');
                 if ($this->docked) {
-                    $moveicon->image->src = $OUTPUT->pix_url('t/movetoblock');
-                    $moveicon->image->alt = $toggleblockdisplay;
-                    $moveicon->image->title = $toggleblockdisplay;
-                    $moveicon->link->url->param('undock', $this->instance->id);
+                    $movelink->url->param('undock', $this->instance->id);
+                    $moveicon = $OUTPUT->action_icon($movelink, $toggleblockdisplay, 't/movetoblock');
                 } else {
-                    $moveicon->image->src = $OUTPUT->pix_url('t/movetosidetab');
-                    $moveicon->image->alt = $togglesidetabdisplay;
-                    $moveicon->image->title = $togglesidetabdisplay;
-                    $moveicon->link->url->param('dock', $this->instance->id);
+                    $movelink->url->param('dock', $this->instance->id);
+                    $moveicon = $OUTPUT->action_icon($movelink, $toggleblockdisplay, 't/movetosidetab');
                 }
-                $this->content->footer .= $OUTPUT->action_icon($moveicon);
+                $this->content->footer .= $moveicon;
             }
         }
 

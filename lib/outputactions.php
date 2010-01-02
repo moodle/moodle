@@ -115,7 +115,11 @@ class popup_action extends component_action {
         global $CFG;
         $this->name = $name;
 
-        $url = new moodle_url($url);
+        if ($url instanceof moodle_url) {
+            $url = clone($url);
+        } else {
+            $url = new moodle_url($url);
+        }
 
         if ($this->name) {
             $_name = $this->name;

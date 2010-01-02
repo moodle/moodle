@@ -340,13 +340,8 @@
 
                 $contentheading = $group->name;
                 if (has_capability('moodle/course:managegroups', $context)) {
-                    $editgroupaction = new moodle_action_icon();
-                    $editgroupaction->link->url = new moodle_url($CFG->wwwroot.'/group/group.php', array('id' => $group->id, 'courseid' => $group->courseid));
-                    $editgroupaction->link->title = get_string('editgroupprofile');
-                    $editgroupaction->image->src = $OUTPUT->pix_url('t/edit');
-                    $editgroupaction->image->alt = get_string('editgroupprofile');
-
-                    $contentheading .= '&nbsp;' . $OUTPUT->action_icon($editgroupaction);
+                    $aurl = new moodle_url($CFG->wwwroot.'/group/group.php', array('id' => $group->id, 'courseid' => $group->courseid));
+                    $contentheading .= '&nbsp;' . $OUTPUT->action_icon($aurl, get_string('editgroupprofile'), 't/edit');
                 }
 
                 $group->description = file_rewrite_pluginfile_urls($group->description, 'pluginfile.php', $context->id, 'course_group_description', $group->id);

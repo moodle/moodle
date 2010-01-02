@@ -502,14 +502,10 @@ class grade_report_grader extends grade_report {
 
         $string = ${'str' . $showhide};
 
-        $toggleicon = new moodle_action_icon();
-        $toggleicon->image->src = $OUTPUT->pix_url($imagename);
-        $toggleicon->image->add_class('iconsmall');
-        $toggleicon->alt = $string;
-        $toggleicon->title = $string;
-        $toggleicon->link->url = $this->baseurl->out(false, array('toggle' => $toggleaction, 'toggle_type' => $type), false);
+        $aurl = clone($this->baseurl);
+        $url->params(array('toggle' => $toggleaction, 'toggle_type' => $type));
 
-        $retval = $OUTPUT->container($OUTPUT->action_icon($toggleicon, 'gradertoggle'));
+        $retval = $OUTPUT->container($OUTPUT->action_icon($url, $string, $imagename, array('class'=>'iconsmall'))); // TODO: this container looks wrong here
 
         return $retval;
     }
@@ -614,12 +610,8 @@ class grade_report_grader extends grade_report {
                 $userreportcell->header = true;
                 $a->user = fullname($user);
                 $strgradesforuser = get_string('gradesforuser', 'grades', $a);
-                $userreporticon = new moodle_action_icon();
-                $userreporticon->link->url = new moodle_url($CFG->wwwroot.'/grade/report/'.$CFG->grade_profilereport.'/index.php', array('userid' => $user->id, 'id' => $this->course->id));
-                $userreporticon->image->add_class('iconsmall');
-                $userreporticon->image->src = $OUTPUT->pix_url('t/grades');
-                $userreporticon->image->alt = $strgradesforuser;
-                $userreportcell->text = $OUTPUT->action_icon($userreporticon);
+                $url = new moodle_url($CFG->wwwroot.'/grade/report/'.$CFG->grade_profilereport.'/index.php', array('userid' => $user->id, 'id' => $this->course->id));
+                $userreportcell->text = $OUTPUT->action_icon($url, $strgradesforuser, 't/grades', array('class'=>'iconsmall'));
                 $userrow->cells[] = $userreportcell;
             }
 
@@ -1414,22 +1406,21 @@ class grade_report_grader extends grade_report {
             $strswitchplus  = $this->get_lang_string('gradesonly', 'grades');
             $strswitchwhole = $this->get_lang_string('fullmode', 'grades');
 
-            $contractexpandicon = new moodle_action_icon();
-            $contractexpandicon->link->url = new moodle_url($this->gpr->get_return_url(null, array('target'=>$element['eid'], 'action'=>'switch_minus', 'sesskey'=>sesskey())));
-            $contractexpandicon->image->add_class('iconsmall');
-            $contractexpandicon->image->src = $OUTPUT->pix_url('t/switch_minus');
-            $contractexpandicon->image->alt = $strswitchminus;
+            $url = new moodle_url($this->gpr->get_return_url(null, array('target'=>$element['eid'], 'sesskey'=>sesskey())));
 
             if (in_array($element['object']->id, $this->collapsed['aggregatesonly'])) {
-                $contractexpandicon->image->src = $OUTPUT->pix_url('t/switch_plus');
-                $contractexpandicon->image->alt = $strswitchplus;
-                $contractexpandicon->link->url->param('action', 'switch_plus');
-            } elseif (in_array($element['object']->id, $this->collapsed['gradesonly'])) {
+                $url->param('action', 'switch_plus');
+                $icon = $OUTPUT->action_icon($url, $strswitchplus, 't/switch_plus', array('class'=>'iconsmall'));
+
+            } else if (in_array($element['object']->id, $this->collapsed['gradesonly'])) {
+                $url->param('action', 'switch_whole');
+                $icon = $OUTPUT->action_icon($url, $strswitchwhole, 't/switch_whole', array('class'=>'iconsmall'));
                 $contractexpandicon->image->src = $OUTPUT->pix_url('t/switch_whole');
-                $contractexpandicon->image->alt = $strswitchwhole;
-                $contractexpandicon->link->url->param('action', 'switch_whole');
+
+            } else {
+                $url->param('action', 'switch_minus');
+                $icon = $OUTPUT->action_icon($url, $strswitchminus, 't/switch_minus', array('class'=>'iconsmall'));
             }
-            $icon = $OUTPUT->action_icon($contractexpandicon);
         }
         return $icon;
     }
