@@ -159,7 +159,10 @@ class block_global_navigation_tree extends block_tree {
         // Grab the items to display
         $this->content->items = array($this->page->navigation);
 
-        $this->content->footer .= $OUTPUT->action_icon($this->page->url, get_string('reload'), array('class'=>'customcommand'), 't/reload');
+        $reloadlink = new html_link(new moodle_url($this->page->url, array('regenerate'=>'navigation')));
+        $reloadlink->add_class('customcommand');
+
+        $this->content->footer .= $OUTPUT->action_icon($reloadlink, get_string('reload'), 't/reload');
 
         if (empty($this->config->enablesidebarpopout) || $this->config->enablesidebarpopout == 'yes') {
             user_preference_allow_ajax_update('nav_in_tab_panel_globalnav'.block_global_navigation_tree::$navcount, PARAM_INT);
