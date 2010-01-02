@@ -1107,7 +1107,7 @@ class core_renderer extends renderer_base {
         $options = array('class'=>'iconhelp', 'alt'=>$text);
         $url = new moodle_url(get_docs_url($path));
 
-        $icon = $this->icon('docs', $options);
+        $icon = $this->image('docs', $options);
 
         $link = new html_link($url, $icon.$text);
 
