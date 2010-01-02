@@ -1,11 +1,11 @@
-.userpicture,
-.picture user,
-.picture teacher {
+.mod-assignment .userpicture,
+.mod-assignment .picture user,
+.mod-assignment .picture teacher {
   width:35px;
   height: 35px;
   vertical-align:top;
 }
-.modform {
+.mod-assignment .modform {
   text-align:center;
 }
 #wordcount {
