@@ -1141,10 +1141,10 @@ class core_renderer extends renderer_base {
         }
 
         if (!$linktext) {
-            $options['alt'] = $itle;
+            $options['alt'] = $title;
         }
 
-        $icon = $this->icon($image_or_url, $options);
+        $icon = $this->image($image_or_url, $options);
 
         if ($linktext) {
             $icon = $icon.$itle;
