@@ -1105,7 +1105,7 @@ class core_renderer extends renderer_base {
     /**
      * Given a moodle_action_icon object, outputs an image linking to an action (URL or AJAX).
      *
-     * @param mixed $link A html_link object or a string URL (text param required in second case)
+     * @param mixed $url_or_link A html_link object or a string URL (text param required in second case)
      * @param string $title link title and also image alt if no alt specified in $options
      * @param html_image|moodle_url|string $image_or_url image or url of the image,
      *        it is also possible to use short pix name for core images
@@ -1137,10 +1137,10 @@ class core_renderer extends renderer_base {
         if ($url_or_link instanceof html_link) {
             $link = clone($url_or_link);
             $link->text = ($icon);
-            $url = $link->url;
         } else {
-            $link = new html_link($url, $icon);
+            $link = new html_link($url_or_link, $icon);
         }
+        $url = $link->url;
         $link->add_action(new popup_action('click', $url));
 
         return $this->link($link);
