@@ -965,39 +965,23 @@ class core_renderer extends renderer_base {
     * If a string or moodle_url is given instead of a html_button, method defaults to post.
     *
     * @param string $message The question to ask the user
-    * @param mixed $continue The html_form component representing the Continue answer. Can also be a moodle_url or string URL
-    * @param mixed $cancel The html_form component representing the Cancel answer. Can also be a moodle_url or string URL
+    * @param html_form|moodle_url|string $continue The html_form component representing the Continue answer. Can also be a moodle_url or string URL
+    * @param html_form|moodle_url|string $cancel The html_form component representing the Cancel answer. Can also be a moodle_url or string URL
     * @return string HTML fragment
     */
     public function confirm($message, $continue, $cancel) {
         if ($continue instanceof html_form) {
             $continue = clone($continue);
-        } else if (is_string($continue)) {
-            $continueform = new html_form();
-            $continueform->button->text = get_string('continue');
-            $continueform->url = new moodle_url($continue);
-            $continue = $continueform;
-        } else if ($continue instanceof moodle_url) {
-            $continueform = new html_form();
-            $continueform->button->text = get_string('continue');
-            $continueform->url = $continue;
-            $continue = $continueform;
+        } else if (is_string($continue) or $continue instanceof moodle_url) {
+            $continue = html_form::make_button($continue, null, get_string('continue'), 'post');
         } else {
             throw new coding_exception('The continue param to $OUTPUT->confirm must be either a URL (string/moodle_url) or a html_form object.');
         }
 
         if ($cancel instanceof html_form) {
             $cancel = clone($cancel);
-        } else if (is_string($cancel)) {
-            $cancelform = new html_form();
-            $cancelform->button->text = get_string('cancel');
-            $cancelform->url = new moodle_url($cancel);
-            $cancel = $cancelform;
-        } else if ($cancel instanceof moodle_url) {
-            $cancelform = new html_form();
-            $cancelform->button->text = get_string('cancel');
-            $cancelform->url = $cancel;
-            $cancel = $cancelform;
+        } else if (is_string($cancel) or $cancel instanceof moodle_url) {
+            $cancel = html_form::make_button($cancel, null, get_string('cancel'), 'get');
         } else {
             throw new coding_exception('The cancel param to $OUTPUT->confirm must be either a URL (string/moodle_url) or a html_form object.');
         }

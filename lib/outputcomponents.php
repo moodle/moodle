@@ -1547,7 +1547,7 @@ class html_form extends html_component {
         parent::prepare($output, $page, $target);
     }
 
-    public static function make_button($url, $params, $label=null, $method='post') {
+    public static function make_button($url, array $params=null, $label=null, $method='post') {
         if ($label === null) {
             $label = get_string('ok');
         }
