@@ -1131,7 +1131,7 @@ class core_renderer extends renderer_base {
         $icon = $this->image($image_or_url, $options);
 
         if ($linktext) {
-            $icon = $icon.$itle;
+            $icon = $icon . $title;
         }
 
         if ($url_or_link instanceof html_link) {
