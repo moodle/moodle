@@ -585,6 +585,11 @@ class html_select extends labelled_html_component {
      * @return void
      */
     public function override_option_values($options) {
+        // TODO: this is ugly hack because components shoudl never touch global $PAGE with the exception in prepare(),
+        //       in any case this methods needs to be revisited because it does not make much sense to use the same $menu in
+        //       html_select::make_popup_form() and then again in this method!
+        global $PAGE; //TODO: remove
+
         $originalcount = count($options);
         $this->initialise_options();
         $newcount = count($this->options);
@@ -600,7 +605,7 @@ class html_select extends labelled_html_component {
 
                     $optionurl = new moodle_url(key($options));
 
-                    if ($optionurl->compare($page->url, URL_MATCH_PARAMS)) {
+                    if ($optionurl->compare($PAGE->url, URL_MATCH_PARAMS)) {
                         $this->options[$optkey]->options[$key]->selected = 'selected';
                     }
                 }
@@ -609,7 +614,7 @@ class html_select extends labelled_html_component {
                 $this->options[$optkey]->value = key($options);
                 $optionurl = new moodle_url(key($options));
 
-                if ($optionurl->compare($page->url, URL_MATCH_PARAMS)) {
+                if ($optionurl->compare($PAGE->url, URL_MATCH_PARAMS)) {
                     $this->options[$optkey]->selected = 'selected';
                 }
                 next($options);
