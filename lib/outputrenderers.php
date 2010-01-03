@@ -1009,7 +1009,7 @@ class core_renderer extends renderer_base {
             if (func_num_args() > 1) {
                 debugging('html_form instance used as first parameter of $OUTPUT->single_button(), all other parameters are ignored.');
             }
-        } else if ($url_or_singlebutton instanceof single_button or is_string($url_or_singlebutton)) {
+        } else if ($url_or_singlebutton instanceof moodle_url or is_string($url_or_singlebutton)) {
             $button = new single_button($url_or_singlebutton, $label, $method, $options);
         } else {
             throw new coding_exception('The $$url_or_singlebutton param to $OUTPUT->single_button() must be either a URL (string/moodle_url) or a single_button instance.');
