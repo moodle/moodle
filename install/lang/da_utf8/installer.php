@@ -12,7 +12,7 @@
 $string['admindirerror'] = 'Den angivne admin-mappe er forkert';
 $string['admindirname'] = 'Admin-mappe';
 $string['admindirsettinghead'] = 'Opretter admin-mappen...';
-$string['admindirsettingsub'] = 'Nogle få webhoteller bruger /admin som en speciel URL til kontrolpanelet el.lign. Desværre konflikter dette med standardplaceringen af Moodles administrationssider. Du kan i så tilfælde omdøbe admin-mappen i din installation og skrive navnet her. Eksempel:<br /> <br /><b>moodleadmin</b><br /> <br /> Dette vil sikre admin-linkene i Moodle.';
+$string['admindirsettingsub'] = 'Nogle få webhoteller bruger /admin som en speciel URL til kontrolpanelet el.lign. Desværre konflikter dette med standardplaceringen af Moodles administrationssider. Du kan i så tilfælde omdøbe admin-mappen i din installation og skrive navnet her. Eksempel:<br /> <br /><b>moodleadmin</b><br /> <br /> Dette vil sikre linkene til adminsiderne i Moodle.';
 $string['bypassed'] = 'Forbigået';
 $string['cannotcreatelangdir'] = 'Kan ikke oprette sprogmappe';
 $string['cannotcreatetempdir'] = 'Kan ikke oprette temp-mappe';
@@ -113,7 +113,7 @@ $string['directorysettingssub'] = '<b>Webadresse:</b> Angiv den fulde adresse ti
 <br /> 
 <b>Datamappe:</b> Den mappe, hvori Moodle gemmer uploadede filer. Denne mappe skal være læse- OG SKRIVBAR for den bruger apache kører under (typisk \'nobody\' eller \'apache\'). Der må ikke være direkte adgang til den fra internettet.';
 $string['dirroot'] = 'Moodle-mappe';
-$string['dirrooterror'] = 'Den angivne \"moodle-mappe\" lader ikke til at være rigtig - der er ingen Moodle-installation der. Den nedenstående værdi er blevet fjernet.';
+$string['dirrooterror'] = 'Den angivne \"moodle-mappe\" lader ikke til at være rigtig - der er ingen Moodleinstallation der. Den nedenstående værdi er blevet fjernet.';
 $string['download'] = 'Download';
 $string['downloadedfilecheckfailed'] = 'Downloadet fil-tjek fejlede';
 $string['downloadlanguagebutton'] = 'Download \"$a\"-sprogpakken';
