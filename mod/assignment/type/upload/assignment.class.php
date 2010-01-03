@@ -180,7 +180,7 @@ class assignment_upload extends assignment_base {
         if ($this->can_update_notes($submission)) {
             $options = array ('id'=>$this->cm->id, 'action'=>'editnotes');
             echo '<div style="text-align:center">';
-            echo $OUTPUT->button(html_form::make_button('upload.php', $options, get_string('edit')));
+            echo $OUTPUT->single_button(new moodle_url('upload.php', $options), get_string('edit'));
             echo '</div>';
         }
     }
@@ -376,10 +376,10 @@ class assignment_upload extends assignment_base {
         if ($this->drafts_tracked() and $this->isopen() and has_capability('mod/assignment:grade', $this->context) and $mode != '') { // we do not want it on view.php page
             if ($this->can_unfinalize($submission)) {
                 $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'unfinalize', 'mode'=>$mode, 'offset'=>$offset);
-                $output .= $OUTPUT->button(html_form::make_button('upload.php', $options, get_string('unfinalize', 'assignment')));
+                $output .= $OUTPUT->single_button(new moodle_url('upload.php', $options), get_string('unfinalize', 'assignment'));
             } else if ($this->can_finalize($submission)) {
                 $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'finalizeclose', 'mode'=>$mode, 'offset'=>$offset);
-                $output .= $OUTPUT->button(html_form::make_button('upload.php', $options, get_string('finalize', 'assignment')));
+                $output .= $OUTPUT->single_button(new moodle_url('upload.php', $options), get_string('finalize', 'assignment'));
             }
         }
 

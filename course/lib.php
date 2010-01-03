@@ -2047,13 +2047,12 @@ function print_course_request_buttons($systemcontext) {
     }
     if (isloggedin() && !isguestuser() && !has_capability('moodle/course:create', $systemcontext) && has_capability('moodle/course:request', $systemcontext)) {
     /// Print a button to request a new course
-        echo $OUTPUT->button(html_form::make_button('request.php', NULL, get_string('requestcourse'), 'get'));
+        echo $OUTPUT->single_button('request.php', get_string('requestcourse'), 'get');
     }
     /// Print a button to manage pending requests
     if (has_capability('moodle/site:approvecourse', $systemcontext)) {
-        $form = html_form::make_button('pending.php', NULL, get_string('coursespending'), 'get');
-        $form->button->disabled = !$DB->record_exists('course_request', array());
-        echo $OUTPUT->button($form);
+        $disabled = !$DB->record_exists('course_request', array());
+        echo $OUTPUT->single_button('pending.php', get_string('coursespending'), 'get', array('disabled'=>$disabled));
     }
 }
 
@@ -2100,7 +2099,7 @@ function update_category_button($categoryid = 0) {
     } else {
         $page = 'index.php';
     }
-    return $OUTPUT->button(html_form::make_button($CFG->wwwroot . '/course/' . $page, $options, $label, 'get'));
+    return $OUTPUT->single_button(new moodle_url($CFG->wwwroot . '/course/' . $page, $options), $label, 'get');
 }
 
 /**
@@ -2146,7 +2145,7 @@ function print_courses($category) {
             $options = array();
             $options['category'] = $category->id;
             echo '<div class="addcoursebutton">';
-            echo $OUTPUT->button(html_form::make_button($CFG->wwwroot.'/course/edit.php', $options, get_string("addnewcourse")));
+            echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot.'/course/edit.php', $options), get_string("addnewcourse"));
             echo '</div>';
         }
     }
@@ -2324,7 +2323,7 @@ function print_my_moodle() {
             echo "<table width=\"100%\"><tr><td align=\"center\">";
             print_course_search("", false, "short");
             echo "</td><td align=\"center\">";
-            echo $OUTPUT->button(html_form::make_button("$CFG->wwwroot/course/index.php", NULL, get_string("fulllistofcourses"), "get"));
+            echo $OUTPUT->single_button("$CFG->wwwroot/course/index.php", get_string("fulllistofcourses"), "get");
             echo "</td></tr></table>\n";
         }
 

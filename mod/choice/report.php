@@ -224,13 +224,13 @@
         $options = array();
         $options["id"] = "$cm->id";
         $options["download"] = "ods";
-        echo $OUTPUT->button(html_form::make_button("report.php", $options, get_string("downloadods")));
+        echo $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadods"));
         echo "</td><td>";
         $options["download"] = "xls";
-        echo $OUTPUT->button(html_form::make_button("report.php", $options, get_string("downloadexcel")));
+        echo $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadexcel"));
         echo "</td><td>";
         $options["download"] = "txt";
-        echo $OUTPUT->button(html_form::make_button("report.php", $options, get_string("downloadtext")));
+        echo $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadtext"));
 
         echo "</td></tr></table>";
     }

@@ -507,9 +507,8 @@ if ($pageid != LESSON_EOL) {
             }
             if (!$highscores or $madeit) {
                 $lessoncontent .= $lessonoutput->paragraph(get_string("youmadehighscore", "lesson", $lesson->maxhighscores), 'center');
-                $params = array('id'=>$PAGE->cm->id, 'sesskey'=>sesskey());
-                $highscoresbutton = html_form::make_button($CFG->wwwroot.'/mod/lesson/highscores.php', $params, get_string('clicktopost', 'lesson'));
-                $lessoncontent .= $OUTPUT->button($highscoresbutton);
+                $aurl = new moodle_url($CFG->wwwroot.'/mod/lesson/highscores.php', array('id'=>$PAGE->cm->id, 'sesskey'=>sesskey()));
+                $lessoncontent .= $OUTPUT->single_button($aurl, get_string('clicktopost', 'lesson'));
             } else {
                 $lessoncontent .= get_string("nothighscore", "lesson", $lesson->maxhighscores)."<br />";
             }

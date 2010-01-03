@@ -116,17 +116,14 @@ $DB = $realdb;
 
 echo $OUTPUT->container_start();
 
-$form = html_form::make_button($baseurl, array('action' => 'setup'), 'Set up test tables', 'get');
-$form->button->disabled = $issetup > 0;
-echo $OUTPUT->button($form);
+$aurl = new moodle_url($baseurl, array('action' => 'setup'));
+echo $OUTPUT->single_button($aurl, 'Set up test tables', 'get', array('disabled'=>($issetup > 0)));
 
-$form = html_form::make_button($baseurl, array('action' => 'teardown'), 'Drop test tables', 'get');
-$form->button->disabled = $issetup == 0;
-echo $OUTPUT->button($form);
+$aurl = new moodle_url($baseurl, array('action' => 'teardown'));
+echo $OUTPUT->single_button($aurl, 'Drop test tables', 'get', array('disabled'=>($issetup == 0)));
 
-$form = html_form::make_button($baseurl, array('action' => 'test'), 'Run tests', 'get');
-$form->button->disabled = $issetup != count($requiredtables);
-echo $OUTPUT->button($form);
+$aurl = new moodle_url($baseurl, array('action' => 'test'));
+echo $OUTPUT->single_button($aurl, 'Run tests', 'get', array('disabled'=>($issetup != count($requiredtables))));
 
 echo $OUTPUT->container_end();
 

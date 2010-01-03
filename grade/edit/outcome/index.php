@@ -247,9 +247,9 @@ foreach($outcomes_tables as $table) {
 }
 
 echo $OUTPUT->container_start('buttons');
-echo $OUTPUT->button(html_form::make_button('edit.php', array('courseid'=>$courseid), $strcreatenewoutcome));
+echo $OUTPUT->single_button(new moodle_url('edit.php', array('courseid'=>$courseid)), $strcreatenewoutcome);
 if ( !empty($outcomes_tables) ) {
-    echo $OUTPUT->button(html_form::make_button('export.php', array('id'=>$courseid, 'sesskey'=>sesskey()),  get_string('exportalloutcomes', 'grades')));
+    echo $OUTPUT->single_button(new moodle_url('export.php', array('id'=>$courseid, 'sesskey'=>sesskey())),  get_string('exportalloutcomes', 'grades'));
 }
 echo $OUTPUT->container_end();
 
@@ -268,7 +268,6 @@ function grade_print_scale_link($courseid, $scale, $gpr) {
     global $CFG, $OUTPUT;
     $url = new moodle_url($CFG->wwwroot.'/grade/edit/scale/edit.php', array('courseid' => $courseid, 'id' => $scale->id));
     $url = $gpr->add_url_params($url);
-    $link = html_link::make($url, $scale->get_name());
-    return $OUTPUT->link($link);
+    return $OUTPUT->link($url, $scale->get_name());
 }
 

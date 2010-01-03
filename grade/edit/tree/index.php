@@ -341,16 +341,16 @@ echo $OUTPUT->box_end();
 echo $OUTPUT->container_start('buttons');
 
 if ($moving) {
-    echo $OUTPUT->button(html_form::make_button('index.php', array('id'=>$course->id), get_string('cancel'), 'get'));
+    echo $OUTPUT->single_button(new moodle_url('index.php', array('id'=>$course->id)), get_string('cancel'), 'get');
 } else {
-    echo $OUTPUT->button(html_form::make_button('category.php', array('courseid'=>$course->id), get_string('addcategory', 'grades'), 'get'));
-    echo $OUTPUT->button(html_form::make_button('item.php', array('courseid'=>$course->id), get_string('additem', 'grades'), 'get'));
+    echo $OUTPUT->single_button(new moodle_url('category.php', array('courseid'=>$course->id)), get_string('addcategory', 'grades'), 'get');
+    echo $OUTPUT->single_button(new moodle_url('item.php', array('courseid'=>$course->id)), get_string('additem', 'grades'), 'get');
 
     if (!empty($CFG->enableoutcomes)) {
-        echo $OUTPUT->button(html_form::make_button('outcomeitem.php', array('courseid'=>$course->id), get_string('addoutcomeitem', 'grades'), 'get'));
+        echo $OUTPUT->single_button(new moodle_url('outcomeitem.php', array('courseid'=>$course->id)), get_string('addoutcomeitem', 'grades'), 'get');
     }
 
-    //print_single_button('index.php', array('id'=>$course->id, 'action'=>'autosort'), get_string('autosort', 'grades'), 'get');
+    //echo $OUTPUT->(new moodle_url('index.php', array('id'=>$course->id, 'action'=>'autosort')), get_string('autosort', 'grades'), 'get');
 }
 
 echo $OUTPUT->container_end();

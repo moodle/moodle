@@ -278,13 +278,8 @@ EOF;
     /// Print button
         $form = new html_form();
         $parameters = array ('wsusername' => $username, 'wspassword' => $password, 'print' => true);
-        $form->url = new moodle_url($CFG->wwwroot.'/webservice/wsdoc.php', $parameters); // Required
-        $form->button = new html_button();
-        $form->button->text = get_string('print','webservice'); // Required
-        $form->button->disabled = false;
-        $form->button->title = get_string('print','webservice');
-        $form->method = 'post';
-        $documentationhtml .= $OUTPUT->button($form);
+        $url = new moodle_url($CFG->wwwroot.'/webservice/wsdoc.php', $parameters); // Required
+        $documentationhtml .= $OUTPUT->single_button($url, get_string('print','webservice'));
         $documentationhtml .= $this->output_empty_tag('br', array());
         
         

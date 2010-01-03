@@ -401,7 +401,7 @@
 
 
         /// Restore button
-            echo $OUTPUT->button(html_form::make_button("restore.php", $hidden, get_string("restorecoursenow")));
+            echo $OUTPUT->single_button(new moodle_url("restore.php", $hidden), get_string("restorecoursenow"));
         }
         echo "</div>";
 

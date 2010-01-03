@@ -106,7 +106,7 @@ if (empty($pending)) {
     $strrequireskey = get_string('requireskey');
 
     // Loop over requested courses.
-    $keyicon = $OUTPUT->image('y/key', array('alt'=>$strrequireskey, 'class'=>'icon'));
+    $keyicon = $OUTPUT->image('i/key', array('alt'=>$strrequireskey, 'class'=>'icon'));
 
     foreach ($pending as $course) {
         $course = new course_request($course);
@@ -127,8 +127,8 @@ if (empty($pending)) {
         $row[] = fullname($course->get_requester());
         $row[] = $course->summary;
         $row[] = format_string($course->reason);
-        $row[] = $OUTPUT->button(html_form::make_button($baseurl, array('approve' => $course->id, 'sesskey' => sesskey()), get_string('approve'), 'get')) .
-                $OUTPUT->button(html_form::make_button($baseurl, array('reject' => $course->id), get_string('rejectdots'), 'get'));
+        $row[] = $OUTPUT->single_button(new moodle_url($baseurl, array('approve' => $course->id, 'sesskey' => sesskey())), get_string('approve'), 'get') .
+                 $OUTPUT->single_button(new moodle_url($baseurl, array('reject' => $course->id)), get_string('rejectdots'), 'get');
 
     /// Add the row to the table.
         $table->data[] = $row;
@@ -144,5 +144,5 @@ if (empty($pending)) {
 }
 
 /// Finish off the page.
-echo $OUTPUT->button(html_form::make_button($CFG->wwwroot . '/course/index.php', array(), get_string('backtocourselisting')));
+echo $OUTPUT->single_button($CFG->wwwroot . '/course/index.php', get_string('backtocourselisting'));
 echo $OUTPUT->footer();

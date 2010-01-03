@@ -135,16 +135,16 @@
         $options = array();
         $options['roleid'] = $roleid;
         $options['action'] = 'edit';
-        echo $OUTPUT->button(html_form::make_button($defineurl, $options, get_string('edit')));
+        echo $OUTPUT->single_button(new moodle_url($defineurl, $options), get_string('edit'));
         $options['action'] = 'reset';
         if ($definitiontable->get_legacy_type()) {
-            echo $OUTPUT->button(html_form::make_button($manageurl, $options, get_string('resetrole', 'role')));
+            echo $OUTPUT->single_button(new moodle_url($manageurl, $options), get_string('resetrole', 'role'));
         } else {
-            echo $OUTPUT->button(html_form::make_button($manageurl, $options, get_string('resetrolenolegacy', 'role')));
+            echo $OUTPUT->single_button(new moodle_url($manageurl, $options), get_string('resetrolenolegacy', 'role'));
         }
         $options['action'] = 'duplicate';
-        echo $OUTPUT->button(html_form::make_button($defineurl, $options, get_string('duplicaterole', 'role')));
-        echo $OUTPUT->button(html_form::make_button($manageurl, null, get_string('listallroles', 'role')));
+        echo $OUTPUT->single_button(new moodle_url($defineurl, $options), get_string('duplicaterole', 'role'));
+        echo $OUTPUT->single_button(new moodle_url($manageurl), get_string('listallroles', 'role'));
         echo $OUTPUT->container_end();
     }
 

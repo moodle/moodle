@@ -5019,9 +5019,8 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
             $link = "<noscript>";
         }
         $options ['id'] = $forum->id;
-        $form = html_form::make_button($CFG->wwwroot.'/mod/forum/subscribe.php', $options, $linktext);
-        $form->button->title = $linktitle;
-        $link .= $OUTPUT->button($form);
+        $url = new moodle_url($CFG->wwwroot.'/mod/forum/subscribe.php', $options);
+        $link .= $OUTPUT->single_button($url, $linktext, 'get', array('title'=>$linktitle));
         if ($fakelink) {
             $link .= '</noscript>';
         }
@@ -5075,9 +5074,8 @@ function forum_get_tracking_link($forum, $messages=array(), $fakelink=true) {
         // use <noscript> to print button in case javascript is not enabled
         $link .= '<noscript>';
     }
-    $form = html_form::make_button($CFG->wwwroot.'/mod/forum/settracking.php?id=' . $forum->id, $options, $linktext);
-    $form->button->title = $linktitle;
-    $link .= $OUTPUT->button($form);
+    $url = new moodle_url($CFG->wwwroot.'/mod/forum/settracking.php', array('id'=>$forum->id));
+    $link .= $OUTPUT->single_button($url, $linktext, 'get', array('title'=>$linktitle));
 
     if ($fakelink) {
         $link .= '</noscript>';

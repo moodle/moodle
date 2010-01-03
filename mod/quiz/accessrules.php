@@ -224,7 +224,7 @@ class quiz_access_manager {
             if ($strconfirmstartattempt) {
                 $form->button->add_confirm_action($strconfirmstartattempt);
             }
-            echo $OUTPUT->button($form);
+            echo $OUTPUT->single_button($form);
         }
         echo "</div>\n";
     }
@@ -750,7 +750,7 @@ class securewindow_access_rule extends quiz_access_rule_base {
         $form->button->title = $form->button->text;
         $form->url = $this->_quizobj->review_url($attemptid);
         $form->button->add_action(new popup_action('click', $form->url, 'quizpopup', $this->windowoptions));
-        return $OUTPUT->button($form);
+        return $OUTPUT->single_button($form);
     }
 
     /**

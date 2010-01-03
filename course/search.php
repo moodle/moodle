@@ -188,16 +188,13 @@
                 $edit = "on";
             }
 
-            $form = new html_form();
-            $form->url = new moodle_url("$CFG->wwwroot/course/search.php", array(
+            $aurl = new moodle_url("$CFG->wwwroot/course/search.php", array(
                     'edit' => $edit,
                     'sesskey' => sesskey(),
-                    'search' => s($search, true),
+                    'search' => $search,
                     'page' => $page,
                     'perpage' => $perpage));
-            $form->method = 'get';
-            $form->button->text = s($string);
-            $searchform = $OUTPUT->button($form);
+            $searchform = $OUTPUT->single_button($aurl, $string, 'get');
         }
     }
 

@@ -132,12 +132,8 @@ foreach($feeds as $feed) {
 
 $table->print_html();
 
-$button = new html_form();
-$button->method = 'get';
-$button->url = $CFG->wwwroot . '/blocks/rss_client/editfeed.php?' . substr($extraparams, 1);
-$button->showbutton = true;
-$button->button->text = get_string('addnewfeed', 'block_rss_client');
-echo '<div class="actionbuttons">' . $OUTPUT->button($button) . '</div>';
+$url = $CFG->wwwroot . '/blocks/rss_client/editfeed.php?' . substr($extraparams, 1);
+echo '<div class="actionbuttons">' . $OUTPUT->single_button($url, get_string('addnewfeed', 'block_rss_client'), 'get') . '</div>';
 
 
 if ($returnurl) {

@@ -5263,7 +5263,9 @@ function admin_externalpage_print_header($focus='') {
             $caption = get_string('blocksediton');
             $options['adminedit'] = 'on';
         }
-        $buttons = $OUTPUT->button(html_form::make_button($PAGE->url->out(), $options, $caption, 'get'));
+        $url = clone($PAGE->url);
+        $url->params($options);
+        $buttons = $OUTPUT->single_button($url, $caption, 'get');
     }
 
     $PAGE->set_title("$SITE->shortname: " . implode(": ",$visiblepathtosection));

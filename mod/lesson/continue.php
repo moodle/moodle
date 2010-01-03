@@ -186,14 +186,13 @@ if ($lesson->review && !$result->correctanswer && !$result->noanswer && !$result
     echo $OUTPUT->form($form);
 }
 
-$url = $CFG->wwwroot.'/mod/lesson/view.php';
-$options = array('id'=>$cm->id, 'pageid'=>$result->newpageid);
+$url = new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$result->newpageid));
 if ($lesson->review && !$result->correctanswer && !$result->noanswer && !$result->isessayquestion) {
     // Review button continue
-    $form = html_form::make_button($url, $options, get_string('reviewquestioncontinue', 'lesson'));
+    echo $OUTPUT->single_button($url, get_string('reviewquestioncontinue', 'lesson'));
 } else {
     // Normal continue button
-    $form = html_form::make_button($url, $options, get_string('continue', 'lesson'));
+    echo $OUTPUT->single_button($url, get_string('continue', 'lesson'));
 }
-echo $OUTPUT->button($form);
+
 echo $lessonoutput->footer();

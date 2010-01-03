@@ -135,7 +135,7 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
             if ($error) {
                 echo $OUTPUT->box_start('generalbox importoutcomenofile');
                 echo get_string('importoutcomenofile', 'grades', $line);
-                echo $OUTPUT->button(html_form::make_button($CFG->wwwroot.'/grade/edit/outcome/index.php', array('id'=> $courseid), get_string('back'), 'get'));
+                echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot.'/grade/edit/outcome/index.php', array('id'=> $courseid)), get_string('back'), 'get');
                 echo $OUTPUT->box_end();
                 $fatal_error = true;
                 break;
@@ -154,7 +154,7 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
         if ( count($csv_data) != count($file_headers) ) {
             echo $OUTPUT->box_start('generalbox importoutcomenofile');
             echo get_string('importoutcomenofile', 'grades', $line);
-            echo $OUTPUT->button(html_form::make_button($CFG->wwwroot.'/grade/edit/outcome/index.php', array('id'=> $courseid), get_string('back'), 'get'));
+            echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot.'/grade/edit/outcome/index.php', array('id'=> $courseid)), get_string('back'), 'get');
             echo $OUTPUT->box_end();
             $fatal_error = true;
             //echo $OUTPUT->box(var_export($csv_data, true) ."<br />". var_export($header, true));
@@ -166,7 +166,7 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
             if ($csv_data[$imported_headers[$header]] == '') {
                 echo $OUTPUT->box_start('generalbox importoutcomenofile');
                 echo get_string('importoutcomenofile', 'grades', $line);
-                echo $OUTPUT->button(html_form::make_button($CFG->wwwroot.'/grade/edit/outcome/index.php', array('id'=> $courseid), get_string('back'), 'get'));
+                echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot.'/grade/edit/outcome/index.php', array('id'=> $courseid)), get_string('back'), 'get');
                 echo $OUTPUT->box_end();
                 $fatal_error = true;
                 break;

@@ -141,7 +141,7 @@
             echo $OUTPUT->box_start('generalbox', 'notice');
             echo '<p align="center">'. get_string('noguestchoose', 'choice') .'</p>';
             echo $OUTPUT->container_start('continuebutton');
-            echo $OUTPUT->button(html_form::make_button($CFG->wwwroot.'/course/enrol.php?id='.$course->id, NULL, get_string('enrolme', '', format_string($course->shortname))));
+            echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot.'/course/enrol.php?', array('id'=>$course->id)), get_string('enrolme', '', format_string($course->shortname)));
             echo $OUTPUT->container_end();
             echo $OUTPUT->box_end();
 

@@ -2472,7 +2472,7 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
                                  $id=null, $class=null) {
     global $OUTPUT;
 
-    debugging('button_to_popup_window() has been deprecated. Please change your code to use $OUTPUT->button().');
+    debugging('button_to_popup_window() has been deprecated. Please change your code to use $OUTPUT->single_button().');
 
     if ($options == 'none') {
         $options = null;
@@ -2516,7 +2516,7 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
     }
 
     $form->button->add_action(new popup_action('click', $url, $name, $popupparams));
-    $output = $OUTPUT->button($form);
+    $output = $OUTPUT->single_button($form);
 
     if ($return) {
         return $output;
@@ -2546,7 +2546,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
         $return=false, $tooltip='', $disabled = false, $jsconfirmmessage='', $formid = '') {
     global $OUTPUT;
 
-    debugging('print_single_button() has been deprecated. Please change your code to use $OUTPUT->button().');
+    debugging('print_single_button() has been deprecated. Please change your code to use $OUTPUT->single_button().');
 
     // Cast $options to array
     $options = (array) $options;
@@ -2562,7 +2562,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
         $form->button->add_confirm_action($jsconfirmmessage);
     }
 
-    $output = $OUTPUT->button($form);
+    $output = $OUTPUT->single_button($form);
 
     if ($return) {
         return $output;
@@ -3561,10 +3561,8 @@ function update_module_button($cmid, $ignored, $string) {
     if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $cmid))) {
         $string = get_string('updatethis', '', $string);
 
-        $form = new html_form();
-        $form->url = new moodle_url("$CFG->wwwroot/course/mod.php", array('update' => $cmid, 'return' => true, 'sesskey' => sesskey()));
-        $form->button->text = $string;
-        return $OUTPUT->button($form);
+        $url = new moodle_url("$CFG->wwwroot/course/mod.php", array('update' => $cmid, 'return' => true, 'sesskey' => sesskey()));
+        return $OUTPUT->single_button($url, $string);
     } else {
         return '';
     }

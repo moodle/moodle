@@ -1492,7 +1492,7 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
              $options['id'] = $cm->id;
              $options['mode'] = 'cat';
              $options['hook'] = $hook;
-             echo $OUTPUT->button(html_form::make_button("editcategories.php", $options, get_string("editcategories","glossary"), "get"));
+             echo $OUTPUT->single_button(new moodle_url("editcategories.php", $options), get_string("editcategories","glossary"), "get");
      }
      echo '</td>';
 

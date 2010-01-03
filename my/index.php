@@ -37,10 +37,8 @@
         $edit = '1';
     }
 
-    $form = new html_form();
-    $form->url = new moodle_url("$CFG->wwwroot/my/index.php", array('edit' => $edit));
-    $form->button->text = $string;
-    $button = $OUTPUT->button($form);
+    $url = new moodle_url("$CFG->wwwroot/my/index.php", array('edit' => $edit));
+    $button = $OUTPUT->single_button($url, $string);
 
     $header = $SITE->shortname . ': ' . $strmymoodle;
     $PAGE->navbar->add($strmymoodle);

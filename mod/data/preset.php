@@ -339,7 +339,7 @@ $options = array();
 $options['sesskey'] = sesskey();
 $options['action']  = 'export';
 $options['d']       = $data->id;
-echo $OUTPUT->button(html_form::make_button('preset.php', $options, $strexport));
+echo $OUTPUT->single_button(new moodle_url('preset.php', $options), $strexport);
 echo '</td></tr>';
 
 echo '<tr><td><label>'.$strsaveaspreset.'</label>';
@@ -349,7 +349,7 @@ $options = array();
 $options['sesskey'] = sesskey();
 $options['action']  = 'save1';
 $options['d']       = $data->id;
-echo $OUTPUT->button(html_form::make_button('preset.php', $options, $strsave));
+echo $OUTPUT->single_button(new moodle_url('preset.php', $options), $strsave);
 echo '</td></tr>';
 echo '<tr><td valign="top" colspan="2" align="center"><h3>'.$strimport.'</h3></td></tr>';
 echo '<tr><td><label for="fromfile">'.$strfromfile.'</label>';

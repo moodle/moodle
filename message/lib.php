@@ -179,7 +179,7 @@ function message_print_contacts() {
     echo $OUTPUT->container_end();
 
     echo $OUTPUT->container_start('messagejsmanualrefresh aligncenter');
-    echo $OUTPUT->button(html_form::make_button('index.php', false, get_string('refresh')));
+    echo $OUTPUT->single_button('index.php', get_string('refresh'));
     echo $OUTPUT->container_end();
 }
 
@@ -518,7 +518,7 @@ function message_print_search_results($frm) {
     }
 
     echo '<br />';
-    echo $OUTPUT->button(html_form::make_button('index.php', array( 'tab' => 'search'), get_string('newsearch', 'message')));
+    echo $OUTPUT->single_button(new moodle_url('index.php', array('tab' => 'search')), get_string('newsearch', 'message'));
 
     echo '</div>';
 }

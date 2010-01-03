@@ -123,12 +123,7 @@
                 <tr>
                      <td>&nbsp;</td>
                      <td><?php
-                        $form = new html_form();
-                        $form->button->text = get_string('choosefile', 'feedback');
-                        $form->button->title = $form->button->text;
-                        $form->url = "/files/index.php?id={$course->id}&choose=form.choosefile";
-                        $form->button->add_action(new popup_action('click', $form->url, "coursefiles", array('width' => 750, 'height' => 500)));
-                        echo $OUTPUT->button($form);
+                        echo 'TODO: implement new file picker and file ahdnling - MDL-14493';
                         ?>
                           <input type="submit" name="save" value="<?php print_string('importfromthisfile', 'feedback'); ?>" />
                     </td>
@@ -141,7 +136,7 @@
      <?php
 
     echo $OUTPUT->container_start('mdl-align');
-    echo $OUTPUT->button(html_form::make_button('edit.php', array('id'=>$id, 'do_show'=>'templates'), get_string('cancel')));
+    echo $OUTPUT->single_button(new moodle_url('edit.php', array('id'=>$id, 'do_show'=>'templates')), get_string('cancel'));
     echo $OUTPUT->container_end();
     echo $OUTPUT->footer();
 

@@ -1927,10 +1927,8 @@ function create_new_question_button($categoryid, $params, $caption, $tooltip = '
     global $CFG, $PAGE, $OUTPUT;
     static $choiceformprinted = false;
     $params['category'] = $categoryid;
-    $form = html_form::make_button($CFG->wwwroot . '/question/addquestion.php', $params, $caption,'get');
-    $form->button->title = $tooltip;
-    $form->button->disabled = $disabled;
-    echo $OUTPUT->button($form);
+    $url = new moodle_url($CFG->wwwroot . '/question/addquestion.php', $params);
+    echo $OUTPUT->single_button($url, $caption, 'get', array('disabled'=>$disabled, 'title'=>$tooltip));
 
     echo $OUTPUT->help_icon('types', get_string('createnewquestion', 'question'), 'question');
     $PAGE->requires->yui2_lib('dragdrop');

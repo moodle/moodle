@@ -162,6 +162,6 @@ echo $OUTPUT->table($table);
 echo $OUTPUT->heading($strstandardscale, 3, 'main');
 echo $OUTPUT->table($table2);
 echo $OUTPUT->container_start('buttons');
-echo $OUTPUT->button(html_form::make_button('edit.php', array('courseid'=>$courseid), $srtcreatenewscale));
+echo $OUTPUT->single_button(new moodle_url('edit.php', array('courseid'=>$courseid)), $srtcreatenewscale);
 echo $OUTPUT->container_end();
 echo $OUTPUT->footer();

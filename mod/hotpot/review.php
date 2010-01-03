@@ -138,12 +138,12 @@ function hotpot_print_review_buttons(&$course, &$hotpot, &$attempt, $context) {
 
     print "\n".'<table border="0" align="center" cellpadding="2" cellspacing="2" class="generaltable">';
     print "\n<tr>\n".'<td align="center">';
-    echo $OUTPUT->button(html_form::make_button("report.php?hp=$hotpot->id", NULL, get_string('continue')));
+    echo $OUTPUT->single_button(new moodle_url("report.php", array('hp'=>$hotpot->id)), get_string('continue'));
     if (has_capability('mod/hotpot:viewreport',$context) && $DB->record_exists('hotpot_details', array('attempt'=>$attempt->id))) {
         print "</td>\n".'<td align="center">';
-        echo $OUTPUT->button(html_form::make_button("review.php?hp=$hotpot->id&attempt=$attempt->id&action=showxmlsource", NULL, get_string('showxmlsource', 'hotpot')));
+        echo $OUTPUT->single_button(new moodle_url("review.php", array('hp'=>$hotpot->id, 'attempt'=>$attempt->id, 'action'=>'showxmlsource')), get_string('showxmlsource', 'hotpot'));
         print "</td>\n".'<td align="center">';
-        echo $OUTPUT->button(html_form::make_button("review.php?hp=$hotpot->id&attempt=$attempt->id&action=showxmltree", NULL, get_string('showxmltree', 'hotpot')));
+        echo $OUTPUT->single_button(new moodle_url("review.php", array('hp'=>$hotpot->id,'attempt'=>$attempt->id, 'action'=>'showxmltree')), get_string('showxmltree', 'hotpot'));
         $colspan = 3;
     } else {
         $colspan = 1;

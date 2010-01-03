@@ -59,7 +59,7 @@ if ($reset and confirm_sesskey()) {
 admin_externalpage_print_header('themeselector');
 echo $OUTPUT->heading(get_string('themes'));
 
-echo $OUTPUT->button(html_form::make_button('index.php', array('sesskey'=>sesskey(),'reset'=>1), get_string('themeresetcaches', 'admin')));
+echo $OUTPUT->single_button(new moodle_url('index.php', array('sesskey'=>sesskey(),'reset'=>1)), get_string('themeresetcaches', 'admin'));
 
 $table = new html_table();
 $table->id = 'adminthemeselector';
@@ -95,7 +95,7 @@ foreach ($themes as $themename => $themedir) {
     // Contents of the second cell.
     $infocell = $OUTPUT->heading($themename, 3);
     if ($themename != $CFG->theme) {
-        $infocell .= $OUTPUT->button(html_form::make_button('index.php', array('choose' => $themename, 'sesskey' => sesskey()), get_string('choose'), 'get'));
+        $infocell .= $OUTPUT->single_button(new moodle_url('index.php', array('choose' => $themename, 'sesskey' => sesskey())), get_string('choose'), 'get');
 
     }
     $row[] = $infocell;

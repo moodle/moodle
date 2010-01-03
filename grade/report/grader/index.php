@@ -84,7 +84,7 @@ if (has_capability('moodle/grade:edit', $context)) {
         $string = get_string('turneditingon');
     }
 
-    $buttons = $OUTPUT->button(html_form::make_button('index.php', $options, $string, 'get'));
+    $buttons = $OUTPUT->single_button(new moodle_url('index.php', $options), $string, 'get');
 
 } else {
     $USER->gradeediting[$course->id] = 0;

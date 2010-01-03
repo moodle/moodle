@@ -152,10 +152,8 @@ if($do_show == 'showentries'){
                             </td>
                             <td align="right">
                             <?php
-                                $show_button_link = $ME;
-                                $show_button_options = array('sesskey'=>sesskey(), 'userid'=>$student->id, 'do_show'=>'showoneentry', 'id'=>$id);
-                                $show_button_label = get_string('show_entries', 'feedback');
-                                echo $OUTPUT->button(html_form::make_button($show_button_link, $show_button_options, $show_button_label));
+                                $aurl = new moodle_url($ME, array('sesskey'=>sesskey(), 'userid'=>$student->id, 'do_show'=>'showoneentry', 'id'=>$id));
+                                echo $OUTPUT->single_button($aurl, get_string('show_entries', 'feedback'));
                             ?>
                             </td>
                 <?php
@@ -163,10 +161,8 @@ if($do_show == 'showentries'){
                 ?>
                             <td align="right">
                             <?php
-                                $delete_button_link = 'delete_completed.php';
-                                $delete_button_options = array('sesskey'=>sesskey(), 'completedid'=>$feedbackcompleted->id, 'do_show'=>'showoneentry', 'id'=>$id);
-                                $delete_button_label = get_string('delete_entry', 'feedback');
-                                echo $OUTPUT->button(html_form::make_button($delete_button_link, $delete_button_options, $delete_button_label));
+                                $aurl = new moodle_url('delete_completed.php', array('sesskey'=>sesskey(), 'completedid'=>$feedbackcompleted->id, 'do_show'=>'showoneentry', 'id'=>$id));
+                                echo $OUTPUT->single_button($aurl, get_string('delete_entry', 'feedback'));
                             ?>
                             </td>
                 <?php
@@ -187,10 +183,8 @@ if($do_show == 'showentries'){
                 </td>
                 <td align="right">
                     <?php
-                        $show_anon_button_link = 'show_entries_anonym.php';
-                        $show_anon_button_options = array('sesskey'=>sesskey(), 'userid'=>0, 'do_show'=>'showoneentry', 'id'=>$id);
-                        $show_anon_button_label = get_string('show_entries', 'feedback');
-                        echo $OUTPUT->button(html_form::make_button($show_anon_button_link, $show_anon_button_options, $show_anon_button_label));
+                        $aurl = new moodle_url('show_entries_anonym.php', array('sesskey'=>sesskey(), 'userid'=>0, 'do_show'=>'showoneentry', 'id'=>$id));
+                        echo $OUTPUT->single_button($aurl, get_string('show_entries', 'feedback'));
                     ?>
                 </td>
             </tr>

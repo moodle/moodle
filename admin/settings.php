@@ -90,15 +90,15 @@ if (empty($SITE->fullname)) {
 
 } else {
     if ($PAGE->user_allowed_editing()) {
-        $options = $PAGE->url->params();
+        $url = clone($PAGE->url);
         if ($PAGE->user_is_editing()) {
             $caption = get_string('blockseditoff');
-            $options['adminedit'] = 'off';
+            $url->param('adminedit', 'off');
         } else {
             $caption = get_string('blocksediton');
-            $options['adminedit'] = 'on';
+            $url->param('adminedit', 'on');
         }
-        $buttons = $OUTPUT->button(html_form::make_button($PAGE->url->out(), $options, $caption, 'get'));
+        $buttons = $OUTPUT->single_button($url, $caption, 'get');
     }
 
     $visiblepathtosection = array_reverse($settingspage->visiblepath);

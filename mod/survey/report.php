@@ -484,13 +484,13 @@
         $options["group"] = $currentgroup;
 
         $options["type"] = "ods";
-        echo $OUTPUT->button(html_form::make_button("download.php", $options, get_string("downloadods")));
+        echo $OUTPUT->single_button(new moodle_url("download.php", $options), get_string("downloadods"));
 
         $options["type"] = "xls";
-        echo $OUTPUT->button(html_form::make_button("download.php", $options, get_string("downloadexcel")));
+        echo $OUTPUT->single_button(new moodle_url("download.php", $options), get_string("downloadexcel"));
 
         $options["type"] = "txt";
-        echo $OUTPUT->button(html_form::make_button("download.php", $options, get_string("downloadtext")));
+        echo $OUTPUT->single_button(new moodle_url("download.php", $options), get_string("downloadtext"));
         echo $OUTPUT->container_end();
 
         break;

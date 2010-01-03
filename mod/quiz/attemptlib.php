@@ -742,8 +742,8 @@ class quiz_attempt extends quiz {
     public function print_restart_preview_button() {
         global $CFG, $OUTPUT;
         echo $OUTPUT->container_start('controls');
-        $options = array('cmid' => $this->cm->id, 'forcenew' => true);
-        echo $OUTPUT->button(html_form::make_button($this->start_attempt_url(), $options, get_string('startagain', 'quiz')));
+        $url = new moodle_url($this->start_attempt_url(), array('cmid' => $this->cm->id, 'forcenew' => true));
+        echo $OUTPUT->single_button($url, get_string('startagain', 'quiz'));
         echo $OUTPUT->container_end();
     }
 

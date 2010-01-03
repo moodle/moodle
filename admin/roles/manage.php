@@ -265,7 +265,7 @@
     echo $OUTPUT->table($table);
 
     echo $OUTPUT->container_start('buttons');
-    echo $OUTPUT->button(html_form::make_button($defineurl, array('action' => 'add'), get_string('addrole', 'role'), 'get'));
+    echo $OUTPUT->single_button(new moodle_url($defineurl, array('action' => 'add')), get_string('addrole', 'role'), 'get');
     echo $OUTPUT->container_end();
 
     echo $OUTPUT->footer();

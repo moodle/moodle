@@ -554,8 +554,8 @@ function quiz_grade_item_update($quiz, $grades=NULL) {
                 echo $OUTPUT->box_start('generalbox', 'notice');
                 echo '<p>'. $message .'</p>';
                 echo $OUTPUT->container_start('buttons');
-                echo $OUTPUT->button(html_form::make_button($regrade_link, null, get_string('regradeanyway', 'grades')));
-                echo $OUTPUT->button(html_form::make_button($back_link,  null,  get_string('cancel')));
+                echo $OUTPUT->single_button($regrade_link, get_string('regradeanyway', 'grades'));
+                echo $OUTPUT->single_button($back_link,  get_string('cancel'));
                 echo $OUTPUT->container_end();
                 echo $OUTPUT->box_end();
 

@@ -208,15 +208,11 @@ if ($generalforums) {
                     $trackedlink = $stryes;
 
                 } else {
-                    $options = array('id'=>$forum->id);
+                    $aurl = new moodle_url($CFG->wwwroot.'/mod/forum/settracking.php', array('id'=>$forum->id));
                     if (!isset($untracked[$forum->id])) {
-                        $form = html_form::make_button($CFG->wwwroot.'/mod/forum/settracking.php', $options, $stryes);
-                        $form->button->title = $strnotrackforum;
-                        $trackedlink = $OUTPUT->button($form);
+                        $trackedlink = $OUTPUT->single_button($aurl, $stryes, 'post', array('title'=>$strnotrackforum));
                     } else {
-                        $form = html_form::make_button($CFG->wwwroot.'/mod/forum/settracking.php', $options, $strno);
-                        $form->button->title = $strtrackforum;
-                        $trackedlink = $OUTPUT->button($form);
+                        $trackedlink = $OUTPUT->single_button($aurl, $strno, 'post', array('title'=>$strtrackforum));
                     }
                 }
             }
@@ -335,15 +331,11 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
                         $trackedlink = $stryes;
 
                     } else {
-                        $options = array('id'=>$forum->id);
+                        $aurl = new moodle_url($CFG->wwwroot.'/mod/forum/settracking.php', array('id'=>$forum->id));
                         if (!isset($untracked[$forum->id])) {
-                            $form = html_form::make_button($CFG->wwwroot.'/mod/forum/settracking.php', $options, $stryes);
-                            $form->button->title = $strnotrackforum;
-                            $trackedlink = $OUTPUT->button($form);
+                            $trackedlink = $OUTPUT->single_button($aurl, $stryes, 'post', array('title'=>$strnotrackforum));
                         } else {
-                            $form = html_form::make_button($CFG->wwwroot.'/mod/forum/settracking.php', $options, $strno);
-                            $form->button->title = $strtrackforum;
-                            $trackedlink = $OUTPUT->button($form);
+                            $trackedlink = $OUTPUT->single_button($aurl, $strno, 'post', array('title'=>$strtrackforum));
                         }
                     }
                 }

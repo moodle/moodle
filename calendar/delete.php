@@ -100,26 +100,19 @@ echo $OUTPUT->header();
 echo $OUTPUT->box_start('eventlist');
 
 // Delete this event button is always shown
-$deleteone = new html_form();
-$deleteone->button->text = get_string('delete');
-$deleteone->url = new moodle_url(CALENDAR_URL.'delete.php', array('id'=>$event->id, 'confirm'=>true));
-$buttons = $OUTPUT->button($deleteone);
+$url = new moodle_url(CALENDAR_URL.'delete.php', array('id'=>$event->id, 'confirm'=>true));
+$buttons = $OUTPUT->single_button($url, get_string('delete'));
 
 // If there are repeated events then add a Delete Repeated button
 $repeatspan = '';
 if (!empty($event->eventrepeats) && $event->eventrepeats > 0) {
-    $deleteall = new html_form();
-    $deleteall->button->text = get_string('deleteall');
-    $deleteall->url = new moodle_url(CALENDAR_URL.'delete.php', array('id'=>$event->repeatid, 'confirm'=>true, 'repeats'=>true));
-    $buttons .= $OUTPUT->button($deleteall);
+    $url = new moodle_url(CALENDAR_URL.'delete.php', array('id'=>$event->repeatid, 'confirm'=>true, 'repeats'=>true));
+    $buttons .= $OUTPUT->single_button($url, get_string('deleteall'));
     $repeatspan = '<br /><br />'.$OUTPUT->span(get_string('youcandeleteallrepeats', 'calendar'));
 }
 
 // And add the cancel button
-$cancel = new html_form();
-$cancel->button->text = get_string('cancel');
-$cancel->url = $viewcalendarurl;
-$buttons .= $OUTPUT->button($cancel);
+$buttons .= $OUTPUT->single_button($viewcalendarurl, get_string('cancel'));
 
 // And show the buttons and notes
 echo $OUTPUT->box_start('generalbox', 'notice');

@@ -295,8 +295,7 @@ abstract class grade_export {
         echo $OUTPUT->container_start('gradeexportlink');
 
         if (!$this->userkey) {      // this button should trigger a download prompt
-            echo $OUTPUT->button(html_form::make_button($CFG->wwwroot.'/grade/export/'.$this->plugin.'/export.php',
-                                $params, get_string('download', 'admin')));
+            echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot.'/grade/export/'.$this->plugin.'/export.php', $params), get_string('download', 'admin'));
 
         } else {
             $paramstr = '';
@@ -308,7 +307,7 @@ abstract class grade_export {
 
             $link = $CFG->wwwroot.'/grade/export/'.$this->plugin.'/dump.php'.$paramstr.'&key='.$this->userkey;
 
-            echo get_string('download', 'admin').': ' . $OUTPUT->link(html_link::make($link, $link));
+            echo get_string('download', 'admin').': ' . $OUTPUT->link($link, $link);
         }
         echo $OUTPUT->container_end();
     }

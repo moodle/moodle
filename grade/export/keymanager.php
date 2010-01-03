@@ -77,7 +77,7 @@ $table->data  = $data;
 echo $OUTPUT->table($table);
 
 echo $OUTPUT->container_start('buttons mdl-align');
-echo $OUTPUT->button(html_form::make_button('key.php', array('courseid'=>$course->id), get_string('newuserkey', 'userkey')));
+echo $OUTPUT->single_button(new moodle_url('key.php', array('courseid'=>$course->id)), get_string('newuserkey', 'userkey'));
 echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();

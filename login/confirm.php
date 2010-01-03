@@ -39,7 +39,7 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
         echo $OUTPUT->box_start('generalbox centerpara boxwidthnormal boxaligncenter');
         echo "<h3>".get_string("thanks").", ". fullname($user) . "</h3>\n";
         echo "<p>".get_string("alreadyconfirmed")."</p>\n";
-        echo $OUTPUT->button(html_form::make_button("$CFG->wwwroot/course/", null, get_string('courses')));
+        echo $OUTPUT->single_button("$CFG->wwwroot/course/", get_string('courses'));
         echo $OUTPUT->box_end();
         echo $OUTPUT->footer();
         exit;
@@ -66,7 +66,7 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
         echo $OUTPUT->box_start('generalbox centerpara boxwidthnormal boxaligncenter');
         echo "<h3>".get_string("thanks").", ". fullname($USER) . "</h3>\n";
         echo "<p>".get_string("confirmed")."</p>\n";
-        echo $OUTPUT->button(html_form::make_button("$CFG->wwwroot/course/", null, get_string('courses')));
+        echo $OUTPUT->single_button("$CFG->wwwroot/course/", get_string('courses'));
         echo $OUTPUT->box_end();
         echo $OUTPUT->footer();
         exit;

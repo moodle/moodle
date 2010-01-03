@@ -101,7 +101,7 @@ $table->data  = $data;
 echo $OUTPUT->table($table);
 
 echo $OUTPUT->container_start('buttons');
-echo $OUTPUT->button(html_form::make_button('grouping.php', array('courseid'=>$courseid), $srtnewgrouping));
+echo $OUTPUT->single_button(new moodle_url('grouping.php', array('courseid'=>$courseid)), $srtnewgrouping);
 echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();

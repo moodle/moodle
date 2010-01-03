@@ -8296,7 +8296,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $hidden["launch"]             = "form";
                 $hidden["file"]               =  $file;
                 $hidden["id"]                 =  $id;
-                echo $OUTPUT->button(html_form::make_button("restore.php", $hidden, get_string("continue")));
+                echo $OUTPUT->single_button(new moodle_url("restore.php", $hidden), get_string("continue"));
                 echo "</div>";
             }
             else {

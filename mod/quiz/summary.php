@@ -128,7 +128,7 @@ $form = html_form::make_button($attemptobj->processattempt_url(), $options, get_
 $form->id = 'responseform';
 $form->button->add_confirm_action(get_string('confirmclose', 'quiz'));
 
-echo $OUTPUT->button($form);
+echo $OUTPUT->single_button($form);
 echo $OUTPUT->container_end();
 
 /// Finish the page

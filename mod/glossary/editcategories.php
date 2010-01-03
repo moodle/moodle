@@ -146,7 +146,7 @@ if ( $hook >0 ) {
 <?php
             unset($options);
             $options = array ("id" => $id);
-            echo $OUTPUT->button(html_form::make_button("editcategories.php", $options, get_string("no")));
+            echo $OUTPUT->single_button(new moodle_url("editcategories.php", $options), get_string("no"));
             echo "</td></tr></table>";
             echo "</div>";
             echo $OUTPUT->box_end();
@@ -241,12 +241,12 @@ if ( $action ) {
              $options['action'] = "add";
 
              echo "<table border=\"0\"><tr><td align=\"right\">";
-             echo $OUTPUT->button(html_form::make_button("editcategories.php", $options, get_string("add") . " " . get_string("category","glossary")));
+             echo $OUTPUT->single_button(new moodle_url("editcategories.php", $options), get_string("add") . " " . get_string("category","glossary"));
              echo "</td><td align=\"left\">";
              unset($options['action']);
              $options['mode'] = 'cat';
              $options['hook'] = $hook;
-             echo $OUTPUT->button(html_form::make_button("view.php", $options, get_string("back","glossary")));
+             echo $OUTPUT->single_button(new moodle_url("view.php", $options), get_string("back","glossary"));
              echo "</td></tr>";
              echo "</table>";
 

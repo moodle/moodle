@@ -84,10 +84,8 @@ echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 if( $capabilities->viewreports ) {
     //button "export to excel"
     echo $OUTPUT->container_start('mdl-align');
-    $export_button_link = 'analysis_to_excel.php';
-    $export_button_options = array('sesskey'=>sesskey(), 'id'=>$id, 'coursefilter'=>$coursefilter);
-    $export_button_label = get_string('export_to_excel', 'feedback');
-    echo $OUTPUT->button(html_form::make_button($export_button_link, $export_button_options, $export_button_label));
+    $aurl = new moodle_url('analysis_to_excel.php', array('sesskey'=>sesskey(), 'id'=>$id, 'coursefilter'=>$coursefilter));
+    echo $OUTPUT->single_button($aurl, get_string('export_to_excel', 'feedback'));
     echo $OUTPUT->container_end();
 }
 

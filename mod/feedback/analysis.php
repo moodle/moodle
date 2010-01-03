@@ -87,10 +87,8 @@ if( $capabilities->viewreports ) {
     //echo '<div class="mdl-align">';
     // echo '<div class="feedback_centered_button">';
     echo $OUTPUT->container_start('form-buttons');
-    $export_button_link = 'analysis_to_excel.php';
-    $export_button_options = array('sesskey'=>sesskey(), 'id'=>$id);
-    $export_button_label = get_string('export_to_excel', 'feedback');
-    echo $OUTPUT->button(html_form::make_button($export_button_link, $export_button_options, $export_button_label));
+    $aurl = new moodle_url('analysis_to_excel.php', array('sesskey'=>sesskey(), 'id'=>$id));
+    echo $OUTPUT->single_button($aurl, get_string('export_to_excel', 'feedback'));
     echo $OUTPUT->container_end();
 }
 

@@ -151,7 +151,7 @@ echo $OUTPUT->select(html_select::make_popup_form($popupurl, 'datatype', $option
 
 /// Create a new category link
 $options = array('action'=>'editcategory');
-echo $OUTPUT->button(html_form::make_button('index.php', $options, get_string('profilecreatecategory', 'admin')));
+echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string('profilecreatecategory', 'admin'));
 
 echo '</div>';
 

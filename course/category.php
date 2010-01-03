@@ -207,11 +207,11 @@
 
         // Print button to update this category
         $options = array('id' => $category->id);
-        echo $OUTPUT->button(html_form::make_button($CFG->wwwroot.'/course/editcategory.php', $options, get_string('editcategorythis'), 'get'));
+        echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot.'/course/editcategory.php', $options), get_string('editcategorythis'), 'get');
 
         // Print button for creating new categories
         $options = array('parent' => $category->id);
-        echo $OUTPUT->button(html_form::make_button($CFG->wwwroot.'/course/editcategory.php', $options, get_string('addsubcategory'), 'get'));
+        echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot.'/course/editcategory.php', $options), get_string('addsubcategory'), 'get');
 
         echo $OUTPUT->container_end();
     }
@@ -451,14 +451,14 @@
         $options['id'] = $category->id;
         $options['resort'] = 'name';
         $options['sesskey'] = sesskey();
-        echo $OUTPUT->button(html_form::make_button('category.php', $options, get_string('resortcoursesbyname'), 'get'));
+        echo $OUTPUT->single_button(new moodle_url('category.php', $options), get_string('resortcoursesbyname'), 'get');
     }
 
     if (has_capability('moodle/course:create', $context)) {
     /// Print button to create a new course
         unset($options);
         $options['category'] = $category->id;
-        echo $OUTPUT->button(html_form::make_button('edit.php', $options, get_string('addnewcourse'), 'get'));
+        echo $OUTPUT->single_button(new moodle_url('edit.php', $options), get_string('addnewcourse'), 'get');
     }
 
     if (!empty($CFG->enablecourserequests) && $category->id == $CFG->enablecourserequests) {

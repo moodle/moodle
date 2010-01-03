@@ -183,7 +183,7 @@ switch($view) {
 //Link to calendar export page
 echo $OUTPUT->container_start('bottom');
 if (!empty($CFG->enablecalendarexport)) {
-    echo $OUTPUT->button(html_form::make_button('export.php', array('course'=>$courseid), get_string('exportcalendar', 'calendar')));
+    echo $OUTPUT->single_button(new moodle_url('export.php', array('course'=>$courseid)), get_string('exportcalendar', 'calendar'));
 
     if (!empty($USER->id)) {
         $authtoken = sha1($USER->username . $USER->password . $CFG->calendar_exportsalt);
