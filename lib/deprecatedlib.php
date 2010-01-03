@@ -3009,8 +3009,8 @@ function notice_yesno($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno=
 
     global $OUTPUT;
 
-    $buttoncontinue = html_form::make_button($linkyes, $optionsyes, get_string('yes'), $methodyes);
-    $buttoncancel   = html_form::make_button($linkno, $optionsno, get_string('no'), $methodno);
+    $buttoncontinue = new simple_button(new moodle_url($linkyes, $optionsyes), get_string('yes'), $methodyes);
+    $buttoncancel   = new simple_button(new moodle_url($linkno, $optionsno), get_string('no'), $methodno);
 
     echo $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel);
 }

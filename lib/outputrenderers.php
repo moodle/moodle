@@ -970,20 +970,20 @@ class core_renderer extends renderer_base {
     * @return string HTML fragment
     */
     public function confirm($message, $continue, $cancel) {
-        if ($continue instanceof html_form) {
+        if ($continue instanceof html_form) { //TODO: change to single_button
             $continue = clone($continue);
         } else if (is_string($continue) or $continue instanceof moodle_url) {
-            $continue = html_form::make_button($continue, null, get_string('continue'), 'post');
+            $continue = new single_button($continue, get_string('continue'), 'post');
         } else {
-            throw new coding_exception('The continue param to $OUTPUT->confirm must be either a URL (string/moodle_url) or a html_form object.');
+            throw new coding_exception('The continue param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a html_form instance.');
         }
 
-        if ($cancel instanceof html_form) {
+        if ($cancel instanceof html_form) { //TODO: change to single_button
             $cancel = clone($cancel);
         } else if (is_string($cancel) or $cancel instanceof moodle_url) {
-            $cancel = html_form::make_button($cancel, null, get_string('cancel'), 'get');
+            $cancel = new single_button($cancel, get_string('cancel'), 'get');
         } else {
-            throw new coding_exception('The cancel param to $OUTPUT->confirm must be either a URL (string/moodle_url) or a html_form object.');
+            throw new coding_exception('The cancel param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a html_form instance.');
         }
 
         $output = $this->box_start('generalbox', 'notice');
@@ -997,20 +997,22 @@ class core_renderer extends renderer_base {
      * Returns a form with single button.
      * If first parameter is html_form instance all other parameters are ignored.
      *
-     * @param string|moodle_url|single_button $singlebutton_or_form 
+     * @param string|moodle_url|single_button $url_or_singlebutton
      * @param string $label button text
      * @param string $method get or post submit method
      * @param array $options associative array {disabled, title}
      * @return string HTML fragment
      */
-    public function single_button($singlebutton_or_form, $label=null, $method='post', array $options=null) {
-        if ($singlebutton_or_form instanceof single_button) {
-            $button = $singlebutton_or_form;
+    public function single_button($url_or_singlebutton, $label=null, $method='post', array $options=null) {
+        if ($url_or_singlebutton instanceof single_button) {
+            $button = $url_or_singlebutton;
             if (func_num_args() > 1) {
                 debugging('html_form instance used as first parameter of $OUTPUT->single_button(), all other parameters are ignored.');
             }
+        } else if ($url_or_singlebutton instanceof single_button or is_string($url_or_singlebutton)) {
+            $button = new single_button($url_or_singlebutton, $label, $method, $options);
         } else {
-            $button = new single_button($url_or_form, $label, $method, $options);
+            throw new coding_exception('The $$url_or_singlebutton param to $OUTPUT->single_button() must be either a URL (string/moodle_url) or a single_button instance.');
         }
 
         return $this->button($button);

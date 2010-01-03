@@ -1547,6 +1547,7 @@ class html_form extends html_component {
 
     public static function make_button($url, array $params=null, $label=null, $method='post', array $formoptions=null) {
         //TODO: to be removed soon, repalced by ew single_button()
+        //      in any case the $params argument is not appropriate here, we use moodle_urls now!
         $form = new html_form($formoptions);
         $form->url = new moodle_url($url, $params);
         if ($label !== null) {
@@ -1569,7 +1570,7 @@ class html_form extends html_component {
 class single_button extends html_form {
     /**
      * Constructor
-     * @param string|moodle_url 
+     * @param string|moodle_url
      * @param string $label button text
      * @param string $method get or post submit method
      * @param array $options associative array form attributes + {disabled, title}
