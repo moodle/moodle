@@ -200,13 +200,9 @@ if ($version > $CFG->version) {  // upgrade
         $PAGE->set_heading($stradministration);
         $PAGE->set_cacheable(false);
         echo $OUTPUT->header();
-        $continueform = new html_form();
-        $continueform->method = 'get';
-        $continueform->url = new moodle_url('index.php', array('confirmupgrade' => 1));
-        $cancelform = new html_form();
-        $cancelform->url = new moodle_url('index.php');
-        $cancelform->button->text = get_string('no');
-        echo $OUTPUT->confirm(get_string('upgradesure', 'admin', $a->newversion), $continueform, $cancelform);
+        $continueurl = new moodle_url('index.php', array('confirmupgrade' => 1));
+        $cancelurl = new moodle_url('index.php');
+        echo $OUTPUT->confirm(get_string('upgradesure', 'admin', $a->newversion), $continueurl, $cancelurl);
         echo $OUTPUT->footer();
         exit;
 
