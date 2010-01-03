@@ -997,27 +997,23 @@ class core_renderer extends renderer_base {
      * Returns a form with single button.
      * If first parameter is html_form instance all other parameters are ignored.
      *
-     * @param string|moodle_url|html_form $url_or_form 
+     * @param string|moodle_url|single_button $singlebutton_or_form 
      * @param string $label button text
      * @param string $method get or post submit method
      * @param array $options associative array {disabled, title}
      * @return string HTML fragment
      */
-    public function single_button($url_or_form, $label=null, $method='post', array $options=null) {
-        if ($url_or_form instanceof html_form) {
-            $form = $url_or_form;
+    public function single_button($singlebutton_or_form, $label=null, $method='post', array $options=null) {
+        if ($singlebutton_or_form instanceof single_button) {
+            $button = $singlebutton_or_form;
             if (func_num_args() > 1) {
                 debugging('html_form instance used as first parameter of $OUTPUT->single_button(), all other parameters are ignored.');
             }
         } else {
-            $form = html_form::make_button($url_or_form, null, $label, $method);
-            $form->button->disabled = !empty($options['disabled']);
-            if (!empty($options['title'])) {
-                $form->button->title = $options['title'];
-            }
+            $button = new single_button($url_or_form, $label, $method, $options);
         }
 
-        return $this->button($form);
+        return $this->button($button);
     }
 
     /**

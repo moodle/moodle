@@ -124,7 +124,7 @@ $options = array(
     'sesskey' => sesskey(),
 );
 
-$form = html_form::make_button($attemptobj->processattempt_url(), $options, get_string('finishattempt', 'quiz'));
+$form = new single_button(new moodle_url($attemptobj->processattempt_url(), $options), get_string('finishattempt', 'quiz'));
 $form->id = 'responseform';
 $form->button->add_confirm_action(get_string('confirmclose', 'quiz'));
 

@@ -1498,10 +1498,6 @@ class html_form extends html_component {
      */
     public $url;
     /**
-     * @var array $params Optional array of parameters. Ignored if $url instanceof moodle_url
-     */
-    public $params = array();
-    /**
      * @var boolean $showbutton If true, the submit button will always be shown even if JavaScript is available
      */
     public $showbutton = false;
@@ -1524,7 +1520,7 @@ class html_form extends html_component {
     public function __construct(array $options = null) {
         parent::__construct($options);
         $this->button = new html_button();
-        $this->button->text = get_string('ok');
+        $this->button->text = get_string('go');
     }
 
     /**
@@ -1537,11 +1533,12 @@ class html_form extends html_component {
             throw new coding_exception('A html_form must have a $url value (string or moodle_url).');
         }
 
-        if (!($this->url instanceof moodle_url)) {
-            $this->url = new moodle_url($this->url, $this->params);
+        if (is_string($this->url)) {
+            $this->url = new moodle_url($this->url);
         }
 
         if ($this->method == 'post') {
+            // automatic CSRF protection
             $this->url->param('sesskey', sesskey());
         }
 
@@ -1549,6 +1546,7 @@ class html_form extends html_component {
     }
 
     public static function make_button($url, array $params=null, $label=null, $method='post', array $formoptions=null) {
+        //TODO: to be removed soon, repalced by ew single_button()
         $form = new html_form($formoptions);
         $form->url = new moodle_url($url, $params);
         if ($label !== null) {
@@ -1557,6 +1555,36 @@ class html_form extends html_component {
         $form->method = $method;
 
         return $form;
+    }
+}
+
+
+/**
+ * A component representing a simple form with only one button.
+ *
+ * @copyright 2009 Petr Skoda
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class single_button extends html_form {
+    /**
+     * Constructor
+     * @param string|moodle_url 
+     * @param string $label button text
+     * @param string $method get or post submit method
+     * @param array $options associative array form attributes + {disabled, title}
+     */
+    public function __construct($url, $label, $method='post', array $options=null) {
+        parent::__construct($options);
+        $this->url = $url;
+        $form->method = $method;
+        $this->button->text = $label;
+        if (!empty($options['disabled'])) {
+            $this->button->disabled = true;
+        }
+        if (!empty($options['title'])) {
+            $this->button->title = $options['title'];
+        }
     }
 }
 

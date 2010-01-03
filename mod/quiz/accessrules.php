@@ -220,7 +220,7 @@ class quiz_access_manager {
         if ($this->securewindow_required($canpreview)) {
             $this->_securewindowrule->print_start_attempt_button($buttontext, $strconfirmstartattempt);
         } else {
-            $form = html_form::make_button($this->_quizobj->start_attempt_url(), array('cmid' => $this->_quizobj->get_cmid()), $buttontext);
+            $form = new single_button(new moodle_url($this->_quizobj->start_attempt_url(), array('cmid' => $this->_quizobj->get_cmid())), $buttontext);
             if ($strconfirmstartattempt) {
                 $form->button->add_confirm_action($strconfirmstartattempt);
             }
@@ -745,10 +745,7 @@ class securewindow_access_rule extends quiz_access_rule_base {
      */
     public function make_review_link($linktext, $attemptid) {
         global $OUTPUT;
-        $form = new html_form();
-        $form->button->text = $linktext;
-        $form->button->title = $form->button->text;
-        $form->url = $this->_quizobj->review_url($attemptid);
+        $form = new single_button($this->_quizobj->review_url($attemptid), $linktext);
         $form->button->add_action(new popup_action('click', $form->url, 'quizpopup', $this->windowoptions));
         return $OUTPUT->single_button($form);
     }

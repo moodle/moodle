@@ -2483,11 +2483,9 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
     }
 
     // Create a html_button object
-    $form = new html_form();
-    $form->button->text = $linkname;
+    $form = new single_button($url, $text, 'post');
     $form->button->title = $title;
     $form->button->id = $id;
-    $form->url = $url;
     $form->add_class($class);
 
     // Parse the $options string
@@ -2550,19 +2548,14 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
 
     // Cast $options to array
     $options = (array) $options;
-    $form = new html_form();
-    $form->url = new moodle_url($link, $options);
-    $form->button->text = $label;
-    $form->button->disabled = $disabled;
-    $form->button->title = $tooltip;
-    $form->method = $method;
-    $form->id = $formid;
+
+    $button = new sibngle_button(new moodle_url($link, $options), $label, $method, array('disabled'=>$disabled, 'title'=>$tooltip, 'id'=>$id));
 
     if ($jsconfirmmessage) {
-        $form->button->add_confirm_action($jsconfirmmessage);
+        $button->button->add_confirm_action($jsconfirmmessage);
     }
 
-    $output = $OUTPUT->single_button($form);
+    $output = $OUTPUT->single_button($button);
 
     if ($return) {
         return $output;
