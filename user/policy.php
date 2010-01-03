@@ -81,8 +81,8 @@ echo '<object id="policyframe" data="'.$CFG->sitepolicy.'" type="'.$mimetype.'">
 echo '<a href="'.$CFG->sitepolicy.'" onclick="this.target=\'_blank\'">'.$strpolicyagreementclick.'</a>';
 echo '</object></div>';
 
-$formcontinue = html_form::make_button('policy.php', array('agree'=>1), get_string('yes'));
-$formcancel = html_form::make_button($CFG->wwwroot.'/login/logout.php', array(), get_string('no'));
+$formcontinue = new single_button(new moodle_url('policy.php', array('agree'=>1)), get_string('yes'));
+$formcancel = new single_button($CFG->wwwroot.'/login/logout.php', get_string('no'));
 echo $OUTPUT->confirm($strpolicyagree, $formcontinue, $formcancel);
 
 echo $OUTPUT->footer();

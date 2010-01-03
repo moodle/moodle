@@ -60,8 +60,8 @@ if ($confirm and confirm_sesskey()) {
         $usernames .= ', ...';
     }
     echo $OUTPUT->heading(get_string('confirmation', 'admin'));
-    $formcontinue = html_form::make_button('user_bulk_forcepasswordchange.php', array('confirm' => 1), get_string('yes'));
-    $formcancel = html_form::make_button('user_bulk.php', array(), get_string('no'), 'get');
+    $formcontinue = new single_button(new moodle_url('user_bulk_forcepasswordchange.php', array('confirm' => 1)), get_string('yes'));
+    $formcancel = new single_button('user_bulk.php', get_string('no'), 'get');
     echo $OUTPUT->confirm(get_string('forcepasswordchangecheckfull', '', $usernames), $formcontinue, $formcancel);
 }
 

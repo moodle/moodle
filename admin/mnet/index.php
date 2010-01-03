@@ -45,8 +45,8 @@
             $MNET->get_private_key();
             $SESSION->mnet_confirm_delete_key = md5(sha1($MNET->keypair['keypair_PEM'])).':'.time();
 
-            $formcontinue = html_form::make_button('index.php', array('confirm' => md5($MNET->public_key)), get_string('yes'));
-            $formcancel = html_form::make_button('index.php', null, get_string('no'), 'get');
+            $formcontinue = new single_button(new moodle_url('index.php', array('confirm' => md5($MNET->public_key))), get_string('yes'));
+            $formcancel = new single_button('index.php', get_string('no'), 'get');
             echo $OUTPUT->confirm(get_string("deletekeycheck", "mnet"), $formcontinue, $formcancel);
             exit;
         } else {

@@ -122,7 +122,7 @@
             echo $OUTPUT->heading($title);
 
             $linkcontinue = new moodle_url($returnurl, array('action' => 'delete', 'filterpath' => $filterpath, 'confirm' => 1));
-            $formcancel = html_form::make_button($returnurl, null, get_string('no'), 'get');
+            $formcancel = new single_button($returnurl, get_string('no'), 'get');
             echo $OUTPUT->confirm(get_string('deletefilterareyousuremessage', 'admin', $filtername), $linkcontinue, $formcancel);
             echo $OUTPUT->footer();
             exit;

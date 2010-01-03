@@ -218,10 +218,10 @@ if (empty($pageid)) {
         echo $lessonoutput->header($lesson, $cm);
         if ($lesson->timed) {
             if ($lesson->retake) {
-                $continuelink = html_form::make_button($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no'), get_string('continue', 'lesson'), 'get');
+                $continuelink = new single_button(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no')), get_string('continue', 'lesson'), 'get');
                 echo $lessonoutput->message(get_string('leftduringtimed', 'lesson'), $continuelink);
             } else {
-                $courselink = html_form::make_button($CFG->wwwroot.'/course/view.php', array('id'=>$PAGE->course->id), get_string('returntocourse', 'lesson'), 'get');
+                $courselink = new single_button(new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
                 echo $lessonoutput->message(get_string('leftduringtimednoretake', 'lesson'), $courselink);
             }
         } else {
@@ -234,7 +234,7 @@ if (empty($pageid)) {
     if ($attemptflag) {
         if (!$lesson->retake) {
             echo $lessonoutput->header($lesson, $cm, 'view');
-            $courselink = html_form::make_button($CFG->wwwroot.'/course/view.php', array('id'=>$PAGE->course->id), get_string('returntocourse', 'lesson'), 'get');
+            $courselink = new single_button(new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
             echo $lessonoutput->message(get_string("noretake", "lesson"), $courselink);
             echo $lessonoutput->footer();
             exit();

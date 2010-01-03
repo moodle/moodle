@@ -220,8 +220,8 @@ if (!empty($edit) || !empty($new)) {
         }
         exit;
     }
-    $formcontinue = html_form::make_button($baseurl, array('delete' => $delete, 'sure' => 'yes'), get_string('yes'));
-    $formcancel = html_form::make_button($baseurl, array(), get_string('no'));
+    $formcontinue = new single_button(new moodle_url($baseurl, array('delete' => $delete, 'sure' => 'yes')), get_string('yes'));
+    $formcancel = new single_button($baseurl, get_string('no'));
     echo $OUTPUT->confirm(get_string('confirmdelete', 'repository', $instance->name), $formcontinue, $formcancel);
     $return = false;
 } else {

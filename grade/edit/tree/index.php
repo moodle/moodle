@@ -164,8 +164,8 @@ switch ($action) {
                 $strdeletecheckfull = get_string('deletecheck', '', $object->get_name());
                 $optionsyes = array('eid'=>$eid, 'confirm'=>1, 'sesskey'=>sesskey(), 'id'=>$course->id, 'action'=>'delete');
                 $optionsno  = array('id'=>$course->id);
-                $formcontinue = html_form::make_button('index.php', $optionsyes, get_string('yes'));
-                $formcancel = html_form::make_button('index.php', $optionsno, get_string('no'), 'get');
+                $formcontinue = new single_button(new moodle_url('index.php', $optionsyes), get_string('yes'));
+                $formcancel = new signle_button(new moodle_url('index.php', $optionsno), get_string('no'), 'get');
                 echo $OUTPUT->confirm($strdeletecheckfull, $formcontinue, $formcancel);
                 echo $OUTPUT->footer();
                 die;

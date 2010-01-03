@@ -59,8 +59,8 @@ if ($msgform->is_cancelled()) {
     echo $OUTPUT->heading(get_string('confirmation', 'admin'));
     echo $OUTPUT->box($msg, 'boxwidthnarrow boxaligncenter generalbox', 'preview');
 
-    $formcontinue = html_form::make_button('user_bulk_message.php', array('confirm' => 1, 'msg' => $msg), get_string('yes'));
-    $formcancel = html_form::make_button('user_bulk.php', $optionsno, get_string('no'), 'get');
+    $formcontinue = new single_button(new moodle_url('user_bulk_message.php', array('confirm' => 1, 'msg' => $msg)), get_string('yes'));
+    $formcancel = new single_button('user_bulk.php', get_string('no'), 'get');
     echo $OUTPUT->confirm(get_string('confirmmessage', 'bulkusers', $usernames), $formcontinue, $formcancel);
     echo $OUTPUT->footer();
     die;

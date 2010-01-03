@@ -92,7 +92,7 @@ class lesson_page_type_branchtable extends lesson_page {
             $params['pageid'] = $this->properties->id;
             $params['sesskey'] = sesskey();
             $params['jumpto'] = $answer->jumpto;
-            $buttons[] = $renderer->button(html_form::make_button($CFG->wwwroot.'/mod/lesson/continue.php', $params, strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options))));
+            $buttons[] = $renderer->button(new single_button(new moodle_url($CFG->wwwroot.'/mod/lesson/continue.php', $params), strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options))));
             $i++;
         }
         // Set the orientation

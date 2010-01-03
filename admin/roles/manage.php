@@ -90,8 +90,8 @@
                 $a->shortname = $roles[$roleid]->shortname;
                 $a->count = $DB->count_records('role_assignments', array('roleid'=>$roleid));
 
-                $formcontinue = html_form::make_button($baseurl, array('confirm' => 1, 'msg' => $msg), get_string('yes'));
-                $formcancel = html_form::make_button($baseurl, $optionsno, get_string('no'), 'get');
+                $formcontinue = new single_button(new moodle_url($baseurl, $optionsyes), get_string('yes'));
+                $formcancel = new single_button($baseurl, get_string('no'), 'get');
                 echo $OUTPUT->confirm(get_string('deleterolesure', 'role', $a), $formcontinue, $formcancel);
                 echo $OUTPUT->footer();
                 die;
@@ -172,8 +172,8 @@
                 } else {
                     $warning = get_string('resetrolesure', 'role', $a);
                 }
-                $formcontinue = html_form::make_button('manage.php', array('confirm' => 1, 'msg' => $msg), get_string('yes'));
-                $formcancel = html_form::make_button('manage.php', $optionsno, get_string('no'), 'get');
+                $formcontinue = new single_button(new moodle_url('manage.php', $optionsyes), get_string('yes'));
+                $formcancel = new single_button(new moodle_url('manage.php', $optionsno), get_string('no'), 'get');
                 echo $OUTPUT->confirm(get_string('confirmmessage', 'bulkusers', $usernames), $formcontinue, $formcancel);
                 echo $OUTPUT->footer();
                 die;

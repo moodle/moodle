@@ -70,8 +70,8 @@ if ($confirm && data_submitted()) {
         }
         $message.='</ul>';
     }
-    $formcontinue = html_form::make_button('delete.php', $optionsyes, get_string('yes'), 'post');
-    $formcancel = html_form::make_button('index.php', $optionsno, get_string('no'), 'get');
+    $formcontinue = new single_button(new moodle_url('delete.php', $optionsyes), get_string('yes'), 'post');
+    $formcancel = new single_button(new moodle_url('index.php', $optionsno), get_string('no'), 'get');
     echo $OUTPUT->confirm($message, $formcontinue, $formcancel);
     echo $OUTPUT->footer();
 }

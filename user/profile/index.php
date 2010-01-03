@@ -54,8 +54,8 @@ switch ($action) {
         admin_externalpage_print_header();
         echo $OUTPUT->heading('profiledeletecategory', 'admin');
 
-        $formcontinue = html_form::make_button($redirect, $optionsyes, get_string('yes'), 'post');
-        $formcancel = html_form::make_button($redirect, array(), get_string('no'), 'get');
+        $formcontinue = new single_button(new moodle_url($redirect, $optionsyes), get_string('yes'), 'post');
+        $formcancel = new single_button($redirect, get_string('no'), 'get');
         echo $OUTPUT->confirm(get_string('profileconfirmcategorydeletion', 'admin', $fieldcount), $formcontinue, $formcancel);
         echo $OUTPUT->footer();
         die;
@@ -76,8 +76,8 @@ switch ($action) {
         $PAGE->navbar->add($strheading);
         admin_externalpage_print_header();
         echo $OUTPUT->heading($strheading);
-        $formcontinue = html_form::make_button($redirect, $optionsyes, get_string('yes'), 'post');
-        $formcancel = html_form::make_button($redirect, array(), get_string('no'), 'get');
+        $formcontinue = new single_button(new moodle_url($redirect, $optionsyes), get_string('yes'), 'post');
+        $formcancel = new single_button($redirect, get_string('no'), 'get');
         echo $OUTPUT->confirm(get_string('profileconfirmfielddeletion', 'admin', $datacount), $formcontinue, $formcancel);
         echo $OUTPUT->footer();
         die;

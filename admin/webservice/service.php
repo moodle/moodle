@@ -48,8 +48,8 @@ if ($action == 'delete' and confirm_sesskey() and $service and empty($service->c
         admin_externalpage_print_header();
         $optionsyes = array('id'=>$id, 'action'=>'delete', 'confirm'=>1, 'sesskey'=>sesskey());
         $optionsno  = array('section'=>'externalservices');
-        $formcontinue = html_form::make_button('service.php', $optionsyes, get_string('delete'), 'post');
-        $formcancel = html_form::make_button("$CFG->wwwroot/$CFG->admin/settings.php", $optionsno, get_string('cancel'), 'get');
+        $formcontinue = new single_button(new moodle_url('service.php', $optionsyes), get_string('delete'), 'post');
+        $formcancel = new single_button(new moodle_url("$CFG->wwwroot/$CFG->admin/settings.php", $optionsno), get_string('cancel'), 'get');
         echo $OUTPUT->confirm(get_string('deleteserviceconfirm', 'webservice', $service->name), $formcontinue, $formcancel);
         echo $OUTPUT->footer();
         die;

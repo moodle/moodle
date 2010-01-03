@@ -76,8 +76,8 @@ if ($id and $delete) {
         echo $OUTPUT->header();
         $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
         $optionsno  = array('id'=>$courseid);
-        $formcontinue = html_form::make_button('key.php', $optionsyes, get_string('yes'), 'get');
-        $formcancel = html_form::make_button('keymanager.php', $optionsno, get_string('no'), 'get');
+        $formcontinue = new single_button(new moodle_url('key.php', $optionsyes), get_string('yes'), 'get');
+        $formcancel = new single_button(new moodle_url('keymanager.php', $optionsno), get_string('no'), 'get');
         echo $OUTPUT->confirm(get_string('deletekeyconfirm', 'userkey', $key->value), $formcontinue, $formcancel);
         echo $OUTPUT->footer();
         die;

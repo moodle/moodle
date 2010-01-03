@@ -112,8 +112,8 @@ if (!empty($add)) {
 
         // print_simple_box_start('center', '60%', '#FFAAAA', 20, 'noticebox');
         echo $OUTPUT->box_start('noticebox');
-        $formcontinue = html_form::make_button("$CFG->wwwroot/course/mod.php", $optionsyes, get_string('yes'));
-        $formcancel = html_form::make_button($return, $optionsno, get_string('no'), 'get');
+        $formcontinue = new single_button(new moodle_url("$CFG->wwwroot/course/mod.php", $optionsyes), get_string('yes'));
+        $formcancel = new single_button(new moodle_url($return, $optionsno), get_string('no'), 'get');
         echo $OUTPUT->confirm($strdeletecheckfull, $formcontinue, $formcancel);
         echo $OUTPUT->box_end();
         echo $OUTPUT->footer();
