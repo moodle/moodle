@@ -994,12 +994,33 @@ class core_renderer extends renderer_base {
     }
 
     /**
+     * Returns a form with single button.
+     *
+     * @param string|moodle_url|html_form $url_or_form 
+     * @param string $label button text
+     * @param string $method get or post submit method
+     * @return string HTML fragment
+     */
+    public function single_button($url_or_form, $label=null, $method='get') {
+        if ($url_or_form instanceof html_form) {
+            $form = clone($url_or_form);
+            if (!is_null($label)) {
+                $form->button->text = $label;
+            }
+        } else {
+            $form = html_form::make_button($url_or_form, null, $label, $method);
+        }
+
+        return $this->button($form);
+    }
+
+    /**
      * Given a html_form object, outputs an <input> tag within a form that uses the object's attributes.
      *
      * @param html_form $form A html_form object
      * @return string HTML fragment
      */
-    public function button($form) {
+    public function button(html_form $form) {
         if (empty($form->button) or !($form->button instanceof html_button)) {
             throw new coding_exception('$OUTPUT->button($form) requires $form to have a button (html_button) value');
         }
@@ -1030,7 +1051,7 @@ class core_renderer extends renderer_base {
      * @param string $contents HTML fragment to put inside the form. If given, must contain at least the submit button.
      * @return string HTML fragment
      */
-    public function form($form, $contents=null) {
+    public function form(html_form $form, $contents=null) {
         $form = clone($form);
         $form->prepare($this, $this->page, $this->target);
         $this->prepare_event_handlers($form);

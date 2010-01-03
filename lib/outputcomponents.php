@@ -1521,9 +1521,10 @@ class html_form extends html_component {
      * Constructor: sets up the other components in case they are needed
      * @return void
      */
-    public function __construct() {
+    public function __construct(array $options = null) {
+        parent::__construct($options);
         $this->button = new html_button();
-        $this->button->text = get_string('yes');
+        $this->button->text = get_string('ok');
     }
 
     /**
@@ -1547,14 +1548,14 @@ class html_form extends html_component {
         parent::prepare($output, $page, $target);
     }
 
-    public static function make_button($url, array $params=null, $label=null, $method='post') {
-        if ($label === null) {
-            $label = get_string('ok');
-        }
-        $form = new html_form();
+    public static function make_button($url, array $params=null, $label=null, $method='post', array $formoptions=null) {
+        $form = new html_form($formoptions);
         $form->url = new moodle_url($url, $params);
-        $form->button->text = $label;
+        if ($label !== null) {
+            $form->button->text = $label;
+        }
         $form->method = $method;
+
         return $form;
     }
 }
