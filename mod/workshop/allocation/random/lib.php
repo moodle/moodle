@@ -80,9 +80,9 @@ class workshop_random_allocator implements workshop_allocator {
             $addselfassessment  = optional_param('addselfassessment', false, PARAM_BOOL);
             $musthavesubmission = empty($assesswosubmission);
 
-            $authors            = $this->workshop->get_potential_authors($PAGE->context);
+            $authors            = $this->workshop->get_potential_authors();
             $authors            = $this->workshop->get_grouped($authors);
-            $reviewers          = $this->workshop->get_potential_reviewers($PAGE->context, $musthavesubmission);
+            $reviewers          = $this->workshop->get_potential_reviewers($musthavesubmission);
             $reviewers          = $this->workshop->get_grouped($reviewers);
             $assessments        = $this->workshop->get_all_assessments();
 

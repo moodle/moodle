@@ -50,8 +50,8 @@ $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'workshop'));
 $PAGE->navbar->add('Development tools');
 
 if ($tool == 'mksubmissions') {
-    $authors                = $workshop->get_potential_authors($PAGE->context, false);
-    $authorswithsubmission  = $workshop->get_potential_authors($PAGE->context, true);
+    $authors                = $workshop->get_potential_authors(false);
+    $authorswithsubmission  = $workshop->get_potential_authors(true);
     $authors                = array_diff_key($authors, $authorswithsubmission);
     echo $OUTPUT->header();
     $c = 0; // counter

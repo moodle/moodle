@@ -305,8 +305,8 @@ class workshop_manual_allocator implements workshop_allocator {
         $data                   = new stdClass();
         $data->allocations      = $allocations;
         $data->userinfo         = $userinfo;
-        $data->authors          = $this->workshop->get_potential_authors($PAGE->context);
-        $data->reviewers        = $this->workshop->get_potential_reviewers($PAGE->context);
+        $data->authors          = $this->workshop->get_potential_authors();
+        $data->reviewers        = $this->workshop->get_potential_reviewers();
         $data->hlauthorid       = $hlauthorid;
         $data->hlreviewerid     = $hlreviewerid;
         $data->selfassessment   = $this->workshop->useselfassessment;

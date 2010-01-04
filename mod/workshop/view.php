@@ -163,7 +163,7 @@ case workshop::PHASE_EVALUATION:
     $sortby     = 'totalgrade';   // todo let the user choose the column to sort by
     $sorthow    = 'DESC';        // todo detto
 
-    $data = $workshop->prepare_grading_report($PAGE->context, $USER->id, $groups, $page, $perpage, $sortby, $sorthow);
+    $data = $workshop->prepare_grading_report($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
     if ($data) {
         $showauthornames    = has_capability('mod/workshop:viewauthornames', $PAGE->context);
         $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $PAGE->context);

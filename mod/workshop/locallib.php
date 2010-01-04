@@ -89,7 +89,9 @@ class workshop {
         $this->cm           = $cm;
         $this->course       = $course;  // beware - this replaces the standard course field in the instance table
                                         // this is intentional - IMO there should be no such field as it violates
-                                        // 3rd normal form with no real performance gain
+                                        // 3rd normal form with no real performance gain. This way I try to
+                                        // demonstrate how backwards compatibility could be achieved --mudrd8mz
+        $this->context      = get_context_instance(CONTEXT_MODULE, $this->id);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -154,12 +156,11 @@ class workshop {
      * The returned objects contain id, lastname and firstname properties and are ordered by lastname,firstname
      *
      * @todo handle with limits and groups
-     * @param stdClass $context
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible authors otherwise.
      * @return array array[userid] => stdClass{->id ->lastname ->firstname}
      */
-    public function get_potential_authors(stdClass $context, $musthavesubmission=true) {
-        $users = get_users_by_capability($context, 'mod/workshop:submit',
+    public function get_potential_authors($musthavesubmission=true) {
+        $users = get_users_by_capability($this->context, 'mod/workshop:submit',
                     'u.id,u.lastname,u.firstname', 'u.lastname,u.firstname,u.id', 0, 1000, '', '', false, false, true);
         if ($musthavesubmission) {
             $users = array_intersect_key($users, $this->users_with_submission(array_keys($users)));
@@ -173,12 +174,11 @@ class workshop {
      * The returned objects contain id, lastname and firstname properties and are ordered by lastname,firstname
      *
      * @todo handle with limits and groups
-     * @param stdClass $context
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible users otherwise.
      * @return array array[userid] => stdClass{->id ->lastname ->firstname}
      */
-    public function get_potential_reviewers(stdClass $context, $musthavesubmission=false) {
-        $users = get_users_by_capability($context, 'mod/workshop:peerassess',
+    public function get_potential_reviewers($musthavesubmission=false) {
+        $users = get_users_by_capability($this->context, 'mod/workshop:peerassess',
                     'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname,u.id', 0, 1000, '', '', false, false, true);
         if ($musthavesubmission) {
             // users without their own submission can not be reviewers
@@ -654,7 +654,7 @@ class workshop {
      * @param stdClass context of the planned workshop
      * @return stdClass data object to be passed to the renderer
      */
-    public function prepare_user_plan($userid, stdClass $context) {
+    public function prepare_user_plan($userid) {
         global $DB;
 
         $phases = array();
@@ -663,21 +663,21 @@ class workshop {
         $phase = new stdClass();
         $phase->title = get_string('phasesetup', 'workshop');
         $phase->tasks = array();
-        if (has_capability('moodle/course:manageactivities', $context, $userid)) {
+        if (has_capability('moodle/course:manageactivities', $this->context, $userid)) {
             $task = new stdClass();
             $task->title = get_string('taskintro', 'workshop');
             $task->link = $this->updatemod_url();
             $task->completed = !(trim(strip_tags($this->intro)) == '');
             $phase->tasks['intro'] = $task;
         }
-        if (has_capability('moodle/course:manageactivities', $context, $userid)) {
+        if (has_capability('moodle/course:manageactivities', $this->context, $userid)) {
             $task = new stdClass();
             $task->title = get_string('taskinstructauthors', 'workshop');
             $task->link = $this->updatemod_url();
             $task->completed = !(trim(strip_tags($this->instructauthors)) == '');
             $phase->tasks['instructauthors'] = $task;
         }
-        if (has_capability('mod/workshop:editdimensions', $context, $userid)) {
+        if (has_capability('mod/workshop:editdimensions', $this->context, $userid)) {
             $task = new stdClass();
             $task->title = get_string('editassessmentform', 'workshop');
             $task->link = $this->editform_url();
@@ -702,7 +702,7 @@ class workshop {
         $phase = new stdClass();
         $phase->title = get_string('phasesubmission', 'workshop');
         $phase->tasks = array();
-        if (has_capability('moodle/course:manageactivities', $context, $userid)) {
+        if (has_capability('moodle/course:manageactivities', $this->context, $userid)) {
             $task = new stdClass();
             $task->title = get_string('taskinstructreviewers', 'workshop');
             $task->link = $this->updatemod_url();
@@ -713,7 +713,7 @@ class workshop {
             }
             $phase->tasks['instructreviewers'] = $task;
         }
-        if (has_capability('mod/workshop:submit', $context, $userid, false)) {
+        if (has_capability('mod/workshop:submit', $this->context, $userid, false)) {
             $task = new stdClass();
             $task->title = get_string('tasksubmit', 'workshop');
             $task->link = $this->submission_url();
@@ -727,11 +727,11 @@ class workshop {
             $phase->tasks['submit'] = $task;
         }
         $phases[self::PHASE_SUBMISSION] = $phase;
-        if (has_capability('mod/workshop:allocate', $context, $userid)) {
+        if (has_capability('mod/workshop:allocate', $this->context, $userid)) {
             $task = new stdClass();
             $task->title = get_string('allocate', 'workshop');
             $task->link = $this->allocation_url();
-            $numofauthors = count(get_users_by_capability($context, 'mod/workshop:submit', 'u.id', '', '', '',
+            $numofauthors = count(get_users_by_capability($this->context, 'mod/workshop:submit', 'u.id', '', '', '',
                     '', '', false, true));
             $numofsubmissions = $DB->count_records('workshop_submissions', array('workshopid'=>$this->id, 'example'=>0));
             $sql = 'SELECT COUNT(s.id) AS nonallocated
@@ -769,7 +769,7 @@ class workshop {
         $phase = new stdClass();
         $phase->title = get_string('phaseassessment', 'workshop');
         $phase->tasks = array();
-        $phase->isreviewer = has_capability('mod/workshop:peerassess', $context, $userid);
+        $phase->isreviewer = has_capability('mod/workshop:peerassess', $this->context, $userid);
         $phase->assessments = $this->get_assessments_by_reviewer($userid);
         $numofpeers     = 0;    // number of allocated peer-assessments
         $numofpeerstodo = 0;    // number of peer-assessments to do
@@ -850,7 +850,7 @@ class workshop {
         }
 
         // Add phase swithing actions
-        if (has_capability('mod/workshop:switchphase', $context, $userid)) {
+        if (has_capability('mod/workshop:switchphase', $this->context, $userid)) {
             foreach ($phases as $phasecode => $phase) {
                 if (! $phase->active) {
                     $action = new stdClass();
@@ -915,7 +915,6 @@ class workshop {
     /**
      * Prepares data object with all workshop grades to be rendered
      *
-     * @param stdClass $context of the workshop instance
      * @param int $userid the user we are preparing the report for
      * @param mixed $groups single group or array of groups - only show users who are in one of these group(s). Defaults to all
      * @param int $page the current page (for the pagination)
@@ -924,11 +923,11 @@ class workshop {
      * @param string $sorthow ASC|DESC
      * @return stdClass data for the renderer
      */
-    public function prepare_grading_report(stdClass $context, $userid, $groups, $page, $perpage, $sortby, $sorthow) {
+    public function prepare_grading_report($userid, $groups, $page, $perpage, $sortby, $sorthow) {
         global $DB;
 
-        $canviewall     = has_capability('mod/workshop:viewallassessments', $context, $userid);
-        $isparticipant  = has_any_capability(array('mod/workshop:submit', 'mod/workshop:peerassess'), $context, $userid);
+        $canviewall     = has_capability('mod/workshop:viewallassessments', $this->context, $userid);
+        $isparticipant  = has_any_capability(array('mod/workshop:submit', 'mod/workshop:peerassess'), $this->context, $userid);
 
         if (!$canviewall and !$isparticipant) {
             // who the hell is this?
@@ -946,7 +945,7 @@ class workshop {
         // get the list of user ids to be displayed
         if ($canviewall) {
             // fetch the list of ids of all workshop participants - this may get really long so fetch just id
-            $participants = get_users_by_capability($context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
+            $participants = get_users_by_capability($this->context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
                     'u.id', '', '', '', $groups, '', false, false, true);
         } else {
             // this is an ordinary workshop participant (aka student) - display the report just for him/her
