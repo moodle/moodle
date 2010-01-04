@@ -109,6 +109,10 @@ if ($edit and $ownsubmission) {
                                                       'workshop_submission_content', $formdata->id);
         $formdata = file_postupdate_standard_filemanager($formdata, 'attachment', $attachmentopts, $workshop->context,
                                                            'workshop_submission_attachment', $formdata->id);
+        if (empty($formdata->attachment)) {
+            // explicit cas to zero integer
+            $formdata->attachment = 0;
+        }
         // store the updated values or re-save the new submission (re-saving needed because URLs are now rewritten)
         $DB->update_record('workshop_submissions', $formdata);
         redirect($workshop->submission_url($formdata->id));
