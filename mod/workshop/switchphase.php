@@ -30,12 +30,12 @@ $cmid       = required_param('cmid', PARAM_INT);            // course module
 $phase      = required_param('phase', PARAM_INT);           // the code of the new page
 $confirm    = optional_param('confirm', false, PARAM_BOOL); // confirmation
 
-$PAGE->set_url('mod/workshop/switchphase.php', array('cmid' => $cmid, 'phase' => $phase));
-
 $cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
 $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
 $workshop   = new workshop($workshop, $cm, $course);
+
+$PAGE->set_url(new moodle_url($workshop->switchphase_user(), array('cmid' => $cmid, 'phase' => $phase));
 
 require_login($course, false, $cm);
 require_capability('mod/workshop:switchphase', $PAGE->context);

@@ -47,7 +47,7 @@ if (has_capability('mod/workshop:editdimensions', $workshop->context)) {
     $row[] = new tabobject('editform', $workshop->editform_url()->out(), get_string('editassessmentform', 'workshop'));
 }
 if (has_capability('mod/workshop:submit', $workshop->context)) {
-    $row[] = new tabobject('submission', $workshop->submission_url()->out(), get_string('mysubmission', 'workshop'));
+    $row[] = new tabobject('submission', $workshop->submission_url()->out(), get_string('submission', 'workshop'));
 }
 if (has_capability('mod/workshop:allocate', $workshop->context)) {
     $row[] = new tabobject('allocation', $workshop->allocation_url()->out(), get_string('allocate', 'workshop'));

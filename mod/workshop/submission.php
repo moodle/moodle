@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Submit own assignment or edit the already submitted own work
+ * View a single (usually the own) submission, submit own work.
  *
  * @package   mod-workshop
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
@@ -36,16 +36,17 @@ $cm     = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
-require_capability('mod/workshop:submit', $PAGE->context);
 if (isguestuser()) {
     print_error('guestsarenotallowed');
 }
 
-$workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
-$workshop   = new workshop($workshop, $cm, $course);
+$workshop = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
+$workshop = new workshop($workshop, $cm, $course);
+
+$PAGE->set_url(new moodle_url($workshop->submission_url(), array('cmid' => $cmid, 'id' => $id, 'edit' => $edit)));
 
 if ($id) { // submission is specified
-    $submission = $DB->get_record('workshop_submissions', array('id' => $id, 'workshopid' => $workshop->id), '*', MUST_EXIST);
+    $submission = $workshop->get_submission_by_id($id);
 } else { // no submission specified
     if (!$submission = $workshop->get_submission_by_author($USER->id)) {
         $submission = new stdClass();
@@ -54,8 +55,15 @@ if ($id) { // submission is specified
     }
 }
 
-if ($submission->userid !== $USER->id) {
-    print_error('nopermissiontoviewpage', 'error', $workshop->view_url());
+$ownsubmission  = $submission->userid == $USER->id;
+$canviewall     = has_capability('mod/workshop:viewallsubmissions', $PAGE->context);
+$cansubmit      = has_capability('mod/workshop:submit', $PAGE->context);
+
+if (!$ownsubmission and !$canviewall) {
+    print_error('nopermissions');
+}
+if ($ownsubmission and !$cansubmit) {
+    print_error('nopermissions');
 }
 
 $maxfiles       = $workshop->nattachments;
@@ -72,7 +80,7 @@ $mform          = new workshop_submission_form(null, array('current' => $submiss
 if ($mform->is_cancelled()) {
     redirect($workshop->view_url());
 
-} elseif ($formdata = $mform->get_data()) {
+} elseif ($cansubmit and $formdata = $mform->get_data()) {
     $timenow = time();
     if (empty($formdata->id)) {
         $formdata->workshopid     = $workshop->id;
@@ -99,21 +107,24 @@ if ($mform->is_cancelled()) {
     redirect($workshop->view_url());
 }
 
-$PAGE->set_url('mod/workshop/submission.php', array('cmid' => $cm->id));
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
 if ($edit) {
     $PAGE->navbar->add(get_string('mysubmission', 'workshop'), $workshop->submission_url(), navigation_node::TYPE_CUSTOM);
     $PAGE->navbar->add(get_string('editingsubmission', 'workshop'));
-} else {
+} elseif ($ownsubmission) {
     $PAGE->navbar->add(get_string('mysubmission', 'workshop'));
+} else {
+    $PAGE->navbar->add(get_string('submission', 'workshop'));
 }
 
 // Output starts here
 echo $OUTPUT->header();
+$currenttab = 'submission';
+include(dirname(__FILE__) . '/tabs.php');
 echo $OUTPUT->heading(format_string($workshop->name), 2);
 
-if ($edit) {
+if ($edit and $ownsubmission) {
     $mform->display();
     echo $OUTPUT->footer();
     die();
@@ -124,7 +135,7 @@ if (!empty($submission->id)) {
     echo $wsoutput->submission_full($submission, true);
 }
 
-if ($workshop->submitting_allowed()) {
+if ($ownsubmission and $workshop->submitting_allowed()) {
     $editbutton                 = new html_form();
     $editbutton->method         = 'get';
     $editbutton->button->text   = get_string('editsubmission', 'workshop');

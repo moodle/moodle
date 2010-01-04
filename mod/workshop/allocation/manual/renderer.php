@@ -76,7 +76,7 @@ class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
         foreach ($peers as $user) {
             $row = array();
             $row[] = $this->reviewers_of_participant($user, $workshop, $peers);
-            $row[] = $this->participant($user);
+            $row[] = $this->participant($user, $workshop);
             $row[] = $this->reviewees_of_participant($user, $workshop, $peers);
             $thisrowclasses = array();
             if ($user->id == $hlauthorid) {
@@ -96,17 +96,21 @@ class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
      * Returns information about the workshop participant
      *
      * @param stdClass $user participant data
+     * @param workshop API
      * @return string HTML code
      */
-    protected function participant(stdClass $user) {
+    protected function participant(stdClass $user, workshop $workshop) {
         $o  = $this->output->user_picture($user, $this->page->course->id);
         $o .= fullname($user);
         $o .= $this->output->container_start(array('submission'));
         if (is_null($user->submissionid)) {
             $o .= $this->output->output_tag('span', array('class' => 'info'), get_string('nosubmissionfound', 'workshop'));
         } else {
-            $submlink = $this->output->output_tag('a', array('href' => '#'), s($user->submissiontitle)); // todo link
-            $o .= $this->output->container($submlink, array('title'));
+            $submlink = new html_link();
+            $submlink->url = new moodle_url($workshop->submission_url(), array('id' => $user->submissionid));
+            $submlink->text = format_string($user->submissiontitle);
+            $submlink->set_classes('title');
+            $o .= $this->output->link($submlink);
             if (is_null($user->submissiongrade)) {
                 $o .= $this->output->container(get_string('nogradeyet', 'workshop'), array('grade', 'missing'));
             } else {

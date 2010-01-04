@@ -89,6 +89,13 @@ case workshop::PHASE_SUBMISSION:
         if ($submission = $workshop->get_submission_by_author($USER->id)) {
             echo $OUTPUT->box_start('generalbox mysubmission');
             echo $wsoutput->submission_summary($submission, true);
+            if ($workshop->submitting_allowed()) {
+                $editbutton                 = new html_form();
+                $editbutton->method         = 'get';
+                $editbutton->button->text   = get_string('editsubmission', 'workshop');
+                $editbutton->url            = new moodle_url($PAGE->url, array('edit' => 'on', 'id' => $submission->id));
+                echo $OUTPUT->button($editbutton);
+            }
             echo $OUTPUT->box_end();
         }
     }

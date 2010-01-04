@@ -262,6 +262,25 @@ class workshop {
     }
 
     /**
+     * Returns a submission record with the author's data
+     *
+     * @param int $id submission id
+     * @return stdClass
+     */
+    public function get_submission_by_id($id) {
+        global $DB;
+
+        $sql = 'SELECT s.*,
+                       u.lastname AS authorlastname, u.firstname AS authorfirstname, u.id AS authorid,
+                       u.picture AS authorpicture, u.imagealt AS authorimagealt
+                  FROM {workshop_submissions} s
+            INNER JOIN {user} u ON (s.userid = u.id)
+                 WHERE s.workshopid = :workshopid AND s.id = :id';
+        $params = array('workshopid' => $this->id, 'id' => $id);
+        return $DB->get_record_sql($sql, $params, MUST_EXIST);
+    }
+
+    /**
      * Returns a submission submitted by the given author or authors.
      *
      * If the single one submission is requested, returns the first found record including text fields.

@@ -30,15 +30,15 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 require_once(dirname(__FILE__).'/allocation/lib.php');
 
-$cmid   = required_param('cmid', PARAM_INT);                    // course module
-$method = optional_param('method', 'manual', PARAM_ALPHA);      // method to use
-
-$PAGE->set_url('mod/workshop/allocation.php', array('cmid' => $cmid, 'method' => $method));
+$cmid       = required_param('cmid', PARAM_INT);                    // course module
+$method     = optional_param('method', 'manual', PARAM_ALPHA);      // method to use
 
 $cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
 $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
 $workshop   = new workshop($workshop, $cm, $course);
+
+$PAGE->set_url(new moodle_url($workshop->allocation_url(), array('cmid' => $cmid, 'method' => $method)));
 
 require_login($course, false, $cm);
 $context = $PAGE->context;

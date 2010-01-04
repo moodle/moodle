@@ -94,7 +94,6 @@ $string['maxbytes'] = 'Maximum file size';
 $string['messageclose'] = '(hide)';
 $string['modulenameplural'] = 'Workshops';
 $string['modulename'] = 'Workshop';
-$string['mysubmission'] = 'My submission';
 $string['nattachments'] = 'Maximum number of submission attachments';
 $string['nexassessments'] = 'Number of required assessments of examples';
 $string['nogradeyet'] = 'No grade yet';
