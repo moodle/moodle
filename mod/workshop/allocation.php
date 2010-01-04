@@ -34,54 +34,38 @@ require_once(dirname(__FILE__).'/allocation/lib.php');
 $cmid   = required_param('cmid', PARAM_INT);                    // course module
 $method = optional_param('method', 'manual', PARAM_ALPHA);      // method to use
 
-$PAGE->set_url('mod/workshop/allocation.php', array('cmid' => $cmid));
+$PAGE->set_url('mod/workshop/allocation.php', array('cmid' => $cmid, 'method' => $method));
 
-if (!$cm = get_coursemodule_from_id('workshop', $cmid)) {
-    print_error('invalidcoursemodule');
-}
-if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-    print_error('coursemisconf');
-}
-if (!$workshop = $DB->get_record('workshop', array('id' => $cm->instance))) {
-    print_error('err_invalidworkshopid', 'workshop');
-}
-
-$workshop = new workshop_api($workshop, $cm);
+$cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
+$course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
+$workshop   = new workshop_api($workshop, $cm);
 
 require_login($course, false, $cm);
-
 $context = $PAGE->context;
 require_capability('mod/workshop:allocate', $context);
 
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
-
+//
 // todo navigation will be changed yet for Moodle 2.0
 $navigation = build_navigation(get_string('allocation', 'workshop'), $cm);
 
-$allocator = workshop_allocator_instance($workshop, $method);
-try {
-    $allocator->init();
-} 
-catch (moodle_workshop_exception $e) {
-    echo $OUTPUT->header($navigation);
-    throw $e;
-}
+$allocator = $workshop->allocator_instance($method);
+$allocator->init();
 
 //
 // Output starts here
 //
+$wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
 echo $OUTPUT->header($navigation);
 
-$allocators = workshop_installed_allocators();
+$allocators = $workshop->installed_allocators();
 $tabrow = array();
 foreach ($allocators as $methodid => $methodname) {
     $tabrow[] = new tabobject($methodid, "allocation.php?cmid={$cmid}&amp;method={$methodid}", $methodname);
 }
-print_tabs(array($tabrow), $method);
+print_tabs(array($tabrow), $method);    // todo use $output call
 
-echo $OUTPUT->container_start('allocator allocator-' . $method);
-echo $allocator->ui();
-echo $OUTPUT->container_end();
-
+echo $OUTPUT->container($allocator->ui(), 'allocator-ui');
 echo $OUTPUT->footer();

@@ -75,10 +75,10 @@ class workshop_manual_allocator implements workshop_allocator {
             $reviewerid = required_param('by', PARAM_INT);
             $authorid   = required_param('of', PARAM_INT);
             $m          = array();  // message object to be passed to the next page
-            $rs         = $this->workshop->get_submissions($authorid);
+            $rs         = $this->workshop->get_submissions_recordset($authorid);
             $submission = $rs->current();
             $rs->close();
-            if (!$submission) {
+            if (empty($submission->id)) {
                 // nothing submitted by the given user
                 $m[] = WORKSHOP_ALLOCATION_MANUAL_MSG_NOSUBMISSION;
                 $m[] = $authorid;
@@ -109,10 +109,10 @@ class workshop_manual_allocator implements workshop_allocator {
             }
             $assessmentid   = required_param('what', PARAM_INT);
             $confirmed      = optional_param('confirm', 0, PARAM_INT);
-            $rs             = $this->workshop->get_assessments('all', $assessmentid);
+            $rs             = $this->workshop->get_assessments_recordset('all', $assessmentid);
             $assessment     = $rs->current();
             $rs->close();
-            if ($assessment) {
+            if (!empty($assessment)) {
                 if (!$confirmed) {
                     $m[] = WORKSHOP_ALLOCATION_MANUAL_MSG_CONFIRM_DEL;
                     $m[] = $assessment->id;
@@ -134,9 +134,6 @@ class workshop_manual_allocator implements workshop_allocator {
             }
             break;
         }
-
-        // if we stay on this page, set the environment
-        $PAGE->requires->css('mod/workshop/allocation/manual/ui.css');
     }
 
 
@@ -146,71 +143,64 @@ class workshop_manual_allocator implements workshop_allocator {
     public function ui() {
         global $PAGE;
 
-        $o              = '';   // output buffer
-        $hlauthorid     = -1;   // highlight this author
-        $hlreviewerid   = -1;   // highlight this reviewer
-        $msg            = '';   // msg text
-        $sty            = '';   // msg style
-        $m = optional_param('m', '', PARAM_ALPHANUMEXT);   // message object
+        $hlauthorid     = -1;           // highlight this author
+        $hlreviewerid   = -1;           // highlight this reviewer
+        $msg            = new stdClass; // message to render
 
+        $m  = optional_param('m', '', PARAM_ALPHANUMEXT);   // message object
         if ($m) {
             $m = explode('-', $m);  // unserialize
             switch ($m[0]) {
             case WORKSHOP_ALLOCATION_MANUAL_MSG_ADDED:
                 $hlauthorid     = $m[1];
                 $hlreviewerid   = $m[2];
-                $msg            = get_string('allocationadded', 'workshop');
-                $sty            = 'ok';
+                $msg->text      = get_string('allocationadded', 'workshop');
+                $msg->sty       = 'ok';
                 break;
             case WORKSHOP_ALLOCATION_MANUAL_MSG_EXISTS:
                 $hlauthorid     = $m[1];
                 $hlreviewerid   = $m[2];
-                $msg            = get_string('allocationexists', 'workshop');
-                $sty            = 'info';
+                $msg->text      = get_string('allocationexists', 'workshop');
+                $msg->sty       = 'info';
                 break;
             case WORKSHOP_ALLOCATION_MANUAL_MSG_NOSUBMISSION:
                 $hlauthorid     = $m[1];
-                $msg            = get_string('nosubmissionfound', 'workshop');
-                $sty            = 'error';
+                $msg->text      = get_string('nosubmissionfound', 'workshop');
+                $msg->sty       = 'error';
                 break;
             case WORKSHOP_ALLOCATION_MANUAL_MSG_WOSUBMISSION:
                 $hlauthorid     = $m[1];
                 $hlreviewerid   = $m[2];
-                $msg            = get_string('cantassesswosubmission', 'workshop');
-                $sty            = 'error';
+                $msg->text      = get_string('cantassesswosubmission', 'workshop');
+                $sty->sty       = 'error';
                 break;
             case WORKSHOP_ALLOCATION_MANUAL_MSG_CONFIRM_DEL:
                 $hlauthorid     = $m[2];
                 $hlreviewerid   = $m[3];
                 if ($m[4] == 0) {
-                    $msg            = get_string('areyousuretodeallocate', 'workshop');
-                    $sty            = 'info';
+                    $msg->text  = get_string('areyousuretodeallocate', 'workshop');
+                    $msg->sty   = 'info';
                 } else {
-                    $msg            = get_string('areyousuretodeallocategraded', 'workshop');
-                    $sty            = 'error';
+                    $msg->text  = get_string('areyousuretodeallocategraded', 'workshop');
+                    $msg->sty   = 'error';
                 }
                 break;
             case WORKSHOP_ALLOCATION_MANUAL_MSG_DELETED:
                 $hlauthorid     = $m[1];
                 $hlreviewerid   = $m[2];
-                $msg            = get_string('assessmentdeleted', 'workshop');
-                $sty            = 'ok';
+                $msg->text      = get_string('assessmentdeleted', 'workshop');
+                $msg->sty       = 'ok';
                 break;
             }
-            $o .= '<div id="message" class="' . $sty . '">';
-            $o .= '  <span>' . $msg . '</span>';
-            $o .= '  <div id="message-close"><a href="' . $PAGE->url->out() . '">' . 
-                                                get_string('messageclose', 'workshop') . '</a></div>';
             if ($m[0] == WORKSHOP_ALLOCATION_MANUAL_MSG_CONFIRM_DEL) {
                 $handler = $PAGE->url->out_action();
-                $o .= print_single_button($handler, array('mode' => 'del', 'what' => $m[1], 'confirm' => 1),
+                $msg->extra = print_single_button($handler, array('mode' => 'del', 'what' => $m[1], 'confirm' => 1),
                                 get_string('iamsure', 'workshop'), 'post', '', true);
             }
-            $o .= '</div>';
         }
 
         $peer = array(); // singular chosen due to readibility
-        $rs = $this->workshop->get_allocations();
+        $rs = $this->workshop->get_allocations_recordset();
         foreach ($rs as $allocation) {
             $currentuserid = $allocation->authorid;
             if (!isset($peer[$currentuserid])) {
@@ -237,159 +227,19 @@ class workshop_manual_allocator implements workshop_allocator {
 
         foreach ($peer as $author) {
             foreach ($author->reviewedby as $reviewerid => $assessmentid) {
-                // example: "user with id 87 is reviewer of the work submitted by user id 45 in the assessment record 12"
                 if (isset($peer[$reviewerid])) {
+                    // example: "user with id 87 is reviewer of the work submitted by user id 45 in the assessment record 12"
                     $peer[$reviewerid]->reviewerof[$author->id] = $assessmentid;
                 }
             }
         }
 
-        if (empty($peer)) {
-            $o .= '<div id="message" class="info">' . get_string('nosubmissions', 'workshop') . '</div>';
-        } else {
-            $o .= '<table class="allocations">' . "\n";
-            $o .= '<thead><tr>';
-            $o .= '<th>' . get_string('participantreviewedby', 'workshop') . '</th>';
-            $o .= '<th>' . get_string('participant', 'workshop') . '</th>';
-            $o .= '<th>' . get_string('participantrevierof', 'workshop') . '</th>';
-            $o .= '</thead><tbody>';
-            $counter = 0;
-            foreach ($peer as $user) {
-                $o .= '<tr class="r' . $counter % 2 . '">' . "\n";
-
-                if ($user->id == $hlauthorid) {
-                    $highlight=' highlight';
-                } else {
-                    $highlight='';
-                }
-                $o .= '<td class="reviewedby' . $highlight . '">' . "\n";
-                if (is_null($user->submissionid)) {
-                    $o .= '<span class="info">' . "\n";
-                    $o .= get_string('nothingtoreview', 'workshop');
-                    $o .= '</span>' . "\n";
-                } else {
-                    $handler = $PAGE->url->out_action() . '&amp;mode=new&amp;of=' . $user->id . '&amp;by=';
-                    $o .= popup_form($handler, $this->available_reviewers($user->id), 'addreviewof' . $user->id, '',
-                             get_string('chooseuser', 'workshop'), '', '', true, 'self', get_string('addreviewer', 'workshop'));
-                }
-                $o .= '<ul>' . "\n";
-                foreach ($user->reviewedby as $reviewerid => $assessmentid) {
-                    $o .= '<li>';
-                    $o .= print_user_picture($peer[$reviewerid], $this->workshop->course, null, 16, true);
-                    $o .= fullname($peer[$reviewerid]);
-
-                    // delete
-                    $handler = $PAGE->url->out_action(array('mode' => 'del', 'what' => $assessmentid));
-                    $o .= '<a class="action" href="' . $handler . '"> X </a>'; // todo icon and link title
-
-                    $o .= '</li>';
-                }
-                $o .= '</ul>' . "\n";
-
-                $o .= '</td>' . "\n";
-                $o .= '<td class="peer">' . "\n";
-                $o .= print_user_picture($user, $this->workshop->course, null, 35, true);
-                $o .= fullname($user);
-                $o .= '<div class="submission">' . "\n";
-                if (is_null($user->submissionid)) {
-                    $o .= '<span class="info">' . get_string('nosubmissionfound', 'workshop');
-                } else {
-                    $o .= '<div class="title"><a href="#">' . s($user->submissiontitle) . '</a></div>';
-                    if (is_null($user->submissiongrade)) {
-                        $o .= '<div class="grade missing">' . get_string('nogradeyet', 'workshop') . '</div>';
-                    } else {
-                        $o .= '<div class="grade">' . s($user->submissiongrade) . '</div>'; // todo calculate
-                    }
-                }
-                $o .= '</div>' . "\n";
-                $o .= '</td>' . "\n";
-
-                if ($user->id == $hlreviewerid) {
-                    $highlight=' highlight';
-                } else {
-                    $highlight='';
-                }
-                $o .= '<td class="reviewerof' . $highlight . '">' . "\n";
-                if (!($this->workshop->assesswosubmission) && is_null($user->submissionid)) {
-                    $o .= '<span class="info">' . "\n";
-                    $o .= get_string('cantassesswosubmission', 'workshop');
-                    $o .= '</span>' . "\n";
-                } else {
-                    $handler = $PAGE->url->out_action() . '&mode=new&amp;by=' . $user->id . '&amp;of=';
-                    $o .= popup_form($handler, $this->available_reviewees($user->id), 'addreviewby' . $user->id, '',
-                             get_string('chooseuser', 'workshop'), '', '', true, 'self', get_string('addreviewee', 'workshop'));
-                    $o .= '<ul>' . "\n";
-                    foreach ($user->reviewerof as $authorid => $assessmentid) {
-                        $o .= '<li>';
-                        $o .= print_user_picture($peer[$authorid], $this->workshop->course, null, 16, true);
-                        $o .= fullname($peer[$authorid]);
-
-                        // delete
-                        $handler = $PAGE->url->out_action(array('mode' => 'del', 'what' => $assessmentid));
-                        $o .= '<a class="action" href="' . $handler . '"> X </a>'; // todo icon and link title
-
-                        $o .= '</li>';
-                    }   
-                    $o .= '</ul>' . "\n";
-                }
-                $o .= '</td>' . "\n";
-                $o .= '</tr>' . "\n";
-                $counter++;
-            }
-            $o .= '</tbody></table>' . "\n";
-        }
-        return $o;
+        // ok, we have all data. Let it pass to the renderer and return the output
+        require_once(dirname(__FILE__) . '/renderer.php');
+        $uioutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE, 'allocation_manual');
+        return $uioutput->display_allocations($this->workshop, $peer, $hlauthorid, $hlreviewerid, $msg);
     }
 
-
-    /**
-     * Return a list of reviewers that can review a submission
-     *
-     * @param int $authorid User ID of the submission author
-     * @return array Select options
-     */
-    protected function available_reviewers($authorid) {
-
-        $users = $this->workshop->get_peer_reviewers();
-        $options = array();
-        foreach ($users as $user) {
-            $options[$user->id] = fullname($user);
-        }
-        if (0 == $this->workshop->useselfassessment) {
-            // students can not review their own submissions in this workshop
-            if (isset($options[$authorid])) {
-                unset($options[$authorid]);
-            }
-        }
-
-        return $options;
-    }
-
-
-    /**
-     * Return a list of reviewees whom work can be reviewed by a given user
-     *
-     * @param int $reviewerid User ID of the reviewer
-     * @return array Select options
-     */
-    protected function available_reviewees($reviewerid) {
-
-        $rs = $this->workshop->get_submissions();
-        $options = array();
-        foreach ($rs as $submission) {
-            $options[$submission->userid] = fullname((object)array('firstname' => $submission->authorfirstname, 
-                                                                   'lastname' =>  $submission->authorlastname));
-        }
-        $rs->close();
-        if (0 == $this->workshop->useselfassessment) {
-            // students can not be reviewed by themselves in this workshop
-            if (isset($options[$reviewerid])) {
-                unset($options[$reviewerid]);
-            }
-        }
-
-        return $options;
-    }
 
 }
 

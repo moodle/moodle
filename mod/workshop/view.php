@@ -31,55 +31,33 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
-$a  = optional_param('a', 0, PARAM_INT);  // workshop instance ID
+$w  = optional_param('w', 0, PARAM_INT);  // workshop instance ID
 
 if ($id) {
-    if (! $cm = get_coursemodule_from_id('workshop', $id)) {
-        error('Course Module ID was incorrect');
-    }
-
-    if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
-        error('Course is misconfigured');
-    }
-
-    if (! $workshop = $DB->get_record('workshop', array('id' => $cm->instance))) {
-        error('Course module is incorrect');
-    }
-
-} else if ($a) {
-    if (! $workshop = $DB->get_record('workshop', array('id' => $a))) {
-        error('Course module is incorrect');
-    }
-    if (! $course = $DB->get_record('course', array('id' => $workshop->course))) {
-        error('Course is misconfigured');
-    }
-    if (! $cm = get_coursemodule_from_instance('workshop', $workshop->id, $course->id)) {
-        error('Course Module ID was incorrect');
-    }
-
+    $cm         = get_coursemodule_from_id('workshop', $id, 0, false, MUST_EXIST);
+    $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
-    error('You must specify a course_module ID or an instance ID');
+    $workshop   = $DB->get_record('workshop', array('id' => $w), '*', MUST_EXIST);
+    $course     = $DB->get_record('course', array('id' => $workshop->course), '*', MUST_EXIST);
+    $cm         = get_coursemodule_from_instance('workshop', $workshop->id, $course->id, false, MUST_EXIST);
 }
 
-require_login($course, true, $cm);
-
-$context = $PAGE->context;
 $workshop = new workshop_api($workshop, $cm);
+require_login($course, true, $cm);
+$context = $PAGE->context;
 
-// todo has_capability() check
+// todo has_capability() check using something like
+// if (!(($workshop->is_open() && has_capability('mod/workshop:view')) || has_capability(...) || has_capability(...))) {
+//      unable to view this page
+//
 
 add_to_log($course->id, "workshop", "view", "view.php?id=$cm->id", "$workshop->id");
-
-/// Print the page header
 
 $PAGE->set_url('mod/workshop/view.php', array('id' => $cm->id));
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_button(update_module_button($cm->id, $course->id, get_string('modulename', 'workshop')));
-
-// other things you may want to set - remove if not needed
-//$PAGE->set_cacheable(false);
-//$PAGE->set_focuscontrol('some-html-id');
 
 // todo navigation will be changed yet for Moodle 2.0
 $navlinks   = array();
@@ -92,7 +70,11 @@ $navlinks[] = array('name' => format_string($workshop->name),
 $navigation = build_navigation($navlinks);
 $menu       = navmenu($course, $cm);
 
+$output = $THEME->get_renderer('mod_workshop', $PAGE);
+
 echo $OUTPUT->header($navigation, $menu);
+
+echo $OUTPUT->heading('Workshop administration tools', 3);
 
 /// Print the main part of the page - todo these are just links to help during development
 
@@ -112,7 +94,7 @@ echo $OUTPUT->box_end();
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading(get_string('assessment', 'workshop'), 3);
 
-$rs = $workshop->get_assessments($USER->id);
+$rs = $workshop->get_assessments_recordset($USER->id);
 echo "You are expected to assess following submissions:";
 echo "<ul>";
 foreach ($rs as $assessment) {

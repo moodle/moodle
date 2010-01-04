@@ -56,6 +56,7 @@ class workshop_api extends workshop {
      * @param object $md        Course module record
      */
     public function __construct($instance, $cm) {
+
         parent::__construct($instance, $cm);
     }
 
@@ -63,21 +64,33 @@ class workshop_api extends workshop {
     /**
      * Fetches all users with the capability mod/workshop:submit in the current context
      *
-     * Static variable used to cache the results. The returned objects contain id, lastname
+     * Static variables used to cache the results. The returned objects contain id, lastname
      * and firstname properties and are ordered by lastname,firstname
      * 
-     * @param object $context The context instance where the capability should be checked
+     * @param bool $musthavesubmission If true, returns only users with existing submission. All possible authors otherwise.
      * @return array Array of '(int)userid => (stdClass)userinfo'
      */
-    public function get_peer_authors() {
-        static $users=null;
+    public function get_peer_authors($musthavesubmission=false) {
+        global $DB;
+        static $users               = null;
+        static $userswithsubmission = null;
 
         if (is_null($users)) {
             $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
             $users = get_users_by_capability($context, 'mod/workshop:submit',
                         'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
         }
-        return $users;
+
+        if ($musthavesubmission && is_null($userswithsubmission)) {
+            $userswithsubmission = $DB->get_records_list('workshop_submissions', 'userid', array_keys($users),'', 'userid');
+            $userswithsubmission = array_intersect_key($users, $userswithsubmission);
+        }
+
+        if ($musthavesubmission) {
+            return $userswithsubmission;
+        } else {
+            return $users;
+        }
     }
 
 
@@ -98,24 +111,13 @@ class workshop_api extends workshop {
             $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
             $users = get_users_by_capability($context, 'mod/workshop:peerassess',
                         'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
-        }
-        if (!$this->assesswosubmission) {
-            $userswithsubmission = array();
-            // users without their own submission can not be reviewers
-            $rs = $DB->get_recordset_list('workshop_submissions', 'userid', array_keys($users),'', 'id,userid');
-            foreach ($rs as $submission) {
-                if (isset($users[$submission->userid])) {
-                    $userswithsubmission[$submission->userid] = 'submission_exists';
-                } else {
-                    // this is a submission by a user who does not have mod/workshop:peerassess
-                    // this is either bug or workshop capabilities have been overridden after the submission
-                }
+            if (!$this->assesswosubmission) {
+                // users without their own submission can not be reviewers
+                $withsubmission = $DB->get_records_list('workshop_submissions', 'userid', array_keys($users),'', 'userid');
+                $users = array_intersect_key($users, $withsubmission);
             }
-            $rs->close();
-            return array_intersect_key($users, $userswithsubmission);
-        } else {
-            return $users;
         }
+        return $users;
     }
 
 
@@ -130,7 +132,7 @@ class workshop_api extends workshop {
      * @todo unittest
      * @return object moodle_recordset
      */
-    public function get_submissions($userid='all', $examples=false) {
+    public function get_submissions_recordset($userid='all', $examples=false) {
         global $DB;
 
         $sql = 'SELECT s.*, u.lastname AS authorlastname, u.firstname AS authorfirstname
@@ -169,7 +171,7 @@ class workshop_api extends workshop {
      * @param mixed $id         'all'|int Assessment ID
      * @return object moodle_recordset
      */
-    public function get_assessments($reviewerid='all', $id='all') {
+    public function get_assessments_recordset($reviewerid='all', $id='all') {
         global $DB;
         
         $sql = 'SELECT  a.*,
@@ -220,7 +222,7 @@ class workshop_api extends workshop {
      *
      * @return object moodle_recordset
      */
-    public function get_allocations() {
+    public function get_allocations_recordset() {
         global $DB;
         static $users=null;
 
@@ -325,10 +327,48 @@ class workshop_api extends workshop {
     }
 
 
+    /**
+     * Return list of available allocation methods
+     *
+     * @return array Array ['string' => 'string'] of localized allocation method names
+     */
+    public function installed_allocators() {
+
+        $installed = get_list_of_plugins('mod/workshop/allocation');
+        $forms = array();
+        foreach ($installed as $allocation) {
+            $forms[$allocation] = get_string('allocation' . $allocation, 'workshop');
+        }
+        // usability - make sure that manual allocation appears the first
+        if (isset($forms['manual'])) {
+            $m = array('manual' => $forms['manual']);
+            unset($forms['manual']);
+            $forms = array_merge($m, $forms);
+        }
+        return $forms;
+    }
+
+
+    /**
+     * Returns instance of submissions allocator
+     * 
+     * @param object $method The name of the allocation method, must be PARAM_ALPHA
+     * @return object Instance of submissions allocator
+     */
+    public function allocator_instance($method) {
+
+        $allocationlib = dirname(__FILE__) . '/allocation/' . $method . '/allocator.php';
+        if (is_readable($allocationlib)) {
+            require_once($allocationlib);
+        } else {
+            throw new moodle_exception('missingallocator', 'workshop');
+        }
+        $classname = 'workshop_' . $method . '_allocator';
+        return new $classname($this);
+    }
+
 
 }
-
-
 
 
 /**
