@@ -178,11 +178,6 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->setHelpButton('assessmentend', array('assessmentend', $label, 'workshop'));
         $mform->setAdvanced('assessmentend');
 
-        $label = get_string('releasegrades', 'workshop');
-        $mform->addElement('date_selector', 'releasegrades', $label, array('optional' => true));
-        $mform->setHelpButton('releasegrades', array('releasegrades', $label, 'workshop'));
-        $mform->setAdvanced('releasegrades');
-
         // Common module settinga, Restrict availability, Activity completion etc. ----
         $features = array('groups'=>true, 'groupings'=>true, 'groupmembersonly'=>true,
                 'outcomes'=>true, 'gradecat'=>false, 'idnumber'=>false);

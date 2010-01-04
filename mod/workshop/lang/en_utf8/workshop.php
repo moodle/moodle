@@ -136,7 +136,6 @@ $string['phasesubmission'] = 'Submission phase';
 $string['previewassessmentform'] = 'Preview';
 $string['reassess'] = 'Re-assess';
 $string['receivedgrades'] = 'Received grades';
-$string['releasegrades'] = 'Push final grades into the gradebook';
 $string['saveandclose'] = 'Save and close';
 $string['saveandcontinue'] = 'Save and continue editing';
 $string['saveandpreview'] = 'Save and preview';
