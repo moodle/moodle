@@ -136,6 +136,7 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
             $this->exporter->write_new_file($csv, clean_filename($this->cm->name) . '.csv', false);
             return;
         } else if ($this->get('exporter')->get('formatclass') == PORTFOLIO_FORMAT_LEAP2A) {
+            $ids = array(); // keep track of these to make into a selection later
             global $USER, $DB;
             $writer = $this->get('exporter')->get('format')->leap2a_writer($USER);
             $format = $this->exporter->get('format');
@@ -168,7 +169,11 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
                     }
                 }
                 $writer->add_entry($entry);
+                $ids[] = $entry->id;
             }
+            $selection = new portfolio_format_leap2a_entry('wholeglossary' . $this->glossary->id, get_string('modulename', 'glossary'), 'selection');
+            $writer->add_entry($selection);
+            $writer->make_selection($selection, $ids, 'Grouping');
             $content = $writer->to_xml();
         }
         $this->exporter->write_new_file($content, $filename, true);
