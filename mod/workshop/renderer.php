@@ -317,7 +317,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         if ($summary->example->weight == 1) {
             // dirty hack to guess if the current user is example manager or not
             $icon = new moodle_action_icon();
-            $icon->image->src = $this->old_icon_url('i/edit');
+            $icon->image->src = $this->pix_url('i/edit');
             $icon->image->alt = get_string('edit');
             $icon->link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php',
                                         array('cmid' => $this->page->context->instanceid, 'id' => $summary->example->id, 'edit' => 'on'));
