@@ -74,7 +74,7 @@ $string['assessmentform'] = 'Assessment form';
 $string['assessmentresult'] = 'Assessment result';
 $string['assessmentsettings'] = 'Assessment settings';
 $string['assessmentstart'] = 'Start of assessment phase';
-$string['assesswosubmission'] = 'Users can assess without their own submission';
+$string['assesswosubmission'] = 'Participants can assess without having submitted anything';
 $string['backtoeditform'] = 'Back to editing form';
 $string['byfullname'] = 'by <a href=\"{$a->url}\">{$a->name}</a>';
 $string['comparisonhigh'] = 'High';
