@@ -328,7 +328,7 @@ class workshop_api extends workshop {
      * mainly they do not contain text fields.
      *
      * @param mixed $reviewerid 'all'|int|array User ID of the reviewer
-     * @return array of objects
+     * @return array [assessmentid] => assessment object
      * @see workshop_api::get_assessments_recordset() for the structure of returned objects
      */
     public function get_assessments($reviewerid='all') {

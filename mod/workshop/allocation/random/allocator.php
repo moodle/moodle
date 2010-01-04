@@ -54,7 +54,7 @@ class workshop_random_allocator implements workshop_allocator {
     protected $mform;
 
     /**
-     * @param stdClass $workshop Workshop record
+     * @param workshop $workshop Workshop API object
      */
     public function __construct(workshop $workshop) {
         $this->workshop = $workshop;
@@ -67,7 +67,7 @@ class workshop_random_allocator implements workshop_allocator {
         global $PAGE;
 
         $customdata = array();
-        // $customdata['workshop'] = $this->workshop;
+        $customdata['workshop'] = $this->workshop;
         $this->mform = new workshop_random_allocator_form($PAGE->url, $customdata);
         if ($this->mform->is_cancelled()) {
             redirect($PAGE->url->out(false, array(), false));
@@ -91,7 +91,14 @@ class workshop_random_allocator implements workshop_allocator {
             $newallocations     = array();      // array of (reviewer,reviewee) tuples
 
             if ($numofreviews) {
-                $randomallocations  = $this->random_allocation($authors, $reviewers, $assessments, $numofreviews, $numper);
+                if ($removecurrent) {
+                    // behave as if there were no current assessments
+                    $curassessments = array();
+                } else {
+                    $curassessments = $assessments;
+                }
+                $randomallocations  = $this->random_allocation($authors, $reviewers, $curassessments, $numofreviews, $numper, $o);
+                $this->filter_current_assessments($randomallocations, $assessments);
                 $newallocations     = array_merge($newallocations, $randomallocations);
                 $o[] = 'ok::' . get_string('numofrandomlyallocatedsubmissions', 'workshop', count($randomallocations));
                 unset($randomallocations);
@@ -111,7 +118,7 @@ class workshop_random_allocator implements workshop_allocator {
                     $a                  = new stdClass();
                     $a->reviewername    = fullname($reviewers[0][$reviewerid]);
                     $a->authorname      = fullname($authors[0][$authorid]);
-                    $o[] = 'ok::ident::' . get_string('allocationaddeddetail', 'workshop', $a);
+                    $o[] = 'ok::indent::' . get_string('allocationaddeddetail', 'workshop', $a);
                 }
             }
             if ($removecurrent) {
@@ -128,10 +135,10 @@ class workshop_random_allocator implements workshop_allocator {
                             'lastname'  => $assessments[$delassessmentid]->reviewerlastname,
                             'firstname' => $assessments[$delassessmentid]->reviewerfirstname));
                     if (!is_null($assessments[$delassessmentid]->grade)) {
-                        $o[] = 'error::ident::' . get_string('allocationdeallocategraded', 'workshop', $a);
+                        $o[] = 'error::indent::' . get_string('allocationdeallocategraded', 'workshop', $a);
                         unset($delassessments[$delassessmentkey]);
                     } else {
-                        $o[] = 'info::ident::' . get_string('assessmentdeleteddetail', 'workshop', $a);
+                        $o[] = 'info::indent::' . get_string('assessmentdeleteddetail', 'workshop', $a);
                     }
                 }
                 $this->workshop->delete_assessment($delassessments);
@@ -310,16 +317,229 @@ class workshop_random_allocator implements workshop_allocator {
     }
 
     /**
-     * TODO: short description.
+     * Allocates submission reviews randomly
      *
-     * @param array    $authors      
-     * @param resource $reviewers    
-     * @param array    $assessments  
-     * @param mixed    $numofreviews 
-     * @param mixed    $numper       
-     * @return TODO
+     * The algorithm of this function has been described at http://moodle.org/mod/forum/discuss.php?d=128473
+     * Please see the PDF attached to the post before you study the implementation. The goal of the function
+     * is to connect each "circle" (circles are representing either authors or reviewers) with a required
+     * number of "squares" (the other type than circles are).
+     *
+     * @param array    $authors      structure of grouped authors
+     * @param resource $reviewers    structure of grouped reviewers
+     * @param array    $assessments  currently assigned assessments to be kept
+     * @param mixed    $numofreviews number of reviewes to be allocated to each circle
+     * @param mixed    $numper       what user type the circles represent
+     * @param array    $o            reference to an array of log messages
+     * @return array                 array of (reviewerid => authorid) pairs
      */
-    protected function random_allocation($authors, $reviewers, $assessments, $numofreviews, $numper) {
+    protected function random_allocation($authors, $reviewers, $assessments, $numofreviews, $numper, &$o) {
+        if (WORKSHOP_USERTYPE_AUTHOR == $numper) {
+            // circles are authors, squares are reviewers
+            $o[] = 'info::Trying to allocate ' . $numofreviews . ' review(s) per author'; // todo translate
+            $allcircles = $authors;
+            $allsquares = $reviewers;
+            // get current workload
+            list($circlelinks, $squarelinks) = $this->convert_assessments_to_links($assessments);
+        } elseif (WORKSHOP_USERTYPE_REVIEWER == $numper) {
+            // circles are reviewers, squares are authors
+            $o[] = 'info::trying to allocate ' . $numofreviews . ' review(s) per reviewer'; // todo translate
+            $allcircles = $reviewers;
+            $allsquares = $authors;
+            // get current workload
+            list($squarelinks, $circlelinks) = $this->convert_assessments_to_links($assessments);
+        } else {
+            throw new moodle_workshop_exception($this->workshop, 'unknown user type passed');
+        }
+        $o[] = 'debug::circle links = ' . json_encode($circlelinks);
+        $o[] = 'debug::square links = ' . json_encode($squarelinks);
+        $squareworkload         = array();  // individual workload indexed by squareid
+        $squaregroupsworkload   = array();    // group workload indexed by squaregroupid
+        foreach ($allsquares as $squaregroupid => $squares) {
+            $squaregroupsworkload[$squaregroupid] = 0;
+            foreach ($squares as $squareid => $square) {
+                if (!isset($squarelinks[$squareid])) {
+                    $squarelinks[$squareid] = array();
+                }
+                $squareworkload[$squareid] = count($squarelinks[$squareid]);
+                $squaregroupsworkload[$squaregroupid] += $squareworkload[$squareid];
+            }
+            $squaregroupsworkload[$squaregroupid] /= count($squares);
+        }
+        unset($squaregroupsworkload[0]);    // [0] is not real group, it contains all users
+        $o[] = 'debug::square workload = ' . json_encode($squareworkload);
+        $o[] = 'debug::square group workload = ' . json_encode($squaregroupsworkload);
+        $gmode = groups_get_activity_groupmode($this->workshop->cm);
+        if (SEPARATEGROUPS == $gmode) {
+            // shuffle all groups but [0] which means "all users"
+            $circlegroups = array_keys(array_diff_key($allcircles, array(0 => null)));
+            shuffle($circlegroups);
+        } else {
+            // all users will be processed at once
+            $circlegroups = array(0);
+        }
+        $this->shuffle_assoc($circlegroups);
+        $o[] = 'debug::circle groups = ' . json_encode($circlegroups);
+        foreach ($circlegroups as $circlegroupid) {
+            $o[] = 'debug::processing circle group id ' . $circlegroupid;
+            $circles = $allcircles[$circlegroupid];
+            $this->shuffle_assoc($circles);
+            foreach ($circles as $circleid => $circle) {
+                $o[] = 'debug::processing circle id ' . $circleid;
+                if (!isset($circlelinks[$circleid])) {
+                    $circlelinks[$circleid] = array();
+                }
+                $keeptrying     = true;     // is there a chance to find a square for this circle?
+                $failedgroups   = array();  // array of groupids where the square should be chosen from (because
+                                            // of their group workload) but it was not possible (for example there
+                                            // was the only square and it had been already connected
+                while ($keeptrying && (count($circlelinks[$circleid]) < $numofreviews)) {
+                    // firstly, choose a group to pick the square from
+                    if (NOGROUPS == $gmode) {
+                        if (in_array(0, $failedgroups)) {
+                            $keeptrying = false;
+                            $o[] = 'error::indent::No more peers available'; // todo translate
+                            break;
+                        }
+                        $targetgroup = 0;
+                    } elseif (SEPARATEGROUPS == $gmode) {
+                        if (in_array($circlegroupid, $failedgroups)) {
+                            $keeptrying = false;
+                            $o[] = 'error::indent::No more peers available in this separate group'; // todo translate
+                            break;
+                        }
+                        $targetgroup = $circlegroupid;
+                    } elseif (VISIBLEGROUPS == $gmode) {
+                        $trygroups = array_diff_key($squaregroupsworkload, array(0 => null));   // all but [0]
+                        $trygroups = array_diff_key($trygroups, array_flip($failedgroups));     // withou previous failures
+                        $targetgroup = $this->get_element_with_lowest_workload($trygroups);
+                    }
+                    if ($targetgroup === false) {
+                        $keeptrying = false;
+                        $o[] = 'error::indent::Not enough peers available'; // todo translate
+                        break;
+                    }
+                    $o[] = 'debug::indent::next square should be from group id ' . $targetgroup;
+                    // now, choose a square from the target group
+                    $trysquares = array_intersect_key($squareworkload, $allsquares[$targetgroup]);
+                    $o[] = 'debug::indent::individual workloads in this group are ' . json_encode($trysquares);
+                    unset($trysquares[$circleid]);  // can't allocate to self
+                    $trysquares = array_diff_key($trysquares, array_flip($circlelinks[$circleid])); // can't re-allocate the same
+                    $targetsquare = $this->get_element_with_lowest_workload($trysquares);
+                    if (false === $targetsquare) {
+                        $o[] = 'debug::indent::unable to find an available square. trying another group';
+                        $failedgroups[] = $targetgroup;
+                        continue;
+                    }
+                    $o[] = 'debug::indent::target square = ' . $targetsquare;
+                    // ok - we have found the square
+                    $circlelinks[$circleid][]       = $targetsquare;
+                    $squarelinks[$targetsquare][]   = $circleid;
+                    $squareworkload[$targetsquare]++;
+                    $o[] = 'debug::indent::increasing square workload to ' . $squareworkload[$targetsquare];
+                    if ($targetgroup) {
+                        // recalculate the group workload
+                        $squaregroupsworkload[$targetgroup] = 0;
+                        foreach ($allsquares[$targetgroup] as $squareid => $square) {
+                            $squaregroupsworkload[$targetgroup] += $squareworkload[$squareid];
+                        }
+                        $squaregroupsworkload[$targetgroup] /= count($allsquares[$targetgroup]);
+                        $o[] = 'debug::indent::increasing group workload to ' . $squaregroupsworkload[$targetgroup];
+                    }
+                } // end of processing this circle
+            } // end of processing circles in the group
+        } // end of processing circle groups
+        $returned = array();
+        if (WORKSHOP_USERTYPE_AUTHOR == $numper) {
+            // circles are authors, squares are reviewers
+            foreach ($circlelinks as $circleid => $squares) {
+                foreach ($squares as $squareid) {
+                    $returned[] = array($squareid => $circleid);
+                }
+            }
+        }
+        if (WORKSHOP_USERTYPE_REVIEWER == $numper) {
+            // circles are reviewers, squares are authors
+            foreach ($circlelinks as $circleid => $squares) {
+                foreach ($squares as $squareid) {
+                    $returned[] = array($circleid => $squareid);
+                }
+            }
+        }
+        return $returned;
     }
 
+    /**
+     * Extracts the information about reviews from the authors' and reviewers' perspectives
+     *
+     * @param array $assessments array of assessments as returned by {@link workshop_api::get_assessments()}
+     * @return array of two arrays
+     */
+    protected function convert_assessments_to_links($assessments) {
+        $authorlinks    = array(); // [authorid]    => array(reviewerid, reviewerid, ...)
+        $reviewerlinks  = array(); // [reviewerid]  => array(authorid, authorid, ...)
+        foreach ($assessments as $assessment) {
+            if (!isset($authorlinks[$assessment->authorid])) {
+                $authorlinks[$assessment->authorid] = array();
+            }
+            if (!isset($reviewerlinks[$assessment->reviewerid])) {
+                $reviewerlinks[$assessment->reviewerid] = array();
+            }
+            $authorlinks[$assessment->authorid][]   = $assessment->reviewerid;
+            $reviewerlinks[$assessment->reviewerid][] = $assessment->authorid;
+            }
+        return array($authorlinks, $reviewerlinks);
+    }
+
+    /**
+     * Selects an element with the lowest workload
+     *
+     * If there are more elements with the same workload, choose one of them randomly. This may be
+     * used to select a group or user.
+     *
+     * @param array $workload [groupid] => (int)workload
+     * @return mixed int|bool id of the selected element or false if it is impossible to choose
+     */
+    protected function get_element_with_lowest_workload($workload) {
+        if (empty($workload)) {
+            return false;
+        }
+        $minload = min($workload);
+        $minkeys = array_filter($workload, create_function('$val', 'return $val == ' . $minload . ';'));
+        return array_rand($minkeys);
+    }
+
+    /**
+     * Shuffle the order of array elements preserving the key=>values
+     *
+     * @author rich at home dot nl
+     * @link http://php.net/manual/en/function.shuffle.php#80586
+     * @param array $array to be shuffled
+     * @return true
+     */
+    protected function shuffle_assoc(&$array) {
+        if (count($array) > 1) {
+            // $keys needs to be an array, no need to shuffle 1 item or empty arrays, anyway
+            $keys = array_rand($array, count($array));
+            foreach($keys as $key) {
+                $new[$key] = $array[$key];
+            }
+            $array = $new;
+        }
+        return true; // because this behaves like in-built shuffle(), which returns true
+    }
+
+    /**
+     * Filter new allocations so that they do not contain an already existing assessment
+     *
+     * @param mixed $newallocations array of ('reviewerid' => 'authorid') tuples
+     * @param array $assessments    array of assessment records
+     * @return void
+     */
+    protected function filter_current_assessments(&$newallocations, $assessments) {
+        foreach ($assessments as $assessment) {
+            $allocation     = array($assessment->reviewerid => $assessment->authorid);
+            $foundat        = array_keys($newallocations, $allocation);
+            $newallocations = array_diff_key($newallocations, array_flip($foundat));
+        }
+    }
 }

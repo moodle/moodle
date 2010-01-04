@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string[''] = '';
+$string['numofrandomlyallocatedsubmissions'] = 'Randomly allocating $a submissions';
 $string[''] = '';
 $string[''] = '';
 $string[''] = '';

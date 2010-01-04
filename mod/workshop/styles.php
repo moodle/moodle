@@ -41,7 +41,7 @@
     font-size: 80%;
 }
 
-.mod-workshop .allocation-init-results .ident {
+.mod-workshop .allocation-init-results .indent {
     margin-left: 20px;
 }
 
@@ -58,6 +58,11 @@
 .mod-workshop .allocation-init-results .info {
     color: #1666a9;
     background-color: #d2ebff;
+}
+
+.mod-workshop .allocation-init-results .debug {
+    color: black;
+    background-color: #ddd;
 }
 
 /**

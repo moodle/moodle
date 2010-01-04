@@ -100,6 +100,10 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                 $parts  = explode('::', $message);
                 $text   = array_pop($parts);
                 $class  = implode(' ', $parts);
+                if (in_array('debug', $parts) && !debugging('', DEBUG_DEVELOPER)) {
+                    // do not display allocation debugging messages
+                    continue;
+                }
                 $o .= $this->output->output_tag('li', array('class' => $class), $text);
             }
             $o .= $this->output->output_end_tag('ul');

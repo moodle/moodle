@@ -42,16 +42,29 @@ class workshop_random_allocator_form extends moodleform {
      */
     public function definition() {
         $mform      = $this->_form;
-        //$workshop   = $this->_customdata['workshop'];
+        $workshop   = $this->_customdata['workshop'];
 
         $mform->addElement('header', 'settings', get_string('allocationsettings', 'workshop'));
 
-        $options_numofreviewes = array(0=>0,1=>1, 2=>2, 3=>2, 4=>4);
+        switch ($workshop->cm->groupmode) {
+        case NOGROUPS:
+            $grouplabel = get_string('groupsnone', 'group');
+            break;
+        case VISIBLEGROUPS:
+            $grouplabel = get_string('groupsvisible', 'group');
+            break;
+        case SEPARATEGROUPS:
+            $grouplabel = get_string('groupsseparate', 'group');
+            break;
+        }
+        $mform->addElement('static', 'groupmode', get_string('groupmode', 'group'), $grouplabel);
+
+        $options_numofreviewes = array(0=>0,1=>1, 2=>2, 3=>3, 4=>4);
         $options_numper = array(WORKSHOP_USERTYPE_AUTHOR    => get_string('numperauthor', 'workshop'),
                                 WORKSHOP_USERTYPE_REVIEWER  => get_string('numperreviewer', 'workshop'));
         $grpnumofreviews = array();
         $grpnumofreviews[] =& $mform->createElement('select', 'numofreviews', '', $options_numofreviewes);
-        $mform->setDefault('numofreviews', 0);
+        $mform->setDefault('numofreviews', 4);
         $grpnumofreviews[] =& $mform->createElement('select', 'numper', '', $options_numper);
         $mform->setDefault('numper', WORKSHOP_USERTYPE_AUTHOR);
         $mform->addGroup($grpnumofreviews, 'grpnumofreviews', get_string('numofreviews', 'workshop'), array(' '), false);

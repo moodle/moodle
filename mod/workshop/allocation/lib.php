@@ -54,7 +54,8 @@ interface workshop_allocator {
      *
      * If a form is part of the UI, the caller should have called $PAGE->set_url(...)
      * The methods must produce output instead of just returning it so mform->display() can
-     * be used there.
+     * be used there. This should be changed once we make quickforms deprecated and then,
+     * this method will just return the required HTML code.
      *
      * @param object $wsoutput workshop module renderer can be used
      * @return void

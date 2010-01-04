@@ -47,6 +47,15 @@ class testable_workshop_random_allocator extends workshop_random_allocator {
     public function get_unkept_assessments($assessments, $newallocations, $keepselfassessments) {
         return parent::get_unkept_assessments($assessments, $newallocations, $keepselfassessments);
     }
+    public function convert_assessments_to_links($assessments) {
+        return parent::convert_assessments_to_links($assessments);
+    }
+    public function get_element_with_lowest_workload($workload) {
+        return parent::get_element_with_lowest_workload($workload);
+    }
+    public function filter_current_assessments(&$newallocations, $assessments) {
+        return parent::filter_current_assessments($newallocations, $assessments);
+    }
 }
 
 class workshop_allocation_random_test extends UnitTestCase {
@@ -175,6 +184,103 @@ class workshop_allocation_random_test extends UnitTestCase {
         // we want to keep $assessments[45] because it has been re-allocated
         // we want to keep $assessments[23] because if is self assessment
         $this->assertEqual(array(12), $delassessments);
+    }
+
+    /**
+     * Aggregates assessment info per author and per reviewer
+     */
+    public function test_convert_assessments_to_links() {
+        // fixture setup
+        $assessments = array(
+                23 => (object)array('authorid' => 3, 'reviewerid' => 3),
+                45 => (object)array('authorid' => 5, 'reviewerid' => 11),
+                12 => (object)array('authorid' => 5, 'reviewerid' => 3),
+                );
+        // exercise SUT
+        list($authorlinks, $reviewerlinks) = $this->allocator->convert_assessments_to_links($assessments);
+        // verify
+        $this->assertEqual(array(3 => array(3), 5 => array(11, 3)), $authorlinks);
+        $this->assertEqual(array(3 => array(3, 5), 11 => array(5)), $reviewerlinks);
+    }
+
+    /**
+     * Trivial case
+     */
+    public function test_convert_assessments_to_links_empty() {
+        // fixture setup
+        $assessments = array();
+        // exercise SUT
+        list($authorlinks, $reviewerlinks) = $this->allocator->convert_assessments_to_links($assessments);
+        // verify
+        $this->assertEqual(array(), $authorlinks);
+        $this->assertEqual(array(), $reviewerlinks);
+    }
+
+    /**
+     * If there is a single element with the lowest workload, it should be chosen
+     */
+    public function test_get_element_with_lowest_workload_deterministic() {
+        // fixture setup
+        $workload = array(4 => 6, 9 => 1, 10 => 2);
+        // exercise SUT
+        $chosen = $this->allocator->get_element_with_lowest_workload($workload);
+        // verify
+        $this->assertEqual(9, $chosen);
+    }
+
+    /**
+     * If there are no elements available, must return false
+     */
+    public function test_get_element_with_lowest_workload_impossible() {
+        // fixture setup
+        $workload = array();
+        // exercise SUT
+        $chosen = $this->allocator->get_element_with_lowest_workload($workload);
+        // verify
+        $this->assertTrue($chosen === false);
+    }
+
+    /**
+     * If there are several elements with the lowest workload, one of them should be chosen randomly
+     */
+    public function test_get_element_with_lowest_workload_random() {
+        // fixture setup
+        $workload = array(4 => 6, 9 => 2, 10 => 2);
+        // exercise SUT
+        $elements = $this->allocator->get_element_with_lowest_workload($workload);
+        // verify
+        // in theory, this test can fail even if the function works well. However, the probability of getting
+        // a row of a hundred same ids in this use case is 1/pow(2, 100)
+        // also, this just tests that each of the two elements has been chosen at least once. this is not to
+        // measure the quality or randomness of the algorithm
+        $counts = array(4 => 0, 9 => 0, 10 => 0);
+        for ($i = 0; $i < 100; $i++) {
+            $chosen = $this->allocator->get_element_with_lowest_workload($workload);
+            if (!in_array($chosen, array(4, 9, 10))) {
+                $this->fail('Invalid element chosen');
+                break;
+            } else {
+                $counts[$this->allocator->get_element_with_lowest_workload($workload)]++;
+            }
+        }
+        $this->assertTrue(($counts[9] > 0) && ($counts[10] > 0));
+    }
+
+    /**
+     * Filter new assessments so they do not contain existing
+     */
+    public function test_filter_current_assessments() {
+        // fixture setup
+        $newallocations = array(array(3 => 5), array(11 => 5), array(2 => 9), array(3 => 5));
+        $assessments = array(
+                23 => (object)array('authorid' => 3, 'reviewerid' => 3),
+                45 => (object)array('authorid' => 5, 'reviewerid' => 11),
+                12 => (object)array('authorid' => 5, 'reviewerid' => 3),
+                );
+        // exercise SUT
+        $this->allocator->filter_current_assessments($newallocations, $assessments);
+        // verify
+        $this->assertEqual(array_values($newallocations), array(array(2 => 9)));
     }
 
 
