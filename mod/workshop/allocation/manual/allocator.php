@@ -200,8 +200,6 @@ class workshop_manual_allocator implements workshop_allocator {
                 $peer[$currentuserid]->lastname         = $allocation->authorlastname;
                 $peer[$currentuserid]->picture          = $allocation->authorpicture;
                 $peer[$currentuserid]->imagealt         = $allocation->authorimagealt;
-                $peer[$currentuserid]->avatar           = print_user_picture($peer[$currentuserid],
-                                                                            $this->workshop->course, null, 16, true);
                 $peer[$currentuserid]->submissionid     = $allocation->submissionid;
                 $peer[$currentuserid]->submissiontitle  = $allocation->submissiontitle;
                 $peer[$currentuserid]->submissiongrade  = $allocation->submissiongrade;

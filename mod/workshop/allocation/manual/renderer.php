@@ -99,7 +99,7 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
      * @return string HTML code
      */
     protected function participant(stdClass $user) {
-        $o  = print_user_picture($user, $this->page->course->id, null, 35, true);
+        $o  = $this->output->user_picture($user, $this->page->course->id);
         $o .= fullname($user);
         $o .= $this->output->container_start(array('submission'));
         if (is_null($user->submissionid)) {
@@ -144,7 +144,7 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
         $o .= $this->output->output_start_tag('ul', array());
         foreach ($user->reviewedby as $reviewerid => $assessmentid) {
             $o .= $this->output->output_start_tag('li', array());
-            $o .= print_user_picture($peers[$reviewerid], $this->page->course->id, null, 16, true);
+            $o .= $this->output->user_picture($peers[$reviewerid], $this->page->course->id); // todo display smaller
             $o .= fullname($peers[$reviewerid]);
 
             $handler = $this->page->url->out_action(array('mode' => 'del', 'what' => $assessmentid));
@@ -182,7 +182,7 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
         $o .= $this->output->output_start_tag('ul', array());
         foreach ($user->reviewerof as $authorid => $assessmentid) {
             $o .= $this->output->output_start_tag('li', array());
-            $o .= print_user_picture($peers[$authorid], $this->page->course->id, null, 16, true);
+            $o .= $this->output->user_picture($peers[$authorid], $this->page->course->id); // todo display smaller
             $o .= fullname($peers[$authorid]);
 
             // delete
