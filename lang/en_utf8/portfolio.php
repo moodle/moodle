@@ -44,6 +44,7 @@ $string['failedtosendpackage'] = 'Failed to send your data to the selected portf
 $string['failedtopackage'] = 'Could not find files to package';
 $string['filedenied'] = 'Access denied to this file';
 $string['filenotfound'] = 'File not found';
+$string['fileoutputnotsupported'] = 'Rewriting file output is not supported for this format';
 $string['format_document'] = 'Document';
 $string['format_file'] = 'File';
 $string['format_richhtml'] = 'HTML with attachments';

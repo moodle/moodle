@@ -122,7 +122,7 @@ class portfolio_format_file extends portfolio_format {
     }
 
     public static function get_file_directory() {
-        throw new portfolio_exception('fileoutputnotsupported', 'portfolio');
+        return false;
     }
 
     public static function file_output($file, $options=null) {
