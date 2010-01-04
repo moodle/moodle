@@ -744,34 +744,70 @@ class workshop {
     /**
      * Are users allowed to create/edit their submissions?
      *
-     * TODO: this depends on the workshop phase, phase deadlines, submitting after deadlines possibility
-     *
      * @return bool
      */
     public function submitting_allowed() {
+        if ($this->phase != self::PHASE_SUBMISSION) {
+            // submitting is not allowed but in the submission phase
+            return false;
+        }
+        $now = time();
+        if (!empty($this->submissionstart) and $this->submissionstart > $now) {
+            // if enabled, submitting is not allowed before the date/time defined in the mod_form
+            return false;
+        }
+        if (!empty($this->submissionend) and empty($this->latesubmissions) and $now > $this->submissionend ) {
+            // if enabled, submitting is not allowed after the date/time defined in the mod_form unless late submission is allowed
+            return false;
+        }
+        // here we go, submission is allowed
         return true;
     }
 
     /**
      * Are reviewers allowed to create/edit their assessments?
      *
-     * TODO: this depends on the workshop phase, phase deadlines
-     *
      * @return bool
      */
     public function assessing_allowed() {
+        if ($this->phase != self::PHASE_ASSESSMENT) {
+            // assessing is not allowed but in the assessment phase
+            return false;
+        }
+        $now = time();
+        if (!empty($this->assessmentstart) and $this->assessmentstart > $now) {
+            // if enabled, assessing is not allowed before the date/time defined in the mod_form
+            return false;
+        }
+        if (!empty($this->assessmentend) and $now > $this->assessmentend ) {
+            // if enabled, assessing is not allowed after the date/time defined in the mod_form
+            return false;
+        }
+        // here we go, assessing is allowed
         return true;
     }
 
     /**
      * Are reviewers allowed to create/edit their assessments of the example submissions?
      *
-     * TODO: this depends on the workshop phase, phase deadlines
+     * Note this does not check other conditions like the number of already submitted examples etc.
      *
-     * @return bool
+     * @return null|bool
      */
     public function assessing_examples_allowed() {
-        return true;
+        if (empty($this->useexamples)) {
+            return null;
+        }
+        if (self::EXAMPLES_VOLUNTARY == $this->examplesmode) {
+            return true;
+        }
+        if (self::EXAMPLES_BEFORE_SUBMISSION == $this->examplesmode and self::PHASE_SUBMISSION == $this->phase) {
+            return true;
+        }
+        if (self::EXAMPLES_BEFORE_ASSESSMENT == $this->examplesmode and self::PHASE_ASSESSMENT == $this->phase) {
+            return true;
+        }
+        return false;
     }
 
     /**
