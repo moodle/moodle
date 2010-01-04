@@ -119,7 +119,7 @@ class workshop_random_allocator implements workshop_allocator {
                 // random allocator should not be able to delete assessments that have already been graded
                 // by reviewer
                 $o[] = 'info::' . get_string('numofdeallocatedassessment', 'workshop', count($delassessments));
-                foreach ($delassessments as $delassessmentid) {
+                foreach ($delassessments as $delassessmentkey => $delassessmentid) {
                     $a = new stdClass();
                     $a->authorname      = fullname((object)array(
                             'lastname'  => $assessments[$delassessmentid]->authorlastname,
@@ -129,7 +129,7 @@ class workshop_random_allocator implements workshop_allocator {
                             'firstname' => $assessments[$delassessmentid]->reviewerfirstname));
                     if (!is_null($assessments[$delassessmentid]->grade)) {
                         $o[] = 'error::ident::' . get_string('allocationdeallocategraded', 'workshop', $a);
-                        unset($delassessments[$delassessmentid]);
+                        unset($delassessments[$delassessmentkey]);
                     } else {
                         $o[] = 'info::ident::' . get_string('assessmentdeleteddetail', 'workshop', $a);
                     }
