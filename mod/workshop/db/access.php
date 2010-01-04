@@ -75,7 +75,8 @@ $mod_workshop_capabilities = array(
     ),
 
     // Ability to be a reviewer of a submission. All users with this capability are considered
-    // as potential reviewers for the allocation purposes.
+    // as potential reviewers for the allocation purposes and can train assessment process on the
+    // example submissions.
     'mod/workshop:peerassess' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,

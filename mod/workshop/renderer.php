@@ -304,7 +304,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $classes = 'submission-summary example';
         $o .= $this->output->container_start($classes);  // main wrapper
         $link = new html_link();
-        $link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/example.php',
+        $link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php',
                                     array('cmid' => $this->page->context->instanceid, 'id' => $example->id));
         $link->text = format_string($example->title);
         $link->set_classes('title');
@@ -313,14 +313,14 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $icon = new moodle_action_icon();
         $icon->image->src = $this->old_icon_url('i/edit');
         $icon->image->alt = get_string('edit');
-        $icon->link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/example.php',
+        $icon->link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php',
                                     array('cmid' => $this->page->context->instanceid, 'id' => $example->id, 'edit' => 'on'));
         $o .= $this->output->action_icon($icon);
 
         $icon = new moodle_action_icon();
         $icon->image->src = $this->old_icon_url('t/delete');
         $icon->image->alt = get_string('delete');
-        $icon->link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/example.php',
+        $icon->link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php',
                                     array('cmid' => $this->page->context->instanceid, 'id' => $example->id, 'delete' => 1));
         $o .= $this->output->action_icon($icon);
 

@@ -26,9 +26,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
+$string['exampleassess'] = 'Assess example submission';
+$string['assessmentreference'] = 'Reference assessment';
+$string['assessmentreferenceneeded'] = 'You have to assess this example submission to provide a reference assessment. Click \'Continue\' button to assess the submission.';
 $string['accesscontrol'] = 'Access control';
 $string['aggregategrades'] = 'Re-calculate grades';
 $string['aggregation'] = 'Grades aggregation';
@@ -43,7 +43,9 @@ $string['areainstructauthors'] = 'Instructions for submitting';
 $string['areasubmissionattachment'] = 'Submission attachments';
 $string['areasubmissioncontent'] = 'Submission texts';
 $string['assess'] = 'Assess';
+$string['assessedexample'] = 'Assessed example submission';
 $string['assessedsubmission'] = 'Assessed submission';
+$string['assessingexample'] = 'Assessing example submission';
 $string['assessingsubmission'] = 'Assessing submission';
 $string['assessmentbyknown'] = 'Assessment by $a';
 $string['assessmentbyunknown'] = 'Assessment';
@@ -77,7 +79,7 @@ $string['evaluategradeswait'] = 'Please wait until the assessments are evaluated
 $string['evaluation'] = 'Grading evaluation';
 $string['evaluationmethod'] = 'Grading evaluation method';
 $string['exampleadd'] = 'Add example submission';
-$string['exampledeleteconfirm'] = 'Are you sure you want to delete the following example submission?';
+$string['exampledeleteconfirm'] = 'Are you sure you want to delete the following example submission? Click \'Continue\' button to delete the submission.';
 $string['exampledelete'] = 'Delete example';
 $string['exampleedit'] = 'Edit example';
 $string['exampleediting'] = 'Editing example';

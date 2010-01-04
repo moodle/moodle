@@ -538,9 +538,10 @@ class workshop {
      * @param stdClass $submission Submission record
      * @param int $reviewerid User ID
      * @param bool $bulk repeated inserts into DB expected
+     * @param int $weight of the new assessment, from 0 to 16
      * @return int ID of the new assessment or an error code
      */
-    public function add_allocation(stdClass $submission, $reviewerid, $bulk=false) {
+    public function add_allocation(stdClass $submission, $reviewerid, $bulk=false, $weight=1) {
         global $DB;
 
         if ($DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'reviewerid' => $reviewerid))) {
@@ -553,7 +554,7 @@ class workshop {
         $assessment->reviewerid             = $reviewerid;
         $assessment->timecreated            = $now;
         $assessment->timemodified           = $now;
-        $assessment->weight                 = 1;
+        $assessment->weight                 = $weight;
         $assessment->generalcommentformat   = FORMAT_HTML;  // todo better default handling
         $assessment->feedbackreviewerformat = FORMAT_HTML;  // todo better default handling
 
@@ -680,6 +681,16 @@ class workshop {
     }
 
     /**
+     * @param int $assessmentid The ID of assessment record
+     * @return moodle_url of the example assessment page
+     */
+    public function exassess_url($assessmentid) {
+        global $CFG;
+        $assessmentid = clean_param($assessmentid, PARAM_INT);
+        return new moodle_url($CFG->wwwroot . '/mod/workshop/exassessment.php', array('asid' => $assessmentid));
+    }
+
+    /**
      * @return moodle_url of the page to view a submission, defaults to the own one
      */
     public function submission_url($id=null) {
@@ -691,9 +702,9 @@ class workshop {
      * @param int $id example submission id
      * @return moodle_url of the page to view an example submission
      */
-    public function example_url($id) {
+    public function exsubmission_url($id) {
         global $CFG;
-        return new moodle_url($CFG->wwwroot . '/mod/workshop/example.php', array('cmid' => $this->cm->id, 'id' => $id));
+        return new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php', array('cmid' => $this->cm->id, 'id' => $id));
     }
 
     /**
@@ -752,6 +763,16 @@ class workshop {
         return true;
     }
 
+    /**
+     * Are reviewers allowed to create/edit their assessments of the example submissions?
+     *
+     * TODO: this depends on the workshop phase, phase deadlines
+     *
+     * @return bool
+     */
+    public function assessing_examples_allowed() {
+        return true;
+    }
 
     /**
      * Are the peer-reviews available to the authors?

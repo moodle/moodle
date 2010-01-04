@@ -69,8 +69,11 @@
     margin: 0px 0px 0px 5px;
 }
 
+.mod-workshop .submission-full .header .userdate.created {
+    padding-right: 10px;
+}
+
 .mod-workshop .submission-full .header .userdate.modified {
-    margin-left: 10px;
     padding-left: 10px;
     border-left: 1px solid #000;
 }

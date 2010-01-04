@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * View or edit a single example example
+ * View, create or edit single example submission
  *
  * @package   mod-workshop
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
@@ -27,14 +27,15 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
-$cmid   = required_param('cmid', PARAM_INT);            // course module id
-$id     = required_param('id', PARAM_INT);              // example submission id, 0 for the new one
-$edit   = optional_param('edit', false, PARAM_BOOL);    // open for editing?
-$delete = optional_param('delete', false, PARAM_BOOL);  // example removal requested
-$confirm = optional_param('confirm', false, PARAM_BOOL);  // example removal request confirmed
+$cmid       = required_param('cmid', PARAM_INT);            // course module id
+$id         = required_param('id', PARAM_INT);              // example submission id, 0 for the new one
+$edit       = optional_param('edit', false, PARAM_BOOL);    // open for editing?
+$delete     = optional_param('delete', false, PARAM_BOOL);  // example removal requested
+$confirm    = optional_param('confirm', false, PARAM_BOOL); // example removal request confirmed
+$assess     = optional_param('assess', false, PARAM_BOOL);  // assessment required
 
-$cm     = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
+$course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
 if (isguestuser()) {
@@ -44,7 +45,7 @@ if (isguestuser()) {
 $workshop = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
 $workshop = new workshop($workshop, $cm, $course);
 
-$PAGE->set_url(new moodle_url($workshop->example_url($id), array('edit' => $edit)));
+$PAGE->set_url(new moodle_url($workshop->exsubmission_url($id), array('edit' => $edit)));
 
 if ($id) { // example is specified
     $example = $workshop->get_example_by_id($id);
@@ -56,7 +57,16 @@ if ($id) { // example is specified
 }
 
 $canmanage  = has_capability('mod/workshop:manageexamples', $workshop->context);
-$isreviewer = $DB->record_exists('workshop_assessments', array('submissionid' => $example->id, 'reviewerid' => $USER->id));
+$canassess  = has_capability('mod/workshop:peerassess', $workshop->context);
+$refasid    = $DB->get_field('workshop_assessments', 'id', array('submissionid' => $example->id, 'weight' => 1));
+
+if ($example->id and ($canmanage or ($workshop->assessing_examples_allowed() and $canassess))) {
+    // ok you can go
+} elseif (is_null($example->id) and $canmanage) {
+    // ok you can go
+} else {
+    print_error('nopermissions');
+}
 
 if ($id and $delete and $confirm and $canmanage) {
     require_sesskey();
@@ -64,12 +74,25 @@ if ($id and $delete and $confirm and $canmanage) {
     redirect($workshop->view_url());
 }
 
-if ($example->id and ($canmanage or $isreviewer)) {
-    // ok you can go
-} elseif (is_null($example->id) and $canmanage) {
-    // ok you can go
-} else {
-    print_error('nopermissions');
+if ($id and $assess and $canmanage) {
+    // reference assessment of an example is the assessment with the weight = 1. There should be just one
+    // such assessment
+    require_sesskey();
+    if (!$refasid) {
+        $refasid = $workshop->add_allocation($example, $USER->id, false, 1);
+    }
+    redirect($workshop->exassess_url($refasid));
+}
+
+if ($id and $assess and $canassess) {
+    // training assessment of an example is the assessment with the weight = 0
+    require_sesskey();
+    $asid = $DB->get_field('workshop_assessments', 'id',
+            array('submissionid' => $example->id, 'weight' => 0, 'reviewerid' => $USER->id));
+    if (!$asid) {
+        $asid = $workshop->add_allocation($example, $USER->id, false, 0);
+    }
+    redirect($workshop->exassess_url($asid));
 }
 
 if ($edit and $canmanage) {
@@ -119,7 +142,7 @@ if ($edit and $canmanage) {
         }
         // store the updated values or re-save the new example (re-saving needed because URLs are now rewritten)
         $DB->update_record('workshop_submissions', $formdata);
-        redirect($workshop->example_url($formdata->id));
+        redirect($workshop->exsubmission_url($formdata->id));
     }
 }
 
@@ -133,7 +156,7 @@ if ($edit) {
 
 // Output starts here
 echo $OUTPUT->header();
-$currenttab = 'submission';
+$currenttab = 'example';
 include(dirname(__FILE__) . '/tabs.php');
 echo $OUTPUT->heading(format_string($workshop->name), 2);
 
@@ -150,28 +173,39 @@ if ($example->id) {
     echo $OUTPUT->confirm(get_string('exampledeleteconfirm', 'workshop'),
             new moodle_url($PAGE->url, array('delete' => 1, 'confirm' => 1)), $workshop->view_url());
     }
+    if ($canmanage and !$delete and !$DB->record_exists_select('workshop_assessments',
+            'grade IS NOT NULL AND weight=1 AND submissionid = ?', array($example->id))) {
+        echo $OUTPUT->confirm(get_string('assessmentreferenceneeded', 'workshop'),
+                new moodle_url($PAGE->url, array('assess' => 1)), $workshop->view_url());
+    }
     $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
     echo $wsoutput->example_full($example, true);
 }
-// ...with an option to edit and remove it
+// ...with an option to edit or remove it
+echo $OUTPUT->container_start('buttonsbar');
 if ($canmanage) {
-    echo $OUTPUT->container_start('buttonsbar');
     if (empty($edit) and empty($delete)) {
-        $editbutton                 = new html_form();
-        $editbutton->method         = 'get';
-        $editbutton->button->text   = get_string('exampleedit', 'workshop');
-        $editbutton->url            = new moodle_url($workshop->example_url($example->id), array('edit' => 'on'));
-        echo $OUTPUT->button($editbutton);
-    }
-    if (empty($delete)) {
-        $deletebutton               = new html_form();
-        $deletebutton->method       = 'get';
-        $deletebutton->button->text = get_string('exampledelete', 'workshop');
-        $deletebutton->url          = new moodle_url($workshop->example_url($example->id), array('delete' => 'on'));
-        echo $OUTPUT->button($deletebutton);
-    }
-    echo $OUTPUT->container_end();
-}
+        $button                 = new html_form();
+        $button->method         = 'get';
+        $button->button->text   = get_string('exampleedit', 'workshop');
+        $button->url            = new moodle_url($workshop->exsubmission_url($example->id), array('edit' => 'on'));
+        echo $OUTPUT->button($button);
 
+        $button                 = new html_form();
+        $button->method         = 'get';
+        $button->button->text   = get_string('exampledelete', 'workshop');
+        $button->url            = new moodle_url($workshop->exsubmission_url($example->id), array('delete' => 'on'));
+        echo $OUTPUT->button($button);
+    }
+}
+// ...and optionally assess it
+if ($canassess or ($canmanage and empty($edit) and empty($delete))) {
+    $button                 = new html_form();
+    $button->method         = 'get';
+    $button->button->text   = get_string('exampleassess', 'workshop');
+    $button->url            = new moodle_url($workshop->exsubmission_url($example->id), array('assess' => 'on', 'sesskey' => sesskey()));
+    echo $OUTPUT->button($button);
+}
+echo $OUTPUT->container_end(); // buttonsbar
 // and possibly display the example's review(s) - todo
 echo $OUTPUT->footer();

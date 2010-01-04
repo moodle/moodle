@@ -95,7 +95,7 @@ case workshop::PHASE_SETUP:
         $editbutton                 = new html_form();
         $editbutton->method         = 'get';
         $editbutton->button->text   = get_string('exampleadd', 'workshop');
-        $editbutton->url            = new moodle_url($workshop->example_url(0), array('edit' => 'on'));
+        $editbutton->url            = new moodle_url($workshop->exsubmission_url(0), array('edit' => 'on'));
         echo $OUTPUT->button($editbutton);
         echo $OUTPUT->box_end();
     }

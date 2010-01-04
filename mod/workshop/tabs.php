@@ -46,6 +46,9 @@ if (has_capability('mod/workshop:view', $PAGE->context)) {
 if (has_capability('mod/workshop:editdimensions', $PAGE->context)) {
     $row[] = new tabobject('editform', $workshop->editform_url()->out(), get_string('editassessmentform', 'workshop'));
 }
+if ($currenttab == 'example' and has_any_capability(array('mod/workshop:submit', 'mod/workshop:manageexamples'), $PAGE->context)) {
+    $row[] = new tabobject('example', '', get_string('example', 'workshop'));
+}
 if (has_capability('mod/workshop:submit', $PAGE->context)) {
     $row[] = new tabobject('submission', $workshop->submission_url()->out(), get_string('submission', 'workshop'));
 }
