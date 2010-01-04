@@ -18,7 +18,7 @@ YAHOO.util.Event.onDOMReady(function () {
     //TODO: remove this hack MDL-20204
     var animationlib = document.createElement('script');
     animationlib.setAttribute('type','text/javascript');
-    animationlib.setAttribute('src',moodle_cfg.wwwroot+'/lib/yui/2.8.0r4/animation/animation-min.js');
+    animationlib.setAttribute('src',moodle_cfg.yui2loaderBase+'/animation/animation-min.js');
     document.getElementsByTagName('head')[0].appendChild(animationlib);
 });
 
