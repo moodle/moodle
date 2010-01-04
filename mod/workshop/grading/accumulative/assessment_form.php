@@ -62,13 +62,12 @@ class workshop_accumulative_assessment_form extends workshop_assessment_form {
             $mform->addElement('html', $desc);
 
             // grade for this aspect
-            $label = 'Grade'; // todo i18n 
-            $label .= ' / ' . $fields['grade__idx_' . $i];
-            $options = array(10,9,8,7,6,5,4,3,2,1,0); // todo
+            $label = get_string('dimensiongrade', 'workshop');
+            $options = make_grades_menu($fields['grade__idx_' . $i]);
             $mform->addElement('select', 'grade__idx_' . $i, $label, $options);
 
             // comment
-            $label = 'Comment'; //todo i18n
+            $label = get_string('dimensioncomment', 'workshop');
             //$mform->addElement('editor', 'peercomment__idx_' . $i, $label, null, array('maxfiles' => 0));
             $mform->addElement('textarea', 'peercomment__idx_' . $i, $label, array('cols' => 60, 'rows' => 5));
         }

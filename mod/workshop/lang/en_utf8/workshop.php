@@ -25,8 +25,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['strategyhaschanged'] = 'The workshop grading strategy has changed since the form was opened for editing.';
-$string['editsubmission'] = 'Edit submission';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
 $string[''] = '';
 $string[''] = '';
 $string[''] = '';
@@ -89,12 +93,16 @@ $string['confignoerrorsgrade0'] = 'The default word describing the negative asse
 $string['confignoerrorsgrade1'] = 'The default word describing the positive assessment of an assertion in "Number of errors" grading strategy.';
 $string['confignsassessments'] = 'Default number of allocated submissions to be reviewed by a user in the assessment phase';
 $string['configstrategy'] = 'Default grading strategy for workshops';
+$string['dimensioncomment'] = 'Comment';
 $string['dimensiondescription'] = 'Description';
+$string['dimensiongrade'] = 'Grade';
+$string['dimensionmaxgrade'] = 'Best possible grade / Scale to use';
 $string['dimensionnumberaccumulative'] = 'Aspect $a';
 $string['dimensionnumbernoerrors'] = 'Assertion $a';
 $string['dimensionweight'] = 'Weight';
 $string['editingassessmentform'] = 'Editing assessment form';
 $string['editingsubmission'] = 'Editing submission';
+$string['editsubmission'] = 'Edit submission';
 $string['err_removegrademappings'] = 'Unable to remove the unused grade mappings';
 $string['examplesbeforeassessment'] = 'Examples are available after own submission and must be assessed before peer/self assessment phase';
 $string['examplesbeforesubmission'] = 'Examples must be assessed before own submission';
@@ -148,6 +156,7 @@ $string['saveandcontinue'] = 'Save and continue editing';
 $string['saveandpreview'] = 'Save and preview';
 $string['strategyaccumulative'] = 'Accumulative grading';
 $string['strategy'] = 'Grading strategy';
+$string['strategyhaschanged'] = 'The workshop grading strategy has changed since the form was opened for editing.';
 $string['strategynoerrors'] = 'Number of errors';
 $string['strategynograding'] = 'No grading';
 $string['strategyrubric'] = 'Rubric grading';

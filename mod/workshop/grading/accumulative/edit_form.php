@@ -52,7 +52,6 @@ class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_fo
         // value not to be overridden by submitted value
         $mform->setConstants(array('norepeats' => $norepeats));
 
-        $gradeoptions = array(20 => 20, 10 => 10, 8=>8, 5 => 5);
         $weights = workshop_get_dimension_weights();
 
         for ($i = 0; $i < $norepeats; $i++) {
@@ -60,8 +59,10 @@ class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_fo
             $mform->addElement('hidden', 'dimensionid__idx_'.$i);   // the id in workshop_forms_accumulative
             $mform->addElement('editor', 'description__idx_'.$i.'_editor', get_string('dimensiondescription', 'workshop'),
                                     array('cols' => 20), $descriptionopts);
-            $mform->addElement('select', 'grade__idx_'.$i, get_string('grade'), $gradeoptions);
+            $mform->addElement('modgrade', 'grade__idx_'.$i, get_string('dimensionmaxgrade','workshop'), null, true);
+            $mform->setDefault('grade__idx_'.$i, 10);
             $mform->addElement('select', 'weight__idx_'.$i, get_string('dimensionweight', 'workshop'), $weights);
+            $mform->setDefault('weight__idx_'.$i, 1);
         }
 
         $mform->registerNoSubmitButton('noadddims');
