@@ -273,9 +273,9 @@ class workshop_accumulative_strategy implements workshop_strategy {
     public function get_assessments_recordset($restrict) {
         global $DB;
 
-        $sql = 'SELECT a.id AS assessmentid,a.weight AS assessmentweight,a.reviewerid,
+        $sql = 'SELECT a.id AS assessmentid, a.weight AS assessmentweight, a.reviewerid, a.gradinggrade,
                        s.id AS submissionid,
-                       g.dimensionid,g.grade,
+                       g.dimensionid, g.grade,
                        d.weight AS dimensionweight
                   FROM {workshop_submissions} s
                   JOIN {workshop_assessments} a ON (a.submissionid = s.id)
