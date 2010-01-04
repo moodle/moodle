@@ -704,11 +704,15 @@ function workshop_extend_settings_navigation(settings_navigation $settingsnav, s
     $workshopnode->forceopen = true;
     //$workshopobject = $DB->get_record("workshop", array("id" => $PAGE->cm->instance));
 
+    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
+        $url = new moodle_url($CFG->wwwroot . '/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey()));
+        $workshopnode->add(get_string('updatethis', '', get_string('modulename', 'workshop')), $url, settings_navigation::TYPE_SETTING);
+    }
     if (has_capability('mod/workshop:editdimensions', $PAGE->cm->context)) {
         $url = new moodle_url($CFG->wwwroot . '/mod/workshop/editform.php', array('cmid' => $PAGE->cm->id));
         $workshopnode->add(get_string('editassessmentform', 'workshop'), $url, settings_navigation::TYPE_SETTING);
     }
-    if (has_capability('mod/workshop:allocate', $PAGE->context)) {
+    if (has_capability('mod/workshop:allocate', $PAGE->cm->context)) {
         $url = new moodle_url($CFG->wwwroot . '/mod/workshop/allocation.php', array('cmid' => $PAGE->cm->id));
         $workshopnode->add(get_string('allocate', 'workshop'), $url, settings_navigation::TYPE_SETTING);
     }

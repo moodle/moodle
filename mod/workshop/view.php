@@ -57,18 +57,6 @@ $PAGE->set_url($workshop->view_url());
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
 
-// todo 
-$buttons = array();
-if ($PAGE->user_allowed_editing()) {
-    $editblocks                 = new html_form();
-    $editblocks->method         = 'get';
-    $editblocks->button->text   = get_string($PAGE->user_is_editing() ? 'blockseditoff' : 'blocksediton');
-    $editblocks->url            = new moodle_url($PAGE->url, array('editmode' => $PAGE->user_is_editing() ? 'off' : 'on'));
-    $buttons[] = $OUTPUT->button($editblocks);
-}
-$buttons[] = $OUTPUT->update_module_button($cm->id, 'workshop');
-$PAGE->set_button(implode('', $buttons));
-
 $wsoutput = $PAGE->get_renderer('mod_workshop');
 
 /// Output starts here
