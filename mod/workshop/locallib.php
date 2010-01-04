@@ -1075,8 +1075,8 @@ class workshop {
         foreach ($submissions as $submission) {
             $grades[$submission->authorid]->submissionid = $submission->id;
             $grades[$submission->authorid]->submissiontitle = $submission->title;
-            $grades[$submission->authorid]->submissiongrade = $submission->grade;
-            $grades[$submission->authorid]->submissiongradeover = $submission->gradeover;
+            $grades[$submission->authorid]->submissiongrade = $this->real_grade($submission->grade);
+            $grades[$submission->authorid]->submissiongradeover = $this->real_grade($submission->gradeover);
             $grades[$submission->authorid]->submissiongradeoverby = $submission->gradeoverby;
         }
         unset($submissions);
@@ -1087,9 +1087,9 @@ class workshop {
             $info->userid = $reviewer->reviewerid;
             $info->assessmentid = $reviewer->assessmentid;
             $info->submissionid = $reviewer->submissionid;
-            $info->grade = $reviewer->grade;
-            $info->gradinggrade = $reviewer->gradinggrade;
-            $info->gradinggradeover = $reviewer->gradinggradeover;
+            $info->grade = $this->real_grade($reviewer->grade);
+            $info->gradinggrade = $this->real_grading_grade($reviewer->gradinggrade);
+            $info->gradinggradeover = $this->real_grading_grade($reviewer->gradinggradeover);
             $grades[$reviewer->authorid]->reviewedby[$reviewer->reviewerid] = $info;
         }
         unset($reviewers);
@@ -1100,36 +1100,77 @@ class workshop {
             $info->userid = $reviewee->authorid;
             $info->assessmentid = $reviewee->assessmentid;
             $info->submissionid = $reviewee->submissionid;
-            $info->grade = $reviewee->grade;
-            $info->gradinggrade = $reviewee->gradinggrade;
-            $info->gradinggradeover = $reviewee->gradinggradeover;
+            $info->grade = $this->real_grade($reviewee->grade);
+            $info->gradinggrade = $this->real_grading_grade($reviewee->gradinggrade);
+            $info->gradinggradeover = $this->real_grading_grade($reviewee->gradinggradeover);
             $grades[$reviewee->reviewerid]->reviewerof[$reviewee->authorid] = $info;
         }
         unset($reviewees);
         unset($reviewee);
 
+        foreach ($grades as $grade) {
+            $grade->gradinggrade = $this->real_grading_grade($grade->gradinggrade);
+            $grade->totalgrade = $this->format_total_grade($grade->totalgrade);
+        }
+
         $data = new stdClass();
         $data->grades = $grades;
         $data->userinfo = $userinfo;
         $data->totalcount = $numofparticipants;
+        $data->maxgrade = $this->real_grade(100);
+        $data->maxgradinggrade = $this->real_grading_grade(100);
         return $data;
     }
 
     /**
-     * Calculate the participant's total grade given the aggregated grades for submission and assessments
+     * Calculates the real value of a grade
      *
-     * todo there will be a setting how to deal with null values (for example no grade for submission) - if
-     * they are considered as 0 or excluded
-     *
-     * @param float|null $grade for submission
-     * @param float|null $gradinggrade for assessment
-     * @return float|null
+     * @param float $value percentual value from 0 to 100
+     * @param float $max   the maximal grade
+     * @return string
      */
-    public function total_grade($grade=null, $gradinggrade=null) {
-        if (is_null($grade) and is_null($gradinggrade)) {
+    public function real_grade_value($value, $max) {
+        $localized = true;
+        if (is_null($value)) {
+            return null;
+        } elseif ($max == 0) {
+            return 0;
+        } else {
+            return format_float($max * $value / 100, $this->gradedecimals, $localized);
+        }
+    }
+
+    /**
+     * Rounds the value from DB to be displayed
+     *
+     * @param float $raw value from {workshop_aggregations}
+     * @return string
+     */
+    public function format_total_grade($raw) {
+        if (is_null($raw)) {
             return null;
         }
-        return grade_floatval((float)$grade + (float)$gradinggrade);
+        return format_float($raw, $this->gradedecimals, $localized);
+    }
+
+    /**
+     * Calculates the real value of grade for submission
+     *
+     * @param float $value percentual value from 0 to 100
+     * @return string
+     */
+    public function real_grade($value) {
+        return $this->real_grade_value($value, $this->grade);
+    }
+
+    /**
+     * Calculates the real value of grade for assessment
+     *
+     * @param float $value percentual value from 0 to 100
+     * @return string
+     */
+    public function real_grading_grade($value) {
+        return $this->real_grade_value($value, $this->gradinggrade);
     }
 
     /**

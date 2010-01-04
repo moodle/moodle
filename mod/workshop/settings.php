@@ -31,11 +31,18 @@ require_once($CFG->dirroot.'/mod/workshop/lib.php');
 
 $grades = workshop_get_maxgrades();
 
-$settings->add(new admin_setting_configselect('workshop/grade', get_string('gradeforsubmission', 'workshop'),
+$settings->add(new admin_setting_configselect('workshop/grade', get_string('submissiongrade', 'workshop'),
                     get_string('configgrade', 'workshop'), 80, $grades));
 
-$settings->add(new admin_setting_configselect('workshop/gradinggrade', get_string('gradeforassessment', 'workshop'),
+$settings->add(new admin_setting_configselect('workshop/gradinggrade', get_string('gradinggrade', 'workshop'),
                     get_string('configgradinggrade', 'workshop'), 20, $grades));
+
+$options = array();
+for ($i = 5; $i >= 0; $i--) {
+    $options[$i] = $i;
+}
+$settings->add(new admin_setting_configselect('workshop/gradedecimals', get_string('gradedecimals', 'workshop'),
+                    get_string('configgradedecimals', 'workshop'), 0, $options));
 
 $options = get_max_upload_sizes($CFG->maxbytes);
 $options[0] = get_string('courseuploadlimit');

@@ -87,12 +87,12 @@ class mod_workshop_mod_form extends moodleform_mod {
 
         $grades = workshop_get_maxgrades();
 
-        $label = get_string('gradeforsubmission', 'workshop');
+        $label = get_string('submissiongrade', 'workshop');
         $mform->addElement('select', 'grade', $label, $grades);
         $mform->setDefault('grade', $workshopconfig->grade);
         $mform->setHelpButton('grade', array('grade', $label, 'workshop'));
 
-        $label = get_string('gradeforassessment', 'workshop');
+        $label = get_string('gradinggrade', 'workshop');
         $mform->addElement('select', 'gradinggrade', $label , $grades);
         $mform->setDefault('gradinggrade', $workshopconfig->gradinggrade);
         $mform->setHelpButton('gradinggrade', array('gradinggrade', $label, 'workshop'));
@@ -101,6 +101,16 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('select', 'strategy', $label, workshop_get_strategies());
         $mform->setDefault('strategy', $workshopconfig->strategy);
         $mform->setHelpButton('strategy', array('strategy', $label, 'workshop'));
+
+        $options = array();
+        for ($i=5; $i>=0; $i--) {
+            $options[$i] = $i;
+        }
+        $label = get_string('gradedecimals', 'workshop');
+        $mform->addElement('select', 'gradedecimals', $label, $options);
+        $mform->setHelpButton('gradedecimals', array('gradedecimals', $label, 'workshop'));
+        $mform->setAdvanced('gradedecimals');
+        $mform->setDefault('gradedecimals', $workshopconfig->gradedecimals);
 
         // Submission settings --------------------------------------------------------
         $mform->addElement('header', 'submissionsettings', get_string('submissionsettings', 'workshop'));

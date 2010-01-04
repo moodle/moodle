@@ -429,9 +429,11 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                 $sortbyname,
                 $this->sortable_heading(get_string('submission', 'workshop'), 'submissiontitle', $sortby, $sorthow),
                 $this->sortable_heading(get_string('receivedgrades', 'workshop')),
-                $this->sortable_heading(get_string('submissiongrade', 'workshop'), 'submissiongrade', $sortby, $sorthow),
+                $this->sortable_heading(get_string('submissiongradeof', 'workshop', $data->maxgrade),
+                        'submissiongrade', $sortby, $sorthow),
                 $this->sortable_heading(get_string('givengrades', 'workshop')),
-                $this->sortable_heading(get_string('gradinggrade', 'workshop'), 'gradinggrade', $sortby, $sorthow),
+                $this->sortable_heading(get_string('gradinggradeof', 'workshop', $data->maxgradinggrade),
+                        'gradinggrade', $sortby, $sorthow),
                 $this->sortable_heading(get_string('totalgrade', 'workshop'), 'totalgrade', $sortby, $sorthow),
             );
         $table->rowclasses  = array();
@@ -510,7 +512,11 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                 // column #7 - total grade for assessment
                 if ($tr == 0) {
                     $cell = new html_table_cell();
-                    $cell->text = $participant->totalgrade;
+                    if (is_null($participant->totalgrade)) {
+                        $cell->text = get_string('nullgrade', 'workshop');
+                    } else {
+                        $cell->text = $participant->totalgrade;
+                    }
                     $cell->rowspan = $numoftrs;
                     $row->cells[] = $cell;
                 }
@@ -619,22 +625,6 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
 
         return $grade;
     }
-
-    /**
-     * Format the grade for the output
-     *
-     * @param float $value the grade value
-     * @param int $decimals the precision to be displayed
-     * @return string
-     */
-    public function grade($value, $decimals=0) {
-        if (is_null($value)) {
-            return get_string('nullgrade', 'workshop');
-        }
-
-        return format_float($value, $decimals, true);
-    }
-
 
     ////////////////////////////////////////////////////////////////////////////
     // Helper methods                                                         //

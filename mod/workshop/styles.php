@@ -405,6 +405,10 @@
     border: 1px solid #ddd;
 }
 
+.mod-workshop .grading-report th {
+    white-space: normal;
+}
+
 .mod-workshop .grading-report td {
     vertical-align: top;
     border: 1px solid #ddd;
