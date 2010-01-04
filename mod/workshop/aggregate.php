@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Aggregates the grades for submission and grades for assessments and calculates the total grade for workshop
+ * Aggregates the grades for submission and grades for assessments
  *
  * @package   mod-workshop
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
@@ -55,7 +55,6 @@ if ($settingsform->is_cancelled()) {
     $workshop->aggregate_submission_grades();           // updates 'grade' in {workshop_submissions}
     $evaluator->update_grading_grades($settingsdata);   // updates 'gradinggrade' in {workshop_assessments}
     $workshop->aggregate_grading_grades();              // updates 'gradinggrade' in {workshop_aggregations}
-    $workshop->aggregate_total_grades();                // updates 'totalgrade' in {workshop_aggregations}
     redirect(new moodle_url($workshop->view_url(), compact('page', 'sortby', 'sorthow')));
 }
 

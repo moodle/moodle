@@ -402,7 +402,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      *
      * @param stdClass $data prepared by {@link workshop::prepare_grading_report()}
      * @param stdClass $options display options object with properties ->showauthornames ->showreviewernames ->sortby ->sorthow
-     *          ->showsubmissiongrade ->showgradinggrade ->showtotalgrade
+     *          ->showsubmissiongrade ->showgradinggrade
      * @return string html code
      */
     public function grading_report(stdClass $data, stdClass $options) {
@@ -437,10 +437,6 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
         if ($options->showgradinggrade) {
             $table->head[] = $this->sortable_heading(get_string('gradinggradeof', 'workshop', $data->maxgradinggrade),
                     'gradinggrade', $options->sortby, $options->sorthow);
-        }
-        if ($options->showtotalgrade) {
-            $table->head[] = $this->sortable_heading(get_string('totalgradeof', 'workshop', $data->maxtotalgrade),
-                    'totalgrade', $options->sortby, $options->sorthow);
         }
 
         $table->rowclasses  = array();
@@ -536,19 +532,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                     $cell->add_class('gradinggrade');
                     $row->cells[] = $cell;
                 }
-                // column #7 - total grade for assessment
-                if ($options->showtotalgrade and $tr == 0) {
-                    $cell = new html_table_cell();
-                    if (is_null($participant->totalgrade)) {
-                        $cell->text = get_string('nullgrade', 'workshop');
-                    } else {
-                        $cell->text = $participant->totalgrade;
-                    }
-                    $cell->text = $this->grading_report_grade($participant->totalgrade);
-                    $cell->rowspan = $numoftrs;
-                    $cell->add_class('totalgrade');
-                    $row->cells[] = $cell;
-                }
+
                 $table->data[] = $row;
             }
         }

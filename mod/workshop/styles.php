@@ -446,18 +446,13 @@
 .mod-workshop .grading-report .submissiongrade,
 .mod-workshop .grading-report .gradinggrade {
     text-align: center;
-    font-size: 160%;
+    font-size: 200%;
     white-space: nowrap;
 }
 
 .mod-workshop .grading-report .givengrade.null .user,
 .mod-workshop .grading-report .receivedgrade.null .user {
     color: #ee0000;
-}
-
-.mod-workshop .grading-report .totalgrade {
-    text-align: center;
-    font-size: 220%;
 }
 
 /**

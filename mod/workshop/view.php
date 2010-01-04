@@ -145,7 +145,6 @@ case workshop::PHASE_ASSESSMENT:
             $reportopts->sorthow                = $sorthow;
             $reportopts->showsubmissiongrade    = false;
             $reportopts->showgradinggrade       = false;
-            $reportopts->showtotalgrade         = false;
 
             echo $OUTPUT->paging_bar($pagingbar);
             echo $wsoutput->grading_report($data, $reportopts);
@@ -232,7 +231,6 @@ case workshop::PHASE_EVALUATION:
             $reportopts->sorthow                = $sorthow;
             $reportopts->showsubmissiongrade    = true;
             $reportopts->showgradinggrade       = true;
-            $reportopts->showtotalgrade         = false; // todo totalgrade to be dropped completely
 
             echo $OUTPUT->paging_bar($pagingbar);
             echo $wsoutput->grading_report($data, $reportopts);
