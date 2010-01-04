@@ -273,4 +273,21 @@ class workshop_internal_api_test extends UnitTestCase {
         $part = workshop::percent_to_value($percent, $total);
     }
 
+    public function test_lcm() {
+        // fixture setup + excercise SUT + verify in one step
+        $this->assertEqual(workshop::lcm(1,4), 4);
+        $this->assertEqual(workshop::lcm(2,4), 4);
+        $this->assertEqual(workshop::lcm(4,2), 4);
+        $this->assertEqual(workshop::lcm(2,3), 6);
+        $this->assertEqual(workshop::lcm(6,4), 12);
+    }
+
+    public function test_lcm_array() {
+        // fixture setup
+        $numbers = array(5,3,15);
+        // excersise SUT
+        $lcm = array_reduce($numbers, 'workshop::lcm', 1);
+        // verify
+        $this->assertEqual($lcm, 15);
+    }
 }

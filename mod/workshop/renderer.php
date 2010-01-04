@@ -444,7 +444,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
 
             // compute the number of <tr> table rows needed to display this participant
             if ($numofreceived > 0 and $numofgiven > 0) {
-                $numoftrs       = self::lcm($numofreceived, $numofgiven);
+                $numoftrs       = workshop::lcm($numofreceived, $numofgiven);
                 $spanreceived   = $numoftrs / $numofreceived;
                 $spangiven      = $numoftrs / $numofgiven;
             } elseif ($numofreceived == 0 and $numofgiven > 0) {
@@ -639,28 +639,6 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
     ////////////////////////////////////////////////////////////////////////////
     // Helper methods                                                         //
     ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Helper function returning the greatest common divisor
-     *
-     * @param int $a
-     * @param int $b
-     * @return int
-     */
-    protected static function gcd($a, $b) {
-        return ($b == 0) ? ($a):(self::gcd($b, $a % $b));
-    }
-
-    /**
-     * Helper function returning the least common multiple
-     *
-     * @param int $a
-     * @param int $b
-     * @return int
-     */
-    protected static function lcm($a, $b) {
-        return ($a / self::gcd($a,$b)) * $b;
-    }
 
     /**
      * Helper function returning the n-th item of the array

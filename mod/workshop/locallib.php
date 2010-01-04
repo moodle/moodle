@@ -1212,6 +1212,31 @@ class workshop {
         // todo
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Helper methods                                                         //
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Helper function returning the greatest common divisor
+     *
+     * @param int $a
+     * @param int $b
+     * @return int
+     */
+    public static function gcd($a, $b) {
+        return ($b == 0) ? ($a):(self::gcd($b, $a % $b));
+    }
+
+    /**
+     * Helper function returning the least common multiple
+     *
+     * @param int $a
+     * @param int $b
+     * @return int
+     */
+    public static function lcm($a, $b) {
+        return ($a / self::gcd($a,$b)) * $b;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////
     // Internal methods (implementation details)                                  //
@@ -1311,6 +1336,5 @@ class workshop {
             self::PHASE_CLOSED      => true,
         );
     }
-
 
 }
