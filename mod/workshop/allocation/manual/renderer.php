@@ -44,7 +44,7 @@ class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
      * @return void
      */
     public function __construct($page, $output) {
-        $this->page   = $page;
+        parent::__construct($page);
         $this->output = $output;
     }
 
