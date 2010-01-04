@@ -67,10 +67,10 @@ class workshop_best_evaluation implements workshop_evaluation {
         }
 
         // get the information about the assessment dimensions
-        $diminfo = $grader->eval_best_dimensions_info();
+        $diminfo = $grader->get_dimensions_info();
 
         // fetch a recordset with all assessments to process
-        $rs         = $grader->eval_best_get_assessments_recordset($restrict);
+        $rs         = $grader->get_assessments_recordset($restrict);
         $batch      = array();    // will contain a set of all assessments of a single submission
         $previous   = null;       // a previous record in the recordset
         foreach ($rs as $current) {

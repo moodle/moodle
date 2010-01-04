@@ -93,4 +93,23 @@ interface workshop_strategy {
      */
     public function supports_evaluation(workshop_evaluation $evaluation);
 
+    /**
+     * Returns a general information about the assessment dimensions
+     *
+     * @return array [dimid] => stdClass (->id ->max ->min ->weight)
+     */
+    public function get_dimensions_info();
+
+    /**
+     * Returns recordset with detailed information of all assessments done using this strategy
+     *
+     * The returned structure must be a recordset of objects containing at least properties:
+     * submissionid, assessmentid, assessmentweight, reviewerid, gradinggrade, dimensionid and grade.
+     * It is possible to pass user id(s) of reviewer(s). Then, the method returns just the reviewer's
+     * assessments info.
+     *
+     * @param array|int|null $restrict optional id or ids of the reviewer
+     * @return moodle_recordset
+     */
+    public function get_assessments_recordset($restrict=null);
 }

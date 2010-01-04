@@ -270,7 +270,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
      * @param resource $restrict 
      * @return TODO
      */
-    public function eval_best_get_assessments_recordset($restrict) {
+    public function get_assessments_recordset($restrict) {
         global $DB;
 
         $sql = 'SELECT s.id AS submissionid,
@@ -302,7 +302,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
      *
      * @return array [dimid] => stdClass (->id ->max ->min ->weight)
      */
-    public function eval_best_dimensions_info() {
+    public function get_dimensions_info() {
         global $DB;
 
         $sql = 'SELECT d.id, d.grade, d.weight, s.scale

@@ -320,7 +320,7 @@ class workshop_rubric_strategy implements workshop_strategy {
      * @param array|int|null $restrict optional id or ids of the reviewer
      * @return moodle_recordset
      */
-    public function eval_best_get_assessments_recordset($restrict=null) {
+    public function get_assessments_recordset($restrict=null) {
         global $DB;
 
         $sql = 'SELECT s.id AS submissionid,
@@ -354,7 +354,7 @@ class workshop_rubric_strategy implements workshop_strategy {
      *
      * @return array [dimid] => stdClass (->id ->max ->min ->weight)
      */
-    public function eval_best_dimensions_info() {
+    public function get_dimensions_info() {
         global $DB;
 
         $sql = 'SELECT d.id AS id, MIN(l.grade) AS min, MAX(l.grade) AS max, 1 AS weight
