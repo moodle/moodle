@@ -1013,17 +1013,17 @@ class grade_report_grader extends grade_report {
                 }
 
                 $userreportcell = '';
-                if (has_capability('gradereport/user:view', $this->context)) {
+                if (has_capability('gradereport/'.$CFG->grade_profilereport.':view', $this->context)) {
                     $a->user = fullname($user);
                     $strgradesforuser = get_string('gradesforuser', 'grades', $a);
-                    $userreportcell = '<th class="userreport"><a href="'.$CFG->wwwroot.'/grade/report/user/index.php?id='.$this->courseid.'&amp;userid='.$user->id.'">'
+                    $userreportcell = '<th class="userreport"><a href="'.$CFG->wwwroot.'/grade/report/'.$CFG->grade_profilereport.'/index.php?id='.$this->courseid.'&amp;userid='.$user->id.'">'
                                     .'<img src="'.$CFG->pixpath.'/t/grades.gif" alt="'.$strgradesforuser.'" title="'.$strgradesforuser.'" /></a></th>';
                 }
 
                 $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
                               .'<th class="c0 user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
                               .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
-                              .fullname($user)."</a>$userreportcell</th>\n";
+                              .fullname($user)."</a></th>$userreportcell\n";
 
                 if ($showuseridnumber) {
                     $studentshtml .= '<th class="c0 useridnumber" onclick="set_row(this.parentNode.rowIndex);">'. $user->idnumber."</th>\n";
