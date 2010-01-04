@@ -51,21 +51,72 @@ define('WORKSHOP_COMPARISON_VERYHIGH',  4);     /* f = 5.00 */
 
 
 /**
+ * The base class of workshop instances
+ *
+ * The class just wraps the database record from the {workshop} table and adds some
+ * methods that implement the compulsory activity module API.
+ * For full-featured class see {@link workshop_api}.
+ */
+class workshop {
+
+    /** course module record */
+    public $cm;
+
+    /**
+     * Defines methods that are part of any activity module API and may be called by Moodle core
+     *
+     * Initializes the object using the data from DB. Makes deep copy of all $dbrecord properties.
+     *
+     * @param object $instance  The instance data row from {workshop} table
+     * @param object $cm        Course module record
+     */
+    public function __construct(stdClass $instance, stdClass $cm) {
+
+        foreach ($instance as $key => $val) {
+            if (is_object($val) || (is_array($val))) {
+                // this should not happen if the $dbrecord is really just the record returned by $DB
+                $this->{$key} = unserialize(serialize($val));
+            } else {
+                $this->{$key} = $val;
+            }
+        }
+        $this->cm = $cm;
+    }
+
+
+    /**
+     * Saves a new instance of the workshop into the database
+     *
+     * Given an object containing all the necessary data,
+     * (defined by the form in mod_form.php) this function
+     * will save a new instance and return the id number
+     * of the new instance.
+     *
+     * @param object $data An object from the form in mod_form.php
+     * @return int The id of the newly inserted workshop record
+     */
+    public static function add_instance($data) {
+        global $DB;
+
+        $data->timecreated = time();
+        $data->timemodified = $data->timecreated;
+
+        return $DB->insert_record('workshop', $data);
+    }
+}
+
+
+/**
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will create a new instance and return the id number
  * of the new instance.
  *
- * @param object $workshop An object from the form in mod_form.php
+ * @param object $data An object from the form in mod_form.php
  * @return int The id of the newly inserted workshop record
  */
-function workshop_add_instance($workshop) {
-    global $DB;
-
-    $workshop->timecreated = time();
-    $workshop->timemodified = $workshop->timecreated;
-
-    return $DB->insert_record('workshop', $workshop);
+function workshop_add_instance($data) {
+    return workshop::add_instance($data);
 }
 
 
@@ -333,24 +384,6 @@ function workshop_get_strategies() {
     $forms = array();
     foreach ($installed as $strategy) {
         $forms[$strategy] = get_string('strategy' . $strategy, 'workshop');
-    }
-
-    return $forms;
-}
-
-
-/**
- * Return an array of the localized allocation names
- * 
- * @access public
- * @return array Array ['string' => 'string']
- */
-function workshop_get_allocations() {
-
-    $installed = get_list_of_plugins('mod/workshop/allocation');
-    $forms = array();
-    foreach ($installed as $allocation) {
-        $forms[$allocation] = get_string('allocation' . $allocation, 'workshop');
     }
 
     return $forms;

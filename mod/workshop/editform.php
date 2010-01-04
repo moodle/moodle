@@ -25,7 +25,6 @@
  */
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
 $cmid = required_param('cmid', PARAM_INT);            // course module id
@@ -40,7 +39,7 @@ if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
 
 require_login($course, false, $cm);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = $PAGE->context;
 
 if (isguestuser()) {
     print_error('err_noguests', 'workshop', "$CFG->wwwroot/mod/workshop/view.php?id=$cmid");
@@ -50,6 +49,8 @@ if (!$workshop = $DB->get_record('workshop', array('id' => $cm->instance))) {
     print_error('err_invalidworkshopid', 'workshop');
 }
 
+$workshop = new workshop_api($workshop, $cm)l
+
 // where should the user be sent after closing the editing form
 $returnurl  = "{$CFG->wwwroot}/mod/workshop/view.php?id={$cm->id}";
 // the URL of this editing form
@@ -58,7 +59,7 @@ $selfurl    = "{$CFG->wwwroot}/mod/workshop/editform.php?cmid={$cm->id}";
 $previewurl = "{$CFG->wwwroot}/mod/workshop/assessment.php?preview={$cm->id}";
 
 // load the grading strategy logic
-$strategy = workshop_strategy_instance($workshop);
+$strategy = $workshop->grading_strategy_instance();
 
 // load the assessment form definition from the database
 // this must be called before get_edit_strategy_form() where we have to know

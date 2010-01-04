@@ -28,7 +28,6 @@
  */
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-//require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
 if ($preview = optional_param('preview', 0, PARAM_INT)) {
@@ -66,7 +65,9 @@ if ($preview = optional_param('preview', 0, PARAM_INT)) {
 
 require_login($course, false, $cm);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$workshop = new workshop_api($workshop, $cm);
+
+$context = $PAGE->context;
 
 if (isguestuser()) {
     print_error('err_noguests', 'workshop', "$CFG->wwwroot/mod/workshop/view.php?id=$cmid");
@@ -84,7 +85,7 @@ if ($mode == 'preview') {
 $editurl = "{$CFG->wwwroot}/mod/workshop/editform.php?cmid={$cm->id}";
 
 // load the grading strategy logic
-$strategy = workshop_strategy_instance($workshop);
+$strategy = $workshop->grading_strategy_instance();
 
 // load the assessment form definition from the database
 // this must be called before get_assessment_form() where we have to know

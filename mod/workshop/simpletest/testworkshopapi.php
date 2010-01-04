@@ -17,7 +17,7 @@
  
  
 /**
- * Unit tests for (some of) mod/workshop/lib.php
+ * Unit tests for workshop_api class defined in mod/workshop/locallib.php
  *
  * @package   mod-workshop
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
@@ -27,24 +27,39 @@
 defined('MOODLE_INTERNAL') || die();
  
 // Make sure the code being tested is accessible.
-require_once($CFG->dirroot . '/mod/workshop/lib.php'); // Include the code to test
+require_once($CFG->dirroot . '/mod/workshop/locallib.php'); // Include the code to test
  
-/** 
- * Test cases for the functions in lib.php
- */
-class workshop_lib_test extends UnitTestCase {
 
-    function test_workshop_get_maxgrades() {
-        $this->assertIsA(workshop_get_maxgrades(), 'Array');
-        $this->assertTrue(workshop_get_maxgrades());
-        $values_are_integers = True;
-        foreach(workshop_get_maxgrades() as $key => $val) {
-            if (!is_int($val)) {
-                $values_are_integers = false;
-                break;
-            }
-        }
-        $this->assertTrue($values_are_integers, 'Array values must be integers');
+/**
+ * Test subclass that makes all the protected methods we want to test public.
+ * Also re-implements bridging methods so we can test more easily.
+ */
+class testable_workshop_api extends workshop_api {
+
+}
+
+
+/** 
+ * Test cases for the internal workshop api
+ */
+class workshop_api_test extends UnitTestCase {
+
+    /** workshop instance emulation */
+    protected $workshop;
+
+    /** setup testing environment */
+    public function setUp() {
+        $workshoprecord         = new stdClass;
+        $workshoprecord->id     = 42;
+
+        $cm                     = new stdClass;
+        $this->workshop = new testable_workshop_api($workshoprecord, $cm);
     }
+
+    public function tearDown() {
+        $this->workshop = null;
+    }
+
+
  
 }

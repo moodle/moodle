@@ -28,7 +28,6 @@
  */
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
@@ -64,13 +63,18 @@ if ($id) {
 
 require_login($course, true, $cm);
 
+$context = $PAGE->context;
+$workshop = new workshop_api($workshop, $cm);
+
+// todo has_capability() check
+
 add_to_log($course->id, "workshop", "view", "view.php?id=$cm->id", "$workshop->id");
 
 /// Print the page header
 
 $PAGE->set_url('mod/workshop/view.php', array('id' => $cm->id));
 $PAGE->set_title($workshop->name);
-$PAGE->set_heading($course->shortname);
+$PAGE->set_heading($course->fullname);
 $PAGE->set_button(update_module_button($cm->id, $course->id, get_string('modulename', 'workshop')));
 
 // other things you may want to set - remove if not needed
@@ -94,7 +98,10 @@ echo $OUTPUT->header($navigation, $menu);
 
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading('Workshop administration tools', 3);
-echo "<a href=\"editform.php?cmid={$cm->id}\">Edit grading form (".get_string('strategy' . $workshop->strategy, 'workshop').")</a>";
+echo '<ul>';
+echo "<li><a href=\"editform.php?cmid={$cm->id}\">Edit grading form (".get_string('strategy' . $workshop->strategy, 'workshop').")</a></li>";
+echo "<li><a href=\"allocation.php?cmid={$cm->id}\">Allocate submissions</a></li>";
+echo '</ul>';
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->box_start();
@@ -105,13 +112,14 @@ echo $OUTPUT->box_end();
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading(get_string('assessment', 'workshop'), 3);
 
-$reviewstogive = workshop_get_assessments_for_reviewer($workshop->id, $USER->id);
+$rs = $workshop->get_assessments($USER->id);
 echo "You are expected to assess following submissions:";
 echo "<ul>";
-foreach ($reviewstogive as $review) {
-    echo "<li><a href=\"assessment.php?asid={$review->assessmentid}\">Assessment of '{$review->title}' by {$review->authorid}</a></li>";
+foreach ($rs as $assessment) {
+    echo "<li><a href=\"assessment.php?asid={$assessment->id}\">Assessment of '{$assessment->title}' by {$assessment->authorid}</a></li>";
 }
 echo "</ul>";
+$rs->close();
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();

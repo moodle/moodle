@@ -61,7 +61,7 @@ if ($id) { // submission is specified
 
 } else { // no submission specified
     //todo require_capability('mod/workshop:submit', $context);
-    if (!$submission = workshop_get_user_submission($workshop->id, $USER->id)) {
+    if (!$submission = workshop_get_user_submission($workshop, $USER->id)) {
         $submission = new object();
         $submission->id = null;
     } 
@@ -84,14 +84,8 @@ $submission->cmid = $cm->id;
 $mform = new workshop_submission_form(null, array('current' => $submission, 'cm' => $cm, 'workshop'=>$workshop,
                                                  'dataoptions' => $dataoptions, 'attachmentoptions'=>$attachmentoptions));
 
-if ($mform->is_cancelled()){
-    die(); // todo
-    if ($id){
-        redirect("view.php?id=$cm->id");
-    } else {
-        redirect("view.php?id=$cm->id");
-    }
-
+if ($mform->is_cancelled()) {
+    redirect("view.php?id=$cm->id");
 } else if ($submission = $mform->get_data()) {
 
     $timenow = time();
