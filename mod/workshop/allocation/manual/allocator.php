@@ -47,7 +47,7 @@ class workshop_manual_allocator implements workshop_allocator {
     protected $workshop;
 
     /**
-     * @param stdClass $workshop Workshop record
+     * @param workshop $workshop Workshop API object
      */
     public function __construct(workshop $workshop) {
         $this->workshop = $workshop;
@@ -136,7 +136,7 @@ class workshop_manual_allocator implements workshop_allocator {
 
         $hlauthorid     = -1;           // highlight this author
         $hlreviewerid   = -1;           // highlight this reviewer
-        $msg            = new stdClass; // message to render
+        $msg            = new object(); // message to render
 
         $m  = optional_param('m', '', PARAM_ALPHANUMEXT);   // message object
         if ($m) {
@@ -195,7 +195,7 @@ class workshop_manual_allocator implements workshop_allocator {
         foreach ($rs as $allocation) {
             $currentuserid = $allocation->authorid;
             if (!isset($peer[$currentuserid])) {
-                $peer[$currentuserid]                   = new stdClass();
+                $peer[$currentuserid]                   = new object();
                 $peer[$currentuserid]->id               = $allocation->authorid;
                 $peer[$currentuserid]->firstname        = $allocation->authorfirstname;
                 $peer[$currentuserid]->lastname         = $allocation->authorlastname;

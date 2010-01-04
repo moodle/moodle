@@ -117,7 +117,7 @@ class workshop_random_allocator implements workshop_allocator {
                 $this->add_new_allocations($newallocations, $authors, $reviewers);
                 foreach ($newallocations as $newallocation) {
                     list($reviewerid, $authorid) = each($newallocation);
-                    $a                  = new stdClass();
+                    $a                  = new object();
                     $a->reviewername    = fullname($reviewers[0][$reviewerid]);
                     $a->authorname      = fullname($authors[0][$authorid]);
                     $o[] = 'ok::indent::' . get_string('allocationaddeddetail', 'workshop', $a);
@@ -129,7 +129,7 @@ class workshop_random_allocator implements workshop_allocator {
                 // by reviewer
                 $o[] = 'info::' . get_string('numofdeallocatedassessment', 'workshop', count($delassessments));
                 foreach ($delassessments as $delassessmentkey => $delassessmentid) {
-                    $a = new stdClass();
+                    $a = new object();
                     $a->authorname      = fullname((object)array(
                             'lastname'  => $assessments[$delassessmentid]->authorlastname,
                             'firstname' => $assessments[$delassessmentid]->authorfirstname));
@@ -160,7 +160,7 @@ class workshop_random_allocator implements workshop_allocator {
         global $OUTPUT;
 
         $m = optional_param('m', null, PARAM_INT);  // status message code
-        $msg = new stdClass();
+        $msg = new object();
         if ($m == WORKSHOP_ALLOCATION_RANDOM_MSG_SUCCESS) {
             $msg = (object)array('text' => get_string('randomallocationdone', 'workshop'), 'sty' => 'ok');
         }

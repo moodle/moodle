@@ -62,7 +62,7 @@ class workshop {
      * @param object $cm       Course module record as returned by {@link get_coursemodule_from_id()}
      * @param object $course   Course record from {course} table
      */
-    public function __construct(stdClass $instance, stdClass $cm, stdClass $course) {
+    public function __construct(object $instance, object $cm, object $course) {
         foreach ($instance as $key => $val) {
             if (is_object($val) || (is_array($val))) {
                 // this should not happen if the $instance is really just the record returned by $DB
@@ -81,7 +81,7 @@ class workshop {
      * The returned objects contain id, lastname and firstname properties and are ordered by lastname,firstname
      *
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible authors otherwise.
-     * @return array array[userid] => stdClass{->id ->lastname ->firstname}
+     * @return array array[userid] => object{->id ->lastname ->firstname}
      */
     public function get_peer_authors($musthavesubmission=true) {
         global $DB;
@@ -114,7 +114,7 @@ class workshop {
      *
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible users otherwise.
      * @see get_super_reviewers()
-     * @return array array[userid] => stdClass{->id ->lastname ->firstname}
+     * @return array array[userid] => object{->id ->lastname ->firstname}
      */
     public function get_peer_reviewers($musthavesubmission=false) {
         global $DB;
@@ -147,7 +147,7 @@ class workshop {
      *
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible users otherwise.
      * @see get_peer_reviewers()
-     * @return array array[userid] => stdClass{->id ->lastname ->firstname}
+     * @return array array[userid] => object{->id ->lastname ->firstname}
      */
     public function get_super_reviewers() {
         global $DB;
@@ -166,8 +166,8 @@ class workshop {
      * is set, returns only groups withing the course module grouping. Always returns group [0] with
      * all the given users.
      *
-     * @param array $users array[userid] => stdClass{->id ->lastname ->firstname}
-     * @return array array[groupid][userid] => stdClass{->id ->lastname ->firstname}
+     * @param array $users array[userid] => object{->id ->lastname ->firstname}
+     * @return array array[groupid][userid] => object{->id ->lastname ->firstname}
      */
     public function get_grouped($users) {
         global $DB;
@@ -260,7 +260,7 @@ class workshop {
         if (is_array($id)) {
             $submissions = array();
             foreach ($rs as $submission) {
-                $submissions[$submission->id] = new stdClass();
+                $submissions[$submission->id] = new object();
                 foreach ($submission as $property => $value) {
                     // we do not want text fields here to prevent possible memory issues
                     if (in_array($property, array('id', 'workshopid', 'example', 'userid', 'authorlastname', 'authorfirstname',
@@ -344,7 +344,7 @@ class workshop {
         foreach ($rs as $assessment) {
             // copy selected properties into the array to be returned. This is here mainly in order not
             // to include text comments.
-            $assessments[$assessment->id] = new stdClass;
+            $assessments[$assessment->id] = new object();
             foreach ($assessment as $property => $value) {
                 if (in_array($property, array('id', 'submissionid', 'userid', 'timecreated', 'timemodified',
                         'timeagreed', 'grade', 'gradinggrade', 'gradinggradeover', 'gradinggradeoverby',
@@ -448,7 +448,7 @@ class workshop {
      * @param bool $bulk repeated inserts into DB expected
      * @return int ID of the new assessment or an error code
      */
-    public function add_allocation(stdClass $submission, $reviewerid, $bulk=false) {
+    public function add_allocation(object $submission, $reviewerid, $bulk=false) {
         global $DB;
 
         if ($DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'userid' => $reviewerid))) {
@@ -456,7 +456,7 @@ class workshop {
         }
 
         $now = time();
-        $assessment = new stdClass();
+        $assessment = new object();
         $assessment->submissionid   = $submission->id;
         $assessment->userid         = $reviewerid;
         $assessment->timecreated    = $now;

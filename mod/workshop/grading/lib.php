@@ -60,7 +60,7 @@ interface workshop_strategy {
      * @param object $data Raw data as returned by the form editor
      * @return void
      */
-    public function save_edit_strategy_form(stdClass $data);
+    public function save_edit_strategy_form(object $data);
 
     /**
      * Factory method returning an instance of an assessment form
@@ -79,5 +79,5 @@ interface workshop_strategy {
      * @param object $data       Raw data as returned by the assessment form
      * @return float|float       Percentual grade for submission as suggested by the peer or null if impossible to count
      */
-    public function save_assessment(stdClass $assessment, stdClass $data);
+    public function save_assessment(object $assessment, object $data);
 }

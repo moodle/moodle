@@ -95,10 +95,10 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
     /**
      * Returns information about the workshop participant
      *
-     * @param stdClass $user participant data
+     * @param object $user participant data
      * @return string HTML code
      */
-    protected function participant(stdClass $user) {
+    protected function participant(object $user) {
         $o  = $this->output->user_picture($user, $this->page->course->id);
         $o .= fullname($user);
         $o .= $this->output->container_start(array('submission'));
@@ -120,12 +120,12 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
     /**
      * Returns information about the current reviewers of the given participant and a selector do add new one
      *
-     * @param stdClass $user         participant data
+     * @param object $user         participant data
      * @param workshop $workshop workshop record
      * @param array $peers           objects with properties to display picture and fullname
      * @return string html code
      */
-    protected function reviewers_of_participant(stdClass $user, workshop $workshop, &$peers) {
+    protected function reviewers_of_participant(object $user, workshop $workshop, &$peers) {
         $o = '';
         if (is_null($user->submissionid)) {
             $o .= $this->output->output_tag('span', array('class' => 'info'), get_string('nothingtoreview', 'workshop'));
@@ -166,12 +166,12 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
     /**
      * Returns information about the current reviewees of the given participant and a selector do add new one
      *
-     * @param stdClass $user         participant data
+     * @param object $user         participant data
      * @param workshop $workshop workshop record
      * @param array $peers           objects with properties to display picture and fullname
      * @return string html code
      */
-    protected function reviewees_of_participant(stdClass $user, workshop $workshop, &$peers) {
+    protected function reviewees_of_participant(object $user, workshop $workshop, &$peers) {
         $o = '';
         if (is_null($user->submissionid)) {
             $o .= $this->output->container(get_string('withoutsubmission', 'workshop'), 'info');

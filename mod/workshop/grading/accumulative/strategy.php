@@ -124,7 +124,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
      */
     protected function prepare_form_fields(array $raw) {
 
-        $formdata = new stdClass();
+        $formdata = new object();
         $key = 0;
         foreach ($raw as $dimension) {
             $formdata->{'dimensionid__idx_' . $key}             = $dimension->id; // master id, not the local one!
@@ -149,7 +149,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
      * @param object $data Raw data returned by the dimension editor form
      * @return void
      */
-    public function save_edit_strategy_form(stdClass $data) {
+    public function save_edit_strategy_form(object $data) {
         global $DB, $PAGE;
 
         if (!isset($data->strategyname) || ($data->strategyname != $this->name())) {
@@ -227,15 +227,15 @@ class workshop_accumulative_strategy implements workshop_strategy {
      * @param object $raw Raw data returned by mform
      * @return array Array of objects to be inserted/updated in DB
      */
-    protected function prepare_database_fields(stdClass $raw) {
+    protected function prepare_database_fields(object $raw) {
         global $PAGE;
 
-        $cook                       = new stdClass();   // to be returned
+        $cook                       = new object();   // to be returned
         $cook->forms                = array();          // to be stored in {workshop_forms}
         $cook->forms_accumulative   = array();          // to be stored in {workshop_forms_accumulative}
 
         for ($i = 0; $i < $raw->norepeats; $i++) {
-            $cook->forms_accumulative[$i] = new stdClass();
+            $cook->forms_accumulative[$i] = new object();
 
             $fieldname = 'description__idx_'.$i.'_editor';
             $cook->forms_accumulative[$i]->description_editor   = isset($raw->$fieldname) ? $raw->$fieldname : null;
@@ -244,7 +244,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
             $fieldname = 'weight__idx_'.$i;
             $cook->forms_accumulative[$i]->weight               = isset($raw->$fieldname) ? $raw->$fieldname : null;
 
-            $cook->forms[$i]                = new stdClass();
+            $cook->forms[$i]                = new object();
             $cook->forms[$i]->id            = isset($raw->{'dimensionid__idx_'.$i}) ? $raw->{'dimensionid__idx_'.$i} : null;
             $cook->forms[$i]->workshopid    = $this->workshop->id;
             $cook->forms[$i]->sort          = $i + 1;
@@ -259,7 +259,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
      * @param moodle_url $actionurl URL of form handler, defaults to auto detect the current url
      * @param string $mode          Mode to open the form in: preview/assessment
      */
-    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdClass $assessment=null) {
+    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', object $assessment=null) {
         global $CFG;    // needed because the included files use it
         global $PAGE;
         global $DB;
@@ -277,7 +277,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
         if ('assessment' === $mode and !empty($assessment)) {
             // load the previously saved assessment data
             $grades = $this->reindex_grades_by_dimension($this->get_current_assessment_data($assessment));
-            $current = new stdClass();
+            $current = new object();
             for ($i = 0; $i < $nodimensions; $i++) {
                 $dimid = $fields->{'dimensionid__idx_'.$i};
                 if (isset($grades[$dimid])) {
@@ -310,7 +310,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
      * @param object $data       Raw data as returned by the assessment form
      * @return float|null        Percentual grade for submission as suggested by the peer
      */
-    public function save_assessment(stdClass $assessment, stdClass $data) {
+    public function save_assessment(object $assessment, object $data) {
         global $DB;
 
         if (!isset($data->strategyname) || ($data->strategyname != $this->name())) {
@@ -321,7 +321,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
             throw coding_expection('You did not send me the number of assessment dimensions to process');
         }
         for ($i = 0; $i < $data->nodims; $i++) {
-            $grade = new stdClass();
+            $grade = new object();
             $grade->id = $data->{'gradeid__idx_' . $i};
             $grade->assessmentid = $assessment->id;
             $grade->dimensionid = $data->{'dimensionid__idx_' . $i};
@@ -345,7 +345,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
      * @param object $assessment Assessment record
      * @return array of filtered records from the table workshop_grades
      */
-    protected function get_current_assessment_data(stdClass $assessment) {
+    protected function get_current_assessment_data(object $assessment) {
         global $DB;
 
         // fetch all grades accociated with this assessment
@@ -377,10 +377,10 @@ class workshop_accumulative_strategy implements workshop_strategy {
     /**
      * Aggregates the assessment form data and sets the grade for the submission given by the peer
      *
-     * @param stdClass $assessment Assessment record
+     * @param object $assessment Assessment record
      * @return float|null          Percentual grade for submission as suggested by the peer
      */
-    protected function update_peer_grade(stdClass $assessment) {
+    protected function update_peer_grade(object $assessment) {
         $grades     = $this->get_current_assessment_data($assessment);
         $suggested  = $this->calculate_peer_grade($grades);
         if (!is_null($suggested)) {

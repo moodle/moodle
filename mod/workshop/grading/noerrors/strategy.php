@@ -85,7 +85,7 @@ class workshop_noerrors_strategy extends workshop_base_strategy {
      * @param object $data Raw data returned by the dimension editor form
      * @return void
      */
-    public function save_form(stdClass $data) {
+    public function save_form(object $data) {
         global $DB;
 
         if (!isset($data->strategyname) || ($data->strategyname != $this->name())) {
@@ -169,12 +169,12 @@ class workshop_noerrors_strategy extends workshop_base_strategy {
      * @param object $raw Raw data returned by mform
      * @return array Array of objects to be inserted/updated in DB
      */
-    protected function _cook_form_data(stdClass $raw) {
+    protected function _cook_form_data(object $raw) {
 
         $cook = array();
 
         for ($k = 0; $k < $raw->numofdimensions; $k++) {
-            $cook[$k]                    = new stdClass();
+            $cook[$k]                    = new object();
             $cook[$k]->id                = isset($raw->dimensionid[$k]) ? $raw->dimensionid[$k] : null;
             $cook[$k]->workshopid        = $this->workshop->id;
             $cook[$k]->sort              = $k + 1;

@@ -59,7 +59,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      * @param string $message to display
      * @return string html
      */
-    public function status_message(stdClass $message) {
+    public function status_message(object $message) {
         if (empty($message->text)) {
             return '';
         }
@@ -86,7 +86,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      * @return string html to be echoed
      */
     public function allocation_init_result($result='') {
-        $msg = new stdClass();
+        $msg = new object();
         if ($result === 'WORKSHOP_ALLOCATION_RANDOM_ERROR') {
             $msg = (object)array('text' => get_string('randomallocationerror', 'workshop'), 'sty' => 'error');
         } else {
@@ -116,12 +116,12 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      *
      * By default, this looks similar to a forum post.
      *
-     * @param stdClass $submission     The submission record
+     * @param object $submission     The submission record
      * @param bool     $showauthorname Should the author name be displayed
-     * @param stdClass $author         If author's name should be displayed, this object contains the author data
+     * @param object $author         If author's name should be displayed, this object contains the author data
      * @return string html to be echoed
      */
-    public function submission_full(stdClass $submission, $showauthorname=false, stdClass $author=null) {
+    public function submission_full(object $submission, $showauthorname=false, object $author=null) {
         global $CFG;
 
         $o  = '';    // output code
@@ -142,7 +142,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
             $userpic    = $this->output->user_picture($userpic);
             $userurl    = new moodle_url($CFG->wwwroot . '/user/view.php',
                                             array('id' => $author->id, 'course' => $this->page->course->id));
-            $a          = new stdClass();
+            $a          = new object();
             $a->name    = fullname($author);
             $a->url     = $userurl->out();
             $byfullname = get_string('byfullname', 'workshop', $a);
@@ -176,11 +176,11 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      * If format==html, then format a html string. If format==text, then format a text-only string.
      * Otherwise, returns html for non-images and html to display the image inline.
      *
-     * @param stdClass $submission Submission record
+     * @param object $submission Submission record
      * @param string format        The format of the returned string
      * @return string              HTML code to be echoed
      */
-    public function submission_attachments(stdClass $submission, $format=null) {
+    public function submission_attachments(object $submission, $format=null) {
         global $CFG;
         require_once($CFG->libdir.'/filelib.php');
 

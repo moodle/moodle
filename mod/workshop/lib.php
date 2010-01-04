@@ -121,7 +121,7 @@ function workshop_delete_instance($id) {
  * @todo Finish documenting this function
  */
 function workshop_user_outline($course, $user, $mod, $workshop) {
-    $return = new stdClass;
+    $return = new object();
     $return->time = 0;
     $return->info = '';
     return $return;
@@ -553,23 +553,23 @@ function workshop_get_example_modes() {
 function workshop_get_comparison_levels() {
     $levels = array();
 
-    $levels[WORKSHOP_COMPARISON_VERYHIGH] = new stdClass;
+    $levels[WORKSHOP_COMPARISON_VERYHIGH] = new object();
     $levels[WORKSHOP_COMPARISON_VERYHIGH]->name = get_string('comparisonveryhigh', 'workshop');
     $levels[WORKSHOP_COMPARISON_VERYHIGH]->value = 5.00;
 
-    $levels[WORKSHOP_COMPARISON_HIGH] = new stdClass;
+    $levels[WORKSHOP_COMPARISON_HIGH] = new object();
     $levels[WORKSHOP_COMPARISON_HIGH]->name = get_string('comparisonhigh', 'workshop');
     $levels[WORKSHOP_COMPARISON_HIGH]->value = 3.00;
 
-    $levels[WORKSHOP_COMPARISON_NORMAL] = new stdClass;
+    $levels[WORKSHOP_COMPARISON_NORMAL] = new object();
     $levels[WORKSHOP_COMPARISON_NORMAL]->name = get_string('comparisonnormal', 'workshop');
     $levels[WORKSHOP_COMPARISON_NORMAL]->value = 2.50;
 
-    $levels[WORKSHOP_COMPARISON_LOW] = new stdClass;
+    $levels[WORKSHOP_COMPARISON_LOW] = new object();
     $levels[WORKSHOP_COMPARISON_LOW]->name = get_string('comparisonlow', 'workshop');
     $levels[WORKSHOP_COMPARISON_LOW]->value = 1.67;
 
-    $levels[WORKSHOP_COMPARISON_VERYLOW] = new stdClass;
+    $levels[WORKSHOP_COMPARISON_VERYLOW] = new object();
     $levels[WORKSHOP_COMPARISON_VERYLOW]->name = get_string('comparisonverylow', 'workshop');
     $levels[WORKSHOP_COMPARISON_VERYLOW]->value = 1.00;
 

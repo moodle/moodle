@@ -34,8 +34,8 @@ if ($preview = optional_param('preview', 0, PARAM_INT)) {
     $cm         = get_coursemodule_from_id('workshop', $preview, 0, false, MUST_EXIST);
     $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
     $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
-    $submission = new stdClass();
-    $assessment = new stdClass();
+    $submission = new object();
+    $assessment = new object();
 
 } else {
     $mode       = 'assessment';
