@@ -103,7 +103,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                     // do not display allocation debugging messages
                     continue;
                 }
-                $o .= $this->output->output_tag('li', array('class' => $class), $text);
+                $o .= $this->output->output_tag('li', array('class' => $class), $text) . "\n";
             }
             $o .= $this->output->output_end_tag('ul');
             $o .= $this->output->continue_button($this->page->url->out());

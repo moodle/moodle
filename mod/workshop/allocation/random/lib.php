@@ -366,8 +366,8 @@ class workshop_random_allocator implements workshop_allocator {
         } else {
             throw new moodle_exception('unknownusertypepassed', 'workshop');
         }
-        $o[] = 'debug::circle links = ' . json_encode($circlelinks);
-        $o[] = 'debug::square links = ' . json_encode($squarelinks);
+        // $o[] = 'debug::circle links = ' . json_encode($circlelinks);
+        // $o[] = 'debug::square links = ' . json_encode($squarelinks);
         $squareworkload         = array();  // individual workload indexed by squareid
         $squaregroupsworkload   = array();    // group workload indexed by squaregroupid
         foreach ($allsquares as $squaregroupid => $squares) {
@@ -382,8 +382,8 @@ class workshop_random_allocator implements workshop_allocator {
             $squaregroupsworkload[$squaregroupid] /= count($squares);
         }
         unset($squaregroupsworkload[0]);    // [0] is not real group, it contains all users
-        $o[] = 'debug::square workload = ' . json_encode($squareworkload);
-        $o[] = 'debug::square group workload = ' . json_encode($squaregroupsworkload);
+        // $o[] = 'debug::square workload = ' . json_encode($squareworkload);
+        // $o[] = 'debug::square group workload = ' . json_encode($squaregroupsworkload);
         $gmode = groups_get_activity_groupmode($this->workshop->cm, $this->workshop->course);
         if (SEPARATEGROUPS == $gmode) {
             // shuffle all groups but [0] which means "all users"
@@ -394,7 +394,7 @@ class workshop_random_allocator implements workshop_allocator {
             $circlegroups = array(0);
         }
         $this->shuffle_assoc($circlegroups);
-        $o[] = 'debug::circle groups = ' . json_encode($circlegroups);
+        // $o[] = 'debug::circle groups = ' . json_encode($circlegroups);
         foreach ($circlegroups as $circlegroupid) {
             $o[] = 'debug::processing circle group id ' . $circlegroupid;
             $circles = $allcircles[$circlegroupid];
@@ -437,7 +437,7 @@ class workshop_random_allocator implements workshop_allocator {
                     $o[] = 'debug::indent::next square should be from group id ' . $targetgroup;
                     // now, choose a square from the target group
                     $trysquares = array_intersect_key($squareworkload, $allsquares[$targetgroup]);
-                    $o[] = 'debug::indent::individual workloads in this group are ' . json_encode($trysquares);
+                    // $o[] = 'debug::indent::individual workloads in this group are ' . json_encode($trysquares);
                     unset($trysquares[$circleid]);  // can't allocate to self
                     $trysquares = array_diff_key($trysquares, array_flip($circlelinks[$circleid])); // can't re-allocate the same
                     $targetsquare = $this->get_element_with_lowest_workload($trysquares);
