@@ -69,17 +69,17 @@ class mod_workshop_mod_form extends moodleform_mod {
 
         $label = get_string('useexamples', 'workshop');
         $text = get_string('useexamplesdesc', 'workshop');
-        $mform->addElement('advcheckbox', 'useexamples', $label, $text);
+        $mform->addElement('checkbox', 'useexamples', $label, $text);
         $mform->setHelpButton('useexamples', array('useexamples', $label, 'workshop'));
 
         $label = get_string('usepeerassessment', 'workshop');
         $text = get_string('usepeerassessmentdesc', 'workshop');
-        $mform->addElement('advcheckbox', 'usepeerassessment', $label, $text);
+        $mform->addElement('checkbox', 'usepeerassessment', $label, $text);
         $mform->setHelpButton('usepeerassessment', array('usepeerassessment', $label, 'workshop'));
 
         $label = get_string('useselfassessment', 'workshop');
         $text = get_string('useselfassessmentdesc', 'workshop');
-        $mform->addElement('advcheckbox', 'useselfassessment', $label, $text);
+        $mform->addElement('checkbox', 'useselfassessment', $label, $text);
         $mform->setHelpButton('useselfassessment', array('useselfassessment', $label, 'workshop'));
 
         // Grading settings -----------------------------------------------------------
@@ -136,7 +136,7 @@ class mod_workshop_mod_form extends moodleform_mod {
 
         $label = get_string('latesubmissions', 'workshop');
         $text = get_string('latesubmissionsdesc', 'workshop');
-        $mform->addElement('advcheckbox', 'latesubmissions', $label, $text);
+        $mform->addElement('checkbox', 'latesubmissions', $label, $text);
         $mform->setHelpButton('latesubmissions', array('latesubmissions', $label, 'workshop'));
         $mform->setAdvanced('latesubmissions');
 
