@@ -64,27 +64,11 @@ if ($mform->is_cancelled()) {
     }
 }
 
-// build the navigation and the header
-$navlinks = array();
-$navlinks[] = array('name' => get_string('modulenameplural', 'workshop'),
-                    'link' => "index.php?id=$course->id",
-                    'type' => 'activity');
-$navlinks[] = array('name' => format_string($workshop->name),
-                    'link' => "view.php?id=$cm->id",
-                    'type' => 'activityinstance');
-$navlinks[] = array('name' => get_string('editingassessmentform', 'workshop'),
-                    'link' => '',
-                    'type' => 'title');
-$navigation = build_navigation($navlinks);
+// Output starts here
 
-// OUTPUT STARTS HERE
-// todo use outputlib
-
-print_header_simple(format_string($workshop->name), '', $navigation, '', '', true, '');
-
-print_heading(get_string('strategy' . $workshop->strategy, 'workshop'));
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('strategy' . $workshop->strategy, 'workshop'));
 
 $mform->display();
 
-/// Finish the page
-print_footer($course);
+echo $OUTPUT->footer();
