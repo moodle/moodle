@@ -55,7 +55,7 @@ class testable_workshop_random_allocator extends workshop_random_allocator {
         return parent::get_element_with_lowest_workload($workload);
     }
     public function filter_current_assessments(&$newallocations, $assessments) {
-        return parent::filter_current_assessments(&$newallocations, $assessments);
+        return parent::filter_current_assessments($newallocations, $assessments);
     }
 }
 
