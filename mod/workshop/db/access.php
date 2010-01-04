@@ -109,6 +109,17 @@ $mod_workshop_capabilities = array(
         )
     ),
 
+    // Ability to publish submissions, it est make them available when workshop is closed
+    'mod/workshop:publishsubmissions' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+
     // Ability to identify the author of the work that has been allocated to them for a review
     // Reviewers without this capability will see the author as Anonymous
     'mod/workshop:viewauthornames' => array(
@@ -139,6 +150,19 @@ $mod_workshop_capabilities = array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+
+    // Ability to view published submission when the workshop is closed. Applies to the user's group only
+    // or - if the user is allowed to access all groups - applies to any submission
+    'mod/workshop:viewpublishedsubmissions' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
