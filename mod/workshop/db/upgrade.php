@@ -38,6 +38,29 @@ function xmldb_workshop_upgrade($oldversion) {
     $dbman = $DB->get_manager();
     $result = true;
 
+    //===== 1.9.0 upgrade line ======//
+
+    /**
+     * the following blocks contain all the db/upgrade.php logic from MOODLE_19_STABLE branch
+     * so that it does not matter if we are upgrading from 1.9.0, 1.9.3 or 1.9.whatever
+     */
+
+    if ($result && $oldversion < 2007101510) {
+        $orphans = $DB->get_records_sql('SELECT wa.id
+                                           FROM {workshop_assessments} wa
+                                      LEFT JOIN {workshop_submissions} ws ON wa.submissionid = ws.id
+                                          WHERE ws.id IS NULL');
+        if (!empty($orphans)) {
+            echo $OUTPUT->notification('Orphaned assessment records found - cleaning...');
+            foreach (array_keys($orphans) as $waid) {
+                $DB->delete_records('workshop_assessments', 'id', $waid);
+            }
+        }
+        upgrade_mod_savepoint($result, 2007101510, 'workshop');
+    }
+
+    //===== end of 1.9.0 upgrade line ======//
+
     /**
      * Upgrading from workshop 1.9.x - big things going to happen now...
      * The migration procedure is divided into smaller chunks using incremental
