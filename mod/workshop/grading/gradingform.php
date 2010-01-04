@@ -43,9 +43,6 @@ class workshop_edit_strategy_form extends moodleform {
     /** strategy logic instance that this class is editor of */ 
     protected $strategy;
 
-    /** number of current dimensions loaded from DB */
-    protected $nocurrentdims;
-
     /**
      * Add the fields that are common for all grading strategies.
      *
@@ -61,8 +58,7 @@ class workshop_edit_strategy_form extends moodleform {
         global $CFG;
 
         $mform = $this->_form;
-        $this->strategy         = $this->_customdata['strategy'];
-        $this->nocurrentdims    = $this->_customdata['nocurrentdims']; 
+        $this->strategy = $this->_customdata['strategy'];
 
         $mform->addElement('hidden', 'strategyname', $this->strategy->name);
 
@@ -90,34 +86,5 @@ class workshop_edit_strategy_form extends moodleform {
     protected function definition_inner(&$mform) {
         // By default, do nothing.
     }
-
-
-    /**
-     * Set the form data before it is displayed
-     *
-     * Strategy plugins should provide the list of fields to be mapped from 
-     * DB record to the form fields in their map_dimension_fieldnames() method
-     * 
-     * @param object $formdata Should contain the array $formdata->dimensions
-     * @access public
-     * @return void
-     */
-    public function set_data($formdata) {
-
-        if (is_array($formdata->dimensions) && !empty($formdata->dimensions)) {
-            // $formdata->dimensions must be array of dimension records loaded from database
-            $key = 0;
-            $default_values = array();
-            foreach ($formdata->dimensions as $dimension) {
-                foreach ($this->strategy->map_dimension_fieldnames() as $fielddbname => $fieldformname) {
-                    $default_values[$fieldformname . '[' . $key . ']'] = $dimension->$fielddbname;
-                }
-                $key++;
-            }
-            $formdata = (object)((array)$formdata + $default_values);
-        }
-        parent::set_data($formdata);
-    }
-
 
 }

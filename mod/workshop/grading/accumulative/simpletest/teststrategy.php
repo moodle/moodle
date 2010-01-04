@@ -35,9 +35,14 @@ require_once($CFG->dirroot . '/mod/workshop/grading/accumulative/strategy.php');
  */
 class testable_workshop_accumulative_strategy extends workshop_accumulative_strategy {
 
-    public function cook_form_data($raw) {
-        return parent::cook_form_data($raw);
+    public function _cook_dimension_records(array $raw) {
+        return parent::_cook_dimension_records($raw);
     }
+
+    public function _cook_form_data(stdClass $raw) {
+        return parent::_cook_form_data($raw);
+    }
+
 }
 
 
@@ -49,8 +54,11 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
     /** instance of the strategy logic class being tested */
     protected $strategy;
 
-    /** this emulates data returned by get_data() of a submitted strategy edit form */
-    protected $rawdata;
+    /** this emulates dimensions data returned by get_data() of a submitted strategy edit form */
+    protected $rawform;
+
+    /** this emulates dimensions data stored in database to be loaded into strategy edit form */
+    protected $rawdb;
 
     /** setup testing environment */
     public function setUp() {
@@ -63,24 +71,69 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
 
         // emulate a form with 5 dimensions. The first three are already in DB, the forth is new and the
         // fifth is left empty
-        $this->rawdata = new stdClass;
-        $this->rawdata->workshopid          = 42;
-        $this->rawdata->strategy            = 'accumulative';
-        $this->rawdata->numofdimensions     = 5;
-        $this->rawdata->dimensionid         = array(0 => 3,       1=> 2,         2 => 1,       3 => 0,       4 => 0);
-        $this->rawdata->description         = array(0 => 'First', 1 => 'Second', 2 => 'Third', 3 => 'Forth', 4 => '');
-        $this->rawdata->descriptionformat   = array(0 => 1,       1 => 1,        2 => 1,       3 => 1,       4 => 1);
-        $this->rawdata->grade               = array(0 => 10,      1 => 5,        2 => 5,       3 => 2,       4 => 10);
-        $this->rawdata->weight              = array(0 => 1,       1 => 1,        2 => 2,       3 => 2,       4 => 1);
+        $this->rawform = new stdClass;
+        $this->rawform->workshopid          = 42;
+        $this->rawform->strategy            = 'accumulative';
+        $this->rawform->numofdimensions     = 5;
+        $this->rawform->dimensionid         = array(0 => 3,       1=> 2,         2 => 1,       3 => 0,       4 => 0);
+        $this->rawform->description         = array(0 => 'First', 1 => 'Second', 2 => 'Third', 3 => 'Forth', 4 => '');
+        $this->rawform->descriptionformat   = array(0 => 1,       1 => 1,        2 => 1,       3 => 1,       4 => 1);
+        $this->rawform->grade               = array(0 => 10,      1 => 5,        2 => 5,       3 => 2,       4 => 10);
+        $this->rawform->weight              = array(0 => 1,       1 => 1,        2 => 2,       3 => 2,       4 => 1);
+
+        // emulate two assessment dimensions being stored in database
+        $this->rawdb = array();
+        $this->rawdb[3] = new stdClass;
+        $this->rawdb[3]->id                 = 3;
+        $this->rawdb[3]->workshopid         = 42;
+        $this->rawdb[3]->sort               = 1;
+        $this->rawdb[3]->description        = 'First';
+        $this->rawdb[3]->descriptionformat  = 1;
+        $this->rawdb[3]->grade              = 20;
+        $this->rawdb[3]->weight             = 16;
+
+        $this->rawdb[7] = new stdClass;
+        $this->rawdb[7]->id                 = 7;
+        $this->rawdb[7]->workshopid         = 42;
+        $this->rawdb[7]->sort               = 2;
+        $this->rawdb[7]->description        = 'Second';
+        $this->rawdb[7]->descriptionformat  = 1;
+        $this->rawdb[7]->grade              = 10;
+        $this->rawdb[7]->weight             = 1;
+
     }
+
 
     public function tearDown() {
         $this->strategy = null;
+        $this->rawform  = null;
+        $this->rawdb    = null;
     }
 
+    
+    public function test_cook_dimension_records() {
+        
+        $cooked = $this->strategy->_cook_dimension_records($this->rawdb);
+        $this->assertIsA($cooked, 'stdClass');
+        $cooked = (array)$cooked;
+
+        $this->assertEqual($cooked['dimensionid[0]'], 3);
+        $this->assertEqual($cooked['description[0]'], 'First');
+        $this->assertEqual($cooked['descriptionformat[0]'], 1);
+        $this->assertEqual($cooked['grade[0]'], 20);
+        $this->assertEqual($cooked['weight[0]'], 16);
+
+        $this->assertEqual($cooked['dimensionid[1]'], 7);
+        $this->assertEqual($cooked['description[1]'], 'Second');
+        $this->assertEqual($cooked['descriptionformat[1]'], 1);
+        $this->assertEqual($cooked['grade[1]'], 10);
+        $this->assertEqual($cooked['weight[1]'], 1);
+    }
+
+    
     public function test_cook_form_data() {
 
-        $cooked = $this->strategy->cook_form_data($this->rawdata);
+        $cooked = $this->strategy->_cook_form_data($this->rawform);
         $this->assertIsA($cooked, 'Array');
         $this->assertEqual($cooked[2], (object)array(
                             'id'                => 1,

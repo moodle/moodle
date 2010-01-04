@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Strategy interface defines all methods that strategy subplugins has to implemens
  */
-interface workshop_strategy_interface {
+interface workshop_strategy {
 
     /**
      * Factory method returning an instance of an assessment form editor class
@@ -38,39 +38,51 @@ interface workshop_strategy_interface {
      * dimensions that will be passed by set_data() must be already known here becase the
      * definition() of the form has to know the number and it is called before set_data().
      *
-     * @param string $actionurl URL of the action handler script
-     * @param int $nocurrentdims Number of current dimensions to be set later by set_data()
+     * @param string $actionurl URL of the action handler script, defaults to auto detect
      * @access public
      * @return object The instance of the assessment form editor class
      */
-    public function get_edit_strategy_form($actionurl, $nocurrentdims=0);
+    public function get_edit_strategy_form($actionurl=null);
 
 
     /**
-     * Load the assessment dimensions from database
+     * Load the assessment dimensions and other grading form elements
      * 
      * Assessment dimension (also know as assessment element) represents one aspect or criterion 
      * to be evaluated. Each dimension consists of a set of form fields. Strategy-specific information
      * are saved in workshop_forms_{strategyname} tables.
+     * The returned object is passed to the mform set_data() method.
      *
      * @access public
-     * @return array Array of database records
+     * @return object Object representing the form fields values
      */
-    public function load_dimensions();
+    public function load_grading_form();
 
 
     /**
-     * Save the assessment dimensions into database
+     * Save the assessment dimensions and other grading form elements
      *
      * Assessment dimension (also know as assessment element) represents one aspect or criterion 
      * to be evaluated. Each dimension consists of a set of form fields. Strategy-specific information
      * are saved in workshop_forms_{strategyname} tables.
      *
      * @access public
+     * @param object $data Raw data as returned by the form editor
      * @return void
      */
-    public function save_dimensions($data);
+    public function save_grading_form(stdClass $data);
+
+
+    /**
+     * Return the number of assessment dimensions defined in the instance of the strategy
+     * 
+     * @return int Zero or positive integer
+     */
+    public function get_number_of_dimensions();
+
 }
+
+
 
 /**
  * Base class for grading strategy logic
@@ -78,13 +90,16 @@ interface workshop_strategy_interface {
  * This base class implements the default behaviour that should be suitable for the most
  * of simple grading strategies.
  */
-class workshop_strategy implements workshop_strategy_interface {
+abstract class workshop_base_strategy implements workshop_strategy {
 
     /** the name of the strategy */
     public $name;
 
     /** the parent workshop instance */
     protected $workshop;
+
+    /** number of dimensions defined in database */
+    protected $nodimensions;
 
     /**
      * Constructor 
@@ -95,8 +110,9 @@ class workshop_strategy implements workshop_strategy_interface {
      */
     public function __construct($workshop) {
 
-        $this->name     = $workshop->strategy;
-        $this->workshop = $workshop;
+        $this->name         = $workshop->strategy;
+        $this->workshop     = $workshop;
+        $this->nodimensions = null;
     }
 
 
@@ -105,8 +121,10 @@ class workshop_strategy implements workshop_strategy_interface {
      *
      * By default, the class is defined in grading/{strategy}/gradingform.php and is named
      * workshop_edit_{strategy}_strategy_form
+     *
+     * @param $actionurl URL of form handler, defaults to auto detect the current url
      */
-    public function get_edit_strategy_form($actionurl, $nocurrentdims=0) {
+    public function get_edit_strategy_form($actionurl=null) {
         global $CFG;    // needed because the included files use it
     
         $strategyform = dirname(__FILE__) . '/' . $this->name . '/gradingform.php';
@@ -120,8 +138,6 @@ class workshop_strategy implements workshop_strategy_interface {
         $customdata = new stdClass;
         $customdata = array(
                         'strategy'      => $this,
-                        'nocurrentdims' => $nocurrentdims,
-
                         );
         $attributes = array('class' => 'editstrategyform');
 
@@ -131,92 +147,13 @@ class workshop_strategy implements workshop_strategy_interface {
 
 
     /**
-     * Load the assessment dimensions from database
+     * By default, the number of loaded dimensions is set by load_grading_form() 
      * 
-     * This base method just fetches all relevant records from the main strategy form table.
-     *
-     * @uses $DB
      * @access public
      * @return void
      */
-    public function load_dimensions() {
-        global $DB;
-
-        return $DB->get_records('workshop_forms_' . $this->name, array('workshopid' => $this->workshop->id), 'sort');
-    }
-
-
-    /**
-     * Save the assessment dimensions into database
-     *
-     * This base method saves data into the main strategy form table. If the record->id is null or zero,
-     * new record is created. If the record->id is not empty, the existing record is updated. Records with
-     * empty 'description' field are not saved.
-     * The passed data object are the raw data returned by the get_data(). They must be cooked here.
-     *
-     * @uses $DB
-     * @param object $data Raw data returned by the dimension editor form
-     * @access public
-     * @return void
-     */
-    public function save_dimensions($data) {
-        global $DB;
-        
-        if (!isset($data->strategyname) || ($data->strategyname != $this->name)) {
-            // the workshop strategy has changed since the form was opened for editing
-            throw new moodle_exception('strategyhaschanged', 'workshop');
-        }
-
-        $data = $this->cook_form_data($data);
-
-        foreach ($data as $record) {
-            if (empty($record->description)) {
-                continue;
-            }
-            if (empty($record->id)) {
-                // new field
-                $record->id = $DB->insert_record('workshop_forms_' . $this->name, $record);
-            } else {
-                // exiting field
-                $DB->update_record('workshop_forms_' . $this->name, $record);
-            }
-        }
-    }
-
-
-    /**
-     * The default implementation transposes the returned structure
-     *
-     * It automatically adds some columns into every record.
-     * The sorting is done by the order of the returned array and starts with 1.
-     * 
-     * @param object $raw 
-     * @return void
-     */
-    protected function cook_form_data($raw) {
-
-        $cook = array();
-        foreach (array_flip($this->map_dimension_fieldnames()) as $formfield => $dbfield) {
-            for ($k = 0; $k < $raw->numofdimensions; $k++) {
-                $cook[$k]->{$dbfield}   = isset($raw->{$formfield}[$k]) ? $raw->{$formfield}[$k] : null;
-                $cook[$k]->descriptionformat    = FORMAT_HTML;
-                $cook[$k]->sort                 = $k + 1;
-                $cook[$k]->workshopid           = $this->workshop->id;
-            }
-        }
-        return $cook;
-    }
-
-
-    /**
-     * Return the mapping of the db fields to the form fields for every assessment dimension
-     *
-     * This must be public because it is also used by the dimensions editor class.
-     * 
-     * @return array Array ['field_db_name' => 'field_form_name']
-     */
-    public function map_dimension_fieldnames() {
-        return array();
+    public function get_number_of_dimensions() {
+        return $this->nodimensions;
     }
 
 

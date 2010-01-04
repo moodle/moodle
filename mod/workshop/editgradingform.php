@@ -64,21 +64,21 @@ if (file_exists($strategylib)) {
 $classname = 'workshop_' . $workshop->strategy . '_strategy';
 $strategy = new $classname($workshop);
 
-// load the dimensions from the database
-$dimensions = $strategy->load_dimensions();
+// load the assessment form definition from the database
+// this must be called before get_edit_strategy_form() where we have to know
+// the number of repeating fieldsets
+$formdata = $strategy->load_grading_form();
 
 // load the form to edit the grading strategy dimensions
-$mform = $strategy->get_edit_strategy_form($selfurl, count($dimensions));
+$mform = $strategy->get_edit_strategy_form($selfurl);
 
 // initialize form data
-$formdata = new stdClass;
-$formdata->dimensions = $dimensions;
 $mform->set_data($formdata);
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 } elseif ($data = $mform->get_data()) {
-    $strategy->save_dimensions($data);
+    $strategy->save_grading_form($data);
     if (isset($data->saveandclose)) {
         redirect($returnurl);
     } else {

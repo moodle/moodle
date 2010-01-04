@@ -85,7 +85,7 @@ $mform = new workshop_submission_form(null, array('current' => $submission, 'cm'
                                                  'dataoptions' => $dataoptions, 'attachmentoptions'=>$attachmentoptions));
 
 if ($mform->is_cancelled()){
-    die();
+    die(); // todo
     if ($id){
         redirect("view.php?id=$cm->id");
     } else {
