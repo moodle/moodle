@@ -46,10 +46,6 @@ $settings->add(new admin_setting_configselect('workshop/maxbytes', get_string('m
 $settings->add(new admin_setting_configselect('workshop/strategy', get_string('strategy', 'workshop'),
                     get_string('configstrategy', 'workshop'), 'accumulative', workshop_get_strategies()));
 
-$options = workshop_get_anonymity_modes();
-$settings->add(new admin_setting_configselect('workshop/anonymity', get_string('anonymity', 'workshop'),
-                    get_string('configanonymity', 'workshop'), WORKSHOP_ANONYMITY_NONE, $options));
-
 $options = workshop_get_numbers_of_assessments();
 $settings->add(new admin_setting_configselect('workshop/nsassessments', get_string('nsassessments', 'workshop'),
                     get_string('confignsassessments', 'workshop'), 3, $options));

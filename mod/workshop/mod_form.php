@@ -125,13 +125,6 @@ class mod_workshop_mod_form extends moodleform_mod {
 /// Assessment settings
         $mform->addElement('header', 'assessmentsettings', get_string('assessmentsettings', 'workshop'));
 
-        $options = workshop_get_anonymity_modes();
-        $label = get_string('anonymity', 'workshop');
-        $mform->addElement('select', 'anonymity', $label, $options);
-        $mform->setDefault('anonymity', $workshopconfig->anonymity);
-        $mform->setHelpButton('anonymity', array('anonymity', $label, 'workshop'));
-        $mform->disabledIf('anonymity', 'usepeerassessment');
-
         $label = get_string('nsassessments', 'workshop');
         $options = workshop_get_numbers_of_assessments();
         $mform->addElement('select', 'nsassessments', $label, $options);
@@ -171,12 +164,6 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'agreeassessments', $label, $text);
         $mform->setHelpButton('agreeassessments', array('agreeassessments', $label, 'workshop'));
         $mform->setAdvanced('agreeassessments');
-
-        $label = get_string('hidegrades', 'workshop');
-        $text = get_string('hidegradesdesc', 'workshop');
-        $mform->addElement('advcheckbox', 'hidegrades', $label, $text);
-        $mform->setHelpButton('hidegrades', array('hidegrades', $label, 'workshop'));
-        $mform->setAdvanced('hidegrades');
 
         $label = get_string('assessmentcomps', 'workshop');
         $levels = array();

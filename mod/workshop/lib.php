@@ -33,15 +33,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The internal codes of the anonymity levels
- */
-define('WORKSHOP_ANONYMITY_NONE',       0);     /* not anonymous */
-define('WORKSHOP_ANONYMITY_AUTHORS',    1);     /* authors hidden from reviewers */
-define('WORKSHOP_ANONYMITY_REVIEWERS',  2);     /* reviewers hidden from authors */
-define('WORKSHOP_ANONYMITY_BOTH',       3);     /* fully anonymous */
-
-
-/**
  * The internal codes of the example assessment modes
  */
 define('WORKSHOP_EXAMPLES_VOLUNTARY',           0);
@@ -349,19 +340,20 @@ function workshop_get_strategies() {
 
 
 /**
- * Return an array of available anonymity modes
- *
- * @return array Array 'anonymity DB code'=>'anonymity mode name'
+ * Return an array of the localized allocation names
+ * 
+ * @access public
+ * @return array Array ['string' => 'string']
  */
-function workshop_get_anonymity_modes() {
-    
-    $modes = array();
-    $modes[WORKSHOP_ANONYMITY_NONE]      = get_string('anonymitynone', 'workshop');
-    $modes[WORKSHOP_ANONYMITY_AUTHORS]   = get_string('anonymityauthors', 'workshop');
-    $modes[WORKSHOP_ANONYMITY_REVIEWERS] = get_string('anonymityreviewers', 'workshop');
-    $modes[WORKSHOP_ANONYMITY_BOTH]      = get_string('anonymityboth', 'workshop');
+function workshop_get_allocations() {
 
-    return $modes;
+    $installed = get_list_of_plugins('mod/workshop/allocation');
+    $forms = array();
+    foreach ($installed as $allocation) {
+        $forms[$allocation] = get_string('allocation' . $allocation, 'workshop');
+    }
+
+    return $forms;
 }
 
 
