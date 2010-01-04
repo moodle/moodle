@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20090731" COMMENT="XMLDB file for Moodle mod/workshop"
+<XMLDB PATH="mod/workshop/db" VERSION="20090804" COMMENT="XMLDB file for Moodle mod/workshop"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -21,10 +21,8 @@
         <FIELD NAME="strategy" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The type of the current grading strategy used in this workshop" PREVIOUS="gradinggrade" NEXT="nattachments"/>
         <FIELD NAME="nattachments" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of required submission attachments" PREVIOUS="strategy" NEXT="latesubmissions"/>
         <FIELD NAME="latesubmissions" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allow submitting the work after the deadline" PREVIOUS="nattachments" NEXT="maxbytes"/>
-        <FIELD NAME="maxbytes" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="100000" SEQUENCE="false" COMMENT="Maximum size of the one attached file" PREVIOUS="latesubmissions" NEXT="assesswosubmission"/>
-        <FIELD NAME="assesswosubmission" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="If a student should participate in peer assessment phase even if she has not managed to submit her own work" PREVIOUS="maxbytes" NEXT="nsassessments"/>
-        <FIELD NAME="nsassessments" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of required assessments of other students' work" PREVIOUS="assesswosubmission" NEXT="nexassessments"/>
-        <FIELD NAME="nexassessments" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="If useexamples == 1: the number of required assessments of teacher examples (0 = all, greater than 0: the number)" PREVIOUS="nsassessments" NEXT="examplesmode"/>
+        <FIELD NAME="maxbytes" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="100000" SEQUENCE="false" COMMENT="Maximum size of the one attached file" PREVIOUS="latesubmissions" NEXT="nexassessments"/>
+        <FIELD NAME="nexassessments" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="If useexamples == 1: the number of required assessments of teacher examples (0 = all, greater than 0: the number)" PREVIOUS="maxbytes" NEXT="examplesmode"/>
         <FIELD NAME="examplesmode" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = example assessments are voluntary, 1 = examples must be assessed before submission, 2 = examples are available after own submission and must be assessed before peer/self assessment phase" PREVIOUS="nexassessments" NEXT="teacherweight"/>
         <FIELD NAME="teacherweight" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="The weight of the teacher's assessments" PREVIOUS="examplesmode" NEXT="agreeassessments"/>
         <FIELD NAME="agreeassessments" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Boolean - determines if author may comment assessments and agree/disagree with it" PREVIOUS="teacherweight" NEXT="assessmentcomps"/>
@@ -92,51 +90,70 @@
         <KEY NAME="overriddenby_fk" TYPE="foreign" FIELDS="gradinggradeoverby" REFTABLE="user" REFFIELDS="id" PREVIOUS="reviewer_fk"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="workshop_grades" COMMENT="How the reviewers filled-up the grading forms, given grades and comments" PREVIOUS="workshop_assessments" NEXT="workshop_forms_nograding">
+    <TABLE NAME="workshop_grades" COMMENT="How the reviewers filled-up the grading forms, given grades and comments" PREVIOUS="workshop_assessments" NEXT="workshop_forms">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="assessmentid"/>
-        <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Part of which assessment this grade is of" PREVIOUS="id" NEXT="strategy"/>
-        <FIELD NAME="strategy" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The type of the grading strategy used for this grade" PREVIOUS="assessmentid" NEXT="dimensionid"/>
-        <FIELD NAME="dimensionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key. References dimension id in one of the grading strategy tables." PREVIOUS="strategy" NEXT="grade"/>
+        <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Part of which assessment this grade is of" PREVIOUS="id" NEXT="dimensionid"/>
+        <FIELD NAME="dimensionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key. References dimension id in one of the grading strategy tables." PREVIOUS="assessmentid" NEXT="grade"/>
         <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Given grade in the referenced assessment dimension." PREVIOUS="dimensionid" NEXT="peercomment"/>
         <FIELD NAME="peercomment" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Reviewer's comment to the grade value." PREVIOUS="grade" NEXT="peercommentformat"/>
         <FIELD NAME="peercommentformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="The format of peercomment field" PREVIOUS="peercomment"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="assessment_fk"/>
-        <KEY NAME="assessment_fk" TYPE="foreign" FIELDS="assessmentid" REFTABLE="workshop_assessments" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="assessment_fk" TYPE="foreign" FIELDS="assessmentid" REFTABLE="workshop_assessments" REFFIELDS="id" PREVIOUS="primary" NEXT="dimension_fk"/>
+        <KEY NAME="dimension_fk" TYPE="foreign" FIELDS="dimensionid" REFTABLE="workshop_forms" REFFIELDS="id" PREVIOUS="assessment_fk"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="workshop_forms_nograding" COMMENT="The assessment dimensions definitions of No grading strategy forms" PREVIOUS="workshop_grades" NEXT="workshop_forms_noerrors">
+    <TABLE NAME="workshop_forms" COMMENT="Meta table to provide unique id for every assessment dimension which is needed for file api support." PREVIOUS="workshop_grades" NEXT="workshop_forms_accumulative">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the Workshop instance where this dimension is used as a part of evaluation form." PREVIOUS="id" NEXT="sort"/>
-        <FIELD NAME="sort" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The order of the dimension in the form" PREVIOUS="workshopid" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The description of the dimension" PREVIOUS="sort" NEXT="descriptionformat"/>
-        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field" PREVIOUS="description"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Workshop ID" PREVIOUS="id" NEXT="sort"/>
+        <FIELD NAME="sort" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Defines the dimension order within the assessment form" PREVIOUS="workshopid" NEXT="strategy"/>
+        <FIELD NAME="strategy" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="Defines the target assessment form table" PREVIOUS="sort" NEXT="localid"/>
+        <FIELD NAME="localid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The foreign primary key of one of the assessment forms tables." PREVIOUS="strategy"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
         <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="workshop_forms_accumulative" COMMENT="The assessment dimensions definitions of Accumulative grading strategy forms" PREVIOUS="workshop_forms" NEXT="workshop_forms_nograding">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The description of the dimension" PREVIOUS="id" NEXT="descriptionformat"/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field" PREVIOUS="description" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="If greater than 0, then the value is maximum grade on a scale 0..grade. If lesser than 0, then its absolute value is the id of a record in scale table. If equals 0, then no grading is possible for this dimension, just commenting." PREVIOUS="descriptionformat" NEXT="weight"/>
+        <FIELD NAME="weight" TYPE="int" LENGTH="5" NOTNULL="false" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" COMMENT="The weigh of the dimension" PREVIOUS="grade"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="workshop_forms_nograding" COMMENT="The assessment dimensions definitions of No grading strategy forms" PREVIOUS="workshop_forms_accumulative" NEXT="workshop_forms_noerrors">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The description of the dimension" PREVIOUS="id" NEXT="descriptionformat"/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field" PREVIOUS="description"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
     <TABLE NAME="workshop_forms_noerrors" COMMENT="The assessment dimensions definitions of Number of errors grading strategy forms" PREVIOUS="workshop_forms_nograding" NEXT="workshop_forms_noerrors_map">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the Workshop instance where this dimension is used as a part of evaluation form." PREVIOUS="id" NEXT="sort"/>
-        <FIELD NAME="sort" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The order of the dimension in the form" PREVIOUS="workshopid" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The description of the dimension" PREVIOUS="sort" NEXT="descriptionformat"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The description of the dimension" PREVIOUS="id" NEXT="descriptionformat"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field" PREVIOUS="description" NEXT="grade0"/>
         <FIELD NAME="grade0" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="The word describing the negative evaluation (like Poor, Missing, Absent, etc.). If NULL, it defaults to a translated string False" PREVIOUS="descriptionformat" NEXT="grade1"/>
         <FIELD NAME="grade1" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="A word for possitive evaluation (like Good, Present, OK etc). If NULL, it defaults to a translated string True" PREVIOUS="grade0" NEXT="weight"/>
         <FIELD NAME="weight" TYPE="int" LENGTH="5" NOTNULL="false" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" COMMENT="Weight of this dimension" PREVIOUS="grade1"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
-        <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="workshop_forms_noerrors_map" COMMENT="This maps the number of errors to a percentual grade for submission" PREVIOUS="workshop_forms_noerrors" NEXT="workshop_forms_accumulative">
+    <TABLE NAME="workshop_forms_noerrors_map" COMMENT="This maps the number of errors to a percentual grade for submission" PREVIOUS="workshop_forms_noerrors" NEXT="workshop_forms_rubric">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
         <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the workshop" PREVIOUS="id" NEXT="nonegative"/>
@@ -148,33 +165,14 @@
         <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="workshop_forms_accumulative" COMMENT="The assessment dimensions definitions of Accumulative grading strategy forms" PREVIOUS="workshop_forms_noerrors_map" NEXT="workshop_forms_rubric">
+    <TABLE NAME="workshop_forms_rubric" COMMENT="The assessment dimensions definitions of Rubric grading strategy forms" PREVIOUS="workshop_forms_noerrors_map" NEXT="workshop_forms_rubric_levels">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the Workshop instance where this dimension is used as a part of evaluation form." PREVIOUS="id" NEXT="sort"/>
-        <FIELD NAME="sort" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The order of the dimension in the form" PREVIOUS="workshopid" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The description of the dimension" PREVIOUS="sort" NEXT="descriptionformat"/>
-        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field" PREVIOUS="description" NEXT="descriptiontrust"/>
-        <FIELD NAME="descriptiontrust" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Can the content be trusted" PREVIOUS="descriptionformat" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="If greater than 0, then the value is maximum grade on a scale 0..grade. If lesser than 0, then its absolute value is the id of a record in scale table. If equals 0, then no grading is possible for this dimension, just commenting." PREVIOUS="descriptiontrust" NEXT="weight"/>
-        <FIELD NAME="weight" TYPE="int" LENGTH="5" NOTNULL="false" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" COMMENT="The weigh of the dimension" PREVIOUS="grade"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
-        <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="workshop_forms_rubric" COMMENT="The assessment dimensions definitions of Rubric grading strategy forms" PREVIOUS="workshop_forms_accumulative" NEXT="workshop_forms_rubric_levels">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the Workshop instance where this dimension is used as a part of evaluation form." PREVIOUS="id" NEXT="sort"/>
-        <FIELD NAME="sort" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The order of the dimension in the form" PREVIOUS="workshopid" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The description of the dimension" PREVIOUS="sort" NEXT="descriptionformat"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The description of the dimension" PREVIOUS="id" NEXT="descriptionformat"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field" PREVIOUS="description"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
-        <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="workshop_forms_rubric_levels" COMMENT="The definition of rubric rating scales" PREVIOUS="workshop_forms_rubric">
