@@ -1,3 +1,0 @@
-- assessment form, dimension description - I want to have a single filearea
-  for all dimension descriptions within the given workshop. Does not work,
-  TBD with skodak
