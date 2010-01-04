@@ -241,29 +241,6 @@ case workshop::PHASE_EVALUATION:
     }
     break;
 case workshop::PHASE_CLOSED:
-    $page       = optional_param('page', 0, PARAM_INT);
-    $sortby     = optional_param('sortby', 'totalgrade', PARAM_ALPHA);
-    $sorthow    = optional_param('sorthow', 'DESC', PARAM_ALPHA);
-    $perpage    = 10;           // todo let the user modify this
-    $groups     = '';           // todo let the user choose the group
-    $PAGE->set_url(new moodle_url($PAGE->url, compact('sortby', 'sorthow', 'page')));
-    $data = $workshop->prepare_grading_report($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
-    if ($data) {
-        $showauthornames    = has_capability('mod/workshop:viewauthornames', $workshop->context);
-        $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
-
-        // prepare paging bar
-        $pagingbar              = new moodle_paging_bar();
-        $pagingbar->totalcount  = $data->totalcount;
-        $pagingbar->page        = $page;
-        $pagingbar->perpage     = $perpage;
-        $pagingbar->baseurl     = $PAGE->url;
-        $pagingbar->pagevar     = 'page';
-
-        echo $OUTPUT->paging_bar($pagingbar);
-        echo $wsoutput->grading_report($data, $showauthornames, $showreviewernames, $sortby, $sorthow);
-        echo $OUTPUT->paging_bar($pagingbar);
-    }
     break;
 default:
 }

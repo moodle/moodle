@@ -992,7 +992,7 @@ class workshop {
     public function switch_phase($newphase) {
         global $DB;
 
-        $known = $this->available_phases();
+        $known = $this->available_phases_list();
         if (!isset($known[$newphase])) {
             return false;
         }
@@ -1696,7 +1696,7 @@ class workshop {
     /**
      * @return array of available workshop phases
      */
-    protected function available_phases() {
+    protected function available_phases_list() {
         return array(
             self::PHASE_SETUP       => true,
             self::PHASE_SUBMISSION  => true,

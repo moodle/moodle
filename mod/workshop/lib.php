@@ -16,10 +16,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library of interface functions and constants for module workshop
+ * Library of functions needed by Moodle core and other subsystems
  *
- * All the core Moodle functions, neeeded to allow the module to work
- * integrated in Moodle should be placed here.
+ * All the functions neeeded by Moodle core, gradebook, file subsystem etc
+ * are placed here.
  *
  * @package   mod-workshop
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
@@ -27,6 +27,10 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+
+////////////////////////////////////////////////////////////////////////////////
+// Moodle core API                                                            //
+////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Returns the information if the module supports a feature
@@ -59,42 +63,45 @@ function workshop_supports($feature) {
  * will save a new instance and return the id number
  * of the new instance.
  *
- * @param stdClass $data An object from the form in mod_form.php
+ * @param stdClass $workshop An object from the form in mod_form.php
  * @return int The id of the newly inserted workshop record
  */
-function workshop_add_instance($data) {
+function workshop_add_instance(stdClass $workshop) {
     global $CFG, $DB;
     require_once(dirname(__FILE__) . '/locallib.php');
 
-    $data->phase        = workshop::PHASE_SETUP;
-    $data->timecreated  = time();
-    $data->timemodified = $data->timecreated;
+    $workshop->phase        = workshop::PHASE_SETUP;
+    $workshop->timecreated  = time();
+    $workshop->timemodified = $workshop->timecreated;
 
     // insert the new record so we get the id
-    $data->id = $DB->insert_record('workshop', $data);
+    $workshop->id = $DB->insert_record('workshop', $workshop);
 
     // we need to use context now, so we need to make sure all needed info is already in db
-    $cmid = $data->coursemodule;
-    $DB->set_field('course_modules', 'instance', $data->id, array('id' => $cmid));
+    $cmid = $workshop->coursemodule;
+    $DB->set_field('course_modules', 'instance', $workshop->id, array('id' => $cmid));
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
 
     // process the custom wysiwyg editors
-    if ($draftitemid = $data->instructauthorseditor['itemid']) {
-        $data->instructauthors = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructauthors',
-                0, workshop::instruction_editors_options($context), $data->instructauthorseditor['text']);
-        $data->instructauthorsformat = $data->instructauthorseditor['format'];
+    if ($draftitemid = $workshop->instructauthorseditor['itemid']) {
+        $workshop->instructauthors = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructauthors',
+                0, workshop::instruction_editors_options($context), $workshop->instructauthorseditor['text']);
+        $workshop->instructauthorsformat = $workshop->instructauthorseditor['format'];
     }
 
-    if ($draftitemid = $data->instructreviewerseditor['itemid']) {
-        $data->instructreviewers = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructreviewers',
-                0, workshop::instruction_editors_options($context), $data->instructreviewerseditor['text']);
-        $data->instructreviewersformat = $data->instructreviewerseditor['format'];
+    if ($draftitemid = $workshop->instructreviewerseditor['itemid']) {
+        $workshop->instructreviewers = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructreviewers',
+                0, workshop::instruction_editors_options($context), $workshop->instructreviewerseditor['text']);
+        $workshop->instructreviewersformat = $workshop->instructreviewerseditor['format'];
     }
 
     // re-save the record with the replaced URLs in editor fields
-    $DB->update_record('workshop', $data);
+    $DB->update_record('workshop', $workshop);
 
-    return $data->id;
+    // update gradebook item
+    workshop_grade_item_update($workshop);
+
+    return $workshop->id;
 }
 
 /**
@@ -102,37 +109,42 @@ function workshop_add_instance($data) {
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
  *
- * @param stdClass $data An object from the form in mod_form.php
+ * @param stdClass $workshop An object from the form in mod_form.php
  * @return bool success
  */
-function workshop_update_instance($data) {
+function workshop_update_instance(stdClass $workshop) {
     global $CFG, $DB;
     require_once(dirname(__FILE__) . '/locallib.php');
 
-    $data->timemodified = time();
-    $data->id = $data->instance;
+    $workshop->timemodified = time();
+    $workshop->id = $workshop->instance;
 
     // todo - if the grading strategy is being changed, we must replace all aggregated peer grades with nulls
     // todo - if maximum grades are being changed, we should probably recalculate or invalidate them
 
-    $DB->update_record('workshop', $data);
-    $context = get_context_instance(CONTEXT_MODULE, $data->coursemodule);
+    $DB->update_record('workshop', $workshop);
+    $context = get_context_instance(CONTEXT_MODULE, $workshop->coursemodule);
 
     // process the custom wysiwyg editors
-    if ($draftitemid = $data->instructauthorseditor['itemid']) {
-        $data->instructauthors = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructauthors',
-                0, workshop::instruction_editors_options($context), $data->instructauthorseditor['text']);
-        $data->instructauthorsformat = $data->instructauthorseditor['format'];
+    if ($draftitemid = $workshop->instructauthorseditor['itemid']) {
+        $workshop->instructauthors = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructauthors',
+                0, workshop::instruction_editors_options($context), $workshop->instructauthorseditor['text']);
+        $workshop->instructauthorsformat = $workshop->instructauthorseditor['format'];
     }
 
-    if ($draftitemid = $data->instructreviewerseditor['itemid']) {
-        $data->instructreviewers = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructreviewers',
-                0, workshop::instruction_editors_options($context), $data->instructreviewerseditor['text']);
-        $data->instructreviewersformat = $data->instructreviewerseditor['format'];
+    if ($draftitemid = $workshop->instructreviewerseditor['itemid']) {
+        $workshop->instructreviewers = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructreviewers',
+                0, workshop::instruction_editors_options($context), $workshop->instructreviewerseditor['text']);
+        $workshop->instructreviewersformat = $workshop->instructreviewerseditor['format'];
     }
 
     // re-save the record with the replaced URLs in editor fields
-    return $DB->update_record('workshop', $data);
+    $DB->update_record('workshop', $workshop);
+
+    // update gradebook item
+    workshop_grade_item_update($workshop);
+
+    return true;
 }
 
 /**
@@ -163,6 +175,10 @@ function workshop_delete_instance($id) {
     // ...
     // finally remove the workshop record itself
     $DB->delete_records('workshop', array('id' => $workshop->id));
+
+    // gradebook cleanup
+    grade_update('mod/workshop', $workshop->course, 'mod', 'workshop', $workshop->id, 0, null, array('deleted' => true));
+    grade_update('mod/workshop', $workshop->course, 'mod', 'workshop', $workshop->id, 1, null, array('deleted' => true));
 
     return true;
 }
@@ -287,6 +303,77 @@ function workshop_install() {
  */
 function workshop_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Gradebook API                                                              //
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Creates or updates grade items for the give workshop instance
+ *
+ * Needed by grade_update_mod_grades() in lib/gradelib.php. Also used by
+ * {@link workshop_update_grades()}.
+ *
+ * @param stdClass $workshop instance object with extra cmidnumber and modname property
+ * @param stdClass $submissiongrades data for the first grade item
+ * @param stdClass $assessmentgrades data for the second grade item
+ * @return void
+ */
+function workshop_grade_item_update(stdClass $workshop, $submissiongrades=null, $assessmentgrades=null) {
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    $a = new stdClass();
+    $a->workshopname = clean_param($workshop->name, PARAM_NOTAGS);
+
+    $item = array();
+    $item['itemname'] = get_string('gradeitemsubmission', 'workshop', $a);
+    $item['idnumber'] = $workshop->cmidnumber;
+    $item['gradetype'] = GRADE_TYPE_VALUE;
+    $item['grademax']  = $workshop->grade;
+    $item['grademin']  = 0;
+    grade_update('mod/workshop', $workshop->course, 'mod', 'workshop', $workshop->id, 0, $submissiongrades , $item);
+
+    $item = array();
+    $item['itemname'] = get_string('gradeitemassessment', 'workshop', $a);
+    $item['idnumber'] = $workshop->cmidnumber;
+    $item['gradetype'] = GRADE_TYPE_VALUE;
+    $item['grademax']  = $workshop->gradinggrade;
+    $item['grademin']  = 0;
+    grade_update('mod/workshop', $workshop->course, 'mod', 'workshop', $workshop->id, 1, $assessmentgrades, $item);
+}
+
+/**
+ * Update workshop grades in the gradebook
+ *
+ * Needed by grade_update_mod_grades() in lib/gradelib.php
+ *
+ * @param stdClass $workshop instance object with extra cmidnumber and modname property
+ * @param int $userid        update grade of specific user only, 0 means all participants
+ * @return void
+ */
+function workshop_update_grades(stdClass $workshop, $userid=0) {
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    $whereuser = $userid ? ' AND authorid = :userid' : '';
+    $params = array('workshopid' => $workshop->id, 'maxgrade' => $workshop->grade, 'userid' => $userid);
+    $sql = 'SELECT authorid, authorid AS userid, grade * :maxgrade / 100 AS rawgrade,
+                   feedbackauthor AS feedback, feedbackauthorformat AS feedbackformat,
+                   timemodified AS datesubmitted
+              FROM {workshop_submissions}
+             WHERE workshopid = :workshopid AND example=0' . $whereuser;
+    $submissiongrades = $DB->get_records_sql($sql, $params);
+
+    $whereuser = $userid ? ' AND userid = :userid' : '';
+    $params = array('workshopid' => $workshop->id, 'maxgrade' => $workshop->gradinggrade, 'userid' => $userid);
+    $sql = 'SELECT userid, gradinggrade * :maxgrade / 100 AS rawgrade
+              FROM {workshop_aggregations}
+             WHERE workshopid = :workshopid' . $whereuser;
+    $assessmentgrades = $DB->get_records_sql($sql, $params);
+
+    workshop_grade_item_update($workshop, $submissiongrades, $assessmentgrades);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
