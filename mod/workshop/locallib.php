@@ -29,6 +29,25 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+function workshop_strategy_instance($workshop) {
+    /** static variable to hold the singleton */
+    static $instance = null;
+
+    if (is_null($instance)) {
+        $strategylib = dirname(__FILE__) . '/grading/' . $workshop->strategy . '/strategy.php';
+        if (is_readable($strategylib)) {
+            require_once($strategylib);
+        } else {
+            throw new moodle_exception('missingstrategy', 'workshop');
+        }
+        $classname = 'workshop_' . $workshop->strategy . '_strategy';
+        $instance = new $classname($workshop);
+    }
+
+    return $instance;
+}
+
+
 /**
  * Return the user's submission record in the given workshop
  *

@@ -157,5 +157,37 @@ abstract class workshop_base_strategy implements workshop_strategy {
     }
 
 
+    /**
+     * Factory method returning an instance of an assessment form
+     *
+     * By default, the class is defined in grading/{strategy}/assessment_form.php and is named
+     * workshop_{strategy}_assessment_form
+     *
+     * @param string $actionurl URL of form handler, defaults to auto detect the current url
+     * @param string $mode Mode to open the form in: preview/assessment
+     */
+    public function get_assessment_form($actionurl=null, $mode='preview') {
+        global $CFG;    // needed because the included files use it
+    
+        $assessmentform = dirname(__FILE__) . '/' . $this->name . '/assessment_form.php';
+        if (is_readable($assessmentform)) {
+            require_once($assessmentform);
+        } else {
+            throw new moodle_exception('errloadingassessmentform', 'workshop');
+        }
+        $classname = 'workshop_' . $this->name . '_assessment_form';
+
+        $customdata = new stdClass;
+        $customdata = array(
+                        'strategy'  => $this,
+                        'fields'    => $this->load_form(),
+                        'mode'      => $mode,
+                        );
+        $attributes = array('class' => 'assessmentform');
+
+        return new $classname($actionurl, $customdata, 'post', '', $attributes);
+
+    }
+
 
 }

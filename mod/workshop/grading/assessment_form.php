@@ -17,7 +17,7 @@
  
  
 /**
- * This file defines a base class for all grading strategy editing forms.
+ * This file defines a base class for all assessment forms
  *
  * @package   mod-workshop
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
@@ -30,18 +30,24 @@ require_once($CFG->libdir . '/formslib.php'); // parent class definition
 
 
 /**
- * Base class for editing all the strategy grading forms.
+ * Base class for all assessment forms
  *
- * This defines the common fields that all strategy grading forms need. 
- * Strategies should define their own  class that inherits from this one, and 
+ * This defines the common fields that all assessment forms need. 
+ * Strategies should define their own class that inherits from this one, and 
  * implements the definition_inner() method.
  * 
  * @uses moodleform
  */
-class workshop_edit_strategy_form extends moodleform {
+class workshop_assessment_form extends moodleform {
 
-    /** strategy logic instance that this class is editor of */ 
+    /** object Strategy logic instance */ 
     protected $strategy;
+
+    /** array Assessment form fields defined by teacher */
+    protected $fields = array();
+
+    /** string The mode of the form: "preview" or "assessment" */
+    protected $mode = 'preview';
 
     /**
      * Add the fields that are common for all grading strategies.
@@ -49,7 +55,7 @@ class workshop_edit_strategy_form extends moodleform {
      * If the strategy does not support all these fields, then you can override 
      * this method and remove the ones you don't want with 
      * $mform->removeElement().
-     * Stretegy subclassess should define their own fields in definition_inner()
+     * Strategy subclassess should define their own fields in definition_inner()
      * 
      * @access public
      * @return void
@@ -59,20 +65,21 @@ class workshop_edit_strategy_form extends moodleform {
 
         $mform = $this->_form;
         $this->strategy = $this->_customdata['strategy'];
+        $this->fields   = (array)$this->_customdata['fields'];
+        $this->mode     = $this->_customdata['mode'];
 
         $mform->addElement('hidden', 'strategyname', $this->strategy->name);
 
         $this->definition_inner($mform);
 
-        if (!empty($CFG->usetags)) {
-            $mform->addElement('header', 'tagsheader', get_string('tags'));
-            $mform->addElement('tags', 'tags', get_string('tags'));
-        }
-
         $buttonarray = array();
-        $buttonarray[] = &$mform->createElement('submit', 'saveandcontinue', get_string('saveandcontinue', 'workshop'));
-        $buttonarray[] = &$mform->createElement('submit', 'saveandpreview', get_string('saveandpreview', 'workshop'));
-        $buttonarray[] = &$mform->createElement('submit', 'saveandclose', get_string('saveandclose', 'workshop'));
+        if ($this->mode == 'preview') {
+            $buttonarray[] = &$mform->createElement('submit', 'backtoeditform', get_string('backtoeditform', 'workshop'));
+        }
+        if ($this->mode == 'assessment') {
+            $buttonarray[] = &$mform->createElement('submit', 'saveandcontinue', get_string('saveandcontinue', 'workshop'));
+            $buttonarray[] = &$mform->createElement('submit', 'saveandclose', get_string('saveandclose', 'workshop'));
+        }
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');

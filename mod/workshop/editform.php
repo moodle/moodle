@@ -26,6 +26,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__).'/locallib.php');
 
 $cmid = required_param('cmid', PARAM_INT);            // course module id
         
@@ -42,27 +43,22 @@ require_login($course, false, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 if (isguestuser()) {
-    print_error('guestnoedit', 'workshop', "$CFG->wwwroot/mod/workshop/view.php?id=$cmid");
+    print_error('err_noguests', 'workshop', "$CFG->wwwroot/mod/workshop/view.php?id=$cmid");
 }
 
 if (!$workshop = $DB->get_record('workshop', array('id' => $cm->instance))) {
-    print_error('invalidid', 'workshop');
+    print_error('err_invalidworkshopid', 'workshop');
 }
 
 // where should the user be sent after closing the editing form
-$returnurl = "{$CFG->wwwroot}/mod/workshop/view.php?id={$cm->id}";
+$returnurl  = "{$CFG->wwwroot}/mod/workshop/view.php?id={$cm->id}";
 // the URL of this editing form
-$selfurl   = "{$CFG->wwwroot}/mod/workshop/editform.php?cmid={$cm->id}";
+$selfurl    = "{$CFG->wwwroot}/mod/workshop/editform.php?cmid={$cm->id}";
+// the URL to preview the assessment form
+$previewurl = "{$CFG->wwwroot}/mod/workshop/assessment.php?preview={$cm->id}";
 
 // load the grading strategy logic
-$strategylib = dirname(__FILE__) . '/grading/' . $workshop->strategy . '/strategy.php';
-if (file_exists($strategylib)) {
-    require_once($strategylib);
-} else {
-    print_error('errloadingstrategylib', 'workshop', $returnurl);
-}
-$classname = 'workshop_' . $workshop->strategy . '_strategy';
-$strategy = new $classname($workshop);
+$strategy = workshop_strategy_instance($workshop);
 
 // load the assessment form definition from the database
 // this must be called before get_edit_strategy_form() where we have to know
@@ -81,7 +77,10 @@ if ($mform->is_cancelled()) {
     $strategy->save_form($data);
     if (isset($data->saveandclose)) {
         redirect($returnurl);
+    } elseif (isset($data->saveandpreview)) {
+        redirect($previewurl);
     } else {
+        // save and continue - redirect to self to prevent data being re-posted by pressing "Reload"
         redirect($selfurl);
     }
 }
@@ -94,15 +93,14 @@ $navlinks[] = array('name' => get_string('modulenameplural', 'workshop'),
 $navlinks[] = array('name' => format_string($workshop->name), 
                     'link' => "view.php?id=$cm->id",
                     'type' => 'activityinstance');
-$navlinks[] = array('name' => get_string('editinggradingform', 'workshop'), 
+$navlinks[] = array('name' => get_string('editingassessmentform', 'workshop'), 
                     'link' => '',
                     'type' => 'title');
 $navigation = build_navigation($navlinks);
 
 // OUTPUT STARTS HERE
 
-print_header_simple(format_string($workshop->name), '', $navigation, '', '', true,
-              update_module_button($cm->id, $course->id, get_string('modulename', 'workshop')), navmenu($course, $cm));
+print_header_simple(format_string($workshop->name), '', $navigation, '', '', true, '', navmenu($course, $cm));
 
 print_heading(get_string('strategy' . $workshop->strategy, 'workshop'));
 
