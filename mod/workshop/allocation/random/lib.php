@@ -426,7 +426,7 @@ class workshop_random_allocator implements workshop_allocator {
                         $targetgroup = $circlegroupid;
                     } elseif (VISIBLEGROUPS == $gmode) {
                         $trygroups = array_diff_key($squaregroupsworkload, array(0 => null));   // all but [0]
-                        $trygroups = array_diff_key($trygroups, array_flip($failedgroups));     // withou previous failures
+                        $trygroups = array_diff_key($trygroups, array_flip($failedgroups));     // without previous failures
                         $targetgroup = $this->get_element_with_lowest_workload($trygroups);
                     }
                     if ($targetgroup === false) {
@@ -516,11 +516,18 @@ class workshop_random_allocator implements workshop_allocator {
      * @return mixed int|bool id of the selected element or false if it is impossible to choose
      */
     protected function get_element_with_lowest_workload($workload) {
+        $precision = 10;
+
         if (empty($workload)) {
             return false;
         }
-        $minload = min($workload);
-        $minkeys = array_filter($workload, create_function('$val', 'return $val == ' . $minload . ';'));
+        $minload = round(min($workload), $precision);
+        $minkeys = array();
+        foreach ($workload as $key => $val) {
+            if (round($val, $precision) == $minload) {
+                $minkeys[$key] = $val;
+            }
+        }
         return array_rand($minkeys);
     }
 

@@ -261,13 +261,38 @@ class workshop_allocation_random_test extends UnitTestCase {
         for ($i = 0; $i < 100; $i++) {
             $chosen = $this->allocator->get_element_with_lowest_workload($workload);
             if (!in_array($chosen, array(4, 9, 10))) {
-                $this->fail('Invalid element chosen');
+                $this->fail('Invalid element ' . var_export($chosen, true) . ' chosen');
                 break;
             } else {
                 $counts[$this->allocator->get_element_with_lowest_workload($workload)]++;
             }
         }
         $this->assertTrue(($counts[9] > 0) && ($counts[10] > 0));
+    }
+
+    /**
+     * Floats should be rounded before they are compared
+     *
+     * This should test
+     */
+    public function test_get_element_with_lowest_workload_random_floats() {
+        // fixture setup
+        $workload = array(1 => 1/13, 2 => 0.0769230769231); // should be considered as the same value
+        // exercise SUT
+        $elements = $this->allocator->get_element_with_lowest_workload($workload);
+        // verify
+        $counts = array(1 => 0, 2 => 0);
+        for ($i = 0; $i < 100; $i++) {
+            $chosen = $this->allocator->get_element_with_lowest_workload($workload);
+            if (!in_array($chosen, array(1, 2))) {
+                $this->fail('Invalid element ' . var_export($chosen, true) . ' chosen');
+                break;
+            } else {
+                $counts[$this->allocator->get_element_with_lowest_workload($workload)]++;
+            }
+        }
+        $this->assertTrue(($counts[1] > 0) && ($counts[2] > 0));
+
     }
 
     /**
