@@ -91,7 +91,7 @@ if ($mform->is_cancelled()) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('assessedexample', 'workshop'), 2);
 
-$wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);      // workshop renderer
+$wsoutput = $PAGE->get_renderer('mod_workshop');      // workshop renderer
 $example = $workshop->get_example_by_id($example->id);     // reload so can be passed to the renderer
 echo $wsoutput->example_full($example);
 

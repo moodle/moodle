@@ -69,7 +69,7 @@ if ($canmanage) {
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(get_string('examplecomparing', 'workshop'));
-$wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
+$wsoutput = $PAGE->get_renderer('mod_workshop');
 
 // Output starts here
 echo $OUTPUT->header();

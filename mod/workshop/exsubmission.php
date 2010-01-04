@@ -177,7 +177,7 @@ if ($example->id) {
         echo $OUTPUT->confirm(get_string('assessmentreferenceneeded', 'workshop'),
                 new moodle_url($PAGE->url, array('assess' => 1)), $workshop->view_url());
     }
-    $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
+    $wsoutput = $PAGE->get_renderer('mod_workshop');
     echo $wsoutput->example_full($example, true);
 }
 // ...with an option to edit or remove it
