@@ -116,12 +116,12 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      *
      * By default, this looks similar to a forum post.
      *
-     * @param object $submission     The submission record
+     * @param stdClass $submission     The submission record
      * @param bool     $showauthorname Should the author name be displayed
-     * @param object $author         If author's name should be displayed, this object contains the author data
+     * @param stdClass $author         If author's name should be displayed, this object contains the author data
      * @return string html to be echoed
      */
-    public function submission_full(object $submission, $showauthorname=false, object $author=null) {
+    public function submission_full(stdClass $submission, $showauthorname=false, stdClass $author=null) {
         global $CFG;
 
         $o  = '';    // output code
@@ -176,11 +176,11 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      * If format==html, then format a html string. If format==text, then format a text-only string.
      * Otherwise, returns html for non-images and html to display the image inline.
      *
-     * @param object $submission Submission record
+     * @param stdClass $submission Submission record
      * @param string format        The format of the returned string
      * @return string              HTML code to be echoed
      */
-    public function submission_attachments(object $submission, $format=null) {
+    public function submission_attachments(stdClass $submission, $format=null) {
         global $CFG;
         require_once($CFG->libdir.'/filelib.php');
 
