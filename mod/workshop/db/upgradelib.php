@@ -161,7 +161,7 @@ function workshop_upgrade_copy_instances() {
         $new->course        = $old->course;
         $new->name          = $old->name;
         $new->intro         = $old->description;
-        $new->introformat   = FORMAT_HTML;
+        $new->introformat   = $old->format;
         $new->nattachments  = $old->nattachments;
         $new->maxbytes      = $old->maxbytes;
         $new->grade         = $old->grade;
@@ -176,20 +176,20 @@ function workshop_upgrade_copy_instances() {
         $new->usepeerassessment = 1;
         $new->useselfassessment = $old->includeself;
         switch ($old->gradingstrategy) {
-        case 0:
-            $new->strategy = 'comments';     // 'notgraded'
+        case 0: // 'notgraded' - renamed
+            $new->strategy = 'comments';
             break;
-        case 1:
-            $new->strategy = 'accumulative'; // 'accumulative'
+        case 1: // 'accumulative'
+            $new->strategy = 'accumulative';
             break;
-        case 2:
-            $new->strategy = 'numerrors';    // 'errorbanded'
+        case 2: // 'errorbanded' - renamed
+            $new->strategy = 'numerrors';
             break;
-        case 3:
-            $new->strategy = 'rubric';       // 'criterion'
+        case 3: // 'criterion' - will be migrated into 'rubric'
+            $new->strategy = 'rubric';
             break;
-        case 4:
-            $new->strategy = 'rubric';       // 'rubric'
+        case 4: // 'rubric'
+            $new->strategy = 'rubric';
             break;
         }
         $newid = $DB->insert_record('workshop', $new, true, true);
