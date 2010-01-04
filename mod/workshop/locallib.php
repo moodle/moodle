@@ -417,6 +417,7 @@ class workshop {
         $assessment->reviewerid     = $reviewerid;
         $assessment->timecreated    = $now;
         $assessment->timemodified   = $now;
+        $assessment->weight         = 1;    // todo better handling of the weight value/default
 
         return $DB->insert_record('workshop_assessments', $assessment, true, $bulk);
     }
@@ -700,7 +701,7 @@ class workshop {
             }
             $phase->tasks['instructreviewers'] = $task;
         }
-        if (has_capability('mod/workshop:submit', $context, $userid)) {
+        if (has_capability('mod/workshop:submit', $context, $userid, false)) {
             $task = new stdClass();
             $task->title = get_string('tasksubmit', 'workshop');
             $task->link = $this->submission_url();
@@ -718,28 +719,18 @@ class workshop {
             $task = new stdClass();
             $task->title = get_string('allocate', 'workshop');
             $task->link = $this->allocation_url();
-            $authors     = array();
-            $allocations = array(); // 'submissionid' => isallocated
-            $records = $this->get_allocations();
-            foreach ($records as $allocation) {
-                if (!isset($authors[$allocation->authorid])) {
-                    $authors[$allocation->authorid] = true;
-                }
-                if (isset($allocation->submissionid)) {
-                    if (!isset($allocations[$allocation->submissionid])) {
-                        $allocations[$allocation->submissionid] = false;
-                    }
-                    if (!empty($allocation->reviewerid)) {
-                        $allocations[$allocation->submissionid] = true;
-                    }
-                }
-            }
-            $numofauthors     = count($authors);
-            $numofsubmissions = count($allocations);
-            $numofallocated   = count(array_filter($allocations));
+            $numofauthors = count(get_users_by_capability($context, 'mod/workshop:submit', 'u.id', '', '', '',
+                    '', '', false, true));
+            $numofsubmissions = $DB->count_records('workshop_submissions', array('workshopid'=>$this->id, 'example'=>0));
+            $sql = 'SELECT COUNT(s.id) AS nonallocated
+                      FROM {workshop_submissions} s
+                 LEFT JOIN {workshop_assessments} a ON (a.submissionid=s.id)
+                     WHERE s.workshopid = :workshopid AND s.example=0 AND a.submissionid IS NULL';
+            $params['workshopid'] = $this->id;
+            $numnonallocated = $DB->count_records_sql($sql, $params);
             if ($numofsubmissions == 0) {
                 $task->completed = null;
-            } elseif ($numofsubmissions == $numofallocated) {
+            } elseif ($numnonallocated == 0) {
                 $task->completed = true;
             } elseif ($this->phase > self::PHASE_SUBMISSION) {
                 $task->completed = false;
@@ -749,7 +740,7 @@ class workshop {
             $a = new stdClass();
             $a->expected    = $numofauthors;
             $a->submitted   = $numofsubmissions;
-            $a->allocated   = $numofallocated;
+            $a->allocate    = $numnonallocated;
             $task->details  = get_string('allocatedetails', 'workshop', $a);
             unset($a);
             $phase->tasks['allocate'] = $task;

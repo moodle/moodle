@@ -45,7 +45,7 @@ if ($id) {
 
 require_login($course, true, $cm);
 require_capability('mod/workshop:view', $PAGE->context);
-add_to_log($course->id, 'workshop', 'view', 'view.php?id='.$cm->id, $workshop->id);
+add_to_log($course->id, 'workshop', 'view', 'view.php?id=' . $cm->id, $workshop->name, $cm->id);
 
 $workshop = new workshop($workshop, $cm, $course);
 
