@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-define('WORKSHOP_STRATEGY_MINDIMS', 3);    // default number of dimensions to show
+define('WORKSHOPFORM_MINDIMS', 3);    // default number of dimensions to show
 define('WORKSHOP_STRATEGY_ADDDIMS', 2);    // number of dimensions to add
 
 /**
@@ -80,4 +80,19 @@ interface workshop_strategy {
      * @return boolean
      */
     public function form_ready();
+
+    /**
+     * Returns true if the given evaluation method is supported by this strategy
+     *
+     * To support an evaluation method, the strategy subplugin must usually implement some
+     * required public methods. In theory, this is what interfaces should be used for.
+     * Unfortunatelly, we can't extend "implements" declaration as the interface must
+     * be known to the PHP interpret. So we can't declare implementation of a non-installed
+     * evaluation subplugin.
+     *
+     * @param workshop_evaluation $evaluation the instance of grading evaluation class
+     * @return bool true if the evaluation method is supported, false otherwise
+     */
+    public function evaluation_supported(workshop_evaluation $evaluation);
+
 }

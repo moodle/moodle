@@ -32,6 +32,12 @@ require_once(dirname(dirname(__FILE__)) . '/lib.php');  // interface definition
  */
 class workshop_accumulative_strategy implements workshop_strategy {
 
+    /** @const default number of dimensions to show */
+    const MINDIMS = 3;
+
+    /** @const number of dimensions to add */
+    const ADDDIMS = 2;
+
     /** @var workshop the parent workshop instance */
     protected $workshop;
 
@@ -66,11 +72,11 @@ class workshop_accumulative_strategy implements workshop_strategy {
 
         $fields             = $this->prepare_form_fields($this->dimensions);
         $nodimensions       = count($this->dimensions);
-        $norepeatsdefault   = max($nodimensions + WORKSHOP_STRATEGY_ADDDIMS, WORKSHOP_STRATEGY_MINDIMS);
+        $norepeatsdefault   = max($nodimensions + self::ADDDIMS, self::MINDIMS);
         $norepeats          = optional_param('norepeats', $norepeatsdefault, PARAM_INT);    // number of dimensions
         $noadddims          = optional_param('noadddims', '', PARAM_ALPHA);                 // shall we add more?
         if ($noadddims) {
-            $norepeats += WORKSHOP_STRATEGY_ADDDIMS;
+            $norepeats += self::ADDDIMS;
         }
 
         // prepare the embeded files

@@ -65,6 +65,12 @@ class workshop {
     protected $strategyinstance = null;
 
     /**
+     * @var workshop_evaluation grading evaluation instance
+     * Do not use directly, get the instance using {@link workshop::grading_evaluation_instance()}
+     */
+    protected $evaluationinstance = null;
+
+    /**
      * Initializes the workshop API instance using the data from DB
      *
      * Makes deep copy of all passed records properties. Replaces integer $course attribute
@@ -78,10 +84,11 @@ class workshop {
         foreach ($dbrecord as $field => $value) {
             $this->{$field} = $value;
         }
-        $this->cm       = $cm;
-        $this->course   = $course;  // beware - this replaces the standard course field in the instance table
-                                    // this is intentional - IMO there should be no such field as it violates
-                                    // 3rd normal form with no real performance gain
+        $this->evaluation   = 'best';   // todo make this configurable
+        $this->cm           = $cm;
+        $this->course       = $course;  // beware - this replaces the standard course field in the instance table
+                                        // this is intentional - IMO there should be no such field as it violates
+                                        // 3rd normal form with no real performance gain
     }
 
     /**
@@ -473,6 +480,30 @@ class workshop {
             }
         }
         return $this->strategyinstance;
+    }
+
+    /**
+     * Returns instance of grading evaluation class
+     *
+     * @return stdClass Instance of a grading evaluation
+     */
+    public function grading_evaluation_instance() {
+        global $CFG;    // because we require other libs here
+
+        if (is_null($this->evaluationinstance)) {
+            $evaluationlib = dirname(__FILE__) . '/eval/' . $this->evaluation . '/lib.php';
+            if (is_readable($evaluationlib)) {
+                require_once($evaluationlib);
+            } else {
+                throw new coding_exception('the grading evaluation subplugin must contain library ' . $evaluationlib);
+            }
+            $classname = 'workshop_' . $this->evaluation . '_evaluation';
+            $this->evaluationinstance = new $classname($this);
+            if (!in_array('workshop_evaluation', class_implements($this->evaluationinstance))) {
+                throw new coding_exception($classname . ' does not implement workshop_evaluation interface');
+            }
+        }
+        return $this->evaluationinstance;
     }
 
     /**

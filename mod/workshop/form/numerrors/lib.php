@@ -33,6 +33,12 @@ require_once($CFG->libdir . '/gradelib.php');           // to handle float vs de
  */
 class workshop_numerrors_strategy implements workshop_strategy {
 
+    /** @const default number of dimensions to show */
+    const MINDIMS = 3;
+
+    /** @const number of dimensions to add */
+    const ADDDIMS = 2;
+
     /** @var workshop the parent workshop instance */
     protected $workshop;
 
@@ -71,11 +77,11 @@ class workshop_numerrors_strategy implements workshop_strategy {
 
         $fields             = $this->prepare_form_fields($this->dimensions, $this->mappings);
         $nodimensions       = count($this->dimensions);
-        $norepeatsdefault   = max($nodimensions + WORKSHOP_STRATEGY_ADDDIMS, WORKSHOP_STRATEGY_MINDIMS);
+        $norepeatsdefault   = max($nodimensions + self::ADDDIMS, self::MINDIMS);
         $norepeats          = optional_param('norepeats', $norepeatsdefault, PARAM_INT);    // number of dimensions
         $noadddims          = optional_param('noadddims', '', PARAM_ALPHA);                 // shall we add more?
         if ($noadddims) {
-            $norepeats += WORKSHOP_STRATEGY_ADDDIMS;
+            $norepeats += self::ADDDIMS;
         }
 
         // prepare the embeded files
@@ -266,6 +272,26 @@ class workshop_numerrors_strategy implements workshop_strategy {
         if (count($this->dimensions) > 0) {
             return true;
         }
+        return false;
+    }
+
+    /**
+     * Returns true if the given evaluation method is supported by this strategy
+     *
+     * To support an evaluation method, the strategy subplugin must usually implement some
+     * required public methods. In theory, this is what interfaces should be used for.
+     * Unfortunatelly, we can't extend "implements" declaration as the interface must
+     * be known to the PHP interpret. So we can't declare implementation of a non-installed
+     * evaluation subplugin.
+     *
+     * @param workshop_evaluation $evaluation the instance of grading evaluation class
+     * @return bool true if the evaluation method is supported, false otherwise
+     */
+    public function evaluation_supported(workshop_evaluation $evaluation) {
+        if (is_a($evaluation, 'workshop_best_evaluation')) {
+            return true;
+        }
+        // all other evaluation methods are not supported yet
         return false;
     }
 
