@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20090908" COMMENT="XMLDB file for Moodle mod/workshop"
+<XMLDB PATH="mod/workshop/db" VERSION="20090914" COMMENT="XMLDB file for Moodle mod/workshop"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -46,39 +46,38 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
         <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the id of the workshop instance" PREVIOUS="id" NEXT="example"/>
-        <FIELD NAME="example" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Is this submission an example from teacher" PREVIOUS="workshopid" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The author of the submission" PREVIOUS="example" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Timestamp when the work was submitted for the first time" PREVIOUS="userid" NEXT="timemodified"/>
+        <FIELD NAME="example" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Is this submission an example from teacher" PREVIOUS="workshopid" NEXT="authorid"/>
+        <FIELD NAME="authorid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The author of the submission" PREVIOUS="example" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Timestamp when the work was submitted for the first time" PREVIOUS="authorid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Timestamp when the submission has been updated" PREVIOUS="timecreated" NEXT="title"/>
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The submission title" PREVIOUS="timemodified" NEXT="content"/>
         <FIELD NAME="content" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Submission text" PREVIOUS="title" NEXT="contentformat"/>
         <FIELD NAME="contentformat" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of submission text" PREVIOUS="content" NEXT="contenttrust"/>
         <FIELD NAME="contenttrust" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The trust mode of the data" PREVIOUS="contentformat" NEXT="attachment"/>
         <FIELD NAME="attachment" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Used by File API file_postupdate_standard_filemanager" PREVIOUS="contenttrust" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the submission calculated as average of the peer-assessments. The grade is a number from interval 0..100. If NULL then the grade for submission has not been aggregated yet." PREVIOUS="attachment" NEXT="gradeover"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="Aggregated grade for the submission. The grade is a decimal number from interval 0..100. If NULL then the grade for submission has not been aggregated yet." PREVIOUS="attachment" NEXT="gradeover"/>
         <FIELD NAME="gradeover" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the submission manually overridden by a teacher. Grade is always from interval 0..100. If NULL then the grade is not overriden." PREVIOUS="grade" NEXT="gradeoverby"/>
-        <FIELD NAME="gradeoverby" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the user who has overridden the grade for submission." PREVIOUS="gradeover" NEXT="gradinggrade"/>
-        <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the assessment calculated by the module. The grade is a number from interval 0..100. If NULL then the grade for assessment has not been aggregated yet." PREVIOUS="gradeoverby" NEXT="teachercomment"/>
-        <FIELD NAME="teachercomment" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Teacher comment for the submission, for example describing the reasons for the overriding" PREVIOUS="gradinggrade" NEXT="teachercommentformat"/>
+        <FIELD NAME="gradeoverby" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the user who has overridden the grade for submission." PREVIOUS="gradeover" NEXT="teachercomment"/>
+        <FIELD NAME="teachercomment" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Teacher comment for the submission, for example describing the reasons for the overriding" PREVIOUS="gradeoverby" NEXT="teachercommentformat"/>
         <FIELD NAME="teachercommentformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the teachercomment field" PREVIOUS="teachercomment"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
-        <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" COMMENT="Workshop foreign key" PREVIOUS="primary" NEXT="author_fk"/>
-        <KEY NAME="author_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="workshop_fk" NEXT="overriddenby_fk"/>
-        <KEY NAME="overriddenby_fk" TYPE="foreign" FIELDS="gradeoverby" REFTABLE="user" REFFIELDS="id" PREVIOUS="author_fk"/>
+        <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" COMMENT="Workshop foreign key" PREVIOUS="primary" NEXT="overriddenby_fk"/>
+        <KEY NAME="overriddenby_fk" TYPE="foreign" FIELDS="gradeoverby" REFTABLE="user" REFFIELDS="id" PREVIOUS="workshop_fk" NEXT="author_fk"/>
+        <KEY NAME="author_fk" TYPE="foreign" FIELDS="authorid" REFTABLE="user" REFFIELDS="id" PREVIOUS="overriddenby_fk"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="workshop_assessments" COMMENT="Info about the made assessment and automatically calculated grade for it. The proposed grade can be overridden by teacher." PREVIOUS="workshop_submissions" NEXT="workshop_grades">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="submissionid"/>
-        <FIELD NAME="submissionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the assessed submission" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the reviewer who created this assessment" PREVIOUS="submissionid" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="If 0 then the assessment was allocated but the reviewer has not assessed yet. If greater than 0 then the timestamp of when the reviewer assessed for the first time" PREVIOUS="userid" NEXT="timemodified"/>
+        <FIELD NAME="submissionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the assessed submission" PREVIOUS="id" NEXT="reviewerid"/>
+        <FIELD NAME="reviewerid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the reviewer who makes this assessment" PREVIOUS="submissionid" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="If 0 then the assessment was allocated but the reviewer has not assessed yet. If greater than 0 then the timestamp of when the reviewer assessed for the first time" PREVIOUS="reviewerid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="If 0 then the assessment was allocated but the reviewer has not assessed yet. If greater than 0 then the timestamp of when the reviewer assessed for the last time" PREVIOUS="timecreated" NEXT="timeagreed"/>
         <FIELD NAME="timeagreed" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="If 0 then the assessment was not agreed by the author. If greater than 0 then the timestamp of when the assessment was agreed by the author" PREVIOUS="timemodified" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The aggregated grade for submission suggested by the reviewer. The grade is computed from the values assigned to the assessment dimensions fields. If NULL then it has not been aggregated yet." PREVIOUS="timeagreed" NEXT="gradinggrade"/>
-        <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The computed grade for this assessment. If NULL then it has not been computed yet." PREVIOUS="grade" NEXT="gradinggradeover"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The aggregated grade for submission suggested by the reviewer. The grade 0..100 is computed from the values assigned to the assessment dimensions fields. If NULL then it has not been aggregated yet." PREVIOUS="timeagreed" NEXT="gradinggrade"/>
+        <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The computed grade 0..100 for this assessment. If NULL then it has not been computed yet." PREVIOUS="grade" NEXT="gradinggradeover"/>
         <FIELD NAME="gradinggradeover" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the assessment manually overridden by a teacher. Grade is always from interval 0..100. If NULL then the grade is not overriden." PREVIOUS="gradinggrade" NEXT="gradinggradeoverby"/>
         <FIELD NAME="gradinggradeoverby" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the user who has overridden the grade for submission." PREVIOUS="gradinggradeover" NEXT="generalcomment"/>
         <FIELD NAME="generalcomment" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Comment from the reviewer" PREVIOUS="gradinggradeoverby" NEXT="generalcommentformat"/>
@@ -88,12 +87,12 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="submission_fk"/>
-        <KEY NAME="submission_fk" TYPE="foreign" FIELDS="submissionid" REFTABLE="workshop_submissions" REFFIELDS="id" PREVIOUS="primary" NEXT="reviewer_fk"/>
-        <KEY NAME="reviewer_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="submission_fk" NEXT="overriddenby_fk"/>
-        <KEY NAME="overriddenby_fk" TYPE="foreign" FIELDS="gradinggradeoverby" REFTABLE="user" REFFIELDS="id" PREVIOUS="reviewer_fk"/>
+        <KEY NAME="submission_fk" TYPE="foreign" FIELDS="submissionid" REFTABLE="workshop_submissions" REFFIELDS="id" PREVIOUS="primary" NEXT="overriddenby_fk"/>
+        <KEY NAME="overriddenby_fk" TYPE="foreign" FIELDS="gradinggradeoverby" REFTABLE="user" REFFIELDS="id" PREVIOUS="submission_fk" NEXT="reviewer_fk"/>
+        <KEY NAME="reviewer_fk" TYPE="foreign" FIELDS="reviewerid" REFTABLE="user" REFFIELDS="id" PREVIOUS="overriddenby_fk"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="workshop_grades" COMMENT="How the reviewers filled-up the grading forms, given grades and comments" PREVIOUS="workshop_assessments">
+    <TABLE NAME="workshop_grades" COMMENT="How the reviewers filled-up the grading forms, given grades and comments" PREVIOUS="workshop_assessments" NEXT="workshop_evaluations">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="assessmentid"/>
         <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Part of which assessment this grade is of" PREVIOUS="id" NEXT="strategy"/>
@@ -107,6 +106,19 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="assessment_fk"/>
         <KEY NAME="assessment_fk" TYPE="foreign" FIELDS="assessmentid" REFTABLE="workshop_assessments" REFFIELDS="id" PREVIOUS="primary" NEXT="formfield_uk"/>
         <KEY NAME="formfield_uk" TYPE="unique" FIELDS="assessmentid, strategy, dimensionid" COMMENT="The combination of assessmentid, strategy and dimensionid must be unique" PREVIOUS="assessment_fk"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="workshop_evaluations" COMMENT="Aggregated grades for assessments calculated during grading evaluation phase are stored here" PREVIOUS="workshop_grades">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the id of the workshop instance" PREVIOUS="id" NEXT="reviewerid"/>
+        <FIELD NAME="reviewerid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the id of the user the grading grade is calculated for" PREVIOUS="workshopid" NEXT="gradinggrade"/>
+        <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The aggregated grade for all assessments made by this reviewer. The grade is a number from interval 0..100. If NULL then the grade for assessments has not been aggregated yet." PREVIOUS="reviewerid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
+        <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary" NEXT="reviewer_fk"/>
+        <KEY NAME="reviewer_fk" TYPE="foreign" FIELDS="reviewerid" REFTABLE="user" REFFIELDS="id" PREVIOUS="workshop_fk"/>
       </KEYS>
     </TABLE>
   </TABLES>
