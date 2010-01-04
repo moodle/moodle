@@ -189,9 +189,9 @@ class workshop_rubric_strategy implements workshop_strategy {
      * Factory method returning an instance of an assessment form
      *
      * @param moodle_url $actionurl URL of form handler, defaults to auto detect the current url
-     * @param string $mode          Mode to open the form in: preview/assessment
+     * @param string $mode          Mode to open the form in: preview/assessment/readonly
      */
-    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdClass $assessment=null) {
+    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdClass $assessment=null, $editable=true) {
         global $CFG;    // needed because the included files use it
         global $DB;
         require_once(dirname(__FILE__) . '/assessment_form.php');
@@ -241,7 +241,7 @@ class workshop_rubric_strategy implements workshop_strategy {
         $attributes = array('class' => 'assessmentform rubric ' . $this->config->layout);
 
         $formclassname = 'workshop_rubric_' . $this->config->layout . '_assessment_form';
-        return new $formclassname($actionurl, $customdata, 'post', '', $attributes);
+        return new $formclassname($actionurl, $customdata, 'post', '', $attributes, $editable);
     }
 
     /**

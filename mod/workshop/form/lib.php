@@ -54,9 +54,11 @@ interface workshop_strategy {
      * Factory method returning an instance of an assessment form
      *
      * @param moodle_url $actionurl URL of form handler, defaults to auto detect the current url
-     * @param string $mode          Mode to open the form in: preview or assessment
+     * @param string $mode          Mode to open the form in: preview|assessment
+     * @param stdClass $assessment  If opening in the assessment mode, the current assessment record
+     * @param bool $editable        Shall the form be opened as editable (true) or read-only (false)
      */
-    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview');
+    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdClass $assessment=null, $editable=true);
 
     /**
      * Saves the filled assessment and returns the grade for submission as suggested by the reviewer

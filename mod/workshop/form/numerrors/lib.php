@@ -184,8 +184,10 @@ class workshop_numerrors_strategy implements workshop_strategy {
      *
      * @param moodle_url $actionurl URL of form handler, defaults to auto detect the current url
      * @param string $mode          Mode to open the form in: preview/assessment
+     * @param stdClass $assessment
+     * @param bool $editable
      */
-    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdClass $assessment=null) {
+    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdClass $assessment=null, $editable=true) {
         global $CFG;    // needed because the included files use it
         global $PAGE;
         global $DB;
@@ -225,7 +227,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
         $customdata['current']  = isset($current) ? $current : null;
         $attributes = array('class' => 'assessmentform numerrors');
 
-        return new workshop_numerrors_assessment_form($actionurl, $customdata, 'post', '', $attributes);
+        return new workshop_numerrors_assessment_form($actionurl, $customdata, 'post', '', $attributes, $editable);
     }
 
     /**
