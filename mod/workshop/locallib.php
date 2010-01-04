@@ -31,6 +31,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__).'/lib.php');      // we extend this library here
+require_once($CFG->libdir . '/gradelib.php');
 
 /**
  * Full-featured workshop API
@@ -244,10 +245,9 @@ class workshop {
      * tables. Does not return textual fields to prevent possible memory lack issues.
      *
      * @param mixed $authorid int|array|'all' If set to [array of] integer, return submission[s] of the given user[s] only
-     * @param mixed $examples false|true|'all' Only regular submissions, only examples, all submissions
      * @return array
      */
-    public function get_submissions($authorid='all', $examples=false) {
+    public function get_submissions($authorid='all') {
         global $DB;
 
         $sql = 'SELECT s.id, s.workshopid, s.example, s.authorid, s.timecreated, s.timemodified,
@@ -258,19 +258,9 @@ class workshop {
                        t.picture AS overpicture, t.imagealt AS overimagealt
                   FROM {workshop_submissions} s
             INNER JOIN {user} u ON (s.authorid = u.id)
-             LEFT JOIN {user} t ON (s.gradeoverby = u.id)
-                 WHERE s.workshopid = :workshopid';
+             LEFT JOIN {user} t ON (s.gradeoverby = t.id)
+                 WHERE s.example = 0 AND s.workshopid = :workshopid';
         $params = array('workshopid' => $this->id);
-
-        if ('all' === $examples) {
-            // no additional conditions
-        } elseif ($examples === true) {
-            $sql .= ' AND example = 1';
-        } elseif ($examples === false) {
-            $sql .= ' AND example = 0';
-        } else {
-            throw new coding_exception('Illegal parameter value: $examples may be false|true|"all"');
-        }
 
         if ('all' === $authorid) {
             // no additional conditions
@@ -296,6 +286,8 @@ class workshop {
     public function get_submission_by_id($id) {
         global $DB;
 
+        // we intentionally check the workshopid here, too, so the workshop can't touch submissions
+        // from other instances
         $sql = 'SELECT s.*,
                        u.lastname AS authorlastname, u.firstname AS authorfirstname, u.id AS authorid,
                        u.picture AS authorpicture, u.imagealt AS authorimagealt
@@ -915,6 +907,227 @@ class workshop {
         $data->grade = $grade;
         $DB->update_record('workshop_assessments', $data);
         return $grade;
+    }
+
+    /**
+     * Prepares data object with all workshop grades to be rendered
+     *
+     * @todo this is very similar to what allocation/manual/lib.php does - refactoring expectable
+     * @param stdClass $context of the workshop instance
+     * @param int $userid
+     * @param int $page the current page (for the pagination)
+     * @return stdClass data for the renderer
+     */
+    public function prepare_grading_report(stdClass $context, $userid, $page) {
+        global $DB;
+
+        $canviewall         = has_capability('mod/workshop:viewallassessments', $context, $userid);
+        $isparticipant      = has_any_capability(array('mod/workshop:submit', 'mod/workshop:peerassess'), $context, $userid);
+
+        if (!$canviewall and !$isparticipant) {
+            // who the hell is this?
+            return array();
+        }
+
+        if ($canviewall) {
+            // fetch the list of ids of all workshop participants - this may get really long so fetch just id
+            $participants = get_users_by_capability($context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
+                                'u.id', 'u.lastname,u.firstname,u.id', '', '', '', '', false, false, true);
+        } else {
+            // this is an ordinary workshop participant (aka student) - display the report just for him/her
+            $participants = array($userid => (object)array('id' => $userid));
+        }
+
+        // we will need to know the number of all later for the pagination purposes
+        $numofparticipants = count($participants);
+
+        // slice the list of participants according to the current page
+        $participants = array_slice($participants, $page * self::PERPAGE, self::PERPAGE, true);
+
+        // this will hold the information needed to display user names and pictures
+        $userinfo = $DB->get_records_list('user', 'id', array_keys($participants), '', 'id,lastname,firstname,picture,imagealt');
+
+        // load the participants' submissions
+        $submissions = $this->get_submissions(array_keys($participants));
+        foreach ($submissions as $submission) {
+            if (!isset($userinfo[$submission->authorid])) {
+                $userinfo[$submission->authorid]            = new stdClass();
+                $userinfo[$submission->authorid]->id        = $submission->authorid;
+                $userinfo[$submission->authorid]->firstname = $submission->authorfirstname;
+                $userinfo[$submission->authorid]->lastname  = $submission->authorlastname;
+                $userinfo[$submission->authorid]->picture   = $submission->authorpicture;
+                $userinfo[$submission->authorid]->imagealt  = $submission->authorimagealt;
+            }
+            if (!isset($userinfo[$submission->gradeoverby])) {
+                $userinfo[$submission->gradeoverby]            = new stdClass();
+                $userinfo[$submission->gradeoverby]->id        = $submission->gradeoverby;
+                $userinfo[$submission->gradeoverby]->firstname = $submission->overfirstname;
+                $userinfo[$submission->gradeoverby]->lastname  = $submission->overlastname;
+                $userinfo[$submission->gradeoverby]->picture   = $submission->overpicture;
+                $userinfo[$submission->gradeoverby]->imagealt  = $submission->overimagealt;
+            }
+        }
+
+        // get current reviewers
+        $reviewers = array();
+        if ($submissions) {
+            list($submissionids, $params) = $DB->get_in_or_equal(array_keys($submissions), SQL_PARAMS_NAMED);
+            $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover,
+                           r.id AS reviewerid, r.lastname, r.firstname, r.picture, r.imagealt,
+                           s.id AS submissionid, s.authorid
+                      FROM {workshop_assessments} a
+                      JOIN {user} r ON (a.reviewerid = r.id)
+                      JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+                     WHERE a.submissionid $submissionids";
+            $reviewers = $DB->get_records_sql($sql, $params);
+            foreach ($reviewers as $reviewer) {
+                if (!isset($userinfo[$reviewer->reviewerid])) {
+                    $userinfo[$reviewer->reviewerid]            = new stdClass();
+                    $userinfo[$reviewer->reviewerid]->id        = $reviewer->reviewerid;
+                    $userinfo[$reviewer->reviewerid]->firstname = $reviewer->firstname;
+                    $userinfo[$reviewer->reviewerid]->lastname  = $reviewer->lastname;
+                    $userinfo[$reviewer->reviewerid]->picture   = $reviewer->picture;
+                    $userinfo[$reviewer->reviewerid]->imagealt  = $reviewer->imagealt;
+                }
+            }
+        }
+
+        // get current reviewees
+        list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
+        $params['workshopid'] = $this->id;
+        $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover,
+                       u.id AS reviewerid,
+                       s.id AS submissionid,
+                       e.id AS authorid, e.lastname, e.firstname, e.picture, e.imagealt
+                  FROM {user} u
+                  JOIN {workshop_assessments} a ON (a.reviewerid = u.id)
+                  JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+                  JOIN {user} e ON (s.authorid = e.id)
+                 WHERE u.id $participantids AND s.workshopid = :workshopid";
+        $reviewees = $DB->get_records_sql($sql, $params);
+        foreach ($reviewees as $reviewee) {
+            if (!isset($userinfo[$reviewee->authorid])) {
+                $userinfo[$reviewee->authorid]            = new stdClass();
+                $userinfo[$reviewee->authorid]->id        = $reviewee->authorid;
+                $userinfo[$reviewee->authorid]->firstname = $reviewee->firstname;
+                $userinfo[$reviewee->authorid]->lastname  = $reviewee->lastname;
+                $userinfo[$reviewee->authorid]->picture   = $reviewee->picture;
+                $userinfo[$reviewee->authorid]->imagealt  = $reviewee->imagealt;
+            }
+        }
+
+        // get the current grades for assessment
+        list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
+        $params['workshopid'] = $this->id;
+        $sql = "SELECT * FROM {workshop_evaluations} WHERE reviewerid $participantids AND workshopid = :workshopid";
+        $gradinggrades = $DB->get_records_sql($sql, $params);
+
+        // now populate the final data object to be rendered
+        $grades = array();
+
+        foreach ($participants as $participant) {
+            // set up default (null) values
+            $grades[$participant->id] = new stdClass;
+            $grades[$participant->id]->userid = $participant->id;
+            $grades[$participant->id]->submissionid = null;
+            $grades[$participant->id]->submissiongrade = null;
+            $grades[$participant->id]->reviewedby = array();
+            $grades[$participant->id]->reviewerof = array();
+            $grades[$participant->id]->gradinggrade = null;
+            $grades[$participant->id]->totalgrade = null;
+        }
+        unset($participants);
+        unset($participant);
+
+        foreach ($submissions as $submission) {
+            $grades[$submission->authorid]->submissionid = $submission->id;
+            $grades[$submission->authorid]->submissiontitle = $submission->title;
+            $grades[$submission->authorid]->submissiongrade = $submission->grade;
+            $grades[$submission->authorid]->submissiongradeover = $submission->gradeover;
+            $grades[$submission->authorid]->submissiongradeoverby = $submission->gradeoverby;
+        }
+        unset($submissions);
+        unset($submission);
+
+        foreach($reviewers as $reviewer) {
+            $info = new stdClass();
+            $info->userid = $reviewer->reviewerid;
+            $info->assessmentid = $reviewer->assessmentid;
+            $info->submissionid = $reviewer->submissionid;
+            $info->grade = $reviewer->grade;
+            $info->gradinggrade = $reviewer->gradinggrade;
+            $info->gradinggradeover = $reviewer->gradinggradeover;
+            $grades[$reviewer->authorid]->reviewedby[$reviewer->reviewerid] = $info;
+        }
+        unset($reviewers);
+        unset($reviewer);
+
+        foreach($reviewees as $reviewee) {
+            $info = new stdClass();
+            $info->userid = $reviewee->authorid;
+            $info->assessmentid = $reviewee->assessmentid;
+            $info->submissionid = $reviewee->submissionid;
+            $info->grade = $reviewee->grade;
+            $info->gradinggrade = $reviewee->gradinggrade;
+            $info->gradinggradeover = $reviewee->gradinggradeover;
+            $grades[$reviewee->reviewerid]->reviewerof[$reviewee->authorid] = $info;
+        }
+        unset($reviewees);
+        unset($reviewee);
+
+        foreach ($gradinggrades as $gradinggrade) {
+            $grades[$gradinggrade->reviewerid]->gradinggrade = $gradinggrade->gradinggrade;
+        }
+
+        foreach ($grades as $grade) {
+            $grade->totalgrade = $this->total_grade($grade->submissiongrade, $grade->gradinggrade);
+        }
+
+        $data = new stdClass();
+        $data->grades = $grades;
+        $data->userinfo = $userinfo;
+        $data->totalcount = $numofparticipants;
+        return $data;
+    }
+
+    /**
+     * Format the grade for the output
+     *
+     * The returned value must not be used for calculations, it is intended for the displaying purposes only
+     *
+     * @param float $value the grade value
+     * @param bool $keepnull whether keep nulls as nulls or return their string representation
+     * @return string
+     */
+    public function format_grade($value, $keepnull = false) {
+        if (is_null($value)) {
+            if ($keepnull) {
+                return null;
+            } else {
+                return get_string('null', 'workshop');
+            }
+        }
+        $decimalpoints  = 1;   // todo make the precision configurable
+        $localized      = true;
+
+        return format_float($value, $decimalpoints, $localized);
+    }
+
+    /**
+     * Calculate the participant's total grade given the aggregated grades for submission and assessments
+     *
+     * todo there will be a setting how to deal with null values (for example no grade for submission) - if
+     * they are considered as 0 or excluded
+     *
+     * @param float|null $grade for submission
+     * @param float|null $gradinggrade for assessment
+     * @return float|null
+     */
+    public function total_grade($grade=null, $gradinggrade=null) {
+        if (is_null($grade) and is_null($gradinggrade)) {
+            return null;
+        }
+        return grade_floatval((float)$grade + (float)$gradinggrade);
     }
 
     ////////////////////////////////////////////////////////////////////////////////

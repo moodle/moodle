@@ -210,7 +210,7 @@ class workshop_manual_allocator implements workshop_allocator {
         $userinfo = $DB->get_records_list('user', 'id', array_keys($participants), '', 'id,lastname,firstname,picture,imagealt');
 
         // load the participants' submissions
-        $submissions = $this->workshop->get_submissions(array_keys($participants), false);
+        $submissions = $this->workshop->get_submissions(array_keys($participants));
         foreach ($submissions as $submission) {
             if (!isset($userinfo[$submission->authorid])) {
                 $userinfo[$submission->authorid]            = new stdClass();
@@ -257,7 +257,7 @@ class workshop_manual_allocator implements workshop_allocator {
                   JOIN {workshop_assessments} a ON (a.reviewerid = u.id)
                   JOIN {workshop_submissions} s ON (a.submissionid = s.id)
                   JOIN {user} e ON (s.authorid = e.id)
-                 WHERE u.id $participantids AND s.workshopid = :workshopid";
+                 WHERE u.id $participantids AND s.workshopid = :workshopid AND s.example = 0";
         $reviewees = $DB->get_records_sql($sql, $params);
         foreach ($reviewees as $reviewee) {
             if (!isset($userinfo[$reviewee->revieweeid])) {
@@ -314,7 +314,6 @@ class workshop_manual_allocator implements workshop_allocator {
         $pagingbar->perpage     = workshop::PERPAGE;
         $pagingbar->baseurl     = $PAGE->url;
         $pagingbar->pagevar     = $pagingvar;
-        $pagingbar->nocurr      = true;
 
         $pagingbarout = $OUTPUT->paging_bar($pagingbar);
 

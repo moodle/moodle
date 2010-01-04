@@ -64,7 +64,7 @@ class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
         $selfassessment     = $data->selfassessment;    // bool is the self-assessment allowed in this workshop?
 
         if (empty($allocations)) {
-            return $this->output->heading(get_string('nosubmissions', 'workshop'));
+            return '';
         }
 
         // convert user collections into drop down menus

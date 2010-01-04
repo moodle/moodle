@@ -308,10 +308,10 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
     }
 
     /**
-     * TODO: short description.
+     * Renders the user plannner tool
      *
-     * @param array $plan
-     * @return TODO
+     * @param array $plan as returned by {@link workshop::prepare_user_plan()}
+     * @return string html code to be displayed
      */
     public function user_plan(array $plan) {
         if (empty($plan)) {
@@ -358,10 +358,10 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
     }
 
     /**
-     * TODO: short description.
+     * Renders the tasks for the single phase in the user plan
      *
-     * @param stdClass $tasks 
-     * @return TODO
+     * @param stdClass $tasks
+     * @return string html code
      */
     protected function user_plan_tasks(array $tasks) {
         $out = '';
@@ -392,4 +392,211 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
         }
         return $out;
     }
+
+    /**
+     * Renders the workshop grading report
+     *
+     * @param stdClass $data prepared by {@link workshop::prepare_grading_report()}
+     * @param bool $showauthornames
+     * @param bool $showreviewernames
+     * @return string html code
+     */
+    public function grading_report(stdClass $data, $showauthornames, $showreviewernames) {
+        $grades = $data->grades;
+        $userinfo = $data->userinfo;
+
+        if (empty($grades)) {
+            return '';
+        }
+
+        $table              = new html_table();
+        $table->set_classes('grading-report');
+        $table->head        = array(get_string('participant', 'workshop'),
+                                    get_string('submission', 'workshop'),
+                                    get_string('receivedgrades', 'workshop'),
+                                    get_string('gradeforsubmission', 'workshop'),
+                                    get_string('givengrades', 'workshop'),
+                                    get_string('gradeforassessment', 'workshop'),
+                                    get_string('totalgrade', 'workshop'));
+        $table->rowclasses  = array();
+        $table->colclasses  = array('reviewedby', 'peer', 'reviewerof');
+        $table->data        = array();
+
+        foreach ($grades as $participant) {
+            $numofreceived  = count($participant->reviewedby);
+            $numofgiven     = count($participant->reviewerof);
+
+            // compute the number of <tr> table rows needed to display this participant
+            if ($numofreceived > 0 and $numofgiven > 0) {
+                $numoftrs       = self::lcm($numofreceived, $numofgiven);
+                $spanreceived   = $numoftrs / $numofreceived;
+                $spangiven      = $numoftrs / $numofgiven;
+            } elseif ($numofreceived == 0 and $numofgiven > 0) {
+                $numoftrs       = $numofgiven;
+                $spanreceived   = $numoftrs;
+                $spangiven      = $numoftrs / $numofgiven;
+            } elseif ($numofreceived > 0 and $numofgiven == 0) {
+                $numoftrs       = $numofreceived;
+                $spanreceived   = $numoftrs / $numofreceived;
+                $spangiven      = $numoftrs;
+            } else {
+                $numoftrs       = 1;
+                $spanreceived   = 1;
+                $spangiven      = 1;
+            }
+
+            for ($tr = 0; $tr < $numoftrs; $tr++) {
+                $row = new html_table_row();
+                // column #1 - participant - spans over all rows
+                if ($tr == 0) {
+                    $cell = new html_table_cell();
+                    $cell->text = $this->grading_report_participant($participant, $userinfo);
+                    $cell->rowspan = $numoftrs;
+                    $row->cells[] = $cell;
+                }
+                // column #2 - submission - spans over all rows
+                if ($tr == 0) {
+                    $cell = new html_table_cell();
+                    $cell->text = $this->grading_report_submission($participant);
+                    $cell->rowspan = $numoftrs;
+                    $row->cells[] = $cell;
+                }
+                // column #3 - received grades
+                if ($tr % $spanreceived == 0) {
+                    $idx = intval($tr / $spanreceived);
+                    $cell = new html_table_cell();
+                    $cell->text = $this->grading_report_assessment(self::array_nth($participant->reviewedby, $idx));
+                    $cell->rowspan = $spanreceived;
+                    $row->cells[] = $cell;
+                }
+                // column #4 - total grade for submission
+                if ($tr == 0) {
+                    $cell = new html_table_cell();
+                    $cell->text = $participant->submissiongrade;
+                    $cell->rowspan = $numoftrs;
+                    $row->cells[] = $cell;
+                }
+                // column #5 - given grades
+                if ($tr % $spangiven == 0) {
+                    $idx = intval($tr / $spangiven);
+                    $cell = new html_table_cell();
+                    $cell->text = $this->grading_report_assessment(self::array_nth($participant->reviewerof, $idx));
+                    $cell->rowspan = $spangiven;
+                    $row->cells[] = $cell;
+                }
+                // column #6 - total grade for assessment
+                if ($tr == 0) {
+                    $cell = new html_table_cell();
+                    $cell->text = $participant->gradinggrade;
+                    $cell->rowspan = $numoftrs;
+                    $row->cells[] = $cell;
+                }
+                // column #7 - total grade for assessment
+                if ($tr == 0) {
+                    $cell = new html_table_cell();
+                    $cell->text = $participant->totalgrade;
+                    $cell->rowspan = $numoftrs;
+                    $row->cells[] = $cell;
+                }
+                $table->data[] = $row;
+            }
+        }
+
+        return $this->output->table($table);
+    }
+
+    /**
+     * @param stdClass $participant
+     * @param array $userinfo
+     * @return string
+     */
+    protected function grading_report_participant(stdClass $participant, array $userinfo) {
+        $userid = $participant->userid;
+        $pic = new moodle_user_picture();
+        $pic->user = $userinfo[$userid];
+        $pic->courseid = $this->page->course->id;
+        $pic->url = true;
+        $pic->size = 35;
+
+        $out  = $this->output->user_picture($pic);
+        $out .= $this->output->output_tag('span', '', fullname($userinfo[$userid]));
+
+        return $out;
+    }
+
+    /**
+     * @param stdClass $participant
+     * @return string
+     */
+    protected function grading_report_submission(stdClass $participant) {
+        if (is_null($participant->submissionid)) {
+            $out = $this->output->container(get_string('nosubmissionfound', 'workshop'), 'info');
+        } else {
+            $out = $this->output->container(format_string($participant->submissiontitle), 'title');
+        }
+
+        return $out;
+    }
+
+    /**
+     * @todo grade formatting (decimals)
+     * @param stdClass|null $assessment
+     * @return string
+     */
+    protected function grading_report_assessment($assessment) {
+        if (is_null($assessment)) {
+            return get_string('null', 'workshop');
+        }
+        $a = new stdClass();
+        $a->grade = is_null($assessment->grade) ? get_string('null', 'workshop') : $assessment->grade;
+        $a->gradinggrade = is_null($assessment->gradinggrade) ? get_string('null', 'workshop') : $assessment->gradinggrade;
+        if (is_null($assessment->gradinggradeover)) {
+            $grade = get_string('formatpeergrade', 'workshop', $a);
+        } else {
+            $a->gradinggradeover = $assessment->gradinggradeover;
+            $grade = get_string('formatpeergradeover', 'workshop', $a);
+        }
+
+        return $grade;
+    }
+
+
+    /**
+     * Helper function returning the greatest common divisor
+     *
+     * @param int $a
+     * @param int $b
+     * @return int
+     */
+    protected static function gcd($a, $b) {
+        return ($b == 0) ? ($a):(self::gcd($b, $a % $b));
+    }
+
+    /**
+     * Helper function returning the least common multiple
+     *
+     * @param int $a
+     * @param int $b
+     * @return int
+     */
+    protected static function lcm($a, $b) {
+        return ($a / self::gcd($a,$b)) * $b;
+    }
+
+    /**
+     * Helper function returning the n-th item of the array
+     *
+     * @param array $a
+     * @param int   $n from 0 to m, where m is th number of items in the array
+     * @return mixed the $n-th element of $a
+     */
+    protected static function array_nth(array $a, $n) {
+        $keys = array_keys($a);
+        if ($n < 0 or $n > count($keys) - 1) {
+            return null;
+        }
+        $key = $keys[$n];
+        return $a[$key];
+    }
+
 }

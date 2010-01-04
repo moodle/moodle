@@ -325,3 +325,19 @@
 .mod-workshop .assessmentform .description {
     margin: 0px 1em;
 }
+
+/**
+ * Grading report
+ */
+.mod-workshop .grading-report {
+    width: 90%;
+    margin: 1em auto 1em auto;
+    font-size: 80%;
+    border: 1px solid #ddd;
+}
+
+.mod-workshop .grading-report td {
+    vertical-align: top;
+    border: 1px solid #ddd;
+}
+
