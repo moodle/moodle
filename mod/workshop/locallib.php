@@ -1189,7 +1189,8 @@ class workshop {
     /**
      * Calculates grades for assessment for the given participant(s)
      *
-     * Grade for submission is calculated as a weighted mean of all given grades
+     * Grade for assessment is calculated as a simple mean of all grading grades calculated by the grading evaluator.
+     * The assessment weight is not taken into account here.
      *
      * @param null|int|array $restrict If null, update all reviewers, otherwise update just grades for the given reviewer(s)
      * @return void
@@ -1197,7 +1198,50 @@ class workshop {
     public function aggregate_grading_grades($restrict=null) {
         global $DB;
 
-        // todo
+        // fetch a recordset with all assessments to process
+        $sql = 'SELECT a.reviewerid, a.gradinggrade, a.gradinggradeover,
+                       ag.id AS aggregationid, ag.gradinggrade AS aggregatedgrade
+                  FROM {workshop_assessments} a
+            INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+             LEFT JOIN {workshop_aggregations} ag ON (ag.userid = a.reviewerid AND ag.workshopid = s.workshopid)
+                 WHERE s.example=0 AND s.workshopid=:workshopid'; // to be cont.
+        $params = array('workshopid' => $this->id);
+
+        if (is_null($restrict)) {
+            // update all users - no more conditions
+        } elseif (!empty($restrict)) {
+            list($usql, $uparams) = $DB->get_in_or_equal($restrict, SQL_PARAMS_NAMED);
+            $sql .= " AND a.reviewerid $usql";
+            $params = array_merge($params, $uparams);
+        } else {
+            throw new coding_exception('Empty value is not a valid parameter here');
+        }
+
+        $sql .= ' ORDER BY a.reviewerid'; // this is important for bulk processing
+
+        $rs         = $DB->get_recordset_sql($sql, $params);
+        $batch      = array();    // will contain a set of all assessments of a single submission
+        $previous   = null;       // a previous record in the recordset
+
+        foreach ($rs as $current) {
+            if (is_null($previous)) {
+                // we are processing the very first record in the recordset
+                $previous   = $current;
+            }
+            if ($current->reviewerid == $previous->reviewerid) {
+                // we are still processing the current reviewer
+                $batch[] = $current;
+            } else {
+                // process all the assessments of a sigle submission
+                $this->aggregate_grading_grades_process($batch);
+                // and then start to process another reviewer
+                $batch      = array($current);
+                $previous   = $current;
+            }
+        }
+        // do not forget to process the last batch!
+        $this->aggregate_grading_grades_process($batch);
+        $rs->close();
     }
 
     /**
@@ -1292,6 +1336,68 @@ class workshop {
         if (grade_floats_different($finalgrade, $current)) {
             // we need to save new calculation into the database
             $DB->set_field('workshop_submissions', 'grade', $finalgrade, array('id' => $submissionid));
+        }
+    }
+
+    /**
+     * Given an array of all assessments done by a single reviewer, calculates the final grading grade
+     *
+     * This calculates the simple mean of the passed grading grades. If, however, the grading grade
+     * was overridden by a teacher, the gradinggradeover value is returned and the rest of grades are ignored.
+     *
+     * @param array $assessments of stdClass(->reviewerid ->gradinggrade ->gradinggradeover ->aggregationid ->aggregatedgrade)
+     * @return null|float the aggregated grade rounded to numeric(10,5)
+     */
+    protected function aggregate_grading_grades_process(array $assessments) {
+        global $DB;
+
+        $reviewerid = null; // the id of the reviewer being processed
+        $current    = null; // the gradinggrade currently saved in database
+        $finalgrade = null; // the new grade to be calculated
+        $agid       = null; // aggregation id
+        $sumgrades  = 0;
+        $count      = 0;
+
+        foreach ($assessments as $assessment) {
+            if (is_null($reviewerid)) {
+                // the id is the same in all records, fetch it during the first loop cycle
+                $reviewerid = $assessment->reviewerid;
+            }
+            if (is_null($agid)) {
+                // the id is the same in all records, fetch it during the first loop cycle
+                $agid = $assessment->aggregationid;
+            }
+            if (is_null($current)) {
+                // the currently saved grade is the same in all records, fetch it during the first loop cycle
+                $current = $assessment->aggregatedgrade;
+            }
+            if (!is_null($assessment->gradinggradeover)) {
+                // the grading grade for this assessment is overriden by a teacher
+                $sumgrades += $assessment->gradinggradeover;
+                $count++;
+            } else {
+                if (!is_null($assessment->gradinggrade)) {
+                    $sumgrades += $assessment->gradinggrade;
+                    $count++;
+                }
+            }
+        }
+        if ($count > 0) {
+            $finalgrade = grade_floatval($sumgrades / $count);
+        }
+        // check if the new final grade differs from the one stored in the database
+        if (grade_floats_different($finalgrade, $current)) {
+            // we need to save new calculation into the database
+            if (is_null($agid)) {
+                // no aggregation record yet
+                $record = new stdClass();
+                $record->workshopid = $this->id;
+                $record->userid = $reviewerid;
+                $record->gradinggrade = $finalgrade;
+                $DB->insert_record('workshop_aggregations', $record);
+            } else {
+                $DB->set_field('workshop_aggregations', 'gradinggrade', $finalgrade, array('id' => $agid));
+            }
         }
     }
 

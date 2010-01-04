@@ -36,6 +36,7 @@ Mock::generate(get_class($DB), 'mockDB');
 class testable_workshop extends workshop {
 
     public function __construct() {
+        $this->id       = 16;
         $this->cm       = new stdClass();
         $this->course   = new stdClass();
         $this->context  = new stdClass();
@@ -43,6 +44,10 @@ class testable_workshop extends workshop {
 
     public function aggregate_submission_grades_process(array $assessments) {
         parent::aggregate_submission_grades_process($assessments);
+    }
+
+    public function aggregate_grading_grades_process(array $assessments) {
+        parent::aggregate_grading_grades_process($assessments);
     }
 }
 
@@ -242,6 +247,135 @@ class workshop_internal_api_test extends UnitTestCase {
         // excercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
+
+    public function test_aggregate_grading_grades_process_nograding() {
+        global $DB;
+        // fixture set-up
+        $batch = array();
+        $batch[] = (object)array('reviewerid'=>2, 'gradinggrade'=>null, 'gradinggradeover'=>null, 'aggregationid'=>null, 'aggregatedgrade'=>null);
+        // expectation
+        $DB->expectNever('set_field');
+        // excersise SUT
+        $this->workshop->aggregate_grading_grades_process($batch);
+    }
+
+    public function test_aggregate_grading_grades_process_single_grade_new() {
+        global $DB;
+        // fixture set-up
+        $batch = array();
+        $batch[] = (object)array('reviewerid'=>3, 'gradinggrade'=>82.87670, 'gradinggradeover'=>null, 'aggregationid'=>null, 'aggregatedgrade'=>null);
+        // expectation
+        $expected = new stdClass();
+        $expected->workshopid = $this->workshop->id;
+        $expected->userid = 3;
+        $expected->gradinggrade = 82.87670;
+        $DB->expectOnce('insert_record', array('workshop_aggregations', $expected));
+        // excersise SUT
+        $this->workshop->aggregate_grading_grades_process($batch);
+    }
+
+    public function test_aggregate_grading_grades_process_single_grade_update() {
+        global $DB;
+        // fixture set-up
+        $batch = array();
+        $batch[] = (object)array('reviewerid'=>3, 'gradinggrade'=>90.00000, 'gradinggradeover'=>null, 'aggregationid'=>1, 'aggregatedgrade'=>82.87670);
+        // expectation
+        $DB->expectOnce('set_field', array('workshop_aggregations', 'gradinggrade', 90.00000, array('id' => 1)));
+        // excersise SUT
+        $this->workshop->aggregate_grading_grades_process($batch);
+    }
+
+    public function test_aggregate_grading_grades_process_single_grade_uptodate() {
+        global $DB;
+        // fixture set-up
+        $batch = array();
+        $batch[] = (object)array('reviewerid'=>3, 'gradinggrade'=>90.00000, 'gradinggradeover'=>null, 'aggregationid'=>1, 'aggregatedgrade'=>90.00000);
+        // expectation
+        $DB->expectNever('set_field');
+        // excersise SUT
+        $this->workshop->aggregate_grading_grades_process($batch);
+    }
+
+    public function test_aggregate_grading_grades_process_single_grade_overridden() {
+        global $DB;
+        // fixture set-up
+        $batch = array();
+        $batch[] = (object)array('reviewerid'=>4, 'gradinggrade'=>91.56700, 'gradinggradeover'=>82.32105, 'aggregationid'=>2, 'aggregatedgrade'=>91.56700);
+        // expectation
+        $DB->expectOnce('set_field', array('workshop_aggregations', 'gradinggrade', 82.32105, array('id' => 2)));
+        // excersise SUT
+        $this->workshop->aggregate_grading_grades_process($batch);
+    }
+
+    public function test_aggregate_grading_grades_process_multiple_grades_new() {
+        global $DB;
+        // fixture set-up
+        $batch = array();
+        $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>99.45670, 'gradinggradeover'=>null, 'aggregationid'=>null, 'aggregatedgrade'=>null);
+        $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>87.34311, 'gradinggradeover'=>null, 'aggregationid'=>null, 'aggregatedgrade'=>null);
+        $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>51.12000, 'gradinggradeover'=>null, 'aggregationid'=>null, 'aggregatedgrade'=>null);
+        // expectation
+        $expected = new stdClass();
+        $expected->workshopid = $this->workshop->id;
+        $expected->userid = 5;
+        $expected->gradinggrade = 79.3066;
+        $DB->expectOnce('insert_record', array('workshop_aggregations', $expected));
+        // excersise SUT
+        $this->workshop->aggregate_grading_grades_process($batch);
+    }
+
+    public function test_aggregate_grading_grades_process_multiple_grades_update() {
+        global $DB;
+        // fixture set-up
+        $batch = array();
+        $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>56.23400, 'gradinggradeover'=>null, 'aggregationid'=>2, 'aggregatedgrade'=>79.30660);
+        $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>87.34311, 'gradinggradeover'=>null, 'aggregationid'=>2, 'aggregatedgrade'=>79.30660);
+        $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>51.12000, 'gradinggradeover'=>null, 'aggregationid'=>2, 'aggregatedgrade'=>79.30660);
+        // expectation
+        $DB->expectOnce('set_field', array('workshop_aggregations', 'gradinggrade', 64.89904, array('id' => 2)));
+        // excersise SUT
+        $this->workshop->aggregate_grading_grades_process($batch);
+    }
+
+    public function test_aggregate_grading_grades_process_multiple_grades_overriden() {
+        global $DB;
+        // fixture set-up
+        $batch = array();
+        $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>56.23400, 'gradinggradeover'=>99.45670, 'aggregationid'=>2, 'aggregatedgrade'=>64.89904);
+        $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>87.34311, 'gradinggradeover'=>null, 'aggregationid'=>2, 'aggregatedgrade'=>64.89904);
+        $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>51.12000, 'gradinggradeover'=>null, 'aggregationid'=>2, 'aggregatedgrade'=>64.89904);
+        // expectation
+        $DB->expectOnce('set_field', array('workshop_aggregations', 'gradinggrade', 79.30660, array('id' => 2)));
+        // excersise SUT
+        $this->workshop->aggregate_grading_grades_process($batch);
+    }
+
+    public function test_aggregate_grading_grades_process_multiple_grades_one_missing() {
+        global $DB;
+        // fixture set-up
+        $batch = array();
+        $batch[] = (object)array('reviewerid'=>6, 'gradinggrade'=>50.00000, 'gradinggradeover'=>null, 'aggregationid'=>3, 'aggregatedgrade'=>100.00000);
+        $batch[] = (object)array('reviewerid'=>6, 'gradinggrade'=>null, 'gradinggradeover'=>null, 'aggregationid'=>3, 'aggregatedgrade'=>100.00000);
+        $batch[] = (object)array('reviewerid'=>6, 'gradinggrade'=>52.20000, 'gradinggradeover'=>null, 'aggregationid'=>3, 'aggregatedgrade'=>100.00000);
+        // expectation
+        $DB->expectOnce('set_field', array('workshop_aggregations', 'gradinggrade', 51.10000, array('id' => 3)));
+        // excersise SUT
+        $this->workshop->aggregate_grading_grades_process($batch);
+    }
+
+    public function test_aggregate_grading_grades_process_multiple_grades_missing_overridden() {
+        global $DB;
+        // fixture set-up
+        $batch = array();
+        $batch[] = (object)array('reviewerid'=>6, 'gradinggrade'=>50.00000, 'gradinggradeover'=>null, 'aggregationid'=>3, 'aggregatedgrade'=>100.00000);
+        $batch[] = (object)array('reviewerid'=>6, 'gradinggrade'=>null, 'gradinggradeover'=>69.00000, 'aggregationid'=>3, 'aggregatedgrade'=>100.00000);
+        $batch[] = (object)array('reviewerid'=>6, 'gradinggrade'=>52.20000, 'gradinggradeover'=>null, 'aggregationid'=>3, 'aggregatedgrade'=>100.00000);
+        // expectation
+        $DB->expectOnce('set_field', array('workshop_aggregations', 'gradinggrade', 57.06667, array('id' => 3)));
+        // excersise SUT
+        $this->workshop->aggregate_grading_grades_process($batch);
+    }
+
 
     public function test_percent_to_value() {
         // fixture setup
