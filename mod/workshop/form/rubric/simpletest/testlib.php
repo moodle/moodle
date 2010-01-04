@@ -67,9 +67,9 @@ class workshop_rubric_strategy_test extends UnitTestCase {
         $this->realDB   = $DB;
         $DB             = new mockDB();
 
-        $cm             = new stdClass();
-        $course         = new stdClass();
-        $context        = new stdClass();
+        $cm             = new stdclass();
+        $course         = new stdclass();
+        $context        = new stdclass();
         $workshop       = (object)array('id' => 42, 'strategy' => 'rubric');
         $this->workshop = new workshop($workshop, $cm, $course, $context);
         $DB->expectOnce('get_records_sql');
@@ -77,7 +77,7 @@ class workshop_rubric_strategy_test extends UnitTestCase {
         $this->strategy = new testable_workshop_rubric_strategy($this->workshop);
 
         // prepare dimensions definition
-        $dim = new stdClass();
+        $dim = new stdclass();
         $dim->id = 6;
         $dim->levels[10] = (object)array('id' => 10, 'grade' => 0);
         $dim->levels[13] = (object)array('id' => 13, 'grade' => 2);
@@ -85,7 +85,7 @@ class workshop_rubric_strategy_test extends UnitTestCase {
         $dim->levels[16] = (object)array('id' => 16, 'grade' => 8);
         $this->strategy->dimensions[$dim->id] = $dim;
 
-        $dim = new stdClass();
+        $dim = new stdclass();
         $dim->id = 8;
         $dim->levels[17] = (object)array('id' => 17, 'grade' => 0);
         $dim->levels[18] = (object)array('id' => 18, 'grade' => 1);
@@ -93,7 +93,7 @@ class workshop_rubric_strategy_test extends UnitTestCase {
         $dim->levels[20] = (object)array('id' => 20, 'grade' => 3);
         $this->strategy->dimensions[$dim->id] = $dim;
 
-        $dim = new stdClass();
+        $dim = new stdclass();
         $dim->id = 10;
         $dim->levels[27] = (object)array('id' => 27, 'grade' => 10);
         $dim->levels[28] = (object)array('id' => 28, 'grade' => 20);

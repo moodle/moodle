@@ -50,7 +50,7 @@ if ($id) { // example is specified
     $example = $workshop->get_example_by_id($id);
 } else { // no example specified - create new one
     require_capability('mod/workshop:manageexamples', $workshop->context);
-    $example = new stdClass();
+    $example = new stdclass();
     $example->id = null;
     $example->authorid = $USER->id;
 }

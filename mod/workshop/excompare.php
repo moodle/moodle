@@ -88,7 +88,7 @@ if (!empty($mformreference)) {
 if ($isreviewer) {
     echo $OUTPUT->heading(get_string('assessmentbyyourself', 'workshop'), 2);
 } elseif ($canmanage) {
-    $reviewer   = new stdClass();
+    $reviewer   = new stdclass();
     $reviewer->firstname = $assessment->reviewerfirstname;
     $reviewer->lastname = $assessment->reviewerlastname;
     echo $OUTPUT->heading(get_string('assessmentbyknown', 'workshop', fullname($reviewer)), 2);

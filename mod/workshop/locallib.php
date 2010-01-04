@@ -58,13 +58,13 @@ class workshop {
     const EXAMPLES_BEFORE_SUBMISSION    = 1;
     const EXAMPLES_BEFORE_ASSESSMENT    = 2;
 
-    /** @var stdClass course module record */
+    /** @var stdclass course module record */
     public $cm = null;
 
-    /** @var stdClass course record */
+    /** @var stdclass course record */
     public $course = null;
 
-    /** @var stdClass context object */
+    /** @var stdclass context object */
     public $context = null;
 
     /**
@@ -85,12 +85,12 @@ class workshop {
      * Makes deep copy of all passed records properties. Replaces integer $course attribute
      * with a full database record (course should not be stored in instances table anyway).
      *
-     * @param stdClass $dbrecord Workshop instance data from {workshop} table
-     * @param stdClass $cm       Course module record as returned by {@link get_coursemodule_from_id()}
-     * @param stdClass $course   Course record from {course} table
-     * @param stdClass $context  The context of the workshop instance
+     * @param stdclass $dbrecord Workshop instance data from {workshop} table
+     * @param stdclass $cm       Course module record as returned by {@link get_coursemodule_from_id()}
+     * @param stdclass $course   Course record from {course} table
+     * @param stdclass $context  The context of the workshop instance
      */
-    public function __construct(stdClass $dbrecord, stdClass $cm, stdClass $course, stdClass $context=null) {
+    public function __construct(stdclass $dbrecord, stdclass $cm, stdclass $course, stdclass $context=null) {
         foreach ($dbrecord as $field => $value) {
             $this->{$field} = $value;
         }
@@ -135,10 +135,10 @@ class workshop {
     /**
      * Returns an array of options for the editors that are used for submitting and assessing instructions
      *
-     * @param stdClass $context
+     * @param stdclass $context
      * @return array
      */
-    public static function instruction_editors_options(stdClass $context) {
+    public static function instruction_editors_options(stdclass $context) {
         return array('subdirs' => 1, 'maxbytes' => 0, 'maxfiles' => EDITOR_UNLIMITED_FILES,
                      'changeformat' => 1, 'context' => $context, 'noclean' => 1, 'trusttext' => 0);
     }
@@ -246,7 +246,7 @@ class workshop {
      *
      * @todo handle with limits and groups
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible authors otherwise.
-     * @return array array[userid] => stdClass{->id ->lastname ->firstname}
+     * @return array array[userid] => stdclass{->id ->lastname ->firstname}
      */
     public function get_potential_authors($musthavesubmission=true) {
         $users = get_users_by_capability($this->context, 'mod/workshop:submit',
@@ -264,7 +264,7 @@ class workshop {
      *
      * @todo handle with limits and groups
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible users otherwise.
-     * @return array array[userid] => stdClass{->id ->lastname ->firstname}
+     * @return array array[userid] => stdclass{->id ->lastname ->firstname}
      */
     public function get_potential_reviewers($musthavesubmission=false) {
         $users = get_users_by_capability($this->context, 'mod/workshop:peerassess',
@@ -283,8 +283,8 @@ class workshop {
      * is set, returns only groups withing the course module grouping. Always returns group [0] with
      * all the given users.
      *
-     * @param array $users array[userid] => stdClass{->id ->lastname ->firstname}
-     * @return array array[groupid][userid] => stdClass{->id ->lastname ->firstname}
+     * @param array $users array[userid] => stdclass{->id ->lastname ->firstname}
+     * @return array array[groupid][userid] => stdclass{->id ->lastname ->firstname}
      */
     public function get_grouped($users) {
         global $DB;
@@ -382,7 +382,7 @@ class workshop {
      * Returns a submission record with the author's data
      *
      * @param int $id submission id
-     * @return stdClass
+     * @return stdclass
      */
     public function get_submission_by_id($id) {
         global $DB;
@@ -403,7 +403,7 @@ class workshop {
      * Returns a submission submitted by the given author
      *
      * @param int $id author id
-     * @return stdClass|false
+     * @return stdclass|false
      */
     public function get_submission_by_author($authorid) {
         global $DB;
@@ -476,12 +476,12 @@ class workshop {
     /**
      * Prepares component containing summary of given example to be rendered
      *
-     * @param stdClass $example as returned by {@link workshop::get_examples_for_manager()} or {@link workshop::get_examples_for_reviewer()}
-     * @return stdClass component to be rendered
+     * @param stdclass $example as returned by {@link workshop::get_examples_for_manager()} or {@link workshop::get_examples_for_reviewer()}
+     * @return stdclass component to be rendered
      */
-    public function prepare_example_summary(stdClass $example) {
+    public function prepare_example_summary(stdclass $example) {
 
-        $summary = new stdClass();
+        $summary = new stdclass();
         $summary->example = $example;
         if (is_null($example->grade)) {
             $summary->status   = 'notgraded';
@@ -491,7 +491,7 @@ class workshop {
             $buttontext = get_string('reassess', 'workshop');
         }
 
-        $summary->gradeinfo           = new stdClass();
+        $summary->gradeinfo           = new stdclass();
         $summary->gradeinfo->received = $this->real_grade($example->grade);
         $summary->gradeinfo->max      = $this->real_grade(100);
 
@@ -506,10 +506,10 @@ class workshop {
     /**
      * Removes the submission and all relevant data
      *
-     * @param stdClass $submission record to delete
+     * @param stdclass $submission record to delete
      * @return void
      */
-    public function delete_submission(stdClass $submission) {
+    public function delete_submission(stdclass $submission) {
         global $DB;
         $assessments = $DB->get_records('workshop_assessments', array('submissionid' => $submission->id), '', 'id');
         $this->delete_assessment(array_keys($assessments));
@@ -523,7 +523,7 @@ class workshop {
      * tables. The returned object does not contain textual fields (ie comments) to prevent memory
      * lack issues.
      *
-     * @return array [assessmentid] => assessment stdClass
+     * @return array [assessmentid] => assessment stdclass
      */
     public function get_all_assessments() {
         global $DB;
@@ -548,7 +548,7 @@ class workshop {
      * Get the complete information about the given assessment
      *
      * @param int $id Assessment ID
-     * @return mixed false if not found, stdClass otherwise
+     * @return mixed false if not found, stdclass otherwise
      */
     public function get_assessment_by_id($id) {
         global $DB;
@@ -595,13 +595,13 @@ class workshop {
     /**
      * Allocate a submission to a user for review
      *
-     * @param stdClass $submission Submission object with at least id property
+     * @param stdclass $submission Submission object with at least id property
      * @param int $reviewerid User ID
      * @param bool $bulk repeated inserts into DB expected
      * @param int $weight of the new assessment, from 0 to 16
      * @return int ID of the new assessment or an error code
      */
-    public function add_allocation(stdClass $submission, $reviewerid, $bulk=false, $weight=1) {
+    public function add_allocation(stdclass $submission, $reviewerid, $bulk=false, $weight=1) {
         global $DB;
 
         if ($DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'reviewerid' => $reviewerid))) {
@@ -609,7 +609,7 @@ class workshop {
         }
 
         $now = time();
-        $assessment = new stdClass();
+        $assessment = new stdclass();
         $assessment->submissionid           = $submission->id;
         $assessment->reviewerid             = $reviewerid;
         $assessment->timecreated            = $now;
@@ -642,7 +642,7 @@ class workshop {
     /**
      * Returns instance of grading strategy class
      *
-     * @return stdClass Instance of a grading strategy
+     * @return stdclass Instance of a grading strategy
      */
     public function grading_strategy_instance() {
         global $CFG;    // because we require other libs here
@@ -666,7 +666,7 @@ class workshop {
     /**
      * Returns instance of grading evaluation class
      *
-     * @return stdClass Instance of a grading evaluation
+     * @return stdclass Instance of a grading evaluation
      */
     public function grading_evaluation_instance() {
         global $CFG;    // because we require other libs here
@@ -691,7 +691,7 @@ class workshop {
      * Returns instance of submissions allocator
      *
      * @param string $method The name of the allocation method, must be PARAM_ALPHA
-     * @return stdClass Instance of submissions allocator
+     * @return stdclass Instance of submissions allocator
      */
     public function allocator_instance($method) {
         global $CFG;    // because we require other libs here
@@ -924,8 +924,8 @@ class workshop {
      * Prepare an individual workshop plan for the given user.
      *
      * @param int $userid whom the plan is prepared for
-     * @param stdClass context of the planned workshop
-     * @return stdClass data object to be passed to the renderer
+     * @param stdclass context of the planned workshop
+     * @return stdclass data object to be passed to the renderer
      */
     public function prepare_user_plan($userid) {
         global $DB;
@@ -933,25 +933,25 @@ class workshop {
         $phases = array();
 
         // Prepare tasks for the setup phase
-        $phase = new stdClass();
+        $phase = new stdclass();
         $phase->title = get_string('phasesetup', 'workshop');
         $phase->tasks = array();
         if (has_capability('moodle/course:manageactivities', $this->context, $userid)) {
-            $task = new stdClass();
+            $task = new stdclass();
             $task->title = get_string('taskintro', 'workshop');
             $task->link = $this->updatemod_url();
             $task->completed = !(trim(strip_tags($this->intro)) == '');
             $phase->tasks['intro'] = $task;
         }
         if (has_capability('moodle/course:manageactivities', $this->context, $userid)) {
-            $task = new stdClass();
+            $task = new stdclass();
             $task->title = get_string('taskinstructauthors', 'workshop');
             $task->link = $this->updatemod_url();
             $task->completed = !(trim(strip_tags($this->instructauthors)) == '');
             $phase->tasks['instructauthors'] = $task;
         }
         if (has_capability('mod/workshop:editdimensions', $this->context, $userid)) {
-            $task = new stdClass();
+            $task = new stdclass();
             $task->title = get_string('editassessmentform', 'workshop');
             $task->link = $this->editform_url();
             if ($this->grading_strategy_instance()->form_ready()) {
@@ -962,7 +962,7 @@ class workshop {
             $phase->tasks['editform'] = $task;
         }
         if ($this->useexamples and has_capability('mod/workshop:manageexamples', $this->context, $userid)) {
-            $task = new stdClass();
+            $task = new stdclass();
             $task->title = get_string('prepareexamples', 'workshop');
             if ($DB->count_records('workshop_submissions', array('example' => 1, 'workshopid' => $this->id)) > 0) {
                 $task->completed = true;
@@ -974,7 +974,7 @@ class workshop {
         if (empty($phase->tasks) and $this->phase == self::PHASE_SETUP) {
             // if we are in the setup phase and there is no task (typical for students), let us
             // display some explanation what is going on
-            $task = new stdClass();
+            $task = new stdclass();
             $task->title = get_string('undersetup', 'workshop');
             $task->completed = 'info';
             $phase->tasks['setupinfo'] = $task;
@@ -982,12 +982,12 @@ class workshop {
         $phases[self::PHASE_SETUP] = $phase;
 
         // Prepare tasks for the submission phase
-        $phase = new stdClass();
+        $phase = new stdclass();
         $phase->title = get_string('phasesubmission', 'workshop');
         $phase->tasks = array();
         if (($this->usepeerassessment or $this->useselfassessment)
              and has_capability('moodle/course:manageactivities', $this->context, $userid)) {
-            $task = new stdClass();
+            $task = new stdclass();
             $task->title = get_string('taskinstructreviewers', 'workshop');
             $task->link = $this->updatemod_url();
             if (trim(strip_tags($this->instructreviewers))) {
@@ -998,7 +998,7 @@ class workshop {
             $phase->tasks['instructreviewers'] = $task;
         }
         if (has_capability('mod/workshop:submit', $this->context, $userid, false)) {
-            $task = new stdClass();
+            $task = new stdclass();
             $task->title = get_string('tasksubmit', 'workshop');
             $task->link = $this->submission_url();
             if ($DB->record_exists('workshop_submissions', array('workshopid'=>$this->id, 'example'=>0, 'authorid'=>$userid))) {
@@ -1011,7 +1011,7 @@ class workshop {
             $phase->tasks['submit'] = $task;
         }
         if (has_capability('mod/workshop:allocate', $this->context, $userid)) {
-            $task = new stdClass();
+            $task = new stdclass();
             $task->title = get_string('allocate', 'workshop');
             $task->link = $this->allocation_url();
             $numofauthors = count(get_users_by_capability($this->context, 'mod/workshop:submit', 'u.id', '', '', '',
@@ -1032,7 +1032,7 @@ class workshop {
             } else {
                 $task->completed = null;    // still has a chance to allocate
             }
-            $a = new stdClass();
+            $a = new stdclass();
             $a->expected    = $numofauthors;
             $a->submitted   = $numofsubmissions;
             $a->allocate    = $numnonallocated;
@@ -1041,7 +1041,7 @@ class workshop {
             $phase->tasks['allocate'] = $task;
 
             if ($numofsubmissions < $numofauthors and $this->phase >= self::PHASE_SUBMISSION) {
-                $task = new stdClass();
+                $task = new stdclass();
                 $task->title = get_string('someuserswosubmission', 'workshop');
                 $task->completed = 'info';
                 $phase->tasks['allocateinfo'] = $task;
@@ -1050,7 +1050,7 @@ class workshop {
         $phases[self::PHASE_SUBMISSION] = $phase;
 
         // Prepare tasks for the peer-assessment phase (includes eventual self-assessments)
-        $phase = new stdClass();
+        $phase = new stdclass();
         $phase->title = get_string('phaseassessment', 'workshop');
         $phase->tasks = array();
         $phase->isreviewer = has_capability('mod/workshop:peerassess', $this->context, $userid);
@@ -1074,13 +1074,13 @@ class workshop {
         }
         unset($a);
         if ($this->usepeerassessment and $numofpeers) {
-            $task = new stdClass();
+            $task = new stdclass();
             if ($numofpeerstodo == 0) {
                 $task->completed = true;
             } elseif ($this->phase > self::PHASE_ASSESSMENT) {
                 $task->completed = false;
             }
-            $a = new stdClass();
+            $a = new stdclass();
             $a->total = $numofpeers;
             $a->todo  = $numofpeerstodo;
             $task->title = get_string('taskassesspeers', 'workshop');
@@ -1089,7 +1089,7 @@ class workshop {
             $phase->tasks['assesspeers'] = $task;
         }
         if ($this->useselfassessment and $numofself) {
-            $task = new stdClass();
+            $task = new stdclass();
             if ($numofselftodo == 0) {
                 $task->completed = true;
             } elseif ($this->phase > self::PHASE_ASSESSMENT) {
@@ -1101,16 +1101,16 @@ class workshop {
         $phases[self::PHASE_ASSESSMENT] = $phase;
 
         // Prepare tasks for the grading evaluation phase
-        $phase = new stdClass();
+        $phase = new stdclass();
         $phase->title = get_string('phaseevaluation', 'workshop');
         $phase->tasks = array();
         if (has_capability('mod/workshop:overridegrades', $this->context)) {
             $expected = count($this->get_potential_authors(false));
             $calculated = $DB->count_records_select('workshop_submissions',
                     'workshopid = ? AND (grade IS NOT NULL OR gradeover IS NOT NULL)', array($this->id));
-            $task = new stdClass();
+            $task = new stdclass();
             $task->title = get_string('calculatesubmissiongrades', 'workshop');
-            $a = new stdClass();
+            $a = new stdclass();
             $a->expected    = $expected;
             $a->calculated  = $calculated;
             $task->details  = get_string('calculatesubmissiongradesdetails', 'workshop', $a);
@@ -1124,9 +1124,9 @@ class workshop {
             $expected = count($this->get_potential_reviewers(false));
             $calculated = $DB->count_records_select('workshop_aggregations',
                     'workshopid = ? AND gradinggrade IS NOT NULL', array($this->id));
-            $task = new stdClass();
+            $task = new stdclass();
             $task->title = get_string('calculategradinggrades', 'workshop');
-            $a = new stdClass();
+            $a = new stdclass();
             $a->expected    = $expected;
             $a->calculated  = $calculated;
             $task->details  = get_string('calculategradinggradesdetails', 'workshop', $a);
@@ -1138,7 +1138,7 @@ class workshop {
             $phase->tasks['calculategradinggrade'] = $task;
 
         } elseif ($this->phase == self::PHASE_EVALUATION) {
-            $task = new stdClass();
+            $task = new stdclass();
             $task->title = get_string('evaluategradeswait', 'workshop');
             $task->completed = 'info';
             $phase->tasks['evaluateinfo'] = $task;
@@ -1146,7 +1146,7 @@ class workshop {
         $phases[self::PHASE_EVALUATION] = $phase;
 
         // Prepare tasks for the "workshop closed" phase - todo
-        $phase = new stdClass();
+        $phase = new stdclass();
         $phase->title = get_string('phaseclosed', 'workshop');
         $phase->tasks = array();
         $phases[self::PHASE_CLOSED] = $phase;
@@ -1176,7 +1176,7 @@ class workshop {
         if (has_capability('mod/workshop:switchphase', $this->context, $userid)) {
             foreach ($phases as $phasecode => $phase) {
                 if (! $phase->active) {
-                    $action = new stdClass();
+                    $action = new stdclass();
                     $action->type = 'switchphase';
                     $action->url  = $this->switchphase_url($phasecode);
                     $phase->actions[] = $action;
@@ -1205,7 +1205,7 @@ class workshop {
 
         if (self::PHASE_CLOSED == $newphase) {
             // push the grades into the gradebook
-            $workshop = new stdClass();
+            $workshop = new stdclass();
             foreach ($this as $property => $value) {
                 $workshop->{$property} = $value;
             }
@@ -1232,7 +1232,7 @@ class workshop {
         if (is_null($grade)) {
             return false;
         }
-        $data = new stdClass();
+        $data = new stdclass();
         $data->id = $assessmentid;
         $data->grade = $grade;
         $DB->update_record('workshop_assessments', $data);
@@ -1248,7 +1248,7 @@ class workshop {
      * @param int $perpage participants per page (for the pagination)
      * @param string $sortby lastname|firstname|submissiontitle|submissiongrade|gradinggrade
      * @param string $sorthow ASC|DESC
-     * @return stdClass data for the renderer
+     * @return stdclass data for the renderer
      */
     public function prepare_grading_report($userid, $groups, $page, $perpage, $sortby, $sorthow) {
         global $DB;
@@ -1306,7 +1306,7 @@ class workshop {
         // get the user details for all participants to display
         foreach ($participants as $participant) {
             if (!isset($userinfo[$participant->userid])) {
-                $userinfo[$participant->userid]            = new stdClass();
+                $userinfo[$participant->userid]            = new stdclass();
                 $userinfo[$participant->userid]->id        = $participant->userid;
                 $userinfo[$participant->userid]->firstname = $participant->firstname;
                 $userinfo[$participant->userid]->lastname  = $participant->lastname;
@@ -1321,7 +1321,7 @@ class workshop {
         // get the user details for all moderators (teachers) that have overridden a submission grade
         foreach ($submissions as $submission) {
             if (!isset($userinfo[$submission->gradeoverby])) {
-                $userinfo[$submission->gradeoverby]            = new stdClass();
+                $userinfo[$submission->gradeoverby]            = new stdclass();
                 $userinfo[$submission->gradeoverby]->id        = $submission->gradeoverby;
                 $userinfo[$submission->gradeoverby]->firstname = $submission->overfirstname;
                 $userinfo[$submission->gradeoverby]->lastname  = $submission->overlastname;
@@ -1344,7 +1344,7 @@ class workshop {
             $reviewers = $DB->get_records_sql($sql, $params);
             foreach ($reviewers as $reviewer) {
                 if (!isset($userinfo[$reviewer->reviewerid])) {
-                    $userinfo[$reviewer->reviewerid]            = new stdClass();
+                    $userinfo[$reviewer->reviewerid]            = new stdclass();
                     $userinfo[$reviewer->reviewerid]->id        = $reviewer->reviewerid;
                     $userinfo[$reviewer->reviewerid]->firstname = $reviewer->firstname;
                     $userinfo[$reviewer->reviewerid]->lastname  = $reviewer->lastname;
@@ -1370,7 +1370,7 @@ class workshop {
             $reviewees = $DB->get_records_sql($sql, $params);
             foreach ($reviewees as $reviewee) {
                 if (!isset($userinfo[$reviewee->authorid])) {
-                    $userinfo[$reviewee->authorid]            = new stdClass();
+                    $userinfo[$reviewee->authorid]            = new stdclass();
                     $userinfo[$reviewee->authorid]->id        = $reviewee->authorid;
                     $userinfo[$reviewee->authorid]->firstname = $reviewee->firstname;
                     $userinfo[$reviewee->authorid]->lastname  = $reviewee->lastname;
@@ -1407,7 +1407,7 @@ class workshop {
         unset($submission);
 
         foreach($reviewers as $reviewer) {
-            $info = new stdClass();
+            $info = new stdclass();
             $info->userid = $reviewer->reviewerid;
             $info->assessmentid = $reviewer->assessmentid;
             $info->submissionid = $reviewer->submissionid;
@@ -1421,7 +1421,7 @@ class workshop {
         unset($reviewer);
 
         foreach($reviewees as $reviewee) {
-            $info = new stdClass();
+            $info = new stdclass();
             $info->userid = $reviewee->authorid;
             $info->assessmentid = $reviewee->assessmentid;
             $info->submissionid = $reviewee->submissionid;
@@ -1438,7 +1438,7 @@ class workshop {
             $grade->gradinggrade = $this->real_grading_grade($grade->gradinggrade);
         }
 
-        $data = new stdClass();
+        $data = new stdclass();
         $data->grades = $grades;
         $data->userinfo = $userinfo;
         $data->totalcount = $numofparticipants;
@@ -1625,11 +1625,11 @@ class workshop {
      *
      * @return workshop_feedbackreviewer_form
      */
-    public function get_feedbackreviewer_form(moodle_url $actionurl, stdClass $assessment, $editable=true) {
+    public function get_feedbackreviewer_form(moodle_url $actionurl, stdclass $assessment, $editable=true) {
         global $CFG;
         require_once(dirname(__FILE__) . '/feedbackreviewer_form.php');
 
-        $current = new stdClass();
+        $current = new stdclass();
         $current->asid                      = $assessment->id;
         $current->gradinggrade              = $this->real_grading_grade($assessment->gradinggrade);
         $current->gradinggradeover          = $this->real_grading_grade($assessment->gradinggradeover);
@@ -1652,11 +1652,11 @@ class workshop {
      *
      * @return workshop_feedbackauthor_form
      */
-    public function get_feedbackauthor_form(moodle_url $actionurl, stdClass $submission, $editable=true) {
+    public function get_feedbackauthor_form(moodle_url $actionurl, stdclass $submission, $editable=true) {
         global $CFG;
         require_once(dirname(__FILE__) . '/feedbackauthor_form.php');
 
-        $current = new stdClass();
+        $current = new stdclass();
         $current->submissionid          = $submission->id;
         $current->grade                 = $this->real_grade($submission->grade);
         $current->gradeover             = $this->real_grade($submission->gradeover);
@@ -1684,7 +1684,7 @@ class workshop {
      * This calculates the weighted mean of the passed assessment grades. If, however, the submission grade
      * was overridden by a teacher, the gradeover value is returned and the rest of grades are ignored.
      *
-     * @param array $assessments of stdClass(->submissionid ->submissiongrade ->gradeover ->weight ->grade)
+     * @param array $assessments of stdclass(->submissionid ->submissiongrade ->gradeover ->weight ->grade)
      * @return void
      */
     protected function aggregate_submission_grades_process(array $assessments) {
@@ -1722,7 +1722,7 @@ class workshop {
         // check if the new final grade differs from the one stored in the database
         if (grade_floats_different($finalgrade, $current)) {
             // we need to save new calculation into the database
-            $record = new stdClass();
+            $record = new stdclass();
             $record->id = $submissionid;
             $record->grade = $finalgrade;
             $record->timegraded = time();
@@ -1736,7 +1736,7 @@ class workshop {
      * This calculates the simple mean of the passed grading grades. If, however, the grading grade
      * was overridden by a teacher, the gradinggradeover value is returned and the rest of grades are ignored.
      *
-     * @param array $assessments of stdClass(->reviewerid ->gradinggrade ->gradinggradeover ->aggregationid ->aggregatedgrade)
+     * @param array $assessments of stdclass(->reviewerid ->gradinggrade ->gradinggradeover ->aggregationid ->aggregatedgrade)
      * @return void
      */
     protected function aggregate_grading_grades_process(array $assessments) {
@@ -1781,14 +1781,14 @@ class workshop {
             // we need to save new calculation into the database
             if (is_null($agid)) {
                 // no aggregation record yet
-                $record = new stdClass();
+                $record = new stdclass();
                 $record->workshopid = $this->id;
                 $record->userid = $reviewerid;
                 $record->gradinggrade = $finalgrade;
                 $record->timegraded = time();
                 $DB->insert_record('workshop_aggregations', $record);
             } else {
-                $record = new stdClass();
+                $record = new stdclass();
                 $record->id = $agid;
                 $record->gradinggrade = $finalgrade;
                 $record->timegraded = time();

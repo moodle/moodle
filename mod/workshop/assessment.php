@@ -98,7 +98,7 @@ if ($canoverridegrades) {
     $feedbackform = $workshop->get_feedbackreviewer_form($PAGE->url, $assessment);
     if ($data = $feedbackform->get_data()) {
         $data = file_postupdate_standard_editor($data, 'feedbackreviewer', array(), $workshop->context);
-        $record = new stdClass();
+        $record = new stdclass();
         $record->id = $assessment->id;
         $record->gradinggradeover = $workshop->raw_grade_value($data->gradinggradeover, $workshop->gradinggrade);
         $record->gradinggradeoverby = $USER->id;
@@ -121,7 +121,7 @@ if ($isreviewer) {
     echo $OUTPUT->heading(get_string('assessmentbyyourself', 'workshop'), 2);
 } elseif (has_capability('mod/workshop:viewreviewernames', $workshop->context)) {
     $assessment = $workshop->get_assessment_by_id($assessment->id); // extend the current record with user details
-    $reviewer   = new stdClass();
+    $reviewer   = new stdclass();
     $reviewer->firstname = $assessment->reviewerfirstname;
     $reviewer->lastname = $assessment->reviewerlastname;
     echo $OUTPUT->heading(get_string('assessmentbyknown', 'workshop', fullname($reviewer)), 2);

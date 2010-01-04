@@ -33,10 +33,10 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
     /**
      * Display the table of all current allocations and widgets to modify them
      *
-     * @param stdClass $data to be displayed - see the top of the function for the list of needed properties
+     * @param stdclass $data to be displayed - see the top of the function for the list of needed properties
      * @return string html code
      */
-    public function display_allocations(stdClass $data) {
+    public function display_allocations(stdclass $data) {
         $allocations        = $data->allocations;       // array prepared array of all allocations data
         $userinfo           = $data->userinfo;          // names and pictures of all required users
         $authors            = $data->authors;           // array potential reviewees
@@ -85,7 +85,7 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
      *
      * @return string HTML code
      */
-    protected function participant(stdClass $allocation, array $userinfo) {
+    protected function participant(stdclass $allocation, array $userinfo) {
         $o  = $this->output->user_picture($userinfo[$allocation->userid], $this->page->course->id);
         $o .= fullname($userinfo[$allocation->userid]);
         $o .= $this->output->container_start(array('submission'));
@@ -108,7 +108,7 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
      *
      * @return string html code
      */
-    protected function reviewers_of_participant(stdClass $allocation, array $userinfo, array $reviewers, $selfassessment) {
+    protected function reviewers_of_participant(stdclass $allocation, array $userinfo, array $reviewers, $selfassessment) {
         $o = '';
         if (is_null($allocation->submissionid)) {
             $o .= $this->output->container(get_string('nothingtoreview', 'workshop'), 'info');
@@ -154,7 +154,7 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
      *
      * @return string html code
      */
-    protected function reviewees_of_participant(stdClass $allocation, array $userinfo, array $authors, $selfassessment) {
+    protected function reviewees_of_participant(stdclass $allocation, array $userinfo, array $authors, $selfassessment) {
         $o = '';
         if (is_null($allocation->submissionid)) {
             $o .= $this->output->container(get_string('withoutsubmission', 'workshop'), 'info');

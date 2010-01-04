@@ -55,7 +55,7 @@ interface workshop_allocator {
      *
      * If a form is part of the UI, the caller should have called $PAGE->set_url(...)
      *
-     * @param stdClass $wsoutput workshop module renderer can be used
+     * @param stdclass $wsoutput workshop module renderer can be used
      * @return string HTML code to be echoed
      */
     public function ui();

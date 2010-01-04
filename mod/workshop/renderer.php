@@ -41,7 +41,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
      * @param string $message to display
      * @return string html
      */
-    public function status_message(stdClass $message) {
+    public function status_message(stdclass $message) {
         if (empty($message->text)) {
             return '';
         }
@@ -68,7 +68,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
      * @return string html to be echoed
      */
     public function allocation_init_result($result='') {
-        $msg = new stdClass();
+        $msg = new stdclass();
         if ($result === workshop::ALLOCATION_ERROR) {
             $msg = (object)array('text' => get_string('allocationerror', 'workshop'), 'sty' => 'error');
         } else {
@@ -99,11 +99,11 @@ class mod_workshop_renderer extends plugin_renderer_base {
      * The passed submission object must define at least: id, title, timecreated, timemodified,
      * authorid, authorfirstname, authorlastname, authorpicture and authorimagealt
      *
-     * @param stdClass $submission     The submission record
+     * @param stdclass $submission     The submission record
      * @param bool     $showauthorname Should the author name be displayed
      * @return string html to be echoed
      */
-    public function submission_summary(stdClass $submission, $showauthorname=false) {
+    public function submission_summary(stdclass $submission, $showauthorname=false) {
         global $CFG;
 
         $o  = '';    // output HTML code
@@ -119,7 +119,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $link->set_classes('title');
         $o .= $this->output->link($link);
         if ($showauthorname) {
-            $author             = new stdClass();
+            $author             = new stdclass();
             $author->id         = $submission->authorid;
             $author->firstname  = $submission->authorfirstname;
             $author->lastname   = $submission->authorlastname;
@@ -133,7 +133,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $userpic            = $this->output->user_picture($userpic);
             $userurl            = new moodle_url($CFG->wwwroot . '/user/view.php',
                                             array('id' => $author->id, 'course' => $this->page->course->id));
-            $a                  = new stdClass();
+            $a                  = new stdclass();
             $a->name            = fullname($author);
             $a->url             = $userurl->out();
             $byfullname         = get_string('byfullname', 'workshop', $a);
@@ -158,11 +158,11 @@ class mod_workshop_renderer extends plugin_renderer_base {
      *
      * By default, this looks similar to a forum post.
      *
-     * @param stdClass $submission     The submission data
+     * @param stdclass $submission     The submission data
      * @param bool     $showauthorname Should the author name be displayed
      * @return string html to be echoed
      */
-    public function submission_full(stdClass $submission, $showauthorname=false) {
+    public function submission_full(stdclass $submission, $showauthorname=false) {
         global $CFG;
 
         $o  = '';    // output HTML code
@@ -174,7 +174,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $o .= $this->output->container_start('header');
         $o .= $this->output->heading(format_string($submission->title), 3, 'title');
         if ($showauthorname) {
-            $author             = new stdClass();
+            $author             = new stdclass();
             $author->id         = $submission->authorid;
             $author->firstname  = $submission->authorfirstname;
             $author->lastname   = $submission->authorlastname;
@@ -188,7 +188,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $userpic            = $this->output->user_picture($userpic);
             $userurl            = new moodle_url($CFG->wwwroot . '/user/view.php',
                                             array('id' => $author->id, 'course' => $this->page->course->id));
-            $a                  = new stdClass();
+            $a                  = new stdclass();
             $a->name            = fullname($author);
             $a->url             = $userurl->out();
             $byfullname         = get_string('byfullname', 'workshop', $a);
@@ -223,11 +223,11 @@ class mod_workshop_renderer extends plugin_renderer_base {
      * If format==html, then format a html string. If format==text, then format a text-only string.
      * Otherwise, returns html for non-images and html to display the image inline.
      *
-     * @param stdClass $submission Submission record
+     * @param stdclass $submission Submission record
      * @param string format        The format of the returned string
      * @return string              HTML code to be echoed
      */
-    public function submission_attachments(stdClass $submission, $format=null) {
+    public function submission_attachments(stdclass $submission, $format=null) {
         global $CFG;
         require_once($CFG->libdir.'/filelib.php');
 
@@ -294,10 +294,10 @@ class mod_workshop_renderer extends plugin_renderer_base {
      *
      * The passed submission object must define at least: id and title
      *
-     * @param stdClass $data prepared by workshop::prepare_example_summary()
+     * @param stdclass $data prepared by workshop::prepare_example_summary()
      * @return string html to be echoed
      */
-    public function example_summary(stdClass $summary) {
+    public function example_summary(stdclass $summary) {
         global $CFG;
 
         $o  = '';    // output HTML code
@@ -346,10 +346,10 @@ class mod_workshop_renderer extends plugin_renderer_base {
      *
      * By default, this looks similar to a forum post.
      *
-     * @param stdClass $example        The example submission data
+     * @param stdclass $example        The example submission data
      * @return string html to be echoed
      */
-    public function example_full(stdClass $example) {
+    public function example_full(stdclass $example) {
         global $CFG;
 
         $o  = '';    // output HTML code
@@ -430,7 +430,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
     /**
      * Renders the tasks for the single phase in the user plan
      *
-     * @param stdClass $tasks
+     * @param stdclass $tasks
      * @return string html code
      */
     protected function user_plan_tasks(array $tasks) {
@@ -469,12 +469,12 @@ class mod_workshop_renderer extends plugin_renderer_base {
      * Grades must be already rounded to the set number of decimals or must be null (in which later case,
      * the [[nullgrade]] string shall be displayed).
      *
-     * @param stdClass $data prepared by {@link workshop::prepare_grading_report()}
-     * @param stdClass $options display options object with properties ->showauthornames ->showreviewernames ->sortby ->sorthow
+     * @param stdclass $data prepared by {@link workshop::prepare_grading_report()}
+     * @param stdclass $options display options object with properties ->showauthornames ->showreviewernames ->sortby ->sorthow
      *          ->showsubmissiongrade ->showgradinggrade
      * @return string html code
      */
-    public function grading_report(stdClass $data, stdClass $options) {
+    public function grading_report(stdclass $data, stdclass $options) {
         $grades             = $data->grades;
         $userinfo           = $data->userinfo;
 
@@ -654,11 +654,11 @@ class mod_workshop_renderer extends plugin_renderer_base {
 }
 
     /**
-     * @param stdClass $participant
+     * @param stdclass $participant
      * @param array $userinfo
      * @return string
      */
-    protected function grading_report_participant(stdClass $participant, array $userinfo) {
+    protected function grading_report_participant(stdclass $participant, array $userinfo) {
         $userid = $participant->userid;
         $pic = new moodle_user_picture();
         $pic->user = $userinfo[$userid];
@@ -673,10 +673,10 @@ class mod_workshop_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @param stdClass $participant
+     * @param stdclass $participant
      * @return string
      */
-    protected function grading_report_submission(stdClass $participant) {
+    protected function grading_report_submission(stdclass $participant) {
         global $CFG;
 
         if (is_null($participant->submissionid)) {
@@ -695,7 +695,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
     /**
      * @todo Highlight the nulls
-     * @param stdClass|null $assessment
+     * @param stdclass|null $assessment
      * @param bool $shownames
      * @param string $separator between the grade and the reviewer/author
      * @return string
@@ -706,7 +706,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         if (is_null($assessment)) {
             return get_string('nullgrade', 'workshop');
         }
-        $a = new stdClass();
+        $a = new stdclass();
         $a->grade = is_null($assessment->grade) ? get_string('nullgrade', 'workshop') : $assessment->grade;
         $a->gradinggrade = is_null($assessment->gradinggrade) ? get_string('nullgrade', 'workshop') : $assessment->gradinggrade;
         $a->weight = $assessment->weight;
@@ -754,7 +754,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
      * Formats the aggreagated grades
      */
     protected function grading_report_grade($grade, $over=null) {
-        $a = new stdClass();
+        $a = new stdclass();
         $a->grade = is_null($grade) ? get_string('nullgrade', 'workshop') : $grade;
         if (is_null($over)) {
             $text = get_string('formataggregatedgrade', 'workshop', $a);
@@ -791,7 +791,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
      * @return string fl|lf
      */
     protected static function fullname_format() {
-        $fake = new stdClass(); // fake user
+        $fake = new stdclass(); // fake user
         $fake->lastname = 'LLLL';
         $fake->firstname = 'FFFF';
         $fullname = get_string('fullnamedisplay', '', $fake);

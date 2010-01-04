@@ -112,10 +112,10 @@ class workshop_numerrors_strategy implements workshop_strategy {
      * The passed data object are the raw data returned by the get_data().
      *
      * @uses $DB
-     * @param stdClass $data Raw data returned by the dimension editor form
+     * @param stdclass $data Raw data returned by the dimension editor form
      * @return void
      */
-    public function save_edit_strategy_form(stdClass $data) {
+    public function save_edit_strategy_form(stdclass $data) {
         global $DB, $PAGE;
 
         $workshopid = $data->workshopid;
@@ -184,10 +184,10 @@ class workshop_numerrors_strategy implements workshop_strategy {
      *
      * @param moodle_url $actionurl URL of form handler, defaults to auto detect the current url
      * @param string $mode          Mode to open the form in: preview/assessment
-     * @param stdClass $assessment
+     * @param stdclass $assessment
      * @param bool $editable
      */
-    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdClass $assessment=null, $editable=true) {
+    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdclass $assessment=null, $editable=true) {
         global $CFG;    // needed because the included files use it
         global $PAGE;
         global $DB;
@@ -205,7 +205,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
         if ('assessment' === $mode and !empty($assessment)) {
             // load the previously saved assessment data
             $grades = $this->get_current_assessment_data($assessment);
-            $current = new stdClass();
+            $current = new stdclass();
             for ($i = 0; $i < $nodimensions; $i++) {
                 $dimid = $fields->{'dimensionid__idx_'.$i};
                 if (isset($grades[$dimid])) {
@@ -235,18 +235,18 @@ class workshop_numerrors_strategy implements workshop_strategy {
      *
      * This method processes data submitted using the form returned by {@link get_assessment_form()}
      *
-     * @param stdClass $assessment Assessment being filled
-     * @param stdClass $data       Raw data as returned by the assessment form
+     * @param stdclass $assessment Assessment being filled
+     * @param stdclass $data       Raw data as returned by the assessment form
      * @return float|null          Raw grade (from 0.00000 to 100.00000) for submission as suggested by the peer
      */
-    public function save_assessment(stdClass $assessment, stdClass $data) {
+    public function save_assessment(stdclass $assessment, stdclass $data) {
         global $DB;
 
         if (!isset($data->nodims)) {
             throw coding_expection('You did not send me the number of assessment dimensions to process');
         }
         for ($i = 0; $i < $data->nodims; $i++) {
-            $grade = new stdClass();
+            $grade = new stdclass();
             $grade->id                  = $data->{'gradeid__idx_' . $i};
             $grade->assessmentid        = $assessment->id;
             $grade->strategy            = 'numerrors';
@@ -332,7 +332,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
      */
     protected function prepare_form_fields(array $dims, array $maps) {
 
-        $formdata = new stdClass();
+        $formdata = new stdclass();
         $key = 0;
         foreach ($dims as $dimension) {
             $formdata->{'dimensionid__idx_' . $key}             = $dimension->id;
@@ -377,18 +377,18 @@ class workshop_numerrors_strategy implements workshop_strategy {
      * Called internally from {@link save_edit_strategy_form()} only. Could be private but
      * keeping protected for unit testing purposes.
      *
-     * @param stdClass $raw Raw data returned by mform
+     * @param stdclass $raw Raw data returned by mform
      * @return array Array of objects to be inserted/updated in DB
      */
-    protected function prepare_database_fields(stdClass $raw) {
+    protected function prepare_database_fields(stdclass $raw) {
         global $PAGE;
 
-        $cook               = new stdClass();   // to be returned
+        $cook               = new stdclass();   // to be returned
         $cook->numerrors    = array();          // to be stored in {workshopform_numerrors}
         $cook->mappings     = array();          // to be stored in {workshopform_numerrors_map}
 
         for ($i = 0; $i < $raw->norepeats; $i++) {
-            $cook->numerrors[$i]                        = new stdClass();
+            $cook->numerrors[$i]                        = new stdclass();
             $cook->numerrors[$i]->id                    = $raw->{'dimensionid__idx_'.$i};
             $cook->numerrors[$i]->workshopid            = $this->workshop->id;
             $cook->numerrors[$i]->sort                  = $i + 1;
@@ -414,10 +414,10 @@ class workshop_numerrors_strategy implements workshop_strategy {
     /**
      * Returns the list of current grades filled by the reviewer
      *
-     * @param stdClass $assessment Assessment record
+     * @param stdclass $assessment Assessment record
      * @return array of filtered records from the table workshop_grades
      */
-    protected function get_current_assessment_data(stdClass $assessment) {
+    protected function get_current_assessment_data(stdclass $assessment) {
         global $DB;
 
         if (empty($this->dimensions)) {
@@ -437,10 +437,10 @@ class workshop_numerrors_strategy implements workshop_strategy {
     /**
      * Aggregates the assessment form data and sets the grade for the submission given by the peer
      *
-     * @param stdClass $assessment Assessment record
+     * @param stdclass $assessment Assessment record
      * @return float|null          Raw grade (0.00000 to 100.00000) for submission as suggested by the peer
      */
-    protected function update_peer_grade(stdClass $assessment) {
+    protected function update_peer_grade(stdclass $assessment) {
         $grades     = $this->get_current_assessment_data($assessment);
         $suggested  = $this->calculate_peer_grade($grades);
         if (!is_null($suggested)) {

@@ -63,10 +63,10 @@ function workshop_supports($feature) {
  * will save a new instance and return the id number
  * of the new instance.
  *
- * @param stdClass $workshop An object from the form in mod_form.php
+ * @param stdclass $workshop An object from the form in mod_form.php
  * @return int The id of the newly inserted workshop record
  */
-function workshop_add_instance(stdClass $workshop) {
+function workshop_add_instance(stdclass $workshop) {
     global $CFG, $DB;
     require_once(dirname(__FILE__) . '/locallib.php');
 
@@ -113,10 +113,10 @@ function workshop_add_instance(stdClass $workshop) {
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
  *
- * @param stdClass $workshop An object from the form in mod_form.php
+ * @param stdclass $workshop An object from the form in mod_form.php
  * @return bool success
  */
-function workshop_update_instance(stdClass $workshop) {
+function workshop_update_instance(stdclass $workshop) {
     global $CFG, $DB;
     require_once(dirname(__FILE__) . '/locallib.php');
 
@@ -204,7 +204,7 @@ function workshop_delete_instance($id) {
  * @todo Finish documenting this function
  */
 function workshop_user_outline($course, $user, $mod, $workshop) {
-    $return = new stdClass();
+    $return = new stdclass();
     $return->time = 0;
     $return->info = '';
     return $return;
@@ -315,16 +315,16 @@ function workshop_get_extra_capabilities() {
  * Needed by grade_update_mod_grades() in lib/gradelib.php. Also used by
  * {@link workshop_update_grades()}.
  *
- * @param stdClass $workshop instance object with extra cmidnumber and modname property
- * @param stdClass $submissiongrades data for the first grade item
- * @param stdClass $assessmentgrades data for the second grade item
+ * @param stdclass $workshop instance object with extra cmidnumber and modname property
+ * @param stdclass $submissiongrades data for the first grade item
+ * @param stdclass $assessmentgrades data for the second grade item
  * @return void
  */
-function workshop_grade_item_update(stdClass $workshop, $submissiongrades=null, $assessmentgrades=null) {
+function workshop_grade_item_update(stdclass $workshop, $submissiongrades=null, $assessmentgrades=null) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
 
-    $a = new stdClass();
+    $a = new stdclass();
     $a->workshopname = clean_param($workshop->name, PARAM_NOTAGS);
 
     $item = array();
@@ -349,11 +349,11 @@ function workshop_grade_item_update(stdClass $workshop, $submissiongrades=null, 
  *
  * Needed by grade_update_mod_grades() in lib/gradelib.php
  *
- * @param stdClass $workshop instance object with extra cmidnumber and modname property
+ * @param stdclass $workshop instance object with extra cmidnumber and modname property
  * @param int $userid        update grade of specific user only, 0 means all participants
  * @return void
  */
-function workshop_update_grades(stdClass $workshop, $userid=0) {
+function workshop_update_grades(stdclass $workshop, $userid=0) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
 
@@ -365,7 +365,7 @@ function workshop_update_grades(stdClass $workshop, $userid=0) {
     $records = $DB->get_records_sql($sql, $params);
     $submissiongrades = array();
     foreach ($records as $record) {
-        $grade = new stdClass();
+        $grade = new stdclass();
         $grade->userid = $record->authorid;
         if (!is_null($record->gradeover)) {
             $grade->rawgrade = grade_floatval($workshop->grade * $record->gradeover / 100);
@@ -388,7 +388,7 @@ function workshop_update_grades(stdClass $workshop, $userid=0) {
     $records = $DB->get_records_sql($sql, $params);
     $assessmentgrades = array();
     foreach ($records as $record) {
-        $grade = new stdClass();
+        $grade = new stdclass();
         $grade->userid = $record->userid;
         $grade->rawgrade = grade_floatval($workshop->gradinggrade * $record->gradinggrade / 100);
         $grade->dategraded = $record->timegraded;
@@ -408,9 +408,9 @@ function workshop_update_grades(stdClass $workshop, $userid=0) {
  * The file area workshop_intro for the activity introduction field is added automatically
  * by {@link file_browser::get_file_info_module()}
  *
- * @param stdClass $course
- * @param stdClass $cm
- * @param stdClass $context
+ * @param stdclass $course
+ * @param stdclass $cm
+ * @param stdclass $context
  * @return array of [(string)filearea] => (string)description
  */
 function workshop_get_file_areas($course, $cm, $context) {
@@ -434,9 +434,9 @@ function workshop_get_file_areas($course, $cm, $context) {
  * Besides that, areas workshop_instructauthors and workshop_instructreviewers contain the media
  * embedded using the mod_form.php.
  *
- * @param stdClass $course
- * @param stdClass $cminfo
- * @param stdClass $context
+ * @param stdclass $course
+ * @param stdclass $cminfo
+ * @param stdclass $context
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
@@ -567,16 +567,16 @@ function workshop_pluginfile($course, $cminfo, $context, $filearea, array $args,
 /**
  * File browsing support for workshop file areas
  *
- * @param stdClass $browser
- * @param stdClass $areas
- * @param stdClass $course
- * @param stdClass $cm
- * @param stdClass $context
+ * @param stdclass $browser
+ * @param stdclass $areas
+ * @param stdclass $course
+ * @param stdclass $cm
+ * @param stdclass $context
  * @param string $filearea
  * @param int $itemid
  * @param string $filepath
  * @param string $filename
- * @return stdClass file_info instance or null if not found
+ * @return stdclass file_info instance or null if not found
  */
 function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG, $DB;
@@ -672,11 +672,11 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
  * This can be called by an AJAX request so do not rely on $PAGE as it might not be set up properly.
  *
  * @param navigation_node $navref An object representing the navigation tree node of the workshop module instance
- * @param stdClass $course
- * @param stdClass $module
- * @param stdClass $cm
+ * @param stdclass $course
+ * @param stdclass $module
+ * @param stdclass $cm
  */
-function workshop_extend_navigation(navigation_node $navref, stdClass $course, stdClass $module, stdClass $cm) {
+function workshop_extend_navigation(navigation_node $navref, stdclass $course, stdclass $module, stdclass $cm) {
     global $CFG;
 
     if (has_capability('mod/workshop:submit', $cm->context)) {
@@ -693,10 +693,10 @@ function workshop_extend_navigation(navigation_node $navref, stdClass $course, s
  * so it is safe to rely on the $PAGE.
  *
  * @param settings_navigation $settingsnav {@link settings_navigation}
- * @param stdClass $module
+ * @param stdclass $module
  * @return void|mixed The key to the modules branch
  */
-function workshop_extend_settings_navigation(settings_navigation $settingsnav, stdClass $module=null) {
+function workshop_extend_settings_navigation(settings_navigation $settingsnav, stdclass $module=null) {
     global $CFG, $PAGE;
 
     $workshopkey = $settingsnav->add(get_string('workshopadministration', 'workshop'));

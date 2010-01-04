@@ -47,7 +47,7 @@ if ($id) { // submission is specified
     $submission = $workshop->get_submission_by_id($id);
 } else { // no submission specified
     if (!$submission = $workshop->get_submission_by_author($USER->id)) {
-        $submission = new stdClass();
+        $submission = new stdclass();
         $submission->id = null;
         $submission->authorid = $USER->id;
     }
@@ -125,7 +125,7 @@ if (!$edit and $canoverride) {
     $feedbackform = $workshop->get_feedbackauthor_form($PAGE->url, $submission);
     if ($data = $feedbackform->get_data()) {
         $data = file_postupdate_standard_editor($data, 'feedbackauthor', array(), $workshop->context);
-        $record = new stdClass();
+        $record = new stdclass();
         $record->id = $submission->id;
         $record->gradeover = $workshop->raw_grade_value($data->gradeover, $workshop->grade);
         $record->gradeoverby = $USER->id;

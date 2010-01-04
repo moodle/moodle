@@ -37,9 +37,9 @@ class testable_workshop extends workshop {
 
     public function __construct() {
         $this->id       = 16;
-        $this->cm       = new stdClass();
-        $this->course   = new stdClass();
-        $this->context  = new stdClass();
+        $this->cm       = new stdclass();
+        $this->course   = new stdclass();
+        $this->context  = new stdclass();
     }
 
     public function aggregate_submission_grades_process(array $assessments) {
@@ -213,7 +213,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch = array();
         $batch[] = (object)array('reviewerid'=>3, 'gradinggrade'=>82.87670, 'gradinggradeover'=>null, 'aggregationid'=>null, 'aggregatedgrade'=>null);
         // expectation
-        $expected = new stdClass();
+        $expected = new stdclass();
         $expected->workshopid = $this->workshop->id;
         $expected->userid = 3;
         $expected->gradinggrade = 82.87670;
@@ -264,7 +264,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>87.34311, 'gradinggradeover'=>null, 'aggregationid'=>null, 'aggregatedgrade'=>null);
         $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>51.12000, 'gradinggradeover'=>null, 'aggregationid'=>null, 'aggregatedgrade'=>null);
         // expectation
-        $expected = new stdClass();
+        $expected = new stdclass();
         $expected->workshopid = $this->workshop->id;
         $expected->userid = 5;
         $expected->gradinggrade = 79.3066;

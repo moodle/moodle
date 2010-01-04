@@ -47,7 +47,7 @@ class testable_workshop_best_evaluation extends workshop_best_evaluation {
     public function weighted_variance(array $assessments) {
         return parent::weighted_variance($assessments);
     }
-    public function assessments_distance(stdClass $assessment, stdClass $referential, array $diminfo, stdClass $settings) {
+    public function assessments_distance(stdclass $assessment, stdclass $referential, array $diminfo, stdclass $settings) {
         return parent::assessments_distance($assessment, $referential, $diminfo, $settings);
     }
 }
@@ -71,9 +71,9 @@ class workshop_best_evaluation_test extends UnitTestCase {
         $this->realDB   = $DB;
         $DB             = new mockDB();
 
-        $cm             = new stdClass();
-        $course         = new stdClass();
-        $context        = new stdClass();
+        $cm             = new stdclass();
+        $course         = new stdclass();
+        $context        = new stdclass();
         $workshop       = (object)array('id' => 42, 'evaluation' => 'best');
         $this->workshop = new workshop($workshop, $cm, $course, $context);
         $this->evaluator = new testable_workshop_best_evaluation($this->workshop);

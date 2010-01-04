@@ -70,9 +70,9 @@ class workshop_numerrors_strategy_test extends UnitTestCase {
         $this->realDB   = $DB;
         $DB             = new mockDB();
 
-        $cm             = new stdClass();
-        $course         = new stdClass();
-        $context        = new stdClass();
+        $cm             = new stdclass();
+        $course         = new stdclass();
+        $context        = new stdclass();
         $workshop       = (object)array('id' => 42, 'strategy' => 'numerrors');
         $this->workshop = new workshop($workshop, $cm, $course, $context);
         $this->strategy = new testable_workshop_numerrors_strategy($this->workshop);

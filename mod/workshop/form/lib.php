@@ -34,7 +34,7 @@ interface workshop_strategy {
      * Factory method returning a form that is used to define the assessment form
      *
      * @param string $actionurl URL of the action handler script, defaults to auto detect
-     * @return stdClass The instance of the assessment form editor class
+     * @return stdclass The instance of the assessment form editor class
      */
     public function get_edit_strategy_form($actionurl=null);
 
@@ -45,20 +45,20 @@ interface workshop_strategy {
      * to be evaluated. Each dimension consists of a set of form fields. Strategy-specific information
      * are saved in workshopform_{strategyname} tables.
      *
-     * @param stdClass $data Raw data as returned by the form editor
+     * @param stdclass $data Raw data as returned by the form editor
      * @return void
      */
-    public function save_edit_strategy_form(stdClass $data);
+    public function save_edit_strategy_form(stdclass $data);
 
     /**
      * Factory method returning an instance of an assessment form
      *
      * @param moodle_url $actionurl URL of form handler, defaults to auto detect the current url
      * @param string $mode          Mode to open the form in: preview|assessment
-     * @param stdClass $assessment  If opening in the assessment mode, the current assessment record
+     * @param stdclass $assessment  If opening in the assessment mode, the current assessment record
      * @param bool $editable        Shall the form be opened as editable (true) or read-only (false)
      */
-    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdClass $assessment=null, $editable=true);
+    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdclass $assessment=null, $editable=true);
 
     /**
      * Saves the filled assessment and returns the grade for submission as suggested by the reviewer
@@ -67,12 +67,12 @@ interface workshop_strategy {
      * The returned grade should be rounded to 5 decimals as with round($grade, 5).
      *
      * @see grade_floatval()
-     * @param stdClass $assessment Assessment being filled
-     * @param stdClass $data       Raw data as returned by the assessment form
+     * @param stdclass $assessment Assessment being filled
+     * @param stdclass $data       Raw data as returned by the assessment form
      * @return float|null          Raw percentual grade (0.00000 to 100.00000) for submission
      *                             as suggested by the peer or null if impossible to count
      */
-    public function save_assessment(stdClass $assessment, stdClass $data);
+    public function save_assessment(stdclass $assessment, stdclass $data);
 
     /**
      * Has the assessment form been defined and is ready to be used by the reviewers?
@@ -84,7 +84,7 @@ interface workshop_strategy {
     /**
      * Returns a general information about the assessment dimensions
      *
-     * @return array [dimid] => stdClass (->id ->max ->min ->weight)
+     * @return array [dimid] => stdclass (->id ->max ->min ->weight)
      */
     public function get_dimensions_info();
 

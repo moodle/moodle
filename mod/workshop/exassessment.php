@@ -101,7 +101,7 @@ if ($canmanage) {
     echo $OUTPUT->heading(get_string('assessmentbyyourself', 'workshop'), 2);
 } else {
     $assessment = $workshop->get_assessment_by_id($assessment->id); // extend the current record with user details
-    $reviewer   = new stdClass();
+    $reviewer   = new stdclass();
     $reviewer->firstname = $assessment->reviewerfirstname;
     $reviewer->lastname = $assessment->reviewerlastname;
     echo $OUTPUT->heading(get_string('assessmentbyknown', 'workshop', fullname($reviewer)), 2);

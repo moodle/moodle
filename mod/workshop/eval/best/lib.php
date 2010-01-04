@@ -58,17 +58,17 @@ class workshop_best_evaluation implements workshop_evaluation {
      * This function relies on the grading strategy subplugin providing get_assessments_recordset() method.
      * {@see self::process_assessments()} for the required structure of the recordset.
      *
-     * @param stdClass $settings       The settings for this round of evaluation
+     * @param stdclass $settings       The settings for this round of evaluation
      * @param null|int|array $restrict If null, update all reviewers, otherwise update just grades for the given reviewers(s)
      *
      * @return void
      */
-    public function update_grading_grades(stdClass $settings, $restrict=null) {
+    public function update_grading_grades(stdclass $settings, $restrict=null) {
         global $DB;
 
         // remember the recently used settings for this workshop
         if (empty($this->settings)) {
-            $record = new stdClass();
+            $record = new stdclass();
             $record->workshopid = $this->workshop->id;
             $record->comparison = $settings->comparison;
             $DB->insert_record('workshopeval_best_settings', $record);
@@ -131,12 +131,12 @@ class workshop_best_evaluation implements workshop_evaluation {
     /**
      * Given a list of all assessments of a single submission, updates the grading grades in database
      *
-     * @param array $assessments of stdClass (->assessmentid ->assessmentweight ->reviewerid ->gradinggrade ->submissionid ->dimensionid ->grade)
-     * @param array $diminfo of stdClass (->id ->weight ->max ->min)
-     * @param stdClass grading evaluation settings
+     * @param array $assessments of stdclass (->assessmentid ->assessmentweight ->reviewerid ->gradinggrade ->submissionid ->dimensionid ->grade)
+     * @param array $diminfo of stdclass (->id ->weight ->max ->min)
+     * @param stdclass grading evaluation settings
      * @return void
      */
-    protected function process_assessments(array $assessments, array $diminfo, stdClass $settings) {
+    protected function process_assessments(array $assessments, array $diminfo, stdclass $settings) {
         global $DB;
 
         if (empty($assessments)) {
@@ -196,7 +196,7 @@ class workshop_best_evaluation implements workshop_evaluation {
         foreach ($grades as $assessmentid => $grade) {
             if (grade_floats_different($grade, $assessments[$assessmentid]->gradinggrade)) {
                 // the value has changed
-                $record = new stdClass();
+                $record = new stdclass();
                 $record->id = $assessmentid;
                 $record->gradinggrade = grade_floatval($grade);
                 $DB->update_record('workshop_assessments', $record, true);  // bulk operations expected
@@ -217,7 +217,7 @@ class workshop_best_evaluation implements workshop_evaluation {
         foreach ($assessments as $a) {
             $id = $a->assessmentid; // just an abbrevation
             if (!isset($data[$id])) {
-                $data[$id] = new stdClass();
+                $data[$id] = new stdclass();
                 $data[$id]->assessmentid = $a->assessmentid;
                 $data[$id]->weight       = $a->assessmentweight;
                 $data[$id]->reviewerid   = $a->reviewerid;
@@ -233,12 +233,12 @@ class workshop_best_evaluation implements workshop_evaluation {
     /**
      * Normalizes the dimension grades to the interval 0.00000 - 100.00000
      *
-     * Note: this heavily relies on PHP5 way of handling references in array of stdClasses. Hopefuly
+     * Note: this heavily relies on PHP5 way of handling references in array of stdclasses. Hopefuly
      * it will not change again soon.
      *
-     * @param array $assessments of stdClass as returned by {@see self::prepare_data_from_recordset()}
-     * @param array $diminfo of stdClass
-     * @return array of stdClass with the same structure as $assessments
+     * @param array $assessments of stdclass as returned by {@see self::prepare_data_from_recordset()}
+     * @param array $diminfo of stdclass
+     * @return array of stdclass with the same structure as $assessments
      */
     protected function normalize_grades(array $assessments, array $diminfo) {
         foreach ($assessments as $asid => $assessment) {
@@ -261,7 +261,7 @@ class workshop_best_evaluation implements workshop_evaluation {
      * The passed structure must be array of assessments objects with ->weight and ->dimgrades properties.
      *
      * @param array $assessments as prepared by {@link self::prepare_data_from_recordset()}
-     * @return null|stdClass
+     * @return null|stdclass
      */
     protected function average_assessment(array $assessments) {
         $sumdimgrades = array();
@@ -283,7 +283,7 @@ class workshop_best_evaluation implements workshop_evaluation {
             return null;
         }
 
-        $average = new stdClass();
+        $average = new stdclass();
         $average->dimgrades = array();
         foreach ($sumdimgrades as $dimid => $sumdimgrade) {
             $average->dimgrades[$dimid] = grade_floatval($sumdimgrade / $sumweights);
@@ -356,13 +356,13 @@ class workshop_best_evaluation implements workshop_evaluation {
      * Returned value is rounded to 4 valid decimals to prevent some rounding issues - see the unit test
      * for an example.
      *
-     * @param stdClass $assessment the assessment being measured
-     * @param stdClass $referential assessment
-     * @param array $diminfo of stdClass(->weight ->min ->max ->variance) indexed by dimension id
-     * @param stdClass $settings
+     * @param stdclass $assessment the assessment being measured
+     * @param stdclass $referential assessment
+     * @param array $diminfo of stdclass(->weight ->min ->max ->variance) indexed by dimension id
+     * @param stdclass $settings
      * @return float|null rounded to 4 valid decimals
      */
-    protected function assessments_distance(stdClass $assessment, stdClass $referential, array $diminfo, stdClass $settings) {
+    protected function assessments_distance(stdclass $assessment, stdclass $referential, array $diminfo, stdclass $settings) {
         $distance = 0;
         $n = 0;
         foreach (array_keys($assessment->dimgrades) as $dimid) {

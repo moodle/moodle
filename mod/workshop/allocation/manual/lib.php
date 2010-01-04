@@ -136,7 +136,7 @@ class workshop_manual_allocator implements workshop_allocator {
 
         $hlauthorid     = -1;           // highlight this author
         $hlreviewerid   = -1;           // highlight this reviewer
-        $msg            = new stdClass(); // message to render
+        $msg            = new stdclass(); // message to render
 
         $m  = optional_param('m', '', PARAM_ALPHANUMEXT);   // message code
         if ($m) {
@@ -214,7 +214,7 @@ class workshop_manual_allocator implements workshop_allocator {
         $submissions = $this->workshop->get_submissions(array_keys($participants));
         foreach ($submissions as $submission) {
             if (!isset($userinfo[$submission->authorid])) {
-                $userinfo[$submission->authorid]            = new stdClass();
+                $userinfo[$submission->authorid]            = new stdclass();
                 $userinfo[$submission->authorid]->id        = $submission->authorid;
                 $userinfo[$submission->authorid]->firstname = $submission->authorfirstname;
                 $userinfo[$submission->authorid]->lastname  = $submission->authorlastname;
@@ -237,7 +237,7 @@ class workshop_manual_allocator implements workshop_allocator {
             $reviewers = $DB->get_records_sql($sql, $params);
             foreach ($reviewers as $reviewer) {
                 if (!isset($userinfo[$reviewer->reviewerid])) {
-                    $userinfo[$reviewer->reviewerid]            = new stdClass();
+                    $userinfo[$reviewer->reviewerid]            = new stdclass();
                     $userinfo[$reviewer->reviewerid]->id        = $reviewer->reviewerid;
                     $userinfo[$reviewer->reviewerid]->firstname = $reviewer->firstname;
                     $userinfo[$reviewer->reviewerid]->lastname  = $reviewer->lastname;
@@ -264,7 +264,7 @@ class workshop_manual_allocator implements workshop_allocator {
             $reviewees = $DB->get_records_sql($sql, $params);
             foreach ($reviewees as $reviewee) {
                 if (!isset($userinfo[$reviewee->revieweeid])) {
-                    $userinfo[$reviewee->revieweeid]            = new stdClass();
+                    $userinfo[$reviewee->revieweeid]            = new stdclass();
                     $userinfo[$reviewee->revieweeid]->id        = $reviewee->revieweeid;
                     $userinfo[$reviewee->revieweeid]->firstname = $reviewee->firstname;
                     $userinfo[$reviewee->revieweeid]->lastname  = $reviewee->lastname;
@@ -278,7 +278,7 @@ class workshop_manual_allocator implements workshop_allocator {
         $allocations = array();
 
         foreach ($participants as $participant) {
-            $allocations[$participant->id] = new stdClass;
+            $allocations[$participant->id] = new stdclass;
             $allocations[$participant->id]->userid = $participant->id;
             $allocations[$participant->id]->submissionid = null;
             $allocations[$participant->id]->reviewedby = array();
@@ -302,7 +302,7 @@ class workshop_manual_allocator implements workshop_allocator {
         unset($reviewees);
 
         // prepare data to be displayed
-        $data                   = new stdClass();
+        $data                   = new stdclass();
         $data->allocations      = $allocations;
         $data->userinfo         = $userinfo;
         $data->authors          = $this->workshop->get_potential_authors();

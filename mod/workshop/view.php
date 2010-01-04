@@ -199,7 +199,7 @@ case workshop::PHASE_ASSESSMENT:
             $pagingbar->pagevar     = 'page';
 
             // grading report display options
-            $reportopts                         = new stdClass();
+            $reportopts                         = new stdclass();
             $reportopts->showauthornames        = $showauthornames;
             $reportopts->showreviewernames      = $showreviewernames;
             $reportopts->sortby                 = $sortby;
@@ -227,7 +227,7 @@ case workshop::PHASE_ASSESSMENT:
     } else {
         $shownames = has_capability('mod/workshop:viewauthornames', $PAGE->context);
         foreach ($assessments as $assessment) {
-            $submission                     = new stdClass();
+            $submission                     = new stdclass();
             $submission->id                 = $assessment->submissionid;
             $submission->title              = $assessment->submissiontitle;
             $submission->timecreated        = $assessment->submissioncreated;
@@ -289,7 +289,7 @@ case workshop::PHASE_EVALUATION:
             $pagingbar->pagevar     = 'page';
 
             // grading report display options
-            $reportopts                         = new stdClass();
+            $reportopts                         = new stdclass();
             $reportopts->showauthornames        = $showauthornames;
             $reportopts->showreviewernames      = $showreviewernames;
             $reportopts->sortby                 = $sortby;

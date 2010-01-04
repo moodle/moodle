@@ -117,10 +117,10 @@ class workshop_rubric_strategy implements workshop_strategy {
      * The passed data object are the raw data returned by the get_data().
      *
      * @uses $DB
-     * @param stdClass $data Raw data returned by the dimension editor form
+     * @param stdclass $data Raw data returned by the dimension editor form
      * @return void
      */
-    public function save_edit_strategy_form(stdClass $data) {
+    public function save_edit_strategy_form(stdclass $data) {
         global $DB;
 
         $norepeats  = $data->norepeats;
@@ -132,7 +132,7 @@ class workshop_rubric_strategy implements workshop_strategy {
         if ($DB->record_exists('workshopform_rubric_config', array('workshopid' => $this->workshop->id))) {
             $DB->set_field('workshopform_rubric_config', 'layout', $layout, array('workshopid' => $this->workshop->id));
         } else {
-            $record = new stdClass();
+            $record = new stdclass();
             $record->workshopid = $this->workshop->id;
             $record->layout     = $layout;
             $DB->insert_record('workshopform_rubric_config', $record, false);
@@ -191,7 +191,7 @@ class workshop_rubric_strategy implements workshop_strategy {
      * @param moodle_url $actionurl URL of form handler, defaults to auto detect the current url
      * @param string $mode          Mode to open the form in: preview/assessment/readonly
      */
-    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdClass $assessment=null, $editable=true) {
+    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdclass $assessment=null, $editable=true) {
         global $CFG;    // needed because the included files use it
         global $DB;
         require_once(dirname(__FILE__) . '/assessment_form.php');
@@ -210,7 +210,7 @@ class workshop_rubric_strategy implements workshop_strategy {
         if ('assessment' === $mode and !empty($assessment)) {
             // load the previously saved assessment data
             $grades = $this->get_current_assessment_data($assessment);
-            $current = new stdClass();
+            $current = new stdclass();
             for ($i = 0; $i < $nodimensions; $i++) {
                 $dimid = $fields->{'dimensionid__idx_'.$i};
                 if (isset($grades[$dimid])) {
@@ -249,15 +249,15 @@ class workshop_rubric_strategy implements workshop_strategy {
      *
      * This method processes data submitted using the form returned by {@link get_assessment_form()}
      *
-     * @param stdClass $assessment Assessment being filled
-     * @param stdClass $data       Raw data as returned by the assessment form
+     * @param stdclass $assessment Assessment being filled
+     * @param stdclass $data       Raw data as returned by the assessment form
      * @return float|null          Raw grade (0.00000 to 100.00000) for submission as suggested by the peer
      */
-    public function save_assessment(stdClass $assessment, stdClass $data) {
+    public function save_assessment(stdclass $assessment, stdclass $data) {
         global $DB;
 
         for ($i = 0; isset($data->{'dimensionid__idx_' . $i}); $i++) {
-            $grade = new stdClass();
+            $grade = new stdclass();
             $grade->id = $data->{'gradeid__idx_' . $i};
             $grade->assessmentid = $assessment->id;
             $grade->strategy = 'rubric';
@@ -357,7 +357,7 @@ class workshop_rubric_strategy implements workshop_strategy {
         $fields = array();
         foreach ($records as $record) {
             if (!isset($fields[$record->rid])) {
-                $fields[$record->rid] = new stdClass();
+                $fields[$record->rid] = new stdclass();
                 $fields[$record->rid]->id = $record->rid;
                 $fields[$record->rid]->sort = $record->sort;
                 $fields[$record->rid]->description = $record->description;
@@ -365,7 +365,7 @@ class workshop_rubric_strategy implements workshop_strategy {
                 $fields[$record->rid]->levels = array();
             }
             if (!empty($record->lid)) {
-                $fields[$record->rid]->levels[$record->lid] = new stdClass();
+                $fields[$record->rid]->levels[$record->lid] = new stdclass();
                 $fields[$record->rid]->levels[$record->lid]->id = $record->lid;
                 $fields[$record->rid]->levels[$record->lid]->grade = $record->grade;
                 $fields[$record->rid]->levels[$record->lid]->definition = $record->definition;
@@ -393,11 +393,11 @@ class workshop_rubric_strategy implements workshop_strategy {
      * Maps the dimension data from DB to the form fields
      *
      * @param array $fields Array of dimensions definition as returned by {@link load_fields()}
-     * @return stdClass of fields data to be used by the mform set_data
+     * @return stdclass of fields data to be used by the mform set_data
      */
     protected function prepare_form_fields(array $fields) {
 
-        $formdata = new stdClass();
+        $formdata = new stdclass();
         $key = 0;
         foreach ($fields as $field) {
             $formdata->{'dimensionid__idx_' . $key}             = $field->id;
@@ -445,15 +445,15 @@ class workshop_rubric_strategy implements workshop_strategy {
      * Called internally from {@link save_edit_strategy_form()} only. Could be private but
      * keeping protected for unit testing purposes.
      *
-     * @param stdClass $raw Raw data returned by mform
+     * @param stdclass $raw Raw data returned by mform
      * @return array Array of objects to be inserted/updated in DB
      */
-    protected function prepare_database_fields(stdClass $raw) {
+    protected function prepare_database_fields(stdclass $raw) {
 
         $cook = array();
 
         for ($i = 0; $i < $raw->norepeats; $i++) {
-            $cook[$i]                       = new stdClass();
+            $cook[$i]                       = new stdclass();
             $cook[$i]->id                   = $raw->{'dimensionid__idx_'.$i};
             $cook[$i]->workshopid           = $this->workshop->id;
             $cook[$i]->sort                 = $i + 1;
@@ -462,7 +462,7 @@ class workshop_rubric_strategy implements workshop_strategy {
 
             $j = 0;
             while (isset($raw->{'levelid__idx_' . $i . '__idy_' . $j})) {
-                $level                      = new stdClass();
+                $level                      = new stdclass();
                 $level->id                  = $raw->{'levelid__idx_' . $i . '__idy_' . $j};
                 $level->grade               = $raw->{'grade__idx_'.$i.'__idy_'.$j};
                 $level->definition          = $raw->{'definition__idx_'.$i.'__idy_'.$j};
@@ -478,10 +478,10 @@ class workshop_rubric_strategy implements workshop_strategy {
     /**
      * Returns the list of current grades filled by the reviewer indexed by dimensionid
      *
-     * @param stdClass $assessment Assessment record
-     * @return array [int dimensionid] => stdClass workshop_grades record
+     * @param stdclass $assessment Assessment record
+     * @return array [int dimensionid] => stdclass workshop_grades record
      */
-    protected function get_current_assessment_data(stdClass $assessment) {
+    protected function get_current_assessment_data(stdclass $assessment) {
         global $DB;
 
         if (empty($this->dimensions)) {
@@ -501,10 +501,10 @@ class workshop_rubric_strategy implements workshop_strategy {
     /**
      * Aggregates the assessment form data and sets the grade for the submission given by the peer
      *
-     * @param stdClass $assessment Assessment record
+     * @param stdclass $assessment Assessment record
      * @return float|null          Raw grade (from 0.00000 to 100.00000) for submission as suggested by the peer
      */
-    protected function update_peer_grade(stdClass $assessment) {
+    protected function update_peer_grade(stdclass $assessment) {
         $grades     = $this->get_current_assessment_data($assessment);
         $suggested  = $this->calculate_peer_grade($grades);
         if (!is_null($suggested)) {

@@ -107,10 +107,10 @@ class workshop_comments_strategy implements workshop_strategy {
      * The passed data object are the raw data returned by the get_data().
      *
      * @uses $DB
-     * @param stdClass $data Raw data returned by the dimension editor form
+     * @param stdclass $data Raw data returned by the dimension editor form
      * @return void
      */
-    public function save_edit_strategy_form(stdClass $data) {
+    public function save_edit_strategy_form(stdclass $data) {
         global $DB, $PAGE;
 
         $workshopid = $data->workshopid;
@@ -149,10 +149,10 @@ class workshop_comments_strategy implements workshop_strategy {
      *
      * @param moodle_url $actionurl URL of form handler, defaults to auto detect the current url
      * @param string $mode          Mode to open the form in: preview/assessment
-     * @param stdClass $assessment  The current assessment
+     * @param stdclass $assessment  The current assessment
      * @param bool $editable
      */
-    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdClass $assessment=null, $editable=true) {
+    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdclass $assessment=null, $editable=true) {
         global $CFG;    // needed because the included files use it
         global $PAGE;
         global $DB;
@@ -170,7 +170,7 @@ class workshop_comments_strategy implements workshop_strategy {
         if ('assessment' === $mode and !empty($assessment)) {
             // load the previously saved assessment data
             $grades = $this->get_current_assessment_data($assessment);
-            $current = new stdClass();
+            $current = new stdclass();
             for ($i = 0; $i < $nodimensions; $i++) {
                 $dimid = $fields->{'dimensionid__idx_'.$i};
                 if (isset($grades[$dimid])) {
@@ -199,18 +199,18 @@ class workshop_comments_strategy implements workshop_strategy {
      *
      * This method processes data submitted using the form returned by {@link get_assessment_form()}
      *
-     * @param stdClass $assessment Assessment being filled
-     * @param stdClass $data       Raw data as returned by the assessment form
+     * @param stdclass $assessment Assessment being filled
+     * @param stdclass $data       Raw data as returned by the assessment form
      * @return float|null          Constant raw grade 100.00000 for submission as suggested by the peer
      */
-    public function save_assessment(stdClass $assessment, stdClass $data) {
+    public function save_assessment(stdclass $assessment, stdclass $data) {
         global $DB;
 
         if (!isset($data->nodims)) {
             throw coding_expection('You did not send me the number of assessment dimensions to process');
         }
         for ($i = 0; $i < $data->nodims; $i++) {
-            $grade = new stdClass();
+            $grade = new stdclass();
             $grade->id = $data->{'gradeid__idx_' . $i};
             $grade->assessmentid = $assessment->id;
             $grade->strategy = 'comments';
@@ -282,7 +282,7 @@ class workshop_comments_strategy implements workshop_strategy {
         $dimrecords = $DB->get_records('workshopform_comments', array('workshopid' => $this->workshop->id), 'sort', 'id');
         $diminfo = array();
         foreach ($dimrecords as $dimid => $dimrecord) {
-            $diminfo[$dimid] = new stdClass();
+            $diminfo[$dimid] = new stdclass();
             $diminfo[$dimid]->id = $dimid;
             $diminfo[$dimid]->weight = 1;
             $diminfo[$dimid]->min = 100;
@@ -313,7 +313,7 @@ class workshop_comments_strategy implements workshop_strategy {
      */
     protected function prepare_form_fields(array $raw) {
 
-        $formdata = new stdClass();
+        $formdata = new stdclass();
         $key = 0;
         foreach ($raw as $dimension) {
             $formdata->{'dimensionid__idx_' . $key}             = $dimension->id;
@@ -352,17 +352,17 @@ class workshop_comments_strategy implements workshop_strategy {
      * Called internally from {@link save_edit_strategy_form()} only. Could be private but
      * keeping protected for unit testing purposes.
      *
-     * @param stdClass $raw Raw data returned by mform
+     * @param stdclass $raw Raw data returned by mform
      * @return array Array of objects to be inserted/updated in DB
      */
-    protected function prepare_database_fields(stdClass $raw) {
+    protected function prepare_database_fields(stdclass $raw) {
         global $PAGE;
 
-        $cook               = new stdClass(); // to be returned
+        $cook               = new stdclass(); // to be returned
         $cook->comments = array();        // records to be stored in {workshopform_comments}
 
         for ($i = 0; $i < $raw->norepeats; $i++) {
-            $cook->comments[$i]                     = new stdClass();
+            $cook->comments[$i]                     = new stdclass();
             $cook->comments[$i]->id                 = $raw->{'dimensionid__idx_'.$i};
             $cook->comments[$i]->workshopid         = $this->workshop->id;
             $cook->comments[$i]->sort               = $i + 1;
@@ -374,10 +374,10 @@ class workshop_comments_strategy implements workshop_strategy {
     /**
      * Returns the list of current grades filled by the reviewer indexed by dimensionid
      *
-     * @param stdClass $assessment Assessment record
-     * @return array [int dimensionid] => stdClass workshop_grades record
+     * @param stdclass $assessment Assessment record
+     * @return array [int dimensionid] => stdclass workshop_grades record
      */
-    protected function get_current_assessment_data(stdClass $assessment) {
+    protected function get_current_assessment_data(stdclass $assessment) {
         global $DB;
 
         if (empty($this->dimensions)) {
