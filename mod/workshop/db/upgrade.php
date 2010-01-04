@@ -79,7 +79,15 @@ function xmldb_workshop_upgrade($oldversion) {
             if ($dbman->table_exists($tableorig)) {
                 $dbman->rename_table(new XMLDBTable($tableorig), $tablearchive);
             }
-            // append a new field 'newid' in every archived table. null value means the record was not migrated yet
+            // append a new field 'newplugin' into every archived table. In this field, the name of the subplugin
+            // who adopted the record during the migration is stored. null value means the record is not migrated yet
+            $table = new xmldb_table($tablearchive);
+            $field = new xmldb_field('newplugin', XMLDB_TYPE_CHAR, '28', null, null, null, null);
+            if (!$dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+            // append a new field 'newid' in every archived table. null value means the record was not migrated yet.
+            // the field will hold the new id of the migrated record
             $table = new xmldb_table($tablearchive);
             $field = new xmldb_field('newid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
             if (!$dbman->field_exists($table, $field)) {
@@ -105,8 +113,80 @@ function xmldb_workshop_upgrade($oldversion) {
     if ($result && $oldversion < 2009102903) {
         require_once(dirname(__FILE__) . '/upgradelib.php');
         echo $OUTPUT->notification('Copying workshop core data', 'notifysuccess');
-        workshop_upgrade_copy_instances();
+        workshop_upgrade_module_instances();
         upgrade_mod_savepoint($result, 2009102903, 'workshop');
+    }
+
+    /**
+     * Migration from 1.9 - step 4 - migrate submissions
+     */
+    if ($result && $oldversion < 2009102904) {
+        require_once(dirname(__FILE__) . '/upgradelib.php');
+        echo $OUTPUT->notification('Copying submissions', 'notifysuccess');
+        workshop_upgrade_submissions();
+        upgrade_mod_savepoint($result, 2009102904, 'workshop');
+    }
+
+    /**
+     * Migration from 1.9 - step 5 - migrate submission attachment to new file storage
+     */
+    if ($result && $oldversion < 2009102905) {
+        // $filearea = "$workshop->course/$CFG->moddata/workshop/$submission->id";
+        $fs     = get_file_storage();
+        $from   = 'FROM {workshop_submissions} s
+                   JOIN {workshop} w ON (w.id = s.workshopid)
+                   JOIN {modules} m ON (m.name = :modulename)
+                   JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = w.id)
+                  WHERE s.attachment <> 1';
+        $params = array('modulename' => 'workshop');
+        $count  = $DB->count_records_sql('SELECT COUNT(s.id) ' . $from, $params);
+        $rs     = $DB->get_recordset_sql('SELECT s.id, s.authorid, s.workshopid, cm.course, cm.id AS cmid ' .
+                                            $from . ' ORDER BY cm.course, w.id', $params);
+        $pbar   = new progress_bar('migrateworkshopsubmissions', 500, true);
+        $i      = 0;
+        foreach ($rs as $submission) {
+            $i++;
+            upgrade_set_timeout(60); // set up timeout, may also abort execution
+            $pbar->update($i, $count, "Migrating workshop submissions - $i/$count");
+
+            $filedir = "$CFG->dataroot/$submission->course/$CFG->moddata/workshop/$submission->id";
+            if ($files = get_directory_list($filedir, '', false)) {
+                $context = get_context_instance(CONTEXT_MODULE, $submission->cmid);
+                foreach ($files as $filename) {
+                    $filepath = $filedir . '/' . $filename;
+                    if (!is_readable($filepath)) {
+                        echo $OUTPUT->notification('File not readable: ' . $filepath);
+                        continue;
+                    }
+                    $filename = clean_param($filename, PARAM_FILE);
+                    if ($filename === '') {
+                        echo $OUTPUT->notification('Unsupported submission filename: ' . $filepath);
+                        continue;
+                    }
+                    if (! $fs->file_exists($context->id, 'workshop_submission_attachment', $submission->id, '/', $filename)) {
+                        $filerecord = array('contextid' => $context->id,
+                                            'filearea'  => 'workshop_submission_attachment',
+                                            'itemid'    => $submission->id,
+                                            'filepath'  => '/',
+                                            'filename'  => $filename,
+                                            'userid'    => $submission->authorid);
+                        if ($fs->create_file_from_pathname($filerecord, $filepath)) {
+                            $submission->attachment = 1;
+                            if ($DB->update_record('workshop_submissions', $submission)) {
+                                unlink($filepath);
+                            }
+                        }
+                    }
+                }
+            }
+            // remove dirs if empty
+            @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata/workshop/$submission->id");
+            @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata/workshop");
+            @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata");
+            @rmdir("$CFG->dataroot/$submission->course");
+        }
+        $rs->close();
+        upgrade_mod_savepoint($result, 2009102905, 'workshop');
     }
 
     /**

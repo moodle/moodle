@@ -34,7 +34,6 @@ function workshop_upgrade_prepare_20_tables() {
     if (!$dbman->table_exists('workshop')) {
         $table = new xmldb_table('workshop');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('oldid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null); // id in 1.9 table
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
         $table->add_field('intro', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
@@ -145,56 +144,150 @@ function workshop_upgrade_prepare_20_tables() {
 }
 
 /**
- * Copies the records from workshop_old into workshop table, keeping the original id in oldid column
+ * Copies the records from workshop_old into workshop table
  *
  * @return void
  */
-function workshop_upgrade_copy_instances() {
+function workshop_upgrade_module_instances() {
     global $CFG, $DB, $OUTPUT;
 
     upgrade_set_timeout();
     $moduleid = $DB->get_field('modules', 'id', array('name' => 'workshop'), MUST_EXIST);
     $rs = $DB->get_recordset_select('workshop_old', 'newid IS NULL');
     foreach ($rs as $old) {
-        $new                = new stdClass();
-        $new->oldid         = $old->id;
-        $new->course        = $old->course;
-        $new->name          = $old->name;
-        $new->intro         = $old->description;
-        $new->introformat   = $old->format;
-        $new->nattachments  = $old->nattachments;
-        $new->maxbytes      = $old->maxbytes;
-        $new->grade         = $old->grade;
-        $new->gradinggrade  = $old->gradinggrade;
-        $new->phase         = 50;   // defined in locallib.php as const workshop::PHASE_CLOSED
-        $new->timemodified  = time();
-        if ($old->ntassessments > 0) {
-            $new->useexamples = 1;
-        } else {
-            $new->useexamples = 0;
-        }
-        $new->usepeerassessment = 1;
-        $new->useselfassessment = $old->includeself;
-        switch ($old->gradingstrategy) {
-        case 0: // 'notgraded' - renamed
-            $new->strategy = 'comments';
-            break;
-        case 1: // 'accumulative'
-            $new->strategy = 'accumulative';
-            break;
-        case 2: // 'errorbanded' - renamed
-            $new->strategy = 'numerrors';
-            break;
-        case 3: // 'criterion' - will be migrated into 'rubric'
-            $new->strategy = 'rubric';
-            break;
-        case 4: // 'rubric'
-            $new->strategy = 'rubric';
-            break;
-        }
+        $new = workshop_upgrade_transform_instance($old);
         $newid = $DB->insert_record('workshop', $new, true, true);
         $DB->set_field('course_modules', 'instance', $newid, array('module' => $moduleid, 'instance' => $old->id));
+        $DB->set_field('workshop_old', 'newplugin', 'workshop', array('id' => $old->id));
         $DB->set_field('workshop_old', 'newid', $newid, array('id' => $old->id));
     }
     $rs->close();
 }
+
+/**
+ * Given a record containing data from 1.9 workshop table, returns object containing data as should be saved in 2.0 workshop table
+ *
+ * @param stdClass $old record from 1.9 workshop table
+ * @return stdClass
+ */
+function workshop_upgrade_transform_instance(stdClass $old) {
+    global $CFG;
+    require_once(dirname(dirname(__FILE__)) . '/locallib.php');
+
+    $new                = new stdClass();
+    $new->course        = $old->course;
+    $new->name          = $old->name;
+    $new->intro         = $old->description;
+    $new->introformat   = $old->format;
+    $new->nattachments  = $old->nattachments;
+    $new->maxbytes      = $old->maxbytes;
+    $new->grade         = $old->grade;
+    $new->gradinggrade  = $old->gradinggrade;
+    $new->phase         = workshop::PHASE_CLOSED;
+    $new->timemodified  = time();
+    if ($old->ntassessments > 0) {
+        $new->useexamples = 1;
+    } else {
+        $new->useexamples = 0;
+    }
+    $new->usepeerassessment = 1;
+    $new->useselfassessment = $old->includeself;
+    switch ($old->gradingstrategy) {
+    case 0: // 'notgraded' - renamed
+        $new->strategy = 'comments';
+        break;
+    case 1: // 'accumulative'
+        $new->strategy = 'accumulative';
+        break;
+    case 2: // 'errorbanded' - renamed
+        $new->strategy = 'numerrors';
+        break;
+    case 3: // 'criterion' - will be migrated into 'rubric'
+        $new->strategy = 'rubric';
+        break;
+    case 4: // 'rubric'
+        $new->strategy = 'rubric';
+        break;
+    }
+
+    return $new;
+}
+
+/**
+ * TODO: short description.
+ *
+ * @return TODO
+ */
+function workshop_upgrade_workshop_id_mappings() {
+    global $DB;
+
+    $oldrecords = $DB->get_records('workshop_old', null, 'id', 'id,newid');
+    $newids = array();
+    foreach ($oldrecords as $oldid => $oldrecord) {
+        if ($oldrecord->id and $oldrecord->newid) {
+            $newids[$oldid] = $oldrecord->newid;
+        }
+    }
+    return $newids;
+}
+
+/**
+ * Copies records from workshop_submissions_old into workshop_submissions. Can be called after all workshop module instances
+ * were correctly migrated and new ids are filled in workshop_old
+ *
+ * @return void
+ */
+function workshop_upgrade_submissions() {
+    global $CFG, $DB, $OUTPUT;
+
+    upgrade_set_timeout();
+    // mapping table from legacy workshop instance id to the new one: array of (int)oldid => (int)newid
+    $workshopnewids = workshop_upgrade_workshop_id_mappings();
+
+    // list of teachers in every workshop: array of (int)workshopid => array of (int)userid => notused
+    $workshopteachers = array();
+    $rs = $DB->get_recordset_select('workshop_submissions_old', 'newid IS NULL');
+    foreach ($rs as $old) {
+        if (!isset($workshopteachers[$old->workshopid])) {
+            $cm = get_coursemodule_from_instance('workshop', $old->workshopid, 0, false, MUST_EXIST);
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $workshopteachers[$old->workshopid] = get_users_by_capability($context, 'mod/workshop:manage', 'u.id');
+        }
+        $new = workshop_upgrade_transform_submission($old, $workshopnewids, $workshopteachers[$old->workshopid]);
+        $newid = $DB->insert_record('workshop_submissions', $new, true, true);
+        $DB->set_field('workshop_submissions_old', 'newplugin', 'submissions', array('id' => $old->id));
+        $DB->set_field('workshop_submissions_old', 'newid', $newid, array('id' => $old->id));
+    }
+    $rs->close();
+}
+
+/**
+ * Given a record from 1.x workshop_submissions_old, returns data for 2.0 workshop_submissions
+ *
+ * @param stdClass $old
+ * @param array $workshopnewids $oldid => $newid workshop instances mapping table
+ * @param array $legacyteachers $userid => notused the list of legacy workshop teachers for the submission's workshop
+ * @return stdClass
+ */
+function workshop_upgrade_transform_submission(stdClass $old, array $workshopnewids, array $legacyteachers) {
+    $new = new stdclass(); // new submission record to be returned
+    $new->workshopid = $workshopnewids[$old->workshopid];
+    if (isset($legacyteachers[$old->userid])) {
+        // the author of the submission was teacher = had mod/workshop:manage. this is the only way how we can
+        // recognize the submission should be treated as example submission (ach jo...)
+        $new->example = 1;
+    } else {
+        $new->example = 0;
+    }
+    $new->authorid = $old->userid;
+    $new->timecreated = $old->timecreated;
+    $new->timemodified = $old->timecreated;
+    $new->title = $old->title;
+    $new->content = $old->description;
+    $new->contentformat = FORMAT_HTML;
+    $new->contenttrust = 0;
+    $new->published = 0;
+
+    return $new;
+}
+
