@@ -34,7 +34,7 @@ require_once(dirname(dirname(__FILE__)) . '/strategy.php'); // parent class
  */
 class workshop_accumulative_strategy extends workshop_base_strategy {
 
-    public function load_grading_form() {
+    public function load_form() {
         global $DB;
 
         $dims = $DB->get_records('workshop_forms_' . $this->name, array('workshopid' => $this->workshop->id), 'sort');
@@ -46,7 +46,7 @@ class workshop_accumulative_strategy extends workshop_base_strategy {
     /**
      * Transpones the dimension data from DB so the assessment form editor can be populated by set_data
      *
-     * Called internally from load_grading_form(). Could be private but keeping protected
+     * Called internally from load_form(). Could be private but keeping protected
      * for unit testing purposes.
      * 
      * @param array $raw Array of raw dimension records as fetched by get_record()
@@ -81,7 +81,7 @@ class workshop_accumulative_strategy extends workshop_base_strategy {
      * @access public
      * @return void
      */
-    public function save_grading_form(stdClass $data) {
+    public function save_form(stdClass $data) {
         global $DB;
 
         if (!isset($data->strategyname) || ($data->strategyname != $this->name)) {
@@ -116,7 +116,7 @@ class workshop_accumulative_strategy extends workshop_base_strategy {
      *
      * It automatically adds some columns into every record. The sorting is 
      * done by the order of the returned array and starts with 1.
-     * Called internally from save_grading_form() only. Could be private but
+     * Called internally from save_form() only. Could be private but
      * keeping protected for unit testing purposes.
      * 
      * @param object $raw Raw data returned by mform

@@ -82,9 +82,9 @@ print_header_simple(format_string($workshop->name), '', $navigation, '', '', tru
 
 /// Print the main part of the page
 
-echo "<a href=\"editgradingform.php?cmid={$cm->id}\">Edit grading form (".get_string('strategy' . $workshop->strategy, 'workshop').")</a>";
-echo " | ";
-echo "<a href=\"submission.php?cmid={$cm->id}\">My submission</a>";
+echo "<a href=\"editform.php?cmid={$cm->id}\">Edit grading form (".get_string('strategy' . $workshop->strategy, 'workshop').")</a>";
+echo " | <a href=\"submission.php?cmid={$cm->id}\">My submission</a>";
+echo " | <a href=\"assessment.php?asid=1\">Assessment ID 1</a>";
 
 /// Finish the page
 print_footer($course);

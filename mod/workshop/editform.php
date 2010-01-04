@@ -52,7 +52,7 @@ if (!$workshop = $DB->get_record('workshop', array('id' => $cm->instance))) {
 // where should the user be sent after closing the editing form
 $returnurl = "{$CFG->wwwroot}/mod/workshop/view.php?id={$cm->id}";
 // the URL of this editing form
-$selfurl   = "{$CFG->wwwroot}/mod/workshop/editgradingform.php?cmid={$cm->id}";
+$selfurl   = "{$CFG->wwwroot}/mod/workshop/editform.php?cmid={$cm->id}";
 
 // load the grading strategy logic
 $strategylib = dirname(__FILE__) . '/grading/' . $workshop->strategy . '/strategy.php';
@@ -67,7 +67,7 @@ $strategy = new $classname($workshop);
 // load the assessment form definition from the database
 // this must be called before get_edit_strategy_form() where we have to know
 // the number of repeating fieldsets
-$formdata = $strategy->load_grading_form();
+$formdata = $strategy->load_form();
 
 // load the form to edit the grading strategy dimensions
 $mform = $strategy->get_edit_strategy_form($selfurl);
@@ -78,7 +78,7 @@ $mform->set_data($formdata);
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 } elseif ($data = $mform->get_data()) {
-    $strategy->save_grading_form($data);
+    $strategy->save_form($data);
     if (isset($data->saveandclose)) {
         redirect($returnurl);
     } else {

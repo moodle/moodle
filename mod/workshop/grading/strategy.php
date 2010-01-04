@@ -56,7 +56,7 @@ interface workshop_strategy {
      * @access public
      * @return object Object representing the form fields values
      */
-    public function load_grading_form();
+    public function load_form();
 
 
     /**
@@ -70,7 +70,7 @@ interface workshop_strategy {
      * @param object $data Raw data as returned by the form editor
      * @return void
      */
-    public function save_grading_form(stdClass $data);
+    public function save_form(stdClass $data);
 
 
     /**
@@ -147,7 +147,7 @@ abstract class workshop_base_strategy implements workshop_strategy {
 
 
     /**
-     * By default, the number of loaded dimensions is set by load_grading_form() 
+     * By default, the number of loaded dimensions is set by load_form() 
      * 
      * @access public
      * @return Array of records
