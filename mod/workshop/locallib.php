@@ -477,7 +477,7 @@ class workshop {
         // todo remove all given grades from workshop_grades;
 
         if (is_array($id)) {
-            return $DB->delete_records_lists("workshop_assessments", "id", $id);
+            return $DB->delete_records_list("workshop_assessments", "id", $id);
         } else {
             return $DB->delete_records("workshop_assessments", array("id" => $id));
         }
