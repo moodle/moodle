@@ -71,7 +71,7 @@ if ($submission->id and ($ownsubmission or $canviewall or $isreviewer)) {
 $maxfiles       = $workshop->nattachments;
 $maxbytes       = $workshop->maxbytes;
 $contentopts    = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes);
-$attachmentopts = array('subdirs' => false, 'maxfiles'=>$maxfiles, 'maxbytes'=>$maxbytes);
+$attachmentopts = array('subdirs' => true, 'maxfiles'=>$maxfiles, 'maxbytes'=>$maxbytes);
 $submission     = file_prepare_standard_editor($submission, 'content', $contentopts, $PAGE->context,
                                     'workshop_submission_content', $submission->id);
 $submission     = file_prepare_standard_filemanager($submission, 'attachment', $attachmentopts, $PAGE->context,
