@@ -96,11 +96,30 @@ if ($tool == 'mksubmissions') {
 }
 
 if ($tool == 'mkassessments') {
-    $sql = 'UPDATE {workshop_assessments}
-               SET grade = 100*RANDOM()
-             WHERE submissionid IN (SELECT id FROM {workshop_submissions} WHERE workshopid = :workshopid)';
-    $params['workshopid'] = $workshop->id;
-    $DB->execute($sql, $params);
+    $diminfo = $workshop->grading_strategy_instance()->get_dimensions_info();
+
+    $sql = 'SELECT a.id
+              FROM {workshop_assessments} a
+        INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+             WHERE s.example = 0 AND s.workshopid = :workshopid';
+    $params = array('workshopid' => $workshop->id);
+    $assessments = $DB->get_records_sql($sql, $params);
+
+    foreach ($assessments as $assessment) {
+        foreach ($diminfo as $dimension) {
+            if (! $DB->record_exists('workshop_grades', array('assessmentid'=>$assessment->id, 'strategy'=>$workshop->strategy, 'dimensionid'=>$dimension->id))) {
+                $grade = new stdClass();
+                $grade->assessmentid = $assessment->id;
+                $grade->strategy = $workshop->strategy;
+                $grade->dimensionid = $dimension->id;
+                $grade->grade = rand($dimension->min, $dimension->max);
+                $DB->insert_record('workshop_grades', $grade, false, true);
+            }
+        }
+        // to make this script work, make the update_peer_grade() a public method of the strategy class
+        $workshop->grading_strategy_instance()->update_peer_grade($assessment);
+    }
+
     echo $OUTPUT->header();
     echo $OUTPUT->heading('Submissions graded');
     echo $OUTPUT->continue_button($PAGE->url->out());
@@ -115,6 +134,6 @@ include(dirname(__FILE__) . '/tabs.php');
 echo $OUTPUT->heading('Workshop development tools', 1);
 echo '<ul>';
 echo '<li><a href="' . $PAGE->url->out(false, array('tool' => 'mksubmissions')) . '">Fake submissions</a></li>';
-echo '<li><a href="' . $PAGE->url->out(false, array('tool' => 'mkassessments')) . '">Fake assessments</a></li>';
+echo '<li><a href="' . $PAGE->url->out(false, array('tool' => 'mkassessments')) . '">Fake assessments (see the source code of this script)</a></li>';
 echo '</ul>';
 echo $OUTPUT->footer();
