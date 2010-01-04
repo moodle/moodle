@@ -61,10 +61,6 @@ class workshop_best_evaluation implements workshop_evaluation {
         global $DB;
 
         $grader = $this->workshop->grading_strategy_instance();
-        if (! $grader->supports_evaluation($this)) {
-            throw new coding_exception('The currently selected grading strategy plugin does not
-                support this method of grading evaluation.');
-        }
 
         // get the information about the assessment dimensions
         $diminfo = $grader->get_dimensions_info();

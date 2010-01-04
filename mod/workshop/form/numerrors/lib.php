@@ -275,26 +275,6 @@ class workshop_numerrors_strategy implements workshop_strategy {
         return false;
     }
 
-    /**
-     * Returns true if the given evaluation method is supported by this strategy
-     *
-     * To support an evaluation method, the strategy subplugin must usually implement some
-     * required public methods. In theory, this is what interfaces should be used for.
-     * Unfortunatelly, we can't extend "implements" declaration as the interface must
-     * be known to the PHP interpret. So we can't declare implementation of a non-installed
-     * evaluation subplugin.
-     *
-     * @param workshop_evaluation $evaluation the instance of grading evaluation class
-     * @return bool true if the evaluation method is supported, false otherwise
-     */
-    public function supports_evaluation(workshop_evaluation $evaluation) {
-        if (is_a($evaluation, 'workshop_best_evaluation')) {
-            return true;
-        }
-        // all other evaluation methods are not supported yet
-        return false;
-    }
-
 ////////////////////////////////////////////////////////////////////////////////
 // Internal methods                                                           //
 ////////////////////////////////////////////////////////////////////////////////

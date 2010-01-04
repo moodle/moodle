@@ -289,36 +289,7 @@ class workshop_rubric_strategy implements workshop_strategy {
     }
 
     /**
-     * Returns true if the given evaluation method is supported by this strategy
-     *
-     * To support an evaluation method, the strategy subplugin must usually implement some
-     * required public methods. In theory, this is what interfaces should be used for.
-     * Unfortunatelly, we can't extend "implements" declaration as the interface must
-     * be known to the PHP interpreter. So we can't declare implementation of a non-installed
-     * evaluation subplugin.
-     *
-     * @param workshop_evaluation $evaluation the instance of grading evaluation class
-     * @return bool true if the evaluation method is supported, false otherwise
-     */
-    public function supports_evaluation(workshop_evaluation $evaluation) {
-        if (is_a($evaluation, 'workshop_best_evaluation')) {
-            return true;
-        }
-        // all other evaluation methods are not supported yet
-        return false;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // Methods required by the 'best' evaluation plugin                           //
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Returns recordset with information of all assessments done using this strategy
-     *
-     * Required by /eval/best grading evaluation subplugin
-     *
-     * @param array|int|null $restrict optional id or ids of the reviewer
-     * @return moodle_recordset
+     * @see parent::get_assessments_recordset()
      */
     public function get_assessments_recordset($restrict=null) {
         global $DB;
@@ -348,11 +319,7 @@ class workshop_rubric_strategy implements workshop_strategy {
     }
 
     /**
-     * Returns a general information about the assessment dimensions
-     *
-     * In rubric, all dimensions have the same weight.
-     *
-     * @return array [dimid] => stdClass (->id ->max ->min ->weight)
+     * @see parent::get_dimensions_info()
      */
     public function get_dimensions_info() {
         global $DB;
