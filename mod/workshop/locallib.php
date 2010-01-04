@@ -43,8 +43,8 @@ require_once($CFG->libdir . '/gradelib.php');   // we use some rounding and comp
 class workshop {
 
     /** return statuses of {@link add_allocation} to be passed to a workshop renderer method */
-    const ALLOCATION_EXISTS             = -1;
-    const ALLOCATION_ERROR              = -2;
+    const ALLOCATION_EXISTS             = -9999;
+    const ALLOCATION_ERROR              = -9998;
 
     /** the internal code of the workshop phases as are stored in the database */
     const PHASE_SETUP                   = 10;
@@ -422,16 +422,6 @@ class workshop {
     }
 
     /**
-     * Returns example submissions for this workshop
-     *
-     * @return array of records or an empty array
-     */
-    public function get_examples() {
-        global $DB;
-        return $DB->get_records('workshop_submissions', array('workshopid' => $this->id, 'example' => 1), 'title', 'id,title');
-    }
-
-    /**
      * Returns full record of the given example submission
      *
      * @param int $id example submission od
@@ -441,6 +431,76 @@ class workshop {
         global $DB;
         return $DB->get_record('workshop_submissions',
                 array('id' => $id, 'workshopid' => $this->id, 'example' => 1), '*', MUST_EXIST);
+    }
+
+    /**
+     * Returns the list of example submissions in this workshop with reference assessments attached
+     *
+     * @return array of objects or an empty array
+     * @see workshop::prepare_example_summary()
+     */
+    public function get_examples_for_manager() {
+        global $DB;
+
+        $sql = 'SELECT s.id, s.title,
+                       a.id AS assessmentid, a.weight, a.grade, a.gradinggrade
+                  FROM {workshop_submissions} s
+             LEFT JOIN {workshop_assessments} a ON (a.submissionid = s.id AND a.weight = 1)
+                 WHERE s.example = 1 AND s.workshopid = :workshopid
+              ORDER BY s.title';
+        return $DB->get_records_sql($sql, array('workshopid' => $this->id));
+    }
+
+    /**
+     * Returns the list of all example submissions in this workshop with the information of assessments done by the given user
+     *
+     * @param int $reviewerid user id
+     * @return array of objects, indexed by example submission id
+     * @see workshop::prepare_example_summary()
+     */
+    public function get_examples_for_reviewer($reviewerid) {
+        global $DB;
+
+        if (empty($reviewerid)) {
+            return false;
+        }
+        $sql = 'SELECT s.id, s.title,
+                       a.id AS assessmentid, a.weight, a.grade, a.gradinggrade
+                  FROM {workshop_submissions} s
+             LEFT JOIN {workshop_assessments} a ON (a.submissionid = s.id AND a.reviewerid = :reviewerid AND a.weight = 0)
+                 WHERE s.example = 1 AND s.workshopid = :workshopid
+              ORDER BY s.title';
+        return $DB->get_records_sql($sql, array('workshopid' => $this->id, 'reviewerid' => $reviewerid));
+    }
+
+    /**
+     * Prepares component containing summary of given example to be rendered
+     *
+     * @param stdClass $example as returned by {@link workshop::get_examples_for_manager()} or {@link workshop::get_examples_for_reviewer()}
+     * @return stdClass component to be rendered
+     */
+    public function prepare_example_summary(stdClass $example) {
+
+        $summary = new stdClass();
+        $summary->example = $example;
+        if (is_null($example->grade)) {
+            $summary->status   = 'notgraded';
+            $buttontext = get_string('assess', 'workshop');
+        } else {
+            $summary->status   = 'graded';
+            $buttontext = get_string('reassess', 'workshop');
+        }
+
+        $summary->gradeinfo           = new stdClass();
+        $summary->gradeinfo->received = $this->real_grade($example->grade);
+        $summary->gradeinfo->max      = $this->real_grade(100);
+
+        $summary->btnform = new html_form();
+        $summary->btnform->method       = 'get';
+        $summary->btnform->button->text = $buttontext;
+        $summary->btnform->url          = new moodle_url($this->exsubmission_url($example->id), array('assess' => 'on', 'sesskey' => sesskey()));
+
+        return $summary;
     }
 
     /**
@@ -535,7 +595,7 @@ class workshop {
     /**
      * Allocate a submission to a user for review
      *
-     * @param stdClass $submission Submission record
+     * @param stdClass $submission Submission object with at least id property
      * @param int $reviewerid User ID
      * @param bool $bulk repeated inserts into DB expected
      * @param int $weight of the new assessment, from 0 to 16
@@ -705,6 +765,33 @@ class workshop {
     public function exsubmission_url($id) {
         global $CFG;
         return new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php', array('cmid' => $this->cm->id, 'id' => $id));
+    }
+
+    /**
+     * @param int $sid submission id
+     * @param array $aid of int assessment ids
+     * @return moodle_url of the page to compare assessments of the given submission
+     */
+    public function compare_url($sid, array $aids) {
+        global $CFG;
+
+        $url = new moodle_url($CFG->wwwroot . '/mod/workshop/compare.php', array('cmid' => $this->cm->id, 'sid' => $sid));
+        $i = 0;
+        foreach ($aids as $aid) {
+            $url->param("aid{$i}", $aid);
+            $i++;
+        }
+        return $url;
+    }
+
+    /**
+     * @param int $sid submission id
+     * @param int $aid assessment id
+     * @return moodle_url of the page to compare the reference assessments of the given example submission
+     */
+    public function excompare_url($sid, $aid) {
+        global $CFG;
+        return new moodle_url($CFG->wwwroot . '/mod/workshop/excompare.php', array('cmid' => $this->cm->id, 'sid' => $sid, 'aid' => $aid));
     }
 
     /**

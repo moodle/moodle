@@ -294,37 +294,50 @@ class mod_workshop_renderer extends plugin_renderer_base {
      *
      * The passed submission object must define at least: id and title
      *
-     * @param stdClass $example The example submission record
+     * @param stdClass $data prepared by workshop::prepare_example_summary()
      * @return string html to be echoed
      */
-    public function example_summary(stdClass $example) {
+    public function example_summary(stdClass $summary) {
         global $CFG;
 
         $o  = '';    // output HTML code
-        $classes = 'submission-summary example';
-        $o .= $this->output->container_start($classes);  // main wrapper
+
+        // wrapping box
+        $o .= $this->output->box_start('generalbox example-summary ' . $summary->status);
+
+        // title
+        $o .= $this->output->container_start('example-title');
         $link = new html_link();
         $link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php',
-                                    array('cmid' => $this->page->context->instanceid, 'id' => $example->id));
-        $link->text = format_string($example->title);
+                                    array('cmid' => $this->page->context->instanceid, 'id' => $summary->example->id));
+        $link->text = format_string($summary->example->title);
         $link->set_classes('title');
         $o .= $this->output->link($link);
 
-        $icon = new moodle_action_icon();
-        $icon->image->src = $this->old_icon_url('i/edit');
-        $icon->image->alt = get_string('edit');
-        $icon->link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php',
-                                    array('cmid' => $this->page->context->instanceid, 'id' => $example->id, 'edit' => 'on'));
-        $o .= $this->output->action_icon($icon);
+        if ($summary->example->weight == 1) {
+            // dirty hack to guess if the current user is example manager or not
+            $icon = new moodle_action_icon();
+            $icon->image->src = $this->old_icon_url('i/edit');
+            $icon->image->alt = get_string('edit');
+            $icon->link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php',
+                                        array('cmid' => $this->page->context->instanceid, 'id' => $summary->example->id, 'edit' => 'on'));
+            $o .= $this->output->action_icon($icon);
+        }
+        $o .= $this->output->container_end();
 
-        $icon = new moodle_action_icon();
-        $icon->image->src = $this->old_icon_url('t/delete');
-        $icon->image->alt = get_string('delete');
-        $icon->link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php',
-                                    array('cmid' => $this->page->context->instanceid, 'id' => $example->id, 'delete' => 1));
-        $o .= $this->output->action_icon($icon);
+        // additional info
+        if ($summary->status == 'notgraded') {
+            $o .= $this->output->container(get_string('nogradeyet', 'workshop'), 'example-info nograde');
+        } else {
+            $o .= $this->output->container(get_string('examplegrade', 'workshop' , $summary->gradeinfo), 'example-info grade');
+        }
 
-        $o .= $this->output->container_end(); // end of the main wrapper
+        // button to assess
+        $o .= $this->output->container($this->output->button($summary->btnform), 'example-actions');
+
+        // end of wrapping box
+        $o .= $this->output->box_end();
+
         return $o;
     }
 

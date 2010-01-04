@@ -70,9 +70,16 @@ if ($mform->is_cancelled()) {
     redirect($workshop->view_url());
 } elseif ($assessmenteditable and ($data = $mform->get_data())) {
     $rawgrade = $strategy->save_assessment($assessment, $data);
-    $DB->set_field('workshop_assessments', 'reviewerid', $USER->id, array('id' => $assessment->id));
+    if ($canmanage) {
+        // remember the last one who edited the reference assessment
+        $DB->set_field('workshop_assessments', 'reviewerid', $USER->id, array('id' => $assessment->id));
+    }
     if (!is_null($rawgrade) and isset($data->saveandclose)) {
-        redirect($workshop->view_url());
+        if ($canmanage) {
+            redirect($workshop->view_url());
+        } else {
+            redirect($workshop->excompare_url($example->id, $assessment->id));
+        }
     } else {
         // either it is not possible to calculate the $rawgrade
         // or the reviewer has chosen "Save and continue"

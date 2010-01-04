@@ -27,7 +27,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/workshop/lib.php');
 require_once($CFG->dirroot.'/mod/workshop/locallib.php');
 
 $grades = workshop::available_maxgrades_list();

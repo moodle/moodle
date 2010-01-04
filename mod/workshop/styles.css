@@ -337,7 +337,8 @@
 /**
  * Assessment
  */
-.mod-workshop .assessment-summary.graded {
+.mod-workshop .assessment-summary.graded,
+.mod-workshop .example-summary.graded {
     background-color: #e7f1c3;
 }
 

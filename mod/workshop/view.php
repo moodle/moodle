@@ -88,18 +88,22 @@ case workshop::PHASE_SETUP:
     if ($workshop->useexamples and has_capability('mod/workshop:manageexamples', $PAGE->context)) {
         print_collapsible_region_start('', 'workshop-viewlet-allexamples', get_string('examplesubmissions', 'workshop'));
         echo $OUTPUT->box_start('generalbox examples');
-        echo $OUTPUT->heading(get_string('examplesubmissions', 'workshop'), 3);
-        if (! $examples = $workshop->get_examples()) {
-            echo $OUTPUT->container(get_string('noexamples', 'workshop'), 'noexamples');
+        if ($workshop->grading_strategy_instance()->form_ready()) {
+            if (! $examples = $workshop->get_examples_for_manager()) {
+                echo $OUTPUT->container(get_string('noexamples', 'workshop'), 'noexamples');
+            }
+            foreach ($examples as $example) {
+                $summary = $workshop->prepare_example_summary($example);
+                echo $wsoutput->example_summary($summary);
+            }
+            $editbutton                 = new html_form();
+            $editbutton->method         = 'get';
+            $editbutton->button->text   = get_string('exampleadd', 'workshop');
+            $editbutton->url            = new moodle_url($workshop->exsubmission_url(0), array('edit' => 'on'));
+            echo $OUTPUT->button($editbutton);
+        } else {
+            echo $OUTPUT->container(get_string('noexamplesformready', 'workshop'));
         }
-        foreach ($examples as $example) {
-            echo $wsoutput->example_summary($example);
-        }
-        $editbutton                 = new html_form();
-        $editbutton->method         = 'get';
-        $editbutton->button->text   = get_string('exampleadd', 'workshop');
-        $editbutton->url            = new moodle_url($workshop->exsubmission_url(0), array('edit' => 'on'));
-        echo $OUTPUT->button($editbutton);
         echo $OUTPUT->box_end();
     }
     break;
@@ -111,51 +115,46 @@ case workshop::PHASE_SUBMISSION:
         echo $OUTPUT->box(format_text($instructions, $workshop->instructauthorsformat), array('generalbox', 'instructions'));
         print_collapsible_region_end();
     }
-    //print_collapsible_region_start('', 'workshop-viewlet-examples', get_string('hideshow', 'workshop'));
-    //echo 'Hello';
-    //print_collapsible_region_end();
-    /* todo pseudocode follows
-    if ($workshop->useexamples) {
-        if (examples are voluntary) {
-            submitting is allowed
-            assessing is allowed
-            display the example assessment tool - just offer the posibility to train assessment
-        }
-        if (examples must be done before submission) {
-            if (student assessed all example submissions) {
-                submitting is allowed
-                assessing is allowed
-                display - let the student to reassess to train
+
+    $examplesdone = true;
+    if ($workshop->assessing_examples_allowed()
+            and has_capability('mod/workshop:submit', $workshop->context)
+                    and ! has_capability('mod/workshop:manageexamples', $workshop->context)) {
+        $examples = $workshop->get_examples_for_reviewer($USER->id);
+        $total = count($examples);
+        $done = 0;
+        $todo = 0;
+        // make sure the current user has all examples allocated
+        foreach ($examples as $exampleid => $example) {
+            if (is_null($example->assessmentid)) {
+                $examples[$exampleid]->assessmentid = $workshop->add_allocation($example, $USER->id, false, 0);
+            }
+            if (is_null($example->grade)) {
+                $todo++;
             } else {
-                submitting is not allowed
-                assessing is not allowed
-                display - force student to assess the examples
+                $done++;
             }
         }
-
-
-        // the following goes into the next PHASE
-        if (examples must be done before assessment) {
-            if (student assessed all example submissions) {
-                assessing is allowed
-                let the student to optionally reassess to train
-            } else {
-                assessing is not allowed
-                force student to assess the examples
+        if ($todo > 0 and $workshop->examplesmode != workshop::EXAMPLES_VOLUNTARY) {
+            $examplesdone = false;
+        }
+        print_collapsible_region_start('', 'workshop-viewlet-examples', get_string('exampleassessments', 'workshop'));
+        echo $OUTPUT->box_start('generalbox exampleassessments');
+        if ($total == 0) {
+            echo $OUTPUT->heading(get_string('noexamples', 'workshop'), 3);
+        } else {
+            foreach ($examples as $example) {
+                $summary = $workshop->prepare_example_summary($example);
+                echo $wsoutput->example_summary($summary);
             }
         }
+        echo $OUTPUT->box_end();
+        print_collapsible_region_end();
     }
 
-    */
-    if ($workshop->useexamples and $workshop->examplesmode == workshop::EXAMPLES_BEFORE_SUBMISSION) {
-        if (has_capability('mod/workshop:manageexamples', $workshop->context)) {
-            // todo what is teacher expected to see here? some stats probably...
-        }
-        if (has_capability('mod/workshop:peerassess', $workshop->context)) {
-
-        }
-    }
-    if (has_capability('mod/workshop:submit', $PAGE->context)) {
+    if ($workshop->submitting_allowed()
+                and has_capability('mod/workshop:submit', $PAGE->context)
+                        and $examplesdone) {
         print_collapsible_region_start('', 'workshop-viewlet-ownsubmission', get_string('yoursubmission', 'workshop'));
         echo $OUTPUT->box_start('generalbox ownsubmission');
         if ($submission = $workshop->get_submission_by_author($USER->id)) {
@@ -173,6 +172,7 @@ case workshop::PHASE_SUBMISSION:
         echo $OUTPUT->box_end();
         print_collapsible_region_end();
     }
+
     if (has_capability('mod/workshop:viewallsubmissions', $PAGE->context)) {
         $shownames = has_capability('mod/workshop:viewauthornames', $PAGE->context);
         print_collapsible_region_start('', 'workshop-viewlet-allsubmissions', get_string('allsubmissions', 'workshop'));
@@ -186,7 +186,9 @@ case workshop::PHASE_SUBMISSION:
         echo $OUTPUT->box_end();
         print_collapsible_region_end();
     }
+
     break;
+
 case workshop::PHASE_ASSESSMENT:
     if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
         $page       = optional_param('page', 0, PARAM_INT);
