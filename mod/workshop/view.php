@@ -81,9 +81,12 @@ echo $wsoutput->user_plan($workshop->prepare_user_plan($USER->id, $PAGE->context
 switch ($workshop->phase) {
 case workshop::PHASE_SETUP:
     if (trim(strip_tags($workshop->intro))) {
-        echo $OUTPUT->box(format_module_intro('workshop', $workshop, $workshop->cm->id), 'generalbox', 'intro');
+        print_collapsible_region_start('', 'workshop-viewlet-intro', get_string('introduction', 'workshop'));
+        echo $OUTPUT->box(format_module_intro('workshop', $workshop, $workshop->cm->id), 'generalbox');
+        print_collapsible_region_end();
     }
     if ($workshop->useexamples and has_capability('mod/workshop:manageexamples', $PAGE->context)) {
+        print_collapsible_region_start('', 'workshop-viewlet-allexamples', get_string('examplesubmissions', 'workshop'));
         echo $OUTPUT->box_start('generalbox examples');
         echo $OUTPUT->heading(get_string('examplesubmissions', 'workshop'), 3);
         if (! $examples = $workshop->get_examples()) {
@@ -104,11 +107,57 @@ case workshop::PHASE_SUBMISSION:
     if (trim(strip_tags($workshop->instructauthors))) {
         $instructions = file_rewrite_pluginfile_urls($workshop->instructauthors, 'pluginfile.php', $PAGE->context->id,
             'workshop_instructauthors', 0, workshop::instruction_editors_options($PAGE->context));
+        print_collapsible_region_start('', 'workshop-viewlet-instructauthors', get_string('instructauthors', 'workshop'));
         echo $OUTPUT->box(format_text($instructions, $workshop->instructauthorsformat), array('generalbox', 'instructions'));
+        print_collapsible_region_end();
+    }
+    //print_collapsible_region_start('', 'workshop-viewlet-examples', get_string('hideshow', 'workshop'));
+    //echo 'Hello';
+    //print_collapsible_region_end();
+    /* todo pseudocode follows
+    if ($workshop->useexamples) {
+        if (examples are voluntary) {
+            submitting is allowed
+            assessing is allowed
+            display the example assessment tool - just offer the posibility to train assessment
+        }
+        if (examples must be done before submission) {
+            if (student assessed all example submissions) {
+                submitting is allowed
+                assessing is allowed
+                display - let the student to reassess to train
+            } else {
+                submitting is not allowed
+                assessing is not allowed
+                display - force student to assess the examples
+            }
+        }
+
+
+        // the following goes into the next PHASE
+        if (examples must be done before assessment) {
+            if (student assessed all example submissions) {
+                assessing is allowed
+                let the student to optionally reassess to train
+            } else {
+                assessing is not allowed
+                force student to assess the examples
+            }
+        }
+    }
+
+    */
+    if ($workshop->useexamples and $workshop->examplesmode == workshop::EXAMPLES_BEFORE_SUBMISSION) {
+        if (has_capability('mod/workshop:manageexamples', $workshop->context)) {
+            // todo what is teacher expected to see here? some stats probably...
+        }
+        if (has_capability('mod/workshop:peerassess', $workshop->context)) {
+
+        }
     }
     if (has_capability('mod/workshop:submit', $PAGE->context)) {
+        print_collapsible_region_start('', 'workshop-viewlet-ownsubmission', get_string('yoursubmission', 'workshop'));
         echo $OUTPUT->box_start('generalbox ownsubmission');
-        echo $OUTPUT->heading(get_string('yoursubmission', 'workshop'), 3);
         if ($submission = $workshop->get_submission_by_author($USER->id)) {
             echo $wsoutput->submission_summary($submission, true);
         } else {
@@ -122,11 +171,12 @@ case workshop::PHASE_SUBMISSION:
             echo $OUTPUT->button($editbutton);
         }
         echo $OUTPUT->box_end();
+        print_collapsible_region_end();
     }
     if (has_capability('mod/workshop:viewallsubmissions', $PAGE->context)) {
         $shownames = has_capability('mod/workshop:viewauthornames', $PAGE->context);
+        print_collapsible_region_start('', 'workshop-viewlet-allsubmissions', get_string('allsubmissions', 'workshop'));
         echo $OUTPUT->box_start('generalbox allsubmissions');
-        echo $OUTPUT->heading(get_string('allsubmissions', 'workshop'), 3);
         if (! $submissions = $workshop->get_submissions('all')) {
             echo $OUTPUT->container(get_string('nosubmissions', 'workshop'), 'nosubmissions');
         }
@@ -134,6 +184,7 @@ case workshop::PHASE_SUBMISSION:
             echo $wsoutput->submission_summary($submission, $shownames);
         }
         echo $OUTPUT->box_end();
+        print_collapsible_region_end();
     }
     break;
 case workshop::PHASE_ASSESSMENT:
@@ -174,12 +225,16 @@ case workshop::PHASE_ASSESSMENT:
     if (trim(strip_tags($workshop->instructreviewers))) {
         $instructions = file_rewrite_pluginfile_urls($workshop->instructreviewers, 'pluginfile.php', $PAGE->context->id,
             'workshop_instructreviewers', 0, workshop::instruction_editors_options($PAGE->context));
+        print_collapsible_region_start('', 'workshop-viewlet-instructreviewers', get_string('instructreviewers', 'workshop'));
         echo $OUTPUT->box(format_text($instructions, $workshop->instructreviewersformat), array('generalbox', 'instructions'));
+        print_collapsible_region_end();
     }
+    print_collapsible_region_start('', 'workshop-viewlet-assignedassessments', get_string('assignedassessments', 'workshop'));
     if (! $assessments = $workshop->get_assessments_by_reviewer($USER->id)) {
+        echo $OUTPUT->box_start('generalbox assessment-none');
         echo $OUTPUT->heading(get_string('assignedassessmentsnone', 'workshop'), 3);
+        echo $OUTPUT->box_end();
     } else {
-        echo $OUTPUT->heading(get_string('assignedassessments', 'workshop'), 3);
         $shownames = has_capability('mod/workshop:viewauthornames', $PAGE->context);
         foreach ($assessments as $assessment) {
             $submission                     = new stdClass();
@@ -213,6 +268,7 @@ case workshop::PHASE_ASSESSMENT:
             echo $OUTPUT->box_end();
         }
     }
+    print_collapsible_region_end();
     break;
 case workshop::PHASE_EVALUATION:
     if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
