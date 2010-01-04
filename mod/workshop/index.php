@@ -41,20 +41,14 @@ require_course_login($course);
 
 add_to_log($course->id, 'workshop', 'view all', "index.php?id=$course->id", '');
 
-/// Print the header
-
 $PAGE->set_url('mod/workshop/view.php', array('id' => $id));
 $PAGE->set_title($course->fullname);
 $PAGE->set_heading($course->shortname);
+$PAGE->navbar->add(get_string('modulenameplural', 'workshop'));
 
-// todo navigation will be changed yet for Moodle 2.0
-$navlinks = array();
-$navlinks[] = array('name' => get_string('modulenameplural', 'workshop'),
-                    'link' => '',
-                    'type' => 'activity');
-$navigation = build_navigation($navlinks);
+/// Output starts here
 
-echo $OUTPUT->header($navigation);
+echo $OUTPUT->header();
 
 /// Get all the appropriate data
 

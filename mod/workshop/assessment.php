@@ -58,6 +58,9 @@ if ('preview' == $mode) {
     $PAGE->set_url($workshop->previewform_url());
     $PAGE->set_title($workshop->name);
     $PAGE->set_heading($course->fullname);
+    $PAGE->navbar->add(get_string('editingassessmentform', 'workshop'), null, null, navigation_node::TYPE_CUSTOM,
+                        $workshop->editform_url());
+    $PAGE->navbar->add(get_string('previewassessmentform', 'workshop'));
 
 } elseif ('assessment' == $mode) {
     if (!has_any_capability(array('mod/workshop:peerassess', 'mod/workshop:assessallsubmissions'), $PAGE->context)) {
@@ -67,29 +70,8 @@ if ('preview' == $mode) {
     $PAGE->set_url($workshop->assess_url($assessment->id));
     $PAGE->set_title($workshop->name);
     $PAGE->set_heading($course->fullname);
+    $PAGE->navbar->add(get_string('assessingsubmission', 'workshop'));
 }
-
-// build the navigation and the header - todo this will be changed by the new navigation api
-$navlinks = array();
-$navlinks[] = array('name' => get_string('modulenameplural', 'workshop'),
-                    'link' => "index.php?id=$course->id",
-                    'type' => 'activity');
-$navlinks[] = array('name' => format_string($workshop->name),
-                    'link' => "view.php?id=$cm->id",
-                    'type' => 'activityinstance');
-if ($mode == 'preview') {
-    $navlinks[] = array('name' => get_string('editingassessmentform', 'workshop'),
-                        'link' => $workshop->editform_url()->out(),
-                        'type' => 'title');
-    $navlinks[] = array('name' => get_string('previewassessmentform', 'workshop'),
-                        'link' => '',
-                        'type' => 'title');
-} elseif ($mode == 'assessment') {
-    $navlinks[] = array('name' => get_string('assessingsubmission', 'workshop'),
-                        'link' => '',
-                        'type' => 'title');
-}
-$navigation = build_navigation($navlinks);
 
 // load the grading strategy logic
 $strategy = $workshop->grading_strategy_instance();
@@ -107,7 +89,7 @@ if ($mform->is_cancelled()) {
     }
     $rawgrade = $strategy->save_assessment($assessment, $data);
     if (!is_null($rawgrade) and isset($data->saveandclose)) {
-        echo $OUTPUT->header($navigation);
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('assessmentresult', 'workshop'), 2);
         echo $OUTPUT->box('Given grade: ' . sprintf("%01.2f", $rawgrade * 100) . ' %'); // todo more detailed info using own renderer
         echo $OUTPUT->continue_button($workshop->view_url());
@@ -122,7 +104,7 @@ if ($mform->is_cancelled()) {
 
 // Output starts here
 
-echo $OUTPUT->header($navigation);
+echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('assessmentform', 'workshop'), 2);
 
 if ('assessment' === $mode) {

@@ -433,6 +433,52 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
     }
 }
 
+/**
+ * Extends the global navigation tree by adding workshop nodes if there is a relevant content
+ *
+ * @param navigation_node $navref An object representing the navigation tree node of the workshop module instance
+ * @param stdClass $course
+ * @param stdClass $module
+ * @param stdClass $cm
+ */
+function workshop_extend_navigation(navigation_node $navref, stdClass $course, stdClass $module, stdClass $cm) {
+    global $CFG;
+
+    if (has_capability('mod/workshop:submit', $cm->context)) {
+        $url = new moodle_url($CFG->wwwroot.'/mod/workshop/submission.php', array('cmid' => $cm->id));
+        $mysubmissionkey = $navref->add(get_string('mysubmission', 'workshop'), null, null, navigation_node::TYPE_CUSTOM, $url);
+    }
+}
+
+/**
+ * Extends the settings navigation with the Workshop settings
+
+ * This function is called when the context for the page is a workshop module.
+ *
+ * @param settings_navigation $settingsnav {@link settings_navigation}
+ * @param stdClass $module
+ * @return void|mixed The key to the modules branch
+ */
+function workshop_extend_settings_navigation(settings_navigation $settingsnav, stdClass $module=null) {
+    global $CFG, $PAGE;
+
+    $workshopkey = $settingsnav->add(get_string('workshopadministration', 'workshop'));
+    $workshopnode = $settingsnav->get($workshopkey);
+    $workshopnode->forceopen = true;
+    //$workshopobject = $DB->get_record("workshop", array("id" => $PAGE->cm->instance));
+
+    if (has_capability('mod/workshop:editdimensions', $PAGE->context)) {
+        $url = new moodle_url($CFG->wwwroot . '/mod/workshop/editform.php', array('cmid' => $PAGE->cm->id));
+        $workshopnode->add(get_string('editassessmentform', 'workshop'), null, null, settings_navigation::TYPE_SETTING, $url);
+    }
+    if (has_capability('mod/workshop:allocate', $PAGE->context)) {
+        $url = new moodle_url($CFG->wwwroot . '/mod/workshop/allocation.php', array('cmid' => $PAGE->cm->id));
+        $workshopnode->add(get_string('allocate', 'workshop'), null, null, settings_navigation::TYPE_SETTING, $url);
+    }
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Other functions needed by Moodle core follows. They can't be put into      //
 // locallib.php because they are used by some core scripts (like modedit.php) //

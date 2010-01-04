@@ -46,9 +46,7 @@ require_capability('mod/workshop:allocate', $context);
 
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
-//
-// TODO navigation will be changed yet for Moodle 2.0
-$navigation = build_navigation(get_string('allocation', 'workshop'), $cm);
+$PAGE->navbar->add(get_string('allocation', 'workshop'));
 
 $allocator  = $workshop->allocator_instance($method);
 $initresult = $allocator->init();
@@ -57,7 +55,7 @@ $initresult = $allocator->init();
 // Output starts here
 //
 $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
-echo $OUTPUT->header($navigation);
+echo $OUTPUT->header();
 
 $allocators = $workshop->installed_allocators();
 $tabrow = array();

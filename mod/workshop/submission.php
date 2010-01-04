@@ -102,11 +102,15 @@ if ($mform->is_cancelled()) {
 $PAGE->set_url('mod/workshop/submission.php', array('cmid' => $cm->id));
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
+// the default navbar node for non-editing mode is set in {@link workshop_extend_navigation()}
+if ($edit) {
+    $PAGE->navbar->add(get_string('mysubmission', 'workshop'), null, null, navigation_node::TYPE_CUSTOM,
+                        $workshop->submission_url());
+    $PAGE->navbar->add(get_string('editingsubmission', 'workshop'));
+}
 
 // Output starts here
-$stredit    = empty($submission->id) ? get_string('editingsubmission', 'workshop') : get_string('edit');
-$navigation = build_navigation($stredit, $cm);
-echo $OUTPUT->header($navigation);
+echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($workshop->name), 2);
 
 if ($edit) {

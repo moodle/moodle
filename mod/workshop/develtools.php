@@ -47,18 +47,16 @@ $PAGE->set_url('mod/workshop/develtools.php', array('cmid' => $cm->id));
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'workshop'));
+$PAGE->navbar->add('Development tools');
 
 $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
-
-$navigation = build_navigation('Development tools', $cm);
-// todo $menu       = navmenu($course, $cm);
 
 switch ($tool) {
 case 'mksubmissions':
     $authors                = $workshop->get_peer_authors(false);
     $authorswithsubmission  = $workshop->get_peer_authors(true);
     $authors                = array_diff_key($authors, $authorswithsubmission);
-    echo $OUTPUT->header($navigation);
+    echo $OUTPUT->header();
     $c = 0; // counter
     foreach ($authors as $authorid => $author) {
         $timenow = time() - rand(0, 60 * 60 * 24 * 7); // submitted sometimes during last week
@@ -102,7 +100,7 @@ case 'mksubmissions':
 case 'menu':
     // no break, skip to default
 default:
-    echo $OUTPUT->header($navigation);
+    echo $OUTPUT->header();
     echo $OUTPUT->heading('Workshop development tools', 1);
     echo '<ul>';
     echo '<li><a href="' . $PAGE->url->out(false, array('tool' => 'mksubmissions')) . '">Fake submissions</a></li>';

@@ -71,20 +71,9 @@ if ($PAGE->user_allowed_editing()) {
 $buttons[] = $OUTPUT->update_module_button($cm->id, 'workshop');
 $PAGE->set_button(implode('', $buttons));
 
-// todo navigation will be changed yet for Moodle 2.0
-$navlinks   = array();
-$navlinks[] = array('name' => get_string('modulenameplural', 'workshop'),
-                    'link' => "index.php?id=$course->id",
-                    'type' => 'activity');
-$navlinks[] = array('name' => format_string($workshop->name),
-                    'link' => '',
-                    'type' => 'activityinstance');
-$navigation = build_navigation($navlinks);
-//$menu       = navmenu($course, $cm); todo
-
 /// Output starts here
 
-echo $OUTPUT->header($navigation);
+echo $OUTPUT->header();
 
 /// Print the main part of the page - todo these are just links to help during development
 echo $OUTPUT->box_start();

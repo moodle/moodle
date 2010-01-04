@@ -25,12 +25,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string[''] = '';
 $string['accesscontrol'] = 'Access control';
 $string['agreeassessments'] = 'Assessments must be agreed';
 $string['agreeassessmentsdesc'] = 'Authors may comment assessments of their work and agree/disagree with it';
-$string['allocation'] = 'Submission allocation';
+$string['allocate'] = 'Allocate submissions';
 $string['allocationdone'] = 'Allocation done';
 $string['allocationerror'] = 'Allocation error';
+$string['allocation'] = 'Submission allocation';
 $string['areadimensiondescription'] = 'Assessment form fields';
 $string['areasubmissionattachment'] = 'Submission attachments';
 $string['areasubmissioncontent'] = 'Submission texts';
@@ -59,6 +61,7 @@ $string['configmaxbytes'] = 'Default maximum submission file size for all worksh
 $string['confignexassessments'] = 'Default number of examples to be reviewed by a user in the example assessment phase';
 $string['confignsassessments'] = 'Default number of allocated submissions to be reviewed by a user in the assessment phase';
 $string['configstrategy'] = 'Default grading strategy for workshops';
+$string['editassessmentform'] = 'Edit assessment form';
 $string['editingassessmentform'] = 'Editing assessment form';
 $string['editingsubmission'] = 'Editing submission';
 $string['editsubmission'] = 'Edit submission';
@@ -79,6 +82,7 @@ $string['maxbytes'] = 'Maximum file size';
 $string['messageclose'] = '(hide)';
 $string['modulenameplural'] = 'Workshops';
 $string['modulename'] = 'Workshop';
+$string['mysubmission'] = 'My submission';
 $string['nattachments'] = 'Maximum number of submission attachments';
 $string['nexassessments'] = 'Number of required assessments of examples';
 $string['nogradeyet'] = 'No grade yet';
@@ -119,5 +123,6 @@ $string['userdatemodified'] = 'modified on <span>$a</span>';
 $string['useselfassessmentdesc'] = 'Users perform self assessment of their own work';
 $string['useselfassessment'] = 'Use self assessment';
 $string['withoutsubmission'] = 'Warning - reviewer without own submission';
+$string['workshopadministration'] = 'Workshop administration';
 $string['workshopfeatures'] = 'Workshop features';
 $string['workshopname'] = 'Workshop name';

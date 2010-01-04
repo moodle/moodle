@@ -583,6 +583,14 @@ class workshop {
     }
 
     /**
+     * @return stdClass {@link moodle_url} the URL of the page to view own submission
+     */
+    public function submission_url() {
+        global $CFG;
+        return new moodle_url($CFG->wwwroot . '/mod/workshop/submission.php', array('cmid' => $this->cm->id));
+    }
+
+    /**
      * Returns an object containing all data to display the user's full name and picture
      *
      * @param int $id optional user id, defaults to the current user

@@ -43,6 +43,7 @@ $workshop   = new workshop($workshop, $cm, $course);
 $PAGE->set_url($workshop->editform_url());
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
+$PAGE->navbar->add(get_string('editingassessmentform', 'workshop'));
 
 // load the grading strategy logic
 $strategy = $workshop->grading_strategy_instance();
