@@ -149,7 +149,7 @@ function workshop_upgrade_prepare_20_tables() {
  * @return void
  */
 function workshop_upgrade_module_instances() {
-    global $CFG, $DB, $OUTPUT;
+    global $CFG, $DB;
 
     upgrade_set_timeout();
     $moduleid = $DB->get_field('modules', 'id', array('name' => 'workshop'), MUST_EXIST);
@@ -238,7 +238,7 @@ function workshop_upgrade_workshop_id_mappings() {
  * @return void
  */
 function workshop_upgrade_submissions() {
-    global $CFG, $DB, $OUTPUT;
+    global $CFG, $DB;
 
     upgrade_set_timeout();
     $newworkshopids = workshop_upgrade_workshop_id_mappings();
@@ -407,4 +407,53 @@ function workshop_upgrade_transform_assessment(stdClass $old, $newsubmissionid, 
     }
 
     return $new;
+}
+
+/**
+ * Returns the list of new assessment ids
+ *
+ * @return array (int)oldid => (int)newid
+ */
+function workshop_upgrade_assessment_id_mappings() {
+    global $DB;
+
+    $oldrecords = $DB->get_records('workshop_assessments_old', null, 'id', 'id,newid');
+    $newids = array();
+    foreach ($oldrecords as $oldid => $oldrecord) {
+        if ($oldrecord->id and $oldrecord->newid) {
+            $newids[$oldid] = $oldrecord->newid;
+        }
+    }
+    return $newids;
+}
+
+/**
+ * Returns the list of new element (dimension) ids
+ *
+ * todo: this function is used in accumulative subtype. if it will not be used in any other subplugin, move it to the
+ * subplugin library
+ *
+ * @param string $strategy the name of strategy subplugin that the element was migrated into
+ * @return array (int)workshopid => array (int)elementno => stdclass ->(int)newid ->(string)type
+ */
+function workshop_upgrade_element_id_mappings($strategy) {
+    global $DB;
+
+    $oldrecords = $DB->get_records('workshop_elements_old', array('newplugin' => $strategy),
+                                   'workshopid,elementno', 'id,workshopid,elementno,scale,newid');
+    $newids = array();
+    foreach ($oldrecords as $old) {
+        if (!isset($newids[$old->workshopid])) {
+            $newids[$old->workshopid] = array();
+        }
+        $info = new stdclass();
+        $info->newid = $old->newid;
+        if ($old->scale >= 0 and $old->scale <= 6) {
+            $info->type = 'scale';
+        } else {
+            $info->type = 'value';
+        }
+        $newids[$old->workshopid][$old->elementno] = $info;
+    }
+    return $newids;
 }
