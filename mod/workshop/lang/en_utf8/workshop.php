@@ -25,7 +25,7 @@
  */
 
 $string['accesscontrol'] = 'Access control';
-$string['addmoredimensionblanks'] = 'Blanks for $a more dimensions';
+$string['addmoredimensionsaccumulative'] = 'Blanks for $a more aspects';
 $string['agreeassessments'] = 'Assessments must be agreed';
 $string['agreeassessmentsdesc'] = 'Authors may comment assessments of their work and agree/disagree with it';
 $string['anonymity'] = 'Anonymity mode';
@@ -56,10 +56,9 @@ $string['confignsassessments'] = 'Default number of allocated submissions to be 
 $string['configstrategy'] = 'Default grading strategy for workshops';
 $string['editgradingform'] = 'Edit grading form';
 $string['editinggradingform'] = 'Editing grading form';
-$string['dimensiondescription'] = 'Dimension description';
-$string['dimensionweight'] = 'Dimension weight';
-$string['dimension'] = 'Assessment dimension';
-$string['dimensionnumber'] = 'Dimension $a';
+$string['dimensiondescription'] = 'Description';
+$string['dimensionweight'] = 'Weight';
+$string['dimensionnumberaccumulative'] = 'Aspect $a';
 $string['examplesbeforeassessment'] = 'Examples are available after own submission and must be assessed before peer/self assessment phase';
 $string['examplesbeforesubmission'] = 'Examples must be assessed before own submission';
 $string['examplesmode'] = 'Mode of examples assessment';
