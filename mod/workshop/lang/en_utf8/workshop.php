@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['strategyhaschanged'] = 'The workshop grading strategy has changed since the form was opened for editing.';
-$string[''] = '';
+$string['editsubmission'] = 'Edit submission';
 $string[''] = '';
 $string[''] = '';
 $string[''] = '';
@@ -56,7 +56,7 @@ $string['allocationrandom'] = 'Random allocation';
 $string['allocationsettings'] = 'Allocation settings';
 $string['allocation'] = 'Submission allocation';
 $string['allocationview'] = 'View current allocations';
-$string['areadimensiondescription'] = 'Assessment dimensions';
+$string['areadimensiondescription'] = 'Assessment form fields';
 $string['areasubmissionattachment'] = 'Submission attachments';
 $string['areasubmissioncontent'] = 'Submission texts';
 $string['areyousuretodeallocate'] = 'Are you sure you want deallocate the selected assessment?';

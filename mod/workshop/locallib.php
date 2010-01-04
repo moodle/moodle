@@ -600,4 +600,15 @@ class workshop {
         }
     }
 
+    /**
+     * Are users alloed to create/edit their submissions?
+     *
+     * TODO: this depends on the workshop phase, phase deadlines, submitting after deadlines possibility
+     *
+     * @return bool
+     */
+    public function submitting_allowed() {
+        return true;
+    }
+
 }

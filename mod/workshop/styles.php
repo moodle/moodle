@@ -3,6 +3,7 @@
  */
 .submission-full {
     border: 1px solid #ddd;
+    margin: 0px 0px 1em 0px;
 }
 
 .submission-full .header {

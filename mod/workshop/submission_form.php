@@ -25,19 +25,18 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once ($CFG->dirroot.'/lib/formslib.php');
+require_once($CFG->dirroot . '/lib/formslib.php');
 
 class workshop_submission_form extends moodleform {
 
     function definition() {
-
         $mform = $this->_form;
 
-        $current            = $this->_customdata['current'];
-        $workshop           = $this->_customdata['workshop'];
-        $cm                 = $this->_customdata['cm'];
-        $contentoptions     = $this->_customdata['contentoptions'];
-        $attachmentoptions  = $this->_customdata['attachmentoptions'];
+        $current        = $this->_customdata['current'];
+        $workshop       = $this->_customdata['workshop'];
+        $cm             = $this->_customdata['cm'];
+        $contentopts    = $this->_customdata['contentopts'];
+        $attachmentopts = $this->_customdata['attachmentopts'];
 
         $mform->addElement('header', 'general', get_string('submission', 'workshop'));
 
@@ -45,13 +44,13 @@ class workshop_submission_form extends moodleform {
         $mform->setType('title', PARAM_TEXT);
         $mform->addRule('title', null, 'required', null, 'client');
 
-        $mform->addElement('editor', 'content_editor', get_string('submissioncontent', 'workshop'), null, $contentoptions);
+        $mform->addElement('editor', 'content_editor', get_string('submissioncontent', 'workshop'), null, $contentopts);
         $mform->setType('content', PARAM_RAW);
 
         if ($workshop->nattachments > 0) {
             $mform->addElement('static', 'filemanagerinfo', get_string('nattachments', 'workshop'), $workshop->nattachments);
             $mform->addElement('filemanager', 'attachment_filemanager', get_string('submissionattachment', 'workshop'),
-                                null, $attachmentoptions);
+                                null, $attachmentopts);
         }
 
         $mform->addElement('hidden', 'id', $current->id);
