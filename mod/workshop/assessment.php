@@ -58,7 +58,7 @@ $currenttab = 'assessment';
 
 $canviewallassessments  = has_capability('mod/workshop:viewallassessments', $workshop->context);
 $canviewallsubmissions  = has_capability('mod/workshop:viewallsubmissions', $workshop->context);
-$canoverridegrades      = has_capability('mod/workshop:overridegrades', $workshop->context);
+$canoverridegrades      = ($workshop->phase == workshop::PHASE_EVALUATION) and  has_capability('mod/workshop:overridegrades', $workshop->context);
 $isreviewer             = ($USER->id == $assessment->reviewerid);
 $isauthor               = ($USER->id == $submission->authorid);
 

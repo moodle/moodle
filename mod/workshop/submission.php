@@ -57,7 +57,7 @@ if ($id) { // submission is specified
 $ownsubmission  = $submission->authorid == $USER->id;
 $canviewall     = has_capability('mod/workshop:viewallsubmissions', $workshop->context);
 $cansubmit      = has_capability('mod/workshop:submit', $workshop->context);
-$canoverride    = has_capability('mod/workshop:overridegrades', $workshop->context);
+$canoverride    = ($workshop->phase == workshop::PHASE_EVALUATION) and has_capability('mod/workshop:overridegrades', $workshop->context);
 $isreviewer     = $DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'reviewerid' => $USER->id));
 
 if ($submission->id and ($ownsubmission or $canviewall or $isreviewer)) {
