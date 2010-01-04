@@ -39,6 +39,9 @@ class testable_workshop_noerrors_strategy extends workshop_noerrors_strategy {
     /** allows to set dimensions manually */
     public $dimensions = array();
 
+    /** allow to set mappings manually */
+    public $mappings = array();
+
     /**
      * This is where the calculation of suggested grade for submission is done
      */
@@ -83,7 +86,8 @@ class workshop_noerrors_strategy_test extends UnitTestCase {
 
     public function test_calculate_peer_grade_null_grade() {
         // fixture set-up
-        $this->dimensions = array();
+        $this->strategy->dimensions   = array();
+        $this->strategy->mappings     = array();
         $grades = array();
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
@@ -91,138 +95,167 @@ class workshop_noerrors_strategy_test extends UnitTestCase {
         $this->assertNull($suggested);
     }
 
-    public function test_calculate_peer_grade_one_numerical() {
+    public function test_calculate_peer_grade_no_error() {
         // fixture set-up
-        $this->strategy->dimensions[1003] = (object)array('grade' => 20, 'weight' => 1);
-        $grades[] = (object)array('dimensionid' => 1003, 'grade' => 5);
+        $this->strategy->dimensions      = array();
+        $this->strategy->dimensions[108] = (object)array('weight' => 1);
+        $this->strategy->dimensions[109] = (object)array('weight' => 1);
+        $this->strategy->dimensions[111] = (object)array('weight' => 1);
+        $this->strategy->mappings        = array();
+        $grades = array();
+        $grades[] = (object)array('dimensionid' => 108, 'grade' => 1);
+        $grades[] = (object)array('dimensionid' => 111, 'grade' => 1);
+        $grades[] = (object)array('dimensionid' => 109, 'grade' => 1);
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
         // validate
-        $this->assertEqual(5/20, $suggested);
+        $this->assertEqual($suggested, 1.0);
     }
 
-    public function test_calculate_peer_grade_negative_weight() {
+    public function test_calculate_peer_grade_one_error() {
         // fixture set-up
-        $this->strategy->dimensions[1003] = (object)array('grade' => 20, 'weight' => -1);
-        $grades[] = (object)array('dimensionid' => 1003, 'grade' => 20);
-        $this->expectException('coding_exception');
-        // excercise SUT
-        $suggested = $this->strategy->calculate_peer_grade($grades);
-    }
+        $this->strategy->dimensions      = array();
+        $this->strategy->dimensions[108] = (object)array('weight' => 1);
+        $this->strategy->dimensions[109] = (object)array('weight' => 1);
+        $this->strategy->dimensions[111] = (object)array('weight' => 1);
 
-    public function test_calculate_peer_grade_one_numerical_weighted() {
-        // fixture set-up
-        $this->strategy->dimensions[1003] = (object)array('grade' => 20, 'weight' => 3);
-        $grades[] = (object)array('dimensionid' => 1003, 'grade' => 5);
+        $this->strategy->mappings        = array(
+                                                1 => (object)array('grade' => 80.0),
+                                                2 => (object)array('grade' => 60.0),
+                                            );
+
+        $grades = array();
+        $grades[] = (object)array('dimensionid' => 108, 'grade' => 1);
+        $grades[] = (object)array('dimensionid' => 111, 'grade' => 0);
+        $grades[] = (object)array('dimensionid' => 109, 'grade' => 1);
+
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
         // validate
-        $this->assertEqual(5/20, $suggested);
+        $this->assertEqual($suggested, 0.8);
     }
 
-    public function test_calculate_peer_grade_three_numericals_same_weight() {
+    public function test_calculate_peer_grade_three_errors_same_weight_a() {
         // fixture set-up
-        $this->strategy->dimensions[1003] = (object)array('grade' =>20, 'weight' => 2);
-        $this->strategy->dimensions[1004] = (object)array('grade' =>100, 'weight' => 2);
-        $this->strategy->dimensions[1005] = (object)array('grade' =>10, 'weight' => 2);
+        $this->strategy->dimensions      = array();
+        $this->strategy->dimensions[108] = (object)array('weight' => 1);
+        $this->strategy->dimensions[109] = (object)array('weight' => 1);
+        $this->strategy->dimensions[111] = (object)array('weight' => 1);
 
-        $grades[] = (object)array('dimensionid' => 1003, 'grade' => 11);
-        $grades[] = (object)array('dimensionid' => 1004, 'grade' => 87);
-        $grades[] = (object)array('dimensionid' => 1005, 'grade' => 10);
+        $this->strategy->mappings        = array(
+                                                1 => (object)array('grade' => 80.0),
+                                                2 => (object)array('grade' => 60.0),
+                                                3 => (object)array('grade' => 10.0),
+                                            );
+
+        $grades = array();
+        $grades[] = (object)array('dimensionid' => 108, 'grade' => 0);
+        $grades[] = (object)array('dimensionid' => 111, 'grade' => 0);
+        $grades[] = (object)array('dimensionid' => 109, 'grade' => 0);
 
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
-
         // validate
-        $this->assertEqual((11/20 + 87/100 + 10/10)/3, $suggested);
+        $this->assertEqual($suggested, 0.1);
     }
 
-    public function test_calculate_peer_grade_three_numericals_different_weights() {
+    public function test_calculate_peer_grade_three_errors_same_weight_b() {
         // fixture set-up
-        $this->strategy->dimensions[1003] = (object)array('grade' =>15, 'weight' => 3);
-        $this->strategy->dimensions[1004] = (object)array('grade' =>80, 'weight' => 1);
-        $this->strategy->dimensions[1005] = (object)array('grade' =>5, 'weight' => 2);
+        $this->strategy->dimensions      = array();
+        $this->strategy->dimensions[108] = (object)array('weight' => 1);
+        $this->strategy->dimensions[109] = (object)array('weight' => 1);
+        $this->strategy->dimensions[111] = (object)array('weight' => 1);
 
-        $grades[] = (object)array('dimensionid' => 1003, 'grade' => 7);
-        $grades[] = (object)array('dimensionid' => 1004, 'grade' => 66);
-        $grades[] = (object)array('dimensionid' => 1005, 'grade' => 4);
+        $this->strategy->mappings        = array(
+                                                1 => (object)array('grade' => 80.0),
+                                                2 => (object)array('grade' => 60.0),
+                                                3 => (object)array('grade' => 0.0),
+                                            );
+
+        $grades = array();
+        $grades[] = (object)array('dimensionid' => 108, 'grade' => 0);
+        $grades[] = (object)array('dimensionid' => 111, 'grade' => 0);
+        $grades[] = (object)array('dimensionid' => 109, 'grade' => 0);
 
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
-
         // validate
-        $this->assertEqual((7/15*3 + 66/80*1 + 4/5*2)/6, $suggested);
+        $this->assertEqual($suggested, 0);
     }
 
-    public function test_calculate_peer_grade_one_scale_max() {
-        global $DB;
-
+    public function test_calculate_peer_grade_one_error_weighted() {
         // fixture set-up
-        $mockscale = 'E,D,C,B,A';
-        $this->strategy->dimensions[1008] = (object)array('grade' => -10, 'weight' => 1);
-        $grades[] = (object)array('dimensionid' => 1008, 'grade' => 5);
-        $DB->expectOnce('get_field', array("scales", "scale", array("id" => 10), MUST_EXIST));
-        $DB->setReturnValue('get_field', $mockscale);
+        $this->strategy->dimensions      = array();
+        $this->strategy->dimensions[108] = (object)array('weight' => 1);
+        $this->strategy->dimensions[109] = (object)array('weight' => 2);
+        $this->strategy->dimensions[111] = (object)array('weight' => 0);
+
+        $this->strategy->mappings        = array(
+                                                1 => (object)array('grade' => 66.0),
+                                                2 => (object)array('grade' => 33.0),
+                                                3 => (object)array('grade' => 0.0),
+                                            );
+
+        $grades = array();
+        $grades[] = (object)array('dimensionid' => 108, 'grade' => 1);
+        $grades[] = (object)array('dimensionid' => 111, 'grade' => 1);
+        $grades[] = (object)array('dimensionid' => 109, 'grade' => 0);
 
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
-
         // validate
-        $this->assertEqual(1, $suggested);
+        $this->assertEqual($suggested, 0.33);
     }
 
-    public function test_calculate_peer_grade_one_scale_min_with_scale_caching() {
-        global $DB;
-
+    public function test_calculate_peer_grade_zero_weight() {
         // fixture set-up
-        $this->strategy->dimensions[1008] = (object)array('grade' => -10, 'weight' => 1);
-        $grades[] = (object)array('dimensionid' => 1008, 'grade' => 1);
-        $DB->expectNever('get_field', array("scales", "scale", array("id" => 10), MUST_EXIST)); // cached
+        $this->strategy->dimensions      = array();
+        $this->strategy->dimensions[108] = (object)array('weight' => 1);
+        $this->strategy->dimensions[109] = (object)array('weight' => 2);
+        $this->strategy->dimensions[111] = (object)array('weight' => 0);
+
+        $this->strategy->mappings        = array(
+                                                1 => (object)array('grade' => 66.0),
+                                                2 => (object)array('grade' => 33.0),
+                                                3 => (object)array('grade' => 0.0),
+                                            );
+
+        $grades = array();
+        $grades[] = (object)array('dimensionid' => 108, 'grade' => 1);
+        $grades[] = (object)array('dimensionid' => 111, 'grade' => 0);
+        $grades[] = (object)array('dimensionid' => 109, 'grade' => 1);
 
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
-
         // validate
-        $this->assertEqual(0, $suggested);
+        $this->assertEqual($suggested, 1.0);
     }
 
-    public function test_calculate_peer_grade_two_scales_weighted() {
-        global $DB;
-
+    public function test_calculate_peer_grade_sum_weight() {
         // fixture set-up
-        $mockscale13 = 'Poor,Good,Excellent';
-        $mockscale17 = '-,*,**,***,****,*****,******';
+        $this->strategy->dimensions      = array();
+        $this->strategy->dimensions[108] = (object)array('weight' => 1);
+        $this->strategy->dimensions[109] = (object)array('weight' => 2);
+        $this->strategy->dimensions[111] = (object)array('weight' => 3);
 
-        $this->strategy->dimensions[1012] = (object)array('grade' => -13, 'weight' => 2);
-        $this->strategy->dimensions[1019] = (object)array('grade' => -17, 'weight' => 3);
+        $this->strategy->mappings        = array(
+                                                1 => (object)array('grade' => 90.0),
+                                                2 => (object)array('grade' => 80.0),
+                                                3 => (object)array('grade' => 70.0),
+                                                4 => (object)array('grade' => 60.0),
+                                                5 => (object)array('grade' => 30.0),
+                                                6 => (object)array('grade' => 5.0),
+                                                7 => (object)array('grade' => 0.0),
+                                            );
 
-        $grades[] = (object)array('dimensionid' => 1012, 'grade' => 2); // "Good"
-        $grades[] = (object)array('dimensionid' => 1019, 'grade' => 5); // "****"
-
-        $DB->expectAt(0, 'get_field', array("scales", "scale", array("id" => 13), MUST_EXIST));
-        $DB->setReturnValueAt(0, 'get_field', $mockscale13);
-
-        $DB->expectAt(1, 'get_field', array("scales", "scale", array("id" => 17), MUST_EXIST));
-        $DB->setReturnValueAt(1, 'get_field', $mockscale17);
+        $grades = array();
+        $grades[] = (object)array('dimensionid' => 108, 'grade' => 0);
+        $grades[] = (object)array('dimensionid' => 111, 'grade' => 0);
+        $grades[] = (object)array('dimensionid' => 109, 'grade' => 0);
 
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
-
         // validate
-        $this->assertEqual((1/2*2 + 4/6*3)/5, $suggested);
-    }
-
-    public function test_calculate_peer_grade_scale_exception() {
-        global $DB;
-
-        // fixture set-up
-        $mockscale13 = 'Poor,Good,Excellent';
-        $this->strategy->dimensions[1012] = (object)array('grade' => -13, 'weight' => 1);
-        $DB->expectNever('get_field', array("scales", "scale", array("id" => 13), MUST_EXIST)); // cached
-        $grades[] = (object)array('dimensionid' => 1012, 'grade' => 4); // exceeds the number of scale items
-        $this->expectException('coding_exception');
-
-        // excercise SUT
-        $suggested = $this->strategy->calculate_peer_grade($grades);
+        $this->assertEqual($suggested, 0.05);
     }
 }

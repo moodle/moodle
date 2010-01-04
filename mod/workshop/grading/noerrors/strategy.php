@@ -446,17 +446,54 @@ class workshop_noerrors_strategy implements workshop_strategy {
      * Calculates the aggregated grade given by the reviewer
      *
      * @param array $grades Grade records as returned by {@link get_current_assessment_data}
-     * @uses $this->mappings
      * @return float|null   Raw grade (0 to 1) for submission as suggested by the peer
      */
     protected function calculate_peer_grade(array $grades) {
-
         if (empty($grades)) {
             return null;
         }
-        $sumgrades  = 0;
-        $sumweights = 0;
-        return 1;
+        $sumerrors  = 0;    // sum of the weighted errors (ie the negative responses)
+        foreach ($grades as $grade) {
+            if (empty($grade->grade)) {
+                // negative reviewer's response
+                $sumerrors += $this->dimensions[$grade->dimensionid]->weight;
+            }
+        }
+        return $this->errors_to_grade($sumerrors);
     }
 
+    /**
+     * Returns a grade 0..1 for the given number of errors
+     *
+     * This is where we use the mapping table defined by the teacher. If a grade for the given
+     * number of errors (negative assertions) is not defined, the most recently defined one is used.
+     * Example of the defined mapping:
+     * Number of errors | Grade
+     *                0 | 100%  (always)
+     *                1 | -     (not defined)
+     *                2 | 80%
+     *                3 | 60%
+     *                4 | -
+     *                5 | 30%
+     *                6 | 0%
+     * With this mapping, one error is mapped to 100% grade and 4 errors is mapped to 60%.
+     *
+     * @param mixed $noerrors Number of errors
+     * @return float          Raw grade (0 to 1) for the given number of negative assertions
+     */
+    protected function errors_to_grade($noerrors) {
+        $grade = 100;
+        for ($i = 1; $i <= $noerrors; $i++) {
+            if (isset($this->mappings[$i])) {
+                $grade = $this->mappings[$i]->grade;
+            }
+        }
+        if ($grade > 100) {
+            $grade = 100;
+        }
+        if ($grade < 0) {
+            $grade = 0;
+        }
+        return $grade/100;
+    }
 }
