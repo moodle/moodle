@@ -28,7 +28,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.'); //  It must be included from a Moodle page
 }
 
-require_once(dirname(dirname(__FILE__)).'/edit_strategy_form.php');  // parent class definition
+require_once(dirname(dirname(__FILE__)).'/gradingform.php');  // parent class definition
 
 
 /**

@@ -70,11 +70,11 @@ $selfurl   = "{$CFG->wwwroot}/mod/workshop/editgradingform.php?id={$cm->id}";
 $dimensions = $DB->get_records('workshop_forms_accumulative', array('workshopid' => $workshop->id), 'sort');
 
 // load the form to edit the grading strategy dimensions
-$strategylib = dirname(__FILE__) . '/grading/' . $workshop->strategy . '/edit_' . $workshop->strategy . '_strategy_form.php';
-if (file_exists($strategylib)) {
-    require_once($strategylib);
+$strategyform = dirname(__FILE__) . '/grading/' . $workshop->strategy . '/gradingform.php';
+if (file_exists($strategyform)) {
+    require_once($strategyform);
 } else {
-    print_error('errloadingstrategylib', 'workshop', $returnurl);
+    print_error('errloadingstrategyform', 'workshop', $returnurl);
 }
 $classname = 'workshop_edit_' . $workshop->strategy . '_strategy_form';
 $mform = new $classname($selfurl, true, count($dimensions));
