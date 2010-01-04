@@ -224,16 +224,6 @@ function workshop_install() {
 }
 
 /**
- * Execute post-uninstall custom actions for the module
- * This function was added in 1.9
- *
- * @return boolean true if success, false on error
- */
-function workshop_uninstall() {
-    return true;
-}
-
-/**
  * Returns the information if the module supports a feature
  *
  * @see plugin_supports() in lib/moodlelib.php
