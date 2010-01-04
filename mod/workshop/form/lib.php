@@ -94,6 +94,6 @@ interface workshop_strategy {
      * @param workshop_evaluation $evaluation the instance of grading evaluation class
      * @return bool true if the evaluation method is supported, false otherwise
      */
-    public function evaluation_supported(workshop_evaluation $evaluation);
+    public function supports_evaluation(workshop_evaluation $evaluation);
 
 }

@@ -27,10 +27,101 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(dirname(__FILE__)) . '/lib.php');  // interface definition
+require_once($CFG->libdir . '/gradelib.php');
 
 /**
  * Defines the computation login of the grading evaluation subplugin
  */
 class workshop_best_evaluation implements workshop_evaluation {
+
+    /** @var workshop the parent workshop instance */
+    protected $workshop;
+
+    /**
+     * Constructor
+     *
+     * @param workshop $workshop The workshop api instance
+     * @return void
+     */
+    public function __construct(workshop $workshop) {
+        $this->workshop         = $workshop;
+    }
+
+    /**
+     * TODO
+     *
+     * @param null|int|array $restrict If null, update all reviewers, otherwise update just grades for the given reviewers(s)
+     *
+     * @return void
+     */
+    public function update_grading_grades($restrict=null) {
+        global $DB;
+
+        $grader = $this->workshop->grading_strategy_instance();
+        if (! $grader->supports_evaluation($this)) {
+            throw new coding_exception('The currently selected grading strategy plugin does not
+                support this method of grading evaluation.');
+        }
+
+        // fetch a recordset with all assessments to process
+        $rs         = $grader->get_assessments_recordset($restrict);
+        $batch      = array();    // will contain a set of all assessments of a single submission
+        $previous   = null;       // a previous record in the recordset
+        foreach ($rs as $current) {
+            if (is_null($previous)) {
+                // we are processing the very first record in the recordset
+                $previous = $current;
+            }
+            if ($current->submissionid == $previous->submissionid) {
+                $batch[] = $current;
+            } else {
+                // process all the assessments of a sigle submission
+                $this->process_assessments($batch);
+                // start with a new batch to be processed
+                $batch = array($current);
+                $previous = $current;
+            }
+        }
+        // do not forget to process the last batch!
+        $this->process_assessments($batch);
+        $rs->close();
+    }
+
+////////////////////////////////////////////////////////////////////////////////
+// Internal methods                                                           //
+////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Given a list of all assessments of a single submission, updates the grading grades in database
+     *
+     * @param array $assessments of stdClass Object(->assessmentid ->assessmentweight ->reviewerid ->submissionid
+     *                                              ->dimensionid ->grade ->dimensionweight)
+     * @return void
+     */
+    protected function process_assessments(array $assessments) {
+        global $DB;
+
+        $grades = $this->evaluate_assessments($assessments);
+        foreach ($grades as $assessmentid => $grade) {
+            $record = new stdClass();
+            $record->id = $assessmentid;
+            $record->gradinggrade = grade_floatval($grade);
+            $DB->update_record('workshop_assessments', $record, true);
+        }
+    }
+
+    /**
+     * Given a list of all assessments of a single submission, calculates the grading grades for them
+     *
+     * @param array $assessments same structure as for {@link self::process_assessments()}
+     * @return array [(int)assessmentid => (float)gradinggrade] to be saved into {workshop_assessments}
+     */
+    protected function evaluate_assessments(array $assessments) {
+        $gradinggrades = array();
+        foreach ($assessments as $assessment) {
+            $gradinggrades[$assessment->assessmentid] = grade_floatval(rand(0, 100));   // todo
+        }
+        return $gradinggrades;
+    }
 
 }

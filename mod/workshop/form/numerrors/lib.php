@@ -287,7 +287,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
      * @param workshop_evaluation $evaluation the instance of grading evaluation class
      * @return bool true if the evaluation method is supported, false otherwise
      */
-    public function evaluation_supported(workshop_evaluation $evaluation) {
+    public function supports_evaluation(workshop_evaluation $evaluation) {
         if (is_a($evaluation, 'workshop_best_evaluation')) {
             return true;
         }

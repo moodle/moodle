@@ -39,12 +39,17 @@ $PAGE->set_url(new moodle_url($workshop->aggregate_url(), array('cmid' => $cmid)
 require_login($course, false, $cm);
 require_capability('mod/workshop:overridegrades', $PAGE->context);
 
+// load the grading evaluator
+$evaluator = $workshop->grading_evaluation_instance();
+
 if ($confirm) {
     if (!confirm_sesskey()) {
         throw new moodle_exception('confirmsesskeybad');
     }
-    $workshop->update_submission_grades();
-    $workshop->update_grading_grades();
+    $workshop->aggregate_submission_grades();
+    //$evaluator->update_grading_grades();
+    //$workshop->aggregate_grading_grades();
+    //$workshop->aggregate_total_grades();
     redirect($workshop->view_url());
 }
 

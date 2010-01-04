@@ -91,7 +91,7 @@ class workshop {
                                         // this is intentional - IMO there should be no such field as it violates
                                         // 3rd normal form with no real performance gain. This way I try to
                                         // demonstrate how backwards compatibility could be achieved --mudrd8mz
-        $this->context      = get_context_instance(CONTEXT_MODULE, $this->id);
+        $this->context      = get_context_instance(CONTEXT_MODULE, $this->cm->id);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -1136,7 +1136,7 @@ class workshop {
      * @param null|int|array $restrict If null, update all authors, otherwise update just grades for the given author(s)
      * @return void
      */
-    public function update_submission_grades($restrict=null) {
+    public function aggregate_submission_grades($restrict=null) {
         global $DB;
 
         // fetch a recordset with all assessments to process
@@ -1222,7 +1222,7 @@ class workshop {
      * @param null|int|array $restrict If null, update all reviewers, otherwise update just grades for the given reviewer(s)
      * @return void
      */
-    public function update_grading_grades($restrict=null) {
+    public function aggregate_grading_grades($restrict=null) {
         global $DB;
 
         // todo

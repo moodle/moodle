@@ -162,7 +162,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         $mockscale = 'E,D,C,B,A';
         $this->strategy->dimensions[1008] = (object)array('grade' => '-10', 'weight' => 1);
         $grades[] = (object)array('dimensionid' => 1008, 'grade' => '5.00000');
-        $DB->expectOnce('get_field', array('scales', 'scale', array('id' => 10), MUST_EXIST));
+        $DB->expectOnce('get_field', array('scale', 'scale', array('id' => 10), MUST_EXIST));
         $DB->setReturnValue('get_field', $mockscale);
 
         // excercise SUT
@@ -178,7 +178,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         // fixture set-up
         $this->strategy->dimensions[1008] = (object)array('grade' => '-10', 'weight' => 1);
         $grades[] = (object)array('dimensionid' => 1008, 'grade' => '1.00000');
-        $DB->expectNever('get_field', array('scales', 'scale', array('id' => 10), MUST_EXIST)); // cached
+        $DB->expectNever('get_field', array('scale', 'scale', array('id' => 10), MUST_EXIST)); // cached
 
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
@@ -200,10 +200,10 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         $grades[] = (object)array('dimensionid' => 1012, 'grade' => '2.00000'); // "Good"
         $grades[] = (object)array('dimensionid' => 1019, 'grade' => '5.00000'); // "****"
 
-        $DB->expectAt(0, 'get_field', array('scales', 'scale', array('id' => 13), MUST_EXIST));
+        $DB->expectAt(0, 'get_field', array('scale', 'scale', array('id' => 13), MUST_EXIST));
         $DB->setReturnValueAt(0, 'get_field', $mockscale13);
 
-        $DB->expectAt(1, 'get_field', array('scales', 'scale', array('id' => 17), MUST_EXIST));
+        $DB->expectAt(1, 'get_field', array('scale', 'scale', array('id' => 17), MUST_EXIST));
         $DB->setReturnValueAt(1, 'get_field', $mockscale17);
 
         // excercise SUT
@@ -219,7 +219,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         // fixture set-up
         $mockscale13 = 'Poor,Good,Excellent';
         $this->strategy->dimensions[1012] = (object)array('grade' => -13, 'weight' => 1);
-        $DB->expectNever('get_field', array('scales', 'scale', array('id' => 13), MUST_EXIST)); // cached
+        $DB->expectNever('get_field', array('scale', 'scale', array('id' => 13), MUST_EXIST)); // cached
         $grades[] = (object)array('dimensionid' => 1012, 'grade' => '4.00000'); // exceeds the number of scale items
         $this->expectException('coding_exception');
 

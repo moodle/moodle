@@ -252,8 +252,51 @@ class workshop_accumulative_strategy implements workshop_strategy {
      * @param workshop_evaluation $evaluation the instance of grading evaluation class
      * @return bool true if the evaluation method is supported, false otherwise
      */
-    public function evaluation_supported(workshop_evaluation $evaluation) {
-        return false;   // todo does not support any evaluation yet
+    public function supports_evaluation(workshop_evaluation $evaluation) {
+        if (is_a($evaluation, 'workshop_best_evaluation')) {
+            return true;
+        }
+        // all other evaluation methods are not supported yet
+        return false;
+    }
+
+////////////////////////////////////////////////////////////////////////////////
+// Methods needed by 'best' evaluation plugin                                 //
+////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * TODO: short description.
+     *
+     * @param resource $restrict 
+     * @return TODO
+     */
+    public function get_assessments_recordset($restrict) {
+        global $DB;
+
+        $sql = 'SELECT a.id AS assessmentid,a.weight AS assessmentweight,a.reviewerid,
+                       s.id AS submissionid,
+                       g.dimensionid,g.grade,
+                       d.weight AS dimensionweight
+                  FROM {workshop_submissions} s
+                  JOIN {workshop_assessments} a ON (a.submissionid = s.id)
+                  JOIN {workshop_grades} g ON (g.assessmentid = a.id AND g.strategy = :strategy)
+                  JOIN {workshopform_accumulative} d ON (d.id = g.dimensionid)
+                 WHERE s.example=0 AND s.workshopid=:workshopid'; // to be cont.
+        $params = array('workshopid' => $this->workshop->id, 'strategy' => $this->workshop->strategy);
+
+        if (is_null($restrict)) {
+            // update all users - no more conditions
+        } elseif (!empty($restrict)) {
+            list($usql, $uparams) = $DB->get_in_or_equal($restrict, SQL_PARAMS_NAMED);
+            $sql .= " AND a.reviewerid $usql";
+            $params = array_merge($params, $uparams);
+        } else {
+            throw new coding_exception('Empty value is not a valid parameter here');
+        }
+
+        $sql .= ' ORDER BY s.id'; // this is important for bulk processing
+
+        return $DB->get_recordset_sql($sql, $params);
     }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -443,7 +486,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
         static $numofscaleitems = array();
 
         if (!isset($numofscaleitems[$scaleid])) {
-            $scale = $DB->get_field("scales", "scale", array("id" => $scaleid), MUST_EXIST);
+            $scale = $DB->get_field('scale', 'scale', array('id' => $scaleid), MUST_EXIST);
             $items = explode(',', $scale);
             $numofscaleitems[$scaleid] = count($items);
             unset($scale);
