@@ -90,9 +90,17 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             throw new portfolio_caller_exception('invalidcoursemodule');
         }
 
-        $modcontext = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $this->modcontext = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $fs = get_file_storage();
         if ($this->post) {
-            $this->set_file_and_format_data($this->attachment, $modcontext->id, 'forum_attachment', $this->post->id, 'timemodified', false);
+            if ($this->attachment) {
+                $this->set_file_and_format_data($this->attachment);
+            } else {
+                $attach = $fs->get_area_files($this->modcontext->id, 'forum_attachment', $this->post->id, 'timemodified', false);
+                $embed  = $fs->get_area_files($this->modcontext->id, 'forum_post', $this->post->id, 'timemodified', false);
+                $files = array_merge($attach, $embed);
+                $this->set_file_and_format_data($files);
+            }
             if (!empty($this->multifiles)) {
                 $this->keyedfiles[$this->post->id] = $this->multifiles;
             } else if (!empty($this->singlefile)) {
@@ -103,7 +111,12 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             $this->posts = forum_get_all_discussion_posts($this->discussion->id, 'p.created ASC');
             $this->multifiles = array();
             foreach ($this->posts as $post) {
-                if (!$this->keyedfiles[$post->id] = $fs->get_area_files($modcontext->id, 'forum_attachment', $post->id, "timemodified", false)) {
+                $attach = $fs->get_area_files($this->modcontext->id, 'forum_attachment', $this->post->id, 'timemodified', false) || array();
+                $embed  = $fs->get_area_files($this->modcontext->id, 'forum_post', $this->post->id, 'timemodified', false) || array();
+                $files = array_merge($attach, $embed);
+                if ($files) {
+                    $this->keyedfiles[$post->id] = $files;
+                } else {
                     continue;
                 }
                 $this->multifiles = array_merge($this->multifiles, array_values($this->keyedfiles[$post->id]));
@@ -282,7 +295,9 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         // format the post body
         $options = new object();
         $options->para = true;
+        $format = $this->get('exporter')->get('format');
         $formattedtext = format_text($post->message, $post->messageformat, $options, $this->get('course')->id);
+        $formattedtext = portfolio_rewrite_pluginfile_urls($formattedtext, $this->modcontext->id, 'forum_post', $post->id, $format);
 
         $output = '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
 
@@ -313,7 +328,6 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         if (is_array($this->keyedfiles) && array_key_exists($post->id, $this->keyedfiles) && is_array($this->keyedfiles[$post->id]) && count($this->keyedfiles[$post->id]) > 0) {
             $output .= '<div class="attachments">';
             $output .= '<br /><b>' .  get_string('attachments', 'forum') . '</b>:<br /><br />';
-            $format = $this->get('exporter')->get('format');
             foreach ($this->keyedfiles[$post->id] as $file) {
                 $output .= $format->file_output($file)  . '<br/ >';
             }
