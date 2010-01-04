@@ -83,7 +83,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
 
     public function test_calculate_peer_grade_null_grade() {
         // fixture set-up
-        $this->dimensions = array();
+        $this->strategy->dimensions = array();
         $grades = array();
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
