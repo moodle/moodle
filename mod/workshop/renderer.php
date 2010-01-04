@@ -262,9 +262,10 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                 continue;
             }
 
+            $filepath   = $file->get_filepath();
             $filename   = $file->get_filename();
             $fileurl    = file_encode_url($CFG->wwwroot . '/pluginfile.php',
-                                '/' . $ctx->id . '/workshop_submission_attachment/' . $submission->id . '/' . $filename, true);
+                                '/' . $ctx->id . '/workshop_submission_attachment/' . $submission->id . $filepath . $filename, true);
             $type       = $file->get_mimetype();
             $type       = mimeinfo_from_type("type", $type);
             $icon       = new html_image();
