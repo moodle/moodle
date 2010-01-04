@@ -30,7 +30,7 @@ require_once(dirname(dirname(__FILE__)) . '/lib.php');  // interface definition
 /**
  * Accumulative grading strategy logic.
  */
-class workshop_accumulative_strategy implements workshop_strategy {
+class workshop_accumulative_strategy extends workshop_base_strategy implements workshop_strategy {
 
     /** @var workshop the parent workshop instance */
     protected $workshop;
@@ -81,11 +81,13 @@ class workshop_accumulative_strategy implements workshop_strategy {
             $norepeats += WORKSHOP_STRATEGY_ADDDIMS;
         }
 
-        for ($i = 0; $i < $norepeats; $i++) {
+        // prepare the emebeded files
+        for ($i = 0; $i < $this->nodimensions; $i++) {
             // prepare all editor elements
             $fields = file_prepare_standard_editor($fields, 'description__idx_'.$i, $this->descriptionopts,
-                                                   $PAGE->context, 'workshop_dimension_description', 0);
+                $PAGE->context, 'workshop_dimension_description', $fields->{'dimensionid__idx_'.$i});
         }
+
         $customdata = array();
         $customdata['workshop'] = $this->workshop;
         $customdata['strategy'] = $this;
@@ -103,7 +105,14 @@ class workshop_accumulative_strategy implements workshop_strategy {
     protected function load_fields() {
         global $DB;
 
-        $dims = $DB->get_records('workshop_forms_' . $this->name(), array('workshopid' => $this->workshop->id), 'sort');
+        $sql = 'SELECT master.id,dim.description,dim.descriptionformat,dim.grade,dim.weight
+                FROM {workshop_forms} master
+                JOIN {workshop_forms_accumulative} dim ON (dim.id=master.localid)
+                WHERE master.workshopid = ?
+                ORDER BY master.sort';
+        $params[0] = $this->workshop->id;
+
+        $dims = $DB->get_records_sql($sql, $params);
         $this->nodimensions = count($dims);
         $fields = $this->_cook_dimension_records($dims);
         return $fields;
@@ -120,18 +129,17 @@ class workshop_accumulative_strategy implements workshop_strategy {
      */
     protected function _cook_dimension_records(array $raw) {
 
-        $formdata = array();
+        $formdata = new stdClass();
         $key = 0;
         foreach ($raw as $dimension) {
-            $formdata['dimensionid__idx_' . $key]       = $dimension->id;
-            $formdata['description__idx_' . $key]       = $dimension->description;
-            $formdata['descriptionformat__idx_' . $key] = $dimension->descriptionformat;
-            $formdata['grade__idx_' . $key]             = $dimension->grade;
-            $formdata['weight__idx_' . $key]            = $dimension->weight;
+            $formdata->{'dimensionid__idx_' . $key}             = $dimension->id;
+            $formdata->{'description__idx_' . $key}             = $dimension->description;
+            $formdata->{'description__idx_' . $key.'format'}    = $dimension->descriptionformat;
+            $formdata->{'grade__idx_' . $key}                   = $dimension->grade;
+            $formdata->{'weight__idx_' . $key}                  = $dimension->weight;
             $key++;
         }
-        $cooked = (object)$formdata;
-        return $cooked;
+        return $formdata;
     }
 
     /**
@@ -147,32 +155,50 @@ class workshop_accumulative_strategy implements workshop_strategy {
      * @return void
      */
     public function save_edit_strategy_form(stdClass $data) {
-        global $DB;
+        global $DB, $PAGE;
 
         if (!isset($data->strategyname) || ($data->strategyname != $this->name())) {
             // the workshop strategy has changed since the form was opened for editing
             throw new moodle_exception('strategyhaschanged', 'workshop');
         }
+        $workshopid = $data->workshopid;
+        $norepeats  = $data->norepeats;
 
-        $data = $this->_cook_edit_form_data($data);
-        $todelete = array();
-        foreach ($data as $record) {
-            if (empty($record->description)) {
-                if (!empty($record->id)) {
+        $data           = $this->_cook_edit_form_data($data);
+        $masterrecords  = $data->forms;
+        $localrecords   = $data->forms_accumulative;
+        $todeletelocal  = array(); // local ids to be deleted
+        $todeletemaster = array(); // master ids to be deleted
+
+        for ($i=0; $i < $norepeats; $i++) {
+            $local  = $localrecords[$i];
+            $master = $masterrecords[$i];
+            if (empty($local->description_editor['text'])) {
+                if (!empty($local->id)) {
                     // existing record with empty description - to be deleted
-                    $todelete[] = $record->id;
+                    $todeletelocal[]    = $local->id;
+                    $todeletemaster[]   = $this->dimension_master_id($local->id);
                 }
                 continue;
             }
-            if (empty($record->id)) {
+            if (empty($local->id)) {
                 // new field
-                $record->id = $DB->insert_record('workshop_forms_' . $this->name(), $record);
+                $local->id          = $DB->insert_record('workshop_forms_accumulative', $local);
+                $master->localid    = $local->id;
+                $master->id         = $DB->insert_record('workshop_forms', $master);
             } else {
                 // exiting field
-                $DB->update_record('workshop_forms_' . $this->name(), $record);
+                $master->id = $this->dimension_master_id($local->id);
+                $DB->update_record('workshop_forms', $master);
             }
+            // $local record now has its id, let us re-save it with correct path to embeded media files
+            $local = file_postupdate_standard_editor($local, 'description', $this->descriptionopts,
+                $PAGE->context, 'workshop_dimension_description', $local->id);
+            $DB->update_record('workshop_forms_accumulative', $local);
         }
-        $DB->delete_records_list('workshop_forms_' . $this->name(), 'id', $todelete);
+        // todo unlink embedded files
+        $DB->delete_records_list('workshop_forms_accumulative', 'id', $todeletelocal);
+        $DB->delete_records_list('workshop_forms', 'id', $todeletemaster);
     }
 
     /**
@@ -189,23 +215,27 @@ class workshop_accumulative_strategy implements workshop_strategy {
     protected function _cook_edit_form_data(stdClass $raw) {
         global $PAGE;
 
-        $cook = array();
+        $cook                       = new stdClass();   // to be returned
+        $cook->forms                = array();          // to be stored in {workshop_forms}
+        $cook->forms_accumulative   = array();          // to be stored in {workshop_forms_accumulative}
+
         for ($i = 0; $i < $raw->norepeats; $i++) {
-            $raw = file_postupdate_standard_editor($raw, 'description__idx_'.$i, $this->descriptionopts,
-                                                    $PAGE->context, 'workshop_dimension_description', 0);
-            $cook[$i]                    = new stdClass();
-            $fieldname                   = 'dimensionid__idx_'.$i;
-            $cook[$i]->id                = isset($raw->$fieldname) ? $raw->$fieldname : null;
-            $cook[$i]->workshopid        = $this->workshop->id;
-            $cook[$i]->sort              = $i + 1;
-            $fieldname                   = 'description__idx_'.$i;
-            $cook[$i]->description       = isset($raw->$fieldname) ? $raw->$fieldname : null;
-            $fieldname                   = 'description__idx_'.$i.'format';
-            $cook[$i]->descriptionformat = isset($raw->$fieldname) ? $raw->$fieldname : FORMAT_HTML;
-            $fieldname                   = 'grade__idx_'.$i;
-            $cook[$i]->grade             = isset($raw->$fieldname) ? $raw->$fieldname : null;
-            $fieldname                   = 'weight__idx_'.$i;
-            $cook[$i]->weight            = isset($raw->$fieldname) ? $raw->$fieldname : null;
+            $cook->forms_accumulative[$i] = new stdClass();
+            $fieldname = 'dimensionid__idx_'.$i;
+            $cook->forms_accumulative[$i]->id                   = isset($raw->$fieldname) ? $raw->$fieldname : null;
+            $fieldname = 'description__idx_'.$i.'_editor';
+            $cook->forms_accumulative[$i]->description_editor   = isset($raw->$fieldname) ? $raw->$fieldname : null;
+            $fieldname = 'grade__idx_'.$i;
+            $cook->forms_accumulative[$i]->grade                = isset($raw->$fieldname) ? $raw->$fieldname : null;
+            $fieldname = 'weight__idx_'.$i;
+            $cook->forms_accumulative[$i]->weight               = isset($raw->$fieldname) ? $raw->$fieldname : null;
+
+            $cook->forms[$i]                = new stdClass();
+            $cook->forms[$i]->id            = null; // will be checked later, considered unknown at the moment
+            $cook->forms[$i]->workshopid    = $this->workshop->id;
+            $cook->forms[$i]->sort          = $i + 1;
+            $cook->forms[$i]->strategy      = 'accumulative';
+            $cook->forms[$i]->dimensionid   = $cook->forms_accumulative[$i]->id;
         }
         return $cook;
     }

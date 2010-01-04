@@ -60,7 +60,7 @@ echo $OUTPUT->header($navigation);
 
 if (! $workshops = get_all_instances_in_course('workshop', $course)) {
     echo $OUTPUT->heading(get_string('noworkshops', 'workshop'), 2);
-    echo $OUTPUT->continue_button("view.php?id=$course->id");
+    echo $OUTPUT->continue_button(new moodle_url($CFG->wwwroot . '/course/view.php', array('id' => $course->id)));
     echo $OUTPUT->footer();
     die();
 }

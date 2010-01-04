@@ -98,12 +98,6 @@ class mod_workshop_mod_form extends moodleform_mod {
 /// Submission settings --------------------------------------------------------
         $mform->addElement('header', 'submissionsettings', get_string('submissionsettings', 'workshop'));
 
-        $label = get_string('latesubmissions', 'workshop');
-        $text = get_string('latesubmissionsdesc', 'workshop');
-        $mform->addElement('advcheckbox', 'latesubmissions', $label, $text);
-        $mform->setHelpButton('latesubmissions', array('latesubmissions', $label, 'workshop'));
-        $mform->setAdvanced('latesubmissions');
-
         $options = array();
         for ($i=7; $i>=0; $i--) {
             $options[$i] = $i;
@@ -112,23 +106,20 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('select', 'nattachments', $label, $options);
         $mform->setDefault('nattachments', 1);
         $mform->setHelpButton('nattachments', array('nattachments', $label, 'workshop'));
-        $mform->setAdvanced('nattachments');
+
+        $label = get_string('latesubmissions', 'workshop');
+        $text = get_string('latesubmissionsdesc', 'workshop');
+        $mform->addElement('advcheckbox', 'latesubmissions', $label, $text);
+        $mform->setHelpButton('latesubmissions', array('latesubmissions', $label, 'workshop'));
 
         $options = get_max_upload_sizes($CFG->maxbytes, $COURSE->maxbytes);
         $options[0] = get_string('courseuploadlimit') . ' ('.display_size($COURSE->maxbytes).')';
         $mform->addElement('select', 'maxbytes', get_string('maximumsize', 'assignment'), $options);
         $mform->setDefault('maxbytes', $workshopconfig->maxbytes);
         $mform->setHelpButton('maxbytes', array('maxbytes', $label, 'workshop'));
-        $mform->setAdvanced('maxbytes');
 
 /// Assessment settings
         $mform->addElement('header', 'assessmentsettings', get_string('assessmentsettings', 'workshop'));
-
-        $label = get_string('nsassessments', 'workshop');
-        $options = workshop_get_numbers_of_assessments();
-        $mform->addElement('select', 'nsassessments', $label, $options);
-        $mform->setDefault('nsassessments', $workshopconfig->nsassessments);
-        $mform->setHelpButton('nsassessments', array('nsassessments', $label, 'workshop'));
 
         $label = get_string('nexassessments', 'workshop');
         $options = workshop_get_numbers_of_assessments();
@@ -138,17 +129,12 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->setHelpButton('nexassessments', array('nexassessments', $label, 'workshop'));
         $mform->disabledIf('nexassessments', 'useexamples');
 
-        $label = get_string('assesswosubmission', 'workshop');
-        $text = get_string('assesswosubmissiondesc', 'workshop');
-        $mform->addElement('advcheckbox', 'assesswosubmission', $label, $text);
-        $mform->setHelpButton('assesswosubmission', array('assesswosubmission', $label, 'workshop'));
-        $mform->setAdvanced('assesswosubmission');
-
         $label = get_string('examplesmode', 'workshop');
         $options = workshop_get_example_modes();
         $mform->addElement('select', 'examplesmode', $label, $options);
         $mform->setDefault('examplesmode', $workshopconfig->examplesmode);
         $mform->setHelpButton('examplesmode', array('examplesmode', $label, 'workshop'));
+        $mform->disabledIf('nexassessments', 'useexamples');
         $mform->setAdvanced('examplesmode');
 
         $label = get_string('teacherweight', 'workshop');
@@ -156,7 +142,6 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('select', 'teacherweight', $label, $options);
         $mform->setDefault('teacherweight', 1);
         $mform->setHelpButton('teacherweight', array('teacherweight', $label, 'workshop'));
-        $mform->setAdvanced('teacherweight');
 
         $label = get_string('agreeassessments', 'workshop');
         $text = get_string('agreeassessmentsdesc', 'workshop');
@@ -172,7 +157,6 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('select', 'assessmentcomps', $label, $levels);
         $mform->setDefault('assessmentcomps', $workshopconfig->assessmentcomps);
         $mform->setHelpButton('assessmentcomps', array('assessmentcomps', $label, 'workshop'));
-        $mform->setAdvanced('assessmentcomps');
 
 /// Access control
         $mform->addElement('header', 'accesscontrol', get_string('accesscontrol', 'workshop'));
@@ -206,7 +190,6 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('passwordunmask', 'password', $label);
         $mform->setType('quizpassword', PARAM_TEXT);
         $mform->setHelpButton('password', array('requirepassword', $label, 'workshop'));
-        $mform->setAdvanced('password');
 
 /// Common module settinga, Restrict availability, Activity completion etc. ----
         $features = array('groups'=>true, 'groupings'=>true, 'groupmembersonly'=>true,

@@ -81,3 +81,46 @@ interface workshop_strategy {
      */
     public function save_assessment(stdClass $assessment, stdClass $data);
 }
+
+/**
+ * Provides common methods for all grading strategies
+ *
+ * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class workshop_base_strategy {
+
+    /**
+     * Returns the dimension's master id from table {workshop_forms}
+     *
+     * Every grading strategy defines its assessment dimensions in its own tables (eg workshop_forms_accumulative).
+     * But we need a unique identifier across all strategies to be able to embed media into dimension descriptions.
+     * So, every dimension has to have a record in the master table workshop_forms. This is a similar pattern
+     * to what Moodle already uses with course_modules and instances.
+     *
+     * @param int $localid The id if the dimension in the subplugin table (eg workshop_forms_accumulative)
+     * @return int|false   The master id from workshop_forms_accumulative or false, if not found
+     */
+    public function dimension_master_id($localid) {
+        global $DB;
+        /** @var array Cache database query results so we can call from a loop */
+        static $cache=null;
+
+        if (is_null($cache)) {
+            $strategy   = $this->name();
+            $dimids     = $DB->get_records('workshop_forms',
+                array('workshopid' => $this->workshop->id, 'strategy' => 'accumulative'), '', 'id,localid');
+            $cache = array();
+            foreach ($dimids as $masterid => $master) {
+                $cache[$masterid] = $master->localid;
+            }
+            $cache = array_flip($cache);
+            // now the $cache contains records [$localid] => [$masterid]
+        }
+
+        if (isset($cache[$localid])) {
+            return $localid;
+        }
+        return false;
+    }
+}
