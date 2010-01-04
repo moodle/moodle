@@ -186,11 +186,6 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->setHelpButton('releasegrades', array('releasegrades', $label, 'workshop'));
         $mform->setAdvanced('releasegrades');
 
-        $label = get_string('requirepassword', 'workshop');
-        $mform->addElement('passwordunmask', 'password', $label);
-        $mform->setType('quizpassword', PARAM_TEXT);
-        $mform->setHelpButton('password', array('requirepassword', $label, 'workshop'));
-
 /// Common module settinga, Restrict availability, Activity completion etc. ----
         $features = array('groups'=>true, 'groupings'=>true, 'groupmembersonly'=>true,
                 'outcomes'=>true, 'gradecat'=>false, 'idnumber'=>false);

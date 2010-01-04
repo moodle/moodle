@@ -150,7 +150,6 @@ $string['previewassessmentform'] = 'Preview';
 $string['randomallocationdone'] = 'Random allocation done';
 $string['releasegrades'] = 'Push final grades into the gradebook';
 $string['removecurrentallocations'] = 'Remove current allocations';
-$string['requirepassword'] = 'Require password';
 $string['saveandclose'] = 'Save and close';
 $string['saveandcontinue'] = 'Save and continue editing';
 $string['saveandpreview'] = 'Save and preview';
