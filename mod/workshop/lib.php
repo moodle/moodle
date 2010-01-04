@@ -99,7 +99,7 @@ function workshop_add_instance($data) {
     // process the custom wysiwyg editors
     if ($draftitemid = $data->instructauthorseditor['itemid']) {
         $data->instructauthors = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructauthors',
-                false, workshop::instruction_editors_options($context), $data->instructauthorseditor['text']);
+                0, workshop::instruction_editors_options($context), $data->instructauthorseditor['text']);
         $data->instructauthorsformat = $data->instructauthorseditor['format'];
     }
 
@@ -133,7 +133,7 @@ function workshop_update_instance($data) {
     // process the custom wysiwyg editors
     if ($draftitemid = $data->instructauthorseditor['itemid']) {
         $data->instructauthors = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructauthors',
-                false, workshop::instruction_editors_options($context), $data->instructauthorseditor['text']);
+                0, workshop::instruction_editors_options($context), $data->instructauthorseditor['text']);
         $data->instructauthorsformat = $data->instructauthorseditor['format'];
     }
 
@@ -299,10 +299,6 @@ function workshop_get_extra_capabilities() {
  * The file area workshop_intro for the activity introduction field is added automatically
  * by {@link file_browser::get_file_info_module()}
  *
- * TODO: we use the following areas
- * workshopform_accumulative_description
- * workshopform_numerrors_description
- *
  * @param stdClass $course
  * @param stdClass $cm
  * @param stdClass $context
@@ -369,21 +365,26 @@ function workshop_pluginfile($course, $cminfo, $context, $filearea, array $args,
         send_stored_file($file, $lifetime, 0);
     }
 
-    /** todo - this filearea has been replaced by subplugins' areas
-    if ($filearea === 'workshop_dimension_description') {
-        $itemid = (int)array_shift($args);
-        if (!$dimension = $DB->get_record('workshop_forms', array('id' => $itemid))) {
-            return false;
+    // the following file areas are for the files embedded into the assessment forms
+    if (in_array($filearea, array(
+            'workshopform_comments_description',
+            'workshopform_accumulative_description',
+            'workshopform_numerrors_description',
+            'workshopform_rubric_description',
+        ))) {
+        $itemid = (int)array_shift($args); // the id of the assessment form dimension
+        if (!$dimension = $DB->get_record('workshopform_numerrors', array('id' => $itemid))) {
+            send_file_not_found();
         }
         if (!$workshop = $DB->get_record('workshop', array('id' => $cminfo->instance))) {
-            return false;
+            send_file_not_found();
         }
         if ($workshop->id !== $dimension->workshopid) {
             // this should never happen but just in case
-            return false;
+            send_file_not_found();
         }
         // TODO now make sure the user is allowed to see the file
-        // media embedded by teacher into the dimension description
+        // (media embedded into the dimension description)
         $fs = get_file_storage();
         $relativepath = '/' . implode('/', $args);
         $fullpath = $context->id . $filearea . $itemid . $relativepath;
@@ -393,7 +394,6 @@ function workshop_pluginfile($course, $cminfo, $context, $filearea, array $args,
         // finally send the file
         send_stored_file($file);
     }
-    */
 
     if ($filearea === 'workshop_submission_content' or $filearea === 'workshop_submission_attachment') {
         $itemid = (int)array_shift($args);
