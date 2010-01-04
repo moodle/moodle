@@ -30,10 +30,17 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__).'/lib.php'); // we extend this library here
+require_once(dirname(__FILE__).'/lib.php');      // we extend this library here
 
-define('WORKSHOP_ALLOCATION_EXISTS', -1);   // return status of {@link add_allocation}
-define('WORKSHOP_ALLOCATION_ERROR',  -2);   // can be passed to a workshop renderer method
+define('WORKSHOP_ALLOCATION_EXISTS',    -1);    // return status of {@link add_allocation}
+define('WORKSHOP_ALLOCATION_ERROR',     -2);    // can be passed to a workshop renderer method
+
+/** workshop phases */
+define('WORKSHOP_PHASE_SETUP',          10);    // The moderator is setting up the workshop
+define('WORKSHOP_PHASE_SUBMISSION',     20);    // Participants work on their submissions
+define('WORKSHOP_PHASE_ASSESSMENT',     30);    // 
+define('WORKSHOP_PHASE_EVALUATION',     40);
+define('WORKSHOP_PHASE_CLOSED',         50);
 
 /**
  * Full-featured workshop API
@@ -50,8 +57,11 @@ class workshop {
     /** @var stdClass course record */
     public $course = null;
 
-    /** grading strategy instance */
-    private $strategyinstance = null;
+    /** @var workshop_strategy grading strategy instance */
+    protected $strategyinstance = null;
+
+    /** @var stdClass underlying database record */
+    protected $dbrecord = null;
 
     /**
      * Initializes the workshop API instance using the data from DB
@@ -59,21 +69,28 @@ class workshop {
      * Makes deep copy of all passed records properties. Replaces integer $course attribute
      * with a full database record (course should not be stored in instances table anyway).
      *
-     * @param stdClass $instance Workshop instance data from {workshop} table
+     * @param stdClass $dbrecord Workshop instance data from {workshop} table
      * @param stdClass $cm       Course module record as returned by {@link get_coursemodule_from_id()}
      * @param stdClass $course   Course record from {course} table
      */
-    public function __construct(stdClass $instance, stdClass $cm, stdClass $course) {
-        foreach ($instance as $key => $val) {
-            if (is_object($val) || (is_array($val))) {
-                // this should not happen if the $instance is really just the record returned by $DB
-                $this->{$key} = unserialize(serialize($val));   // makes deep copy of referenced variables
-            } else {
-                $this->{$key} = $val;
-            }
+    public function __construct(stdClass $dbrecord, stdClass $cm, stdClass $course) {
+        $this->dbrecord = $dbrecord;
+        $this->cm       = $cm;
+        $this->course   = $course;
+    }
+
+    /**
+     * Magic method to retrieve the value of the underlying database record's field
+     *
+     * @throws coding_exception if the field does not exist
+     * @param mixed $key the name of the database field
+     * @return mixed|null the value of the field
+     */
+    public function __get($key) {
+        if (!isset($this->dbrecord->{$key})) {
+            throw new coding_exception('You are trying to get a non-existing property');
         }
-        $this->cm     = unserialize(serialize($cm));
-        $this->course = unserialize(serialize($course));
+        return $this->dbrecord->{$key};
     }
 
     /**
@@ -110,11 +127,9 @@ class workshop {
     /**
      * Fetches all users with the capability mod/workshop:peerassess in the current context
      *
-     * Static variable used to cache the results. The returned objects contain id, lastname
-     * and firstname properties and are ordered by lastname,firstname
+     * The returned objects contain id, lastname and firstname properties and are ordered by lastname,firstname
      *
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible users otherwise.
-     * @see get_super_reviewers()
      * @return array array[userid] => stdClass{->id ->lastname ->firstname}
      */
     public function get_peer_reviewers($musthavesubmission=false) {
@@ -138,26 +153,6 @@ class workshop {
         } else {
             return $users;
         }
-    }
-
-    /**
-     * Fetches all users with the capability mod/workshop:assessallsubmissions in the current context
-     *
-     * Static variable used to cache the results. The returned objects contain id, lastname
-     * and firstname properties and are ordered by lastname,firstname
-     *
-     * @param bool $musthavesubmission If true, return only users who have already submitted. All possible users otherwise.
-     * @see get_peer_reviewers()
-     * @return array array[userid] => stdClass{->id ->lastname ->firstname}
-     */
-    public function get_super_reviewers() {
-        global $DB;
-
-        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
-        $users = get_users_by_capability($context, 'mod/workshop:assessallsubmissions',
-                    'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
-
-        return $users;
     }
 
     /**
@@ -223,10 +218,14 @@ class workshop {
                  WHERE s.workshopid = :workshopid';
         $params = array('workshopid' => $this->id);
 
-        if ($examples === true) {
+        if ('all' === $examples) {
+            // no additional conditions
+        } elseif ($examples === true) {
             $sql .= ' AND example = 1';
-        } else {
+        } elseif ($examples === false) {
             $sql .= ' AND example = 0';
+        } else {
+            throw new coding_exception('Illegal parameter value: $examples may be false|true|"all"');
         }
 
         if ('all' === $userid) {
@@ -607,7 +606,7 @@ class workshop {
     }
 
     /**
-     * Are users alloed to create/edit their submissions?
+     * Are users allowed to create/edit their submissions?
      *
      * TODO: this depends on the workshop phase, phase deadlines, submitting after deadlines possibility
      *
@@ -617,4 +616,12 @@ class workshop {
         return true;
     }
 
+    /**
+     * Returns the localized name of the grading strategy method to be displayed to the users
+     *
+     * @return string
+     */
+    public function strategy_name() {
+        return get_string('pluginname', 'workshopgrading_' . $this->strategy);
+    }
 }
