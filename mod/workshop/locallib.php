@@ -544,7 +544,7 @@ class workshop {
      */
     public function previewform_url() {
         global $CFG;
-        return new moodle_url($CFG->wwwroot . '/mod/workshop/assessment.php', array('preview' => $this->cm->id));
+        return new moodle_url($CFG->wwwroot . '/mod/workshop/editformpreview.php', array('cmid' => $this->cm->id));
     }
 
     /**
