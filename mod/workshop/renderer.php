@@ -402,9 +402,11 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      * @param stdClass $data prepared by {@link workshop::prepare_grading_report()}
      * @param bool $showauthornames
      * @param bool $showreviewernames
+     * @param string $sortby
+     * @param string $sorthow
      * @return string html code
      */
-    public function grading_report(stdClass $data, $showauthornames, $showreviewernames) {
+    public function grading_report(stdClass $data, $showauthornames, $showreviewernames, $sortby, $sorthow) {
         $grades = $data->grades;
         $userinfo = $data->userinfo;
 
@@ -412,15 +414,26 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
             return '';
         }
 
-        $table              = new html_table();
+        $table = new html_table();
         $table->set_classes('grading-report');
-        $table->head        = array(get_string('participant', 'workshop'),
-                                    get_string('submission', 'workshop'),
-                                    get_string('receivedgrades', 'workshop'),
-                                    get_string('gradeforsubmission', 'workshop'),
-                                    get_string('givengrades', 'workshop'),
-                                    get_string('gradeforassessment', 'workshop'),
-                                    get_string('totalgrade', 'workshop'));
+
+        $sortbyfirstname = $this->sortable_heading(get_string('firstname'), 'firstname', $sortby, $sorthow);
+        $sortbylastname = $this->sortable_heading(get_string('lastname'), 'lastname', $sortby, $sorthow);
+        if (self::fullname_format() == 'lf') {
+            $sortbyname = $sortbylastname . ' / ' . $sortbyfirstname;
+        } else {
+            $sortbyname = $sortbyfirstname . ' / ' . $sortbylastname;
+        }
+
+        $table->head = array(
+                $sortbyname,
+                $this->sortable_heading(get_string('submission', 'workshop'), 'submissiontitle', $sortby, $sorthow),
+                $this->sortable_heading(get_string('receivedgrades', 'workshop')),
+                $this->sortable_heading(get_string('submissiongrade', 'workshop'), 'submissiongrade', $sortby, $sorthow),
+                $this->sortable_heading(get_string('givengrades', 'workshop')),
+                $this->sortable_heading(get_string('gradinggrade', 'workshop'), 'gradinggrade', $sortby, $sorthow),
+                $this->sortable_heading(get_string('totalgrade', 'workshop'), 'totalgrade', $sortby, $sorthow),
+            );
         $table->rowclasses  = array();
         $table->colclasses  = array('reviewedby', 'peer', 'reviewerof');
         $table->data        = array();
@@ -507,6 +520,50 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
 
         return $this->output->table($table);
     }
+
+    /**
+     * Renders a text with icons to sort by the given column
+     *
+     * This is intended for table headings.
+     *
+     * @param string $text    The heading text
+     * @param string $sortid  The column id used for sorting
+     * @param string $sortby  Currently sorted by (column id)
+     * @param string $sorthow Currently sorted how (ASC|DESC)
+     *
+     * @return string
+     */
+    protected function sortable_heading($text, $sortid=null, $sortby=null, $sorthow=null) {
+        global $PAGE;
+
+        $out = $this->output->output_tag('span', array('class'=>'text'), $text);
+
+        if (!is_null($sortid)) {
+            $iconasc = new moodle_action_icon();
+            $iconasc->image->src = $this->old_icon_url('t/down');
+            $iconasc->image->alt = get_string('sortasc', 'workshop');
+            $iconasc->image->set_classes('sort asc');
+            $newurl = clone($PAGE->url);
+            $newurl->params(array('sortby' => $sortid, 'sorthow' => 'ASC'));
+            $iconasc->link->url = new moodle_url($newurl);
+
+            $icondesc = new moodle_action_icon();
+            $icondesc->image->src = $this->old_icon_url('t/up');
+            $icondesc->image->alt = get_string('sortdesc', 'workshop');
+            $icondesc->image->set_classes('sort desc');
+            $newurl = clone($PAGE->url);
+            $newurl->params(array('sortby' => $sortid, 'sorthow' => 'DESC'));
+            $icondesc->link->url = new moodle_url($newurl);
+
+            if ($sortby !== $sortid or $sorthow !== 'ASC') {
+                $out .= $this->output->action_icon($iconasc);
+            }
+            if ($sortby !== $sortid or $sorthow !== 'DESC') {
+                $out .= $this->output->action_icon($icondesc);
+            }
+        }
+        return $out;
+}
 
     /**
      * @param stdClass $participant
@@ -619,6 +676,23 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
         }
         $key = $keys[$n];
         return $a[$key];
+    }
+
+    /**
+     * Tries to guess the fullname format set at the site
+     *
+     * @return string fl|lf
+     */
+    protected static function fullname_format() {
+        $fake = new stdClass(); // fake user
+        $fake->lastname = 'LLLL';
+        $fake->firstname = 'FFFF';
+        $fullname = get_string('fullnamedisplay', '', $fake);
+        if (strpos($fullname, 'LLLL') < strpos($fullname, 'FFFF')) {
+            return 'lf';
+        } else {
+            return 'fl';
+        }
     }
 
 }

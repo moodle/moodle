@@ -158,11 +158,11 @@ case workshop::PHASE_ASSESSMENT:
 case workshop::PHASE_EVALUATION:
     $pagingvar  = 'page';
     $page       = optional_param($pagingvar, 0, PARAM_INT);
+    $sortby     = optional_param('sortby', 'lastname', PARAM_ALPHA);
+    $sorthow    = optional_param('sorthow', 'ASC', PARAM_ALPHA);
+
     $perpage    = 10;           // todo let the user modify this
     $groups     = '';           // todo let the user choose the group
-    $sortby     = 'submissiongrade';   // todo let the user choose the column to sort by
-    $sorthow    = 'ASC';        // todo detto
-
     $data = $workshop->prepare_grading_report($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
     if ($data) {
         $showauthornames    = has_capability('mod/workshop:viewauthornames', $PAGE->context);
@@ -194,7 +194,7 @@ case workshop::PHASE_EVALUATION:
         $pagingbar->pagevar     = $pagingvar;
 
         echo $OUTPUT->paging_bar($pagingbar);
-        echo $wsoutput->grading_report($data, $showauthornames, $showreviewernames);
+        echo $wsoutput->grading_report($data, $showauthornames, $showreviewernames, $sortby, $sorthow);
         echo $OUTPUT->paging_bar($pagingbar);
     }
     break;
