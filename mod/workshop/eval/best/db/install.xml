@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="workshopeval_best_settings" COMMENT="Settings for the grading evaluation subplugin Distance from the best assessment.">
+    <TABLE NAME="workshopeval_best_settings" COMMENT="Settings for the grading evaluation subplugin Comparison with the best assessment.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
         <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="comparison"/>
