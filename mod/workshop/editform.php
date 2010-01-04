@@ -48,7 +48,7 @@ if (!$workshop = $DB->get_record('workshop', array('id' => $cm->instance))) {
     print_error('err_invalidworkshopid', 'workshop');
 }
 
-$workshop = new workshop_api($workshop, $cm)l
+$workshop = new workshop_api($workshop, $cm, $course);
 
 // where should the user be sent after closing the editing form
 $returnurl  = "{$CFG->wwwroot}/mod/workshop/view.php?id={$cm->id}";

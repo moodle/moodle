@@ -67,7 +67,7 @@ class workshop_allocation_random_test extends UnitTestCase {
     protected $allocator;
 
     public function setUp() {
-        $this->workshop     = new workshop((object)array('id' => 42), new stdClass());
+        $this->workshop     = new workshop((object)array('id' => 42), new stdClass(), new stdClass());
         $this->allocator    = new testable_workshop_random_allocator($this->workshop);
     }
 

@@ -64,7 +64,7 @@ if ($preview = optional_param('preview', 0, PARAM_INT)) {
 
 require_login($course, false, $cm);
 
-$workshop = new workshop_api($workshop, $cm);
+$workshop = new workshop_api($workshop, $cm, $course);
 
 $context = $PAGE->context;
 

@@ -333,6 +333,10 @@ class workshop_random_allocator implements workshop_allocator {
      * @return array                 array of (reviewerid => authorid) pairs
      */
     protected function random_allocation($authors, $reviewers, $assessments, $numofreviews, $numper, &$o) {
+        if (empty($authors) || empty($reviewers)) {
+            // nothing to be done
+            return array();
+        }
         if (WORKSHOP_USERTYPE_AUTHOR == $numper) {
             // circles are authors, squares are reviewers
             $o[] = 'info::Trying to allocate ' . $numofreviews . ' review(s) per author'; // todo translate
@@ -368,7 +372,7 @@ class workshop_random_allocator implements workshop_allocator {
         unset($squaregroupsworkload[0]);    // [0] is not real group, it contains all users
         $o[] = 'debug::square workload = ' . json_encode($squareworkload);
         $o[] = 'debug::square group workload = ' . json_encode($squaregroupsworkload);
-        $gmode = groups_get_activity_groupmode($this->workshop->cm);
+        $gmode = groups_get_activity_groupmode($this->workshop->cm, $this->workshop->courserecord);
         if (SEPARATEGROUPS == $gmode) {
             // shuffle all groups but [0] which means "all users"
             $circlegroups = array_keys(array_diff_key($allcircles, array(0 => null)));

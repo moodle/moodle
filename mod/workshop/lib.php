@@ -50,25 +50,30 @@ define('WORKSHOP_COMPARISON_VERYHIGH',  4);     /* f = 5.00 */
 /**
  * The base class of workshop instances
  *
+ * It defines methods that are part of any activity module API and may be called by Moodle core.
  * The class just wraps the database record from the {workshop} table and adds some
  * methods that implement the compulsory activity module API.
- * For full-featured class see {@link workshop_api}.
+ * For full-featured workshop class see {@link workshop_api}.
  */
 class workshop {
 
-    /** course module record */
+    /** @var object course module record */
     public $cm;
 
+    /** @var object course record */
+    public $courserecord;
+
     /**
-     * Defines methods that are part of any activity module API and may be called by Moodle core
      *
      * Initializes the object using the data from DB. Makes deep copy of all $dbrecord properties.
+     * Please do not confuse $this->course (integer property from the database record) and
+     * $this->courserecord (object containing the whole course record).
      *
-     * @param object $instance  The instance data row from {workshop} table
-     * @param object $cm        Course module record
+     * @param object $instance     The instance data row from {workshop} table
+     * @param object $cm           Course module record
+     * @param object $courserecord Course record
      */
-    public function __construct(stdClass $instance, stdClass $cm) {
-
+    public function __construct(stdClass $instance, stdClass $cm, stdClass $courserecord) {
         foreach ($instance as $key => $val) {
             if (is_object($val) || (is_array($val))) {
                 // this should not happen if the $dbrecord is really just the record returned by $DB
@@ -78,6 +83,7 @@ class workshop {
             }
         }
         $this->cm = $cm;
+        $this->courserecord = $courserecord;
     }
 
     /**
@@ -113,6 +119,8 @@ class workshop {
 function workshop_add_instance($data) {
     return workshop::add_instance($data);
 }
+
+// TODO convert following functions into workshop methods
 
 /**
  * Given an object containing all the necessary data,

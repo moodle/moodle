@@ -42,7 +42,7 @@ if ($id) {
     $cm         = get_coursemodule_from_instance('workshop', $workshop->id, $course->id, false, MUST_EXIST);
 }
 
-$workshop = new workshop_api($workshop, $cm);
+$workshop = new workshop_api($workshop, $cm, $course);
 require_login($course, true, $cm);
 $context = $PAGE->context;
 

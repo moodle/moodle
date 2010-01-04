@@ -49,13 +49,13 @@ class workshop_api extends workshop {
     /**
      * Initialize the object using the data from DB
      *
-     * @param object $instance  The instance data row from {workshop} table
-     * @param object $md        Course module record
-     */
-    public function __construct($instance, $cm) {
-
-        parent::__construct($instance, $cm);
+     * @param object $instance     The instance data row from {workshop} table
+     * @param object $cm           Course module record
+     * @param object $courserecord Course record
+    public function __construct($instance, $cm, $courserecord) {
+        parent::__construct($instance, $cm, $courserecord);
     }
+     */
 
     /**
      * Fetches all users with the capability mod/workshop:submit in the current context
@@ -103,6 +103,9 @@ class workshop_api extends workshop {
 
         $authors    = $this->get_peer_authors($musthavesubmission);
         $gauthors   = array();  // grouped authors to be returned
+        if (empty($authors)) {
+            return $gauthors;
+        }
         if ($this->cm->groupmembersonly) {
             // Available for group members only - the workshop is available only
             // to users assigned to groups within the selected grouping, or to
@@ -174,6 +177,9 @@ class workshop_api extends workshop {
 
         $reviewers  = $this->get_peer_reviewers($musthavesubmission);
         $greviewers = array();  // grouped reviewers to be returned
+        if (empty($reviewers)) {
+            return $greviewers;
+        }
         if ($this->cm->groupmembersonly) {
             // Available for group members only - the workshop is available only
             // to users assigned to groups within the selected grouping, or to

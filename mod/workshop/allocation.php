@@ -38,7 +38,7 @@ $PAGE->set_url('mod/workshop/allocation.php', array('cmid' => $cmid, 'method' =>
 $cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
 $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
-$workshop   = new workshop_api($workshop, $cm);
+$workshop   = new workshop_api($workshop, $cm, $course);
 
 require_login($course, false, $cm);
 $context = $PAGE->context;
