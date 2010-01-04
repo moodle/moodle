@@ -58,6 +58,8 @@ $canviewall     = has_capability('mod/workshop:viewallsubmissions', $workshop->c
 $cansubmit      = has_capability('mod/workshop:submit', $workshop->context);
 $canoverride    = ($workshop->phase == workshop::PHASE_EVALUATION) and has_capability('mod/workshop:overridegrades', $workshop->context);
 $isreviewer     = $DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'reviewerid' => $USER->id));
+$editable       = $workshop->submitting_allowed();
+$edit           = $editable and $edit;
 
 if ($submission->id and ($ownsubmission or $canviewall or $isreviewer)) {
     // ok you can go
@@ -168,7 +170,7 @@ if ($submission->id) {
     echo $OUTPUT->box(get_string('noyoursubmission', 'workshop'));
 }
 
-if ($ownsubmission and $workshop->submitting_allowed()) {
+if ($ownsubmission and $editable) {
     $editbutton                 = new html_form();
     $editbutton->method         = 'get';
     $editbutton->button->text   = get_string('editsubmission', 'workshop');
@@ -183,8 +185,6 @@ if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
     $canviewallassessments = true;
 } elseif ($ownsubmission and $workshop->assessments_available()) {
     $canviewallassessments = true;
-} else {
-    $canviewallassessments = false;
 }
 
 $canviewgrades = false;
