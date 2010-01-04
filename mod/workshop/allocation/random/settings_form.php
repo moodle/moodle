@@ -41,8 +41,9 @@ class workshop_random_allocator_form extends moodleform {
      * Definition of the setting form elements
      */
     public function definition() {
-        $mform      = $this->_form;
-        $workshop   = $this->_customdata['workshop'];
+        $mform          = $this->_form;
+        $workshop       = $this->_customdata['workshop'];
+        $plugindefaults = get_config('workshopallocation_random');
 
         $mform->addElement('header', 'settings', get_string('allocationsettings', 'workshopallocation_random'));
 
@@ -60,18 +61,18 @@ class workshop_random_allocator_form extends moodleform {
         }
         $mform->addElement('static', 'groupmode', get_string('groupmode', 'group'), $grouplabel);
 
-        $options_numofreviewes = array(0=>0,1=>1, 2=>2, 3=>3, 4=>4); // todo
         $options_numper = array(
             workshop_random_allocator::USERTYPE_AUTHOR      => get_string('numperauthor', 'workshopallocation_random'),
             workshop_random_allocator::USERTYPE_REVIEWER    => get_string('numperreviewer', 'workshopallocation_random')
         );
         $grpnumofreviews = array();
-        $grpnumofreviews[] = $mform->createElement('select', 'numofreviews', '', $options_numofreviewes);
-        $mform->setDefault('numofreviews', 4);
+        $grpnumofreviews[] = $mform->createElement('select', 'numofreviews', '',
+                workshop_random_allocator::available_numofreviews_list());
+        $mform->setDefault('numofreviews', $plugindefaults->numofreviews);
         $grpnumofreviews[] = $mform->createElement('select', 'numper', '', $options_numper);
         $mform->setDefault('numper', workshop_random_allocator::USERTYPE_AUTHOR);
-        $mform->addGroup($grpnumofreviews, 'grpnumofreviews', get_string('numofreviews', 'workshop'), array(' '), false);
-
+        $mform->addGroup($grpnumofreviews, 'grpnumofreviews', get_string('numofreviews', 'workshopallocation_random'),
+                array(' '), false);
         $mform->addElement('checkbox', 'removecurrent', get_string('removecurrentallocations', 'workshopallocation_random'));
         $mform->setDefault('removecurrent', 0);
 

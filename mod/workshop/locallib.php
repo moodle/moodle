@@ -43,21 +43,29 @@ require_once($CFG->libdir . '/gradelib.php');   // we use some rounding and comp
 class workshop {
 
     /** return statuses of {@link add_allocation} to be passed to a workshop renderer method */
-    const ALLOCATION_EXISTS = -1;
-    const ALLOCATION_ERROR  = -2;
+    const ALLOCATION_EXISTS             = -1;
+    const ALLOCATION_ERROR              = -2;
 
     /** the internal code of the workshop phases as are stored in the database */
-    const PHASE_SETUP       = 10;
-    const PHASE_SUBMISSION  = 20;
-    const PHASE_ASSESSMENT  = 30;
-    const PHASE_EVALUATION  = 40;
-    const PHASE_CLOSED      = 50;
+    const PHASE_SETUP                   = 10;
+    const PHASE_SUBMISSION              = 20;
+    const PHASE_ASSESSMENT              = 30;
+    const PHASE_EVALUATION              = 40;
+    const PHASE_CLOSED                  = 50;
+
+    /** the internal code of the examples modes as are stored in the database */
+    const EXAMPLES_VOLUNTARY            = 0;
+    const EXAMPLES_BEFORE_SUBMISSION    = 1;
+    const EXAMPLES_BEFORE_ASSESSMENT    = 2;
 
     /** @var stdClass course module record */
     public $cm = null;
 
     /** @var stdClass course record */
     public $course = null;
+
+    /** @var stdClass context object */
+    public $context = null;
 
     /**
      * @var workshop_strategy grading strategy instance
@@ -148,6 +156,83 @@ class workshop {
         }
 
         return $total * $percent / 100;
+    }
+
+    /**
+     * Returns an array of numeric values that can be used as maximum grades
+     *
+     * @return array Array of integers
+     */
+    public static function available_maxgrades_list() {
+        $grades = array();
+        for ($i=100; $i>=0; $i--) {
+            $grades[$i] = $i;
+        }
+        return $grades;
+    }
+
+    /**
+     * Returns the localized list of supported examples modes
+     *
+     * @return array
+     */
+    public static function available_example_modes_list() {
+        $options = array();
+        $options[self::EXAMPLES_VOLUNTARY]         = get_string('examplesvoluntary', 'workshop');
+        $options[self::EXAMPLES_BEFORE_SUBMISSION] = get_string('examplesbeforesubmission', 'workshop');
+        $options[self::EXAMPLES_BEFORE_ASSESSMENT] = get_string('examplesbeforeassessment', 'workshop');
+        return $options;
+    }
+
+    /**
+     * Returns the list of available grading strategy methods
+     *
+     * @return array ['string' => 'string']
+     */
+    public static function available_strategies_list() {
+        $installed = get_plugin_list('workshopform');
+        $forms = array();
+        foreach ($installed as $strategy => $strategypath) {
+            if (file_exists($strategypath . '/lib.php')) {
+                $forms[$strategy] = get_string('pluginname', 'workshopform_' . $strategy);
+            }
+        }
+        return $forms;
+    }
+
+    /**
+     * Return an array of possible values of assessment dimension weight
+     *
+     * @return array of integers 0, 1, 2, ..., 16
+     */
+    public static function available_dimension_weights_list() {
+        $weights = array();
+        for ($i=16; $i>=0; $i--) {
+            $weights[$i] = $i;
+        }
+        return $weights;
+    }
+
+    /**
+     * Helper function returning the greatest common divisor
+     *
+     * @param int $a
+     * @param int $b
+     * @return int
+     */
+    public static function gcd($a, $b) {
+        return ($b == 0) ? ($a):(self::gcd($b, $a % $b));
+    }
+
+    /**
+     * Helper function returning the least common multiple
+     *
+     * @param int $a
+     * @param int $b
+     * @return int
+     */
+    public static function lcm($a, $b) {
+        return ($a / self::gcd($a,$b)) * $b;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -348,7 +433,7 @@ class workshop {
     public function get_all_assessments() {
         global $DB;
 
-        $sql = 'SELECT a.id, a.submissionid, a.reviewerid, a.timecreated, a.timemodified, a.timeagreed,
+        $sql = 'SELECT a.id, a.submissionid, a.reviewerid, a.timecreated, a.timemodified,
                        a.grade, a.gradinggrade, a.gradinggradeover, a.gradinggradeoverby,
                        reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname as reviewerlastname,
                        s.title,
@@ -639,22 +724,12 @@ class workshop {
      * Can the given grades be displayed to the authors?
      *
      * Grades are not displayed if {@link self::assessments_available()} return false. The returned
-     * value may be true (if yes, display grades), false (no, hide grades yet) or null (only
-     * display grades if the assessment has been agreed by the author).
+     * value may be true (if yes, display grades) or false (no, hide grades yet)
      *
-     * @return bool|null
+     * @return bool
      */
     public function grades_available() {
         return true;
-    }
-
-    /**
-     * Returns the localized name of the grading strategy method to be displayed to the users
-     *
-     * @return string
-     */
-    public function strategy_name() {
-        return get_string('pluginname', 'workshopform_' . $this->strategy);
     }
 
     /**
@@ -691,7 +766,7 @@ class workshop {
             $task = new stdClass();
             $task->title = get_string('editassessmentform', 'workshop');
             $task->link = $this->editform_url();
-            if ($this->assessment_form_ready()) {
+            if ($this->grading_strategy_instance()->form_ready()) {
                 $task->completed = true;
             } elseif ($this->phase > self::PHASE_SETUP) {
                 $task->completed = false;
@@ -907,15 +982,6 @@ class workshop {
     }
 
     /**
-     * Has the assessment form been defined?
-     *
-     * @return bool
-     */
-    public function assessment_form_ready() {
-        return $this->grading_strategy_instance()->form_ready();
-    }
-
-    /**
      * Switch to a new workshop phase
      *
      * Modifies the underlying database record. You should terminate the script shortly after calling this.
@@ -930,6 +996,12 @@ class workshop {
         if (!isset($known[$newphase])) {
             return false;
         }
+
+        if (self::PHASE_CLOSED == $newphase) {
+            // push the total grades into the gradebook
+
+        }
+
         $DB->set_field('workshop', 'phase', $newphase, array('id' => $this->id));
         return true;
     }
@@ -1377,10 +1449,9 @@ class workshop {
     }
 
     /**
-     * TODO: short description.
+     * Returns the mform the teachers use to put a feedback for the reviewer
      *
-     * @param array $actionurl 
-     * @return TODO
+     * @return workshop_feedbackreviewer_form
      */
     public function get_feedbackreviewer_form(moodle_url $actionurl, stdClass $assessment, $editable=true) {
         global $CFG;
@@ -1402,32 +1473,6 @@ class workshop {
         return new workshop_feedbackreviewer_form($actionurl,
                 array('workshop' => $this, 'current' => $current, 'feedbackopts' => array()),
                 'post', '', null, $editable);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Helper methods                                                         //
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Helper function returning the greatest common divisor
-     *
-     * @param int $a
-     * @param int $b
-     * @return int
-     */
-    public static function gcd($a, $b) {
-        return ($b == 0) ? ($a):(self::gcd($b, $a % $b));
-    }
-
-    /**
-     * Helper function returning the least common multiple
-     *
-     * @param int $a
-     * @param int $b
-     * @return int
-     */
-    public static function lcm($a, $b) {
-        return ($a / self::gcd($a,$b)) * $b;
     }
 
     ////////////////////////////////////////////////////////////////////////////////

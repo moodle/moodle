@@ -28,8 +28,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/workshop/lib.php');
+require_once($CFG->dirroot.'/mod/workshop/locallib.php');
 
-$grades = workshop_get_maxgrades();
+$grades = workshop::available_maxgrades_list();
 
 $settings->add(new admin_setting_configselect('workshop/grade', get_string('submissiongrade', 'workshop'),
                     get_string('configgrade', 'workshop'), 80, $grades));
@@ -50,27 +51,21 @@ $settings->add(new admin_setting_configselect('workshop/maxbytes', get_string('m
                     get_string('configmaxbytes', 'workshop'), 0, $options));
 
 $settings->add(new admin_setting_configselect('workshop/strategy', get_string('strategy', 'workshop'),
-                    get_string('configstrategy', 'workshop'), 'accumulative', workshop_get_strategies()));
+                    get_string('configstrategy', 'workshop'), 'accumulative', workshop::available_strategies_list()));
 
-$options = workshop_get_numbers_of_assessments();
-$settings->add(new admin_setting_configselect('workshop/nsassessments', get_string('nsassessments', 'workshop'),
-                    get_string('confignsassessments', 'workshop'), 3, $options));
-
-$options = workshop_get_numbers_of_assessments();
-$options[0] = get_string('assessallexamples', 'workshop');
-$settings->add(new admin_setting_configselect('workshop/nexassessments', get_string('nexassessments', 'workshop'),
-                    get_string('confignexassessments', 'workshop'), 0, $options));
-
-$options = workshop_get_example_modes();
+$options = workshop::available_example_modes_list();
 $settings->add(new admin_setting_configselect('workshop/examplesmode', get_string('examplesmode', 'workshop'),
-                    get_string('configexamplesmode', 'workshop'), WORKSHOP_EXAMPLES_VOLUNTARY, $options));
+                    get_string('configexamplesmode', 'workshop'), workshop::EXAMPLES_VOLUNTARY, $options));
 
-$levels = array();
-foreach (workshop_get_comparison_levels() as $code => $level) {
-    $levels[$code] = $level->name;
+// include the settings of allocation subplugins
+$allocators = get_plugin_list('workshopallocation');
+foreach ($allocators as $allocator => $path) {
+    if (file_exists($settingsfile = $path . '/settings.php')) {
+        $settings->add(new admin_setting_heading('workshopallocationsetting'.$allocator,
+                get_string('allocation', 'workshop') . ' - ' . get_string('pluginname', 'workshopallocation_' . $allocator), ''));
+        include($settingsfile);
+    }
 }
-$settings->add(new admin_setting_configselect('workshop/assessmentcomps', get_string('assessmentcomps', 'workshop'),
-                    get_string('configassessmentcomps', 'workshop'), WORKSHOP_COMPARISON_NORMAL, $levels));
 
 // include the settings of grading strategy subplugins
 $strategies = get_plugin_list('workshopform');

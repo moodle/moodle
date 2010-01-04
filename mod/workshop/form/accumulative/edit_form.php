@@ -52,19 +52,17 @@ class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_fo
         // value not to be overridden by submitted value
         $mform->setConstants(array('norepeats' => $norepeats));
 
-        $weights = workshop_get_dimension_weights();
-
         for ($i = 0; $i < $norepeats; $i++) {
             $mform->addElement('header', 'dimension'.$i, get_string('dimensionnumber', 'workshopform_accumulative', $i+1));
             $mform->addElement('hidden', 'dimensionid__idx_'.$i);
             $mform->addElement('editor', 'description__idx_'.$i.'_editor',
-                                get_string('dimensiondescription', 'workshopform_accumulative'), '', $descriptionopts);
+                    get_string('dimensiondescription', 'workshopform_accumulative'), '', $descriptionopts);
             // todo replace modgrade with an advanced element (usability issue discussed with Olli)
             $mform->addElement('modgrade', 'grade__idx_'.$i,
-                                get_string('dimensionmaxgrade','workshopform_accumulative'), null, true);
+                    get_string('dimensionmaxgrade','workshopform_accumulative'), null, true);
             $mform->setDefault('grade__idx_'.$i, 10);
             $mform->addElement('select', 'weight__idx_'.$i,
-                                get_string('dimensionweight', 'workshopform_accumulative'), $weights);
+                    get_string('dimensionweight', 'workshopform_accumulative'), workshop::available_dimension_weights_list());
             $mform->setDefault('weight__idx_'.$i, 1);
         }
 

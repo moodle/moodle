@@ -168,16 +168,4 @@ $mod_workshop_capabilities = array(
         )
     ),
 
-    // Ability to see the given/calculated grades even before the author did not agree
-    // with the assessment comments yet
-    'mod/workshop:viewgradesbeforeagreement' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        )
-    ),
-
 );

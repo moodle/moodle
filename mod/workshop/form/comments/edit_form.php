@@ -52,8 +52,6 @@ class workshop_edit_comments_strategy_form extends workshop_edit_strategy_form {
         // value not to be overridden by submitted value
         $mform->setConstants(array('norepeats' => $norepeats));
 
-        $weights = workshop_get_dimension_weights();
-
         for ($i = 0; $i < $norepeats; $i++) {
             $mform->addElement('header', 'dimension'.$i, get_string('dimensionnumber', 'workshopform_comments', $i+1));
             $mform->addElement('hidden', 'dimensionid__idx_'.$i);

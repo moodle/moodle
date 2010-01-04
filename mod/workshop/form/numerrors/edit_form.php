@@ -54,20 +54,19 @@ class workshop_edit_numerrors_strategy_form extends workshop_edit_strategy_form 
         // value not to be overridden by submitted value
         $mform->setConstants(array('norepeats' => $norepeats));
 
-        $weights = workshop_get_dimension_weights();
-
         for ($i = 0; $i < $norepeats; $i++) {
             $mform->addElement('header', 'dimension'.$i, get_string('dimensionnumber', 'workshopform_numerrors', $i+1));
             $mform->addElement('hidden', 'dimensionid__idx_'.$i);   // the id in workshop_forms
             $mform->addElement('editor', 'description__idx_'.$i.'_editor',
-                                get_string('dimensiondescription', 'workshopform_numerrors'), '', $descriptionopts);
+                    get_string('dimensiondescription', 'workshopform_numerrors'), '', $descriptionopts);
             $mform->addElement('text', 'grade0__idx_'.$i, get_string('grade0', 'workshopform_numerrors'), array('size'=>'15'));
             $mform->setDefault('grade0__idx_'.$i, $plugindefaults->grade0);
             $mform->setType('grade0__idx_'.$i, PARAM_TEXT);
             $mform->addElement('text', 'grade1__idx_'.$i, get_string('grade1', 'workshopform_numerrors'), array('size'=>'15'));
             $mform->setDefault('grade1__idx_'.$i, $plugindefaults->grade1);
             $mform->setType('grade1__idx_'.$i, PARAM_TEXT);
-            $mform->addElement('select', 'weight__idx_'.$i, get_string('dimensionweight', 'workshopform_numerrors'), $weights);
+            $mform->addElement('select', 'weight__idx_'.$i,
+                    get_string('dimensionweight', 'workshopform_numerrors'), workshop::available_dimension_weights_list());
             $mform->setDefault('weight__idx_'.$i, 1);
         }
 

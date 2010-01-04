@@ -20,9 +20,6 @@
  *
  * All the core Moodle functions, neeeded to allow the module to work
  * integrated in Moodle should be placed here.
- * All the workshop specific functions, needed to implement all the module
- * logic, should go to locallib.php. This will help to save some memory when
- * Moodle is performing actions across all modules.
  *
  * @package   mod-workshop
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
@@ -30,22 +27,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-
-/**
- * The internal codes of the example assessment modes
- */
-define('WORKSHOP_EXAMPLES_VOLUNTARY',           0);
-define('WORKSHOP_EXAMPLES_BEFORE_SUBMISSION',   1);
-define('WORKSHOP_EXAMPLES_BEFORE_ASSESSMENT',   2);
-
-/**
- * The internal codes of the required level of assessment similarity
- */
-define('WORKSHOP_COMPARISON_VERYLOW',   0);     /* f = 1.00 */
-define('WORKSHOP_COMPARISON_LOW',       1);     /* f = 1.67 */
-define('WORKSHOP_COMPARISON_NORMAL',    2);     /* f = 2.50 */
-define('WORKSHOP_COMPARISON_HIGH',      3);     /* f = 3.00 */
-define('WORKSHOP_COMPARISON_VERYHIGH',  4);     /* f = 5.00 */
 
 /**
  * Returns the information if the module supports a feature
@@ -622,145 +603,4 @@ function workshop_extend_settings_navigation(settings_navigation $settingsnav, s
         $url = new moodle_url($CFG->wwwroot . '/mod/workshop/allocation.php', array('cmid' => $PAGE->cm->id));
         $workshopnode->add(get_string('allocate', 'workshop'), $url, settings_navigation::TYPE_SETTING);
     }
-}
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Other functions needed by Moodle core follows. They can't be put into      //
-// locallib.php because they are used by some core scripts (like modedit.php) //
-// where locallib.php is not included.                                        //
-////////////////////////////////////////////////////////////////////////////////
-
-/**
- * Return an array of numeric values that can be used as maximum grades
- *
- * Used at several places where maximum grade for submission and grade for
- * assessment are defined via a HTML select form element. By default it returns
- * an array 0, 1, 2, ..., 98, 99, 100.
- *
- * @return array Array of integers
- */
-function workshop_get_maxgrades() {
-    $grades = array();
-    for ($i=100; $i>=0; $i--) {
-        $grades[$i] = $i;
-    }
-    return $grades;
-}
-
-/**
- * Return an array of possible numbers of assessments to be done
- *
- * Should always contain numbers 1, 2, 3, ... 10 and possibly others up to a reasonable value
- *
- * @return array Array of integers
- */
-function workshop_get_numbers_of_assessments() {
-    $options = array();
-    $options[30] = 30;
-    $options[20] = 20;
-    $options[15] = 15;
-    for ($i=10; $i>0; $i--) {
-        $options[$i] = $i;
-    }
-    return $options;
-}
-
-/**
- * Return an array of possible values for weight of teacher assessment
- *
- * @return array Array of integers 0, 1, 2, ..., 10
- */
-function workshop_get_teacher_weights() {
-    $weights = array();
-    for ($i=10; $i>=0; $i--) {
-        $weights[$i] = $i;
-    }
-    return $weights;
-}
-
-/**
- * Return an array of possible values of assessment dimension weight
- *
- * @return array Array of integers 0, 1, 2, ..., 16
- */
-function workshop_get_dimension_weights() {
-    $weights = array();
-    for ($i=16; $i>=0; $i--) {
-        $weights[$i] = $i;
-    }
-    return $weights;
-}
-
-/**
- * Return an array of the localized grading strategy names
- *
- * @todo remove this function from lib.php
- * $return array Array ['string' => 'string']
- */
-function workshop_get_strategies() {
-    $installed = get_plugin_list('workshopform');
-    $forms = array();
-    foreach ($installed as $strategy => $strategypath) {
-        if (file_exists($strategypath . '/lib.php')) {
-            $forms[$strategy] = get_string('pluginname', 'workshopform_' . $strategy);
-        }
-    }
-    return $forms;
-}
-
-/**
- * Return an array of available example assessment modes
- *
- * @return array Array 'mode DB code'=>'mode name'
- */
-function workshop_get_example_modes() {
-    $modes = array();
-    $modes[WORKSHOP_EXAMPLES_VOLUNTARY]         = get_string('examplesvoluntary', 'workshop');
-    $modes[WORKSHOP_EXAMPLES_BEFORE_SUBMISSION] = get_string('examplesbeforesubmission', 'workshop');
-    $modes[WORKSHOP_EXAMPLES_BEFORE_ASSESSMENT] = get_string('examplesbeforeassessment', 'workshop');
-
-    return $modes;
-}
-
-/**
- * Return array of assessment comparison levels
- *
- * The assessment comparison level influence how the grade for assessment is calculated.
- * Each object in the returned array provides information about the name of the level
- * and the value of the factor to be used in the calculation.
- * The structure of the returned array is
- * array[code int] of stdClass (
- *                      ->name string,
- *                      ->value number,
- *                      )
- * where code if the integer code that is actually stored in the database.
- *
- * @return array Array of objects
- */
-function workshop_get_comparison_levels() {
-    $levels = array();
-
-    $levels[WORKSHOP_COMPARISON_VERYHIGH] = new stdClass();
-    $levels[WORKSHOP_COMPARISON_VERYHIGH]->name = get_string('comparisonveryhigh', 'workshop');
-    $levels[WORKSHOP_COMPARISON_VERYHIGH]->value = 5.00;
-
-    $levels[WORKSHOP_COMPARISON_HIGH] = new stdClass();
-    $levels[WORKSHOP_COMPARISON_HIGH]->name = get_string('comparisonhigh', 'workshop');
-    $levels[WORKSHOP_COMPARISON_HIGH]->value = 3.00;
-
-    $levels[WORKSHOP_COMPARISON_NORMAL] = new stdClass();
-    $levels[WORKSHOP_COMPARISON_NORMAL]->name = get_string('comparisonnormal', 'workshop');
-    $levels[WORKSHOP_COMPARISON_NORMAL]->value = 2.50;
-
-    $levels[WORKSHOP_COMPARISON_LOW] = new stdClass();
-    $levels[WORKSHOP_COMPARISON_LOW]->name = get_string('comparisonlow', 'workshop');
-    $levels[WORKSHOP_COMPARISON_LOW]->value = 1.67;
-
-    $levels[WORKSHOP_COMPARISON_VERYLOW] = new stdClass();
-    $levels[WORKSHOP_COMPARISON_VERYLOW]->name = get_string('comparisonverylow', 'workshop');
-    $levels[WORKSHOP_COMPARISON_VERYLOW]->value = 1.00;
-
-    return $levels;
 }

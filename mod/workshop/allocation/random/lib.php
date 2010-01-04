@@ -182,6 +182,24 @@ class workshop_random_allocator implements workshop_allocator {
     }
 
     /**
+     * Return an array of possible numbers of reviews to be done
+     *
+     * Should contain numbers 1, 2, 3, ... 10 and possibly others up to a reasonable value
+     *
+     * @return array of integers
+     */
+    public static function available_numofreviews_list() {
+        $options = array();
+        $options[30] = 30;
+        $options[20] = 20;
+        $options[15] = 15;
+        for ($i = 10; $i >= 0; $i--) {
+            $options[$i] = $i;
+        }
+        return $options;
+    }
+
+    /**
      * Allocates submissions to their authors for review
      *
      * If the submission has already been allocated, it is skipped. If the author is not found among

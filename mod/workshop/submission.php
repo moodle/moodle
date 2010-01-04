@@ -167,9 +167,6 @@ if ($isreviewer) {
     $canviewgrades = true;  // reviewers can always see the grades they gave even they are not available yet
 } elseif ($ownsubmission or $canviewallassessments) {
     $canviewgrades = $workshop->grades_available(); // bool|null, see the function phpdoc
-    if (!$canviewgrades and has_capability('mod/workshop:viewgradesbeforeagreement', $PAGE->context)) {
-        $canviewgrades = true;
-    }
 }
 
 if ($isreviewer) {

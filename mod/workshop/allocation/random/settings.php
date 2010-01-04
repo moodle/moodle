@@ -16,34 +16,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for (some of) mod/workshop/lib.php
+ * The configuration variables for "Random allocation" subplugin
  *
- * @package   mod-workshop
+ * @package   mod-workshopallocation-random
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-// Make sure the code being tested is accessible.
-require_once($CFG->dirroot . '/mod/workshop/lib.php'); // Include the code to test
+require_once(dirname(__FILE__) . '/lib.php');
 
-/**
- * Test cases for the functions in lib.php
- */
-class workshop_lib_test extends UnitTestCase {
-
-    function test_workshop_get_maxgrades() {
-        $this->assertIsA(workshop_get_maxgrades(), 'Array');
-        $this->assertTrue(workshop_get_maxgrades());
-        $values_are_integers = True;
-        foreach(workshop_get_maxgrades() as $key => $val) {
-            if (!is_int($val)) {
-                $values_are_integers = false;
-                break;
-            }
-        }
-        $this->assertTrue($values_are_integers, 'Array values must be integers');
-    }
-
-}
+$settings->add(new admin_setting_configselect('workshopallocation_random/numofreviews',
+        get_string('numofreviews', 'workshopallocation_random'),
+        get_string('confignumofreviews', 'workshopallocation_random'), 5,
+                workshop_random_allocator::available_numofreviews_list()));
