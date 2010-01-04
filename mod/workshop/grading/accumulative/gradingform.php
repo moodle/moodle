@@ -68,7 +68,7 @@ class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_fo
 
         $numofdimensionstoadd   = 2;
         $numofinitialdimensions = 3;
-        $numofdisplaydimensions = max($this->numofdimensions + $numofdimensionstoadd, $numofinitialdimensions);
+        $numofdisplaydimensions = max($this->nocurrentdims + $numofdimensionstoadd, $numofinitialdimensions);
         $this->repeat_elements($repeated, $numofdisplaydimensions,  $repeatedoptions, 'numofdimensions', 'adddimensions', $numofdimensionstoadd, get_string('addmoredimensionsaccumulative', 'workshop', $numofdimensionstoadd));
     }
 

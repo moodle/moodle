@@ -81,13 +81,11 @@ $strategy = new $classname($workshop);
 $dimensions = $strategy->load_dimensions();
 
 // load the form to edit the grading strategy dimensions
-$mform = $strategy->get_edit_strategy_form($selfurl, true, count($dimensions));
+$mform = $strategy->get_edit_strategy_form($selfurl, count($dimensions));
 
 // initialize form data
 $formdata = new stdClass;
-$formdata->workshopid   = $workshop->id;
-$formdata->strategy     = $workshop->strategy;
-$formdata->dimensions   = $dimensions;
+$formdata->dimensions = $dimensions;
 $mform->set_data($formdata);
 
 if ($mform->is_cancelled()) {

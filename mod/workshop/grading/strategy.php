@@ -34,15 +34,16 @@ interface workshop_strategy_interface {
     /**
      * Factory method returning an instance of an assessment form editor class
      * 
-     * The returned class will probably expand the base workshop_edit_strategy_form
+     * The returned class will probably expand the base workshop_edit_strategy_form. The number of
+     * dimensions that will be passed by set_data() must be already known here becase the
+     * definition() of the form has to know the number and it is called before set_data().
      *
      * @param string $actionurl URL of the action handler script
-     * @param boolean $edit Open the form in editing mode
-     * @param int $nodimensions Number of dimensions to be provided by set_data
+     * @param int $nocurrentdims Number of current dimensions to be set later by set_data()
      * @access public
      * @return object The instance of the assessment form editor class
      */
-    public function get_edit_strategy_form($actionurl, $edit=true, $nodimensions=0);
+    public function get_edit_strategy_form($actionurl, $nocurrentdims=0);
 
 
     /**
@@ -83,7 +84,7 @@ class workshop_strategy implements workshop_strategy_interface {
     public $name;
 
     /** the parent workshop instance */
-    protected $_workshop;
+    protected $workshop;
 
     /**
      * Constructor 
@@ -94,8 +95,8 @@ class workshop_strategy implements workshop_strategy_interface {
      */
     public function __construct($workshop) {
 
-        $this->name         = $workshop->strategy;
-        $this->_workshop    = $workshop;
+        $this->name     = $workshop->strategy;
+        $this->workshop = $workshop;
     }
 
 
@@ -105,7 +106,7 @@ class workshop_strategy implements workshop_strategy_interface {
      * By default, the class is defined in grading/{strategy}/gradingform.php and is named
      * workshop_edit_{strategy}_strategy_form
      */
-    public function get_edit_strategy_form($actionurl, $edit=true, $nodimensions=0) {
+    public function get_edit_strategy_form($actionurl, $nocurrentdims=0) {
         global $CFG;    // needed because the included files use it
     
         $strategyform = dirname(__FILE__) . '/' . $this->name . '/gradingform.php';
@@ -116,7 +117,15 @@ class workshop_strategy implements workshop_strategy_interface {
         }
         $classname = 'workshop_edit_' . $this->name . '_strategy_form';
 
-        return new $classname($this, $actionurl, $edit, $nodimensions);
+        $customdata = new stdClass;
+        $customdata = array(
+                        'strategy'      => $this,
+                        'nocurrentdims' => $nocurrentdims,
+
+                        );
+        $attributes = array('class' => 'editstrategyform');
+
+        return new $classname($actionurl, $customdata, 'post', '', $attributes);
 
     }
 
@@ -133,7 +142,7 @@ class workshop_strategy implements workshop_strategy_interface {
     public function load_dimensions() {
         global $DB;
 
-        return $DB->get_records('workshop_forms_' . $this->name, array('workshopid' => $this->_workshop->id), 'sort');
+        return $DB->get_records('workshop_forms_' . $this->name, array('workshopid' => $this->workshop->id), 'sort');
     }
 
 
@@ -153,6 +162,11 @@ class workshop_strategy implements workshop_strategy_interface {
     public function save_dimensions($data) {
         global $DB;
         
+        if (!isset($data->strategyname) || ($data->strategyname != $this->name)) {
+            // the workshop strategy has changed since the form was opened for editing
+            throw new moodle_exception('strategyhaschanged', 'workshop');
+        }
+
         $data = $this->cook_form_data($data);
 
         foreach ($data as $record) {
@@ -173,7 +187,7 @@ class workshop_strategy implements workshop_strategy_interface {
     /**
      * The default implementation transposes the returned structure
      *
-     * It automatically adds 'sort' column and 'workshopid' column into every record.
+     * It automatically adds some columns into every record.
      * The sorting is done by the order of the returned array and starts with 1.
      * 
      * @param object $raw 
@@ -185,8 +199,9 @@ class workshop_strategy implements workshop_strategy_interface {
         foreach (array_flip($this->map_dimension_fieldnames()) as $formfield => $dbfield) {
             for ($k = 0; $k < $raw->numofdimensions; $k++) {
                 $cook[$k]->{$dbfield}   = isset($raw->{$formfield}[$k]) ? $raw->{$formfield}[$k] : null;
-                $cook[$k]->sort         = $k + 1;
-                $cook[$k]->workshopid   = $raw->workshopid;
+                $cook[$k]->descriptionformat    = FORMAT_HTML;
+                $cook[$k]->sort                 = $k + 1;
+                $cook[$k]->workshopid           = $this->workshop->id;
             }
         }
         return $cook;

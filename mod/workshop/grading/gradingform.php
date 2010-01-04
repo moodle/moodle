@@ -43,26 +43,8 @@ class workshop_edit_strategy_form extends moodleform {
     /** strategy logic instance that this class is editor of */ 
     protected $strategy;
 
-    /** number of dimensions that are populated from DB */
-    protected $numofdimensions;
-
-    /**
-     * Constructor
-     * 
-     * @param object $strategy The instance of the strategy logic
-     * @param str $actionurl URL to handle data
-     * @param bool $editable Should the form be editable?
-     * @param int $initialdimensions Number of assessment dimensions that are already filled
-     * @access public
-     * @return void
-     */
-    public function __construct(workshop_strategy $strategy, $actionurl, $editable=true, $initialdimensions=0) {
-
-        $this->strategy         = $strategy;
-        $this->numofdimensions  = $initialdimensions;
-        parent::moodleform($actionurl, null, 'post', '', array('class' => 'editstrategyform'), $editable);
-    }
-
+    /** number of current dimensions loaded from DB */
+    protected $nocurrentdims;
 
     /**
      * Add the fields that are common for all grading strategies.
@@ -79,12 +61,10 @@ class workshop_edit_strategy_form extends moodleform {
         global $CFG;
 
         $mform = $this->_form;
+        $this->strategy         = $this->_customdata['strategy'];
+        $this->nocurrentdims    = $this->_customdata['nocurrentdims']; 
 
-        $mform->addElement('hidden', 'workshopid');
-        $mform->setType('id', PARAM_INT);
-
-        $mform->addElement('hidden', 'strategy');
-        $mform->setType('id', PARAM_ALPHA);
+        $mform->addElement('hidden', 'strategyname', $this->strategy->name);
 
         $this->definition_inner($mform);
 
