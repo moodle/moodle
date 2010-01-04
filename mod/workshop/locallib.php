@@ -58,11 +58,11 @@ class workshop {
      * Makes deep copy of all passed records properties. Replaces integer $course attribute
      * with a full database record (course should not be stored in instances table anyway).
      *
-     * @param object $instance Workshop instance data from {workshop} table
-     * @param object $cm       Course module record as returned by {@link get_coursemodule_from_id()}
-     * @param object $course   Course record from {course} table
+     * @param stdClass $instance Workshop instance data from {workshop} table
+     * @param stdClass $cm       Course module record as returned by {@link get_coursemodule_from_id()}
+     * @param stdClass $course   Course record from {course} table
      */
-    public function __construct(object $instance, object $cm, object $course) {
+    public function __construct(stdClass $instance, stdClass $cm, stdClass $course) {
         foreach ($instance as $key => $val) {
             if (is_object($val) || (is_array($val))) {
                 // this should not happen if the $instance is really just the record returned by $DB
