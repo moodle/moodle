@@ -49,10 +49,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'workshop'));
 $PAGE->navbar->add('Development tools');
 
-$wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
-
-switch ($tool) {
-case 'mksubmissions':
+if ($tool == 'mksubmissions') {
     $authors                = $workshop->get_potential_authors($PAGE->context, false);
     $authorswithsubmission  = $workshop->get_potential_authors($PAGE->context, true);
     $authors                = array_diff_key($authors, $authorswithsubmission);
@@ -94,27 +91,30 @@ case 'mksubmissions':
         echo "<pre>No submission added</pre>\n";
     }
     echo $OUTPUT->continue_button($PAGE->url->out());
-    break;
-case 'mkassessments':
+    echo $OUTPUT->footer();
+    exit;
+}
+
+if ($tool == 'mkassessments') {
     $sql = 'UPDATE {workshop_assessments}
                SET grade = 100*RANDOM()
              WHERE submissionid IN (SELECT id FROM {workshop_submissions} WHERE workshopid = :workshopid)';
     $params['workshopid'] = $workshop->id;
     $DB->execute($sql, $params);
+    echo $OUTPUT->header();
     echo $OUTPUT->heading('Submissions graded');
     echo $OUTPUT->continue_button($PAGE->url->out());
-    break;
-case 'menu':
-    // no break, skip to default
-default:
-    echo $OUTPUT->header();
-    $currenttab = 'develtools';
-    include(dirname(__FILE__) . '/tabs.php');
-    echo $OUTPUT->heading('Workshop development tools', 1);
-    echo '<ul>';
-    echo '<li><a href="' . $PAGE->url->out(false, array('tool' => 'mksubmissions')) . '">Fake submissions</a></li>';
-    echo '<li><a href="' . $PAGE->url->out(false, array('tool' => 'mkassessments')) . '">Fake assessments</a></li>';
-    echo '</ul>';
+    echo $OUTPUT->footer();
+    exit;
 }
 
+// no known $tool selected
+echo $OUTPUT->header();
+$currenttab = 'develtools';
+include(dirname(__FILE__) . '/tabs.php');
+echo $OUTPUT->heading('Workshop development tools', 1);
+echo '<ul>';
+echo '<li><a href="' . $PAGE->url->out(false, array('tool' => 'mksubmissions')) . '">Fake submissions</a></li>';
+echo '<li><a href="' . $PAGE->url->out(false, array('tool' => 'mkassessments')) . '">Fake assessments</a></li>';
+echo '</ul>';
 echo $OUTPUT->footer();
