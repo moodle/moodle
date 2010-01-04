@@ -105,7 +105,7 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
         if (is_null($user->submissionid)) {
             $o .= $this->output->output_tag('span', array('class' => 'info'), get_string('nosubmissionfound', 'workshop'));
         } else {
-            $submlink = $this->output->output_tag('a', array('href' => '#'), s($user->submissiontitle));
+            $submlink = $this->output->output_tag('a', array('href' => '#'), s($user->submissiontitle)); // todo link
             $o .= $this->output->container($submlink, array('title'));
             if (is_null($user->submissiongrade)) {
                 $o .= $this->output->container(get_string('nogradeyet', 'workshop'), array('grade', 'missing'));
@@ -137,8 +137,8 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
             // todo add an option to exclude users without own submission
             // todo nice to have number of current allocations for every user plus ordering by it
             $handler = new moodle_url($this->page->url, array('mode' => 'new', 'of' => $user->id, 'sesskey' => sesskey()));
-            $options = $this->users_to_menu_options($workshop->get_peer_reviewers(), $exclude, $handler, 'by'); 
-            $select = moodle_select::make_popup_form($options, 'addreviewof' . $user->id, '', 
+            $options = $this->users_to_menu_options($workshop->get_peer_reviewers(), $exclude);
+            $select = html_select::make_popup_form($handler, 'by', $options, 'addreviewof' . $user->id, '',
                 get_string('addreviewer', 'workshop'));
             $select->nothinglabel = get_string('chooseuser', 'workshop');
             $select->set_label(get_string('addreviewer', 'workshop'), $select->id);
@@ -147,7 +147,11 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
         $o .= $this->output->output_start_tag('ul', array());
         foreach ($user->reviewedby as $reviewerid => $assessmentid) {
             $o .= $this->output->output_start_tag('li', array());
-            $o .= $this->output->user_picture($peers[$reviewerid], $this->page->course->id); // todo display smaller
+            $userpic = new moodle_user_picture();
+            $userpic->user = $peers[$reviewerid];
+            $userpic->courseid = $this->page->course->id;
+            $userpic->size = 16;
+            $o .= $this->output->user_picture($userpic);
             $o .= fullname($peers[$reviewerid]);
 
             $handler = $this->page->url->out_action(array('mode' => 'del', 'what' => $assessmentid));
@@ -179,8 +183,8 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
         // todo add an option to exclude users without own submission
         // todo nice to have number of current allocations for every user plus ordering by it
         $handler = new moodle_url($this->page->url, array('mode' => 'new', 'by' => $user->id, 'sesskey' => sesskey()));
-        $options = $this->users_to_menu_options($workshop->get_peer_authors(), $exclude, $handler, 'of'); 
-        $select = moodle_select::make_popup_form($options, 'addreviewby' . $user->id, '', 
+        $options = $this->users_to_menu_options($workshop->get_peer_authors(), $exclude);
+        $select = html_select::make_popup_form($handler, 'of', $options, 'addreviewby' . $user->id, '',
             get_string('addreviewee', 'workshop'));
         $select->nothinglabel = get_string('chooseuser', 'workshop');
         $select->set_label(get_string('addreviewee', 'workshop'), $select->id);
@@ -188,7 +192,11 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
         $o .= $this->output->output_start_tag('ul', array());
         foreach ($user->reviewerof as $authorid => $assessmentid) {
             $o .= $this->output->output_start_tag('li', array());
-            $o .= $this->output->user_picture($peers[$authorid], $this->page->course->id); // todo display smaller
+            $userpic = new moodle_user_picture();
+            $userpic->user = $peers[$authorid];
+            $userpic->courseid = $this->page->course->id;
+            $userpic->size = 16;
+            $o .= $this->output->user_picture($userpic, $this->page->course->id);
             $o .= fullname($peers[$authorid]);
 
             // delete
@@ -205,13 +213,13 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
      * Given a list of users, returns an array suitable to render the HTML select field
      *
      * @param array $users array of users or array of groups of users
-     * @return array of options to be passed to {@link moodle_select::make_ popup_form()}
+     * @return array of options to be passed to {@link html_select::make_ popup_form()}
      */
-    protected function users_to_menu_options(&$users, array $exclude, moodle_url $baseurl, $var) {
+    protected function users_to_menu_options(&$users, array $exclude) {
         $options = array(); // to be returned
         foreach ($users as $user) {
             if (!isset($exclude[$user->id])) {
-                $options[$baseurl->out(false, array($var => $user->id), false)] = fullname($user);
+                $options[$user->id] = fullname($user);
             }
         }
         return $options;

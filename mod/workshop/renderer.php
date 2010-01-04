@@ -134,7 +134,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
         $o .= $this->output->heading(format_string($submission->title), 3, 'title');
         if ($showauthorname && $author) {
             $o .= $this->output->output_start_tag('div', array('class' => 'author'));                           //+++
-            $userpic    = new user_picture();
+            $userpic    = new moodle_user_picture();
             $userpic->user = $author;
             $userpic->courseid = $this->page->course->id;
             $userpic->url = true;

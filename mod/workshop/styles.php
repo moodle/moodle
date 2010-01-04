@@ -134,6 +134,17 @@
     background-color: #eee;
 }
 
+.mod-workshop .manual-allocator .allocations .peer .image {
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.mod-workshop .manual-allocator .allocations .reviewedby .image,
+.mod-workshop .manual-allocator .allocations .reviewerof .image {
+    margin-right: 3px;
+    vertical-align: middle;
+}
+
 .mod-workshop .manual-allocator .allocations .highlightreviewedby .reviewedby,
 .mod-workshop .manual-allocator .allocations .highlightreviewerof .reviewerof {
     background-color: #fff3d2;
@@ -155,21 +166,6 @@
     font-size: 80%;
     color: #888;
     font-style: italic;
-}
-
-.mod-workshop .manual-allocator .allocations .reviewedby img.userpicture,
-.mod-workshop .manual-allocator .allocations .reviewerof img.userpicture {
-    height: 16px;
-    width: 16px;
-    margin-right: 3px;
-    vertical-align: middle;
-}
-
-.mod-workshop .manual-allocator .allocations .peer img.userpicture {
-    height: 35px;
-    width: 35px;
-    vertical-align: middle;
-    margin-right: 5px;
 }
 
 .mod-workshop .manual-allocator .allocations .peer .submission {
