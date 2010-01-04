@@ -63,10 +63,11 @@ class workshop_edit_strategy_form extends moodleform {
 
         $this->definition_inner($mform);
 
-        if (!empty($CFG->usetags)) {
-            $mform->addElement('header', 'tagsheader', get_string('tags'));
-            $mform->addElement('tags', 'tags', get_string('tags'));
-        }
+        // todo - tags support
+        //if (!empty($CFG->usetags)) {
+        //    $mform->addElement('header', 'tagsheader', get_string('tags'));
+        //    $mform->addElement('tags', 'tags', get_string('tags'));
+        //}
 
         $buttonarray = array();
         $buttonarray[] = &$mform->createElement('submit', 'saveandcontinue', get_string('saveandcontinue', 'workshop'));
