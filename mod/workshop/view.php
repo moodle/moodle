@@ -165,23 +165,13 @@ case workshop::PHASE_EVALUATION:
         $PAGE->set_url(new moodle_url($PAGE->url, compact('sortby', 'sorthow', 'page')));
         $data = $workshop->prepare_grading_report($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
         if ($data) {
-            $showauthornames    = has_capability('mod/workshop:viewauthornames', $PAGE->context);
-            $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $PAGE->context);
+            $showauthornames    = has_capability('mod/workshop:viewauthornames', $workshop->context);
+            $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
 
-            $form = new html_form();
-            $form->url = new moodle_url($workshop->aggregate_url(), compact('sortby', 'sorthow', 'page'));
-            $form->button = new html_button();
-            $form->button->text = get_string('aggregategrades', 'workshop');
-            $form->method = 'post';
-
-            $helpicon = new moodle_help_icon();
-            $helpicon->page = 'aggregate';
-            $helpicon->text = get_string('aggregategrades', 'workshop');
-            $helpicon->module = 'workshop';
-
-            echo $OUTPUT->box_start('buttonsbar');
-            echo $OUTPUT->box($OUTPUT->button($form) . $OUTPUT->help_icon($helpicon), 'buttonwithhelp');
-            echo $OUTPUT->box_end();
+            // load the grading evaluator
+            $evaluator = $workshop->grading_evaluation_instance();
+            $form = $evaluator->get_settings_form(new moodle_url($workshop->aggregate_url(), compact('sortby', 'sorthow', 'page')));
+            $form->display();
 
             // prepare paging bar
             $pagingbar              = new moodle_paging_bar();
@@ -199,15 +189,15 @@ case workshop::PHASE_EVALUATION:
     break;
 case workshop::PHASE_CLOSED:
     $page       = optional_param('page', 0, PARAM_INT);
-    $sortby     = optional_param('sortby', 'lastname', PARAM_ALPHA);
-    $sorthow    = optional_param('sorthow', 'ASC', PARAM_ALPHA);
+    $sortby     = optional_param('sortby', 'totalgrade', PARAM_ALPHA);
+    $sorthow    = optional_param('sorthow', 'DESC', PARAM_ALPHA);
     $perpage    = 10;           // todo let the user modify this
     $groups     = '';           // todo let the user choose the group
     $PAGE->set_url(new moodle_url($PAGE->url, compact('sortby', 'sorthow', 'page')));
     $data = $workshop->prepare_grading_report($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
     if ($data) {
-        $showauthornames    = has_capability('mod/workshop:viewauthornames', $PAGE->context);
-        $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $PAGE->context);
+        $showauthornames    = has_capability('mod/workshop:viewauthornames', $workshop->context);
+        $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
 
         // prepare paging bar
         $pagingbar              = new moodle_paging_bar();

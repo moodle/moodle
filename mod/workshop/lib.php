@@ -63,7 +63,8 @@ function workshop_supports($feature) {
         case FEATURE_MOD_INTRO:         return true;
         case FEATURE_MOD_SUBPLUGINS:    return array(
                                                 'workshopform'       => 'mod/workshop/form',
-                                                'workshopallocation' => 'mod/workshop/allocation'
+                                                'workshopallocation' => 'mod/workshop/allocation',
+                                                'workshopeval'       => 'mod/workshop/eval',
                                                 );
         default:                        return null;
     }

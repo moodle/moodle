@@ -405,6 +405,17 @@
     border: 1px solid #ddd;
 }
 
+.mod-workshop .grading-report del {
+    color: red;
+    font-size: 90%
+    text-decoration: 
+}
+
+.mod-workshop .grading-report ins {
+    color: green;
+    font-weight: bold;
+}
+
 .mod-workshop .grading-report th {
     white-space: normal;
 }
@@ -414,10 +425,15 @@
     border: 1px solid #ddd;
 }
 
+.mod-workshop .grading-report .assessmentdetails {
+    white-space: nowrap;
+}
+
 .mod-workshop .grading-report td.c3,
 .mod-workshop .grading-report td.c5 {
     text-align: center;
     font-size: 160%;
+    white-space: nowrap;
 }
 
 .mod-workshop .grading-report td.c6 {

@@ -851,7 +851,13 @@ class workshop {
             } elseif ($this->phase > self::PHASE_EVALUATION) {
                 $task->completed = false;
             }
-            $phase->tasks['evaluateinfo'] = $task;
+            $phase->tasks['calculatetotalgrade'] = $task;
+            if ($known > 0 and $known < $expected) {
+                $task = new stdClass();
+                $task->title = get_string('totalgradesmissing', 'workshop');
+                $task->completed = 'info';
+                $phase->tasks['totalgradesmissinginfo'] = $task;
+            }
         } else {
             $task = new stdClass();
             $task->title = get_string('evaluategradeswait', 'workshop');

@@ -44,17 +44,18 @@ $PAGE->set_url(new moodle_url($workshop->aggregate_url(), compact('confirm', 'pa
 require_login($course, false, $cm);
 require_capability('mod/workshop:overridegrades', $PAGE->context);
 
-// load the grading evaluator
+// load and init the grading evaluator
 $evaluator = $workshop->grading_evaluation_instance();
+$settingsform = $evaluator->get_settings_form($PAGE->url);
 
-if ($confirm) {
-    if (!confirm_sesskey()) {
-        throw new moodle_exception('confirmsesskeybad');
-    }
-    $workshop->aggregate_submission_grades();   // updates 'grade' in {workshop_submissions}
-    $evaluator->update_grading_grades();        // updates 'gradinggrade' in {workshop_assessments}
-    $workshop->aggregate_grading_grades();      // updates 'gradinggrade' in {workshop_aggregations}
-    $workshop->aggregate_total_grades();        // updates 'totalgrade' in {workshop_aggregations}
+if ($settingsform->is_cancelled()) {
+    redirect(new moodle_url($workshop->view_url(), compact('page', 'sortby', 'sorthow')));
+
+} elseif ($settingsdata = $settingsform->get_data()) {
+    $workshop->aggregate_submission_grades();           // updates 'grade' in {workshop_submissions}
+    $evaluator->update_grading_grades($settingsdata);   // updates 'gradinggrade' in {workshop_assessments}
+    $workshop->aggregate_grading_grades();              // updates 'gradinggrade' in {workshop_aggregations}
+    $workshop->aggregate_total_grades();                // updates 'totalgrade' in {workshop_aggregations}
     redirect(new moodle_url($workshop->view_url(), compact('page', 'sortby', 'sorthow')));
 }
 
@@ -67,5 +68,6 @@ $PAGE->navbar->add(get_string('aggregation', 'workshop'));
 //
 echo $OUTPUT->header();
 echo $OUTPUT->confirm(get_string('aggregationinfo', 'workshop'),
-                        new moodle_url($PAGE->url, array('confirm' => 1)), $workshop->view_url());
+    new moodle_url($PAGE->url, $settingsdata),
+    new moodle_url($workshop->view_url(), compact('page', 'sortby', 'sorthow')));
 echo $OUTPUT->footer();

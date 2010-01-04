@@ -44,7 +44,7 @@ class workshop_best_evaluation implements workshop_evaluation {
      * @return void
      */
     public function __construct(workshop $workshop) {
-        $this->workshop         = $workshop;
+        $this->workshop = $workshop;
     }
 
     /**
@@ -57,7 +57,7 @@ class workshop_best_evaluation implements workshop_evaluation {
      *
      * @return void
      */
-    public function update_grading_grades($restrict=null) {
+    public function update_grading_grades(stdClass $settings, $restrict=null) {
         global $DB;
 
         $grader = $this->workshop->grading_strategy_instance();
@@ -78,15 +78,32 @@ class workshop_best_evaluation implements workshop_evaluation {
                 $batch[] = $current;
             } else {
                 // process all the assessments of a sigle submission
-                $this->process_assessments($batch, $diminfo);
+                $this->process_assessments($batch, $diminfo, $settings);
                 // start with a new batch to be processed
                 $batch = array($current);
                 $previous = $current;
             }
         }
         // do not forget to process the last batch!
-        $this->process_assessments($batch, $diminfo);
+        $this->process_assessments($batch, $diminfo, $settings);
         $rs->close();
+    }
+
+    /**
+     * TODO: short description.
+     *
+     * @return TODO
+     */
+    public function get_settings_form(moodle_url $actionurl=null) {
+        global $CFG;    // needed because the included files use it
+        require_once(dirname(__FILE__) . '/settings_form.php');
+
+        $current = null;    // the recently used setting - todo where should it be stored?
+        $customdata['current'] = $current;
+        $customdata['workshop'] = $this->workshop;
+        $attributes = array('class' => 'evalsettingsform best');
+
+        return new workshop_best_evaluation_settings_form($actionurl, $customdata, 'post', '', $attributes);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -98,9 +115,10 @@ class workshop_best_evaluation implements workshop_evaluation {
      *
      * @param array $assessments of stdClass (->assessmentid ->assessmentweight ->reviewerid ->gradinggrade ->submissionid ->dimensionid ->grade)
      * @param array $diminfo of stdClass (->id ->weight ->max ->min)
+     * @param stdClass grading evaluation settings
      * @return void
      */
-    protected function process_assessments(array $assessments, array $diminfo) {
+    protected function process_assessments(array $assessments, array $diminfo, stdClass $settings) {
         global $DB;
 
         // reindex the passed flat structure to be indexed by assessmentid
@@ -121,7 +139,7 @@ class workshop_best_evaluation implements workshop_evaluation {
         // for every assessment, calculate its distance from the average one
         $distances = array();
         foreach ($assessments as $asid => $assessment) {
-            $distances[$asid] = $this->assessments_distance($assessment, $average, $diminfo);
+            $distances[$asid] = $this->assessments_distance($assessment, $average, $diminfo, $settings);
         }
 
         // identify the best assessments - it est those with the shortest distance from the best assessment
@@ -132,7 +150,7 @@ class workshop_best_evaluation implements workshop_evaluation {
         foreach ($bestids as $bestid) {
             $best = $assessments[$bestid];
             foreach ($assessments as $asid => $assessment) {
-                $d = $this->assessments_distance($assessment, $best, $diminfo);
+                $d = $this->assessments_distance($assessment, $best, $diminfo, $settings);
                 if (!isset($distances[$asid]) or $d < $distances[$asid]) {
                     $distances[$asid] = $d;
                 }
@@ -142,14 +160,12 @@ class workshop_best_evaluation implements workshop_evaluation {
         // calculate the grading grade
         foreach ($distances as $asid => $distance) {
             $gradinggrade = (100 - $distance);
-            /**
             if ($gradinggrade < 0) {
                 $gradinggrade = 0;
             }
             if ($gradinggrade > 100) {
                 $gradinggrade = 100;
             }
-             */
             $grades[$asid] = grade_floatval($gradinggrade);
         }
 
@@ -315,9 +331,10 @@ class workshop_best_evaluation implements workshop_evaluation {
      * @param stdClass $assessment the assessment being measured
      * @param stdClass $referential assessment
      * @param array $diminfo of stdClass(->weight ->min ->max ->variance) indexed by dimension id
+     * @param stdClass $settings
      * @return float|null rounded to 5 valid decimals
      */
-    protected function assessments_distance(stdClass $assessment, stdClass $referential, array $diminfo) {
+    protected function assessments_distance(stdClass $assessment, stdClass $referential, array $diminfo, stdClass $settings) {
         $distance = 0;
         $n = 0;
         foreach (array_keys($assessment->dimgrades) as $dimid) {
@@ -329,8 +346,7 @@ class workshop_best_evaluation implements workshop_evaluation {
             // variations very close to zero are too sensitive to a small change of data values
             if ($var > 0.01 and $agrade != $rgrade) {
                 $absdelta   = abs($agrade - $rgrade);
-                // todo the following constant is the param. For 1 it is very strict, for 5 it is quite lax
-                $reldelta   = pow($agrade - $rgrade, 2) / (5 * $var);
+                $reldelta   = pow($agrade - $rgrade, 2) / ($settings->comparison * $var);
                 $distance  += $absdelta * $reldelta * $weight;
                 $n         += $weight;
             }

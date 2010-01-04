@@ -438,7 +438,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                         'totalgrade', $sortby, $sorthow),
             );
         $table->rowclasses  = array();
-        $table->colclasses  = array('reviewedby', 'peer', 'reviewerof');
+        $table->colclasses  = array();
         $table->data        = array();
 
         foreach ($grades as $participant) {
@@ -484,18 +484,15 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                 if ($tr % $spanreceived == 0) {
                     $idx = intval($tr / $spanreceived);
                     $cell = new html_table_cell();
-                    $cell->text = $this->grading_report_assessment(self::array_nth($participant->reviewedby, $idx));
+                    $cell->text = $this->grading_report_assessment(self::array_nth($participant->reviewedby, $idx),
+                            $showreviewernames, $userinfo, get_string('gradereceivedfrom', 'workshop'));
                     $cell->rowspan = $spanreceived;
                     $row->cells[] = $cell;
                 }
                 // column #4 - total grade for submission
                 if ($tr == 0) {
                     $cell = new html_table_cell();
-                    if (is_null($participant->submissiongrade)) {
-                        $cell->text = get_string('nullgrade', 'workshop');
-                    } else {
-                        $cell->text = $participant->submissiongrade;
-                    }
+                    $cell->text = $this->grading_report_grade($participant->submissiongrade, $participant->submissiongradeover);
                     $cell->rowspan = $numoftrs;
                     $row->cells[] = $cell;
                 }
@@ -503,18 +500,15 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                 if ($tr % $spangiven == 0) {
                     $idx = intval($tr / $spangiven);
                     $cell = new html_table_cell();
-                    $cell->text = $this->grading_report_assessment(self::array_nth($participant->reviewerof, $idx));
+                    $cell->text = $this->grading_report_assessment(self::array_nth($participant->reviewerof, $idx),
+                            $showauthornames, $userinfo, get_string('gradegivento', 'workshop'));
                     $cell->rowspan = $spangiven;
                     $row->cells[] = $cell;
                 }
                 // column #6 - total grade for assessment
                 if ($tr == 0) {
                     $cell = new html_table_cell();
-                    if (is_null($participant->gradinggrade)) {
-                        $cell->text = get_string('nullgrade', 'workshop');
-                    } else {
-                        $cell->text = $participant->gradinggrade;
-                    }
+                    $cell->text = $this->grading_report_grade($participant->gradinggrade);
                     $cell->rowspan = $numoftrs;
                     $row->cells[] = $cell;
                 }
@@ -526,6 +520,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                     } else {
                         $cell->text = $participant->totalgrade;
                     }
+                    $cell->text = $this->grading_report_grade($participant->totalgrade);
                     $cell->rowspan = $numoftrs;
                     $row->cells[] = $cell;
                 }
@@ -604,10 +599,17 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      * @return string
      */
     protected function grading_report_submission(stdClass $participant) {
+        global $CFG;
+
         if (is_null($participant->submissionid)) {
             $out = $this->output->container(get_string('nosubmissionfound', 'workshop'), 'info');
         } else {
-            $out = $this->output->container(format_string($participant->submissiontitle), 'title');
+            $link = new html_link();
+            $link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/submission.php',
+                                        array('cmid' => $this->page->context->instanceid, 'id' => $participant->submissionid));
+            $link->text = format_string($participant->submissiontitle);
+            $link->set_classes('title');
+            $out = $this->output->link($link);
         }
 
         return $out;
@@ -616,9 +618,11 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
     /**
      * @todo Highlight the nulls
      * @param stdClass|null $assessment
+     * @param bool $shownames
+     * @param string $separator between the grade and the reviewer/author
      * @return string
      */
-    protected function grading_report_assessment($assessment) {
+    protected function grading_report_assessment(stdClass $assessment, $shownames, array $userinfo, $separator) {
         if (is_null($assessment)) {
             return get_string('nullgrade', 'workshop');
         }
@@ -631,8 +635,39 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
             $a->gradinggradeover = $assessment->gradinggradeover;
             $grade = get_string('formatpeergradeover', 'workshop', $a);
         }
+        $grade = $this->output->output_tag('span', array('class' => 'grade'), $grade);
 
-        return $grade;
+        if ($shownames) {
+            $userid = $assessment->userid;
+            $pic = new moodle_user_picture();
+            $pic->user = $userinfo[$userid];
+            $pic->courseid = $this->page->course->id;
+            $pic->url = true;
+            $pic->size = 16;
+
+            $name  = $this->output->user_picture($pic);
+            $name .= $this->output->output_tag('span', array('class' => 'fullname'), fullname($userinfo[$userid]));
+            $name  = $separator . $this->output->output_tag('span', array('class' => 'user'), $name);
+        } else {
+            $name = '';
+        }
+
+        return $this->output->container($grade . $name, 'assessmentdetails');
+    }
+
+    /**
+     * Formats the aggreagated grades
+     */
+    protected function grading_report_grade($grade, $over=null) {
+        $a = new stdClass();
+        $a->grade = is_null($grade) ? get_string('nullgrade', 'workshop') : $grade;
+        if (is_null($over)) {
+            $text = get_string('formataggregatedgrade', 'workshop', $a);
+        } else {
+            $a->over = is_null($over) ? get_string('nullgrade', 'workshop') : $over;
+            $text = get_string('formataggregatedgradeover', 'workshop', $a);
+        }
+        return $text;
     }
 
     ////////////////////////////////////////////////////////////////////////////
