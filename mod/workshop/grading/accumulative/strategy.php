@@ -196,7 +196,11 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
                 $PAGE->context, 'workshop_dimension_description', $local->id);
             $DB->update_record('workshop_forms_accumulative', $local);
         }
-        // todo unlink embedded files
+        // unlink embedded files and delete emptied dimensions
+        $fs = get_file_storage();
+        foreach ($todeletelocal as $itemid) {
+            $fs->delete_area_files($PAGE->context->id, 'workshop_dimension_description', $itemid);
+        }
         $DB->delete_records_list('workshop_forms_accumulative', 'id', $todeletelocal);
         $DB->delete_records_list('workshop_forms', 'id', $todeletemaster);
     }
