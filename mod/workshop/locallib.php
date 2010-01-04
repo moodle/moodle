@@ -88,11 +88,11 @@ class workshop {
 
         $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
         $users = get_users_by_capability($context, 'mod/workshop:submit',
-                    "u.id, u.lastname, u.firstname", "u.lastname,u.firstname", '', '', '', '', false, false, true);
+                    'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
 
         if ($musthavesubmission) {
             $userswithsubmission = array();
-            $submissions = $DB->get_records_list('workshop_submissions', "userid", array_keys($users),'', "id,userid");
+            $submissions = $DB->get_records_list('workshop_submissions', 'userid', array_keys($users),'', 'id,userid');
             foreach ($submissions as $submission) {
                 $userswithsubmission[$submission->userid] = null;
             }
@@ -121,11 +121,11 @@ class workshop {
 
         $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
         $users = get_users_by_capability($context, 'mod/workshop:peerassess',
-                    "u.id, u.lastname, u.firstname", "u.lastname,u.firstname", '', '', '', '', false, false, true);
+                    'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
 
         if ($musthavesubmission) {
             // users without their own submission can not be reviewers
-            $submissions = $DB->get_records_list("workshop_submissions", "userid", array_keys($users),'', "id,userid");
+            $submissions = $DB->get_records_list('workshop_submissions', 'userid', array_keys($users),'', 'id,userid');
             foreach ($submissions as $submission) {
                 $userswithsubmission[$submission->userid] = null;
             }
@@ -154,7 +154,7 @@ class workshop {
 
         $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
         $users = get_users_by_capability($context, 'mod/workshop:assessallsubmissions',
-                    "u.id, u.lastname, u.firstname", "u.lastname,u.firstname", '', '', '', '', false, false, true);
+                    'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
 
         return $users;
     }
@@ -216,16 +216,16 @@ class workshop {
     public function get_submissions_recordset($userid='all', $examples=false) {
         global $DB;
 
-        $sql = "SELECT s.*, u.lastname AS authorlastname, u.firstname AS authorfirstname
+        $sql = 'SELECT s.*, u.lastname AS authorlastname, u.firstname AS authorfirstname
                   FROM {workshop_submissions} s
             INNER JOIN {user} u ON (s.userid = u.id)
-                 WHERE s.workshopid = :workshopid";
+                 WHERE s.workshopid = :workshopid';
         $params = array('workshopid' => $this->id);
 
         if ($examples === true) {
-            $sql .= " AND example = 1";
+            $sql .= ' AND example = 1';
         } else {
-            $sql .= " AND example = 0";
+            $sql .= ' AND example = 0';
         }
 
         if ('all' === $userid) {
@@ -235,7 +235,7 @@ class workshop {
             $sql .= " AND userid $usql";
             $params = array_merge($params, $uparams);
         } else {
-            $sql .= " AND userid = :userid";
+            $sql .= ' AND userid = :userid';
             $params['userid'] = $userid;
         }
 
@@ -294,7 +294,7 @@ class workshop {
     public function get_assessments_recordset($reviewerid='all', $id='all') {
         global $DB;
 
-        $sql = "SELECT a.*,
+        $sql = 'SELECT a.*,
                        reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname as reviewerlastname,
                        s.title,
                        author.id AS authorid, author.firstname AS authorfirstname,author.lastname as authorlastname
@@ -302,7 +302,7 @@ class workshop {
             INNER JOIN {user} reviewer ON (a.userid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
             INNER JOIN {user} author ON (s.userid = author.id)
-                 WHERE s.workshopid = :workshopid";
+                 WHERE s.workshopid = :workshopid';
         $params = array('workshopid' => $this->id);
 
         if ('all' === $reviewerid) {
@@ -312,14 +312,14 @@ class workshop {
             $sql .= " AND reviewer.id $usql";
             $params = array_merge($params, $uparams);
         } else {
-            $sql .= " AND reviewer.id = :reviewerid";
+            $sql .= ' AND reviewer.id = :reviewerid';
             $params['reviewerid'] = $reviewerid;
         }
 
         if ('all' === $id) {
             // no additional conditions
         } else {
-            $sql .= " AND a.id = :assessmentid";
+            $sql .= ' AND a.id = :assessmentid';
             $params['assessmentid'] = $id;
         }
 
@@ -419,12 +419,12 @@ class workshop {
 
         $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
         $users = get_users_by_capability($context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
-                    "u.id", "u.lastname,u.firstname", '', '', '', '', false, false, true);
+                    'u.id', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
 
         list($usql, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED);
         $params['workshopid'] = $this->id;
 
-        $sql = "SELECT author.id AS authorid, author.firstname AS authorfirstname, author.lastname AS authorlastname,
+        $sql = 'SELECT author.id AS authorid, author.firstname AS authorfirstname, author.lastname AS authorlastname,
                        author.picture AS authorpicture, author.imagealt AS authorimagealt,
                        s.id AS submissionid, s.title AS submissiontitle, s.grade AS submissiongrade,
                        a.id AS assessmentid, a.timecreated AS timeallocated, a.userid AS reviewerid,
@@ -435,7 +435,7 @@ class workshop {
              LEFT JOIN {workshop_assessments} a ON (s.id = a.submissionid)
              LEFT JOIN {user} reviewer ON (a.userid = reviewer.id)
                  WHERE author.id $usql AND s.workshopid = :workshopid
-              ORDER BY author.lastname,author.firstname,reviewer.lastname,reviewer.firstname";
+              ORDER BY author.lastname,author.firstname,reviewer.lastname,reviewer.firstname';
         
         return $DB->get_recordset_sql($sql, $params);
     }
@@ -462,7 +462,7 @@ class workshop {
         $assessment->timecreated    = $now;
         $assessment->timemodified   = $now;
 
-        return $DB->insert_record("workshop_assessments", $assessment, true, $bulk);
+        return $DB->insert_record('workshop_assessments', $assessment, true, $bulk);
     }
 
     /**
@@ -477,9 +477,9 @@ class workshop {
         // todo remove all given grades from workshop_grades;
 
         if (is_array($id)) {
-            return $DB->delete_records_list("workshop_assessments", "id", $id);
+            return $DB->delete_records_list('workshop_assessments', 'id', $id);
         } else {
-            return $DB->delete_records("workshop_assessments", array("id" => $id));
+            return $DB->delete_records('workshop_assessments', array('id' => $id));
         }
     }
 
