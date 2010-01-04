@@ -54,6 +54,11 @@ $mform = $strategy->get_edit_strategy_form($PAGE->url);
 if ($mform->is_cancelled()) {
     redirect($workshop->view_url());
 } elseif ($data = $mform->get_data()) {
+    if (($data->workshopid != $workshop->id) or ($data->strategy != $workshop->strategy)) {
+        // this may happen if someone changes the workshop setting while the user had the
+        // editing form opened
+        throw new invalid_parameter_exception('Invalid workshop ID or the grading strategy has changed.');
+    }
     $strategy->save_edit_strategy_form($data);
     if (isset($data->saveandclose)) {
         redirect($workshop->view_url());
