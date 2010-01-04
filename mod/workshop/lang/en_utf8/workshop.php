@@ -74,6 +74,7 @@ $string['editassessmentform'] = 'Edit assessment form';
 $string['editassessmentformstrategy'] = 'Edit assessment form ($a)';
 $string['editingassessmentform'] = 'Editing assessment form';
 $string['editingsubmission'] = 'Editing submission';
+$string['mysubmission'] = 'My submission';
 $string['editsubmission'] = 'Edit submission';
 $string['err_removegrademappings'] = 'Unable to remove the unused grade mappings';
 $string['examplesbeforeassessment'] = 'Examples are available after own submission and must be assessed before peer/self assessment phase';

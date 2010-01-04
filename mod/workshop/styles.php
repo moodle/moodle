@@ -1,4 +1,49 @@
 /**
+ * Submission - one line summary display
+ */
+.submission-summary {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.submission-summary .title,
+.submission-summary .author,
+.submission-summary .author .fullname,
+.submission-summary .author .picture {
+    display: inline;
+}
+
+.submission-summary .title,
+.submission-summary .userdate {
+    margin: 0px 0px 0px 40px;
+}
+
+.submission-summary .author {
+    margin-left: 1ex;
+}
+
+.submission-summary.anonymous .title,
+.submission-summary.anonymous .author,
+.submission-summary.anonymous .userdate {
+    margin: 0px 0px 0px 5px;
+}
+
+.submission-summary .userdate {
+    font-size: x-small;
+    color: #333;
+}
+
+.submission-summary .userdate span {
+    font-style: italic;
+}
+
+.submission-summary .author .picture {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+/**
  * Submission - full display
  */
 .submission-full {

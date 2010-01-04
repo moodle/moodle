@@ -217,7 +217,7 @@ class workshop {
     /**
      * Returns submissions from this workshop
      *
-     * Fetches data from {workshop_submissions} and adds some useful information from other
+     * Fetches no-big-text data from {workshop_submissions} and adds some useful information from other
      * tables.
      *
      * @param mixed $userid int|array|'all' If set to [array of] integer, return submission[s] of the given user[s] only
@@ -227,7 +227,10 @@ class workshop {
     public function get_submissions_recordset($userid='all', $examples=false) {
         global $DB;
 
-        $sql = 'SELECT s.*, u.lastname AS authorlastname, u.firstname AS authorfirstname
+        $sql = 'SELECT s.id, s.workshopid, s.example, s.userid, s.timecreated, s.timemodified,
+                       s.title, s.grade, s.gradeover, s.gradeoverby, s.gradinggrade,
+                       u.lastname AS authorlastname, u.firstname AS authorfirstname, u.id AS authorid,
+                       u.picture AS authorpicture, u.imagealt AS authorimagealt
                   FROM {workshop_submissions} s
             INNER JOIN {user} u ON (s.userid = u.id)
                  WHERE s.workshopid = :workshopid';
@@ -242,6 +245,7 @@ class workshop {
         } else {
             throw new coding_exception('Illegal parameter value: $examples may be false|true|"all"');
         }
+        $sql .= ' ORDER BY u.lastname, u.firstname';
 
         if ('all' === $userid) {
             // no additional conditions
@@ -260,39 +264,36 @@ class workshop {
     /**
      * Returns a submission submitted by the given author or authors.
      *
-     * This is intended for regular workshop participants, not for example submissions by teachers.
-     * If an array of authors is provided, returns array of stripped submission records so they do not
-     * include text fields (to prevent possible memory-lack issues).
+     * If the single one submission is requested, returns the first found record including text fields.
+     * If multiple records are requested, uses {@link self::get_submissions_recordset()}.
+     * Does not return example submissions.
      *
      * @param mixed $id integer|array author ID or IDs
      * @return mixed false if not found, stdClass if $id is int, array if $id is array
      */
     public function get_submission_by_author($id) {
+        global $DB;
+
         if (empty($id)) {
             return false;
         }
-        $rs = $this->get_submissions_recordset($id, false);
         if (is_array($id)) {
+            $rs = $this->get_submissions_recordset($id, false);
             $submissions = array();
             foreach ($rs as $submission) {
-                $submissions[$submission->id] = new stdClass();
-                foreach ($submission as $property => $value) {
-                    // we do not want text fields here to prevent possible memory issues
-                    if (in_array($property, array('id', 'workshopid', 'example', 'userid', 'authorlastname', 'authorfirstname',
-                            'timecreated', 'timemodified', 'grade', 'gradeover', 'gradeoverby', 'gradinggrade'))) {
-                        $submissions[$submission->id]->{$property} = $value;
-                    }
-                }
+                $submissions[$submission->id] = $submission;
             }
+            $rs->close();
             return $submissions;
         } else {
-            $submission = $rs->current();
-            $rs->close();
-            if (empty($submission->id)) {
-                return false;
-            } else {
-                return $submission;
-            }
+            $sql = 'SELECT s.*,
+                           u.lastname AS authorlastname, u.firstname AS authorfirstname, u.id AS authorid,
+                           u.picture AS authorpicture, u.imagealt AS authorimagealt
+                      FROM {workshop_submissions} s
+                INNER JOIN {user} u ON (s.userid = u.id)
+                     WHERE s.example = 0 AND s.workshopid = :workshopid AND s.userid = :userid';
+            $params = array('workshopid' => $this->id, 'userid' => $id);
+            return $DB->get_record_sql($sql, $params);
         }
     }
 

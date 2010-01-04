@@ -112,60 +112,123 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
     }
 
     /**
+     * Display a short summary of the submission
+     *
+     * @param stdClass $submission     The submission record
+     * @param bool     $showauthorname Should the author name be displayed
+     * @return string html to be echoed
+     */
+    public function submission_summary(stdClass $submission, $showauthorname=false) {
+        global $CFG;
+
+        $o  = '';    // output HTML code
+        $classes = 'submission-summary';
+        if (!$showauthorname) {
+            $classes .= ' anonymous';
+        }
+        $o .= $this->output->container_start($classes);  // main wrapper
+        $link = new html_link();
+        $link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/submission.php',
+                                    array('cmid' => $this->page->context->instanceid, 'id' => $submission->id));
+        $link->text = format_string($submission->title);
+        $link->set_classes('title');
+        $o .= $this->output->link($link);
+        if ($showauthorname) {
+            $author             = new stdClass();
+            $author->id         = $submission->authorid;
+            $author->firstname  = $submission->authorfirstname;
+            $author->lastname   = $submission->authorlastname;
+            $author->picture    = $submission->authorpicture;
+            $author->imagealt   = $submission->authorimagealt;
+            $userpic            = new moodle_user_picture();
+            $userpic->user      = $author;
+            $userpic->courseid  = $this->page->course->id;
+            $userpic->url       = true;
+            $userpic->size      = 35;
+            $userpic            = $this->output->user_picture($userpic);
+            $userurl            = new moodle_url($CFG->wwwroot . '/user/view.php',
+                                            array('id' => $author->id, 'course' => $this->page->course->id));
+            $a                  = new stdClass();
+            $a->name            = fullname($author);
+            $a->url             = $userurl->out();
+            $byfullname         = get_string('byfullname', 'workshop', $a);
+
+            $oo  = $this->output->container($userpic, 'picture');
+            $oo .= $this->output->container($byfullname, 'fullname');
+            $o .= $this->output->container($oo, 'author');
+        }
+        $created = get_string('userdatecreated', 'workshop', userdate($submission->timecreated));
+        $o .= $this->output->container($created, 'userdate created');
+        if ($submission->timemodified > $submission->timecreated) {
+            $modified = get_string('userdatemodified', 'workshop', userdate($submission->timemodified));
+            $o .= $this->output->container($modified, 'userdate modified');
+        }
+        $o .= $this->output->container_end(); // end of the main wrapper
+
+        return $o;
+    }
+
+
+    /**
      * Displays the submission fulltext
      *
      * By default, this looks similar to a forum post.
      *
      * @param stdClass $submission     The submission record
      * @param bool     $showauthorname Should the author name be displayed
-     * @param stdClass $author         If author's name should be displayed, this object contains the author data
      * @return string html to be echoed
      */
-    public function submission_full(stdClass $submission, $showauthorname=false, stdClass $author=null) {
+    public function submission_full(stdClass $submission, $showauthorname=false) {
         global $CFG;
 
-        $o  = '';    // output code
-        $at = array('class' => 'submission-full');
-        if (!$showauthorname || !$author) {
-            $at['class'] .= ' anonymous';
+        $o  = '';    // output HTML code
+        $classes = 'submission-full';
+        if (!$showauthorname) {
+            $classes .= ' anonymous';
         }
-        $o .= $this->output->output_start_tag('div', $at);                                                      //+
-        $o .= $this->output->output_start_tag('div', array('class' => 'header'));                               //++
+        $o .= $this->output->container_start($classes);
+        $o .= $this->output->container_start('header');
         $o .= $this->output->heading(format_string($submission->title), 3, 'title');
-        if ($showauthorname && $author) {
-            $o .= $this->output->output_start_tag('div', array('class' => 'author'));                           //+++
-            $userpic    = new moodle_user_picture();
-            $userpic->user = $author;
-            $userpic->courseid = $this->page->course->id;
-            $userpic->url = true;
-            $userpic->size = 64;
-            $userpic    = $this->output->user_picture($userpic);
-            $userurl    = new moodle_url($CFG->wwwroot . '/user/view.php',
+        if ($showauthorname) {
+            $author             = new stdClass();
+            $author->id         = $submission->authorid;
+            $author->firstname  = $submission->authorfirstname;
+            $author->lastname   = $submission->authorlastname;
+            $author->picture    = $submission->authorpicture;
+            $author->imagealt   = $submission->authorimagealt;
+            $userpic            = new moodle_user_picture();
+            $userpic->user      = $author;
+            $userpic->courseid  = $this->page->course->id;
+            $userpic->url       = true;
+            $userpic->size      = 64;
+            $userpic            = $this->output->user_picture($userpic);
+            $userurl            = new moodle_url($CFG->wwwroot . '/user/view.php',
                                             array('id' => $author->id, 'course' => $this->page->course->id));
-            $a          = new stdClass();
-            $a->name    = fullname($author);
-            $a->url     = $userurl->out();
-            $byfullname = get_string('byfullname', 'workshop', $a);
-            $o .= $this->output->output_tag('div', array('class' => 'picture'), $userpic);
-            $o .= $this->output->output_tag('div', array('class' => 'fullname'), $byfullname);
-            $o .= $this->output->output_end_tag('div'); // end of author                                        //++
+            $a                  = new stdClass();
+            $a->name            = fullname($author);
+            $a->url             = $userurl->out();
+            $byfullname         = get_string('byfullname', 'workshop', $a);
+            $oo  = $this->output->container($userpic, 'picture');
+            $oo .= $this->output->container($byfullname, 'fullname');
+
+            $o .= $this->output->container($oo, 'author');
         }
         $created = get_string('userdatecreated', 'workshop', userdate($submission->timecreated));
-        $o .= $this->output->output_tag('div', array('class' => 'userdate created'), $created);
+        $o .= $this->output->container($created, 'userdate created');
         if ($submission->timemodified > $submission->timecreated) {
             $modified = get_string('userdatemodified', 'workshop', userdate($submission->timemodified));
-            $o .= $this->output->output_tag('div', array('class' => 'userdate modified'), $modified);
+            $o .= $this->output->container($modified, 'userdate modified');
         }
-        $o .= $this->output->output_end_tag('div'); // end of header                                            //+
+        $o .= $this->output->container_end(); // end of header
 
         $content = format_text($submission->content, $submission->contentformat);
         $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $this->page->context->id,
                                                         'workshop_submission_content', $submission->id);
-        $o .= $this->output->output_tag('div', array('class' => 'content'), $content);
+        $o .= $this->output->container($content, 'content');
 
         $o .= $this->submission_attachments($submission);
 
-        $o .= $this->output->output_end_tag('div'); // end of submission-full                                   //
+        $o .= $this->output->container_end(); // end of submission-full
 
         return $o;
     }
@@ -224,7 +287,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                     $preview->set_classes('preview');
                     $preview        = $this->output->image($preview);
                     $preview        = $this->output->link($fileurl, $preview);
-                    $outputimgs    .= $this->output->output_tag('div', array(), $preview);
+                    $outputimgs    .= $this->output->container($preview);
                 } else {
                     // this is the same as the code in html if-branch
                     $outputfiles .= $this->output->output_tag('li', array('class' => $type), $linkhtml);
@@ -233,12 +296,12 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
         }
 
         if ($outputimgs) {
-            $outputimgs = $this->output->output_tag('div', array('class' => 'images'), $outputimgs);
+            $outputimgs = $this->output->container($outputimgs, 'images');
         }
         if ($format !== "text") {
             $outputfiles = $this->output->output_tag('ul', array('class' => 'files'), $outputfiles);
         }
-        return $this->output->output_tag('div', array('class' => 'attachments'), $outputimgs . $outputfiles);
+        return $this->output->container($outputimgs . $outputfiles, 'attachments');
     }
 
     /**

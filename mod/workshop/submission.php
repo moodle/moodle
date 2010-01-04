@@ -121,7 +121,7 @@ if ($edit) {
 
 if (!empty($submission->id)) {
     $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
-    echo $wsoutput->submission_full($submission, true, $USER);
+    echo $wsoutput->submission_full($submission, true);
 }
 
 if ($workshop->submitting_allowed()) {

@@ -75,17 +75,39 @@ $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
 
 echo $OUTPUT->header();
 include(dirname(__FILE__) . '/tabs.php');
-echo $OUTPUT->heading(format_string($workshop->name));
+echo $OUTPUT->heading(format_string($workshop->name), 2);
 echo $wsoutput->user_plan($workshop->prepare_user_plan($USER->id));
 
 switch ($workshop->phase) {
 case workshop::PHASE_SETUP:
-    // print workshop name and description
     if (trim(strip_tags($workshop->intro))) {
         echo $OUTPUT->box(format_module_intro('workshop', $workshop, $workshop->cm->id), 'generalbox', 'intro');
     }
     break;
 case workshop::PHASE_SUBMISSION:
+    if (has_capability('mod/workshop:submit', $PAGE->context)) {
+        if ($submission = $workshop->get_submission_by_author($USER->id)) {
+            echo $OUTPUT->box_start('generalbox mysubmission');
+            echo $wsoutput->submission_summary($submission, true);
+            echo $OUTPUT->box_end();
+        }
+    }
+    if (has_capability('mod/workshop:viewallsubmissions', $PAGE->context)) {
+        $shownames = has_capability('mod/workshop:viewauthornames', $PAGE->context);
+        echo $OUTPUT->box_start('generalbox allsubmissions');
+        $counter = 0;
+        $rs = $workshop->get_submissions_recordset('all', false);
+        foreach ($rs as $submission) {
+            $counter++;
+            echo $wsoutput->submission_summary($submission, $shownames);
+        }
+        $rs->close();
+        if ($counter == 0) {
+            echo $OUTPUT->container(get_string('nosubmissions', 'workshop'), 'nosubmissions');
+        }
+        echo $OUTPUT->box_end();
+    }
+    break;
 case workshop::PHASE_ASSESSMENT:
 case workshop::PHASE_EVALUATION:
 case workshop::PHASE_CLOSED:
