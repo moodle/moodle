@@ -377,7 +377,6 @@ function workshop_pluginfile($course, $cminfo, $context, $filearea, $args, $forc
  */
 function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG, $DB;
-    static $authors=null;    // cache for submission authors
 
     if (!has_capability('moodle/course:managefiles', $context)) {
         return null;
@@ -407,15 +406,14 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
         }
 
         // let us display the author's name instead of itemid (submission id)
+        // todo some sort of caching should happen here
 
-        if (is_null($authors)) {
-            $sql = 'SELECT s.id, u.lastname, u.firstname
-                    FROM {workshop_submissions} s
-                    JOIN {user} u ON (s.userid = u.id)
-                    WHERE s.workshopid = ?';
-            $params[0] = $cm->instance;
-            $authors = $DB->get_records_sql($sql, $params);
-        }
+        $sql = "SELECT s.id, u.lastname, u.firstname
+                  FROM {workshop_submissions} s
+            INNER JOIN {user} u ON (s.userid = u.id)
+                 WHERE s.workshopid = ?";
+        $params         = array($cm->instance);
+        $authors        = $DB->get_records_sql($sql, $params);
         $urlbase        = $CFG->wwwroot . '/pluginfile.php';
         $topvisiblename = fullname($authors[$itemid]);
         // do not allow manual modification of any files!
