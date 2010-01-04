@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for workshop class defined in mod/workshop/locallib.php
+ * Unit tests for workshop api class defined in mod/workshop/locallib.php
  *
  * @package   mod-workshop
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
@@ -25,15 +25,22 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// Make sure the code being tested is accessible.
 require_once($CFG->dirroot . '/mod/workshop/locallib.php'); // Include the code to test
 
 /**
  * Test subclass that makes all the protected methods we want to test public.
- * Also re-implements bridging methods so we can test more easily.
  */
 class testable_workshop extends workshop {
 
+    public function __construct() {
+        $this->cm       = new stdClass();
+        $this->course   = new stdClass();
+        $this->context  = new stdClass();
+    }
+
+    public function aggregate_submission_grades_process(array $assessments) {
+        parent::aggregate_submission_grades_process($assessments);
+    }
 }
 
 /**
@@ -46,14 +53,15 @@ class workshop_internal_api_test extends UnitTestCase {
 
     /** setup testing environment */
     public function setUp() {
-        $cm                 = (object)array('id' => 3);
-        $course             = (object)array('id' => 11);
-        $workshop           = (object)array('id' => 42);
-        $this->workshop     = new testable_workshop($workshop, $cm, $course);
+        $this->workshop = new testable_workshop();
     }
 
     public function tearDown() {
         $this->workshop = null;
+    }
+
+    public function test_aggregate_submission_grades_process_empty_param() {
+
     }
 
     public function test_percent_to_value() {

@@ -1133,9 +1133,7 @@ class workshop {
     }
 
     /**
-     * Calculates grades for submission for the given participant(s)
-     *
-     * Grade for submission is calculated as a weighted mean of all given grades
+     * Calculates grades for submission for the given participant(s) and updates it in the database
      *
      * @param null|int|array $restrict If null, update all authors, otherwise update just grades for the given author(s)
      * @return void
@@ -1144,7 +1142,7 @@ class workshop {
         global $DB;
 
         // fetch a recordset with all assessments to process
-        $sql = 'SELECT s.id AS submissionid, s.authorid, s.grade AS submissiongrade, s.gradeover, s.gradeoverby,
+        $sql = 'SELECT s.id AS submissionid, s.grade AS submissiongrade, s.gradeover,
                        a.weight, a.grade
                   FROM {workshop_submissions} s
              LEFT JOIN {workshop_assessments} a ON (a.submissionid = s.id)
@@ -1162,59 +1160,29 @@ class workshop {
         }
 
         $sql .= ' ORDER BY s.id'; // this is important for bulk processing
-        $rs = $DB->get_recordset_sql($sql, $params);
 
-        $previous   = null;
+        $rs         = $DB->get_recordset_sql($sql, $params);
+        $batch      = array();    // will contain a set of all assessments of a single submission
+        $previous   = null;       // a previous record in the recordset
+
         foreach ($rs as $current) {
             if (is_null($previous)) {
                 // we are processing the very first record in the recordset
                 $previous   = $current;
-                $sumgrades  = 0;
-                $sumweights = 0;
             }
-            if (is_null($current->grade)) {
-                // this was not assessed yet
-                continue;
-            }
-            if ($current->weight == 0) {
-                // this does not influence the calculation
-                continue;
-            }
-            if ($current->submissionid != $previous->submissionid) {
-                // firstly finish the calculation for the previous submission as we now have all its data
-                if ($sumweights > 0) {
-                    // there is a chance that the aggregated grade has changed
-                    $finalgrade = $sumgrades / $sumweights;
-                    if (grade_floats_different($finalgrade, $previous->submissiongrade)) {
-                        // we need to save new calculation into the database
-                        $DB->set_field('workshop_submissions', 'grade', $finalgrade, array('id' => $previous->submissionid));
-                    }
-                }
-                // and then start to process another submission
-                $previous = $current;
-                if (is_null($current->grade)) {
-                    $sumgrades = 0;
-                } else {
-                    $sumgrades  = $current->grade;
-                }
-                $sumweights = $current->weight;
-                continue;
-            } else {
+            if ($current->submissionid == $previous->submissionid) {
                 // we are still processing the current submission
-                $sumgrades  += $current->grade * $current->weight;
-                $sumweights += $current->weight;
-                continue;
+                $batch[] = $current;
+            } else {
+                // process all the assessments of a sigle submission
+                $this->aggregate_submission_grades_process($batch);
+                // and then start to process another submission
+                $batch      = array($current);
+                $previous   = $current;
             }
         }
-        // finally we must calculate the last submission's grade as it was not done in the previous loop
-        if ($sumweights > 0) {
-            // there is a chance that the aggregated grade has changed
-            $finalgrade = $sumgrades / $sumweights;
-            if (grade_floats_different($finalgrade, $current->submissiongrade)) {
-                // we need to save new calculation into the database
-                $DB->set_field('workshop_submissions', 'grade', $finalgrade, array('id' => $current->submissionid));
-            }
-        }
+        // do not forget to process the last batch!
+        $this->aggregate_submission_grades_process($batch);
         $rs->close();
     }
 
@@ -1235,6 +1203,59 @@ class workshop {
     ////////////////////////////////////////////////////////////////////////////////
     // Internal methods (implementation details)                                  //
     ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Given an array of all assessments of a single submission, calculates the final grade for this submission
+     *
+     * This calculates the weighted mean of the passed assessment grades. If, however, the submission grade
+     * was overridden by a teacher, the gradeover value is returned and the rest of grades are ignored.
+     *
+     * @param array $assessments of stdClass(->submissionid ->submissiongrade ->gradeover ->weight ->grade)
+     * @return null|float the aggregated grade rounded to numeric(10,5)
+     */
+    protected function aggregate_submission_grades_process(array $assessments) {
+        global $DB;
+
+        $submissionid   = null; // the id of the submission being processed
+        $current        = null; // the grade currently saved in database
+        $finalgrade     = null; // the new grade to be calculated
+        $sumgrades      = 0;
+        $sumweights     = 0;
+
+        foreach ($assessments as $assessment) {
+            if (is_null($submissionid)) {
+                // the id is the same in all records, fetch it during the first loop cycle
+                $submissionid = $assessment->submissionid;
+            }
+            if (is_null($current)) {
+                // the currently saved grade is the same in all records, fetch it during the first loop cycle
+                $current = $assessment->submissiongrade;
+            }
+            if (!is_null($assessment->gradeover)) {
+                // the grade for this assessment is overriden by a teacher, no need to calculate anything
+                $finalgrade = grade_floatval($assessment->gradeover);
+                break;
+            }
+            if (is_null($assessment->grade)) {
+                // this was not assessed yet
+                continue;
+            }
+            if ($assessment->weight == 0) {
+                // this does not influence the calculation
+                continue;
+            }
+            $sumgrades  += $assessment->grade * $assessment->weight;
+            $sumweights += $assessment->weight;
+        }
+        if ($sumweights > 0 and is_null($finalgrade)) {
+            $finalgrade = grade_floatval($sumgrades / $sumweights);
+        }
+        // check if the new final grade differs from the one stored in the database
+        if (grade_floats_different($finalgrade, $current)) {
+            // we need to save new calculation into the database
+            $DB->set_field('workshop_submissions', 'grade', $finalgrade, array('id' => $submissionid));
+        }
+    }
 
     /**
      * Given a list of user ids, returns the filtered one containing just ids of users with own submission

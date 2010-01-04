@@ -160,8 +160,8 @@ case workshop::PHASE_EVALUATION:
     $page       = optional_param($pagingvar, 0, PARAM_INT);
     $perpage    = 10;           // todo let the user modify this
     $groups     = '';           // todo let the user choose the group
-    $sortby     = 'assessmentgrade';   // todo let the user choose the column to sort by
-    $sorthow    = 'DESC';        // todo detto
+    $sortby     = 'submissiongrade';   // todo let the user choose the column to sort by
+    $sorthow    = 'ASC';        // todo detto
 
     $data = $workshop->prepare_grading_report($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
     if ($data) {
