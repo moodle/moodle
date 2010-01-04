@@ -710,11 +710,20 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $a->grade = is_null($assessment->grade) ? get_string('nullgrade', 'workshop') : $assessment->grade;
         $a->gradinggrade = is_null($assessment->gradinggrade) ? get_string('nullgrade', 'workshop') : $assessment->gradinggrade;
         $a->weight = $assessment->weight;
+        // grrr the following logic should really be handled by a future language pack feature
         if (is_null($assessment->gradinggradeover)) {
-            $grade = get_string('formatpeergrade', 'workshop', $a);
+            if ($a->weight == 1) {
+                $grade = get_string('formatpeergrade', 'workshop', $a);
+            } else {
+                $grade = get_string('formatpeergradeweighted', 'workshop', $a);
+            }
         } else {
             $a->gradinggradeover = $assessment->gradinggradeover;
-            $grade = get_string('formatpeergradeover', 'workshop', $a);
+            if ($a->weight == 1) {
+                $grade = get_string('formatpeergradeover', 'workshop', $a);
+            } else {
+                $grade = get_string('formatpeergradeoverweighted', 'workshop', $a);
+            }
         }
         $link = new html_link();
         $link->text = $grade;
