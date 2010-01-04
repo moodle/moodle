@@ -59,13 +59,6 @@ class workshop_edit_comments_strategy_form extends workshop_edit_strategy_form {
             $mform->addElement('hidden', 'dimensionid__idx_'.$i);
             $mform->addElement('editor', 'description__idx_'.$i.'_editor',
                                 get_string('dimensiondescription', 'workshopform_comments'), '', $descriptionopts);
-            // todo replace modgrade with an advanced element (usability issue discussed with Olli)
-            $mform->addElement('modgrade', 'grade__idx_'.$i,
-                                get_string('dimensionmaxgrade','workshopform_comments'), null, true);
-            $mform->setDefault('grade__idx_'.$i, 10);
-            $mform->addElement('select', 'weight__idx_'.$i,
-                                get_string('dimensionweight', 'workshopform_comments'), $weights);
-            $mform->setDefault('weight__idx_'.$i, 1);
         }
 
         $mform->registerNoSubmitButton('noadddims');

@@ -132,5 +132,5 @@ if ($isreviewer) {
 $mform->display();
 if ($canoverridegrades) {
     $feedbackform->display();
-    echo $OUTPUT->footer();
 }
+echo $OUTPUT->footer();

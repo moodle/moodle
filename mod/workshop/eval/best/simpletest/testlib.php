@@ -115,6 +115,22 @@ class workshop_best_evaluation_test extends UnitTestCase {
         $this->assertEqual($norm[7]->dimgrades[4], 0);
     }
 
+    public function test_normalize_grades_max_equals_min() {
+        // fixture set-up
+        $assessments = array();
+        $assessments[1] = (object)array(
+                'dimgrades' => array(3 => 100.0000),
+            );
+        $diminfo = array(
+                3 => (object)array('min' => 100, 'max' => 100),
+            );
+        // excersise SUT
+        $norm = $this->evaluator->normalize_grades($assessments, $diminfo);
+        // validate
+        $this->assertIsA($norm, 'array');
+        $this->assertEqual($norm[1]->dimgrades[3], 100);
+    }
+
     public function test_average_assessment() {
         // fixture set-up
         $assessments = array();

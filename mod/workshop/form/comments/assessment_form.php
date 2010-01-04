@@ -65,15 +65,11 @@ class workshop_comments_assessment_form extends workshop_assessment_form {
             $desc .= "\n</div>";
             $mform->addElement('html', $desc);
 
-            // grade for this aspect
-            $label = get_string('dimensiongrade', 'workshopform_comments');
-            $options = make_grades_menu($fields->{'grade__idx_' . $i});
-            $mform->addElement('select', 'grade__idx_' . $i, $label, $options);
-
             // comment
             $label = get_string('dimensioncomment', 'workshopform_comments');
             //$mform->addElement('editor', 'peercomment__idx_' . $i, $label, null, array('maxfiles' => 0));
-            $mform->addElement('textarea', 'peercomment__idx_' . $i, $label, array('cols' => 60, 'rows' => 5));
+            $mform->addElement('textarea', 'peercomment__idx_' . $i, $label, array('cols' => 60, 'rows' => 10));
+            $mform->addRule('peercomment__idx_' . $i, null, 'required', null, 'client');
         }
         $this->set_data($current);
     }

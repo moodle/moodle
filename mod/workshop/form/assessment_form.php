@@ -64,13 +64,13 @@ class workshop_assessment_form extends moodleform {
 
         $buttonarray = array();
         if ($this->mode == 'preview') {
-            $buttonarray[] = $mform->createElement('submit', 'backtoeditform', get_string('backtoeditform', 'workshop'));
+            $buttonarray[] = $mform->createElement('cancel', 'backtoeditform', get_string('backtoeditform', 'workshop'));
         }
         if ($this->mode == 'assessment') {
             $buttonarray[] = $mform->createElement('submit', 'saveandcontinue', get_string('saveandcontinue', 'workshop'));
             $buttonarray[] = $mform->createElement('submit', 'saveandclose', get_string('saveandclose', 'workshop'));
+            $buttonarray[] = $mform->createElement('cancel');
         }
-        $buttonarray[] = $mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
     }

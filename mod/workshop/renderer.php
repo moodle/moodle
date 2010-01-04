@@ -622,7 +622,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      * @param string $separator between the grade and the reviewer/author
      * @return string
      */
-    protected function grading_report_assessment(stdClass $assessment, $shownames, array $userinfo, $separator) {
+    protected function grading_report_assessment($assessment, $shownames, array $userinfo, $separator) {
         global $CFG;
 
         if (is_null($assessment)) {

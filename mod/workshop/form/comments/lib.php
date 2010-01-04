@@ -175,7 +175,6 @@ class workshop_comments_strategy implements workshop_strategy {
                 $dimid = $fields->{'dimensionid__idx_'.$i};
                 if (isset($grades[$dimid])) {
                     $current->{'gradeid__idx_'.$i}      = $grades[$dimid]->id;
-                    $current->{'grade__idx_'.$i}        = $grades[$dimid]->grade;
                     $current->{'peercomment__idx_'.$i}  = $grades[$dimid]->peercomment;
                 }
             }
@@ -202,7 +201,7 @@ class workshop_comments_strategy implements workshop_strategy {
      *
      * @param stdClass $assessment Assessment being filled
      * @param stdClass $data       Raw data as returned by the assessment form
-     * @return float|null          Raw grade (0.00000 to 100.00000) for submission as suggested by the peer
+     * @return float|null          Constant raw grade 100.00000 for submission as suggested by the peer
      */
     public function save_assessment(stdClass $assessment, stdClass $data) {
         global $DB;
@@ -216,7 +215,7 @@ class workshop_comments_strategy implements workshop_strategy {
             $grade->assessmentid = $assessment->id;
             $grade->strategy = 'comments';
             $grade->dimensionid = $data->{'dimensionid__idx_' . $i};
-            $grade->grade = $data->{'grade__idx_' . $i};
+            $grade->grade = 100.00000;
             $grade->peercomment = $data->{'peercomment__idx_' . $i};
             $grade->peercommentformat = FORMAT_MOODLE;
             if (empty($grade->id)) {
@@ -227,7 +226,8 @@ class workshop_comments_strategy implements workshop_strategy {
                 $DB->update_record('workshop_grades', $grade);
             }
         }
-        return $this->update_peer_grade($assessment);
+        $this->workshop->set_peer_grade($assessment->id, 100.00000);
+        return 100.0000;
     }
 
     /**
@@ -250,7 +250,7 @@ class workshop_comments_strategy implements workshop_strategy {
 
         $sql = 'SELECT s.id AS submissionid,
                        a.id AS assessmentid, a.weight AS assessmentweight, a.reviewerid, a.gradinggrade,
-                       g.dimensionid, g.grade
+                       g.dimensionid, 100.00000 AS grade
                   FROM {workshop_submissions} s
                   JOIN {workshop_assessments} a ON (a.submissionid = s.id)
                   JOIN {workshop_grades} g ON (g.assessmentid = a.id AND g.strategy = :strategy)
@@ -278,26 +278,15 @@ class workshop_comments_strategy implements workshop_strategy {
     public function get_dimensions_info() {
         global $DB;
 
-        $sql = 'SELECT d.id, d.grade, d.weight, s.scale
-                  FROM {workshopform_comments} d
-             LEFT JOIN {scale} s ON (d.grade < 0 AND -d.grade = s.id)
-                 WHERE d.workshopid = :workshopid';
         $params = array('workshopid' => $this->workshop->id);
-        $dimrecords = $DB->get_records_sql($sql, $params);
+        $dimrecords = $DB->get_records('workshopform_comments', array('workshopid' => $this->workshop->id), 'sort', 'id');
         $diminfo = array();
         foreach ($dimrecords as $dimid => $dimrecord) {
             $diminfo[$dimid] = new stdClass();
             $diminfo[$dimid]->id = $dimid;
-            $diminfo[$dimid]->weight = $dimrecord->weight;
-            if ($dimrecord->grade < 0) {
-                // the dimension uses a scale
-                $diminfo[$dimid]->min = 1;
-                $diminfo[$dimid]->max = count(explode(',', $dimrecord->scale));
-            } else {
-                // the dimension uses points
-                $diminfo[$dimid]->min = 0;
-                $diminfo[$dimid]->max = grade_floatval($dimrecord->grade);
-            }
+            $diminfo[$dimid]->weight = 1;
+            $diminfo[$dimid]->min = 100;
+            $diminfo[$dimid]->max = 100;
         }
         return $diminfo;
     }
@@ -313,14 +302,7 @@ class workshop_comments_strategy implements workshop_strategy {
      */
     protected function load_fields() {
         global $DB;
-
-        $sql = 'SELECT *
-                  FROM {workshopform_comments}
-                 WHERE workshopid = :workshopid
-                 ORDER BY sort';
-        $params = array('workshopid' => $this->workshop->id);
-
-        return $DB->get_records_sql($sql, $params);
+        return $DB->get_records('workshopform_comments', array('workshopid' => $this->workshop->id), 'sort');
     }
 
     /**
@@ -337,8 +319,6 @@ class workshop_comments_strategy implements workshop_strategy {
             $formdata->{'dimensionid__idx_' . $key}             = $dimension->id;
             $formdata->{'description__idx_' . $key}             = $dimension->description;
             $formdata->{'description__idx_' . $key.'format'}    = $dimension->descriptionformat;
-            $formdata->{'grade__idx_' . $key}                   = $dimension->grade;
-            $formdata->{'weight__idx_' . $key}                  = $dimension->weight;
             $key++;
         }
         return $formdata;
@@ -387,8 +367,6 @@ class workshop_comments_strategy implements workshop_strategy {
             $cook->comments[$i]->workshopid         = $this->workshop->id;
             $cook->comments[$i]->sort               = $i + 1;
             $cook->comments[$i]->description_editor = $raw->{'description__idx_'.$i.'_editor'};
-            $cook->comments[$i]->grade              = $raw->{'grade__idx_'.$i};
-            $cook->comments[$i]->weight             = $raw->{'weight__idx_'.$i};
         }
         return $cook;
     }
@@ -414,96 +392,5 @@ class workshop_comments_strategy implements workshop_strategy {
         $params = array_merge($params, $dimparams);
 
         return $DB->get_records_sql($sql, $params);
-    }
-
-    /**
-     * Aggregates the assessment form data and sets the grade for the submission given by the peer
-     *
-     * @param stdClass $assessment Assessment record
-     * @return float|null          Raw grade (from 0.00000 to 100.00000) for submission as suggested by the peer
-     */
-    protected function update_peer_grade(stdClass $assessment) {
-        $grades     = $this->get_current_assessment_data($assessment);
-        $suggested  = $this->calculate_peer_grade($grades);
-        if (!is_null($suggested)) {
-            $this->workshop->set_peer_grade($assessment->id, $suggested);
-        }
-        return $suggested;
-    }
-
-    /**
-     * Calculates the aggregated grade given by the reviewer
-     *
-     * @param array $grades Grade records as returned by {@link get_current_assessment_data}
-     * @uses $this->dimensions
-     * @return float|null   Raw grade (from 0.00000 to 100.00000) for submission as suggested by the peer
-     */
-    protected function calculate_peer_grade(array $grades) {
-
-        if (empty($grades)) {
-            return null;
-        }
-        $sumgrades  = 0;
-        $sumweights = 0;
-        foreach ($grades as $grade) {
-            $dimension = $this->dimensions[$grade->dimensionid];
-            if ($dimension->weight < 0) {
-                throw new coding_exception('Negative weights are not supported any more. Something is wrong with your data');
-            }
-            if (grade_floats_equal($dimension->weight, 0) or grade_floats_equal($dimension->grade, 0)) {
-                // does not influence the final grade
-                continue;
-            }
-            if ($dimension->grade < 0) {
-                // this is a scale
-                $scaleid    = -$dimension->grade;
-                $sumgrades  += $this->scale_to_grade($scaleid, $grade->grade) * $dimension->weight * 100;
-                $sumweights += $dimension->weight;
-            } else {
-                // regular grade
-                $sumgrades  += ($grade->grade / $dimension->grade) * $dimension->weight * 100;
-                $sumweights += $dimension->weight;
-            }
-        }
-
-        if ($sumweights === 0) {
-            return 0;
-        }
-        return grade_floatval($sumgrades / $sumweights);
-    }
-
-    /**
-     * Convert scale grade to numerical grades
-     *
-     * In comments grading strategy, scales are considered as grades from 0 to M-1, where M is the number of scale items.
-     *
-     * @throws coding_exception
-     * @param string $scaleid Scale identifier
-     * @param int    $item    Selected scale item number, numbered 1, 2, 3, ... M
-     * @return float
-     */
-    protected function scale_to_grade($scaleid, $item) {
-        global $DB;
-
-        /** @var cache of numbers of scale items */
-        static $numofscaleitems = array();
-
-        if (!isset($numofscaleitems[$scaleid])) {
-            $scale = $DB->get_field('scale', 'scale', array('id' => $scaleid), MUST_EXIST);
-            $items = explode(',', $scale);
-            $numofscaleitems[$scaleid] = count($items);
-            unset($scale);
-            unset($items);
-        }
-
-        if ($numofscaleitems[$scaleid] <= 1) {
-            throw new coding_exception('Invalid scale definition, no scale items found');
-        }
-
-        if ($item <= 0 or $numofscaleitems[$scaleid] < $item) {
-            throw new coding_exception('Invalid scale item number');
-        }
-
-        return ($item - 1) / ($numofscaleitems[$scaleid] - 1);
     }
 }

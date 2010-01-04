@@ -241,7 +241,11 @@ class workshop_best_evaluation implements workshop_evaluation {
             foreach ($assessment->dimgrades as $dimid => $dimgrade) {
                 $dimmin = $diminfo[$dimid]->min;
                 $dimmax = $diminfo[$dimid]->max;
-                $assessment->dimgrades[$dimid] = grade_floatval(($dimgrade - $dimmin) / ($dimmax - $dimmin) * 100);
+                if ($dimmin == $dimmax) {
+                    $assessment->dimgrades[$dimid] = grade_floatval($dimmax);
+                } else {
+                    $assessment->dimgrades[$dimid] = grade_floatval(($dimgrade - $dimmin) / ($dimmax - $dimmin) * 100);
+                }
             }
         }
         return $assessments;
