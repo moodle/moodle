@@ -30,8 +30,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__).'/lib.php');      // we extend this library here
-require_once($CFG->libdir . '/gradelib.php');
+require_once(dirname(__FILE__).'/lib.php');     // we extend this library here
+require_once($CFG->libdir . '/gradelib.php');   // we use some rounding and comparing routines here
 
 /**
  * Full-featured workshop API
@@ -588,6 +588,14 @@ class workshop {
     }
 
     /**
+     * @return moodle_url to the aggregation page
+     */
+    public function aggregate_url() {
+        global $CFG;
+        return new moodle_url($CFG->wwwroot . '/mod/workshop/aggregate.php', array('cmid' => $this->cm->id));
+    }
+
+    /**
      * Returns an object containing all data to display the user's full name and picture
      *
      * @param int $id optional user id, defaults to the current user
@@ -960,10 +968,10 @@ class workshop {
         $params['workshopid'] = $this->id;
         $sqlsort = $sortby . ' ' . $sorthow . ',u.lastname,u.firstname,u.id';
         $sql = "SELECT u.id AS userid,u.firstname,u.lastname,u.picture,u.imagealt,
-                       s.title AS submissiontitle, a.submissiongrade, a.gradinggrade, a.totalgrade
+                       s.title AS submissiontitle, s.grade AS submissiongrade, ag.gradinggrade, ag.totalgrade
                   FROM {user} u
              LEFT JOIN {workshop_submissions} s ON (s.authorid = u.id)
-             LEFT JOIN {workshop_aggregations} a ON (a.userid = u.id)
+             LEFT JOIN {workshop_aggregations} ag ON (ag.userid = u.id AND ag.workshopid = s.workshopid)
                  WHERE s.workshopid = :workshopid AND s.example = 0 AND u.id $participantids
               ORDER BY $sqlsort";
         $participants = $DB->get_records_sql($sql, $params, $page * $perpage, $perpage);
@@ -1118,6 +1126,106 @@ class workshop {
             return null;
         }
         return grade_floatval((float)$grade + (float)$gradinggrade);
+    }
+
+    /**
+     * Calculates grades for submission for the given participant(s)
+     *
+     * Grade for submission is calculated as a weighted mean of all given grades
+     *
+     * @param null|int|array $restrict If null, update all authors, otherwise update just grades for the given author(s)
+     * @return void
+     */
+    public function update_submission_grades($restrict=null) {
+        global $DB;
+
+        // fetch a recordset with all assessments to process
+        $sql = 'SELECT s.id AS submissionid, s.authorid, s.grade AS submissiongrade, s.gradeover, s.gradeoverby,
+                       a.weight, a.grade
+                  FROM {workshop_submissions} s
+             LEFT JOIN {workshop_assessments} a ON (a.submissionid = s.id)
+                 WHERE s.example=0 AND s.workshopid=:workshopid'; // to be cont.
+        $params = array('workshopid' => $this->id);
+
+        if (is_null($restrict)) {
+            // update all users - no more conditions
+        } elseif (!empty($restrict)) {
+            list($usql, $uparams) = $DB->get_in_or_equal($restrict, SQL_PARAMS_NAMED);
+            $sql .= " AND s.authorid $usql";
+            $params = array_merge($params, $uparams);
+        } else {
+            throw new coding_exception('Empty value is not a valid parameter here');
+        }
+
+        $sql .= ' ORDER BY s.id'; // this is important for bulk processing
+        $rs = $DB->get_recordset_sql($sql, $params);
+
+        $previous   = null;
+        foreach ($rs as $current) {
+            if (is_null($previous)) {
+                // we are processing the very first record in the recordset
+                $previous   = $current;
+                $sumgrades  = 0;
+                $sumweights = 0;
+            }
+            if (is_null($current->grade)) {
+                // this was not assessed yet
+                continue;
+            }
+            if ($current->weight == 0) {
+                // this does not influence the calculation
+                continue;
+            }
+            if ($current->submissionid != $previous->submissionid) {
+                // firstly finish the calculation for the previous submission as we now have all its data
+                if ($sumweights > 0) {
+                    // there is a chance that the aggregated grade has changed
+                    $finalgrade = $sumgrades / $sumweights;
+                    if (grade_floats_different($finalgrade, $previous->submissiongrade)) {
+                        // we need to save new calculation into the database
+                        $DB->set_field('workshop_submissions', 'grade', $finalgrade, array('id' => $previous->submissionid));
+                    }
+                }
+                // and then start to process another submission
+                $previous = $current;
+                if (is_null($current->grade)) {
+                    $sumgrades = 0;
+                } else {
+                    $sumgrades  = $current->grade;
+                }
+                $sumweights = $current->weight;
+                continue;
+            } else {
+                // we are still processing the current submission
+                $sumgrades  += $current->grade * $current->weight;
+                $sumweights += $current->weight;
+                continue;
+            }
+        }
+        // finally we must calculate the last submission's grade as it was not done in the previous loop
+        if ($sumweights > 0) {
+            // there is a chance that the aggregated grade has changed
+            $finalgrade = $sumgrades / $sumweights;
+            if (grade_floats_different($finalgrade, $current->submissiongrade)) {
+                // we need to save new calculation into the database
+                $DB->set_field('workshop_submissions', 'grade', $finalgrade, array('id' => $current->submissionid));
+            }
+        }
+        $rs->close();
+    }
+
+    /**
+     * Calculates grades for assessment for the given participant(s)
+     *
+     * Grade for submission is calculated as a weighted mean of all given grades
+     *
+     * @param null|int|array $restrict If null, update all reviewers, otherwise update just grades for the given reviewer(s)
+     * @return void
+     */
+    public function update_grading_grades($restrict=null) {
+        global $DB;
+
+        // todo
     }
 
     ////////////////////////////////////////////////////////////////////////////////

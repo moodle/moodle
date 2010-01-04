@@ -109,15 +109,14 @@
         <KEY NAME="formfield_uk" TYPE="unique" FIELDS="assessmentid, strategy, dimensionid" COMMENT="The combination of assessmentid, strategy and dimensionid must be unique" PREVIOUS="assessment_fk"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="workshop_aggregations" COMMENT="Aggregated grade for submission, grade assessments and total grade calculated for workshop participants are stored here" PREVIOUS="workshop_grades">
+    <TABLE NAME="workshop_aggregations" COMMENT="Aggregated grade for assessment and total grade calculated for workshop participants are stored here. The aggregated grade for submission is stored in workshop_submissions" PREVIOUS="workshop_grades">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
         <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the id of the workshop instance" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the user which aggregated grades are calculated for" PREVIOUS="workshopid" NEXT="submissiongrade"/>
-        <FIELD NAME="submissiongrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The grade for submission" PREVIOUS="userid" NEXT="gradinggrade"/>
-        <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The aggregated grade for all assessments made by this reviewer. The grade is a number from interval 0..100. If NULL then the grade for assessments has not been aggregated yet." PREVIOUS="submissiongrade" NEXT="totalgrade"/>
-        <FIELD NAME="totalgrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The total grade for this workshop to be pushed into the gradebook" PREVIOUS="gradinggrade" NEXT="timeaggregated"/>
-        <FIELD NAME="timeaggregated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The timestamp of when the participant's grades were recently aggregated. If there are some modifications of the assessment after this time, the aggregation shall be marked as possibly out-dated" PREVIOUS="totalgrade"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the user which aggregated grades are calculated for" PREVIOUS="workshopid" NEXT="gradinggrade"/>
+        <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The aggregated grade for all assessments made by this reviewer. The grade is a number from interval 0..100. If NULL then the grade for assessments has not been aggregated yet." PREVIOUS="userid" NEXT="totalgrade"/>
+        <FIELD NAME="totalgrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The total grade for this workshop to be pushed into the gradebook" PREVIOUS="gradinggrade" NEXT="timetotalgraded"/>
+        <FIELD NAME="timetotalgraded" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The timestamp of when the participant's totalgrade was recently aggregated. If there are some modifications of any assessment of his/her submission after this time, the aggregation shall be marked as possibly out-dated" PREVIOUS="totalgrade"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
