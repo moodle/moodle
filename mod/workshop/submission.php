@@ -90,7 +90,7 @@ if ($edit and $ownsubmission) {
         $timenow = time();
         if (empty($formdata->id)) {
             $formdata->workshopid     = $workshop->id;
-            $formdata->example        = 0; // todo add examples support
+            $formdata->example        = 0;
             $formdata->authorid       = $USER->id;
             $formdata->timecreated    = $timenow;
             $formdata->feedbackauthorformat = FORMAT_HTML; // todo better default

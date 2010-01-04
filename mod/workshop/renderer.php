@@ -153,7 +153,6 @@ class mod_workshop_renderer extends plugin_renderer_base {
         return $o;
     }
 
-
     /**
      * Displays the submission fulltext
      *
@@ -288,6 +287,81 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $outputfiles = $this->output->output_tag('ul', array('class' => 'files'), $outputfiles);
         }
         return $this->output->container($outputimgs . $outputfiles, 'attachments');
+    }
+
+    /**
+     * Display a short summary of the example submission
+     *
+     * The passed submission object must define at least: id and title
+     *
+     * @param stdClass $example The example submission record
+     * @return string html to be echoed
+     */
+    public function example_summary(stdClass $example) {
+        global $CFG;
+
+        $o  = '';    // output HTML code
+        $classes = 'submission-summary example';
+        $o .= $this->output->container_start($classes);  // main wrapper
+        $link = new html_link();
+        $link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/example.php',
+                                    array('cmid' => $this->page->context->instanceid, 'id' => $example->id));
+        $link->text = format_string($example->title);
+        $link->set_classes('title');
+        $o .= $this->output->link($link);
+
+        $icon = new moodle_action_icon();
+        $icon->image->src = $this->old_icon_url('i/edit');
+        $icon->image->alt = get_string('edit');
+        $icon->link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/example.php',
+                                    array('cmid' => $this->page->context->instanceid, 'id' => $example->id, 'edit' => 'on'));
+        $o .= $this->output->action_icon($icon);
+
+        $icon = new moodle_action_icon();
+        $icon->image->src = $this->old_icon_url('t/delete');
+        $icon->image->alt = get_string('delete');
+        $icon->link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/example.php',
+                                    array('cmid' => $this->page->context->instanceid, 'id' => $example->id, 'delete' => 1));
+        $o .= $this->output->action_icon($icon);
+
+        $o .= $this->output->container_end(); // end of the main wrapper
+        return $o;
+    }
+
+    /**
+     * Displays the example submission fulltext
+     *
+     * By default, this looks similar to a forum post.
+     *
+     * @param stdClass $example        The example submission data
+     * @return string html to be echoed
+     */
+    public function example_full(stdClass $example) {
+        global $CFG;
+
+        $o  = '';    // output HTML code
+        $classes = 'submission-full example';
+        $o .= $this->output->container_start($classes);
+        $o .= $this->output->container_start('header');
+        $o .= $this->output->heading(format_string($example->title), 3, 'title');
+        $created = get_string('userdatecreated', 'workshop', userdate($example->timecreated));
+        $o .= $this->output->container($created, 'userdate created');
+        if ($example->timemodified > $example->timecreated) {
+            $modified = get_string('userdatemodified', 'workshop', userdate($example->timemodified));
+            $o .= $this->output->container($modified, 'userdate modified');
+        }
+        $o .= $this->output->container_end(); // end of header
+
+        $content = format_text($example->content, $example->contentformat);
+        $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $this->page->context->id,
+                                                        'workshop_submission_content', $example->id);
+        $o .= $this->output->container($content, 'content');
+
+        $o .= $this->submission_attachments($example);
+
+        $o .= $this->output->container_end(); // end of example-full
+
+        return $o;
     }
 
     /**

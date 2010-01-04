@@ -83,6 +83,22 @@ case workshop::PHASE_SETUP:
     if (trim(strip_tags($workshop->intro))) {
         echo $OUTPUT->box(format_module_intro('workshop', $workshop, $workshop->cm->id), 'generalbox', 'intro');
     }
+    if ($workshop->useexamples and has_capability('mod/workshop:manageexamples', $PAGE->context)) {
+        echo $OUTPUT->box_start('generalbox examples');
+        echo $OUTPUT->heading(get_string('examplesubmissions', 'workshop'), 3);
+        if (! $examples = $workshop->get_examples()) {
+            echo $OUTPUT->container(get_string('noexamples', 'workshop'), 'noexamples');
+        }
+        foreach ($examples as $example) {
+            echo $wsoutput->example_summary($example);
+        }
+        $editbutton                 = new html_form();
+        $editbutton->method         = 'get';
+        $editbutton->button->text   = get_string('exampleadd', 'workshop');
+        $editbutton->url            = new moodle_url($workshop->example_url(0), array('edit' => 'on'));
+        echo $OUTPUT->button($editbutton);
+        echo $OUTPUT->box_end();
+    }
     break;
 case workshop::PHASE_SUBMISSION:
     if (trim(strip_tags($workshop->instructauthors))) {
@@ -91,22 +107,26 @@ case workshop::PHASE_SUBMISSION:
         echo $OUTPUT->box(format_text($instructions, $workshop->instructauthorsformat), array('generalbox', 'instructions'));
     }
     if (has_capability('mod/workshop:submit', $PAGE->context)) {
+        echo $OUTPUT->box_start('generalbox ownsubmission');
+        echo $OUTPUT->heading(get_string('yoursubmission', 'workshop'), 3);
         if ($submission = $workshop->get_submission_by_author($USER->id)) {
-            echo $OUTPUT->box_start('generalbox mysubmission');
             echo $wsoutput->submission_summary($submission, true);
-            if ($workshop->submitting_allowed()) {
-                $editbutton                 = new html_form();
-                $editbutton->method         = 'get';
-                $editbutton->button->text   = get_string('editsubmission', 'workshop');
-                $editbutton->url            = new moodle_url($workshop->submission_url(), array('edit' => 'on', 'id' => $submission->id));
-                echo $OUTPUT->button($editbutton);
-            }
-            echo $OUTPUT->box_end();
+        } else {
+            echo $OUTPUT->container(get_string('noyoursubmission', 'workshop'));
         }
+        if ($workshop->submitting_allowed()) {
+            $editbutton                 = new html_form();
+            $editbutton->method         = 'get';
+            $editbutton->button->text   = get_string('editsubmission', 'workshop');
+            $editbutton->url            = new moodle_url($workshop->submission_url(), array('edit' => 'on'));
+            echo $OUTPUT->button($editbutton);
+        }
+        echo $OUTPUT->box_end();
     }
     if (has_capability('mod/workshop:viewallsubmissions', $PAGE->context)) {
         $shownames = has_capability('mod/workshop:viewauthornames', $PAGE->context);
         echo $OUTPUT->box_start('generalbox allsubmissions');
+        echo $OUTPUT->heading(get_string('allsubmissions', 'workshop'), 3);
         if (! $submissions = $workshop->get_submissions('all')) {
             echo $OUTPUT->container(get_string('nosubmissions', 'workshop'), 'nosubmissions');
         }

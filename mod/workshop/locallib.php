@@ -394,7 +394,7 @@ class workshop {
                        u.picture AS authorpicture, u.imagealt AS authorimagealt
                   FROM {workshop_submissions} s
             INNER JOIN {user} u ON (s.authorid = u.id)
-                 WHERE s.workshopid = :workshopid AND s.id = :id';
+                 WHERE s.example = 0 AND s.workshopid = :workshopid AND s.id = :id';
         $params = array('workshopid' => $this->id, 'id' => $id);
         return $DB->get_record_sql($sql, $params, MUST_EXIST);
     }
@@ -419,6 +419,41 @@ class workshop {
                  WHERE s.example = 0 AND s.workshopid = :workshopid AND s.authorid = :authorid';
         $params = array('workshopid' => $this->id, 'authorid' => $authorid);
         return $DB->get_record_sql($sql, $params);
+    }
+
+    /**
+     * Returns example submissions for this workshop
+     *
+     * @return array of records or an empty array
+     */
+    public function get_examples() {
+        global $DB;
+        return $DB->get_records('workshop_submissions', array('workshopid' => $this->id, 'example' => 1), 'title', 'id,title');
+    }
+
+    /**
+     * Returns full record of the given example submission
+     *
+     * @param int $id example submission od
+     * @return object
+     */
+    public function get_example_by_id($id) {
+        global $DB;
+        return $DB->get_record('workshop_submissions',
+                array('id' => $id, 'workshopid' => $this->id, 'example' => 1), '*', MUST_EXIST);
+    }
+
+    /**
+     * Removes the submission and all relevant data
+     *
+     * @param stdClass $submission record to delete
+     * @return void
+     */
+    public function delete_submission(stdClass $submission) {
+        global $DB;
+        $assessments = $DB->get_records('workshop_assessments', array('submissionid' => $submission->id), '', 'id');
+        $this->delete_assessment(array_keys($assessments));
+        $DB->delete_records('workshop_submissions', array('id' => $submission->id));
     }
 
     /**
@@ -653,6 +688,15 @@ class workshop {
     }
 
     /**
+     * @param int $id example submission id
+     * @return moodle_url of the page to view an example submission
+     */
+    public function example_url($id) {
+        global $CFG;
+        return new moodle_url($CFG->wwwroot . '/mod/workshop/example.php', array('cmid' => $this->cm->id, 'id' => $id));
+    }
+
+    /**
      * @return moodle_url of the mod_edit form
      */
     public function updatemod_url() {
@@ -773,6 +817,16 @@ class workshop {
             }
             $phase->tasks['editform'] = $task;
         }
+        if ($this->useexamples and has_capability('mod/workshop:manageexamples', $this->context, $userid)) {
+            $task = new stdClass();
+            $task->title = get_string('prepareexamples', 'workshop');
+            if ($DB->count_records('workshop_submissions', array('example' => 1, 'workshopid' => $this->id)) > 0) {
+                $task->completed = true;
+            } elseif ($this->phase > self::PHASE_SETUP) {
+                $task->completed = false;
+            }
+            $phase->tasks['prepareexamples'] = $task;
+        }
         if (empty($phase->tasks) and $this->phase == self::PHASE_SETUP) {
             // if we are in the setup phase and there is no task (typical for students), let us
             // display some explanation what is going on
@@ -787,7 +841,8 @@ class workshop {
         $phase = new stdClass();
         $phase->title = get_string('phasesubmission', 'workshop');
         $phase->tasks = array();
-        if (has_capability('moodle/course:manageactivities', $this->context, $userid)) {
+        if (($this->usepeerassessment or $this->useselfassessment)
+             and has_capability('moodle/course:manageactivities', $this->context, $userid)) {
             $task = new stdClass();
             $task->title = get_string('taskinstructreviewers', 'workshop');
             $task->link = $this->updatemod_url();
@@ -811,7 +866,6 @@ class workshop {
             }
             $phase->tasks['submit'] = $task;
         }
-        $phases[self::PHASE_SUBMISSION] = $phase;
         if (has_capability('mod/workshop:allocate', $this->context, $userid)) {
             $task = new stdClass();
             $task->title = get_string('allocate', 'workshop');
@@ -849,6 +903,7 @@ class workshop {
                 $phase->tasks['allocateinfo'] = $task;
             }
         }
+        $phases[self::PHASE_SUBMISSION] = $phase;
 
         // Prepare tasks for the peer-assessment phase (includes eventual self-assessments)
         $phase = new stdClass();
@@ -874,7 +929,7 @@ class workshop {
             }
         }
         unset($a);
-        if ($numofpeers) {
+        if ($this->usepeerassessment and $numofpeers) {
             $task = new stdClass();
             if ($numofpeerstodo == 0) {
                 $task->completed = true;
@@ -889,7 +944,7 @@ class workshop {
             unset($a);
             $phase->tasks['assesspeers'] = $task;
         }
-        if ($numofself) {
+        if ($this->useselfassessment and $numofself) {
             $task = new stdClass();
             if ($numofselftodo == 0) {
                 $task->completed = true;
