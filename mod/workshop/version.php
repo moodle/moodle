@@ -27,6 +27,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $module->version  = 2009052100;
 $module->requires = 2009050619;  // Requires this Moodle version
 $module->cron     = 60;
