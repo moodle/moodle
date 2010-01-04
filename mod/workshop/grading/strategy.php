@@ -119,7 +119,7 @@ abstract class workshop_base_strategy implements workshop_strategy {
     /**
      * Factory method returning an instance of an assessment form editor class
      *
-     * By default, the class is defined in grading/{strategy}/gradingform.php and is named
+     * By default, the class is defined in grading/{strategy}/edit_form.php and is named
      * workshop_edit_{strategy}_strategy_form
      *
      * @param $actionurl URL of form handler, defaults to auto detect the current url
@@ -127,7 +127,7 @@ abstract class workshop_base_strategy implements workshop_strategy {
     public function get_edit_strategy_form($actionurl=null) {
         global $CFG;    // needed because the included files use it
     
-        $strategyform = dirname(__FILE__) . '/' . $this->name . '/gradingform.php';
+        $strategyform = dirname(__FILE__) . '/' . $this->name . '/edit_form.php';
         if (file_exists($strategyform)) {
             require_once($strategyform);
         } else {

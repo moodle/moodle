@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(dirname(dirname(__FILE__))).'/lib.php');   // module library
-require_once(dirname(dirname(__FILE__)).'/gradingform.php');    // parent class definition
+require_once(dirname(dirname(__FILE__)).'/edit_form.php');    // parent class definition
 
 
 /**
