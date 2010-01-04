@@ -50,7 +50,7 @@ class workshop {
     public $course = null;
 
     /** grading strategy instance */
-    private $_strategyinstance = null;
+    private $strategyinstance = null;
 
     /**
      * Initializes the object using the data from DB
@@ -491,7 +491,7 @@ class workshop {
     public function grading_strategy_instance() {
         global $CFG;    // because we require other libs here
 
-        if (is_null($this->_strategyinstance)) {
+        if (is_null($this->strategyinstance)) {
             $strategylib = dirname(__FILE__) . '/grading/' . $this->strategy . '/strategy.php';
             if (is_readable($strategylib)) {
                 require_once($strategylib);
@@ -499,12 +499,12 @@ class workshop {
                 throw new moodle_exception('missingstrategy', 'workshop');
             }
             $classname = 'workshop_' . $this->strategy . '_strategy';
-            $this->_strategyinstance = new $classname($this);
-            if (!in_array('workshop_strategy', class_implements($this->_strategyinstance))) {
+            $this->strategyinstance = new $classname($this);
+            if (!in_array('workshop_strategy', class_implements($this->strategyinstance))) {
                 throw new moodle_exception('strategynotimplemented', 'workshop');
             }
         }
-        return $this->_strategyinstance;
+        return $this->strategyinstance;
     }
 
     /**
