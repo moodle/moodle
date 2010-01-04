@@ -294,7 +294,7 @@ class workshop_rubric_strategy implements workshop_strategy {
      * To support an evaluation method, the strategy subplugin must usually implement some
      * required public methods. In theory, this is what interfaces should be used for.
      * Unfortunatelly, we can't extend "implements" declaration as the interface must
-     * be known to the PHP interpret. So we can't declare implementation of a non-installed
+     * be known to the PHP interpreter. So we can't declare implementation of a non-installed
      * evaluation subplugin.
      *
      * @param workshop_evaluation $evaluation the instance of grading evaluation class
@@ -313,12 +313,14 @@ class workshop_rubric_strategy implements workshop_strategy {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * TODO
+     * Returns recordset with information of all assessments done using this strategy
      *
-     * @param resource $restrict 
-     * @return TODO
+     * Required by /eval/best grading evaluation subplugin
+     *
+     * @param array|int|null $restrict optional id or ids of the reviewer
+     * @return moodle_recordset
      */
-    public function eval_best_get_assessments_recordset($restrict) {
+    public function eval_best_get_assessments_recordset($restrict=null) {
         global $DB;
 
         $sql = 'SELECT s.id AS submissionid,
@@ -346,35 +348,23 @@ class workshop_rubric_strategy implements workshop_strategy {
     }
 
     /**
-     * TODO: short description.
+     * Returns a general information about the assessment dimensions
+     *
+     * In rubric, all dimensions have the same weight.
      *
      * @return array [dimid] => stdClass (->id ->max ->min ->weight)
      */
     public function eval_best_dimensions_info() {
         global $DB;
 
-        $sql = 'SELECT d.id, d.grade, d.weight, s.scale
+        $sql = 'SELECT d.id AS id, MIN(l.grade) AS min, MAX(l.grade) AS max, 1 AS weight
                   FROM {workshopform_rubric} d
-             LEFT JOIN {scale} s ON (d.grade < 0 AND -d.grade = s.id)
-                 WHERE d.workshopid = :workshopid';
+            INNER JOIN {workshopform_rubric_levels} l ON (d.id = l.dimensionid)
+                 WHERE d.workshopid = :workshopid
+              GROUP BY d.id';
         $params = array('workshopid' => $this->workshop->id);
-        $dimrecords = $DB->get_records_sql($sql, $params);
-        $diminfo = array();
-        foreach ($dimrecords as $dimid => $dimrecord) {
-            $diminfo[$dimid] = new stdClass();
-            $diminfo[$dimid]->id = $dimid;
-            $diminfo[$dimid]->weight = $dimrecord->weight;
-            if ($dimrecord->grade < 0) {
-                // the dimension uses a scale
-                $diminfo[$dimid]->min = 1;
-                $diminfo[$dimid]->max = count(explode(',', $dimrecord->scale));
-            } else {
-                // the dimension uses points
-                $diminfo[$dimid]->min = 0;
-                $diminfo[$dimid]->max = grade_floatval($dimrecord->grade);
-            }
-        }
-        return $diminfo;
+
+        return $DB->get_records_sql($sql, $params);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
