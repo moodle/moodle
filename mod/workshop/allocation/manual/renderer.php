@@ -67,12 +67,12 @@ class moodle_mod_workshop_allocation_manual_renderer  {
             return $this->status_message((object)array('text' => get_string('nosubmissions', 'workshop')));
         }
 
-        $table = new stdClass();
-        $table->class       = 'allocations';
+        $table              = new html_table();
+        $table->set_classes = array('allocations');
         $table->head        = array(get_string('participantreviewedby', 'workshop'),
                                     get_string('participant', 'workshop'),
                                     get_string('participantrevierof', 'workshop'));
-        $table->rowclass    = array();
+        $table->rowclasses  = array();
         $table->colclasses  = array('reviewedby', 'peer', 'reviewerof');
         $table->data        = array();
         foreach ($peers as $user) {
@@ -91,7 +91,7 @@ class moodle_mod_workshop_allocation_manual_renderer  {
             $table->data[] = $row;
         }
 
-        return $this->output->container($this->status_message($msg) . print_table($table, true), 'manual-allocator');
+        return $this->output->container($this->status_message($msg) . $this->output->table($table), 'manual-allocator');
     }
 
 
