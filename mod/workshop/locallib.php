@@ -1239,7 +1239,7 @@ class workshop {
      */
     public function real_grade_value($value, $max) {
         $localized = true;
-        if (is_null($value)) {
+        if (is_null($value) or $value === '') {
             return null;
         } elseif ($max == 0) {
             return 0;
@@ -1258,7 +1258,7 @@ class workshop {
      * @return float       suitable to be stored as numeric(10,5)
      */
     public function raw_grade_value($value, $max) {
-        if (is_null($value)) {
+        if (is_null($value) or $value === '') {
             return null;
         }
         if ($max == 0 or $value < 0) {
@@ -1278,7 +1278,7 @@ class workshop {
      * @return string
      */
     public function format_total_grade($raw) {
-        if (is_null($raw)) {
+        if (is_null($raw) or $raw === '') {
             return null;
         }
         return format_float($raw, $this->gradedecimals, true);
@@ -1491,10 +1491,10 @@ class workshop {
 
         $current = new stdClass();
         $current->submissionid          = $submission->id;
-        $current->grade                 = $this->real_grade($assessment->grade);
-        $current->gradeover             = $this->real_grade($assessment->gradeover);
-        $current->feedbackauthor        = $assessment->feedbackreviewer;
-        $current->feedbackauthorformat  = $assessment->feedbackreviewerformat;
+        $current->grade                 = $this->real_grade($submission->grade);
+        $current->gradeover             = $this->real_grade($submission->gradeover);
+        $current->feedbackauthor        = $submission->feedbackauthor;
+        $current->feedbackauthorformat  = $submission->feedbackauthorformat;
         if (is_null($current->grade)) {
             $current->grade = get_string('nullgrade', 'workshop');
         }

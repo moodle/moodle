@@ -93,6 +93,7 @@ if ($edit and $ownsubmission) {
             $formdata->example        = 0; // todo add examples support
             $formdata->authorid       = $USER->id;
             $formdata->timecreated    = $timenow;
+            $formdata->feedbackauthorformat = FORMAT_HTML; // todo better default
         }
         $formdata->timemodified       = $timenow;
         $formdata->title              = trim($formdata->title);
@@ -111,6 +112,22 @@ if ($edit and $ownsubmission) {
         // store the updated values or re-save the new submission (re-saving needed because URLs are now rewritten)
         $DB->update_record('workshop_submissions', $formdata);
         redirect($workshop->submission_url($formdata->id));
+    }
+}
+
+// load the form to override gradinggrade and process the submitted data eventually
+if (!$edit and $canoverride) {
+    $feedbackform = $workshop->get_feedbackauthor_form($PAGE->url, $submission);
+    if ($data = $feedbackform->get_data()) {
+        $data = file_postupdate_standard_editor($data, 'feedbackauthor', array(), $workshop->context);
+        $record = new stdClass();
+        $record->id = $submission->id;
+        $record->gradeover = $workshop->raw_grade_value($data->gradeover, $workshop->grade);
+        $record->gradeoverby = $USER->id;
+        $record->feedbackauthor = $data->feedbackauthor;
+        $record->feedbackauthorformat = $data->feedbackauthorformat;
+        $DB->update_record('workshop_submissions', $record);
+        redirect($workshop->view_url());
     }
 }
 
@@ -182,6 +199,11 @@ if ($isreviewer) {
 if ($canviewallassessments) {
     // display all assessments (except the eventual own one - that has been already displayed) - todo
     $strategy = $workshop->grading_strategy_instance();
+}
+
+if (!$edit and $canoverride) {
+    // display a form to override the submission grade
+    $feedbackform->display();
 }
 
 echo $OUTPUT->footer();
