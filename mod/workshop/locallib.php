@@ -931,7 +931,7 @@ class workshop {
                 $task->completed = 'info';
                 $phase->tasks['totalgradesmissinginfo'] = $task;
             }
-        } else {
+        } elseif ($this->phase == self::PHASE_EVALUATION) {
             $task = new stdClass();
             $task->title = get_string('evaluategradeswait', 'workshop');
             $task->completed = 'info';
@@ -1069,16 +1069,17 @@ class workshop {
         // we will need to know the number of all records later for the pagination purposes
         $numofparticipants = count($participants);
 
-        // load all fields which can be used sorting and paginate the records
+        // load all fields which can be used for sorting and paginate the records
         list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
-        $params['workshopid'] = $this->id;
+        $params['workshopid1'] = $this->id;
+        $params['workshopid2'] = $this->id;
         $sqlsort = $sortby . ' ' . $sorthow . ',u.lastname,u.firstname,u.id';
         $sql = "SELECT u.id AS userid,u.firstname,u.lastname,u.picture,u.imagealt,
                        s.title AS submissiontitle, s.grade AS submissiongrade, ag.gradinggrade, ag.totalgrade
                   FROM {user} u
-             LEFT JOIN {workshop_submissions} s ON (s.authorid = u.id)
-             LEFT JOIN {workshop_aggregations} ag ON (ag.userid = u.id AND ag.workshopid = s.workshopid)
-                 WHERE s.workshopid = :workshopid AND s.example = 0 AND u.id $participantids
+             LEFT JOIN {workshop_submissions} s ON (s.authorid = u.id AND s.workshopid = :workshopid1 AND s.example = 0)
+             LEFT JOIN {workshop_aggregations} ag ON (ag.userid = u.id AND ag.workshopid = :workshopid2)
+                 WHERE u.id $participantids
               ORDER BY $sqlsort";
         $participants = $DB->get_records_sql($sql, $params, $page * $perpage, $perpage);
 
@@ -1141,8 +1142,7 @@ class workshop {
         if ($participants) {
             list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
             $params['workshopid'] = $this->id;
-            $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover,
-                           u.id AS reviewerid,
+            $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover, a.reviewerid,
                            s.id AS submissionid,
                            e.id AS authorid, e.lastname, e.firstname, e.picture, e.imagealt
                       FROM {user} u
@@ -1168,6 +1168,11 @@ class workshop {
 
         foreach ($participants as $participant) {
             // set up default (null) values
+            $grades[$participant->userid]->submissionid = null;
+            $grades[$participant->userid]->submissiontitle = null;
+            $grades[$participant->userid]->submissiongrade = null;
+            $grades[$participant->userid]->submissiongradeover = null;
+            $grades[$participant->userid]->submissiongradeoverby = null;
             $grades[$participant->userid]->reviewedby = array();
             $grades[$participant->userid]->reviewerof = array();
         }
@@ -1253,7 +1258,7 @@ class workshop {
      * @return float       suitable to be stored as numeric(10,5)
      */
     public function raw_grade_value($value, $max) {
-        if (empty($value)) {
+        if (is_null($value)) {
             return null;
         }
         if ($max == 0 or $value < 0) {

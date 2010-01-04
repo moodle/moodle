@@ -62,7 +62,7 @@ $string['assignedassessmentsnone'] = 'You have no assigned submission to assess'
 $string['backtoeditform'] = 'Back to editing form';
 $string['byfullname'] = 'by <a href=\"{$a->url}\">{$a->name}</a>';
 $string['calculatetotalgrades'] = 'Calculate total grades';
-$string['calculatetotalgradesdetails'] = 'expected: $a->expected<br />known: $a->known';
+$string['calculatetotalgradesdetails'] = 'expected: $a->expected<br />calculated: $a->known';
 $string['configexamplesmode'] = 'Default mode of examples assessment in workshops';
 $string['configgradedecimals'] = 'Default number of digits that should be shown after the decimal point when displaying grades.';
 $string['configgrade'] = 'Default maximum grade for submission in workshops';

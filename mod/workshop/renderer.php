@@ -400,15 +400,13 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      * the [[nullgrade]] string shall be displayed).
      *
      * @param stdClass $data prepared by {@link workshop::prepare_grading_report()}
-     * @param bool $showauthornames
-     * @param bool $showreviewernames
-     * @param string $sortby
-     * @param string $sorthow
+     * @param stdClass $options display options object with properties ->showauthornames ->showreviewernames ->sortby ->sorthow
+     *          ->showsubmissiongrade ->showgradinggrade ->showtotalgrade
      * @return string html code
      */
-    public function grading_report(stdClass $data, $showauthornames, $showreviewernames, $sortby, $sorthow) {
-        $grades = $data->grades;
-        $userinfo = $data->userinfo;
+    public function grading_report(stdClass $data, stdClass $options) {
+        $grades             = $data->grades;
+        $userinfo           = $data->userinfo;
 
         if (empty($grades)) {
             return '';
@@ -417,26 +415,33 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
         $table = new html_table();
         $table->set_classes('grading-report');
 
-        $sortbyfirstname = $this->sortable_heading(get_string('firstname'), 'firstname', $sortby, $sorthow);
-        $sortbylastname = $this->sortable_heading(get_string('lastname'), 'lastname', $sortby, $sorthow);
+        $sortbyfirstname = $this->sortable_heading(get_string('firstname'), 'firstname', $options->sortby, $options->sorthow);
+        $sortbylastname = $this->sortable_heading(get_string('lastname'), 'lastname', $options->sortby, $options->sorthow);
         if (self::fullname_format() == 'lf') {
             $sortbyname = $sortbylastname . ' / ' . $sortbyfirstname;
         } else {
             $sortbyname = $sortbyfirstname . ' / ' . $sortbylastname;
         }
 
-        $table->head = array(
-                $sortbyname,
-                $this->sortable_heading(get_string('submission', 'workshop'), 'submissiontitle', $sortby, $sorthow),
-                $this->sortable_heading(get_string('receivedgrades', 'workshop')),
-                $this->sortable_heading(get_string('submissiongradeof', 'workshop', $data->maxgrade),
-                        'submissiongrade', $sortby, $sorthow),
-                $this->sortable_heading(get_string('givengrades', 'workshop')),
-                $this->sortable_heading(get_string('gradinggradeof', 'workshop', $data->maxgradinggrade),
-                        'gradinggrade', $sortby, $sorthow),
-                $this->sortable_heading(get_string('totalgradeof', 'workshop', $data->maxtotalgrade),
-                        'totalgrade', $sortby, $sorthow),
-            );
+        $table->head = array();
+        $table->head[] = $sortbyname;
+        $table->head[] = $this->sortable_heading(get_string('submission', 'workshop'), 'submissiontitle',
+                $options->sortby, $options->sorthow);
+        $table->head[] = $this->sortable_heading(get_string('receivedgrades', 'workshop'));
+        if ($options->showsubmissiongrade) {
+            $table->head[] = $this->sortable_heading(get_string('submissiongradeof', 'workshop', $data->maxgrade),
+                    'submissiongrade', $options->sortby, $options->sorthow);
+        }
+        $table->head[] = $this->sortable_heading(get_string('givengrades', 'workshop'));
+        if ($options->showgradinggrade) {
+            $table->head[] = $this->sortable_heading(get_string('gradinggradeof', 'workshop', $data->maxgradinggrade),
+                    'gradinggrade', $options->sortby, $options->sorthow);
+        }
+        if ($options->showtotalgrade) {
+            $table->head[] = $this->sortable_heading(get_string('totalgradeof', 'workshop', $data->maxtotalgrade),
+                    'totalgrade', $options->sortby, $options->sorthow);
+        }
+
         $table->rowclasses  = array();
         $table->colclasses  = array();
         $table->data        = array();
@@ -471,6 +476,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                     $cell = new html_table_cell();
                     $cell->text = $this->grading_report_participant($participant, $userinfo);
                     $cell->rowspan = $numoftrs;
+                    $cell->add_class('participant');
                     $row->cells[] = $cell;
                 }
                 // column #2 - submission - spans over all rows
@@ -478,42 +484,59 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                     $cell = new html_table_cell();
                     $cell->text = $this->grading_report_submission($participant);
                     $cell->rowspan = $numoftrs;
+                    $cell->add_class('submission');
                     $row->cells[] = $cell;
                 }
                 // column #3 - received grades
                 if ($tr % $spanreceived == 0) {
                     $idx = intval($tr / $spanreceived);
+                    $assessment = self::array_nth($participant->reviewedby, $idx);
                     $cell = new html_table_cell();
-                    $cell->text = $this->grading_report_assessment(self::array_nth($participant->reviewedby, $idx),
-                            $showreviewernames, $userinfo, get_string('gradereceivedfrom', 'workshop'));
+                    $cell->text = $this->grading_report_assessment($assessment, $options->showreviewernames, $userinfo,
+                            get_string('gradereceivedfrom', 'workshop'));
                     $cell->rowspan = $spanreceived;
+                    $cell->add_class('receivedgrade');
+                    if (is_null($assessment) or is_null($assessment->grade)) {
+                        $cell->add_class('null');
+                    } else {
+                        $cell->add_class('notnull');
+                    }
                     $row->cells[] = $cell;
                 }
                 // column #4 - total grade for submission
-                if ($tr == 0) {
+                if ($options->showsubmissiongrade and $tr == 0) {
                     $cell = new html_table_cell();
                     $cell->text = $this->grading_report_grade($participant->submissiongrade, $participant->submissiongradeover);
                     $cell->rowspan = $numoftrs;
+                    $cell->add_class('submissiongrade');
                     $row->cells[] = $cell;
                 }
                 // column #5 - given grades
                 if ($tr % $spangiven == 0) {
                     $idx = intval($tr / $spangiven);
+                    $assessment = self::array_nth($participant->reviewerof, $idx);
                     $cell = new html_table_cell();
-                    $cell->text = $this->grading_report_assessment(self::array_nth($participant->reviewerof, $idx),
-                            $showauthornames, $userinfo, get_string('gradegivento', 'workshop'));
+                    $cell->text = $this->grading_report_assessment($assessment, $options->showauthornames, $userinfo,
+                            get_string('gradegivento', 'workshop'));
                     $cell->rowspan = $spangiven;
+                    $cell->add_class('givengrade');
+                    if (is_null($assessment) or is_null($assessment->grade)) {
+                        $cell->add_class('null');
+                    } else {
+                        $cell->add_class('notnull');
+                    }
                     $row->cells[] = $cell;
                 }
                 // column #6 - total grade for assessment
-                if ($tr == 0) {
+                if ($options->showgradinggrade and $tr == 0) {
                     $cell = new html_table_cell();
                     $cell->text = $this->grading_report_grade($participant->gradinggrade);
                     $cell->rowspan = $numoftrs;
+                    $cell->add_class('gradinggrade');
                     $row->cells[] = $cell;
                 }
                 // column #7 - total grade for assessment
-                if ($tr == 0) {
+                if ($options->showtotalgrade and $tr == 0) {
                     $cell = new html_table_cell();
                     if (is_null($participant->totalgrade)) {
                         $cell->text = get_string('nullgrade', 'workshop');
@@ -522,6 +545,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                     }
                     $cell->text = $this->grading_report_grade($participant->totalgrade);
                     $cell->rowspan = $numoftrs;
+                    $cell->add_class('totalgrade');
                     $row->cells[] = $cell;
                 }
                 $table->data[] = $row;

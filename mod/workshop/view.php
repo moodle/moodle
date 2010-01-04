@@ -117,6 +117,41 @@ case workshop::PHASE_SUBMISSION:
     }
     break;
 case workshop::PHASE_ASSESSMENT:
+    if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
+        $page       = optional_param('page', 0, PARAM_INT);
+        $sortby     = optional_param('sortby', 'lastname', PARAM_ALPHA);
+        $sorthow    = optional_param('sorthow', 'ASC', PARAM_ALPHA);
+        $perpage    = 10;           // todo let the user modify this
+        $groups     = '';           // todo let the user choose the group
+        $PAGE->set_url(new moodle_url($PAGE->url, compact('sortby', 'sorthow', 'page')));
+        $data = $workshop->prepare_grading_report($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
+        if ($data) {
+            $showauthornames    = has_capability('mod/workshop:viewauthornames', $workshop->context);
+            $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
+
+            // prepare paging bar
+            $pagingbar              = new moodle_paging_bar();
+            $pagingbar->totalcount  = $data->totalcount;
+            $pagingbar->page        = $page;
+            $pagingbar->perpage     = $perpage;
+            $pagingbar->baseurl     = $PAGE->url;
+            $pagingbar->pagevar     = 'page';
+
+            // grading report display options
+            $reportopts                         = new stdClass();
+            $reportopts->showauthornames        = $showauthornames;
+            $reportopts->showreviewernames      = $showreviewernames;
+            $reportopts->sortby                 = $sortby;
+            $reportopts->sorthow                = $sorthow;
+            $reportopts->showsubmissiongrade    = false;
+            $reportopts->showgradinggrade       = false;
+            $reportopts->showtotalgrade         = false;
+
+            echo $OUTPUT->paging_bar($pagingbar);
+            echo $wsoutput->grading_report($data, $reportopts);
+            echo $OUTPUT->paging_bar($pagingbar);
+        }
+    }
     if (trim(strip_tags($workshop->instructreviewers))) {
         $instructions = file_rewrite_pluginfile_urls($workshop->instructreviewers, 'pluginfile.php', $PAGE->context->id,
             'workshop_instructreviewers', 0, workshop::instruction_editors_options($PAGE->context));
@@ -161,7 +196,7 @@ case workshop::PHASE_ASSESSMENT:
     }
     break;
 case workshop::PHASE_EVALUATION:
-    if (has_capability('mod/workshop:overridegrades', $PAGE->context)) {
+    if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
         $page       = optional_param('page', 0, PARAM_INT);
         $sortby     = optional_param('sortby', 'lastname', PARAM_ALPHA);
         $sorthow    = optional_param('sorthow', 'ASC', PARAM_ALPHA);
@@ -173,10 +208,13 @@ case workshop::PHASE_EVALUATION:
             $showauthornames    = has_capability('mod/workshop:viewauthornames', $workshop->context);
             $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
 
-            // load the grading evaluator
-            $evaluator = $workshop->grading_evaluation_instance();
-            $form = $evaluator->get_settings_form(new moodle_url($workshop->aggregate_url(), compact('sortby', 'sorthow', 'page')));
-            $form->display();
+            if (has_capability('mod/workshop:overridegrades', $PAGE->context)) {
+                // load the grading evaluator
+                $evaluator = $workshop->grading_evaluation_instance();
+                $form = $evaluator->get_settings_form(new moodle_url($workshop->aggregate_url(),
+                        compact('sortby', 'sorthow', 'page')));
+                $form->display();
+            }
 
             // prepare paging bar
             $pagingbar              = new moodle_paging_bar();
@@ -186,8 +224,18 @@ case workshop::PHASE_EVALUATION:
             $pagingbar->baseurl     = $PAGE->url;
             $pagingbar->pagevar     = 'page';
 
+            // grading report display options
+            $reportopts                         = new stdClass();
+            $reportopts->showauthornames        = $showauthornames;
+            $reportopts->showreviewernames      = $showreviewernames;
+            $reportopts->sortby                 = $sortby;
+            $reportopts->sorthow                = $sorthow;
+            $reportopts->showsubmissiongrade    = true;
+            $reportopts->showgradinggrade       = true;
+            $reportopts->showtotalgrade         = true;
+
             echo $OUTPUT->paging_bar($pagingbar);
-            echo $wsoutput->grading_report($data, $showauthornames, $showreviewernames, $sortby, $sorthow);
+            echo $wsoutput->grading_report($data, $reportopts);
             echo $OUTPUT->paging_bar($pagingbar);
         }
     }
