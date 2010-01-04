@@ -434,7 +434,8 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                 $this->sortable_heading(get_string('givengrades', 'workshop')),
                 $this->sortable_heading(get_string('gradinggradeof', 'workshop', $data->maxgradinggrade),
                         'gradinggrade', $sortby, $sorthow),
-                $this->sortable_heading(get_string('totalgrade', 'workshop'), 'totalgrade', $sortby, $sorthow),
+                $this->sortable_heading(get_string('totalgradeof', 'workshop', $data->maxtotalgrade),
+                        'totalgrade', $sortby, $sorthow),
             );
         $table->rowclasses  = array();
         $table->colclasses  = array('reviewedby', 'peer', 'reviewerof');
@@ -490,7 +491,11 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                 // column #4 - total grade for submission
                 if ($tr == 0) {
                     $cell = new html_table_cell();
-                    $cell->text = $participant->submissiongrade;
+                    if (is_null($participant->submissiongrade)) {
+                        $cell->text = get_string('nullgrade', 'workshop');
+                    } else {
+                        $cell->text = $participant->submissiongrade;
+                    }
                     $cell->rowspan = $numoftrs;
                     $row->cells[] = $cell;
                 }
@@ -505,7 +510,11 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                 // column #6 - total grade for assessment
                 if ($tr == 0) {
                     $cell = new html_table_cell();
-                    $cell->text = $participant->gradinggrade;
+                    if (is_null($participant->gradinggrade)) {
+                        $cell->text = get_string('nullgrade', 'workshop');
+                    } else {
+                        $cell->text = $participant->gradinggrade;
+                    }
                     $cell->rowspan = $numoftrs;
                     $row->cells[] = $cell;
                 }
@@ -546,7 +555,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
 
         if (!is_null($sortid)) {
             $iconasc = new moodle_action_icon();
-            $iconasc->image->src = $this->old_icon_url('t/down');
+            $iconasc->image->src = $this->old_icon_url('t/up');
             $iconasc->image->alt = get_string('sortasc', 'workshop');
             $iconasc->image->set_classes('sort asc');
             $newurl = clone($PAGE->url);
@@ -554,7 +563,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
             $iconasc->link->url = new moodle_url($newurl);
 
             $icondesc = new moodle_action_icon();
-            $icondesc->image->src = $this->old_icon_url('t/up');
+            $icondesc->image->src = $this->old_icon_url('t/down');
             $icondesc->image->alt = get_string('sortdesc', 'workshop');
             $icondesc->image->set_classes('sort desc');
             $newurl = clone($PAGE->url);

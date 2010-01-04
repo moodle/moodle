@@ -165,7 +165,7 @@ class workshop {
      */
     public function get_potential_authors($musthavesubmission=true) {
         $users = get_users_by_capability($this->context, 'mod/workshop:submit',
-                    'u.id,u.lastname,u.firstname', 'u.lastname,u.firstname,u.id', 0, 1000, '', '', false, false, true);
+                    'u.id,u.lastname,u.firstname', 'u.lastname,u.firstname,u.id', '', '', '', '', false, false, true);
         if ($musthavesubmission) {
             $users = array_intersect_key($users, $this->users_with_submission(array_keys($users)));
         }
@@ -183,7 +183,7 @@ class workshop {
      */
     public function get_potential_reviewers($musthavesubmission=false) {
         $users = get_users_by_capability($this->context, 'mod/workshop:peerassess',
-                    'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname,u.id', 0, 1000, '', '', false, false, true);
+                    'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname,u.id', '', '', '', '', false, false, true);
         if ($musthavesubmission) {
             // users without their own submission can not be reviewers
             $users = array_intersect_key($users, $this->users_with_submission(array_keys($users)));
@@ -828,10 +828,36 @@ class workshop {
         }
         $phases[self::PHASE_ASSESSMENT] = $phase;
 
-        // Prepare tasks for the grading evaluation phase - todo
+        // Prepare tasks for the grading evaluation phase
         $phase = new stdClass();
         $phase->title = get_string('phaseevaluation', 'workshop');
         $phase->tasks = array();
+        if (has_capability('mod/workshop:overridegrades', $this->context)) {
+            $authors = $this->get_potential_authors(false);
+            $reviewers = $this->get_potential_reviewers(false);
+            $expected = count($authors + $reviewers);
+            unset($authors);
+            unset($reviewers);
+            $known = $DB->count_records_select('workshop_aggregations', 'workshopid = ? AND totalgrade IS NOT NULL',
+                    array($this->id));
+            $task = new stdClass();
+            $task->title = get_string('calculatetotalgrades', 'workshop');
+            $a = new stdClass();
+            $a->expected    = $expected;
+            $a->known       = $known;
+            $task->details  = get_string('calculatetotalgradesdetails', 'workshop', $a);
+            if ($known >= $expected) {
+                $task->completed = true;
+            } elseif ($this->phase > self::PHASE_EVALUATION) {
+                $task->completed = false;
+            }
+            $phase->tasks['evaluateinfo'] = $task;
+        } else {
+            $task = new stdClass();
+            $task->title = get_string('evaluategradeswait', 'workshop');
+            $task->completed = 'info';
+            $phase->tasks['evaluateinfo'] = $task;
+        }
         $phases[self::PHASE_EVALUATION] = $phase;
 
         // Prepare tasks for the "workshop closed" phase - todo
@@ -1119,6 +1145,7 @@ class workshop {
         $data->totalcount = $numofparticipants;
         $data->maxgrade = $this->real_grade(100);
         $data->maxgradinggrade = $this->real_grading_grade(100);
+        $data->maxtotalgrade = $this->format_total_grade($data->maxgrade + $data->maxgradinggrade);
         return $data;
     }
 
@@ -1150,7 +1177,7 @@ class workshop {
         if (is_null($raw)) {
             return null;
         }
-        return format_float($raw, $this->gradedecimals, $localized);
+        return format_float($raw, $this->gradedecimals, true);
     }
 
     /**
@@ -1294,7 +1321,32 @@ class workshop {
     public function aggregate_total_grades($restrict=null) {
         global $DB;
 
-        // todo
+        // fetch a recordset with all assessments to process
+        $sql = 'SELECT s.grade, s.gradeover, s.authorid AS userid,
+                       ag.id AS agid, ag.gradinggrade, ag.totalgrade
+                  FROM {workshop_submissions} s
+            INNER JOIN {workshop_aggregations} ag ON (ag.userid = s.authorid)
+                 WHERE s.example=0 AND s.workshopid=:workshopid'; // to be cont.
+        $params = array('workshopid' => $this->id);
+
+        if (is_null($restrict)) {
+            // update all users - no more conditions
+        } elseif (!empty($restrict)) {
+            list($usql, $uparams) = $DB->get_in_or_equal($restrict, SQL_PARAMS_NAMED);
+            $sql .= " AND ag.userid $usql";
+            $params = array_merge($params, $uparams);
+        } else {
+            throw new coding_exception('Empty value is not a valid parameter here');
+        }
+
+        $sql .= ' ORDER BY ag.userid'; // this is important for bulk processing
+
+        $rs         = $DB->get_recordset_sql($sql, $params);
+
+        foreach ($rs as $current) {
+            $this->aggregate_total_grades_process($current);
+        }
+        $rs->close();
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -1334,7 +1386,7 @@ class workshop {
      * was overridden by a teacher, the gradeover value is returned and the rest of grades are ignored.
      *
      * @param array $assessments of stdClass(->submissionid ->submissiongrade ->gradeover ->weight ->grade)
-     * @return null|float the aggregated grade rounded to numeric(10,5)
+     * @return void
      */
     protected function aggregate_submission_grades_process(array $assessments) {
         global $DB;
@@ -1387,7 +1439,7 @@ class workshop {
      * was overridden by a teacher, the gradinggradeover value is returned and the rest of grades are ignored.
      *
      * @param array $assessments of stdClass(->reviewerid ->gradinggrade ->gradinggradeover ->aggregationid ->aggregatedgrade)
-     * @return null|float the aggregated grade rounded to numeric(10,5)
+     * @return void
      */
     protected function aggregate_grading_grades_process(array $assessments) {
         global $DB;
@@ -1438,6 +1490,49 @@ class workshop {
                 $DB->insert_record('workshop_aggregations', $record);
             } else {
                 $DB->set_field('workshop_aggregations', 'gradinggrade', $finalgrade, array('id' => $agid));
+            }
+        }
+    }
+
+    /**
+     * Given an object with final grade for submission and final grade for assessment, updates the total grade in DB
+     *
+     * @param stdClass $data
+     * @return void
+     */
+    protected function aggregate_total_grades_process(stdClass $data) {
+        global $DB;
+
+        if (!is_null($data->gradeover)) {
+            $submissiongrade = $data->gradeover;
+        } else {
+            $submissiongrade = $data->grade;
+        }
+
+        // If we do not have enough information to update totalgrade, do not do
+        // anything. Please note there may be a lot of reasons why the workshop
+        // participant does not have one of these grades - maybe she was ill or
+        // just did not reach the deadlines. Teacher has to fix grades in
+        // gradebook manually.
+
+        if (is_null($submissiongrade) or (!empty($this->gradinggrade) and is_null($this->gradinggrade))) {
+            return;
+        }
+
+        $totalgrade = $this->grade * $submissiongrade / 100 + $this->gradinggrade * $data->gradinggrade / 100;
+
+        // check if the new total grade differs from the one stored in the database
+        if (grade_floats_different($totalgrade, $data->totalgrade)) {
+            // we need to save new calculation into the database
+            if (is_null($data->agid)) {
+                // no aggregation record yet
+                $record = new stdClass();
+                $record->workshopid = $this->id;
+                $record->userid = $data->userid;
+                $record->totalgrade = $totalgrade;
+                $DB->insert_record('workshop_aggregations', $record);
+            } else {
+                $DB->set_field('workshop_aggregations', 'totalgrade', $totalgrade, array('id' => $data->agid));
             }
         }
     }

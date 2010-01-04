@@ -49,6 +49,10 @@ class testable_workshop extends workshop {
     public function aggregate_grading_grades_process(array $assessments) {
         parent::aggregate_grading_grades_process($assessments);
     }
+
+    public function aggregate_total_grades_process(stdClass $data) {
+        parent::aggregate_total_grades_process($data);
+    }
 }
 
 /**
@@ -376,7 +380,123 @@ class workshop_internal_api_test extends UnitTestCase {
         $this->workshop->aggregate_grading_grades_process($batch);
     }
 
+    public function test_aggregate_total_grades_process_normal_new() {
+        global $DB;
 
+        // fixture set-up
+        $this->workshop->grade = 85;
+        $this->workshop->gradinggrade = 15;
+
+        $data = new stdClass();
+        $data->agid = 1;
+        $data->grade = 95.00000;
+        $data->gradeover = null;
+        $data->gradinggrade = 67.34500;
+        $data->totalgrade = null;
+
+        $expected = grade_floatval(0.95 * 85 + 0.67345 * 15);
+        $DB->expectOnce('set_field', array('workshop_aggregations', 'totalgrade', $expected, array('id' => 1)));
+        // excercise SUT
+        $this->workshop->aggregate_total_grades_process($data);
+    }
+
+    public function test_aggregate_total_grades_process_overriden_new() {
+        global $DB;
+
+        // fixture set-up
+        $this->workshop->grade = 80;
+        $this->workshop->gradinggrade = 20;
+
+        $data = new stdClass();
+        $data->agid = 2;
+        $data->grade = 95.00000;
+        $data->gradeover = 87.5;
+        $data->gradinggrade = 67.34500;
+        $data->totalgrade = null;
+
+        $expected = grade_floatval(0.875 * 80 + 0.67345 * 20);
+        $DB->expectOnce('set_field', array('workshop_aggregations', 'totalgrade', $expected, array('id' => 2)));
+        // excercise SUT
+        $this->workshop->aggregate_total_grades_process($data);
+    }
+
+    public function test_aggregate_total_grades_process_uptodate() {
+        global $DB;
+
+        // fixture set-up
+        $this->workshop->grade = 100;
+        $this->workshop->gradinggrade = 100;
+
+        $data = new stdClass();
+        $data->agid = 3;
+        $data->grade = 45.00000;
+        $data->gradeover = null;
+        $data->gradinggrade = 40.00000;
+        $data->totalgrade = 85.00000;
+
+        $DB->expectNever('set_field');
+        // excercise SUT
+        $this->workshop->aggregate_total_grades_process($data);
+    }
+
+    public function test_aggregate_total_grades_process_null_grade() {
+        global $DB;
+
+        // fixture set-up
+        $this->workshop->grade = 70;
+        $this->workshop->gradinggrade = 30;
+
+        $data = new stdClass();
+        $data->agid = 4;
+        $data->grade = null;
+        $data->gradeover = null;
+        $data->gradinggrade = 95.00000;
+        $data->totalgrade = null;
+
+        $DB->expectNever('set_field');
+        // excercise SUT
+        $this->workshop->aggregate_total_grades_process($data);
+    }
+
+    /*
+    public function test_aggregate_total_grades_process_null_gradinggrade() {
+        global $DB;
+
+        // fixture set-up
+        $this->workshop->grade = 70;
+        $this->workshop->gradinggrade = 30;
+
+        $data = new stdClass();
+        $data->agid = 5;
+        $data->grade = 12.12345;
+        $data->gradeover = null;
+        $data->gradinggrade = null;
+        $data->totalgrade = null;
+
+        $DB->expectNever('set_field');
+        // excercise SUT
+        $this->workshop->aggregate_total_grades_process($data);
+    }
+
+    public function test_aggregate_total_grades_process_null_gradinggrade_of_zero() {
+        global $DB;
+
+        // fixture set-up
+        $this->workshop->grade = 100;
+        $this->workshop->gradinggrade = 0;
+
+        $data = new stdClass();
+        $data->agid = 6;
+        $data->grade = 56.00000;
+        $data->gradeover = null;
+        $data->gradinggrade = null;
+        $data->totalgrade = null;
+
+        $DB->expectOnce('set_field', array('workshop_aggregations', 'totalgrade', 56.00000, array('id' => 1)));
+        // excercise SUT
+        $this->workshop->aggregate_total_grades_process($data);
+    }
+     */
     public function test_percent_to_value() {
         // fixture setup
         $total = 185;

@@ -414,6 +414,17 @@
     border: 1px solid #ddd;
 }
 
+.mod-workshop .grading-report td.c3,
+.mod-workshop .grading-report td.c5 {
+    text-align: center;
+    font-size: 160%;
+}
+
+.mod-workshop .grading-report td.c6 {
+    text-align: center;
+    font-size: 220%;
+}
+
 /**
  * Edit assessment form
  */
