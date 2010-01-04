@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/workshop/db" VERSION="20090526" COMMENT="XMLDB file for Moodle mod/workshop"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="workshop" COMMENT="This table keeps information about the module instances and their settings" NEXT="workshop_submissions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="ID of the parent course" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Name of the activity" PREVIOUS="course" NEXT="intro"/>
+        <FIELD NAME="intro" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="The introduction or description of the activity" PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the intro field" PREVIOUS="intro" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The timestamp when the module was modified" PREVIOUS="introformat" NEXT="phase"/>
+        <FIELD NAME="phase" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The current phase of workshop (0 = not available, 1 = submission, 2 = assessment, 3 = closed)" PREVIOUS="timemodified" NEXT="useexamples"/>
+        <FIELD NAME="useexamples" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="optional feature: students practise evaluating on example submissions from teacher" PREVIOUS="phase" NEXT="usepeerassessment"/>
+        <FIELD NAME="usepeerassessment" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="optional feature: students perform peer assessment of others' work" PREVIOUS="useexamples" NEXT="useselfassessment"/>
+        <FIELD NAME="useselfassessment" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="optional feature: students perform self assessment of their own work" PREVIOUS="usepeerassessment" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="5" NOTNULL="false" UNSIGNED="true" DEFAULT="80" SEQUENCE="false" COMMENT="The maximum grade for submission" PREVIOUS="useselfassessment" NEXT="gradinggrade"/>
+        <FIELD NAME="gradinggrade" TYPE="int" LENGTH="5" NOTNULL="false" UNSIGNED="true" DEFAULT="20" SEQUENCE="false" COMMENT="The maximum grade for assessment" PREVIOUS="grade" NEXT="strategy"/>
+        <FIELD NAME="strategy" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The type of the current grading strategy used in this workshop" PREVIOUS="gradinggrade" NEXT="nattachments"/>
+        <FIELD NAME="nattachments" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of required submission attachments" PREVIOUS="strategy" NEXT="latesubmissions"/>
+        <FIELD NAME="latesubmissions" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allow submitting the work after the deadline" PREVIOUS="nattachments" NEXT="maxbytes"/>
+        <FIELD NAME="maxbytes" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="100000" SEQUENCE="false" COMMENT="Maximum size of the one attached file" PREVIOUS="latesubmissions" NEXT="anonymity"/>
+        <FIELD NAME="anonymity" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The anonymity mode (0 = not anonymous, 1 = authors hidden to reviewers, 2 = reviewers hidden to authors, 3 = fully anonymous)" PREVIOUS="maxbytes" NEXT="assesswosubmission"/>
+        <FIELD NAME="assesswosubmission" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="If a student should participate in peer assessment phase even if she has not managed to submit her own work" PREVIOUS="anonymity" NEXT="nsassessments"/>
+        <FIELD NAME="nsassessments" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of required assessments of other students' work" PREVIOUS="assesswosubmission" NEXT="nexassessments"/>
+        <FIELD NAME="nexassessments" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="If useexamples == 1: the number of required assessments of teacher examples (0 = all, greater than 0: the number)" PREVIOUS="nsassessments" NEXT="examplesmode"/>
+        <FIELD NAME="examplesmode" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = example assessments are voluntary, 1 = examples must be assessed before submission, 2 = examples are available after own submission and must be assessed before peer/self assessment phase" PREVIOUS="nexassessments" NEXT="teacherweight"/>
+        <FIELD NAME="teacherweight" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="The weight of the teacher's assessments" PREVIOUS="examplesmode" NEXT="agreeassessments"/>
+        <FIELD NAME="agreeassessments" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Boolean - determines if author may comment assessments and agree/disagree with it" PREVIOUS="teacherweight" NEXT="hidegrades"/>
+        <FIELD NAME="hidegrades" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Boolean - if agreeassessments==1, should the grades be hidden for author? If hidden, only comments are visible" PREVIOUS="agreeassessments" NEXT="assessmentcomps"/>
+        <FIELD NAME="assessmentcomps" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="2" SEQUENCE="false" COMMENT="Comparison of assessments = required level of assessment similarity (0 = very lax, 1 = lax, 2 = fair, 3 = strict, 4 = very strict)" PREVIOUS="hidegrades" NEXT="submissionstart"/>
+        <FIELD NAME="submissionstart" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be started manually, greater than 0 the timestamp of the start of the submission phase" PREVIOUS="assessmentcomps" NEXT="submissionend"/>
+        <FIELD NAME="submissionend" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be closed manually, greater than 0 the timestamp of the end of the submission phase" PREVIOUS="submissionstart" NEXT="assessmentstart"/>
+        <FIELD NAME="assessmentstart" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be started manually, greater than 0 the timestamp of the start of the assessment phase" PREVIOUS="submissionend" NEXT="assessmentend"/>
+        <FIELD NAME="assessmentend" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be closed manually, greater than 0 the timestamp of the end of the assessment phase" PREVIOUS="assessmentstart" NEXT="releasegrades"/>
+        <FIELD NAME="releasegrades" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be released manually, greater than 0 the timestamp when final grades are published" PREVIOUS="assessmentend" NEXT="password"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The access password" PREVIOUS="releasegrades"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="course_fk"/>
+        <KEY NAME="course_fk" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="workshop_submissions" COMMENT="Info about the submission and the aggregation of the grade for submission, grade for assessment and final grade. Both grade for submission and grade for assessment can be overridden by teacher. Final grade is always the sum of them. All grades are stored as of 0-100." PREVIOUS="workshop" NEXT="workshop_assessments">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the id of the workshop instance" PREVIOUS="id" NEXT="example"/>
+        <FIELD NAME="example" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Is this submission an example from teacher" PREVIOUS="workshopid" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The author of the submission" PREVIOUS="example" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Timestamp when the work was submitted for the first time" PREVIOUS="userid" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Timestamp when the submission has been updated" PREVIOUS="timecreated" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="false" DEFAULT="-1" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the submission calculated as average of the peer-assessments. The grade is a number from interval 0..100. If grade == -1 then the grade for submission has not been aggregated yet." PREVIOUS="timemodified" NEXT="gradeover"/>
+        <FIELD NAME="gradeover" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="false" DEFAULT="-1" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the submission manually overridden by a teacher. Grade is always from interval 0..100. If gradeover == -1 then the grade is not overriden." PREVIOUS="grade" NEXT="gradeoverby"/>
+        <FIELD NAME="gradeoverby" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the user who has overridden the grade for submission." PREVIOUS="gradeover" NEXT="gradinggrade"/>
+        <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="false" DEFAULT="-1" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the assessment calculated by the module. The grade is a number from interval 0..100. If grade == -1 then the grade for assessment has not been aggregated yet." PREVIOUS="gradeoverby" NEXT="teachercomment"/>
+        <FIELD NAME="teachercomment" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="Teacher comment for the submission, for example describing the reasons for the overriding" PREVIOUS="gradinggrade" NEXT="teachercommentformat"/>
+        <FIELD NAME="teachercommentformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the teachercomment field" PREVIOUS="teachercomment"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
+        <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" COMMENT="Workshop foreign key" PREVIOUS="primary" NEXT="author_fk"/>
+        <KEY NAME="author_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="workshop_fk" NEXT="overriddenby_fk"/>
+        <KEY NAME="overriddenby_fk" TYPE="foreign" FIELDS="gradeoverby" REFTABLE="user" REFFIELDS="id" PREVIOUS="author_fk"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="workshop_assessments" COMMENT="Info about the made assessment and automatically calculated grade for it. The proposed grade can be overridden by teacher." PREVIOUS="workshop_submissions" NEXT="workshop_grades">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="submissionid"/>
+        <FIELD NAME="submissionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the assessed submission" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the reviewer who created this assessment" PREVIOUS="submissionid" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="If 0 then the assessment was allocated but the reviewer has not assessed yet. If greater than 0 then the timestamp of when the reviewer assessed for the first time" PREVIOUS="userid" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="If 0 then the assessment was allocated but the reviewer has not assessed yet. If greater than 0 then the timestamp of when the reviewer assessed for the last time" PREVIOUS="timecreated" NEXT="timeagreed"/>
+        <FIELD NAME="timeagreed" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="If 0 then the assessment was not agreed by the author. If greater than 0 then the timestamp of when the assessment was agreed by the author" PREVIOUS="timemodified" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="false" DEFAULT="-1" SEQUENCE="false" DECIMALS="5" COMMENT="The aggregated grade for submission suggested by the reviewer. The grade is computed from the values assigned to the assessment dimensions fields. If grade == -1 then it has not been aggregated yet." PREVIOUS="timeagreed" NEXT="gradinggrade"/>
+        <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="false" DEFAULT="-1" SEQUENCE="false" DECIMALS="5" COMMENT="The computed grade for this assessment. If gradinggrade == -1 then it has not been computed yet." PREVIOUS="grade" NEXT="gradinggradeover"/>
+        <FIELD NAME="gradinggradeover" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="false" DEFAULT="-1" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the assessment manually overridden by a teacher. Grade is always from interval 0..100. If gradinggradeover == -1 then the grade is not overriden." PREVIOUS="gradinggrade" NEXT="gradinggradeoverby"/>
+        <FIELD NAME="gradinggradeoverby" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the user who has overridden the grade for submission." PREVIOUS="gradinggradeover" NEXT="generalcomment"/>
+        <FIELD NAME="generalcomment" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="Comment from the reviewer" PREVIOUS="gradinggradeoverby" NEXT="generalcommentformat"/>
+        <FIELD NAME="generalcommentformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of generalcomment field" PREVIOUS="generalcomment" NEXT="teachercomment"/>
+        <FIELD NAME="teachercomment" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="The comment from the teacher. For example the reason why the grade for assessment was overridden" PREVIOUS="generalcommentformat" NEXT="teachercommentformat"/>
+        <FIELD NAME="teachercommentformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of teachercomment field" PREVIOUS="teachercomment"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="submission_fk"/>
+        <KEY NAME="submission_fk" TYPE="foreign" FIELDS="submissionid" REFTABLE="workshop_submissions" REFFIELDS="id" PREVIOUS="primary" NEXT="reviewer_fk"/>
+        <KEY NAME="reviewer_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="submission_fk" NEXT="overriddenby_fk"/>
+        <KEY NAME="overriddenby_fk" TYPE="foreign" FIELDS="gradinggradeoverby" REFTABLE="user" REFFIELDS="id" PREVIOUS="reviewer_fk"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="workshop_grades" COMMENT="How the reviewers filled-up the grading forms, given grades and comments" PREVIOUS="workshop_assessments" NEXT="workshop_forms_nograding">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="assessmentid"/>
+        <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Part of which assessment this grade is of" PREVIOUS="id" NEXT="strategy"/>
+        <FIELD NAME="strategy" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The type of the grading strategy used for this grade" PREVIOUS="assessmentid" NEXT="dimensionid"/>
+        <FIELD NAME="dimensionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key. References dimension id in one of the grading strategy tables." PREVIOUS="strategy" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Given grade in the referenced assessment dimension." PREVIOUS="dimensionid" NEXT="peercomment"/>
+        <FIELD NAME="peercomment" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="Reviewer's comment to the grade value." PREVIOUS="grade" NEXT="peercommentformat"/>
+        <FIELD NAME="peercommentformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="The format of peercomment field" PREVIOUS="peercomment"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="assessment_fk"/>
+        <KEY NAME="assessment_fk" TYPE="foreign" FIELDS="assessmentid" REFTABLE="workshop_assessments" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="workshop_forms_nograding" COMMENT="The assessment dimensions definitions of No grading strategy forms" PREVIOUS="workshop_grades" NEXT="workshop_forms_errorbanded">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the Workshop instance where this dimension is used as a part of evaluation form." PREVIOUS="id" NEXT="sort"/>
+        <FIELD NAME="sort" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The order of the dimension in the form" PREVIOUS="workshopid" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="The description of the dimension" PREVIOUS="sort" NEXT="descriptionformat"/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field" PREVIOUS="description"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
+        <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="workshop_forms_errorbanded" COMMENT="The assessment dimensions definitions of Error banded grading strategy forms" PREVIOUS="workshop_forms_nograding" NEXT="workshop_forms_accumulative">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the Workshop instance where this dimension is used as a part of evaluation form." PREVIOUS="id" NEXT="sort"/>
+        <FIELD NAME="sort" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The order of the dimension in the form" PREVIOUS="workshopid" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="The description of the dimension" PREVIOUS="sort" NEXT="descriptionformat"/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field" PREVIOUS="description" NEXT="grade0"/>
+        <FIELD NAME="grade0" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="The word describing the negative evaluation (like Poor, Missing, Absent, etc.). If NULL, it defaults to a translated string False" PREVIOUS="descriptionformat" NEXT="grade1"/>
+        <FIELD NAME="grade1" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="A word for possitive evaluation (like Good, Present, OK etc). If NULL, it defaults to a translated string True" PREVIOUS="grade0" NEXT="weight"/>
+        <FIELD NAME="weight" TYPE="int" LENGTH="5" NOTNULL="false" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" COMMENT="Weight of this dimension" PREVIOUS="grade1"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
+        <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="workshop_forms_accumulative" COMMENT="The assessment dimensions definitions of Accumulative grading strategy forms" PREVIOUS="workshop_forms_errorbanded" NEXT="workshop_forms_rubric">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the Workshop instance where this dimension is used as a part of evaluation form." PREVIOUS="id" NEXT="sort"/>
+        <FIELD NAME="sort" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The order of the dimension in the form" PREVIOUS="workshopid" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="The description of the dimension" PREVIOUS="sort" NEXT="descriptionformat"/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field" PREVIOUS="description" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="If greater than 0, then the value is maximum grade on a scale 0..grade. If lesser than 0, then its absolute value is the id of a record in scale table. If equals 0, then no grading is possible for this dimension, just commenting." PREVIOUS="descriptionformat" NEXT="weight"/>
+        <FIELD NAME="weight" TYPE="int" LENGTH="5" NOTNULL="false" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" COMMENT="The weigh of the dimension" PREVIOUS="grade"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
+        <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="workshop_forms_rubric" COMMENT="The assessment dimensions definitions of Rubric grading strategy forms" PREVIOUS="workshop_forms_accumulative" NEXT="workshop_forms_rubric_levels">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the Workshop instance where this dimension is used as a part of evaluation form." PREVIOUS="id" NEXT="sort"/>
+        <FIELD NAME="sort" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The order of the dimension in the form" PREVIOUS="workshopid" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="The description of the dimension" PREVIOUS="sort" NEXT="descriptionformat"/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field" PREVIOUS="description"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
+        <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="workshop_forms_rubric_levels" COMMENT="The definition of rubric rating scales" PREVIOUS="workshop_forms_rubric">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="dimensionid"/>
+        <FIELD NAME="dimensionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Which criterion this level is part of" PREVIOUS="id" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Grade representing this level." PREVIOUS="dimensionid" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="The definition of this level" PREVIOUS="grade" NEXT="descriptionformat"/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field" PREVIOUS="description"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="dimension_fk"/>
+        <KEY NAME="dimension_fk" TYPE="foreign" FIELDS="dimensionid" REFTABLE="workshop_forms_rubric" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
