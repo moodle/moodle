@@ -46,7 +46,7 @@ require_login($course, false, $cm);
 $PAGE->set_url('mod/workshop/develtools.php', array('cmid' => $cm->id));
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_button(update_module_button($cm->id, $course->id, get_string('modulename', 'workshop')));
+$PAGE->set_button($OUTPUT->update_module_button($cm->id, 'workshop'));
 
 $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
 

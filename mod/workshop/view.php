@@ -68,7 +68,7 @@ if ($PAGE->user_allowed_editing()) {
     $editblocks->url            = new moodle_url($PAGE->url, array('edit' => $PAGE->user_is_editing() ? 'off' : 'on'));
     $buttons[] = $OUTPUT->button($editblocks);
 }
-$buttons[] = update_module_button($cm->id, $course->id, get_string('modulename', 'workshop'));
+$buttons[] = $OUTPUT->update_module_button($cm->id, 'workshop');
 $PAGE->set_button(implode('', $buttons));
 
 // todo navigation will be changed yet for Moodle 2.0
@@ -103,6 +103,7 @@ foreach ($assessments as $assessment) {
 }
 echo "</ol></li>" . "\n";
 echo "</ol>\n";
+echo "<p><a href=\"develtools.php?cmid={$cm->id}\">Workshop development tools</a></p>\n";
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
