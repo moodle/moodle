@@ -150,7 +150,7 @@ abstract class workshop_base_strategy implements workshop_strategy {
      * By default, the number of loaded dimensions is set by load_grading_form() 
      * 
      * @access public
-     * @return void
+     * @return Array of records
      */
     public function get_number_of_dimensions() {
         return $this->nodimensions;
