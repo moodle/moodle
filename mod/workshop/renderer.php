@@ -125,12 +125,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $author->lastname   = $submission->authorlastname;
             $author->picture    = $submission->authorpicture;
             $author->imagealt   = $submission->authorimagealt;
-            $userpic            = new moodle_user_picture();
-            $userpic->user      = $author;
-            $userpic->courseid  = $this->page->course->id;
-            $userpic->url       = true;
-            $userpic->size      = 35;
-            $userpic            = $this->output->user_picture($userpic);
+            $userpic            = $this->output->user_picture($author, array('courseid' => $this->page->course->id, 'size' => 35));
             $userurl            = new moodle_url($CFG->wwwroot . '/user/view.php',
                                             array('id' => $author->id, 'course' => $this->page->course->id));
             $a                  = new stdclass();
@@ -180,12 +175,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $author->lastname   = $submission->authorlastname;
             $author->picture    = $submission->authorpicture;
             $author->imagealt   = $submission->authorimagealt;
-            $userpic            = new moodle_user_picture();
-            $userpic->user      = $author;
-            $userpic->courseid  = $this->page->course->id;
-            $userpic->url       = true;
-            $userpic->size      = 64;
-            $userpic            = $this->output->user_picture($userpic);
+            $userpic            = $this->output->user_picture($author, array('courseid' => $this->page->course->id, 'size' => 64));
             $userurl            = new moodle_url($CFG->wwwroot . '/user/view.php',
                                             array('id' => $author->id, 'course' => $this->page->course->id));
             $a                  = new stdclass();
@@ -641,14 +631,8 @@ class mod_workshop_renderer extends plugin_renderer_base {
      */
     protected function grading_report_participant(stdclass $participant, array $userinfo) {
         $userid = $participant->userid;
-        $pic = new moodle_user_picture();
-        $pic->user = $userinfo[$userid];
-        $pic->courseid = $this->page->course->id;
-        $pic->url = true;
-        $pic->size = 35;
-
-        $out  = $this->output->user_picture($pic);
-        $out .= $this->output->output_tag('span', '', fullname($userinfo[$userid]));
+        $out  = $this->output->user_picture($userinfo[$userid], array('courseid' => $this->page->course->id, 'size' => 35));
+        $out .= $this->output->output_tag('span', array(), fullname($userinfo[$userid]));
 
         return $out;
     }
@@ -715,17 +699,11 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
         if ($shownames) {
             $userid = $assessment->userid;
-            $pic = new moodle_user_picture();
-            $pic->user = $userinfo[$userid];
-            $pic->courseid = $this->page->course->id;
-            $pic->url = true;
-            $pic->size = 16;
-
-            $name  = $this->output->user_picture($pic);
-            $name .= $this->output->output_tag('span', array('class' => 'fullname'), fullname($userinfo[$userid]));
-            $name  = $separator . $this->output->output_tag('span', array('class' => 'user'), $name);
+            $name   = $this->output->user_picture($userinfo[$userid], array('courseid' => $this->page->course->id, 'size' => 16));
+            $name  .= $this->output->output_tag('span', array('class' => 'fullname'), fullname($userinfo[$userid]));
+            $name   = $separator . $this->output->output_tag('span', array('class' => 'user'), $name);
         } else {
-            $name = '';
+            $name   = '';
         }
 
         return $this->output->container($grade . $name, 'assessmentdetails');

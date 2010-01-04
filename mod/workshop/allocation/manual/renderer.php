@@ -86,7 +86,7 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
      * @return string HTML code
      */
     protected function participant(stdclass $allocation, array $userinfo) {
-        $o  = $this->output->user_picture($userinfo[$allocation->userid], $this->page->course->id);
+        $o  = $this->output->user_picture($userinfo[$allocation->userid], array('courseid' => $this->page->course->id));
         $o .= fullname($userinfo[$allocation->userid]);
         $o .= $this->output->container_start(array('submission'));
         if (is_null($allocation->submissionid)) {
@@ -132,11 +132,7 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
         $o .= $this->output->output_start_tag('ul', array());
         foreach ($allocation->reviewedby as $reviewerid => $assessmentid) {
             $o .= $this->output->output_start_tag('li', array());
-            $allocationpic = new moodle_user_picture();
-            $allocationpic->user = $userinfo[$reviewerid];
-            $allocationpic->courseid = $this->page->course->id;
-            $allocationpic->size = 16;
-            $o .= $this->output->user_picture($allocationpic);
+            $o .= $this->output->user_picture($userinfo[$reviewerid], array('courseid' => $this->page->course->id, 'size' => 16));
             $o .= fullname($userinfo[$reviewerid]);
 
             // delete icon
@@ -180,11 +176,7 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
         $o .= $this->output->output_start_tag('ul', array());
         foreach ($allocation->reviewerof as $authorid => $assessmentid) {
             $o .= $this->output->output_start_tag('li', array());
-            $allocationpic = new moodle_user_picture();
-            $allocationpic->user = $userinfo[$authorid];
-            $allocationpic->courseid = $this->page->course->id;
-            $allocationpic->size = 16;
-            $o .= $this->output->user_picture($allocationpic, $this->page->course->id);
+            $o .= $this->output->user_picture($userinfo[$authorid], array('courseid' => $this->page->course->id, 'size' => 16));
             $o .= fullname($userinfo[$authorid]);
 
             // delete icon
