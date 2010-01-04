@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20090804" COMMENT="XMLDB file for Moodle mod/workshop"
+<XMLDB PATH="mod/workshop/db" VERSION="20090812" COMMENT="XMLDB file for Moodle mod/workshop"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -102,7 +102,8 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="assessment_fk"/>
         <KEY NAME="assessment_fk" TYPE="foreign" FIELDS="assessmentid" REFTABLE="workshop_assessments" REFFIELDS="id" PREVIOUS="primary" NEXT="dimension_fk"/>
-        <KEY NAME="dimension_fk" TYPE="foreign" FIELDS="dimensionid" REFTABLE="workshop_forms" REFFIELDS="id" PREVIOUS="assessment_fk"/>
+        <KEY NAME="dimension_fk" TYPE="foreign" FIELDS="dimensionid" REFTABLE="workshop_forms" REFFIELDS="id" PREVIOUS="assessment_fk" NEXT="formfield"/>
+        <KEY NAME="formfield" TYPE="unique" FIELDS="assessmentid, dimensionid" COMMENT="The combination of assessmentid and dimensionid must be unique" PREVIOUS="dimension_fk"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="workshop_forms" COMMENT="Meta table to provide unique id for every assessment dimension which is needed for file api support." PREVIOUS="workshop_grades" NEXT="workshop_forms_accumulative">
