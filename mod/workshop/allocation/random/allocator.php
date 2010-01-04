@@ -90,9 +90,12 @@ class workshop_random_allocator implements workshop_allocator {
             $reviewers          = $this->workshop->get_grouped($reviewers);
             $assessments        = $this->workshop->get_assessments();
 
-            $newallocations     = array();      // array of (reviewer,reviewee) tuples
+            $newallocations     = array();      // array of array(reviewer => reviewee)
 
             if ($numofreviews) {
+                // TODO MDL-19870 rewrite this part to make it easier to maintain and extend.
+                // $removecurrent -> remove it at the beginning and stop doing the magic with unkept allocation
+                // (leading to possible bugs)
                 if ($removecurrent) {
                     // behave as if there were no current assessments
                     $curassessments = array();
