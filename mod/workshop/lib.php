@@ -309,45 +309,56 @@ function workshop_pluginfile($course, $cminfo, $context, $filearea, $args, $forc
     if (!$cminfo->uservisible) {
         return false;
     }
-
-    $fileareas = array('workshop_submission_content', 'workshop_submission_attachment', 'workshop_dimension_description');
-    if (!in_array($filearea, $fileareas)) {
-        return false;
-    }
-
-    $submissionid = (int)array_shift($args);
-
     if (!$cm = get_coursemodule_from_instance('workshop', $cminfo->instance, $course->id)) {
         return false;
     }
-
     require_course_login($course, true, $cm);
 
-    if (!$submission = $DB->get_record('workshop_submissions', array('id' => $submissionid))) {
-        return false;
-    }
-
-    if (!$workshop = $DB->get_record('workshop', array('id' => $cminfo->instance))) {
-        return false;
-    }
-
-    $fs = get_file_storage();
-    $relativepath = '/' . implode('/', $args);
-    $fullpath = $context->id . $filearea . $submissionid . $relativepath;
-    if ((!$file = $fs->get_file_by_hash(sha1($fullpath))) || ($file->is_directory())) {
-        return false;
-    }
-    // TODO make sure the user is allowed to see the file
-
-    // finally send the file
-    if ('workshop_dimension_description' == $filearea) {
+    if ($filearea === 'workshop_dimension_description') {
+        $itemid = (int)array_shift($args);
+        if (!$dimension = $DB->get_record('workshop_forms', array('id' => $itemid))) {
+            return false;
+        }
+        if (!$workshop = $DB->get_record('workshop', array('id' => $cminfo->instance))) {
+            return false;
+        }
+        if ($workshop->id !== $dimension->workshopid) {
+            // this should never happen but just in case
+            return false;
+        }
+        // TODO now make sure the user is allowed to see the file
         // media embedded by teacher into the dimension description
+        $fs = get_file_storage();
+        $relativepath = '/' . implode('/', $args);
+        $fullpath = $context->id . $filearea . $itemid . $relativepath;
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+        // finally send the file
         send_stored_file($file);
+    }
 
-    } else {
-        // files uploaded by students in their attachments - forcing download for security reasons
+    if ($filearea === 'workshop_submission_content' or $filearea === 'workshop_submission_attachment') {
+        $itemid = (int)array_shift($args);
+        if (!$submission = $DB->get_record('workshop_submissions', array('id' => $itemid))) {
+            return false;
+        }
+        if (!$workshop = $DB->get_record('workshop', array('id' => $cminfo->instance))) {
+            return false;
+        }
+        // TODO now make sure the user is allowed to see the file
+        $fs = get_file_storage();
+        $relativepath = '/' . implode('/', $args);
+        $fullpath = $context->id . $filearea . $itemid . $relativepath;
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+        // finally send the file
+        // these files are uploaded by students - forcing download for security reasons
         send_stored_file($file, 0, 0, true);
     }
+
+    return false;
 }
 
 /**

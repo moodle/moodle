@@ -81,7 +81,7 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
             $norepeats += WORKSHOP_STRATEGY_ADDDIMS;
         }
 
-        // prepare the emebeded files
+        // prepare the embeded files
         for ($i = 0; $i < $this->nodimensions; $i++) {
             // prepare all editor elements
             $fields = file_prepare_standard_editor($fields, 'description__idx_'.$i, $this->descriptionopts,
@@ -252,11 +252,18 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
      */
     public function get_assessment_form(moodle_url $actionurl=null, $mode='preview') {
         global $CFG;    // needed because the included files use it
+        global $PAGE;
         require_once(dirname(__FILE__) . '/assessment_form.php');
 
         $fields = $this->load_fields();
         if (is_null($this->nodimensions)) {
             throw new coding_exception('You forgot to set the number of dimensions in load_fields()');
+        }
+
+        // rewrite URLs to the embeded files
+        for ($i = 0; $i < $this->nodimensions; $i++) {
+            $fields->{'description__idx_'.$i} = file_rewrite_pluginfile_urls($fields->{'description__idx_'.$i},
+                'pluginfile.php', $PAGE->context->id, 'workshop_dimension_description', $fields->{'dimensionid__idx_'.$i});
         }
 
         // set up the required custom data common for all strategies
