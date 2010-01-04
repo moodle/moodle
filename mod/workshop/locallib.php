@@ -80,18 +80,22 @@ class workshop {
      * @param stdClass $dbrecord Workshop instance data from {workshop} table
      * @param stdClass $cm       Course module record as returned by {@link get_coursemodule_from_id()}
      * @param stdClass $course   Course record from {course} table
+     * @param stdClass $context  The context of the workshop instance
      */
-    public function __construct(stdClass $dbrecord, stdClass $cm, stdClass $course) {
+    public function __construct(stdClass $dbrecord, stdClass $cm, stdClass $course, stdClass $context=null) {
         foreach ($dbrecord as $field => $value) {
             $this->{$field} = $value;
         }
-        $this->evaluation   = 'best';   // todo make this configurable
         $this->cm           = $cm;
         $this->course       = $course;  // beware - this replaces the standard course field in the instance table
                                         // this is intentional - IMO there should be no such field as it violates
-                                        // 3rd normal form with no real performance gain. This way I try to
-                                        // demonstrate how backwards compatibility could be achieved --mudrd8mz
-        $this->context      = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+                                        // 3rd normal form with no real performance gain
+        if (is_null($context)) {
+            $this->context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        } else {
+            $this->context = $context;
+        }
+        $this->evaluation   = 'best';   // todo make this configurable although we have no alternatives yet
     }
 
     ////////////////////////////////////////////////////////////////////////////////

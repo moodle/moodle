@@ -67,10 +67,11 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         $this->realDB   = $DB;
         $DB             = new mockDB();
 
-        $cm             = (object)array('id' => 3);
-        $course         = (object)array('id' => 11);
+        $cm             = new stdClass();
+        $course         = new stdClass();
+        $context        = new stdClass();
         $workshop       = (object)array('id' => 42, 'strategy' => 'accumulative');
-        $this->workshop = new workshop($workshop, $cm, $course);
+        $this->workshop = new workshop($workshop, $cm, $course, $context);
         $this->strategy = new testable_workshop_accumulative_strategy($this->workshop);
     }
 
