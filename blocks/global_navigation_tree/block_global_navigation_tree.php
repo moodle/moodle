@@ -89,7 +89,8 @@ class block_global_navigation_tree extends block_tree {
             return true;
         }
         $this->page->requires->yui2_lib('dom');
-        $this->page->requires->js('lib/javascript-navigation.js');
+        // JS for navigation moved to the standard theme, the code will probably have to depend on the actual page structure
+        // $this->page->requires->js('lib/javascript-navigation.js');
         // Navcount is used to allow us to have multiple trees although I dont' know why
         // you would want to trees the same
 
