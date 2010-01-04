@@ -48,14 +48,14 @@ class workshop_edit_noerrors_strategy_form extends workshop_edit_strategy_form {
         $weights = workshop_get_dimension_weights();
 
         $repeated = array();
-        $repeated[] =& $mform->createElement('hidden', 'dimensionid', 0);
-        $repeated[] =& $mform->createElement('header', 'dimension',
+        $repeated[] = $mform->createElement('hidden', 'dimensionid', 0);
+        $repeated[] = $mform->createElement('header', 'dimension',
                                                 get_string('dimensionnumbernoerrors', 'workshop', '{no}'));
-        $repeated[] =& $mform->createElement('htmleditor', 'description',
+        $repeated[] = $mform->createElement('htmleditor', 'description',
                                                 get_string('dimensiondescription', 'workshop'), array());
-        $repeated[] =& $mform->createElement('text', 'grade0', get_string('noerrorsgrade0', 'workshop'), array('size'=>'15'));
-        $repeated[] =& $mform->createElement('text', 'grade1', get_string('noerrorsgrade1', 'workshop'), array('size'=>'15'));
-        $repeated[] =& $mform->createElement('select', 'weight', get_string('dimensionweight', 'workshop'), $weights);
+        $repeated[] = $mform->createElement('text', 'grade0', get_string('noerrorsgrade0', 'workshop'), array('size'=>'15'));
+        $repeated[] = $mform->createElement('text', 'grade1', get_string('noerrorsgrade1', 'workshop'), array('size'=>'15'));
+        $repeated[] = $mform->createElement('select', 'weight', get_string('dimensionweight', 'workshop'), $weights);
 
         $repeatedoptions = array();
         $repeatedoptions['description']['type'] = PARAM_CLEANHTML;
@@ -86,8 +86,8 @@ class workshop_edit_noerrors_strategy_form extends workshop_edit_strategy_form {
         $mform->addElement('hidden', 'map[0]', 100);
         for ($i = 1; $i <= $numofdisplaydimensions; $i++) {
             $selects = array();
-            $selects[] =& $mform->createElement('select', "map[$i]", $i, $percents);
-            $selects[] =& $mform->createElement('static', "mapdefault[$i]", '',
+            $selects[] = $mform->createElement('select', "map[$i]", $i, $percents);
+            $selects[] = $mform->createElement('static', "mapdefault[$i]", '',
                                         get_string('percents', 'workshop', floor(100 - $i * 100 / $numofdisplaydimensions)));
             $mform->addGroup($selects, "grademapping$i", $i, array(' '), false);
             $mform->setDefault("map[$i]", '');

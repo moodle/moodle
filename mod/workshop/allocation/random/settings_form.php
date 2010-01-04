@@ -64,9 +64,9 @@ class workshop_random_allocator_form extends moodleform {
         $options_numper = array(WORKSHOP_USERTYPE_AUTHOR    => get_string('numperauthor', 'workshop'),
                                 WORKSHOP_USERTYPE_REVIEWER  => get_string('numperreviewer', 'workshop'));
         $grpnumofreviews = array();
-        $grpnumofreviews[] =& $mform->createElement('select', 'numofreviews', '', $options_numofreviewes);
+        $grpnumofreviews[] = $mform->createElement('select', 'numofreviews', '', $options_numofreviewes);
         $mform->setDefault('numofreviews', 4);
-        $grpnumofreviews[] =& $mform->createElement('select', 'numper', '', $options_numper);
+        $grpnumofreviews[] = $mform->createElement('select', 'numper', '', $options_numper);
         $mform->setDefault('numper', WORKSHOP_USERTYPE_AUTHOR);
         $mform->addGroup($grpnumofreviews, 'grpnumofreviews', get_string('numofreviews', 'workshop'), array(' '), false);
 

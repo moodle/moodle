@@ -132,6 +132,7 @@ class workshop_manual_allocator implements workshop_allocator {
      */
     public function ui(moodle_mod_workshop_renderer $wsoutput) {
         global $PAGE;
+        global $CFG;    // bacause we include other libs here
 
         $hlauthorid     = -1;           // highlight this author
         $hlreviewerid   = -1;           // highlight this reviewer

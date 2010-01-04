@@ -37,7 +37,7 @@ class mod_workshop_mod_form extends moodleform_mod {
 
         global $CFG, $COURSE;
         $workshopconfig = get_config('workshop');
-        $mform =& $this->_form;
+        $mform = $this->_form;
 
 /// General --------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
