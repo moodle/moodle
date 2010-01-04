@@ -247,26 +247,29 @@ class workshop_manual_allocator implements workshop_allocator {
         }
 
         // get current reviewees
-        list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
-        $params['workshopid'] = $this->workshop->id;
-        $sql = "SELECT a.id AS assessmentid, a.submissionid,
-                       u.id AS reviewerid,
-                       s.id AS submissionid,
-                       e.id AS revieweeid, e.lastname, e.firstname, e.picture, e.imagealt
-                  FROM {user} u
-                  JOIN {workshop_assessments} a ON (a.reviewerid = u.id)
-                  JOIN {workshop_submissions} s ON (a.submissionid = s.id)
-                  JOIN {user} e ON (s.authorid = e.id)
-                 WHERE u.id $participantids AND s.workshopid = :workshopid AND s.example = 0";
-        $reviewees = $DB->get_records_sql($sql, $params);
-        foreach ($reviewees as $reviewee) {
-            if (!isset($userinfo[$reviewee->revieweeid])) {
-                $userinfo[$reviewee->revieweeid]            = new stdClass();
-                $userinfo[$reviewee->revieweeid]->id        = $reviewee->revieweeid;
-                $userinfo[$reviewee->revieweeid]->firstname = $reviewee->firstname;
-                $userinfo[$reviewee->revieweeid]->lastname  = $reviewee->lastname;
-                $userinfo[$reviewee->revieweeid]->picture   = $reviewee->picture;
-                $userinfo[$reviewee->revieweeid]->imagealt  = $reviewee->imagealt;
+        $reviewees = array();
+        if ($participants) {
+            list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
+            $params['workshopid'] = $this->workshop->id;
+            $sql = "SELECT a.id AS assessmentid, a.submissionid,
+                           u.id AS reviewerid,
+                           s.id AS submissionid,
+                           e.id AS revieweeid, e.lastname, e.firstname, e.picture, e.imagealt
+                      FROM {user} u
+                      JOIN {workshop_assessments} a ON (a.reviewerid = u.id)
+                      JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+                      JOIN {user} e ON (s.authorid = e.id)
+                     WHERE u.id $participantids AND s.workshopid = :workshopid AND s.example = 0";
+            $reviewees = $DB->get_records_sql($sql, $params);
+            foreach ($reviewees as $reviewee) {
+                if (!isset($userinfo[$reviewee->revieweeid])) {
+                    $userinfo[$reviewee->revieweeid]            = new stdClass();
+                    $userinfo[$reviewee->revieweeid]->id        = $reviewee->revieweeid;
+                    $userinfo[$reviewee->revieweeid]->firstname = $reviewee->firstname;
+                    $userinfo[$reviewee->revieweeid]->lastname  = $reviewee->lastname;
+                    $userinfo[$reviewee->revieweeid]->picture   = $reviewee->picture;
+                    $userinfo[$reviewee->revieweeid]->imagealt  = $reviewee->imagealt;
+                }
             }
         }
 

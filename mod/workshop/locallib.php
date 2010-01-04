@@ -245,7 +245,7 @@ class workshop {
      * tables. Does not return textual fields to prevent possible memory lack issues.
      *
      * @param mixed $authorid int|array|'all' If set to [array of] integer, return submission[s] of the given user[s] only
-     * @return array
+     * @return array of records or an empty array
      */
     public function get_submissions($authorid='all') {
         global $DB;
@@ -264,13 +264,13 @@ class workshop {
 
         if ('all' === $authorid) {
             // no additional conditions
-        } elseif (is_array($authorid)) {
+        } elseif (!empty($authorid)) {
             list($usql, $uparams) = $DB->get_in_or_equal($authorid, SQL_PARAMS_NAMED);
             $sql .= " AND authorid $usql";
             $params = array_merge($params, $uparams);
         } else {
-            $sql .= ' AND authorid = :authorid';
-            $params['authorid'] = $authorid;
+            // $authorid is empty
+            return array();
         }
         $sql .= ' ORDER BY u.lastname, u.firstname';
 
@@ -993,34 +993,40 @@ class workshop {
         }
 
         // get current reviewees
-        list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
-        $params['workshopid'] = $this->id;
-        $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover,
-                       u.id AS reviewerid,
-                       s.id AS submissionid,
-                       e.id AS authorid, e.lastname, e.firstname, e.picture, e.imagealt
-                  FROM {user} u
-                  JOIN {workshop_assessments} a ON (a.reviewerid = u.id)
-                  JOIN {workshop_submissions} s ON (a.submissionid = s.id)
-                  JOIN {user} e ON (s.authorid = e.id)
-                 WHERE u.id $participantids AND s.workshopid = :workshopid";
-        $reviewees = $DB->get_records_sql($sql, $params);
-        foreach ($reviewees as $reviewee) {
-            if (!isset($userinfo[$reviewee->authorid])) {
-                $userinfo[$reviewee->authorid]            = new stdClass();
-                $userinfo[$reviewee->authorid]->id        = $reviewee->authorid;
-                $userinfo[$reviewee->authorid]->firstname = $reviewee->firstname;
-                $userinfo[$reviewee->authorid]->lastname  = $reviewee->lastname;
-                $userinfo[$reviewee->authorid]->picture   = $reviewee->picture;
-                $userinfo[$reviewee->authorid]->imagealt  = $reviewee->imagealt;
+        $reviewees = array();
+        if ($participants) {
+            list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
+            $params['workshopid'] = $this->id;
+            $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover,
+                           u.id AS reviewerid,
+                           s.id AS submissionid,
+                           e.id AS authorid, e.lastname, e.firstname, e.picture, e.imagealt
+                      FROM {user} u
+                      JOIN {workshop_assessments} a ON (a.reviewerid = u.id)
+                      JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+                      JOIN {user} e ON (s.authorid = e.id)
+                     WHERE u.id $participantids AND s.workshopid = :workshopid";
+            $reviewees = $DB->get_records_sql($sql, $params);
+            foreach ($reviewees as $reviewee) {
+                if (!isset($userinfo[$reviewee->authorid])) {
+                    $userinfo[$reviewee->authorid]            = new stdClass();
+                    $userinfo[$reviewee->authorid]->id        = $reviewee->authorid;
+                    $userinfo[$reviewee->authorid]->firstname = $reviewee->firstname;
+                    $userinfo[$reviewee->authorid]->lastname  = $reviewee->lastname;
+                    $userinfo[$reviewee->authorid]->picture   = $reviewee->picture;
+                    $userinfo[$reviewee->authorid]->imagealt  = $reviewee->imagealt;
+                }
             }
         }
 
         // get the current grades for assessment
-        list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
-        $params['workshopid'] = $this->id;
-        $sql = "SELECT * FROM {workshop_evaluations} WHERE reviewerid $participantids AND workshopid = :workshopid";
-        $gradinggrades = $DB->get_records_sql($sql, $params);
+        $gradinggrades = array();
+        if ($participants) {
+            list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
+            $params['workshopid'] = $this->id;
+            $sql = "SELECT * FROM {workshop_evaluations} WHERE reviewerid $participantids AND workshopid = :workshopid";
+            $gradinggrades = $DB->get_records_sql($sql, $params);
+        }
 
         // now populate the final data object to be rendered
         $grades = array();
