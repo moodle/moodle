@@ -154,6 +154,7 @@ $string['saveandclose'] = 'Save and close';
 $string['saveandcontinue'] = 'Save and continue editing';
 $string['saveandpreview'] = 'Save and preview';
 $string['strategyaccumulative'] = 'Accumulative grading';
+$string['strategydummy'] = 'Dummy strategy';
 $string['strategy'] = 'Grading strategy';
 $string['strategyhaschanged'] = 'The workshop grading strategy has changed since the form was opened for editing.';
 $string['strategynoerrors'] = 'Number of errors';
