@@ -130,16 +130,19 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
         if (is_null($user->submissionid)) {
             $o .= $this->output->output_tag('span', array('class' => 'info'), get_string('nothingtoreview', 'workshop'));
         } else {
-            $options = $this->users_to_menu_options($workshop->get_peer_reviewers(!$workshop->assesswosubmission));
+            $exclude = array();
             if (!$workshop->useselfassessment) {
-                // students can not review their own submissions in this workshop
-                if (isset($options[$user->id])) {
-                    unset($options[$user->id]);
-                }
+                $exclude[$user->id] = true;
             }
-            $handler = $this->page->url->out_action() . '&amp;mode=new&amp;of=' . $user->id . '&amp;by=';
-            $o .= popup_form($handler, $options, 'addreviewof' . $user->id, '',
-                     get_string('chooseuser', 'workshop'), '', '', true, 'self', get_string('addreviewer', 'workshop'));
+            // todo add an option to exclude users without own submission
+            // todo nice to have number of current allocations for every user plus ordering by it
+            $handler = new moodle_url($this->page->url, array('mode' => 'new', 'of' => $user->id, 'sesskey' => sesskey()));
+            $options = $this->users_to_menu_options($workshop->get_peer_reviewers(), $exclude, $handler, 'by'); 
+            $select = moodle_select::make_popup_form($options, 'addreviewof' . $user->id, '', 
+                get_string('addreviewer', 'workshop'));
+            $select->nothinglabel = get_string('chooseuser', 'workshop');
+            $select->set_label(get_string('addreviewer', 'workshop'), $select->id);
+            $o .= $this->output->select($select);
         }
         $o .= $this->output->output_start_tag('ul', array());
         foreach ($user->reviewedby as $reviewerid => $assessmentid) {
@@ -169,16 +172,19 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
         if (is_null($user->submissionid)) {
             $o .= $this->output->container(get_string('withoutsubmission', 'workshop'), 'info');
         }
-        $options = $this->users_to_menu_options($workshop->get_peer_authors());
+        $exclude = array();
         if (!$workshop->useselfassessment) {
-            // students can not be reviewed by themselves in this workshop
-            if (isset($options[$user->id])) {
-                unset($options[$user->id]);
-            }
+            $exclude[$user->id] = true;
         }
-        $handler = $this->page->url->out_action() . '&mode=new&amp;by=' . $user->id . '&amp;of=';
-        $o .= popup_form($handler, $options, 'addreviewby' . $user->id, '',
-                    get_string('chooseuser', 'workshop'), '', '', true, 'self', get_string('addreviewee', 'workshop'));
+        // todo add an option to exclude users without own submission
+        // todo nice to have number of current allocations for every user plus ordering by it
+        $handler = new moodle_url($this->page->url, array('mode' => 'new', 'by' => $user->id, 'sesskey' => sesskey()));
+        $options = $this->users_to_menu_options($workshop->get_peer_authors(), $exclude, $handler, 'of'); 
+        $select = moodle_select::make_popup_form($options, 'addreviewby' . $user->id, '', 
+            get_string('addreviewee', 'workshop'));
+        $select->nothinglabel = get_string('chooseuser', 'workshop');
+        $select->set_label(get_string('addreviewee', 'workshop'), $select->id);
+        $o .= $this->output->select($select);
         $o .= $this->output->output_start_tag('ul', array());
         foreach ($user->reviewerof as $authorid => $assessmentid) {
             $o .= $this->output->output_start_tag('li', array());
@@ -199,12 +205,14 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
      * Given a list of users, returns an array suitable to render the HTML select field
      *
      * @param array $users array of users or array of groups of users
-     * @return array of options to be passed to {@see popup_form()}
+     * @return array of options to be passed to {@link moodle_select::make_ popup_form()}
      */
-    protected function users_to_menu_options(&$users) {
-        $options = array();
+    protected function users_to_menu_options(&$users, array $exclude, moodle_url $baseurl, $var) {
+        $options = array(); // to be returned
         foreach ($users as $user) {
-            $options[$user->id] = fullname($user);
+            if (!isset($exclude[$user->id])) {
+                $options[$baseurl->out(false, array($var => $user->id), false)] = fullname($user);
+            }
         }
         return $options;
     }
