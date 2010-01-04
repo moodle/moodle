@@ -78,26 +78,21 @@ class workshop {
     /**
      * Fetches all users with the capability mod/workshop:submit in the current context
      *
-     * Static variables used to cache the results. The returned objects contain id, lastname
-     * and firstname properties and are ordered by lastname,firstname
+     * The returned objects contain id, lastname and firstname properties and are ordered by lastname,firstname
      *
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible authors otherwise.
      * @return array array[userid] => stdClass{->id ->lastname ->firstname}
      */
     public function get_peer_authors($musthavesubmission=true) {
         global $DB;
-        static $users               = null;
-        static $userswithsubmission = null;
 
-        if (is_null($users)) {
-            $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
-            $users = get_users_by_capability($context, 'mod/workshop:submit',
-                        'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
-        }
+        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $users = get_users_by_capability($context, 'mod/workshop:submit',
+                    "u.id, u.lastname, u.firstname", "u.lastname,u.firstname", '', '', '', '', false, false, true);
 
-        if ($musthavesubmission && is_null($userswithsubmission)) {
+        if ($musthavesubmission) {
             $userswithsubmission = array();
-            $submissions = $DB->get_records_list('workshop_submissions', 'userid', array_keys($users),'', 'id,userid');
+            $submissions = $DB->get_records_list('workshop_submissions', "userid", array_keys($users),'', "id,userid");
             foreach ($submissions as $submission) {
                 $userswithsubmission[$submission->userid] = null;
             }
@@ -123,22 +118,20 @@ class workshop {
      */
     public function get_peer_reviewers($musthavesubmission=false) {
         global $DB;
-        static $users               = null;
-        static $userswithsubmission = null;
 
-        if (is_null($users)) {
-            $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
-            $users = get_users_by_capability($context, 'mod/workshop:peerassess',
-                        'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
-            if ($musthavesubmission && is_null($userswithsubmission)) {
-                // users without their own submission can not be reviewers
-                $submissions = $DB->get_records_list('workshop_submissions', 'userid', array_keys($users),'', 'id,userid');
-                foreach ($submissions as $submission) {
-                    $userswithsubmission[$submission->userid] = null;
-                }
-                $userswithsubmission = array_intersect_key($users, $userswithsubmission);
+        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $users = get_users_by_capability($context, 'mod/workshop:peerassess',
+                    "u.id, u.lastname, u.firstname", "u.lastname,u.firstname", '', '', '', '', false, false, true);
+
+        if ($musthavesubmission) {
+            // users without their own submission can not be reviewers
+            $submissions = $DB->get_records_list("workshop_submissions", "userid", array_keys($users),'', "id,userid");
+            foreach ($submissions as $submission) {
+                $userswithsubmission[$submission->userid] = null;
             }
+            $userswithsubmission = array_intersect_key($users, $userswithsubmission);
         }
+
         if ($musthavesubmission) {
             return $userswithsubmission;
         } else {
@@ -158,13 +151,11 @@ class workshop {
      */
     public function get_super_reviewers() {
         global $DB;
-        static $users = null;
 
-        if (is_null($users)) {
-            $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
-            $users = get_users_by_capability($context, 'mod/workshop:assessallsubmissions',
-                        'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
-        }
+        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $users = get_users_by_capability($context, 'mod/workshop:assessallsubmissions',
+                    "u.id, u.lastname, u.firstname", "u.lastname,u.firstname", '', '', '', '', false, false, true);
+
         return $users;
     }
 
@@ -178,14 +169,15 @@ class workshop {
      * @param array $users array[userid] => stdClass{->id ->lastname ->firstname}
      * @return array array[groupid][userid] => stdClass{->id ->lastname ->firstname}
      */
-    public function get_grouped(&$users) {
+    public function get_grouped($users) {
         global $DB;
+        global $CFG;
 
         $grouped = array();  // grouped users to be returned
         if (empty($users)) {
             return $grouped;
         }
-        if ($this->cm->groupmembersonly) {
+        if (!empty($CFG->enablegroupings) and $this->cm->groupmembersonly) {
             // Available for group members only - the workshop is available only
             // to users assigned to groups within the selected grouping, or to
             // any group if no grouping is selected.
@@ -219,32 +211,32 @@ class workshop {
      *
      * @param mixed $userid int|array|'all' If set to [array of] integer, return submission[s] of the given user[s] only
      * @param mixed $examples false|true|'all' Only regular submissions, only examples, all submissions
-     * @todo unittest
      * @return object moodle_recordset
      */
     public function get_submissions_recordset($userid='all', $examples=false) {
         global $DB;
 
-        $sql = 'SELECT s.*, u.lastname AS authorlastname, u.firstname AS authorfirstname
-                FROM {workshop_submissions} s
-                JOIN {user} u ON (s.userid = u.id)
-                WHERE s.workshopid = ?';
-        $params[0] = $this->id;
+        $sql = "SELECT s.*, u.lastname AS authorlastname, u.firstname AS authorfirstname
+                  FROM {workshop_submissions} s
+            INNER JOIN {user} u ON (s.userid = u.id)
+                 WHERE s.workshopid = :workshopid";
+        $params = array('workshopid' => $this->id);
 
-        if ($examples === false) {
-            $sql .= ' AND example = 0';
-        }
         if ($examples === true) {
-            $sql .= ' AND example = 1';
+            $sql .= " AND example = 1";
+        } else {
+            $sql .= " AND example = 0";
         }
-        if (is_numeric($userid)) {
-            $sql .= ' AND userid = ?';
-            $params = array_merge($params, array($userid));
-        }
-        if (is_array($userid)) {
-            list($usql, $uparams) = $DB->get_in_or_equal($userid);
-            $sql .= ' AND userid ' . $usql;
+
+        if ('all' === $userid) {
+            // no additional conditions
+        } elseif (is_array($userid)) {
+            list($usql, $uparams) = $DB->get_in_or_equal($userid, SQL_PARAMS_NAMED);
+            $sql .= " AND userid $usql";
             $params = array_merge($params, $uparams);
+        } else {
+            $sql .= " AND userid = :userid";
+            $params['userid'] = $userid;
         }
 
         return $DB->get_recordset_sql($sql, $params);
@@ -265,15 +257,7 @@ class workshop {
             return false;
         }
         $rs = $this->get_submissions_recordset($id, false);
-        if (is_numeric($id)) {
-            $submission = $rs->current();
-            $rs->close();
-            if (empty($submission->id)) {
-                return false;
-            } else {
-                return $submission;
-            }
-        } elseif (is_array($id)) {
+        if (is_array($id)) {
             $submissions = array();
             foreach ($rs as $submission) {
                 $submissions[$submission->id] = new stdClass();
@@ -287,7 +271,13 @@ class workshop {
             }
             return $submissions;
         } else {
-            throw new moodle_exception('wrongparameter');
+            $submission = $rs->current();
+            $rs->close();
+            if (empty($submission->id)) {
+                return false;
+            } else {
+                return $submission;
+            }
         }
     }
 
@@ -304,28 +294,33 @@ class workshop {
     public function get_assessments_recordset($reviewerid='all', $id='all') {
         global $DB;
 
-        $sql = 'SELECT  a.*,
-                        reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname as reviewerlastname,
-                        s.title,
-                        author.id AS authorid, author.firstname AS authorfirstname,author.lastname as authorlastname
-                FROM {workshop_assessments} a
-                INNER JOIN {user} reviewer ON (a.userid = reviewer.id)
-                INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
-                INNER JOIN {user} author ON (s.userid = author.id)
-                WHERE s.workshopid = ?';
-        $params = array($this->id);
-        if (is_numeric($reviewerid)) {
-            $sql .= ' AND reviewer.id = ?';
-            $params = array_merge($params, array($reviewerid));
-        }
-        if (is_array($reviewerid)) {
-            list($usql, $uparams) = $DB->get_in_or_equal($reviewerid);
-            $sql .= ' AND reviewer.id ' . $usql;
+        $sql = "SELECT a.*,
+                       reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname as reviewerlastname,
+                       s.title,
+                       author.id AS authorid, author.firstname AS authorfirstname,author.lastname as authorlastname
+                  FROM {workshop_assessments} a
+            INNER JOIN {user} reviewer ON (a.userid = reviewer.id)
+            INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+            INNER JOIN {user} author ON (s.userid = author.id)
+                 WHERE s.workshopid = :workshopid";
+        $params = array('workshopid' => $this->id);
+
+        if ('all' === $reviewerid) {
+            // no additional conditions
+        } elseif (is_array($reviewerid)) {
+            list($usql, $uparams) = $DB->get_in_or_equal($reviewerid, SQL_PARAMS_NAMED);
+            $sql .= " AND reviewer.id $usql";
             $params = array_merge($params, $uparams);
+        } else {
+            $sql .= " AND reviewer.id = :reviewerid";
+            $params['reviewerid'] = $reviewerid;
         }
-        if (is_numeric($id)) {
-            $sql .= ' AND a.id = ?';
-            $params = array_merge($params, array($id));
+
+        if ('all' === $id) {
+            // no additional conditions
+        } else {
+            $sql .= " AND a.id = :assessmentid";
+            $params['assessmentid'] = $id;
         }
 
         return $DB->get_recordset_sql($sql, $params);
@@ -412,7 +407,7 @@ class workshop {
      * [timeallocated] [reviewerid] [reviewerfirstname] [reviewerlastname]
      * [reviewerpicture] [reviewerimagealt]
      *
-     * This should be refactored when capability handling proposed by Petr is implemented so that
+     * TODO This should be refactored when capability handling proposed by Petr is implemented so that
      * we can check capabilities directly in SQL joins.
      * Note that the returned recordset includes participants without submission as well as those
      * without any review allocated yet.
@@ -421,29 +416,27 @@ class workshop {
      */
     public function get_allocations_recordset() {
         global $DB;
-        static $users=null;
 
-        if (is_null($users)) {
-            $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
-            $users = get_users_by_capability($context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
-                        'u.id', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
-        }
+        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $users = get_users_by_capability($context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
+                    "u.id", "u.lastname,u.firstname", '', '', '', '', false, false, true);
 
-        list($usql, $params) = $DB->get_in_or_equal(array_keys($users));
-        $params[] = $this->id;
+        list($usql, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED);
+        $params['workshopid'] = $this->id;
 
-        $sql = 'SELECT  author.id AS authorid, author.firstname AS authorfirstname, author.lastname AS authorlastname,
-                        author.picture AS authorpicture, author.imagealt AS authorimagealt,
-                        s.id AS submissionid, s.title AS submissiontitle, s.grade AS submissiongrade,
-                        a.id AS assessmentid, a.timecreated AS timeallocated, a.userid AS reviewerid,
-                        reviewer.firstname AS reviewerfirstname, reviewer.lastname AS reviewerlastname,
-                        reviewer.picture as reviewerpicture, reviewer.imagealt AS reviewerimagealt
-                FROM {user} author
-                    LEFT JOIN {workshop_submissions} s ON (s.userid = author.id)
-                    LEFT JOIN {workshop_assessments} a ON (s.id = a.submissionid)
-                    LEFT JOIN {user} reviewer ON (a.userid = reviewer.id)
-                WHERE author.id ' . $usql . ' AND (s.workshopid = ? OR s.workshopid IS NULL)
-                ORDER BY author.lastname,author.firstname,reviewer.lastname,reviewer.firstname';
+        $sql = "SELECT author.id AS authorid, author.firstname AS authorfirstname, author.lastname AS authorlastname,
+                       author.picture AS authorpicture, author.imagealt AS authorimagealt,
+                       s.id AS submissionid, s.title AS submissiontitle, s.grade AS submissiongrade,
+                       a.id AS assessmentid, a.timecreated AS timeallocated, a.userid AS reviewerid,
+                       reviewer.firstname AS reviewerfirstname, reviewer.lastname AS reviewerlastname,
+                       reviewer.picture as reviewerpicture, reviewer.imagealt AS reviewerimagealt
+                  FROM {user} author
+             LEFT JOIN {workshop_submissions} s ON (s.userid = author.id)
+             LEFT JOIN {workshop_assessments} a ON (s.id = a.submissionid)
+             LEFT JOIN {user} reviewer ON (a.userid = reviewer.id)
+                 WHERE author.id $usql AND s.workshopid = :workshopid
+              ORDER BY author.lastname,author.firstname,reviewer.lastname,reviewer.firstname";
+        
         return $DB->get_recordset_sql($sql, $params);
     }
 
@@ -469,7 +462,7 @@ class workshop {
         $assessment->timecreated    = $now;
         $assessment->timemodified   = $now;
 
-        return $DB->insert_record('workshop_assessments', $assessment, true, $bulk);
+        return $DB->insert_record("workshop_assessments", $assessment, true, $bulk);
     }
 
     /**
@@ -483,13 +476,11 @@ class workshop {
 
         // todo remove all given grades from workshop_grades;
 
-        if (is_numeric($id)) {
-            return $DB->delete_records('workshop_assessments', array('id' => $id));
-        }
         if (is_array($id)) {
-            return $DB->delete_records_list('workshop_assessments', 'id', $id);
+            return $DB->delete_records_lists("workshop_assessments", "id", $id);
+        } else {
+            return $DB->delete_records("workshop_assessments", array("id" => $id));
         }
-        return false;
     }
 
     /**
@@ -498,6 +489,8 @@ class workshop {
      * @return object Instance of a grading strategy
      */
     public function grading_strategy_instance() {
+        global $CFG;    // because we require other libs here
+
         if (is_null($this->_strategyinstance)) {
             $strategylib = dirname(__FILE__) . '/grading/' . $this->strategy . '/strategy.php';
             if (is_readable($strategylib)) {
@@ -541,6 +534,8 @@ class workshop {
      * @return object Instance of submissions allocator
      */
     public function allocator_instance($method) {
+        global $CFG;    // because we require other libs here
+
         $allocationlib = dirname(__FILE__) . '/allocation/' . $method . '/allocator.php';
         if (is_readable($allocationlib)) {
             require_once($allocationlib);
