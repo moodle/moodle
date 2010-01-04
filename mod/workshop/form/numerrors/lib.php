@@ -275,6 +275,20 @@ class workshop_numerrors_strategy implements workshop_strategy {
         return false;
     }
 
+    /**
+     * @see parent::get_assessments_recordset()
+     */
+    public function get_assessments_recordset($restrict=null) {
+        // todo
+    }
+
+    /**
+     * @see parent::get_dimensions_info()
+     */
+    public function get_dimensions_info() {
+        // todo
+    }
+
 ////////////////////////////////////////////////////////////////////////////////
 // Internal methods                                                           //
 ////////////////////////////////////////////////////////////////////////////////

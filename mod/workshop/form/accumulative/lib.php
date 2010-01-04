@@ -243,7 +243,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
     /**
      * @see parent::get_assessments_recordset()
      */
-    public function get_assessments_recordset($restrict) {
+    public function get_assessments_recordset($restrict=null) {
         global $DB;
 
         $sql = 'SELECT s.id AS submissionid,
