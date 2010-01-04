@@ -154,8 +154,9 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
             $o .= $this->output->user_picture($userpic);
             $o .= fullname($peers[$reviewerid]);
 
-            $handler = $this->page->url->out_action(array('mode' => 'del', 'what' => $assessmentid));
-            $o .= $this->output->output_tag('a', array('href' => $handler), ' X ');
+            // delete icon
+            $handler = new moodle_url($this->page->url, array('mode' => 'del', 'what' => $assessmentid, 'sesskey' => sesskey()));
+            $o .= $this->remove_allocation_icon($handler);
 
             $o .= $this->output->output_end_tag('li');
         }
@@ -199,9 +200,9 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
             $o .= $this->output->user_picture($userpic, $this->page->course->id);
             $o .= fullname($peers[$authorid]);
 
-            // delete
-            $handler = $this->page->url->out_action(array('mode' => 'del', 'what' => $assessmentid));
-            $o .= $this->output->output_tag('a', array('href' => $handler), ' X ');
+            // delete icon
+            $handler = new moodle_url($this->page->url, array('mode' => 'del', 'what' => $assessmentid, 'sesskey' => sesskey()));
+            $o .= $this->remove_allocation_icon($handler);
 
             $o .= $this->output->output_end_tag('li');
         }
@@ -224,5 +225,22 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
         }
         return $options;
     }
+
+    /**
+     * Generates an icon link to remove the allocation
+     *
+     * @param moodle_url $link to the action
+     * @return html code to be displayed
+     */
+    protected function remove_allocation_icon($link) {
+        $icon = new moodle_action_icon();
+        $icon->image->src = $this->old_icon_url('i/cross_red_big');
+        $icon->image->alt = 'X';
+        $icon->link->url = $link;
+
+        return $this->output->action_icon($icon);
+
+    }
+
 
 }
