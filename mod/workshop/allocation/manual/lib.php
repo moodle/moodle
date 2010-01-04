@@ -33,6 +33,9 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/locallib.php');    // works
  */
 class workshop_manual_allocator implements workshop_allocator {
 
+    /** participants per page */
+    const PERPAGE           = 30;
+
     /** constants that are used to pass status messages between init() and ui() */
     const MSG_ADDED         = 1;
     const MSG_NOSUBMISSION  = 2;
@@ -129,15 +132,17 @@ class workshop_manual_allocator implements workshop_allocator {
      * Prints user interface - current allocation and a form to edit it
      */
     public function ui() {
-        global $PAGE, $OUTPUT;
+        global $PAGE, $OUTPUT, $DB;
+        $pagingvar  = 'page';
+        $page       = optional_param($pagingvar, 0, PARAM_INT);
 
         $hlauthorid     = -1;           // highlight this author
         $hlreviewerid   = -1;           // highlight this reviewer
         $msg            = new stdClass(); // message to render
 
-        $m  = optional_param('m', '', PARAM_ALPHANUMEXT);   // message stdClass
+        $m  = optional_param('m', '', PARAM_ALPHANUMEXT);   // message code
         if ($m) {
-            $m = explode('-', $m);  // unserialize
+            $m = explode('-', $m);
             switch ($m[0]) {
             case self::MSG_ADDED:
                 $hlauthorid     = $m[1];
@@ -190,56 +195,170 @@ class workshop_manual_allocator implements workshop_allocator {
             }
         }
 
-        $peers = array();
-        $rs = $this->workshop->get_allocations_recordset();
-        if (!is_null($rs)) {
-            foreach ($rs as $allocation) {
-                $currentuserid = $allocation->authorid;
-                if (!isset($peers[$currentuserid])) {
-                    $peers[$currentuserid]                   = new stdClass();
-                    $peers[$currentuserid]->id               = $allocation->authorid;
-                    $peers[$currentuserid]->firstname        = $allocation->authorfirstname;
-                    $peers[$currentuserid]->lastname         = $allocation->authorlastname;
-                    $peers[$currentuserid]->picture          = $allocation->authorpicture;
-                    $peers[$currentuserid]->imagealt         = $allocation->authorimagealt;
-                    $peers[$currentuserid]->submissionid     = $allocation->submissionid;
-                    $peers[$currentuserid]->submissiontitle  = $allocation->submissiontitle;
-                    $peers[$currentuserid]->submissiongrade  = $allocation->submissiongrade;
-                    $peers[$currentuserid]->reviewedby       = array(); // users who are reviewing this user's submission
-                    $peers[$currentuserid]->reviewerof       = array(); // users whom submission is being reviewed by this user
-                }
-                if (!empty($allocation->reviewerid)) {
-                    // example: "submission of user with id 45 is reviewed by user with id 87 in the assessment record 12"
-                    $peers[$currentuserid]->reviewedby[$allocation->reviewerid] = $allocation->assessmentid;
-                }
-            }
-            $rs->close();
+        if ($hlauthorid > 0 and $hlreviewerid > 0) {
+            // display just those users, no pagination
+            $participants = get_users_by_capability($PAGE->context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
+                                                'u.id,u.lastname,u.firstname,u.picture,u.imagealt', 'u.lastname,u.firstname,u.id',
+                                                '', '', '', '', false, false, true);
+            $participants = array_intersect_key($participants, array($hlauthorid => null, $hlreviewerid => null));
+        } else {
+            // the paginated list of users to be displayed in the middle column ("Participant")
+            $participants = get_users_by_capability($PAGE->context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
+                                                'u.id,u.lastname,u.firstname,u.picture,u.imagealt', 'u.lastname,u.firstname,u.id',
+                                                $page * self::PERPAGE, self::PERPAGE, '', '', false, false, true);
         }
 
-        foreach ($peers as $author) {
-            foreach ($author->reviewedby as $reviewerid => $assessmentid) {
-                if (isset($peers[$reviewerid])) {
-                    // example: "user with id 87 is reviewer of the work submitted by user id 45 in the assessment record 12"
-                    $peers[$reviewerid]->reviewerof[$author->id] = $assessmentid;
+
+        // this will hold the information needed to display user names and pictures
+        $userinfo = $participants;
+
+        // load the participants' submissions
+        $submissions = $this->workshop->get_submissions(array_keys($participants), false);
+
+        // get current reviewers
+        $reviewers = array();
+        if ($submissions) {
+            list($submissionids, $params) = $DB->get_in_or_equal(array_keys($submissions), SQL_PARAMS_NAMED);
+            $sql = "SELECT a.id AS assessmentid, a.submissionid,
+                           r.id AS reviewerid, r.lastname, r.firstname, r.picture, r.imagealt,
+                           s.id AS submissionid, s.userid AS authorid
+                      FROM {workshop_assessments} a
+                      JOIN {user} r ON (a.userid = r.id)
+                      JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+                     WHERE a.submissionid $submissionids";
+            $reviewers = $DB->get_records_sql($sql, $params);
+            foreach ($reviewers as $reviewer) {
+                if (!isset($userinfo[$reviewer->reviewerid])) {
+                    $userinfo[$reviewer->reviewerid]            = new stdClass();
+                    $userinfo[$reviewer->reviewerid]->id        = $reviewer->reviewerid;
+                    $userinfo[$reviewer->reviewerid]->firstname = $reviewer->firstname;
+                    $userinfo[$reviewer->reviewerid]->lastname  = $reviewer->lastname;
+                    $userinfo[$reviewer->reviewerid]->picture   = $reviewer->picture;
+                    $userinfo[$reviewer->reviewerid]->imagealt  = $reviewer->imagealt;
+                    $userinfo[$reviewer->reviewerid]->firstname = $reviewer->firstname;
                 }
             }
         }
+
+        // get current reviewees
+        list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
+        $params['workshopid'] = $this->workshop->id;
+        $sql = "SELECT a.id AS assessmentid, a.submissionid,
+                       u.id AS reviewerid,
+                       s.id AS submissionid,
+                       r.id AS revieweeid, r.lastname, r.firstname, r.picture, r.imagealt
+                  FROM {user} u
+                  JOIN {workshop_assessments} a ON (a.userid = u.id)
+                  JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+                  JOIN {user} r ON (s.userid = r.id)
+                 WHERE u.id $participantids AND s.workshopid = :workshopid";
+        $reviewees = $DB->get_records_sql($sql, $params);
+        foreach ($reviewees as $reviewee) {
+            if (!isset($userinfo[$reviewee->revieweeid])) {
+                $userinfo[$reviewee->revieweeid]            = new stdClass();
+                $userinfo[$reviewee->revieweeid]->id        = $reviewee->revieweeid;
+                $userinfo[$reviewee->revieweeid]->firstname = $reviewee->firstname;
+                $userinfo[$reviewee->revieweeid]->lastname  = $reviewee->lastname;
+                $userinfo[$reviewee->revieweeid]->picture   = $reviewee->picture;
+                $userinfo[$reviewee->revieweeid]->imagealt  = $reviewee->imagealt;
+                $userinfo[$reviewee->revieweeid]->firstname = $reviewee->firstname;
+            }
+        }
+
+        // the information about the allocations
+        $allocations = array();
+
+        foreach ($participants as $participant) {
+            $allocations[$participant->id] = new stdClass;
+            $allocations[$participant->id]->userid = $participant->id;
+            $allocations[$participant->id]->submissionid = null;
+            $allocations[$participant->id]->reviewedby = array();
+            $allocations[$participant->id]->reviewerof = array();
+        }
+        unset($participants);
+        foreach ($submissions as $submission) {
+            $allocations[$submission->authorid]->submissionid = $submission->id;
+            $allocations[$submission->authorid]->submissiontitle = $submission->title;
+            $allocations[$submission->authorid]->submissiongrade = $submission->grade;
+        }
+        unset($submissions);
+        foreach($reviewers as $reviewer) {
+            $allocations[$reviewer->authorid]->reviewedby[$reviewer->reviewerid] = $reviewer->assessmentid;
+        }
+        unset($reviewers);
+        foreach($reviewees as $reviewee) {
+            $allocations[$reviewee->reviewerid]->reviewerof[$reviewee->revieweeid] = $reviewee->assessmentid;
+        }
+        unset($reviewees);
 
         // we have all data, let us pass it to the renderer and return the output
         $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
         $uioutput = $PAGE->theme->get_renderer('workshopallocation_manual', $PAGE);
-        // prepare data to be displayed
-        $data                    = new stdClass();
-        $data->wsoutput          = $wsoutput;
-        $data->peers             = $peers;
-        $data->authors           = $this->workshop->get_potential_authors($PAGE->context);
-        $data->reviewers         = $this->workshop->get_potential_reviewers($PAGE->context);
-        $data->hlauthorid        = $hlauthorid;
-        $data->hlreviewerid      = $hlreviewerid;
-        $data->msg               = $msg;
-        $data->useselfassessment = $this->workshop->useselfassessment;
 
-        return $uioutput->display_allocations($data);
+        // prepare data to be displayed
+        $data                   = new stdClass();
+        $data->wsoutput         = $wsoutput;
+        $data->allocations      = $allocations;
+        $data->userinfo         = $userinfo;
+        $data->authors          = $this->workshop->get_potential_authors($PAGE->context);
+        $data->reviewers        = $this->workshop->get_potential_reviewers($PAGE->context);
+        $data->hlauthorid       = $hlauthorid;
+        $data->hlreviewerid     = $hlreviewerid;
+        $data->selfassessment   = $this->workshop->useselfassessment;
+
+        // prepare paging bar
+        $pagingbar              = new moodle_paging_bar();
+        $pagingbar->totalcount  = count($data->authors);
+        $pagingbar->page        = $page;
+        $pagingbar->perpage     = self::PERPAGE;
+        $pagingbar->baseurl     = $PAGE->url;
+        $pagingbar->pagevar     = $pagingvar;
+        $pagingbar->nocurr      = true;
+
+        $pagingbarout = $OUTPUT->paging_bar($pagingbar);
+
+        return $pagingbarout . $wsoutput->status_message($msg) . $uioutput->display_allocations($data) . $pagingbarout;
     }
+
+    /**
+     * Returns the list of all allocations where the given users are involved
+     *
+     * We must use recordset here because we do not have any unique identifier available
+     *
+     * @param array [userid] => whatever
+     * @return moodle_recordset|null
+     */
+    protected function get_allocations_recordset(array $users) {
+        global $DB, $PAGE;
+
+        if (empty($users)) {
+            return null;
+        }
+        if (count($users) > 9999) {
+            throw coding_exception('two many users');
+        }
+
+        list($authorids, $authorparams)     = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED, 'a0000');
+        list($reviewerids, $reviewerparams) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED, 'r0000');
+        $params = array_merge($authorparams, $reviewerparams);
+        $params['workshopid'] = $this->workshop->id;
+
+        $sql = "SELECT author.id AS authorid, author.firstname AS authorfirstname, author.lastname AS authorlastname,
+                       author.picture AS authorpicture, author.imagealt AS authorimagealt,
+                       s.id AS submissionid, s.title AS submissiontitle, s.grade AS submissiongrade,
+                       a.id AS assessmentid, a.timecreated AS timeallocated, a.userid AS reviewerid,
+                       reviewer.firstname AS reviewerfirstname, reviewer.lastname AS reviewerlastname,
+                       reviewer.picture as reviewerpicture, reviewer.imagealt AS reviewerimagealt
+                  FROM {user} author
+             LEFT JOIN {workshop_submissions} s ON (s.userid = author.id)
+             LEFT JOIN {workshop_assessments} a ON (s.id = a.submissionid)
+             LEFT JOIN {user} reviewer ON (a.userid = reviewer.id)
+                 WHERE (author.id $authorids OR reviewer.id $reviewerids) AND (s.id IS NULL OR s.workshopid = :workshopid)
+              ORDER BY author.lastname,author.firstname,author.id,reviewer.lastname,reviewer.firstname,reviewer.id";
+
+        return $DB->get_recordset_sql($sql, $params);
+    }
+
+
 
 }

@@ -91,47 +91,60 @@ class workshop {
                                         // 3rd normal form with no real performance gain
     }
 
+    ////////////////////////////////////////////////////////////////////////////////
+    // Static methods                                                             //
+    ////////////////////////////////////////////////////////////////////////////////
+
     /**
-     * Given a list of user ids, returns the filtered one containing just ids of users with own submission
+     * Return list of available allocation methods
      *
-     * Example submissions are ignored.
+     * @return array Array ['string' => 'string'] of localized allocation method names
+     */
+    public static function installed_allocators() {
+        $installed = get_plugin_list('workshopallocation');
+        $forms = array();
+        foreach ($installed as $allocation => $allocationpath) {
+            if (file_exists($allocationpath . '/lib.php')) {
+                $forms[$allocation] = get_string('pluginname', 'workshopallocation_' . $allocation);
+            }
+        }
+        // usability - make sure that manual allocation appears the first
+        if (isset($forms['manual'])) {
+            $m = array('manual' => $forms['manual']);
+            unset($forms['manual']);
+            $forms = array_merge($m, $forms);
+        }
+        return $forms;
+    }
+
+    /**
+     * Returns an array of options for the editors that are used for submitting and assessing instructions
      *
-     * @param array $userids
+     * @param stdClass $context
      * @return array
      */
-    protected function users_with_submission(array $userids) {
-        global $DB;
-
-        if (empty($userids)) {
-            return array();
-        }
-        $userswithsubmission = array();
-        list($usql, $uparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
-        $sql = "SELECT id,userid
-                  FROM {workshop_submissions}
-                 WHERE example = 0 AND workshopid = :workshopid AND userid $usql";
-        $params = array('workshopid' => $this->id);
-        $params = array_merge($params, $uparams);
-        $submissions = $DB->get_records_sql($sql, $params);
-        foreach ($submissions as $submission) {
-            $userswithsubmission[$submission->userid] = null;
-        }
-
-        return $userswithsubmission;
+    public static function instruction_editors_options(stdClass $context) {
+        return array('subdirs' => 1, 'maxbytes' => 0, 'maxfiles' => EDITOR_UNLIMITED_FILES,
+                     'changeformat' => 1, 'context' => $context, 'noclean' => 1, 'trusttext' => 0);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Workshop API                                                               //
+    ////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Fetches all users with the capability mod/workshop:submit in the current context
      *
      * The returned objects contain id, lastname and firstname properties and are ordered by lastname,firstname
      *
+     * @todo handle with limits and groups
      * @param stdClass $context
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible authors otherwise.
      * @return array array[userid] => stdClass{->id ->lastname ->firstname}
      */
     public function get_potential_authors(stdClass $context, $musthavesubmission=true) {
         $users = get_users_by_capability($context, 'mod/workshop:submit',
-                    'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
+                    'u.id,u.lastname,u.firstname', 'u.lastname,u.firstname,u.id', 0, 1000, '', '', false, false, true);
         if ($musthavesubmission) {
             $users = array_intersect_key($users, $this->users_with_submission(array_keys($users)));
         }
@@ -143,13 +156,14 @@ class workshop {
      *
      * The returned objects contain id, lastname and firstname properties and are ordered by lastname,firstname
      *
+     * @todo handle with limits and groups
      * @param stdClass $context
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible users otherwise.
      * @return array array[userid] => stdClass{->id ->lastname ->firstname}
      */
     public function get_potential_reviewers(stdClass $context, $musthavesubmission=false) {
         $users = get_users_by_capability($context, 'mod/workshop:peerassess',
-                    'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
+                    'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname,u.id', 0, 1000, '', '', false, false, true);
         if ($musthavesubmission) {
             // users without their own submission can not be reviewers
             $users = array_intersect_key($users, $this->users_with_submission(array_keys($users)));
@@ -199,6 +213,26 @@ class workshop {
             $grouped[0][$gmembership->userid] = $users[$gmembership->userid];
         }
         return $grouped;
+    }
+
+    /**
+     * Returns the list of all allocations (it est assigned assessments) in the workshop
+     *
+     * Assessments of example submissions are ignored
+     *
+     * @return array
+     */
+    public function get_allocations() {
+        global $DB;
+
+        $sql = 'SELECT a.id, a.submissionid, a.userid AS reviewerid,
+                       s.userid AS authorid
+                  FROM {workshop_assessments} a
+            INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+                 WHERE s.example = 0 AND s.workshopid = :workshopid';
+        $params = array('workshopid' => $this->id);
+
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**
@@ -366,56 +400,6 @@ class workshop {
     }
 
     /**
-     * Returns the list of allocations in the workshop
-     *
-     * This returns the list of all users who can submit their work or review submissions (or both
-     * which is the common case). So basically this is to return list of all students participating
-     * in the workshop. For every participant, it adds information about their submission and their
-     * reviews, if such information is available (null elsewhere).
-     *
-     * The returned structure is recordset of objects with following properties:
-     * [authorid] [authorfirstname] [authorlastname] [authorpicture] [authorimagealt]
-     * [submissionid] [submissiontitle] [submissiongrade] [assessmentid]
-     * [timeallocated] [reviewerid] [reviewerfirstname] [reviewerlastname]
-     * [reviewerpicture] [reviewerimagealt]
-     *
-     * TODO This should be refactored when capability handling proposed by Petr is implemented so that
-     * we can check capabilities directly in SQL joins.
-     * Note that the returned recordset includes participants without submission as well as those
-     * without any review allocated yet.
-     *
-     * @return null|stdClass moodle_recordset
-     */
-    public function get_allocations_recordset() {
-        global $DB, $PAGE;
-
-        $users = get_users_by_capability($PAGE->context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
-                    'u.id', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
-
-        if (empty($users)) {
-            return null;
-        }
-
-        list($usql, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED);
-        $params['workshopid'] = $this->id;
-
-        $sql = "SELECT author.id AS authorid, author.firstname AS authorfirstname, author.lastname AS authorlastname,
-                       author.picture AS authorpicture, author.imagealt AS authorimagealt,
-                       s.id AS submissionid, s.title AS submissiontitle, s.grade AS submissiongrade,
-                       a.id AS assessmentid, a.timecreated AS timeallocated, a.userid AS reviewerid,
-                       reviewer.firstname AS reviewerfirstname, reviewer.lastname AS reviewerlastname,
-                       reviewer.picture as reviewerpicture, reviewer.imagealt AS reviewerimagealt
-                  FROM {user} author
-             LEFT JOIN {workshop_submissions} s ON (s.userid = author.id)
-             LEFT JOIN {workshop_assessments} a ON (s.id = a.submissionid)
-             LEFT JOIN {user} reviewer ON (a.userid = reviewer.id)
-                 WHERE author.id $usql AND (s.id IS NULL OR s.workshopid = :workshopid)
-              ORDER BY author.lastname,author.firstname,reviewer.lastname,reviewer.firstname";
-
-        return $DB->get_recordset_sql($sql, $params);
-    }
-
-    /**
      * Allocate a submission to a user for review
      *
      * @param stdClass $submission Submission record
@@ -504,28 +488,6 @@ class workshop {
             }
         }
         return $this->evaluationinstance;
-    }
-
-    /**
-     * Return list of available allocation methods
-     *
-     * @return array Array ['string' => 'string'] of localized allocation method names
-     */
-    public function installed_allocators() {
-        $installed = get_plugin_list('workshopallocation');
-        $forms = array();
-        foreach ($installed as $allocation => $allocationpath) {
-            if (file_exists($allocationpath . '/lib.php')) {
-                $forms[$allocation] = get_string('pluginname', 'workshopallocation_' . $allocation);
-            }
-        }
-        // usability - make sure that manual allocation appears the first
-        if (isset($forms['manual'])) {
-            $m = array('manual' => $forms['manual']);
-            unset($forms['manual']);
-            $forms = array_merge($m, $forms);
-        }
-        return $forms;
     }
 
     /**
@@ -761,22 +723,19 @@ class workshop {
             $task->link = $this->allocation_url();
             $authors     = array();
             $allocations = array(); // 'submissionid' => isallocated
-            $rs = $this->get_allocations_recordset();
-            if (!is_null($rs)) {
-                foreach ($rs as $allocation) {
-                    if (!isset($authors[$allocation->authorid])) {
-                        $authors[$allocation->authorid] = true;
+            $records = $this->get_allocations();
+            foreach ($records as $allocation) {
+                if (!isset($authors[$allocation->authorid])) {
+                    $authors[$allocation->authorid] = true;
+                }
+                if (isset($allocation->submissionid)) {
+                    if (!isset($allocations[$allocation->submissionid])) {
+                        $allocations[$allocation->submissionid] = false;
                     }
-                    if (isset($allocation->submissionid)) {
-                        if (!isset($allocations[$allocation->submissionid])) {
-                            $allocations[$allocation->submissionid] = false;
-                        }
-                        if (!empty($allocation->reviewerid)) {
-                            $allocations[$allocation->submissionid] = true;
-                        }
+                    if (!empty($allocation->reviewerid)) {
+                        $allocations[$allocation->submissionid] = true;
                     }
                 }
-                $rs->close();
             }
             $numofauthors     = count($authors);
             $numofsubmissions = count($allocations);
@@ -915,19 +874,6 @@ class workshop {
     }
 
     /**
-     * @return array of available workshop phases
-     */
-    protected function available_phases() {
-        return array(
-            self::PHASE_SETUP       => true,
-            self::PHASE_SUBMISSION  => true,
-            self::PHASE_ASSESSMENT  => true,
-            self::PHASE_EVALUATION  => true,
-            self::PHASE_CLOSED      => true,
-        );
-    }
-
-    /**
      * Switch to a new workshop phase
      *
      * Modifies the underlying database record. You should terminate the script shortly after calling this.
@@ -966,17 +912,51 @@ class workshop {
         return $grade;
     }
 
-// Static methods
+    ////////////////////////////////////////////////////////////////////////////////
+    // Internal methods (implementation details)                                  //
+    ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns an array of options for the editors that are used for submitting and assessing instructions
+     * Given a list of user ids, returns the filtered one containing just ids of users with own submission
      *
-     * @param stdClass $context
+     * Example submissions are ignored.
+     *
+     * @param array $userids
      * @return array
      */
-    public static function instruction_editors_options(stdClass $context) {
-        return array('subdirs' => 1, 'maxbytes' => 0, 'maxfiles' => EDITOR_UNLIMITED_FILES,
-                     'changeformat' => 1, 'context' => $context, 'noclean' => 1, 'trusttext' => 0);
+    protected function users_with_submission(array $userids) {
+        global $DB;
+
+        if (empty($userids)) {
+            return array();
+        }
+        $userswithsubmission = array();
+        list($usql, $uparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        $sql = "SELECT id,userid
+                  FROM {workshop_submissions}
+                 WHERE example = 0 AND workshopid = :workshopid AND userid $usql";
+        $params = array('workshopid' => $this->id);
+        $params = array_merge($params, $uparams);
+        $submissions = $DB->get_records_sql($sql, $params);
+        foreach ($submissions as $submission) {
+            $userswithsubmission[$submission->userid] = null;
+        }
+
+        return $userswithsubmission;
     }
+
+    /**
+     * @return array of available workshop phases
+     */
+    protected function available_phases() {
+        return array(
+            self::PHASE_SETUP       => true,
+            self::PHASE_SUBMISSION  => true,
+            self::PHASE_ASSESSMENT  => true,
+            self::PHASE_EVALUATION  => true,
+            self::PHASE_CLOSED      => true,
+        );
+    }
+
 
 }

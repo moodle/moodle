@@ -56,16 +56,16 @@ class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
      */
     public function display_allocations(stdClass $data) {
         $wsoutput           = $data->wsoutput;          // moodle_mod_workshop_renderer
-        $peers              = $data->peers;             // array prepared array of all allocations data
-        $authors            = $data->authors;           // array submission authors
+        $allocations        = $data->allocations;       // array prepared array of all allocations data
+        $userinfo           = $data->userinfo;          // names and pictures of all required users
+        $authors            = $data->authors;           // array potential reviewees
         $reviewers          = $data->reviewers;         // array potential submission reviewers
         $hlauthorid         = $data->hlauthorid;        // int id of the author to highlight
         $hlreviewerid       = $data->hlreviewerid;      // int id of the reviewer to highlight
-        $useselfassessment  = $data->useselfassessment; // bool is the self-assessment allowed in this workshop?
-        $msg                = $data->msg;               // stdClass message to display
+        $selfassessment     = $data->selfassessment;    // bool is the self-assessment allowed in this workshop?
 
         $wsoutput = $this->page->theme->get_renderer('mod_workshop', $this->page);
-        if (empty($peers)) {
+        if (empty($allocations)) {
             return $wsoutput->status_message((object)array('text' => get_string('nosubmissions', 'workshop')));
         }
 
@@ -77,41 +77,39 @@ class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
         $table->rowclasses  = array();
         $table->colclasses  = array('reviewedby', 'peer', 'reviewerof');
         $table->data        = array();
-        foreach ($peers as $user) {
+        foreach ($allocations as $allocation) {
             $row = array();
-            $row[] = $this->reviewers_of_participant($user, $peers, $reviewers, $useselfassessment);
-            $row[] = $this->participant($user);
-            $row[] = $this->reviewees_of_participant($user, $peers, $authors, $useselfassessment);
+            $row[] = $this->reviewers_of_participant($allocation, $userinfo, $reviewers, $selfassessment);
+            $row[] = $this->participant($allocation, $userinfo);
+            $row[] = $this->reviewees_of_participant($allocation, $userinfo, $authors, $selfassessment);
             $thisrowclasses = array();
-            if ($user->id == $hlauthorid) {
+            if ($allocation->userid == $hlauthorid) {
                 $thisrowclasses[] = 'highlightreviewedby';
             }
-            if ($user->id == $hlreviewerid) {
+            if ($allocation->userid == $hlreviewerid) {
                 $thisrowclasses[] = 'highlightreviewerof';
             }
             $table->rowclasses[] = implode(' ', $thisrowclasses);
             $table->data[] = $row;
         }
 
-        return $this->output->container($wsoutput->status_message($msg) . $this->output->table($table), 'manual-allocator');
+        return $this->output->container($this->output->table($table), 'manual-allocator');
     }
 
     /**
      * Returns information about the workshop participant
      *
-     * @param stdClass $user participant data
-     * @param workshop API
      * @return string HTML code
      */
-    protected function participant(stdClass $user) {
-        $o  = $this->output->user_picture($user, $this->page->course->id);
-        $o .= fullname($user);
+    protected function participant(stdClass $allocation, array $userinfo) {
+        $o  = $this->output->user_picture($userinfo[$allocation->userid], $this->page->course->id);
+        $o .= fullname($userinfo[$allocation->userid]);
         $o .= $this->output->container_start(array('submission'));
-        if (is_null($user->submissionid)) {
+        if (is_null($allocation->submissionid)) {
             $o .= $this->output->container(get_string('nosubmissionfound', 'workshop'), 'info');
         } else {
-            $o .= $this->output->container(format_string($user->submissiontitle), 'title');
-            if (is_null($user->submissiongrade)) {
+            $o .= $this->output->container(format_string($allocation->submissiontitle), 'title');
+            if (is_null($allocation->submissiongrade)) {
                 $o .= $this->output->container(get_string('nogradeyet', 'workshop'), array('grade', 'missing'));
             } else {
                 $o .= $this->output->container(get_string('alreadygraded', 'workshop'), array('grade', 'missing'));
@@ -124,41 +122,38 @@ class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
     /**
      * Returns information about the current reviewers of the given participant and a selector do add new one
      *
-     * @param stdClass $user          participant data
-     * @param array $peers            objects with properties to display picture and fullname
-     * @param array $reviewers        potential reviewers
-     * @param bool $useselfassessment shall a user be offered as a reviewer of him/herself
      * @return string html code
      */
-    protected function reviewers_of_participant(stdClass $user, array $peers, array $reviewers, $useselfassessment) {
+    protected function reviewers_of_participant(stdClass $allocation, array $userinfo, array $reviewers, $selfassessment) {
         $o = '';
-        if (is_null($user->submissionid)) {
+        if (is_null($allocation->submissionid)) {
             $o .= $this->output->container(get_string('nothingtoreview', 'workshop'), 'info');
         } else {
             $exclude = array();
-            if (! $useselfassessment) {
-                $exclude[$user->id] = true;
+            if (! $selfassessment) {
+                $exclude[$allocation->userid] = true;
             }
             // todo add an option to exclude users without own submission
             $options = $this->users_to_menu_options($reviewers, $exclude);
             if ($options) {
-                $handler = new moodle_url($this->page->url, array('mode' => 'new', 'of' => $user->id, 'sesskey' => sesskey()));
-                $select = html_select::make_popup_form($handler, 'by', $options, 'addreviewof' . $user->id, '',
-                    get_string('addreviewer', 'workshopallocation_manual'));
+                $handler = new moodle_url($this->page->url,
+                                            array('mode' => 'new', 'of' => $allocation->userid, 'sesskey' => sesskey()));
+                $select = html_select::make_popup_form($handler, 'by', $options, 'addreviewof' . $allocation->userid, '',
+                                            get_string('addreviewer', 'workshopallocation_manual'));
                 $select->nothinglabel = get_string('chooseuser', 'workshop');
                 $select->set_label(get_string('addreviewer', 'workshopallocation_manual'), $select->id);
                 $o .= $this->output->select($select);
             }
         }
         $o .= $this->output->output_start_tag('ul', array());
-        foreach ($user->reviewedby as $reviewerid => $assessmentid) {
+        foreach ($allocation->reviewedby as $reviewerid => $assessmentid) {
             $o .= $this->output->output_start_tag('li', array());
-            $userpic = new moodle_user_picture();
-            $userpic->user = $peers[$reviewerid];
-            $userpic->courseid = $this->page->course->id;
-            $userpic->size = 16;
-            $o .= $this->output->user_picture($userpic);
-            $o .= fullname($peers[$reviewerid]);
+            $allocationpic = new moodle_user_picture();
+            $allocationpic->user = $userinfo[$reviewerid];
+            $allocationpic->courseid = $this->page->course->id;
+            $allocationpic->size = 16;
+            $o .= $this->output->user_picture($allocationpic);
+            $o .= fullname($userinfo[$reviewerid]);
 
             // delete icon
             $handler = new moodle_url($this->page->url, array('mode' => 'del', 'what' => $assessmentid, 'sesskey' => sesskey()));
@@ -173,28 +168,25 @@ class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
     /**
      * Returns information about the current reviewees of the given participant and a selector do add new one
      *
-     * @param stdClass $user          participant data
-     * @param array $peers            objects with properties to display picture and fullname
-     * @param array $authors          potential authors to be reviewed
-     * @param bool $useselfassessment shall a user be offered as a reviewer of him/herself
      * @return string html code
      */
-    protected function reviewees_of_participant(stdClass $user, array $peers, array $authors, $useselfassessment) {
+    protected function reviewees_of_participant(stdClass $allocation, array $userinfo, array $authors, $selfassessment) {
         $o = '';
-        if (is_null($user->submissionid)) {
+        if (is_null($allocation->submissionid)) {
             $o .= $this->output->container(get_string('withoutsubmission', 'workshop'), 'info');
         }
         $exclude = array();
-        if (! $useselfassessment) {
-            $exclude[$user->id] = true;
+        if (! $selfassessment) {
+            $exclude[$allocation->userid] = true;
             $o .= $this->output->container(get_string('selfassessmentdisabled', 'workshop'), 'info');
         }
         // todo add an option to exclude users without own submission
         $options = $this->users_to_menu_options($authors, $exclude);
         if ($options) {
-            $handler = new moodle_url($this->page->url, array('mode' => 'new', 'by' => $user->id, 'sesskey' => sesskey()));
-            $select = html_select::make_popup_form($handler, 'of', $options, 'addreviewby' . $user->id, '',
-                                                        get_string('addreviewee', 'workshopallocation_manual'));
+            $handler = new moodle_url($this->page->url,
+                                        array('mode' => 'new', 'by' => $allocation->userid, 'sesskey' => sesskey()));
+            $select = html_select::make_popup_form($handler, 'of', $options, 'addreviewby' . $allocation->userid, '',
+                                        get_string('addreviewee', 'workshopallocation_manual'));
             $select->nothinglabel = get_string('chooseuser', 'workshop');
             $select->set_label(get_string('addreviewee', 'workshopallocation_manual'), $select->id);
             $o .= $this->output->select($select);
@@ -202,14 +194,14 @@ class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
             $o .= $this->output->container(get_string('nothingtoreview', 'workshop'), 'info');
         }
         $o .= $this->output->output_start_tag('ul', array());
-        foreach ($user->reviewerof as $authorid => $assessmentid) {
+        foreach ($allocation->reviewerof as $authorid => $assessmentid) {
             $o .= $this->output->output_start_tag('li', array());
-            $userpic = new moodle_user_picture();
-            $userpic->user = $peers[$authorid];
-            $userpic->courseid = $this->page->course->id;
-            $userpic->size = 16;
-            $o .= $this->output->user_picture($userpic, $this->page->course->id);
-            $o .= fullname($peers[$authorid]);
+            $allocationpic = new moodle_user_picture();
+            $allocationpic->user = $userinfo[$authorid];
+            $allocationpic->courseid = $this->page->course->id;
+            $allocationpic->size = 16;
+            $o .= $this->output->user_picture($allocationpic, $this->page->course->id);
+            $o .= fullname($userinfo[$authorid]);
 
             // delete icon
             $handler = new moodle_url($this->page->url, array('mode' => 'del', 'what' => $assessmentid, 'sesskey' => sesskey()));
@@ -252,6 +244,4 @@ class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
         return $this->output->action_icon($icon);
 
     }
-
-
 }

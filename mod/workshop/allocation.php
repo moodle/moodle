@@ -57,7 +57,7 @@ $initresult = $allocator->init();
 $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
 echo $OUTPUT->header();
 
-$allocators = $workshop->installed_allocators();
+$allocators = workshop::installed_allocators();
 $currenttab = 'allocation';
 include(dirname(__FILE__) . '/tabs.php');
 
