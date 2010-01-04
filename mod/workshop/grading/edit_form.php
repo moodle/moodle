@@ -59,7 +59,6 @@ class workshop_edit_strategy_form extends moodleform {
         $this->strategy = $this->_customdata['strategy'];
 
         $mform->addElement('hidden', 'workshopid', $this->workshop->id);
-        $mform->addElement('hidden', 'strategyname', $this->strategy->name());
 
         $this->definition_inner($mform);
 

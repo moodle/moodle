@@ -60,13 +60,6 @@ class workshop_noerrors_strategy implements workshop_strategy {
 /// Public API methods
 
     /**
-     * @return string
-     */
-    public function name() {
-        return 'noerrors';
-    }
-
-    /**
      * Factory method returning an instance of an assessment form editor class
      *
      * @param $actionurl URL of form handler, defaults to auto detect the current url
@@ -119,10 +112,6 @@ class workshop_noerrors_strategy implements workshop_strategy {
     public function save_edit_strategy_form(stdClass $data) {
         global $DB, $PAGE;
 
-        if (!isset($data->strategyname) || ($data->strategyname != $this->name())) {
-            // the workshop strategy has changed since the form was opened for editing
-            throw new moodle_exception('strategyhaschanged', 'workshop');
-        }
         $workshopid = $data->workshopid;
         $norepeats  = $data->norepeats;
 
@@ -160,43 +149,32 @@ class workshop_noerrors_strategy implements workshop_strategy {
         $this->delete_dimensions($todelete);
 
         // re-save the mappings
-        $current  = array();
-        $currentx = $DB->get_records('workshop_forms_noerrors_map', array('workshopid' => $this->workshop->id));
-        foreach ($currentx as $id => $map) {
-            $current[$map->nonegative] = $map->grade;
-        }
-        unset($currentx);
         $todelete = array();
-
-        foreach ($data->map as $nonegative => $grade) {
-            if ($nonegative == 0) {
-                // no negative response automatically maps to 100%, do not save such mapping
-                continue;
-            }
-            if (!is_numeric($grade)) {
+        foreach ($data->mappings as $nonegative => $grade) {
+            if (is_null($grade)) {
                 // no grade set for this number of negative responses
                 $todelete[] = $nonegative;
                 continue;
             }
-            if (isset($current[$nonegative])) {
-                $DB->set_field('workshop_forms_noerrors_map', 'grade', $grade,
-                            array('workshopid' => $this->workshop->id, 'nonegative' => $nonegative));
+            if (isset($this->mappings[$nonegative])) {
+                $DB->set_field("workshop_forms_noerrors_map", "grade", $grade,
+                            array("workshopid" => $this->workshop->id, "nonegative" => $nonegative));
             } else {
-                $DB->insert_record('workshop_forms_noerrors_map',
-                            (object)array('workshopid' => $this->workshop->id, 'nonegative' => $nonegative, 'grade' => $grade));
+                $DB->insert_record("workshop_forms_noerrors_map",
+                            (object)array("workshopid" => $this->workshop->id, "nonegative" => $nonegative, "grade" => $grade));
             }
         }
         // clear mappings that are not valid any more
         if (!empty($todelete)) {
-            list($insql, $params) = $DB->get_in_or_equal($todelete);
-            $insql = 'nonegative ' . $insql . ' OR ';
+            list($insql, $params) = $DB->get_in_or_equal($todelete, SQL_PARAMS_NAMED);
+            $insql = "nonegative $insql OR ";
         } else {
-            list($insql, $params) = array('', array());
+            $insql = "";
         }
-        $sql = 'DELETE FROM {workshop_forms_noerrors_map}
-                WHERE ((' . $insql . 'nonegative > ?) AND (workshopid = ?))';
-        $params[] = count($data->map) - 1;
-        $params[] = $this->workshop->id;
+        $sql = "DELETE FROM {workshop_forms_noerrors_map}
+                      WHERE (($insql nonegative > :nodimensions) AND (workshopid = :workshopid))";
+        $params['nodimensions'] = $norepeats;
+        $params['workshopid']   = $this->workshop->id;
         if (!$DB->execute($sql, $params)){
             print_error('err_removegrademappings', 'workshop');
         }
@@ -262,10 +240,6 @@ class workshop_noerrors_strategy implements workshop_strategy {
     public function save_assessment(stdClass $assessment, stdClass $data) {
         global $DB;
 
-        if (!isset($data->strategyname) || ($data->strategyname != $this->name())) {
-            // the workshop strategy has changed since the form was opened for editing
-            throw new moodle_exception('strategyhaschanged', 'workshop');
-        }
         if (!isset($data->nodims)) {
             throw coding_expection('You did not send me the number of assessment dimensions to process');
         }
@@ -286,48 +260,6 @@ class workshop_noerrors_strategy implements workshop_strategy {
             }
         }
         return $this->update_peer_grade($assessment);
-    }
-
-    /**
-     * Save the definition of a "Number of errors" grading form
-     *
-     * The dimensions data are stored in workshop_forms_noerrors. The data that map the
-     * number of errors to a grade are saved into workshop_forms_noerrors_map.
-     *
-     * @uses $DB
-     * @param stdClass $data Raw data returned by the dimension editor form
-     * @return void
-     */
-    public function save_form(stdClass $data) {
-        global $DB;
-
-        if (!isset($data->strategyname) || ($data->strategyname != $this->name())) {
-            // the workshop strategy has changed since the form was opened for editing
-            throw new moodle_exception('strategyhaschanged', 'workshop');
-        }
-
-        // save the dimensions data
-        $dims = $this->_cook_form_data($data);
-        $todelete = array();
-        foreach ($dims as $record) {
-            if (empty($record->description)) {
-                if (!empty($record->id)) {
-                    // existing record with empty description - to be deleted
-                    $todelete[] = $record->id;
-                }
-                continue;
-            }
-            if (empty($record->id)) {
-                // new field
-                $record->id = $DB->insert_record('workshop_forms_' . $this->name(), $record);
-            } else {
-                // exiting field
-                $DB->update_record('workshop_forms_' . $this->name(), $record);
-            }
-        }
-        // delete dimensions if the teacher removed the description
-        $DB->delete_records_list('workshop_forms_' . $this->name(), 'id', $todelete);
-
     }
 
 /// Internal methods
@@ -376,7 +308,6 @@ class workshop_noerrors_strategy implements workshop_strategy {
             $formdata->{'dimensionid__idx_' . $key}             = $dimension->id; // master id, not the local one!
             $formdata->{'description__idx_' . $key}             = $dimension->description;
             $formdata->{'description__idx_' . $key.'format'}    = $dimension->descriptionformat;
-            $formdata->{'description__idx_' . $key.'trust'}     = $dimension->descriptiontrust;
             $formdata->{'grade0__idx_' . $key}                  = $dimension->grade0;
             $formdata->{'grade1__idx_' . $key}                  = $dimension->grade1;
             $formdata->{'weight__idx_' . $key}                  = $dimension->weight;
@@ -446,14 +377,48 @@ class workshop_noerrors_strategy implements workshop_strategy {
             $cook->noerrors[$i]->grade1     = $raw->{'grade1__idx_'.$i};
             $cook->noerrors[$i]->weight     = $raw->{'weight__idx_'.$i};
 
-            if (empty($raw->{'map__idx_'.$i})) {
-                $cook->mappings[$i]         = null;
+            if (is_numeric($raw->{'map__idx_'.($i+1) })) {
+                $cook->mappings[$i+1]         = $raw->{'map__idx_'.($i+1)}; // 0, 1, 2, ...
             } else {
-                $cook->mappings[$i]         = new stdClass();
-                $cook->mappings[$i]->grade  = $raw->{'map__idx_'.$i};
+                $cook->mappings[$i+1]         = null; // not set anything
             }
         }
         return $cook;
+    }
+
+    /**
+     * Returns the list of current grades filled by the reviewer
+     *
+     * @param stdClass $assessment Assessment record
+     * @return array of filtered records from the table workshop_grades
+     */
+    protected function get_current_assessment_data(stdClass $assessment) {
+        global $DB;
+
+        // fetch all grades accociated with this assessment
+        $grades = $DB->get_records("workshop_grades", array("assessmentid" => $assessment->id));
+
+        // filter grades given under an other strategy or assessment form
+        foreach ($grades as $grade) {
+            if (!isset($this->dimensions[$grade->dimensionid])) {
+                unset ($grades[$grade->id]);
+            }
+        }
+        return $grades;
+    }
+
+    /**
+     * Reindexes the records returned by {@link get_current_assessment_data} by dimensionid
+     *
+     * @param mixed $grades
+     * @return array
+     */
+    protected function reindex_grades_by_dimension($grades) {
+        $reindexed = array();
+        foreach ($grades as $grade) {
+            $reindexed[$grade->dimensionid] = $grade;
+        }
+        return $reindexed;
     }
 
 }

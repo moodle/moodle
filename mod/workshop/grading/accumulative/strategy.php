@@ -56,13 +56,6 @@ class workshop_accumulative_strategy implements workshop_strategy {
 /// Public API
 
     /**
-     * @return string
-     */
-    public function name() {
-        return 'accumulative';
-    }
-
-    /**
      * Factory method returning an instance of an assessment form editor class
      *
      * @param $actionurl URL of form handler, defaults to auto detect the current url
@@ -115,10 +108,6 @@ class workshop_accumulative_strategy implements workshop_strategy {
     public function save_edit_strategy_form(stdClass $data) {
         global $DB, $PAGE;
 
-        if (!isset($data->strategyname) || ($data->strategyname != $this->name())) {
-            // the workshop strategy has changed since the form was opened for editing
-            throw new moodle_exception('strategyhaschanged', 'workshop');
-        }
         $workshopid = $data->workshopid;
         $norepeats  = $data->norepeats;
 
@@ -215,10 +204,6 @@ class workshop_accumulative_strategy implements workshop_strategy {
     public function save_assessment(stdClass $assessment, stdClass $data) {
         global $DB;
 
-        if (!isset($data->strategyname) || ($data->strategyname != $this->name())) {
-            // the workshop strategy has changed since the form was opened for editing
-            throw new moodle_exception('strategyhaschanged', 'workshop');
-        }
         if (!isset($data->nodims)) {
             throw coding_expection('You did not send me the number of assessment dimensions to process');
         }

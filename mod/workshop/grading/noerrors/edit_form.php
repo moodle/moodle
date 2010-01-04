@@ -79,7 +79,6 @@ class workshop_edit_noerrors_strategy_form extends workshop_edit_strategy_form {
             $percents[$i] = get_string('percents', 'workshop', $i);
         }
         $mform->addElement('static', 'mappingzero', 0, get_string('percents', 'workshop', 100));
-        $mform->addElement('hidden', 'map__idx_0', 100);
         for ($i = 1; $i <= $norepeats; $i++) {
             $selects = array();
             $selects[] = $mform->createElement('select', 'map__idx_'.$i, $i, $percents);

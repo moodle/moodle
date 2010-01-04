@@ -55,8 +55,6 @@ class workshop_assessment_form extends moodleform {
         $this->mode     = $this->_customdata['mode'];       // influences the save buttons
         $this->strategy = $this->_customdata['strategy'];   // strategy name sends back for cross check
 
-        $mform->addElement('hidden', 'strategyname', $this->strategy->name());
-
         // add the strategy-specific fields
         $this->definition_inner($mform);
 

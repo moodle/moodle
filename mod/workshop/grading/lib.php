@@ -34,15 +34,6 @@ define('WORKSHOP_STRATEGY_ADDDIMS', 2);    // number of dimensions to add
 interface workshop_strategy {
 
     /**
-     * Returns name of the strategy
-     *
-     * The name may be used to generate table names, class names, paths etc.
-     *
-     * @return string
-     */
-    public function name();
-
-    /**
      * Factory method returning a form that is used to define the assessment form
      *
      * @param string $actionurl URL of the action handler script, defaults to auto detect
@@ -77,7 +68,7 @@ interface workshop_strategy {
      *
      * @param stdClass $assessment Assessment being filled
      * @param stdClass $data       Raw data as returned by the assessment form
-     * @return float|float       Percentual grade for submission as suggested by the peer or null if impossible to count
+     * @return float|null          Percentual grade for submission as suggested by the peer or null if impossible to count
      */
     public function save_assessment(stdClass $assessment, stdClass $data);
 }
