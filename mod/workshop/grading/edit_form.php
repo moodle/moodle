@@ -70,10 +70,10 @@ class workshop_edit_strategy_form extends moodleform {
         //}
 
         $buttonarray = array();
-        $buttonarray[] = &$mform->createElement('submit', 'saveandcontinue', get_string('saveandcontinue', 'workshop'));
-        $buttonarray[] = &$mform->createElement('submit', 'saveandpreview', get_string('saveandpreview', 'workshop'));
-        $buttonarray[] = &$mform->createElement('submit', 'saveandclose', get_string('saveandclose', 'workshop'));
-        $buttonarray[] = &$mform->createElement('cancel');
+        $buttonarray[] = $mform->createElement('submit', 'saveandcontinue', get_string('saveandcontinue', 'workshop'));
+        $buttonarray[] = $mform->createElement('submit', 'saveandpreview', get_string('saveandpreview', 'workshop'));
+        $buttonarray[] = $mform->createElement('submit', 'saveandclose', get_string('saveandclose', 'workshop'));
+        $buttonarray[] = $mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
     }

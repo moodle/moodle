@@ -58,7 +58,7 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
      * @param object message to display
      * @return string html code
      */
-    public function display_allocations(workshop $workshop, &$peers, $hlauthorid=null, $hlreviewerid=null, $msg=null) {
+    public function display_allocations(workshop $workshop, $peers, $hlauthorid=null, $hlreviewerid=null, $msg=null) {
 
         $wsoutput = $this->page->theme->get_renderer('mod_workshop', $this->page);
         if (empty($peers)) {
@@ -125,7 +125,7 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
      * @param array $peers           objects with properties to display picture and fullname
      * @return string html code
      */
-    protected function reviewers_of_participant(object $user, workshop $workshop, &$peers) {
+    protected function reviewers_of_participant(object $user, workshop $workshop, $peers) {
         $o = '';
         if (is_null($user->submissionid)) {
             $o .= $this->output->output_tag('span', array('class' => 'info'), get_string('nothingtoreview', 'workshop'));
@@ -171,7 +171,7 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
      * @param array $peers           objects with properties to display picture and fullname
      * @return string html code
      */
-    protected function reviewees_of_participant(object $user, workshop $workshop, &$peers) {
+    protected function reviewees_of_participant(object $user, workshop $workshop, $peers) {
         $o = '';
         if (is_null($user->submissionid)) {
             $o .= $this->output->container(get_string('withoutsubmission', 'workshop'), 'info');
@@ -215,7 +215,7 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
      * @param array $users array of users or array of groups of users
      * @return array of options to be passed to {@link html_select::make_ popup_form()}
      */
-    protected function users_to_menu_options(&$users, array $exclude) {
+    protected function users_to_menu_options($users, array $exclude) {
         $options = array(); // to be returned
         foreach ($users as $user) {
             if (!isset($exclude[$user->id])) {
