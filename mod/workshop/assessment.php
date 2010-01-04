@@ -69,30 +69,7 @@ if ('preview' == $mode) {
     $PAGE->set_heading($course->fullname);
 }
 
-// load the grading strategy logic
-$strategy = $workshop->grading_strategy_instance();
-
-// load the form to edit the grading strategy dimensions
-$mform = $strategy->get_assessment_form($PAGE->url, $mode, $assessment);
-
-if ($mform->is_cancelled()) {
-    redirect($workshop->view_url());
-
-} elseif ($data = $mform->get_data()) {
-    if (isset($data->backtoeditform)) {
-        // user wants to return from preview to form editing
-        redirect($workshop->editform_url());
-    }
-    $strategy->save_assessment($assessment, $data);
-    if (isset($data->saveandclose)) {
-        redirect($workshop->view_url());
-    } else {
-        // save and continue - redirect to self to prevent data being re-posted by pressing "Reload"
-        redirect($PAGE->url);
-    }
-}
-
-// build the navigation and the header
+// build the navigation and the header - todo this will be changed by the new navigation api
 $navlinks = array();
 $navlinks[] = array('name' => get_string('modulenameplural', 'workshop'),
                     'link' => "index.php?id=$course->id",
@@ -113,6 +90,34 @@ if ($mode == 'preview') {
                         'type' => 'title');
 }
 $navigation = build_navigation($navlinks);
+
+// load the grading strategy logic
+$strategy = $workshop->grading_strategy_instance();
+
+// load the form to edit the grading strategy dimensions
+$mform = $strategy->get_assessment_form($PAGE->url, $mode, $assessment);
+
+if ($mform->is_cancelled()) {
+    redirect($workshop->view_url());
+
+} elseif ($data = $mform->get_data()) {
+    if (isset($data->backtoeditform)) {
+        // user wants to return from preview to form editing
+        redirect($workshop->editform_url());
+    }
+    $rawgrade = $strategy->save_assessment($assessment, $data);
+    if (isset($data->saveandclose)) {
+        echo $OUTPUT->header($navigation);
+        echo $OUTPUT->heading(get_string('assessmentresult', 'workshop'), 2);
+        echo $OUTPUT->box('Given grade: ' . $rawgrade); // todo more detailed info using own renderer
+        echo $OUTPUT->continue_button($workshop->view_url());
+        echo $OUTPUT->footer();
+        die();  // bye-bye
+    } else {
+        // save and continue - redirect to self to prevent data being re-posted by pressing "Reload"
+        redirect($PAGE->url);
+    }
+}
 
 // Output starts here
 

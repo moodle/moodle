@@ -71,13 +71,13 @@ interface workshop_strategy {
     public function get_assessment_form(moodle_url $actionurl=null, $mode='preview');
 
     /**
-     * Saves the filled assessment
+     * Saves the filled assessment and returns the grade for submission as suggested by the reviewer
      *
      * This method processes data submitted using the form returned by {@link get_assessment_form()}
      *
      * @param object $assessment Assessment being filled
      * @param object $data       Raw data as returned by the assessment form
-     * @return void
+     * @return float             Percentual grade for submission as suggested by the peer
      */
     public function save_assessment(stdClass $assessment, stdClass $data);
 }

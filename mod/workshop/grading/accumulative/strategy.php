@@ -35,8 +35,8 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
     /** @var workshop the parent workshop instance */
     protected $workshop;
 
-    /** @var int number of dimensions defined in database, must be set in {@link load_fields()} */
-    protected $nodimensions=null;
+    /** @var array definition of the assessment form fields */
+    protected $dimensions = null;
 
     /** @var array options for dimension description fields */
     protected $descriptionopts;
@@ -49,6 +49,7 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
      */
     public function __construct($workshop) {
         $this->workshop         = $workshop;
+        $this->dimensions       = $this->load_fields();
         $this->descriptionopts  = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => -1);
     }
 
@@ -70,11 +71,9 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
 
         require_once(dirname(__FILE__) . '/edit_form.php');
 
-        $fields = $this->load_fields();
-        if (is_null($this->nodimensions)) {
-            throw new coding_exception('You forgot to set the number of dimensions in load_fields()');
-        }
-        $norepeatsdefault   = max($this->nodimensions + WORKSHOP_STRATEGY_ADDDIMS, WORKSHOP_STRATEGY_MINDIMS);
+        $fields             = $this->prepare_form_fields($this->dimensions);
+        $nodimensions       = count($this->dimensions);
+        $norepeatsdefault   = max($nodimensions + WORKSHOP_STRATEGY_ADDDIMS, WORKSHOP_STRATEGY_MINDIMS);
         $norepeats          = optional_param('norepeats', $norepeatsdefault, PARAM_INT);    // number of dimensions
         $noadddims          = optional_param('noadddims', '', PARAM_ALPHA);                 // shall we add more?
         if ($noadddims) {
@@ -82,7 +81,7 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
         }
 
         // prepare the embeded files
-        for ($i = 0; $i < $this->nodimensions; $i++) {
+        for ($i = 0; $i < $nodimensions; $i++) {
             // prepare all editor elements
             $fields = file_prepare_standard_editor($fields, 'description__idx_'.$i, $this->descriptionopts,
                 $PAGE->context, 'workshop_dimension_description', $fields->{'dimensionid__idx_'.$i});
@@ -100,7 +99,9 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
     }
 
     /**
-     * Returns the fields of the assessment form and sets {@var nodimensions}
+     * Loads the fields of the assessment form
+     *
+     * @return array definition of assessment dimensions
      */
     protected function load_fields() {
         global $DB;
@@ -112,22 +113,16 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
                 ORDER BY master.sort';
         $params[0] = $this->workshop->id;
 
-        $dims = $DB->get_records_sql($sql, $params);
-        $this->nodimensions = count($dims);
-        $fields = $this->_cook_dimension_records($dims);
-        return $fields;
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**
-     * Maps the data from DB to their form fields
+     * Maps the dimension data from DB to the form fields
      *
-     * Called internally from load_form(). Could be private but keeping protected
-     * for unit testing purposes.
-     *
-     * @param array $raw Array of raw dimension records as fetched by get_record()
+     * @param array $raw Array of raw dimension records as returned by {@link load_fields()}
      * @return array Array of fields data to be used by the mform set_data
      */
-    protected function _cook_dimension_records(array $raw) {
+    protected function prepare_form_fields(array $raw) {
 
         $formdata = new stdClass();
         $key = 0;
@@ -256,13 +251,11 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
         global $DB;
         require_once(dirname(__FILE__) . '/assessment_form.php');
 
-        $fields = $this->load_fields();
-        if (is_null($this->nodimensions)) {
-            throw new coding_exception('You forgot to set the number of dimensions in load_fields()');
-        }
+        $fields         = $this->prepare_form_fields($this->dimensions);
+        $nodimensions   = count($this->dimensions);
 
         // rewrite URLs to the embeded files
-        for ($i = 0; $i < $this->nodimensions; $i++) {
+        for ($i = 0; $i < $nodimensions; $i++) {
             $fields->{'description__idx_'.$i} = file_rewrite_pluginfile_urls($fields->{'description__idx_'.$i},
                 'pluginfile.php', $PAGE->context->id, 'workshop_dimension_description', $fields->{'dimensionid__idx_'.$i});
         }
@@ -271,7 +264,7 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
             // load the previously saved assessment data
             $grades = $DB->get_records('workshop_grades', array('assessmentid' => $assessment->id), '', 'dimensionid,*');
             $current = new stdClass();
-            for ($i = 0; $i < $this->nodimensions; $i++) {
+            for ($i = 0; $i < $nodimensions; $i++) {
                 $dimid = $fields->{'dimensionid__idx_'.$i};
                 if (isset($grades[$dimid])) {
                     $current->{'gradeid__idx_'.$i}      = $grades[$dimid]->id;
@@ -286,7 +279,7 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
         $customdata['mode']     = $mode;
 
         // set up strategy-specific custom data
-        $customdata['nodims']   = $this->nodimensions;
+        $customdata['nodims']   = $nodimensions;
         $customdata['fields']   = $fields;
         $customdata['current']  = isset($current) ? $current : null;
         $attributes = array('class' => 'assessmentform accumulative');
@@ -301,7 +294,7 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
      *
      * @param object $assessment Assessment being filled
      * @param object $data       Raw data as returned by the assessment form
-     * @return void
+     * @return float             Percentual grade for submission as suggested by the peer
      */
     public function save_assessment(stdClass $assessment, stdClass $data) {
         global $DB;
@@ -329,7 +322,16 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
                 $DB->update_record('workshop_grades', $grade);
             }
         }
-        // todo recalculate grades immediately or by cron ?
+        return $this->update_peer_grade($assessment);
     }
 
+    /**
+     * Aggregate the assessment form data and set the grade for the submission given by the peer
+     *
+     * @param stdClass $assessment Assessment record
+     * @return float               Percentual grade for submission as suggested by the peer
+     */
+    protected function update_peer_grade(stdClass $assessment) {
+        return 60.2;
+    }
 }
