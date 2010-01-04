@@ -44,7 +44,7 @@ class workshop_edit_noerrors_strategy_form extends workshop_edit_strategy_form {
      */
     protected function definition_inner(&$mform) {
 
-        $workshopconfig     = get_config('workshop');
+        $plugindefaults     = get_config('workshopgrading_noerrors');
         $nodimensions       = $this->_customdata['nodimensions'];       // number of currently filled dimensions
         $norepeats          = $this->_customdata['norepeats'];          // number of dimensions to display
         $descriptionopts    = $this->_customdata['descriptionopts'];    // wysiwyg fields options
@@ -62,10 +62,10 @@ class workshop_edit_noerrors_strategy_form extends workshop_edit_strategy_form {
             $mform->addElement('editor', 'description__idx_'.$i.'_editor',
                                 get_string('dimensiondescription', 'workshopgrading_noerrors'), '', $descriptionopts);
             $mform->addElement('text', 'grade0__idx_'.$i, get_string('grade0', 'workshopgrading_noerrors'), array('size'=>'15'));
-            $mform->setDefault('grade0__idx_'.$i, $workshopconfig->noerrorsgrade0);
+            $mform->setDefault('grade0__idx_'.$i, $plugindefaults->grade0);
             $mform->setType('grade0__idx_'.$i, PARAM_TEXT);
             $mform->addElement('text', 'grade1__idx_'.$i, get_string('grade1', 'workshopgrading_noerrors'), array('size'=>'15'));
-            $mform->setDefault('grade1__idx_'.$i, $workshopconfig->noerrorsgrade1);
+            $mform->setDefault('grade1__idx_'.$i, $plugindefaults->grade1);
             $mform->setType('grade1__idx_'.$i, PARAM_TEXT);
             $mform->addElement('select', 'weight__idx_'.$i, get_string('dimensionweight', 'workshopgrading_noerrors'), $weights);
             $mform->setDefault('weight__idx_'.$i, 1);

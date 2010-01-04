@@ -67,7 +67,7 @@ if ($mform->is_cancelled()) {
 // Output starts here
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('strategy' . $workshop->strategy, 'workshop'));
+echo $OUTPUT->heading(get_string('pluginname', 'workshopgrading_' . $workshop->strategy));
 
 $mform->display();
 
