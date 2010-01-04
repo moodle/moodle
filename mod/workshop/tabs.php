@@ -40,11 +40,14 @@ $inactive   = array();
 $activated  = array();
 
 // top level tabs
-if (has_capability('mod/workshop:view', $PAGE->context)) {
+if (has_capability('mod/workshop:view', $workshop->context)) {
     $row[] = new tabobject('info', $workshop->view_url()->out(), get_string('info', 'workshop'));
 }
-if (has_capability('mod/workshop:editdimensions', $PAGE->context)) {
+if (has_capability('mod/workshop:editdimensions', $workshop->context)) {
     $row[] = new tabobject('editform', $workshop->editform_url()->out(), get_string('editassessmentform', 'workshop'));
+}
+if (has_capability('mod/workshop:submit', $workshop->context)) {
+    $row[] = new tabobject('submission', $workshop->submission_url()->out(), get_string('editsubmission', 'workshop'));
 }
 $tabs[] = $row;
 

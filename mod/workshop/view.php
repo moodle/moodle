@@ -76,6 +76,8 @@ $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
 echo $OUTPUT->header();
 include(dirname(__FILE__) . '/tabs.php');
 
+echo $OUTPUT->heading(format_string($workshop->name));
+
 $workshop->phase = 10;    // todo xxx devel hack
 echo $wsoutput->user_plan($workshop->prepare_user_plan($USER->id));
 
@@ -83,7 +85,6 @@ echo $wsoutput->user_plan($workshop->prepare_user_plan($USER->id));
 switch ($workshop->phase) {
 case workshop::PHASE_SETUP:
     // print workshop name and description
-    echo $OUTPUT->heading(format_string($workshop->name));
     if (trim(strip_tags($workshop->intro))) {
         echo $OUTPUT->box(format_module_intro('workshop', $workshop, $workshop->cm->id), 'generalbox', 'intro');
     }

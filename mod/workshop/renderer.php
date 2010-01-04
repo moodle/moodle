@@ -63,7 +63,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
         if (empty($message->text)) {
             return '';
         }
-        $sty = $message->sty ? $message->sty : 'info';
+        $sty = empty($message->sty) ? 'info' : $message->sty;
 
         $o = $this->output->output_tag('span', array(), $message->text);
         $closer = $this->output->output_tag('a', array('href' => $this->page->url->out()),
@@ -287,18 +287,23 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
             $classes = '';
             $icon = null;
             if ($task->completed === true) {
-                $icon = new html_image();
-                $icon->src = $this->old_icon_url('i/tick_green_big.gif');
-                $icon->alt = '+';
                 $classes .= ' completed';
             } elseif ($task->completed === false) {
-                $classes .= ' pending';
-            } else {
-                $classes .= ' statusunknown';
+                $classes .= ' fail';
+            } elseif ($task->completed === 'info') {
+                $classes .= ' info';
             }
-            $title = $this->output->container($task->title, 'title');
-            $info = $this->output->container($task->info, 'info');
-            $out .= $this->output->output_tag('li', array('class' => $classes), $title . $info);
+            if (is_null($task->link)) {
+                $title = $task->title;
+            } else {
+                $link = new html_link();
+                $link->url  = $task->link;
+                $link->text = $task->title;
+                $title = $this->output->link($link);
+            }
+            $title = $this->output->container($title, 'title');
+            $details = $this->output->container($task->details, 'details');
+            $out .= $this->output->output_tag('li', array('class' => $classes), $title . $details);
         }
         if ($out) {
             $out = $this->output->output_tag('ul', array('class' => 'tasks'), $out);

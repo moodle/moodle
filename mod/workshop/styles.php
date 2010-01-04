@@ -186,6 +186,7 @@
 .userplan {
     width: 70%;
     margin: 1em auto 1em auto;
+    font-size: 80%;
 }
 
 .userplan th {
@@ -199,7 +200,7 @@
 .userplan th.active {
     vertical-align: top;
     color: black;
-    font-size: 110%;
+    font-size: 140%;
     border: 1px solid #ddd;
     border-bottom: none;
     background-color: #e7f1c3;
@@ -210,7 +211,24 @@
     vertical-align: top;
     border-right: 1px solid #ddd;
     background-color: #f5f5f5;
+}
+
+.userplan td,
+.userplan td a,
+.userplan td a:link,
+.userplan td a:hover,
+.userplan td a:visited,
+.userplan td a:active {
     color: #999;
+}
+
+.userplan td.active,
+.userplan td.active a,
+.userplan td.active a:link,
+.userplan td.active a:hover,
+.userplan td.active a:visited,
+.userplan td.active a:active {
+    color: black;
 }
 
 .userplan td.lastcol {
@@ -218,7 +236,6 @@
 }
 
 .userplan td.active {
-    color: black;
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
     background-color: #e7f1c3;
@@ -230,8 +247,16 @@
     background-repeat: no-repeat;
 }
 
-.userplan tr.phasetasks .completed {
+.userplan tr.phasetasks li.completed {
     background-image: url(../../pix/i/completion-auto-y.gif);
+}
+
+.userplan tr.phasetasks li.fail {
+    background-image: url(../../pix/i/completion-auto-fail.gif);
+}
+
+.userplan tr.phasetasks li.info {
+    background-image: url(../../pix/i/info.gif);
 }
 
 .userplan tr.phasetasks .tasks {
@@ -244,7 +269,7 @@
     padding: 0px 10px 0px 20px;
 }
 
-.userplan tr.phasetasks .info {
+.userplan tr.phasetasks .details {
     padding: 0px 10px 0px 25px;
     font-size: 80%;
 }

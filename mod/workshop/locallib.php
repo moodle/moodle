@@ -96,9 +96,36 @@ class workshop {
      */
     public function __get($key) {
         if (!isset($this->dbrecord->{$key})) {
-            throw new coding_exception('You are trying to get a non-existing property');
+            // todo remove the comment here // throw new coding_exception('You are trying to get a non-existing property');
+            return null;
         }
         return $this->dbrecord->{$key};
+    }
+
+    /**
+     * Given a list of user ids, returns the filtered one containing just ids of users with own submission
+     *
+     * Example submissions are ignored.
+     *
+     * @param array $userids 
+     * @return TODO
+     */
+    protected function users_with_submission(array $userids) {
+        global $DB;
+
+        $userswithsubmission = array();
+        list($usql, $uparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        $sql = "SELECT id,userid
+                  FROM {workshop_submissions}
+                 WHERE example = 0 AND workshopid = :workshopid AND userid $usql";
+        $params = array('workshopid' => $this->id);
+        $params = array_merge($params, $uparams);
+        $submissions = $DB->get_records_sql($sql, $params);
+        foreach ($submissions as $submission) {
+            $userswithsubmission[$submission->userid] = null;
+        }
+
+        return $userswithsubmission;
     }
 
     /**
@@ -110,25 +137,15 @@ class workshop {
      * @return array array[userid] => stdClass{->id ->lastname ->firstname}
      */
     public function get_peer_authors($musthavesubmission=true) {
-        global $DB;
 
         $users = get_users_by_capability($this->context, 'mod/workshop:submit',
                     'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
 
         if ($musthavesubmission) {
-            $userswithsubmission = array();
-            $submissions = $DB->get_records_list('workshop_submissions', 'userid', array_keys($users),'', 'id,userid');
-            foreach ($submissions as $submission) {
-                $userswithsubmission[$submission->userid] = null;
-            }
-            $userswithsubmission = array_intersect_key($users, $userswithsubmission);
+            $users = array_intersect_key($users, $this->users_with_submission(array_keys($users)));
         }
 
-        if ($musthavesubmission) {
-            return $userswithsubmission;
-        } else {
-            return $users;
-        }
+        return $users;
     }
 
     /**
@@ -147,18 +164,10 @@ class workshop {
 
         if ($musthavesubmission) {
             // users without their own submission can not be reviewers
-            $submissions = $DB->get_records_list('workshop_submissions', 'userid', array_keys($users),'', 'id,userid');
-            foreach ($submissions as $submission) {
-                $userswithsubmission[$submission->userid] = null;
-            }
-            $userswithsubmission = array_intersect_key($users, $userswithsubmission);
+            $users = array_intersect_key($users, $this->users_with_submission(array_keys($users)));
         }
 
-        if ($musthavesubmission) {
-            return $userswithsubmission;
-        } else {
-            return $users;
-        }
+        return $users;
     }
 
     /**
@@ -595,6 +604,19 @@ class workshop {
     }
 
     /**
+     * @return stdClass {@link moodle_url} the URL of the mod_edit form
+     */
+    public function updatemod_url() {
+        global $CFG;
+        return new moodle_url($CFG->wwwroot . '/course/modedit.php', array('update' => $this->cm->id, 'return' => 1));
+    }
+
+    public function allocation_url() {
+        global $CFG;
+        return new moodle_url($CFG->wwwroot . '/mod/workshop/allocation.php', array('cmid' => $this->cm->id));
+    }
+
+    /**
      * Returns an object containing all data to display the user's full name and picture
      *
      * @param int $id optional user id, defaults to the current user
@@ -645,11 +667,42 @@ class workshop {
         $phase = new stdClass();
         $phase->title = get_string('phasesetup', 'workshop');
         $phase->tasks = array();
+        if (has_capability('moodle/course:manageactivities', $this->context, $userid)) {
+            $task = new stdClass();
+            $task->title = get_string('taskintro', 'workshop');
+            $task->link = $this->updatemod_url();
+            $task->completed = !(trim(strip_tags($this->intro)) == '');
+            $phase->tasks['intro'] = $task;
+        }
         if (has_capability('mod/workshop:editdimensions', $this->context, $userid)) {
             $task = new stdClass();
-            $task->title = get_string('taskeditform', 'workshop');
-            $task->completed = $this->assessment_form_ready();
+            $task->title = get_string('editassessmentform', 'workshop');
+            $task->link = $this->editform_url();
+            if ($this->assessment_form_ready()) {
+                $task->completed = true;
+            } elseif ($this->phase > self::PHASE_SETUP) {
+                $task->completed = false;
+            }
             $phase->tasks['editform'] = $task;
+        }
+        if (has_capability('moodle/course:manageactivities', $this->context, $userid)) {
+            $task = new stdClass();
+            $task->title = get_string('taskinstructauthors', 'workshop');
+            $task->link = $this->updatemod_url();
+            if (trim(strip_tags($this->instructauthors))) {
+                $task->completed = true;
+            } elseif ($this->phase >= self::PHASE_SUBMISSION) {
+                $task->completed = false;
+            }
+            $phase->tasks['instructauthors'] = $task;
+        }
+        if (empty($phase->tasks) and $this->phase == self::PHASE_SETUP) {
+            // if we are in the setup phase and there is no task (typical for students), let us
+            // display some explanation what is going on
+            $task = new stdClass();
+            $task->title = get_string('undersetup', 'workshop');
+            $task->completed = 'info';
+            $phase->tasks['setupinfo'] = $task;
         }
         $phases[self::PHASE_SETUP] = $phase;
 
@@ -660,11 +713,61 @@ class workshop {
         if (has_capability('mod/workshop:submit', $this->context, $userid)) {
             $task = new stdClass();
             $task->title = get_string('tasksubmit', 'workshop');
-            $task->completed = $DB->record_exists('workshop_submissions',
-                                        array('workshopid' => $this->id, 'example' => 0, 'userid' => $userid));
+            $task->link = $this->submission_url();
+            if ($DB->record_exists('workshop_submissions', array('workshopid'=>$this->id, 'example'=>0, 'userid'=>$userid))) {
+                $task->completed = true;
+            } elseif ($this->phase >= self::PHASE_ASSESSMENT) {
+                $task->completed = false;
+            } else {
+                $task->completed = null;    // still has a chance to submit
+            }
             $phase->tasks['submit'] = $task;
         }
+        if (has_capability('moodle/course:manageactivities', $this->context, $userid)) {
+            $task = new stdClass();
+            $task->title = get_string('taskinstructreviewers', 'workshop');
+            $task->link = $this->updatemod_url();
+            if (trim(strip_tags($this->instructreviewers))) {
+                $task->completed = true;
+            } elseif ($this->phase >= self::PHASE_ASSESSMENT) {
+                $task->completed = false;
+            }
+            $phase->tasks['instructreviewers'] = $task;
+        }
         $phases[self::PHASE_SUBMISSION] = $phase;
+        if (has_capability('mod/workshop:allocate', $this->context, $userid)) {
+            $task = new stdClass();
+            $task->title = get_string('allocate', 'workshop');
+            $task->link = $this->allocation_url();
+            $rs = $this->get_allocations_recordset();
+            $allocations = array(); // 'submissionid' => isallocated
+            foreach ($rs as $allocation) {
+                if (!isset($allocations[$allocation->submissionid])) {
+                    $allocations[$allocation->submissionid] = false;
+                }
+                if (!empty($allocation->reviewerid)) {
+                    $allocations[$allocation->submissionid] = true;
+                }
+            }
+            $numofsubmissions = count($allocations);
+            $numofallocated   = count(array_filter($allocations));
+            $rs->close();
+            if ($numofsubmissions == 0) {
+                $task->completed = null;
+            } elseif ($numofsubmissions == $numofallocated) {
+                $task->completed = true;
+            } elseif ($this->phase > self::PHASE_SUBMISSION) {
+                $task->completed = false;
+            } else {
+                $task->completed = null;    // still has a chance to allocate
+            }
+            $a = new stdClass();
+            $a->total = $numofsubmissions;
+            $a->done  = $numofallocated;
+            $task->details = get_string('allocatedetails', 'workshop', $a);
+            unset($a);
+            $phase->tasks['submit'] = $task;
+        }
 
         // Prepare tasks for the peer-assessment phase (includes eventual self-assessments)
         $phase = new stdClass();
@@ -697,7 +800,7 @@ class workshop {
             $a->total = $numofpeers;
             $a->todo  = $numofpeerstodo;
             $task->title = get_string('taskassesspeers', 'workshop');
-            $task->info = get_string('taskassesspeersinfo', 'workshop', $a);
+            $task->details = get_string('taskassesspeersdetails', 'workshop', $a);
             unset($a);
             $phase->tasks['assesspeers'] = $task;
         }
@@ -733,7 +836,8 @@ class workshop {
 
             foreach ($phase->tasks as $taskcode => $task) {
                 $task->title        = isset($task->title)       ? $task->title      : '';
-                $task->info         = isset($task->info)        ? $task->info       : '';
+                $task->link         = isset($task->link)        ? $task->link       : null;
+                $task->details      = isset($task->details)     ? $task->details    : '';
                 $task->completed    = isset($task->completed)   ? $task->completed  : null;
             }
         }

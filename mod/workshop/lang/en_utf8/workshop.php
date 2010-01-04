@@ -26,16 +26,23 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string['info'] = 'Info';
+$string['undersetup'] = 'The workshop is currently under setup. Please wait until it is switched to the next phase.';
+$string['taskinstructreviewers'] = 'Provide instructions for grading';
+$string['taskinstructauthors'] = 'Provide instructions for submitting';
+$string['taskintro'] = 'Set the workshop introduction';
 $string['phaseclosed'] = 'Closed';
 $string['phaseevaluation'] = 'Grading evaluation phase';
 $string['phaseassessment'] = 'Assessment phase';
 $string['phasesubmission'] = 'Submission phase';
-$string['phasesetup'] = 'Setup';
+$string['phasesetup'] = 'Setup phase';
 $string['taskassessself'] = 'Assess yourself';
 $string['taskassesspeers'] = 'Assess peers';
-$string['taskassesspeersinfo'] = 'total: $a->total<br />pending: $a->todo';
+$string['allocatedetails'] = 'submissions: $a->total<br />allocated: $a->done';
+$string['taskassesspeersdetails'] = 'total: $a->total<br />pending: $a->todo';
 $string['tasksubmit'] = 'Submit your work';
-$string['taskeditform'] = 'Define the assessment form';
 $string['accesscontrol'] = 'Access control';
 $string['agreeassessments'] = 'Assessments must be agreed';
 $string['agreeassessmentsdesc'] = 'Authors may comment assessments of their work and agree/disagree with it';
