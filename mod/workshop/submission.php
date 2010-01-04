@@ -26,7 +26,6 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/locallib.php');
-require_once(dirname(__FILE__).'/submission_form.php');
 
 $cmid   = required_param('cmid', PARAM_INT);            // course module id
 $id     = optional_param('id', 0, PARAM_INT);           // submission id
@@ -56,8 +55,9 @@ if ($id) { // submission is specified
 }
 
 $ownsubmission  = $submission->authorid == $USER->id;
-$canviewall     = has_capability('mod/workshop:viewallsubmissions', $PAGE->context);
-$cansubmit      = has_capability('mod/workshop:submit', $PAGE->context);
+$canviewall     = has_capability('mod/workshop:viewallsubmissions', $workshop->context);
+$cansubmit      = has_capability('mod/workshop:submit', $workshop->context);
+$canoverride    = has_capability('mod/workshop:overridegrades', $workshop->context);
 $isreviewer     = $DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'reviewerid' => $USER->id));
 
 if ($submission->id and ($ownsubmission or $canviewall or $isreviewer)) {
@@ -68,45 +68,50 @@ if ($submission->id and ($ownsubmission or $canviewall or $isreviewer)) {
     print_error('nopermissions');
 }
 
-$maxfiles       = $workshop->nattachments;
-$maxbytes       = $workshop->maxbytes;
-$contentopts    = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes);
-$attachmentopts = array('subdirs' => true, 'maxfiles'=>$maxfiles, 'maxbytes'=>$maxbytes);
-$submission     = file_prepare_standard_editor($submission, 'content', $contentopts, $PAGE->context,
-                                    'workshop_submission_content', $submission->id);
-$submission     = file_prepare_standard_filemanager($submission, 'attachment', $attachmentopts, $PAGE->context,
-                                    'workshop_submission_attachment', $submission->id);
-$mform          = new workshop_submission_form(null, array('current' => $submission, 'cm' => $cm, 'workshop' => $workshop,
-                                    'contentopts' => $contentopts, 'attachmentopts' => $attachmentopts));
+if ($edit and $ownsubmission) {
+    require_once(dirname(__FILE__).'/submission_form.php');
 
-if ($mform->is_cancelled()) {
-    redirect($workshop->view_url());
+    $maxfiles       = $workshop->nattachments;
+    $maxbytes       = $workshop->maxbytes;
+    $contentopts    = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes);
+    $attachmentopts = array('subdirs' => true, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes);
+    $submission     = file_prepare_standard_editor($submission, 'content', $contentopts, $workshop->context,
+                                        'workshop_submission_content', $submission->id);
+    $submission     = file_prepare_standard_filemanager($submission, 'attachment', $attachmentopts, $workshop->context,
+                                        'workshop_submission_attachment', $submission->id);
 
-} elseif ($cansubmit and $formdata = $mform->get_data()) {
-    $timenow = time();
-    if (empty($formdata->id)) {
-        $formdata->workshopid     = $workshop->id;
-        $formdata->example        = 0; // todo add examples support
-        $formdata->authorid       = $USER->id;
-        $formdata->timecreated    = $timenow;
+    $mform          = new workshop_submission_form($PAGE->url, array('current' => $submission, 'workshop' => $workshop,
+                                                    'contentopts' => $contentopts, 'attachmentopts' => $attachmentopts));
+
+    if ($mform->is_cancelled()) {
+        redirect($workshop->view_url());
+
+    } elseif ($cansubmit and $formdata = $mform->get_data()) {
+        $timenow = time();
+        if (empty($formdata->id)) {
+            $formdata->workshopid     = $workshop->id;
+            $formdata->example        = 0; // todo add examples support
+            $formdata->authorid       = $USER->id;
+            $formdata->timecreated    = $timenow;
+        }
+        $formdata->timemodified       = $timenow;
+        $formdata->title              = trim($formdata->title);
+        $formdata->content            = '';          // updated later
+        $formdata->contentformat      = FORMAT_HTML; // updated later
+        $formdata->contenttrust       = 0;           // updated later
+        if (empty($formdata->id)) {
+            $formdata->id = $DB->insert_record('workshop_submissions', $formdata);
+            // todo add to log
+        }
+        // save and relink embedded images and save attachments
+        $formdata = file_postupdate_standard_editor($formdata, 'content', $contentopts, $workshop->context,
+                                                      'workshop_submission_content', $formdata->id);
+        $formdata = file_postupdate_standard_filemanager($formdata, 'attachment', $attachmentopts, $workshop->context,
+                                                           'workshop_submission_attachment', $formdata->id);
+        // store the updated values or re-save the new submission (re-saving needed because URLs are now rewritten)
+        $DB->update_record('workshop_submissions', $formdata);
+        redirect($workshop->submission_url($formdata->id));
     }
-    $formdata->timemodified       = $timenow;
-    $formdata->title              = trim($formdata->title);
-    $formdata->content            = '';          // updated later
-    $formdata->contentformat      = FORMAT_HTML; // updated later
-    $formdata->contenttrust       = 0;           // updated later
-    if (empty($formdata->id)) {
-        $formdata->id = $DB->insert_record('workshop_submissions', $formdata);
-        // todo add to log
-    }
-    // save and relink embedded images and save attachments
-    $formdata = file_postupdate_standard_editor($formdata, 'content', $contentopts, $PAGE->context,
-                                                  'workshop_submission_content', $formdata->id);
-    $formdata = file_postupdate_standard_filemanager($formdata, 'attachment', $attachmentopts, $PAGE->context,
-                                                       'workshop_submission_attachment', $formdata->id);
-    // store the updated values or re-save the new submission (re-saving needed because URLs are now rewritten)
-    $DB->update_record('workshop_submissions', $formdata);
-    redirect($workshop->view_url());
 }
 
 $PAGE->set_title($workshop->name);

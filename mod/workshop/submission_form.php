@@ -34,7 +34,6 @@ class workshop_submission_form extends moodleform {
 
         $current        = $this->_customdata['current'];
         $workshop       = $this->_customdata['workshop'];
-        $cm             = $this->_customdata['cm'];
         $contentopts    = $this->_customdata['contentopts'];
         $attachmentopts = $this->_customdata['attachmentopts'];
 
@@ -54,7 +53,8 @@ class workshop_submission_form extends moodleform {
         }
 
         $mform->addElement('hidden', 'id', $current->id);
-        $mform->addElement('hidden', 'cmid', $cm->id);
+        $mform->addElement('hidden', 'cmid', $workshop->cm->id);
+        $mform->addElement('hidden', 'edit', 1);
 
         $this->add_action_buttons();
 

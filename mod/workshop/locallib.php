@@ -645,11 +645,11 @@ class workshop {
     }
 
     /**
-     * @return moodle_url of the page to view own submission
+     * @return moodle_url of the page to view a submission, defaults to the own one
      */
-    public function submission_url() {
+    public function submission_url($id=null) {
         global $CFG;
-        return new moodle_url($CFG->wwwroot . '/mod/workshop/submission.php', array('cmid' => $this->cm->id));
+        return new moodle_url($CFG->wwwroot . '/mod/workshop/submission.php', array('cmid' => $this->cm->id, 'id' => $id));
     }
 
     /**
@@ -1476,6 +1476,33 @@ class workshop {
         $current = file_prepare_standard_editor($current, 'feedbackreviewer', array());
 
         return new workshop_feedbackreviewer_form($actionurl,
+                array('workshop' => $this, 'current' => $current, 'feedbackopts' => array()),
+                'post', '', null, $editable);
+    }
+
+    /**
+     * Returns the mform the teachers use to put a feedback for the author on their submission
+     *
+     * @return workshop_feedbackauthor_form
+     */
+    public function get_feedbackauthor_form(moodle_url $actionurl, stdClass $submission, $editable=true) {
+        global $CFG;
+        require_once(dirname(__FILE__) . '/feedbackauthor_form.php');
+
+        $current = new stdClass();
+        $current->submissionid          = $submission->id;
+        $current->grade                 = $this->real_grade($assessment->grade);
+        $current->gradeover             = $this->real_grade($assessment->gradeover);
+        $current->feedbackauthor        = $assessment->feedbackreviewer;
+        $current->feedbackauthorformat  = $assessment->feedbackreviewerformat;
+        if (is_null($current->grade)) {
+            $current->grade = get_string('nullgrade', 'workshop');
+        }
+
+        // prepare wysiwyg editor
+        $current = file_prepare_standard_editor($current, 'feedbackauthor', array());
+
+        return new workshop_feedbackauthor_form($actionurl,
                 array('workshop' => $this, 'current' => $current, 'feedbackopts' => array()),
                 'post', '', null, $editable);
     }
