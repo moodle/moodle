@@ -54,7 +54,7 @@ $initresult = $allocator->init();
 //
 // Output starts here
 //
-$wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
+$wsoutput = $PAGE->get_renderer('mod_workshop');
 echo $OUTPUT->header();
 
 $allocators = workshop::installed_allocators();

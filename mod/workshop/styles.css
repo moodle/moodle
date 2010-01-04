@@ -283,21 +283,21 @@
 }
 
 .mod-workshop .userplan tr.phasetasks li {
-    background-image: url(../../pix/i/completion-auto-n.gif);
+    background-image: url([[pix:mod_workshop|userplan/task-todo]]);
     background-position: top left;
     background-repeat: no-repeat;
 }
 
 .mod-workshop .userplan tr.phasetasks li.completed {
-    background-image: url(../../pix/i/completion-auto-y.gif);
+    background-image: url([[pix:mod_workshop|userplan/task-done]]);
 }
 
 .mod-workshop .userplan tr.phasetasks li.fail {
-    background-image: url(../../pix/i/completion-auto-fail.gif);
+    background-image: url([[pix:mod_workshop|userplan/task-fail]]);
 }
 
 .mod-workshop .userplan tr.phasetasks li.info {
-    background-image: url(../../pix/i/info.gif);
+    background-image: url([[pix:mod_workshop|userplan/task-info]]);
 }
 
 .mod-workshop .userplan tr.phasetasks .tasks {
@@ -422,12 +422,13 @@
 .mod-workshop .grading-report del {
     color: red;
     font-size: 90%
-    text-decoration: 
+    text-decoration: line-through;
 }
 
 .mod-workshop .grading-report ins {
     color: green;
     font-weight: bold;
+    text-decoration: underline;
 }
 
 .mod-workshop .grading-report th {

@@ -69,7 +69,7 @@ if ($PAGE->user_allowed_editing()) {
 $buttons[] = $OUTPUT->update_module_button($cm->id, 'workshop');
 $PAGE->set_button(implode('', $buttons));
 
-$wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
+$wsoutput = $PAGE->get_renderer('mod_workshop');
 
 /// Output starts here
 

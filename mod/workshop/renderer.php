@@ -31,25 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_mod_workshop_renderer extends moodle_renderer_base {
-
-    /** the underlying renderer to use */
-    protected $output;
-
-    /** the page we are doing output for */
-    protected $page;
-
-    /**
-     * Workshop renderer constructor
-     *
-     * @param mixed $page the page we are doing output for
-     * @param mixed $output lower-level renderer, typically moodle_core_renderer
-     * @return void
-     */
-    public function __construct($page, $output) {
-        parent::__construct($page);
-        $this->output = $output;
-    }
+class mod_workshop_renderer extends plugin_renderer_base {
 
     /**
      * Returns html code for a status message
@@ -269,7 +251,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
             $type       = $file->get_mimetype();
             $type       = mimeinfo_from_type("type", $type);
             $icon       = new html_image();
-            $icon->src  = $this->output->old_icon_url(file_mimetype_icon($type));
+            $icon->src  = $this->output->pix_url(file_mimetype_icon($type));
             $icon->set_classes('icon');
             $icon->alt  = $type;
             $image      = $this->output->image($icon);
@@ -331,7 +313,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
                 switch ($action->type) {
                 case 'switchphase':
                     $icon = new moodle_action_icon();
-                    $icon->image->src = $this->old_icon_url('i/marker');
+                    $icon->image->src = $this->pix_url('i/marker');
                     $icon->image->alt = get_string('switchphase', 'workshop');
                     $icon->link->url = $action->url;
                     $actions .= $this->output->action_icon($icon);
@@ -559,7 +541,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
 
         if (!is_null($sortid)) {
             $iconasc = new moodle_action_icon();
-            $iconasc->image->src = $this->old_icon_url('t/up');
+            $iconasc->image->src = $this->pix_url('t/up');
             $iconasc->image->alt = get_string('sortasc', 'workshop');
             $iconasc->image->set_classes('sort asc');
             $newurl = clone($PAGE->url);
@@ -567,7 +549,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
             $iconasc->link->url = new moodle_url($newurl);
 
             $icondesc = new moodle_action_icon();
-            $icondesc->image->src = $this->old_icon_url('t/down');
+            $icondesc->image->src = $this->pix_url('t/down');
             $icondesc->image->alt = get_string('sortdesc', 'workshop');
             $icondesc->image->set_classes('sort desc');
             $newurl = clone($PAGE->url);

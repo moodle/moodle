@@ -113,7 +113,7 @@ if ($canoverridegrades) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('assessedsubmission', 'workshop'), 2);
 
-$wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);      // workshop renderer
+$wsoutput = $PAGE->get_renderer('mod_workshop');      // workshop renderer
 $submission = $workshop->get_submission_by_id($submission->id);     // reload so can be passed to the renderer
 echo $wsoutput->submission_full($submission, has_capability('mod/workshop:viewauthornames', $workshop->context));
 

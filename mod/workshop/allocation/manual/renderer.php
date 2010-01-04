@@ -28,25 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Manual allocation renderer class
  */
-class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
-
-    /** the underlying renderer to use */
-    protected $output;
-
-    /** the page we are doing output for */
-    protected $page;
-
-    /**
-     * Workshop renderer constructor
-     *
-     * @param mixed $page the page we are doing output for
-     * @param mixed $output lower-level renderer, typically moodle_core_renderer
-     * @return void
-     */
-    public function __construct($page, $output) {
-        parent::__construct($page);
-        $this->output = $output;
-    }
+class workshopallocation_manual_renderer extends plugin_renderer_base  {
 
     /**
      * Display the table of all current allocations and widgets to modify them

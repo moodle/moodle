@@ -163,7 +163,7 @@ if ($edit and $ownsubmission) {
 // else display the submission
 
 if ($submission->id) {
-    $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
+    $wsoutput = $PAGE->get_renderer('mod_workshop');
     echo $wsoutput->submission_full($submission, true);
 } else {
     echo $OUTPUT->box(get_string('noyoursubmission', 'workshop'));

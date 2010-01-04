@@ -322,8 +322,8 @@ class workshop_manual_allocator implements workshop_allocator {
         $pagingbarout = $OUTPUT->paging_bar($pagingbar);
 
         // we have all data, let us pass it to the renderers and return the output
-        $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
-        $uioutput = $PAGE->theme->get_renderer('workshopallocation_manual', $PAGE);
+        $wsoutput = $PAGE->get_renderer('mod_workshop');
+        $uioutput = $PAGE->get_renderer('workshopallocation_manual');
 
         return $pagingbarout . $wsoutput->status_message($msg) . $uioutput->display_allocations($data) . $pagingbarout;
     }
