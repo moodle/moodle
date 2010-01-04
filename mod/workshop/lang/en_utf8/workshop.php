@@ -56,7 +56,6 @@ $string['assessmentcomps'] = 'Required level of assessments similarity';
 $string['assessmentdeleted'] = 'Assessment deallocated';
 $string['assessmentend'] = 'End of assessment phase';
 $string['assessmentform'] = 'Assessment form';
-$string['assessmentresult'] = 'Assessment result';
 $string['assessmentsettings'] = 'Assessment settings';
 $string['assessmentstart'] = 'Start of assessment phase';
 $string['assignedassessments'] = 'Assigned submissions to assess';

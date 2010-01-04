@@ -328,12 +328,15 @@
 
 /* Rubric - list layout */
 
+.mod-workshop .mform.frozen .fitem.description.rubric + .fitem .fitemtitle,
 .mod-workshop .assessmentform.rubric.list .fitem .fitemtitle {
     display: none;
 }
 
+.mod-workshop .mform.frozen .fitem.description.rubric + .fitem .fitemtitle + .felement,
 .mod-workshop .assessmentform.rubric.list .fitem .felement {
-    width: auto;
+    width: auto%;
+    border: none;
 }
 
 .mod-workshop .assessmentform.rubric.list .fitem .felement span {

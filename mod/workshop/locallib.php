@@ -600,22 +600,6 @@ class workshop {
     }
 
     /**
-     * Returns an object containing all data to display the user's full name and picture
-     *
-     * @param int $id optional user id, defaults to the current user
-     * @return stdClass containing properties lastname, firstname, picture and imagealt
-     */
-    public function user_info($id=null) {
-        global $USER, $DB;
-
-        if (is_null($id) || ($id == $USER->id)) {
-            return $USER;
-        } else {
-            return $DB->get_record('user', array('id' => $id), 'id,lastname,firstname,picture,imagealt', MUST_EXIST);
-        }
-    }
-
-    /**
      * Are users allowed to create/edit their submissions?
      *
      * TODO: this depends on the workshop phase, phase deadlines, submitting after deadlines possibility
@@ -625,6 +609,18 @@ class workshop {
     public function submitting_allowed() {
         return true;
     }
+
+    /**
+     * Are reviewers allowed to create/edit their assessments?
+     *
+     * TODO: this depends on the workshop phase, phase deadlines
+     *
+     * @return bool
+     */
+    public function assessing_allowed() {
+        return true;
+    }
+
 
     /**
      * Are the peer-reviews available to the authors?

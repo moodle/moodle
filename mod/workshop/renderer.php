@@ -623,6 +623,8 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      * @return string
      */
     protected function grading_report_assessment(stdClass $assessment, $shownames, array $userinfo, $separator) {
+        global $CFG;
+
         if (is_null($assessment)) {
             return get_string('nullgrade', 'workshop');
         }
@@ -635,7 +637,12 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
             $a->gradinggradeover = $assessment->gradinggradeover;
             $grade = get_string('formatpeergradeover', 'workshop', $a);
         }
-        $grade = $this->output->output_tag('span', array('class' => 'grade'), $grade);
+        $link = new html_link();
+        $link->text = $grade;
+        $link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/assessment.php',
+                            array('asid' => $assessment->assessmentid));
+        $link->set_classes('grade');
+        $grade = $this->output->link($link);
 
         if ($shownames) {
             $userid = $assessment->userid;

@@ -173,13 +173,12 @@ if ($isreviewer) {
 }
 
 if ($isreviewer) {
-    // display own assessment
-    $assessment = 
+    // display own assessment - todo
     $strategy = $workshop->grading_strategy_instance();
 }
 
 if ($canviewallassessments) {
-    // display all assessments (except the eventual own one - that has been already displayed
+    // display all assessments (except the eventual own one - that has been already displayed) - todo
     $strategy = $workshop->grading_strategy_instance();
 }
 
