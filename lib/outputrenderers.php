@@ -1284,7 +1284,7 @@ class core_renderer extends renderer_base {
             $image = clone($image_or_url);
         } else {
             if ($image_or_url instanceof moodle_url) {
-                $url = &$image_or_url;
+                $url = $image_or_url;
             } else if (strpos($image_or_url, 'http')) {
                 $url = new moodle_url($image_or_url);
             } else {
