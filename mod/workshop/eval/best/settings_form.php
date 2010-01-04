@@ -32,12 +32,13 @@ class workshop_best_evaluation_settings_form extends moodleform {
     function definition() {
         $mform = $this->_form;
 
-        $current  = $this->_customdata['current'];
-        $workshop = $this->_customdata['workshop'];
+        $plugindefaults = get_config('workshopeval_best');
+        $current        = $this->_customdata['current'];
+        $workshop       = $this->_customdata['workshop'];
 
         $mform->addElement('header', 'general', get_string('settings', 'workshopeval_best'));
 
-        $label = get_string('gradingevaluationmethod', 'workshop');
+        $label = get_string('evaluationmethod', 'workshop');
         $mform->addElement('static', 'methodname', $label, get_string('pluginname', 'workshopeval_best'));
         $mform->setHelpButton('methodname', array('method', $label, 'workshopeval_best'));
 
@@ -48,7 +49,7 @@ class workshop_best_evaluation_settings_form extends moodleform {
         $label = get_string('comparison', 'workshopeval_best');
         $mform->addElement('select', 'comparison', $label, $options);
         $mform->setHelpButton('comparison', array('comparison', $label, 'workshopeval_best'));
-        $mform->setDefault('comparison', 5);
+        $mform->setDefault('comparison', $plugindefaults->comparison);
 
         $mform->addElement('submit', 'submit', get_string('aggregategrades', 'workshop'));
 

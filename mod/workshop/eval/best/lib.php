@@ -37,6 +37,9 @@ class workshop_best_evaluation implements workshop_evaluation {
     /** @var workshop the parent workshop instance */
     protected $workshop;
 
+    /** @var the recently used settings in this workshop */
+    protected $settings;
+
     /**
      * Constructor
      *
@@ -44,7 +47,9 @@ class workshop_best_evaluation implements workshop_evaluation {
      * @return void
      */
     public function __construct(workshop $workshop) {
+        global $DB;
         $this->workshop = $workshop;
+        $this->settings = $DB->get_record('workshopeval_best_settings', array('workshopid' => $this->workshop->id));
     }
 
     /**
@@ -53,6 +58,7 @@ class workshop_best_evaluation implements workshop_evaluation {
      * This function relies on the grading strategy subplugin providing get_assessments_recordset() method.
      * {@see self::process_assessments()} for the required structure of the recordset.
      *
+     * @param stdClass $settings       The settings for this round of evaluation
      * @param null|int|array $restrict If null, update all reviewers, otherwise update just grades for the given reviewers(s)
      *
      * @return void
@@ -60,6 +66,18 @@ class workshop_best_evaluation implements workshop_evaluation {
     public function update_grading_grades(stdClass $settings, $restrict=null) {
         global $DB;
 
+        // remember the recently used settings for this workshop
+        if (empty($this->settings)) {
+            $record = new stdClass();
+            $record->workshopid = $this->workshop->id;
+            $record->comparison = $settings->comparison;
+            $DB->insert_record('workshopeval_best_settings', $record);
+        } elseif ($this->settings->comparison != $settings->comparison) {
+            $DB->set_field('workshopeval_best_settings', 'comparison', $settings->comparison,
+                    array('workshopid' => $this->workshop->id));
+        }
+
+        // get the grading strategy instance
         $grader = $this->workshop->grading_strategy_instance();
 
         // get the information about the assessment dimensions
@@ -96,11 +114,11 @@ class workshop_best_evaluation implements workshop_evaluation {
      */
     public function get_settings_form(moodle_url $actionurl=null) {
         global $CFG;    // needed because the included files use it
+        global $DB;
         require_once(dirname(__FILE__) . '/settings_form.php');
 
-        $current = null;    // the recently used setting - todo where should it be stored?
-        $customdata['current'] = $current;
         $customdata['workshop'] = $this->workshop;
+        $customdata['current'] = $this->settings;
         $attributes = array('class' => 'evalsettingsform best');
 
         return new workshop_best_evaluation_settings_form($actionurl, $customdata, 'post', '', $attributes);

@@ -77,7 +77,17 @@ $strategies = get_plugin_list('workshopform');
 foreach ($strategies as $strategy => $path) {
     if (file_exists($settingsfile = $path . '/settings.php')) {
         $settings->add(new admin_setting_heading('workshopformsetting'.$strategy,
-                                                get_string('pluginname', 'workshopform_' . $strategy), ''));
+                get_string('strategy', 'workshop') . ' - ' . get_string('pluginname', 'workshopform_' . $strategy), ''));
+        include($settingsfile);
+    }
+}
+
+// include the settings of grading evaluation subplugins
+$evaluations = get_plugin_list('workshopeval');
+foreach ($evaluations as $evaluation => $path) {
+    if (file_exists($settingsfile = $path . '/settings.php')) {
+        $settings->add(new admin_setting_heading('workshopevalsetting'.$evaluation,
+                get_string('evaluation', 'workshop') . ' - ' . get_string('pluginname', 'workshopeval_' . $evaluation), ''));
         include($settingsfile);
     }
 }
