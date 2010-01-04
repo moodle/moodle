@@ -370,7 +370,6 @@ class core_renderer extends renderer_base {
 
         $this->page->requires->js('lib/javascript-static.js')->in_head();
         $this->page->requires->js('lib/javascript-deprecated.js')->in_head();
-        $this->page->requires->js('lib/javascript-mod.php')->in_head();
         $this->page->requires->js_function_call('setTimeout', array('fix_column_widths()', 20));
 
         $focus = $this->page->focuscontrol;
