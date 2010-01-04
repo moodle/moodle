@@ -910,17 +910,17 @@ class workshop {
             $calculated = $DB->count_records_select('workshop_submissions',
                     'workshopid = ? AND (grade IS NOT NULL OR gradeover IS NOT NULL)', array($this->id));
             $task = new stdClass();
-            $task->title = get_string('calculategrades', 'workshop');
+            $task->title = get_string('calculatesubmissiongrades', 'workshop');
             $a = new stdClass();
             $a->expected    = $expected;
             $a->calculated  = $calculated;
-            $task->details  = get_string('calculategradesdetails', 'workshop', $a);
+            $task->details  = get_string('calculatesubmissiongradesdetails', 'workshop', $a);
             if ($calculated >= $expected) {
                 $task->completed = true;
             } elseif ($this->phase > self::PHASE_EVALUATION) {
                 $task->completed = false;
             }
-            $phase->tasks['calculategradinggrade'] = $task;
+            $phase->tasks['calculatesubmissiongrade'] = $task;
 
             $expected = count($this->get_potential_reviewers(false));
             $calculated = $DB->count_records_select('workshop_aggregations',
@@ -1006,7 +1006,14 @@ class workshop {
 
         if (self::PHASE_CLOSED == $newphase) {
             // push the grades into the gradebook
-
+            $workshop = new stdClass();
+            foreach ($this as $property => $value) {
+                $workshop->{$property} = $value;
+            }
+            $workshop->course     = $this->course->id;
+            $workshop->cmidnumber = $this->cm->id;
+            $workshop->modname    = 'workshop';
+            workshop_update_grades($workshop);
         }
 
         $DB->set_field('workshop', 'phase', $newphase, array('id' => $this->id));
@@ -1510,7 +1517,11 @@ class workshop {
         // check if the new final grade differs from the one stored in the database
         if (grade_floats_different($finalgrade, $current)) {
             // we need to save new calculation into the database
-            $DB->set_field('workshop_submissions', 'grade', $finalgrade, array('id' => $submissionid));
+            $record = new stdClass();
+            $record->id = $submissionid;
+            $record->grade = $finalgrade;
+            $record->timegraded = time();
+            $DB->update_record('workshop_submissions', $record);
         }
     }
 
@@ -1569,9 +1580,14 @@ class workshop {
                 $record->workshopid = $this->id;
                 $record->userid = $reviewerid;
                 $record->gradinggrade = $finalgrade;
+                $record->timegraded = time();
                 $DB->insert_record('workshop_aggregations', $record);
             } else {
-                $DB->set_field('workshop_aggregations', 'gradinggrade', $finalgrade, array('id' => $agid));
+                $record = new stdClass();
+                $record->id = $agid;
+                $record->gradinggrade = $finalgrade;
+                $record->timegraded = time();
+                $DB->update_record('workshop_aggregations', $record);
             }
         }
     }

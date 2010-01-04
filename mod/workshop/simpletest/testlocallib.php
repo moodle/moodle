@@ -81,7 +81,7 @@ class workshop_internal_api_test extends UnitTestCase {
         // fixture set-up
         $batch = array();   // batch of a submission's assessments
         $batch[] = (object)array('submissionid' => 12, 'submissiongrade' => null, 'weight' => 1, 'grade' => null);
-        $DB->expectNever('set_field');
+        $DB->expectNever('update_record');
         // excercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
@@ -93,7 +93,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch = array();   // batch of a submission's assessments
         $batch[] = (object)array('submissionid' => 12, 'submissiongrade' => null, 'weight' => 1, 'grade' => 10.12345);
         $expected = 10.12345;
-        $DB->expectOnce('set_field', array('workshop_submissions', 'grade', $expected, array('id' => 12)));
+        $DB->expectOnce('update_record');
         // excercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
@@ -106,7 +106,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('submissionid' => 12, 'submissiongrade' => null, 'weight' => 1, 'grade' => 45.54321);
         $batch[] = (object)array('submissionid' => 12, 'submissiongrade' => null, 'weight' => 1, 'grade' => null);
         $expected = 45.54321;
-        $DB->expectOnce('set_field', array('workshop_submissions', 'grade', $expected, array('id' => 12)));
+        $DB->expectOnce('update_record');
         // excercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
@@ -118,7 +118,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch = array();   // batch of a submission's assessments
         $batch[] = (object)array('submissionid' => 12, 'submissiongrade' => null, 'weight' => 4, 'grade' => 14.00012);
         $expected = 14.00012;
-        $DB->expectOnce('set_field', array('workshop_submissions', 'grade', $expected, array('id' => 12)));
+        $DB->expectOnce('update_record');
         // excercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
@@ -133,7 +133,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'weight' => 1, 'grade' => 10.00000);
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'weight' => 1, 'grade' => 0.00000);
         $expected = 19.67750;
-        $DB->expectOnce('set_field', array('workshop_submissions', 'grade', $expected, array('id' => 45)));
+        $DB->expectOnce('update_record');
         // excercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
@@ -148,7 +148,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 12.57750, 'weight' => 1, 'grade' => 10.00000);
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 12.57750, 'weight' => 1, 'grade' => 0.00000);
         $expected = 19.67750;
-        $DB->expectOnce('set_field', array('workshop_submissions', 'grade', $expected, array('id' => 45)));
+        $DB->expectOnce('update_record');
         // excercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
@@ -162,7 +162,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 19.67750, 'weight' => 1, 'grade' => 12.59000);
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 19.67750, 'weight' => 1, 'grade' => 10.00000);
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 19.67750, 'weight' => 1, 'grade' => 0.00000);
-        $DB->expectNever('set_field');
+        $DB->expectNever('update_record');
         // excercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
@@ -176,7 +176,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'weight' => 1, 'grade' => 2.00000);
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'weight' => 1, 'grade' => 1.00000);
         $expected = 2.33333;
-        $DB->expectOnce('set_field', array('workshop_submissions', 'grade', $expected, array('id' => 45)));
+        $DB->expectOnce('update_record');
         // excercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
@@ -191,7 +191,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'weight' => 1, 'grade' => 10.00000);
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'weight' => 0, 'grade' => 1000.00000);
         $expected = 17.66667;
-        $DB->expectOnce('set_field', array('workshop_submissions', 'grade', $expected, array('id' => 45)));
+        $DB->expectOnce('update_record');
         // excercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
@@ -202,7 +202,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch = array();
         $batch[] = (object)array('reviewerid'=>2, 'gradinggrade'=>null, 'gradinggradeover'=>null, 'aggregationid'=>null, 'aggregatedgrade'=>null);
         // expectation
-        $DB->expectNever('set_field');
+        $DB->expectNever('update_record');
         // excersise SUT
         $this->workshop->aggregate_grading_grades_process($batch);
     }
@@ -217,6 +217,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $expected->workshopid = $this->workshop->id;
         $expected->userid = 3;
         $expected->gradinggrade = 82.87670;
+        $expected->timegraded = time(); // warning - this is a weak point as the time may actually change
         $DB->expectOnce('insert_record', array('workshop_aggregations', $expected));
         // excersise SUT
         $this->workshop->aggregate_grading_grades_process($batch);
@@ -228,7 +229,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch = array();
         $batch[] = (object)array('reviewerid'=>3, 'gradinggrade'=>90.00000, 'gradinggradeover'=>null, 'aggregationid'=>1, 'aggregatedgrade'=>82.87670);
         // expectation
-        $DB->expectOnce('set_field', array('workshop_aggregations', 'gradinggrade', 90.00000, array('id' => 1)));
+        $DB->expectOnce('update_record');
         // excersise SUT
         $this->workshop->aggregate_grading_grades_process($batch);
     }
@@ -239,7 +240,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch = array();
         $batch[] = (object)array('reviewerid'=>3, 'gradinggrade'=>90.00000, 'gradinggradeover'=>null, 'aggregationid'=>1, 'aggregatedgrade'=>90.00000);
         // expectation
-        $DB->expectNever('set_field');
+        $DB->expectNever('update_record');
         // excersise SUT
         $this->workshop->aggregate_grading_grades_process($batch);
     }
@@ -250,7 +251,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch = array();
         $batch[] = (object)array('reviewerid'=>4, 'gradinggrade'=>91.56700, 'gradinggradeover'=>82.32105, 'aggregationid'=>2, 'aggregatedgrade'=>91.56700);
         // expectation
-        $DB->expectOnce('set_field', array('workshop_aggregations', 'gradinggrade', 82.32105, array('id' => 2)));
+        $DB->expectOnce('update_record');
         // excersise SUT
         $this->workshop->aggregate_grading_grades_process($batch);
     }
@@ -267,6 +268,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $expected->workshopid = $this->workshop->id;
         $expected->userid = 5;
         $expected->gradinggrade = 79.3066;
+        $expected->timegraded = time(); // warning - this is a weak point as the time may actually change
         $DB->expectOnce('insert_record', array('workshop_aggregations', $expected));
         // excersise SUT
         $this->workshop->aggregate_grading_grades_process($batch);
@@ -280,7 +282,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>87.34311, 'gradinggradeover'=>null, 'aggregationid'=>2, 'aggregatedgrade'=>79.30660);
         $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>51.12000, 'gradinggradeover'=>null, 'aggregationid'=>2, 'aggregatedgrade'=>79.30660);
         // expectation
-        $DB->expectOnce('set_field', array('workshop_aggregations', 'gradinggrade', 64.89904, array('id' => 2)));
+        $DB->expectOnce('update_record');
         // excersise SUT
         $this->workshop->aggregate_grading_grades_process($batch);
     }
@@ -293,7 +295,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>87.34311, 'gradinggradeover'=>null, 'aggregationid'=>2, 'aggregatedgrade'=>64.89904);
         $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>51.12000, 'gradinggradeover'=>null, 'aggregationid'=>2, 'aggregatedgrade'=>64.89904);
         // expectation
-        $DB->expectOnce('set_field', array('workshop_aggregations', 'gradinggrade', 79.30660, array('id' => 2)));
+        $DB->expectOnce('update_record');
         // excersise SUT
         $this->workshop->aggregate_grading_grades_process($batch);
     }
@@ -306,7 +308,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('reviewerid'=>6, 'gradinggrade'=>null, 'gradinggradeover'=>null, 'aggregationid'=>3, 'aggregatedgrade'=>100.00000);
         $batch[] = (object)array('reviewerid'=>6, 'gradinggrade'=>52.20000, 'gradinggradeover'=>null, 'aggregationid'=>3, 'aggregatedgrade'=>100.00000);
         // expectation
-        $DB->expectOnce('set_field', array('workshop_aggregations', 'gradinggrade', 51.10000, array('id' => 3)));
+        $DB->expectOnce('update_record');
         // excersise SUT
         $this->workshop->aggregate_grading_grades_process($batch);
     }
@@ -319,7 +321,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('reviewerid'=>6, 'gradinggrade'=>null, 'gradinggradeover'=>69.00000, 'aggregationid'=>3, 'aggregatedgrade'=>100.00000);
         $batch[] = (object)array('reviewerid'=>6, 'gradinggrade'=>52.20000, 'gradinggradeover'=>null, 'aggregationid'=>3, 'aggregatedgrade'=>100.00000);
         // expectation
-        $DB->expectOnce('set_field', array('workshop_aggregations', 'gradinggrade', 57.06667, array('id' => 3)));
+        $DB->expectOnce('update_record');
         // excersise SUT
         $this->workshop->aggregate_grading_grades_process($batch);
     }

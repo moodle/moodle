@@ -358,20 +358,42 @@ function workshop_update_grades(stdClass $workshop, $userid=0) {
     require_once($CFG->libdir.'/gradelib.php');
 
     $whereuser = $userid ? ' AND authorid = :userid' : '';
-    $params = array('workshopid' => $workshop->id, 'maxgrade' => $workshop->grade, 'userid' => $userid);
-    $sql = 'SELECT authorid, authorid AS userid, grade * :maxgrade / 100 AS rawgrade,
-                   feedbackauthor AS feedback, feedbackauthorformat AS feedbackformat,
-                   timemodified AS datesubmitted
+    $params = array('workshopid' => $workshop->id, 'userid' => $userid);
+    $sql = 'SELECT authorid, grade, gradeover, gradeoverby, feedbackauthor, feedbackauthorformat, timemodified, timegraded
               FROM {workshop_submissions}
              WHERE workshopid = :workshopid AND example=0' . $whereuser;
-    $submissiongrades = $DB->get_records_sql($sql, $params);
+    $records = $DB->get_records_sql($sql, $params);
+    $submissiongrades = array();
+    foreach ($records as $record) {
+        $grade = new stdClass();
+        $grade->userid = $record->authorid;
+        if (!is_null($record->gradeover)) {
+            $grade->rawgrade = grade_floatval($workshop->grade * $record->gradeover / 100);
+            $grade->usermodified = $record->gradeoverby;
+        } else {
+            $grade->rawgrade = grade_floatval($workshop->grade * $record->grade / 100);
+        }
+        $grade->feedback = $record->feedbackauthor;
+        $grade->feedbackformat = $record->feedbackauthorformat;
+        $grade->datesubmitted = $record->timemodified;
+        $grade->dategraded = $record->timegraded;
+        $submissiongrades[$record->authorid] = $grade;
+    }
 
     $whereuser = $userid ? ' AND userid = :userid' : '';
-    $params = array('workshopid' => $workshop->id, 'maxgrade' => $workshop->gradinggrade, 'userid' => $userid);
-    $sql = 'SELECT userid, gradinggrade * :maxgrade / 100 AS rawgrade
+    $params = array('workshopid' => $workshop->id, 'userid' => $userid);
+    $sql = 'SELECT userid, gradinggrade, timegraded
               FROM {workshop_aggregations}
              WHERE workshopid = :workshopid' . $whereuser;
-    $assessmentgrades = $DB->get_records_sql($sql, $params);
+    $records = $DB->get_records_sql($sql, $params);
+    $assessmentgrades = array();
+    foreach ($records as $record) {
+        $grade = new stdClass();
+        $grade->userid = $record->userid;
+        $grade->rawgrade = grade_floatval($workshop->gradinggrade * $record->gradinggrade / 100);
+        $grade->dategraded = $record->timegraded;
+        $assessmentgrades[$record->userid] = $grade;
+    }
 
     workshop_grade_item_update($workshop, $submissiongrades, $assessmentgrades);
 }

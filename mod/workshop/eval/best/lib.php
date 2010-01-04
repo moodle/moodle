@@ -139,6 +139,10 @@ class workshop_best_evaluation implements workshop_evaluation {
     protected function process_assessments(array $assessments, array $diminfo, stdClass $settings) {
         global $DB;
 
+        if (empty($assessments)) {
+            return;
+        }
+
         // reindex the passed flat structure to be indexed by assessmentid
         $assessments = $this->prepare_data_from_recordset($assessments);
 
