@@ -158,8 +158,12 @@ case workshop::PHASE_ASSESSMENT:
 case workshop::PHASE_EVALUATION:
     $pagingvar  = 'page';
     $page       = optional_param($pagingvar, 0, PARAM_INT);
+    $perpage    = 1000;           // todo let the user modify this
+    $groups     = '';           // todo let the user choose the group
+    $sortby     = 'totalgrade';   // todo let the user choose the column to sort by
+    $sorthow    = 'DESC';        // todo detto
 
-    $data = $workshop->prepare_grading_report($PAGE->context, $USER->id, $page);
+    $data = $workshop->prepare_grading_report($PAGE->context, $USER->id, $groups, $page, $perpage, $sortby, $sorthow);
     if ($data) {
         $showauthornames    = has_capability('mod/workshop:viewauthornames', $PAGE->context);
         $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $PAGE->context);
@@ -168,7 +172,7 @@ case workshop::PHASE_EVALUATION:
         $pagingbar              = new moodle_paging_bar();
         $pagingbar->totalcount  = $data->totalcount;
         $pagingbar->page        = $page;
-        $pagingbar->perpage     = workshop::PERPAGE;
+        $pagingbar->perpage     = $perpage;
         $pagingbar->baseurl     = $PAGE->url;
         $pagingbar->pagevar     = $pagingvar;
 

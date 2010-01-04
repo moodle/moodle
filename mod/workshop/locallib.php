@@ -53,9 +53,6 @@ class workshop {
     const PHASE_EVALUATION  = 40;
     const PHASE_CLOSED      = 50;
 
-    /** how many participants per page are displayed by various reports */
-    const PERPAGE           = 30;
-
     /** @var stdClass course module record */
     public $cm = null;
 
@@ -918,52 +915,80 @@ class workshop {
     /**
      * Prepares data object with all workshop grades to be rendered
      *
-     * @todo this is very similar to what allocation/manual/lib.php does - refactoring expectable
      * @param stdClass $context of the workshop instance
-     * @param int $userid
+     * @param int $userid the user we are preparing the report for
+     * @param mixed $groups single group or array of groups - only show users who are in one of these group(s). Defaults to all
      * @param int $page the current page (for the pagination)
+     * @param int $perpage participants per page (for the pagination)
+     * @param string $sortby lastname|firstname|submissiontitle|submissiongrade|gradinggrade|totalgrade
+     * @param string $sorthow ASC|DESC
      * @return stdClass data for the renderer
      */
-    public function prepare_grading_report(stdClass $context, $userid, $page) {
+    public function prepare_grading_report(stdClass $context, $userid, $groups, $page, $perpage, $sortby, $sorthow) {
         global $DB;
 
-        $canviewall         = has_capability('mod/workshop:viewallassessments', $context, $userid);
-        $isparticipant      = has_any_capability(array('mod/workshop:submit', 'mod/workshop:peerassess'), $context, $userid);
+        $canviewall     = has_capability('mod/workshop:viewallassessments', $context, $userid);
+        $isparticipant  = has_any_capability(array('mod/workshop:submit', 'mod/workshop:peerassess'), $context, $userid);
 
         if (!$canviewall and !$isparticipant) {
             // who the hell is this?
             return array();
         }
 
+        if (!in_array($sortby, array('lastname','firstname','submissiontitle','submissiongrade','gradinggrade','totalgrade'))) {
+            $sortby = 'lastname';
+        }
+
+        if (!($sorthow === 'ASC' or $sorthow === 'DESC')) {
+            $sorthow = 'ASC';
+        }
+
+        // get the list of user ids to be displayed
         if ($canviewall) {
             // fetch the list of ids of all workshop participants - this may get really long so fetch just id
             $participants = get_users_by_capability($context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
-                                'u.id', 'u.lastname,u.firstname,u.id', '', '', '', '', false, false, true);
+                    'u.id', '', '', '', $groups, '', false, false, true);
         } else {
             // this is an ordinary workshop participant (aka student) - display the report just for him/her
             $participants = array($userid => (object)array('id' => $userid));
         }
 
-        // we will need to know the number of all later for the pagination purposes
+        // we will need to know the number of all records later for the pagination purposes
         $numofparticipants = count($participants);
 
-        // slice the list of participants according to the current page
-        $participants = array_slice($participants, $page * self::PERPAGE, self::PERPAGE, true);
+        // load all fields which can be used sorting and paginate the records
+        list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
+        $params['workshopid'] = $this->id;
+        $sqlsort = $sortby . ' ' . $sorthow . ',u.lastname,u.firstname,u.id';
+        $sql = "SELECT u.id AS userid,u.firstname,u.lastname,u.picture,u.imagealt,
+                       s.title AS submissiontitle, a.submissiongrade, a.gradinggrade, a.totalgrade
+                  FROM {user} u
+             LEFT JOIN {workshop_submissions} s ON (s.authorid = u.id)
+             LEFT JOIN {workshop_aggregations} a ON (a.userid = u.id)
+                 WHERE s.workshopid = :workshopid AND s.example = 0 AND u.id $participantids
+              ORDER BY $sqlsort";
+        $participants = $DB->get_records_sql($sql, $params, $page * $perpage, $perpage);
 
         // this will hold the information needed to display user names and pictures
-        $userinfo = $DB->get_records_list('user', 'id', array_keys($participants), '', 'id,lastname,firstname,picture,imagealt');
+        $userinfo = array();
 
-        // load the participants' submissions
-        $submissions = $this->get_submissions(array_keys($participants));
-        foreach ($submissions as $submission) {
-            if (!isset($userinfo[$submission->authorid])) {
-                $userinfo[$submission->authorid]            = new stdClass();
-                $userinfo[$submission->authorid]->id        = $submission->authorid;
-                $userinfo[$submission->authorid]->firstname = $submission->authorfirstname;
-                $userinfo[$submission->authorid]->lastname  = $submission->authorlastname;
-                $userinfo[$submission->authorid]->picture   = $submission->authorpicture;
-                $userinfo[$submission->authorid]->imagealt  = $submission->authorimagealt;
+        // get the user details for all participants to display
+        foreach ($participants as $participant) {
+            if (!isset($userinfo[$participant->userid])) {
+                $userinfo[$participant->userid]            = new stdClass();
+                $userinfo[$participant->userid]->id        = $participant->userid;
+                $userinfo[$participant->userid]->firstname = $participant->firstname;
+                $userinfo[$participant->userid]->lastname  = $participant->lastname;
+                $userinfo[$participant->userid]->picture   = $participant->picture;
+                $userinfo[$participant->userid]->imagealt  = $participant->imagealt;
             }
+        }
+
+        // load the submissions details
+        $submissions = $this->get_submissions(array_keys($participants));
+
+        // get the user details for all moderators (teachers) that have overridden a submission grade
+        foreach ($submissions as $submission) {
             if (!isset($userinfo[$submission->gradeoverby])) {
                 $userinfo[$submission->gradeoverby]            = new stdClass();
                 $userinfo[$submission->gradeoverby]->id        = $submission->gradeoverby;
@@ -974,7 +999,7 @@ class workshop {
             }
         }
 
-        // get current reviewers
+        // get the user details for all reviewers of the displayed participants
         $reviewers = array();
         if ($submissions) {
             list($submissionids, $params) = $DB->get_in_or_equal(array_keys($submissions), SQL_PARAMS_NAMED);
@@ -998,7 +1023,7 @@ class workshop {
             }
         }
 
-        // get current reviewees
+        // get the user details for all reviewees of the displayed participants
         $reviewees = array();
         if ($participants) {
             list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
@@ -1025,28 +1050,13 @@ class workshop {
             }
         }
 
-        // get the current grades for assessment
-        $gradinggrades = array();
-        if ($participants) {
-            list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
-            $params['workshopid'] = $this->id;
-            $sql = "SELECT * FROM {workshop_evaluations} WHERE reviewerid $participantids AND workshopid = :workshopid";
-            $gradinggrades = $DB->get_records_sql($sql, $params);
-        }
-
-        // now populate the final data object to be rendered
-        $grades = array();
+        // finally populate the object to be rendered
+        $grades = $participants;
 
         foreach ($participants as $participant) {
             // set up default (null) values
-            $grades[$participant->id] = new stdClass;
-            $grades[$participant->id]->userid = $participant->id;
-            $grades[$participant->id]->submissionid = null;
-            $grades[$participant->id]->submissiongrade = null;
-            $grades[$participant->id]->reviewedby = array();
-            $grades[$participant->id]->reviewerof = array();
-            $grades[$participant->id]->gradinggrade = null;
-            $grades[$participant->id]->totalgrade = null;
+            $grades[$participant->userid]->reviewedby = array();
+            $grades[$participant->userid]->reviewerof = array();
         }
         unset($participants);
         unset($participant);
@@ -1087,42 +1097,11 @@ class workshop {
         unset($reviewees);
         unset($reviewee);
 
-        foreach ($gradinggrades as $gradinggrade) {
-            $grades[$gradinggrade->reviewerid]->gradinggrade = $gradinggrade->gradinggrade;
-        }
-
-        foreach ($grades as $grade) {
-            $grade->totalgrade = $this->total_grade($grade->submissiongrade, $grade->gradinggrade);
-        }
-
         $data = new stdClass();
         $data->grades = $grades;
         $data->userinfo = $userinfo;
         $data->totalcount = $numofparticipants;
         return $data;
-    }
-
-    /**
-     * Format the grade for the output
-     *
-     * The returned value must not be used for calculations, it is intended for the displaying purposes only
-     *
-     * @param float $value the grade value
-     * @param bool $keepnull whether keep nulls as nulls or return their string representation
-     * @return string
-     */
-    public function format_grade($value, $keepnull = false) {
-        if (is_null($value)) {
-            if ($keepnull) {
-                return null;
-            } else {
-                return get_string('null', 'workshop');
-            }
-        }
-        $decimalpoints  = 1;   // todo make the precision configurable
-        $localized      = true;
-
-        return format_float($value, $decimalpoints, $localized);
     }
 
     /**

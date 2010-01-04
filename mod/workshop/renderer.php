@@ -396,6 +396,9 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
     /**
      * Renders the workshop grading report
      *
+     * Grades must be already rounded to the set number of decimals or must be null (in which later case,
+     * the [[nullgrade]] string shall be displayed).
+     *
      * @param stdClass $data prepared by {@link workshop::prepare_grading_report()}
      * @param bool $showauthornames
      * @param bool $showreviewernames
@@ -539,17 +542,17 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
     }
 
     /**
-     * @todo grade formatting (decimals)
+     * @todo Highlight the nulls
      * @param stdClass|null $assessment
      * @return string
      */
     protected function grading_report_assessment($assessment) {
         if (is_null($assessment)) {
-            return get_string('null', 'workshop');
+            return get_string('nullgrade', 'workshop');
         }
         $a = new stdClass();
-        $a->grade = is_null($assessment->grade) ? get_string('null', 'workshop') : $assessment->grade;
-        $a->gradinggrade = is_null($assessment->gradinggrade) ? get_string('null', 'workshop') : $assessment->gradinggrade;
+        $a->grade = is_null($assessment->grade) ? get_string('nullgrade', 'workshop') : $assessment->grade;
+        $a->gradinggrade = is_null($assessment->gradinggrade) ? get_string('nullgrade', 'workshop') : $assessment->gradinggrade;
         if (is_null($assessment->gradinggradeover)) {
             $grade = get_string('formatpeergrade', 'workshop', $a);
         } else {
@@ -560,6 +563,25 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
         return $grade;
     }
 
+    /**
+     * Format the grade for the output
+     *
+     * @param float $value the grade value
+     * @param int $decimals the precision to be displayed
+     * @return string
+     */
+    public function grade($value, $decimals=0) {
+        if (is_null($value)) {
+            return get_string('nullgrade', 'workshop');
+        }
+
+        return format_float($value, $decimals, true);
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Helper methods                                                         //
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * Helper function returning the greatest common divisor
