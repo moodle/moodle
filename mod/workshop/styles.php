@@ -355,14 +355,18 @@
 
 /* Rubric - grid layout */
 
+.mod-workshop .mform.frozen #rubric-grid-wrapper,
 .mod-workshop .assessmentform.rubric #rubric-grid-wrapper {
     border: none;
 }
 
+.mod-workshop .mform.frozen #rubric-grid-wrapper legend,
 .mod-workshop .assessmentform.rubric #rubric-grid-wrapper legend {
     display: none;
 }
 
+.mod-workshop .mform.frozen #rubric-grid-wrapper th,
+.mod-workshop .mform.frozen #rubric-grid-wrapper td,
 .mod-workshop .assessmentform.rubric.grid th,
 .mod-workshop .assessmentform.rubric.grid td {
     border: 1px solid #ddd;
@@ -370,6 +374,7 @@
     vertical-align: top;
 }
 
+.mod-workshop .mform.frozen #rubric-grid-wrapper,
 .mod-workshop .assessmentform.rubric.grid .criterion {
     text-align: center;
 }
@@ -378,14 +383,20 @@
     text-align: center;
 }
 
+.mod-workshop .mform.frozen #rubric-grid-wrapper .fitem .fitemtitle,
 .mod-workshop .assessmentform.rubric.grid .fitem .fitemtitle {
     display: none;
 }
 
+.mod-workshop .mform.frozen #rubric-grid-wrapper .fitem .felement,
 .mod-workshop .assessmentform.rubric.grid .fitem .felement {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
+}
+
+.mod-workshop .mform.frozen #rubric-grid-wrapper .fitem .felement {
+    border: none;
 }
 
 .mod-workshop .assessmentform.rubric.grid .fitem .felement span {

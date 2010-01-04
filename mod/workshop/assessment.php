@@ -58,6 +58,7 @@ $currenttab = 'assessment';
 
 $canviewallassessments  = has_capability('mod/workshop:viewallassessments', $workshop->context);
 $canviewallsubmissions  = has_capability('mod/workshop:viewallsubmissions', $workshop->context);
+$canoverridegrades      = has_capability('mod/workshop:overridegrades', $workshop->context);
 $isreviewer             = ($USER->id == $assessment->reviewerid);
 $isauthor               = ($USER->id == $submission->authorid);
 
@@ -69,21 +70,21 @@ if ($isreviewer or $isauthor or ($canviewallassessments and $canviewallsubmissio
 
 // only the reviewer is allowed to modify the assessment
 if ($isreviewer and $workshop->assessing_allowed()) {
-    $editable = true;
+    $assessmenteditable = true;
 } else {
-    $editable = false;
+    $assessmenteditable = false;
 }
 
 // load the grading strategy logic
 $strategy = $workshop->grading_strategy_instance();
 
 // load the assessment form
-$mform = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, $editable);
+$mform = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, $assessmenteditable);
 
 if ($mform->is_cancelled()) {
     redirect($workshop->view_url());
 
-} elseif ($editable and ($data = $mform->get_data())) {
+} elseif ($assessmenteditable and ($data = $mform->get_data())) {
     $rawgrade = $strategy->save_assessment($assessment, $data);
     if (!is_null($rawgrade) and isset($data->saveandclose)) {
         redirect($workshop->view_url());
@@ -94,13 +95,38 @@ if ($mform->is_cancelled()) {
     }
 }
 
+// load the form to override gradinggrade
+if ($canoverridegrades) {
+    $feedbackform = $workshop->get_feedbackreviewer_form($PAGE->url, $assessment, $canoverridegrades);
+    if ($data = $feedbackform->get_data()) {
+        print_object($data); die(); // DONOTCOMMIT
+        // todo
+        redirect($PAGE->url);
+    }
+}
+
 // output starts here
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('assessmentform', 'workshop'), 2);
+echo $OUTPUT->heading(get_string('assessedsubmission', 'workshop'), 2);
 
 $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);      // workshop renderer
 $submission = $workshop->get_submission_by_id($submission->id);     // reload so can be passed to the renderer
 echo $wsoutput->submission_full($submission, has_capability('mod/workshop:viewauthornames', $workshop->context));
 
+if ($isreviewer) {
+    echo $OUTPUT->heading(get_string('assessmentbyyourself', 'workshop'), 2);
+} elseif (has_capability('mod/workshop:viewreviewernames', $workshop->context)) {
+    $assessment = $workshop->get_assessment_by_id($assessment->id); // extend the current record with user details
+    $reviewer   = new stdClass();
+    $reviewer->firstname = $assessment->reviewerfirstname;
+    $reviewer->lastname = $assessment->reviewerlastname;
+    echo $OUTPUT->heading(get_string('assessmentbyknown', 'workshop', fullname($reviewer)), 2);
+} else {
+    echo $OUTPUT->heading(get_string('assessmentbyunknown', 'workshop'), 2);
+}
 $mform->display();
-echo $OUTPUT->footer();
+
+if ($canoverridegrades) {
+    $feedbackform->display();
+    echo $OUTPUT->footer();
+}

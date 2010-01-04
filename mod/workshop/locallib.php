@@ -1351,6 +1351,21 @@ class workshop {
         $rs->close();
     }
 
+    /**
+     * TODO: short description.
+     *
+     * @param array $actionurl 
+     * @return TODO
+     */
+    public function get_feedbackreviewer_form(moodle_url $actionurl, stdClass $assessment, $editable) {
+        global $CFG;
+        require_once(dirname(__FILE__) . '/feedbackreviewer_form.php');
+
+        return new workshop_feedbackreviewer_form($actionurl,
+                array('workshop' => $this, 'current' => $assessment, 'feedbackopts' => array()),
+                'post', '', null, $editable);
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     // Helper methods                                                         //
     ////////////////////////////////////////////////////////////////////////////
