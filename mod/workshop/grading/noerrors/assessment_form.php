@@ -65,10 +65,11 @@ class workshop_noerrors_assessment_form extends workshop_assessment_form {
             $desc .= "\n</div>";
             $mform->addElement('html', $desc);
 
-            // evaluation of the assertion todo
+            // evaluation of the assertion
             $label = get_string('dimensiongradenoerrors', 'workshop');
-            //$options = make_grades_menu($fields->{'grade__idx_' . $i});
-            //$mform->addElement('select', 'grade__idx_' . $i, $label, $options);
+            $mform->addElement('radio', 'grade__idx_' . $i, 'Your assessment', $fields->{'grade0__idx_'.$i}, 0); // todo localize
+            $mform->addElement('radio', 'grade__idx_' . $i, '', $fields->{'grade1__idx_'.$i}, 1);
+            $mform->setDefault('grade__idx_' . $i, 0);
 
             // comment
             $label = get_string('dimensioncomment', 'workshop');

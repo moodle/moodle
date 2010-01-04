@@ -45,6 +45,7 @@ class workshop_edit_noerrors_strategy_form extends workshop_edit_strategy_form {
     protected function definition_inner(&$mform) {
 
         $workshopconfig     = get_config('workshop');
+        $nodimensions       = $this->_customdata['nodimensions'];       // number of currently filled dimensions
         $norepeats          = $this->_customdata['norepeats'];          // number of dimensions to display
         $descriptionopts    = $this->_customdata['descriptionopts'];    // wysiwyg fields options
         $current            = $this->_customdata['current'];            // current data to be set
@@ -73,17 +74,27 @@ class workshop_edit_noerrors_strategy_form extends workshop_edit_strategy_form {
         $mform->addElement('header', 'mappingheader', get_string('noerrorsgrademapping', 'workshop'));
         $mform->addElement('static', 'mappinginfo', get_string('noerrorsmaperror', 'workshop'),
                                                             get_string('noerrorsmapgrade', 'workshop'));
+
+        // get the total weight of all items == maximum weighted number of errors
+        $totalweight = 0;
+        for ($i = 0; $i < $norepeats; $i++) {
+            if (!empty($current->{'weight__idx_'.$i})) {
+                $totalweight += $current->{'weight__idx_'.$i};
+            }
+        }
+        $totalweight = max($totalweight, $nodimensions);
+
         $percents = array();
         $percents[''] = '';
         for ($i = 100; $i >= 0; $i--) {
             $percents[$i] = get_string('percents', 'workshop', $i);
         }
         $mform->addElement('static', 'mappingzero', 0, get_string('percents', 'workshop', 100));
-        for ($i = 1; $i <= $norepeats; $i++) {
+        for ($i = 1; $i <= $totalweight; $i++) {
             $selects = array();
             $selects[] = $mform->createElement('select', 'map__idx_'.$i, $i, $percents);
             $selects[] = $mform->createElement('static', 'mapdefault__idx_'.$i, '',
-                                        get_string('percents', 'workshop', floor(100 - $i * 100 / $norepeats)));
+                                        get_string('percents', 'workshop', floor(100 - $i * 100 / $totalweight)));
             $mform->addGroup($selects, 'grademapping'.$i, $i, array(' '), false);
             $mform->setDefault('map__idx_'.$i, '');
         }

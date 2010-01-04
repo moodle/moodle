@@ -90,6 +90,7 @@ class workshop_noerrors_strategy implements workshop_strategy {
         $customdata['workshop'] = $this->workshop;
         $customdata['strategy'] = $this;
         $customdata['norepeats'] = $norepeats;
+        $customdata['nodimensions'] = $nodimensions;
         $customdata['descriptionopts'] = $this->descriptionopts;
         $customdata['current']  = $fields;
         $attributes = array('class' => 'editstrategyform');
@@ -133,18 +134,18 @@ class workshop_noerrors_strategy implements workshop_strategy {
             }
             if (empty($master->id)) {
                 // new field
-                $local->id          = $DB->insert_record("workshop_forms_noerrors", $local);
+                $local->id          = $DB->insert_record('workshop_forms_noerrors', $local);
                 $master->localid    = $local->id;
-                $master->id         = $DB->insert_record("workshop_forms", $master);
+                $master->id         = $DB->insert_record('workshop_forms', $master);
             } else {
                 // exiting field
-                $DB->update_record("workshop_forms", $master);
-                $local->id = $DB->get_field("workshop_forms", "localid", array("id" => $master->id), MUST_EXIST);
+                $DB->update_record('workshop_forms', $master);
+                $local->id = $DB->get_field('workshop_forms', 'localid', array('id' => $master->id), MUST_EXIST);
             }
             // re-save with correct path to embeded media files
             $local = file_postupdate_standard_editor($local, 'description', $this->descriptionopts,
                 $PAGE->context, 'workshop_dimension_description', $master->id);
-            $DB->update_record("workshop_forms_noerrors", $local);
+            $DB->update_record('workshop_forms_noerrors', $local);
         }
         $this->delete_dimensions($todelete);
 
@@ -157,11 +158,11 @@ class workshop_noerrors_strategy implements workshop_strategy {
                 continue;
             }
             if (isset($this->mappings[$nonegative])) {
-                $DB->set_field("workshop_forms_noerrors_map", "grade", $grade,
-                            array("workshopid" => $this->workshop->id, "nonegative" => $nonegative));
+                $DB->set_field('workshop_forms_noerrors_map', 'grade', $grade,
+                            array('workshopid' => $this->workshop->id, 'nonegative' => $nonegative));
             } else {
-                $DB->insert_record("workshop_forms_noerrors_map",
-                            (object)array("workshopid" => $this->workshop->id, "nonegative" => $nonegative, "grade" => $grade));
+                $DB->insert_record('workshop_forms_noerrors_map',
+                            (object)array('workshopid' => $this->workshop->id, 'nonegative' => $nonegative, 'grade' => $grade));
             }
         }
         // clear mappings that are not valid any more
@@ -169,7 +170,7 @@ class workshop_noerrors_strategy implements workshop_strategy {
             list($insql, $params) = $DB->get_in_or_equal($todelete, SQL_PARAMS_NAMED);
             $insql = "nonegative $insql OR ";
         } else {
-            $insql = "";
+            $insql = '';
         }
         $sql = "DELETE FROM {workshop_forms_noerrors_map}
                       WHERE (($insql nonegative > :nodimensions) AND (workshopid = :workshopid))";
@@ -235,7 +236,7 @@ class workshop_noerrors_strategy implements workshop_strategy {
      *
      * @param stdClass $assessment Assessment being filled
      * @param stdClass $data       Raw data as returned by the assessment form
-     * @return float|null        Percentual grade for submission as suggested by the peer
+     * @return float|null          Raw grade (from 0 to 1) for submission as suggested by the peer
      */
     public function save_assessment(stdClass $assessment, stdClass $data) {
         global $DB;
@@ -272,12 +273,12 @@ class workshop_noerrors_strategy implements workshop_strategy {
     protected function load_fields() {
         global $DB;
 
-        $sql = "SELECT master.id,dim.description,dim.descriptionformat,dim.grade0,dim.grade1,dim.weight
+        $sql = 'SELECT master.id,dim.description,dim.descriptionformat,dim.grade0,dim.grade1,dim.weight
                   FROM {workshop_forms} master
             INNER JOIN {workshop_forms_noerrors} dim ON (dim.id=master.localid)
                  WHERE master.workshopid = :workshopid AND master.strategy = :strategy
-                 ORDER BY master.sort";
-        $params = array("workshopid" => $this->workshop->id, "strategy" => $this->workshop->strategy);
+                 ORDER BY master.sort';
+        $params = array('workshopid' => $this->workshop->id, 'strategy' => $this->workshop->strategy);
 
         return $DB->get_records_sql($sql, $params);
     }
@@ -289,8 +290,8 @@ class workshop_noerrors_strategy implements workshop_strategy {
      */
     protected function load_mappings() {
         global $DB;
-        return $DB->get_records("workshop_forms_noerrors_map", array("workshopid" => $this->workshop->id), "nonegative",
-                                "nonegative,grade"); // we can use nonegative as key here as it must be unique within workshop
+        return $DB->get_records('workshop_forms_noerrors_map', array('workshopid' => $this->workshop->id), 'nonegative',
+                                'nonegative,grade'); // we can use nonegative as key here as it must be unique within workshop
     }
 
     /**
@@ -332,7 +333,7 @@ class workshop_noerrors_strategy implements workshop_strategy {
     protected function delete_dimensions($masterids) {
         global $DB, $PAGE;
 
-        $masters    = $DB->get_records_list("workshop_forms", "id", $masterids, "", "id,localid");
+        $masters    = $DB->get_records_list('workshop_forms', 'id', $masterids, '', 'id,localid');
         $masterids  = array_keys($masters);  // now contains only those really existing
         $localids   = array();
         $fs         = get_file_storage();
@@ -341,8 +342,8 @@ class workshop_noerrors_strategy implements workshop_strategy {
             $fs->delete_area_files($PAGE->context->id, 'workshop_dimension_description', $itemid);
             $localids[] = $master->localid;
         }
-        $DB->delete_records_list("workshop_forms_noerrors", "id", $localids);
-        $DB->delete_records_list("workshop_forms", "id", $masterids);
+        $DB->delete_records_list('workshop_forms_noerrors', 'id', $localids);
+        $DB->delete_records_list('workshop_forms', 'id', $masterids);
     }
 
     /**
@@ -376,13 +377,18 @@ class workshop_noerrors_strategy implements workshop_strategy {
             $cook->noerrors[$i]->grade0     = $raw->{'grade0__idx_'.$i};
             $cook->noerrors[$i]->grade1     = $raw->{'grade1__idx_'.$i};
             $cook->noerrors[$i]->weight     = $raw->{'weight__idx_'.$i};
-
-            if (is_numeric($raw->{'map__idx_'.($i+1) })) {
-                $cook->mappings[$i+1]         = $raw->{'map__idx_'.($i+1)}; // 0, 1, 2, ...
-            } else {
-                $cook->mappings[$i+1]         = null; // not set anything
-            }
         }
+
+        $i = 1;
+        while (isset($raw->{'map__idx_'.$i})) {
+            if (is_numeric($raw->{'map__idx_'.$i})) {
+                $cook->mappings[$i] = $raw->{'map__idx_'.$i}; // should be a value from 0 to 100
+            } else {
+                $cook->mappings[$i] = null; // the user did not set anything
+            }
+            $i++;
+        }
+
         return $cook;
     }
 
@@ -396,7 +402,7 @@ class workshop_noerrors_strategy implements workshop_strategy {
         global $DB;
 
         // fetch all grades accociated with this assessment
-        $grades = $DB->get_records("workshop_grades", array("assessmentid" => $assessment->id));
+        $grades = $DB->get_records('workshop_grades', array('assessmentid' => $assessment->id));
 
         // filter grades given under an other strategy or assessment form
         foreach ($grades as $grade) {
@@ -419,6 +425,38 @@ class workshop_noerrors_strategy implements workshop_strategy {
             $reindexed[$grade->dimensionid] = $grade;
         }
         return $reindexed;
+    }
+
+    /**
+     * Aggregates the assessment form data and sets the grade for the submission given by the peer
+     *
+     * @param stdClass $assessment Assessment record
+     * @return float|null          Raw grade (0 to 1) for submission as suggested by the peer
+     */
+    protected function update_peer_grade(stdClass $assessment) {
+        $grades     = $this->get_current_assessment_data($assessment);
+        $suggested  = $this->calculate_peer_grade($grades);
+        if (!is_null($suggested)) {
+            // todo save into workshop_assessments
+        }
+        return $suggested;
+    }
+
+    /**
+     * Calculates the aggregated grade given by the reviewer
+     *
+     * @param array $grades Grade records as returned by {@link get_current_assessment_data}
+     * @uses $this->mappings
+     * @return float|null   Raw grade (0 to 1) for submission as suggested by the peer
+     */
+    protected function calculate_peer_grade(array $grades) {
+
+        if (empty($grades)) {
+            return null;
+        }
+        $sumgrades  = 0;
+        $sumweights = 0;
+        return 1;
     }
 
 }
