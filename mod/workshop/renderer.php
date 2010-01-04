@@ -709,6 +709,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $a = new stdClass();
         $a->grade = is_null($assessment->grade) ? get_string('nullgrade', 'workshop') : $assessment->grade;
         $a->gradinggrade = is_null($assessment->gradinggrade) ? get_string('nullgrade', 'workshop') : $assessment->gradinggrade;
+        $a->weight = $assessment->weight;
         if (is_null($assessment->gradinggradeover)) {
             $grade = get_string('formatpeergrade', 'workshop', $a);
         } else {

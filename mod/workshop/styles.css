@@ -464,8 +464,13 @@
     white-space: nowrap;
 }
 
-.mod-workshop .grading-report .submissiongrade,
-.mod-workshop .grading-report .gradinggrade {
+.mod-workshop .grading-report .receivedgrade span.grade,
+.mod-workshop .grading-report .givengrade span.gradinggrade {
+    font-weight: bold;
+}
+
+.mod-workshop .grading-report .submissiongrade.cell,
+.mod-workshop .grading-report .gradinggrade.cell {
     text-align: center;
     font-size: 200%;
     white-space: nowrap;

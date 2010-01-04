@@ -1330,7 +1330,7 @@ class workshop {
         $reviewers = array();
         if ($submissions) {
             list($submissionids, $params) = $DB->get_in_or_equal(array_keys($submissions), SQL_PARAMS_NAMED);
-            $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover,
+            $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover, a.weight,
                            r.id AS reviewerid, r.lastname, r.firstname, r.picture, r.imagealt,
                            s.id AS submissionid, s.authorid
                       FROM {workshop_assessments} a
@@ -1355,7 +1355,7 @@ class workshop {
         if ($participants) {
             list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
             $params['workshopid'] = $this->id;
-            $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover, a.reviewerid,
+            $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover, a.reviewerid, a.weight,
                            s.id AS submissionid,
                            e.id AS authorid, e.lastname, e.firstname, e.picture, e.imagealt
                       FROM {user} u
@@ -1410,6 +1410,7 @@ class workshop {
             $info->grade = $this->real_grade($reviewer->grade);
             $info->gradinggrade = $this->real_grading_grade($reviewer->gradinggrade);
             $info->gradinggradeover = $this->real_grading_grade($reviewer->gradinggradeover);
+            $info->weight = $reviewer->weight;
             $grades[$reviewer->authorid]->reviewedby[$reviewer->reviewerid] = $info;
         }
         unset($reviewers);
@@ -1423,6 +1424,7 @@ class workshop {
             $info->grade = $this->real_grade($reviewee->grade);
             $info->gradinggrade = $this->real_grading_grade($reviewee->gradinggrade);
             $info->gradinggradeover = $this->real_grading_grade($reviewee->gradinggradeover);
+            $info->weight = $reviewee->weight;
             $grades[$reviewee->reviewerid]->reviewerof[$reviewee->authorid] = $info;
         }
         unset($reviewees);

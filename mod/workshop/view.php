@@ -261,7 +261,6 @@ case workshop::PHASE_ASSESSMENT:
             }
             echo $OUTPUT->box_start('generalbox assessment-summary' . $class);
             echo $wsoutput->submission_summary($submission, $shownames);
-            echo get_string('givengradestatus', 'workshop', $status);
             $button = new html_form();
             $button->method         = 'get';
             $button->button->text   = $buttontext;
