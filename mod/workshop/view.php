@@ -27,10 +27,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/// (Replace workshop with the name of your module and remove this line)
-
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__).'/locallib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $a  = optional_param('a', 0, PARAM_INT);  // workshop instance ID
@@ -68,23 +67,51 @@ require_login($course, true, $cm);
 add_to_log($course->id, "workshop", "view", "view.php?id=$cm->id", "$workshop->id");
 
 /// Print the page header
-$strworkshops = get_string('modulenameplural', 'workshop');
-$strworkshop  = get_string('modulename', 'workshop');
 
-$navlinks = array();
-$navlinks[] = array('name' => $strworkshops, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-$navlinks[] = array('name' => format_string($workshop->name), 'link' => '', 'type' => 'activityinstance');
+$PAGE->set_url('mod/workshop/view.php', array('id' => $cm->id));
+$PAGE->set_title($workshop->name);
+$PAGE->set_heading($course->shortname);
+$PAGE->set_button(update_module_button($cm->id, $course->id, get_string('modulename', 'workshop')));
 
+// other things you may want to set - remove if not needed
+//$PAGE->set_cacheable(false);
+//$PAGE->set_focuscontrol('some-html-id');
+
+// todo navigation will be changed yet for Moodle 2.0
+$navlinks   = array();
+$navlinks[] = array('name' => get_string('modulenameplural', 'workshop'), 
+                    'link' => "index.php?id=$course->id", 
+                    'type' => 'activity');
+$navlinks[] = array('name' => format_string($workshop->name), 
+                    'link' => '',
+                    'type' => 'activityinstance');
 $navigation = build_navigation($navlinks);
+$menu       = navmenu($course, $cm);
 
-print_header_simple(format_string($workshop->name), '', $navigation, '', '', true,
-              update_module_button($cm->id, $course->id, $strworkshop), navmenu($course, $cm));
+echo $OUTPUT->header($navigation, $menu);
 
-/// Print the main part of the page
+/// Print the main part of the page - todo these are just links to help during development
 
+echo $OUTPUT->box_start();
+echo $OUTPUT->heading('Workshop administration tools', 3);
 echo "<a href=\"editform.php?cmid={$cm->id}\">Edit grading form (".get_string('strategy' . $workshop->strategy, 'workshop').")</a>";
-echo " | <a href=\"submission.php?cmid={$cm->id}\">My submission</a>";
-echo " | <a href=\"assessment.php?asid=1\">Assessment ID 1</a>";
+echo $OUTPUT->box_end();
 
-/// Finish the page
-print_footer($course);
+echo $OUTPUT->box_start();
+echo $OUTPUT->heading(get_string('submission', 'workshop'), 3);
+echo "<a href=\"submission.php?cmid={$cm->id}\">My submission</a>";
+echo $OUTPUT->box_end();
+
+echo $OUTPUT->box_start();
+echo $OUTPUT->heading(get_string('assessment', 'workshop'), 3);
+
+$reviewstogive = workshop_get_assessments_for_reviewer($workshop->id, $USER->id);
+echo "You are expected to assess following submissions:";
+echo "<ul>";
+foreach ($reviewstogive as $review) {
+    echo "<li><a href=\"assessment.php?asid={$review->assessmentid}\">Assessment of '{$review->title}' by {$review->authorid}</a></li>";
+}
+echo "</ul>";
+echo $OUTPUT->box_end();
+
+echo $OUTPUT->footer();

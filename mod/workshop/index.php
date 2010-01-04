@@ -42,26 +42,28 @@ require_course_login($course);
 
 add_to_log($course->id, 'workshop', 'view all', "index.php?id=$course->id", '');
 
-
-/// Get all required stringsworkshop
-
-$strworkshops = get_string('modulenameplural', 'workshop');
-$strworkshop  = get_string('modulename', 'workshop');
-
-
 /// Print the header
 
-$navlinks = array();
-$navlinks[] = array('name' => $strworkshops, 'link' => '', 'type' => 'activity');
-$navigation = build_navigation($navlinks);
+$PAGE->set_url('mod/workshop/view.php', array('id' => $id));
+$PAGE->set_title($course->fullname);
+$PAGE->set_heading($course->shortname);
 
-print_header_simple($strworkshops, '', $navigation, '', '', true, '', navmenu($course));
+// todo navigation will be changed yet for Moodle 2.0
+$navlinks = array();
+$navlinks[] = array('name' => get_string('modulenameplural', 'workshop'),
+                    'link' => '',
+                    'type' => 'activity');
+$navigation = build_navigation($navlinks);
+        
+echo $OUTPUT->header($navigation);
 
 /// Get all the appropriate data
 
 if (! $workshops = get_all_instances_in_course('workshop', $course)) {
-    notice('There are no workshops', "../../course/view.php?id=$course->id");
-    die;
+    echo $OUTPUT->heading(get_string('noworkshops', 'workshop'), 2);
+    echo $OUTPUT->continue_button("view.php?id=$course->id");
+    echo $OUTPUT->footer();
+    die();
 }
 
 /// Print the list of instances (your module will probably extend this)
@@ -98,9 +100,9 @@ foreach ($workshops as $workshop) {
     }
 }
 
-print_heading($strworkshops);
+echo $OUTPUT->heading(get_string('modulenameplural', 'workshop'), 2);
 print_table($table);
 
 /// Finish the page
 
-print_footer($course);
+echo $OUTPUT->footer();
