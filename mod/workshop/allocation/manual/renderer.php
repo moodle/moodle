@@ -55,7 +55,6 @@ class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
      * @return string html code
      */
     public function display_allocations(stdClass $data) {
-        $wsoutput           = $data->wsoutput;          // moodle_mod_workshop_renderer
         $allocations        = $data->allocations;       // array prepared array of all allocations data
         $userinfo           = $data->userinfo;          // names and pictures of all required users
         $authors            = $data->authors;           // array potential reviewees
@@ -64,10 +63,13 @@ class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
         $hlreviewerid       = $data->hlreviewerid;      // int id of the reviewer to highlight
         $selfassessment     = $data->selfassessment;    // bool is the self-assessment allowed in this workshop?
 
-        $wsoutput = $this->page->theme->get_renderer('mod_workshop', $this->page);
         if (empty($allocations)) {
-            return $wsoutput->status_message((object)array('text' => get_string('nosubmissions', 'workshop')));
+            return $this->output->heading(get_string('nosubmissions', 'workshop'));
         }
+
+        // convert user collections into drop down menus
+        $authors    = array_map('fullname', $authors);
+        $reviewers  =  array_map('fullname', $reviewers);
 
         $table              = new html_table();
         $table->set_classes('allocations');
@@ -134,7 +136,7 @@ class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
                 $exclude[$allocation->userid] = true;
             }
             // todo add an option to exclude users without own submission
-            $options = $this->users_to_menu_options($reviewers, $exclude);
+            $options = array_diff_key($reviewers, $exclude);
             if ($options) {
                 $handler = new moodle_url($this->page->url,
                                             array('mode' => 'new', 'of' => $allocation->userid, 'sesskey' => sesskey()));
@@ -181,7 +183,7 @@ class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
             $o .= $this->output->container(get_string('selfassessmentdisabled', 'workshop'), 'info');
         }
         // todo add an option to exclude users without own submission
-        $options = $this->users_to_menu_options($authors, $exclude);
+        $options = array_diff_key($authors, $exclude);
         if ($options) {
             $handler = new moodle_url($this->page->url,
                                         array('mode' => 'new', 'by' => $allocation->userid, 'sesskey' => sesskey()));
@@ -211,22 +213,6 @@ class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
         }
         $o .= $this->output->output_end_tag('ul');
         return $o;
-    }
-
-    /**
-     * Given a list of users, returns an array suitable to render the HTML select field
-     *
-     * @param array $users array of users or array of groups of users
-     * @return array of options to be passed to {@link html_select::make_ popup_form()}
-     */
-    protected function users_to_menu_options($users, array $exclude) {
-        $options = array(); // to be returned
-        foreach ($users as $user) {
-            if (!isset($exclude[$user->id])) {
-                $options[$user->id] = fullname($user);
-            }
-        }
-        return $options;
     }
 
     /**

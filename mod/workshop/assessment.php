@@ -66,7 +66,7 @@ if ('preview' == $mode) {
     // we do not require 'mod/workshop:peerassess' here, we just check that the assessment record
     // has been prepared for the current user. So even a user without the peerassess capability
     // (like a 'teacher', for example) can become a reviewer
-    if ($USER->id !== $assessment->userid) {
+    if ($USER->id !== $assessment->reviewerid) {
         print_error('nopermissions', '', $workshop->view_url());
     }
     $PAGE->set_url($workshop->assess_url($assessment->id));
@@ -94,7 +94,7 @@ if ($mform->is_cancelled()) {
     if (!is_null($rawgrade) and isset($data->saveandclose)) {
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('assessmentresult', 'workshop'), 2);
-        echo $OUTPUT->box('Given grade: ' . sprintf("%01.2f", $rawgrade * 100) . ' %'); // todo more detailed info using own renderer
+        echo $OUTPUT->box('Given grade: ' . $rawgrade . ' %'); // todo more detailed info using own renderer, format grade
         echo $OUTPUT->continue_button($workshop->view_url());
         echo $OUTPUT->footer();
         die();  // bye-bye
@@ -113,7 +113,7 @@ echo $OUTPUT->heading(get_string('assessmentform', 'workshop'), 2);
 if ('assessment' === $mode) {
     if (has_capability('mod/workshop:viewauthornames', $PAGE->context)) {
         $showname   = true;
-        $author     = $workshop->user_info($submission->userid);
+        $author     = $workshop->user_info($submission->authorid);
     } else {
         $showname   = false;
         $author     = null;

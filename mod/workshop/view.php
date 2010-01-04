@@ -154,8 +154,145 @@ case workshop::PHASE_ASSESSMENT:
             echo $OUTPUT->box_end();
         }
     }
-
+    break;
 case workshop::PHASE_EVALUATION:
+    $pagingvar  = 'page';
+    $page       = optional_param($pagingvar, 0, PARAM_INT);
+
+    if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
+        $showauthornames = has_capability('mod/workshop:viewauthornames', $PAGE->context);
+        $showreviewernames = has_capability('mod/workshop:viewreviewernames', $PAGE->context);
+        // todo this is very similar to what allocation/manual/lib.php does - refactoring expectable
+
+        // fetch the list of ids of all workshop participants - this may get really long so fetch just id
+        $participants = get_users_by_capability($PAGE->context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
+                                            'u.id', 'u.lastname,u.firstname,u.id', '', '', '', '', false, false, true);
+
+        $numofparticipants = count($participants);  // we will need later for the pagination
+
+        // slice the list of participants according to the current page
+        $participants = array_slice($participants, $page * workshop::PERPAGE, workshop::PERPAGE, true);
+
+        // this will hold the information needed to display user names and pictures
+        $userinfo = $DB->get_records_list('user', 'id', array_keys($participants), '', 'id,lastname,firstname,picture,imagealt');
+
+        // load the participants' submissions
+        $submissions = $workshop->get_submissions(array_keys($participants), false);
+        foreach ($submissions as $submission) {
+            if (!isset($userinfo[$submission->authorid])) {
+                $userinfo[$submission->authorid]            = new stdClass();
+                $userinfo[$submission->authorid]->id        = $submission->authorid;
+                $userinfo[$submission->authorid]->firstname = $submission->authorfirstname;
+                $userinfo[$submission->authorid]->lastname  = $submission->authorlastname;
+                $userinfo[$submission->authorid]->picture   = $submission->authorpicture;
+                $userinfo[$submission->authorid]->imagealt  = $submission->authorimagealt;
+            }
+            if (!isset($userinfo[$submission->gradeoverby])) {
+                $userinfo[$submission->gradeoverby]            = new stdClass();
+                $userinfo[$submission->gradeoverby]->id        = $submission->gradeoverby;
+                $userinfo[$submission->gradeoverby]->firstname = $submission->overfirstname;
+                $userinfo[$submission->gradeoverby]->lastname  = $submission->overlastname;
+                $userinfo[$submission->gradeoverby]->picture   = $submission->overpicture;
+                $userinfo[$submission->gradeoverby]->imagealt  = $submission->overimagealt;
+            }
+        }
+
+        // get current reviewers
+        $reviewers = array();
+        if ($submissions) {
+            list($submissionids, $params) = $DB->get_in_or_equal(array_keys($submissions), SQL_PARAMS_NAMED);
+            $sql = "SELECT a.id AS assessmentid, a.submissionid,
+                           r.id AS reviewerid, r.lastname, r.firstname, r.picture, r.imagealt,
+                           s.id AS submissionid, s.authorid
+                      FROM {workshop_assessments} a
+                      JOIN {user} r ON (a.reviewerid = r.id)
+                      JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+                     WHERE a.submissionid $submissionids";
+            $reviewers = $DB->get_records_sql($sql, $params);
+            foreach ($reviewers as $reviewer) {
+                if (!isset($userinfo[$reviewer->reviewerid])) {
+                    $userinfo[$reviewer->reviewerid]            = new stdClass();
+                    $userinfo[$reviewer->reviewerid]->id        = $reviewer->reviewerid;
+                    $userinfo[$reviewer->reviewerid]->firstname = $reviewer->firstname;
+                    $userinfo[$reviewer->reviewerid]->lastname  = $reviewer->lastname;
+                    $userinfo[$reviewer->reviewerid]->picture   = $reviewer->picture;
+                    $userinfo[$reviewer->reviewerid]->imagealt  = $reviewer->imagealt;
+                }
+            }
+        }
+
+        // get current reviewees
+        list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
+        $params['workshopid'] = $workshop->id;
+        $sql = "SELECT a.id AS assessmentid, a.submissionid,
+                       u.id AS reviewerid,
+                       s.id AS submissionid,
+                       e.id AS revieweeid, e.lastname, e.firstname, e.picture, e.imagealt
+                  FROM {user} u
+                  JOIN {workshop_assessments} a ON (a.reviewerid = u.id)
+                  JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+                  JOIN {user} e ON (s.authorid = e.id)
+                 WHERE u.id $participantids AND s.workshopid = :workshopid";
+        $reviewees = $DB->get_records_sql($sql, $params);
+        foreach ($reviewees as $reviewee) {
+            if (!isset($userinfo[$reviewee->revieweeid])) {
+                $userinfo[$reviewee->revieweeid]            = new stdClass();
+                $userinfo[$reviewee->revieweeid]->id        = $reviewee->revieweeid;
+                $userinfo[$reviewee->revieweeid]->firstname = $reviewee->firstname;
+                $userinfo[$reviewee->revieweeid]->lastname  = $reviewee->lastname;
+                $userinfo[$reviewee->revieweeid]->picture   = $reviewee->picture;
+                $userinfo[$reviewee->revieweeid]->imagealt  = $reviewee->imagealt;
+            }
+        }
+
+        // get the current grades for assessment
+        list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
+        $params['workshopid'] = $workshop->id;
+        $sql = "SELECT * FROM {workshop_evaluations} WHERE reviewerid $participantids AND workshopid = :workshopid";
+        $gradinggrades = $DB->get_records_sql($sql, $params);
+
+        // now populate the final data object to be rendered
+        $grades = array();
+
+        foreach ($participants as $participant) {
+            // set up default (null) values
+            $grades[$participant->id] = new stdClass;
+            $grades[$participant->id]->userid = $participant->id;
+            $grades[$participant->id]->submissionid = null;
+            $grades[$participant->id]->reviewedby = array();
+            $grades[$participant->id]->reviewerof = array();
+            $grades[$participant->id]->gradinggrade = null;
+        }
+        unset($participants);
+
+        foreach ($submissions as $submission) {
+            $grades[$submission->authorid]->submissionid = $submission->id;
+            $grades[$submission->authorid]->submissiontitle = $submission->title;
+            $grades[$submission->authorid]->submissiongrade = $submission->grade;
+            $grades[$submission->authorid]->submissiongradeover = $submission->gradeover;
+            $grades[$submission->authorid]->submissiongradeoverby = $submission->gradeoverby;
+        }
+        unset($submissions);
+
+        foreach($reviewers as $reviewer) {
+            $grades[$reviewer->authorid]->reviewedby[$reviewer->reviewerid] = $reviewer->assessmentid;
+        }
+        unset($reviewers);
+
+        foreach($reviewees as $reviewee) {
+            $grades[$reviewee->reviewerid]->reviewerof[$reviewee->revieweeid] = $reviewee->assessmentid;
+        }
+        unset($reviewees);
+
+        foreach ($gradinggrades as $gradinggrade) {
+            $grades[$gradinggrade->reviewerid]->gradinggrade = $gradinggrade->gradinggrade;
+        }
+
+        // we have all data, let us pass it to the renderer and return the output
+
+        print_object($grades); die(); // DONOTCOMMIT
+        break;
+    }
 case workshop::PHASE_CLOSED:
 default:
 }

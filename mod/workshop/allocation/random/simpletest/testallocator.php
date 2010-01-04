@@ -126,23 +126,23 @@ class workshop_allocation_random_test extends UnitTestCase {
     public function test_index_submissions_by_authors() {
         // fixture setup
         $submissions = array(
-                676 => (object)array('id' => 676, 'userid' => 23),
-                121 => (object)array('id' => 121, 'userid' => 56),
+                676 => (object)array('id' => 676, 'authorid' => 23),
+                121 => (object)array('id' => 121, 'authorid' => 56),
                 );
         // exercise SUT
         $submissions = $this->allocator->index_submissions_by_authors($submissions);
         // verify
         $this->assertEqual(array(
-                23 => (object)array('id' => 676, 'userid' => 23),
-                56 => (object)array('id' => 121, 'userid' => 56),
+                23 => (object)array('id' => 676, 'authorid' => 23),
+                56 => (object)array('id' => 121, 'authorid' => 56),
                 ), $submissions);
     }
 
     public function test_index_submissions_by_authors_duplicate_author() {
         // fixture setup
         $submissions = array(
-                14 => (object)array('id' => 676, 'userid' => 3),
-                87 => (object)array('id' => 121, 'userid' => 3),
+                14 => (object)array('id' => 676, 'authorid' => 3),
+                87 => (object)array('id' => 121, 'authorid' => 3),
                 );
         // set expectation
         $this->expectException('moodle_exception');

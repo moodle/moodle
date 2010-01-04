@@ -51,14 +51,14 @@ if ($id) { // submission is specified
     if (!$submission = $workshop->get_submission_by_author($USER->id)) {
         $submission = new stdClass();
         $submission->id = null;
-        $submission->userid = $USER->id;
+        $submission->authorid = $USER->id;
     }
 }
 
-$ownsubmission  = $submission->userid == $USER->id;
+$ownsubmission  = $submission->authorid == $USER->id;
 $canviewall     = has_capability('mod/workshop:viewallsubmissions', $PAGE->context);
 $cansubmit      = has_capability('mod/workshop:submit', $PAGE->context);
-$isreviewer     = $DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'userid' => $USER->id));
+$isreviewer     = $DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'reviewerid' => $USER->id));
 
 if ($submission->id and ($ownsubmission or $canviewall or $isreviewer)) {
     // ok you can go
@@ -87,7 +87,7 @@ if ($mform->is_cancelled()) {
     if (empty($formdata->id)) {
         $formdata->workshopid     = $workshop->id;
         $formdata->example        = 0; // todo add examples support
-        $formdata->userid         = $USER->id;
+        $formdata->authorid       = $USER->id;
         $formdata->timecreated    = $timenow;
     }
     $formdata->timemodified       = $timenow;

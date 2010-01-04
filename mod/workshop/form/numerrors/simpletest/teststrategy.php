@@ -110,7 +110,7 @@ class workshop_numerrors_strategy_test extends UnitTestCase {
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
         // validate
-        $this->assertEqual($suggested, 1.0);
+        $this->assertEqual($suggested, 100.00000);
     }
 
     public function test_calculate_peer_grade_one_error() {
@@ -133,7 +133,7 @@ class workshop_numerrors_strategy_test extends UnitTestCase {
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
         // validate
-        $this->assertEqual($suggested, 0.8);
+        $this->assertEqual($suggested, 80.00000);
     }
 
     public function test_calculate_peer_grade_three_errors_same_weight_a() {
@@ -157,7 +157,7 @@ class workshop_numerrors_strategy_test extends UnitTestCase {
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
         // validate
-        $this->assertEqual($suggested, 0.1);
+        $this->assertEqual($suggested, 10.00000);
     }
 
     public function test_calculate_peer_grade_three_errors_same_weight_b() {
@@ -181,7 +181,7 @@ class workshop_numerrors_strategy_test extends UnitTestCase {
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
         // validate
-        $this->assertEqual($suggested, 0);
+        $this->assertEqual($suggested, 0.00000);
     }
 
     public function test_calculate_peer_grade_one_error_weighted() {
@@ -205,7 +205,7 @@ class workshop_numerrors_strategy_test extends UnitTestCase {
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
         // validate
-        $this->assertEqual($suggested, 0.33);
+        $this->assertEqual($suggested, 33.00000);
     }
 
     public function test_calculate_peer_grade_zero_weight() {
@@ -229,7 +229,7 @@ class workshop_numerrors_strategy_test extends UnitTestCase {
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
         // validate
-        $this->assertEqual($suggested, 1.0);
+        $this->assertEqual($suggested, 100.00000);
     }
 
     public function test_calculate_peer_grade_sum_weight() {
@@ -257,6 +257,6 @@ class workshop_numerrors_strategy_test extends UnitTestCase {
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
         // validate
-        $this->assertEqual($suggested, 0.05);
+        $this->assertEqual($suggested, 5.00000);
     }
 }

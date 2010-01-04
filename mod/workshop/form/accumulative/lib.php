@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(dirname(__FILE__)) . '/lib.php');  // interface definition
+require_once($CFG->libdir . '/gradelib.php');           // to handle float vs decimal issues
 
 /**
  * Accumulative grading strategy logic.
@@ -199,7 +200,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
      *
      * @param stdClass $assessment Assessment being filled
      * @param stdClass $data       Raw data as returned by the assessment form
-     * @return float|null          Raw grade (0 to 1) for submission as suggested by the peer
+     * @return float|null          Raw grade (0.00000 to 100.00000) for submission as suggested by the peer
      */
     public function save_assessment(stdClass $assessment, stdClass $data) {
         global $DB;
@@ -355,12 +356,15 @@ class workshop_accumulative_strategy implements workshop_strategy {
     protected function get_current_assessment_data(stdClass $assessment) {
         global $DB;
 
+        if (empty($this->dimensions)) {
+            return array();
+        }
         list($dimsql, $dimparams) = $DB->get_in_or_equal(array_keys($this->dimensions), SQL_PARAMS_NAMED);
         // beware! the caller may rely on the returned array is indexed by dimensionid
         $sql = "SELECT dimensionid, *
                   FROM {workshop_grades}
                  WHERE assessmentid = :assessmentid AND strategy= :strategy AND dimensionid $dimsql";
-        $params = array('assessmentid' => $assessment->id, 'strategy' => 'acumulative');
+        $params = array('assessmentid' => $assessment->id, 'strategy' => 'accumulative');
         $params = array_merge($params, $dimparams);
 
         return $DB->get_records_sql($sql, $params);
@@ -370,7 +374,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
      * Aggregates the assessment form data and sets the grade for the submission given by the peer
      *
      * @param stdClass $assessment Assessment record
-     * @return float|null          Raw grade (from 0 to 1) for submission as suggested by the peer
+     * @return float|null          Raw grade (from 0.00000 to 100.00000) for submission as suggested by the peer
      */
     protected function update_peer_grade(stdClass $assessment) {
         $grades     = $this->get_current_assessment_data($assessment);
@@ -386,7 +390,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
      *
      * @param array $grades Grade records as returned by {@link get_current_assessment_data}
      * @uses $this->dimensions
-     * @return float|null   Raw grade (from 0 to 1) for submission as suggested by the peer
+     * @return float|null   Raw grade (from 0.00000 to 100.00000) for submission as suggested by the peer
      */
     protected function calculate_peer_grade(array $grades) {
 
@@ -407,11 +411,11 @@ class workshop_accumulative_strategy implements workshop_strategy {
             if ($dimension->grade < 0) {
                 // this is a scale
                 $scaleid    = -$dimension->grade;
-                $sumgrades  += $this->scale_to_grade($scaleid, $grade->grade) * $dimension->weight;
+                $sumgrades  += $this->scale_to_grade($scaleid, $grade->grade) * $dimension->weight * 100;
                 $sumweights += $dimension->weight;
             } else {
                 // regular grade
-                $sumgrades  += ($grade->grade / $dimension->grade) * $dimension->weight;
+                $sumgrades  += ($grade->grade / $dimension->grade) * $dimension->weight * 100;
                 $sumweights += $dimension->weight;
             }
         }

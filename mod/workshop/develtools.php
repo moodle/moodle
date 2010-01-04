@@ -63,7 +63,7 @@ case 'mksubmissions':
         $submission                 = new stdClass();
         $submission->workshopid     = $workshop->id;
         $submission->example        = 0;
-        $submission->userid         = $authorid;
+        $submission->authorid       = $authorid;
         $submission->timecreated    = $timenow;
         $submission->timemodified   = $timenow;
         $submission->title          = $author->firstname . '\'s submission';

@@ -52,6 +52,9 @@ class workshop {
     const PHASE_EVALUATION  = 40;
     const PHASE_CLOSED      = 50;
 
+    /** how many participants per page are displayed by various reports */
+    const PERPAGE           = 30;
+
     /** @var stdClass course module record */
     public $cm = null;
 
@@ -225,8 +228,7 @@ class workshop {
     public function get_allocations() {
         global $DB;
 
-        $sql = 'SELECT a.id, a.submissionid, a.userid AS reviewerid,
-                       s.userid AS authorid
+        $sql = 'SELECT a.id, a.submissionid, a.reviewerid, s.authorid
                   FROM {workshop_assessments} a
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
                  WHERE s.example = 0 AND s.workshopid = :workshopid';
@@ -241,19 +243,22 @@ class workshop {
      * Fetches data from {workshop_submissions} and adds some useful information from other
      * tables. Does not return textual fields to prevent possible memory lack issues.
      *
-     * @param mixed $userid int|array|'all' If set to [array of] integer, return submission[s] of the given user[s] only
+     * @param mixed $authorid int|array|'all' If set to [array of] integer, return submission[s] of the given user[s] only
      * @param mixed $examples false|true|'all' Only regular submissions, only examples, all submissions
      * @return array
      */
-    public function get_submissions($userid='all', $examples=false) {
+    public function get_submissions($authorid='all', $examples=false) {
         global $DB;
 
-        $sql = 'SELECT s.id, s.workshopid, s.example, s.userid, s.timecreated, s.timemodified,
-                       s.title, s.grade, s.gradeover, s.gradeoverby, s.gradinggrade,
-                       u.lastname AS authorlastname, u.firstname AS authorfirstname, u.id AS authorid,
-                       u.picture AS authorpicture, u.imagealt AS authorimagealt
+        $sql = 'SELECT s.id, s.workshopid, s.example, s.authorid, s.timecreated, s.timemodified,
+                       s.title, s.grade, s.gradeover, s.gradeoverby,
+                       u.lastname AS authorlastname, u.firstname AS authorfirstname,
+                       u.picture AS authorpicture, u.imagealt AS authorimagealt,
+                       t.lastname AS overlastname, t.firstname AS overfirstname,
+                       t.picture AS overpicture, t.imagealt AS overimagealt
                   FROM {workshop_submissions} s
-            INNER JOIN {user} u ON (s.userid = u.id)
+            INNER JOIN {user} u ON (s.authorid = u.id)
+             LEFT JOIN {user} t ON (s.gradeoverby = u.id)
                  WHERE s.workshopid = :workshopid';
         $params = array('workshopid' => $this->id);
 
@@ -267,15 +272,15 @@ class workshop {
             throw new coding_exception('Illegal parameter value: $examples may be false|true|"all"');
         }
 
-        if ('all' === $userid) {
+        if ('all' === $authorid) {
             // no additional conditions
-        } elseif (is_array($userid)) {
-            list($usql, $uparams) = $DB->get_in_or_equal($userid, SQL_PARAMS_NAMED);
-            $sql .= " AND userid $usql";
+        } elseif (is_array($authorid)) {
+            list($usql, $uparams) = $DB->get_in_or_equal($authorid, SQL_PARAMS_NAMED);
+            $sql .= " AND authorid $usql";
             $params = array_merge($params, $uparams);
         } else {
-            $sql .= ' AND userid = :userid';
-            $params['userid'] = $userid;
+            $sql .= ' AND authorid = :authorid';
+            $params['authorid'] = $authorid;
         }
         $sql .= ' ORDER BY u.lastname, u.firstname';
 
@@ -295,7 +300,7 @@ class workshop {
                        u.lastname AS authorlastname, u.firstname AS authorfirstname, u.id AS authorid,
                        u.picture AS authorpicture, u.imagealt AS authorimagealt
                   FROM {workshop_submissions} s
-            INNER JOIN {user} u ON (s.userid = u.id)
+            INNER JOIN {user} u ON (s.authorid = u.id)
                  WHERE s.workshopid = :workshopid AND s.id = :id';
         $params = array('workshopid' => $this->id, 'id' => $id);
         return $DB->get_record_sql($sql, $params, MUST_EXIST);
@@ -307,19 +312,19 @@ class workshop {
      * @param int $id author id
      * @return stdClass|false
      */
-    public function get_submission_by_author($id) {
+    public function get_submission_by_author($authorid) {
         global $DB;
 
-        if (empty($id)) {
+        if (empty($authorid)) {
             return false;
         }
         $sql = 'SELECT s.*,
                        u.lastname AS authorlastname, u.firstname AS authorfirstname, u.id AS authorid,
                        u.picture AS authorpicture, u.imagealt AS authorimagealt
                   FROM {workshop_submissions} s
-            INNER JOIN {user} u ON (s.userid = u.id)
-                 WHERE s.example = 0 AND s.workshopid = :workshopid AND s.userid = :userid';
-        $params = array('workshopid' => $this->id, 'userid' => $id);
+            INNER JOIN {user} u ON (s.authorid = u.id)
+                 WHERE s.example = 0 AND s.workshopid = :workshopid AND s.authorid = :authorid';
+        $params = array('workshopid' => $this->id, 'authorid' => $authorid);
         return $DB->get_record_sql($sql, $params);
     }
 
@@ -335,15 +340,15 @@ class workshop {
     public function get_all_assessments() {
         global $DB;
 
-        $sql = 'SELECT a.id, a.submissionid, a.userid, a.timecreated, a.timemodified, a.timeagreed,
+        $sql = 'SELECT a.id, a.submissionid, a.reviewerid, a.timecreated, a.timemodified, a.timeagreed,
                        a.grade, a.gradinggrade, a.gradinggradeover, a.gradinggradeoverby,
                        reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname as reviewerlastname,
                        s.title,
                        author.id AS authorid, author.firstname AS authorfirstname,author.lastname AS authorlastname
                   FROM {workshop_assessments} a
-            INNER JOIN {user} reviewer ON (a.userid = reviewer.id)
+            INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
-            INNER JOIN {user} author ON (s.userid = author.id)
+            INNER JOIN {user} author ON (s.authorid = author.id)
                  WHERE s.workshopid = :workshopid AND s.example = 0
               ORDER BY reviewer.lastname, reviewer.firstname';
         $params = array('workshopid' => $this->id);
@@ -365,9 +370,9 @@ class workshop {
                        s.title,
                        author.id AS authorid, author.firstname AS authorfirstname,author.lastname as authorlastname
                   FROM {workshop_assessments} a
-            INNER JOIN {user} reviewer ON (a.userid = reviewer.id)
+            INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
-            INNER JOIN {user} author ON (s.userid = author.id)
+            INNER JOIN {user} author ON (s.authorid = author.id)
                  WHERE a.id = :id AND s.workshopid = :workshopid';
         $params = array('id' => $id, 'workshopid' => $this->id);
 
@@ -377,10 +382,10 @@ class workshop {
     /**
      * Get the complete information about all assessments allocated to the given reviewer
      *
-     * @param int $userid reviewer id
+     * @param int $reviewerid
      * @return array
      */
-    public function get_assessments_by_reviewer($userid) {
+    public function get_assessments_by_reviewer($reviewerid) {
         global $DB;
 
         $sql = 'SELECT a.*,
@@ -390,11 +395,11 @@ class workshop {
                        author.id AS authorid, author.firstname AS authorfirstname,author.lastname AS authorlastname,
                        author.picture AS authorpicture, author.imagealt AS authorimagealt
                   FROM {workshop_assessments} a
-            INNER JOIN {user} reviewer ON (a.userid = reviewer.id)
+            INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
-            INNER JOIN {user} author ON (s.userid = author.id)
-                 WHERE s.example = 0 AND reviewer.id = :userid AND s.workshopid = :workshopid';
-        $params = array('userid' => $userid, 'workshopid' => $this->id);
+            INNER JOIN {user} author ON (s.authorid = author.id)
+                 WHERE s.example = 0 AND reviewer.id = :reviewerid AND s.workshopid = :workshopid';
+        $params = array('reviewerid' => $reviewerid, 'workshopid' => $this->id);
 
         return $DB->get_records_sql($sql, $params);
     }
@@ -410,14 +415,14 @@ class workshop {
     public function add_allocation(stdClass $submission, $reviewerid, $bulk=false) {
         global $DB;
 
-        if ($DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'userid' => $reviewerid))) {
+        if ($DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'reviewerid' => $reviewerid))) {
             return self::ALLOCATION_EXISTS;
         }
 
         $now = time();
         $assessment = new stdClass();
         $assessment->submissionid   = $submission->id;
-        $assessment->userid         = $reviewerid;
+        $assessment->reviewerid     = $reviewerid;
         $assessment->timecreated    = $now;
         $assessment->timemodified   = $now;
 
@@ -692,19 +697,6 @@ class workshop {
         $phase = new stdClass();
         $phase->title = get_string('phasesubmission', 'workshop');
         $phase->tasks = array();
-        if (has_capability('mod/workshop:submit', $context, $userid)) {
-            $task = new stdClass();
-            $task->title = get_string('tasksubmit', 'workshop');
-            $task->link = $this->submission_url();
-            if ($DB->record_exists('workshop_submissions', array('workshopid'=>$this->id, 'example'=>0, 'userid'=>$userid))) {
-                $task->completed = true;
-            } elseif ($this->phase >= self::PHASE_ASSESSMENT) {
-                $task->completed = false;
-            } else {
-                $task->completed = null;    // still has a chance to submit
-            }
-            $phase->tasks['submit'] = $task;
-        }
         if (has_capability('moodle/course:manageactivities', $context, $userid)) {
             $task = new stdClass();
             $task->title = get_string('taskinstructreviewers', 'workshop');
@@ -715,6 +707,19 @@ class workshop {
                 $task->completed = false;
             }
             $phase->tasks['instructreviewers'] = $task;
+        }
+        if (has_capability('mod/workshop:submit', $context, $userid)) {
+            $task = new stdClass();
+            $task->title = get_string('tasksubmit', 'workshop');
+            $task->link = $this->submission_url();
+            if ($DB->record_exists('workshop_submissions', array('workshopid'=>$this->id, 'example'=>0, 'authorid'=>$userid))) {
+                $task->completed = true;
+            } elseif ($this->phase >= self::PHASE_ASSESSMENT) {
+                $task->completed = false;
+            } else {
+                $task->completed = null;    // still has a chance to submit
+            }
+            $phase->tasks['submit'] = $task;
         }
         $phases[self::PHASE_SUBMISSION] = $phase;
         if (has_capability('mod/workshop:allocate', $context, $userid)) {
@@ -896,7 +901,7 @@ class workshop {
      * Saves a raw grade for submission as calculated from the assessment form fields
      *
      * @param array $assessmentid assessment record id, must exists
-     * @param mixed $grade        raw percentual grade from 0 to 1
+     * @param mixed $grade        raw percentual grade from 0.00000 to 100.00000
      * @return false|float        the saved grade
      */
     public function set_peer_grade($assessmentid, $grade) {
@@ -932,14 +937,14 @@ class workshop {
         }
         $userswithsubmission = array();
         list($usql, $uparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
-        $sql = "SELECT id,userid
+        $sql = "SELECT id,authorid
                   FROM {workshop_submissions}
-                 WHERE example = 0 AND workshopid = :workshopid AND userid $usql";
+                 WHERE example = 0 AND workshopid = :workshopid AND authorid $usql";
         $params = array('workshopid' => $this->id);
         $params = array_merge($params, $uparams);
         $submissions = $DB->get_records_sql($sql, $params);
         foreach ($submissions as $submission) {
-            $userswithsubmission[$submission->userid] = null;
+            $userswithsubmission[$submission->authorid] = true;
         }
 
         return $userswithsubmission;

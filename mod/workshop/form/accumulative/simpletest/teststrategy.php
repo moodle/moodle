@@ -99,7 +99,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
         // validate
-        $this->assertEqual(grade_floatval(5/20), $suggested);
+        $this->assertEqual(grade_floatval(5/20 * 100), $suggested);
     }
 
     public function test_calculate_peer_grade_negative_weight() {
@@ -118,7 +118,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
         // validate
-        $this->assertEqual(grade_floatval(5/20), $suggested);
+        $this->assertEqual(grade_floatval(5/20 * 100), $suggested);
     }
 
     public function test_calculate_peer_grade_three_numericals_same_weight() {
@@ -135,7 +135,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         $suggested = $this->strategy->calculate_peer_grade($grades);
 
         // validate
-        $this->assertEqual(grade_floatval((11/20 + 87/100 + 10/10)/3), $suggested);
+        $this->assertEqual(grade_floatval((11/20 + 87/100 + 10/10)/3 * 100), $suggested);
     }
 
     public function test_calculate_peer_grade_three_numericals_different_weights() {
@@ -152,7 +152,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         $suggested = $this->strategy->calculate_peer_grade($grades);
 
         // validate
-        $this->assertEqual(grade_floatval((7/15*3 + 66/80*1 + 4/5*2)/6), $suggested);
+        $this->assertEqual(grade_floatval((7/15*3 + 66/80*1 + 4/5*2)/6 * 100), $suggested);
     }
 
     public function test_calculate_peer_grade_one_scale_max() {
@@ -169,7 +169,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         $suggested = $this->strategy->calculate_peer_grade($grades);
 
         // validate
-        $this->assertEqual(1.00000, $suggested);
+        $this->assertEqual(100.00000, $suggested);
     }
 
     public function test_calculate_peer_grade_one_scale_min_with_scale_caching() {
@@ -210,7 +210,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         $suggested = $this->strategy->calculate_peer_grade($grades);
 
         // validate
-        $this->assertEqual(grade_floatval((1/2*2 + 4/6*3)/5), $suggested);
+        $this->assertEqual(grade_floatval((1/2*2 + 4/6*3)/5 * 100), $suggested);
     }
 
     public function test_calculate_peer_grade_scale_exception() {

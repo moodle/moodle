@@ -33,9 +33,6 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/locallib.php');    // works
  */
 class workshop_manual_allocator implements workshop_allocator {
 
-    /** participants per page */
-    const PERPAGE           = 30;
-
     /** constants that are used to pass status messages between init() and ui() */
     const MSG_ADDED         = 1;
     const MSG_NOSUBMISSION  = 2;
@@ -81,11 +78,11 @@ class workshop_manual_allocator implements workshop_allocator {
                 $res = $this->workshop->add_allocation($submission, $reviewerid);
                 if ($res == workshop::ALLOCATION_EXISTS) {
                     $m[] = self::MSG_EXISTS;
-                    $m[] = $submission->userid;
+                    $m[] = $submission->authorid;
                     $m[] = $reviewerid;
                 } else {
                     $m[] = self::MSG_ADDED;
-                    $m[] = $submission->userid;
+                    $m[] = $submission->authorid;
                     $m[] = $reviewerid;
                 }
             }
@@ -195,25 +192,35 @@ class workshop_manual_allocator implements workshop_allocator {
             }
         }
 
+        // fetch the list of ids of all workshop participants - this may get really long so fetch just id
+        $participants = get_users_by_capability($PAGE->context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
+                                            'u.id', 'u.lastname,u.firstname,u.id', '', '', '', '', false, false, true);
+
+        $numofparticipants = count($participants);  // we will need later for the pagination
+
         if ($hlauthorid > 0 and $hlreviewerid > 0) {
-            // display just those users, no pagination
-            $participants = get_users_by_capability($PAGE->context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
-                                                'u.id,u.lastname,u.firstname,u.picture,u.imagealt', 'u.lastname,u.firstname,u.id',
-                                                '', '', '', '', false, false, true);
+            // display just those two users
             $participants = array_intersect_key($participants, array($hlauthorid => null, $hlreviewerid => null));
         } else {
-            // the paginated list of users to be displayed in the middle column ("Participant")
-            $participants = get_users_by_capability($PAGE->context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
-                                                'u.id,u.lastname,u.firstname,u.picture,u.imagealt', 'u.lastname,u.firstname,u.id',
-                                                $page * self::PERPAGE, self::PERPAGE, '', '', false, false, true);
+            // slice the list of participants according to the current page
+            $participants = array_slice($participants, $page * workshop::PERPAGE, workshop::PERPAGE, true);
         }
 
-
         // this will hold the information needed to display user names and pictures
-        $userinfo = $participants;
+        $userinfo = $DB->get_records_list('user', 'id', array_keys($participants), '', 'id,lastname,firstname,picture,imagealt');
 
         // load the participants' submissions
         $submissions = $this->workshop->get_submissions(array_keys($participants), false);
+        foreach ($submissions as $submission) {
+            if (!isset($userinfo[$submission->authorid])) {
+                $userinfo[$submission->authorid]            = new stdClass();
+                $userinfo[$submission->authorid]->id        = $submission->authorid;
+                $userinfo[$submission->authorid]->firstname = $submission->authorfirstname;
+                $userinfo[$submission->authorid]->lastname  = $submission->authorlastname;
+                $userinfo[$submission->authorid]->picture   = $submission->authorpicture;
+                $userinfo[$submission->authorid]->imagealt  = $submission->authorimagealt;
+            }
+        }
 
         // get current reviewers
         $reviewers = array();
@@ -221,9 +228,9 @@ class workshop_manual_allocator implements workshop_allocator {
             list($submissionids, $params) = $DB->get_in_or_equal(array_keys($submissions), SQL_PARAMS_NAMED);
             $sql = "SELECT a.id AS assessmentid, a.submissionid,
                            r.id AS reviewerid, r.lastname, r.firstname, r.picture, r.imagealt,
-                           s.id AS submissionid, s.userid AS authorid
+                           s.id AS submissionid, s.authorid
                       FROM {workshop_assessments} a
-                      JOIN {user} r ON (a.userid = r.id)
+                      JOIN {user} r ON (a.reviewerid = r.id)
                       JOIN {workshop_submissions} s ON (a.submissionid = s.id)
                      WHERE a.submissionid $submissionids";
             $reviewers = $DB->get_records_sql($sql, $params);
@@ -235,7 +242,6 @@ class workshop_manual_allocator implements workshop_allocator {
                     $userinfo[$reviewer->reviewerid]->lastname  = $reviewer->lastname;
                     $userinfo[$reviewer->reviewerid]->picture   = $reviewer->picture;
                     $userinfo[$reviewer->reviewerid]->imagealt  = $reviewer->imagealt;
-                    $userinfo[$reviewer->reviewerid]->firstname = $reviewer->firstname;
                 }
             }
         }
@@ -246,11 +252,11 @@ class workshop_manual_allocator implements workshop_allocator {
         $sql = "SELECT a.id AS assessmentid, a.submissionid,
                        u.id AS reviewerid,
                        s.id AS submissionid,
-                       r.id AS revieweeid, r.lastname, r.firstname, r.picture, r.imagealt
+                       e.id AS revieweeid, e.lastname, e.firstname, e.picture, e.imagealt
                   FROM {user} u
-                  JOIN {workshop_assessments} a ON (a.userid = u.id)
+                  JOIN {workshop_assessments} a ON (a.reviewerid = u.id)
                   JOIN {workshop_submissions} s ON (a.submissionid = s.id)
-                  JOIN {user} r ON (s.userid = r.id)
+                  JOIN {user} e ON (s.authorid = e.id)
                  WHERE u.id $participantids AND s.workshopid = :workshopid";
         $reviewees = $DB->get_records_sql($sql, $params);
         foreach ($reviewees as $reviewee) {
@@ -261,7 +267,6 @@ class workshop_manual_allocator implements workshop_allocator {
                 $userinfo[$reviewee->revieweeid]->lastname  = $reviewee->lastname;
                 $userinfo[$reviewee->revieweeid]->picture   = $reviewee->picture;
                 $userinfo[$reviewee->revieweeid]->imagealt  = $reviewee->imagealt;
-                $userinfo[$reviewee->revieweeid]->firstname = $reviewee->firstname;
             }
         }
 
@@ -276,6 +281,7 @@ class workshop_manual_allocator implements workshop_allocator {
             $allocations[$participant->id]->reviewerof = array();
         }
         unset($participants);
+
         foreach ($submissions as $submission) {
             $allocations[$submission->authorid]->submissionid = $submission->id;
             $allocations[$submission->authorid]->submissiontitle = $submission->title;
@@ -291,13 +297,8 @@ class workshop_manual_allocator implements workshop_allocator {
         }
         unset($reviewees);
 
-        // we have all data, let us pass it to the renderer and return the output
-        $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
-        $uioutput = $PAGE->theme->get_renderer('workshopallocation_manual', $PAGE);
-
         // prepare data to be displayed
         $data                   = new stdClass();
-        $data->wsoutput         = $wsoutput;
         $data->allocations      = $allocations;
         $data->userinfo         = $userinfo;
         $data->authors          = $this->workshop->get_potential_authors($PAGE->context);
@@ -308,14 +309,18 @@ class workshop_manual_allocator implements workshop_allocator {
 
         // prepare paging bar
         $pagingbar              = new moodle_paging_bar();
-        $pagingbar->totalcount  = count($data->authors);
+        $pagingbar->totalcount  = $numofparticipants;
         $pagingbar->page        = $page;
-        $pagingbar->perpage     = self::PERPAGE;
+        $pagingbar->perpage     = workshop::PERPAGE;
         $pagingbar->baseurl     = $PAGE->url;
         $pagingbar->pagevar     = $pagingvar;
         $pagingbar->nocurr      = true;
 
         $pagingbarout = $OUTPUT->paging_bar($pagingbar);
+
+        // we have all data, let us pass it to the renderers and return the output
+        $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
+        $uioutput = $PAGE->theme->get_renderer('workshopallocation_manual', $PAGE);
 
         return $pagingbarout . $wsoutput->status_message($msg) . $uioutput->display_allocations($data) . $pagingbarout;
     }
@@ -346,13 +351,13 @@ class workshop_manual_allocator implements workshop_allocator {
         $sql = "SELECT author.id AS authorid, author.firstname AS authorfirstname, author.lastname AS authorlastname,
                        author.picture AS authorpicture, author.imagealt AS authorimagealt,
                        s.id AS submissionid, s.title AS submissiontitle, s.grade AS submissiongrade,
-                       a.id AS assessmentid, a.timecreated AS timeallocated, a.userid AS reviewerid,
+                       a.id AS assessmentid, a.timecreated AS timeallocated, a.reviewerid,
                        reviewer.firstname AS reviewerfirstname, reviewer.lastname AS reviewerlastname,
                        reviewer.picture as reviewerpicture, reviewer.imagealt AS reviewerimagealt
                   FROM {user} author
-             LEFT JOIN {workshop_submissions} s ON (s.userid = author.id)
+             LEFT JOIN {workshop_submissions} s ON (s.authorid = author.id)
              LEFT JOIN {workshop_assessments} a ON (s.id = a.submissionid)
-             LEFT JOIN {user} reviewer ON (a.userid = reviewer.id)
+             LEFT JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
                  WHERE (author.id $authorids OR reviewer.id $reviewerids) AND (s.id IS NULL OR s.workshopid = :workshopid)
               ORDER BY author.lastname,author.firstname,author.id,reviewer.lastname,reviewer.firstname,reviewer.id";
 

@@ -246,7 +246,7 @@ class workshop_random_allocator implements workshop_allocator {
     }
 
     /**
-     * Flips the structure of submission so it is indexed by userid attribute
+     * Flips the structure of submission so it is indexed by authorid attribute
      *
      * It is the caller's responsibility to make sure the submissions are not teacher
      * examples so no user is the author of more submissions.
@@ -258,10 +258,10 @@ class workshop_random_allocator implements workshop_allocator {
         $byauthor = array();
         if (is_array($submissions)) {
             foreach ($submissions as $submissionid => $submission) {
-                if (isset($byauthor[$submission->userid])) {
+                if (isset($byauthor[$submission->authorid])) {
                     throw new moodle_exception('moresubmissionsbyauthor', 'workshop');
                 }
-                $byauthor[$submission->userid] = $submission;
+                $byauthor[$submission->authorid] = $submission;
             }
         }
         return $byauthor;

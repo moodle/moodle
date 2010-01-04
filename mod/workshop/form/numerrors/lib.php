@@ -235,7 +235,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
      *
      * @param stdClass $assessment Assessment being filled
      * @param stdClass $data       Raw data as returned by the assessment form
-     * @return float|null          Raw grade (from 0 to 1) for submission as suggested by the peer
+     * @return float|null          Raw grade (from 0.00000 to 100.00000) for submission as suggested by the peer
      */
     public function save_assessment(stdClass $assessment, stdClass $data) {
         global $DB;
@@ -424,6 +424,9 @@ class workshop_numerrors_strategy implements workshop_strategy {
     protected function get_current_assessment_data(stdClass $assessment) {
         global $DB;
 
+        if (empty($this->dimensions)) {
+            return array();
+        }
         list($dimsql, $dimparams) = $DB->get_in_or_equal(array_keys($this->dimensions), SQL_PARAMS_NAMED);
         // beware! the caller may rely on the returned array is indexed by dimensionid
         $sql = "SELECT dimensionid, *
@@ -439,7 +442,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
      * Aggregates the assessment form data and sets the grade for the submission given by the peer
      *
      * @param stdClass $assessment Assessment record
-     * @return float|null          Raw grade (0 to 1) for submission as suggested by the peer
+     * @return float|null          Raw grade (0.00000 to 100.00000) for submission as suggested by the peer
      */
     protected function update_peer_grade(stdClass $assessment) {
         $grades     = $this->get_current_assessment_data($assessment);
@@ -454,7 +457,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
      * Calculates the aggregated grade given by the reviewer
      *
      * @param array $grades Grade records as returned by {@link get_current_assessment_data}
-     * @return float|null   Raw grade (0 to 1) for submission as suggested by the peer
+     * @return float|null   Raw grade (0.00000 to 100.00000) for submission as suggested by the peer
      */
     protected function calculate_peer_grade(array $grades) {
         if (empty($grades)) {
@@ -471,7 +474,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
     }
 
     /**
-     * Returns a grade 0..1 for the given number of errors
+     * Returns a grade 0.00000 to 100.00000 for the given number of errors
      *
      * This is where we use the mapping table defined by the teacher. If a grade for the given
      * number of errors (negative assertions) is not defined, the most recently defined one is used.
@@ -487,21 +490,21 @@ class workshop_numerrors_strategy implements workshop_strategy {
      * With this mapping, one error is mapped to 100% grade and 4 errors is mapped to 60%.
      *
      * @param mixed $numerrors Number of errors
-     * @return float          Raw grade (0 to 1) for the given number of negative assertions
+     * @return float          Raw grade (0.00000 to 100.00000) for the given number of negative assertions
      */
     protected function errors_to_grade($numerrors) {
-        $grade = 100;
+        $grade = 100.00000;
         for ($i = 1; $i <= $numerrors; $i++) {
             if (isset($this->mappings[$i])) {
                 $grade = $this->mappings[$i]->grade;
             }
         }
-        if ($grade > 100) {
-            $grade = 100;
+        if ($grade > 100.00000) {
+            $grade = 100.00000;
         }
-        if ($grade < 0) {
-            $grade = 0;
+        if ($grade < 0.00000) {
+            $grade = 0.00000;
         }
-        return grade_floatval($grade/100);
+        return grade_floatval($grade);
     }
 }

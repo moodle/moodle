@@ -500,7 +500,7 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
 
         $sql = 'SELECT s.id, u.lastname, u.firstname
                   FROM {workshop_submissions} s
-            INNER JOIN {user} u ON (s.userid = u.id)
+            INNER JOIN {user} u ON (s.authorid = u.id)
                  WHERE s.workshopid = ?';
         $params         = array($cm->instance);
         $authors        = $DB->get_records_sql($sql, $params);

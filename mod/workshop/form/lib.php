@@ -70,7 +70,8 @@ interface workshop_strategy {
      * @see grade_floatval()
      * @param stdClass $assessment Assessment being filled
      * @param stdClass $data       Raw data as returned by the assessment form
-     * @return float|null          Raw grade (0 to 1) for submission as suggested by the peer or null if impossible to count
+     * @return float|null          Raw percentual grade (0.00000 to 100.00000) for submission
+     *                             as suggested by the peer or null if impossible to count
      */
     public function save_assessment(stdClass $assessment, stdClass $data);
 
