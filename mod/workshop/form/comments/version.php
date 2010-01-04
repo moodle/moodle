@@ -16,17 +16,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the version of workshop accumulative grading strategy subplugin
+ * Defines the version of workshop comments grading strategy subplugin
  *
  * This code fragment is called by moodle_needs_upgrading() and
  * /admin/index.php
  *
- * @package   mod-workshop
+ * @package   mod-workshopform-comments
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2009081300;
-$plugin->requires = 2009080700;  // Requires this Moodle version
+$plugin->version  = 2009102600;
+$plugin->requires = 2009102600;  // Requires this Moodle version

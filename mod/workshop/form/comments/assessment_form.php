@@ -16,9 +16,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file defines an mform to assess a submission by accumulative grading strategy
+ * This file defines an mform to assess a submission by comments grading strategy
  *
- * @package   mod-workshop
+ * @package   mod-workshopform-comments
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,11 +28,11 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(dirname(__FILE__)).'/assessment_form.php');    // parent class definition
 
 /**
- * Class representing a form for assessing submissions by accumulative grading strategy
+ * Class representing a form for assessing submissions by comments grading strategy
  *
  * @uses moodleform
  */
-class workshop_accumulative_assessment_form extends workshop_assessment_form {
+class workshop_comments_assessment_form extends workshop_assessment_form {
 
     /**
      * Define the elements to be displayed at the form
@@ -50,7 +50,7 @@ class workshop_accumulative_assessment_form extends workshop_assessment_form {
 
         for ($i = 0; $i < $nodims; $i++) {
             // dimension header
-            $dimtitle = get_string('dimensionnumber', 'workshopform_accumulative', $i+1);
+            $dimtitle = get_string('dimensionnumber', 'workshopform_comments', $i+1);
             $mform->addElement('header', 'dimensionhdr__idx_'.$i, $dimtitle);
 
             // dimension id
@@ -60,18 +60,18 @@ class workshop_accumulative_assessment_form extends workshop_assessment_form {
             $mform->addElement('hidden', 'gradeid__idx_'.$i);   // value set by set_data() later
 
             // dimension description
-            $desc = '<div id="id_dim_'.$fields->{'dimensionid__idx_'.$i}.'_desc" class="fitem description accumulative">'."\n";
+            $desc = '<div id="id_dim_'.$fields->{'dimensionid__idx_'.$i}.'_desc" class="fitem description comments">'."\n";
             $desc .= format_text($fields->{'description__idx_'.$i}, $fields->{'description__idx_'.$i.'format'});
             $desc .= "\n</div>";
             $mform->addElement('html', $desc);
 
             // grade for this aspect
-            $label = get_string('dimensiongrade', 'workshopform_accumulative');
+            $label = get_string('dimensiongrade', 'workshopform_comments');
             $options = make_grades_menu($fields->{'grade__idx_' . $i});
             $mform->addElement('select', 'grade__idx_' . $i, $label, $options);
 
             // comment
-            $label = get_string('dimensioncomment', 'workshopform_accumulative');
+            $label = get_string('dimensioncomment', 'workshopform_comments');
             //$mform->addElement('editor', 'peercomment__idx_' . $i, $label, null, array('maxfiles' => 0));
             $mform->addElement('textarea', 'peercomment__idx_' . $i, $label, array('cols' => 60, 'rows' => 5));
         }

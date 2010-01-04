@@ -16,9 +16,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * English strings for Workshop subplugin - "Accumulative" grading strategy
+ * English strings for Workshop subplugin - "Comments" grading strategy
  *
- * @package   mod-workshop
+ * @package   mod-workshopform-commentsform-comments
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,8 +28,5 @@ defined('MOODLE_INTERNAL') || die();
 $string['addmoredimensions'] = 'Blanks for $a more aspects';
 $string['dimensioncomment'] = 'Comment';
 $string['dimensiondescription'] = 'Description';
-$string['dimensiongrade'] = 'Grade';
-$string['dimensionmaxgrade'] = 'Best possible grade / Scale to use';
 $string['dimensionnumber'] = 'Aspect $a';
-$string['dimensionweight'] = 'Weight';
-$string['pluginname'] = 'Accumulative grading';
+$string['pluginname'] = 'Comments';

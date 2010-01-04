@@ -16,9 +16,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file defines a class with accumulative grading strategy logic
+ * This file defines a class with comments grading strategy logic
  *
- * @package   mod-workshop
+ * @package   mod-workshopform-comments
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/gradelib.php');           // to handle float vs de
 /**
  * Accumulative grading strategy logic.
  */
-class workshop_accumulative_strategy implements workshop_strategy {
+class workshop_comments_strategy implements workshop_strategy {
 
     /** @const default number of dimensions to show */
     const MINDIMS = 3;
@@ -84,7 +84,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
         for ($i = 0; $i < $nodimensions; $i++) {
             // prepare all editor elements
             $fields = file_prepare_standard_editor($fields, 'description__idx_'.$i, $this->descriptionopts,
-                $PAGE->context, 'workshopform_accumulative_description', $fields->{'dimensionid__idx_'.$i});
+                $PAGE->context, 'workshopform_comments_description', $fields->{'dimensionid__idx_'.$i});
         }
 
         $customdata = array();
@@ -95,7 +95,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
         $customdata['current']  = $fields;
         $attributes = array('class' => 'editstrategyform');
 
-        return new workshop_edit_accumulative_strategy_form($actionurl, $customdata, 'post', '', $attributes);
+        return new workshop_edit_comments_strategy_form($actionurl, $customdata, 'post', '', $attributes);
     }
 
     /**
@@ -117,7 +117,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
         $norepeats  = $data->norepeats;
 
         $data       = $this->prepare_database_fields($data);
-        $records    = $data->accumulative;  // records to be saved into {workshopform_accumulative}
+        $records    = $data->comments;  // records to be saved into {workshopform_comments}
         $todelete   = array();              // dimension ids to be deleted
 
         for ($i=0; $i < $norepeats; $i++) {
@@ -131,15 +131,15 @@ class workshop_accumulative_strategy implements workshop_strategy {
             }
             if (empty($record->id)) {
                 // new field
-                $record->id         = $DB->insert_record('workshopform_accumulative', $record);
+                $record->id         = $DB->insert_record('workshopform_comments', $record);
             } else {
                 // exiting field
-                $DB->update_record('workshopform_accumulative', $record);
+                $DB->update_record('workshopform_comments', $record);
             }
             // re-save with correct path to embeded media files
             $record = file_postupdate_standard_editor($record, 'description', $this->descriptionopts,
-                                                      $PAGE->context, 'workshopform_accumulative_description', $record->id);
-            $DB->update_record('workshopform_accumulative', $record);
+                                                      $PAGE->context, 'workshopform_comments_description', $record->id);
+            $DB->update_record('workshopform_comments', $record);
         }
         $this->delete_dimensions($todelete);
     }
@@ -164,7 +164,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
         // rewrite URLs to the embeded files
         for ($i = 0; $i < $nodimensions; $i++) {
             $fields->{'description__idx_'.$i} = file_rewrite_pluginfile_urls($fields->{'description__idx_'.$i},
-                'pluginfile.php', $PAGE->context->id, 'workshopform_accumulative_description', $fields->{'dimensionid__idx_'.$i});
+                'pluginfile.php', $PAGE->context->id, 'workshopform_comments_description', $fields->{'dimensionid__idx_'.$i});
         }
 
         if ('assessment' === $mode and !empty($assessment)) {
@@ -190,9 +190,9 @@ class workshop_accumulative_strategy implements workshop_strategy {
         $customdata['nodims']   = $nodimensions;
         $customdata['fields']   = $fields;
         $customdata['current']  = isset($current) ? $current : null;
-        $attributes = array('class' => 'assessmentform accumulative');
+        $attributes = array('class' => 'assessmentform comments');
 
-        return new workshop_accumulative_assessment_form($actionurl, $customdata, 'post', '', $attributes, $editable);
+        return new workshop_comments_assessment_form($actionurl, $customdata, 'post', '', $attributes, $editable);
     }
 
     /**
@@ -214,7 +214,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
             $grade = new stdClass();
             $grade->id = $data->{'gradeid__idx_' . $i};
             $grade->assessmentid = $assessment->id;
-            $grade->strategy = 'accumulative';
+            $grade->strategy = 'comments';
             $grade->dimensionid = $data->{'dimensionid__idx_' . $i};
             $grade->grade = $data->{'grade__idx_' . $i};
             $grade->peercomment = $data->{'peercomment__idx_' . $i};
@@ -279,7 +279,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
         global $DB;
 
         $sql = 'SELECT d.id, d.grade, d.weight, s.scale
-                  FROM {workshopform_accumulative} d
+                  FROM {workshopform_comments} d
              LEFT JOIN {scale} s ON (d.grade < 0 AND -d.grade = s.id)
                  WHERE d.workshopid = :workshopid';
         $params = array('workshopid' => $this->workshop->id);
@@ -315,7 +315,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
         global $DB;
 
         $sql = 'SELECT *
-                  FROM {workshopform_accumulative}
+                  FROM {workshopform_comments}
                  WHERE workshopid = :workshopid
                  ORDER BY sort';
         $params = array('workshopid' => $this->workshop->id);
@@ -358,14 +358,14 @@ class workshop_accumulative_strategy implements workshop_strategy {
         $fs = get_file_storage();
         foreach ($ids as $id) {
             if (!empty($id)) {   // to prevent accidental removal of all files in the area
-                $fs->delete_area_files($PAGE->context->id, 'workshopform_accumulative_description', $id);
+                $fs->delete_area_files($PAGE->context->id, 'workshopform_comments_description', $id);
             }
         }
-        $DB->delete_records_list('workshopform_accumulative', 'id', $ids);
+        $DB->delete_records_list('workshopform_comments', 'id', $ids);
     }
 
     /**
-     * Prepares data returned by {@link workshop_edit_accumulative_strategy_form} so they can be saved into database
+     * Prepares data returned by {@link workshop_edit_comments_strategy_form} so they can be saved into database
      *
      * It automatically adds some columns into every record. The sorting is
      * done by the order of the returned array and starts with 1.
@@ -379,16 +379,16 @@ class workshop_accumulative_strategy implements workshop_strategy {
         global $PAGE;
 
         $cook               = new stdClass(); // to be returned
-        $cook->accumulative = array();        // records to be stored in {workshopform_accumulative}
+        $cook->comments = array();        // records to be stored in {workshopform_comments}
 
         for ($i = 0; $i < $raw->norepeats; $i++) {
-            $cook->accumulative[$i]                     = new stdClass();
-            $cook->accumulative[$i]->id                 = $raw->{'dimensionid__idx_'.$i};
-            $cook->accumulative[$i]->workshopid         = $this->workshop->id;
-            $cook->accumulative[$i]->sort               = $i + 1;
-            $cook->accumulative[$i]->description_editor = $raw->{'description__idx_'.$i.'_editor'};
-            $cook->accumulative[$i]->grade              = $raw->{'grade__idx_'.$i};
-            $cook->accumulative[$i]->weight             = $raw->{'weight__idx_'.$i};
+            $cook->comments[$i]                     = new stdClass();
+            $cook->comments[$i]->id                 = $raw->{'dimensionid__idx_'.$i};
+            $cook->comments[$i]->workshopid         = $this->workshop->id;
+            $cook->comments[$i]->sort               = $i + 1;
+            $cook->comments[$i]->description_editor = $raw->{'description__idx_'.$i.'_editor'};
+            $cook->comments[$i]->grade              = $raw->{'grade__idx_'.$i};
+            $cook->comments[$i]->weight             = $raw->{'weight__idx_'.$i};
         }
         return $cook;
     }
@@ -410,7 +410,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
         $sql = "SELECT dimensionid, *
                   FROM {workshop_grades}
                  WHERE assessmentid = :assessmentid AND strategy= :strategy AND dimensionid $dimsql";
-        $params = array('assessmentid' => $assessment->id, 'strategy' => 'accumulative');
+        $params = array('assessmentid' => $assessment->id, 'strategy' => 'comments');
         $params = array_merge($params, $dimparams);
 
         return $DB->get_records_sql($sql, $params);
@@ -475,7 +475,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
     /**
      * Convert scale grade to numerical grades
      *
-     * In accumulative grading strategy, scales are considered as grades from 0 to M-1, where M is the number of scale items.
+     * In comments grading strategy, scales are considered as grades from 0 to M-1, where M is the number of scale items.
      *
      * @throws coding_exception
      * @param string $scaleid Scale identifier

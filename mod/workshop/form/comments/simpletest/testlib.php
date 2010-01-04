@@ -18,7 +18,7 @@
 /**
  * Unit tests for Accumulative grading strategy logic
  *
- * @package   mod-workshop
+ * @package   mod-workshopform-comments
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // Include the code to test
 require_once($CFG->dirroot . '/mod/workshop/locallib.php');
-require_once($CFG->dirroot . '/mod/workshop/form/accumulative/lib.php');
+require_once($CFG->dirroot . '/mod/workshop/form/comments/lib.php');
 
 global $DB;
 Mock::generate(get_class($DB), 'mockDB');
@@ -35,7 +35,7 @@ Mock::generate(get_class($DB), 'mockDB');
 /**
  * Test subclass that makes all the protected methods we want to test public
  */
-class testable_workshop_accumulative_strategy extends workshop_accumulative_strategy {
+class testable_workshop_comments_strategy extends workshop_comments_strategy {
 
     /** allows to set dimensions manually */
     public $dimensions = array();
@@ -48,7 +48,7 @@ class testable_workshop_accumulative_strategy extends workshop_accumulative_stra
     }
 }
 
-class workshop_accumulative_strategy_test extends UnitTestCase {
+class workshop_comments_strategy_test extends UnitTestCase {
 
     /** real database */
     protected $realDB;
@@ -70,9 +70,9 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         $cm             = new stdClass();
         $course         = new stdClass();
         $context        = new stdClass();
-        $workshop       = (object)array('id' => 42, 'strategy' => 'accumulative');
+        $workshop       = (object)array('id' => 42, 'strategy' => 'comments');
         $this->workshop = new workshop($workshop, $cm, $course, $context);
-        $this->strategy = new testable_workshop_accumulative_strategy($this->workshop);
+        $this->strategy = new testable_workshop_comments_strategy($this->workshop);
     }
 
     public function tearDown() {
