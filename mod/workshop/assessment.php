@@ -93,7 +93,6 @@ if ($mform->is_cancelled()) {
     $rawgrade = $strategy->save_assessment($assessment, $data);
     if (!is_null($rawgrade) and isset($data->saveandclose)) {
         echo $OUTPUT->header();
-        include(dirname(__FILE__) . '/tabs.php');
         echo $OUTPUT->heading(get_string('assessmentresult', 'workshop'), 2);
         echo $OUTPUT->box('Given grade: ' . sprintf("%01.2f", $rawgrade * 100) . ' %'); // todo more detailed info using own renderer
         echo $OUTPUT->continue_button($workshop->view_url());
@@ -109,7 +108,6 @@ if ($mform->is_cancelled()) {
 // Output starts here
 
 echo $OUTPUT->header();
-include(dirname(__FILE__) . '/tabs.php');
 echo $OUTPUT->heading(get_string('assessmentform', 'workshop'), 2);
 
 if ('assessment' === $mode) {
@@ -120,8 +118,9 @@ if ('assessment' === $mode) {
         $showname   = false;
         $author     = null;
     }
-    $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);    // workshop renderer
-    echo $wsoutput->submission_full($submission, $showname, $author);
+    $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);      // workshop renderer
+    $submission = $workshop->get_submission_by_id($submission->id);     // reload so can be passed to the renderer
+    echo $wsoutput->submission_full($submission, $showname);
 }
 
 $mform->display();

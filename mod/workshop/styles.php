@@ -318,3 +318,11 @@
     padding: 0px 10px 0px 25px;
     font-size: 80%;
 }
+
+/**
+ * Assessment
+ */
+.assessment-summary.graded {
+    background-color: #e7f1c3;
+}
+

@@ -114,6 +114,9 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
     /**
      * Display a short summary of the submission
      *
+     * The passed submission object must define at least: id, title, timecreated, timemodified,
+     * authorid, authorfirstname, authorlastname, authorpicture and authorimagealt
+     *
      * @param stdClass $submission     The submission record
      * @param bool     $showauthorname Should the author name be displayed
      * @return string html to be echoed
@@ -174,7 +177,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      *
      * By default, this looks similar to a forum post.
      *
-     * @param stdClass $submission     The submission record
+     * @param stdClass $submission     The submission data
      * @param bool     $showauthorname Should the author name be displayed
      * @return string html to be echoed
      */

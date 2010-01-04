@@ -311,7 +311,7 @@ class workshop {
                        a.grade, a.gradinggrade, a.gradinggradeover, a.gradinggradeoverby,
                        reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname as reviewerlastname,
                        s.title,
-                       author.id AS authorid, author.firstname AS authorfirstname,author.lastname as authorlastname
+                       author.id AS authorid, author.firstname AS authorfirstname,author.lastname AS authorlastname
                   FROM {workshop_assessments} a
             INNER JOIN {user} reviewer ON (a.userid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
@@ -356,9 +356,11 @@ class workshop {
         global $DB;
 
         $sql = 'SELECT a.*,
-                       reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname as reviewerlastname,
-                       s.title,
-                       author.id AS authorid, author.firstname AS authorfirstname,author.lastname as authorlastname
+                       reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname AS reviewerlastname,
+                       s.id AS submissionid, s.title AS submissiontitle, s.timecreated AS submissioncreated,
+                       s.timemodified AS submissionmodified,
+                       author.id AS authorid, author.firstname AS authorfirstname,author.lastname AS authorlastname,
+                       author.picture AS authorpicture, author.imagealt AS authorimagealt
                   FROM {workshop_assessments} a
             INNER JOIN {user} reviewer ON (a.userid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
@@ -917,5 +919,25 @@ class workshop {
         }
         $DB->set_field('workshop', 'phase', $newphase, array('id' => $this->id));
         return true;
+    }
+
+    /**
+     * Saves a raw grade for submission as calculated from the assessment form fields
+     *
+     * @param array $assessmentid assessment record id, must exists
+     * @param mixed $grade        raw percentual grade from 0 to 1
+     * @return false|float        the saved grade
+     */
+    public function set_peer_grade($assessmentid, $grade) {
+        global $DB;
+
+        if (is_null($grade)) {
+            return false;
+        }
+        $data = new stdClass();
+        $data->id = $assessmentid;
+        $data->grade = $grade;
+        $DB->update_record('workshop_assessments', $data);
+        return $grade;
     }
 }

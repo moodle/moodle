@@ -102,19 +102,49 @@ case workshop::PHASE_SUBMISSION:
     if (has_capability('mod/workshop:viewallsubmissions', $PAGE->context)) {
         $shownames = has_capability('mod/workshop:viewauthornames', $PAGE->context);
         echo $OUTPUT->box_start('generalbox allsubmissions');
-        $counter = 0;
-        $submissions = $workshop->get_submissions('all', false);
-        foreach ($submissions as $submission) {
-            $counter++;
-            echo $wsoutput->submission_summary($submission, $shownames);
-        }
-        if ($counter == 0) {
+        if (! $submissions = $workshop->get_submissions('all', false)) {
             echo $OUTPUT->container(get_string('nosubmissions', 'workshop'), 'nosubmissions');
+        }
+        foreach ($submissions as $submission) {
+            echo $wsoutput->submission_summary($submission, $shownames);
         }
         echo $OUTPUT->box_end();
     }
     break;
 case workshop::PHASE_ASSESSMENT:
+    if (! $assessments = $workshop->get_assessments_by_reviewer($USER->id)) {
+        echo $OUTPUT->heading(get_string('assignedassessmentsnone', 'workshop'), 3);
+    } else {
+        echo $OUTPUT->heading(get_string('assignedassessments', 'workshop'), 3);
+        $shownames = has_capability('mod/workshop:viewauthornames', $PAGE->context);
+        foreach ($assessments as $assessment) {
+            $submission = clone($assessment);
+            $submission->id = $submission->submissionid;
+            $submission->title = $submission->submissiontitle;
+            $submission->timecreated = $submission->submissioncreated;
+            $submission->timemodified = $submission->submissionmodified;
+            if (is_null($assessment->grade)) {
+                $class      = ' notgraded';
+                $givengrade = get_string('nogradeyet', 'workshop');
+                $buttontext = get_string('assess', 'workshop');
+            } else {
+                $class      = ' graded';
+                // todo format grade
+                $givengrade = $assessment->grade;
+                $buttontext = get_string('reassess', 'workshop');
+            }
+            echo $OUTPUT->box_start('generalbox assessment-summary' . $class);
+            echo $wsoutput->submission_summary($submission, $shownames);
+            echo get_string('givengrade', 'workshop', $givengrade);
+            $button = new html_form();
+            $button->method         = 'get';
+            $button->button->text   = $buttontext;
+            $button->url            = $workshop->assess_url($assessment->id);
+            echo $OUTPUT->button($button);
+            echo $OUTPUT->box_end();
+        }
+    }
+
 case workshop::PHASE_EVALUATION:
 case workshop::PHASE_CLOSED:
 default:

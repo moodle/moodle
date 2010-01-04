@@ -381,7 +381,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
         $grades     = $this->get_current_assessment_data($assessment);
         $suggested  = $this->calculate_peer_grade($grades);
         if (!is_null($suggested)) {
-            // todo save into workshop_assessments
+            $this->workshop->set_peer_grade($assessment->id, $suggested);
         }
         return $suggested;
     }
