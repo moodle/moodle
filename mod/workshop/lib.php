@@ -287,16 +287,6 @@ function workshop_scale_used_anywhere($scaleid) {
 }
 
 /**
- * Execute post-install custom actions for the module
- * This function was added in 1.9
- *
- * @return boolean true if success, false on error
- */
-function workshop_install() {
-    return true;
-}
-
-/**
  * Returns all other caps used in the module
  *
  * @return array

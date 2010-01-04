@@ -25,5 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2009102000;
+$plugin->version  = 2009103000;
 $plugin->requires = 2009100605;  // Requires this Moodle version
