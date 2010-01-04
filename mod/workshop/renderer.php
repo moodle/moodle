@@ -314,14 +314,11 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $link->set_classes('title');
         $o .= $this->output->link($link);
 
+        // dirty hack to guess if the current user is example manager or not
         if ($summary->example->weight == 1) {
-            // dirty hack to guess if the current user is example manager or not
-            $icon = new moodle_action_icon();
-            $icon->image->src = $this->pix_url('i/edit');
-            $icon->image->alt = get_string('edit');
-            $icon->link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php',
+            $url = new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php',
                                         array('cmid' => $this->page->context->instanceid, 'id' => $summary->example->id, 'edit' => 'on'));
-            $o .= $this->output->action_icon($icon);
+            $o .= $this->output->action_icon($url, get_string('edit'), 'i/edit');
         }
         $o .= $this->output->container_end();
 
@@ -399,11 +396,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             foreach ($phase->actions as $action) {
                 switch ($action->type) {
                 case 'switchphase':
-                    $icon = new moodle_action_icon();
-                    $icon->image->src = $this->pix_url('i/marker');
-                    $icon->image->alt = get_string('switchphase', 'workshop');
-                    $icon->link->url = $action->url;
-                    $actions .= $this->output->action_icon($icon);
+                    $actions .= $this->output->action_icon($action->url, get_string('switchphase', 'workshop'), 'i/marker');
                     break;
                 }
             }
@@ -627,27 +620,15 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $out = $this->output->output_tag('span', array('class'=>'text'), $text);
 
         if (!is_null($sortid)) {
-            $iconasc = new moodle_action_icon();
-            $iconasc->image->src = $this->pix_url('t/up');
-            $iconasc->image->alt = get_string('sortasc', 'workshop');
-            $iconasc->image->set_classes('sort asc');
-            $newurl = clone($PAGE->url);
-            $newurl->params(array('sortby' => $sortid, 'sorthow' => 'ASC'));
-            $iconasc->link->url = new moodle_url($newurl);
-
-            $icondesc = new moodle_action_icon();
-            $icondesc->image->src = $this->pix_url('t/down');
-            $icondesc->image->alt = get_string('sortdesc', 'workshop');
-            $icondesc->image->set_classes('sort desc');
-            $newurl = clone($PAGE->url);
-            $newurl->params(array('sortby' => $sortid, 'sorthow' => 'DESC'));
-            $icondesc->link->url = new moodle_url($newurl);
-
             if ($sortby !== $sortid or $sorthow !== 'ASC') {
-                $out .= $this->output->action_icon($iconasc);
+                $url = new moodle_url($PAGE->url);
+                $url->params(array('sortby' => $sortid, 'sorthow' => 'ASC'));
+                $out .= $this->output->action_icon($url, get_string('sortasc', 'workshop'), 't/up', array('class' => 'sort asc'));
             }
             if ($sortby !== $sortid or $sorthow !== 'DESC') {
-                $out .= $this->output->action_icon($icondesc);
+                $url = new moodle_url($PAGE->url);
+                $url->params(array('sortby' => $sortid, 'sorthow' => 'DESC'));
+                $out .= $this->output->action_icon($url, get_string('sortdesc', 'workshop'), 't/down', array('class' => 'sort desc'));
             }
         }
         return $out;

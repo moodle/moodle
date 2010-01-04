@@ -204,12 +204,6 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
      * @return html code to be displayed
      */
     protected function remove_allocation_icon($link) {
-        $icon = new moodle_action_icon();
-        $icon->image->src = $this->output->pix_url('i/cross_red_big');
-        $icon->image->alt = 'X';
-        $icon->link->url = $link;
-
-        return $this->output->action_icon($icon);
-
+        return $this->output->action_icon($link, 'X', 'i/cross_red_big');
     }
 }
