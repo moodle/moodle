@@ -78,12 +78,10 @@ if ($isreviewer and $workshop->assessing_allowed()) {
 // load the grading strategy logic
 $strategy = $workshop->grading_strategy_instance();
 
-// load the assessment form
+// load the assessment form and process the submitted data eventually
 $mform = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, $assessmenteditable);
-
 if ($mform->is_cancelled()) {
     redirect($workshop->view_url());
-
 } elseif ($assessmenteditable and ($data = $mform->get_data())) {
     $rawgrade = $strategy->save_assessment($assessment, $data);
     if (!is_null($rawgrade) and isset($data->saveandclose)) {
@@ -95,13 +93,19 @@ if ($mform->is_cancelled()) {
     }
 }
 
-// load the form to override gradinggrade
+// load the form to override gradinggrade and process the submitted data eventually
 if ($canoverridegrades) {
-    $feedbackform = $workshop->get_feedbackreviewer_form($PAGE->url, $assessment, $canoverridegrades);
+    $feedbackform = $workshop->get_feedbackreviewer_form($PAGE->url, $assessment);
     if ($data = $feedbackform->get_data()) {
-        print_object($data); die(); // DONOTCOMMIT
-        // todo
-        redirect($PAGE->url);
+        $data = file_postupdate_standard_editor($data, 'feedbackreviewer', array(), $workshop->context);
+        $record = new stdClass();
+        $record->id = $assessment->id;
+        $record->gradinggradeover = $workshop->raw_grade_value($data->gradinggradeover, $workshop->gradinggrade);
+        $record->gradinggradeoverby = $USER->id;
+        $record->feedbackreviewer = $data->feedbackreviewer;
+        $record->feedbackreviewerformat = $data->feedbackreviewerformat;
+        $DB->update_record('workshop_assessments', $record);
+        redirect($workshop->view_url());
     }
 }
 
@@ -124,8 +128,8 @@ if ($isreviewer) {
 } else {
     echo $OUTPUT->heading(get_string('assessmentbyunknown', 'workshop'), 2);
 }
-$mform->display();
 
+$mform->display();
 if ($canoverridegrades) {
     $feedbackform->display();
     echo $OUTPUT->footer();

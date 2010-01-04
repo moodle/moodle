@@ -429,11 +429,13 @@ class workshop {
 
         $now = time();
         $assessment = new stdClass();
-        $assessment->submissionid   = $submission->id;
-        $assessment->reviewerid     = $reviewerid;
-        $assessment->timecreated    = $now;
-        $assessment->timemodified   = $now;
-        $assessment->weight         = 1;    // todo better handling of the weight value/default
+        $assessment->submissionid           = $submission->id;
+        $assessment->reviewerid             = $reviewerid;
+        $assessment->timecreated            = $now;
+        $assessment->timemodified           = $now;
+        $assessment->weight                 = 1;
+        $assessment->generalcommentformat   = FORMAT_HTML;  // todo better default handling
+        $assessment->feedbackreviewerformat = FORMAT_HTML;  // todo better default handling
 
         return $DB->insert_record('workshop_assessments', $assessment, true, $bulk);
     }
@@ -1170,6 +1172,29 @@ class workshop {
     }
 
     /**
+     * Calculates the raw (percentual) value from a real grade
+     *
+     * This is used in cases when a user wants to give a grade such as 12 of 20 and we need to save
+     * this value in a raw percentual form into DB
+     * @param float $value given grade
+     * @param float $max   the maximal grade
+     * @return float       suitable to be stored as numeric(10,5)
+     */
+    public function raw_grade_value($value, $max) {
+        if (empty($value)) {
+            return null;
+        }
+        if ($max == 0 or $value < 0) {
+            return 0;
+        }
+        $p = $value / $max * 100;
+        if ($p > 100) {
+            return $max;
+        }
+        return grade_floatval($p);
+    }
+
+    /**
      * Rounds the value from DB to be displayed
      *
      * @param float $raw value from {workshop_aggregations}
@@ -1357,12 +1382,25 @@ class workshop {
      * @param array $actionurl 
      * @return TODO
      */
-    public function get_feedbackreviewer_form(moodle_url $actionurl, stdClass $assessment, $editable) {
+    public function get_feedbackreviewer_form(moodle_url $actionurl, stdClass $assessment, $editable=true) {
         global $CFG;
         require_once(dirname(__FILE__) . '/feedbackreviewer_form.php');
 
+        $current = new stdClass();
+        $current->asid                      = $assessment->id;
+        $current->gradinggrade              = $this->real_grading_grade($assessment->gradinggrade);
+        $current->gradinggradeover          = $this->real_grading_grade($assessment->gradinggradeover);
+        $current->feedbackreviewer          = $assessment->feedbackreviewer;
+        $current->feedbackreviewerformat    = $assessment->feedbackreviewerformat;
+        if (is_null($current->gradinggrade)) {
+            $current->gradinggrade = get_string('nullgrade', 'workshop');
+        }
+
+        // prepare wysiwyg editor
+        $current = file_prepare_standard_editor($current, 'feedbackreviewer', array());
+
         return new workshop_feedbackreviewer_form($actionurl,
-                array('workshop' => $this, 'current' => $assessment, 'feedbackopts' => array()),
+                array('workshop' => $this, 'current' => $current, 'feedbackopts' => array()),
                 'post', '', null, $editable);
     }
 
