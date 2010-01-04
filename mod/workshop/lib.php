@@ -516,12 +516,13 @@ function workshop_get_dimension_weights() {
  * $return array Array ['string' => 'string']
  */
 function workshop_get_strategies() {
-    $installed = get_list_of_plugins('mod/workshop/grading');
+    $installed = get_plugin_list('workshopgrading');
     $forms = array();
-    foreach ($installed as $strategy) {
-        $forms[$strategy] = get_string('strategy' . $strategy, 'workshop');
+    foreach ($installed as $strategy => $strategypath) {
+        if (file_exists($strategypath . '/strategy.php')) {
+            $forms[$strategy] = get_string('pluginname', 'workshopgrading_' . $strategy);
+        }
     }
-
     return $forms;
 }
 

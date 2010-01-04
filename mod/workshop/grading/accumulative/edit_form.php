@@ -55,18 +55,20 @@ class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_fo
         $weights = workshop_get_dimension_weights();
 
         for ($i = 0; $i < $norepeats; $i++) {
-            $mform->addElement('header', 'dimension'.$i, get_string('dimensionnumberaccumulative', 'workshop', $i+1));
+            $mform->addElement('header', 'dimension'.$i, get_string('dimensionnumber', 'workshopgrading_accumulative', $i+1));
             $mform->addElement('hidden', 'dimensionid__idx_'.$i);   // the id in workshop_forms
-            $mform->addElement('editor', 'description__idx_'.$i.'_editor', get_string('dimensiondescription', 'workshop'),
-                                    '', $descriptionopts);
-            $mform->addElement('modgrade', 'grade__idx_'.$i, get_string('dimensionmaxgrade','workshop'), null, true);
+            $mform->addElement('editor', 'description__idx_'.$i.'_editor',
+                                get_string('dimensiondescription', 'workshopgrading_accumulative'), '', $descriptionopts);
+            $mform->addElement('modgrade', 'grade__idx_'.$i,
+                                get_string('dimensionmaxgrade','workshopgrading_accumulative'), null, true);
             $mform->setDefault('grade__idx_'.$i, 10);
-            $mform->addElement('select', 'weight__idx_'.$i, get_string('dimensionweight', 'workshop'), $weights);
+            $mform->addElement('select', 'weight__idx_'.$i,
+                                get_string('dimensionweight', 'workshopgrading_accumulative'), $weights);
             $mform->setDefault('weight__idx_'.$i, 1);
         }
 
         $mform->registerNoSubmitButton('noadddims');
-        $mform->addElement('submit', 'noadddims', get_string('addmoredimensionsaccumulative', 'workshop',
+        $mform->addElement('submit', 'noadddims', get_string('addmoredimensions', 'workshopgrading_accumulative',
                                                                     WORKSHOP_STRATEGY_ADDDIMS));
         $mform->closeHeaderBefore('noadddims');
         $this->set_data($current);

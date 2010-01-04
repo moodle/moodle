@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Manual allocation renderer class
  */
-class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_base  {
+class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
 
     /** the underlying renderer to use */
     protected $output;
@@ -139,9 +139,9 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
             $handler = new moodle_url($this->page->url, array('mode' => 'new', 'of' => $user->id, 'sesskey' => sesskey()));
             $options = $this->users_to_menu_options($workshop->get_peer_reviewers(), $exclude);
             $select = html_select::make_popup_form($handler, 'by', $options, 'addreviewof' . $user->id, '',
-                get_string('addreviewer', 'workshop'));
+                get_string('addreviewer', 'workshopallocation_manual'));
             $select->nothinglabel = get_string('chooseuser', 'workshop');
-            $select->set_label(get_string('addreviewer', 'workshop'), $select->id);
+            $select->set_label(get_string('addreviewer', 'workshopallocation_manual'), $select->id);
             $o .= $this->output->select($select);
         }
         $o .= $this->output->output_start_tag('ul', array());
@@ -186,9 +186,9 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
         $handler = new moodle_url($this->page->url, array('mode' => 'new', 'by' => $user->id, 'sesskey' => sesskey()));
         $options = $this->users_to_menu_options($workshop->get_peer_authors(), $exclude);
         $select = html_select::make_popup_form($handler, 'of', $options, 'addreviewby' . $user->id, '',
-            get_string('addreviewee', 'workshop'));
+            get_string('addreviewee', 'workshopallocation_manual'));
         $select->nothinglabel = get_string('chooseuser', 'workshop');
-        $select->set_label(get_string('addreviewee', 'workshop'), $select->id);
+        $select->set_label(get_string('addreviewee', 'workshopallocation_manual'), $select->id);
         $o .= $this->output->select($select);
         $o .= $this->output->output_start_tag('ul', array());
         foreach ($user->reviewerof as $authorid => $assessmentid) {

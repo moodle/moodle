@@ -44,7 +44,7 @@ class workshop_random_allocator_form extends moodleform {
         $mform      = $this->_form;
         $workshop   = $this->_customdata['workshop'];
 
-        $mform->addElement('header', 'settings', get_string('allocationsettings', 'workshop'));
+        $mform->addElement('header', 'settings', get_string('allocationsettings', 'workshopallocation_random'));
 
         $gmode = groups_get_activity_groupmode($workshop->cm, $workshop->course);
         switch ($gmode) {
@@ -61,8 +61,8 @@ class workshop_random_allocator_form extends moodleform {
         $mform->addElement('static', 'groupmode', get_string('groupmode', 'group'), $grouplabel);
 
         $options_numofreviewes = array(0=>0,1=>1, 2=>2, 3=>3, 4=>4);
-        $options_numper = array(WORKSHOP_USERTYPE_AUTHOR    => get_string('numperauthor', 'workshop'),
-                                WORKSHOP_USERTYPE_REVIEWER  => get_string('numperreviewer', 'workshop'));
+        $options_numper = array(WORKSHOP_USERTYPE_AUTHOR    => get_string('numperauthor', 'workshopallocation_random'),
+                                WORKSHOP_USERTYPE_REVIEWER  => get_string('numperreviewer', 'workshopallocation_random'));
         $grpnumofreviews = array();
         $grpnumofreviews[] = $mform->createElement('select', 'numofreviews', '', $options_numofreviewes);
         $mform->setDefault('numofreviews', 4);
@@ -70,13 +70,13 @@ class workshop_random_allocator_form extends moodleform {
         $mform->setDefault('numper', WORKSHOP_USERTYPE_AUTHOR);
         $mform->addGroup($grpnumofreviews, 'grpnumofreviews', get_string('numofreviews', 'workshop'), array(' '), false);
 
-        $mform->addElement('advcheckbox', 'removecurrent', get_string('removecurrentallocations', 'workshop'));
+        $mform->addElement('advcheckbox', 'removecurrent', get_string('removecurrentallocations', 'workshopallocation_random'));
         $mform->setDefault('removecurrent', 0);
 
-        $mform->addElement('advcheckbox', 'assesswosubmission', get_string('assesswosubmission', 'workshop'));
+        $mform->addElement('advcheckbox', 'assesswosubmission', get_string('assesswosubmission', 'workshopallocation_random'));
         $mform->setDefault('assesswosubmission', 0);
 
-        $mform->addElement('advcheckbox', 'addselfassessment', get_string('addselfassessment', 'workshop'));
+        $mform->addElement('advcheckbox', 'addselfassessment', get_string('addselfassessment', 'workshopallocation_random'));
         $mform->setDefault('addselfassessment', 0);
 
         $this->add_action_buttons();

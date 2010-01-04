@@ -90,7 +90,7 @@ echo $OUTPUT->header($navigation);
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading('Workshop testing', 1);
 echo "<ol>\n";
-echo '<li><a href="' . $workshop->editform_url()->out()  . '">Edit grading form (' . get_string('strategy' . $workshop->strategy, 'workshop') . ')</a></li>' . "\n";
+echo '<li><a href="' . $workshop->editform_url()->out()  . '">Edit grading form (' . get_string('pluginname', 'workshopgrading_' . $workshop->strategy) . ')</a></li>' . "\n";
 echo "<li><a href=\"submission.php?cmid={$cm->id}\">View/edit your own submission</a></li>\n";
 echo "<li><a href=\"develtools.php?tool=mksubmissions&amp;cmid={$cm->id}\">Fake others' submissions</a></li>\n";
 echo "<li><a href=\"allocation.php?cmid={$cm->id}\">Allocate submissions</a></li>\n";

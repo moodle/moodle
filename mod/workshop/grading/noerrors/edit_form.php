@@ -57,23 +57,23 @@ class workshop_edit_noerrors_strategy_form extends workshop_edit_strategy_form {
         $weights = workshop_get_dimension_weights();
 
         for ($i = 0; $i < $norepeats; $i++) {
-            $mform->addElement('header', 'dimension'.$i, get_string('dimensionnumbernoerrors', 'workshop', $i+1));
+            $mform->addElement('header', 'dimension'.$i, get_string('dimensionnumber', 'workshopgrading_noerrors', $i+1));
             $mform->addElement('hidden', 'dimensionid__idx_'.$i);   // the id in workshop_forms
-            $mform->addElement('editor', 'description__idx_'.$i.'_editor', get_string('dimensiondescription', 'workshop'),
-                                    '', $descriptionopts);
-            $mform->addElement('text', 'grade0__idx_'.$i, get_string('noerrorsgrade0', 'workshop'), array('size'=>'15'));
+            $mform->addElement('editor', 'description__idx_'.$i.'_editor',
+                                get_string('dimensiondescription', 'workshopgrading_noerrors'), '', $descriptionopts);
+            $mform->addElement('text', 'grade0__idx_'.$i, get_string('grade0', 'workshopgrading_noerrors'), array('size'=>'15'));
             $mform->setDefault('grade0__idx_'.$i, $workshopconfig->noerrorsgrade0);
             $mform->setType('grade0__idx_'.$i, PARAM_TEXT);
-            $mform->addElement('text', 'grade1__idx_'.$i, get_string('noerrorsgrade1', 'workshop'), array('size'=>'15'));
+            $mform->addElement('text', 'grade1__idx_'.$i, get_string('grade1', 'workshopgrading_noerrors'), array('size'=>'15'));
             $mform->setDefault('grade1__idx_'.$i, $workshopconfig->noerrorsgrade1);
             $mform->setType('grade1__idx_'.$i, PARAM_TEXT);
-            $mform->addElement('select', 'weight__idx_'.$i, get_string('dimensionweight', 'workshop'), $weights);
+            $mform->addElement('select', 'weight__idx_'.$i, get_string('dimensionweight', 'workshopgrading_noerrors'), $weights);
             $mform->setDefault('weight__idx_'.$i, 1);
         }
 
-        $mform->addElement('header', 'mappingheader', get_string('noerrorsgrademapping', 'workshop'));
-        $mform->addElement('static', 'mappinginfo', get_string('noerrorsmaperror', 'workshop'),
-                                                            get_string('noerrorsmapgrade', 'workshop'));
+        $mform->addElement('header', 'mappingheader', get_string('grademapping', 'workshopgrading_noerrors'));
+        $mform->addElement('static', 'mappinginfo', get_string('maperror', 'workshopgrading_noerrors'),
+                                                            get_string('mapgrade', 'workshopgrading_noerrors'));
 
         // get the total weight of all items == maximum weighted number of errors
         $totalweight = 0;
@@ -87,20 +87,20 @@ class workshop_edit_noerrors_strategy_form extends workshop_edit_strategy_form {
         $percents = array();
         $percents[''] = '';
         for ($i = 100; $i >= 0; $i--) {
-            $percents[$i] = get_string('percents', 'workshop', $i);
+            $percents[$i] = get_string('percents', 'workshopgrading_noerrors', $i);
         }
-        $mform->addElement('static', 'mappingzero', 0, get_string('percents', 'workshop', 100));
+        $mform->addElement('static', 'mappingzero', 0, get_string('percents', 'workshopgrading_noerrors', 100));
         for ($i = 1; $i <= $totalweight; $i++) {
             $selects = array();
             $selects[] = $mform->createElement('select', 'map__idx_'.$i, $i, $percents);
             $selects[] = $mform->createElement('static', 'mapdefault__idx_'.$i, '',
-                                        get_string('percents', 'workshop', floor(100 - $i * 100 / $totalweight)));
+                                        get_string('percents', 'workshopgrading_noerrors', floor(100 - $i * 100 / $totalweight)));
             $mform->addGroup($selects, 'grademapping'.$i, $i, array(' '), false);
             $mform->setDefault('map__idx_'.$i, '');
         }
 
         $mform->registerNoSubmitButton('noadddims');
-        $mform->addElement('submit', 'noadddims', get_string('addmoredimensionsaccumulative', 'workshop',
+        $mform->addElement('submit', 'noadddims', get_string('addmoredimensions', 'workshopgrading_noerrors',
                                                                     WORKSHOP_STRATEGY_ADDDIMS));
         $mform->closeHeaderBefore('noadddims');
         $this->set_data($current);

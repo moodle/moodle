@@ -87,10 +87,10 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      */
     public function allocation_init_result($result='') {
         $msg = new stdClass();
-        if ($result === 'WORKSHOP_ALLOCATION_RANDOM_ERROR') {
-            $msg = (object)array('text' => get_string('randomallocationerror', 'workshop'), 'sty' => 'error');
+        if ($result === WORKSHOP_ALLOCATION_ERROR) {
+            $msg = (object)array('text' => get_string('allocationerror', 'workshop'), 'sty' => 'error');
         } else {
-            $msg = (object)array('text' => get_string('randomallocationdone', 'workshop'), 'sty' => 'ok');
+            $msg = (object)array('text' => get_string('allocationdone', 'workshop'), 'sty' => 'ok');
         }
         $o = $this->status_message($msg);
         if (is_array($result)) {

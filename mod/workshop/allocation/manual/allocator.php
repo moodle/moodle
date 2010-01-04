@@ -145,13 +145,13 @@ class workshop_manual_allocator implements workshop_allocator {
             case WORKSHOP_ALLOCATION_MANUAL_MSG_ADDED:
                 $hlauthorid     = $m[1];
                 $hlreviewerid   = $m[2];
-                $msg->text      = get_string('allocationadded', 'workshop');
+                $msg->text      = get_string('allocationadded', 'workshopallocation_manual');
                 $msg->sty       = 'ok';
                 break;
             case WORKSHOP_ALLOCATION_MANUAL_MSG_EXISTS:
                 $hlauthorid     = $m[1];
                 $hlreviewerid   = $m[2];
-                $msg->text      = get_string('allocationexists', 'workshop');
+                $msg->text      = get_string('allocationexists', 'workshopallocation_manual');
                 $msg->sty       = 'info';
                 break;
             case WORKSHOP_ALLOCATION_MANUAL_MSG_NOSUBMISSION:
@@ -163,10 +163,10 @@ class workshop_manual_allocator implements workshop_allocator {
                 $hlauthorid     = $m[2];
                 $hlreviewerid   = $m[3];
                 if ($m[4] == 0) {
-                    $msg->text  = get_string('areyousuretodeallocate', 'workshop');
+                    $msg->text  = get_string('areyousuretodeallocate', 'workshopallocation_manual');
                     $msg->sty   = 'info';
                 } else {
-                    $msg->text  = get_string('areyousuretodeallocategraded', 'workshop');
+                    $msg->text  = get_string('areyousuretodeallocategraded', 'workshopallocation_manual');
                     $msg->sty   = 'error';
                 }
                 break;
@@ -226,7 +226,7 @@ class workshop_manual_allocator implements workshop_allocator {
         // We have all data. Let it pass to the renderer and return the output
         // Here, we do not use neither the core renderer nor the workshop one but use an own one
         require_once(dirname(__FILE__) . '/renderer.php');
-        $uioutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE, 'allocation_manual');
+        $uioutput = $PAGE->theme->get_renderer('workshopallocation_manual', $PAGE);
         echo $uioutput->display_allocations($this->workshop, $peer, $hlauthorid, $hlreviewerid, $msg);
     }
 

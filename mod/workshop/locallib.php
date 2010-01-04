@@ -32,7 +32,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__).'/lib.php'); // we extend this library here
 
-define('WORKSHOP_ALLOCATION_EXISTS',        -1);    // return status of {@link add_allocation}
+define('WORKSHOP_ALLOCATION_EXISTS', -1);   // return status of {@link add_allocation}
+define('WORKSHOP_ALLOCATION_ERROR',  -2);   // can be passed to a workshop renderer method
 
 /**
  * Full-featured workshop API
@@ -513,10 +514,12 @@ class workshop {
      * @return array Array ['string' => 'string'] of localized allocation method names
      */
     public function installed_allocators() {
-        $installed = get_list_of_plugins('mod/workshop/allocation');
+        $installed = get_plugin_list('workshopallocation');
         $forms = array();
-        foreach ($installed as $allocation) {
-            $forms[$allocation] = get_string('allocation' . $allocation, 'workshop');
+        foreach ($installed as $allocation => $allocationpath) {
+            if (file_exists($allocationpath . '/allocator.php')) {
+                $forms[$allocation] = get_string('pluginname', 'workshopallocation_' . $allocation);
+            }
         }
         // usability - make sure that manual allocation appears the first
         if (isset($forms['manual'])) {

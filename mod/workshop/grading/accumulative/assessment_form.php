@@ -50,7 +50,7 @@ class workshop_accumulative_assessment_form extends workshop_assessment_form {
 
         for ($i = 0; $i < $nodims; $i++) {
             // dimension header
-            $dimtitle = get_string('dimensionnumberaccumulative', 'workshop', $i+1);
+            $dimtitle = get_string('dimensionnumber', 'workshopgrading_accumulative', $i+1);
             $mform->addElement('header', "dimensionhdr__idx_$i", $dimtitle);
 
             // dimension id
@@ -66,12 +66,12 @@ class workshop_accumulative_assessment_form extends workshop_assessment_form {
             $mform->addElement('html', $desc);
 
             // grade for this aspect
-            $label = get_string('dimensiongrade', 'workshop');
+            $label = get_string('dimensiongrade', 'workshopgrading_accumulative');
             $options = make_grades_menu($fields->{'grade__idx_' . $i});
             $mform->addElement('select', 'grade__idx_' . $i, $label, $options);
 
             // comment
-            $label = get_string('dimensioncomment', 'workshop');
+            $label = get_string('dimensioncomment', 'workshopgrading_accumulative');
             //$mform->addElement('editor', 'peercomment__idx_' . $i, $label, null, array('maxfiles' => 0));
             $mform->addElement('textarea', 'peercomment__idx_' . $i, $label, array('cols' => 60, 'rows' => 5));
         }

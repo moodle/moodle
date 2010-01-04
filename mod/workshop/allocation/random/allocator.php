@@ -105,17 +105,17 @@ class workshop_random_allocator implements workshop_allocator {
                 $randomallocations  = $this->random_allocation($authors, $reviewers, $curassessments, $numofreviews, $numper, $o);
                 $this->filter_current_assessments($randomallocations, $assessments);
                 $newallocations     = array_merge($newallocations, $randomallocations);
-                $o[] = 'ok::' . get_string('numofrandomlyallocatedsubmissions', 'workshop', count($randomallocations));
+                $o[] = 'ok::' . get_string('numofrandomlyallocatedsubmissions', 'workshopallocation_random', count($randomallocations));
                 unset($randomallocations);
             }
             if ($addselfassessment) {
                 $selfallocations    = $this->self_allocation($authors, $reviewers, $assessments);
                 $newallocations     = array_merge($newallocations, $selfallocations);
-                $o[] = 'ok::' . get_string('numofselfallocatedsubmissions', 'workshop', count($selfallocations));
+                $o[] = 'ok::' . get_string('numofselfallocatedsubmissions', 'workshopallocation_random', count($selfallocations));
                 unset($selfallocations);
             }
             if (empty($newallocations)) {
-                $o[] = 'info::' . get_string('noallocationtoadd', 'workshop');
+                $o[] = 'info::' . get_string('noallocationtoadd', 'workshopallocation_random');
             } else {
                 $this->add_new_allocations($newallocations, $authors, $reviewers);
                 foreach ($newallocations as $newallocation) {
@@ -123,14 +123,14 @@ class workshop_random_allocator implements workshop_allocator {
                     $a                  = new stdClass();
                     $a->reviewername    = fullname($reviewers[0][$reviewerid]);
                     $a->authorname      = fullname($authors[0][$authorid]);
-                    $o[] = 'ok::indent::' . get_string('allocationaddeddetail', 'workshop', $a);
+                    $o[] = 'ok::indent::' . get_string('allocationaddeddetail', 'workshopallocation_random', $a);
                 }
             }
             if ($removecurrent) {
                 $delassessments = $this->get_unkept_assessments($assessments, $newallocations, $addselfassessment);
                 // random allocator should not be able to delete assessments that have already been graded
                 // by reviewer
-                $o[] = 'info::' . get_string('numofdeallocatedassessment', 'workshop', count($delassessments));
+                $o[] = 'info::' . get_string('numofdeallocatedassessment', 'workshopallocation_random', count($delassessments));
                 foreach ($delassessments as $delassessmentkey => $delassessmentid) {
                     $a = new stdClass();
                     $a->authorname      = fullname((object)array(
@@ -140,10 +140,10 @@ class workshop_random_allocator implements workshop_allocator {
                             'lastname'  => $assessments[$delassessmentid]->reviewerlastname,
                             'firstname' => $assessments[$delassessmentid]->reviewerfirstname));
                     if (!is_null($assessments[$delassessmentid]->grade)) {
-                        $o[] = 'error::indent::' . get_string('allocationdeallocategraded', 'workshop', $a);
+                        $o[] = 'error::indent::' . get_string('allocationdeallocategraded', 'workshopallocation_random', $a);
                         unset($delassessments[$delassessmentkey]);
                     } else {
-                        $o[] = 'info::indent::' . get_string('assessmentdeleteddetail', 'workshop', $a);
+                        $o[] = 'info::indent::' . get_string('assessmentdeleteddetail', 'workshopallocation_random', $a);
                     }
                 }
                 $this->workshop->delete_assessment($delassessments);
@@ -165,7 +165,7 @@ class workshop_random_allocator implements workshop_allocator {
         $m = optional_param('m', null, PARAM_INT);  // status message code
         $msg = new stdClass();
         if ($m == WORKSHOP_ALLOCATION_RANDOM_MSG_SUCCESS) {
-            $msg = (object)array('text' => get_string('randomallocationdone', 'workshop'), 'sty' => 'ok');
+            $msg = (object)array('text' => get_string('randomallocationdone', 'workshopallocation_random'), 'sty' => 'ok');
         }
 
         echo $OUTPUT->container_start('random-allocator');

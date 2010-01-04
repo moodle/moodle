@@ -50,7 +50,7 @@ class workshop_noerrors_assessment_form extends workshop_assessment_form {
 
         for ($i = 0; $i < $nodims; $i++) {
             // dimension header
-            $dimtitle = get_string('dimensionnumbernoerrors', 'workshop', $i+1);
+            $dimtitle = get_string('dimensionnumber', 'workshopgrading_noerrors', $i+1);
             $mform->addElement('header', "dimensionhdr__idx_$i", $dimtitle);
 
             // dimension id
@@ -66,13 +66,13 @@ class workshop_noerrors_assessment_form extends workshop_assessment_form {
             $mform->addElement('html', $desc);
 
             // evaluation of the assertion
-            $label = get_string('dimensiongradenoerrors', 'workshop');
+            $label = get_string('dimensiongrade', 'workshopgrading_noerrors');
             $mform->addElement('radio', 'grade__idx_' . $i, 'Your assessment', $fields->{'grade0__idx_'.$i}, 0); // todo localize
             $mform->addElement('radio', 'grade__idx_' . $i, '', $fields->{'grade1__idx_'.$i}, 1);
             $mform->setDefault('grade__idx_' . $i, 0);
 
             // comment
-            $label = get_string('dimensioncomment', 'workshop');
+            $label = get_string('dimensioncomment', 'workshopgrading_noerrors');
             $mform->addElement('textarea', 'peercomment__idx_' . $i, $label, array('cols' => 60, 'rows' => 5));
         }
         $this->set_data($current);
