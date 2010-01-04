@@ -1,7 +1,7 @@
 <?php
- 
-// This file is part of Moodle - http://moodle.org/  
-// 
+
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,10 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
- 
+
 /**
  * This file defines an mform to edit accumulative grading strategy forms.
  *
@@ -29,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(dirname(dirname(__FILE__))).'/lib.php');   // module library
 require_once(dirname(dirname(__FILE__)).'/edit_form.php');    // parent class definition
 
-
 /**
  * Class for editing accumulative grading strategy forms.
  *
@@ -38,10 +36,10 @@ require_once(dirname(dirname(__FILE__)).'/edit_form.php');    // parent class de
 class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_form {
 
     /**
-     * Define the elements to be displayed at the form 
+     * Define the elements to be displayed at the form
      *
      * Called by the parent::definition()
-     * 
+     *
      * @access protected
      * @return void
      */
@@ -52,16 +50,16 @@ class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_fo
 
         $repeated = array();
         $repeated[] =& $mform->createElement('hidden', 'dimensionid', 0);
-        $repeated[] =& $mform->createElement('header', 'dimension', 
+        $repeated[] =& $mform->createElement('header', 'dimension',
                                                 get_string('dimensionnumberaccumulative', 'workshop', '{no}'));
         $repeated[] =& $mform->createElement('htmleditor', 'description',
                                                 get_string('dimensiondescription', 'workshop'), array());
         $repeated[] =& $mform->createElement('select', 'grade', get_string('grade'), $gradeoptions);
         $repeated[] =& $mform->createElement('select', 'weight', get_string('dimensionweight', 'workshop'), $weights);
-        
+
         $repeatedoptions = array();
         $repeatedoptions['description']['type'] = PARAM_CLEANHTML;
-        $repeatedoptions['description']['helpbutton'] = array('dimensiondescription', 
+        $repeatedoptions['description']['helpbutton'] = array('dimensiondescription',
                                                             get_string('dimensiondescription', 'workshop'), 'workshop');
         $repeatedoptions['grade']['default'] = 10;
         $repeatedoptions['weight']['default'] = 1;
@@ -71,6 +69,5 @@ class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_fo
         $numofdisplaydimensions = max($this->strategy->get_number_of_dimensions() + $numofdimensionstoadd, $numofinitialdimensions);
         $this->repeat_elements($repeated, $numofdisplaydimensions,  $repeatedoptions, 'numofdimensions', 'adddimensions', $numofdimensionstoadd, get_string('addmoredimensionsaccumulative', 'workshop', $numofdimensionstoadd));
     }
-
 
 }

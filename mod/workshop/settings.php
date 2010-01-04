@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * The workshop module configuration variables
  *
@@ -66,11 +65,11 @@ foreach (workshop_get_comparison_levels() as $code => $level) {
 $settings->add(new admin_setting_configselect('workshop/assessmentcomps', get_string('assessmentcomps', 'workshop'),
                     get_string('configassessmentcomps', 'workshop'), WORKSHOP_COMPARISON_NORMAL, $levels));
 
-$settings->add(new admin_setting_configtext('workshop/noerrorsgrade0', get_string('noerrorsgrade0', 'workshop'), 
+$settings->add(new admin_setting_configtext('workshop/noerrorsgrade0', get_string('noerrorsgrade0', 'workshop'),
                     get_string('confignoerrorsgrade0', 'workshop'), get_string('noerrorsgrade0default', 'workshop'),
                     $paramtype=PARAM_TEXT, $size=15));
 
-$settings->add(new admin_setting_configtext('workshop/noerrorsgrade1', get_string('noerrorsgrade1', 'workshop'), 
+$settings->add(new admin_setting_configtext('workshop/noerrorsgrade1', get_string('noerrorsgrade1', 'workshop'),
                     get_string('confignoerrorsgrade1', 'workshop'), get_string('noerrorsgrade1default', 'workshop'),
                     $paramtype=PARAM_TEXT, $size=15));
 

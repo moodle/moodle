@@ -1,7 +1,7 @@
 <?php
- 
-// This file is part of Moodle - http://moodle.org/  
-// 
+
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,15 +11,14 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
- 
+
 /**
  * At this page, teachers allocate submissions to students for a review
  *
- * The allocation logic itself is delegated to allocators - subplugins in ./allocation 
+ * The allocation logic itself is delegated to allocators - subplugins in ./allocation
  * folder.
  *
  * @package   mod-workshop
@@ -48,11 +47,11 @@ require_capability('mod/workshop:allocate', $context);
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
 //
-// todo navigation will be changed yet for Moodle 2.0
+// TODO navigation will be changed yet for Moodle 2.0
 $navigation = build_navigation(get_string('allocation', 'workshop'), $cm);
 
-$allocator = $workshop->allocator_instance($method);
-$allocator->init();
+$allocator  = $workshop->allocator_instance($method);
+$initresult = $allocator->init();
 
 //
 // Output starts here
@@ -67,5 +66,13 @@ foreach ($allocators as $methodid => $methodname) {
 }
 print_tabs(array($tabrow), $method);    // todo use $output call
 
-echo $OUTPUT->container($allocator->ui(), 'allocator-ui');
+if (!empty($initresult)) {
+    echo $OUTPUT->container_start('allocator-init-results');
+    echo $wsoutput->allocation_init_result($initresult);
+    echo $OUTPUT->container_end();
+} else {
+    echo $OUTPUT->container_start('allocator-ui');
+    $allocator->ui($wsoutput);
+    echo $OUTPUT->container_end();
+}
 echo $OUTPUT->footer();

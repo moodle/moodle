@@ -1,7 +1,7 @@
 <?php
- 
-// This file is part of Moodle - http://moodle.org/  
-// 
+
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,10 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
- 
+
 /**
  * Unit tests for (some of) mod/workshop/grading/accumulative/strategy.php
  *
@@ -28,7 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 // Include the code to test
 require_once($CFG->dirroot . '/mod/workshop/grading/accumulative/strategy.php');
-
 
 /**
  * Test subclass that makes all the protected methods we want to test public
@@ -44,7 +42,6 @@ class testable_workshop_accumulative_strategy extends workshop_accumulative_stra
     }
 
 }
-
 
 class workshop_accumulative_strategy_test extends UnitTestCase {
 
@@ -62,7 +59,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
 
     /** setup testing environment */
     public function setUp() {
-    
+
         $this->workshop             = new stdClass;
         $this->workshop->id         = 42;
         $this->workshop->strategy   = 'accumulative';
@@ -103,16 +100,14 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
 
     }
 
-
     public function tearDown() {
         $this->strategy = null;
         $this->rawform  = null;
         $this->rawdb    = null;
     }
 
-    
     public function test_cook_dimension_records() {
-        
+
         $cooked = $this->strategy->_cook_dimension_records($this->rawdb);
         $this->assertIsA($cooked, 'stdClass');
         $cooked = (array)$cooked;
@@ -130,7 +125,6 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         $this->assertEqual($cooked['weight[1]'], 1);
     }
 
-    
     public function test_cook_form_data() {
 
         $cooked = $this->strategy->_cook_form_data($this->rawform);
@@ -163,5 +157,5 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
                             'weight'            => 1,
                             ));
     }
-    
+
 }

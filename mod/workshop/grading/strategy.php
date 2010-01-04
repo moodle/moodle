@@ -1,7 +1,7 @@
 <?php
- 
-// This file is part of Moodle - http://moodle.org/  
-// 
+
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,10 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
- 
+
 /**
  * This file defines a base class for all grading strategy logic
  *
@@ -33,7 +32,7 @@ interface workshop_strategy {
 
     /**
      * Factory method returning an instance of an assessment form editor class
-     * 
+     *
      * The returned class will probably expand the base workshop_edit_strategy_form. The number of
      * dimensions that will be passed by set_data() must be already known here becase the
      * definition() of the form has to know the number and it is called before set_data().
@@ -44,11 +43,10 @@ interface workshop_strategy {
      */
     public function get_edit_strategy_form($actionurl=null);
 
-
     /**
      * Load the assessment dimensions and other grading form elements
-     * 
-     * Assessment dimension (also know as assessment element) represents one aspect or criterion 
+     *
+     * Assessment dimension (also know as assessment element) represents one aspect or criterion
      * to be evaluated. Each dimension consists of a set of form fields. Strategy-specific information
      * are saved in workshop_forms_{strategyname} tables.
      * The returned object is passed to the mform set_data() method.
@@ -58,11 +56,10 @@ interface workshop_strategy {
      */
     public function load_form();
 
-
     /**
      * Save the assessment dimensions and other grading form elements
      *
-     * Assessment dimension (also know as assessment element) represents one aspect or criterion 
+     * Assessment dimension (also know as assessment element) represents one aspect or criterion
      * to be evaluated. Each dimension consists of a set of form fields. Strategy-specific information
      * are saved in workshop_forms_{strategyname} tables.
      *
@@ -72,17 +69,14 @@ interface workshop_strategy {
      */
     public function save_form(stdClass $data);
 
-
     /**
      * Return the number of assessment dimensions defined in the instance of the strategy
-     * 
+     *
      * @return int Zero or positive integer
      */
     public function get_number_of_dimensions();
 
 }
-
-
 
 /**
  * Base class for grading strategy logic
@@ -102,8 +96,8 @@ abstract class workshop_base_strategy implements workshop_strategy {
     protected $nodimensions;
 
     /**
-     * Constructor 
-     * 
+     * Constructor
+     *
      * @param object $workshop The workshop instance record
      * @access public
      * @return void
@@ -115,7 +109,6 @@ abstract class workshop_base_strategy implements workshop_strategy {
         $this->nodimensions = null;
     }
 
-
     /**
      * Factory method returning an instance of an assessment form editor class
      *
@@ -126,7 +119,7 @@ abstract class workshop_base_strategy implements workshop_strategy {
      */
     public function get_edit_strategy_form($actionurl=null) {
         global $CFG;    // needed because the included files use it
-    
+
         $strategyform = dirname(__FILE__) . '/' . $this->name . '/edit_form.php';
         if (file_exists($strategyform)) {
             require_once($strategyform);
@@ -145,17 +138,15 @@ abstract class workshop_base_strategy implements workshop_strategy {
 
     }
 
-
     /**
-     * By default, the number of loaded dimensions is set by load_form() 
-     * 
+     * By default, the number of loaded dimensions is set by load_form()
+     *
      * @access public
      * @return Array of records
      */
     public function get_number_of_dimensions() {
         return $this->nodimensions;
     }
-
 
     /**
      * Factory method returning an instance of an assessment form
@@ -168,7 +159,7 @@ abstract class workshop_base_strategy implements workshop_strategy {
      */
     public function get_assessment_form($actionurl=null, $mode='preview') {
         global $CFG;    // needed because the included files use it
-    
+
         $assessmentform = dirname(__FILE__) . '/' . $this->name . '/assessment_form.php';
         if (is_readable($assessmentform)) {
             require_once($assessmentform);
@@ -188,6 +179,5 @@ abstract class workshop_base_strategy implements workshop_strategy {
         return new $classname($actionurl, $customdata, 'post', '', $attributes);
 
     }
-
 
 }

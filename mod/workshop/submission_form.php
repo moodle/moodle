@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/  
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,10 +11,9 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 
 /**
  * Submit an assignment or edit the already submitted work
@@ -51,7 +50,7 @@ class workshop_submission_form extends moodleform {
 
         if ($workshop->nattachments > 0) {
             $mform->addElement('static', 'filemanagerinfo', get_string('nattachments', 'workshop'), $workshop->nattachments);
-            $mform->addElement('filemanager', 'attachment_filemanager', get_string('submissionattachment', 'workshop'), 
+            $mform->addElement('filemanager', 'attachment_filemanager', get_string('submissionattachment', 'workshop'),
                                 null, $attachmentoptions);
         }
 
@@ -62,7 +61,6 @@ class workshop_submission_form extends moodleform {
 
         $this->set_data($current);
     }
-
 
     function validation($data, $files) {
         global $CFG, $USER, $DB;

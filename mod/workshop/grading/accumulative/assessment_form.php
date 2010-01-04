@@ -1,7 +1,7 @@
 <?php
- 
-// This file is part of Moodle - http://moodle.org/  
-// 
+
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,10 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
- 
+
 /**
  * This file defines an mform to assess a submission by accumulative grading strategy
  *
@@ -29,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 //require_once(dirname(dirname(dirname(__FILE__))).'/lib.php');   // module library
 require_once(dirname(dirname(__FILE__)).'/assessment_form.php');    // parent class definition
 
-
 /**
  * Class representing a form for assessing submissions by accumulative grading strategy
  *
@@ -38,10 +36,10 @@ require_once(dirname(dirname(__FILE__)).'/assessment_form.php');    // parent cl
 class workshop_accumulative_assessment_form extends workshop_assessment_form {
 
     /**
-     * Define the elements to be displayed at the form 
+     * Define the elements to be displayed at the form
      *
      * Called by the parent::definition()
-     * 
+     *
      * @access protected
      * @return void
      */
@@ -71,6 +69,5 @@ class workshop_accumulative_assessment_form extends workshop_assessment_form {
         }
 
     }
-
 
 }

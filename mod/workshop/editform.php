@@ -1,7 +1,7 @@
 <?php
- 
-// This file is part of Moodle - http://moodle.org/  
-// 
+
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,10 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
- 
+
 /**
  * Edit grading form in for a particular instance of workshop
  *
@@ -28,14 +27,14 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
 $cmid = required_param('cmid', PARAM_INT);            // course module id
-        
+
 if (!$cm = get_coursemodule_from_id('workshop', $cmid)) {
     print_error('invalidcoursemodule');
-}   
-        
+}
+
 if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
     print_error('coursemisconf');
-}   
+}
 
 require_login($course, false, $cm);
 
@@ -88,13 +87,13 @@ if ($mform->is_cancelled()) {
 
 // build the navigation and the header
 $navlinks = array();
-$navlinks[] = array('name' => get_string('modulenameplural', 'workshop'), 
-                    'link' => "index.php?id=$course->id", 
+$navlinks[] = array('name' => get_string('modulenameplural', 'workshop'),
+                    'link' => "index.php?id=$course->id",
                     'type' => 'activity');
-$navlinks[] = array('name' => format_string($workshop->name), 
+$navlinks[] = array('name' => format_string($workshop->name),
                     'link' => "view.php?id=$cm->id",
                     'type' => 'activityinstance');
-$navlinks[] = array('name' => get_string('editingassessmentform', 'workshop'), 
+$navlinks[] = array('name' => get_string('editingassessmentform', 'workshop'),
                     'link' => '',
                     'type' => 'title');
 $navigation = build_navigation($navlinks);

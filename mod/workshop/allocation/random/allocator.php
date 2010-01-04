@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/  
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,13 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Allocates the submissions randomly
- * 
+ *
  * @package   mod-workshop
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,54 +25,301 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(__FILE__)) . '/lib.php');  // interface definition
+global $CFG;    // access to global variables during unit test
 
+require_once(dirname(dirname(__FILE__)) . '/lib.php');                  // interface definition
+require_once(dirname(dirname(dirname(__FILE__))) . '/locallib.php');    // workshop internal API
+require_once(dirname(__FILE__) . '/settings_form.php');                 // settings form
 
+/**
+ * Constants used to pass status messages between init() and ui()
+ */
+define('WORKSHOP_ALLOCATION_RANDOM_MSG_SUCCESS',    1);
+
+/**
+ * Constants used in allocation settings form
+ */
+define('WORKSHOP_USERTYPE_AUTHOR',                  1);
+define('WORKSHOP_USERTYPE_REVIEWER',                2);
+
+/**
+ * Allocates the submissions randomly
+ */
 class workshop_random_allocator implements workshop_allocator {
 
     /** workshop instance */
     protected $workshop;
 
-    /** array of allocations */
-    protected $allocation = array();
+    /** mform with settings */
+    protected $mform;
 
-    public function __construct(stdClass $workshop) {
-        global $DB, $USER;
-
+    /**
+     * @param stdClass $workshop Workshop record
+     */
+    public function __construct(workshop $workshop) {
         $this->workshop = $workshop;
-
-        // submissions to be allocated
-        $submissions = $DB->get_records('workshop_submissions', array('workshopid' => $this->workshop->id, 'example' => 0),
-                                         '', 'id,userid,title');
-
-
-        // dummy allocation - allocate all submissions to the current USER
-        foreach ($submissions as $submissionid => $submission) {
-            $this->allocation[$submissionid]                = new stdClass;
-            $this->allocation[$submissionid]->submissionid  = $submissionid;
-            $this->allocation[$submissionid]->title         = $submission->title;
-            $this->allocation[$submissionid]->authorid      = $submission->userid;
-            $this->allocation[$submissionid]->reviewerid    = $USER->id;
-            $this->allocation[$submissionid]->assessmentid  = NULL;
-        }
-
-        // already created assessments
-        $assessments = $DB->get_records_list('workshop_assessments', 'submissionid', array_keys($submissions),
-                                                '', 'id,submissionid,userid');
-        
-        foreach ($assessments as $assessmentid => $assessment) {
-            $this->allocation[$assessment->submissionid]->assessmentid  = $assessmentid;
-        }
     }
 
-
+    /**
+     * Allocate submissions as requested by user
+     */
     public function init() {
+        global $PAGE;
+
+        $customdata = array();
+        // $customdata['workshop'] = $this->workshop;
+        $this->mform = new workshop_random_allocator_form($PAGE->url, $customdata);
+        if ($this->mform->is_cancelled()) {
+            redirect($PAGE->url->out(false, array(), false));
+        } else if ($settings = $this->mform->get_data()) {
+            // process validated data
+            if (!confirm_sesskey()) {
+                throw new moodle_workshop_exception($this->workshop, 'confirmsesskeybad');
+            }
+            $o                  = array();      // list of output messages
+            $numofreviews       = required_param('numofreviews', PARAM_INT);
+            $numper             = required_param('numper', PARAM_INT);
+            $removecurrent      = required_param('removecurrent', PARAM_INT);
+            $assesswosubmission = required_param('assesswosubmission', PARAM_INT);
+            $musthavesubmission = empty($assesswosubmission);
+            $addselfassessment  = required_param('addselfassessment', PARAM_INT);
+
+            $authors            = $this->workshop->get_peer_authors_by_group();
+            $reviewers          = $this->workshop->get_peer_reviewers_by_group($musthavesubmission);
+            $assessments        = $this->workshop->get_assessments();
+
+            $newallocations     = array();      // array of (reviewer,reviewee) tuples
+
+            if ($numofreviews) {
+                $randomallocations  = $this->random_allocation($authors, $reviewers, $assessments, $numofreviews, $numper);
+                $newallocations     = array_merge($newallocations, $randomallocations);
+                $o[] = 'ok::' . get_string('numofrandomlyallocatedsubmissions', 'workshop', count($randomallocations));
+                unset($randomallocations);
+            }
+            if ($addselfassessment) {
+                $selfallocations    = $this->self_allocation($authors, $reviewers, $assessments);
+                $newallocations     = array_merge($newallocations, $selfallocations);
+                $o[] = 'ok::' . get_string('numofselfallocatedsubmissions', 'workshop', count($selfallocations));
+                unset($selfallocations);
+            }
+            if (empty($newallocations)) {
+                $o[] = 'info::' . get_string('noallocationtoadd', 'workshop');
+            } else {
+                $this->add_new_allocations($newallocations, $authors, $reviewers);
+                foreach ($newallocations as $newallocation) {
+                    list($reviewerid, $authorid) = each($newallocation);
+                    $a                  = new stdClass();
+                    $a->reviewername    = fullname($reviewers[0][$reviewerid]);
+                    $a->authorname      = fullname($authors[0][$authorid]);
+                    $o[] = 'ok::ident::' . get_string('allocationaddeddetail', 'workshop', $a);
+                }
+            }
+            if ($removecurrent) {
+                $delassessments = $this->get_unkept_assessments($assessments, $newallocations, $addselfassessment);
+                // random allocator should not be able to delete assessments that have already been graded
+                // by reviewer
+                $o[] = 'info::' . get_string('numofdeallocatedassessment', 'workshop', count($delassessments));
+                foreach ($delassessments as $delassessmentid) {
+                    $a = new stdClass();
+                    $a->authorname      = fullname((object)array(
+                            'lastname'  => $assessments[$delassessmentid]->authorlastname,
+                            'firstname' => $assessments[$delassessmentid]->authorfirstname));
+                    $a->reviewername    = fullname((object)array(
+                            'lastname'  => $assessments[$delassessmentid]->reviewerlastname,
+                            'firstname' => $assessments[$delassessmentid]->reviewerfirstname));
+                    if (!is_null($assessments[$delassessmentid]->grade)) {
+                        $o[] = 'error::ident::' . get_string('allocationdeallocategraded', 'workshop', $a);
+                        unset($delassessments[$delassessmentid]);
+                    } else {
+                        $o[] = 'info::ident::' . get_string('assessmentdeleteddetail', 'workshop', $a);
+                    }
+                }
+                $this->workshop->delete_assessment($delassessments);
+            }
+            return $o;
+        } else {
+            // this branch is executed if the form is submitted but the data
+            // doesn't validate and the form should be redisplayed
+            // or on the first display of the form.
+        }
     }
 
+    /**
+     * Prints user interface
+     */
+    public function ui(moodle_mod_workshop_renderer $wsoutput) {
+        global $OUTPUT;
 
-    public function ui() {
-        return 'TODO';
+        $m = optional_param('m', null, PARAM_INT);  // status message code
+        $msg = new stdClass();
+        if ($m == WORKSHOP_ALLOCATION_RANDOM_MSG_SUCCESS) {
+            $msg = (object)array('text' => get_string('randomallocationdone', 'workshop'), 'sty' => 'ok');
+        }
+
+        echo $OUTPUT->container_start('random-allocator');
+        echo $wsoutput->status_message($msg);
+        $this->mform->display();
+        echo $OUTPUT->container_end();
     }
 
+    /**
+     * Allocates submissions to their authors for review
+     *
+     * If the submission has already been allocated, it is skipped. If the author is not found among
+     * reviewers, the submission is not assigned.
+     *
+     * @param array $authors as returned by {@see workshop_api::get_peer_authors_by_group()}
+     * @param array $reviewers as returned by {@see workshop_api::get_peer_reviewers_by_group()}
+     * @param array $assessments as returned by {@see workshop_api::get_assessments()}
+     * @return array of new allocations to be created, array of array(reviewerid => authorid)
+     */
+    protected function self_allocation($authors=array(), $reviewers=array(), $assessments=array()) {
+        if (!isset($authors[0]) || !isset($reviewers[0])) {
+            // no authors or no reviewers
+            return array();
+        }
+        $alreadyallocated = array();
+        foreach ($assessments as $assessment) {
+            if ($assessment->authorid == $assessment->reviewerid) {
+                $alreadyallocated[$assessment->authorid] = 1;
+            }
+        }
+        $add = array(); // list of new allocations to be created
+        foreach ($authors[0] as $authorid => $author) {
+            // for all authors in all groups
+            if (isset($reviewers[0][$authorid])) {
+                // if the author can be reviewer
+                if (!isset($alreadyallocated[$authorid])) {
+                    // and the allocation does not exist yet, then
+                    $add[] = array($authorid => $authorid);
+                }
+            }
+        }
+        return $add;
+    }
+
+    /**
+     * Creates new assessment records
+     *
+     * @param array $newallocations pairs 'reviewerid' => 'authorid'
+     * @param array $dataauthors    authors by group, group [0] contains all authors
+     * @param array $datareviewers  reviewers by group, group [0] contains all reviewers
+     * @return bool
+     */
+    protected function add_new_allocations($newallocations, $dataauthors, $datareviewers) {
+        global $DB;
+
+        $newallocations = $this->get_unique_allocations($newallocations);
+        $authorids      = $this->get_author_ids($newallocations);
+        $submissions    = $this->workshop->get_submission_by_author($authorids);
+        $submissions    = $this->index_submissions_by_authors($submissions);
+        foreach ($newallocations as $newallocation) {
+            list($reviewerid, $authorid) = each($newallocation);
+            if (!isset($submissions[$authorid])) {
+                throw new moodle_workshop_exception($this->workshop, 'unabletoallocateauthorwithoutsubmission');
+            }
+            $submission = $submissions[$authorid];
+            $status = $this->workshop->add_allocation($submission, $reviewerid, true);
+            if (WORKSHOP_ALLOCATION_EXISTS == $status) {
+                debugging('newallocations array contains existing allocation, this should not happen');
+            }
+        }
+    }
+
+    /**
+     * Flips the structure of submission so it is indexed by userid attribute
+     *
+     * It is the caller's responsibility to make sure the submissions are not teacher
+     * examples so no user is the author of more submissions.
+     *
+     * @param string $submissions array indexed by submission id
+     * @return array indexed by author id
+     */
+    protected function index_submissions_by_authors($submissions) {
+        $byauthor = array();
+        if (is_array($submissions)) {
+            foreach ($submissions as $submissionid => $submission) {
+                if (isset($byauthor[$submission->userid])) {
+                    throw new moodle_workshop_exception($this->workshop, 'moresubmissionsbyauthor');
+                }
+                $byauthor[$submission->userid] = $submission;
+            }
+        }
+        return $byauthor;
+    }
+
+    /**
+     * Extracts unique list of authors' IDs from the structure of new allocations
+     *
+     * @param array $newallocations of pairs 'reviewerid' => 'authorid'
+     * @return array of authorids
+     */
+    protected function get_author_ids($newallocations) {
+        $authors = array();
+        foreach ($newallocations as $newallocation) {
+            $authorid = reset($newallocation);
+            if (!in_array($authorid, $authors)) {
+                $authors[] = $authorid;
+            }
+        }
+        return $authors;
+    }
+
+    /**
+     * Removes duplicate allocations
+     *
+     * @param mixed $newallocations array of 'reviewerid' => 'authorid' pairs
+     * @return array
+     */
+    protected function get_unique_allocations($newallocations) {
+        return array_merge(array_map('unserialize', array_unique(array_map('serialize', $newallocations))));
+    }
+
+    /**
+     * Returns the list of assessments to remove
+     *
+     * If user selects "removecurrentallocations", we should remove all current assessment records
+     * and insert new ones. But this would needlessly waste table ids. Instead, let us find only those
+     * assessments that have not been re-allocated in this run of allocation. So, the once-allocated
+     * submissions are kept with their original id.
+     *
+     * @param array $assessments         list of current assessments
+     * @param mixed $newallocations      array of 'reviewerid' => 'authorid' pairs
+     * @param bool  $keepselfassessments do not remove already allocated self assessments
+     * @return array of assessments ids to be removed
+     */
+    protected function get_unkept_assessments($assessments, $newallocations, $keepselfassessments) {
+        $keepids = array(); // keep these assessments
+        foreach ($assessments as $assessmentid => $assessment) {
+            $aaid = $assessment->authorid;
+            $arid = $assessment->reviewerid;
+            if (($keepselfassessments) && ($aaid == $arid)) {
+                $keepids[$assessmentid] = null;
+                continue;
+            }
+            foreach ($newallocations as $newallocation) {
+                list($nrid, $naid) = each($newallocation);
+                if (array($arid, $aaid) == array($nrid, $naid)) {
+                    // re-allocation found - let us continue with the next assessment
+                    $keepids[$assessmentid] = null;
+                    continue 2;
+                }
+            }
+        }
+        return array_keys(array_diff_key($assessments, $keepids));
+    }
+
+    /**
+     * TODO: short description.
+     *
+     * @param array    $authors      
+     * @param resource $reviewers    
+     * @param array    $assessments  
+     * @param mixed    $numofreviews 
+     * @param mixed    $numper       
+     * @return TODO
+     */
+    protected function random_allocation($authors, $reviewers, $assessments, $numofreviews, $numper) {
+    }
 
 }

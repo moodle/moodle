@@ -1,7 +1,7 @@
 <?php
- 
-// This file is part of Moodle - http://moodle.org/  
-// 
+
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,18 +11,17 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
- 
+
 /**
  * Library of interface functions and constants for module workshop
  *
- * All the core Moodle functions, neeeded to allow the module to work 
+ * All the core Moodle functions, neeeded to allow the module to work
  * integrated in Moodle should be placed here.
- * All the workshop specific functions, needed to implement all the module 
- * logic, should go to locallib.php. This will help to save some memory when 
+ * All the workshop specific functions, needed to implement all the module
+ * logic, should go to locallib.php. This will help to save some memory when
  * Moodle is performing actions across all modules.
  *
  * @package   mod-workshop
@@ -39,7 +38,6 @@ define('WORKSHOP_EXAMPLES_VOLUNTARY',           0);
 define('WORKSHOP_EXAMPLES_BEFORE_SUBMISSION',   1);
 define('WORKSHOP_EXAMPLES_BEFORE_ASSESSMENT',   2);
 
-
 /**
  * The internal codes of the required level of assessment similarity
  */
@@ -48,7 +46,6 @@ define('WORKSHOP_COMPARISON_LOW',       1);     /* f = 1.67 */
 define('WORKSHOP_COMPARISON_NORMAL',    2);     /* f = 2.50 */
 define('WORKSHOP_COMPARISON_HIGH',      3);     /* f = 3.00 */
 define('WORKSHOP_COMPARISON_VERYHIGH',  4);     /* f = 5.00 */
-
 
 /**
  * The base class of workshop instances
@@ -83,7 +80,6 @@ class workshop {
         $this->cm = $cm;
     }
 
-
     /**
      * Saves a new instance of the workshop into the database
      *
@@ -105,7 +101,6 @@ class workshop {
     }
 }
 
-
 /**
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
@@ -118,7 +113,6 @@ class workshop {
 function workshop_add_instance($data) {
     return workshop::add_instance($data);
 }
-
 
 /**
  * Given an object containing all the necessary data,
@@ -136,7 +130,6 @@ function workshop_update_instance($workshop) {
 
     return $DB->update_record('workshop', $workshop);
 }
-
 
 /**
  * Given an ID of an instance of this module,
@@ -164,7 +157,6 @@ function workshop_delete_instance($id) {
     return $result;
 }
 
-
 /**
  * Return a small object with summary information about what a
  * user has done with a given particular instance of this module
@@ -182,7 +174,6 @@ function workshop_user_outline($course, $user, $mod, $workshop) {
     return $return;
 }
 
-
 /**
  * Print a detailed representation of what a user has done with
  * a given particular instance of this module, for user activity reports.
@@ -193,7 +184,6 @@ function workshop_user_outline($course, $user, $mod, $workshop) {
 function workshop_user_complete($course, $user, $mod, $workshop) {
     return true;
 }
-
 
 /**
  * Given a course and a time, this module should find recent activity
@@ -207,7 +197,6 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
     return false;  //  True if anything was printed, otherwise false
 }
 
-
 /**
  * Function to be run periodically according to the moodle cron
  * This function searches for things that need to be done, such
@@ -219,7 +208,6 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
 function workshop_cron () {
     return true;
 }
-
 
 /**
  * Must return an array of user records (all data) who are participants
@@ -233,7 +221,6 @@ function workshop_cron () {
 function workshop_get_participants($workshopid) {
     return false;
 }
-
 
 /**
  * This function returns if a scale is being used by one workshop
@@ -257,7 +244,6 @@ function workshop_scale_used($workshopid, $scaleid) {
     return $return;
 }
 
-
 /**
  * Checks if scale is being used by any instance of workshop.
  * This function was added in 1.9
@@ -274,7 +260,6 @@ function workshop_scale_used_anywhere($scaleid) {
     }
 }
 
-
 /**
  * Execute post-install custom actions for the module
  * This function was added in 1.9
@@ -284,7 +269,6 @@ function workshop_scale_used_anywhere($scaleid) {
 function workshop_install() {
     return true;
 }
-
 
 /**
  * Execute post-uninstall custom actions for the module
@@ -296,6 +280,25 @@ function workshop_uninstall() {
     return true;
 }
 
+/**
+ * Returns the information if the module supports a feature
+ *
+ * @see plugin_supports() in lib/moodlelib.php
+ * @todo review and add features
+ * @param string $feature FEATURE_xx constant for requested feature
+ * @return mixed true if the feature is supported, null if unknown
+ */
+function workshop_supports($feature) {
+    switch($feature) {
+        case FEATURE_GROUPS:            return true;
+        case FEATURE_GROUPINGS:         return true;
+        case FEATURE_GROUPMEMBERSONLY:  return true;
+        case FEATURE_MOD_INTRO:         return true;
+        case FEATURE_GRADE_HAS_GRADE:   return true;
+        default:                        return null;
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Other functions needed by Moodle core follows. They can't be put into      //
 // locallib.php because they are used by some core scripts (like modedit.php) //
@@ -305,10 +308,10 @@ function workshop_uninstall() {
 /**
  * Return an array of numeric values that can be used as maximum grades
  *
- * Used at several places where maximum grade for submission and grade for 
+ * Used at several places where maximum grade for submission and grade for
  * assessment are defined via a HTML select form element. By default it returns
  * an array 0, 1, 2, ..., 98, 99, 100.
- * 
+ *
  * @access public
  * @return array Array of integers
  */
@@ -320,7 +323,6 @@ function workshop_get_maxgrades() {
     }
     return $grades;
 }
-
 
 /**
  * Return an array of possible numbers of assessments to be done
@@ -341,10 +343,9 @@ function workshop_get_numbers_of_assessments() {
     return $options;
 }
 
-
 /**
  * Return an array of possible values for weight of teacher assessment
- * 
+ *
  * @return array Array of integers 0, 1, 2, ..., 10
  */
 function workshop_get_teacher_weights() {
@@ -356,10 +357,9 @@ function workshop_get_teacher_weights() {
     return $weights;
 }
 
-
 /**
  * Return an array of possible values of assessment dimension weight
- * 
+ *
  * @return array Array of integers 0, 1, 2, ..., 16
  */
 function workshop_get_dimension_weights() {
@@ -370,7 +370,6 @@ function workshop_get_dimension_weights() {
     }
     return $weights;
 }
-
 
 /**
  * Return an array of the localized grading strategy names
@@ -389,7 +388,6 @@ function workshop_get_strategies() {
     return $forms;
 }
 
-
 /**
  * Return an array of available example assessment modes
  *
@@ -404,7 +402,6 @@ function workshop_get_example_modes() {
 
     return $modes;
 }
-
 
 /**
  * Return array of assessment comparison levels

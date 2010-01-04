@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/  
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,10 +11,9 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 
 /**
  * English strings for Workshop module
@@ -40,18 +39,28 @@ $string[''] = '';
 $string[''] = '';
 $string[''] = '';
 $string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
 $string['accesscontrol'] = 'Access control';
 $string['addmoredimensionsaccumulative'] = 'Blanks for $a more aspects';
 $string['addmoredimensionsnoerrors'] = 'Blanks for $a more assertions';
 $string['addreviewee'] = 'Add reviewee';
 $string['addreviewer'] = 'Add reviewer';
+$string['addselfassessment'] = 'Add self-assessments';
 $string['addsubmissiontoreview'] = 'Assign submission';
 $string['agreeassessments'] = 'Assessments must be agreed';
 $string['agreeassessmentsdesc'] = 'Authors may comment assessments of their work and agree/disagree with it';
+$string['allocationaddeddetail'] = 'New assessment to be done: <strong>$a->reviewername</strong> is reviewer of <strong>$a->authorname</strong>';
 $string['allocationadded'] = 'The submission has been successfully allocated';
+$string['allocationdeallocategraded'] = 'Unable to deallocate already graded assessment: reviewer <strong>$a->reviewername</strong>, submission author: <strong>$a->authorname</strong>';
 $string['allocationexists'] = 'The allocation already exists';
 $string['allocationmanual'] = 'Manual allocation';
 $string['allocationrandom'] = 'Random allocation';
+$string['allocationsettings'] = 'Allocation settings';
 $string['allocation'] = 'Submission allocation';
 $string['allocationview'] = 'View current allocations';
 $string['areyousuretodeallocate'] = 'Are you sure you want deallocate the selected assessment?';
@@ -59,15 +68,14 @@ $string['areyousuretodeallocategraded'] = 'You are going to remove the assessmen
 $string['assessallexamples'] = 'Assess all examples';
 $string['assessingsubmission'] = 'Assessing submission';
 $string['assessmentcomps'] = 'Required level of assessments similarity';
-$string['assessmentdeleted'] = 'Submission deallocated and assessment deleted';
+$string['assessmentdeleted'] = 'Assessment deallocated';
+$string['assessmentdeleteddetail'] = 'Assessment deallocated: <strong>$a->reviewername</strong> is no longer reviewer of <strong>$a->authorname</strong>';
 $string['assessmentend'] = 'End of assessment phase';
 $string['assessmentform'] = 'Assessment form';
 $string['assessmentsettings'] = 'Assessment settings';
 $string['assessmentstart'] = 'Start of assessment phase';
-$string['assesswosubmission'] = 'Assess without submission';
-$string['assesswosubmissiondesc'] = 'Users can assess peers even without their own submission';
+$string['assesswosubmission'] = 'Users can assess without their own submission';
 $string['backtoeditform'] = 'Back to editing form';
-$string['cantassesswosubmission'] = 'Users can\'t assess without own submission in this workshop';
 $string['comparisonhigh'] = 'High';
 $string['comparisonlow'] = 'Low';
 $string['comparisonnormal'] = 'Normal';
@@ -109,6 +117,7 @@ $string['modulenameplural'] = 'Workshops';
 $string['modulename'] = 'Workshop';
 $string['nattachments'] = 'Maximum number of submission attachments';
 $string['nexassessments'] = 'Number of required assessments of examples';
+$string['noallocationtoadd'] = 'No allocations to add';
 $string['noerrorsgrademapping'] = 'Grade mapping table';
 $string['noerrorsgrade0default'] = 'No';
 $string['noerrorsgrade0'] = 'Word for the error';
@@ -121,12 +130,19 @@ $string['nosubmissionfound'] = 'No submission found for this user';
 $string['nosubmissions'] = 'No submissions yet in this workshop';
 $string['nothingtoreview'] = 'Nothing to review';
 $string['nsassessments'] = 'Number of required assessments of other users\' work';
+$string['numofdeallocatedassessment'] = 'Deallocating $a assessment(s)';
+$string['numofreviews'] = 'Number of reviews';
+$string['numofselfallocatedsubmissions'] = 'Self-allocating $a submission(s)';
+$string['numperauthor'] = 'per submission';
+$string['numperreviewer'] = 'per reviewer';
 $string['participant'] = 'Participant';
 $string['participantrevierof'] = 'Participant is reviewer of';
 $string['participantreviewedby'] = 'Participant is reviewed by';
 $string['percents'] = '$a%';
 $string['previewassessmentform'] = 'Preview';
+$string['randomallocationdone'] = 'Random allocation done';
 $string['releasegrades'] = 'Push final grades into the gradebook';
+$string['removecurrentallocations'] = 'Remove current allocations';
 $string['requirepassword'] = 'Require password';
 $string['saveandclose'] = 'Save and close';
 $string['saveandcontinue'] = 'Save and continue editing';
@@ -150,5 +166,6 @@ $string['usepeerassessmentdesc'] = 'Users perform peer assessment of others\' wo
 $string['usepeerassessment'] = 'Use peer assessment';
 $string['useselfassessmentdesc'] = 'Users perform self assessment of their own work';
 $string['useselfassessment'] = 'Use self assessment';
+$string['withoutsubmission'] = 'Warning - reviewer without own submission';
 $string['workshopfeatures'] = 'Workshop features';
 $string['workshopname'] = 'Workshop name';

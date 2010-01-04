@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/  
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,10 +11,9 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 
 /**
  * Submit an assignment or edit the already submitted work
@@ -64,7 +63,7 @@ if ($id) { // submission is specified
     if (!$submission = workshop_get_user_submission($workshop, $USER->id)) {
         $submission = new object();
         $submission->id = null;
-    } 
+    }
 }
 unset($id); // not needed anymore
 
@@ -109,9 +108,9 @@ if ($mform->is_cancelled()) {
     }
 
     // save and relink embedded images and save attachments
-    $submission = file_postupdate_standard_editor($submission, 'data', $dataoptions, $context, 
+    $submission = file_postupdate_standard_editor($submission, 'data', $dataoptions, $context,
                                                     'workshop_submission', $submission->id);
-    $submission = file_postupdate_standard_filemanager($submission, 'attachment', $attachmentoptions, $context, 
+    $submission = file_postupdate_standard_filemanager($submission, 'attachment', $attachmentoptions, $context,
                                                     'workshop_attachment', $submission->id);
 
     // store the updated values or re-save the new submission

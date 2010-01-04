@@ -1,7 +1,7 @@
 <?php
- 
-// This file is part of Moodle - http://moodle.org/  
-// 
+
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,10 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
- 
+
 /**
  * This is a one-line short description of the file
  *
@@ -54,7 +53,7 @@ $navlinks[] = array('name' => get_string('modulenameplural', 'workshop'),
                     'link' => '',
                     'type' => 'activity');
 $navigation = build_navigation($navlinks);
-        
+
 echo $OUTPUT->header($navigation);
 
 /// Get all the appropriate data

@@ -1,7 +1,7 @@
 <?php
- 
-// This file is part of Moodle - http://moodle.org/  
-// 
+
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,10 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
- 
+
 /**
  * This file defines a base class for all assessment forms
  *
@@ -28,19 +27,18 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php'); // parent class definition
 
-
 /**
  * Base class for all assessment forms
  *
- * This defines the common fields that all assessment forms need. 
- * Strategies should define their own class that inherits from this one, and 
+ * This defines the common fields that all assessment forms need.
+ * Strategies should define their own class that inherits from this one, and
  * implements the definition_inner() method.
- * 
+ *
  * @uses moodleform
  */
 class workshop_assessment_form extends moodleform {
 
-    /** object Strategy logic instance */ 
+    /** object Strategy logic instance */
     protected $strategy;
 
     /** array Assessment form fields defined by teacher */
@@ -52,11 +50,11 @@ class workshop_assessment_form extends moodleform {
     /**
      * Add the fields that are common for all grading strategies.
      *
-     * If the strategy does not support all these fields, then you can override 
-     * this method and remove the ones you don't want with 
+     * If the strategy does not support all these fields, then you can override
+     * this method and remove the ones you don't want with
      * $mform->removeElement().
      * Strategy subclassess should define their own fields in definition_inner()
-     * 
+     *
      * @access public
      * @return void
      */
@@ -84,7 +82,6 @@ class workshop_assessment_form extends moodleform {
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
     }
-
 
     /**
      * Add any strategy specific form fields.

@@ -1,7 +1,7 @@
 <?php
- 
-// This file is part of Moodle - http://moodle.org/  
-// 
+
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,10 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
- 
+
 /**
  * Renderer class for the manual allocation UI is defined here
  *
@@ -27,9 +26,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Manual allocation renderer class 
+ * Manual allocation renderer class
  */
-class moodle_mod_workshop_allocation_manual_renderer  {
+class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_base  {
 
     /** the underlying renderer to use */
     protected $output;
@@ -39,7 +38,7 @@ class moodle_mod_workshop_allocation_manual_renderer  {
 
     /**
      * Workshop renderer constructor
-     * 
+     *
      * @param mixed $page the page we are doing output for
      * @param mixed $output lower-level renderer, typically moodle_core_renderer
      * @access public
@@ -50,11 +49,10 @@ class moodle_mod_workshop_allocation_manual_renderer  {
         $this->output = $output;
     }
 
-
     /**
      * Display the table of all current allocations and widgets to modify them
-     * 
-     * @param workshop $workshop workshop instance object 
+     *
+     * @param workshop $workshop workshop instance object
      * @param array $peers prepared array of all allocations
      * @param int $hlauthorid highlight this author
      * @param int $hlreviewerid highlight this reviewer
@@ -63,12 +61,13 @@ class moodle_mod_workshop_allocation_manual_renderer  {
      */
     public function display_allocations(workshop $workshop, &$peers, $hlauthorid=null, $hlreviewerid=null, $msg=null) {
 
+        $wsoutput = $this->page->theme->get_renderer('mod_workshop', $this->page);
         if (empty($peers)) {
-            return $this->status_message((object)array('text' => get_string('nosubmissions', 'workshop')));
+            return $wsoutput->status_message((object)array('text' => get_string('nosubmissions', 'workshop')));
         }
 
         $table              = new html_table();
-        $table->set_classes = array('allocations');
+        $table->set_classes('allocations');
         $table->head        = array(get_string('participantreviewedby', 'workshop'),
                                     get_string('participant', 'workshop'),
                                     get_string('participantrevierof', 'workshop'));
@@ -87,68 +86,53 @@ class moodle_mod_workshop_allocation_manual_renderer  {
             if ($user->id == $hlreviewerid) {
                 $thisrowclasses[] = 'highlightreviewerof';
             }
-            $table->rowclass[] = implode(' ', $thisrowclasses);
+            $table->rowclasses[] = implode(' ', $thisrowclasses);
             $table->data[] = $row;
         }
 
-        return $this->output->container($this->status_message($msg) . $this->output->table($table), 'manual-allocator');
+        return $this->output->container($wsoutput->status_message($msg) . $this->output->table($table), 'manual-allocator');
     }
-
 
     /**
-     * Returns html code for a status message 
-     * 
-     * @param string $message to display
-     * @return string html
+     * Returns information about the workshop participant
+     *
+     * @param stdClass $user participant data
+     * @return string HTML code
      */
-    protected function status_message(stdClass $message) {
-
-        if (empty($message->text)) {
-            return '';
-        }
-        $sty = $message->sty ? $message->sty : 'info';
-
-        $o = '<span>' . $message->text . '</span>';
-        $closer = '<a href="' . $this->page->url->out() . '">' . get_string('messageclose', 'workshop') . '</a>';
-        $o .= $this->output->container($closer, 'status-message-closer');
-        if (isset($message->extra)) {
-            $o .= $message->extra;
-        }
-        return $this->output->container($o, array('status-message', $sty));
-    }
-
-
     protected function participant(stdClass $user) {
-
         $o  = print_user_picture($user, $this->page->course->id, null, 35, true);
         $o .= fullname($user);
-        $o .= '<div class="submission">' . "\n";
+        $o .= $this->output->container_start(array('submission'));
         if (is_null($user->submissionid)) {
-            $o .= '<span class="info">' . get_string('nosubmissionfound', 'workshop');
+            $o .= $this->output->output_tag('span', array('class' => 'info'), get_string('nosubmissionfound', 'workshop'));
         } else {
-            $o .= '<div class="title"><a href="#">' . s($user->submissiontitle) . '</a></div>';
+            $submlink = $this->output->output_tag('a', array('href' => '#'), s($user->submissiontitle));
+            $o .= $this->output->container($submlink, array('title'));
             if (is_null($user->submissiongrade)) {
-                $o .= '<div class="grade missing">' . get_string('nogradeyet', 'workshop') . '</div>';
+                $o .= $this->output->container(get_string('nogradeyet', 'workshop'), array('grade', 'missing'));
             } else {
-                $o .= '<div class="grade">' . s($user->submissiongrade) . '</div>'; // todo calculate
+                $o .= $this->output->container(s($user->submissiongrade), array('grade')); // TODO calculate grade
             }
         }
-        $o .= '</div>' . "\n";
-    
+        $o .= $this->output->container_end();
         return $o;
     }
 
-
-    protected function reviewers_of_participant(stdClass $user, workshop $workshop, &$peers) {
-
+    /**
+     * Returns information about the current reviewers of the given participant and a selector do add new one
+     *
+     * @param stdClass $user         participant data
+     * @param workshop_api $workshop workshop record
+     * @param array $peers           objects with properties to display picture and fullname
+     * @return string html code
+     */
+    protected function reviewers_of_participant(stdClass $user, workshop_api $workshop, &$peers) {
         $o = '';
         if (is_null($user->submissionid)) {
-            $o .= '<span class="info">' . "\n";
-            $o .= get_string('nothingtoreview', 'workshop');
-            $o .= '</span>' . "\n";
+            $o .= $this->output->output_tag('span', array('class' => 'info'), get_string('nothingtoreview', 'workshop'));
         } else {
             $options = array();
-            foreach ($workshop->get_peer_reviewers() as $reviewer) {
+            foreach ($workshop->get_peer_reviewers(!$workshop->assesswosubmission) as $reviewer) {
                 $options[$reviewer->id] = fullname($reviewer);
             }
             if (!$workshop->useselfassessment) {
@@ -156,73 +140,66 @@ class moodle_mod_workshop_allocation_manual_renderer  {
                 if (isset($options[$user->id])) {
                     unset($options[$user->id]);
                 }
-            }   
+            }
             $handler = $this->page->url->out_action() . '&amp;mode=new&amp;of=' . $user->id . '&amp;by=';
             $o .= popup_form($handler, $options, 'addreviewof' . $user->id, '',
                      get_string('chooseuser', 'workshop'), '', '', true, 'self', get_string('addreviewer', 'workshop'));
         }
-        $o .= '<ul>' . "\n";
+        $o .= $this->output->output_start_tag('ul', array());
         foreach ($user->reviewedby as $reviewerid => $assessmentid) {
-            $o .= '<li>';
+            $o .= $this->output->output_start_tag('li', array());
             $o .= print_user_picture($peers[$reviewerid], $this->page->course->id, null, 16, true);
             $o .= fullname($peers[$reviewerid]);
 
             $handler = $this->page->url->out_action(array('mode' => 'del', 'what' => $assessmentid));
-            $o .= '<a class="action" href="' . $handler . '"> X </a>';
+            $o .= $this->output->output_tag('a', array('href' => $handler), ' X ');
 
-            $o .= '</li>';
+            $o .= $this->output->output_end_tag('li');
         }
-        $o .= '</ul>' . "\n";
-
+        $o .= $this->output->output_end_tag('ul');
         return $o;
     }
 
-
-    protected function reviewees_of_participant(stdClass $user, workshop $workshop, &$peers) {
-
+    /**
+     * Returns information about the current reviewees of the given participant and a selector do add new one
+     *
+     * @param stdClass $user         participant data
+     * @param workshop_api $workshop workshop record
+     * @param array $peers           objects with properties to display picture and fullname
+     * @return string html code
+     */
+    protected function reviewees_of_participant(stdClass $user, workshop_api $workshop, &$peers) {
         $o = '';
-        if (!$workshop->assesswosubmission && is_null($user->submissionid)) {
-            $o .= '<span class="info">' . "\n";
-            $o .= get_string('cantassesswosubmission', 'workshop');
-            $o .= '</span>' . "\n";
-        } else {
-            $options = array();
-            foreach ($workshop->get_peer_authors(true) as $author) {
-                $options[$author->id] = fullname($author);
-            }
-            if (!$workshop->useselfassessment) {
-                // students can not be reviewed by themselves in this workshop
-                if (isset($options[$user->id])) {
-                    unset($options[$user->id]);
-                }
-            }
-
-            $handler = $this->page->url->out_action() . '&mode=new&amp;by=' . $user->id . '&amp;of=';
-            $o .= popup_form($handler, $options, 'addreviewby' . $user->id, '', 
-                        get_string('chooseuser', 'workshop'), '', '', true, 'self', get_string('addreviewee', 'workshop'));
-            $o .= '<ul>' . "\n";
-            foreach ($user->reviewerof as $authorid => $assessmentid) {
-                $o .= '<li>';
-                $o .= print_user_picture($peers[$authorid], $this->page->course->id, null, 16, true);
-                $o .= fullname($peers[$authorid]);
-
-                // delete
-                $handler = $this->page->url->out_action(array('mode' => 'del', 'what' => $assessmentid));
-                $o .= '<a class="action" href="' . $handler . '"> X </a>'; // todo icon and link title
-
-                $o .= '</li>';
-            }
-            $o .= '</ul>' . "\n";
+        if (is_null($user->submissionid)) {
+            $o .= $this->output->container(get_string('withoutsubmission', 'workshop'), 'info');
         }
+        $options = array();
+        foreach ($workshop->get_peer_authors() as $author) {
+            $options[$author->id] = fullname($author);
+        }
+        if (!$workshop->useselfassessment) {
+            // students can not be reviewed by themselves in this workshop
+            if (isset($options[$user->id])) {
+                unset($options[$user->id]);
+            }
+        }
+        $handler = $this->page->url->out_action() . '&mode=new&amp;by=' . $user->id . '&amp;of=';
+        $o .= popup_form($handler, $options, 'addreviewby' . $user->id, '',
+                    get_string('chooseuser', 'workshop'), '', '', true, 'self', get_string('addreviewee', 'workshop'));
+        $o .= $this->output->output_start_tag('ul', array());
+        foreach ($user->reviewerof as $authorid => $assessmentid) {
+            $o .= $this->output->output_start_tag('li', array());
+            $o .= print_user_picture($peers[$authorid], $this->page->course->id, null, 16, true);
+            $o .= fullname($peers[$authorid]);
 
+            // delete
+            $handler = $this->page->url->out_action(array('mode' => 'del', 'what' => $assessmentid));
+            $o .= $this->output->output_tag('a', array('href' => $handler), ' X ');
+
+            $o .= $this->output->output_end_tag('li');
+        }
+        $o .= $this->output->output_end_tag('ul');
         return $o;
     }
 
 }
-
-
-
-
-
-
-

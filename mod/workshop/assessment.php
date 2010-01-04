@@ -1,7 +1,7 @@
 <?php
- 
-// This file is part of Moodle - http://moodle.org/  
-// 
+
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,10 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
- 
+
 /**
  * Assess a submission or preview the assessment form
  *
@@ -57,10 +56,10 @@ if ($preview = optional_param('preview', 0, PARAM_INT)) {
     }
     if (!$cm = get_coursemodule_from_instance('workshop', $workshop->id, $workshop->course)) {
         print_error('invalidcoursemodule');
-    }   
+    }
     if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
         print_error('coursemisconf');
-    }   
+    }
 }
 
 require_login($course, false, $cm);
@@ -93,8 +92,6 @@ $strategy = $workshop->grading_strategy_instance();
 
 //todo $formdata = $strategy->load_assessment($assessment);
 
-
-
 // load the form to edit the grading strategy dimensions
 $mform = $strategy->get_assessment_form($selfurl, $mode);
 
@@ -118,21 +115,21 @@ if ($mform->is_cancelled()) {
 
 // build the navigation and the header
 $navlinks = array();
-$navlinks[] = array('name' => get_string('modulenameplural', 'workshop'), 
-                    'link' => "index.php?id=$course->id", 
+$navlinks[] = array('name' => get_string('modulenameplural', 'workshop'),
+                    'link' => "index.php?id=$course->id",
                     'type' => 'activity');
-$navlinks[] = array('name' => format_string($workshop->name), 
+$navlinks[] = array('name' => format_string($workshop->name),
                     'link' => "view.php?id=$cm->id",
                     'type' => 'activityinstance');
 if ($mode == 'preview') {
-    $navlinks[] = array('name' => get_string('editingassessmentform', 'workshop'),       
+    $navlinks[] = array('name' => get_string('editingassessmentform', 'workshop'),
                         'link' => $editurl,
                         'type' => 'title');
-    $navlinks[] = array('name' => get_string('previewassessmentform', 'workshop'), 
+    $navlinks[] = array('name' => get_string('previewassessmentform', 'workshop'),
                         'link' => '',
                         'type' => 'title');
 } elseif ($mode == 'assessment') {
-    $navlinks[] = array('name' => get_string('assessingsubmission', 'workshop'), 
+    $navlinks[] = array('name' => get_string('assessingsubmission', 'workshop'),
                         'link' => '',
                         'type' => 'title');
 }
