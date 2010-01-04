@@ -316,14 +316,18 @@ function workshop_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
 }
 
-////////////////////////////////
-/// File API ///////////////////
-////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// File API                                                                   //
+////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Serves the submission attachments
+ * Serves the files from the workshop file areas
  *
- * The access rights to the file are checked here.
+ * Apart from module intro (handled by pluginfile.php automatically), workshop files may be
+ * media inserted into submission content (like images) and submission attachments. For these two,
+ * the fileareas workshop_submission_content and workshop_submission_attachment are used.
+ * The access rights to the files are checked here. The user must be either a peer-reviewer
+ * of the submission or have capability ... (todo) to access the submission files.
  *
  * @param object $course
  * @param object $cminfo

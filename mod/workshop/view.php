@@ -42,18 +42,17 @@ if ($id) {
     $cm         = get_coursemodule_from_instance('workshop', $workshop->id, $course->id, false, MUST_EXIST);
 }
 
-$workshop = new workshop_api($workshop, $cm, $course);
 require_login($course, true, $cm);
-$context = $PAGE->context;
+$workshop = new workshop_api($workshop, $cm, $course);
 
 // todo has_capability() check using something like
 // if (!(($workshop->is_open() && has_capability('mod/workshop:view')) || has_capability(...) || has_capability(...))) {
 //      unable to view this page
 //
 
-add_to_log($course->id, "workshop", "view", "view.php?id=$cm->id", "$workshop->id");
+// todo logging add_to_log($course->id, "workshop", "view", "view.php?id=$cm->id", "$workshop->id");
 
-$PAGE->set_url('mod/workshop/view.php', array('id' => $cm->id));
+$PAGE->set_url($workshop->view_url());
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_button(update_module_button($cm->id, $course->id, get_string('modulename', 'workshop')));
@@ -69,18 +68,16 @@ $navlinks[] = array('name' => format_string($workshop->name),
 $navigation = build_navigation($navlinks);
 $menu       = navmenu($course, $cm);
 
-$output = $THEME->get_renderer('mod_workshop', $PAGE);
+/// Output starts here
 
 echo $OUTPUT->header($navigation, $menu);
 
-echo $OUTPUT->heading('Workshop administration tools', 3);
-
 /// Print the main part of the page - todo these are just links to help during development
-
+echo $OUTPUT->heading('Workshop administration tools', 3);
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading('Workshop administration tools', 3);
 echo '<ul>';
-echo "<li><a href=\"editform.php?cmid={$cm->id}\">Edit grading form (".get_string('strategy' . $workshop->strategy, 'workshop').")</a></li>";
+echo '<li><a href="' . $workshop->editform_url()->out()  . '">Edit grading form (' . get_string('strategy' . $workshop->strategy, 'workshop') . ')</a></li>';
 echo "<li><a href=\"allocation.php?cmid={$cm->id}\">Allocate submissions</a></li>";
 echo "<li><a href=\"develtools.php?cmid={$cm->id}\">Development tools</a></li>";
 echo '</ul>';

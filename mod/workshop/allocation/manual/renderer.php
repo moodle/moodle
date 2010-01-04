@@ -131,10 +131,7 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
         if (is_null($user->submissionid)) {
             $o .= $this->output->output_tag('span', array('class' => 'info'), get_string('nothingtoreview', 'workshop'));
         } else {
-            $options = array();
-            foreach ($workshop->get_peer_reviewers(!$workshop->assesswosubmission) as $reviewer) {
-                $options[$reviewer->id] = fullname($reviewer);
-            }
+            $options = $this->users_to_menu_options($workshop->get_peer_reviewers(!$workshop->assesswosubmission));
             if (!$workshop->useselfassessment) {
                 // students can not review their own submissions in this workshop
                 if (isset($options[$user->id])) {
@@ -173,10 +170,7 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
         if (is_null($user->submissionid)) {
             $o .= $this->output->container(get_string('withoutsubmission', 'workshop'), 'info');
         }
-        $options = array();
-        foreach ($workshop->get_peer_authors() as $author) {
-            $options[$author->id] = fullname($author);
-        }
+        $options = $this->users_to_menu_options($workshop->get_peer_authors());
         if (!$workshop->useselfassessment) {
             // students can not be reviewed by themselves in this workshop
             if (isset($options[$user->id])) {
@@ -200,6 +194,20 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
         }
         $o .= $this->output->output_end_tag('ul');
         return $o;
+    }
+
+    /**
+     * Given a list of users, returns an array suitable to render the HTML select field
+     *
+     * @param array $users array of users or array of groups of users
+     * @return array of options to be passed to {@see popup_form()}
+     */
+    protected function users_to_menu_options(&$users) {
+        $options = array();
+        foreach ($users as $user) {
+            $options[$user->id] = fullname($user);
+        }
+        return $options;
     }
 
 }

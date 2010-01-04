@@ -84,8 +84,10 @@ class workshop_random_allocator implements workshop_allocator {
             $musthavesubmission = empty($assesswosubmission);
             $addselfassessment  = required_param('addselfassessment', PARAM_INT);
 
-            $authors            = $this->workshop->get_peer_authors_by_group();
-            $reviewers          = $this->workshop->get_peer_reviewers_by_group($musthavesubmission);
+            $authors            = $this->workshop->get_peer_authors();
+            $authors            = $this->workshop->get_grouped($authors);
+            $reviewers          = $this->workshop->get_peer_reviewers($musthavesubmission);
+            $reviewers          = $this->workshop->get_grouped($reviewers);
             $assessments        = $this->workshop->get_assessments();
 
             $newallocations     = array();      // array of (reviewer,reviewee) tuples

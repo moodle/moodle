@@ -154,10 +154,10 @@ abstract class workshop_base_strategy implements workshop_strategy {
      * By default, the class is defined in grading/{strategy}/assessment_form.php and is named
      * workshop_{strategy}_assessment_form
      *
-     * @param string $actionurl URL of form handler, defaults to auto detect the current url
+     * @param moodle_url $actionurl URL of form handler, defaults to auto detect the current url
      * @param string $mode Mode to open the form in: preview/assessment
      */
-    public function get_assessment_form($actionurl=null, $mode='preview') {
+    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview') {
         global $CFG;    // needed because the included files use it
 
         $assessmentform = dirname(__FILE__) . '/' . $this->name . '/assessment_form.php';

@@ -26,26 +26,20 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
-$cmid = required_param('cmid', PARAM_INT);            // course module id
+$cmid       = required_param('cmid', PARAM_INT);
 
 $cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
 $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
-if (isguestuser()) {
-    print_error('guestnoedit', 'workshop', "$CFG->wwwroot/mod/workshop/view.php?id=$cmid");
-}
 require_capability('mod/workshop:editdimensions', $PAGE->context);
 
 $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
 $workshop   = new workshop_api($workshop, $cm, $course);
 
-// where should the user be sent after closing the editing form
-$returnurl  = "{$CFG->wwwroot}/mod/workshop/view.php?id={$cm->id}";
-// the URL of this editing form
-$selfurl    = "{$CFG->wwwroot}/mod/workshop/editform.php?cmid={$cm->id}";
-// the URL to preview the assessment form
-$previewurl = "{$CFG->wwwroot}/mod/workshop/assessment.php?preview={$cm->id}";
+$PAGE->set_url($workshop->editform_url());
+$PAGE->set_title($workshop->name);
+$PAGE->set_heading($course->fullname);
 
 // load the grading strategy logic
 $strategy = $workshop->grading_strategy_instance();
@@ -56,22 +50,22 @@ $strategy = $workshop->grading_strategy_instance();
 $formdata = $strategy->load_form();
 
 // load the form to edit the grading strategy dimensions
-$mform = $strategy->get_edit_strategy_form($selfurl);
+$mform = $strategy->get_edit_strategy_form($PAGE->url);
 
 // initialize form data
 $mform->set_data($formdata);
 
 if ($mform->is_cancelled()) {
-    redirect($returnurl);
+    redirect($workshop->view_url());
 } elseif ($data = $mform->get_data()) {
     $strategy->save_form($data);
     if (isset($data->saveandclose)) {
-        redirect($returnurl);
+        redirect($workshop->view_url());
     } elseif (isset($data->saveandpreview)) {
-        redirect($previewurl);
+        redirect($workshop->previewform_url());
     } else {
         // save and continue - redirect to self to prevent data being re-posted by pressing "Reload"
-        redirect($selfurl);
+        redirect($PAGE->url);
     }
 }
 

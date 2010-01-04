@@ -30,58 +30,42 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
 if ($preview = optional_param('preview', 0, PARAM_INT)) {
-    $mode = 'preview';
-    if (!$cm = get_coursemodule_from_id('workshop', $preview)) {
-        print_error('invalidcoursemodule');
-    }
-    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error('coursemisconf');
-    }
-    if (!$workshop = $DB->get_record('workshop', array('id' => $cm->instance))) {
-        print_error('err_invalidworkshopid', 'workshop');
-    }
+    $mode       = 'preview';
+    $cm         = get_coursemodule_from_id('workshop', $preview, 0, false, MUST_EXIST);
+    $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
     $submission = new stdClass();
     $assessment = new stdClass();
+
 } else {
-    $mode = 'assessment';
-    $assessmentid = required_param('asid', PARAM_INT);  // assessment id
-    if (!$assessment = $DB->get_record('workshop_assessments', array('id' => $assessmentid))) {
-        print_error('err_unknownassessment', 'workshop');
-    }
-    if (!$submission = $DB->get_record('workshop_submissions', array('id' => $assessment->submissionid))) {
-        print_error('err_unknownsubmission', 'workshop');
-    }
-    if (!$workshop = $DB->get_record('workshop', array('id' => $submission->workshopid))) {
-        print_error('err_invalidworkshopid', 'workshop');
-    }
-    if (!$cm = get_coursemodule_from_instance('workshop', $workshop->id, $workshop->course)) {
-        print_error('invalidcoursemodule');
-    }
-    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error('coursemisconf');
-    }
+    $mode       = 'assessment';
+    $asid       = required_param('asid', PARAM_INT);  // assessment id
+    $assessment = $DB->get_record('workshop_assessments', array('id' => $asid), '*', MUST_EXIST);
+    $submission = $DB->get_record('workshop_submissions', array('id' => $assessment->submissionid), '*', MUST_EXIST);
+    $workshop   = $DB->get_record('workshop', array('id' => $submission->workshopid), '*', MUST_EXIST);
+    $course     = $DB->get_record('course', array('id' => $workshop->course), '*', MUST_EXIST);
+    $cm         = get_coursemodule_from_instance('workshop', $workshop->id, $course->id, false, MUST_EXIST);
 }
 
 require_login($course, false, $cm);
-
 $workshop = new workshop_api($workshop, $cm, $course);
 
-$context = $PAGE->context;
+if ('preview' == $mode) {
+    require_capability('mod/workshop:editdimensions', $PAGE->context);
+    // TODO logging add_to_log($course->id, "workshop", "view", "view.php?id=$cm->id", "$workshop->id");
+    $PAGE->set_url($workshop->previewform_url());
+    $PAGE->set_title($workshop->name);
+    $PAGE->set_heading($course->fullname);
 
-if (isguestuser()) {
-    print_error('err_noguests', 'workshop', "$CFG->wwwroot/mod/workshop/view.php?id=$cmid");
+} elseif ('assessment' == $mode) {
+    if (!(has_capability('mod/workshop:peerassess', $PAGE->context) || has_capability('mod/workshop:peerassess', $PAGE->context))) {
+        print_error('nopermissions', '', $workshop->view_url());
+    }
+    // TODO logging add_to_log($course->id, "workshop", "view", "view.php?id=$cm->id", "$workshop->id");
+    $PAGE->set_url($workshop->assess_url($assessment->id));
+    $PAGE->set_title($workshop->name);
+    $PAGE->set_heading($course->fullname);
 }
-
-// where should the user be sent after closing the assessment form
-$returnurl = "{$CFG->wwwroot}/mod/workshop/view.php?id={$cm->id}";
-// the URL of this handler
-if ($mode == 'preview') {
-    $selfurl = "{$CFG->wwwroot}/mod/workshop/assessment.php?preview={$cm->id}";
-} elseif ($mode == 'assessment') {
-    $selfurl = "{$CFG->wwwroot}/mod/workshop/assessment.php?asid={$assessment->id}";
-}
-// the URL to edit this assessment form
-$editurl = "{$CFG->wwwroot}/mod/workshop/editform.php?cmid={$cm->id}";
 
 // load the grading strategy logic
 $strategy = $workshop->grading_strategy_instance();
@@ -93,23 +77,24 @@ $strategy = $workshop->grading_strategy_instance();
 //todo $formdata = $strategy->load_assessment($assessment);
 
 // load the form to edit the grading strategy dimensions
-$mform = $strategy->get_assessment_form($selfurl, $mode);
+$mform = $strategy->get_assessment_form($PAGE->url, $mode);
 
 // initialize form data
 //todo $mform->set_data($formdata);
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
+
 } elseif ($data = $mform->get_data()) {
     if (isset($data->backtoeditform)) {
-        redirect($editurl);
+        redirect($workshop->editform_url());
     }
     $strategy->save_assessment($data);
     if (isset($data->saveandclose)) {
-        redirect($returnurl);
+        redirect($workshop->view_url());
     } else {
         // save and continue - redirect to self to prevent data being re-posted by pressing "Reload"
-        redirect($selfurl);
+        redirect($PAGE->url->out());
     }
 }
 
@@ -123,7 +108,7 @@ $navlinks[] = array('name' => format_string($workshop->name),
                     'type' => 'activityinstance');
 if ($mode == 'preview') {
     $navlinks[] = array('name' => get_string('editingassessmentform', 'workshop'),
-                        'link' => $editurl,
+                        'link' => $workshop->editform_url(),
                         'type' => 'title');
     $navlinks[] = array('name' => get_string('previewassessmentform', 'workshop'),
                         'link' => '',
@@ -135,13 +120,18 @@ if ($mode == 'preview') {
 }
 $navigation = build_navigation($navlinks);
 
-// OUTPUT STARTS HERE
+// Output starts here
 
-print_header_simple(format_string($workshop->name), '', $navigation, '', '', true, '', navmenu($course, $cm));
-
-print_heading(get_string('assessmentform', 'workshop'));
-
+$wsoutput = $THEME->get_renderer('mod_workshop', $PAGE);    // workshop renderer
+echo $OUTPUT->header($navigation);
+echo $OUTPUT->heading(get_string('assessmentform', 'workshop'), 2);
+if (has_capability('mod/workshop:viewauthornames', $PAGE->context)) {
+    $showname   = true;
+    $author     = $workshop->user_info($submission->userid);
+} else {
+    $showname   = false;
+    $author     = null;
+}
+echo $wsoutput->submission_full($submission, $showname, $author);
 $mform->display();
-
-/// Finish the page
-print_footer($course);
+echo $OUTPUT->footer();

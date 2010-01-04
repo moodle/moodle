@@ -25,9 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
+$string['userdatecreated'] = 'submitted on <span>$a</span>';
+$string['userdatemodified'] = 'modified on <span>$a</span>';
+$string['byfullname'] = 'by <a href=\"{$a->url}\">{$a->name}</a>';
 $string[''] = '';
 $string[''] = '';
 $string[''] = '';

@@ -35,10 +35,10 @@ $cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
 $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
-if (isguestuser()) {
-    print_error('guestnoedit', 'workshop', "$CFG->wwwroot/mod/workshop/view.php?id=$cmid");
-}
 require_capability('mod/workshop:submit', $PAGE->context);
+if (isguestuser()) {
+    print_error('guestsarenotallowed');
+}
 
 $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
 $workshop   = new workshop_api($workshop, $cm, $course);

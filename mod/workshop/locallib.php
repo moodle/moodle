@@ -78,7 +78,10 @@ class workshop_api extends workshop {
         }
 
         if ($musthavesubmission && is_null($userswithsubmission)) {
-            $userswithsubmission = $DB->get_records_list('workshop_submissions', 'userid', array_keys($users),'', 'userid');
+            $submissions = $DB->get_records_list('workshop_submissions', 'userid', array_keys($users),'', 'id,userid');
+            foreach ($submissions as $submission) {
+                $userswithsubmission[$submission->userid] = null;
+            }
             $userswithsubmission = array_intersect_key($users, $userswithsubmission);
         }
 
@@ -90,55 +93,13 @@ class workshop_api extends workshop {
     }
 
     /**
-     * Returns all users with the capability mod/workshop:submit sorted by groups
-     *
-     * This takes the module grouping settings into account. If "Available for group members only"
-     * is set, returns only groups withing the course module grouping.
-     *
-     * @param bool $musthavesubmission If true, return only users who have already submitted. All possible authors otherwise.
-     * @return array array[groupid][userid] => stdClass{->id ->lastname ->firstname}
-     */
-    public function get_peer_authors_by_group($musthavesubmission=true) {
-        global $DB;
-
-        $authors    = $this->get_peer_authors($musthavesubmission);
-        $gauthors   = array();  // grouped authors to be returned
-        if (empty($authors)) {
-            return $gauthors;
-        }
-        if ($this->cm->groupmembersonly) {
-            // Available for group members only - the workshop is available only
-            // to users assigned to groups within the selected grouping, or to
-            // any group if no grouping is selected.
-            $groupingid = $this->cm->groupingid;
-            // All authors that are members of at least one group will be
-            // added into a virtual group id 0
-            $gauthors[0] = array();
-        } else {
-            $groupingid = 0;
-            // there is no need to be member of a group so $gauthors[0] will contain
-            // all authors with a submission
-            $gauthors[0] = $authors;
-        }
-        $gmemberships = groups_get_all_groups($this->cm->course, array_keys($authors), $groupingid,
-                            'gm.id,gm.groupid,gm.userid');
-        foreach ($gmemberships as $gmembership) {
-            if (!isset($gauthors[$gmembership->groupid])) {
-                $gauthors[$gmembership->groupid] = array();
-            }
-            $gauthors[$gmembership->groupid][$gmembership->userid]  = $authors[$gmembership->userid];
-            $gauthors[0][$gmembership->userid]                      = $authors[$gmembership->userid];
-        }
-        return $gauthors;
-    }
-
-    /**
      * Fetches all users with the capability mod/workshop:peerassess in the current context
      *
      * Static variable used to cache the results. The returned objects contain id, lastname
      * and firstname properties and are ordered by lastname,firstname
      *
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible users otherwise.
+     * @see get_super_reviewers()
      * @return array array[userid] => stdClass{->id ->lastname ->firstname}
      */
     public function get_peer_reviewers($musthavesubmission=false) {
@@ -152,7 +113,10 @@ class workshop_api extends workshop {
                         'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
             if ($musthavesubmission && is_null($userswithsubmission)) {
                 // users without their own submission can not be reviewers
-                $userswithsubmission = $DB->get_records_list('workshop_submissions', 'userid', array_keys($users),'', 'userid');
+                $submissions = $DB->get_records_list('workshop_submissions', 'userid', array_keys($users),'', 'id,userid');
+                foreach ($submissions as $submission) {
+                    $userswithsubmission[$submission->userid] = null;
+                }
                 $userswithsubmission = array_intersect_key($users, $userswithsubmission);
             }
         }
@@ -164,46 +128,68 @@ class workshop_api extends workshop {
     }
 
     /**
-     * Returns all users with the capability mod/workshop:peerassess sorted by groups
+     * Fetches all users with the capability mod/workshop:assessallsubmissions in the current context
      *
-     * This takes the module grouping settings into account. If "Available for group members only"
-     * is set, returns only groups withing the course module grouping.
+     * Static variable used to cache the results. The returned objects contain id, lastname
+     * and firstname properties and are ordered by lastname,firstname
      *
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible users otherwise.
+     * @see get_peer_reviewers()
+     * @return array array[userid] => stdClass{->id ->lastname ->firstname}
+     */
+    public function get_super_reviewers() {
+        global $DB;
+        static $users = null;
+
+        if (is_null($users)) {
+            $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+            $users = get_users_by_capability($context, 'mod/workshop:assessallsubmissions',
+                        'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
+        }
+        return $users;
+    }
+
+    /**
+     * Groups the given users by the group membership
+     *
+     * This takes the module grouping settings into account. If "Available for group members only"
+     * is set, returns only groups withing the course module grouping. Always returns group [0] with
+     * all the given users.
+     *
+     * @param array $users array[userid] => stdClass{->id ->lastname ->firstname}
      * @return array array[groupid][userid] => stdClass{->id ->lastname ->firstname}
      */
-    public function get_peer_reviewers_by_group($musthavesubmission=false) {
+    public function get_grouped(&$users) {
         global $DB;
 
-        $reviewers  = $this->get_peer_reviewers($musthavesubmission);
-        $greviewers = array();  // grouped reviewers to be returned
-        if (empty($reviewers)) {
-            return $greviewers;
+        $grouped = array();  // grouped users to be returned
+        if (empty($users)) {
+            return $grouped;
         }
         if ($this->cm->groupmembersonly) {
             // Available for group members only - the workshop is available only
             // to users assigned to groups within the selected grouping, or to
             // any group if no grouping is selected.
             $groupingid = $this->cm->groupingid;
-            // All reviewers that are members of at least one group will be
+            // All users that are members of at least one group will be
             // added into a virtual group id 0
-            $greviewers[0] = array();
+            $grouped[0] = array();
         } else {
             $groupingid = 0;
-            // there is no need to be member of a group so $greviewers[0] will contain
-            // all reviewers
-            $greviewers[0] = $reviewers;
+            // there is no need to be member of a group so $grouped[0] will contain
+            // all users
+            $grouped[0] = $users;
         }
-        $gmemberships = groups_get_all_groups($this->cm->course, array_keys($reviewers), $groupingid,
+        $gmemberships = groups_get_all_groups($this->cm->course, array_keys($users), $groupingid,
                             'gm.id,gm.groupid,gm.userid');
         foreach ($gmemberships as $gmembership) {
-            if (!isset($greviewers[$gmembership->groupid])) {
-                $greviewers[$gmembership->groupid] = array();
+            if (!isset($grouped[$gmembership->groupid])) {
+                $grouped[$gmembership->groupid] = array();
             }
-            $greviewers[$gmembership->groupid][$gmembership->userid] = $reviewers[$gmembership->userid];
-            $greviewers[0][$gmembership->userid] = $reviewers[$gmembership->userid];
+            $grouped[$gmembership->groupid][$gmembership->userid] = $users[$gmembership->userid];
+            $grouped[0][$gmembership->userid] = $users[$gmembership->userid];
         }
-        return $greviewers;
+        return $grouped;
     }
 
     /**
@@ -334,11 +320,12 @@ class workshop_api extends workshop {
      * mainly they do not contain text fields.
      *
      * @param mixed $reviewerid 'all'|int|array User ID of the reviewer
+     * @param mixed $id         'all'|int Assessment ID
      * @return array [assessmentid] => assessment object
      * @see workshop_api::get_assessments_recordset() for the structure of returned objects
      */
-    public function get_assessments($reviewerid='all') {
-        $rs = $this->get_assessments_recordset($reviewerid, 'all');
+    public function get_assessments($reviewerid='all', $id='all') {
+        $rs = $this->get_assessments_recordset($reviewerid, $id);
         $assessments = array();
         foreach ($rs as $assessment) {
             // copy selected properties into the array to be returned. This is here mainly in order not
@@ -543,6 +530,55 @@ class workshop_api extends workshop {
         }
         $classname = 'workshop_' . $method . '_allocator';
         return new $classname($this);
+    }
+
+    /**
+     * @return object {@link moodle_url} the URL of this workshop's view page
+     */
+    public function view_url() {
+        global $CFG;
+        return new moodle_url($CFG->wwwroot . '/mod/workshop/view.php', array('id' => $this->cm->id));
+    }
+
+    /**
+     * @return object {@link moodle_url} the URL of the page for editing this workshop's grading form
+     */
+    public function editform_url() {
+        global $CFG;
+        return new moodle_url($CFG->wwwroot . '/mod/workshop/editform.php', array('cmid' => $this->cm->id));
+    }
+
+    /**
+     * @return object {@link moodle_url} the URL of the page for previewing this workshop's grading form
+     */
+    public function previewform_url() {
+        global $CFG;
+        return new moodle_url($CFG->wwwroot . '/mod/workshop/assessment.php', array('preview' => $this->cm->id));
+    }
+
+    /**
+     * @param int $assessmentid The ID of assessment record
+     * @return object {@link moodle_url} the URL of the assessment page
+     */
+    public function assess_url() {
+        global $CFG;
+        return new moodle_url($CFG->wwwroot . '/mod/workshop/assessment.php', array('asid' => $this->cm->id));
+    }
+
+    /**
+     * Returns an object containing all data to display the user's full name and picture
+     *
+     * @param int $id optional user id, defaults to the current user
+     * @return object containing properties lastname, firstname, picture and imagealt
+     */
+    public function user_info($id=null) {
+        global $USER, $DB;
+
+        if (is_null($id) || ($id == $USER->id)) {
+            return $USER;
+        } else {
+            return $DB->get_record('user', array('id' => $id), 'id,lastname,firstname,picture,imagealt', MUST_EXIST);
+        }
     }
 
 }
