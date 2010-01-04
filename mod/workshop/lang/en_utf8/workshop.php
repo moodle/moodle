@@ -42,7 +42,6 @@ $string['allocatedetails'] = 'expected: $a->expected<br />submitted: $a->submitt
 $string['allocationdone'] = 'Allocation done';
 $string['allocationerror'] = 'Allocation error';
 $string['allocation'] = 'Submission allocation';
-$string['areadimensiondescription'] = 'Assessment form fields';
 $string['areasubmissionattachment'] = 'Submission attachments';
 $string['areasubmissioncontent'] = 'Submission texts';
 $string['assessallexamples'] = 'Assess all examples';

@@ -40,16 +40,16 @@ $inactive   = array();
 $activated  = array();
 
 // top level tabs
-if (has_capability('mod/workshop:view', $workshop->context)) {
+if (has_capability('mod/workshop:view', $PAGE->context)) {
     $row[] = new tabobject('info', $workshop->view_url()->out(), get_string('info', 'workshop'));
 }
-if (has_capability('mod/workshop:editdimensions', $workshop->context)) {
+if (has_capability('mod/workshop:editdimensions', $PAGE->context)) {
     $row[] = new tabobject('editform', $workshop->editform_url()->out(), get_string('editassessmentform', 'workshop'));
 }
-if (has_capability('mod/workshop:submit', $workshop->context)) {
+if (has_capability('mod/workshop:submit', $PAGE->context)) {
     $row[] = new tabobject('submission', $workshop->submission_url()->out(), get_string('submission', 'workshop'));
 }
-if (has_capability('mod/workshop:allocate', $workshop->context)) {
+if (has_capability('mod/workshop:allocate', $PAGE->context)) {
     $row[] = new tabobject('allocation', $workshop->allocation_url()->out(), get_string('allocate', 'workshop'));
 }
 if (has_capability('moodle/site:config', get_system_context())) {

@@ -72,22 +72,17 @@ class workshop_random_allocator_form extends moodleform {
         $mform->setDefault('numper', workshop_random_allocator::USERTYPE_AUTHOR);
         $mform->addGroup($grpnumofreviews, 'grpnumofreviews', get_string('numofreviews', 'workshop'), array(' '), false);
 
-        $mform->addElement('advcheckbox', 'removecurrent', get_string('removecurrentallocations', 'workshopallocation_random'));
+        $mform->addElement('checkbox', 'removecurrent', get_string('removecurrentallocations', 'workshopallocation_random'));
         $mform->setDefault('removecurrent', 0);
 
-        $mform->addElement('advcheckbox', 'assesswosubmission', get_string('assesswosubmission', 'workshopallocation_random'));
+        $mform->addElement('checkbox', 'assesswosubmission', get_string('assesswosubmission', 'workshopallocation_random'));
         $mform->setDefault('assesswosubmission', 0);
 
-        $grpselfassessment = array();
-        $grpselfassessment[] = $mform->createElement('advcheckbox', 'addselfassessment');
-        $mform->setDefault('addselfassessment', 0);
-        if (!$workshop->useselfassessment) {
-            $grpselfassessment[] = $mform->createElement('static', 'selfassessmentcheck', '',
-                                                        get_string('selfassessmentdisabled', 'workshop'));
-        }
-        $mform->addGroup($grpselfassessment, 'grpselfassessment', get_string('addselfassessment', 'workshopallocation_random'));
-        if (!$workshop->useselfassessment) {
-            $mform->freeze(array('grpselfassessment'));
+        if (empty($workshop->useselfassessment)) {
+            $mform->addElement('static', 'addselfassessment', get_string('addselfassessment', 'workshopallocation_random'),
+                                                                 get_string('selfassessmentdisabled', 'workshop'));
+        } else {
+            $mform->addElement('checkbox', 'addselfassessment', get_string('addselfassessment', 'workshopallocation_random'));
         }
 
         $this->add_action_buttons();

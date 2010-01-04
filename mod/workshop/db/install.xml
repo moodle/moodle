@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20090907" COMMENT="XMLDB file for Moodle mod/workshop"
+<XMLDB PATH="mod/workshop/db" VERSION="20090908" COMMENT="XMLDB file for Moodle mod/workshop"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -93,33 +93,20 @@
         <KEY NAME="overriddenby_fk" TYPE="foreign" FIELDS="gradinggradeoverby" REFTABLE="user" REFFIELDS="id" PREVIOUS="reviewer_fk"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="workshop_grades" COMMENT="How the reviewers filled-up the grading forms, given grades and comments" PREVIOUS="workshop_assessments" NEXT="workshop_forms">
+    <TABLE NAME="workshop_grades" COMMENT="How the reviewers filled-up the grading forms, given grades and comments" PREVIOUS="workshop_assessments">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="assessmentid"/>
-        <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Part of which assessment this grade is of" PREVIOUS="id" NEXT="dimensionid"/>
-        <FIELD NAME="dimensionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key. References dimension id in one of the grading strategy tables." PREVIOUS="assessmentid" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Given grade in the referenced assessment dimension." PREVIOUS="dimensionid" NEXT="peercomment"/>
+        <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Part of which assessment this grade is of" PREVIOUS="id" NEXT="strategy"/>
+        <FIELD NAME="strategy" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" PREVIOUS="assessmentid" NEXT="dimensionid"/>
+        <FIELD NAME="dimensionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key. References dimension id in one of the grading strategy tables." PREVIOUS="strategy" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="Given grade in the referenced assessment dimension." PREVIOUS="dimensionid" NEXT="peercomment"/>
         <FIELD NAME="peercomment" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Reviewer's comment to the grade value." PREVIOUS="grade" NEXT="peercommentformat"/>
         <FIELD NAME="peercommentformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="The format of peercomment field" PREVIOUS="peercomment"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="assessment_fk"/>
-        <KEY NAME="assessment_fk" TYPE="foreign" FIELDS="assessmentid" REFTABLE="workshop_assessments" REFFIELDS="id" PREVIOUS="primary" NEXT="dimension_fk"/>
-        <KEY NAME="dimension_fk" TYPE="foreign" FIELDS="dimensionid" REFTABLE="workshop_forms" REFFIELDS="id" PREVIOUS="assessment_fk" NEXT="formfield"/>
-        <KEY NAME="formfield" TYPE="unique" FIELDS="assessmentid, dimensionid" COMMENT="The combination of assessmentid and dimensionid must be unique" PREVIOUS="dimension_fk"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="workshop_forms" COMMENT="Meta table to provide unique id for every assessment dimension which is needed for file api support." PREVIOUS="workshop_grades">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Workshop ID" PREVIOUS="id" NEXT="sort"/>
-        <FIELD NAME="sort" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Defines the dimension order within the assessment form" PREVIOUS="workshopid" NEXT="strategy"/>
-        <FIELD NAME="strategy" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="Defines the target assessment form table" PREVIOUS="sort" NEXT="localid"/>
-        <FIELD NAME="localid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The foreign primary key of one of the assessment forms tables." PREVIOUS="strategy"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
-        <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="assessment_fk" TYPE="foreign" FIELDS="assessmentid" REFTABLE="workshop_assessments" REFFIELDS="id" PREVIOUS="primary" NEXT="formfield_uk"/>
+        <KEY NAME="formfield_uk" TYPE="unique" FIELDS="assessmentid, strategy, dimensionid" COMMENT="The combination of assessmentid, strategy and dimensionid must be unique" PREVIOUS="assessment_fk"/>
       </KEYS>
     </TABLE>
   </TABLES>

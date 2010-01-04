@@ -1,43 +1,43 @@
 /**
  * Submission - one line summary display
  */
-.submission-summary {
+.mod-workshop .submission-summary {
     position: relative;
     margin-bottom: 10px;
 }
 
-.submission-summary .title,
-.submission-summary .author,
-.submission-summary .author .fullname,
-.submission-summary .author .picture {
+.mod-workshop .submission-summary .title,
+.mod-workshop .submission-summary .author,
+.mod-workshop .submission-summary .author .fullname,
+.mod-workshop .submission-summary .author .picture {
     display: inline;
 }
 
-.submission-summary .title,
-.submission-summary .userdate {
+.mod-workshop .submission-summary .title,
+.mod-workshop .submission-summary .userdate {
     margin: 0px 0px 0px 40px;
 }
 
-.submission-summary .author {
+.mod-workshop .submission-summary .author {
     margin-left: 1ex;
 }
 
-.submission-summary.anonymous .title,
-.submission-summary.anonymous .author,
-.submission-summary.anonymous .userdate {
+.mod-workshop .submission-summary.anonymous .title,
+.mod-workshop .submission-summary.anonymous .author,
+.mod-workshop .submission-summary.anonymous .userdate {
     margin: 0px 0px 0px 5px;
 }
 
-.submission-summary .userdate {
+.mod-workshop .submission-summary .userdate {
     font-size: x-small;
     color: #333;
 }
 
-.submission-summary .userdate span {
+.mod-workshop .submission-summary .userdate span {
     font-style: italic;
 }
 
-.submission-summary .author .picture {
+.mod-workshop .submission-summary .author .picture {
     position: absolute;
     top: 0px;
     left: 0px;
@@ -46,57 +46,57 @@
 /**
  * Submission - full display
  */
-.submission-full {
+.mod-workshop .submission-full {
     border: 1px solid #ddd;
     margin: 0px 0px 1em 0px;
 }
 
-.submission-full .header {
+.mod-workshop .submission-full .header {
     position: relative;
     background-color: #ddd;
     padding: 3px;
 }
 
-.submission-full .header .title,
-.submission-full .header .author,
-.submission-full .header .userdate {
+.mod-workshop .submission-full .header .title,
+.mod-workshop .submission-full .header .author,
+.mod-workshop .submission-full .header .userdate {
     margin: 0px 0px 0px 80px;
 }
 
-.submission-full.anonymous .header .title,
-.submission-full.anonymous .header .author,
-.submission-full.anonymous .header .userdate {
+.mod-workshop .submission-full.anonymous .header .title,
+.mod-workshop .submission-full.anonymous .header .author,
+.mod-workshop .submission-full.anonymous .header .userdate {
     margin: 0px 0px 0px 5px;
 }
 
-.submission-full .header .userdate.modified {
+.mod-workshop .submission-full .header .userdate.modified {
     margin-left: 10px;
     padding-left: 10px;
     border-left: 1px solid #000;
 }
 
-.submission-full .header .userdate {
+.mod-workshop .submission-full .header .userdate {
     font-size: x-small;
     color: #333;
     display: inline;
 }
 
-.submission-full .header .userdate span {
+.mod-workshop .submission-full .header .userdate span {
     font-style: italic;
 }
 
-.submission-full .header .author .picture {
+.mod-workshop .submission-full .header .author .picture {
     position: absolute;
     top: 3px;
     left: 3px;
 }
 
-.submission-full .content,
-.submission-full .attachments {
+.mod-workshop .submission-full .content,
+.mod-workshop .submission-full .attachments {
     padding: 5px 10px;
 }
 
-.submission-full .attachments .files img.icon {
+.mod-workshop .submission-full .attachments .files img.icon {
     margin-right: 5px;
 }
 
@@ -219,102 +219,98 @@
 }
 
 /**
- * Assessment
- */
-.assessmentform .description {
-    margin: 0px 1em;
-}
-
-/**
  * User plan
  */
-.userplan {
+.mod-workshop .userplan {
     width: 70%;
     margin: 1em auto 1em auto;
     font-size: 80%;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
 }
 
-.userplan th {
+.mod-workshop .userplan th {
     vertical-align: bottom;
     white-space: normal;
     color: #999;
+    border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
     padding: 3px;
 }
 
-.userplan th.active {
+.mod-workshop .userplan th.active {
     vertical-align: top;
     color: black;
     font-size: 140%;
     border: 1px solid #ddd;
     border-bottom: none;
-    background-color: #e7f1c3;
+    background: #e7f1c3;
 }
 
-.userplan td {
+.mod-workshop .userplan td {
     width: 20%;
     vertical-align: top;
     border-right: 1px solid #ddd;
     background-color: #f5f5f5;
 }
 
-.userplan td,
-.userplan td a,
-.userplan td a:link,
-.userplan td a:hover,
-.userplan td a:visited,
-.userplan td a:active {
+.mod-workshop .userplan td,
+.mod-workshop .userplan td a,
+.mod-workshop .userplan td a:link,
+.mod-workshop .userplan td a:hover,
+.mod-workshop .userplan td a:visited,
+.mod-workshop .userplan td a:active {
     color: #999;
 }
 
-.userplan td.active,
-.userplan td.active a,
-.userplan td.active a:link,
-.userplan td.active a:hover,
-.userplan td.active a:visited,
-.userplan td.active a:active {
+.mod-workshop .userplan td.active,
+.mod-workshop .userplan td.active a,
+.mod-workshop .userplan td.active a:link,
+.mod-workshop .userplan td.active a:hover,
+.mod-workshop .userplan td.active a:visited,
+.mod-workshop .userplan td.active a:active {
     color: black;
 }
 
-.userplan td.lastcol {
+.mod-workshop .userplan td.lastcol {
     border-right: none;
 }
 
-.userplan td.active {
+.mod-workshop .userplan td.active {
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
     background-color: #e7f1c3;
 }
 
-.userplan tr.phasetasks li {
+.mod-workshop .userplan tr.phasetasks li {
     background-image: url(../../pix/i/completion-auto-n.gif);
     background-position: top left;
     background-repeat: no-repeat;
 }
 
-.userplan tr.phasetasks li.completed {
+.mod-workshop .userplan tr.phasetasks li.completed {
     background-image: url(../../pix/i/completion-auto-y.gif);
 }
 
-.userplan tr.phasetasks li.fail {
+.mod-workshop .userplan tr.phasetasks li.fail {
     background-image: url(../../pix/i/completion-auto-fail.gif);
 }
 
-.userplan tr.phasetasks li.info {
+.mod-workshop .userplan tr.phasetasks li.info {
     background-image: url(../../pix/i/info.gif);
 }
 
-.userplan tr.phasetasks .tasks {
+.mod-workshop .userplan tr.phasetasks .tasks {
     list-style:none;
     margin: 3px;
     padding: 0px;
 }
 
-.userplan tr.phasetasks .title {
+.mod-workshop .userplan tr.phasetasks .title {
     padding: 0px 10px 0px 20px;
 }
 
-.userplan tr.phasetasks .details {
+.mod-workshop .userplan tr.phasetasks .details {
     padding: 0px 10px 0px 25px;
     font-size: 80%;
 }
@@ -322,7 +318,10 @@
 /**
  * Assessment
  */
-.assessment-summary.graded {
+.mod-workshop .assessment-summary.graded {
     background-color: #e7f1c3;
 }
 
+.mod-workshop .assessmentform .description {
+    margin: 0px 1em;
+}

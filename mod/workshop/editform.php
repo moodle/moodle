@@ -70,7 +70,7 @@ if ($mform->is_cancelled()) {
 echo $OUTPUT->header();
 $currenttab = 'editform';
 include(dirname(__FILE__) . '/tabs.php');
-echo $OUTPUT->heading(get_string('pluginname', 'workshopgrading_' . $workshop->strategy));
+echo $OUTPUT->heading(get_string('pluginname', 'workshopform_' . $workshop->strategy));
 
 $mform->display();
 

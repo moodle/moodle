@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for mod/workshop/allocation/random/allocator.php
+ * Unit tests for Random allocation
  *
  * @package   mod-workshop
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
@@ -26,7 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 // Include the code to test
-require_once($CFG->dirroot . '/mod/workshop/allocation/random/allocator.php');
+require_once($CFG->dirroot . '/mod/workshop/locallib.php');
+require_once($CFG->dirroot . '/mod/workshop/allocation/random/lib.php');
 
 /**
  * Make protected methods we want to test public

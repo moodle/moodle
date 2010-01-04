@@ -62,7 +62,7 @@ function workshop_supports($feature) {
         case FEATURE_GROUPMEMBERSONLY:  return true;
         case FEATURE_MOD_INTRO:         return true;
         case FEATURE_MOD_SUBPLUGINS:    return array(
-                                                'workshopgrading'    => 'mod/workshop/grading',
+                                                'workshopform'       => 'mod/workshop/form',
                                                 'workshopallocation' => 'mod/workshop/allocation'
                                                 );
         default:                        return null;
@@ -123,6 +123,9 @@ function workshop_update_instance($data) {
 
     $data->timemodified = time();
     $data->id = $data->instance;
+
+    // todo - if the grading strategy is being changed, we must replace all aggregated peer grades with nulls
+    // todo - if maximum grades are being changed, we should probably recalculate or invalidate them
 
     $DB->update_record('workshop', $data);
     $context = get_context_instance(CONTEXT_MODULE, $data->coursemodule);
@@ -296,6 +299,10 @@ function workshop_get_extra_capabilities() {
  * The file area workshop_intro for the activity introduction field is added automatically
  * by {@link file_browser::get_file_info_module()}
  *
+ * TODO: we use the following areas
+ * workshopform_accumulative_description
+ * workshopform_numerrors_description
+ *
  * @param stdClass $course
  * @param stdClass $cm
  * @param stdClass $context
@@ -305,7 +312,6 @@ function workshop_get_file_areas($course, $cm, $context) {
     $areas = array();
     if (has_capability('moodle/course:managefiles', $context)) {
         $areas['workshop_instructauthors']          = get_string('areainstructauthors', 'workshop');
-        $areas['workshop_dimension_description']    = get_string('areadimensiondescription', 'workshop');
         $areas['workshop_submission_content']       = get_string('areasubmissioncontent', 'workshop');
         $areas['workshop_submission_attachment']    = get_string('areasubmissionattachment', 'workshop');
     }
@@ -363,6 +369,7 @@ function workshop_pluginfile($course, $cminfo, $context, $filearea, array $args,
         send_stored_file($file, $lifetime, 0);
     }
 
+    /** todo - this filearea has been replaced by subplugins' areas
     if ($filearea === 'workshop_dimension_description') {
         $itemid = (int)array_shift($args);
         if (!$dimension = $DB->get_record('workshop_forms', array('id' => $itemid))) {
@@ -386,6 +393,7 @@ function workshop_pluginfile($course, $cminfo, $context, $filearea, array $args,
         // finally send the file
         send_stored_file($file);
     }
+    */
 
     if ($filearea === 'workshop_submission_content' or $filearea === 'workshop_submission_attachment') {
         $itemid = (int)array_shift($args);
@@ -469,6 +477,7 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
         return new file_info_stored($browser, $context, $storedfile, $urlbase, $topvisiblename, true, true, false, false);
     }
 
+    /* todo was replaced by subplugins' areas
     if ($filearea === 'workshop_dimension_description') {
         // always only itemid 0 - TODO not true, review
 
@@ -486,6 +495,7 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
         }
         return new file_info_stored($browser, $context, $storedfile, $urlbase, $areas[$filearea], false, true, true, false);
     }
+     */
 
     if ($filearea === 'workshop_instructauthors') {
         // always only itemid 0
@@ -630,14 +640,15 @@ function workshop_get_dimension_weights() {
 /**
  * Return an array of the localized grading strategy names
  *
+ * @todo remove this function from lib.php
  * $return array Array ['string' => 'string']
  */
 function workshop_get_strategies() {
-    $installed = get_plugin_list('workshopgrading');
+    $installed = get_plugin_list('workshopform');
     $forms = array();
     foreach ($installed as $strategy => $strategypath) {
-        if (file_exists($strategypath . '/strategy.php')) {
-            $forms[$strategy] = get_string('pluginname', 'workshopgrading_' . $strategy);
+        if (file_exists($strategypath . '/lib.php')) {
+            $forms[$strategy] = get_string('pluginname', 'workshopform_' . $strategy);
         }
     }
     return $forms;

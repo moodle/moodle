@@ -66,11 +66,11 @@ $settings->add(new admin_setting_configselect('workshop/assessmentcomps', get_st
                     get_string('configassessmentcomps', 'workshop'), WORKSHOP_COMPARISON_NORMAL, $levels));
 
 // include the settings of grading strategy subplugins
-$strategies = get_plugin_list('workshopgrading');
+$strategies = get_plugin_list('workshopform');
 foreach ($strategies as $strategy => $path) {
     if (file_exists($settingsfile = $path . '/settings.php')) {
-        $settings->add(new admin_setting_heading('workshopgradingsetting'.$strategy,
-                                                get_string('pluginname', 'workshopgrading_' . $strategy), ''));
+        $settings->add(new admin_setting_heading('workshopformsetting'.$strategy,
+                                                get_string('pluginname', 'workshopform_' . $strategy), ''));
         include($settingsfile);
     }
 }

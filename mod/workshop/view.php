@@ -76,7 +76,7 @@ $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
 echo $OUTPUT->header();
 include(dirname(__FILE__) . '/tabs.php');
 echo $OUTPUT->heading(format_string($workshop->name), 2);
-echo $wsoutput->user_plan($workshop->prepare_user_plan($USER->id));
+echo $wsoutput->user_plan($workshop->prepare_user_plan($USER->id, $PAGE->context));
 
 switch ($workshop->phase) {
 case workshop::PHASE_SETUP:

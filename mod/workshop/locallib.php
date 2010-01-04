@@ -58,17 +58,11 @@ class workshop {
     /** @var stdClass course record */
     public $course = null;
 
-    /** @var stdClass the workshop instance context */
-    public $context = null;
-
     /**
      * @var workshop_strategy grading strategy instance
      * Do not use directly, get the instance using {@link workshop::grading_strategy_instance()}
      */
     protected $strategyinstance = null;
-
-    /** @var stdClass underlying database record */
-    protected $dbrecord = null;
 
     /**
      * Initializes the workshop API instance using the data from DB
@@ -81,25 +75,13 @@ class workshop {
      * @param stdClass $course   Course record from {course} table
      */
     public function __construct(stdClass $dbrecord, stdClass $cm, stdClass $course) {
-        $this->dbrecord = $dbrecord;
-        $this->cm       = $cm;
-        $this->course   = $course;
-        $this->context  = get_context_instance(CONTEXT_MODULE, $this->cm->id);
-    }
-
-    /**
-     * Magic method to retrieve the value of the underlying database record's field
-     *
-     * @throws coding_exception if the field does not exist
-     * @param mixed $key the name of the database field
-     * @return mixed|null the value of the field
-     */
-    public function __get($key) {
-        if (!isset($this->dbrecord->{$key})) {
-            // todo remove the comment here // throw new coding_exception('You are trying to get a non-existing property');
-            return null;
+        foreach ($dbrecord as $field => $value) {
+            $this->{$field} = $value;
         }
-        return $this->dbrecord->{$key};
+        $this->cm       = $cm;
+        $this->course   = $course;  // beware - this replaces the standard course field in the instance table
+                                    // this is intentional - IMO there should be no such field as it violates
+                                    // 3rd normal form with no real performance gain
     }
 
     /**
@@ -107,12 +89,15 @@ class workshop {
      *
      * Example submissions are ignored.
      *
-     * @param array $userids 
-     * @return TODO
+     * @param array $userids
+     * @return array
      */
     protected function users_with_submission(array $userids) {
         global $DB;
 
+        if (empty($userids)) {
+            return array();
+        }
         $userswithsubmission = array();
         list($usql, $uparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
         $sql = "SELECT id,userid
@@ -133,11 +118,12 @@ class workshop {
      *
      * The returned objects contain id, lastname and firstname properties and are ordered by lastname,firstname
      *
+     * @param stdClass $context
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible authors otherwise.
      * @return array array[userid] => stdClass{->id ->lastname ->firstname}
      */
-    public function get_potential_authors($musthavesubmission=true) {
-        $users = get_users_by_capability($this->context, 'mod/workshop:submit',
+    public function get_potential_authors(stdClass $context, $musthavesubmission=true) {
+        $users = get_users_by_capability($context, 'mod/workshop:submit',
                     'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
         if ($musthavesubmission) {
             $users = array_intersect_key($users, $this->users_with_submission(array_keys($users)));
@@ -150,11 +136,12 @@ class workshop {
      *
      * The returned objects contain id, lastname and firstname properties and are ordered by lastname,firstname
      *
+     * @param stdClass $context
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible users otherwise.
      * @return array array[userid] => stdClass{->id ->lastname ->firstname}
      */
-    public function get_potential_reviewers($musthavesubmission=false) {
-        $users = get_users_by_capability($this->context, 'mod/workshop:peerassess',
+    public function get_potential_reviewers(stdClass $context, $musthavesubmission=false) {
+        $users = get_users_by_capability($context, 'mod/workshop:peerassess',
                     'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
         if ($musthavesubmission) {
             // users without their own submission can not be reviewers
@@ -215,7 +202,7 @@ class workshop {
      *
      * @param mixed $userid int|array|'all' If set to [array of] integer, return submission[s] of the given user[s] only
      * @param mixed $examples false|true|'all' Only regular submissions, only examples, all submissions
-     * @return stdClass moodle_recordset
+     * @return array
      */
     public function get_submissions($userid='all', $examples=false) {
         global $DB;
@@ -390,13 +377,17 @@ class workshop {
      * Note that the returned recordset includes participants without submission as well as those
      * without any review allocated yet.
      *
-     * @return stdClass moodle_recordset
+     * @return null|stdClass moodle_recordset
      */
     public function get_allocations_recordset() {
-        global $DB;
+        global $DB, $PAGE;
 
-        $users = get_users_by_capability($this->context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
+        $users = get_users_by_capability($PAGE->context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
                     'u.id', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
+
+        if (empty($users)) {
+            return null;
+        }
 
         list($usql, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED);
         $params['workshopid'] = $this->id;
@@ -469,11 +460,11 @@ class workshop {
         global $CFG;    // because we require other libs here
 
         if (is_null($this->strategyinstance)) {
-            $strategylib = dirname(__FILE__) . '/grading/' . $this->strategy . '/strategy.php';
+            $strategylib = dirname(__FILE__) . '/form/' . $this->strategy . '/lib.php';
             if (is_readable($strategylib)) {
                 require_once($strategylib);
             } else {
-                throw new coding_exception('the grading subplugin must contain library ' . $strategylib);
+                throw new coding_exception('the grading forms subplugin must contain library ' . $strategylib);
             }
             $classname = 'workshop_' . $this->strategy . '_strategy';
             $this->strategyinstance = new $classname($this);
@@ -493,7 +484,7 @@ class workshop {
         $installed = get_plugin_list('workshopallocation');
         $forms = array();
         foreach ($installed as $allocation => $allocationpath) {
-            if (file_exists($allocationpath . '/allocator.php')) {
+            if (file_exists($allocationpath . '/lib.php')) {
                 $forms[$allocation] = get_string('pluginname', 'workshopallocation_' . $allocation);
             }
         }
@@ -515,11 +506,11 @@ class workshop {
     public function allocator_instance($method) {
         global $CFG;    // because we require other libs here
 
-        $allocationlib = dirname(__FILE__) . '/allocation/' . $method . '/allocator.php';
+        $allocationlib = dirname(__FILE__) . '/allocation/' . $method . '/lib.php';
         if (is_readable($allocationlib)) {
             require_once($allocationlib);
         } else {
-            throw new coding_exception('Unable to find allocator.php');
+            throw new coding_exception('Unable to find the allocation library ' . $allocationlib);
         }
         $classname = 'workshop_' . $method . '_allocator';
         return new $classname($this);
@@ -650,16 +641,17 @@ class workshop {
      * @return string
      */
     public function strategy_name() {
-        return get_string('pluginname', 'workshopgrading_' . $this->strategy);
+        return get_string('pluginname', 'workshopform_' . $this->strategy);
     }
 
     /**
      * Prepare an individual workshop plan for the given user.
      *
-     * @param mixed $userid 
-     * @return TODO
+     * @param int $userid whom the plan is prepared for
+     * @param stdClass context of the planned workshop
+     * @return stdClass data object to be passed to the renderer
      */
-    public function prepare_user_plan($userid) {
+    public function prepare_user_plan($userid, stdClass $context) {
         global $DB;
 
         $phases = array();
@@ -668,21 +660,21 @@ class workshop {
         $phase = new stdClass();
         $phase->title = get_string('phasesetup', 'workshop');
         $phase->tasks = array();
-        if (has_capability('moodle/course:manageactivities', $this->context, $userid)) {
+        if (has_capability('moodle/course:manageactivities', $context, $userid)) {
             $task = new stdClass();
             $task->title = get_string('taskintro', 'workshop');
             $task->link = $this->updatemod_url();
             $task->completed = !(trim(strip_tags($this->intro)) == '');
             $phase->tasks['intro'] = $task;
         }
-        if (has_capability('moodle/course:manageactivities', $this->context, $userid)) {
+        if (has_capability('moodle/course:manageactivities', $context, $userid)) {
             $task = new stdClass();
             $task->title = get_string('taskinstructauthors', 'workshop');
             $task->link = $this->updatemod_url();
             $task->completed = !(trim(strip_tags($this->instructauthors)) == '');
             $phase->tasks['instructauthors'] = $task;
         }
-        if (has_capability('mod/workshop:editdimensions', $this->context, $userid)) {
+        if (has_capability('mod/workshop:editdimensions', $context, $userid)) {
             $task = new stdClass();
             $task->title = get_string('editassessmentform', 'workshop');
             $task->link = $this->editform_url();
@@ -707,7 +699,7 @@ class workshop {
         $phase = new stdClass();
         $phase->title = get_string('phasesubmission', 'workshop');
         $phase->tasks = array();
-        if (has_capability('mod/workshop:submit', $this->context, $userid)) {
+        if (has_capability('mod/workshop:submit', $context, $userid)) {
             $task = new stdClass();
             $task->title = get_string('tasksubmit', 'workshop');
             $task->link = $this->submission_url();
@@ -720,7 +712,7 @@ class workshop {
             }
             $phase->tasks['submit'] = $task;
         }
-        if (has_capability('moodle/course:manageactivities', $this->context, $userid)) {
+        if (has_capability('moodle/course:manageactivities', $context, $userid)) {
             $task = new stdClass();
             $task->title = get_string('taskinstructreviewers', 'workshop');
             $task->link = $this->updatemod_url();
@@ -732,30 +724,32 @@ class workshop {
             $phase->tasks['instructreviewers'] = $task;
         }
         $phases[self::PHASE_SUBMISSION] = $phase;
-        if (has_capability('mod/workshop:allocate', $this->context, $userid)) {
+        if (has_capability('mod/workshop:allocate', $context, $userid)) {
             $task = new stdClass();
             $task->title = get_string('allocate', 'workshop');
             $task->link = $this->allocation_url();
-            $rs = $this->get_allocations_recordset();
             $authors     = array();
             $allocations = array(); // 'submissionid' => isallocated
-            foreach ($rs as $allocation) {
-                if (!isset($authors[$allocation->authorid])) {
-                    $authors[$allocation->authorid] = true;
-                }
-                if (isset($allocation->submissionid)) {
-                    if (!isset($allocations[$allocation->submissionid])) {
-                        $allocations[$allocation->submissionid] = false;
+            $rs = $this->get_allocations_recordset();
+            if (!is_null($rs)) {
+                foreach ($rs as $allocation) {
+                    if (!isset($authors[$allocation->authorid])) {
+                        $authors[$allocation->authorid] = true;
                     }
-                    if (!empty($allocation->reviewerid)) {
-                        $allocations[$allocation->submissionid] = true;
+                    if (isset($allocation->submissionid)) {
+                        if (!isset($allocations[$allocation->submissionid])) {
+                            $allocations[$allocation->submissionid] = false;
+                        }
+                        if (!empty($allocation->reviewerid)) {
+                            $allocations[$allocation->submissionid] = true;
+                        }
                     }
                 }
+                $rs->close();
             }
             $numofauthors     = count($authors);
             $numofsubmissions = count($allocations);
             $numofallocated   = count(array_filter($allocations));
-            $rs->close();
             if ($numofsubmissions == 0) {
                 $task->completed = null;
             } elseif ($numofsubmissions == $numofallocated) {
@@ -785,7 +779,7 @@ class workshop {
         $phase = new stdClass();
         $phase->title = get_string('phaseassessment', 'workshop');
         $phase->tasks = array();
-        $phase->isreviewer = has_capability('mod/workshop:peerassess', $this->context, $userid);
+        $phase->isreviewer = has_capability('mod/workshop:peerassess', $context, $userid);
         $phase->assessments = $this->get_assessments_by_reviewer($userid);
         $numofpeers     = 0;    // number of allocated peer-assessments
         $numofpeerstodo = 0;    // number of peer-assessments to do
@@ -866,7 +860,7 @@ class workshop {
         }
 
         // Add phase swithing actions
-        if (has_capability('mod/workshop:switchphase', $this->context, $userid)) {
+        if (has_capability('mod/workshop:switchphase', $context, $userid)) {
             foreach ($phases as $phasecode => $phase) {
                 if (! $phase->active) {
                     $action = new stdClass();
