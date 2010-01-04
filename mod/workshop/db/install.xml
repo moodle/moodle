@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20090919" COMMENT="XMLDB file for Moodle mod/workshop"
+<XMLDB PATH="mod/workshop/db" VERSION="20090928" COMMENT="XMLDB file for Moodle mod/workshop"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -93,7 +93,7 @@
         <KEY NAME="reviewer_fk" TYPE="foreign" FIELDS="reviewerid" REFTABLE="user" REFFIELDS="id" PREVIOUS="overriddenby_fk"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="workshop_grades" COMMENT="How the reviewers filled-up the grading forms, given grades and comments" PREVIOUS="workshop_assessments" NEXT="workshop_evaluations">
+    <TABLE NAME="workshop_grades" COMMENT="How the reviewers filled-up the grading forms, given grades and comments" PREVIOUS="workshop_assessments" NEXT="workshop_aggregations">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="assessmentid"/>
         <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Part of which assessment this grade is of" PREVIOUS="id" NEXT="strategy"/>
@@ -109,17 +109,20 @@
         <KEY NAME="formfield_uk" TYPE="unique" FIELDS="assessmentid, strategy, dimensionid" COMMENT="The combination of assessmentid, strategy and dimensionid must be unique" PREVIOUS="assessment_fk"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="workshop_evaluations" COMMENT="Aggregated grades for assessments calculated during grading evaluation phase are stored here" PREVIOUS="workshop_grades">
+    <TABLE NAME="workshop_aggregations" COMMENT="Aggregated grade for submission, grade assessments and total grade calculated for workshop participants are stored here" PREVIOUS="workshop_grades">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the id of the workshop instance" PREVIOUS="id" NEXT="reviewerid"/>
-        <FIELD NAME="reviewerid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the id of the user the grading grade is calculated for" PREVIOUS="workshopid" NEXT="gradinggrade"/>
-        <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The aggregated grade for all assessments made by this reviewer. The grade is a number from interval 0..100. If NULL then the grade for assessments has not been aggregated yet." PREVIOUS="reviewerid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the id of the workshop instance" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the user which aggregated grades are calculated for" PREVIOUS="workshopid" NEXT="submissiongrade"/>
+        <FIELD NAME="submissiongrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The grade for submission" PREVIOUS="userid" NEXT="gradinggrade"/>
+        <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The aggregated grade for all assessments made by this reviewer. The grade is a number from interval 0..100. If NULL then the grade for assessments has not been aggregated yet." PREVIOUS="submissiongrade" NEXT="totalgrade"/>
+        <FIELD NAME="totalgrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The total grade for this workshop to be pushed into the gradebook" PREVIOUS="gradinggrade"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
-        <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary" NEXT="reviewer_fk"/>
-        <KEY NAME="reviewer_fk" TYPE="foreign" FIELDS="reviewerid" REFTABLE="user" REFFIELDS="id" PREVIOUS="workshop_fk"/>
+        <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary" NEXT="user_fk"/>
+        <KEY NAME="user_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="workshop_fk" NEXT="workshopuser"/>
+        <KEY NAME="workshopuser" TYPE="unique" FIELDS="workshopid, userid" COMMENT="The combination of workshopid with userid must be unique in this table" PREVIOUS="user_fk"/>
       </KEYS>
     </TABLE>
   </TABLES>
