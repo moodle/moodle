@@ -27,6 +27,9 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/workshop/locallib.php'); // Include the code to test
 
+global $DB;
+Mock::generate(get_class($DB), 'mockDB');
+
 /**
  * Test subclass that makes all the protected methods we want to test public.
  */
@@ -53,15 +56,191 @@ class workshop_internal_api_test extends UnitTestCase {
 
     /** setup testing environment */
     public function setUp() {
+        global $DB;
+        $this->realDB = $DB;
+        $DB = new mockDB();
+
         $this->workshop = new testable_workshop();
     }
 
     public function tearDown() {
+        global $DB;
+        $DB = $this->realDB;
         $this->workshop = null;
     }
 
-    public function test_aggregate_submission_grades_process_empty_param() {
+    public function test_aggregate_submission_grades_process_notgraded() {
+        global $DB;
 
+        // fixture set-up
+        $batch = array();   // batch of a submission's assessments
+        $batch[] = (object)array('submissionid' => 12, 'submissiongrade' => null, 'gradeover' => null, 'weight' => 1,
+                'grade' => null);
+        $DB->expectNever('set_field');
+        // excercise SUT
+        $this->workshop->aggregate_submission_grades_process($batch);
+    }
+
+    public function test_aggregate_submission_grades_process_single() {
+        global $DB;
+
+        // fixture set-up
+        $batch = array();   // batch of a submission's assessments
+        $batch[] = (object)array('submissionid' => 12, 'submissiongrade' => null, 'gradeover' => null, 'weight' => 1,
+                'grade' => 10.12345);
+        $expected = 10.12345;
+        $DB->expectOnce('set_field', array('workshop_submissions', 'grade', $expected, array('id' => 12)));
+        // excercise SUT
+        $this->workshop->aggregate_submission_grades_process($batch);
+    }
+
+    public function test_aggregate_submission_grades_process_null_doesnt_influence() {
+        global $DB;
+
+        // fixture set-up
+        $batch = array();   // batch of a submission's assessments
+        $batch[] = (object)array('submissionid' => 12, 'submissiongrade' => null, 'gradeover' => null, 'weight' => 1,
+                'grade' => 45.54321);
+        $batch[] = (object)array('submissionid' => 12, 'submissiongrade' => null, 'gradeover' => null, 'weight' => 1,
+                'grade' => null);
+        $expected = 45.54321;
+        $DB->expectOnce('set_field', array('workshop_submissions', 'grade', $expected, array('id' => 12)));
+        // excercise SUT
+        $this->workshop->aggregate_submission_grades_process($batch);
+    }
+
+    public function test_aggregate_submission_grades_process_weighted_single() {
+        global $DB;
+
+        // fixture set-up
+        $batch = array();   // batch of a submission's assessments
+        $batch[] = (object)array('submissionid' => 12, 'submissiongrade' => null, 'gradeover' => null,
+                'weight' => 4, 'grade' => 14.00012);
+        $expected = 14.00012;
+        $DB->expectOnce('set_field', array('workshop_submissions', 'grade', $expected, array('id' => 12)));
+        // excercise SUT
+        $this->workshop->aggregate_submission_grades_process($batch);
+    }
+
+    public function test_aggregate_submission_grades_process_mean() {
+        global $DB;
+
+        // fixture set-up
+        $batch = array();   // batch of a submission's assessments
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'gradeover' => null, 'weight' => 1,
+                'grade' => 56.12000);
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'gradeover' => null, 'weight' => 1,
+                'grade' => 12.59000);
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'gradeover' => null, 'weight' => 1,
+                'grade' => 10.00000);
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'gradeover' => null, 'weight' => 1,
+                'grade' => 0.00000);
+        $expected = 19.67750;
+        $DB->expectOnce('set_field', array('workshop_submissions', 'grade', $expected, array('id' => 45)));
+        // excercise SUT
+        $this->workshop->aggregate_submission_grades_process($batch);
+    }
+
+    public function test_aggregate_submission_grades_process_mean_changed() {
+        global $DB;
+
+        // fixture set-up
+        $batch = array();   // batch of a submission's assessments
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 12.57750, 'gradeover' => null, 'weight' => 1,
+                'grade' => 56.12000);
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 12.57750, 'gradeover' => null, 'weight' => 1,
+                'grade' => 12.59000);
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 12.57750, 'gradeover' => null, 'weight' => 1,
+                'grade' => 10.00000);
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 12.57750, 'gradeover' => null, 'weight' => 1,
+                'grade' => 0.00000);
+        $expected = 19.67750;
+        $DB->expectOnce('set_field', array('workshop_submissions', 'grade', $expected, array('id' => 45)));
+        // excercise SUT
+        $this->workshop->aggregate_submission_grades_process($batch);
+    }
+
+    public function test_aggregate_submission_grades_process_mean_nochange() {
+        global $DB;
+
+        // fixture set-up
+        $batch = array();   // batch of a submission's assessments
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 19.67750, 'gradeover' => null, 'weight' => 1,
+                'grade' => 56.12000);
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 19.67750, 'gradeover' => null, 'weight' => 1,
+                'grade' => 12.59000);
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 19.67750, 'gradeover' => null, 'weight' => 1,
+                'grade' => 10.00000);
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 19.67750, 'gradeover' => null, 'weight' => 1,
+                'grade' => 0.00000);
+        $DB->expectNever('set_field');
+        // excercise SUT
+        $this->workshop->aggregate_submission_grades_process($batch);
+    }
+
+    public function test_aggregate_submission_grades_process_rounding() {
+        global $DB;
+
+        // fixture set-up
+        $batch = array();   // batch of a submission's assessments
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'gradeover' => null, 'weight' => 1,
+                'grade' => 4.00000);
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'gradeover' => null, 'weight' => 1,
+                'grade' => 2.00000);
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'gradeover' => null, 'weight' => 1,
+                'grade' => 1.00000);
+        $expected = 2.33333;
+        $DB->expectOnce('set_field', array('workshop_submissions', 'grade', $expected, array('id' => 45)));
+        // excercise SUT
+        $this->workshop->aggregate_submission_grades_process($batch);
+    }
+
+    public function test_aggregate_submission_grades_process_weighted_mean() {
+        global $DB;
+
+        // fixture set-up
+        $batch = array();   // batch of a submission's assessments
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'gradeover' => null,
+                'weight' => 3, 'grade' => 12.00000);
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'gradeover' => null,
+                'weight' => 2, 'grade' => 30.00000);
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'gradeover' => null,
+                'weight' => 1, 'grade' => 10.00000);
+        $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'gradeover' => null,
+                'weight' => 0, 'grade' => 1000.00000);
+        $expected = 17.66667;
+        $DB->expectOnce('set_field', array('workshop_submissions', 'grade', $expected, array('id' => 45)));
+        // excercise SUT
+        $this->workshop->aggregate_submission_grades_process($batch);
+    }
+
+    public function test_aggregate_submission_grades_process_overriden_different() {
+        global $DB;
+
+        // fixture set-up
+        $batch = array();   // batch of a submission's assessments
+        $batch[] = (object)array('submissionid' => 11, 'submissiongrade' => null, 'gradeover' => 95.00000,
+                'weight' => 3, 'grade' => 100.00000);
+        $batch[] = (object)array('submissionid' => 11, 'submissiongrade' => null, 'gradeover' => 95.00000,
+                'weight' => 2, 'grade' => 96.50000);
+        $expected = 95.00000;
+        $DB->expectOnce('set_field', array('workshop_submissions', 'grade', $expected, array('id' => 11)));
+        // excercise SUT
+        $this->workshop->aggregate_submission_grades_process($batch);
+    }
+
+    public function test_aggregate_submission_grades_process_overriden_equals() {
+        global $DB;
+
+        // fixture set-up
+        $batch = array();   // batch of a submission's assessments
+        $batch[] = (object)array('submissionid' => 11, 'submissiongrade' => 95.00000, 'gradeover' => 95.00000,
+                'weight' => 3, 'grade' => 100.00000);
+        $batch[] = (object)array('submissionid' => 11, 'submissiongrade' => 95.00000, 'gradeover' => 95.00000,
+                'weight' => 2, 'grade' => 96.50000);
+        $DB->expectNever('set_field');
+        // excercise SUT
+        $this->workshop->aggregate_submission_grades_process($batch);
     }
 
     public function test_percent_to_value() {
