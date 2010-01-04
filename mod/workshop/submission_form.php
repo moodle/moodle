@@ -49,8 +49,11 @@ class workshop_submission_form extends moodleform {
         $mform->addElement('editor', 'data_editor', get_string('submissiondata', 'workshop'), null, $dataoptions);
         $mform->setType('data_editor', PARAM_RAW);
 
-        $mform->addElement('filemanager', 'attachment_filemanager', get_string('submissionattachment', 'workshop'), 
-                            null, $attachmentoptions);
+        if ($workshop->nattachments > 0) {
+            $mform->addElement('static', 'filemanagerinfo', get_string('nattachments', 'workshop'), $workshop->nattachments);
+            $mform->addElement('filemanager', 'attachment_filemanager', get_string('submissionattachment', 'workshop'), 
+                                null, $attachmentoptions);
+        }
 
         $mform->addElement('hidden', 'id');
         $mform->addElement('hidden', 'cmid');

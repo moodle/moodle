@@ -26,6 +26,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__).'/locallib.php');
 require_once(dirname(__FILE__).'/submission_form.php');
 
 $cmid = required_param('cmid', PARAM_INT);            // course module id
@@ -51,17 +52,21 @@ if (!$workshop = $DB->get_record('workshop', array('id' => $cm->instance))) {
     print_error('invalidid', 'workshop');
 }
 
-if ($id) { // if submission is specified
+if ($id) { // submission is specified
     if (!$submission = $DB->get_record('workshop_submissions', array('id' => $id, 'workshopid' => $workshop->id))) {
         print_error('invalidsubmissionid', 'workshop');
     }
     // todo check access rights
+    //require_capability('mod/workshop:submit', $context) or user has cap edit all submissions?
 
-} else { // new submission
-    //require_capability('mod/workshop:submit', $context);
-    $submission = new object();
-    $submission->id = null;
+} else { // no submission specified
+    //todo require_capability('mod/workshop:submit', $context);
+    if (!$submission = workshop_get_user_submission($workshop->id, $USER->id)) {
+        $submission = new object();
+        $submission->id = null;
+    } 
 }
+unset($id); // not needed anymore
 
 $maxfiles = $workshop->nattachments;
 $maxbytes = $workshop->maxbytes;
@@ -80,6 +85,7 @@ $mform = new workshop_submission_form(null, array('current' => $submission, 'cm'
                                                  'dataoptions' => $dataoptions, 'attachmentoptions'=>$attachmentoptions));
 
 if ($mform->is_cancelled()){
+    die();
     if ($id){
         redirect("view.php?id=$cm->id");
     } else {
@@ -104,21 +110,17 @@ if ($mform->is_cancelled()){
     $submission->datatrust          = 0;           // updated later
 
     if (empty($submission->id)) {
-        //new submission
         $submission->id = $DB->insert_record('workshop_submissions', $submission);
-        // todo add to log
-
-    } else {
-        //existing submission
-        $DB->update_record('workshop_submissions', $submission);
         // todo add to log
     }
 
     // save and relink embedded images and save attachments
-    $submission = file_postupdate_standard_editor($submission, 'data', $dataoptions, $context, 'workshop_submission', $submission->id);
-    $submission = file_postupdate_standard_filemanager($submission, 'attachment', $attachmentoptions, $context, 'workshop_attachment', $submission->id);
+    $submission = file_postupdate_standard_editor($submission, 'data', $dataoptions, $context, 
+                                                    'workshop_submission', $submission->id);
+    $submission = file_postupdate_standard_filemanager($submission, 'attachment', $attachmentoptions, $context, 
+                                                    'workshop_attachment', $submission->id);
 
-    // store the updated value values
+    // store the updated values or re-save the new submission
     $DB->update_record('workshop_submissions', $submission);
 
     redirect("view.php?id=$cm->id");
