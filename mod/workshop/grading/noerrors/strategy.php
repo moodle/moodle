@@ -25,95 +25,139 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(__FILE__)) . '/strategy.php'); // parent class
+require_once(dirname(dirname(__FILE__)) . '/lib.php'); // interface definition
 
 /**
  * "Number of errors" grading strategy logic.
  */
-class workshop_noerrors_strategy extends workshop_base_strategy {
+class workshop_noerrors_strategy implements workshop_strategy {
 
-    public function load_form() {
-        global $DB;
+    /** @var workshop the parent workshop instance */
+    protected $workshop;
 
-        $dims = $DB->get_records('workshop_forms_' . $this->name(), array('workshopid' => $this->workshop->id), 'sort');
-        $maps = $DB->get_records('workshop_forms_noerrors_map', array('workshopid' => $this->workshop->id), 'nonegative');
-        $this->nodimensions = count($dims);
-        return $this->_cook_database_records($dims, $maps);
-    }
+    /** @var array definition of the assessment form fields */
+    protected $dimensions = null;
 
-    /**
-     * Transpones the dimension data from DB so the assessment form editor can be populated by set_data
-     *
-     * Called internally from load_form(). Could be private but keeping protected
-     * for unit testing purposes.
-     *
-     * @param array $dims Array of raw dimension records as fetched by get_record()
-     * @param array $maps Array of grade mappings
-     * @return array Object to be used by the mform set_data
-     */
-    protected function _cook_database_records(array $dims, array $maps) {
+    /** @var array mapping of the number of errors to a grade */
+    protected $mappings = null;
 
-        $formdata = array();
-
-        // cook dimensions
-        $key = 0;
-        foreach ($dims as $dimension) {
-            $formdata['dimensionid[' . $key . ']']       = $dimension->id;
-            $formdata['description[' . $key . ']']       = $dimension->description;
-            $formdata['descriptionformat[' . $key . ']'] = $dimension->descriptionformat;
-            $formdata['grade0[' . $key . ']']            = $dimension->grade0;
-            $formdata['grade1[' . $key . ']']            = $dimension->grade1;
-            $formdata['weight[' . $key . ']']            = $dimension->weight;
-            $key++;
-        }
-
-        // cook grade mappings
-        foreach ($maps as $map) {
-            $formdata['map[' . $map->nonegative . ']'] = $map->grade;
-        }
-
-        return (object)$formdata;
-    }
+    /** @var array options for dimension description fields */
+    protected $descriptionopts;
 
     /**
-     * Save the definition of a "Number of errors" grading form
+     * Constructor
      *
-     * The dimensions data are stored in workshop_forms_noerrors. The data that map the
-     * number of errors to a grade are saved into workshop_forms_noerrors_map.
-     *
-     * @uses $DB
-     * @param object $data Raw data returned by the dimension editor form
+     * @param workshop $workshop The workshop instance record
      * @return void
      */
-    public function save_form(object $data) {
-        global $DB;
+    public function __construct(workshop $workshop) {
+        $this->workshop         = $workshop;
+        $this->dimensions       = $this->load_fields();
+        $this->mappings         = $this->load_mappings();
+        $this->descriptionopts  = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1);
+    }
+
+/// Public API methods
+
+    /**
+     * @return string
+     */
+    public function name() {
+        return 'noerrors';
+    }
+
+    /**
+     * Factory method returning an instance of an assessment form editor class
+     *
+     * @param $actionurl URL of form handler, defaults to auto detect the current url
+     */
+    public function get_edit_strategy_form($actionurl=null) {
+        global $CFG;    // needed because the included files use it
+        global $PAGE;
+
+        require_once(dirname(__FILE__) . '/edit_form.php');
+
+        $fields             = $this->prepare_form_fields($this->dimensions, $this->mappings);
+        $nodimensions       = count($this->dimensions);
+        $norepeatsdefault   = max($nodimensions + WORKSHOP_STRATEGY_ADDDIMS, WORKSHOP_STRATEGY_MINDIMS);
+        $norepeats          = optional_param('norepeats', $norepeatsdefault, PARAM_INT);    // number of dimensions
+        $noadddims          = optional_param('noadddims', '', PARAM_ALPHA);                 // shall we add more?
+        if ($noadddims) {
+            $norepeats += WORKSHOP_STRATEGY_ADDDIMS;
+        }
+
+        // prepare the embeded files
+        for ($i = 0; $i < $nodimensions; $i++) {
+            // prepare all editor elements
+            $fields = file_prepare_standard_editor($fields, 'description__idx_'.$i, $this->descriptionopts,
+                $PAGE->context, 'workshop_dimension_description', $fields->{'dimensionid__idx_'.$i});
+        }
+
+        $customdata = array();
+        $customdata['workshop'] = $this->workshop;
+        $customdata['strategy'] = $this;
+        $customdata['norepeats'] = $norepeats;
+        $customdata['descriptionopts'] = $this->descriptionopts;
+        $customdata['current']  = $fields;
+        $attributes = array('class' => 'editstrategyform');
+
+        return new workshop_edit_noerrors_strategy_form($actionurl, $customdata, 'post', '', $attributes);
+    }
+
+    /**
+     * Save the assessment dimensions into database
+     *
+     * Saves data into the main strategy form table. If the record->id is null or zero,
+     * new record is created. If the record->id is not empty, the existing record is updated. Records with
+     * empty 'description' field are removed from database.
+     * The passed data object are the raw data returned by the get_data().
+     *
+     * @uses $DB
+     * @param stdClass $data Raw data returned by the dimension editor form
+     * @return void
+     */
+    public function save_edit_strategy_form(stdClass $data) {
+        global $DB, $PAGE;
 
         if (!isset($data->strategyname) || ($data->strategyname != $this->name())) {
             // the workshop strategy has changed since the form was opened for editing
             throw new moodle_exception('strategyhaschanged', 'workshop');
         }
+        $workshopid = $data->workshopid;
+        $norepeats  = $data->norepeats;
 
-        // save the dimensions data
-        $dims = $this->_cook_form_data($data);
-        $todelete = array();
-        foreach ($dims as $record) {
-            if (empty($record->description)) {
-                if (!empty($record->id)) {
+        $data       = $this->prepare_database_fields($data);
+        $masters    = $data->forms;     // data to be saved into {workshop_forms}
+        $locals     = $data->noerrors;  // data to be saved into {workshop_forms_noerrors}
+        $mappings   = $data->mappings;  // data to be saved into {workshop_forms_noerrors_map}
+        $todelete   = array();          // master ids to be deleted
+
+        for ($i=0; $i < $norepeats; $i++) {
+            $local  = $locals[$i];
+            $master = $masters[$i];
+            if (empty($local->description_editor['text'])) {
+                if (!empty($master->id)) {
                     // existing record with empty description - to be deleted
-                    $todelete[] = $record->id;
+                    $todelete[] = $master->id;
                 }
                 continue;
             }
-            if (empty($record->id)) {
+            if (empty($master->id)) {
                 // new field
-                $record->id = $DB->insert_record('workshop_forms_' . $this->name(), $record);
+                $local->id          = $DB->insert_record("workshop_forms_noerrors", $local);
+                $master->localid    = $local->id;
+                $master->id         = $DB->insert_record("workshop_forms", $master);
             } else {
                 // exiting field
-                $DB->update_record('workshop_forms_' . $this->name(), $record);
+                $DB->update_record("workshop_forms", $master);
+                $local->id = $DB->get_field("workshop_forms", "localid", array("id" => $master->id), MUST_EXIST);
             }
+            // re-save with correct path to embeded media files
+            $local = file_postupdate_standard_editor($local, 'description', $this->descriptionopts,
+                $PAGE->context, 'workshop_dimension_description', $master->id);
+            $DB->update_record("workshop_forms_noerrors", $local);
         }
-        // delete dimensions if the teacher removed the description
-        $DB->delete_records_list('workshop_forms_' . $this->name(), 'id', $todelete);
+        $this->delete_dimensions($todelete);
 
         // re-save the mappings
         $current  = array();
@@ -159,30 +203,255 @@ class workshop_noerrors_strategy extends workshop_base_strategy {
     }
 
     /**
-     * Prepares dimensions data returned by mform so they can be saved into database
+     * Factory method returning an instance of an assessment form
+     *
+     * @param moodle_url $actionurl URL of form handler, defaults to auto detect the current url
+     * @param string $mode          Mode to open the form in: preview/assessment
+     */
+    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', object $assessment=null) {
+        global $CFG;    // needed because the included files use it
+        global $PAGE;
+        global $DB;
+        require_once(dirname(__FILE__) . '/assessment_form.php');
+
+        $fields         = $this->prepare_form_fields($this->dimensions, $this->mappings);
+        $nodimensions   = count($this->dimensions);
+
+        // rewrite URLs to the embeded files
+        for ($i = 0; $i < $nodimensions; $i++) {
+            $fields->{'description__idx_'.$i} = file_rewrite_pluginfile_urls($fields->{'description__idx_'.$i},
+                'pluginfile.php', $PAGE->context->id, 'workshop_dimension_description', $fields->{'dimensionid__idx_'.$i});
+        }
+
+        if ('assessment' === $mode and !empty($assessment)) {
+            // load the previously saved assessment data
+            $grades = $this->reindex_grades_by_dimension($this->get_current_assessment_data($assessment));
+            $current = new object();
+            for ($i = 0; $i < $nodimensions; $i++) {
+                $dimid = $fields->{'dimensionid__idx_'.$i};
+                if (isset($grades[$dimid])) {
+                    $current->{'gradeid__idx_'.$i}      = $grades[$dimid]->id;
+                    $current->{'grade__idx_'.$i}        = $grades[$dimid]->grade;
+                    $current->{'peercomment__idx_'.$i}  = $grades[$dimid]->peercomment;
+                }
+            }
+        }
+
+        // set up the required custom data common for all strategies
+        $customdata['strategy'] = $this;
+        $customdata['mode']     = $mode;
+
+        // set up strategy-specific custom data
+        $customdata['nodims']   = $nodimensions;
+        $customdata['fields']   = $fields;
+        $customdata['current']  = isset($current) ? $current : null;
+        $attributes = array('class' => 'assessmentform noerrors');
+
+        return new workshop_noerrors_assessment_form($actionurl, $customdata, 'post', '', $attributes);
+    }
+
+    /**
+     * Saves the filled assessment
+     *
+     * This method processes data submitted using the form returned by {@link get_assessment_form()}
+     *
+     * @param object $assessment Assessment being filled
+     * @param object $data       Raw data as returned by the assessment form
+     * @return float|null        Percentual grade for submission as suggested by the peer
+     */
+    public function save_assessment(object $assessment, object $data) {
+        global $DB;
+
+        if (!isset($data->strategyname) || ($data->strategyname != $this->name())) {
+            // the workshop strategy has changed since the form was opened for editing
+            throw new moodle_exception('strategyhaschanged', 'workshop');
+        }
+        if (!isset($data->nodims)) {
+            throw coding_expection('You did not send me the number of assessment dimensions to process');
+        }
+        for ($i = 0; $i < $data->nodims; $i++) {
+            $grade = new object();
+            $grade->id = $data->{'gradeid__idx_' . $i};
+            $grade->assessmentid = $assessment->id;
+            $grade->dimensionid = $data->{'dimensionid__idx_' . $i};
+            $grade->grade = $data->{'grade__idx_' . $i};
+            $grade->peercomment = $data->{'peercomment__idx_' . $i};
+            $grade->peercommentformat = FORMAT_HTML;
+            if (empty($grade->id)) {
+                // new grade
+                $grade->id = $DB->insert_record('workshop_grades', $grade);
+            } else {
+                // updated grade
+                $DB->update_record('workshop_grades', $grade);
+            }
+        }
+        return $this->update_peer_grade($assessment);
+    }
+
+    /**
+     * Save the definition of a "Number of errors" grading form
+     *
+     * The dimensions data are stored in workshop_forms_noerrors. The data that map the
+     * number of errors to a grade are saved into workshop_forms_noerrors_map.
+     *
+     * @uses $DB
+     * @param object $data Raw data returned by the dimension editor form
+     * @return void
+     */
+    public function save_form(object $data) {
+        global $DB;
+
+        if (!isset($data->strategyname) || ($data->strategyname != $this->name())) {
+            // the workshop strategy has changed since the form was opened for editing
+            throw new moodle_exception('strategyhaschanged', 'workshop');
+        }
+
+        // save the dimensions data
+        $dims = $this->_cook_form_data($data);
+        $todelete = array();
+        foreach ($dims as $record) {
+            if (empty($record->description)) {
+                if (!empty($record->id)) {
+                    // existing record with empty description - to be deleted
+                    $todelete[] = $record->id;
+                }
+                continue;
+            }
+            if (empty($record->id)) {
+                // new field
+                $record->id = $DB->insert_record('workshop_forms_' . $this->name(), $record);
+            } else {
+                // exiting field
+                $DB->update_record('workshop_forms_' . $this->name(), $record);
+            }
+        }
+        // delete dimensions if the teacher removed the description
+        $DB->delete_records_list('workshop_forms_' . $this->name(), 'id', $todelete);
+
+    }
+
+/// Internal methods
+
+    /**
+     * Loads the fields of the assessment form currently used in this workshop
+     *
+     * @return array definition of assessment dimensions
+     */
+    protected function load_fields() {
+        global $DB;
+
+        $sql = "SELECT master.id,dim.description,dim.descriptionformat,dim.grade0,dim.grade1,dim.weight
+                  FROM {workshop_forms} master
+            INNER JOIN {workshop_forms_noerrors} dim ON (dim.id=master.localid)
+                 WHERE master.workshopid = :workshopid AND master.strategy = :strategy
+                 ORDER BY master.sort";
+        $params = array("workshopid" => $this->workshop->id, "strategy" => $this->workshop->strategy);
+
+        return $DB->get_records_sql($sql, $params);
+    }
+
+    /**
+     * Loads the mappings of the number of errors to the grade
+     *
+     * @return array of records
+     */
+    protected function load_mappings() {
+        global $DB;
+        return $DB->get_records("workshop_forms_noerrors_map", array("workshopid" => $this->workshop->id), "nonegative",
+                                "nonegative,grade"); // we can use nonegative as key here as it must be unique within workshop
+    }
+
+    /**
+     * Prepares the database data to be used by the mform
+     *
+     * @param array $dims Array of raw dimension records as returned by {@link load_fields()}
+     * @param array $maps Array of raw mapping records as returned by {@link load_mappings()}
+     * @return array Array of fields data to be used by the mform set_data
+     */
+    protected function prepare_form_fields(array $dims, array $maps) {
+
+        $formdata = new object();
+        $key = 0;
+        foreach ($dims as $dimension) {
+            $formdata->{'dimensionid__idx_' . $key}             = $dimension->id; // master id, not the local one!
+            $formdata->{'description__idx_' . $key}             = $dimension->description;
+            $formdata->{'description__idx_' . $key.'format'}    = $dimension->descriptionformat;
+            $formdata->{'description__idx_' . $key.'trust'}     = $dimension->descriptiontrust;
+            $formdata->{'grade0__idx_' . $key}                  = $dimension->grade0;
+            $formdata->{'grade1__idx_' . $key}                  = $dimension->grade1;
+            $formdata->{'weight__idx_' . $key}                  = $dimension->weight;
+            $key++;
+        }
+
+        foreach ($maps as $nonegative => $map) {
+            $formdata->{'map__idx_' . $nonegative} = $map->grade;
+        }
+
+        return $formdata;
+    }
+
+    /**
+     * Deletes dimensions and removes embedded media from its descriptions
+     *
+     * todo we may check that there are no assessments done using these dimensions and probably remove them
+     *
+     * @param array $masterids
+     * @return void
+     */
+    protected function delete_dimensions($masterids) {
+        global $DB, $PAGE;
+
+        $masters    = $DB->get_records_list("workshop_forms", "id", $masterids, "", "id,localid");
+        $masterids  = array_keys($masters);  // now contains only those really existing
+        $localids   = array();
+        $fs         = get_file_storage();
+
+        foreach ($masters as $itemid => $master) {
+            $fs->delete_area_files($PAGE->context->id, 'workshop_dimension_description', $itemid);
+            $localids[] = $master->localid;
+        }
+        $DB->delete_records_list("workshop_forms_noerrors", "id", $localids);
+        $DB->delete_records_list("workshop_forms", "id", $masterids);
+    }
+
+    /**
+     * Prepares data returned by {@link workshop_edit_noerrors_strategy_form} so they can be saved into database
      *
      * It automatically adds some columns into every record. The sorting is
      * done by the order of the returned array and starts with 1.
-     * Called internally from save_form() only. Could be private but
+     * Called internally from {@link save_edit_strategy_form()} only. Could be private but
      * keeping protected for unit testing purposes.
      *
-     * @param object $raw Raw data returned by mform
+     * @param stdClass $raw Raw data returned by mform
      * @return array Array of objects to be inserted/updated in DB
      */
-    protected function _cook_form_data(object $raw) {
+    protected function prepare_database_fields(stdClass $raw) {
+        global $PAGE;
 
-        $cook = array();
+        $cook           = new object(); // to be returned
+        $cook->forms    = array();      // to be stored in {workshop_forms}
+        $cook->noerrors = array();      // to be stored in {workshop_forms_noerrors}
+        $cook->mappings = array();      // to be stored in {workshop_forms_noerrors_map}
 
-        for ($k = 0; $k < $raw->numofdimensions; $k++) {
-            $cook[$k]                    = new object();
-            $cook[$k]->id                = isset($raw->dimensionid[$k]) ? $raw->dimensionid[$k] : null;
-            $cook[$k]->workshopid        = $this->workshop->id;
-            $cook[$k]->sort              = $k + 1;
-            $cook[$k]->description       = isset($raw->description[$k]) ? $raw->description[$k] : null;
-            $cook[$k]->descriptionformat = FORMAT_HTML;
-            $cook[$k]->grade0            = isset($raw->grade0[$k]) ? $raw->grade0[$k] : null;
-            $cook[$k]->grade1            = isset($raw->grade1[$k]) ? $raw->grade1[$k] : null;
-            $cook[$k]->weight            = isset($raw->weight[$k]) ? $raw->weight[$k] : null;
+        for ($i = 0; $i < $raw->norepeats; $i++) {
+            $cook->forms[$i]                = new object();
+            $cook->forms[$i]->id            = $raw->{'dimensionid__idx_'.$i};
+            $cook->forms[$i]->workshopid    = $this->workshop->id;
+            $cook->forms[$i]->sort          = $i + 1;
+            $cook->forms[$i]->strategy      = 'noerrors';
+
+            $cook->noerrors[$i]             = new object();
+            $cook->noerrors[$i]->description_editor = $raw->{'description__idx_'.$i.'_editor'};
+            $cook->noerrors[$i]->grade0     = $raw->{'grade0__idx_'.$i};
+            $cook->noerrors[$i]->grade1     = $raw->{'grade1__idx_'.$i};
+            $cook->noerrors[$i]->weight     = $raw->{'weight__idx_'.$i};
+
+            if (empty($raw->{'map__idx_'.$i})) {
+                $cook->mappings[$i]         = null;
+            } else {
+                $cook->mappings[$i]         = new object();
+                $cook->mappings[$i]->grade  = $raw->{'map__idx_'.$i};
+            }
         }
         return $cook;
     }

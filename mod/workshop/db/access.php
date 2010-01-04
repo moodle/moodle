@@ -74,7 +74,7 @@ $mod_workshop_capabilities = array(
     ),
 
     'mod/workshop:editdimensions' => array(
-
+        'riskbitmask' => RISK_XSS,  // can embed flash and javascript into wysiwyg
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(

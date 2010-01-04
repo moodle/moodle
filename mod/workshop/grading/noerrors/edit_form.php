@@ -44,36 +44,32 @@ class workshop_edit_noerrors_strategy_form extends workshop_edit_strategy_form {
      */
     protected function definition_inner(&$mform) {
 
-        $workshopconfig = get_config('workshop');
+        $workshopconfig     = get_config('workshop');
+        $norepeats          = $this->_customdata['norepeats'];          // number of dimensions to display
+        $descriptionopts    = $this->_customdata['descriptionopts'];    // wysiwyg fields options
+        $current            = $this->_customdata['current'];            // current data to be set
+
+        $mform->addElement('hidden', 'norepeats', $norepeats);
+        // value not to be overridden by submitted value
+        $mform->setConstants(array('norepeats' => $norepeats));
+
         $weights = workshop_get_dimension_weights();
 
-        $repeated = array();
-        $repeated[] = $mform->createElement('hidden', 'dimensionid', 0);
-        $repeated[] = $mform->createElement('header', 'dimension',
-                                                get_string('dimensionnumbernoerrors', 'workshop', '{no}'));
-        $repeated[] = $mform->createElement('htmleditor', 'description',
-                                                get_string('dimensiondescription', 'workshop'), array());
-        $repeated[] = $mform->createElement('text', 'grade0', get_string('noerrorsgrade0', 'workshop'), array('size'=>'15'));
-        $repeated[] = $mform->createElement('text', 'grade1', get_string('noerrorsgrade1', 'workshop'), array('size'=>'15'));
-        $repeated[] = $mform->createElement('select', 'weight', get_string('dimensionweight', 'workshop'), $weights);
+        for ($i = 0; $i < $norepeats; $i++) {
+            $mform->addElement('header', 'dimension'.$i, get_string('dimensionnumbernoerrors', 'workshop', $i+1));
+            $mform->addElement('hidden', 'dimensionid__idx_'.$i);   // the id in workshop_forms
+            $mform->addElement('editor', 'description__idx_'.$i.'_editor', get_string('dimensiondescription', 'workshop'),
+                                    '', $descriptionopts);
+            $mform->addElement('text', 'grade0__idx_'.$i, get_string('noerrorsgrade0', 'workshop'), array('size'=>'15'));
+            $mform->setDefault('grade0__idx_'.$i, $workshopconfig->noerrorsgrade0);
+            $mform->setType('grade0__idx_'.$i, PARAM_TEXT);
+            $mform->addElement('text', 'grade1__idx_'.$i, get_string('noerrorsgrade1', 'workshop'), array('size'=>'15'));
+            $mform->setDefault('grade1__idx_'.$i, $workshopconfig->noerrorsgrade1);
+            $mform->setType('grade1__idx_'.$i, PARAM_TEXT);
+            $mform->addElement('select', 'weight__idx_'.$i, get_string('dimensionweight', 'workshop'), $weights);
+            $mform->setDefault('weight__idx_'.$i, 1);
+        }
 
-        $repeatedoptions = array();
-        $repeatedoptions['description']['type'] = PARAM_CLEANHTML;
-        $repeatedoptions['description']['helpbutton'] = array('dimensiondescription',
-                                                            get_string('dimensiondescription', 'workshop'), 'workshop');
-        $repeatedoptions['grade0']['type'] = PARAM_TEXT;
-        $repeatedoptions['grade0']['default'] = $workshopconfig->noerrorsgrade0;
-        $repeatedoptions['grade1']['type'] = PARAM_TEXT;
-        $repeatedoptions['grade1']['default'] = $workshopconfig->noerrorsgrade1;
-        $repeatedoptions['weight']['default'] = 1;
-
-        $numofdimensionstoadd   = 2;
-        $numofinitialdimensions = 3;
-        $numofdisplaydimensions = max($this->strategy->get_number_of_dimensions() + $numofdimensionstoadd,
-                                                                                            $numofinitialdimensions);
-        $numofdisplaydimensions = $this->repeat_elements($repeated, $numofdisplaydimensions,  $repeatedoptions,
-                                                    'numofdimensions', 'adddimensions', $numofdimensionstoadd,
-                                                    get_string('addmoredimensionsnoerrors', 'workshop', $numofdimensionstoadd));
         $mform->addElement('header', 'mappingheader', get_string('noerrorsgrademapping', 'workshop'));
         $mform->addElement('static', 'mappinginfo', get_string('noerrorsmaperror', 'workshop'),
                                                             get_string('noerrorsmapgrade', 'workshop'));
@@ -83,15 +79,21 @@ class workshop_edit_noerrors_strategy_form extends workshop_edit_strategy_form {
             $percents[$i] = get_string('percents', 'workshop', $i);
         }
         $mform->addElement('static', 'mappingzero', 0, get_string('percents', 'workshop', 100));
-        $mform->addElement('hidden', 'map[0]', 100);
-        for ($i = 1; $i <= $numofdisplaydimensions; $i++) {
+        $mform->addElement('hidden', 'map__idx_0', 100);
+        for ($i = 1; $i <= $norepeats; $i++) {
             $selects = array();
-            $selects[] = $mform->createElement('select', "map[$i]", $i, $percents);
-            $selects[] = $mform->createElement('static', "mapdefault[$i]", '',
-                                        get_string('percents', 'workshop', floor(100 - $i * 100 / $numofdisplaydimensions)));
-            $mform->addGroup($selects, "grademapping$i", $i, array(' '), false);
-            $mform->setDefault("map[$i]", '');
+            $selects[] = $mform->createElement('select', 'map__idx_'.$i, $i, $percents);
+            $selects[] = $mform->createElement('static', 'mapdefault__idx_'.$i, '',
+                                        get_string('percents', 'workshop', floor(100 - $i * 100 / $norepeats)));
+            $mform->addGroup($selects, 'grademapping'.$i, $i, array(' '), false);
+            $mform->setDefault('map__idx_'.$i, '');
         }
+
+        $mform->registerNoSubmitButton('noadddims');
+        $mform->addElement('submit', 'noadddims', get_string('addmoredimensionsaccumulative', 'workshop',
+                                                                    WORKSHOP_STRATEGY_ADDDIMS));
+        $mform->closeHeaderBefore('noadddims');
+        $this->set_data($current);
 
     }
 

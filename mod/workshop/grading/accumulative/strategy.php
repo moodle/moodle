@@ -44,14 +44,16 @@ class workshop_accumulative_strategy implements workshop_strategy {
     /**
      * Constructor
      *
-     * @param object $workshop The workshop instance record
+     * @param workshop $workshop The workshop instance record
      * @return void
      */
-    public function __construct($workshop) {
+    public function __construct(workshop $workshop) {
         $this->workshop         = $workshop;
         $this->dimensions       = $this->load_fields();
         $this->descriptionopts  = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1);
     }
+
+/// Public API
 
     /**
      * @return string
@@ -99,45 +101,6 @@ class workshop_accumulative_strategy implements workshop_strategy {
     }
 
     /**
-     * Loads the fields of the assessment form currently used in this workshop
-     *
-     * @return array definition of assessment dimensions
-     */
-    protected function load_fields() {
-        global $DB;
-
-        $sql = "SELECT master.id,dim.description,dim.descriptionformat,dim.grade,dim.weight
-                  FROM {workshop_forms} master
-            INNER JOIN {workshop_forms_accumulative} dim ON (dim.id=master.localid)
-                 WHERE master.workshopid = :workshopid AND master.strategy = :strategy
-                 ORDER BY master.sort";
-        $params = array("workshopid" => $this->workshop->id, "strategy" => $this->workshop->strategy);
-
-        return $DB->get_records_sql($sql, $params);
-    }
-
-    /**
-     * Maps the dimension data from DB to the form fields
-     *
-     * @param array $raw Array of raw dimension records as returned by {@link load_fields()}
-     * @return array Array of fields data to be used by the mform set_data
-     */
-    protected function prepare_form_fields(array $raw) {
-
-        $formdata = new object();
-        $key = 0;
-        foreach ($raw as $dimension) {
-            $formdata->{'dimensionid__idx_' . $key}             = $dimension->id; // master id, not the local one!
-            $formdata->{'description__idx_' . $key}             = $dimension->description;
-            $formdata->{'description__idx_' . $key.'format'}    = $dimension->descriptionformat;
-            $formdata->{'grade__idx_' . $key}                   = $dimension->grade;
-            $formdata->{'weight__idx_' . $key}                  = $dimension->weight;
-            $key++;
-        }
-        return $formdata;
-    }
-
-    /**
      * Save the assessment dimensions into database
      *
      * Saves data into the main strategy form table. If the record->id is null or zero,
@@ -146,10 +109,10 @@ class workshop_accumulative_strategy implements workshop_strategy {
      * The passed data object are the raw data returned by the get_data().
      *
      * @uses $DB
-     * @param object $data Raw data returned by the dimension editor form
+     * @param stdClass $data Raw data returned by the dimension editor form
      * @return void
      */
-    public function save_edit_strategy_form(object $data) {
+    public function save_edit_strategy_form(stdClass $data) {
         global $DB, $PAGE;
 
         if (!isset($data->strategyname) || ($data->strategyname != $this->name())) {
@@ -160,9 +123,9 @@ class workshop_accumulative_strategy implements workshop_strategy {
         $norepeats  = $data->norepeats;
 
         $data       = $this->prepare_database_fields($data);
-        $masters    = $data->forms;                 // data to be saved into workshop_forms
-        $locals     = $data->forms_accumulative;    // data to be saved into workshop_forms_accumulative
-        $todelete   = array();                      // master ids to be deleted
+        $masters    = $data->forms;         // data to be saved into workshop_forms
+        $locals     = $data->accumulative;  // data to be saved into workshop_forms_accumulative
+        $todelete   = array();              // master ids to be deleted
 
         for ($i=0; $i < $norepeats; $i++) {
             $local  = $locals[$i];
@@ -187,70 +150,9 @@ class workshop_accumulative_strategy implements workshop_strategy {
             // re-save with correct path to embeded media files
             $local = file_postupdate_standard_editor($local, 'description', $this->descriptionopts,
                 $PAGE->context, 'workshop_dimension_description', $master->id);
-            $DB->update_record('workshop_forms_accumulative', $local);
+            $DB->update_record("workshop_forms_accumulative", $local);
         }
         $this->delete_dimensions($todelete);
-    }
-
-    /**
-     * Deletes dimensions and removes embedded media from its descriptions
-     *
-     * todo we may check that there are no assessments done using these dimensions and probably remove them
-     *
-     * @param array $masterids
-     * @return void
-     */
-    protected function delete_dimensions($masterids) {
-        global $DB, $PAGE;
-
-        $masters    = $DB->get_records_list("workshop_forms", "id", $masterids, "", "id,localid");
-        $masterids  = array_keys($masters);  // now contains only those really existing
-        $localids   = array();
-        $fs         = get_file_storage();
-
-        foreach ($masters as $itemid => $master) {
-            $fs->delete_area_files($PAGE->context->id, 'workshop_dimension_description', $itemid);
-            $localids[] = $master->localid;
-        }
-        $DB->delete_records_list("workshop_forms_accumulative", "id", $localids);
-        $DB->delete_records_list("workshop_forms", "id", $masterids);
-    }
-
-    /**
-     * Prepares data returned by {@link workshop_edit_accumulative_strategy_form} so they can be saved into database
-     *
-     * It automatically adds some columns into every record. The sorting is
-     * done by the order of the returned array and starts with 1.
-     * Called internally from {@link save_edit_strategy_form()} only. Could be private but
-     * keeping protected for unit testing purposes.
-     *
-     * @param object $raw Raw data returned by mform
-     * @return array Array of objects to be inserted/updated in DB
-     */
-    protected function prepare_database_fields(object $raw) {
-        global $PAGE;
-
-        $cook                       = new object();   // to be returned
-        $cook->forms                = array();          // to be stored in {workshop_forms}
-        $cook->forms_accumulative   = array();          // to be stored in {workshop_forms_accumulative}
-
-        for ($i = 0; $i < $raw->norepeats; $i++) {
-            $cook->forms_accumulative[$i] = new object();
-
-            $fieldname = 'description__idx_'.$i.'_editor';
-            $cook->forms_accumulative[$i]->description_editor   = isset($raw->$fieldname) ? $raw->$fieldname : null;
-            $fieldname = 'grade__idx_'.$i;
-            $cook->forms_accumulative[$i]->grade                = isset($raw->$fieldname) ? $raw->$fieldname : null;
-            $fieldname = 'weight__idx_'.$i;
-            $cook->forms_accumulative[$i]->weight               = isset($raw->$fieldname) ? $raw->$fieldname : null;
-
-            $cook->forms[$i]                = new object();
-            $cook->forms[$i]->id            = isset($raw->{'dimensionid__idx_'.$i}) ? $raw->{'dimensionid__idx_'.$i} : null;
-            $cook->forms[$i]->workshopid    = $this->workshop->id;
-            $cook->forms[$i]->sort          = $i + 1;
-            $cook->forms[$i]->strategy      = 'accumulative';
-        }
-        return $cook;
     }
 
     /**
@@ -337,6 +239,104 @@ class workshop_accumulative_strategy implements workshop_strategy {
             }
         }
         return $this->update_peer_grade($assessment);
+    }
+
+/// Internal methods
+
+    /**
+     * Loads the fields of the assessment form currently used in this workshop
+     *
+     * @return array definition of assessment dimensions
+     */
+    protected function load_fields() {
+        global $DB;
+
+        $sql = "SELECT master.id,dim.description,dim.descriptionformat,dim.grade,dim.weight
+                  FROM {workshop_forms} master
+            INNER JOIN {workshop_forms_accumulative} dim ON (dim.id=master.localid)
+                 WHERE master.workshopid = :workshopid AND master.strategy = :strategy
+                 ORDER BY master.sort";
+        $params = array("workshopid" => $this->workshop->id, "strategy" => $this->workshop->strategy);
+
+        return $DB->get_records_sql($sql, $params);
+    }
+
+    /**
+     * Maps the dimension data from DB to the form fields
+     *
+     * @param array $raw Array of raw dimension records as returned by {@link load_fields()}
+     * @return array Array of fields data to be used by the mform set_data
+     */
+    protected function prepare_form_fields(array $raw) {
+
+        $formdata = new object();
+        $key = 0;
+        foreach ($raw as $dimension) {
+            $formdata->{'dimensionid__idx_' . $key}             = $dimension->id; // master id, not the local one!
+            $formdata->{'description__idx_' . $key}             = $dimension->description;
+            $formdata->{'description__idx_' . $key.'format'}    = $dimension->descriptionformat;
+            $formdata->{'grade__idx_' . $key}                   = $dimension->grade;
+            $formdata->{'weight__idx_' . $key}                  = $dimension->weight;
+            $key++;
+        }
+        return $formdata;
+    }
+
+    /**
+     * Deletes dimensions and removes embedded media from its descriptions
+     *
+     * todo we may check that there are no assessments done using these dimensions and probably remove them
+     *
+     * @param array $masterids
+     * @return void
+     */
+    protected function delete_dimensions($masterids) {
+        global $DB, $PAGE;
+
+        $masters    = $DB->get_records_list("workshop_forms", "id", $masterids, "", "id,localid");
+        $masterids  = array_keys($masters);  // now contains only those really existing
+        $localids   = array();
+        $fs         = get_file_storage();
+
+        foreach ($masters as $itemid => $master) {
+            $fs->delete_area_files($PAGE->context->id, 'workshop_dimension_description', $itemid);
+            $localids[] = $master->localid;
+        }
+        $DB->delete_records_list("workshop_forms_accumulative", "id", $localids);
+        $DB->delete_records_list("workshop_forms", "id", $masterids);
+    }
+
+    /**
+     * Prepares data returned by {@link workshop_edit_accumulative_strategy_form} so they can be saved into database
+     *
+     * It automatically adds some columns into every record. The sorting is
+     * done by the order of the returned array and starts with 1.
+     * Called internally from {@link save_edit_strategy_form()} only. Could be private but
+     * keeping protected for unit testing purposes.
+     *
+     * @param stdClass $raw Raw data returned by mform
+     * @return array Array of objects to be inserted/updated in DB
+     */
+    protected function prepare_database_fields(stdClass $raw) {
+        global $PAGE;
+
+        $cook               = new object(); // to be returned
+        $cook->forms        = array();      // to be stored in {workshop_forms}
+        $cook->accumulative = array();      // to be stored in {workshop_forms_accumulative}
+
+        for ($i = 0; $i < $raw->norepeats; $i++) {
+            $cook->forms[$i]                = new object();
+            $cook->forms[$i]->id            = $raw->{'dimensionid__idx_'.$i};
+            $cook->forms[$i]->workshopid    = $this->workshop->id;
+            $cook->forms[$i]->sort          = $i + 1;
+            $cook->forms[$i]->strategy      = 'accumulative';
+
+            $cook->accumulative[$i]         = new object();
+            $cook->accumulative[$i]->description_editor = $raw->{'description__idx_'.$i.'_editor'};
+            $cook->accumulative[$i]->grade  = $raw->{'grade__idx_'.$i};
+            $cook->accumulative[$i]->weight = $raw->{'weight__idx_'.$i};
+        }
+        return $cook;
     }
 
     /**

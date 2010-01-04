@@ -56,9 +56,9 @@ class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_fo
 
         for ($i = 0; $i < $norepeats; $i++) {
             $mform->addElement('header', 'dimension'.$i, get_string('dimensionnumberaccumulative', 'workshop', $i+1));
-            $mform->addElement('hidden', 'dimensionid__idx_'.$i);   // the id in workshop_forms_accumulative
+            $mform->addElement('hidden', 'dimensionid__idx_'.$i);   // the id in workshop_forms
             $mform->addElement('editor', 'description__idx_'.$i.'_editor', get_string('dimensiondescription', 'workshop'),
-                                    array('cols' => 20), $descriptionopts);
+                                    '', $descriptionopts);
             $mform->addElement('modgrade', 'grade__idx_'.$i, get_string('dimensionmaxgrade','workshop'), null, true);
             $mform->setDefault('grade__idx_'.$i, 10);
             $mform->addElement('select', 'weight__idx_'.$i, get_string('dimensionweight', 'workshop'), $weights);

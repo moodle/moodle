@@ -57,10 +57,10 @@ interface workshop_strategy {
      * to be evaluated. Each dimension consists of a set of form fields. Strategy-specific information
      * are saved in workshop_forms_{strategyname} tables.
      *
-     * @param object $data Raw data as returned by the form editor
+     * @param stdClass $data Raw data as returned by the form editor
      * @return void
      */
-    public function save_edit_strategy_form(object $data);
+    public function save_edit_strategy_form(stdClass $data);
 
     /**
      * Factory method returning an instance of an assessment form
