@@ -48,6 +48,12 @@ class workshop_rubric_strategy implements workshop_strategy {
     /** @var array options for dimension description fields */
     protected $descriptionopts;
 
+    /** @var array options for level definition fields */
+    protected $definitionopts;
+
+    /** @var object rubric configuration */
+    protected $config;
+
     /**
      * Constructor
      *
@@ -57,8 +63,10 @@ class workshop_rubric_strategy implements workshop_strategy {
     public function __construct(workshop $workshop) {
         $this->workshop         = $workshop;
         $this->dimensions       = $this->load_fields();
+        $this->config           = $this->load_config();
         $this->descriptionopts  = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1);
         $this->definitionopts   = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1);
+        print_object($this->config); die(); // DONOTCOMMIT
     }
 
     /**
@@ -344,20 +352,44 @@ class workshop_rubric_strategy implements workshop_strategy {
 
         $sql = 'SELECT r.id AS rid, l.id AS lid, *
                   FROM {workshopform_rubric} r
-             LEFT JOIN {workshopform_rubric_levels} l ON (l.dimensionid = r.id}
+             LEFT JOIN {workshopform_rubric_levels} l ON (l.dimensionid = r.id)
                  WHERE r.workshopid = :workshopid
                  ORDER BY r.sort, l.grade';
         $params = array('workshopid' => $this->workshop->id);
 
-        $rs = $DB->get_recordset_sql($sql, $param);
+        $rs = $DB->get_recordset_sql($sql, $params);
         $fields = array();
         foreach ($rs as $record) {
-            //            if (!isset($fields
-            print_object($record); die(); // DONOTCOMMIT
+            if (!isset($fields[$record->rid])) {
+                $fields[$record->rid] = new stdClass();
+                $fields[$record->rid]->id = $record->rid;
+                $fields[$record->rid]->sort = $record->sort;
+                $fields[$record->rid]->description = $record->description;
+                $fields[$record->rid]->descriptionformat = $record->descriptionformat;
+                $fields[$record->rid]->levels = array();
+            }
+            $fields[$record->rid]->levels[$record->lid] = new stdClass();
+            $fields[$record->rid]->levels[$record->lid]->id = $record->lid;
+            $fields[$record->rid]->levels[$record->lid]->grade = $record->grade;
+            $fields[$record->rid]->levels[$record->lid]->definition = $record->definition;
+            $fields[$record->rid]->levels[$record->lid]->definitionformat = $record->definitionformat;
         }
         $rs->close();
-
         return $fields;
+    }
+
+    /**
+     * Get the configuration for the current rubric strategy
+     *
+     * @return object
+     */
+    protected function load_config() {
+        global $DB;
+
+        if (!$config = $DB->get_record('workshopform_rubric_config', array('workshopid' => $this->workshop->id), 'layout')) {
+            $config = (object)array('layout' => 'list');
+        }
+        return $config;
     }
 
     /**

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20091008" COMMENT="XMLDB file for workshop Rubric grading strategy"
+<XMLDB PATH="mod/workshop/db" VERSION="20091009" COMMENT="XMLDB file for workshop Rubric grading strategy"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -17,7 +17,7 @@
         <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="workshopform_rubric_levels" COMMENT="The definition of rubric rating scales" PREVIOUS="workshopform_rubric" NEXT="workshopforms_rubric_config">
+    <TABLE NAME="workshopform_rubric_levels" COMMENT="The definition of rubric rating scales" PREVIOUS="workshopform_rubric" NEXT="workshopform_rubric_config">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="dimensionid"/>
         <FIELD NAME="dimensionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Which criterion this level is part of" PREVIOUS="id" NEXT="grade"/>
@@ -30,7 +30,7 @@
         <KEY NAME="dimension_fk" TYPE="foreign" FIELDS="dimensionid" REFTABLE="workshopform_rubric" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="workshopforms_rubric_config" COMMENT="Configuration table for the Rubric grading strategy" PREVIOUS="workshopform_rubric_levels">
+    <TABLE NAME="workshopform_rubric_config" COMMENT="Configuration table for the Rubric grading strategy" PREVIOUS="workshopform_rubric_levels">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
         <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of workshop this configuartion applies for" PREVIOUS="id" NEXT="layout"/>
@@ -38,7 +38,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="uqfk_workshop"/>
-        <KEY NAME="uqfk_workshop" TYPE="foreign-unique" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="uqfk_workshop" TYPE="unique" FIELDS="workshopid" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
   </TABLES>
