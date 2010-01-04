@@ -156,7 +156,9 @@ function workshop_update_instance(stdClass $workshop) {
  * @return boolean Success/Failure
  */
 function workshop_delete_instance($id) {
-    global $DB;
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/gradelib.php');
+
 
     if (! $workshop = $DB->get_record('workshop', array('id' => $id))) {
         return false;
