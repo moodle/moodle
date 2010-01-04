@@ -53,7 +53,7 @@ class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_fo
 
         $repeated = array();
         $repeated[] =& $mform->createElement('hidden', 'dimensionid', 0);
-        $repeated[] =& $mform->createElement('header', 'dimension', get_string('dimension', 'workshop'));
+        $repeated[] =& $mform->createElement('header', 'dimension', get_string('dimensionnumber', 'workshop', '{no}'));
         $repeated[] =& $mform->createElement('textarea', 'description',
                                                  get_string('dimensiondescription', 'workshop'), array('cols'=>60));
         $repeated[] =& $mform->createElement('select', 'grade', get_string('grade'), $gradeoptions);

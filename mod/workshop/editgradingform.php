@@ -66,18 +66,21 @@ add_to_log($course->id, "workshop", "editgradingform", "editgradingform.php?id=$
 $returnurl = "{$CFG->wwwroot}/mod/workshop/view.php?id={$cm->id}";
 $selfurl   = "{$CFG->wwwroot}/mod/workshop/editgradingform.php?id={$cm->id}";
 
-// todo
-$dimensions = $DB->get_records('workshop_forms_accumulative', array('workshopid' => $workshop->id), 'sort');
+// load the grading strategy logic
+$strategylib = dirname(__FILE__) . '/grading/' . $workshop->strategy . '/strategy.php';
+if (file_exists($strategylib)) {
+    require_once($strategylib);
+} else {
+    print_error('errloadingstrategylib', 'workshop', $returnurl);
+}
+$classname = 'workshop_' . $workshop->strategy . '_strategy';
+$strategy = new $classname($workshop);
+
+// load the dimensions from the database
+$dimensions = $strategy->load_dimensions();
 
 // load the form to edit the grading strategy dimensions
-$strategyform = dirname(__FILE__) . '/grading/' . $workshop->strategy . '/gradingform.php';
-if (file_exists($strategyform)) {
-    require_once($strategyform);
-} else {
-    print_error('errloadingstrategyform', 'workshop', $returnurl);
-}
-$classname = 'workshop_edit_' . $workshop->strategy . '_strategy_form';
-$mform = new $classname($selfurl, true, count($dimensions));
+$mform = $strategy->get_edit_strategy_form($selfurl, true, count($dimensions));
 
 // initialize form data
 $formdata = new stdClass;
