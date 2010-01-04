@@ -103,6 +103,12 @@ function workshop_add_instance($data) {
         $data->instructauthorsformat = $data->instructauthorseditor['format'];
     }
 
+    if ($draftitemid = $data->instructreviewerseditor['itemid']) {
+        $data->instructreviewers = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructreviewers',
+                0, workshop::instruction_editors_options($context), $data->instructreviewerseditor['text']);
+        $data->instructreviewersformat = $data->instructreviewerseditor['format'];
+    }
+
     // re-save the record with the replaced URLs in editor fields
     $DB->update_record('workshop', $data);
 
@@ -135,6 +141,12 @@ function workshop_update_instance($data) {
         $data->instructauthors = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructauthors',
                 0, workshop::instruction_editors_options($context), $data->instructauthorseditor['text']);
         $data->instructauthorsformat = $data->instructauthorseditor['format'];
+    }
+
+    if ($draftitemid = $data->instructreviewerseditor['itemid']) {
+        $data->instructreviewers = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructreviewers',
+                0, workshop::instruction_editors_options($context), $data->instructreviewerseditor['text']);
+        $data->instructreviewersformat = $data->instructreviewerseditor['format'];
     }
 
     // re-save the record with the replaced URLs in editor fields
@@ -347,6 +359,27 @@ function workshop_pluginfile($course, $cminfo, $context, $filearea, array $args,
     if ($filearea === 'workshop_instructauthors') {
         // submission instructions may contain sensitive data
         if (!has_any_capability(array('moodle/course:manageactivities', 'mod/workshop:submit'), $context)) {
+            send_file_not_found();
+        }
+
+        array_shift($args); // we do not use itemids here
+        $relativepath = '/' . implode('/', $args);
+        $fullpath = $context->id . $filearea . '0' . $relativepath; // beware, slashes are not used here!
+
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
+
+        // finally send the file
+        send_stored_file($file, $lifetime, 0);
+    }
+
+    if ($filearea === 'workshop_instructreviewers') {
+        // submission instructions may contain sensitive data
+        if (!has_any_capability(array('moodle/course:manageactivities', 'mod/workshop:peerassess'), $context)) {
             send_file_not_found();
         }
 

@@ -132,9 +132,9 @@ class mod_workshop_mod_form extends moodleform_mod {
         // Assessment settings --------------------------------------------------------
         $mform->addElement('header', 'assessmentsettings', get_string('assessmentsettings', 'workshop'));
 
-//        $label = get_string('instructreviewers', 'workshop');
-//        $mform->addElement('editor', 'instructreviewerseditor', $label, null,
-//                            workshop::instruction_editors_options($this->context));
+        $label = get_string('instructreviewers', 'workshop');
+        $mform->addElement('editor', 'instructreviewerseditor', $label, null,
+                            workshop::instruction_editors_options($this->context));
 
         $label = get_string('nexassessments', 'workshop');
         $options = workshop_get_numbers_of_assessments();
@@ -229,11 +229,23 @@ class mod_workshop_mod_form extends moodleform_mod {
                                 $data['instructauthors']);
             $data['instructauthorseditor']['format'] = $data['instructauthorsformat'];
             $data['instructauthorseditor']['itemid'] = $draftitemid;
+
+            $draftitemid = file_get_submitted_draft_itemid('instructreviewers');
+            $data['instructreviewerseditor']['text'] = file_prepare_draft_area($draftitemid, $this->context->id,
+                                'workshop_instructreviewers', false,
+                                workshop::instruction_editors_options($this->context),
+                                $data['instructreviewers']);
+            $data['instructreviewerseditor']['format'] = $data['instructreviewersformat'];
+            $data['instructreviewerseditor']['itemid'] = $draftitemid;
         } else {
             // adding a new workshop instance
             $draftitemid = file_get_submitted_draft_itemid('instructauthors');
             file_prepare_draft_area($draftitemid, null, null, null);    // no context, no filearea yet
             $data['instructauthorseditor'] = array('text' => '', 'format' => FORMAT_HTML, 'itemid' => $draftitemid);
+
+            $draftitemid = file_get_submitted_draft_itemid('instructreviewers');
+            file_prepare_draft_area($draftitemid, null, null, null);    // no context, no filearea yet
+            $data['instructreviewerseditor'] = array('text' => '', 'format' => FORMAT_HTML, 'itemid' => $draftitemid);
         }
     }
 }

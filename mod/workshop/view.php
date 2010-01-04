@@ -117,6 +117,11 @@ case workshop::PHASE_SUBMISSION:
     }
     break;
 case workshop::PHASE_ASSESSMENT:
+    if (trim(strip_tags($workshop->instructreviewers))) {
+        $instructions = file_rewrite_pluginfile_urls($workshop->instructreviewers, 'pluginfile.php', $PAGE->context->id,
+            'workshop_instructreviewers', 0, workshop::instruction_editors_options($PAGE->context));
+        echo $OUTPUT->box(format_text($instructions, $workshop->instructreviewersformat), array('generalbox', 'instructions'));
+    }
     if (! $assessments = $workshop->get_assessments_by_reviewer($USER->id)) {
         echo $OUTPUT->heading(get_string('assignedassessmentsnone', 'workshop'), 3);
     } else {
