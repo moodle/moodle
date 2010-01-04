@@ -47,7 +47,9 @@ class testable_workshop_best_evaluation extends workshop_best_evaluation {
     public function weighted_variance(array $assessments) {
         return parent::weighted_variance($assessments);
     }
-
+    public function assessments_distance(stdClass $assessment, stdClass $referential, array $diminfo, stdClass $settings) {
+        return parent::assessments_distance($assessment, $referential, $diminfo, $settings);
+    }
 }
 
 class workshop_best_evaluation_test extends UnitTestCase {
@@ -131,23 +133,39 @@ class workshop_best_evaluation_test extends UnitTestCase {
         $this->assertEqual($norm[1]->dimgrades[3], 100);
     }
 
-    public function test_average_assessment() {
+    public function test_average_assessment_same_weights() {
+        // fixture set-up
+        $assessments = array();
+        $assessments[18] = (object)array(
+                'weight'        => 1,
+                'dimgrades'     => array(1 => 50, 2 => 33.33333),
+            );
+        $assessments[16] = (object)array(
+                'weight'        => 1,
+                'dimgrades'     => array(1 => 0, 2 => 66.66667),
+            );
+        // excersise SUT
+        $average = $this->evaluator->average_assessment($assessments);
+        // validate
+        $this->assertIsA($average->dimgrades, 'array');
+        $this->assertEqual(grade_floatval($average->dimgrades[1]), grade_floatval(25));
+        $this->assertEqual(grade_floatval($average->dimgrades[2]), grade_floatval(50));
+    }
+
+    public function test_average_assessment_different_weights() {
         // fixture set-up
         $assessments = array();
         $assessments[11] = (object)array(
                 'weight'        => 1,
                 'dimgrades'     => array(3 => 10.0, 4 => 13.4, 5 => 95.0),
-                'dimweights'    => array(3 => 1, 4 => 1, 5 => 1)
             );
         $assessments[13] = (object)array(
                 'weight'        => 3,
                 'dimgrades'     => array(3 => 11.0, 4 => 10.1, 5 => 92.0),
-                'dimweights'    => array(3 => 1, 4 => 1, 5 => 1)
             );
         $assessments[17] = (object)array(
                 'weight'        => 1,
                 'dimgrades'     => array(3 => 11.0, 4 => 8.1, 5 => 88.0),
-                'dimweights'    => array(3 => 1, 4 => 1, 5 => 1)
             );
         // excersise SUT
         $average = $this->evaluator->average_assessment($assessments);
@@ -164,12 +182,10 @@ class workshop_best_evaluation_test extends UnitTestCase {
         $assessments[11] = (object)array(
                 'weight'        => 0,
                 'dimgrades'     => array(3 => 10.0, 4 => 13.4, 5 => 95.0),
-                'dimweights'    => array(3 => 1, 4 => 1, 5 => 1)
             );
         $assessments[17] = (object)array(
                 'weight'        => 0,
                 'dimgrades'     => array(3 => 11.0, 4 => 8.1, 5 => 88.0),
-                'dimweights'    => array(3 => 1, 4 => 1, 5 => 1)
             );
         // excersise SUT
         $average = $this->evaluator->average_assessment($assessments);
@@ -206,5 +222,48 @@ class workshop_best_evaluation_test extends UnitTestCase {
         $this->assertEqual($variance[3], 0);
         // dimension [4] represents data 2, 4, 4, 4, 5, 5, 7, 9 having stdev=2 (stdev is sqrt of variance)
         $this->assertEqual($variance[4], 4);
+    }
+
+    public function test_assessments_distance_zero() {
+        // fixture set-up
+        $diminfo = array(
+            3 => (object)array('weight' => 1, 'min' => 0, 'max' => 100, 'variance' => 12.34567),
+            4 => (object)array('weight' => 1, 'min' => 1, 'max' => 5,   'variance' => 98.76543),
+        );
+        $assessment1 = (object)array('dimgrades' => array(3 => 15, 4 => 2));
+        $assessment2 = (object)array('dimgrades' => array(3 => 15, 4 => 2));
+        $settings = (object)array('comparison' => 5);
+        // excersise SUT and validate
+        $this->assertEqual($this->evaluator->assessments_distance($assessment1, $assessment2, $diminfo, $settings), 0);
+    }
+
+    public function test_assessments_distance_equals() {
+        /*
+        // fixture set-up
+        $diminfo = array(
+            3 => (object)array('weight' => 1, 'min' => 0, 'max' => 100, 'variance' => 12.34567),
+            4 => (object)array('weight' => 1, 'min' => 0, 'max' => 100, 'variance' => 12.34567),
+        );
+        $assessment1 = (object)array('dimgrades' => array(3 => 25, 4 => 4));
+        $assessment2 = (object)array('dimgrades' => array(3 => 75, 4 => 2));
+        $referential = (object)array('dimgrades' => array(3 => 50, 4 => 3));
+        $settings = (object)array('comparison' => 5);
+        // excersise SUT and validate
+        $this->assertEqual($this->evaluator->assessments_distance($assessment1, $referential, $diminfo, $settings),
+                           $this->evaluator->assessments_distance($assessment2, $referential, $diminfo, $settings));
+        */
+        // fixture set-up
+        $diminfo = array(
+            1 => (object)array('min' => 0, 'max' => 2, 'weight' => 1, 'variance' => 625),
+            2 => (object)array('min' => 0, 'max' => 3, 'weight' => 1, 'variance' => 277.7778888889),
+        );
+        $assessment1 = (object)array('dimgrades' => array(1 => 0,  2 => 66.66667));
+        $assessment2 = (object)array('dimgrades' => array(1 => 50, 2 => 33.33333));
+        $referential = (object)array('dimgrades' => array(1 => 25, 2 => 50));
+        $settings = (object)array('comparison' => 9);
+        // excersise SUT and validate
+        $this->assertEqual($this->evaluator->assessments_distance($assessment1, $referential, $diminfo, $settings),
+                           $this->evaluator->assessments_distance($assessment2, $referential, $diminfo, $settings));
+
     }
 }

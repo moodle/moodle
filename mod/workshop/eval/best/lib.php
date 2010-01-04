@@ -173,7 +173,7 @@ class workshop_best_evaluation implements workshop_evaluation {
             $best = $assessments[$bestid];
             foreach ($assessments as $asid => $assessment) {
                 $d = $this->assessments_distance($assessment, $best, $diminfo, $settings);
-                if (!isset($distances[$asid]) or $d < $distances[$asid]) {
+                if (!is_null($d) and (!isset($distances[$asid]) or $d < $distances[$asid])) {
                     $distances[$asid] = $d;
                 }
             }
@@ -353,12 +353,14 @@ class workshop_best_evaluation implements workshop_evaluation {
      * The passed data structures must contain ->dimgrades property. The referential
      * assessment is supposed to be close to the average assessment. All dimension grades are supposed to be
      * normalized to the interval 0 - 100.
+     * Returned value is rounded to 4 valid decimals to prevent some rounding issues - see the unit test
+     * for an example.
      *
      * @param stdClass $assessment the assessment being measured
      * @param stdClass $referential assessment
      * @param array $diminfo of stdClass(->weight ->min ->max ->variance) indexed by dimension id
      * @param stdClass $settings
-     * @return float|null rounded to 5 valid decimals
+     * @return float|null rounded to 4 valid decimals
      */
     protected function assessments_distance(stdClass $assessment, stdClass $referential, array $diminfo, stdClass $settings) {
         $distance = 0;
@@ -368,18 +370,18 @@ class workshop_best_evaluation implements workshop_evaluation {
             $rgrade = $referential->dimgrades[$dimid];
             $var    = $diminfo[$dimid]->variance;
             $weight = $diminfo[$dimid]->weight;
+            $n     += $weight;
 
             // variations very close to zero are too sensitive to a small change of data values
             if ($var > 0.01 and $agrade != $rgrade) {
                 $absdelta   = abs($agrade - $rgrade);
                 $reldelta   = pow($agrade - $rgrade, 2) / ($settings->comparison * $var);
                 $distance  += $absdelta * $reldelta * $weight;
-                $n         += $weight;
             }
         }
         if ($n > 0) {
             // average distance across all dimensions
-            return grade_floatval($distance / $n);
+            return round($distance / $n, 4);
         } else {
             return null;
         }
