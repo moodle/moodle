@@ -424,7 +424,7 @@ class workshop {
         list($usql, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED);
         $params['workshopid'] = $this->id;
 
-        $sql = 'SELECT author.id AS authorid, author.firstname AS authorfirstname, author.lastname AS authorlastname,
+        $sql = "SELECT author.id AS authorid, author.firstname AS authorfirstname, author.lastname AS authorlastname,
                        author.picture AS authorpicture, author.imagealt AS authorimagealt,
                        s.id AS submissionid, s.title AS submissiontitle, s.grade AS submissiongrade,
                        a.id AS assessmentid, a.timecreated AS timeallocated, a.userid AS reviewerid,
@@ -435,7 +435,7 @@ class workshop {
              LEFT JOIN {workshop_assessments} a ON (s.id = a.submissionid)
              LEFT JOIN {user} reviewer ON (a.userid = reviewer.id)
                  WHERE author.id $usql AND s.workshopid = :workshopid
-              ORDER BY author.lastname,author.firstname,reviewer.lastname,reviewer.firstname';
+              ORDER BY author.lastname,author.firstname,reviewer.lastname,reviewer.firstname";
         
         return $DB->get_recordset_sql($sql, $params);
     }
