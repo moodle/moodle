@@ -33,8 +33,8 @@ require_once(dirname(__FILE__).'/locallib.php');
 $cmid = required_param('cmid', PARAM_INT);              // course module id
 $tool = optional_param('tool', 'menu', PARAM_ALPHA);    // toolkit action
 
-debugging('', DEBUG_DEVELOPER) || die('For development purposes only');
-has_capability('moodle/site:config', get_system_context()) || die('You are not allowed to run this');
+//debugging('', DEBUG_DEVELOPER) || die('For development purposes only');
+//has_capability('moodle/site:config', get_system_context()) || die('You are not allowed to run this');
 
 $cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
 $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -94,9 +94,16 @@ case 'mksubmissions':
         echo "<pre>No submission added</pre>\n";
     }
     echo $OUTPUT->continue_button($PAGE->url->out());
-    echo $OUTPUT->footer();
-    exit();
-
+    break;
+case 'mkassessments':
+    $sql = 'UPDATE {workshop_assessments}
+               SET grade = 100*RANDOM()
+             WHERE submissionid IN (SELECT id FROM {workshop_submissions} WHERE workshopid = :workshopid)';
+    $params['workshopid'] = $workshop->id;
+    $DB->execute($sql, $params);
+    echo $OUTPUT->heading('Submissions graded');
+    echo $OUTPUT->continue_button($PAGE->url->out());
+    break;
 case 'menu':
     // no break, skip to default
 default:
@@ -106,9 +113,8 @@ default:
     echo $OUTPUT->heading('Workshop development tools', 1);
     echo '<ul>';
     echo '<li><a href="' . $PAGE->url->out(false, array('tool' => 'mksubmissions')) . '">Fake submissions</a></li>';
-    echo '<li><a href="' . $PAGE->url->out(false, array('tool' => 'rmsubmissions')) . '">Remove all submissions (TODO)</a></li>';
+    echo '<li><a href="' . $PAGE->url->out(false, array('tool' => 'mkassessments')) . '">Fake assessments</a></li>';
     echo '</ul>';
-    echo $OUTPUT->footer();
 }
 
-
+echo $OUTPUT->footer();
