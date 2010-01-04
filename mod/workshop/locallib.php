@@ -59,13 +59,91 @@ class workshop {
     const EXAMPLES_BEFORE_ASSESSMENT    = 2;
 
     /** @var stdclass course module record */
-    public $cm = null;
+    public $cm;
 
     /** @var stdclass course record */
-    public $course = null;
+    public $course;
 
     /** @var stdclass context object */
-    public $context = null;
+    public $context;
+
+    /** @var int workshop instance identifier */
+    public $id;
+
+    /** @var string workshop activity name */
+    public $name;
+
+    /** @var string introduction or description of the activity */
+    public $intro;
+
+    /** @var int format of the {@link $intro} */
+    public $introformat;
+
+    /** @var string instructions for the submission phase */
+    public $instructauthors;
+
+    /** @var int format of the {@link $instructauthors} */
+    public $instructauthorsformat;
+
+    /** @var string instructions for the assessment phase */
+    public $instructreviewers;
+
+    /** @var int format of the {@link $instructreviewers} */
+    public $instructreviewersformat;
+
+    /** @var int timestamp of when the module was modified */
+    public $timemodified;
+
+    /** @var int current phase of workshop, for example {@link workshop::PHASE_SETUP} */
+    public $phase;
+
+    /** @var bool optional feature: students practise evaluating on example submissions from teacher */
+    public $useexamples;
+
+    /** @var bool optional feature: students perform peer assessment of others' work */
+    public $usepeerassessment;
+
+    /** @var bool optional feature: students perform self assessment of their own work */
+    public $useselfassessment;
+
+    /** @var float number (10, 5) unsigned, the maximum grade for submission */
+    public $grade;
+
+    /** @var float number (10, 5) unsigned, the maximum grade for assessment */
+    public $gradinggrade;
+
+    /** @var string type of the current grading strategy used in this workshop, for example 'accumulative' */
+    public $strategy;
+
+    /** @var int number of digits that should be shown after the decimal point when displaying grades */
+    public $gradedecimals;
+
+    /** @var int number of allowed submission attachments and the files embedded into submission */
+    public $nattachments;
+
+    /** @var bool allow submitting the work after the deadline */
+    public $latesubmissions;
+
+    /** @var int maximum size of the one attached file in bytes */
+    public $maxbytes;
+
+    /** @var int mode of example submissions support, for example {@link workshop::EXAMPLES_VOLUNTARY} */
+    public $examplesmode;
+
+    /** @var int if greater than 0 then the submission is not allowed before this timestamp */
+    public $submissionstart;
+
+    /** @var int if greater than 0 then the submission is not allowed after this timestamp */
+    public $submissionend;
+
+    /** @var int if greater than 0 then the peer assessment is not allowed before this timestamp */
+    public $assessmentstart;
+
+    /** @var int if greater than 0 then the peer assessment is not allowed after this timestamp */
+    public $assessmentend;
+
+    /** @var string the name of the evaluation plugin to use for grading grades calculation */
+    public $evaluation;
 
     /**
      * @var workshop_strategy grading strategy instance
