@@ -128,24 +128,29 @@ case workshop::PHASE_ASSESSMENT:
         echo $OUTPUT->heading(get_string('assignedassessments', 'workshop'), 3);
         $shownames = has_capability('mod/workshop:viewauthornames', $PAGE->context);
         foreach ($assessments as $assessment) {
-            $submission = clone($assessment);
-            $submission->id = $submission->submissionid;
-            $submission->title = $submission->submissiontitle;
-            $submission->timecreated = $submission->submissioncreated;
-            $submission->timemodified = $submission->submissionmodified;
+            $submission                     = new stdClass();
+            $submission->id                 = $assessment->submissionid;
+            $submission->title              = $assessment->submissiontitle;
+            $submission->timecreated        = $assessment->submissioncreated;
+            $submission->timemodified       = $assessment->submissionmodified;
+            $submission->authorid           = $assessment->authorid;
+            $submission->authorfirstname    = $assessment->authorfirstname;
+            $submission->authorlastname     = $assessment->authorlastname;
+            $submission->authorpicture      = $assessment->authorpicture;
+            $submission->authorimagealt     = $assessment->authorimagealt;
+
             if (is_null($assessment->grade)) {
                 $class      = ' notgraded';
-                $givengrade = get_string('nogradeyet', 'workshop');
+                $status     = get_string('nogradeyet', 'workshop');
                 $buttontext = get_string('assess', 'workshop');
             } else {
                 $class      = ' graded';
-                // todo format grade
-                $givengrade = $assessment->grade;
+                $status     = get_string('alreadygraded', 'workshop');
                 $buttontext = get_string('reassess', 'workshop');
             }
             echo $OUTPUT->box_start('generalbox assessment-summary' . $class);
             echo $wsoutput->submission_summary($submission, $shownames);
-            echo get_string('givengrade', 'workshop', $givengrade);
+            echo get_string('givengradestatus', 'workshop', $status);
             $button = new html_form();
             $button->method         = 'get';
             $button->button->text   = $buttontext;
