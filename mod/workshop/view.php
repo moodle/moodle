@@ -158,7 +158,7 @@ case workshop::PHASE_ASSESSMENT:
 case workshop::PHASE_EVALUATION:
     $pagingvar  = 'page';
     $page       = optional_param($pagingvar, 0, PARAM_INT);
-    $perpage    = 1000;           // todo let the user modify this
+    $perpage    = 10;           // todo let the user modify this
     $groups     = '';           // todo let the user choose the group
     $sortby     = 'totalgrade';   // todo let the user choose the column to sort by
     $sorthow    = 'DESC';        // todo detto
@@ -167,6 +167,23 @@ case workshop::PHASE_EVALUATION:
     if ($data) {
         $showauthornames    = has_capability('mod/workshop:viewauthornames', $PAGE->context);
         $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $PAGE->context);
+
+        if (has_capability('mod/workshop:overridegrades', $PAGE->context)) {
+            $form = new html_form();
+            $form->url = $workshop->aggregate_url();
+            $form->button = new html_button();
+            $form->button->text = get_string('aggregategrades', 'workshop');
+            $form->method = 'post';
+
+            $helpicon = new moodle_help_icon();
+            $helpicon->page = 'aggregate';
+            $helpicon->text = get_string('aggregategrades', 'workshop');
+            $helpicon->module = 'workshop';
+
+            echo $OUTPUT->box_start('buttonsbar');
+            echo $OUTPUT->box($OUTPUT->button($form) . $OUTPUT->help_icon($helpicon), 'buttonwithhelp');
+            echo $OUTPUT->box_end();
+        }
 
         // prepare paging bar
         $pagingbar              = new moodle_paging_bar();

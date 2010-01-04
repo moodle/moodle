@@ -341,3 +341,13 @@
     border: 1px solid #ddd;
 }
 
+/**
+ * Misc
+ */
+.mod-workshop div.buttonsbar {
+    text-align: center;
+}
+
+.mod-workshop div.buttonwithhelp div {
+    display: inline;
+}
