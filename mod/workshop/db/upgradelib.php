@@ -34,7 +34,7 @@ function workshop_upgrade_prepare_20_tables() {
     if (!$dbman->table_exists('workshop')) {
         $table = new xmldb_table('workshop');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('oldid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null); // id in 1.9 table
+        $table->add_field('oldid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null); // id in 1.9 table
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
         $table->add_field('intro', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
