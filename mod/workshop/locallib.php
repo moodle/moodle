@@ -1216,7 +1216,7 @@ class workshop {
         global $DB;
 
         // fetch a recordset with all assessments to process
-        $sql = 'SELECT s.id AS submissionid, s.grade AS submissiongrade, s.gradeover,
+        $sql = 'SELECT s.id AS submissionid, s.grade AS submissiongrade,
                        a.weight, a.grade
                   FROM {workshop_submissions} s
              LEFT JOIN {workshop_assessments} a ON (a.submissionid = s.id)
@@ -1411,11 +1411,6 @@ class workshop {
             if (is_null($current)) {
                 // the currently saved grade is the same in all records, fetch it during the first loop cycle
                 $current = $assessment->submissiongrade;
-            }
-            if (!is_null($assessment->gradeover)) {
-                // the grade for this assessment is overriden by a teacher, no need to calculate anything
-                $finalgrade = grade_floatval($assessment->gradeover);
-                break;
             }
             if (is_null($assessment->grade)) {
                 // this was not assessed yet
