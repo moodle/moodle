@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20090601" COMMENT="XMLDB file for Moodle mod/workshop"
+<XMLDB PATH="mod/workshop/db" VERSION="20090605" COMMENT="XMLDB file for Moodle mod/workshop"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -50,8 +50,13 @@
         <FIELD NAME="example" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Is this submission an example from teacher" PREVIOUS="workshopid" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The author of the submission" PREVIOUS="example" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Timestamp when the work was submitted for the first time" PREVIOUS="userid" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Timestamp when the submission has been updated" PREVIOUS="timecreated" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the submission calculated as average of the peer-assessments. The grade is a number from interval 0..100. If NULL then the grade for submission has not been aggregated yet." PREVIOUS="timemodified" NEXT="gradeover"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Timestamp when the submission has been updated" PREVIOUS="timecreated" NEXT="title"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The submission title" PREVIOUS="timemodified" NEXT="data"/>
+        <FIELD NAME="data" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Submission text" PREVIOUS="title" NEXT="dataformat"/>
+        <FIELD NAME="dataformat" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of submission text" PREVIOUS="data" NEXT="datatrust"/>
+        <FIELD NAME="datatrust" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The trust mode of the data" PREVIOUS="dataformat" NEXT="attachment"/>
+        <FIELD NAME="attachment" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Used by File API file_postupdate_standard_filemanager" PREVIOUS="datatrust" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the submission calculated as average of the peer-assessments. The grade is a number from interval 0..100. If NULL then the grade for submission has not been aggregated yet." PREVIOUS="attachment" NEXT="gradeover"/>
         <FIELD NAME="gradeover" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the submission manually overridden by a teacher. Grade is always from interval 0..100. If NULL then the grade is not overriden." PREVIOUS="grade" NEXT="gradeoverby"/>
         <FIELD NAME="gradeoverby" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the user who has overridden the grade for submission." PREVIOUS="gradeover" NEXT="gradinggrade"/>
         <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the assessment calculated by the module. The grade is a number from interval 0..100. If NULL then the grade for assessment has not been aggregated yet." PREVIOUS="gradeoverby" NEXT="teachercomment"/>

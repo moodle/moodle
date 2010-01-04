@@ -27,45 +27,32 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 
-$id = optional_param('id', 0, PARAM_INT); // course_module ID, or
-$a  = optional_param('a', 0, PARAM_INT);  // workshop instance ID
+$cmid = required_param('cmid', PARAM_INT);            // course module id
+        
+if (!$cm = get_coursemodule_from_id('workshop', $cmid)) {
+    print_error('invalidcoursemodule');
+}   
+        
+if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
+    print_error('coursemisconf');
+}   
 
-if ($id) {
-    if (! $cm = get_coursemodule_from_id('workshop', $id)) {
-        error('Course Module ID was incorrect');
-    }
+require_login($course, false, $cm);
 
-    if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
-        error('Course is misconfigured');
-    }
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    if (! $workshop = $DB->get_record('workshop', array('id' => $cm->instance))) {
-        error('Course module is incorrect');
-    }
-
-} else if ($a) {
-    if (! $workshop = $DB->get_record('workshop', array('id' => $a))) {
-        error('Course module is incorrect');
-    }
-    if (! $course = $DB->get_record('course', array('id' => $workshop->course))) {
-        error('Course is misconfigured');
-    }
-    if (! $cm = get_coursemodule_from_instance('workshop', $workshop->id, $course->id)) {
-        error('Course Module ID was incorrect');
-    }
-
-} else {
-    error('You must specify a course_module ID or an instance ID');
+if (isguestuser()) {
+    print_error('guestnoedit', 'workshop', "$CFG->wwwroot/mod/workshop/view.php?id=$cmid");
 }
 
-require_login($course, true, $cm);
-
-add_to_log($course->id, "workshop", "editgradingform", "editgradingform.php?id=$cm->id", "$workshop->id");
+if (!$workshop = $DB->get_record('workshop', array('id' => $cm->instance))) {
+    print_error('invalidid', 'workshop');
+}
 
 // where should the user be sent after closing the editing form
 $returnurl = "{$CFG->wwwroot}/mod/workshop/view.php?id={$cm->id}";
 // the URL of this editing form
-$selfurl   = "{$CFG->wwwroot}/mod/workshop/editgradingform.php?id={$cm->id}";
+$selfurl   = "{$CFG->wwwroot}/mod/workshop/editgradingform.php?cmid={$cm->id}";
 
 // load the grading strategy logic
 $strategylib = dirname(__FILE__) . '/grading/' . $workshop->strategy . '/strategy.php';
