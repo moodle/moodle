@@ -56,4 +56,34 @@ class workshop_internal_api_test extends UnitTestCase {
         $this->workshop = null;
     }
 
+    public function test_percent_to_value() {
+        // fixture setup
+        $total = 185;
+        $percent = 56.6543;
+        // exercise SUT
+        $part = workshop::percent_to_value($percent, $total);
+        // verify
+        $this->assertEqual($part, $total * $percent / 100);
+    }
+
+    public function test_percent_to_value_negative() {
+        // fixture setup
+        $total = 185;
+        $percent = -7.098;
+        // set expectation
+        $this->expectException('coding_exception');
+        // exercise SUT
+        $part = workshop::percent_to_value($percent, $total);
+    }
+
+    public function test_percent_to_value_over_hundred() {
+        // fixture setup
+        $total = 185;
+        $percent = 121.08;
+        // set expectation
+        $this->expectException('coding_exception');
+        // exercise SUT
+        $part = workshop::percent_to_value($percent, $total);
+    }
+
 }

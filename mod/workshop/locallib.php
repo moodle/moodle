@@ -132,6 +132,21 @@ class workshop {
                      'changeformat' => 1, 'context' => $context, 'noclean' => 1, 'trusttext' => 0);
     }
 
+    /**
+     * Given the percent and the total, returns the number
+     *
+     * @param float $percent from 0 to 100
+     * @param float $total   the 100% value
+     * @return float
+     */
+    public static function percent_to_value($percent, $total) {
+        if ($percent < 0 or $percent > 100) {
+            throw new coding_exception('The percent can not be less than 0 or higher than 100');
+        }
+
+        return $total * $percent / 100;
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     // Workshop API                                                               //
     ////////////////////////////////////////////////////////////////////////////////
