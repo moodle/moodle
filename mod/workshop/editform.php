@@ -28,27 +28,17 @@ require_once(dirname(__FILE__).'/locallib.php');
 
 $cmid = required_param('cmid', PARAM_INT);            // course module id
 
-if (!$cm = get_coursemodule_from_id('workshop', $cmid)) {
-    print_error('invalidcoursemodule');
-}
-
-if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-    print_error('coursemisconf');
-}
+$cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
+$course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
-
-$context = $PAGE->context;
-
 if (isguestuser()) {
-    print_error('err_noguests', 'workshop', "$CFG->wwwroot/mod/workshop/view.php?id=$cmid");
+    print_error('guestnoedit', 'workshop', "$CFG->wwwroot/mod/workshop/view.php?id=$cmid");
 }
+require_capability('mod/workshop:editdimensions', $PAGE->context);
 
-if (!$workshop = $DB->get_record('workshop', array('id' => $cm->instance))) {
-    print_error('err_invalidworkshopid', 'workshop');
-}
-
-$workshop = new workshop_api($workshop, $cm, $course);
+$workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
+$workshop   = new workshop_api($workshop, $cm, $course);
 
 // where should the user be sent after closing the editing form
 $returnurl  = "{$CFG->wwwroot}/mod/workshop/view.php?id={$cm->id}";

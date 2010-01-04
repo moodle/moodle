@@ -36,7 +36,7 @@ class workshop_submission_form extends moodleform {
         $current            = $this->_customdata['current'];
         $workshop           = $this->_customdata['workshop'];
         $cm                 = $this->_customdata['cm'];
-        $dataoptions        = $this->_customdata['dataoptions'];
+        $contentoptions     = $this->_customdata['contentoptions'];
         $attachmentoptions  = $this->_customdata['attachmentoptions'];
 
         $mform->addElement('header', 'general', get_string('submission', 'workshop'));
@@ -45,8 +45,8 @@ class workshop_submission_form extends moodleform {
         $mform->setType('title', PARAM_TEXT);
         $mform->addRule('title', null, 'required', null, 'client');
 
-        $mform->addElement('editor', 'data_editor', get_string('submissiondata', 'workshop'), null, $dataoptions);
-        $mform->setType('data_editor', PARAM_RAW);
+        $mform->addElement('editor', 'content_editor', get_string('submissioncontent', 'workshop'), null, $contentoptions);
+        $mform->setType('content', PARAM_RAW);
 
         if ($workshop->nattachments > 0) {
             $mform->addElement('static', 'filemanagerinfo', get_string('nattachments', 'workshop'), $workshop->nattachments);
@@ -54,8 +54,8 @@ class workshop_submission_form extends moodleform {
                                 null, $attachmentoptions);
         }
 
-        $mform->addElement('hidden', 'id');
-        $mform->addElement('hidden', 'cmid');
+        $mform->addElement('hidden', 'id', $current->id);
+        $mform->addElement('hidden', 'cmid', $cm->id);
 
         $this->add_action_buttons();
 

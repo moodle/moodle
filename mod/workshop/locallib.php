@@ -52,10 +52,10 @@ class workshop_api extends workshop {
      * @param object $instance     The instance data row from {workshop} table
      * @param object $cm           Course module record
      * @param object $courserecord Course record
+     */
     public function __construct($instance, $cm, $courserecord) {
         parent::__construct($instance, $cm, $courserecord);
     }
-     */
 
     /**
      * Fetches all users with the capability mod/workshop:submit in the current context
@@ -232,7 +232,7 @@ class workshop_api extends workshop {
         if ($examples === true) {
             $sql .= ' AND example = 1';
         }
-        if (is_int($userid)) {
+        if (is_numeric($userid)) {
             $sql .= ' AND userid = ?';
             $params = array_merge($params, array($userid));
         }
@@ -260,7 +260,7 @@ class workshop_api extends workshop {
             return false;
         }
         $rs = $this->get_submissions_recordset($id, false);
-        if (is_int($id)) {
+        if (is_numeric($id)) {
             $submission = $rs->current();
             $rs->close();
             if (empty($submission->id)) {
@@ -309,16 +309,16 @@ class workshop_api extends workshop {
                 INNER JOIN {user} author ON (s.userid = author.id)
                 WHERE s.workshopid = ?';
         $params = array($this->id);
-        if (is_int($reviewerid)) {
-            $sql .= ' AND reviewerid = ?';
+        if (is_numeric($reviewerid)) {
+            $sql .= ' AND reviewer.id = ?';
             $params = array_merge($params, array($reviewerid));
         }
         if (is_array($reviewerid)) {
             list($usql, $uparams) = $DB->get_in_or_equal($reviewerid);
-            $sql .= ' AND reviewerid ' . $usql;
+            $sql .= ' AND reviewer.id ' . $usql;
             $params = array_merge($params, $uparams);
         }
-        if (is_int($id)) {
+        if (is_numeric($id)) {
             $sql .= ' AND a.id = ?';
             $params = array_merge($params, array($id));
         }
@@ -489,28 +489,22 @@ class workshop_api extends workshop {
     /**
      * Returns instance of grading strategy class
      *
-     * @param object $workshop Workshop record
      * @return object Instance of a grading strategy
      */
     public function grading_strategy_instance() {
-        if (!($this->strategy === clean_param($workshop->strategy, PARAM_ALPHA))) {
-            throw new moodle_workshop_exception($this, 'invalidstrategyname');
-        }
-
         if (is_null($this->strategy_api)) {
-            $strategylib = dirname(__FILE__) . '/grading/' . $workshop->strategy . '/strategy.php';
+            $strategylib = dirname(__FILE__) . '/grading/' . $this->strategy . '/strategy.php';
             if (is_readable($strategylib)) {
                 require_once($strategylib);
             } else {
                 throw new moodle_workshop_exception($this, 'missingstrategy');
             }
-            $classname = 'workshop_' . $workshop->strategy . '_strategy';
+            $classname = 'workshop_' . $this->strategy . '_strategy';
             $this->strategy_api = new $classname($this);
             if (!in_array('workshop_strategy', class_implements($this->strategy_api))) {
                 throw new moodle_workshop_exception($this, 'strategynotimplemented');
             }
         }
-
         return $this->strategy_api;
     }
 
@@ -579,4 +573,3 @@ class moodle_workshop_exception extends moodle_exception {
         parent::__construct($errorcode, $module, $link, $a, $debuginfo);
     }
 }
-

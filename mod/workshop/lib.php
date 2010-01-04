@@ -307,6 +307,140 @@ function workshop_supports($feature) {
     }
 }
 
+/**
+ * Returns all other caps used in the module
+ *
+ * @return array
+ */
+function workshop_get_extra_capabilities() {
+    return array('moodle/site:accessallgroups');
+}
+
+////////////////////////////////
+/// File API ///////////////////
+////////////////////////////////
+
+/**
+ * Serves the submission attachments
+ *
+ * The access rights to the file are checked here.
+ *
+ * @param object $course
+ * @param object $cminfo
+ * @param object $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
+ * @return bool false if file not found, does not return if found - justsend the file
+ */
+function workshop_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
+    global $DB;
+
+    if (!$cminfo->uservisible) {
+        return false;
+    }
+
+    $fileareas = array('workshop_submission_content', 'workshop_submission_attachment');
+    if (!in_array($filearea, $fileareas)) {
+        return false;
+    }
+
+    $submissionid = (int)array_shift($args);
+
+    if (!$cm = get_coursemodule_from_instance('workshop', $cminfo->instance, $course->id)) {
+        return false;
+    }
+
+    require_course_login($course, true, $cm);
+
+    if (!$submission = $DB->get_record('workshop_submissions', array('id' => $submissionid))) {
+        return false;
+    }
+
+    if (!$workshop = $DB->get_record('workshop', array('id' => $cminfo->instance))) {
+        return false;
+    }
+
+    $fs = get_file_storage();
+    $relativepath = '/' . implode('/', $args);
+    $fullpath = $context->id . $filearea . $submissionid . $relativepath;
+    if ((!$file = $fs->get_file_by_hash(sha1($fullpath))) || ($file->is_directory())) {
+        return false;
+    }
+    // TODO MDL-19941 make sure the user is allowed to see the submission
+
+    // finally send the file
+    send_stored_file($file, 0, 0, true); // download MUST be forced - security!
+}
+
+/**
+ * Returns the lists of all browsable file areas within the given module context
+ *
+ * The file area workshop_intro for the activity introduction field is added automatically
+ * by {@link file_browser::get_file_info_module()}
+ *
+ * @param object $course
+ * @param object $cm
+ * @param object $context
+ * @return array of [(string)filearea] => (string)description
+ */
+function workshop_get_file_areas($course, $cm, $context) {
+    $areas = array();
+    // todo re-think capability checking
+    if (has_capability('mod/workshop:submit', $context) || has_capability('mod/workshop:submitexamples', $context)) {
+        $areas['workshop_submission_content']       = get_string('areasubmissioncontent', 'workshop');
+        $areas['workshop_submission_attachment']    = get_string('areasubmissionattachment', 'workshop');
+    }
+    return $areas;
+}
+
+/**
+ * File browsing support for workshop file areas
+ *
+ * @param object $browser
+ * @param object $areas
+ * @param object $course
+ * @param object $cm
+ * @param object $context
+ * @param string $filearea
+ * @param int $itemid
+ * @param string $filepath
+ * @param string $filename
+ * @return object file_info instance or null if not found
+ */
+function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+    global $CFG, $DB;
+    static $authors=null;    // cache for submission authors
+
+    if (!($filearea == 'workshop_submission_content' || $filearea == 'workshop_submission_attachment')) {
+        return null;
+    }
+    if (is_null($itemid)) {
+        require_once($CFG->dirroot . '/mod/workshop/fileinfolib.php');
+        return new workshop_file_info($browser, $course, $cm, $context, $areas, $filearea);
+    }
+
+    $fs = get_file_storage();
+    $filepath = is_null($filepath) ? '/' : $filepath;
+    $filename = is_null($filename) ? '.' : $filename;
+    if (!$storedfile = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
+        return null;
+    }
+
+    if (is_null($authors)) {
+        $sql = 'SELECT s.id, u.lastname, u.firstname
+                FROM {workshop_submissions} s
+                JOIN {user} u ON (s.userid = u.id)
+                WHERE s.workshopid = ?';
+        $params[0] = $cm->instance;
+        $authors = $DB->get_records_sql($sql, $params);
+    }
+    $urlbase        = $CFG->wwwroot . '/pluginfile.php';
+    $topvisiblename = fullname($authors[$itemid]);
+    // do not allow manual modification of any files!
+    return new file_info_stored($browser, $context, $storedfile, $urlbase, $topvisiblename, true, true, false, false);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Other functions needed by Moodle core follows. They can't be put into      //
 // locallib.php because they are used by some core scripts (like modedit.php) //
@@ -324,7 +458,6 @@ function workshop_supports($feature) {
  * @return array Array of integers
  */
 function workshop_get_maxgrades() {
-
     $grades = array();
     for ($i=100; $i>=0; $i--) {
         $grades[$i] = $i;
@@ -340,7 +473,6 @@ function workshop_get_maxgrades() {
  * @return array Array of integers
  */
 function workshop_get_numbers_of_assessments() {
-
     $options = array();
     $options[30] = 30;
     $options[20] = 20;
@@ -357,7 +489,6 @@ function workshop_get_numbers_of_assessments() {
  * @return array Array of integers 0, 1, 2, ..., 10
  */
 function workshop_get_teacher_weights() {
-
     $weights = array();
     for ($i=10; $i>=0; $i--) {
         $weights[$i] = $i;
@@ -371,7 +502,6 @@ function workshop_get_teacher_weights() {
  * @return array Array of integers 0, 1, 2, ..., 16
  */
 function workshop_get_dimension_weights() {
-
     $weights = array();
     for ($i=16; $i>=0; $i--) {
         $weights[$i] = $i;
@@ -386,7 +516,6 @@ function workshop_get_dimension_weights() {
  * $return array Array ['string' => 'string']
  */
 function workshop_get_strategies() {
-
     $installed = get_list_of_plugins('mod/workshop/grading');
     $forms = array();
     foreach ($installed as $strategy) {
@@ -402,7 +531,6 @@ function workshop_get_strategies() {
  * @return array Array 'mode DB code'=>'mode name'
  */
 function workshop_get_example_modes() {
-
     $modes = array();
     $modes[WORKSHOP_EXAMPLES_VOLUNTARY]         = get_string('examplesvoluntary', 'workshop');
     $modes[WORKSHOP_EXAMPLES_BEFORE_SUBMISSION] = get_string('examplesbeforesubmission', 'workshop');
@@ -427,7 +555,6 @@ function workshop_get_example_modes() {
  * @return array Array of objects
  */
 function workshop_get_comparison_levels() {
-
     $levels = array();
 
     $levels[WORKSHOP_COMPARISON_VERYHIGH] = new stdClass;

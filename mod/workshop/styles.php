@@ -120,4 +120,9 @@
     margin-top: 1em;
 }
 
-
+/**
+ * Assessment
+ */
+.assessmentform .description {
+    margin: 0px 1em;
+}
