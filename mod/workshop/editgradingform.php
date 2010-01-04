@@ -62,8 +62,9 @@ require_login($course, true, $cm);
 
 add_to_log($course->id, "workshop", "editgradingform", "editgradingform.php?id=$cm->id", "$workshop->id");
 
-// where should the user be sent in case of error of canceling
+// where should the user be sent after closing the editing form
 $returnurl = "{$CFG->wwwroot}/mod/workshop/view.php?id={$cm->id}";
+// the URL of this editing form
 $selfurl   = "{$CFG->wwwroot}/mod/workshop/editgradingform.php?id={$cm->id}";
 
 // load the grading strategy logic
@@ -92,7 +93,12 @@ $mform->set_data($formdata);
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 } elseif ($data = $mform->get_data()) {
-    print_object($data); die();
+    $strategy->save_dimensions($data);
+    if (isset($data->saveandclose)) {
+        redirect($returnurl);
+    } else {
+        redirect($selfurl);
+    }
 }
 
 // build the navigation and the header

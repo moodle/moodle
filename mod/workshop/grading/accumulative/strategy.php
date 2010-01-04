@@ -36,4 +36,20 @@ require_once(dirname(dirname(__FILE__)) . '/strategy.php'); // parent class
  */
 class workshop_accumulative_strategy extends workshop_strategy {
 
+    /**
+     * Mapping of the db fields to the form fields for every dimension of assessment
+     *
+     * @return array Array ['field_db_name' => 'field_form_name']
+     */
+    public function map_dimension_fieldnames() {
+        return array(
+                'id'                => 'dimensionid',
+                'description'       => 'description',
+                'descriptionformat' => 'descriptionformat',
+                'grade'             => 'grade',
+                'weight'            => 'weight',
+            );
+    }
+
+
 }

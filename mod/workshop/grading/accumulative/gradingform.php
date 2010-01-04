@@ -24,11 +24,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.'); //  It must be included from a Moodle page
-}
+defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(__FILE__)).'/gradingform.php');  // parent class definition
+require_once(dirname(dirname(dirname(__FILE__))).'/lib.php');   // module library
+require_once(dirname(dirname(__FILE__)).'/gradingform.php');    // parent class definition
 
 
 /**
@@ -53,9 +52,10 @@ class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_fo
 
         $repeated = array();
         $repeated[] =& $mform->createElement('hidden', 'dimensionid', 0);
-        $repeated[] =& $mform->createElement('header', 'dimension', get_string('dimensionnumberaccumulative', 'workshop', '{no}'));
-        $repeated[] =& $mform->createElement('textarea', 'description',
-                                                 get_string('dimensiondescription', 'workshop'), array('cols'=>60));
+        $repeated[] =& $mform->createElement('header', 'dimension', 
+                                                get_string('dimensionnumberaccumulative', 'workshop', '{no}'));
+        $repeated[] =& $mform->createElement('htmleditor', 'description',
+                                                get_string('dimensiondescription', 'workshop'), array());
         $repeated[] =& $mform->createElement('select', 'grade', get_string('grade'), $gradeoptions);
         $repeated[] =& $mform->createElement('select', 'weight', get_string('dimensionweight', 'workshop'), $weights);
         
@@ -70,23 +70,6 @@ class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_fo
         $numofinitialdimensions = 3;
         $numofdisplaydimensions = max($this->numofdimensions + $numofdimensionstoadd, $numofinitialdimensions);
         $this->repeat_elements($repeated, $numofdisplaydimensions,  $repeatedoptions, 'numofdimensions', 'adddimensions', $numofdimensionstoadd, get_string('addmoredimensionsaccumulative', 'workshop', $numofdimensionstoadd));
-    }
-
-
-    /**
-     * Return the mapping of the db fields to the form fields for every dimension of assessment
-     *  
-     * @access protected
-     * @return array Array ['field_db_name' => 'field_form_name']
-     */
-    protected function get_dimension_fieldnames() {
-        return array(
-                'id'                => 'dimensionid',
-                'description'       => 'description',
-                'descriptionformat' => 'descriptionformat',
-                'grade'             => 'grade',
-                'weight'            => 'weight',
-            );
     }
 
 

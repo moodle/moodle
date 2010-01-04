@@ -24,9 +24,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.'); //  It must be included from a Moodle page
-}
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php'); // parent class definition
 
@@ -42,26 +40,26 @@ require_once($CFG->libdir . '/formslib.php'); // parent class definition
  */
 class workshop_edit_strategy_form extends moodleform {
 
-    /**
-     * Number of dimensions that are populated from DB
-     * 
-     * @var mixed
-     * @access protected
-     */
+    /** strategy logic instance that this class is editor of */ 
+    protected $strategy;
+
+    /** number of dimensions that are populated from DB */
     protected $numofdimensions;
 
     /**
      * Constructor
      * 
+     * @param object $strategy The instance of the strategy logic
      * @param str $actionurl URL to handle data
      * @param bool $editable Should the form be editable?
      * @param int $initialdimensions Number of assessment dimensions that are already filled
      * @access public
      * @return void
      */
-    public function __construct($actionurl, $editable=true, $initialdimensions=0) {
+    public function __construct(workshop_strategy $strategy, $actionurl, $editable=true, $initialdimensions=0) {
 
-        $this->numofdimensions = $initialdimensions;
+        $this->strategy         = $strategy;
+        $this->numofdimensions  = $initialdimensions;
         parent::moodleform($actionurl, null, 'post', '', array('class' => 'editstrategyform'), $editable);
     }
 
@@ -96,7 +94,8 @@ class workshop_edit_strategy_form extends moodleform {
         }
 
         $buttonarray = array();
-        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+        $buttonarray[] = &$mform->createElement('submit', 'saveandclose', get_string('saveandclose', 'workshop'));
+        $buttonarray[] = &$mform->createElement('submit', 'saveandcontinue', get_string('saveandcontinue', 'workshop'));
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
@@ -117,7 +116,7 @@ class workshop_edit_strategy_form extends moodleform {
      * Set the form data before it is displayed
      *
      * Strategy plugins should provide the list of fields to be mapped from 
-     * DB record to the form fields in their get_dimension_fieldnames() method
+     * DB record to the form fields in their map_dimension_fieldnames() method
      * 
      * @param object $formdata Should contain the array $formdata->dimensions
      * @access public
@@ -130,7 +129,7 @@ class workshop_edit_strategy_form extends moodleform {
             $key = 0;
             $default_values = array();
             foreach ($formdata->dimensions as $dimension) {
-                foreach ($this->get_dimension_fieldnames() as $fielddbname => $fieldformname) {
+                foreach ($this->strategy->map_dimension_fieldnames() as $fielddbname => $fieldformname) {
                     $default_values[$fieldformname . '[' . $key . ']'] = $dimension->$fielddbname;
                 }
                 $key++;
@@ -140,15 +139,5 @@ class workshop_edit_strategy_form extends moodleform {
         parent::set_data($formdata);
     }
 
-
-    /**
-     * Return the mapping of the db fields to the form fields for every assessment dimension
-     * 
-     * @access protected
-     * @return array Array ['field_db_name' => 'field_form_name']
-     */
-    protected function get_dimension_fieldnames() {
-        return array();
-    }
 
 }

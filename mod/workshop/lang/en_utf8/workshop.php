@@ -24,6 +24,21 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
 $string['accesscontrol'] = 'Access control';
 $string['addmoredimensionsaccumulative'] = 'Blanks for $a more aspects';
 $string['agreeassessments'] = 'Assessments must be agreed';
@@ -54,11 +69,11 @@ $string['configmaxbytes'] = 'Default maximum submission file size for all worksh
 $string['confignexassessments'] = 'Default number of examples to be reviewed by a user in the example assessment phase';
 $string['confignsassessments'] = 'Default number of allocated submissions to be reviewed by a user in the assessment phase';
 $string['configstrategy'] = 'Default grading strategy for workshops';
+$string['dimensiondescription'] = 'Description';
+$string['dimensionnumberaccumulative'] = 'Aspect $a';
+$string['dimensionweight'] = 'Weight';
 $string['editgradingform'] = 'Edit grading form';
 $string['editinggradingform'] = 'Editing grading form';
-$string['dimensiondescription'] = 'Description';
-$string['dimensionweight'] = 'Weight';
-$string['dimensionnumberaccumulative'] = 'Aspect $a';
 $string['examplesbeforeassessment'] = 'Examples are available after own submission and must be assessed before peer/self assessment phase';
 $string['examplesbeforesubmission'] = 'Examples must be assessed before own submission';
 $string['examplesmode'] = 'Mode of examples assessment';
@@ -79,6 +94,8 @@ $string['nexassessments'] = 'Number of required assessments of examples';
 $string['nsassessments'] = 'Number of required assessments of other users\' work';
 $string['releasegrades'] = 'Push final grades into the gradebook';
 $string['requirepassword'] = 'Require password';
+$string['saveandclose'] = 'Save and close';
+$string['saveandcontinue'] = 'Save and continue';
 $string['strategyaccumulative'] = 'Accumulative grading';
 $string['strategyerrorbanded'] = 'Error banded grading';
 $string['strategy'] = 'Grading strategy';
@@ -96,18 +113,3 @@ $string['useselfassessmentdesc'] = 'Users perform self assessment of their own w
 $string['useselfassessment'] = 'Use self assessment';
 $string['workshopfeatures'] = 'Workshop features';
 $string['workshopname'] = 'Workshop name';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
