@@ -46,10 +46,10 @@ if ($confirm) {
     if (!confirm_sesskey()) {
         throw new moodle_exception('confirmsesskeybad');
     }
-    $workshop->aggregate_submission_grades();
-    //$evaluator->update_grading_grades();
-    //$workshop->aggregate_grading_grades();
-    //$workshop->aggregate_total_grades();
+    $workshop->aggregate_submission_grades();   // updates 'grade' in {workshop_submissions}
+    $evaluator->update_grading_grades();        // updates 'gradinggrade' in {workshop_assessments}
+    $workshop->aggregate_grading_grades();      // updates 'gradinggrade' in {workshop_aggregations}
+    $workshop->aggregate_total_grades();        // updates 'totalgrade' in {workshop_aggregations}
     redirect($workshop->view_url());
 }
 

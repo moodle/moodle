@@ -1200,6 +1200,19 @@ class workshop {
         // todo
     }
 
+    /**
+     * Calculates the workshop total grades for the given participant(s)
+     *
+     * @param null|int|array $restrict If null, update all reviewers, otherwise update just grades for the given reviewer(s)
+     * @return void
+     */
+    public function aggregate_total_grades($restrict=null) {
+        global $DB;
+
+        // todo
+    }
+
+
     ////////////////////////////////////////////////////////////////////////////////
     // Internal methods (implementation details)                                  //
     ////////////////////////////////////////////////////////////////////////////////

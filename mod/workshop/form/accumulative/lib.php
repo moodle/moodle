@@ -260,27 +260,25 @@ class workshop_accumulative_strategy implements workshop_strategy {
         return false;
     }
 
-////////////////////////////////////////////////////////////////////////////////
-// Methods needed by 'best' evaluation plugin                                 //
-////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // Methods required by the 'best' evaluation plugin                           //
+    ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * TODO: short description.
+     * TODO
      *
      * @param resource $restrict 
      * @return TODO
      */
-    public function get_assessments_recordset($restrict) {
+    public function eval_best_get_assessments_recordset($restrict) {
         global $DB;
 
-        $sql = 'SELECT a.id AS assessmentid, a.weight AS assessmentweight, a.reviewerid, a.gradinggrade,
-                       s.id AS submissionid,
-                       g.dimensionid, g.grade,
-                       d.weight AS dimensionweight
+        $sql = 'SELECT s.id AS submissionid,
+                       a.id AS assessmentid, a.weight AS assessmentweight, a.reviewerid, a.gradinggrade,
+                       g.dimensionid, g.grade
                   FROM {workshop_submissions} s
                   JOIN {workshop_assessments} a ON (a.submissionid = s.id)
                   JOIN {workshop_grades} g ON (g.assessmentid = a.id AND g.strategy = :strategy)
-                  JOIN {workshopform_accumulative} d ON (d.id = g.dimensionid)
                  WHERE s.example=0 AND s.workshopid=:workshopid'; // to be cont.
         $params = array('workshopid' => $this->workshop->id, 'strategy' => $this->workshop->strategy);
 
@@ -299,9 +297,41 @@ class workshop_accumulative_strategy implements workshop_strategy {
         return $DB->get_recordset_sql($sql, $params);
     }
 
-////////////////////////////////////////////////////////////////////////////////
-// Internal methods                                                           //
-////////////////////////////////////////////////////////////////////////////////
+    /**
+     * TODO: short description.
+     *
+     * @return array [dimid] => stdClass (->id ->max ->min ->weight)
+     */
+    public function eval_best_dimensions_info() {
+        global $DB;
+
+        $sql = 'SELECT d.id, d.grade, d.weight, s.scale
+                  FROM {workshopform_accumulative} d
+             LEFT JOIN {scale} s ON (d.grade < 0 AND -d.grade = s.id)
+                 WHERE d.workshopid = :workshopid';
+        $params = array('workshopid' => $this->workshop->id);
+        $dimrecords = $DB->get_records_sql($sql, $params);
+        $diminfo = array();
+        foreach ($dimrecords as $dimid => $dimrecord) {
+            $diminfo[$dimid] = new stdClass();
+            $diminfo[$dimid]->id = $dimid;
+            $diminfo[$dimid]->weight = $dimrecord->weight;
+            if ($dimrecord->grade < 0) {
+                // the dimension uses a scale
+                $diminfo[$dimid]->min = 1;
+                $diminfo[$dimid]->max = count(explode(',', $dimrecord->scale));
+            } else {
+                // the dimension uses points
+                $diminfo[$dimid]->min = 0;
+                $diminfo[$dimid]->max = grade_floatval($dimrecord->grade);
+            }
+        }
+        return $diminfo;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Internal methods                                                           //
+    ////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Loads the fields of the assessment form currently used in this workshop
