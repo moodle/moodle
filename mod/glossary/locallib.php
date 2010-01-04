@@ -141,7 +141,14 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
             $format = $this->exporter->get('format');
             $filename = $this->get('exporter')->get('format')->manifest_name();
             foreach ($entries as $e) {
-                $content = glossary_entry_portfolio_caller::entry_content($this->course, $this->cm, $this->glossary, $e, (array_key_exists($e->id, $aliases) ? $aliases[$e->id] : array()), $format);
+                $content = glossary_entry_portfolio_caller::entry_content(
+                    $this->course,
+                    $this->cm,
+                    $this->glossary,
+                    $e,
+                    (array_key_exists($e->id, $aliases) ? $aliases[$e->id] : array()),
+                    $format
+                );
                 $entry = new portfolio_format_leap2a_entry('glossaryentry' . $e->id, $e->concept, 'entry', $content);
                 $entry->author    = $DB->get_record('user', array('id' => $e->userid), 'id,firstname,lastname,email');
                 $entry->published = $e->timecreated;
