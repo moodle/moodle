@@ -1166,7 +1166,6 @@ class core_renderer extends renderer_base {
             $link = new html_link($url_or_link, $icon);
         }
         $url = $link->url;
-        $link->add_action(new popup_action('click', $url));
 
         return $this->link($link);
     }
