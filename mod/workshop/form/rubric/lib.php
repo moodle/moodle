@@ -346,7 +346,7 @@ class workshop_rubric_strategy implements workshop_strategy {
     protected function load_fields() {
         global $DB;
 
-        $sql = 'SELECT l.id AS lid, r.id AS rid, *
+        $sql = 'SELECT l.id AS lid, r.id AS rid, r.*, l.*
                   FROM {workshopform_rubric} r
              LEFT JOIN {workshopform_rubric_levels} l ON (l.dimensionid = r.id)
                  WHERE r.workshopid = :workshopid
