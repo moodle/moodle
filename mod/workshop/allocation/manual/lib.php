@@ -132,6 +132,7 @@ class workshop_manual_allocator implements workshop_allocator {
         global $PAGE, $OUTPUT, $DB;
         $pagingvar  = 'page';
         $page       = optional_param($pagingvar, 0, PARAM_INT);
+        $perpage    = 10;   // todo let the user modify this
 
         $hlauthorid     = -1;           // highlight this author
         $hlreviewerid   = -1;           // highlight this reviewer
@@ -203,7 +204,7 @@ class workshop_manual_allocator implements workshop_allocator {
             $participants = array_intersect_key($participants, array($hlauthorid => null, $hlreviewerid => null));
         } else {
             // slice the list of participants according to the current page
-            $participants = array_slice($participants, $page * workshop::PERPAGE, workshop::PERPAGE, true);
+            $participants = array_slice($participants, $page * $perpage, $perpage, true);
         }
 
         // this will hold the information needed to display user names and pictures
@@ -314,7 +315,7 @@ class workshop_manual_allocator implements workshop_allocator {
         $pagingbar              = new moodle_paging_bar();
         $pagingbar->totalcount  = $numofparticipants;
         $pagingbar->page        = $page;
-        $pagingbar->perpage     = workshop::PERPAGE;
+        $pagingbar->perpage     = $perpage;
         $pagingbar->baseurl     = $PAGE->url;
         $pagingbar->pagevar     = $pagingvar;
 
