@@ -58,11 +58,13 @@ if ($id) { // submission is specified
 $ownsubmission  = $submission->userid == $USER->id;
 $canviewall     = has_capability('mod/workshop:viewallsubmissions', $PAGE->context);
 $cansubmit      = has_capability('mod/workshop:submit', $PAGE->context);
+$isreviewer     = $DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'userid' => $USER->id));
 
-if (!$ownsubmission and !$canviewall) {
-    print_error('nopermissions');
-}
-if ($ownsubmission and !$cansubmit) {
+if ($submission->id and ($ownsubmission or $canviewall or $isreviewer)) {
+    // ok you can go
+} elseif (is_null($submission->id) and $cansubmit) {
+    // ok you can go
+} else {
     print_error('nopermissions');
 }
 
@@ -124,15 +126,21 @@ $currenttab = 'submission';
 include(dirname(__FILE__) . '/tabs.php');
 echo $OUTPUT->heading(format_string($workshop->name), 2);
 
+// if in edit mode, display the form to edit the submission
+
 if ($edit and $ownsubmission) {
     $mform->display();
     echo $OUTPUT->footer();
     die();
 }
 
-if (!empty($submission->id)) {
+// else display the submission
+
+if ($submission->id) {
     $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
     echo $wsoutput->submission_full($submission, true);
+} else {
+    echo $OUTPUT->box(get_string('noyoursubmission', 'workshop'));
 }
 
 if ($ownsubmission and $workshop->submitting_allowed()) {
@@ -141,6 +149,38 @@ if ($ownsubmission and $workshop->submitting_allowed()) {
     $editbutton->button->text   = get_string('editsubmission', 'workshop');
     $editbutton->url            = new moodle_url($PAGE->url, array('edit' => 'on', 'id' => $submission->id));
     echo $OUTPUT->button($editbutton);
+}
+
+// and possibly display the submission's review(s)
+
+$canviewallassessments  = false;
+if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
+    $canviewallassessments = true;
+} elseif ($ownsubmission and $workshop->assessments_available()) {
+    $canviewallassessments = true;
+} else {
+    $canviewallassessments = false;
+}
+
+$canviewgrades = false;
+if ($isreviewer) {
+    $canviewgrades = true;  // reviewers can always see the grades they gave even they are not available yet
+} elseif ($ownsubmission or $canviewallassessments) {
+    $canviewgrades = $workshop->grades_available(); // bool|null, see the function phpdoc
+    if (!$canviewgrades and has_capability('mod/workshop:viewgradesbeforeagreement', $PAGE->context)) {
+        $canviewgrades = true;
+    }
+}
+
+if ($isreviewer) {
+    // display own assessment
+    $assessment = 
+    $strategy = $workshop->grading_strategy_instance();
+}
+
+if ($canviewallassessments) {
+    // display all assessments (except the eventual own one - that has been already displayed
+    $strategy = $workshop->grading_strategy_instance();
 }
 
 echo $OUTPUT->footer();

@@ -35,7 +35,7 @@ $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EX
 $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
 $workshop   = new workshop($workshop, $cm, $course);
 
-$PAGE->set_url(new moodle_url($workshop->switchphase_user(), array('cmid' => $cmid, 'phase' => $phase));
+$PAGE->set_url(new moodle_url($workshop->switchphase_url($phase), array('cmid' => $cmid, 'phase' => $phase)));
 
 require_login($course, false, $cm);
 require_capability('mod/workshop:switchphase', $PAGE->context);

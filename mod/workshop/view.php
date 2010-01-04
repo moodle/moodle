@@ -103,12 +103,11 @@ case workshop::PHASE_SUBMISSION:
         $shownames = has_capability('mod/workshop:viewauthornames', $PAGE->context);
         echo $OUTPUT->box_start('generalbox allsubmissions');
         $counter = 0;
-        $rs = $workshop->get_submissions_recordset('all', false);
-        foreach ($rs as $submission) {
+        $submissions = $workshop->get_submissions('all', false);
+        foreach ($submissions as $submission) {
             $counter++;
             echo $wsoutput->submission_summary($submission, $shownames);
         }
-        $rs->close();
         if ($counter == 0) {
             echo $OUTPUT->container(get_string('nosubmissions', 'workshop'), 'nosubmissions');
         }

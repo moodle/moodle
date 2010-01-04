@@ -129,9 +129,7 @@ class workshop_manual_allocator implements workshop_allocator {
      * Prints user interface - current allocation and a form to edit it
      */
     public function ui() {
-        global $PAGE;
-        global $CFG;    // bacause we include other libs here
-        global $OUTPUT;
+        global $PAGE, $OUTPUT;
 
         $hlauthorid     = -1;           // highlight this author
         $hlreviewerid   = -1;           // highlight this reviewer
@@ -225,11 +223,21 @@ class workshop_manual_allocator implements workshop_allocator {
             }
         }
 
-        // We have all data. Let it pass to the renderer and return the output
-        // Here, we do not use neither the core renderer nor the workshop one but use an own one
-        require_once(dirname(__FILE__) . '/renderer.php');
+        // we have all data, let us pass it to the renderer and return the output
+        $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
         $uioutput = $PAGE->theme->get_renderer('workshopallocation_manual', $PAGE);
-        return $uioutput->display_allocations($this->workshop, $peers, $hlauthorid, $hlreviewerid, $msg);
+        // prepare data to be displayed
+        $data                    = new stdClass();
+        $data->wsoutput          = $wsoutput;
+        $data->peers             = $peers;
+        $data->authors           = $this->workshop->get_potential_authors();
+        $data->reviewers         = $this->workshop->get_potential_reviewers();
+        $data->hlauthorid        = $hlauthorid;
+        $data->hlreviewerid      = $hlreviewerid;
+        $data->msg               = $msg;
+        $data->useselfassessment = $this->workshop->useselfassessment;
+
+        return $uioutput->display_allocations($data);
     }
 
 }

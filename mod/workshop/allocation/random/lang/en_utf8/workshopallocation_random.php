@@ -40,3 +40,4 @@ $string['numperreviewer'] = 'per reviewer';
 $string['pluginname'] = 'Random allocation';
 $string['randomallocationdone'] = 'Random allocation done';
 $string['removecurrentallocations'] = 'Remove current allocations';
+$string['stats'] = 'Current allocation statistics';

@@ -80,11 +80,11 @@ class workshop_random_allocator implements workshop_allocator {
             $musthavesubmission = empty($assesswosubmission);
             $addselfassessment  = optional_param('addselfassessment', false, PARAM_INT); // may be frozen in the form
 
-            $authors            = $this->workshop->get_peer_authors();
+            $authors            = $this->workshop->get_potential_authors();
             $authors            = $this->workshop->get_grouped($authors);
-            $reviewers          = $this->workshop->get_peer_reviewers($musthavesubmission);
+            $reviewers          = $this->workshop->get_potential_reviewers($musthavesubmission);
             $reviewers          = $this->workshop->get_grouped($reviewers);
-            $assessments        = $this->workshop->get_assessments();
+            $assessments        = $this->workshop->get_all_assessments();
 
             $newallocations     = array();      // array of array(reviewer => reviewee)
 
@@ -176,6 +176,8 @@ class workshop_random_allocator implements workshop_allocator {
         ob_end_clean();
         $out .= $OUTPUT->container_end();
 
+        $out .= $OUTPUT->heading(get_string('stats', 'workshopallocation_random'));
+        // TODO
         return $out;
     }
 
@@ -185,9 +187,9 @@ class workshop_random_allocator implements workshop_allocator {
      * If the submission has already been allocated, it is skipped. If the author is not found among
      * reviewers, the submission is not assigned.
      *
-     * @param array $authors as returned by {@see workshop::get_peer_authors_by_group()}
-     * @param array $reviewers as returned by {@see workshop::get_peer_reviewers_by_group()}
-     * @param array $assessments as returned by {@see workshop::get_assessments()}
+     * @param array $authors grouped of {@see workshop::get_potential_authors()}
+     * @param array $reviewers grouped by {@see workshop::get_potential_reviewers()}
+     * @param array $assessments as returned by {@see workshop::get_all_assessments()}
      * @return array of new allocations to be created, array of array(reviewerid => authorid)
      */
     protected function self_allocation($authors=array(), $reviewers=array(), $assessments=array()) {
@@ -223,12 +225,12 @@ class workshop_random_allocator implements workshop_allocator {
      * @param array $datareviewers  reviewers by group, group [0] contains all reviewers
      * @return bool
      */
-    protected function add_new_allocations($newallocations, $dataauthors, $datareviewers) {
+    protected function add_new_allocations(array $newallocations, array $dataauthors, array $datareviewers) {
         global $DB;
 
         $newallocations = $this->get_unique_allocations($newallocations);
         $authorids      = $this->get_author_ids($newallocations);
-        $submissions    = $this->workshop->get_submission_by_author($authorids);
+        $submissions    = $this->workshop->get_submissions($authorids, false);
         $submissions    = $this->index_submissions_by_authors($submissions);
         foreach ($newallocations as $newallocation) {
             list($reviewerid, $authorid) = each($newallocation);
@@ -485,7 +487,7 @@ class workshop_random_allocator implements workshop_allocator {
     /**
      * Extracts the information about reviews from the authors' and reviewers' perspectives
      *
-     * @param array $assessments array of assessments as returned by {@link workshop::get_assessments()}
+     * @param array $assessments array of assessments as returned by {@link workshop::get_all_assessments()}
      * @return array of two arrays
      */
     protected function convert_assessments_to_links($assessments) {

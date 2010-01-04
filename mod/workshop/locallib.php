@@ -136,15 +136,12 @@ class workshop {
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible authors otherwise.
      * @return array array[userid] => stdClass{->id ->lastname ->firstname}
      */
-    public function get_peer_authors($musthavesubmission=true) {
-
+    public function get_potential_authors($musthavesubmission=true) {
         $users = get_users_by_capability($this->context, 'mod/workshop:submit',
                     'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
-
         if ($musthavesubmission) {
             $users = array_intersect_key($users, $this->users_with_submission(array_keys($users)));
         }
-
         return $users;
     }
 
@@ -156,17 +153,13 @@ class workshop {
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible users otherwise.
      * @return array array[userid] => stdClass{->id ->lastname ->firstname}
      */
-    public function get_peer_reviewers($musthavesubmission=false) {
-        global $DB;
-
+    public function get_potential_reviewers($musthavesubmission=false) {
         $users = get_users_by_capability($this->context, 'mod/workshop:peerassess',
                     'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
-
         if ($musthavesubmission) {
             // users without their own submission can not be reviewers
             $users = array_intersect_key($users, $this->users_with_submission(array_keys($users)));
         }
-
         return $users;
     }
 
@@ -217,14 +210,14 @@ class workshop {
     /**
      * Returns submissions from this workshop
      *
-     * Fetches no-big-text data from {workshop_submissions} and adds some useful information from other
-     * tables.
+     * Fetches data from {workshop_submissions} and adds some useful information from other
+     * tables. Does not return textual fields to prevent possible memory lack issues.
      *
      * @param mixed $userid int|array|'all' If set to [array of] integer, return submission[s] of the given user[s] only
      * @param mixed $examples false|true|'all' Only regular submissions, only examples, all submissions
      * @return stdClass moodle_recordset
      */
-    public function get_submissions_recordset($userid='all', $examples=false) {
+    public function get_submissions($userid='all', $examples=false) {
         global $DB;
 
         $sql = 'SELECT s.id, s.workshopid, s.example, s.userid, s.timecreated, s.timemodified,
@@ -245,7 +238,6 @@ class workshop {
         } else {
             throw new coding_exception('Illegal parameter value: $examples may be false|true|"all"');
         }
-        $sql .= ' ORDER BY u.lastname, u.firstname';
 
         if ('all' === $userid) {
             // no additional conditions
@@ -257,8 +249,9 @@ class workshop {
             $sql .= ' AND userid = :userid';
             $params['userid'] = $userid;
         }
+        $sql .= ' ORDER BY u.lastname, u.firstname';
 
-        return $DB->get_recordset_sql($sql, $params);
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**
@@ -281,14 +274,10 @@ class workshop {
     }
 
     /**
-     * Returns a submission submitted by the given author or authors.
+     * Returns a submission submitted by the given author
      *
-     * If the single one submission is requested, returns the first found record including text fields.
-     * If multiple records are requested, uses {@link self::get_submissions_recordset()}.
-     * Does not return example submissions.
-     *
-     * @param mixed $id integer|array author ID or IDs
-     * @return mixed false if not found, stdClass if $id is int, array if $id is array
+     * @param int $id author id
+     * @return stdClass|false
      */
     public function get_submission_by_author($id) {
         global $DB;
@@ -296,37 +285,51 @@ class workshop {
         if (empty($id)) {
             return false;
         }
-        if (is_array($id)) {
-            $rs = $this->get_submissions_recordset($id, false);
-            $submissions = array();
-            foreach ($rs as $submission) {
-                $submissions[$submission->id] = $submission;
-            }
-            $rs->close();
-            return $submissions;
-        } else {
-            $sql = 'SELECT s.*,
-                           u.lastname AS authorlastname, u.firstname AS authorfirstname, u.id AS authorid,
-                           u.picture AS authorpicture, u.imagealt AS authorimagealt
-                      FROM {workshop_submissions} s
-                INNER JOIN {user} u ON (s.userid = u.id)
-                     WHERE s.example = 0 AND s.workshopid = :workshopid AND s.userid = :userid';
-            $params = array('workshopid' => $this->id, 'userid' => $id);
-            return $DB->get_record_sql($sql, $params);
-        }
+        $sql = 'SELECT s.*,
+                       u.lastname AS authorlastname, u.firstname AS authorfirstname, u.id AS authorid,
+                       u.picture AS authorpicture, u.imagealt AS authorimagealt
+                  FROM {workshop_submissions} s
+            INNER JOIN {user} u ON (s.userid = u.id)
+                 WHERE s.example = 0 AND s.workshopid = :workshopid AND s.userid = :userid';
+        $params = array('workshopid' => $this->id, 'userid' => $id);
+        return $DB->get_record_sql($sql, $params);
     }
 
     /**
-     * Returns the list of assessments with some data added
+     * Returns the list of all assessments in the workshop with some data added
      *
      * Fetches data from {workshop_assessments} and adds some useful information from other
-     * tables.
-      *
-     * @param mixed $reviewerid 'all'|int|array User ID of the reviewer
-     * @param mixed $id         'all'|int Assessment ID
-     * @return stdClass moodle_recordset
+     * tables. The returned object does not contain textual fields (ie comments) to prevent memory
+     * lack issues.
+     *
+     * @return array [assessmentid] => assessment stdClass
      */
-    public function get_assessments_recordset($reviewerid='all', $id='all') {
+    public function get_all_assessments() {
+        global $DB;
+
+        $sql = 'SELECT a.id, a.submissionid, a.userid, a.timecreated, a.timemodified, a.timeagreed,
+                       a.grade, a.gradinggrade, a.gradinggradeover, a.gradinggradeoverby,
+                       reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname as reviewerlastname,
+                       s.title,
+                       author.id AS authorid, author.firstname AS authorfirstname,author.lastname as authorlastname
+                  FROM {workshop_assessments} a
+            INNER JOIN {user} reviewer ON (a.userid = reviewer.id)
+            INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+            INNER JOIN {user} author ON (s.userid = author.id)
+                 WHERE s.workshopid = :workshopid AND s.example = 0
+              ORDER BY reviewer.lastname, reviewer.firstname';
+        $params = array('workshopid' => $this->id);
+
+        return $DB->get_records_sql($sql, $params);
+    }
+
+    /**
+     * Get the complete information about the given assessment
+     *
+     * @param int $id Assessment ID
+     * @return mixed false if not found, stdClass otherwise
+     */
+    public function get_assessment_by_id($id) {
         global $DB;
 
         $sql = 'SELECT a.*,
@@ -337,95 +340,33 @@ class workshop {
             INNER JOIN {user} reviewer ON (a.userid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
             INNER JOIN {user} author ON (s.userid = author.id)
-                 WHERE s.workshopid = :workshopid';
-        $params = array('workshopid' => $this->id);
+                 WHERE a.id = :id AND s.workshopid = :workshopid';
+        $params = array('id' => $id, 'workshopid' => $this->id);
 
-        if ('all' === $reviewerid) {
-            // no additional conditions
-        } elseif (is_array($reviewerid)) {
-            list($usql, $uparams) = $DB->get_in_or_equal($reviewerid, SQL_PARAMS_NAMED);
-            $sql .= " AND reviewer.id $usql";
-            $params = array_merge($params, $uparams);
-        } else {
-            $sql .= ' AND reviewer.id = :reviewerid';
-            $params['reviewerid'] = $reviewerid;
-        }
-
-        if ('all' === $id) {
-            // no additional conditions
-        } else {
-            $sql .= ' AND a.id = :assessmentid';
-            $params['assessmentid'] = $id;
-        }
-
-        return $DB->get_recordset_sql($sql, $params);
+        return $DB->get_record_sql($sql, $params, MUST_EXIST);
     }
 
     /**
-     * Returns the list of assessments with some data added
+     * Get the complete information about all assessments allocated to the given reviewer
      *
-     * Fetches data from {workshop_assessments} and adds some useful information from other
-     * tables. The returned objects are lightweight version of those returned by get_assessments_recordset(),
-     * mainly they do not contain text fields.
-     *
-     * @param mixed $reviewerid 'all'|int|array User ID of the reviewer
-     * @param mixed $id         'all'|int Assessment ID
-     * @return array [assessmentid] => assessment stdClass
-     * @see workshop::get_assessments_recordset() for the structure of returned objects
+     * @param int $userid reviewer id
+     * @return array
      */
-    public function get_assessments($reviewerid='all', $id='all') {
-        $rs = $this->get_assessments_recordset($reviewerid, $id);
-        $assessments = array();
-        foreach ($rs as $assessment) {
-            // copy selected properties into the array to be returned. This is here mainly in order not
-            // to include text comments.
-            $assessments[$assessment->id] = new stdClass();
-            foreach ($assessment as $property => $value) {
-                if (in_array($property, array('id', 'submissionid', 'userid', 'timecreated', 'timemodified',
-                        'timeagreed', 'grade', 'gradinggrade', 'gradinggradeover', 'gradinggradeoverby',
-                        'reviewerid', 'reviewerfirstname', 'reviewerlastname', 'title', 'authorid',
-                        'authorfirstname', 'authorlastname'))) {
-                    $assessments[$assessment->id]->{$property} = $value;
-                }
-            }
-        }
-        $rs->close();
-        return $assessments;
-    }
+    public function get_assessments_by_reviewer($userid) {
+        global $DB;
 
-    /**
-     * Get the information about the given assessment
-     *
-     * @param int $id Assessment ID
-     * @see workshop::get_assessments_recordset() for the structure of data returned
-     * @return mixed false if not found, stdClass otherwise
-     */
-    public function get_assessment_by_id($id) {
-        $rs         = $this->get_assessments_recordset('all', $id);
-        $assessment = $rs->current();
-        $rs->close();
-        if (empty($assessment->id)) {
-            return false;
-        } else {
-            return $assessment;
-        }
-    }
+        $sql = 'SELECT a.*,
+                       reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname as reviewerlastname,
+                       s.title,
+                       author.id AS authorid, author.firstname AS authorfirstname,author.lastname as authorlastname
+                  FROM {workshop_assessments} a
+            INNER JOIN {user} reviewer ON (a.userid = reviewer.id)
+            INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+            INNER JOIN {user} author ON (s.userid = author.id)
+                 WHERE s.example = 0 AND reviewer.id = :userid AND s.workshopid = :workshopid';
+        $params = array('userid' => $userid, 'workshopid' => $this->id);
 
-    /**
-     * Get the information about all assessments assigned to the given reviewer
-     *
-     * @param int $id Reviewer ID
-     * @see workshop::get_assessments_recordset() for the structure of data returned
-     * @return array array of objects
-     */
-    public function get_assessments_by_reviewer($id) {
-        $rs = $this->get_assessments_recordset($id);
-        $assessments = array();
-        foreach ($rs as $assessment) {
-            $assessments[$assessment->id] = $assessment;
-        }
-        $rs->close();
-        return $assessment;
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**
@@ -678,6 +619,30 @@ class workshop {
     }
 
     /**
+     * Are the peer-reviews available to the authors?
+     *
+     * TODO: this depends on the workshop phase
+     *
+     * @return bool
+     */
+    public function assessments_available() {
+        return true;
+    }
+
+    /**
+     * Can the given grades be displayed to the authors?
+     *
+     * Grades are not displayed if {@link self::assessments_available()} return false. The returned
+     * value may be true (if yes, display grades), false (no, hide grades yet) or null (only
+     * display grades if the assessment has been agreed by the author).
+     *
+     * @return bool|null
+     */
+    public function grades_available() {
+        return true;
+    }
+
+    /**
      * Returns the localized name of the grading strategy method to be displayed to the users
      *
      * @return string
@@ -791,7 +756,7 @@ class workshop {
             $rs->close();
             if ($numofsubmissions == 0) {
                 $task->completed = null;
-            } elseif ($numofauthors == $numofallocated) {
+            } elseif ($numofsubmissions == $numofallocated) {
                 $task->completed = true;
             } elseif ($this->phase > self::PHASE_SUBMISSION) {
                 $task->completed = false;
@@ -805,6 +770,13 @@ class workshop {
             $task->details  = get_string('allocatedetails', 'workshop', $a);
             unset($a);
             $phase->tasks['allocate'] = $task;
+
+            if ($numofsubmissions < $numofauthors and $this->phase >= self::PHASE_SUBMISSION) {
+                $task = new stdClass();
+                $task->title = get_string('someuserswosubmission', 'workshop');
+                $task->completed = 'info';
+                $phase->tasks['allocateinfo'] = $task;
+            }
         }
 
         // Prepare tasks for the peer-assessment phase (includes eventual self-assessments)
@@ -812,7 +784,7 @@ class workshop {
         $phase->title = get_string('phaseassessment', 'workshop');
         $phase->tasks = array();
         $phase->isreviewer = has_capability('mod/workshop:peerassess', $this->context, $userid);
-        $phase->assessments = $this->get_assessments($userid); // todo make sure this does not contain assessment of examples
+        $phase->assessments = $this->get_assessments_by_reviewer($userid);
         $numofpeers     = 0;    // number of allocated peer-assessments
         $numofpeerstodo = 0;    // number of peer-assessments to do
         $numofself      = 0;    // number of allocated self-assessments - should be 0 or 1
@@ -833,7 +805,11 @@ class workshop {
         unset($a);
         if ($numofpeers) {
             $task = new stdClass();
-            $task->completed = ($numofpeerstodo == 0);
+            if ($numofpeerstodo == 0) {
+                $task->completed = true;
+            } elseif ($this->phase > self::PHASE_ASSESSMENT) {
+                $task->completed = false;
+            }
             $a = new stdClass();
             $a->total = $numofpeers;
             $a->todo  = $numofpeerstodo;
@@ -844,7 +820,11 @@ class workshop {
         }
         if ($numofself) {
             $task = new stdClass();
-            $task->completed = ($numofselftodo == 0);
+            if ($numofselftodo == 0) {
+                $task->completed = true;
+            } elseif ($this->phase > self::PHASE_ASSESSMENT) {
+                $task->completed = false;
+            }
             $task->title = get_string('taskassessself', 'workshop');
             $phase->tasks['assessself'] = $task;
         }
