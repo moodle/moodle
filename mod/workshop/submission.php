@@ -126,7 +126,7 @@ if ($mform->is_cancelled()){
     redirect("view.php?id=$cm->id");
 }
 
-$stredit = empty($submission->id) ? get_string('addsubmission', 'workshop') : get_string('edit');
+$stredit = empty($submission->id) ? get_string('editingsubmission', 'workshop') : get_string('edit');
 
 $navigation = build_navigation($stredit, $cm);
 print_header_simple(format_string($workshop->name), "", $navigation, "", "", true, "", navmenu($course, $cm));
