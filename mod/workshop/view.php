@@ -82,6 +82,7 @@ echo $OUTPUT->heading('Workshop administration tools', 3);
 echo '<ul>';
 echo "<li><a href=\"editform.php?cmid={$cm->id}\">Edit grading form (".get_string('strategy' . $workshop->strategy, 'workshop').")</a></li>";
 echo "<li><a href=\"allocation.php?cmid={$cm->id}\">Allocate submissions</a></li>";
+echo "<li><a href=\"develtools.php?cmid={$cm->id}\">Development tools</a></li>";
 echo '</ul>';
 echo $OUTPUT->box_end();
 
