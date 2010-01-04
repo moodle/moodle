@@ -190,6 +190,16 @@ function xmldb_workshop_upgrade($oldversion) {
     }
 
     /**
+     * Migration from 1.9 - step 6 - migrate assessments
+     */
+    if ($result && $oldversion < 2009102906) {
+        require_once(dirname(__FILE__) . '/upgradelib.php');
+        echo $OUTPUT->notification('Copying assessments', 'notifysuccess');
+        workshop_upgrade_assessments();
+        upgrade_mod_savepoint($result, 2009102906, 'workshop');
+    }
+
+    /**
      * End of migration from 1.9
      */
 

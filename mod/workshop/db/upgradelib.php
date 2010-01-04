@@ -214,9 +214,9 @@ function workshop_upgrade_transform_instance(stdClass $old) {
 }
 
 /**
- * TODO: short description.
+ * Returns the list of new workshop instances ids
  *
- * @return TODO
+ * @return array (int)oldid => (int)newid
  */
 function workshop_upgrade_workshop_id_mappings() {
     global $DB;
@@ -241,19 +241,19 @@ function workshop_upgrade_submissions() {
     global $CFG, $DB, $OUTPUT;
 
     upgrade_set_timeout();
-    // mapping table from legacy workshop instance id to the new one: array of (int)oldid => (int)newid
-    $workshopnewids = workshop_upgrade_workshop_id_mappings();
+    $newworkshopids = workshop_upgrade_workshop_id_mappings();
 
-    // list of teachers in every workshop: array of (int)workshopid => array of (int)userid => notused
+    // list of teachers in every workshop: array of (int)oldworkshopid => array of (int)userid => notused
     $workshopteachers = array();
+
     $rs = $DB->get_recordset_select('workshop_submissions_old', 'newid IS NULL');
     foreach ($rs as $old) {
         if (!isset($workshopteachers[$old->workshopid])) {
-            $cm = get_coursemodule_from_instance('workshop', $old->workshopid, 0, false, MUST_EXIST);
+            $cm = get_coursemodule_from_instance('workshop', $newworkshopids[$old->workshopid], 0, false, MUST_EXIST);
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
             $workshopteachers[$old->workshopid] = get_users_by_capability($context, 'mod/workshop:manage', 'u.id');
         }
-        $new = workshop_upgrade_transform_submission($old, $workshopnewids, $workshopteachers[$old->workshopid]);
+        $new = workshop_upgrade_transform_submission($old, $newworkshopids[$old->workshopid], $workshopteachers[$old->workshopid]);
         $newid = $DB->insert_record('workshop_submissions', $new, true, true);
         $DB->set_field('workshop_submissions_old', 'newplugin', 'submissions', array('id' => $old->id));
         $DB->set_field('workshop_submissions_old', 'newid', $newid, array('id' => $old->id));
@@ -265,29 +265,146 @@ function workshop_upgrade_submissions() {
  * Given a record from 1.x workshop_submissions_old, returns data for 2.0 workshop_submissions
  *
  * @param stdClass $old
- * @param array $workshopnewids $oldid => $newid workshop instances mapping table
+ * @param int $newworkshopid new workshop id
  * @param array $legacyteachers $userid => notused the list of legacy workshop teachers for the submission's workshop
  * @return stdClass
  */
-function workshop_upgrade_transform_submission(stdClass $old, array $workshopnewids, array $legacyteachers) {
-    $new = new stdclass(); // new submission record to be returned
-    $new->workshopid = $workshopnewids[$old->workshopid];
+function workshop_upgrade_transform_submission(stdClass $old, $newworkshopid, array $legacyteachers) {
+
+    $new                = new stdclass(); // new submission record to be returned
+    $new->workshopid    = $newworkshopid;
+
     if (isset($legacyteachers[$old->userid])) {
         // the author of the submission was teacher = had mod/workshop:manage. this is the only way how we can
         // recognize the submission should be treated as example submission (ach jo...)
-        $new->example = 1;
+        $new->example   = 1;
     } else {
-        $new->example = 0;
+        $new->example   = 0;
     }
-    $new->authorid = $old->userid;
-    $new->timecreated = $old->timecreated;
-    $new->timemodified = $old->timecreated;
-    $new->title = $old->title;
-    $new->content = $old->description;
+
+    $new->authorid      = $old->userid;
+    $new->timecreated   = $old->timecreated;
+    $new->timemodified  = $old->timecreated;
+    $new->title         = $old->title;
+    $new->content       = $old->description;
     $new->contentformat = FORMAT_HTML;
-    $new->contenttrust = 0;
-    $new->published = 0;
+    $new->contenttrust  = 0;
+    $new->published     = 0;
 
     return $new;
 }
 
+/**
+ * Returns the list of new submission instances ids
+ *
+ * @return array (int)oldid => (int)newid
+ */
+function workshop_upgrade_submission_id_mappings() {
+    global $DB;
+
+    $oldrecords = $DB->get_records('workshop_submissions_old', null, 'id', 'id,newid');
+    $newids = array();
+    foreach ($oldrecords as $oldid => $oldrecord) {
+        if ($oldrecord->id and $oldrecord->newid) {
+            $newids[$oldid] = $oldrecord->newid;
+        }
+    }
+    return $newids;
+}
+
+/**
+ * Returns the list of teacherweight values as were set in legacy workshop instances
+ *
+ * @return array (int)oldid => (int)teacherweight
+ */
+function workshop_upgrade_legacy_teacher_weights() {
+    global $DB;
+
+    $oldrecords = $DB->get_records('workshop_old', null, 'id', 'id,teacherweight');
+    $weights = array();
+    foreach ($oldrecords as $oldid => $oldrecord) {
+        if (is_null($oldrecord->teacherweight)) {
+            $weights[$oldid] = 1;
+        } else {
+            $weights[$oldid] = $oldrecord->teacherweight;
+        }
+    }
+    return $weights;
+}
+
+/**
+ * Copies all assessments from workshop_assessments_old to workshop_assessments. Can be called after all
+ * submissions were migrated.
+ *
+ * @return void
+ */
+function workshop_upgrade_assessments() {
+    global $CFG, $DB, $OUTPUT;
+
+    upgrade_set_timeout();
+    $newworkshopids     = workshop_upgrade_workshop_id_mappings();
+    $newsubmissionids   = workshop_upgrade_submission_id_mappings();
+    $teacherweights     = workshop_upgrade_legacy_teacher_weights();
+
+    // list of teachers in every workshop: array of (int)oldworkshopid => array of (int)userid => notused
+    $workshopteachers   = array();
+
+    $rs = $DB->get_recordset_select('workshop_assessments_old', 'newid IS NULL');
+    foreach ($rs as $old) {
+        if (!isset($workshopteachers[$old->workshopid])) {
+            $cm = get_coursemodule_from_instance('workshop', $newworkshopids[$old->workshopid], 0, false, MUST_EXIST);
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $workshopteachers[$old->workshopid] = get_users_by_capability($context, 'mod/workshop:manage', 'u.id');
+        }
+        $new = workshop_upgrade_transform_assessment($old, $newsubmissionids[$old->submissionid],
+                                                     $workshopteachers[$old->workshopid], $teacherweights[$old->workshopid]);
+        $newid = $DB->insert_record('workshop_assessments', $new, true, true);
+        $DB->set_field('workshop_assessments_old', 'newplugin', 'assessments', array('id' => $old->id));
+        $DB->set_field('workshop_assessments_old', 'newid', $newid, array('id' => $old->id));
+    }
+    $rs->close();
+}
+
+/**
+ * Given a record from workshop_assessments_old, returns record to be stored in workshop_assessment
+ *
+ * @param stdClass $old                 record from workshop_assessments_old,
+ * @param int      $newsubmissionid     new submission id
+ * @param array    $legacyteachers      (int)userid => notused the list of legacy workshop teachers for the submission's workshop
+ * @param int      $legacyteacherweight weight of teacher's assessment in legacy workshop
+ * @return stdClass
+ */
+function workshop_upgrade_transform_assessment(stdClass $old, $newsubmissionid, array $legacyteachers, $legacyteacherweight) {
+    global $CFG;
+    require_once($CFG->libdir . '/gradelib.php');
+
+    $new                            = new stdclass();
+    $new->submissionid              = $newsubmissionid;
+    $new->reviewerid                = $old->userid;
+
+    if (isset($legacyteachers[$old->userid])) {
+        $new->weight                = $legacyteacherweight;
+    } else {
+        $new->weight                = 1;
+    }
+
+    if ($old->grade < 0) {
+        // in workshop 1.x, this is just allocated assessment that has not been touched yet, having timecreated one year in the future :-/
+        $new->timecreated           = time();
+    } else {
+        $new->grade                 = grade_floatval($old->grade);
+        if ($old->teachergraded) {
+            $new->gradinggradeover  = grade_floatval($old->gradinggrade);
+        } else {
+            $new->gradinggrade      = grade_floatval($old->gradinggrade);
+        }
+        $new->feedbackauthor        = $old->generalcomment;
+        $new->feedbackauthorformat  = FORMAT_HTML;
+        $new->feedbackreviewer      = $old->teachercomment;
+        $new->feedbackreviewerformat = FORMAT_HTML;
+        $new->timecreated           = $old->timecreated;
+        $new->timemodified          = $old->timegraded;
+    }
+
+    return $new;
+}
