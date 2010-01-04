@@ -109,5 +109,21 @@ function xmldb_workshop_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009102903, 'workshop');
     }
 
+    /**
+     * End of migration from 1.9
+     */
+
+    /**
+     * Add 'published' field into workshop_submissions
+     */
+    if ($result && $oldversion < 2009121800) {
+        $table = new xmldb_table('workshop_submissions');
+        $field = new xmldb_field('published', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, null, null, '0', 'timegraded');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint($result, 2009121800, 'workshop');
+    }
+
     return $result;
 }
