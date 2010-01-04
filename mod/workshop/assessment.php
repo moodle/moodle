@@ -114,7 +114,8 @@ if ($mform->is_cancelled()) {
         echo $OUTPUT->footer();
         die();  // bye-bye
     } else {
-        // save and continue - redirect to self to prevent data being re-posted by pressing "Reload"
+        // either it is not possible to calculate the $rawgrade or the reviewer has chosen "Save and continue"
+        // redirect to self to prevent data being re-posted by pressing "Reload"
         redirect($PAGE->url);
     }
 }

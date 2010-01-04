@@ -199,7 +199,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
      *
      * @param stdClass $assessment Assessment being filled
      * @param stdClass $data       Raw data as returned by the assessment form
-     * @return float|null        Percentual grade for submission as suggested by the peer
+     * @return float|null          Raw grade (0 to 1) for submission as suggested by the peer
      */
     public function save_assessment(stdClass $assessment, stdClass $data) {
         global $DB;
@@ -363,7 +363,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
      * Aggregates the assessment form data and sets the grade for the submission given by the peer
      *
      * @param stdClass $assessment Assessment record
-     * @return float|null          Percentual grade for submission as suggested by the peer
+     * @return float|null          Raw grade (from 0 to 1) for submission as suggested by the peer
      */
     protected function update_peer_grade(stdClass $assessment) {
         $grades     = $this->get_current_assessment_data($assessment);
@@ -379,7 +379,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
      *
      * @param array $grades Grade records as returned by {@link get_current_assessment_data}
      * @uses $this->dimensions
-     * @return float|null   Percentual grade for submission as suggested by the peer
+     * @return float|null   Raw grade (from 0 to 1) for submission as suggested by the peer
      */
     protected function calculate_peer_grade(array $grades) {
 
