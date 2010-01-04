@@ -940,4 +940,18 @@ class workshop {
         $DB->update_record('workshop_assessments', $data);
         return $grade;
     }
+
+// Static methods
+
+    /**
+     * Returns an array of options for the editors that are used for submitting and assessing instructions
+     *
+     * @param stdClass $context
+     * @return array
+     */
+    public static function instruction_editors_options(stdClass $context) {
+        return array('subdirs' => 1, 'maxbytes' => 0, 'maxfiles' => EDITOR_UNLIMITED_FILES,
+                     'changeformat' => 1, 'context' => $context, 'noclean' => 1, 'trusttext' => 0);
+    }
+
 }

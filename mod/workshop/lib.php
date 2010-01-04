@@ -69,7 +69,6 @@ function workshop_supports($feature) {
     }
 }
 
-
 /**
  * Saves a new instance of the workshop into the database
  *
@@ -89,7 +88,25 @@ function workshop_add_instance($data) {
     $data->timecreated  = time();
     $data->timemodified = $data->timecreated;
 
-    return $DB->insert_record('workshop', $data);
+    // insert the new record so we get the id
+    $data->id = $DB->insert_record('workshop', $data);
+
+    // we need to use context now, so we need to make sure all needed info is already in db
+    $cmid = $data->coursemodule;
+    $DB->set_field('course_modules', 'instance', $data->id, array('id' => $cmid));
+    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+
+    // process the custom wysiwyg editors
+    if ($draftitemid = $data->instructauthorseditor['itemid']) {
+        $data->instructauthors = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructauthors',
+                false, workshop::instruction_editors_options($context), $data->instructauthorseditor['text']);
+        $data->instructauthorsformat = $data->instructauthorseditor['format'];
+    }
+
+    // re-save the record with the replaced URLs in editor fields
+    $DB->update_record('workshop', $data);
+
+    return $data->id;
 }
 
 /**
@@ -97,16 +114,28 @@ function workshop_add_instance($data) {
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
  *
- * @param stdClass $workshop An object from the form in mod_form.php
- * @return boolean Success/Fail
+ * @param stdClass $data An object from the form in mod_form.php
+ * @return bool success
  */
-function workshop_update_instance($workshop) {
-    global $DB;
+function workshop_update_instance($data) {
+    global $CFG, $DB;
+    require_once(dirname(__FILE__) . '/locallib.php');
 
-    $workshop->timemodified = time();
-    $workshop->id = $workshop->instance;
+    $data->timemodified = time();
+    $data->id = $data->instance;
 
-    return $DB->update_record('workshop', $workshop);
+    $DB->update_record('workshop', $data);
+    $context = get_context_instance(CONTEXT_MODULE, $data->coursemodule);
+
+    // process the custom wysiwyg editors
+    if ($draftitemid = $data->instructauthorseditor['itemid']) {
+        $data->instructauthors = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructauthors',
+                false, workshop::instruction_editors_options($context), $data->instructauthorseditor['text']);
+        $data->instructauthorsformat = $data->instructauthorseditor['format'];
+    }
+
+    // re-save the record with the replaced URLs in editor fields
+    return $DB->update_record('workshop', $data);
 }
 
 /**
@@ -275,6 +304,7 @@ function workshop_get_extra_capabilities() {
 function workshop_get_file_areas($course, $cm, $context) {
     $areas = array();
     if (has_capability('moodle/course:managefiles', $context)) {
+        $areas['workshop_instructauthors']          = get_string('areainstructauthors', 'workshop');
         $areas['workshop_dimension_description']    = get_string('areadimensiondescription', 'workshop');
         $areas['workshop_submission_content']       = get_string('areasubmissioncontent', 'workshop');
         $areas['workshop_submission_attachment']    = get_string('areasubmissionattachment', 'workshop');
@@ -290,6 +320,8 @@ function workshop_get_file_areas($course, $cm, $context) {
  * the fileareas workshop_submission_content and workshop_submission_attachment are used.
  * The access rights to the files are checked here. The user must be either a peer-reviewer
  * of the submission or have capability ... (todo) to access the submission files.
+ * Besides that, areas workshop_instructauthors and workshop_instructreviewers contain the media
+ * embedded using the mod_form.php.
  *
  * @param stdClass $course
  * @param stdClass $cminfo
@@ -297,18 +329,39 @@ function workshop_get_file_areas($course, $cm, $context) {
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
- * @return bool false if file not found, does not return if found - justsend the file
+ * @return void this should never return to the caller
  */
-function workshop_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
+function workshop_pluginfile($course, $cminfo, $context, $filearea, array $args, $forcedownload) {
     global $DB;
 
     if (!$cminfo->uservisible) {
-        return false;
+        send_file_not_found();
     }
     if (!$cm = get_coursemodule_from_instance('workshop', $cminfo->instance, $course->id)) {
-        return false;
+        send_file_not_found();
     }
-    require_course_login($course, true, $cm);
+    require_login($course, true, $cm);
+
+    if ($filearea === 'workshop_instructauthors') {
+        // submission instructions may contain sensitive data
+        if (!has_any_capability(array('moodle/course:manageactivities', 'mod/workshop:submit'), $context)) {
+            send_file_not_found();
+        }
+
+        array_shift($args); // we do not use itemids here
+        $relativepath = '/' . implode('/', $args);
+        $fullpath = $context->id . $filearea . '0' . $relativepath; // beware, slashes are not used here!
+
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
+
+        // finally send the file
+        send_stored_file($file, $lifetime, 0);
+    }
 
     if ($filearea === 'workshop_dimension_description') {
         $itemid = (int)array_shift($args);
@@ -417,6 +470,24 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
     }
 
     if ($filearea === 'workshop_dimension_description') {
+        // always only itemid 0 - TODO not true, review
+
+        $filepath = is_null($filepath) ? '/' : $filepath;
+        $filename = is_null($filename) ? '.' : $filename;
+
+        $urlbase = $CFG->wwwroot.'/pluginfile.php';
+        if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+            if ($filepath === '/' and $filename === '.') {
+                $storedfile = new virtual_root_file($context->id, $filearea, 0);
+            } else {
+                // not found
+                return null;
+            }
+        }
+        return new file_info_stored($browser, $context, $storedfile, $urlbase, $areas[$filearea], false, true, true, false);
+    }
+
+    if ($filearea === 'workshop_instructauthors') {
         // always only itemid 0
 
         $filepath = is_null($filepath) ? '/' : $filepath;
@@ -434,6 +505,10 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
         return new file_info_stored($browser, $context, $storedfile, $urlbase, $areas[$filearea], false, true, true, false);
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Navigation API                                                             //
+////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Extends the global navigation tree by adding workshop nodes if there is a relevant content

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20090831" COMMENT="XMLDB file for Moodle mod/workshop"
+<XMLDB PATH="mod/workshop/db" VERSION="20090907" COMMENT="XMLDB file for Moodle mod/workshop"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -10,8 +10,12 @@
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="ID of the parent course" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Name of the activity" PREVIOUS="course" NEXT="intro"/>
         <FIELD NAME="intro" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The introduction or description of the activity" PREVIOUS="name" NEXT="introformat"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the intro field" PREVIOUS="intro" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The timestamp when the module was modified" PREVIOUS="introformat" NEXT="phase"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the intro field" PREVIOUS="intro" NEXT="instructauthors"/>
+        <FIELD NAME="instructauthors" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Instructions for the submission phase" PREVIOUS="introformat" NEXT="instructauthorsformat"/>
+        <FIELD NAME="instructauthorsformat" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="instructauthors" NEXT="instructreviewers"/>
+        <FIELD NAME="instructreviewers" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Instructions for the assessment phase" PREVIOUS="instructauthorsformat" NEXT="instructreviewersformat"/>
+        <FIELD NAME="instructreviewersformat" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="instructreviewers" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The timestamp when the module was modified" PREVIOUS="instructreviewersformat" NEXT="phase"/>
         <FIELD NAME="phase" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The current phase of workshop (0 = not available, 1 = submission, 2 = assessment, 3 = closed)" PREVIOUS="timemodified" NEXT="useexamples"/>
         <FIELD NAME="useexamples" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="optional feature: students practise evaluating on example submissions from teacher" PREVIOUS="phase" NEXT="usepeerassessment"/>
         <FIELD NAME="usepeerassessment" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="optional feature: students perform peer assessment of others' work" PREVIOUS="useexamples" NEXT="useselfassessment"/>

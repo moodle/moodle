@@ -85,6 +85,11 @@ case workshop::PHASE_SETUP:
     }
     break;
 case workshop::PHASE_SUBMISSION:
+    if (trim(strip_tags($workshop->instructauthors))) {
+        $instructions = file_rewrite_pluginfile_urls($workshop->instructauthors, 'pluginfile.php', $PAGE->context->id,
+            'workshop_instructauthors', 0, workshop::instruction_editors_options($PAGE->context));
+        echo $OUTPUT->box(format_text($instructions, $workshop->instructauthorsformat), array('generalbox', 'instructions'));
+    }
     if (has_capability('mod/workshop:submit', $PAGE->context)) {
         if ($submission = $workshop->get_submission_by_author($USER->id)) {
             echo $OUTPUT->box_start('generalbox mysubmission');

@@ -29,20 +29,27 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/course/moodleform_mod.php');
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
+require_once(dirname(__FILE__) . '/locallib.php');
+require_once($CFG->libdir . '/filelib.php');
 
 class mod_workshop_mod_form extends moodleform_mod {
 
+    /**
+     * Defines the workshop instance configuration form
+     *
+     * @return void
+     */
     function definition() {
 
         global $CFG, $COURSE;
         $workshopconfig = get_config('workshop');
         $mform = $this->_form;
 
-/// General --------------------------------------------------------------------
+        // General --------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-    /// Workshop name
+        // Workshop name
         $label = get_string('workshopname', 'workshop');
         $mform->addElement('text', 'name', $label, array('size'=>'64'));
         if (!empty($CFG->formatstringstriptags)) {
@@ -54,10 +61,10 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->setHelpButton('name', array('workshopname', $label, 'workshop'));
 
-    /// Introduction
+        // Introduction
         $this->add_intro_editor(false, get_string('introduction', 'workshop'));
 
-/// Workshop features ----------------------------------------------------------
+        // Workshop features ----------------------------------------------------------
         $mform->addElement('header', 'workshopfeatures', get_string('workshopfeatures', 'workshop'));
 
         $label = get_string('useexamples', 'workshop');
@@ -75,7 +82,7 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'useselfassessment', $label, $text);
         $mform->setHelpButton('useselfassessment', array('useselfassessment', $label, 'workshop'));
 
-/// Grading settings -----------------------------------------------------------
+        // Grading settings -----------------------------------------------------------
         $mform->addElement('header', 'gradingsettings', get_string('gradingsettings', 'workshop'));
 
         $grades = workshop_get_maxgrades();
@@ -95,8 +102,12 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->setDefault('strategy', $workshopconfig->strategy);
         $mform->setHelpButton('strategy', array('strategy', $label, 'workshop'));
 
-/// Submission settings --------------------------------------------------------
+        // Submission settings --------------------------------------------------------
         $mform->addElement('header', 'submissionsettings', get_string('submissionsettings', 'workshop'));
+
+        $label = get_string('instructauthors', 'workshop');
+        $mform->addElement('editor', 'instructauthorseditor', $label, null,
+                            workshop::instruction_editors_options($this->context));
 
         $options = array();
         for ($i=7; $i>=0; $i--) {
@@ -118,8 +129,12 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->setDefault('maxbytes', $workshopconfig->maxbytes);
         $mform->setHelpButton('maxbytes', array('maxbytes', $label, 'workshop'));
 
-/// Assessment settings
+        // Assessment settings --------------------------------------------------------
         $mform->addElement('header', 'assessmentsettings', get_string('assessmentsettings', 'workshop'));
+
+//        $label = get_string('instructreviewers', 'workshop');
+//        $mform->addElement('editor', 'instructreviewerseditor', $label, null,
+//                            workshop::instruction_editors_options($this->context));
 
         $label = get_string('nexassessments', 'workshop');
         $options = workshop_get_numbers_of_assessments();
@@ -158,7 +173,7 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->setDefault('assessmentcomps', $workshopconfig->assessmentcomps);
         $mform->setHelpButton('assessmentcomps', array('assessmentcomps', $label, 'workshop'));
 
-/// Access control
+        // Access control -------------------------------------------------------------
         $mform->addElement('header', 'accesscontrol', get_string('accesscontrol', 'workshop'));
 
         $label = get_string('submissionstart', 'workshop');
@@ -186,15 +201,39 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->setHelpButton('releasegrades', array('releasegrades', $label, 'workshop'));
         $mform->setAdvanced('releasegrades');
 
-/// Common module settinga, Restrict availability, Activity completion etc. ----
+        // Common module settinga, Restrict availability, Activity completion etc. ----
         $features = array('groups'=>true, 'groupings'=>true, 'groupmembersonly'=>true,
                 'outcomes'=>true, 'gradecat'=>false, 'idnumber'=>false);
 
         $this->standard_coursemodule_elements();
 
-/// Save and close, Save, Cancel -----------------------------------------------
-        // add standard buttons, common to all modules
+        // Standard buttons, common to all modules ------------------------------------
         $this->add_action_buttons();
+    }
 
+    /**
+     * Prepares the form before data are set
+     *
+     * Additional wysiwyg editor are prepared here, the introeditor is prepared automatically by core
+     *
+     * @param array $data to be set
+     * @return void
+     */
+    function data_preprocessing(&$data) {
+        if ($this->current->instance) {
+            // editing an existing workshop - let us prepare the added editor elements (intro done automatically)
+            $draftitemid = file_get_submitted_draft_itemid('instructauthors');
+            $data['instructauthorseditor']['text'] = file_prepare_draft_area($draftitemid, $this->context->id,
+                                'workshop_instructauthors', false,
+                                workshop::instruction_editors_options($this->context),
+                                $data['instructauthors']);
+            $data['instructauthorseditor']['format'] = $data['instructauthorsformat'];
+            $data['instructauthorseditor']['itemid'] = $draftitemid;
+        } else {
+            // adding a new workshop instance
+            $draftitemid = file_get_submitted_draft_itemid('instructauthors');
+            file_prepare_draft_area($draftitemid, null, null, null);    // no context, no filearea yet
+            $data['instructauthorseditor'] = array('text' => '', 'format' => FORMAT_HTML, 'itemid' => $draftitemid);
+        }
     }
 }
