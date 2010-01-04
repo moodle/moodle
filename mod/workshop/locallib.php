@@ -1282,19 +1282,23 @@ class workshop {
         // we will need to know the number of all records later for the pagination purposes
         $numofparticipants = count($participants);
 
-        // load all fields which can be used for sorting and paginate the records
-        list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
-        $params['workshopid1'] = $this->id;
-        $params['workshopid2'] = $this->id;
-        $sqlsort = $sortby . ' ' . $sorthow . ',u.lastname,u.firstname,u.id';
-        $sql = "SELECT u.id AS userid,u.firstname,u.lastname,u.picture,u.imagealt,
-                       s.title AS submissiontitle, s.grade AS submissiongrade, ag.gradinggrade
-                  FROM {user} u
-             LEFT JOIN {workshop_submissions} s ON (s.authorid = u.id AND s.workshopid = :workshopid1 AND s.example = 0)
-             LEFT JOIN {workshop_aggregations} ag ON (ag.userid = u.id AND ag.workshopid = :workshopid2)
-                 WHERE u.id $participantids
-              ORDER BY $sqlsort";
-        $participants = $DB->get_records_sql($sql, $params, $page * $perpage, $perpage);
+        if ($numofparticipants > 0) {
+            // load all fields which can be used for sorting and paginate the records
+            list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
+            $params['workshopid1'] = $this->id;
+            $params['workshopid2'] = $this->id;
+            $sqlsort = $sortby . ' ' . $sorthow . ',u.lastname,u.firstname,u.id';
+            $sql = "SELECT u.id AS userid,u.firstname,u.lastname,u.picture,u.imagealt,
+                           s.title AS submissiontitle, s.grade AS submissiongrade, ag.gradinggrade
+                      FROM {user} u
+                 LEFT JOIN {workshop_submissions} s ON (s.authorid = u.id AND s.workshopid = :workshopid1 AND s.example = 0)
+                 LEFT JOIN {workshop_aggregations} ag ON (ag.userid = u.id AND ag.workshopid = :workshopid2)
+                     WHERE u.id $participantids
+                  ORDER BY $sqlsort";
+            $participants = $DB->get_records_sql($sql, $params, $page * $perpage, $perpage);
+        } else {
+            $participants = array();
+        }
 
         // this will hold the information needed to display user names and pictures
         $userinfo = array();
