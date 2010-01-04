@@ -16,7 +16,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file defines an mform to assess a submission by rubric grading strategy
+ * This file defines mforms to assess a submission by rubric grading strategy
+ *
+ * Rubric can be displayed in two possible layouts - list or grid. This file defines
+ * therefore defines two classes, respectively.
  *
  * @package   mod-workshop
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
@@ -28,11 +31,27 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(dirname(__FILE__)).'/assessment_form.php');    // parent class definition
 
 /**
- * Class representing a form for assessing submissions by rubric grading strategy
- *
- * @uses moodleform
+ * Base class representing a form for assessing submissions by rubric grading strategy
  */
-class workshop_rubric_assessment_form extends workshop_assessment_form {
+abstract class workshop_rubric_assessment_form extends workshop_assessment_form {
+
+    public function validation($data, $files) {
+
+        $errors = parent::validation($data, $files);
+        for ($i = 0; isset($data['dimensionid__idx_'.$i]); $i++) {
+            if (empty($data['chosenlevelid__idx_'.$i])) {
+                $errors['chosenlevelid__idx_'.$i] = get_string('mustchooseone', 'workshopform_rubric'); // used in grid
+                $errors['levelgrp__idx_'.$i] = get_string('mustchooseone', 'workshopform_rubric');      // used in list
+            }
+        }
+        return $errors;
+    }
+}
+
+/**
+ * Class representing a form for assessing submissions by rubric grading strategy - list layout
+ */
+class workshop_rubric_list_assessment_form extends workshop_rubric_assessment_form {
 
     /**
      * Define the elements to be displayed at the form
@@ -42,11 +61,10 @@ class workshop_rubric_assessment_form extends workshop_assessment_form {
      * @return void
      */
     protected function definition_inner(&$mform) {
+        $workshop   = $this->_customdata['workshop'];
         $fields     = $this->_customdata['fields'];
         $current    = $this->_customdata['current'];
         $nodims     = $this->_customdata['nodims'];     // number of assessment dimensions
-
-        $mform->addElement('hidden', 'nodims', $nodims);
 
         for ($i = 0; $i < $nodims; $i++) {
             // dimension header
@@ -65,16 +83,84 @@ class workshop_rubric_assessment_form extends workshop_assessment_form {
             $desc .= "\n</div>";
             $mform->addElement('html', $desc);
 
-            // grade for this aspect
-            $label = get_string('dimensiongrade', 'workshopform_rubric');
-            $options = make_grades_menu($fields->{'grade__idx_' . $i});
-            $mform->addElement('select', 'grade__idx_' . $i, $label, $options);
-
-            // comment
-            $label = get_string('dimensioncomment', 'workshopform_rubric');
-            //$mform->addElement('editor', 'peercomment__idx_' . $i, $label, null, array('maxfiles' => 0));
-            $mform->addElement('textarea', 'peercomment__idx_' . $i, $label, array('cols' => 60, 'rows' => 5));
+            $numoflevels = $fields->{'numoflevels__idx_'.$i};
+            $levelgrp   = array();
+            for ($j = 0; $j < $numoflevels; $j++) {
+                $levelid = $fields->{'levelid__idx_'.$i.'__idy_'.$j};
+                $definition = $fields->{'definition__idx_'.$i.'__idy_'.$j};
+                $definitionformat = $fields->{'definition__idx_'.$i.'__idy_'.$j.'format'};
+                $levelgrp[] = $mform->createElement('radio', 'chosenlevelid__idx_'.$i, '',
+                        format_text($definition, $definitionformat, null, $workshop->course->id), $levelid);
+            }
+            $mform->addGroup($levelgrp, 'levelgrp__idx_'.$i, '', "<br />\n", false);
         }
+        $this->set_data($current);
+    }
+}
+
+/**
+ * Class representing a form for assessing submissions by rubric grading strategy - grid layout
+ */
+class workshop_rubric_grid_assessment_form extends workshop_rubric_assessment_form {
+
+    /**
+     * Define the elements to be displayed at the form
+     *
+     * Called by the parent::definition()
+     *
+     * @return void
+     */
+    protected function definition_inner(&$mform) {
+        $workshop   = $this->_customdata['workshop'];
+        $fields     = $this->_customdata['fields'];
+        $current    = $this->_customdata['current'];
+        $nodims     = $this->_customdata['nodims'];     // number of assessment dimensions
+
+        // get the number of required grid columns
+        $levelcounts = array();
+        for ($i = 0; $i < $nodims; $i++) {
+            if ($fields->{'numoflevels__idx_'.$i} > 0) {
+                $levelcounts[] = $fields->{'numoflevels__idx_'.$i};
+            }
+        }
+        $numofcolumns = array_reduce($levelcounts, 'workshop::lcm', 1);
+
+        $mform->addElement('header', 'rubric-grid-wrapper', get_string('layoutgrid', 'workshopform_rubric'));
+
+        $mform->addElement('html', '<table class="rubric-grid">' . "\n");
+        $mform->addElement('html', '<th class="header">' . get_string('criteria', 'workshopform_rubric') . '</th>');
+        $mform->addElement('html', '<th class="header" colspan="'.$numofcolumns.'">'.get_string('levels', 'workshopform_rubric').'</th>');
+
+        for ($i = 0; $i < $nodims; $i++) {
+
+            $mform->addElement('html', '<tr class="r'. $i % 2  .'"><td class="criterion">' . "\n");
+
+            // dimension id
+            $mform->addElement('hidden', 'dimensionid__idx_'.$i, $fields->{'dimensionid__idx_'.$i});
+
+            // given grade id
+            $mform->addElement('hidden', 'gradeid__idx_'.$i);   // value set by set_data() later
+
+            // dimension description
+            $desc = format_text($fields->{'description__idx_'.$i}, $fields->{'description__idx_'.$i.'format'});
+            $desc .= "</td>\n";
+            $mform->addElement('html', $desc);
+
+            $numoflevels = $fields->{'numoflevels__idx_'.$i};
+            for ($j = 0; $j < $numoflevels; $j++) {
+                $colspan = $numofcolumns / $numoflevels;
+                $mform->addElement('html', '<td class="level c' . $j % 2  . '" colspan="' . $colspan . '">' . "\n");
+                $levelid = $fields->{'levelid__idx_'.$i.'__idy_'.$j};
+                $definition = $fields->{'definition__idx_'.$i.'__idy_'.$j};
+                $definitionformat = $fields->{'definition__idx_'.$i.'__idy_'.$j.'format'};
+                $mform->addElement('radio', 'chosenlevelid__idx_'.$i, '',
+                        format_text($definition, $definitionformat, null, $workshop->course->id), $levelid);
+                $mform->addElement('html', '</td>' . "\n");
+            }
+            $mform->addElement('html', '</tr>' . "\n");
+        }
+        $mform->addElement('html', '</table>' . "\n");
+
         $this->set_data($current);
     }
 }

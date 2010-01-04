@@ -72,20 +72,47 @@ class workshop_rubric_strategy_test extends UnitTestCase {
         $context        = new stdClass();
         $workshop       = (object)array('id' => 42, 'strategy' => 'rubric');
         $this->workshop = new workshop($workshop, $cm, $course, $context);
+        $DB->expectOnce('get_records_sql');
+        $DB->setReturnValue('get_records_sql', array());
         $this->strategy = new testable_workshop_rubric_strategy($this->workshop);
+
+        // prepare dimensions definition
+        $dim = new stdClass();
+        $dim->id = 6;
+        $dim->levels[10] = (object)array('id' => 10, 'grade' => 0);
+        $dim->levels[13] = (object)array('id' => 13, 'grade' => 2);
+        $dim->levels[14] = (object)array('id' => 14, 'grade' => 6);
+        $dim->levels[16] = (object)array('id' => 16, 'grade' => 8);
+        $this->strategy->dimensions[$dim->id] = $dim;
+
+        $dim = new stdClass();
+        $dim->id = 8;
+        $dim->levels[17] = (object)array('id' => 17, 'grade' => 0);
+        $dim->levels[18] = (object)array('id' => 18, 'grade' => 1);
+        $dim->levels[19] = (object)array('id' => 19, 'grade' => 2);
+        $dim->levels[20] = (object)array('id' => 20, 'grade' => 3);
+        $this->strategy->dimensions[$dim->id] = $dim;
+
+        $dim = new stdClass();
+        $dim->id = 10;
+        $dim->levels[27] = (object)array('id' => 27, 'grade' => 10);
+        $dim->levels[28] = (object)array('id' => 28, 'grade' => 20);
+        $dim->levels[29] = (object)array('id' => 29, 'grade' => 30);
+        $dim->levels[30] = (object)array('id' => 30, 'grade' => 40);
+        $this->strategy->dimensions[$dim->id] = $dim;
+
     }
 
     public function tearDown() {
         global $DB;
         $DB = $this->realDB;
 
-        $this->workshop = null;
         $this->strategy = null;
+        $this->workshop = null;
     }
 
     public function test_calculate_peer_grade_null_grade() {
         // fixture set-up
-        $this->strategy->dimensions = array();
         $grades = array();
         // excercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
@@ -93,4 +120,37 @@ class workshop_rubric_strategy_test extends UnitTestCase {
         $this->assertNull($suggested);
     }
 
+    public function test_calculate_peer_grade_worst_possible() {
+        // fixture set-up
+        $grades[6] = (object)array('dimensionid' => 6, 'grade' => 0);
+        $grades[8] = (object)array('dimensionid' => 8, 'grade' => 0);
+        $grades[10] = (object)array('dimensionid' => 10, 'grade' => 10);
+        // excercise SUT
+        $suggested = $this->strategy->calculate_peer_grade($grades);
+        // validate
+        $this->assertEqual(grade_floatval($suggested), 0.00000);
+    }
+
+    public function test_calculate_peer_grade_best_possible() {
+        // fixture set-up
+        $grades[6] = (object)array('dimensionid' => 6, 'grade' => 8);
+        $grades[8] = (object)array('dimensionid' => 8, 'grade' => 3);
+        $grades[10] = (object)array('dimensionid' => 10, 'grade' => 40);
+        // excercise SUT
+        $suggested = $this->strategy->calculate_peer_grade($grades);
+        // validate
+        $this->assertEqual(grade_floatval($suggested), 100.00000);
+    }
+
+    public function test_calculate_peer_grade_something() {
+        // fixture set-up
+        $grades[6] = (object)array('dimensionid' => 6, 'grade' => 2);
+        $grades[8] = (object)array('dimensionid' => 8, 'grade' => 2);
+        $grades[10] = (object)array('dimensionid' => 10, 'grade' => 30);
+        // excercise SUT
+        $suggested = $this->strategy->calculate_peer_grade($grades);
+        // validate
+        // minimal rubric score is 10, maximal is 51. We have 34 here
+        $this->assertEqual(grade_floatval($suggested), grade_floatval(100 * 24 / 41));
+    }
 }

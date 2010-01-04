@@ -326,6 +326,75 @@
     margin: 0px 1em;
 }
 
+/* Rubric - list layout */
+
+.mod-workshop .assessmentform.rubric.list .fitem .fitemtitle {
+    display: none;
+}
+
+.mod-workshop .assessmentform.rubric.list .fitem .felement {
+    width: auto;
+}
+
+.mod-workshop .assessmentform.rubric.list .fitem .felement span {
+    display: block;
+}
+
+.mod-workshop .assessmentform.rubric.list .fitem .felement span input {
+    display: block;
+    float: left;
+}
+
+.mod-workshop .assessmentform.rubric.list .fitem .felement.fgroup span label {
+    display: block;
+    margin-left: 30px;
+}
+
+/* Rubric - grid layout */
+
+.mod-workshop .assessmentform.rubric #rubric-grid-wrapper {
+    border: none;
+}
+
+.mod-workshop .assessmentform.rubric #rubric-grid-wrapper legend {
+    display: none;
+}
+
+.mod-workshop .assessmentform.rubric.grid th,
+.mod-workshop .assessmentform.rubric.grid td {
+    border: 1px solid #ddd;
+    padding: 5px;
+    vertical-align: top;
+}
+
+.mod-workshop .assessmentform.rubric.grid .criterion {
+    text-align: center;
+}
+
+.mod-workshop .assessmentform.rubric.grid .fitem {
+    text-align: center;
+}
+
+.mod-workshop .assessmentform.rubric.grid .fitem .fitemtitle {
+    display: none;
+}
+
+.mod-workshop .assessmentform.rubric.grid .fitem .felement {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mod-workshop .assessmentform.rubric.grid .fitem .felement span {
+    display: block;
+    text-align: center;
+}
+
+.mod-workshop .assessmentform.rubric.grid .fitem .felement span label {
+    display: block;
+    text-align: center;
+}
+
 /**
  * Grading report
  */

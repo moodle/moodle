@@ -34,3 +34,6 @@ $string['layoutlist'] = 'List';
 $string['layout'] = 'Rubric layout';
 $string['levelgroup'] = 'Level grade and definition';
 $string['pluginname'] = 'Rubric';
+$string['criteria'] = 'Criteria';
+$string['levels'] = 'Levels';
+$string['mustchooseone'] = 'You have to select one of these items';

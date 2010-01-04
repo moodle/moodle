@@ -412,13 +412,29 @@ function workshop_pluginfile($course, $cminfo, $context, $filearea, array $args,
             'workshopform_rubric_description',
         ))) {
         $itemid = (int)array_shift($args); // the id of the assessment form dimension
-        if (!$dimension = $DB->get_record('workshopform_numerrors', array('id' => $itemid))) {
-            send_file_not_found();
-        }
         if (!$workshop = $DB->get_record('workshop', array('id' => $cminfo->instance))) {
             send_file_not_found();
         }
-        if ($workshop->id !== $dimension->workshopid) {
+        switch ($filearea) {
+            case 'workshopform_comments_description':
+                $dimension = $DB->get_record('workshopform_comments', array('id' => $itemid));
+                break;
+            case 'workshopform_accumulative_description':
+                $dimension = $DB->get_record('workshopform_accumulative', array('id' => $itemid));
+                break;
+            case 'workshopform_numerrors_description':
+                $dimension = $DB->get_record('workshopform_numerrors', array('id' => $itemid));
+                break;
+            case 'workshopform_rubric_description':
+                $dimension = $DB->get_record('workshopform_rubric', array('id' => $itemid));
+                break;
+            default:
+                $dimension = false;
+        }
+        if (empty($dimension)) {
+            send_file_not_found();
+        }
+        if ($workshop->id != $dimension->workshopid) {
             // this should never happen but just in case
             send_file_not_found();
         }
@@ -434,7 +450,7 @@ function workshop_pluginfile($course, $cminfo, $context, $filearea, array $args,
         send_stored_file($file);
     }
 
-    if ($filearea === 'workshop_submission_content' or $filearea === 'workshop_submission_attachment') {
+    if ($filearea == 'workshop_submission_content' or $filearea == 'workshop_submission_attachment') {
         $itemid = (int)array_shift($args);
         if (!$submission = $DB->get_record('workshop_submissions', array('id' => $itemid))) {
             return false;

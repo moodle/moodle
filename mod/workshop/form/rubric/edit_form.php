@@ -47,7 +47,6 @@ class workshop_edit_rubric_strategy_form extends workshop_edit_strategy_form {
     protected function definition_inner(&$mform) {
 
         $norepeats          = $this->_customdata['norepeats'];          // number of dimensions to display
-        $addlevels          = $this->_customdata['addlevels'];          // additional levels required
         $descriptionopts    = $this->_customdata['descriptionopts'];    // wysiwyg fields options
         $current            = $this->_customdata['current'];            // current data to be set
 
@@ -70,7 +69,7 @@ class workshop_edit_rubric_strategy_form extends workshop_edit_strategy_form {
             } else {
                 $numoflevels = self::MINLEVELS;
             }
-            $prevlevel = 0;
+            $prevlevel = -1;
             for ($j = 0; $j < $numoflevels; $j++) {
                 $mform->addElement('hidden', 'levelid__idx_' . $i . '__idy_' . $j);
                 $levelgrp = array();
