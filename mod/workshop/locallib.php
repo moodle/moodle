@@ -507,7 +507,7 @@ class workshop {
     /**
      * Returns instance of submissions allocator
      *
-     * @param stdClass $method The name of the allocation method, must be PARAM_ALPHA
+     * @param string $method The name of the allocation method, must be PARAM_ALPHA
      * @return stdClass Instance of submissions allocator
      */
     public function allocator_instance($method) {
