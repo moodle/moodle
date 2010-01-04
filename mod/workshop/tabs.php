@@ -49,6 +49,27 @@ if (has_capability('mod/workshop:editdimensions', $workshop->context)) {
 if (has_capability('mod/workshop:submit', $workshop->context)) {
     $row[] = new tabobject('submission', $workshop->submission_url()->out(), get_string('editsubmission', 'workshop'));
 }
+if (has_capability('mod/workshop:allocate', $workshop->context)) {
+    $row[] = new tabobject('allocation', $workshop->allocation_url()->out(), get_string('allocate', 'workshop'));
+}
+if (has_capability('moodle/site:config', get_system_context())) {
+    // todo remove these tools from a production release
+    $row[] = new tabobject('develtools', "develtools.php?cmid={$cm->id}", 'Development tools');
+}
 $tabs[] = $row;
+
+if ($currenttab == 'allocation' and !empty($allocators)) {
+    // this is included from allocation.php so we rely of some variables defined there
+    $activated[] = 'allocation';
+    $row = array();
+    foreach ($allocators as $methodid => $methodname) {
+        $row[] = new tabobject($methodid, "allocation.php?cmid={$cmid}&amp;method={$methodid}", $methodname);
+        if ($methodid == $method) {
+            $currenttab = $methodid;
+        }
+    }
+    $tabs[] = $row;
+}
+
 
 print_tabs($tabs, $currenttab, $inactive, $activated);

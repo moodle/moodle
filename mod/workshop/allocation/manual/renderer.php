@@ -180,6 +180,7 @@ class moodle_workshopallocation_manual_renderer extends moodle_renderer_base  {
         $exclude = array();
         if (!$workshop->useselfassessment) {
             $exclude[$user->id] = true;
+            $o .= $this->output->container(get_string('selfassessmentdisabled', 'workshop'), 'info');
         }
         // todo add an option to exclude users without own submission
         // todo nice to have number of current allocations for every user plus ordering by it

@@ -101,6 +101,8 @@ case 'menu':
     // no break, skip to default
 default:
     echo $OUTPUT->header();
+    $currenttab = 'develtools';
+    include(dirname(__FILE__) . '/tabs.php');
     echo $OUTPUT->heading('Workshop development tools', 1);
     echo '<ul>';
     echo '<li><a href="' . $PAGE->url->out(false, array('tool' => 'mksubmissions')) . '">Fake submissions</a></li>';

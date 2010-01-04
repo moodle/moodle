@@ -414,7 +414,7 @@ class workshop {
      * This returns the list of all users who can submit their work or review submissions (or both
      * which is the common case). So basically this is to return list of all students participating
      * in the workshop. For every participant, it adds information about their submission and their
-     * reviews.
+     * reviews, if such information is available (null elsewhere).
      *
      * The returned structure is recordset of objects with following properties:
      * [authorid] [authorfirstname] [authorlastname] [authorpicture] [authorimagealt]
@@ -448,9 +448,9 @@ class workshop {
              LEFT JOIN {workshop_submissions} s ON (s.userid = author.id)
              LEFT JOIN {workshop_assessments} a ON (s.id = a.submissionid)
              LEFT JOIN {user} reviewer ON (a.userid = reviewer.id)
-                 WHERE author.id $usql AND s.workshopid = :workshopid
+                 WHERE author.id $usql AND (s.id IS NULL OR s.workshopid = :workshopid)
               ORDER BY author.lastname,author.firstname,reviewer.lastname,reviewer.firstname";
-        
+
         return $DB->get_recordset_sql($sql, $params);
     }
 
@@ -740,21 +740,28 @@ class workshop {
             $task->title = get_string('allocate', 'workshop');
             $task->link = $this->allocation_url();
             $rs = $this->get_allocations_recordset();
+            $authors     = array();
             $allocations = array(); // 'submissionid' => isallocated
             foreach ($rs as $allocation) {
-                if (!isset($allocations[$allocation->submissionid])) {
-                    $allocations[$allocation->submissionid] = false;
+                if (!isset($authors[$allocation->authorid])) {
+                    $authors[$allocation->authorid] = true;
                 }
-                if (!empty($allocation->reviewerid)) {
-                    $allocations[$allocation->submissionid] = true;
+                if (isset($allocation->submissionid)) {
+                    if (!isset($allocations[$allocation->submissionid])) {
+                        $allocations[$allocation->submissionid] = false;
+                    }
+                    if (!empty($allocation->reviewerid)) {
+                        $allocations[$allocation->submissionid] = true;
+                    }
                 }
             }
+            $numofauthors     = count($authors);
             $numofsubmissions = count($allocations);
             $numofallocated   = count(array_filter($allocations));
             $rs->close();
             if ($numofsubmissions == 0) {
                 $task->completed = null;
-            } elseif ($numofsubmissions == $numofallocated) {
+            } elseif ($numofauthors == $numofallocated) {
                 $task->completed = true;
             } elseif ($this->phase > self::PHASE_SUBMISSION) {
                 $task->completed = false;
@@ -762,11 +769,12 @@ class workshop {
                 $task->completed = null;    // still has a chance to allocate
             }
             $a = new stdClass();
-            $a->total = $numofsubmissions;
-            $a->done  = $numofallocated;
-            $task->details = get_string('allocatedetails', 'workshop', $a);
+            $a->expected    = $numofauthors;
+            $a->submitted   = $numofsubmissions;
+            $a->allocated   = $numofallocated;
+            $task->details  = get_string('allocatedetails', 'workshop', $a);
             unset($a);
-            $phase->tasks['submit'] = $task;
+            $phase->tasks['allocate'] = $task;
         }
 
         // Prepare tasks for the peer-assessment phase (includes eventual self-assessments)

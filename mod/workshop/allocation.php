@@ -58,11 +58,8 @@ $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
 echo $OUTPUT->header();
 
 $allocators = $workshop->installed_allocators();
-$tabrow = array();
-foreach ($allocators as $methodid => $methodname) {
-    $tabrow[] = new tabobject($methodid, "allocation.php?cmid={$cmid}&amp;method={$methodid}", $methodname);
-}
-print_tabs(array($tabrow), $method);    // todo use $output call
+$currenttab = 'allocation';
+include(dirname(__FILE__) . '/tabs.php');
 
 if (!empty($initresult)) {
     echo $OUTPUT->container_start('allocator-init-results');

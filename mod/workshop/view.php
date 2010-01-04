@@ -96,25 +96,4 @@ case workshop::PHASE_CLOSED:
 default:
 }
 
-
-/// Print the main part of the page - todo these are just links to help during development
-echo $OUTPUT->box_start();
-echo $OUTPUT->heading('Workshop testing', 1);
-echo "<ol>\n";
-echo '<li><a href="' . $workshop->editform_url()->out()  . '">Edit grading form (' . get_string('pluginname', 'workshopgrading_' . $workshop->strategy) . ')</a></li>' . "\n";
-echo "<li><a href=\"submission.php?cmid={$cm->id}\">View/edit your own submission</a></li>\n";
-echo "<li><a href=\"develtools.php?tool=mksubmissions&amp;cmid={$cm->id}\">Fake others' submissions</a></li>\n";
-echo "<li><a href=\"allocation.php?cmid={$cm->id}\">Allocate submissions</a></li>\n";
-
-$assessments = $workshop->get_assessments($USER->id);
-echo "<li>Assess submissions\n";
-echo "<ol>\n";
-foreach ($assessments as $assessment) {
-    echo "<li><a href=\"assessment.php?asid={$assessment->id}\">Assessment of '{$assessment->title}' by {$assessment->authorid}</a></li>" . "\n";
-}
-echo "</ol></li>" . "\n";
-echo "</ol>\n";
-echo "<p><a href=\"develtools.php?cmid={$cm->id}\">Workshop development tools</a></p>\n";
-echo $OUTPUT->box_end();
-
 echo $OUTPUT->footer();

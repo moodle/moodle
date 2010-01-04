@@ -78,7 +78,7 @@ class workshop_random_allocator implements workshop_allocator {
             $removecurrent      = required_param('removecurrent', PARAM_INT);
             $assesswosubmission = required_param('assesswosubmission', PARAM_INT);
             $musthavesubmission = empty($assesswosubmission);
-            $addselfassessment  = required_param('addselfassessment', PARAM_INT);
+            $addselfassessment  = optional_param('addselfassessment', false, PARAM_INT); // may be frozen in the form
 
             $authors            = $this->workshop->get_peer_authors();
             $authors            = $this->workshop->get_grouped($authors);

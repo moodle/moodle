@@ -78,8 +78,17 @@ class workshop_random_allocator_form extends moodleform {
         $mform->addElement('advcheckbox', 'assesswosubmission', get_string('assesswosubmission', 'workshopallocation_random'));
         $mform->setDefault('assesswosubmission', 0);
 
-        $mform->addElement('advcheckbox', 'addselfassessment', get_string('addselfassessment', 'workshopallocation_random'));
+        $grpselfassessment = array();
+        $grpselfassessment[] = $mform->createElement('advcheckbox', 'addselfassessment');
         $mform->setDefault('addselfassessment', 0);
+        if (!$workshop->useselfassessment) {
+            $grpselfassessment[] = $mform->createElement('static', 'selfassessmentcheck', '',
+                                                        get_string('selfassessmentdisabled', 'workshop'));
+        }
+        $mform->addGroup($grpselfassessment, 'grpselfassessment', get_string('addselfassessment', 'workshopallocation_random'));
+        if (!$workshop->useselfassessment) {
+            $mform->freeze(array('grpselfassessment'));
+        }
 
         $this->add_action_buttons();
     }
