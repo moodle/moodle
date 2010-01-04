@@ -25,7 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(dirname(__FILE__))).'/lib.php');   // module library
 require_once(dirname(dirname(__FILE__)).'/edit_form.php');    // parent class definition
 
 /**
@@ -34,6 +33,9 @@ require_once(dirname(dirname(__FILE__)).'/edit_form.php');    // parent class de
  * @uses moodleform
  */
 class workshop_edit_rubric_strategy_form extends workshop_edit_strategy_form {
+
+    const MINLEVELS = 4;
+    const ADDLEVELS = 2;
 
     /**
      * Define the elements to be displayed at the form
@@ -45,6 +47,7 @@ class workshop_edit_rubric_strategy_form extends workshop_edit_strategy_form {
     protected function definition_inner(&$mform) {
 
         $norepeats          = $this->_customdata['norepeats'];          // number of dimensions to display
+        $addlevels          = $this->_customdata['addlevels'];          // additional levels required
         $descriptionopts    = $this->_customdata['descriptionopts'];    // wysiwyg fields options
         $current            = $this->_customdata['current'];            // current data to be set
 
@@ -52,26 +55,50 @@ class workshop_edit_rubric_strategy_form extends workshop_edit_strategy_form {
         // value not to be overridden by submitted value
         $mform->setConstants(array('norepeats' => $norepeats));
 
-        $weights = workshop_get_dimension_weights();
+        $levelgrades = array();
+        for ($i = 100; $i >= 0; $i--) {
+            $levelgrades[$i] = $i;
+        }
 
         for ($i = 0; $i < $norepeats; $i++) {
             $mform->addElement('header', 'dimension'.$i, get_string('dimensionnumber', 'workshopform_rubric', $i+1));
             $mform->addElement('hidden', 'dimensionid__idx_'.$i);
             $mform->addElement('editor', 'description__idx_'.$i.'_editor',
                                 get_string('dimensiondescription', 'workshopform_rubric'), '', $descriptionopts);
-            // todo replace modgrade with an advanced element (usability issue discussed with Olli)
-            $mform->addElement('modgrade', 'grade__idx_'.$i,
-                                get_string('dimensionmaxgrade','workshopform_rubric'), null, true);
-            $mform->setDefault('grade__idx_'.$i, 10);
-            $mform->addElement('select', 'weight__idx_'.$i,
-                                get_string('dimensionweight', 'workshopform_rubric'), $weights);
-            $mform->setDefault('weight__idx_'.$i, 1);
+            if (isset($current->{'numoflevels__idx_' . $i})) {
+                $numoflevels = max($current->{'numoflevels__idx_' . $i} + self::ADDLEVELS, self::MINLEVELS);
+            } else {
+                $numoflevels = self::MINLEVELS;
+            }
+            $prevlevel = 0;
+            for ($j = 0; $j < $numoflevels; $j++) {
+                $mform->addElement('hidden', 'levelid__idx_' . $i . '__idy_' . $j);
+                $levelgrp = array();
+                $levelgrp[] = $mform->createElement('select', 'grade__idx_'.$i.'__idy_'.$j,'', $levelgrades);
+                $levelgrp[] = $mform->createElement('textarea', 'definition__idx_'.$i.'__idy_'.$j, '',  array('cols' => 60, 'rows' => 3));
+                $mform->addGroup($levelgrp, 'level__idx_'.$i.'__idy_'.$j, get_string('levelgroup', 'workshopform_rubric'), array(' '), false);
+                $mform->setDefault('grade__idx_'.$i.'__idy_'.$j, $prevlevel + 1);
+                if (isset($current->{'grade__idx_'.$i.'__idy_'.$j})) {
+                    $prevlevel = $current->{'grade__idx_'.$i.'__idy_'.$j};
+                } else {
+                    $prevlevel++;
+                }
+            }
         }
 
-        $mform->registerNoSubmitButton('noadddims');
-        $mform->addElement('submit', 'noadddims', get_string('addmoredimensions', 'workshopform_rubric',
-                                                                    WORKSHOP_STRATEGY_ADDDIMS));
-        $mform->closeHeaderBefore('noadddims');
+        $mform->registerNoSubmitButton('adddims');
+        $mform->addElement('submit', 'adddims', get_string('addmoredimensions', 'workshopform_rubric',
+                workshop_rubric_strategy::ADDDIMS));
+        $mform->closeHeaderBefore('adddims');
+
+        $mform->addElement('header', 'configheader', get_string('configuration', 'workshopform_rubric'));
+        $layoutgrp = array();
+        $layoutgrp[] = $mform->createElement('radio', 'config_layout', '',
+                get_string('layoutlist', 'workshopform_rubric'), 'list');
+        $layoutgrp[] = $mform->createElement('radio', 'config_layout', '',
+                get_string('layoutgrid', 'workshopform_rubric'), 'grid');
+        $mform->addGroup($layoutgrp, 'layoutgrp', get_string('layout', 'workshopform_rubric'), array('<br />'), false);
+        $mform->setDefault('config_layout', 'list');
         $this->set_data($current);
     }
 }

@@ -342,6 +342,13 @@
 }
 
 /**
+ * Edit assessment form
+ */
+#mod-workshop-editform fieldset.fgroup * {
+    vertical-align: top;
+}
+
+/**
  * Misc
  */
 .mod-workshop div.buttonsbar {

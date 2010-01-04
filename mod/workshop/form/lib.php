@@ -25,9 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-define('WORKSHOPFORM_MINDIMS', 3);    // default number of dimensions to show
-define('WORKSHOP_STRATEGY_ADDDIMS', 2);    // number of dimensions to add
-
 /**
  * Strategy interface defines all methods that strategy subplugins has to implement
  */

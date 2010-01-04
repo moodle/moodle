@@ -25,4 +25,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['addmoredimensions'] = 'Blanks for $a more criteria';
+$string['configuration'] = 'Rubric configuration';
+$string['dimensiondescription'] = 'Description';
+$string['dimensionnumber'] = 'Criterion $a';
+$string['layoutgrid'] = 'Grid';
+$string['layoutlist'] = 'List';
+$string['layout'] = 'Rubric layout';
+$string['levelgroup'] = 'Level grade and definition';
 $string['pluginname'] = 'Rubric';

@@ -66,348 +66,390 @@ class workshop_rubric_strategy implements workshop_strategy {
         $this->config           = $this->load_config();
         $this->descriptionopts  = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1);
         $this->definitionopts   = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1);
-        print_object($this->config); die(); // DONOTCOMMIT
     }
 
-    /**
-     * Factory method returning an instance of an assessment form editor class
-     *
-     * @param $actionurl URL of form handler, defaults to auto detect the current url
-     */
-    public function get_edit_strategy_form($actionurl=null) {
-        global $CFG;    // needed because the included files use it
-        global $PAGE;
+/**
+ * Factory method returning an instance of an assessment form editor class
+ *
+ * @param $actionurl URL of form handler, defaults to auto detect the current url
+ */
+public function get_edit_strategy_form($actionurl=null) {
+    global $CFG;    // needed because the included files use it
+    global $DB;
 
-        require_once(dirname(__FILE__) . '/edit_form.php');
+    require_once(dirname(__FILE__) . '/edit_form.php');
 
-        $fields             = $this->prepare_form_fields($this->dimensions);
-        $nodimensions       = count($this->dimensions);
-        $norepeatsdefault   = max($nodimensions + self::ADDDIMS, self::MINDIMS);
-        $norepeats          = optional_param('norepeats', $norepeatsdefault, PARAM_INT);    // number of dimensions
-        $noadddims          = optional_param('noadddims', '', PARAM_ALPHA);                 // shall we add more?
-        if ($noadddims) {
-            $norepeats += self::ADDDIMS;
-        }
+    $fields             = $this->prepare_form_fields($this->dimensions);
+    $fields->config_layout = $DB->get_field('workshopform_rubric_config', 'layout', array('workshopid' => $this->workshop->id));
 
-        // prepare the embeded files
-        for ($i = 0; $i < $nodimensions; $i++) {
-            // prepare all editor elements
-            $fields = file_prepare_standard_editor($fields, 'description__idx_'.$i, $this->descriptionopts,
-                $PAGE->context, 'workshop_dimension_description', $fields->{'dimensionid__idx_'.$i});
-        }
+    $nodimensions       = count($this->dimensions);
+    $norepeatsdefault   = max($nodimensions + self::ADDDIMS, self::MINDIMS);
+    $norepeats          = optional_param('norepeats', $norepeatsdefault, PARAM_INT);    // number of dimensions
+    $adddims            = optional_param('adddims', '', PARAM_ALPHA);                   // shall we add more dimensions?
+    $addlevels          = optional_param('addlevels', '', PARAM_ALPHA);                 // shall we add more dimensions?
+    if ($adddims) {
+        $norepeats += self::ADDDIMS;
+    }
+    $addlevels = (bool)$addlevels;  // string to boolean
 
-        $customdata = array();
-        $customdata['workshop'] = $this->workshop;
-        $customdata['strategy'] = $this;
-        $customdata['norepeats'] = $norepeats;
-        $customdata['descriptionopts'] = $this->descriptionopts;
-        $customdata['current']  = $fields;
-        $attributes = array('class' => 'editstrategyform');
-
-        return new workshop_edit_rubric_strategy_form($actionurl, $customdata, 'post', '', $attributes);
+    // prepare the embeded files
+    for ($i = 0; $i < $nodimensions; $i++) {
+        // prepare all editor elements
+        $fields = file_prepare_standard_editor($fields, 'description__idx_'.$i, $this->descriptionopts,
+            $this->workshop->context, 'workshopform_rubric_description', $fields->{'dimensionid__idx_'.$i});
     }
 
-    /**
-     * Save the assessment dimensions into database
-     *
-     * Saves data into the main strategy form table. If the record->id is null or zero,
-     * new record is created. If the record->id is not empty, the existing record is updated. Records with
-     * empty 'description' field are removed from database.
-     * The passed data object are the raw data returned by the get_data().
-     *
-     * @uses $DB
-     * @param stdClass $data Raw data returned by the dimension editor form
-     * @return void
-     */
-    public function save_edit_strategy_form(stdClass $data) {
-        global $DB, $PAGE;
+    $customdata = array();
+    $customdata['workshop'] = $this->workshop;
+    $customdata['strategy'] = $this;
+    $customdata['norepeats'] = $norepeats;
+    $customdata['addlevels'] = $addlevels;
+    $customdata['descriptionopts'] = $this->descriptionopts;
+    $customdata['current']  = $fields;
+    $attributes = array('class' => 'editstrategyform');
 
-        $workshopid = $data->workshopid;
-        $norepeats  = $data->norepeats;
+    return new workshop_edit_rubric_strategy_form($actionurl, $customdata, 'post', '', $attributes);
+}
 
-        $data       = $this->prepare_database_fields($data);
-        $records    = $data->rubric;  // records to be saved into {workshopform_rubric}
-        $todelete   = array();              // dimension ids to be deleted
+/**
+ * Save the assessment dimensions into database
+ *
+ * Saves data into the main strategy form table. If the record->id is null or zero,
+ * new record is created. If the record->id is not empty, the existing record is updated. Records with
+ * empty 'description' field are removed from database.
+ * The passed data object are the raw data returned by the get_data().
+ *
+ * @uses $DB
+ * @param stdClass $data Raw data returned by the dimension editor form
+ * @return void
+ */
+public function save_edit_strategy_form(stdClass $data) {
+    global $DB;
 
-        for ($i=0; $i < $norepeats; $i++) {
-            $record = $records[$i];
-            if (empty($record->description_editor['text'])) {
-                if (!empty($record->id)) {
-                    // existing record with empty description - to be deleted
-                    $todelete[] = $record->id;
+    $norepeats  = $data->norepeats;
+    $layout     = $data->config_layout;
+    $data       = $this->prepare_database_fields($data);
+    $deletedims = array();  // dimension ids to be deleted
+    $deletelevs = array();  // level ids to be deleted
+
+    if ($DB->record_exists('workshopform_rubric_config', array('workshopid' => $this->workshop->id))) {
+        $DB->set_field('workshopform_rubric_config', 'layout', $layout, array('workshopid' => $this->workshop->id));
+    } else {
+        $record = new stdClass();
+        $record->workshopid = $this->workshop->id;
+        $record->layout     = $layout;
+        $DB->insert_record('workshopform_rubric_config', $record, false);
+    }
+
+    foreach ($data as $record) {
+        if (0 == strlen(trim($record->description_editor['text']))) {
+            if (!empty($record->id)) {
+                // existing record with empty description - to be deleted
+                $deletedims[] = $record->id;
+                foreach ($record->levels as $level) {
+                    if (!empty($level->id)) {
+                        $deletelevs[] = $level->id;
+                    }
+                }
+            }
+            continue;
+        }
+        if (empty($record->id)) {
+            // new field
+            $record->id = $DB->insert_record('workshopform_rubric', $record);
+        } else {
+            // exiting field
+            $DB->update_record('workshopform_rubric', $record);
+        }
+        // re-save with correct path to embeded media files
+        $record = file_postupdate_standard_editor($record, 'description', $this->descriptionopts,
+                                                  $this->workshop->context, 'workshopform_rubric_description', $record->id);
+        $DB->update_record('workshopform_rubric', $record);
+
+        // create/update the criterion levels
+        foreach ($record->levels as $level) {
+            $level->dimensionid = $record->id;
+            if (0 == strlen(trim($level->definition))) {
+                if (!empty($level->id)) {
+                    $deletelevs[] = $level->id;
                 }
                 continue;
             }
-            if (empty($record->id)) {
+            if (empty($level->id)) {
                 // new field
-                $record->id         = $DB->insert_record('workshopform_rubric', $record);
+                $level->id = $DB->insert_record('workshopform_rubric_levels', $level);
             } else {
                 // exiting field
-                $DB->update_record('workshopform_rubric', $record);
+                $DB->update_record('workshopform_rubric_levels', $level);
             }
-            // re-save with correct path to embeded media files
-            $record = file_postupdate_standard_editor($record, 'description', $this->descriptionopts,
-                                                      $PAGE->context, 'workshopform_rubric_description', $record->id);
-            $DB->update_record('workshopform_rubric', $record);
         }
-        $this->delete_dimensions($todelete);
+    }
+    $DB->delete_records_list('workshopform_rubric_levels', 'id', $deletelevs);
+    $this->delete_dimensions($deletedims);
+}
+
+/**
+ * Factory method returning an instance of an assessment form
+ *
+ * @param moodle_url $actionurl URL of form handler, defaults to auto detect the current url
+ * @param string $mode          Mode to open the form in: preview/assessment
+ */
+public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdClass $assessment=null) {
+    global $CFG;    // needed because the included files use it
+    global $DB;
+    require_once(dirname(__FILE__) . '/assessment_form.php');
+
+    $fields         = $this->prepare_form_fields($this->dimensions);
+    $nodimensions   = count($this->dimensions);
+
+    // rewrite URLs to the embeded files
+    for ($i = 0; $i < $nodimensions; $i++) {
+        $fields->{'description__idx_'.$i} = file_rewrite_pluginfile_urls($fields->{'description__idx_'.$i},
+            'pluginfile.php', $this->workshop->context->id, 'workshopform_rubric_description', $fields->{'dimensionid__idx_'.$i});
+
     }
 
-    /**
-     * Factory method returning an instance of an assessment form
-     *
-     * @param moodle_url $actionurl URL of form handler, defaults to auto detect the current url
-     * @param string $mode          Mode to open the form in: preview/assessment
-     */
-    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdClass $assessment=null) {
-        global $CFG;    // needed because the included files use it
-        global $PAGE;
-        global $DB;
-        require_once(dirname(__FILE__) . '/assessment_form.php');
-
-        $fields         = $this->prepare_form_fields($this->dimensions);
-        $nodimensions   = count($this->dimensions);
-
-        // rewrite URLs to the embeded files
+    if ('assessment' === $mode and !empty($assessment)) {
+        // load the previously saved assessment data
+        $grades = $this->get_current_assessment_data($assessment);
+        $current = new stdClass();
         for ($i = 0; $i < $nodimensions; $i++) {
-            $fields->{'description__idx_'.$i} = file_rewrite_pluginfile_urls($fields->{'description__idx_'.$i},
-                'pluginfile.php', $PAGE->context->id, 'workshopform_rubric_description', $fields->{'dimensionid__idx_'.$i});
-        }
-
-        if ('assessment' === $mode and !empty($assessment)) {
-            // load the previously saved assessment data
-            $grades = $this->get_current_assessment_data($assessment);
-            $current = new stdClass();
-            for ($i = 0; $i < $nodimensions; $i++) {
-                $dimid = $fields->{'dimensionid__idx_'.$i};
-                if (isset($grades[$dimid])) {
-                    $current->{'gradeid__idx_'.$i}      = $grades[$dimid]->id;
-                    $current->{'grade__idx_'.$i}        = $grades[$dimid]->grade;
-                    $current->{'peercomment__idx_'.$i}  = $grades[$dimid]->peercomment;
-                }
+            $dimid = $fields->{'dimensionid__idx_'.$i};
+            if (isset($grades[$dimid])) {
+                $current->{'gradeid__idx_'.$i}      = $grades[$dimid]->id;
+                $current->{'grade__idx_'.$i}        = $grades[$dimid]->grade;
+                $current->{'peercomment__idx_'.$i}  = $grades[$dimid]->peercomment;
             }
         }
-
-        // set up the required custom data common for all strategies
-        $customdata['strategy'] = $this;
-        $customdata['workshop'] = $this->workshop;
-        $customdata['mode']     = $mode;
-
-        // set up strategy-specific custom data
-        $customdata['nodims']   = $nodimensions;
-        $customdata['fields']   = $fields;
-        $customdata['current']  = isset($current) ? $current : null;
-        $attributes = array('class' => 'assessmentform rubric');
-
-        return new workshop_rubric_assessment_form($actionurl, $customdata, 'post', '', $attributes);
     }
 
-    /**
-     * Saves the filled assessment
-     *
-     * This method processes data submitted using the form returned by {@link get_assessment_form()}
-     *
-     * @param stdClass $assessment Assessment being filled
-     * @param stdClass $data       Raw data as returned by the assessment form
-     * @return float|null          Raw grade (0.00000 to 100.00000) for submission as suggested by the peer
-     */
-    public function save_assessment(stdClass $assessment, stdClass $data) {
-        global $DB;
+    // set up the required custom data common for all strategies
+    $customdata['strategy'] = $this;
+    $customdata['workshop'] = $this->workshop;
+    $customdata['mode']     = $mode;
 
-        if (!isset($data->nodims)) {
-            throw coding_expection('You did not send me the number of assessment dimensions to process');
-        }
-        for ($i = 0; $i < $data->nodims; $i++) {
-            $grade = new stdClass();
-            $grade->id = $data->{'gradeid__idx_' . $i};
-            $grade->assessmentid = $assessment->id;
-            $grade->strategy = 'rubric';
-            $grade->dimensionid = $data->{'dimensionid__idx_' . $i};
-            $grade->grade = $data->{'grade__idx_' . $i};
-            $grade->peercomment = $data->{'peercomment__idx_' . $i};
-            $grade->peercommentformat = FORMAT_MOODLE;
-            if (empty($grade->id)) {
-                // new grade
-                $grade->id = $DB->insert_record('workshop_grades', $grade);
-            } else {
-                // updated grade
-                $DB->update_record('workshop_grades', $grade);
-            }
-        }
-        return $this->update_peer_grade($assessment);
+    // set up strategy-specific custom data
+    $customdata['nodims']   = $nodimensions;
+    $customdata['fields']   = $fields;
+    $customdata['current']  = isset($current) ? $current : null;
+    $attributes = array('class' => 'assessmentform rubric');
+
+    return new workshop_rubric_assessment_form($actionurl, $customdata, 'post', '', $attributes);
+}
+
+/**
+ * Saves the filled assessment
+ *
+ * This method processes data submitted using the form returned by {@link get_assessment_form()}
+ *
+ * @param stdClass $assessment Assessment being filled
+ * @param stdClass $data       Raw data as returned by the assessment form
+ * @return float|null          Raw grade (0.00000 to 100.00000) for submission as suggested by the peer
+ */
+public function save_assessment(stdClass $assessment, stdClass $data) {
+    global $DB;
+
+    if (!isset($data->nodims)) {
+        throw coding_expection('You did not send me the number of assessment dimensions to process');
     }
-
-    /**
-     * Has the assessment form been defined and is ready to be used by the reviewers?
-     *
-     * @return boolean
-     */
-    public function form_ready() {
-        if (count($this->dimensions) > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Returns true if the given evaluation method is supported by this strategy
-     *
-     * To support an evaluation method, the strategy subplugin must usually implement some
-     * required public methods. In theory, this is what interfaces should be used for.
-     * Unfortunatelly, we can't extend "implements" declaration as the interface must
-     * be known to the PHP interpret. So we can't declare implementation of a non-installed
-     * evaluation subplugin.
-     *
-     * @param workshop_evaluation $evaluation the instance of grading evaluation class
-     * @return bool true if the evaluation method is supported, false otherwise
-     */
-    public function supports_evaluation(workshop_evaluation $evaluation) {
-        if (is_a($evaluation, 'workshop_best_evaluation')) {
-            return true;
-        }
-        // all other evaluation methods are not supported yet
-        return false;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // Methods required by the 'best' evaluation plugin                           //
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * TODO
-     *
-     * @param resource $restrict 
-     * @return TODO
-     */
-    public function eval_best_get_assessments_recordset($restrict) {
-        global $DB;
-
-        $sql = 'SELECT s.id AS submissionid,
-                       a.id AS assessmentid, a.weight AS assessmentweight, a.reviewerid, a.gradinggrade,
-                       g.dimensionid, g.grade
-                  FROM {workshop_submissions} s
-                  JOIN {workshop_assessments} a ON (a.submissionid = s.id)
-                  JOIN {workshop_grades} g ON (g.assessmentid = a.id AND g.strategy = :strategy)
-                 WHERE s.example=0 AND s.workshopid=:workshopid'; // to be cont.
-        $params = array('workshopid' => $this->workshop->id, 'strategy' => $this->workshop->strategy);
-
-        if (is_null($restrict)) {
-            // update all users - no more conditions
-        } elseif (!empty($restrict)) {
-            list($usql, $uparams) = $DB->get_in_or_equal($restrict, SQL_PARAMS_NAMED);
-            $sql .= " AND a.reviewerid $usql";
-            $params = array_merge($params, $uparams);
+    for ($i = 0; $i < $data->nodims; $i++) {
+        $grade = new stdClass();
+        $grade->id = $data->{'gradeid__idx_' . $i};
+        $grade->assessmentid = $assessment->id;
+        $grade->strategy = 'rubric';
+        $grade->dimensionid = $data->{'dimensionid__idx_' . $i};
+        $grade->grade = $data->{'grade__idx_' . $i};
+        $grade->peercomment = $data->{'peercomment__idx_' . $i};
+        $grade->peercommentformat = FORMAT_MOODLE;
+        if (empty($grade->id)) {
+            // new grade
+            $grade->id = $DB->insert_record('workshop_grades', $grade);
         } else {
-            throw new coding_exception('Empty value is not a valid parameter here');
+            // updated grade
+            $DB->update_record('workshop_grades', $grade);
         }
+    }
+    return $this->update_peer_grade($assessment);
+}
 
-        $sql .= ' ORDER BY s.id'; // this is important for bulk processing
+/**
+ * Has the assessment form been defined and is ready to be used by the reviewers?
+ *
+ * @return boolean
+ */
+public function form_ready() {
+    if (count($this->dimensions) > 0) {
+        return true;
+    }
+    return false;
+}
 
-        return $DB->get_recordset_sql($sql, $params);
+/**
+ * Returns true if the given evaluation method is supported by this strategy
+ *
+ * To support an evaluation method, the strategy subplugin must usually implement some
+ * required public methods. In theory, this is what interfaces should be used for.
+ * Unfortunatelly, we can't extend "implements" declaration as the interface must
+ * be known to the PHP interpret. So we can't declare implementation of a non-installed
+ * evaluation subplugin.
+ *
+ * @param workshop_evaluation $evaluation the instance of grading evaluation class
+ * @return bool true if the evaluation method is supported, false otherwise
+ */
+public function supports_evaluation(workshop_evaluation $evaluation) {
+    if (is_a($evaluation, 'workshop_best_evaluation')) {
+        return true;
+    }
+    // all other evaluation methods are not supported yet
+    return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Methods required by the 'best' evaluation plugin                           //
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * TODO
+ *
+ * @param resource $restrict 
+ * @return TODO
+ */
+public function eval_best_get_assessments_recordset($restrict) {
+    global $DB;
+
+    $sql = 'SELECT s.id AS submissionid,
+                   a.id AS assessmentid, a.weight AS assessmentweight, a.reviewerid, a.gradinggrade,
+                   g.dimensionid, g.grade
+              FROM {workshop_submissions} s
+              JOIN {workshop_assessments} a ON (a.submissionid = s.id)
+              JOIN {workshop_grades} g ON (g.assessmentid = a.id AND g.strategy = :strategy)
+             WHERE s.example=0 AND s.workshopid=:workshopid'; // to be cont.
+    $params = array('workshopid' => $this->workshop->id, 'strategy' => $this->workshop->strategy);
+
+    if (is_null($restrict)) {
+        // update all users - no more conditions
+    } elseif (!empty($restrict)) {
+        list($usql, $uparams) = $DB->get_in_or_equal($restrict, SQL_PARAMS_NAMED);
+        $sql .= " AND a.reviewerid $usql";
+        $params = array_merge($params, $uparams);
+    } else {
+        throw new coding_exception('Empty value is not a valid parameter here');
     }
 
-    /**
-     * TODO: short description.
-     *
-     * @return array [dimid] => stdClass (->id ->max ->min ->weight)
-     */
-    public function eval_best_dimensions_info() {
-        global $DB;
+    $sql .= ' ORDER BY s.id'; // this is important for bulk processing
 
-        $sql = 'SELECT d.id, d.grade, d.weight, s.scale
-                  FROM {workshopform_rubric} d
-             LEFT JOIN {scale} s ON (d.grade < 0 AND -d.grade = s.id)
-                 WHERE d.workshopid = :workshopid';
-        $params = array('workshopid' => $this->workshop->id);
-        $dimrecords = $DB->get_records_sql($sql, $params);
-        $diminfo = array();
-        foreach ($dimrecords as $dimid => $dimrecord) {
-            $diminfo[$dimid] = new stdClass();
-            $diminfo[$dimid]->id = $dimid;
-            $diminfo[$dimid]->weight = $dimrecord->weight;
-            if ($dimrecord->grade < 0) {
-                // the dimension uses a scale
-                $diminfo[$dimid]->min = 1;
-                $diminfo[$dimid]->max = count(explode(',', $dimrecord->scale));
-            } else {
-                // the dimension uses points
-                $diminfo[$dimid]->min = 0;
-                $diminfo[$dimid]->max = grade_floatval($dimrecord->grade);
+    return $DB->get_recordset_sql($sql, $params);
+}
+
+/**
+ * TODO: short description.
+ *
+ * @return array [dimid] => stdClass (->id ->max ->min ->weight)
+ */
+public function eval_best_dimensions_info() {
+    global $DB;
+
+    $sql = 'SELECT d.id, d.grade, d.weight, s.scale
+              FROM {workshopform_rubric} d
+         LEFT JOIN {scale} s ON (d.grade < 0 AND -d.grade = s.id)
+             WHERE d.workshopid = :workshopid';
+    $params = array('workshopid' => $this->workshop->id);
+    $dimrecords = $DB->get_records_sql($sql, $params);
+    $diminfo = array();
+    foreach ($dimrecords as $dimid => $dimrecord) {
+        $diminfo[$dimid] = new stdClass();
+        $diminfo[$dimid]->id = $dimid;
+        $diminfo[$dimid]->weight = $dimrecord->weight;
+        if ($dimrecord->grade < 0) {
+            // the dimension uses a scale
+            $diminfo[$dimid]->min = 1;
+            $diminfo[$dimid]->max = count(explode(',', $dimrecord->scale));
+        } else {
+            // the dimension uses points
+            $diminfo[$dimid]->min = 0;
+            $diminfo[$dimid]->max = grade_floatval($dimrecord->grade);
+        }
+    }
+    return $diminfo;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Internal methods                                                           //
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Loads the fields of the assessment form currently used in this workshop
+ *
+ * @return array definition of assessment dimensions
+ */
+protected function load_fields() {
+    global $DB;
+
+    $sql = 'SELECT r.id AS rid, l.id AS lid, *
+              FROM {workshopform_rubric} r
+         LEFT JOIN {workshopform_rubric_levels} l ON (l.dimensionid = r.id)
+             WHERE r.workshopid = :workshopid
+             ORDER BY r.sort, l.grade';
+    $params = array('workshopid' => $this->workshop->id);
+
+    $rs = $DB->get_recordset_sql($sql, $params);
+    $fields = array();
+    foreach ($rs as $record) {
+        if (!isset($fields[$record->rid])) {
+            $fields[$record->rid] = new stdClass();
+            $fields[$record->rid]->id = $record->rid;
+            $fields[$record->rid]->sort = $record->sort;
+            $fields[$record->rid]->description = $record->description;
+            $fields[$record->rid]->descriptionformat = $record->descriptionformat;
+            $fields[$record->rid]->levels = array();
+        }
+        $fields[$record->rid]->levels[$record->lid] = new stdClass();
+        $fields[$record->rid]->levels[$record->lid]->id = $record->lid;
+        $fields[$record->rid]->levels[$record->lid]->grade = $record->grade;
+        $fields[$record->rid]->levels[$record->lid]->definition = $record->definition;
+        $fields[$record->rid]->levels[$record->lid]->definitionformat = $record->definitionformat;
+    }
+    $rs->close();
+    return $fields;
+}
+
+/**
+ * Get the configuration for the current rubric strategy
+ *
+ * @return object
+ */
+protected function load_config() {
+    global $DB;
+
+    if (!$config = $DB->get_record('workshopform_rubric_config', array('workshopid' => $this->workshop->id), 'layout')) {
+        $config = (object)array('layout' => 'list');
+    }
+    return $config;
+}
+
+/**
+ * Maps the dimension data from DB to the form fields
+ *
+ * @param array $fields Array of dimensions definition as returned by {@link load_fields()}
+ * @return stdClass of fields data to be used by the mform set_data
+ */
+protected function prepare_form_fields(array $fields) {
+
+    $formdata = new stdClass();
+    $key = 0;
+    foreach ($fields as $field) {
+        $formdata->{'dimensionid__idx_' . $key}             = $field->id;
+        $formdata->{'description__idx_' . $key}             = $field->description;
+        $formdata->{'description__idx_' . $key.'format'}    = $field->descriptionformat;
+        $formdata->{'numoflevels__idx_' . $key}             = count($field->levels);
+        $lev = 0;
+        foreach ($field->levels as $level) {
+            $formdata->{'levelid__idx_' . $key . '__idy_' . $lev} = $level->id;
+            $formdata->{'grade__idx_' . $key . '__idy_' . $lev} = $level->grade;
+            $formdata->{'definition__idx_' . $key . '__idy_' . $lev} = $level->definition;
+            $formdata->{'definition__idx_' . $key . '__idy_' . $lev . 'format'} = $level->definitionformat;
+                $lev++;
             }
-        }
-        return $diminfo;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // Internal methods                                                           //
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Loads the fields of the assessment form currently used in this workshop
-     *
-     * @return array definition of assessment dimensions
-     */
-    protected function load_fields() {
-        global $DB;
-
-        $sql = 'SELECT r.id AS rid, l.id AS lid, *
-                  FROM {workshopform_rubric} r
-             LEFT JOIN {workshopform_rubric_levels} l ON (l.dimensionid = r.id)
-                 WHERE r.workshopid = :workshopid
-                 ORDER BY r.sort, l.grade';
-        $params = array('workshopid' => $this->workshop->id);
-
-        $rs = $DB->get_recordset_sql($sql, $params);
-        $fields = array();
-        foreach ($rs as $record) {
-            if (!isset($fields[$record->rid])) {
-                $fields[$record->rid] = new stdClass();
-                $fields[$record->rid]->id = $record->rid;
-                $fields[$record->rid]->sort = $record->sort;
-                $fields[$record->rid]->description = $record->description;
-                $fields[$record->rid]->descriptionformat = $record->descriptionformat;
-                $fields[$record->rid]->levels = array();
-            }
-            $fields[$record->rid]->levels[$record->lid] = new stdClass();
-            $fields[$record->rid]->levels[$record->lid]->id = $record->lid;
-            $fields[$record->rid]->levels[$record->lid]->grade = $record->grade;
-            $fields[$record->rid]->levels[$record->lid]->definition = $record->definition;
-            $fields[$record->rid]->levels[$record->lid]->definitionformat = $record->definitionformat;
-        }
-        $rs->close();
-        return $fields;
-    }
-
-    /**
-     * Get the configuration for the current rubric strategy
-     *
-     * @return object
-     */
-    protected function load_config() {
-        global $DB;
-
-        if (!$config = $DB->get_record('workshopform_rubric_config', array('workshopid' => $this->workshop->id), 'layout')) {
-            $config = (object)array('layout' => 'list');
-        }
-        return $config;
-    }
-
-    /**
-     * Maps the dimension data from DB to the form fields
-     *
-     * @param array $raw Array of raw dimension records as returned by {@link load_fields()}
-     * @return array Array of fields data to be used by the mform set_data
-     */
-    protected function prepare_form_fields(array $raw) {
-
-        $formdata = new stdClass();
-        $key = 0;
-        foreach ($raw as $dimension) {
-            $formdata->{'dimensionid__idx_' . $key}             = $dimension->id;
-            $formdata->{'description__idx_' . $key}             = $dimension->description;
-            $formdata->{'description__idx_' . $key.'format'}    = $dimension->descriptionformat;
-            $formdata->{'grade__idx_' . $key}                   = $dimension->grade;
-            $formdata->{'weight__idx_' . $key}                  = $dimension->weight;
             $key++;
         }
         return $formdata;
@@ -422,12 +464,12 @@ class workshop_rubric_strategy implements workshop_strategy {
      * @return void
      */
     protected function delete_dimensions(array $ids) {
-        global $DB, $PAGE;
+        global $DB;
 
         $fs = get_file_storage();
         foreach ($ids as $id) {
             if (!empty($id)) {   // to prevent accidental removal of all files in the area
-                $fs->delete_area_files($PAGE->context->id, 'workshopform_rubric_description', $id);
+                $fs->delete_area_files($this->workshop->context->id, 'workshopform_rubric_description', $id);
             }
         }
         $DB->delete_records_list('workshopform_rubric', 'id', $ids);
@@ -445,20 +487,29 @@ class workshop_rubric_strategy implements workshop_strategy {
      * @return array Array of objects to be inserted/updated in DB
      */
     protected function prepare_database_fields(stdClass $raw) {
-        global $PAGE;
 
-        $cook               = new stdClass(); // to be returned
-        $cook->rubric = array();        // records to be stored in {workshopform_rubric}
+        $cook = array();
 
         for ($i = 0; $i < $raw->norepeats; $i++) {
-            $cook->rubric[$i]                     = new stdClass();
-            $cook->rubric[$i]->id                 = $raw->{'dimensionid__idx_'.$i};
-            $cook->rubric[$i]->workshopid         = $this->workshop->id;
-            $cook->rubric[$i]->sort               = $i + 1;
-            $cook->rubric[$i]->description_editor = $raw->{'description__idx_'.$i.'_editor'};
-            $cook->rubric[$i]->grade              = $raw->{'grade__idx_'.$i};
-            $cook->rubric[$i]->weight             = $raw->{'weight__idx_'.$i};
+            $cook[$i]                       = new stdClass();
+            $cook[$i]->id                   = $raw->{'dimensionid__idx_'.$i};
+            $cook[$i]->workshopid           = $this->workshop->id;
+            $cook[$i]->sort                 = $i + 1;
+            $cook[$i]->description_editor   = $raw->{'description__idx_'.$i.'_editor'};
+            $cook[$i]->levels               = array();
+
+            $j = 0;
+            while (isset($raw->{'levelid__idx_' . $i . '__idy_' . $j})) {
+                $level                      = new stdClass();
+                $level->id                  = $raw->{'levelid__idx_' . $i . '__idy_' . $j};
+                $level->grade               = $raw->{'grade__idx_'.$i.'__idy_'.$j};
+                $level->definition          = $raw->{'definition__idx_'.$i.'__idy_'.$j};
+                $level->definitionformat    = FORMAT_HTML;
+                $cook[$i]->levels[]         = $level;
+                $j++;
+            }
         }
+
         return $cook;
     }
 
