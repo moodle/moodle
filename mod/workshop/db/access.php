@@ -157,6 +157,7 @@ $mod_workshop_capabilities = array(
     ),
 
     // Ability to override grade for submission or the calcaluted grades for assessment
+    // and to run aggregation tasks that computes the total grade
     'mod/workshop:overridegrades' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
