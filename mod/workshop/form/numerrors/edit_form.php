@@ -101,7 +101,7 @@ class workshop_edit_numerrors_strategy_form extends workshop_edit_strategy_form 
 
         $mform->registerNoSubmitButton('noadddims');
         $mform->addElement('submit', 'noadddims', get_string('addmoredimensions', 'workshopform_numerrors',
-                                                                    WORKSHOP_STRATEGY_ADDDIMS));
+                workshop_numerrors_strategy::ADDDIMS));
         $mform->closeHeaderBefore('noadddims');
         $this->set_data($current);
 

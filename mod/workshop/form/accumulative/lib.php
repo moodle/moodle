@@ -84,7 +84,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
         for ($i = 0; $i < $nodimensions; $i++) {
             // prepare all editor elements
             $fields = file_prepare_standard_editor($fields, 'description__idx_'.$i, $this->descriptionopts,
-                $PAGE->context, 'workshop_dimension_description', $fields->{'dimensionid__idx_'.$i});
+                $PAGE->context, 'workshopform_accumulative_description', $fields->{'dimensionid__idx_'.$i});
         }
 
         $customdata = array();
@@ -122,7 +122,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
 
         for ($i=0; $i < $norepeats; $i++) {
             $record = $records[$i];
-            if (empty($record->description_editor['text'])) {
+            if (0 == strlen(trim($record->description_editor['text']))) {
                 if (!empty($record->id)) {
                     // existing record with empty description - to be deleted
                     $todelete[] = $record->id;

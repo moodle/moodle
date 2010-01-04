@@ -128,7 +128,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
 
         for ($i=0; $i < $norepeats; $i++) {
             $record = $records[$i];
-            if (empty($record->description_editor['text'])) {
+            if (0 == strlen(trim($record->description_editor['text']))) {
                 if (!empty($record->id)) {
                     // existing dimension record with empty description - to be deleted
                     $todelete[] = $record->id;

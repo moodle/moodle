@@ -70,7 +70,7 @@ class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_fo
 
         $mform->registerNoSubmitButton('noadddims');
         $mform->addElement('submit', 'noadddims', get_string('addmoredimensions', 'workshopform_accumulative',
-                                                                    WORKSHOP_STRATEGY_ADDDIMS));
+                workshop_accumulative_strategy::ADDDIMS));
         $mform->closeHeaderBefore('noadddims');
         $this->set_data($current);
     }
