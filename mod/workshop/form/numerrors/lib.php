@@ -425,7 +425,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
         }
         list($dimsql, $dimparams) = $DB->get_in_or_equal(array_keys($this->dimensions), SQL_PARAMS_NAMED);
         // beware! the caller may rely on the returned array is indexed by dimensionid
-        $sql = "SELECT dimensionid, *
+        $sql = "SELECT dimensionid, wg.*
                   FROM {workshop_grades}
                  WHERE assessmentid = :assessmentid AND strategy= :strategy AND dimensionid $dimsql";
         $params = array('assessmentid' => $assessment->id, 'strategy' => 'numerrors');

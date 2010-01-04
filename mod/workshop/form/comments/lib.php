@@ -385,8 +385,8 @@ class workshop_comments_strategy implements workshop_strategy {
         }
         list($dimsql, $dimparams) = $DB->get_in_or_equal(array_keys($this->dimensions), SQL_PARAMS_NAMED);
         // beware! the caller may rely on the returned array is indexed by dimensionid
-        $sql = "SELECT dimensionid, *
-                  FROM {workshop_grades}
+        $sql = "SELECT dimensionid, wg.*
+                  FROM {workshop_grades} wg
                  WHERE assessmentid = :assessmentid AND strategy= :strategy AND dimensionid $dimsql";
         $params = array('assessmentid' => $assessment->id, 'strategy' => 'comments');
         $params = array_merge($params, $dimparams);
