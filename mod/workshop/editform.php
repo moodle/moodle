@@ -35,7 +35,7 @@ require_login($course, false, $cm);
 require_capability('mod/workshop:editdimensions', $PAGE->context);
 
 $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
-$workshop   = new workshop_api($workshop, $cm, $course);
+$workshop   = new workshop($workshop, $cm, $course);
 
 $PAGE->set_url($workshop->editform_url());
 $PAGE->set_title($workshop->name);
@@ -44,21 +44,13 @@ $PAGE->set_heading($course->fullname);
 // load the grading strategy logic
 $strategy = $workshop->grading_strategy_instance();
 
-// load the assessment form definition from the database
-// this must be called before get_edit_strategy_form() where we have to know
-// the number of repeating fieldsets
-$formdata = $strategy->load_form();
-
 // load the form to edit the grading strategy dimensions
 $mform = $strategy->get_edit_strategy_form($PAGE->url);
-
-// initialize form data
-$mform->set_data($formdata);
 
 if ($mform->is_cancelled()) {
     redirect($workshop->view_url());
 } elseif ($data = $mform->get_data()) {
-    $strategy->save_form($data);
+    $strategy->save_edit_strategy_form($data);
     if (isset($data->saveandclose)) {
         redirect($workshop->view_url());
     } elseif (isset($data->saveandpreview)) {
@@ -83,8 +75,9 @@ $navlinks[] = array('name' => get_string('editingassessmentform', 'workshop'),
 $navigation = build_navigation($navlinks);
 
 // OUTPUT STARTS HERE
+// todo use outputlib
 
-print_header_simple(format_string($workshop->name), '', $navigation, '', '', true, '', navmenu($course, $cm));
+print_header_simple(format_string($workshop->name), '', $navigation, '', '', true, '');
 
 print_heading(get_string('strategy' . $workshop->strategy, 'workshop'));
 

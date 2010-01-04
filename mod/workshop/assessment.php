@@ -48,20 +48,21 @@ if ($preview = optional_param('preview', 0, PARAM_INT)) {
 }
 
 require_login($course, false, $cm);
-$workshop = new workshop_api($workshop, $cm, $course);
+if (isguestuser()) {
+    print_error('guestsarenotallowed');
+}
+$workshop = new workshop($workshop, $cm, $course);
 
 if ('preview' == $mode) {
     require_capability('mod/workshop:editdimensions', $PAGE->context);
-    // TODO logging add_to_log($course->id, "workshop", "view", "view.php?id=$cm->id", "$workshop->id");
     $PAGE->set_url($workshop->previewform_url());
     $PAGE->set_title($workshop->name);
     $PAGE->set_heading($course->fullname);
 
 } elseif ('assessment' == $mode) {
-    if (!(has_capability('mod/workshop:peerassess', $PAGE->context) || has_capability('mod/workshop:peerassess', $PAGE->context))) {
+    if (!has_any_capability(array('mod/workshop:peerassess', 'mod/workshop:assessallsubmissions'), $PAGE->context)) {
         print_error('nopermissions', '', $workshop->view_url());
     }
-    // TODO logging add_to_log($course->id, "workshop", "view", "view.php?id=$cm->id", "$workshop->id");
     $PAGE->set_url($workshop->assess_url($assessment->id));
     $PAGE->set_title($workshop->name);
     $PAGE->set_heading($course->fullname);
@@ -79,22 +80,20 @@ $strategy = $workshop->grading_strategy_instance();
 // load the form to edit the grading strategy dimensions
 $mform = $strategy->get_assessment_form($PAGE->url, $mode);
 
-// initialize form data
-//todo $mform->set_data($formdata);
-
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } elseif ($data = $mform->get_data()) {
     if (isset($data->backtoeditform)) {
+        // user wants to return from preview to form editing
         redirect($workshop->editform_url());
     }
-    $strategy->save_assessment($data);
+    $strategy->save_assessment($assessment, $data);
     if (isset($data->saveandclose)) {
         redirect($workshop->view_url());
     } else {
         // save and continue - redirect to self to prevent data being re-posted by pressing "Reload"
-        redirect($PAGE->url->out());
+        redirect($PAGE->url);
     }
 }
 
@@ -108,7 +107,7 @@ $navlinks[] = array('name' => format_string($workshop->name),
                     'type' => 'activityinstance');
 if ($mode == 'preview') {
     $navlinks[] = array('name' => get_string('editingassessmentform', 'workshop'),
-                        'link' => $workshop->editform_url(),
+                        'link' => $workshop->editform_url()->out(),
                         'type' => 'title');
     $navlinks[] = array('name' => get_string('previewassessmentform', 'workshop'),
                         'link' => '',
@@ -122,16 +121,20 @@ $navigation = build_navigation($navlinks);
 
 // Output starts here
 
-$wsoutput = $THEME->get_renderer('mod_workshop', $PAGE);    // workshop renderer
 echo $OUTPUT->header($navigation);
 echo $OUTPUT->heading(get_string('assessmentform', 'workshop'), 2);
-if (has_capability('mod/workshop:viewauthornames', $PAGE->context)) {
-    $showname   = true;
-    $author     = $workshop->user_info($submission->userid);
-} else {
-    $showname   = false;
-    $author     = null;
+
+if ('assessment' === $mode) {
+    if (has_capability('mod/workshop:viewauthornames', $PAGE->context)) {
+        $showname   = true;
+        $author     = $workshop->user_info($submission->userid);
+    } else {
+        $showname   = false;
+        $author     = null;
+    }
+    $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);    // workshop renderer
+    echo $wsoutput->submission_full($submission, $showname, $author);
 }
-echo $wsoutput->submission_full($submission, $showname, $author);
+
 $mform->display();
 echo $OUTPUT->footer();

@@ -67,7 +67,10 @@ class workshop_allocation_random_test extends UnitTestCase {
     protected $allocator;
 
     public function setUp() {
-        $this->workshop     = new workshop((object)array('id' => 42), new stdClass(), new stdClass());
+        $cm                 = (object)array('id' => 3);
+        $course             = (object)array('id' => 11);
+        $workshop           = (object)array('id' => 42);
+        $this->workshop     = new workshop($workshop, $cm, $course);
         $this->allocator    = new testable_workshop_random_allocator($this->workshop);
     }
 
@@ -141,7 +144,7 @@ class workshop_allocation_random_test extends UnitTestCase {
                 87 => (object)array('id' => 121, 'userid' => 3),
                 );
         // set expectation
-        $this->expectException('moodle_workshop_exception');
+        $this->expectException('moodle_exception');
         // exercise SUT
         $submissions = $this->allocator->index_submissions_by_authors($submissions);
     }

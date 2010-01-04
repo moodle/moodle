@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for workshop_api class defined in mod/workshop/locallib.php
+ * Unit tests for workshop class defined in mod/workshop/locallib.php
  *
  * @package   mod-workshop
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
@@ -32,25 +32,24 @@ require_once($CFG->dirroot . '/mod/workshop/locallib.php'); // Include the code 
  * Test subclass that makes all the protected methods we want to test public.
  * Also re-implements bridging methods so we can test more easily.
  */
-class testable_workshop_api extends workshop_api {
+class testable_workshop extends workshop {
 
 }
 
 /**
  * Test cases for the internal workshop api
  */
-class workshop_api_test extends UnitTestCase {
+class workshop_internal_api_test extends UnitTestCase {
 
     /** workshop instance emulation */
     protected $workshop;
 
     /** setup testing environment */
     public function setUp() {
-        $workshoprecord         = new stdClass;
-        $workshoprecord->id     = 42;
-
-        $cm                     = new stdClass;
-        $this->workshop = new testable_workshop_api($workshoprecord, $cm);
+        $cm                 = (object)array('id' => 3);
+        $course             = (object)array('id' => 11);
+        $workshop           = (object)array('id' => 42);
+        $this->workshop     = new testable_workshop($workshop, $cm, $course);
     }
 
     public function tearDown() {

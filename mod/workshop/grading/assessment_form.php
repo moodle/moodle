@@ -38,15 +38,6 @@ require_once($CFG->libdir . '/formslib.php'); // parent class definition
  */
 class workshop_assessment_form extends moodleform {
 
-    /** object Strategy logic instance */
-    protected $strategy;
-
-    /** array Assessment form fields defined by teacher */
-    protected $fields = array();
-
-    /** string The mode of the form: "preview" or "assessment" */
-    protected $mode = 'preview';
-
     /**
      * Add the fields that are common for all grading strategies.
      *
@@ -55,19 +46,18 @@ class workshop_assessment_form extends moodleform {
      * $mform->removeElement().
      * Strategy subclassess should define their own fields in definition_inner()
      *
-     * @access public
      * @return void
      */
     public function definition() {
         global $CFG;
 
-        $mform = $this->_form;
-        $this->strategy = $this->_customdata['strategy'];
-        $this->fields   = (array)$this->_customdata['fields'];
-        $this->mode     = $this->_customdata['mode'];
+        $mform          = $this->_form;
+        $this->mode     = $this->_customdata['mode'];       // influences the save buttons
+        $this->strategy = $this->_customdata['strategy'];   // strategy name sends back for cross check
 
-        $mform->addElement('hidden', 'strategyname', $this->strategy->name);
+        $mform->addElement('hidden', 'strategyname', $this->strategy->name());
 
+        // add the strategy-specific fields
         $this->definition_inner($mform);
 
         $buttonarray = array();

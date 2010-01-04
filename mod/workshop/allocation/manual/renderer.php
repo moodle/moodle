@@ -41,7 +41,6 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
      *
      * @param mixed $page the page we are doing output for
      * @param mixed $output lower-level renderer, typically moodle_core_renderer
-     * @access public
      * @return void
      */
     public function __construct($page, $output) {
@@ -52,7 +51,7 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
     /**
      * Display the table of all current allocations and widgets to modify them
      *
-     * @param workshop $workshop workshop instance object
+     * @param workshop $workshop workshop API instance
      * @param array $peers prepared array of all allocations
      * @param int $hlauthorid highlight this author
      * @param int $hlreviewerid highlight this reviewer
@@ -122,11 +121,11 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
      * Returns information about the current reviewers of the given participant and a selector do add new one
      *
      * @param stdClass $user         participant data
-     * @param workshop_api $workshop workshop record
+     * @param workshop $workshop workshop record
      * @param array $peers           objects with properties to display picture and fullname
      * @return string html code
      */
-    protected function reviewers_of_participant(stdClass $user, workshop_api $workshop, &$peers) {
+    protected function reviewers_of_participant(stdClass $user, workshop $workshop, &$peers) {
         $o = '';
         if (is_null($user->submissionid)) {
             $o .= $this->output->output_tag('span', array('class' => 'info'), get_string('nothingtoreview', 'workshop'));
@@ -161,11 +160,11 @@ class moodle_mod_workshop_allocation_manual_renderer extends moodle_renderer_bas
      * Returns information about the current reviewees of the given participant and a selector do add new one
      *
      * @param stdClass $user         participant data
-     * @param workshop_api $workshop workshop record
+     * @param workshop $workshop workshop record
      * @param array $peers           objects with properties to display picture and fullname
      * @return string html code
      */
-    protected function reviewees_of_participant(stdClass $user, workshop_api $workshop, &$peers) {
+    protected function reviewees_of_participant(stdClass $user, workshop $workshop, &$peers) {
         $o = '';
         if (is_null($user->submissionid)) {
             $o .= $this->output->container(get_string('withoutsubmission', 'workshop'), 'info');

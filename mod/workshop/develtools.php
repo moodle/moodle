@@ -39,7 +39,7 @@ has_capability('moodle/site:config', get_system_context()) || die('You are not a
 $cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
 $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
-$workshop   = new workshop_api($workshop, $cm, $course); // wrap the record with a full API
+$workshop   = new workshop($workshop, $cm, $course); // wrap the record with a full API
 
 require_login($course, false, $cm);
 
@@ -48,15 +48,18 @@ $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_button(update_module_button($cm->id, $course->id, get_string('modulename', 'workshop')));
 
+$wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
+
 $navigation = build_navigation('Development tools', $cm);
-$menu       = navmenu($course, $cm);
+// todo $menu       = navmenu($course, $cm);
 
 switch ($tool) {
 case 'mksubmissions':
     $authors                = $workshop->get_peer_authors(false);
     $authorswithsubmission  = $workshop->get_peer_authors(true);
     $authors                = array_diff_key($authors, $authorswithsubmission);
-    echo $OUTPUT->header($navigation, $menu);
+    echo $OUTPUT->header($navigation);
+    $c = 0; // counter
     foreach ($authors as $authorid => $author) {
         $timenow = time() - rand(0, 60 * 60 * 24 * 7); // submitted sometimes during last week
         $submission                 = new stdClass();
@@ -66,18 +69,46 @@ case 'mksubmissions':
         $submission->timecreated    = $timenow;
         $submission->timemodified   = $timenow;
         $submission->title          = $author->firstname . '\'s submission';
-        $submission->data           = '';
-        $submission->dataformat     = FORMAT_HTML;
-        $submission->datatrust      = 0;
+        $submission->content        = "<p>Pellentesque habitant morbi tristique " .
+                                    "senectus et netus et malesuada fames ac " .
+                                    "turpis egestas. Sed posuere volutpat nunc " .
+                                    "semper ultricies! Aenean elementum metus in  " .
+                                    "lorem volutpat eu volutpat neque vulputate? " .
+                                    "Pellentesque sit amet sem leo. In hac " .
+                                    "habitasse platea dictumst. Proin quis " .
+                                    "accumsan elit. Nulla quis libero ac nunc " .
+                                    "elementum commodo at et sem. Vestibulum " .
+                                    "eget euismod felis. Lorem ipsum dolor sit " .
+                                    "amet, consectetur adipiscing elit. Aliquam " .
+                                    "id tellus vel velit aliquet volutpat at " .
+                                    "quis arcu. Nulla laoreet tincidunt sodales. " .
+                                    "Suspendisse potenti. Curabitur sagittis " .
+                                    "arcu nec erat aliquet imperdiet. Aenean at " .
+                                    "mi ut est molestie posuere a vitae mauris.</p>";
+
+        $submission->contentformat  = FORMAT_HTML;
+        $submission->contenttrust   = 0;
         $submission->id = $DB->insert_record('workshop_submissions', $submission);
-        // todo print some info
+        echo "<pre>Added submission by " . fullname($author) . "</pre>\n";
+        $c++;
+    }
+    if ($c == 0) {
+        echo "<pre>No submission added</pre>\n";
     }
     echo $OUTPUT->continue_button($PAGE->url->out());
     echo $OUTPUT->footer();
-    exit;
+    exit();
+
+case 'menu':
+    // no break, skip to default
+default:
+    echo $OUTPUT->header($navigation);
+    echo $OUTPUT->heading('Workshop development tools', 1);
+    echo '<ul>';
+    echo '<li><a href="' . $PAGE->url->out(false, array('tool' => 'mksubmissions')) . '">Fake submissions</a></li>';
+    echo '<li><a href="' . $PAGE->url->out(false, array('tool' => 'rmsubmissions')) . '">Remove all submissions (TODO)</a></li>';
+    echo '</ul>';
+    echo $OUTPUT->footer();
 }
 
-echo $OUTPUT->header($navigation, $menu);
-echo $OUTPUT->heading('Workshop development tools', 1);
-echo '<a href="' . $PAGE->url->out(false, array('tool' => 'mksubmissions')) . '">Fake submissions</a>';
-echo $OUTPUT->footer();
+

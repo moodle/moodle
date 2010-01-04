@@ -46,7 +46,7 @@ class workshop_random_allocator_form extends moodleform {
 
         $mform->addElement('header', 'settings', get_string('allocationsettings', 'workshop'));
 
-        $gmode = groups_get_activity_groupmode($workshop->cm, $workshop->courserecord);
+        $gmode = groups_get_activity_groupmode($workshop->cm, $workshop->course);
         switch ($gmode) {
         case NOGROUPS:
             $grouplabel = get_string('groupsnone', 'group');

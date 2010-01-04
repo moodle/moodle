@@ -25,10 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['userdatecreated'] = 'submitted on <span>$a</span>';
-$string['userdatemodified'] = 'modified on <span>$a</span>';
-$string['byfullname'] = 'by <a href=\"{$a->url}\">{$a->name}</a>';
-$string[''] = '';
+$string['strategyhaschanged'] = 'The workshop grading strategy has changed since the form was opened for editing.';
 $string[''] = '';
 $string[''] = '';
 $string[''] = '';
@@ -59,6 +56,7 @@ $string['allocationrandom'] = 'Random allocation';
 $string['allocationsettings'] = 'Allocation settings';
 $string['allocation'] = 'Submission allocation';
 $string['allocationview'] = 'View current allocations';
+$string['areadimensiondescription'] = 'Assessment dimensions';
 $string['areasubmissionattachment'] = 'Submission attachments';
 $string['areasubmissioncontent'] = 'Submission texts';
 $string['areyousuretodeallocate'] = 'Are you sure you want deallocate the selected assessment?';
@@ -74,6 +72,7 @@ $string['assessmentsettings'] = 'Assessment settings';
 $string['assessmentstart'] = 'Start of assessment phase';
 $string['assesswosubmission'] = 'Users can assess without their own submission';
 $string['backtoeditform'] = 'Back to editing form';
+$string['byfullname'] = 'by <a href=\"{$a->url}\">{$a->name}</a>';
 $string['comparisonhigh'] = 'High';
 $string['comparisonlow'] = 'Low';
 $string['comparisonnormal'] = 'Normal';
@@ -164,6 +163,8 @@ $string['useexamplesdesc'] = 'Users practise evaluating on example submissions';
 $string['useexamples'] = 'Use examples';
 $string['usepeerassessmentdesc'] = 'Users perform peer assessment of others\' work';
 $string['usepeerassessment'] = 'Use peer assessment';
+$string['userdatecreated'] = 'submitted on <span>$a</span>';
+$string['userdatemodified'] = 'modified on <span>$a</span>';
 $string['useselfassessmentdesc'] = 'Users perform self assessment of their own work';
 $string['useselfassessment'] = 'Use self assessment';
 $string['withoutsubmission'] = 'Warning - reviewer without own submission';

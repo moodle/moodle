@@ -41,7 +41,7 @@ if (isguestuser()) {
 }
 
 $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
-$workshop   = new workshop_api($workshop, $cm, $course);
+$workshop   = new workshop($workshop, $cm, $course);
 
 if ($id) { // submission is specified
     $submission = $DB->get_record('workshop_submissions', array('id' => $id, 'workshopid' => $workshop->id), '*', MUST_EXIST);
@@ -101,9 +101,9 @@ $PAGE->set_heading($course->fullname);
 
 $stredit    = empty($submission->id) ? get_string('editingsubmission', 'workshop') : get_string('edit');
 $navigation = build_navigation($stredit, $cm);
-$menu       = navmenu($course, $cm);
+// todo $menu       = navmenu($course, $cm);
 
-echo $OUTPUT->header($navigation, $menu);
+echo $OUTPUT->header($navigation);
 echo $OUTPUT->heading(format_string($workshop->name), 2);
 $mform->display();
 echo $OUTPUT->footer();

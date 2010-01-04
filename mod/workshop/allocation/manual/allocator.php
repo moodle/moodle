@@ -64,7 +64,7 @@ class workshop_manual_allocator implements workshop_allocator {
         switch ($mode) {
         case 'new':
             if (!confirm_sesskey()) {
-                throw new moodle_workshop_exception($this->workshop, 'confirmsesskeybad');
+                throw new moodle_exception('confirmsesskeybad');
             }
             $reviewerid = required_param('by', PARAM_INT);
             $authorid   = required_param('of', PARAM_INT);
@@ -93,7 +93,7 @@ class workshop_manual_allocator implements workshop_allocator {
             break;
         case 'del':
             if (!confirm_sesskey()) {
-                throw new moodle_workshop_exception($this->workshop, 'confirmsesskeybad');
+                throw new moodle_exception('confirmsesskeybad');
             }
             $assessmentid   = required_param('what', PARAM_INT);
             $confirmed      = optional_param('confirm', 0, PARAM_INT);

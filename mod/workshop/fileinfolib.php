@@ -26,11 +26,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Represents the nodes of the virtual directory tree that may be browsed in file manager
+ * Represents virtual root node for all submissions
  *
- * Here we create a virtual hierarchy of all submissions, sorted by their author.
+ * Workshop submission uses two fileareas: workshop_submission_content
+ * for editor's embeded media and workshop_submission_attachment for attachments.
+ * In both, the itemid represents the submission id.
  */
-class workshop_file_info extends file_info {
+class workshop_file_info_submissions_container extends file_info {
     protected $course;
     protected $cm;
     protected $areas;
@@ -90,7 +92,8 @@ class workshop_file_info extends file_info {
         global $DB;
 
         $children = array();
-        $itemids = $DB->get_records('files', array('contextid' => $this->context->id, 'filearea' => $this->filearea), 'itemid', "DISTINCT itemid");
+        $itemids = $DB->get_records('files', array('contextid' => $this->context->id, 'filearea' => $this->filearea),
+            'itemid', "DISTINCT itemid");
         foreach ($itemids as $itemid => $unused) {
             if ($child = $this->browser->get_file_info($this->context, $this->filearea, $itemid)) {
                 $children[] = $child;

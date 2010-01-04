@@ -25,7 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-//require_once(dirname(dirname(dirname(__FILE__))).'/lib.php');   // module library
 require_once(dirname(dirname(__FILE__)).'/assessment_form.php');    // parent class definition
 
 /**
@@ -40,32 +39,38 @@ class workshop_accumulative_assessment_form extends workshop_assessment_form {
      *
      * Called by the parent::definition()
      *
-     * @access protected
      * @return void
      */
     protected function definition_inner(&$mform) {
+        $fields = (array)$this->_customdata['fields'];
+        $nodims = $this->_customdata['nodims'];     // number of assessment dimensions
 
-        for ($i = 0; $i < $this->strategy->get_number_of_dimensions(); $i++) {
+        $mform->addElement('hidden', 'nodims', $nodims);
 
+        for ($i = 0; $i < $nodims; $i++) {
             // dimension header
-            $mform->addElement('header', "dimensionhdr[$i]",
-                                    str_replace('{no}', $i+1, get_string('dimensionnumberaccumulative', 'workshop', '{no}')));
+            $dimtitle = get_string('dimensionnumberaccumulative', 'workshop', $i+1);
+            $mform->addElement('header', "dimensionhdr__idx_$i", $dimtitle);
+
+            // dimension id
+            $mform->addElement('hidden', 'dimensionid__idx_'.$i, $fields['dimensionid__idx_'.$i]);
 
             // dimension description
-            $desc = '<div id="id_dim_'.$this->fields["dimensionid[$i]"] . '_desc" class="fitem description accumulative">' . "\n";
-            $desc .= format_text($this->fields["description[$i]"], $this->fields["descriptionformat[$i]"]);
+            $desc = '<div id="id_dim_'.$fields['dimensionid__idx_'.$i].'_desc" class="fitem description accumulative">'."\n";
+            $desc .= format_text($fields['description__idx_'.$i], $fields['descriptionformat__idx_'.$i]);
             $desc .= "\n</div>";
             $mform->addElement('html', $desc);
 
             // grade for this aspect
-            $label = 'Grade'; // todo
+            $label = 'Grade'; // todo i18n 
+            $label .= ' / ' . $fields['grade__idx_' . $i];
             $options = array(10,9,8,7,6,5,4,3,2,1,0); // todo
-            $mform->addElement('select', "grade[$i]", $label, $options);
+            $mform->addElement('select', 'grade__idx_' . $i, $label, $options);
 
             // comment
-            $label = 'Comment'; //todo
-            $mform->addElement('htmleditor', "comment[$i]", $label, array());
-
+            $label = 'Comment'; //todo i18n
+            //$mform->addElement('editor', 'peercomment__idx_' . $i, $label, null, array('maxfiles' => 0));
+            $mform->addElement('textarea', 'peercomment__idx_' . $i, $label, array('cols' => 60, 'rows' => 5));
         }
 
     }

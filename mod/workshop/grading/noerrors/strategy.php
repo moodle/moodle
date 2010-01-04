@@ -35,7 +35,7 @@ class workshop_noerrors_strategy extends workshop_base_strategy {
     public function load_form() {
         global $DB;
 
-        $dims = $DB->get_records('workshop_forms_' . $this->name, array('workshopid' => $this->workshop->id), 'sort');
+        $dims = $DB->get_records('workshop_forms_' . $this->name(), array('workshopid' => $this->workshop->id), 'sort');
         $maps = $DB->get_records('workshop_forms_noerrors_map', array('workshopid' => $this->workshop->id), 'nonegative');
         $this->nodimensions = count($dims);
         return $this->_cook_database_records($dims, $maps);
@@ -88,7 +88,7 @@ class workshop_noerrors_strategy extends workshop_base_strategy {
     public function save_form(stdClass $data) {
         global $DB;
 
-        if (!isset($data->strategyname) || ($data->strategyname != $this->name)) {
+        if (!isset($data->strategyname) || ($data->strategyname != $this->name())) {
             // the workshop strategy has changed since the form was opened for editing
             throw new moodle_exception('strategyhaschanged', 'workshop');
         }
@@ -106,14 +106,14 @@ class workshop_noerrors_strategy extends workshop_base_strategy {
             }
             if (empty($record->id)) {
                 // new field
-                $record->id = $DB->insert_record('workshop_forms_' . $this->name, $record);
+                $record->id = $DB->insert_record('workshop_forms_' . $this->name(), $record);
             } else {
                 // exiting field
-                $DB->update_record('workshop_forms_' . $this->name, $record);
+                $DB->update_record('workshop_forms_' . $this->name(), $record);
             }
         }
         // delete dimensions if the teacher removed the description
-        $DB->delete_records_list('workshop_forms_' . $this->name, 'id', $todelete);
+        $DB->delete_records_list('workshop_forms_' . $this->name(), 'id', $todelete);
 
         // re-save the mappings
         $current  = array();

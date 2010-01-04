@@ -40,34 +40,34 @@ class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_fo
      *
      * Called by the parent::definition()
      *
-     * @access protected
      * @return void
      */
     protected function definition_inner(&$mform) {
 
-        $gradeoptions = array(20 => 20, 10 => 10, 5 => 5);
+        $norepeats          = $this->_customdata['norepeats'];          // number of dimensions to display
+        $descriptionopts    = $this->_customdata['descriptionopts'];    // wysiwyg fields options
+        $current            = $this->_customdata['current'];            // current data to be set
+
+        $mform->addElement('hidden', 'norepeats', $norepeats);
+        // value not to be overridden by submitted value
+        $mform->setConstants(array('norepeats' => $norepeats));
+
+        $gradeoptions = array(20 => 20, 10 => 10, 8=>8, 5 => 5);
         $weights = workshop_get_dimension_weights();
 
-        $repeated = array();
-        $repeated[] =& $mform->createElement('hidden', 'dimensionid', 0);
-        $repeated[] =& $mform->createElement('header', 'dimension',
-                                                get_string('dimensionnumberaccumulative', 'workshop', '{no}'));
-        $repeated[] =& $mform->createElement('htmleditor', 'description',
-                                                get_string('dimensiondescription', 'workshop'), array());
-        $repeated[] =& $mform->createElement('select', 'grade', get_string('grade'), $gradeoptions);
-        $repeated[] =& $mform->createElement('select', 'weight', get_string('dimensionweight', 'workshop'), $weights);
+        for ($i = 0; $i < $norepeats; $i++) {
+            $mform->addElement('header', 'dimension'.$i, get_string('dimensionnumberaccumulative', 'workshop', $i+1));
+            $mform->addElement('hidden', 'dimensionid__idx_'.$i);
+            $mform->addElement('editor', 'description__idx_'.$i.'_editor', get_string('dimensiondescription', 'workshop'),
+                                    array('cols' => 20), $descriptionopts);
+            $mform->addElement('select', 'grade__idx_'.$i, get_string('grade'), $gradeoptions);
+            $mform->addElement('select', 'weight__idx_'.$i, get_string('dimensionweight', 'workshop'), $weights);
+        }
 
-        $repeatedoptions = array();
-        $repeatedoptions['description']['type'] = PARAM_CLEANHTML;
-        $repeatedoptions['description']['helpbutton'] = array('dimensiondescription',
-                                                            get_string('dimensiondescription', 'workshop'), 'workshop');
-        $repeatedoptions['grade']['default'] = 10;
-        $repeatedoptions['weight']['default'] = 1;
-
-        $numofdimensionstoadd   = 2;
-        $numofinitialdimensions = 3;
-        $numofdisplaydimensions = max($this->strategy->get_number_of_dimensions() + $numofdimensionstoadd, $numofinitialdimensions);
-        $this->repeat_elements($repeated, $numofdisplaydimensions,  $repeatedoptions, 'numofdimensions', 'adddimensions', $numofdimensionstoadd, get_string('addmoredimensionsaccumulative', 'workshop', $numofdimensionstoadd));
+        $mform->registerNoSubmitButton('noadddims');
+        $mform->addElement('submit', 'noadddims', get_string('addmoredimensionsaccumulative', 'workshop',
+                                                                    WORKSHOP_STRATEGY_ADDDIMS));
+        $mform->closeHeaderBefore('noadddims');
+        $this->set_data($current);
     }
-
 }

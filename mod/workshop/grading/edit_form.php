@@ -49,16 +49,17 @@ class workshop_edit_strategy_form extends moodleform {
      * $mform->removeElement().
      * Stretegy subclassess should define their own fields in definition_inner()
      *
-     * @access public
      * @return void
      */
     public function definition() {
         global $CFG;
 
         $mform = $this->_form;
+        $this->workshop = $this->_customdata['workshop'];
         $this->strategy = $this->_customdata['strategy'];
 
-        $mform->addElement('hidden', 'strategyname', $this->strategy->name);
+        $mform->addElement('hidden', 'workshopid', $this->workshop->id);
+        $mform->addElement('hidden', 'strategyname', $this->strategy->name());
 
         $this->definition_inner($mform);
 

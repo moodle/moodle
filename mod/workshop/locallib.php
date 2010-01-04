@@ -21,7 +21,7 @@
  * All the workshop specific functions, needed to implement the module
  * logic, should go to here. Instead of having bunch of function named
  * workshop_something() taking the workshop instance as the first
- * parameter, we use a class workshop_api that provides all methods.
+ * parameter, we use a class workshop that provides all methods.
  *
  * @package   mod-workshop
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
@@ -37,24 +37,42 @@ define('WORKSHOP_ALLOCATION_EXISTS',        -1);    // return status of {@link a
 /**
  * Full-featured workshop API
  *
- * This extends the module base API and adds the internal methods that are called
+ * This wraps the workshop database record with a set of methods that are called
  * from the module itself. The class should be initialized right after you get
- * $workshop and $cm records at the begining of the script.
+ * $workshop, $cm and $course records at the begining of the script.
  */
-class workshop_api extends workshop {
+class workshop {
+
+    /** @var object course module record */
+    public $cm = null;
+
+    /** @var object course record */
+    public $course = null;
 
     /** grading strategy instance */
-    protected $strategy_api=null;
+    private $_strategyinstance = null;
 
     /**
-     * Initialize the object using the data from DB
+     * Initializes the object using the data from DB
      *
-     * @param object $instance     The instance data row from {workshop} table
-     * @param object $cm           Course module record
-     * @param object $courserecord Course record
+     * Makes deep copy of all passed records properties. Replaces integer $course attribute
+     * with a full database record (course should not be stored in instances table anyway).
+     *
+     * @param object $instance Workshop instance data from {workshop} table
+     * @param object $cm       Course module record as returned by {@link get_coursemodule_from_id()}
+     * @param object $course   Course record from {course} table
      */
-    public function __construct($instance, $cm, $courserecord) {
-        parent::__construct($instance, $cm, $courserecord);
+    public function __construct(stdClass $instance, stdClass $cm, stdClass $course) {
+        foreach ($instance as $key => $val) {
+            if (is_object($val) || (is_array($val))) {
+                // this should not happen if the $instance is really just the record returned by $DB
+                $this->{$key} = unserialize(serialize($val));   // makes deep copy of referenced variables
+            } else {
+                $this->{$key} = $val;
+            }
+        }
+        $this->cm     = unserialize(serialize($cm));
+        $this->course = unserialize(serialize($course));
     }
 
     /**
@@ -78,6 +96,7 @@ class workshop_api extends workshop {
         }
 
         if ($musthavesubmission && is_null($userswithsubmission)) {
+            $userswithsubmission = array();
             $submissions = $DB->get_records_list('workshop_submissions', 'userid', array_keys($users),'', 'id,userid');
             foreach ($submissions as $submission) {
                 $userswithsubmission[$submission->userid] = null;
@@ -268,7 +287,7 @@ class workshop_api extends workshop {
             }
             return $submissions;
         } else {
-            throw new moodle_workshop_exception($this, 'wrongparameter');
+            throw new moodle_exception('wrongparameter');
         }
     }
 
@@ -322,7 +341,7 @@ class workshop_api extends workshop {
      * @param mixed $reviewerid 'all'|int|array User ID of the reviewer
      * @param mixed $id         'all'|int Assessment ID
      * @return array [assessmentid] => assessment object
-     * @see workshop_api::get_assessments_recordset() for the structure of returned objects
+     * @see workshop::get_assessments_recordset() for the structure of returned objects
      */
     public function get_assessments($reviewerid='all', $id='all') {
         $rs = $this->get_assessments_recordset($reviewerid, $id);
@@ -348,7 +367,7 @@ class workshop_api extends workshop {
      * Get the information about the given assessment
      *
      * @param int $id Assessment ID
-     * @see workshop_api::get_assessments_recordset() for the structure of data returned
+     * @see workshop::get_assessments_recordset() for the structure of data returned
      * @return mixed false if not found, object otherwise
      */
     public function get_assessment_by_id($id) {
@@ -366,7 +385,7 @@ class workshop_api extends workshop {
      * Get the information about all assessments assigned to the given reviewer
      *
      * @param int $id Reviewer ID
-     * @see workshop_api::get_assessments_recordset() for the structure of data returned
+     * @see workshop::get_assessments_recordset() for the structure of data returned
      * @return array array of objects
      */
     public function get_assessments_by_reviewer($id) {
@@ -479,20 +498,20 @@ class workshop_api extends workshop {
      * @return object Instance of a grading strategy
      */
     public function grading_strategy_instance() {
-        if (is_null($this->strategy_api)) {
+        if (is_null($this->_strategyinstance)) {
             $strategylib = dirname(__FILE__) . '/grading/' . $this->strategy . '/strategy.php';
             if (is_readable($strategylib)) {
                 require_once($strategylib);
             } else {
-                throw new moodle_workshop_exception($this, 'missingstrategy');
+                throw new moodle_exception('missingstrategy', 'workshop');
             }
             $classname = 'workshop_' . $this->strategy . '_strategy';
-            $this->strategy_api = new $classname($this);
-            if (!in_array('workshop_strategy', class_implements($this->strategy_api))) {
-                throw new moodle_workshop_exception($this, 'strategynotimplemented');
+            $this->_strategyinstance = new $classname($this);
+            if (!in_array('workshop_strategy', class_implements($this->_strategyinstance))) {
+                throw new moodle_exception('strategynotimplemented', 'workshop');
             }
         }
-        return $this->strategy_api;
+        return $this->_strategyinstance;
     }
 
     /**
@@ -526,7 +545,7 @@ class workshop_api extends workshop {
         if (is_readable($allocationlib)) {
             require_once($allocationlib);
         } else {
-            throw new moodle_workshop_exception($this, 'missingallocator');
+            throw new coding_exception('Unable to find allocator.php');
         }
         $classname = 'workshop_' . $method . '_allocator';
         return new $classname($this);
@@ -560,9 +579,9 @@ class workshop_api extends workshop {
      * @param int $assessmentid The ID of assessment record
      * @return object {@link moodle_url} the URL of the assessment page
      */
-    public function assess_url() {
+    public function assess_url($assessmentid) {
         global $CFG;
-        return new moodle_url($CFG->wwwroot . '/mod/workshop/assessment.php', array('asid' => $this->cm->id));
+        return new moodle_url($CFG->wwwroot . '/mod/workshop/assessment.php', array('asid' => $assessmentid));
     }
 
     /**
@@ -581,31 +600,4 @@ class workshop_api extends workshop {
         }
     }
 
-}
-
-/**
- * Class for workshop exceptions. Just saves a couple of arguments of the
- * constructor for a moodle_exception.
- *
- * @param object $workshop Should be workshop or its subclass
- * @param string $errorcode
- * @param mixed $a Object/variable to pass to get_string
- * @param string $link URL to continue after the error notice
- * @param $debuginfo
- */
-class moodle_workshop_exception extends moodle_exception {
-
-    function __construct($workshop, $errorcode, $a = NULL, $link = '', $debuginfo = null) {
-        global $CFG;
-
-        if (!$link) {
-            $link = $CFG->wwwroot . '/mod/workshop/view.php?a=' . $workshop->id;
-        }
-        if ('confirmsesskeybad' == $errorcode) {
-            $module = '';
-        } else {
-            $module = 'workshop';
-        }
-        parent::__construct($errorcode, $module, $link, $a, $debuginfo);
-    }
 }

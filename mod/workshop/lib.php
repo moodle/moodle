@@ -48,79 +48,24 @@ define('WORKSHOP_COMPARISON_HIGH',      3);     /* f = 3.00 */
 define('WORKSHOP_COMPARISON_VERYHIGH',  4);     /* f = 5.00 */
 
 /**
- * The base class of workshop instances
+ * Saves a new instance of the workshop into the database
  *
- * It defines methods that are part of any activity module API and may be called by Moodle core.
- * The class just wraps the database record from the {workshop} table and adds some
- * methods that implement the compulsory activity module API.
- * For full-featured workshop class see {@link workshop_api}.
- */
-class workshop {
-
-    /** @var object course module record */
-    public $cm;
-
-    /** @var object course record */
-    public $courserecord;
-
-    /**
-     *
-     * Initializes the object using the data from DB. Makes deep copy of all $dbrecord properties.
-     * Please do not confuse $this->course (integer property from the database record) and
-     * $this->courserecord (object containing the whole course record).
-     *
-     * @param object $instance     The instance data row from {workshop} table
-     * @param object $cm           Course module record
-     * @param object $courserecord Course record
-     */
-    public function __construct(stdClass $instance, stdClass $cm, stdClass $courserecord) {
-        foreach ($instance as $key => $val) {
-            if (is_object($val) || (is_array($val))) {
-                // this should not happen if the $dbrecord is really just the record returned by $DB
-                $this->{$key} = unserialize(serialize($val));
-            } else {
-                $this->{$key} = $val;
-            }
-        }
-        $this->cm = $cm;
-        $this->courserecord = $courserecord;
-    }
-
-    /**
-     * Saves a new instance of the workshop into the database
-     *
-     * Given an object containing all the necessary data,
-     * (defined by the form in mod_form.php) this function
-     * will save a new instance and return the id number
-     * of the new instance.
-     *
-     * @param object $data An object from the form in mod_form.php
-     * @return int The id of the newly inserted workshop record
-     */
-    public static function add_instance($data) {
-        global $DB;
-
-        $data->timecreated = time();
-        $data->timemodified = $data->timecreated;
-
-        return $DB->insert_record('workshop', $data);
-    }
-}
-
-/**
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
- * will create a new instance and return the id number
+ * will save a new instance and return the id number
  * of the new instance.
  *
  * @param object $data An object from the form in mod_form.php
  * @return int The id of the newly inserted workshop record
  */
 function workshop_add_instance($data) {
-    return workshop::add_instance($data);
-}
+    global $DB;
 
-// TODO convert following functions into workshop methods
+    $data->timecreated = time();
+    $data->timemodified = $data->timecreated;
+
+    return $DB->insert_record('workshop', $data);
+}
 
 /**
  * Given an object containing all the necessary data,
@@ -321,6 +266,27 @@ function workshop_get_extra_capabilities() {
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
+ * Returns the lists of all browsable file areas within the given module context
+ *
+ * The file area workshop_intro for the activity introduction field is added automatically
+ * by {@link file_browser::get_file_info_module()}
+ *
+ * @param object $course
+ * @param object $cm
+ * @param object $context
+ * @return array of [(string)filearea] => (string)description
+ */
+function workshop_get_file_areas($course, $cm, $context) {
+    $areas = array();
+    if (has_capability('moodle/course:managefiles', $context)) {
+        $areas['workshop_dimension_description']    = get_string('areadimensiondescription', 'workshop');
+        $areas['workshop_submission_content']       = get_string('areasubmissioncontent', 'workshop');
+        $areas['workshop_submission_attachment']    = get_string('areasubmissionattachment', 'workshop');
+    }
+    return $areas;
+}
+
+/**
  * Serves the files from the workshop file areas
  *
  * Apart from module intro (handled by pluginfile.php automatically), workshop files may be
@@ -344,7 +310,7 @@ function workshop_pluginfile($course, $cminfo, $context, $filearea, $args, $forc
         return false;
     }
 
-    $fileareas = array('workshop_submission_content', 'workshop_submission_attachment');
+    $fileareas = array('workshop_submission_content', 'workshop_submission_attachment', 'workshop_dimension_description');
     if (!in_array($filearea, $fileareas)) {
         return false;
     }
@@ -371,31 +337,17 @@ function workshop_pluginfile($course, $cminfo, $context, $filearea, $args, $forc
     if ((!$file = $fs->get_file_by_hash(sha1($fullpath))) || ($file->is_directory())) {
         return false;
     }
-    // TODO MDL-19941 make sure the user is allowed to see the submission
+    // TODO make sure the user is allowed to see the file
 
     // finally send the file
-    send_stored_file($file, 0, 0, true); // download MUST be forced - security!
-}
+    if ('workshop_dimension_description' == $filearea) {
+        // media embedded by teacher into the dimension description
+        send_stored_file($file);
 
-/**
- * Returns the lists of all browsable file areas within the given module context
- *
- * The file area workshop_intro for the activity introduction field is added automatically
- * by {@link file_browser::get_file_info_module()}
- *
- * @param object $course
- * @param object $cm
- * @param object $context
- * @return array of [(string)filearea] => (string)description
- */
-function workshop_get_file_areas($course, $cm, $context) {
-    $areas = array();
-    // todo re-think capability checking
-    if (has_capability('mod/workshop:submit', $context) || has_capability('mod/workshop:submitexamples', $context)) {
-        $areas['workshop_submission_content']       = get_string('areasubmissioncontent', 'workshop');
-        $areas['workshop_submission_attachment']    = get_string('areasubmissionattachment', 'workshop');
+    } else {
+        // files uploaded by students in their attachments - forcing download for security reasons
+        send_stored_file($file, 0, 0, true);
     }
-    return $areas;
 }
 
 /**
@@ -416,33 +368,66 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
     global $CFG, $DB;
     static $authors=null;    // cache for submission authors
 
-    if (!($filearea == 'workshop_submission_content' || $filearea == 'workshop_submission_attachment')) {
+    if (!has_capability('moodle/course:managefiles', $context)) {
         return null;
-    }
-    if (is_null($itemid)) {
-        require_once($CFG->dirroot . '/mod/workshop/fileinfolib.php');
-        return new workshop_file_info($browser, $course, $cm, $context, $areas, $filearea);
     }
 
     $fs = get_file_storage();
-    $filepath = is_null($filepath) ? '/' : $filepath;
-    $filename = is_null($filename) ? '.' : $filename;
-    if (!$storedfile = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
-        return null;
+
+    if ($filearea === 'workshop_submission_content' or $filearea === 'workshop_submission_attachment') {
+
+        if (is_null($itemid)) {
+            require_once($CFG->dirroot . '/mod/workshop/fileinfolib.php');
+            return new workshop_file_info_submissions_container($browser, $course, $cm, $context, $areas, $filearea);
+        }
+
+        // we are inside the submission container
+
+        $filepath = is_null($filepath) ? '/' : $filepath;
+        $filename = is_null($filename) ? '.' : $filename;
+
+        if (!$storedfile = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
+            if ($filepath === '/' and $filename === '.') {
+                $storedfile = new virtual_root_file($context->id, $filearea, $itemid);
+            } else {
+                // not found
+                return null;
+            }
+        }
+
+        // let us display the author's name instead of itemid (submission id)
+
+        if (is_null($authors)) {
+            $sql = 'SELECT s.id, u.lastname, u.firstname
+                    FROM {workshop_submissions} s
+                    JOIN {user} u ON (s.userid = u.id)
+                    WHERE s.workshopid = ?';
+            $params[0] = $cm->instance;
+            $authors = $DB->get_records_sql($sql, $params);
+        }
+        $urlbase        = $CFG->wwwroot . '/pluginfile.php';
+        $topvisiblename = fullname($authors[$itemid]);
+        // do not allow manual modification of any files!
+        return new file_info_stored($browser, $context, $storedfile, $urlbase, $topvisiblename, true, true, false, false);
     }
 
-    if (is_null($authors)) {
-        $sql = 'SELECT s.id, u.lastname, u.firstname
-                FROM {workshop_submissions} s
-                JOIN {user} u ON (s.userid = u.id)
-                WHERE s.workshopid = ?';
-        $params[0] = $cm->instance;
-        $authors = $DB->get_records_sql($sql, $params);
+    if ($filearea === 'workshop_dimension_description') {
+        // always only itemid 0
+
+        $filepath = is_null($filepath) ? '/' : $filepath;
+        $filename = is_null($filename) ? '.' : $filename;
+
+        $urlbase = $CFG->wwwroot.'/pluginfile.php';
+        if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+            if ($filepath === '/' and $filename === '.') {
+                $storedfile = new virtual_root_file($context->id, $filearea, 0);
+            } else {
+                // not found
+                return null;
+            }
+        }
+        return new file_info_stored($browser, $context, $storedfile, $urlbase, $areas[$filearea], false, true, true, false);
     }
-    $urlbase        = $CFG->wwwroot . '/pluginfile.php';
-    $topvisiblename = fullname($authors[$itemid]);
-    // do not allow manual modification of any files!
-    return new file_info_stored($browser, $context, $storedfile, $urlbase, $topvisiblename, true, true, false, false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -458,7 +443,6 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
  * assessment are defined via a HTML select form element. By default it returns
  * an array 0, 1, 2, ..., 98, 99, 100.
  *
- * @access public
  * @return array Array of integers
  */
 function workshop_get_maxgrades() {
@@ -516,7 +500,6 @@ function workshop_get_dimension_weights() {
 /**
  * Return an array of the localized grading strategy names
  *
- * @access public
  * $return array Array ['string' => 'string']
  */
 function workshop_get_strategies() {

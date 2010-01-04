@@ -44,7 +44,6 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      *
      * @param mixed $page the page we are doing output for
      * @param mixed $output lower-level renderer, typically moodle_core_renderer
-     * @access public
      * @return void
      */
     public function __construct($page, $output) {

@@ -74,7 +74,7 @@ class workshop_random_allocator implements workshop_allocator {
         } else if ($settings = $this->mform->get_data()) {
             // process validated data
             if (!confirm_sesskey()) {
-                throw new moodle_workshop_exception($this->workshop, 'confirmsesskeybad');
+                throw new moodle_exception('confirmsesskeybad');
             }
             $o                  = array();      // list of output messages
             $numofreviews       = required_param('numofreviews', PARAM_INT);
@@ -177,9 +177,9 @@ class workshop_random_allocator implements workshop_allocator {
      * If the submission has already been allocated, it is skipped. If the author is not found among
      * reviewers, the submission is not assigned.
      *
-     * @param array $authors as returned by {@see workshop_api::get_peer_authors_by_group()}
-     * @param array $reviewers as returned by {@see workshop_api::get_peer_reviewers_by_group()}
-     * @param array $assessments as returned by {@see workshop_api::get_assessments()}
+     * @param array $authors as returned by {@see workshop::get_peer_authors_by_group()}
+     * @param array $reviewers as returned by {@see workshop::get_peer_reviewers_by_group()}
+     * @param array $assessments as returned by {@see workshop::get_assessments()}
      * @return array of new allocations to be created, array of array(reviewerid => authorid)
      */
     protected function self_allocation($authors=array(), $reviewers=array(), $assessments=array()) {
@@ -225,7 +225,7 @@ class workshop_random_allocator implements workshop_allocator {
         foreach ($newallocations as $newallocation) {
             list($reviewerid, $authorid) = each($newallocation);
             if (!isset($submissions[$authorid])) {
-                throw new moodle_workshop_exception($this->workshop, 'unabletoallocateauthorwithoutsubmission');
+                throw new moodle_exception('unabletoallocateauthorwithoutsubmission', 'workshop');
             }
             $submission = $submissions[$authorid];
             $status = $this->workshop->add_allocation($submission, $reviewerid, true);
@@ -249,7 +249,7 @@ class workshop_random_allocator implements workshop_allocator {
         if (is_array($submissions)) {
             foreach ($submissions as $submissionid => $submission) {
                 if (isset($byauthor[$submission->userid])) {
-                    throw new moodle_workshop_exception($this->workshop, 'moresubmissionsbyauthor');
+                    throw new moodle_exception('moresubmissionsbyauthor', 'workshop');
                 }
                 $byauthor[$submission->userid] = $submission;
             }
@@ -354,7 +354,7 @@ class workshop_random_allocator implements workshop_allocator {
             // get current workload
             list($squarelinks, $circlelinks) = $this->convert_assessments_to_links($assessments);
         } else {
-            throw new moodle_workshop_exception($this->workshop, 'unknown user type passed');
+            throw new moodle_exception('unknownusertypepassed', 'workshop');
         }
         $o[] = 'debug::circle links = ' . json_encode($circlelinks);
         $o[] = 'debug::square links = ' . json_encode($squarelinks);
@@ -374,7 +374,7 @@ class workshop_random_allocator implements workshop_allocator {
         unset($squaregroupsworkload[0]);    // [0] is not real group, it contains all users
         $o[] = 'debug::square workload = ' . json_encode($squareworkload);
         $o[] = 'debug::square group workload = ' . json_encode($squaregroupsworkload);
-        $gmode = groups_get_activity_groupmode($this->workshop->cm, $this->workshop->courserecord);
+        $gmode = groups_get_activity_groupmode($this->workshop->cm, $this->workshop->course);
         if (SEPARATEGROUPS == $gmode) {
             // shuffle all groups but [0] which means "all users"
             $circlegroups = array_keys(array_diff_key($allcircles, array(0 => null)));
@@ -477,7 +477,7 @@ class workshop_random_allocator implements workshop_allocator {
     /**
      * Extracts the information about reviews from the authors' and reviewers' perspectives
      *
-     * @param array $assessments array of assessments as returned by {@link workshop_api::get_assessments()}
+     * @param array $assessments array of assessments as returned by {@link workshop::get_assessments()}
      * @return array of two arrays
      */
     protected function convert_assessments_to_links($assessments) {

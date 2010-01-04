@@ -29,8 +29,9 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
-$id = optional_param('id', 0, PARAM_INT); // course_module ID, or
-$w  = optional_param('w', 0, PARAM_INT);  // workshop instance ID
+$id     = optional_param('id', 0, PARAM_INT); // course_module ID, or
+$w      = optional_param('w', 0, PARAM_INT);  // workshop instance ID
+$edit   = optional_param('edit', null, PARAM_BOOL);
 
 if ($id) {
     $cm         = get_coursemodule_from_id('workshop', $id, 0, false, MUST_EXIST);
@@ -43,7 +44,7 @@ if ($id) {
 }
 
 require_login($course, true, $cm);
-$workshop = new workshop_api($workshop, $cm, $course);
+$workshop = new workshop($workshop, $cm, $course);
 
 // todo has_capability() check using something like
 // if (!(($workshop->is_open() && has_capability('mod/workshop:view')) || has_capability(...) || has_capability(...))) {
@@ -52,10 +53,23 @@ $workshop = new workshop_api($workshop, $cm, $course);
 
 // todo logging add_to_log($course->id, "workshop", "view", "view.php?id=$cm->id", "$workshop->id");
 
+if (!is_null($edit) && $PAGE->user_allowed_editing()) {
+    $USER->editing = $edit;
+}
+
 $PAGE->set_url($workshop->view_url());
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_button(update_module_button($cm->id, $course->id, get_string('modulename', 'workshop')));
+$buttons = array();
+if ($PAGE->user_allowed_editing()) {
+    $editblocks                 = new html_form();
+    $editblocks->method         = 'get';
+    $editblocks->button->text   = get_string($PAGE->user_is_editing() ? 'blockseditoff' : 'blocksediton');
+    $editblocks->url            = new moodle_url($PAGE->url, array('edit' => $PAGE->user_is_editing() ? 'off' : 'on'));
+    $buttons[] = $OUTPUT->button($editblocks);
+}
+$buttons[] = update_module_button($cm->id, $course->id, get_string('modulename', 'workshop'));
+$PAGE->set_button(implode('', $buttons));
 
 // todo navigation will be changed yet for Moodle 2.0
 $navlinks   = array();
@@ -66,39 +80,29 @@ $navlinks[] = array('name' => format_string($workshop->name),
                     'link' => '',
                     'type' => 'activityinstance');
 $navigation = build_navigation($navlinks);
-$menu       = navmenu($course, $cm);
+//$menu       = navmenu($course, $cm); todo
 
 /// Output starts here
 
-echo $OUTPUT->header($navigation, $menu);
+echo $OUTPUT->header($navigation);
 
 /// Print the main part of the page - todo these are just links to help during development
-echo $OUTPUT->heading('Workshop administration tools', 3);
 echo $OUTPUT->box_start();
-echo $OUTPUT->heading('Workshop administration tools', 3);
-echo '<ul>';
-echo '<li><a href="' . $workshop->editform_url()->out()  . '">Edit grading form (' . get_string('strategy' . $workshop->strategy, 'workshop') . ')</a></li>';
-echo "<li><a href=\"allocation.php?cmid={$cm->id}\">Allocate submissions</a></li>";
-echo "<li><a href=\"develtools.php?cmid={$cm->id}\">Development tools</a></li>";
-echo '</ul>';
-echo $OUTPUT->box_end();
+echo $OUTPUT->heading('Workshop testing', 1);
+echo "<ol>\n";
+echo '<li><a href="' . $workshop->editform_url()->out()  . '">Edit grading form (' . get_string('strategy' . $workshop->strategy, 'workshop') . ')</a></li>' . "\n";
+echo "<li><a href=\"submission.php?cmid={$cm->id}\">View/edit your own submission</a></li>\n";
+echo "<li><a href=\"develtools.php?tool=mksubmissions&amp;cmid={$cm->id}\">Fake others' submissions</a></li>\n";
+echo "<li><a href=\"allocation.php?cmid={$cm->id}\">Allocate submissions</a></li>\n";
 
-echo $OUTPUT->box_start();
-echo $OUTPUT->heading(get_string('submission', 'workshop'), 3);
-echo "<a href=\"submission.php?cmid={$cm->id}\">My submission</a>";
-echo $OUTPUT->box_end();
-
-echo $OUTPUT->box_start();
-echo $OUTPUT->heading(get_string('assessment', 'workshop'), 3);
-
-$rs = $workshop->get_assessments_recordset($USER->id);
-echo "You are expected to assess following submissions:";
-echo "<ul>";
-foreach ($rs as $assessment) {
-    echo "<li><a href=\"assessment.php?asid={$assessment->id}\">Assessment of '{$assessment->title}' by {$assessment->authorid}</a></li>";
+$assessments = $workshop->get_assessments($USER->id);
+echo "<li>Assess submissions\n";
+echo "<ol>\n";
+foreach ($assessments as $assessment) {
+    echo "<li><a href=\"assessment.php?asid={$assessment->id}\">Assessment of '{$assessment->title}' by {$assessment->authorid}</a></li>" . "\n";
 }
-echo "</ul>";
-$rs->close();
+echo "</ol></li>" . "\n";
+echo "</ol>\n";
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();

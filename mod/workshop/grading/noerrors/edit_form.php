@@ -40,7 +40,6 @@ class workshop_edit_noerrors_strategy_form extends workshop_edit_strategy_form {
      *
      * Called by the parent::definition()
      *
-     * @access protected
      * @return void
      */
     protected function definition_inner(&$mform) {

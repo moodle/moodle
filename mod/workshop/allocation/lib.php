@@ -44,7 +44,7 @@ interface workshop_allocator {
      * is generated. Therefore is may process any data submitted and do other tasks.
      * It should not generate any output
      *
-     * @throws moodle_workshop_exception
+     * @throws moodle_exception
      * @return mixed void or optional HTML string
      */
     public function init();
