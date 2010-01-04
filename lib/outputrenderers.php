@@ -152,10 +152,26 @@ class renderer_base {
     }
 
     /**
-     * Return the moodle_url for an image
+     * Return the moodle_url for an image.
+     * The exact image location and extension is determined
+     * automatically by searching for gif|png|jpg|jpeg, please
+     * note there can not be diferent images with the different
+     * extension. The imagename is for historical reasons
+     * a relative path name, it may be changed later for core
+     * images. It is recommended to not use subdirectories
+     * in plugin and theme pix directories.
      *
-     * @param string $imagename the name of the image
-     * @param string $component full plugin name
+     * There are three types of images:
+     * 1/ theme images  - stored in theme/mytheme/pix/,
+     *                    use component 'theme'
+     * 2/ core images   - stored in /pix/,
+     *                    overridden via theme/mytheme/pix_core/
+     * 3/ plugin images - stored in mod/mymodule/pix,
+     *                    overridden via theme/mytheme/pix_plugins/mod/mymodule/,
+     *                    example: pix_url('comment', 'mod_glossary')
+     *
+     * @param string $imagename the pathname of the image
+     * @param string $component full plugin name (aka component) or 'theme'
      * @return moodle_url
      */
     public function pix_url($imagename, $component = 'moodle') {
