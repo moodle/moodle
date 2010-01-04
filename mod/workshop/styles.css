@@ -457,7 +457,7 @@
 
 .mod-workshop .grading-report td {
     vertical-align: top;
-    border: 1px solid #ddd;
+    border: 1px solid #ddd !important;
 }
 
 .mod-workshop .grading-report .assessmentdetails {
