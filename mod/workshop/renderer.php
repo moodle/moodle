@@ -87,7 +87,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      */
     public function allocation_init_result($result='') {
         $msg = new stdClass();
-        if ($result === WORKSHOP_ALLOCATION_ERROR) {
+        if ($result === workshop::ALLOCATION_ERROR) {
             $msg = (object)array('text' => get_string('allocationerror', 'workshop'), 'sty' => 'error');
         } else {
             $msg = (object)array('text' => get_string('allocationdone', 'workshop'), 'sty' => 'ok');
@@ -241,4 +241,68 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
         return $this->output->output_tag('div', array('class' => 'attachments'), $outputimgs . $outputfiles);
     }
 
+    /**
+     * TODO: short description.
+     *
+     * @param array $plan
+     * @return TODO
+     */
+    public function user_plan(array $plan) {
+        if (empty($plan)) {
+            throw new coding_exception('you must provide the prepared user plan to be rendered');
+        }
+        $table = new html_table();
+        $table->set_classes('userplan');
+        $table->head = array();
+        $table->colclasses = array();
+        $row = new html_table_row();
+        $row->set_classes('phasetasks');
+        foreach ($plan as $phasecode => $phase) {
+            $table->head[] = $this->output->container($this->output->output_tag('span', array(), $phase->title));
+            $classes = 'phase' . $phasecode;
+            if ($phase->active) {
+                $classes .= ' active';
+            } else {
+                $classes .= ' nonactive';
+            }
+            $table->colclasses[] = $classes;
+            $cell = new html_table_cell();
+            $cell->text = $this->user_plan_tasks($phase->tasks);
+            $row->cells[] = $cell;
+        }
+        $table->data = array($row);
+
+        return $this->output->table($table);
+    }
+
+    /**
+     * TODO: short description.
+     *
+     * @param stdClass $tasks 
+     * @return TODO
+     */
+    protected function user_plan_tasks(array $tasks) {
+        $out = '';
+        foreach ($tasks as $taskcode => $task) {
+            $classes = '';
+            $icon = null;
+            if ($task->completed === true) {
+                $icon = new html_image();
+                $icon->src = $this->old_icon_url('i/tick_green_big.gif');
+                $icon->alt = '+';
+                $classes .= ' completed';
+            } elseif ($task->completed === false) {
+                $classes .= ' pending';
+            } else {
+                $classes .= ' statusunknown';
+            }
+            $title = $this->output->container($task->title, 'title');
+            $info = $this->output->container($task->info, 'info');
+            $out .= $this->output->output_tag('li', array('class' => $classes), $title . $info);
+        }
+        if ($out) {
+            $out = $this->output->output_tag('ul', array('class' => 'tasks'), $out);
+        }
+        return $out;
+    }
 }

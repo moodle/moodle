@@ -42,10 +42,11 @@ interface workshop_allocator {
      *
      * This method is called soon after the allocator is constructed and before any output
      * is generated. Therefore is may process any data submitted and do other tasks.
-     * It should not generate any output
+     * It should not generate any output. However if it does so, the output is rendered
+     * using the method {@link moodle_mod_workshop_renderer::allocation_init_result()}
      *
      * @throws moodle_exception
-     * @return mixed void or optional HTML string
+     * @return void|string
      */
     public function init();
 
@@ -53,13 +54,9 @@ interface workshop_allocator {
      * Print HTML to be displayed as the user interface
      *
      * If a form is part of the UI, the caller should have called $PAGE->set_url(...)
-     * The methods must produce output instead of just returning it so mform->display() can
-     * be used there. This should be changed once we make quickforms deprecated and then,
-     * this method will just return the required HTML code.
      *
      * @param stdClass $wsoutput workshop module renderer can be used
-     * @return void
+     * @return string HTML code to be echoed
      */
-    public function ui(moodle_mod_workshop_renderer $wsoutput);
-
+    public function ui();
 }

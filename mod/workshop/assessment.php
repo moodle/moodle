@@ -58,19 +58,22 @@ if ('preview' == $mode) {
     $PAGE->set_url($workshop->previewform_url());
     $PAGE->set_title($workshop->name);
     $PAGE->set_heading($course->fullname);
-    $PAGE->navbar->add(get_string('editingassessmentform', 'workshop'), null, null, navigation_node::TYPE_CUSTOM,
-                        $workshop->editform_url());
+    $PAGE->navbar->add(get_string('editingassessmentform', 'workshop'), $workshop->editform_url(), navigation_node::TYPE_CUSTOM);
     $PAGE->navbar->add(get_string('previewassessmentform', 'workshop'));
+    $currenttab = 'editform';
 
 } elseif ('assessment' == $mode) {
-    if (!has_any_capability(array('mod/workshop:peerassess', 'mod/workshop:assessallsubmissions'), $PAGE->context)) {
+    // we do not require 'mod/workshop:peerassess' here, we just check that the assessment record
+    // has been prepared for the current user. So even a user without the peerassess capability
+    // (like a 'teacher', for example) can become a reviewer
+    if ($USER->id !== $assessment->userid) {
         print_error('nopermissions', '', $workshop->view_url());
     }
-    // todo do a check that the user is allowed to assess this submission
     $PAGE->set_url($workshop->assess_url($assessment->id));
     $PAGE->set_title($workshop->name);
     $PAGE->set_heading($course->fullname);
     $PAGE->navbar->add(get_string('assessingsubmission', 'workshop'));
+    $currenttab = 'assessment';
 }
 
 // load the grading strategy logic
@@ -90,6 +93,7 @@ if ($mform->is_cancelled()) {
     $rawgrade = $strategy->save_assessment($assessment, $data);
     if (!is_null($rawgrade) and isset($data->saveandclose)) {
         echo $OUTPUT->header();
+        include(dirname(__FILE__) . '/tabs.php');
         echo $OUTPUT->heading(get_string('assessmentresult', 'workshop'), 2);
         echo $OUTPUT->box('Given grade: ' . sprintf("%01.2f", $rawgrade * 100) . ' %'); // todo more detailed info using own renderer
         echo $OUTPUT->continue_button($workshop->view_url());
@@ -105,6 +109,7 @@ if ($mform->is_cancelled()) {
 // Output starts here
 
 echo $OUTPUT->header();
+include(dirname(__FILE__) . '/tabs.php');
 echo $OUTPUT->heading(get_string('assessmentform', 'workshop'), 2);
 
 if ('assessment' === $mode) {

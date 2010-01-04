@@ -29,21 +29,19 @@ require_once(dirname(dirname(__FILE__)) . '/lib.php');                  // inter
 require_once(dirname(dirname(dirname(__FILE__))) . '/locallib.php');    // workshop internal API
 
 /**
- * These constants are used to pass status messages between init() and ui()
- */
-define('WORKSHOP_ALLOCATION_MANUAL_MSG_ADDED',          1);
-define('WORKSHOP_ALLOCATION_MANUAL_MSG_NOSUBMISSION',   2);
-define('WORKSHOP_ALLOCATION_MANUAL_MSG_EXISTS',         3);
-define('WORKSHOP_ALLOCATION_MANUAL_MSG_CONFIRM_DEL',    4);
-define('WORKSHOP_ALLOCATION_MANUAL_MSG_DELETED',        5);
-define('WORKSHOP_ALLOCATION_MANUAL_MSG_DELETE_ERROR',   6);
-
-/**
  * Allows users to allocate submissions for review manually
  */
 class workshop_manual_allocator implements workshop_allocator {
 
-    /** workshop instance */
+    /** constants that are used to pass status messages between init() and ui() */
+    const MSG_ADDED         = 1;
+    const MSG_NOSUBMISSION  = 2;
+    const MSG_EXISTS        = 3;
+    const MSG_CONFIRM_DEL   = 4;
+    const MSG_DELETED       = 5;
+    const MSG_DELETE_ERROR  = 6;
+
+    /** @var workshop instance */
     protected $workshop;
 
     /**
@@ -72,18 +70,18 @@ class workshop_manual_allocator implements workshop_allocator {
             $submission = $this->workshop->get_submission_by_author($authorid);
             if (!$submission) {
                 // nothing submitted by the given user
-                $m[] = WORKSHOP_ALLOCATION_MANUAL_MSG_NOSUBMISSION;
+                $m[] = self::MSG_NOSUBMISSION;
                 $m[] = $authorid;
 
             } else {
                 // ok, we have the submission
                 $res = $this->workshop->add_allocation($submission, $reviewerid);
-                if ($res == WORKSHOP_ALLOCATION_EXISTS) {
-                    $m[] = WORKSHOP_ALLOCATION_MANUAL_MSG_EXISTS;
+                if ($res == workshop::ALLOCATION_EXISTS) {
+                    $m[] = self::MSG_EXISTS;
                     $m[] = $submission->userid;
                     $m[] = $reviewerid;
                 } else {
-                    $m[] = WORKSHOP_ALLOCATION_MANUAL_MSG_ADDED;
+                    $m[] = self::MSG_ADDED;
                     $m[] = $submission->userid;
                     $m[] = $reviewerid;
                 }
@@ -100,7 +98,7 @@ class workshop_manual_allocator implements workshop_allocator {
             $assessment     = $this->workshop->get_assessment_by_id($assessmentid);
             if ($assessment) {
                 if (!$confirmed) {
-                    $m[] = WORKSHOP_ALLOCATION_MANUAL_MSG_CONFIRM_DEL;
+                    $m[] = self::MSG_CONFIRM_DEL;
                     $m[] = $assessment->id;
                     $m[] = $assessment->authorid;
                     $m[] = $assessment->reviewerid;
@@ -111,11 +109,11 @@ class workshop_manual_allocator implements workshop_allocator {
                     }
                 } else {
                     if($this->workshop->delete_assessment($assessment->id)) {
-                        $m[] = WORKSHOP_ALLOCATION_MANUAL_MSG_DELETED;
+                        $m[] = self::MSG_DELETED;
                         $m[] = $assessment->authorid;
                         $m[] = $assessment->reviewerid;
                     } else {
-                        $m[] = WORKSHOP_ALLOCATION_MANUAL_MSG_DELETE_ERROR;
+                        $m[] = self::MSG_DELETE_ERROR;
                         $m[] = $assessment->authorid;
                         $m[] = $assessment->reviewerid;
                     }
@@ -130,9 +128,10 @@ class workshop_manual_allocator implements workshop_allocator {
     /**
      * Prints user interface - current allocation and a form to edit it
      */
-    public function ui(moodle_mod_workshop_renderer $wsoutput) {
+    public function ui() {
         global $PAGE;
         global $CFG;    // bacause we include other libs here
+        global $OUTPUT;
 
         $hlauthorid     = -1;           // highlight this author
         $hlreviewerid   = -1;           // highlight this reviewer
@@ -142,24 +141,24 @@ class workshop_manual_allocator implements workshop_allocator {
         if ($m) {
             $m = explode('-', $m);  // unserialize
             switch ($m[0]) {
-            case WORKSHOP_ALLOCATION_MANUAL_MSG_ADDED:
+            case self::MSG_ADDED:
                 $hlauthorid     = $m[1];
                 $hlreviewerid   = $m[2];
                 $msg->text      = get_string('allocationadded', 'workshopallocation_manual');
                 $msg->sty       = 'ok';
                 break;
-            case WORKSHOP_ALLOCATION_MANUAL_MSG_EXISTS:
+            case self::MSG_EXISTS:
                 $hlauthorid     = $m[1];
                 $hlreviewerid   = $m[2];
                 $msg->text      = get_string('allocationexists', 'workshopallocation_manual');
                 $msg->sty       = 'info';
                 break;
-            case WORKSHOP_ALLOCATION_MANUAL_MSG_NOSUBMISSION:
+            case self::MSG_NOSUBMISSION:
                 $hlauthorid     = $m[1];
                 $msg->text      = get_string('nosubmissionfound', 'workshop');
                 $msg->sty       = 'error';
                 break;
-            case WORKSHOP_ALLOCATION_MANUAL_MSG_CONFIRM_DEL:
+            case self::MSG_CONFIRM_DEL:
                 $hlauthorid     = $m[2];
                 $hlreviewerid   = $m[3];
                 if ($m[4] == 0) {
@@ -170,55 +169,58 @@ class workshop_manual_allocator implements workshop_allocator {
                     $msg->sty   = 'error';
                 }
                 break;
-            case WORKSHOP_ALLOCATION_MANUAL_MSG_DELETED:
+            case self::MSG_DELETED:
                 $hlauthorid     = $m[1];
                 $hlreviewerid   = $m[2];
                 $msg->text      = get_string('assessmentdeleted', 'workshop');
                 $msg->sty       = 'ok';
                 break;
-            case WORKSHOP_ALLOCATION_MANUAL_MSG_DELETE_ERROR:
+            case self::MSG_DELETE_ERROR:
                 $hlauthorid     = $m[1];
                 $hlreviewerid   = $m[2];
                 $msg->text      = get_string('assessmentnotdeleted', 'workshop');
                 $msg->sty       = 'error';
                 break;
             }
-            if ($m[0] == WORKSHOP_ALLOCATION_MANUAL_MSG_CONFIRM_DEL) {
-                $handler = $PAGE->url->out_action();
-                $msg->extra = print_single_button($handler, array('mode' => 'del', 'what' => $m[1], 'confirm' => 1),
-                                get_string('iamsure', 'workshop'), 'post', '', true);
+            if ($m[0] == self::MSG_CONFIRM_DEL) {
+                $form = new html_form();
+                $form->url = new moodle_url($PAGE->url, array('mode' => 'del', 'what' => $m[1], 'confirm' => 1));
+                $form->button = new html_button();
+                $form->button->text = get_string('iamsure', 'workshop');
+                $form->method = 'post';
+                $msg->extra = $OUTPUT->button($form);
             }
         }
 
-        $peer = array(); // singular chosen due to readibility
+        $peers = array();
         $rs = $this->workshop->get_allocations_recordset();
         foreach ($rs as $allocation) {
             $currentuserid = $allocation->authorid;
-            if (!isset($peer[$currentuserid])) {
-                $peer[$currentuserid]                   = new stdClass();
-                $peer[$currentuserid]->id               = $allocation->authorid;
-                $peer[$currentuserid]->firstname        = $allocation->authorfirstname;
-                $peer[$currentuserid]->lastname         = $allocation->authorlastname;
-                $peer[$currentuserid]->picture          = $allocation->authorpicture;
-                $peer[$currentuserid]->imagealt         = $allocation->authorimagealt;
-                $peer[$currentuserid]->submissionid     = $allocation->submissionid;
-                $peer[$currentuserid]->submissiontitle  = $allocation->submissiontitle;
-                $peer[$currentuserid]->submissiongrade  = $allocation->submissiongrade;
-                $peer[$currentuserid]->reviewedby       = array(); // users who are reviewing this user's submission
-                $peer[$currentuserid]->reviewerof       = array(); // users whom submission is being reviewed by this user
+            if (!isset($peers[$currentuserid])) {
+                $peers[$currentuserid]                   = new stdClass();
+                $peers[$currentuserid]->id               = $allocation->authorid;
+                $peers[$currentuserid]->firstname        = $allocation->authorfirstname;
+                $peers[$currentuserid]->lastname         = $allocation->authorlastname;
+                $peers[$currentuserid]->picture          = $allocation->authorpicture;
+                $peers[$currentuserid]->imagealt         = $allocation->authorimagealt;
+                $peers[$currentuserid]->submissionid     = $allocation->submissionid;
+                $peers[$currentuserid]->submissiontitle  = $allocation->submissiontitle;
+                $peers[$currentuserid]->submissiongrade  = $allocation->submissiongrade;
+                $peers[$currentuserid]->reviewedby       = array(); // users who are reviewing this user's submission
+                $peers[$currentuserid]->reviewerof       = array(); // users whom submission is being reviewed by this user
             }
             if (!empty($allocation->reviewerid)) {
                 // example: "submission of user with id 45 is reviewed by user with id 87 in the assessment record 12"
-                $peer[$currentuserid]->reviewedby[$allocation->reviewerid] = $allocation->assessmentid;
+                $peers[$currentuserid]->reviewedby[$allocation->reviewerid] = $allocation->assessmentid;
             }
         }
         $rs->close();
 
-        foreach ($peer as $author) {
+        foreach ($peers as $author) {
             foreach ($author->reviewedby as $reviewerid => $assessmentid) {
-                if (isset($peer[$reviewerid])) {
+                if (isset($peers[$reviewerid])) {
                     // example: "user with id 87 is reviewer of the work submitted by user id 45 in the assessment record 12"
-                    $peer[$reviewerid]->reviewerof[$author->id] = $assessmentid;
+                    $peers[$reviewerid]->reviewerof[$author->id] = $assessmentid;
                 }
             }
         }
@@ -227,8 +229,7 @@ class workshop_manual_allocator implements workshop_allocator {
         // Here, we do not use neither the core renderer nor the workshop one but use an own one
         require_once(dirname(__FILE__) . '/renderer.php');
         $uioutput = $PAGE->theme->get_renderer('workshopallocation_manual', $PAGE);
-        echo $uioutput->display_allocations($this->workshop, $peer, $hlauthorid, $hlreviewerid, $msg);
+        return $uioutput->display_allocations($this->workshop, $peers, $hlauthorid, $hlreviewerid, $msg);
     }
 
 }
-

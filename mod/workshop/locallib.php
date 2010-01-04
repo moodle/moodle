@@ -32,16 +32,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__).'/lib.php');      // we extend this library here
 
-define('WORKSHOP_ALLOCATION_EXISTS',    -1);    // return status of {@link add_allocation}
-define('WORKSHOP_ALLOCATION_ERROR',     -2);    // can be passed to a workshop renderer method
-
-/** workshop phases */
-define('WORKSHOP_PHASE_SETUP',          10);    // The moderator is setting up the workshop
-define('WORKSHOP_PHASE_SUBMISSION',     20);    // Participants work on their submissions
-define('WORKSHOP_PHASE_ASSESSMENT',     30);    // 
-define('WORKSHOP_PHASE_EVALUATION',     40);
-define('WORKSHOP_PHASE_CLOSED',         50);
-
 /**
  * Full-featured workshop API
  *
@@ -51,13 +41,30 @@ define('WORKSHOP_PHASE_CLOSED',         50);
  */
 class workshop {
 
+    /** return statuses of {@link add_allocation} to be passed to a workshop renderer method */
+    const ALLOCATION_EXISTS = -1;
+    const ALLOCATION_ERROR  = -2;
+
+    /** the internal code of the workshop phases as are stored in the database */
+    const PHASE_SETUP       = 10;
+    const PHASE_SUBMISSION  = 20;
+    const PHASE_ASSESSMENT  = 30;
+    const PHASE_EVALUATION  = 40;
+    const PHASE_CLOSED      = 50;
+
     /** @var stdClass course module record */
     public $cm = null;
 
     /** @var stdClass course record */
     public $course = null;
 
-    /** @var workshop_strategy grading strategy instance */
+    /** @var stdClass the workshop instance context */
+    public $context = null;
+
+    /**
+     * @var workshop_strategy grading strategy instance
+     * Do not use directly, get the instance using {@link workshop::grading_strategy_instance()}
+     */
     protected $strategyinstance = null;
 
     /** @var stdClass underlying database record */
@@ -77,6 +84,7 @@ class workshop {
         $this->dbrecord = $dbrecord;
         $this->cm       = $cm;
         $this->course   = $course;
+        $this->context  = get_context_instance(CONTEXT_MODULE, $this->cm->id);
     }
 
     /**
@@ -104,8 +112,7 @@ class workshop {
     public function get_peer_authors($musthavesubmission=true) {
         global $DB;
 
-        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
-        $users = get_users_by_capability($context, 'mod/workshop:submit',
+        $users = get_users_by_capability($this->context, 'mod/workshop:submit',
                     'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
 
         if ($musthavesubmission) {
@@ -135,8 +142,7 @@ class workshop {
     public function get_peer_reviewers($musthavesubmission=false) {
         global $DB;
 
-        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
-        $users = get_users_by_capability($context, 'mod/workshop:peerassess',
+        $users = get_users_by_capability($this->context, 'mod/workshop:peerassess',
                     'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
 
         if ($musthavesubmission) {
@@ -417,8 +423,7 @@ class workshop {
     public function get_allocations_recordset() {
         global $DB;
 
-        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
-        $users = get_users_by_capability($context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
+        $users = get_users_by_capability($this->context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
                     'u.id', 'u.lastname,u.firstname', '', '', '', '', false, false, true);
 
         list($usql, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED);
@@ -452,7 +457,7 @@ class workshop {
         global $DB;
 
         if ($DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'userid' => $reviewerid))) {
-            return WORKSHOP_ALLOCATION_EXISTS;
+            return self::ALLOCATION_EXISTS;
         }
 
         $now = time();
@@ -496,12 +501,12 @@ class workshop {
             if (is_readable($strategylib)) {
                 require_once($strategylib);
             } else {
-                throw new moodle_exception('missingstrategy', 'workshop');
+                throw new coding_exception('the grading subplugin must contain library ' . $strategylib);
             }
             $classname = 'workshop_' . $this->strategy . '_strategy';
             $this->strategyinstance = new $classname($this);
             if (!in_array('workshop_strategy', class_implements($this->strategyinstance))) {
-                throw new moodle_exception('strategynotimplemented', 'workshop');
+                throw new coding_exception($classname . ' does not implement workshop_strategy interface');
             }
         }
         return $this->strategyinstance;
@@ -624,4 +629,124 @@ class workshop {
     public function strategy_name() {
         return get_string('pluginname', 'workshopgrading_' . $this->strategy);
     }
+
+    /**
+     * Prepare an individual workshop plan for the given user.
+     *
+     * @param mixed $userid 
+     * @return TODO
+     */
+    public function prepare_user_plan($userid) {
+        global $DB;
+
+        $phases = array();
+
+        // Prepare tasks for the setup phase
+        $phase = new stdClass();
+        $phase->title = get_string('phasesetup', 'workshop');
+        $phase->tasks = array();
+        if (has_capability('mod/workshop:editdimensions', $this->context, $userid)) {
+            $task = new stdClass();
+            $task->title = get_string('taskeditform', 'workshop');
+            $task->completed = $this->assessment_form_ready();
+            $phase->tasks['editform'] = $task;
+        }
+        $phases[self::PHASE_SETUP] = $phase;
+
+        // Prepare tasks for the submission phase
+        $phase = new stdClass();
+        $phase->title = get_string('phasesubmission', 'workshop');
+        $phase->tasks = array();
+        if (has_capability('mod/workshop:submit', $this->context, $userid)) {
+            $task = new stdClass();
+            $task->title = get_string('tasksubmit', 'workshop');
+            $task->completed = $DB->record_exists('workshop_submissions',
+                                        array('workshopid' => $this->id, 'example' => 0, 'userid' => $userid));
+            $phase->tasks['submit'] = $task;
+        }
+        $phases[self::PHASE_SUBMISSION] = $phase;
+
+        // Prepare tasks for the peer-assessment phase (includes eventual self-assessments)
+        $phase = new stdClass();
+        $phase->title = get_string('phaseassessment', 'workshop');
+        $phase->tasks = array();
+        $phase->isreviewer = has_capability('mod/workshop:peerassess', $this->context, $userid);
+        $phase->assessments = $this->get_assessments($userid); // todo make sure this does not contain assessment of examples
+        $numofpeers     = 0;    // number of allocated peer-assessments
+        $numofpeerstodo = 0;    // number of peer-assessments to do
+        $numofself      = 0;    // number of allocated self-assessments - should be 0 or 1
+        $numofselftodo  = 0;    // number of self-assessments to do - should be 0 or 1
+        foreach ($phase->assessments as $a) {
+            if ($a->authorid == $userid) {
+                $numofself++;
+                if (is_null($a->grade)) {
+                    $numofselftodo++;
+                }
+            } else {
+                $numofpeers++;
+                if (is_null($a->grade)) {
+                    $numofpeerstodo++;
+                }
+            }
+        }
+        unset($a);
+        if ($numofpeers) {
+            $task = new stdClass();
+            $task->completed = ($numofpeerstodo == 0);
+            $a = new stdClass();
+            $a->total = $numofpeers;
+            $a->todo  = $numofpeerstodo;
+            $task->title = get_string('taskassesspeers', 'workshop');
+            $task->info = get_string('taskassesspeersinfo', 'workshop', $a);
+            unset($a);
+            $phase->tasks['assesspeers'] = $task;
+        }
+        if ($numofself) {
+            $task = new stdClass();
+            $task->completed = ($numofselftodo == 0);
+            $task->title = get_string('taskassessself', 'workshop');
+            $phase->tasks['assessself'] = $task;
+        }
+        $phases[self::PHASE_ASSESSMENT] = $phase;
+
+        // Prepare tasks for the grading evaluation phase - todo
+        $phase = new stdClass();
+        $phase->title = get_string('phaseevaluation', 'workshop');
+        $phase->tasks = array();
+        $phases[self::PHASE_EVALUATION] = $phase;
+
+        // Prepare tasks for the "workshop closed" phase - todo
+        $phase = new stdClass();
+        $phase->title = get_string('phaseclosed', 'workshop');
+        $phase->tasks = array();
+        $phases[self::PHASE_CLOSED] = $phase;
+
+        // Polish data, set default values if not done explicitly
+        foreach ($phases as $phasecode => $phase) {
+            $phase->title       = isset($phase->title)      ? $phase->title     : '';
+            $phase->tasks       = isset($phase->tasks)      ? $phase->tasks     : array();
+            if ($phasecode == $this->phase) {
+                $phase->active = true;
+            } else {
+                $phase->active = false;
+            }
+
+            foreach ($phase->tasks as $taskcode => $task) {
+                $task->title        = isset($task->title)       ? $task->title      : '';
+                $task->info         = isset($task->info)        ? $task->info       : '';
+                $task->completed    = isset($task->completed)   ? $task->completed  : null;
+            }
+        }
+        return $phases;
+    }
+
+    /**
+     * Has the assessment form been defined?
+     *
+     * @return bool
+     */
+    public function assessment_form_ready() {
+        return $this->grading_strategy_instance()->form_ready();
+    }
+
 }

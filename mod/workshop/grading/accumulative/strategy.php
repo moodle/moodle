@@ -226,6 +226,18 @@ class workshop_accumulative_strategy implements workshop_strategy {
         return $this->update_peer_grade($assessment);
     }
 
+    /**
+     * Has the assessment form been defined and is ready to be used by the reviewers?
+     *
+     * @return boolean
+     */
+    public function form_ready() {
+        if (count($this->dimensions) > 0) {
+            return true;
+        }
+        return false;
+    }
+
 /// Internal methods
 
     /**

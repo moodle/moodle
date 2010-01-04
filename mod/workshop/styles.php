@@ -179,3 +179,72 @@
 .assessmentform .description {
     margin: 0px 1em;
 }
+
+/**
+ * User plan
+ */
+.userplan {
+    width: 70%;
+    margin: 1em auto 1em auto;
+}
+
+.userplan th {
+    vertical-align: bottom;
+    white-space: normal;
+    color: #999;
+    border-bottom: 1px solid #ddd;
+    padding: 3px;
+}
+
+.userplan th.active {
+    vertical-align: top;
+    color: black;
+    font-size: 110%;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    background-color: #e7f1c3;
+}
+
+.userplan td {
+    width: 20%;
+    vertical-align: top;
+    border-right: 1px solid #ddd;
+    background-color: #f5f5f5;
+    color: #999;
+}
+
+.userplan td.lastcol {
+    border-right: none;
+}
+
+.userplan td.active {
+    color: black;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    background-color: #e7f1c3;
+}
+
+.userplan tr.phasetasks li {
+    background-image: url(../../pix/i/completion-auto-n.gif);
+    background-position: top left;
+    background-repeat: no-repeat;
+}
+
+.userplan tr.phasetasks .completed {
+    background-image: url(../../pix/i/completion-auto-y.gif);
+}
+
+.userplan tr.phasetasks .tasks {
+    list-style:none;
+    margin: 3px;
+    padding: 0px;
+}
+
+.userplan tr.phasetasks .title {
+    padding: 0px 10px 0px 20px;
+}
+
+.userplan tr.phasetasks .info {
+    padding: 0px 10px 0px 25px;
+    font-size: 80%;
+}

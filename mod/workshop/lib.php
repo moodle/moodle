@@ -48,6 +48,29 @@ define('WORKSHOP_COMPARISON_HIGH',      3);     /* f = 3.00 */
 define('WORKSHOP_COMPARISON_VERYHIGH',  4);     /* f = 5.00 */
 
 /**
+ * Returns the information if the module supports a feature
+ *
+ * @see plugin_supports() in lib/moodlelib.php
+ * @param string $feature FEATURE_xx constant for requested feature
+ * @return mixed true if the feature is supported, null if unknown
+ */
+function workshop_supports($feature) {
+    switch($feature) {
+        case FEATURE_GRADE_HAS_GRADE:   return true;
+        case FEATURE_GROUPS:            return true;
+        case FEATURE_GROUPINGS:         return true;
+        case FEATURE_GROUPMEMBERSONLY:  return true;
+        case FEATURE_MOD_INTRO:         return true;
+        case FEATURE_MOD_SUBPLUGINS:    return array(
+                                                'workshopgrading'    => 'mod/workshop/grading',
+                                                'workshopallocation' => 'mod/workshop/allocation'
+                                                );
+        default:                        return null;
+    }
+}
+
+
+/**
  * Saves a new instance of the workshop into the database
  *
  * Given an object containing all the necessary data,
@@ -221,29 +244,6 @@ function workshop_scale_used_anywhere($scaleid) {
  */
 function workshop_install() {
     return true;
-}
-
-/**
- * Returns the information if the module supports a feature
- *
- * @see plugin_supports() in lib/moodlelib.php
- * @todo review and add features
- * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed true if the feature is supported, null if unknown
- */
-function workshop_supports($feature) {
-    switch($feature) {
-        case FEATURE_GRADE_HAS_GRADE:   return true;
-        case FEATURE_GROUPS:            return true;
-        case FEATURE_GROUPINGS:         return true;
-        case FEATURE_GROUPMEMBERSONLY:  return true;
-        case FEATURE_MOD_INTRO:         return true;
-        case FEATURE_MOD_SUBPLUGINS:    return array(
-                                                'workshopgrading'    => 'mod/workshop/grading',
-                                                'workshopallocation' => 'mod/workshop/allocation'
-                                                );
-        default:                        return null;
-    }
 }
 
 /**
@@ -436,6 +436,8 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
 /**
  * Extends the global navigation tree by adding workshop nodes if there is a relevant content
  *
+ * This can be called by an AJAX request so do not rely on $PAGE as it might not be set up properly.
+ *
  * @param navigation_node $navref An object representing the navigation tree node of the workshop module instance
  * @param stdClass $course
  * @param stdClass $module
@@ -446,14 +448,16 @@ function workshop_extend_navigation(navigation_node $navref, stdClass $course, s
 
     if (has_capability('mod/workshop:submit', $cm->context)) {
         $url = new moodle_url($CFG->wwwroot.'/mod/workshop/submission.php', array('cmid' => $cm->id));
-        $mysubmissionkey = $navref->add(get_string('mysubmission', 'workshop'), null, null, navigation_node::TYPE_CUSTOM, $url);
+        $mysubmissionkey = $navref->add(get_string('mysubmission', 'workshop'), $url);
+        $navref->get($mysubmissionkey)->mainnavonly = true;
     }
 }
 
 /**
  * Extends the settings navigation with the Workshop settings
 
- * This function is called when the context for the page is a workshop module.
+ * This function is called when the context for the page is a workshop module. This is not called by AJAX
+ * so it is safe to rely on the $PAGE.
  *
  * @param settings_navigation $settingsnav {@link settings_navigation}
  * @param stdClass $module
@@ -467,13 +471,13 @@ function workshop_extend_settings_navigation(settings_navigation $settingsnav, s
     $workshopnode->forceopen = true;
     //$workshopobject = $DB->get_record("workshop", array("id" => $PAGE->cm->instance));
 
-    if (has_capability('mod/workshop:editdimensions', $PAGE->context)) {
+    if (has_capability('mod/workshop:editdimensions', $PAGE->cm->context)) {
         $url = new moodle_url($CFG->wwwroot . '/mod/workshop/editform.php', array('cmid' => $PAGE->cm->id));
-        $workshopnode->add(get_string('editassessmentform', 'workshop'), null, null, settings_navigation::TYPE_SETTING, $url);
+        $workshopnode->add(get_string('editassessmentform', 'workshop'), $url, settings_navigation::TYPE_SETTING);
     }
     if (has_capability('mod/workshop:allocate', $PAGE->context)) {
         $url = new moodle_url($CFG->wwwroot . '/mod/workshop/allocation.php', array('cmid' => $PAGE->cm->id));
-        $workshopnode->add(get_string('allocate', 'workshop'), null, null, settings_navigation::TYPE_SETTING, $url);
+        $workshopnode->add(get_string('allocate', 'workshop'), $url, settings_navigation::TYPE_SETTING);
     }
 }
 

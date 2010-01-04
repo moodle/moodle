@@ -71,4 +71,11 @@ interface workshop_strategy {
      * @return float|null          Raw grade (0 to 1) for submission as suggested by the peer or null if impossible to count
      */
     public function save_assessment(stdClass $assessment, stdClass $data);
+
+    /**
+     * Has the assessment form been defined and is ready to be used by the reviewers?
+     *
+     * @return boolean
+     */
+    public function form_ready();
 }

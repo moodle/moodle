@@ -70,7 +70,7 @@ if (!empty($initresult)) {
     echo $OUTPUT->container_end();
 } else {
     echo $OUTPUT->container_start('allocator-ui');
-    $allocator->ui($wsoutput);
+    echo $allocator->ui();
     echo $OUTPUT->container_end();
 }
 echo $OUTPUT->footer();

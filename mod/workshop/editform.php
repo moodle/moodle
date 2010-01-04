@@ -68,6 +68,8 @@ if ($mform->is_cancelled()) {
 // Output starts here
 
 echo $OUTPUT->header();
+$currenttab = 'editform';
+include(dirname(__FILE__) . '/tabs.php');
 echo $OUTPUT->heading(get_string('pluginname', 'workshopgrading_' . $workshop->strategy));
 
 $mform->display();

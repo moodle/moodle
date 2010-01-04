@@ -26,6 +26,16 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string[''] = '';
+$string['phaseclosed'] = 'Closed';
+$string['phaseevaluation'] = 'Grading evaluation phase';
+$string['phaseassessment'] = 'Assessment phase';
+$string['phasesubmission'] = 'Submission phase';
+$string['phasesetup'] = 'Setup';
+$string['taskassessself'] = 'Assess yourself';
+$string['taskassesspeers'] = 'Assess peers';
+$string['taskassesspeersinfo'] = 'total: $a->total<br />pending: $a->todo';
+$string['tasksubmit'] = 'Submit your work';
+$string['taskeditform'] = 'Define the assessment form';
 $string['accesscontrol'] = 'Access control';
 $string['agreeassessments'] = 'Assessments must be agreed';
 $string['agreeassessmentsdesc'] = 'Authors may comment assessments of their work and agree/disagree with it';
@@ -62,6 +72,7 @@ $string['confignexassessments'] = 'Default number of examples to be reviewed by 
 $string['confignsassessments'] = 'Default number of allocated submissions to be reviewed by a user in the assessment phase';
 $string['configstrategy'] = 'Default grading strategy for workshops';
 $string['editassessmentform'] = 'Edit assessment form';
+$string['editassessmentformstrategy'] = 'Edit assessment form ($a)';
 $string['editingassessmentform'] = 'Editing assessment form';
 $string['editingsubmission'] = 'Editing submission';
 $string['editsubmission'] = 'Edit submission';

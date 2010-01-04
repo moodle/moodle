@@ -44,14 +44,10 @@ if ($id) {
 }
 
 require_login($course, true, $cm);
+require_capability('mod/workshop:view', $PAGE->context);
+add_to_log($course->id, 'workshop', 'view', 'view.php?id='.$cm->id, $workshop->id);
+
 $workshop = new workshop($workshop, $cm, $course);
-
-// todo has_capability() check using something like
-// if (!(($workshop->is_open() && has_capability('mod/workshop:view')) || has_capability(...) || has_capability(...))) {
-//      unable to view this page
-//
-
-// todo logging add_to_log($course->id, "workshop", "view", "view.php?id=$cm->id", "$workshop->id");
 
 if (!is_null($edit) && $PAGE->user_allowed_editing()) {
     $USER->editing = $edit;
@@ -60,6 +56,8 @@ if (!is_null($edit) && $PAGE->user_allowed_editing()) {
 $PAGE->set_url($workshop->view_url());
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
+
+// todo 
 $buttons = array();
 if ($PAGE->user_allowed_editing()) {
     $editblocks                 = new html_form();
@@ -71,9 +69,32 @@ if ($PAGE->user_allowed_editing()) {
 $buttons[] = $OUTPUT->update_module_button($cm->id, 'workshop');
 $PAGE->set_button(implode('', $buttons));
 
+$wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
+
 /// Output starts here
 
 echo $OUTPUT->header();
+include(dirname(__FILE__) . '/tabs.php');
+
+$workshop->phase = 10;    // todo xxx devel hack
+echo $wsoutput->user_plan($workshop->prepare_user_plan($USER->id));
+
+
+switch ($workshop->phase) {
+case workshop::PHASE_SETUP:
+    // print workshop name and description
+    echo $OUTPUT->heading(format_string($workshop->name));
+    if (trim(strip_tags($workshop->intro))) {
+        echo $OUTPUT->box(format_module_intro('workshop', $workshop, $workshop->cm->id), 'generalbox', 'intro');
+    }
+    break;
+case workshop::PHASE_SUBMISSION:
+case workshop::PHASE_ASSESSMENT:
+case workshop::PHASE_EVALUATION:
+case workshop::PHASE_CLOSED:
+default:
+}
+
 
 /// Print the main part of the page - todo these are just links to help during development
 echo $OUTPUT->box_start();

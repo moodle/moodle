@@ -32,20 +32,16 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/locallib.php');    // works
 require_once(dirname(__FILE__) . '/settings_form.php');                 // settings form
 
 /**
- * Constants used to pass status messages between init() and ui()
- */
-define('WORKSHOP_ALLOCATION_RANDOM_MSG_SUCCESS',    1);
-
-/**
- * Constants used in allocation settings form
- */
-define('WORKSHOP_USERTYPE_AUTHOR',                  1);
-define('WORKSHOP_USERTYPE_REVIEWER',                2);
-
-/**
  * Allocates the submissions randomly
  */
 class workshop_random_allocator implements workshop_allocator {
+
+    /** constants used to pass status messages between init() and ui() */
+    const MSG_SUCCESS       = 1;
+
+    /** constants used in allocation settings form */
+    const USERTYPE_AUTHOR   = 1;
+    const USERTYPE_REVIEWER = 2;
 
     /** workshop instance */
     protected $workshop;
@@ -157,21 +153,30 @@ class workshop_random_allocator implements workshop_allocator {
     }
 
     /**
-     * Prints user interface
+     * Returns the HTML code to print the user interface
      */
-    public function ui(moodle_mod_workshop_renderer $wsoutput) {
-        global $OUTPUT;
+    public function ui() {
+        global $OUTPUT, $PAGE;
 
         $m = optional_param('m', null, PARAM_INT);  // status message code
         $msg = new stdClass();
-        if ($m == WORKSHOP_ALLOCATION_RANDOM_MSG_SUCCESS) {
+        if ($m == self::MSG_SUCCESS) {
             $msg = (object)array('text' => get_string('randomallocationdone', 'workshopallocation_random'), 'sty' => 'ok');
         }
 
-        echo $OUTPUT->container_start('random-allocator');
-        echo $wsoutput->status_message($msg);
+        $out = '';
+        $out .= $OUTPUT->container_start('random-allocator');
+        $wsoutput = $PAGE->theme->get_renderer('mod_workshop', $PAGE);
+        $out .= $wsoutput->status_message($msg);
+        // the nasty hack follows to bypass the sad fact that moodle quickforms do not allow to actually
+        // return the HTML content, just to display it
+        ob_start();
         $this->mform->display();
-        echo $OUTPUT->container_end();
+        $out .= ob_get_contents();
+        ob_end_clean();
+        $out .= $OUTPUT->container_end();
+
+        return $out;
     }
 
     /**
@@ -232,7 +237,7 @@ class workshop_random_allocator implements workshop_allocator {
             }
             $submission = $submissions[$authorid];
             $status = $this->workshop->add_allocation($submission, $reviewerid, true);
-            if (WORKSHOP_ALLOCATION_EXISTS == $status) {
+            if (workshop::ALLOCATION_EXISTS == $status) {
                 debugging('newallocations array contains existing allocation, this should not happen');
             }
         }
@@ -342,14 +347,14 @@ class workshop_random_allocator implements workshop_allocator {
             // nothing to be done
             return array();
         }
-        if (WORKSHOP_USERTYPE_AUTHOR == $numper) {
+        if (self::USERTYPE_AUTHOR == $numper) {
             // circles are authors, squares are reviewers
             $o[] = 'info::Trying to allocate ' . $numofreviews . ' review(s) per author'; // todo translate
             $allcircles = $authors;
             $allsquares = $reviewers;
             // get current workload
             list($circlelinks, $squarelinks) = $this->convert_assessments_to_links($assessments);
-        } elseif (WORKSHOP_USERTYPE_REVIEWER == $numper) {
+        } elseif (self::USERTYPE_REVIEWER == $numper) {
             // circles are reviewers, squares are authors
             $o[] = 'info::trying to allocate ' . $numofreviews . ' review(s) per reviewer'; // todo translate
             $allcircles = $reviewers;
@@ -458,7 +463,7 @@ class workshop_random_allocator implements workshop_allocator {
             } // end of processing circles in the group
         } // end of processing circle groups
         $returned = array();
-        if (WORKSHOP_USERTYPE_AUTHOR == $numper) {
+        if (self::USERTYPE_AUTHOR == $numper) {
             // circles are authors, squares are reviewers
             foreach ($circlelinks as $circleid => $squares) {
                 foreach ($squares as $squareid) {
@@ -466,7 +471,7 @@ class workshop_random_allocator implements workshop_allocator {
                 }
             }
         }
-        if (WORKSHOP_USERTYPE_REVIEWER == $numper) {
+        if (self::USERTYPE_REVIEWER == $numper) {
             // circles are reviewers, squares are authors
             foreach ($circlelinks as $circleid => $squares) {
                 foreach ($squares as $squareid) {

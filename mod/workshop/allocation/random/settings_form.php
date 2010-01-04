@@ -60,14 +60,16 @@ class workshop_random_allocator_form extends moodleform {
         }
         $mform->addElement('static', 'groupmode', get_string('groupmode', 'group'), $grouplabel);
 
-        $options_numofreviewes = array(0=>0,1=>1, 2=>2, 3=>3, 4=>4);
-        $options_numper = array(WORKSHOP_USERTYPE_AUTHOR    => get_string('numperauthor', 'workshopallocation_random'),
-                                WORKSHOP_USERTYPE_REVIEWER  => get_string('numperreviewer', 'workshopallocation_random'));
+        $options_numofreviewes = array(0=>0,1=>1, 2=>2, 3=>3, 4=>4); // todo
+        $options_numper = array(
+            workshop_random_allocator::USERTYPE_AUTHOR      => get_string('numperauthor', 'workshopallocation_random'),
+            workshop_random_allocator::USERTYPE_REVIEWER    => get_string('numperreviewer', 'workshopallocation_random')
+        );
         $grpnumofreviews = array();
         $grpnumofreviews[] = $mform->createElement('select', 'numofreviews', '', $options_numofreviewes);
         $mform->setDefault('numofreviews', 4);
         $grpnumofreviews[] = $mform->createElement('select', 'numper', '', $options_numper);
-        $mform->setDefault('numper', WORKSHOP_USERTYPE_AUTHOR);
+        $mform->setDefault('numper', workshop_random_allocator::USERTYPE_AUTHOR);
         $mform->addGroup($grpnumofreviews, 'grpnumofreviews', get_string('numofreviews', 'workshop'), array(' '), false);
 
         $mform->addElement('advcheckbox', 'removecurrent', get_string('removecurrentallocations', 'workshopallocation_random'));
