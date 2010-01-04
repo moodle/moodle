@@ -29,9 +29,9 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
-$id     = optional_param('id', 0, PARAM_INT); // course_module ID, or
-$w      = optional_param('w', 0, PARAM_INT);  // workshop instance ID
-$edit   = optional_param('edit', null, PARAM_BOOL);
+$id         = optional_param('id', 0, PARAM_INT); // course_module ID, or
+$w          = optional_param('w', 0, PARAM_INT);  // workshop instance ID
+$editmode   = optional_param('editmode', null, PARAM_BOOL);
 
 if ($id) {
     $cm         = get_coursemodule_from_id('workshop', $id, 0, false, MUST_EXIST);
@@ -49,8 +49,8 @@ add_to_log($course->id, 'workshop', 'view', 'view.php?id=' . $cm->id, $workshop-
 
 $workshop = new workshop($workshop, $cm, $course);
 
-if (!is_null($edit) && $PAGE->user_allowed_editing()) {
-    $USER->editing = $edit;
+if (!is_null($editmode) && $PAGE->user_allowed_editing()) {
+    $USER->editing = $editmode;
 }
 
 $PAGE->set_url($workshop->view_url());
@@ -63,7 +63,7 @@ if ($PAGE->user_allowed_editing()) {
     $editblocks                 = new html_form();
     $editblocks->method         = 'get';
     $editblocks->button->text   = get_string($PAGE->user_is_editing() ? 'blockseditoff' : 'blocksediton');
-    $editblocks->url            = new moodle_url($PAGE->url, array('edit' => $PAGE->user_is_editing() ? 'off' : 'on'));
+    $editblocks->url            = new moodle_url($PAGE->url, array('editmode' => $PAGE->user_is_editing() ? 'off' : 'on'));
     $buttons[] = $OUTPUT->button($editblocks);
 }
 $buttons[] = $OUTPUT->update_module_button($cm->id, 'workshop');
@@ -232,7 +232,7 @@ case workshop::PHASE_EVALUATION:
             $reportopts->sorthow                = $sorthow;
             $reportopts->showsubmissiongrade    = true;
             $reportopts->showgradinggrade       = true;
-            $reportopts->showtotalgrade         = true;
+            $reportopts->showtotalgrade         = false; // todo totalgrade to be dropped completely
 
             echo $OUTPUT->paging_bar($pagingbar);
             echo $wsoutput->grading_report($data, $reportopts);
