@@ -82,9 +82,11 @@ function workshop_supports($feature) {
  * @return int The id of the newly inserted workshop record
  */
 function workshop_add_instance($data) {
-    global $DB;
+    global $CFG, $DB;
+    require_once(dirname(__FILE__) . '/locallib.php');
 
-    $data->timecreated = time();
+    $data->phase        = workshop::PHASE_SETUP;
+    $data->timecreated  = time();
     $data->timemodified = $data->timecreated;
 
     return $DB->insert_record('workshop', $data);

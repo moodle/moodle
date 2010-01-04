@@ -258,7 +258,23 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
         $row = new html_table_row();
         $row->set_classes('phasetasks');
         foreach ($plan as $phasecode => $phase) {
-            $table->head[] = $this->output->container($this->output->output_tag('span', array(), $phase->title));
+            $title = $this->output->output_tag('span', array(), $phase->title);
+            $actions = '';
+            foreach ($phase->actions as $action) {
+                switch ($action->type) {
+                case 'switchphase':
+                    $icon = new moodle_action_icon();
+                    $icon->image->src = $this->old_icon_url('i/marker');
+                    $icon->image->alt = get_string('switchphase', 'workshop');
+                    $icon->link->url = $action->url;
+                    $actions .= $this->output->action_icon($icon);
+                    break;
+                }
+            }
+            if (!empty($actions)) {
+                $actions = $this->output->container($actions, 'actions');
+            }
+            $table->head[] = $this->output->container($title . $actions);
             $classes = 'phase' . $phasecode;
             if ($phase->active) {
                 $classes .= ' active';

@@ -563,7 +563,7 @@ class workshop {
     }
 
     /**
-     * @return stdClass {@link moodle_url} the URL of this workshop's view page
+     * @return moodle_url of this workshop's view page
      */
     public function view_url() {
         global $CFG;
@@ -571,7 +571,7 @@ class workshop {
     }
 
     /**
-     * @return stdClass {@link moodle_url} the URL of the page for editing this workshop's grading form
+     * @return moodle_url of the page for editing this workshop's grading form
      */
     public function editform_url() {
         global $CFG;
@@ -579,7 +579,7 @@ class workshop {
     }
 
     /**
-     * @return stdClass {@link moodle_url} the URL of the page for previewing this workshop's grading form
+     * @return moodle_url of the page for previewing this workshop's grading form
      */
     public function previewform_url() {
         global $CFG;
@@ -588,15 +588,16 @@ class workshop {
 
     /**
      * @param int $assessmentid The ID of assessment record
-     * @return stdClass {@link moodle_url} the URL of the assessment page
+     * @return moodle_url of the assessment page
      */
     public function assess_url($assessmentid) {
         global $CFG;
+        $assessmentid = clean_param($assessmentid, PARAM_INT);
         return new moodle_url($CFG->wwwroot . '/mod/workshop/assessment.php', array('asid' => $assessmentid));
     }
 
     /**
-     * @return stdClass {@link moodle_url} the URL of the page to view own submission
+     * @return moodle_url of the page to view own submission
      */
     public function submission_url() {
         global $CFG;
@@ -604,16 +605,29 @@ class workshop {
     }
 
     /**
-     * @return stdClass {@link moodle_url} the URL of the mod_edit form
+     * @return moodle_url of the mod_edit form
      */
     public function updatemod_url() {
         global $CFG;
         return new moodle_url($CFG->wwwroot . '/course/modedit.php', array('update' => $this->cm->id, 'return' => 1));
     }
 
+    /**
+     * @return moodle_url to the allocation page
+     */
     public function allocation_url() {
         global $CFG;
         return new moodle_url($CFG->wwwroot . '/mod/workshop/allocation.php', array('cmid' => $this->cm->id));
+    }
+
+    /**
+     * @param int $phasecode The internal phase code
+     * @return moodle_url of the script to change the current phase to $phasecode
+     */
+    public function switchphase_url($phasecode) {
+        global $CFG;
+        $phasecode = clean_param($phasecode, PARAM_INT);
+        return new moodle_url($CFG->wwwroot . '/mod/workshop/switchphase.php', array('cmid' => $this->cm->id, 'phase' => $phasecode));
     }
 
     /**
@@ -674,6 +688,13 @@ class workshop {
             $task->completed = !(trim(strip_tags($this->intro)) == '');
             $phase->tasks['intro'] = $task;
         }
+        if (has_capability('moodle/course:manageactivities', $this->context, $userid)) {
+            $task = new stdClass();
+            $task->title = get_string('taskinstructauthors', 'workshop');
+            $task->link = $this->updatemod_url();
+            $task->completed = !(trim(strip_tags($this->instructauthors)) == '');
+            $phase->tasks['instructauthors'] = $task;
+        }
         if (has_capability('mod/workshop:editdimensions', $this->context, $userid)) {
             $task = new stdClass();
             $task->title = get_string('editassessmentform', 'workshop');
@@ -684,17 +705,6 @@ class workshop {
                 $task->completed = false;
             }
             $phase->tasks['editform'] = $task;
-        }
-        if (has_capability('moodle/course:manageactivities', $this->context, $userid)) {
-            $task = new stdClass();
-            $task->title = get_string('taskinstructauthors', 'workshop');
-            $task->link = $this->updatemod_url();
-            if (trim(strip_tags($this->instructauthors))) {
-                $task->completed = true;
-            } elseif ($this->phase >= self::PHASE_SUBMISSION) {
-                $task->completed = false;
-            }
-            $phase->tasks['instructauthors'] = $task;
         }
         if (empty($phase->tasks) and $this->phase == self::PHASE_SETUP) {
             // if we are in the setup phase and there is no task (typical for students), let us
@@ -841,6 +851,9 @@ class workshop {
             } else {
                 $phase->active = false;
             }
+            if (!isset($phase->actions)) {
+                $phase->actions = array();
+            }
 
             foreach ($phase->tasks as $taskcode => $task) {
                 $task->title        = isset($task->title)       ? $task->title      : '';
@@ -849,6 +862,19 @@ class workshop {
                 $task->completed    = isset($task->completed)   ? $task->completed  : null;
             }
         }
+
+        // Add phase swithing actions
+        if (has_capability('mod/workshop:switchphase', $this->context, $userid)) {
+            foreach ($phases as $phasecode => $phase) {
+                if (! $phase->active) {
+                    $action = new stdClass();
+                    $action->type = 'switchphase';
+                    $action->url  = $this->switchphase_url($phasecode);
+                    $phase->actions[] = $action;
+                }
+            }
+        }
+
         return $phases;
     }
 
@@ -861,4 +887,35 @@ class workshop {
         return $this->grading_strategy_instance()->form_ready();
     }
 
+    /**
+     * @return array of available workshop phases
+     */
+    protected function available_phases() {
+        return array(
+            self::PHASE_SETUP       => true,
+            self::PHASE_SUBMISSION  => true,
+            self::PHASE_ASSESSMENT  => true,
+            self::PHASE_EVALUATION  => true,
+            self::PHASE_CLOSED      => true,
+        );
+    }
+
+    /**
+     * Switch to a new workshop phase
+     *
+     * Modifies the underlying database record. You should terminate the script shortly after calling this.
+     *
+     * @param int $newphase new phase code
+     * @return bool true if success, false otherwise
+     */
+    public function switch_phase($newphase) {
+        global $DB;
+
+        $known = $this->available_phases();
+        if (!isset($known[$newphase])) {
+            return false;
+        }
+        $DB->set_field('workshop', 'phase', $newphase, array('id' => $this->id));
+        return true;
+    }
 }
