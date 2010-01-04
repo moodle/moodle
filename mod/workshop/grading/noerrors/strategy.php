@@ -208,7 +208,7 @@ class workshop_noerrors_strategy implements workshop_strategy {
      * @param moodle_url $actionurl URL of form handler, defaults to auto detect the current url
      * @param string $mode          Mode to open the form in: preview/assessment
      */
-    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', object $assessment=null) {
+    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdClass $assessment=null) {
         global $CFG;    // needed because the included files use it
         global $PAGE;
         global $DB;
@@ -226,7 +226,7 @@ class workshop_noerrors_strategy implements workshop_strategy {
         if ('assessment' === $mode and !empty($assessment)) {
             // load the previously saved assessment data
             $grades = $this->reindex_grades_by_dimension($this->get_current_assessment_data($assessment));
-            $current = new object();
+            $current = new stdClass();
             for ($i = 0; $i < $nodimensions; $i++) {
                 $dimid = $fields->{'dimensionid__idx_'.$i};
                 if (isset($grades[$dimid])) {
@@ -255,11 +255,11 @@ class workshop_noerrors_strategy implements workshop_strategy {
      *
      * This method processes data submitted using the form returned by {@link get_assessment_form()}
      *
-     * @param object $assessment Assessment being filled
-     * @param object $data       Raw data as returned by the assessment form
+     * @param stdClass $assessment Assessment being filled
+     * @param stdClass $data       Raw data as returned by the assessment form
      * @return float|null        Percentual grade for submission as suggested by the peer
      */
-    public function save_assessment(object $assessment, object $data) {
+    public function save_assessment(stdClass $assessment, stdClass $data) {
         global $DB;
 
         if (!isset($data->strategyname) || ($data->strategyname != $this->name())) {
@@ -270,7 +270,7 @@ class workshop_noerrors_strategy implements workshop_strategy {
             throw coding_expection('You did not send me the number of assessment dimensions to process');
         }
         for ($i = 0; $i < $data->nodims; $i++) {
-            $grade = new object();
+            $grade = new stdClass();
             $grade->id = $data->{'gradeid__idx_' . $i};
             $grade->assessmentid = $assessment->id;
             $grade->dimensionid = $data->{'dimensionid__idx_' . $i};
@@ -295,10 +295,10 @@ class workshop_noerrors_strategy implements workshop_strategy {
      * number of errors to a grade are saved into workshop_forms_noerrors_map.
      *
      * @uses $DB
-     * @param object $data Raw data returned by the dimension editor form
+     * @param stdClass $data Raw data returned by the dimension editor form
      * @return void
      */
-    public function save_form(object $data) {
+    public function save_form(stdClass $data) {
         global $DB;
 
         if (!isset($data->strategyname) || ($data->strategyname != $this->name())) {
@@ -370,7 +370,7 @@ class workshop_noerrors_strategy implements workshop_strategy {
      */
     protected function prepare_form_fields(array $dims, array $maps) {
 
-        $formdata = new object();
+        $formdata = new stdClass();
         $key = 0;
         foreach ($dims as $dimension) {
             $formdata->{'dimensionid__idx_' . $key}             = $dimension->id; // master id, not the local one!
@@ -428,19 +428,19 @@ class workshop_noerrors_strategy implements workshop_strategy {
     protected function prepare_database_fields(stdClass $raw) {
         global $PAGE;
 
-        $cook           = new object(); // to be returned
+        $cook           = new stdClass(); // to be returned
         $cook->forms    = array();      // to be stored in {workshop_forms}
         $cook->noerrors = array();      // to be stored in {workshop_forms_noerrors}
         $cook->mappings = array();      // to be stored in {workshop_forms_noerrors_map}
 
         for ($i = 0; $i < $raw->norepeats; $i++) {
-            $cook->forms[$i]                = new object();
+            $cook->forms[$i]                = new stdClass();
             $cook->forms[$i]->id            = $raw->{'dimensionid__idx_'.$i};
             $cook->forms[$i]->workshopid    = $this->workshop->id;
             $cook->forms[$i]->sort          = $i + 1;
             $cook->forms[$i]->strategy      = 'noerrors';
 
-            $cook->noerrors[$i]             = new object();
+            $cook->noerrors[$i]             = new stdClass();
             $cook->noerrors[$i]->description_editor = $raw->{'description__idx_'.$i.'_editor'};
             $cook->noerrors[$i]->grade0     = $raw->{'grade0__idx_'.$i};
             $cook->noerrors[$i]->grade1     = $raw->{'grade1__idx_'.$i};
@@ -449,7 +449,7 @@ class workshop_noerrors_strategy implements workshop_strategy {
             if (empty($raw->{'map__idx_'.$i})) {
                 $cook->mappings[$i]         = null;
             } else {
-                $cook->mappings[$i]         = new object();
+                $cook->mappings[$i]         = new stdClass();
                 $cook->mappings[$i]->grade  = $raw->{'map__idx_'.$i};
             }
         }

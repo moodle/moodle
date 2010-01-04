@@ -57,7 +57,7 @@ interface workshop_allocator {
      * be used there. This should be changed once we make quickforms deprecated and then,
      * this method will just return the required HTML code.
      *
-     * @param object $wsoutput workshop module renderer can be used
+     * @param stdClass $wsoutput workshop module renderer can be used
      * @return void
      */
     public function ui(moodle_mod_workshop_renderer $wsoutput);

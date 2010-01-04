@@ -55,7 +55,7 @@ define('WORKSHOP_COMPARISON_VERYHIGH',  4);     /* f = 5.00 */
  * will save a new instance and return the id number
  * of the new instance.
  *
- * @param object $data An object from the form in mod_form.php
+ * @param stdClass $data An object from the form in mod_form.php
  * @return int The id of the newly inserted workshop record
  */
 function workshop_add_instance($data) {
@@ -72,7 +72,7 @@ function workshop_add_instance($data) {
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
  *
- * @param object $workshop An object from the form in mod_form.php
+ * @param stdClass $workshop An object from the form in mod_form.php
  * @return boolean Success/Fail
  */
 function workshop_update_instance($workshop) {
@@ -121,7 +121,7 @@ function workshop_delete_instance($id) {
  * @todo Finish documenting this function
  */
 function workshop_user_outline($course, $user, $mod, $workshop) {
-    $return = new object();
+    $return = new stdClass();
     $return->time = 0;
     $return->info = '';
     return $return;
@@ -271,9 +271,9 @@ function workshop_get_extra_capabilities() {
  * The file area workshop_intro for the activity introduction field is added automatically
  * by {@link file_browser::get_file_info_module()}
  *
- * @param object $course
- * @param object $cm
- * @param object $context
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param stdClass $context
  * @return array of [(string)filearea] => (string)description
  */
 function workshop_get_file_areas($course, $cm, $context) {
@@ -295,9 +295,9 @@ function workshop_get_file_areas($course, $cm, $context) {
  * The access rights to the files are checked here. The user must be either a peer-reviewer
  * of the submission or have capability ... (todo) to access the submission files.
  *
- * @param object $course
- * @param object $cminfo
- * @param object $context
+ * @param stdClass $course
+ * @param stdClass $cminfo
+ * @param stdClass $context
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
@@ -364,16 +364,16 @@ function workshop_pluginfile($course, $cminfo, $context, $filearea, $args, $forc
 /**
  * File browsing support for workshop file areas
  *
- * @param object $browser
- * @param object $areas
- * @param object $course
- * @param object $cm
- * @param object $context
+ * @param stdClass $browser
+ * @param stdClass $areas
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param stdClass $context
  * @param string $filearea
  * @param int $itemid
  * @param string $filepath
  * @param string $filename
- * @return object file_info instance or null if not found
+ * @return stdClass file_info instance or null if not found
  */
 function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG, $DB;
@@ -542,7 +542,7 @@ function workshop_get_example_modes() {
  * Each object in the returned array provides information about the name of the level
  * and the value of the factor to be used in the calculation.
  * The structure of the returned array is
- * array[code int] of object (
+ * array[code int] of stdClass (
  *                      ->name string,
  *                      ->value number,
  *                      )
@@ -553,23 +553,23 @@ function workshop_get_example_modes() {
 function workshop_get_comparison_levels() {
     $levels = array();
 
-    $levels[WORKSHOP_COMPARISON_VERYHIGH] = new object();
+    $levels[WORKSHOP_COMPARISON_VERYHIGH] = new stdClass();
     $levels[WORKSHOP_COMPARISON_VERYHIGH]->name = get_string('comparisonveryhigh', 'workshop');
     $levels[WORKSHOP_COMPARISON_VERYHIGH]->value = 5.00;
 
-    $levels[WORKSHOP_COMPARISON_HIGH] = new object();
+    $levels[WORKSHOP_COMPARISON_HIGH] = new stdClass();
     $levels[WORKSHOP_COMPARISON_HIGH]->name = get_string('comparisonhigh', 'workshop');
     $levels[WORKSHOP_COMPARISON_HIGH]->value = 3.00;
 
-    $levels[WORKSHOP_COMPARISON_NORMAL] = new object();
+    $levels[WORKSHOP_COMPARISON_NORMAL] = new stdClass();
     $levels[WORKSHOP_COMPARISON_NORMAL]->name = get_string('comparisonnormal', 'workshop');
     $levels[WORKSHOP_COMPARISON_NORMAL]->value = 2.50;
 
-    $levels[WORKSHOP_COMPARISON_LOW] = new object();
+    $levels[WORKSHOP_COMPARISON_LOW] = new stdClass();
     $levels[WORKSHOP_COMPARISON_LOW]->name = get_string('comparisonlow', 'workshop');
     $levels[WORKSHOP_COMPARISON_LOW]->value = 1.67;
 
-    $levels[WORKSHOP_COMPARISON_VERYLOW] = new object();
+    $levels[WORKSHOP_COMPARISON_VERYLOW] = new stdClass();
     $levels[WORKSHOP_COMPARISON_VERYLOW]->name = get_string('comparisonverylow', 'workshop');
     $levels[WORKSHOP_COMPARISON_VERYLOW]->value = 1.00;
 

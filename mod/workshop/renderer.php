@@ -59,7 +59,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      * @param string $message to display
      * @return string html
      */
-    public function status_message(object $message) {
+    public function status_message(stdClass $message) {
         if (empty($message->text)) {
             return '';
         }
@@ -86,7 +86,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
      * @return string html to be echoed
      */
     public function allocation_init_result($result='') {
-        $msg = new object();
+        $msg = new stdClass();
         if ($result === 'WORKSHOP_ALLOCATION_RANDOM_ERROR') {
             $msg = (object)array('text' => get_string('randomallocationerror', 'workshop'), 'sty' => 'error');
         } else {
@@ -142,7 +142,7 @@ class moodle_mod_workshop_renderer extends moodle_renderer_base {
             $userpic    = $this->output->user_picture($userpic);
             $userurl    = new moodle_url($CFG->wwwroot . '/user/view.php',
                                             array('id' => $author->id, 'course' => $this->page->course->id));
-            $a          = new object();
+            $a          = new stdClass();
             $a->name    = fullname($author);
             $a->url     = $userurl->out();
             $byfullname = get_string('byfullname', 'workshop', $a);

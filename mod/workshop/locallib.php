@@ -43,17 +43,17 @@ define('WORKSHOP_ALLOCATION_EXISTS',        -1);    // return status of {@link a
  */
 class workshop {
 
-    /** @var object course module record */
+    /** @var stdClass course module record */
     public $cm = null;
 
-    /** @var object course record */
+    /** @var stdClass course record */
     public $course = null;
 
     /** grading strategy instance */
     private $strategyinstance = null;
 
     /**
-     * Initializes the object using the data from DB
+     * Initializes the workshop API instance using the data from DB
      *
      * Makes deep copy of all passed records properties. Replaces integer $course attribute
      * with a full database record (course should not be stored in instances table anyway).
@@ -81,7 +81,7 @@ class workshop {
      * The returned objects contain id, lastname and firstname properties and are ordered by lastname,firstname
      *
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible authors otherwise.
-     * @return array array[userid] => object{->id ->lastname ->firstname}
+     * @return array array[userid] => stdClass{->id ->lastname ->firstname}
      */
     public function get_peer_authors($musthavesubmission=true) {
         global $DB;
@@ -114,7 +114,7 @@ class workshop {
      *
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible users otherwise.
      * @see get_super_reviewers()
-     * @return array array[userid] => object{->id ->lastname ->firstname}
+     * @return array array[userid] => stdClass{->id ->lastname ->firstname}
      */
     public function get_peer_reviewers($musthavesubmission=false) {
         global $DB;
@@ -147,7 +147,7 @@ class workshop {
      *
      * @param bool $musthavesubmission If true, return only users who have already submitted. All possible users otherwise.
      * @see get_peer_reviewers()
-     * @return array array[userid] => object{->id ->lastname ->firstname}
+     * @return array array[userid] => stdClass{->id ->lastname ->firstname}
      */
     public function get_super_reviewers() {
         global $DB;
@@ -166,8 +166,8 @@ class workshop {
      * is set, returns only groups withing the course module grouping. Always returns group [0] with
      * all the given users.
      *
-     * @param array $users array[userid] => object{->id ->lastname ->firstname}
-     * @return array array[groupid][userid] => object{->id ->lastname ->firstname}
+     * @param array $users array[userid] => stdClass{->id ->lastname ->firstname}
+     * @return array array[groupid][userid] => stdClass{->id ->lastname ->firstname}
      */
     public function get_grouped($users) {
         global $DB;
@@ -211,7 +211,7 @@ class workshop {
      *
      * @param mixed $userid int|array|'all' If set to [array of] integer, return submission[s] of the given user[s] only
      * @param mixed $examples false|true|'all' Only regular submissions, only examples, all submissions
-     * @return object moodle_recordset
+     * @return stdClass moodle_recordset
      */
     public function get_submissions_recordset($userid='all', $examples=false) {
         global $DB;
@@ -250,7 +250,7 @@ class workshop {
      * include text fields (to prevent possible memory-lack issues).
      *
      * @param mixed $id integer|array author ID or IDs
-     * @return mixed false if not found, object if $id is int, array if $id is array
+     * @return mixed false if not found, stdClass if $id is int, array if $id is array
      */
     public function get_submission_by_author($id) {
         if (empty($id)) {
@@ -260,7 +260,7 @@ class workshop {
         if (is_array($id)) {
             $submissions = array();
             foreach ($rs as $submission) {
-                $submissions[$submission->id] = new object();
+                $submissions[$submission->id] = new stdClass();
                 foreach ($submission as $property => $value) {
                     // we do not want text fields here to prevent possible memory issues
                     if (in_array($property, array('id', 'workshopid', 'example', 'userid', 'authorlastname', 'authorfirstname',
@@ -289,7 +289,7 @@ class workshop {
       *
      * @param mixed $reviewerid 'all'|int|array User ID of the reviewer
      * @param mixed $id         'all'|int Assessment ID
-     * @return object moodle_recordset
+     * @return stdClass moodle_recordset
      */
     public function get_assessments_recordset($reviewerid='all', $id='all') {
         global $DB;
@@ -335,7 +335,7 @@ class workshop {
      *
      * @param mixed $reviewerid 'all'|int|array User ID of the reviewer
      * @param mixed $id         'all'|int Assessment ID
-     * @return array [assessmentid] => assessment object
+     * @return array [assessmentid] => assessment stdClass
      * @see workshop::get_assessments_recordset() for the structure of returned objects
      */
     public function get_assessments($reviewerid='all', $id='all') {
@@ -344,7 +344,7 @@ class workshop {
         foreach ($rs as $assessment) {
             // copy selected properties into the array to be returned. This is here mainly in order not
             // to include text comments.
-            $assessments[$assessment->id] = new object();
+            $assessments[$assessment->id] = new stdClass();
             foreach ($assessment as $property => $value) {
                 if (in_array($property, array('id', 'submissionid', 'userid', 'timecreated', 'timemodified',
                         'timeagreed', 'grade', 'gradinggrade', 'gradinggradeover', 'gradinggradeoverby',
@@ -363,7 +363,7 @@ class workshop {
      *
      * @param int $id Assessment ID
      * @see workshop::get_assessments_recordset() for the structure of data returned
-     * @return mixed false if not found, object otherwise
+     * @return mixed false if not found, stdClass otherwise
      */
     public function get_assessment_by_id($id) {
         $rs         = $this->get_assessments_recordset('all', $id);
@@ -412,7 +412,7 @@ class workshop {
      * Note that the returned recordset includes participants without submission as well as those
      * without any review allocated yet.
      *
-     * @return object moodle_recordset
+     * @return stdClass moodle_recordset
      */
     public function get_allocations_recordset() {
         global $DB;
@@ -443,12 +443,12 @@ class workshop {
     /**
      * Allocate a submission to a user for review
      *
-     * @param object $submission Submission record
+     * @param stdClass $submission Submission record
      * @param int $reviewerid User ID
      * @param bool $bulk repeated inserts into DB expected
      * @return int ID of the new assessment or an error code
      */
-    public function add_allocation(object $submission, $reviewerid, $bulk=false) {
+    public function add_allocation(stdClass $submission, $reviewerid, $bulk=false) {
         global $DB;
 
         if ($DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'userid' => $reviewerid))) {
@@ -456,7 +456,7 @@ class workshop {
         }
 
         $now = time();
-        $assessment = new object();
+        $assessment = new stdClass();
         $assessment->submissionid   = $submission->id;
         $assessment->userid         = $reviewerid;
         $assessment->timecreated    = $now;
@@ -486,7 +486,7 @@ class workshop {
     /**
      * Returns instance of grading strategy class
      *
-     * @return object Instance of a grading strategy
+     * @return stdClass Instance of a grading strategy
      */
     public function grading_strategy_instance() {
         global $CFG;    // because we require other libs here
@@ -530,8 +530,8 @@ class workshop {
     /**
      * Returns instance of submissions allocator
      *
-     * @param object $method The name of the allocation method, must be PARAM_ALPHA
-     * @return object Instance of submissions allocator
+     * @param stdClass $method The name of the allocation method, must be PARAM_ALPHA
+     * @return stdClass Instance of submissions allocator
      */
     public function allocator_instance($method) {
         global $CFG;    // because we require other libs here
@@ -547,7 +547,7 @@ class workshop {
     }
 
     /**
-     * @return object {@link moodle_url} the URL of this workshop's view page
+     * @return stdClass {@link moodle_url} the URL of this workshop's view page
      */
     public function view_url() {
         global $CFG;
@@ -555,7 +555,7 @@ class workshop {
     }
 
     /**
-     * @return object {@link moodle_url} the URL of the page for editing this workshop's grading form
+     * @return stdClass {@link moodle_url} the URL of the page for editing this workshop's grading form
      */
     public function editform_url() {
         global $CFG;
@@ -563,7 +563,7 @@ class workshop {
     }
 
     /**
-     * @return object {@link moodle_url} the URL of the page for previewing this workshop's grading form
+     * @return stdClass {@link moodle_url} the URL of the page for previewing this workshop's grading form
      */
     public function previewform_url() {
         global $CFG;
@@ -572,7 +572,7 @@ class workshop {
 
     /**
      * @param int $assessmentid The ID of assessment record
-     * @return object {@link moodle_url} the URL of the assessment page
+     * @return stdClass {@link moodle_url} the URL of the assessment page
      */
     public function assess_url($assessmentid) {
         global $CFG;
@@ -583,7 +583,7 @@ class workshop {
      * Returns an object containing all data to display the user's full name and picture
      *
      * @param int $id optional user id, defaults to the current user
-     * @return object containing properties lastname, firstname, picture and imagealt
+     * @return stdClass containing properties lastname, firstname, picture and imagealt
      */
     public function user_info($id=null) {
         global $USER, $DB;

@@ -86,8 +86,8 @@ class workshop_allocation_random_test extends UnitTestCase {
 
     public function test_self_allocation_equal_user_groups() {
         // fixture setup
-        $authors    = array(0 => array_fill_keys(array(4, 6, 10), new object()));
-        $reviewers  = array(0 => array_fill_keys(array(4, 6, 10), new object()));
+        $authors    = array(0 => array_fill_keys(array(4, 6, 10), new stdClass()));
+        $reviewers  = array(0 => array_fill_keys(array(4, 6, 10), new stdClass()));
         // exercise SUT
         $newallocations = $this->allocator->self_allocation($authors, $reviewers);
         // verify
@@ -96,8 +96,8 @@ class workshop_allocation_random_test extends UnitTestCase {
 
     public function test_self_allocation_different_user_groups() {
         // fixture setup
-        $authors    = array(0 => array_fill_keys(array(1, 4, 5, 10, 13), new object()));
-        $reviewers  = array(0 => array_fill_keys(array(4, 7, 10), new object()));
+        $authors    = array(0 => array_fill_keys(array(1, 4, 5, 10, 13), new stdClass()));
+        $reviewers  = array(0 => array_fill_keys(array(4, 7, 10), new stdClass()));
         // exercise SUT
         $newallocations = $this->allocator->self_allocation($authors, $reviewers);
         // verify
@@ -106,8 +106,8 @@ class workshop_allocation_random_test extends UnitTestCase {
 
     public function test_self_allocation_skip_existing() {
         // fixture setup
-        $authors        = array(0 => array_fill_keys(array(3, 4, 10), new object()));
-        $reviewers      = array(0 => array_fill_keys(array(3, 4, 10), new object()));
+        $authors        = array(0 => array_fill_keys(array(3, 4, 10), new stdClass()));
+        $reviewers      = array(0 => array_fill_keys(array(3, 4, 10), new stdClass()));
         $assessments    = array(23 => (object)array('authorid' => 3, 'reviewerid' => 3));
         // exercise SUT
         $newallocations = $this->allocator->self_allocation($authors, $reviewers, $assessments);

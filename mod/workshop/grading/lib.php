@@ -46,7 +46,7 @@ interface workshop_strategy {
      * Factory method returning a form that is used to define the assessment form
      *
      * @param string $actionurl URL of the action handler script, defaults to auto detect
-     * @return object The instance of the assessment form editor class
+     * @return stdClass The instance of the assessment form editor class
      */
     public function get_edit_strategy_form($actionurl=null);
 
@@ -75,9 +75,9 @@ interface workshop_strategy {
      *
      * This method processes data submitted using the form returned by {@link get_assessment_form()}
      *
-     * @param object $assessment Assessment being filled
-     * @param object $data       Raw data as returned by the assessment form
+     * @param stdClass $assessment Assessment being filled
+     * @param stdClass $data       Raw data as returned by the assessment form
      * @return float|float       Percentual grade for submission as suggested by the peer or null if impossible to count
      */
-    public function save_assessment(object $assessment, object $data);
+    public function save_assessment(stdClass $assessment, stdClass $data);
 }

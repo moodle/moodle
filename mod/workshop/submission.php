@@ -48,7 +48,7 @@ if ($id) { // submission is specified
     $submission = $DB->get_record('workshop_submissions', array('id' => $id, 'workshopid' => $workshop->id), '*', MUST_EXIST);
 } else { // no submission specified
     if (!$submission = $workshop->get_submission_by_author($USER->id)) {
-        $submission = new object();
+        $submission = new stdClass();
         $submission->id = null;
         $submission->userid = $USER->id;
     }

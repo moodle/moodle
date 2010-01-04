@@ -136,9 +136,9 @@ class workshop_manual_allocator implements workshop_allocator {
 
         $hlauthorid     = -1;           // highlight this author
         $hlreviewerid   = -1;           // highlight this reviewer
-        $msg            = new object(); // message to render
+        $msg            = new stdClass(); // message to render
 
-        $m  = optional_param('m', '', PARAM_ALPHANUMEXT);   // message object
+        $m  = optional_param('m', '', PARAM_ALPHANUMEXT);   // message stdClass
         if ($m) {
             $m = explode('-', $m);  // unserialize
             switch ($m[0]) {
@@ -195,7 +195,7 @@ class workshop_manual_allocator implements workshop_allocator {
         foreach ($rs as $allocation) {
             $currentuserid = $allocation->authorid;
             if (!isset($peer[$currentuserid])) {
-                $peer[$currentuserid]                   = new object();
+                $peer[$currentuserid]                   = new stdClass();
                 $peer[$currentuserid]->id               = $allocation->authorid;
                 $peer[$currentuserid]->firstname        = $allocation->authorfirstname;
                 $peer[$currentuserid]->lastname         = $allocation->authorlastname;

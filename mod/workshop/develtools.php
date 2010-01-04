@@ -62,7 +62,7 @@ case 'mksubmissions':
     $c = 0; // counter
     foreach ($authors as $authorid => $author) {
         $timenow = time() - rand(0, 60 * 60 * 24 * 7); // submitted sometimes during last week
-        $submission                 = new object();
+        $submission                 = new stdClass();
         $submission->workshopid     = $workshop->id;
         $submission->example        = 0;
         $submission->userid         = $authorid;
