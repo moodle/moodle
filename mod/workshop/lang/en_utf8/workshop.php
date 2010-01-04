@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 $string[''] = '';
 $string[''] = '';
 $string[''] = '';
-$string['null'] = '?';
+$string['nullgrade'] = '?';
 $string['formatpeergradeover'] = '$a->grade (<del>$a->gradinggrade</del> / <ins>$a->gradinggradeover</ins>)';
 $string['formatpeergrade'] = '$a->grade ($a->gradinggrade)';
 $string['accesscontrol'] = 'Access control';
