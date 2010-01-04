@@ -195,7 +195,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
     /**
      * Deletes dimensions and removes embedded media from its descriptions
      *
-     * todo we may check that there are no assessments done using these dimensions
+     * todo we may check that there are no assessments done using these dimensions and probably remove them
      *
      * @param array $masterids
      * @return void
@@ -276,7 +276,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
 
         if ('assessment' === $mode and !empty($assessment)) {
             // load the previously saved assessment data
-            $grades = $DB->get_records('workshop_grades', array('assessmentid' => $assessment->id), '', 'dimensionid,*');
+            $grades = $this->reindex_grades_by_dimension($this->get_current_assessment_data($assessment));
             $current = new stdClass();
             for ($i = 0; $i < $nodimensions; $i++) {
                 $dimid = $fields->{'dimensionid__idx_'.$i};
@@ -308,7 +308,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
      *
      * @param object $assessment Assessment being filled
      * @param object $data       Raw data as returned by the assessment form
-     * @return float             Percentual grade for submission as suggested by the peer
+     * @return float|null        Percentual grade for submission as suggested by the peer
      */
     public function save_assessment(stdClass $assessment, stdClass $data) {
         global $DB;
@@ -340,16 +340,128 @@ class workshop_accumulative_strategy implements workshop_strategy {
     }
 
     /**
-     * Aggregate the assessment form data and set the grade for the submission given by the peer
+     * Returns the list of current grades filled by the reviewer
      *
-     * @param stdClass $assessment Assessment record
-     * @return float               Percentual grade for submission as suggested by the peer
+     * @param object $assessment Assessment record
+     * @return array of filtered records from the table workshop_grades
      */
-    protected function update_peer_grade(stdClass $assessment) {
+    protected function get_current_assessment_data(stdClass $assessment) {
         global $DB;
 
-        $given = $DB->get_records('workshop_grades', array('assessmentid' => $assessment->id));
-        // use only grades given within the currently used strategy
-        
+        // fetch all grades accociated with this assessment
+        $grades = $DB->get_records("workshop_grades", array("assessmentid" => $assessment->id));
+
+        // filter grades given under an other strategy or assessment form
+        foreach ($grades as $grade) {
+            if (!isset($this->dimensions[$grade->dimensionid])) {
+                unset ($grades[$grade->id]);
+            }
+        }
+        return $grades;
+    }
+
+    /**
+     * Reindexes the records returned by {@link get_current_assessment_data} by dimensionid
+     *
+     * @param mixed $grades
+     * @return array
+     */
+    protected function reindex_grades_by_dimension($grades) {
+        $reindexed = array();
+        foreach ($grades as $grade) {
+            $reindexed[$grade->dimensionid] = $grade;
+        }
+        return $reindexed;
+    }
+
+    /**
+     * Aggregates the assessment form data and sets the grade for the submission given by the peer
+     *
+     * @param stdClass $assessment Assessment record
+     * @return float|null          Percentual grade for submission as suggested by the peer
+     */
+    protected function update_peer_grade(stdClass $assessment) {
+        $grades     = $this->get_current_assessment_data($assessment);
+        $suggested  = $this->calculate_peer_grade($grades);
+        if (!is_null($suggested)) {
+            // todo save into workshop_assessments
+        }
+        return $suggested;
+    }
+
+    /**
+     * Calculates the aggregated grade given by the reviewer
+     *
+     * @param array $grades Grade records as returned by {@link get_current_assessment_data}
+     * @uses $this->dimensions
+     * @return float|null   Percentual grade for submission as suggested by the peer
+     */
+    protected function calculate_peer_grade(array $grades) {
+
+        if (empty($grades)) {
+            return null;
+        }
+        $sumgrades  = 0;
+        $sumweights = 0;
+        foreach ($grades as $grade) {
+            $dimension = $this->dimensions[$grade->dimensionid];
+            if ($dimension->weight < 0) {
+                throw new coding_exception('Negative weights are not supported any more. Something is wrong with your data');
+            }
+            if ($dimension->weight == 0 or $dimension->grade == 0) {
+                // does not influence the final grade
+                continue;
+            }
+            if ($dimension->grade < 0) {
+                // this is a scale
+                $scaleid    = -$dimension->grade;
+                $sumgrades  += $this->scale_to_grade($scaleid, $grade->grade) * $dimension->weight;
+                $sumweights += $dimension->weight;
+            } else {
+                // regular grade
+                $sumgrades  += ($grade->grade / $dimension->grade) * $dimension->weight;
+                $sumweights += $dimension->weight;
+            }
+        }
+
+        if ($sumweights === 0) {
+            return 0;
+        }
+        return $sumgrades / $sumweights;
+    }
+
+    /**
+     * Convert scale grade to numerical grades
+     *
+     * In accumulative grading strategy, scales are considered as grades from 0 to M-1, where M is the number of scale items.
+     *
+     * @throws coding_exception
+     * @param string $scaleid Scale identifier
+     * @param int    $item    Selected scale item number, numbered 1, 2, 3, ... M
+     * @return float
+     */
+    protected function scale_to_grade($scaleid, $item) {
+        global $DB;
+
+        /** @var cache of numbers of scale items */
+        static $numofscaleitems = array();
+
+        if (!isset($numofscaleitems[$scaleid])) {
+            $scale = $DB->get_field("scales", "scale", array("id" => $scaleid), MUST_EXIST);
+            $items = explode(',', $scale);
+            $numofscaleitems[$scaleid] = count($items);
+            unset($scale);
+            unset($items);
+        }
+
+        if ($numofscaleitems[$scaleid] <= 1) {
+            throw new coding_exception('Invalid scale definition, no scale items found');
+        }
+
+        if ($item <= 0 or $numofscaleitems[$scaleid] < $item) {
+            throw new coding_exception('Invalid scale item number');
+        }
+
+        return ($item - 1) / ($numofscaleitems[$scaleid] - 1);
     }
 }

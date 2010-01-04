@@ -77,7 +77,7 @@ interface workshop_strategy {
      *
      * @param object $assessment Assessment being filled
      * @param object $data       Raw data as returned by the assessment form
-     * @return float             Percentual grade for submission as suggested by the peer
+     * @return float|float       Percentual grade for submission as suggested by the peer or null if impossible to count
      */
     public function save_assessment(stdClass $assessment, stdClass $data);
 }

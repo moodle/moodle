@@ -106,10 +106,10 @@ if ($mform->is_cancelled()) {
         redirect($workshop->editform_url());
     }
     $rawgrade = $strategy->save_assessment($assessment, $data);
-    if (isset($data->saveandclose)) {
+    if (!is_null($rawgrade) and isset($data->saveandclose)) {
         echo $OUTPUT->header($navigation);
         echo $OUTPUT->heading(get_string('assessmentresult', 'workshop'), 2);
-        echo $OUTPUT->box('Given grade: ' . $rawgrade); // todo more detailed info using own renderer
+        echo $OUTPUT->box('Given grade: ' . sprintf("%01.2f", $rawgrade * 100) . ' %'); // todo more detailed info using own renderer
         echo $OUTPUT->continue_button($workshop->view_url());
         echo $OUTPUT->footer();
         die();  // bye-bye
