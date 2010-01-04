@@ -250,9 +250,10 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
      * @param moodle_url $actionurl URL of form handler, defaults to auto detect the current url
      * @param string $mode          Mode to open the form in: preview/assessment
      */
-    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview') {
+    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdClass $assessment=null) {
         global $CFG;    // needed because the included files use it
         global $PAGE;
+        global $DB;
         require_once(dirname(__FILE__) . '/assessment_form.php');
 
         $fields = $this->load_fields();
@@ -266,6 +267,20 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
                 'pluginfile.php', $PAGE->context->id, 'workshop_dimension_description', $fields->{'dimensionid__idx_'.$i});
         }
 
+        if ('assessment' === $mode and !empty($assessment)) {
+            // load the previously saved assessment data
+            $grades = $DB->get_records('workshop_grades', array('assessmentid' => $assessment->id), '', 'dimensionid,*');
+            $current = new stdClass();
+            for ($i = 0; $i < $this->nodimensions; $i++) {
+                $dimid = $fields->{'dimensionid__idx_'.$i};
+                if (isset($grades[$dimid])) {
+                    $current->{'gradeid__idx_'.$i}      = $grades[$dimid]->id;
+                    $current->{'grade__idx_'.$i}        = $grades[$dimid]->grade;
+                    $current->{'peercomment__idx_'.$i}  = $grades[$dimid]->peercomment;
+                }
+            }
+        }
+
         // set up the required custom data common for all strategies
         $customdata['strategy'] = $this;
         $customdata['mode']     = $mode;
@@ -273,6 +288,7 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
         // set up strategy-specific custom data
         $customdata['nodims']   = $this->nodimensions;
         $customdata['fields']   = $fields;
+        $customdata['current']  = isset($current) ? $current : null;
         $attributes = array('class' => 'assessmentform accumulative');
 
         return new workshop_accumulative_assessment_form($actionurl, $customdata, 'post', '', $attributes);
@@ -297,45 +313,23 @@ class workshop_accumulative_strategy extends workshop_base_strategy implements w
         if (!isset($data->nodims)) {
             throw coding_expection('You did not send me the number of assessment dimensions to process');
         }
-
-        foreach ($this->_cook_assessment_form_data($assessment, $data) as $cooked) {
-            $cooked->id = $DB->get_field('workshop_grades', 'id', array('assessmentid' => $cooked->assessmentid,
-                                                                        'strategy' => 'accumulative',
-                                                                        'dimensionid' => $cooked->dimensionid));
-            if (false === $cooked->id) {
-                // not found - new grade
-                $cooked->id = $DB->insert_record('workshop_grades', $cooked);
+        for ($i = 0; $i < $data->nodims; $i++) {
+            $grade = new stdClass();
+            $grade->id = $data->{'gradeid__idx_' . $i};
+            $grade->assessmentid = $assessment->id;
+            $grade->dimensionid = $data->{'dimensionid__idx_' . $i};
+            $grade->grade = $data->{'grade__idx_' . $i};
+            $grade->peercomment = $data->{'peercomment__idx_' . $i};
+            $grade->peercommentformat = FORMAT_HTML;
+            if (empty($grade->id)) {
+                // new grade
+                $grade->id = $DB->insert_record('workshop_grades', $grade);
             } else {
-                 // update existing grade
-                $DB->update_record('workshop_grades', $cooked);
+                // updated grade
+                $DB->update_record('workshop_grades', $grade);
             }
         }
-        // todo recalculate grades
-    }
-
-    /**
-     * Prepares data returned by {@link workshop_accumulative_assessment_form} so they can be saved into database
-     *
-     * Called internally from {@link save_assessment()} only. Could be private but
-     * keeping protected for unit testing purposes.
-     *
-     * @param object $raw Raw data returned by mform
-     * @return array Array of objects to be inserted/updated in DB
-     */
-    protected function _cook_assessment_form_data(stdClass $assessment, stdClass $raw) {
-        $raw = (array)$raw;
-        $cooked = array();
-        for ($i = 0; $i < $raw['nodims']; $i++) {
-            $grade = new stdClass();
-            $grade->assessmentid = $assessment->id;
-            $grade->strategy = $raw['strategyname'];
-            $grade->dimensionid = $raw['dimensionid__idx_' . $i];
-            $grade->grade = $raw['grade__idx_' . $i];
-            $grade->peercomment = $raw['peercomment__idx_' . $i];
-            $grade->peercommentformat = FORMAT_HTML;
-            $cooked[$i] = $grade;
-        }
-        return $cooked;
+        // todo recalculate grades immediately or by cron ?
     }
 
 }

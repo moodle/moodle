@@ -42,8 +42,9 @@ class workshop_accumulative_assessment_form extends workshop_assessment_form {
      * @return void
      */
     protected function definition_inner(&$mform) {
-        $fields = (array)$this->_customdata['fields'];
-        $nodims = $this->_customdata['nodims'];     // number of assessment dimensions
+        $fields     = $this->_customdata['fields'];
+        $current    = $this->_customdata['current'];
+        $nodims     = $this->_customdata['nodims'];     // number of assessment dimensions
 
         $mform->addElement('hidden', 'nodims', $nodims);
 
@@ -53,17 +54,20 @@ class workshop_accumulative_assessment_form extends workshop_assessment_form {
             $mform->addElement('header', "dimensionhdr__idx_$i", $dimtitle);
 
             // dimension id
-            $mform->addElement('hidden', 'dimensionid__idx_'.$i, $fields['dimensionid__idx_'.$i]);
+            $mform->addElement('hidden', 'dimensionid__idx_'.$i, $fields->{'dimensionid__idx_'.$i});
+
+            // grade id
+            $mform->addElement('hidden', 'gradeid__idx_'.$i);   // value set by set_data() later
 
             // dimension description
-            $desc = '<div id="id_dim_'.$fields['dimensionid__idx_'.$i].'_desc" class="fitem description accumulative">'."\n";
-            $desc .= format_text($fields['description__idx_'.$i], $fields['description__idx_'.$i.'format']);
+            $desc = '<div id="id_dim_'.$fields->{'dimensionid__idx_'.$i}.'_desc" class="fitem description accumulative">'."\n";
+            $desc .= format_text($fields->{'description__idx_'.$i}, $fields->{'description__idx_'.$i.'format'});
             $desc .= "\n</div>";
             $mform->addElement('html', $desc);
 
             // grade for this aspect
             $label = get_string('dimensiongrade', 'workshop');
-            $options = make_grades_menu($fields['grade__idx_' . $i]);
+            $options = make_grades_menu($fields->{'grade__idx_' . $i});
             $mform->addElement('select', 'grade__idx_' . $i, $label, $options);
 
             // comment
@@ -71,7 +75,6 @@ class workshop_accumulative_assessment_form extends workshop_assessment_form {
             //$mform->addElement('editor', 'peercomment__idx_' . $i, $label, null, array('maxfiles' => 0));
             $mform->addElement('textarea', 'peercomment__idx_' . $i, $label, array('cols' => 60, 'rows' => 5));
         }
-
+        $this->set_data($current);
     }
-
 }

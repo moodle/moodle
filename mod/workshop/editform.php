@@ -37,6 +37,9 @@ require_capability('mod/workshop:editdimensions', $PAGE->context);
 $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
 $workshop   = new workshop($workshop, $cm, $course);
 
+// todo: check if there already is some assessment done and do not allowed the change of the form
+// once somebody already used it to assess
+
 $PAGE->set_url($workshop->editform_url());
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);

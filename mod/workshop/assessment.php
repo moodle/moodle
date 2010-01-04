@@ -63,6 +63,7 @@ if ('preview' == $mode) {
     if (!has_any_capability(array('mod/workshop:peerassess', 'mod/workshop:assessallsubmissions'), $PAGE->context)) {
         print_error('nopermissions', '', $workshop->view_url());
     }
+    // todo do a check that the user is allowed to assess this submission
     $PAGE->set_url($workshop->assess_url($assessment->id));
     $PAGE->set_title($workshop->name);
     $PAGE->set_heading($course->fullname);
@@ -71,17 +72,11 @@ if ('preview' == $mode) {
 // load the grading strategy logic
 $strategy = $workshop->grading_strategy_instance();
 
-// load the assessment form definition from the database
-// this must be called before get_assessment_form() where we have to know
-// the number of repeating fieldsets
-
-//todo $formdata = $strategy->load_assessment($assessment);
-
 // load the form to edit the grading strategy dimensions
-$mform = $strategy->get_assessment_form($PAGE->url, $mode);
+$mform = $strategy->get_assessment_form($PAGE->url, $mode, $assessment);
 
 if ($mform->is_cancelled()) {
-    redirect($returnurl);
+    redirect($workshop->view_url());
 
 } elseif ($data = $mform->get_data()) {
     if (isset($data->backtoeditform)) {
