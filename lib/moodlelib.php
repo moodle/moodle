@@ -5071,8 +5071,7 @@ function email_welcome_message_to_user($course, $user=NULL) {
 /**
  * Returns local file storage instance
  *
- * @global object
- * @return object file_storage
+ * @return file_storage
  */
 function get_file_storage() {
     global $CFG;
@@ -5105,8 +5104,7 @@ function get_file_storage() {
 /**
  * Returns local file storage instance
  *
- * @global object
- * @return object file_storage
+ * @return file_browser
  */
 function get_file_browser() {
     global $CFG;
@@ -5127,9 +5125,8 @@ function get_file_browser() {
 /**
  * Returns file packer
  *
- * @global object
  * @param string $mimetype default application/zip
- * @return object file_storage
+ * @return file_packer
  */
 function get_file_packer($mimetype='application/zip') {
     global $CFG;
