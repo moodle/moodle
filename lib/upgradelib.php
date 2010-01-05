@@ -492,6 +492,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             message_update_providers($component);
 
+            theme_reset_all_caches();
             $endcallback($component, true, $verbose);
 
         } else if ($currmodule->version < $module->version) {
@@ -518,6 +519,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             message_update_providers($component);
 
+            theme_reset_all_caches();
             remove_dir($CFG->dataroot.'/cache', true); // flush cache
 
             $endcallback($component, false, $verbose);
@@ -642,6 +644,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             message_update_providers($component);
 
+            theme_reset_all_caches();
             $endcallback($component, true, $verbose);
 
         } else if ($currblock->version < $block->version) {
@@ -673,6 +676,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             message_update_providers($component);
 
+            theme_reset_all_caches();
             $endcallback($component, false, $verbose);
 
         } else if ($currblock->version > $block->version) {
