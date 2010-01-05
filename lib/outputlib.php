@@ -642,19 +642,7 @@ class theme_config {
 
         // legacy YUI2 stylesheets, YUI3 stylesheets are loaded on the fly
         $yui2_sheets = "\n\n/*** Standard YUI2 sheets ***/\n\n";
-        $items = new DirectoryIterator("$CFG->libdir/yui/$CFG->yui2version/build/assets/skins/sam");
-        foreach ($items as $item) {
-            if ($item->isDot() or !$item->isFile()) {
-                continue;
-            }
-            $filename = $item->getFilename();
-            if (substr($filename, -4) !== '.css') {
-                continue;
-            }
-            $yui2_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui2version/build/assets/skins/sam/$filename");
-        }
-        unset($item);
-        unset($items);
+        $yui2_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui2version/build/assets/skins/sam/skin.css");
 
         // search for all images in yui2 CSS and serve them through the yui_image.php script
         $css['yui2'][] = preg_replace('/([a-z-]+)\.(png|gif)/', 'yui_image.php?file='.$CFG->yui2version.'/$1.$2', $yui2_sheets);
