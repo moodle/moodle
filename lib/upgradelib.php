@@ -367,6 +367,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             message_update_providers($component);
 
+            theme_reset_all_caches();
             $endcallback($component, true, $verbose);
 
         } else if ($installedversion < $plugin->version) { // upgrade
@@ -394,6 +395,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             message_update_providers($component);
 
+            theme_reset_all_caches();
             $endcallback($component, false, $verbose);
 
         } else if ($installedversion > $plugin->version) {
@@ -1224,6 +1226,7 @@ function upgrade_core($version, $verbose) {
         events_update_definition('moodle');
         message_update_providers('moodle');
 
+        theme_reset_all_caches();
         remove_dir($CFG->dataroot . '/cache', true); // flush cache
 
         print_upgrade_part_end('moodle', false, $verbose);
