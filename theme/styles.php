@@ -82,9 +82,11 @@ if ($type === 'editor') {
         $sheet = '';
         foreach($value as $val) {
             if (is_array($val)) {
-                $sheet .= "\n\n".implode("\n\n", $val);
+                foreach ($val as $k=>$v) {
+                    $sheet .= compress_css($v)."\n";
+                }
             } else {
-                $sheet .= "\n\n".$val;
+                $sheet .= compress_css($val)."\n";
             }
         }
         $css[$key] = $sheet;
@@ -129,9 +131,7 @@ EOF;
     header('Pragma: ');
     header('Accept-Ranges: none');
     header('Content-Type: text/css');
-    if (!min_enable_zlib_compression()) {
-        header('Content-Length: '.strlen($css));
-    }
+    header('Content-Length: '.strlen($css));
 
     echo $css;
     die;
@@ -152,4 +152,23 @@ function send_cached_css($csspath, $rev) {
 
     readfile($csspath);
     die;
+}
+
+function compress_css($css) {
+    // remove comments - credit for this regex goes to "reinhold weber"
+    $css = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $css);
+
+    // replace newlines, tabs, etc.
+    $css = str_replace(array("\r\n", "\r", "\n", "\t"), ' ', $css);
+
+    // replace repeated spaces
+    $css = preg_replace('/ +/', ' ', $css);
+
+    // fix whitespace around separators
+    $css = preg_replace('/ ([;,:\{\}])/', '$1', $css);
+    $css = preg_replace('/([;,:\{\}]) /', '$1', $css);
+
+    $css = str_replace('url (', 'url(', $css);
+
+    return $css;
 }
