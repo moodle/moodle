@@ -50,6 +50,18 @@ $CFG->yui3version = '3.0.0';
 // special support for highly optimised scripts that do not need libraries and DB connection
 if (defined('ABORT_AFTER_CONFIG')) {
     if (!defined('ABORT_AFTER_CONFIG_CANCEL')) {
+        // hide debugging if not enabled in config.php - we do not want to disclose sensitive info
+        if (isset($CFG->debug)) {
+            error_reporting($CFG->debug);
+        } else {
+            error_reporting(0);
+        }
+        if (empty($CFG->debugdisplay)) {
+            @ini_set('display_errors', '0');
+            @ini_set('log_errors', '1');
+        } else {
+            @ini_set('display_errors', '1');
+        }
         require_once("$CFG->dirroot/lib/configonlylib.php");
         return;
     }
