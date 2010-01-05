@@ -390,7 +390,7 @@ class core_renderer extends renderer_base {
 
         // Get the theme stylesheet - this has to be always first CSS, this loads also styles.css from all plugins;
         // any other custom CSS can not be overridden via themes and is highly discouraged
-        $urls = $this->page->theme->css_urls();
+        $urls = $this->page->theme->css_urls($this->page);
         foreach ($urls as $url) {
             $this->page->requires->css($url->out(), true);
         }

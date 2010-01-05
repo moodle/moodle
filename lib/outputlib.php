@@ -574,17 +574,20 @@ class theme_config {
      * @param bool $encoded false means use & and true use &amp; in URLs
      * @return array of moodle_url
      */
-    public function css_urls() {
+    public function css_urls(moodle_page $page) {
         global $CFG;
 
         $rev = theme_get_revision();
+
+        $urls = array();
+        //TODO: MDL-21242 add here link to full YUI2 skin.css - get the url from the $page->requires instance
 
         if ($rev > -1) {
             $params = array('theme'=>$this->name,'rev'=>$rev);
             if (check_browser_version('MSIE', 5) and !check_browser_version('MSIE', 8)) {
                 $params['type'] = 'ie';
             }
-            return array(new moodle_url($CFG->httpswwwroot.'/theme/styles.php', $params));
+            $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles.php', $params);
 
         } else {
             // find out the current CSS and cache it now for 5 seconds
@@ -627,8 +630,9 @@ class theme_config {
             foreach ($css['theme'] as $sheet=>$unused) {
                 $urls[] = new moodle_url($url, array('sheet'=>$sheet, 'theme'=>$this->name, 'type'=>'theme')); // sheet first in order to make long urls easier to read
             }
-            return $urls;
         }
+
+        return $urls;
     }
 
     /**
@@ -643,6 +647,7 @@ class theme_config {
         // legacy YUI2 stylesheets, YUI3 stylesheets are loaded on the fly
         $yui2_sheets = "\n\n/*** Standard YUI2 sheets ***/\n\n";
         $yui2_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui2version/build/assets/skins/sam/skin.css");
+        //TODO: MDL-21242 move this YUI2 CSS hack to css_urls(), the page requirements manager should return the correct yui_combo.php?2.x.x/build/skinks/sam/skin.css
 
         // search for all images in yui2 CSS and serve them through the yui_image.php script
         $css['yui2'][] = preg_replace('/([a-z-]+)\.(png|gif)/', 'yui_image.php?file='.$CFG->yui2version.'/$1.$2', $yui2_sheets);
