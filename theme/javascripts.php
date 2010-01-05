@@ -30,6 +30,14 @@ require('../config.php'); // this stops immediately at the beginning of lib/setu
 
 $themename = min_optional_param('theme', 'standard', 'SAFEDIR');
 $rev       = min_optional_param('rev', 0, 'INT');
+$type      = min_optional_param('type', 'header', 'RAW');
+
+if ($type !== 'header' and $type !== 'footer') {
+    header('HTTP/1.0 404 not found');
+    die('Theme was not found, sorry.');
+}
+
+$footer = ($type === 'footer');
 
 if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
     // exists
@@ -40,7 +48,7 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
     die('Theme was not found, sorry.');
 }
 
-$candidate = "$CFG->dataroot/cache/theme/$themename/javascript.js";
+$candidate = "$CFG->dataroot/cache/theme/$themename/javascript_$type.js";
 
 if ($rev > -1 and file_exists($candidate)) {
     if (!empty($_SERVER['HTTP_IF_NONE_MATCH'])) {
@@ -63,7 +71,7 @@ require("$CFG->dirroot/lib/setup.php");
 
 $theme = theme_config::load($themename);
 
-$js = $theme->javascript_content();
+$js = $theme->javascript_content($footer);
 if ($rev > -1) {
     check_dir_exists(dirname($candidate), true, true);
     $fp = fopen($candidate, 'w');

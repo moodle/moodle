@@ -148,12 +148,20 @@ class theme_config {
 
     /**
      * The names of all the javascript files this theme that you would
-     * like included, in order. Give the names of the files without .js.
+     * like included from head, in order. Give the names of the files without .js.
      *
      * @var array
      */
     public $javascripts = array();
 
+    /**
+     * The names of all the javascript files this theme that you would
+     * like included from footer, in order. Give the names of the files without .js.
+     *
+     * @var array
+     */
+    public $javascripts_footer = array();
+    
     /**
      * The names of all the javascript files from parents that should be expcluded.
      * true value may be used to specify all parents or all themes from one parent.
@@ -731,23 +739,29 @@ class theme_config {
 
     /**
      * Get the javascript URL of this theme
-     * @param bool $encoded false means use & and true use &amp; in URLs
+     * @param bool $footer true measn footer url, false means head
      * @return moodle_url
      */
-    public function javascript_url() {
+    public function javascript_url($footer=false) {
         global $CFG;
 
         $rev = theme_get_revision();
 
         $params = array('theme'=>$this->name,'rev'=>$rev);
+        if ($footer) {
+            $params['type'] = 'footer';
+        }
         return new moodle_url($CFG->httpswwwroot.'/theme/javascripts.php', $params);
     }
 
     /**
      * Returns the content of the one huge javascript file merged from all theme javascript files.
+     * @param bool $footer true measn footer url, false means head
      * @return string
      */
-    public function javascript_content() {
+    public function javascript_content($footer=false) {
+        $type = $footer ? 'javascripts_footer' : 'javascripts';
+
         $js = array();
         // find out wanted parent javascripts
         $excludes = null;
@@ -767,13 +781,13 @@ class theme_config {
         if ($excludes !== true) {
             foreach (array_reverse($this->parent_configs) as $parent_config) { // base first, the immediate parent last
                 $parent = $parent_config->name;
-                if (empty($parent_config->javascripts)) {
+                if (empty($parent_config->$type)) {
                     continue;
                 }
                 if (!empty($excludes[$parent]) and $excludes[$parent] === true) {
                     continue;
                 }
-                foreach ($parent_config->javascripts as $javascript) {
+                foreach ($parent_config->$type as $javascript) {
                     if (!empty($excludes[$parent]) and is_array($excludes[$parent])
                         and in_array($javascript, $excludes[$parent])) {
                         continue;
@@ -787,8 +801,8 @@ class theme_config {
         }
 
         // current theme javascripts
-        if (is_array($this->javascripts)) {
-            foreach ($this->javascripts as $javascript) {
+        if (is_array($this->$type)) {
+            foreach ($this->$type as $javascript) {
                 $javascriptfile = "$this->dir/javascript/$javascript.js";
                 if (is_readable($javascriptfile)) {
                     $js[] = "/*** This theme $this->name/javascript/$javascript.js ***/\n\n" . file_get_contents($javascriptfile);
