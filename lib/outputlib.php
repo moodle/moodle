@@ -800,6 +800,8 @@ class theme_config {
     }
 
     protected function post_process($css) {
+        global $CFG;
+
         // now resolve all image locations
         if (preg_match_all('/\[\[pix:([a-z_]+\|)?([^\]]+)\]\]/', $css, $matches, PREG_SET_ORDER)) {
             $replaced = array();
@@ -810,7 +812,10 @@ class theme_config {
                 $replaced[$match[0]] = true;
                 $imagename = $match[2];
                 $component = rtrim($match[1], '|');
-                $css = str_replace($match[0], $this->pix_url($imagename, $component)->out(false, array(), false), $css);
+                $imageurl = $this->pix_url($imagename, $component)->out_raw();
+                 // we do not need full url because the image.php is always in the same dir
+                $imageurl = str_replace("$CFG->httpswwwroot/theme/", '', $imageurl);
+                $css = str_replace($match[0], $imageurl, $css);
             }
         }
 
