@@ -368,8 +368,7 @@ class core_renderer extends renderer_base {
             $output .= '<meta http-equiv="refresh" content="'.$this->page->periodicrefreshdelay.';url='.$this->page->url->out().'" />';
         }
 
-        $this->page->requires->js('lib/javascript-static.js')->in_head();
-        $this->page->requires->js('lib/javascript-deprecated.js')->in_head();
+        $this->page->requires->js('lib/javascript-static.js')->in_head(); // contains deprecated stuff too, do not add extre file for that for perf reasons!
         $this->page->requires->js_function_call('setTimeout', array('fix_column_widths()', 20));
 
         $focus = $this->page->focuscontrol;
