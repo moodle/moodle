@@ -118,7 +118,7 @@ class page_requirements_manager {
      * @param moodle_page $page
      * @param core_renderer $output
      */
-    function setup_core_javascript(moodle_page $page, core_renderer $output) {
+    protected function setup_core_javascript(moodle_page $page, core_renderer $output) {
         global $CFG;
 
         // JavaScript should always work with $CFG->httpswwwroot rather than $CFG->wwwroot.
@@ -498,6 +498,9 @@ class page_requirements_manager {
      * Returns basic YUI3 JS loading code.
      * YUI3 is using autoloading of both CSS and JS code.
      *
+     * Major benefit of this compared to standard js/csss loader is much improved
+     * caching, better browser cache utilisation, much fewer http requests.
+     *
      * @return string
      */
     protected function get_yui3lib_headcode() {
@@ -511,15 +514,30 @@ class page_requirements_manager {
     /**
      * Returns basic YUI2 JS loading code.
      * It can be called manually at any time.
+     * If called manually the result needs to be output using echo().
+     *
+     * Major benefit of this compared to standard js loader is much improved
+     * caching, better browser cache utilisation, much fewer http requests.
+     *
+     * All YUI2 CSS is loaded automatically.
      *
      * @return string JS embedding code
      */
     public function get_yui2lib_code() {
-        // All YUI2 CSS is loaded automatically
+        global $CFG;
+
         if ($this->headdone) {
             $code = $this->yui2loader->script_embed();
         } else {
             $code = $this->yui2loader->script();
+            if ($this->yui2loader->combine) {
+                $skinurl = $this->yui2loader->comboBase . $CFG->yui2version . '/build/assets/skins/sam/skin.css';
+            } else {
+                $skinurl = $this->yui2loader->base . 'assets/skins/sam/skin.css';
+            }
+            // please note this is a temporary hack until we fully migrate to later YUI3 that has all the widgets
+            // we can not use moodle_url because the url fomrat for combo loader is "a bit" non-standard
+            $code .= "\n".'<link rel="stylesheet" type="text/css" href="'.$skinurl.'" />'."\n";
         }
         $code = str_replace('&amp;', '&', $code);
         $code = str_replace('&', '&amp;', $code);

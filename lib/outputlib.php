@@ -580,7 +580,6 @@ class theme_config {
         $rev = theme_get_revision();
 
         $urls = array();
-        //TODO: MDL-21242 add here link to full YUI2 skin.css - get the url from the $page->requires instance
 
         if ($rev > -1) {
             $params = array('theme'=>$this->name,'rev'=>$rev);
@@ -616,19 +615,17 @@ class theme_config {
                 file_put_contents($candidatesheet, serialize($css));
             }
 
-            $url = $CFG->httpswwwroot.'/theme/styles_debug.php';
-            $urls = array();
-            $urls[] = new moodle_url($url, array('theme'=>$this->name,'type'=>'yui2'));
+            $baseurl = $CFG->httpswwwroot.'/theme/styles_debug.php';
             foreach ($css['plugins'] as $plugin=>$unused) {
-                $urls[] = new moodle_url($url, array('theme'=>$this->name,'type'=>'plugin', 'subtype'=>$plugin));
+                $urls[] = new moodle_url($baseurl, array('theme'=>$this->name,'type'=>'plugin', 'subtype'=>$plugin));
             }
             foreach ($css['parents'] as $parent=>$sheets) {
                 foreach ($sheets as $sheet=>$unused2) {
-                    $urls[] = new moodle_url($url, array('theme'=>$this->name,'type'=>'parent', 'subtype'=>$parent, 'sheet'=>$sheet));
+                    $urls[] = new moodle_url($$baseurl, array('theme'=>$this->name,'type'=>'parent', 'subtype'=>$parent, 'sheet'=>$sheet));
                 }
             }
             foreach ($css['theme'] as $sheet=>$unused) {
-                $urls[] = new moodle_url($url, array('sheet'=>$sheet, 'theme'=>$this->name, 'type'=>'theme')); // sheet first in order to make long urls easier to read
+                $urls[] = new moodle_url($baseurl, array('sheet'=>$sheet, 'theme'=>$this->name, 'type'=>'theme')); // sheet first in order to make long urls easier to read
             }
         }
 
@@ -642,15 +639,7 @@ class theme_config {
     public function css_content() {
         global $CFG;
 
-        $css = array('yui2'=>array(), 'plugins'=>array(), 'parents'=>array(), 'theme'=>array());
-
-        // legacy YUI2 stylesheets, YUI3 stylesheets are loaded on the fly
-        $yui2_sheets = "\n\n/*** Standard YUI2 sheets ***/\n\n";
-        $yui2_sheets .= file_get_contents("$CFG->libdir/yui/$CFG->yui2version/build/assets/skins/sam/skin.css");
-        //TODO: MDL-21242 move this YUI2 CSS hack to css_urls(), the page requirements manager should return the correct yui_combo.php?2.x.x/build/skinks/sam/skin.css
-
-        // search for all images in yui2 CSS and serve them through the yui_image.php script
-        $css['yui2'][] = preg_replace('/([a-z-]+)\.(png|gif)/', 'yui_image.php?file='.$CFG->yui2version.'/$1.$2', $yui2_sheets);
+        $css = array('plugins'=>array(), 'parents'=>array(), 'theme'=>array());
 
         // get all plugin sheets
         $excludes = null;

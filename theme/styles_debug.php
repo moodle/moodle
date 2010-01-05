@@ -56,10 +56,7 @@ if (!$css = file_get_contents($candidatesheet)) {
 
 $css = unserialize($css);
 
-if ($type === 'yui2') {
-    send_uncached_css(reset($css['yui2']));
-
-} else if ($type === 'plugin') {
+if ($type === 'plugin') {
     if (isset($css['plugins'][$subtype])) {
         send_uncached_css($css['plugins'][$subtype]);
     }
