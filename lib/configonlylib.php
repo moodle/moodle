@@ -72,3 +72,39 @@ function min_clean_param($value, $type) {
 
     return $value;
 }
+
+/**
+ * This method tries to enable output compression if possible.
+ * This function must be called before any output or headers.
+ *
+ * (IE6 is not supported at all.)
+ *
+ * @return boolean, true if compression enabled
+ */
+function min_enable_zlib_compression() {
+    
+    if (headers_sent()) {
+        return false;
+    }
+
+    // zlib.output_compression is preferred over ob_gzhandler()
+    if (!empty($_SERVER['HTTP_USER_AGENT'])) {
+        $agent = $_SERVER['HTTP_USER_AGENT'];
+        // try to detect IE6 and prevent gzip because it is extremely buggy browser
+        $parts = explode(';', $agent);
+        if (isset($parts[1])) {
+            $parts = explode(' ', trim($parts[1]));
+            if (count($parts) > 1) {
+                if ($parts[0] === 'MSIE' and (float)$string[1] < 7) {
+                    @ini_set('zlib.output_compression', '0');
+                    return false;
+                }
+            }
+        }
+    }
+
+    @ini_set('output_handler', '');
+    @ini_set('zlib.output_compression', 'on');
+
+    return true;
+}

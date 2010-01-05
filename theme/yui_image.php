@@ -75,7 +75,8 @@ function yui_image_cached($imagepath) {
     header('Content-Type: '.$mimetype);
     header('Content-Length: '.filesize($imagepath));
 
-    while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
+    // no need to gzip already compressed images ;-)
+
     readfile($imagepath);
     die;
 }

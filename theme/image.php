@@ -144,7 +144,8 @@ function send_cached_image($imagepath, $rev) {
     header('Content-Type: '.$mimetype);
     header('Content-Length: '.filesize($imagepath));
 
-    while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
+    // no need to gzip already compressed images ;-)
+
     readfile($imagepath);
     die;
 }
@@ -170,7 +171,6 @@ function send_uncached_image($imagepath) {
     header('Content-Type: '.$mimetype);
     header('Content-Length: '.filesize($imagepath));
 
-    while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
     readfile($imagepath);
     die;
 }

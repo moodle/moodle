@@ -89,9 +89,10 @@ function send_cached_js($jspath) {
     header('Pragma: ');
     header('Accept-Ranges: none');
     header('Content-Type: application/x-javascript');
-    header('Content-Length: '.filesize($jspath));
+    if (!min_enable_zlib_compression()) {
+        header('Content-Length: '.filesize($jspath));
+    }
 
-    while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
     readfile($jspath);
     die;
 }
@@ -105,7 +106,6 @@ function send_uncached_js($js) {
     header('Content-Type: application/x-javascript');
     header('Content-Length: '.strlen($js));
 
-    while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
     echo $js;
     die;
 }

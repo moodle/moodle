@@ -44,6 +44,8 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
     css_not_found();
 }
 
+// no gzip compression when debugging
+
 $candidatesheet = "$CFG->dataroot/cache/theme/$themename/designer.ser";
 
 if (!file_exists($candidatesheet)) {
@@ -85,9 +87,8 @@ function send_uncached_css($css, $lifetime = THEME_DESIGNER_CACHE_LIFETIME) {
     header('Pragma: ');
     header('Accept-Ranges: none');
     header('Content-Type: text/css');
-    header('Content-Length: '.strlen($css));
+    //header('Content-Length: '.strlen($css));
 
-    while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
     echo($css);
     die;
 }

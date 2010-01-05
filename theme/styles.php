@@ -129,9 +129,10 @@ EOF;
     header('Pragma: ');
     header('Accept-Ranges: none');
     header('Content-Type: text/css');
-    header('Content-Length: '.strlen($css));
+    if (!min_enable_zlib_compression()) {
+        header('Content-Length: '.strlen($css));
+    }
 
-    while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
     echo $css;
     die;
 }
@@ -145,9 +146,10 @@ function send_cached_css($csspath, $rev) {
     header('Pragma: ');
     header('Accept-Ranges: none');
     header('Content-Type: text/css');
-    header('Content-Length: '.filesize($csspath));
+    if (!min_enable_zlib_compression()) {
+        header('Content-Length: '.filesize($csspath));
+    }
 
-    while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
     readfile($csspath);
     die;
 }

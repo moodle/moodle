@@ -92,9 +92,10 @@ function combo_send_cached($content, $mimetype) {
     header('Cache-Control: max-age=315360000');
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
-    header('Content-Length: '.strlen($content));
+    if (!min_enable_zlib_compression()) {
+        header('Content-Length: '.strlen($content));
+    }
 
-    while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
     echo $content;
     die;
 }
