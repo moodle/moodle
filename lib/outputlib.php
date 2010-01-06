@@ -629,7 +629,7 @@ class theme_config {
             }
             foreach ($css['parents'] as $parent=>$sheets) {
                 foreach ($sheets as $sheet=>$unused2) {
-                    $urls[] = new moodle_url($$baseurl, array('theme'=>$this->name,'type'=>'parent', 'subtype'=>$parent, 'sheet'=>$sheet));
+                    $urls[] = new moodle_url($baseurl, array('theme'=>$this->name,'type'=>'parent', 'subtype'=>$parent, 'sheet'=>$sheet));
                 }
             }
             foreach ($css['theme'] as $sheet=>$unused) {
