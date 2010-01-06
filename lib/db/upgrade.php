@@ -2835,6 +2835,28 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009112400);
     }
 
+    if ($result && $oldversion < 2010010601) {
+
+    /// Define field creatorid to be added to external_tokens
+        $table = new xmldb_table('external_tokens');
+        $field = new xmldb_field('creatorid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'contextid');
+
+    /// Conditionally launch add field creatorid
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define key creatorid (foreign) to be added to external_tokens
+        $table = new xmldb_table('external_tokens');
+        $key = new xmldb_key('creatorid', XMLDB_KEY_FOREIGN, array('creatorid'), 'user', array('id'));
+
+    /// Launch add key creatorid
+        $dbman->add_key($table, $key);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2010010601);
+    }
+
     return $result;
 }
 

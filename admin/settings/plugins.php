@@ -236,7 +236,7 @@ if ($hassiteconfig) {
     }
 }
 
-    // Web services
+/// Web services
     $ADMIN->add('modules', new admin_category('webservicesettings', get_string('webservices', 'webservice')));
     $temp = new admin_settingpage('externalservices', get_string('externalservices', 'webservice'));
     $temp->add(new admin_setting_manageexternalservices());
@@ -244,6 +244,7 @@ if ($hassiteconfig) {
     $ADMIN->add('webservicesettings', new admin_externalpage('externalservice', get_string('externalservice', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/service.php", 'moodle/site:config', true));
     $ADMIN->add('webservicesettings', new admin_externalpage('externalservicefunctions', get_string('externalservicefunctions', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/service_functions.php", 'moodle/site:config', true));
     $ADMIN->add('webservicesettings', new admin_externalpage('externalserviceusers', get_string('externalserviceusers', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/service_users.php", 'moodle/site:config', true));
+    /// manage protocol page link
     $temp = new admin_settingpage('webserviceprotocols', get_string('manageprotocols', 'webservice'));
     $temp->add(new admin_setting_managewebserviceprotocols());
     if (empty($CFG->enablewebservices)) {
@@ -251,6 +252,7 @@ if ($hassiteconfig) {
     }
     $temp->add(new admin_setting_configcheckbox('enablewsdocumentation', get_string('enablewsdocumentation', 'admin'), get_string('configenablewsdocumentation', 'admin'), false));
     $ADMIN->add('webservicesettings', $temp);
+    /// links to protocol pages
     $webservices_available = get_plugin_list('webservice');
     $active_webservices = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
     foreach ($webservices_available as $webservice => $location) {
@@ -263,6 +265,14 @@ if ($hassiteconfig) {
             $ADMIN->add('webservicesettings', $settings);
         }
     }
+    /// manage token page link
+    $temp = new admin_settingpage('webservicetokens', get_string('managetokens', 'webservice'));
+    $temp->add(new admin_setting_managewebservicetokens());
+    if (empty($CFG->enablewebservices)) {
+        $temp->add(new admin_setting_heading('webservicesaredisabled', '', get_string('disabledwarning', 'webservice')));
+    }
+    $ADMIN->add('webservicesettings', $temp);
+    
 
 if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) {
     // Question type settings.

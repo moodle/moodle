@@ -6414,3 +6414,113 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
         return highlight($query, $return);
     }
 }
+
+
+/**
+ * Special class for web service token administration.
+ *
+ * @author Jerome Mouneyrac
+ */
+class admin_setting_managewebservicetokens extends admin_setting {
+
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        parent::__construct('webservicestokenui', get_string('managetokens', 'webservice'), '', '');
+    }
+
+    /**
+     * Always returns true, does nothing
+     *
+     * @return true
+     */
+    public function get_setting() {
+        return true;
+    }
+
+    /**
+     * Always returns true, does nothing
+     *
+     * @return true
+     */
+    public function get_defaultsetting() {
+        return true;
+    }
+
+    /**
+     * Always returns '', does not write anything
+     *
+     * @return string Always returns ''
+     */
+    public function write_setting($data) {
+    // do not write any setting
+        return '';
+    }
+
+    /**
+     * Builds the XHTML to display the control
+     *
+     * @param string $data Unused
+     * @param string $query
+     * @return string
+     */
+    public function output_html($data, $query='') {
+        global $CFG, $OUTPUT, $DB, $USER;
+
+        // display strings
+        $stroperation = get_string('operation', 'webservice');
+        $strtoken = get_string('token', 'webservice');
+        $strservice = get_string('service', 'webservice');
+        $struser = get_string('user');
+        $strcontext = get_string('context', 'webservice');
+
+      
+
+
+        $return = $OUTPUT->heading(get_string('webservicetokens', 'webservice'), 3, 'main', true);
+        $return .= $OUTPUT->box_start('generalbox webservicestokenui');
+
+        $table = new html_table();
+        $table->head  = array($strtoken, $struser, $strservice, $strcontext, $stroperation);
+        $table->align = array('left', 'left', 'left', 'left', 'center');
+        $table->width = '100%';
+        $table->data  = array();
+
+        $tokenpageurl = "$CFG->wwwroot/$CFG->admin/webservice/tokens.php?sesskey=" . sesskey();
+
+        //TODO: in order to let the administrator delete obsolete token, split this request in multiple request
+
+        //here retrieve token list (including linked users firstname/lastname and linked services name)
+        $sql = "SELECT
+                    token.id, token.token, user.firstname, user.lastname, service.name
+                FROM
+                    {external_tokens} token, {user} user, {external_services} service
+                WHERE
+                    token.creatorid=? AND service.id = token.externalserviceid AND token.userid = user.id";
+        $tokens = $DB->get_records_sql($sql, array( $USER->id));
+        if (!empty($tokens)) {
+            foreach ($tokens as $token) {
+                //TODO: retrieve context
+
+                $delete = "<a href=\"".$tokenpageurl."&amp;action=delete&amp;tokenid=".$token->id."\">";
+                $delete .= get_string('delete')."</a>";
+
+
+                $table->data[] = array($token->token, $token->firstname." ".$token->lastname, $token->name, '', $delete);
+            }
+
+            $return .= $OUTPUT->table($table);
+            $return .= get_string('httpswarning', 'webservice');
+        } else {
+            $return .= get_string('notoken', 'webservice');
+        }
+
+        $return .= $OUTPUT->box_end();
+        // add a token to the table
+        $return .= "<a href=\"".$tokenpageurl."&amp;action=create\">";
+        $return .= get_string('add')."</a>";
+
+        return highlight($query, $return);
+    }
+}
