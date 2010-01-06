@@ -42,6 +42,10 @@ class user_editadvanced_form extends moodleform {
         $mform->setHelpButton('auth', array('authchange', get_string('chooseauthmethod','auth')));
         $mform->setAdvanced('auth');
 
+        if(!empty($CFG->passwordpolicy)){
+            $passwordpolicy = print_password_policy();
+            $mform->addElement('html', '<div class="fitem">'.$passwordpolicy . '</div>');
+        }
         $mform->addElement('passwordunmask', 'newpassword', get_string('newpassword'), 'size="20"');
         $mform->setHelpButton('newpassword',array('newpassword', get_string('leavetokeep')));
         $mform->setType('newpassword', PARAM_RAW);

@@ -87,6 +87,12 @@ $string['getanothercaptcha'] = 'Get another CAPTCHA';
 $string['getanaudiocaptcha'] = 'Get an audio CAPTCHA';
 $string['getanimagecaptcha'] = 'Get an image CAPTCHA';
 $string['recaptcha'] = 'reCAPTCHA';
+$string['informminpasswordlength'] = 'at least $a characters';
+$string['informminpassworddigits'] = 'at least $a digit(s)';
+$string['informminpasswordlower'] = 'at least $a lower case letter(s)';
+$string['informminpasswordnonalphanum'] = 'at least $a non-alphanumeric character(s)';
+$string['informminpasswordupper'] = 'at least $a upper case letter(s)';
+$string['informpasswordpolicy'] = 'The password must have $a';
 
 // Strings below here are module specific and will be duplicated in auth_* files
 // Module specific language strings should also be copied into their respective
