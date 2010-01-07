@@ -31,7 +31,7 @@
     if ($id !== SITEID) {
         $url->param('id', $id);
     }
-    $PAGE->set_url($id);
+    $PAGE->set_url($url);
 
     if (!confirm_sesskey()) {
         print_error('confirmsesskeybad');

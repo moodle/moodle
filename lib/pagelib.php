@@ -813,7 +813,7 @@ class moodle_page {
      * For example, course/view.php does:
      *      $id = optional_param('id', 0, PARAM_INT);
      *      $PAGE->set_url('course/view.php', array('id' => $id));
-     * @param mixed $url moodle_url|string URL relative to $CFG->wwwroot or {@link moodle_url} instance
+     * @param moodle_url|string $url URL relative to $CFG->wwwroot or {@link moodle_url} instance
      * @param array $params paramters to add to the URL (allowed only if $url is string)
      */
     public function set_url($url, $params = array()) {
@@ -832,6 +832,9 @@ class moodle_page {
                 // we have to use httpswwwroot here, because of loginhttps pages
                 $this->_url = new moodle_url($CFG->httpswwwroot . '/' . $url, $params);
             }
+
+        } else {
+            throw new coding_exception('Parameter $url must be either moodle_url or string, ' . gettype($url) . ' given instead.');
         }
 
         $fullurl = $this->_url->out(true);
