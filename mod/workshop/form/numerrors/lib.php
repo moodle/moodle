@@ -281,14 +281,46 @@ class workshop_numerrors_strategy implements workshop_strategy {
      * @see parent::get_assessments_recordset()
      */
     public function get_assessments_recordset($restrict=null) {
-        // todo
+       global $DB;
+
+        $sql = 'SELECT s.id AS submissionid,
+                       a.id AS assessmentid, a.weight AS assessmentweight, a.reviewerid, a.gradinggrade,
+                       g.dimensionid, g.grade
+                  FROM {workshop_submissions} s
+                  JOIN {workshop_assessments} a ON (a.submissionid = s.id)
+                  JOIN {workshop_grades} g ON (g.assessmentid = a.id AND g.strategy = :strategy)
+                 WHERE s.example=0 AND s.workshopid=:workshopid'; // to be cont.
+        $params = array('workshopid' => $this->workshop->id, 'strategy' => $this->workshop->strategy);
+
+        if (is_null($restrict)) {
+            // update all users - no more conditions
+        } elseif (!empty($restrict)) {
+            list($usql, $uparams) = $DB->get_in_or_equal($restrict, SQL_PARAMS_NAMED);
+            $sql .= " AND a.reviewerid $usql";
+            $params = array_merge($params, $uparams);
+        } else {
+            throw new coding_exception('Empty value is not a valid parameter here');
+        }
+
+        $sql .= ' ORDER BY s.id'; // this is important for bulk processing
+
+        return $DB->get_recordset_sql($sql, $params);
+
     }
 
     /**
      * @see parent::get_dimensions_info()
      */
     public function get_dimensions_info() {
-        // todo
+        global $DB;
+
+        $params = array('workshopid' => $this->workshop->id);
+        $dimrecords = $DB->get_records('workshopform_numerrors', array('workshopid' => $this->workshop->id), 'sort', 'id,weight');
+        foreach ($dimrecords as $dimid => $dimrecord) {
+            $dimrecords[$dimid]->min = 0;
+            $dimrecords[$dimid]->max = 1;
+        }
+        return $dimrecords;
     }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -426,7 +458,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
         list($dimsql, $dimparams) = $DB->get_in_or_equal(array_keys($this->dimensions), SQL_PARAMS_NAMED);
         // beware! the caller may rely on the returned array is indexed by dimensionid
         $sql = "SELECT dimensionid, wg.*
-                  FROM {workshop_grades}
+                  FROM {workshop_grades} wg
                  WHERE assessmentid = :assessmentid AND strategy= :strategy AND dimensionid $dimsql";
         $params = array('assessmentid' => $assessment->id, 'strategy' => 'numerrors');
         $params = array_merge($params, $dimparams);

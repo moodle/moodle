@@ -430,11 +430,8 @@ function workshop_upgrade_assessment_id_mappings() {
 /**
  * Returns the list of new element (dimension) ids
  *
- * todo: this function is used in accumulative subtype. if it will not be used in any other subplugin, move it to the
- * subplugin library
- *
  * @param string $strategy the name of strategy subplugin that the element was migrated into
- * @return array (int)workshopid => array (int)elementno => stdclass ->(int)newid ->(string)type
+ * @return array (int)workshopid => array (int)elementno => stdclass ->(int)newid {->(string)type}
  */
 function workshop_upgrade_element_id_mappings($strategy) {
     global $DB;
@@ -448,10 +445,12 @@ function workshop_upgrade_element_id_mappings($strategy) {
         }
         $info = new stdclass();
         $info->newid = $old->newid;
-        if ($old->scale >= 0 and $old->scale <= 6) {
-            $info->type = 'scale';
-        } else {
-            $info->type = 'value';
+        if ($strategy == 'accumulative') {
+            if ($old->scale >= 0 and $old->scale <= 6) {
+                $info->type = 'scale';
+            } else {
+                $info->type = 'value';
+            }
         }
         $newids[$old->workshopid][$old->elementno] = $info;
     }
