@@ -29,11 +29,11 @@
  * This must be called after workshop core migration has finished so that
  * all assessments are already upgraded and tables are correctly renamed.
  */
-function workshopform_allocation_upgrade_legacy() {
+function workshopform_accumulative_upgrade_legacy() {
     global $CFG, $DB, $OUTPUT;
     require_once($CFG->dirroot . '/mod/workshop/db/upgradelib.php');
 
-    if (!workshopform_allocation_upgrade_legacy_needed()) {
+    if (!workshopform_accumulative_upgrade_legacy_needed()) {
         return;
     }
 
@@ -51,9 +51,9 @@ function workshopform_allocation_upgrade_legacy() {
         $newworkshopids = workshop_upgrade_workshop_id_mappings();
         $newelementids = array();   // (int)workshopid => array of (int)elementno => (int)newelementid
         // prepare system (global) scales to replace the legacy in-built ones
-        $newscaleids = workshopform_allocation_upgrade_scales();
+        $newscaleids = workshopform_accumulative_upgrade_scales();
         foreach ($rs as $old) {
-            $new = workshopform_allocation_upgrade_element($old, $newscaleids, $newworkshopids[$old->workshopid]);
+            $new = workshopform_accumulative_upgrade_element($old, $newscaleids, $newworkshopids[$old->workshopid]);
             $newid = $DB->insert_record('workshopform_accumulative', $new);
             if (!isset($newelementids[$old->workshopid])) {
                 $newelementids[$old->workshopid] = array();
@@ -80,7 +80,7 @@ function workshopform_allocation_upgrade_legacy() {
                 // orphaned grade - the assessment form element has been removed after the grade was recorded
                 continue;
             }
-            $new = workshopform_allocation_upgrade_grade($old, $newassessmentids[$old->assessmentid],
+            $new = workshopform_accumulative_upgrade_grade($old, $newassessmentids[$old->assessmentid],
                                                          $newelementids[$old->workshopid][$old->elementno]);
             $newid = $DB->insert_record('workshop_grades', $new);
             $DB->set_field('workshop_grades_old', 'newplugin', 'accumulative', array('id' => $old->id));
@@ -98,7 +98,7 @@ function workshopform_allocation_upgrade_legacy() {
  * @param int $newworkshopid id of the new workshop instance that replaced the previous one
  * @return stdclass to be saved in workshopform_accumulative
  */
-function workshopform_allocation_upgrade_element(stdclass $old, array $newscaleids, $newworkshopid) {
+function workshopform_accumulative_upgrade_element(stdclass $old, array $newscaleids, $newworkshopid) {
     $new = new stdclass();
     $new->workshopid = $newworkshopid;
     $new->sort = $old->elementno;
@@ -141,7 +141,7 @@ function workshopform_allocation_upgrade_element(stdclass $old, array $newscalei
  * @param stdclass $newdimensioninfo
  * @return stdclass
  */
-function workshopform_allocation_upgrade_grade(stdclass $old, $newassessmentid, stdclass $newdimensioninfo) {
+function workshopform_accumulative_upgrade_grade(stdclass $old, $newassessmentid, stdclass $newdimensioninfo) {
     $new                    = new stdclass();
     $new->assessmentid      = $newassessmentid;
     $new->strategy          = 'accumulative';
@@ -163,7 +163,7 @@ function workshopform_allocation_upgrade_grade(stdclass $old, $newassessmentid, 
  *
  * @return bool
  */
-function workshopform_allocation_upgrade_legacy_needed() {
+function workshopform_accumulative_upgrade_legacy_needed() {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
@@ -190,7 +190,7 @@ function workshopform_allocation_upgrade_legacy_needed() {
  *
  * @return array (int)oldscale => (int)newscaleid
  */
-function workshopform_allocation_upgrade_scales() {
+function workshopform_accumulative_upgrade_scales() {
     global $DB, $CFG, $USER;
     require_once($CFG->libdir . '/gradelib.php');
 
