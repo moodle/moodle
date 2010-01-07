@@ -1113,9 +1113,9 @@ class mssql_native_moodle_database extends moodle_database {
 
    public function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {
         if ($textfield) {
-            return $this->sql_compare_text($fieldname)." = '' ";
+            return ' (' . $this->sql_compare_text($fieldname) . " = '') ";
         } else {
-            return " $fieldname = '' ";
+            return " ($fieldname = '') ";
         }
     }
 

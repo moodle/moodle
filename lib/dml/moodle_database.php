@@ -1843,7 +1843,7 @@ abstract class moodle_database {
      * @return string the sql code to be added to check for empty values
      */
     public function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {
-        return " $fieldname = '' ";
+        return " ($fieldname = '') ";
     }
 
     /**

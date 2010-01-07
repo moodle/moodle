@@ -1457,9 +1457,9 @@ class oci_native_moodle_database extends moodle_database {
 
     public function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {
         if ($textfield) {
-            return " ".$this->sql_compare_text($fieldname)." = '".$this->sql_empty()."' ";
+            return " (".$this->sql_compare_text($fieldname)." = '".$this->sql_empty()."') ";
         } else {
-            return " $fieldname = '".$this->sql_empty()."' ";
+            return " ($fieldname = '".$this->sql_empty()."') ";
         }
     }
 
