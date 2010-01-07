@@ -198,28 +198,6 @@ class renderer_base {
     }
 
     /**
-     * Given a html_component with height and/or width set, translates them
-     * to appropriate CSS rules.
-     *
-     * @param html_component $component
-     * @return string CSS rules
-     */
-    protected function prepare_legacy_width_and_height(html_component $component) {
-        $output = '';
-        if (!empty($component->height)) {
-            // We need a more intelligent way to handle these warnings. If $component->height have come from
-            // somewhere in deprecatedlib.php, then there is no point outputting a warning here.
-            // debugging('Explicit height given to html_component leads to inline css. Use a proper CSS class instead.', DEBUG_DEVELOPER);
-            $output .= "height: {$component->height}px;";
-        }
-        if (!empty($component->width)) {
-            // debugging('Explicit width given to html_component leads to inline css. Use a proper CSS class instead.', DEBUG_DEVELOPER);
-            $output .= "width: {$component->width}px;";
-        }
-        return $output;
-    }
-
-    /**
      * Helper function for applying of html_component options
      * @param html_component $component
      * @param array $options
