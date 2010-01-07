@@ -1899,7 +1899,9 @@ function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {
             break;
     }
 
-    return ' ' . $sql . ' '; /// Adding spaces to avoid wrong SQLs due to concatenation
+    // Add spaces to avoid wrong SQLs due to concatenation.
+    // Add brackets to avoid operator precedence problems.
+    return ' (' . $sql . ') ';
 }
 
 /**
