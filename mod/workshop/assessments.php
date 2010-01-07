@@ -1139,6 +1139,7 @@
                 $element->workshopid = $workshop->id;
                 $element->assessmentid = $assessment->id;
                 $element->elementno = $i;
+                $element->feedback = '@@ GRADE_ADJUSTMENT @@';
                 $element->grade = $form->grade[$i];
                 if (!$element->id = insert_record("workshop_grades", $element)) {
                     error("Could not insert workshop grade!");
