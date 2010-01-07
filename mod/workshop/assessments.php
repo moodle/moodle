@@ -748,9 +748,13 @@
                     $element->maxscore = $themaxscore;
                     if (isset($form->description[$key])) {
                         $element->description   = $form->description[$key];
+                    } else {
+                        $element->description   = '@@ GRADE_MAPPING_ELEMENT @@';
                     }
                     if (isset($form->weight[$key])) {
                         $element->weight = $form->weight[$key];
+                    } else {
+                        $element->weight = 1;
                     }
                     if (!$element->id = insert_record("workshop_elements", $element)) {
                         error("Could not insert workshop element!");
@@ -761,18 +765,20 @@
             case 4: // ...and criteria grading
                 // Insert all the elements that contain something
                 foreach ($form->description as $key => $description) {
-                    unset($element);
-                    $element->workshopid = $workshop->id;
-                    $element->elementno = clean_param($key, PARAM_INT);
-                    $element->description   = $description;
-                    $element->weight = $form->weight[$key];
-                    for ($j=0;$j<5;$j++) {
-                        if (empty($form->rubric[$key][$j]))
-                            break;
-                    }
-                    $element->maxscore = $j - 1;
-                    if (!$element->id = insert_record("workshop_elements", $element)) {
-                        error("Could not insert workshop element!");
+                    if ($description) {
+                        unset($element);
+                        $element->workshopid = $workshop->id;
+                        $element->elementno = clean_param($key, PARAM_INT);
+                        $element->description   = $description;
+                        $element->weight = $form->weight[$key];
+                        for ($j=0;$j<5;$j++) {
+                            if (empty($form->rubric[$key][$j]))
+                                break;
+                        }
+                        $element->maxscore = $j - 1;
+                        if (!$element->id = insert_record("workshop_elements", $element)) {
+                            error("Could not insert workshop element!");
+                        }
                     }
                 }
                 // let's not fool around here, dump the junk!
