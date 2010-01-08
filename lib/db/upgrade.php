@@ -3291,6 +3291,29 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101563.03);
     }
 
+    if ($result && $oldversion < 2007101571.01) {
+        // MDL-21011 bring down course sort orders away from maximum values
+        $sql = "SELECT * from {$CFG->prefix}course
+                ORDER BY sortorder ASC;";
+        if ($courses = get_records_sql($sql)) {
+            $i=1000;
+            $old_category = 0;
+            foreach ($courses as $course) {
+                if($course->category!=$old_category) {
+                    //increase i to put a gap between courses in different categories
+                    //don't think we need to but they had one before
+                    $i += 1000;
+                    $old_category = $course->category;
+                }
+                $course->sortorder = $i++;
+                execute_sql("UPDATE {$CFG->prefix}course SET sortorder=$i WHERE id={$course->id}");
+            }
+        }
+        unset($courses);
+
+        upgrade_main_savepoint($result, 2007101571.01);
+    }
+
     return $result;
 }
 
