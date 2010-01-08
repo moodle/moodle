@@ -3305,8 +3305,9 @@ function xmldb_main_upgrade($oldversion=0) {
                     $i += 1000;
                     $old_category = $course->category;
                 }
-                $course->sortorder = $i++;
-                execute_sql("UPDATE {$CFG->prefix}course SET sortorder=$i WHERE id={$course->id}");
+                $c->id = $course->id;
+                $c->sortorder = $i++;
+                update_record('course',$c);
             }
         }
         unset($courses);
