@@ -391,7 +391,9 @@ padding-top:20px;
 .grade-report-grader .right_scroller {
 width:auto;
 clear:none;
-overflow-x:auto;
+/*force horizontal scrollbar to appear or IE adds one over the bottom row of the table MDL-21088*/
+overflow-x:scroll;
+overflow-y:hidden;
 }
 
 .grade-report-grader table tr.avg,.grade-report-grader table tr.groupavg td,.grade-report-grader table tr.avg td,.grade-report-grader table tr.groupavg th,.grade-report-grader table tr.avg th,.grade-report-grader table tr.controls_row,.grade-report-grader table tr.controls_row th,.grade-report-grader table tr.range_row,.grade-report-grader table tr.range_row th,div.right_scroller tr {
@@ -443,6 +445,11 @@ white-space:nowrap;
 .heading_name_row th {
 white-space:nowrap;
 width:2000px;
+}
+
+/*MDL-21088 - IE 7 ignores nowraps on tds or ths so we put a span within it with a nowrap on it*/
+.heading_name_row th span {
+white-space:nowrap;
 }
 
 .grade_icons img.ajax {

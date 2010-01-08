@@ -197,21 +197,26 @@ echo '<div id="hiddentooltiproot">tooltip panel</div>';
 YAHOO.namespace("graderreport");
 
 function init() {
-    // Adjust height of header c0
-    //"heading_name_row" only exists if static students column is turned on
-    var rows = YAHOO.util.Dom.getElementsByClassName('heading_name_row');
-    if(rows && rows.length>0)
-    {
-        var header_cell_region = YAHOO.util.Dom.getRegion(rows[rows.length-1].firstChild);
-        if(header_cell_region)
+    //MDL-21088 IE 7 vertical alignment was fixed thus making this unnecesary.
+    //TODO - remove this once sure the other fix is effective
+    /*if(navigator.appVersion.indexOf("MSIE 7")>0) {
+        // Adjust height of header c0 (firstname/surname cell) in case multiline grade items have pushed down
+        // the right hand table cells. Only a problem in IE7. This JS fixes IE7 but CAUSES alignment problems in other browsers.
+        // "heading_name_row" only exists if static students column is turned on
+        var rows = YAHOO.util.Dom.getElementsByClassName('heading_name_row');
+        if(rows && rows.length>0)
         {
-            var height = header_cell_region.bottom - header_cell_region.top;
-            if(!isNaN(height))
+            var header_cell_region = YAHOO.util.Dom.getRegion(rows[rows.length-1].firstChild);
+            if(header_cell_region)
             {
-                YAHOO.util.Dom.setStyle('studentheader', 'height', height + 'px');
+                var height = header_cell_region.bottom - header_cell_region.top;
+                if(!isNaN(height))
+                {
+                    YAHOO.util.Dom.setStyle('studentheader', 'height', height + 'px');
+                }
             }
         }
-    }
+    }*/
 
     // attach event listener to the table for mouseover and mouseout
     var table = document.getElementById('user-grades');

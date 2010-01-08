@@ -625,7 +625,8 @@ class grade_report_grader extends grade_report {
                 }
 // Element is a category
                 else if ($type == 'category') {
-                    $headerhtml .= '<th class=" '. $columnclass.' category'.$catlevel.'" '.$colspan.' scope="col">'
+                    //MDL-21088 - IE 7 ignores nowraps on td or th so we put this in a span with a nowrap on it.
+                    $headerhtml .= '<th class=" '. $columnclass.' category'.$catlevel.'" '.$colspan.' scope="col"><span>'
                                 . shorten_text($element['object']->get_name());
                     $headerhtml .= $this->get_collapsing_icon($element);
 
@@ -634,7 +635,7 @@ class grade_report_grader extends grade_report {
                         $headerhtml .= $this->get_icons($element);
                     }
 
-                    $headerhtml .= '</th>';
+                    $headerhtml .= '</span></th>';
                 }
 // Element is a grade_item
                 else {
@@ -657,9 +658,10 @@ class grade_report_grader extends grade_report {
                     }
 
                     $headerlink = $this->gtree->get_element_header($element, true, $this->get_pref('showactivityicons'), false);
-                    $headerhtml .= '<th class=" '.$columnclass.' '.$type.$catlevel.$hidden.'" scope="col" onclick="set_col(this.cellIndex)">'
-                                . shorten_text($headerlink) . $arrow;
-                    $headerhtml .= '</th>';
+                    //MDL-21088 - IE 7 ignores nowraps on tds or ths so we this in a span with a nowrap on it.
+                    $headerhtml .= '<th class=" '.$columnclass.' '.$type.$catlevel.$hidden.'" scope="col" onclick="set_col(this.cellIndex)"><span>'
+                                .shorten_text($headerlink) . $arrow;
+                    $headerhtml .= '</span></th>';
                 }
 
             }

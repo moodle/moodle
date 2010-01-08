@@ -1111,7 +1111,7 @@ th.header {
   background-repeat: repeat-x;
   background-position: center bottom;
   background-color: #FFFFFF;
-  padding-bottom: 5px;
+  /*padding-bottom: 5px; causes mis-alignment in IE. MDL-21088*/
 }
 form.mform legend {
   color: #0066ff;
@@ -1254,13 +1254,20 @@ tr.hidden div.summary {
 tr.hidden td.left {
   color: #AAAAAA;
 }
-body#message-index div#header,body#message-discussion div#header,body#message-history div#header,body#message-user div#header {
+body#message-index div#header,
+body#message-discussion div#header,
+body#message-history div#header,
+body#message-user div#header {
   display: none;
 }
-body#message-index div#footer,body#message-discussion div#footer,body#message-history div#footer {
+body#message-index div#footer,
+body#message-discussion div#footer,
+body#message-history div#footer {
   display: none;
 }
-body#message-index div#page,body#message-user div#page,body#message-history div#page {
+body#message-index div#page,
+body#message-user div#page,
+body#message-history div#page {
   width: auto;
 }
 body#message-user div#page {
