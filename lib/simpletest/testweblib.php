@@ -177,10 +177,16 @@ END;
                      '<br />This is some text. www.moodle.com then some more text<br />' => '<br />This is some text. <a href="http://www.moodle.com" target="_blank">www.moodle.com</a> then some more text<br />',
                      //check we aren't modifying img tags
                      'image<img src="http://moodle.org/logo/logo-240x60.gif" />' => 'image<img src="http://moodle.org/logo/logo-240x60.gif" />',
+                     'image<img src="www.moodle.org/logo/logo-240x60.gif" />' => 'image<img src="www.moodle.org/logo/logo-240x60.gif" />',
+                     //and another url within one tag
+                     '<td background="http://moodle.org">&nbsp;</td>' => '<td background="http://moodle.org">&nbsp;</td>',
+                     '<td background="www.moodle.org">&nbsp;</td>' => '<td background="www.moodle.org">&nbsp;</td>',
                      //partially escaped img tag
                      'partially escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" />' => 'partially escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" />',
                      //fully escaped img tag
                      htmlspecialchars('fully escaped img tag <img src="http://moodle.org/logo/logo-240x60.gif" />') => 'fully escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" /&gt;',
+                     //Double http with www
+                     'One more link like http://www.moodle.org to test' => 'One more link like <a href="http://www.moodle.org" target="_blank">http://www.moodle.org</a> to test'
                  );
        foreach ($texts as $text => $correctresult) {
             $msg = "Testing text: ". str_replace('%', '%%', $text) . ": %s"; // Escape original '%' so sprintf() wont get confused
