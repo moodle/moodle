@@ -1511,19 +1511,20 @@ function usergetdate($time, $timezone=99) {
     $time += dst_offset_on($time, $strtimezone);
     $time += intval((float)$timezone * HOURSECS);
 
-    $datestring = gmstrftime('%S_%M_%H_%d_%m_%Y_%w_%j_%A_%B', $time);
+    $datestring = gmstrftime('%B_%A_%j_%Y_%m_%w_%d_%H_%M_%S', $time);
 
+    //be careful to ensure the returned array matches that produced by getdate() above
     list(
-        $getdate['seconds'],
-        $getdate['minutes'],
-        $getdate['hours'],
-        $getdate['mday'],
-        $getdate['mon'],
-        $getdate['year'],
-        $getdate['wday'],
-        $getdate['yday'],
+        $getdate['month'],
         $getdate['weekday'],
-        $getdate['month']
+        $getdate['yday'],
+        $getdate['year'],
+        $getdate['mon'],
+        $getdate['wday'],
+        $getdate['mday'],
+        $getdate['hours'],
+        $getdate['minutes'],
+        $getdate['seconds']
     ) = explode('_', $datestring);
 
     return $getdate;
