@@ -1343,7 +1343,7 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
     // $mustshift indicates whether the sequence must be shifted to
     // meet its range
     $mustshift = false;
-    if ($min < $n+$tolerance || $min > $n+$tolerance+$catgap ) {
+    if ($min < $n-$tolerance || $min > $n+$tolerance+$catgap ) {
         $mustshift = true;
     }
 

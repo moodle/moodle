@@ -57,9 +57,9 @@
         if ($resort and confirm_sesskey()) {
             if ($courses = get_courses($category->id, "fullname ASC", 'c.id,c.fullname,c.sortorder')) {
                 // move it off the range
-                $count = get_record_sql('SELECT MAX(sortorder) AS max, 1
+                $count = get_record_sql('SELECT MIN(sortorder) AS min, 1
                                          FROM ' . $CFG->prefix . 'course WHERE category=' . $category->id);
-                $count = $count->max + 100;
+                $count = $count->min;
                 begin_sql();
                 foreach ($courses as $course) {
                     set_field('course', 'sortorder', $count, 'id', $course->id);
