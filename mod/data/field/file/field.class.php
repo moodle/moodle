@@ -35,7 +35,7 @@ class data_field_file extends data_field_base {
         if ($recordid){
             if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
                 if (!empty($content->content)) {
-                    if ($file = $FS->get_file($this->context->id, 'data_content', $content->id, '/', $content->content)) {
+                    if ($file = $fs->get_file($this->context->id, 'data_content', $content->id, '/', $content->content)) {
                         if (empty($content->content1)) {
                             $displayname = $file->get_filename();
                         } else {
