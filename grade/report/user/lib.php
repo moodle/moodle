@@ -23,6 +23,11 @@
 require_once($CFG->dirroot . '/grade/report/lib.php');
 require_once($CFG->libdir.'/tablelib.php');
 
+//showhiddenitems values
+define("GRADE_REPORT_USER_HIDE_HIDDEN", 0);
+define("GRADE_REPORT_USER_HIDE_UNTIL", 1);
+define("GRADE_REPORT_USER_SHOW_HIDDEN", 2);
+
 /**
  * Class providing an API for the user report building and displaying.
  * @uses grade_report
@@ -199,10 +204,10 @@ class grade_report_user extends grade_report {
         $excluded = '';
         $class = '';
 
-        // If this is a hidden grade category, hide it completely from the user. showhiddenitems: 0 = hide all, 1 = show only hidden until, 2 = show all
+        // If this is a hidden grade category, hide it completely from the user
         if ($type == 'category' && $grade_object->is_hidden() && !$this->canviewhidden && (
-                $this->showhiddenitems == 0 ||
-                ($this->showhiddenitems == 1 && !$grade_object->is_hiddenuntil()))) {
+                $this->showhiddenitems == GRADE_REPORT_USER_HIDE_HIDDEN ||
+                ($this->showhiddenitems == GRADE_REPORT_USER_HIDE_UNTIL && !$grade_object->is_hiddenuntil()))) {
             return false;
         }
 
@@ -226,10 +231,10 @@ class grade_report_user extends grade_report {
                 $hidden = ' hidden';
             }
 
-            // If this is a hidden grade item, hide it completely from the user. showhiddenitems: 0 = hide all, 1 = show only hidden until, 2 = show all
+            // If this is a hidden grade item, hide it completely from the user.
             if ($grade_grade->is_hidden() && !$this->canviewhidden && (
-                    $this->showhiddenitems == 0 ||
-                    ($this->showhiddenitems == 1 && !$grade_grade->is_hiddenuntil()))) {
+                    $this->showhiddenitems == GRADE_REPORT_USER_HIDE_HIDDEN ||
+                    ($this->showhiddenitems == GRADE_REPORT_USER_HIDE_UNTIL && !$grade_grade->is_hiddenuntil()))) {
                 // return false;
             } else {
 
