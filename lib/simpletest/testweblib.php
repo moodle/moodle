@@ -166,7 +166,7 @@ END;
     }
 
     function test_convert_urls_into_links() {
-$texts = array (
+        $texts = array (
                      //just a url
                      'http://moodle.org - URL' => '<a href="http://moodle.org" class="_blanktarget">http://moodle.org</a> - URL',
                      'www.moodle.org - URL' => '<a href="http://www.moodle.org" class="_blanktarget">www.moodle.org</a> - URL',
@@ -250,24 +250,10 @@ $texts = array (
                      htmlspecialchars('fully escaped img tag <img src="http://moodle.org/logo/logo-240x60.gif" />') => 'fully escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" /&gt;',
                  );
        foreach ($texts as $text => $correctresult) {
-            if(mb_detect_encoding($text)=='UTF-8') {
-               $text_for_msg = utf8_decode($text);
-            }
-            else {
-                $text_for_msg = $text;
-            }
-            //urldecode text or things like %28 cause sprintf's, looking for %s's, to throw an exception
-            $msg = "Testing text: ".urldecode($text_for_msg).": %s";
+            $msg = "Testing text: ". str_replace('%', '%%', $text) . ": %s"; // Escape original '%' so sprintf() wont get confused
 
             convert_urls_into_links($text);
 
-            //these decode's make all the strings non-garbled. The tests pass without them.
-            if(mb_detect_encoding($text)=='UTF-8') {
-                $text = utf8_decode($text);
-            }
-            if(mb_detect_encoding($correctresult)=='UTF-8') {
-               $correctresult = utf8_decode($correctresult);
-            }
             $this->assertEqual($text, $correctresult, $msg);
         }
 
@@ -275,8 +261,7 @@ $texts = array (
         $reps = 1000;
 
         $time_start = microtime(true);
-        for($i=0;$i<$reps;$i++)
-        {
+        for($i=0;$i<$reps;$i++) {
             $text = $this->get_test_text();
             convert_urls_into_links($text);
         }
@@ -284,8 +269,7 @@ $texts = array (
         $new_time = $time_end - $time_start;
 
         $time_start = microtime(true);
-        for($i=0;$i<$reps;$i++)
-        {
+        for($i=0;$i<$reps;$i++) {
             $text = $this->get_test_text();
             $this->old_convert_urls_into_links($text);
         }
