@@ -449,6 +449,11 @@ white-space:nowrap;
 width:2000px;
 }
 
+/*MDL-21088 - IE 7 ignores nowraps on tds or ths so we put a span within it with a nowrap on it*/
+heading_name_row th span {
+    white-space:nowrap;
+}
+
 .grade_icons img.ajax {
 float:right;
 }
