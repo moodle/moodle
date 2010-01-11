@@ -159,22 +159,22 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('header', 'accesscontrol', get_string('accesscontrol', 'workshop'));
 
         $label = get_string('submissionstart', 'workshop');
-        $mform->addElement('date_selector', 'submissionstart', $label, array('optional' => true));
+        $mform->addElement('date_time_selector', 'submissionstart', $label, array('optional' => true));
         $mform->setHelpButton('submissionstart', array('submissionstart', $label, 'workshop'));
         $mform->setAdvanced('submissionstart');
 
         $label = get_string('submissionend', 'workshop');
-        $mform->addElement('date_selector', 'submissionend', $label, array('optional' => true));
+        $mform->addElement('date_time_selector', 'submissionend', $label, array('optional' => true));
         $mform->setHelpButton('submissionend', array('submissionend', $label, 'workshop'));
         $mform->setAdvanced('submissionend');
 
         $label = get_string('assessmentstart', 'workshop');
-        $mform->addElement('date_selector', 'assessmentstart', $label, array('optional' => true));
+        $mform->addElement('date_time_selector', 'assessmentstart', $label, array('optional' => true));
         $mform->setHelpButton('assessmentstart', array('assessmentstart', $label, 'workshop'));
         $mform->setAdvanced('assessmentstart');
 
         $label = get_string('assessmentend', 'workshop');
-        $mform->addElement('date_selector', 'assessmentend', $label, array('optional' => true));
+        $mform->addElement('date_time_selector', 'assessmentend', $label, array('optional' => true));
         $mform->setHelpButton('assessmentend', array('assessmentend', $label, 'workshop'));
         $mform->setAdvanced('assessmentend');
 
