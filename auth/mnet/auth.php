@@ -296,11 +296,9 @@ class auth_plugin_mnet extends auth_plugin_base {
             }
             $remoteuser->mnethostid = $remotehost->id;
             $remoteuser->firstaccess = time(); // First time user in this server, grab it here
-            $DB->insert_record('user', $remoteuser);
+            $remoteuser->id = $DB->insert_record('user', $remoteuser);
             $firsttime = true;
-            if (! $localuser = $DB->get_record('user', array('username'=>$remoteuser->username, 'mnethostid'=>$remotehost->id))) {
-                print_error('nolocaluser', 'mnet');
-            }
+            $localuser = $remoteuser;
         }
 
         // check sso access control list for permission first
