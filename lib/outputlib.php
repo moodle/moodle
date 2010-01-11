@@ -184,7 +184,7 @@ class theme_config {
      * how you want that type of page to look. For example
      * <pre>
      *   $THEME->layouts = array(
-     *       // Most pages - if we encounter an unknown or amissing page type, this one is used.
+     *       // Most pages - if we encounter an unknown or a missing page type, this one is used.
      *       'standard' => array(
      *           'theme' = 'mytheme',
      *           'file' => 'normal.php',
