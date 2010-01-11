@@ -70,7 +70,7 @@ class mnet_environment {
         if (!empty($this->keypair)) return true;
 
         $this->keypair = array();
-        $keypair = $DB->get_field('config_plugins', 'value', array('plugin'=>'mnet', 'name'=>'openssl'));
+        $keypair = get_config('mnet', 'openssl');
 
         if (!empty($keypair)) {
             // Explode/Implode is faster than Unserialize/Serialize
@@ -84,7 +84,7 @@ class mnet_environment {
             // Key generation/rotation
 
             // 1. Archive the current key (if there is one).
-            $result = $DB->get_field('config_plugins', 'value', array('plugin'=>'mnet', 'name'=>'openssl_history'));
+            $result = get_config('mnet', 'openssl_history');
             if(empty($result)) {
                 set_config('openssl_history', serialize(array()), 'mnet');
                 $openssl_history = array();
@@ -99,7 +99,7 @@ class mnet_environment {
 
             // 2. How many old keys do we want to keep? Use array_slice to get
             // rid of any we don't want
-            $openssl_generations = $DB->get_field('config_plugins', 'value', array('plugin'=>'mnet', 'name'=>'openssl_generations'));
+            $openssl_generations = get_config('mnet', 'openssl_generations');
             if(empty($openssl_generations)) {
                 set_config('openssl_generations', 3, 'mnet');
                 $openssl_generations = 3;
