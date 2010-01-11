@@ -163,7 +163,7 @@ class theme_config {
     public $javascripts_footer = array();
     
     /**
-     * The names of all the javascript files from parents that should be expcluded.
+     * The names of all the javascript files from parents that should be excluded.
      * true value may be used to specify all parents or all themes from one parent.
      * If no value specified value from parent theme used.
      *
