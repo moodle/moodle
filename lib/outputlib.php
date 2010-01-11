@@ -122,7 +122,7 @@ class theme_config {
     public $sheets = array();
 
     /**
-     * The names of all the stylesheets from parents that should be expcluded.
+     * The names of all the stylesheets from parents that should be excluded.
      * true value may be used to specify all parents or all themes from one parent.
      * If no value specified value from parent theme used.
      *
