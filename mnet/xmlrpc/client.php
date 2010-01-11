@@ -146,6 +146,8 @@ class mnet_xmlrpc_client {
         }
         curl_close($httprequest);
 
+        $this->rawresponse = trim($this->rawresponse);
+
         $mnet_peer->touch();
 
         $crypt_parser = new mnet_encxml_parser();
