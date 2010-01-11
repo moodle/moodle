@@ -1,6 +1,7 @@
 <?php
 
 $string['accessexception'] = 'Access control exception';
+$string['activatehttps'] = 'connect with HTTPS to see the token';
 $string['addfunction'] = 'Add function';
 $string['addfunctionhelp'] = 'Select the function to add to the service.';
 $string['addrequiredcapability'] = 'Assign/Unassign the required capability';
@@ -11,8 +12,10 @@ $string['apiexplorernotavalaible'] = 'API explorer not available yet.';
 $string['arguments'] = 'Arguments';
 $string['configwebserviceplugins'] = 'For security reasons enable only protocols that are used.';
 $string['context'] = 'Context';
+$string['createtoken'] = 'Create token';
 $string['deleteservice'] = 'Delete the service: $a->name (id: $a->id)';
 $string['deleteserviceconfirm'] = 'Do you really want to delete external service \"$a\"?';
+$string['deletetokenconfirm'] = 'Do you really want to delete this web service token for <strong>$a->user</strong> on the service <strong>$a->service</strong>?';
 $string['disabledwarning'] = 'All webs service protocols are disabled, the \Enable web services\" setting can be found in the \"Advanced features\" section.';
 $string['editservice'] = 'Edit the service: $a->name (id: $a->id)';
 $string['enabled'] = 'Enabled';

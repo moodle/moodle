@@ -266,6 +266,7 @@ if ($hassiteconfig) {
         }
     }
     /// manage token page link
+    $ADMIN->add('webservicesettings', new admin_externalpage('addwebservicetoken', get_string('managetokens', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/tokens.php", 'moodle/site:config', true));
     $temp = new admin_settingpage('webservicetokens', get_string('managetokens', 'webservice'));
     $temp->add(new admin_setting_managewebservicetokens());
     if (empty($CFG->enablewebservices)) {

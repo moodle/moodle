@@ -419,6 +419,7 @@ $string['tagnotfound'] = 'The specified tag was not found in the database';
 $string['tagdisabled'] = 'Tags are disabled!';
 $string['targetdatabasenotempty'] = 'The target database is not empty. Transfer aborted for safety reasons.';
 $string['themenotinstall'] = 'This theme is not installed!';
+$string['tokenalreadyexist'] = 'The generated token already exists, try again.';
 $string['transactionvoid'] = 'Transaction cannot be voided because it has already been voided';
 $string['TODO'] = 'TODO';
 $string['importformatnotimplement'] = 'Sorry, importing this format is not yet implemented!';

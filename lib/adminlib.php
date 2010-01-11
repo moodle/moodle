@@ -6474,30 +6474,28 @@ class admin_setting_managewebservicetokens extends admin_setting {
         $strservice = get_string('service', 'webservice');
         $struser = get_string('user');
         $strcontext = get_string('context', 'webservice');
-
-      
-
+        $strvaliduntil = get_string('validuntil', 'webservice');
 
         $return = $OUTPUT->heading(get_string('webservicetokens', 'webservice'), 3, 'main', true);
         $return .= $OUTPUT->box_start('generalbox webservicestokenui');
 
         $table = new html_table();
-        $table->head  = array($strtoken, $struser, $strservice, $strcontext, $stroperation);
+        $table->head  = array($strtoken, $struser, $strservice, $strcontext, $strvaliduntil, $stroperation);
         $table->align = array('left', 'left', 'left', 'left', 'center');
         $table->width = '100%';
         $table->data  = array();
 
         $tokenpageurl = "$CFG->wwwroot/$CFG->admin/webservice/tokens.php?sesskey=" . sesskey();
 
-        //TODO: in order to let the administrator delete obsolete token, split this request in multiple request
+        //TODO: in order to let the administrator delete obsolete token, split this request in multiple request or use LEFT JOIN
 
         //here retrieve token list (including linked users firstname/lastname and linked services name)
         $sql = "SELECT
-                    token.id, token.token, user.firstname, user.lastname, service.name
+                    token.id, token.token, user.firstname, user.lastname, service.name, token.validuntil
                 FROM
                     {external_tokens} token, {user} user, {external_services} service
                 WHERE
-                    token.creatorid=? AND service.id = token.externalserviceid AND token.userid = user.id";
+                    token.creatorid=? AND token.tokentype = 2 AND service.id = token.externalserviceid AND token.userid = user.id";
         $tokens = $DB->get_records_sql($sql, array( $USER->id));
         if (!empty($tokens)) {
             foreach ($tokens as $token) {
@@ -6506,8 +6504,16 @@ class admin_setting_managewebservicetokens extends admin_setting {
                 $delete = "<a href=\"".$tokenpageurl."&amp;action=delete&amp;tokenid=".$token->id."\">";
                 $delete .= get_string('delete')."</a>";
 
+                if (empty($_SERVER['HTTPS'])) {
+                    $token->token = get_string('activatehttps', 'webservice');
+                }
 
-                $table->data[] = array($token->token, $token->firstname." ".$token->lastname, $token->name, '', $delete);
+                $validuntil = '';
+                if (!empty($token->validuntil)) {
+                    $validuntil = date("F j, Y"); //TODO: language support (look for moodle function)
+                }
+
+                $table->data[] = array($token->token, $token->firstname." ".$token->lastname, $token->name, '', $validuntil, $delete);
             }
 
             $return .= $OUTPUT->table($table);

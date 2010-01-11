@@ -25,8 +25,12 @@
  */
 
 require_once('../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
+require_once('forms.php');
 
 $PAGE->set_url('/admin/webservice/tokens.php', array());
+
+admin_externalpage_setup('addwebservicetoken');
 
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
@@ -46,14 +50,69 @@ if (!confirm_sesskey()) {
 }
 
 switch ($action) {
-
+    
     case 'create':
-        echo "I'm creating a token yoohoo";
+        $mform = new web_service_token_form(null, array('action' => 'create'));
+        if ($mform->is_cancelled()) {
+            redirect($returnurl);
+        } else if ($data = $mform->get_data()) {
+            ignore_user_abort(true); // no interruption here!
+
+            //generate token
+            $generatedtoken = md5(uniqid(rand(),1));
+
+            // make sure the token doesn't exist (even if it should be almost impossible with the random generation)
+            if ($DB->record_exists('external_tokens', array('token'=>$generatedtoken))) {
+                throw new moodle_exception('tokenalreadyexist');
+            } else {
+                $newtoken = new object();
+                $newtoken->token = $generatedtoken;
+                $newtoken->externalserviceid = $data->service;
+                $newtoken->tokentype = 2;
+                $newtoken->userid = $data->user;
+                //TODO: find a way to get the context - UPDATE FOLLOWING LINE
+                $newtoken->contextid = get_context_instance(CONTEXT_SYSTEM)->id; 
+                $newtoken->creatorid = $USER->id;
+                $newtoken->timecreated = time();
+                $newtoken->validuntil = $data->validuntil;
+                if (!empty($data->iprestriction)) {
+                    $newtoken->iprestriction = $data->iprestriction;
+                }
+                $DB->insert_record('external_tokens', $newtoken);
+            }
+            redirect($returnurl);
+        }
+
+
+
+        //ask for function id
+        admin_externalpage_print_header();
+        echo $OUTPUT->heading(get_string('createtoken', 'webservice'));
+        $mform->display();
+        echo $OUTPUT->footer();
+        die;
         break;
 
     case 'delete':
-        $token = $DB->get_record('external_tokens', array('id' => $tokenid));
-        echo "coucou delete token id:".$token->id;
+        $sql = "SELECT
+                    token.id, token.token, user.firstname, user.lastname, service.name
+                FROM
+                    {external_tokens} token, {user} user, {external_services} service
+                WHERE
+                    token.creatorid=? AND token.id=? AND token.tokentype = 2 AND service.id = token.externalserviceid AND token.userid = user.id";
+        $token = $DB->get_record_sql($sql, array($USER->id, $tokenid), MUST_EXIST); //must be the token creator
+        if (!$confirm) {
+            admin_externalpage_print_header();
+            $optionsyes = array('tokenid'=>$tokenid, 'action'=>'delete', 'confirm'=>1, 'sesskey'=>sesskey());
+            $optionsno  = array('section'=>'webservicetokens', 'sesskey'=>sesskey());
+            $formcontinue = new single_button(new moodle_url('/admin/webservice/tokens.php', $optionsyes), get_string('delete'));
+            $formcancel = new single_button(new moodle_url('/admin/settings.php', $optionsno), get_string('cancel'), 'get');
+            echo $OUTPUT->confirm(get_string('deletetokenconfirm', 'webservice', (object)array('user'=>$token->firstname." ".$token->lastname, 'service'=>$token->name)), $formcontinue, $formcancel);
+            echo $OUTPUT->footer();
+            die;
+        }
+        $DB->delete_records('external_tokens', array('id'=>$token->id));
+        redirect($returnurl);
         break;
 
     default:

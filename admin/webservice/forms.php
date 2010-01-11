@@ -129,3 +129,57 @@ class external_service_functions_form extends moodleform {
         $this->set_data($data);
     }
 }
+
+
+class web_service_token_form extends moodleform {
+    function definition() {
+        global $CFG, $USER, $DB;
+
+        $mform = $this->_form;
+        $data = $this->_customdata;
+
+        $mform->addElement('header', 'token', get_string('token', 'webservice'));
+
+        //user searchable selector
+        $sql = "SELECT user.id, user.firstname, user.lastname, rassign.roleid
+        FROM {user} user
+        LEFT JOIN {role_assignments} rassign
+        ON user.id = rassign.userid
+        ORDER BY user.lastname";
+        $users = $DB->get_records_sql($sql,array());
+        $options = array();
+        foreach ($users as $userid => $user) {
+            if ($user->roleid != 1) {
+                $options[$userid] = $user->firstname. " " . $user->lastname;
+            }
+        }
+        $mform->addElement('searchableselector', 'user', get_string('user'),$options);
+        $mform->addRule('user', get_string('required'), 'required', null, 'client');
+
+        //service selector
+        $services = $DB->get_records('external_services');
+        $options = array();
+        foreach ($services as $serviceid => $service) {
+            $options[$serviceid] = $service->name;
+        }
+        $mform->addElement('select', 'service', get_string('service', 'webservice'),$options);
+        $mform->addRule('service', get_string('required'), 'required', null, 'client');
+       
+        
+        $mform->addElement('text', 'iprestriction', get_string('iprestriction', 'webservice'));
+
+        $mform->addElement('date_selector', 'validuntil', get_string('validuntil', 'webservice'), array('optional'=>true));
+
+        $mform->addElement('hidden', 'action');
+        $mform->setType('action', PARAM_ACTION);
+
+        $this->add_action_buttons(true);
+
+        $this->set_data($data);
+    }
+
+    function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        return $errors;
+    }
+}
