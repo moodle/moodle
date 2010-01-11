@@ -291,18 +291,16 @@ class auth_plugin_mnet extends auth_plugin_base {
         // TODO: refactor into a separate function
         if (empty($localuser) || ! $localuser->id) {
             if (empty($this->config->auto_add_remote_users)) {
-                print_error('nolocaluser', 'mnet');
+                print_error('nolocaluser2', 'mnet');
             }
             $remoteuser->mnethostid = $remotehost->id;
             $remoteuser->firstaccess = time(); // First time user in this server, grab it here
 
-            if (! insert_record('user', addslashes_recursive($remoteuser))) {
+            if (!$remoteuser->id =  insert_record('user', addslashes_recursive($remoteuser))) {
                 print_error('databaseerror', 'mnet');
             }
             $firsttime = true;
-            if (! $localuser = get_record('user', 'username', addslashes($remoteuser->username), 'mnethostid', $remotehost->id)) {
-                print_error('nolocaluser', 'mnet');
-            }
+            $localuser = $remoteuser;
         }
 
         // check sso access control list for permission first
