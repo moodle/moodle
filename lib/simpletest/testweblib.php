@@ -202,7 +202,7 @@ END;
                      'URL: <a href="http://moodle.org">www.moodle.org</a>' => 'URL: <a href="http://moodle.org">www.moodle.org</a>',
                      'URL: <a href="http://moodle.org"> http://moodle.org</a>' => 'URL: <a href="http://moodle.org"> http://moodle.org</a>',
                      'URL: <a href="http://moodle.org"> www.moodle.org</a>' => 'URL: <a href="http://moodle.org"> www.moodle.org</a>',
-                     //escaped anchor tag
+                     //escaped anchor tag. todo decide whether we want to make this work. MDL-21183
                      htmlspecialchars('escaped anchor tag <a href="http://moodle.org">www.moodle.org</a>') => 'escaped anchor tag &lt;a href="http://moodle.org"&gt; www.moodle.org&lt;/a&gt;',
                      //trailing fullstop
                      'URL: http://moodle.org/s/i=1&j=2.' => 'URL: <a href="http://moodle.org/s/i=1&j=2" class="_blanktarget">http://moodle.org/s/i=1&j=2</a>.',
@@ -231,9 +231,11 @@ END;
                      'This contains http, http:// and www but no actual links.'=>'This contains http, http:// and www but no actual links.',
                      //no link at all
                      'This is a story about moodle.coming to a cinema near you.'=>'This is a story about moodle.coming to a cinema near you.',
-                     //utf 8 characters
+                     //URLs containing utf 8 characters
                      'http://Iñtërnâtiônàlizætiøn.com?ô=nëø'=>'<a href="http://Iñtërnâtiônàlizætiøn.com?ô=nëø" class="_blanktarget">http://Iñtërnâtiônàlizætiøn.com?ô=nëø</a>',
                      'www.Iñtërnâtiônàlizætiøn.com?ô=nëø'=>'<a href="http://www.Iñtërnâtiônàlizætiøn.com?ô=nëø" class="_blanktarget">www.Iñtërnâtiônàlizætiøn.com?ô=nëø</a>',
+                     //text containing utf 8 characters outside of a url
++                     'Iñtërnâtiônàlizætiøn is important to http://moodle.org'=>'Iñtërnâtiônàlizætiøn is important to <a href="http://moodle.org" target="_blank">http://moodle.org</a>',
                      //too hard to identify without additional regexs
                      'moodle.org' => 'moodle.org',
                      //some text with no link between related html tags
@@ -248,12 +250,20 @@ END;
                      //and another url within one tag
                      '<td background="http://moodle.org">&nbsp;</td>' => '<td background="http://moodle.org">&nbsp;</td>',
                      '<td background="www.moodle.org">&nbsp;</td>' => '<td background="www.moodle.org">&nbsp;</td>',
+                     '<form name="input" action="http://moodle.org/submit.asp" method="get">'=>'<form name="input" action="http://moodle.org/submit.asp" method="get">',
                      //partially escaped img tag
                      'partially escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" />' => 'partially escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" />',
-                     //fully escaped img tag
+                     //fully escaped img tag. Do we want this to work on escaped text? MDL-21183
                      htmlspecialchars('fully escaped img tag <img src="http://moodle.org/logo/logo-240x60.gif" />') => 'fully escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" /&gt;',
                      //Double http with www
-                     'One more link like http://www.moodle.org to test' => 'One more link like <a href="http://www.moodle.org" class="_blanktarget">http://www.moodle.org</a> to test'
+                     'One more link like http://www.moodle.org to test' => 'One more link like <a href="http://www.moodle.org" target="_blank">http://www.moodle.org</a> to test',
++                     //URLs in Javascript
+                     'var url="http://moodle.org";'=>'var url="http://moodle.org";',
+                     'var url = "http://moodle.org";'=>'var url = "http://moodle.org";',
+                     'var url="www.moodle.org";'=>'var url="www.moodle.org";',
+                     'var url = "www.moodle.org";'=>'var url = "www.moodle.org";',
+                     //doctype. do we care about this failing?
+                     //'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN http://www.w3.org/TR/html4/strict.dtd">'=>'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN http://www.w3.org/TR/html4/strict.dtd">'
                  );
        foreach ($texts as $text => $correctresult) {
             $msg = "Testing text: ". str_replace('%', '%%', $text) . ": %s"; // Escape original '%' so sprintf() wont get confused
