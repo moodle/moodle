@@ -76,10 +76,10 @@ if ($formdata = $mform->get_data()) {
 
         // Create a unique temporary directory, to process the zip file
         // contents.
-        $zipodir = my_mktempdir($CFG->dataroot.'/temp/', 'usrpic');
-        $dstfile = $zipodir.'/images.zip';
-
-        if (!$mform->save_file('userfile', $dstfile, true)) {
+        $zipdir = my_mktempdir($CFG->dataroot.'/temp/', 'usrpic');
+        $dstfile = $zipdir.'/images.zip';
+        
+        if (!$mform->save_file('userpicturesfile', $dstfile, true)) {
             echo $OUTPUT->notification(get_string('uploadpicture_cannotmovezip','admin'));
             @remove_dir($zipdir);
         } else {
@@ -212,7 +212,7 @@ function process_file ($file, $userfield, $overwrite) {
                         strlen($extension) - 1);
 
     // userfield names are safe, so don't quote them.
-    if (!($user = $DB->get_record('user', array ($userfield => $uservalue)))) {
+    if (!($user = $DB->get_record('user', array ($userfield => $uservalue,'deleted',0)))) {
         $a = new Object();
         $a->userfield = clean_param($userfield, PARAM_CLEANHTML);
         $a->uservalue = clean_param($uservalue, PARAM_CLEANHTML);
