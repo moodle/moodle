@@ -215,12 +215,6 @@ class grade_item extends grade_object {
     public $decimals = null;
 
     /**
-     * 0 if visible, 1 always hidden or date not visible until
-     * @var int $hidden
-     */
-    public $hidden = 0;
-
-    /**
      * Grade item lock flag. Empty if not locked, locked if any value present, usually date when item was locked. Locking prevents updating.
      * @var int $locked
      */
@@ -560,38 +554,13 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Returns the hidden state of this grade_item
-     * @return boolean hidden state
-     */
-    public function is_hidden() {
-        return ($this->hidden == 1 or ($this->hidden != 0 and $this->hidden > time()));
-    }
-
-    /**
-     * Check grade hidden status. Uses data from both grade item and grade.
-     * @return boolean true if hiddenuntil, false if not
-     */
-    public function is_hiddenuntil() {
-        return $this->hidden > 1;
-    }
-
-    /**
-     * Check grade item hidden status.
-     * @return int 0 means visible, 1 hidden always, timestamp hidden until
-     */
-    public function get_hidden() {
-        return $this->hidden;
-    }
-
-    /**
      * Set the hidden status of grade_item and all grades, 0 mean visible, 1 always hidden, number means date to hide until.
      * @param int $hidden new hidden status
      * @param boolean $cascade apply to child objects too
      * @return void
      */
     public function set_hidden($hidden, $cascade=false) {
-        $this->hidden = $hidden;
-        $this->update();
+        parent::set_hidden($hidden, $cascade);
 
         if ($cascade) {
             if ($grades = grade_grade::fetch_all(array('itemid'=>$this->id))) {

@@ -34,7 +34,7 @@ abstract class grade_object {
      * Array of required table fields, must start with 'id'.
      * @var array $required_fields
      */
-    public $required_fields = array('id', 'timecreated', 'timemodified');
+    public $required_fields = array('id', 'timecreated', 'timemodified', 'hidden');
 
     /**
      * Array of optional fields with default values - usually long text information that is not always needed.
@@ -60,6 +60,12 @@ abstract class grade_object {
      * @var int $timemodified
      */
     public $timemodified;
+
+    /**
+     * 0 if visible, 1 always hidden or date not visible until
+     * @var int $hidden
+     */
+    var $hidden = 0;
 
     /**
      * Constructor. Optionally (and by default) attempts to fetch corresponding row from DB.
@@ -353,5 +359,34 @@ abstract class grade_object {
      * @param bool $deleted
      */
     function notify_changed($deleted) {
+    }
+
+    /**
+     * Returns the hidden state of this grade_item
+     * @return boolean hidden state
+     */
+    function is_hidden() {
+        return ($this->hidden == 1 or ($this->hidden != 0 and $this->hidden > time()));
+    }
+
+    /**
+     * Check grade hidden status. Uses data from both grade item and grade.
+     * @return boolean true if hiddenuntil, false if not
+     */
+    function is_hiddenuntil() {
+        return $this->hidden > 1;
+    }
+
+    /**
+     * Check grade item hidden status.
+     * @return int 0 means visible, 1 hidden always, timestamp hidden until
+     */
+    function get_hidden() {
+        return $this->hidden;
+    }
+
+    function set_hidden($hidden, $cascade=false) {
+        $this->hidden = $hidden;
+        $this->update();
     }
 }

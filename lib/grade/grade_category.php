@@ -45,7 +45,7 @@ class grade_category extends grade_object {
      */
     public $required_fields = array('id', 'courseid', 'parent', 'depth', 'path', 'fullname', 'aggregation',
                                  'keephigh', 'droplow', 'aggregateonlygraded', 'aggregateoutcomes',
-                                 'aggregatesubcats', 'timecreated', 'timemodified');
+                                 'aggregatesubcats', 'timecreated', 'timemodified', 'hidden');
 
     /**
      * The course this category belongs to.
@@ -1502,26 +1502,6 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Returns the hidden state/date of the associated grade_item. This method is also available in
-     * grade_item.
-     *
-     * @return boolean
-     */
-    public function is_hidden() {
-        $this->load_grade_item();
-        return $this->grade_item->is_hidden();
-    }
-
-    /**
-     * Check grade hidden status. Uses data from both grade item and grade.
-     * @return boolean true if hiddenuntil, false if not
-     */
-    public function is_hiddenuntil() {
-        $this->load_grade_item();
-        return $this->grade_item->is_hiddenuntil();
-    }
-
-    /**
      * Sets the grade_item's hidden variable and updates the grade_item.
      * Method named after grade_item::set_hidden().
      * @param int $hidden 0, 1 or a timestamp int(10) after which date the item will be hidden.
@@ -1530,7 +1510,10 @@ class grade_category extends grade_object {
      */
     public function set_hidden($hidden, $cascade=false) {
         $this->load_grade_item();
+        //this hides the associated grade item (the course total)
         $this->grade_item->set_hidden($hidden);
+        //this hides the category itself and everything it contains
+        parent::set_hidden($hidden, $cascade);
 
         if ($cascade) {
 
