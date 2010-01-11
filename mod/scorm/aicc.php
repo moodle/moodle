@@ -42,8 +42,8 @@
         if (isset($SESSION->scorm_status)) {
             $status = $SESSION->scorm_status;
         }
-        if (isset($SESSION->attempt)) {
-            $attempt = $SESSION->attempt;
+        if (isset($SESSION->scorm_attempt)) {
+            $attempt = $SESSION->scorm_attempt;
         } else {
             $attempt = 1;
         }
