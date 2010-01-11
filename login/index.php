@@ -236,10 +236,16 @@ if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    /
             $errorcode = 3;
         }
 
-        // TODO: if the user failed to authenticate, check if the username corresponds to a remote mnet user
         if ( !empty($CFG->mnet_dispatcher_mode)
              && $CFG->mnet_dispatcher_mode === 'strict'
-             && is_enabled_auth('mnet')) {
+             && is_enabled_auth('mnet')
+             && $DB->record_exists_sql('SELECT h.id FROM {mnet_host} h
+                INNER JOIN {mnet_host2service} m ON h.id=m.hostid
+                INNER JOIN {mnet_service} s ON s.id=m.serviceid
+                WHERE s.name=? AND h.deleted=? AND m.publish = ?',
+                array('sso_sp', 0, 1))
+            && $DB->record_exists_select('user', 'username = ? AND mnethostid != ?', array($frm->username, $CFG->mnet_localhost_id))
+        ) {
             $errormsg .= get_string('loginlinkmnetuser', 'mnet', "mnet_email.php?u=$frm->username");
         }
     }
