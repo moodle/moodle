@@ -360,7 +360,7 @@ class theme_config {
     /**
      * Theme diagnostic code. It is very problematic to send debug output
      * to the actual CSS file, instead this functions is supposed to
-     * diagnose given theme and highlisht all potential problems.
+     * diagnose given theme and highlights all potential problems.
      * This information should be available from the theme selection page
      * or some other debug page for theme designers.
      *
