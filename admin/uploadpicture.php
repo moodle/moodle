@@ -212,7 +212,7 @@ function process_file ($file, $userfield, $overwrite) {
                         strlen($extension) - 1);
 
     // userfield names are safe, so don't quote them.
-    if (!($user = $DB->get_record('user', array ($userfield => $uservalue,'deleted',0)))) {
+    if (!($user = $DB->get_record('user', array ($userfield => $uservalue, 'deleted' => 0)))) {
         $a = new Object();
         $a->userfield = clean_param($userfield, PARAM_CLEANHTML);
         $a->uservalue = clean_param($uservalue, PARAM_CLEANHTML);
