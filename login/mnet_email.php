@@ -20,13 +20,17 @@ $PAGE->set_heading($mnetidprovider);
 $PAGE->set_focuscontrol('email');
 
 echo $OUTPUT->header();
+echo $OUTPUT->notification(get_string('mnetidproviderdesc', 'mnet'));
 
 if ($form = data_submitted() and confirm_sesskey()) {
-    if ($user = $DB->get_record('user', array('username'=>$username, 'email'=>$form->email))) {
+    if ($user = $DB->get_record_select('user', 'username = ? AND email = ? AND mnethostid != ?', array($username,$form->email, $CFG->mnet_localhost_id))) {
         if (!empty($user->mnethostid) and $host = $DB->get_record('mnet_host', array('id'=>$user->mnethostid))) {
             $link = "<a href=\"{$host->wwwroot}/login/\">{$host->name}</a>";
             notice(get_string('mnetidprovidermsg','mnet',$link));
         }
+    }
+    if (empty($link)) {
+        notice(get_string('mnetidprovidernotfound', 'mnet'));
     }
 }
 
