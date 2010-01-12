@@ -283,6 +283,11 @@ class auth_plugin_mnet extends auth_plugin_base {
             exit;
         }
 
+        if (user_not_fully_set_up($remoteuser)) {
+            print_error('notenoughidpinfo', 'mnet');
+            exit;
+        }
+
         $firsttime = false;
 
         // get the local record for the remote user

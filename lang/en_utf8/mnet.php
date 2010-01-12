@@ -217,6 +217,7 @@ $string['hostnotconfiguredforsso'] = 'This remote Moodle Hub is not configured f
 $string['authmnetdisabled'] = 'Moodle Networking authentication is disabled.';
 $string['unknownerror'] = 'Unknown error occurred during negotiation.';
 $string['nolocaluser'] = 'No local record exists for remote user, and it could not be created, as this host will not auto create users.  Please contact your administrator!';
+$string['notenoughidpinfo'] = 'Your identity provider is not giving us enough information to create your account locally.  Sorry!';
 $string['databaseerror'] = 'Could not write details to the database.';
 $string['ssoacldescr'] = 'Use this page to grant/deny access to specific users from remote Moodle Network hosts. This is functional when you are offering SSO services to remote users. To control your <em>local</em> users\' ability to roam to other Moodle Network hosts, use the roles system to grant them the <em>mnetlogintoremote</em> capability.';
 $string['ssoaclneeds'] = 'For this functionality to work, you must have Moodle Networking On, plus the Moodle Network authentication plugin enabled with auto-add users enabled .';
