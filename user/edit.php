@@ -79,6 +79,10 @@ if (!empty($CFG->usetags)) {
 
 // remote users cannot be edited
 if (is_mnet_remote_user($user)) {
+    if (user_not_fully_set_up($user)) {
+        $hostwwwroot = $DB->get_field('mnet_host', 'wwwroot', array('id'=>$user->mnethostid));
+        print_error('usernotfullysetup', 'mnet', '', $hostwwwroot);
+    }
     redirect($CFG->wwwroot . "/user/view.php?course={$course->id}");
 }
 
