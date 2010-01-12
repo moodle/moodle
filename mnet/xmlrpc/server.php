@@ -10,9 +10,12 @@
 
 // Make certain that config.php doesn't display any errors, and that it doesn't
 // override our do-not-display-errors setting:
-ini_set('display_errors',0);
+// disable moodle specific debug messages and any errors in output
+define('NO_DEBUG_DISPLAY', true);
+// cookies are not used, makes sure there is empty global $USER
+define('NO_MOODLE_COOKIES', true);
+
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
-ini_set('display_errors',0);
 
 // Include MNET stuff:
 require_once $CFG->dirroot.'/mnet/lib.php';
