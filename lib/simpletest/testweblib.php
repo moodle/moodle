@@ -236,7 +236,7 @@ END;
             $fast_enough = true;
         }
 
-        $this->assertEqual($fast_enough, true, 'Timing test: ' . $new_time . 'ms (new) < ' . $old_time . 'ms (old)');
+        $this->assertEqual($fast_enough, true, 'Timing test: ' . $new_time . 'secs (new) < ' . $old_time . 'secs (old)');
     }
 }
 ?>
