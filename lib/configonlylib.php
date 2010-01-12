@@ -102,9 +102,9 @@ function min_enable_zlib_compression() {
             }
         }
     }
-
+    
     @ini_set('output_handler', '');
-    @ini_set('zlib.output_compression', 'on');
-
+    @ini_set('zlib.output_compression', 1);
+    
     return true;
 }
