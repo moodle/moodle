@@ -2857,7 +2857,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010010601);
     }
 
-    if ($result && $oldversion < 2010010601.01) {
+    if ($result && $oldversion < 2010010612) {
         $table = new xmldb_table('grade_categories');
         $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
 
@@ -2865,7 +2865,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $dbman->add_field($table, $field);
         }
 
-        upgrade_main_savepoint($result, 2010010601.01);
+        upgrade_main_savepoint($result, 2010010612);
     }
 
     return $result;
