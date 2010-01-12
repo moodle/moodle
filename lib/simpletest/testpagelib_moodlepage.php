@@ -137,7 +137,7 @@ class moodle_page_test extends UnitTestCase {
 
     public function test_cannot_set_course_once_theme_set() {
         // Setup fixture
-        $this->testpage->force_theme('standard');
+        $this->testpage->force_theme(theme_config::DEFAULT_THEME);
         $course = $this->create_a_course();
         // Set expectation.
         $this->expectException();
@@ -147,7 +147,7 @@ class moodle_page_test extends UnitTestCase {
 
     public function test_cannot_set_category_once_theme_set() {
         // Setup fixture
-        $this->testpage->force_theme('standard');
+        $this->testpage->force_theme(theme_config::DEFAULT_THEME);
         // Set expectation.
         $this->expectException();
         // Exercise SUT

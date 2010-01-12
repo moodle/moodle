@@ -102,6 +102,12 @@ function theme_get_revision() {
  */
 class theme_config {
     /**
+     * @var string default theme, used when requested theme not found
+     *      TODO: MDL-21149 replace with some new default theme when implemented
+     */
+    const DEFAULT_THEME = 'standard';
+
+    /**
      * You can base your theme on other themes by linking to the other theme as
      * parents. This lets you use the CSS and layouts from the other themes
      * (see {@link $layouts}).
@@ -351,9 +357,13 @@ class theme_config {
 
         if ($config = theme_config::find_theme_config($themename, $settings)) {
             return new theme_config($config);
+
+        } else if ($themename == theme_config::DEFAULT_THEME) {
+            throw new coding_exception('Default theme '.theme_config::DEFAULT_THEME.' not available or broken!');
+
         } else {
             // bad luck, the requested theme has some problems - admin see details in theme config
-            return new theme_config(theme_config::find_theme_config('standard', $settings)); // TODO: use some other default MDL-21149
+            return new theme_config(theme_config::find_theme_config(theme_config::DEFAULT_THEME, $settings));
         }
     }
 
