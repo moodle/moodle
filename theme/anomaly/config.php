@@ -12,7 +12,7 @@ $THEME->sheets = array('styles', 'styles_layout', 'styles_select');
 /// stylesheet files you want included in this theme, and in what order
 ////////////////////////////////////////////////////////////////////////////////
 
-$THEME->parents = array('standardold');
+$THEME->parents = array('standardold');  // TODO: new themes can not be based on standardold, instead use 'base' as the base
 /// This variable can be set to the name of a parent theme
 /// which you want to have included before the current theme.
 /// This can make it easy to make modifications to another
