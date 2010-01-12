@@ -74,7 +74,8 @@ class repository_remotemoodle extends repository {
 
         ///check the the user is known
         ///he has to be previously connected to the server site in order to be in the database
-        //TODO: MDL-21318 this seems weird - is it executed from cron or what? Please review
+        //TODO: MDL-21318 this looks problematic, because global $USER would need to be set back after this,
+        //      also is the user allowed to roam?
         $USER = $DB->get_record('user',array('username' => $username, 'mnethostid' => $MNET_REMOTE_CLIENT->id));
         if (empty($USER)) {
             exit(mnet_server_fault(9016, get_string('usernotfound', 'repository_remotemoodle',  $username)));
@@ -116,7 +117,8 @@ class repository_remotemoodle extends repository {
 
         ///check the the user is known
         ///he has to be previously connected to the server site in order to be in the database
-        //TODO: MDL-21318 this seems weird - is it executed from cron or what? Please review
+        //TODO: MDL-21318 this looks problematic, because global $USER would need to be set back after this,
+        //      also is the user allowed to roam?
         $USER = $DB->get_record('user',array('username' => $username, 'mnethostid' => $MNET_REMOTE_CLIENT->id));
         if (empty($USER)) {
             exit(mnet_server_fault(9016, get_string('usernotfound', 'repository_remotemoodle',  $username)));
