@@ -104,7 +104,14 @@ function min_enable_zlib_compression() {
     }
     
     @ini_set('output_handler', '');
-    @ini_set('zlib.output_compression', 1);
+
+    /*
+     * docs clearly say 'on' means enable and number menas size of bufffer,
+     * but unfortunately some PHP version break when we set 'on' here.
+     * 1 probably sets chunk size to 4096. our CSS and JS scripts are much bigger,
+     * so let's try some bigger sizes.
+     */
+    @ini_set('zlib.output_compression', 65536);
     
     return true;
 }
