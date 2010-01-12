@@ -1,0 +1,15 @@
+This legacy standard theme is here only for developers that need to work
+on general issues before we create new 'base' theme and new 'standard' theme.
+
+The layouts in this theme are table based and in general are completely useless.
+
+The CSS files contain a lot of weird markup that was accumulated over the years,
+please make sure you copy only good CSS with proper selectors from here.
+
+Some CSS from this theme will be gradully copied into the 'base' theme,
+some CSS will be copied into new 'standard' theme. Some CSS will be deleted.
+
+
+This theme will be removed from CVS when we have new 'standard' theme.
+
+
