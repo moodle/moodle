@@ -140,27 +140,35 @@ class web_service_token_form extends moodleform {
 
         $mform->addElement('header', 'token', get_string('token', 'webservice'));
 
-        //user searchable selector
-        $sql = "SELECT user.id, user.firstname, user.lastname, rassign.roleid
-        FROM {user} user
-        LEFT JOIN {role_assignments} rassign
-        ON user.id = rassign.userid
-        ORDER BY user.lastname";
-        $users = $DB->get_records_sql($sql,array());
-        $options = array();
-        foreach ($users as $userid => $user) {
-            if ($user->roleid != 1) {
-                $options[$userid] = $user->firstname. " " . $user->lastname;
+        if (empty($data->nouserselection)) {
+            //user searchable selector
+            $sql = "SELECT user.id, user.firstname, user.lastname, rassign.roleid
+            FROM {user} user
+            LEFT JOIN {role_assignments} rassign
+            ON user.id = rassign.userid
+            ORDER BY user.lastname";
+            $users = $DB->get_records_sql($sql,array());
+            $options = array();
+            foreach ($users as $userid => $user) {
+                if ($user->roleid != 1) {
+                    $options[$userid] = $user->firstname. " " . $user->lastname;
+                }
             }
+            $mform->addElement('searchableselector', 'user', get_string('user'),$options);
+            $mform->addRule('user', get_string('required'), 'required', null, 'client');
         }
-        $mform->addElement('searchableselector', 'user', get_string('user'),$options);
-        $mform->addRule('user', get_string('required'), 'required', null, 'client');
 
         //service selector
         $services = $DB->get_records('external_services');
         $options = array();
+        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
         foreach ($services as $serviceid => $service) {
-            $options[$serviceid] = $service->name;
+            //check that the user has the required capability (only for generation by the profil page)
+            if (empty($data->nouserselection) 
+                || empty($service->requiredcapability)
+                || has_capability($service->requiredcapability, $systemcontext, $USER->id)) {
+                $options[$serviceid] = $service->name;
+            }
         }
         $mform->addElement('select', 'service', get_string('service', 'webservice'),$options);
         $mform->addRule('service', get_string('required'), 'required', null, 'client');

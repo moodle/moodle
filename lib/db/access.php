@@ -1509,5 +1509,14 @@ $capabilities = array(
             'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
+    ),
+    'moodle/webservice:createtoken' => array(
+
+        'riskbitmask' => RISK_DATALOSS | RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'admin' => CAP_ALLOW
+        )
     )
 );

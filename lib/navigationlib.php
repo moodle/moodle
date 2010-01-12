@@ -3354,6 +3354,12 @@ class settings_navigation extends navigation_node {
             }
         }
 
+        // Webservice
+        if ($currentuser && !empty($CFG->enablewebservices) && has_capability('moodle/webservice:createtoken', $systemcontext)) {
+            $url = new moodle_url($CFG->wwwroot .'/user/managetoken.php', array('sesskey'=>sesskey()));
+            $usersetting->add(get_string('webservices', 'webservice'), $url, self::TYPE_SETTING);
+        }
+
         // Repository
         if (!$currentuser) {
             require_once($CFG->dirroot . '/repository/lib.php');

@@ -272,6 +272,7 @@ $string['userswithrole'] = 'All users with a role';
 $string['useshowadvancedtochange'] = 'Use \'Show advanced\' to change';
 $string['viewrole'] = 'View role details';
 $string['viewingdefinitionofrolex'] = 'Viewing the definition of role \'$a\'';
+$string['webservice:createtoken'] = 'Create a web service token';
 $string['whydoesuserhavecap'] = 'Why does $a->fullname have capability $a->capability in context $a->context?';
 $string['whydoesusernothavecap'] = 'Why does $a->fullname not have capability $a->capability in context $a->context?';
 $string['xroleassignments'] = '$a\'s role assignments';

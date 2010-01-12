@@ -67,7 +67,11 @@ switch ($action) {
             } else {
                 $newtoken = new object();
                 $newtoken->token = $generatedtoken;
-                $newtoken->externalserviceid = $data->service;
+                if (empty($service->requiredcapability) || has_capability($service->requiredcapability, $systemcontext, $data->user)) {
+                    $newtoken->externalserviceid = $data->service;
+                } else {
+                    throw new moodle_exception('userhasnocapabilitytousethisservice');
+                }
                 $newtoken->tokentype = 2;
                 $newtoken->userid = $data->user;
                 //TODO: find a way to get the context - UPDATE FOLLOWING LINE
