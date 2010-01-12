@@ -166,7 +166,7 @@ END;
                      'This is a story about moodle.coming to a cinema near you.'=>'This is a story about moodle.coming to a cinema near you.',
                      //URLs containing utf 8 characters
                      'http://Iñtërnâtiônàlizætiøn.com?ô=nëø'=>'<a href="http://Iñtërnâtiônàlizætiøn.com?ô=nëø" target="_blank">http://Iñtërnâtiônàlizætiøn.com?ô=nëø</a>',
-                     'www.Iñtërnâtiônàlizætiøn.com?ô=nëø'=>'<a href="http://www.Iñtërnâtiônàlizætiøn.com?ô=nëø" target="_blank">http://www.Iñtërnâtiônàlizætiøn.com?ô=nëø</a>',
+                     'www.Iñtërnâtiônàlizætiøn.com?ô=nëø'=>'<a href="http://www.Iñtërnâtiônàlizætiøn.com?ô=nëø" target="_blank">www.Iñtërnâtiônàlizætiøn.com?ô=nëø</a>',
                      //text containing utf 8 characters outside of a url
                      'Iñtërnâtiônàlizætiøn is important to http://moodle.org'=>'Iñtërnâtiônàlizætiøn is important to <a href="http://moodle.org" target="_blank">http://moodle.org</a>',
                      //too hard to identify without additional regexs
@@ -190,6 +190,12 @@ END;
                      htmlspecialchars('fully escaped img tag <img src="http://moodle.org/logo/logo-240x60.gif" />') => 'fully escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" /&gt;',
                      //Double http with www
                      'One more link like http://www.moodle.org to test' => 'One more link like <a href="http://www.moodle.org" target="_blank">http://www.moodle.org</a> to test',
+                     //Encoded URLs in the path
+                     'URL: http://127.0.0.1/one%28parenthesis%29/path?param=value' => 'URL: <a href="http://127.0.0.1/one%28parenthesis%29/path?param=value" target="_blank">http://127.0.0.1/one%28parenthesis%29/path?param=value</a>',
+                     'URL: www.localhost.com/one%28parenthesis%29/path?param=value' => 'URL: <a href="http://www.localhost.com/one%28parenthesis%29/path?param=value" target="_blank">www.localhost.com/one%28parenthesis%29/path?param=value</a>',
+                     //Encoded URLs in the query
+                     'URL: http://127.0.0.1/path/to?param=value_with%28parenthesis%29&param2=1' => 'URL: <a href="http://127.0.0.1/path/to?param=value_with%28parenthesis%29&param2=1" target="_blank">http://127.0.0.1/path/to?param=value_with%28parenthesis%29&param2=1</a>',
+                     'URL: www.localhost.com/path/to?param=value_with%28parenthesis%29&param2=1' => 'URL: <a href="http://www.localhost.com/path/to?param=value_with%28parenthesis%29&param2=1" target="_blank">www.localhost.com/path/to?param=value_with%28parenthesis%29&param2=1</a>',
                      //URLs in Javascript
                      'var url="http://moodle.org";'=>'var url="http://moodle.org";',
                      'var url = "http://moodle.org";'=>'var url = "http://moodle.org";',
