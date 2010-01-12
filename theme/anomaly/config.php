@@ -12,7 +12,7 @@ $THEME->sheets = array('styles', 'styles_layout', 'styles_select');
 /// stylesheet files you want included in this theme, and in what order
 ////////////////////////////////////////////////////////////////////////////////
 
-$THEME->parents = array('standard');
+$THEME->parents = array('standardold');
 /// This variable can be set to the name of a parent theme
 /// which you want to have included before the current theme.
 /// This can make it easy to make modifications to another
@@ -21,7 +21,7 @@ $THEME->parents = array('standard');
 /// is not used.
 ////////////////////////////////////////////////////////////////////////////////
 
-$THEME->parents_exclude_sheets = array('standard'=>array('styles_moz'));
+$THEME->parents_exclude_sheets = array('standardold'=>array('styles_moz'));
 
 $THEME->resource_mp3player_colors =
  'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
