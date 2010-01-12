@@ -235,7 +235,7 @@ END;
                      'http://Iñtërnâtiônàlizætiøn.com?ô=nëø'=>'<a href="http://Iñtërnâtiônàlizætiøn.com?ô=nëø" class="_blanktarget">http://Iñtërnâtiônàlizætiøn.com?ô=nëø</a>',
                      'www.Iñtërnâtiônàlizætiøn.com?ô=nëø'=>'<a href="http://www.Iñtërnâtiônàlizætiøn.com?ô=nëø" class="_blanktarget">www.Iñtërnâtiônàlizætiøn.com?ô=nëø</a>',
                      //text containing utf 8 characters outside of a url
-+                     'Iñtërnâtiônàlizætiøn is important to http://moodle.org'=>'Iñtërnâtiônàlizætiøn is important to <a href="http://moodle.org" target="_blank">http://moodle.org</a>',
+                     'Iñtërnâtiônàlizætiøn is important to http://moodle.org'=>'Iñtërnâtiônàlizætiøn is important to <a href="http://moodle.org" class="_blanktarget">http://moodle.org</a>',
                      //too hard to identify without additional regexs
                      'moodle.org' => 'moodle.org',
                      //some text with no link between related html tags
@@ -256,8 +256,14 @@ END;
                      //fully escaped img tag. Do we want this to work on escaped text? MDL-21183
                      htmlspecialchars('fully escaped img tag <img src="http://moodle.org/logo/logo-240x60.gif" />') => 'fully escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" /&gt;',
                      //Double http with www
-                     'One more link like http://www.moodle.org to test' => 'One more link like <a href="http://www.moodle.org" target="_blank">http://www.moodle.org</a> to test',
-+                     //URLs in Javascript
+                     'One more link like http://www.moodle.org to test' => 'One more link like <a href="http://www.moodle.org" class="_blanktarget">http://www.moodle.org</a> to test',
+                     //Encoded URLs in the path
+                     'URL: http://127.0.0.1/one%28parenthesis%29/path?param=value' => 'URL: <a href="http://127.0.0.1/one%28parenthesis%29/path?param=value" class="_blanktarget">http://127.0.0.1/one%28parenthesis%29/path?param=value</a>',
+                     'URL: www.localhost.com/one%28parenthesis%29/path?param=value' => 'URL: <a href="http://www.localhost.com/one%28parenthesis%29/path?param=value" class="_blanktarget">www.localhost.com/one%28parenthesis%29/path?param=value</a>',
+                     //Encoded URLs in the query
+                     'URL: http://127.0.0.1/path/to?param=value_with%28parenthesis%29&param2=1' => 'URL: <a href="http://127.0.0.1/path/to?param=value_with%28parenthesis%29&param2=1" class="_blanktarget">http://127.0.0.1/path/to?param=value_with%28parenthesis%29&param2=1</a>',
+                     'URL: www.localhost.com/path/to?param=value_with%28parenthesis%29&param2=1' => 'URL: <a href="http://www.localhost.com/path/to?param=value_with%28parenthesis%29&param2=1" class="_blanktarget">www.localhost.com/path/to?param=value_with%28parenthesis%29&param2=1</a>',
+                     //URLs in Javascript
                      'var url="http://moodle.org";'=>'var url="http://moodle.org";',
                      'var url = "http://moodle.org";'=>'var url = "http://moodle.org";',
                      'var url="www.moodle.org";'=>'var url="www.moodle.org";',
