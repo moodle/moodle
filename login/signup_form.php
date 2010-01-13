@@ -103,13 +103,12 @@ class login_signup_form extends moodleform {
             //check allowed characters
             if ($data['username'] !== moodle_strtolower($data['username'])) {
                 $errors['username'] = get_string('usernamelowercase');
-            } else {
-                if (empty($CFG->extendedusernamechars)) {
-                    $string = clean_param($data['username'], PARAM_USERNAME);
-                    if (strcmp($data['username'], $string)) {
-                        $errors['username'] = get_string('invalidusername');
-                    }
+            } else {                
+                $string = clean_param($data['username'], PARAM_USERNAME);
+                if (strcmp($data['username'], $string)) {
+                    $errors['username'] = get_string('invalidusername');
                 }
+                
             }
         }
 
