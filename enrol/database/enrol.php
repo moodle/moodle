@@ -434,7 +434,7 @@ function get_access_icons($course) {
 
 /// Overide the base config_form() function
 function config_form($frm) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     $vars = array('enrol_dbhost', 'enrol_dbuser', 'enrol_dbpass',
                   'enrol_dbname', 'enrol_dbtable',

@@ -97,7 +97,7 @@ function determine_default_rolemapping($imscode) {
 
 /// Override the base config_form() function
 function config_form($frm) {
-    global $CFG, $imsroles;
+    global $CFG, $OUTPUT, $imsroles;
 
     $vars = array('enrol_imsfilelocation', 'enrol_logtolocation', 'enrol_createnewusers', 'enrol_fixcaseusernames', 'enrol_fixcasepersonalnames', 'enrol_truncatecoursecodes',
             'enrol_createnewcourses', 'enrol_createnewcategories', 'enrol_createnewusers', 'enrol_mailadmins',

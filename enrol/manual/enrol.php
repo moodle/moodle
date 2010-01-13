@@ -215,7 +215,7 @@ function check_group_entry ($courseid, $password) {
 * @param    frm  an object containing all the data for this page
 */
 function config_form($frm) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     if (!isset( $frm->enrol_manual_keyholderrole )) {
         $frm->enrol_manual_keyholderrole = '';

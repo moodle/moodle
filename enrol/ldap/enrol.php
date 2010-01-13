@@ -314,7 +314,7 @@ function get_access_icons($course) {
 
 /// Overrise the base config_form() function
 function config_form($frm) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     $this->check_legacy_config();
 
