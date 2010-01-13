@@ -146,7 +146,8 @@ class web_service_token_form extends moodleform {
             FROM {user} user
             WHERE user.id NOT IN (  SELECT adminuser.id
                                     FROM {user} adminuser, {role_assignments} rassign
-                                    WHERE rassign.roleid = 1 AND rassign.userid = adminuser.id)";
+                                    WHERE rassign.roleid = 1 AND rassign.userid = adminuser.id)
+            ORDER BY user.lastname";
             $users = $DB->get_records_sql($sql,array());
             $options = array();
             foreach ($users as $userid => $user) {
