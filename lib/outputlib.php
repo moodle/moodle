@@ -105,7 +105,7 @@ class theme_config {
      * @var string default theme, used when requested theme not found
      *      TODO: MDL-21149 replace with some new default theme when implemented
      */
-    const DEFAULT_THEME = 'standard';
+    const DEFAULT_THEME = 'standardold';
 
     /**
      * You can base your theme on other themes by linking to the other theme as
@@ -399,7 +399,7 @@ class theme_config {
             $baseconfig = $config;
         }
 
-        $configurable = array('parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'javascripts',
+        $configurable = array('parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'javascripts', 'javascripts_footer',
                               'parents_exclude_javascripts', 'layouts', 'resource_mp3player_colors',
                               'filter_mediaplugin_colors', 'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow');
 
