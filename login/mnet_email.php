@@ -14,13 +14,17 @@ $mnetidprovider = get_string('mnetidprovider','mnet');
 $navigation = build_navigation(array(array('name' => $mnetidprovider, 'link' => null, 'type' => 'misc')));
 
 print_header($mnetidprovider, $mnetidprovider, $navigation, 'form.email' );
+notify(get_string('mnetidproviderdesc', 'mnet'));
 
 if ($form = data_submitted() and confirm_sesskey()) {
-    if ($user = get_record('user', 'username', $username, 'email', $form->email)) {
+    if ($user = get_record_select('user', "username = '$username' AND email = '$form->email' AND mnethostid != $CFG->mnet_localhost_id")) {
         if (!empty($user->mnethostid) and $host = get_record('mnet_host', 'id', $user->mnethostid)) {
             $link = "<a href=\"{$host->wwwroot}/login/\">{$host->name}</a>";
             notice(get_string('mnetidprovidermsg','mnet',$link));
         }
+    }
+    if (empty($link)) {
+        notice(get_string('mnetidprovidernotfound', 'mnet'));
     }
 }
 
