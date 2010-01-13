@@ -85,7 +85,7 @@
             $id_list .= ', '.$CFG->mnet_all_hosts_id;
         }
 
-        $concat = sql_concat('COALESCE(h2s.id,0) ', ' \'-\' ', ' svc.id');
+        $concat = sql_concat('COALESCE(h2s.id,0) ', ' \'-\' ', ' svc.id', '\'-\'', 'r.parent_type', '\'-\'', 'r.parent');
 
         $query = "
             SELECT DISTINCT
