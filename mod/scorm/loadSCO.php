@@ -93,10 +93,11 @@
     }
 
     if ($version == 'AICC') {
+        $sco_params = '';
         if (isset($sco->parameters) && (!empty($sco->parameters))) {
-            $sco->parameters = '&'. $sco->parameters;
+            $sco_params = '&'. $sco->parameters;
         }
-        $launcher = $sco->launch.$connector.'aicc_sid='.sesskey().'&aicc_url='.$CFG->wwwroot.'/mod/scorm/aicc.php'.$sco->parameters;
+        $launcher = $sco->launch.$connector.'aicc_sid='.sesskey().'&aicc_url='.$CFG->wwwroot.'/mod/scorm/aicc.php'.$sco_params;
     } else {
         if (isset($sco->parameters) && (!empty($sco->parameters))) {
             $launcher = $sco->launch.$connector.$sco->parameters;
