@@ -24,25 +24,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Security token used for allowing access
- * from external application such as web services.
- * Scripts do not use any session, performance is relatively
- * low because we need to load access info in each request.
- * Scrits are executed in parallel.
- */
-define('EXTERNAL_TOKEN_PERMANENT', 0);
 
 /**
- * Security token used for allowing access
- * of embedded applications, the code is executed in the
- * active user session. Token is invalidated after user logs out.
- * Scripts are executed serially - normal session locking is used.
- */
-define('EXTERNAL_TOKEN_EMBEDDED', 1);
-
-/**
- * Returns detailed functio information
+ * Returns detailed function information
  * @param string|object $function name of external function or record from external_function
  * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
  *                        MUST_EXIST means throw exception if no record or multiple records found

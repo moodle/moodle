@@ -30,6 +30,7 @@ require_once("$CFG->dirroot/webservice/testclient_forms.php");
 
 $function = optional_param('function', '', PARAM_SAFEDIR);
 $protocol = optional_param('protocol', '', PARAM_SAFEDIR);
+$authmethod = optional_param('authmethod', '', PARAM_SAFEDIR);
 
 $PAGE->set_url('webservice/testclient.php');
 
@@ -87,7 +88,7 @@ if (!$function or !$protocol) {
 
 $class = $function.'_form';
 
-$mform = new $class();
+$mform = new $class(null, array('authmethod' => $authmethod));
 $mform->set_data(array('function'=>$function, 'protocol'=>$protocol));
 
 if ($mform->is_cancelled()) {
@@ -106,9 +107,15 @@ if ($mform->is_cancelled()) {
     }
     $testclient = new $testclientclass();
 
-    $serverurl = "$CFG->wwwroot/webservice/$protocol/simpleserver.php";
-    $serverurl .= '?wsusername='.urlencode($data->wsusername);
-    $serverurl .= '&wspassword='.urlencode($data->wspassword);
+    $serverurl = "$CFG->wwwroot/webservice/$protocol/";
+    if ($authmethod == 'simple') {
+        $serverurl .= 'simpleserver.php';
+        $serverurl .= '?wsusername='.urlencode($data->wsusername);
+        $serverurl .= '&wspassword='.urlencode($data->wspassword);
+    } else if ($authmethod == 'token') {
+        $serverurl .= 'server.php';
+        $serverurl .= '?wstoken='.urlencode($data->token);
+    }
 
     // now get the function parameters
     $params = $mform->get_params();

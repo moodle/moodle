@@ -12,6 +12,9 @@ class webservice_test_client_form extends moodleform {
 
         $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
 
+        $authmethod = array('simple' => 'simple', 'token' => 'token');
+        $mform->addElement('select', 'authmethod', get_string('authmethod', 'webservice'), $authmethod);
+
         $mform->addElement('select', 'protocol', get_string('protocol', 'webservice'), $protocols);
 
         $mform->addElement('select', 'function', get_string('function', 'webservice'), $functions);
@@ -27,12 +30,22 @@ class moodle_group_create_groups_form extends moodleform {
         global $CFG;
 
         $mform = $this->_form;
+       
 
         $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
 
         //note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters
-        $mform->addElement('text', 'wsusername', 'wsusername');
-        $mform->addElement('text', 'wspassword', 'wspassword');
+        $data = $this->_customdata;
+        if ($data['authmethod'] == 'simple') {
+            $mform->addElement('text', 'wsusername', 'wsusername');
+            $mform->addElement('text', 'wspassword', 'wspassword');
+        } else  if ($data['authmethod'] == 'token') {
+            $mform->addElement('text', 'token', 'token');
+        }
+
+        $mform->addElement('hidden', 'authmethod', $data['authmethod']);
+        $mform->setType('authmethod', PARAM_SAFEDIR);
+
         $mform->addElement('text', 'courseid', 'courseid');
         $mform->addElement('text', 'name', 'name');
         $mform->addElement('text', 'description', 'description');
@@ -43,6 +56,8 @@ class moodle_group_create_groups_form extends moodleform {
 
         $mform->addElement('hidden', 'protocol');
         $mform->setType('protocol', PARAM_SAFEDIR);
+
+        
 
         $mform->addElement('static', 'warning', '', get_string('executewarnign', 'webservice'));
 
@@ -59,6 +74,8 @@ class moodle_group_create_groups_form extends moodleform {
         unset($data->function);
         unset($data->wsusername);
         unset($data->wspassword);
+        unset($data->token);
+        unset($data->authmethod);
 
         $params = array();
         $params['groups'] = array();
@@ -77,8 +94,16 @@ class moodle_group_get_groups_form extends moodleform {
         $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
 
         //note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters
-        $mform->addElement('text', 'wsusername', 'wsusername');
-        $mform->addElement('text', 'wspassword', 'wspassword');
+        $data = $this->_customdata;
+        if ($data['authmethod'] == 'simple') {
+            $mform->addElement('text', 'wsusername', 'wsusername');
+            $mform->addElement('text', 'wspassword', 'wspassword');
+        } else  if ($data['authmethod'] == 'token') {
+            $mform->addElement('text', 'token', 'token');
+        }
+
+        $mform->addElement('hidden', 'authmethod', $data['authmethod']);
+        $mform->setType('authmethod', PARAM_SAFEDIR);
         $mform->addElement('text', 'groupids[0]', 'groupids[0]');
         $mform->addElement('text', 'groupids[1]', 'groupids[1]');
         $mform->addElement('text', 'groupids[2]', 'groupids[2]');
@@ -103,6 +128,8 @@ class moodle_group_get_groups_form extends moodleform {
         unset($data->function);
         unset($data->wsusername);
         unset($data->wspassword);
+        unset($data->token);
+        unset($data->authmethod);
 
         $params = array();
         $params['groupids'] = array();
@@ -126,8 +153,16 @@ class moodle_group_get_course_groups_form extends moodleform {
         $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
 
         //note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters
-        $mform->addElement('text', 'wsusername', 'wsusername');
-        $mform->addElement('text', 'wspassword', 'wspassword');
+        $data = $this->_customdata;
+        if ($data['authmethod'] == 'simple') {
+            $mform->addElement('text', 'wsusername', 'wsusername');
+            $mform->addElement('text', 'wspassword', 'wspassword');
+        } else  if ($data['authmethod'] == 'token') {
+            $mform->addElement('text', 'token', 'token');
+        }
+
+        $mform->addElement('hidden', 'authmethod', $data['authmethod']);
+        $mform->setType('authmethod', PARAM_SAFEDIR);
         $mform->addElement('text', 'courseid', 'courseid');
 
         $mform->addElement('hidden', 'function');
@@ -149,6 +184,8 @@ class moodle_group_get_course_groups_form extends moodleform {
         unset($data->function);
         unset($data->wsusername);
         unset($data->wspassword);
+        unset($data->token);
+        unset($data->authmethod);
 
         $params = array();
         $params['courseid'] = $data->courseid;
@@ -166,8 +203,16 @@ class moodle_group_delete_groups_form extends moodleform {
         $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
 
         //note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters
-        $mform->addElement('text', 'wsusername', 'wsusername');
-        $mform->addElement('text', 'wspassword', 'wspassword');
+        $data = $this->_customdata;
+        if ($data['authmethod'] == 'simple') {
+            $mform->addElement('text', 'wsusername', 'wsusername');
+            $mform->addElement('text', 'wspassword', 'wspassword');
+        } else  if ($data['authmethod'] == 'token') {
+            $mform->addElement('text', 'token', 'token');
+        }
+
+        $mform->addElement('hidden', 'authmethod', $data['authmethod']);
+        $mform->setType('authmethod', PARAM_SAFEDIR);
         $mform->addElement('text', 'groupids[0]', 'groupids[0]');
         $mform->addElement('text', 'groupids[1]', 'groupids[1]');
         $mform->addElement('text', 'groupids[2]', 'groupids[2]');
@@ -194,6 +239,8 @@ class moodle_group_delete_groups_form extends moodleform {
         unset($data->function);
         unset($data->wsusername);
         unset($data->wspassword);
+        unset($data->token);
+        unset($data->authmethod);
 
         $params = array();
         $params['groupids'] = array();
@@ -217,8 +264,16 @@ class moodle_group_get_groupmembers_form extends moodleform {
         $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
 
         //note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters
-        $mform->addElement('text', 'wsusername', 'wsusername');
-        $mform->addElement('text', 'wspassword', 'wspassword');
+        $data = $this->_customdata;
+        if ($data['authmethod'] == 'simple') {
+            $mform->addElement('text', 'wsusername', 'wsusername');
+            $mform->addElement('text', 'wspassword', 'wspassword');
+        } else  if ($data['authmethod'] == 'token') {
+            $mform->addElement('text', 'token', 'token');
+        }
+
+        $mform->addElement('hidden', 'authmethod', $data['authmethod']);
+        $mform->setType('authmethod', PARAM_SAFEDIR);
         $mform->addElement('text', 'groupids[0]', 'groupids[0]');
         $mform->addElement('text', 'groupids[1]', 'groupids[1]');
         $mform->addElement('text', 'groupids[2]', 'groupids[2]');
@@ -243,6 +298,8 @@ class moodle_group_get_groupmembers_form extends moodleform {
         unset($data->function);
         unset($data->wsusername);
         unset($data->wspassword);
+        unset($data->token);
+        unset($data->authmethod);
 
         $params = array();
         $params['groupids'] = array();
@@ -266,8 +323,16 @@ class moodle_group_add_groupmembers_form extends moodleform {
         $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
 
         //note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters
-        $mform->addElement('text', 'wsusername', 'wsusername');
-        $mform->addElement('text', 'wspassword', 'wspassword');
+        $data = $this->_customdata;
+        if ($data['authmethod'] == 'simple') {
+            $mform->addElement('text', 'wsusername', 'wsusername');
+            $mform->addElement('text', 'wspassword', 'wspassword');
+        } else  if ($data['authmethod'] == 'token') {
+            $mform->addElement('text', 'token', 'token');
+        }
+
+        $mform->addElement('hidden', 'authmethod', $data['authmethod']);
+        $mform->setType('authmethod', PARAM_SAFEDIR);
         $mform->addElement('text', 'userid[0]', 'userid[0]');
         $mform->addElement('text', 'groupid[0]', 'groupid[0]');
         $mform->addElement('text', 'userid[1]', 'userid[1]');
@@ -292,6 +357,8 @@ class moodle_group_add_groupmembers_form extends moodleform {
         unset($data->function);
         unset($data->wsusername);
         unset($data->wspassword);
+        unset($data->token);
+        unset($data->authmethod);
 
         $params = array();
         $params['members'] = array();
@@ -315,8 +382,16 @@ class moodle_group_delete_groupmembers_form extends moodleform {
         $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
 
         //note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters
-        $mform->addElement('text', 'wsusername', 'wsusername');
-        $mform->addElement('text', 'wspassword', 'wspassword');
+        $data = $this->_customdata;
+        if ($data['authmethod'] == 'simple') {
+            $mform->addElement('text', 'wsusername', 'wsusername');
+            $mform->addElement('text', 'wspassword', 'wspassword');
+        } else  if ($data['authmethod'] == 'token') {
+            $mform->addElement('text', 'token', 'token');
+        }
+
+        $mform->addElement('hidden', 'authmethod', $data['authmethod']);
+        $mform->setType('authmethod', PARAM_SAFEDIR);
         $mform->addElement('text', 'userid[0]', 'userid[0]');
         $mform->addElement('text', 'groupid[0]', 'groupid[0]');
         $mform->addElement('text', 'userid[1]', 'userid[1]');
@@ -341,6 +416,8 @@ class moodle_group_delete_groupmembers_form extends moodleform {
         unset($data->function);
         unset($data->wsusername);
         unset($data->wspassword);
+        unset($data->token);
+        unset($data->authmethod);
 
         $params = array();
         $params['members'] = array();

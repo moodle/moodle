@@ -69,7 +69,7 @@ switch ($action) {
                     throw new moodle_exception('nocapabilitytousethisservice');
                 }
 
-                $newtoken->tokentype = 2;
+                $newtoken->tokentype = EXTERNAL_TOKEN_PERMANENT;
                 $newtoken->userid = $USER->id;
                 //TODO: find a way to get the context - UPDATE FOLLOWING LINE
                 $newtoken->contextid = get_context_instance(CONTEXT_SYSTEM)->id;
@@ -98,7 +98,7 @@ switch ($action) {
                 FROM
                     {external_tokens} token, {user} user, {external_services} service
                 WHERE
-                    token.creatorid=? AND token.id=? AND token.tokentype = 2 AND service.id = token.externalserviceid AND token.userid = user.id";
+                    token.creatorid=? AND token.id=? AND token.tokentype = ".EXTERNAL_TOKEN_PERMANENT." AND service.id = token.externalserviceid AND token.userid = user.id";
         $token = $DB->get_record_sql($sql, array($USER->id, $tokenid), MUST_EXIST); //must be the token creator
         if (!$confirm) {
             echo $OUTPUT->header();
