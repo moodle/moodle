@@ -78,7 +78,7 @@ class repository_remotemoodle extends repository {
         //      also is the user allowed to roam?
         $USER = $DB->get_record('user',array('username' => $username, 'mnethostid' => $MNET_REMOTE_CLIENT->id));
         if (empty($USER)) {
-            exit(mnet_server_fault(9016, get_string('usernotfound', 'repository_remotemoodle',  $username)));
+            throw new mnet_server_exception(9012, get_string('usernotfound', 'repository_remotemoodle',  $username));
         }
 
         $file = unserialize(base64_decode($source));
@@ -92,7 +92,7 @@ class repository_remotemoodle extends repository {
         $browser = get_file_browser();
         $fileinfo = $browser->get_file_info(get_context_instance_by_id($contextid), $filearea, $itemid, $filepath, $filename);
         if (empty($fileinfo)) {
-            exit(mnet_server_fault(9016, get_string('usercannotaccess', 'repository_remotemoodle',  $file)));
+            throw new mnet_server_exception(9013, get_string('usercannotaccess', 'repository_remotemoodle',  $file));
         }
 
         ///retrieve the file with file API functions and return it encoded in base64
@@ -121,14 +121,14 @@ class repository_remotemoodle extends repository {
         //      also is the user allowed to roam?
         $USER = $DB->get_record('user',array('username' => $username, 'mnethostid' => $MNET_REMOTE_CLIENT->id));
         if (empty($USER)) {
-            exit(mnet_server_fault(9016, get_string('usernotfound', 'repository_remotemoodle',  $username)));
+            throw new mnet_server_exception(9012, get_string('usernotfound', 'repository_remotemoodle',  $username));
         }
 
         try {
             return repository::get_user_file_tree($search);
         }
         catch (Exception $e) {
-            exit(mnet_server_fault(9016, get_string('failtoretrievelist', 'repository_remotemoodle')));
+            throw new mnet_server_exception(9014, get_string('failtoretrievelist', 'repository_remotemoodle'));
         }
     }
 
