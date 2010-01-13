@@ -70,7 +70,7 @@ switch ($action) {
                 if (empty($service->requiredcapability) || has_capability($service->requiredcapability, $systemcontext, $data->user)) {
                     $newtoken->externalserviceid = $data->service;
                 } else {
-                    throw new moodle_exception('userhasnocapabilitytousethisservice');
+                    throw new moodle_exception('nocapabilitytousethisservice');
                 }
                 $newtoken->tokentype = 2;
                 $newtoken->userid = $data->user;
