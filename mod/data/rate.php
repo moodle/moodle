@@ -14,6 +14,8 @@
 
     if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
         error("Course Module ID was incorrect");
+    } else {
+        $data->cmidnumber = $cm->id; //MDL-12961
     }
 
     require_login($course, false, $cm);
