@@ -6495,7 +6495,7 @@ class admin_setting_managewebservicetokens extends admin_setting {
                 FROM
                     {external_tokens} token, {user} user, {external_services} service
                 WHERE
-                    token.creatorid=? AND token.tokentype = 2 AND service.id = token.externalserviceid AND token.userid = user.id";
+                    token.creatorid=? AND token.tokentype = ".EXTERNAL_TOKEN_PERMANENT." AND service.id = token.externalserviceid AND token.userid = user.id";
         $tokens = $DB->get_records_sql($sql, array( $USER->id));
         if (!empty($tokens)) {
             foreach ($tokens as $token) {
