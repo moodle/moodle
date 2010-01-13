@@ -142,17 +142,16 @@ class web_service_token_form extends moodleform {
 
         if (empty($data->nouserselection)) {
             //user searchable selector
-            $sql = "SELECT user.id, user.firstname, user.lastname, rassign.roleid
+            $sql = "SELECT user.id, user.firstname, user.lastname
             FROM {user} user
-            LEFT JOIN {role_assignments} rassign
-            ON user.id = rassign.userid
+            WHERE user.id NOT IN (  SELECT adminuser.id
+                                    FROM {user} adminuser, {role_assignments} rassign
+                                    WHERE rassign.roleid = 1 AND rassign.userid = adminuser.id)
             ORDER BY user.lastname";
             $users = $DB->get_records_sql($sql,array());
             $options = array();
             foreach ($users as $userid => $user) {
-                if ($user->roleid != 1) {
                     $options[$userid] = $user->firstname. " " . $user->lastname;
-                }
             }
             $mform->addElement('searchableselector', 'user', get_string('user'),$options);
             $mform->addRule('user', get_string('required'), 'required', null, 'client');
