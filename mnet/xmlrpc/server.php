@@ -51,7 +51,7 @@ $MNET_REMOTE_CLIENT = new mnet_remote_client();
 try {
     $plaintextmessage = mnet_server_strip_encryption($HTTP_RAW_POST_DATA);
     $xmlrpcrequest = mnet_server_strip_signature($plaintextmessage);
-catch (Exception $e {
+} catch (Exception $e) {
     exit(mnet_server_fault($e->getCode(), $e->getMessage(), $e->a));
 }
 
@@ -74,7 +74,7 @@ if ((($MNET_REMOTE_CLIENT->request_was_encrypted == true) && ($MNET_REMOTE_CLIEN
     || (($MNET_REMOTE_CLIENT->signatureok == true) && ($MNET_REMOTE_CLIENT->plaintext_is_ok() == true))) {
     try {
         $response = mnet_server_dispatch($xmlrpcrequest);
-    catch (Exception $e) {
+    } catch (Exception $e) {
         exit(mnet_server_fault($e->getCode(), $e->getMessage(), $e->a));
     }
 } else {
