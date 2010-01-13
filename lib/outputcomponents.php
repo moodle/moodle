@@ -27,6 +27,215 @@
  */
 
 /**
+ * This constant is used for html attributes which need to have an empty
+ * value and still be output by the renderers (e.g. alt="");
+ *
+ * @constant @EMPTY@
+ */
+define('HTML_ATTR_EMPTY', '@EMPTY@');
+
+
+/**
+ * Interface marking other classes as suitable for renderer_base::render()
+ * @author 2010 Petr Skoda (skodak) info@skodak.org
+ */
+interface renderable {
+    // intentionally empty
+}
+
+
+/**
+ * Component representing a user picture.
+ *
+ * @copyright 2009 Nicolas Connault, 2010 Petr Skoda
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class user_picture implements renderable {
+    /**
+     * List of mandatory fields in user record here.
+     * @var string
+     */
+    const FIELDS = 'id,picture,firstname,lastname,imagealt';
+
+    /**
+     * @var object $user A user object with at least fields id, picture, imagealt, firstname and lastname set.
+     */
+    public $user;
+    /**
+     * @var int $courseid The course id. Used when constructing the link to the user's profile,
+     * page course id used if not specified.
+     */
+    public $courseid;
+    /**
+     * @var bool $link add course profile link to image
+     */
+    public $link = true;
+    /**
+     * @var int $size Size in pixels. Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatibility
+     */
+    public $size = 35;
+    /**
+     * @var boolean $alttext add non-blank alt-text to the image.
+     * Default true, set to false when image alt just duplicates text in screenreaders.
+     */
+    public $alttext = true;
+    /**
+     * @var boolean $popup Whether or not to open the link in a popup window.
+     */
+    public $popup = false;
+    /**
+     * @var string Image class attribute
+     */
+    public $class = 'userpicture';
+
+    /**
+     * User picture constructor.
+     *
+     * @param object $user user record with at least id, picture, imagealt, firstname and lastname set.
+     * @param array $options such as link, size, link, ...
+     */
+    public function __construct(stdClass $user) {
+        global $DB;
+
+        static $fields = null;
+        if (is_null($fields)) {
+            $fields = explode(',', self::FIELDS);
+        }
+
+        if (empty($user->id)) {
+            throw new coding_exception('User id is required when printing user avatar image.');
+        }
+
+        // only touch the DB if we are missing data and complain loudly...
+        $needrec = false;
+        foreach ($fields as $field) {
+            if (!array_key_exists($field, $user)) {
+                $needrec = true;
+                debugging('Missing '.$field.' property in $user object, this is a performance problem that needs to be fixed by a developer. '
+                          .'Please use user_picture::fields() to get the full list of required fields.', DEBUG_DEVELOPER);
+                break;
+            }
+        }
+
+        if ($needrec) {
+            $this->user = $DB->get_record('user', array('id'=>$user->id), self::FIELDS, MUST_EXIST);
+        } else {
+            $this->user = clone($user);
+        }
+    }
+
+    /**
+     * Returns a list of required user fields, usefull when fetching required user info from db.
+     * @param string $tableprefix name of database table prefix in query
+     * @return string
+     */
+    public static function fields($tableprefix = '') {
+        if ($tableprefix === '') {
+            return self::FIELDS;
+        } else {
+            return "$tableprefix." . str_replace(',', ",$tableprefix.", self::FIELDS);
+        }
+    }
+}
+
+// ==== HTML writer and helper classes, will be probably moved elsewhere ======
+
+
+/**
+ * Simple html output class
+ * @copyright 2009 Tim Hunt, 2010 Petr Skoda
+ */
+class html_writer {
+    /**
+     * Outputs a tag with attributes and contents
+     * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
+     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
+     * @param string $contents What goes between the opening and closing tags
+     * @return string HTML fragment
+     */
+    public static function tag($tagname, array $attributes = null, $contents) {
+        return self::start_tag($tagname, $attributes) . $contents . self::end_tag($tagname);
+    }
+
+    /**
+     * Outputs an opening tag with attributes
+     * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
+     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
+     * @return string HTML fragment
+     */
+    public static function start_tag($tagname, array $attributes = null) {
+        return '<' . $tagname . self::attributes($attributes) . '>';
+    }
+
+    /**
+     * Outputs a closing tag
+     * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
+     * @return string HTML fragment
+     */
+    public static function end_tag($tagname) {
+        return '</' . $tagname . '>';
+    }
+
+    /**
+     * Outputs an empty tag with attributes
+     * @param string $tagname The name of tag ('input', 'img', 'br' etc.)
+     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
+     * @return string HTML fragment
+     */
+    public static function empty_tag($tagname, array $attributes = null) {
+        return '<' . $tagname . self::attributes($attributes) . ' />';
+    }
+
+    /**
+     * Outputs a HTML attribute and value
+     * @param string $name The name of the attribute ('src', 'href', 'class' etc.)
+     * @param string $value The value of the attribute. The value will be escaped with {@link s()}
+     * @return string HTML fragment
+     */
+    public static function attribute($name, $value) {
+        if (is_array($value)) {
+            debugging("Passed an array for the HTML attribute $name", DEBUG_DEVELOPER);
+        }
+
+        $value = trim($value);
+        if ($value == HTML_ATTR_EMPTY) {
+            return ' ' . $name . '=""';
+        } else if ($value || is_numeric($value)) { // We want 0 to be output.
+            return ' ' . $name . '="' . s($value) . '"';
+        }
+    }
+
+    /**
+     * Outputs a list of HTML attributes and values
+     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
+     *       The values will be escaped with {@link s()}
+     * @return string HTML fragment
+     */
+    public static function attributes(array $attributes = null) {
+        $attributes = (array)$attributes;
+        $output = '';
+        foreach ($attributes as $name => $value) {
+            $output .= self::attribute($name, $value);
+        }
+        return $output;
+    }
+
+    /**
+     * Generates random html element id.
+     * @param string $base
+     * @return string
+     */
+    public static function random_id($base='random') {
+        return uniqid($base);
+    }
+}
+
+
+// ===============================================================================================
+// TODO: Following components will be refactored soon
+
+/**
  * Base class for classes representing HTML elements, like html_select.
  *
  * Handles the id and class attributes.
@@ -1887,148 +2096,6 @@ class moodle_paging_bar extends html_component {
         $pagingbar->perpage = $perpage;
         $pagingbar->baseurl = $baseurl;
         return $pagingbar;
-    }
-}
-
-
-/**
- * Component representing a user picture.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class user_picture extends html_image {
-    /**
-     * @var mixed $user A user object with at least fields id, picture, imagealt, firstname and lastname set.
-     */
-    public $user;
-    /**
-     * @var int $courseid The course id. Used when constructing the link to the user's profile,
-     * page course id used if not specified.
-     */
-    public $courseid;
-    /**
-     * @var bool $link add course profile link to image
-     */
-    public $link = true;
-    /**
-     * @var int $size Size in pixels. Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatibility
-     */
-    public $size = 35;
-    /**
-     * @var boolean $alttext add non-blank alt-text to the image.
-     * Default true, set to false when image alt just duplicates text in screenreaders.
-     */
-    public $alttext = true;
-    /**
-     * @var boolean $popup Whether or not to open the link in a popup window.
-     */
-    public $popup = false;
-
-    /**
-     * @var link to profile if link requested
-     */
-    public $url;
-
-    /**
-     * User picture constructor.
-     *
-     * @param object $user user record with at least id, picture, imagealt, firstname and lastname set.
-     * @param array $options such as link, size, link, ...
-     */
-    public function __construct(stdClass $user = null, array $options = null) {
-        parent::__construct(null, $options);
-
-        if ($user) {
-            $this->user = $user;
-        }
-    }
-
-    /**
-     * @see lib/html_component#prepare()
-     * @return void
-     */
-    public function prepare(renderer_base $output, moodle_page $page, $target) {
-        global $CFG, $DB;
-
-        if (empty($this->user)) {
-            throw new coding_exception('A user_picture object must have a $user object before being rendered.');
-        }
-
-        if (empty($this->user->id)) {
-            throw new coding_exception('User id missing in $user object.');
-        }
-
-        if (empty($this->courseid)) {
-            $courseid = $page->course->id;
-        } else {
-            $courseid = $this->courseid;
-        }
-
-        // only touch the DB if we are missing data and complain loudly...
-        $needrec = false;
-
-        if (!array_key_exists('picture', $this->user)) {
-            $needrec = true;
-            debugging('Missing picture property in $user object, this is a performance problem that needs to be fixed by a developer.', DEBUG_DEVELOPER);
-        }
-        if ($this->alttext) {
-            if (!array_key_exists('firstname', $this->user) || !array_key_exists('lastname', $this->user) || !array_key_exists('imagealt', $this->user)) {
-                $needrec = true;
-                debugging('Missing firstname, lastname or imagealt property in $user object, this is a performance problem that needs to be fixed by a developer.', DEBUG_DEVELOPER);
-            }
-        }
-
-        if ($needrec) {
-            $this->user = $DB->get_record('user', array('id'=>$this->user->id), 'id, firstname, lastname, imagealt');
-        }
-
-        if ($this->alttext) {
-            if (!empty($user->imagealt)) {
-                $this->alt = $user->imagealt;
-            } else {
-                $this->alt = get_string('pictureof', '', fullname($this->user));
-            }
-        } else {
-            $this->alt = HTML_ATTR_EMPTY;
-        }
-
-        if ($this->link) {
-            $this->url = new moodle_url('/user/view.php', array('id' => $this->user->id, 'course' => $courseid));
-        } else {
-            $this->url = null;
-            $this->popup = false;
-        }
-
-        if (empty($this->size)) {
-            $file = 'f2';
-            $this->size = 35;
-        } else if ($this->size === true or $this->size == 1) {
-            $file = 'f1';
-            $this->size = 100;
-        } else if ($this->size >= 50) {
-            $file = 'f1';
-        } else {
-            $file = 'f2';
-        }
-
-        if (!empty($this->size)) {
-            $this->width = $this->size;
-            $this->height = $this->size;
-        }
-
-        $this->add_class('userpicture');
-
-        if (!empty($this->user->picture)) {
-            require_once($CFG->libdir.'/filelib.php');
-            $this->src = new moodle_url(get_file_url($this->user->id.'/'.$file.'.jpg', null, 'user'));
-        } else { // Print default user pictures (use theme version if available)
-            $this->add_class('defaultuserpic');
-            $this->src = $output->pix_url('u/' . $file);
-        }
-
-        parent::prepare($output, $page, $target);
     }
 }
 

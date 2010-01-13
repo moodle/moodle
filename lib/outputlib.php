@@ -26,14 +26,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * This constant is used for html attributes which need to have an empty
- * value and still be output by the renderers (e.g. alt="");
- *
- * @constant @EMPTY@
- */
-define('HTML_ATTR_EMPTY', '@EMPTY@');
-
 require_once($CFG->libdir.'/outputcomponents.php');
 require_once($CFG->libdir.'/outputactions.php');
 require_once($CFG->libdir.'/outputfactories.php');

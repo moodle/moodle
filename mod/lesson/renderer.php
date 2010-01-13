@@ -570,13 +570,13 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $attributes = array();
         $attributes['class'] = 'slideshow';
         $attributes['style'] = 'background-color:'.$lesson->bgcolor.';height:'.$lesson->height.'px;width:'.$lesson->width.'px;';
-        $output = $this->output_start_tag('div', $attributes);
+        $output = html_writer::start_tag('div', $attributes);
     }
     /**
      * Returns HTML to show the end of a slideshow
      */
     public function slideshow_end() {
-        $output = $this->output_end_tag('div');
+        $output = html_writer::end_tag('div');
     }
     /**
      * Returns a P tag containing contents
@@ -588,7 +588,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
         if ($class !== '') {
             $attributes['class'] = $class;
         }
-        $output = $this->output_tag('p', $attributes, $contents);
+        $output = html_writer::tag('p', $attributes, $contents);
     }
     /**
      * Returns HTML to display add_highscores_form

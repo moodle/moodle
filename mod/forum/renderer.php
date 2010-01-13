@@ -46,18 +46,18 @@ class mod_forum_renderer extends plugin_renderer_base {
         $formattributes['id'] = 'subscriberform';
         $formattributes['action'] = '';
         $formattributes['method'] = 'post';
-        $output .= $this->output_start_tag('form', $formattributes);
-        $output .= $this->output_empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
+        $output .= html_writer::start_tag('form', $formattributes);
+        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
 
         $existingcell = new html_table_cell();
         $existingcell->text = $existinguc->display(true);
         $existingcell->set_classes(array('existing'));
         $actioncell = new html_table_cell();
-        $actioncell->text  = $this->output_start_tag('div', array());
-        $actioncell->text .= $this->output_empty_tag('input', array('type'=>'submit', 'name'=>'subscribe', 'value'=>$this->page->theme->larrow.' '.get_string('add'), 'class'=>'actionbutton'));
-        $actioncell->text .= $this->output_empty_tag('br', array());
-        $actioncell->text .= $this->output_empty_tag('input', array('type'=>'submit', 'name'=>'unsubscribe', 'value'=>$this->page->theme->rarrow.' '.get_string('remove'), 'class'=>'actionbutton'));
-        $actioncell->text .= $this->output_end_tag('div', array());
+        $actioncell->text  = html_writer::start_tag('div', array());
+        $actioncell->text .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'subscribe', 'value'=>$this->page->theme->larrow.' '.get_string('add'), 'class'=>'actionbutton'));
+        $actioncell->text .= html_writer::empty_tag('br', array());
+        $actioncell->text .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'unsubscribe', 'value'=>$this->page->theme->rarrow.' '.get_string('remove'), 'class'=>'actionbutton'));
+        $actioncell->text .= html_writer::end_tag('div', array());
         $actioncell->set_classes(array('actions'));
         $potentialcell = new html_table_cell();
         $potentialcell->text = $potentialuc->display(true);
@@ -68,7 +68,7 @@ class mod_forum_renderer extends plugin_renderer_base {
         $table->data = array(html_table_row::make(array($existingcell, $actioncell, $potentialcell)));
         $output .= $this->output->table($table);
 
-        $output .= $this->output_end_tag('form');
+        $output .= html_writer::end_tag('form');
         return $output;
     }
 
@@ -109,7 +109,7 @@ class mod_forum_renderer extends plugin_renderer_base {
      */
     public function subscribed_users(user_selector_base $existingusers) {
         $output  = $this->output->box_start('subscriberdiv boxaligncenter');
-        $output .= $this->output_tag('p', array(), get_string('forcessubscribe', 'forum'));
+        $output .= html_writer::tag('p', array(), get_string('forcessubscribe', 'forum'));
         $output .= $existingusers->display(true);
         $output .= $this->output->box_end();
         return $output;

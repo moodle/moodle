@@ -57,86 +57,34 @@ class renderer_base {
     }
 
     /**
+     * Returns rendered widget.
+     * @param renderable $widget intence with renderable interface
+     * @return string
+     */
+    public function render(renderable $widget) {
+        $rendermethod = 'render_'.get_class($widget);
+        if (method_exists($this, $rendermethod)) {
+            return $this->$rendermethod($widget);
+        }
+        throw new coding_exception('Can not render widget, renderer method ('.$rendermethod.') not found.');
+    }
+
+    /**
+     * Adds JS handlers needed for event execution for one html element id
+     * @param string $id
+     * @param component_action $actions
+     * @return void
+     */
+    public function add_action_handler($id, component_action $action) {
+        $this->page->requires->event_handler($id, $action->event, $action->jsfunction, $action->jsfunctionargs);
+    }
+
+    /**
      * Have we started output yet?
      * @return boolean true if the header has been printed.
      */
     public function has_started() {
         return $this->page->state >= moodle_page::STATE_IN_BODY;
-    }
-
-    /**
-     * Outputs a tag with attributes and contents
-     * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
-     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
-     * @param string $contents What goes between the opening and closing tags
-     * @return string HTML fragment
-     */
-    protected function output_tag($tagname, array $attributes = null, $contents) {
-        return $this->output_start_tag($tagname, $attributes) . $contents .
-                $this->output_end_tag($tagname);
-    }
-
-    /**
-     * Outputs an opening tag with attributes
-     * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
-     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
-     * @return string HTML fragment
-     */
-    protected function output_start_tag($tagname, array $attributes = null) {
-        return '<' . $tagname . $this->output_attributes($attributes) . '>';
-    }
-
-    /**
-     * Outputs a closing tag
-     * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
-     * @return string HTML fragment
-     */
-    protected function output_end_tag($tagname) {
-        return '</' . $tagname . '>';
-    }
-
-    /**
-     * Outputs an empty tag with attributes
-     * @param string $tagname The name of tag ('input', 'img', 'br' etc.)
-     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
-     * @return string HTML fragment
-     */
-    protected function output_empty_tag($tagname, array $attributes = null) {
-        return '<' . $tagname . $this->output_attributes($attributes) . ' />';
-    }
-
-    /**
-     * Outputs a HTML attribute and value
-     * @param string $name The name of the attribute ('src', 'href', 'class' etc.)
-     * @param string $value The value of the attribute. The value will be escaped with {@link s()}
-     * @return string HTML fragment
-     */
-    protected function output_attribute($name, $value) {
-        if (is_array($value)) {
-            debugging("Passed an array for the HTML attribute $name", DEBUG_DEVELOPER);
-        }
-
-        $value = trim($value);
-        if ($value == HTML_ATTR_EMPTY) {
-            return ' ' . $name . '=""';
-        } else if ($value || is_numeric($value)) { // We want 0 to be output.
-            return ' ' . $name . '="' . s($value) . '"';
-        }
-    }
-
-    /**
-     * Outputs a list of HTML attributes and values
-     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
-     *       The values will be escaped with {@link s()}
-     * @return string HTML fragment
-     */
-    protected function output_attributes(array $attributes = null) {
-        $attributes = (array)$attributes;
-        $output = '';
-        foreach ($attributes as $name => $value) {
-            $output .= $this->output_attribute($name, $value);
-        }
-        return $output;
     }
 
     /**
@@ -187,6 +135,7 @@ class renderer_base {
      * @return void;
      */
     protected function prepare_event_handlers(html_component $component) {
+        //TODO: to be deleted soon
         $actions = $component->get_actions();
         if (!empty($actions) && is_array($actions) && $actions[0] instanceof component_action) {
             foreach ($actions as $action) {
@@ -204,6 +153,7 @@ class renderer_base {
      * @return void
      */
     public static function apply_component_options(html_component $component, array $options = null) {
+        //TODO: to be deleted soon
         $options = (array)$options;
         foreach ($options as $key => $value) {
             if ($key === 'class' or $key === 'classes') {
@@ -238,6 +188,20 @@ class plugin_renderer_base extends renderer_base {
     public function __construct(moodle_page $page, $target) {
         $this->output = $page->get_renderer('core', null, $target);
         parent::__construct($page, $target);
+    }
+
+    /**
+     * Returns rendered widget.
+     * @param renderable $widget intence with renderable interface
+     * @return string
+     */
+    public function render(renderable $widget) {
+        $rendermethod = 'render_'.get_class($widget);
+        if (method_exists($this, $rendermethod)) {
+            return $this->$rendermethod($widget);
+        }
+        // pass to core renderer if method not found here
+        $this->output->render($widget);
     }
 
     /**
@@ -377,7 +341,7 @@ class core_renderer extends renderer_base {
         $this->page->requires->js($jsurl->out(), true)->in_head();
         $jsurl = $this->page->theme->javascript_url(true);
         $this->page->requires->js($jsurl->out(), true);
-        
+
         // Perform a browser environment check for the flash version.  Should only run once per login session.
         if (isloggedin() && !empty($CFG->excludeoldflashclients) && empty($SESSION->flashversion)) {
             $this->page->requires->yui2_lib('event');
@@ -392,7 +356,7 @@ class core_renderer extends renderer_base {
 
         // List alternate versions.
         foreach ($this->page->alternateversions as $type => $alt) {
-            $output .= $this->output_empty_tag('link', array('rel' => 'alternate',
+            $output .= html_writer::empty_tag('link', array('rel' => 'alternate',
                     'type' => $type, 'title' => $alt->title, 'href' => $alt->url));
         }
 
@@ -774,12 +738,12 @@ class core_renderer extends renderer_base {
         }
         $controlshtml = array();
         foreach ($controls as $control) {
-            $controlshtml[] = $this->output_tag('a', array('class' => 'icon',
+            $controlshtml[] = html_writer::tag('a', array('class' => 'icon',
                     'title' => $control['caption'], 'href' => $control['url']),
-                    $this->output_empty_tag('img',  array('src' => $this->pix_url($control['icon'])->out(false, array(), false),
+                    html_writer::empty_tag('img',  array('src' => $this->pix_url($control['icon'])->out(false, array(), false),
                     'alt' => $control['caption'])));
         }
-        return $this->output_tag('div', array('class' => 'commands'), implode('', $controlshtml));
+        return html_writer::tag('div', array('class' => 'commands'), implode('', $controlshtml));
     }
 
     /**
@@ -801,40 +765,40 @@ class core_renderer extends renderer_base {
             $output = '';
             $skipdest = '';
         } else {
-            $output = $this->output_tag('a', array('href' => '#sb-' . $bc->skipid, 'class' => 'skip-block'),
+            $output = html_writer::tag('a', array('href' => '#sb-' . $bc->skipid, 'class' => 'skip-block'),
                     get_string('skipa', 'access', $skiptitle));
-            $skipdest = $this->output_tag('span', array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to'), '');
+            $skipdest = html_writer::tag('span', array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to'), '');
         }
 
         $bc->attributes['id'] = $bc->id;
         $bc->attributes['class'] = $bc->get_classes_string();
-        $output .= $this->output_start_tag('div', $bc->attributes);
+        $output .= html_writer::start_tag('div', $bc->attributes);
 
         $controlshtml = $this->block_controls($bc->controls);
 
         $title = '';
         if ($bc->title) {
-            $title = $this->output_tag('h2', null, $bc->title);
+            $title = html_writer::tag('h2', null, $bc->title);
         }
 
         if ($title || $controlshtml) {
-            $output .= $this->output_tag('div', array('class' => 'header'),
-                    $this->output_tag('div', array('class' => 'title'),
+            $output .= html_writer::tag('div', array('class' => 'header'),
+                    html_writer::tag('div', array('class' => 'title'),
                     $title . $controlshtml));
         }
 
-        $output .= $this->output_start_tag('div', array('class' => 'content'));
+        $output .= html_writer::start_tag('div', array('class' => 'content'));
         $output .= $bc->content;
 
         if ($bc->footer) {
-            $output .= $this->output_tag('div', array('class' => 'footer'), $bc->footer);
+            $output .= html_writer::tag('div', array('class' => 'footer'), $bc->footer);
         }
 
-        $output .= $this->output_end_tag('div');
-        $output .= $this->output_end_tag('div');
+        $output .= html_writer::end_tag('div');
+        $output .= html_writer::end_tag('div');
 
         if ($bc->annotation) {
-            $output .= $this->output_tag('div', array('class' => 'blockannotation'), $bc->annotation);
+            $output .= html_writer::tag('div', array('class' => 'blockannotation'), $bc->annotation);
         }
         $output .= $skipdest;
 
@@ -870,16 +834,16 @@ class core_renderer extends renderer_base {
         $row = 0;
         $lis = array();
         foreach ($items as $key => $string) {
-            $item = $this->output_start_tag('li', array('class' => 'r' . $row));
+            $item = html_writer::start_tag('li', array('class' => 'r' . $row));
             if (!empty($icons[$key])) { //test if the content has an assigned icon
-                $item .= $this->output_tag('div', array('class' => 'icon column c0'), $icons[$key]);
+                $item .= html_writer::tag('div', array('class' => 'icon column c0'), $icons[$key]);
             }
-            $item .= $this->output_tag('div', array('class' => 'column c1'), $string);
-            $item .= $this->output_end_tag('li');
+            $item .= html_writer::tag('div', array('class' => 'column c1'), $string);
+            $item .= html_writer::end_tag('li');
             $lis[] = $item;
             $row = 1 - $row; // Flip even/odd.
         }
-        return $this->output_tag('ul', array('class' => 'list'), implode("\n", $lis));
+        return html_writer::tag('ul', array('class' => 'list'), implode("\n", $lis));
     }
 
     /**
@@ -909,8 +873,8 @@ class core_renderer extends renderer_base {
      * @return string the HTML to be output.
      */
     public function block_move_target($target) {
-        return $this->output_tag('a', array('href' => $target->url, 'class' => 'blockmovetarget'),
-                $this->output_tag('span', array('class' => 'accesshide'), $target->text));
+        return html_writer::tag('a', array('href' => $target->url, 'class' => 'blockmovetarget'),
+                html_writer::tag('span', array('class' => 'accesshide'), $target->text));
     }
 
     /**
@@ -950,7 +914,7 @@ class core_renderer extends renderer_base {
             $attributes['target'] = $CFG->framename;
         }
 
-        return $this->output_tag('a', $attributes, $link->text);
+        return html_writer::tag('a', $attributes, $link->text);
     }
 
    /**
@@ -981,8 +945,8 @@ class core_renderer extends renderer_base {
         }
 
         $output = $this->box_start('generalbox', 'notice');
-        $output .= $this->output_tag('p', array(), $message);
-        $output .= $this->output_tag('div', array('class' => 'buttons'), $this->button($continue) . $this->button($cancel));
+        $output .= html_writer::tag('p', array(), $message);
+        $output .= html_writer::tag('div', array('class' => 'buttons'), $this->button($continue) . $this->button($cancel));
         $output .= $this->box_end();
         return $output;
     }
@@ -1033,12 +997,12 @@ class core_renderer extends renderer_base {
                                   'disabled' => $form->button->disabled,
                                   'id' => $form->button->id);
 
-        $buttonoutput = $this->output_empty_tag('input', $buttonattributes);
+        $buttonoutput = html_writer::empty_tag('input', $buttonattributes);
 
         // Removing the button so it doesn't get output again
         unset($form->button);
 
-        return $this->output_tag('div', array('class' => 'singlebutton'), $this->form($form, $buttonoutput));
+        return html_writer::tag('div', array('class' => 'singlebutton'), $this->form($form, $buttonoutput));
     }
 
     /**
@@ -1058,7 +1022,7 @@ class core_renderer extends renderer_base {
         if (empty($contents) && !empty($form->button)) {
             debugging("You probably want to use \$OUTPUT->single_button(\$form), please read that function's documentation", DEBUG_DEVELOPER);
         } else if (empty($contents)) {
-            $contents = $this->output_empty_tag('input', array('type' => 'submit', 'value' => get_string('ok')));
+            $contents = html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('ok')));
         } else if (!empty($form->button)) {
             $form->button->prepare($this, $this->page, $this->target);
             $this->prepare_event_handlers($form->button);
@@ -1069,11 +1033,11 @@ class core_renderer extends renderer_base {
                                       'disabled' => $form->button->disabled,
                                       'id' => $form->button->id);
 
-            $buttonoutput = $this->output_empty_tag('input', $buttonattributes);
+            $buttonoutput = html_writer::empty_tag('input', $buttonattributes);
 
             // Hide the submit button if the button has a JS submit action
             if ($form->jssubmitaction) {
-                $buttonoutput = $this->output_start_tag('div', array('id' => "noscript$form->id")) . $buttonoutput . $this->output_end_tag('div');
+                $buttonoutput = html_writer::start_tag('div', array('id' => "noscript$form->id")) . $buttonoutput . html_writer::end_tag('div');
                 $this->page->requires->js_function_call('hide_item', array("noscript$form->id"));
             }
 
@@ -1082,7 +1046,7 @@ class core_renderer extends renderer_base {
         $hiddenoutput = '';
 
         foreach ($form->url->params() as $var => $val) {
-            $hiddenoutput .= $this->output_empty_tag('input', array('type' => 'hidden', 'name' => $var, 'value' => $val));
+            $hiddenoutput .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $var, 'value' => $val));
         }
 
         $formattributes = array(
@@ -1091,8 +1055,8 @@ class core_renderer extends renderer_base {
                 'id' => $form->id,
                 'class' => $form->get_classes_string());
 
-        $divoutput = $this->output_tag('div', array(), $hiddenoutput . $contents . $buttonoutput);
-        $output = $this->output_tag('form', $formattributes, $divoutput);
+        $divoutput = html_writer::tag('div', array(), $hiddenoutput . $contents . $buttonoutput);
+        $output = html_writer::tag('form', $formattributes, $divoutput);
 
         return $output;
     }
@@ -1209,7 +1173,7 @@ class core_renderer extends renderer_base {
             $icon->link->text .= $icon->text;
         }
 
-        return $this->output_tag('span', array('class' => 'helplink'), $this->link($icon->link));
+        return html_writer::tag('span', array('class' => 'helplink'), $this->link($icon->link));
     }
 
     /**
@@ -1230,7 +1194,7 @@ class core_renderer extends renderer_base {
         $popupaction = new popup_action('click', $link->url, 'ratingscale');
         $link->add_action($popupaction);
 
-        return $this->output_tag('span', array('class' => 'helplink'), $this->link($link));
+        return html_writer::tag('span', array('class' => 'helplink'), $this->link($link));
     }
 
     /**
@@ -1306,27 +1270,26 @@ class core_renderer extends renderer_base {
             $attributes['width'] = $image->width;
         }
 
-        return $this->output_empty_tag('img', $attributes);
+        return html_writer::empty_tag('img', $attributes);
     }
 
     /**
      * Print the specified user's avatar.
      *
-     * This method can be used in two ways:
+     * User avatar may be obtained in two ways:
      * <pre>
      * // Option 1: (shortcut for simple cases, preferred way)
      * // $user has come from the DB and has fields id, picture, imagealt, firstname and lastname
      * $OUTPUT->user_picture($user, array('popup'=>true));
      *
-     * // Option 2: (not recommended)
-     * $userpic = new user_picture();
+     * // Option 2:
+     * $userpic = new user_picture($user);
      * // Set properties of $userpic
-     * $userpic->user = $user;
      * $userpic->popup = true;
-     * $OUTPUT->user_picture($userpic);
+     * $OUTPUT->render($userpic);
      * </pre>
      *
-     * @param object|user_picture $user_or_userpicture Object with at least fields id, picture, imagealt, firstname, lastname
+     * @param object Object with at least fields id, picture, imagealt, firstname, lastname
      *     If any of these are missing, the database is queried. Avoid this
      *     if at all possible, particularly for reports. It is very bad for performance.
      * @param array $options associative array with user picture options, used only if not a user_picture object,
@@ -1336,34 +1299,90 @@ class core_renderer extends renderer_base {
      *     - link=true (make image clickable - the link leads to user profile)
      *     - popup=false (open in popup)
      *     - alttext=true (add image alt attribute)
-     *     - etc.
+     *     - class = image class attribute (default 'userpicture')
      * @return string HTML fragment
      */
-    public function user_picture(stdClass $user_or_userpicture, array $options = null) {
-
-        if ($user_or_userpicture instanceof user_picture) {
-            // we need a clone because prepare() should not be called repeatedly
-            $userpic = clone($user_or_userpicture);
-        } else {
-            $userpic = new user_picture($user_or_userpicture, $options);
-        }
-
-        $userpic->prepare($this, $this->page, $this->target);
-
-        // get the image html output fisrt, then wrap it in link if needed
-        $output = $this->image($userpic);
-
-        if ($userpic->link) {
-            $link = new html_link();
-            $link->url  = $userpic->url;
-            $link->text = $output;
-            if ($userpic->popup) {
-                $link->add_action(new popup_action('click', $userpic->url));
+    public function user_picture(stdClass $user, array $options = null) {
+        $userpicture = new user_picture($user);
+        foreach ((array)$options as $key=>$value) {
+            if (array_key_exists($key, $userpicture)) {
+                $userpicture->$key = $value;
             }
-            $output = $this->link($link);
+        }
+        return $this->render($userpicture);
+    }
+
+    /**
+     * Internal implementation of user image rendering.
+     * @param user_picture $userpicture
+     * @return string
+     */
+    protected function render_user_picture(user_picture $userpicture) {
+        global $CFG, $DB;
+
+        $user = $userpicture->user;
+
+        if ($userpicture->alttext) {
+            if (!empty($user->imagealt)) {
+                $alt = $user->imagealt;
+            } else {
+                $alt = get_string('pictureof', '', fullname($user));
+            }
+        } else {
+            $alt = HTML_ATTR_EMPTY;
         }
 
-        return $output;
+        if (empty($userpicture->size)) {
+            $file = 'f2';
+            $size = 35;
+        } else if ($userpicture->size === true or $userpicture->size == 1) {
+            $file = 'f1';
+            $size = 100;
+        } else if ($userpicture->size >= 50) {
+            $file = 'f1';
+            $size = $userpicture->size;
+        } else {
+            $file = 'f2';
+            $size = $userpicture->size;
+        }
+
+        $class = $userpicture->class;
+
+        if (!empty($user->picture)) {
+            require_once($CFG->libdir.'/filelib.php');
+            $src = new moodle_url(get_file_url($user->id.'/'.$file.'.jpg', null, 'user'));
+        } else { // Print default user pictures (use theme version if available)
+            $class .= ' defaultuserpic';
+            $src = $this->pix_url('u/' . $file);
+        }
+
+        $attributes = array('src'=>$src, 'alt'=>$alt, 'class'=>$class, 'width'=>$size, 'height'=>$size);
+
+        // get the image html output fisrt
+        $output = html_writer::empty_tag('img', $attributes);;
+
+        // then wrap it in link if needed
+        if (!$userpicture->link) {
+            return $output;
+        }
+
+        if (empty($userpicture->courseid)) {
+            $courseid = $this->page->course->id;
+        } else {
+            $courseid = $userpicture->courseid;
+        }
+
+        $url = new moodle_url($CFG->wwwroot.'/user/view.php', array('id' => $user->id, 'course' => $courseid));
+
+        $attributes = array('href'=>$url);
+
+        if ($userpicture->popup) {
+            $id = html_writer::random_id('userpicture');
+            $attributes['id'] = $id;
+            $this->add_action_handler($id, new popup_action('click', $url));
+        }
+
+        return html_writer::tag('a', $attributes, $output);
     }
 
     /**
@@ -1429,19 +1448,19 @@ class core_renderer extends renderer_base {
             $tag = 'ul';
         }
 
-        $output = $this->output_start_tag($tag, array('class' => $list->get_classes_string()));
+        $output = html_writer::start_tag($tag, array('class' => $list->get_classes_string()));
 
         foreach ($list->items as $listitem) {
             if ($listitem instanceof html_list) {
-                $output .= $this->output_start_tag('li', array()) . "\n";
+                $output .= html_writer::start_tag('li', array()) . "\n";
                 $output .= $this->htmllist($listitem) . "\n";
-                $output .= $this->output_end_tag('li') . "\n";
+                $output .= html_writer::end_tag('li') . "\n";
             } else if ($listitem instanceof html_list_item) {
                 $listitem->prepare($this, $this->page, $this->target);
                 $this->prepare_event_handlers($listitem);
-                $output .= $this->output_tag('li', array('class' => $listitem->get_classes_string()), $listitem->value) . "\n";
+                $output .= html_writer::tag('li', array('class' => $listitem->get_classes_string()), $listitem->value) . "\n";
             } else {
-                $output .= $this->output_tag('li', array(), $listitem) . "\n";
+                $output .= html_writer::tag('li', array(), $listitem) . "\n";
             }
         }
 
@@ -1449,7 +1468,7 @@ class core_renderer extends renderer_base {
             $output = $list->text . $output;
         }
 
-        return $output . $this->output_end_tag($tag);
+        return $output . html_writer::end_tag($tag);
     }
 
     /**
@@ -1475,7 +1494,7 @@ class core_renderer extends renderer_base {
                             'style' => $span->style,
                             'title' => $span->title,
                             'id' => $span->id);
-        return $this->output_tag('span', $attributes, $span->contents);
+        return html_writer::tag('span', $attributes, $span->contents);
     }
 
     /**
@@ -1574,14 +1593,14 @@ class core_renderer extends renderer_base {
         }
 
         if ($select->rendertype == 'menu') {
-            $html .= $this->output_start_tag('select', $attributes) . "\n";
+            $html .= html_writer::start_tag('select', $attributes) . "\n";
 
             foreach ($select->options as $option) {
                 // $OUTPUT->select_option detects if $option is an option or an optgroup
                 $html .= $this->select_option($option);
             }
 
-            $html .= $this->output_end_tag('select') . "\n";
+            $html .= html_writer::end_tag('select') . "\n";
         } else if ($select->rendertype == 'radio') {
             $currentradio = 0;
             foreach ($select->options as $option) {
@@ -1632,14 +1651,14 @@ class core_renderer extends renderer_base {
         $option->label->for = $option->id;
         $this->prepare_event_handlers($option);
 
-        $output = $this->output_start_tag('span', array('class' => "radiogroup $name rb{$currentradio[$name]}")) . "\n";
+        $output = html_writer::start_tag('span', array('class' => "radiogroup $name rb{$currentradio[$name]}")) . "\n";
         $output .= $this->label($option->label);
 
         if ($option->selected == 'selected') {
             $option->selected = 'checked';
         }
 
-        $output .= $this->output_empty_tag('input', array(
+        $output .= html_writer::empty_tag('input', array(
                 'type' => 'radio',
                 'value' => $option->value,
                 'name' => $name,
@@ -1648,7 +1667,7 @@ class core_renderer extends renderer_base {
                 'class' => $option->get_classes_string(),
                 'checked' => $option->selected));
 
-        $output .= $this->output_end_tag('span');
+        $output .= html_writer::end_tag('span');
         $currentradio[$name]++;
         return $output;
     }
@@ -1672,7 +1691,7 @@ class core_renderer extends renderer_base {
         $option->label->for = $option->id;
         $this->prepare_event_handlers($option);
 
-        $output = $this->output_start_tag('span', array('class' => "checkbox $name")) . "\n";
+        $output = html_writer::start_tag('span', array('class' => "checkbox $name")) . "\n";
 
         if ($option->selected) {
             $option->selected = 'checked';
@@ -1680,7 +1699,7 @@ class core_renderer extends renderer_base {
             $option->selected = '';
         }
 
-        $output .= $this->output_empty_tag('input', array(
+        $output .= html_writer::empty_tag('input', array(
                 'type' => 'checkbox',
                 'value' => $option->value,
                 'name' => $name,
@@ -1691,7 +1710,7 @@ class core_renderer extends renderer_base {
                 'checked' => $option->selected));
         $output .= $this->label($option->label);
 
-        $output .= $this->output_end_tag('span');
+        $output .= html_writer::end_tag('span');
 
         return $output;
     }
@@ -1709,17 +1728,17 @@ class core_renderer extends renderer_base {
         $this->prepare_event_handlers($option);
 
         if ($option instanceof html_select_option) {
-            return $this->output_tag('option', array(
+            return html_writer::tag('option', array(
                     'value' => $option->value,
                     'disabled' => $option->disabled,
                     'class' => $option->get_classes_string(),
                     'selected' => $option->selected), $option->text);
         } else if ($option instanceof html_select_optgroup) {
-            $output = $this->output_start_tag('optgroup', array('label' => $option->text, 'class' => $option->get_classes_string()));
+            $output = html_writer::start_tag('optgroup', array('label' => $option->text, 'class' => $option->get_classes_string()));
             foreach ($option->options as $selectoption) {
                 $output .= $this->select_option($selectoption);
             }
-            $output .= $this->output_end_tag('optgroup');
+            $output .= html_writer::end_tag('optgroup');
             return $output;
         }
     }
@@ -1731,7 +1750,7 @@ class core_renderer extends renderer_base {
      * @return string the HTML for the <input>
      */
     public function textfield($field) {
-        return $this->output_tag('span', array('class' => "textfield $field->name"), $this->field($field));
+        return html_writer::tag('span', array('class' => "textfield $field->name"), $this->field($field));
     }
 
     /**
@@ -1748,7 +1767,7 @@ class core_renderer extends renderer_base {
         if (!empty($field->label->text)) {
             $label = $this->label($field->label);
         }
-        return $label . $this->output_empty_tag('input', array(
+        return $label . html_writer::empty_tag('input', array(
                 'type' => $field->type,
                 'name' => $field->name,
                 'id' => $field->id,
@@ -1769,7 +1788,7 @@ class core_renderer extends renderer_base {
         $label = clone($label);
         $label->prepare($this, $this->page, $this->target);
         $this->prepare_event_handlers($label);
-        return $this->output_tag('label', array('for' => $label->for, 'class' => $label->get_classes_string()), $label->text);
+        return html_writer::tag('label', array('for' => $label->for, 'class' => $label->get_classes_string()), $label->text);
     }
 
     /**
@@ -1782,7 +1801,7 @@ class core_renderer extends renderer_base {
         if (empty($message)) {
             return '';
         }
-        return $this->output_tag('span', array('class' => 'error'), $message);
+        return html_writer::tag('span', array('class' => 'error'), $message);
     }
 
     /**
@@ -1867,7 +1886,7 @@ class core_renderer extends renderer_base {
      * @return string the HTML to output.
      */
     public function notification($message, $classes = 'notifyproblem') {
-        return $this->output_tag('div', array('class' =>
+        return html_writer::tag('div', array('class' =>
                 renderer_base::prepare_classes($classes)), clean_text($message));
     }
 
@@ -1887,7 +1906,7 @@ class core_renderer extends renderer_base {
         $form->button->text = get_string('continue');
         $form->method = 'get';
 
-        return $this->output_tag('div', array('class' => 'continuebutton') , $this->button($form));
+        return html_writer::tag('div', array('class' => 'continuebutton') , $this->button($form));
     }
 
     /**
@@ -1929,7 +1948,7 @@ class core_renderer extends renderer_base {
             }
         }
 
-        return $this->output_tag('div', array('class' => 'paging'), $output);
+        return html_writer::tag('div', array('class' => 'paging'), $output);
     }
 
     /**
@@ -1948,14 +1967,14 @@ class core_renderer extends renderer_base {
                 'cellpadding'   => $table->cellpadding,
                 'cellspacing'   => $table->cellspacing,
                 'class'         => $table->get_classes_string());
-        $output = $this->output_start_tag('table', $attributes) . "\n";
+        $output = html_writer::start_tag('table', $attributes) . "\n";
 
         $countcols = 0;
 
         if (!empty($table->head)) {
             $countcols = count($table->head);
-            $output .= $this->output_start_tag('thead', $table->headclasses) . "\n";
-            $output .= $this->output_start_tag('tr', array()) . "\n";
+            $output .= html_writer::start_tag('thead', $table->headclasses) . "\n";
+            $output .= html_writer::start_tag('tr', array()) . "\n";
             $keys = array_keys($table->head);
             $lastkey = end($keys);
 
@@ -1988,7 +2007,7 @@ class core_renderer extends renderer_base {
                 }
                 if ($table->rotateheaders) {
                     // we need to wrap the heading content
-                    $heading->text = $this->output_tag('span', null, $heading->text);
+                    $heading->text = html_writer::tag('span', null, $heading->text);
                 }
 
                 $attributes = array(
@@ -2001,22 +2020,22 @@ class core_renderer extends renderer_base {
                 if ($heading->header === true) {
                     $tagtype = 'th';
                 }
-                $output .= $this->output_tag($tagtype, $attributes, $heading->text) . "\n";
+                $output .= html_writer::tag($tagtype, $attributes, $heading->text) . "\n";
             }
-            $output .= $this->output_end_tag('tr') . "\n";
-            $output .= $this->output_end_tag('thead') . "\n";
+            $output .= html_writer::end_tag('tr') . "\n";
+            $output .= html_writer::end_tag('thead') . "\n";
         }
 
         if (!empty($table->data)) {
             $oddeven    = 1;
             $keys       = array_keys($table->data);
             $lastrowkey = end($keys);
-            $output .= $this->output_start_tag('tbody', array('class' => renderer_base::prepare_classes($table->bodyclasses))) . "\n";
+            $output .= html_writer::start_tag('tbody', array('class' => renderer_base::prepare_classes($table->bodyclasses))) . "\n";
 
             foreach ($table->data as $key => $row) {
                 if (($row === 'hr') && ($countcols)) {
-                    $output .= $this->output_tag('td', array('colspan' => $countcols),
-                                                 $this->output_tag('div', array('class' => 'tabledivider'), '')) . "\n";
+                    $output .= html_writer::tag('td', array('colspan' => $countcols),
+                                                 html_writer::tag('div', array('class' => 'tabledivider'), '')) . "\n";
                 } else {
                     // Convert array rows to html_table_rows and cell strings to html_table_cell objects
                     if (!($row instanceof html_table_row)) {
@@ -2043,7 +2062,7 @@ class core_renderer extends renderer_base {
                         $row->add_class('lastrow');
                     }
 
-                    $output .= $this->output_start_tag('tr', array('class' => $row->get_classes_string(), 'style' => $row->style, 'id' => $row->id)) . "\n";
+                    $output .= html_writer::start_tag('tr', array('class' => $row->get_classes_string(), 'style' => $row->style, 'id' => $row->id)) . "\n";
                     $keys2 = array_keys($row->cells);
                     $lastkey = end($keys2);
 
@@ -2081,14 +2100,14 @@ class core_renderer extends renderer_base {
                         if ($cell->header === true) {
                             $tagtype = 'th';
                         }
-                        $output .= $this->output_tag($tagtype, $tdattributes, $cell->text) . "\n";
+                        $output .= html_writer::tag($tagtype, $tdattributes, $cell->text) . "\n";
                     }
                 }
-                $output .= $this->output_end_tag('tr') . "\n";
+                $output .= html_writer::end_tag('tr') . "\n";
             }
-            $output .= $this->output_end_tag('tbody') . "\n";
+            $output .= html_writer::end_tag('tbody') . "\n";
         }
-        $output .= $this->output_end_tag('table') . "\n";
+        $output .= html_writer::end_tag('table') . "\n";
 
         if ($table->rotateheaders && can_use_rotated_text()) {
             $this->page->requires->yui2_lib('event');
@@ -2104,7 +2123,7 @@ class core_renderer extends renderer_base {
      * @return string the HTML to output.
      */
     public function skip_link_target($id = '') {
-        return $this->output_tag('span', array('id' => $id), '');
+        return html_writer::tag('span', array('id' => $id), '');
     }
 
     /**
@@ -2120,7 +2139,7 @@ class core_renderer extends renderer_base {
         if ($level < 1 or $level > 6) {
             throw new coding_exception('Heading level must be an integer between 1 and 6.');
         }
-        return $this->output_tag('h' . $level,
+        return html_writer::tag('h' . $level,
                 array('id' => $id, 'class' => renderer_base::prepare_classes($classes)), $text);
     }
 
@@ -2142,8 +2161,8 @@ class core_renderer extends renderer_base {
      * @return string the HTML to output.
      */
     public function box_start($classes = 'generalbox', $id = '') {
-        $this->opencontainers->push('box', $this->output_end_tag('div'));
-        return $this->output_start_tag('div', array('id' => $id,
+        $this->opencontainers->push('box', html_writer::end_tag('div'));
+        return html_writer::start_tag('div', array('id' => $id,
                 'class' => 'box ' . renderer_base::prepare_classes($classes)));
     }
 
@@ -2173,8 +2192,8 @@ class core_renderer extends renderer_base {
      * @return string the HTML to output.
      */
     public function container_start($classes = '', $id = '') {
-        $this->opencontainers->push('container', $this->output_end_tag('div'));
-        return $this->output_start_tag('div', array('id' => $id,
+        $this->opencontainers->push('container', html_writer::end_tag('div'));
+        return html_writer::start_tag('div', array('id' => $id,
                 'class' => renderer_base::prepare_classes($classes)));
     }
 
@@ -2238,14 +2257,14 @@ class core_renderer extends renderer_base {
             if (!empty($item->id)) {
                 $divattr['id'] = $item->id;
             }
-            $content = $this->output_tag('p', $divattr, $content) . $this->tree_block_contents($item->children);
+            $content = html_writer::tag('p', $divattr, $content) . $this->tree_block_contents($item->children);
             if (!empty($item->preceedwithhr) && $item->preceedwithhr===true) {
-                $content = $this->output_tag('hr', array(), null).$content;
+                $content = html_writer::tag('hr', array(), null).$content;
             }
-            $content = $this->output_tag('li', $liattr, $content);
+            $content = html_writer::tag('li', $liattr, $content);
             $lis[] = $content;
         }
-        return $this->output_tag('ul', $attrs, implode("\n", $lis));
+        return html_writer::tag('ul', $attrs, implode("\n", $lis));
     }
 
     /**

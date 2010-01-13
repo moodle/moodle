@@ -129,9 +129,9 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
                 $o .= $this->output->select($select);
             }
         }
-        $o .= $this->output->output_start_tag('ul', array());
+        $o .= html_writer::start_tag('ul', array());
         foreach ($allocation->reviewedby as $reviewerid => $assessmentid) {
-            $o .= $this->output->output_start_tag('li', array());
+            $o .= html_writer::start_tag('li', array());
             $o .= $this->output->user_picture($userinfo[$reviewerid], array('courseid' => $this->page->course->id, 'size' => 16));
             $o .= fullname($userinfo[$reviewerid]);
 
@@ -139,9 +139,9 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
             $handler = new moodle_url($this->page->url, array('mode' => 'del', 'what' => $assessmentid, 'sesskey' => sesskey()));
             $o .= $this->remove_allocation_icon($handler);
 
-            $o .= $this->output->output_end_tag('li');
+            $o .= html_writer::end_tag('li');
         }
-        $o .= $this->output->output_end_tag('ul');
+        $o .= html_writer::end_tag('ul');
         return $o;
     }
 
@@ -173,9 +173,9 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
         } else {
             $o .= $this->output->container(get_string('nothingtoreview', 'workshop'), 'info');
         }
-        $o .= $this->output->output_start_tag('ul', array());
+        $o .= html_writer::start_tag('ul', array());
         foreach ($allocation->reviewerof as $authorid => $assessmentid) {
-            $o .= $this->output->output_start_tag('li', array());
+            $o .= html_writer::start_tag('li', array());
             $o .= $this->output->user_picture($userinfo[$authorid], array('courseid' => $this->page->course->id, 'size' => 16));
             $o .= fullname($userinfo[$authorid]);
 
@@ -183,9 +183,9 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
             $handler = new moodle_url($this->page->url, array('mode' => 'del', 'what' => $assessmentid, 'sesskey' => sesskey()));
             $o .= $this->remove_allocation_icon($handler);
 
-            $o .= $this->output->output_end_tag('li');
+            $o .= html_writer::end_tag('li');
         }
-        $o .= $this->output->output_end_tag('ul');
+        $o .= html_writer::end_tag('ul');
         return $o;
     }
 

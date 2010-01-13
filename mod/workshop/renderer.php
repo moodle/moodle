@@ -47,8 +47,8 @@ class mod_workshop_renderer extends plugin_renderer_base {
         }
         $sty = empty($message->sty) ? 'info' : $message->sty;
 
-        $o = $this->output->output_tag('span', array(), $message->text);
-        $closer = $this->output->output_tag('a', array('href' => $this->page->url->out()),
+        $o = html_writer::tag('span', array(), $message->text);
+        $closer = html_writer::tag('a', array('href' => $this->page->url->out()),
                     get_string('messageclose', 'workshop'));
         $o .= $this->output->container($closer, 'status-message-closer');
         if (isset($message->extra)) {
@@ -76,7 +76,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         }
         $o = $this->status_message($msg);
         if (is_array($result)) {
-            $o .= $this->output->output_start_tag('ul', array('class' => 'allocation-init-results'));
+            $o .= html_writer::start_tag('ul', array('class' => 'allocation-init-results'));
             foreach ($result as $message) {
                 $parts  = explode('::', $message);
                 $text   = array_pop($parts);
@@ -85,9 +85,9 @@ class mod_workshop_renderer extends plugin_renderer_base {
                     // do not display allocation debugging messages
                     continue;
                 }
-                $o .= $this->output->output_tag('li', array('class' => $class), $text) . "\n";
+                $o .= html_writer::tag('li', array('class' => $class), $text) . "\n";
             }
-            $o .= $this->output->output_end_tag('ul');
+            $o .= html_writer::end_tag('ul');
             $o .= $this->output->continue_button($this->page->url->out());
         }
         return $o;
@@ -250,7 +250,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
             if ($format == "html") {
                 // this is the same as the code in the last else-branch
-                $outputfiles .= $this->output->output_tag('li', array('class' => $type), $linkhtml);
+                $outputfiles .= html_writer::tag('li', array('class' => $type), $linkhtml);
 
             } else if ($format == "text") {
                 $outputfiles .= $linktxt . "\n";
@@ -265,7 +265,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
                     $outputimgs    .= $this->output->container($preview);
                 } else {
                     // this is the same as the code in html if-branch
-                    $outputfiles .= $this->output->output_tag('li', array('class' => $type), $linkhtml);
+                    $outputfiles .= html_writer::tag('li', array('class' => $type), $linkhtml);
                 }
             }
         }
@@ -274,7 +274,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $outputimgs = $this->output->container($outputimgs, 'images');
         }
         if ($format !== "text") {
-            $outputfiles = $this->output->output_tag('ul', array('class' => 'files'), $outputfiles);
+            $outputfiles = html_writer::tag('ul', array('class' => 'files'), $outputfiles);
         }
         return $this->output->container($outputimgs . $outputfiles, 'attachments');
     }
@@ -381,7 +381,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $row = new html_table_row();
         $row->set_classes('phasetasks');
         foreach ($plan as $phasecode => $phase) {
-            $title = $this->output->output_tag('span', array(), $phase->title);
+            $title = html_writer::tag('span', array(), $phase->title);
             $actions = '';
             foreach ($phase->actions as $action) {
                 switch ($action->type) {
@@ -438,10 +438,10 @@ class mod_workshop_renderer extends plugin_renderer_base {
             }
             $title = $this->output->container($title, 'title');
             $details = $this->output->container($task->details, 'details');
-            $out .= $this->output->output_tag('li', array('class' => $classes), $title . $details);
+            $out .= html_writer::tag('li', array('class' => $classes), $title . $details);
         }
         if ($out) {
-            $out = $this->output->output_tag('ul', array('class' => 'tasks'), $out);
+            $out = html_writer::tag('ul', array('class' => 'tasks'), $out);
         }
         return $out;
     }
@@ -607,7 +607,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
     protected function sortable_heading($text, $sortid=null, $sortby=null, $sorthow=null) {
         global $PAGE;
 
-        $out = $this->output->output_tag('span', array('class'=>'text'), $text);
+        $out = html_writer::tag('span', array('class'=>'text'), $text);
 
         if (!is_null($sortid)) {
             if ($sortby !== $sortid or $sorthow !== 'ASC') {
@@ -632,7 +632,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
     protected function grading_report_participant(stdclass $participant, array $userinfo) {
         $userid = $participant->userid;
         $out  = $this->output->user_picture($userinfo[$userid], array('courseid' => $this->page->course->id, 'size' => 35));
-        $out .= $this->output->output_tag('span', array(), fullname($userinfo[$userid]));
+        $out .= html_writer::tag('span', array(), fullname($userinfo[$userid]));
 
         return $out;
     }
@@ -700,8 +700,8 @@ class mod_workshop_renderer extends plugin_renderer_base {
         if ($shownames) {
             $userid = $assessment->userid;
             $name   = $this->output->user_picture($userinfo[$userid], array('courseid' => $this->page->course->id, 'size' => 16));
-            $name  .= $this->output->output_tag('span', array('class' => 'fullname'), fullname($userinfo[$userid]));
-            $name   = $separator . $this->output->output_tag('span', array('class' => 'user'), $name);
+            $name  .= html_writer::tag('span', array('class' => 'fullname'), fullname($userinfo[$userid]));
+            $name   = $separator . html_writer::tag('span', array('class' => 'user'), $name);
         } else {
             $name   = '';
         }

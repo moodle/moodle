@@ -47,28 +47,28 @@ class core_webservice_renderer extends plugin_renderer_base {
     /// retrieve the description of the description object
         $paramdesc = "";
         if (!empty($params->desc)) {
-            $paramdesc .= $this->output_start_tag('span', array('style' => "color:#2A33A6"));
-            $paramdesc .= $this->output_start_tag('i', array());
+            $paramdesc .= html_writer::start_tag('span', array('style' => "color:#2A33A6"));
+            $paramdesc .= html_writer::start_tag('i', array());
             $paramdesc .= "//".$params->desc;
-            $paramdesc .= $this->output_end_tag('i');
-            $paramdesc .= $this->output_end_tag('span');
-            $paramdesc .= $this->output_empty_tag('br', array());
+            $paramdesc .= html_writer::end_tag('i');
+            $paramdesc .= html_writer::end_tag('span');
+            $paramdesc .= html_writer::empty_tag('br', array());
         }
 
     /// description object is a list
         if ($params instanceof external_multiple_structure) {
-            return $paramdesc . "list of ( " . $this->output_empty_tag('br', array()) . $this->detailed_description_html($params->content) . ")";
+            return $paramdesc . "list of ( " . html_writer::empty_tag('br', array()) . $this->detailed_description_html($params->content) . ")";
         } else if ($params instanceof external_single_structure) {
     /// description object is an object
-            $singlestructuredesc = $paramdesc."object {". $this->output_empty_tag('br', array());
+            $singlestructuredesc = $paramdesc."object {". html_writer::empty_tag('br', array());
             foreach ($params->keys as $attributname => $attribut) {
-                $singlestructuredesc .= $this->output_start_tag('b', array());
+                $singlestructuredesc .= html_writer::start_tag('b', array());
                 $singlestructuredesc .= $attributname;
-                $singlestructuredesc .= $this->output_end_tag('b');
+                $singlestructuredesc .= html_writer::end_tag('b');
                 $singlestructuredesc .= " ".$this->detailed_description_html($params->keys[$attributname]);
             }
             $singlestructuredesc .= "} ";
-            $singlestructuredesc .= $this->output_empty_tag('br', array());
+            $singlestructuredesc .= html_writer::empty_tag('br', array());
             return $singlestructuredesc;
         } else {
     /// description object is a primary type (string, integer)
@@ -192,17 +192,17 @@ EOF;
      * @return <type>
      */
     public function colored_box_with_pre_tag($title, $content, $rgb = 'FEEBE5') {
-        $coloredbox = $this->output_start_tag('ins', array()); //TODO: this tag removes xhtml strict error but cause warning
-        $coloredbox .= $this->output_start_tag('div', array('style' => "border:solid 1px #DEDEDE;background:#".$rgb.";color:#222222;padding:4px;"));
-        $coloredbox .= $this->output_start_tag('pre', array());
-        $coloredbox .= $this->output_start_tag('b', array());
+        $coloredbox = html_writer::start_tag('ins', array()); //TODO: this tag removes xhtml strict error but cause warning
+        $coloredbox .= html_writer::start_tag('div', array('style' => "border:solid 1px #DEDEDE;background:#".$rgb.";color:#222222;padding:4px;"));
+        $coloredbox .= html_writer::start_tag('pre', array());
+        $coloredbox .= html_writer::start_tag('b', array());
         $coloredbox .= $title;
-        $coloredbox .= $this->output_end_tag('b', array());
-        $coloredbox .= $this->output_empty_tag('br', array());
+        $coloredbox .= html_writer::end_tag('b', array());
+        $coloredbox .= html_writer::empty_tag('br', array());
         $coloredbox .= "\n".$content."\n";
-        $coloredbox .= $this->output_end_tag('pre', array());
-        $coloredbox .= $this->output_end_tag('div', array());
-        $coloredbox .= $this->output_end_tag('ins', array());
+        $coloredbox .= html_writer::end_tag('pre', array());
+        $coloredbox .= html_writer::end_tag('div', array());
+        $coloredbox .= html_writer::end_tag('ins', array());
         return $coloredbox;
     }
 
@@ -267,12 +267,12 @@ EOF;
 
 EOF;
     /// Some general information
-        $documentationhtml = $this->output_start_tag('table', array('style' => "margin-left:auto; margin-right:auto;"));
-        $documentationhtml .= $this->output_start_tag('tr', array());
-        $documentationhtml .= $this->output_start_tag('td', array());
+        $documentationhtml = html_writer::start_tag('table', array('style' => "margin-left:auto; margin-right:auto;"));
+        $documentationhtml .= html_writer::start_tag('tr', array());
+        $documentationhtml .= html_writer::start_tag('td', array());
         $documentationhtml .= get_string('wsdocumentationintro', 'webservice', $username);
-        $documentationhtml .= $this->output_empty_tag('br', array());
-        $documentationhtml .= $this->output_empty_tag('br', array());
+        $documentationhtml .= html_writer::empty_tag('br', array());
+        $documentationhtml .= html_writer::empty_tag('br', array());
         
 
     /// Print button
@@ -280,7 +280,7 @@ EOF;
         $parameters = array ('wsusername' => $username, 'wspassword' => $password, 'print' => true);
         $url = new moodle_url($CFG->wwwroot.'/webservice/wsdoc.php', $parameters); // Required
         $documentationhtml .= $OUTPUT->single_button($url, get_string('print','webservice'));
-        $documentationhtml .= $this->output_empty_tag('br', array());
+        $documentationhtml .= html_writer::empty_tag('br', array());
         
         
     /// each functions will be displayed into a collapsible region (opened if printableformat = true)
@@ -289,40 +289,40 @@ EOF;
             if (empty($printableformat)) {
                 $documentationhtml .= print_collapsible_region_start('',
                                                                  'aera_'.$functionname,
-                                                                 $this->output_start_tag('strong', array()).$functionname.$this->output_end_tag('strong'),
+                                                                 html_writer::start_tag('strong', array()).$functionname.html_writer::end_tag('strong'),
                                                                  false,
                                                                  !$printableformat,
                                                                  true);
             } else {
-                $documentationhtml .= $this->output_tag('strong', array(), $functionname);
-                $documentationhtml .= $this->output_empty_tag('br', array());
+                $documentationhtml .= html_writer::tag('strong', array(), $functionname);
+                $documentationhtml .= html_writer::empty_tag('br', array());
             }
 
         /// function global description
-            $documentationhtml .= $this->output_empty_tag('br', array());
-            $documentationhtml .= $this->output_start_tag('div', array('style' => 'border:solid 1px #DEDEDE;background:#E2E0E0;color:#222222;padding:4px;'));
+            $documentationhtml .= html_writer::empty_tag('br', array());
+            $documentationhtml .= html_writer::start_tag('div', array('style' => 'border:solid 1px #DEDEDE;background:#E2E0E0;color:#222222;padding:4px;'));
             $documentationhtml .= $description->description;
-            $documentationhtml .= $this->output_end_tag('div');
-            $documentationhtml .= $this->output_empty_tag('br', array());
-            $documentationhtml .= $this->output_empty_tag('br', array());
+            $documentationhtml .= html_writer::end_tag('div');
+            $documentationhtml .= html_writer::empty_tag('br', array());
+            $documentationhtml .= html_writer::empty_tag('br', array());
 
         /// function arguments documentation
-            $documentationhtml .= $this->output_start_tag('span', array('style' => 'color:#EA33A6'));
+            $documentationhtml .= html_writer::start_tag('span', array('style' => 'color:#EA33A6'));
             $documentationhtml .= get_string('arguments', 'webservice');
-            $documentationhtml .= $this->output_end_tag('span');
-            $documentationhtml .= $this->output_empty_tag('br', array());
+            $documentationhtml .= html_writer::end_tag('span');
+            $documentationhtml .= html_writer::empty_tag('br', array());
             foreach ($description->parameters_desc->keys as $paramname => $paramdesc) {
             /// a argument documentation
-                $documentationhtml .= $this->output_start_tag('span', array('style' => 'font-size:80%'));
+                $documentationhtml .= html_writer::start_tag('span', array('style' => 'font-size:80%'));
                 $required = $paramdesc->required?get_string('required', 'webservice'):get_string('optional', 'webservice');
-                $documentationhtml .= $this->output_start_tag('b', array());
+                $documentationhtml .= html_writer::start_tag('b', array());
                 $documentationhtml .= $paramname;
-                $documentationhtml .= $this->output_end_tag('b');
+                $documentationhtml .= html_writer::end_tag('b');
                 $documentationhtml .= " (" .$required. ")"; // argument is required or optional ?
-                $documentationhtml .= $this->output_empty_tag('br', array());
+                $documentationhtml .= html_writer::empty_tag('br', array());
                 $documentationhtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".$paramdesc->desc; // argument description
-                $documentationhtml .= $this->output_empty_tag('br', array());
-                $documentationhtml .= $this->output_empty_tag('br', array());
+                $documentationhtml .= html_writer::empty_tag('br', array());
+                $documentationhtml .= html_writer::empty_tag('br', array());
                 ///general structure of the argument
                 $documentationhtml .= $this->colored_box_with_pre_tag(get_string('generalstructure', 'webservice'), 
                                                                       $this->detailed_description_html($paramdesc),
@@ -339,23 +339,23 @@ EOF;
                                                                           htmlentities($this->rest_param_description_html($paramdesc,$paramname)),
                                                                           'FEEBE5');
                 }
-                $documentationhtml .= $this->output_end_tag('span');
+                $documentationhtml .= html_writer::end_tag('span');
             }
-            $documentationhtml .= $this->output_empty_tag('br', array());
-            $documentationhtml .= $this->output_empty_tag('br', array());
+            $documentationhtml .= html_writer::empty_tag('br', array());
+            $documentationhtml .= html_writer::empty_tag('br', array());
 
 
         /// function response documentation
-            $documentationhtml .= $this->output_start_tag('span', array('style' => 'color:#EA33A6'));
+            $documentationhtml .= html_writer::start_tag('span', array('style' => 'color:#EA33A6'));
             $documentationhtml .= get_string('response', 'webservice');
-            $documentationhtml .= $this->output_end_tag('span');
-            $documentationhtml .= $this->output_empty_tag('br', array());
+            $documentationhtml .= html_writer::end_tag('span');
+            $documentationhtml .= html_writer::empty_tag('br', array());
             /// function response description
-            $documentationhtml .= $this->output_start_tag('span', array('style' => 'font-size:80%'));
+            $documentationhtml .= html_writer::start_tag('span', array('style' => 'font-size:80%'));
             if (!empty($description->returns_desc->desc)) {
                 $documentationhtml .= $description->returns_desc->desc;
-                $documentationhtml .= $this->output_empty_tag('br', array());
-                $documentationhtml .= $this->output_empty_tag('br', array());
+                $documentationhtml .= html_writer::empty_tag('br', array());
+                $documentationhtml .= html_writer::empty_tag('br', array());
             }
             if (!empty($description->returns_desc)) {
                 ///general structure of the response
@@ -378,18 +378,18 @@ EOF;
                                                                           'FEEBE5');
                 }
             }
-            $documentationhtml .= $this->output_end_tag('span');
-            $documentationhtml .= $this->output_empty_tag('br', array());
-            $documentationhtml .= $this->output_empty_tag('br', array());
+            $documentationhtml .= html_writer::end_tag('span');
+            $documentationhtml .= html_writer::empty_tag('br', array());
+            $documentationhtml .= html_writer::empty_tag('br', array());
 
        /// function errors documentation for REST protocol
             if (!empty($activatedprotocol['rest'])) {
-                $documentationhtml .= $this->output_start_tag('span', array('style' => 'color:#EA33A6'));
+                $documentationhtml .= html_writer::start_tag('span', array('style' => 'color:#EA33A6'));
                 $documentationhtml .= get_string('errorcodes', 'webservice');
-                $documentationhtml .= $this->output_end_tag('span');
-                $documentationhtml .= $this->output_empty_tag('br', array());
-                $documentationhtml .= $this->output_empty_tag('br', array());
-                $documentationhtml .= $this->output_start_tag('span', array('style' => 'font-size:80%'));
+                $documentationhtml .= html_writer::end_tag('span');
+                $documentationhtml .= html_writer::empty_tag('br', array());
+                $documentationhtml .= html_writer::empty_tag('br', array());
+                $documentationhtml .= html_writer::start_tag('span', array('style' => 'font-size:80%'));
                 $errormessage = get_string('invalidparameter', 'debug');
                 $restexceptiontext =<<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -402,19 +402,19 @@ EOF;
                                                                       htmlentities($restexceptiontext),
                                                                       'FEEBE5');
 
-            $documentationhtml .= $this->output_end_tag('span');
+            $documentationhtml .= html_writer::end_tag('span');
             }
-            $documentationhtml .= $this->output_empty_tag('br', array());
-            $documentationhtml .= $this->output_empty_tag('br', array());
+            $documentationhtml .= html_writer::empty_tag('br', array());
+            $documentationhtml .= html_writer::empty_tag('br', array());
             if (empty($printableformat)) {
                 $documentationhtml .= print_collapsible_region_end(true);
             }
         }
 
      /// close the table and return the documentation
-        $documentationhtml .= $this->output_end_tag('td');
-        $documentationhtml .= $this->output_end_tag('tr');
-        $documentationhtml .= $this->output_end_tag('table');
+        $documentationhtml .= html_writer::end_tag('td');
+        $documentationhtml .= html_writer::end_tag('tr');
+        $documentationhtml .= html_writer::end_tag('table');
 
         return $documentationhtml;
 
@@ -428,18 +428,18 @@ EOF;
     public function login_page_html($errormessage) {
         global $CFG, $OUTPUT;
 
-        $htmlloginpage = $this->output_start_tag('table', array('style' => "margin-left:auto; margin-right:auto;"));
-        $htmlloginpage .= $this->output_start_tag('tr', array());
-        $htmlloginpage .= $this->output_start_tag('td', array());
+        $htmlloginpage = html_writer::start_tag('table', array('style' => "margin-left:auto; margin-right:auto;"));
+        $htmlloginpage .= html_writer::start_tag('tr', array());
+        $htmlloginpage .= html_writer::start_tag('td', array());
         $htmlloginpage .= get_string('wsdocumentationlogin', 'webservice');
-        $htmlloginpage .= $this->output_empty_tag('br', array());
-        $htmlloginpage .= $this->output_empty_tag('br', array());
-        $htmlloginpage .= $this->output_empty_tag('br', array());
+        $htmlloginpage .= html_writer::empty_tag('br', array());
+        $htmlloginpage .= html_writer::empty_tag('br', array());
+        $htmlloginpage .= html_writer::empty_tag('br', array());
 
 //        /// Display detailed error message when can't login
 //        $htmlloginpage .= get_string('error','webservice',$errormessage);
-//        $htmlloginpage .= $this->output_empty_tag('br', array());
-//        $htmlloginpage .= $this->output_empty_tag('br', array());
+//        $htmlloginpage .= html_writer::empty_tag('br', array());
+//        $htmlloginpage .= html_writer::empty_tag('br', array());
 
         //login form - we cannot use moodle form as we don't have sessionkey
         $form = new html_form();
@@ -461,14 +461,14 @@ EOF;
         $field->value = get_string('wspassword', 'webservice');
         $field->style = 'width: 30em;';
         $contents .= $OUTPUT->textfield($field);
-        $contents .= $this->output_empty_tag('br', array());
-        $contents .= $this->output_empty_tag('br', array());
+        $contents .= html_writer::empty_tag('br', array());
+        $contents .= html_writer::empty_tag('br', array());
 
         $htmlloginpage .= $OUTPUT->form($form, $contents);
 
-        $htmlloginpage .= $this->output_end_tag('td');
-        $htmlloginpage .= $this->output_end_tag('tr');
-        $htmlloginpage .= $this->output_end_tag('table');
+        $htmlloginpage .= html_writer::end_tag('td');
+        $htmlloginpage .= html_writer::end_tag('tr');
+        $htmlloginpage .= html_writer::end_tag('table');
 
         return $htmlloginpage;
 
