@@ -342,6 +342,22 @@ define('MOD_ARCHETYPE_RESOURCE', 1);
 /** Assignemnt module archetype */
 define('MOD_ARCHETYPE_ASSIGNMENT', 2);
 
+/**
+ * Security token used for allowing access
+ * from external application such as web services.
+ * Scripts do not use any session, performance is relatively
+ * low because we need to load access info in each request.
+ * Scrits are executed in parallel.
+ */
+define('EXTERNAL_TOKEN_PERMANENT', 0);
+
+/**
+ * Security token used for allowing access
+ * of embedded applications, the code is executed in the
+ * active user session. Token is invalidated after user logs out.
+ * Scripts are executed serially - normal session locking is used.
+ */
+define('EXTERNAL_TOKEN_EMBEDDED', 1);
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
