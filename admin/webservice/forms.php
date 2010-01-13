@@ -144,7 +144,7 @@ class web_service_token_form extends moodleform {
             //user searchable selector
             $sql = "SELECT user.id, user.firstname, user.lastname
             FROM {user} user
-            WHERE NOT EXISTS ( SELECT adminuser.id
+            WHERE NOT EXISTS ( SELECT 1
                                     FROM {user} adminuser, {role_assignments} rassign
                                     WHERE adminuser.id=user.id AND rassign.roleid = 1 AND rassign.userid = adminuser.id)
             ORDER BY user.lastname";
