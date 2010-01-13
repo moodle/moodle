@@ -17,6 +17,8 @@ if (!$course = $DB->get_record('course', array('id'=>$data->course))) {
 
 if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
     print_error('invalidcoursemodule');
+} else {
+    $data->cmidnumber = $cm->id; //MDL-12961
 }
 
 require_login($course, false, $cm);
