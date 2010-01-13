@@ -45,7 +45,7 @@ interface renderable {
 
 
 /**
- * Component representing a user picture.
+ * Data structure representing a user picture.
  *
  * @copyright 2009 Nicolas Connault, 2010 Petr Skoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -139,6 +139,55 @@ class user_picture implements renderable {
     }
 }
 
+
+/**
+ * Data structure representing a help icon.
+ *
+ * @copyright 2009 Nicolas Connault, 2010 Petr Skoda
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class help_icon implements renderable {
+    /**
+     * @var string $page name of help page
+     */
+    public $helppage;
+    /**
+     * @var string $title A descriptive text for title tooltip
+     */
+    public $title = '';
+    /**
+     * @var string $component Component name, the same as in get_string()
+     */
+    public $component = 'moodle';
+    /**
+     * @var string $linktext Extra descriptive text next to the icon
+     */
+    public $linktext = '';
+
+    /**
+     * Constructor: sets up the other components in case they are needed
+     * @param string $page  The keyword that defines a help page
+     * @param string $title A descriptive text for accesibility only
+     * @param string $component
+     * @param bool $linktext add extra text to icon
+     * @return void
+     */
+    public function __construct($helppage, $title, $component = 'moodle') {
+        if (empty($title)) {
+            throw new coding_exception('A help_icon object requires a $text parameter');
+        }
+        if (empty($helppage)) {
+            throw new coding_exception('A help_icon object requires a $helppage parameter');
+        }
+
+        $this->helppage  = $helppage;
+        $this->title     = $title;
+        $this->component = $component;
+    }
+}
+
+
 // ==== HTML writer and helper classes, will be probably moved elsewhere ======
 
 
@@ -197,7 +246,9 @@ class html_writer {
         if (is_array($value)) {
             debugging("Passed an array for the HTML attribute $name", DEBUG_DEVELOPER);
         }
-
+        if ($value instanceof moodle_url) {
+            return ' ' . $name . '="' . $value->out() . '"';
+        }
         $value = trim($value);
         if ($value == HTML_ATTR_EMPTY) {
             return ' ' . $name . '=""';
@@ -2096,96 +2147,6 @@ class moodle_paging_bar extends html_component {
         $pagingbar->perpage = $perpage;
         $pagingbar->baseurl = $baseurl;
         return $pagingbar;
-    }
-}
-
-
-/**
- * Component representing a help icon.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class help_icon extends html_image {
-    public $page;
-    /**
-     * @var string $module Which module is the page defined in
-     */
-    /**
-     * @var string $text A descriptive text
-     */
-    public $text;
-    /**
-     * @var string $page  The keyword that defines a help page
-     */
-    public $component = 'moodle';
-    /**
-     * @var boolean $linktext Whether or not to show text next to the icon
-     */
-    public $linktext = false;
-
-    /**
-     * @var html_link $link A html_link object that will hold the URL info
-     */
-    public $link;
-
-    /**
-     * Constructor: sets up the other components in case they are needed
-     * @param string $page  The keyword that defines a help page
-     * @param string $text A descriptive text
-     * @param string $component
-     * @param bool $linktext add extra text to icon
-     * @return void
-     */
-    public function __construct($helppage, $text, $component='moodle', $linktext=false) {
-        global $CFG;
-
-        if (empty($helppage)) {
-            throw new coding_exception('A help_icon object requires a $helppage parameter');
-        }
-
-        if (empty($text)) {
-            throw new coding_exception('A help_icon object requires a $text parameter');
-        }
-
-        parent::__construct(null, array('class'=>'iconhelp'));
-
-        $this->helppage  = $helppage;
-        $this->text      = $text;
-        $this->component = $component;
-        $this->linktext  = $linktext;
-
-        $this->link = new html_link();
-        $this->link->url = new moodle_url($CFG->wwwroot.'/help.php', array('module' => $this->component, 'file' => $this->helppage .'.html'));
-        // Warn users about new window for Accessibility
-    }
-
-    /**
-     * @see lib/html_component#prepare()
-     * @return void
-     */
-    public function prepare(renderer_base $output, moodle_page $page, $target) {
-        global $CFG;
-
-        if (empty($this->link->title)) {
-            $this->link->title = get_string('helpprefix2', '', trim($this->text, ". \t")) .' ('.get_string('newwindow').')';
-        }
-
-        if (empty($this->src)) {
-            $this->src = $output->pix_url('help');
-        }
-
-        if ($this->linktext) {
-            $this->image->alt = get_string('helpwiththis');
-        } else {
-            $this->image->alt = $this->text;
-        }
-
-        $popup = new popup_action('click', $this->link->url);
-        $this->link->add_action($popup);
-
-        parent::prepare($output, $page, $target);
     }
 }
 

@@ -1157,23 +1157,61 @@ class core_renderer extends renderer_base {
      * Print a help icon.
      *
      * @param string $page The keyword that defines a help page
-     * @param string $text A descriptive text
+     * @param string $title A descriptive text for accessibility only
      * @param string $component component name
-     * @param bool $linktext show extra descriptive text
-
-     * @return string  HTML fragment
+     * @param string|bool $linktext true means use $title as link text, string means link text value
+     * @return string HTML fragment
      */
-    public function help_icon($helppage, $text=null, $component='moodle', $linktext=false) {
-        $icon = new help_icon($helppage, $text, $component, $linktext);
+    public function help_icon($helppage, $title, $component = 'moodle', $linktext='') {
+        $icon = new help_icon($helppage, $title, $component);
+        if ($linktext === true) {
+            $icon->linktext = $title;
+        } else if (!empty($linktext)) {
+            $icon->linktext = $linktext;
+        }
+        return $this->render($icon);
+    }
 
-        $icon->prepare($this, $this->page, $this->target);
+    /**
+     * Implementation of user image rendering.
+     * @param help_icon $helpicon
+     * @return string HTML fragment
+     */
+    protected function render_help_icon(help_icon $helpicon) {
+        global $CFG;
 
-        $icon->link->text = $this->image($icon);
-        if ($icon->linktext) {
-            $icon->link->text .= $icon->text;
+        // first get the help image icon
+        $src = $this->pix_url('help');
+
+        if (empty($helpicon->linktext)) {
+            $alt = $helpicon->title;
+        } else {
+            $alt = get_string('helpwiththis');
         }
 
-        return html_writer::tag('span', array('class' => 'helplink'), $this->link($icon->link));
+        $attributes = array('src'=>$src, 'alt'=>$alt, 'class'=>'iconhelp');
+        $output = html_writer::empty_tag('img', $attributes);
+
+        // add the link text if given
+        if (!empty($helpicon->linktext)) {
+            // the spacing has to be done through CSS
+            $output .= $helpicon->linktext;
+        }
+
+        // now create the link around it - TODO: this will be changed during the big lang cleanup in 2.0
+        $url = new moodle_url($CFG->wwwroot.'/help.php', array('module' => $helpicon->component, 'file' => $helpicon->helppage .'.html'));
+
+        // note: this title is displayed only if JS is disabled, otherwise the link will have the new ajax tooltip
+        $title = get_string('helpprefix2', '', trim($helpicon->title, ". \t"));
+
+        $attributes = array('href'=>$url, 'title'=>$title);
+        $id = html_writer::random_id('helpicon');
+        $attributes['id'] = $id;
+        $this->add_action_handler($id, new popup_action('click', $url));
+        $output = html_writer::tag('a', $attributes, $output);
+
+        // and finally span
+        return html_writer::tag('span', array('class' => 'helplink'), $output);
     }
 
     /**
