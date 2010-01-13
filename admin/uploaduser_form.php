@@ -353,3 +353,10 @@ class admin_uploaduser_form2 extends moodleform {
     }
 }
 
+class admin_uploaduser_form3 extends moodleform {
+    function definition (){
+        global $CFG, $USER;
+        $mform =& $this->_form;        
+        $this->add_action_buttons(false, get_string('uploadnewfile'));
+    }
+}

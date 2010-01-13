@@ -219,6 +219,10 @@ define('PARAM_THEME',  'theme');
  */
 define('PARAM_URL',      'url');
 
+/**
+ * PARAM_USERNAME - Clean username to only contains specified characters.
+ */
+define('PARAM_USERNAME',    'username');
 
 
 ///// DEPRECATED PARAM TYPES OR ALIASES - DO NOT USE FOR NEW CODE  /////
@@ -463,6 +467,7 @@ function validate_param($param, $type, $allownull=false, $debuginfo='') {
  * @uses PARAM_BASE64
  * @uses PARAM_TAG
  * @uses PARAM_SEQUENCE
+ * @uses PARAM_USERNAME
  * @param mixed $param the variable we are cleaning
  * @param int $type expected format of param after cleaning.
  * @return mixed
@@ -721,6 +726,17 @@ function clean_param($param, $type) {
             } else {
                 return '';  // Specified theme is not installed
             }
+
+        case PARAM_USERNAME:
+            $param = str_replace(" " , "", $param);
+            if (empty($CFG->extendedusernamechars)) {                                                              
+                // regular expression, eliminate all chars EXCEPT:
+                // alphanum, dash (-), underscore (_), at sign (@) and period (.) characters.
+                $param = preg_replace('/[^-\.@_a-z0-9]/', '', $param);
+            } else {
+                $param = preg_replace('/[A-Z]/', '', $param);
+            }
+            return $param;
 
         default:                 // throw error, switched parameters in optional_param or another serious problem
             print_error("unknownparamtype", '', '', $type);

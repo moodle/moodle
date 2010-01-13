@@ -73,12 +73,13 @@ class auth_plugin_email extends auth_plugin_base {
      * @param object $user new user object
      * @param boolean $notify print notice with link and terminate
      */
-    function user_signup($user, $notify=true) {
+    function user_signup($user, $notify=true) { 
         global $CFG, $DB;
         require_once($CFG->dirroot.'/user/profile/lib.php');
 
         $user->password = hash_internal_user_password($user->password);
 
+        //TODO - username required to use PARAM_USERNAME before inserting into user table (MDL-16919)
         if (! ($user->id = $DB->insert_record('user', $user)) ) {
             print_error('auth_emailnoinsert','auth_email');
         }
@@ -94,7 +95,7 @@ class auth_plugin_email extends auth_plugin_base {
         }
 
         if ($notify) {
-            global $CFG;
+            global $CFG, $PAGE, $OUTPUT;
             $emailconfirm = get_string('emailconfirm');
             $PAGE->navbar->add($emailconfirm);
             $PAGE->set_title($emailconfirm);

@@ -265,10 +265,8 @@ if ($formdata = $mform->is_cancelled()) {
         }
 
         // normalize username
-        $user->username = $textlib->strtolower($user->username);
-        if (empty($CFG->extendedusernamechars)) {
-            $user->username = preg_replace('/[^(-\.[:alnum:])]/i', '', $user->username);
-        }
+        $user->username = clean_param($user->username, PARAM_USERNAME);
+
         if (empty($user->username)) {
             $upt->track('status', get_string('missingfield', 'error', 'username'), 'error');
             $upt->track('username', $errorstr, 'error');
@@ -748,36 +746,106 @@ admin_externalpage_print_header();
 
 echo $OUTPUT->heading_with_help(get_string('uploaduserspreview', 'admin'), 'uploadusers2');
 
-$ci = 0;
 $ri = 0;
+$cir->init();
 
+$filerows = array();
+while ($fields = $cir->next()) {
+    $ci = 0;
+    if ($ri > $previewrows) {
+        $arow .= '<tr class="r'.$ri++.'">';
+        foreach ($fields as $field) {
+            $arow .= '<td class="cell c'.$ci++.'">...</td>';
+        }
+        $arow .= '</tr>';
+        break;
+    }
+
+    $arow = '';
+    $errormsg = array();
+    $filerows[$ri] = array();
+    $arow .= '<tr class="r'.$ri.'">';
+    foreach ($fields as $key => $field) {
+        $errorclass = '';
+        if ($ci == 0) { //username field
+            $newusername = clean_param($field, PARAM_USERNAME);
+            if (strcmp($field, $newusername) != 0){
+                $errorclass = 'uuerror';
+                $errormsg[] = get_string('invalidusernameupload');
+            } else if ($DB->record_exists('user', array('username'=>$field)) || $DB->record_exists('user', array('username'=>$field)) ) {
+                $errorclass = 'uuerror';
+                $errormsg[] = get_string('usernameexists');
+            }
+        } else { 
+            if ($ci == 4) {     //email field                
+                if ($DB->record_exists('user', array('email'=>$field))) {
+                    $errorclass = 'uuerror';
+                    $errormsg[] = get_string('emailexists');
+
+                } else if (!validate_email($field)) {
+                    $errorclass = 'uuerror';
+                    $errormsg[] = get_string('invalidemail');
+                }
+            }
+        }
+        $arow .= '<td class="cell c'.$ci++.'">';
+        $arow .= '<div class="'.$errorclass.'">'.s($field). '</div>';
+        $arow .= '</td>';
+
+        if ($key == (count($fields) - 1) && !empty($errormsg)) {
+            $errormsg =  implode('<br />', $errormsg);
+            $arow .=  '<td>' . $errormsg . '</td>';
+            $filerows[$ri]['error'] = $errormsg;            
+        } 
+    }
+    $arow .= '</tr>';
+   $filerows[$ri]['content'] = $arow;
+   $ri++;
+}                          
+$cir->close();
+
+$validcontent = array();
+$invalidcontent = array();
+foreach ($filerows as $arow) {
+    if (array_key_exists('error', $arow)){
+        $invalidcontent[] = $arow['content'];
+        $mform = new admin_uploaduser_form3();
+    } else {
+        $validcontent[] = $arow['content'];
+    }
+}
+
+$ri = 0;
+$ci = 0;
 echo '<table id="uupreview" class="generaltable boxaligncenter" summary="'.get_string('uploaduserspreview', 'admin').'">';
 echo '<tr class="heading r'.$ri++.'">';
 foreach ($columns as $col) {
     echo '<th class="header c'.$ci++.'" scope="col">'.s($col).'</th>';
 }
+if (!empty($invalidcontent)) {
+    echo '<th class="header c'.$ci++.'" scope="col">'.moodle_strtolower(get_string('error', 'moodle')).'</th>';
+}
 echo '</tr>';
 
-$cir->init();
-while ($fields = $cir->next()) {
-    if ($ri > $previewrows) {
-        echo '<tr class="r'.$ri++.'">';
-        foreach ($fields as $field) {
-            echo '<td class="cell c'.$ci++.'">...</td>';;
-        }
-        break;
-    }
-    $ci = 0;
-    echo '<tr class="r'.$ri++.'">';
-    foreach ($fields as $field) {
-        echo '<td class="cell c'.$ci++.'">'.s($field).'</td>';;
-    }
-    echo '</tr>';
+$countcontent = 0;
+if (empty($invalidcontent)) {
+    $countcontent = count($validcontent);
+    echo implode('', $validcontent);
+} else {
+    $countcontent = count($invalidcontent);
+    echo implode('', $invalidcontent);
 }
-$cir->close();
-
 echo '</table>';
-echo '<div class="centerpara">'.get_string('uupreprocessedcount', 'admin', $readcount).'</div>';
+
+if (!empty($invalidcontent)) {
+    echo '<div class="centerpara">'.get_string('uploadinvalidpreprocessedcount', 'moodle', $countcontent).'</div>';
+    echo '<div class="">'.get_string('invalidusername', 'moodle').'</div>';
+    echo '<div class="">'.get_string('uploadfilecontainerror', 'moodle').'</div>';
+} else {
+    echo '<div class="">'.get_string('uupreprocessedcount', 'admin', $countcontent).'</div>';
+}
+
+//echo '<div class="centerpara">'.get_string('uupreprocessedcount', 'admin', $readcount).'</div>';
 $mform->display();
 echo $OUTPUT->footer();
 die;
@@ -822,10 +890,13 @@ class uu_progress_tracker {
         }
         $ci = 0;
         $ri = 1;
-        echo '<tr class="r'.$ri++.'">';
-        foreach ($this->_row as $field) {
+        echo '<tr class="r'.$ri.'">';
+        foreach ($this->_row as $key=>$field) {
             foreach ($field as $type=>$content) {
                 if ($field[$type] !== '') {
+                    if ($key == 'username' && $type == 'normal') {
+                        $field[$type] = clean_param($field[$type], PARAM_USERNAME);
+                    }
                     $field[$type] = '<span class="uu'.$type.'">'.$field[$type].'</span>';
                 } else {
                     unset($field[$type]);

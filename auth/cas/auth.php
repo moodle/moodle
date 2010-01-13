@@ -863,6 +863,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
                     $user->lang = $CFG->lang;
                 }
 
+                //TODO - username required to use PARAM_USERNAME before inserting into user table (MDL-16919)
                 if ($id = $DB->insert_record('user', $user)) {
                     echo "\t"; print_string('auth_dbinsertuser', 'auth_db', array($user->username, $id)); echo "\n";
                     $userobj = $this->update_user_record($user->username);

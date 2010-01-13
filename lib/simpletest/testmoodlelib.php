@@ -266,6 +266,7 @@ class moodlelib_test extends UnitTestCase {
      * @uses PARAM_LOCALURL
      * @uses PARAM_CLEANHTML
      * @uses PARAM_SEQUENCE
+     * @uses PARAM_USERNAME
      * @param mixed $param the variable we are cleaning
      * @param int $type expected format of param after cleaning.
      * @return mixed
@@ -295,6 +296,35 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual(clean_param('/just/a/path', PARAM_LOCALURL), '/just/a/path');
         $this->assertEqual(clean_param('funny:thing', PARAM_LOCALURL), '');
         $this->assertEqual(clean_param('course/view.php?id=3', PARAM_LOCALURL), 'course/view.php?id=3');
+
+        $currentstatus =  $CFG->extendedusernamechars;
+        
+        // Run tests with extended character == FALSE;
+        $CFG->extendedusernamechars = FALSE;
+        $this->assertEqual(clean_param('johndoe123', PARAM_USERNAME), 'johndoe123' );
+        $this->assertEqual(clean_param('john.doe', PARAM_USERNAME), 'john.doe');
+        $this->assertEqual(clean_param('john-doe', PARAM_USERNAME), 'john-doe');
+        $this->assertEqual(clean_param('john- doe', PARAM_USERNAME), 'john-doe');
+        $this->assertEqual(clean_param('john_doe', PARAM_USERNAME), 'john_doe');
+        $this->assertEqual(clean_param('john@doe', PARAM_USERNAME), 'john@doe');
+        $this->assertEqual(clean_param('john~doe', PARAM_USERNAME), 'johndoe');
+        $this->assertEqual(clean_param('john´doe', PARAM_USERNAME), 'johndoe');
+        $this->assertEqual(clean_param('john#$%&() ', PARAM_USERNAME), 'john');
+        $this->assertEqual(clean_param('JOHNdóé ', PARAM_USERNAME), 'd');
+        $this->assertEqual(clean_param('john.,:;-_/|\ñÑ[]A_X-,D {} ~!@#$%^&*()_+ ?><[] ščřžžý ?ýá?ý??doe ', PARAM_USERNAME), 'john.-__-@_doe');
+        
+
+        // Test success condition, if extendedusernamechars == ENABLE;
+        $CFG->extendedusernamechars = TRUE;
+        $this->assertEqual(clean_param('john_doe', PARAM_USERNAME), 'john_doe');
+        $this->assertEqual(clean_param('john@doe', PARAM_USERNAME), 'john@doe');
+        $this->assertEqual(clean_param('john# $%&()+_^', PARAM_USERNAME), 'john#$%&()+_^');
+        $this->assertEqual(clean_param('john~doe', PARAM_USERNAME), 'john~doe');
+        $this->assertEqual(clean_param('joHN´doe', PARAM_USERNAME), 'jo´doe');
+        $this->assertEqual(clean_param('johnDOE', PARAM_USERNAME), 'john');
+        $this->assertEqual(clean_param('johndóé ', PARAM_USERNAME), 'johndóé');
+                
+        $CFG->extendedusernamechars = $currentstatus;
     }
 
     function test_validate_param() {

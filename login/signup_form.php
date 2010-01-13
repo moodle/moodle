@@ -88,8 +88,6 @@ class login_signup_form extends moodleform {
 
     function definition_after_data(){
         $mform =& $this->_form;
-
-        $mform->applyFilter('username', 'moodle_strtolower');
         $mform->applyFilter('username', 'trim');
     }
 
@@ -102,10 +100,15 @@ class login_signup_form extends moodleform {
         if ($DB->record_exists('user', array('username'=>$data['username'], 'mnethostid'=>$CFG->mnet_localhost_id))) {
             $errors['username'] = get_string('usernameexists');
         } else {
-            if (empty($CFG->extendedusernamechars)) {
-                $string = preg_replace("~[^(-\.[:alnum:])]~i", '', $data['username']);
-                if (strcmp($data['username'], $string)) {
-                    $errors['username'] = get_string('alphanumerical');
+            //check allowed characters
+            if ($data['username'] !== moodle_strtolower($data['username'])) {
+                $errors['username'] = get_string('usernamelowercase');
+            } else {
+                if (empty($CFG->extendedusernamechars)) {
+                    $string = clean_param($data['username'], PARAM_USERNAME);
+                    if (strcmp($data['username'], $string)) {
+                        $errors['username'] = get_string('invalidusername');
+                    }
                 }
             }
         }

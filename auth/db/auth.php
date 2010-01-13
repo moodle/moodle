@@ -364,6 +364,8 @@ class auth_plugin_db extends auth_plugin_base {
                     $user->id = $old_user->id;
                     $DB->set_field('user', 'deleted', 0, array('username'=>$user->username));
                     echo "\t"; print_string('auth_dbreviveuser', 'auth_db', array($user->username, $user->id)); echo "\n";
+                    
+                //TODO - username required to use PARAM_USERNAME before inserting into user table (MDL-16919)
                 } elseif ($id = $DB->insert_record ('user',$user)) { // it is truly a new user
                     echo "\t"; print_string('auth_dbinsertuser','auth_db',array($user->username, $id)); echo "\n";
                     // if relevant, tag for password generation
