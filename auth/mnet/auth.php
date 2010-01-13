@@ -78,20 +78,17 @@ class auth_plugin_mnet extends auth_plugin_base {
 
         $mnet_session = $DB->get_record('mnet_session', array('token'=>$token, 'useragent'=>$useragent));
         if (empty($mnet_session)) {
-            echo mnet_server_fault(1, get_string('authfail_nosessionexists', 'mnet'));
-            exit;
+            throw new mnet_server_exception(1, get_string('authfail_nosessionexists', 'mnet'));
         }
 
         // check session confirm timeout
         if ($mnet_session->confirm_timeout < time()) {
-            echo mnet_server_fault(2, get_string('authfail_sessiontimedout', 'mnet'));
-            exit;
+            throw new mnet_server_exception(2, get_string('authfail_sessiontimedout', 'mnet'));
         }
 
         // session okay, try getting the user
         if (!$user = $DB->get_record('user', array('id'=>$mnet_session->userid))) {
-            echo mnet_server_fault(3, get_string('authfail_usermismatch', 'mnet'));
-            exit;
+            throw new mnet_server_exception(3, get_string('authfail_usermismatch', 'mnet'));
         }
 
         $userdata = array();
@@ -480,10 +477,9 @@ class auth_plugin_mnet extends auth_plugin_base {
         }
         // make sure it is a user we have an in active session
         // with that host...
-        $userid = $DB->get_field('mnet_session', 'userid',
-                            array('username'=>$username, 'mnethostid'=>$MNET_REMOTE_CLIENT->id));
-        if (!$userid) {
-            return false;
+        if (!$userid = $DB->get_field('mnet_session', 'userid',
+                            array('username'=>$username, 'mnethostid'=>$MNET_REMOTE_CLIENT->id))) {
+            throw new mnet_server_exception(1, get_string('authfail_nosessionexists', 'mnet'));
         }
 
         if (empty($courses)) { // no courses? clear out quickly

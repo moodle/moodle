@@ -48,8 +48,13 @@ if (!isset($_SERVER)) {
 // if you've been called by a remote Moodle, this should be set:
 $MNET_REMOTE_CLIENT = new mnet_remote_client();
 
-$plaintextmessage = mnet_server_strip_encryption($HTTP_RAW_POST_DATA);
-$xmlrpcrequest = mnet_server_strip_signature($plaintextmessage);
+try {
+    $plaintextmessage = mnet_server_strip_encryption($HTTP_RAW_POST_DATA);
+    $xmlrpcrequest = mnet_server_strip_signature($plaintextmessage);
+catch (Exception $e {
+    exit(mnet_server_fault($e->getCode(), $e->getMessage(), $e->a));
+}
+
 
 if($MNET_REMOTE_CLIENT->pushkey == true) {
     // The peer used one of our older public keys, we will return a
@@ -67,7 +72,11 @@ $params = xmlrpc_decode_request($xmlrpcrequest, $method);
 if ((($MNET_REMOTE_CLIENT->request_was_encrypted == true) && ($MNET_REMOTE_CLIENT->signatureok == true))
     || (($method == 'system.keyswap') || ($method == 'system/keyswap'))
     || (($MNET_REMOTE_CLIENT->signatureok == true) && ($MNET_REMOTE_CLIENT->plaintext_is_ok() == true))) {
-    $response = mnet_server_dispatch($xmlrpcrequest);
+    try {
+        $response = mnet_server_dispatch($xmlrpcrequest);
+    catch (Exception $e) {
+        exit(mnet_server_fault($e->getCode(), $e->getMessage(), $e->a));
+    }
 } else {
     if (($MNET_REMOTE_CLIENT->request_was_encrypted == false) && ($MNET_REMOTE_CLIENT->plaintext_is_ok() == false)) {
         exit(mnet_server_fault(7021, 'forbidden-transport'));
@@ -118,6 +127,9 @@ if (!empty($CFG->mnet_rpcdebug)) {
 /* Strip encryption envelope (if present) and decrypt data
  *
  * @param string $HTTP_RAW_POST_DATA The XML that the client sent
+ *
+ * @throws mnet_server_exception
+ *
  * @return string XML with any encryption envolope removed
  */
 function mnet_server_strip_encryption($HTTP_RAW_POST_DATA) {
@@ -133,7 +145,7 @@ function mnet_server_strip_encryption($HTTP_RAW_POST_DATA) {
     $host_record_exists = $MNET_REMOTE_CLIENT->set_wwwroot($crypt_parser->remote_wwwroot);
 
     if (false == $host_record_exists) {
-        exit(mnet_server_fault(7020, 'wrong-wwwroot', $crypt_parser->remote_wwwroot));
+        throw new mnet_server_exception(7020, 'wrong-wwwroot', $crypt_parser->remote_wwwroot);
     }
 
     // This key is symmetric, and is itself encrypted. Can be decrypted using our private key
@@ -173,12 +185,13 @@ function mnet_server_strip_encryption($HTTP_RAW_POST_DATA) {
     }
 
     //If after all that we still couldn't decrypt the message, error out.
-    exit(mnet_server_fault(7023, 'encryption-invalid'));
+    throw new mnet_server_exception(7023, 'encryption-invalid');
 }
 
 /* Strip signature envelope (if present), try to verify any signature using our record of remote peer's public key.
  *
  * @param string $plaintextmessage XML envelope containing XMLRPC request and signature
+ *
  * @return string XMLRPC request
  */
 function mnet_server_strip_signature($plaintextmessage) {
@@ -306,6 +319,8 @@ function mnet_server_fault_xml($code, $text, $privatekey = null) {
  * The methodName argument (eg. mnet/testlib/mnet_concatenate_strings)
  * is ignored.
  *
+ * @throws mnet_server_exception
+ *
  * @param  string  $methodname     We discard this - see 'functionname'
  * @param  array   $argsarray      Each element is an argument to the real
  *                                 function
@@ -316,12 +331,16 @@ function mnet_server_fault_xml($code, $text, $privatekey = null) {
 function mnet_server_dummy_method($methodname, $argsarray, $functionname) {
     global $MNET_REMOTE_CLIENT;
 
-    if (is_object($MNET_REMOTE_CLIENT->object_to_call)) {
-        return @call_user_func_array(array($MNET_REMOTE_CLIENT->object_to_call,$functionname), $argsarray);
-    } else if (!empty($MNET_REMOTE_CLIENT->static_location)) {
-        return @call_user_func_array(array($MNET_REMOTE_CLIENT->static_location, $functionname), $argsarray);
-    } else {
-        return @call_user_func_array($functionname, $argsarray);
+    try {
+        if (is_object($MNET_REMOTE_CLIENT->object_to_call)) {
+            return @call_user_func_array(array($MNET_REMOTE_CLIENT->object_to_call,$functionname), $argsarray);
+        } else if (!empty($MNET_REMOTE_CLIENT->static_location)) {
+            return @call_user_func_array(array($MNET_REMOTE_CLIENT->static_location, $functionname), $argsarray);
+        } else {
+            return @call_user_func_array($functionname, $argsarray);
+        }
+    } catch (Exception $e) {
+        exit(mnet_server_fault($e->getCode(), $e->getMessage()));
     }
 }
 
@@ -354,6 +373,9 @@ function mnet_server_prepare_response($response, $privatekey = null) {
  * off:         The default - don't execute anything
  *
  * @param  string  $payload    The XML-RPC request
+ *
+ * @throws mnet_server_exception
+ *
  * @return                     No return val - just echo the response
  */
 function mnet_server_dispatch($payload) {
@@ -371,7 +393,7 @@ function mnet_server_dispatch($payload) {
     // The method name must not begin with a / - avoid absolute paths
     // A dot character . is only allowed in the filename, i.e. something.php
     if (0 == preg_match("@^[A-Za-z0-9]+/[A-Za-z0-9/_\.-]+(\.php/)?[A-Za-z0-9_-]+$@",$method)) {
-        exit(mnet_server_fault(713, 'nosuchfunction'));
+        throw new mnet_server_exception(713, 'nosuchfunction');
     }
 
     if(preg_match("/^system\./", $method)) {
@@ -389,9 +411,9 @@ function mnet_server_dispatch($payload) {
     ////////////////////////////////////// OFF
     if (!isset($CFG->mnet_dispatcher_mode) ) {
         set_config('mnet_dispatcher_mode', 'off');
-        exit(mnet_server_fault(704, 'nosuchservice'));
+        throw new mnet_server_exception(704, 'nosuchservice');
     } elseif ('off' == $CFG->mnet_dispatcher_mode) {
-        exit(mnet_server_fault(704, 'nosuchservice'));
+        throw new mnet_server_exception(704, 'nosuchservice');
 
     ////////////////////////////////////// SYSTEM METHODS
     } elseif ($callstack[0] == 'system') {
@@ -445,7 +467,7 @@ function mnet_server_dispatch($payload) {
             $response = xmlrpc_server_call_method($xmlrpcserver, $payload, $MNET_REMOTE_CLIENT, array("encoding" => "utf-8"));
             $response = mnet_server_prepare_response($response);
         } else {
-            exit(mnet_server_fault(7018, 'nosuchfunction'));
+            throw new mnet_server_exception(7018, 'nosuchfunction');
         }
 
         xmlrpc_server_destroy($xmlrpcserver);
@@ -465,7 +487,7 @@ function mnet_server_dispatch($payload) {
             echo $response;
         } else {
             // Generate error response - unable to locate function
-            exit(mnet_server_fault(702, 'nosuchfunction'));
+            throw new mnet_server_exception(702, 'nosuchfunction');
         }
 
     ////////////////////////////////////// STRICT ENROL
@@ -482,7 +504,7 @@ function mnet_server_dispatch($payload) {
             echo $response;
         } else {
             // Generate error response - unable to locate function
-            exit(mnet_server_fault(703, 'nosuchfunction'));
+            throw new mnet_server_exception(703, 'nosuchfunction');
         }
 
     } else if ($callstack[0] == 'portfolio') {
@@ -497,7 +519,7 @@ function mnet_server_dispatch($payload) {
             echo $response;
         } else {
             // Generate error response - unable to locate function
-            exit(mnet_server_fault(7012, 'nosuchfunction'));
+            throw new mnet_server_exception(7012, 'nosuchfunction');
         }
 
     } else if ($callstack[0] == 'repository') {
@@ -512,7 +534,7 @@ function mnet_server_dispatch($payload) {
             echo $response;
         } else {
             // Generate error response - unable to locate function
-            exit(mnet_server_fault(7012, 'nosuchfunction'));
+            throw new mnet_server_exception(7012, 'nosuchfunction');
         }
 
     ////////////////////////////////////// STRICT MOD/*
@@ -537,7 +559,7 @@ function mnet_server_dispatch($payload) {
                 if (0 == preg_match("/php$/", $filename)) {
                     // Filename doesn't end in 'php'; possible attack?
                     // Generate error response - unable to locate function
-                    exit(mnet_server_fault(7012, 'nosuchfunction'));
+                    throw new mnet_server_exception(7012, 'nosuchfunction');
                 }
 
                 // The call stack holds the path to any include file
@@ -549,12 +571,12 @@ function mnet_server_dispatch($payload) {
 
         } else {
             // Generate error response - unable to locate function
-            exit(mnet_server_fault(7012, 'nosuchfunction'));
+            throw new mnet_server_exception(7012, 'nosuchfunction');
         }
 
     } else {
         // Generate error response - unable to locate function
-        exit(mnet_server_fault(7012, 'nosuchfunction'));
+        throw new mnet_server_exception(7012, 'nosuchfunction');
     }
 }
 
@@ -564,6 +586,9 @@ function mnet_server_dispatch($payload) {
  * @param  string  $method    XMLRPC method name, e.g. system.listMethods
  * @param  array   $params    Array of parameters from the XMLRPC request
  * @param  string  $hostinfo  Hostinfo object from the mnet_host table
+ *
+ * @throws mnet_server_exception
+ *
  * @return mixed              Response data - any kind of PHP variable
  */
 function mnet_system($method, $params, $hostinfo) {
@@ -717,7 +742,7 @@ function mnet_system($method, $params, $hostinfo) {
 
         return $services;
     }
-    exit(mnet_server_fault(7019, 'nosuchfunction'));
+    throw new mnet_server_exception(7019, 'nosuchfunction');
 }
 
 /**
@@ -729,6 +754,9 @@ function mnet_system($method, $params, $hostinfo) {
  * @param  string  $method         The full path to the method
  * @param  string  $payload        The XML-RPC request payload
  * @param  string  $class          The name of the class to instantiate (or false)
+ *
+ * @throws mnet_server_exception
+ *
  * @return string                  The XML-RPC response
  */
 function mnet_server_invoke_method($includefile, $methodname, $method, $payload, $class=false) {
@@ -737,42 +765,37 @@ function mnet_server_invoke_method($includefile, $methodname, $method, $payload,
 
     if (RPC_NOSUCHFILE == $permission) {
         // Generate error response - unable to locate function
-        exit(mnet_server_fault(705, 'nosuchfile', $includefile));
+        throw new mnet_server_exception(705, 'nosuchfile', $includefile);
     }
 
     if (RPC_NOSUCHFUNCTION == $permission) {
         // Generate error response - unable to locate function
-        exit(mnet_server_fault(706, 'nosuchfunction'));
+        throw new mnet_server_exception(706, 'nosuchfunction');
     }
 
     if (RPC_FORBIDDENFUNCTION == $permission) {
         // Generate error response - unable to locate function
-        exit(mnet_server_fault(707, 'forbidden-function'));
+        throw new mnet_server_exception(707, 'forbidden-function');
     }
 
     if (RPC_NOSUCHCLASS == $permission) {
         // Generate error response - unable to locate function
-        exit(mnet_server_fault(7013, 'nosuchfunction'));
+        throw new mnet_server_exception(7013, 'nosuchfunction');
     }
 
     if (RPC_NOSUCHMETHOD == $permission) {
         // Generate error response - unable to locate function
-        exit(mnet_server_fault(7014, 'nosuchmethod'));
-    }
-
-    if (RPC_NOSUCHFUNCTION == $permission) {
-        // Generate error response - unable to locate function
-        exit(mnet_server_fault(7014, 'nosuchmethod'));
+        throw new mnet_server_exception(7014, 'nosuchmethod');
     }
 
     if (RPC_FORBIDDENMETHOD == $permission) {
         // Generate error response - unable to locate function
-        exit(mnet_server_fault(7015, 'nosuchfunction'));
+        throw new mnet_server_exception(7015, 'nosuchfunction');
     }
 
     if (0 < $permission) {
         // Generate error response - unable to locate function
-        exit(mnet_server_fault(7019, 'unknownerror'));
+        throw new mnet_server_exception(7019, 'unknownerror');
     }
 
     if (RPC_OK == $permission) {

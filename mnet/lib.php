@@ -654,3 +654,24 @@ function mnet_get_app_jumppath ($applicationid) {
     }
     return $appjumppaths[$applicationid];
 }
+
+/**
+ * mnet server exception.  extends moodle_exception, but takes slightly different arguments.
+ * error strings are always in mnet, so $module is not necessary,
+ * and unlike the rest of moodle, the actual int error code is used.
+ * this exception should only be used during an xmlrpc server request, ie, not for client requests.
+ */
+class mnet_server_exception extends moodle_exception {
+
+    /**
+     * @param int    $intcode      the numerical error associated with this fault.  this is <b>not</b> the string errorcode
+     * @param string $languagekey  the key to the language string for the error message, or the text of the message (mnet_server_fault figures it out for you) if you're not using mnet error string file
+     * @param mixed  $a            params for get_string
+     */
+    public function __construct($intcode, $languagekey, $a=null) {
+        parent::__construct($languagekey, 'mnet', '', $a);
+        $this->code    = $intcode;
+        $this->message = $languagekey; // override this because mnet_server_fault (our handler) uses this directly
+
+    }
+}

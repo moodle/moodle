@@ -323,30 +323,30 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         global $DB, $MNET_REMOTE_CLIENT;;
         try {
             if (!$transferid = $DB->get_field('portfolio_mahara_queue', 'transferid', array('token' => $token))) {
-                exit(mnet_server_fault(8009, get_string('mnet_notoken', 'portfolio_mahara')));
+                throw new mnet_server_exception(8009, get_string('mnet_notoken', 'portfolio_mahara'));
             }
             $exporter = portfolio_exporter::rewaken_object($transferid);
         } catch (portfolio_exception $e) {
-            exit(mnet_server_fault(8010, get_string('mnet_noid', 'portfolio_mahara')));
+            throw new mnet_server_exception(8010, get_string('mnet_noid', 'portfolio_mahara'));
         }
         if ($exporter->get('instance')->get_config('mnethostid') != $MNET_REMOTE_CLIENT->id) {
-            exit(mnet_server_fault(8011, get_string('mnet_wronghost', 'portfolio_mahara')));
+            throw new mnet_server_exception(8011, get_string('mnet_wronghost', 'portfolio_mahara'));
         }
         global $CFG;
         try {
             $i = $exporter->get('instance');
             $f = $i->get('file');
             if (empty($f) || !($f instanceof stored_file)) {
-                exit(mnet_server_fault(8012, get_string('mnet_nofile', 'portfolio_mahara')));
+                throw new mnet_server_exception(8012, get_string('mnet_nofile', 'portfolio_mahara'));
             }
             try {
                 $c = $f->get_content();
             } catch (file_exception $e) {
-                exit(mnet_server_fault(8013, get_string('mnet_nofilecontents', 'portfolio_mahara', $e->getMessage())));
+                throw new mnet_server_exception(8013, get_string('mnet_nofilecontents', 'portfolio_mahara', $e->getMessage()));
             }
             $contents = base64_encode($c);
         } catch (Exception $e) {
-            exit(mnet_server_fault(8013, get_string('mnet_nofile', 'portfolio_mahara')));
+            throw new mnet_server_exception(8013, get_string('mnet_nofile', 'portfolio_mahara'));
         }
         $exporter->log_transfer();
         $exporter->process_stage_cleanup(true);
