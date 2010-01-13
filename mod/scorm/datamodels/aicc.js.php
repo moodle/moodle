@@ -517,6 +517,9 @@ function AICCapi() {
         } else {
             datastring = CollectData(data,'cmi');
         }
+        datastring += '&attempt=<?php echo $attempt ?>';
+        datastring += '&scoid=<?php echo $scoid ?>';
+
         //popupwin(datastring);
         var myRequest = NewHttpReq();
         result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>"+datastring);
