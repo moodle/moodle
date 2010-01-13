@@ -342,7 +342,7 @@ class enrolment_plugin_mnet {
     function unenrol_user($username, $courseid) {
         global $MNET_REMOTE_CLIENT;
 
-        if (!$userrecord = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$MNET_REMOTE_CLIENT->id));
+        if (!$userrecord = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$MNET_REMOTE_CLIENT->id))) {
             throw new mnet_exception(5014, get_string('usernotfound', 'enrol_mnet'));
         }
 
