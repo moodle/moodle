@@ -160,7 +160,7 @@ abstract class webservice_server implements webservice_server_interface {
                 throw new webservice_access_exception('Invalid token');
             }
 
-            if ($token->validuntil and $token->validuntil > time()) {
+            if ($token->validuntil and $token->validuntil < time()) {
                 throw new webservice_access_exception('Invalid token');
             }
 
