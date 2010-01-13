@@ -24,6 +24,10 @@
     // force   Go ahead with something we've been warned is strange
     $step   = optional_param('step', NULL, PARAM_ALPHA);
     $hostid = optional_param('hostid', NULL, PARAM_INT);
+    $publishes  = optional_param('publish', null, PARAM_BOOL); // optional_param cleans arrays too
+    $subscribes = optional_param('subscribe', null, PARAM_BOOL); // optional_param cleans arrays too
+    $exists     = optional_param('subscribe', null, PARAM_BOOL); // optional_param cleans arrays too
+
     $nocertstring = '';
     $nocertmatch  = '';
     $badcert = '';
@@ -43,21 +47,21 @@
     if (($form = data_submitted()) && confirm_sesskey()) {
         $mnet_peer->set_id($hostid);
         $treevals = array();
-        foreach($_POST['exists'] as $key => $value) {
-            $host2service   = get_record('mnet_host2service', 'hostid', $_POST['hostid'], 'serviceid', $key);
-            $publish        = (isset($_POST['publish'][$key]) && $_POST['publish'][$key] == 'on')? 1 : 0;
-            $subscribe      = (isset($_POST['subscribe'][$key]) && $_POST['subscribe'][$key] == 'on')? 1 : 0;
+        foreach($exists as $key => $value) {
+            $host2service   = get_record('mnet_host2service', 'hostid', $hostid, 'serviceid', $key);
+            $publish        = array_key_exists($key, $publishes) ? $publishes[$key] : 0;
+            $subscribe      = array_key_exists($key, $subscribes) ? $subscribes[$key] : 0;
 
             if ($publish != 1 && $subscribe != 1) {
                 if (false == $host2service) {
                     // We don't have or need a record - do nothing!
                 } else {
                     // We don't need the record - delete it
-                    delete_records('mnet_host2service', 'hostid', $_POST['hostid'], 'serviceid', $key);
+                    delete_records('mnet_host2service', 'hostid', $hostid, 'serviceid', $key);
                 }
             } elseif (false == $host2service && ($publish == 1 || $subscribe == 1)) {
                 $host2service = new stdClass();
-                $host2service->hostid = $_POST['hostid'];
+                $host2service->hostid = $hostid;
                 $host2service->serviceid = $key;
                 
                 $host2service->publish = $publish;
