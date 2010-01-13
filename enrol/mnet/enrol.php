@@ -313,14 +313,12 @@ class enrolment_plugin_mnet {
             if ($userrecord->id = $DB->insert_record('user', $userrecord)) {
                 $userrecord = $DB->get_record('user', array('id'=>$userrecord->id));
             } else {
-                // TODO: Error out
-                return false;
+                throw new mnet_server_exception(5011, get_string('couldnotcreateuser', 'enrol_mnet'));
             }
         }
 
         if (! $course = $DB->get_record('course', array('id'=>$courseid))) {
-            // TODO: Error out
-            return false;
+            throw new mnet_server_exception(5012, get_string('coursenotfound', 'enrol_mnet'));
         }
 
         $courses = $this->available_courses();
@@ -329,8 +327,9 @@ class enrolment_plugin_mnet {
             if (enrol_into_course($course, $userrecord, 'mnet')) {
                 return true;
             }
+            throw new mnet_server_exception(5016, get_string('couldnotenrol', 'enrol_mnet'));
         }
-        return false;
+        throw new mnet_server_exception(5013, get_string('courseunavailable', 'enrol_mnet'));
     }
 
     /**
@@ -343,28 +342,21 @@ class enrolment_plugin_mnet {
     function unenrol_user($username, $courseid) {
         global $MNET_REMOTE_CLIENT;
 
-        $userrecord = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$MNET_REMOTE_CLIENT->id));
-
-        if ($userrecord == false) {
-            return false;
-            // TODO: Error out
+        if (!$userrecord = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$MNET_REMOTE_CLIENT->id));
+            throw new mnet_exception(5014, get_string('usernotfound', 'enrol_mnet'));
         }
 
         if (! $course = $DB->get_record('course', array('id'=>$courseid))) {
-            return false;
-            // TODO: Error out
+            throw new mnet_server_exception(5012, get_string('coursenotfound', 'enrol_mnet'));
         }
 
-        if (! $context = get_context_instance(CONTEXT_COURSE, $course->id)) {
-            return false;
-            // TODO: Error out (Invalid context)
-        }
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
         // Are we a *real* user or the shady MNET Daemon?
         // require_capability('moodle/role:assign', $context, NULL, false);
 
         if (!role_unassign(0, $userrecord->id, 0, $context->id)) {
-            print_error("unenrolerror");
+            throw new mnet_exception(5015, get_string('couldnotunenrol', 'enrol_mnet'));
         }
 
         return true;
