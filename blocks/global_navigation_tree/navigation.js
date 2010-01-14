@@ -76,12 +76,16 @@ blocks.navigation.classes.tree = function(id, key, properties) {
     this.cachedfooter = null;
     this.position = 'block';
     this.skipsetposition = false;
+    this.candock = false;
     if (properties) {
         if (properties.expansions) {
             this.expansions = properties.expansions;
         }
         if (properties.instance) {
             this.instance = properties.instance;
+        }
+        if (properties.candock) {
+            this.candock = true;
         }
     }
 
@@ -97,7 +101,9 @@ blocks.navigation.classes.tree = function(id, key, properties) {
     var node = Y.one('#inst'+this.id);
     node.all('.tree_item.branch').on('click', this.toggleexpansion , this);
 
-    this.init(node);
+    if (this.candock) {
+        this.init(node);
+    }
 
     if (node.hasClass('block_js_expansion')) {
         node.on('mouseover', function(e){this.toggleClass('mouseover');}, node);
@@ -140,7 +146,9 @@ blocks.navigation.classes.tree.prototype.load_ajax = function(tid, outcome, args
         var branch = outcome.responseXML.documentElement;
         if (branch!=null && this.add_branch(branch, args.target.ancestor('LI') ,1)) {
             // If we get here everything worked perfectly
-            blocks.dock.resize();
+            if (this.candock) {
+                blocks.dock.resize();
+            }
             return true;
         }
     }
@@ -179,7 +187,9 @@ blocks.navigation.classes.tree.prototype.add_branch = function(branchxml, target
  */
 blocks.navigation.classes.tree.prototype.toggleexpansion = function(e) {
     e.target.ancestor('LI').toggleClass('collapsed');
-    blocks.dock.resize();
+    if (this.candock) {
+        blocks.dock.resize();
+    }
 }
 
 /**
@@ -293,6 +303,8 @@ blocks.navigation.classes.branch.prototype.inject_into_dom = function(element) {
 }
 
 YUI({base: moodle_cfg.yui3loaderBase}).use('event-custom', 'node', function(Y){
-    // Give the tree class the dock block properties
-    Y.augment(blocks.navigation.classes.tree, blocks.genericblock);
+    if (blocks.genericblock) {
+        // Give the tree class the dock block properties
+        Y.augment(blocks.navigation.classes.tree, blocks.genericblock);
+    }
 });

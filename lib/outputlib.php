@@ -317,6 +317,13 @@ class theme_config {
     public $setting = null;
 
     /**
+     * If set to true and the theme enables the dock then  blocks will be able
+     * to be moved to the special dock
+     * @var bool
+     */
+    public $enable_dock = false;
+
+    /**
      * Instance of the renderer_factory implementation
      * we are using. Implementation detail.
      * @var renderer_factory
@@ -392,7 +399,7 @@ class theme_config {
         }
 
         $configurable = array('parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'javascripts', 'javascripts_footer',
-                              'parents_exclude_javascripts', 'layouts', 'resource_mp3player_colors',
+                              'parents_exclude_javascripts', 'layouts', 'resource_mp3player_colors', 'enable_dock',
                               'filter_mediaplugin_colors', 'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow');
 
         foreach ($config as $key=>$value) {

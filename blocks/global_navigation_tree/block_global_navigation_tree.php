@@ -151,9 +151,9 @@ class block_global_navigation_tree extends block_tree {
         // Get the expandable items so we can pass them to JS
         $expandable = array();
         $this->page->navigation->find_expandable($expandable);
-        
+
         // Initialise the JS tree object
-        $args = array($this->instance->id,array('expansions'=>$expandable,'instance'=>$this->instance->id));
+        $args = array($this->instance->id,array('expansions'=>$expandable,'instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked()));
         $this->page->requires->js_function_call('blocks.navigation.setup_new_tree',  $args)->on_dom_ready();
         
         // Grab the items to display
@@ -182,16 +182,8 @@ class block_global_navigation_tree extends block_tree {
      */
     public function html_attributes() {
         $attributes = parent::html_attributes();
-
-        if ($this->docked===null) {
-            $this->docked = get_user_preferences('docked_block_instance_'.$this->instance->id, 0);
-        }
-
         if (!empty($this->config->enablehoverexpansion) && $this->config->enablehoverexpansion == 'yes') {
             $attributes['class'] .= ' block_js_expansion';
-        }
-        if ($this->docked) {
-            $attributes['class'] .= ' dock_on_load';
         }
         return $attributes;
     }

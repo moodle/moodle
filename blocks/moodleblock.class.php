@@ -547,7 +547,7 @@ class block_base {
             'id' => 'inst' . $this->instance->id,
             'class' => 'block_' . $this->name()
         );
-        if (get_user_preferences('docked_block_instance_'.$this->instance->id, 0)) {
+        if ($this->instance_can_be_docked() && get_user_preferences('docked_block_instance_'.$this->instance->id, 0)) {
             $attributes['class'] .= ' dock_on_load';
         }
         return $attributes;
@@ -576,8 +576,8 @@ class block_base {
     }
 
     function get_required_javascript() {
-        if ($this->instance_can_dock_with_dock()) {
-            $this->_initialise_dock();
+        $this->_initialise_dock();
+        if ($this->instance_can_be_docked()) {
             $this->page->requires->js_function_call('blocks.setup_generic_block', array($this->instance->id))->on_dom_ready();
             user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
         }
@@ -744,19 +744,19 @@ class block_base {
         throw new coding_exception('config_print() can no longer be used. Blocks should use a settings.php file.');
     }
 
-    public function instance_can_dock_with_dock() {
-        return true;
+    public function instance_can_be_docked() {
+        global $CFG;
+        return ($CFG->allowblockstodock && $this->page->theme->enable_dock);
     }
 
     public function _initialise_dock() {
         if (!self::$dockinitialised) {
-            $this->page->requires->js('blocks/blocks.js');
+            $this->page->requires->js_function_call('blocks.dock.init')->on_dom_ready();
             $this->page->requires->data_for_js('blocks.dock.strings.addtodock', get_string('addtodock', 'block'));
             $this->page->requires->data_for_js('blocks.dock.strings.undockitem', get_string('undockitem', 'block'));
             $this->page->requires->data_for_js('blocks.dock.strings.undockall', get_string('undockall', 'block'));
             self::$dockinitialised = true;
         }
-        
     }
 
     /** @callback callback functions for comments api */

@@ -179,3 +179,5 @@ $THEME->layouts = array(
 /** List of javascript files that need to included on each page */
 $THEME->javascripts = array();
 $THEME->javascripts_footer = array('navigation');
+
+$THEME->enable_dock = true;

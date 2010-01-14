@@ -80,7 +80,8 @@ class block_settings_navigation_tree extends block_tree {
     function get_required_javascript() {
         $this->_initialise_dock();
         $this->page->requires->js('blocks/global_navigation_tree/navigation.js');
-        $this->page->requires->js_function_call('blocks.navigation.setup_new_tree', array($this->instance->id))->on_dom_ready();
+        $args = array($this->instance->id, array('instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked()));
+        $this->page->requires->js_function_call('blocks.navigation.setup_new_tree', $args)->on_dom_ready();
         user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
     }
 
@@ -151,17 +152,8 @@ class block_settings_navigation_tree extends block_tree {
 
     function html_attributes() {
         $attributes = parent::html_attributes();
-
-        // Check if this block has been docked
-        if ($this->docked === null) {
-            $this->docked = get_user_preferences('docked_block_instance_'.$this->instance->id, 0);
-        }
-
         if (!empty($this->config->enablehoverexpansion) && $this->config->enablehoverexpansion == 'yes') {
             $attributes['class'] .= ' block_js_expansion';
-        }
-        if ($this->docked) {
-            $attributes['class'] .= ' dock_on_load';
         }
         return $attributes;
     }

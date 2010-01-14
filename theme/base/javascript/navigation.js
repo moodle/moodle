@@ -93,7 +93,7 @@
  */
 
 // If this isn't set we don't need an override at all
-if (blocks.genericblock) {
+if (typeof(blocks)=='object' && blocks.genericblock) {
 
     /**
      * Override the default resize_block_space method so that we can ensure
