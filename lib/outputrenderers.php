@@ -923,7 +923,7 @@ class core_renderer extends renderer_base {
      * @param string|moodle_url $url
      * @param string $text HTML fragment
      * @param component_action $action
-     * @param array $options associative array form attributes + {disabled, title}
+     * @param array $attributes associative array of html link attributes + disabled
      * @return HTML fragment
      */
     public function action_link($url, $text, component_action $action, array $attributes=null) {
@@ -948,6 +948,7 @@ class core_renderer extends renderer_base {
             // do not use div here due to nesting restriction in xhtml strict
             return html_writer::tag('span', $link->text, array('class'=>'currentlink'));
         }
+
         $attributes = $link->attributes;
         unset($link->attributes['disabled']);
         $attributes['href'] = $link->url;
@@ -986,7 +987,7 @@ class core_renderer extends renderer_base {
     */
     public function confirm($message, $continue, $cancel) {
         if ($continue instanceof single_button) {
-            $continue = clone($continue);
+            // ok
         } else if (is_string($continue)) {
             $continue = new single_button(new moodle_url($continue), get_string('continue'), 'post');
         } else if ($continue instanceof moodle_url) {
@@ -996,7 +997,7 @@ class core_renderer extends renderer_base {
         }
 
         if ($cancel instanceof single_button) {
-            $cancel = clone($cancel);
+            // ok
         } else if (is_string($cancel)) {
             $cancel = new single_button(new moodle_url($cancel), get_string('cancel'), 'get');
         } else if ($cancel instanceof moodle_url) {

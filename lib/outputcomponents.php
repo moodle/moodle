@@ -303,7 +303,7 @@ class action_link implements renderable {
      * @param string|moodle_url $url
      * @param string $text HTML fragment
      * @param component_action $action
-     * @param array $options associative array form attributes + {disabled, title}
+     * @param array $attributes associative array of html link attributes + disabled
      */
     public function __construct(moodle_url $url, $text, component_action $action=null, array $attributes=null) {
         $this->url       = clone($url);
