@@ -1047,7 +1047,6 @@ $string['moreinformation'] = 'More information about this error';
 $string['moreprofileinfoneeded'] = 'Please tell us more about yourself';
 $string['mostrecently'] = 'most recently';
 $string['move'] = 'Move';
-$string['moveallsidetabstoblock'] = 'Move all tabs back to their block position';
 $string['movecategoryto'] = 'Move category to:';
 $string['movecategorycontentto'] = 'Move into';
 $string['movecontentstoanothercategory'] = 'Move contents to another category';

@@ -111,7 +111,7 @@
   font-weight:bold;
 }
 
-.jsenabled .sideblock_js_sidebarpopout,
+.jsenabled .dock_on_load,
 .jsenabled .block_tree .collapsed ul {
   display: none;
 }

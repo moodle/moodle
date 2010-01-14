@@ -39,7 +39,6 @@ class block_settings_navigation_tree extends block_tree {
     /** @var string */
     public static $navcount;
     public $blockname = null;
-    public $id = null;
     /** @var bool */
     protected $contentgenerated = false;
     /** @var bool|null */
@@ -78,6 +77,13 @@ class block_settings_navigation_tree extends block_tree {
         return true;
     }
 
+    function get_required_javascript() {
+        $this->_initialise_dock();
+        $this->page->requires->js('blocks/global_navigation_tree/navigation.js');
+        $this->page->requires->js_function_call('blocks.navigation.setup_new_tree', array($this->instance->id))->on_dom_ready();
+        user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
+    }
+
     /**
      * Gets the content for this block by grabbing it from $this->page
      */
@@ -110,17 +116,6 @@ class block_settings_navigation_tree extends block_tree {
             redirect($url);
         }
 
-        $togglesidetabdisplay = get_string('togglesidetabdisplay', $this->blockname);
-        $toggleblockdisplay = get_string('toggleblockdisplay', $this->blockname);
-        $args = array('instance'=>$this->instance->id);
-        $args['togglesidetabdisplay'] = $togglesidetabdisplay;
-        $args['toggleblockdisplay'] = $toggleblockdisplay;
-        // Give JS some information we will use within the JS tree object
-        $this->page->requires->data_for_js('settingsnav'.block_settings_navigation_tree::$navcount, $args);
-
-
-        $this->id = 'settingsnav'.block_settings_navigation_tree::$navcount;
-        $this->page->requires->js_function_call('setup_new_navtree', array($this->id))->on_dom_ready();
         // Grab the children from settings nav, we have more than one root node
         // and we dont want to show the site node
         $this->content->items = $this->page->settingsnav->children;
@@ -147,17 +142,6 @@ class block_settings_navigation_tree extends block_tree {
 
             if (!empty($this->config->enablesidebarpopout) && $this->config->enablesidebarpopout == 'yes') {
                 user_preference_allow_ajax_update('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, PARAM_INT);
-
-                $movelink = new html_link($this->page->url);
-                $movelink->add_classes('moveto customcommand requiresjs');
-                if ($this->docked) {
-                    $movelink->url->param('undock', $this->instance->id);
-                    $moveicon = $OUTPUT->action_icon($movelink, $toggleblockdisplay, 't/movetoblock');
-                } else {
-                    $movelink->url->param('dock', $this->instance->id);
-                    $moveicon = $OUTPUT->action_icon($movelink, $toggleblockdisplay, 't/movetosidetab');
-                }
-                $this->content->footer .= $moveicon;
             }
         }
 
@@ -170,14 +154,14 @@ class block_settings_navigation_tree extends block_tree {
 
         // Check if this block has been docked
         if ($this->docked === null) {
-            $this->docked = get_user_preferences('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, 0);
+            $this->docked = get_user_preferences('docked_block_instance_'.$this->instance->id, 0);
         }
 
         if (!empty($this->config->enablehoverexpansion) && $this->config->enablehoverexpansion == 'yes') {
-            $attributes['class'] .= ' sideblock_js_expansion';
+            $attributes['class'] .= ' block_js_expansion';
         }
         if ($this->docked) {
-            $attributes['class'] .= ' sideblock_js_sidebarpopout';
+            $attributes['class'] .= ' dock_on_load';
         }
         return $attributes;
     }

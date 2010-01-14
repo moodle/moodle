@@ -243,7 +243,7 @@ class page_requirements_manager {
      */
     public function yui3_lib($libname) {
         if ($this->headdone) {
-            throw new coding_exception('YUI3 libraries can be preloaded by PHP only from HEAD, please use YUI autoloading instead: ', $stylesheet);
+            throw new coding_exception('YUI3 libraries can be preloaded by PHP only from HEAD, please use YUI autoloading instead: ', $libname);
         }
         $libnames = (array)$libname;
         foreach ($libnames as $lib) {
@@ -591,6 +591,7 @@ class page_requirements_manager {
      * @return string the HTML code to to at the end of the page.
      */
     public function get_end_code() {
+        global $CFG;
         $output = $this->get_yui2lib_code();
         $output .= $this->get_linked_resources_code(self::WHEN_AT_END);
 
@@ -601,9 +602,16 @@ class page_requirements_manager {
         $js = $this->get_javascript_code(self::WHEN_AT_END);
 
         $ondomreadyjs = $this->get_javascript_code(self::WHEN_ON_DOM_READY, '    ');
-        if ($ondomreadyjs) {
-            $js .= "YAHOO.util.Event.onDOMReady(function() {\n" . $ondomreadyjs . "});\n";
-        }
+
+        $js .= <<<EOD
+Y = YUI({
+    base: moodle_cfg.yui3loaderBase
+}).use('node-base', function(Y) {
+    Y.on('domready', function() {
+    $ondomreadyjs
+    });
+});
+EOD;
 
         $output .= ajax_generate_script_tag($js);
 

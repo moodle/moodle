@@ -1848,7 +1848,7 @@ a.skip:focus, a.skip:active {
 .block_tree .root_node.leaf {
   padding-left:0px;
 }
-.jsenabled .sideblock_js_sidebarpopout,
+.jsenabled .dock_on_load,
 .jsenabled .block_tree .collapsed ul {
   display: none;
 }
@@ -1871,10 +1871,10 @@ a.skip:focus, a.skip:active {
 }
 /* Navigation and settings block */
 /* This CSS is for the side panel */
-body.has_navigation_bar {
+body.has_dock {
   margin-left:3em;
 }
-.navigation_bar {
+.dock {
   width:30px;
   position:fixed;
   top:0px;
@@ -1886,89 +1886,89 @@ body.has_navigation_bar {
   background-position:100% 0%;
   background-repeat:repeat-y;
 }
-.ie6 .navigation_bar {
+.ie6 .dock {
   position:absolute;
 }
-.ie6 .navigation_bar hr {
+.ie6 .dock hr {
   display:none;
   margin:0px;
   height:0px;
   padding:0px;
 }
-.ie6 .navigation_bar li p {
+.ie6 .dock li p {
     background-color:inherit;
 }
-.navigation_bar .sideblock_tab {
+.dock .dockeditem {
 
 }
-.navigation_bar .sideblock_tab .firsttab {
+.dock .dockeditem .firstdockitem {
   margin-top:1em;
 }
-.navigation_bar .sideblock_tab .title {
+.dock .dockeditem .dockedtitle {
   border-bottom:1px solid #eee;
   border-top:1px solid #ddd;
   cursor:pointer;
 }
-.navigation_bar .bd.oversized_content {
+.dock .bd.oversized_content {
   overflow-y:auto;
   overflow-x:visible;
   height:inherit;
 }
-.navigation_bar .block_tree .current_branch {
+.dock .block_tree .current_branch {
   background-color:#ddd;
 }
-.ie6 .navigation_bar .bd.oversized_content {
+.ie6 .dock .bd.oversized_content {
   width:100%;
 }
-.ie7 .navigation_bar .bd.oversized_content {
+.ie7 .dock .bd.oversized_content {
   width:400px;
 }
-.navigation_bar .bd.oversized_content .content {
+.dock .bd.oversized_content .content {
   margin:6px 6px 6px 0px;
   padding-bottom:6px;
 }
-.ie6 .navigation_bar .bd.oversized_content .content,
-.ie7 .navigation_bar .bd.oversized_content .content {
+.ie6 .dock .bd.oversized_content .content,
+.ie7 .dock .bd.oversized_content .content {
   padding-bottom:0px;
 }
-.navigation_bar .sideblock_tab .title.active_tab {
+.dock .dockeditem .dockedtitle.activeitem {
   background-color:#e9e9e9;
   border-bottom-color:#ccc;
   border-top-color:#ddd;
 }
-.navigation_bar .sideblock_tab .title h2 {
+.dock .dockeditem .dockedtitle h2 {
   font-size:0.8em;
   line-height:100%;
   text-transform:uppercase;
   text-align:center;
 }
-.navigation_bar .controls {
+.dock .controls {
   position:absolute;
   bottom:1em;
   width:100%;
   text-align:center;
 }
-.navigation_bar .controls img {
+.dock .controls img {
   cursor:pointer;
 }
 
 /* Navigation and settings block */
 /* Sideblock expansion code */
-.sideblock_js_expansion .block_tree {
+.block_js_expansion .block_tree {
   overflow-x:scroll;
 }
-.sideblock_js_expansion.mouseover .content {
+.block_js_expansion.mouseover .content {
   width:200%;
   z-index:1000;
   position:relative;
 }
-.sideblock_js_expansion.mouseover .content .block_tree {
+.block_js_expansion.mouseover .content .block_tree {
   width:100%;
   background-color:#fcfcfc;
   padding-bottom:0px;
 }
-.ie6 .sideblock_js_expansion.mouseover .content,
-.ie7 .sideblock_js_expansion.mouseover .content{
+.ie6 .block_js_expansion.mouseover .content,
+.ie7 .block_js_expansion.mouseover .content{
   padding-bottom:2px;
 }
 

@@ -1,6 +1,7 @@
 <?php // $Id$ 
       // block.php - created with Moodle 2.0 dev
 
+$string['addtodock'] = 'Move this to the dock';
 $string['appearsinsubcontexts'] = 'Appears in sub-contexts';
 $string['anypagematchingtheabove'] = 'Any page matching the above';
 $string['blocksettings'] = 'Block settings';
@@ -19,3 +20,5 @@ $string['thisspecificpage'] = 'This specific page (page $a)';
 $string['visible'] = 'Visible';
 $string['weight'] = 'Weight';
 $string['wherethisblockappears'] = 'Where this block appears';
+$string['undockall'] = 'Undock all';
+$string['undockitem'] = 'Undock this item';

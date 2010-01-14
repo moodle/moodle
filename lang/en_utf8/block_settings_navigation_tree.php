@@ -27,5 +27,3 @@
 $string['blockname'] = 'Settings';
 $string['enablehoverexpansion'] = 'Enable mouseover expansion of this block';
 $string['enablesidebarpopout'] = 'Allow the user to switch the block to a sidbar popout';
-$string['toggleblockdisplay'] = 'Move to block position';
-$string['togglesidetabdisplay'] = 'Move to side panel tab';

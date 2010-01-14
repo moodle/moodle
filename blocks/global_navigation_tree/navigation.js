@@ -1,0 +1,298 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This file contains classes used to manage the navigation structures in Moodle
+ * and was introduced as part of the changes occuring in Moodle 2.0
+ *
+ * @since 2.0
+ * @package javascript
+ * @copyright 2009 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+ * @namespace
+ */
+var blocks = blocks || {};
+
+/**
+ * This namespace will contain all of the contents of the navigation blocks
+ * global navigation and settings.
+ * @namespace
+ */
+blocks.navigation = {
+    /** The number of expandable branches in existence */
+    expandablebranchcount:0,
+    /** An array of initialised trees */
+    treecollection:[],
+    /**
+     * @namespace
+     */
+    classes:{},
+    /**
+     * @function
+     * @static
+     * @param {int} uid The id of the block within the page
+     * @param {object} properties
+     */
+    setup_new_tree:function(uid, properties) {
+        Y.use('base','dom','io','node', function() {
+            properties = properties || {'instance':uid};
+            blocks.navigation.treecollection[uid] = new blocks.navigation.classes.tree(uid, uid, properties);
+        });
+    }
+};
+
+/**
+ * @class tree
+ * @constructor
+ * @base blocks.dock.abstractblock
+ * @param {string} id The name of the tree
+ * @param {int} key The internal id within the tree store
+ * @param {object} properties Object containing tree properties
+ */
+blocks.navigation.classes.tree = function(id, key, properties) {
+    this.id = id;
+    this.key = key;
+    this.type = 'blocks.navigation.classes.tree';
+    this.errorlog = [];
+    this.ajaxbranches = 0;
+    this.expansions = [];
+    this.instance = null;
+    this.cachedcontentnode = null;
+    this.cachedfooter = null;
+    this.position = 'block';
+    this.skipsetposition = false;
+    if (properties) {
+        if (properties.expansions) {
+            this.expansions = properties.expansions;
+        }
+        if (properties.instance) {
+            this.instance = properties.instance;
+        }
+    }
+
+    if (Y.one('#inst'+this.id) === null) {
+        return;
+    }
+
+    for (var i in this.expansions) {
+        Y.one('#'+this.expansions[i].id).on('ajaxload|click', this.init_load_ajax, this, this.expansions[i]);
+        blocks.navigation.expandablebranchcount++;
+    }
+
+    var node = Y.one('#inst'+this.id);
+    node.all('.tree_item.branch').on('click', this.toggleexpansion , this);
+
+    this.init(node);
+
+    if (node.hasClass('block_js_expansion')) {
+        node.on('mouseover', function(e){this.toggleClass('mouseover');}, node);
+        node.on('mouseout', function(e){this.toggleClass('mouseover');}, node);
+    }
+}
+
+/**
+ * Loads a branch via AJAX
+ * @param {event} The event object
+ * @param {object} A branch to load via ajax
+ */
+blocks.navigation.classes.tree.prototype.init_load_ajax = function(e, branch) {
+    e.stopPropagation();
+    if (e.target.get('nodeName').toUpperCase() != 'P') {
+        return true;
+    }
+    var cfginstance = (this.instance != null)?'&instance='+this.instance:'';
+    Y.io(moodle_cfg.wwwroot+'/lib/ajax/getnavbranch.php', {
+        method:'POST',
+        data:'elementid='+branch.id+'&id='+branch.branchid+'&type='+branch.type+'&sesskey='+moodle_cfg.sesskey+cfginstance,
+        on: {
+            complete:this.load_ajax,
+            success:function() {Y.detach('click', this.init_load_ajax, e.target);}
+        },
+        context:this,
+        arguments:{
+            target:e.target
+        }
+    });
+    return true;
+}
+
+/**
+ * Takes an branch provided through ajax and loads it into the tree
+ */
+blocks.navigation.classes.tree.prototype.load_ajax = function(tid, outcome, args) {
+    // Check the status
+    if (outcome.status!=0 && outcome.responseXML!=null) {
+        var branch = outcome.responseXML.documentElement;
+        if (branch!=null && this.add_branch(branch, args.target.ancestor('LI') ,1)) {
+            // If we get here everything worked perfectly
+            blocks.dock.resize();
+            return true;
+        }
+    }
+    args.target.replaceClass('branch', 'emptybranch');
+    return true;
+}
+
+/**
+ * Adds a branch into the tree provided with some XML
+ */
+blocks.navigation.classes.tree.prototype.add_branch = function(branchxml, target, depth) {
+
+    var branch = new blocks.navigation.classes.branch(this);
+    branch.construct_from_xml(branchxml);
+
+    var childrenul = false;
+    if (depth === 1) {
+        if (!branch.haschildren) {
+            return false;
+        }
+        childrenul = Y.Node.create('<ul></ul>');
+        target.appendChild(childrenul);
+    } else {
+        childrenul = branch.inject_into_dom(target);
+    }
+
+    if (childrenul) {
+        for (var i=0;i<branch.children.childNodes.length;i++) {
+            this.add_branch(branch.children.childNodes[i], childrenul, depth+1);
+        }
+    }
+    return true;
+}
+/**
+ * Toggle a branch as expanded or collapsed
+ */
+blocks.navigation.classes.tree.prototype.toggleexpansion = function(e) {
+    e.target.ancestor('LI').toggleClass('collapsed');
+    blocks.dock.resize();
+}
+
+/**
+ * This class represents a branch for a tree
+ * @class tree
+ * @constructor
+ */
+blocks.navigation.classes.branch = function(tree) {
+    this.tree = tree;
+    this.name = null;
+    this.title = null;
+    this.classname = null;
+    this.id = null;
+    this.key = null;
+    this.type = null;
+    this.link = null;
+    this.icon = null;
+    this.expandable = null;
+    this.expansionceiling = null;
+    this.hidden = false;
+    this.haschildren = false;
+    this.children = false;
+}
+/**
+ * Constructs a branch from XML
+ */
+blocks.navigation.classes.branch.prototype.construct_from_xml = function(xml) {
+    this.title = xml.getAttribute('title');
+    this.classname = xml.getAttribute('class');
+    this.id = xml.getAttribute('id');
+    this.link = xml.getAttribute('link');
+    this.icon = xml.getAttribute('icon');
+    this.key = xml.getAttribute('key');
+    this.type = xml.getAttribute('type');
+    this.expandable = xml.getAttribute('expandable');
+    this.expansionceiling = xml.getAttribute('expansionceiling');
+    this.hidden = (xml.getAttribute('hidden')=='true');
+    this.haschildren = (xml.getAttribute('haschildren')=='true');
+
+    if (this.id && this.id.match(/^expandable_branch_\d+$/)) {
+        blocks.navigation.expandablebranchcount++;
+        this.id = 'expandable_branch_'+blocks.navigation.expandablebranchcount;
+    }
+
+    for (var i=0; i<xml.childNodes.length;i++) {
+        var node = xml.childNodes[i];
+        switch (node.nodeName.toLowerCase()) {
+            case 'name':
+                this.name = node.firstChild.nodeValue;
+                break;
+            case 'children':
+                this.children = node;
+        }
+    }
+}
+/**
+ * Injects a branch into the tree at the given location
+ */
+blocks.navigation.classes.branch.prototype.inject_into_dom = function(element) {
+
+    var branchli = Y.Node.create('<li></li>');
+    var branchp = Y.Node.create('<p class="tree_item"></p>');
+
+    if ((this.expandable !== null || this.haschildren) && this.expansionceiling===null) {
+        branchli.addClass('collapsed');
+        branchp.addClass('branch');
+        branchp.on('click', this.tree.toggleexpansion, this.tree);
+        if (this.expandable) {
+            branchp.on('ajaxload|click', this.tree.init_load_ajax, this.tree, {branchid:this.key,id:this.id,type:this.type});
+        }
+    }
+
+    if (this.myclass !== null) {
+        branchp.addClass(this.myclass);
+    }
+    if (this.id !== null) {
+        branchp.setAttribute('id', this.id);
+    }
+
+    var branchicon = false;
+    if (this.icon != null) {
+        branchicon = Y.Node.create('<img src="'+this.icon+'" alt="" />');
+        this.name = ' '+this.name;
+    }
+    if (this.link === null) {
+        if (branchicon) {
+            branchp.appendChild(branchicon);
+        }
+        branchp.append(this.name.replace(/\n/g, '<br />'));
+    } else {
+        var branchlink = Y.Node.create('<a title="'+this.title+'" href="'+this.link+'">'+this.name.replace(/\n/g, '<br />')+'</a>');
+        if (branchicon) {
+            branchlink.appendChild(branchicon);
+        }
+        if (this.hidden) {
+            branchlink.addClass('dimmed');
+        }
+        branchp.appendChild(branchlink);
+    }
+
+    branchli.appendChild(branchp);
+    if (this.haschildren) {
+        var childrenul = Y.Node.create('<ul></ul>');
+        branchli.appendChild(childrenul);
+        element.appendChild(branchli);
+        return childrenul
+    } else {
+        element.appendChild(branchli);
+        return false;
+    }
+}
+
+YUI({base: moodle_cfg.yui3loaderBase}).use('event-custom', 'node', function(Y){
+    // Give the tree class the dock block properties
+    Y.augment(blocks.navigation.classes.tree, blocks.genericblock);
+});

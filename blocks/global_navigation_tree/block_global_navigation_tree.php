@@ -79,6 +79,12 @@ class block_global_navigation_tree extends block_tree {
         return true;
     }
 
+    function get_required_javascript() {
+        $this->_initialise_dock();
+        $this->page->requires->js('blocks/global_navigation_tree/navigation.js');
+        user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
+    }
+
     /**
      * Gets the content for this block by grabbing it from $this->page
      */
@@ -142,21 +148,14 @@ class block_global_navigation_tree extends block_tree {
             $this->showmyhistory();
         }
 
-        $togglesidetabdisplay = get_string('togglesidetabdisplay', $this->blockname);
-        $toggleblockdisplay = get_string('toggleblockdisplay', $this->blockname);
-
-
         // Get the expandable items so we can pass them to JS
         $expandable = array();
         $this->page->navigation->find_expandable($expandable);
-        $args = array('expansions'=>$expandable,'instance'=>$this->instance->id);
-        $args['togglesidetabdisplay'] = $togglesidetabdisplay;
-        $args['toggleblockdisplay'] = $toggleblockdisplay;
-        // Give JS some information we will use within the JS tree object
-        $this->page->requires->data_for_js('globalnav'.block_global_navigation_tree::$navcount, $args);
+        
         // Initialise the JS tree object
-        $this->id = 'globalnav'.block_global_navigation_tree::$navcount;
-        $this->page->requires->js_function_call('setup_new_navtree', array($this->id))->on_dom_ready();
+        $args = array($this->instance->id,array('expansions'=>$expandable,'instance'=>$this->instance->id));
+        $this->page->requires->js_function_call('blocks.navigation.setup_new_tree',  $args)->on_dom_ready();
+        
         // Grab the items to display
         $this->content->items = array($this->page->navigation);
 
@@ -164,21 +163,6 @@ class block_global_navigation_tree extends block_tree {
         $reloadlink->add_class('customcommand');
 
         $this->content->footer .= $OUTPUT->action_icon($reloadlink, get_string('reload'), 't/reload');
-
-        if (empty($this->config->enablesidebarpopout) || $this->config->enablesidebarpopout == 'yes') {
-            user_preference_allow_ajax_update('nav_in_tab_panel_globalnav'.block_global_navigation_tree::$navcount, PARAM_INT);
-
-            $movelink = new html_link($this->page->url);
-            $movelink->add_classes('moveto customcommand requiresjs');
-            if ($this->docked) {
-                $movelink->url->param('undock', $this->instance->id);
-                $moveicon = $OUTPUT->action_icon($movelink, $toggleblockdisplay, 't/movetoblock');
-            } else {
-                $movelink->url->param('dock', $this->instance->id);
-                $moveicon = $OUTPUT->action_icon($movelink, $toggleblockdisplay, 't/movetosidetab');
-            }
-            $this->content->footer .= $moveicon;
-        }
 
         // Set content generated to true so that we know it has been done
         $this->contentgenerated = true;
@@ -200,14 +184,14 @@ class block_global_navigation_tree extends block_tree {
         $attributes = parent::html_attributes();
 
         if ($this->docked===null) {
-            $this->docked = get_user_preferences('nav_in_tab_panel_globalnav'.block_global_navigation_tree::$navcount, 0);
+            $this->docked = get_user_preferences('docked_block_instance_'.$this->instance->id, 0);
         }
 
         if (!empty($this->config->enablehoverexpansion) && $this->config->enablehoverexpansion == 'yes') {
-            $attributes['class'] .= ' sideblock_js_expansion';
+            $attributes['class'] .= ' block_js_expansion';
         }
         if ($this->docked) {
-            $attributes['class'] .= ' sideblock_js_sidebarpopout';
+            $attributes['class'] .= ' dock_on_load';
         }
         return $attributes;
     }

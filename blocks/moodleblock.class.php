@@ -113,6 +113,8 @@ class block_base {
 
     var $cron          = NULL;
 
+    static $dockinitialised = false;
+
 /// Class Functions
 
     /**
@@ -541,10 +543,14 @@ class block_base {
      * @return array attribute name => value.
      */
     function html_attributes() {
-        return array(
+        $attributes = array(
             'id' => 'inst' . $this->instance->id,
             'class' => 'block_' . $this->name()
         );
+        if (get_user_preferences('docked_block_instance_'.$this->instance->id, 0)) {
+            $attributes['class'] .= ' dock_on_load';
+        }
+        return $attributes;
     }
 
     /**
@@ -566,6 +572,15 @@ class block_base {
         }
         $this->page = $page;
         $this->specialization();
+        $this->get_required_javascript();
+    }
+
+    function get_required_javascript() {
+        if ($this->instance_can_dock_with_dock()) {
+            $this->_initialise_dock();
+            $this->page->requires->js_function_call('blocks.setup_generic_block', array($this->instance->id))->on_dom_ready();
+            user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
+        }
     }
 
     /**
@@ -728,6 +743,22 @@ class block_base {
     function config_print() {
         throw new coding_exception('config_print() can no longer be used. Blocks should use a settings.php file.');
     }
+
+    public function instance_can_dock_with_dock() {
+        return true;
+    }
+
+    public function _initialise_dock() {
+        if (!self::$dockinitialised) {
+            $this->page->requires->js('blocks/blocks.js');
+            $this->page->requires->data_for_js('blocks.dock.strings.addtodock', get_string('addtodock', 'block'));
+            $this->page->requires->data_for_js('blocks.dock.strings.undockitem', get_string('undockitem', 'block'));
+            $this->page->requires->data_for_js('blocks.dock.strings.undockall', get_string('undockall', 'block'));
+            self::$dockinitialised = true;
+        }
+        
+    }
+
     /** @callback callback functions for comments api */
     public static function comment_template($options) {
         $ret = <<<EOD

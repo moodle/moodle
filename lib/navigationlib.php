@@ -884,7 +884,6 @@ class global_navigation extends navigation_node {
         $this->forceopen = true;
         $this->action = new moodle_url($CFG->wwwroot);
         $this->cache = new navigation_cache(NAVIGATION_CACHE_NAME);
-        $PAGE->requires->string_for_js('moveallsidetabstoblock','moodle');
         $regenerate = optional_param('regenerate', null, PARAM_TEXT);
         if ($regenerate==='navigation') {
             $this->cache->clear();
