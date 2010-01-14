@@ -149,7 +149,7 @@ class blog_entry {
 
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $COURSE->id)));
         $by = new object();
-        $by->name =  $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/user/view.php', array('id' => $user->id, 'course' => $COURSE->id)), $fullname));
+        $by->name =  html_writer::link(new moodle_url($CFG->wwwroot.'/user/view.php', array('id' => $user->id, 'course' => $COURSE->id)), $fullname);
         $by->date = $template['created'];
 
         $topiccell->text .= get_string('bynameondate', 'forum', $by);
@@ -158,7 +158,7 @@ class blog_entry {
         if ($this->uniquehash && $this->content) {
             if ($externalblog = $DB->get_record('blog_external', array('id' => $this->content))) {
                 $urlparts = parse_url($externalblog->url);
-                $topiccell->text .= $OUTPUT->container(get_string('retrievedfrom', 'blog') . $OUTPUT->link(html_link::make($urlparts['scheme'].'://'.$urlparts['host'], $externalblog->name)), 'externalblog');
+                $topiccell->text .= $OUTPUT->container(get_string('retrievedfrom', 'blog') . html_writer::link($urlparts['scheme'].'://'.$urlparts['host'], $externalblog->name), 'externalblog');
             }
         }
 
@@ -205,7 +205,7 @@ class blog_entry {
         // Uniquehash is used as a link to an external blog
         if (!empty($this->uniquehash)) {
             $contentcell->text .= $OUTPUT->container_start('externalblog');
-            $contentcell->text .= $OUTPUT->link(html_link::make($this->uniquehash, get_string('linktooriginalentry', 'blog')));
+            $contentcell->text .= html_writer::link($this->uniquehash, get_string('linktooriginalentry', 'blog'));
             $contentcell->text .= $OUTPUT->container_end();
         }
 
@@ -281,11 +281,11 @@ class blog_entry {
         $contentcell->text .= $OUTPUT->container_start('commands');
 
         if (blog_user_can_edit_entry($this) && empty($this->uniquehash)) {
-            $contentcell->text .= $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/blog/edit.php', array('action' => 'edit', 'entryid' => $this->id)), $stredit)) . ' | ';
-            $contentcell->text .= $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/blog/edit.php', array('action' => 'delete', 'entryid' => $this->id)), $strdelete)) . ' | ';
+            $contentcell->text .= html_writer::link(new moodle_url($CFG->wwwroot.'/blog/edit.php', array('action' => 'edit', 'entryid' => $this->id)), $stredit) . ' | ';
+            $contentcell->text .= html_writer::link(new moodle_url($CFG->wwwroot.'/blog/edit.php', array('action' => 'delete', 'entryid' => $this->id)), $strdelete) . ' | ';
         }
 
-        $contentcell->text .= $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/blog/index.php', array('entryid' => $this->id)), get_string('permalink', 'blog')));
+        $contentcell->text .= html_writer::link(new moodle_url($CFG->wwwroot.'/blog/index.php', array('entryid' => $this->id)), get_string('permalink', 'blog'));
 
         $contentcell->text .= $OUTPUT->container_end();
 
@@ -497,8 +497,8 @@ class blog_entry {
             $image = $OUTPUT->image("/f/$icon", array('alt'=>$filename, 'class'=>'icon'));
 
             if ($return == "html") {
-                $output .= $OUTPUT->link(html_link::make($ffurl, $OUTPUT->image($image)));
-                $output .= $OUTPUT->link(html_link::make($ffurl, $filename));
+                $output .= html_writer::link($ffurl, $OUTPUT->image($image));
+                $output .= html_writer::link($ffurl, $filename);
 
             } else if ($return == "text") {
                 $output .= "$strattachment $filename:\n$ffurl\n";
@@ -508,8 +508,8 @@ class blog_entry {
                     $image = $OUTPUT->image($ffurl, array('alt'=>$filename));
                     $imagereturn .= "<br />" . $OUTPUT->image($image);
                 } else {
-                    $imagereturn .= $OUTPUT->link(html_link::make($ffurl, $image));
-                    $imagereturn .= filter_text($OUTPUT->link(html_link::make($ffurl, $filename)));
+                    $imagereturn .= html_writer::link($ffurl, $image);
+                    $imagereturn .= filter_text(html_writer::link($ffurl, $filename));
                 }
             }
         }

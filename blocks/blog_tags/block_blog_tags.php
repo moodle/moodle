@@ -154,10 +154,8 @@ class block_blog_tags extends block_base {
                 }
 
                 $blogurl->param('tagid', $tag->id);
-                $link = html_link::make($blogurl, tag_display_name($tag));
-                $link->add_class($tag->class);
-                $link->title = get_string('numberofentries','blog',$tag->ct);
-                $this->content->text .= '<li>' . $OUTPUT->link($link) . '</li> ';
+                $link = html_writer::link($blogurl, tag_display_name($tag), array('class'=>$tag->class, 'title'=>get_string('numberofentries','blog',$tag->ct)));
+                $this->content->text .= '<li>' . $link . '</li> ';
             }
             $this->content->text .= "\n</ul>\n";
 

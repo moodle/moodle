@@ -161,11 +161,11 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $output = $this->output->box(get_string('youhaveseen','lesson'), 'generalbox boxaligncenter');
         $output .= $this->output->box_start('center');
 
-        $yeslink = html_link::make(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$lastpageseenid, 'startlastseen'=>'yes')), get_string('yes'));
-        $output .= $this->output->span($this->output->link($yeslink), 'lessonbutton standardbutton');
+        $yeslink = html_writer::link(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$lastpageseenid, 'startlastseen'=>'yes')), get_string('yes'));
+        $output .= $this->output->span($yeslink, 'lessonbutton standardbutton');
 
-        $nolink = html_link::make(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no')), get_string('no'));
-        $output .= $this->output->span($this->output->link($nolink), 'lessonbutton standardbutton');
+        $nolink = html_writer::link(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no')), get_string('no'));
+        $output .= $this->output->span($nolink, 'lessonbutton standardbutton');
 
         $output .= $this->output->box_end();
         return $output;
@@ -332,17 +332,13 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $links = array();
 
         $importquestionsurl = new moodle_url($CFG->wwwroot.'/mod/lesson/import.php',array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
-        $links[] = html_link::make($importquestionsurl, get_string('importquestions', 'lesson'));
+        $links[] = html_writer::link($importquestionsurl, get_string('importquestions', 'lesson'));
 
         $manager = lesson_page_type_manager::get($lesson);
         $links = array_merge($links, $manager->get_add_page_type_links($prevpageid));
 
         $addquestionurl = new moodle_url($CFG->wwwroot.'/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
-        $links[] = html_link::make($addquestionurl, get_string('addaquestionpagehere', 'lesson'));
-
-        foreach ($links as $key=>$link) {
-            $links[$key] = $this->output->link($link);
-        }
+        $links[] = html_writer::link($addquestionurl, get_string('addaquestionpagehere', 'lesson'));
 
         return $this->output->box(implode(" | \n", $links), 'addlinks');
     }

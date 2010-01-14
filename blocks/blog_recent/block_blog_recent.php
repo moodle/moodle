@@ -96,8 +96,8 @@ class block_blog_recent extends block_base {
 
             foreach ($entries as $entryid => $entry) {
                 $viewblogurl->param('entryid', $entryid);
-                $entrylink = html_link::make($viewblogurl, shorten_text($entry->subject));
-                $entrieslist->add_item($OUTPUT->link($entrylink));
+                $entrylink = html_writer::link($viewblogurl, shorten_text($entry->subject));
+                $entrieslist->add_item($entrylink);
             }
 
             $this->content->text .= $OUTPUT->htmllist($entrieslist);
@@ -105,8 +105,8 @@ class block_blog_recent extends block_base {
             if (!empty($blogheaders['strview'])) {
                 $strview = $blogheaders['strview'];
             }
-            $viewallentrieslink = html_link::make($blogheaders['url'], $strview);
-            $this->content->text .= $OUTPUT->link($viewallentrieslink);
+            $viewallentrieslink = html_writer::link($blogheaders['url'], $strview);
+            $this->content->text .= $viewallentrieslink;
         } else {
             $this->content->text .= get_string('norecentblogentries', 'block_blog_recent');
         }

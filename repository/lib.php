@@ -1049,13 +1049,11 @@ abstract class repository {
 
                     $url->param('type', $i->options['type']);
                     $url->param('edit', $i->id);
-                    $link = html_link::make($url->out(), $settingsstr);
-                    $settings .= $OUTPUT->link($link);
+                    $settings .= html_writer::link($url, $settingsstr);
 
                     $url->remove_params('edit');
                     $url->param('delete', $i->id);
-                    $link = html_link::make($url->out(), $deletestr);
-                    $delete .= $OUTPUT->link($link);
+                    $delete .= html_writer::link($url, $deletestr);
 
                     $url->remove_params('type');
                 }

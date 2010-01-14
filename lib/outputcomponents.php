@@ -335,6 +335,19 @@ class html_writer {
     public static function random_id($base='random') {
         return uniqid($base);
     }
+
+    /**
+     * Generates a simple html link
+     * @param string|moodle_url $url
+     * @param string $text link txt
+     * @param array $attributes extra html attributes
+     * @return string HTML fragment
+     */
+    public static function link($url, $text, array $attributes = null) {
+        $attributes = (array)$attributes;
+        $attributes['href']  = $url;
+        return self::tag('a', $attributes, $text);
+    }
 }
 
 

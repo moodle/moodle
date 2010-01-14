@@ -513,9 +513,8 @@ if ($pageid != LESSON_EOL) {
                 $lessoncontent .= get_string("nothighscore", "lesson", $lesson->maxhighscores)."<br />";
             }
         }
-        $link = html_link::make(new moodle_url($CFG->wwwroot.'/mod/lesson/highscores.php', array('id'=>$PAGE->cm->id, 'link'=>'1')), get_string('viewhighscores', 'lesson'));
-        $link->set_classes(array('centerpadded','lessonbutton','standardbutton'));
-        $lessoncontent .= $OUTPUT->link($link);
+        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/highscores.php', array('id'=>$PAGE->cm->id, 'link'=>'1'));
+        $lessoncontent .= html_writer::link($url, get_string('viewhighscores', 'lesson'), array('class'=>'centerpadded lessonbutton standardbutton'));
         $lessoncontent .= $OUTPUT->box_end();
     }
 
@@ -534,9 +533,8 @@ if ($pageid != LESSON_EOL) {
         $lastattempt = end($attempts);
         $USER->modattempts[$lesson->id] = $lastattempt->pageid;
 
-        $link = html_link::make(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$PAGE->cm->id, 'pageid'=>$pageid)), get_string('reviewlesson', 'lesson'));
-        $link->set_classes(array('centerpadded','lessonbutton','standardbutton'));
-        $lessoncontent .= $OUTPUT->link($link);
+        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$PAGE->cm->id, 'pageid'=>$pageid));
+        $lessoncontent .= html_writer::link($url, get_string('reviewlesson', 'lesson'), array('class' => 'centerpadded lessonbutton standardbutton'));
 
     } elseif ($lesson->modattempts && $canmanage) {
         $lessoncontent .= $lessonoutput->paragraph(get_string("modattemptsnoteacher", "lesson"), 'centerpadded');
@@ -549,13 +547,11 @@ if ($pageid != LESSON_EOL) {
         }
     }
 
-    $link = html_link::make(new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)), get_string('returnto', 'lesson', format_string($course->fullname, true)));
-    $link->set_classes(array('centerpadded','lessonbutton','standardbutton'));
-    $lessoncontent .= $OUTPUT->link($link);
+    $url = new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id));
+    $lessoncontent .= html_writer::link($url, get_string('returnto', 'lesson', format_string($course->fullname, true)), array('class'=>'centerpadded lessonbutton standardbutton'));
 
-    $link = html_link::make(new moodle_url($CFG->wwwroot.'/grade/index.php', array('id'=>$course->id)), get_string('viewgrades', 'lesson'));
-    $link->set_classes(array('centerpadded','lessonbutton','standardbutton'));
-    $lessoncontent .= $OUTPUT->link($link);
+    $url = new moodle_url($CFG->wwwroot.'/grade/index.php', array('id'=>$course->id));
+    $lessoncontent .= html_writer::link($url, get_string('viewgrades', 'lesson'), array('class'=>'centerpadded lessonbutton standardbutton'));
 
     lesson_add_pretend_blocks($PAGE, $cm, $lesson, $timer);
     echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid);

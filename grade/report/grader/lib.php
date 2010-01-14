@@ -568,8 +568,8 @@ class grade_report_grader extends grade_report {
         $headerrow->cells[] = $studentheader;
 
         if ($showuseridnumber) {
-            $sortidnumberlink = html_link::make(clone($this->baseurl), get_string('idnumber'));
-            $sortidnumberlink->url->param('sortitemid', 'idnumber');
+            // TODO: weird, this is not used anywhere
+            $sortidnumberlink = html_writer::link(new moodle_url($this->baseurl, array('sortitemid'=>'idnumber')), get_string('idnumber'));
 
             $idnumberheader = new html_table_cell();
             $idnumberheader->add_classes(array('header', 'c0', 'useridnumber'));
@@ -600,7 +600,7 @@ class grade_report_grader extends grade_report {
                 $usercell->text = $OUTPUT->container($OUTPUT->user_picture($user), 'userpic');
             }
 
-            $usercell->text .= $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/user/view.php', array('id' => $user->id, 'course' => $this->course->id)), fullname($user)));
+            $usercell->text .= html_writer::link(new moodle_url($CFG->wwwroot.'/user/view.php', array('id' => $user->id, 'course' => $this->course->id)), fullname($user));
 
             $userrow->cells[] = $usercell;
 
@@ -1508,14 +1508,11 @@ class grade_report_grader extends grade_report {
         $strfirstname = $this->get_lang_string('firstname');
         $strlastname  = $this->get_lang_string('lastname');
 
-        $firstlink = html_link::make(clone($this->baseurl), $strfirstname);
-        $firstlink->url->param('sortitemid', 'firstname');
-        $lastlink = html_link::make(clone($this->baseurl), $strlastname);
-        $lastlink->url->param('sortitemid', 'lastname');
-        $idnumberlink = html_link::make(clone($this->baseurl), get_string('idnumber'));
-        $idnumberlink->url->param('sortitemid', 'idnumber');
+        $firstlink = html_writer::link(new moodle_url($this->baseurl, array('sortitemid'=>'firstname')), $strfirstname);
+        $lastlink = html_writer::link(new moodle_url($this->baseurl, array('sortitemid'=>'lastname')), $strlastname);
+        $idnumberlink = html_writer::link(new moodle_url($this->baseurl, array('sortitemid'=>'idnumber')), get_string('idnumber'));
 
-        $arrows['studentname'] = $OUTPUT->link($lastlink);
+        $arrows['studentname'] = $lastlink;
 
         if ($this->sortitemid === 'lastname') {
             if ($this->sortorder == 'ASC') {
@@ -1525,7 +1522,7 @@ class grade_report_grader extends grade_report {
             }
         }
 
-        $arrows['studentname'] .= ' ' . $OUTPUT->link($firstlink);
+        $arrows['studentname'] .= ' ' . $firstlink;
 
         if ($this->sortitemid === 'firstname') {
             if ($this->sortorder == 'ASC') {
@@ -1535,7 +1532,7 @@ class grade_report_grader extends grade_report {
             }
         }
 
-        $arrows['idnumber'] = $OUTPUT->link($idnumberlink);
+        $arrows['idnumber'] = $idnumberlink;
 
         if ('idnumber' == $this->sortitemid) {
             if ($this->sortorder == 'ASC') {

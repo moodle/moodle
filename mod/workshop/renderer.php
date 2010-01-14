@@ -112,12 +112,9 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $classes .= ' anonymous';
         }
         $o .= $this->output->container_start($classes);  // main wrapper
-        $link = new html_link();
-        $link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/submission.php',
-                                    array('cmid' => $this->page->context->instanceid, 'id' => $submission->id));
-        $link->text = format_string($submission->title);
-        $link->set_classes('title');
-        $o .= $this->output->link($link);
+        $url = new moodle_url($CFG->wwwroot . '/mod/workshop/submission.php',
+                              array('cmid' => $this->page->context->instanceid, 'id' => $submission->id));
+        $o .= html_writer::link($url, format_string($submission->title), array('class'=>'title'));
         if ($showauthorname) {
             $author             = new stdclass();
             $author->id         = $submission->authorid;
@@ -297,12 +294,9 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
         // title
         $o .= $this->output->container_start('example-title');
-        $link = new html_link();
-        $link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php',
-                                    array('cmid' => $this->page->context->instanceid, 'id' => $summary->example->id));
-        $link->text = format_string($summary->example->title);
-        $link->set_classes('title');
-        $o .= $this->output->link($link);
+        $url = new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php',
+                              array('cmid' => $this->page->context->instanceid, 'id' => $summary->example->id));
+        $o .= html_writer::link($url, format_string($summary->example->title), array('class'=>'title'));
 
         // dirty hack to guess if the current user is example manager or not
         if ($summary->example->weight == 1) {
@@ -431,10 +425,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             if (is_null($task->link)) {
                 $title = $task->title;
             } else {
-                $link = new html_link();
-                $link->url  = $task->link;
-                $link->text = $task->title;
-                $title = $this->output->link($link);
+                $title = html_writer::link($task->link, $task->text);
             }
             $title = $this->output->container($title, 'title');
             $details = $this->output->container($task->details, 'details');
@@ -647,12 +638,9 @@ class mod_workshop_renderer extends plugin_renderer_base {
         if (is_null($participant->submissionid)) {
             $out = $this->output->container(get_string('nosubmissionfound', 'workshop'), 'info');
         } else {
-            $link = new html_link();
-            $link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/submission.php',
-                                        array('cmid' => $this->page->context->instanceid, 'id' => $participant->submissionid));
-            $link->text = format_string($participant->submissiontitle);
-            $link->set_classes('title');
-            $out = $this->output->link($link);
+            $url = new moodle_url($CFG->wwwroot . '/mod/workshop/submission.php',
+                                  array('cmid' => $this->page->context->instanceid, 'id' => $participant->submissionid));
+            $out = html_writer::link($url, format_string($participant->submissiontitle), array('class'=>'title'));
         }
 
         return $out;
@@ -690,12 +678,9 @@ class mod_workshop_renderer extends plugin_renderer_base {
                 $grade = get_string('formatpeergradeoverweighted', 'workshop', $a);
             }
         }
-        $link = new html_link();
-        $link->text = $grade;
-        $link->url = new moodle_url($CFG->wwwroot . '/mod/workshop/assessment.php',
-                            array('asid' => $assessment->assessmentid));
-        $link->set_classes('grade');
-        $grade = $this->output->link($link);
+        $url = new moodle_url($CFG->wwwroot . '/mod/workshop/assessment.php',
+                              array('asid' => $assessment->assessmentid));
+        $grade = html_writer::link($url, $grade, array('class'=>'grade'));
 
         if ($shownames) {
             $userid = $assessment->userid;

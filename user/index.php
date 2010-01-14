@@ -773,10 +773,7 @@
                     }
                     if ($user->maildisplay == 1 or ($user->maildisplay == 2 and ($course->id != SITEID) and !isguestuser()) or
                                 has_capability('moodle/course:viewhiddenuserfields', $context)) {
-                        $link = new html_link();
-                        $link->url = "mailto:$user->email";
-                        $link->text = $user->email;
-                        $row->cells[1]->text .= get_string('email') .': ' . $OUTPUT->link($link) . '<br />';
+                        $row->cells[1]->text .= get_string('email') .': ' . html_writer::link("mailto:$user->email", $user->email) . '<br />';
                     }
                     if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
                         $row->cells[1]->text .= get_string('city') .': ';
@@ -810,31 +807,29 @@
                     $links = array();
 
                     if ($CFG->bloglevel > 0) {
-                        $links[] = html_link::make(new moodle_url($CFG->wwwroot.'/blog/index.php?userid='.$user->id), get_string('blogs','blog'));
+                        $links[] = html_writer::link(new moodle_url($CFG->wwwroot.'/blog/index.php?userid='.$user->id), get_string('blogs','blog'));
                     }
 
                     if (!empty($CFG->enablenotes) and (has_capability('moodle/notes:manage', $context) || has_capability('moodle/notes:view', $context))) {
-                        $links[] = html_link::make(new moodle_url($CFG->wwwroot.'/notes/index.php?course=' . $course->id. '&user='.$user->id), get_string('notes','notes'));
+                        $links[] = html_writer::link(new moodle_url($CFG->wwwroot.'/notes/index.php?course=' . $course->id. '&user='.$user->id), get_string('notes','notes'));
                     }
 
                     if (has_capability('moodle/site:viewreports', $context) or has_capability('moodle/user:viewuseractivitiesreport', $usercontext)) {
-                        $links[] = html_link::make(new moodle_url($CFG->wwwroot.'/course/user.php?id='. $course->id .'&user='. $user->id), get_string('activity'));
+                        $links[] = html_writer::link(new moodle_url($CFG->wwwroot.'/course/user.php?id='. $course->id .'&user='. $user->id), get_string('activity'));
                     }
 
                     if (has_capability('moodle/role:assign', $context) and get_user_roles($context, $user->id, false)) {  // I can unassign and user has some role
-                        $links[] = html_link::make(new moodle_url($CFG->wwwroot.'/course/unenrol.php?id='. $course->id .'&user='. $user->id), get_string('unenrol'));
+                        $links[] = html_writer::link(new moodle_url($CFG->wwwroot.'/course/unenrol.php?id='. $course->id .'&user='. $user->id), get_string('unenrol'));
                     }
 
                     if ($USER->id != $user->id && !session_is_loggedinas() && has_capability('moodle/user:loginas', $context) &&
                                                  ! has_capability('moodle/site:doanything', $context, $user->id, false)) {
-                        $links[] = html_link::make(new moodle_url($CFG->wwwroot.'/course/loginas.php?id='. $course->id .'&user='. $user->id .'&sesskey='. sesskey()), get_string('loginas'));
+                        $links[] = html_writer::link(new moodle_url($CFG->wwwroot.'/course/loginas.php?id='. $course->id .'&user='. $user->id .'&sesskey='. sesskey()), get_string('loginas'));
                     }
 
-                    $links[] = html_link::make(new moodle_url($CFG->wwwroot.'/user/view.php?id='. $user->id .'&course='. $course->id), get_string('fullprofile') . '...');
+                    $links[] = html_writer::link(new moodle_url($CFG->wwwroot.'/user/view.php?id='. $user->id .'&course='. $course->id), get_string('fullprofile') . '...');
 
-                    foreach ($links as $link) {
-                        $row->cells[2]->text .= $OUTPUT->link($link);
-                    }
+                    $row->cells[2]->text .= implode('', $link);
 
                     if (!empty($messageselect)) {
                         $row->cells[2]->text .= '<br /><input type="checkbox" name="user'.$user->id.'" /> ';
@@ -1009,11 +1004,11 @@
     $perpageurl->remove_params('perpage');
     if ($perpage == SHOW_ALL_PAGE_SIZE) {
         $perpageurl->param('perpage', DEFAULT_PAGE_SIZE);
-        echo $OUTPUT->container($OUTPUT->link(html_link::make($perpageurl, get_string('showperpage', '', DEFAULT_PAGE_SIZE))), array(), 'showall');
+        echo $OUTPUT->container(html_writer::link($perpageurl, get_string('showperpage', '', DEFAULT_PAGE_SIZE)), array(), 'showall');
 
     } else if ($matchcount > 0 && $perpage < $matchcount) {
         $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
-        echo $OUTPUT->container($OUTPUT->link(html_link::make($perpageurl, get_string('showall', '', $matchcount))), array(), 'showall');
+        echo $OUTPUT->container(html_writer::link($perpageurl, get_string('showall', '', $matchcount)), array(), 'showall');
     }
 
     echo $OUTPUT->footer();

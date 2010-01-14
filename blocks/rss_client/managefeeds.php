@@ -109,12 +109,10 @@ foreach($feeds as $feed) {
         $feedtitle =  s($feed->title);
     }
 
-    $viewlink = new html_link();
-    $viewlink->url = $CFG->wwwroot .'/blocks/rss_client/viewfeed.php?rssid=' . $feed->id . $extraparams;
-    $viewlink->text = $feedtitle;
+    $viewlink = html_writer::link($CFG->wwwroot .'/blocks/rss_client/viewfeed.php?rssid=' . $feed->id . $extraparams, $feedtitle);
 
-    $feedinfo = '<div class="title">' . $OUTPUT->link($viewlink) . '</div>' .
-        '<div class="url">' . $OUTPUT->link($feed->url, $feed->url) .'</div>' .
+    $feedinfo = '<div class="title">' . $viewlink . '</div>' .
+        '<div class="url">' . html_writer::link($feed->url, $feed->url) .'</div>' .
         '<div class="description">' . $feed->description . '</div>';
 
     $editurl = $CFG->wwwroot .'/blocks/rss_client/editfeed.php?rssid=' . $feed->id . $extraparams;

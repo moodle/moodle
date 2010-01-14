@@ -109,12 +109,12 @@
 
             $activityicon = $OUTPUT->image($OUTPUT->pix_url('icon', $cm->modname), array('alt'=>$modulename, 'class'=>'icon'));
 
-            $activitylink = html_link::make("$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id", format_string($cm->name));
+            $attributes = array();
             if (!$cm->visible) {
-                $activitylink->add_class('dimmed');
+                $attributes['class'] = 'dimmed';
             }
 
-            $activitycell->text = $activityicon . $OUTPUT->link($activitylink);
+            $activitycell->text = $activityicon . html_writer::link("$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id", format_string($cm->name), $attributes);;
 
             $reportrow->cells[] = $activitycell;
 
@@ -133,7 +133,7 @@
                 $blogcell = new html_table_cell();
                 $blogcell->add_class('blog');
                 if ($blogcount = blog_get_associated_count($course->id, $cm->id)) {
-                    $blogcell->text = $OUTPUT->link(html_link::make('/blog/index.php?modid='.$cm->id, $blogcount));
+                    $blogcell->text = html_writer::link('/blog/index.php?modid='.$cm->id, $blogcount);
                 } else {
                     $blogcell->text = '-';
                 }
