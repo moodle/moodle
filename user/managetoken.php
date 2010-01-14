@@ -142,7 +142,7 @@ switch ($action) {
                 FROM
                     {external_tokens} t, {user} u, {external_services} s
                 WHERE
-                    t.creatorid=? AND t.tokentype = 2 AND s.id = t.externalserviceid AND t.userid = u.id";
+                    t.creatorid=? AND t.tokentype = ".EXTERNAL_TOKEN_PERMANENT." AND s.id = t.externalserviceid AND t.userid = u.id";
         $tokens = $DB->get_records_sql($sql, array( $USER->id));
         if (!empty($tokens)) {
             foreach ($tokens as $token) {
