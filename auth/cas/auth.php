@@ -194,6 +194,8 @@ if ( !is_object($PHPCAS_CLIENT) ) {
      * @param array $page An object containing all the data for this page.
      */
     function config_form($config, $err, $user_fields) {
+        global $OUTPUT;
+
         include 'config.html';
     }
     /**

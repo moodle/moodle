@@ -123,6 +123,8 @@ class auth_plugin_imap extends auth_plugin_base {
      * @param array $page An object containing all the data for this page.
      */
     function config_form($config, $err, $user_fields) {
+        global $OUTPUT;
+
         include "config.html";
     }
 
