@@ -147,7 +147,7 @@ class web_service_token_form extends moodleform {
             WHERE NOT EXISTS ( SELECT 1
                                     FROM {user} au, {role_assignments} r
                                     WHERE au.id=u.id AND r.roleid = 1 AND r.userid = au.id)
-            ORDER BY user.lastname";
+            ORDER BY u.lastname";
             $users = $DB->get_records_sql($sql,array());
             $options = array();
             foreach ($users as $userid => $user) {
