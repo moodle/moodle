@@ -985,13 +985,21 @@ class core_renderer extends renderer_base {
     * @return string HTML fragment
     */
     public function confirm($message, $continue, $cancel) {
-        if (is_string($continue) or $continue instanceof moodle_url) {
+        if ($continue instanceof single_button) {
+            $continue = clone($continue);
+        } else if (is_string($continue)) {
+            $continue = new single_button(new moodle_url($continue), get_string('continue'), 'post');
+        } else if ($continue instanceof moodle_url) {
             $continue = new single_button($continue, get_string('continue'), 'post');
         } else {
             throw new coding_exception('The continue param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a html_form instance.');
         }
 
-        if (is_string($cancel) or $cancel instanceof moodle_url) {
+        if ($cancel instanceof single_button) {
+            $cancel = clone($cancel);
+        } else if (is_string($cancel)) {
+            $cancel = new single_button(new moodle_url($cancel), get_string('cancel'), 'get');
+        } else if ($cancel instanceof moodle_url) {
             $cancel = new single_button($cancel, get_string('cancel'), 'get');
         } else {
             throw new coding_exception('The cancel param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a html_form instance.');
