@@ -142,11 +142,11 @@ class web_service_token_form extends moodleform {
 
         if (empty($data->nouserselection)) {
             //user searchable selector
-            $sql = "SELECT user.id, user.firstname, user.lastname
-            FROM {user} user
+            $sql = "SELECT u.id, u.firstname, u.lastname
+            FROM {user} u
             WHERE NOT EXISTS ( SELECT 1
-                                    FROM {user} adminuser, {role_assignments} rassign
-                                    WHERE adminuser.id=user.id AND rassign.roleid = 1 AND rassign.userid = adminuser.id)
+                                    FROM {user} au, {role_assignments} r
+                                    WHERE au.id=u.id AND r.roleid = 1 AND r.userid = au.id)
             ORDER BY user.lastname";
             $users = $DB->get_records_sql($sql,array());
             $options = array();

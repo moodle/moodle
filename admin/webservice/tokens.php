@@ -99,11 +99,11 @@ switch ($action) {
 
     case 'delete':
         $sql = "SELECT
-                    token.id, token.token, user.firstname, user.lastname, service.name
+                    t.id, t.token, u.firstname, u.lastname, s.name
                 FROM
-                    {external_tokens} token, {user} user, {external_services} service
+                    {external_tokens} t, {user} u, {external_services} s
                 WHERE
-                    token.creatorid=? AND token.id=? AND token.tokentype = ".EXTERNAL_TOKEN_PERMANENT." AND service.id = token.externalserviceid AND token.userid = user.id";
+                    t.creatorid=? AND t.id=? AND t.tokentype = ".EXTERNAL_TOKEN_PERMANENT." AND s.id = t.externalserviceid AND t.userid = u.id";
         $token = $DB->get_record_sql($sql, array($USER->id, $tokenid), MUST_EXIST); //must be the token creator
         if (!$confirm) {
             admin_externalpage_print_header();
