@@ -310,8 +310,8 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual(clean_param('john~doe', PARAM_USERNAME), 'johndoe');
         $this->assertEqual(clean_param('john´doe', PARAM_USERNAME), 'johndoe');
         $this->assertEqual(clean_param('john#$%&() ', PARAM_USERNAME), 'john');
-        $this->assertEqual(clean_param('JOHNdóé ', PARAM_USERNAME), 'd');
-        $this->assertEqual(clean_param('john.,:;-_/|\ñÑ[]A_X-,D {} ~!@#$%^&*()_+ ?><[] ščřžžý ?ýá?ý??doe ', PARAM_USERNAME), 'john.-__-@_doe');
+        $this->assertEqual(clean_param('JOHNdóé ', PARAM_USERNAME), 'johnd');
+        $this->assertEqual(clean_param('john.,:;-_/|\ñÑ[]A_X-,D {} ~!@#$%^&*()_+ ?><[] ščřžžý ?ýá?ý??doe ', PARAM_USERNAME), 'john.-_a_x-d@_doe');
         
 
         // Test success condition, if extendedusernamechars == ENABLE;
@@ -320,8 +320,8 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual(clean_param('john@doe', PARAM_USERNAME), 'john@doe');
         $this->assertEqual(clean_param('john# $%&()+_^', PARAM_USERNAME), 'john#$%&()+_^');
         $this->assertEqual(clean_param('john~doe', PARAM_USERNAME), 'john~doe');
-        $this->assertEqual(clean_param('joHN´doe', PARAM_USERNAME), 'jo´doe');
-        $this->assertEqual(clean_param('johnDOE', PARAM_USERNAME), 'john');
+        $this->assertEqual(clean_param('joHN´doe', PARAM_USERNAME), 'john´doe');
+        $this->assertEqual(clean_param('johnDOE', PARAM_USERNAME), 'johndoe');
         $this->assertEqual(clean_param('johndóé ', PARAM_USERNAME), 'johndóé');
                 
         $CFG->extendedusernamechars = $currentstatus;

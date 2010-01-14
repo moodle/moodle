@@ -745,13 +745,12 @@ function clean_param($param, $type) {
 
         case PARAM_USERNAME:
             $param = str_replace(" " , "", $param);
-            if (empty($CFG->extendedusernamechars)) {                                                              
+            $param = moodle_strtolower($param);  // Convert uppercase to lowercase MDL-16919
+            if (empty($CFG->extendedusernamechars)) {
                 // regular expression, eliminate all chars EXCEPT:
                 // alphanum, dash (-), underscore (_), at sign (@) and period (.) characters.
                 $param = preg_replace('/[^-\.@_a-z0-9]/', '', $param);
-            } else {
-                $param = preg_replace('/[A-Z]/', '', $param);
-            }
+            } 
             return $param;
 
         default:                 // throw error, switched parameters in optional_param or another serious problem
