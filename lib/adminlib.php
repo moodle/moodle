@@ -5722,7 +5722,8 @@ function print_plugin_tables() {
         'scorm',
         'survey',
         'url',
-        'wiki');
+        'wiki',
+        'workshop');
 
     $plugins_standard['blocks'] = array('activity_modules',
         'admin',
