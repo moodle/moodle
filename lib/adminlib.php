@@ -6490,13 +6490,10 @@ class admin_setting_managewebservicetokens extends admin_setting {
         //TODO: in order to let the administrator delete obsolete token, split this request in multiple request or use LEFT JOIN
 
         //here retrieve token list (including linked users firstname/lastname and linked services name)
-        $sql = "SELECT
-                    token.id, token.token, user.firstname, user.lastname, service.name, token.validuntil
-                FROM
-                    {external_tokens} token, {user} user, {external_services} service
-                WHERE
-                    token.creatorid=? AND token.tokentype = ".EXTERNAL_TOKEN_PERMANENT." AND service.id = token.externalserviceid AND token.userid = user.id";
-        $tokens = $DB->get_records_sql($sql, array( $USER->id));
+        $sql = "SELECT t.id, t.token, u.firstname, u.lastname, s.name, t.validuntil
+                  FROM {external_tokens} t, {user} u, {external_services} s
+                 WHERE t.creatorid=? AND t.tokentype = ? AND s.id = t.externalserviceid AND t.userid = u.id";
+        $tokens = $DB->get_records_sql($sql, array($USER->id, EXTERNAL_TOKEN_PERMANENT));
         if (!empty($tokens)) {
             foreach ($tokens as $token) {
                 //TODO: retrieve context
