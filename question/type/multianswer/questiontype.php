@@ -313,7 +313,7 @@ class embedded_cloze_qtype extends default_questiontype {
                             }
                         }
                     }
-                    if ($correctanswer) {
+                    if ($correctanswer  != '') {
                         $feedback = '<div class="correctness">';
                         $feedback .= get_string('correctansweris', 'quiz', s($correctanswer, true));
                         $feedback .= '</div>';
