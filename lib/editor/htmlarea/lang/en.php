@@ -59,6 +59,7 @@ HTMLArea.I18N = {
         forecolor:      "<?php print_string("forecolor","editor") ?>",
         hilitecolor:    "<?php print_string("hilitecolor","editor") ?>",
         inserthorizontalrule: "<?php print_string("horizontalrule","editor") ?>",
+        createanchor:   "<?php print_string("createanchor","editor") ?>",
         createlink:     "<?php print_string("createlink","editor") ?>",
         unlink:         "<?php print_string("removelink","editor") ?>",
         nolink:         "<?php print_string("nolink","editor") ?>",
