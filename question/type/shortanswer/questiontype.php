@@ -305,7 +305,7 @@ class question_shortanswer_qtype extends default_questiontype {
                     echo ' partiallycorrect">';
                     print_string('partiallycorrect', 'quiz');
                     // MDL-7496
-                    if ($correctanswer) {
+                    if ($correctanswer != '') {
                         echo ('<div class="correctness">');
                         print_string('correctansweris', 'quiz', s($correctanswer, true));
                         echo ('</div>');
@@ -314,7 +314,7 @@ class question_shortanswer_qtype extends default_questiontype {
                     echo ' incorrect">';
                     // MDL-7496
                     print_string('incorrect', 'quiz');
-                    if ($correctanswer) {
+                    if ($correctanswer != '') {
                         echo ('<div class="correctness">');
                         print_string('correctansweris', 'quiz', s($correctanswer, true));
                         echo ('</div>');
