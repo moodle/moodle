@@ -325,7 +325,7 @@ class question_shortanswer_qtype extends default_questiontype {
                 $class = question_get_feedback_class($state->last_graded->raw_grade /
                         $question->maxgrade);
                 echo '<div class="correctness ' . $class . '">' . get_string($class, 'quiz');
-                if ($correctanswer && ($class == 'partiallycorrect' || $class == 'incorrect')) {
+                if ($correctanswer  != '' && ($class == 'partiallycorrect' || $class == 'incorrect')) {
                     echo ('<div class="correctness">');
                     print_string('correctansweris', 'quiz', s($correctanswer));
                     echo ('</div>');
