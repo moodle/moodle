@@ -917,6 +917,63 @@ class core_renderer extends renderer_base {
         return html_writer::tag('a', $attributes, $link->text);
     }
 
+    /**
+     * Renders a sepcial html link with attached action
+     *
+     * @param string|moodle_url $url
+     * @param string $text HTML fragment
+     * @param component_action $action
+     * @param array $options associative array form attributes + {disabled, title}
+     * @return HTML fragment
+     */
+    public function action_link($url, $text, component_action $action, array $attributes=null) {
+        if (!($url instanceof moodle_url)) {
+            $url = new moodle_url($url);
+        }
+        $link = new action_link($url, $text, $action, $attributes);
+
+        $this->render($link);
+    }
+
+    /**
+     * Implementation of action_link rendering
+     * @param action_link $link
+     * @return string HTML fragment
+     */
+    protected function render_action_link(action_link $link) {
+        global $CFG;
+
+        // A disabled link is rendered as formatted text
+        if (!empty($link->attributes['disabled'])) {
+            // do not use div here due to nesting restriction in xhtml strict
+            return html_writer::tag('span', $link->text, array('class'=>'currentlink'));
+        }
+        $attributes = $link->attributes;
+        unset($link->attributes['disabled']);
+        $attributes['href'] = $link->url;
+
+        if ($link->actions) {
+            if (empty($attributes[$id])) {
+                $id = html_writer::random_id('action_link');
+                $attributes['id'] = $id;
+            } else {
+                $id = $attributes['id'];
+            }
+            foreach ($link->actions as $action) {
+                $this->add_action_handler($id, $action);
+            }
+        }
+
+        if (!empty($CFG->frametarget)) {
+            //TODO: this seems wrong, we have to use onclick hack in order to be xhtml strict,
+            //      we should instead use YUI and alter all links in frame-top layout,
+            //      that is officially the only place where we have the "breaking out of frame" problems.
+            $attributes['target'] = $CFG->framename;
+        }
+
+        return html_writer::tag('a', $attributes, $link->text);
+    }
+
    /**
     * Print a message along with button choices for Continue/Cancel
     *
@@ -957,13 +1014,11 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     public function single_button($url, $label, $method='post', array $options=null) {
-        if ($url instanceof moodle_url) {
-            $button = new single_button($url, $label, $method);
-        } else if (is_string($url_or_singlebutton)) {
-            $button = new single_button(new moodle_url($url), $label, $method);
-        } else {
-            throw new coding_exception('The $url param to $OUTPUT->single_button() must be either a string or moodle_url.');
+        if (!($url instanceof moodle_url)) {
+            $url = new moodle_url($url);
         }
+        $button = new single_button($url, $label, $method);
+
         foreach ((array)$options as $key=>$value) {
             if (array_key_exists($key, $button)) {
                 $button->$key = $value;

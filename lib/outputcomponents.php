@@ -196,29 +196,52 @@ class help_icon implements renderable {
  * @since     Moodle 2.0
  */
 class single_button implements renderable {
-    /** Target url */
+    /**
+     * Target url
+     * @var moodle_url
+     */
     var $url;
-    /** Button label */
+    /**
+     * Button label
+     * @var string
+     */
     var $label;
-    /** Form submit method */
+    /**
+     * Form submit method
+     * @var string post or get
+     */
     var $method = 'post';
-    /** Form class */
+    /**
+     * Wrapping div class
+     * @var string
+     * */
     var $class = 'singlebutton';
-    /** True if button disabled, false if normal */
+    /**
+     * True if button disabled, false if normal
+     * @var boolean
+     */
     var $disabled = false;
-    /** Button tooltip */
+    /**
+     * Button tooltip
+     * @var string
+     */
     var $tooltip = '';
-    /** Form id */
+    /**
+     * Form id
+     * @var string
+     */
     var $formid;
-    /** List of attached actions */
+    /**
+     * List of attached actions
+     * @var array of component_action
+     */
     var $actions = array();
 
     /**
      * Constructor
-     * @param string|moodle_url
+     * @param string|moodle_url $url
      * @param string $label button text
      * @param string $method get or post submit method
-     * @param array $options associative array form attributes + {disabled, title}
      */
     public function __construct(moodle_url $url, $label, $method='post') {
         $this->url    = clone($url);
@@ -227,7 +250,7 @@ class single_button implements renderable {
     }
 
     /**
-     * Shortcut for adding a JS confirm dialog when the component is clicked.
+     * Shortcut for adding a JS confirm dialog when the button is clicked.
      * The message must be a yes/no question.
      * @param string $message The yes/no confirmation question. If "Yes" is clicked, the original action will occur.
      * @return void
@@ -236,12 +259,69 @@ class single_button implements renderable {
         $this->add_action(new component_action('click', 'confirm_dialog', array('message' => $confirmmessage)));
     }
 
+    /**
+     * Add action to the button.
+     * @param component_action $action
+     * @return void
+     */
     public function add_action(component_action $action) {
         $this->actions[] = $action;
     }
 }
 
 
+/**
+ * Data structure describing html link with special action attached.
+ * @copyright 2010 Petr Skoda
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class action_link implements renderable {
+    /**
+     * Href url
+     * @var moodle_url
+     */
+    var $url;
+    /**
+     * Link text
+     * @var string HTML fragment
+     */
+    var $text;
+    /**
+     * HTML attributes
+     * @var array
+     */
+    var $attributes;
+    /**
+     * List of actions attached to link
+     * @var array of component_action
+     */
+    var $actions;
+
+    /**
+     * Constructor
+     * @param string|moodle_url $url
+     * @param string $text HTML fragment
+     * @param component_action $action
+     * @param array $options associative array form attributes + {disabled, title}
+     */
+    public function __construct(moodle_url $url, $text, component_action $action=null, array $attributes=null) {
+        $this->url       = clone($url);
+        $this->text      = $text;
+        if ($actions) {
+            $this->add_action($action);
+        }
+    }
+
+    /**
+     * Add action to the link.
+     * @param component_action $action
+     * @return void
+     */
+    public function add_action(component_action $action) {
+        $this->actions[] = $action;
+    }
+}
 
 // ==== HTML writer and helper classes, will be probably moved elsewhere ======
 
