@@ -202,8 +202,8 @@ END;
                      'URL: <a href="http://moodle.org">www.moodle.org</a>' => 'URL: <a href="http://moodle.org">www.moodle.org</a>',
                      'URL: <a href="http://moodle.org"> http://moodle.org</a>' => 'URL: <a href="http://moodle.org"> http://moodle.org</a>',
                      'URL: <a href="http://moodle.org"> www.moodle.org</a>' => 'URL: <a href="http://moodle.org"> www.moodle.org</a>',
-                     //escaped anchor tag. todo decide whether we want to make this work. MDL-21183
-                     htmlspecialchars('escaped anchor tag <a href="http://moodle.org">www.moodle.org</a>') => 'escaped anchor tag &lt;a href="http://moodle.org"&gt; www.moodle.org&lt;/a&gt;',
+                     //escaped anchor tag. Commented out as part of MDL-21183
+                     //htmlspecialchars('escaped anchor tag <a href="http://moodle.org">www.moodle.org</a>') => 'escaped anchor tag &lt;a href="http://moodle.org"&gt; www.moodle.org&lt;/a&gt;',
                      //trailing fullstop
                      'URL: http://moodle.org/s/i=1&j=2.' => 'URL: <a href="http://moodle.org/s/i=1&j=2" class="_blanktarget">http://moodle.org/s/i=1&j=2</a>.',
                      'URL: www.moodle.org/s/i=1&amp;j=2.' => 'URL: <a href="http://www.moodle.org/s/i=1&amp;j=2" class="_blanktarget">www.moodle.org/s/i=1&amp;j=2</a>.',
@@ -253,8 +253,8 @@ END;
                      '<form name="input" action="http://moodle.org/submit.asp" method="get">'=>'<form name="input" action="http://moodle.org/submit.asp" method="get">',
                      //partially escaped img tag
                      'partially escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" />' => 'partially escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" />',
-                     //fully escaped img tag. Do we want this to work on escaped text? MDL-21183
-                     htmlspecialchars('fully escaped img tag <img src="http://moodle.org/logo/logo-240x60.gif" />') => 'fully escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" /&gt;',
+                     //fully escaped img tag. Commented out as part of MDL-21183
+                     //htmlspecialchars('fully escaped img tag <img src="http://moodle.org/logo/logo-240x60.gif" />') => 'fully escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" /&gt;',
                      //Double http with www
                      'One more link like http://www.moodle.org to test' => 'One more link like <a href="http://www.moodle.org" class="_blanktarget">http://www.moodle.org</a> to test',
                      //Encoded URLs in the path
@@ -263,11 +263,11 @@ END;
                      //Encoded URLs in the query
                      'URL: http://127.0.0.1/path/to?param=value_with%28parenthesis%29&param2=1' => 'URL: <a href="http://127.0.0.1/path/to?param=value_with%28parenthesis%29&param2=1" class="_blanktarget">http://127.0.0.1/path/to?param=value_with%28parenthesis%29&param2=1</a>',
                      'URL: www.localhost.com/path/to?param=value_with%28parenthesis%29&param2=1' => 'URL: <a href="http://www.localhost.com/path/to?param=value_with%28parenthesis%29&param2=1" class="_blanktarget">www.localhost.com/path/to?param=value_with%28parenthesis%29&param2=1</a>',
-                     //URLs in Javascript
-                     'var url="http://moodle.org";'=>'var url="http://moodle.org";',
-                     'var url = "http://moodle.org";'=>'var url = "http://moodle.org";',
-                     'var url="www.moodle.org";'=>'var url="www.moodle.org";',
-                     'var url = "www.moodle.org";'=>'var url = "www.moodle.org";',
+                     //URLs in Javascript. Commented out as part of MDL-21183
+                     //'var url="http://moodle.org";'=>'var url="http://moodle.org";',
+                     //'var url = "http://moodle.org";'=>'var url = "http://moodle.org";',
+                     //'var url="www.moodle.org";'=>'var url="www.moodle.org";',
+                     //'var url = "www.moodle.org";'=>'var url = "www.moodle.org";',
                      //doctype. do we care about this failing?
                      //'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN http://www.w3.org/TR/html4/strict.dtd">'=>'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN http://www.w3.org/TR/html4/strict.dtd">'
                  );
