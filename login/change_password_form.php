@@ -14,9 +14,8 @@ class login_change_password_form extends moodleform {
         // visible elements
         $mform->addElement('static', 'username', get_string('username'), $USER->username);
 
-        if(!empty($CFG->passwordpolicy)){
-            $passwordpolicy = print_password_policy();
-            $mform->addElement('html', $passwordpolicy);
+        if (!empty($CFG->passwordpolicy)){
+            $mform->addElement('static', 'passwordpolicyinfo', '', print_password_policy());
         }
         $mform->addElement('password', 'password', get_string('oldpassword'));
         $mform->addRule('password', get_string('required'), 'required', null, 'client');

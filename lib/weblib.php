@@ -7144,40 +7144,37 @@ function auth_get_plugin_title ($authtype) {
     return $authtitle;
 }
 
- /**
- * Print password policy.
+/**
+ * Returns a localized sentence in the current language summarizing the current password policy
+ *
  * @uses $CFG
  * @return string
  */
- function print_password_policy(){
-     global $CFG;
-     $messages = array();
-     
-     if(!empty($CFG->passwordpolicy)){
-            $messages[] = get_string('informminpasswordlength', 'auth', $CFG->minpasswordlength);
-            if(!empty($CFG->minpassworddigits)){
-                $messages[] = get_string('informminpassworddigits', 'auth', $CFG->minpassworddigits);
-            }
-            if(!empty($CFG->minpasswordlower)){
-                $messages[] = get_string('informminpasswordlower', 'auth', $CFG->minpasswordlower);
-            }
-            if(!empty($CFG->minpasswordupper)){
-                $messages[] = get_string('informminpasswordupper', 'auth', $CFG->minpasswordupper);
-            }
-            if(!empty($CFG->minpasswordnonalphanum)){
-                $messages[] = get_string('informminpasswordnonalphanum', 'auth', $CFG->minpasswordnonalphanum);
-            }
-            
-            $lastmessage = new stdClass;
-            $lastmessage->one = '';
-            $lastmessage->two = array_pop($messages);
-            $messages[] = get_string('and','moodle',$lastmessage);
-            $message = join(', ', $messages);
-            $message = '<div class="fitemtitle">&nbsp;</div><div class="felement ftext">'. get_string('informpasswordpolicy', 'auth', $message) . '</div>';
+function print_password_policy() {
+    global $CFG;
+
+    $message = '';
+    if (!empty($CFG->passwordpolicy)) {
+        $messages = array();
+        $messages[] = get_string('informminpasswordlength', 'auth', $CFG->minpasswordlength);
+        if (!empty($CFG->minpassworddigits)) {
+            $messages[] = get_string('informminpassworddigits', 'auth', $CFG->minpassworddigits);
         }
-        return $message;
-                
- }
+        if (!empty($CFG->minpasswordlower)) {
+            $messages[] = get_string('informminpasswordlower', 'auth', $CFG->minpasswordlower);
+        }
+        if (!empty($CFG->minpasswordupper)) {
+            $messages[] = get_string('informminpasswordupper', 'auth', $CFG->minpasswordupper);
+        }
+        if (!empty($CFG->minpasswordnonalphanum)) {
+            $messages[] = get_string('informminpasswordnonalphanum', 'auth', $CFG->minpasswordnonalphanum);
+        }
+
+        $messages = join(', ', $messages); // this is ugly but we do not have anything better yet...
+        $message = get_string('informpasswordpolicy', 'auth', $messages);
+    }
+    return $message;
+}
 
  // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
