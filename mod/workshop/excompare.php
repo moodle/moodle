@@ -96,11 +96,8 @@ if ($isreviewer) {
 $mformassessment->display();
 echo $OUTPUT->container_start('buttonsbar');
 if ($isreviewer and $workshop->assessing_examples_allowed()) {
-    $button                 = new html_form();
-    $button->method         = 'get';
-    $button->button->text   = get_string('reassess', 'workshop');
-    $button->url            = new moodle_url($workshop->exsubmission_url($example->id), array('assess' => 'on', 'sesskey' => sesskey()));
-    echo $OUTPUT->button($button);
+    $aurl = new moodle_url($workshop->exsubmission_url($example->id), array('assess' => 'on', 'sesskey' => sesskey()));
+    echo $OUTPUT->single_button($aurl, get_string('reassess', 'workshop'), 'get');
 }
 echo $OUTPUT->container_end(); // buttonsbar
 

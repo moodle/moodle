@@ -140,11 +140,11 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @param html_form $button
      * @return string
      */
-    public function message($message, html_form $button = null) {
+    public function message($message, single_button $button = null) {
         $output  = $this->output->box_start('generalbox boxaligncenter');
         $output .= $message;
         if ($button !== null) {
-            $output .= $this->output->box($this->output->button($button),'lessonbutton standardbutton');
+            $output .= $this->output->box($this->output->render($button), 'lessonbutton standardbutton');
         }
         $output .= $this->output->box_end();
         return $output;

@@ -33,7 +33,7 @@
     if (!data_submitted() or empty($reallysure)) {
         $optionsyes = array('sure'=>'yes', 'sesskey'=>sesskey(), 'reallysure'=>'yes');
         $formcontinue = new single_button(new moodle_url('delete.php', $optionsyes), get_string('yes'));
-        $formcancel = new signle_button('index.php', get_string('no'), 'get');
+        $formcancel = new single_button('index.php', get_string('no'), 'get');
         echo $OUTPUT->confirm('Are you REALLY REALLY completely sure you want to delete everything inside the directory '.
                 $deletedir .' (this includes all user images, and any other course files that have been created) ?',
                 $formcontinue, $formcancel);

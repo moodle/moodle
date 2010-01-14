@@ -188,6 +188,61 @@ class help_icon implements renderable {
 }
 
 
+/**
+ * Data structure representing a simple form with only one button.
+ *
+ * @copyright 2009 Petr Skoda
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class single_button implements renderable {
+    /** Target url */
+    var $url;
+    /** Button label */
+    var $label;
+    /** Form submit method */
+    var $method = 'post';
+    /** Form class */
+    var $class = 'singlebutton';
+    /** True if button disabled, false if normal */
+    var $disabled = false;
+    /** Button tooltip */
+    var $tooltip = '';
+    /** Form id */
+    var $formid;
+    /** List of attached actions */
+    var $actions = array();
+
+    /**
+     * Constructor
+     * @param string|moodle_url
+     * @param string $label button text
+     * @param string $method get or post submit method
+     * @param array $options associative array form attributes + {disabled, title}
+     */
+    public function __construct(moodle_url $url, $label, $method='post') {
+        $this->url    = clone($url);
+        $this->label  = $label;
+        $this->method = $method;
+    }
+
+    /**
+     * Shortcut for adding a JS confirm dialog when the component is clicked.
+     * The message must be a yes/no question.
+     * @param string $message The yes/no confirmation question. If "Yes" is clicked, the original action will occur.
+     * @return void
+     */
+    public function add_confirm_action($confirmmessage) {
+        $this->add_action(new component_action('click', 'confirm_dialog', array('message' => $confirmmessage)));
+    }
+
+    public function add_action(component_action $action) {
+        $this->actions[] = $action;
+    }
+}
+
+
+
 // ==== HTML writer and helper classes, will be probably moved elsewhere ======
 
 
@@ -1808,49 +1863,6 @@ class html_form extends html_component {
         }
 
         parent::prepare($output, $page, $target);
-    }
-
-    public static function make_button($url, array $params=null, $label=null, $method='post', array $formoptions=null) {
-        //TODO: to be removed soon, repalced by ew single_button()
-        //      in any case the $params argument is not appropriate here, we use moodle_urls now!
-        $form = new html_form($formoptions);
-        $form->url = new moodle_url($url, $params);
-        if ($label !== null) {
-            $form->button->text = $label;
-        }
-        $form->method = $method;
-
-        return $form;
-    }
-}
-
-
-/**
- * A component representing a simple form with only one button.
- *
- * @copyright 2009 Petr Skoda
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class single_button extends html_form {
-    /**
-     * Constructor
-     * @param string|moodle_url
-     * @param string $label button text
-     * @param string $method get or post submit method
-     * @param array $options associative array form attributes + {disabled, title}
-     */
-    public function __construct($url, $label, $method='post', array $options=null) {
-        parent::__construct($options);
-        $this->url = $url;
-        $form->method = $method;
-        $this->button->text = $label;
-        if (!empty($options['disabled'])) {
-            $this->button->disabled = true;
-        }
-        if (!empty($options['title'])) {
-            $this->button->title = $options['title'];
-        }
     }
 }
 

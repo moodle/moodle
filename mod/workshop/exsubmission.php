@@ -184,26 +184,17 @@ if ($example->id) {
 echo $OUTPUT->container_start('buttonsbar');
 if ($canmanage) {
     if (empty($edit) and empty($delete)) {
-        $button                 = new html_form();
-        $button->method         = 'get';
-        $button->button->text   = get_string('exampleedit', 'workshop');
-        $button->url            = new moodle_url($workshop->exsubmission_url($example->id), array('edit' => 'on'));
-        echo $OUTPUT->button($button);
+        $aurl = new moodle_url($workshop->exsubmission_url($example->id), array('edit' => 'on'));
+        echo $OUTPUT->single_button($aurl, get_string('exampleedit', 'workshop'), 'get');
 
-        $button                 = new html_form();
-        $button->method         = 'get';
-        $button->button->text   = get_string('exampledelete', 'workshop');
-        $button->url            = new moodle_url($workshop->exsubmission_url($example->id), array('delete' => 'on'));
-        echo $OUTPUT->button($button);
+        $aurl = new moodle_url($workshop->exsubmission_url($example->id), array('delete' => 'on'));
+        echo $OUTPUT->single_button($aurl, get_string('exampledelete', 'workshop'), 'get');
     }
 }
 // ...and optionally assess it
 if ($canassess or ($canmanage and empty($edit) and empty($delete))) {
-    $button                 = new html_form();
-    $button->method         = 'get';
-    $button->button->text   = get_string('exampleassess', 'workshop');
-    $button->url            = new moodle_url($workshop->exsubmission_url($example->id), array('assess' => 'on', 'sesskey' => sesskey()));
-    echo $OUTPUT->button($button);
+    $aurl = new moodle_url($workshop->exsubmission_url($example->id), array('assess' => 'on', 'sesskey' => sesskey()));
+    echo $OUTPUT->single_button($aurl, get_string('exampleassess', 'workshop'), 'get');
 }
 echo $OUTPUT->container_end(); // buttonsbar
 // and possibly display the example's review(s) - todo

@@ -95,9 +95,10 @@ if (!empty($dataid)) {
             $exporter->print_header('confirmcancel');
             echo $OUTPUT->box_start();
             $yesbutton = new single_button(new moodle_url($CFG->wwwroot . '/portfolio/add.php', array('id' => $dataid, 'cancel' => 1, 'cancelsure' => 1, 'logreturn' => $logreturn)). get_string('yes'));
-            $nobutton  = new single_button(new moodle_url($CFG->wwwroot . '/portfolio/add.php', array('id' => $dataid)), get_string('no'));
             if ($logreturn) {
-                $nobutton->url = $CFG->wwwroot . '/user/portfoliologs.php';
+                $nobutton  = new single_button(new moodle_url($CFG->wwwroot . '/user/portfoliologs.php', array('id' => $dataid)), get_string('no'));
+            } else {
+                $nobutton  = new single_button(new moodle_url($CFG->wwwroot . '/portfolio/add.php', array('id' => $dataid)), get_string('no'));
             }
             echo $OUTPUT->confirm(get_string('confirmcancel', 'portfolio'), $yesbutton, $nobutton);
             echo $OUTPUT->box_end();

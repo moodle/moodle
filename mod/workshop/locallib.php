@@ -573,10 +573,8 @@ class workshop {
         $summary->gradeinfo->received = $this->real_grade($example->grade);
         $summary->gradeinfo->max      = $this->real_grade(100);
 
-        $summary->btnform = new html_form();
-        $summary->btnform->method       = 'get';
-        $summary->btnform->button->text = $buttontext;
-        $summary->btnform->url          = new moodle_url($this->exsubmission_url($example->id), array('assess' => 'on', 'sesskey' => sesskey()));
+        $aurl = new moodle_url($this->exsubmission_url($example->id), array('assess' => 'on', 'sesskey' => sesskey()));
+        $summary->btnform = new single_button($aurl, $buttontext, 'get');
 
         return $summary;
     }

@@ -320,7 +320,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         }
 
         // button to assess
-        $o .= $this->output->container($this->output->button($summary->btnform), 'example-actions');
+        $o .= $this->output->container($this->output->render($summary->btnform), 'example-actions');
 
         // end of wrapping box
         $o .= $this->output->box_end();

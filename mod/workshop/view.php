@@ -84,11 +84,8 @@ case workshop::PHASE_SETUP:
                 $summary = $workshop->prepare_example_summary($example);
                 echo $wsoutput->example_summary($summary);
             }
-            $editbutton                 = new html_form();
-            $editbutton->method         = 'get';
-            $editbutton->button->text   = get_string('exampleadd', 'workshop');
-            $editbutton->url            = new moodle_url($workshop->exsubmission_url(0), array('edit' => 'on'));
-            echo $OUTPUT->button($editbutton);
+            $aurl = new moodle_url($workshop->exsubmission_url(0), array('edit' => 'on'));
+            echo $OUTPUT->single_button($aurl, get_string('exampleadd', 'workshop'), 'get');
         } else {
             echo $OUTPUT->container(get_string('noexamplesformready', 'workshop'));
         }
@@ -151,11 +148,8 @@ case workshop::PHASE_SUBMISSION:
             echo $OUTPUT->container(get_string('noyoursubmission', 'workshop'));
         }
         if ($workshop->submitting_allowed()) {
-            $editbutton                 = new html_form();
-            $editbutton->method         = 'get';
-            $editbutton->button->text   = get_string('editsubmission', 'workshop');
-            $editbutton->url            = new moodle_url($workshop->submission_url(), array('edit' => 'on'));
-            echo $OUTPUT->button($editbutton);
+            $aurl = new moodle_url($workshop->submission_url(), array('edit' => 'on'));
+            echo $OUTPUT->single_button($aurl, get_string('editsubmission', 'workshop'), 'get');
         }
         echo $OUTPUT->box_end();
         print_collapsible_region_end();
@@ -249,11 +243,8 @@ case workshop::PHASE_ASSESSMENT:
             }
             echo $OUTPUT->box_start('generalbox assessment-summary' . $class);
             echo $wsoutput->submission_summary($submission, $shownames);
-            $button = new html_form();
-            $button->method         = 'get';
-            $button->button->text   = $buttontext;
-            $button->url            = $workshop->assess_url($assessment->id);
-            echo $OUTPUT->button($button);
+            $aurl = $workshop->assess_url($assessment->id);
+            echo $OUTPUT->single_button($aurl, $buttontext, 'get');
             echo $OUTPUT->box_end();
         }
     }

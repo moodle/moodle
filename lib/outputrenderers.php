@@ -923,22 +923,18 @@ class core_renderer extends renderer_base {
     * If a string or moodle_url is given instead of a html_button, method defaults to post.
     *
     * @param string $message The question to ask the user
-    * @param html_form|moodle_url|string $continue The html_form component representing the Continue answer. Can also be a moodle_url or string URL
-    * @param html_form|moodle_url|string $cancel The html_form component representing the Cancel answer. Can also be a moodle_url or string URL
+    * @param single_button|moodle_url|string $continue The single_button component representing the Continue answer. Can also be a moodle_url or string URL
+    * @param single_button|moodle_url|string $cancel The single_button component representing the Cancel answer. Can also be a moodle_url or string URL
     * @return string HTML fragment
     */
     public function confirm($message, $continue, $cancel) {
-        if ($continue instanceof html_form) { //TODO: change to single_button
-            $continue = clone($continue);
-        } else if (is_string($continue) or $continue instanceof moodle_url) {
+        if (is_string($continue) or $continue instanceof moodle_url) {
             $continue = new single_button($continue, get_string('continue'), 'post');
         } else {
             throw new coding_exception('The continue param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a html_form instance.');
         }
 
-        if ($cancel instanceof html_form) { //TODO: change to single_button
-            $cancel = clone($cancel);
-        } else if (is_string($cancel) or $cancel instanceof moodle_url) {
+        if (is_string($cancel) or $cancel instanceof moodle_url) {
             $cancel = new single_button($cancel, get_string('cancel'), 'get');
         } else {
             throw new coding_exception('The cancel param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a html_form instance.');
@@ -946,63 +942,79 @@ class core_renderer extends renderer_base {
 
         $output = $this->box_start('generalbox', 'notice');
         $output .= html_writer::tag('p', array(), $message);
-        $output .= html_writer::tag('div', array('class' => 'buttons'), $this->button($continue) . $this->button($cancel));
+        $output .= html_writer::tag('div', array('class' => 'buttons'), $this->render($continue) . $this->render($cancel));
         $output .= $this->box_end();
         return $output;
     }
 
     /**
-     * Returns a form with single button.
-     * If first parameter is html_form instance all other parameters are ignored.
+     * Returns a form with a single button.
      *
-     * @param string|moodle_url|single_button $url_or_singlebutton
+     * @param string|moodle_url $url
      * @param string $label button text
      * @param string $method get or post submit method
-     * @param array $options associative array {disabled, title}
+     * @param array $options associative array {disabled, title, etc.}
      * @return string HTML fragment
      */
-    public function single_button($url_or_singlebutton, $label=null, $method='post', array $options=null) {
-        if ($url_or_singlebutton instanceof single_button) {
-            $button = $url_or_singlebutton;
-            if (func_num_args() > 1) {
-                debugging('html_form instance used as first parameter of $OUTPUT->single_button(), all other parameters are ignored.');
-            }
-        } else if ($url_or_singlebutton instanceof moodle_url or is_string($url_or_singlebutton)) {
-            $button = new single_button($url_or_singlebutton, $label, $method, $options);
+    public function single_button($url, $label, $method='post', array $options=null) {
+        if ($url instanceof moodle_url) {
+            $button = new single_button($url, $label, $method);
+        } else if (is_string($url_or_singlebutton)) {
+            $button = new single_button(new moodle_url($url), $label, $method);
         } else {
-            throw new coding_exception('The $$url_or_singlebutton param to $OUTPUT->single_button() must be either a URL (string/moodle_url) or a single_button instance.');
+            throw new coding_exception('The $url param to $OUTPUT->single_button() must be either a string or moodle_url.');
+        }
+        foreach ((array)$options as $key=>$value) {
+            if (array_key_exists($key, $button)) {
+                $button->$key = $value;
+            }
         }
 
-        return $this->button($button);
+        return $this->render($button);
     }
 
     /**
-     * Given a html_form object, outputs an <input> tag within a form that uses the object's attributes.
-     *
-     * @param html_form $form A html_form object
+     * Internal implementation of single_button rendering
+     * @param single_button $button
      * @return string HTML fragment
      */
-    public function button(html_form $form) {
-        if (empty($form->button) or !($form->button instanceof html_button)) {
-            throw new coding_exception('$OUTPUT->button($form) requires $form to have a button (html_button) value');
+    protected function render_single_button(single_button $button) {
+        $attributes = array('type'     => 'submit',
+                            'value'    => $button->label,
+                            'disabled' => $button->disabled,
+                            'title'    => $button->tooltip);
+
+        if ($button->actions) {
+            $id = html_writer::random_id('single_button');
+            $attributes['id'] = $id;
+            foreach ($button->actions as $action) {
+                $this->add_action_handler($id, $action);
+            }
         }
-        $form = clone($form);
-        $form->button->prepare($this, $this->page, $this->target);
 
-        $this->prepare_event_handlers($form->button);
+        // first the input element
+        $output = html_writer::empty_tag('input', $attributes);
 
-        $buttonattributes = array('class' => $form->button->get_classes_string(),
-                                  'type' => 'submit',
-                                  'value' => $form->button->text,
-                                  'disabled' => $form->button->disabled,
-                                  'id' => $form->button->id);
+        // then hidden fields
+        $params = $button->url->params();
+        if ($button->method === 'post') {
+            $params['sesskey'] = sesskey();
+        }
+        foreach ($params as $var => $val) {
+            $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $var, 'value' => $val));
+        }
 
-        $buttonoutput = html_writer::empty_tag('input', $buttonattributes);
+        // then div wrapper for xhtml strictness
+        $output = html_writer::tag('div', array(), $output);
 
-        // Removing the button so it doesn't get output again
-        unset($form->button);
+        // now the form itself around it
+        $attributes = array('method' => $button->method,
+                            'action' => $button->url->out(true), // url without params
+                            'id'     => $button->formid);
+        $output = html_writer::tag('form', $attributes, $output);
 
-        return html_writer::tag('div', array('class' => 'singlebutton'), $this->form($form, $buttonoutput));
+        // and finally one more wrapper with class
+        return html_writer::tag('div', array('class' => $button->class), $output);
     }
 
     /**
@@ -1435,11 +1447,8 @@ class core_renderer extends renderer_base {
         if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $cmid))) {
             $modulename = get_string('modulename', $modulename);
             $string = get_string('updatethis', '', $modulename);
-
-            $form = new html_form();
-            $form->url = new moodle_url("$CFG->wwwroot/course/mod.php", array('update' => $cmid, 'return' => true, 'sesskey' => sesskey()));
-            $form->button->text = $string;
-            return $this->button($form);
+            $url = new moodle_url("$CFG->wwwroot/course/mod.php", array('update' => $cmid, 'return' => true, 'sesskey' => sesskey()));
+            return $this->single_button($url, $string);
         } else {
             return '';
         }
@@ -1460,12 +1469,9 @@ class core_renderer extends renderer_base {
             $edit = '1';
         }
 
-        $form = new html_form();
-        $form->url = $url;
-        $form->url->param('edit', $edit);
-        $form->button->text = $string;
+        $url = new moodle_url($url, array('edit'=>$edit));
 
-        return $this->button($form);
+        return $this->single_button($url, $string);
     }
 
     /**
@@ -1538,21 +1544,17 @@ class core_renderer extends renderer_base {
     /**
      * Prints a simple button to close a window
      *
-     * @global objec)t
      * @param string $text The lang string for the button's label (already output from get_string())
-     * @return string|void if $return is true, void otherwise
+     * @return string html fragment
      */
     public function close_window_button($text='') {
         if (empty($text)) {
             $text = get_string('closewindow');
         }
-        $closeform = new html_form();
-        $closeform->url = '#';
-        $closeform->method = 'get';
-        $closeform->button->text = $text;
-        $closeform->button->add_action('click', 'close_window');
-        $closeform->button->prepare($this, $this->page, $this->target);
-        return $this->container($this->button($closeform), 'closewindow');
+        $button = new single_button($this->page->url.'#', $text, 'get');
+        $button->add_action('click', 'close_window');
+
+        return $this->container($this->render($button), 'closewindow');
     }
 
     /**
@@ -1931,20 +1933,17 @@ class core_renderer extends renderer_base {
     /**
      * Print a continue button that goes to a particular URL.
      *
-     * @param string|moodle_url $link The url the button goes to.
+     * @param string|moodle_url $url The url the button goes to.
      * @return string the HTML to output.
      */
-    public function continue_button($link) {
-        if (!is_a($link, 'moodle_url')) {
-            $link = new moodle_url($link);
+    public function continue_button($url) {
+        if (!($url instanceof moodle_url)) {
+            $url = new moodle_url($url);
         }
-        $form = new html_form();
-        $form->url = $link;
-        $form->values = $link->params();
-        $form->button->text = get_string('continue');
-        $form->method = 'get';
+        $button = new single_button($url, get_string('continue'), 'get');
+        $button->class = 'continuebutton';
 
-        return html_writer::tag('div', array('class' => 'continuebutton') , $this->button($form));
+        return $this->render($button);
     }
 
     /**
