@@ -145,12 +145,10 @@ class user_editadvanced_form extends moodleform {
             //check allowed characters
             if ($usernew->username !== moodle_strtolower($usernew->username)) {
                 $err['username'] = get_string('usernamelowercase');
-            } else {
-                if (empty($CFG->extendedusernamechars)) {
-                    $string = clean_param($usernew->username, PARAM_USERNAME);
-                    if ($usernew->username !== $string) {
-                        $err['username'] = get_string('invalidusername');
-                    }
+            } else {                
+                $string = clean_param($usernew->username, PARAM_USERNAME);
+                if ($usernew->username !== $string) {
+                    $err['username'] = get_string('invalidusername');
                 }
             }
         }
