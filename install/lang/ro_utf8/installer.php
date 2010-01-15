@@ -10,9 +10,25 @@
 /// using strings defined in stringnames.txt (same dir)
 
 $string['availablelangs'] = 'Pachete de limbă disponibile';
+$string['cannotcreatelangdir'] = 'Nu se poate crea un director lang';
+$string['cannotdownloadcomponents'] = 'Nu se pot descărca componente';
+$string['cannotdownloadzipfile'] = 'Fişierul arhivă ZIP nu poate fi descărcat';
+$string['cannotfindcomponent'] = 'Nu a fost găsită componenta';
+$string['cannotsavemd5file'] = 'Fişierul md5 nu poate fi salvat';
+$string['cannotsavezipfile'] = 'Arhiva ZIP nu poate fi salvată';
+$string['cannotunzipfile'] = 'Arhiva nu poate fi deschisă';
+$string['chooselanguagehead'] = 'Selectare limbă';
+$string['dataroot'] = 'Data Directory';
+$string['dirroot'] = 'Director Moodle';
 $string['environment'] = 'Mediu';
+$string['environmentrequireinstall'] = 'trebuie instalat şi activat';
+$string['installation'] = 'Instalare';
 $string['language'] = 'Limba';
+$string['parentlanguage'] = 'PENTRU TRADUCĂTORI: în cazul în care pentru limba pe care o folosiţi există o limbă alternativă pe care Moodle o poate folosi atunci când lipseşte traducerea în limba dumneavoastră, specificaţi aici codul acesteia. Dacă nu completaţi nimic în acest câmp se va folosi limba engleză. Exemplu: nl.';
+$string['phpversion'] = 'Versiune PHP';
 $string['reload'] = 'Reîncarcă';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Română';
+$string['welcomep10'] = '$a->installername ($a->installerversion)';
+$string['wwwroot'] = 'Adresă Web';
 ?>
