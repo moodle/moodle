@@ -431,13 +431,13 @@ function workshop_upgrade_assessment_id_mappings() {
  * Returns the list of new element (dimension) ids
  *
  * @param string $strategy the name of strategy subplugin that the element was migrated into
- * @return array (int)workshopid => array (int)elementno => stdclass ->(int)newid {->(string)type}
+ * @return array (int)workshopid => array (int)elementno => stdclass ->(int)newid {->(string)type} {->(int)maxscore}
  */
 function workshop_upgrade_element_id_mappings($strategy) {
     global $DB;
 
     $oldrecords = $DB->get_records('workshop_elements_old', array('newplugin' => $strategy),
-                                   'workshopid,elementno', 'id,workshopid,elementno,scale,newid');
+                                   'workshopid,elementno', 'id,workshopid,elementno,scale,maxscore,newid');
     $newids = array();
     foreach ($oldrecords as $old) {
         if (!isset($newids[$old->workshopid])) {
@@ -451,6 +451,9 @@ function workshop_upgrade_element_id_mappings($strategy) {
             } else {
                 $info->type = 'value';
             }
+        }
+        if ($strategy == 'rubric_levels') {
+            $info->maxscore = $old->maxscore;
         }
         $newids[$old->workshopid][$old->elementno] = $info;
     }
