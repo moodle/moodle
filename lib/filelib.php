@@ -2229,7 +2229,7 @@ class curl {
         // sends as part of the HTTP header (note this is recursive,
         // PHP will follow as many "Location: " headers that it is sent,
         // unless CURLOPT_MAXREDIRS is set).
-        $this->options['CURLOPT_FOLLOWLOCATION']    = 1;
+        //$this->options['CURLOPT_FOLLOWLOCATION']    = 1;
         $this->options['CURLOPT_MAXREDIRS']         = 10;
         $this->options['CURLOPT_ENCODING']          = '';
         // TRUE to return the transfer as a string of the return
@@ -2764,7 +2764,7 @@ class curl_cache {
  * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class file_type_to_ext {
+class filetype_parser {
     /**
      * Check file_types.mm file, setup variables
      *
@@ -2826,7 +2826,10 @@ class file_type_to_ext {
      * @param array $types
      * @return mixed
      */
-    public function get_file_ext($types) {
+    public function get_extensions($types) {
+        if (!is_array($types)) {
+            $types = array($types);
+        }
         $this->result = array();
         if ((is_array($types) && in_array('*', $types)) ||
             $types == '*' || empty($types)) {
@@ -2848,7 +2851,7 @@ class file_type_to_ext {
                 }
             }
         } else {
-            exit('Failed to open test.xml.');
+            exit('Failed to open file');
         }
         return $this->result;
     }

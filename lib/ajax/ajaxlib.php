@@ -166,6 +166,8 @@ class page_requirements_manager {
         $this->yui2_lib('dom');        // needs to be migrated to YUI3 before we release 2.0
         $this->yui2_lib('container');  // needs to be migrated to YUI3 before we release 2.0
         $this->yui2_lib('connection'); // needs to be migrated to YUI3 before we release 2.0
+        // File Picker use this module loading YUI2 widgets
+        $this->yui2_lib('yuiloader');  // needs to be migrated to YUI3 before we release 2.0
 
         $this->string_for_js('confirmation', 'admin');
         $this->string_for_js('cancel', 'moodle');
@@ -603,14 +605,22 @@ class page_requirements_manager {
 
         $ondomreadyjs = $this->get_javascript_code(self::WHEN_ON_DOM_READY, '    ');
 
+        $pathtofilepicker = $CFG->httpswwwroot.'/repository/filepicker.js';
+
         $js .= <<<EOD
-Y = YUI({
-    base: moodle_cfg.yui3loaderBase
-}).use('node-base', function(Y) {
-    Y.on('domready', function() {
-    $ondomreadyjs
+\n
+    Y = YUI({
+        base: moodle_cfg.yui3loaderBase,
+        combine: true,
+        comboBase: moodle_cfg.yui3loaderComboBase,
+        modules: {
+            'filepicker':{fullpath:'$pathtofilepicker', 'requires':['base', 'node', 'json', 'async-queue', 'io']}
+        }
+    }).use('node-base', function(Y) {
+        Y.on('domready', function() {
+        $ondomreadyjs
+        });
     });
-});
 EOD;
 
         $output .= ajax_generate_script_tag($js);

@@ -29,10 +29,12 @@
     require_once('../config.php');
     require_once('../lib/filelib.php');
     require_once('lib.php');
+
     require_login();
 
 /// Parameters
     $action    = optional_param('action', '', PARAM_ALPHA);
+    $repo_id   = optional_param('repo_id', 1, PARAM_INT);           // repository ID
     $callback  = optional_param('callback', '', PARAM_CLEANHTML);
     $client_id = optional_param('client_id', SITEID, PARAM_RAW);    // client ID
     $contextid = optional_param('ctx_id', SITEID, PARAM_INT);       // context ID
@@ -41,12 +43,11 @@
     $itemid    = optional_param('itemid', '', PARAM_INT);
     $title     = optional_param('title', '', PARAM_FILE);           // new file name
     $page      = optional_param('page', '', PARAM_RAW);             // page
-    $repo_id   = optional_param('repo_id', 1, PARAM_INT);           // repository ID
     $maxbytes  = optional_param('maxbytes', -1, PARAM_INT);           // repository ID
     $req_path  = optional_param('p', '', PARAM_RAW);                // path
     $save_path = optional_param('savepath', '/', PARAM_PATH);
     $search_text   = optional_param('s', '', PARAM_CLEANHTML);
-    $link_external = optional_param('link_external', '', PARAM_ALPHA);
+    $linkexternal = optional_param('linkexternal', '', PARAM_ALPHA);
 
 /// Headers to make it not cacheable
     header("Cache-Control: no-cache, must-revalidate");
@@ -135,7 +136,7 @@
 <html><head>
 <script type="text/javascript">
 if(window.opener){
-    window.opener.repository_callback($repo_id);
+    active_filepicker.list();
     window.close();
 } else {
     alert("{$strhttpsbug }");
@@ -143,7 +144,7 @@ if(window.opener){
 </script>
 <body>
 <noscript>
-{$strrefreshnonjs}
+    {$strrefreshnonjs}
 </noscript>
 </body>
 </html>
@@ -156,6 +157,7 @@ EOD;
 /// These actions all occur on the currently active repository instance
     switch ($action) {
         case 'sign':
+        case 'signin':
         case 'list':
             if ($repo->check_login()) {
                 try {
@@ -195,10 +197,10 @@ EOD;
             break;
         case 'search':
             try {
-                $search_result = $repo->search($search_text);
-                $search_result['search_result'] = true;
+                $search_result = $repo->search($search_text, (int)$page);
                 $search_result['client_id'] = $client_id;
                 $search_result['repo_id'] = $repo_id;
+                $search_result['search_result'] = true;
                 echo json_encode($search_result);
             } catch (repository_exception $e) {
                 $err->e = $e->getMessage();
@@ -232,14 +234,13 @@ EOD;
                 // allow external links in url element all the time
                 $allowexternallink = ($allowexternallink || ($env == 'url'));
 
-                if ($allowexternallink and $link_external === 'yes' and ($repo->supported_returntypes() || FILE_EXTERNAL)) {
+                if ($allowexternallink and $linkexternal === 'yes' and ($repo->supported_returntypes() || FILE_EXTERNAL)) {
                     try {
                         $link = $repo->get_link($file);
                     } catch (repository_exception $e){
                     }
                     $info = array();
-                    $info['client_id'] = $client_id;
-                    $info['file'] = $title;
+                    $info['filename'] = $title;
                     $info['type'] = 'link';
                     $info['url'] = $link;
                     die(json_encode($info));
@@ -255,7 +256,9 @@ EOD;
                     throw new file_exception('maxbytes');
                 }
                 $info = repository::move_to_filepool($filepath, $title, $itemid, $save_path);
-                $info['client_id'] = $client_id;
+                if (empty($info)) {
+                    $info['e'] = get_string('error', 'moodle');
+                }
                 echo json_encode($info);
             } catch (repository_exception $e){
                 $err->e = $e->getMessage();

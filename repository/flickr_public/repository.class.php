@@ -15,6 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
+require_once($CFG->libdir.'/flickrlib.php');
+require_once(dirname(__FILE__) . '/image.php');
+
 /**
  * repository_flickr_public class
  * This one is used to create public repository
@@ -27,13 +31,6 @@
  * @copyright 2009 Dongsheng Cai
  * @author Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-require_once($CFG->libdir.'/flickrlib.php');
-require_once(dirname(__FILE__) . '/image.php');
-
-/**
- *
  */
 class repository_flickr_public extends repository {
     private $flickr;
@@ -49,12 +46,12 @@ class repository_flickr_public extends repository {
             set_config('api_key', trim($options['api_key']), 'flickr_public');
         }
         unset($options['api_key']);
-        $ret = parent::set_option($options);
-        return $ret;
+        return parent::set_option($options);
     }
 
     /**
      * get api_key from config table
+     *
      * @param string $config
      * @return mixed
      */
@@ -64,12 +61,12 @@ class repository_flickr_public extends repository {
         } else {
             $options['api_key'] = trim(get_config('flickr_public', 'api_key'));
         }
-        $options = parent::get_option($config);
-        return $options;
+        return parent::get_option($config);
     }
 
     /**
      * is global_search available?
+     *
      * @return boolean
      */
     public function global_search() {
@@ -81,8 +78,10 @@ class repository_flickr_public extends repository {
     }
 
     /**
+     * constructor method
      *
      * @global object $CFG
+     * @global object $SESSION
      * @param int $repositoryid
      * @param int $context
      * @param array $options
@@ -123,6 +122,7 @@ class repository_flickr_public extends repository {
     }
 
     /**
+     * construct login form
      *
      * @param boolean $ajax
      * @return array
@@ -193,8 +193,9 @@ class repository_flickr_public extends repository {
     }
 
     /**
+     * destroy session
      *
-     * @return <type>
+     * @return object
      */
     public function logout() {
         global $SESSION;
@@ -205,13 +206,18 @@ class repository_flickr_public extends repository {
     }
 
     /**
+     * search images on flickr
      *
-     * @param <type> $search_text
-     * @return <type>
+     * @param string $search_text
+     * @return array
      */
-    public function search($search_text) {
+    public function search($search_text, $page = 1) {
         global $SESSION;
         $ret = array();
+        if (empty($page)) {
+            $page = 1;
+        }
+
         if (!empty($this->flickr_account)) {
             $people = $this->flickr->people_findByEmail($this->flickr_account);
             $this->nsid = $people['nsid'];
@@ -228,12 +234,7 @@ class repository_flickr_public extends repository {
                 return $ret;
             }
         }
-        $is_paging = optional_param('search_paging', '', PARAM_RAW);
-        if (!empty($is_paging)) {
-            $page = optional_param('p', '', PARAM_INT);
-        } else {
-            $page = 1;
-        }
+
         // including all licenses by default
         $licenses = array(1=>1, 2, 3, 4, 5, 6, 7);
 
@@ -291,10 +292,11 @@ class repository_flickr_public extends repository {
     }
 
     /**
+     * return an image list
      *
      * @param string $path
      * @param int $page
-     * @return <type>
+     * @return array
      */
     public function get_listing($path = '', $page = 1) {
         $people = $this->flickr->people_findByEmail($this->flickr_account);
@@ -306,10 +308,11 @@ class repository_flickr_public extends repository {
     }
 
     /**
+     * build an image list
      *
-     * @param <type> $photos
-     * @param <type> $page
-     * @return <type>
+     * @param array $photos
+     * @param int $page
+     * @return array
      */
     private function build_list($photos, $page = 1, &$ret) {
         if (!empty($this->nsid)) {
@@ -414,7 +417,7 @@ class repository_flickr_public extends repository {
 
     /**
      * Add Instance settings input to Moodle form
-     * @param <type> $
+     * @param object $mform
      */
     public function instance_config_form(&$mform) {
         $mform->addElement('text', 'email_address', get_string('emailaddress', 'repository_flickr_public'));
@@ -423,7 +426,7 @@ class repository_flickr_public extends repository {
 
     /**
      * Names of the instance settings
-     * @return <type>
+     * @return array
      */
     public static function get_instance_option_names() {
         return array('email_address');
@@ -431,7 +434,7 @@ class repository_flickr_public extends repository {
 
     /**
      * Add Plugin settings input to Moodle form
-     * @param <type> $
+     * @param object $mform
      */
     public function type_config_form(&$mform) {
         $api_key = get_config('flickr_public', 'api_key');
@@ -451,7 +454,7 @@ class repository_flickr_public extends repository {
 
     /**
      * Names of the plugin settings
-     * @return <type>
+     * @return array 
      */
     public static function get_type_option_names() {
         return array('api_key', 'watermark');

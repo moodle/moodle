@@ -27,19 +27,14 @@ global $CFG;
 
 require_once('HTML/QuickForm/element.php');
 require_once($CFG->dirroot.'/lib/filelib.php');
+require_once("$CFG->dirroot/repository/lib.php");
 
 class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     public $_helpbutton = '';
-    protected $_options    = array('mainfile'=>'', 'subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>-1, 'filetypes'=>'*', 'returntypes'=>FILE_INTERNAL);
+    protected $_options    = array('mainfile'=>'', 'subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
 
     function MoodleQuickForm_filemanager($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG, $PAGE;
-        require_once("$CFG->dirroot/repository/lib.php");
-
-        // has to require these js files before head
-        $PAGE->requires->yui2_lib('menu');
-        $PAGE->requires->yui2_lib('connection');
-        $PAGE->requires->yui2_lib('json');
 
         $options = (array)$options;
         foreach ($options as $name=>$value) {
@@ -51,8 +46,8 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
         }
         parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
-
-        repository_head_setup();
+        $PAGE->requires->js('repository/filepicker.js');
+        $PAGE->requires->js('lib/form/filemanager.js');
     }
 
     function setName($name) {
@@ -130,11 +125,13 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $subdirs     = $this->_options['subdirs'];
         $maxbytes    = $this->_options['maxbytes'];
         $draftitemid = $this->getValue();
+        $accepted_types = $this->_options['accepted_types'];
 
         // language strings
         $straddfile  = get_string('add', 'repository') . '...';
         $strmakedir  = get_string('makeafolder', 'moodle');
         $strdownload  = get_string('downloadfolder', 'repository');
+
 
         $PAGE->requires->string_for_js('loading', 'repository');
         $PAGE->requires->string_for_js('nomorefiles', 'repository');
@@ -168,17 +165,22 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
 
         $draftareainfo = file_get_draft_area_info($draftitemid);
         $filecount = $draftareainfo['filecount'];
-
-        if ($COURSE->id == SITEID) {
-            $context = get_context_instance(CONTEXT_SYSTEM);
-        } else {
-            $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-        }
-
         $client_id = uniqid();
 
+        $args = new stdclass;
+        // need these three to filter repositories list
+        $args->accepted_types = $accepted_types;
+        $args->return_types = $this->_options['return_types'];
+        $args->context = $PAGE->context;
+        $args->env = 'filemanager';
+
+        $filepicker_options = initialise_filepicker($args);
+
+        $filepicker_options->client_id = $client_id;
+        $filepicker_options->maxbytes = $this->_options['maxbytes'];
+        $filepicker_options->maxfiles = $this->_options['maxfiles'];
+
         // Generate file picker
-        $repojs = repository_get_client($context, $client_id, $this->_options['filetypes'], $this->_options['returntypes']);
         $result = new stdclass;
 
         $options = file_get_draft_area_files($draftitemid);
@@ -192,11 +194,9 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $options->target    = $id;
 
         $html = $this->_getTabs();
-        $html .= $repojs;
 
-        if (empty($CFG->filemanagerjsloaded)) {
-            $PAGE->requires->js('lib/form/filemanager.js');
-            $CFG->filemanagerjsloaded = true;
+        if (empty($CFG->filemanagertemplateloaded)) {
+            $CFG->filemanagertemplateloaded = true;
             // print html template
             $html .= <<<FMHTML
 <div id="fm-template" style="display:none"><div class="fm-file-menu">___action___</div> <div class="fm-file-name">___fullname___</div></div>
@@ -212,7 +212,6 @@ FMHTML;
         <a href="###" id="btncrt-{$client_id}">{$strmakedir}</a>
         <a href="###" id="btndwn-{$client_id}">{$strdownload}</a>
     </div>
-
     <div class="filemanager-container" id="filemanager-{$client_id}">
         <ul id="draftfiles-{$client_id}">
             <li>Loading...</li>
@@ -221,16 +220,17 @@ FMHTML;
 </div>
 FMHTML;
         // non-javascript file manager, will be destroied automatically if javascript is enabled.
-        $html .= '<div id="nonjs-filemanager-'.$client_id.'">';
-        $editorurl = "$CFG->wwwroot/repository/filepicker.php?env=filemanager&amp;action=embedded&amp;itemid=$draftitemid&amp;subdirs=/&amp;maxbytes=$options->maxbytes&amp;ctx_id=".$context->id;
-        $html .= '<object type="text/html" data="'.$editorurl.'" height="160" width="600" style="border:1px solid #000">Error</object>';
-        $html .= '</div>';
+        $editorurl = "$CFG->wwwroot/repository/filepicker.php?env=filemanager&amp;action=embedded&amp;itemid=$draftitemid&amp;subdirs=/&amp;maxbytes=$options->maxbytes&amp;ctx_id=".$PAGE->context->id;
+        $html .= <<<NONJS
+<div id="nonjs-filemanager-$client_id">';
+<object type="text/html" data="$editorurl" height="160" width="600" style="border:1px solid #000">Error</object>';
+</div>
+NONJS;
 
-        $html .= $PAGE->requires->js_function_call('destroy_item', array("nonjs-filemanager-{$client_id}"))->asap();
-        $html .= $PAGE->requires->js_function_call('show_item', array("filemanager-wrapper-{$client_id}"))->asap();
+        $PAGE->requires->js_function_call('destroy_item', array("nonjs-filemanager-{$client_id}"))->on_dom_ready();
+        $PAGE->requires->js_function_call('show_item', array("filemanager-wrapper-{$client_id}"))->on_dom_ready();
         $PAGE->requires->js_function_call('launch_filemanager', array($client_id, $options))->on_dom_ready();
-
+        $PAGE->requires->js_function_call('fm_init_filepicker', array('btnadd-'.$client_id, $filepicker_options))->on_dom_ready();
         return $html;
     }
-
 }

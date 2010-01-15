@@ -598,7 +598,6 @@ abstract class repository {
      * @param string $type a type name to retrieve
      * @return array repository instances
      */
-    //public static function get_instances($contexts=array(), $userid = null, $onlyvisible = true, $type=null, $accepted_types = '*', $returntypes = 3) {
     public static function get_instances($args = array()) {
         global $DB, $CFG, $USER;
 
@@ -616,7 +615,6 @@ abstract class repository {
 
         $onlyvisible = isset($args['onlyvisible']) ? $args['onlyvisible'] : true;
         $type        = isset($args['type']) ? $args['type'] : null;
-        $acceptedtypes = isset($args['accepted_types']) ? $args['accepted_types'] : '*';
         $returntypes   = isset($args['returntypes']) ? $args['returntypes'] : 3;
 
         $params = array();
@@ -657,7 +655,8 @@ abstract class repository {
         }
 
         $repositories = array();
-        $ft = new file_type_to_ext();
+        $ft = new filetype_parser();
+        $accepted_types = $args['accepted_types'];
         foreach ($records as $record) {
             if (!file_exists($CFG->dirroot . '/repository/'. $record->repositorytype.'/repository.class.php')) {
                 continue;
@@ -668,7 +667,6 @@ abstract class repository {
             $options['type']    = $record->repositorytype;
             $options['typeid']  = $record->typeid;
             // tell instance what file types will be accepted by file picker
-            $options['accepted_types'] = $ft->get_file_ext($acceptedtypes);
             $classname = 'repository_' . $record->repositorytype;
 
             $repository = new $classname($record->id, $record->contextid, $options, $record->readonly);
@@ -680,13 +678,13 @@ abstract class repository {
                 debugging('parent::__construct must be called by '.$record->repositorytype.' plugin.');
             } else {
                 // check mimetypes
-                if ($acceptedtypes !== '*' and $repository->supported_filetypes() !== '*') {
-                    $acceptedtypes = $ft->get_file_ext($acceptedtypes);
-                    $supported_filetypes = $ft->get_file_ext($repository->supported_filetypes());
+                if ($accepted_types !== '*' and $repository->supported_filetypes() !== '*') {
+                    $accepted_types = $ft->get_extensions($accepted_types);
+                    $supported_filetypes = $ft->get_extensions($repository->supported_filetypes());
 
                     $is_supported = false;
                     foreach  ($supported_filetypes as $type) {
-                        if (in_array($type, $acceptedtypes)) {
+                        if (in_array($type, $accepted_types)) {
                             $is_supported = true;
                         }
                     }
@@ -711,7 +709,7 @@ abstract class repository {
                         $capability = has_capability('repository/'.$record->repositorytype.':view', get_system_context());
                     }
                     if ($is_supported && $capability) {
-                        $repositories[] = $repository;
+                        $repositories[$repository->id] = $repository;
                     }
                 }
             }
@@ -794,13 +792,13 @@ abstract class repository {
      * @global object $DB
      * @global object $CFG
      * @global object $USER
-     * @param string $path file path in download folder
+     * @param string $filepath file path in download folder
      * @param string $name file name
      * @param integer $itemid item id to identify a file in filepool
      * @param string $filearea file area
      * @return array information of file in file pool
      */
-    public static function move_to_filepool($path, $name, $itemid, $filepath = '/', $filearea = 'user_draft') {
+    public static function move_to_filepool($thefile, $name, $itemid, $filepath = '/', $filearea = 'user_draft') {
         global $DB, $CFG, $USER, $OUTPUT;
         if ($filepath !== '/') {
             $filepath = trim($filepath, '/');
@@ -816,7 +814,7 @@ abstract class repository {
         $entry->timecreated  = $now;
         $entry->timemodified = $now;
         $entry->userid       = $USER->id;
-        $entry->mimetype     = mimeinfo('type', $path);
+        $entry->mimetype     = mimeinfo('type', $thefile);
         if(is_numeric($itemid)) {
             $entry->itemid = $itemid;
         } else {
@@ -827,18 +825,18 @@ abstract class repository {
         if ($existingfile = $fs->get_file($context->id, $filearea, $itemid, $filepath, $name)) {
             $existingfile->delete();
         }
-        if ($file = $fs->create_file_from_pathname($entry, $path)) {
+        if ($file = $fs->create_file_from_pathname($entry, $thefile)) {
             if (empty($CFG->repository_no_delete)) {
-                $delete = unlink($path);
+                $delete = unlink($thefile);
                 unset($CFG->repository_no_delete);
             }
-            $ret = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
-            if(!empty($ret)) {
+            $fileinfo = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+            if(!empty($fileinfo)) {
                 return array(
-                    'url'=>$ret->get_url(),
+                    'url'=>$fileinfo->get_url(),
                     'id'=>$file->get_itemid(),
                     'file'=>$file->get_filename(),
-                    'icon' => $OUTPUT->pix_url(file_extension_icon($path, 32))
+                    'icon' => $OUTPUT->pix_url(file_extension_icon($thefile, 32))
                 );
             } else {
                 return null;
@@ -1234,14 +1232,13 @@ abstract class repository {
      */
     final public function get_meta() {
         global $CFG;
-        $ft = new file_type_to_ext;
+        $ft = new filetype_parser;
         $meta = new stdclass;
         $meta->id   = $this->id;
         $meta->name = $this->get_name();
         $meta->type = $this->options['type'];
         $meta->icon = $CFG->httpswwwroot.'/repository/'.$meta->type.'/icon.png';
-        $meta->supported_types = $ft->get_file_ext($this->supported_filetypes());
-        $meta->accepted_types = $this->options['accepted_types'];
+        $meta->supported_types = $ft->get_extensions($this->supported_filetypes());
         $meta->return_types = $this->supported_returntypes();
         return $meta;
     }
@@ -1420,8 +1417,8 @@ abstract class repository {
     public function filter(&$value) {
         $pass = false;
         $accepted_types = optional_param('accepted_types', '', PARAM_RAW);
-        $ft = new file_type_to_ext;
-        $ext = $ft->get_file_ext($this->supported_filetypes());
+        $ft = new filetype_parser;
+        $ext = $ft->get_extensions($this->supported_filetypes());
         if (isset($value['children'])) {
             $pass = true;
             if (!empty($value['children'])) {
@@ -1753,161 +1750,90 @@ function repository_setup_default_plugins() {
     return true;
 }
 
-/**
- * Loads file picker Javascript files
- *
- * @return void
- */
-function repository_head_setup() {
-    global $PAGE;
-
-    $PAGE->requires->yui2_lib('yahoo');
-    $PAGE->requires->yui2_lib('dom');
-    $PAGE->requires->yui2_lib('element');
-    $PAGE->requires->yui2_lib('event');
-    $PAGE->requires->yui2_lib('json');
-    $PAGE->requires->yui2_lib('treeview');
-    $PAGE->requires->yui2_lib('dragdrop');
-    $PAGE->requires->yui2_lib('container');
-    $PAGE->requires->yui2_lib('resize');
-    $PAGE->requires->yui2_lib('layout');
-    $PAGE->requires->yui2_lib('connection');
-    $PAGE->requires->yui2_lib('button');
-    $PAGE->requires->yui2_lib('selector');
-
-    //TODO: remove the ->in_head() once we refactor the inline script tags in repo code
-    $PAGE->requires->js('repository/repository.src.js')->in_head();
-
-}
-
-/**
- * Return javascript to create file picker to browse repositories
- *
- * @global object $CFG
- * @global object $USER
- * @global object $PAGE
- * @global object $OUTPUT
- * @param object $context the context
- * @param string $id unique id for every file picker
- * @param string $accepted_filetypes
- * @param string $returntypes the return value of file picker
- * @return string
- */
-function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $returntypes = 3) {
+function initialise_filepicker($args) {
     global $CFG, $USER, $PAGE, $OUTPUT;
-
-    $ft = new file_type_to_ext();
-    $image_file_ext = json_encode($ft->get_file_ext(array('image')));
-    $video_file_ext = json_encode($ft->get_file_ext(array('video')));
-    $accepted_file_ext = json_encode($ft->get_file_ext($accepted_filetypes));
-
-    $js  = '';
-    if (!isset($CFG->filepickerjsloaded)) {
-        $lang = array();
-        $lang['title'] = get_string('title', 'repository');
-        $lang['preview'] = get_string('preview', 'repository');
-        $lang['add']     = get_string('add', 'repository');
-        $lang['back']      = get_string('back', 'repository');
-        $lang['cancel']    = get_string('cancel');
-        $lang['close']     = get_string('close', 'repository');
-        $lang['ccache']    = get_string('cleancache', 'repository');
-        $lang['copying']   = get_string('copying', 'repository');
-        $lang['downbtn']   = get_string('getfile', 'repository');
-        $lang['download']  = get_string('downloadsucc', 'repository');
-        $lang['date']      = get_string('date', 'repository').': ';
-        $lang['error']     = get_string('error', 'repository');
-        $lang['emptylist'] = get_string('emptylist', 'repository');
-        $lang['filenotnull'] = get_string('filenotnull', 'repository');
-        $lang['federatedsearch'] = get_string('federatedsearch', 'repository');
-        $lang['help']      = get_string('help');
-        $lang['refresh']   = get_string('refresh', 'repository');
-        $lang['invalidjson'] = get_string('invalidjson', 'repository');
-        $lang['listview']  = get_string('listview', 'repository');
-        $lang['linkexternal'] = get_string('linkexternal', 'repository');
-        $lang['login']     = get_string('login', 'repository');
-        $lang['logout']    = get_string('logout', 'repository');
-        $lang['loading']   = get_string('loading', 'repository');
-        $lang['thumbview'] = get_string('thumbview', 'repository');
-        $lang['title']     = get_string('title', 'repository');
-        $lang['noresult']  = get_string('noresult', 'repository');
-        $lang['mgr']       = get_string('manageurl', 'repository');
-        $lang['noenter']   = get_string('noenter', 'repository');
-        $lang['save']      = get_string('save', 'repository');
-        $lang['saveas']    = get_string('saveas', 'repository').': ';
-        $lang['saved']     = get_string('saved', 'repository');
-        $lang['saving']    = get_string('saving', 'repository');
-        $lang['size']      = get_string('size', 'repository').': ';
-        $lang['sync']      = get_string('sync', 'repository');
-        $lang['search']    = get_string('search', 'repository');
-        $lang['searching'] = get_string('searching', 'repository');
-        $lang['submit']    = get_string('submit', 'repository');
-        $lang['preview']   = get_string('preview', 'repository');
-        $lang['popup']     = get_string('popup', 'repository');
-        $lang['upload']    = get_string('upload', 'repository').'...';
-        $lang['uploading'] = get_string('uploading', 'repository');
-        $lang['xhtml']     = get_string('xhtmlerror', 'repository');
-        $lang = json_encode($lang);
-
-        $options = array();
-        $sys_context = get_system_context();
-        $options['contextid'] = $sys_context->id;
-        $externallink = (int)get_config(null, 'repositoryallowexternallinks');
-        if (empty($externallink)) {
-            $options['externallink'] = false;
-        } else {
-            $options['externallink'] = true;
-        }
-        $options['icons']['loading'] = $OUTPUT->pix_url('i/loading');
-        $options['icons']['logout']  = $OUTPUT->pix_url('a/logout');
-        $options['icons']['help']    = $OUTPUT->pix_url('a/help');
-        $options['icons']['progressbar'] = $OUTPUT->pix_url('i/progressbar');
-        $options['icons']['search']  = $OUTPUT->pix_url('a/search');
-        $options['icons']['setting'] = $OUTPUT->pix_url('a/setting');
-        $options['icons']['refresh'] = $OUTPUT->pix_url('a/refresh');
-        $options = json_encode($options);
-        // fp_config includes filepicker options
-
-        $accepted_file_ext = json_encode($ft->get_file_ext($accepted_filetypes));
-        $js .= <<<EOD
-<script type="text/javascript">
-var fp_lang = $lang;
-var fp_config = $options;
-MOODLE.repository.extensions.image = $image_file_ext;
-MOODLE.repository.extensions.media = $video_file_ext;
-</script>
-EOD;
-
-        $CFG->filepickerjsloaded = true;
+    $ft = new filetype_parser();
+    if (empty($args->context)) {
+        $context = $PAGE->context;
     } else {
-        // if yui and repository javascript libs are loaded
-        $js = '';
+        $context = $args->context;
     }
+    $return = new stdclass;
 
-    // print instances listing
+    $PAGE->requires->string_for_js('loading', 'repository');
+    $PAGE->requires->string_for_js('title', 'repository');
+    $PAGE->requires->string_for_js('preview', 'repository');
+    $PAGE->requires->string_for_js('add', 'repository');
+    $PAGE->requires->string_for_js('back', 'repository');
+    $PAGE->requires->string_for_js('cancel', 'moodle');
+    $PAGE->requires->string_for_js('close', 'repository');
+    $PAGE->requires->string_for_js('cleancache', 'repository');
+    $PAGE->requires->string_for_js('copying', 'repository');
+    $PAGE->requires->string_for_js('getfile', 'repository');
+    $PAGE->requires->string_for_js('downloadsucc', 'repository');
+    $PAGE->requires->string_for_js('date', 'repository').': ';
+    $PAGE->requires->string_for_js('error', 'repository');
+    $PAGE->requires->string_for_js('emptylist', 'repository');
+    $PAGE->requires->string_for_js('filenotnull', 'repository');
+    $PAGE->requires->string_for_js('federatedsearch', 'repository');
+    $PAGE->requires->string_for_js('help', 'moodle');
+    $PAGE->requires->string_for_js('refresh', 'repository');
+    $PAGE->requires->string_for_js('invalidjson', 'repository');
+    $PAGE->requires->string_for_js('listview', 'repository');
+    $PAGE->requires->string_for_js('linkexternal', 'repository');
+    $PAGE->requires->string_for_js('login', 'repository');
+    $PAGE->requires->string_for_js('logout', 'repository');
+    $PAGE->requires->string_for_js('loading', 'repository');
+    $PAGE->requires->string_for_js('iconview', 'repository');
+    $PAGE->requires->string_for_js('title', 'repository');
+    $PAGE->requires->string_for_js('noresult', 'repository');
+    $PAGE->requires->string_for_js('manageurl', 'repository');
+    $PAGE->requires->string_for_js('noenter', 'repository');
+    $PAGE->requires->string_for_js('save', 'repository');
+    $PAGE->requires->string_for_js('saveas', 'repository').': ';
+    $PAGE->requires->string_for_js('saved', 'repository');
+    $PAGE->requires->string_for_js('saving', 'repository');
+    $PAGE->requires->string_for_js('size', 'repository').': ';
+    $PAGE->requires->string_for_js('sync', 'repository');
+    $PAGE->requires->string_for_js('search', 'repository');
+    $PAGE->requires->string_for_js('searching', 'repository');
+    $PAGE->requires->string_for_js('submit', 'repository');
+    $PAGE->requires->string_for_js('preview', 'repository');
+    $PAGE->requires->string_for_js('popup', 'repository');
+    $PAGE->requires->string_for_js('upload', 'repository').'...';
+    $PAGE->requires->string_for_js('uploading', 'repository');
+    $PAGE->requires->string_for_js('xhtmlerror', 'repository');
+
     $user_context = get_context_instance(CONTEXT_USER, $USER->id);
-    if (is_array($accepted_filetypes) && in_array('*', $accepted_filetypes)) {
-        $accepted_filetypes = '*';
-    }
-    $params = array();
-    $params['context'] = array($user_context, get_system_context());
-    $params['currentcontext'] = $context;
-    $params['accepted_types'] = $accepted_filetypes;
-    $params['returntypes'] = $returntypes;
-    $repos = repository::get_instances($params);
 
-    // print repository instances listing
-    $js .= <<<EOD
-<script type="text/javascript">
-MOODLE.repository.listing['$id'] = [];
-EOD;
-    foreach ($repos as $repo) {
-        $meta = $repo->get_meta();
-        $js .= "\r\n";
-        $js .= 'MOODLE.repository.listing[\''.$id.'\']['.$meta->id.']='.json_encode($meta).';';
-        $js .= "\n";
-    }
-    $js .= "\r\n";
-    $js .= "</script>";
+    $externallink = (int)get_config(null, 'repositoryallowexternallinks');
+    $repositories = repository::get_instances(array(
+        'context'=>array($user_context, get_system_context()),
+        'currentcontext'=> $context,
+        'accepted_types'=>$args->accepted_types
+    ));
 
-    return $js;
+    $return->repositories = array();
+
+    if (empty($externallink)) {
+        $return->externallink = false;
+    } else {
+        $return->externallink = true;
+    }
+
+    $return->pix = array();
+    $return->pix['loading'] = $OUTPUT->pix_url('i/loading')->out();
+    $return->pix['logout']  = $OUTPUT->pix_url('a/logout')->out();
+    $return->pix['help']    = $OUTPUT->pix_url('a/help')->out();
+    $return->pix['progressbar'] = $OUTPUT->pix_url('i/progressbar')->out();
+    $return->pix['search']  = $OUTPUT->pix_url('a/search')->out();
+    $return->pix['setting'] = $OUTPUT->pix_url('a/setting')->out();
+    $return->pix['refresh'] = $OUTPUT->pix_url('a/refresh')->out();
+    // provided by form element
+    $return->accepted_types = $ft->get_extensions($args->accepted_types);
+    foreach ($repositories as $repository) {
+        $meta = $repository->get_meta();
+        $return->repositories[$repository->id] = $meta;
+    }
+    return $return;
 }

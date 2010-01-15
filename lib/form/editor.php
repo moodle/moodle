@@ -18,7 +18,8 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
     protected $_values     = array('text'=>null, 'format'=>null, 'itemid'=>null);
 
     function MoodleQuickForm_editor($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
-        global $CFG;
+        global $CFG, $PAGE;
+        $PAGE->requires->js('lib/form/filepicker.js');
 
         $options = (array)$options;
         foreach ($options as $name=>$value) {
@@ -35,7 +36,6 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         $this->_options['trusted'] = trusttext_trusted($this->_options['context']);
         parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
 
-        repository_head_setup();
         editors_head_setup();
     }
 
@@ -114,6 +114,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
     function toHtml() {
         global $CFG, $COURSE, $PAGE;
+        require_once($CFG->dirroot.'/repository/lib.php');
 
         if ($this->_flagFrozen) {
             return $this->getFrozenHtml();
@@ -177,13 +178,25 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $str .= '<object type="text/html" data="'.$editorurl.'" height="160" width="600" style="border:1px solid #000">Error</object>'; // TODO: localise, fix styles, etc.
             $str .= '</div>';
 
-            require_once($CFG->dirroot.'/repository/lib.php');
             $client_id = uniqid();
-            $repojs = repository_get_client($ctx, $client_id, array('image', 'video', 'media'), (FILE_EXTERNAL | FILE_INTERNAL));
 
-            $str .= $repojs;
-            $str .= $PAGE->requires->js_function_call('id2_add_clientid', array($id, $client_id))->asap();
-            $str .= $PAGE->requires->js_function_call('id2_add_itemid', array($id, $draftitemid))->asap();
+            $args = new stdclass;
+            // need these three to filter repositories list
+            $args->accepted_types = array('image', 'video', 'media');
+            $args->return_types = (FILE_INTERNAL | FILE_EXTERNAL);
+            $args->context = $ctx;
+            $args->env = 'filepicker';
+
+            $options = initialise_filepicker($args);
+
+            $options->client_id = $client_id;
+            $options->maxbytes = $this->_options['maxbytes'];
+            $options->maxfiles = 1;
+            $options->env = 'editor';
+
+            //$PAGE->requires->js_function_call('id2_add_clientid', array($id, $client_id))->on_dom_ready();
+            //$PAGE->requires->js_function_call('id2_add_itemid', array($id, $draftitemid))->on_dom_ready();
+            $PAGE->requires->js_function_call('editor_init_filepicker', array($id, $options))->on_dom_ready();
 
             if ($editor->supports_repositories()) {
                 $str .= $PAGE->requires->js_function_call('destroy_item', array("{$id}_filemanager"))->asap();
