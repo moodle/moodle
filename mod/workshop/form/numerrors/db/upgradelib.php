@@ -41,7 +41,7 @@ function workshopform_numerrors_upgrade_legacy() {
 
     // get the list of all legacy workshops using this grading strategy
     if ($legacyworkshops = $DB->get_records('workshop_old', array('gradingstrategy' => 2), 'course,id', 'id')) {
-        echo $OUTPUT->notification('Copying assessment forms elements', 'notifysuccess');
+        echo $OUTPUT->notification('Copying assessment forms elements and grade mappings', 'notifysuccess');
         $legacyworkshops = array_keys($legacyworkshops);
         // get some needed info about the workshops
         $workshopinfos = $DB->get_records_list('workshop_old', 'id', $legacyworkshops, 'id', 'id,grade');
@@ -76,7 +76,6 @@ function workshopform_numerrors_upgrade_legacy() {
             }
             $DB->set_field('workshop_elements_old', 'newplugin', 'numerrors', array('id' => $old->id));
             $DB->set_field('workshop_elements_old', 'newid', $newid, array('id' => $old->id));
-
         }
         $rs->close();
 
@@ -85,6 +84,7 @@ function workshopform_numerrors_upgrade_legacy() {
         $newelementids = workshop_upgrade_element_id_mappings('numerrors');
 
         // migrate all grades for these elements (it est the values that reviewers put into forms)
+        echo $OUTPUT->notification('Copying assessment form grades', 'notifysuccess');
         $sql = "SELECT *
                   FROM {workshop_grades_old}
                  WHERE workshopid $workshopids

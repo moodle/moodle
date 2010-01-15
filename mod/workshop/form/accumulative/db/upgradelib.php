@@ -64,6 +64,7 @@ function workshopform_accumulative_upgrade_legacy() {
         $newelementids = workshop_upgrade_element_id_mappings('accumulative');
 
         // migrate all grades for these elements (it est the values that reviewers put into forms)
+        echo $OUTPUT->notification('Copying assessment form grades', 'notifysuccess');
         $sql = "SELECT *
                   FROM {workshop_grades_old}
                  WHERE workshopid $workshopids

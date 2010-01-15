@@ -35,7 +35,7 @@ function workshopform_rubric_upgrade_legacy() {
         return;
     }
     workshopform_rubric_upgrade_legacy_criterion();
-    // todo workshopform_rubric_upgrade_legacy_rubric();
+    workshopform_rubric_upgrade_legacy_rubric();
 }
 
 /**
@@ -47,7 +47,7 @@ function workshopform_rubric_upgrade_legacy_criterion() {
 
     // get the list of all legacy workshops using this grading strategy
     if ($legacyworkshops = $DB->get_records('workshop_old', array('gradingstrategy' => 3), 'course,id', 'id')) {
-        echo $OUTPUT->notification('Copying assessment forms elements', 'notifysuccess');
+        echo $OUTPUT->notification('Copying criterion assessment form elements', 'notifysuccess');
         $legacyworkshops = array_keys($legacyworkshops);
         // get the list of all form elements
         list($workshopids, $params) = $DB->get_in_or_equal($legacyworkshops, SQL_PARAMS_NAMED);
@@ -83,9 +83,9 @@ function workshopform_rubric_upgrade_legacy_criterion() {
             if (trim($old->description)) {
                 $new = workshopform_rubric_upgrade_criterion_level($old, $newdimensionids[$old->workshopid]);
                 $newid = $DB->insert_record('workshopform_rubric_levels', $new);
+                $DB->set_field('workshop_elements_old', 'newplugin', 'rubric_levels', array('id' => $old->id));
+                $DB->set_field('workshop_elements_old', 'newid', $newid, array('id' => $old->id));
             }
-            $DB->set_field('workshop_elements_old', 'newplugin', 'rubric_levels', array('id' => $old->id));
-            $DB->set_field('workshop_elements_old', 'newid', $newid, array('id' => $old->id));
         }
         $rs->close();
 
@@ -93,6 +93,7 @@ function workshopform_rubric_upgrade_legacy_criterion() {
         $newelementids = workshop_upgrade_element_id_mappings('rubric_levels');
 
         // migrate all grades for these elements (it est the values that reviewers put into forms)
+        echo $OUTPUT->notification('Copying criterion assessment form grades', 'notifysuccess');
         $sql = "SELECT *
                   FROM {workshop_grades_old}
                  WHERE workshopid $workshopids
@@ -121,9 +122,112 @@ function workshopform_rubric_upgrade_legacy_criterion() {
 }
 
 /**
- * Transforms a given record from workshop_elements_old into an object to be saved into workshopform_rubric_levels
+ * Upgrades legacy workshops using rubric grading strategy
+ */
+function workshopform_rubric_upgrade_legacy_rubric() {
+    global $CFG, $DB, $OUTPUT;
+    require_once($CFG->dirroot . '/mod/workshop/db/upgradelib.php');
+
+    // get the list of all legacy workshops using this grading strategy
+    if ($legacyworkshops = $DB->get_records('workshop_old', array('gradingstrategy' => 4), 'course,id', 'id')) {
+        echo $OUTPUT->notification('Copying rubric assessment form elements', 'notifysuccess');
+        $legacyworkshops = array_keys($legacyworkshops);
+        // get the list of all form elements and rubrics
+        list($workshopids, $params) = $DB->get_in_or_equal($legacyworkshops, SQL_PARAMS_NAMED);
+        $sql = "SELECT e.id AS eid, e.workshopid AS workshopid, e.elementno AS esort, e.description AS edesc, e.weight AS eweight,
+                       r.id AS rid, r.rubricno AS rgrade, r.description AS rdesc
+                  FROM {workshop_elements_old} e
+             LEFT JOIN {workshop_rubrics_old} r ON (r.elementno = e.elementno AND r.workshopid = e.workshopid)
+                 WHERE e.workshopid $workshopids
+                       AND e.newid IS NULL
+                       AND r.newid IS NULL
+              ORDER BY e.workshopid, e.elementno, r.rubricno";
+        $rs = $DB->get_recordset_sql($sql, $params);
+        $newworkshopids     = workshop_upgrade_workshop_id_mappings();  // array of (int)oldworkshopid => (int)newworkshopid
+        $newdimensionids    = array();  // (int)oldworkshopid => (int)elementno => (int)dimensionid
+        $newlevelids        = array();  // (int)oldrubricid => (int)newlevelid
+        $prevelement        = null;
+        foreach ($rs as $old) {
+            // create rubric criterion and the configuration if necessary
+            if (!isset($newdimensionids[$old->workshopid]) or !isset($newdimensionids[$old->workshopid][$old->esort])) {
+                if (!$DB->record_exists('workshopform_rubric', array('workshopid' => $newworkshopids[$old->workshopid], 'sort' => $old->esort))) {
+                    $newdimension = new stdclass();
+                    $newdimenison->workshopid = $newworkshopids[$old->workshopid];
+                    $newdimenison->sort = $old->esort;
+                    $newdimenison->description = $old->edesc;
+                    $newdimenison->descriptionformat = FORMAT_HTML;
+                    $newdimensionids[$old->workshopid][$old->esort] = $DB->insert_record('workshopform_rubric', $newdimenison);
+                } else {
+                    $newdimensionids[$old->workshopid][$old->esort] = $DB->get_field('workshopform_rubric', 'id',
+                                                                    array('workshopid' => $newworkshopids[$old->workshopid], 'sort' => $old->esort));
+                }
+                if (!$DB->record_exists('workshopform_rubric_config', array('workshopid' => $newworkshopids[$old->workshopid]))) {
+                    $newconfig = new stdclass();
+                    $newconfig->workshopid = $newworkshopids[$old->workshopid];
+                    $newconfig->layout = 'grid';
+                    $DB->insert_record('workshopform_rubric_config', $newconfig);
+                }
+            }
+            // process the information about the criterion levels
+            if (trim($old->rdesc)) {
+                $new = workshopform_rubric_upgrade_rubric_level($old, $newdimensionids[$old->workshopid][$old->esort]);
+                $newid = $DB->insert_record('workshopform_rubric_levels', $new);
+                $DB->set_field('workshop_rubrics_old', 'newplugin', 'rubric_levels', array('id' => $old->rid));
+                $DB->set_field('workshop_rubrics_old', 'newid', $newid, array('id' => $old->rid));
+            }
+            // mark the whole element as processed if the last level was processed
+            if ($old->rgrade == 4) {
+                $DB->set_field('workshop_elements_old', 'newplugin', 'rubric', array('id' => $old->eid));
+                $DB->set_field('workshop_elements_old', 'newid', $newdimensionids[$old->workshopid][$old->esort], array('id' => $old->eid));
+            }
+        }
+        $rs->close();
+
+        // reload the mappings - this must be reloaded so that we can run this during recovery
+        $newelementids = workshop_upgrade_element_id_mappings('rubric');
+
+        // load the legacy element weights and multiply the new max grade by it
+        echo $OUTPUT->notification('Recalculating rubric assessment form element weights', 'notifysuccess');
+        $oldweights = $DB->get_records('workshop_elements_old', array('newplugin' => 'rubric'), '', 'id,workshopid,elementno,weight');
+        $newweights = array();
+        foreach ($oldweights as $eid => $element) {
+            $newweights[$newelementids[$element->workshopid][$element->elementno]->newid] = workshopform_rubric_upgrade_weight($element->weight);
+        }
+        unset($oldweights);
+        unset($element);
+
+        // migrate all grades for these elements (it est the values that reviewers put into forms)
+        echo $OUTPUT->notification('Copying rubric assessment form grades', 'notifysuccess');
+        $sql = "SELECT *
+                  FROM {workshop_grades_old}
+                 WHERE workshopid $workshopids
+                       AND newid IS NULL";
+        $rs = $DB->get_recordset_sql($sql, $params);
+        $newassessmentids = workshop_upgrade_assessment_id_mappings();
+        foreach ($rs as $old) {
+            if (!isset($newelementids[$old->workshopid]) or !isset($newelementids[$old->workshopid][$old->elementno])) {
+                // orphaned grade - the assessment form element has been removed after the grade was recorded
+                continue;
+            }
+            $new                    = new stdclass();
+            $new->assessmentid      = $newassessmentids[$old->assessmentid];
+            $new->strategy          = 'rubric';
+            $new->dimensionid       = $newelementids[$old->workshopid][$old->elementno]->newid;
+            $new->grade             = $old->grade * $newweights[$new->dimensionid];
+            $new->peercomment       = $old->feedback;
+            $new->peercommentformat = FORMAT_HTML;
+            $newid = $DB->insert_record('workshop_grades', $new);
+            $DB->set_field('workshop_grades_old', 'newplugin', 'rubric', array('id' => $old->id));
+            $DB->set_field('workshop_grades_old', 'newid', $newid, array('id' => $old->id));
+        }
+        $rs->close();
+    }
+}
+
+/**
+ * Transforms given record from workshop_elements_old into an object to be saved into workshopform_rubric_levels
  *
- * This is used during Criterion -> Rubric conversion
+ * This is used during Criterion 1.9 -> Rubric 2.0 conversion
  *
  * @param stdclass $old legacy record from workshop_elements_old
  * @param int $newdimensionid id of the new workshopform_rubric dimension record to be linked to
@@ -134,6 +238,24 @@ function workshopform_rubric_upgrade_criterion_level(stdclass $old, $newdimensio
     $new->dimensionid = $newdimensionid;
     $new->grade = $old->maxscore;
     $new->definition = $old->description;
+    $new->definitionformat = FORMAT_HTML;
+    return $new;
+}
+
+/**
+ * Transforms given record into an object to be saved into workshopform_rubric_levels
+ *
+ * This is used during Rubric 1.9 -> Rubric 2.0 conversion
+ *
+ * @param stdclass $old legacy record from joined workshop_elements_old + workshop_rubrics_old
+ * @param int $newdimensionid id of the new workshopform_rubric dimension record to be linked to
+ * @return stdclass to be saved in workshopform_rubric_levels
+ */
+function workshopform_rubric_upgrade_rubric_level(stdclass $old, $newdimensionid) {
+    $new = new stdclass();
+    $new->dimensionid = $newdimensionid;
+    $new->grade = $old->rgrade * workshopform_rubric_upgrade_weight($old->eweight);
+    $new->definition = $old->rdesc;
     $new->definitionformat = FORMAT_HTML;
     return $new;
 }
@@ -151,4 +273,30 @@ function workshopform_rubric_upgrade_legacy_needed() {
         return false;
     }
     return true;
+}
+
+/**
+ * Given old workshop element weight, returns the weight multiplier
+ *
+ * Negative weights are not supported any more and are replaced with weight = 0.
+ * Legacy workshop did not store the raw weight but the index in the array
+ * of weights (see $WORKSHOP_EWEIGHTS in workshop 1.x). workshop 2.0 uses
+ * integer weights only (0-16) so all previous weights are multiplied by 4.
+ *
+ * @param $oldweight index in legacy $WORKSHOP_EWEIGHTS
+ * @return int new weight
+ */
+function workshopform_rubric_upgrade_weight($oldweight) {
+
+    switch ($oldweight) {
+        case 8: $weight = 1; break;
+        case 9: $weight = 2; break;
+        case 10: $weight = 3; break;
+        case 11: $weight = 4; break;
+        case 12: $weight = 6; break;
+        case 13: $weight = 8; break;
+        case 14: $weight = 16; break;
+        default: $weight = 0;
+    }
+    return $weight;
 }
