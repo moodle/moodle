@@ -21,7 +21,7 @@ class question_edit_multianswer_form extends question_edit_form {
     var $savedquestiondisplay ;
     var $used_in_quiz = false ;
     var $qtype_change = false ;
-    var $negative_diff = false ;
+    var $negative_diff = 0 ;
     var $nb_of_quiz = 0;
     var $nb_of_attempts = 0;
     public $confirm = 0 ;
@@ -29,16 +29,16 @@ class question_edit_multianswer_form extends question_edit_form {
 
     function question_edit_multianswer_form(&$submiturl, &$question, &$category, &$contexts, $formeditable = true){
         global $QTYPES, $SESSION, $CFG, $DB;
-  /*      $this->regenerate = true;
+        $this->regenerate = true;
         if  (  "1" == optional_param('reload','', PARAM_INT )) {
             $this->reload = true ;
         }else {
             $this->reload = false ;
         }
        // $this->question = $question;
-       //$used_in_quiz =false;
-        echo "<p> question <pre>";print_r($question);echo "</pre></p>";
-        if(! empty($question->id)){
+       $this->used_in_quiz =false;
+      //  echo "<p> question <pre>";print_r($question);echo "</pre></p>";
+        if(isset($question->id) && $question->id != 0 ){
             $this->savedquestiondisplay =fullclone($question ) ;
             if ($list = $DB->get_records('quiz_question_instances', array( 'question'=> $question->id))){
                 foreach($list as $key => $li){
@@ -52,7 +52,7 @@ class question_edit_multianswer_form extends question_edit_form {
         }
 
 
-*/
+
 
 
         parent::question_edit_form($submiturl, $question, $category, $contexts, $formeditable);
@@ -61,14 +61,13 @@ class question_edit_multianswer_form extends question_edit_form {
 
 
     function definition_inner(&$mform) {
-   //     $mform->addElement('hidden', 'reload', 1);
-   //     $mform->setType('reload', PARAM_INT);
+        $mform->addElement('hidden', 'reload', 1);
+        $mform->setType('reload', PARAM_INT);
         $question_type_names = question_type_menu();
-        $mform->addRule('questiontext', null, 'required', null, 'client');
 
         // Remove meaningless defaultgrade field.
         $mform->removeElement('defaultgrade');
-  /*      $this->confirm = optional_param('confirm','0', PARAM_RAW);
+        $this->confirm = optional_param('confirm','0', PARAM_RAW);
 
          // display the questions from questiontext;
         if  (  "" != optional_param('questiontext','', PARAM_RAW)) {
@@ -187,9 +186,6 @@ class question_edit_multianswer_form extends question_edit_form {
             }
             if($this->type_change )
                {
-                //$this->used_in_quiz
-
-                  //  $mform->addElement('header', 'additemhdr', "WARNING");
                             $mform->addElement('static', 'alert1', "<strong>"."Question type change "."</strong>","<strong>".get_string(' at least one question type has been changed. Did you add,delete or move a question ? Look ahead ','qtype_multianswer')."</strong>");//$countsubquestions."-".$countsavedsubquestions
             }
             echo '</div>';
@@ -209,7 +205,7 @@ class question_edit_multianswer_form extends question_edit_form {
         }else {
             $mform->addElement('hidden', 'confirm',0);
         }
-*/
+
     }
 
 
@@ -264,7 +260,7 @@ class question_edit_multianswer_form extends question_edit_form {
             }
         }
         }
-/*
+
         // set default to $questiondisplay questions elements
         if (isset($this->questiondisplay->options->questions)) {
             $subquestions = fullclone($this->questiondisplay->options->questions) ;
@@ -347,9 +343,6 @@ class question_edit_multianswer_form extends question_edit_form {
                 }
             }
         }
-        if (( $this->negative_diff || $this->used_in_quiz && ($this->negative_diff > 0 ||$this->negative_diff < 0 || $this->type_change ))&& $this->confirm == 0 ){
-            $this->_form->setElementError('confirm',"confirm then save");
-        }
        $default_values['alertas']= "<strong>".get_string("
 
 <ul>
@@ -357,7 +350,7 @@ class question_edit_multianswer_form extends question_edit_form {
   <li>change the questions order in the text,</li>
   <li>change their question type (numerical, shortanswer, multiple choice). </li></ul>
 ",'qtype_multianswer')."</strong>";
-*/
+
         if( $default_values != "")   {
             $question = (object)((array)$question + $default_values);
         }
@@ -366,11 +359,14 @@ class question_edit_multianswer_form extends question_edit_form {
 
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
-/*        echo "<p> errors<pre>";print_r($errors);echo "</pre></p>";
+  
+        $questiondisplay = qtype_multianswer_extract_question($data['questiontext']) ;
 
-        if (isset($this->questiondisplay->options->questions)) {
 
-           $subquestions = fullclone($this->questiondisplay->options->questions) ;
+
+        if (isset($questiondisplay->options->questions)) {
+
+           $subquestions = fullclone($questiondisplay->options->questions) ;
             if (count($subquestions)) {
                 $sub =1;
                 foreach ($subquestions as $subquestion) {
@@ -379,10 +375,9 @@ class question_edit_multianswer_form extends question_edit_form {
                     $maxgrade = false;
                     $maxfraction = -1;
              if(isset($this->savedquestiondisplay->options->questions[$sub]->qtype) &&
-             $this->savedquestiondisplay->options->questions[$sub]->qtype != $this->questiondisplay->options->questions[$sub]->qtype ){
+             $this->savedquestiondisplay->options->questions[$sub]->qtype != $questiondisplay->options->questions[$sub]->qtype ){
                $storemess = " STORED QTYPE ".$question_type_names[$this->savedquestiondisplay->options->questions[$sub]->qtype];
             }
-                 //   $errors['subhdr'.$sub]=$storemess ;
                     foreach ( $subquestion->answer as $key=>$answer) {
                         $trimmedanswer = trim($answer);
                         if ($trimmedanswer !== '') {
@@ -414,9 +409,13 @@ class question_edit_multianswer_form extends question_edit_form {
                 $errors['questiontext']=get_string('questionsmissing', 'qtype_multianswer');
             }
         }
+           // $question = qtype_multianswer_extract_question($data['questiontext']);
+          //  if (isset $question->options->questions
+        if (( $this->negative_diff > 0 || $this->used_in_quiz && ($this->negative_diff > 0 ||$this->negative_diff < 0 || $this->type_change ))&& $this->confirm == 0 ){
+       $errors['confirm']="confirm then save".$this->negative_diff ;
+        }
 
-        echo "<p> errors<pre>";print_r($errors);echo "</pre></p>";
-*/        
+        
     return $errors;
     }
 
