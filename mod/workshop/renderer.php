@@ -425,7 +425,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             if (is_null($task->link)) {
                 $title = $task->title;
             } else {
-                $title = html_writer::link($task->link, $task->text);
+                $title = html_writer::link($task->link, $task->title);
             }
             $title = $this->output->container($title, 'title');
             $details = $this->output->container($task->details, 'details');
