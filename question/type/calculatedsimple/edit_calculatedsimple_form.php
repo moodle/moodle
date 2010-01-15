@@ -52,7 +52,6 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         global $QTYPES, $SESSION, $CFG, $DB;
         $this->regenerate = true;
         $this->question = $question;
-                echo "<p> question <pre>";print_r($question);echo "</pre></p>";
 
         $this->qtypeobj =& $QTYPES[$this->question->qtype];
         //get the dataset definitions for this question
