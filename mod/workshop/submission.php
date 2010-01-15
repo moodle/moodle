@@ -172,7 +172,7 @@ if ($submission->id) {
 
 if ($ownsubmission and $editable) {
     $url = new moodle_url($PAGE->url, array('edit' => 'on', 'id' => $submission->id));
-    echo $OUTPUT->sinle_button($url, get_string('editsubmission', 'workshop'), 'get');
+    echo $OUTPUT->single_button($url, get_string('editsubmission', 'workshop'), 'get');
 }
 
 // and possibly display the submission's review(s)
