@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the version of workshop accumulative grading strategy subplugin
+ * Defines the version of workshop rubric grading strategy subplugin
  *
  * This code fragment is called by moodle_needs_upgrading() and
  * /admin/index.php

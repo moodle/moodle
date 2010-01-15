@@ -45,7 +45,7 @@ function workshopform_numerrors_upgrade_legacy() {
         $legacyworkshops = array_keys($legacyworkshops);
         // get some needed info about the workshops
         $workshopinfos = $DB->get_records_list('workshop_old', 'id', $legacyworkshops, 'id', 'id,grade');
-        // get the list of all accumulative form elements
+        // get the list of all form elements
         list($workshopids, $params) = $DB->get_in_or_equal($legacyworkshops, SQL_PARAMS_NAMED);
         $sql = "SELECT *
                   FROM {workshop_elements_old}
@@ -53,7 +53,6 @@ function workshopform_numerrors_upgrade_legacy() {
                        AND newid IS NULL";
         $rs = $DB->get_recordset_sql($sql, $params);
         $newworkshopids = workshop_upgrade_workshop_id_mappings();
-        $newelementids = array();   // (int)workshopid => array of (int)elementno => (int)newelementid
         foreach ($rs as $old) {
             // process the information about mapping
             $newmapping = new stdclass();
@@ -75,10 +74,6 @@ function workshopform_numerrors_upgrade_legacy() {
             } else {
                 $newid = 0;
             }
-            if (!isset($newelementids[$old->workshopid])) {
-                $newelementids[$old->workshopid] = array();
-            }
-            $newelementids[$old->workshopid][$old->elementno] = $newid;
             $DB->set_field('workshop_elements_old', 'newplugin', 'numerrors', array('id' => $old->id));
             $DB->set_field('workshop_elements_old', 'newid', $newid, array('id' => $old->id));
 

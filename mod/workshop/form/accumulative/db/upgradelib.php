@@ -41,7 +41,7 @@ function workshopform_accumulative_upgrade_legacy() {
     if ($legacyworkshops = $DB->get_records('workshop_old', array('gradingstrategy' => 1), 'course,id', 'id')) {
         echo $OUTPUT->notification('Copying assessment forms elements', 'notifysuccess');
         $legacyworkshops = array_keys($legacyworkshops);
-        // get the list of all accumulative form elements
+        // get the list of all form elements
         list($workshopids, $params) = $DB->get_in_or_equal($legacyworkshops, SQL_PARAMS_NAMED);
         $sql = "SELECT *
                   FROM {workshop_elements_old}
@@ -49,16 +49,11 @@ function workshopform_accumulative_upgrade_legacy() {
                        AND newid IS NULL";
         $rs = $DB->get_recordset_sql($sql, $params);
         $newworkshopids = workshop_upgrade_workshop_id_mappings();
-        $newelementids = array();   // (int)workshopid => array of (int)elementno => (int)newelementid
         // prepare system (global) scales to replace the legacy in-built ones
         $newscaleids = workshopform_accumulative_upgrade_scales();
         foreach ($rs as $old) {
             $new = workshopform_accumulative_upgrade_element($old, $newscaleids, $newworkshopids[$old->workshopid]);
             $newid = $DB->insert_record('workshopform_accumulative', $new);
-            if (!isset($newelementids[$old->workshopid])) {
-                $newelementids[$old->workshopid] = array();
-            }
-            $newelementids[$old->workshopid][$old->elementno] = $newid;
             $DB->set_field('workshop_elements_old', 'newplugin', 'accumulative', array('id' => $old->id));
             $DB->set_field('workshop_elements_old', 'newid', $newid, array('id' => $old->id));
         }
