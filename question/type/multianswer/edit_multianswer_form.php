@@ -29,7 +29,7 @@ class question_edit_multianswer_form extends question_edit_form {
 
     function question_edit_multianswer_form(&$submiturl, &$question, &$category, &$contexts, $formeditable = true){
         global $QTYPES, $SESSION, $CFG, $DB;
-        $this->regenerate = true;
+  /*      $this->regenerate = true;
         if  (  "1" == optional_param('reload','', PARAM_INT )) {
             $this->reload = true ;
         }else {
@@ -37,6 +37,7 @@ class question_edit_multianswer_form extends question_edit_form {
         }
        // $this->question = $question;
        //$used_in_quiz =false;
+        echo "<p> question <pre>";print_r($question);echo "</pre></p>";
         if(! empty($question->id)){
             $this->savedquestiondisplay =fullclone($question ) ;
             if ($list = $DB->get_records('quiz_question_instances', array( 'question'=> $question->id))){
@@ -51,7 +52,7 @@ class question_edit_multianswer_form extends question_edit_form {
         }
 
 
-
+*/
 
 
         parent::question_edit_form($submiturl, $question, $category, $contexts, $formeditable);
@@ -60,14 +61,14 @@ class question_edit_multianswer_form extends question_edit_form {
 
 
     function definition_inner(&$mform) {
-        $mform->addElement('hidden', 'reload', 1);
-        $mform->setType('reload', PARAM_INT);
+   //     $mform->addElement('hidden', 'reload', 1);
+   //     $mform->setType('reload', PARAM_INT);
         $question_type_names = question_type_menu();
         $mform->addRule('questiontext', null, 'required', null, 'client');
 
         // Remove meaningless defaultgrade field.
         $mform->removeElement('defaultgrade');
-        $this->confirm = optional_param('confirm','0', PARAM_RAW);
+  /*      $this->confirm = optional_param('confirm','0', PARAM_RAW);
 
          // display the questions from questiontext;
         if  (  "" != optional_param('questiontext','', PARAM_RAW)) {
@@ -208,7 +209,7 @@ class question_edit_multianswer_form extends question_edit_form {
         }else {
             $mform->addElement('hidden', 'confirm',0);
         }
-
+*/
     }
 
 
@@ -263,7 +264,7 @@ class question_edit_multianswer_form extends question_edit_form {
             }
         }
         }
-
+/*
         // set default to $questiondisplay questions elements
         if (isset($this->questiondisplay->options->questions)) {
             $subquestions = fullclone($this->questiondisplay->options->questions) ;
@@ -356,7 +357,7 @@ class question_edit_multianswer_form extends question_edit_form {
   <li>change the questions order in the text,</li>
   <li>change their question type (numerical, shortanswer, multiple choice). </li></ul>
 ",'qtype_multianswer')."</strong>";
-
+*/
         if( $default_values != "")   {
             $question = (object)((array)$question + $default_values);
         }
@@ -365,6 +366,8 @@ class question_edit_multianswer_form extends question_edit_form {
 
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
+/*        echo "<p> errors<pre>";print_r($errors);echo "</pre></p>";
+
         if (isset($this->questiondisplay->options->questions)) {
 
            $subquestions = fullclone($this->questiondisplay->options->questions) ;
@@ -412,7 +415,9 @@ class question_edit_multianswer_form extends question_edit_form {
             }
         }
 
-        return $errors;
+        echo "<p> errors<pre>";print_r($errors);echo "</pre></p>";
+*/        
+    return $errors;
     }
 
     function qtype() {
