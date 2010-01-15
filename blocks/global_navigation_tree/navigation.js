@@ -24,6 +24,7 @@
  */
 
 /**
+ * This namespace will contain all of the information fo the blocks
  * @namespace
  */
 var blocks = blocks || {};
@@ -39,6 +40,7 @@ blocks.navigation = {
     /** An array of initialised trees */
     treecollection:[],
     /**
+     * Will contain all of the classes for the navigation blocks
      * @namespace
      */
     classes:{},
@@ -77,51 +79,57 @@ blocks.navigation.classes.tree = function(id, key, properties) {
     this.position = 'block';
     this.skipsetposition = false;
     this.candock = false;
-    if (properties) {
-        if (properties.expansions) {
-            this.expansions = properties.expansions;
-        }
-        if (properties.instance) {
-            this.instance = properties.instance;
-        }
-        if (properties.candock) {
-            this.candock = true;
-        }
+    
+    if (properties.expansions) {
+        this.expansions = properties.expansions;
     }
-
-    if (Y.one('#inst'+this.id) === null) {
-        return;
+    if (properties.instance) {
+        this.instance = properties.instance;
     }
-
-    for (var i in this.expansions) {
-        Y.one('#'+this.expansions[i].id).on('ajaxload|click', this.init_load_ajax, this, this.expansions[i]);
-        blocks.navigation.expandablebranchcount++;
+    if (properties.candock) {
+        this.candock = true;
     }
 
     var node = Y.one('#inst'+this.id);
+    
+    // Can't find the block instance within the page
+    if (node === null) {
+        return;
+    }
+    // Attach event to toggle expansion
     node.all('.tree_item.branch').on('click', this.toggleexpansion , this);
 
-    if (this.candock) {
-        this.init(node);
+    // Attache events to expand by AJAX
+    for (var i in this.expansions) {
+        Y.one('#'+this.expansions[i].id).on('ajaxload|click', this.init_load_ajax, this, this.expansions[i]);
+        blocks.navigation.expandablebranchcount++;
     }
 
     if (node.hasClass('block_js_expansion')) {
         node.on('mouseover', function(e){this.toggleClass('mouseover');}, node);
         node.on('mouseout', function(e){this.toggleClass('mouseover');}, node);
     }
+
+    // Call the generic blocks init method to add all the generic stuff
+    if (this.candock) {
+        this.init(node);
+    }
 }
 
 /**
  * Loads a branch via AJAX
- * @param {event} The event object
- * @param {object} A branch to load via ajax
+ * @param {event} e The event object
+ * @param {object} branch A branch to load via ajax
  */
 blocks.navigation.classes.tree.prototype.init_load_ajax = function(e, branch) {
     e.stopPropagation();
     if (e.target.get('nodeName').toUpperCase() != 'P') {
         return true;
     }
-    var cfginstance = (this.instance != null)?'&instance='+this.instance:'';
+    var cfginstance = '';
+    if (this.instance != null) {
+        cfginstance = '&instance='+this.instance
+    }
     Y.io(moodle_cfg.wwwroot+'/lib/ajax/getnavbranch.php', {
         method:'POST',
         data:'elementid='+branch.id+'&id='+branch.branchid+'&type='+branch.type+'&sesskey='+moodle_cfg.sesskey+cfginstance,
@@ -139,6 +147,10 @@ blocks.navigation.classes.tree.prototype.init_load_ajax = function(e, branch) {
 
 /**
  * Takes an branch provided through ajax and loads it into the tree
+ * @param {int} tid The transaction id
+ * @param {object} outcome
+ * @param {mixed} args
+ * @return bool
  */
 blocks.navigation.classes.tree.prototype.load_ajax = function(tid, outcome, args) {
     // Check the status
@@ -152,17 +164,22 @@ blocks.navigation.classes.tree.prototype.load_ajax = function(tid, outcome, args
             return true;
         }
     }
+    // The branch is empty so class it accordingly
     args.target.replaceClass('branch', 'emptybranch');
     return true;
 }
 
 /**
  * Adds a branch into the tree provided with some XML
+ * @param {xmldoc} branchxml
+ * @param {Y.Node} target
+ * @param {int} depth
+ * @return bool
  */
 blocks.navigation.classes.tree.prototype.add_branch = function(branchxml, target, depth) {
 
-    var branch = new blocks.navigation.classes.branch(this);
-    branch.construct_from_xml(branchxml);
+    // Make the new branch into an object
+    var branch = new blocks.navigation.classes.branch(this, branchxml);
 
     var childrenul = false;
     if (depth === 1) {
@@ -174,9 +191,9 @@ blocks.navigation.classes.tree.prototype.add_branch = function(branchxml, target
     } else {
         childrenul = branch.inject_into_dom(target);
     }
-
     if (childrenul) {
         for (var i=0;i<branch.children.childNodes.length;i++) {
+            // Add each branch to the tree
             this.add_branch(branch.children.childNodes[i], childrenul, depth+1);
         }
     }
@@ -184,9 +201,16 @@ blocks.navigation.classes.tree.prototype.add_branch = function(branchxml, target
 }
 /**
  * Toggle a branch as expanded or collapsed
+ * @param {Event} e
  */
 blocks.navigation.classes.tree.prototype.toggleexpansion = function(e) {
-    e.target.ancestor('LI').toggleClass('collapsed');
+    // First check if they managed to click on the li iteslf, then find the closest
+    // LI ancestor and use that
+    if (e.target.get('nodeName').toUpperCase() == 'LI') {
+        e.target.toggleClass('collapsed');
+    } else if (e.target.ancestor('LI')) {
+        e.target.ancestor('LI').toggleClass('collapsed');
+    }
     if (this.candock) {
         blocks.dock.resize();
     }
@@ -194,10 +218,12 @@ blocks.navigation.classes.tree.prototype.toggleexpansion = function(e) {
 
 /**
  * This class represents a branch for a tree
- * @class tree
+ * @class branch
  * @constructor
+ * @param {blocks.navigation.classes.tree} tree
+ * @param {xmldoc|null} xml
  */
-blocks.navigation.classes.branch = function(tree) {
+blocks.navigation.classes.branch = function(tree, xml) {
     this.tree = tree;
     this.name = null;
     this.title = null;
@@ -212,11 +238,17 @@ blocks.navigation.classes.branch = function(tree) {
     this.hidden = false;
     this.haschildren = false;
     this.children = false;
+    if (xml !== null) {
+        // Construct from the provided xml
+        this.construct_from_xml(xml);
+    }
 }
 /**
  * Constructs a branch from XML
+ * @param {xmldoc} xml
  */
 blocks.navigation.classes.branch.prototype.construct_from_xml = function(xml) {
+    // Get required attributes
     this.title = xml.getAttribute('title');
     this.classname = xml.getAttribute('class');
     this.id = xml.getAttribute('id');
@@ -226,14 +258,17 @@ blocks.navigation.classes.branch.prototype.construct_from_xml = function(xml) {
     this.type = xml.getAttribute('type');
     this.expandable = xml.getAttribute('expandable');
     this.expansionceiling = xml.getAttribute('expansionceiling');
+    // Boolean attributes
     this.hidden = (xml.getAttribute('hidden')=='true');
     this.haschildren = (xml.getAttribute('haschildren')=='true');
 
     if (this.id && this.id.match(/^expandable_branch_\d+$/)) {
+        // Assign a new unique id for this new expandable branch
         blocks.navigation.expandablebranchcount++;
         this.id = 'expandable_branch_'+blocks.navigation.expandablebranchcount;
     }
 
+    // Retrieve any additional information
     for (var i=0; i<xml.childNodes.length;i++) {
         var node = xml.childNodes[i];
         switch (node.nodeName.toLowerCase()) {
@@ -247,6 +282,7 @@ blocks.navigation.classes.branch.prototype.construct_from_xml = function(xml) {
 }
 /**
  * Injects a branch into the tree at the given location
+ * @param {element} element
  */
 blocks.navigation.classes.branch.prototype.inject_into_dom = function(element) {
 
