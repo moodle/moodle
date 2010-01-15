@@ -254,7 +254,7 @@ function rss_add_items($items) {
             if (isset($item->tags)) {
                 $attributes = array();
                 if (isset($item->tagscheme)) {
-                    $attributes['domain'] = $item->tagscheme;
+                    $attributes['domain'] = s($item->tagscheme);
                 }
                 foreach ($item->tags as $tag) {
                     $result .= rss_full_tag('category', 3, false, $tag, $attributes);
