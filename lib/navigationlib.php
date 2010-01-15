@@ -2707,7 +2707,7 @@ class settings_navigation extends navigation_node {
                     require_once($CFG->dirroot.'/lib/adminlib.php');
                 }
                 $adminroot = admin_get_root(false, false);
-                $branchkey = $this->add(get_string('administrationsite'),new moodle_url($CFG->wwwroot.'/admin/'), self::TYPE_SETTING);
+                $branchkey = $this->add(get_string('administrationsite'), null, self::TYPE_SETTING);
                 $referencebranch = $this->get($branchkey);
                 foreach ($adminroot->children as $adminbranch) {
                     $this->load_administration_settings($referencebranch, $adminbranch);
