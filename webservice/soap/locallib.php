@@ -56,17 +56,20 @@ class webservice_soap_server extends webservice_zend_server {
         global $CFG;
 
         parent::init_zend_server();
-
+        
         if ($this->simple) {
             $username = optional_param('wsusername', '', PARAM_RAW);
             $password = optional_param('wspassword', '', PARAM_RAW);
             // aparently some clients and zend soap server does not work well with "&" in urls :-(
-            //TODO: report error if slasharguments disabled
+            //TODO: the zend error has been fixed in the last Zend SOAP version, check that is fixed and remove obsolete code
             $url = $CFG->wwwroot.'/webservice/soap/simpleserver.php/'.urlencode($username).'/'.urlencode($password);
             // the Zend server is using this uri directly in xml - weird :-(
             $this->zend_server->setUri(htmlentities($url));
         } else {
-            die('TODO: not implemented yet');
+            $wstoken = optional_param('wstoken', '', PARAM_RAW);
+            $url = $CFG->wwwroot.'/webservice/soap/server.php?wstoken='.urlencode($wstoken);
+            // the Zend server is using this uri directly in xml - weird :-(
+            $this->zend_server->setUri(htmlentities($url));
         }
 
         if (!optional_param('wsdl', 0, PARAM_BOOL)) {
