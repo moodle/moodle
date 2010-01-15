@@ -308,7 +308,7 @@ class action_link implements renderable {
     public function __construct(moodle_url $url, $text, component_action $action=null, array $attributes=null) {
         $this->url       = clone($url);
         $this->text      = $text;
-        if ($actions) {
+        if ($action) {
             $this->add_action($action);
         }
     }

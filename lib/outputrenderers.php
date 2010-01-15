@@ -932,7 +932,7 @@ class core_renderer extends renderer_base {
         }
         $link = new action_link($url, $text, $action, $attributes);
 
-        $this->render($link);
+        return $this->render($link);
     }
 
     /**
@@ -954,7 +954,7 @@ class core_renderer extends renderer_base {
         $attributes['href'] = $link->url;
 
         if ($link->actions) {
-            if (empty($attributes[$id])) {
+            if (empty($attributes['id'])) {
                 $id = html_writer::random_id('action_link');
                 $attributes['id'] = $id;
             } else {
