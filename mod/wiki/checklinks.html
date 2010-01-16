@@ -11,7 +11,7 @@
 <input type="hidden" name="wikipage" value="<?php print $wikipage?>" />
 <?php
   $pagelist=wiki_admin_checklinks_list();
-  echo html_writer::input_select($pagelist, "pagetocheck", $wikipage, false);
+  echo html_writer::select($pagelist, "pagetocheck", $wikipage, false);
 ?>
   <input type="submit" name="proceed" value="<?php print get_string("checklinks","wiki"); ?>" />
 </fieldset>

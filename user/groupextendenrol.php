@@ -174,9 +174,9 @@ foreach ($_POST as $k => $v) {
 echo $OUTPUT->table($table);
 echo '<div style="width:100%;text-align:center;"><strong>';
 echo get_string('extendperiod') . ' ';
-echo html_writer::input_select($periodmenu, 'extendperiod');
+echo html_writer::select($periodmenu, 'extendperiod');
 echo ' ' . get_string('startingfrom') . ' ';
-echo html_writer::input_select($basemenu, 'extendbase', '2', false);
+echo html_writer::select($basemenu, 'extendbase', '2', false);
 echo '</strong><br />';
 echo '<input type="submit" value="'.get_string('savechanges').'" />';
 echo '</div></form>';

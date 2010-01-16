@@ -4172,7 +4172,7 @@ function forum_print_rating_menu($postid, $userid, $scale, $myrating=NULL) {
         $strrate = get_string("rate", "forum");
     }
     $scale = array(FORUM_UNSET_POST_RATING => $strrate.'...') + $scale;
-    echo html_writer::input_select($scale, $postid, $myrating, false, array('class'=>'forumpostratingmenu'));
+    echo html_writer::select($scale, $postid, $myrating, false, array('class'=>'forumpostratingmenu'));
 }
 
 /**

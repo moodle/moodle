@@ -1537,7 +1537,7 @@ function calendar_print_month_selector($name, $selected) {
         $months[$i] = userdate(gmmktime(12, 0, 0, $i, 15, 2000), '%B');
     }
 
-    echo html_writer::input_select($months, $name, $selected, false);
+    echo html_writer::select($months, $name, $selected, false);
 }
 
 function calendar_get_filters_status() {

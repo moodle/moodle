@@ -74,7 +74,7 @@
        foreach ($dbtypes as $dbtype) {
            $dboptions[$dbtype] = $dbtype;
        }
-       echo html_writer::input_select($dboptions, "type", $config->type, false);
+       echo html_writer::select($dboptions, "type", $config->type, false);
     ?>
 
     </td>
@@ -86,7 +86,7 @@
 <tr valign="top" class="required">
     <td align="right"><label for="menusybasequoting"><?php print_string("auth_dbsybasequoting", "auth_db") ?></label></td>
     <td>
-        <?php echo html_writer::input_select($yesno, 'sybasequoting', $config->sybasequoting, false); ?>
+        <?php echo html_writer::select($yesno, 'sybasequoting', $config->sybasequoting, false); ?>
     </td>
     <td><?php print_string("auth_dbsybasequotinghelp", "auth_db") ?></td>
 </tr>
@@ -192,7 +192,7 @@
         $passtype["md5"]       = get_string("md5", "auth");
         $passtype["sha1"]      = get_string("sha1", "auth");
         $passtype["internal"]  = get_string("internal", "auth");
-        echo html_writer::input_select($passtype, "passtype", $config->passtype, false);
+        echo html_writer::select($passtype, "passtype", $config->passtype, false);
 
         ?>
     </td>
@@ -225,7 +225,7 @@
 <tr valign="top">
     <td align="right"><label for="menudebugauthdb"><?php print_string("auth_dbdebugauthdb", "auth_db") ?></label></td>
     <td>
-        <?php echo html_writer::input_select($yesno, 'debugauthdb', $config->debugauthdb, false); ?>
+        <?php echo html_writer::select($yesno, 'debugauthdb', $config->debugauthdb, false); ?>
     </td>
     <td><?php print_string("auth_dbdebugauthdbhelp", "auth_db") ?></td>
 </tr>
@@ -259,7 +259,7 @@
        $deleteopt[AUTH_REMOVEUSER_KEEP] = get_string('auth_remove_keep','auth');
        $deleteopt[AUTH_REMOVEUSER_SUSPEND] = get_string('auth_remove_suspend','auth');
        $deleteopt[AUTH_REMOVEUSER_FULLDELETE] = get_string('auth_remove_delete','auth');
-       echo html_writer::input_select($deleteopt, 'removeuser', $config->removeuser, false);
+       echo html_writer::select($deleteopt, 'removeuser', $config->removeuser, false);
     ?>
     </td>
     <td>

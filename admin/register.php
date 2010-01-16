@@ -71,7 +71,7 @@
     echo '<div class="fitem">';
     echo '<div class="fitemtitle"><label for="menucountry">'.get_string("country").'</label></div>';
     echo '<div class="felement ftext">';
-    echo html_writer::input_select(get_list_of_countries(), "country", $admin->country, array(''=>get_string("selectacountry")."..."));
+    echo html_writer::select(get_list_of_countries(), "country", $admin->country, array(''=>get_string("selectacountry")."..."));
     echo '</div>';
     echo '</div>';
 
@@ -82,7 +82,7 @@
     $options[0] = get_string("publicdirectory0");
     $options[1] = get_string("publicdirectory1");
     $options[2] = get_string("publicdirectory2");
-    echo html_writer::input_select($options, "public", "2", false);
+    echo html_writer::select($options, "public", "2", false);
     echo '</div>';
     echo '</div>';
 
@@ -92,7 +92,7 @@
     $options = array();
     $options[0] = get_string("registrationcontactno");
     $options[1] = get_string("registrationcontactyes");
-    echo html_writer::input_select($options, "contact", "1", false);
+    echo html_writer::select($options, "contact", "1", false);
     echo '</div>';
     echo '</div>';
 
@@ -167,7 +167,7 @@
     $options = array();
     $options[0] = get_string("registrationno");
     $options[1] = get_string("registrationyes");
-    echo html_writer::input_select($options, "mailme", "1", false);
+    echo html_writer::select($options, "mailme", "1", false);
     echo '</div>';
     echo '</div>';
 

@@ -72,7 +72,7 @@ class data_field_radiobutton extends data_field_base {
                 $options[$key] = $key;  //Build following indicies from the sql.
             }
         }
-        return html_writer::input_select($options, 'f_'.$this->field->id, $value);
+        return html_writer::select($options, 'f_'.$this->field->id, $value);
     }
 
     function parse_search_field() {

@@ -109,7 +109,7 @@ foreach ($users as $k => $v) {
     if(!$user = $DB->get_record('user', array('id'=>$v))) {
         continue;
     }
-    $checkbox = html_writer::input_select($state_names, 'states[' . $k . ']', empty($states[$k]) ? NOTES_STATE_PUBLIC : $states[$k], false);
+    $checkbox = html_writer::select($state_names, 'states[' . $k . ']', empty($states[$k]) ? NOTES_STATE_PUBLIC : $states[$k], false);
     $table->data[] = array(
         '<input type="hidden" name="userid['.$k.']" value="'.$v.'" />'. fullname($user, true),
         '<textarea name="contents['. $k . ']" rows="2" cols="40">' . strip_tags(@$contents[$k]) . '</textarea>',

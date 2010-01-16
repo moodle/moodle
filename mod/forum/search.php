@@ -351,7 +351,7 @@ function forum_print_big_search_form($course) {
     echo '<tr>';
     echo '<td class="c0"><label for="menuforumid">'.get_string('searchwhichforums', 'forum').'</label></td>';
     echo '<td class="c1">';
-    echo html_writer::input_select(forum_menu_list($course), 'forumid', '', array(''=>get_string('allforums', 'forum')));
+    echo html_writer::select(forum_menu_list($course), 'forumid', '', array(''=>get_string('allforums', 'forum')));
     echo '</td>';
     echo '</tr>';
 

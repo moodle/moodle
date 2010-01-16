@@ -65,7 +65,7 @@ if (!isset($frm->acceptechecktypes)) {
 <tr valign="top">
     <td align="right">enrol_currency:</td>
     <td><?php
-        echo html_writer::input_select(get_list_of_currencies(), "enrol_currency", $frm->enrol_currency, false);
+        echo html_writer::select(get_list_of_currencies(), "enrol_currency", $frm->enrol_currency, false);
         ?>
         <br />
         <?php print_string("currency") ?>
@@ -212,7 +212,7 @@ if (!isset($frm->acceptechecktypes)) {
     <td><?php
     $sorts = array('ttl' => get_string('adminemailexpiredsortsum', 'enrol_authorize'),
                    'cnt' => get_string('adminemailexpiredsortcount', 'enrol_authorize'));
-    echo html_writer::input_select($sorts, "an_sorttype", $frm->an_sorttype, false);
+    echo html_writer::select($sorts, "an_sorttype", $frm->an_sorttype, false);
     ?>
     <br />
     <?php print_string("adminemailexpiredsort", "enrol_authorize") ?></td>

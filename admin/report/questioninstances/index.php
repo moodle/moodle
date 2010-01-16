@@ -33,7 +33,7 @@ echo '<form method="get" action="." id="settingsform"><div>';
 echo $OUTPUT->heading(get_string('reportsettings', 'report_questioninstances'));
 echo '<p id="intro">', get_string('intro', 'report_questioninstances') , '</p>';
 echo '<p><label for="menuqtype"> ' . get_string('questiontype', 'admin') . '</label> ';
-echo html_writer::input_select($qtypechoices, 'qtype', $requestedqtype, array('_all_'=>get_string('all')));
+echo html_writer::select($qtypechoices, 'qtype', $requestedqtype, array('_all_'=>get_string('all')));
 echo '</p>';
 echo '<p><input type="submit" id="settingssubmit" value="' .
         get_string('getreport', 'report_questioninstances') . '" /></p>';

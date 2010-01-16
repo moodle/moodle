@@ -179,7 +179,7 @@ if (empty($availablefilters)) {
         } else {
             $activechoices[TEXTFILTER_INHERIT] = $strdefaultoff;
         }
-        $row[] = html_writer::input_select($activechoices, str_replace('/', '_', $filter), $filterinfo->localstate, false);
+        $row[] = html_writer::select($activechoices, str_replace('/', '_', $filter), $filterinfo->localstate, false);
 
         // Settings link, if required
         if ($settingscol) {

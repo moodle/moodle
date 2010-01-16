@@ -15,7 +15,7 @@
     <td>
     <?php
         global $OUTPUT;
-        echo html_writer::input_select($paypalcurrencies, "enrol_currency", $frm->enrol_currency, false);
+        echo html_writer::select($paypalcurrencies, "enrol_currency", $frm->enrol_currency, false);
     ?>
     </td>
     <td>

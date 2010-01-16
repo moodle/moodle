@@ -128,7 +128,7 @@ class edit_key extends XMLDBAction {
     /// if ($key->getType() != XMLDB_KEY_FOREIGN_UNIQUE) {
     ///     unset ($typeoptions[XMLDB_KEY_FOREIGN_UNIQUE);
     /// }
-        $select = html_writer::input_select($typeoptions, 'type', $key->getType(), false);
+        $select = html_writer::select($typeoptions, 'type', $key->getType(), false);
 
         $o.= '      <tr valign="top"><td><label for="menutype" accesskey="t">Type:</label></td>';
         $o.= '        <td colspan="2">' . $select . '</td></tr>';

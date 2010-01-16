@@ -9,7 +9,7 @@
         $options['0']  = get_string('default', 'calendar');
         $options[CALENDAR_TF_12] = get_string('timeformat_12', 'calendar');
         $options[CALENDAR_TF_24] = get_string('timeformat_24', 'calendar');
-        echo html_writer::input_select($options, "timeformat", $prefs->timeformat, false);
+        echo html_writer::select($options, "timeformat", $prefs->timeformat, false);
     ?>
     <p><?php print_string('explain_timeformat', 'calendar'); ?></p>
     </td>
@@ -27,7 +27,7 @@
         $options[4] = get_string('thursday', 'calendar');
         $options[5] = get_string('friday', 'calendar');
         $options[6] = get_string('saturday', 'calendar');
-        echo html_writer::input_select($options, 'startwday', $prefs->startwday, false);
+        echo html_writer::select($options, 'startwday', $prefs->startwday, false);
     ?>
     <p><?php print_string('explain_startwday', 'calendar'); ?></p>
     </td>
@@ -41,7 +41,7 @@
         for ($i=1; $i<=20; $i++) {
             $options[$i] = $i;
         }
-        echo html_writer::input_select($options, "maxevents", $prefs->maxevents, false);
+        echo html_writer::select($options, "maxevents", $prefs->maxevents, false);
     ?>
     <p><?php print_string('explain_maxevents', 'calendar'); ?></p>
     </td>
@@ -55,7 +55,7 @@
         for ($i=1; $i<=200; $i++) {
             $options[$i] = $i;
         }
-        echo html_writer::input_select($options, "lookahead", $prefs->lookahead, false);
+        echo html_writer::select($options, "lookahead", $prefs->lookahead, false);
     ?>
     <p><?php print_string('explain_lookahead', 'calendar'); ?></p>
     </td>
@@ -65,7 +65,7 @@
     <th scope="row"><?php print_string('pref_persistflt', 'calendar')?>:</th>
     <td>
     <?php
-    echo html_writer::input_select(array(0 => get_string('no'), 1 => get_string('yes')), 'persistflt', $prefs->persistflt, false);
+    echo html_writer::select(array(0 => get_string('no'), 1 => get_string('yes')), 'persistflt', $prefs->persistflt, false);
     ?>
     <p><?php print_string('explain_persistflt', 'calendar'); ?></p>
     </td>

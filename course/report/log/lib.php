@@ -261,7 +261,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     } else {
         $courses = array();
         $courses[$course->id] = $course->fullname . ((empty($course->category)) ? ' ('.get_string('site').') ' : '');
-        echo html_writer::input_select($courses,"id",$course->id, false);
+        echo html_writer::select($courses,"id",$course->id, false);
         if (has_capability('coursereport/log:view', $sitecontext)) {
             $a = new object();
             $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
@@ -279,11 +279,11 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         else {
             $groups = array();
         }
-        echo html_writer::input_select($groups, "group", $selectedgroup, get_string("allgroups"));
+        echo html_writer::select($groups, "group", $selectedgroup, get_string("allgroups"));
     }
 
     if ($showusers) {
-        echo html_writer::input_select($users, "user", $selecteduser, get_string("allparticipants"));
+        echo html_writer::select($users, "user", $selecteduser, get_string("allparticipants"));
     }
     else {
         $users = array();
@@ -294,21 +294,21 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         else {
             $users[0] = get_string('allparticipants');
         }
-        echo html_writer::input_select($users, "user", $selecteduser, false);
+        echo html_writer::select($users, "user", $selecteduser, false);
         $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
             ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showusers=1&showcourses=$showcourses";
         print_string('logtoomanyusers','moodle',$a);
     }
 
-    echo html_writer::input_select($dates, "date", $selecteddate, get_string("alldays"));
-    echo html_writer::input_select($activities, "modid", $selectedactivity, get_string("allactivities"));
-    echo html_writer::input_select($actions, 'modaction', $modaction, get_string("allactions"));
+    echo html_writer::select($dates, "date", $selecteddate, get_string("alldays"));
+    echo html_writer::select($activities, "modid", $selectedactivity, get_string("allactivities"));
+    echo html_writer::select($actions, 'modaction', $modaction, get_string("allactions"));
 
     $logformats = array('showashtml' => get_string('displayonpage'),
                         'downloadascsv' => get_string('downloadtext'),
                         'downloadasods' => get_string('downloadods'),
                         'downloadasexcel' => get_string('downloadexcel'));
-    echo html_writer::input_select($logformats, 'logformat', $logformat, false);
+    echo html_writer::select($logformats, 'logformat', $logformat, false);
     echo '<input type="submit" value="'.get_string('gettheselogs').'" />';
     echo '</div>';
     echo '</form>';
@@ -480,12 +480,12 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     echo "<input type=\"hidden\" name=\"showusers\" value=\"$showusers\" />\n";
     echo "<input type=\"hidden\" name=\"showcourses\" value=\"$showcourses\" />\n";
     if (has_capability('coursereport/log:view', $sitecontext) && $showcourses) {
-        echo html_writer::input_select($courses, "id", $course->id, false);
+        echo html_writer::select($courses, "id", $course->id, false);
     } else {
         //        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         $courses = array();
         $courses[$course->id] = $course->fullname . (($course->id == SITEID) ? ' ('.get_string('site').') ' : '');
-        echo html_writer::input_select($courses,"id",$course->id, false);
+        echo html_writer::select($courses,"id",$course->id, false);
         if (has_capability('coursereport/log:view', $sitecontext)) {
             $a = new object();
             $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
@@ -503,11 +503,11 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         else {
             $groups = array();
         }
-        echo html_writer::input_select($groups, "group", $selectedgroup, get_string("allgroups"));
+        echo html_writer::select($groups, "group", $selectedgroup, get_string("allgroups"));
     }
 
     if ($showusers) {
-        echo html_writer::input_select($users, "user", $selecteduser, get_string("allparticipants"));
+        echo html_writer::select($users, "user", $selecteduser, get_string("allparticipants"));
     }
     else {
         $users = array();
@@ -518,23 +518,23 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         else {
             $users[0] = get_string('allparticipants');
         }
-        echo html_writer::input_select($users, "user", $selecteduser, false);
+        echo html_writer::select($users, "user", $selecteduser, false);
         $a = new object();
         $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
             ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showusers=1&showcourses=$showcourses";
         print_string('logtoomanyusers','moodle',$a);
     }
-    echo html_writer::input_select($dates, "date", $selecteddate, get_string("alldays"));
+    echo html_writer::select($dates, "date", $selecteddate, get_string("alldays"));
 
-    echo html_writer::input_select($activities, "modid", $selectedactivity, get_string("allactivities"));
-    echo html_writer::input_select($actions, 'modaction', $modaction, get_string("allactions"));
+    echo html_writer::select($activities, "modid", $selectedactivity, get_string("allactivities"));
+    echo html_writer::select($actions, 'modaction', $modaction, get_string("allactions"));
 
     $logformats = array('showashtml' => get_string('displayonpage'),
                         'downloadascsv' => get_string('downloadtext'),
                         'downloadasods' => get_string('downloadods'),
                         'downloadasexcel' => get_string('downloadexcel'));
 
-    echo html_writer::input_select($logformats, 'logformat', $logformat, false);
+    echo html_writer::select($logformats, 'logformat', $logformat, false);
     echo '<input type="submit" value="'.get_string('gettheselogs').'" />';
     echo '</div>';
     echo '</form>';

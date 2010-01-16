@@ -147,7 +147,7 @@ class edit_field extends XMLDBAction {
         if ($field->getType() != XMLDB_TYPE_DATETIME) {
             unset ($typeoptions[XMLDB_TYPE_DATETIME]);
         }
-        $select = html_writer::input_select($typeoptions, 'type', $field->getType(), false);
+        $select = html_writer::select($typeoptions, 'type', $field->getType(), false);
         $o.= '      <tr valign="top"><td><label for="menutype" accesskey="t">Type:</label></td>';
         $o.= '        <td colspan="2">' . $select . '</td></tr>';
     /// xmldb_field Length
@@ -158,17 +158,17 @@ class edit_field extends XMLDBAction {
         $o.= '        <td colspan="2"><input name="decimals" type="text" size="6" maxlength="6" id="decimals" value="' . s($field->getDecimals()) . '" /><span id="decimalstip"></span></td></tr>';
     /// xmldb_field Unsigned
         $unsignedoptions = array (0 => 'signed', 1 => 'unsigned');
-        $select = html_writer::input_select($unsignedoptions, 'unsigned', $field->getUnsigned(), false);
+        $select = html_writer::select($unsignedoptions, 'unsigned', $field->getUnsigned(), false);
         $o.= '      <tr valign="top"><td><label for="menuunsigned" accesskey="u">Unsigned:</label></td>';
         $o.= '        <td colspan="2">' . $select . '</td></tr>';
     /// xmldb_field NotNull
         $notnulloptions = array (0 => 'null', 'not null');
-        $select = html_writer::input_select($notnulloptions, 'notnull', $field->getNotNull(), false);
+        $select = html_writer::select($notnulloptions, 'notnull', $field->getNotNull(), false);
         $o.= '      <tr valign="top"><td><label for="menunotnull" accesskey="n">Not Null:</label></td>';
         $o.= '        <td colspan="2">' . $select . '</td></tr>';
     /// xmldb_field Sequence
         $sequenceoptions = array (0 => $this->str['no'], 1 => 'auto-numbered');
-        $select = html_writer::input_select($sequenceoptions, 'sequence', $field->getSequence(), false);
+        $select = html_writer::select($sequenceoptions, 'sequence', $field->getSequence(), false);
         $o.= '      <tr valign="top"><td><label for="menusequence" accesskey="s">Sequence:</label></td>';
         $o.= '        <td colspan="2">' . $select . '</td></tr>';
     /// xmldb_field Default

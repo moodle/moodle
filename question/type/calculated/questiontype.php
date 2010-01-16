@@ -958,9 +958,9 @@ class question_calculated_qtype extends default_questiontype {
                                                 ? 'decimals'
                                                 : 'significantfigures'), 'quiz', $i);
             }
-            $menu1 = html_writer::input_select($lengthoptions, 'calclength[]', $regs[4], false);
+            $menu1 = html_writer::select($lengthoptions, 'calclength[]', $regs[4], false);
 
-            $menu2 = html_writer::input_select(array('uniform' => get_string('uniform', 'quiz'),
+            $menu2 = html_writer::select(array('uniform' => get_string('uniform', 'quiz'),
                                                      'loguniform' => get_string('loguniform', 'quiz')),
                                                'calcdistribution[]', $regs[1], false);
             return '<input type="submit" onclick="'
@@ -1397,14 +1397,14 @@ class question_calculated_qtype extends default_questiontype {
                 list($options, $selected) =
                         $this->dataset_options($form, $datasetname);
                 unset($options['0']); // Mandatory...
-                $datasetmenus[$datasetname] = html_writer::input_select($options, 'dataset[]', $selected, false);
+                $datasetmenus[$datasetname] = html_writer::select($options, 'dataset[]', $selected, false);
             }
         }
         foreach ($optionaldatasets as $datasetname) {
             if (!isset($datasetmenus[$datasetname])) {
                 list($options, $selected) =
                         $this->dataset_options($form, $datasetname);
-                $datasetmenus[$datasetname] = html_writer::input_select($options, 'dataset[]', $selected, false);
+                $datasetmenus[$datasetname] = html_writer::select($options, 'dataset[]', $selected, false);
             }
         }
         return $datasetmenus;

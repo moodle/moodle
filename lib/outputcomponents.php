@@ -438,7 +438,7 @@ class html_writer {
      * @param array $attributes - html select element attributes
      * @return string HRML fragment
      */
-    public static function input_select(array $options, $name, $selected = '', $nothing = array(''=>'choose'), array $attributes = null) {
+    public static function select(array $options, $name, $selected = '', $nothing = array(''=>'choose'), array $attributes = null) {
         $attributes = (array)$attributes;
         if (is_array($nothing)) {
             foreach ($nothing as $k=>$v) {

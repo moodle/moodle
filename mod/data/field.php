@@ -350,7 +350,7 @@ if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          /// 
 
     $options = array(0 => get_string('ascending', 'data'),
                      1 => get_string('descending', 'data'));
-    echo html_writer::input_select($options, 'defaultsortdir', $data->defaultsortdir, false);
+    echo html_writer::select($options, 'defaultsortdir', $data->defaultsortdir, false);
     echo '<input type="submit" value="'.get_string('save', 'data').'" />';
     echo '</div>';
     echo '</form>';

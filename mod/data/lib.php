@@ -1365,7 +1365,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '<label for="pref_perpage">'.get_string('pagesize','data').'</label> ';
     $pagesizes = array(2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,10=>10,15=>15,
                        20=>20,30=>30,40=>40,50=>50,100=>100,200=>200,300=>300,400=>400,500=>500,1000=>1000);
-    echo html_writer::input_select($pagesizes, 'perpage', $perpage, false, array('id'=>'pref_perpage'));
+    echo html_writer::select($pagesizes, 'perpage', $perpage, false, array('id'=>'pref_perpage'));
     echo '<div id="reg_search" style="display: ';
     if ($advanced) {
         echo 'none';
@@ -1661,7 +1661,7 @@ function data_print_rating_menu($recordid, $userid, $scale) {
     if (empty($strrate)) {
         $strrate = get_string("rate", "data");
     }
-    echo html_writer::input_select($scale, $recordid, $rating->rating, array(-999=>"$strrate..."));
+    echo html_writer::select($scale, $recordid, $rating->rating, array(-999=>"$strrate..."));
 }
 
 /**

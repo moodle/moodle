@@ -121,7 +121,7 @@ echo '<br /><textarea name="content" rows="5" cols="50">' . strip_tags(@$content
 
 echo '<p>' . $strpublishstate;
 echo $OUTPUT->help_icon('status', $strpublishstate, 'notes');
-echo html_writer::input_select($state_names, 'state', empty($state) ? NOTES_STATE_PUBLIC : $state, false);
+echo html_writer::select($state_names, 'state', empty($state) ? NOTES_STATE_PUBLIC : $state, false);
 echo '</p>';
 
 echo '<input type="submit" value="' . get_string('savechanges'). '" /></div></form>';

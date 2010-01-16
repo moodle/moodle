@@ -69,7 +69,7 @@ if (!isset($config->changepasswordurl)) {
     $radiustype['CHAP_MD5'] = get_string('auth_radiustypechapmd5', 'auth_radius');
     $radiustype['MSCHAPv1'] = get_string('auth_radiustypemschapv1', 'auth_radius');
     $radiustype['MSCHAPv2'] = get_string('auth_radiustypemschapv2', 'auth_radius');
-    echo html_writer::input_select($radiustype, 'radiustype', $config->radiustype, false);
+    echo html_writer::select($radiustype, 'radiustype', $config->radiustype, false);
 
     if (isset($err['radiustype'])) {
         echo $OUTPUT->error_text($err['radiustype']);

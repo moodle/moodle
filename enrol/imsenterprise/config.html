@@ -117,7 +117,7 @@ foreach($this->imsroles as $imsrolenum=>$imsrolename){
 
         $configref = "enrol_imse_imsrolemap" . $imsrolenum;
 
-        echo html_writer::input_select($assignableroles, 'enrol_imse_imsrolemap'.$imsrolenum,
+        echo html_writer::select($assignableroles, 'enrol_imse_imsrolemap'.$imsrolenum,
            strlen($frm->$configref) ? $frm->$configref : $this->determine_default_rolemapping($imsrolenum), false);
     ?>
     </td>

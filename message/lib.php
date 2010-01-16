@@ -254,7 +254,7 @@ function message_print_settings() {
     $cbemailmessages = (get_user_preferences('message_emailmessages', 1) == '1') ? 'checked="checked"' : '';
     $txemailaddress = get_user_preferences('message_emailaddress', $USER->email);
     $txemailtimenosee = get_user_preferences('message_emailtimenosee', 10);
-    $format_select = html_writer::input_select(array(FORMAT_PLAIN => get_string('formatplain'),
+    $format_select = html_writer::select(array(FORMAT_PLAIN => get_string('formatplain'),
                                                      FORMAT_HTML  => get_string('formathtml')),
                                               'emailformat', get_user_preferences('message_emailformat', FORMAT_PLAIN));
 

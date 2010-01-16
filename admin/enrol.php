@@ -125,7 +125,7 @@
     echo '<span class="form-shortname">sendcoursewelcomemessage</span>';
     echo '</label></div>';
     echo '<div class="form-setting"><div class="form-checkbox defaultsnext">';
-    echo html_writer::input_select($yesnooptions, 'sendcoursewelcomemessage', $CFG->sendcoursewelcomemessage, false);
+    echo html_writer::select($yesnooptions, 'sendcoursewelcomemessage', $CFG->sendcoursewelcomemessage, false);
     echo '</div><div class="form-defaultinfo">'.get_string('defaultsettinginfo', 'admin', get_string('yes')).'</div></div>';
     echo '<div class="form-description">' . get_string('configsendcoursewelcomemessage', 'admin') . '</div>';
     echo '</div>';

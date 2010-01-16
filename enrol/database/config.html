@@ -19,7 +19,7 @@
        if (!isset($frm->enrol_dbtype)) {
            $frm->enrol_dbtype = 'mysql';
        }
-       echo html_writer::input_select($dboptions, "enrol_dbtype", $frm->enrol_dbtype, false);
+       echo html_writer::select($dboptions, "enrol_dbtype", $frm->enrol_dbtype, false);
     ?>
 
     </td>
@@ -160,7 +160,7 @@
         $assignableroles = get_assignable_roles($sitecontext);
         $assignableroles = array('' => get_string('default')) + $assignableroles;
 
-        echo html_writer::input_select($assignableroles, 'enrol_db_defaultcourseroleid', $frm->enrol_db_defaultcourseroleid, false);
+        echo html_writer::select($assignableroles, 'enrol_db_defaultcourseroleid', $frm->enrol_db_defaultcourseroleid, false);
         if (isset($err['enrol_db_defaultcourseroleid'])) echo $OUTPUT->error_text($err['enrol_db_defaultcourseroleid']);
     ?>
     </td>
@@ -178,7 +178,7 @@
     <td align="right">enrol_db_autocreate:</td>
     <td>
     <?php
-       echo html_writer::input_select($yesno, "enrol_db_autocreate", $frm->enrol_db_autocreate, false);
+       echo html_writer::select($yesno, "enrol_db_autocreate", $frm->enrol_db_autocreate, false);
            if (isset($err["enrol_db_autocreate"])) echo $OUTPUT->error_text($err["enrol_db_autocreate"]);
     ?>
     </td>
@@ -194,7 +194,7 @@
            $displaylist = array();
            $parentlist = array();
            make_categories_list($displaylist, $parentlist);
-           echo html_writer::input_select($displaylist, "enrol_db_category", $frm->enrol_db_category, false);
+           echo html_writer::select($displaylist, "enrol_db_category", $frm->enrol_db_category, false);
 
     ?>
     <?php  if (isset($err["enrol_db_category"])) echo $OUTPUT->error_text($err["enrol_db_category"]); ?>
@@ -223,7 +223,7 @@
     <td align="right">enrol_db_ignorehiddencourse:</td>
     <td>
     <?php
-        echo html_writer::input_select($yesno, "enrol_db_ignorehiddencourse", $frm->enrol_db_ignorehiddencourse, false);
+        echo html_writer::select($yesno, "enrol_db_ignorehiddencourse", $frm->enrol_db_ignorehiddencourse, false);
         if (isset($err['enrol_db_ignorehiddencourse'])) {
             echo $OUTPUT->error_text($err['enrol_db_ignorehiddencourse']);
         }
@@ -238,7 +238,7 @@
     <td align="right">enrol_db_disableunenrol:</td>
     <td>
     <?php
-        echo html_writer::input_select($yesno, "enrol_db_disableunenrol", $frm->enrol_db_disableunenrol, false);
+        echo html_writer::select($yesno, "enrol_db_disableunenrol", $frm->enrol_db_disableunenrol, false);
         if (isset($err['enrol_db_disableunenrol'])) {
             echo $OUTPUT->error_text($err['enrol_db_disableunenrol']);
         }

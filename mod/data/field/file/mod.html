@@ -14,7 +14,7 @@
             <?php
                 $course->maxbytes = $DB->get_field('course', 'maxbytes', array('id'=>$this->data->course));
                 $choices = get_max_upload_sizes($CFG->maxbytes, $course->maxbytes);
-                echo html_writer::input_select($choices, 'param3', $this->field->param3, false, array('id' => 'param3'));
+                echo html_writer::select($choices, 'param3', $this->field->param3, false, array('id' => 'param3'));
             ?>
         </td>
     </tr>

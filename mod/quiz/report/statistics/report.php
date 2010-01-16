@@ -418,7 +418,7 @@ class quiz_statistics_report extends quiz_default_report {
             $quizinformationtablehtml .= '<div class="mdl-align">';
             $quizinformationtablehtml .= '<input type="hidden" name="everything" value="1"/>';
             $quizinformationtablehtml .= '<input type="submit" value="'.get_string('downloadeverything', 'quiz_statistics').'"/>';
-            $quizinformationtablehtml .= html_writer::input_select($downloadoptions, 'download', $this->table->defaultdownloadformat, false);
+            $quizinformationtablehtml .= html_writer::select($downloadoptions, 'download', $this->table->defaultdownloadformat, false);
             $quizinformationtablehtml .= $OUTPUT->help_icon('tableexportformats', get_string('tableexportformats', 'table'));
             $quizinformationtablehtml .= '</div></form>';
         }

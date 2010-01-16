@@ -210,7 +210,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "</b></td><td colspan=\"2\">";
             $meta_options[0] = get_string("no");
             $meta_options[1] = get_string("yes");
-            echo html_writer::input_select($meta_options, "backup_metacourse", $backup_metacourse, false);
+            echo html_writer::select($meta_options, "backup_metacourse", $backup_metacourse, false);
             echo "</td></tr>";
         }
         else {
@@ -228,7 +228,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             }
             $user_options[1] = get_string("course");
             $user_options[2] = get_string("none");
-            echo html_writer::input_select($user_options, "backup_users", $backup_users, false);
+            echo html_writer::select($user_options, "backup_users", $backup_users, false);
             echo "</td></tr>";
         }
         else {
@@ -243,7 +243,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "</b></td><td colspan=\"2\">";
             $log_options[0] = get_string("no");
             $log_options[1] = get_string("yes");
-            echo html_writer::input_select($log_options, "backup_logs", $backup_logs, false);
+            echo html_writer::select($log_options, "backup_logs", $backup_logs, false);
             echo "</td></tr>";
         }
         else {
@@ -258,7 +258,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "</b></td><td colspan=\"2\">";
             $user_file_options[0] = get_string("no");
             $user_file_options[1] = get_string("yes");
-            echo html_writer::input_select($user_file_options, "backup_user_files", $backup_user_files, false);
+            echo html_writer::select($user_file_options, "backup_user_files", $backup_user_files, false);
             echo "</td></tr>";
         }
         else {
@@ -272,7 +272,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo "</b></td><td colspan=\"2\">";
         $course_file_options[0] = get_string("no");
         $course_file_options[1] = get_string("yes");
-        echo html_writer::input_select($course_file_options, "backup_course_files", $backup_course_files, false);
+        echo html_writer::select($course_file_options, "backup_course_files", $backup_course_files, false);
         echo "</td></tr>";
 
 
@@ -285,7 +285,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "</b></td><td colspan=\"2\">";
             $course_file_options[0] = get_string("no");
             $course_file_options[1] = get_string("yes");
-            echo html_writer::input_select($course_file_options, "backup_site_files", $backup_site_files, false);
+            echo html_writer::select($course_file_options, "backup_site_files", $backup_site_files, false);
             echo "</td></tr>";
         }
 
@@ -297,7 +297,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "</b></td><td colspan=\"2\">";
             $gradebook_history_options[0] = get_string("no");
             $gradebook_history_options[1] = get_string("yes");
-            echo html_writer::input_select($gradebook_history_options, "backup_gradebook_history", $backup_gradebook_history, false);
+            echo html_writer::select($gradebook_history_options, "backup_gradebook_history", $backup_gradebook_history, false);
             echo "</td></tr>";
         } else {
             $hidden_options .= '<input type="hidden" name="backup_gradebook_history" value="0" />';
@@ -311,7 +311,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "</b></td><td colspan=\"2\">";
             $mess_options[0] = get_string("no");
             $mess_options[1] = get_string("yes");
-            echo html_writer::input_select($mess_options, "backup_messages", $backup_messages, false);
+            echo html_writer::select($mess_options, "backup_messages", $backup_messages, false);
             echo "</td></tr>";
         }
         else {
@@ -326,7 +326,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "</b></td><td colspan=\"2\">";
             $blog_options[0] = get_string("no");
             $blog_options[1] = get_string("yes");
-            echo html_writer::input_select($blog_options, "backup_blogs", $backup_blogs, false);
+            echo html_writer::select($blog_options, "backup_blogs", $backup_blogs, false);
             echo "</td></tr>";
         }
         else {

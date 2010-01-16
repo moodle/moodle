@@ -47,7 +47,7 @@ if($err->remark) {
         $operations=array( "lastonly" => get_string("revertlastonly","wiki"),
                            "allsince" => get_string("revertallsince","wiki"),
                            "the" => get_string("revertthe","wiki"));
-        echo html_writer::input_select($operations, "howtooperate", $form->howtooperate, false);
+        echo html_writer::select($operations, "howtooperate", $form->howtooperate, false);
         ?>
     </td>
 </tr>

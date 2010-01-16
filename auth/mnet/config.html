@@ -44,7 +44,7 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
     <td>
         <?php
 
-        echo html_writer::input_select($yesno, 'auto_add_remote_users', $config->auto_add_remote_users, false);
+        echo html_writer::select($yesno, 'auto_add_remote_users', $config->auto_add_remote_users, false);
 
         ?>
     </td>

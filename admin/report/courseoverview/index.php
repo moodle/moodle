@@ -52,8 +52,8 @@
     $table->width = '*';
     $table->align = array('left','left','left','left','left','left');
 
-    $reporttypemenu = html_writer::input_select($reportoptions,'report',$report, false);
-    $timeoptionsmenu = html_writer::input_select($timeoptions,'time',$time, false);
+    $reporttypemenu = html_writer::select($reportoptions,'report',$report, false);
+    $timeoptionsmenu = html_writer::select($timeoptions,'time',$time, false);
 
     $table->data[] = array(get_string('statsreporttype'),$reporttypemenu,
                            get_string('statstimeperiod'),$timeoptionsmenu,

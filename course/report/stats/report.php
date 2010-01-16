@@ -45,21 +45,21 @@
         }
 
         $table->align = array('left','left','left','left','left','left','left','left');
-        $table->data[] = array(get_string('course'),html_writer::input_select($courseoptions,'course',$course->id,false),
-                               get_string('users'),html_writer::input_select($users,'userid',$userid,false),
-                               get_string('statsreporttype'),html_writer::input_select($reportoptions,'report',($report == 5) ? $report.$roleid : $report,false),
-                               get_string('statstimeperiod'),html_writer::input_select($timeoptions,'time',$time,false),
+        $table->data[] = array(get_string('course'),html_writer::select($courseoptions,'course',$course->id,false),
+                               get_string('users'),html_writer::select($users,'userid',$userid,false),
+                               get_string('statsreporttype'),html_writer::select($reportoptions,'report',($report == 5) ? $report.$roleid : $report,false),
+                               get_string('statstimeperiod'),html_writer::select($timeoptions,'time',$time,false),
                                '<input type="submit" value="'.get_string('view').'" />') ;
     } else if ($mode == STATS_MODE_RANKED) {
         $table->align = array('left','left','left','left','left','left');
-        $table->data[] = array(get_string('statsreporttype'),html_writer::input_select($reportoptions,'report',($report == 5) ? $report.$roleid : $report,false),
-                               get_string('statstimeperiod'),html_writer::input_select($timeoptions,'time',$time,false),
+        $table->data[] = array(get_string('statsreporttype'),html_writer::select($reportoptions,'report',($report == 5) ? $report.$roleid : $report,false),
+                               get_string('statstimeperiod'),html_writer::select($timeoptions,'time',$time,false),
                                '<input type="submit" value="'.get_string('view').'" />') ;
     } else if ($mode == STATS_MODE_GENERAL) {
         $table->align = array('left','left','left','left','left','left','left');
-        $table->data[] = array(get_string('course'),html_writer::input_select($courseoptions,'course',$course->id,false),
-                               get_string('statsreporttype'),html_writer::input_select($reportoptions,'report',($report == 5) ? $report.$roleid : $report,false),
-                               get_string('statstimeperiod'),html_writer::input_select($timeoptions,'time',$time,false),
+        $table->data[] = array(get_string('course'),html_writer::select($courseoptions,'course',$course->id,false),
+                               get_string('statsreporttype'),html_writer::select($reportoptions,'report',($report == 5) ? $report.$roleid : $report,false),
+                               get_string('statstimeperiod'),html_writer::select($timeoptions,'time',$time,false),
                                '<input type="submit" value="'.get_string('view').'" />') ;
     }
 
