@@ -30,7 +30,7 @@ $id    = required_param('id',PARAM_INT);           // forum
 $group = optional_param('group',0,PARAM_INT);      // change of group
 $edit  = optional_param('edit',-1,PARAM_BOOL);     // Turn editing on and off
 
-$url = new moodle_url($CFG->wwwroot.'/mod/forum/subscribers.php', array('id'=>$id));
+$url = new moodle_url('/mod/forum/subscribers.php', array('id'=>$id));
 if ($group !== 0) {
     $url->param('group', $group);
 }

@@ -11,7 +11,7 @@ $id = required_param('id', PARAM_INT);      // Course Module ID
 $l   = optional_param('l','', PARAM_ALPHANUM);
 $cat = optional_param('cat',0, PARAM_ALPHANUM);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/glossary/exportfile.php', array('id'=>$id));
+$url = new moodle_url('/mod/glossary/exportfile.php', array('id'=>$id));
 if ($l !== '') {
     $url->param('l', $l);
 }

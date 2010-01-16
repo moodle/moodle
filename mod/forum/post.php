@@ -440,7 +440,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
 
         $course = $DB->get_record('course', array('id' => $forum->course));
 
-        $PAGE->navbar->add(format_string($post->subject, true), new moodle_url($CFG->wwwroot.'/mod/forum/discuss.php', array('d'=>$discussion->id)));
+        $PAGE->navbar->add(format_string($post->subject, true), new moodle_url('/mod/forum/discuss.php', array('d'=>$discussion->id)));
         $PAGE->navbar->add(get_string("prune", "forum"));
         $PAGE->set_title(format_string($discussion->name).": ".format_string($post->subject));
         echo $OUTPUT->header();

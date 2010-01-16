@@ -71,7 +71,7 @@ $login      = get_string('login');
 
 $PAGE->navbar->add($login);
 $PAGE->navbar->add($newaccount);
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/login/signup.php'));
+$PAGE->set_url('/login/signup.php');
 $PAGE->set_title($newaccount);
 $PAGE->set_heading($newaccount);
 $PAGE->set_focuscontrol($mform_signup->focus());

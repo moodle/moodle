@@ -161,10 +161,10 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $output = $this->output->box(get_string('youhaveseen','lesson'), 'generalbox boxaligncenter');
         $output .= $this->output->box_start('center');
 
-        $yeslink = html_writer::link(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$lastpageseenid, 'startlastseen'=>'yes')), get_string('yes'));
+        $yeslink = html_writer::link(new moodle_url('/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$lastpageseenid, 'startlastseen'=>'yes')), get_string('yes'));
         $output .= $this->output->span($yeslink, 'lessonbutton standardbutton');
 
-        $nolink = html_writer::link(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no')), get_string('no'));
+        $nolink = html_writer::link(new moodle_url('/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no')), get_string('no'));
         $output .= $this->output->span($nolink, 'lessonbutton standardbutton');
 
         $output .= $this->output->box_end();
@@ -331,13 +331,13 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
         $links = array();
 
-        $importquestionsurl = new moodle_url($CFG->wwwroot.'/mod/lesson/import.php',array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
+        $importquestionsurl = new moodle_url('/mod/lesson/import.php',array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
         $links[] = html_writer::link($importquestionsurl, get_string('importquestions', 'lesson'));
 
         $manager = lesson_page_type_manager::get($lesson);
         $links = array_merge($links, $manager->get_add_page_type_links($prevpageid));
 
-        $addquestionurl = new moodle_url($CFG->wwwroot.'/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
+        $addquestionurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
         $links[] = html_writer::link($addquestionurl, get_string('addaquestionpagehere', 'lesson'));
 
         return $this->output->box(implode(" | \n", $links), 'addlinks');
@@ -355,10 +355,10 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $output = $this->output->heading(get_string("whatdofirst", "lesson"), 3);
         $links = array();
 
-        $importquestionsurl = new moodle_url($CFG->wwwroot.'/mod/lesson/import.php',array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
+        $importquestionsurl = new moodle_url('/mod/lesson/import.php',array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
         $links[] = html_link::make($importquestionsurl, get_string('importquestions', 'lesson'));
 
-        $importppturl = new moodle_url($CFG->wwwroot.'/mod/lesson/importppt.php',array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
+        $importppturl = new moodle_url('/mod/lesson/importppt.php',array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
         $links[] = html_link::make($importppturl, get_string('importppt', 'lesson'));
 
         $manager = lesson_page_type_manager::get($lesson);
@@ -368,7 +368,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $links[] = $link;
         }
 
-        $addquestionurl = new moodle_url($CFG->wwwroot.'/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid, 'firstpage'=>1));
+        $addquestionurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid, 'firstpage'=>1));
         $links[] = html_link::make($addquestionurl, get_string('addaquestionpage', 'lesson'));
 
         foreach ($links as $key=>$link) {
@@ -392,16 +392,16 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $actions = array();
 
         if ($printmove) {
-            $printmovehtml = new moodle_url($CFG->wwwroot.'/mod/lesson/lesson.php', array('id'=>$this->page->cm->id, 'action'=>'move', 'pageid'=>$page->id, 'sesskey'=>sesskey()));
+            $printmovehtml = new moodle_url('/mod/lesson/lesson.php', array('id'=>$this->page->cm->id, 'action'=>'move', 'pageid'=>$page->id, 'sesskey'=>sesskey()));
             $actions[] = html_link::make($printmovehtml, '<img src="'.$this->output->pix_url('t/move').'" class="iconsmall" alt="'.get_string('move').'" />');
         }
-        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id, 'edit'=>1));
+        $url = new moodle_url('/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id, 'edit'=>1));
         $actions[] = html_link::make($url, '<img src="'.$this->output->pix_url('t/edit').'" class="iconsmall" alt="'.get_string('update').'" />');
 
-        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id));
+        $url = new moodle_url('/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id));
         $actions[] = html_link::make($url, '<img src="'.$this->output->pix_url('t/preview').'" class="iconsmall" alt="'.get_string('preview').'" />');
 
-        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/lesson.php', array('id'=>$this->page->cm->id, 'action'=>'confirmdelete', 'pageid'=>$page->id, 'sesskey'=>sesskey()));
+        $url = new moodle_url('/mod/lesson/lesson.php', array('id'=>$this->page->cm->id, 'action'=>'confirmdelete', 'pageid'=>$page->id, 'sesskey'=>sesskey()));
         $actions[] = html_link::make($url, '<img src="'.$this->output->pix_url('t/delete').'" class="iconsmall" alt="'.get_string('delete').'" />');
 
         if ($printaddpage) {
@@ -413,7 +413,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
             }
             $options[0] = get_string('question', 'lesson');
 
-            $addpageurl = new moodle_url($CFG->wwwroot.'/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id, 'sesskey'=>sesskey()));
+            $addpageurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id, 'sesskey'=>sesskey()));
             $addpageselect = html_select::make_popup_form($addpageurl, 'qtype', $options, 'addpageafter'.$page->id);
             $addpageselect->nothinglabel = get_string('addanewpage', 'lesson').'...';
             $addpageselector = $this->output->select($addpageselect);

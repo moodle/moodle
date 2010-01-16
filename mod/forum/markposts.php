@@ -31,7 +31,7 @@ $mark       = required_param('mark',PARAM_ALPHA); // Read or unread?
 $d          = optional_param('d',0,PARAM_INT); // Discussion to mark.
 $returnpage = optional_param('returnpage', 'index.php', PARAM_FILE);    // Page to return to.
 
-$url = new moodle_url($CFG->wwwroot.'/mod/forum/markposts.php', array('f'=>$f, 'mark'=>$mark));
+$url = new moodle_url('/mod/forum/markposts.php', array('f'=>$f, 'mark'=>$mark));
 if ($d !== 0) {
     $url->param('d', $d);
 }

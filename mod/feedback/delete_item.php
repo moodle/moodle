@@ -14,7 +14,7 @@
     $id = required_param('id', PARAM_INT);
     $deleteitem = required_param('deleteitem', PARAM_INT);
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/feedback/delete_item.php', array('id'=>$id, 'deleteitem'=>$deleteitem)));
+    $PAGE->set_url('/mod/feedback/delete_item.php', array('id'=>$id, 'deleteitem'=>$deleteitem));
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
@@ -58,7 +58,7 @@
     $strfeedbacks = get_string("modulenameplural", "feedback");
     $strfeedback  = get_string("modulename", "feedback");
 
-    $PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
+    $PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', array('id'=>$course->id)));
     $PAGE->navbar->add(format_string($feedback->name));
 
     $PAGE->set_title(format_string($feedback->name));

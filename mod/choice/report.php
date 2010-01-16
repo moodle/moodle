@@ -9,7 +9,7 @@
     $action     = optional_param('action', '', PARAM_ALPHA);
     $attemptids = optional_param('attemptid', array(), PARAM_INT); //get array of responses to delete.
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/choice/report.php', array('id'=>$id));
+    $url = new moodle_url('/mod/choice/report.php', array('id'=>$id));
     if ($format !== CHOICE_PUBLISH_NAMES) {
         $url->param('format', $format);
     }

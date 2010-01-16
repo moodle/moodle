@@ -44,7 +44,7 @@ if (isguestuser()) {
 $workshop = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
 $workshop = new workshop($workshop, $cm, $course);
 
-$PAGE->set_url(new moodle_url($workshop->exsubmission_url($id), array('edit' => $edit)));
+$PAGE->set_url($workshop->exsubmission_url($id), array('edit' => $edit));
 
 if ($id) { // example is specified
     $example = $workshop->get_example_by_id($id);

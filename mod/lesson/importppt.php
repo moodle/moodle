@@ -37,7 +37,7 @@ require_once($CFG->dirroot.'/mod/lesson/importpptlib.php');
 $id     = required_param('id', PARAM_INT);         // Course Module ID
 $pageid = optional_param('pageid', '', PARAM_INT); // Page ID
 
-$url = new moodle_url($CFG->wwwroot.'/mod/lesson/importppt.php', array('id'=>$id));
+$url = new moodle_url('/mod/lesson/importppt.php', array('id'=>$id));
 if ($pageid !== '') {
     $url->param('pageid', $pageid);
 }

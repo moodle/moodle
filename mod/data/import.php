@@ -35,7 +35,7 @@ $rid             = optional_param('rid', 0, PARAM_INT); // record id
 $fielddelimiter  = optional_param('fielddelimiter', ',', PARAM_CLEANHTML); // characters used as field delimiters for csv file import
 $fieldenclosure = optional_param('fieldenclosure', '', PARAM_CLEANHTML);   // characters used as record delimiters for csv file import
 
-$url = new moodle_url($CFG->wwwroot.'/mod/data/import.php');
+$url = new moodle_url('/mod/data/import.php');
 if ($rid !== 0) {
     $url->param('rid', $rid);
 }

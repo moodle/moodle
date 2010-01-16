@@ -184,7 +184,7 @@ function html_header($context, $file_info){
 
     $strfiles = get_string("files");
     build_navbar_for_file($PAGE, $file_info);
-    $PAGE->set_url("files/index.php", $file_info->get_params_rawencoded());
+    $PAGE->set_url("/files/index.php", $file_info->get_params_rawencoded());
     $PAGE->set_title("$SITE->shortname: $strfiles");
     echo $OUTPUT->header();
 

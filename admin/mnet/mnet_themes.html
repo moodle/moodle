@@ -6,7 +6,7 @@ admin_externalpage_print_header();
 echo $OUTPUT->heading(get_string('themes'));
 $original_theme = fullclone($THEME);
     $currenttab = 'mnetthemes';
-    require_once($CFG->dirroot .'/admin/mnet/tabs.php');
+    require_once($CFG->dirroot .'/'.$CFG->admin.'/mnet/tabs.php');
 
     $themes = get_list_of_plugins("theme");
     $sesskey = sesskey();

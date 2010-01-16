@@ -34,14 +34,14 @@ $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 $modid    = optional_param('modid', 0, PARAM_INT); // To associate the entry with a module instance
 $courseid = optional_param('courseid', 0, PARAM_INT); // To associate the entry with a course
 
-$PAGE->set_url('blog/edit.php', array('action' => $action, 'entryid' => $id, 'confirm' => $confirm, 'modid' => $modid, 'courseid' => $courseid));
+$PAGE->set_url('/blog/edit.php', array('action' => $action, 'entryid' => $id, 'confirm' => $confirm, 'modid' => $modid, 'courseid' => $courseid));
 
 // If action is add, we ignore $id to avoid any further problems
 if (!empty($id) && $action == 'add') {
     $id = null;
 }
 
-$returnurl = new moodle_url($CFG->wwwroot . '/blog/index.php');
+$returnurl = new moodle_url('/blog/index.php');
 
 if (!empty($courseid) && empty($modid)) {
     $returnurl->param('courseid', $courseid);

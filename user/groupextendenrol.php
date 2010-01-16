@@ -28,7 +28,7 @@ require_once("../config.php");
 $id    = required_param('id', PARAM_INT);              // course id
 $users = optional_param('userid', array(), PARAM_INT); // array of user id
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/user/groupextendenrol.php', array('id'=>$id)));
+$PAGE->set_url('/user/groupextendenrol.php', array('id'=>$id));
 
 if (! $course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourseid');

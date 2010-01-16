@@ -50,7 +50,7 @@ $cal_y = optional_param('cal_y', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
 $type = optional_param('type', '', PARAM_ALPHA);
 
-$url = new moodle_url($CFG->wwwroot.'/calendar/set.php', array('from'=>$from,'var'=>$var));
+$url = new moodle_url('/calendar/set.php', array('from'=>$from,'var'=>$var));
 if ($id !== 0) {
     $url->param('id', $id);
 }

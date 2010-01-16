@@ -44,7 +44,7 @@
         print_error('coursemisconf');
     }
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/survey/save.php', array('id'=>$id)));
+    $PAGE->set_url('/mod/survey/save.php', array('id'=>$id));
     require_login($course->id, false, $cm);
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);

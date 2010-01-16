@@ -9,7 +9,7 @@ require_once("lib.php");
 $id   = required_param('id', PARAM_INT);
 $mode = optional_param('mode', '', PARAM_ACTION);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/glossary/formats.php', array('id'=>$id));
+$url = new moodle_url('/mod/glossary/formats.php', array('id'=>$id));
 if ($mode !== '') {
     $url->param('mode', $mode);
 }

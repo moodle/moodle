@@ -680,7 +680,7 @@ function workshop_extend_navigation(navigation_node $navref, stdclass $course, s
     global $CFG;
 
     if (has_capability('mod/workshop:submit', $cm->context)) {
-        $url = new moodle_url($CFG->wwwroot.'/mod/workshop/submission.php', array('cmid' => $cm->id));
+        $url = new moodle_url('/mod/workshop/submission.php', array('cmid' => $cm->id));
         $mysubmissionkey = $navref->add(get_string('mysubmission', 'workshop'), $url);
         $navref->get($mysubmissionkey)->mainnavonly = true;
     }
@@ -705,15 +705,15 @@ function workshop_extend_settings_navigation(settings_navigation $settingsnav, s
     //$workshopobject = $DB->get_record("workshop", array("id" => $PAGE->cm->instance));
 
     if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $url = new moodle_url($CFG->wwwroot . '/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey()));
+        $url = new moodle_url('/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey()));
         $workshopnode->add(get_string('updatethis', '', get_string('modulename', 'workshop')), $url, settings_navigation::TYPE_SETTING);
     }
     if (has_capability('mod/workshop:editdimensions', $PAGE->cm->context)) {
-        $url = new moodle_url($CFG->wwwroot . '/mod/workshop/editform.php', array('cmid' => $PAGE->cm->id));
+        $url = new moodle_url('/mod/workshop/editform.php', array('cmid' => $PAGE->cm->id));
         $workshopnode->add(get_string('editassessmentform', 'workshop'), $url, settings_navigation::TYPE_SETTING);
     }
     if (has_capability('mod/workshop:allocate', $PAGE->cm->context)) {
-        $url = new moodle_url($CFG->wwwroot . '/mod/workshop/allocation.php', array('cmid' => $PAGE->cm->id));
+        $url = new moodle_url('/mod/workshop/allocation.php', array('cmid' => $PAGE->cm->id));
         $workshopnode->add(get_string('allocate', 'workshop'), $url, settings_navigation::TYPE_SETTING);
     }
 }

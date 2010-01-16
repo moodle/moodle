@@ -15,7 +15,7 @@
     $questionid = required_param('question', PARAM_INT); // question id
     $stateid = optional_param('state', 0, PARAM_INT); // state id
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/quiz/reviewquestion.php', array('attempt'=>$attemptid,'question'=>$questionid));
+    $url = new moodle_url('/mod/quiz/reviewquestion.php', array('attempt'=>$attemptid,'question'=>$questionid));
     if ($stateid !== 0) {
         $url->param('state', $stateid);
     }

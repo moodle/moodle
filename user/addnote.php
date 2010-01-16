@@ -31,7 +31,7 @@ $users = optional_param('userid', array(), PARAM_INT); // array of user id
 $contents = optional_param('contents', array(), PARAM_RAW); // array of user notes
 $states = optional_param('states', array(), PARAM_ALPHA); // array of notes states
 
-$url = new moodle_url($CFG->wwwroot.'/user/addnote.php', array('id'=>$id));
+$url = new moodle_url('/user/addnote.php', array('id'=>$id));
 if ($users !== 0) {
     $url->param('userid', $users);
 }

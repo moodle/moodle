@@ -41,7 +41,7 @@ require_login($course, false, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/lesson:edit', $context);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/lesson/essay.php', array('id'=>$id));
+$url = new moodle_url('/mod/lesson/essay.php', array('id'=>$id));
 if ($mode !== 'display') {
     $url->param('mode', $mode);
 }
@@ -118,7 +118,7 @@ switch ($mode) {
             // update central gradebook
             lesson_update_grades($lesson, $grade->userid);
 
-            redirect(new moodle_url($CFG->wwwroot.'/mod/lesson/essay.php', array('id'=>$cm->id)));
+            redirect(new moodle_url('/mod/lesson/essay.php', array('id'=>$cm->id)));
         } else {
             print_error('invalidformdata');
         }
@@ -226,7 +226,7 @@ switch ($mode) {
             }
         }
         $lesson->add_message(get_string('emailsuccess', 'lesson'), 'notifysuccess');
-        redirect(new moodle_url($CFG->wwwroot.'/mod/lesson/essay.php', array('id'=>$cm->id)));
+        redirect(new moodle_url('/mod/lesson/essay.php', array('id'=>$cm->id)));
         break;
     case 'display':  // Default view - get the necessary data
     default:
@@ -330,7 +330,7 @@ switch ($mode) {
                     $essayinfo = unserialize($essay->useranswer);
 
                     // link for each essay
-                    $url = new moodle_url($CFG->wwwroot.'/mod/lesson/essay.php', array('id'=>$cm->id,'mode'=>'grade','attemptid'=>$essay->id,'sesskey'=>sesskey()));
+                    $url = new moodle_url('/mod/lesson/essay.php', array('id'=>$cm->id,'mode'=>'grade','attemptid'=>$essay->id,'sesskey'=>sesskey()));
                     $link = html_link::make($url, userdate($essay->timeseen, get_string('strftimedatetime')).' '.format_string($pages[$essay->pageid]->title,true));
                     // Different colors for all the states of an essay (graded, if sent, not graded)
                     if (!$essayinfo->graded) {
@@ -344,14 +344,14 @@ switch ($mode) {
                 }
             }
             // email link for this user
-            $url = new moodle_url($CFG->wwwroot.'/mod/lesson/essay.php', array('id'=>$cm->id,'mode'=>'email','userid'=>$userid,'sesskey'=>sesskey()));
+            $url = new moodle_url('/mod/lesson/essay.php', array('id'=>$cm->id,'mode'=>'email','userid'=>$userid,'sesskey'=>sesskey()));
             $emaillink = $OUTPUT->link(html_link::make($url, get_string('emailgradedessays', 'lesson')));
 
             $table->data[] = array($OUTPUT->user_picture($users[$userid], array('courseid'=>$course->id)).$studentname, implode("<br />", $essaylinks), $emaillink);
         }
 
         // email link for all users
-        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/essay.php', array('id'=>$cm->id,'mode'=>'email','sesskey'=>sesskey()));
+        $url = new moodle_url('/mod/lesson/essay.php', array('id'=>$cm->id,'mode'=>'email','sesskey'=>sesskey()));
         $emailalllink = $OUTPUT->link(html_link::make($url, get_string('emailallgradedessays', 'lesson')));
 
         $table->data[] = array(' ', ' ', $emailalllink);

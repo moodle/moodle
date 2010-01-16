@@ -29,7 +29,7 @@ require_once("lib.php");
 $id         = required_param('id',PARAM_INT);                           // The forum to subscribe or unsubscribe to
 $returnpage = optional_param('returnpage', 'index.php', PARAM_FILE);    // Page to return to.
 
-$url = new moodle_url($CFG->wwwroot.'/mod/forum/settracking.php', array('id'=>$id));
+$url = new moodle_url('/mod/forum/settracking.php', array('id'=>$id));
 if ($returnpage !== 'index.php') {
     $url->param('returnpage', $returnpage);
 }

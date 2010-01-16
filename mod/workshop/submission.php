@@ -41,7 +41,7 @@ if (isguestuser()) {
 $workshop = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
 $workshop = new workshop($workshop, $cm, $course);
 
-$PAGE->set_url(new moodle_url($workshop->submission_url(), array('cmid' => $cmid, 'id' => $id, 'edit' => $edit)));
+$PAGE->set_url($workshop->submission_url(), array('cmid' => $cmid, 'id' => $id, 'edit' => $edit));
 
 if ($id) { // submission is specified
     $submission = $workshop->get_submission_by_id($id);

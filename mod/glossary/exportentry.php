@@ -8,7 +8,7 @@ $confirm  = optional_param('confirm', 0, PARAM_BOOL); // export confirmation
 $prevmode = required_param('prevmode', PARAM_ALPHA);
 $hook     = optional_param('hook', '', PARAM_CLEAN);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/glossary/exportentry.php', array('id'=>$id,'prevmode'=>$prevmode));
+$url = new moodle_url('/mod/glossary/exportentry.php', array('id'=>$id,'prevmode'=>$prevmode));
 if ($confirm !== 0) {
     $url->param('confirm', $confirm);
 }

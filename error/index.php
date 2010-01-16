@@ -45,7 +45,7 @@
     header("HTTP/1.0 404 Not Found");
     header("Status: 404 Not Found");
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/error/'));
+    $PAGE->set_url('/error/');
     $PAGE->set_title($site->fullname .':Error');
     $PAGE->set_heading($site->fullname .': Error 404');
     $PAGE->navbar->add('Error 404 - File not Found');

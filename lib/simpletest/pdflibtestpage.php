@@ -133,7 +133,7 @@ if ($getpdf) {
     exit();
 }
 
-$PAGE->set_url('lib/simpletest/pdflibtestpage.php');
+$PAGE->set_url('/lib/simpletest/pdflibtestpage.php');
 $PAGE->set_context($context);
 $PAGE->set_title('PDF library test');
 $PAGE->set_heading('PDF library test');

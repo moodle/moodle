@@ -22,7 +22,7 @@
     $method = optional_param('method', '', PARAM_ACTION);
     $backup_unique_code = optional_param('backup_unique_code',0,PARAM_INT);
 
-    $url = new moodle_url($CFG->wwwroot.'/backup/restore.php');
+    $url = new moodle_url('/backup/restore.php');
     if ($id !== 0) {
         $url->param('id', $id);
     }
@@ -109,7 +109,7 @@
     $PAGE->set_title("$site->shortname: $strcourserestore");
     $PAGE->set_heading($site->fullname);
     if (!$file) {
-        $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
+        $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php'));
         $PAGE->navbar->add($strcourserestore);
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string("nofilesselected"));
@@ -120,7 +120,7 @@
 
     //If cancel has been selected, inform and end
     if ($cancel) {
-        $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
+        $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php'));
         $PAGE->navbar->add($strcourserestore);
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string("restorecancelled"));
@@ -141,7 +141,7 @@
         $PAGE->navbar->add(basename($file));
         echo $OUTPUT->header();
     } else {
-        $PAGE->navbar->add($course->shortname, new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
+        $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
         $PAGE->navbar->add($strcourserestore);
         echo $OUTPUT->header();
     }

@@ -13,7 +13,7 @@
     $action     = optional_param('action', '', PARAM_ALPHA);
     $attemptids = optional_param('attemptid', array(), PARAM_RAW); //get array of responses to delete.
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/scorm/report.php');
+    $url = new moodle_url('/mod/scorm/report.php');
     if ($user !== '') {
         $url->param('user', $user);
     }
@@ -83,14 +83,14 @@
 
         $PAGE->set_title("$course->shortname: ".format_string($scorm->name));
         $PAGE->set_heading($course->fullname);
-        $PAGE->navbar->add($strreport, new moodle_url($CFG->wwwroot.'/mod/scorm/report.php', array('id'=>$cm->id)));
+        $PAGE->navbar->add($strreport, new moodle_url('/mod/scorm/report.php', array('id'=>$cm->id)));
 
         if (empty($b)) {
             if (!empty($a)) {
                 $PAGE->navbar->add("$strattempt $attempt - ".fullname($userdata));
             }
         } else {
-            $PAGE->navbar->add("$strattempt $attempt - ".fullname($userdata), new moodle_url($CFG->wwwroot.'/mod/scorm/report.php', array('a'=>$a, 'user'=>$user, 'attempt'=>$attempt)));
+            $PAGE->navbar->add("$strattempt $attempt - ".fullname($userdata), new moodle_url('/mod/scorm/report.php', array('a'=>$a, 'user'=>$user, 'attempt'=>$attempt)));
             $PAGE->navbar->add($sco->title);
         }
         echo $OUTPUT->header();

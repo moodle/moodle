@@ -17,14 +17,14 @@ if ($id) {
     if (!$category = $DB->get_record('course_categories', array('id' => $id))) {
         print_error('unknowcategory');
     }
-    $PAGE->set_url('course/editcategory.php', array('id' => $id));
+    $PAGE->set_url('/course/editcategory.php', array('id' => $id));
     $categorycontext = get_context_instance(CONTEXT_COURSECAT, $id);
     require_capability('moodle/category:manage', $categorycontext);
     $strtitle = get_string('editcategorysettings');
     $editorcontext = $categorycontext;
 } else {
     $parent = required_param('parent', PARAM_INT);
-    $PAGE->set_url('course/editcategory.php', array('parent' => $parent));
+    $PAGE->set_url('/course/editcategory.php', array('parent' => $parent));
     if ($parent) {
         if (!$DB->record_exists('course_categories', array('id' => $parent))) {
             print_error('unknowcategory');
@@ -100,8 +100,8 @@ if ($id) {
     $title = $strtitle;
     $fullname = $category->name;
 } else {
-    $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
-    $PAGE->navbar->add($strcategories, new moodle_url($CFG->wwwroot.'/course/index.php'));
+    $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php'));
+    $PAGE->navbar->add($strcategories, new moodle_url('/course/index.php'));
     $PAGE->navbar->add($straddnewcategory);
     $title = "$SITE->shortname: $straddnewcategory";
     $fullname = $SITE->fullname;

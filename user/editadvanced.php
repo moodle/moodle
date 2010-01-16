@@ -35,7 +35,7 @@ httpsrequired();
 $id     = optional_param('id', $USER->id, PARAM_INT);    // user id; -1 if creating new user
 $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 
-$url = new moodle_url($CFG->wwwroot.'/user/editadvanced.php', array('course'=>$course));
+$url = new moodle_url('/user/editadvanced.php', array('course'=>$course));
 if ($id !== $USER->id) {
     $url->param('id', $id);
 }
@@ -259,10 +259,10 @@ if ($user->id == -1 or ($user->id != $USER->id)) {
 
     $link = null;
     if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
-        $link = new moodle_url($CFG->wwwroot."/user/index.php", array('id'=>$course->id));
+        $link = new moodle_url("/user/index.php", array('id'=>$course->id));
     }
     $PAGE->navbar->add($strparticipants, $link);
-    $link = new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id, 'course'=>$course->id));
+    $link = new moodle_url('/user/view.php', array('id'=>$user->id, 'course'=>$course->id));
     $PAGE->navbar->add($userfullname, $link);
     $PAGE->navbar->add($streditmyprofile);
 

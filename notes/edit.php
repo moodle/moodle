@@ -7,7 +7,7 @@ require_once('edit_form.php');
 /// retrieve parameters
 $noteid = optional_param('id', 0, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/notes/edit.php');
+$url = new moodle_url('/notes/edit.php');
 
 if ($noteid) {
     //existing note
@@ -86,11 +86,11 @@ if ($noteid) {
 /// output HTML
 $link = null;
 if (has_capability('moodle/course:viewparticipants', $context) || has_capability('moodle/site:viewparticipants', get_context_instance(CONTEXT_SYSTEM))) {
-    $link = new moodle_url($CFG->wwwroot.'/user/index.php',array('id'=>$course->id));
+    $link = new moodle_url('/user/index.php',array('id'=>$course->id));
 }
 $PAGE->navbar->add(get_string('participants'), $link);
-$PAGE->navbar->add(fullname($user), new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id,'course'=>$course->id)));
-$PAGE->navbar->add(get_string('notes', 'notes'), new moodle_url($CFG->wwwroot.'/notes/index.php', array('user'=>$user->id,'course'=>$course->id)));
+$PAGE->navbar->add(fullname($user), new moodle_url('/user/view.php', array('id'=>$user->id,'course'=>$course->id)));
+$PAGE->navbar->add(get_string('notes', 'notes'), new moodle_url('/notes/index.php', array('user'=>$user->id,'course'=>$course->id)));
 $PAGE->navbar->add($strnotes);
 $PAGE->set_title($course->shortname . ': ' . $strnotes);
 $PAGE->set_heading($course->fullname);

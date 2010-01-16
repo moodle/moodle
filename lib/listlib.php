@@ -99,6 +99,8 @@ class moodle_list {
      * @return moodle_list
      */
     function moodle_list($type='ul', $attributes='', $editable = false, $pageurl=null, $page = 0, $pageparamname = 'page', $itemsperpage = 20) {
+        global $PAGE;
+
         $this->editable = $editable;
         $this->attributes = $attributes;
         $this->type = $type;
@@ -106,7 +108,7 @@ class moodle_list {
         $this->pageparamname = $pageparamname;
         $this->itemsperpage = $itemsperpage;
         if ($pageurl === null) {
-            $this->pageurl = new moodle_url();
+            $this->pageurl = new moodle_url($PAGE->url);
             $this->pageurl->params(array($this->pageparamname => $this->page));
         } else {
             $this->pageurl = $pageurl;

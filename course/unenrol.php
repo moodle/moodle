@@ -33,7 +33,7 @@ $id      = required_param('id', PARAM_INT);               //course
 $userid  = optional_param('user', 0, PARAM_INT);          //course
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/unenrol.php', array('id'=>$id)));
+$PAGE->set_url('/course/unenrol.php', array('id'=>$id));
 
 if($userid == $USER->id){
     // the rest of this code assumes $userid=0 means

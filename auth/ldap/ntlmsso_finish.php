@@ -5,7 +5,7 @@ require_once(dirname(dirname(dirname(__FILE__)))."/config.php");
 //HTTPS is potentially required in this page
 httpsrequired();
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/auth/ldap/ntlmsso_finish.php'));
+$PAGE->set_url('/auth/ldap/ntlmsso_finish.php');
 
 /// Define variables used in page
 $site = get_site();

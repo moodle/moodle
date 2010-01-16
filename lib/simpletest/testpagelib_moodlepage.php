@@ -323,7 +323,7 @@ class moodle_page_test extends UnitTestCase {
     public function test_set_url_using_moodle_url() {
         global $CFG;
         // Fixture setup
-        $url = new moodle_url($CFG->wwwroot . '/mod/workshop/allocation.php', array('cmid' => 29, 'method' => 'manual'));
+        $url = new moodle_url('/mod/workshop/allocation.php', array('cmid' => 29, 'method' => 'manual'));
         // Exercise SUT
         $this->testpage->set_url($url);
         // Validate
@@ -333,7 +333,7 @@ class moodle_page_test extends UnitTestCase {
     public function test_set_url_using_moodle_url_and_params() {
         global $CFG;
         // Fixture setup
-        $url = new moodle_url($CFG->wwwroot . '/mod/workshop/allocation.php', array('cmid' => 29, 'method' => 'manual'));
+        $url = new moodle_url('/mod/workshop/allocation.php', array('cmid' => 29, 'method' => 'manual'));
         // Set expectation
         $this->expectException('coding_exception');
         // Exercise SUT

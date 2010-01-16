@@ -16,7 +16,7 @@ $courseid = required_param('courseid', PARAM_INT);
 $groupids = required_param('groups', PARAM_SEQUENCE);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/group/delete.php', array('courseid'=>$courseid,'groups'=>$groupids)));
+$PAGE->set_url('/group/delete.php', array('courseid'=>$courseid,'groups'=>$groupids));
 
 // Make sure course is OK and user has access to manage groups
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {

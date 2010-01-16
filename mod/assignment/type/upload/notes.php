@@ -9,7 +9,7 @@ $userid = required_param('userid', PARAM_INT);  // User ID
 $offset = optional_param('offset', 0, PARAM_INT);
 $mode   = optional_param('mode', '', PARAM_ALPHA);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/assignment/type/online/file.php', array('id'=>$id, 'userid'=>$userid));
+$url = new moodle_url('/mod/assignment/type/online/file.php', array('id'=>$id, 'userid'=>$userid));
 if ($offset !== 0) {
     $url->param('offset',$offset);
 }

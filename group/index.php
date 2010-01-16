@@ -38,7 +38,7 @@ if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
     print_error('invalidcourse'); //'The course ID is invalid'
 }
 
-$url = new moodle_url($CFG->wwwroot.'/group/index.php', array('id'=>$courseid));
+$url = new moodle_url('/group/index.php', array('id'=>$courseid));
 if ($userid) {
     $url->param('user', $userid);
 }
@@ -133,7 +133,7 @@ switch ($action) {
 $strgroups = get_string('groups');
 $strparticipants = get_string('participants');
 
-$PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strparticipants, new moodle_url('/user/index.php', array('id'=>$courseid)));
 $PAGE->navbar->add($strgroups);
 
 /// Print header

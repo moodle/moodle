@@ -27,7 +27,7 @@ if (!$glossary = $DB->get_record('glossary', array('id'=>$cm->instance))) {
     print_error('invalidid', 'glossary');
 }
 
-$url = new moodle_url($CFG->wwwroot.'/mod/glossary/edit.php', array('cmid'=>$cm->id));
+$url = new moodle_url('/mod/glossary/edit.php', array('cmid'=>$cm->id));
 if (!empty($id)) {
     $url->param('id', $id);
 }

@@ -13,7 +13,7 @@ require_once("lib.php");
 
 $id = required_param('id', PARAM_INT);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/feedback/print.php', array('id'=>$id)));
+$PAGE->set_url('/mod/feedback/print.php', array('id'=>$id));
 
 $formdata = data_submitted();
 
@@ -42,7 +42,7 @@ if(!$capabilities->edititems){
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
-$PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
+$PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', array('id'=>$course->id)));
 $PAGE->navbar->add(format_string($feedback->name));
 
 $PAGE->set_title(format_string($feedback->name));

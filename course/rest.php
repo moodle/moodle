@@ -41,7 +41,7 @@ $sequence   = optional_param('sequence', '', PARAM_SEQUENCE);
 $visible    = optional_param('visible', 0, PARAM_INT);
 $pageaction = optional_param('action', '', PARAM_ALPHA); // Used to simulate a DELETE command
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/rest.php', array('courseId'=>$courseId,'class'=>$class)));
+$PAGE->set_url('/course/rest.php', array('courseId'=>$courseId,'class'=>$class));
 
 // Authorise the user and verify some incoming data
 if (!$course = $DB->get_record('course', array('id'=>$courseid))) {

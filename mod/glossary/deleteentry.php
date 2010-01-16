@@ -9,7 +9,7 @@ $entry    = optional_param('entry', 0, PARAM_INT);    // entry id
 $prevmode = required_param('prevmode', PARAM_ALPHA);
 $hook     = optional_param('hook', '', PARAM_CLEAN);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/glossary/deleteentry.php', array('id'=>$id,'prevmode'=>$prevmode));
+$url = new moodle_url('/mod/glossary/deleteentry.php', array('id'=>$id,'prevmode'=>$prevmode));
 if ($confirm !== 0) {
     $url->param('confirm', $confirm);
 }

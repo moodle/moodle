@@ -946,7 +946,7 @@ function chat_format_message_theme ($message, $courseid, $currentuser, $theme = 
     if(!empty($message->system)) {
         $result->type = 'system';
 
-        $userlink = new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$message->userid,'course'=>$courseid));
+        $userlink = new moodle_url('/user/view.php', array('id'=>$message->userid,'course'=>$courseid));
 
         $patterns = array();
         $replacements = array();
@@ -1270,7 +1270,7 @@ function chat_extend_navigation($navigation, $course, $module, $cm) {
         $userskey = $navigation->add(get_string('currentusers', 'chat'));
         $users = $navigation->get($userskey);
         foreach ($chatusers as $chatuser) {
-            $userlink = new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$chatuser->id,'course'=>$course->id));
+            $userlink = new moodle_url('/user/view.php', array('id'=>$chatuser->id,'course'=>$course->id));
             $users->add(fullname($chatuser).' '.format_time(time() - $chatuser->lastmessageping), $userlink, navigation_node::TYPE_USER, null, null, $OUTPUT->pix_url('c/user'));
         }
     }
@@ -1296,11 +1296,11 @@ function chat_extend_settings_navigation($settingsnav, $module) {
 
     if ($chat->studentlogs || has_capability('mod/chat:readlog',$PAGE->cm->context)) {
         if ($DB->get_records_select('chat_messages', "chatid = ? $groupselect", array($chat->id))) {
-            $chatnav->add(get_string('viewreport', 'chat'), new moodle_url($CFG->wwwroot.'/mod/chat/report.php', array('id'=>$PAGE->cm->id)));
+            $chatnav->add(get_string('viewreport', 'chat'), new moodle_url('/mod/chat/report.php', array('id'=>$PAGE->cm->id)));
         }
     }
 
     if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $chatnav->add(get_string('updatethis', '', get_string('modulename', 'chat')), new moodle_url($CFG->wwwroot.'/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
+        $chatnav->add(get_string('updatethis', '', get_string('modulename', 'chat')), new moodle_url('/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
     }
 }

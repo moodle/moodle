@@ -31,7 +31,7 @@
     if ($perpage) {
         $urlparams['perpage'] = $perpage;
     }
-    $PAGE->set_url('course/category.php', $urlparams);
+    $PAGE->set_url('/course/category.php', $urlparams);
     $context = $PAGE->context;
     $category = $PAGE->category;
 
@@ -207,11 +207,11 @@
 
         // Print button to update this category
         $options = array('id' => $category->id);
-        echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot.'/course/editcategory.php', $options), get_string('editcategorythis'), 'get');
+        echo $OUTPUT->single_button(new moodle_url('/course/editcategory.php', $options), get_string('editcategorythis'), 'get');
 
         // Print button for creating new categories
         $options = array('parent' => $category->id);
-        echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot.'/course/editcategory.php', $options), get_string('addsubcategory'), 'get');
+        echo $OUTPUT->single_button(new moodle_url('/course/editcategory.php', $options), get_string('addsubcategory'), 'get');
 
         echo $OUTPUT->container_end();
     }

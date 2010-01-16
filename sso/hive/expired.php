@@ -9,7 +9,7 @@
 
     //MW theres no easy way to log in seamlessly. We need the users unhashed password.
     // It's a security risk to carry that in $SESSION so we put up login form.
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/sso/hive/expired.php'));
+    $PAGE->set_url('/sso/hive/expired.php');
     echo $OUTPUT->header();
     echo $OUTPUT->notification('Your session has expired. Please log in again.');
 ?>

@@ -29,7 +29,7 @@ require_once($CFG->dirroot.'/admin/webservice/lib.php');
 
 $id = required_param('id', PARAM_INT);
 
-$PAGE->set_url('admin/webservice/service_users.php', array('id'=>$id));
+$PAGE->set_url('/admin/webservice/service_users.php', array('id'=>$id));
 $PAGE->requires->js($CFG->admin.'/webservice/script.js');
 
 admin_externalpage_setup('externalserviceusers');

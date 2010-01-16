@@ -278,7 +278,7 @@ EOF;
     /// Print button
         $form = new html_form();
         $parameters = array ('wsusername' => $username, 'wspassword' => $password, 'print' => true);
-        $url = new moodle_url($CFG->wwwroot.'/webservice/wsdoc.php', $parameters); // Required
+        $url = new moodle_url('/webservice/wsdoc.php', $parameters); // Required
         $documentationhtml .= $OUTPUT->single_button($url, get_string('print','webservice'));
         $documentationhtml .= html_writer::empty_tag('br', array());
         
@@ -443,7 +443,7 @@ EOF;
 
         //login form - we cannot use moodle form as we don't have sessionkey
         $form = new html_form();
-        $form->url = new moodle_url($CFG->wwwroot.'/webservice/wsdoc.php', array()); // Required
+        $form->url = new moodle_url('/webservice/wsdoc.php', array()); // Required
         $form->button = new html_button();
         $form->button->text = get_string('wsdocumentation','webservice'); // Required
         $form->button->disabled = false;

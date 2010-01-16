@@ -30,7 +30,7 @@ require_once('editsection_form.php');
 
 $id = required_param('id',PARAM_INT);    // Week/topic ID
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/editsection.php', array('id'=>$id)));
+$PAGE->set_url('/course/editsection.php', array('id'=>$id));
 
 if (! $section = $DB->get_record("course_sections", array("id"=>$id))) {
     print_error("sectionnotexist");

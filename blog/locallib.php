@@ -149,7 +149,7 @@ class blog_entry {
 
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $COURSE->id)));
         $by = new object();
-        $by->name =  html_writer::link(new moodle_url($CFG->wwwroot.'/user/view.php', array('id' => $user->id, 'course' => $COURSE->id)), $fullname);
+        $by->name =  html_writer::link(new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $COURSE->id)), $fullname);
         $by->date = $template['created'];
 
         $topiccell->text .= get_string('bynameondate', 'forum', $by);
@@ -237,7 +237,7 @@ class blog_entry {
             foreach ($blogassociations as $assocrec) {
                 $contextrec = $DB->get_record('context', array('id' => $assocrec->contextid));
                 if ($contextrec->contextlevel ==  CONTEXT_COURSE) {
-                    $url = new moodle_url($CFG->wwwroot.'/course/view.php', array('id' => $contextrec->instanceid));
+                    $url = new moodle_url('/course/view.php', array('id' => $contextrec->instanceid));
                     $text = $DB->get_field('course', 'shortname', array('id' => $contextrec->instanceid)); //TODO: performance!!!!
                     $assocstr .= $OUTPUT->action_icon($associconurl, $text, 'i/course');
                     $hascourseassocs = true;
@@ -258,7 +258,7 @@ class blog_entry {
                     $modinfo = $DB->get_record('course_modules', array('id' => $contextrec->instanceid));
                     $modname = $DB->get_field('modules', 'name', array('id' => $modinfo->module));
 
-                    $url = new moodle_url($CFG->wwwroot.'/mod/'.$modname.'/view.php', array('id' => $modinfo->id));
+                    $url = new moodle_url('/mod/'.$modname.'/view.php', array('id' => $modinfo->id));
                     $text = $DB->get_field($modname, 'name', array('id' => $modinfo->instance)); //TODO: performance!!!!
                     $assocstr .= $OUTPUT->action_icon($associconurl, $text, $OUTPUT->pix_url('icon', $modname));
                     $assocstr .= ', ';
@@ -281,11 +281,11 @@ class blog_entry {
         $contentcell->text .= $OUTPUT->container_start('commands');
 
         if (blog_user_can_edit_entry($this) && empty($this->uniquehash)) {
-            $contentcell->text .= html_writer::link(new moodle_url($CFG->wwwroot.'/blog/edit.php', array('action' => 'edit', 'entryid' => $this->id)), $stredit) . ' | ';
-            $contentcell->text .= html_writer::link(new moodle_url($CFG->wwwroot.'/blog/edit.php', array('action' => 'delete', 'entryid' => $this->id)), $strdelete) . ' | ';
+            $contentcell->text .= html_writer::link(new moodle_url('/blog/edit.php', array('action' => 'edit', 'entryid' => $this->id)), $stredit) . ' | ';
+            $contentcell->text .= html_writer::link(new moodle_url('/blog/edit.php', array('action' => 'delete', 'entryid' => $this->id)), $strdelete) . ' | ';
         }
 
-        $contentcell->text .= html_writer::link(new moodle_url($CFG->wwwroot.'/blog/index.php', array('entryid' => $this->id)), get_string('permalink', 'blog'));
+        $contentcell->text .= html_writer::link(new moodle_url('/blog/index.php', array('entryid' => $this->id)), get_string('permalink', 'blog'));
 
         $contentcell->text .= $OUTPUT->container_end();
 

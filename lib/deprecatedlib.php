@@ -2549,7 +2549,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
     // Cast $options to array
     $options = (array) $options;
 
-    $button = new sibngle_button(new moodle_url($link, $options), $label, $method, array('disabled'=>$disabled, 'title'=>$tooltip, 'id'=>$id));
+    $button = new single_button(new moodle_url($link, $options), $label, $method, array('disabled'=>$disabled, 'title'=>$tooltip, 'id'=>$id));
 
     if ($jsconfirmmessage) {
         $button->button->add_confirm_action($jsconfirmmessage);
@@ -3530,7 +3530,7 @@ function update_mymoodle_icon() {
  */
 function update_tag_button($tagid) {
     debugging('update_tag_button() has been deprecated. Please change your code to use $OUTPUT->edit_button(moodle_url).');
-    return $OUTPUT->edit_button(new moodle_url($CFG->wwwroot.'/tag/index.php', array('id' => $tagid)));
+    return $OUTPUT->edit_button(new moodle_url('/tag/index.php', array('id' => $tagid)));
 }
 
 
@@ -3594,7 +3594,7 @@ function update_course_icon($courseid) {
 
     debugging('update_course_button() has been deprecated. Please change your code to use $OUTPUT->edit_button(moodle_url).');
 
-    return $OUTPUT->edit_button(new moodle_url($CFG->wwwroot.'/course/view.php', array('id' => $courseid)));
+    return $OUTPUT->edit_button(new moodle_url('/course/view.php', array('id' => $courseid)));
 }
 
 /**

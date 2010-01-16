@@ -44,7 +44,7 @@ if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 
 
 // setup $PAGE so that format_text will work properly
 $PAGE->set_cm($cm, $course, $chat);
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/chat/chat_ajax.php', array('chat_sid'=>$chat_sid)));
+$PAGE->set_url('/mod/chat/chat_ajax.php', array('chat_sid'=>$chat_sid));
 
 ob_start();
 header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');

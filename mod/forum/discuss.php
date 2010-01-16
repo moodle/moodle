@@ -33,7 +33,7 @@
     $mark   = optional_param('mark', '', PARAM_ALPHA);       // Used for tracking read posts if user initiated.
     $postid = optional_param('postid', 0, PARAM_INT);        // Used for tracking read posts if user initiated.
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/forum/discuss.php', array('d'=>$d));
+    $url = new moodle_url('/mod/forum/discuss.php', array('d'=>$d));
     if ($parent !== 0) {
         $url->param('parent', $parent);
     }
@@ -179,7 +179,7 @@
 
     $searchform = forum_search_form($course);
 
-    $PAGE->navbar->add(format_string($discussion->name), new moodle_url($CFG->wwwroot.'/mod/forum/discuss.php', array('d'=>$discussion->id)));
+    $PAGE->navbar->add(format_string($discussion->name), new moodle_url('/mod/forum/discuss.php', array('d'=>$discussion->id)));
     if ($parent != $discussion->firstpost) {
         $PAGE->navbar->add(format_string($post->subject));
     }

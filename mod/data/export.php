@@ -30,7 +30,7 @@ require_once('export_form.php');
 // database ID
 $d = required_param('d', PARAM_INT);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/data/export.php', array('d'=>$d)));
+$PAGE->set_url('/mod/data/export.php', array('d'=>$d));
 
 if (! $data = $DB->get_record('data', array('id'=>$d))) {
     print_error('wrongdataid', 'data');

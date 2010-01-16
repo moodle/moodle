@@ -30,7 +30,7 @@ $id = required_param('id',PARAM_INT);      // The forum to subscribe or unsubscr
 $force = optional_param('force','',PARAM_ALPHA);  // Force everyone to be subscribed to this forum?
 $user = optional_param('user',0,PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/forum/subscribe.php', array('id'=>$id));
+$url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$id));
 if ($force !== '') {
     $url->param('force', $force);
 }
@@ -47,12 +47,8 @@ if (! $course = $DB->get_record("course", array("id" => $forum->course))) {
     print_error('invalidcoursemodule');
 }
 
-if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-} else {
-    $cm->id = 0;
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-}
+$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id, false, MUST_EXIST);
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 if ($user) {
     if (!has_capability('mod/forum:managesubscriptions', $context)) {
@@ -83,7 +79,7 @@ if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
     echo $OUTPUT->confirm(get_string('noguestsubscribe', 'forum').'<br /><br />'.get_string('liketologin'),
-                 get_login_url(), new moodle_url());
+                 get_login_url(), new moodle_url('/mod/forum/view.php', array('f'=>$id)));
     echo $OUTPUT->footer();
     exit;
 }

@@ -32,7 +32,7 @@ require_login();
 $context = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/site:config', $context);
 
-$PAGE->set_url('lib/simpletest/todochecker.php');
+$PAGE->set_url('/lib/simpletest/todochecker.php');
 $PAGE->set_context($context);
 $PAGE->set_title('To-do checker');
 $PAGE->set_heading('To-do checker');

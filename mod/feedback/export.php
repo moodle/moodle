@@ -15,7 +15,7 @@ require_once("lib.php");
 $id = required_param('id', PARAM_INT);
 $action = optional_param('action', false, PARAM_ALPHA);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/feedback/export.php', array('id'=>$id));
+$url = new moodle_url('/mod/feedback/export.php', array('id'=>$id));
 if ($action !== false) {
     $url->param('action', $action);
 }

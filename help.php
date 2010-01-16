@@ -22,7 +22,7 @@ $fortooltip = optional_param('fortooltip', 0, PARAM_INT);
 
 $PAGE->set_course($COURSE);
 
-$url = new moodle_url($CFG->wwwroot.'/help.php');
+$url = new moodle_url('/help.php');
 if ($file !== '')  {
     $url->param('file', $file);
 }
@@ -132,7 +132,7 @@ echo '<p class="helpindex"><a href="help.php?file=index.html">'. get_string('hel
 // Offer a link to the alternative help file language
 $currentlang = current_language();
 if ($file && $helpfound && ($foundlang != 'en_utf8' || ($forcelang == 'en_utf8' && current_language() != 'en_utf8'))) {
-    $url = new moodle_url();
+    $url = new moodle_url($PAGE->url);
     if ($foundlang != 'en_utf8') {
         $url->param('forcelang', 'en_utf8');
         $nextlangname = get_string('english');

@@ -44,7 +44,7 @@ $title = 'get_string performance test';
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-$PAGE->set_url('lib/simpletest/getstringperformancetester.php');
+$PAGE->set_url('/lib/simpletest/getstringperformancetester.php');
 echo $OUTPUT->header();
 
 $installedlangs = get_list_of_languages();

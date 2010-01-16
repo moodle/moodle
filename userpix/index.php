@@ -8,7 +8,7 @@
 
     include('../config.php');
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/userpix/index.php'));
+    $PAGE->set_url('/userpix/index.php');
 
     require_login();
 

@@ -26,7 +26,7 @@ require('../config.php');
 @header('Content-Type: text/html; charset=utf-8');
 
 $PAGE->set_pagelayout('popup');
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/message/messages.php'));
+$PAGE->set_url('/message/messages.php');
 $PAGE->set_title(get_string('messages', 'message').' - '.format_string($SITE->fullname));
 echo $OUTPUT->header();
 echo "<div id='messages'></div>";

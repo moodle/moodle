@@ -58,7 +58,7 @@ if (!confirm_sesskey()) {
 $postid = required_param('postid', PARAM_INT); // The postid to rate
 $rate   = required_param('rate', PARAM_INT); // The rate to apply
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/forum/rate_ajax.php', array('postid'=>$postid,'rate'=>$rate)));
+$PAGE->set_url('/mod/forum/rate_ajax.php', array('postid'=>$postid,'rate'=>$rate));
 
 /// Check postid is valid
 if (!$post = $DB->get_record_sql('SELECT p.*,

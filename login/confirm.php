@@ -7,7 +7,7 @@ $data = optional_param('data', '', PARAM_CLEAN);  // Formatted as:  secret/usern
 $p = optional_param('p', '', PARAM_ALPHANUM);     // Old parameter:  secret
 $s = optional_param('s', '', PARAM_CLEAN);        // Old parameter:  username
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/login/confirm.php'));
+$PAGE->set_url('/login/confirm.php');
 
 if (empty($CFG->registerauth)) {
     print_error('cannotusepage2');

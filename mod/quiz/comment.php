@@ -13,7 +13,7 @@
     $attemptid = required_param('attempt', PARAM_INT); // attempt id
     $questionid = required_param('question', PARAM_INT); // question id
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/quiz/comment.php', array('attempt'=>$attemptid, 'question'=>$questionid)));
+    $PAGE->set_url('/mod/quiz/comment.php', array('attempt'=>$attemptid, 'question'=>$questionid));
 
     $attemptobj = new quiz_attempt($attemptid);
 

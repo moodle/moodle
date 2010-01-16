@@ -6,7 +6,7 @@ $id = optional_param('id',0,PARAM_INT);    // Course Module ID, or
 $l = optional_param('l',0,PARAM_INT);     // Label ID
 
 if ($id) {
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/label/index.php', array('id'=>$id)));
+    $PAGE->set_url('/mod/label/index.php', array('id'=>$id));
     if (! $cm = get_coursemodule_from_id('label', $id)) {
         print_error('invalidcoursemodule');
     }
@@ -20,7 +20,7 @@ if ($id) {
     }
 
 } else {
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/label/index.php', array('l'=>$l)));
+    $PAGE->set_url('/mod/label/index.php', array('l'=>$l));
     if (! $label = $DB->get_record("label", array("id"=>$l))) {
         print_error('invalidcoursemodule');
     }

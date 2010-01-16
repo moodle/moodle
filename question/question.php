@@ -26,7 +26,7 @@ $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 $appendqnumstring = optional_param('appendqnumstring', '', PARAM_ALPHA);
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
 
-$url = new moodle_url($CFG->wwwroot.'/question/question.php');
+$url = new moodle_url('/question/question.php');
 if ($id !== 0) {
     $url->param('id', $id);
 }
@@ -226,7 +226,7 @@ if ($mform->is_cancelled()){
         $tocontext = get_context_instance_by_id($tocontextid);
         require_capability('moodle/question:add', $tocontext);
         if (get_filesdir_from_context($categorycontext) != get_filesdir_from_context($tocontext)){
-            $movecontexturl  = new moodle_url($CFG->wwwroot.'/question/contextmoveq.php',
+            $movecontexturl  = new moodle_url('/question/contextmoveq.php',
                                             array('returnurl' => $returnurl,
                                                     'ids'=>$question->id,
                                                     'tocatid'=> $tocatid));
@@ -280,8 +280,8 @@ if ($mform->is_cancelled()){
     if ($cm !== null) {
         $strmodule = get_string('modulename', $cm->modname);
         $streditingmodule = get_string('editinga', 'moodle', $strmodule);
-        $PAGE->navbar->add(get_string('modulenameplural', $cm->modname), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/index.php', array('id'=>$cm->course)));
-        $PAGE->navbar->add(format_string($module->name), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id)));
+        $PAGE->navbar->add(get_string('modulenameplural', $cm->modname), new moodle_url('/mod/'.$cm->modname.'/index.php', array('id'=>$cm->course)));
+        $PAGE->navbar->add(format_string($module->name), new moodle_url('/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id)));
         if (stripos($returnurl, "$CFG->wwwroot/mod/{$cm->modname}/view.php")!== 0){
             //don't need this link if returnurl returns to view.php
             $PAGE->navbar->add($streditingmodule, $returnurl);

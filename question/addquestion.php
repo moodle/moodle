@@ -76,7 +76,7 @@ if (!empty($appendqnumstring)) {
     $hiddenparams['appendqnumstring'] = $appendqnumstring;
 }
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/question/addquestion.php', $hiddenparams));
+$PAGE->set_url('/question/addquestion.php', $hiddenparams);
 
 $chooseqtype = get_string('chooseqtypetoadd', 'question');
 if ($cm !== null) {

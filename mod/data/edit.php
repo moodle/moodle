@@ -34,7 +34,7 @@ $import   = optional_param('import', 0, PARAM_INT);    // show import form
 $cancel   = optional_param('cancel', '', PARAM_RAW);    // cancel an add
 $mode ='addtemplate';    //define the mode for this page, only 1 mode available
 
-$url = new moodle_url($CFG->wwwroot.'/mod/data/edit.php');
+$url = new moodle_url('/mod/data/edit.php');
 if ($rid !== 0) {
     $url->param('rid', $rid);
 }

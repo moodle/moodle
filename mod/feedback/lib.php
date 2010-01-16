@@ -2345,26 +2345,26 @@ function feedback_extend_settings_navigation($settings, $module) {
 
     if($capabilities->edititems) {
         $qkey = $feedbacknav->add(get_string('questions', 'feedback'));
-        $feedbacknav->get($qkey)->add(get_string('edit_items', 'feedback'), new moodle_url($CFG->wwwroot.'/mod/feedback/edit.php', array('id'=>$PAGE->cm->id, 'do_show'=>'edit')));
-        $feedbacknav->get($qkey)->add(get_string('export_questions', 'feedback'), new moodle_url($CFG->wwwroot.'/mod/feedback/export.php', array('id'=>$PAGE->cm->id, 'action'=>'exportfile')));
-        $feedbacknav->get($qkey)->add(get_string('import_questions', 'feedback'), new moodle_url($CFG->wwwroot.'/mod/feedback/import.php', array('id'=>$PAGE->cm->id)));
-        $feedbacknav->get($qkey)->add(get_string('templates', 'feedback'), new moodle_url($CFG->wwwroot.'/mod/feedback/edit.php', array('id'=>$PAGE->cm->id, 'do_show'=>'templates')));
+        $feedbacknav->get($qkey)->add(get_string('edit_items', 'feedback'), new moodle_url('/mod/feedback/edit.php', array('id'=>$PAGE->cm->id, 'do_show'=>'edit')));
+        $feedbacknav->get($qkey)->add(get_string('export_questions', 'feedback'), new moodle_url('/mod/feedback/export.php', array('id'=>$PAGE->cm->id, 'action'=>'exportfile')));
+        $feedbacknav->get($qkey)->add(get_string('import_questions', 'feedback'), new moodle_url('/mod/feedback/import.php', array('id'=>$PAGE->cm->id)));
+        $feedbacknav->get($qkey)->add(get_string('templates', 'feedback'), new moodle_url('/mod/feedback/edit.php', array('id'=>$PAGE->cm->id, 'do_show'=>'templates')));
     }
 
     if($capabilities->viewreports) {
         if($feedback->course == SITEID){
-            $feedbacknav->add(get_string('analysis', 'feedback'), new moodle_url($CFG->wwwroot.'/mod/feedback/analysis_course.php', array('id'=>$PAGE->cm->id, 'course'=>$PAGE->course->id,'do_show'=>'analysis')));
+            $feedbacknav->add(get_string('analysis', 'feedback'), new moodle_url('/mod/feedback/analysis_course.php', array('id'=>$PAGE->cm->id, 'course'=>$PAGE->course->id,'do_show'=>'analysis')));
         }else {
-            $feedbacknav->add(get_string('analysis', 'feedback'), new moodle_url($CFG->wwwroot.'/mod/feedback/analysis.php', array('id'=>$PAGE->cm->id, 'course'=>$PAGE->course->id,'do_show'=>'analysis')));
+            $feedbacknav->add(get_string('analysis', 'feedback'), new moodle_url('/mod/feedback/analysis.php', array('id'=>$PAGE->cm->id, 'course'=>$PAGE->course->id,'do_show'=>'analysis')));
         }
     }
 
     if($capabilities->viewreports) {
-        $feedbacknav->add(get_string('show_entries', 'feedback'), new moodle_url($CFG->wwwroot.'/mod/feedback/show_entries.php', array('id'=>$PAGE->cm->id, 'do_show'=>'showentries')));
+        $feedbacknav->add(get_string('show_entries', 'feedback'), new moodle_url('/mod/feedback/show_entries.php', array('id'=>$PAGE->cm->id, 'do_show'=>'showentries')));
     }
 
     if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $feedbacknav->add(get_string('updatethis', '', get_string('modulename', 'feedback')), new moodle_url($CFG->wwwroot.'/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
+        $feedbacknav->add(get_string('updatethis', '', get_string('modulename', 'feedback')), new moodle_url('/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
     }
 }
 

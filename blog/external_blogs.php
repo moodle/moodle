@@ -50,8 +50,8 @@ if ($delete && confirm_sesskey()) {
 
 $blogs = $DB->get_records('blog_external', array('userid' => $USER->id));
 
-$PAGE->navbar->add(fullname($USER), new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$USER->id)));
-$PAGE->navbar->add($strblogs, new moodle_url($CFG->wwwroot.'/blog/index.php', array('userid'=>$USER->id)));
+$PAGE->navbar->add(fullname($USER), new moodle_url('/user/view.php', array('id'=>$USER->id)));
+$PAGE->navbar->add($strblogs, new moodle_url('/blog/index.php', array('userid'=>$USER->id)));
 $PAGE->navbar->add($strexternalblogs);
 $PAGE->set_heading("$SITE->shortname: $strblogs: $strexternalblogs", $SITE->fullname);
 $PAGE->set_title("$SITE->shortname: $strblogs: $strexternalblogs");
@@ -78,10 +78,10 @@ if (!empty($blogs)) {
             $validicon = $OUTPUT->image('i/tick_green_big', array('alt'=>get_string('feedisvalid', 'blog'), 'title'=>get_string('feedisvalid', 'blog')));
         }
 
-        $editurl = new moodle_url($CFG->wwwroot.'/blog/external_blog_edit.php', array('id' => $blog->id));
+        $editurl = new moodle_url('/blog/external_blog_edit.php', array('id' => $blog->id));
         $editicon = $OUTPUT->action_icon($editurl, get_string('editexternalblog', 'blog'), 't/edit');
 
-        $deletelink = new html_link(new moodle_url($CFG->wwwroot.'/blog/external_blog_edit.php', array('id' => $blog->id, 'sesskey'=>sesskey())));
+        $deletelink = new html_link(new moodle_url('/blog/external_blog_edit.php', array('id' => $blog->id, 'sesskey'=>sesskey())));
         $deletelink->add_confirm_action(get_string('externalblogdeleteconfirm', 'blog'));
         $deleteicon = $OUTPUT->action_icon($deletelink, get_string('deleteexternalblog', 'blog'), 't/delete');
 
@@ -90,7 +90,7 @@ if (!empty($blogs)) {
     echo $OUTPUT->table($table);
 }
 
-$newexternalurl = new moodle_url($CFG->wwwroot.'/blog/external_blog_edit.php');
+$newexternalurl = new moodle_url('/blog/external_blog_edit.php');
 echo $OUTPUT->link(html_link::make($newexternalurl, $straddnewexternalblog));
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer();

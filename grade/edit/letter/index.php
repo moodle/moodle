@@ -30,7 +30,7 @@ require_once $CFG->libdir.'/gradelib.php';
 $courseid  = optional_param('id', SITEID, PARAM_INT);
 $action   = optional_param('action', '', PARAM_ALPHA);
 
-$PAGE->set_url('grade/edit/letter/index.php', array('id' => $courseid));
+$PAGE->set_url('/grade/edit/letter/index.php', array('id' => $courseid));
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');

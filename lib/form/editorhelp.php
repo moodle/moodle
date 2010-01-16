@@ -1,7 +1,7 @@
 <?php
 require_once('../../config.php');
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/lib/form/editorhelp.php'));
+$PAGE->set_url('/lib/form/editorhelp.php');
 
 $topics = array();
 $titles = array();

@@ -47,9 +47,9 @@
         // print page header
         $site = get_site();
 
-        $PAGE->set_url(new moodle_url($CFG->wwwroot.'/search/indexersplash.php'));
-        $PAGE->navbar->add($strsearch, new moodle_url($CFG->wwwroot.'/search/index.php'));
-        $PAGE->navbar->add($strquery, new moodle_url($CFG->wwwroot.'/search/stats.php'));
+        $PAGE->set_url('/search/indexersplash.php');
+        $PAGE->navbar->add($strsearch, new moodle_url('/search/index.php'));
+        $PAGE->navbar->add($strquery, new moodle_url('/search/stats.php'));
         $PAGE->navbar->add(get_string('runindexer','search'));
         $PAGE->set_title($strsearch);
         $PAGE->set_heading($site->fullname);

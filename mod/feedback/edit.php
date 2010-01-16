@@ -27,8 +27,6 @@ $moveitem = optional_param('moveitem', false, PARAM_INT);
 $movehere = optional_param('movehere', false, PARAM_INT);
 $switchitemrequired = optional_param('switchitemrequired', false, PARAM_INT);
 
-$ME = strip_querystring($FULLME);//sometimes it is not correct set
-
 // $SESSION->feedback->current_tab = $do_show;
 $current_tab = $do_show;
 
@@ -80,7 +78,7 @@ if($moveitem){
 if($switchitemrequired) {
     $item = $DB->get_record('feedback_item', array('id'=>$switchitemrequired));
     @feedback_switch_item_required($item);
-    redirect($ME.'?'.feedback_edit_get_default_query($id, $do_show));
+    redirect($CFG->wwwroot.'/mod/feedback/edit.php?'.feedback_edit_get_default_query($id, $do_show));
     exit;
 }
 
@@ -150,7 +148,7 @@ if ($do_show == 'edit') {
 } else {
     $PAGE->navbar->add(get_string($do_show, 'feedback'));
 }
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/feedback/edit.php', array('id'=>$cm->id, 'do_show'=>$do_show)));
+$PAGE->set_url('/mod/feedback/edit.php', array('id'=>$cm->id, 'do_show'=>$do_show));
 $PAGE->set_title(format_string($feedback->name));
 echo $OUTPUT->header();
 
@@ -215,7 +213,7 @@ if($do_show == 'edit') {
 
         echo $OUTPUT->heading($helpbutton . get_string('preview', 'feedback'));
         if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
-            echo $OUTPUT->heading('<a href="'.htmlspecialchars($ME.'?id='.$id).'">'.get_string('cancel_moving', 'feedback').'</a>');
+            echo $OUTPUT->heading('<a href="edit.php?id='.$id.'">'.get_string('cancel_moving', 'feedback').'</a>');
         }
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
@@ -231,12 +229,12 @@ if($do_show == 'edit') {
             $moveposition = 1;
             echo '<tr>'; //only shown if shouldmoving = 1
                 echo '<td>';
-                $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&movehere='.$moveposition);
+                $buttonlink = 'edit.php?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&movehere='.$moveposition);
                 echo '<a title="'.get_string('move_here','feedback').'" href="'.$buttonlink.'">
                         <img class="movetarget" alt="'.get_string('move_here','feedback').'" src="'.$OUTPUT->pix_url('movehere') . '" />
                       </a>';
 
-                    // echo '<form action="'.$ME.'" method="post"><fieldset>';
+                    // echo '<form action="edit.php" method="post"><fieldset>';
                     // echo '<input title="'.get_string('move_here','feedback').'" type="image" src="'.$OUTPUT->pix_url('movehere') . '" hspace="1" height="16" width="80" border="0" />';
                     // echo '<input type="hidden" name="movehere" value="'.$moveposition.'" />';
                     // feedback_edit_print_default_form_values($id, $do_show);
@@ -267,12 +265,12 @@ if($do_show == 'edit') {
             echo '<td>('.get_string('position', 'feedback').':'.$itempos .')</td>';
             echo '<td>';
             if($feedbackitem->position > 1){
-                $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&moveupitem='.$feedbackitem->id);
+                $buttonlink = 'edit.php?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&moveupitem='.$feedbackitem->id);
                 echo '<a class="icon up" title="'.get_string('moveup_item','feedback').'" href="'.$buttonlink.'">
                         <img alt="'.get_string('moveup_item','feedback').'" src="'.$OUTPUT->pix_url('t/up') . '" />
                       </a>';
                 //print the button to move-up the item
-                // echo '<form action="'.$ME.'" method="post"><fieldset>';
+                // echo '<form action="edit.php" method="post"><fieldset>';
                 // ///////echo '<input title="'.get_string('moveup_item','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/up') . '" hspace="1" height="11" width="11" border="0" />';
                 // echo '<input class="feedback_moveup_button" title="'.get_string('moveup_item','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/up') . '" />';
                 // echo '<input type="hidden" name="moveupitem" value="'.$feedbackitem->id.'" />';
@@ -284,12 +282,12 @@ if($do_show == 'edit') {
             echo '</td>';
             echo '<td>';
             if($feedbackitem->position < $lastposition - 1){
-                $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&movedownitem='.$feedbackitem->id);
+                $buttonlink = 'edit.php?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&movedownitem='.$feedbackitem->id);
                 echo '<a class="icon down" title="'.get_string('movedown_item','feedback').'" href="'.$buttonlink.'">
                         <img alt="'.get_string('movedown_item','feedback').'" src="'.$OUTPUT->pix_url('t/down') . '" />
                       </a>';
                 //print the button to move-down the item
-                // echo '<form action="'.$ME.'" method="post"><fieldset>';
+                // echo '<form action="edit.php" method="post"><fieldset>';
                 // echo '<input title="'.get_string('movedown_item','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/down') . '" hspace="1" height="11" width="11" border="0" />';
                 // echo '<input class="feedback_movedown_button" title="'.get_string('movedown_item','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/down') . '" />';
                 // echo '<input type="hidden" name="movedownitem" value="'.$feedbackitem->id.'" />';
@@ -300,11 +298,11 @@ if($do_show == 'edit') {
             }
             echo '</td>';
             echo '<td>';
-                $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&moveitem='.$feedbackitem->id);
+                $buttonlink = 'edit.php?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&moveitem='.$feedbackitem->id);
                 echo '<a class="editing_move" title="'.get_string('move_item','feedback').'" href="'.$buttonlink.'">
                         <img alt="'.get_string('move_item','feedback').'" src="'.$OUTPUT->pix_url('t/move') . '" />
                       </a>';
-                // echo '<form action="'.$ME.'" method="post"><fieldset>';
+                // echo '<form action="edit.php" method="post"><fieldset>';
                 // echo '<input title="'.get_string('move_item','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/move') . '" hspace="1" height="11" width="11" border="0" />';
                 // echo '<input class="feedback_move_button" title="'.get_string('move_item','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/move') . '" />';
                 // echo '<input type="hidden" name="moveitem" value="'.$feedbackitem->id.'" />';
@@ -333,7 +331,7 @@ if($do_show == 'edit') {
 
             //print the toggle-button to switch required yes/no
             if($feedbackitem->hasvalue == 1) {
-                // echo '<form action="'.$ME.'" method="post"><fieldset>';
+                // echo '<form action="edit.php" method="post"><fieldset>';
                 if($feedbackitem->required == 1) {
                     // echo '<input title="'.get_string('switch_item_to_not_required','feedback').'" type="image" src="pics/required.gif" hspace="1" height="11" width="11" border="0" />';
                     // echo '<input class="feedback_required_button" title="'.get_string('switch_item_to_not_required','feedback').'" type="image" src="pics/required.gif" />';
@@ -345,7 +343,7 @@ if($do_show == 'edit') {
                     $buttontitle = get_string('switch_item_to_required','feedback');
                     $buttonimg = 'pics/notrequired.gif';
                 }
-                $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&switchitemrequired='.$feedbackitem->id);
+                $buttonlink = 'edit.php?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&switchitemrequired='.$feedbackitem->id);
                 echo '<a class="icon feedback_switchrequired" title="'.$buttontitle.'" href="'.$buttonlink.'">
                         <img alt="'.$buttontitle.'" src="'.$buttonimg.'" />
                       </a>';
@@ -373,11 +371,11 @@ if($do_show == 'edit') {
                 $moveposition++;
                 echo '<tr>'; //only shown if shouldmoving = 1
                     echo '<td>';
-                        $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&movehere='.$moveposition);
+                        $buttonlink = 'edit.php?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&movehere='.$moveposition);
                         echo '<a title="'.get_string('move_here','feedback').'" href="'.$buttonlink.'">
                                 <img class="movetarget" alt="'.get_string('move_here','feedback').'" src="'.$OUTPUT->pix_url('movehere') . '" />
                               </a>';
-                        // echo '<form action="'.$ME.'" method="post"><fieldset>';
+                        // echo '<form action="edit.php" method="post"><fieldset>';
                         // echo '<input class="feedback_movehere_button" title="'.get_string('move_here','feedback').'" type="image" src="'.$OUTPUT->pix_url('movehere') . '" />';
                         // echo '<input type="hidden" name="movehere" value="'.$moveposition.'" />';
                         // feedback_edit_print_default_form_values($id, $do_show);

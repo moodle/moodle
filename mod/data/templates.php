@@ -30,7 +30,7 @@ $id    = optional_param('id', 0, PARAM_INT);  // course module id
 $d     = optional_param('d', 0, PARAM_INT);   // database id
 $mode  = optional_param('mode', 'singletemplate', PARAM_ALPHA);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/data/templates.php');
+$url = new moodle_url('/mod/data/templates.php');
 if ($mode !== 'singletemplate') {
     $url->param('mode', $mode);
 }

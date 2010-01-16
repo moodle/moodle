@@ -58,7 +58,7 @@ $strname         = get_string('name');
 $strintro        = get_string('moduleintro');
 $strlastmodified = get_string('lastmodified');
 
-$PAGE->set_url('course/resources.php', array('id' => $course->id));
+$PAGE->set_url('/course/resources.php', array('id' => $course->id));
 $PAGE->set_title($course->shortname.': '.$strresources);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strresources);

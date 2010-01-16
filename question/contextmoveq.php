@@ -21,7 +21,7 @@ if (!$cmid = optional_param('cmid', 0, PARAM_INT)){
 $tocatid = required_param('tocatid', PARAM_INT);
 $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 
-$thispageurl = new moodle_url();
+$thispageurl = new moodle_url('/question/contextmoveq.php');
 $thispageurl->params(compact('tocatid', 'ids', 'returnurl'));
 
 if ($cmid){

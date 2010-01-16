@@ -28,7 +28,7 @@ require_once('change_password_form.php');
 
 $id = optional_param('id', SITEID, PARAM_INT); // current course
 
-$url = new moodle_url($CFG->wwwroot.'/login/change_password.php');
+$url = new moodle_url('/login/change_password.php');
 if ($id !== SITEID) {
     $url->param('id', $id);
 }
@@ -107,7 +107,7 @@ if ($mform->is_cancelled()) {
 
     $fullname = fullname($USER, true);
 
-    $PAGE->navbar->add($fullname, new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$USER->id, 'course'=>$course->id)));
+    $PAGE->navbar->add($fullname, new moodle_url('/user/view.php', array('id'=>$USER->id, 'course'=>$course->id)));
     $PAGE->navbar->add($strpasswordchanged);
     $PAGE->set_title($strpasswordchanged);
     $PAGE->set_heading($strpasswordchanged);
@@ -130,7 +130,7 @@ $strchangepassword = get_string('changepassword');
 
 $fullname = fullname($USER, true);
 
-$PAGE->navbar->add($fullname, new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$USER->id, 'course'=>$course->id)));
+$PAGE->navbar->add($fullname, new moodle_url('/user/view.php', array('id'=>$USER->id, 'course'=>$course->id)));
 $PAGE->navbar->add($strchangepassword);
 $PAGE->set_title($strchangepassword);
 $PAGE->set_heading($strchangepassword);

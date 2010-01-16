@@ -54,7 +54,7 @@ $agreelicense   = optional_param('agreelicense', 0, PARAM_BOOL);
 
 // Check some PHP server settings
 
-$PAGE->set_url($CFG->admin . '/index.php');
+$PAGE->set_url('/admin/index.php');
 
 $documentationlink = '<a href="http://docs.moodle.org/en/Installation">Installation docs</a>';
 

@@ -23,7 +23,7 @@ if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
     print_error('invalidcoursemodule');
 }
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/chat/gui_header_js/chatinput.php', array('chat_sid'=>$chat_sid, 'chat_id'=>$chatid)));
+$PAGE->set_url('/mod/chat/gui_header_js/chatinput.php', array('chat_sid'=>$chat_sid, 'chat_id'=>$chatid));
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 

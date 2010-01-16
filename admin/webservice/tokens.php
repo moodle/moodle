@@ -28,7 +28,7 @@ require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once('forms.php');
 
-$PAGE->set_url('/admin/webservice/tokens.php', array());
+$PAGE->set_url('/admin/webservice/tokens.php');
 
 admin_externalpage_setup('addwebservicetoken');
 

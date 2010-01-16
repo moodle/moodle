@@ -15,7 +15,7 @@
     $page = optional_param('page', 0, PARAM_INT);
     $showall = optional_param('showall', 0, PARAM_BOOL);
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/quiz/review.php', array('attempt'=>$attemptid));
+    $url = new moodle_url('/mod/quiz/review.php', array('attempt'=>$attemptid));
     if ($page !== 0) {
         $url->param('page', $page);
     }

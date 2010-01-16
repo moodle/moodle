@@ -5,7 +5,7 @@ require_once('lib.php');
 
 $dataid = required_param('dataid', PARAM_INT); // The forum the rated posts are from
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/data/rate.php', array('dataid'=>$dataid)));
+$PAGE->set_url('/mod/data/rate.php', array('dataid'=>$dataid));
 
 if (!$data = $DB->get_record('data', array('id'=>$dataid))) {
     print_error('invalidid', 'data');

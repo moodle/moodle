@@ -22,7 +22,7 @@ require_once $CFG->libdir.'/gradelib.php';
 $courseid = optional_param('id', 0, PARAM_INT);
 $action   = optional_param('action', '', PARAM_ALPHA);
 
-$PAGE->set_url('grade/edit/scale/index.php', array('id' => $courseid));
+$PAGE->set_url('/grade/edit/scale/index.php', array('id' => $courseid));
 
 /// Make sure they can even access this course
 if ($courseid) {

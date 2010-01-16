@@ -40,7 +40,7 @@
     $userid     = required_param('id', PARAM_INT);
     $noframesjs = optional_param('noframesjs', 0, PARAM_BOOL);
 
-    $url = new moodle_url($CFG->wwwroot.'/message/discussion.php', array('id'=>$userid));
+    $url = new moodle_url('/message/discussion.php', array('id'=>$userid));
     if ($noframesjs !== 0) {
         $url->param('noframesjs', $noframesjs);
     }

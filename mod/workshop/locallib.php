@@ -787,7 +787,7 @@ class workshop {
      */
     public function view_url() {
         global $CFG;
-        return new moodle_url($CFG->wwwroot . '/mod/workshop/view.php', array('id' => $this->cm->id));
+        return new moodle_url('/mod/workshop/view.php', array('id' => $this->cm->id));
     }
 
     /**
@@ -795,7 +795,7 @@ class workshop {
      */
     public function editform_url() {
         global $CFG;
-        return new moodle_url($CFG->wwwroot . '/mod/workshop/editform.php', array('cmid' => $this->cm->id));
+        return new moodle_url('/mod/workshop/editform.php', array('cmid' => $this->cm->id));
     }
 
     /**
@@ -803,7 +803,7 @@ class workshop {
      */
     public function previewform_url() {
         global $CFG;
-        return new moodle_url($CFG->wwwroot . '/mod/workshop/editformpreview.php', array('cmid' => $this->cm->id));
+        return new moodle_url('/mod/workshop/editformpreview.php', array('cmid' => $this->cm->id));
     }
 
     /**
@@ -813,7 +813,7 @@ class workshop {
     public function assess_url($assessmentid) {
         global $CFG;
         $assessmentid = clean_param($assessmentid, PARAM_INT);
-        return new moodle_url($CFG->wwwroot . '/mod/workshop/assessment.php', array('asid' => $assessmentid));
+        return new moodle_url('/mod/workshop/assessment.php', array('asid' => $assessmentid));
     }
 
     /**
@@ -823,7 +823,7 @@ class workshop {
     public function exassess_url($assessmentid) {
         global $CFG;
         $assessmentid = clean_param($assessmentid, PARAM_INT);
-        return new moodle_url($CFG->wwwroot . '/mod/workshop/exassessment.php', array('asid' => $assessmentid));
+        return new moodle_url('/mod/workshop/exassessment.php', array('asid' => $assessmentid));
     }
 
     /**
@@ -831,7 +831,7 @@ class workshop {
      */
     public function submission_url($id=null) {
         global $CFG;
-        return new moodle_url($CFG->wwwroot . '/mod/workshop/submission.php', array('cmid' => $this->cm->id, 'id' => $id));
+        return new moodle_url('/mod/workshop/submission.php', array('cmid' => $this->cm->id, 'id' => $id));
     }
 
     /**
@@ -840,7 +840,7 @@ class workshop {
      */
     public function exsubmission_url($id) {
         global $CFG;
-        return new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php', array('cmid' => $this->cm->id, 'id' => $id));
+        return new moodle_url('/mod/workshop/exsubmission.php', array('cmid' => $this->cm->id, 'id' => $id));
     }
 
     /**
@@ -851,7 +851,7 @@ class workshop {
     public function compare_url($sid, array $aids) {
         global $CFG;
 
-        $url = new moodle_url($CFG->wwwroot . '/mod/workshop/compare.php', array('cmid' => $this->cm->id, 'sid' => $sid));
+        $url = new moodle_url('/mod/workshop/compare.php', array('cmid' => $this->cm->id, 'sid' => $sid));
         $i = 0;
         foreach ($aids as $aid) {
             $url->param("aid{$i}", $aid);
@@ -867,7 +867,7 @@ class workshop {
      */
     public function excompare_url($sid, $aid) {
         global $CFG;
-        return new moodle_url($CFG->wwwroot . '/mod/workshop/excompare.php', array('cmid' => $this->cm->id, 'sid' => $sid, 'aid' => $aid));
+        return new moodle_url('/mod/workshop/excompare.php', array('cmid' => $this->cm->id, 'sid' => $sid, 'aid' => $aid));
     }
 
     /**
@@ -875,7 +875,7 @@ class workshop {
      */
     public function updatemod_url() {
         global $CFG;
-        return new moodle_url($CFG->wwwroot . '/course/modedit.php', array('update' => $this->cm->id, 'return' => 1));
+        return new moodle_url('/course/modedit.php', array('update' => $this->cm->id, 'return' => 1));
     }
 
     /**
@@ -883,7 +883,7 @@ class workshop {
      */
     public function allocation_url() {
         global $CFG;
-        return new moodle_url($CFG->wwwroot . '/mod/workshop/allocation.php', array('cmid' => $this->cm->id));
+        return new moodle_url('/mod/workshop/allocation.php', array('cmid' => $this->cm->id));
     }
 
     /**
@@ -893,7 +893,7 @@ class workshop {
     public function switchphase_url($phasecode) {
         global $CFG;
         $phasecode = clean_param($phasecode, PARAM_INT);
-        return new moodle_url($CFG->wwwroot . '/mod/workshop/switchphase.php', array('cmid' => $this->cm->id, 'phase' => $phasecode));
+        return new moodle_url('/mod/workshop/switchphase.php', array('cmid' => $this->cm->id, 'phase' => $phasecode));
     }
 
     /**
@@ -901,7 +901,7 @@ class workshop {
      */
     public function aggregate_url() {
         global $CFG;
-        return new moodle_url($CFG->wwwroot . '/mod/workshop/aggregate.php', array('cmid' => $this->cm->id));
+        return new moodle_url('/mod/workshop/aggregate.php', array('cmid' => $this->cm->id));
     }
 
     /**

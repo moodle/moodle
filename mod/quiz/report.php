@@ -36,7 +36,7 @@
         }
     }
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php');
+    $url = new moodle_url('/mod/quiz/report.php');
     if ($id !== 0) {
         $url->param('id', $id);
     } else {

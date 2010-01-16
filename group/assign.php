@@ -28,7 +28,7 @@ require_once('lib.php');
 
 $groupingid = required_param('id', PARAM_INT);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/group/assign.php', array('id'=>$groupingid)));
+$PAGE->set_url('/group/assign.php', array('id'=>$groupingid));
 
 if (!$grouping = $DB->get_record('groupings', array('id'=>$groupingid))) {
     print_error('invalidgroupid');
@@ -116,8 +116,8 @@ $straddgroupstogroupings = get_string('addgroupstogroupings', 'group');
 
 $groupingname = format_string($grouping->name);
 
-$PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
-$PAGE->navbar->add($strgroups, new moodle_url($CFG->wwwroot.'/group/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strparticipants, new moodle_url('/user/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strgroups, new moodle_url('/group/index.php', array('id'=>$courseid)));
 $PAGE->navbar->add($straddgroupstogroupings);
 
 /// Print header

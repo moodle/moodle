@@ -61,7 +61,7 @@ if ($courseid = optional_param('course', 0, PARAM_INT)) {
     $course = NULL;
 }
 
-$url = new moodle_url($CFG->wwwroot.'/calendar/export.php');
+$url = new moodle_url('/calendar/export.php');
 if ($action !== '') {
     $url->param('action', $action);
 }
@@ -95,7 +95,7 @@ $navlinks = array();
 $now = usergetdate(time());
 
 if (!empty($courseid) && $course->id != SITEID) {
-    $PAGE->navbar->add($course->shortname, new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
+    $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
 }
 
 if(!checkdate($mon, $day, $yr)) {

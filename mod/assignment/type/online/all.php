@@ -22,7 +22,7 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourse');
 }
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/assignment/type/online/all.php', array('id'=>$id)));
+$PAGE->set_url('/mod/assignment/type/online/all.php', array('id'=>$id));
 
 require_course_login($course);
 
@@ -43,7 +43,7 @@ $str->submitted = get_string('submitted','assignment');
 $str->topic = get_string('topic');
 $str->week = get_string('week');
 
-$PAGE->navbar->add($str->assignments, new moodle_url($CFG->wwwroot.'/mod/assignment/index.php', array('id'=>$id)));
+$PAGE->navbar->add($str->assignments, new moodle_url('/mod/assignment/index.php', array('id'=>$id)));
 $PAGE->navbar->add($str->onlinetext);
 
 // get all the assignments in the course

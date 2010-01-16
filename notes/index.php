@@ -15,7 +15,7 @@ $userid       = optional_param('user', 0, PARAM_INT);
 $filtertype   = optional_param('filtertype', '', PARAM_ALPHA);
 $filterselect = optional_param('filterselect', 0, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/notes/index.php');
+$url = new moodle_url('/notes/index.php');
 if ($courseid !== SITEID) {
     $url->param('course', $courseid);
 }
@@ -84,7 +84,7 @@ $systemcontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
 $strnotes = get_string('notes', 'notes');
 $link = null;
 if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
-    $link = new moodle_url($CFG->wwwroot.'/user/index.php',array('id'=>$course->id));
+    $link = new moodle_url('/user/index.php',array('id'=>$course->id));
 }
 if ($userid) {
     $PAGE->navigation->extend_for_user($user);

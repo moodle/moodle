@@ -54,7 +54,7 @@ if ($courseid) {
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
 }
-$PAGE->set_url('blocks/rss_client/viewfeed.php', $urlparams);
+$PAGE->set_url('/blocks/rss_client/viewfeed.php', $urlparams);
 $PAGE->set_pagelayout('popup');
 
 $rssrecord = $DB->get_record('block_rss_client', array('id' => $rssid), '*', MUST_EXIST);
@@ -71,8 +71,8 @@ $strviewfeed = get_string('viewfeed', 'block_rss_client');
 $PAGE->set_title($strviewfeed);
 $PAGE->set_heading($strviewfeed);
 
-$settingsurl = new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=blocksettingrss_client');
-$managefeeds = new moodle_url($CFG->wwwroot . '/blocks/rss_client/managefeeds.php', $urlparams);
+$settingsurl = new moodle_url('/admin/settings.php?section=blocksettingrss_client');
+$managefeeds = new moodle_url('/blocks/rss_client/managefeeds.php', $urlparams);
 $PAGE->navbar->add(get_string('blocks'));
 $PAGE->navbar->add(get_string('feedstitle', 'block_rss_client'), $settingsurl);
 $PAGE->navbar->add(get_string('managefeeds', 'block_rss_client'));

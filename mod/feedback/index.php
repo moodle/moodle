@@ -13,7 +13,7 @@ require_once("lib.php");
 
 $id = required_param('id', PARAM_INT);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$id)));
+$PAGE->set_url('/mod/feedback/index.php', array('id'=>$id));
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourseid');
@@ -37,7 +37,7 @@ echo $OUTPUT->header();
 /// Get all the appropriate data
 
 if (! $feedbacks = get_all_instances_in_course("feedback", $course)) {
-    notice(get_string('thereareno', 'moodle', $strfeedbacks), new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
+    notice(get_string('thereareno', 'moodle', $strfeedbacks), new moodle_url('/course/view.php', array('id'=>$course->id)));
     die;
 }
 

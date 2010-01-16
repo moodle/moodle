@@ -227,7 +227,7 @@ function blog_delete_external_entries($externalblog) {
 function blog_get_context_url($context=null) {
     global $CFG;
 
-    $viewblogentriesurl = new moodle_url($CFG->wwwroot . '/blog/index.php');
+    $viewblogentriesurl = new moodle_url('/blog/index.php');
 
     if (empty($context)) {
         global $PAGE;
@@ -313,7 +313,7 @@ function blog_get_headers() {
 
     $headers = array('title' => '', 'heading' => '', 'cm' => null, 'filters' => array());
 
-    $blogurl = new moodle_url($CFG->wwwroot . '/blog/index.php');
+    $blogurl = new moodle_url('/blog/index.php');
 
     // If the title is not yet set, it's likely that the context isn't set either, so skip this part
     $pagetitle = $PAGE->title;

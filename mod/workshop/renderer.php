@@ -112,7 +112,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $classes .= ' anonymous';
         }
         $o .= $this->output->container_start($classes);  // main wrapper
-        $url = new moodle_url($CFG->wwwroot . '/mod/workshop/submission.php',
+        $url = new moodle_url('/mod/workshop/submission.php',
                               array('cmid' => $this->page->context->instanceid, 'id' => $submission->id));
         $o .= html_writer::link($url, format_string($submission->title), array('class'=>'title'));
         if ($showauthorname) {
@@ -123,7 +123,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $author->picture    = $submission->authorpicture;
             $author->imagealt   = $submission->authorimagealt;
             $userpic            = $this->output->user_picture($author, array('courseid' => $this->page->course->id, 'size' => 35));
-            $userurl            = new moodle_url($CFG->wwwroot . '/user/view.php',
+            $userurl            = new moodle_url('/user/view.php',
                                             array('id' => $author->id, 'course' => $this->page->course->id));
             $a                  = new stdclass();
             $a->name            = fullname($author);
@@ -173,7 +173,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $author->picture    = $submission->authorpicture;
             $author->imagealt   = $submission->authorimagealt;
             $userpic            = $this->output->user_picture($author, array('courseid' => $this->page->course->id, 'size' => 64));
-            $userurl            = new moodle_url($CFG->wwwroot . '/user/view.php',
+            $userurl            = new moodle_url('/user/view.php',
                                             array('id' => $author->id, 'course' => $this->page->course->id));
             $a                  = new stdclass();
             $a->name            = fullname($author);
@@ -294,13 +294,13 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
         // title
         $o .= $this->output->container_start('example-title');
-        $url = new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php',
+        $url = new moodle_url('/mod/workshop/exsubmission.php',
                               array('cmid' => $this->page->context->instanceid, 'id' => $summary->example->id));
         $o .= html_writer::link($url, format_string($summary->example->title), array('class'=>'title'));
 
         // dirty hack to guess if the current user is example manager or not
         if ($summary->example->weight == 1) {
-            $url = new moodle_url($CFG->wwwroot . '/mod/workshop/exsubmission.php',
+            $url = new moodle_url('/mod/workshop/exsubmission.php',
                                         array('cmid' => $this->page->context->instanceid, 'id' => $summary->example->id, 'edit' => 'on'));
             $o .= $this->output->action_icon($url, get_string('edit'), 'i/edit');
         }
@@ -638,7 +638,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         if (is_null($participant->submissionid)) {
             $out = $this->output->container(get_string('nosubmissionfound', 'workshop'), 'info');
         } else {
-            $url = new moodle_url($CFG->wwwroot . '/mod/workshop/submission.php',
+            $url = new moodle_url('/mod/workshop/submission.php',
                                   array('cmid' => $this->page->context->instanceid, 'id' => $participant->submissionid));
             $out = html_writer::link($url, format_string($participant->submissiontitle), array('class'=>'title'));
         }
@@ -678,7 +678,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
                 $grade = get_string('formatpeergradeoverweighted', 'workshop', $a);
             }
         }
-        $url = new moodle_url($CFG->wwwroot . '/mod/workshop/assessment.php',
+        $url = new moodle_url('/mod/workshop/assessment.php',
                               array('asid' => $assessment->assessmentid));
         $grade = html_writer::link($url, $grade, array('class'=>'grade'));
 

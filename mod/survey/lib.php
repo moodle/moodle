@@ -845,26 +845,26 @@ function survey_extend_settings_navigation($settings, $module) {
     if (has_capability('mod/survey:readresponses', $PAGE->cm->context)) {
         $key = $surveynav->add(get_string("responsereports", "survey"));
 
-        $url = new moodle_url($CFG->wwwroot.'/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'summary'));
+        $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'summary'));
         $surveynav->get($key)->add(get_string("summary", "survey"), $url);
 
-        $url = new moodle_url($CFG->wwwroot.'/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'scales'));
+        $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'scales'));
         $surveynav->get($key)->add(get_string("scales", "survey"), $url);
 
-        $url = new moodle_url($CFG->wwwroot.'/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'questions'));
+        $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'questions'));
         $surveynav->get($key)->add(get_string("question", "survey"), $url);
 
-        $url = new moodle_url($CFG->wwwroot.'/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'students'));
+        $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'students'));
         $surveynav->get($key)->add(get_string('participants'), $url);
 
         if (has_capability('mod/survey:download', $PAGE->cm->context)) {
-            $url = new moodle_url($CFG->wwwroot.'/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'download'));
+            $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'download'));
             $surveynav->add(get_string('downloadresults', 'survey'), $url);
         }
     }
 
     if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $url = new moodle_url($CFG->wwwroot.'/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey()));
+        $url = new moodle_url('/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey()));
         $surveynav->add(get_string('updatethis', '', get_string('modulename', 'quiz')), $url);
     }
 

@@ -23,7 +23,7 @@
     $contextid    = optional_param('contextid', 0, PARAM_INT);                // one of this or
     $courseid     = optional_param('id', 0, PARAM_INT);                       // this are required
 
-    $PAGE->set_url('user/index.php', array(
+    $PAGE->set_url('/user/index.php', array(
             'page' => $page,
             'perpage' => $perpage,
             'mode' => $mode,
@@ -176,7 +176,7 @@
     }
 
     // Should use this variable so that we don't break stuff every time a variable is added or changed.
-    $baseurl = new moodle_url($CFG->wwwroot.'/user/index.php', array(
+    $baseurl = new moodle_url('/user/index.php', array(
             'contextid' => $context->id,
             'roleid' => $roleid,
             'id' => $course->id,
@@ -221,7 +221,7 @@
 /// Print my course menus
     if ($mycourses = get_my_courses($USER->id)) {
         $courselist = array();
-        $popupurl = new moodle_url($CFG->wwwroot.'/user/index.php?roleid='.$roleid.'&sifirst=&silast=');
+        $popupurl = new moodle_url('/user/index.php?roleid='.$roleid.'&sifirst=&silast=');
         foreach ($mycourses as $mycourse) {
             $courselist[$mycourse->id] = format_string($mycourse->shortname);
         }
@@ -340,7 +340,7 @@
 
                 $contentheading = $group->name;
                 if (has_capability('moodle/course:managegroups', $context)) {
-                    $aurl = new moodle_url($CFG->wwwroot.'/group/group.php', array('id' => $group->id, 'courseid' => $group->courseid));
+                    $aurl = new moodle_url('/group/group.php', array('id' => $group->id, 'courseid' => $group->courseid));
                     $contentheading .= '&nbsp;' . $OUTPUT->action_icon($aurl, get_string('editgroupprofile'), 't/edit');
                 }
 
@@ -807,27 +807,27 @@
                     $links = array();
 
                     if ($CFG->bloglevel > 0) {
-                        $links[] = html_writer::link(new moodle_url($CFG->wwwroot.'/blog/index.php?userid='.$user->id), get_string('blogs','blog'));
+                        $links[] = html_writer::link(new moodle_url('/blog/index.php?userid='.$user->id), get_string('blogs','blog'));
                     }
 
                     if (!empty($CFG->enablenotes) and (has_capability('moodle/notes:manage', $context) || has_capability('moodle/notes:view', $context))) {
-                        $links[] = html_writer::link(new moodle_url($CFG->wwwroot.'/notes/index.php?course=' . $course->id. '&user='.$user->id), get_string('notes','notes'));
+                        $links[] = html_writer::link(new moodle_url('/notes/index.php?course=' . $course->id. '&user='.$user->id), get_string('notes','notes'));
                     }
 
                     if (has_capability('moodle/site:viewreports', $context) or has_capability('moodle/user:viewuseractivitiesreport', $usercontext)) {
-                        $links[] = html_writer::link(new moodle_url($CFG->wwwroot.'/course/user.php?id='. $course->id .'&user='. $user->id), get_string('activity'));
+                        $links[] = html_writer::link(new moodle_url('/course/user.php?id='. $course->id .'&user='. $user->id), get_string('activity'));
                     }
 
                     if (has_capability('moodle/role:assign', $context) and get_user_roles($context, $user->id, false)) {  // I can unassign and user has some role
-                        $links[] = html_writer::link(new moodle_url($CFG->wwwroot.'/course/unenrol.php?id='. $course->id .'&user='. $user->id), get_string('unenrol'));
+                        $links[] = html_writer::link(new moodle_url('/course/unenrol.php?id='. $course->id .'&user='. $user->id), get_string('unenrol'));
                     }
 
                     if ($USER->id != $user->id && !session_is_loggedinas() && has_capability('moodle/user:loginas', $context) &&
                                                  ! has_capability('moodle/site:doanything', $context, $user->id, false)) {
-                        $links[] = html_writer::link(new moodle_url($CFG->wwwroot.'/course/loginas.php?id='. $course->id .'&user='. $user->id .'&sesskey='. sesskey()), get_string('loginas'));
+                        $links[] = html_writer::link(new moodle_url('/course/loginas.php?id='. $course->id .'&user='. $user->id .'&sesskey='. sesskey()), get_string('loginas'));
                     }
 
-                    $links[] = html_writer::link(new moodle_url($CFG->wwwroot.'/user/view.php?id='. $user->id .'&course='. $course->id), get_string('fullprofile') . '...');
+                    $links[] = html_writer::link(new moodle_url('/user/view.php?id='. $user->id .'&course='. $course->id), get_string('fullprofile') . '...');
 
                     $row->cells[2]->text .= implode('', $link);
 

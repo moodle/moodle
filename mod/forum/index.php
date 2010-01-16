@@ -29,7 +29,7 @@ require_once($CFG->libdir . '/rsslib.php');
 $id = optional_param('id', 0, PARAM_INT);                   // Course id
 $subscribe = optional_param('subscribe', null, PARAM_INT);  // Subscribe/Unsubscribe all forums
 
-$url = new moodle_url($CFG->wwwroot.'/mod/forum/index.php', array('id'=>$id));
+$url = new moodle_url('/mod/forum/index.php', array('id'=>$id));
 if ($subscribe !== null) {
     $url->param('subscribe', $subscribe);
 }
@@ -208,7 +208,7 @@ if ($generalforums) {
                     $trackedlink = $stryes;
 
                 } else {
-                    $aurl = new moodle_url($CFG->wwwroot.'/mod/forum/settracking.php', array('id'=>$forum->id));
+                    $aurl = new moodle_url('/mod/forum/settracking.php', array('id'=>$forum->id));
                     if (!isset($untracked[$forum->id])) {
                         $trackedlink = $OUTPUT->single_button($aurl, $stryes, 'post', array('title'=>$strnotrackforum));
                     } else {
@@ -331,7 +331,7 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
                         $trackedlink = $stryes;
 
                     } else {
-                        $aurl = new moodle_url($CFG->wwwroot.'/mod/forum/settracking.php', array('id'=>$forum->id));
+                        $aurl = new moodle_url('/mod/forum/settracking.php', array('id'=>$forum->id));
                         if (!isset($untracked[$forum->id])) {
                             $trackedlink = $OUTPUT->single_button($aurl, $stryes, 'post', array('title'=>$strnotrackforum));
                         } else {

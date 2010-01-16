@@ -24,7 +24,7 @@ if (!$course = $DB->get_record('course', array('id'=>$group->courseid))) {
 }
 $courseid = $course->id;
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/groups/members.php', array('id'=>$groupid)));
+$PAGE->set_url('/groups/members.php', array('id'=>$groupid));
 
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $courseid);
@@ -78,8 +78,8 @@ $strusergroupmembership = get_string('usergroupmembership', 'group');
 $groupname = format_string($group->name);
 
 $PAGE->requires->js('group/clientlib.js');
-$PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
-$PAGE->navbar->add($strgroups, new moodle_url($CFG->wwwroot.'/group/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strparticipants, new moodle_url('/user/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strgroups, new moodle_url('/group/index.php', array('id'=>$courseid)));
 $PAGE->navbar->add($stradduserstogroup);
 
 /// Print header

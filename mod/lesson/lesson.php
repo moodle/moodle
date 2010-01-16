@@ -44,7 +44,7 @@ try {
 }
 require_login($course, false, $cm);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/lesson/lesson.php', array('id'=>$id,'action'=>$action));
+$url = new moodle_url('/mod/lesson/lesson.php', array('id'=>$id,'action'=>$action));
 $PAGE->set_url($url);
 $PAGE->navbar->add(get_string($action, 'lesson'));
 

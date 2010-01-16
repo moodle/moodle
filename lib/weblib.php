@@ -260,63 +260,100 @@ function qualified_me() {
  */
 class moodle_url {
     /**
+     * Scheme, ex.: http, https
      * @var string
-     * @access protected
      */
-    protected $scheme = ''; // e.g. http
-    protected $host = '';
-    protected $port = '';
-    protected $user = '';
-    protected $pass = '';
-    protected $path = '';
-    protected $fragment = '';
+    protected $scheme = '';
     /**
+     * hostname
+     * @var string
+     */
+    protected $host = '';
+    /**
+     * Port number, empty means default 80 or 443 in case of http
+     * @var unknown_type
+     */
+    protected $port = '';
+    /**
+     * Username for http auth
+     * @var string
+     */
+    protected $user = '';
+    /**
+     * Password for http auth
+     * @var string
+     */
+    protected $pass = '';
+    /**
+     * script path, may include path info too
+     * @var string
+     */
+    protected $path = '';
+    /**
+     * Anchor, may be also empty, null means none
+     * @var string
+     */
+    protected $anchor = null;
+    /**
+     * Url parameters as associative array
      * @var array
-     * @access protected
      */
     protected $params = array(); // Associative array of query string params
 
     /**
-     * Pass no arguments to create a url that refers to this page.
-     * Use empty string to create empty url.
+     * Create new instance of moodle_url.
      *
-     * @global string
-     * @param mixed $url a number of different forms are accespted:
-     *      null - create a URL that is the same as the URL used to load this page, but with no query string
-     *      '' - and empty URL
-     *      string - a URL, will be parsed into it's bits, including query string
-     *      array - as returned from the PHP function parse_url
-     *      moodle_url - make a copy of another moodle_url
-     * @param array $params these params override anything in the query string
-     *      where params have the same name.
+     * @param moodle_url|string $url - moodle_url means make a copy of another
+     *      moodle_url and change parameters, string means full url or shortened
+     *      form (ex.: '/course/view.php'). It is strongly encouraged to not include
+     *      query string because it may result in double encoded values
+     * @param array $params these params override current params or add new
      */
-    public function __construct($url = null, array $params = null) {
-        if ($url === '') {
-            // Leave URL blank.
+    public function __construct($url, array $params = null) {
+        global $CFG;
 
-        } else if (is_a($url, 'moodle_url')) {
+        if ($url instanceof moodle_url) {
             $this->scheme = $url->scheme;
             $this->host = $url->host;
             $this->port = $url->port;
             $this->user = $url->user;
             $this->pass = $url->pass;
             $this->path = $url->path;
-            $this->fragment = $url->fragment;
             $this->params = $url->params;
+            $this->anchor = $url->anchor;
 
         } else {
-            if ($url === null) {
-                global $ME;
-                $url = $ME;
+            // detect if anchor used
+            $apos = strpos($url, '#');
+            if ($apos !== false) {
+                $anchor = substr($url, $apos);
+                $anchor = ltrim($anchor, '#');
+                $this->set_anchor($anchor);
+                $url = substr($url, 0, $apos);
             }
-            if (is_string($url)) {
-                $url = parse_url($url);
+
+            // normalise shortened form of our url ex.: '/course/view.php'
+            if (strpos($url, '/') === 0) {
+                // we must not use httpswwwroot here, because it might be url of other page,
+                // devs have to use httpswwwroot explicitly when creating new moodle_url
+                $url = $CFG->wwwroot.$url;
             }
-            $parts = $url;
-            if ($parts === FALSE) {
+
+            // now fix the admin links if needed, no need to mess with httpswwwroot
+            if ($CFG->admin !== 'admin') {
+                if (strpos($url, "$CFG->wwwroot/admin/") === 0) {
+                    $url = str_replace("$CFG->wwwroot/admin/", "$CFG->wwwroot/$CFG->admin/", $url);
+                }
+            }
+
+            // parse the $url
+            $parts = parse_url($url);
+            if ($parts === false) {
                 throw new moodle_exception('invalidurl');
             }
             if (isset($parts['query'])) {
+                // note: the values may not be correctly decoded,
+                //       url parameters should be always passed as array
                 parse_str(str_replace('&amp;', '&', $parts['query']), $this->params);
             }
             unset($parts['query']);
@@ -504,8 +541,11 @@ class moodle_url {
             if ($querystring) {
                 $uri .= '?' . $querystring;
             }
+            if (!is_null($this->anchor)) {
+                $uri .= '#'.$this->anchor;
+            }
         }
-        $uri .= $this->fragment ? '#'.$this->fragment : '';
+
         return $uri;
     }
 
@@ -614,12 +654,21 @@ class moodle_url {
 
     /**
      * Sets the anchor for the URI (the bit after the hash)
-     * @param string $anchor
+     * @param string $anchor null means remove previous
      */
     public function set_anchor($anchor) {
-        // Match the anchor against the NMTOKEN spec
-        if (preg_match('#[a-zA-Z\_\:][a-zA-Z0-9\_\-\.\:]*#', $anchor)) {
-            $this->fragment = $anchor;
+        if (is_null($anchor)) {
+            // remove
+            $this->anchor = null;
+        } else if ($anchor === '') {
+            // special case, used as empty link
+            $this->anchor = '';
+        } else if (preg_match('|[a-zA-Z\_\:][a-zA-Z0-9\_\-\.\:]*|', $anchor)) {
+            // Match the anchor against the NMTOKEN spec
+            $this->anchor = $anchor;
+        } else {
+            // bad luck, no valid anchor found
+            $this->anchor = null;
         }
     }
 }
@@ -2219,7 +2268,7 @@ function switchroles_form($courseid) {
         $options['sesskey'] = sesskey();
         $options['switchrole'] = 0;
 
-        return $OUTPUT->single_button(new moodle_url($CFG->wwwroot.'/course/view.php', $options), get_string('switchrolereturn'));
+        return $OUTPUT->single_button(new moodle_url('/course/view.php', $options), get_string('switchrolereturn'));
     }
 
     if (has_capability('moodle/role:switchroles', $context)) {
@@ -2413,7 +2462,7 @@ function mdie($msg='', $errorcode=1) {
 function modgradehelpbutton($courseid){
     global $CFG, $OUTPUT;
 
-    $url = new moodle_url($CFG->wwwroot .'/course/scales.php', array('id' => $courseid, 'list' => true));
+    $url = new moodle_url('/course/scales.php', array('id' => $courseid, 'list' => true));
     $link = new html_link();
     $link->url = $url;
     $link->text = '<span class="helplink"><img alt="' . get_string('scales') . '" class="iconhelp" src="' . $OUTPUT->pix_url('help') . '" /></span>';

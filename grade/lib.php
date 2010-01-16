@@ -1109,7 +1109,7 @@ function grade_build_nav($path, $pagename=null, $id=null) {
     $path_elements_count = count($path_elements);
 
     // First link is always 'grade'
-    $PAGE->navbar->add($strgrades, new moodle_url($CFG->wwwroot.'/grade/index.php', array('id'=>$COURSE->id)));
+    $PAGE->navbar->add($strgrades, new moodle_url('/grade/index.php', array('id'=>$COURSE->id)));
 
     $link = null;
     $numberofelements = 3;
@@ -1147,7 +1147,7 @@ function grade_build_nav($path, $pagename=null, $id=null) {
         case 'report':
             // $id is required for this link. Do not print it if $id isn't given
             if (!is_null($id)) {
-                $link = new moodle_url($CFG->wwwroot.'/grade/report/index.php', $linkparams);
+                $link = new moodle_url('/grade/report/index.php', $linkparams);
             }
 
             if ($path_elements[2] == 'grader') {
@@ -1174,7 +1174,7 @@ function grade_build_nav($path, $pagename=null, $id=null) {
             break;
         case 4:
             if ($path_elements[2] == 'grader' AND $path_elements[3] != 'index.php') {
-                $PAGE->navbar->add(get_string('modulename', 'gradereport_grader'), new moodle_url($CFG->wwwroot.'/grade/report/grader/index.php', $linkparams));
+                $PAGE->navbar->add(get_string('modulename', 'gradereport_grader'), new moodle_url('/grade/report/grader/index.php', $linkparams));
             }
             $PAGE->navbar->add($pagename);
             break;
@@ -1423,27 +1423,27 @@ class grade_structure {
             case 'courseitem':
                 $stredit = get_string('editverbose', 'grades', $strparams);
                 if (empty($object->outcomeid) || empty($CFG->enableoutcomes)) {
-                    $url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/item.php',
+                    $url = new moodle_url('/grade/edit/tree/item.php',
                             array('courseid' => $this->courseid, 'id' => $object->id));
                 } else {
-                    $url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/outcomeitem.php',
+                    $url = new moodle_url('/grade/edit/tree/outcomeitem.php',
                             array('courseid' => $this->courseid, 'id' => $object->id));
                 }
                 break;
 
             case 'category':
                 $stredit = get_string('editverbose', 'grades', $strparams);
-                $url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/category.php',
+                $url = new moodle_url('/grade/edit/tree/category.php',
                         array('courseid' => $this->courseid, 'id' => $object->id));
                 break;
 
             case 'grade':
                 $stredit = $streditgrade;
                 if (empty($object->id)) {
-                    $url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/grade.php',
+                    $url = new moodle_url('/grade/edit/tree/grade.php',
                             array('courseid' => $this->courseid, 'itemid' => $object->itemid, 'userid' => $object->userid));
                 } else {
-                    $url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/grade.php',
+                    $url = new moodle_url('/grade/edit/tree/grade.php',
                             array('courseid' => $this->courseid, 'id' => $object->id));
                 }
                 if (!empty($object->feedback)) {
@@ -1483,7 +1483,7 @@ class grade_structure {
         $strshow = get_string('showverbose', 'grades', $strparams);
         $strhide = get_string('hideverbose', 'grades', $strparams);
 
-        $url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/action.php', array('id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']));
+        $url = new moodle_url('/grade/edit/tree/action.php', array('id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']));
         $url = $gpr->add_url_params($url);
 
         if ($element['object']->is_hidden()) {
@@ -1523,7 +1523,7 @@ class grade_structure {
         $strunlock = get_string('unlockverbose', 'grades', $strparams);
         $strlock = get_string('lockverbose', 'grades', $strparams);
 
-        $url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/action.php', array('id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']));
+        $url = new moodle_url('/grade/edit/tree/action.php', array('id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']));
         $url = $gpr->add_url_params($url);
 
         // Don't allow an unlocking action for a grade whose grade item is locked: just print a state icon
@@ -1596,7 +1596,7 @@ class grade_structure {
                     $icon = 't/calc_off';
                 }
 
-                $url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/calculation.php', array('courseid' => $this->courseid, 'id' => $object->id));
+                $url = new moodle_url('/grade/edit/tree/calculation.php', array('courseid' => $this->courseid, 'id' => $object->id));
                 $url = $gpr->add_url_params($url);
                 return $OUTPUT->action_icon($url, $streditcalculation, $icon, array('class'=>'smallicon')) . "\n";
             }

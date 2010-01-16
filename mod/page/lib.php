@@ -419,7 +419,7 @@ function page_extend_settings_navigation($settings, $module) {
 
     // If the user has the capability add an update this module link for the page instance
     if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $url = new moodle_url($CFG->wwwroot.'/course/mod.php', array('update'=>$PAGE->cm->id, 'return'=>true, 'sesskey'=>sesskey()));
+        $url = new moodle_url('/course/mod.php', array('update'=>$PAGE->cm->id, 'return'=>true, 'sesskey'=>sesskey()));
         $pagenav->add(get_string('updatethis', '', get_string('modulename', 'page')), $url);
     }
 

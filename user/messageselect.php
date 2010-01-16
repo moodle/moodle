@@ -35,7 +35,7 @@ $returnto = optional_param('returnto','',PARAM_LOCALURL);
 $format = optional_param('format',FORMAT_MOODLE,PARAM_INT);
 $deluser = optional_param('deluser',0,PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/user/messageselect.php', array('id'=>$id));
+$url = new moodle_url('/user/messageselect.php', array('id'=>$id));
 if ($messagebody !== '') {
     $url->param('messagebody', $messagebody);
 }
@@ -105,7 +105,7 @@ $strtitle = get_string('coursemessage');
 
 $link = null;
 if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
-    $link = new moodle_url($CFG->wwwroot."/user/index.php", array('id'=>$course->id));
+    $link = new moodle_url("/user/index.php", array('id'=>$course->id));
 }
 $PAGE->navbar->add(get_string('participants'), $link);
 $PAGE->navbar->add($strtitle);

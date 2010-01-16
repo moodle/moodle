@@ -812,30 +812,25 @@ class moodle_page {
      * blocks editing UI to know where to return the user after an action.
      * For example, course/view.php does:
      *      $id = optional_param('id', 0, PARAM_INT);
-     *      $PAGE->set_url('course/view.php', array('id' => $id));
+     *      $PAGE->set_url('/course/view.php', array('id' => $id));
      * @param moodle_url|string $url URL relative to $CFG->wwwroot or {@link moodle_url} instance
-     * @param array $params paramters to add to the URL (allowed only if $url is string)
+     * @param array $params paramters to add to the URL
      */
-    public function set_url($url, $params = array()) {
+    public function set_url($url, array $params = null) {
         global $CFG;
 
-        if ($url instanceof moodle_url) {
-            if (!empty($params)) {
-                throw new coding_exception('Cannot pass params together with moodle_url to moodle_page::set_url().');
-            }
-            $this->_url = clone($url);
-
-        } else if (is_string($url)) {
+        if (is_string($url)) {
             if (strpos($url, 'http') === 0) {
-                $this->_url = new moodle_url($url, $params);
-            } else {
+                // ok
+            } else if (strpos($url, '/') === 0) {
                 // we have to use httpswwwroot here, because of loginhttps pages
-                $this->_url = new moodle_url($CFG->httpswwwroot . '/' . $url, $params);
+                $url = $CFG->httpswwwroot . $url;
+            } else {
+                throw new coding_exception('Invalid parameter $url, has to be full url or in shortened form starting with /.');
             }
-
-        } else {
-            throw new coding_exception('Parameter $url must be either moodle_url or string, ' . gettype($url) . ' given instead.');
         }
+
+        $this->_url = new moodle_url($url, $params);
 
         $fullurl = $this->_url->out(true);
         if (strpos($fullurl, "$CFG->httpswwwroot/") !== 0) {

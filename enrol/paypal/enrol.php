@@ -37,7 +37,7 @@ function print_entry($course) {
         $manual->print_entry($course);
 
     } else {
-        $PAGE->navbar->add($strcourses, new moodle_url($CFG->wwwroot.'/course/'));
+        $PAGE->navbar->add($strcourses, new moodle_url('/course/'));
         $PAGE->navbar->add($strloginto);
         $PAGE->set_title($strloginto);
         $PAGE->set_heading($course->fullname);

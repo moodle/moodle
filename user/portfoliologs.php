@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/portfoliolib.php');
 
 $course  = optional_param('course', SITEID, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/user/portfoliologs.php', array('course'=>$course));
+$url = new moodle_url('/user/portfoliologs.php', array('course'=>$course));
 
 if (! $course = $DB->get_record("course", array("id"=>$course))) {
     print_error('invalidcourseid');
@@ -84,7 +84,7 @@ if (count($queued) > 0) {
         $e = portfolio_exporter::rewaken_object($q->id);
         $e->verify_rewaken(true);
         $queued = $e->get('queued');
-        $baseurl = new moodle_url($CFG->wwwroot . '/portfolio/add.php', array('id'=>$q->id, 'logreturn'=>1, 'sesskey'=>sesskey()));
+        $baseurl = new moodle_url('/portfolio/add.php', array('id'=>$q->id, 'logreturn'=>1, 'sesskey'=>sesskey()));
 
         $iconstr = $OUTPUT->action_icon(new moodle_url($baseurl, array('cancel'=>1)), get_string('cancel'), 't/stop');
 

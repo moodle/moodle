@@ -22,7 +22,7 @@ $lastpage = optional_param('lastpage', false, PARAM_INT);
 $startitempos = optional_param('startitempos', 0, PARAM_INT);
 $lastitempos = optional_param('lastitempos', 0, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/feedback/complete_guest.php', array('id'=>$id));
+$url = new moodle_url('/mod/feedback/complete_guest.php', array('id'=>$id));
 if ($completedid !== false) {
     $url->param('completedid', $completedid);
 }
@@ -127,7 +127,7 @@ if(!$capabilities->complete) {
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
-$PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
+$PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', array('id'=>$course->id)));
 $PAGE->navbar->add(format_string($feedback->name));
 
 $PAGE->set_title(format_string($feedback->name));
@@ -294,7 +294,7 @@ if($feedback_can_submit) {
         //print the items
         if(is_array($feedbackitems)){
             echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-            echo '<div class="mdl-align"><form name="frm" action="'.$ME.'" method="post" onsubmit=" ">';
+            echo '<div class="mdl-align"><form name="frm" action="complete_guests.php" method="post" onsubmit=" ">';
             echo '<table>';
             echo '<tr><td colspan="3" align="center">
                     <input type="hidden" name="anonymous" value="0" />

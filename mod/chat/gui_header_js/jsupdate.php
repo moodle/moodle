@@ -9,7 +9,7 @@ $chat_sid      = required_param('chat_sid', PARAM_ALPHANUM);
 $chat_lasttime = optional_param('chat_lasttime', 0, PARAM_INT);
 $chat_lastrow  = optional_param('chat_lastrow', 1, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/chat/gui_header_js/jsupdate.php', array('chat_sid'=>$chat_sid));
+$url = new moodle_url('/mod/chat/gui_header_js/jsupdate.php', array('chat_sid'=>$chat_sid));
 if ($chat_lasttime !== 0) {
     $url->param('chat_lasttime', $chat_lasttime);
 }

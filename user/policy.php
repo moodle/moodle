@@ -28,7 +28,7 @@ require_once($CFG->libdir.'/filelib.php');
 
 $agree = optional_param('agree', 0, PARAM_BOOL);
 
-$url = new moodle_url($CFG->wwwroot.'/user/policy.php');
+$url = new moodle_url('/user/policy.php');
 if ($agree !== 0) {
     $url->param('agree', $agree);
 }

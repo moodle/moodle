@@ -17,7 +17,7 @@ $searchcourse = optional_param('searchcourse', '', PARAM_ALPHANUM);
 $coursefilter = optional_param('coursefilter', '', PARAM_INT);
 $courseid = optional_param('courseid', false, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/feedback/mapcourse.php', array('id'=>$id));
+$url = new moodle_url('/mod/feedback/mapcourse.php', array('id'=>$id));
 if ($searchcourse !== '') {
     $url->param('searchcourse', $searchcourse);
 }
@@ -73,7 +73,7 @@ if ($coursefilter) {
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
-$PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
+$PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', array('id'=>$course->id)));
 $PAGE->navbar->add(format_string($feedback->name));
 
 $PAGE->set_title(format_string($feedback->name));

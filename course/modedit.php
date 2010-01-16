@@ -37,7 +37,7 @@
 
     $PAGE->set_pagelayout('base');
 
-    $url = new moodle_url($CFG->wwwroot.'/course/modedit.php');
+    $url = new moodle_url('/course/modedit.php');
     if (!empty($add)) {
         $url->param('add', $add);
     } else if (!empty($update)) {

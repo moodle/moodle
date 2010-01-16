@@ -28,7 +28,7 @@ require_once('../config.php');
 $userid = optional_param('id', $USER->id, PARAM_INT);    // user id
 $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 
-$url = new moodle_url($CFG->wwwroot.'/message/edit.php');
+$url = new moodle_url('/message/edit.php');
 if ($userid !== $USER->id) {
     $url->param('id', $userid);
 }
@@ -173,9 +173,9 @@ $userfullname     = fullname($user, true);
 
 if (has_capability('moodle/course:viewparticipants', $coursecontext) ||
     has_capability('moodle/site:viewparticipants', $systemcontext)) {
-    $PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/message/index.php', array('id'=>$course->id)));
+    $PAGE->navbar->add($strparticipants, new moodle_url('/message/index.php', array('id'=>$course->id)));
 }
-$PAGE->navbar->add($userfullname, new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id, 'course'=>$course->id)));
+$PAGE->navbar->add($userfullname, new moodle_url('/user/view.php', array('id'=>$user->id, 'course'=>$course->id)));
 $PAGE->navbar->add($streditmymessage);
 $PAGE->set_title("$course->shortname: $streditmymessage");
 if ($course->id != SITEID) {

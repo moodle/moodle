@@ -38,7 +38,7 @@ if (empty($CFG->messaging)) {
 
 $PAGE->set_pagelayout('popup');
 $PAGE->set_title(get_string('messages', 'message').' - '.format_string($SITE->fullname));
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/message/refresh.php'));
+$PAGE->set_url('/message/refresh.php');
 header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');
 header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 header('Cache-Control: no-cache, must-revalidate');

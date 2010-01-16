@@ -27,7 +27,7 @@ if (empty($tag)) {
     redirect($CFG->wwwroot.'/tag/search.php');
 }
 
-$PAGE->set_url('tag/index.php', array('id' => $tag->id));
+$PAGE->set_url('/tag/index.php', array('id' => $tag->id));
 $PAGE->set_subpage($tag->id);
 $PAGE->set_context($systemcontext);
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
@@ -124,7 +124,7 @@ if ($tagnew = $tagform->get_data()) {
     }
 }
 
-$PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url($CFG->wwwroot.'/tag/search.php'));
+$PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url('/tag/search.php'));
 $PAGE->navbar->add($tagname);
 $PAGE->set_title(get_string('tag', 'tag') . ' - '. $tagname);
 echo $OUTPUT->header();

@@ -32,7 +32,7 @@ $function = optional_param('function', '', PARAM_SAFEDIR);
 $protocol = optional_param('protocol', '', PARAM_SAFEDIR);
 $authmethod = optional_param('authmethod', '', PARAM_SAFEDIR);
 
-$PAGE->set_url('webservice/testclient.php');
+$PAGE->set_url('/webservice/testclient.php');
 
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));

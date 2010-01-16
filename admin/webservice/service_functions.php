@@ -33,7 +33,7 @@ $fid     = optional_param('fid', 0, PARAM_INT);
 $action  = optional_param('action', '', PARAM_ACTION);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-$PAGE->set_url('admin/websevice/service_functions.php', array('id'=>$id));
+$PAGE->set_url('/admin/websevice/service_functions.php', array('id'=>$id));
 
 admin_externalpage_setup('externalservicefunctions');
 

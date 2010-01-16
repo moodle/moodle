@@ -64,7 +64,7 @@ if ($courseid === 0) {
     $courseid = optional_param('course', 0, PARAM_INT);
 }
 
-$url = new moodle_url($CFG->wwwroot.'/calendar/event.php', array('action'=>$action));
+$url = new moodle_url('/calendar/event.php', array('action'=>$action));
 if ($eventid !== 0) $url->param('id', $eventid);
 if ($courseid !== 0) $url->param('course', $courseid);
 if ($cal_y !== 0) $url->param('cal_y', $cal_y);
@@ -73,7 +73,7 @@ if ($cal_d !== 0) $url->param('cal_d', $cal_d);
 $PAGE->set_url($url);
 
 if ($action === 'delete' && $eventid>0) {
-    $deleteurl = new moodle_url($CFG->wwwroot.'/calendar/delete.php', array('id'=>$eventid));
+    $deleteurl = new moodle_url('/calendar/delete.php', array('id'=>$eventid));
     if ($courseid > 0) {
         $deleteurl->param('course', $courseid);
     }

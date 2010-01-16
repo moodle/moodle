@@ -10,7 +10,7 @@ $refresh = optional_param('refresh', '', PARAM_RAW); // force refresh
 $last    = optional_param('last', 0, PARAM_INT);     // last time refresh or sending
 $newonly = optional_param('newonly', 0, PARAM_BOOL); // show only new messages
 
-$url = new moodle_url($CFG->wwwroot.'/mod/chat/gui_basic/index.php', array('id'=>$id));
+$url = new moodle_url('/mod/chat/gui_basic/index.php', array('id'=>$id));
 if ($groupid !== 0) {
     $url->param('groupid', $groupid);
 }

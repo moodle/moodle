@@ -4,7 +4,7 @@ require_once("../../config.php");
 
 $id   = required_param('id', PARAM_INT);          // Course module ID
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/assignment/grade.php', array('id'=>$id)));
+$PAGE->set_url('/mod/assignment/grade.php', array('id'=>$id));
 if (! $cm = get_coursemodule_from_id('assignment', $id)) {
     print_error('invalidcoursemodule');
 }

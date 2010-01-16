@@ -811,34 +811,34 @@ function lesson_extend_settings_navigation($settings, $module) {
 
     $canedit = has_capability('mod/lesson:edit', $PAGE->cm->context);
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$PAGE->cm->id));
+    $url = new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id));
     $key = $lessonnav->add(get_string('preview', 'lesson'), $url);
 
     if ($canedit) {
-        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/edit.php', array('id'=>$PAGE->cm->id));
+        $url = new moodle_url('/mod/lesson/edit.php', array('id'=>$PAGE->cm->id));
         $key = $lessonnav->add(get_string('edit', 'lesson'), $url);
     }
 
     if (has_capability('mod/lesson:manage', $PAGE->cm->context)) {
         $key = $lessonnav->add(get_string('reports', 'lesson'));
-        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportoverview'));
+        $url = new moodle_url('/mod/lesson/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportoverview'));
         $lessonnav->get($key)->add(get_string('overview', 'lesson'), $url);
-        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportdetail'));
+        $url = new moodle_url('/mod/lesson/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportdetail'));
         $lessonnav->get($key)->add(get_string('detailedstats', 'lesson'), $url);
     }
 
     if ($canedit) {
-        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/essay.php', array('id'=>$PAGE->cm->id));
+        $url = new moodle_url('/mod/lesson/essay.php', array('id'=>$PAGE->cm->id));
         $lessonnav->add(get_string('manualgrading', 'lesson'), $url);
     }
 
     if ($lesson->highscores) {
-        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/highscores.php', array('id'=>$PAGE->cm->id));
+        $url = new moodle_url('/mod/lesson/highscores.php', array('id'=>$PAGE->cm->id));
         $lessonnav->add(get_string('highscores', 'lesson'), $url);
     }
 
     if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $url = new moodle_url($CFG->wwwroot.'/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey()));
+        $url = new moodle_url('/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey()));
         $lessonnav->add(get_string('updatethis', '', get_string('modulename', 'lesson')), $url);
     }
 
@@ -1575,7 +1575,7 @@ class lesson extends lesson_base {
             if ($modname) {
                 $instancename = $DB->get_field($modname, 'name', array('id' => $module->instance));
                 if ($instancename) {
-                    $link = html_link::make(new moodle_url($CFG->wwwroot.'/mod/'.$modname.'/view.php', array('id'=>$this->properties->activitylink)), get_string('returnto', 'lesson', get_string('activitylinkname', 'lesson', $instancename)));
+                    $link = html_link::make(new moodle_url('/mod/'.$modname.'/view.php', array('id'=>$this->properties->activitylink)), get_string('returnto', 'lesson', get_string('activitylinkname', 'lesson', $instancename)));
                     $link->set_classes(array('centerpadded','lessonbutton','standardbutton'));
                     return $link;
                 }

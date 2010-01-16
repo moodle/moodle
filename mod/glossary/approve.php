@@ -8,7 +8,7 @@ $eid = required_param('eid', PARAM_INT);    // Entry ID
 $mode = optional_param('mode', 'approval', PARAM_ALPHA);
 $hook = optional_param('hook', 'ALL', PARAM_CLEAN);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/glossary/approve.php', array('eid'=>$eid,'mode'=>$mode, 'hook'=>$hook));
+$url = new moodle_url('/mod/glossary/approve.php', array('eid'=>$eid,'mode'=>$mode, 'hook'=>$hook));
 $PAGE->set_url($url);
 
 $entry = $DB->get_record('glossary_entries', 'id', $eid, '*', MUST_EXIST);

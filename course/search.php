@@ -15,7 +15,7 @@
     $blocklist = optional_param('blocklist', 0, PARAM_INT);
     $modulelist= optional_param('modulelist', '', PARAM_ALPHAEXT);
 
-    $PAGE->set_url('course/search.php', compact('search', 'page', 'perpage', 'blocklist', 'modulelist', 'edit'));
+    $PAGE->set_url('/course/search.php', compact('search', 'page', 'perpage', 'blocklist', 'modulelist', 'edit'));
     $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
     $search = trim(strip_tags($search)); // trim & clean raw searched string
 
@@ -40,7 +40,7 @@
     if ($perpage != 10) {
         $urlparams['perpage'] = $perpage;
     }
-    $PAGE->set_url('course/search.php', $urlparams);
+    $PAGE->set_url('/course/search.php', $urlparams);
     $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
     if ($CFG->forcelogin) {
@@ -95,7 +95,7 @@
     $strnovalidcourses = get_string('novalidcourses');
 
     if (empty($search) and empty($blocklist) and empty($modulelist)) {
-        $PAGE->navbar->add($strcourses, new moodle_url($CFG->wwwroot.'/course/index.php'));
+        $PAGE->navbar->add($strcourses, new moodle_url('/course/index.php'));
         $PAGE->navbar->add($strsearch);
         $PAGE->set_title("$site->fullname : $strsearch");
         $PAGE->set_heading($site->fullname);
@@ -198,8 +198,8 @@
         }
     }
 
-    $PAGE->navbar->add($strcourses, new moodle_url($CFG->wwwroot.'/course/index.php'));
-    $PAGE->navbar->add($strsearch, new moodle_url($CFG->wwwroot.'/course/search.php'));
+    $PAGE->navbar->add($strcourses, new moodle_url('/course/index.php'));
+    $PAGE->navbar->add($strsearch, new moodle_url('/course/search.php'));
     if (!empty($search)) {
         $PAGE->navbar->add(s($search));
     }

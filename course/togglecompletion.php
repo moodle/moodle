@@ -29,7 +29,7 @@ require_once($CFG->libdir.'/completionlib.php');
 $cmid=required_param('id',PARAM_INT);
 $targetstate=required_param('completionstate',PARAM_INT);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/togglecompletion.php', array('id'=>$id,'completionstate'=>$targetstate)));
+$PAGE->set_url('/course/togglecompletion.php', array('id'=>$id,'completionstate'=>$targetstate));
 
 switch($targetstate) {
     case COMPLETION_COMPLETE:

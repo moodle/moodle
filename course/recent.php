@@ -29,7 +29,7 @@ require_once('recent_form.php');
 
 $id = required_param('id', PARAM_INT);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/recent.php', array('id'=>$id)));
+$PAGE->set_url('/course/recent.php', array('id'=>$id));
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error("That's an invalid course id");
@@ -73,7 +73,7 @@ if (!empty($param->user)) {
 }
 
 $strrecentactivity = get_string('recentactivity');
-$PAGE->navbar->add($strrecentactivity, new moodle_url($CFG->wwwroot.'/course/recent.php', array('id'=>$course->id)));
+$PAGE->navbar->add($strrecentactivity, new moodle_url('/course/recent.php', array('id'=>$course->id)));
 $PAGE->navbar->add($userinfo);
 $PAGE->set_title("$course->shortname: $strrecentactivity");
 $PAGE->set_heading($course->fullname);

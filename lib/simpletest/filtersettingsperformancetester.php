@@ -41,7 +41,7 @@ require_capability('moodle/site:config', $syscontext);
 $baseurl = $CFG->wwwroot . '/lib/simpletest/filtersettingsperformancetester.php';
 
 $title = 'filter_get_active_in_context performance test';
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/lib/simpletest/filtersettingsperformancetester.php'));
+$PAGE->set_url('/lib/simpletest/filtersettingsperformancetester.php');
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);

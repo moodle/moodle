@@ -89,7 +89,7 @@ class lesson_page_type_essay extends lesson_page {
         require_sesskey();
 
         if (!$data) {
-            redirect(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$PAGE->cm->id, 'pageid'=>$this->properties->id)));
+            redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id, 'pageid'=>$this->properties->id)));
         }
 
         $studentanswer = $data->answer['text'];

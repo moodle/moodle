@@ -35,7 +35,7 @@ $fromcoursesearch = optional_param('fromcoursesearch', '', PARAM_RAW);
 $page             = optional_param('page', 0, PARAM_INT);
 $filename         = optional_param('filename', 0, PARAM_PATH);
 
-$url = new moodle_url($CFG->wwwroot.'/course/import/activities/index.php', array('id'=>$id));
+$url = new moodle_url('/course/import/activities/index.php', array('id'=>$id));
 if ($fromcourse !== 0) {
     $url->param('fromcourse', $fromcourse);
 }
@@ -92,8 +92,8 @@ if ($from = $DB->get_record('course', array('id'=>$fromcourse))) {
     }
 }
 
-$PAGE->navbar->add($course->shortname, new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
-$PAGE->navbar->add(get_string('import'), new moodle_url($CFG->wwwroot.'/course/import.php', array('id'=>$course->id)));
+$PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
+$PAGE->navbar->add(get_string('import'), new moodle_url('/course/import.php', array('id'=>$course->id)));
 $PAGE->navbar->add($strimportactivities);
 
 $PAGE->set_title("$course->shortname: $strimportactivities");

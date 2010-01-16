@@ -35,7 +35,7 @@ $userid = optional_param('id', $USER->id, PARAM_INT);    // user id
 $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 $cancelemailchange = optional_param('cancelemailchange', false, PARAM_INT);   // course id (defaults to Site)
 
-$url = new moodle_url($CFG->wwwroot.'/user/edit.php', array('course'=>$course));
+$url = new moodle_url('/user/edit.php', array('course'=>$course));
 if ($userid !== $USER->id) {
     $url->param('id', $userid);
 }

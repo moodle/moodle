@@ -125,7 +125,7 @@ $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
 $PAGE->navbar->add(get_string('feedback:complete', 'feedback'));
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/feedback/complete.php', array('id'=>$cm->id, 'gopage'=>$gopage, 'courseid'=>$course->id)));
+$PAGE->set_url('/mod/feedback/complete.php', array('id'=>$cm->id, 'gopage'=>$gopage, 'courseid'=>$course->id));
 $PAGE->set_title(format_string($feedback->name));
 echo $OUTPUT->header();
 
@@ -328,7 +328,7 @@ if($feedback_can_submit) {
         //print the items
         if(is_array($feedbackitems)){
             echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-            echo '<div class="mdl-align"><form name="frm" action="'.$ME.'" method="post" onsubmit=" ">';
+            echo '<div class="mdl-align"><form name="frm" action="complete.php" method="post" onsubmit=" ">';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '<table>';
             switch ($feedback->anonymous) {

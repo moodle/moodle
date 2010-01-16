@@ -554,7 +554,7 @@ class page_requirements_manager {
      *
      * @return string the HTML code to to inside the <head> tag.
      */
-    public function get_head_code($page, $output) {
+    public function get_head_code(moodle_page $page, core_renderer $output) {
         // note: the $page and $output are not stored here because it would
         // create circular references in memory which prevents garbage collection
         $this->setup_core_javascript($page, $output);

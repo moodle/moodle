@@ -38,7 +38,7 @@ if (isset($CFG->iplookup)) {
     set_config('iplookup', NULL);
 }
 
-$PAGE->set_url('iplookup/index.php', array('id'=>$ip, 'user'=>$user));
+$PAGE->set_url('/iplookup/index.php', array('id'=>$ip, 'user'=>$user));
 $PAGE->set_pagelayout('popup');
 
 $info = array($ip);

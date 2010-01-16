@@ -32,7 +32,7 @@ $id       = optional_param('id', 0, PARAM_INT); // The key's id
 $delete   = optional_param('delete', 0, PARAM_BOOL);
 $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
-$PAGE->set_url('grade/export/key.php', array('id' => $id, 'courseid' => $courseid));
+$PAGE->set_url('/grade/export/key.php', array('id' => $id, 'courseid' => $courseid));
 
 if ($id) {
     if (!$key = $DB->get_record('user_private_key', array('id' => $id))) {
@@ -119,8 +119,8 @@ if ($id) {
     $strheading = get_string('createuserkey', 'userkey');
 }
 
-$PAGE->navbar->add($strgrades, new moodle_url($CFG->wwwroot.'/grade/index.php', array('id'=>$courseid)));
-$PAGE->navbar->add($strkeys, new moodle_url($CFG->wwwroot.'/grade/export/keymanager.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strgrades, new moodle_url('/grade/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strkeys, new moodle_url('/grade/export/keymanager.php', array('id'=>$courseid)));
 $PAGE->navbar->add($strheading);
 
 /// Print header

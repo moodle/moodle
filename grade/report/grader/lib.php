@@ -133,7 +133,7 @@ class grade_report_grader extends grade_report {
             $this->baseurl->params(array('perpage' => $studentsperpage, 'page' => $this->page));
         }
 
-        $this->pbarurl = new moodle_url($CFG->wwwroot.'/grade/report/grader/index.php', array('id' => $this->courseid, 'perpage' => $studentsperpage));
+        $this->pbarurl = new moodle_url('/grade/report/grader/index.php', array('id' => $this->courseid, 'perpage' => $studentsperpage));
 
         $this->setup_groups();
 
@@ -600,7 +600,7 @@ class grade_report_grader extends grade_report {
                 $usercell->text = $OUTPUT->container($OUTPUT->user_picture($user), 'userpic');
             }
 
-            $usercell->text .= html_writer::link(new moodle_url($CFG->wwwroot.'/user/view.php', array('id' => $user->id, 'course' => $this->course->id)), fullname($user));
+            $usercell->text .= html_writer::link(new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $this->course->id)), fullname($user));
 
             $userrow->cells[] = $usercell;
 
@@ -610,7 +610,7 @@ class grade_report_grader extends grade_report {
                 $userreportcell->header = true;
                 $a->user = fullname($user);
                 $strgradesforuser = get_string('gradesforuser', 'grades', $a);
-                $url = new moodle_url($CFG->wwwroot.'/grade/report/'.$CFG->grade_profilereport.'/index.php', array('userid' => $user->id, 'id' => $this->course->id));
+                $url = new moodle_url('/grade/report/'.$CFG->grade_profilereport.'/index.php', array('userid' => $user->id, 'id' => $this->course->id));
                 $userreportcell->text = $OUTPUT->action_icon($url, $strgradesforuser, 't/grades', array('class'=>'iconsmall'));
                 $userrow->cells[] = $userreportcell;
             }

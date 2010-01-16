@@ -7,7 +7,7 @@
     $id     = required_param('id', PARAM_INT);              // course id
     $delete = optional_param('delete', '', PARAM_ALPHANUM); // delete confirmation hash
 
-    $PAGE->set_url('course/delete.php', array('id' => $id));
+    $PAGE->set_url('/course/delete.php', array('id' => $id));
     require_login();
 
     if (!can_delete_course($id)) {
@@ -26,9 +26,9 @@
 
     $category = $DB->get_record("course_categories", array("id"=>$course->category));
 
-    $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php/'));
-    $PAGE->navbar->add($strcategories, new moodle_url($CFG->wwwroot.'/course/index.php'));
-    $PAGE->navbar->add($category->name, new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$course->category)));
+    $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php/'));
+    $PAGE->navbar->add($strcategories, new moodle_url('/course/index.php'));
+    $PAGE->navbar->add($category->name, new moodle_url('/course/category.php', array('id'=>$course->category)));
     if (! $delete) {
         $strdeletecheck = get_string("deletecheck", "", $course->shortname);
         $strdeletecoursecheck = get_string("deletecoursecheck");

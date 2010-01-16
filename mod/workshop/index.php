@@ -41,7 +41,7 @@ require_course_login($course);
 
 add_to_log($course->id, 'workshop', 'view all', "index.php?id=$course->id", '');
 
-$PAGE->set_url('mod/workshop/view.php', array('id' => $id));
+$PAGE->set_url('/mod/workshop/view.php', array('id' => $id));
 $PAGE->set_title($course->fullname);
 $PAGE->set_heading($course->shortname);
 $PAGE->navbar->add(get_string('modulenameplural', 'workshop'));
@@ -54,7 +54,7 @@ echo $OUTPUT->header();
 
 if (! $workshops = get_all_instances_in_course('workshop', $course)) {
     echo $OUTPUT->heading(get_string('noworkshops', 'workshop'), 2);
-    echo $OUTPUT->continue_button(new moodle_url($CFG->wwwroot . '/course/view.php', array('id' => $course->id)));
+    echo $OUTPUT->continue_button(new moodle_url('/course/view.php', array('id' => $course->id)));
     echo $OUTPUT->footer();
     die();
 }

@@ -42,7 +42,7 @@ if ($id) {
     }
 }
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/feedback/show_entries.php', array('id'=>$cm->id, 'do_show'=>$do_show)));
+$PAGE->set_url('/mod/feedback/show_entries.php', array('id'=>$cm->id, 'do_show'=>$do_show));
 
 $capabilities = feedback_load_capabilities($cm->id);
 
@@ -152,7 +152,7 @@ if($do_show == 'showentries'){
                             </td>
                             <td align="right">
                             <?php
-                                $aurl = new moodle_url($ME, array('sesskey'=>sesskey(), 'userid'=>$student->id, 'do_show'=>'showoneentry', 'id'=>$id));
+                                $aurl = new moodle_url('show_entries.php', array('sesskey'=>sesskey(), 'userid'=>$student->id, 'do_show'=>'showoneentry', 'id'=>$id));
                                 echo $OUTPUT->single_button($aurl, get_string('show_entries', 'feedback'));
                             ?>
                             </td>

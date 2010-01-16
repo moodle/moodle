@@ -126,7 +126,7 @@ $PAGE->set_title($title);
 if ($courseid != SITEID) {
     $PAGE->set_heading($fullname);
     if (has_capability('moodle/course:viewparticipants', $coursecontext)) {
-        $PAGE->navbar->add(get_string('participants'),new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
+        $PAGE->navbar->add(get_string('participants'),new moodle_url('/user/index.php', array('id'=>$courseid)));
     }
 } else {
     $PAGE->set_heading($course->fullname);

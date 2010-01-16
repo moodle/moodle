@@ -78,7 +78,7 @@ function authorize_print_orders($courseid, $userid) {
     }
 
     if (SITEID != $courseid) {
-        $PAGE->navbar->add($course->shortname, new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
+        $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
     }
     $PAGE->navbar->add($authstrs->paymentmanagement, 'index.php');
     $PAGE->set_title("$course->shortname: $authstrs->paymentmanagement");
@@ -268,7 +268,7 @@ function authorize_print_order($orderid)
     }
 
     if (SITEID != $courseid) {
-        $PAGE->navbar->add($course->shortname, new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
+        $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
     }
     $PAGE->navbar->add($authstrs->paymentmanagement, 'index.php?course='.$course->id);
     $PAGE->navbar->add($authstrs->orderid . ': ' . $orderid, 'index.php');

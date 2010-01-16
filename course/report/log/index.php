@@ -46,7 +46,7 @@
     if ($showusers !== 0) $params['showusers'] = $showusers;
     if ($chooselog !== 0) $params['chooselog'] = $chooselog;
     if ($logformat !== 'showashtml') $params['logformat'] = $logformat;
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/report/log/index.php', $params));
+    $PAGE->set_url('/course/report/log/index.php', $params);
 
     if ($hostid == $CFG->mnet_localhost_id) {
         if (!$course = $DB->get_record('course', array('id'=>$id))) {
@@ -98,8 +98,8 @@
                 } else {
                     $PAGE->set_title($course->shortname .': '. $strlogs);
                     $PAGE->set_heading($course->fullname);
-                    $PAGE->navbar->add($strreports, new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)));
-                    $PAGE->navbar->add($strlogs, new moodle_url($CFG->wwwroot.'/course/index.php', array('id'=>$course->id)));
+                    $PAGE->navbar->add($strreports, new moodle_url('/course/report.php', array('id'=>$course->id)));
+                    $PAGE->navbar->add($strlogs, new moodle_url('/course/index.php', array('id'=>$course->id)));
                     $PAGE->navbar->add("$userinfo, $dateinfo");
                     echo $OUTPUT->header();
                 }

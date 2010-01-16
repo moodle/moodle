@@ -12,7 +12,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 $attemptid = required_param('attempt', PARAM_INT); // The attempt to summarise.
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/quiz/summary.php', array('attempt'=>$attemptid)));
+$PAGE->set_url('/mod/quiz/summary.php', array('attempt'=>$attemptid));
 
 $attemptobj = new quiz_attempt($attemptid);
 

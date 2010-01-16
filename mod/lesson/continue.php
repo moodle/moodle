@@ -42,7 +42,7 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 $canmanage = has_capability('mod/lesson:manage', $context);
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
-$url = new moodle_url($CFG->wwwroot.'/mod/lesson/continue.php', array('id'=>$cm->id));
+$url = new moodle_url('/mod/lesson/continue.php', array('id'=>$cm->id));
 $PAGE->set_url($url);
 $PAGE->navbar->add(get_string('continue', 'lesson'));
 
@@ -56,7 +56,7 @@ if (!$canmanage) {
         if ($timeleft <= 0) {
             // Out of time
             $lesson->add_message(get_string('eolstudentoutoftime', 'lesson'));
-            redirect(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$cm->id,'pageid'=>LESSON_EOL, 'outoftime'=>'normal')));
+            redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id,'pageid'=>LESSON_EOL, 'outoftime'=>'normal')));
         } else if ($timeleft < 60) {
             // One minute warning
             $lesson->add_message(get_string("studentoneminwarning", "lesson"));
@@ -125,7 +125,7 @@ if (isset($USER->modattempts[$lesson->id])) {
 
 if ($result->nodefaultresponse) {
     // Don't display feedback
-    redirect(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$cm->id,'pageid'=>$result->newpageid)));
+    redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id,'pageid'=>$result->newpageid)));
 }
 
 /// Set Messages
@@ -151,7 +151,7 @@ if ($result->maxattemptsreached != 0) {
     $lesson->add_message('('.get_string("maximumnumberofattemptsreached", "lesson").')');
 }
 
-$PAGE->set_url('mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $page->id));
+$PAGE->set_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $page->id));
 $PAGE->set_subpage($page->id);
 
 /// Print the header, heading and tabs
@@ -186,7 +186,7 @@ if ($lesson->review && !$result->correctanswer && !$result->noanswer && !$result
     echo $OUTPUT->form($form);
 }
 
-$url = new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$result->newpageid));
+$url = new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$result->newpageid));
 if ($lesson->review && !$result->correctanswer && !$result->noanswer && !$result->isessayquestion) {
     // Review button continue
     echo $OUTPUT->single_button($url, get_string('reviewquestioncontinue', 'lesson'));

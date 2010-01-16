@@ -19,7 +19,7 @@ require_once '../../config.php';
 
 $courseid = required_param('id', PARAM_INT);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/grade/report/index.php', array('id'=>$courseid)));
+$PAGE->set_url('/grade/report/index.php', array('id'=>$courseid));
 
 /// basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {

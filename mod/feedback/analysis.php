@@ -17,7 +17,7 @@ $current_tab = 'analysis';
 $id = required_param('id', PARAM_INT);  //the POST dominated the GET
 $courseid = optional_param('courseid', false, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/feedback/analysis.php', array('id'=>$id));
+$url = new moodle_url('/mod/feedback/analysis.php', array('id'=>$id));
 if ($courseid !== false) {
     $url->param('courseid', $courseid);
 }

@@ -5197,8 +5197,7 @@ function admin_externalpage_setup($section, $extrabutton = '',
     if (!$actualurl) {
         $actualurl = $extpage->url;
     }
-    $PAGE->set_url(str_replace($CFG->wwwroot . '/', '', $actualurl),
-        array_merge($extraurlparams, array('section' => $section)));
+    $PAGE->set_url($actualurl, array_merge($extraurlparams, array('section' => $section)));
     if (strpos($PAGE->pagetype, 'admin-') !== 0) {
         $PAGE->set_pagetype('admin-' . $PAGE->pagetype);
     }

@@ -11,7 +11,7 @@ if (isset($SESSION->cal_course_referer)) {
     }
 }
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/calendar/preferences.php'));
+$PAGE->set_url('/calendar/preferences.php');
 
 if ($course->id != SITEID) {
     require_login($course->id);
@@ -62,9 +62,9 @@ $strcalendar = get_string('calendar', 'calendar');
 $strpreferences = get_string('preferences', 'calendar');
 
 if ($course->id != SITEID) {
-   $PAGE->navbar-add($course->shortname, new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
+   $PAGE->navbar-add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
 }
-$PAGE->navbar->add($strpreferences, new moodle_url($CFG->wwwroot.'/calendar/view.php'));
+$PAGE->navbar->add($strpreferences, new moodle_url('/calendar/view.php'));
 
 $PAGE->set_title("$site->shortname: $strcalendar: $strpreferences");
 $PAGE->set_heading($strcalendar);

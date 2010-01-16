@@ -56,7 +56,7 @@
     add_to_log($course->id, "quiz", "view", "view.php?id=$cm->id", $quiz->id, $cm->id);
 
 /// Initialize $PAGE, compute blocks
-    $PAGE->set_url('mod/quiz/view.php', array('id' => $cm->id));
+    $PAGE->set_url('/mod/quiz/view.php', array('id' => $cm->id));
 
     $edit = optional_param('edit', -1, PARAM_BOOL);
     if ($edit != -1 && $PAGE->user_allowed_editing()) {

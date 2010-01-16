@@ -119,7 +119,7 @@ class bloglib_test extends UnitTestCaseUsingDatabase {
      */
     public function test_blog_get_headers_case_1() {
         global $CFG, $PAGE, $OUTPUT;
-        $PAGE->url = new moodle_url($CFG->wwwroot . '/blog/index.php', array('entryid' => 1));
+        $PAGE->url = new moodle_url('/blog/index.php', array('entryid' => 1));
         $blog_headers = blog_get_headers();
 
         $this->assertEqual($blog_headers['title'], '');

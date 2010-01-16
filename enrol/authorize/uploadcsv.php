@@ -15,7 +15,7 @@
     $struploadcsv = get_string('uploadcsv', 'enrol_authorize');
     $managebutton = "<form method='get' action='index.php'><div><input type='submit' value='".get_string('paymentmanagement', 'enrol_authorize')."' /></div></form>";
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/enrol/authorize/uploadcsv.php'));
+    $PAGE->set_url('/enrol/authorize/uploadcsv.php');
     $PAGE->navbar->add(get_string('paymentmanagement', 'enrol_authorize'), 'index.php');
     $PAGE->navbar->add($struploadcsv, 'uploadcsv.php');
     $PAGE->set_title($struploadcsv);

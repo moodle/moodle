@@ -39,7 +39,7 @@ $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EX
 $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
 $workshop   = new workshop($workshop, $cm, $course);
 
-$PAGE->set_url(new moodle_url($workshop->aggregate_url(), compact('confirm', 'page', 'sortby', 'sorthow')));
+$PAGE->set_url($workshop->aggregate_url(), compact('confirm', 'page', 'sortby', 'sorthow'));
 
 require_login($course, false, $cm);
 require_capability('mod/workshop:overridegrades', $PAGE->context);

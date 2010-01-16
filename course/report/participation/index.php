@@ -14,7 +14,7 @@
     $page       = optional_param('page', 0, PARAM_INT);                     // which page to show
     $perpage    = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
 
-    $PAGE->set_url('course/report/participation/index.php', compact('id', 'roleid', 'instanceid', 'timefrom', 'page', 'perpage'));
+    $PAGE->set_url('/course/report/participation/index.php', compact('id', 'roleid', 'instanceid', 'timefrom', 'page', 'perpage'));
 
     if ($action != 'view' and $action != 'post') {
         $action = ''; // default to all (don't restrict)
@@ -51,7 +51,7 @@
 
     $PAGE->set_title($course->shortname .': '. $strparticipation);
     $PAGE->set_heading($course->fullname);
-    $PAGE->navbar->add($strreports, new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)));
+    $PAGE->navbar->add($strreports, new moodle_url('/course/report.php', array('id'=>$course->id)));
     $PAGE->navbar->add($strparticipation);
     echo $OUTPUT->header();
 

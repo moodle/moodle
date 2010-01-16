@@ -14,7 +14,7 @@ $mode    = required_param('mode', PARAM_ALPHA);             // mode to show the 
 $hook    = optional_param('hook','ALL', PARAM_ALPHANUM);   // what to show
 $sortkey = optional_param('sortkey','UPDATE', PARAM_ALPHA); // Sorting key
 
-$url = new moodle_url($CFG->wwwroot.'/mod/glossary/print.php', array('id'=>$id));
+$url = new moodle_url('/mod/glossary/print.php', array('id'=>$id));
 if ($sortorder !== 'asc') {
     $url->param('sortorder', $sortorder);
 }

@@ -60,7 +60,7 @@ class lesson_page_type_endofcluster extends lesson_page {
         } else {
             $nextpageid = $this->properties->nextpageid;
         }
-        redirect(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$PAGE->cm->id,'pageid'=>$nextpageid)));
+        redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id,'pageid'=>$nextpageid)));
     }
     public function get_grayout() {
         return 1;
@@ -117,7 +117,7 @@ class lesson_page_type_endofcluster extends lesson_page {
     public function add_page_link($previd) {
         global $PAGE, $CFG;
         if ($previd != 0) {
-            $endofclusterurl = new moodle_url($CFG->wwwroot.'/mod/lesson/editpage.php', array('id'=>$PAGE->cm->id, 'pageid'=>$previd, 'sesskey'=>sesskey(), 'qtype'=>LESSON_PAGE_ENDOFCLUSTER));
+            $endofclusterurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$PAGE->cm->id, 'pageid'=>$previd, 'sesskey'=>sesskey(), 'qtype'=>LESSON_PAGE_ENDOFCLUSTER));
             return html_link::make($endofclusterurl, get_string('addendofcluster', 'lesson'));
         }
         return false;

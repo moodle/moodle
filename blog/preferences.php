@@ -35,7 +35,7 @@ $userid   = optional_param('userid', null, PARAM_INT);
 $tagid    = optional_param('tagid', null, PARAM_INT);
 $groupid      = optional_param('groupid', null, PARAM_INT);
 
-$PAGE->set_url('blog/preferences.php', array('courseid' => $courseid, 'modid' => $modid, 'userid' => $userid, 'tagid' => $tagid, 'groupid' => $groupid));
+$PAGE->set_url('/blog/preferences.php', array('courseid' => $courseid, 'modid' => $modid, 'userid' => $userid, 'tagid' => $tagid, 'groupid' => $groupid));
 
 if ($courseid == SITEID) {
     require_login();
@@ -76,7 +76,7 @@ $strblogs       = get_string('blogs', 'blog');
 $title = "$site->shortname: $strblogs : $strpreferences";
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-$PAGE->navbar->add($strblogs, new moodle_url($CFG->wwwroot.'/blog/'));
+$PAGE->navbar->add($strblogs, new moodle_url('/blog/'));
 $PAGE->navbar->add($strpreferences);
 
 echo $OUTPUT->header();

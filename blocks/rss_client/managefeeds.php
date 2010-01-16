@@ -59,7 +59,7 @@ if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
     $extraparams = '&returnurl=' . $returnurl;
 }
-$PAGE->set_url('blocks/rss_client/managefeeds.php', $urlparams);
+$PAGE->set_url('/blocks/rss_client/managefeeds.php', $urlparams);
 
 // Process any actions
 if ($deleterssid && confirm_sesskey()) {
@@ -82,8 +82,8 @@ $PAGE->set_pagelayout('base');
 $PAGE->set_title($strmanage);
 $PAGE->set_heading($strmanage);
 
-$settingsurl = new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=blocksettingrss_client');
-$managefeeds = new moodle_url($CFG->wwwroot . '/blocks/rss_client/managefeeds.php', $urlparams);
+$settingsurl = new moodle_url('/admin/settings.php?section=blocksettingrss_client');
+$managefeeds = new moodle_url('/blocks/rss_client/managefeeds.php', $urlparams);
 $PAGE->navbar->add(get_string('blocks'));
 $PAGE->navbar->add(get_string('feedstitle', 'block_rss_client'), $settingsurl);
 $PAGE->navbar->add(get_string('managefeeds', 'block_rss_client'), $managefeeds);

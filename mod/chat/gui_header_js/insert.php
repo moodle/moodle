@@ -6,7 +6,7 @@ include('../lib.php');
 $chat_sid     = required_param('chat_sid', PARAM_ALPHANUM);
 $chat_message = required_param('chat_message', PARAM_RAW);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/chat/gui_header_js/insert.php', array('chat_sid'=>$chat_sid,'chat_message'=>$chat_message)));
+$PAGE->set_url('/mod/chat/gui_header_js/insert.php', array('chat_sid'=>$chat_sid,'chat_message'=>$chat_message));
 
 if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
     print_error('notlogged', 'chat');

@@ -39,7 +39,7 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/lesson:manage', $context);
 
 $mode    = optional_param('mode', get_user_preferences('lesson_view', 'collapsed'), PARAM_ALPHA);
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/lesson/edit.php', array('id'=>$cm->id,'mode'=>$mode)));
+$PAGE->set_url('/mod/lesson/edit.php', array('id'=>$cm->id,'mode'=>$mode));
 
 if ($mode != get_user_preferences('lesson_view', 'collapsed') && $mode !== 'single') {
     set_user_preference('lesson_view', $mode);

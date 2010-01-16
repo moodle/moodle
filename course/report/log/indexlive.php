@@ -27,7 +27,7 @@
     } else {
         $PAGE->set_title($course->shortname .': '. $strlogs);
         $PAGE->set_heading($course->fullname);
-        $PAGE->navbar->add($strreports, new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)), navigation_node::TYPE_CUSTOM);
+        $PAGE->navbar->add($strreports, new moodle_url('/course/report.php', array('id'=>$course->id)), navigation_node::TYPE_CUSTOM);
         $PAGE->navbar->add($strlogs);
         echo $OUTPUT->header();
     }

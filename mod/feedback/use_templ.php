@@ -20,7 +20,7 @@ if(!$templateid) {
     redirect('edit.php?id='.$id);
 }
 
-$url = new moodle_url($CFG->wwwroot.'/mod/feedback/use_templ.php', array('id'=>$id,'templateid'=>$templateid));
+$url = new moodle_url('/mod/feedback/use_templ.php', array('id'=>$id,'templateid'=>$templateid));
 if ($deleteolditems !== 0) {
     $url->param('deleteolditems', $deleteolditems);
 }
@@ -69,7 +69,7 @@ if(isset($formdata->confirmadd) AND $formdata->confirmadd == 1){
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
-$PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
+$PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', array('id'=>$course->id)));
 $PAGE->navbar->add(format_string($feedback->name));
 
 $PAGE->set_title(format_string($feedback->name));

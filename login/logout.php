@@ -36,7 +36,7 @@ if (!isloggedin()) {
     redirect($redirect);
 
 } else if (!confirm_sesskey($sesskey)) {
-    $url = new moodle_url($CFG->wwwroot.'/login/logout.php');
+    $url = new moodle_url('/login/logout.php');
     if ($sesskey !== '__notpresent__') $url->param('sesskey', $sesskey);
     $PAGE->set_url($url);
     $PAGE->set_title($SITE->fullname);

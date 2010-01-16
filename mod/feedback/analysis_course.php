@@ -22,7 +22,7 @@ $courseitemfiltertyp = optional_param('courseitemfiltertyp', '0', PARAM_ALPHANUM
 $searchcourse = optional_param('searchcourse', '', PARAM_RAW);
 $courseid = optional_param('courseid', false, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/feedback/analysis_course.php', array('id'=>$id));
+$url = new moodle_url('/mod/feedback/analysis_course.php', array('id'=>$id));
 if ($courseid !== false) {
     $url->param('courseid', $courseid);
 }
@@ -69,7 +69,7 @@ if( !( (intval($feedback->publish_stats) == 1) || $capabilities->viewreports)) {
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
-$PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
+$PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', array('id'=>$course->id)));
 $PAGE->navbar->add(format_string($feedback->name));
 
 $PAGE->set_title(format_string($feedback->name));

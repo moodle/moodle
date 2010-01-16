@@ -42,7 +42,7 @@ try {
 }
 require_login($course, false, $cm);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$id));
+$url = new moodle_url('/mod/lesson/view.php', array('id'=>$id));
 if ($pageid !== null) {
     $url->param('pageid', $pageid);
 }
@@ -139,7 +139,7 @@ if (!$canmanage) {
         }
     } else if ($lesson->highscores && !$lesson->practice && !optional_param('viewed', 0, PARAM_INT) && empty($pageid)) {
         // Display high scores before starting lesson
-        redirect(new moodle_url($CFG->wwwroot.'/mod/lesson/highscores.php', array("id"=>$cm->id)));
+        redirect(new moodle_url('/mod/lesson/highscores.php', array("id"=>$cm->id)));
     }
 }
 
@@ -218,10 +218,10 @@ if (empty($pageid)) {
         echo $lessonoutput->header($lesson, $cm);
         if ($lesson->timed) {
             if ($lesson->retake) {
-                $continuelink = new single_button(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no')), get_string('continue', 'lesson'), 'get');
+                $continuelink = new single_button(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no')), get_string('continue', 'lesson'), 'get');
                 echo $lessonoutput->message(get_string('leftduringtimed', 'lesson'), $continuelink);
             } else {
-                $courselink = new single_button(new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
+                $courselink = new single_button(new moodle_url('/course/view.php', array('id'=>$PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
                 echo $lessonoutput->message(get_string('leftduringtimednoretake', 'lesson'), $courselink);
             }
         } else {
@@ -234,7 +234,7 @@ if (empty($pageid)) {
     if ($attemptflag) {
         if (!$lesson->retake) {
             echo $lessonoutput->header($lesson, $cm, 'view');
-            $courselink = new single_button(new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
+            $courselink = new single_button(new moodle_url('/course/view.php', array('id'=>$PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
             echo $lessonoutput->message(get_string("noretake", "lesson"), $courselink);
             echo $lessonoutput->footer();
             exit();
@@ -290,7 +290,7 @@ if ($pageid != LESSON_EOL) {
             if ($timeleft <= 0) {
                 // Out of time
                 $lesson->add_message(get_string('eolstudentoutoftime', 'lesson'));
-                redirect(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$cm->id,'pageid'=>LESSON_EOL, 'outoftime'=>'normal')));
+                redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id,'pageid'=>LESSON_EOL, 'outoftime'=>'normal')));
                 die; // Shouldn't be reached, but make sure
             } else if ($timeleft < 60) {
                 // One minute warning
@@ -330,7 +330,7 @@ if ($pageid != LESSON_EOL) {
         }
     }
 
-    $PAGE->set_url('mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $page->id));
+    $PAGE->set_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $page->id));
     $PAGE->set_subpage($page->id);
     $currenttab = 'view';
     $extraeditbuttons = true;
@@ -480,7 +480,7 @@ if ($pageid != LESSON_EOL) {
     // after all the grade processing, check to see if "Show Grades" is off for the course
     // if yes, redirect to the course page
     if (!$course->showgrades) {
-        redirect(new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
+        redirect(new moodle_url('/course/view.php', array('id'=>$course->id)));
     }
 
     // high scores code
@@ -507,13 +507,13 @@ if ($pageid != LESSON_EOL) {
             }
             if (!$highscores or $madeit) {
                 $lessoncontent .= $lessonoutput->paragraph(get_string("youmadehighscore", "lesson", $lesson->maxhighscores), 'center');
-                $aurl = new moodle_url($CFG->wwwroot.'/mod/lesson/highscores.php', array('id'=>$PAGE->cm->id, 'sesskey'=>sesskey()));
+                $aurl = new moodle_url('/mod/lesson/highscores.php', array('id'=>$PAGE->cm->id, 'sesskey'=>sesskey()));
                 $lessoncontent .= $OUTPUT->single_button($aurl, get_string('clicktopost', 'lesson'));
             } else {
                 $lessoncontent .= get_string("nothighscore", "lesson", $lesson->maxhighscores)."<br />";
             }
         }
-        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/highscores.php', array('id'=>$PAGE->cm->id, 'link'=>'1'));
+        $url = new moodle_url('/mod/lesson/highscores.php', array('id'=>$PAGE->cm->id, 'link'=>'1'));
         $lessoncontent .= html_writer::link($url, get_string('viewhighscores', 'lesson'), array('class'=>'centerpadded lessonbutton standardbutton'));
         $lessoncontent .= $OUTPUT->box_end();
     }
@@ -533,7 +533,7 @@ if ($pageid != LESSON_EOL) {
         $lastattempt = end($attempts);
         $USER->modattempts[$lesson->id] = $lastattempt->pageid;
 
-        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$PAGE->cm->id, 'pageid'=>$pageid));
+        $url = new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id, 'pageid'=>$pageid));
         $lessoncontent .= html_writer::link($url, get_string('reviewlesson', 'lesson'), array('class' => 'centerpadded lessonbutton standardbutton'));
 
     } elseif ($lesson->modattempts && $canmanage) {
@@ -547,10 +547,10 @@ if ($pageid != LESSON_EOL) {
         }
     }
 
-    $url = new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id));
+    $url = new moodle_url('/course/view.php', array('id'=>$course->id));
     $lessoncontent .= html_writer::link($url, get_string('returnto', 'lesson', format_string($course->fullname, true)), array('class'=>'centerpadded lessonbutton standardbutton'));
 
-    $url = new moodle_url($CFG->wwwroot.'/grade/index.php', array('id'=>$course->id));
+    $url = new moodle_url('/grade/index.php', array('id'=>$course->id));
     $lessoncontent .= html_writer::link($url, get_string('viewgrades', 'lesson'), array('class'=>'centerpadded lessonbutton standardbutton'));
 
     lesson_add_pretend_blocks($PAGE, $cm, $lesson, $timer);

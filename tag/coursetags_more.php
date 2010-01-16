@@ -13,7 +13,7 @@ $sort = optional_param('sort', 'alpha', PARAM_TEXT); //alpha, date or popularity
 $show = optional_param('show', 'all', PARAM_TEXT); //all, my, official, community or course
 $courseid = optional_param('courseid', 0, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/tag/coursetags_more.php');
+$url = new moodle_url('/tag/coursetags_more.php');
 if ($sort !== 'alpha') {
     $url->param('sort', $sort);
 }
@@ -63,7 +63,7 @@ $welcome = get_string('morewelcome', $tagslang);
 
 // The title and breadcrumb
 if ($courseid) {
-    $PAGE->navbar->add(format_string($course->shortname), new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$courseid)));
+    $PAGE->navbar->add(format_string($course->shortname), new moodle_url('/course/view.php', array('id'=>$courseid)));
 }
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);

@@ -8,7 +8,7 @@
 
     $id = required_param('id', PARAM_INT);   // course
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/index.php', array('id'=>$id)));
+    $PAGE->set_url('/mod/hotpot/index.php', array('id'=>$id));
 
     if (!$course = $DB->get_record('course', array('id'=>$id))) {
         print_error('invalidcourseid');
@@ -109,7 +109,7 @@
                 }
                 print ''
                 .   '<div class="mdl-align"><table border="0"><tr><td>'
-                .   '<form target="_parent" method="post" action="'.$ME.'">'
+                .   '<form target="_parent" method="post" action="index.php">'
                 .   '<input type="hidden" name="id" value="'.$course->id.'" />'
                 .   '<input type="hidden" name="regrade" value="'.$regrade.'" />'
                 .   '<input type="hidden" name="confirm" value="1" />'
@@ -117,7 +117,7 @@
                 .   '<input type="submit" value="'.get_string("yes").'" />'
                 .   '</form>'
                 .   '</td><td> &nbsp; </td><td>'
-                .   '<form target="_parent" method="post" action="'.$ME.'">'
+                .   '<form target="_parent" method="post" action="index.php">'
                 .   '<input type="hidden" name="id" value="'.$course->id.'" />'
                 .   $sesskey
                 .   '<input type="submit" value="'.get_string("no").'" />'
@@ -382,7 +382,7 @@
             } else {
                 $strregradecheck = get_string('regradecheck', 'hotpot', strtr($hotpot->name, $quotes));
                 $regradebutton = ''
-                .   '<form target="_parent" method="post" action="'.$ME.'" onsubmit="var x=window.confirm('."'$strregradecheck'".');this.confirm.value=x;return x;">'
+                .   '<form target="_parent" method="post" action="index.php" onsubmit="var x=window.confirm('."'$strregradecheck'".');this.confirm.value=x;return x;">'
                 .   '<input type="hidden" name="id" value="'.$course->id.'" />'
                 .   '<input type="hidden" name="regrade" value="'.$hotpot->id.'" />'
                 .   '<input type="hidden" name="confirm" value="" />'

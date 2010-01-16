@@ -17,7 +17,7 @@ $current_tab = 'showentries';
 $id = required_param('id', PARAM_INT);
 $userid = optional_param('userid', false, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/feedback/show_entries_anonym.php', array('id'=>$id));
+$url = new moodle_url('/mod/feedback/show_entries_anonym.php', array('id'=>$id));
 if ($userid !== '') {
     $url->param('userid', $userid);
 }
@@ -68,7 +68,7 @@ $feedbackcompleteds = $DB->get_records('feedback_completed', array('feedback'=>$
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
-$PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
+$PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', array('id'=>$course->id)));
 $PAGE->navbar->add(format_string($feedback->name));
 
 $PAGE->set_title(format_string($feedback->name));

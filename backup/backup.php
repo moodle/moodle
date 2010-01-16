@@ -13,7 +13,7 @@
     $cancel = optional_param('cancel', '', PARAM_RAW);
     $launch = optional_param('launch', '', PARAM_ACTION);
 
-    $url = new moodle_url();
+    $url = new moodle_url('/backup/backup.php');
     if ($id !== 0) {
         $url->param('id', $id);
     }
@@ -75,7 +75,7 @@
     $PAGE->set_title("$site->shortname: $strcoursebackup");
     $PAGE->set_heading($site->fullname);
     if (!$id) {
-        $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
+        $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php'));
         $PAGE->navbar->add($strcoursebackup);
         echo $OUTPUT->header();
         if ($courses = get_courses('all','c.shortname','c.id,c.shortname,c.fullname')) {
@@ -100,12 +100,12 @@
 
     //Print header
     if (has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM))) {
-        $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
-        $PAGE->navbar->add($strcoursebackup, new moodle_url($CFG->wwwroot.'/backup/backup.php'));
+        $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php'));
+        $PAGE->navbar->add($strcoursebackup, new moodle_url('/backup/backup.php'));
         $PAGE->navbar->add("$course->fullname ($course->shortname)");
         echo $OUTPUT->header();
     } else {
-        $PAGE->navbar->add($course->fullname, new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
+        $PAGE->navbar->add($course->fullname, new moodle_url('/course/view.php', array('id'=>$course->id)));
         $PAGE->navbar->add($strcoursebackup);
         echo $OUTPUT->header();
     }

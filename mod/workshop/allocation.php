@@ -38,7 +38,7 @@ $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EX
 $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
 $workshop   = new workshop($workshop, $cm, $course);
 
-$PAGE->set_url(new moodle_url($workshop->allocation_url(), array('cmid' => $cmid, 'method' => $method)));
+$PAGE->set_url($workshop->allocation_url(), array('cmid' => $cmid, 'method' => $method));
 
 require_login($course, false, $cm);
 $context = $PAGE->context;

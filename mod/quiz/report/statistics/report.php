@@ -43,7 +43,7 @@ class quiz_statistics_report extends quiz_default_report {
         }
 
 
-        $reporturl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions);
+        $reporturl = new moodle_url('/mod/quiz/report.php', $pageoptions);
 
         $mform = new mod_quiz_report_statistics($reporturl);
         if ($fromform = $mform->get_data()){

@@ -25,7 +25,7 @@ $id            = required_param('id', PARAM_INT); // course id
 $separator     = optional_param('separator', '', PARAM_ALPHA);
 $verbosescales = optional_param('verbosescales', 1, PARAM_BOOL);
 
-$url = new moodle_url($CFG->wwwroot.'/grade/import/csv/index.php', array('id'=>$id));
+$url = new moodle_url('/grade/import/csv/index.php', array('id'=>$id));
 if ($separator !== '') {
     $url->param('separator', $separator);
 }

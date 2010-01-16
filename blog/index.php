@@ -32,7 +32,7 @@ foreach ($url_params as $var => $val) {
         unset($url_params[$var]);
     }
 }
-$PAGE->set_url('blog/index.php', $url_params);
+$PAGE->set_url('/blog/index.php', $url_params);
 
 //correct tagid if a text tag is provided as a param
 if (!empty($tag)) {

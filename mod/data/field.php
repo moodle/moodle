@@ -39,7 +39,7 @@ if ($cancel) {
     $mode = 'list';
 }
 
-$url = new moodle_url($CFG->wwwroot.'/mod/data/field.php');
+$url = new moodle_url('/mod/data/field.php');
 if ($fid !== 0) {
     $url->param('fid', $fid);
 }

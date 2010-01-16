@@ -30,7 +30,7 @@ require_once('lib.php');
 
 $forumid = required_param('forumid', PARAM_INT); // The forum the rated posts are from
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/forum/rate.php', array('forumid'=>$forumid)));
+$PAGE->set_url('/mod/forum/rate.php', array('forumid'=>$forumid));
 
 if (!$forum = $DB->get_record('forum', array('id' => $forumid))) {
     print_error('invalidforumid', 'forum');

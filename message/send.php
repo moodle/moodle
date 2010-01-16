@@ -44,7 +44,7 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
 /// Script parameters
     $userid   = required_param('id', PARAM_INT);
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/message/send.php', array('id'=>$userid)));
+    $PAGE->set_url('/message/send.php', array('id'=>$userid));
 
 /// Check the user we are talking to is valid
     if (! $user = $DB->get_record('user', array('id'=>$userid))) {
@@ -114,7 +114,7 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
     $mform->display();
     echo $OUTPUT->box_start('noframesjslink');
     $accesslink = new html_link();
-    $accesslink->url = new moodle_url($CFG->wwwroot.'/message/discussion.php', array('id'=>$userid, 'noframesjs'=>1));
+    $accesslink->url = new moodle_url('/message/discussion.php', array('id'=>$userid, 'noframesjs'=>1));
     $accesslink->text = get_string('noframesjs', 'message');
     $accesslink->add_action(new breakout_of_frame_action());
     echo $OUTPUT->link($accesslink);

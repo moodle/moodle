@@ -27,7 +27,7 @@ require_once('../config.php');
 
 $id = required_param('id', PARAM_INT);   // course id to import TO
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/import.php', array('id'=>$id)));
+$PAGE->set_url('/course/import.php', array('id'=>$id));
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error("That's an invalid course id");

@@ -49,9 +49,9 @@ if ($id) {
 }
 
 if ($id !== 0) {
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/group/group.php', array('id'=>$id)));
+    $PAGE->set_url('/group/group.php', array('id'=>$id));
 } else {
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/group/group.php', array('courseid'=>$courseid)));
+    $PAGE->set_url('/group/group.php', array('courseid'=>$courseid));
 }
 
 require_login($course);
@@ -118,8 +118,8 @@ if ($id) {
     $strheading = get_string('creategroup', 'group');
 }
 
-$PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
-$PAGE->navbar->add($strgroups, new moodle_url($CFG->wwwroot.'/group/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strparticipants, new moodle_url('/user/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strgroups, new moodle_url('/group/index.php', array('id'=>$courseid)));
 $PAGE->navbar->add($strheading);
 
 /// Print header

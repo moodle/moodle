@@ -54,7 +54,7 @@
     if ($returnurl) {
         $urlparams['returnurl'] = $returnurl;
     }
-    $PAGE->set_url($CFG->admin . '/roles/assign.php', $urlparams);
+    $PAGE->set_url('/admin/roles/assign.php', $urlparams);
     $baseurl = $PAGE->url->out();
 
     if (! $context = get_context_instance_by_id($contextid)) {
@@ -266,7 +266,7 @@
         $PAGE->set_title($title);
         if ($courseid != SITEID) {
             if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $courseid))) {
-                $PAGE->navbar->add(get_string('participants'), new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
+                $PAGE->navbar->add(get_string('participants'), new moodle_url('/user/index.php', array('id'=>$courseid)));
             }
             $PAGE->set_heading($fullname);
         } else {

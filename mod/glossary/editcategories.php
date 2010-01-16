@@ -16,7 +16,7 @@ $mode   = optional_param('mode', '', PARAM_ALPHA);   // cat
 
 $action = strtolower($action);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/glossary/editcategories.php', array('id'=>$id));
+$url = new moodle_url('/mod/glossary/editcategories.php', array('id'=>$id));
 if ($usedynalink !== 0) {
     $url->param('usedynalink', $usedynalink);
 }
@@ -69,8 +69,8 @@ require_capability('mod/glossary:managecategories', $context);
 $strglossaries   = get_string("modulenameplural", "glossary");
 $strglossary     = get_string("modulename", "glossary");
 
-$PAGE->navbar->add($strglossaries, new moodle_url($CFG->wwwroot.'/mod/glossary/index.php', array('id'=>$course->id)));
-$PAGE->navbar->add(format_string($glossary->name),  new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->id,'tab'=>'GLOSSARY_CATEGORY_VIEW')));
+$PAGE->navbar->add($strglossaries, new moodle_url('/mod/glossary/index.php', array('id'=>$course->id)));
+$PAGE->navbar->add(format_string($glossary->name),  new moodle_url('/mod/glossary/view.php', array('id'=>$cm->id,'tab'=>'GLOSSARY_CATEGORY_VIEW')));
 $PAGE->navbar->add(get_string("categories","glossary"));
 $PAGE->set_title(format_string($glossary->name));
 echo $OUTPUT->header();

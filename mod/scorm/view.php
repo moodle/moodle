@@ -31,7 +31,7 @@
         print_error('missingparameter');
     }
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/scorm/view.php', array('id'=>$cm->id));
+    $url = new moodle_url('/mod/scorm/view.php', array('id'=>$cm->id));
     if ($organization !== '') {
         $url->param('organization', $organization);
     }

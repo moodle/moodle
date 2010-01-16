@@ -6,7 +6,7 @@ require_once('../lib.php');
 $id      = required_param('id', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT); //only for teachers
 
-$url = new moodle_url($CFG->wwwroot.'/mod/chat/gui_header_js/index.php', array('id'=>$id));
+$url = new moodle_url('/mod/chat/gui_header_js/index.php', array('id'=>$id));
 if ($groupid !== 0) {
     $url->param('groupid', $groupid);
 }

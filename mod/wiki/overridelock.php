@@ -15,7 +15,7 @@ require_once('../../config.php');
 $id=required_param('id',PARAM_INT);
 $page=required_param('page',PARAM_RAW);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/wiki/overridelock.php', array('id'=>$id, 'page'=>$page)));
+$PAGE->set_url('/mod/wiki/overridelock.php', array('id'=>$id, 'page'=>$page));
 
 if (! $cm = get_coursemodule_from_id('wiki', $id)) {
     print_error('invalidcoursemodule');

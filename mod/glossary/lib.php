@@ -2677,10 +2677,10 @@ function glossary_supports($feature) {
 
 function glossary_extend_navigation($navigation, $course, $module, $cm) {
     global $CFG;
-    $navigation->add(get_string('standardview', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->id, 'mode'=>'letter')));
-    $navigation->add(get_string('categoryview', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->id, 'mode'=>'cat')));
-    $navigation->add(get_string('dateview', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->id, 'mode'=>'date')));
-    $navigation->add(get_string('authorview', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->id, 'mode'=>'author')));
+    $navigation->add(get_string('standardview', 'glossary'), new moodle_url('/mod/glossary/view.php', array('id'=>$cm->id, 'mode'=>'letter')));
+    $navigation->add(get_string('categoryview', 'glossary'), new moodle_url('/mod/glossary/view.php', array('id'=>$cm->id, 'mode'=>'cat')));
+    $navigation->add(get_string('dateview', 'glossary'), new moodle_url('/mod/glossary/view.php', array('id'=>$cm->id, 'mode'=>'date')));
+    $navigation->add(get_string('authorview', 'glossary'), new moodle_url('/mod/glossary/view.php', array('id'=>$cm->id, 'mode'=>'author')));
 }
 
 function glossary_extend_settings_navigation($settings, $module) {
@@ -2694,22 +2694,22 @@ function glossary_extend_settings_navigation($settings, $module) {
     $glossarynav->forceopen = true;
 
     if (has_capability('mod/glossary:import', $PAGE->cm->context)) {
-        $glossarynav->add(get_string('importentries', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/import.php', array('id'=>$PAGE->cm->id)));
+        $glossarynav->add(get_string('importentries', 'glossary'), new moodle_url('/mod/glossary/import.php', array('id'=>$PAGE->cm->id)));
     }
 
     if (has_capability('mod/glossary:export', $PAGE->cm->context)) {
-        $glossarynav->add(get_string('exportentries', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/export.php', array('id'=>$PAGE->cm->id, 'mode'=>$mode, 'hook'=>$hook)));
+        $glossarynav->add(get_string('exportentries', 'glossary'), new moodle_url('/mod/glossary/export.php', array('id'=>$PAGE->cm->id, 'mode'=>$mode, 'hook'=>$hook)));
     }
 
     if (has_capability('mod/glossary:approve', $PAGE->cm->context) && ($hiddenentries = $DB->count_records('glossary_entries', array('glossaryid'=>$PAGE->cm->instance, 'approved'=>0)))) {
-        $glossarynav->add(get_string('waitingapproval', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$PAGE->cm->id, 'mode'=>'approval')));
+        $glossarynav->add(get_string('waitingapproval', 'glossary'), new moodle_url('/mod/glossary/view.php', array('id'=>$PAGE->cm->id, 'mode'=>'approval')));
     }
 
     if (has_capability('mod/glossary:write', $PAGE->cm->context)) {
-        $glossarynav->add(get_string('addentry', 'glossary'), new moodle_url($CFG->wwwroot.'/mod/glossary/edit.php', array('cmid'=>$PAGE->cm->id)));
+        $glossarynav->add(get_string('addentry', 'glossary'), new moodle_url('/mod/glossary/edit.php', array('cmid'=>$PAGE->cm->id)));
     }
 
     if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $glossarynav->add(get_string('updatethis', '', get_string('modulename', 'glossary')), new moodle_url($CFG->wwwroot.'/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
+        $glossarynav->add(get_string('updatethis', '', get_string('modulename', 'glossary')), new moodle_url('/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
     }
 }

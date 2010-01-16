@@ -31,7 +31,7 @@ require_once 'edit_form.php';
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/grade/edit/outcome/edit.php');
+$url = new moodle_url('/grade/edit/outcome/edit.php');
 if ($courseid !== 0) $url->param('courseid', $courseid);
 if ($id !== 0) $url->param('id', $id);
 $PAGE->set_url($url);

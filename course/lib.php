@@ -2099,7 +2099,7 @@ function update_category_button($categoryid = 0) {
     } else {
         $page = 'index.php';
     }
-    return $OUTPUT->single_button(new moodle_url($CFG->wwwroot . '/course/' . $page, $options), $label, 'get');
+    return $OUTPUT->single_button(new moodle_url('/course/' . $page, $options), $label, 'get');
 }
 
 /**
@@ -2145,7 +2145,7 @@ function print_courses($category) {
             $options = array();
             $options['category'] = $category->id;
             echo '<div class="addcoursebutton">';
-            echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot.'/course/edit.php', $options), get_string("addnewcourse"));
+            echo $OUTPUT->single_button(new moodle_url('/course/edit.php', $options), get_string("addnewcourse"));
             echo '</div>';
         }
     }

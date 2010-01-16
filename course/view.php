@@ -89,7 +89,7 @@
         $course->format = 'weeks';  // Default format is weeks
     }
 
-    $PAGE->set_url('course/view.php', array('id' => $course->id));
+    $PAGE->set_url('/course/view.php', array('id' => $course->id));
     $PAGE->set_pagelayout('course');
     $PAGE->set_pagetype('course-view-' . $course->format);
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
@@ -192,7 +192,7 @@
     // (i.e., no breadcrumbs other than the default one added inside this function)
     $buttons = switchroles_form($course->id);
     if ($PAGE->user_allowed_editing()) {
-        $buttons .= $OUTPUT->edit_button(new moodle_url($CFG->wwwroot.'/course/view.php', array('id' => $course->id)));
+        $buttons .= $OUTPUT->edit_button(new moodle_url('/course/view.php', array('id' => $course->id)));
     }
 
     $PAGE->set_title(get_string('course') . ': ' . $course->fullname);

@@ -34,7 +34,7 @@
     $param->moveto = optional_param('moveto', 0, PARAM_INT);
     $param->edit = optional_param('edit', 0, PARAM_INT);
 
-    $url = new moodle_url($CFG->wwwroot.$thispageurl);
+    $url = new moodle_url($thispageurl);
     foreach ((array)$param as $key=>$value) {
         if (($key !== 'cancel' && $value !== 0) || ($key === 'cancel' && $value !== '')) {
             $url->param($key, $value);

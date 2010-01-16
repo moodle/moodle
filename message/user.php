@@ -42,7 +42,7 @@ $removecontact  = optional_param('removecontact',  0, PARAM_INT); // removing a 
 $blockcontact   = optional_param('blockcontact',   0, PARAM_INT); // blocking a contact
 $unblockcontact = optional_param('unblockcontact', 0, PARAM_INT); // unblocking a contact
 
-$url = new moodle_url($CFG->wwwroot.'/message/user.php', array('id'=>$userid));
+$url = new moodle_url('/message/user.php', array('id'=>$userid));
 if ($addcontact !== 0) {
     $url->param('addcontact', $addcontact);
 }

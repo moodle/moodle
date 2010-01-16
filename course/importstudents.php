@@ -37,7 +37,7 @@
     $previoussearch = optional_param('previoussearch', 0, PARAM_BOOL);
     $previoussearch = ($searchtext != '') or ($previoussearch) ? 1:0;
 
-    $url = new moodle_url($CFG->wwwroot.'/course/importstudents.php', array('id'=>$id));
+    $url = new moodle_url('/course/importstudents.php', array('id'=>$id));
     if ($add !== 0) {
         $url->param('add', $add);
     }

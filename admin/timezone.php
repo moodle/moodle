@@ -18,7 +18,7 @@
     $strusers = get_string("users");
     $strall = get_string("all");
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/admin/timezone.php'));
+    $PAGE->set_url('/admin/timezone.php');
     $PAGE->set_title($strtimezone);
     $PAGE->set_heading($strtimezone);
     $PAGE->navbar->add($strtimezone);

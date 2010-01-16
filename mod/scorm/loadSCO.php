@@ -32,7 +32,7 @@
         print_error('missingparameter');
     }
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/scorm/loadSCO.php', array('scoid'=>$scoid, 'id'=>$cm->id)));
+    $PAGE->set_url('/mod/scorm/loadSCO.php', array('scoid'=>$scoid, 'id'=>$cm->id));
 
     require_login($course->id, false, $cm);
 

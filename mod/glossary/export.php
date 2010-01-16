@@ -9,7 +9,7 @@ $mode= optional_param('mode', '', PARAM_ALPHA);           // term entry cat date
 $hook= optional_param('hook', '', PARAM_CLEAN);           // the term, entry, cat, etc... to look for based on mode
 $cat = optional_param('cat',0, PARAM_ALPHANUM);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/glossary/export.php', array('id'=>$id));
+$url = new moodle_url('/mod/glossary/export.php', array('id'=>$id));
 if ($cat !== 0) {
     $url->param('cat', $cat);
 }
@@ -49,7 +49,7 @@ $strsearch = get_string("search");
 $strexportfile = get_string("exportfile", "glossary");
 $strexportentries = get_string('exportentriestoxml', 'glossary');
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/glossary/export.php', array('id'=>$cm->id)));
+$PAGE->set_url('/mod/glossary/export.php', array('id'=>$cm->id));
 $PAGE->navbar->add($strexportentries);
 $PAGE->set_title(format_string($glossary->name));
 

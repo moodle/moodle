@@ -92,7 +92,7 @@ class block_blog_recent extends block_base {
         if (!empty($entries)) {
             $entrieslist = new html_list();
             $entrieslist->add_class('list');
-            $viewblogurl = new moodle_url($CFG->wwwroot . '/blog/index.php');
+            $viewblogurl = new moodle_url('/blog/index.php');
 
             foreach ($entries as $entryid => $entry) {
                 $viewblogurl->param('entryid', $entryid);

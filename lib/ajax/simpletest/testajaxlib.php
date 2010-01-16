@@ -139,7 +139,7 @@ class required_skip_link_test extends ajaxlib_unit_test_base {
  */
 class required_js_code_test extends ajaxlib_unit_test_base {
     protected $classname = 'required_data_for_js';
-
+/* TODO: MDL-21361
     public function test_when() {
         $requirement = new $this->classname($this->requires, '', '');
         $this->assertEqual($requirement->get_when(), page_requirements_manager::WHEN_AT_END);
@@ -211,7 +211,7 @@ class required_js_code_test extends ajaxlib_unit_test_base {
         $requirement->in_head();
         $requirement->at_top_of_body();
         $this->assertEqual($requirement->get_when(), page_requirements_manager::WHEN_IN_HEAD);
-    }
+    }*/
 }
 
 
@@ -285,7 +285,7 @@ class required_data_for_js_test extends ajaxlib_unit_test_base {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_requirements_manager_test extends ajaxlib_unit_test_base {
-
+/* TODO: MDL-21361
     public function test_outputting_head_marks_it_done() {
         $this->requires->get_head_code();
         $this->assertTrue($this->requires->is_head_done());
@@ -372,7 +372,7 @@ class page_requirements_manager_test extends ajaxlib_unit_test_base {
         $this->assertPattern('/<script.*src=".*event.*\.js"/', $html);
         $this->assertContains($html, 'YAHOO.util.Event.onDOMReady');
         $this->assertContains($html, 'fn()');
-    }
+    }*/
 }
 
 

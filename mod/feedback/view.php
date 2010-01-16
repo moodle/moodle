@@ -80,7 +80,7 @@ if($feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/feedback/view.php', array('id'=>$cm->id, 'do_show'=>'view')));
+$PAGE->set_url('/mod/feedback/view.php', array('id'=>$cm->id, 'do_show'=>'view'));
 $PAGE->set_title(format_string($feedback->name));
 echo $OUTPUT->header();
 

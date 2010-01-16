@@ -21,7 +21,7 @@ require_once $CFG->dirroot.'/grade/lib.php';
 
 $courseid = required_param('id', PARAM_INT);                   // course id
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/grade/report/outcomes/index.php', array('id'=>$courseid)));
+$PAGE->set_url('/grade/report/outcomes/index.php', array('id'=>$courseid));
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');

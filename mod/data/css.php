@@ -30,7 +30,7 @@ require_once('../../config.php');
 $d = optional_param('d', 0, PARAM_INT);   // database id
 $lifetime  = 600;                                   // Seconds to cache this stylesheet
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/data/css.php', array('d'=>$d)));
+$PAGE->set_url('/mod/data/css.php', array('d'=>$d));
 
 if ($data = $DB->get_record('data', array('id'=>$d))) {
     header('Last-Modified: ' . gmdate('D, d M Y H:i:s', time()) . ' GMT');

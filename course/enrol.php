@@ -32,7 +32,7 @@ require_once("$CFG->dirroot/enrol/enrol.class.php");
 $id           = required_param('id', PARAM_INT);
 $loginasguest = optional_param('loginasguest', 0, PARAM_BOOL); // hmm, is this still needed?
 
-$url = new moodle_url($CFG->wwwroot.'/course/enrol.php', array('id'=>$id));
+$url = new moodle_url('/course/enrol.php', array('id'=>$id));
 if ($loginasguest !== 0) {
     $url->param('loginasguest', $loginasguest);
 }

@@ -18,7 +18,7 @@ $id       = optional_param('id', 0, PARAM_INT);
 $delete   = optional_param('delete', 0, PARAM_BOOL);
 $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
-$url = new moodle_url($CFG->wwwroot.'/group/grouping.php');
+$url = new moodle_url('/group/grouping.php');
 if ($id) {
     $url->param('id', $id);
     if (!$grouping = $DB->get_record('groupings', array('id'=>$id))) {
@@ -114,8 +114,8 @@ if ($id) {
     $strheading = get_string('creategrouping', 'group');
 }
 
-$PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
-$PAGE->navbar->add($strgroupings, new moodle_url($CFG->wwwroot.'/group/groupings.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strparticipants, new moodle_url('/user/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strgroupings, new moodle_url('/group/groupings.php', array('id'=>$courseid)));
 $PAGE->navbar->add($strheading);
 
 /// Print header

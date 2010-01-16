@@ -37,7 +37,7 @@
         }
     }
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/wiki/admin.php', array('id'=>$cm->id));
+    $url = new moodle_url('/mod/wiki/admin.php', array('id'=>$cm->id));
     if ($page !== false) {
         $url->param('page', $page);
     }

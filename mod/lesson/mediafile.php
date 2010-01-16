@@ -36,7 +36,7 @@ require_once($CFG->libdir.'/resourcelib.php');
 $id = required_param('id', PARAM_INT);    // Course Module ID
 $printclose = optional_param('printclose', 0, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/lesson/mediafile.php', array('id'=>$id));
+$url = new moodle_url('/mod/lesson/mediafile.php', array('id'=>$id));
 if ($printclose !== '') {
     $url->param('printclose', $printclose);
 }

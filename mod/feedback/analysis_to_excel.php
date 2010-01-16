@@ -15,7 +15,7 @@ require_once('easy_excel.php');
 $id = required_param('id', PARAM_INT);  //the POST dominated the GET
 $coursefilter = optional_param('coursefilter', '0', PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/feedback/analysis_to_excel.php', array('id'=>$id));
+$url = new moodle_url('/mod/feedback/analysis_to_excel.php', array('id'=>$id));
 if ($coursefilter !== '0') {
     $url->param('coursefilter', $coursefilter);
 }

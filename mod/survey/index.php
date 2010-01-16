@@ -5,7 +5,7 @@
 
     $id = required_param('id', PARAM_INT);    // Course Module ID
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/survey/index.php', array('id'=>$id)));
+    $PAGE->set_url('/mod/survey/index.php', array('id'=>$id));
 
     if (!$course = $DB->get_record('course', array('id'=>$id))) {
         print_error('invalidcourseid');

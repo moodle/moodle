@@ -20,7 +20,7 @@
         print_error('invalidsesskey');
     }
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/feedback/import.php', array('id'=>$id));
+    $url = new moodle_url('/mod/feedback/import.php', array('id'=>$id));
     if ($choosefile !== false) {
         $url->param('choosefile', $choosefile);
     }
@@ -84,7 +84,7 @@
     $strfeedbacks = get_string("modulenameplural", "feedback");
     $strfeedback  = get_string("modulename", "feedback");
 
-    $PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
+    $PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', array('id'=>$course->id)));
     $PAGE->navbar->add(format_string($feedback->name));
 
     $PAGE->set_title(format_string($feedback->name));

@@ -26,10 +26,10 @@ $params = array();
 if ($perpage != DEFAULT_PAGE_SIZE) {
     $params['perpage'] = $perpage;
 }
-$PAGE->set_url('tag/manage.php', $params);
+$PAGE->set_url('/tag/manage.php', $params);
 $PAGE->set_context($systemcontext);
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
-$PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url($CFG->wwwroot.'/tag/search.php'));
+$PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url('/tag/search.php'));
 $PAGE->navbar->add(get_string('managetags', 'tag'));
 $PAGE->set_title(get_string('managetags', 'tag'));
 echo $OUTPUT->header();

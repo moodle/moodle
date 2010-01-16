@@ -43,7 +43,7 @@
         print_error('missingparameter');
     }
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/scorm/player.php', array('scoid'=>$scoid, 'id'=>$cm->id));
+    $url = new moodle_url('/mod/scorm/player.php', array('scoid'=>$scoid, 'id'=>$cm->id));
     if ($mode !== 'normal') {
         $url->param('mode', $mode);
     }
@@ -67,7 +67,7 @@
             // The module SCORM/AICC activity with the first id is the course
             $firstscorm = current($scorms);
             if (!(($course->format == 'scorm') && ($firstscorm->id == $scorm->id))) {
-                $PAGE->navbar->add($strscorms, new moodle_url($CFG->wwwroot.'/mod/scorm/index.php', array('id'=>$course->id)));
+                $PAGE->navbar->add($strscorms, new moodle_url('/mod/scorm/index.php', array('id'=>$course->id)));
             }
         }
     }
@@ -75,7 +75,7 @@
     $pagetitle = strip_tags("$course->shortname: ".format_string($scorm->name));
     $PAGE->set_title($pagetitle);
     $PAGE->set_heading($course->fullname);
-    $PAGE->navbar->add(format_string($scorm->name,true), new moodle_url($CFG->wwwroot.'/mode/scorm/view.php', array('id'=>$cm->id)));
+    $PAGE->navbar->add(format_string($scorm->name,true), new moodle_url('/mode/scorm/view.php', array('id'=>$cm->id)));
 
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE,$course->id))) {
         echo $OUTPUT->header();

@@ -1172,7 +1172,7 @@ class question_bank_view {
         echo '<div class="choosecategory">';
         $catmenu = question_category_options($contexts, false, 0, true);
 
-        $editurl = new moodle_url($CFG->wwwroot.'/question/edit.php', $pageurl->params());
+        $editurl = new moodle_url('/question/edit.php', $pageurl->params());
         $select = html_select::make_popup_form($editurl, 'category', $catmenu, 'catmenu', $current);
 
         // The js func submit_form_by_id ignores the first element by default when using
@@ -1428,7 +1428,7 @@ class question_bank_view {
                     }
                     redirect($returnurl);
                 } else {
-                    $movecontexturl  = new moodle_url($CFG->wwwroot.'/question/contextmoveq.php',
+                    $movecontexturl  = new moodle_url('/question/contextmoveq.php',
                                                     array('returnurl' => $returnurl,
                                                             'ids'=>$questionids,
                                                             'tocatid'=> $tocategoryid));
@@ -1528,11 +1528,11 @@ class question_bank_view {
  * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
 function question_edit_setup($edittab, $requirecmid = false, $requirecourseid = true){
-    global $QUESTION_EDITTABCAPS, $DB;
+    global $QUESTION_EDITTABCAPS, $DB, $PAGE;
 
     //$thispageurl is used to construct urls for all question edit pages we link to from this page. It contains an array
     //of parameters that are passed from page to page.
-    $thispageurl = new moodle_url();
+    $thispageurl = new moodle_url($PAGE->url);
     $thispageurl->remove_all_params(); // We are going to explicity add back everything important - this avoids unwanted params from being retained.
 
     if ($requirecmid){
@@ -1927,7 +1927,7 @@ function create_new_question_button($categoryid, $params, $caption, $tooltip = '
     global $CFG, $PAGE, $OUTPUT;
     static $choiceformprinted = false;
     $params['category'] = $categoryid;
-    $url = new moodle_url($CFG->wwwroot . '/question/addquestion.php', $params);
+    $url = new moodle_url('/question/addquestion.php', $params);
     echo $OUTPUT->single_button($url, $caption, 'get', array('disabled'=>$disabled, 'title'=>$tooltip));
 
     echo $OUTPUT->help_icon('types', get_string('createnewquestion', 'question'), 'question');

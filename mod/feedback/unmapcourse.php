@@ -14,7 +14,7 @@ require_once($CFG->dirroot.'/mod/feedback/lib.php');
 $id = required_param('id', PARAM_INT);
 $cmapid = required_param('cmapid', PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/feedback/unmapcourse.php', array('id'=>$id));
+$url = new moodle_url('/mod/feedback/unmapcourse.php', array('id'=>$id));
 if ($cmapid !== '') {
     $url->param('cmapid', $cmapid);
 }

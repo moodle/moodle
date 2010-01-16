@@ -52,7 +52,7 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 add_to_log($course->id, 'resource', 'view', 'view.php?id='.$cm->id, $resource->id, $cm->id);
 
-$PAGE->set_url('mod/resource/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/resource/view.php', array('id' => $cm->id));
 
 if ($resource->tobemigrated) {
     resource_print_tobemigrated($resource, $cm, $course);

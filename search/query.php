@@ -56,7 +56,7 @@
     $advanced     = (optional_param('a', '0', PARAM_INT) == '1') ? true : false;
     $query_string = stripslashes(optional_param('query_string', '', PARAM_CLEAN));
 
-    $url = new moodle_url($CFG->wwwroot.'/search/query.php');
+    $url = new moodle_url('/search/query.php');
     if ($page_number !== -1) {
         $url->param('page', $page_number);
     }
@@ -166,8 +166,8 @@
     // print the header
     $site = get_site();
 
-    $PAGE->navbar->add($strsearch, new moodle_url($CFG->wwwroot.'/search/index.php'));
-    $PAGE->navbar->add($strquery, new moodle_url($CFG->wwwroot.'/search/stats.php'));
+    $PAGE->navbar->add($strsearch, new moodle_url('/search/index.php'));
+    $PAGE->navbar->add($strquery, new moodle_url('/search/stats.php'));
     $PAGE->set_title($strsearch);
     $PAGE->set_heading($site->fullname);
     echo $OUTPUT->header();

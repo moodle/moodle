@@ -22,7 +22,7 @@ $courseid = required_param('id', PARAM_INT);
 $action   = required_param('action', PARAM_ALPHA);
 $eid      = required_param('eid', PARAM_ALPHANUM);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/grade/edit/tree/action.php', array('id'=>$courseid, 'action'=>$action, 'eid'=>$eid)));
+$PAGE->set_url('/grade/edit/tree/action.php', array('id'=>$courseid, 'action'=>$action, 'eid'=>$eid));
 
 /// Make sure they can even access this course
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {

@@ -5019,7 +5019,7 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
             $link = "<noscript>";
         }
         $options ['id'] = $forum->id;
-        $url = new moodle_url($CFG->wwwroot.'/mod/forum/subscribe.php', $options);
+        $url = new moodle_url('/mod/forum/subscribe.php', $options);
         $link .= $OUTPUT->single_button($url, $linktext, 'get', array('title'=>$linktitle));
         if ($fakelink) {
             $link .= '</noscript>';
@@ -5074,7 +5074,7 @@ function forum_get_tracking_link($forum, $messages=array(), $fakelink=true) {
         // use <noscript> to print button in case javascript is not enabled
         $link .= '<noscript>';
     }
-    $url = new moodle_url($CFG->wwwroot.'/mod/forum/settracking.php', array('id'=>$forum->id));
+    $url = new moodle_url('/mod/forum/settracking.php', array('id'=>$forum->id));
     $link .= $OUTPUT->single_button($url, $linktext, 'get', array('title'=>$linktitle));
 
     if ($fakelink) {
@@ -7990,7 +7990,7 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
 
     foreach ($discussions as $discussion) {
         $icon = $OUTPUT->pix_url('i/feedback');
-        $url = new moodle_url($CFG->wwwroot.'/mod/forum/discuss.php', array('d'=>$discussion->discussion));
+        $url = new moodle_url('/mod/forum/discuss.php', array('d'=>$discussion->discussion));
         $navref->get($discussionkey)->add($discussion->subject, $url, navigation_node::TYPE_SETTING, null, null, $icon);
     }
 
@@ -7998,7 +7998,7 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
         if (!empty($navref->action)) {
             $url = $navref->action;
         } else {
-            $url = new moodle_url($CFG->wwwroot.'/mod/forum/view.php', array('id'=>$cm->id));
+            $url = new moodle_url('/mod/forum/view.php', array('id'=>$cm->id));
         }
         $childkey = $navref->get($discussionkey)->add(get_string('viewalldiscussions', 'forum'), $url, navigation_node::TYPE_SETTING, null, null, $icon);
     }
@@ -8018,7 +8018,7 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
         $navref->get($recentkey)->mainnavonly = true;
         foreach ($recentposts as $post) {
             $icon = $OUTPUT->pix_url('i/feedback');
-            $url = new moodle_url($CFG->wwwroot.'/mod/forum/discuss.php', array('d'=>$post->content->discussion));
+            $url = new moodle_url('/mod/forum/discuss.php', array('d'=>$post->content->discussion));
             $title = $post->content->subject."\n".userdate($post->timestamp, get_string('strftimerecent', 'langconfig'))."\n".$post->user->firstname.' '.$post->user->lastname;
             $navref->get($recentkey)->add($title, $url, navigation_node::TYPE_SETTING, null, null, $icon);
         }
@@ -8051,7 +8051,7 @@ function forum_extend_settings_navigation($settingsnav, $module=null) {
             $string = get_string('allowchoice', 'forum');
             $helpbutton = $OUTPUT->help_icon("subscription", $string, "forum");
             if (has_capability('mod/forum:managesubscriptions', $PAGE->cm->context)) {
-                $url = new moodle_url($CFG->wwwroot.'/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'force'=>'no'));
+                $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'force'=>'no'));
                 $forum->add($string, $url, navigation_node::TYPE_SETTING);
             } else {
                 $forum->add(get_string('everyoneisnowsubscribed', 'forum'), null, navigation_node::TYPE_SETTING);
@@ -8066,13 +8066,13 @@ function forum_extend_settings_navigation($settingsnav, $module=null) {
             $helpbutton = $OUTPUT->help_icon("subscription", $string, "forum");
 
             if (has_capability('mod/forum:managesubscriptions', $PAGE->cm->context)) {
-                $url = new moodle_url($CFG->wwwroot.'/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'force'=>'yes'));
+                $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'force'=>'yes'));
                 $forum->add($string, $url, navigation_node::TYPE_SETTING);
             } else {
                 $forum->add(get_string('everyonecannowchoose', 'forum'), null, navigation_node::TYPE_SETTING);
             }
             if(has_capability('mod/forum:viewsubscribers', $PAGE->cm->context)){
-                $url = new moodle_url($CFG->wwwroot.'/mod/forum/subscribers.php', array('id'=>$forumobject->id));
+                $url = new moodle_url('/mod/forum/subscribers.php', array('id'=>$forumobject->id));
                 $forum->add(get_string('showsubscribers', 'forum'), $url, navigation_node::TYPE_SETTING);
             }
 
@@ -8084,7 +8084,7 @@ function forum_extend_settings_navigation($settingsnav, $module=null) {
                 } else {
                     $linktext = get_string('subscribe', 'forum');
                 }
-                $url = new moodle_url($CFG->wwwroot . '/mod/forum/subscribe.php', array('id'=>$forumobject->id));
+                $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id));
                 $forum->add($linktext, $url, navigation_node::TYPE_SETTING);
             }
         }
@@ -8095,7 +8095,7 @@ function forum_extend_settings_navigation($settingsnav, $module=null) {
             } else {
                 $linktext = get_string('trackforum', 'forum');
             }
-            $url = new moodle_url($CFG->wwwroot . '/mod/forum/settracking.php', array('id'=>$forumobject->id));
+            $url = new moodle_url('/mod/forum/settracking.php', array('id'=>$forumobject->id));
             $forum->add($linktext, $url, navigation_node::TYPE_SETTING);
         }
         if ($notekey!==false) {

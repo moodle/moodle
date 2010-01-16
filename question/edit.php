@@ -33,7 +33,7 @@
     require_once("../config.php");
     require_once("editlib.php");
 
-    $url = new moodle_url($CFG->wwwroot.'/question/edit.php');
+    $url = new moodle_url('/question/edit.php');
     if (($lastchanged = optional_param('lastchanged', 0, PARAM_INT)) !== 0) {
         $url->param('lastchanged', $lastchanged);
     }

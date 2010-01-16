@@ -3386,7 +3386,7 @@ function assignment_extend_settings_navigation($navnode, $module) {
             } else {
                 $group = groups_get_activity_group($PAGE->cm);
             }
-            $link = new moodle_url($CFG->wwwroot.'/mod/assignment/submissions.php', array('id'=>$PAGE->cm->id));
+            $link = new moodle_url('/mod/assignment/submissions.php', array('id'=>$PAGE->cm->id));
             if ($count = $assignmentinstance->count_real_submissions($group)) {
                 $string = get_string('viewsubmissions', 'assignment', $count);
             } else {

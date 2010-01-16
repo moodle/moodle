@@ -38,7 +38,7 @@
         print_error('needcoursecategroyid');
     }
 
-    $PAGE->set_url($CFG->wwwroot.'/course/edit.php');
+    $PAGE->set_url('/course/edit.php');
     if ($id !== 0) {
         $PAGE->url->param('id',$id);
     } else {
@@ -146,8 +146,8 @@
         $title = $streditcoursesettings;
         $fullname = $course->fullname;
     } else {
-        $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
-        $PAGE->navbar->add($strcategories, new moodle_url($CFG->wwwroot.'/course/index.php'));
+        $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php'));
+        $PAGE->navbar->add($strcategories, new moodle_url('/course/index.php'));
         $PAGE->navbar->add($straddnewcourse);
         $title = "$site->shortname: $straddnewcourse";
         $fullname = $site->fullname;

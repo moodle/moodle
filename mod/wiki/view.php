@@ -23,7 +23,7 @@
     // Only want to add edit log entries if we have made some changes ie submitted a form
     $editsave = optional_param('thankyou', '', PARAM_RAW);
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/wiki/view.php');
+    $url = new moodle_url('/mod/wiki/view.php');
     if ($ewiki_action !== '') {
         $url->param('ewiki_action', $ewiki_action);
     }

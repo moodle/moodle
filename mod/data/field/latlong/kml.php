@@ -26,7 +26,7 @@ $d       = required_param('d', PARAM_INT);   // database id
 $fieldid = required_param('fieldid', PARAM_INT);   // field id
 $rid     = optional_param('rid', 0, PARAM_INT);    //record id
 
-$url = new moodle_url($CFG->wwwroot.'/mod/data/field/latlong/kml.php', array('d'=>$d, 'fieldid'=>$fieldid));
+$url = new moodle_url('/mod/data/field/latlong/kml.php', array('d'=>$d, 'fieldid'=>$fieldid));
 if ($rid !== 0) {
     $url->param('rid', $rid);
 }

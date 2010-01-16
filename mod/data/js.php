@@ -29,7 +29,7 @@ require_once('../../config.php');
 
 $d = optional_param('d', 0, PARAM_INT);   // database id
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/data/js.php', array('d'=>$d)));
+$PAGE->set_url('/mod/data/js.php', array('d'=>$d));
 
 $lifetime  = 600;                                   // Seconds to cache this stylesheet
 

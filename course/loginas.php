@@ -27,7 +27,7 @@
     $id     = optional_param('id', SITEID, PARAM_INT);   // course id
     $userid = required_param('user', PARAM_INT);         // login as this user
 
-    $url = new moodle_url($CFG->wwwroot.'/course/loginas.php', array('user'=>$userid, 'sesskey'=>sesskey()));
+    $url = new moodle_url('/course/loginas.php', array('user'=>$userid, 'sesskey'=>sesskey()));
     if ($id !== SITEID) {
         $url->param('id', $id);
     }

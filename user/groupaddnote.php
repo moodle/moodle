@@ -31,7 +31,7 @@ $users = optional_param('userid', array(), PARAM_INT); // array of user id
 $content = optional_param('content', '', PARAM_RAW); // note content
 $state = optional_param('state', '', PARAM_ALPHA); // note publish state
 
-$url = new moodle_url($CFG->wwwroot.'/user/groupaddnote.php', array('id'=>$id));
+$url = new moodle_url('/user/groupaddnote.php', array('id'=>$id));
 if ($content !== '') {
     $url->param('content', $content);
 }

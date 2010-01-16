@@ -34,7 +34,7 @@ $mode    = optional_param('mode', 'posts', PARAM_ALPHA);
 $page    = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 5, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/forum/user.php', array('course'=>$course));
+$url = new moodle_url('/mod/forum/user.php', array('course'=>$course));
 if ($id !== 0) {
     $url->param('id', $id);
 }
@@ -87,7 +87,7 @@ $fullname        = fullname($user, has_capability('moodle/site:viewfullnames', $
 
 $link = null;
 if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $course->id)) || has_capability('moodle/site:viewparticipants', $syscontext)) {
-    $link = new moodle_url($CFG->wwwroot.'/user/index.php',array('id'=>$course->id));
+    $link = new moodle_url('/user/index.php',array('id'=>$course->id));
 }
 
 $PAGE->navigation->extend_for_user($user);

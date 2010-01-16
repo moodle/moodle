@@ -42,7 +42,7 @@ if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/survey/download.php', array('id'=>$id, 'type'=>$type, 'group'=>$group)));
+$PAGE->set_url('/mod/survey/download.php', array('id'=>$id, 'type'=>$type, 'group'=>$group));
 
 require_login($course->id, false, $cm);
 require_capability('mod/survey:download', $context) ;

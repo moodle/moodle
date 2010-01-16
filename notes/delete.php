@@ -6,7 +6,7 @@ require_once('lib.php');
 // retrieve parameters
 $noteid = required_param('id', PARAM_INT);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/notes/delete.php', array('id'=>$noteid)));
+$PAGE->set_url('/notes/delete.php', array('id'=>$noteid));
 
 // locate note information
 if (!$note = note_load($noteid)) {
@@ -57,11 +57,11 @@ if (data_submitted() && confirm_sesskey()) {
 // output HTML
     $link = null;
     if (has_capability('moodle/course:viewparticipants', $context) || has_capability('moodle/site:viewparticipants', get_context_instance(CONTEXT_SYSTEM))) {
-        $link = new moodle_url($CFG->wwwroot.'/user/index.php',array('id'=>$course->id));
+        $link = new moodle_url('/user/index.php',array('id'=>$course->id));
     }
     $PAGE->navbar->add(get_string('participants'), $link);
-    $PAGE->navbar->add(fullname($user), new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id,'course'=>$course->id)));
-    $PAGE->navbar->add(get_string('notes', 'notes'), new moodle_url($CFG->wwwroot.'/notes/index.php', array('user'=>$user->id,'course'=>$course->id)));
+    $PAGE->navbar->add(fullname($user), new moodle_url('/user/view.php', array('id'=>$user->id,'course'=>$course->id)));
+    $PAGE->navbar->add(get_string('notes', 'notes'), new moodle_url('/notes/index.php', array('user'=>$user->id,'course'=>$course->id)));
     $PAGE->navbar->add(get_string('delete'));
     $PAGE->set_title($course->shortname . ': ' . $strnotes);
     $PAGE->set_heading($course->fullname);

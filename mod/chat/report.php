@@ -12,7 +12,7 @@
     $confirmdelete = optional_param('confirmdelete', 0, PARAM_BOOL);
     $show_all      = optional_param('show_all', 0, PARAM_BOOL);
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/chat/report.php', array('id'=>$id));
+    $url = new moodle_url('/mod/chat/report.php', array('id'=>$id));
     if ($start !== 0) {
         $url->param('start', $start);
     }

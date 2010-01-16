@@ -1072,8 +1072,12 @@ class core_renderer extends renderer_base {
         $output = html_writer::tag('div', array(), $output);
 
         // now the form itself around it
+        $url = $button->url->out(true); // url without params
+        if ($url === '') {
+            $url = '#'; // there has to be always some action
+        }
         $attributes = array('method' => $button->method,
-                            'action' => $button->url->out(true), // url without params
+                            'action' => $url,
                             'id'     => $button->formid);
         $output = html_writer::tag('form', $attributes, $output);
 
@@ -1275,7 +1279,7 @@ class core_renderer extends renderer_base {
         }
 
         // now create the link around it - TODO: this will be changed during the big lang cleanup in 2.0
-        $url = new moodle_url($CFG->wwwroot.'/help.php', array('module' => $helpicon->component, 'file' => $helpicon->helppage .'.html'));
+        $url = new moodle_url('/help.php', array('module' => $helpicon->component, 'file' => $helpicon->helppage .'.html'));
 
         // note: this title is displayed only if JS is disabled, otherwise the link will have the new ajax tooltip
         $title = get_string('helpprefix2', '', trim($helpicon->title, ". \t"));
@@ -1304,7 +1308,7 @@ class core_renderer extends renderer_base {
 
         $icon = $this->image($this->pix_url('help'), array('class'=>'iconhelp', 'alt'=>get_string('scales')));
 
-        $link = new html_link(new moodle_url($CFG->wwwroot.'/course/scales.php', array('id' => $courseid, 'list' => true, 'scaleid' => $scale->id)), $icon);
+        $link = new html_link(new moodle_url('/course/scales.php', array('id' => $courseid, 'list' => true, 'scaleid' => $scale->id)), $icon);
         $popupaction = new popup_action('click', $link->url, 'ratingscale');
         $link->add_action($popupaction);
 
@@ -1486,7 +1490,7 @@ class core_renderer extends renderer_base {
             $courseid = $userpicture->courseid;
         }
 
-        $url = new moodle_url($CFG->wwwroot.'/user/view.php', array('id' => $user->id, 'course' => $courseid));
+        $url = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $courseid));
 
         $attributes = array('href'=>$url);
 
@@ -1615,8 +1619,8 @@ class core_renderer extends renderer_base {
         if (empty($text)) {
             $text = get_string('closewindow');
         }
-        $button = new single_button($this->page->url.'#', $text, 'get');
-        $button->add_action('click', 'close_window');
+        $button = new single_button(new moodle_url('#'), $text, 'get');
+        $button->add_action(new component_action('click', 'close_window'));
 
         return $this->container($this->render($button), 'closewindow');
     }

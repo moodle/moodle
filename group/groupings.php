@@ -28,7 +28,7 @@ require_once $CFG->dirroot.'/group/lib.php';
 
 $courseid = required_param('id', PARAM_INT);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/group/groupings.php', array('id'=>$courseid)));
+$PAGE->set_url('/group/groupings.php', array('id'=>$courseid));
 
 if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
     print_error('nocourseid');
@@ -50,7 +50,7 @@ $struses         = get_string('activities');
 $strparticipants = get_string('participants');
 $strmanagegrping = get_String('showgroupsingrouping', 'group');
 
-$PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strparticipants, new moodle_url('/user/index.php', array('id'=>$courseid)));
 $PAGE->navbar->add($strgroupings);
 
 /// Print header

@@ -36,7 +36,7 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error("invalidcourseid");
 }
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/reset.php', array('id'=>$id)));
+$PAGE->set_url('/course/reset.php', array('id'=>$id));
 
 require_login($course);
 require_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id));

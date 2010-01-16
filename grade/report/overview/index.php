@@ -23,7 +23,7 @@ require_once $CFG->dirroot.'/grade/report/overview/lib.php';
 $courseid = required_param('id', PARAM_INT);
 $userid   = optional_param('userid', $USER->id, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/grade/report/overview/index.php', array('id'=>$courseid));
+$url = new moodle_url('/grade/report/overview/index.php', array('id'=>$courseid));
 if ($userid !== $USER->id) {
     $url->param('userid', $userid);
 }

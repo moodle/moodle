@@ -52,7 +52,7 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 add_to_log($course->id, 'page', 'view', 'view.php?id='.$cm->id, $page->id, $cm->id);
 
-$PAGE->set_url('mod/page/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/page/view.php', array('id' => $cm->id));
 
 $options = empty($page->displayoptions) ? array() : unserialize($page->displayoptions);
 

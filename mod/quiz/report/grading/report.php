@@ -154,7 +154,7 @@ class quiz_grading_report extends quiz_default_report {
                 }
             }
         }
-        $this->viewurl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $viewoptions);
+        $this->viewurl = new moodle_url('/mod/quiz/report.php', $viewoptions);
         /// find out current groups mode
 
         if ($groupmode = groups_get_activity_groupmode($this->cm)) {   // Groups are being used

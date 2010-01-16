@@ -18,7 +18,7 @@
     $sessionid = required_param('session_id', PARAM_ALPHANUM);
     $aiccdata = optional_param('aicc_data', '', PARAM_RAW);
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/scorm/aicc.php', array('command'=>$command,'session_id'=>$sessionid));
+    $url = new moodle_url('/mod/scorm/aicc.php', array('command'=>$command,'session_id'=>$sessionid));
     if ($aiccdata !== 0) {
         $url->param('aicc_data', $aiccdata);
     }

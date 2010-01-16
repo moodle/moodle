@@ -120,7 +120,7 @@ $strpage = get_string("page");
 
 if (!$search || $showform) {
 
-    $PAGE->navbar->add($strforums, new moodle_url($CFG->wwwroot.'/mod/forum/index.php', array('id'=>$course->id)));
+    $PAGE->navbar->add($strforums, new moodle_url('/mod/forum/index.php', array('id'=>$course->id)));
     $PAGE->navbar->add($strsearch);
 
     $PAGE->set_title($strsearch);
@@ -139,7 +139,7 @@ $searchterms = explode(' ', $searchterms);
 
 $searchform = forum_search_form($course, $search);
 
-$PAGE->navbar->add($strsearch, new moodle_url($CFG->wwwroot.'/mod/forum/search.php', array('id'=>$course->id)));
+$PAGE->navbar->add($strsearch, new moodle_url('/mod/forum/search.php', array('id'=>$course->id)));
 $PAGE->navbar->add(s($search, true));
 if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
     $PAGE->set_title($strsearchresults);

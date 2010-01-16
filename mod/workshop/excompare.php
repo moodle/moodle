@@ -42,7 +42,7 @@ $workshop = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_
 $workshop = new workshop($workshop, $cm, $course);
 $strategy = $workshop->grading_strategy_instance();
 
-$PAGE->set_url(new moodle_url($workshop->excompare_url($sid, $aid)));
+$PAGE->set_url($workshop->excompare_url($sid, $aid));
 
 $example    = $workshop->get_example_by_id($sid);
 $assessment = $workshop->get_assessment_by_id($aid);

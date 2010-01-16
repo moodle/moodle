@@ -46,7 +46,7 @@
         print_error('coursemisconf');
     }
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/survey/report.php', array('id'=>$id));
+    $url = new moodle_url('/mod/survey/report.php', array('id'=>$id));
     if ($action !== '') {
         $url->param('action', $action);
     }

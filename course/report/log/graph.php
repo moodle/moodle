@@ -32,7 +32,7 @@ $type = required_param('type', PARAM_FILE);  // Graph Type
 $user = optional_param('user', 0, PARAM_INT);  // Student ID
 $date = optional_param('date', 0, PARAM_INT);  // A time of a day (in GMT)
 
-$url = new moodle_url($CFG->wwwroot.'/course/report/log/graph.php', array('id'=>$id,'type'=>$type));
+$url = new moodle_url('/course/report/log/graph.php', array('id'=>$id,'type'=>$type));
 if ($user !== 0) {
     $url->param('user', $user);
 }

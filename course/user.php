@@ -32,7 +32,7 @@ $mode    = optional_param('mode', "todaylogs", PARAM_ALPHA);
 $page    = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 100, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/course/user.php', array('id'=>$id,'user'=>$user, 'mode'=>$mode));
+$url = new moodle_url('/course/user.php', array('id'=>$id,'user'=>$user, 'mode'=>$mode));
 if ($page !== 0) {
     $url->param('page', $page);
 }
@@ -133,7 +133,7 @@ $fullname          = fullname($user, true);
 
 $link = null;
 if ($course->id != SITEID && has_capability('moodle/course:viewparticipants', $coursecontext)) {
-    $link = new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$course->id));
+    $link = new moodle_url('/user/index.php', array('id'=>$course->id));
 }
 
 $PAGE->navigation->extend_for_user($user);

@@ -16,7 +16,7 @@
 
     $strreports = get_string('reports');
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$id)));
+    $PAGE->set_url('/course/report.php', array('id'=>$id));
     $PAGE->set_title($course->fullname.': '.$strreports);
     $PAGE->set_heading($course->fullname.': '.$strreports);
     echo $OUTPUT->header();

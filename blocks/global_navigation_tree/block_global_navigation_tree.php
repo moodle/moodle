@@ -195,7 +195,7 @@ class block_global_navigation_tree extends block_tree {
      * @return bool
      */
     protected function showmyhistory() {
-        global $USER, $PAGE, $ME;
+        global $USER, $PAGE;
 
         // Create a navigation cache so that we can store the history
         $cache = new navigation_cache('navigationhistory', 60*60);

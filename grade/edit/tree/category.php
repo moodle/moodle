@@ -23,7 +23,7 @@ require_once 'category_form.php';
 $courseid = required_param('courseid', PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT); // grade_category->id
 
-$url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/category.php', array('courseid'=>$courseid));
+$url = new moodle_url('/grade/edit/tree/category.php', array('courseid'=>$courseid));
 if ($id !== 0) {
     $url->param('id', $id);
 }

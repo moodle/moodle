@@ -37,7 +37,7 @@ $id          = required_param('id', PARAM_INT);
 $switchrole  = optional_param('switchrole',-1, PARAM_INT);
 $returnurlkey = optional_param('returnurl', false, PARAM_INT);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/switchrole.php', array('id'=>$id)));
+$PAGE->set_url('/course/switchrole.php', array('id'=>$id));
 
 if (!confirm_sesskey()) {
     print_error('confirmsesskeybad', 'error');

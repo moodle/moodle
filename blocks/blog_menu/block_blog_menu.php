@@ -100,7 +100,7 @@ class block_blog_menu extends block_base {
         $output .= '';
 
         // show View my entries link
-        $myentrieslink = html_link::make(new moodle_url($CFG->wwwroot .'/blog/index.php', array('userid' => $USER->id)), get_string('viewmyentries', 'blog'));
+        $myentrieslink = html_link::make(new moodle_url('/blog/index.php', array('userid' => $USER->id)), get_string('viewmyentries', 'blog'));
         $myentrieslink->url->params($blogheaders['url']->params());
         $myentrieslink->url->param('userid', $USER->id);
         $pageuserid = $PAGE->url->param('userid');
@@ -113,7 +113,7 @@ class block_blog_menu extends block_base {
         // show "Add entry" or "Blog about this" link
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
         if (has_capability('moodle/blog:create', $sitecontext)) {
-            $addentrylink = html_link::make(new moodle_url($CFG->wwwroot .'/blog/edit.php', array('action' => 'add')), $blogheaders['stradd']);
+            $addentrylink = html_link::make(new moodle_url('/blog/edit.php', array('action' => 'add')), $blogheaders['stradd']);
             $addentrylink->url->params($blogheaders['url']->params());
             $addentrylink->disableifcurrent = true;
             $menulist->add_item($OUTPUT->link($addentrylink));

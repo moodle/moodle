@@ -38,7 +38,7 @@ try {
 }
 require_login($course, false, $cm);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/lesson/grade.php', array('id'=>$cm->id)));
+$PAGE->set_url('/mod/lesson/grade.php', array('id'=>$cm->id));
 
 if (has_capability('mod/lesson:edit', get_context_instance(CONTEXT_MODULE, $cm->id))) {
     redirect('report.php?id='.$cm->id);

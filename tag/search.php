@@ -24,13 +24,13 @@ if ($page) {
 if ($perpage) {
     $params['perpage'] = $perpage;
 }
-$PAGE->set_url('tag/search.php', $params);
+$PAGE->set_url('/tag/search.php', $params);
 $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 $manage_link = '&nbsp;';
 
-$PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url($CFG->wwwroot.'/tag/search.php'));
+$PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url('/tag/search.php'));
 $PAGE->set_title(get_string('tags', 'tag'));
 echo $OUTPUT->header();
 

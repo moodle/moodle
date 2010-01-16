@@ -52,7 +52,7 @@ class quiz_responses_report extends quiz_default_report {
         $pageoptions['q'] = $quiz->id;
         $pageoptions['mode'] = 'responses';
 
-        $reporturl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions);
+        $reporturl = new moodle_url('/mod/quiz/report.php', $pageoptions);
         $qmsubselect = quiz_report_qm_filter_select($quiz);
 
 

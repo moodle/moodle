@@ -19,7 +19,7 @@ $itemid = optional_param('itemid', false, PARAM_INT);
 
 if(!$typ)redirect(htmlspecialchars('edit.php?id=' . $id));
 
-$url = new moodle_url($CFG->wwwroot.'/mod/feedback/edit_item.php', array('id'=>$id));
+$url = new moodle_url('/mod/feedback/edit_item.php', array('id'=>$id));
 if ($typ !== false) {
     $url->param('typ', $typ);
 }
@@ -166,7 +166,7 @@ if ($formdata = $item_form->get_data()) {
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
-$PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
+$PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', array('id'=>$course->id)));
 $PAGE->navbar->add(format_string($feedback->name));
 
 $PAGE->set_title(format_string($feedback->name));
@@ -184,7 +184,7 @@ $item_form->display();
 
 /*
 echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
-    echo '<form action="'.$ME.'" method="post">';
+    echo '<form action="edit_item.php" method="post">';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 
 //this div makes the buttons stand side by side

@@ -58,7 +58,7 @@
     add_to_log($course->id, 'chat', 'view', "view.php?id=$cm->id", $chat->id, $cm->id);
 
 // Initialize $PAGE, compute blocks
-    $PAGE->set_url('mod/chat/view.php', array('id' => $cm->id));
+    $PAGE->set_url('/mod/chat/view.php', array('id' => $cm->id));
 
 /// Print the page header
     $strenterchat    = get_string('enterchat', 'chat');

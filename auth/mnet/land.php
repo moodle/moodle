@@ -21,7 +21,7 @@ $remotewwwroot = required_param('idp',      PARAM_URL);
 $wantsurl      = required_param('wantsurl', PARAM_LOCALURL);
 $wantsremoteurl = optional_param('remoteurl', false, PARAM_BOOL);
 
-$url = new moodle_url($CFG->wwwroot.'/auth/mnet/jump.php', array('token'=>$token, 'idp'=>$remotewwwroot, 'wantsurl'=>$wantsurl));
+$url = new moodle_url('/auth/mnet/jump.php', array('token'=>$token, 'idp'=>$remotewwwroot, 'wantsurl'=>$wantsurl));
 if ($wantsremoteurl !== false) $url->param('remoteurl', $wantsremoteurl);
 $PAGE->set_url($url);
 

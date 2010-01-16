@@ -346,7 +346,7 @@ class assignment_online extends assignment_base {
         // If the user has submitted something add a bit more stuff
         if ($submission) {
             // Add a view link to the settings nav
-            $link = new moodle_url($CFG->wwwroot.'/mod/assignment/view.php', array('id'=>$PAGE->cm->id));
+            $link = new moodle_url('/mod/assignment/view.php', array('id'=>$PAGE->cm->id));
             $node->add(get_string('viewmysubmission', 'assignment'), $link, navigation_node::TYPE_SETTING);
 
             if (!empty($submission->timemodified)) {
@@ -363,7 +363,7 @@ class assignment_online extends assignment_base {
 
         if (!$submission || $editable) {
             // If this assignment is editable once submitted add an edit link to the settings nav
-            $link = new moodle_url($CFG->wwwroot.'/mod/assignment/view.php', array('id'=>$PAGE->cm->id, 'edit'=>1, 'sesskey'=>sesskey()));
+            $link = new moodle_url('/mod/assignment/view.php', array('id'=>$PAGE->cm->id, 'edit'=>1, 'sesskey'=>sesskey()));
             $node->add(get_string('editmysubmission', 'assignment'), $link, navigation_node::TYPE_SETTING);
         }
     }

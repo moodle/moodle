@@ -9,7 +9,7 @@
     $attempt = required_param('attempt', PARAM_INT); // A particular attempt ID for review
 
     if ($id) {
-        $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/review.php', array('id'=>$id,'attempt'=>$attempt)));
+        $PAGE->set_url('/mod/hotpot/review.php', array('id'=>$id,'attempt'=>$attempt));
         if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
             print_error('invalidcoursemodule');
         }
@@ -20,7 +20,7 @@
             print_error('invalidcoursemodule');
         }
     } else {
-        $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/review.php', array('hp'=>$hp,'attempt'=>$attempt)));
+        $PAGE->set_url('/mod/hotpot/review.php', array('hp'=>$hp,'attempt'=>$attempt));
         if (! $hotpot = $DB->get_record("hotpot", array("id"=>$hp))) {
             print_error('invalidcoursemodule');
         }

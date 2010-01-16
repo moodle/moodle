@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/repository/lib.php');
 $config = optional_param('config', 0, PARAM_INT);
 $course  = optional_param('course', SITEID, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/user/repository.php', array('course'=>$course));
+$url = new moodle_url('/user/repository.php', array('course'=>$course));
 if ($config !== 0) {
     $url->param('config', $config);
 }
@@ -49,7 +49,7 @@ $pluginstr = get_string('plugin', 'repository');
 
 require_login($course, false);
 
-$link = new moodle_url($CFG->wwwroot . '/user/view.php', array('id'=>$user->id));
+$link = new moodle_url('/user/view.php', array('id'=>$user->id));
 $PAGE->navbar->add($fullname, $link);
 $PAGE->navbar->add($strrepos);
 $PAGE->set_title("$course->fullname: $fullname: $strrepos");

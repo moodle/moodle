@@ -31,7 +31,7 @@ if (empty($tag)) {
     redirect($CFG->wwwroot.'/tag/search.php');
 }
 
-$PAGE->set_url('tag/index.php', array('id' => $tag->id));
+$PAGE->set_url('/tag/index.php', array('id' => $tag->id));
 $PAGE->set_subpage($tag->id);
 $PAGE->set_context($systemcontext);
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
@@ -48,7 +48,7 @@ if ($PAGE->user_allowed_editing() ) {
     $button = $OUTPUT->edit_button(new moodle_url("$CFG->wwwroot/tag/index.php", array('id' => $tagid)));
 }
 
-$PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url($CFG->wwwroot.'/tag/search.php'));
+$PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url('/tag/search.php'));
 $PAGE->navbar->add($tagname);
 $PAGE->set_title($title);
 $PAGE->set_button($button);
@@ -127,7 +127,7 @@ if (has_capability('moodle/blog:view', $systemcontext)) {
         }
         echo '</ul>';
 
-        $allblogsurl = new moodle_url($CFG->wwwroot.'/blog/index.php', array('tagid' => $tag->id));
+        $allblogsurl = new moodle_url('/blog/index.php', array('tagid' => $tag->id));
         echo '<p class="moreblogs"><a href="'.$allblogsurl->out().'">'.get_string('seeallblogs', 'tag', $tagname).'</a></p>';
 
         echo $OUTPUT->box_end();
@@ -144,7 +144,7 @@ if ($usercount > 0) {
     echo "<a name='user'></a>";
     echo $OUTPUT->heading($heading, 3);
 
-    $baseurl = new moodle_url($CFG->wwwroot.'/tag/index.php', array('id' => $tag->id));
+    $baseurl = new moodle_url('/tag/index.php', array('id' => $tag->id));
     $pagingbar = moodle_paging_bar::make($totalcount, $page, $perpage, $baseurl);
     $pagingbar->pagevar = 'userpage';
     echo $OUTPUT->paging_bar($pagingbar);

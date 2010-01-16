@@ -7,7 +7,7 @@ require("assignment.class.php");
 $id     = required_param('id', PARAM_INT);      // Course Module ID
 $userid = required_param('userid', PARAM_INT);  // User ID
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/assignment/type/online/file.php', array('id'=>$id, 'userid'=>$userid)));
+$PAGE->set_url('/mod/assignment/type/online/file.php', array('id'=>$id, 'userid'=>$userid));
 
 if (! $cm = get_coursemodule_from_id('assignment', $id)) {
     print_error('invalidcoursemodule');

@@ -26,7 +26,7 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/user/selector/lib.php');
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/user/selector/search.php'));
+$PAGE->set_url('/user/selector/search.php');
 
 // In developer debug mode, when there is a debug=1 in the URL send as plain text
 // for easier debugging.

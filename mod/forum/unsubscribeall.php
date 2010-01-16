@@ -26,7 +26,7 @@ require_once("lib.php");
 
 $confirm = optional_param('confirm', false, PARAM_BOOL);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/forum/unsubscribeall.php'));
+$PAGE->set_url('/mod/forum/unsubscribeall.php');
 
 require_login();
 

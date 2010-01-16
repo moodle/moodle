@@ -1460,31 +1460,31 @@ function quiz_extend_settings_navigation($settings, $module) {
     $quiznav->forceopen = true;
 
     if (has_capability('mod/quiz:view', $PAGE->cm->context)) {
-        $url = new moodle_url($CFG->wwwroot.'/mod/quiz/view.php', array('id'=>$PAGE->cm->id));
+        $url = new moodle_url('/mod/quiz/view.php', array('id'=>$PAGE->cm->id));
         $quiznav->add(get_string('info', 'quiz'), $url, navigation_node::TYPE_SETTING, null, null, $OUTPUT->pix_url('i/info'));
     }
     if (has_capability('mod/quiz:viewreports', $PAGE->cm->context)) {
-        $url = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', array('q'=>$PAGE->cm->instance));
+        $url = new moodle_url('/mod/quiz/report.php', array('q'=>$PAGE->cm->instance));
         $reportkey = $quiznav->add(get_string('results', 'quiz'), $url, navigation_node::TYPE_SETTING, null, null, $OUTPUT->pix_url('i/report'));
 
         require_once($CFG->dirroot.'/mod/quiz/report/reportlib.php');
         $reportlist = quiz_report_list($PAGE->cm->context);
         foreach ($reportlist as $report) {
-            $url = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', array('q'=>$PAGE->cm->instance, 'mode'=>$report));
+            $url = new moodle_url('/mod/quiz/report.php', array('q'=>$PAGE->cm->instance, 'mode'=>$report));
             $quiznav->get($reportkey)->add(get_string($report, 'quiz_'.$report), $url, navigation_node::TYPE_SETTING, null, null, $OUTPUT->pix_url('i/item'));
         }
     }
     if (has_capability('mod/quiz:preview', $PAGE->cm->context)) {
-        $url = new moodle_url($CFG->wwwroot.'/mod/quiz/startattempt.php', array('cmid'=>$PAGE->cm->id, 'sesskey'=>sesskey()));
+        $url = new moodle_url('/mod/quiz/startattempt.php', array('cmid'=>$PAGE->cm->id, 'sesskey'=>sesskey()));
         $quiznav->add(get_string('preview', 'quiz'), $url, navigation_node::TYPE_SETTING, null, null, $OUTPUT->pix_url('t/preview'));
     }
     if (has_capability('mod/quiz:manage', $PAGE->cm->context)) {
-        $url = new moodle_url($CFG->wwwroot.'/mod/quiz/edit.php', array('cmid'=>$PAGE->cm->id));
+        $url = new moodle_url('/mod/quiz/edit.php', array('cmid'=>$PAGE->cm->id));
         $quiznav->add(get_string('edit'), $url, navigation_node::TYPE_SETTING, null, null, $OUTPUT->pix_url('t/edit'));
     }
 
     if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $url = new moodle_url($CFG->wwwroot.'/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey()));
+        $url = new moodle_url('/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey()));
         $quiznav->add(get_string('updatethis', '', get_string('modulename', 'quiz')), $url);
     }
 

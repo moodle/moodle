@@ -13,7 +13,7 @@
 
 require_once("../../config.php");
 
-$PAGE->set_url($CFG->wwwroot.'/mod/wiki/confirmlock.php');
+$PAGE->set_url('/mod/wiki/confirmlock.php');
 
 header('Content-Type: text/plain');
 

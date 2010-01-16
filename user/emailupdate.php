@@ -30,7 +30,7 @@ require_once($CFG->dirroot.'/user/editlib.php');
 $key = required_param('key', PARAM_ALPHANUM);
 $id  = required_param('id', PARAM_INT);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/user/emailupdate.php', array('id'=>$id, 'key'=>$key)));
+$PAGE->set_url('/user/emailupdate.php', array('id'=>$id, 'key'=>$key));
 
 if (!$user = $DB->get_record('user', array('id' => $id))) {
     print_error('invaliduserid');

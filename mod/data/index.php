@@ -28,7 +28,7 @@ require_once("lib.php");
 
 $id = required_param('id', PARAM_INT);   // course
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/data/index.php', array('id'=>$id)));
+$PAGE->set_url('/mod/data/index.php', array('id'=>$id));
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourseid');
@@ -47,7 +47,7 @@ $strname = get_string('name');
 $strdata = get_string('modulename','data');
 $strdataplural  = get_string('modulenameplural','data');
 
-$PAGE->navbar->add($strdata, new moodle_url($CFG->wwwroot.'/mod/data/index.php', array('id'=>$course->id)));
+$PAGE->navbar->add($strdata, new moodle_url('/mod/data/index.php', array('id'=>$course->id)));
 $PAGE->set_title($strdata);
 echo $OUTPUT->header();
 

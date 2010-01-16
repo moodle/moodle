@@ -26,7 +26,7 @@
 
 require('../config.php');
 
-$PAGE->set_url('user/managetoken.php');
+$PAGE->set_url('/user/managetoken.php');
 
 $action  = optional_param('action', '', PARAM_ACTION);
 $tokenid = optional_param('tokenid', '', PARAM_SAFEDIR);
@@ -42,7 +42,7 @@ $returnurl = "$CFG->wwwroot/user/managetoken.php?sesskey=" . sesskey();
 switch ($action) {
 
     case 'create':
-        require_once($CFG->dirroot."/admin/webservice/forms.php");
+        require_once($CFG->dirroot."/$CFG->admin/webservice/forms.php");
         $mform = new web_service_token_form(null, array('action' => 'create', 'nouserselection' => true));
         if ($mform->is_cancelled()) {
             redirect($returnurl);

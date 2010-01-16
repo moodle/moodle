@@ -29,7 +29,7 @@ require_once($CFG->dirroot.'/group/lib.php');
 
 $id = required_param('id', PARAM_INT);    // Course id
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/import/groups/index.php', array('id'=>$id)));
+$PAGE->set_url('/course/import/groups/index.php', array('id'=>$id));
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourseid');
@@ -63,8 +63,8 @@ if (isset($CFG->CSV_DELIMITER)) {
 }
 
 /// Print the header
-$PAGE->navbar->add($course->shortname, new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
-$PAGE->navbar->add(get_string('import'), new moodle_url($CFG->wwwroot.'/course/import.php', array('id'=>$course->id)));
+$PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
+$PAGE->navbar->add(get_string('import'), new moodle_url('/course/import.php', array('id'=>$course->id)));
 $PAGE->navbar->add($strimportgroups);
 
 $PAGE->set_title("$course->shortname: $strimportgroups");

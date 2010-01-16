@@ -2850,13 +2850,13 @@ function data_extend_navigation($navigation, $course, $module, $cm) {
         $navigation->get($key)->add_class('note');
     }
 
-    $navigation->add(get_string('list', 'data'), new moodle_url($CFG->wwwroot.'/mod/data/view.php', array('d'=>$cm->instance)));
+    $navigation->add(get_string('list', 'data'), new moodle_url('/mod/data/view.php', array('d'=>$cm->instance)));
     if (!empty($rid)) {
-        $navigation->add(get_string('single', 'data'), new moodle_url($CFG->wwwroot.'/mod/data/view.php', array('d'=>$cm->instance, 'rid'=>$rid)));
+        $navigation->add(get_string('single', 'data'), new moodle_url('/mod/data/view.php', array('d'=>$cm->instance, 'rid'=>$rid)));
     } else {
-        $navigation->add(get_string('single', 'data'), new moodle_url($CFG->wwwroot.'/mod/data/view.php', array('d'=>$cm->instance, 'mode'=>'single')));
+        $navigation->add(get_string('single', 'data'), new moodle_url('/mod/data/view.php', array('d'=>$cm->instance, 'mode'=>'single')));
     }
-    $navigation->add(get_string('search', 'data'), new moodle_url($CFG->wwwroot.'/mod/data/view.php', array('d'=>$cm->instance, 'mode'=>'search')));
+    $navigation->add(get_string('search', 'data'), new moodle_url('/mod/data/view.php', array('d'=>$cm->instance, 'mode'=>'search')));
 }
 
 function data_extend_settings_navigation($settings, $module) {
@@ -2879,13 +2879,13 @@ function data_extend_settings_navigation($settings, $module) {
         } else {
             $addstring = get_string('editentry', 'data');
         }
-        $datanav->add($addstring, new moodle_url($CFG->wwwroot.'/mod/data/edit.php', array('d'=>$PAGE->cm->instance)));
+        $datanav->add($addstring, new moodle_url('/mod/data/edit.php', array('d'=>$PAGE->cm->instance)));
     }
 
     if (has_capability(DATA_CAP_EXPORT, $PAGE->cm->context)) {
         // The capability required to Export database records is centrally defined in 'lib.php'
         // and should be weaker than those required to edit Templates, Fields and Presets.
-        $datanav->add(get_string('export', 'data'), new moodle_url($CFG->wwwroot.'/mod/data/export.php', array('d'=>$data->id)));
+        $datanav->add(get_string('export', 'data'), new moodle_url('/mod/data/export.php', array('d'=>$data->id)));
     }
 
     if (has_capability('mod/data:managetemplates', $PAGE->cm->context)) {
@@ -2905,14 +2905,14 @@ function data_extend_settings_navigation($settings, $module) {
 
         $templatelist = array ('listtemplate', 'singletemplate', 'asearchtemplate', 'addtemplate', 'rsstemplate', 'csstemplate', 'jstemplate');
         foreach ($templatelist as $template) {
-            $templates->add(get_string($template, 'data'), new moodle_url($CFG->wwwroot.'/mod/data/templates.php', array('d'=>$data->id,'mode'=>$template)));
+            $templates->add(get_string($template, 'data'), new moodle_url('/mod/data/templates.php', array('d'=>$data->id,'mode'=>$template)));
         }
 
-        $datanav->add(get_string('fields', 'data'), new moodle_url($CFG->wwwroot.'/mod/data/field.php', array('d'=>$data->id)));
-        $datanav->add(get_string('presets', 'data'), new moodle_url($CFG->wwwroot.'/mod/data/preset.php', array('d'=>$data->id)));
+        $datanav->add(get_string('fields', 'data'), new moodle_url('/mod/data/field.php', array('d'=>$data->id)));
+        $datanav->add(get_string('presets', 'data'), new moodle_url('/mod/data/preset.php', array('d'=>$data->id)));
     }
 
     if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $datanav->add(get_string('updatethis', '', get_string('modulename', 'choice')), new moodle_url($CFG->wwwroot.'/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
+        $datanav->add(get_string('updatethis', '', get_string('modulename', 'choice')), new moodle_url('/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
     }
 }

@@ -13,7 +13,7 @@
         $hp = optional_param('hp', 0, PARAM_INT); // hotpot ID
 
         if ($id) {
-            $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/report.php', array('id'=>$id)));
+            $PAGE->set_url('/mod/hotpot/report.php', array('id'=>$id));
             if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
                 print_error('invalidcoursemodule');
             }
@@ -25,7 +25,7 @@
             }
 
         } else {
-            $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/report.php', array('hp'=>$hp)));
+            $PAGE->set_url('/mod/hotpot/report.php', array('hp'=>$hp));
             if (! $hotpot = $DB->get_record("hotpot", array("id"=>$hp))) {
                 print_error('invalidhotpotid', 'hotpot');
             }

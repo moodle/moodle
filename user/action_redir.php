@@ -28,7 +28,7 @@ require_once("../config.php");
 $formaction = required_param('formaction', PARAM_FILE);
 $id = required_param('id', PARAM_INT);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/user/action_redir.php', array('formaction'=>$formaction,'id'=>$id)));
+$PAGE->set_url('/user/action_redir.php', array('formaction'=>$formaction,'id'=>$id));
 
 // Add every page will be redirected by this script
 $actions = array(

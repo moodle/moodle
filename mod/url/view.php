@@ -46,7 +46,7 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 add_to_log($course->id, 'url', 'view', 'view.php?id='.$cm->id, $url->id, $cm->id);
 
-$PAGE->set_url('mod/url/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/url/view.php', array('id' => $cm->id));
 
 if ($redirect) {
     // coming from course page or url index page,

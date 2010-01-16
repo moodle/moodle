@@ -5,7 +5,7 @@
     include('../config.php');
     include('../lib/gdlib.php');
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/userpix/upgrade.php'));
+    $PAGE->set_url('/userpix/upgrade.php');
 
     require_login();
 

@@ -37,7 +37,7 @@ if (empty($id)) {         // See your own profile by default
     $id = $USER->id;
 }
 
-$url = new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$id));
+$url = new moodle_url('/user/view.php', array('id'=>$id));
 if ($course != SITEID) {
     $url->param('course', $course);
 }
@@ -102,7 +102,7 @@ $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $coursec
 
 $link = null;
 if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
-    $link = new moodle_url($CFG->wwwroot."/user/index.php", array('id'=>$course->id));
+    $link = new moodle_url("/user/index.php", array('id'=>$course->id));
 }
 
 /// If the user being shown is not ourselves, then make sure we are allowed to see them!

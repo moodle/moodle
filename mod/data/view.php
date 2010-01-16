@@ -257,7 +257,7 @@
 
 
 // Initialize $PAGE, compute blocks
-    $PAGE->set_url('mod/data/view.php', array('id' => $cm->id));
+    $PAGE->set_url('/mod/data/view.php', array('id' => $cm->id));
 
     if (($edit != -1) and $PAGE->user_allowed_editing()) {
         $USER->editing = $edit;

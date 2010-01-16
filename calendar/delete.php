@@ -34,10 +34,10 @@ $confirm = optional_param('confirm', false, PARAM_BOOL);
 $repeats = optional_param('repeats', false, PARAM_BOOL);
 $courseid = optional_param('course', 0, PARAM_INT);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/calendar/delete.php', array('id'=>$eventid)));
+$PAGE->set_url('/calendar/delete.php', array('id'=>$eventid));
 
 if(!$site = get_site()) {
-    redirect(new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
+    redirect(new moodle_url('/admin/index.php'));
 }
 
 $event = calendar_event::load($eventid);

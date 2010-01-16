@@ -8,7 +8,7 @@
     $params->course = required_param('course', PARAM_INT);
     $params->reference = required_param('reference', PARAM_PATH);
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/show.php', array('action'=>$params->action, 'course'=>$params->course, 'reference'=>$params->reference)));
+    $PAGE->set_url('/mod/hotpot/show.php', array('action'=>$params->action, 'course'=>$params->course, 'reference'=>$params->reference));
 
     require_login($params->course);
 

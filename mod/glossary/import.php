@@ -14,7 +14,7 @@ $catsincl = optional_param('catsincl', 0, PARAM_INT);         // Import Categori
 $mode     = optional_param('mode', 'letter', PARAM_ALPHA );
 $hook     = optional_param('hook', 'ALL', PARAM_ALPHANUM);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/glossary/import.php', array('id'=>$id));
+$url = new moodle_url('/mod/glossary/import.php', array('id'=>$id));
 if ($step !== 0) {
     $url->param('step', $step);
 }
@@ -65,7 +65,7 @@ $strsearchindefinition = get_string("searchindefinition", "glossary");
 $strsearch = get_string("search");
 $strimportentries = get_string('importentriesfromxml', 'glossary');
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/glossary/import.php', array('id'=>$cm->id, 'mode'=>$mode, 'hook'=>$hook)));
+$PAGE->set_url('/mod/glossary/import.php', array('id'=>$cm->id, 'mode'=>$mode, 'hook'=>$hook));
 $PAGE->navbar->add($strimportentries);
 $PAGE->set_title(format_string($glossary->name));
 

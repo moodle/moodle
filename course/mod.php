@@ -45,7 +45,7 @@ $cancelcopy    = optional_param('cancelcopy', 0, PARAM_BOOL);
 $confirm       = optional_param('confirm', 0, PARAM_BOOL);
 
 // This page should always redirect
-$url = new moodle_url($CFG->wwwroot.'/course/mod.php');
+$url = new moodle_url('/course/mod.php');
 foreach (compact('indent','update','hide','show','copy','moveto','movetosection','delete','course','cancelcopy','confirm') as $key=>$value) {
     if ($value !== 0) {
         $url->param($key, $value);

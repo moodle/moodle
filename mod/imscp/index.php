@@ -42,7 +42,7 @@ $strname         = get_string('name');
 $strintro        = get_string('moduleintro');
 $strlastmodified = get_string('lastmodified');
 
-$PAGE->set_url('mod/imscp/index.php', array('id' => $course->id));
+$PAGE->set_url('/mod/imscp/index.php', array('id' => $course->id));
 $PAGE->set_title($course->shortname.': '.$strimscps);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strimscps);

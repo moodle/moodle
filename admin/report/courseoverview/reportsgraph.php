@@ -30,7 +30,7 @@
     $courses = $DB->get_records_sql($sql, $param->$params, 0, $numcourses);
 
     if (empty($courses)) {
-        $PAGE->set_url(new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/index.php'));
+        $PAGE->set_url('/admin/report/courseoverview/index.php');
         print_error('statsnodata', 'error', $PAGE->url->out());
     }
 

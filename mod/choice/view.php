@@ -8,7 +8,7 @@
     $action     = optional_param('action', '', PARAM_ALPHA);
     $attemptids = optional_param('attemptid', array(), PARAM_INT); // array of attempt ids for delete action
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/choice/view.php', array('id'=>$id));
+    $url = new moodle_url('/mod/choice/view.php', array('id'=>$id));
     if ($action !== '') {
         $url->param('action', $action);
     }
@@ -141,7 +141,7 @@
             echo $OUTPUT->box_start('generalbox', 'notice');
             echo '<p align="center">'. get_string('noguestchoose', 'choice') .'</p>';
             echo $OUTPUT->container_start('continuebutton');
-            echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot.'/course/enrol.php?', array('id'=>$course->id)), get_string('enrolme', '', format_string($course->shortname)));
+            echo $OUTPUT->single_button(new moodle_url('/course/enrol.php?', array('id'=>$course->id)), get_string('enrolme', '', format_string($course->shortname)));
             echo $OUTPUT->container_end();
             echo $OUTPUT->box_end();
 

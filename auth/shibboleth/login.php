@@ -66,7 +66,7 @@ httpsrequired();
 
     $loginsite = get_string("loginsite");
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/auth/shibboleth/login.php'));
+    $PAGE->set_url('/auth/shibboleth/login.php');
     $PAGE->navbar->add($loginsite);
     $PAGE->set_title("$site->fullname: $loginsite");
     $PAGE->set_heading($site->fullname);

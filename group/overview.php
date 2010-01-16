@@ -21,7 +21,7 @@ if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
     print_error('invalidcourse');
 }
 
-$url = new moodle_url($CFG->wwwroot.'/group/overview.php', array('course'=>$courseid));
+$url = new moodle_url('/group/overview.php', array('course'=>$courseid));
 if ($groupid !== 0) {
     $url->param('group', $groupid);
 }
@@ -118,7 +118,7 @@ if ($rs = $DB->get_recordset_sql($sql, $params)) {
 $PAGE->requires->js('lib/overlib/overlib.js')->in_head();
 $PAGE->requires->js('lib/overlib/overlib_cssstyle.js')->in_head();
 
-$PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strparticipants, new moodle_url('/user/index.php', array('id'=>$courseid)));
 $PAGE->navbar->add($strgroups);
 
 /// Print header

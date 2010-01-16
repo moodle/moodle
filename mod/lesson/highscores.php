@@ -40,7 +40,7 @@ try {
 }
 require_login($course, false, $cm);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/lesson/highscores.php', array('id'=>$id));
+$url = new moodle_url('/mod/lesson/highscores.php', array('id'=>$id));
 if ($mode !== '') {
     $url->param('mode', $mode);
 }
@@ -215,10 +215,10 @@ switch ($mode) {
             echo $OUTPUT->box_start('mdl-align');
             echo $OUTPUT->box_start('lessonbutton standardbutton');
             if ($link) {
-                echo $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)), get_string("returntocourse", "lesson")));
+                echo $OUTPUT->link(html_link::make(new moodle_url('/course/view.php', array('id'=>$course->id)), get_string("returntocourse", "lesson")));
             } else {
-                echo $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)), get_string("cancel", "lesson"))). ' ';
-                echo $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$cm->id, 'viewed'=>'1')), get_string("startlesson", "lesson")));
+                echo $OUTPUT->link(html_link::make(new moodle_url('/course/view.php', array('id'=>$course->id)), get_string("cancel", "lesson"))). ' ';
+                echo $OUTPUT->link(html_link::make(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id, 'viewed'=>'1')), get_string("startlesson", "lesson")));
             }
             echo $OUTPUT->box_end();
             echo $OUTPUT->box_end();

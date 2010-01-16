@@ -20,7 +20,7 @@ $hostid = optional_param('hostid', '0', PARAM_INT);
 $hostwwwroot = optional_param('hostwwwroot', '', PARAM_URL);
 $wantsurl = optional_param('wantsurl', '', PARAM_RAW);
 
-$url = new moodle_url($CFG->wwwroot.'/auth/mnet/jump.php');
+$url = new moodle_url('/auth/mnet/jump.php');
 if ($hostid !== '0') $url->param('hostid', $hostid);
 if ($hostwwwroot !== '') $url->param('hostwwwroot', $hostwwwroot);
 if ($wantsurl !== '') $url->param('wantsurl', $wantsurl);

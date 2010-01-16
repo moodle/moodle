@@ -27,7 +27,7 @@ require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/course/request_form.php');
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/request.php'));
+$PAGE->set_url('/course/request.php');
 
 /// Where we came from. Used in a number of redirects.
 $returnurl = $CFG->wwwroot . '/course/index.php';

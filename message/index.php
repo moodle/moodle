@@ -44,7 +44,7 @@ $blockcontact   = optional_param('blockcontact',   0, PARAM_INT); // blocking a 
 $unblockcontact = optional_param('unblockcontact', 0, PARAM_INT); // unblocking a contact
 $popup          = optional_param('popup', false, PARAM_ALPHANUM);    // If set then starts a new popup window
 
-$url = new moodle_url($CFG->wwwroot.'/message/index.php');
+$url = new moodle_url('/message/index.php');
 if ($tab !== 'contacts') {
     $url->param('tab', $tab);
 }

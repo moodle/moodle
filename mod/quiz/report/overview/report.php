@@ -2,7 +2,6 @@
 /**
  * This script lists student attempts
  *
- * @version $Id$
  * @author Martin Dougiamas, Tim Hunt and others.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz
@@ -80,7 +79,7 @@ class quiz_overview_report extends quiz_default_report {
         $pageoptions['q'] = $quiz->id;
         $pageoptions['mode'] = 'overview';
 
-        $reporturl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions);
+        $reporturl = new moodle_url('/mod/quiz/report.php', $pageoptions);
         $qmsubselect = quiz_report_qm_filter_select($quiz);
 
         $mform = new mod_quiz_report_overview_settings($reporturl, array('qmsubselect'=> $qmsubselect, 'quiz'=>$quiz,

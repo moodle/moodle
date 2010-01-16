@@ -5,7 +5,7 @@
 
     $attemptid = required_param('attemptid', PARAM_INT);
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/attempt.php', array('attemptid'=>$attemptid)));
+    $PAGE->set_url('/mod/hotpot/attempt.php', array('attemptid'=>$attemptid));
 
     // get attempt, hotpot, course and course_module records
     if (! $attempt = $DB->get_record("hotpot_attempts", array("id"=>$attemptid))) {

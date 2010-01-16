@@ -40,7 +40,7 @@ $site = get_site();
 
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/index.php'));
+$PAGE->set_url('/course/index.php');
 $PAGE->set_context($systemcontext);
 
 if (can_edit_in_category()) {

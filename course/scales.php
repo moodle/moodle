@@ -29,7 +29,7 @@ require_once("lib.php");
 $id   = required_param('id', PARAM_INT);               // course id
 $scaleid  = optional_param('scaleid', 0, PARAM_INT);   // scale id (show only this one)
 
-$url = new moodle_url($CFG->wwwroot.'/course/scales.php', array('id'=>$id));
+$url = new moodle_url('/course/scales.php', array('id'=>$id));
 if ($scaleid !== 0) {
     $url->param('scaleid', $scaleid);
 }

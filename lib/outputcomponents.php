@@ -977,7 +977,7 @@ class html_select extends labelled_html_component {
         $select->form->method = 'get';
         $select->form->jssubmitaction = true;
         $select->form->add_class('popupform');
-        $select->form->url = new moodle_url($CFG->wwwroot . '/course/jumpto.php', array('sesskey' => sesskey()));
+        $select->form->url = new moodle_url('/course/jumpto.php', array('sesskey' => sesskey()));
         $select->form->button->text = get_string('go');
 
         $select->id = $formid . '_jump';

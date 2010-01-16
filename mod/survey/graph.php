@@ -10,7 +10,7 @@
     $sid   = optional_param('sid', false, PARAM_INT);  // Student ID
     $qid   = optional_param('qid', 0, PARAM_INT);  // Group ID
 
-    $url = new moodle_url($CFG->wwwroot.'/mod/survey/graph.php', array('id'=>$id, 'type'=>$type));
+    $url = new moodle_url('/mod/survey/graph.php', array('id'=>$id, 'type'=>$type));
     if ($group !== 0) {
         $url->param('group', $group);
     }

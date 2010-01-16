@@ -38,9 +38,9 @@
         if ($live_users > 0) {
             $warn[] = get_string('usersareonline', 'mnet', $live_users);
         }
-        $PAGE->set_url(new moodle_url($CFG->wwwroot.'/admin/mnet/delete.php'));
-        $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
-        $PAGE->navbar->add(get_string('mnetsettings', 'mnet'), new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/mnet/index.php'));
+        $PAGE->set_url('/admin/mnet/delete.php');
+        $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php'));
+        $PAGE->navbar->add(get_string('mnetsettings', 'mnet'), new moodle_url('/admin/mnet/index.php'));
         $PAGE->navbar->add(get_string('deletehost', 'mnet'));
 
         $PAGE->set_title("$site->shortname: $strmnetsettings");

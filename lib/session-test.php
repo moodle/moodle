@@ -32,7 +32,7 @@
 /** Include config {@see config.php} */
 require '../config.php';
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/lib/session-test.php'));
+$PAGE->set_url('/lib/session-test.php');
 
 error('session test not reimplemented yet'); //DO NOT localize or use print_error()!
 //

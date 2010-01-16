@@ -39,7 +39,7 @@ $action   = optional_param('action', 'base', PARAM_ALPHANUM); // current action
 $fullname = optional_param('fullname', '', PARAM_PATH); // directory the preset is in
 $file     = optional_param('file', '', PARAM_PATH); // uploaded file
 
-$url = new moodle_url($CFG->wwwroot.'/mod/data/preset.php');
+$url = new moodle_url('/mod/data/preset.php');
 if ($action !== 'base') {
     $url->param('action', $action);
 }

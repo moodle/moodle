@@ -1333,7 +1333,7 @@ if (CLI_SCRIPT) {
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
     require_capability('moodle/site:config', $systemcontext);
 
-    $PAGE->set_url($CFG->wwwroot.'/admin/generator.php');
+    $PAGE->set_url('/admin/generator.php');
     $PAGE->set_pagelayout('base');
     $generator = new generator_web();
     $generator->setup();

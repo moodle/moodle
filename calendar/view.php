@@ -52,7 +52,7 @@ $yr   = optional_param('cal_y', 0, PARAM_INT);
 
 $site = get_site();
 
-$url = new moodle_url($CFG->wwwroot.'/calendar/view.php');
+$url = new moodle_url('/calendar/view.php');
 if ($courseid !== 0) {
     $url->param('course', $courseid);
 }

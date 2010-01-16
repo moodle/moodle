@@ -50,7 +50,7 @@
     if ($returnurl) {
         $urlparams['returnurl'] = $returnurl;
     }
-    $PAGE->set_url($CFG->admin . '/roles/override.php', $urlparams);
+    $PAGE->set_url('/admin/roles/override.php', $urlparams);
     $baseurl = $PAGE->url->out();
 
 /// Validate the contextid parameter.
@@ -151,7 +151,7 @@
         $PAGE->set_title($title);
         if ($courseid != SITEID) {
             if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $course->id))) {
-                $PAGE->navbar->add(get_string('participants'), new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$course->id)));
+                $PAGE->navbar->add(get_string('participants'), new moodle_url('/user/index.php', array('id'=>$course->id)));
             }
             $PAGE->set_heading($fullname);
         } else {

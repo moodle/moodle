@@ -54,7 +54,7 @@ if ($newquestioninfo) {
 $quiz_page = optional_param('quiz_page', 0, PARAM_SEQUENCE);
 $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/quiz/addrandom.php');
+$url = new moodle_url('/mod/quiz/addrandom.php');
 if ($quiz_page != 0) {
     $url->param('quiz_page', $quiz_page);
 }

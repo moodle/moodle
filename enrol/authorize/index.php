@@ -12,7 +12,7 @@
     $courseid = optional_param('course', SITEID, PARAM_INT);
     $userid   = optional_param('user', 0, PARAM_INT);
 
-    $url = new moodle_url($CFG->wwwroot.'/enrol/authorize/index.php');
+    $url = new moodle_url('/enrol/authorize/index.php');
     if ($orderid !== 0) {
         $url->param('order', $orderid);
     }

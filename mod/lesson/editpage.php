@@ -45,7 +45,7 @@ require_login($course, false, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/lesson:edit', $context);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/lesson/editpage.php', array('pageid'=>$pageid, 'id'=>$id, 'qtype'=>$qtype)));
+$PAGE->set_url('/mod/lesson/editpage.php', array('pageid'=>$pageid, 'id'=>$id, 'qtype'=>$qtype));
 
 if ($edit) {
     $editpage = lesson_page::load($pageid, $lesson);
@@ -64,7 +64,7 @@ if ($edit) {
     $properties->pageid = $editpage->id;
     $properties->id = $cm->id;
     $mform->set_data($properties, $context, $editpage->id);
-    $PAGE->navbar->add(get_string('edit'), new moodle_url($CFG->wwwroot.'/mod/lesson/edit.php', array('id'=>$id)));
+    $PAGE->navbar->add(get_string('edit'), new moodle_url('/mod/lesson/edit.php', array('id'=>$id)));
     $PAGE->navbar->add(get_string('editingquestionpage', 'lesson', get_string($mform->qtypestring, 'lesson')));
 } else {
     // Give the page type being created a chance to override the creation process
@@ -95,7 +95,7 @@ if ($data = $mform->get_data()) {
     } else {
         $editpage = lesson_page::create($data, $lesson, $context, $PAGE->course->maxbytes);
     }
-    redirect(new moodle_url($CFG->wwwroot.'/mod/lesson/edit.php', array('id'=>$cm->id)));
+    redirect(new moodle_url('/mod/lesson/edit.php', array('id'=>$cm->id)));
 }
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');

@@ -40,7 +40,7 @@ $PAGE->set_title(get_string('messagehistory', 'message'));
 
 /// Script parameters
 $userid1 = required_param('user1', PARAM_INT);
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/message/history.php', array('user1'=>$userid1)));
+$PAGE->set_url('/message/history.php', array('user1'=>$userid1));
 if (! $user1 = $DB->get_record("user", array("id"=>$userid1))) {  // Check it's correct
     print_error('invaliduserid');
 }

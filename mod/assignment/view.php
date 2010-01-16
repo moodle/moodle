@@ -7,7 +7,7 @@ require_once($CFG->libdir . '/completionlib.php');
 $id = optional_param('id', 0, PARAM_INT);  // Course Module ID
 $a  = optional_param('a', 0, PARAM_INT);   // Assignment ID
 
-$url = new moodle_url($CFG->wwwroot.'/mod/assignment/view.php');
+$url = new moodle_url('/mod/assignment/view.php');
 if ($id) {
     if (! $cm = get_coursemodule_from_id('assignment', $id)) {
         print_error('invalidcoursemodule');

@@ -24,6 +24,6 @@
 /** Include config.pgp */
 include('../config.php');
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/lib/womenslib.php'));
+$PAGE->set_url('/lib/womenslib.php');
 
 redirect('http://en.wikipedia.org/wiki/Women%27s_liberation');

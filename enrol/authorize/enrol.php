@@ -57,7 +57,7 @@ class enrolment_plugin_authorize
         $strcourses = get_string('courses');
         $strloginto = get_string('loginto', '', $course->shortname);
 
-        $PAGE->navbar->add($strcourses, new moodle_url($CFG->wwwroot.'/course/'));
+        $PAGE->navbar->add($strcourses, new moodle_url('/course/'));
         $PAGE->navbar->add($strloginto);
         $PAGE->set_title($strloginto);
         $PAGE->set_heading($course->fullname);

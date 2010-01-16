@@ -26,7 +26,7 @@ $strsubmitted = get_string("submitted", "assignment");
 $strgrade = get_string("grade");
 
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/assignment/index.php', array('id'=>$course->id)));
+$PAGE->set_url('/mod/assignment/index.php', array('id'=>$course->id));
 $PAGE->navbar->add($strassignments);
 $PAGE->set_title($strassignments);
 echo $OUTPUT->header();

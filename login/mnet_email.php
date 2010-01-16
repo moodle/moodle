@@ -11,7 +11,7 @@ if (isloggedin() and !isguestuser()) {
     redirect( $CFG->wwwroot.'/', get_string('loginalready'), 5);
 }
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/login/mnet_email.php', array('u'=>$username)));
+$PAGE->set_url('/login/mnet_email.php', array('u'=>$username));
 
 $mnetidprovider = get_string('mnetidprovider','mnet');
 $PAGE->navbar->add($mnetidprovider);

@@ -39,7 +39,7 @@ function csv_quote($value) {
     }
 }
 
-$url = new moodle_url($CFG->wwwroot.'/course/report/progress/index.php', array('course'=>$id));
+$url = new moodle_url('/course/report/progress/index.php', array('course'=>$id));
 if ($sort !== '') {
     $url->param('sort', $sort);
 }
@@ -99,7 +99,7 @@ if($csv) {
 
     $PAGE->set_title($strcompletion);
     $PAGE->set_heading($course->fullname);
-    $PAGE->navbar->add($strreports, new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)));
+    $PAGE->navbar->add($strreports, new moodle_url('/course/report.php', array('id'=>$course->id)));
     $PAGE->navbar->add($strcompletion);
     echo $OUTPUT->header();
 

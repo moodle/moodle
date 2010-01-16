@@ -950,10 +950,10 @@ function choice_extend_settings_navigation($settings, $module) {
                 $responsecount += count($userlist);
             }
         }
-        $choicenav->add(get_string("viewallresponses", "choice", $responsecount), new moodle_url($CFG->wwwroot.'/mod/choice/report.php', array('id'=>$PAGE->cm->id)));
+        $choicenav->add(get_string("viewallresponses", "choice", $responsecount), new moodle_url('/mod/choice/report.php', array('id'=>$PAGE->cm->id)));
     }
 
     if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $choicenav->add(get_string('updatethis', '', get_string('modulename', 'choice')), new moodle_url($CFG->wwwroot.'/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
+        $choicenav->add(get_string('updatethis', '', get_string('modulename', 'choice')), new moodle_url('/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
     }
 }

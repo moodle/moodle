@@ -29,7 +29,7 @@
     $strlivelogs = get_string("livelogs");
     $strupdatesevery = get_string("updatesevery", "moodle", COURSE_LIVELOG_REFRESH);
 
-    $PAGE->set_url('/course/report/log/live.php', Array('id'=>$course->id));
+    $PAGE->set_url('/course/report/log/live.php', array('id'=>$course->id));
     $PAGE->set_pagelayout('popup');
     $PAGE->set_title("$strlivelogs ($strupdatesevery)");
     $PAGE->set_periodic_refresh_delay(COURSE_LIVELOG_REFRESH);

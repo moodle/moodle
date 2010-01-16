@@ -31,7 +31,7 @@ require_once($CFG->libdir.'/gradelib.php');
 $courseid = optional_param('id', 0, PARAM_INT);
 $action   = optional_param('action', '', PARAM_ALPHA);
 
-$PAGE->set_url('grade/edit/outcome/index.php', array('id' => $courseid));
+$PAGE->set_url('/grade/edit/outcome/index.php', array('id' => $courseid));
 
 /// Make sure they can even access this course
 if ($courseid) {
@@ -266,7 +266,7 @@ echo $OUTPUT->footer();
  */
 function grade_print_scale_link($courseid, $scale, $gpr) {
     global $CFG, $OUTPUT;
-    $url = new moodle_url($CFG->wwwroot.'/grade/edit/scale/edit.php', array('courseid' => $courseid, 'id' => $scale->id));
+    $url = new moodle_url('/grade/edit/scale/edit.php', array('courseid' => $courseid, 'id' => $scale->id));
     $url = $gpr->add_url_params($url);
     return $OUTPUT->link($url, $scale->get_name());
 }

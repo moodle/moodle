@@ -1063,7 +1063,7 @@ class assignment_upload extends assignment_base {
         // If the user has submitted something add a bit more stuff
         if ($submission) {
             // Add a view link to the settings nav
-            $link = new moodle_url($CFG->wwwroot.'/mod/assignment/view.php', array('id'=>$this->cm->id));
+            $link = new moodle_url('/mod/assignment/view.php', array('id'=>$this->cm->id));
             $node->add(get_string('viewmysubmission', 'assignment'), $link, navigation_node::TYPE_SETTING);
             if (!empty($submission->timemodified)) {
                 $key = $node->add(get_string('submitted', 'assignment') . ' ' . userdate($submission->timemodified));
@@ -1097,7 +1097,7 @@ class assignment_upload extends assignment_base {
 
         // Show a notes link if they are enabled
         if ($this->notes_allowed()) {
-            $link = new moodle_url($CFG->wwwroot.'/mod/assignment/upload.php', array('id'=>$this->cm->id, 'action'=>'editnotes', 'sesskey'=>sesskey()));
+            $link = new moodle_url('/mod/assignment/upload.php', array('id'=>$this->cm->id, 'action'=>'editnotes', 'sesskey'=>sesskey()));
             $node->add(get_string('notes', 'assignment'), $link);
         }
     }

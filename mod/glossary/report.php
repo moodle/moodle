@@ -8,7 +8,7 @@ require_once("lib.php");
 $id   = required_param('id', PARAM_INT);
 $sort = optional_param('sort', '', PARAM_ALPHA);
 
-$url = new moodle_url($CFG->wwwroot.'/mod/glossary/report.php', array('id'=>$id));
+$url = new moodle_url('/mod/glossary/report.php', array('id'=>$id));
 if ($sort !== '') {
     $url->param('sort', $sort);
 }

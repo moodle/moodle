@@ -39,7 +39,7 @@ require_capability('moodle/blog:manageexternal', get_context_instance(CONTEXT_SY
 $id = optional_param('id', null, PARAM_INT);
 $PAGE->set_url('/blog/external_blog_edit.php', array('id' => $id));
 
-$returnurl = new moodle_url($CFG->wwwroot . '/blog/external_blogs.php');
+$returnurl = new moodle_url('/blog/external_blogs.php');
 
 $action = (empty($id)) ? 'add' : 'edit';
 
@@ -112,8 +112,8 @@ if ($externalblogform->is_cancelled()){
     redirect($returnurl);
 }
 
-$PAGE->navbar->add(fullname($USER), new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$USER->id)));
-$PAGE->navbar->add($strblogs, new moodle_url($CFG->wwwroot.'/blog/index.php', array('userid'=>$USER->id)));
+$PAGE->navbar->add(fullname($USER), new moodle_url('/user/view.php', array('id'=>$USER->id)));
+$PAGE->navbar->add($strblogs, new moodle_url('/blog/index.php', array('userid'=>$USER->id)));
 $PAGE->navbar->add($strformheading);
 $PAGE->set_heading("$SITE->shortname: $strblogs: $strexternalblogs", $SITE->fullname);
 $PAGE->set_title("$SITE->shortname: $strblogs: $strexternalblogs");

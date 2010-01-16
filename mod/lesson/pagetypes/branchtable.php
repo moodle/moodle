@@ -92,7 +92,7 @@ class lesson_page_type_branchtable extends lesson_page {
             $params['pageid'] = $this->properties->id;
             $params['sesskey'] = sesskey();
             $params['jumpto'] = $answer->jumpto;
-            $url = new moodle_url($CFG->wwwroot.'/mod/lesson/continue.php', $params);
+            $url = new moodle_url('/mod/lesson/continue.php', $params);
             $buttons[] = $renderer->single_button($url, strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)));
             $i++;
         }
@@ -162,7 +162,7 @@ class lesson_page_type_branchtable extends lesson_page {
             $newpageid = lesson_unseen_branch_jump($this->lesson, $USER->id);
         }
         // no need to record anything in lesson_attempts
-        redirect(new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$PAGE->cm->id,'pageid'=>$newpageid)));
+        redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id,'pageid'=>$newpageid)));
     }
 
     public function display_answers($table) {
@@ -216,7 +216,7 @@ class lesson_page_type_branchtable extends lesson_page {
     }
     public function add_page_link($previd) {
         global $PAGE, $CFG;
-        $addbranchurl = new moodle_url($CFG->wwwroot.'/mod/lesson/editpage.php', array('id'=>$PAGE->cm->id, 'pageid'=>$previd, 'qtype'=>LESSON_PAGE_BRANCHTABLE));
+        $addbranchurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$PAGE->cm->id, 'pageid'=>$previd, 'qtype'=>LESSON_PAGE_BRANCHTABLE));
         return html_link::make($addbranchurl, get_string('addabranchtable', 'lesson'));
     }
     protected function get_displayinmenublock() {

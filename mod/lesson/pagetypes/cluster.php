@@ -69,7 +69,7 @@ class lesson_page_type_cluster extends lesson_page {
     }
     public function add_page_link($previd) {
         global $PAGE, $CFG;
-        $addclusterurl = new moodle_url($CFG->wwwroot.'/mod/lesson/editpage.php', array('id'=>$PAGE->cm->id, 'pageid'=>$previd, 'sesskey'=>sesskey(), 'qtype'=>LESSON_PAGE_CLUSTER));
+        $addclusterurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$PAGE->cm->id, 'pageid'=>$previd, 'sesskey'=>sesskey(), 'qtype'=>LESSON_PAGE_CLUSTER));
         return html_link::make($addclusterurl, get_string('addcluster', 'lesson'));
     }
     public function valid_page_and_view(&$validpages, &$pageviews) {

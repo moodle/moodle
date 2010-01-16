@@ -136,7 +136,7 @@ class block_blog_tags extends block_base {
         /// Accessibility: markup as a list.
             $this->content->text .= "\n<ul class='inline-list'>\n";
             foreach ($etags as $tag) {
-                $blogurl = new moodle_url($CFG->wwwroot.'/blog/index.php');
+                $blogurl = new moodle_url('/blog/index.php');
 
                 switch ($CFG->bloglevel) {
                     case BLOG_USER_LEVEL:

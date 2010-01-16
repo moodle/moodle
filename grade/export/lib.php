@@ -295,7 +295,7 @@ abstract class grade_export {
         echo $OUTPUT->container_start('gradeexportlink');
 
         if (!$this->userkey) {      // this button should trigger a download prompt
-            echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot.'/grade/export/'.$this->plugin.'/export.php', $params), get_string('download', 'admin'));
+            echo $OUTPUT->single_button(new moodle_url('/grade/export/'.$this->plugin.'/export.php', $params), get_string('download', 'admin'));
 
         } else {
             $paramstr = '';

@@ -25,7 +25,7 @@ $itemid        = required_param('itemid', PARAM_INT);        // item id
 $page          = optional_param('page', 0, PARAM_INT);   // active page
 $perpageurl    = optional_param('perpage', 0, PARAM_INT);
 
-$url = new moodle_url($CFG->wwwroot.'/grade/report/grader/quickedit_item.php', array('id'=>$courseid, 'itemid'=>$itemid));
+$url = new moodle_url('/grade/report/grader/quickedit_item.php', array('id'=>$courseid, 'itemid'=>$itemid));
 if ($page !== 0) {
     $url->param('page', $page);
 }

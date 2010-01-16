@@ -19,7 +19,7 @@ if($completedid == 0){
     print_error('no_complete_to_delete', 'feedback', 'show_entries.php?id='.$id.'&do_show=showentries');
 }
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/feedback/delete_completed.php', array('id'=>$id, 'completed'=>$completedid)));
+$PAGE->set_url('/mod/feedback/delete_completed.php', array('id'=>$id, 'completed'=>$completedid));
 
 if ($id) {
     if (! $cm = get_coursemodule_from_id('feedback', $id)) {
@@ -66,7 +66,7 @@ if(isset($formdata->confirmdelete) AND $formdata->confirmdelete == 1){
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
-$PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
+$PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', array('id'=>$course->id)));
 $PAGE->navbar->add(format_string($feedback->name));
 
 $PAGE->set_title(format_string($feedback->name));

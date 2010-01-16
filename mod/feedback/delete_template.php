@@ -21,7 +21,7 @@ $shoulddelete = optional_param('shoulddelete', false, PARAM_INT);
 $deletetempl = optional_param('deletetempl', false, PARAM_INT);
 // $formdata = data_submitted();
 
-$url = new moodle_url($CFG->wwwroot.'/mod/feedback/delete_template.php', array('id'=>$id));
+$url = new moodle_url('/mod/feedback/delete_template.php', array('id'=>$id));
 if ($canceldelete !== false) {
     $url->param('canceldelete', $canceldelete);
 }
@@ -83,7 +83,7 @@ if(isset($formdata->confirmdelete) AND $formdata->confirmdelete == 1){
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
-$PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
+$PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', array('id'=>$course->id)));
 $PAGE->navbar->add(format_string($feedback->name));
 
 $PAGE->set_title(format_string($feedback->name));
@@ -114,7 +114,7 @@ if($shoulddelete == 1) {
         foreach($templates as $template) {
             echo '<tr><td align="center">'.$template->name.'</td>';
             echo '<td align="center">';
-            echo '<form action="'.$ME.'" method="post">';
+            echo '<form action="delete_template.php" method="post">';
             echo '<input title="'.get_string('delete_template','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/delete') . '" hspace="1" height="11" width="11" border="0" />';
             echo '<input type="hidden" name="deletetempl" value="'.$template->id.'" />';
             echo '<input type="hidden" name="shoulddelete" value="1" />';
@@ -126,7 +126,7 @@ if($shoulddelete == 1) {
         echo '</table>';
     }
 ?>
-        <form name="frm" action="<?php echo $ME;?>" method="post">
+        <form name="frm" action="delete_template.php" method="post">
             <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
             <input type="hidden" name="id" value="<?php echo $id;?>" />
             <input type="hidden" name="canceldelete" value="0" />

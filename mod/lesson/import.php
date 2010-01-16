@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/mod/lesson/format.php');  // Parent class
 $id     = required_param('id', PARAM_INT);         // Course Module ID
 $pageid = optional_param('pageid', '', PARAM_INT); // Page ID
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/lesson/import.php', array('id'=>$id, 'pageid'=>$pageid)));
+$PAGE->set_url('/mod/lesson/import.php', array('id'=>$id, 'pageid'=>$pageid));
 
 try {
     $cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);;

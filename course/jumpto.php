@@ -28,7 +28,7 @@ require('../config.php');
 
 $jump = optional_param('jump', '', PARAM_RAW);
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/jumpto.php'));
+$PAGE->set_url('/course/jumpto.php');
 
 if (!confirm_sesskey()) {
     print_error('confirmsesskeybad');

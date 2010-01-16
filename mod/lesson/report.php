@@ -66,7 +66,7 @@ if (! $students = $DB->get_records_sql($sql, $params)) {
     $nothingtodisplay = true;
 }
 
-$url = new moodle_url($CFG->wwwroot.'/mod/lesson/report.php', array('id'=>$id));
+$url = new moodle_url('/mod/lesson/report.php', array('id'=>$id));
 if ($action !== 'reportoverview') {
     $url->param('action', $action);
 }
@@ -74,7 +74,7 @@ if ($pageid !== NULL) {
     $url->param('pageid', $pageid);
 }
 $PAGE->set_url($url);
-$PAGE->navbar->add(get_string('reports', 'lesson'), new moodle_url($CFG->wwwroot.'/mod/lesson/report.php', array('id'=>$id)));
+$PAGE->navbar->add(get_string('reports', 'lesson'), new moodle_url('/mod/lesson/report.php', array('id'=>$id)));
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
 /// Process any form data before fetching attempts, grades and times
@@ -143,7 +143,7 @@ echo $lessonoutput->header($lesson, $cm, $action);
 
 $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
 if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
-    $seeallgradeslink = new moodle_url($CFG->wwwroot.'/grade/report/grader/index.php', array('id'=>$course->id));
+    $seeallgradeslink = new moodle_url('/grade/report/grader/index.php', array('id'=>$course->id));
     $seeallgradeslink = html_link::make($seeallgradeslink, get_string('seeallcoursegrades', 'grades'));
     echo $OUTPUT->box($OUTPUT->link($seeallgradeslink), 'allcoursegrades');
 }
