@@ -431,7 +431,11 @@ class html_writer {
 
     /**
      * Generates a simple select form field
-     * @param array $options associative array value=>label
+     * @param array $options associative array value=>label ex.:
+     *                array(1=>'One, 2=>Two)
+     *              it is also possible to specify optgroup as complex label array ex.:
+     *                array(array('Odd'=>array(1=>'One', 3=>'Three)), array('Even'=>array(2=>'Two'))) 
+     *                array(1=>'One', '--1uniquekey'=>array('More'=>array(2=>'Two', 3=>'Three')))
      * @param string $name name of select element
      * @param string|array $selected value or arary of values depending on multiple attribute
      * @param array|bool $nothing, add nothing selected option, or false of not added
@@ -480,16 +484,36 @@ class html_writer {
 
         $output = '';
         foreach ($options as $value=>$label) {
-            $ias = array();
-            $value = (string)$value; //TODO: add support for opt groups as nested arrays
-            if (in_array($value, $selected, true)) {
-                $ias['selected'] = 'selected';
+            if (is_array($label)) {
+                // ignore key, it just has to be unique
+                $output .= self::select_optgroup(key($label), current($label), $selected);
+            } else {
+                $output .= self::select_option($label, $value, $selected);
             }
-            $ias['value'] = $value;
-            $output .= self::tag('option', $ias, $label);
         }
-
         return self::tag('select', $attributes, $output);
+    }
+
+    private static function select_option($label, $value, array $selected) {
+        $attributes = array();
+        $value = (string)$value;
+        if (in_array($value, $selected, true)) {
+            $attributes['selected'] = 'selected';
+        }
+        $attributes['value'] = $value;
+        return self::tag('option', $attributes, $label);
+    }
+
+    private static function select_optgroup($groupname, $options, array $selected) {
+        if (empty($options)) {
+            return '';
+        }
+        $attributes = array('label'=>$groupname);
+        $output = '';
+        foreach ($options as $value=>$label) {
+            $output .= self::select_option($label, $value, $selected);
+        }
+        return self::tag('optgroup', $attributes, $output);
     }
 }
 

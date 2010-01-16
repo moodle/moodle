@@ -130,6 +130,8 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     $hostarray[$CFG->mnet_localhost_id] = $SITE->fullname;
     asort($hostarray);
 
+    $dropdown = array();
+
     foreach($hostarray as $hostid => $name) {
         $courses = array();
         $sites = array();
@@ -161,7 +163,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         }
 
         asort($courses);
-        $dropdown[$name] = $sites + $courses;
+        $dropdown[] = array($name=>($sites + $courses));
     }
 
 
@@ -255,9 +257,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     echo "<input type=\"hidden\" name=\"showcourses\" value=\"$showcourses\" />\n";
     if (has_capability('coursereport/log:view', $sitecontext) && $showcourses) {
         $cid = empty($course->id)? '1' : $course->id;
-        $select = html_select::make($dropdown, "host_course", $hostid.'/'.$cid);
-        $select->nested = true;
-        echo $OUTPUT->select($select);
+        echo html_writer::select($dropdown, "host_course", $hostid.'/'.$cid);
     } else {
         $courses = array();
         $courses[$course->id] = $course->fullname . ((empty($course->category)) ? ' ('.get_string('site').') ' : '');

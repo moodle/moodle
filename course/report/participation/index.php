@@ -64,11 +64,11 @@
         if (empty($modinfo->instances[$module->name])) {
             continue;
         }
-        $agroup = get_string('modulenameplural', $module->name);
-        $instanceoptions[$agroup] = array();
+        $instances = array();
         foreach ($modinfo->instances[$module->name] as $cm) {
-            $instanceoptions[$agroup][$cm->id] = format_string($cm->name);
+            $instances[$cm->id] = format_string($cm->name);
         }
+        $instanceoptions[] = array(get_string('modulenameplural', $module->name)=>$instances);
     }
 
     $timeoptions = array();
@@ -117,9 +117,7 @@
     echo '<form class="participationselectform" action="index.php" method="get"><div>'."\n".
          '<input type="hidden" name="id" value="'.$course->id.'" />'."\n";
     echo '<label for="menuinstanceid">'.get_string('activitymodule').'</label>'."\n";
-    $select = html_select::make($instanceoptions, 'instanceid', $instanceid);
-    $select->nested = true;
-    echo $OUTPUT->select($select);
+    echo html_writer::select($instanceoptions, 'instanceid', $instanceid);
     echo '<label for="menutimefrom">'.get_string('lookback').'</label>'."\n";
     echo html_writer::select($timeoptions,'timefrom',$timefrom);
     echo '<label for="menuroleid">'.get_string('showonly').'</label>'."\n";

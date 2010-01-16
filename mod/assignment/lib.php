@@ -987,9 +987,7 @@ class assignment_base {
                     $options[0] = get_string('nooutcome', 'grades');
                     echo $options[$outcome->grades[$submission->userid]->grade];
                 } else {
-                    $select = html_select::make($options, 'outcome_'.$n.'['.$userid.']', $outcome->grades[$submission->userid]->grade, get_string('nooutcome', 'grades'));
-                    $select->id = 'menuoutcome_'.$n;
-                    echo $OUTPUT->select($select);
+                    echo html_writer::select($options, 'outcome_'.$n.'['.$userid.']', $outcome->grades[$submission->userid]->grade, get_string('nooutcome', 'grades'), array('id' => 'menuoutcome_'.$n));
                 }
                 echo '</div>';
                 echo '<div class="clearer"></div>';
@@ -1008,7 +1006,7 @@ class assignment_base {
                 echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
             } else {
                 echo '<div class="format">';
-                echo $OUTPUT->select(html_select::make(format_text_menu(), "format", $submission->format, false));
+                echo html_writer::select(format_text_menu(), "format", $submission->format, false);
                 echo $OUTPUT->help_icon("textformat", get_string("helpformatting"));
                 echo '</div>';
             }

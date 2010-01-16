@@ -2351,14 +2351,16 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
     global $OUTPUT;
     $categoriesarray = question_category_options($contexts, $top, $currentcat, false, $nochildrenof);
     if ($selected) {
-        $nothing = '';
+        $choose = '';
     } else {
-        $nothing = 'choosedots';
+        $choose = 'choosedots';
     }
-    $select = html_select::make($categoriesarray, 'category', $selected);
-    $select->nothingvalue = $nothing;
-    $select->nested = true;
-    echo $OUTPUT->select($select);
+    $options = array();
+    foreach($categoriesarray as $group=>$opts) {
+        $options[] = array($group=>$opts);
+    }
+
+    echo html_writer::select($options, 'category', $selected, $choose);
 }
 
 /**
