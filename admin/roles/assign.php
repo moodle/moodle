@@ -331,10 +331,10 @@
               </label></p>
 
               <p><label for="extendperiod"><?php print_string('enrolperiod') ?></label><br />
-              <?php echo $OUTPUT->select(html_select::make($periodmenu, 'extendperiod', $defaultperiod, $unlimitedperiod)); ?></p>
+              <?php echo html_writer::input_select($periodmenu, 'extendperiod', $defaultperiod, $unlimitedperiod); ?></p>
 
               <p><label for="extendbase"><?php print_string('startingfrom') ?></label><br />
-              <?php echo $OUTPUT->select(html_select::make($basemenu, 'extendbase', $extendbase, false)); ?></p>
+              <?php echo html_writer::input_select($basemenu, 'extendbase', $extendbase, false); ?></p>
               <?php print_collapsible_region_end(); ?>
           </div>
 

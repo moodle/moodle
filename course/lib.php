@@ -3057,7 +3057,7 @@ function print_grouping_settings($form, $course=NULL) {
 
         $groupingid = isset($cm->groupingid) ? $cm->groupingid : 0;
 
-        echo $OUTPUT->select(html_select::make($groupings, 'groupingid', $groupingid, get_string('none')));
+        echo html_writer::input_select($groupings, 'groupingid', $groupingid, get_string('none'));
         echo '</td></tr>';
 
         $checked = empty($cm->groupmembersonly) ? '':'checked="checked"';

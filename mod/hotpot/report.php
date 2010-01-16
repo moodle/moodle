@@ -552,7 +552,7 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
     print '</td><th align="right" scope="col">'.get_string('reportcontent', 'hotpot').':</th><td colspan="7">';
     foreach ($menus as $name => $options) {
         $value = $formdata[$name];
-        print $OUTPUT->select(html_select::make($options, $name, $value, false));
+        print html_writer::input_select($options, $name, $value, false);
     };
     print '<input type="submit" value="'.get_string('reportbutton', 'hotpot').'" /></td></tr>';
 
@@ -591,7 +591,7 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
     print '</td>';
     foreach ($menus as $name => $options) {
         $value = $formdata[$name];
-        print '<th align="right" scope="col">'.get_string($name, 'hotpot').':</th><td>'.$OUTPUT->select(html_select::make($options, $name, $value, false)).'</td>';
+        print '<th align="right" scope="col">'.get_string($name, 'hotpot').':</th><td>'.html_writer::input_select($options, $name, $value, false).'</td>';
     }
     print '</tr>';
 

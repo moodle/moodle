@@ -188,7 +188,7 @@ function comp(v) { // general entry point for all cases
         $options[52] = get_string('weekly','block_loancalc');
         $options[26] = get_string('fortnightly','block_loancalc');
         $options[12] = get_string('monthly','block_loancalc');
-        $this->content->text .= $OUTPUT->select(html_select::make($options,'LOANPAYPERIOD','12'));
+        $this->content->text .= html_writer::input_select($options,'LOANPAYPERIOD','12');
         $this->content->text .= '</td>
                     <td></td>
                 </tr>

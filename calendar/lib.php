@@ -1531,14 +1531,13 @@ function calendar_format_event_time($event, $now, $morehref, $usecommonwords = t
 }
 
 function calendar_print_month_selector($name, $selected) {
-    global $OUTPUT;
     $months = array();
 
     for ($i=1; $i<=12; $i++) {
         $months[$i] = userdate(gmmktime(12, 0, 0, $i, 15, 2000), '%B');
     }
 
-    echo $OUTPUT->select(html_select::make($months, $name, $selected, false));
+    echo html_writer::input_select($months, $name, $selected, false);
 }
 
 function calendar_get_filters_status() {

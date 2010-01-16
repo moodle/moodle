@@ -71,34 +71,28 @@
     echo '<div class="fitem">';
     echo '<div class="fitemtitle"><label for="menucountry">'.get_string("country").'</label></div>';
     echo '<div class="felement ftext">';
-    $select = html_select::make(get_list_of_countries(), "country", $admin->country, get_string("selectacountry")."...");
-    $select->nothingvalue = '';
-    echo $OUTPUT->select($select);
+    echo html_writer::input_select(get_list_of_countries(), "country", $admin->country, array(''=>get_string("selectacountry")."..."));
     echo '</div>';
     echo '</div>';
 
     echo '<div class="fitem">';
     echo '<div class="fitemtitle"><label for="menupublic">'."<a href=\"http://moodle.org/sites/?country=$admin->country\" title=\"".get_string("publicdirectorytitle")."\">".get_string("publicdirectory")."</a>".'</label></div>';
     echo '<div class="felement ftext">';
+    $options = array();
     $options[0] = get_string("publicdirectory0");
     $options[1] = get_string("publicdirectory1");
     $options[2] = get_string("publicdirectory2");
-    $select = html_select::make($options, "public", "2", false);
-    $select->nothingvalue = '';
-    echo $OUTPUT->select($select);
-    unset($options);
+    echo html_writer::input_select($options, "public", "2", false);
     echo '</div>';
     echo '</div>';
 
     echo '<div class="fitem">';
     echo '<div class="fitemtitle"><label for="menucontact">'.get_string("registrationcontact").'</label></div>';
     echo '<div class="felement ftext">';
+    $options = array();
     $options[0] = get_string("registrationcontactno");
     $options[1] = get_string("registrationcontactyes");
-    $select = html_select::make($options, "contact", "1", false);
-    $select->nothingvalue = '';
-    echo $OUTPUT->select($select);
-    unset($options);
+    echo html_writer::input_select($options, "contact", "1", false);
     echo '</div>';
     echo '</div>';
 
@@ -170,12 +164,10 @@
     echo '<div class="fitem">';
     echo '<div class="fitemtitle"><label for="menumailme">'.get_string("registrationemail").'</label></div>';
     echo '<div class="felement ftext">';
+    $options = array();
     $options[0] = get_string("registrationno");
     $options[1] = get_string("registrationyes");
-    $select = html_select::make($options, "mailme", "1", false);
-    $select->nothingvalue = '';
-    echo $OUTPUT->select($select);
-    unset($options);
+    echo html_writer::input_select($options, "mailme", "1", false);
     echo '</div>';
     echo '</div>';
 

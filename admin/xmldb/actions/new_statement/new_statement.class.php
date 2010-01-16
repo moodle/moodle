@@ -106,7 +106,7 @@ class new_statement extends XMLDBAction {
             $o.= '    <input type="hidden" name ="postaction" value="edit_statement" />';
             $o.= '    <input type="hidden" name ="sesskey" value="' . sesskey() . '" />';
             $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
-            $o.= '      <tr><td><label for="type" accesskey="t">' . $this->str['statementtype'] .' </label>' . $OUTPUT->select(html_select::make($typeoptions, 'type')) . '<label for="table" accesskey="a">' . $this->str['statementtable'] . ' </label>' .$OUTPUT->select(html_select::make($selecttables, 'table')) . '</td></tr>';
+            $o.= '      <tr><td><label for="type" accesskey="t">' . $this->str['statementtype'] .' </label>' . html_writer::input_select($typeoptions, 'type') . '<label for="table" accesskey="a">' . $this->str['statementtable'] . ' </label>' .html_writer::input_select($selecttables, 'table') . '</td></tr>';
             $o.= '      <tr><td colspan="2" align="center"><input type="submit" value="' .$this->str['create'] . '" /></td></tr>';
             $o.= '      <tr><td colspan="2" align="center"><a href="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a></td></tr>';
             $o.= '    </table>';

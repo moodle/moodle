@@ -214,7 +214,7 @@ echo " " . get_string('remotehost', 'mnet') . ":\n";
 if (!empty($formerror['mnet_host_id'])) {
     echo '<span class="error"> * </span>';
 }
-echo $OUTPUT->select(html_select::make($mnethosts, 'mnet_host_id'));
+echo html_writer::input_select($mnethosts, 'mnet_host_id');
 
 // choose an access level
 echo " " . get_string('accesslevel', 'mnet') . ":\n";
@@ -223,7 +223,7 @@ if (!empty($formerror['accessctrl'])) {
 }
 $accessmenu['allow'] = get_string('allow', 'mnet');
 $accessmenu['deny'] = get_string('deny', 'mnet');
-echo $OUTPUT->select(html_select::make($accessmenu, 'accessctrl'));
+echo html_writer::input_select($accessmenu, 'accessctrl');
 
 // submit button
 echo '<input type="submit" value="' . get_string('addtoacl', 'mnet') . '" />';

@@ -109,9 +109,7 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
         '    <TD align="right">'.get_string("exportformats","wiki").":</TD>\n".
         "    <TD>\n";
   if($wiki->htmlmode!=2) {
-      $select = html_select::make($exportformats, "exportformats", $exportformatval, false);
-      $select->nothingvalue = '';
-    $ret.= $OUTPUT->select($select)."\n";
+    $ret.= html_writer::input_select($exportformats, "exportformats", $exportformatval, false)."\n";
   } else {
     $ret.= '<INPUT type="hidden" name="exportformats" value="1" />'.
            get_string("html","wiki");
@@ -135,9 +133,7 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
   if(count($exportdestinations)==1) {
     $ret.='<INPUT type="hidden" name="exportdestinations" value="0" />'.$exportdestinations[0]."\n";
   } else {
-      $select = html_select::make($exportdestinations, "exportdestinations", $exportdestinationsval, false);
-      $select->nothingvalue = '';
-    $ret.= $OUTPUT->select($select)."\n";
+    $ret.= html_writer::input_select($exportdestinations, "exportdestinations", $exportdestinationsval, false)."\n";
   }
   $ret.="    </TD>\n".
       "  </TR>\n".

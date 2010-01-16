@@ -116,7 +116,7 @@ class view_structure_php extends XMLDBAction {
         $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="action" value="view_structure_php" />';
         $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
-        $o.= '      <tr><td><label for="action" accesskey="c">' . $this->str['selectaction'] .' </label>' . $OUTPUT->select(html_select::make($popcommands, 'command', $commandparam, false)) . '&nbsp;<label for="table" accesskey="t">' . $this->str['selecttable'] . ' </label>' .$OUTPUT->select(html_select::make($poptables, 'table', $tableparam, false)) . '</td></tr>';
+        $o.= '      <tr><td><label for="action" accesskey="c">' . $this->str['selectaction'] .' </label>' . html_writer::input_select($popcommands, 'command', $commandparam, false) . '&nbsp;<label for="table" accesskey="t">' . $this->str['selecttable'] . ' </label>' .html_writer::input_select($poptables, 'table', $tableparam, false) . '</td></tr>';
         $o.= '      <tr><td colspan="2" align="center"><input type="submit" value="' .$this->str['view'] . '" /></td></tr>';
         $o.= '    </table>';
         $o.= '</div></form>';

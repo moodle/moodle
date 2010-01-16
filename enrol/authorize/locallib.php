@@ -27,9 +27,7 @@ function authorize_print_orders($courseid, $userid) {
 
     $searchmenu = array('orderid' => $authstrs->orderid, 'transid' => $authstrs->transid, 'cclastfour' => $authstrs->cclastfour);
     $buttons = "<form method='post' action='index.php' autocomplete='off'><div>";
-    $select = html_select::make($searchmenu, 'searchtype', $searchtype, false);
-    $select->nothingvalue = '';
-    $buttons .= $OUTPUT->select($select);
+    $buttons .= html_writer::input_select($searchmenu, 'searchtype', $searchtype, false);
     $buttons .= "<input type='text' size='16' name='searchquery' value='' />";
     $buttons .= "<input type='submit' value='$strs->search' />";
     $buttons .= "</div></form>";

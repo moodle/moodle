@@ -51,7 +51,7 @@ if (!isset($config->changepasswordurl)) {
         foreach ($pop3types as $pop3type) {
             $pop3options[$pop3type] = $pop3type;
         }
-        echo $OUTPUT->select(html_select::make($pop3options, 'type', $config->type, false));
+        echo html_writer::input_select($pop3options, 'type', $config->type, false);
 
         ?>
     </td>

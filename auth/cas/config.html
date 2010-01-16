@@ -278,7 +278,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
 
 
-        echo $OUTPUT->select(html_select::make($CASLANGUAGES, 'language', $config->language, false));
+        echo html_writer::input_select($CASLANGUAGES, 'language', $config->language, false);
 
 
 
@@ -303,9 +303,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
         unset($options);
 
         $options[1] = get_string('yes');
-        $select = html_select::make($options, 'proxycas', $config->proxycas, get_string('no'));
-        $select->nothingvalue = '';
-        echo $OUTPUT->select($select);
+        echo html_writer::input_select($options, 'proxycas', $config->proxycas, get_string('no'));
 
         ?>
 
@@ -329,9 +327,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
         $options[1] = get_string('yes');
 
-        $select = html_select::make($options, 'logoutcas', $config->logoutcas, get_string('no'));
-        $select->nothingvalue = '';
-        echo $OUTPUT->select($select);
+        echo html_writer::input_select($options, 'logoutcas', $config->logoutcas, get_string('no'));
 
         ?>
 
@@ -355,9 +351,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
         $options[1] = get_string('yes');
 
-        $select = html_select::make($options, 'multiauth', $config->multiauth, get_string('no'));
-        $select->nothingvalue = '';
-        echo $OUTPUT->select($select);
+        echo html_writer::input_select($options, 'multiauth', $config->multiauth, get_string('no'));
 
         ?>
 
@@ -417,7 +411,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
        $versions[3] = '3';
 
-       echo $OUTPUT->select(html_select::make($versions, 'version', $config->version, false));
+       echo html_writer::input_select($versions, 'version', $config->version, false);
 
        if (isset($err['version'])) echo $OUTPUT->error_text($err['version']);
 
@@ -535,7 +529,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
     <td>
 
-    <?php echo $OUTPUT->select(html_select::make($this->ldap_suppported_usertypes(), 'user_type', $config->user_type, false)); ?>
+    <?php echo html_writer::input_select($this->ldap_suppported_usertypes(), 'user_type', $config->user_type, false); ?>
 
     <?php  if (isset($err['user_type'])) echo $OUTPUT->error_text($err['user_type']); ?>
 
@@ -579,7 +573,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
     <td>
 
-        <?php echo $OUTPUT->select(html_select::make($yesno, 'search_sub', $config->search_sub, false)); ?>
+        <?php echo html_writer::input_select($yesno, 'search_sub', $config->search_sub, false); ?>
 
     </td>
 
@@ -607,7 +601,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
        $opt_deref[LDAP_DEREF_ALWAYS] = get_string('yes');
 
-       echo $OUTPUT->select(html_select::make($opt_deref, 'opt_deref', $config->opt_deref, LDAP_DEREF_NEVER, false));
+       echo html_writer::input_select($opt_deref, 'opt_deref', $config->opt_deref, LDAP_DEREF_NEVER, false);
 
        if (isset($err['opt_deref'])) echo $OUTPUT->error_text($err['opt_deref']);
 
@@ -793,7 +787,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
        $deleteopt[AUTH_REMOVEUSER_FULLDELETE] = get_string('auth_remove_delete','auth');
 
-       echo $OUTPUT->select(html_select::make($deleteopt, 'removeuser', $config->removeuser, false));
+       echo html_writer::input_select($deleteopt, 'removeuser', $config->removeuser, false);
 
     ?>
 

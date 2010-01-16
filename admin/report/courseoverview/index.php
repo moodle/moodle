@@ -52,13 +52,8 @@
     $table->width = '*';
     $table->align = array('left','left','left','left','left','left');
 
-    $select = html_select::make($reportoptions,'report',$report, false);
-    $select->nothingvalue = '';
-    $reporttypemenu = $OUTPUT->select($select);
-
-    $select = html_select::make($timeoptions,'time',$time, false);
-    $select->nothingvalue = '';
-    $timeoptionsmenu = $OUTPUT->select($select);
+    $reporttypemenu = html_writer::input_select($reportoptions,'report',$report, false);
+    $timeoptionsmenu = html_writer::input_select($timeoptions,'time',$time, false);
 
     $table->data[] = array(get_string('statsreporttype'),$reporttypemenu,
                            get_string('statstimeperiod'),$timeoptionsmenu,

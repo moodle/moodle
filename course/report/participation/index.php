@@ -121,11 +121,11 @@
     $select->nested = true;
     echo $OUTPUT->select($select);
     echo '<label for="menutimefrom">'.get_string('lookback').'</label>'."\n";
-    echo $OUTPUT->select(html_select::make($timeoptions,'timefrom',$timefrom));
+    echo html_writer::input_select($timeoptions,'timefrom',$timefrom);
     echo '<label for="menuroleid">'.get_string('showonly').'</label>'."\n";
-    echo $OUTPUT->select(html_select::make($roleoptions,'roleid',$roleid,false));
+    echo html_writer::input_select($roleoptions,'roleid',$roleid,false);
     echo '<label for="menuaction">'.get_string('showactions').'</label>'."\n";
-    echo $OUTPUT->select(html_select::make($actionoptions,'action',$action,false));
+    echo html_writer::input_select($actionoptions,'action',$action,false);
     echo $OUTPUT->help_icon('participationreport', get_string('participationreport'));
     echo '<input type="submit" value="'.get_string('go').'" />'."\n</div></form>\n";
 

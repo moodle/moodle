@@ -43,9 +43,7 @@
 
     echo '<center><form action="timezone.php" method="post">';
     echo "$strusers ($strall): ";
-    $select = html_select::make($timezones, "zone", $current, get_string("serverlocaltime"));
-    $select->nothingvalue ="99";
-    echo $OUTPUT->select($select);
+    echo html_writer::input_select($timezones, "zone", $current, array('99'=>get_string("serverlocaltime")));
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
     echo '<input type="submit" value="'.s($strsavechanges).'" />';
     echo "</form></center>";

@@ -2267,10 +2267,7 @@ function glossary_print_rating_menu($entryid, $userid, $scale) {
     if (empty($strrate)) {
         $strrate = get_string("rate", "glossary");
     }
-    $select = html_select::make($scale, $entryid, $rating->rating, "$strrate...");
-    $select->nothingvalue = '-999';
-
-    echo $OUTPUT->select($select);
+    echo html_writer::input_select($scale, $entryid, $rating->rating, array('-999'=>"$strrate..."));
 }
 
 /**

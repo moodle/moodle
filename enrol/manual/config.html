@@ -9,7 +9,7 @@
         foreach ($roles as $id=>$role) {
             $rolenames[$id]=$role->name;
         }
-        echo $OUTPUT->select(html_select::make($rolenames, 'enrol_manual_keyholderrole', $frm->enrol_manual_keyholderrole));
+        echo html_writer::input_select($rolenames, 'enrol_manual_keyholderrole', $frm->enrol_manual_keyholderrole);
     ?>
     </td>
     <td>
@@ -24,7 +24,7 @@
     $choices = array();
     $choices['0'] = get_string('no');
     $choices['1'] = get_string('yes');
-    echo $OUTPUT->select(html_select::make($choices, 'enrol_manual_showhint', $frm->enrol_manual_showhint, false));
+    echo html_writer::input_select($choices, 'enrol_manual_showhint', $frm->enrol_manual_showhint, false);
 ?>
     </td><td>
     <?php  print_string('enrol_manual_showhint', 'enrol_manual') ?>
@@ -38,7 +38,7 @@
     $choices = array();
     $choices['0'] = get_string('no');
     $choices['1'] = get_string('yes');
-    echo $OUTPUT->select(html_select::make($choices, 'enrol_manual_usepasswordpolicy', $frm->enrol_manual_usepasswordpolicy, false));
+    echo html_writer::input_select($choices, 'enrol_manual_usepasswordpolicy', $frm->enrol_manual_usepasswordpolicy, false);
 ?>
     </td><td>
     <?php  print_string('enrol_manual_usepasswordpolicy', 'enrol_manual') ?>
@@ -52,7 +52,7 @@
     $choices = array();
     $choices['0'] = get_string('no');
     $choices['1'] = get_string('yes');
-    echo $OUTPUT->select(html_select::make($choices, 'enrol_manual_requirekey', $frm->enrol_manual_requirekey, false));
+    echo html_writer::input_select($choices, 'enrol_manual_requirekey', $frm->enrol_manual_requirekey, false);
 ?>
     </td><td>
     <?php  print_string('enrol_manual_requirekey', 'enrol_manual') ?>

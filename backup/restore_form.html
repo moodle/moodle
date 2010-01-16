@@ -234,7 +234,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 /// Acummulator for hidden options and proper XHTML output
     $hidden_options = '';
 
-    echo $OUTPUT->select(html_select::make($restore_restoreto_options, "restore_restoreto", $restore_restoreto, false));
+    echo html_writer::input_select($restore_restoreto_options, "restore_restoreto", $restore_restoreto, false);
     echo "</td></tr>";
     if ($cancreatecourses) {  //display these fields conditionally
 
@@ -260,7 +260,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                 $category_default = $fromcat;
             }
         }
-        echo $OUTPUT->select(html_select::make($categories, 'restore_restorecatto', $category_default, false));
+        echo html_writer::input_select($categories, 'restore_restorecatto', $category_default, false);
         echo "</td>";
         echo "</tr>";
 
@@ -432,7 +432,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             $metacourse_options = array();
             $metacourse_options[0] = get_string("no");
             $metacourse_options[1] = get_string("yes");
-            echo $OUTPUT->select(html_select::make($metacourse_options, "restore_metacourse", $restore_metacourse, false));
+            echo html_writer::input_select($metacourse_options, "restore_metacourse", $restore_metacourse, false);
         } else {
             echo get_string("no");
             echo "<input type=\"hidden\" id=\"menurestore_metacourse\" name=\"restore_metacourse\" value=\"0\" />";
@@ -452,7 +452,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             }
             $user_options[1] = get_string("course");
             $user_options[2] = get_string("none");
-            echo $OUTPUT->select(html_select::make($user_options, "restore_users", $restore_users, false));
+            echo html_writer::input_select($user_options, "restore_users", $restore_users, false);
         } else {
             echo get_string("none");
             echo "<input type=\"hidden\" id=\"menurestore_users\" name=\"restore_users\" value=\"2\" />";
@@ -475,7 +475,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             $group_options[RESTORE_GROUPINGS_ONLY] = get_string('groupingsonly', 'group');
             $group_options[RESTORE_GROUPS_GROUPINGS] = get_string('groupsgroupings', 'group'); //all.
         }
-        echo $OUTPUT->select(html_select::make($group_options, 'restore_groups', $restore_groups, false));
+        echo html_writer::input_select($group_options, 'restore_groups', $restore_groups, false);
         echo "</td></tr>";
 
         //Now print the Logs tr
@@ -488,7 +488,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             $log_options = array();
             $log_options[0] = get_string("no");
             $log_options[1] = get_string("yes");
-            echo $OUTPUT->select(html_select::make($log_options, "restore_logs", $restore_logs, false));
+            echo html_writer::input_select($log_options, "restore_logs", $restore_logs, false);
         } else {
             echo get_string("no");
             echo "<input type=\"hidden\" id=\"menurestore_logs\" name=\"restore_logs\" value=\"0\" />";
@@ -505,7 +505,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             $user_file_options = array();
             $user_file_options[0] = get_string("no");
             $user_file_options[1] = get_string("yes");
-            echo $OUTPUT->select(html_select::make($user_file_options, "restore_user_files", $restore_user_files, false));
+            echo html_writer::input_select($user_file_options, "restore_user_files", $restore_user_files, false);
         } else {
             echo get_string("no");
             echo "<input type=\"hidden\" id=\"menurestore_user_files\" name=\"restore_user_files\" value=\"0\" />";
@@ -524,7 +524,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             $course_file_options = array();
             $course_file_options[0] = get_string("no");
             $course_file_options[1] = get_string("yes");
-            echo $OUTPUT->select(html_select::make($course_file_options, "restore_course_files", $restore_course_files, false));
+            echo html_writer::input_select($course_file_options, "restore_course_files", $restore_course_files, false);
         } else {
             echo get_string("no");
             echo "<input type=\"hidden\" id=\"menurestore_course_files\" name=\"restore_course_files\" value=\"0\" />";
@@ -542,7 +542,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             $site_file_options = array();
             $site_file_options[0] = get_string("no");
             $site_file_options[1] = get_string("yes");
-            echo $OUTPUT->select(html_select::make($site_file_options, "restore_site_files", $restore_site_files, false));
+            echo html_writer::input_select($site_file_options, "restore_site_files", $restore_site_files, false);
         } else {
             echo get_string("no");
             echo "<input type=\"hidden\" id=\"menurestore_site_files\" name=\"restore_site_files\" value=\"0\" />";
@@ -559,7 +559,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                 $gradebook_history_options = array();
                 $gradebook_history_options[0] = get_string("no");
                 $gradebook_history_options[1] = get_string("yes");
-                echo $OUTPUT->select(html_select::make($gradebook_history_options, "restore_gradebook_history", $restore_gradebook_history, false));
+                echo html_writer::input_select($gradebook_history_options, "restore_gradebook_history", $restore_gradebook_history, false);
             } else {
                 echo get_string("no");
                 echo "<input type=\"hidden\" id=\"menurestore_gradebook_history\" name=\"restore_gradebook_history\" value=\"0\" />";
@@ -581,7 +581,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             $message_options = array();
             $message_options[0] = get_string("no");
             $message_options[1] = get_string("yes");
-            echo $OUTPUT->select(html_select::make($message_options, "restore_messages", $restore_messages, false));
+            echo html_writer::input_select($message_options, "restore_messages", $restore_messages, false);
             echo "</td></tr>";
         } else {
             $hidden_options .= '<input type="hidden" name="restore_messages" value="0" />';
@@ -599,7 +599,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             $blog_options = array();
             $blog_options[0] = get_string("no");
             $blog_options[1] = get_string("yes");
-            echo $OUTPUT->select(html_select::make($blog_options, "restore_blogs", $restore_blogs, false));
+            echo html_writer::input_select($blog_options, "restore_blogs", $restore_blogs, false);
             echo "</td></tr>";
         } else {
             $hidden_options .= '<input type="hidden" name="restore_blogs" value="0" />';

@@ -147,10 +147,9 @@ class edit_field extends XMLDBAction {
         if ($field->getType() != XMLDB_TYPE_DATETIME) {
             unset ($typeoptions[XMLDB_TYPE_DATETIME]);
         }
-        $select = html_select::make($typeoptions, 'type', $field->getType(), false);
-        $select->nothingvalue = '';
+        $select = html_writer::input_select($typeoptions, 'type', $field->getType(), false);
         $o.= '      <tr valign="top"><td><label for="menutype" accesskey="t">Type:</label></td>';
-        $o.= '        <td colspan="2">' . $OUTPUT->select($select) . '</td></tr>';
+        $o.= '        <td colspan="2">' . $select . '</td></tr>';
     /// xmldb_field Length
         $o.= '      <tr valign="top"><td><label for="length" accesskey="l">Length:</label></td>';
         $o.= '        <td colspan="2"><input name="length" type="text" size="6" maxlength="6" id="length" value="' . s($field->getLength()) . '" /><span id="lengthtip"></span></td></tr>';
@@ -159,22 +158,19 @@ class edit_field extends XMLDBAction {
         $o.= '        <td colspan="2"><input name="decimals" type="text" size="6" maxlength="6" id="decimals" value="' . s($field->getDecimals()) . '" /><span id="decimalstip"></span></td></tr>';
     /// xmldb_field Unsigned
         $unsignedoptions = array (0 => 'signed', 1 => 'unsigned');
-        $select = html_select::make($unsignedoptions, 'unsigned', $field->getUnsigned(), false);
-        $select->nothingvalue = '';
+        $select = html_writer::input_select($unsignedoptions, 'unsigned', $field->getUnsigned(), false);
         $o.= '      <tr valign="top"><td><label for="menuunsigned" accesskey="u">Unsigned:</label></td>';
-        $o.= '        <td colspan="2">' . $OUTPUT->select($select) . '</td></tr>';
+        $o.= '        <td colspan="2">' . $select . '</td></tr>';
     /// xmldb_field NotNull
         $notnulloptions = array (0 => 'null', 'not null');
-        $select = html_select::make($notnulloptions, 'notnull', $field->getNotNull(), false);
-        $select->nothingvalue = '';
+        $select = html_writer::input_select($notnulloptions, 'notnull', $field->getNotNull(), false);
         $o.= '      <tr valign="top"><td><label for="menunotnull" accesskey="n">Not Null:</label></td>';
-        $o.= '        <td colspan="2">' . $OUTPUT->select($select) . '</td></tr>';
+        $o.= '        <td colspan="2">' . $select . '</td></tr>';
     /// xmldb_field Sequence
         $sequenceoptions = array (0 => $this->str['no'], 1 => 'auto-numbered');
-        $select = html_select::make($sequenceoptions, 'sequence', $field->getSequence(), false);
-        $select->nothingvalue = '';
+        $select = html_writer::input_select($sequenceoptions, 'sequence', $field->getSequence(), false);
         $o.= '      <tr valign="top"><td><label for="menusequence" accesskey="s">Sequence:</label></td>';
-        $o.= '        <td colspan="2">' . $OUTPUT->select($select) . '</td></tr>';
+        $o.= '        <td colspan="2">' . $select . '</td></tr>';
     /// xmldb_field Default
         $o.= '      <tr valign="top"><td><label for="default" accesskey="d">Default:</label></td>';
         $o.= '        <td colspan="2"><input type="text" name="default" size="30" maxlength="80" id="default" value="' . s($field->getDefault()) . '" /></td></tr>';

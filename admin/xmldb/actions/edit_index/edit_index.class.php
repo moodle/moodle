@@ -123,9 +123,8 @@ class edit_index extends XMLDBAction {
         $typeoptions = array (0 => 'not unique',
                               1 => 'unique');
         $o.= '      <tr valign="top"><td><label for="menuunique" accesskey="t">Type:</label></td>';
-        $select = html_select::make($typeoptions, 'unique', $index->getUnique(), false);
-        $select->nothingvalue = '';
-        $o.= '        <td colspan="2">' . $OUTPUT->select($select) . '</td></tr>';
+        $select = html_writer::input_select($typeoptions, 'unique', $index->getUnique(), false);
+        $o.= '        <td colspan="2">' . $select . '</td></tr>';
     /// xmldb_index Fields
         $o.= '      <tr valign="top"><td><label for="fields" accesskey="f">Fields:</label></td>';
         $o.= '        <td colspan="2"><input name="fields" type="text" size="40" maxlength="80" id="fields" value="' . s(implode(', ', $index->getFields())) . '" /></td></tr>';

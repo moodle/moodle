@@ -442,7 +442,7 @@ class html_writer {
         $attributes = (array)$attributes;
         if (is_array($nothing)) {
             foreach ($nothing as $k=>$v) {
-                if ($v === 'choose') {
+                if ($v === 'choose' or $v === 'choosedots') {
                     $nothing[$k] = get_string('choosedots');
                 }
             }

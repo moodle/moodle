@@ -48,7 +48,7 @@ if (!isset($config->changepasswordurl)) {
         foreach ($imaptypes as $imaptype) {
             $imapoptions[$imaptype] = $imaptype;
         }
-        echo $OUTPUT->select(html_select::make($imapoptions, 'type', $config->type, false));
+        echo html_writer::input_select($imapoptions, 'type', $config->type, false);
 
         ?>
     </td>

@@ -77,7 +77,7 @@ class data_field_latlong extends data_field_base {
                 $options[$temp.','.$longs[$key]] = $temp.','.$longs[$key];
             }
         }
-       return $OUTPUT->select(html_select::make($options, 'f_'.$this->field->id, $value));
+       return html_writer::input_select($options, 'f_'.$this->field->id, $value);
     }
 
     function parse_search_field() {

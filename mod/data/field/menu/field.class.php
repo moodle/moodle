@@ -47,11 +47,7 @@ class data_field_menu extends data_field_base {
         }
 
 
-        $select = html_select::make($options, 'field_'.$this->field->id, $content, get_string('menuchoose', 'data'));
-        $select->nothingvalue = '';
-        $select->id = 'field_'.$this->field->id;
-
-        $str .= $OUTPUT->select($select);
+        $str .= html_writer::input_select($options, 'field_'.$this->field->id, $content, array(''=>get_string('menuchoose', 'data')), array('id'=>'field_'.$this->field->id));
 
         $str .= '</div>';
 
@@ -88,7 +84,7 @@ class data_field_menu extends data_field_base {
             return '';
         }
 
-        return $OUTPUT->select(html_select::make($options, 'f_'.$this->field->id, $content, '&nbsp;'));
+        return html_writer::input_select($options, 'f_'.$this->field->id, $content, array(''=>'&nbsp;'));
     }
 
      function parse_search_field() {

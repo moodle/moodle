@@ -108,7 +108,7 @@ if (!isset($frm->enrol_ldap_template)) {
     <?php
        $versions[2] = "2";
        $versions[3] = "3";
-       echo $OUTPUT->select(html_select::make($versions, "enrol_ldap_version", $frm->enrol_ldap_version, false));
+       echo html_writer::input_select($versions, "enrol_ldap_version", $frm->enrol_ldap_version, false);
         if (isset($err["enrol_ldap_version"])) echo $OUTPUT->error_text($err["enrol_ldap_version"]);
     ?>
     </td>
@@ -351,7 +351,7 @@ if (!isset($frm->enrol_ldap_template)) {
     <td align="right">enrol_ldap_autocreate:</td>
     <td>
     <?php
-       echo $OUTPUT->select(html_select::make(array('0'=>'no','1'=>'yes'), "enrol_ldap_autocreate", $frm->enrol_ldap_autocreate, false));
+       echo html_writer::input_select('0'=>'no','1'=>'yes'), "enrol_ldap_autocreate", $frm->enrol_ldap_autocreate, false);
            if (isset($err["enrol_ldap_autocreate"])) echo $OUTPUT->error_text($err["enrol_ldap_autocreate"]);
     ?>
     </td>
@@ -366,7 +366,7 @@ if (!isset($frm->enrol_ldap_template)) {
            $displaylist = array();
            $parentlist = array();
            make_categories_list($displaylist, $parentlist);
-           echo $OUTPUT->select(html_select::make($displaylist, "enrol_ldap_category", $frm->enrol_ldap_category, false));
+           echo html_writer::input_select($displaylist, "enrol_ldap_category", $frm->enrol_ldap_category, false);
 
     ?>
     <?php  if (isset($err["enrol_ldap_category"])) echo $OUTPUT->error_text($err["enrol_ldap_category"]); ?>
