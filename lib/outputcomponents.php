@@ -447,7 +447,11 @@ class html_writer {
                 }
             }
             $options = $nothing + $options; // keep keys, do not override
-        }
+
+        } else if (is_string($nothing) and $nothing !== '') {
+            // BC
+            $options = array(''=>$nothing) + $options;
+        } 
 
         // we may accept more values if multiple attribute specified
         $selected = (array)$selected;
