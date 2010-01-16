@@ -31,17 +31,7 @@ $users = optional_param('userid', array(), PARAM_INT); // array of user id
 $contents = optional_param('contents', array(), PARAM_RAW); // array of user notes
 $states = optional_param('states', array(), PARAM_ALPHA); // array of notes states
 
-$url = new moodle_url('/user/addnote.php', array('id'=>$id));
-if ($users !== 0) {
-    $url->param('userid', $users);
-}
-if ($contents !== 0) {
-    $url->param('contents', $contents);
-}
-if ($states !== 0) {
-    $url->param('states', $states);
-}
-$PAGE->set_url($url);
+$PAGE->set_url('/user/addnote.php', array('id'=>$id));
 
 if (! $course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourseid');
@@ -119,7 +109,7 @@ foreach ($users as $k => $v) {
     if(!$user = $DB->get_record('user', array('id'=>$v))) {
         continue;
     }
-    $checkbox = $OUTPUT->select(html_select::make($state_names, 'states[' . $k . ']', empty($states[$k]) ? NOTES_STATE_PUBLIC : $states[$k], false));
+    $checkbox = html_writer::input_select($state_names, 'states[' . $k . ']', empty($states[$k]) ? NOTES_STATE_PUBLIC : $states[$k], false);
     $table->data[] = array(
         '<input type="hidden" name="userid['.$k.']" value="'.$v.'" />'. fullname($user, true),
         '<textarea name="contents['. $k . ']" rows="2" cols="40">' . strip_tags(@$contents[$k]) . '</textarea>',

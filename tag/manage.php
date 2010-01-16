@@ -235,7 +235,7 @@ if ($tagrecords = $DB->get_records_sql($query, $params, $table->get_page_start()
         $timemodified   =   format_time(time() - $tag->timemodified);
         $checkbox       =   '<input type="checkbox" name="tagschecked[]" value="'.$tag->id.'" />';
         $text           =   '<input type="text" name="newname['.$tag->id.']" />';
-        $tagtype        =   $OUTPUT->select(html_select::make($existing_tagtypes, 'tagtypes['.$tag->id.']', $tag->tagtype, false));
+        $tagtype        =   html_writer::input_select($existing_tagtypes, 'tagtypes['.$tag->id.']', $tag->tagtype, false);
 
         //if the tag if flagged, highlight it
         if ($tag->flag > 0) {

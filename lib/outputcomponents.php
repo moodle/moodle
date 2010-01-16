@@ -428,6 +428,65 @@ class html_writer {
         $attributes['href']  = $url;
         return self::tag('a', $attributes, $text);
     }
+
+    /**
+     * Generates a simple select form field
+     * @param array $options associative array value=>label
+     * @param string $name name of select element
+     * @param string|array $selected value or arary of values depending on multiple attribute
+     * @param array|bool $nothing, add nothing selected option, or false of not added
+     * @param array $attributes - html select element attributes
+     * @return string HRML fragment
+     */
+    public static function input_select(array $options, $name, $selected = '', $nothing = array(''=>'choose'), array $attributes = null) {
+        $attributes = (array)$attributes;
+        if (is_array($nothing)) {
+            foreach ($nothing as $k=>$v) {
+                if ($v === 'choose') {
+                    $nothing[$k] = get_string('choosedots');
+                }
+            }
+            $options = $nothing + $options; // keep keys, do not override
+        }
+
+        // we may accept more values if multiple attribute specified
+        $selected = (array)$selected;
+        foreach ($selected as $k=>$v) {
+            $selected[$k] = (string)$v;
+        }
+
+        if (!isset($attributes['id'])) {
+            $id = 'menu'.$name;
+            // name may contaion [], which would make an invalid id. e.g. numeric question type editing form, assignment quickgrading
+            $id = str_replace('[', '', $id);
+            $id = str_replace(']', '', $id);
+            $attributes['id'] = $id;
+        }
+
+        if (!isset($attributes['class'])) {
+            $class = 'menu'.$name;
+            // name may contaion [], which would make an invalid class. e.g. numeric question type editing form, assignment quickgrading
+            $class = str_replace('[', '', $class);
+            $class = str_replace(']', '', $class);
+            $attributes['class'] = $class;
+        }
+        $attributes['class'] = 'select ' . $attributes['class']; /// Add 'select' selector always
+
+        $attributes['name'] = $name;
+
+        $output = '';
+        foreach ($options as $value=>$label) {
+            $ias = array();
+            $value = (string)$value; //TODO: add support for opt groups as nested arrays
+            if (in_array($value, $selected, true)) {
+                $ias['selected'] = 'selected';
+            }
+            $ias['value'] = $value;
+            $output .= self::tag('option', $ias, $label);
+        }
+
+        return self::tag('select', $attributes, $output);
+    }
 }
 
 

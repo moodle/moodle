@@ -171,8 +171,8 @@ foreach ($_POST as $k => $v) {
             unset($userbasemenu[2]);
         }
 
-        $checkbox = $OUTPUT->select(html_select::make($periodmenu, "extendperiod[{$m[1]}]", "0", $nochange));
-        $checkbox2 = $OUTPUT->select(html_select::make($userbasemenu, "extendbase[{$m[1]}]", "2", false));
+        $checkbox = html_writer::input_select($periodmenu, "extendperiod[{$m[1]}]", "0", array('0'=>$nochange));
+        $checkbox2 = html_writer::input_select($userbasemenu, "extendbase[{$m[1]}]", "2", false);
         $table->data[] = array(
                 fullname($user, true),
                 $timestart,

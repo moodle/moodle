@@ -70,24 +70,15 @@ if (count($cleanedroleids) == count($allroles)) {
 
 // Print the settings form.
 echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter centerpara');
-echo '<form method="get" action="." id="settingsform">';
+echo '<form method="get" action="." id="settingsform"><div>';
 echo $OUTPUT->heading(get_string('reportsettings', 'report_capability'));
 echo '<p id="intro">', get_string('intro', 'report_capability') , '</p>';
 echo '<p><label for="menucapability"> ' . get_string('capabilitylabel', 'report_capability') . '</label></p>';
-$select = html_select::make($capabilitychoices, 'capability', $capability);
-$select->nothingvalue = '';
-$select->listbox = true;
-$select->tabindex = 0;
-echo $OUTPUT->select($select);
+echo  html_writer::input_select($capabilitychoices, 'capability', $capability, array(''=>'choose'), array('size'=>10));
 echo '<p><label for="menuroles"> ' . get_string('roleslabel', 'report_capability') . '</label></p>';
-$select = html_select::make($rolechoices, 'roles[]', $selectedroleids, false);
-$select->nothingvalue = '';
-$select->listbox = true;
-$select->multiple = true;
-$select->tabindex = 0;
-echo $OUTPUT->select($select);
+echo  html_writer::input_select($rolechoices, 'roles[]', $selectedroleids, false, array('size'=>10, 'multiple'=>'multiple'));
 echo '<p><input type="submit" id="settingssubmit" value="' . get_string('getreport', 'report_capability') . '" /></p>';
-echo '</form>';
+echo '</div></form>';
 echo $OUTPUT->box_end();
 
 // If we have a capability, generate the report.

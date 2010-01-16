@@ -84,7 +84,7 @@ echo '<table width="90%" align="center" class="generalbox">';
     //Sort it
     asort($formats);
 
-    echo $OUTPUT->select(html_select::make($formats,'popupformatname',$displayformat->popupformatname));
+    echo html_writer::input_select($formats, 'popupformatname', $displayformat->popupformatname, false);
  ?>
     </td>
     <td width="60%">
