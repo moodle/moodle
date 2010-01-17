@@ -608,46 +608,6 @@ class moodle_url {
 }
 
 /**
- * Given an unknown $url type (string or moodle_url), returns a string URL.
- * A relative URL is handled with $PAGE->url but gives a debugging error.
- *
- * @param mixed $url The URL (moodle_url or string)
- * @param bool $stripformparams Whether or not to strip the query params from the URL
- * @return string the URL. &s are unescaped. You must use s(...) to output this to XHTML. ($OUTPUT normally does this automatically.)
- */
-function prepare_url($url, $stripformparams=false) {
-    global $CFG, $PAGE;
-
-    $output = $url;
-
-    if ($url instanceof moodle_url) {
-        if ($stripformparams) {
-            $output = $url->out_omit_querystring();
-        } else {
-            $output = $url->out(false);
-        }
-    }
-
-    // Handle relative URLs
-    if (substr($output, 0, 4) != 'http' && substr($output, 0, 1) != '/') {
-        if (preg_match('/(.*)\/([A-Za-z0-9-_]*\.php)$/', $PAGE->url->out_omit_querystring(), $matches)) {
-            return $matches[1] . "/$output";
-        } else if ($output == '') {
-            return $PAGE->url->out(false) . '#';
-        } else {
-            throw new coding_exception('Unrecognied URL scheme. Please check the formatting of the URL passed to this function. Absolute URLs are the preferred scheme.');
-        }
-    }
-
-    // Add wwwroot only if the URL does not already start with http:// or https://
-    if (!preg_match('|https?://|', $output) ) {
-        $output = $CFG->wwwroot . $output;
-    }
-
-    return $output;
-}
-
-/**
  * Determine if there is data waiting to be processed from a form
  *
  * Used on most forms in Moodle to check for data

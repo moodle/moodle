@@ -903,7 +903,7 @@ class core_renderer extends renderer_base {
 
         $this->prepare_event_handlers($link);
 
-        $attributes = array('href'  => prepare_url($link->url),
+        $attributes = array('href'  => $link->url,
                             'class' => $link->get_classes_string(),
                             'title' => $link->title,
                             'style' => $link->style,
@@ -1131,7 +1131,7 @@ class core_renderer extends renderer_base {
 
         $formattributes = array(
                 'method' => $form->method,
-                'action' => prepare_url($form->url, true),
+                'action' => $form->url->out_omit_querystring(),
                 'id' => $form->id,
                 'class' => $form->get_classes_string());
 
@@ -1373,7 +1373,7 @@ class core_renderer extends renderer_base {
         $this->prepare_event_handlers($image);
 
         $attributes = array('class' => $image->get_classes_string(),
-                            'src'   => prepare_url($image->src),
+                            'src'   => $image->src,
                             'alt'   => $image->alt,
                             'style' => $image->style,
                             'title' => $image->title,
