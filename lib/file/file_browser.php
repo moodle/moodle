@@ -61,7 +61,7 @@ class file_browser {
      * @param int $itemid
      * @param string $filepath
      * @param string $filename
-     * @return object file_info object or null if not found or access not allowed
+     * @return file_info instance or null if not found or access not allowed
      */
     public function get_file_info($context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
         switch ($context->contextlevel) {

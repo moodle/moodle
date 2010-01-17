@@ -81,7 +81,7 @@ $file_info = $browser->get_file_info($context, $filearea, $itemid, $filepath, $f
 /// process actions
 if ($file_info and $file_info->is_directory() and $file_info->is_writable() and $newdirname !== '' and data_submitted() and confirm_sesskey()) {
     if ($newdir_info = $file_info->create_directory($newdirname, $USER->id)) {
-        $params = $newdir_info->get_params_rawencoded();
+        $params = $newdir_info->get_params();
         redirect(new moodle_url('index.php', $params));
     } else {
         $error = "Could not create new dir"; // TODO: localise
@@ -94,7 +94,7 @@ if ($file_info and $file_info->is_directory() and $file_info->is_writable() and 
     if (is_uploaded_file($_FILES['newfile']['tmp_name'])) {
         try {
             if ($newfile = $file_info->create_file_from_pathname($newfilename, $_FILES['newfile']['tmp_name'], $USER->id)) {
-                $params = $file_info->get_params_rawencoded();
+                $params = $file_info->get_params();
                 redirect(new moodle_url('index.php', $params));
 
             } else {
@@ -126,7 +126,7 @@ if ($file_info and $delete) {
         if (!$file_info->delete()) {
             $error = "Could not delete file!"; // TODO: localise
         }
-        $params = $parent_info->get_params_rawencoded();
+        $params = $parent_info->get_params();
         redirect(new moodle_url('index.php', $params));
     }
 }
@@ -184,7 +184,7 @@ function html_header($context, $file_info){
 
     $strfiles = get_string("files");
     build_navbar_for_file($PAGE, $file_info);
-    $PAGE->set_url("/files/index.php", $file_info->get_params_rawencoded());
+    $PAGE->set_url("/files/index.php", $file_info->get_params());
     $PAGE->set_title("$SITE->shortname: $strfiles");
     echo $OUTPUT->header();
 
