@@ -642,7 +642,7 @@ class moodle_url {
         } else {
             $parts = array($contextid, $area, $itemid, $pathname, $filename);
         }
-        $url = $urlbase; "$CFG->httpswwwroot/pluginfile.php";
+        $url = $urlbase;
         if ($CFG->slasharguments) {
             $parts = array_map('rawurlencode', $parts);
             $path  = implode('/', $parts);
@@ -689,6 +689,39 @@ class moodle_url {
         $context = get_context_instance(CONTEXT_USER, $USER->id);
 
         return self::make_file_url($urlbase, $context->id, 'draft_files', $itemid, $pathname, $filename, $forcedownload);
+    }
+
+    /**
+     * Factory method for creating of links to legacy
+     * course files.
+     * @param int $courseid
+     * @param string $filepath
+     * @param bool $forcedownload
+     * @return moodle_url
+     */
+    public static function make_legacyfile_url($courseid, $filepath, $forcedownload=false) {
+        global $CFG;
+
+        $url = "$CFG->wwwroot/file.php";
+        $params = array();
+
+        $filepath = trim('/', $filepath);
+        $path = "/$courseid/$filepath";
+
+        if ($CFG->slasharguments) {
+            $parts = explode('/', $path);
+            $parts = array_map('rawurlencode', $parts);
+            $path  = implode('/', $parts);
+            $url = $url.$path;
+        } else {
+            $params['file'] = rawurlencode($path);
+        }
+
+        if ($forcedownload) {
+            $params['forcedownload'] = 1;
+        }
+
+        return new moodle_url($url, $params);
     }
 }
 
