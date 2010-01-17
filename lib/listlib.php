@@ -267,7 +267,7 @@ class moodle_list {
                     $html .= " $currentpage \n";
                 }
                 else {
-                    $html .= "<a href=\"".$this->pageurl->out(false, array($this->pageparamname => $currentpage))."\">";
+                    $html .= "<a href=\"".$this->pageurl->out(array($this->pageparamname => $currentpage))."\">";
                     $html .= " $currentpage </a>\n";
                 }
             }

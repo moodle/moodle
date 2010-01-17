@@ -491,7 +491,7 @@ class moodle_url {
      * @return string
      */
     public function __toString() {
-        return $this->out(false, null, true);
+        return $this->out(null, true);
     }
 
     /**
@@ -500,26 +500,19 @@ class moodle_url {
      * If you use the returned URL in HTML code, you want the escaped ampersands. If you use
      * the returned URL in HTTP headers, you want $escaped=false.
      *
-     * @param boolean $omitquerystring whether to output page params as a query string in the url.
      * @param array $overrideparams params to add to the output url, these override existing ones with the same name.
      * @param boolean $escaped Use &amp; as params separator instead of plain &
      * @return string Resulting URL
      */
-    public function out($omitquerystring = false, array $overrideparams = null, $escaped = true) {
-        $uri = $this->scheme ? $this->scheme.':'.((strtolower($this->scheme) == 'mailto') ? '':'//'): '';
-        $uri .= $this->user ? $this->user.($this->pass? ':'.$this->pass:'').'@':'';
-        $uri .= $this->host ? $this->host : '';
-        $uri .= $this->port ? ':'.$this->port : '';
-        $uri .= $this->path ? $this->path : '';
+    public function out(array $overrideparams = null, $escaped = true) {
+        $uri = $this->out_omit_querystring();
 
-        if (!$omitquerystring) {
-            $querystring = $this->get_query_string($overrideparams, $escaped);
-            if ($querystring) {
-                $uri .= '?' . $querystring;
-            }
-            if (!is_null($this->anchor)) {
-                $uri .= '#'.$this->anchor;
-            }
+        $querystring = $this->get_query_string($overrideparams, $escaped);
+        if ($querystring) {
+            $uri .= '?' . $querystring;
+        }
+        if (!is_null($this->anchor)) {
+            $uri .= '#'.$this->anchor;
         }
 
         return $uri;
@@ -531,7 +524,20 @@ class moodle_url {
      * @return string
      */
     public function out_raw() {
-        return $this->out(false, null, false);
+        return $this->out(null, false);
+    }
+
+    /**
+     * Returns url without parameters, everything before '?'.
+     * @return string
+     */
+    public function out_omit_querystring() {
+        $uri = $this->scheme ? $this->scheme.':'.((strtolower($this->scheme) == 'mailto') ? '':'//'): '';
+        $uri .= $this->user ? $this->user.($this->pass? ':'.$this->pass:'').'@':'';
+        $uri .= $this->host ? $this->host : '';
+        $uri .= $this->port ? ':'.$this->port : '';
+        $uri .= $this->path ? $this->path : '';
+        return $uri;
     }
 
     /**
@@ -546,7 +552,7 @@ class moodle_url {
     public function out_action(array $overrideparams = null) {
         $overrideparams = (array)$overrideparams;
         $overrideparams = array('sesskey'=> sesskey()) + $overrideparams;
-        return $this->out(false, $overrideparams);
+        return $this->out($overrideparams);
     }
 
     /**
@@ -558,8 +564,8 @@ class moodle_url {
      */
     public function compare(moodle_url $url, $matchtype = URL_MATCH_EXACT) {
 
-        $baseself = $this->out(true);
-        $baseother = $url->out(true);
+        $baseself = $this->out_omit_querystring();
+        $baseother = $url->out_omit_querystring();
 
         // Append index.php if there is no specific file
         if (substr($baseself,-1)=='/') {
@@ -639,12 +645,16 @@ function prepare_url($url, $stripformparams=false) {
     $output = $url;
 
     if ($url instanceof moodle_url) {
-        $output = $url->out($stripformparams, array(), false);
+        if ($stripformparams) {
+            $output = $url->out_omit_querystring();
+        } else {
+            $output = $url->out_raw();
+        }
     }
 
     // Handle relative URLs
     if (substr($output, 0, 4) != 'http' && substr($output, 0, 1) != '/') {
-        if (preg_match('/(.*)\/([A-Za-z0-9-_]*\.php)$/', $PAGE->url->out(true), $matches)) {
+        if (preg_match('/(.*)\/([A-Za-z0-9-_]*\.php)$/', $PAGE->url->out_omit_querystring(), $matches)) {
             return $matches[1] . "/$output";
         } else if ($output == '') {
             return $PAGE->url->out_raw() . '#';

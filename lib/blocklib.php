@@ -286,7 +286,7 @@ class block_manager {
      * @return string URL for moving block $this->movingblock to this position.
      */
     protected function get_move_target_url($region, $weight) {
-        return $this->page->url->out(false, array('bui_moveid' => $this->movingblock,
+        return $this->page->url->out(array('bui_moveid' => $this->movingblock,
                 'bui_newregion' => $region, 'bui_newweight' => $weight, 'sesskey' => sesskey()), false);
     }
 
@@ -889,7 +889,7 @@ class block_manager {
         }
 
         $controls = array();
-        $actionurl = $this->page->url->out(false, array('sesskey'=> sesskey()), false);
+        $actionurl = $this->page->url->out(array('sesskey'=> sesskey()), false);
 
         // Assign roles icon.
         if (has_capability('moodle/role:assign', $block->context)) {
@@ -1066,7 +1066,7 @@ class block_manager {
         $editpage->set_pagelayout('base');
         $editpage->set_course($this->page->course);
         $editpage->set_context($block->context);
-        $editurlbase = str_replace($CFG->wwwroot . '/', '', $this->page->url->out(true));
+        $editurlbase = str_replace($CFG->wwwroot . '/', '', $this->page->url->out_omit_querystring());
         $editurlparams = $this->page->url->params();
         $editurlparams['bui_editid'] = $blockid;
         $editpage->set_url($editurlbase, $editurlparams);

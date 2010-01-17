@@ -76,7 +76,7 @@ class quiz_report_overview_table extends table_sql {
                 // Start form
                 $url = new moodle_url($this->reporturl, $this->displayoptions);
                 echo '<div id="tablecontainer">';
-                echo '<form id="attemptsform" method="post" action="' . $this->reporturl->out(true) .'">';
+                echo '<form id="attemptsform" method="post" action="' . $this->reporturl->out_omit_querystring() .'">';
                 echo '<div style="display: none;">';
                 echo html_writer::input_hidden_params($url);
                 echo '</div>';

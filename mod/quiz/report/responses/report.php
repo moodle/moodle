@@ -138,7 +138,7 @@ class quiz_responses_report extends quiz_default_report {
 
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
             if (!$table->is_downloading()) {
-                groups_print_activity_menu($cm, $reporturl->out(false, $displayoptions));
+                groups_print_activity_menu($cm, $reporturl->out($displayoptions));
             }
         }
         // Print information on the number of existing attempts
@@ -306,7 +306,7 @@ class quiz_responses_report extends quiz_default_report {
             $table->sortable(true, 'concattedid');
 
             // Set up the table
-            $table->define_baseurl($reporturl->out(false, $displayoptions));
+            $table->define_baseurl($reporturl->out($displayoptions));
 
             $table->collapsible(true);
 

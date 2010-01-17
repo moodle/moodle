@@ -603,7 +603,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
 
                 if (!$reordertool && !$quiz->shufflequestions) {
                     echo $OUTPUT->container_start('addpage');
-                    $url = new moodle_url($pageurl->out(true), array('cmid' => $quiz->cmid, 'courseid' => $quiz->course, 'addpage' => $count, 'sesskey' => sesskey()));
+                    $url = new moodle_url($pageurl->out_omit_querystring(), array('cmid' => $quiz->cmid, 'courseid' => $quiz->course, 'addpage' => $count, 'sesskey' => sesskey()));
                     echo $OUTPUT->single_button($url, get_string('addpagehere', 'quiz'), 'get', $hasattempts);
                     echo $OUTPUT->container_end();
                 }
@@ -644,7 +644,7 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts) {
     $defaultcategory = question_make_default_categories($contexts->all());
 
     // Create the url the question page will return to
-    $returnurl_addtoquiz = new moodle_url($pageurl->out(true), array('addonpage' => $page));
+    $returnurl_addtoquiz = new moodle_url($pageurl->out_omit_querystring(), array('addonpage' => $page));
 
     // Print a button linking to the choose question type page.
     $newquestionparams = array('returnurl' => $returnurl_addtoquiz->out(),
@@ -664,7 +664,7 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts) {
                 <input type="hidden" class="addonpage_formelement" name="addonpage_form" value="<?php echo $page; ?>" />
                 <input type="hidden" name="cmid" value="<?php echo $quiz->cmid; ?>" />
                 <input type="hidden" name="courseid" value="<?php echo $quiz->course; ?>" />
-                <input type="hidden" name="returnurl" value="<?php echo urlencode($pageurl->out(true)); ?>" />
+                <input type="hidden" name="returnurl" value="<?php echo urlencode($pageurl->out_omit_querystring()); ?>" />
                 <input type="submit" id="addrandomdialoglaunch_<?php echo $randombuttoncount; ?>" value="<?php echo get_string('addarandomquestion', 'quiz'); ?>" <?php echo " $disabled"; ?> />
             </div>
         </form>
@@ -758,7 +758,7 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktoo
     $a->arrow = $OUTPUT->rarrow();
     $strshowcategorycontents = get_string('showcategorycontents', 'quiz', $a);
 
-    $openqbankurl = $pageurl->out(false, array('qbanktool' => 1,
+    $openqbankurl = $pageurl->out(array('qbanktool' => 1,
             'cat' => $category->id . ',' . $category->contextid));
     $linkcategorycontents = ' <a href="' . $openqbankurl . '">' . $strshowcategorycontents . '</a>';
 

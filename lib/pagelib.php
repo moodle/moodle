@@ -832,7 +832,7 @@ class moodle_page {
 
         $this->_url = new moodle_url($url, $params);
 
-        $fullurl = $this->_url->out(true);
+        $fullurl = $this->_url->out_omit_querystring();
         if (strpos($fullurl, "$CFG->httpswwwroot/") !== 0) {
             debugging('Most probably incorrect set_page() url argument, it does not match the httpswwwroot!');
         }

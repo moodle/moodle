@@ -158,7 +158,7 @@ class quiz_grading_report extends quiz_default_report {
         /// find out current groups mode
 
         if ($groupmode = groups_get_activity_groupmode($this->cm)) {   // Groups are being used
-            groups_print_activity_menu($this->cm, $this->viewurl->out(false, array('userid'=>0, 'attemptid'=>0)));
+            groups_print_activity_menu($this->cm, $this->viewurl->out(array('userid'=>0, 'attemptid'=>0)));
         }
 
         if(empty($this->users)) {

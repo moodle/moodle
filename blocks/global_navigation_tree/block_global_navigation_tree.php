@@ -270,7 +270,7 @@ class block_global_navigation_tree extends block_tree {
                 if ($node->key == $child->key && $node->type == $child->type) {
                     if ($node->action instanceof moodle_url && $child->action instanceof moodle_url && $node->action->compare($child->action)) {
                         unset($history[$key]);
-                    } else if ($child->action instanceof moodle_url && $child->action->out(true) == $node->action) {
+                    } else if ($child->action instanceof moodle_url && $child->action->out_omit_querystring() == $node->action) {
                         unset($history[$key]);
                     } else if ($child->action == $node->action) {
                         unset($history[$key]);

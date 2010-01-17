@@ -999,7 +999,7 @@ class question_bank_view {
         if (count($newsort) > question_bank_view::MAX_SORTS) {
             $newsort = array_slice($newsort, 0, question_bank_view::MAX_SORTS, true);
         }
-        return $this->baseurl->out(false, $this->sort_to_params($newsort));
+        return $this->baseurl->out($this->sort_to_params($newsort));
     }
 
     protected function build_query_sql($category, $recurse, $showhidden) {
@@ -1078,11 +1078,11 @@ class question_bank_view {
     }
 
     public function edit_question_url($questionid) {
-        return $this->editquestionurl->out(false, array('id' => $questionid));
+        return $this->editquestionurl->out(array('id' => $questionid));
     }
 
     public function move_question_url($questionid) {
-        return $this->editquestionurl->out(false, array('id' => $questionid, 'movecontext' => 1));
+        return $this->editquestionurl->out(array('id' => $questionid, 'movecontext' => 1));
     }
 
     public function preview_question_url($questionid) {
@@ -1422,7 +1422,7 @@ class question_bank_view {
                         $checkforfiles = true;
                     }
                 }
-                $returnurl = $this->baseurl->out(false, array('category'=>"$tocategoryid,$contextid"));
+                $returnurl = $this->baseurl->out(array('category'=>"$tocategoryid,$contextid"));
                 if (!$checkforfiles){
                     if (!question_move_questions_to_category(implode(',', $questionids), $tocategory->id)) {
                         print_error('errormovingquestions', 'question', $returnurl, $questionids);

@@ -409,7 +409,7 @@ class quiz_statistics_report extends quiz_default_report {
                 }
                 $quizinformationtablehtml .= $OUTPUT->box_start('boxaligncenter generalbox boxwidthnormal mdl-align');
                 $quizinformationtablehtml .= get_string('lastcalculated', 'quiz_statistics', $a);
-                $aurl = new moodle_url($reporturl->out(true), $reporturl->params()+array('recalculate'=>1));
+                $aurl = new moodle_url($reporturl->out_omit_querystring(), $reporturl->params()+array('recalculate'=>1));
                 $quizinformationtablehtml .= $OUTPUT->single_button($aurl, get_string('recalculatenow', 'quiz_statistics'));
                 $quizinformationtablehtml .= $OUTPUT->box_end();
             }

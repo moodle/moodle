@@ -218,7 +218,7 @@
         echo "</p>\n";
     }
     $number = 1;
-    echo '<form method="post" action="'.$url->out(true).'" enctype="multipart/form-data" id="responseform">', "\n";
+    echo '<form method="post" action="'.$url->out_omit_querystring().'" enctype="multipart/form-data" id="responseform">', "\n";
     print_question($questions[$id], $curstate, $number, $quiz, $options);
 
     echo '<div class="controls">';

@@ -1072,7 +1072,7 @@ class core_renderer extends renderer_base {
         $output = html_writer::tag('div', array(), $output);
 
         // now the form itself around it
-        $url = $button->url->out(true); // url without params
+        $url = $button->url->out_omit_querystring(); // url without params
         if ($url === '') {
             $url = '#'; // there has to be always some action
         }

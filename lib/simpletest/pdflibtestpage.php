@@ -140,5 +140,5 @@ $PAGE->set_heading('PDF library test');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Press the button to generate test PDF', 2);
-echo $OUTPUT->continue_button($PAGE->url->out(false, array('getpdf' => 1)));
+echo $OUTPUT->continue_button(new moodle_url($PAGE->url, array('getpdf' => 1)));
 echo $OUTPUT->footer();

@@ -34,7 +34,7 @@ class quiz_report_responses_table extends table_sql {
                 $displayurl = new moodle_url($this->reporturl, $this->displayoptions);
                 $strreallydel  = addslashes_js(get_string('deleteattemptcheck','quiz'));
                 echo '<div id="tablecontainer">';
-                echo '<form id="attemptsform" method="post" action="' . $displayurl->out(true) .
+                echo '<form id="attemptsform" method="post" action="' . $displayurl->out_omit_querystring() .
                         '" onsubmit="confirm(\''.$strreallydel.'\');">';
                 echo '<div style="display: none;">';
                 echo html_writer::input_hidden_params($displayurl);
