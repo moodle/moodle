@@ -280,10 +280,15 @@ class moodle_url {
      */
     protected $pass = '';
     /**
-     * script path, may include path info too
+     * Script path
      * @var string
      */
     protected $path = '';
+    /**
+     * Optional slash argument value
+     * @var string
+     */
+    protected $slashargument = '';
     /**
      * Anchor, may be also empty, null means none
      * @var string
@@ -314,6 +319,7 @@ class moodle_url {
             $this->user = $url->user;
             $this->pass = $url->pass;
             $this->path = $url->path;
+            $this->slashargument = $url->slashargument;
             $this->params = $url->params;
             $this->anchor = $url->anchor;
 
@@ -354,6 +360,13 @@ class moodle_url {
             unset($parts['query']);
             foreach ($parts as $key => $value) {
                 $this->$key = $value;
+            }
+
+            // detect slashargument value from path - we do not support directory names ending with .php
+            $pos = strpos($this->path, '.php/');
+            if ($pos !== false) {
+                $this->slashargument = substr($this->path, $pos + 4);
+                $this->path = substr($this->path, 0, $pos + 4);
             }
         }
 
@@ -414,6 +427,7 @@ class moodle_url {
      */
     public function remove_all_params($params = null) {
         $this->params = array();
+        $this->slashargument = '';
     }
 
     /**
@@ -473,7 +487,7 @@ class moodle_url {
         $arr = array();
         $params = $this->merge_overrideparams($overrideparams);
         foreach ($params as $key => $val) {
-           $arr[] = urlencode($key)."=".urlencode($val);
+           $arr[] = rawurlencode($key)."=".rawurlencode($val);
         }
         if ($escaped) {
             return implode('&amp;', $arr);
@@ -505,10 +519,10 @@ class moodle_url {
             debugging('Escape parameter must be of type boolean, '.gettype($escaped).' given instead.');
         }
 
-        $uri = $this->out_omit_querystring();
+        $uri = $this->out_omit_querystring().$this->slashargument;
 
         $querystring = $this->get_query_string($escaped, $overrideparams);
-        if ($querystring) {
+        if ($querystring !== '') {
             $uri .= '?' . $querystring;
         }
         if (!is_null($this->anchor)) {
@@ -604,6 +618,77 @@ class moodle_url {
             // bad luck, no valid anchor found
             $this->anchor = null;
         }
+    }
+
+    // == static factory methods ==
+
+    /**
+     * Internal factory method.
+     * @param string $urlbase
+     * @param int $contextid
+     * @param string $area
+     * @param int $itemid
+     * @param string $pathname
+     * @param string $filename
+     * @param bool $forcedownload
+     * @return moodle_url
+     */
+    protected static function make_file_url($urlbase, $contextid, $area, $itemid, $pathname, $filename, $forcedownload=false) {
+        $pathname = trim('/', $pathname);
+        $params = array();
+
+        if (is_null($itemid)) {
+            $parts = array($contextid, $area, $pathname, $filename);
+        } else {
+            $parts = array($contextid, $area, $itemid, $pathname, $filename);
+        }
+        $url = $urlbase; "$CFG->httpswwwroot/pluginfile.php";
+        if ($CFG->slasharguments) {
+            $parts = array_map('rawurlencode', $parts);
+            $path  = implode('/', $parts);
+            $url .= "/$path";
+        } else {
+            $params['file'] = '/'.implode('/', $parts);
+        }
+        if ($forcedownload) {
+            $params['forcedownload'] = 1;
+        }
+        return new moodle_url($url, $params);
+    }
+
+    /**
+     * Factory method for creation of url pointing to plugin file.
+     * Please note this method can be used only from the plugins to
+     * create urls of own files, it must not be used outside of plugins!
+     * @param int $contextid
+     * @param string $area
+     * @param int $itemid
+     * @param string $pathname
+     * @param string $filename
+     * @param bool $forcedownload
+     * @return moodle_url
+     */
+    public static function make_pluginfile_url($contextid, $area, $itemid, $pathname, $filename, $forcedownload=false) {
+        global $CFG;
+        $urlbase = "$CFG->httpswwwroot/pluginfile.php";
+        return self::make_file_url($urlbase, $contextid, $area, $itemid, $pathname, $filename, $forcedownload);
+    }
+
+    /**
+     * Factory method for creation of url pointing to draft
+     * file of current user.
+     * @param int $itemid draft item id
+     * @param string $pathname
+     * @param string $filename
+     * @param bool $forcedownload
+     * @return moodle_url
+     */
+    public static function make_draftfile_url($itemid, $pathname, $filename, $forcedownload=false) {
+        global $CFG, $USER;
+        $urlbase = "$CFG->httpswwwroot/draftfile.php";
+        $context = get_context_instance(CONTEXT_USER, $USER->id);
+
+        return self::make_file_url($urlbase, $context->id, 'draft_files', $itemid, $pathname, $filename, $forcedownload);
     }
 }
 
