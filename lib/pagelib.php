@@ -999,7 +999,7 @@ class moodle_page {
             if (empty($this->_block_actions_done)) {
                 $this->_block_actions_done = true;
                 if ($this->blocks->process_url_actions($this)) {
-                    redirect($this->url->out_raw());
+                    redirect($this->url->out(false));
                 }
             }
             $this->blocks->create_all_block_instances();
@@ -1403,7 +1403,7 @@ class moodle_page {
      */
     function url_get_full($extraparams = array()) {
         debugging('Call to deprecated method moodle_page::url_get_full. Use $this->url->out() instead.');
-        return $this->url->out($extraparams);
+        return $this->url->out(true, $extraparams);
     }
 
     /**

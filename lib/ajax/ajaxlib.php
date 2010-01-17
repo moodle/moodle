@@ -130,7 +130,7 @@ class page_requirements_manager {
         $config = array(
             'wwwroot'             => $CFG->httpswwwroot, // Yes, really. See above.
             'sesskey'             => sesskey(),
-            'loadingicon'         => $output->pix_url('i/loading_small', 'moodle')->out_raw(),
+            'loadingicon'         => $output->pix_url('i/loading_small', 'moodle')->out(false),
             'themerev'            => theme_get_revision(),
             'theme'               => $page->theme->name,
             'yui2loaderBase'      => $this->yui2loader->base,

@@ -170,12 +170,12 @@ class quiz_overview_report extends quiz_default_report {
             $this->regrade_all_needed($quiz, $groupstudents);
         }
         if ($regradeall || $regradealldry || $regradealldrydo){
-            redirect($reporturl->out($displayoptions, false), '', 5);
+            redirect($reporturl->out(false, $displayoptions), '', 5);
         }
 
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
             if (!$table->is_downloading()) {
-                groups_print_activity_menu($cm, $reporturl->out($displayoptions));
+                groups_print_activity_menu($cm, $reporturl->out(treu, $displayoptions));
             }
         }
 
@@ -379,7 +379,7 @@ class quiz_overview_report extends quiz_default_report {
             $table->sortable(true, 'uniqueid');
 
             // Set up the table
-            $table->define_baseurl($reporturl->out($displayoptions));
+            $table->define_baseurl($reporturl->out(true, $displayoptions));
 
             $table->collapsible(false);
 

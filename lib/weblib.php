@@ -491,7 +491,7 @@ class moodle_url {
      * @return string
      */
     public function __toString() {
-        return $this->out(null, true);
+        return $this->out(true);
     }
 
     /**
@@ -500,11 +500,15 @@ class moodle_url {
      * If you use the returned URL in HTML code, you want the escaped ampersands. If you use
      * the returned URL in HTTP headers, you want $escaped=false.
      *
-     * @param array $overrideparams params to add to the output url, these override existing ones with the same name.
      * @param boolean $escaped Use &amp; as params separator instead of plain &
+     * @param array $overrideparams params to add to the output url, these override existing ones with the same name.
      * @return string Resulting URL
      */
-    public function out(array $overrideparams = null, $escaped = true) {
+    public function out($escaped = true, array $overrideparams = null) {
+        if (!is_bool($escaped)) {
+            debugging('Escape parameter must be of type boolean, '.gettype($escaped).' given instead.');
+        }
+
         $uri = $this->out_omit_querystring();
 
         $querystring = $this->get_query_string($overrideparams, $escaped);
@@ -516,15 +520,6 @@ class moodle_url {
         }
 
         return $uri;
-    }
-
-    /**
-     * Returns url in raw form without any escaping,
-     * useful especially when including urls and images in javascript.
-     * @return string
-     */
-    public function out_raw() {
-        return $this->out(null, false);
     }
 
     /**
@@ -552,7 +547,7 @@ class moodle_url {
     public function out_action(array $overrideparams = null) {
         $overrideparams = (array)$overrideparams;
         $overrideparams = array('sesskey'=> sesskey()) + $overrideparams;
-        return $this->out($overrideparams);
+        return $this->out(true, $overrideparams);
     }
 
     /**
@@ -648,7 +643,7 @@ function prepare_url($url, $stripformparams=false) {
         if ($stripformparams) {
             $output = $url->out_omit_querystring();
         } else {
-            $output = $url->out_raw();
+            $output = $url->out(false);
         }
     }
 
@@ -657,7 +652,7 @@ function prepare_url($url, $stripformparams=false) {
         if (preg_match('/(.*)\/([A-Za-z0-9-_]*\.php)$/', $PAGE->url->out_omit_querystring(), $matches)) {
             return $matches[1] . "/$output";
         } else if ($output == '') {
-            return $PAGE->url->out_raw() . '#';
+            return $PAGE->url->out(false) . '#';
         } else {
             throw new coding_exception('Unrecognied URL scheme. Please check the formatting of the URL passed to this function. Absolute URLs are the preferred scheme.');
         }
@@ -2081,7 +2076,7 @@ function print_collapsible_region_start($classes, $id, $caption, $userpref = fal
     $output .= '</div><div id="' . $id . '_inner" class="collapsibleregioninner">';
     $PAGE->requires->js_function_call('new collapsible_region',
             array($id, $userpref, get_string('clicktohideshow'),
-            $OUTPUT->pix_url('t/collapsed')->out_raw(), $OUTPUT->pix_url('t/expanded')->out_raw()));
+            $OUTPUT->pix_url('t/collapsed')->out(false), $OUTPUT->pix_url('t/expanded')->out(false)));
 
     if ($return) {
         return $output;
@@ -2485,7 +2480,7 @@ function redirect($url, $message='', $delay=-1) {
     global $OUTPUT, $PAGE, $SESSION, $CFG;
 
     if ($url instanceof moodle_url) {
-        $url = $url->out_raw();
+        $url = $url->out(false);
     }
 
     if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {

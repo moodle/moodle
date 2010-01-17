@@ -758,7 +758,7 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktoo
     $a->arrow = $OUTPUT->rarrow();
     $strshowcategorycontents = get_string('showcategorycontents', 'quiz', $a);
 
-    $openqbankurl = $pageurl->out(array('qbanktool' => 1,
+    $openqbankurl = $pageurl->out(true, array('qbanktool' => 1,
             'cat' => $category->id . ',' . $category->contextid));
     $linkcategorycontents = ' <a href="' . $openqbankurl . '">' . $strshowcategorycontents . '</a>';
 

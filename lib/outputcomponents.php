@@ -1069,12 +1069,12 @@ class html_select extends labelled_html_component {
         }
 
         if (!empty($selected)) {
-            $selectedurl = $baseurl->out(array($name => $selected), false);
+            $selectedurl = $baseurl->out(false, array($name => $selected));
         }
 
         // Replace real value by formatted URLs
         foreach ($options as $value => $label) {
-            $options[$baseurl->out(array($name => $value), false)] = $label;
+            $options[$baseurl->out(false, array($name => $value))] = $label;
             unset($options[$value]);
         }
 

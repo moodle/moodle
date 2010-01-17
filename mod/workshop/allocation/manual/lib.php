@@ -87,7 +87,7 @@ class workshop_manual_allocator implements workshop_allocator {
                 }
             }
             $m = implode('-', $m);  // serialize message object to be passed via URL
-            redirect($PAGE->url->out(array('m' => $m), false));
+            redirect($PAGE->url->out(false, array('m' => $m)));
             break;
         case 'del':
             if (!confirm_sesskey()) {
@@ -119,7 +119,7 @@ class workshop_manual_allocator implements workshop_allocator {
                     }
                 }
                 $m = implode('-', $m);  // serialize message object to be passed via URL
-                redirect($PAGE->url->out(array('m' => $m), false));
+                redirect($PAGE->url->out(false, array('m' => $m)));
             }
             break;
         }

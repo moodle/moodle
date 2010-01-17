@@ -219,7 +219,7 @@ if ($mform->is_cancelled()){
     $returnurl = new moodle_url($returnurl);
     $returnurl->param('category', $fromform->category);
     // TODO: it is sloppy to pass arounf full URLs through page parameters and some servers do not like that
-    $returnurl = $returnurl->out_raw();
+    $returnurl = $returnurl->out(false);
 
     /// Call the appropriate method.
     if ($movecontext) {

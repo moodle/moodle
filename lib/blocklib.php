@@ -286,8 +286,8 @@ class block_manager {
      * @return string URL for moving block $this->movingblock to this position.
      */
     protected function get_move_target_url($region, $weight) {
-        return $this->page->url->out(array('bui_moveid' => $this->movingblock,
-                'bui_newregion' => $region, 'bui_newweight' => $weight, 'sesskey' => sesskey()), false);
+        return $this->page->url->out(false, array('bui_moveid' => $this->movingblock,
+                'bui_newregion' => $region, 'bui_newweight' => $weight, 'sesskey' => sesskey()));
     }
 
     /**
@@ -889,7 +889,7 @@ class block_manager {
         }
 
         $controls = array();
-        $actionurl = $this->page->url->out(array('sesskey'=> sesskey()), false);
+        $actionurl = $this->page->url->out(false, array('sesskey'=> sesskey()));
 
         // Assign roles icon.
         if (has_capability('moodle/role:assign', $block->context)) {
@@ -897,7 +897,7 @@ class block_manager {
             //      it is shortened because some web servers (e.g. IIS by default) give
             //      a 'security' error if you try to pass a full URL as a GET parameter in another URL.
             
-            $return = $this->out_raw();
+            $return = $this->out(false);
             $return = str_replace($CFG->wwwroot . '/', '', $return);
             
             $controls[] = array('url' => $CFG->wwwroot . '/' . $CFG->admin .

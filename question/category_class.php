@@ -93,7 +93,7 @@ class question_category_list_item extends list_item {
         /// Each section adds html to be displayed as part of this list item
         $questionbankurl = "{$CFG->wwwroot}/question/edit.php?".
                 $this->parentlist->pageurl->get_query_string(array('category'=>"$category->id,$category->contextid"));
-        $catediturl = $this->parentlist->pageurl->out(array('edit'=>$this->id));
+        $catediturl = $this->parentlist->pageurl->out(true, array('edit'=>$this->id));
         $item = "<b><a title=\"{$str->edit}\" href=\"$catediturl\">".$category->name ."</a></b> <a title=\"$editqestions\" href=\"$questionbankurl\">".'('.$category->questioncount.')</a>';
 
         $item .= '&nbsp;'. $category->info;

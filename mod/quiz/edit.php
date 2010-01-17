@@ -449,7 +449,7 @@ echo $OUTPUT->header();
 
 // Initialise the JavaScript.
 $quizeditconfig = new stdClass;
-$quizeditconfig->url = $thispageurl->out(array('qbanktool' => '0'));
+$quizeditconfig->url = $thispageurl->out(true, array('qbanktool' => '0'));
 $quizeditconfig->dialoglisteners = array();
 $numberoflisteners = max(quiz_number_of_pages($quiz->questions), 1);
 for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
@@ -477,10 +477,10 @@ if ($quiz_qbanktool) {
 echo '<div class="questionbankwindow ' . $bankclass . 'sideblock">';
 echo '<div class="header"><div class="title"><h2>';
 echo get_string('questionbankcontents', 'quiz') .
-        ' <a href="' . $thispageurl->out(array('qbanktool' => '1')) .
+        ' <a href="' . $thispageurl->out(true, array('qbanktool' => '1')) .
        '" id="showbankcmd">[' . get_string('show').
        ']</a>
-       <a href="' . $thispageurl->out(array('qbanktool' => '0')) .
+       <a href="' . $thispageurl->out(true, array('qbanktool' => '0')) .
        '" id="hidebankcmd">[' . get_string('hide').
        ']</a>';
 echo '</h2></div></div><div class="content">';

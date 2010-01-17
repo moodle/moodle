@@ -75,7 +75,7 @@ class tinymce_texteditor extends texteditor {
         $strtime        = get_string('strftimetime');
         $strdate        = get_string('strftimedaydate');
         $lang           = str_replace('_utf8', '', current_language()); // use more standard language codes
-        $contentcss     = $PAGE->theme->editor_css_url()->out_raw();
+        $contentcss     = $PAGE->theme->editor_css_url()->out(false);
 
         $context = empty($options['context']) ? get_context_instance(CONTEXT_SYSTEM) : $options['context'];
         if (!empty($options['legacy'])) {
