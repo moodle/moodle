@@ -292,10 +292,11 @@ class quiz_overview_report extends quiz_default_report {
                         $regradealldrylabel = get_string('regradealldry', 'quiz_overview');
                         $regradealllabel = get_string('regradeall', 'quiz_overview');
                     }
+                    $displayurl = new moodle_url($reporturl, $displayoptions);
                     echo '<div class="mdl-align">';
-                    echo '<form action="'.$reporturl->out(true).'">';
+                    echo '<form action="'.$displayurl->out(true).'">';
                     echo '<div>';
-                    echo $reporturl->hidden_params_out(array(), 0, $displayoptions);
+                    echo html_writer::input_hidden_params($displayurl);
                     echo '<input type="submit" name="regradeall" value="'.$regradealllabel.'"/>';
                     echo '<input type="submit" name="regradealldry" value="'.$regradealldrylabel.'"/>';
                     if ($countregradeneeded){

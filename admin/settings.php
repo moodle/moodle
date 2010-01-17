@@ -77,7 +77,7 @@ if (empty($SITE->fullname)) {
 
     echo '<form action="settings.php" method="post" id="adminsettings">';
     echo '<div class="settingsform clearfix">';
-    echo $PAGE->url->hidden_params_out();
+    echo html_writer::input_hidden_params($PAGE->url);
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="return" value="'.$return.'" />';
 
@@ -119,7 +119,7 @@ if (empty($SITE->fullname)) {
 
     echo '<form action="settings.php" method="post" id="adminsettings">';
     echo '<div class="settingsform clearfix">';
-    echo $PAGE->url->hidden_params_out();
+    echo html_writer::input_hidden_params($PAGE->url);
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="return" value="'.$return.'" />';
     echo $OUTPUT->heading($settingspage->visiblename);

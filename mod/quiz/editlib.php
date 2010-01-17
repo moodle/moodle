@@ -374,7 +374,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
     if ($reordertool) {
         echo '<form method="post" action="edit.php" id="quizquestions"><div>';
 
-        echo $pageurl->hidden_params_out();
+        echo html_writer::input_hidden_params($pageurl);
         echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
 
         echo $reordercontrolstop;
@@ -523,7 +523,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
     <fieldset class="invisiblefieldset" style="display: block;">
     <label for="<?php echo "inputq$question->id" ?>"><?php echo $strgrade; ?></label>:<br />
     <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
-    <?php echo $pageurl->hidden_params_out(); ?>
+    <?php echo html_writer::input_hidden_params($pageurl); ?>
     <input type="hidden" name="savechanges" value="save" />
         <?php
             echo '<input type="text" name="g' . $question->id . '" id="inputq' . $question->id .
@@ -1107,7 +1107,7 @@ class quiz_question_bank_view extends question_bank_view {
     protected function display_options($recurse = 1, $showhidden = false, $showquestiontext = false) {
         echo '<form method="get" action="edit.php" id="displayoptions">';
         echo "<fieldset class='invisiblefieldset'>";
-        echo $this->baseurl->hidden_params_out(array('recurse', 'showhidden', 'showquestiontext'));
+        echo html_writer::input_hidden_params($this->baseurl, array('recurse', 'showhidden', 'showquestiontext'));
         $this->display_category_form_checkbox('recurse', get_string('recurse', 'quiz'));
         $this->display_category_form_checkbox('showhidden', get_string('showhidden', 'quiz'));
         echo '<noscript><div class="centerpara"><input type="submit" value="'. get_string('go')  . '" />';
@@ -1131,7 +1131,7 @@ function quiz_print_grading_form($quiz, $pageurl, $tabindex) {
     echo "<form method=\"post\" action=\"edit.php\"><div>";
     echo '<fieldset class="invisiblefieldset" style="display: block;">';
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />";
-    echo $pageurl->hidden_params_out();
+    echo html_writer::input_hidden_params($pageurl);
     $a = '<input type="text" id="inputmaxgrade" name="maxgrade" size="' . ($quiz->decimalpoints + 2) . '" tabindex="' . $tabindex
          . '" value="' . quiz_format_grade($quiz, $quiz->grade) . '" />';
     echo '<label for="inputmaxgrade">' . get_string('maximumgradex', '', $a) . "</label>";

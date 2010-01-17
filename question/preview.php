@@ -222,7 +222,7 @@
     print_question($questions[$id], $curstate, $number, $quiz, $options);
 
     echo '<div class="controls">';
-    echo $url->hidden_params_out();
+    echo html_writer::input_hidden_params($url);
 
     // Print the mark and finish attempt buttons
     echo '<input name="markall" type="submit" value="' . get_string('markall',

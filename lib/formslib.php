@@ -1072,7 +1072,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         $target = empty($target) ? array() : array('target' => $target);
         $this->_formName = $formName;
         if (is_a($action, 'moodle_url')){
-            $this->_pageparams = $action->hidden_params_out();
+            $this->_pageparams = html_writer::input_hidden_params($action);
             $action = $action->out(true);
         } else {
             $this->_pageparams = '';

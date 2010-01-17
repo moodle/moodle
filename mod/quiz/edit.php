@@ -553,7 +553,7 @@ if ($quiz_reordertool) {
     echo '</div><div class="bd">';
     echo '<form action="edit.php" method="post">';
     echo '<fieldset class="invisiblefieldset">';
-    echo $thispageurl->hidden_params_out();
+    echo html_writer::input_hidden_params($thispageurl);
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     //YUI does not submit the value of the submit button so
             //we need to add the value:

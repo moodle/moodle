@@ -74,10 +74,11 @@ class quiz_report_overview_table extends table_sql {
         if (!$this->is_downloading()) {
             if ($this->candelete) {
                 // Start form
+                $url = new moodle_url($this->reporturl, $this->displayoptions);
                 echo '<div id="tablecontainer">';
                 echo '<form id="attemptsform" method="post" action="' . $this->reporturl->out(true) .'">';
                 echo '<div style="display: none;">';
-                echo $this->reporturl->hidden_params_out(array(), 0, $this->displayoptions);
+                echo html_writer::input_hidden_params($url);
                 echo '</div>';
                 echo '<div>';
             }

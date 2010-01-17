@@ -31,12 +31,13 @@ class quiz_report_responses_table extends table_sql {
         if (!$this->is_downloading()) {
             if ($this->candelete) {
                 // Start form
+                $displayurl = new moodle_url($this->reporturl, $this->displayoptions);
                 $strreallydel  = addslashes_js(get_string('deleteattemptcheck','quiz'));
                 echo '<div id="tablecontainer">';
-                echo '<form id="attemptsform" method="post" action="' . $this->reporturl->out(true) .
+                echo '<form id="attemptsform" method="post" action="' . $displayurl->out(true) .
                         '" onsubmit="confirm(\''.$strreallydel.'\');">';
                 echo '<div style="display: none;">';
-                echo $this->reporturl->hidden_params_out(array(), 0, $this->displayoptions);
+                echo html_writer::input_hidden_params($displayurl);
                 echo '</div>';
                 echo '<div>';
             }

@@ -1191,7 +1191,7 @@ class question_bank_view {
     protected function display_options($recurse = 1, $showhidden = false, $showquestiontext = false) {
         echo '<form method="get" action="edit.php" id="displayoptions">';
         echo "<fieldset class='invisiblefieldset'>";
-        echo $this->baseurl->hidden_params_out(array('recurse', 'showhidden', 'showquestiontext'));
+        echo html_writer::input_hidden_params($this->baseurl, array('recurse', 'showhidden', 'showquestiontext'));
         $this->display_category_form_checkbox('recurse', get_string('recurse', 'quiz'));
         $this->display_category_form_checkbox('showhidden', get_string('showhidden', 'quiz'));
         $this->display_category_form_checkbox('qbshowtext', get_string('showquestiontext', 'quiz'));
@@ -1281,7 +1281,7 @@ class question_bank_view {
         echo '<form method="post" action="edit.php">';
         echo '<fieldset class="invisiblefieldset" style="display: block;">';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo $pageurl->hidden_params_out();
+        echo html_writer::input_hidden_params($pageurl);
 
         echo '<div class="categoryquestionscontainer">';
         $this->start_table();

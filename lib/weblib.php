@@ -487,30 +487,6 @@ class moodle_url {
     }
 
     /**
-     * Outputs params as hidden form elements.
-     *
-     * @param array $exclude params to ignore
-     * @param integer $indent indentation
-     * @param array $overrideparams params to add to the output params, these
-     *      override existing ones with the same name.
-     * @return string html for form elements.
-     */
-    public function hidden_params_out(array $exclude = null, $indent = 0, array $overrideparams = null) {
-        $exclude = (array)$exclude;
-        $params = $this->merge_overrideparams($overrideparams);
-
-        $tabindent = str_repeat("\t", $indent);
-        $str = '';
-        foreach ($params as $key => $val) {
-            if (FALSE === array_search($key, $exclude)) {
-                $val = s($val);
-                $str.= "$tabindent<input type=\"hidden\" name=\"$key\" value=\"$val\" />\n";
-            }
-        }
-        return $str;
-    }
-
-    /**
      * Shortcut for printing of encoded URL.
      * @return string
      */

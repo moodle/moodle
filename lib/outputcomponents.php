@@ -515,6 +515,27 @@ class html_writer {
         }
         return self::tag('optgroup', $attributes, $output);
     }
+
+    /**
+     * Returns hidden input fields created from url parameters.
+     * @param moodle_url $url
+     * @param array $exclude list of excluded parameters
+     * @return string HTML fragment
+     */
+    public static function input_hidden_params(moodle_url $url, array $exclude = null) {
+        $exclude = (array)$exclude;
+        $params = $url->params();
+        foreach ($exclude as $key) {
+            unset($params[$key]);
+        }
+
+        $output = '';
+        foreach ($params as $key => $val) {
+            $attributes = array('type'=>'hidden', 'name'=>$key, 'value'=>$value);
+            $output .= self::empty_tag('input', $attributes)."\n";
+        }
+        return $output;
+    }
 }
 
 

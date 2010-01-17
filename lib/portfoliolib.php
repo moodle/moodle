@@ -330,7 +330,7 @@ class portfolio_add_button {
         }
 
         $formoutput = '<form method="post" action="' . $CFG->wwwroot . '/portfolio/add.php" id="portfolio-add-button">' . "\n";
-        $formoutput .= $url->hidden_params_out();
+        $formoutput .= html_writer::input_hidden_params($url);
         $linkoutput = '<a href="' . $url->out();
 
         switch ($format) {
