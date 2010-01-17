@@ -535,30 +535,6 @@ class moodle_url {
     }
 
     /**
-     * Return a URL relative to $CFG->wwwroot.
-     *
-     * Throws an exception if this URL does not start with $CFG->wwwroot.
-     *
-     * The main use for this is when you want to pass a returnurl from one script to another.
-     * In this case the returnurl should be relative to $CFG->wwwroot for two reasons.
-     * First, it is shorter. More imporatantly, some web servers (e.g. IIS by default)
-     * give a 'security' error if you try to pass a full URL as a GET parameter in another URL.
-     *
-     * @return string the URL relative to $CFG->wwwroot. Note, you will need to urlencode
-     * this result if you are outputting a URL manually (but not if you are adding
-     * it to another moodle_url).
-     */
-    public function out_returnurl() {
-        global $CFG;
-        $fulluri = $this->out(false, array(), false);
-        $uri = str_replace($CFG->wwwroot . '/', '', $fulluri);
-        if ($uri == $fulluri) {
-            throw new coding_exception('This URL (' . $fulluri . ') is not relative to $CFG->wwwroot.');
-        }
-        return $uri;
-    }
-
-    /**
      * Output action url with sesskey
      *
      * Adds sesskey and overriderparams then calls {@link out()}

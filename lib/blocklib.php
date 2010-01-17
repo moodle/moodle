@@ -893,8 +893,15 @@ class block_manager {
 
         // Assign roles icon.
         if (has_capability('moodle/role:assign', $block->context)) {
+            //TODO: please note it is sloppy to pass urls through page parameters!!
+            //      it is shortened because some web servers (e.g. IIS by default) give
+            //      a 'security' error if you try to pass a full URL as a GET parameter in another URL.
+            
+            $return = $this->out(false, array(), false);
+            $return = str_replace($CFG->wwwroot . '/', '', $return);
+            
             $controls[] = array('url' => $CFG->wwwroot . '/' . $CFG->admin .
-                    '/roles/assign.php?contextid=' . $block->context->id . '&returnurl=' . urlencode($this->page->url->out_returnurl()),
+                    '/roles/assign.php?contextid=' . $block->context->id . '&returnurl=' . urlencode($return),
                     'icon' => 'i/roles', 'caption' => get_string('assignroles', 'role'));
         }
 
