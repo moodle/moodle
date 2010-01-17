@@ -897,7 +897,7 @@ class block_manager {
             //      it is shortened because some web servers (e.g. IIS by default) give
             //      a 'security' error if you try to pass a full URL as a GET parameter in another URL.
             
-            $return = $this->out(false, array(), false);
+            $return = $this->out_raw();
             $return = str_replace($CFG->wwwroot . '/', '', $return);
             
             $controls[] = array('url' => $CFG->wwwroot . '/' . $CFG->admin .

@@ -647,7 +647,7 @@ function prepare_url($url, $stripformparams=false) {
         if (preg_match('/(.*)\/([A-Za-z0-9-_]*\.php)$/', $PAGE->url->out(true), $matches)) {
             return $matches[1] . "/$output";
         } else if ($output == '') {
-            return $PAGE->url->out(false, array(), false) . '#';
+            return $PAGE->url->out_raw() . '#';
         } else {
             throw new coding_exception('Unrecognied URL scheme. Please check the formatting of the URL passed to this function. Absolute URLs are the preferred scheme.');
         }
@@ -2071,7 +2071,7 @@ function print_collapsible_region_start($classes, $id, $caption, $userpref = fal
     $output .= '</div><div id="' . $id . '_inner" class="collapsibleregioninner">';
     $PAGE->requires->js_function_call('new collapsible_region',
             array($id, $userpref, get_string('clicktohideshow'),
-            $OUTPUT->pix_url('t/collapsed')->out(false, null, false), $OUTPUT->pix_url('t/expanded')->out(false, null, false)));
+            $OUTPUT->pix_url('t/collapsed')->out_raw(), $OUTPUT->pix_url('t/expanded')->out_raw()));
 
     if ($return) {
         return $output;
@@ -2475,7 +2475,7 @@ function redirect($url, $message='', $delay=-1) {
     global $OUTPUT, $PAGE, $SESSION, $CFG;
 
     if ($url instanceof moodle_url) {
-        $url = $url->out(false, array(), false);
+        $url = $url->out_raw();
     }
 
     if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {

@@ -66,7 +66,7 @@ class workshop_random_allocator implements workshop_allocator {
         $customdata['workshop'] = $this->workshop;
         $this->mform = new workshop_random_allocator_form($PAGE->url, $customdata);
         if ($this->mform->is_cancelled()) {
-            redirect($PAGE->url->out(false, array(), false));
+            redirect($PAGE->url->out_raw());
         } else if ($settings = $this->mform->get_data()) {
             // process validated data
             if (!confirm_sesskey()) {

@@ -218,7 +218,8 @@ if ($mform->is_cancelled()){
     /// Ensure we redirect back to the category the question is being saved into.
     $returnurl = new moodle_url($returnurl);
     $returnurl->param('category', $fromform->category);
-    $returnurl = $returnurl->out(false, array(), false);
+    // TODO: it is sloppy to pass arounf full URLs through page parameters and some servers do not like that
+    $returnurl = $returnurl->out_raw();
 
     /// Call the appropriate method.
     if ($movecontext) {

@@ -740,7 +740,7 @@ class core_renderer extends renderer_base {
         foreach ($controls as $control) {
             $controlshtml[] = html_writer::tag('a', array('class' => 'icon',
                     'title' => $control['caption'], 'href' => $control['url']),
-                    html_writer::empty_tag('img',  array('src' => $this->pix_url($control['icon'])->out(false, array(), false),
+                    html_writer::empty_tag('img',  array('src' => $this->pix_url($control['icon'])->out_raw(),
                     'alt' => $control['caption'])));
         }
         return html_writer::tag('div', array('class' => 'commands'), implode('', $controlshtml));
@@ -820,7 +820,7 @@ class core_renderer extends renderer_base {
             $plaintitle = strip_tags($bc->title);
             $this->page->requires->js_function_call('new block_hider', array($bc->id, $userpref,
                     get_string('hideblocka', 'access', $plaintitle), get_string('showblocka', 'access', $plaintitle),
-                    $this->pix_url('t/switch_minus')->out(false, array(), false), $this->pix_url('t/switch_plus')->out(false, array(), false)));
+                    $this->pix_url('t/switch_minus')->out_raw(), $this->pix_url('t/switch_plus')->out_raw()));
         }
     }
 

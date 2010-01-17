@@ -999,7 +999,7 @@ class moodle_page {
             if (empty($this->_block_actions_done)) {
                 $this->_block_actions_done = true;
                 if ($this->blocks->process_url_actions($this)) {
-                    redirect($this->url->out(false, array(), false));
+                    redirect($this->url->out_raw());
                 }
             }
             $this->blocks->create_all_block_instances();

@@ -319,7 +319,7 @@ class portfolio_add_button {
         }
         // if we just want a url to redirect to, do it now
         if ($format == PORTFOLIO_ADD_FAKE_URL) {
-            return $url->out(false, array(), false);
+            return $url->out_raw();
         }
 
         if (empty($addstr)) {

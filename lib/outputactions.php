@@ -132,7 +132,7 @@ class popup_action extends component_action {
                 $this->params[$var] = $params[$var];
             }
         }
-        parent::__construct($event, 'openpopup', array('url' => $url->out(false, array(), false), 'name' => $name, 'options' => $this->get_js_options($params)));
+        parent::__construct($event, 'openpopup', array('url' => $url->out_raw(), 'name' => $name, 'options' => $this->get_js_options($params)));
     }
 
     /**
