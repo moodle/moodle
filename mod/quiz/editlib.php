@@ -430,7 +430,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
                 if ($allowdelete && !$quiz->questionsperpage) {
                     echo '<div class="quizpagedelete">';
                     echo '<a title="' . get_string('removeemptypage', 'quiz') . '" href="' .
-                            $pageurl->out_action(array('deleteemptypage' => $i - 1)) .
+                            $pageurl->out(true, array('deleteemptypage' => $i - 1, 'sesskey'=>sesskey())) .
                             '"><img src="' . $OUTPUT->pix_url('t/delete') . '" ' .
                             'class="iconsmall" alt="' . $strremove . '" /></a>';
                     echo '</div>';
@@ -491,7 +491,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
                         $upbuttonclass = 'upwithoutdown';
                     }
                     echo "<a title=\"$strmoveup\" href=\"" .
-                            $pageurl->out_action(array('up' => $question->id)) . "\"><img
+                            $pageurl->out(true, array('up' => $question->id, 'sesskey'=>sesskey())) . "\"><img
                              src=\"" . $OUTPUT->pix_url('t/up') . "\" class=\"iconsmall
                             $upbuttonclass\" alt=\"$strmoveup\" /></a>";
                 }
@@ -500,7 +500,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
             if ($count < $lastindex - 1) {
                 if (!$hasattempts) {
                     echo "<a title=\"$strmovedown\" href=\"" .
-                            $pageurl->out_action(array('down' => $question->id)) . "\"><img
+                            $pageurl->out(true, array('down' => $question->id, 'sesskey'=>sesskey())) . "\"><img
                             src=\"" . $OUTPUT->pix_url('t/down') . "\" class=\"iconsmall\"" .
                             " alt=\"$strmovedown\" /></a>";
                 }
@@ -509,7 +509,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
             // remove from quiz, not question delete.
                 if (!$hasattempts) {
                     echo "<a title=\"$strremove\" href=\"" .
-                            $pageurl->out_action(array('remove' => $question->id)) . "\">
+                            $pageurl->out(true, array('remove' => $question->id, 'sesskey'=>sesskey())) . "\">
                             <img src=\"" . $OUTPUT->pix_url('t/delete') . "\" " .
                             "class=\"iconsmall\" alt=\"$strremove\" /></a>";
                 }
@@ -1048,8 +1048,10 @@ class quiz_question_bank_view extends question_bank_view {
 
     public function add_to_quiz_url($questionid) {
         global $CFG;
-        return $CFG->wwwroot . '/mod/quiz/edit.php?' . $this->baseurl->get_query_string() .
-                '&amp;addquestion=' . $questionid . '&amp;sesskey=' . sesskey();
+        $params = $this->baseurl->params();
+        $params['addquestion'] = $questionid;
+        $params['sesskey'] = sesskey();
+        return new moodle_url('/mod/quiz/edit.php', $params);
     }
 
     public function display($tabname, $page, $perpage, $sortorder,

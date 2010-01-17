@@ -577,26 +577,30 @@ class list_item {
             } else {
                 $action = $strmoveleft;
             }
-            $this->icons['left'] = $this->image_icon($action, $this->parentlist->pageurl->out_action(array('left'=>$this->id)), 'left');
+            $url = new moodle_url($this->parentlist->pageurl, (array('sesskey'=>sesskey(), 'left'=>$this->id)));
+            $this->icons['left'] = $this->image_icon($action, $url, 'left');
         } else {
             $this->icons['left'] =  $this->image_spacer();
         }
 
         if (!$first) {
-            $this->icons['up'] = $this->image_icon($strmoveup, $this->parentlist->pageurl->out_action(array('moveup'=>$this->id)), 'up');
+            $url = new moodle_url($this->parentlist->pageurl, (array('sesskey'=>sesskey(), 'moveup'=>$this->id)));
+            $this->icons['up'] = $this->image_icon($strmoveup, $url, 'up');
         } else {
             $this->icons['up'] =  $this->image_spacer();
         }
 
         if (!$last) {
-            $this->icons['down'] = $this->image_icon($strmovedown, $this->parentlist->pageurl->out_action(array('movedown'=>$this->id)), 'down');
+            $url = new moodle_url($this->parentlist->pageurl, (array('sesskey'=>sesskey(), 'movedown'=>$this->id)));
+            $this->icons['down'] = $this->image_icon($strmovedown, $url, 'down');
         } else {
             $this->icons['down'] =  $this->image_spacer();
         }
 
         if (!empty($lastitem)) {
             $makechildof = get_string('makechildof', 'question', $lastitem->name);
-            $this->icons['right'] = $this->image_icon($makechildof, $this->parentlist->pageurl->out_action(array('right'=>$this->id)), 'right');
+            $url = new moodle_url($this->parentlist->pageurl, (array('sesskey'=>sesskey(), 'right'=>$this->id)));
+            $this->icons['right'] = $this->image_icon($makechildof, $url, 'right');
         } else {
             $this->icons['right'] =  $this->image_spacer();
         }
@@ -604,8 +608,8 @@ class list_item {
 
     function image_icon($action, $url, $icon) {
         global $OUTPUT;
-        return '<a title="' . $action .'" href="'.$url.'">
-                <img src="' . $OUTPUT->pix_url('t/'.$icon) . '" class="iconsmall" alt="' . $action. '" /></a> ';
+        return '<a title="' . s($action) .'" href="'.$url.'">
+                <img src="' . $OUTPUT->pix_url('t/'.$icon) . '" class="iconsmall" alt="' . s($action). '" /></a> ';
     }
 
     function image_spacer() {

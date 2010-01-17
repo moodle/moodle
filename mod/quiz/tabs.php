@@ -86,7 +86,7 @@ if ($currenttab == 'edit' and isset($mode)) {
         $row[] = new tabobject('editq', "$CFG->wwwroot/mod/quiz/edit.php?cmid=$cm->id", $stredit, $streditingquiz);
         $row[] = new tabobject('reorder', "$CFG->wwwroot/mod/quiz/edit.php?reordertool=1&amp;cmid=$cm->id", get_string('orderandpaging','quiz'), $streditingquiz);
     }
-    //questionbank_navigation_tabs($row, $contexts, $thispageurl->get_query_string());
+    //questionbank_navigation_tabs($row, $contexts, $thispageurl->params());
     $tabs[] = $row;
 
 }

@@ -18,7 +18,7 @@
     $tabs = array();
     $inactive = array();
     $row  = array();
-    questionbank_navigation_tabs($row, $contexts, $thispageurl->get_query_string());
+    questionbank_navigation_tabs($row, $contexts, $thispageurl->params());
     $tabs[] = $row;
 
     print_tabs($tabs, $currenttab, array());

@@ -145,7 +145,8 @@
             }
 
             echo "<hr />";
-            echo $OUTPUT->continue_button("edit.php?".($thispageurl->get_query_string(array('category'=>"{$qformat->category->id},{$qformat->category->contextid}"))));
+            $params = $thispageurl->params() + array('category'=>"{$qformat->category->id},{$qformat->category->contextid}");
+            echo $OUTPUT->continue_button(new moodle_url('edit.php', $params));
             echo $OUTPUT->footer();
             exit;
         }

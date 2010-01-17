@@ -52,8 +52,8 @@ class question_category_list extends moodle_list {
                 $totop = 1;
             }
             $toparent = "0,{$this->context->id}";
-            redirect($CFG->wwwroot.'/question/contextmove.php?'.
-                $this->pageurl->get_query_string(compact('cattomove', 'totop', 'toparent')));
+            $url = new moodle_url('/question/contextmove.php?', $this->pageurl->params() + compact('cattomove', 'totop', 'toparent'));
+            redirect($url);
         }
     }
 }
@@ -64,23 +64,19 @@ class question_category_list_item extends list_item {
     public function set_icon_html($first, $last, &$lastitem){
         global $CFG;
         $category = $this->item;
-        $this->icons['edit']= $this->image_icon(get_string('editthiscategory', 'question'),
-                "{$CFG->wwwroot}/question/category.php?".$this->parentlist->pageurl->get_query_string(array('edit'=>$category->id)), 'edit');
+        $url = new moodle_url('/question/category.php', ($this->parentlist->pageurl->params() + array('edit'=>$category->id)));
+        $this->icons['edit']= $this->image_icon(get_string('editthiscategory', 'question'), $url, 'edit');
         parent::set_icon_html($first, $last, $lastitem);
         $toplevel = ($this->parentlist->parentitem === null);//this is a top level item
         if (($this->parentlist->nextlist !== null) && $last && $toplevel && (count($this->parentlist->items)>1)){
+            $url = new moodle_url($this->parentlist->pageurl, array('movedowncontext'=>$this->id, 'tocontext'=>$this->parentlist->nextlist->context->id, 'sesskey'=>sesskey()));
             $this->icons['down'] = $this->image_icon(
-                get_string('shareincontext', 'question', print_context_name($this->parentlist->nextlist->context)),
-                $this->parentlist->pageurl->out_action(
-                    array('movedowncontext'=>$this->id, 'tocontext'=>$this->parentlist->nextlist->context->id)
-                ), 'down');
+                get_string('shareincontext', 'question', print_context_name($this->parentlist->nextlist->context)), $url, 'down');
         }
         if (($this->parentlist->lastlist !== null) && $first && $toplevel && (count($this->parentlist->items)>1)){
+            $url = new moodle_url($this->parentlist->pageurl, array('moveupcontext'=>$this->id, 'tocontext'=>$this->parentlist->lastlist->context->id, 'sesskey'=>sesskey()));
             $this->icons['up'] = $this->image_icon(
-                get_string('shareincontext', 'question', print_context_name($this->parentlist->lastlist->context)),
-                $this->parentlist->pageurl->out_action(
-                    array('moveupcontext'=>$this->id, 'tocontext'=>$this->parentlist->lastlist->context->id)
-                ), 'up');
+                get_string('shareincontext', 'question', print_context_name($this->parentlist->lastlist->context)), $url, 'up');
         }
     }
     public function item_html($extraargs = array()){
@@ -91,15 +87,14 @@ class question_category_list_item extends list_item {
         $editqestions = get_string('editquestions', 'quiz');
 
         /// Each section adds html to be displayed as part of this list item
-        $questionbankurl = "{$CFG->wwwroot}/question/edit.php?".
-                $this->parentlist->pageurl->get_query_string(array('category'=>"$category->id,$category->contextid"));
+        $questionbankurl = new moodle_url("/question/edit.php", ($this->parentlist->pageurl->params() + array('category'=>"$category->id,$category->contextid")));
         $catediturl = $this->parentlist->pageurl->out(true, array('edit'=>$this->id));
         $item = "<b><a title=\"{$str->edit}\" href=\"$catediturl\">".$category->name ."</a></b> <a title=\"$editqestions\" href=\"$questionbankurl\">".'('.$category->questioncount.')</a>';
 
         $item .= '&nbsp;'. $category->info;
 
         if (count($this->parentlist->records)!=1){ // don't allow delete if this is the last category in this context.
-            $item .=  '<a title="' . $str->delete . '" href="'.$this->parentlist->pageurl->out_action(array('delete'=>$this->id)).'">
+            $item .=  '<a title="' . $str->delete . '" href="'.$this->parentlist->pageurl->out(true, array('delete'=>$this->id, 'sesskey'=>sesskey())).'">
                     <img src="' . $OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt="' .$str->delete. '" /></a>';
         }
 
@@ -475,9 +470,8 @@ class question_category_object {
         if ($oldcat->contextid == $tocontextid) { // not moving contexts
             redirect($this->pageurl);
         } else {
-            redirect($CFG->wwwroot.'/question/contextmove.php?' .
-                    $this->pageurl->get_query_string(array(
-                    'cattomove' => $updateid, 'toparent'=>$newparent)));
+            $url = new moodle_url('/question/contextmove.php', ($this->pageurl->params() + array('cattomove' => $updateid, 'toparent'=>$newparent)));
+            redirect($url);
         }
     }
 

@@ -680,10 +680,11 @@ class question_bank_delete_action_column extends question_bank_action_column_bas
     protected function display_content($question, $rowclasses) {
         if (question_has_capability_on($question, 'edit')) {
             if ($question->hidden) {
-                $this->print_icon('t/restore', $this->strrestore, $this->qbank->base_url()->out_action(array('unhide' => $question->id)));
+                $url = new moodle_url($this->qbank->base_url(), array('unhide' => $question->id, 'sesskey'=>sesskey()));
+                $this->print_icon('t/restore', $this->strrestore, $url);
             } else {
-                $this->print_icon('t/delete', $this->strdelete,
-                        $this->qbank->base_url()->out_action(array('deleteselected' => $question->id, 'q' . $question->id => 1)));
+                $url = new moodle_url($this->qbank->base_url(), array('deleteselected' => $question->id, 'q' . $question->id => 1, 'sesskey'=>sesskey()));
+                $this->print_icon('t/delete', $this->strdelete, $url);
             }
         }
     }
@@ -1298,9 +1299,11 @@ class question_bank_view {
         echo $OUTPUT->paging_bar($pagingbar);
         if ($totalnumber > DEFAULT_QUESTIONS_PER_PAGE) {
             if ($perpage == DEFAULT_QUESTIONS_PER_PAGE) {
-                $showall = '<a href="edit.php?'.$pageurl->get_query_string(array('qperpage'=>1000)).'">'.get_string('showall', 'moodle', $totalnumber).'</a>';
+                $url = new moodle_url('edit.php', ($pageurl->params()+array('qperpage'=>1000)));
+                $showall = '<a href="'.$url.'">'.get_string('showall', 'moodle', $totalnumber).'</a>';
             } else {
-                $showall = '<a href="edit.php?'.$pageurl->get_query_string(array('qperpage'=>DEFAULT_QUESTIONS_PER_PAGE)).'">'.get_string('showperpage', 'moodle', DEFAULT_QUESTIONS_PER_PAGE).'</a>';
+                $url = new moodle_url('edit.php', ($pageurl->params()+array('qperpage'=>DEFAULT_QUESTIONS_PER_PAGE)));
+                $showall = '<a href="'.$url.'">'.get_string('showperpage', 'moodle', DEFAULT_QUESTIONS_PER_PAGE).'</a>';
             }
             echo "<div class='paging'>$showall</div>";
         }
@@ -1509,12 +1512,10 @@ class question_bank_view {
             if ($inuse) {
                 $questionnames .= '<br />'.get_string('questionsinuse', 'quiz');
             }
-            $baseurl = new moodle_url('edit.php');
-            $r = $baseurl->params($this->baseurl->params());
+            $baseurl = new moodle_url('edit.php', $this->baseurl->params());
+            $deleteurl = new moodle_url($baseurl, array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist), 'sesskey'=>sesskey()));
 
-            echo $OUTPUT->confirm(get_string("deletequestionscheck", "quiz", $questionnames),
-                        $baseurl->out_action(array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist))),
-                        $baseurl);
+            echo $OUTPUT->confirm(get_string("deletequestionscheck", "quiz", $questionnames), $deleteurl, $baseurl);
 
             return true;
         }

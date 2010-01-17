@@ -1420,7 +1420,7 @@ function block_add_block_ui($page, $output) {
     }
     asort($menu, SORT_LOCALE_STRING);
 
-    $actionurl = $page->url->out_action();
+    $actionurl = new moodle_url($page->url, array('sesskey'=>sesskey()));
     $select = html_select::make_popup_form($actionurl, 'bui_addblock', $menu, 'add_block');
     $select->nothinglabel = get_string('adddots');
 

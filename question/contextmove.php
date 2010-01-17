@@ -22,7 +22,7 @@
 
 
 
-    $onerrorurl = $CFG->wwwroot.'/question/category.php?'.$thispageurl->get_query_string();
+    $onerrorurl = new moodle_url('/question/category.php', $thispageurl->params());
     list($toparent, $contextto) = explode(',', $toparent);
     if (!empty($toparent)){//not top level category, make it a child of $toparent
         if (!$toparent = $DB->get_record('question_categories', array('id' => $toparent))){
@@ -91,7 +91,7 @@
                                     'fromcoursefilesid', 'tocoursefilesid'));
     if ($contextmoveform->is_cancelled()){
         $thispageurl->remove_params('cattomove', 'toparent', 'totop');
-        redirect($CFG->wwwroot."/question/category.php?".$thispageurl->get_query_string());
+        redirect(new moodle_url("/question/category.php".$thispageurl->params()));
     }elseif ($moveformdata = $contextmoveform->get_data()) {
         if (isset($moveformdata->urls) && is_array($moveformdata->urls)){
             check_dir_exists($CFG->dataroot."/$tocoursefilesid/", true);
@@ -183,7 +183,8 @@
         //finally set the new parent id
         $DB->update_record("question_categories", $cat);
         $thispageurl->remove_params('cattomove', 'toparent', 'totop');
-        redirect($CFG->wwwroot."/question/category.php?".$thispageurl->get_query_string(array('cat'=>"{$cattomove->id},{$contextto->id}")));
+        $url = new moodle_url('/question/category.php', ($thispageurl->params() + array('cat'=>"{$cattomove->id},{$contextto->id}")));
+        redirect($url);
     }
 
     $streditingcategories = get_string('editcategories', 'quiz');

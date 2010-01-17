@@ -249,11 +249,6 @@ function qualified_me() {
  *     - output the url without any get params
  *     - and output the params as hidden fields to be output within a form
  *
- * One important usage note is that data passed to methods out, out_action, get_query_string and
- * hidden_params_out affect what is returned by the function and do not change the data stored in the object.
- * This is to help with typical usage of these objects where one object is used to output urls
- * in many places in a page.
- *
  * @link http://docs.moodle.org/en/Development:lib/weblib.php_moodle_url See short write up here
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package moodlecore
@@ -467,13 +462,14 @@ class moodle_url {
 
     /**
      * Get the params as as a query string.
+     * This method should not be used outside of this method.
      *
+     * @param boolean $escaped Use &amp; as params separator instead of plain &
      * @param array $overrideparams params to add to the output params, these
      *      override existing ones with the same name.
-     * @param boolean $escaped Use &amp; as params separator instead of plain &
      * @return string query string that can be added to a url.
      */
-    public function get_query_string(array $overrideparams = null, $escaped = true) {
+    public function get_query_string($escaped = true, array $overrideparams = null) {
         $arr = array();
         $params = $this->merge_overrideparams($overrideparams);
         foreach ($params as $key => $val) {
@@ -511,7 +507,7 @@ class moodle_url {
 
         $uri = $this->out_omit_querystring();
 
-        $querystring = $this->get_query_string($overrideparams, $escaped);
+        $querystring = $this->get_query_string($escaped, $overrideparams);
         if ($querystring) {
             $uri .= '?' . $querystring;
         }
@@ -533,21 +529,6 @@ class moodle_url {
         $uri .= $this->port ? ':'.$this->port : '';
         $uri .= $this->path ? $this->path : '';
         return $uri;
-    }
-
-    /**
-     * Output action url with sesskey
-     *
-     * Adds sesskey and overriderparams then calls {@link out()}
-     * @see out()
-     *
-     * @param array $overrideparams Allows you to override params
-     * @return string url
-     */
-    public function out_action(array $overrideparams = null) {
-        $overrideparams = (array)$overrideparams;
-        $overrideparams = array('sesskey'=> sesskey()) + $overrideparams;
-        return $this->out(true, $overrideparams);
     }
 
     /**

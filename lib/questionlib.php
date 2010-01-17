@@ -874,13 +874,13 @@ function question_move_questions_to_category($questionids, $newcategory) {
  * @param question_edit_contexts $contexts object representing contexts available from this context
  * @param string $querystring to append to urls
  * */
-function questionbank_navigation_tabs(&$row, $contexts, $querystring) {
+function questionbank_navigation_tabs(&$row, $contexts, array $params) {
     global $CFG, $QUESTION_EDITTABCAPS;
     $tabs = array(
-            'questions' =>array("$CFG->wwwroot/question/edit.php?$querystring", get_string('questions', 'quiz'), get_string('editquestions', 'quiz')),
-            'categories' =>array("$CFG->wwwroot/question/category.php?$querystring", get_string('categories', 'quiz'), get_string('editqcats', 'quiz')),
-            'import' =>array("$CFG->wwwroot/question/import.php?$querystring", get_string('import', 'quiz'), get_string('importquestions', 'quiz')),
-            'export' =>array("$CFG->wwwroot/question/export.php?$querystring", get_string('export', 'quiz'), get_string('exportquestions', 'quiz')));
+            'questions' =>array(new moodle_url('/question/edit.php', $params), get_string('questions', 'quiz'), get_string('editquestions', 'quiz')),
+            'categories' =>array(new moodle_url('/question/category.php', $params), get_string('categories', 'quiz'), get_string('editqcats', 'quiz')),
+            'import' =>array(new moodle_url('/question/import.php', $params), get_string('import', 'quiz'), get_string('importquestions', 'quiz')),
+            'export' =>array(new moodle_url('/question/export.php', $params), get_string('export', 'quiz'), get_string('exportquestions', 'quiz')));
     foreach ($tabs as $tabname => $tabparams){
         if ($contexts->have_one_edit_tab_cap($tabname)) {
             $row[] = new tabobject($tabname, $tabparams[0], $tabparams[1], $tabparams[2]);
