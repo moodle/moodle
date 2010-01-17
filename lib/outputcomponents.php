@@ -434,7 +434,7 @@ class html_writer {
      * @param array $options associative array value=>label ex.:
      *                array(1=>'One, 2=>Two)
      *              it is also possible to specify optgroup as complex label array ex.:
-     *                array(array('Odd'=>array(1=>'One', 3=>'Three)), array('Even'=>array(2=>'Two'))) 
+     *                array(array('Odd'=>array(1=>'One', 3=>'Three)), array('Even'=>array(2=>'Two')))
      *                array(1=>'One', '--1uniquekey'=>array('More'=>array(2=>'Two', 3=>'Three')))
      * @param string $name name of select element
      * @param string|array $selected value or arary of values depending on multiple attribute
@@ -455,7 +455,7 @@ class html_writer {
         } else if (is_string($nothing) and $nothing !== '') {
             // BC
             $options = array(''=>$nothing) + $options;
-        } 
+        }
 
         // we may accept more values if multiple attribute specified
         $selected = (array)$selected;
@@ -530,7 +530,7 @@ class html_writer {
         }
 
         $output = '';
-        foreach ($params as $key => $val) {
+        foreach ($params as $key => $value) {
             $attributes = array('type'=>'hidden', 'name'=>$key, 'value'=>$value);
             $output .= self::empty_tag('input', $attributes)."\n";
         }
