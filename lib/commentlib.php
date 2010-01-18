@@ -481,7 +481,7 @@ EOD;
             $newcmt->time = userdate($now, get_string('strftimerecent', 'langconfig'));
             $newcmt->username = fullname($USER);
             $newcmt->content = format_text($newcmt->content);
-            $newcmt->avatar = $OUTPUT->user_picture($user, array('size'=>16));
+            $newcmt->avatar = $OUTPUT->user_picture($USER, array('size'=>16));
             return $newcmt;
         } else {
             throw new comment_exception('dbupdatefailed');
