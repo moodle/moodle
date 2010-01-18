@@ -907,7 +907,8 @@ class required_js extends linked_requirement {
     }
 
     public function get_html() {
-        return ajax_get_link_to_script($this->url);
+        $attributes = array('type'=>'text/javascript', 'src'=>$this->url);
+        return html_writer::tag('script', $attributes, '') . "\n";
     }
 
     /**
@@ -1274,15 +1275,6 @@ class required_event_handler extends required_js_code {
         }
         return $output . ");\n";
     }
-}
-
-/**
- * Return the HTML required to link to a JavaScript file.
- * @param $url the URL of a JavaScript file.
- * @return string the required HTML.
- */
-function ajax_get_link_to_script($url) {
-    return '<script type="text/javascript"  src="' . $url . '"></script>' . "\n";
 }
 
 
