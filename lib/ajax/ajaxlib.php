@@ -57,7 +57,17 @@ class page_requirements_manager {
     protected $stringsforjs = array();
     protected $requiredjscode = array();
 
-    protected $themestylesheets = array();
+    /**
+     * Theme sheets, initialised only from core_renderer
+     * @var array of moodle_url
+     */
+    protected $css_theme_urls = array();
+    /**
+     * List of custom theme sheets, these are strongly discouraged!
+     * Useful mostly only for CSS submitted by teachers that is not part of the theme.
+     * @var array of moodle_url
+     */
+    protected $css_urls = array();
 
     protected $variablesinitialised = array('mstr' => 1); // 'mstr' is special. See string_for_js.
 
@@ -295,7 +305,7 @@ class page_requirements_manager {
 
     /**
      * Ensure that the specified YUI3 library file, and all its required dependancies,
-     * are laoded automatically on this page.
+     * are loaded automatically on this page.
      *
      * @param string|array $libname the name of the YUI3 library you require. For example 'overlay'.
      * @return void
@@ -348,42 +358,41 @@ class page_requirements_manager {
      * Even if a particular style sheet is requested more than once, it will only
      * be linked to once.
      *
-     * @param string $stylesheet The path to the .css file, relative to
-     *      $CFG->dirroot / $CFG->wwwroot. No leading slash. For example
-     *      'mod/mymod/styles.css';
-     * @param boolean $fullurl This parameter is intended for internal use only.
-     *      (If true, $stylesheet is treaded as a full URL, not relative $CFG->wwwroot.)
+     * Please note sue of this feature is strongly discouraged,
+     * it is suitable only for places where CSS is submitted directly by teachers.
+     * (Students must not be allowed to submit any external CSS because it may
+     * contain embedded javascript!). Example of correct use is mod/data.
+     *
+     * @param string $stylesheet The path to the .css file, relative to $CFG->wwwroot.
+     *   For example:
+     *      $PAGE->requires->css('mod/data/css.php?d='.$data->id);
      */
-    public function css($stylesheet, $fullurl = false) {
+    public function css($stylesheet) {
         global $CFG;
-        if (!$fullurl) {
-            if (!file_exists($CFG->dirroot . '/' . strtok($stylesheet, '?'))) {
-                throw new coding_exception('Attempt to require a CSS file that does not exist.', $stylesheet);
-            }
-            $url = $CFG->httpswwwroot . '/' . $stylesheet;
-        } else {
-            $url = $stylesheet;
+
+        if ($this->headdone) {
+            throw new coding_exception('Cannot require a CSS file after &lt;head> has been printed.', $stylesheet);
         }
 
-        if (isset($this->linkedrequirements[$url])) {
-            // already required, ignore it
-            return;
+        if ($stylesheet instanceof moodle_url) {
+            // ok
+        } else if (strpos($stylesheet, '/') === 0) {
+            $stylesheet = new moodle_url($CFG->httpswwwroot.$stylesheet);
         } else {
-            if ($this->headdone) {
-                throw new coding_exception('Cannot require a CSS file after &lt;head> has been printed.', $stylesheet);
-            }
-            $this->linkedrequirements[$url] = new required_css($this, $url);
+            throw new coding_exception('Invalid stylesheet parameter.', $stylesheet);
         }
+
+        $this->css_urls[$stylesheet->out()] = $stylesheet; // overrides
     }
 
     /**
      * Add theme stylkesheet to page - do not use from plugin code,
-     * this shoudl be called only from the core renderer!
+     * this should be called only from the core renderer!
      * @param moodle_url $stylesheet
      * @return void
      */
-    public function themecss(moodle_url $stylesheet) {
-        $this->themestylesheets[] = $stylesheet;
+    public function css_theme(moodle_url $stylesheet) {
+        $this->css_theme_urls[] = $stylesheet;
     }
 
     /**
@@ -632,8 +641,8 @@ class page_requirements_manager {
                 $skinurl = $this->yui2loader->base . 'assets/skins/sam/skin.css';
             }
             // please note this is a temporary hack until we fully migrate to later YUI3 that has all the widgets
-            // we can not use moodle_url because the url fomrat for combo loader is "a bit" non-standard
-            $code .= "\n".'<link rel="stylesheet" type="text/css" href="'.$skinurl.'" />'."\n";
+            $attributes = array('rel'=>'stylesheet', 'type'=>'text/css', 'href'=>$skinurl);
+            $code .= "\n" . html_writer::empty_tag('link', $attributes) . "\n";
         }
         $code = str_replace('&amp;', '&', $code);
         $code = str_replace('&', '&amp;', $code);
@@ -644,15 +653,24 @@ class page_requirements_manager {
      * Returns html tags needed for inclusion of theme CSS
      * @return string
      */
-    protected function themecss_code() {
+    protected function get_css_code() {
+        // First of all the theme CSS, then any custom CSS
+        // Please note custom CSS is strongly discouraged,
+        // because it can not be overridden by themes!
+        // It is suitable only for things like mod/data which accepts CSS from teachers.
+
         $code = '';
-        $firstthemelink = true;
-        foreach ($this->themestylesheets as $sheet) {
-             // this id is needed for YUI3 loader so that we may override
-             // YUI CSS in our themes
-            $id = $firstthemelink ? 'id="firstthemesheet"' : '';
-            $code .= '<link rel="stylesheet" type="text/css" href="' . $sheet . '" '.$id.'/>' . "\n";;
+        $attributes = array('id'=>'firstthemesheet', 'rel'=>'stylesheet', 'type'=>'text/css');
+
+        $urls = $this->css_theme_urls + $this->css_urls;
+
+        foreach ($urls as $url) {
+            $attributes['href'] = $url;
+            $code .= html_writer::empty_tag('link', $attributes) . "\n";
+            // this id is needed in first sheet only so that theme may override YUI sheets laoded on the fly
+            unset($attributes['id']);
         }
+
         return $code;
     }
 
@@ -668,12 +686,12 @@ class page_requirements_manager {
         // note: the $page and $output are not stored here because it would
         // create circular references in memory which prevents garbage collection
         $this->setup_core_javascript($page, $output);
-        // yui3 JS and CSS is always laoded first - it is cached in browser
+        // yui3 JS and CSS is always loaded first - it is cached in browser
         $output = $this->get_yui3lib_headcode();
-        // BC: load basic YUI2 for now, yui2 things should be laoded as yui3 modules
+        // BC: load basic YUI2 for now, yui2 things should be loaded as yui3 modules
         $output .= $this->get_yui2lib_code();
         // now theme CSS, it must be loaded before the
-        $output .= $this->themecss_code();
+        $output .= $this->get_css_code();
         $output .= $this->get_linked_resources_code(self::WHEN_IN_HEAD);
         $js = $this->get_javascript_code(self::WHEN_IN_HEAD);
         $output .= ajax_generate_script_tag($js);
@@ -734,7 +752,7 @@ class page_requirements_manager {
         Y.on('domready', function() {
             $ondomreadyjs
         });
-        // TODO: call user js functions from here so that they have the proper Y
+        // TODO: call user js functions from here so that they have the proper initialised Y
     });
 EOD;
 
@@ -952,34 +970,6 @@ class required_js extends linked_requirement {
             throw new coding_exception('Too late to ask for a JavaScript file to be linked to from the top of &lt;body>.');
         }
         $this->when = page_requirements_manager::WHEN_TOP_OF_BODY;
-    }
-}
-
-
-/**
- * A subclass of {@link linked_requirement} to represent a required CSS file.
- * Of course, all links to CSS files must go in the <head> section of the HTML.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- */
-class required_css extends linked_requirement {
-    /**
-     * Constructor. Normally instances of this class should not be created directly.
-     * Client code should create them via the page_requirements_manager
-     * method {@link page_requirements_manager::css()}
-     *
-     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
-     * @param string $url The URL of the CSS file we are linking to.
-     */
-    public function __construct(page_requirements_manager $manager, $url) {
-        parent::__construct($manager, $url);
-        $this->when = page_requirements_manager::WHEN_IN_HEAD;
-    }
-
-    public function get_html() {
-        return '<link rel="stylesheet" type="text/css" href="' . $this->url . '" />' . "\n";;
     }
 }
 

@@ -333,7 +333,7 @@ class core_renderer extends renderer_base {
         // any other custom CSS can not be overridden via themes and is highly discouraged
         $urls = $this->page->theme->css_urls($this->page);
         foreach ($urls as $url) {
-            $this->page->requires->themecss($url);
+            $this->page->requires->css_theme($url);
         }
 
         // Get the theme javascript head and footer
