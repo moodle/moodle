@@ -138,7 +138,7 @@ class block_admin_tree extends block_base {
 
         if ($this->tempcontent !== '') {
             $this->page->requires->yui2_lib('event');
-            $this->page->requires->js('blocks/admin_tree/admintree.js');
+            $this->page->requires->js('/blocks/admin_tree/admintree.js');
             $this->page->requires->js_function_call('admin_tree.init',
                     array($this->divcounter - 1, $this->expandnodes,
                     $OUTPUT->pix_url('i/open'), $OUTPUT->pix_url('i/closed'),

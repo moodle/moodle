@@ -137,7 +137,7 @@ if (!empty($errorstring)) {
 $tagform->display();
 
 if (ajaxenabled()) {
-    $PAGE->requires->js('tag/tag.js');
+    $PAGE->requires->js('/tag/tag.js');
     $PAGE->requires->js_function_call('init_tag_autocomplete')->on_dom_ready();
 }
 echo $OUTPUT->footer();

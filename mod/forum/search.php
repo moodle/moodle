@@ -271,7 +271,7 @@ function forum_print_big_search_form($course) {
 
     echo $OUTPUT->box_start('generalbox boxaligncenter');
 
-    echo $PAGE->requires->js('mod/forum/forum.js')->asap();
+    echo $PAGE->requires->js('/mod/forum/forum.js')->asap();
 
     echo '<form id="searchform" action="search.php" method="get">';
     echo '<table cellpadding="10" class="searchbox" id="form">';

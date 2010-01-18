@@ -60,7 +60,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
 
         $repojs = repository_get_client($context, $client_id, '*', FILE_EXTERNAL);
 
-        $PAGE->requires->js('lib/form/url.js');
+        $PAGE->requires->js('/lib/form/url.js');
         $str .= $repojs;
         $str .= <<<EOD
 <button id="filepicker-btn-{$client_id}" style="display:none" onclick="return url_launch_filepicker('$id', '$client_id', 0)">$straddlink</button>

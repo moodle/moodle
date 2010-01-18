@@ -5012,7 +5012,7 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
         $link = '';
 
         if ($fakelink) {
-            $PAGE->requires->js('mod/forum/forum.js');
+            $PAGE->requires->js('/mod/forum/forum.js');
             $PAGE->requires->js_function_call('forum_produce_subscribe_link', Array($forum->id, $backtoindexlink, $linktext, $linktitle));
             $link = "<noscript>";
         }
@@ -5067,7 +5067,7 @@ function forum_get_tracking_link($forum, $messages=array(), $fakelink=true) {
 
     $link = '';
     if ($fakelink) {
-        $PAGE->requires->js('mod/forum/forum.js');
+        $PAGE->requires->js('/mod/forum/forum.js');
         $PAGE->requires->js_function_call('forum_produce_tracking_link', Array($forum->id, $linktext, $linktitle));
         // use <noscript> to print button in case javascript is not enabled
         $link .= '<noscript>';

@@ -184,7 +184,7 @@ EOD;
         $PAGE->requires->yui2_lib('animation');
         $PAGE->requires->yui2_lib('json');
         $PAGE->requires->yui2_lib('connection');
-        $PAGE->requires->js('comment/comment.js')->in_head();
+        $PAGE->requires->js('/comment/comment.js')->in_head();
         $PAGE->requires->string_for_js('addcomment', 'moodle');
         $PAGE->requires->string_for_js('deletecomment', 'moodle');
         $PAGE->requires->string_for_js('comments', 'moodle');

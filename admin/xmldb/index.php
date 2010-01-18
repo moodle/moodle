@@ -85,13 +85,13 @@
                             $script = $CFG->admin . '/xmldb/actions/' . $action . '/' . $action . '.js';
                             $file = $CFG->dirroot . '/' . $script;
                             if (file_exists($file) && is_readable($file)) {
-                                $PAGE->requires->js($script);
+                                $PAGE->requires->js('/'.$script);
                             } else if ($postaction) {
                             /// Try to load the postaction javascript if exists
                                 $script = $CFG->admin . '/xmldb/actions/' . $postaction . '/' . $postaction . '.js';
                                 $file = $CFG->dirroot . '/' . $script;
                                 if (file_exists($file) && is_readable($file)) {
-                                    $PAGE->requires->js($script);
+                                    $PAGE->requires->js('/'.$script);
                                 }
                             }
                         }

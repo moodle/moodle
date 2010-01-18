@@ -48,7 +48,7 @@ add_to_log($course->id, 'folder', 'view', 'view.php?id='.$cm->id, $folder->id, $
 $PAGE->set_url('/mod/folder/view.php', array('id' => $cm->id));
 $PAGE->requires->yui2_lib('json');
 $PAGE->requires->yui2_lib('treeview');
-$PAGE->requires->js('mod/folder/functions.js');
+$PAGE->requires->js('/mod/folder/functions.js');
 
 $PAGE->set_title($course->shortname.': '.$folder->name);
 $PAGE->set_heading($course->fullname);

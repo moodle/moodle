@@ -81,7 +81,7 @@ class block_global_navigation_tree extends block_tree {
 
     function get_required_javascript() {
         $this->_initialise_dock();
-        $this->page->requires->js('blocks/global_navigation_tree/navigation.js');
+        $this->page->requires->js('/blocks/global_navigation_tree/navigation.js');
         user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
     }
 
@@ -96,7 +96,7 @@ class block_global_navigation_tree extends block_tree {
         }
         $this->page->requires->yui2_lib('dom');
         // JS for navigation moved to the standard theme, the code will probably have to depend on the actual page structure
-        // $this->page->requires->js('lib/javascript-navigation.js');
+        // $this->page->requires->js('/lib/javascript-navigation.js');
         // Navcount is used to allow us to have multiple trees although I dont' know why
         // you would want to trees the same
 

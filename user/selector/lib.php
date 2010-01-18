@@ -108,7 +108,7 @@ abstract class user_selector_base {
         $PAGE->requires->yui2_lib('json');
         $PAGE->requires->yui2_lib('connection');
         $PAGE->requires->yui2_lib('datasource');
-        $PAGE->requires->js('user/selector/script.js');
+        $PAGE->requires->js('/user/selector/script.js');
     }
 
     /**

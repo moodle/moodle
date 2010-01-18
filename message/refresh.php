@@ -76,7 +76,7 @@ if ($messages ) {
     }
 }
 
-$PAGE->requires->js('message/message.js')->in_head();
+$PAGE->requires->js('/message/message.js')->in_head();
 $PAGE->requires->js_function_call('refresh_parent_messages_frame');
 $PAGE->requires->data_for_js('chatmessages', Array('msgcount'=>count($jsmessages), 'msg'=>$jsmessages))->in_head();
 

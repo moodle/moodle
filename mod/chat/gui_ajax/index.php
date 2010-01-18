@@ -90,7 +90,7 @@ $PAGE->requires->string_for_js('modulename', 'chat');
 $PAGE->requires->string_for_js('beep', 'chat');
 $PAGE->requires->string_for_js('talk', 'chat');
 
-$PAGE->requires->js('mod/chat/gui_ajax/script.js');
+$PAGE->requires->js('/mod/chat/gui_ajax/script.js');
 $PAGE->requires->yui2_lib('animation');
 
 $PAGE->add_body_class('yui-skin-sam');

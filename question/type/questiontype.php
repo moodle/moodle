@@ -866,10 +866,10 @@ class default_questiontype {
         $plugindirrel = 'question/type/' . $this->name();
 
         if (file_exists($plugindir . '/script.js')) {
-            $PAGE->requires->js($plugindirrel . '/script.js');
+            $PAGE->requires->js('/' . $plugindirrel . '/script.js');
         }
         if (file_exists($plugindir . '/script.php')) {
-            $PAGE->requires->js($plugindirrel . '/script.php');
+            $PAGE->requires->js('/' . $plugindirrel . '/script.php');
         }
     }
 

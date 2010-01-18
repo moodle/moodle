@@ -285,7 +285,7 @@ function print_user_entry($user, $keywords, $count) {
 
 function print_spamcleaner_javascript()  {
     global $PAGE;
-    $PAGE->requires->js('admin/report/spamcleaner/spamcleaner.js');
+    $PAGE->requires->js('/admin/report/spamcleaner/spamcleaner.js');
     $strings = Array('spaminvalidresult','spamdeleteallconfirm','spamcannotdelete','spamdeleteconfirm');
     $PAGE->requires->strings_for_js($strings, 'report_spamcleaner');
     $PAGE->requires->data_for_js('spamcleaner', Array('me'=>me()));

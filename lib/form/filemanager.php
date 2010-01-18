@@ -46,8 +46,8 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
         }
         parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
-        $PAGE->requires->js('repository/filepicker.js');
-        $PAGE->requires->js('lib/form/filemanager.js');
+        $PAGE->requires->js('/repository/filepicker.js');
+        $PAGE->requires->js('/lib/form/filemanager.js');
     }
 
     function setName($name) {

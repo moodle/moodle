@@ -89,7 +89,7 @@ $bodytag .= 'currTextarea = document.getElementById(\'tempform\').template;';
 $bodytag .= '" ';
 
 $PAGE->navbar->add(get_string($mode,'data'));
-$PAGE->requires->js('mod/data/data.js');
+$PAGE->requires->js('/mod/data/data.js');
 $PAGE->set_title($data->name);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($data->name));

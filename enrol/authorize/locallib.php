@@ -70,7 +70,7 @@ function authorize_print_orders($courseid, $userid) {
     if ($canmanagepayments) {
         $popupmenu .= '<br />';
         $checkbox = html_select_option::make_checkbox(1, $userid == $USER->id, get_string('mypaymentsonly', 'enrol_authorize'));
-        $PAGE->requires->js('enrol/authorize/authorize.js');
+        $PAGE->requires->js('/enrol/authorize/authorize.js');
         $checkbox->add_action('click', 'authorize_jump_to_mypayments', array('userid' => $USER->id, 'status' => $status));
         $popupmenu .= $OUTPUT->checkbox($checkbox, 'showonlymy');
     }

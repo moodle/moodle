@@ -161,8 +161,8 @@
                 $PAGE->requires->yui2_lib('dragdrop');
                 $PAGE->requires->yui2_lib('connection');
                 $PAGE->requires->yui2_lib('selector');
-                $PAGE->requires->js('lib/ajax/block_classes.js');
-                $PAGE->requires->js('lib/ajax/section_classes.js');
+                $PAGE->requires->js('/lib/ajax/block_classes.js');
+                $PAGE->requires->js('/lib/ajax/section_classes.js');
 
                 // Okay, global variable alert. VERY UGLY. We need to create
                 // this object here before the <blockname>_print_block()
@@ -179,7 +179,7 @@
     $completion = new completion_info($course);
     if ($completion->is_enabled() && ajaxenabled()) {
         $PAGE->requires->yui2_lib('connection');
-        $PAGE->requires->js('course/completion.js')->in_head();
+        $PAGE->requires->js('/course/completion.js')->in_head();
         $PAGE->requires->js_function_call('completion_init')->on_dom_ready();
         $PAGE->requires->data_for_js('completion_strsaved', get_string('saved', 'completion'));
         $PAGE->requires->data_for_js('completion_strtitley', get_string('completion-title-manual-y', 'completion'));

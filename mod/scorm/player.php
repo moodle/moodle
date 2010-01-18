@@ -164,9 +164,9 @@
     $PAGE->set_button($exitlink);
 
     echo $PAGE->requires->data_for_js('scormplayerdata', Array('cwidth'=>$scorm->width,'cheight'=>$scorm->height))->in_head();
-    echo $PAGE->requires->js('mod/scorm/request.js')->in_head();
-    echo $PAGE->requires->js('mod/scorm/loaddatamodel.php?id='.$cm->id.$scoidstr.$modestr.$attemptstr)->in_head();
-    echo $PAGE->requires->js('mod/scorm/rd.js')->in_head();
+    echo $PAGE->requires->js('/mod/scorm/request.js')->in_head();
+    echo $PAGE->requires->js('/mod/scorm/loaddatamodel.php?id='.$cm->id.$scoidstr.$modestr.$attemptstr)->in_head();
+    echo $PAGE->requires->js('/mod/scorm/rd.js')->in_head();
 
     echo $OUTPUT->header();
 
@@ -313,7 +313,7 @@
             $name = 'scorm_'.$name;
 
             echo $PAGE->requires->js_function_call('scorm_resize')->asap();
-            echo $PAGE->requires->js('mod/scorm/player.js')->asap();
+            echo $PAGE->requires->js('/mod/scorm/player.js')->asap();
             echo $PAGE->requires->js_function_call('scorm_openpopup', Array("loadSCO.php?id=".$cm->id.$scoidpop, p($name), p($scorm->options), p($scorm->width), p($scorm->height)))->asap();
             ?>
                     <noscript>

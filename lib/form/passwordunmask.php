@@ -26,7 +26,7 @@ class MoodleQuickForm_passwordunmask extends MoodleQuickForm_password {
             $id = $this->getAttribute('id');
             $unmask = get_string('unmaskpassword', 'form');
             $unmaskjs = $PAGE->requires->data_for_js('punmask',Array('id'=>$id, 'unmaskstr'=>$unmask))->asap();
-            $unmaskjs .= $PAGE->requires->js('lib/form/passwordunmask.js')->asap();
+            $unmaskjs .= $PAGE->requires->js('/lib/form/passwordunmask.js')->asap();
             return $this->_getTabs() . '<input' . $this->_getAttrString($this->_attributes) . ' /><div class="unmask" id="'.$id.'unmaskdiv"></div>'.$unmaskjs;
         }
     } //end func toHtml

@@ -80,7 +80,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         }
 
         $client_id = uniqid();
-        $PAGE->requires->js('lib/form/filepicker.js');
+        $PAGE->requires->js('/lib/form/filepicker.js');
 
         $args = new stdclass;
         // need these three to filter repositories list

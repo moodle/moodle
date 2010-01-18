@@ -933,7 +933,7 @@ class assignment_base {
         echo $extra_javascript;
 
         echo $PAGE->requires->data_for_js('assignment', Array('nextid'=>$nextid, 'userid'=>$userid))->asap();
-        echo $PAGE->requires->js('mod/assignment/assignment.js')->asap();
+        echo $PAGE->requires->js('/mod/assignment/assignment.js')->asap();
 
         echo '<table cellspacing="0" class="feedback '.$subtype.'" >';
 

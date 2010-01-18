@@ -34,7 +34,7 @@ $PAGE->requires->yui2_lib('event');
 $PAGE->requires->yui2_lib('animation');
 $PAGE->requires->yui2_lib('json');
 $PAGE->requires->yui2_lib('connection');
-$PAGE->requires->js('comment/admin.js');
+$PAGE->requires->js('/comment/admin.js');
 
 $action     = optional_param('action', '', PARAM_ALPHA);
 $commentid  = optional_param('commentid', 0, PARAM_INT);

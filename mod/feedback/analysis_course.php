@@ -144,7 +144,7 @@ if ($courseitemfilter > 0) {
     echo '<input type="hidden" name="courseitemfilter" value="'.$courseitemfilter.'" />';
     echo '<input type="hidden" name="courseitemfiltertyp" value="'.$courseitemfiltertyp.'" />';
     echo '<input type="hidden" name="courseid" value="'.$courseid.'" />';
-    echo $PAGE->requires->js('mod/feedback/feedback.js')->asap();
+    echo $PAGE->requires->js('/mod/feedback/feedback.js')->asap();
     $sql = 'select c.id, c.shortname from {course} c, '.
                                           '{feedback_value} fv, {feedback_item} fi '.
                                           'where c.id = fv.course_id and fv.item = fi.id '.

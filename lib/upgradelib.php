@@ -1106,7 +1106,7 @@ function print_upgrade_part_end($plugin, $installation, $verbose) {
  */
 function upgrade_get_javascript() {
     global $PAGE;
-    $PAGE->requires->js('lib/javascript-static.js')->at_top_of_body();
+    $PAGE->requires->js('/lib/javascript-static.js')->at_top_of_body();
     $PAGE->requires->js_function_call('repeatedly_scroll_to_end')->at_top_of_body();
     $PAGE->requires->js_function_call('cancel_scroll_to_end')->after_delay(1);
 }

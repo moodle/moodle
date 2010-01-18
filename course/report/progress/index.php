@@ -105,7 +105,7 @@ if($csv) {
 
     if($svgcleverness) {
         $PAGE->requires->yui2_lib('event');
-        $PAGE->requires->js('course/report/progress/textrotate.js');
+        $PAGE->requires->js('/course/report/progress/textrotate.js');
     }
 
     // Handle groups (if enabled)

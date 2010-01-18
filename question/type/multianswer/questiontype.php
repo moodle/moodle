@@ -307,8 +307,8 @@ class embedded_cloze_qtype extends default_questiontype {
         // The regex will recognize text snippets of type {#X}
         // where the X can be any text not containg } or white-space characters.
 
-        echo $PAGE->requires->js('lib/overlib/overlib.js')->asap();
-        echo $PAGE->requires->js('lib/overlib/overlib_cssstyle.js')->asap();
+        echo $PAGE->requires->js('/lib/overlib/overlib.js')->asap();
+        echo $PAGE->requires->js('/lib/overlib/overlib_cssstyle.js')->asap();
 
         while (preg_match('~\{#([^[:space:]}]*)}~', $qtextremaining, $regs)) {
             $qtextsplits = explode($regs[0], $qtextremaining, 2);

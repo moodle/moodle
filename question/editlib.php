@@ -1111,7 +1111,7 @@ class question_bank_view {
             return;
         }
 
-        $PAGE->requires->js('question/qbank.js');
+        $PAGE->requires->js('/question/qbank.js');
 
         // Category selection form
         echo $OUTPUT->heading(get_string('questionbank', 'question'), 2);
@@ -1857,7 +1857,7 @@ function require_login_in_context($contextorid = null){
  */
 function print_choose_qtype_to_add_form($hiddenparams) {
     global $CFG, $QTYPES, $PAGE, $OUTPUT;
-    $PAGE->requires->js('question/qbank.js');
+    $PAGE->requires->js('/question/qbank.js');
     echo '<div id="chooseqtypehead" class="hd">' . "\n";
     echo $OUTPUT->heading(get_string('chooseqtypetoadd', 'question'), 3);
     echo "</div>\n";

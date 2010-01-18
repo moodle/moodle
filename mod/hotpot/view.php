@@ -425,7 +425,7 @@
                 break;
                 default:
                     $iframe_id = 'hotpot_iframe';
-                    $PAGE->requires->js('mod/hotpot/iframe.js');
+                    $PAGE->requires->js('/mod/hotpot/iframe.js');
                     $PAGE->requires->js_function_call('set_iframe_height', array($iframe_id))->on_dom_ready();
                     echo $OUTPUT->header();
                     if (!empty($available_msg)) {

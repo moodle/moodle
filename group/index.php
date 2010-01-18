@@ -14,7 +14,7 @@ require_once('lib.php');
 ini_set('include_path', $CFG->libdir.'/pear'.PATH_SEPARATOR.ini_get('include_path'));
 
 $PAGE->requires->yui2_lib('connection');
-$PAGE->requires->js('group/clientlib.js');
+$PAGE->requires->js('/group/clientlib.js');
 
 $courseid = required_param('id', PARAM_INT);
 $groupid  = optional_param('group', false, PARAM_INT);

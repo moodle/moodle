@@ -112,7 +112,7 @@ class mod_quiz_mod_form extends moodleform_mod {
             $pagegroup[] = &$mform->createElement('checkbox', 'repaginatenow', '', get_string('repaginatenow', 'quiz'), array('id' => 'id_repaginatenow'));
             $mform->disabledIf('repaginatenow', 'shufflequestions', 'eq', 1);
             $PAGE->requires->yui2_lib('event');
-            $PAGE->requires->js('mod/quiz/edit.js');
+            $PAGE->requires->js('/mod/quiz/edit.js');
         }
 
         $mform->addGroup($pagegroup, 'questionsperpagegrp', get_string('newpage', 'quiz'), null, false);

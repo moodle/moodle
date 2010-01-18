@@ -64,7 +64,7 @@ if (!empty($chat_message)) {
 
 if ($chatuser->version == 'header_js') {
     /// force msg referesh ASAP
-    echo $PAGE->requires->js('mod/chat/gui_header_js/chat_gui_header.js')->asap();
+    echo $PAGE->requires->js('/mod/chat/gui_header_js/chat_gui_header.js')->asap();
     if ($CFG->chat_normal_updatemode != 'jsupdated') {  // See bug MDL-6791
         echo $PAGE->requires->js_function_call('insert_redirect')->asap();;
     }

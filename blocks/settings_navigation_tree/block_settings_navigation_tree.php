@@ -79,7 +79,7 @@ class block_settings_navigation_tree extends block_tree {
 
     function get_required_javascript() {
         $this->_initialise_dock();
-        $this->page->requires->js('blocks/global_navigation_tree/navigation.js');
+        $this->page->requires->js('/blocks/global_navigation_tree/navigation.js');
         $args = array($this->instance->id, array('instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked()));
         $this->page->requires->js_function_call('blocks.navigation.setup_new_tree', $args)->on_dom_ready();
         user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
@@ -96,7 +96,7 @@ class block_settings_navigation_tree extends block_tree {
         }
         $this->page->requires->yui2_lib('dom');
         // JS for navigation moved to the standard theme, the code will probably have to depend on the actual page structure
-        // $this->page->requires->js('lib/javascript-navigation.js');
+        // $this->page->requires->js('/lib/javascript-navigation.js');
         block_settings_navigation_tree::$navcount++;
 
         // Check if this block has been docked

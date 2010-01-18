@@ -541,8 +541,8 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $result->toc .= $PAGE->requires->data_for_js('scormdata', array(
                 'plusicon' => $OUTPUT->pix_url('pix/plus', 'scorm'),
                 'minusicon' => $OUTPUT->pix_url('pix/minus', 'scorm')))->asap();
-        $result->toc .= $PAGE->requires->js('lib/cookies.js')->asap();
-        $result->toc .= $PAGE->requires->js('mod/scorm/datamodels/scorm_datamodels.js')->asap();
+        $result->toc .= $PAGE->requires->js('/lib/cookies.js')->asap();
+        $result->toc .= $PAGE->requires->js('/mod/scorm/datamodels/scorm_datamodels.js')->asap();
     }
 
     $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&currentorg='.$currentorg.$modestr;

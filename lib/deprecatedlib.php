@@ -1698,7 +1698,7 @@ function require_js($lib) {
     if (strpos($lib, 'yui_') === 0) {
         $PAGE->requires->yui2_lib(substr($lib, 4));
     } else if (preg_match('/^https?:/', $lib)) {
-        echo $PAGE->requires->js(str_replace($CFG->wwwroot, '', $lib))->asap();
+        echo $PAGE->requires->js(str_replace($CFG->wwwroot, '/', $lib))->asap();
     } else {
         echo $PAGE->requires->js($lib)->asap();
     }

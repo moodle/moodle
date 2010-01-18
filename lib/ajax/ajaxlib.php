@@ -33,9 +33,9 @@
  *
  * Typical useage would be
  * <pre>
- *     $PAGE->requires->css('mod/mymod/userstyles.php?id='.$id); // not overriddable via themes!
- *     $PAGE->requires->js('mod/mymod/script.js');
- *     $PAGE->requires->js('mod/mymod/small_but_urgent.js')->in_head();
+ *     $PAGE->requires->css('/mod/mymod/userstyles.php?id='.$id); // not overriddable via themes!
+ *     $PAGE->requires->js('/mod/mymod/script.js');
+ *     $PAGE->requires->js('/mod/mymod/small_but_urgent.js')->in_head();
  *     $PAGE->requires->js_function_call('init_mymod', array($data))->on_dom_ready();
  * </pre>
  *
@@ -881,7 +881,7 @@ abstract class linked_requirement extends requirement_base {
  *
  * The methods {@link asap()}, {@link in_head()} and {@link at_top_of_body()}
  * are indented to be used as a fluid API, so you can say things like
- *     $PAGE->requires->js('mod/mymod/script.js')->in_head();
+ *     $PAGE->requires->js('/mod/mymod/script.js')->in_head();
  *
  * However, by default JavaScript files are included at the end of the HTML.
  * This is recommended practice because it means that the web browser will only

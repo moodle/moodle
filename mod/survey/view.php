@@ -188,7 +188,7 @@
            $checkarray['questions'][] = Array('question'=>$question, 'default'=>$default);
        }
     }
-    $PAGE->requires->js('mod/survey/survey.js');
+    $PAGE->requires->js('/mod/survey/survey.js');
     $PAGE->requires->data_for_js('surveycheck', $checkarray);
     $PAGE->requires->string_for_js('questionsnotanswered', 'survey');
     $PAGE->requires->js_function_call('survey_attach_onsubmit');

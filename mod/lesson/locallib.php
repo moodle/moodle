@@ -487,7 +487,7 @@ function lesson_clock_block_contents($cmid, $lesson, $timer, $page) {
 
     $clocksettings = array('starttime'=>$timer->starttime, 'servertime'=>time(),'testlength'=>($lesson->maxtime * 60));
     $content .= $page->requires->data_for_js('clocksettings', $clocksettings)->now();
-    $content .= $page->requires->js('mod/lesson/timer.js')->now();
+    $content .= $page->requires->js('/mod/lesson/timer.js')->now();
     $content .= $page->requires->js_function_call('show_clock')->now();
 
     $bc = new block_contents();

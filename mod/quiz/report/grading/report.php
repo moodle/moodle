@@ -56,8 +56,8 @@ class quiz_grading_report extends quiz_default_report {
 
         $this->cm = $cm;
 
-        echo $PAGE->requires->js('lib/overlib/overlib.js')->asap();
-        echo $PAGE->requires->js('lib/overlib/overlib_cssstyle.js')->asap();
+        echo $PAGE->requires->js('/lib/overlib/overlib.js')->asap();
+        echo $PAGE->requires->js('/lib/overlib/overlib_cssstyle.js')->asap();
 
         $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="grading");
 

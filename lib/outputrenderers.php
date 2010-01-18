@@ -310,7 +310,7 @@ class core_renderer extends renderer_base {
             $output .= '<meta http-equiv="refresh" content="'.$this->page->periodicrefreshdelay.';url='.$this->page->url->out().'" />';
         }
 
-        $this->page->requires->js('lib/javascript-static.js')->in_head(); // contains deprecated stuff too, do not add extre file for that for perf reasons!
+        $this->page->requires->js('/lib/javascript-static.js')->in_head(); // contains deprecated stuff too, do not add extre file for that for perf reasons!
         $this->page->requires->js_function_call('setTimeout', array('fix_column_widths()', 20));
 
         $focus = $this->page->focuscontrol;
@@ -346,8 +346,8 @@ class core_renderer extends renderer_base {
         if (isloggedin() && !empty($CFG->excludeoldflashclients) && empty($SESSION->flashversion)) {
             $this->page->requires->yui2_lib('event');
             $this->page->requires->yui2_lib('connection');
-            $this->page->requires->js('lib/swfobject/swfobject.js')->in_head();
-            $this->page->requires->js('lib/flashdetect/flashdetect.js')->in_head();
+            $this->page->requires->js('/lib/swfobject/swfobject.js')->in_head();
+            $this->page->requires->js('/lib/flashdetect/flashdetect.js')->in_head();
             $this->page->requires->js_function_call('setflashversiontosession', array($CFG->wwwroot, sesskey()));
         }
 
@@ -2216,7 +2216,7 @@ class core_renderer extends renderer_base {
 
         if ($table->rotateheaders && can_use_rotated_text()) {
             $this->page->requires->yui2_lib('event');
-            $this->page->requires->js('course/report/progress/textrotate.js');
+            $this->page->requires->js('/course/report/progress/textrotate.js');
         }
 
         return $output;

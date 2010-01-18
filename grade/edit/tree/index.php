@@ -35,7 +35,7 @@ $PAGE->requires->yui2_lib('dragdrop');
 $PAGE->requires->yui2_lib('element');
 $PAGE->requires->yui2_lib('container');
 $PAGE->requires->yui2_lib('animation');
-$PAGE->requires->js('grade/edit/tree/functions.js');
+$PAGE->requires->js('/grade/edit/tree/functions.js');
 
 $courseid        = required_param('id', PARAM_INT);
 $action          = optional_param('action', 0, PARAM_ALPHA);

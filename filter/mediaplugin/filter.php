@@ -117,7 +117,7 @@ class mediaplugin_filter extends moodle_text_filter {
         }
 
         if (!$this->eolas_fix_applied) {
-            $PAGE->requires->js('filter/mediaplugin/eolas_fix.js');
+            $PAGE->requires->js('/filter/mediaplugin/eolas_fix.js');
             $this->eolas_fix_applied = true;
         }
 
@@ -148,7 +148,7 @@ function mediaplugin_filter_mp3_callback($link) {
     $args['flashvars'] = $c;
     $args['quality'] = 'high';
 
-    $jsoutput = $PAGE->requires->js('lib/ufo.js')->asap();
+    $jsoutput = $PAGE->requires->js('/lib/ufo.js')->asap();
     $jsoutput .= $PAGE->requires->data_for_js('FO', $args)->asap();
     $jsoutput .= $PAGE->requires->js_function_call('create_UFO_object', Array($id))->asap();
 
@@ -175,7 +175,7 @@ function mediaplugin_filter_swf_callback($link) {
     $args['build'] = 40;
     $args['allowscriptaccess'] = 'never';
     $args['quality'] = 'high';
-    $jsoutput = $PAGE->requires->js('lib/ufo.js')->asap();
+    $jsoutput = $PAGE->requires->js('/lib/ufo.js')->asap();
     $jsoutput .= $PAGE->requires->data_for_js('FO', $args)->asap();
     $jsoutput .= $PAGE->requires->js_function_call('create_UFO_object', Array($id))->asap();
 
@@ -204,7 +204,7 @@ function mediaplugin_filter_flv_callback($link) {
     $args['allowscriptaccess'] = 'never';
     $args['quality'] = 'high';
     $args['allowfullscreen'] = 'true';
-    $jsoutput = $PAGE->requires->js('lib/ufo.js')->asap();
+    $jsoutput = $PAGE->requires->js('/lib/ufo.js')->asap();
     $jsoutput .= $PAGE->requires->data_for_js('FO', $args)->asap();
     $jsoutput .= $PAGE->requires->js_function_call('create_UFO_object', Array($id))->asap();
 

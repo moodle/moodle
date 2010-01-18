@@ -85,7 +85,7 @@ echo $OUTPUT->heading(format_text($feedback->name));
 echo $OUTPUT->continue_button(htmlspecialchars('show_entries.php?id='.$id.'&do_show=showentries'));
 //print the list with anonymous completeds
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-$PAGE->requires->js('mod/feedback/feedback.js');
+$PAGE->requires->js('/mod/feedback/feedback.js');
 ?>
 <div class="mdl-align">
 <form name="frm" action="<?php echo me();?>" method="post">

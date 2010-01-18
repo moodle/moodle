@@ -39,7 +39,7 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
 
     $PAGE->set_pagelayout('popup');
     $PAGE->set_title('send');
-    $PAGE->requires->js('message/message.js');
+    $PAGE->requires->js('/message/message.js');
 
 /// Script parameters
     $userid   = required_param('id', PARAM_INT);

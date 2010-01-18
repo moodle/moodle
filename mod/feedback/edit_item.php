@@ -227,7 +227,7 @@ echo '</form>';
 // echo $OUTPUT->box_end();
 
 if ($typ!='label') {
-    $PAGE->requires->js('mod/feedback/feedback.js');
+    $PAGE->requires->js('/mod/feedback/feedback.js');
     $PAGE->requires->js_function_call('set_item_focus', Array('id_itemname'));
 }
 

@@ -201,7 +201,7 @@ if ($data) {
                 }
 
 $PAGE->requires->yui2_lib('animation');
-$PAGE->requires->js('calendar/calendar.js');
+$PAGE->requires->js('/calendar/calendar.js');
 
 $PAGE->navbar->add($strcalendar, $link);
 $PAGE->navbar->add($title);
