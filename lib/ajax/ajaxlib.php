@@ -114,6 +114,60 @@ class page_requirements_manager {
         $this->json_yui3loader->filter       = ($this->yui3loader->filter == YUI_DEBUG) ? 'debug' : '';
         $this->json_yui3loader->insertBefore = 'firstthemesheet';
         $this->json_yui3loader->modules      = array();
+        $this->add_yui2_modules(); // adds loading info for YUI2
+    }
+
+    /**
+     * This method adds yui2 modules into the yui3 JS loader-
+     * @return void
+     */
+    protected function add_yui2_modules() {
+        //note: this function is definitely not perfect, because
+        //      it adds tons of markup into each page, but it can be
+        //      abstracted into separate JS file with proper headers
+        global $CFG;
+
+        $GLOBALS['yui_current'] = array();
+        require($CFG->libdir.'/yui/phploader/lib/meta/config_'.$CFG->yui2version.'.php');
+        $info = $GLOBALS['yui_current'];
+        unset($GLOBALS['yui_current']);
+
+        if (empty($CFG->yuicomboloading)) {
+            $urlbase = $this->yui2loader->base;
+        } else {
+            $urlbase = $this->yui2loader->comboBase.$CFG->yui2version.'/build/';
+        }
+
+        $modules = array();
+        $ignored = array(); // list of CSS modules that are not needed
+        foreach ($info['moduleInfo'] as $name => $module) {
+            if ($module['type'] === 'css') {
+                $ignored[$name] = true;
+            } else {
+                $modules['yui2-'.$name] = $module;
+            }
+        }
+        foreach ($modules as $name=>$module) {
+            $module['fullpath'] = $urlbase.$module['path']; // fix path to point to correct location
+            unset($module['path']);
+            foreach(array('requires', 'optional', 'supersedes') as $fixme) {
+                if (!empty($module[$fixme])) {
+                    $fixed = false;
+                    foreach ($module[$fixme] as $key=>$dep) {
+                        if (isset($ignored[$dep])) {
+                            unset($module[$fixme][$key]);
+                            $fixed = true;
+                        } else {
+                            $module[$fixme][$key] = 'yui2-'.$dep;
+                        }
+                    }
+                    if ($fixed) {
+                        $module[$fixme] = array_merge($module[$fixme]); // fix keys
+                    }
+                }
+            }
+            $this->json_yui3loader->modules[$name] = $module;
+        }
     }
 
     /**
@@ -150,9 +204,6 @@ class page_requirements_manager {
         }
         $this->data_for_js('moodle_cfg', $config)->in_head();
 
-        // note: in JavaScript use "YUI(yui3loader).use('overlay', function(Y) { .... });"
-        $this->data_for_js('yui3loader', $this->json_yui3loader)->in_head();
-
         if (debugging('', DEBUG_DEVELOPER)) {
             $this->yui2_lib('logger');
         }
@@ -172,6 +223,7 @@ class page_requirements_manager {
         $this->yui2_lib('connection'); // needs to be migrated to YUI3 before we release 2.0
         // File Picker use this module loading YUI2 widgets
         $this->yui2_lib('yuiloader');  // needs to be migrated to YUI3 before we release 2.0
+        $this->js_module('filepicker'); // should be migrated elsewhere before 2.0
 
         $this->string_for_js('confirmation', 'admin');
         $this->string_for_js('cancel', 'moodle');
@@ -255,6 +307,33 @@ class page_requirements_manager {
         foreach ($libnames as $lib) {
             $this->yui3loader->load($lib);
         }
+    }
+
+    /**
+     * Append YUI3 module to default YUI3 JS loader.
+     * The structure of module array is described at http://developer.yahoo.com/yui/3/yui/:
+     * @param string $name unique module name based of full plugin name
+     * @param array $module usually the module details may be detected from the $name
+     * @return void
+     */
+    public function js_module($name, array $module = null) {
+        global $CFG;
+
+        if (strpos($name, 'core_') === 0) {
+            // must be some core stuff
+        } else {
+            if ($name === 'filepicker') { // TODO: rename to 'core_filepicker' and move above
+                $pathtofilepicker = $CFG->httpswwwroot.'/repository/filepicker.js';
+                $module = array('fullpath'=>$pathtofilepicker, 'requires' => array('base', 'node', 'json', 'async-queue', 'io'));
+            }
+            //TODO: look for plugin info?
+        }
+
+        if ($module === null) {
+            throw new coding_exception('Missing YUI3 module details.');
+        }
+
+        $this->json_yui3loader->modules[$name] = $module;
     }
 
     /**
@@ -590,9 +669,9 @@ class page_requirements_manager {
         $this->setup_core_javascript($page, $output);
         // yui3 JS and CSS is always laoded first - it is cached in browser
         $output = $this->get_yui3lib_headcode();
-        // BC: load basic YUI2 for now, yui2 things should be laoded as yui3 modules 
+        // BC: load basic YUI2 for now, yui2 things should be laoded as yui3 modules
         $output .= $this->get_yui2lib_code();
-        // now theme CSS, it must be loaded before the 
+        // now theme CSS, it must be loaded before the
         $output .= $this->themecss_code();
         $output .= $this->get_linked_resources_code(self::WHEN_IN_HEAD);
         $js = $this->get_javascript_code(self::WHEN_IN_HEAD);
@@ -628,7 +707,14 @@ class page_requirements_manager {
      */
     public function get_end_code() {
         global $CFG;
+        // add missing YUI2 YUI - to be removed once we convert everything to YUI3!
         $output = $this->get_yui2lib_code();
+
+        // set up global YUI3 loader object - this should contain all code needed by plugins
+        // note: in JavaScript just use "YUI(yui3loader).use('overlay', function(Y) { .... });"
+        $output .= $this->data_for_js('yui3loader', $this->json_yui3loader)->now();
+
+        // now print all the stuff that was added through ->requires
         $output .= $this->get_linked_resources_code(self::WHEN_AT_END);
 
         if (!empty($this->stringsforjs)) {
@@ -639,21 +725,15 @@ class page_requirements_manager {
 
         $ondomreadyjs = $this->get_javascript_code(self::WHEN_ON_DOM_READY, '    ');
 
-        $pathtofilepicker = $CFG->httpswwwroot.'/repository/filepicker.js';
-
+//TODO: do we really need the global "Y" defined in javasecript-static.js?
+//      The problem is that we can not rely on it to be fully initialised
         $js .= <<<EOD
-\n
-    Y = YUI({
-        base: moodle_cfg.yui3loaderBase,
-        combine: true,
-        comboBase: moodle_cfg.yui3loaderComboBase,
-        modules: {
-            'filepicker':{fullpath:'$pathtofilepicker', 'requires':['base', 'node', 'json', 'async-queue', 'io']}
-        }
-    }).use('node-base', function(Y) {
+
+    Y = YUI(yui3loader).use('node-base', function(Y) {
         Y.on('domready', function() {
-        $ondomreadyjs
+            $ondomreadyjs
         });
+        // TODO: call user js functions from here so that they have the proper Y
     });
 EOD;
 

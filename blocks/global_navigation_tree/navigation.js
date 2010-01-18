@@ -338,7 +338,7 @@ blocks.navigation.classes.branch.prototype.inject_into_dom = function(element) {
     }
 }
 
-YUI({base: moodle_cfg.yui3loaderBase}).use('event-custom', 'node', function(Y){
+YUI(yui3loader).use('event-custom', 'node', function(Y){
     if (blocks.genericblock) {
         // Give the tree class the dock block properties
         Y.augment(blocks.navigation.classes.tree, blocks.genericblock);
