@@ -161,6 +161,7 @@ if (!$currentuser) {
 $PAGE->navigation->extend_for_user($user);
 $PAGE->set_title("$course->fullname: $strpersonalprofile: $fullname");
 $PAGE->set_heading($course->fullname);
+$PAGE->set_pagelayout('standard');
 echo $OUTPUT->header();
 
 if (($course->id != SITEID) and ! has_capability('moodle/legacy:guest', $systemcontext, 0, false) ) {   // Need to have access to a course to see that info
