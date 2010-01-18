@@ -620,6 +620,32 @@ class moodle_url {
         }
     }
 
+    /**
+     * Sets the url slashargument value
+     * @param string $path usually file path
+     * @param string $parameter name of page parameter if slasharguments not supported
+     * @param bool $supported usually null, then it depends on $CFG->slasharguments, use true or false for other servers
+     * @return void
+     */
+    public function set_slashargument($path, $parameter='file', $supported=null) {
+        global $CFG;
+        if (is_null($supported)) {
+            $supported = $CFG->slasharguments;
+        }
+
+        if ($supported) {
+            $parts = explode('/', $path);
+            $parts = array_map('rawurlencode', $parts);
+            $path  = implode('/', $parts);
+            $this->slashargument = $path;
+            unset($this->params[$parameter]);
+
+        } else {
+            $this->slashargument = '';
+            $this->params[$parameter] = $path;
+        }
+    }
+
     // == static factory methods ==
 
     /**
@@ -633,22 +659,14 @@ class moodle_url {
         global $CFG;
 
         $params = array();
-
-        if ($CFG->slasharguments) {
-            $parts = explode('/', $path);
-            $parts = array_map('rawurlencode', $parts);
-            $path  = implode('/', $parts);
-            $url = $urlbase.$path;
-        } else {
-            $params['file'] = rawurlencode($path);
-            $url = $urlbase;
-        }
-
         if ($forcedownload) {
             $params['forcedownload'] = 1;
         }
 
-        return new moodle_url($url, $params);
+        $url = new moodle_url($urlbase, $params);
+        $url->set_slashargument($path);
+
+        return $url;
     }
 
     /**
