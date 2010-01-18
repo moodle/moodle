@@ -157,15 +157,15 @@ abstract class webservice_server implements webservice_server_interface {
         } else {
             if (!$token = $DB->get_record('external_tokens', array('token'=>$this->token, 'tokentype'=>EXTERNAL_TOKEN_PERMANENT))) {
                 // TODO: MDL-12886 log failed login attempts
-                throw new webservice_access_exception('Invalid token');
+                throw new webservice_access_exception(get_string('invalidtoken', 'webservice'));
             }
 
             if ($token->validuntil and $token->validuntil < time()) {
-                throw new webservice_access_exception('Invalid token');
+                throw new webservice_access_exception(get_string('invalidtimedtoken', 'webservice'));
             }
 
             if ($token->iprestriction and !address_in_subnet(getremoteaddr(), $token->iprestriction)) {
-                throw new webservice_access_exception('Invalid token');
+                throw new webservice_access_exception(get_string('invalidiptoken', 'webservice'));
             }
 
             $this->restricted_context = get_context_instance_by_id($token->contextid);

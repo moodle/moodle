@@ -1,7 +1,7 @@
 <?php
 
 $string['accessexception'] = 'Access control exception';
-$string['activatehttps'] = 'connect with HTTPS to see the token';
+$string['activatehttps'] = '******************';
 $string['addfunction'] = 'Add function';
 $string['addfunctionhelp'] = 'Select the function to add to the service.';
 $string['addrequiredcapability'] = 'Assign/Unassign the required capability';
@@ -10,6 +10,7 @@ $string['actwebserviceshhdr'] = 'Active web service protocols';
 $string['apiexplorer'] = 'API explorer';
 $string['apiexplorernotavalaible'] = 'API explorer not available yet.';
 $string['arguments'] = 'Arguments';
+$string['authmethod'] = 'Authentication method';
 $string['configwebserviceplugins'] = 'For security reasons enable only protocols that are used.';
 $string['context'] = 'Context';
 $string['createtoken'] = 'Create token';
@@ -31,6 +32,9 @@ $string['function'] = 'Function';
 $string['functions'] = 'Functions';
 $string['generalstructure'] = 'General structure';
 $string['httpswarning'] = 'Token strings are only displayed if your connection is secured (https)';
+$string['invalidiptoken'] = 'Invalid token - your IP is not supported';
+$string['invalidtimedtoken'] = 'Invalid token - token expired';
+$string['invalidtoken'] = 'Invalid token - token not found';
 $string['iprestriction'] = 'IP restriction';
 $string['manageprotocols'] = 'Manage protocols';
 $string['managetokens'] = 'Manage tokens';
