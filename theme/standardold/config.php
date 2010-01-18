@@ -106,7 +106,7 @@ $THEME->layouts = array(
         'defaultregion' => 'side-post',
     ),
     // Standard module pages - default page layout if $cm specified in require_login()
-    'module' => array(
+    'incourse' => array(
         'theme' => 'standardold',
         'file' => 'normal.php',
         'regions' => array('side-pre', 'side-post'),
