@@ -946,8 +946,7 @@ class graph {
       $textWidth = $this->calculated['legend']['boundary_box_max']['width']; // width of largest legend item.
       $textHeight = $this->calculated['legend']['boundary_box_max']['height']; // use height as size to use for colour square in legend.
       $width = $padding * 2 + $textWidth + $textHeight * 2;  // left and right padding + maximum text width + space for square
-      $height = $padding * ($numSets + 1) + $sumTextHeight; // top and bottom padding + padding between text + text.
-
+      $height = ($padding + $textHeight) * $numSets + $padding; // top and bottom padding + padding between text + text.
 
       $this->calculated['legend']['boundary_box_all'] = array('width'     => $width,
                                                             'height'    => $height,
