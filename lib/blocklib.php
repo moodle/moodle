@@ -1066,7 +1066,7 @@ class block_manager {
         $editpage->set_pagelayout('base');
         $editpage->set_course($this->page->course);
         $editpage->set_context($block->context);
-        $editurlbase = str_replace($CFG->wwwroot . '/', '', $this->page->url->out_omit_querystring());
+        $editurlbase = str_replace($CFG->wwwroot . '/', '/', $this->page->url->out_omit_querystring());
         $editurlparams = $this->page->url->params();
         $editurlparams['bui_editid'] = $blockid;
         $editpage->set_url($editurlbase, $editurlparams);
