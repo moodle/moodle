@@ -1807,7 +1807,7 @@ function convert_urls_into_links(&$text) {
         $unicoderegexp = @preg_match('/\pL/u', 'a'); // This will fail silenty, returning false,
     }
 
-    //MDL-21296 - use of unicode modifiers may cause a timeout
+    //todo: MDL-21296 - use of unicode modifiers may cause a timeout
     if ($unicoderegexp) { //We can use unicode modifiers
         $text = preg_replace('#(?<!=["\'])(((http(s?))://)(((([\pLl0-9]([\pLl0-9]|-)*[\pLl0-9]|[\pLl0-9])\.)+([\pLl]([\pLl0-9]|-)*[\pLl0-9]|[\pLl]))|(([0-9]{1,3}\.){3}[0-9]{1,3}))(:[\pL0-9]*)?(/([\pLl0-9\.!$&\'\(\)*+,;=_~:@-]|%[a-fA-F0-9]{2})*)*(\?([\pLl0-9\.!$&\'\(\)*+,;=_~:@/?-]|%[a-fA-F0-9]{2})*)?(\#[\pLl0-9\.!$&\'\(\)*+,;=_~:@/?-]*)?)(?<![,.;])#iu',
                              '<a href="\\1" class="_blanktarget">\\1</a>', $text);
