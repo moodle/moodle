@@ -186,7 +186,7 @@ class page_requirements_manager {
      * @param moodle_page $page
      * @param core_renderer $output
      */
-    protected function setup_core_javascript(moodle_page $page, core_renderer $output) {
+    protected function init_requirements_data(moodle_page $page, core_renderer $output) {
         global $CFG;
 
         // JavaScript should always work with $CFG->httpswwwroot rather than $CFG->wwwroot.
@@ -685,17 +685,28 @@ class page_requirements_manager {
     public function get_head_code(moodle_page $page, core_renderer $output) {
         // note: the $page and $output are not stored here because it would
         // create circular references in memory which prevents garbage collection
-        $this->setup_core_javascript($page, $output);
+        $this->init_requirements_data($page, $output);
+
         // yui3 JS and CSS is always loaded first - it is cached in browser
         $output = $this->get_yui3lib_headcode();
-        // BC: load basic YUI2 for now, yui2 things should be loaded as yui3 modules
+
+        // BC: load basic YUI2 for now, all yui2 things should be loaded via Y.use('yui2-oldmodulename')
         $output .= $this->get_yui2lib_code();
-        // now theme CSS, it must be loaded before the
+
+        // now theme CSS + custom CSS in this specific order
         $output .= $this->get_css_code();
+
+        // all the other linked things from HEAD - there should be as few as possible
+        // because we need to minimise number of http requests,
+        // all core stuff should go into /lib/javascript-static.js
         $output .= $this->get_linked_resources_code(self::WHEN_IN_HEAD);
-        $js = $this->get_javascript_code(self::WHEN_IN_HEAD);
-        $output .= ajax_generate_script_tag($js);
+
+        // finally all JS that should go directly into head tag - mostly global config 
+        $output .= html_writer::script($this->get_javascript_code(self::WHEN_IN_HEAD));
+
+        // mark head sending done, it is not possible to anything there
         $this->headdone = true;
+
         return $output;
     }
 
@@ -711,7 +722,7 @@ class page_requirements_manager {
         $output = '<div class="skiplinks">' . $this->get_linked_resources_code(self::WHEN_TOP_OF_BODY) . '</div>';
         $js = "document.body.className += ' jsenabled';\n";
         $js .= $this->get_javascript_code(self::WHEN_TOP_OF_BODY);
-        $output .= ajax_generate_script_tag($js);
+        $output .= html_writer::script($js);
         $this->topofbodydone = true;
         return $output;
     }
@@ -756,7 +767,7 @@ class page_requirements_manager {
     });
 EOD;
 
-        $output .= ajax_generate_script_tag($js);
+        $output .= html_writer::script($js);
 
         return $output;
     }
@@ -1067,8 +1078,7 @@ abstract class required_js_code extends requirement_base {
         if ($this->is_done()) {
             return '';
         }
-        $js = $this->get_js_code();
-        $output = ajax_generate_script_tag($js);
+        $output = html_writer::script($this->get_js_code());
         $this->mark_done();
         return $output;
     }
@@ -1265,22 +1275,6 @@ class required_event_handler extends required_js_code {
         return $output . ");\n";
     }
 }
-
-/**
- * Generate a script tag containing the the specified code.
- *
- * @param string $js the JavaScript code
- * @return string HTML, the code wrapped in <script> tags.
- */
-function ajax_generate_script_tag($js) {
-    if ($js) {
-        return '<script type="text/javascript">' . "\n//<![CDATA[\n" .
-                $js . "//]]>\n</script>\n";
-    } else {
-        return '';
-    }
-}
-
 
 /**
  * Return the HTML required to link to a JavaScript file.

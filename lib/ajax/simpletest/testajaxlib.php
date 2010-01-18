@@ -384,19 +384,6 @@ class page_requirements_manager_test extends ajaxlib_unit_test_base {
  */
 class ajax_test extends ajaxlib_unit_test_base {
 
-    function test_ajax_generate_script_tag() {
-        $html = ajax_generate_script_tag('var x = 1;');
-        $this->assertContains($html, '<script type="text/javascript">');
-        $this->assertContains($html, '<![CDATA[');
-        $this->assertContains($html, ']]>');
-        $this->assertContains($html, '</script>');
-    }
-
-    function test_ajax_generate_script_tag_no_output_when_no_code() {
-        $html = ajax_generate_script_tag('');
-        $this->assertEqual($html, '');
-    }
-
     var $user_agents = array(
             'MSIE' => array(
                 '5.5' => array('Windows 2000' => 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)'),

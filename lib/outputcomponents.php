@@ -536,6 +536,20 @@ class html_writer {
         }
         return $output;
     }
+
+    /**
+     * Generate a script tag containing the the specified code.
+     *
+     * @param string $js the JavaScript code
+     * @return string HTML, the code wrapped in <script> tags.
+     */
+    public static function script($jscode) {
+        if ($jscode) {
+            return "<script type=\"text/javascript\">\n//<![CDATA[\n$jscode\n//]]>\n</script>\n";
+        } else {
+            return '';
+        }
+    }
 }
 
 
