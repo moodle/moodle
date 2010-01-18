@@ -57,6 +57,8 @@ class page_requirements_manager {
     protected $stringsforjs = array();
     protected $requiredjscode = array();
 
+    protected $themestylesheets = array();
+
     protected $variablesinitialised = array('mstr' => 1); // 'mstr' is special. See string_for_js.
 
     protected $headdone = false;
@@ -104,12 +106,14 @@ class page_requirements_manager {
         $this->yui3loader->combine = !empty($CFG->yuicomboloading);
         $this->yui2loader->combine = !empty($CFG->yuicomboloading);
 
-        // set up JS loader helper object
+        // set up JS YUI loader helper object
         $this->json_yui3loader = new stdClass();
-        $this->json_yui3loader->base      = $this->yui3loader->base;
-        $this->json_yui3loader->comboBase = $this->yui3loader->comboBase;
-        $this->json_yui3loader->combine   = $this->yui3loader->combine;
-        $this->json_yui3loader->filter    = ($this->yui3loader->filter == YUI_DEBUG) ? 'debug' : '';
+        $this->json_yui3loader->base         = $this->yui3loader->base;
+        $this->json_yui3loader->comboBase    = $this->yui3loader->comboBase;
+        $this->json_yui3loader->combine      = $this->yui3loader->combine;
+        $this->json_yui3loader->filter       = ($this->yui3loader->filter == YUI_DEBUG) ? 'debug' : '';
+        $this->json_yui3loader->insertBefore = 'firstthemesheet';
+        $this->json_yui3loader->modules      = array();
     }
 
     /**
@@ -290,6 +294,16 @@ class page_requirements_manager {
             }
             $this->linkedrequirements[$url] = new required_css($this, $url);
         }
+    }
+
+    /**
+     * Add theme stylkesheet to page - do not use from plugin code,
+     * this shoudl be called only from the core renderer!
+     * @param moodle_url $stylesheet
+     * @return void
+     */
+    public function themecss(moodle_url $stylesheet) {
+        $this->themestylesheets[] = $stylesheet;
     }
 
     /**
@@ -547,6 +561,22 @@ class page_requirements_manager {
     }
 
     /**
+     * Returns html tags needed for inclusion of theme CSS
+     * @return string
+     */
+    protected function themecss_code() {
+        $code = '';
+        $firstthemelink = true;
+        foreach ($this->themestylesheets as $sheet) {
+             // this id is needed for YUI3 loader so that we may override
+             // YUI CSS in our themes
+            $id = $firstthemelink ? 'id="firstthemesheet"' : '';
+            $code .= '<link rel="stylesheet" type="text/css" href="' . $sheet . '" '.$id.'/>' . "\n";;
+        }
+        return $code;
+    }
+
+    /**
      * Generate any HTML that needs to go inside the <head> tag.
      *
      * Normally, this method is called automatically by the code that prints the
@@ -558,8 +588,12 @@ class page_requirements_manager {
         // note: the $page and $output are not stored here because it would
         // create circular references in memory which prevents garbage collection
         $this->setup_core_javascript($page, $output);
+        // yui3 JS and CSS is always laoded first - it is cached in browser
         $output = $this->get_yui3lib_headcode();
+        // BC: load basic YUI2 for now, yui2 things should be laoded as yui3 modules 
         $output .= $this->get_yui2lib_code();
+        // now theme CSS, it must be loaded before the 
+        $output .= $this->themecss_code();
         $output .= $this->get_linked_resources_code(self::WHEN_IN_HEAD);
         $js = $this->get_javascript_code(self::WHEN_IN_HEAD);
         $output .= ajax_generate_script_tag($js);
