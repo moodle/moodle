@@ -103,7 +103,7 @@ YUI.add('filepicker', function(Y) {
             params['accepted_types']=this.options.accepted_types;
             params['sesskey']=moodle_cfg.sesskey;
             params['client_id'] = args.client_id;
-            params['itemid'] = this.itemid?this.itemid:0;
+            params['itemid'] = this.options.itemid?this.options.itemid:0;
             if (args['params']) {
                 for (i in args['params']) {
                     params[i] = args['params'][i];
@@ -381,6 +381,7 @@ YUI.add('filepicker', function(Y) {
                                 scope.options.editor_target.onchange();
                             }
                             scope.hide();
+                            obj.client_id = client_id;
                             scope.options.formcallback(obj);
                         }
                 }, true);
@@ -782,9 +783,10 @@ YUI.add('filepicker', function(Y) {
             this.print_header();
             var id = data.upload.id+'_'+client_id;
             var str = '<div id="'+id+'_div" class="fp-upload-form">';
-            str += '<form id="'+id+'" onsubmit="return false">';
+            str += '<form id="'+id+'" method="POST">';
             str += '<label for="'+id+'_file">'+data.upload.label+': </label>';
             str += '<input type="file" id="'+id+'_file" name="repo_upload_file" />';
+            str += '<input type="hidden" name="itemid" value="'+this.options.itemid+'" />';
             str += '<div class="fp-upload-btn"><a id="'+id+'_action" href="###" >'+mstr.repository.upload+'</a></div>';
             str += '</form>';
             str += '</div>';
@@ -792,16 +794,25 @@ YUI.add('filepicker', function(Y) {
             Y.one('#panel-'+client_id).appendChild(upload_form);
             var scope = this;
             Y.one('#'+id+'_action').on('click', function() {
-                alert('FAIL');
-                //this.request({
-                        //scope: scope,
-                        //action:'upload',
-                        //client_id: client_id,
-                        //repository_id: scope.options.active_repo.id,
-                        //form: {id: 'fp-search-form',upload:true,useDisabled:true},
-                        //callback: function(id, o, args) {
-                        //}
-                //}, true);
+                Y.use('io-upload-iframe' ,function() {
+                    scope.request({
+                            scope: scope,
+                            action:'upload',
+                            client_id: client_id,
+                            params: {'savepath':'/'},
+                            repository_id: scope.active_repo.id,
+                            form: {id: id, upload:true},
+                            callback: function(id, o, args) {
+                                if (scope.options.editor_target&&scope.options.env=='editor') {
+                                    scope.options.editor_target.value=o.url;
+                                    scope.options.editor_target.onchange();
+                                }
+                                scope.hide();
+                                o.client_id = client_id;
+                                scope.options.formcallback(o);
+                            }
+                    }, true);
+                });
             }, this);
         },
         print_header: function() {

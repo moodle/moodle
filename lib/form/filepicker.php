@@ -87,13 +87,14 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $args->accepted_types = $this->_options['accepted_types']?$this->_options['accepted_types']:'*';
         $args->return_types = FILE_INTERNAL;
         $args->context = $PAGE->context;
-        $args->env = 'filepicker';
 
         $options = initialise_filepicker($args);
 
         $options->client_id = $client_id;
         $options->maxbytes = $this->_options['maxbytes'];
         $options->maxfiles = 1;
+        $options->env = 'filepicker';
+        $options->itemid = $draftitemid;
 
         $id     = $this->_attributes['id'];
         $elname = $this->_attributes['name'];
