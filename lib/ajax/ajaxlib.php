@@ -240,7 +240,7 @@ class page_requirements_manager {
      * to once.
      *
      * @param $jsfile The path to the .js file, relative to $CFG->dirroot / $CFG->wwwroot.
-     *      No leading slash. For example 'mod/mymod/customscripts.js';
+     *      No leading slash. For example '/mod/mymod/customscripts.js';
      * @param boolean $fullurl This parameter is intended for internal use only.
      *      However, in exceptional circumstances you may wish to use it to link
      *      to JavaScript on another server. For example, lib/recaptchalib.php has to
@@ -254,6 +254,7 @@ class page_requirements_manager {
     public function js($jsfile, $fullurl = false) {
         global $CFG;
         if (!$fullurl) {
+            $jsfile = ltrim($jsfile, '/'); // for now until we change all js urls to start with '/' like the rest of urls
             // strtok is used to trim off any GET string arguments before looking for the file
             if (!file_exists($CFG->dirroot . '/' . strtok($jsfile, '?'))) {
                 throw new coding_exception('Attept to require a JavaScript file that does not exist.', $jsfile);
