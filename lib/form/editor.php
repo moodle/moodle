@@ -193,9 +193,8 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $options->maxbytes = $this->_options['maxbytes'];
             $options->maxfiles = 1;
             $options->env = 'editor';
+            $options->itemid = $draftitemid;
 
-            //$PAGE->requires->js_function_call('id2_add_clientid', array($id, $client_id))->on_dom_ready();
-            //$PAGE->requires->js_function_call('id2_add_itemid', array($id, $draftitemid))->on_dom_ready();
             $PAGE->requires->js_function_call('editor_init_filepicker', array($id, $options))->on_dom_ready();
 
             if ($editor->supports_repositories()) {
