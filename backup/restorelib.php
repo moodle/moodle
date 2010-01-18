@@ -2809,7 +2809,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $user = $useridsdbrec->info;
                 foreach (array_keys(get_object_vars($user)) as $field) {
                     if (!is_array($user->$field)) {
-                        $user->$field = backup_todb($user->$field);
+                        $user->$field = backup_todb($user->$field, false);
                         if (is_null($user->$field)) {
                             $user->$field = '';
                         }
@@ -2909,8 +2909,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 if ($create_user) {
                     //Unset the id because it's going to be inserted with a new one
                     unset ($user->id);
-                    // relink the descriptions
-                    $user->description = stripslashes($user->description);
 
                 /// Disable pictures based on global setting or existing empty value (old backups can contain wrong empties)
                     if (!empty($CFG->disableuserimages) || empty($user->picture)) {
