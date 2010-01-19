@@ -59,6 +59,11 @@ class page_requirements_manager {
     protected $requiredjscode = array();
 
     /**
+     * Javascript code used for initialisation of page, it shoudl be relatively small
+     * @var array
+     */
+    protected $jsinitcode = array();
+    /**
      * Theme sheets, initialised only from core_renderer
      * @var array of moodle_url
      */
@@ -422,14 +427,17 @@ class page_requirements_manager {
      * somewhere on this page.
      *
      * By default the call will be put in a script tag at the
-     * end of the page, since this gives best page-load performance.
+     * end of the page after initialising Y instance, since this gives best page-load
+     * performance and allows you to use YUI3 library.
      *
      * If you request that a particular function is called several times, then
      * that is what will happen (unlike linking to a CSS or JS file, where only
      * one link will be output).
      *
+     * The main benefit of the mehtod is the automatic encoding of all function parameters.
+     *
      * @param string $function the name of the JavaScritp function to call. Can
-     *      be a compound name like 'YAHOO.util.Event.addListener'. Can also be
+     *      be a compound name like 'Y.Event.purgeElement'. Can also be
      *      used to create and object by using a 'function name' like 'new user_selector'.
      * @param array $arguments and array of arguments to be passed to the function.
      *      When generating the function call, this will be escaped using json_encode,
@@ -445,6 +453,21 @@ class page_requirements_manager {
         $requirement = new required_js_function_call($this, $function, $arguments);
         $this->requiredjscode[] = $requirement;
         return $requirement;
+    }
+
+    /**
+     * Add short static javascript code fragment to page footer.
+     * This is intended primarily for loading of js modules and initialising page layout.
+     * Ideally the JS code fragment should be stored in plugin renderer so that themes
+     * may override it.
+     *
+     * Example: "Y.use('mod_mymod'); M.mod_mymod.init_view();"
+     *
+     * @param string $jscode
+     * @return void
+     */
+    public function js_init_code($jscode) {
+        $this->jsinitcode[] = trim($jscode, " ;\n");
     }
 
     /**
@@ -597,6 +620,14 @@ class page_requirements_manager {
             }
         }
         return $output;
+    }
+
+    /**
+     * Returns js code to be executed when Y is available.
+     * @return unknown_type
+     */
+    protected function get_javascript_init_code() {
+        return implode(";\n", $this->jsinitcode) . ";\n";
     }
 
     /**
@@ -755,6 +786,7 @@ class page_requirements_manager {
 
         $inyuijs = $this->get_javascript_code(self::WHEN_IN_YUI, '    ');
         $ondomreadyjs = $this->get_javascript_code(self::WHEN_ON_DOM_READY, '        ');
+        $jsinit = $this->get_javascript_init_code();
 
 //TODO: do we really need the global "Y" defined in javasecript-static.js?
 //      The problem is that we can not rely on it to be fully initialised
@@ -764,6 +796,7 @@ $inyuijs    ;
     Y.on('domready', function() {
 $ondomreadyjs
     });
+$jsinit
 });
 EOD;
 
@@ -1137,7 +1170,7 @@ class required_js_function_call extends required_js_code {
      *
      * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
      * @param string $function the name of the JavaScritp function to call.
-     *      Can be a compound name like 'Y.on'. Do not use old YUI2 YAHOO. function names.
+     *      Can be a compound name like 'Y.Event.purgeElement'. Do not use old YUI2 YAHOO. function names.
      * @param array $arguments and array of arguments to be passed to the function.
      *      When generating the function call, this will be escaped using json_encode,
      *      so passing objects and arrays should work.
