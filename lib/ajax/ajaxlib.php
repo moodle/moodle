@@ -250,7 +250,7 @@ class page_requirements_manager {
      * to once.
      *
      * @param $jsfile The path to the .js file, relative to $CFG->dirroot / $CFG->wwwroot.
-     *      No leading slash. For example '/mod/mymod/customscripts.js';
+     *      For example '/mod/mymod/customscripts.js';
      * @param boolean $fullurl This parameter is intended for internal use only.
      *      However, in exceptional circumstances you may wish to use it to link
      *      to JavaScript on another server. For example, lib/recaptchalib.php has to
