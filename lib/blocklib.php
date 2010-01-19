@@ -1099,6 +1099,13 @@ class block_manager {
             } else {
                 $bi->subpagepattern = $data->bui_subpagepattern;
             }
+            if (!empty($data->bui_parentcontextid)) {
+                // Ignore context changing if the user doesn't have block manage for the system
+                // to prevent more ordinary users moving blocks illegally
+                if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM))) {
+                    $bi->parentcontextid = $data->bui_parentcontextid;
+                }
+            }
             $bi->defaultregion = $data->bui_defaultregion;
             $bi->defaultweight = $data->bui_defaultweight;
             $DB->update_record('block_instances', $bi);

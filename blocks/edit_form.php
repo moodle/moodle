@@ -82,7 +82,24 @@ class block_edit_form extends moodleform {
         $regionoptions = $this->page->theme->get_all_block_regions();
 
         $parentcontext = get_context_instance_by_id($this->block->instance->parentcontextid);
-        $mform->addElement('static', 'contextname', get_string('thisblockbelongsto', 'block'), print_context_name($parentcontext));
+
+        // Check if the block is on the front page (explictly or as system block): MDL-21375
+        if ($parentcontext->contextlevel == CONTEXT_COURSE && $parentcontext->instanceid == SITEID) {
+            $frontpagecontext = $parentcontext;
+            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        } else if ($parentcontext->contextlevel == CONTEXT_SYSTEM) {
+            $systemcontext = $parentcontext;
+            $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
+        }
+
+        if (!empty($frontpagecontext)) {   // This block appears on the front page, offer a choice
+            $contextoptions = array();
+            $contextoptions[$frontpagecontext->id] = print_context_name($frontpagecontext);
+            $contextoptions[$systemcontext->id] = print_context_name($systemcontext);
+            $mform->addElement('select', 'bui_parentcontextid', get_string('thisblockbelongsto', 'block'), $contextoptions);
+        } else {
+            $mform->addElement('static', 'contextname', get_string('thisblockbelongsto', 'block'), print_context_name($parentcontext));
+        }
 
         $mform->addElement('selectyesno', 'bui_showinsubcontexts', get_string('appearsinsubcontexts', 'block'));
 
@@ -133,7 +150,7 @@ class block_edit_form extends moodleform {
 
     function set_data($defaults) {
         // Prefix bui_ on all the core field names.
-        $blockfields = array('showinsubcontexts', 'pagetypepattern', 'subpagepattern',
+        $blockfields = array('showinsubcontexts', 'pagetypepattern', 'subpagepattern', 'parentcontextid',
                 'defaultregion', 'defaultweight', 'visible', 'region', 'weight');
         foreach ($blockfields as $field) {
             $newname = 'bui_' . $field;
