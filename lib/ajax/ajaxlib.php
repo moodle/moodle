@@ -1235,9 +1235,8 @@ class required_data_for_js extends required_js_code {
 
 /**
  * This class represents a Javascript event handler, listening for a
- * specific Event to occur on a DOM element identified by a given id.
- * By default the data will be output at the end of the page, but you
- * can change that using the {@link asap()}, {@link in_head()}, etc. methods.
+ * specific Event to occur on a DOM element identified by a given selector.
+ * Do not use {@link in_head()}, etc.
  *
  * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
