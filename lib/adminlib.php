@@ -6257,10 +6257,11 @@ class admin_setting_manageexternalservices extends admin_setting {
             $table->data[] = array($displayname, $delete, $functions, $users, $edit);
         }
         // add new custom service option
-        $table->data[] = array('', '', '', '', "<a href=\"$esurl?id=0\">$stradd</a>");
         $return .= $OUTPUT->table($table);
 
-        $return .= '<br />'.get_string('tablesnosave', 'admin');
+        $return .= '<br />';
+        // add a token to the table
+        $return .= "<a href=\"$esurl?id=0\">$stradd</a>";
 
         return highlight($query, $return);
     }
@@ -6476,8 +6477,7 @@ class admin_setting_managewebservicetokens extends admin_setting {
         $strcontext = get_string('context', 'webservice');
         $strvaliduntil = get_string('validuntil', 'webservice');
 
-        $return = $OUTPUT->heading(get_string('webservicetokens', 'webservice'), 3, 'main', true);
-        $return .= $OUTPUT->box_start('generalbox webservicestokenui');
+        $return = $OUTPUT->box_start('generalbox webservicestokenui');
 
         $table = new html_table();
         $table->head  = array($strtoken, $struser, $strservice, $strcontext, $strvaliduntil, $stroperation);
