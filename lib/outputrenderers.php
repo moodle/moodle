@@ -76,7 +76,7 @@ class renderer_base {
      * @return void
      */
     public function add_action_handler($id, component_action $action) {
-        $this->page->requires->event_handler($id, $action->event, $action->jsfunction, $action->jsfunctionargs);
+        $this->page->requires->event_handler("#$id", $action->event, $action->jsfunction, $action->jsfunctionargs);
     }
 
     /**
@@ -140,7 +140,7 @@ class renderer_base {
         if (!empty($actions) && is_array($actions) && $actions[0] instanceof component_action) {
             foreach ($actions as $action) {
                 if (!empty($action->jsfunction)) {
-                    $this->page->requires->event_handler($component->id, $action->event, $action->jsfunction, $action->jsfunctionargs);
+                    $this->page->requires->event_handler("#$component->id", $action->event, $action->jsfunction, $action->jsfunctionargs);
                 }
             }
         }

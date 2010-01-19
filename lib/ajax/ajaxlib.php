@@ -51,6 +51,7 @@ class page_requirements_manager {
     const WHEN_IN_HEAD = 0;
     const WHEN_TOP_OF_BODY = 10;
     const WHEN_AT_END = 20;
+    const WHEN_IN_YUI = 25;
     const WHEN_ON_DOM_READY = 30;
 
     protected $linkedrequirements = array();
@@ -554,16 +555,15 @@ class page_requirements_manager {
     /**
      * Creates a YUI event handler.
      *
-     * @param string $id The id of the DOM element that will be listening for the event
+     * @param mixed $selector standard YUI selector for elemnts, may be array or string, element id is in the form "#idvalue"
      * @param string $event A valid DOM event (click, mousedown, change etc.)
      * @param string $function The name of the function to call
      * @param array  $arguments An optional array of argument parameters to pass to the function
      * @return required_event_handler The event_handler object
      */
-    public function event_handler($id, $event, $function, $arguments=array()) {
-        $requirement = new required_event_handler($this, $id, $event, $function, $arguments);
+    public function event_handler($selector, $event, $function, array $arguments = null) {
+        $requirement = new required_event_handler($this, $selector, $event, $function, $arguments);
         $this->requiredjscode[] = $requirement;
-        $this->yui2_lib('event');
         return $requirement;
     }
 
@@ -701,7 +701,7 @@ class page_requirements_manager {
         // all core stuff should go into /lib/javascript-static.js
         $output .= $this->get_linked_resources_code(self::WHEN_IN_HEAD);
 
-        // finally all JS that should go directly into head tag - mostly global config 
+        // finally all JS that should go directly into head tag - mostly global config
         $output .= html_writer::script($this->get_javascript_code(self::WHEN_IN_HEAD));
 
         // mark head sending done, it is not possible to anything there
@@ -753,18 +753,18 @@ class page_requirements_manager {
 
         $js = $this->get_javascript_code(self::WHEN_AT_END);
 
-        $ondomreadyjs = $this->get_javascript_code(self::WHEN_ON_DOM_READY, '    ');
+        $inyuijs = $this->get_javascript_code(self::WHEN_IN_YUI, '    ');
+        $ondomreadyjs = $this->get_javascript_code(self::WHEN_ON_DOM_READY, '        ');
 
 //TODO: do we really need the global "Y" defined in javasecript-static.js?
 //      The problem is that we can not rely on it to be fully initialised
         $js .= <<<EOD
-
-    Y = YUI(yui3loader).use('node-base', function(Y) {
-        Y.on('domready', function() {
-            $ondomreadyjs
-        });
-        // TODO: call user js functions from here so that they have the proper initialised Y
+Y = YUI(yui3loader).use('node-base', function(Y) {
+$inyuijs    ;
+    Y.on('domready', function() {
+$ondomreadyjs
     });
+});
 EOD;
 
         $output .= html_writer::script($js);
@@ -1118,8 +1118,8 @@ abstract class required_js_code extends requirement_base {
 
 /**
  * This class represents a JavaScript function that must be called from the HTML
- * page. By default the call will be made at the end of the page, but you can
- * chage that using the {@link asap()}, {@link in_head()}, etc. methods.
+ * page. By default the call will be made at the end of the page when YUI initialised,
+ * but you can chage that using the {@link asap()}, {@link in_head()}, etc. methods.
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -1137,13 +1137,14 @@ class required_js_function_call extends required_js_code {
      *
      * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
      * @param string $function the name of the JavaScritp function to call.
-     *      Can be a compound name like 'YAHOO.util.Event.addListener'.
+     *      Can be a compound name like 'Y.on'. Do not use old YUI2 YAHOO. function names.
      * @param array $arguments and array of arguments to be passed to the function.
      *      When generating the function call, this will be escaped using json_encode,
      *      so passing objects and arrays should work.
      */
     public function __construct(page_requirements_manager $manager, $function, $arguments) {
         parent::__construct($manager);
+        $this->when = page_requirements_manager::WHEN_IN_YUI;
         $this->function = $function;
         $this->arguments = $arguments;
     }
@@ -1163,14 +1164,13 @@ class required_js_function_call extends required_js_code {
     /**
      * Indicate that this function should be called in YUI's onDomReady event.
      *
-     * Not that this is probably not necessary most of the time. Just having the
-     * function call at the end of the HTML should normally be sufficient.
+     * Thisis needed mostly for buggy IE browsers because they have problems
+     * when JS starts modifying DOM structure before the DOM is ready.
      */
     public function on_dom_ready() {
-        if ($this->is_done() || $this->when < page_requirements_manager::WHEN_AT_END) {
+        if ($this->is_done() || $this->when < page_requirements_manager::WHEN_IN_YUI) {
             return;
         }
-        $this->manager->yui2_lib('event');
         $this->when = page_requirements_manager::WHEN_ON_DOM_READY;
     }
 
@@ -1244,7 +1244,7 @@ class required_data_for_js extends required_js_code {
  * @since Moodle 2.0
  */
 class required_event_handler extends required_js_code {
-    protected $id;
+    protected $selector;
     protected $event;
     protected $function;
     protected $args = array();
@@ -1255,21 +1255,23 @@ class required_event_handler extends required_js_code {
      * method {@link page_requirements_manager::data_for_js()}.
      *
      * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
-     * @param string $id The id of the DOM element that will be listening for the event
+     * @param mixed $selector standard YUI selector for elemnts, may be array or string, element id is in the form "#idvalue"
      * @param string $event A valid DOM event (click, mousedown, change etc.)
      * @param string $function The name of the function to call
      * @param array  $arguments An optional array of argument parameters to pass to the function
      */
-    public function __construct(page_requirements_manager $manager, $id, $event, $function, $args=array()) {
+    public function __construct(page_requirements_manager $manager, $selector, $event, $function, array $args = null) {
         parent::__construct($manager);
-        $this->id = $id;
+        $this->when = page_requirements_manager::WHEN_IN_YUI;
+        $this->selector = $selector;
         $this->event = $event;
         $this->function = $function;
         $this->args = $args;
     }
 
     public function get_js_code() {
-        $output = "YAHOO.util.Event.addListener('$this->id', '$this->event', $this->function";
+        $selector = json_encode($this->selector);
+        $output = "Y.on('$this->event', $this->function, $selector, null";
         if (!empty($this->args)) {
             $output .= ', ' . json_encode($this->args);
         }
