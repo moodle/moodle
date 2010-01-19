@@ -27,6 +27,8 @@
 require('../config.php');
 
 $PAGE->set_url('/user/managetoken.php');
+$PAGE->set_title(get_string('securitykeys', 'webservice'));
+$PAGE->set_heading(get_string('securitykeys', 'webservice'));
 
 $action  = optional_param('action', '', PARAM_ACTION);
 $tokenid = optional_param('tokenid', '', PARAM_SAFEDIR);
@@ -41,58 +43,7 @@ $returnurl = "$CFG->wwwroot/user/managetoken.php?sesskey=" . sesskey();
 
 switch ($action) {
 
-    case 'create':
-        require_once($CFG->dirroot."/$CFG->admin/webservice/forms.php");
-        $mform = new web_service_token_form(null, array('action' => 'create', 'nouserselection' => true));
-        if ($mform->is_cancelled()) {
-            redirect($returnurl);
-        } else if ($data = $mform->get_data()) {
-            ignore_user_abort(true); // no interruption here!
-
-            //generate token
-            $generatedtoken = md5(uniqid(rand(),1));
-
-            // make sure the token doesn't exist (even if it should be almost impossible with the random generation)
-            if ($DB->record_exists('external_tokens', array('token'=>$generatedtoken))) {
-                throw new moodle_exception('tokenalreadyexist');
-            } else {
-                $newtoken = new object();
-                $newtoken->token = $generatedtoken;
-                //check that the user has capability on this service
-                $service = $DB->get_record('external_services', array('id' => $data->service));
-                if (empty($service)) {
-                    throw new moodle_exception('servicedonotexist');
-                }
-                if (empty($service->requiredcapability) || has_capability($service->requiredcapability, $systemcontext, $USER->id)) {
-                    $newtoken->externalserviceid = $data->service;
-                } else {
-                    throw new moodle_exception('nocapabilitytousethisservice');
-                }
-
-                $newtoken->tokentype = EXTERNAL_TOKEN_PERMANENT;
-                $newtoken->userid = $USER->id;
-                //TODO: find a way to get the context - UPDATE FOLLOWING LINE
-                $newtoken->contextid = get_context_instance(CONTEXT_SYSTEM)->id;
-                $newtoken->creatorid = $USER->id;
-                $newtoken->timecreated = time();
-                $newtoken->validuntil = $data->validuntil;
-                if (!empty($data->iprestriction)) {
-                    $newtoken->iprestriction = $data->iprestriction;
-                }
-                $DB->insert_record('external_tokens', $newtoken);
-            }
-            redirect($returnurl);
-        }
-
-        //ask for function id
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('createtoken', 'webservice'));
-        $mform->display();
-        echo $OUTPUT->footer();
-        die;
-        break;
-
-    case 'delete':
+    case 'reset':
         $sql = "SELECT
                     t.id, t.token, u.firstname, u.lastname, s.name
                 FROM
@@ -103,34 +54,83 @@ switch ($action) {
         if (!$confirm) {
             echo $OUTPUT->header();
             echo $OUTPUT->heading(get_string('managetokens', 'webservice'));
-            $optionsyes = array('tokenid'=>$tokenid, 'action'=>'delete', 'confirm'=>1, 'sesskey'=>sesskey());
+            $optionsyes = array('tokenid'=>$tokenid, 'action'=>'reset', 'confirm'=>1, 'sesskey'=>sesskey());
             $optionsno  = array('section'=>'webservicetokens', 'sesskey'=>sesskey());
-            $formcontinue = new single_button(new moodle_url($returnurl, $optionsyes), get_string('delete'));
+            $formcontinue = new single_button(new moodle_url($returnurl, $optionsyes), get_string('reset'));
             $formcancel = new single_button(new moodle_url($returnurl, $optionsno), get_string('cancel'), 'get');
-            echo $OUTPUT->confirm(get_string('deletetokenconfirm', 'webservice', (object)array('user'=>$token->firstname." ".$token->lastname, 'service'=>$token->name)), $formcontinue, $formcancel);
+            echo $OUTPUT->confirm(get_string('resettokenconfirm', 'webservice', (object)array('user'=>$token->firstname." ".$token->lastname, 'service'=>$token->name)), $formcontinue, $formcancel);
             echo $OUTPUT->footer();
             die;
         }
         $DB->delete_records('external_tokens', array('id'=>$token->id));
+        
         redirect($returnurl);
         break;
 
     default: //display the list of token
 
+    /// generate a token for non admin if web service are enable and the user has the capability to create a token
+        if (!is_siteadmin($USER->id) && has_capability('moodle/webservice:createtoken', get_context_instance(CONTEXT_SYSTEM)) && !empty($CFG->enablewebservices)) {
+        /// for every service than the user is authorised on, create a token (if it doesn't already exist)
+
+            ///get all services which are set to all user (no restricted to specific users)
+            $norestrictedservices = $DB->get_records('external_services', array('restrictedusers' => 0));
+            $serviceidlist = array();
+            foreach ($norestrictedservices as $service) {
+                $serviceidlist[] = $service->id;
+            }
+
+            //get all services which are set to the current user (the current user is specified in the restricted user list)
+            $servicesusers = $DB->get_records('external_services_users', array('userid' => $USER->id));
+            foreach ($servicesusers as $serviceuser) {
+                if (!in_array($serviceuser->externalserviceid,$serviceidlist)) {
+                     $serviceidlist[] = $serviceuser->externalserviceid;
+                }
+            }
+
+            //get all services which already have a token set for the current user
+            $usertokens = $DB->get_records('external_tokens', array('userid' => $USER->id, 'tokentype' => EXTERNAL_TOKEN_PERMANENT));
+            $tokenizedservice = array();
+            foreach ($usertokens as $token) {
+                    $tokenizedservice[]  = $token->externalserviceid;
+            }
+
+            //create a token for the service which have no token already
+            foreach ($serviceidlist as $serviceid) {
+                if (!in_array($serviceid, $tokenizedservice)) {
+                    //create the token for this service
+                    $newtoken = new object();
+                    $newtoken->token = md5(uniqid(rand(),1));
+                    //check that the user has capability on this service
+                    $newtoken->tokentype = EXTERNAL_TOKEN_PERMANENT;
+                    $newtoken->userid = $USER->id;
+                    $newtoken->externalserviceid = $serviceid;
+                    //TODO: find a way to get the context - UPDATE FOLLOWING LINE
+                    $newtoken->contextid = get_context_instance(CONTEXT_SYSTEM)->id;
+                    $newtoken->creatorid = $USER->id;
+                    $newtoken->timecreated = time();
+                   
+                    $DB->insert_record('external_tokens', $newtoken);
+                }
+            }
+            
+            
+        }
+
         // display strings
         $stroperation = get_string('operation', 'webservice');
-        $strtoken = get_string('token', 'webservice');
+        $strtoken = get_string('key', 'webservice');
         $strservice = get_string('service', 'webservice');
         $struser = get_string('user');
         $strcontext = get_string('context', 'webservice');
         $strvaliduntil = get_string('validuntil', 'webservice');
 
-        $return = $OUTPUT->heading(get_string('webservicetokens', 'webservice'), 3, 'main', true);
+        $return = $OUTPUT->heading(get_string('securitykeys', 'webservice'), 3, 'main', true);
         $return .= $OUTPUT->box_start('generalbox webservicestokenui');
 
         $table = new html_table();
-        $table->head  = array($strtoken, $struser, $strservice, $strcontext, $strvaliduntil, $stroperation);
-        $table->align = array('left', 'left', 'left', 'left', 'center');
+        $table->head  = array($strtoken, $strservice, $strvaliduntil, $stroperation);
+        $table->align = array('left', 'left', 'left', 'center', 'center');
         $table->width = '100%';
         $table->data  = array();
 
@@ -148,31 +148,23 @@ switch ($action) {
             foreach ($tokens as $token) {
                 //TODO: retrieve context
 
-                $delete = "<a href=\"".$returnurl."&amp;action=delete&amp;tokenid=".$token->id."\">";
-                $delete .= get_string('delete')."</a>";
-
-                if (empty($_SERVER['HTTPS'])) {
-                    $token->token = get_string('activatehttps', 'webservice');
-                }
+                $reset = "<a href=\"".$returnurl."&amp;action=reset&amp;tokenid=".$token->id."\">";
+                $reset .= get_string('reset')."</a>";
 
                 $validuntil = '';
                 if (!empty($token->validuntil)) {
                     $validuntil = date("F j, Y"); //TODO: language support (look for moodle function)
                 }
 
-                $table->data[] = array($token->token, $token->firstname." ".$token->lastname, $token->name, '', $validuntil, $delete);
+                $table->data[] = array($token->token, $token->name, $validuntil, $reset);
             }
 
             $return .= $OUTPUT->table($table);
-            $return .= get_string('httpswarning', 'webservice');
         } else {
             $return .= get_string('notoken', 'webservice');
         }
 
         $return .= $OUTPUT->box_end();
-        // "add a token" link
-        $return .= "<a href=\"".$returnurl."&amp;action=create\">";
-        $return .= get_string('add')."</a>";
         echo $OUTPUT->header();
         echo $return;
         echo $OUTPUT->footer();
