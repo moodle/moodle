@@ -6408,7 +6408,7 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
             $table->data[] = array($displayname, $version, $hideshow, $uninstall, $settings);
         }
         $return .= $OUTPUT->table($table);
-        $return .= get_string('configwebserviceplugins', 'webservice').'<br />'.get_string('tablenosave', 'admin');
+        $return .= get_string('configwebserviceplugins', 'webservice');
         $return .= $OUTPUT->box_end();
 
         return highlight($query, $return);
