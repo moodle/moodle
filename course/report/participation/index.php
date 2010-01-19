@@ -49,6 +49,8 @@
         $action = '';
     }
 
+    $PAGE->requires->js('/course/report/participation/participation.js')->in_head();
+
     $PAGE->set_title($course->shortname .': '. $strparticipation);
     $PAGE->set_heading($course->fullname);
     $PAGE->navbar->add($strreports, new moodle_url('/course/report.php', array('id'=>$course->id)));
@@ -241,8 +243,6 @@
         }
 
         echo '<h2>'.get_string('counteditems', '', $a).'</h2>'."\n";
-
-        echo $PAGE->requires->js('/course/report/participation/participation.js')->asap();
 
         echo '<form action="'.$CFG->wwwroot.'/user/action_redir.php" method="post" id="studentsform" onsubmit="return checksubmit(this);">'."\n";
         echo '<div>'."\n";
