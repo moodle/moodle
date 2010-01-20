@@ -116,7 +116,7 @@ class external_service_functions_form extends moodleform {
             $functions[$functionid] = $function->name.':'.$function->description;
         }
 
-        $mform->addElement('searchableselector', 'fid', get_string('name'), $functions);
+        $mform->addElement('searchableselector', 'fid', get_string('name'), $functions, array('multiple' => true));
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

@@ -36,10 +36,6 @@ class MoodleQuickForm_searchableselector extends MoodleQuickForm_select{
 
 
     function MoodleQuickForm_searchableselector($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
-        //return exception if the selector is set as multiple (TODO: implement multiple support)
-        if (!empty($attributes) && key_exists('multiple', $attributes)) {
-            throw new moodle_exception('searchableselectorcannotbemultiple');
-        }
         //set size default to 12
         if (empty($attributes) || empty($attributes['size'])) {
             $attributes['size'] = 12;
