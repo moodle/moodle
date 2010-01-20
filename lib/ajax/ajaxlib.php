@@ -49,15 +49,19 @@
  */
 class page_requirements_manager {
     const WHEN_IN_HEAD = 0;
-    const WHEN_TOP_OF_BODY = 10;
-    const WHEN_AT_END = 20;
-    const WHEN_IN_YUI = 25;
+    const WHEN_AT_END = 10;
+    const WHEN_IN_YUI = 20;
     const WHEN_ON_DOM_READY = 30;
 
     protected $linkedrequirements = array();
     protected $stringsforjs = array();
     protected $requiredjscode = array();
 
+    /**
+     * List of skip links, those are needed for accessibility reasons
+     * @var array
+     */
+    protected $skiplinks = array();
     /**
      * Javascript code used for initialisation of page, it shoudl be relatively small
      * @var array
@@ -417,9 +421,11 @@ class page_requirements_manager {
      * @param $linktext The text to use for the skip link. Normally get_string('skipto', 'access', ...);
      */
     public function skip_link_to($target, $linktext) {
-        if (!isset($this->linkedrequirements[$target])) {
-            $this->linkedrequirements[$target] = new required_skip_link($this, $target, $linktext);
+        if ($this->topofbodydone) {
+            debugging('Page header already printed, can not add skip links any more, code needs to be fixed.');
+            return;
         }
+        $this->skiplinks[$target] = $linktext;
     }
 
     /**
@@ -445,7 +451,6 @@ class page_requirements_manager {
      * @return required_js_function_call The required_js_function_call object.
      *      This allows you to control when the link to the script is output by
      *      calling methods like {@link required_js_function_call::in_head()},
-     *      {@link required_js_function_call::at_top_of_body()},
      *      {@link required_js_function_call::on_dom_ready()} or
      *      {@link required_js_function_call::after_delay()} methods.
      */
@@ -562,7 +567,6 @@ class page_requirements_manager {
      *      This allows you to control when the link to the script is output by
      *      calling methods like {@link required_data_for_js::asap()},
      *      {@link required_data_for_js::in_head()} or
-     *      {@link required_data_for_js::at_top_of_body()} methods.
      */
     public function data_for_js($variable, $data) {
         if (isset($this->variablesinitialised[$variable])) {
@@ -750,10 +754,17 @@ class page_requirements_manager {
      * @return string the HTML code to go at the start of the <body> tag.
      */
     public function get_top_of_body_code() {
-        $output = '<div class="skiplinks">' . $this->get_linked_resources_code(self::WHEN_TOP_OF_BODY) . '</div>';
-        $js = "document.body.className += ' jsenabled';\n";
-        $js .= $this->get_javascript_code(self::WHEN_TOP_OF_BODY);
-        $output .= html_writer::script($js);
+		// first the skip links
+        $links = '';
+        $attributes = array('class'=>'skip');
+        foreach ($this->skiplinks as $url => $text) {
+            $attributes['href'] = '#' . $url;
+            $links .= html_writer::tag('a', $attributes, $text);
+        }
+        $output = html_writer::tag('div', array('class'=>'skiplinks'), $links) . "\n";
+
+        // then the clever trick for hiding of things not needed when JS works
+        $output .= html_writer::script("document.body.className += ' jsenabled';") . "\n";
         $this->topofbodydone = true;
         return $output;
     }
@@ -912,7 +923,7 @@ abstract class linked_requirement extends requirement_base {
  * work with a {@link page_requirements_manager} - and probably the only
  * page_requirements_manager you will ever need is the one at $PAGE->requires.
  *
- * The methods {@link asap()}, {@link in_head()} and {@link at_top_of_body()}
+ * The methods {@link asap()} and {@link in_head()}
  * are indented to be used as a fluid API, so you can say things like
  *     $PAGE->requires->js('/mod/mymod/script.js')->in_head();
  *
@@ -1001,57 +1012,6 @@ class required_js extends linked_requirement {
         }
         $this->when = page_requirements_manager::WHEN_IN_HEAD;
     }
-
-    /**
-     * Indicate that the link to this JavaScript file should be output at the top
-     * of the <body> section of the HTML. If it too late for this request to be
-     * satisfied, an exception is thrown.
-     */
-    public function at_top_of_body() {
-        if ($this->is_done() || $this->when <= page_requirements_manager::WHEN_TOP_OF_BODY) {
-            return;
-        }
-        if ($this->manager->is_top_of_body_done()) {
-            throw new coding_exception('Too late to ask for a JavaScript file to be linked to from the top of &lt;body>.');
-        }
-        $this->when = page_requirements_manager::WHEN_TOP_OF_BODY;
-    }
-}
-
-
-/**
- * A subclass of {@link linked_requirement} to represent a skip link.
- * A skip link is a concept from accessibility. You have some links like
- * 'Skip to main content' linking to an #maincontent anchor, at the start of the
- * <body> tag, so that users using assistive technologies like screen readers
- * can easily get to the main content without having to work their way through
- * any navigation, blocks, etc. that comes before it in the HTML.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- */
-class required_skip_link extends linked_requirement {
-    protected $linktext;
-
-    /**
-     * Constructor. Normally instances of this class should not be created directly.
-     * Client code should create them via the page_requirements_manager
-     * method {@link page_requirements_manager::yui2_lib()}.
-     *
-     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
-     * @param string $target the name of the anchor in the page we are linking to.
-     * @param string $linktext the test to use for the link.
-     */
-    public function __construct(page_requirements_manager $manager, $target, $linktext) {
-        parent::__construct($manager, $target);
-        $this->when = page_requirements_manager::WHEN_TOP_OF_BODY;
-        $this->linktext = $linktext;
-    }
-
-    public function get_html() {
-        return '<a class="skip" href="#' . $this->url . '">' . $this->linktext . "</a>\n";
-    }
 }
 
 
@@ -1130,21 +1090,6 @@ abstract class required_js_code extends requirement_base {
             throw new coding_exception('Too late to ask for some JavaScript code to be output in &lt;head>.');
         }
         $this->when = page_requirements_manager::WHEN_IN_HEAD;
-    }
-
-    /**
-     * Indicate that the link to this JavaScript file should be output at the top
-     * of the <body> section of the HTML. If it too late for this request to be
-     * satisfied, an exception is thrown.
-     */
-    public function at_top_of_body() {
-        if ($this->is_done() || $this->when <= page_requirements_manager::WHEN_TOP_OF_BODY) {
-            return;
-        }
-        if ($this->manager->is_top_of_body_done()) {
-            throw new coding_exception('Too late to ask for some JavaScript code to be output at the top of &lt;body>.');
-        }
-        $this->when = page_requirements_manager::WHEN_TOP_OF_BODY;
     }
 }
 

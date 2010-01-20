@@ -103,33 +103,6 @@ class required_css_test extends ajaxlib_unit_test_base {
     }
 }
 
-
-/**
- * Unit tests for the required_skip_link class.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class required_skip_link_test extends ajaxlib_unit_test_base {
-    protected $target = 'skiptarget';
-    protected $linktext = 'Skip to link text';
-
-    public function test_when() {
-        $requirement = new required_skip_link($this->requires, $this->target, $this->linktext);
-        $this->assertEqual($requirement->get_when(), page_requirements_manager::WHEN_TOP_OF_BODY);
-    }
-
-    public function test_round_trip_to_html() {
-        $requirement = new required_skip_link($this->requires, $this->target, $this->linktext);
-        $html = $requirement->get_html();
-        $this->assertContains($html, '>' . $this->linktext . '</a>');
-        $this->assertContains($html, '<a ');
-        $this->assertContains($html, 'class="skip"');
-        $this->assertContains($html, 'href="#' . $this->target . '"');
-    }
-}
-
-
 /**
  * Unit tests for the required_js_code class. Once again we are tesing the
  * behaviour of an abstract class by creating instances one particular subclass.
@@ -149,12 +122,6 @@ class required_js_code_test extends ajaxlib_unit_test_base {
         $requirement = new $this->classname($this->requires, '', '');
         $requirement->in_head();
         $this->assertEqual($requirement->get_when(), page_requirements_manager::WHEN_IN_HEAD);
-    }
-
-    public function test_setting_when_to_top_of_body() {
-        $requirement = new $this->classname($this->requires, '', '');
-        $requirement->at_top_of_body();
-        $this->assertEqual($requirement->get_when(), page_requirements_manager::WHEN_TOP_OF_BODY);
     }
 
     public function test_asap_before_head_is_head() {
@@ -187,31 +154,7 @@ class required_js_code_test extends ajaxlib_unit_test_base {
         $requirement->in_head();
         $this->pass('No exception thrown as expected.');
     }
-
-    public function test_body_top_when_too_late_throws_exception() {
-        $requirement = new $this->classname($this->requires, '', '');
-        $this->requires->get_top_of_body_code();
-
-        $this->expectException();
-        $requirement->at_top_of_body();
-    }
-
-    public function test_body_top_when_too_late_no_exception_if_done() {
-        $requirement = new $this->classname($this->requires, '', '');
-        $requirement->mark_done();
-        $this->requires->get_top_of_body_code();
-
-        $requirement->at_top_of_body();
-        $this->pass('No exception thrown as expected.');
-    }
-
-    public function test_body_top_does_not_override_in_head() {
-        $requirement = new $this->classname($this->requires, '', '');
-
-        $requirement->in_head();
-        $requirement->at_top_of_body();
-        $this->assertEqual($requirement->get_when(), page_requirements_manager::WHEN_IN_HEAD);
-    }*/
+*/
 }
 
 
@@ -237,13 +180,6 @@ class required_js_function_call_test extends ajaxlib_unit_test_base {
         $requirement = new required_js_function_call($this->requires, $this->function, $this->params);
         $requirement->on_dom_ready();
         $this->assertEqual($requirement->get_when(), page_requirements_manager::WHEN_ON_DOM_READY);
-    }
-
-    public function test_body_top_does_not_override_earlier_value() {
-        $requirement = new required_js_function_call($this->requires, $this->function, $this->params);
-        $requirement->at_top_of_body();
-        $requirement->on_dom_ready();
-        $this->assertEqual($requirement->get_when(), page_requirements_manager::WHEN_TOP_OF_BODY);
     }
 }
 
@@ -355,14 +291,6 @@ class page_requirements_manager_test extends ajaxlib_unit_test_base {
         $this->requires->string_for_js('added', 'moodle', 'same$a');
         $this->requires->string_for_js('added', 'moodle', 'same$a');
         $this->pass('No exception thrown as expected.');
-    }
-
-    public function test_requiring_data_for_js() {
-        $this->requires->data_for_js('varname', 'Value')->at_top_of_body();
-
-        $html = $this->requires->get_top_of_body_code();
-        $this->assertContains($html, 'varname');
-        $this->assertContains($html, 'Value');
     }
 
     public function test_requiring_js_function_call_on_dom_ready() {
