@@ -1207,7 +1207,7 @@ class required_data_for_js extends required_js_code {
     public function __construct(page_requirements_manager $manager, $variable, $data) {
         parent::__construct($manager);
         $this->variable = $variable;
-        $this->data = json_encode($data);
+        $this->data = $data;
         // json_encode immediately, so that if $data is an object (and therefore was
         // passed in by reference) we get the data at the time the call was made, and
         // not whatever the data happened to be when this is output.
