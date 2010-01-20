@@ -1005,6 +1005,9 @@ class admin_settingpage implements part_of_admin_tree {
     public $path;
     public $visiblepath;
 
+    /** display the save changes button **/
+    public $displaysavebutton;
+
     /**
      * see admin_settingpage for details of this function
      *
@@ -1026,6 +1029,7 @@ class admin_settingpage implements part_of_admin_tree {
         }
         $this->hidden      = $hidden;
         $this->context     = $context;
+        $this->displaysavebutton = true;
     }
 
     /**
@@ -1046,6 +1050,13 @@ class admin_settingpage implements part_of_admin_tree {
             $return = NULL;
             return $return;
         }
+    }
+
+    /**
+     * Hide the Save Changes button
+     */
+    public function hidesavebutton() {
+       $this->displaysavebutton = false;
     }
 
     /**
@@ -5253,7 +5264,7 @@ function admin_externalpage_print_header($focus='') {
     $section = $PAGE->url->param('section');
     $current = $adminroot->locate($section, true);
     $visiblepathtosection = array_reverse($current->visiblepath);
-
+    
     if ($PAGE->user_allowed_editing()) {
         $options = $PAGE->url->params();
         if ($PAGE->user_is_editing()) {
