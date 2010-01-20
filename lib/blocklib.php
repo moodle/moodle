@@ -1092,20 +1092,37 @@ class block_manager {
         } else if ($data = $mform->get_data()) {
             $bi = new stdClass;
             $bi->id = $block->instance->id;
-            $bi->showinsubcontexts = $data->bui_showinsubcontexts;
             $bi->pagetypepattern = $data->bui_pagetypepattern;
             if (empty($data->bui_subpagepattern) || $data->bui_subpagepattern == '%@NULL@%') {
                 $bi->subpagepattern = null;
             } else {
                 $bi->subpagepattern = $data->bui_subpagepattern;
             }
-            if (!empty($data->bui_parentcontextid)) {
-                // Ignore context changing if the user doesn't have block manage for the system
-                // to prevent more ordinary users moving blocks illegally
-                if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM))) {
-                    $bi->parentcontextid = $data->bui_parentcontextid;
+
+            $parentcontext = get_context_instance_by_id($data->bui_parentcontextid);
+            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+
+            // Updating stickiness and contexts.  See MDL-21375 for details.
+            if (has_capability('moodle/site:manageblocks', $parentcontext)) { // Check permissions in destination
+                // Explicitly set the context
+                $bi->parentcontextid = $parentcontext->id;
+
+                // If the context type is > 0 then we'll explicitly set the block as sticky, otherwise not
+                $bi->showinsubcontexts = (int)(!empty($data->bui_contexts));
+
+                // If the block wants to be system-wide, then explicitly set that
+                if ($data->bui_contexts == 2) {   // Only possible on a frontpage or system page
+                    $bi->parentcontextid = $systemcontext->id;
+
+                } else { // The block doesn't want to be system-wide, so let's ensure that
+                    if ($parentcontext->id == $systemcontext->id) {  // We need to move it to the front page
+                        $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
+                        $bi->parentcontextid = $frontpagecontext->id;
+                        $bi->pagetypepattern = '*';  // Just in case
+                    }
                 }
             }
+
             $bi->defaultregion = $data->bui_defaultregion;
             $bi->defaultweight = $data->bui_defaultweight;
             $DB->update_record('block_instances', $bi);

@@ -82,26 +82,20 @@ class block_edit_form extends moodleform {
         $regionoptions = $this->page->theme->get_all_block_regions();
 
         $parentcontext = get_context_instance_by_id($this->block->instance->parentcontextid);
+        $mform->addElement('hidden', 'bui_parentcontextid', $parentcontext->id);
 
-        // Check if the block is on the front page (explictly or as system block): MDL-21375
-        if ($parentcontext->contextlevel == CONTEXT_COURSE && $parentcontext->instanceid == SITEID) {
-            $frontpagecontext = $parentcontext;
-            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-        } else if ($parentcontext->contextlevel == CONTEXT_SYSTEM) {
-            $systemcontext = $parentcontext;
-            $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
-        }
-
-        if (!empty($frontpagecontext)) {   // This block appears on the front page, offer a choice
-            $contextoptions = array();
-            $contextoptions[$frontpagecontext->id] = print_context_name($frontpagecontext);
-            $contextoptions[$systemcontext->id] = print_context_name($systemcontext);
-            $mform->addElement('select', 'bui_parentcontextid', get_string('thisblockbelongsto', 'block'), $contextoptions);
+        $contextoptions = array();
+        if ( ($parentcontext->contextlevel == CONTEXT_COURSE && $parentcontext->instanceid == SITEID) ||
+             ($parentcontext->contextlevel == CONTEXT_SYSTEM)) {
+            $contextoptions[0] = get_string('showonfrontpageonly', 'block');
+            $contextoptions[1] = get_string('showonfrontpageandsubs', 'block');
+            $contextoptions[2] = get_string('showonentiresite', 'block');
         } else {
-            $mform->addElement('static', 'contextname', get_string('thisblockbelongsto', 'block'), print_context_name($parentcontext));
+            $parentcontextname = print_context_name($parentcontext);
+            $contextoptions[0] = get_string('showoncontextonly', 'block', $parentcontextname);
+            $contextoptions[1] = get_string('showoncontextandsubs', 'block', $parentcontextname);
         }
-
-        $mform->addElement('selectyesno', 'bui_showinsubcontexts', get_string('appearsinsubcontexts', 'block'));
+        $mform->addElement('select', 'bui_contexts', get_string('contexts', 'block'), $contextoptions);
 
         $pagetypeoptions = matching_page_type_patterns($this->page->pagetype);
         $pagetypeoptions = array_combine($pagetypeoptions, $pagetypeoptions);
@@ -168,6 +162,13 @@ class block_edit_form extends moodleform {
         // Munge ->subpagepattern becuase HTML selects don't play nicely with NULLs.
         if (empty($defaults->bui_subpagepattern)) {
             $defaults->bui_subpagepattern = '%@NULL@%';
+        }
+
+        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        if ($defaults->parentcontextid == $systemcontext->id) {
+            $defaults->bui_contexts = 2; // System-wide and sticky
+        } else {
+            $defaults->bui_contexts = $defaults->bui_showinsubcontexts;
         }
 
         parent::set_data($defaults);
