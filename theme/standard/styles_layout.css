@@ -1452,6 +1452,12 @@ a.skip:focus, a.skip:active {
  padding:3px;
 }
 
+.tempblockhandler, .tempblockhandler .content{
+    height: 3px;
+    margin-bottom: -3px;
+    visibility: hidden;
+}
+
 /***
  *** Blogs
  ***/
