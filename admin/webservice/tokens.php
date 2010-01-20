@@ -28,7 +28,21 @@ require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once('forms.php');
 
+$action  = optional_param('action', '', PARAM_ACTION);
+$tokenid = optional_param('tokenid', '', PARAM_SAFEDIR);
+$confirm = optional_param('confirm', 0, PARAM_BOOL);
+
 $PAGE->set_url('/admin/webservice/tokens.php');
+$PAGE->navbar->ignore_active(true);
+$PAGE->navbar->add(get_string('administrationsite'));
+$PAGE->navbar->add(get_string('plugins', 'admin'));
+$PAGE->navbar->add(get_string('webservices', 'webservice'));
+$PAGE->navbar->add(get_string('managetokens', 'webservice'), new moodle_url('/admin/settings.php?section=webservicetokens'));
+if ($action == "delete") {
+    $PAGE->navbar->add(get_string('delete'));
+} else {
+    $PAGE->navbar->add(get_string('createtoken', 'webservice'));
+}
 
 admin_externalpage_setup('addwebservicetoken');
 
@@ -36,11 +50,6 @@ require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
 $returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=webservicetokens";
-
-$action  = optional_param('action', '', PARAM_ACTION);
-$tokenid = optional_param('tokenid', '', PARAM_SAFEDIR);
-$confirm = optional_param('confirm', 0, PARAM_BOOL);
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // process actions

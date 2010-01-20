@@ -30,6 +30,13 @@ require_once($CFG->dirroot.'/admin/webservice/lib.php');
 $id = required_param('id', PARAM_INT);
 
 $PAGE->set_url('/admin/webservice/service_users.php', array('id'=>$id));
+$PAGE->navbar->ignore_active(true);
+$PAGE->navbar->add(get_string('administrationsite'));
+$PAGE->navbar->add(get_string('plugins', 'admin'));
+$PAGE->navbar->add(get_string('webservices', 'webservice'));
+$PAGE->navbar->add(get_string('externalservices', 'webservice'), new moodle_url('/admin/settings.php?section=externalservices'));
+$PAGE->navbar->add(get_string('serviceusers', 'webservice'));
+
 $PAGE->requires->js('/admin/webservice/script.js');
 
 admin_externalpage_setup('externalserviceusers');

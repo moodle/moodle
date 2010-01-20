@@ -34,6 +34,17 @@ $action  = optional_param('action', '', PARAM_ACTION);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
 $PAGE->set_url('/admin/websevice/service_functions.php', array('id'=>$id));
+$PAGE->navbar->ignore_active(true);
+$PAGE->navbar->add(get_string('administrationsite'));
+$PAGE->navbar->add(get_string('plugins', 'admin'));
+$PAGE->navbar->add(get_string('webservices', 'webservice'));
+$PAGE->navbar->add(get_string('externalservices', 'webservice'), new moodle_url('/admin/settings.php?section=externalservices'));
+$PAGE->navbar->add(get_string('functions', 'webservice'), new moodle_url('/admin/webservice/service_functions.php?id='.$id));
+if ($action == "add") {
+    $PAGE->navbar->add(get_string('addfunction', 'webservice'));
+} else if ($action == "delete") {
+    $PAGE->navbar->add(get_string('removefunction', 'webservice'));
+}
 
 admin_externalpage_setup('externalservicefunctions');
 
