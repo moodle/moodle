@@ -323,8 +323,8 @@ class action_link implements renderable {
     }
 }
 
-// ==== HTML writer and helper classes, will be probably moved elsewhere ======
 
+// ==== HTML writer and helper classes, will be probably moved elsewhere ======
 
 /**
  * Simple html output class
@@ -549,6 +549,73 @@ class html_writer {
         } else {
             return '';
         }
+    }
+}
+
+// ==== JS writer and helper classes, will be probably moved elsewhere ======
+
+/**
+ * Simple javascript output class
+ * @copyright 2010 Petr Skoda
+ */
+class js_writer {
+    /**
+     * Returns javascript code calling the function
+     * @param string $function function name, can be complex lin Y.Event.purgeElement
+     * @param array $arguments parameters
+     * @param int $delay execution delay in seconds
+     * @return string JS code fragment
+     */
+    public function function_call($function, array $arguments = null, $delay=0) {
+        $arguments = array_map('json_encode', $arguments);
+        $arguments = implode(', ', $arguments);
+        $js = "$function($arguments);";
+
+        if ($delay) {
+            $delay = $delay * 1000; // in miliseconds
+            $js = "setTimeout(function() { $js }, $delay);";
+        }
+        return $js . "\n";
+    }
+
+    /**
+     * Returns code setting value to variable
+     * @param string $name
+     * @param mixed $value json serialised value
+     * @param bool $usevar add var definition, ignored for nested properties
+     * @return string JS code fragment
+     */
+    public function set_variable($name, $value, $usevar=true) {
+        $output = '';
+
+        if ($usevar) {
+            if (strpos($name, '.')) {
+                $output .= '';
+            } else {
+                $output .= 'var ';
+            }
+        }
+
+        $output .= "$name = ".json_encode($value).";";
+
+        return $output;
+    }
+
+    /**
+     * Writes event handler attaching code
+     * @param mixed $selector standard YUI selector for elemnts, may be array or string, element id is in the form "#idvalue"
+     * @param string $event A valid DOM event (click, mousedown, change etc.)
+     * @param string $function The name of the function to call
+     * @param array  $arguments An optional array of argument parameters to pass to the function
+     * @return string JS code fragment
+     */
+    public function event_handler($selector, $event, $function, array $arguments = null) {
+        $selector = json_encode($selector);
+        $output = "Y.on('$event', $function, $selector, null";
+        if (!empty($arguments)) {
+            $output .= ', ' . json_encode($arguments);
+        }
+        return $output . ");\n";
     }
 }
 

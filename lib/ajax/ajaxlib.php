@@ -78,7 +78,12 @@ class page_requirements_manager {
      * @var array of moodle_url
      */
     protected $css_urls = array();
-
+    /**
+     * List of requested event handlers
+     * @var array
+     */
+    protected $eventhandlers = array();
+    
     protected $variablesinitialised = array('mstr' => 1); // 'mstr' is special. See string_for_js.
 
     protected $headdone = false;
@@ -196,7 +201,7 @@ class page_requirements_manager {
      * @param moodle_page $page
      * @param core_renderer $output
      */
-    protected function init_requirements_data(moodle_page $page, core_renderer $output) {
+    protected function init_requirements_data(moodle_page $page, core_renderer $renderer) {
         global $CFG;
 
         // JavaScript should always work with $CFG->httpswwwroot rather than $CFG->wwwroot.
@@ -208,7 +213,7 @@ class page_requirements_manager {
         $config = array(
             'wwwroot'             => $CFG->httpswwwroot, // Yes, really. See above.
             'sesskey'             => sesskey(),
-            'loadingicon'         => $output->pix_url('i/loading_small', 'moodle')->out(false),
+            'loadingicon'         => $renderer->pix_url('i/loading_small', 'moodle')->out(false),
             'themerev'            => theme_get_revision(),
             'theme'               => $page->theme->name,
             'yui2loaderBase'      => $this->yui2loader->base,
@@ -223,6 +228,7 @@ class page_requirements_manager {
             $config['developerdebug'] = true;
         }
         $this->data_for_js('moodle_cfg', $config)->in_head();
+        $this->data_for_js('yui3loader', null)->in_head();
 
         if (debugging('', DEBUG_DEVELOPER)) {
             $this->yui2_lib('logger');
@@ -586,12 +592,22 @@ class page_requirements_manager {
      * @param string $event A valid DOM event (click, mousedown, change etc.)
      * @param string $function The name of the function to call
      * @param array  $arguments An optional array of argument parameters to pass to the function
-     * @return required_event_handler The event_handler object
+     * @return void
      */
     public function event_handler($selector, $event, $function, array $arguments = null) {
-        $requirement = new required_event_handler($this, $selector, $event, $function, $arguments);
-        $this->requiredjscode[] = $requirement;
-        return $requirement;
+        $this->eventhandlers[] = array('selector'=>$selector, 'event'=>$event, 'function'=>$function, 'arguments'=>$arguments);
+    }
+
+    /**
+     * Returns code needed for registering of event handlers.
+     * @return string JS code
+     */
+    protected function get_event_handler_code() {
+        $output = '';
+        foreach ($this->eventhandlers as $h) {
+            $output .= js_writer::event_handler($h['selector'], $h['event'], $h['function'], $h['arguments']);
+        }
+        return $output;
     }
 
     /**
@@ -717,10 +733,10 @@ class page_requirements_manager {
      *
      * @return string the HTML code to to inside the <head> tag.
      */
-    public function get_head_code(moodle_page $page, core_renderer $output) {
+    public function get_head_code(moodle_page $page, core_renderer $renderer) {
         // note: the $page and $output are not stored here because it would
         // create circular references in memory which prevents garbage collection
-        $this->init_requirements_data($page, $output);
+        $this->init_requirements_data($page, $renderer);
 
         // yui3 JS and CSS is always loaded first - it is cached in browser
         $output = $this->get_yui3lib_headcode();
@@ -784,7 +800,8 @@ class page_requirements_manager {
 
         // set up global YUI3 loader object - this should contain all code needed by plugins
         // note: in JavaScript just use "YUI(yui3loader).use('overlay', function(Y) { .... });"
-        $output .= $this->data_for_js('yui3loader', $this->json_yui3loader)->now();
+        // this needs to be done before including any other script
+        $output .= html_writer::script(js_writer::set_variable('yui3loader', $this->json_yui3loader, false));
 
         // now print all the stuff that was added through ->requires
         $output .= $this->get_linked_resources_code(self::WHEN_AT_END);
@@ -798,9 +815,10 @@ class page_requirements_manager {
         $inyuijs = $this->get_javascript_code(self::WHEN_IN_YUI, '    ');
         $ondomreadyjs = $this->get_javascript_code(self::WHEN_ON_DOM_READY, '        ');
         $jsinit = $this->get_javascript_init_code();
-
-//TODO: do we really need the global "Y" defined in javasecript-static.js?
-//      The problem is that we can not rely on it to be fully initialised
+        $handlersjs = $this->get_event_handler_code();
+        
+        // the global Y can be used only after it is fully loaded, that means
+        // from code executed from the following block
         $js .= <<<EOD
 Y = YUI(yui3loader).use('node-base', function(Y) {
 $inyuijs    ;
@@ -808,6 +826,7 @@ $inyuijs    ;
 $ondomreadyjs
     });
 $jsinit
+$handlersjs
 });
 EOD;
 
@@ -1128,15 +1147,7 @@ class required_js_function_call extends required_js_code {
     }
 
     public function get_js_code() {
-        $quotedargs = array();
-        foreach ($this->arguments as $arg) {
-            $quotedargs[] = json_encode($arg);
-        }
-        $js = $this->function . '(' . implode(', ', $quotedargs) . ');';
-        if ($this->delay) {
-            $js = 'setTimeout(function() { ' . $js . ' }, ' . ($this->delay * 1000) . ');';
-        }
-        return $js . "\n";
+        return js_writer::function_call($this->function, $this->arguments, $this->delay);
     }
 
     /**
@@ -1203,56 +1214,7 @@ class required_data_for_js extends required_js_code {
     }
 
     public function get_js_code() {
-        $prefix = 'var ';
-        if (strpos($this->variable, '.') || strpos($this->variable, '[')) {
-            $prefix = '';
-        }
-        return $prefix . $this->variable . ' = ' . $this->data . ";\n";
-    }
-}
-
-/**
- * This class represents a Javascript event handler, listening for a
- * specific Event to occur on a DOM element identified by a given selector.
- * Do not use {@link in_head()}, etc.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- */
-class required_event_handler extends required_js_code {
-    protected $selector;
-    protected $event;
-    protected $function;
-    protected $args = array();
-
-    /**
-     * Constructor. Normally the class and its subclasses should not be created directly.
-     * Client code should create them via the page_requirements_manager
-     * method {@link page_requirements_manager::data_for_js()}.
-     *
-     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
-     * @param mixed $selector standard YUI selector for elemnts, may be array or string, element id is in the form "#idvalue"
-     * @param string $event A valid DOM event (click, mousedown, change etc.)
-     * @param string $function The name of the function to call
-     * @param array  $arguments An optional array of argument parameters to pass to the function
-     */
-    public function __construct(page_requirements_manager $manager, $selector, $event, $function, array $args = null) {
-        parent::__construct($manager);
-        $this->when = page_requirements_manager::WHEN_IN_YUI;
-        $this->selector = $selector;
-        $this->event = $event;
-        $this->function = $function;
-        $this->args = $args;
-    }
-
-    public function get_js_code() {
-        $selector = json_encode($this->selector);
-        $output = "Y.on('$this->event', $this->function, $selector, null";
-        if (!empty($this->args)) {
-            $output .= ', ' . json_encode($this->args);
-        }
-        return $output . ");\n";
+        return js_writer::set_variable($this->variable, $this->data) . "\n";
     }
 }
 

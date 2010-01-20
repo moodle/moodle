@@ -2921,11 +2921,13 @@ class lesson_page_type_manager {
      * @return array
      */
     public function get_add_page_type_links($previd) {
+        global $OUTPUT;
+
         $links = array();
 
         foreach ($this->types as $type) {
             if (($link = $type->add_page_link($previd)) instanceof html_link) {
-                $links[] = $link;
+                $links[] = $OUTPUT->link($link);
             }
         }
 
