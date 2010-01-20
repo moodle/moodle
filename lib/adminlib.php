@@ -5181,6 +5181,7 @@ function admin_externalpage_setup($section, $extrabutton = '',
     global $CFG, $PAGE, $USER;
 
     $site = get_site();
+    require_login();
 
     $adminroot = admin_get_root(false, false); // settings not required for external pages
     $extpage = $adminroot->locate($section);
