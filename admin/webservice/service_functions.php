@@ -131,12 +131,9 @@ echo $OUTPUT->table($table);
 // we can edit only custom functions, the build-in would be overridden after each upgrade
 if (empty($service->component)) {
     $url = new moodle_url('service_functions.php', array('sesskey'=>sesskey(), 'id'=>$service->id, 'action'=>'add'));
-    echo $OUTPUT->single_button($url, get_string('add'), 'get');
+    echo "<a href=$url>".get_string('add')."</a>";
 }
 
-// simple back button
-$url = new moodle_url('../settings.php', array('section'=>'externalservices'));
-echo $OUTPUT->single_button($url, get_string('back'), 'get');
 
 echo $OUTPUT->footer();
 
