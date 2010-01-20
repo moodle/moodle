@@ -126,9 +126,7 @@ if (empty($SITE->fullname)) {
 
     echo $settingspage->output_html();
 
-    if ($settingspage->displaysavebutton) {
-        echo '<div class="form-buttons"><input class="form-submit" type="submit" value="'.get_string('savechanges','admin').'" /></div>';
-    }
+    echo '<div class="form-buttons"><input class="form-submit" type="submit" value="'.get_string('savechanges','admin').'" /></div>';
 
     echo '</div>';
     echo '</form>';
