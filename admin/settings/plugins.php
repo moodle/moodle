@@ -239,6 +239,8 @@ if ($hassiteconfig) {
 /// Web services
     $ADMIN->add('modules', new admin_category('webservicesettings', get_string('webservices', 'webservice')));
     $temp = new admin_settingpage('externalservices', get_string('externalservices', 'webservice'));
+    $temp->hidesavebutton();
+    $temp->add(new admin_setting_heading('manageserviceshelpexplaination', get_string('information', 'webservice'), get_string('servicehelpexplanation', 'webservice')));
     $temp->add(new admin_setting_manageexternalservices());
     $ADMIN->add('webservicesettings', $temp);
     $ADMIN->add('webservicesettings', new admin_externalpage('externalservice', get_string('externalservice', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/service.php", 'moodle/site:config', true));
@@ -246,6 +248,7 @@ if ($hassiteconfig) {
     $ADMIN->add('webservicesettings', new admin_externalpage('externalserviceusers', get_string('externalserviceusers', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/service_users.php", 'moodle/site:config', true));
     /// manage protocol page link
     $temp = new admin_settingpage('webserviceprotocols', get_string('manageprotocols', 'webservice'));
+    $temp->hidesavebutton();
     $temp->add(new admin_setting_managewebserviceprotocols());
     if (empty($CFG->enablewebservices)) {
         $temp->add(new admin_setting_heading('webservicesaredisabled', '', get_string('disabledwarning', 'webservice')));
@@ -268,6 +271,7 @@ if ($hassiteconfig) {
     /// manage token page link
     $ADMIN->add('webservicesettings', new admin_externalpage('addwebservicetoken', get_string('managetokens', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/tokens.php", 'moodle/site:config', true));
     $temp = new admin_settingpage('webservicetokens', get_string('managetokens', 'webservice'));
+    $temp->hidesavebutton();
     $temp->add(new admin_setting_managewebservicetokens());
     if (empty($CFG->enablewebservices)) {
         $temp->add(new admin_setting_heading('webservicesaredisabled', '', get_string('disabledwarning', 'webservice')));

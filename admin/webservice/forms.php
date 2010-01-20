@@ -37,6 +37,7 @@ class external_service_form extends moodleform {
         $mform->addElement('text', 'name', get_string('name'));
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->addElement('advcheckbox', 'enabled', get_string('enabled', 'webservice'));
+        $mform->addElement('advcheckbox', 'restrictedusers', get_string('restrictedusers', 'webservice'));
 
 
         /// needed to select automatically the 'No required capability" option
@@ -46,6 +47,8 @@ class external_service_form extends moodleform {
           $service->requiredcapability = "norequiredcapability";
           $currentcapabilityexist = true;
         }
+
+
 
         // Prepare the list of capabilites to choose from
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);
@@ -67,12 +70,11 @@ class external_service_form extends moodleform {
             $mform->addElement('static', 'capabilityerror', '', $OUTPUT->notification(get_string('selectedcapabilitydoesntexit','webservice', $service->requiredcapability)));
             $service->requiredcapability = "norequiredcapability";
         }
-        $mform->addElement('advcheckbox', 'restrictedusers', get_string('restrictedusers', 'webservice'));
-
+       
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        $this->add_action_buttons(true);
+        $this->add_action_buttons(true, get_string('addaservice', 'webservice'));
 
         $this->set_data($service);
     }
@@ -101,7 +103,7 @@ class external_service_functions_form extends moodleform {
         $mform = $this->_form;
         $data = $this->_customdata;
 
-        $mform->addElement('header', 'addfunction', get_string('addfunction', 'webservice'));
+        $mform->addElement('header', 'addfunction', get_string('addfunctions', 'webservice'));
 
         $select = "name NOT IN (SELECT s.functionname
                                   FROM {external_services_functions} s
@@ -124,7 +126,7 @@ class external_service_functions_form extends moodleform {
         $mform->addElement('hidden', 'action');
         $mform->setType('action', PARAM_ACTION);
 
-        $this->add_action_buttons(true);
+        $this->add_action_buttons(true, get_string('addfunctions', 'webservice'));
 
         $this->set_data($data);
     }

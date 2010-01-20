@@ -41,7 +41,7 @@ $PAGE->navbar->add(get_string('webservices', 'webservice'));
 $PAGE->navbar->add(get_string('externalservices', 'webservice'), new moodle_url('/admin/settings.php?section=externalservices'));
 $PAGE->navbar->add(get_string('functions', 'webservice'), new moodle_url('/admin/webservice/service_functions.php?id='.$id));
 if ($action == "add") {
-    $PAGE->navbar->add(get_string('addfunction', 'webservice'));
+    $PAGE->navbar->add(get_string('addfunctions', 'webservice'));
 } else if ($action == "delete") {
     $PAGE->navbar->add(get_string('removefunction', 'webservice'));
 }
