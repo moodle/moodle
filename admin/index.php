@@ -159,7 +159,7 @@ if (!core_tables_exist()) {
     }
 
     $strdatabasesetup = get_string('databasesetup');
-    upgrade_get_javascript();
+    upgrade_init_javascript();
     $PAGE->navbar->add($strdatabasesetup);
     $PAGE->set_title($strinstallation.' - Moodle '.$CFG->target_release);
     $PAGE->set_heading($strinstallation);

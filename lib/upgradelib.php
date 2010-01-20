@@ -956,7 +956,7 @@ function upgrade_started($preinstall=false) {
         if (!CLI_SCRIPT and !$PAGE->headerprinted) {
             $strupgrade  = get_string('upgradingversion', 'admin');
             $PAGE->set_pagelayout('maintenance');
-            upgrade_get_javascript();
+            upgrade_init_javascript();
             $PAGE->set_title($strupgrade.' - Moodle '.$CFG->target_release);
             $PAGE->set_heading($strupgrade);
             $PAGE->navbar->add($strupgrade);
@@ -1102,13 +1102,15 @@ function print_upgrade_part_end($plugin, $installation, $verbose) {
 }
 
 /**
+ * Sets up JS code required for all ugprade scripts.
  * @global object
  */
-function upgrade_get_javascript() {
+function upgrade_init_javascript() {
     global $PAGE;
-    $PAGE->requires->js('/lib/javascript-static.js')->at_top_of_body();
-    $PAGE->requires->js_function_call('repeatedly_scroll_to_end')->at_top_of_body();
-    $PAGE->requires->js_function_call('cancel_scroll_to_end')->after_delay(1);
+    // scroll to the end of each upgrade page so that ppl see either error or continue button,
+    // no need to scroll continuously any more, it is enough to jump to end once the footer is printed ;-)
+    $js = "window.scrollTo(0, 5000000);";
+    $PAGE->requires->js_init_code($js);
 }
 
 
