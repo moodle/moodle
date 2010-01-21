@@ -19,7 +19,6 @@
                        $selected = 0;
                 }
                 $categories = $this->get_categories();
-                $selected = $this->category_map_old2new($selected);
                 choose_from_menu ($categories, 'category', $selected);
         ?>
     </td>
