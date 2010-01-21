@@ -39,21 +39,7 @@ class block_tag_youtube_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_numberofvideos', get_string('numberofvideos', 'block_tag_youtube'), array('size' => 5));
         $mform->setType('config_numberofvideos', PARAM_INTEGER);
 
-        $categorychoices = array(
-            0 => get_string('anycategory', 'block_tag_youtube'),
-            1 => get_string('filmsanimation', 'block_tag_youtube'),
-            2 => get_string('autosvehicles', 'block_tag_youtube'),
-            23 => get_string('comedy', 'block_tag_youtube'),
-            24 => get_string('entertainment', 'block_tag_youtube'),
-            10 => get_string('music', 'block_tag_youtube'),
-            25 => get_string('newspolitics', 'block_tag_youtube'),
-            22 => get_string('peopleblogs', 'block_tag_youtube'),
-            15 => get_string('petsanimals', 'block_tag_youtube'),
-            26 => get_string('howtodiy', 'block_tag_youtube'),
-            17 => get_string('sports', 'block_tag_youtube'),
-            19 => get_string('travel', 'block_tag_youtube'),
-            20 => get_string('gadgetsgames', 'block_tag_youtube'),
-        );
+        $categorychoices = $this->block->get_categories();
         $mform->addElement('select', 'config_category', get_string('category', 'block_tag_youtube'), $categorychoices);
         $mform->setDefault('config_category', 0);
 

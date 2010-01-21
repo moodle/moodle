@@ -18,6 +18,9 @@ class block_tag_youtube extends block_base {
 
     function specialization() {
         $this->title = !empty($this->config->title) ? $this->config->title : get_string('blockname', 'block_tag_youtube');
+        // Convert numeric categories (old YouTube API) to
+        // textual ones (new Google Data API)
+        $this->config->category = !empty($this->config->category) ? $this->category_map_old2new($this->config->category) : '0';
     }
 
     function instance_allow_multiple() {
@@ -127,7 +130,7 @@ class block_tag_youtube extends block_base {
         }
 
         $request = 'http://gdata.youtube.com/feeds/api/videos?category=' .
-                   $this->category_map_old2new($this->config->category) .
+                   $this->config->category .
                    '&vq=' .
                    $querytag .
                    '&start-index=1&max-results=' .
