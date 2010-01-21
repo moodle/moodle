@@ -71,19 +71,24 @@ class page_requirements_manager {
      * Theme sheets, initialised only from core_renderer
      * @var array of moodle_url
      */
-    protected $css_theme_urls = array();
+    protected $cssthemeurls = array();
     /**
      * List of custom theme sheets, these are strongly discouraged!
      * Useful mostly only for CSS submitted by teachers that is not part of the theme.
      * @var array of moodle_url
      */
-    protected $css_urls = array();
+    protected $cssurls = array();
     /**
      * List of requested event handlers
      * @var array
      */
     protected $eventhandlers = array();
-    
+    /**
+     * Extra modules
+     * @var array
+     */
+    protected $extramodules = array();
+
     protected $variablesinitialised = array('mstr' => 1); // 'mstr' is special. See string_for_js.
 
     protected $headdone = false;
@@ -94,7 +99,7 @@ class page_requirements_manager {
     /** YUI PHPLoader instance responsible for YUI3 loading from PHP only */
     protected $yui3loader;
     /** YUI PHPLoader instance responsible for YUI3 loading from javascript */
-    protected $json_yui3loader;
+    protected $M_yui_loader;
 
     /**
      * Page requirements constructor.
@@ -132,13 +137,13 @@ class page_requirements_manager {
         $this->yui2loader->combine = !empty($CFG->yuicomboloading);
 
         // set up JS YUI loader helper object
-        $this->json_yui3loader = new stdClass();
-        $this->json_yui3loader->base         = $this->yui3loader->base;
-        $this->json_yui3loader->comboBase    = $this->yui3loader->comboBase;
-        $this->json_yui3loader->combine      = $this->yui3loader->combine;
-        $this->json_yui3loader->filter       = ($this->yui3loader->filter == YUI_DEBUG) ? 'debug' : '';
-        $this->json_yui3loader->insertBefore = 'firstthemesheet';
-        $this->json_yui3loader->modules      = array();
+        $this->M_yui_loader = new stdClass();
+        $this->M_yui_loader->base         = $this->yui3loader->base;
+        $this->M_yui_loader->comboBase    = $this->yui3loader->comboBase;
+        $this->M_yui_loader->combine      = $this->yui3loader->combine;
+        $this->M_yui_loader->filter       = ($this->yui3loader->filter == YUI_DEBUG) ? 'debug' : '';
+        $this->M_yui_loader->insertBefore = 'firstthemesheet';
+        $this->M_yui_loader->modules      = array();
         $this->add_yui2_modules(); // adds loading info for YUI2
     }
 
@@ -191,7 +196,7 @@ class page_requirements_manager {
                     }
                 }
             }
-            $this->json_yui3loader->modules[$name] = $module;
+            $this->M_yui_loader->modules[$name] = $module;
         }
     }
 
@@ -216,19 +221,15 @@ class page_requirements_manager {
             'loadingicon'         => $renderer->pix_url('i/loading_small', 'moodle')->out(false),
             'themerev'            => theme_get_revision(),
             'theme'               => $page->theme->name,
-            'yui2loaderBase'      => $this->yui2loader->base,
-            'yui3loaderBase'      => $this->yui3loader->base,
-            'yui2loaderComboBase' => $this->yui2loader->comboBase,
-            'yui3loaderComboBase' => $this->yui3loader->comboBase,
-            'yuicombine'          => (int)$this->yui3loader->combine,
-            'yuifilter'           => debugging('', DEBUG_DEVELOPER) ? 'debug' : '',
+            'yui2loaderBase'      => $this->yui2loader->base, //will be removed soon
+            'yui2loaderComboBase' => $this->yui2loader->comboBase, //will be removed soon
+            'yuicombine'          => (int)$this->yui3loader->combine, //will be removed soon
 
         );
         if (debugging('', DEBUG_DEVELOPER)) {
             $config['developerdebug'] = true;
         }
         $this->data_for_js('moodle_cfg', $config)->in_head();
-        $this->data_for_js('yui3loader', null)->in_head();
 
         if (debugging('', DEBUG_DEVELOPER)) {
             $this->yui2_lib('logger');
@@ -360,7 +361,15 @@ class page_requirements_manager {
             throw new coding_exception('Missing YUI3 module details.');
         }
 
-        $this->json_yui3loader->modules[$name] = $module;
+        if (in_array($name, $this->M_yui_loader->modules) or in_array($name, $this->extramodules)) {
+            return;
+        }
+
+        if ($this->headdone) {
+            $this->extramodules[$name] = $module;
+        } else {
+            $this->M_yui_loader->modules[$name] = $module;
+        }
     }
 
     /**
@@ -398,7 +407,7 @@ class page_requirements_manager {
             throw new coding_exception('Invalid stylesheet parameter.', $stylesheet);
         }
 
-        $this->css_urls[$stylesheet->out()] = $stylesheet; // overrides
+        $this->cssurls[$stylesheet->out()] = $stylesheet; // overrides
     }
 
     /**
@@ -408,7 +417,7 @@ class page_requirements_manager {
      * @return void
      */
     public function css_theme(moodle_url $stylesheet) {
-        $this->css_theme_urls[] = $stylesheet;
+        $this->cssthemeurls[] = $stylesheet;
     }
 
     /**
@@ -486,7 +495,7 @@ class page_requirements_manager {
 
     /**
      * Adds a required JavaScript object initialisation to the page.
-     * 
+     *
      * @param string|null $var If null the object is not assigned to any variable
      * @param string $class
      * @param array $arguments
@@ -734,7 +743,7 @@ class page_requirements_manager {
         $code = '';
         $attributes = array('id'=>'firstthemesheet', 'rel'=>'stylesheet', 'type'=>'text/css');
 
-        $urls = $this->css_theme_urls + $this->css_urls;
+        $urls = $this->cssthemeurls + $this->cssurls;
 
         foreach ($urls as $url) {
             $attributes['href'] = $url;
@@ -747,6 +756,16 @@ class page_requirements_manager {
     }
 
     /**
+     * Adds extra modules specified after printing of page header
+     */
+    protected function get_extra_modules_code() {
+        if (empty($this->extramodules)) {
+            return '';
+        }
+        return html_writer::script(js_writer::function_call('M.yui.add_module', $this->extramodules));
+    }
+
+    /**
      * Generate any HTML that needs to go inside the <head> tag.
      *
      * Normally, this method is called automatically by the code that prints the
@@ -755,6 +774,8 @@ class page_requirements_manager {
      * @return string the HTML code to to inside the <head> tag.
      */
     public function get_head_code(moodle_page $page, core_renderer $renderer) {
+        global $CFG;
+
         // note: the $page and $output are not stored here because it would
         // create circular references in memory which prevents garbage collection
         $this->init_requirements_data($page, $renderer);
@@ -768,9 +789,17 @@ class page_requirements_manager {
         // now theme CSS + custom CSS in this specific order
         $output .= $this->get_css_code();
 
+        // set up global YUI3 loader object - this should contain all code needed by plugins
+        // note: in JavaScript just use "YUI(M.yui.loader).use('overlay', function(Y) { .... });"
+        // this needs to be done before including any other script
+        $js = "var M = {}; M.yui = {}; " . js_writer::set_variable('M.yui.loader', $this->M_yui_loader, false);
+        $output .= html_writer::script($js);
+
+        // link our main JS file, all core stuff should be there
+        $output .= html_writer::script('', $CFG->httpswwwroot.'/lib/javascript-static.js');
+
         // all the other linked things from HEAD - there should be as few as possible
         // because we need to minimise number of http requests,
-        // all core stuff should go into /lib/javascript-static.js
         $output .= $this->get_linked_resources_code(self::WHEN_IN_HEAD);
 
         // finally all JS that should go directly into head tag - mostly global config
@@ -816,13 +845,11 @@ class page_requirements_manager {
      */
     public function get_end_code() {
         global $CFG;
-        // add missing YUI2 YUI - to be removed once we convert everything to YUI3!
-        $output = $this->get_yui2lib_code();
+        // add other requested modules
+        $output = $this->get_extra_modules_code();
 
-        // set up global YUI3 loader object - this should contain all code needed by plugins
-        // note: in JavaScript just use "YUI(yui3loader).use('overlay', function(Y) { .... });"
-        // this needs to be done before including any other script
-        $output .= html_writer::script(js_writer::set_variable('yui3loader', $this->json_yui3loader, false));
+        // add missing YUI2 YUI - to be removed once we convert everything to YUI3!
+        $output .= $this->get_yui2lib_code();
 
         // now print all the stuff that was added through ->requires
         $output .= $this->get_linked_resources_code(self::WHEN_AT_END);
@@ -844,7 +871,7 @@ class page_requirements_manager {
 
         // the global Y can be used only after it is fully loaded, that means
         // from code executed from the following block
-        $js .= "Y = YUI(yui3loader).use('node', function(Y) {\n{$inyuijs}{$ondomreadyjs}{$jsinit}{$handlersjs}\n});";
+        $js .= "Y = YUI(M.yui.loader).use('node', function(Y) {\n{$inyuijs}{$ondomreadyjs}{$jsinit}{$handlersjs}\n});";
 
         $output .= html_writer::script($js);
 
@@ -986,8 +1013,7 @@ class required_js extends linked_requirement {
     }
 
     public function get_html() {
-        $attributes = array('type'=>'text/javascript', 'src'=>$this->url);
-        return html_writer::tag('script', $attributes, '') . "\n";
+        return html_writer::script('', $this->url);
     }
 
     /**

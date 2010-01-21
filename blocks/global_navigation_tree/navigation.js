@@ -339,4 +339,4 @@ M.blocks.navigation.classes.branch.prototype.inject_into_dom = function(element)
     }
 }
 
-YUI.add('blocks_navigation', M.blocks.navigation.init, '0.0.0.1', yui3loader.modules.blocks_navigation.requires);
+YUI.add('blocks_navigation', M.blocks.navigation.init, '0.0.0.1', M.yui.loader.modules.blocks_navigation.requires);

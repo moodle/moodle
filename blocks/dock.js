@@ -697,4 +697,4 @@ M.blocks.dock.item.prototype.show =               M.blocks.dock.abstract_item_cl
 M.blocks.dock.item.prototype.hide =               M.blocks.dock.abstract_item_class.hide;
 M.blocks.dock.item.prototype.resize_panel =       M.blocks.dock.abstract_item_class.resize_panel;
 
-YUI.add('blocks_dock', M.blocks.dock.init, '0.0.0.1', 'requires', yui3loader.modules['blocks_dock'].requires);
+YUI.add('blocks_dock', M.blocks.dock.init, '0.0.0.1', 'requires', M.yui.loader.modules['blocks_dock'].requires);

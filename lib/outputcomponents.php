@@ -541,11 +541,18 @@ class html_writer {
      * Generate a script tag containing the the specified code.
      *
      * @param string $js the JavaScript code
+	 * @param moodle_url|string optional url of the external script, $code ignored if specified
      * @return string HTML, the code wrapped in <script> tags.
      */
-    public static function script($jscode) {
+    public static function script($jscode, $url=null) {
         if ($jscode) {
-            return "<script type=\"text/javascript\">\n//<![CDATA[\n$jscode\n//]]>\n</script>\n";
+            $attributes = array('type'=>'text/javascript');
+            return self::tag('script', $attributes, "\n//<![CDATA[\n$jscode\n//]]>\n") . "\n";
+
+        } else if ($url) {
+            $attributes = array('type'=>'text/javascript', 'src'=>$url);
+            return self::tag('script', $attributes, '') . "\n";
+            
         } else {
             return '';
         }
