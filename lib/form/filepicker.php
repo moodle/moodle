@@ -80,7 +80,6 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         }
 
         $client_id = uniqid();
-        $PAGE->requires->js('/lib/form/filepicker.js');
 
         $args = new stdclass;
         // need these three to filter repositories list
@@ -119,6 +118,7 @@ EOD;
         $str .= $PAGE->requires->js_function_call('destroy_item', array("nonjs-filepicker-{$client_id}"))->asap();
         $str .= $PAGE->requires->js_function_call('show_item', array("filepicker-wrapper-{$client_id}"))->asap();
         $PAGE->requires->js_function_call('fp_init_filepicker', array('filepicker-button-'.$client_id, $options))->on_dom_ready();
+        $PAGE->requires->js_module('filepicker');
         return $str;
     }
 

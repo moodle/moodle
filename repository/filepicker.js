@@ -5,11 +5,8 @@
  *
  * File Picker UI
  * =====
- * this.loaded, it tracks if yui2 and yui3 js files loaded
  * this.rendered, it tracks if YUI Panel rendered
- * this.auto_render, tell launch() to render filepicker when all js files are loaded
  * this.api, stores the URL to make ajax request
- * this.loader, yui2 loader
  * this.mainui, YUI Panel
  * this.treeview, YUI Treeview
  * this.viewbar, a button group to switch view mode
@@ -66,25 +63,6 @@ YUI.add('filepicker', function(Y) {
         api: moodle_cfg.wwwroot+'/repository/repository_ajax.php',
         initializer: function(args) {
             this.options = args;
-            var loader_scope = this;
-            this.loaded = false;
-            // load yui2 components
-            this.loader = new YAHOO.util.YUILoader({
-                base: moodle_cfg.yui2loaderBase,
-                combine: false,
-                comboBase: moodle_cfg.yui2loaderComboBase,
-                require: ["button", "container", "treeview", "layout"],
-                loadOptional: true,
-                onSuccess: function(o) {
-                    loader_scope.loaded = true;
-                    if (loader_scope.auto_render) {
-                        loader_scope.render();
-                    }
-                },
-                onProgress: function(o) {
-                }
-            });
-            this.loader.insert();
         },
         destructor: function() {
         },
@@ -1086,11 +1064,7 @@ YUI.add('filepicker', function(Y) {
             }
         },
         launch: function() {
-            if (this.loaded) {
-                this.render();
-            } else {
-                this.auto_render = true;
-            }
+            this.render();
         }
     });
     Y.filepicker = filepicker;

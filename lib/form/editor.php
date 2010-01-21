@@ -19,7 +19,6 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
     function MoodleQuickForm_editor($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG, $PAGE;
-        $PAGE->requires->js('/lib/form/filepicker.js');
 
         $options = (array)$options;
         foreach ($options as $name=>$value) {
@@ -195,6 +194,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $options->env = 'editor';
             $options->itemid = $draftitemid;
 
+            $PAGE->requires->js_module('filepicker');
             $PAGE->requires->js_function_call('editor_init_filepicker', array($id, $options))->on_dom_ready();
 
             if ($editor->supports_repositories()) {

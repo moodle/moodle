@@ -221,10 +221,6 @@ class page_requirements_manager {
             'loadingicon'         => $renderer->pix_url('i/loading_small', 'moodle')->out(false),
             'themerev'            => theme_get_revision(),
             'theme'               => $page->theme->name,
-            'yui2loaderBase'      => $this->yui2loader->base, //will be removed soon
-            'yui2loaderComboBase' => $this->yui2loader->comboBase, //will be removed soon
-            'yuicombine'          => (int)$this->yui3loader->combine, //will be removed soon
-
         );
         if (debugging('', DEBUG_DEVELOPER)) {
             $config['developerdebug'] = true;
@@ -237,9 +233,9 @@ class page_requirements_manager {
 
         // YUI3 init code
         $this->yui3_lib(array('cssreset', 'cssbase', 'cssfonts', 'cssgrids')); // full CSS reset
-        $this->yui3_lib(array('yui', 'loader')); // allows autoloading of everything else
+        $this->yui3_lib(array('node', 'loader')); // allows autoloading of everything else
 
-
+        // accessibility stuff
         $this->skip_link_to('maincontent', get_string('tocontent', 'access'));
 
         // Note that, as a short-cut, the code
@@ -248,9 +244,6 @@ class page_requirements_manager {
         $this->yui2_lib('dom');        // needs to be migrated to YUI3 before we release 2.0
         $this->yui2_lib('container');  // needs to be migrated to YUI3 before we release 2.0
         $this->yui2_lib('connection'); // needs to be migrated to YUI3 before we release 2.0
-        // File Picker use this module loading YUI2 widgets
-        $this->yui2_lib('yuiloader');  // needs to be migrated to YUI3 before we release 2.0
-        $this->js_module('filepicker'); // should be migrated elsewhere before 2.0
 
         $this->string_for_js('confirmation', 'admin');
         $this->string_for_js('cancel', 'moodle');
@@ -352,7 +345,7 @@ class page_requirements_manager {
         } else {
             if ($name === 'filepicker') { // TODO: rename to 'core_filepicker' and move above
                 $pathtofilepicker = $CFG->httpswwwroot.'/repository/filepicker.js';
-                $module = array('fullpath'=>$pathtofilepicker, 'requires' => array('base', 'node', 'json', 'async-queue', 'io'));
+                $module = array('fullpath'=>$pathtofilepicker, 'requires' => array('base', 'node', 'json', 'async-queue', 'io', 'yui2-button', 'yui2-container', 'yui2-treeview', 'yui2-layout'));
             }
             //TODO: look for plugin info?
         }
@@ -762,7 +755,7 @@ class page_requirements_manager {
         if (empty($this->extramodules)) {
             return '';
         }
-        return html_writer::script(js_writer::function_call('M.yui.add_module', $this->extramodules));
+        return html_writer::script(js_writer::function_call('M.yui.add_module', array($this->extramodules)));
     }
 
     /**
