@@ -187,11 +187,12 @@ class navigation_node {
             throw new coding_exception('You must set the text for the node when you create it.');
         }
         $this->title = $this->text;
+        $textlib = textlib_get_instance();
         if (strlen($this->text)>50) {
-            $this->text = mb_substr($this->text, 0, 50).'...';
+            $this->text = $textlib->substr($this->text, 0, 50).'...';
         }
         if (is_string($this->shorttext) && strlen($this->shorttext)>25) {
-            $this->shorttext = mb_substr($this->shorttext, 0, 25).'...';
+            $this->shorttext = $textlib->substr($this->shorttext, 0, 25).'...';
         }
     }
 
@@ -2890,6 +2891,8 @@ class settings_navigation extends navigation_node {
                 $resources = $this->cache->{'course'.$course->id.'resources'};
                 $activities = $this->cache->{'course'.$course->id.'activities'};
 
+                $textlib = textlib_get_instance();
+
                 foreach ($sections as $section) {
                     if ($formatidentifier !== 0 && $section->section != $formatidentifier) {
                         continue;
@@ -2906,8 +2909,8 @@ class settings_navigation extends navigation_node {
                         $url = new moodle_url('/course/mod.php', array('id'=>$course->id, 'sesskey'=>sesskey(), 'section'=>$section->section));
                         $pos = strpos($value, '&type=');
                         if ($pos!==false) {
-                            $url->param('add', mb_substr($value, 0,$pos));
-                            $url->param('type', mb_substr($value, $pos+6));
+                            $url->param('add', $textlib->substr($value, 0,$pos));
+                            $url->param('type', $textlib->substr($value, $pos+6));
                         } else {
                             $url->param('add', $value);
                         }
@@ -2926,8 +2929,8 @@ class settings_navigation extends navigation_node {
                         $url = new moodle_url('/course/mod.php', array('id'=>$course->id, 'sesskey'=>sesskey(), 'section'=>$section->section));
                         $pos = strpos($activityname, '&type=');
                         if ($pos!==false) {
-                            $url->param('add', mb_substr($activityname, 0,$pos));
-                            $url->param('type', mb_substr($activityname, $pos+6));
+                            $url->param('add', $textlib->substr($activityname, 0,$pos));
+                            $url->param('type', $textlib->substr($activityname, $pos+6));
                         } else {
                             $url->param('add', $activityname);
                         }
