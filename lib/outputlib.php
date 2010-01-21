@@ -1096,6 +1096,26 @@ class theme_config {
         }
     }
 
+    protected function get_region_name($region, $theme) {
+        $regionstring = get_string('region-' . $region, 'theme_' . $theme);
+        // A name exists in this theme, so use it
+        if (substr($regionstring, 0, 1) != '[') {
+            return $regionstring;
+        }
+
+        // Otherwise, try to find one elsewhere
+        // Check parents, if any
+        foreach ($this->parents as $parentthemename) {
+            $regionstring = get_string('region-' . $region, 'theme_' . $parentthemename);
+            if (substr($regionstring, 0, 1) != '[') {
+                return $regionstring;
+            }
+        }
+
+        // Last resort, try the base theme for names
+        return get_string('region-' . $region, 'theme_base');
+    }
+
     /**
      * Get the list of all block regions known to this theme in all templates.
      * @return array internal region name => human readable name.
@@ -1104,23 +1124,7 @@ class theme_config {
         $regions = array();
         foreach ($this->layouts as $layoutinfo) {
             foreach ($layoutinfo['regions'] as $region) {
-                $regionstring = get_string('region-' . $region, 'theme_' . $layoutinfo['theme']);
-                if (substr($regionstring, 0, 1) != '[') {  // A name exists in this theme, so use it
-                    $regions[$region] = $regionstring;
-                } else {                                   // Otherwise, try to find one elsewhere
-                    // Check parents, if any
-                    if (!empty($this->parents)) {
-                        foreach ($this->parents as $parentthemename) {
-                            $regionstring = get_string('region-' . $region, 'theme_'.$parentthemename);
-                            if (substr($regionstring, 0, 1) != '[') {  // A name exists in this theme, so use it
-                                $regions[$region] = $regionstring;
-                            }
-                        }
-                    }
-                    if (empty($regions[$region])) {         // Last resort, try the base theme for names
-                        $regions[$region] = get_string('region-' . $region, 'theme_base');
-                    }
-                }
+                $regions[$region] = $this->get_region_name($region, $layoutinfo['theme']);
             }
         }
         return $regions;
