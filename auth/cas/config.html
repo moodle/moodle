@@ -601,7 +601,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
        $opt_deref[LDAP_DEREF_ALWAYS] = get_string('yes');
 
-       echo html_writer::select($opt_deref, 'opt_deref', $config->opt_deref, LDAP_DEREF_NEVER, false);
+       echo html_writer::select($opt_deref, 'opt_deref', $config->opt_deref, false);
 
        if (isset($err['opt_deref'])) echo $OUTPUT->error_text($err['opt_deref']);
 
