@@ -100,7 +100,7 @@ class page_requirements_manager {
     protected $yui3loader;
     /** YUI PHPLoader instance responsible for YUI3 loading from javascript */
     protected $M_yui_loader;
-    /** some config vars exposend in JS, please no secret stuff there */
+    /** some config vars exposed in JS, please no secret stuff there */
     protected $M_cfg;
 
     /**
