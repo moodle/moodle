@@ -989,11 +989,13 @@ function wiki_can_add_entry(&$wiki, &$user, &$course, $userid=0, $groupid=0) {
         else if ($groupid == 0) {
             return ($mygroupid != 0 and wiki_is_teacher($wiki));
         }
-        /// If there is a group mode, non-editing teachers with an assigned group, can only create wikis
-        /// in their group. Non-editing teachers with no assigned group and editing teachers can create any wiki.
+        /// If requesting a group, must be an editing teacher, a non-editing teacher with no assigned group,
+        /// or a non-editing teacher requesting their group. or a student in group, but wiki is empty.
         else {
             return (wiki_is_teacheredit($wiki) or
-                    (wiki_is_teacher($wiki) and ($mygroupid == 0 or @in_array($groupid, $mygroupid))));
+                    (wiki_is_teacher($wiki) and ($mygroupid == 0 or @in_array($groupid, $mygroupid))) or
+                    (wiki_is_student($wiki, $user->id) and @in_array($groupid, $mygroupid))
+                    );
         }
         break;
     }
