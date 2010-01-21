@@ -188,10 +188,10 @@ class navigation_node {
         }
         $this->title = $this->text;
         if (strlen($this->text)>50) {
-            $this->text = substr($this->text, 0, 50).'...';
+            $this->text = mb_substr($this->text, 0, 50).'...';
         }
         if (is_string($this->shorttext) && strlen($this->shorttext)>25) {
-            $this->shorttext = substr($this->shorttext, 0, 25).'...';
+            $this->shorttext = mb_substr($this->shorttext, 0, 25).'...';
         }
     }
 
@@ -1520,6 +1520,7 @@ class global_navigation extends navigation_node {
             $currentcategory = array_pop($keys);
             $categorykey = $this->add_to_path($keys,  $category->id, $category->name, $category->name, self::TYPE_CATEGORY, $url);
         } else {
+            $currentcategory = array_pop($keys);
             $categorykey = $currentcategory.':'.self::TYPE_CATEGORY;
         }
         return $categorykey;
@@ -2905,8 +2906,8 @@ class settings_navigation extends navigation_node {
                         $url = new moodle_url('/course/mod.php', array('id'=>$course->id, 'sesskey'=>sesskey(), 'section'=>$section->section));
                         $pos = strpos($value, '&type=');
                         if ($pos!==false) {
-                            $url->param('add', substr($value, 0,$pos));
-                            $url->param('type', substr($value, $pos+6));
+                            $url->param('add', mb_substr($value, 0,$pos));
+                            $url->param('type', mb_substr($value, $pos+6));
                         } else {
                             $url->param('add', $value);
                         }
@@ -2925,8 +2926,8 @@ class settings_navigation extends navigation_node {
                         $url = new moodle_url('/course/mod.php', array('id'=>$course->id, 'sesskey'=>sesskey(), 'section'=>$section->section));
                         $pos = strpos($activityname, '&type=');
                         if ($pos!==false) {
-                            $url->param('add', substr($activityname, 0,$pos));
-                            $url->param('type', substr($activityname, $pos+6));
+                            $url->param('add', mb_substr($activityname, 0,$pos));
+                            $url->param('type', mb_substr($activityname, $pos+6));
                         } else {
                             $url->param('add', $activityname);
                         }
