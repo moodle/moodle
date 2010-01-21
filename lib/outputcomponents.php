@@ -579,6 +579,41 @@ class js_writer {
     }
 
     /**
+     * Returns JavaScript code to initialise a new object
+     * @param string|null $var If it is null then no var is assigned the new object
+     * @param string $class
+     * @param array $arguments
+     * @param array $requirements
+     * @param int $delay
+     * @return string
+     */
+    public function object_init($var, $class, array $arguments = null, array $requirements = null, $delay=0) {
+        if (is_array($arguments)) {
+            $arguments = array_map('json_encode', $arguments);
+            $arguments = implode(', ', $arguments);
+        }
+
+        if ($var === null) {
+            $js = "new $class($arguments);";
+        } else if (strpos($var, '.')!==false) {
+            $js = "$var = new $class($arguments);";
+        } else {
+            $js = "var $var = new $class($arguments);";
+        }
+
+        if ($delay) {
+            $delay = $delay * 1000; // in miliseconds
+            $js = "setTimeout(function() { $js }, $delay);";
+        }
+
+        if (count($requirements) > 0) {
+            $requirements = implode("', '", $requirements);
+            $js = "Y.use('$requirements', function(){ $js });";
+        }
+        return $js."\n";
+    }
+
+    /**
      * Returns code setting value to variable
      * @param string $name
      * @param mixed $value json serialised value

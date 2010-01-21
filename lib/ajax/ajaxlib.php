@@ -472,13 +472,31 @@ class page_requirements_manager {
      * Ideally the JS code fragment should be stored in plugin renderer so that themes
      * may override it.
      *
-     * Example: "Y.use('mod_mymod'); M.mod_mymod.init_view();"
+     * Example:
+     * Y.use('mod_mymod', function(){
+     *      M.mod_mymod.init_view();"
+     * });
      *
      * @param string $jscode
      * @return void
      */
     public function js_init_code($jscode) {
         $this->jsinitcode[] = trim($jscode, " ;\n");
+    }
+
+    /**
+     * Adds a required JavaScript object initialisation to the page.
+     * 
+     * @param string|null $var If null the object is not assigned to any variable
+     * @param string $class
+     * @param array $arguments
+     * @param array $requirements
+     * @return required_js_object_init
+     */
+    public function js_object_init($var, $class, array $arguments = null, array $requirements = null) {
+        $requirement = new required_js_object_init($this, $var, $class, $arguments, $requirements);
+        $this->requiredjscode[] = $requirement;
+        return $requirement;
     }
 
     /**
@@ -647,7 +665,10 @@ class page_requirements_manager {
      * @return unknown_type
      */
     protected function get_javascript_init_code() {
-        return implode(";\n", $this->jsinitcode) . ";\n";
+        if (count($this->jsinitcode)) {
+            return implode(";\n", $this->jsinitcode) . ";\n";
+        }
+        return '';
     }
 
     /**
@@ -816,19 +837,14 @@ class page_requirements_manager {
         $ondomreadyjs = $this->get_javascript_code(self::WHEN_ON_DOM_READY, '        ');
         $jsinit = $this->get_javascript_init_code();
         $handlersjs = $this->get_event_handler_code();
-        
+
+        if (!empty($ondomreadyjs)) {
+             $ondomreadyjs = "    Y.on('domready', function() {\n$ondomreadyjs\n    });";
+        }
+
         // the global Y can be used only after it is fully loaded, that means
         // from code executed from the following block
-        $js .= <<<EOD
-Y = YUI(yui3loader).use('node-base', function(Y) {
-$inyuijs    ;
-    Y.on('domready', function() {
-$ondomreadyjs
-    });
-$jsinit
-$handlersjs
-});
-EOD;
+        $js .= "Y = YUI(yui3loader).use('node', function(Y) {\n{$inyuijs}{$ondomreadyjs}{$jsinit}{$handlersjs}\n});";
 
         $output .= html_writer::script($js);
 
@@ -1112,6 +1128,89 @@ abstract class required_js_code extends requirement_base {
     }
 }
 
+/**
+ * This class is used to manage an object initialisation in JavaScript.
+ *
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ */
+class required_js_object_init extends required_js_code {
+    /**
+     * The variable to assign the object to or null for none
+     * @var string|null
+     */
+    protected $var;
+    /**
+     * The class of the object to initialise
+     * @var string
+     */
+    protected $class;
+    /**
+     * Arguments to pass in to the constructor
+     */
+    protected $arguments;
+    /**
+     * Required YUI modules
+     */
+    protected $requirements;
+    protected $delay = 0;
+
+    /**
+     * Constructor. Normally instances of this class should not be created directly.
+     * Client code should create them via the page_requirements_manager
+     * method {@link page_requirements_manager::js_object_init()}.
+     *
+     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
+     * @param string|null $var
+     * @param string $class
+     * @param array|null $arguments
+     * @param array|null $requirements
+     */
+    public function __construct(page_requirements_manager $manager, $var, $class, array $arguments = null, array $requirements = null) {
+        parent::__construct($manager);
+        $this->when = page_requirements_manager::WHEN_IN_YUI;
+        $this->var = $var;
+        $this->class = $class;
+        $this->arguments = $arguments;
+        $this->requirements = $requirements;
+    }
+
+    /**
+     * Gets the actual JavaScript code for the required object initialisation
+     * @return string
+     */
+    public function get_js_code() {
+        return js_writer::object_init($this->var, $this->class, $this->arguments, $this->requirements, $this->delay);
+    }
+
+    /**
+     * Indicate that this initalisation should be called in YUI's onDomReady event.
+     *
+     * Thisis needed mostly for buggy IE browsers because they have problems
+     * when JS starts modifying DOM structure before the DOM is ready.
+     */
+    public function on_dom_ready() {
+        if ($this->is_done() || $this->when < page_requirements_manager::WHEN_IN_YUI) {
+            return;
+        }
+        $this->when = page_requirements_manager::WHEN_ON_DOM_READY;
+    }
+
+    /**
+     * Indicate that this function should be called a certain number of seconds
+     * after the page has finished loading. (More exactly, a number of seconds
+     * after the onDomReady event fires.)
+     *
+     * @param integer $seconds the number of seconds delay.
+     */
+    public function after_delay($seconds) {
+        if ($seconds) {
+            $this->on_dom_ready();
+        }
+        $this->delay = $seconds;
+    }
+}
 
 /**
  * This class represents a JavaScript function that must be called from the HTML

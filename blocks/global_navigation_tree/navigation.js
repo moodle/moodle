@@ -34,7 +34,7 @@ var blocks = blocks || {};
  * global navigation and settings.
  * @namespace
  */
-blocks.navigation = {
+M.blocks.navigation = {
     /** The number of expandable branches in existence */
     expandablebranchcount:0,
     /** An array of initialised trees */
@@ -45,35 +45,36 @@ blocks.navigation = {
      */
     classes:{},
     /**
+     * This function gets called when the module is first loaded as required by
+     * the YUI.add statement at the bottom of the page.
+     * 
+     * NOTE: This will only be executed ONCE
      * @function
-     * @static
-     * @param {int} uid The id of the block within the page
-     * @param {object} properties
      */
-    setup_new_tree:function(uid, properties) {
-        Y.use('base','dom','io','node', function() {
-            properties = properties || {'instance':uid};
-            blocks.navigation.treecollection[uid] = new blocks.navigation.classes.tree(uid, uid, properties);
-        });
+    init:function() {
+        if (M.blocks.genericblock) {
+            // Give the tree class the dock block properties
+            Y.augment(M.blocks.navigation.classes.tree, M.blocks.genericblock);
+        }
     }
 };
 
 /**
  * @class tree
  * @constructor
- * @base blocks.dock.abstractblock
+ * @base M.blocks.dock.abstractblock
  * @param {string} id The name of the tree
  * @param {int} key The internal id within the tree store
  * @param {object} properties Object containing tree properties
  */
-blocks.navigation.classes.tree = function(id, key, properties) {
+M.blocks.navigation.classes.tree = function(id, properties) {
     this.id = id;
-    this.key = key;
-    this.type = 'blocks.navigation.classes.tree';
+    this.key = id;
+    this.type = 'M.blocks.navigation.classes.tree';
     this.errorlog = [];
     this.ajaxbranches = 0;
     this.expansions = [];
-    this.instance = null;
+    this.instance = id;
     this.cachedcontentnode = null;
     this.cachedfooter = null;
     this.position = 'block';
@@ -102,7 +103,7 @@ blocks.navigation.classes.tree = function(id, key, properties) {
     // Attache events to expand by AJAX
     for (var i in this.expansions) {
         Y.one('#'+this.expansions[i].id).on('ajaxload|click', this.init_load_ajax, this, this.expansions[i]);
-        blocks.navigation.expandablebranchcount++;
+        M.blocks.navigation.expandablebranchcount++;
     }
 
     if (node.hasClass('block_js_expansion')) {
@@ -121,7 +122,7 @@ blocks.navigation.classes.tree = function(id, key, properties) {
  * @param {event} e The event object
  * @param {object} branch A branch to load via ajax
  */
-blocks.navigation.classes.tree.prototype.init_load_ajax = function(e, branch) {
+M.blocks.navigation.classes.tree.prototype.init_load_ajax = function(e, branch) {
     e.stopPropagation();
     if (e.target.get('nodeName').toUpperCase() != 'P') {
         return true;
@@ -152,14 +153,14 @@ blocks.navigation.classes.tree.prototype.init_load_ajax = function(e, branch) {
  * @param {mixed} args
  * @return bool
  */
-blocks.navigation.classes.tree.prototype.load_ajax = function(tid, outcome, args) {
+M.blocks.navigation.classes.tree.prototype.load_ajax = function(tid, outcome, args) {
     // Check the status
     if (outcome.status!=0 && outcome.responseXML!=null) {
         var branch = outcome.responseXML.documentElement;
         if (branch!=null && this.add_branch(branch, args.target.ancestor('LI') ,1)) {
             // If we get here everything worked perfectly
             if (this.candock) {
-                blocks.dock.resize();
+                M.blocks.dock.resize();
             }
             return true;
         }
@@ -176,10 +177,10 @@ blocks.navigation.classes.tree.prototype.load_ajax = function(tid, outcome, args
  * @param {int} depth
  * @return bool
  */
-blocks.navigation.classes.tree.prototype.add_branch = function(branchxml, target, depth) {
+M.blocks.navigation.classes.tree.prototype.add_branch = function(branchxml, target, depth) {
 
     // Make the new branch into an object
-    var branch = new blocks.navigation.classes.branch(this, branchxml);
+    var branch = new M.blocks.navigation.classes.branch(this, branchxml);
 
     var childrenul = false;
     if (depth === 1) {
@@ -203,7 +204,7 @@ blocks.navigation.classes.tree.prototype.add_branch = function(branchxml, target
  * Toggle a branch as expanded or collapsed
  * @param {Event} e
  */
-blocks.navigation.classes.tree.prototype.toggleexpansion = function(e) {
+M.blocks.navigation.classes.tree.prototype.toggleexpansion = function(e) {
     // First check if they managed to click on the li iteslf, then find the closest
     // LI ancestor and use that
     if (e.target.get('nodeName').toUpperCase() == 'LI') {
@@ -212,7 +213,7 @@ blocks.navigation.classes.tree.prototype.toggleexpansion = function(e) {
         e.target.ancestor('LI').toggleClass('collapsed');
     }
     if (this.candock) {
-        blocks.dock.resize();
+        M.blocks.dock.resize();
     }
 }
 
@@ -220,10 +221,10 @@ blocks.navigation.classes.tree.prototype.toggleexpansion = function(e) {
  * This class represents a branch for a tree
  * @class branch
  * @constructor
- * @param {blocks.navigation.classes.tree} tree
+ * @param {M.blocks.navigation.classes.tree} tree
  * @param {xmldoc|null} xml
  */
-blocks.navigation.classes.branch = function(tree, xml) {
+M.blocks.navigation.classes.branch = function(tree, xml) {
     this.tree = tree;
     this.name = null;
     this.title = null;
@@ -247,7 +248,7 @@ blocks.navigation.classes.branch = function(tree, xml) {
  * Constructs a branch from XML
  * @param {xmldoc} xml
  */
-blocks.navigation.classes.branch.prototype.construct_from_xml = function(xml) {
+M.blocks.navigation.classes.branch.prototype.construct_from_xml = function(xml) {
     // Get required attributes
     this.title = xml.getAttribute('title');
     this.classname = xml.getAttribute('class');
@@ -264,8 +265,8 @@ blocks.navigation.classes.branch.prototype.construct_from_xml = function(xml) {
 
     if (this.id && this.id.match(/^expandable_branch_\d+$/)) {
         // Assign a new unique id for this new expandable branch
-        blocks.navigation.expandablebranchcount++;
-        this.id = 'expandable_branch_'+blocks.navigation.expandablebranchcount;
+        M.blocks.navigation.expandablebranchcount++;
+        this.id = 'expandable_branch_'+M.blocks.navigation.expandablebranchcount;
     }
 
     // Retrieve any additional information
@@ -284,7 +285,7 @@ blocks.navigation.classes.branch.prototype.construct_from_xml = function(xml) {
  * Injects a branch into the tree at the given location
  * @param {element} element
  */
-blocks.navigation.classes.branch.prototype.inject_into_dom = function(element) {
+M.blocks.navigation.classes.branch.prototype.inject_into_dom = function(element) {
 
     var branchli = Y.Node.create('<li></li>');
     var branchp = Y.Node.create('<p class="tree_item"></p>');
@@ -338,9 +339,4 @@ blocks.navigation.classes.branch.prototype.inject_into_dom = function(element) {
     }
 }
 
-YUI(yui3loader).use('event-custom', 'node', function(Y){
-    if (blocks.genericblock) {
-        // Give the tree class the dock block properties
-        Y.augment(blocks.navigation.classes.tree, blocks.genericblock);
-    }
-});
+YUI.add('blocks_navigation', M.blocks.navigation.init, '0.0.0.1', yui3loader.modules.blocks_navigation.requires);

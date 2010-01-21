@@ -80,8 +80,9 @@ class block_global_navigation_tree extends block_tree {
     }
 
     function get_required_javascript() {
+        global $CFG;
         $this->_initialise_dock();
-        $this->page->requires->js('/blocks/global_navigation_tree/navigation.js');
+        $this->page->requires->js_module('blocks_navigation', array('fullpath'=>$CFG->wwwroot.'/blocks/global_navigation_tree/navigation.js', 'requires'=>array('blocks_dock', 'io', 'node', 'dom', 'event-custom')));
         user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
     }
 
@@ -153,8 +154,8 @@ class block_global_navigation_tree extends block_tree {
         $this->page->navigation->find_expandable($expandable);
 
         // Initialise the JS tree object
-        $args = array($this->instance->id,array('expansions'=>$expandable,'instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked()));
-        $this->page->requires->js_function_call('blocks.navigation.setup_new_tree',  $args)->on_dom_ready();
+        $args = array($this->instance->id, array('expansions'=>$expandable,'instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked()));
+        $this->page->requires->js_object_init("M.blocks.navigation.treecollection[".$this->instance->id."]", 'M.blocks.navigation.classes.tree', $args, array('blocks_navigation'));
         
         // Grab the items to display
         $this->content->items = array($this->page->navigation);

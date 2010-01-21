@@ -578,7 +578,8 @@ class block_base {
     function get_required_javascript() {
         $this->_initialise_dock();
         if ($this->instance_can_be_docked()) {
-            $this->page->requires->js_function_call('blocks.setup_generic_block', array($this->instance->id))->on_dom_ready();
+            $this->page->requires->js('/blocks/dock.js');
+            $this->page->requires->js_object_init(null, 'M.blocks.genericblock', array($this->instance->id), array('blocks_dock'));
             user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
         }
     }
@@ -750,11 +751,10 @@ class block_base {
     }
 
     public function _initialise_dock() {
+        global $CFG;
         if (!self::$dockinitialised) {
-            $this->page->requires->js_function_call('blocks.dock.init')->on_dom_ready();
-            $this->page->requires->data_for_js('blocks.dock.strings.addtodock', get_string('addtodock', 'block'));
-            $this->page->requires->data_for_js('blocks.dock.strings.undockitem', get_string('undockitem', 'block'));
-            $this->page->requires->data_for_js('blocks.dock.strings.undockall', get_string('undockall', 'block'));
+            $this->page->requires->js_module('blocks_dock', array('fullpath'=>$CFG->wwwroot.'/blocks/dock.js', 'requires'=>array('base','dom','io','node', 'event-custom')));
+            $this->page->requires->strings_for_js(array('addtodock','undockitem','undockall'), 'block');
             self::$dockinitialised = true;
         }
     }
@@ -861,7 +861,7 @@ class block_tree extends block_list {
             $this->content->items = array();
         }
         $this->get_content();
-        $content = $output->tree_block_contents($this->content->items,array('class'=>'block_tree'));
+        $content = $output->tree_block_contents($this->content->items,array('class'=>'block_tree list'));
         if (isset($this->id) && !is_numeric($this->id)) {
             $content = $output->box($content, 'block_tree_box', $this->id);
         }
