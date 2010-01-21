@@ -230,7 +230,6 @@ class block_tag_youtube extends block_base {
             'Education' => get_string('education', 'block_tag_youtube'),
             'Howto'  => get_string('howtodiy', 'block_tag_youtube'),
             'Tech'   => get_string('scienceandtech', 'block_tag_youtube')
-            ,'20'=>'20'
         );
     }
 
