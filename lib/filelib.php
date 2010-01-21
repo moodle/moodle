@@ -566,7 +566,7 @@ function file_get_draft_area_files($draftitemid, $filepath = '/') {
 
             $icon = mimeinfo_from_type('icon', $file->get_mimetype());
             $icon = str_replace('.gif', '', $icon);
-            $item->icon = $OUTPUT->pix_url('f/' . $icon);
+            $item->icon = $OUTPUT->pix_url('f/' . $icon)->out();
 
             if ($icon == 'zip') {
                 $item->type = 'zip';
@@ -576,7 +576,7 @@ function file_get_draft_area_files($draftitemid, $filepath = '/') {
 
             if ($file->is_directory()) {
                 $item->filesize = 0;
-                $item->icon = $OUTPUT->pix_url('f/folder');
+                $item->icon = $OUTPUT->pix_url('f/folder')->out();
                 $item->type = 'folder';
                 $foldername = explode('/', trim($item->filepath, '/'));
                 $item->fullname = trim(array_pop($foldername), '/');

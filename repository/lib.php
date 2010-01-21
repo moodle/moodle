@@ -836,7 +836,7 @@ abstract class repository {
                     'url'=>$fileinfo->get_url(),
                     'id'=>$file->get_itemid(),
                     'file'=>$file->get_filename(),
-                    'icon' => $OUTPUT->pix_url(file_extension_icon($thefile, 32))
+                    'icon' => $OUTPUT->pix_url(file_extension_icon($thefile, 32))->out()
                 );
             } else {
                 return null;
