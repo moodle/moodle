@@ -25,7 +25,6 @@
  */
 //TODO (nfreear): Accessibility: evaluation, lang/en_utf8/moodle.php: $string['formatweekscss']
 
-    require_once($CFG->libdir.'/ajax/ajaxlib.php');
     require_once($CFG->libdir.'/filelib.php');
 
     $week = optional_param('week', -1, PARAM_INT);

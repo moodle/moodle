@@ -26,7 +26,6 @@
  */
 //TODO (nfreear): Accessibility: evaluation, lang/en_utf8/moodle.php: $string['formattopicscss']
 
-require_once($CFG->libdir.'/ajax/ajaxlib.php');
 require_once($CFG->libdir.'/filelib.php');
 
 $topic = optional_param('topic', -1, PARAM_INT);

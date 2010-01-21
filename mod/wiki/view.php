@@ -7,7 +7,6 @@
     require_once("../../config.php");
     require_once("lib.php");
     #require_once("$CFG->dirroot/course/lib.php"); // For side-blocks
-    require_once($CFG->libdir . '/ajax/ajaxlib.php');
     $PAGE->requires->yui2_lib('connection');
 
     $ewiki_action = optional_param('ewiki_action', '', PARAM_ALPHA);     // Action on Wiki-Page
