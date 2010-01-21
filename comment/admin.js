@@ -20,7 +20,7 @@ function init() {
     }
 }
 function delete_comments() {
-    var url = moodle_cfg.wwwroot + '/comment/index.php';
+    var url = M.cfg.wwwroot + '/comment/index.php';
     var cb = {
         success:function(o) {
             if (o.responseText == 'yes') {
@@ -37,7 +37,7 @@ function delete_comments() {
     }
     var data = {
         'commentids': list,
-        'sesskey': moodle_cfg.sesskey
+        'sesskey': M.cfg.sesskey
     }
     var trans = YAHOO.util.Connect.asyncRequest('POST',
         url+'?action=delete', cb, build_querystring(data));

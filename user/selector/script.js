@@ -18,8 +18,8 @@ function user_selector(name, hash, extrafields, lastsearch, strprevselected, str
     this.strnomatchingusers = strnomatchingusers;
     this.strnone = strnone;
     this.iconloading = iconloading;
-    this.searchurl = moodle_cfg.wwwroot + '/user/selector/search.php?selectorid=' +
-            hash + '&sesskey=' + moodle_cfg.sesskey + '&search='
+    this.searchurl = M.cfg.wwwroot + '/user/selector/search.php?selectorid=' +
+            hash + '&sesskey=' + M.cfg.sesskey + '&search='
 
     // Set up the data source.
     this.datasource = new YAHOO.util.XHRDataSource(this.searchurl);
@@ -350,7 +350,7 @@ user_selector.prototype.handle_failure = function() {
     this.searchfield.className = 'error';
 
     // If we are in developer debug mode, output a link to help debug the failure.
-    if (moodle_cfg.developerdebug) {
+    if (M.cfg.developerdebug) {
         var link = document.createElement('a');
         link.href = this.searchurl + this.get_search_text() + '&debug=1';
         link.appendChild(document.createTextNode('Ajax call failed. Click here to try the search call directly.'))

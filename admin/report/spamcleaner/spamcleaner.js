@@ -16,7 +16,7 @@ function init() {
     YAHOO.util.Event.addListener("removeall_btn", "click", function(){
         var yes = confirm(mstr.report_spamcleaner.spamdeleteallconfirm);
         if(yes){
-            var cObj = YAHOO.util.Connect.asyncRequest('POST', spamcleaner.me+'?delall=yes&sesskey='+moodle_cfg.sesskey, delall_cb);
+            var cObj = YAHOO.util.Connect.asyncRequest('POST', spamcleaner.me+'?delall=yes&sesskey='+M.cfg.sesskey, delall_cb);
         }
     });
 }
@@ -64,11 +64,11 @@ function del_user(obj, id) {
     var yes = confirm(mstr.report_spamcleaner.spamdeleteconfirm);
     if(yes){
         row = obj;
-        var cObj = YAHOO.util.Connect.asyncRequest('POST', spamcleaner.me+'?del=yes&sesskey='+moodle_cfg.sesskey+'&id='+id, del_cb);
+        var cObj = YAHOO.util.Connect.asyncRequest('POST', spamcleaner.me+'?del=yes&sesskey='+M.cfg.sesskey+'&id='+id, del_cb);
     }
 }
 function ignore_user(obj, id) {
     row = obj;
-    var cObj = YAHOO.util.Connect.asyncRequest('POST', spamcleaner.me+'?ignore=yes&sesskey='+moodle_cfg.sesskey+'&id='+id, ignore_cb);
+    var cObj = YAHOO.util.Connect.asyncRequest('POST', spamcleaner.me+'?ignore=yes&sesskey='+M.cfg.sesskey+'&id='+id, ignore_cb);
 }
 YAHOO.util.Event.onDOMReady(init);

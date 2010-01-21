@@ -12,7 +12,7 @@ function cmt_replace(client_id,list,newcmt) {
         var val = template.innerHTML;
         val = val.replace('___name___', list[i].username);
         if (list[i]['delete']||newcmt) {
-            list[i].content = '<div class="comment-delete"><a href="###" title="'+mstr.moodle.deletecomment+'" onclick="delete_comment(\''+client_id+'\',\''+list[i].id+'\')"><img src="'+moodle_cfg.wwwroot+'/pix/t/delete.gif" /></a></div>' + list[i].content;
+            list[i].content = '<div class="comment-delete"><a href="###" title="'+mstr.moodle.deletecomment+'" onclick="delete_comment(\''+client_id+'\',\''+list[i].id+'\')"><img src="'+M.cfg.wwwroot+'/pix/t/delete.gif" /></a></div>' + list[i].content;
         }
         val = val.replace('___time___', list[i].time);
         val = val.replace('___picture___', list[i].avatar);
@@ -26,10 +26,10 @@ function cmt_replace(client_id,list,newcmt) {
 }
 function cmt_load(cid) {
     var container = document.getElementById('comment-list-'+cid);
-    container.innerHTML = '<div style="text-align:center"><img src="'+moodle_cfg.wwwroot+'/pix/i/loading.gif'+'" /></div>';
+    container.innerHTML = '<div style="text-align:center"><img src="'+M.cfg.wwwroot+'/pix/i/loading.gif'+'" /></div>';
 }
 function get_comments(client_id, area, itemid, page) {
-    var url = moodle_cfg.wwwroot + '/comment/comment_ajax.php';
+    var url = M.cfg.wwwroot + '/comment/comment_ajax.php';
     var data = {
         'courseid': comment_params.courseid,
         'contextid': comment_params.contextid,
@@ -37,7 +37,7 @@ function get_comments(client_id, area, itemid, page) {
         'itemid': itemid,
         'page': page,
         'client_id': client_id,
-        'sesskey': moodle_cfg.sesskey
+        'sesskey': M.cfg.sesskey
     }
     this.cb = {
         success: function(o) {
@@ -93,7 +93,7 @@ function post_comment(cid) {
     }
     var ta = document.getElementById('dlg-content-'+cid);
     if (ta.value && ta.value != mstr.moodle.addcomment) {
-        var url = moodle_cfg.wwwroot + '/comment/comment_ajax.php';
+        var url = M.cfg.wwwroot + '/comment/comment_ajax.php';
         var formObject = document.getElementById('comment-form-'+cid);
         YAHOO.util.Connect.setForm(formObject);
         var trans = YAHOO.util.Connect.asyncRequest('POST', url+'?action=add', this.cb);
@@ -106,13 +106,13 @@ function post_comment(cid) {
     }
 }
 function delete_comment(client_id, comment_id) {
-    var url = moodle_cfg.wwwroot + '/comment/comment_ajax.php';
+    var url = M.cfg.wwwroot + '/comment/comment_ajax.php';
     var data = {
         'courseid': comment_params.courseid,
         'contextid': comment_params.contextid,
         'commentid': comment_id,
         'client_id': client_id,
-        'sesskey': moodle_cfg.sesskey
+        'sesskey': M.cfg.sesskey
     }
     this.cb = {
         success: function(o) {
@@ -146,11 +146,11 @@ function view_comments(client_id, area, itemid, page) {
         // show
         get_comments(client_id, area, itemid, page);
         container.style.display = 'block';
-        img.src=moodle_cfg.wwwroot+'/pix/t/expanded.png';
+        img.src=M.cfg.wwwroot+'/pix/t/expanded.png';
     } else {
         // hide
         container.style.display = 'none';
-        img.src=moodle_cfg.wwwroot+'/pix/t/collapsed.png';
+        img.src=M.cfg.wwwroot+'/pix/t/collapsed.png';
         ta.value = '';
     }
     toggle_textarea.apply(ta, [false]);

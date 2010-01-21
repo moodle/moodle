@@ -6,7 +6,7 @@ function set_item_focus(itemid) {
 }
 
 function feedbackGo2delete(form) {
-    form.action = moodle_cfg.wwwroot+'/mod/feedback/delete_completed.php';
+    form.action = M.cfg.wwwroot+'/mod/feedback/delete_completed.php';
     form.submit();
 }
 

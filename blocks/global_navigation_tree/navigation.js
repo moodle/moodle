@@ -131,9 +131,9 @@ M.blocks.navigation.classes.tree.prototype.init_load_ajax = function(e, branch) 
     if (this.instance != null) {
         cfginstance = '&instance='+this.instance
     }
-    Y.io(moodle_cfg.wwwroot+'/lib/ajax/getnavbranch.php', {
+    Y.io(M.cfg.wwwroot+'/lib/ajax/getnavbranch.php', {
         method:'POST',
-        data:'elementid='+branch.id+'&id='+branch.branchid+'&type='+branch.type+'&sesskey='+moodle_cfg.sesskey+cfginstance,
+        data:'elementid='+branch.id+'&id='+branch.branchid+'&type='+branch.type+'&sesskey='+M.cfg.sesskey+cfginstance,
         on: {
             complete:this.load_ajax,
             success:function() {Y.detach('click', this.init_load_ajax, e.target);}

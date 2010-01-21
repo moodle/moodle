@@ -86,7 +86,7 @@ function completion_toggle(e) {
   YAHOO.util.Event.preventDefault(e);
   // By setting completion_wwwroot you can cause it to use absolute path
   // otherwise script assumes it is called from somewhere in /course
-  var target = moodle_cfg.wwwroot + '/course/togglecompletion.php';
+  var target = M.cfg.wwwroot + '/course/togglecompletion.php';
   YAHOO.util.Connect.asyncRequest('POST',target,
       {success:completion_handle_response,failure:completion_handle_failure,scope:this},
       'id='+this.cmid+'&completionstate='+this.otherState+'&fromajax=1');

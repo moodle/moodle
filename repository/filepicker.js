@@ -60,7 +60,7 @@ YUI.add('filepicker', function(Y) {
         return obj;
     }
     Y.extend(filepicker, Y.Base, {
-        api: moodle_cfg.wwwroot+'/repository/repository_ajax.php',
+        api: M.cfg.wwwroot+'/repository/repository_ajax.php',
         initializer: function(args) {
             this.options = args;
         },
@@ -79,7 +79,7 @@ YUI.add('filepicker', function(Y) {
             params['env']=this.options.env;
             // the form element only accept certain file types
             params['accepted_types']=this.options.accepted_types;
-            params['sesskey']=moodle_cfg.sesskey;
+            params['sesskey']=M.cfg.sesskey;
             params['client_id'] = args.client_id;
             params['itemid'] = this.options.itemid?this.options.itemid:0;
             if (args['params']) {

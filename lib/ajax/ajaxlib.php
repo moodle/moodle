@@ -100,6 +100,8 @@ class page_requirements_manager {
     protected $yui3loader;
     /** YUI PHPLoader instance responsible for YUI3 loading from javascript */
     protected $M_yui_loader;
+    /** some config vars exposend in JS, please no secret stuff there */
+    protected $M_cfg;
 
     /**
      * Page requirements constructor.
@@ -215,7 +217,7 @@ class page_requirements_manager {
 
         //TODO: problem here is we may need this in some included JS - move this somehow to the very beginning
         //      right after the YUI loading
-        $config = array(
+        $this->M_cfg = array(
             'wwwroot'             => $CFG->httpswwwroot, // Yes, really. See above.
             'sesskey'             => sesskey(),
             'loadingicon'         => $renderer->pix_url('i/loading_small', 'moodle')->out(false),
@@ -223,9 +225,8 @@ class page_requirements_manager {
             'theme'               => $page->theme->name,
         );
         if (debugging('', DEBUG_DEVELOPER)) {
-            $config['developerdebug'] = true;
+            $this->M_cfg['developerdebug'] = true;
         }
-        $this->data_for_js('moodle_cfg', $config)->in_head();
 
         if (debugging('', DEBUG_DEVELOPER)) {
             $this->yui2_lib('logger');
@@ -785,7 +786,9 @@ class page_requirements_manager {
         // set up global YUI3 loader object - this should contain all code needed by plugins
         // note: in JavaScript just use "YUI(M.yui.loader).use('overlay', function(Y) { .... });"
         // this needs to be done before including any other script
-        $js = "var M = {}; M.yui = {}; " . js_writer::set_variable('M.yui.loader', $this->M_yui_loader, false);
+        $js = "var M = {}; M.yui = {}; ";
+        $js .= js_writer::set_variable('M.yui.loader', $this->M_yui_loader, false) . "\n";
+        $js .= js_writer::set_variable('M.cfg', $this->M_cfg, false);
         $output .= html_writer::script($js);
 
         // link our main JS file, all core stuff should be there

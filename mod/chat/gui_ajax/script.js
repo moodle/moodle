@@ -1,5 +1,5 @@
 YAHOO.namespace('moodle.chat');
-YAHOO.moodle.chat.api = moodle_cfg.wwwroot+'/mod/chat/chat_ajax.php';
+YAHOO.moodle.chat.api = M.cfg.wwwroot+'/mod/chat/chat_ajax.php';
 YAHOO.moodle.chat.interval = null;
 YAHOO.moodle.chat.chat_input_element = null;
 YAHOO.moodle.chat.msgs = [];

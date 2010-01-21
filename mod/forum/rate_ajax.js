@@ -74,7 +74,7 @@ function perform_rate(e, menu) {
     };
 
     /** Here goes the request **/
-    var url = moodle_cfg.wwwroot +  '/mod/forum/rate_ajax.php?postid=' + menu.name + '&rate=' + menu.value + '&sesskey=' + moodle_cfg.sesskey;
+    var url = M.cfg.wwwroot +  '/mod/forum/rate_ajax.php?postid=' + menu.name + '&rate=' + menu.value + '&sesskey=' + M.cfg.sesskey;
     YAHOO.util.Connect.asyncRequest('GET', url, callback, null);
 
     /** Start animation **/

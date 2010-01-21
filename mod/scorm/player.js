@@ -1,5 +1,5 @@
 function scorm_openpopup(url,name,options,width,height) {
-    fullurl = moodle_cfg.wwwroot + '/mod/scorm/' + url;
+    fullurl = M.cfg.wwwroot + '/mod/scorm/' + url;
     windowobj = window.open(fullurl,name,options);
     if ((width==100) && (height==100)) {
         // Fullscreen
