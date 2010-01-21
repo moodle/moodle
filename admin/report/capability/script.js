@@ -27,8 +27,8 @@ capability_report = {
         div.appendChild(label);
         div.appendChild(input);
         capability_report.select.parentNode.insertBefore(div, capability_report.select);
-        YAHOO.util.Event.addListener(input, 'keyup', capability_report.cap_filter_change);
-        YAHOO.util.Event.addListener(capability_report.select, 'change', capability_report.validate);
+        Y.on('keyup', capability_report.cap_filter_change, input);
+        Y.on('change', capability_report.validate, capability_report.select);
         capability_report.select.options[0].style.display = 'none';
         capability_report.validate();
     },

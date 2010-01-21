@@ -38,7 +38,6 @@ if (empty($cleanedroleids)) {
 }
 
 // Include the required JavaScript.
-$PAGE->requires->yui2_lib('event');
 $PAGE->requires->js('/admin/report/capability/script.js');
 $PAGE->requires->js_function_call('capability_report.cap_filter_init', array(get_string('search')));
 
