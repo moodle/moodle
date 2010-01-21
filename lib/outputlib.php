@@ -1102,10 +1102,25 @@ class theme_config {
      */
     public function get_all_block_regions() {
         $regions = array();
-        //TODO: this is weird because the regions from different layouts override each other
         foreach ($this->layouts as $layoutinfo) {
             foreach ($layoutinfo['regions'] as $region) {
-                $regions[$region] = get_string('region-' . $region, 'theme_' . $layoutinfo['theme']);
+                $regionstring = get_string('region-' . $region, 'theme_' . $layoutinfo['theme']);
+                if (substr($regionstring, 0, 1) != '[') {  // A name exists in this theme, so use it
+                    $regions[$region] = $regionstring;
+                } else {                                   // Otherwise, try to find one elsewhere
+                    // Check parents, if any
+                    if (!empty($this->parents)) {
+                        foreach ($this->parents as $parentthemename) {
+                            $regionstring = get_string('region-' . $region, 'theme_'.$parentthemename);
+                            if (substr($regionstring, 0, 1) != '[') {  // A name exists in this theme, so use it
+                                $regions[$region] = $regionstring;
+                            }
+                        }
+                    }
+                    if (empty($regions[$region])) {         // Last resort, try the base theme for names
+                        $regions[$region] = get_string('region-' . $region, 'theme_base');
+                    }
+                }
             }
         }
         return $regions;
