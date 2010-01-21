@@ -119,8 +119,8 @@ $admin = reset($admins);
 session_set_user($admin);
 
 // apply all default settings, just in case do it twice to fill all defaults
-admin_apply_default_settings(NULL, true);
-admin_apply_default_settings(NULL, true);
+admin_apply_default_settings(NULL, false);
+admin_apply_default_settings(NULL, false);
 
 echo get_string('cliupgradefinished', 'admin')."\n";
 exit(0); // 0 means success
