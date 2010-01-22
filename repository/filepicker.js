@@ -41,7 +41,7 @@
 
 var active_filepicker = null;
 
-YUI.add('core_filepicker', function(Y) {
+M.core_filepicker = (function(){
     function core_filepicker (args) {
         core_filepicker.superclass.constructor.apply(this, arguments);
     }
@@ -1074,5 +1074,5 @@ YUI.add('core_filepicker', function(Y) {
             this.render();
         }
     });
-    Y.core_filepicker = core_filepicker;
-}, '3.0.0', {requires:['base', 'node', 'json', 'async-queue', 'io']});
+    return core_filepicker;
+})();
