@@ -191,17 +191,11 @@ function process_directory ($dir, $userfield, $overwrite, &$results) {
  */
 function process_file ($file, $userfield, $overwrite) {
     // Add additional checks on the filenames, as they are user
-    // controlled and we don't want to open any security holes.
+    // controlled and we don't want to open any security holes.    
     $path_parts = pathinfo(cleardoubleslashes($file));
     $basename  = $path_parts['basename'];
     $extension = $path_parts['extension'];
-    if ($basename != clean_param($basename, PARAM_CLEANFILE)) {
-        // The original picture file name has invalid characters
-        notify(get_string('uploadpicture_invalidfilename', 'admin',
-                          clean_param($basename, PARAM_CLEANHTML)));
-        return PIX_FILE_ERROR;
-    }
-
+    
     // The picture file name (without extension) must match the
     // userfield attribute.
     $uservalue = substr($basename, 0,
