@@ -463,14 +463,19 @@ class page_requirements_manager {
      * @param array $arguments and array of arguments to be passed to the function.
      *      When generating the function call, this will be escaped using json_encode,
      *      so passing objects and arrays should work.
+     * @param string $module optional js module name, if specified module is required and
+     *      initialised before the call
      * @return required_js_function_call The required_js_function_call object.
      *      This allows you to control when the link to the script is output by
      *      calling methods like {@link required_js_function_call::in_head()},
      *      {@link required_js_function_call::on_dom_ready()} or
      *      {@link required_js_function_call::after_delay()} methods.
      */
-    public function js_function_call($function, $arguments = array()) {
-        $requirement = new required_js_function_call($this, $function, $arguments);
+    public function js_function_call($function, $arguments = array(), $module = null) {
+        if ($module) {
+            $this->js_module($module);
+        }
+        $requirement = new required_js_function_call($this, $function, $arguments, $module);
         $this->requiredjscode[] = $requirement;
         return $requirement;
     }
@@ -517,7 +522,7 @@ class page_requirements_manager {
      * equivalent in the current language.
      *
      * The arguments to this function are just like the arguments to get_string
-     * except that $module is not optional, and there are limitations on how you
+     * except that $component is not optional, and there are limitations on how you
      * use $a. Because each string is only stored once in the JavaScript (based
      * on $identifier and $module) you cannot get the same string with two different
      * values of $a. If you try, an exception will be thrown.
@@ -530,16 +535,16 @@ class page_requirements_manager {
      * @param string $module the language file to look in.
      * @param mixed $a any extra data to add into the string (optional).
      */
-    public function string_for_js($identifier, $module, $a = NULL) {
-        $string = get_string($identifier, $module, $a);
-        if (!$module) {
+    public function string_for_js($identifier, $component, $a = NULL) {
+        $string = get_string($identifier, $component, $a);
+        if (!$component) {
             throw new coding_exception('The $module parameter is required for page_requirements_manager::string_for_js.');
         }
-        if (isset($this->stringsforjs[$module][$identifier]) && $this->stringsforjs[$module][$identifier] != $string) {
+        if (isset($this->stringsforjs[$component][$identifier]) && $this->stringsforjs[$component][$identifier] != $string) {
             throw new coding_exception("Attempt to re-define already required string '$identifier' " .
-                    "from lang file '$module'. Did you already ask for it with a different \$a?");
+                    "from lang file '$component'. Did you already ask for it with a different \$a?");
         }
-        $this->stringsforjs[$module][$identifier] = $string;
+        $this->stringsforjs[$component][$identifier] = $string;
     }
 
     /**
@@ -560,20 +565,20 @@ class page_requirements_manager {
      * </code>
      *
      * @param array $identifiers An array of desired strings
-     * @param string $module The module to load for
+     * @param string $component The module to load for
      * @param mixed $a This can either be a single variable that gets passed as extra
      *         information for every string or it can be an array of mixed data where the
      *         key for the data matches that of the identifier it is meant for.
      *
      */
-    public function strings_for_js($identifiers, $module, $a=NULL) {
+    public function strings_for_js($identifiers, $component, $a=NULL) {
         foreach ($identifiers as $key => $identifier) {
             if (is_array($a) && array_key_exists($key, $a)) {
                 $extra = $a[$key];
             } else {
                 $extra = $a;
             }
-            $this->string_for_js($identifier, $module, $extra);
+            $this->string_for_js($identifier, $component, $extra);
         }
     }
 
@@ -1252,6 +1257,7 @@ class required_js_object_init extends required_js_code {
 class required_js_function_call extends required_js_code {
     protected $function;
     protected $arguments;
+    protected $module;
     protected $delay = 0;
 
     /**
@@ -1266,15 +1272,20 @@ class required_js_function_call extends required_js_code {
      *      When generating the function call, this will be escaped using json_encode,
      *      so passing objects and arrays should work.
      */
-    public function __construct(page_requirements_manager $manager, $function, $arguments) {
+    public function __construct(page_requirements_manager $manager, $function, $arguments, $module) {
         parent::__construct($manager);
         $this->when = page_requirements_manager::WHEN_IN_YUI;
         $this->function = $function;
         $this->arguments = $arguments;
+        $this->module = $module;
     }
 
     public function get_js_code() {
-        return js_writer::function_call($this->function, $this->arguments, $this->delay);
+        $js = js_writer::function_call($this->function, $this->arguments, $this->delay);
+        if ($this->module) {
+            $js = "Y.use('$this->module', function() { $js });";
+        }
+        return $js;
     }
 
     /**

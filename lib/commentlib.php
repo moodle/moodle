@@ -274,8 +274,7 @@ EOD;
             $options->notoggle = true;
         }
 
-        $PAGE->requires->js_module('core_comment');
-        $PAGE->requires->js_function_call('initialize_comment', array($options))->on_dom_ready();
+        $PAGE->requires->js_function_call('M.core_comment.init', array($options), 'core_comment')->on_dom_ready();
 
         if (!empty(self::$nonjs)) {
             return $this->print_comments($this->page, $return);
@@ -287,13 +286,6 @@ EOD;
         // print html template
         if (empty($CFG->commentcommentcode) && !empty($this->viewcap)) {
             echo '<div style="display:none" id="cmt-tmpl">' . $this->template . '</div>';
-
-            // shared parameters for commenting
-            $params = new stdclass;
-            $params->courseid = $this->course->id;
-            $params->contextid = $this->contextid;
-            $PAGE->requires->data_for_js('comment_params', $params);
-
             $CFG->commentcommentcode = true;
         }
 
