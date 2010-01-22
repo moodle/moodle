@@ -99,6 +99,9 @@ abstract class webservice_server implements webservice_server_interface {
     /** @property string $password password of the local user */
     protected $password = null;
 
+    /** @property int $userid the local user */
+    protected $userid = null;
+
     /** @property bool $simple true if simple auth used */
     protected $simple;
 
@@ -179,6 +182,7 @@ abstract class webservice_server implements webservice_server_interface {
 
         // now fake user login, the session is completely empty too
         session_set_user($user);
+        $this->userid = $user->id;
 
         if (!has_capability("webservice/$this->wsname:use", $this->restricted_context)) {
             throw new webservice_access_exception('Access to web service not allowed');
@@ -602,6 +606,9 @@ abstract class webservice_base_server extends webservice_server {
 
         // find all needed function info and make sure user may actually execute the function
         $this->load_function_info();
+        
+        //log the web service request
+        add_to_log(1, 'webservice', $this->functionname, '' , '' , 0, $this->userid);
 
         // finally, execute the function - any errors are catched by the default exception handler
         $this->execute();
