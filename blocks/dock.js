@@ -367,7 +367,7 @@ M.blocks.dock = {
             var spacewidth = this.resize_block_space(placeholder);
 
             var blocktitle = Y.Node.getDOMNode(this.cachedcontentnode.one('.title h2')).cloneNode(true);
-            blocktitle.innerHTML = blocktitle.innerHTML.replace(/([a-zA-Z0-9])/g, "$1<br />");
+            blocktitle.innerHTML = blocktitle.innerHTML.replace(/(.)/g, "$1<br />");
 
             var commands = this.cachedcontentnode.all('.title .commands');
             var blockcommands = Y.Node.create('<div class="commands"></div>');
