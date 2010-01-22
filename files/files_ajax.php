@@ -77,9 +77,9 @@ case 'delete':
     $fs = get_file_storage();
     $filepath = file_correct_filepath($filepath);
     $return = new stdclass;
-    if ($file = $fs->get_file($user_context->id, 'user_draft', $itemid, $filepath, $filename)) {
-        $parent_path = $file->get_parent_directory()->get_filepath();
-        if($result = $file->delete()) {
+    if ($stored_file = $fs->get_file($user_context->id, 'user_draft', $itemid, $filepath, $filename)) {
+        $parent_path = $stored_file->get_parent_directory()->get_filepath();
+        if($result = $stored_file->delete()) {
             $return->filepath = $parent_path;
             echo json_encode($return);
         } else {
@@ -93,11 +93,11 @@ case 'delete':
 case 'renamedir':
     $fs = get_file_storage();
     $fb = get_file_browser();
-    $file = $fb->get_file_info($user_context, 'user_draft', $itemid, $filepath, '.');
-    if ($result = $file->delete()) {
-        $fs->create_directory($user_context->id, 'user_draft', $itemid, file_correct_filepath($newfilename));
-        $return = new stdclass;
-        $return->filepath = file_correct_filepath($newfilename);
+    $return = new stdclass;
+    $fileinfo = $fb->get_file_info($user_context, 'user_draft', $itemid, $filepath, '.');
+    if ($result = $fileinfo->delete()) {
+        $newdir = $fs->create_directory($user_context->id, 'user_draft', $itemid, file_correct_filepath($newfilename));
+        $return->filepath = $newdir->get_parent_directory()->get_filepath();
         echo json_encode($return);
     } else {
         echo json_encode(false);
@@ -190,6 +190,9 @@ case 'unzip':
     } else {
         echo json_encode(false);
     }
+    break;
+
+case 'upload':
     break;
 
 default:

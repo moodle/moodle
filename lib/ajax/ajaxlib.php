@@ -343,11 +343,14 @@ class page_requirements_manager {
 
         if (strpos($name, 'core_') === 0) {
             // must be some core stuff
-        } else {
-            if ($name === 'filepicker') { // TODO: rename to 'core_filepicker' and move above
+            if ($name === 'core_filepicker') {
                 $pathtofilepicker = $CFG->httpswwwroot.'/repository/filepicker.js';
-                $module = array('fullpath'=>$pathtofilepicker, 'requires' => array('base', 'node', 'json', 'async-queue', 'io', 'yui2-button', 'yui2-container', 'yui2-treeview', 'yui2-layout'));
+                $module = array('fullpath'=>$pathtofilepicker, 'requires' => array('base', 'node', 'json', 'async-queue', 'io'));
+            } else if($name === 'core_filemanager') {
+                $pathtofilemanager = $CFG->httpswwwroot.'/lib/form/filemanager.js';
+                $module = array('fullpath'=>$pathtofilemanager, 'requires' => array('base', 'io', 'node', 'json', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview'));
             }
+        } else {
             //TODO: look for plugin info?
         }
 

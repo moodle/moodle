@@ -41,16 +41,16 @@
 
 var active_filepicker = null;
 
-YUI.add('filepicker', function(Y) {
-    function filepicker (args) {
-        filepicker.superclass.constructor.apply(this, arguments);
+YUI.add('core_filepicker', function(Y) {
+    function core_filepicker (args) {
+        core_filepicker.superclass.constructor.apply(this, arguments);
     }
-    filepicker.NAME = "FilePicker";
-    filepicker.ATTRS = {
+    core_filepicker.NAME = "FilePicker";
+    core_filepicker.ATTRS = {
         options: {},
         lang: {}
     };
-    filepicker.json_decode = function(string, source) {
+    core_filepicker.json_decode = function(string, source) {
         var obj = null;
         try {
             obj = Y.JSON.parse(string);
@@ -59,7 +59,7 @@ YUI.add('filepicker', function(Y) {
         }
         return obj;
     }
-    Y.extend(filepicker, Y.Base, {
+    Y.extend(core_filepicker, Y.Base, {
         api: M.cfg.wwwroot+'/repository/repository_ajax.php',
         initializer: function(args) {
             this.options = args;
@@ -95,7 +95,7 @@ YUI.add('filepicker', function(Y) {
                             alert('IO FATAL');
                             return;
                         }
-                        var data = filepicker.json_decode(o.responseText);
+                        var data = core_filepicker.json_decode(o.responseText);
                         args.callback(id,data,p);
                     }
                 },
@@ -278,11 +278,6 @@ YUI.add('filepicker', function(Y) {
                 }
                 count++;
             }
-            //if (list.length == 0 && !this.upload) {
-                //panel.innerHTML = '<div class="fp-error">'+mstr.repository.emptylist+'</div>';
-            //}
-            //container.appendChild(panel);
-            //repository_client.print_footer(client_id);
         },
         select_file: function(args) {
             var client_id = this.options.client_id;
@@ -336,7 +331,7 @@ YUI.add('filepicker', function(Y) {
                 var repository_id = this.active_repo.id;
                 var title = Y.one('#newname-'+client_id).get('value');
                 var filesource = Y.one('#filesource-'+client_id).get('value');
-                var params = {'title':title, 'file':filesource};
+                var params = {'title':title, 'file':filesource, 'savepath': this.options.savepath};
 
                 if (this.options.env == 'editor') {
                     var linkexternal = Y.one('#linkexternal-'+client_id).get('checked');
@@ -349,19 +344,25 @@ YUI.add('filepicker', function(Y) {
 
                 this.wait('download', title);
                 this.request({
-                        action:'download',
-                        client_id: client_id,
-                        repository_id: repository_id,
-                        'params': params,
-                        callback: function(id, obj, args) {
-                            if (scope.options.editor_target&&scope.options.env=='editor') {
-                                scope.options.editor_target.value=obj.url;
-                                scope.options.editor_target.onchange();
-                            }
-                            scope.hide();
-                            obj.client_id = client_id;
-                            scope.options.formcallback(obj);
+                    action:'download',
+                    client_id: client_id,
+                    repository_id: repository_id,
+                    'params': params,
+                    callback: function(id, obj, args) {
+                        if (scope.options.editor_target&&scope.options.env=='editor') {
+                            scope.options.editor_target.value=obj.url;
+                            scope.options.editor_target.onchange();
                         }
+                        scope.hide();
+                        obj.client_id = client_id;
+                        var formcallback_scope = null;
+                        if (scope.options.magicscope) {
+                            formcallback_scope = args.scope.options.magicscope;
+                        } else {
+                            formcallback_scope = args.scope;
+                        }
+                        scope.options.formcallback.apply(formcallback_scope, [obj]);
+                    }
                 }, true);
             }, this);
             var cancel = Y.one('#fp-cancel-'+client_id);
@@ -787,7 +788,13 @@ YUI.add('filepicker', function(Y) {
                                 }
                                 scope.hide();
                                 o.client_id = client_id;
-                                scope.options.formcallback(o);
+                                var formcallback_scope = null;
+                                if (scope.options.magicscope) {
+                                    formcallback_scope = args.scope.options.magicscope;
+                                } else {
+                                    formcallback_scope = args.scope;
+                                }
+                                scope.options.formcallback.apply(formcallback_scope, [o]);
                             }
                     }, true);
                 });
@@ -1067,5 +1074,5 @@ YUI.add('filepicker', function(Y) {
             this.render();
         }
     });
-    Y.filepicker = filepicker;
+    Y.core_filepicker = core_filepicker;
 }, '3.0.0', {requires:['base', 'node', 'json', 'async-queue', 'io']});

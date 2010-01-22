@@ -31,7 +31,7 @@ require_once("$CFG->dirroot/repository/lib.php");
 
 class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     public $_helpbutton = '';
-    protected $_options    = array('mainfile'=>'', 'subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
+    protected $_options    = array('mainfile'=>'', 'subdirs'=>1, 'maxbytes'=>0, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
 
     function MoodleQuickForm_filemanager($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG, $PAGE;
@@ -46,7 +46,8 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
         }
         parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
-        $PAGE->requires->js('/lib/form/filemanager.js');
+        $PAGE->requires->js_module('core_filepicker');
+        $PAGE->requires->js_module('core_filemanager');
     }
 
     function setName($name) {
@@ -169,7 +170,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $args = new stdclass;
         // need these three to filter repositories list
         $args->accepted_types = $accepted_types;
-        $args->return_types = $this->_options['return_types'];
+        $args->return_types = FILE_INTERNAL;
         $args->context = $PAGE->context;
         $args->env = 'filemanager';
 
@@ -178,6 +179,8 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $filepicker_options->client_id = $client_id;
         $filepicker_options->maxbytes = $this->_options['maxbytes'];
         $filepicker_options->maxfiles = $this->_options['maxfiles'];
+        $filepicker_options->env      = 'filemanager';
+        $filepicker_options->itemid   = $draftitemid;
 
         // Generate file picker
         $result = new stdclass;
@@ -190,13 +193,19 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $options->filecount = $filecount;
         $options->itemid    = $draftitemid;
         $options->subdirs   = $this->_options['subdirs'];
+        // store filepicker options
+        $options->filepicker = $filepicker_options;
         $options->target    = $id;
 
         $html = $this->_getTabs();
 
+        $PAGE->requires->js_function_call('destroy_item', array("nonjs-filemanager-{$client_id}"))->on_dom_ready();
+        $PAGE->requires->js_function_call('show_item', array("filemanager-wrapper-{$client_id}"))->on_dom_ready();
+        $PAGE->requires->js_function_call('launch_filemanager', array($options))->on_dom_ready();
+
+        // print out this only once
         if (empty($CFG->filemanagertemplateloaded)) {
             $CFG->filemanagertemplateloaded = true;
-            // print html template
             $html .= <<<FMHTML
 <div id="fm-template" style="display:none"><div class="fm-file-menu">___action___</div> <div class="fm-file-name">___fullname___</div></div>
 FMHTML;
@@ -219,18 +228,13 @@ FMHTML;
 </div>
 FMHTML;
         // non-javascript file manager, will be destroied automatically if javascript is enabled.
+        // will be removed if javascript is enabled
         $editorurl = "$CFG->wwwroot/repository/filepicker.php?env=filemanager&amp;action=embedded&amp;itemid=$draftitemid&amp;subdirs=/&amp;maxbytes=$options->maxbytes&amp;ctx_id=".$PAGE->context->id;
         $html .= <<<NONJS
-<div id="nonjs-filemanager-$client_id">';
-<object type="text/html" data="$editorurl" height="160" width="600" style="border:1px solid #000">Error</object>';
+<div id="nonjs-filemanager-$client_id">
+<object type="text/html" data="$editorurl" height="160" width="600" style="border:1px solid #000">Error</object>
 </div>
 NONJS;
-
-        $PAGE->requires->js_module('filepicker');
-        $PAGE->requires->js_function_call('destroy_item', array("nonjs-filemanager-{$client_id}"))->on_dom_ready();
-        $PAGE->requires->js_function_call('show_item', array("filemanager-wrapper-{$client_id}"))->on_dom_ready();
-        $PAGE->requires->js_function_call('launch_filemanager', array($client_id, $options))->on_dom_ready();
-        $PAGE->requires->js_function_call('fm_init_filepicker', array('btnadd-'.$client_id, $filepicker_options))->on_dom_ready();
         return $html;
     }
 }
