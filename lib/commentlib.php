@@ -316,18 +316,7 @@ EOD;
                 $html .= <<<EOD
 <div class='comment-area'>
     <div class="bd">
-        <form method="post" id="comment-form-{$this->cid}" action="{$CFG->wwwroot}/comment/comment_post.php">
-        <div>
         <textarea name="content" rows="1" id="dlg-content-{$this->cid}"></textarea>
-        <input type="hidden" name="contextid" value="$this->contextid" />
-        <input type="hidden" name="action" value="add" />
-        <input type="hidden" name="area" value="$this->commentarea" />
-        <input type="hidden" name="itemid" value="$this->itemid" />
-        <input type="hidden" name="courseid" value="{$this->course->id}" />
-        <input type="hidden" name="sesskey" value="{$sesskey}" />
-        <input type="hidden" name="client_id" value="$this->cid" />
-        </div>
-        </form>
     </div>
     <div class="fd" id="comment-action-{$this->cid}">
         <a href="###" id="comment-action-post-{$this->cid}"> {$strsubmit} </a>

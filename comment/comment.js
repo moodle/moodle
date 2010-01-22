@@ -48,27 +48,17 @@ M.core_comment = (function(){
                 this.view(0);
                 return false;
             }, this);
-            Y.one('#comment-action-cancel'+this.client_id).on('click', function(e) {
-                e.preventDefault();
-                this.view(0);
-                return false;
-            }, this);
-            // add new comment
-            Y.one('#comment-action-post-'+this.client_id).on('click', function(e) {
-                e.preventDefault();
-                this.post();
-                return false;
-            }, this);
         },
         post: function() {
             var ta = Y.one('#dlg-content-'+this.client_id);
             var scope = this;
             var value = ta.get('value');
             if (value && value != mstr.moodle.addcomment) {
+                var params = {'content': value};
                 this.request({
                     action: 'add',
                     scope: scope,
-                    form: {id:'comment-form-'+this.client_id},
+                    params: params,
                     callback: function(id, obj, args) {
                         var scope = args.scope;
                         var cid = scope.client_id;
@@ -129,7 +119,13 @@ M.core_comment = (function(){
                             return;
                         }
                         var data = json_decode(o.responseText);
-                        args.callback(id,data,p);
+                        if (data.error) {
+                            alert(data.error);
+                            return false;
+                        } else {
+                            args.callback(id,data,p);
+                            return true;
+                        }
                     }
                 },
                 arguments: {
@@ -223,6 +219,20 @@ M.core_comment = (function(){
                 }
             }, true);
         },
+        register_actions: function() {
+            // add new comment
+            Y.one('#comment-action-post-'+this.client_id).on('click', function(e) {
+                e.preventDefault();
+                this.post();
+                return false;
+            }, this);
+            // cancel comment box
+            Y.one('#comment-action-cancel-'+this.client_id).on('click', function(e) {
+                e.preventDefault();
+                this.view(0);
+                return false;
+            }, this);
+        },
         register_delete_buttons: function() {
             var scope = this;
             // page buttons
@@ -282,6 +292,7 @@ M.core_comment = (function(){
             ta.on('blur', function() {
                 this.toggle_textarea(false);
             }, this);
+            this.register_actions();
             return false;
         },
         toggle_textarea: function(focus) {
