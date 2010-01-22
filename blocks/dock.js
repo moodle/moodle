@@ -131,7 +131,7 @@ M.blocks.dock = {
         }
 
         var dockcontrol = Y.Node.create('<div class="'+M.blocks.dock.cfg.css.controls+'"></div>');
-        var removeall = Y.Node.create('<img src="'+get_image_url('t/dock_to_block', 'moodle')+'" alt="'+mstr.block.undockall+'" title="'+mstr.block.undockall+'" />');
+        var removeall = Y.Node.create('<img src="'+M.util.image_url('t/dock_to_block', 'moodle')+'" alt="'+mstr.block.undockall+'" title="'+mstr.block.undockall+'" />');
         removeall.on('removeall|click', this.remove_all, this);
         dockcontrol.appendChild(removeall);
         this.node.appendChild(dockcontrol);
@@ -309,7 +309,7 @@ M.blocks.dock = {
             }
 
             var moveto = Y.Node.create('<a class="moveto customcommand requiresjs"></a>');
-            moveto.append(Y.Node.create('<img src="'+get_image_url('t/dock_to_block', 'moodle')+'" alt="'+mstr.block.undockitem+'" title="'+mstr.block.undockitem+'" />'));
+            moveto.append(Y.Node.create('<img src="'+M.util.image_url('t/dock_to_block', 'moodle')+'" alt="'+mstr.block.undockitem+'" title="'+mstr.block.undockitem+'" />'));
             if (location.href.match(/\?/)) {
                 moveto.set('href', location.href+'&dock='+this.id);
             } else {
@@ -353,7 +353,7 @@ M.blocks.dock = {
                 Y.Event.purgeElement(Y.Node.getDOMNode(moveto), false, 'click');
                 if (moveto.hasClass('customcommand')) {
                     moveto.all('img').each(function(movetoimg){
-                        movetoimg.setAttribute('src', get_image_url('t/dock_to_block', 'moodle'));
+                        movetoimg.setAttribute('src', M.util.image_url('t/dock_to_block', 'moodle'));
                         movetoimg.setAttribute('alt', mstr.block.undockitem);
                         movetoimg.setAttribute('title', mstr.block.undockitem);
                     }, this);
@@ -448,7 +448,7 @@ M.blocks.dock = {
                 moveto.on('movetodock|click', this.move_to_dock, this);
                 if (moveto.hasClass('customcommand')) {
                     moveto.all('img').each(function(movetoimg){
-                        movetoimg.setAttribute('src', get_image_url('t/block_to_dock', 'moodle'));
+                        movetoimg.setAttribute('src', M.util.image_url('t/block_to_dock', 'moodle'));
                         movetoimg.setAttribute('alt', mstr.block.addtodock);
                         movetoimg.setAttribute('title', mstr.block.addtodock);
                     }, this);

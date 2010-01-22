@@ -215,8 +215,6 @@ class page_requirements_manager {
         // Otherwise, in some situations, users will get warnings about insecure content
         // on sercure pages from their web browser.
 
-        //TODO: problem here is we may need this in some included JS - move this somehow to the very beginning
-        //      right after the YUI loading
         $this->M_cfg = array(
             'wwwroot'             => $CFG->httpswwwroot, // Yes, really. See above.
             'sesskey'             => sesskey(),

@@ -158,7 +158,7 @@ M.core_comment = {
                     var val = template.get('innerHTML');
                     val = val.replace('___name___', list[i].username);
                     if (list[i]['delete']||newcmt) {
-                        list[i].content = '<div class="comment-delete"><a href="###" id ="comment-delete-'+this.client_id+'-'+list[i].id+'" title="'+mstr.moodle.deletecomment+'"><img src="'+M.cfg.wwwroot+'/pix/t/delete.gif" /></a></div>' + list[i].content;
+                        list[i].content = '<div class="comment-delete"><a href="###" id ="comment-delete-'+this.client_id+'-'+list[i].id+'" title="'+mstr.moodle.deletecomment+'"><img src="'+M.util.image_url('t/delete', 'core')+'" /></a></div>' + list[i].content;
                     }
                     val = val.replace('___time___', list[i].time);
                     val = val.replace('___picture___', list[i].avatar);
@@ -279,11 +279,11 @@ M.core_comment = {
                     // show
                     this.load(page);
                     container.setStyle('display', 'block');
-                    img.src=M.cfg.wwwroot+'/pix/t/expanded.png';
+                    img.src=M.util.image_url('t/expanded', 'core');
                 } else {
                     // hide
                     container.setStyle('display', 'none');
-                    img.src=M.cfg.wwwroot+'/pix/t/collapsed.png';
+                    img.src=M.util.image_url('t/collapsed', 'core');
                     ta.set('value','');
                 }
                 //toggle_textarea.apply(ta, [false]);
@@ -318,7 +318,7 @@ M.core_comment = {
             },
             wait: function() {
                 var container = Y.one('#comment-list-'+this.client_id);
-                container.set('innerHTML', '<div style="text-align:center"><img src="'+M.cfg.wwwroot+'/pix/i/loading.gif'+'" /></div>');
+                container.set('innerHTML', '<div style="text-align:center"><img src="'+M.util.image_url('i/loading', 'core')+'" /></div>');
             }
         });
 
