@@ -386,7 +386,7 @@ $string['auth_shibboleth_select_organization'] = 'For authentication via Shibbol
 $string['auth_shibbolethdescription'] = 'Using this method users are created and authenticated using <a href=\"http://shibboleth.internet2.edu/\">Shibboleth</a>.<br />Be sure to read the <a href=\"../auth/shibboleth/README.txt\">README</a> for Shibboleth on how to set up your Moodle with Shibboleth';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_webservicedescription'] = 'This authentication method should be used for accounts that are exclusively for use by web service clients.';
-$string['auth_webservicetitle'] = 'Web services';
+$string['auth_webservicetitle'] = 'Web services authentication';
 $string['auto_add_remote_users'] = 'Auto add remote users';
 $string['ntlmsso_attempting'] = 'Attempting Single Sign On via NTLM...';
 $string['ntlmsso_failed'] = 'Auto-login failed, try the normal login page...';
