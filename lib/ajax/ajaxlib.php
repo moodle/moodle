@@ -349,6 +349,9 @@ class page_requirements_manager {
             } else if($name === 'core_filemanager') {
                 $pathtofilemanager = $CFG->httpswwwroot.'/lib/form/filemanager.js';
                 $module = array('fullpath'=>$pathtofilemanager, 'requires' => array('base', 'io', 'node', 'json', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview'));
+            } else if($name === 'core_comment') {
+                $pathtocomment = $CFG->httpswwwroot.'/comment/comment.js';
+                $module = array('fullpath'=>$pathtocomment, 'requires' => array('base', 'io', 'node', 'json', 'yui2-animation'));
             }
         } else {
             //TODO: look for plugin info?

@@ -178,13 +178,6 @@ EOD;
         self::$comment_context = optional_param('comment_context', '', PARAM_INT);
         self::$comment_area    = optional_param('comment_area',    '', PARAM_ALPHAEXT);
 
-        $PAGE->requires->yui2_lib('yahoo');
-        $PAGE->requires->yui2_lib('dom');
-        $PAGE->requires->yui2_lib('event');
-        $PAGE->requires->yui2_lib('animation');
-        $PAGE->requires->yui2_lib('json');
-        $PAGE->requires->yui2_lib('connection');
-        $PAGE->requires->js('/comment/comment.js')->in_head();
         $PAGE->requires->string_for_js('addcomment', 'moodle');
         $PAGE->requires->string_for_js('deletecomment', 'moodle');
         $PAGE->requires->string_for_js('comments', 'moodle');
@@ -259,6 +252,7 @@ EOD;
     public function init($return = true) {
         global $CFG, $COURSE, $PAGE;
 
+
         $this->link = qualified_me();
         $murl = new moodle_url($this->link);
         $murl->remove_params('nonjscomment');
@@ -268,11 +262,20 @@ EOD;
         $murl->param('comment_area', $this->options->commentarea);
         $murl->remove_params('page');
         $this->link = $murl->out();
-        if ($this->env === 'block_comments') {
-            // auto expends comments
-            $PAGE->requires->js_function_call('view_comments', array($this->cid, $this->commentarea, $this->itemid, 0))->on_dom_ready();
-            $PAGE->requires->js_function_call('comment_hide_link', array($this->cid))->on_dom_ready();
+        $options = new stdclass;
+        $options->client_id = $this->cid;
+        $options->commentarea = $this->commentarea;
+        $options->itemid = $this->itemid;
+        $options->page   = 0;
+        $options->courseid = $this->course->id;
+        $options->contextid = $this->contextid;
+        if ($this->env == 'block_comments') {
+            $options->autostart = true;
+            $options->notoggle = true;
         }
+
+        $PAGE->requires->js_module('core_comment');
+        $PAGE->requires->js_function_call('initialize_comment', array($options))->on_dom_ready();
 
         if (!empty(self::$nonjs)) {
             return $this->print_comments($this->page, $return);
@@ -298,7 +301,7 @@ EOD;
             // print commenting icon and tooltip
             $html = <<<EOD
 <div style="text-align:left">
-<a id="comment-link-{$this->cid}" onclick="return view_comments('{$this->cid}', '{$this->commentarea}', '{$this->itemid}', 0)" href="{$this->link}">
+<a id="comment-link-{$this->cid}" href="{$this->link}">
 <img id="comment-img-{$this->cid}" src="{$CFG->wwwroot}/pix/t/collapsed.png" alt="{$this->linktext}" title="{$this->linktext}" />
 <span id="comment-link-text-{$this->cid}">{$this->linktext} {$this->count}</span>
 </a>
@@ -327,12 +330,12 @@ EOD;
         </form>
     </div>
     <div class="fd" id="comment-action-{$this->cid}">
-        <a href="###" onclick="post_comment('{$this->cid}')"> {$strsubmit} </a>
+        <a href="###" id="comment-action-post-{$this->cid}"> {$strsubmit} </a>
 EOD;
         if ($this->env != 'block_comments') {
             $html .= <<<EOD
         <span> | </span>
-        <a href="###" onclick="view_comments('{$this->cid}')"> {$strcancel} </a>
+        <a href="###" id="comment-action-cancel-{$this->cid}"> {$strcancel} </a>
 EOD;
         }
 
@@ -434,13 +437,13 @@ EOD;
         } else {
             // return ajax paging bar
             $str = '';
-            $str .= '<div class="comment-paging">';
+            $str .= '<div class="comment-paging" id="comment-paging-'.$this->cid.'">';
             for ($p=0; $p<$pages; $p++) {
                 $extra = '';
                 if ($p == $page) {
                     $extra = ' style="border:1px solid grey" ';
                 }
-                $str .= '<a class="pageno" href="###"'.$extra.' onclick="get_comments(\''.$this->cid.'\', \''.$this->commentarea.'\', \''.$this->itemid.'\', \''.$p.'\')">'.($p+1).'</a> ';
+                $str .= '<a class="pageno" href="###"'.$extra.' id="comment-page-'.$this->cid.'-'.$p.'">'.($p+1).'</a> ';
             }
             $str .= '</div>';
         }
