@@ -380,7 +380,9 @@ function calendar_get_popup($is_today, $event_timestart, $popupcontent='') {
     }
     $id = 'calendar_tooltip_'.$popupcount;
     $PAGE->requires->yui2_lib('container');
-    $PAGE->requires->js_function_call('blocks.calendar.add_event', Array(Array('id'=>$id,'title'=>$popupcaption, 'content'=>$popupcontent)))->on_dom_ready();
+
+    $PAGE->requires->js_object_init("M.blocks.calendar.events['$id']", 'M.blocks.calendar.event', array(array('id'=>$id,'title'=>$popupcaption, 'content'=>$popupcontent)), array('blocks_calendar'));
+
     $popupcount++;
     return 'id="'.$id.'"';
 }

@@ -186,22 +186,21 @@ if ($data) {
         $data->timeduration = $data->timedurationminutes * MINSECS;
     } else {
         $data->timeduration = 0;
-        }
+    }
 
     $event->update($data);
     $eventurl = new moodle_url(CALENDAR_URL.'view.php', array('view'=>'day'));
     if (!empty($event->courseid)) {
         $eventurl->param('course', $event->courseid);
-                }
+    }
     $eventurl->param('cal_d', date('j', $event->timestart));
     $eventurl->param('cal_m', date('n', $event->timestart));
     $eventurl->param('cal_y', date('Y', $event->timestart));
     $eventurl->set_anchor('event_'.$event->id);
     redirect($eventurl);
-                }
+}
 
-$PAGE->requires->yui2_lib('animation');
-$PAGE->requires->js('/calendar/calendar.js');
+$PAGE->requires->js_module('blocks_calendar', array('fullpath'=>$CFG->wwwroot.'/calendar/calendar.js', 'requires'=>array('dom', 'event', 'node', 'yui2-animation','event-mouseenter')));
 
 $PAGE->navbar->add($strcalendar, $link);
 $PAGE->navbar->add($title);

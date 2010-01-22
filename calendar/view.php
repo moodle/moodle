@@ -154,8 +154,7 @@ $PAGE->set_title("$site->shortname: $strcalendar: $pagetitle");
 $PAGE->set_heading($strcalendar);
 $PAGE->set_button($prefsbutton);
 
-$PAGE->requires->yui2_lib('animation');
-$PAGE->requires->js('/calendar/calendar.js');
+$PAGE->requires->js_module('blocks_calendar', array('fullpath'=>$CFG->wwwroot.'/calendar/calendar.js', 'requires'=>array('dom', 'event', 'node', 'yui2-animation','event-mouseenter')));
 
 echo $OUTPUT->header();
 

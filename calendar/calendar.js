@@ -2,13 +2,14 @@
  * Define a blocks namespace if it has not already been defined
  * @namespace
  */
-var blocks = blocks || {};
+M = M || {};
+M.blocks = M.blocks || {};
 
 /**
  * A calendar namespace for the calendar block
  * @namespace
  */
-blocks.calendar = {
+M.blocks.calendar = {
     // The seconds to delay the show of a calendar event by
     showdelaysecs: 1,
     // The calendar event currently pending display
@@ -16,22 +17,12 @@ blocks.calendar = {
     // An array containing all calendar events
     events : [],
     /**
-     * Adds a new event
-     * @function
-     * @param {object} properties
-     */
-    add_event: function(properties) {
-        Y.use('dom', 'event', 'node', function(){
-            blocks.calendar.events[properties.id] = new blocks.calendarevent(properties);
-        });
-    },
-    /**
      * Callback function for the showback method
      * @function
      */
     show_event_callback : function() {
-        if (blocks.calendar.showdelayevent !== null)  {
-            blocks.calendar.events[blocks.calendar.showdelayevent].show();
+        if (M.blocks.calendar.showdelayevent !== null)  {
+            M.blocks.calendar.events[M.blocks.calendar.showdelayevent].show();
         }
     }
 }
@@ -41,7 +32,7 @@ blocks.calendar = {
  * @class
  * @constructor
  */
-blocks.calendarevent = function(properties) {
+M.blocks.calendar.event = function(properties) {
     this.id = properties.id;
     this.title = properties.title;
     this.content = properties.content;
@@ -56,8 +47,8 @@ blocks.calendarevent = function(properties) {
  * Hides the events panel if it is being displayed
  * @function
  */
-blocks.calendarevent.prototype.hide = function(e) {
-    blocks.calendar.showdelayevent = null;
+M.blocks.calendar.event.prototype.hide = function(e) {
+    M.blocks.calendar.showdelayevent = null;
     if (this.displayed) {
         this.displayed = false;
         this.panel.hide();
@@ -69,13 +60,13 @@ blocks.calendarevent.prototype.hide = function(e) {
  * @function
  * @param {event} e
  */
-blocks.calendarevent.prototype.show_init = function(e) {
-    if (blocks.calendar.showdelayevent !== this.id) {
-        if (blocks.calendar.showdelayevent !== null) {
-            blocks.calendar.events[blocks.calendar.showdelayevent].hide(e);
+M.blocks.calendar.event.prototype.show_init = function(e) {
+    if (M.blocks.calendar.showdelayevent !== this.id) {
+        if (M.blocks.calendar.showdelayevent !== null) {
+            M.blocks.calendar.events[M.blocks.calendar.showdelayevent].hide(e);
         }
-        blocks.calendar.showdelayevent = this.id;
-        setTimeout(blocks.calendar.show_event_callback, blocks.calendar.showdelaysecs*1000);
+        M.blocks.calendar.showdelayevent = this.id;
+        setTimeout(M.blocks.calendar.show_event_callback, M.blocks.calendar.showdelaysecs*1000);
     }
 }
 
@@ -83,7 +74,7 @@ blocks.calendarevent.prototype.show_init = function(e) {
  * Shows the calendar event
  * @function
  */
-blocks.calendarevent.prototype.show = function() {
+M.blocks.calendar.event.prototype.show = function() {
     this.panel = new YAHOO.widget.Panel(this.id+'_panel', {
         width:"240px",
         visible:false,
