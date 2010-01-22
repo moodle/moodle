@@ -83,6 +83,8 @@ class data_field_textarea extends data_field_base {
     }
     
     function gen_textarea($usehtmleditor, $text='') {
+        // MDL-16018: Don't print htmlarea with < 7 lines height, causes visualization problem
+        $this->field->param3 = $usehtmleditor && $this->field->param3 < 7 ? 7 : $this->field->param3;
         return print_textarea($usehtmleditor, $this->field->param3, $this->field->param2,
                               '', '', 'field_'.$this->field->id, $text, '', true, 'field_' . $this->field->id);
     }
