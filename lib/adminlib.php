@@ -6085,7 +6085,6 @@ class admin_setting_managerepository extends admin_setting {
     }
 }
 
-
 /**
  * Special class for management of external services
  *
@@ -6263,6 +6262,237 @@ class admin_setting_manageexternalservices extends admin_setting {
         $return .= '<br />';
         // add a token to the table
         $return .= "<a href=\"$esurl?id=0\">$stradd</a>";
+
+        return highlight($query, $return);
+    }
+}
+
+/**
+ * Special class for overview of external services
+ *
+ * @author Jerome Mouneyrac
+ */
+class admin_setting_webservicesoverview extends admin_setting {
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        parent::__construct('webservicesoverviewui', get_string('webservicesoverview', 'webservice'), '', '');
+    }
+
+    /**
+     * Always returns true, does nothing
+     *
+     * @return true
+     */
+    public function get_setting() {
+        return true;
+    }
+
+    /**
+     * Always returns true, does nothing
+     *
+     * @return true
+     */
+    public function get_defaultsetting() {
+        return true;
+    }
+
+    /**
+     * Always returns '', does not write anything
+     *
+     * @return string Always returns ''
+     */
+    public function write_setting($data) {
+    // do not write any setting
+        return '';
+    }
+
+    /**
+     * Builds the XHTML to display the control
+     *
+     * @param string $data Unused
+     * @param string $query
+     * @return string
+     */
+    public function output_html($data, $query='') {
+        global $CFG, $OUTPUT;
+
+        $return = "";
+
+    /// One system controlling Moodle with Token
+
+        $return .= $OUTPUT->heading(get_string('onesystemcontrolling', 'webservice'), 3, 'main');
+        $table = new html_table();
+        $table->head  = array(get_string('step', 'webservice'), get_string('status'), get_string('description'));
+        $table->size  = array('30%', '10%', '60%' );
+        $table->align = array('left', 'left', 'left');
+        $table->width = '90%';
+        $table->data  = array();
+
+        $return .= "<br/>".get_string('onesystemcontrollingdescription', 'webservice')."<br/><br/>";
+
+        /// 1. Enable Web Services
+        $row = array();
+        $url = new moodle_url("/admin/search.php?query=Enable+web+services");
+        $row[0] = "1. "."<a href=".$url.">".get_string('enablews', 'webservice')."</a>";
+        $status = '<span class="statuscritical">'.get_string('no').'</span>'; //should never happens as this page should only be seen once web service are activated
+        if ($CFG->enablewebservices) {
+            $status = get_string('yes');
+        }
+        $row[1] = $status;
+        $row[2] = get_string('enablewsdescription', 'webservice');
+        $table->data[] = $row;
+
+        /// 2. Enable protocols
+        $row = array();
+        $url = new moodle_url("/admin/settings.php?section=webserviceprotocols");
+        $row[0] = "2. "."<a href=".$url.">".get_string('enableprotocols', 'webservice')."</a>";
+        $status = '<span class="statuscritical">'.get_string('none').'</span>'; //should never happens as this page should only be seen once web service are activated
+        //retrieve activated protocol
+        $active_protocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
+        if (!empty($active_protocols)) {
+            $status = "";
+            foreach($active_protocols as $protocol) {
+                $status .= $protocol."<br/>";
+            }
+        }
+        $row[1] = $status;
+        $row[2] = get_string('enableprotocolsdescription', 'webservice');
+        $table->data[] = $row;
+
+        /// 3. Create user account
+        $row = array();
+        $url = new moodle_url("/user/editadvanced.php?id=-1");
+        $row[0] = "3. "."<a href=".$url.">".get_string('createuser', 'webservice')."</a>";
+        $row[1] = "";
+        $row[2] = get_string('createuserdescription', 'webservice');
+        $table->data[] = $row;
+
+        /// 4. Add capability to users
+        $row = array();
+        $url = new moodle_url("/admin/roles/check.php?contextid=1");
+        $row[0] = "4. "."<a href=".$url.">".get_string('checkusercapability', 'webservice')."</a>";
+        $row[1] = "";
+        $row[2] = get_string('checkusercapabilitydescription', 'webservice');
+        $table->data[] = $row;
+
+        /// 5. Create a web service
+        $row = array();
+        $url = new moodle_url("/admin/webservice/service.php?id=0");
+        $row[0] = "5. "."<a href=".$url.">".get_string('createservice', 'webservice')."</a>";
+        $row[1] = "";
+        $row[2] = get_string('createservicedescription', 'webservice');
+        $table->data[] = $row;
+
+        /// 6. Add functions
+        $row = array();
+        $url = new moodle_url("/admin/settings.php?section=externalservices");
+        $row[0] = "6. "."<a href=".$url.">".get_string('addfunctions', 'webservice')."</a>";
+        $row[1] = "";
+        $row[2] = get_string('addfunctionsdescription', 'webservice');
+        $table->data[] = $row;
+
+        /// 7. Add the specific user
+        $row = array();
+        $url = new moodle_url("/admin/settings.php?section=externalservices");
+        $row[0] = "7. "."<a href=".$url.">".get_string('selectspecificuser', 'webservice')."</a>";
+        $row[1] = "";
+        $row[2] = get_string('selectspecificuserdescription', 'webservice');
+        $table->data[] = $row;
+
+        /// 8. Create token for the specific user
+        $row = array();
+        $url = new moodle_url("/admin/webservice/tokens.php?sesskey=".sesskey()."&action=create");
+        $row[0] = "8. "."<a href=".$url.">".get_string('createtokenforuser', 'webservice')."</a>";
+        $row[1] = "";
+        $row[2] = get_string('createtokenforuserdescription', 'webservice');
+        $table->data[] = $row;
+
+        /// 9. Enable the documentation
+        $row = array();
+        $url = new moodle_url("/admin/search.php?query=Web+services+documentation");
+        $row[0] = "9. "."<a href=".$url.">".get_string('enabledocumentation', 'webservice')."</a>";
+        $status = '<span class="warning">'.get_string('no').'</span>'; //should never happens as this page should only be seen once web service are activated
+        if ($CFG->enablewsdocumentation) {
+            $status = get_string('yes');
+        }
+        $row[1] = $status;
+        $row[2] = get_string('enabledocumentationdescription', 'webservice');
+        $table->data[] = $row;
+        
+        $return .= $OUTPUT->table($table);
+
+    /// Users as clients with token
+        $return .= "<br/><br/><br/>";
+        $return .= $OUTPUT->heading(get_string('userasclients', 'webservice'), 3, 'main');
+        $table = new html_table();
+        $table->head  = array(get_string('step', 'webservice'), get_string('status'), get_string('description'));
+        $table->size  = array('30%', '10%', '60%' );
+        $table->align = array('left', 'left', 'left');
+        $table->width = '90%';
+        $table->data  = array();
+
+        $return .= "<br/>".get_string('userasclientsdescription', 'webservice')."<br/><br/>";
+
+        /// 1. Enable Web Services
+        $row = array();
+        $url = new moodle_url("/admin/search.php?query=Enable+web+services");
+        $row[0] = "1. "."<a href=".$url.">".get_string('enablews', 'webservice')."</a>";
+        $status = '<span class="statuscritical">'.get_string('no').'</span>'; //should never happens as this page should only be seen once web service are activated
+        if ($CFG->enablewebservices) {
+            $status = get_string('yes');
+        }
+        $row[1] = $status;
+        $row[2] = get_string('enablewsdescription', 'webservice');
+        $table->data[] = $row;
+
+        /// 2. Enable protocols
+        $row = array();
+        $url = new moodle_url("/admin/settings.php?section=webserviceprotocols");
+        $row[0] = "2. "."<a href=".$url.">".get_string('enableprotocols', 'webservice')."</a>";
+        $status = '<span class="statuscritical">'.get_string('none').'</span>'; //should never happens as this page should only be seen once web service are activated
+        //retrieve activated protocol
+        $active_protocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
+        if (!empty($active_protocols)) {
+            $status = "";
+            foreach($active_protocols as $protocol) {
+                $status .= $protocol."<br/>";
+            }
+        }
+        $row[1] = $status;
+        $row[2] = get_string('enableprotocolsdescription', 'webservice');
+        $table->data[] = $row;
+
+
+        /// 3. Create a web service
+        $row = array();
+        $url = new moodle_url("/admin/webservice/service.php?id=0");
+        $row[0] = "3. "."<a href=".$url.">".get_string('createservice', 'webservice')."</a>";
+        $row[1] = "";
+        $row[2] = get_string('createserviceforusersdescription', 'webservice');
+        $table->data[] = $row;
+
+        /// 4. Add functions
+        $row = array();
+        $url = new moodle_url("/admin/settings.php?section=externalservices");
+        $row[0] = "4. "."<a href=".$url.">".get_string('addfunctions', 'webservice')."</a>";
+        $row[1] = "";
+        $row[2] = get_string('addfunctionsdescription', 'webservice');
+        $table->data[] = $row;
+
+        /// 5. Add capability to users
+        $row = array();
+        $url = new moodle_url("/admin/roles/check.php?contextid=1");
+        $row[0] = "5. "."<a href=".$url.">".get_string('addcapabilitytousers', 'webservice')."</a>";
+        $row[1] = "";
+        $row[2] = get_string('addcapabilitytousersdescription', 'webservice');
+        $table->data[] = $row;
+
+      
+
+
+        $return .= $OUTPUT->table($table);
 
         return highlight($query, $return);
     }
