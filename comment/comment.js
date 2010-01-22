@@ -99,7 +99,7 @@ M.core_comment = (function(){
                 anim.animate();
             }
         },
-        request: function(args, redraw) {
+        request: function(args, noloading) {
             var params = {};
             var scope = this;
             if (args['scope']) {
@@ -145,7 +145,7 @@ M.core_comment = (function(){
                 cfg.form = args.form;
             }
             Y.io(this.api, cfg);
-            if (!redraw) {
+            if (!noloading) {
                 this.wait();
             }
         },
@@ -221,25 +221,7 @@ M.core_comment = (function(){
                     anim.onComplete.subscribe(remove_dom, cmt, this);
                     anim.animate();
                 }
-            });
-            this.cb = {
-                success: function(o) {
-                    var resp = json_decode(o.responseText);
-                    if (!comment_check_response(resp)) {
-                        return;
-                    }
-                    var htmlid= 'comment-'+resp.commentid+'-'+resp.client_id;
-                    this.el = document.getElementById(htmlid);
-                    this.el.style.overflow = 'hidden';
-                    var attributes = {
-                        width:{to:0},
-                        height:{to:0}
-                    };
-                    var anim = new YAHOO.util.Anim(htmlid, attributes, 1, YAHOO.util.Easing.easeOut);
-                    anim.onComplete.subscribe(this.remove_dom, [], this);
-                    anim.animate();
-                },
-            }
+            }, true);
         },
         register_delete_buttons: function() {
             var scope = this;
