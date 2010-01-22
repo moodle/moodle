@@ -198,13 +198,7 @@ function process_file ($file, $userfield, $overwrite) {
     $path_parts = pathinfo(cleardoubleslashes($file));
     $basename  = $path_parts['basename'];
     $extension = $path_parts['extension'];
-    if ($basename != clean_param($basename, PARAM_FILE)) {
-        // The original picture file name has invalid characters
-        echo $OUTPUT->notification(get_string('uploadpicture_invalidfilename', 'admin',
-                          clean_param($basename, PARAM_CLEANHTML)));
-        return PIX_FILE_ERROR;
-    }
-
+   
     // The picture file name (without extension) must match the
     // userfield attribute.
     $uservalue = substr($basename, 0,
