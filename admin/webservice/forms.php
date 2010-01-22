@@ -63,7 +63,7 @@ class external_service_form extends moodleform {
         }
 
         $mform->addElement('searchableselector', 'requiredcapability', get_string('requiredcapability', 'webservice'), $capabilitychoices);
-
+        $mform->setHelpButton('requiredcapability', array('requiredcapability', get_string('requiredcapability'), 'webservice'));
         /// display notification error if the current requiredcapability doesn't exist anymore
         if(empty($currentcapabilityexist)) {
             global $OUTPUT;
