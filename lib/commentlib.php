@@ -274,7 +274,7 @@ EOD;
             $options->notoggle = true;
         }
 
-        $PAGE->requires->js_function_call('M.core_comment.init', array($options), 'core_comment')->on_dom_ready();
+        $PAGE->requires->js_init_call('M.core_comment.init', array($options), 'core_comment', true);
 
         if (!empty(self::$nonjs)) {
             return $this->print_comments($this->page, $return);

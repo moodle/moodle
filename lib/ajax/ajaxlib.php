@@ -339,28 +339,35 @@ class page_requirements_manager {
     public function js_module($name, array $module = null) {
         global $CFG;
 
-        if (strpos($name, 'core_') === 0) {
-            // must be some core stuff
-            if ($name === 'core_filepicker') {
-                $pathtofilepicker = $CFG->httpswwwroot.'/repository/filepicker.js';
-                $module = array('fullpath'=>$pathtofilepicker, 'requires' => array('base', 'node', 'json', 'async-queue', 'io'));
-            } else if($name === 'core_filemanager') {
-                $pathtofilemanager = $CFG->httpswwwroot.'/lib/form/filemanager.js';
-                $module = array('fullpath'=>$pathtofilemanager, 'requires' => array('base', 'io', 'node', 'json', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview'));
-            } else if($name === 'core_comment') {
-                $pathtocomment = $CFG->httpswwwroot.'/comment/comment.js';
-                $module = array('fullpath'=>$pathtocomment, 'requires' => array('base', 'io', 'node', 'json', 'yui2-animation'));
+        if (empty($name)) {
+            throw new coding_exception('Missing YUI3 module name.');
+        }
+
+        if (empty($module)) {
+            if (strpos($name, 'core_') === 0) {
+                // must be some core stuff
+                if ($name === 'core_filepicker') {
+                    $pathtofilepicker = $CFG->httpswwwroot.'/repository/filepicker.js';
+                    $module = array('fullpath'=>$pathtofilepicker, 'requires' => array('base', 'node', 'json', 'async-queue', 'io'));
+                } else if($name === 'core_filemanager') {
+                    $pathtofilemanager = $CFG->httpswwwroot.'/lib/form/filemanager.js';
+                    $module = array('fullpath'=>$pathtofilemanager, 'requires' => array('base', 'io', 'node', 'json', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview'));
+                } else if($name === 'core_comment') {
+                    $pathtocomment = $CFG->httpswwwroot.'/comment/comment.js';
+                    $module = array('fullpath'=>$pathtocomment, 'requires' => array('base', 'io', 'node', 'json', 'yui2-animation'));
+                }
+            } else {
+                if ($dir = get_component_directory($name)) {
+                    if (file_exists("$dir/module.js")) {
+                        $pathtocomment = str_replace($CFG->dirroot, $CFG->httpswwwroot, "$dir/module.js");
+                        $module = array('fullpath'=>$pathtocomment, 'requires' => array());
+                    }
+                }
             }
-        } else {
-            //TODO: look for plugin info?
         }
 
-        if ($module === null) {
+        if (empty($module)) {
             throw new coding_exception('Missing YUI3 module details.');
-        }
-
-        if (in_array($name, $this->M_yui_loader->modules) or in_array($name, $this->extramodules)) {
-            return;
         }
 
         if ($this->headdone) {
@@ -461,21 +468,35 @@ class page_requirements_manager {
      * @param array $arguments and array of arguments to be passed to the function.
      *      When generating the function call, this will be escaped using json_encode,
      *      so passing objects and arrays should work.
-     * @param string $module optional js module name, if specified module is required and
-     *      initialised before the call
      * @return required_js_function_call The required_js_function_call object.
      *      This allows you to control when the link to the script is output by
      *      calling methods like {@link required_js_function_call::in_head()},
      *      {@link required_js_function_call::on_dom_ready()} or
      *      {@link required_js_function_call::after_delay()} methods.
      */
-    public function js_function_call($function, $arguments = array(), $module = null) {
-        if ($module) {
-            $this->js_module($module);
-        }
-        $requirement = new required_js_function_call($this, $function, $arguments, $module);
+    public function js_function_call($function, $arguments = array()) {
+        $requirement = new required_js_function_call($this, $function, $arguments);
         $this->requiredjscode[] = $requirement;
         return $requirement;
+    }
+
+    /**
+     * Ensure that the specified JavaScript function is called from an inline script
+     * from page footer.
+     *
+     * @param string $function the name of the JavaScritp function to with init code,
+     *      usually something like 'M.mod_mymodule.init'
+     * @param array $extraarguments and array of arguments to be passed to the function.
+     *      The first argument is always the YUI3 Y instance with all required dependencies
+     *      already loaded.
+     * @param string $module optional js module name, if specified module is required and
+     *      initialised before the call
+     * @param bool $ondomready wait for dom ready (helps with some IE problems when modifying DOM)
+     * @return void
+     */
+    public function js_init_call($function, $extraarguments = array(), $module = null, $ondomready = false) {
+        $jscode = js_writer::function_call_with_Y($function, $extraarguments);
+        $this->js_init_code($jscode, $module, $ondomready);
     }
 
     /**
@@ -483,17 +504,32 @@ class page_requirements_manager {
      * This is intended primarily for loading of js modules and initialising page layout.
      * Ideally the JS code fragment should be stored in plugin renderer so that themes
      * may override it.
-     *
-     * Example:
-     * Y.use('mod_mymod', function(){
-     *      M.mod_mymod.init_view();"
-     * });
-     *
      * @param string $jscode
+     * @param string $module optional js module name, if specified module is required and
+     *      initialised before the call
+     * @param bool $ondomready wait for dom ready (helps with some IE problems when modifying DOM)
      * @return void
      */
-    public function js_init_code($jscode) {
-        $this->jsinitcode[] = trim($jscode, " ;\n");
+    public function js_init_code($jscode, $module = null, $ondomready = false) {
+        $jscode = trim($jscode, " ;\n"). ';';
+
+        if ($module) {
+            if (is_array($module)) {
+                $modulename = $module['name'];
+                unset($module['name']);
+            }  else {
+                $modulename = $module;
+                $module = null;
+            }
+            $this->js_module($modulename, $module);
+            $jscode = "Y.use('$modulename', function(Y) { $jscode });";
+        }
+
+        if ($ondomready) {
+            $jscode = "Y.on('domready', function() { $jscode });";
+        }
+
+        $this->jsinitcode[] = $jscode;
     }
 
     /**
@@ -678,7 +714,7 @@ class page_requirements_manager {
      */
     protected function get_javascript_init_code() {
         if (count($this->jsinitcode)) {
-            return implode(";\n", $this->jsinitcode) . ";\n";
+            return implode("\n", $this->jsinitcode) . "\n";
         }
         return '';
     }
@@ -1255,7 +1291,6 @@ class required_js_object_init extends required_js_code {
 class required_js_function_call extends required_js_code {
     protected $function;
     protected $arguments;
-    protected $module;
     protected $delay = 0;
 
     /**
@@ -1270,20 +1305,15 @@ class required_js_function_call extends required_js_code {
      *      When generating the function call, this will be escaped using json_encode,
      *      so passing objects and arrays should work.
      */
-    public function __construct(page_requirements_manager $manager, $function, $arguments, $module) {
+    public function __construct(page_requirements_manager $manager, $function, $arguments) {
         parent::__construct($manager);
         $this->when = page_requirements_manager::WHEN_IN_YUI;
         $this->function = $function;
         $this->arguments = $arguments;
-        $this->module = $module;
     }
 
     public function get_js_code() {
-        $js = js_writer::function_call($this->function, $this->arguments, $this->delay);
-        if ($this->module) {
-            $js = "Y.use('$this->module', function() { $js });";
-        }
-        return $js;
+        return js_writer::function_call($this->function, $this->arguments, $this->delay);
     }
 
     /**

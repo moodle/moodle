@@ -1,12 +1,13 @@
-capability_report = {
+
+M.report_capability = {
     select: null,
     input: null,
     button: null,
 
-    cap_filter_init: function(strsearch) {
+    init: function(Y, strsearch) {
         // Find the form controls.
-        capability_report.select = document.getElementById('menucapability');
-        capability_report.button = document.getElementById('settingssubmit');
+        M.report_capability.select = document.getElementById('menucapability');
+        M.report_capability.button = document.getElementById('settingssubmit');
 
         // Create a div to hold the search UI.
         var div = document.createElement('div');
@@ -16,7 +17,7 @@ capability_report = {
         var input = document.createElement('input');
         input.type = 'text';
         input.id = 'capabilitysearch';
-        capability_report.input = input;
+        M.report_capability.input = input;
 
         // Create a label for the search input.
         var label = document.createElement('label');
@@ -26,16 +27,16 @@ capability_report = {
         // Tie it all together
         div.appendChild(label);
         div.appendChild(input);
-        capability_report.select.parentNode.insertBefore(div, capability_report.select);
-        Y.on('keyup', capability_report.cap_filter_change, input);
-        Y.on('change', capability_report.validate, capability_report.select);
-        capability_report.select.options[0].style.display = 'none';
-        capability_report.validate();
+        M.report_capability.select.parentNode.insertBefore(div, M.report_capability.select);
+        Y.on('keyup', M.report_capability.typed, input);
+        Y.on('change', M.report_capability.validate, M.report_capability.select);
+        M.report_capability.select.options[0].style.display = 'none';
+        M.report_capability.validate();
     },
 
-    cap_filter_change: function() {
-        var filtertext = capability_report.input.value;
-        var options = capability_report.select.options;
+    typed: function() {
+        var filtertext = M.report_capability.input.value;
+        var options = M.report_capability.select.options;
         var onlycapability = -1;
         for (var i = 1; i < options.length; i++) {
             if (options[i].text.indexOf(filtertext) >= 0) {
@@ -56,14 +57,14 @@ capability_report = {
             options[onlycapability].selected = true;
         }
         if (onlycapability == -1) {
-            capability_report.input.className = "error";
+            M.report_capability.input.className = "error";
         } else {
-            capability_report.input.className = "";
+            M.report_capability.input.className = "";
         }
-        capability_report.validate();
+        M.report_capability.validate();
     },
 
     validate: function() {
-        capability_report.button.disabled = (capability_report.select.value == '');
+        M.report_capability.button.disabled = (M.report_capability.select.value == '');
     }
 }

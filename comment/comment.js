@@ -21,7 +21,7 @@ M.core_comment = {
     /**
      * Initialize commenting system
      */
-    init: function(options) {
+    init: function(Y, options) {
         var CommentHelper = function(args) {
             CommentHelper.superclass.constructor.apply(this, arguments);
         }

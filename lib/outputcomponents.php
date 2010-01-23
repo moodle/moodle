@@ -586,6 +586,22 @@ class js_writer {
     }
 
     /**
+     * Special function which adds Y as first argument of fucntion call.
+     * @param string $function
+     * @param array $extraarguments
+     * @return string
+     */
+    public function function_call_with_Y($function, array $extraarguments = null) {
+        if ($extraarguments) {
+            $extraarguments = array_map('json_encode', $extraarguments);
+            $arguments = 'Y, ' . implode(', ', $extraarguments);
+        } else {
+            $arguments = 'Y';
+        }
+        return "$function($arguments);\n";
+    }
+
+    /**
      * Returns JavaScript code to initialise a new object
      * @param string|null $var If it is null then no var is assigned the new object
      * @param string $class
