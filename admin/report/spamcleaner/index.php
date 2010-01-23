@@ -9,9 +9,15 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-// Configuration
-
 // List of known spammy keywords, please add more here
+
+/////////////////////////////////////////////////////////////////////////////////
+
+require_once('../../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
+
+
+// Configuration
 
 $autokeywords = array(
                     "<img",
@@ -24,12 +30,6 @@ $autokeywords = array(
                     "poker",
                     "warcraft"
                 );
-
-
-/////////////////////////////////////////////////////////////////////////////////
-
-require_once('../../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
 
 $keyword = optional_param('keyword', '', PARAM_RAW);
 $autodetect = optional_param('autodetect', '', PARAM_RAW);
@@ -83,13 +83,13 @@ if (!empty($ignore)) {
     exit;
 }
 
+$PAGE->requires->js_init_call('M.report_spamcleaner.init', array(me()), 'report_spamcleaner', true);
+$strings = Array('spaminvalidresult','spamdeleteallconfirm','spamcannotdelete','spamdeleteconfirm');
+$PAGE->requires->strings_for_js($strings, 'report_spamcleaner');
 
 admin_externalpage_print_header();
 
 // Print headers and things
-
-print_spamcleaner_javascript();
-
 echo $OUTPUT->box(get_string('spamcleanerintro', 'report_spamcleaner'));
 
 echo $OUTPUT->box_start();     // The forms section at the top
@@ -244,6 +244,7 @@ function print_user_entry($user, $keywords, $count) {
     $smalluserobject->auth = $user->auth;
     $smalluserobject->firstname = $user->firstname;
     $smalluserobject->lastname = $user->lastname;
+    $smalluserobject->username = $user->username;
 
     if (empty($SESSION->users_result[$user->id])) {
         $SESSION->users_result[$user->id] = $smalluserobject;
@@ -271,8 +272,8 @@ function print_user_entry($user, $keywords, $count) {
 
         $html .= '<td align="left">'.format_text($user->description, $user->descriptionformat).'</td>';
         $html .= '<td width="100px" align="center">';
-        $html .= '<button onclick="del_user(this,'.$user->id.')">'.get_string('deleteuser', 'admin').'</button><br />';
-        $html .= '<button onclick="ignore_user(this,'.$user->id.')">'.get_string('ignore', 'admin').'</button>';
+        $html .= '<button onclick="M.report_spamcleaner.del_user(this,'.$user->id.')">'.get_string('deleteuser', 'admin').'</button><br />';
+        $html .= '<button onclick="M.report_spamcleaner.ignore_user(this,'.$user->id.')">'.get_string('ignore', 'admin').'</button>';
         $html .= '</td>';
         $html .= '</tr>';
         return $html;
@@ -281,15 +282,6 @@ function print_user_entry($user, $keywords, $count) {
     }
 
 
-}
-
-function print_spamcleaner_javascript()  {
-    global $PAGE;
-    $PAGE->requires->js('/admin/report/spamcleaner/spamcleaner.js');
-    $strings = Array('spaminvalidresult','spamdeleteallconfirm','spamcannotdelete','spamdeleteconfirm');
-    $PAGE->requires->strings_for_js($strings, 'report_spamcleaner');
-    $PAGE->requires->data_for_js('spamcleaner', Array('me'=>me()));
-    //$sesskey = sesskey();
 }
 
 echo $OUTPUT->footer();
