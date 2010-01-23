@@ -194,7 +194,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $options->env = 'editor';
             $options->itemid = $draftitemid;
 
-            $PAGE->requires->js_module('filepicker');
+            $PAGE->requires->js_module('core_filepicker');
             $PAGE->requires->js_function_call('editor_init_filepicker', array($id, $options))->on_dom_ready();
 
             if ($editor->supports_repositories()) {
