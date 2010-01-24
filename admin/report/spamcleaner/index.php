@@ -41,10 +41,6 @@ $id = optional_param('id', '', PARAM_INT);
 
 require_login();
 admin_externalpage_setup('reportspamcleaner');
-$PAGE->requires->yui2_lib('json');
-$PAGE->requires->yui2_lib('connection');
-
-// Implement some AJAX calls
 
 // Delete one user
 if (!empty($del) && confirm_sesskey() && ($id != $USER->id)) {
