@@ -5,9 +5,11 @@ M.report_capability = {
     button: null,
 
     init: function(Y, strsearch) {
+        var context = M.report_capability;
+
         // Find the form controls.
-        M.report_capability.select = document.getElementById('menucapability');
-        M.report_capability.button = document.getElementById('settingssubmit');
+        context.select = document.getElementById('menucapability');
+        context.button = document.getElementById('settingssubmit');
 
         // Create a div to hold the search UI.
         var div = document.createElement('div');
@@ -17,7 +19,7 @@ M.report_capability = {
         var input = document.createElement('input');
         input.type = 'text';
         input.id = 'capabilitysearch';
-        M.report_capability.input = input;
+        context.input = input;
 
         // Create a label for the search input.
         var label = document.createElement('label');
@@ -27,16 +29,18 @@ M.report_capability = {
         // Tie it all together
         div.appendChild(label);
         div.appendChild(input);
-        M.report_capability.select.parentNode.insertBefore(div, M.report_capability.select);
-        Y.on('keyup', M.report_capability.typed, input);
-        Y.on('change', M.report_capability.validate, M.report_capability.select);
-        M.report_capability.select.options[0].style.display = 'none';
-        M.report_capability.validate();
+        context.select.parentNode.insertBefore(div, context.select);
+        Y.on('keyup', context.typed, input);
+        Y.on('change', context.validate, context.select);
+        context.select.options[0].style.display = 'none';
+        context.validate();
     },
 
     typed: function() {
-        var filtertext = M.report_capability.input.value;
-        var options = M.report_capability.select.options;
+        var context = M.report_capability;
+
+        var filtertext = context.input.value;
+        var options = context.select.options;
         var onlycapability = -1;
         for (var i = 1; i < options.length; i++) {
             if (options[i].text.indexOf(filtertext) >= 0) {
@@ -57,14 +61,15 @@ M.report_capability = {
             options[onlycapability].selected = true;
         }
         if (onlycapability == -1) {
-            M.report_capability.input.className = "error";
+            context.input.className = "error";
         } else {
-            M.report_capability.input.className = "";
+            context.input.className = "";
         }
-        M.report_capability.validate();
+        context.validate();
     },
 
     validate: function() {
-        M.report_capability.button.disabled = (M.report_capability.select.value == '');
+        var context = M.report_capability;
+        context.button.disabled = (context.select.value == '');
     }
 }
