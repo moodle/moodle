@@ -256,8 +256,6 @@
     }
 
 /// Print the header and tabs
-    $PAGE->requires->yui2_lib('dom-event');
-    $PAGE->requires->js('/admin/roles/roles.js');
     if ($context->contextlevel == CONTEXT_USER) {
         $user = $DB->get_record('user', array('id'=>$userid));
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
@@ -351,7 +349,7 @@
 </div></form>
 
 <?php
-        $PAGE->requires->js_function_call('init_add_assign_page');
+        $PAGE->requires->js_init_call('M.core_role.init_add_assign_page', null, 'core_role');
 
         if (!empty($errors)) {
             $msg = '<p>';

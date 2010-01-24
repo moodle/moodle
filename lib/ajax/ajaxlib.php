@@ -353,6 +353,9 @@ class page_requirements_manager {
                 } else if($name === 'core_comment') {
                     $pathtocomment = $CFG->httpswwwroot.'/comment/comment.js';
                     $module = array('fullpath'=>$pathtocomment, 'requires' => array('base', 'io', 'node', 'json', 'yui2-animation'));
+                } else if($name === 'core_role') {
+                    $pathtocomment = $CFG->httpswwwroot.'/'.$CFG->admin.'/roles/module.js';
+                    $module = array('fullpath'=>$pathtocomment);
                 }
             } else {
                 if ($dir = get_component_directory($name)) {
@@ -472,7 +475,7 @@ class page_requirements_manager {
      *      {@link required_js_function_call::on_dom_ready()} or
      *      {@link required_js_function_call::after_delay()} methods.
      */
-    public function js_function_call($function, $arguments = array()) {
+    public function js_function_call($function, array $arguments = null) {
         $requirement = new required_js_function_call($this, $function, $arguments);
         $this->requiredjscode[] = $requirement;
         return $requirement;
@@ -492,7 +495,7 @@ class page_requirements_manager {
      * @param bool $ondomready wait for dom ready (helps with some IE problems when modifying DOM)
      * @return void
      */
-    public function js_init_call($function, $extraarguments = array(), $module = null, $ondomready = false) {
+    public function js_init_call($function, array $extraarguments = null, $module = null, $ondomready = false) {
         $jscode = js_writer::function_call_with_Y($function, $extraarguments);
         $this->js_init_code($jscode, $module, $ondomready);
     }
