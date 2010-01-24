@@ -2125,9 +2125,7 @@ function print_collapsible_region_start($classes, $id, $caption, $userpref = fal
     $output .= '<div id="' . $id . '_caption" class="collapsibleregioncaption">';
     $output .= $caption . ' ';
     $output .= '</div><div id="' . $id . '_inner" class="collapsibleregioninner">';
-    $PAGE->requires->js_function_call('new collapsible_region',
-            array($id, $userpref, get_string('clicktohideshow'),
-            $OUTPUT->pix_url('t/collapsed')->out(false), $OUTPUT->pix_url('t/expanded')->out(false)));
+    $PAGE->requires->js_init_call('M.util.init_collapsible_region', array($id, $userpref, get_string('clicktohideshow')));
 
     if ($return) {
         return $output;
