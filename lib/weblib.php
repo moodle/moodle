@@ -2106,9 +2106,6 @@ function print_collapsible_region($contents, $classes, $id, $caption, $userpref 
 function print_collapsible_region_start($classes, $id, $caption, $userpref = false, $default = false, $return = false) {
     global $CFG, $PAGE, $OUTPUT;
 
-    // Include required JavaScript libraries.
-    $PAGE->requires->yui2_lib('animation');
-
     // Work out the initial state.
     if (is_string($userpref)) {
         user_preference_allow_ajax_update($userpref, PARAM_BOOL);
