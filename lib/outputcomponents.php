@@ -574,8 +574,12 @@ class js_writer {
      * @return string JS code fragment
      */
     public function function_call($function, array $arguments = null, $delay=0) {
-        $arguments = array_map('json_encode', $arguments);
-        $arguments = implode(', ', $arguments);
+        if ($arguments) {
+            $arguments = array_map('json_encode', $arguments);
+            $arguments = implode(', ', $arguments);
+        } else {
+            $arguments = '';
+        }
         $js = "$function($arguments);";
 
         if ($delay) {
