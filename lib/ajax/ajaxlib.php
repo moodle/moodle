@@ -237,9 +237,7 @@ class page_requirements_manager {
         // accessibility stuff
         $this->skip_link_to('maincontent', get_string('tocontent', 'access'));
 
-        // Note that, as a short-cut, the code
-        // $js = "document.body.className += ' jsenabled';\n";
-        // is hard-coded in {@link page_requirements_manager::get_top_of_body_code)
+        // For now include YUI2, this will be removed asap.
         $this->yui2_lib('dom');        // needs to be migrated to YUI3 before we release 2.0
         $this->yui2_lib('container');  // needs to be migrated to YUI3 before we release 2.0
         $this->yui2_lib('connection'); // needs to be migrated to YUI3 before we release 2.0
@@ -912,7 +910,9 @@ class page_requirements_manager {
 
         // the global Y can be used only after it is fully loaded, that means
         // from code executed from the following block
-        $js .= "Y = YUI(M.yui.loader).use('node', function(Y) {\n{$inyuijs}{$ondomreadyjs}{$jsinit}{$handlersjs}\n});";
+        // TODO: remove global Y, each part needs some other libs, it is loaded asynchronously too,
+        //       it is necessary to pass around the Y manually, that is why the js_init_call() always uses Y as first parameter
+        $js .= "var Y = YUI(M.yui.loader).use('node', function(Y) {\n{$inyuijs}{$ondomreadyjs}{$jsinit}{$handlersjs}\n});";
 
         $output .= html_writer::script($js);
 
