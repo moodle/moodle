@@ -6707,12 +6707,13 @@ class admin_setting_managewebservicetokens extends admin_setting {
         $struser = get_string('user');
         $strcontext = get_string('context', 'webservice');
         $strvaliduntil = get_string('validuntil', 'webservice');
+        $striprestriction = get_string('iprestriction', 'webservice');
 
         $return = $OUTPUT->box_start('generalbox webservicestokenui');
 
         $table = new html_table();
-        $table->head  = array($strtoken, $struser, $strservice, $strcontext, $strvaliduntil, $stroperation);
-        $table->align = array('left', 'left', 'left', 'left', 'center');
+        $table->head  = array($strtoken, $struser, $strservice, $strcontext, $striprestriction, $strvaliduntil, $stroperation);
+        $table->align = array('left', 'left', 'left', 'center', 'center', 'center', 'center');
         $table->width = '100%';
         $table->data  = array();
 
@@ -6741,7 +6742,12 @@ class admin_setting_managewebservicetokens extends admin_setting {
                     $validuntil = date("F j, Y"); //TODO: language support (look for moodle function)
                 }
 
-                $table->data[] = array($token->token, $token->firstname." ".$token->lastname, $token->name, '', $validuntil, $delete);
+                $iprestriction = '';
+                if (!empty($token->iprestriction)) {
+                    $iprestriction = $token->iprestriction; 
+                }
+
+                $table->data[] = array($token->token, $token->firstname." ".$token->lastname, $token->name, '', $iprestriction, $validuntil, $delete);
             }
 
             $return .= $OUTPUT->table($table);
