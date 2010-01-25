@@ -2042,7 +2042,7 @@ function hotpot_convert_url($baseurl, $reference, $url, $stripslashes=true) {
     }
 
     // is this an absolute url? (or javascript pseudo url)
-    if (preg_match('%^(http://|/|javascript:)%i', $url)) {
+    if (preg_match('%^(http://|https://|/|javascript:)%i', $url)) {
         // do nothing
 
     // has this relative url already been converted?
