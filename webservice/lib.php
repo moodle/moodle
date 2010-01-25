@@ -152,7 +152,7 @@ abstract class webservice_server implements webservice_server_interface {
 
             if (!$auth->user_login_webservice($this->username, $this->password)) {
                 // log failed login attempts
-                add_to_log(1, 'webservice', get_string('simpleauthlog', 'webservice'), '' , get_string('failedtolog', 'webservice').": ".$this->username."/".$this->password , 0);
+                add_to_log(1, 'webservice', get_string('simpleauthlog', 'webservice'), '' , get_string('failedtolog', 'webservice').": ".$this->username."/".$this->password." - ".getremoteaddr() , 0);
                 throw new webservice_access_exception('Wrong username or password');
             }
 
@@ -161,7 +161,7 @@ abstract class webservice_server implements webservice_server_interface {
         } else {
             if (!$token = $DB->get_record('external_tokens', array('token'=>$this->token, 'tokentype'=>EXTERNAL_TOKEN_PERMANENT))) {
                 // log failed login attempts
-                add_to_log(1, 'webservice', get_string('tokenauthlog', 'webservice'), '' , get_string('failedtolog', 'webservice').": ".$this->token , 0);
+                add_to_log(1, 'webservice', get_string('tokenauthlog', 'webservice'), '' , get_string('failedtolog', 'webservice').": ".$this->token. " - ".getremoteaddr() , 0);
                 throw new webservice_access_exception(get_string('invalidtoken', 'webservice'));
             }
 
@@ -255,7 +255,7 @@ abstract class webservice_zend_server extends webservice_server {
         $this->zend_server->setClass($this->service_class);
 
         //log the web service request
-        add_to_log(1, 'webservice', '', '' , $this->zend_class , 0, $this->userid);
+        add_to_log(1, 'webservice', '', '' , $this->zend_class." ".getremoteaddr() , 0, $this->userid);
 
         // execute and return response, this sends some headers too
         $response = $this->zend_server->handle();
@@ -614,7 +614,7 @@ abstract class webservice_base_server extends webservice_server {
         $this->load_function_info();
         
         //log the web service request
-        add_to_log(1, 'webservice', $this->functionname, '' , '' , 0, $this->userid);
+        add_to_log(1, 'webservice', $this->functionname, '' , getremoteaddr() , 0, $this->userid);
 
         // finally, execute the function - any errors are catched by the default exception handler
         $this->execute();
