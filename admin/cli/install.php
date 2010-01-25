@@ -465,7 +465,7 @@ if ($interactive) {
         cli_separator();
         cli_heading(get_string('copyrightnotice'));
         echo "Moodle  - Modular Object-Oriented Dynamic Learning Environment\n";
-        echo get_string('gpl')."\n\n";
+        echo get_string('gpl3')."\n\n";
         echo get_string('doyouagree')."\n";
         $prompt = get_string('cliyesnoprompt', 'admin');
         $input = cli_input($prompt, '', array(get_string('clianswerno', 'admin'), get_string('cliansweryes', 'admin')));

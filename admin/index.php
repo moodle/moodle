@@ -126,7 +126,7 @@ if (!core_tables_exist()) {
         echo $OUTPUT->header();
         echo $OUTPUT->heading('<a href="http://moodle.org">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment');
         echo $OUTPUT->heading(get_string('copyrightnotice'));
-        $copyrightnotice = text_to_html(get_string('gpl'));
+        $copyrightnotice = text_to_html(get_string('gpl3'));
         $copyrightnotice = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $copyrightnotice); // extremely ugly validation hack
         echo $OUTPUT->box($copyrightnotice, 'copyrightnotice');
         echo '<br />';
