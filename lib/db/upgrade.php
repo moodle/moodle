@@ -2868,6 +2868,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010011200);
     }
 
+    if ($result && $oldversion < 2010012500) {
+        upgrade_fix_incorrect_mnethostids();
+        upgrade_main_savepoint($result, 2010012500);
+    }
     return $result;
 }
 

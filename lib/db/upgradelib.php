@@ -243,6 +243,17 @@ function upgrade_fix_incorrect_mnethostids() {
     $current_mnet_localhost_host = $DB->get_record('mnet_host', array('wwwroot' => $CFG->wwwroot)); /// By wwwroot
     $current_mnet_all_hosts_host = $DB->get_record_select('mnet_host', $DB->sql_isempty('mnet_host', 'wwwroot', false, false)); /// By empty wwwroot
 
+    if (!$moodleapplicationid = $DB->get_field('mnet_application', 'id', array('name' => 'moodle'))) {
+        $m = (object)array(
+            'name'              => 'moodle',
+            'display_name'      => 'Moodle',
+            'xmlrpc_server_url' => '/mnet/xmlrpc/server.php',
+            'sso_land_url'      => '/auth/mnet/land.php',
+            'sso_jump_url'      => '/auth/mnet/land.php',
+        );
+        $moodleapplicationid = $DB->insert_record('mnet_application', $m);
+    }
+
 /// Create localhost_host if necessary (pretty improbable but better to be 100% in the safe side)
 /// Code stolen from mnet_environment->init
     if (!$current_mnet_localhost_host) {
@@ -255,6 +266,7 @@ function upgrade_fix_incorrect_mnethostids() {
         $current_mnet_localhost_host->last_log_id        = 0;
         $current_mnet_localhost_host->deleted            = 0;
         $current_mnet_localhost_host->name               = '';
+        $current_mnet_localhost_host->applicationid      = $moodleapplicationid;
     /// Get the ip of the server
         if (empty($_SERVER['SERVER_ADDR'])) {
         /// SERVER_ADDR is only returned by Apache-like webservers
@@ -284,6 +296,7 @@ function upgrade_fix_incorrect_mnethostids() {
         $current_mnet_all_hosts_host->last_log_id        = 0;
         $current_mnet_all_hosts_host->deleted            = 0;
         $current_mnet_all_hosts_host->name               = 'All Hosts';
+        $current_mnet_all_hosts_host->applicationid      = $moodleapplicationid;
         $current_mnet_all_hosts_host->id                 = $DB->insert_record('mnet_host', $current_mnet_all_hosts_host, true);
     }
 
@@ -329,6 +342,10 @@ function upgrade_fix_incorrect_mnethostids() {
         }
         $rs->close();
     }
+
+    // fix up any host records that have incorrect ids
+    $DB->set_field_select('mnet_host', 'applicationid', $moodleapplicationid, 'id = ? or id = ?', array($current_mnet_localhost_host->id, $current_mnet_all_hosts_host->id));
+
 }
 
 /**
