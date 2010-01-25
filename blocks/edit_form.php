@@ -86,7 +86,7 @@ class block_edit_form extends moodleform {
 
         $contextoptions = array();
         if ( ($parentcontext->contextlevel == CONTEXT_COURSE && $parentcontext->instanceid == SITEID) ||
-             ($parentcontext->contextlevel == CONTEXT_SYSTEM)) {
+             ($parentcontext->contextlevel == CONTEXT_SYSTEM)) {        // Home page
             $contextoptions[0] = get_string('showonfrontpageonly', 'block');
             $contextoptions[1] = get_string('showonfrontpageandsubs', 'block');
             $contextoptions[2] = get_string('showonentiresite', 'block');
@@ -97,9 +97,21 @@ class block_edit_form extends moodleform {
         }
         $mform->addElement('select', 'bui_contexts', get_string('contexts', 'block'), $contextoptions);
 
-        $pagetypeoptions = matching_page_type_patterns($this->page->pagetype);
-        $pagetypeoptions = array_combine($pagetypeoptions, $pagetypeoptions);
-        $mform->addElement('select', 'bui_pagetypepattern', get_string('pagetypes', 'block'), $pagetypeoptions);
+        if ($this->page->pagetype == 'site-index') {   // No need for pagetype list on home page
+            $pagetypelist = array('*');
+        } else {
+            $pagetypelist = matching_page_type_patterns($this->page->pagetype);
+        }
+        $pagetypeoptions = array();
+        foreach ($pagetypelist as $pagetype) {         // Find human-readable names for the pagetypes
+            $pagetypeoptions[$pagetype] = $pagetype;
+            $pagetypestringname = 'page-'.str_replace('*', 'x',$pagetype);  // Better names MDL-21375 
+            $pagetypestring = get_string($pagetypestringname, 'pagetype');
+            if (substr($pagetypestring, 0, 1) != '[') {
+                $pagetypeoptions[$pagetype] .= ' ('.$pagetypestring.')';
+            }
+        }
+        $mform->addElement('select', 'bui_pagetypepattern', get_string('restrictpagetypes', 'block'), $pagetypeoptions);
 
         if ($this->page->subpage) {
             $subpageoptions = array(
