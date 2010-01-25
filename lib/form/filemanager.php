@@ -216,9 +216,9 @@ FMHTML;
 <div id="filemanager-wrapper-{$client_id}" style="display:none">
     <div class="fm-breadcrumb" id="fm-path-{$client_id}"></div>
     <div class="filemanager-toolbar">
-        <a href="###" id="btnadd-{$client_id}">{$straddfile}</a>
-        <a href="###" id="btncrt-{$client_id}">{$strmakedir}</a>
-        <a href="###" id="btndwn-{$client_id}">{$strdownload}</a>
+        <button id="btnadd-{$client_id}" onclick="return false">{$straddfile}</button>
+        <button id="btncrt-{$client_id}" onclick="return false">{$strmakedir}</button>
+        <button id="btndwn-{$client_id}" onclick="return false">{$strdownload}</button>
     </div>
     <div class="filemanager-container" id="filemanager-{$client_id}">
         <ul id="draftfiles-{$client_id}">

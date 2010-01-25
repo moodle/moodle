@@ -155,18 +155,18 @@ case 'downloaddir':
     $zipper = new zip_packer();
     $fs = get_file_storage();
 
-    $file = $fs->get_file($user_context->id, 'user_draft', $itemid, $filepath, '.');
-    if ($file->get_parent_directory()) {
-        $parent_path = $file->get_parent_directory()->get_filepath();
-        $filename = trim($filepath, '/').'.zip';
-    } else {
+    $stored_file = $fs->get_file($user_context->id, 'user_draft', $itemid, $filepath, '.');
+    if ($filepath === '/') {
         $parent_path = '/';
         $filename = get_string('files').'.zip';
+    } else {
+        $parent_path = $stored_file->get_parent_directory()->get_filepath();
+        $filename = trim($filepath, '/').'.zip';
     }
 
     // archive compressed file to an unused draft area
     $newdraftitemid = file_get_unused_draft_itemid();
-    if ($newfile = $zipper->archive_to_storage(array($file), $user_context->id, 'user_draft', $newdraftitemid, '/', $filename, $USER->id)) {
+    if ($newfile = $zipper->archive_to_storage(array($stored_file), $user_context->id, 'user_draft', $newdraftitemid, '/', $filename, $USER->id)) {
         $return = new stdclass;
         $return->fileurl  = $CFG->wwwroot . '/draftfile.php/' . $user_context->id .'/user_draft/'.$newdraftitemid.'/'.$filename;
         $return->filepath = $parent_path;
