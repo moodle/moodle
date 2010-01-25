@@ -3314,6 +3314,11 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101571.01);
     }
 
+    if ($result && $oldversion < 2007101571.02) {
+        upgrade_fix_incorrect_mnethostids();
+        upgrade_main_savepoint($result, 2007101571.02);
+    }
+
     return $result;
 }
 
