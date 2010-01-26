@@ -69,8 +69,8 @@ $PAGE->set_url($url);
 /// Popup a window if required and quit (usually from external links).
 if ($popup) {
     $PAGE->set_pagelayout('popup');
-    $OUTPUT->header();
-    echo $PAGE->requires->js_function_call('openpopup', Array('/message/index.php', 'message', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0))->asap();
+    echo $OUTPUT->header();
+    echo html_writer::script(js_writer::function_call('openpopup', Array('/message/index.php', 'message', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0)));
     redirect("$CFG->wwwroot/", '', 0);
     exit;
 }
