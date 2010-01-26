@@ -42,6 +42,8 @@ require_login($course->id, false, $cm);
 
 require_capability('mod/assignment:grade', get_context_instance(CONTEXT_MODULE, $cm->id));
 
+$PAGE->requires->js('/mod/assignment/assignment.js');
+
 /// Load up the required assignment code
 require($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
 $assignmentclass = 'assignment_'.$assignment->assignmenttype;

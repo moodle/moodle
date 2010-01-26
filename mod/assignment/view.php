@@ -37,6 +37,8 @@ if ($id) {
 $PAGE->set_url($url);
 require_login($course, true, $cm);
 
+$PAGE->requires->js('/mod/assignment/assignment.js');
+
 require ("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
 $assignmentclass = "assignment_$assignment->assignmenttype";
 $assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);

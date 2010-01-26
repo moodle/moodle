@@ -9,3 +9,8 @@ function saveNext(){
     document.getElementById('submitform').saveuserid.value = assignment.userid;
     document.getElementById('submitform').menuindex.value = document.getElementById('submitform').grade.selectedIndex;
 }
+
+function initNext(nextid, usserid) {
+	assignment.nextid = nextid;
+	assignment.userid = userid;
+}

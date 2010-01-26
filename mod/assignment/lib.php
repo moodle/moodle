@@ -931,9 +931,7 @@ class assignment_base {
 
         /// Print any extra javascript needed for saveandnext
         echo $extra_javascript;
-
-        echo $PAGE->requires->data_for_js('assignment', Array('nextid'=>$nextid, 'userid'=>$userid))->asap();
-        echo $PAGE->requires->js('/mod/assignment/assignment.js')->asap();
+        echo html_writer::script(js_writer::function_call('initNext', array($nextid, $userid)));
 
         echo '<table cellspacing="0" class="feedback '.$subtype.'" >';
 
