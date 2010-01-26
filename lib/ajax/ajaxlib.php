@@ -1064,25 +1064,6 @@ class required_js extends linked_requirement {
     }
 
     /**
-     * Return the required JavaScript immediately, so it can be included in some
-     * HTML that is being built.
-     *
-     * This is not really recommeneded. But is necessary in some legacy code that
-     * includes a .js files that does document.write.
-     *
-     * @return string The HTML for the script tag. The caller
-     * is responsible for making sure it is output.
-     */
-    public function now() {
-        if ($this->is_done()) {
-            return '';
-        }
-        $output = $this->get_html();
-        $this->mark_done();
-        return $output;
-    }
-
-    /**
      * Indicate that the link to this JavaScript file should be output in the
      * <head> section of the HTML. If it too late for this request to be
      * satisfied, an exception is thrown.
@@ -1121,21 +1102,6 @@ abstract class required_js_code extends requirement_base {
      * @return string the JavaScript code needed to satisfy this requirement.
      */
     abstract public function get_js_code();
-
-    /**
-     * Return the required JavaScript immediately, so it can be included in some
-     * HTML that is being built.
-     * @return string The HTML for the script tag. The caller
-     * is responsible for making sure it is output.
-     */
-    public function now() {
-        if ($this->is_done()) {
-            return '';
-        }
-        $output = html_writer::script($this->get_js_code());
-        $this->mark_done();
-        return $output;
-    }
 
     /**
      * Indicate that the link to this JavaScript file should be output in the
