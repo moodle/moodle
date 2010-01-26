@@ -621,6 +621,8 @@ class page_requirements_manager {
     }
 
     /**
+     * !!!!!!DEPRECATED!!!!!! please use js_init_call() for everything now.
+     *
      * Make some data from PHP available to JavaScript code.
      *
      * For example, if you call
