@@ -271,7 +271,7 @@ function forum_print_big_search_form($course) {
 
     echo $OUTPUT->box_start('generalbox boxaligncenter');
 
-    echo $PAGE->requires->js('/mod/forum/forum.js')->asap();
+    echo html_writer::script('', $CFG->wwwroot.'/mod/forum/forum.js');
 
     echo '<form id="searchform" action="search.php" method="get">';
     echo '<table cellpadding="10" class="searchbox" id="form">';
@@ -373,8 +373,8 @@ function forum_print_big_search_form($course) {
     echo '</table>';
     echo '</form>';
 
-    echo $PAGE->requires->js_function_call('lockoptions_timetoitems')->asap();
-    echo $PAGE->requires->js_function_call('lockoptions_timefromitems')->asap();
+    echo html_writer::script(js_writer::function_call('lockoptions_timetoitems'));
+    echo html_writer::script(js_writer::function_call('lockoptions_timefromitems'));
 
     echo $OUTPUT->box_end();
 }

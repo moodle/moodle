@@ -83,7 +83,7 @@ $PAGE->requires->data_for_js('chatmessages', Array('msgcount'=>count($jsmessages
 echo $OUTPUT->header();
 if (!empty($playbeep)) {
     echo '<embed src="bell.wav" autostart="true" hidden="true" name="bell" />';
-    echo $PAGE->requires->js_function_call('parent.send.focus');
+    $PAGE->requires->js_function_call('parent.send.focus');
 }
 
 // Javascript for Mozilla to cope with the redirect bug from editor being on in this page
