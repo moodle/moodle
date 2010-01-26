@@ -1,3 +1,5 @@
+var assignment = {};
+
 function setNext(){
     document.getElementById('submitform').mode.value = 'next';
     document.getElementById('submitform').userid.value = assignment.nextid;
