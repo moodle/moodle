@@ -88,6 +88,10 @@ body {
   margin-top:10%;
 }
 
+.jsenabled .hiddenifjs {
+  display: none;
+}
+
 /* .clearfix {display: inline-table;} */
 
 /* Hides from IE-mac \*/

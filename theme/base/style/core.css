@@ -52,6 +52,11 @@ a.skip-block {
  * General
  **/
 
+/* Block which is hidden if javascript enabled, prevents fickering visible when JS from footer used! */
+.jsenabled .hiddenifjs {
+  display: none;
+}
+
 .clearer {
   clear:both;
   margin:0;

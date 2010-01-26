@@ -986,9 +986,8 @@
         $select->add_action('change', 'conditionalsubmit', array('formid' => 'participantsform'));
         echo $OUTPUT->select($select);
         echo '<input type="hidden" name="id" value="'.$course->id.'" />';
-        echo '<div id="noscriptparticipantsform" style="display: inline;">';
+        echo '<div id="noscriptparticipantsform" class="hiddenifjs">';
         echo '<input type="submit" value="'.get_string('ok').'" /></div>';
-        $PAGE->requires->js_function_call('hide_item', Array('noscriptparticipantsform'));
         echo '</div>';
         echo '</div>';
         echo '</form>';

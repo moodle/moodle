@@ -553,10 +553,9 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                 $select->id = 'menuaction';
                 $select->add_action('change', 'submit_form_by_id', array('id' => 'attemptsform', 'selectid' => 'menuaction'));
                 echo $OUTPUT->select($select);
-                echo '<noscript id="noscriptmenuaction" style="display: inline;">';
+                echo '<noscript id="noscriptmenuaction" class="hiddenifjs">';
                 echo '<div>';
                 echo '<input type="submit" value="'.get_string('go').'" /></div></noscript>';
-                $PAGE->requires->js_function_call('hide_item', Array('noscriptmenuaction'));
                 echo '</td><td></td></tr>';
             }
 

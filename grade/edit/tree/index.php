@@ -325,10 +325,9 @@ if (!$moving && count($grade_edit_tree->categories) > 1) {
     $select->id = 'menumoveafter';
     $select->add_action('change', 'submit_bulk_move');
     echo $OUTPUT->select($select);
-    echo '<div id="noscriptgradetreeform" style="display: inline;">
+    echo '<div id="noscriptgradetreeform" class="hiddenifjs">
             <input type="submit" value="'.get_string('go').'" />
           </div>';
-    echo $PAGE->requires->js_function_call('hide_item', Array('noscriptgradetreeform'))->asap();
 }
 
 echo '</div>';

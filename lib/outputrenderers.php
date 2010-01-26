@@ -1112,12 +1112,15 @@ class core_renderer extends renderer_base {
                                       'disabled' => $form->button->disabled,
                                       'id' => $form->button->id);
 
+            if ($form->jssubmitaction) {
+                $buttonattributes['class'] .= ' hiddenifjs';    
+            }
+
             $buttonoutput = html_writer::empty_tag('input', $buttonattributes);
 
             // Hide the submit button if the button has a JS submit action
             if ($form->jssubmitaction) {
-                $buttonoutput = html_writer::start_tag('div', array('id' => "noscript$form->id")) . $buttonoutput . html_writer::end_tag('div');
-                $this->page->requires->js_function_call('hide_item', array("noscript$form->id"));
+                $buttonoutput = html_writer::start_tag('div', array('id' => "noscript$form->id", 'class'=>'hiddenifjs')) . $buttonoutput . html_writer::end_tag('div');
             }
 
         }
