@@ -1697,10 +1697,12 @@ function require_js($lib) {
 
     if (strpos($lib, 'yui_') === 0) {
         $PAGE->requires->yui2_lib(substr($lib, 4));
-    } else if (preg_match('/^https?:/', $lib)) {
-        echo $PAGE->requires->js(str_replace($CFG->wwwroot, '/', $lib))->asap();
     } else {
-        echo $PAGE->requires->js(new moodle_url($lib))->asap();
+        if ($PAGE->requires->is_head_done()) {
+            echo html_writer::script('', $lib);
+        } else {
+            $PAGE->requires->js(new moodle_url($lib));
+        }
     }
 }
 

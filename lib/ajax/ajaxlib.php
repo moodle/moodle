@@ -239,7 +239,7 @@ class page_requirements_manager {
         // accessibility stuff
         $this->skip_link_to('maincontent', get_string('tocontent', 'access'));
 
-        // For now include YUI2, this will be removed asap.
+        // For now include YUI2, this will be removed before beta.
         $this->yui2_lib('dom');        // needs to be migrated to YUI3 before we release 2.0
         $this->yui2_lib('container');  // needs to be migrated to YUI3 before we release 2.0
         $this->yui2_lib('connection'); // needs to be migrated to YUI3 before we release 2.0
@@ -264,8 +264,7 @@ class page_requirements_manager {
      * @param string|moodle_url $url The path to the .js file, relative to $CFG->dirroot / $CFG->wwwroot.
      *      For example '/mod/mymod/customscripts.js'; use moodle_url for external scripts
      * @return required_js The required_js object. This allows you to control when the
-     *      link to the script is output by calling methods like {@link required_js::asap()} or
-     *      {@link required_js::in_head()}.
+     *      link to the script is output by calling methods like {@link required_js::in_head()}.
      */
     public function js($url) {
         $url = $this->js_fix_url($url);
@@ -643,8 +642,7 @@ class page_requirements_manager {
      *      so passing objects and arrays should work.
      * @return required_data_for_js The required_data_for_js object.
      *      This allows you to control when the link to the script is output by
-     *      calling methods like {@link required_data_for_js::asap()},
-     *      {@link required_data_for_js::in_head()} or
+     *      calling methods like {@link required_data_for_js::in_head()} or
      */
     public function data_for_js($variable, $data) {
         if (isset($this->variablesinitialised[$variable])) {
@@ -1034,7 +1032,7 @@ abstract class linked_requirement extends requirement_base {
  * work with a {@link page_requirements_manager} - and probably the only
  * page_requirements_manager you will ever need is the one at $PAGE->requires.
  *
- * The methods {@link asap()} and {@link in_head()}
+ * The methods {@link in_head()}
  * are indented to be used as a fluid API, so you can say things like
  *     $PAGE->requires->js('/mod/mymod/script.js')->in_head();
  *
@@ -1063,30 +1061,6 @@ class required_js extends linked_requirement {
 
     public function get_html() {
         return html_writer::script('', $this->url);
-    }
-
-    /**
-     * Indicate that the link to this JavaScript file should be output as soon as
-     * possible. That is, if this requirement has already been output, this method
-     * does nothing. Otherwise, if the <head> tag has not yet been printed, the link
-     * to this script will be put in <head>. Otherwise, this method returns a
-     * fragment of HTML that the caller is responsible for outputting as soon as
-     * possible. In fact, it is recommended that you only call this function from
-     * an echo statement, like:
-     * <pre>
-     *     echo $PAGE->requires->js(...)->asap();
-     * </pre>
-     *
-     * @return string The HTML required to include this JavaScript file. The caller
-     * is responsible for outputting this HTML promptly.
-     */
-    public function asap() {
-        if (!$this->manager->is_head_done()) {
-            $this->in_head();
-            return '';
-        } else {
-            return $this->now();
-        }
     }
 
     /**
@@ -1147,30 +1121,6 @@ abstract class required_js_code extends requirement_base {
      * @return string the JavaScript code needed to satisfy this requirement.
      */
     abstract public function get_js_code();
-
-   /**
-     * Indicate that the link to this JavaScript file should be output as soon as
-     * possible. That is, if this requirement has already been output, this method
-     * does nothing. Otherwise, if the <head> tag has not yet been printed, the link
-     * to this script will be put in <head>. Otherwise, this method returns a
-     * fragment of HTML that the caller is responsible for outputting as soon as
-     * possible. In fact, it is recommended that you only call this function from
-     * an echo statement, like:
-     * <pre>
-     *     echo $PAGE->requires->js(...)->asap();
-     * </pre>
-     *
-     * @return string The HTML for the script tag. The caller
-     * is responsible for outputting this HTML promptly.
-     */
-    public function asap() {
-        if ($this->manager->is_head_done()) {
-            return $this->now();
-        } else {
-            $this->in_head();
-            return '';
-        }
-    }
 
     /**
      * Return the required JavaScript immediately, so it can be included in some
@@ -1290,7 +1240,7 @@ class required_js_object_init extends required_js_code {
 /**
  * This class represents a JavaScript function that must be called from the HTML
  * page. By default the call will be made at the end of the page when YUI initialised,
- * but you can chage that using the {@link asap()}, {@link in_head()}, etc. methods.
+ * but you can chage that using the {@link in_head()}, etc. methods.
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -1356,7 +1306,7 @@ class required_js_function_call extends required_js_code {
 /**
  * This class represents some data from PHP that needs to be made available in a
  * global JavaScript variable. By default the data will be output at the end of
- * the page, but you can chage that using the {@link asap()}, {@link in_head()}, etc. methods.
+ * the page, but you can chage that using the {@link in_head()}, etc. methods.
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

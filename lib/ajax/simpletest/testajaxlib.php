@@ -124,20 +124,6 @@ class required_js_code_test extends ajaxlib_unit_test_base {
         $this->assertEqual($requirement->get_when(), page_requirements_manager::WHEN_IN_HEAD);
     }
 
-    public function test_asap_before_head_is_head() {
-        $requirement = new $this->classname($this->requires, '', '');
-        $this->assertEqual($requirement->asap(), '');
-        $this->assertEqual($requirement->get_when(), page_requirements_manager::WHEN_IN_HEAD);
-    }
-
-    public function test_asap_after_head() {
-        $requirement = new $this->classname($this->requires, '', '');
-        $this->requires->get_head_code();
-
-        $this->assertNotEqual($requirement->asap(), '');
-        $this->assertTrue($requirement->is_done());
-    }
-
     public function test_in_head_when_too_late_throws_exception() {
         $requirement = new $this->classname($this->requires, '', '');
         $this->requires->get_head_code();
