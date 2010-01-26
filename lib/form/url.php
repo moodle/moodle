@@ -66,7 +66,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
 <button id="filepicker-btn-{$client_id}" style="display:none" onclick="return url_launch_filepicker('$id', '$client_id', 0)">$straddlink</button>
 EOD;
         // hide the button if javascript is not enabled
-        $str .= $PAGE->requires->js_function_call('show_item', array("filepicker-btn-{$client_id}"))->asap();
+        $str .= html_writer::script(js_writer::function_call('show_item', array("filepicker-btn-{$client_id}")));
         return $str;
     }
    /**

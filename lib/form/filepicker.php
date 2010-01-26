@@ -115,8 +115,8 @@ Moodle File Picker
 </object>
 </noscript>
 EOD;
-        $str .= $PAGE->requires->js_function_call('destroy_item', array("nonjs-filepicker-{$client_id}"))->asap();
-        $str .= $PAGE->requires->js_function_call('show_item', array("filepicker-wrapper-{$client_id}"))->asap();
+        $str .= html_writer::script(js_writer::function_call('destroy_item', array("nonjs-filepicker-{$client_id}")));
+        $str .= html_writer::script(js_writer::function_call('show_item', array("filepicker-wrapper-{$client_id}")));
         $PAGE->requires->js_function_call('fp_init_filepicker', array('filepicker-button-'.$client_id, $options))->on_dom_ready();
         $PAGE->requires->js_module('filepicker');
         return $str;

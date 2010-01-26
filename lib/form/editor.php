@@ -198,7 +198,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $PAGE->requires->js_function_call('editor_init_filepicker', array($id, $options))->on_dom_ready();
 
             if ($editor->supports_repositories()) {
-                $str .= $PAGE->requires->js_function_call('destroy_item', array("{$id}_filemanager"))->asap();
+                $str .= html_writer::script(js_writer::function_call('destroy_item', array("{$id}_filemanager")));
             }
         } else {
             // should disable file picker

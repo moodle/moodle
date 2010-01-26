@@ -143,7 +143,7 @@ function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false) {
     $strgetanaudiocaptcha = get_string('getanaudiocaptcha', 'auth');
     $strgetanimagecaptcha = get_string('getanimagecaptcha', 'auth');
 
-    $return = $PAGE->requires->js($server . '/challenge?k=' . $pubkey . $errorpart, true)->asap();
+    $return = html_writer::script('', $server . '/challenge?k=' . $pubkey . $errorpart);
     $return .= '<noscript>
         <div id="recaptcha_widget_noscript">
         <div id="recaptcha_image_noscript"><img src="' . $image_url . '" alt="reCAPTCHA"/></div>';
