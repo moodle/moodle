@@ -147,6 +147,12 @@ class page_requirements_manager {
         $this->M_yui_loader->insertBefore = 'firstthemesheet';
         $this->M_yui_loader->modules      = array();
         $this->add_yui2_modules(); // adds loading info for YUI2
+
+        // YUI3 init code
+        $libs = array('cssreset', 'cssbase', 'cssfonts', 'cssgrids', 'node', 'loader'); // full CSS reset + basic libs
+        foreach ($libs as $lib) {
+            $this->yui3loader->load($lib);
+        }
     }
 
     /**
@@ -230,10 +236,6 @@ class page_requirements_manager {
             $this->yui2_lib('logger');
         }
 
-        // YUI3 init code
-        $this->yui3_lib(array('cssreset', 'cssbase', 'cssfonts', 'cssgrids')); // full CSS reset
-        $this->yui3_lib(array('node', 'loader')); // allows autoloading of everything else
-
         // accessibility stuff
         $this->skip_link_to('maincontent', get_string('tocontent', 'access'));
 
@@ -307,23 +309,6 @@ class page_requirements_manager {
         $libnames = (array)$libname;
         foreach ($libnames as $lib) {
             $this->yui2loader->load($lib);
-        }
-    }
-
-    /**
-     * Ensure that the specified YUI3 library file, and all its required dependancies,
-     * are loaded automatically on this page.
-     *
-     * @param string|array $libname the name of the YUI3 library you require. For example 'overlay'.
-     * @return void
-     */
-    public function yui3_lib($libname) {
-        if ($this->headdone) {
-            throw new coding_exception('YUI3 libraries can be preloaded by PHP only from HEAD, please use YUI autoloading instead: ', $libname);
-        }
-        $libnames = (array)$libname;
-        foreach ($libnames as $lib) {
-            $this->yui3loader->load($lib);
         }
     }
 
