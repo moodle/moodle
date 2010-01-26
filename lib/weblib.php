@@ -3162,7 +3162,7 @@ EOT;
         if ($es === null){
             $es = "Infinity";
         }
-        echo $PAGE->requires->js_function_call('update_progress_bar', Array($this->html_id, $w, $this->percent, $msg, $es))->asap();
+        echo html_writer::script(js_writer::function_call('update_progress_bar', Array($this->html_id, $w, $this->percent, $msg, $es)));
         flush();
     }
     /**
