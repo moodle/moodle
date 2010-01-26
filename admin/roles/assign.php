@@ -349,7 +349,7 @@
 </div></form>
 
 <?php
-        $PAGE->requires->js_init_call('M.core_role.init_add_assign_page', null, 'core_role');
+        $PAGE->requires->js_init_call('M.core_role.init_add_assign_page');
 
         if (!empty($errors)) {
             $msg = '<p>';

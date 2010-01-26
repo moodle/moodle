@@ -328,53 +328,79 @@ class page_requirements_manager {
     }
 
     /**
-     * Append YUI3 module to default YUI3 JS loader.
-     * The structure of module array is described at http://developer.yahoo.com/yui/3/yui/:
-     * @param string $name unique module name based of full plugin name
-     * @param array $module usually the module details may be detected from the $name
-     * @return void
+     * Returns the actual url through which a script is served.
+     * @param moodle_url|string $url full moodle url, or shortened path to script
+     * @return moodle_url
      */
-    public function js_module($name, array $module = null) {
+    protected function js_url($url) {
         global $CFG;
 
-        if (empty($name)) {
-            throw new coding_exception('Missing YUI3 module name.');
+        if ($url instanceof moodle_url) {
+            return $url;
+        } else {
+            //return new moodle_url($CFG->httpswwwroot.'/lib/javascript.php', array('file'=>$url, 'rev'=>$CFG->jsrev));
+            return new moodle_url($CFG->httpswwwroot.$url);
         }
+    }
 
-        if (empty($module)) {
-            if (strpos($name, 'core_') === 0) {
-                // must be some core stuff
-                if ($name === 'core_filepicker') {
-                    $pathtofilepicker = $CFG->httpswwwroot.'/repository/filepicker.js';
-                    $module = array('fullpath'=>$pathtofilepicker, 'requires' => array('base', 'node', 'json', 'async-queue', 'io'));
-                } else if($name === 'core_filemanager') {
-                    $pathtofilemanager = $CFG->httpswwwroot.'/lib/form/filemanager.js';
-                    $module = array('fullpath'=>$pathtofilemanager, 'requires' => array('base', 'io', 'node', 'json', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview'));
-                } else if($name === 'core_comment') {
-                    $pathtocomment = $CFG->httpswwwroot.'/comment/comment.js';
-                    $module = array('fullpath'=>$pathtocomment, 'requires' => array('base', 'io', 'node', 'json', 'yui2-animation'));
-                } else if($name === 'core_role') {
-                    $pathtocomment = $CFG->httpswwwroot.'/'.$CFG->admin.'/roles/module.js';
-                    $module = array('fullpath'=>$pathtocomment);
-                }
-            } else {
-                if ($dir = get_component_directory($name)) {
-                    if (file_exists("$dir/module.js")) {
-                        $pathtocomment = str_replace($CFG->dirroot, $CFG->httpswwwroot, "$dir/module.js");
-                        $module = array('fullpath'=>$pathtocomment, 'requires' => array());
-                    }
+    /**
+     * Find out if JS modulke present and return details.
+     * @param string $name name of module, ex: core_group, mod_forum
+     * @return array description of module or null if not found
+     */
+    protected function find_module($name) {
+        global $CFG;
+
+        $module = null;
+
+        if (strpos($name, 'core_') === 0) {
+            // must be some core stuff
+            if ($name === 'core_filepicker') {
+                $module = array('name'=>$name, 'fullpath'=>'/repository/filepicker.js', 'requires' => array('base', 'node', 'json', 'async-queue', 'io'));
+            } else if($name === 'core_filemanager') {
+                $module = array('name'=>$name, 'fullpath'=>'/lib/form/filemanager.js', 'requires' => array('base', 'io', 'node', 'json', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview'));
+            } else if($name === 'core_comment') {
+                $module = array('name'=>$name, 'fullpath'=>'/comment/comment.js', 'requires' => array('base', 'io', 'node', 'json', 'yui2-animation'));
+            } else if($name === 'core_role') {
+                $module = array('name'=>$name, 'fullpath'=>'/admin/roles/module.js');
+            }
+        } else {
+            if ($dir = get_component_directory($name, false)) {
+                if (file_exists("$CFG->dirroot/$dir/module.js")) {
+                    $module = array('fullpath'=>"/$dir/module.js", 'requires' => array());
                 }
             }
         }
+        return $module;
+    }
+
+    /**
+     * Append YUI3 module to default YUI3 JS loader.
+     * The structure of module array is described at http://developer.yahoo.com/yui/3/yui/:
+     * @param string|array $module name of module (details are autodetected), or full module specification as array
+     * @return void
+     */
+    public function js_module($module) {
+        global $CFG;
 
         if (empty($module)) {
+            throw new coding_exception('Missing YUI3 module name or full description.');
+        }
+
+        if (is_string($module)) {
+            $module = $this->find_module($name);
+        }
+
+        if (empty($module) or empty($module['name']) or empty($module['fullpath'])) {
             throw new coding_exception('Missing YUI3 module details.');
         }
 
+        $module['fullpath'] = $this->js_url($module['fullpath'])->out();
+
         if ($this->headdone) {
-            $this->extramodules[$name] = $module;
+            $this->extramodules[$module['name']] = $module;
         } else {
-            $this->M_yui_loader->modules[$name] = $module;
+            $this->M_yui_loader->modules[$module['name']] = $module;
         }
     }
 
@@ -490,14 +516,18 @@ class page_requirements_manager {
      * @param array $extraarguments and array of arguments to be passed to the function.
      *      The first argument is always the YUI3 Y instance with all required dependencies
      *      already loaded.
-     * @param string $module optional js module name, if specified module is required and
-     *      initialised before the call
      * @param bool $ondomready wait for dom ready (helps with some IE problems when modifying DOM)
      * @return void
      */
-    public function js_init_call($function, array $extraarguments = null, $module = null, $ondomready = false) {
+    public function js_init_call($function, array $extraarguments = null, $ondomready = false) {
         $jscode = js_writer::function_call_with_Y($function, $extraarguments);
-        $this->js_init_code($jscode, $module, $ondomready);
+        $module = null;
+        // detect module automatically
+        if (preg_match('/M\.([a-z0-9]+_[^\.]+)/', $function, $matches)) {
+            $module = $this->find_module($matches[1]);
+        }
+
+        $this->js_init_code($jscode, $ondomready, $module);
     }
 
     /**
@@ -506,23 +536,16 @@ class page_requirements_manager {
      * Ideally the JS code fragment should be stored in plugin renderer so that themes
      * may override it.
      * @param string $jscode
-     * @param string $module optional js module name, if specified module is required and
-     *      initialised before the call
      * @param bool $ondomready wait for dom ready (helps with some IE problems when modifying DOM)
+     * @param array $module JS module specification array
      * @return void
      */
-    public function js_init_code($jscode, $module = null, $ondomready = false) {
+    public function js_init_code($jscode, $ondomready = false, array $module = null) {
         $jscode = trim($jscode, " ;\n"). ';';
 
         if ($module) {
-            if (is_array($module)) {
-                $modulename = $module['name'];
-                unset($module['name']);
-            }  else {
-                $modulename = $module;
-                $module = null;
-            }
-            $this->js_module($modulename, $module);
+            $this->js_module($module);
+            $modulename = $module['name'];
             $jscode = "Y.use('$modulename', function(Y) { $jscode });";
         }
 

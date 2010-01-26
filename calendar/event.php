@@ -200,7 +200,7 @@ if ($data) {
     redirect($eventurl);
 }
 
-$PAGE->requires->js_module('blocks_calendar', array('fullpath'=>$CFG->wwwroot.'/calendar/calendar.js', 'requires'=>array('dom', 'event', 'node', 'yui2-animation','event-mouseenter')));
+$PAGE->requires->js_module(array('name'=>'blocks_calendar', 'fullpath'=>'/calendar/calendar.js', 'requires'=>array('dom', 'event', 'node', 'yui2-animation','event-mouseenter')));
 
 $PAGE->navbar->add($strcalendar, $link);
 $PAGE->navbar->add($title);

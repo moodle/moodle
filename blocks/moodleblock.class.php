@@ -753,7 +753,7 @@ class block_base {
     public function _initialise_dock() {
         global $CFG;
         if (!self::$dockinitialised) {
-            $this->page->requires->js_module('blocks_dock', array('fullpath'=>$CFG->wwwroot.'/blocks/dock.js', 'requires'=>array('base','dom','io','node', 'event-custom')));
+            $this->page->requires->js_module(array('name'=>'blocks_dock', 'fullpath'=>'/blocks/dock.js', 'requires'=>array('base','dom','io','node', 'event-custom')));
             $this->page->requires->strings_for_js(array('addtodock','undockitem','undockall'), 'block');
             self::$dockinitialised = true;
         }

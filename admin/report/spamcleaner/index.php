@@ -79,7 +79,7 @@ if (!empty($ignore)) {
     exit;
 }
 
-$PAGE->requires->js_init_call('M.report_spamcleaner.init', array(me()), 'report_spamcleaner', true);
+$PAGE->requires->js_init_call('M.report_spamcleaner.init', array(me()), true);
 $strings = Array('spaminvalidresult','spamdeleteallconfirm','spamcannotdelete','spamdeleteconfirm');
 $PAGE->requires->strings_for_js($strings, 'report_spamcleaner');
 

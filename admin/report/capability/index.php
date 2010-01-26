@@ -38,7 +38,7 @@ if (empty($cleanedroleids)) {
 }
 
 // Include the required JavaScript.
-$PAGE->requires->js_init_call('M.report_capability.init', array(get_string('search')), 'report_capability');
+$PAGE->requires->js_init_call('M.report_capability.init', array(get_string('search')));
 
 // Log.
 add_to_log(SITEID, "admin", "report capability", "report/capability/index.php?capability=$capability", $capability);
