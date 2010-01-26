@@ -1700,7 +1700,7 @@ function require_js($lib) {
     } else if (preg_match('/^https?:/', $lib)) {
         echo $PAGE->requires->js(str_replace($CFG->wwwroot, '/', $lib))->asap();
     } else {
-        echo $PAGE->requires->js($lib)->asap();
+        echo $PAGE->requires->js(new moodle_url($lib))->asap();
     }
 }
 
