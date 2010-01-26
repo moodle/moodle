@@ -253,39 +253,26 @@ class page_requirements_manager {
     /**
      * Ensure that the specified JavaScript file is linked to from this page.
      *
+     * NOTE: This function is to be used in rare cases only, please store your JS in module.js file
+     * and use $PAGE->requires->js_init_call() instead.
+     *
      * By default the link is put at the end of the page, since this gives best page-load performance.
      *
      * Even if a particular script is requested more than once, it will only be linked
      * to once.
      *
-     * @param $jsfile The path to the .js file, relative to $CFG->dirroot / $CFG->wwwroot.
-     *      For example '/mod/mymod/customscripts.js';
-     * @param boolean $fullurl This parameter is intended for internal use only.
-     *      However, in exceptional circumstances you may wish to use it to link
-     *      to JavaScript on another server. For example, lib/recaptchalib.php has to
-     *      do this. This really should only be done in exceptional circumstances. This
-     *      may change in the future without warning.
-     *      (If true, $jsfile is treaded as a full URL, not relative $CFG->wwwroot.)
+     * @param string|moodle_url $url The path to the .js file, relative to $CFG->dirroot / $CFG->wwwroot.
+     *      For example '/mod/mymod/customscripts.js'; use moodle_url for external scripts
      * @return required_js The required_js object. This allows you to control when the
      *      link to the script is output by calling methods like {@link required_js::asap()} or
      *      {@link required_js::in_head()}.
      */
-    public function js($jsfile, $fullurl = false) {
-        global $CFG;
-        if (!$fullurl) {
-            $jsfile = ltrim($jsfile, '/'); // for now until we change all js urls to start with '/' like the rest of urls
-            // strtok is used to trim off any GET string arguments before looking for the file
-            if (!file_exists($CFG->dirroot . '/' . strtok($jsfile, '?'))) {
-                throw new coding_exception('Attept to require a JavaScript file that does not exist.', $jsfile);
-            }
-            $url = $CFG->httpswwwroot . '/' . $jsfile;
-        } else {
-            $url = $jsfile;
+    public function js($url) {
+        $url = $this->js_fix_url($url);
+        if (!isset($this->linkedrequirements[$url->out()])) {
+            $this->linkedrequirements[$url->out()] = new required_js($this, $url->out());
         }
-        if (!isset($this->linkedrequirements[$url])) {
-            $this->linkedrequirements[$url] = new required_js($this, $url);
-        }
-        return $this->linkedrequirements[$url];
+        return $this->linkedrequirements[$url->out()];
     }
 
     /**
@@ -317,14 +304,22 @@ class page_requirements_manager {
      * @param moodle_url|string $url full moodle url, or shortened path to script
      * @return moodle_url
      */
-    protected function js_url($url) {
+    protected function js_fix_url($url) {
         global $CFG;
 
         if ($url instanceof moodle_url) {
             return $url;
-        } else {
+        } else if (strpos($url, '/') === 0) {
+            if (debugging()) {
+                // check file existence only when in debug mode
+                if (!file_exists($CFG->dirroot . strtok($url, '?'))) {
+                    throw new coding_exception('Attept to require a JavaScript file that does not exist.', $url);
+                }
+            }
             //return new moodle_url($CFG->httpswwwroot.'/lib/javascript.php', array('file'=>$url, 'rev'=>$CFG->jsrev));
             return new moodle_url($CFG->httpswwwroot.$url);
+        } else {
+            throw new coding_exception('Invalid JS url, it has to be shortened url starting with / or moodle_url instance.', $url);
         }
     }
 
@@ -380,7 +375,7 @@ class page_requirements_manager {
             throw new coding_exception('Missing YUI3 module details.');
         }
 
-        $module['fullpath'] = $this->js_url($module['fullpath'])->out();
+        $module['fullpath'] = $this->js_fix_url($module['fullpath'])->out();
 
         if ($this->headdone) {
             $this->extramodules[$module['name']] = $module;
