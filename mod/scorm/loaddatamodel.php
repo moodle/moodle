@@ -81,11 +81,10 @@
         print_error('cannotfindsco', 'scorm');
     }
     $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe
-    $PAGE->requires->js('/lib/cookies.js')->asap();
     if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php')) {
-        include_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php');
+        include($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php');
     } else {
-        include_once($CFG->dirroot.'/mod/scorm/datamodels/scorm_12.js.php');
+        include($CFG->dirroot.'/mod/scorm/datamodels/scorm_12.js.php');
     }
 
     // set the start time of this SCO

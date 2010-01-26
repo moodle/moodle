@@ -538,11 +538,11 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     }
     $result->toc .= "\t</ul>\n";
     if ($scorm->hidetoc == 0) {
-        $result->toc .= $PAGE->requires->data_for_js('scormdata', array(
+        $result->toc .= html_writer::script(js_writer::set_variable('scormdata', array(
                 'plusicon' => $OUTPUT->pix_url('pix/plus', 'scorm'),
-                'minusicon' => $OUTPUT->pix_url('pix/minus', 'scorm')))->asap();
-        $result->toc .= $PAGE->requires->js('/lib/cookies.js')->asap();
-        $result->toc .= $PAGE->requires->js('/mod/scorm/datamodels/scorm_datamodels.js')->asap();
+                'minusicon' => $OUTPUT->pix_url('pix/minus', 'scorm'))));
+        $result->toc .= html_writer::script('', $CFG->wwwroot.'/lib/cookies.js');
+        $result->toc .= html_writer::script('', $CFG->wwwroot.'/mod/scorm/datamodels/scorm_datamodels.js');
     }
 
     $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&currentorg='.$currentorg.$modestr;

@@ -19,14 +19,14 @@ class MoodleQuickForm_passwordunmask extends MoodleQuickForm_password {
     }
 
     function toHtml() {
-        global $PAGE;
+        global $CFG;
         if ($this->_flagFrozen) {
             return $this->getFrozenHtml();
         } else {
             $id = $this->getAttribute('id');
             $unmask = get_string('unmaskpassword', 'form');
-            $unmaskjs = $PAGE->requires->data_for_js('punmask',Array('id'=>$id, 'unmaskstr'=>$unmask))->asap();
-            $unmaskjs .= $PAGE->requires->js('/lib/form/passwordunmask.js')->asap();
+            $unmaskjs = html_writer::script(js_writer::set_variable('punmask', array('id'=>$id, 'unmaskstr'=>$unmask)));
+            $unmaskjs .= html_writer::script('', $CFG->httpswwwroot.'/lib/form/passwordunmask.js');
             return $this->_getTabs() . '<input' . $this->_getAttrString($this->_attributes) . ' /><div class="unmask" id="'.$id.'unmaskdiv"></div>'.$unmaskjs;
         }
     } //end func toHtml

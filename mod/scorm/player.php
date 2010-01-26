@@ -165,6 +165,7 @@
 
     $PAGE->requires->data_for_js('scormplayerdata', Array('cwidth'=>$scorm->width,'cheight'=>$scorm->height))->in_head();
     $PAGE->requires->js('/mod/scorm/request.js')->in_head();
+    $PAGE->requires->js('/lib/cookies.js')->in_head();
     $PAGE->requires->js('/mod/scorm/loaddatamodel.php?id='.$cm->id.$scoidstr.$modestr.$attemptstr)->in_head();
     $PAGE->requires->js('/mod/scorm/rd.js')->in_head();
 
