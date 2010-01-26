@@ -148,9 +148,7 @@ function mediaplugin_filter_mp3_callback($link) {
     $args['flashvars'] = $c;
     $args['quality'] = 'high';
 
-    $jsoutput = $PAGE->requires->js('/lib/ufo.js')->asap();
-    $jsoutput .= $PAGE->requires->data_for_js('FO', $args)->asap();
-    $jsoutput .= $PAGE->requires->js_function_call('create_UFO_object', Array($id))->asap();
+    $jsoutput = create_ufo_inline($id, $args);
 
     $output = $link[0].'<span class="mediaplugin mediaplugin_mp3" id="'.$id.'">('.get_string('mp3audio', 'mediaplugin').')</span>'.$jsoutput;
 
@@ -175,10 +173,9 @@ function mediaplugin_filter_swf_callback($link) {
     $args['build'] = 40;
     $args['allowscriptaccess'] = 'never';
     $args['quality'] = 'high';
-    $jsoutput = $PAGE->requires->js('/lib/ufo.js')->asap();
-    $jsoutput .= $PAGE->requires->data_for_js('FO', $args)->asap();
-    $jsoutput .= $PAGE->requires->js_function_call('create_UFO_object', Array($id))->asap();
 
+    $jsoutput = create_ufo_inline($id, $args);
+    
     $output = $link[0].'<span class="mediaplugin mediaplugin_swf" id="'.$id.'">('.get_string('flashanimation', 'mediaplugin').')</span>'.$jsoutput;
 
     return $output;
@@ -204,9 +201,7 @@ function mediaplugin_filter_flv_callback($link) {
     $args['allowscriptaccess'] = 'never';
     $args['quality'] = 'high';
     $args['allowfullscreen'] = 'true';
-    $jsoutput = $PAGE->requires->js('/lib/ufo.js')->asap();
-    $jsoutput .= $PAGE->requires->data_for_js('FO', $args)->asap();
-    $jsoutput .= $PAGE->requires->js_function_call('create_UFO_object', Array($id))->asap();
+    $jsoutput = create_ufo_inline($id, $args);
 
     $output = $link[0].'<span class="mediaplugin mediaplugin_flv" id="'.$id.'">('.get_string('flashvideo', 'mediaplugin').')</span>'.$jsoutput;
 

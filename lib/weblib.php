@@ -3411,3 +3411,12 @@ function print_password_policy() {
     }
     return $message;
 }
+
+function create_ufo_inline($id, $args) {
+    global $CFG;
+    // must not use $PAGE, $THEME, $COURSE etc. because the result is cached!
+    
+    $jsoutput = html_writer::script('', $CFG->wwwroot.'/lib/ufo.js');
+    $jsoutput .= html_writer::script(js_writer::function_call('M.util.create_UFO_object', array($id, $args)));
+    return $jsoutput;
+}
