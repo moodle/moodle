@@ -727,8 +727,8 @@ class securewindow_access_rule extends quiz_access_rule_base {
         echo "window.open('$attempturl', '$window', '$this->windowoptions');", '" />';
 
     /// JavaScript to reveal the button.
-        echo $PAGE->requires->js('/mod/quiz/quiz.js')->asap();
-        echo $PAGE->requires->js_function_call('reveal_start_button')->asap();
+        echo html_writer::script('', $CFG->wwwroot.'/mod/quiz/quiz.js');
+        echo html_writer::script(js_writer::function_call('reveal_start_button'));
 
     /// A noscript tag to explains that this quiz only works with JavaScript enabled.
         echo '<noscript>';

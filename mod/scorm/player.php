@@ -312,9 +312,9 @@
             }
             $name = 'scorm_'.$name;
 
-            echo $PAGE->requires->js_function_call('scorm_resize')->asap();
-            echo $PAGE->requires->js('/mod/scorm/player.js')->asap();
-            echo $PAGE->requires->js_function_call('scorm_openpopup', Array("loadSCO.php?id=".$cm->id.$scoidpop, p($name), p($scorm->options), p($scorm->width), p($scorm->height)))->asap();
+            echo html_writer::script(js_writer::function_call('scorm_resize'));
+            echo html_writer::script('', $CFG->wwwroot.'/mod/scorm/player.js');
+            echo html_writer::script(js_writer::function_call('scorm_openpopup', Array("loadSCO.php?id=".$cm->id.$scoidpop, $name, $scorm->options, $scorm->width, $scorm->height)));
             ?>
                     <noscript>
                     <iframe id="main" class="scoframe" src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>">
