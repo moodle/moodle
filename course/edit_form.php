@@ -171,9 +171,12 @@ class course_edit_form extends moodleform {
         $mform->setDefault('maxbytes', $courseconfig->maxbytes);
 
         if (!empty($CFG->allowcoursethemes)) {
+            $themeobjects = get_list_of_themes();
             $themes=array();
             $themes[''] = get_string('forceno');
-            $themes += get_list_of_themes();
+            foreach ($themeobjects as $key=>$theme) {
+                $themes[$key] = $theme->name;
+            }
             $mform->addElement('select', 'theme', get_string('forcetheme'), $themes);
         }
 

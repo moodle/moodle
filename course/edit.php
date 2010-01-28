@@ -9,7 +9,7 @@
     $id         = optional_param('id', 0, PARAM_INT);       // course id
     $categoryid = optional_param('category', 0, PARAM_INT); // course category - can be changed in edit form
 
-    $PAGE->set_pagelayout('base');
+    $PAGE->set_pagelayout('admin');
 
 /// basic access control checks
     if ($id) { // editing course
