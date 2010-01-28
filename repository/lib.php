@@ -1257,6 +1257,7 @@ abstract class repository {
      * @param integer $userid the user id
      * @param object $context the context
      * @param array $params the options for this instance
+     * @param integer $readonly whether to create it readonly or not (defaults to not)
      * @return mixed
      */
     final public static function create($type, $userid, $context, $params, $readonly=0) {
