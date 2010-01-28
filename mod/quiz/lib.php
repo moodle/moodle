@@ -289,7 +289,7 @@ function quiz_get_best_grade($quiz, $userid) {
  * @return bool
  */
 function quiz_user_complete($course, $user, $mod, $quiz) {
-    global $DB, $CFG;
+    global $DB, $CFG, $OUTPUT;
     require_once("$CFG->libdir/gradelib.php");
     $grades = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $user->id);
     if (!empty($grades->items[0]->grades)) {
