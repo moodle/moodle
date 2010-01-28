@@ -100,7 +100,6 @@
         }
     }
 
-    $all_enrolled_usernames = '';
     $timemodified = array();
 /// List all the users (homed on this server) who are enrolled on the course
 /// This will include mnet-enrolled users, and those who have enrolled
@@ -150,6 +149,16 @@
 
     foreach($enrolledusers as $user) {
 
+        // if this user is not remotely enrolled....
+        if (!array_key_exists($user->username, $all_enrolled_users)) {
+            // check to see if we have a record of enrolment and delete it if it's there
+            if ( $user->wehaverecord) {
+                $DB->delete_record('mnet_enrol_assignments', array('id'=>$user->enrolid));
+            }
+            // and keep going
+            continue;
+        }
+
         $dataobj = new stdClass();
         $dataobj->userid    = $user->id;
         $dataobj->hostid    = $mnet_peer->id;
@@ -163,8 +172,6 @@
         } elseif (array_key_exists($user->username, $all_enrolled_users)) {
             $dataobj->id    = $user->enrolid;
             $DB->update_record('mnet_enrol_assignments', $dataobj);
-        } elseif (is_array($all_enrolled_users) && count($all_enrolled_users)) {
-            $DB->delete_record('mnet_enrol_assignments', array('id'=>$user->enrolid));
         }
     }
     unset($enrolledusers);

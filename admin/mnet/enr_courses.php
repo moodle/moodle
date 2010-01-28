@@ -4,6 +4,7 @@
 
     require_once(dirname(__FILE__) . "/../../config.php");
     require_once($CFG->libdir.'/adminlib.php');
+    require_once($CFG->dirroot.'/mnet/lib.php');
 
     if (!confirm_sesskey()) {
         print_error('confirmsesskeybad', 'error');
