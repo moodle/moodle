@@ -83,7 +83,7 @@ class comment_manager {
         $count = $DB->count_records_sql('SELECT COUNT(*) FROM {comments} c');
         $comments = $this->get_comments($page);
         $table = new html_table();
-        $table->head = array ('<input type="checkbox" id="comment_select_all"/>', 'author', 'content', 'action');
+        $table->head = array ('<input type="checkbox" id="comment_select_all" />', 'author', 'content', 'action');
         $table->align = array ('left', 'left', 'left', 'left');
         $table->width = "95%";
         $table->data = array();

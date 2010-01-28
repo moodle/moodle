@@ -76,6 +76,6 @@ if (empty($action)) {
     $manager->print_comments($page);
     echo '<div class="mdl-align">';
     echo '<button id="comments_delete">'.get_string('delete').'</button>';
-    echo '<div>';
+    echo '</div>';
 }
 echo $OUTPUT->footer();
