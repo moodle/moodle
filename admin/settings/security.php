@@ -72,9 +72,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     // "modulesecurity" settingpage
     $temp = new admin_settingpage('modulesecurity', get_string('modulesecurity', 'admin'));
-    $temp->add(new admin_setting_configselect('restrictmodulesfor', get_string('restrictmodulesfor', 'admin'), get_string('configrestrictmodulesfor', 'admin'), 'none', array('none' => 'No courses',
-                                                                                                                                                                              'all' => 'All courses',
-                                                                                                                                                                              'requested' => 'Requested courses')));
+    $temp->add(new admin_setting_configselect('restrictmodulesfor', get_string('restrictmodulesfor', 'admin'), get_string('configrestrictmodulesfor', 'admin'), 'none', array('none' => get_string('nocourses'),
+                                                                                                                                                                              'all' => get_string('fulllistofcourses'),
+                                                                                                                                                                              'requested' => get_string('requestedcourses'))));
     $temp->add(new admin_setting_configcheckbox('restrictbydefault', get_string('restrictbydefault', 'admin'), get_string('configrestrictbydefault', 'admin'), 0));
     if (!$options = get_records("modules")) {
         $options = array();
