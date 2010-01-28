@@ -39,13 +39,50 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
  *
- * @property-read string $pagelayout the general type of page this is. For example 'normal', 'popup', 'home'.
+ * @property-read string $activityname The type of activity we are in, for example 'forum' or 'quiz'.
+ *      Will be null if this page is not within a module.
+ * @property-read object $activityrecord The row from the activities own database table (for example
+ *      the forum or quiz table) that this page belongs to. Will be null
+ *      if this page is not within a module.
+ * @property-read array $alternativeversions Mime type => object with ->url and ->title.
+ * @property-read blocks_manager $blocks The blocks manager object for this page.
+ * @property-read string $bodyclasses Returns a string to use within the class attribute on the body tag.
+ * @property-read string $button The HTML to go where the Turn editing on button normaly goes.
+ * @property-read bool $cacheable Defaults to true. Set to false to stop the page being cached at all.
+ * @property-read array $categories An array of all the categories the page course belongs to,
+ *      starting with the immediately containing category, and working out to
+ *      the top-level category. This may be the empty array if we are in the
+ *      front page course.
+ * @property-read mixed $category The category that the page course belongs to. If there isn't one returns null.
+ * @property-read object $cm The course_module that this page belongs to. Will be null
+ *      if this page is not within a module. This is a full cm object, as loaded
+ *      by get_coursemodule_from_id or get_coursemodule_from_instance,
+ *      so the extra modname and name fields are present.
+ * @property-read object $context The main context to which this page belongs.
+ * @property-read object $course The current course that we are inside - a row from the
+ *      course table. (Also available as $COURSE global.) If we are not inside
+ *      an actual course, this will be the site course.
+ * @property-read string $docspath The path to the Moodle docs for this page.
+ * @property-read string $focuscontrol The id of the HTML element to be focussed when the page has loaded.
+ * @property-read bool $headerprinted
+ * @property-read string $heading The main heading that should be displayed at the top of the <body>.
+ * @property-read string $headingmenu The menu (or actions) to display in the heading
+ * @property-read array $layout_options Returns arrays with options for layout file.
+ * @property-read navbar $navbar Returns the navbar object used to display the navbar
+ * @property-read global_navigation $navigation Returns the global navigation structure
+ * @property-read xml_container_stack $opencontainers Tracks XHTML tags on this page that have been opened but not closed.
+ *      mainly for internal use by the rendering code.
+ * @property-read string $pagelayout The general type of page this is. For example 'normal', 'popup', 'home'.
  *      Allows the theme to display things differently, if it wishes to.
- * @property-read string $title the title that should go in the <head> section of the HTML of this page.
- * @property-read string $heading the main heading that should be displayed at the top of the <body>.
- * @property-read string $cacheable defaults to true. Set to false to stop the page being cached at all.
- * @property-read page_requirements_manager $requires Tracks resources (for example required .css and .js files) required by this page.
- * @property-read int $periodicrefreshdelay Returns the delay in seconds to use in a meta refresh call set this by calling {@link set_periodicrefreshdelay()}
+ * @property-read string $pagetype Returns the page type string, should be used as the id for the body tag in the theme.
+ * @property-read int $periodicrefreshdelay The periodic refresh delay to use with meta refresh
+ * @property-read page_requirements_manager $requires Tracks the JavaScript, CSS files, etc. required by this page.
+ * @property-read settings_navigation $settignsnav
+ * @property-read int $state One of the STATE_... constants
+ * @property-read string $subpage The subpage identifier, if any.
+ * @property-read theme_config $theme Returns the initialised theme for this page.
+ * @property-read string $title The title that should go in the <head> section of the HTML of this page.
+ * @property-read moodle_url $url The moodle url object for this page.
  */
 class moodle_page {
     /**#@+ Tracks the where we are in the generation of the page. */
@@ -301,7 +338,7 @@ class moodle_page {
 
     /**
      * Please do not call this method directly, use the ->layout_tions syntax. {@link __get()}.
-     * @return returns arrys with options for layout file
+     * @return array returns arrys with options for layout file
      */
     protected function magic_get_layout_options() {
         return $this->_layout_options;
@@ -438,7 +475,7 @@ class moodle_page {
 
     /**
      * Please do not call this method directly, use the ->theme syntax. {@link __get()}.
-     * @return string the initialised theme for this page.
+     * @return theme_config the initialised theme for this page.
      */
     protected function magic_get_theme() {
         if (is_null($this->_theme)) {
