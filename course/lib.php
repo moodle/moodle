@@ -418,6 +418,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
             $row[] = $OUTPUT->link($link);
         }
         $row[] = $log->info;
+        $table->data[] = $row;
     }
 
     echo $OUTPUT->table($table);
