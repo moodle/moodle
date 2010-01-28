@@ -661,7 +661,11 @@ abstract class repository {
 
         $repositories = array();
         $ft = new filetype_parser();
-        $accepted_types = $args['accepted_types'];
+        if (isset($args['accepted_types'])) {
+            $accepted_types = $args['accepted_types'];
+        } else {
+            $accepted_types = '*';
+        }
         foreach ($records as $record) {
             if (!file_exists($CFG->dirroot . '/repository/'. $record->repositorytype.'/repository.class.php')) {
                 continue;
