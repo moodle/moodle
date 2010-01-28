@@ -5,4 +5,6 @@ Do not use outside of our /webservice/* !!
 
 
 Changes:
-* lots of files removed, no changes
+* lots of files removed
+* small fix to error reporting in reflection (MDL-21460, ZF-8980)
+
