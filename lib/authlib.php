@@ -268,7 +268,7 @@ class auth_plugin_base {
      * @param string $username (with system magic quotes)
      * @return bool
      */
-    function user_exists() {
+    function user_exists($username) {
         //override if needed
         return false;
     }
