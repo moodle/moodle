@@ -46,7 +46,7 @@
             $SESSION->mnet_confirm_delete_key = md5(sha1($MNET->keypair['keypair_PEM'])).':'.time();
 
             $formcontinue = new single_button(new moodle_url('index.php', array('confirm' => md5($MNET->public_key))), get_string('yes'));
-            $formcancel = new single_button('index.php', get_string('no'), 'get');
+            $formcancel = new single_button(new moodle_url('index.php', array()), get_string('no'));
             echo $OUTPUT->confirm(get_string("deletekeycheck", "mnet"), $formcontinue, $formcancel);
             exit;
         } else {
