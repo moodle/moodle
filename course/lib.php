@@ -345,28 +345,29 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
     echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $perpage, "$url&perpage=$perpage"));
 
-    echo '<table class="logtable generalbox boxaligncenter" summary="">'."\n";
-    // echo "<table class=\"logtable\" cellpadding=\"3\" cellspacing=\"0\" summary=\"\">\n";
-    echo "<tr>";
+    $table = new html_table();
+    $table->classes = array('logtable','generalbox','boxaligncenter');
+    $table->align = array('right', 'left', 'left');
+    $table->head = array(
+        get_string('time'),
+        get_string('ip_address'),
+        get_string('fullnamecourse'),
+        get_string('action'),
+        get_string('info')
+    );
+    $table->data = array();
+    
     if ($course->id == SITEID) {
-        echo "<th class=\"c0 header\" scope=\"col\">".get_string('course')."</th>\n";
+        array_unshift($table->align, 'left');
+        array_unshift($table->head, get_string('course'));
     }
-    echo "<th class=\"c1 header\" scope=\"col\">".get_string('time')."</th>\n";
-    echo "<th class=\"c2 header\" scope=\"col\">".get_string('ip_address')."</th>\n";
-    echo "<th class=\"c3 header\" scope=\"col\">".get_string('fullnamecourse')."</th>\n";
-    echo "<th class=\"c4 header\" scope=\"col\">".get_string('action')."</th>\n";
-    echo "<th class=\"c5 header\" scope=\"col\">".get_string('info')."</th>\n";
-    echo "</tr>\n";
 
     // Make sure that the logs array is an array, even it is empty, to avoid warnings from the foreach.
     if (empty($logs['logs'])) {
         $logs['logs'] = array();
     }
 
-    $row = 1;
     foreach ($logs['logs'] as $log) {
-
-        $row = ($row + 1) % 2;
 
         if (isset($ldcache[$log->module][$log->action])) {
             $ld = $ldcache[$log->module][$log->action];
@@ -376,7 +377,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         }
         if ($ld && is_numeric($log->info)) {
             // ugly hack to make sure fullname is shown correctly
-            if (($ld->mtable == 'user') and ($ld->field == $DB->sql_concat('firstname', "' '" , 'lastname'))) {
+            if ($ld->mtable == 'user' && $ld->field == $DB->sql_concat('firstname', "' '" , 'lastname')) {
                 $log->info = fullname($DB->get_record($ld->mtable, array('id'=>$log->info)), true);
             } else {
                 $log->info = $DB->get_field($ld->mtable, $ld->field, array('id'=>$log->info));
@@ -391,42 +392,35 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         $tl=textlib_get_instance();
         $brokenurl=($tl->strlen($log->url)==100 && $tl->substr($log->url,97)=='...');
 
-        echo '<tr class="r'.$row.'">';
+        $row = array();
         if ($course->id == SITEID) {
-            echo "<td class=\"cell c0\">\n";
             if (empty($log->course)) {
-                echo get_string('site') . "\n";
+                $row[] = get_string('site');
             } else {
-                echo "    <a href=\"{$CFG->wwwroot}/course/view.php?id={$log->course}\">". format_string($courses[$log->course])."</a>\n";
+                $row[] = "<a href=\"{$CFG->wwwroot}/course/view.php?id={$log->course}\">". format_string($courses[$log->course])."</a>";
             }
-            echo "</td>\n";
         }
-        echo "<td class=\"cell c1\" align=\"right\">".userdate($log->time, '%a').
-             ' '.userdate($log->time, $strftimedatetime)."</td>\n";
-        echo "<td class=\"cell c2\">\n";
+        
+        $row[] = userdate($log->time, '%a').' '.userdate($log->time, $strftimedatetime);
+        
         $link = html_link::make("/iplookup/index.php?ip=$log->ip&user=$log->userid", $log->ip);
         $link->add_action(new popup_action('click', $link->url, 'iplookup', array('height' => 440, 'width' => 700)));
-        echo $OUTPUT->link($link);
-        echo "</td>\n";
-        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
-        echo "<td class=\"cell c3\">\n";
-        echo "    <a href=\"$CFG->wwwroot/user/view.php?id={$log->userid}&amp;course={$log->course}\">$fullname</a>\n";
-        echo "</td>\n";
-        echo "<td class=\"cell c4\">\n";
+        $row[] = $OUTPUT->link($link);
+
+        $row[] = $OUTPUT->link(html_link::make("/user/view.php?id={$log->userid}&course={$log->course}", fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)))));
+
         $displayaction="$log->module $log->action";
-        if($brokenurl) {
-            echo $displayaction;
+        if ($brokenurl) {
+            $row[] = $displayaction;
         } else {
             $link = html_link::make(make_log_url($log->module,$log->url), $displayaction);
             $link->add_action(new popup_action('click', $link->url, 'fromloglive'), array('height' => 440, 'width' => 700));
-            echo $OUTPUT->link($link);
+            $row[] = $OUTPUT->link($link);
         }
-        echo "</td>\n";;
-        echo "<td class=\"cell c5\">{$log->info}</td>\n";
-        echo "</tr>\n";
+        $row[] = $log->info;
     }
-    echo "</table>\n";
 
+    echo $OUTPUT->table($table);
     echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $perpage, "$url&perpage=$perpage"));
 }
 
