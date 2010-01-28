@@ -367,7 +367,7 @@ class page_requirements_manager {
         }
 
         if (is_string($module)) {
-            $module = $this->find_module($name);
+            $module = $this->find_module($module);
         }
 
         if (empty($module) or empty($module['name']) or empty($module['fullpath'])) {
