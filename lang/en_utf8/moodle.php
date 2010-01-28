@@ -1820,4 +1820,6 @@ $string['zippingbackup'] = 'Zipping backup';
 
 $string['authenticationplugins'] = 'Authentication Plugins';
 $string['chooseauthmethod'] = 'Choose authentication plugin';
+$string['nocourses'] = 'No courses';
+$string['requestedcourses'] = 'Requested courses';
 ?>
