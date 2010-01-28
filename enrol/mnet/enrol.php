@@ -341,7 +341,7 @@ class enrolment_plugin_mnet {
     * @return bool              Whether the user can login from the remote host
     */
     function unenrol_user($username, $courseid) {
-        global $MNET_REMOTE_CLIENT;
+        global $MNET_REMOTE_CLIENT, $DB;
 
         if (!$userrecord = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$MNET_REMOTE_CLIENT->id))) {
             throw new mnet_exception(5014, get_string('usernotfound', 'enrol_mnet'));
@@ -462,7 +462,7 @@ class enrolment_plugin_mnet {
                 if (empty($cachedcourses[$course->remoteid])) {
                     $course->id = $DB->insert_record('mnet_enrol_course', $dbcourse);
                 } else {
-                    $course->id = $cachedcourses[$course->remoteid]->id;
+                    $course->id = $dbcourse->id = $cachedcourses[$course->remoteid]->id;
                     $cachedcourses[$course->remoteid]->seen=true;
                     $DB->update_record('mnet_enrol_course', $dbcourse);
                 }
