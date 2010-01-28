@@ -2131,6 +2131,14 @@ class core_renderer extends renderer_base {
             }
             $output .= html_writer::end_tag('tr') . "\n";
             $output .= html_writer::end_tag('thead') . "\n";
+
+            if (empty($table->data)) {
+                // For valid XHTML strict every table must contain either a valid tr
+                // or a valid tbody... both of which must contain a valid td
+                $output .= html_writer::start_tag('tbody', array('class' => renderer_base::prepare_classes($table->bodyclasses).' empty'));
+                $output .= html_writer::tag('tr', null, html_writer::tag('td', array('colspan'=>count($table->head)), ''));
+                $output .= html_writer::end_tag('tbody');
+            }
         }
 
         if (!empty($table->data)) {
