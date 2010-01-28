@@ -57,8 +57,8 @@ function upgrade_plugin_mnet_functions($component) {
 
     // Disable functions that don't exist (any more) in the source
     // Should these be deleted? What about their permissions records?
-    foreach ($DB->get_records('mnet_rpc', array('pluginname'=>$plugin, 'plugintype'=>$type), 'function_name ASC ') as $rpc) {
-        if (!array_key_exists($rpc->function_name, $methodservices)) {
+    foreach ($DB->get_records('mnet_rpc', array('pluginname'=>$plugin, 'plugintype'=>$type), 'functionname ASC ') as $rpc) {
+        if (!array_key_exists($rpc->functionname, $methodservices)) {
             $DB->set_field('mnet_rpc', 'enabled', 0, array('id' => $rpc->id));
         }
     }
@@ -77,57 +77,57 @@ function upgrade_plugin_mnet_functions($component) {
             $dataobject->filename    = $f;
 
             if (is_string($method)) {
-                $dataobject->function_name = $method;
+                $dataobject->functionname = $method;
 
             } else if (is_array($method)) { // wants to override file or class
-                $dataobject->function_name = $method['method'];
+                $dataobject->functionname = $method['method'];
                 $dataobject->classname     = $method['classname'];
                 $dataobject->filename      = $method['filename'];
             }
-            $dataobject->xmlrpc_path = $type.'/'.$plugin.'/'.$dataobject->filename.'/'.$method;
+            $dataobject->xmlrpcpath = $type.'/'.$plugin.'/'.$dataobject->filename.'/'.$method;
             $dataobject->static = false;
 
             require_once($path . '/' . $dataobject->filename);
             $functionreflect = null; // slightly different ways to get this depending on whether it's a class method or a function
             if (!empty($dataobject->classname)) {
                 if (!class_exists($dataobject->classname)) {
-                    throw new moodle_exception('installnosuchmethod', 'mnet', '', (object)array('method' => $dataobject->function_name, 'class' => $dataobject->classname));
+                    throw new moodle_exception('installnosuchmethod', 'mnet', '', (object)array('method' => $dataobject->functionname, 'class' => $dataobject->classname));
                 }
                 $key = $dataobject->filename . '|' . $dataobject->classname;
                 if (!array_key_exists($key, $cachedclasses)) { // look to see if we've already got a reflection object
                     try {
                         $cachedclasses[$key] = Zend_Server_Reflection::reflectClass($dataobject->classname);
                     } catch (Zend_Server_Reflection_Exception $e) { // catch these and rethrow them to something more helpful
-                        throw new moodle_exception('installreflectionclasserror', 'mnet', '', (object)array('method' => $dataobject->function_name, 'class' => $dataobject->classname, 'error' => $e->getMessage()));
+                        throw new moodle_exception('installreflectionclasserror', 'mnet', '', (object)array('method' => $dataobject->functionname, 'class' => $dataobject->classname, 'error' => $e->getMessage()));
                     }
                 }
                 $r =& $cachedclasses[$key];
-                if (!$r->hasMethod($dataobject->function_name)) {
-                    throw new moodle_exception('installnosuchmethod', 'mnet', '', (object)array('method' => $dataobject->function_name, 'class' => $dataobject->classname));
+                if (!$r->hasMethod($dataobject->functionname)) {
+                    throw new moodle_exception('installnosuchmethod', 'mnet', '', (object)array('method' => $dataobject->functionname, 'class' => $dataobject->classname));
                 }
                 // stupid workaround for zend not having a getMethod($name) function
                 $ms = $r->getMethods();
                 foreach ($ms as $m) {
-                    if ($m->getName() == $dataobject->function_name) {
+                    if ($m->getName() == $dataobject->functionname) {
                         $functionreflect = $m;
                         break;
                     }
                 }
                 $dataobject->static = (int)$functionreflect->isStatic();
             } else {
-                if (!function_exists($dataobject->function_name)) {
-                    throw new moodle_exception('installnosuchfunction', 'mnet', '', (object)array('method' => $dataobject->function_name, 'file' => $dataobject->filename));
+                if (!function_exists($dataobject->functionname)) {
+                    throw new moodle_exception('installnosuchfunction', 'mnet', '', (object)array('method' => $dataobject->functionname, 'file' => $dataobject->filename));
                 }
                 try {
-                    $functionreflect = Zend_Server_Reflection::reflectFunction($dataobject->function_name);
+                    $functionreflect = Zend_Server_Reflection::reflectFunction($dataobject->functionname);
                 } catch (Zend_Server_Reflection_Exception $e) { // catch these and rethrow them to something more helpful
-                    throw new moodle_exception('installreflectionfunctionerror', 'mnet', '', (object)array('method' => $dataobject->function_name, '' => $dataobject->filename, 'error' => $e->getMessage()));
+                    throw new moodle_exception('installreflectionfunctionerror', 'mnet', '', (object)array('method' => $dataobject->functionname, '' => $dataobject->filename, 'error' => $e->getMessage()));
                 }
             }
             $dataobject->profile =  serialize(admin_mnet_method_profile($functionreflect));
             $dataobject->help = $functionreflect->getDescription();
 
-            if ($record_exists = $DB->get_record('mnet_rpc', array('xmlrpc_path'=>$dataobject->xmlrpc_path))) {
+            if ($record_exists = $DB->get_record('mnet_rpc', array('xmlrpcpath'=>$dataobject->xmlrpcpath))) {
                 $dataobject->id      = $record_exists->id;
                 $dataobject->enabled = $record_exists->enabled;
                 $DB->update_record('mnet_rpc', $dataobject);
@@ -136,7 +136,7 @@ function upgrade_plugin_mnet_functions($component) {
             }
         }
 
-        foreach ($methodservices[$dataobject->function_name] as $service) {
+        foreach ($methodservices[$dataobject->functionname] as $service) {
             if ($serviceobj = $DB->get_record('mnet_service', array('name'=>$service['servicename']))) {
                 $serviceobj->apiversion = $service['apiversion'];
                 $DB->update_record('mnet_service', $serviceobj);

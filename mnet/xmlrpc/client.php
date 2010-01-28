@@ -318,7 +318,7 @@ class mnet_xmlrpc_client {
                 {mnet_service2rpc} s2r,
                 {mnet_host2service} h2s
             WHERE
-                r.xmlrpc_path = ? AND
+                r.xmlrpcpath = ? AND
                 s2r.rpcid = r.id AND
                 s2r.serviceid = h2s.serviceid AND
                 h2s.subscribe = '1' AND

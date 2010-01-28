@@ -314,7 +314,7 @@ function mnet_server_dispatch($payload) {
     ////////////////////////////////////  NORMAL PLUGIN DISPATCHER
     } else {
         // anything else comes from some sort of plugin
-        if ($rpcrecord = $DB->get_record('mnet_rpc', array('xmlrpc_path' => $method))) {
+        if ($rpcrecord = $DB->get_record('mnet_rpc', array('xmlrpcpath' => $method))) {
             $response    = mnet_server_invoke_plugin_method($method, $callstack, $rpcrecord, $payload);
             $response = mnet_server_prepare_response($response);
             echo $response;
@@ -366,8 +366,8 @@ function mnet_system($method, $params, $hostinfo) {
     if ('system.listMethods' == $method || 'system/listMethods' == $method) {
         $query = '
             SELECT DISTINCT
-                rpc.function_name,
-                rpc.xmlrpc_path
+                rpc.functionname,
+                rpc.xmlrpcpath
             FROM
                 {mnet_host2service} h2s
                 JOIN {mnet_service2rpc} s2r ON h2s.serviceid = s2r.serviceid
@@ -378,19 +378,19 @@ function mnet_system($method, $params, $hostinfo) {
                 h2s.publish = 1 AND rpc.enabled = 1
                ' . ((count($params) > 0) ?  'AND svc.name = ? ' : '') . '
             ORDER BY
-                rpc.xmlrpc_path ASC';
+                rpc.xmlrpcpath ASC';
         if (count($params) > 0) {
             $params = array($params[0]);
         }
         $methods = array();
         foreach ($DB->get_records_sql($query, $params) as $result) {
-            $methods[] = $result->xmlrpc_path;
+            $methods[] = $result->xmlrpcpath;
         }
         return $methods;
     } elseif (in_array($method, array('system.methodSignature', 'system/methodSignature', 'system.methodHelp', 'system/methodHelp'))) {
         $query = '
             SELECT DISTINCT
-                rpc.function_name,
+                rpc.functionname,
                 rpc.help,
                 rpc.profile
             FROM
@@ -398,7 +398,7 @@ function mnet_system($method, $params, $hostinfo) {
                 {mnet_service2rpc} s2r,
                 {mnet_rpc} rpc
             WHERE
-                rpc.xmlrpc_path = ? AND
+                rpc.xmlrpcpath = ? AND
                 s2r.rpcid = rpc.id AND
                 h2s.publish = 1 AND rpc.enabled = 1 AND
                 h2s.serviceid = s2r.serviceid AND
@@ -605,12 +605,12 @@ function mnet_setup_dummy_method($method, $callstack, $rpcrecord) {
             } catch (Exception $e) {
                 throw new mnet_server_exception(709, "classerror");
             }
-            if (!is_callable(array($object, $rpcrecord->function_name))) {
+            if (!is_callable(array($object, $rpcrecord->functionname))) {
                 throw new mnet_server_exception(706, "nosuchfunction");
             }
             $MNET_REMOTE_CLIENT->object_to_call($object);
         } else {
-            if (!is_callable(array($rpcrecord->classname, $rpcrecord->function_name))) {
+            if (!is_callable(array($rpcrecord->classname, $rpcrecord->functionname))) {
                 throw new mnet_server_exception(706, "nosuchfunction");
             }
             $MNET_REMOTE_CLIENT->static_location($rpcrecord->classname);

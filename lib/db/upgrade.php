@@ -2903,6 +2903,64 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010012600);
     }
 
+    if ($result && $oldversion < 2010012900) {
+
+    /// Define table mnet_remote_rpc to be created
+        $table = new xmldb_table('mnet_remote_rpc');
+
+    /// Adding fields to table mnet_remote_rpc
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('functionname', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('xmlrpcpath', XMLDB_TYPE_CHAR, '80', null, XMLDB_NOTNULL, null, null);
+
+    /// Adding keys to table mnet_remote_rpc
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Conditionally launch create table for mnet_remote_rpc
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+
+    /// Define table mnet_remote_service2rpc to be created
+        $table = new xmldb_table('mnet_remote_service2rpc');
+
+    /// Adding fields to table mnet_remote_service2rpc
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('serviceid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('rpcid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+
+    /// Adding keys to table mnet_remote_service2rpc
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Adding indexes to table mnet_remote_service2rpc
+        $table->add_index('rpcid_serviceid', XMLDB_INDEX_UNIQUE, array('rpcid', 'serviceid'));
+
+    /// Conditionally launch create table for mnet_remote_service2rpc
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+
+    /// Rename field function_name on table mnet_rpc to functionname
+        $table = new xmldb_table('mnet_rpc');
+        $field = new xmldb_field('function_name', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null, 'id');
+
+    /// Launch rename field function_name
+        $dbman->rename_field($table, $field, 'functionname');
+
+
+    /// Rename field xmlrpc_path on table mnet_rpc to xmlrpcpath
+        $table = new xmldb_table('mnet_rpc');
+        $field = new xmldb_field('xmlrpc_path', XMLDB_TYPE_CHAR, '80', null, XMLDB_NOTNULL, null, null, 'function_name');
+
+    /// Launch rename field xmlrpc_path
+        $dbman->rename_field($table, $field, 'xmlrpcpath');
+
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2010012900);
+    }
     return $result;
 }
 
