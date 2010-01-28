@@ -7,4 +7,5 @@ Do not use outside of our /webservice/* !!
 Changes:
 * lots of files removed
 * small fix to error reporting in reflection (MDL-21460, ZF-8980)
+* regular expression fix in reflection (committed upstream, will be in 1.10) (MDL-21461, ZF-6996)
 

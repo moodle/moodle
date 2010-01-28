@@ -293,7 +293,7 @@ abstract class Zend_Server_Reflection_Function_Abstract
             // Get param types and description
             if (preg_match_all('/@param\s+([^\s]+)/m', $docBlock, $matches)) {
                 $paramTypesTmp = $matches[1];
-                if (preg_match_all('/@param\s+\S+\s+(\$^\S+)\s+(.*?)(@|\*\/)/s', $docBlock, $matches))
+                if (preg_match_all('/@param\s+\S+\s+(\$\S+)\s+(.*?)(@|\*\/)/s', $docBlock, $matches))
                 {
                     $paramDesc = $matches[2];
                     foreach ($paramDesc as $key => $value) {
