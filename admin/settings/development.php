@@ -38,5 +38,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // XMLDB editor
     $ADMIN->add('development', new admin_externalpage('xmldbeditor', get_string('xmldbeditor'), "$CFG->wwwroot/$CFG->admin/xmldb/"));
 
-
+    if ($CFG->mnet_dispatcher_mode !== 'off') {
+        $ADMIN->add('development', new admin_externalpage('mnettestclient', get_string('testclient', 'mnet'), "$CFG->wwwroot/$CFG->admin/mnet/testclient.php"));
+    }
 } // end of speedup

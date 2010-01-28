@@ -335,6 +335,8 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
                     external_update_descriptions($component);
                     events_update_definition($component);
                     message_update_providers($component);
+                    require_once($CFG->dirroot . '/' . $CFG->admin . '/mnet/adminlib.php');
+                    upgrade_plugin_mnet_functions($component);
                     $endcallback($component, true, $verbose);
                 }
             }
@@ -366,6 +368,8 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
             external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
+            require_once($CFG->dirroot . '/' . $CFG->admin . '/mnet/adminlib.php');
+            upgrade_plugin_mnet_functions($component);
 
             theme_reset_all_caches();
             $endcallback($component, true, $verbose);
@@ -394,6 +398,8 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
             external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
+            require_once($CFG->dirroot . '/' . $CFG->admin . '/mnet/adminlib.php');
+            upgrade_plugin_mnet_functions($component);
 
             theme_reset_all_caches();
             $endcallback($component, false, $verbose);
@@ -462,6 +468,8 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
                     external_update_descriptions($component);
                     events_update_definition($component);
                     message_update_providers($component);
+                    require_once($CFG->dirroot . '/' . $CFG->admin . '/mnet/adminlib.php');
+                    upgrade_plugin_mnet_functions($component);
                     $endcallback($component, true, $verbose);
                 }
             }
@@ -491,6 +499,8 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
             external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
+            require_once($CFG->dirroot . '/' . $CFG->admin . '/mnet/adminlib.php');
+            upgrade_plugin_mnet_functions($component);
 
             theme_reset_all_caches();
             $endcallback($component, true, $verbose);
@@ -518,6 +528,8 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
             external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
+            require_once($CFG->dirroot . '/' . $CFG->admin . '/mnet/adminlib.php');
+            upgrade_plugin_mnet_functions($component);
 
             theme_reset_all_caches();
             remove_dir($CFG->dataroot.'/cache', true); // flush cache
@@ -606,6 +618,8 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
                     external_update_descriptions($component);
                     events_update_definition($component);
                     message_update_providers($component);
+                    require_once($CFG->dirroot . '/' . $CFG->admin . '/mnet/adminlib.php');
+                    upgrade_plugin_mnet_functions($component);
                     $endcallback($component, true, $verbose);
                 }
             }
@@ -643,6 +657,8 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
             external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
+            require_once($CFG->dirroot . '/' . $CFG->admin . '/mnet/adminlib.php');
+            upgrade_plugin_mnet_functions($component);
 
             theme_reset_all_caches();
             $endcallback($component, true, $verbose);
@@ -675,6 +691,8 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
             external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
+            require_once($CFG->dirroot . '/' . $CFG->admin . '/mnet/adminlib.php');
+            upgrade_plugin_mnet_functions($component);
 
             theme_reset_all_caches();
             $endcallback($component, false, $verbose);
@@ -1257,18 +1275,6 @@ function upgrade_noncore($verbose) {
         }
     } catch (Exception $ex) {
         upgrade_handle_exception($ex);
-    }
-
-    // Check for changes to RPC functions
-    if ($CFG->mnet_dispatcher_mode != 'off') {
-        try {
-            // this needs a full rewrite, sorry to mention that :-(
-            // we have to make it part of standard WS framework
-            require_once("$CFG->dirroot/$CFG->admin/mnet/adminlib.php");
-            upgrade_RPC_functions();  // Return here afterwards
-        } catch (Exception $ex) {
-            upgrade_handle_exception($ex);
-        }
     }
 }
 

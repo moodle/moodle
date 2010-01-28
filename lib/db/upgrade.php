@@ -2868,10 +2868,41 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010011200);
     }
 
+
     if ($result && $oldversion < 2010012500) {
         upgrade_fix_incorrect_mnethostids();
         upgrade_main_savepoint($result, 2010012500);
     }
+
+    if ($result && $oldversion < 2010012600) {
+        // do stuff to the mnet table
+        $table = new xmldb_table('mnet_rpc');
+
+        $field = new xmldb_field('parent_type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, 'xmlrpc_path');
+        $dbman->rename_field($table, $field, 'plugintype');
+
+        $field = new xmldb_field('parent', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, 'xmlrpc_path');
+        $dbman->rename_field($table, $field, 'pluginname');
+
+        $field = new xmldb_field('filename', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'profile');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('classname', XMLDB_TYPE_CHAR, '150', null, null, null, null, 'filename');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('static', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'classname');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2010012600);
+    }
+
     return $result;
 }
 

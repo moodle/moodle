@@ -32,27 +32,6 @@ class auth_plugin_mnet extends auth_plugin_base {
     }
 
     /**
-     * Provides the allowed RPC services from this class as an array.
-     * @return array  Allowed RPC services.
-     */
-    function mnet_publishes() {
-
-        $sso_idp = array();
-        $sso_idp['name']        = 'sso_idp'; // Name & Description go in lang file
-        $sso_idp['apiversion']  = 1;
-        $sso_idp['methods']     = array('user_authorise','keepalive_server', 'kill_children',
-                                        'refresh_log', 'fetch_user_image', 'fetch_theme_info',
-                                        'update_enrolments');
-
-        $sso_sp = array();
-        $sso_sp['name']         = 'sso_sp'; // Name & Description go in lang file
-        $sso_sp['apiversion']   = 1;
-        $sso_sp['methods']      = array('keepalive_client','kill_child');
-
-        return array($sso_idp, $sso_sp);
-    }
-
-    /**
      * This function is normally used to determine if the username and password
      * are correct for local logins. Always returns false, as local users do not
      * need to login over mnet xmlrpc.
@@ -74,7 +53,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      */
     function user_authorise($token, $useragent) {
         global $CFG, $MNET, $SITE, $MNET_REMOTE_CLIENT, $DB;
-        require_once $CFG->dirroot . '/mnet/xmlrpc/server.php';
+        require_once $CFG->dirroot . '/mnet/xmlrpc/serverlib.php';
 
         $mnet_session = $DB->get_record('mnet_session', array('token'=>$token, 'useragent'=>$useragent));
         if (empty($mnet_session)) {
@@ -465,11 +444,11 @@ class auth_plugin_mnet extends auth_plugin_base {
      * Invoke this function _on_ the IDP to update it with enrolment info local to
      * the SP right after calling user_authorise()
      *
-     * Normally called by the SP after calling
+     * Normally called by the SP after calling user_authorise()
      *
-     *   @param string $username        The username
-     *   @param string $courses         Assoc array of courses following the structure of mnet_enrol_course
-     *   @return bool
+     * @param string $username The username
+     * @param string $courses  Assoc array of courses following the structure of mnet_enrol_course
+     * @return bool
      */
     function update_enrolments($username, $courses) {
         global $MNET_REMOTE_CLIENT, $CFG, $DB;
@@ -623,7 +602,9 @@ class auth_plugin_mnet extends auth_plugin_base {
      * This function is called from admin/auth.php, and outputs a full page with
      * a form for configuring this plugin.
      *
-     * @param array $page An object containing all the data for this page.
+     * @param object $config
+     * @param object $err
+     * @param array $user_fields
      */
     function config_form($config, $err, $user_fields) {
         global $CFG, $DB;

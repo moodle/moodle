@@ -47,19 +47,6 @@ class repository_remotemoodle extends repository {
     }
 
     /**
-     * Declaration of the methods avalaible from mnet
-     * @return <type>
-     */
-    public static function mnet_publishes() {
-        $pf= array();
-        $pf['name']        = 'remoterep'; // Name & Description go in lang file
-        $pf['apiversion']  = 1;
-        $pf['methods']     = array('getFileList', 'retrieveFile');
-
-        return array($pf);
-    }
-
-    /**
      * Retrieve a file for a user of the Moodle client calling this function
      * The file is encoded in base64
      * @global <type> $DB

@@ -729,15 +729,6 @@ abstract class portfolio_plugin_base {
     }
 
     /**
-     * return array of mnet methods, keyed by service (pf)
-     * in the same format used everywhere else in moodle.
-     * see the mahara portfolio plugin for an example
-     */
-    public static function mnet_publishes() {
-        return array();
-    }
-
-    /**
      * whether this plugin supports multiple exports in the same session
      * most plugins should handle this, but some that require a redirect for authentication
      * and then don't support dynamically constructed urls to return to (eg box.net)

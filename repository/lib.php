@@ -1562,14 +1562,6 @@ abstract class repository {
         return array();
     }
 
-    /**
-     * Override it if you need to implement need mnet function
-     * @return array
-     */
-     public static function mnet_publishes() {
-        return array();
-    }
-
 }
 
 /**

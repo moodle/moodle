@@ -65,22 +65,11 @@ class enrolment_plugin_mnet {
      *** MNET functions
      ***
      ***/
-    function mnet_publishes() {
-
-        $enrol = array();
-        $enrol['name']        = 'mnet_enrol'; // Name & Description go in lang file
-        $enrol['apiversion']  = 1;
-        $enrol['methods']     = array('available_courses','user_enrolments', 'enrol_user', 'unenrol_user', 'course_enrolments' );
-
-        return array($enrol);
-    }
 
     /**
-    * Does Foo
+    * Returns a list of all courses available for remote login
     *
-    * @param string $username   The username
-    * @param int    $mnethostid The id of the remote mnethost
-    * @return bool              Whether the user can login from the remote host
+    * @return array Array of courses
     */
     function available_courses() {
         global $CFG, $DB;

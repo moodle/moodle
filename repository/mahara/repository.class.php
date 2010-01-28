@@ -44,19 +44,6 @@ class repository_mahara extends repository {
         parent::__construct($repositoryid, $context, $options);
     }
 
-    /**
-     * Declaration of the methods avalaible from mnet
-     * @return <type>
-     */
-    public static function mnet_publishes() {
-        $pf= array();
-        $pf['name']        = 'remoterep'; // Name & Description go in lang file
-        $pf['apiversion']  = 1;
-        $pf['methods']     = array('get_folder_files', 'get_file', 'search_folders_and_files');
-
-        return array($pf);
-    }
-
   /**
      *
      * @return <type>

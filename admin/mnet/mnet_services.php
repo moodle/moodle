@@ -83,7 +83,7 @@
             $id_list .= ', '.$CFG->mnet_all_hosts_id;
         }
 
-        $concat = $DB->sql_concat('COALESCE(h2s.id,0) ', ' \'-\' ', ' svc.id', '\'-\'', 'r.parent_type', '\'-\'', 'r.parent');
+        $concat = $DB->sql_concat('COALESCE(h2s.id,0) ', ' \'-\' ', ' svc.id', '\'-\'', 'r.plugintype', '\'-\'', 'r.pluginname');
 
         $query = "
             SELECT DISTINCT
@@ -92,8 +92,8 @@
                 svc.name,
                 svc.offer,
                 svc.apiversion,
-                r.parent_type,
-                r.parent,
+                r.plugintype,
+                r.pluginname,
                 h2s.hostid,
                 h2s.publish,
                 h2s.subscribe
@@ -156,8 +156,8 @@
                                                                         'name' => $result->name,
                                                                         'offer' => $result->offer,
                                                                         'apiversion' => $result->apiversion,
-                                                                        'parent_type' => $result->parent_type,
-                                                                        'parent' => $result->parent,
+                                                                        'plugintype' => $result->plugintype,
+                                                                        'pluginname' => $result->pluginname,
                                                                         'hostsubscribes' => $result->hostsubscribes,
                                                                         'hostpublishes' => $result->hostpublishes
                                                                         );

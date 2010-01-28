@@ -256,4 +256,33 @@ $string['error7024'] = 'You send an unencrypted message to the remote site, but 
 $string['error709']  = 'The remote site failed to obtain a SSL key from you.';
 $string['error7026'] = 'The key that your message was signed with differs from the key that the remote host has on file for your server. Further, the remote host attempted to fetch your current key and failed to do so. Please manually re-key with the remote host and try again.';
 
+$string['installnosuchmethod']  = 'Coding error! Something is trying to install a mnet xmlrpc method ($a->method) on a class ($a->class) and it can\'t be found!';
+$string['installnosuchfunction']  = 'Coding error! Something is trying to install a mnet xmlrpc function ($a->method) from a file ($a->file) and it can\'t be found!';
+$string['installreflectionfunctionerror'] = 'Coding error! MNET introspection failed for function \'$a->method\' in file \'$a->file\'.  The original error message, in case it helps, is: \'$a->error\'';
+$string['installreflectionclasserror'] = 'Coding error! MNET introspection failed for method \'$a->method\' in class \'$a->class\'.  The original error message, in case it helps, is: \'$a->error\'';
+
+// admin strings
+$string['hostlist'] = 'List of Networked Hosts';
+$string['servicesavailableonhost'] = 'Services available on $a';
+$string['serviceid'] = 'Service ID';
+$string['service'] = 'Service Name';
+$string['version'] = 'Version';
+$string['theypublish'] = 'They publish';
+$string['theysubscribe'] = 'They subscribe';
+$string['listservices'] = 'List services';
+$string['methodsavailableonhostinservice'] = 'Methods available for $a->service on $a->host';
+$string['methodsavailableonhost'] = 'Methods available on $a';
+$string['method'] = 'Method';
+$string['options'] = 'Options';
+$string['inspect'] = 'Inspect';
+$string['methodsignature'] = 'Method signature for $a';
+$string['position'] = 'Position';
+$string['name'] = 'Name';
+$string['type'] = 'Type';
+$string['description'] = 'Description';
+$string['returnvalue'] = 'Return value';
+$string['methodhelp'] = 'Method help for $a';
+$string['testclient'] = 'Moodle Network Test Client';
+$string['unknown'] = 'Unknown';
+$string['notmoodleapplication'] = 'WARNING: This is not a moodle application, so some of the inspection methods may not work properly.';
 ?>

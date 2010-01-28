@@ -16,7 +16,7 @@ echo $OUTPUT->box_start();
 <?php
     foreach($myservices as $name => $versions) {
     $version = current($versions);
-    $langmodule = ($version['parent_type'] == 'mod' ? '' : ($version['parent_type'] . '_')) . $version['parent'];
+    $langmodule = ($version['plugintype'] == 'mod' ? '' : ($version['plugintype'] . '_')) . $version['pluginname'];
 ?>
 <tr>
     <td align="left" valign="top" colspan="2">
