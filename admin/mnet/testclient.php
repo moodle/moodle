@@ -1,0 +1,195 @@
+<?php
+/**
+ * A service browser for remote Moodles
+ *
+ * This script 'remotely' executes the reflection methods on a remote Moodle,
+ * and publishes the details of the available services
+ *
+ * @author  Donal McMullan  donal@catalyst.net.nz
+ * @version 0.0.1
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package mnet
+ */
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
+require_once($CFG->libdir.'/adminlib.php');
+include_once($CFG->dirroot.'/mnet/lib.php');
+
+if ($CFG->mnet_dispatcher_mode === 'off') {
+    print_error('mnetdisabled', 'mnet');
+}
+
+require_login();
+admin_externalpage_setup('mnettestclient');
+
+$context = get_context_instance(CONTEXT_SYSTEM);
+require_capability('moodle/site:config', $context);
+
+error_reporting(E_ALL);
+
+admin_externalpage_print_header();
+if (!extension_loaded('openssl')) {
+    print_error('requiresopenssl', 'mnet', '', NULL, true);
+}
+
+// optional drilling down parameters
+$hostid = optional_param('hostid', 0, PARAM_INT);
+$servicename = optional_param('servicename', '', PARAM_SAFEDIR);
+$methodid = optional_param('method', 0, PARAM_INT);
+
+$hosts = $DB->get_records('mnet_host');
+$moodleapplicationid = $DB->get_field('mnet_application', 'id', array('name' => 'moodle'));
+
+$url = new moodle_url('/admin/mnet/testclient.php');
+$PAGE->set_url($url);
+
+echo $OUTPUT->heading(get_string('hostlist', 'mnet'));
+foreach ($hosts as $id => $host) {
+    if (empty($host->wwwroot) || $host->wwwroot == $CFG->wwwroot) {
+        continue;
+    }
+    $newurl = new moodle_url($url, array('hostid' => $host->id));
+    echo '<p>' . $OUTPUT->link($newurl, $host->wwwroot) . '</p>';
+}
+
+if (!empty($hostid) && array_key_exists($hostid, $hosts)) {
+    $host = $hosts[$hostid];
+    if ($host->applicationid != $moodleapplicationid) {
+        echo $OUTPUT->notification(get_string('notmoodleapplication', 'mnet'));
+    }
+    $mnet_peer = new mnet_peer();
+    $mnet_peer->set_wwwroot($host->wwwroot);
+
+    $mnet_request = new mnet_xmlrpc_client();
+
+    $mnet_request->set_method('system/listServices');
+    $mnet_request->send($mnet_peer);
+    $services = $mnet_request->response;
+    $yesno = array('No', 'Yes');
+    $servicenames = array();
+
+    echo $OUTPUT->heading(get_string('servicesavailableonhost', 'mnet', $host->wwwroot));
+
+    $table = new html_table();
+    $table->head = array(
+        get_string('serviceid', 'mnet'),
+        get_string('service', 'mnet'),
+        get_string('version', 'mnet'),
+        get_string('theypublish', 'mnet'),
+        get_string('theysubscribe', 'mnet'),
+        get_string('options', 'mnet'),
+    );
+    $table->data = array();
+    $sql = 'SELECT s.name, min(r.plugintype) AS plugintype, min(r.pluginname) AS pluginname
+        FROM {mnet_service} s
+        JOIN {mnet_service2rpc} s2r ON s2r.serviceid = s.id
+        JOIN {mnet_rpc} r ON r.id = s2r.rpcid
+        GROUP BY s.name';
+
+    $yesno = array(get_string('no'), get_string('yes'));
+
+    $serviceinfo = $DB->get_records_sql($sql);
+    foreach ($services as $id => $servicedata) {
+        if (array_key_exists($servicedata['name'], $serviceinfo)) {
+            $service = $serviceinfo[$servicedata['name']];
+            $servicedata['humanname'] = get_string($servicedata['name'].'_name', $service->plugintype . '_' . $service->pluginname);
+        } else {
+            $servicedata['humanname'] = get_string('unknown', 'mnet');
+        }
+        $newurl = new moodle_url($url, array('hostid' => $host->id, 'servicename' => $servicedata['name']));
+        $table->data[] = array(
+            $servicedata['name'],
+            $servicedata['humanname'],
+            $servicedata['apiversion'],
+            $yesno[$servicedata['publish']],
+            $yesno[$servicedata['subscribe']],
+            $OUTPUT->link($newurl, get_string('listservices', 'mnet'))
+        );
+
+    }
+    echo $OUTPUT->table($table);
+
+
+    $mnet_request->set_method('system/listMethods');
+    if (isset($servicename) && array_key_exists($servicename, $serviceinfo)) {
+        echo $OUTPUT->heading(get_string('methodsavailableonhostinservice', 'mnet', array('host' => $host->wwwroot, 'service' => $servicename)));
+        $service = $serviceinfo[$servicename];
+        $mnet_request->add_param($servicename, 'string');
+    } else {
+        echo $OUTPUT->heading(get_string('methodsavailableonhost', 'mnet', $host->wwwroot));
+    }
+
+    $mnet_request->send($mnet_peer);
+    $methods = $mnet_request->response;
+
+
+    $table = new html_table();
+    $table->head = array(
+        get_string('method', 'mnet'),
+        get_string('options', 'mnet'),
+    );
+    $table->data = array();
+
+    foreach ($methods as $id => $method) {
+        $params = array('hostid' => $host->id, 'method' => $id);
+        if (isset($servicename)) {
+            $params['servicename'] = $servicename;
+        }
+        $newurl = new moodle_url($url, $params);
+        $table->data[] = array(
+            $method,
+            $OUTPUT->link($newurl, get_string('inspect', 'mnet'))
+        );
+    }
+    echo $OUTPUT->table($table);
+
+    if (isset($methodid) && array_key_exists($methodid, $methods)) {
+        $method = $methods[$methodid];
+
+        $mnet_request = new mnet_xmlrpc_client();
+        $mnet_request->set_method('system/methodSignature');
+        $mnet_request->add_param($method, 'string');
+        $mnet_request->send($mnet_peer);
+        $signature = $mnet_request->response;
+
+        echo $OUTPUT->heading(get_string('methodsignature', 'mnet', $method));
+
+        $table = new html_table();
+        $table->head = array(
+            get_string('position', 'mnet'),
+            get_string('name', 'mnet'),
+            get_string('type', 'mnet'),
+            get_string('description', 'mnet'),
+        );
+        $table->data = array();
+
+        $params = $signature['parameters'];
+        foreach ($params as $pos => $details) {
+            $table->data[] = array(
+                $pos,
+                $details['name'],
+                $details['type'],
+                $details['description'],
+            );
+        }
+        $table->data[] = array(
+            get_string('returnvalue', 'mnet'),
+            '',
+            $signature['return']['type'],
+            $signature['return']['description']
+        );
+
+        echo $OUTPUT->table($table);
+
+        $mnet_request->set_method('system/methodHelp');
+        $mnet_request->add_param($method, 'string');
+        $mnet_request->send($mnet_peer);
+        $help = $mnet_request->response;
+
+        echo $OUTPUT->heading(get_string('methodhelp', 'mnet', $method));
+        echo(str_replace('\n', '<br />',$help));
+    }
+}
+
+echo $OUTPUT->footer();
+?>
