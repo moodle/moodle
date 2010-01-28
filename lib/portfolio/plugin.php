@@ -213,7 +213,7 @@ abstract class portfolio_plugin_base {
     * @param array $data data from form.
     * @return array keyvalue pairs - form element => error string
     */
-    public function export_config_validation() {}
+    public function export_config_validation(array $data) {}
 
     /**
     * just like the moodle form validation function
@@ -223,7 +223,7 @@ abstract class portfolio_plugin_base {
     * @param array $data data from form.
     * @return array keyvalue pairs - form element => error string
     */
-    public function user_config_validation() {}
+    public function user_config_validation(array $data) {}
 
     /**
     * sets the export time config from the moodle form.
