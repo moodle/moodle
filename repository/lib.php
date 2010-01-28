@@ -591,11 +591,16 @@ abstract class repository {
      * @global object $DB
      * @global object $CFG
      * @global object $USER
-     * @param object $contexts contexts for which the instances are set
-     * @param integer $userid
-     * @param boolean $onlyvisible if visible == true, return visible instances only,
-     *                otherwise, return all instances
-     * @param string $type a type name to retrieve
+     *
+     * @param array $args Array containing the following keys:
+     *           currentcontext
+     *           context
+     *           onlyvisible
+     *           type
+     *           accepted_types
+     *           returntypes
+     *           userid
+     *
      * @return array repository instances
      */
     public static function get_instances($args = array()) {
@@ -747,13 +752,10 @@ abstract class repository {
     }
 
     /**
-     * call a static function
+     * call a static function.  Any additional arguments than plugin and function will be passed through.
      * @global object $CFG
      * @param string $plugin
      * @param string $function
-     * @param type $nocallablereturnvalue default value if function not found
-     *             it's mostly used when you don't want to display an error but
-     *             return a boolean
      * @return mixed
      */
     public static function static_function($plugin, $function) {
