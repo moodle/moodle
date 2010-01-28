@@ -25,7 +25,7 @@
     $PAGE->set_url($url);
 
 /// Get course
-    if (! $course = $DB->get_record('course', array('id'=>$courseid))) {
+    if (!($course = $DB->get_record('course', array('id'=>$courseid)))) {
         print_error('invalidcourseid', '', '', $courseid);
     }
 

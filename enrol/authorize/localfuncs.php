@@ -120,8 +120,8 @@ function message_to_admin($subject, $data)
     $admin = get_admin();
     $data = (array)$data;
 
-    $message = "$SITE->fullname: Transaction failed.\n\n$subject\n\n";
-    $message .= print_r($data, true);
+    $emailmessage = "$SITE->fullname: Transaction failed.\n\n$subject\n\n";
+    $emailmessage .= print_r($data, true);
     $eventdata = new object();
     $eventdata->modulename        = 'moodle';
     $eventdata->userfrom          = $admin;

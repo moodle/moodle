@@ -59,7 +59,7 @@ class AuthorizeNet
     public static function expired(&$order)
     {
         global $DB;
-        static $timediff30;
+        static $timediff30 = 0;
 
         if ($order->status == AN_STATUS_EXPIRE) {
             return true;
@@ -68,7 +68,7 @@ class AuthorizeNet
             return false;
         }
 
-        if (empty($timediff30)) {
+        if (0 == $timediff30) {
             $timediff30 = self::getsettletime(time()) - (30 * 24 * 3600);
         }
 
@@ -95,10 +95,10 @@ class AuthorizeNet
     public static function process(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $cctype=NULL)
     {
         global $CFG, $DB;
-        static $constpd;
+        static $constpd = array();
         require_once($CFG->libdir.'/filelib.php');
 
-        if (!isset($constpd)) {
+        if (empty($constpd)) {
             $mconfig = get_config('enrol/authorize');
             $constpd = array(
                 'x_version'         => '3.1',

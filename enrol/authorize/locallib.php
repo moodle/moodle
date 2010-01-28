@@ -265,7 +265,7 @@ function authorize_print_order($orderid)
         }
     }
 
-    if (SITEID != $courseid) {
+    if (SITEID != $course->id) {
         $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
     }
     $PAGE->navbar->add($authstrs->paymentmanagement, 'index.php?course='.$course->id);
@@ -522,9 +522,9 @@ function authorize_print_order($orderid)
 function authorize_get_status_action($order)
 {
     global $CFG;
-    static $newordertime;
+    static $newordertime = 0;
 
-    if (empty($newordertime)) {
+    if (0 == $newordertime) {
         $newordertime = time() - 120; // -2 minutes. Order may be still in process.
     }
 
