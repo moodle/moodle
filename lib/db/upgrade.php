@@ -2973,9 +2973,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $dbman->add_field($table, $field);
         }
 
-        /// Main savepoint reached
-        upgrade_main_savepoint($result, 2010012901);
-
     /// Define field pluginname to be added to mnet_remote_rpc
         $field = new xmldb_field('pluginname', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, 'plugintype');
 
@@ -2983,6 +2980,24 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+
+        /// Main savepoint reached
+        upgrade_main_savepoint($result, 2010012901);
+    }
+
+    if ($result && $oldversion < 2010012902) {
+
+    /// Define field enabled to be added to mnet_remote_rpc
+        $table = new xmldb_table('mnet_remote_rpc');
+        $field = new xmldb_field('enabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, 'pluginname');
+
+    /// Conditionally launch add field enabled
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        /// Main savepoint reached
+        upgrade_main_savepoint($result, 2010012902);
     }
 
     return $result;
