@@ -64,8 +64,10 @@ function upgrade_plugin_mnet_functions($component) {
     // Disable functions that don't exist (any more) in the source
     // Should these be deleted? What about their permissions records?
     foreach ($DB->get_records('mnet_rpc', array('pluginname'=>$plugin, 'plugintype'=>$type), 'functionname ASC ') as $rpc) {
-        if (!array_key_exists($rpc->functionname, $publishmethodservices)) {
+        if (!array_key_exists($rpc->functionname, $publishmethodservices) && $rpc->enabled) {
             $DB->set_field('mnet_rpc', 'enabled', 0, array('id' => $rpc->id));
+        } else if (array_key_exists($rpc->functionname, $publishmethodservices) && !$rpc->enabled) {
+            $DB->set_field('mnet_rpc', 'enabled', 1, array('id' => $rpc->id));
         }
     }
 
@@ -197,8 +199,10 @@ function upgrade_plugin_mnet_functions($component) {
     }
 
     foreach ($DB->get_records('mnet_remote_rpc', array('pluginname'=>$plugin, 'plugintype'=>$type), 'functionname ASC ') as $rpc) {
-        if (!array_key_exists($rpc->functionname, $subscribemethodservices)) {
+        if (!array_key_exists($rpc->functionname, $subscribemethodservices) && $rpc->enabled) {
             $DB->set_field('mnet_remote_rpc', 'enabled', 0, array('id' => $rpc->id));
+        } else if (array_key_exists($rpc->functionname, $subscribemethodservices) && !$rpc->enabled) {
+            $DB->set_field('mnet_remote_rpc', 'enabled', 1, array('id' => $rpc->id));
         }
     }
 
