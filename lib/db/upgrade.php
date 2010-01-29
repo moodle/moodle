@@ -2961,6 +2961,30 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2010012900);
     }
+
+    if ($result && $oldversion < 2010012901) {
+
+        /// Define field plugintype to be added to mnet_remote_rpc
+        $table = new xmldb_table('mnet_remote_rpc');
+        $field = new xmldb_field('plugintype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, 'xmlrpcpath');
+
+        /// Conditionally launch add field plugintype
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        /// Main savepoint reached
+        upgrade_main_savepoint($result, 2010012901);
+
+    /// Define field pluginname to be added to mnet_remote_rpc
+        $field = new xmldb_field('pluginname', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, 'plugintype');
+
+    /// Conditionally launch add field pluginname
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    }
+
     return $result;
 }
 

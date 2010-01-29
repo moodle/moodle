@@ -1345,7 +1345,9 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="functionname"/>
         <FIELD NAME="functionname" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="xmlrpcpath"/>
-        <FIELD NAME="xmlrpcpath" TYPE="char" LENGTH="80" NOTNULL="true" SEQUENCE="false" PREVIOUS="functionname"/>
+        <FIELD NAME="xmlrpcpath" TYPE="char" LENGTH="80" NOTNULL="true" SEQUENCE="false" PREVIOUS="functionname" NEXT="plugintype"/>
+        <FIELD NAME="plugintype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="xmlrpcpath" NEXT="pluginname"/>
+        <FIELD NAME="pluginname" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="plugintype"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
