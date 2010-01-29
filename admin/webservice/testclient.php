@@ -87,6 +87,10 @@ if (!$function or !$protocol) {
     $mform = new webservice_test_client_form(null, array($functions, $protocols));
     admin_externalpage_print_header();
     echo $OUTPUT->heading(get_string('testclient', 'webservice'));
+    echo $OUTPUT->box_start();
+    echo get_string('testclientdescription', 'webservice');
+    echo $OUTPUT->box_end();
+
     $mform->display();
     echo $OUTPUT->footer();
     die;

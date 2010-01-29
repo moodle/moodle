@@ -6420,6 +6420,14 @@ class admin_setting_webservicesoverview extends admin_setting {
         $row[1] = $status;
         $row[2] = get_string('enabledocumentationdescription', 'webservice');
         $table->data[] = $row;
+
+        /// 10. Test the service
+        $row = array();
+        $url = new moodle_url("/admin/webservice/testclient.php");
+        $row[0] = "10. "."<a href=".$url.">".get_string('testwithtestclient', 'webservice')."</a>";
+        $row[1] = "";
+        $row[2] = get_string('testwithtestclientdescription', 'webservice');
+        $table->data[] = $row;
         
         $return .= $OUTPUT->table($table);
 
@@ -6489,8 +6497,13 @@ class admin_setting_webservicesoverview extends admin_setting {
         $row[2] = get_string('addcapabilitytousersdescription', 'webservice');
         $table->data[] = $row;
 
-      
-
+        /// 6. Test the service
+        $row = array();
+        $url = new moodle_url("/admin/webservice/testclient.php");
+        $row[0] = "6. "."<a href=".$url.">".get_string('testwithtestclient', 'webservice')."</a>";
+        $row[1] = "";
+        $row[2] = get_string('testauserwithtestclientdescription', 'webservice');
+        $table->data[] = $row;
 
         $return .= $OUTPUT->table($table);
 
