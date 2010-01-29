@@ -24,18 +24,24 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../config.php');
+require('../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
 require_once("$CFG->libdir/externallib.php");
-require_once("$CFG->dirroot/webservice/testclient_forms.php");
+require_once("$CFG->dirroot/admin/webservice/testclient_forms.php");
 
 $function = optional_param('function', '', PARAM_SAFEDIR);
 $protocol = optional_param('protocol', '', PARAM_SAFEDIR);
 $authmethod = optional_param('authmethod', '', PARAM_SAFEDIR);
 
-$PAGE->set_url('/webservice/testclient.php');
+$PAGE->set_url('/admin/webservice/testclient.php');
+$PAGE->navbar->ignore_active(true);
+$PAGE->navbar->add(get_string('administrationsite'));
+$PAGE->navbar->add(get_string('development', 'admin'));
+$PAGE->navbar->add(get_string('testclient', 'webservice'));
 
-require_login();
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+//require_login();
+//require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+admin_externalpage_setup('externalservice');
 
 // list of all available functions for testing
 $allfunctions = $DB->get_records('external_functions', array(), 'name ASC');
@@ -79,7 +85,7 @@ if (!isset($protocols[$protocol])) { // whitelisting security
 
 if (!$function or !$protocol) {
     $mform = new webservice_test_client_form(null, array($functions, $protocols));
-    echo $OUTPUT->header();
+    admin_externalpage_print_header();
     echo $OUTPUT->heading(get_string('testclient', 'webservice'));
     $mform->display();
     echo $OUTPUT->footer();
@@ -123,7 +129,7 @@ if ($mform->is_cancelled()) {
     // now test the parameters, this also fixes PHP data types
     $params = external_api::validate_parameters($functioninfo->parameters_desc, $params);
 
-    echo $OUTPUT->header();
+    admin_externalpage_print_header();
     echo $OUTPUT->heading(get_string('pluginname', 'webservice_'.$protocol).': '.$function);
 
     echo 'URL: '.s($serverurl);
@@ -145,7 +151,7 @@ if ($mform->is_cancelled()) {
     die;
 
 } else {
-    echo $OUTPUT->header();
+    admin_externalpage_print_header();
     echo $OUTPUT->heading(get_string('pluginname', 'webservice_'.$protocol).': '.$function);
     $mform->display();
     echo $OUTPUT->footer();
