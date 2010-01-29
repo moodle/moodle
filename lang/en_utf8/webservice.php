@@ -34,6 +34,7 @@ $string['deleteaservice'] = 'Delete service';
 $string['deleteserviceconfirm'] = 'Do you really want to delete external service \"$a\"?';
 $string['deletetokenconfirm'] = 'Do you really want to delete this web service token for <strong>$a->user</strong> on the service <strong>$a->service</strong>?';
 $string['disabledwarning'] = 'All webs service protocols are disabled, the \Enable web services\" setting can be found in Advanced features.';
+$string['documentation'] = 'web service documentation';
 $string['editservice'] = 'Edit the service: $a->name (id: $a->id)';
 $string['editaservice'] = 'Edit service';
 $string['enabled'] = 'Enabled';
