@@ -39,3 +39,12 @@ $publishes = array(
         ),
     ),
 );
+$subscribes = array(
+    'mnet_enrol' => array(
+        'available_courses' => 'enrol/mnet/enrol.php/available_courses',
+        'user_enrolments'   => 'enrol/mnet/enrol.php/user_enrolments',
+        'enrol_user'        => 'enrol/mnet/enrol.php/enrol_user',
+        'unenrol_user'      => 'enrol/mnet/enrol.php/unenrol_user',
+        'course_enrolments' => 'enrol/mnet/enrol.php/course_enrolments',
+    ),
+);

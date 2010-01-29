@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,17 +17,21 @@
 
 
 /**
- * This file contains the version information for the mahara portfolio plugin
+ * This file contains the mnet services for the mahara repository plugin
  *
  * @since 2.0
  * @package moodlecore
- * @subpackage portfolio
- * @copyright 2009 Penny Leach
+ * @subpackage repository
+ * @copyright 2010 Penny Leach
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version  = 2010012901;
-$plugin->requires = 2008072500;
-$plugin->cron     = 0;
-
+$publishes = array();
+$subscribes = array(
+    'remoterep' => array(
+        'get_folder_files'         => 'repository/mahara/repository.class.php/get_folder_files',
+        'search_folders_and_files' => 'repository/mahara/repository.class.php/search_folders_and_files',
+        'get_file'                 => 'repository/mahara/repository.class.php/get_file',
+    ),
+);
 

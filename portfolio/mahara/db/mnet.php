@@ -35,4 +35,9 @@ $publishes = array(
         ),
     ),
 );
-
+$subscribes = array(
+    'pf' => array(
+        'send_content_intent' => 'portfolio/mahara/lib.php/send_content_intent',
+        'send_content_ready'  => 'portfolio/mahara/lib.php/send_content_ready',
+    ),
+);

@@ -43,14 +43,20 @@ function upgrade_plugin_mnet_functions($component) {
     if (empty($publishes)) {
         $publishes = array(); // still need this to be able to disable stuff later
     }
+    if (empty($subscribes)) {
+        $subscribes = array(); // still need this to be able to disable stuff later
+    }
+
+    static $servicecache = array();
 
     // rekey an array based on the rpc method for easy lookups later
-    $methodservices = array();
+    $publishmethodservices = array();
+    $subscribemethodservices = array();
     foreach($publishes as $servicename => $service) {
         if (is_array($service['methods'])) {
             foreach($service['methods'] as $methodname) {
                 $service['servicename'] = $servicename;
-                $methodservices[$methodname][] = $service;
+                $publishmethodservices[$methodname][] = $service;
             }
         }
     }
@@ -58,11 +64,12 @@ function upgrade_plugin_mnet_functions($component) {
     // Disable functions that don't exist (any more) in the source
     // Should these be deleted? What about their permissions records?
     foreach ($DB->get_records('mnet_rpc', array('pluginname'=>$plugin, 'plugintype'=>$type), 'functionname ASC ') as $rpc) {
-        if (!array_key_exists($rpc->functionname, $methodservices)) {
+        if (!array_key_exists($rpc->functionname, $publishmethodservices)) {
             $DB->set_field('mnet_rpc', 'enabled', 0, array('id' => $rpc->id));
         }
     }
 
+    // reflect all the services we're publishing and save them
     require_once($CFG->dirroot . '/lib/zend/Zend/Server/Reflection.php');
     static $cachedclasses = array(); // to store reflection information in
     foreach ($publishes as $service => $data) {
@@ -136,7 +143,7 @@ function upgrade_plugin_mnet_functions($component) {
             }
         }
 
-        foreach ($methodservices[$dataobject->functionname] as $service) {
+        foreach ($publishmethodservices[$dataobject->functionname] as $service) {
             if ($serviceobj = $DB->get_record('mnet_service', array('name'=>$service['servicename']))) {
                 $serviceobj->apiversion = $service['apiversion'];
                 $DB->update_record('mnet_service', $serviceobj);
@@ -147,6 +154,7 @@ function upgrade_plugin_mnet_functions($component) {
                 $serviceobj->offer       = 1;
                 $serviceobj->id          = $DB->insert_record('mnet_service', $serviceobj);
             }
+            $servicecache[$service['servicename']] = $serviceobj;
             if (!$DB->record_exists('mnet_service2rpc', array('rpcid'=>$dataobject->id, 'serviceid'=>$serviceobj->id))) {
                 $obj = new stdClass();
                 $obj->rpcid = $dataobject->id;
@@ -155,7 +163,46 @@ function upgrade_plugin_mnet_functions($component) {
             }
         }
     }
-        return true;
+
+    // finished with methods we publish, now do subscribable methods
+    foreach($subscribes as $service => $methods) {
+        if (!array_key_exists($service, $servicecache)) {
+            if (!$serviceobj = $DB->get_record('mnet_service', array('name' =>  $service))) {
+                debugging("skipping unknown service $service");
+                continue;
+            }
+            $servicecache[$service] = $serviceobj;
+        } else {
+            $serviceobj = $servicecache[$service];
+        }
+        foreach ($methods as $method => $xmlrpcpath) {
+            if (!$rpcid = $DB->record_exists('mnet_remote_rpc', array('xmlrpcpath'=>$xmlrpcpath))) {
+                $remoterpc = (object)array(
+                    'functionname' => $method,
+                    'xmlrpcpath' => $xmlrpcpath,
+                    'plugintype' => $type,
+                    'pluginname' => $plugin,
+                    'enabled'    => 1,
+                );
+                $rpcid = $remoterpc->id = $DB->insert_record('mnet_remote_rpc', $remoterpc, true);
+            }
+            if (!$DB->record_exists('mnet_remote_service2rpc', array('rpcid'=>$rpcid, 'serviceid'=>$serviceobj->id))) {
+                $obj = new stdClass();
+                $obj->rpcid = $rpcid;
+                $obj->serviceid = $serviceobj->id;
+                $DB->insert_record('mnet_remote_service2rpc', $obj, true);
+            }
+            $subscribemethodservices[$method][] = $servicename;
+        }
+    }
+
+    foreach ($DB->get_records('mnet_remote_rpc', array('pluginname'=>$plugin, 'plugintype'=>$type), 'functionname ASC ') as $rpc) {
+        if (!array_key_exists($rpc->functionname, $subscribemethodservices)) {
+            $DB->set_field('mnet_remote_rpc', 'enabled', 0, array('id' => $rpc->id));
+        }
+    }
+
+    return true;
 }
 
 /**

@@ -37,3 +37,10 @@ $publishes = array(
         ),
     ),
 );
+$subscribes = array(
+    'remoterep' => array(
+        'getFileList'  => 'repository/remotemoodle/repository.class.php/getFileList',
+        'retrieveFile' => 'repository/remotemoodle/repository.class.php/retrieveFile',
+
+    ),
+);
