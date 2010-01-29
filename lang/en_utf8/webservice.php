@@ -43,6 +43,7 @@ $string['enablews'] = 'Enable web services';
 $string['enablewsdescription'] = 'Web services must be enabled in Advanced features.';
 $string['enableprotocols'] = 'Enable protocols';
 $string['enableprotocolsdescription'] = 'At least one protocol should be enabled. In counter part, even though Moodle takes a very good care about security issues, more you have enabled protocols, more your Moodle site is subject to external attacks.';
+$string['entertoken'] = 'Enter a security key/token:';
 $string['error'] = 'Error: $a';
 $string['errorcodes'] = 'Error message';
 $string['execute'] = 'Execute';
@@ -95,6 +96,7 @@ $string['selectedcapabilitydoesntexit'] = 'The currently set required capability
 $string['selectedcapability'] = 'Selected';
 $string['simpleauthlog'] = 'Simple authentication login';
 $string['step'] = 'Step';
+$string['securitykey'] = 'Security key (token)';
 $string['selectspecificuser'] = 'Select a specific user';
 $string['selectspecificuserdescription'] = 'On the <strong>Manage service</strong> page, click on \'Authorised users\' and add the user to the authorised users list.';
 $string['service'] = 'Service';
@@ -124,7 +126,7 @@ $string['wsauthnotenabled'] = 'The web service authentication plugin is disabled
 $string['wsdocumentation'] = 'Web service documentation';
 $string['wsdocumentationdisable'] = 'Web service documentation is disabled.';
 $string['wsdocumentationintro'] = 'Following is a listing of web service functions available for the username <b>$a</b>.<br/>To create a client we advise you to read the <a href=\"http://docs.moodle.org/en/Development:Creating_a_web_service_and_a_web_service_function#Create_your_own_client\">Moodle documentation</a>';
-$string['wsdocumentationlogin'] = 'Enter your web service username and password.';
+$string['wsdocumentationlogin'] = 'or enter your web service username and password:';
 $string['wspassword'] = 'Web service password';
 $string['wsusername'] = 'Web service username';
 

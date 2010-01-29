@@ -46,6 +46,9 @@ class webservice_documentation_generator {
     /** @property string $password password of the local user */
     protected $password = null;
 
+    /** @property string $token token of the local user */
+    protected $token = null;
+
     /** @property object $webserviceuser authenticated web service user */
     protected $webserviceuser = null;
 
@@ -104,6 +107,9 @@ class webservice_documentation_generator {
             }
             if (isset($_REQUEST['wspassword'])) {
                 $this->password = $_REQUEST['wspassword'];
+            }
+            if (isset($_REQUEST['token'])) {
+                $this->token = $_REQUEST['token'];
             }
     }
 
@@ -196,20 +202,41 @@ class webservice_documentation_generator {
             throw new webservice_access_exception(get_string('wsauthmissing', 'webservice'));
         }
 
-        if (!$this->username) {
-            throw new webservice_access_exception(get_string('missingusername', 'webservice'));
+        if (!$this->token) {
+            if (!$this->username) {
+                throw new webservice_access_exception(get_string('missingusername', 'webservice'));
+            }
+
+            if (!$this->password) {
+                throw new webservice_access_exception(get_string('missingpassword', 'webservice'));
+            }
+
+            if (!$auth->user_login_webservice($this->username, $this->password)) {
+                throw new webservice_access_exception(get_string('wrongusernamepassword', 'webservice'));
+            }
+
+            $this->webserviceuser = $DB->get_record('user', array('username'=>$this->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);
+        } else {
+            if (!$token = $DB->get_record('external_tokens', array('token'=>$this->token, 'tokentype'=>EXTERNAL_TOKEN_PERMANENT))) {
+                // log failed login attempts
+                throw new webservice_access_exception(get_string('invalidtoken', 'webservice'));
+            }
+
+            if ($token->validuntil and $token->validuntil < time()) {
+                throw new webservice_access_exception(get_string('invalidtimedtoken', 'webservice'));
+            }
+
+            if ($token->iprestriction and !address_in_subnet(getremoteaddr(), $token->iprestriction)) {
+                throw new webservice_access_exception(get_string('invalidiptoken', 'webservice'));
+            }
+
+            $this->webserviceuser = $DB->get_record('user', array('id'=>$token->userid, 'deleted'=>0), '*', MUST_EXIST);
+
+            // log token access
+            $DB->set_field('external_tokens', 'lastaccess', time(), array('id'=>$token->id));
         }
 
-        if (!$this->password) {
-            throw new webservice_access_exception(get_string('missingpassword', 'webservice'));
-        }
-
-        if (!$auth->user_login_webservice($this->username, $this->password)) {
-            throw new webservice_access_exception(get_string('wrongusernamepassword', 'webservice'));
-        }
-
-        $this->webserviceuser = $DB->get_record('user', array('username'=>$this->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);
-
+        
 
     }
 
@@ -241,8 +268,18 @@ class webservice_documentation_generator {
         if (isset($_REQUEST['print'])) {
             $printableformat = $_REQUEST['print'];
         }
-        echo $renderer->documentation_html($this->functions, $this->username, $this->password, $printableformat, $activatedprotocol);
 
+        $authparams = array();
+        if (empty($this->token)) {
+            $authparams['wsusername'] = $this->username;
+            $authparams['wspassword'] = $this->password;
+        } else {
+            $authparams['wsusername'] = $this->webserviceuser->username;
+            $authparams['token'] = $this->token;
+        }
+        
+        echo $renderer->documentation_html($this->functions, $printableformat, $activatedprotocol, $authparams);
+      
         /// trigger browser print operation
         if (!empty($printableformat)) {
             $PAGE->requires->js_function_call('window.print', array());

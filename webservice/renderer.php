@@ -254,14 +254,14 @@ EOF;
     /**
      * This display all the documentation
      * @param array $functions contains all decription objects
-     * @param string $username
-     * @param string $password
+     * @param array $authparam keys are either 'username'/'password' or 'token'
      * @param boolean $printableformat true if we want to display the documentation in a printable format
      * @param array $activatedprotocol
      * @return string the html to diplay
      */
-    public function documentation_html($functions, $username, $password, $printableformat, $activatedprotocol) {
+    public function documentation_html($functions, $printableformat, $activatedprotocol, $authparams) {
         global $OUTPUT, $CFG;
+        $br = html_writer::empty_tag('br', array());
         $brakeline = <<<EOF
 
 
@@ -270,17 +270,17 @@ EOF;
         $documentationhtml = html_writer::start_tag('table', array('style' => "margin-left:auto; margin-right:auto;"));
         $documentationhtml .= html_writer::start_tag('tr', array());
         $documentationhtml .= html_writer::start_tag('td', array());
-        $documentationhtml .= get_string('wsdocumentationintro', 'webservice', $username);
-        $documentationhtml .= html_writer::empty_tag('br', array());
-        $documentationhtml .= html_writer::empty_tag('br', array());
+        $documentationhtml .= get_string('wsdocumentationintro', 'webservice', $authparams['wsusername']);
+        $documentationhtml .= $br.$br;
         
 
     /// Print button
         $form = new html_form();
-        $parameters = array ('wsusername' => $username, 'wspassword' => $password, 'print' => true);
-        $url = new moodle_url('/webservice/wsdoc.php', $parameters); // Required
+        $authparams['print'] = true;
+        //$parameters = array ('token' => $token, 'wsusername' => $username, 'wspassword' => $password, 'print' => true);
+        $url = new moodle_url('/webservice/wsdoc.php', $authparams); // Required
         $documentationhtml .= $OUTPUT->single_button($url, get_string('print','webservice'));
-        $documentationhtml .= html_writer::empty_tag('br', array());
+        $documentationhtml .= $br;
         
         
     /// each functions will be displayed into a collapsible region (opened if printableformat = true)
@@ -295,22 +295,21 @@ EOF;
                                                                  true);
             } else {
                 $documentationhtml .= html_writer::tag('strong', array(), $functionname);
-                $documentationhtml .= html_writer::empty_tag('br', array());
+                $documentationhtml .= $br;
             }
 
         /// function global description
-            $documentationhtml .= html_writer::empty_tag('br', array());
+            $documentationhtml .= $br;
             $documentationhtml .= html_writer::start_tag('div', array('style' => 'border:solid 1px #DEDEDE;background:#E2E0E0;color:#222222;padding:4px;'));
             $documentationhtml .= $description->description;
             $documentationhtml .= html_writer::end_tag('div');
-            $documentationhtml .= html_writer::empty_tag('br', array());
-            $documentationhtml .= html_writer::empty_tag('br', array());
+            $documentationhtml .= $br.$br;
 
         /// function arguments documentation
             $documentationhtml .= html_writer::start_tag('span', array('style' => 'color:#EA33A6'));
             $documentationhtml .= get_string('arguments', 'webservice');
             $documentationhtml .= html_writer::end_tag('span');
-            $documentationhtml .= html_writer::empty_tag('br', array());
+            $documentationhtml .= $br;
             foreach ($description->parameters_desc->keys as $paramname => $paramdesc) {
             /// a argument documentation
                 $documentationhtml .= html_writer::start_tag('span', array('style' => 'font-size:80%'));
@@ -319,10 +318,9 @@ EOF;
                 $documentationhtml .= $paramname;
                 $documentationhtml .= html_writer::end_tag('b');
                 $documentationhtml .= " (" .$required. ")"; // argument is required or optional ?
-                $documentationhtml .= html_writer::empty_tag('br', array());
+                $documentationhtml .= $br;
                 $documentationhtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".$paramdesc->desc; // argument description
-                $documentationhtml .= html_writer::empty_tag('br', array());
-                $documentationhtml .= html_writer::empty_tag('br', array());
+                $documentationhtml .= $br.$br;
                 ///general structure of the argument
                 $documentationhtml .= $this->colored_box_with_pre_tag(get_string('generalstructure', 'webservice'), 
                                                                       $this->detailed_description_html($paramdesc),
@@ -341,21 +339,19 @@ EOF;
                 }
                 $documentationhtml .= html_writer::end_tag('span');
             }
-            $documentationhtml .= html_writer::empty_tag('br', array());
-            $documentationhtml .= html_writer::empty_tag('br', array());
+            $documentationhtml .= $br.$br;
 
 
         /// function response documentation
             $documentationhtml .= html_writer::start_tag('span', array('style' => 'color:#EA33A6'));
             $documentationhtml .= get_string('response', 'webservice');
             $documentationhtml .= html_writer::end_tag('span');
-            $documentationhtml .= html_writer::empty_tag('br', array());
+            $documentationhtml .= $br;
             /// function response description
             $documentationhtml .= html_writer::start_tag('span', array('style' => 'font-size:80%'));
             if (!empty($description->returns_desc->desc)) {
                 $documentationhtml .= $description->returns_desc->desc;
-                $documentationhtml .= html_writer::empty_tag('br', array());
-                $documentationhtml .= html_writer::empty_tag('br', array());
+                $documentationhtml .= $br.$br;
             }
             if (!empty($description->returns_desc)) {
                 ///general structure of the response
@@ -379,16 +375,14 @@ EOF;
                 }
             }
             $documentationhtml .= html_writer::end_tag('span');
-            $documentationhtml .= html_writer::empty_tag('br', array());
-            $documentationhtml .= html_writer::empty_tag('br', array());
+            $documentationhtml .= $br.$br;
 
        /// function errors documentation for REST protocol
             if (!empty($activatedprotocol['rest'])) {
                 $documentationhtml .= html_writer::start_tag('span', array('style' => 'color:#EA33A6'));
                 $documentationhtml .= get_string('errorcodes', 'webservice');
                 $documentationhtml .= html_writer::end_tag('span');
-                $documentationhtml .= html_writer::empty_tag('br', array());
-                $documentationhtml .= html_writer::empty_tag('br', array());
+                $documentationhtml .= $br.$br;
                 $documentationhtml .= html_writer::start_tag('span', array('style' => 'font-size:80%'));
                 $errormessage = get_string('invalidparameter', 'debug');
                 $restexceptiontext =<<<EOF
@@ -404,8 +398,7 @@ EOF;
 
             $documentationhtml .= html_writer::end_tag('span');
             }
-            $documentationhtml .= html_writer::empty_tag('br', array());
-            $documentationhtml .= html_writer::empty_tag('br', array());
+            $documentationhtml .= $br.$br;
             if (empty($printableformat)) {
                 $documentationhtml .= print_collapsible_region_end(true);
             }
@@ -428,13 +421,11 @@ EOF;
     public function login_page_html($errormessage) {
         global $CFG, $OUTPUT;
 
+        $br = html_writer::empty_tag('br', array());
+
         $htmlloginpage = html_writer::start_tag('table', array('style' => "margin-left:auto; margin-right:auto;"));
         $htmlloginpage .= html_writer::start_tag('tr', array());
         $htmlloginpage .= html_writer::start_tag('td', array());
-        $htmlloginpage .= get_string('wsdocumentationlogin', 'webservice');
-        $htmlloginpage .= html_writer::empty_tag('br', array());
-        $htmlloginpage .= html_writer::empty_tag('br', array());
-        $htmlloginpage .= html_writer::empty_tag('br', array());
 
 //        /// Display detailed error message when can't login
 //        $htmlloginpage .= get_string('error','webservice',$errormessage);
@@ -450,20 +441,29 @@ EOF;
         $form->button->title = get_string('wsdocumentation','webservice');
         $form->method = 'post';
 
+        $contents =get_string('entertoken', 'webservice');
+        $contents .=$br.$br;
+        $field = new html_field();
+        $field->name = 'token';
+        $field->style = 'width: 30em;';
+        $contents .= $OUTPUT->textfield($field);
+        
+        $contents .=$br.$br;
+        $contents .=get_string('wsdocumentationlogin', 'webservice');
+        $contents .=$br.$br;
         $field = new html_field();
         $field->name = 'wsusername';
         $field->value = get_string('wsusername', 'webservice');
         $field->style = 'width: 30em;';
-        $contents = $OUTPUT->textfield($field);
-        $contents .= "<br/><br/>";
+        $contents .= $OUTPUT->textfield($field);
+        $contents .= $br.$br;
         $field = new html_field();
         $field->name = 'wspassword';
         $field->value = get_string('wspassword', 'webservice');
         $field->style = 'width: 30em;';
         $contents .= $OUTPUT->textfield($field);
-        $contents .= html_writer::empty_tag('br', array());
-        $contents .= html_writer::empty_tag('br', array());
-
+        $contents .=$br.$br;
+        
         $htmlloginpage .= $OUTPUT->form($form, $contents);
 
         $htmlloginpage .= html_writer::end_tag('td');
