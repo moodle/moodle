@@ -732,16 +732,21 @@ class grade_report_grader extends grade_report {
                     $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, null, 0, true) . '</div>';
                 }
 
+                //we're either going to add a th or a colspan to keep things aligned
                 $userreportcell = '';
+                $userreportcellcolspan = '';
                 if (has_capability('gradereport/'.$CFG->grade_profilereport.':view', $this->context)) {
                     $a->user = fullname($user);
                     $strgradesforuser = get_string('gradesforuser', 'grades', $a);
                     $userreportcell = '<th class="header userreport"><a href="'.$CFG->wwwroot.'/grade/report/'.$CFG->grade_profilereport.'/index.php?id='.$this->courseid.'&amp;userid='.$user->id.'">'
                                     .'<img src="'.$CFG->pixpath.'/t/grades.gif" alt="'.$strgradesforuser.'" title="'.$strgradesforuser.'" /></a></th>';
                 }
+                else {
+                    $userreportcellcolspan = 'colspan=2';
+                }
 
                 $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
-                              .'<th class="c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
+                              .'<th class="c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);" '.$userreportcellcolspan.' >'.$user_pic
                               .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
                               .fullname($user)."</a></th>$userreportcell\n";
 
@@ -1014,16 +1019,21 @@ class grade_report_grader extends grade_report {
                     $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, NULL, 0, true) . "</div>\n";
                 }
 
+                //either add a th or a colspan to keep things aligned
                 $userreportcell = '';
+                $userreportcellcolspan = '';
                 if (has_capability('gradereport/'.$CFG->grade_profilereport.':view', $this->context)) {
                     $a->user = fullname($user);
                     $strgradesforuser = get_string('gradesforuser', 'grades', $a);
                     $userreportcell = '<th class="userreport"><a href="'.$CFG->wwwroot.'/grade/report/'.$CFG->grade_profilereport.'/index.php?id='.$this->courseid.'&amp;userid='.$user->id.'">'
                                     .'<img src="'.$CFG->pixpath.'/t/grades.gif" alt="'.$strgradesforuser.'" title="'.$strgradesforuser.'" /></a></th>';
                 }
+                else {
+                    $userreportcellcolspan = 'colspan=2';
+                }
 
                 $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
-                              .'<th class="c0 user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
+                              .'<th class="c0 user" scope="row" onclick="set_row(this.parentNode.rowIndex);" '.$userreportcellcolspan.' >'.$user_pic
                               .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
                               .fullname($user)."</a></th>$userreportcell\n";
 
@@ -1174,9 +1184,6 @@ class grade_report_grader extends grade_report {
                 }
                 $avghtml .= '<th class="header c0 range" '.$colspan.' scope="row">'.$straverage.'</th>';
             }
-            if (has_capability('gradereport/'.$CFG->grade_profilereport.':view', $this->context)) {
-                $avghtml .= '<th class="header userreport"></th>';
-            }
 
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
@@ -1262,7 +1269,7 @@ class grade_report_grader extends grade_report {
             $fixedstudents = $this->is_fixed_students();
             if (!$fixedstudents) {
                 $colspan='colspan="2" ';
-                if ($this->get_pref('showuseridnumber')) {
+	                 if ($this->get_pref('showuseridnumber')) {
                     $colspan = 'colspan="3" ';
                 }
                 $rangehtml .= '<th class="header c0 range" '.$colspan.' scope="row">'.$this->get_lang_string('range','grades').'</th>';
