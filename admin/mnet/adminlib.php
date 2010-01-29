@@ -178,7 +178,7 @@ function upgrade_plugin_mnet_functions($component) {
             $serviceobj = $servicecache[$service];
         }
         foreach ($methods as $method => $xmlrpcpath) {
-            if (!$rpcid = $DB->record_exists('mnet_remote_rpc', array('xmlrpcpath'=>$xmlrpcpath))) {
+            if (!$rpcid = $DB->get_field('mnet_remote_rpc', 'id', array('xmlrpcpath'=>$xmlrpcpath))) {
                 $remoterpc = (object)array(
                     'functionname' => $method,
                     'xmlrpcpath' => $xmlrpcpath,

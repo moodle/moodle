@@ -80,19 +80,34 @@ if (!empty($hostid) && array_key_exists($hostid, $hosts)) {
         get_string('options', 'mnet'),
     );
     $table->data = array();
-    $sql = 'SELECT s.name, min(r.plugintype) AS plugintype, min(r.pluginname) AS pluginname
-        FROM {mnet_service} s
-        JOIN {mnet_service2rpc} s2r ON s2r.serviceid = s.id
-        JOIN {mnet_rpc} r ON r.id = s2r.rpcid
-        GROUP BY s.name';
 
     $yesno = array(get_string('no'), get_string('yes'));
 
-    $serviceinfo = $DB->get_records_sql($sql);
+    // this query is horrible and has to be remapped afterwards, because of the non-uniqueness
+    // of the remoterep service (it has two plugins so far that use it)
+    // it's possible to get a unique list back using a subquery with LIMIT but that would break oracle
+    // so it's best to just do this small query and then remap the results afterwards
+    $sql = '
+        SELECT DISTINCT
+            ' . $DB->sql_concat('r.plugintype', "'_'", 'r.pluginname', "'_'", 's.name')  . ' AS unique,
+             s.name,
+             r.plugintype,
+             r.pluginname
+        FROM
+            {mnet_service} s
+       JOIN {mnet_remote_service2rpc} s2r ON s2r.serviceid = s.id
+       JOIN {mnet_remote_rpc} r ON r.id = s2r.rpcid';
+
+    $serviceinfo = array();
+
+    foreach ($DB->get_records_sql($sql) as $result) {
+        $serviceinfo[$result->name] = $result->plugintype . '_' . $result->pluginname;
+    }
+
     foreach ($services as $id => $servicedata) {
         if (array_key_exists($servicedata['name'], $serviceinfo)) {
             $service = $serviceinfo[$servicedata['name']];
-            $servicedata['humanname'] = get_string($servicedata['name'].'_name', $service->plugintype . '_' . $service->pluginname);
+            $servicedata['humanname'] = get_string($servicedata['name'].'_name', $service);
         } else {
             $servicedata['humanname'] = get_string('unknown', 'mnet');
         }
