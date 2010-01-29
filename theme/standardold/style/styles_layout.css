@@ -4471,3 +4471,11 @@ table.mod_index {
   position: relative;
   top: 2px;
 }
+
+
+/****** Web services ******/
+#webservice-doc-generator td
+{
+    text-align: left;
+    border: 0px solid black;
+}

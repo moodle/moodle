@@ -230,8 +230,6 @@ class webservice_documentation_generator {
         $PAGE->set_pagelayout('popup');
         $PAGE->set_pagetype('webservice-doc-generator');
 
-        $PAGE->requires->css('webservice/wsdoc.css');
-    
         echo $OUTPUT->header();
 
         $activatedprotocol = array();
@@ -271,8 +269,6 @@ class webservice_documentation_generator {
         $PAGE->set_heading($SITE->fullname." ".get_string('wsdocumentation', 'webservice'));
         $PAGE->set_pagelayout('popup');
         $PAGE->set_pagetype('webservice-doc-generator-login');
-        
-        $PAGE->requires->css('webservice/wsdoc.css');
 
         echo $OUTPUT->header();
 
