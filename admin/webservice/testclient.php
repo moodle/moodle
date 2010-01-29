@@ -88,7 +88,11 @@ if (!$function or !$protocol) {
     admin_externalpage_print_header();
     echo $OUTPUT->heading(get_string('testclient', 'webservice'));
     echo $OUTPUT->box_start();
-    echo get_string('testclientdescription', 'webservice');
+    $url = new moodle_url('/admin/settings.php?section=debugging');
+    $atag =html_writer::start_tag('a', array('href' => $url)).get_string('debug', 'admin').html_writer::end_tag('a');
+    $descparams->atag = $atag;
+    $descparams->mode = get_string('debugnormal', 'admin');
+    echo get_string('testclientdescription', 'webservice', $descparams);
     echo $OUTPUT->box_end();
 
     $mform->display();
