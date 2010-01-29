@@ -314,8 +314,8 @@ class mnet_xmlrpc_client {
             SELECT
                 *
             FROM
-                {mnet_rpc} r,
-                {mnet_service2rpc} s2r,
+                {mnet_remote_rpc} r,
+                {mnet_remote_service2rpc} s2r,
                 {mnet_host2service} h2s
             WHERE
                 r.xmlrpcpath = ? AND
