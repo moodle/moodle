@@ -130,11 +130,11 @@ abstract class webservice_server implements webservice_server_interface {
         }
 
         if (!is_enabled_auth('webservice')) {
-            throw new webservice_access_exception('WS auth not enabled');
+            throw new webservice_access_exception(get_string('wsauthnotenabled', 'webservice'));
         }
 
         if (!$auth = get_auth_plugin('webservice')) {
-            throw new webservice_access_exception('WS auth missing');
+            throw new webservice_access_exception(get_string('wsauthmissing', 'webservice'));
         }
 
         // NOTE: the exception details are here for debugging only, it is controlled via the $CFG->degug
@@ -143,17 +143,17 @@ abstract class webservice_server implements webservice_server_interface {
             $this->restricted_context = get_context_instance(CONTEXT_SYSTEM);
 
             if (!$this->username) {
-                throw new webservice_access_exception('Missing username');
+                throw new webservice_access_exception(get_string('missingusername', 'webservice'));
             }
 
             if (!$this->password) {
-                throw new webservice_access_exception('Missing password');
+                throw new webservice_access_exception(get_string('missingpassword', 'webservice'));
             }
 
             if (!$auth->user_login_webservice($this->username, $this->password)) {
                 // log failed login attempts
                 add_to_log(1, 'webservice', get_string('simpleauthlog', 'webservice'), '' , get_string('failedtolog', 'webservice').": ".$this->username."/".$this->password." - ".getremoteaddr() , 0);
-                throw new webservice_access_exception('Wrong username or password');
+                throw new webservice_access_exception(get_string('wrongusernamepassword', 'webservice'));
             }
 
             $user = $DB->get_record('user', array('username'=>$this->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);
@@ -188,7 +188,7 @@ abstract class webservice_server implements webservice_server_interface {
         $this->userid = $user->id;
 
         if (!has_capability("webservice/$this->wsname:use", $this->restricted_context)) {
-            throw new webservice_access_exception('Access to web service not allowed');
+            throw new webservice_access_exception(get_string('accessnotallowed', 'webservice'));
         }
 
         external_api::set_context_restriction($this->restricted_context);

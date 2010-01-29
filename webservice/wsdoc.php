@@ -189,23 +189,23 @@ class webservice_documentation_generator {
         }
 
         if (!is_enabled_auth('webservice')) {
-            throw new webservice_access_exception('WS auth not enabled');
+            throw new webservice_access_exception(get_string('wsauthnotenabled', 'webservice'));
         }
 
         if (!$auth = get_auth_plugin('webservice')) {
-            throw new webservice_access_exception('WS auth missing');
+            throw new webservice_access_exception(get_string('wsauthmissing', 'webservice'));
         }
 
         if (!$this->username) {
-            throw new webservice_access_exception('Missing username');
+            throw new webservice_access_exception(get_string('missingusername', 'webservice'));
         }
 
         if (!$this->password) {
-            throw new webservice_access_exception('Missing password');
+            throw new webservice_access_exception(get_string('missingpassword', 'webservice'));
         }
 
         if (!$auth->user_login_webservice($this->username, $this->password)) {
-            throw new webservice_access_exception('Wrong username or password');
+            throw new webservice_access_exception(get_string('wrongusernamepassword', 'webservice'));
         }
 
         $this->webserviceuser = $DB->get_record('user', array('username'=>$this->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);

@@ -1,6 +1,7 @@
 <?php
 
 $string['accessexception'] = 'Access control exception';
+$string['accessnotallowed'] = 'Access to web service not allowed';
 $string['activatehttps'] = '******************';
 $string['addcapabilitytousers'] = 'Check users capability';
 $string['addcapabilitytousersdescription'] = 'To use web services, users need to have two different capabilities: \'/webservice:createtoken\' and a capability matching the web service protocols (\'webservice/rest:use\', \'webservice/soap:use\', ...).';
@@ -63,6 +64,8 @@ $string['iprestriction'] = 'IP restriction';
 $string['key'] = 'Key';
 $string['manageprotocols'] = 'Manage protocols';
 $string['managetokens'] = 'Manage tokens';
+$string['missingpassword'] = 'Missing password';
+$string['missingusername'] = 'Missing username';
 $string['norequiredcapability'] = 'No required capability';
 $string['notoken'] = 'The token list is empty.';
 $string['onesystemcontrolling'] = 'One system controlling Moodle with token';
@@ -111,6 +114,9 @@ $string['userasclientsdescription'] = 'The following steps help you to set up th
 $string['webservices'] = 'Web services';
 $string['webservicesoverview'] = 'Overview';
 $string['webservicetokens'] = 'Web service tokens';
+$string['wrongusernamepassword'] = 'Wrong username or password';
+$string['wsauthmissing'] = 'The web service authentication plugin is missing.';
+$string['wsauthnotenabled'] = 'The web service authentication plugin is disabled.';
 $string['wsdocumentation'] = 'Web service documentation';
 $string['wsdocumentationdisable'] = 'Web service documentation is disabled.';
 $string['wsdocumentationintro'] = 'Following is a listing of web service functions available for the username <b>$a</b>.<br/>To create a client we advise you to read the <a href=\"http://docs.moodle.org/en/Development:Creating_a_web_service_and_a_web_service_function#Create_your_own_client\">Moodle documentation</a>';
