@@ -798,11 +798,16 @@ abstract class repository {
      * @global object $DB
      * @global object $CFG
      * @global object $USER
+     * @global object $OUTPUT
      * @param string $filepath file path in download folder
      * @param string $name file name
      * @param integer $itemid item id to identify a file in filepool
      * @param string $filearea file area
-     * @return array information of file in file pool
+     * @return array containing the following keys:
+     *           icon
+     *           file
+     *           id
+     *           url
      */
     public static function move_to_filepool($thefile, $name, $itemid, $filepath = '/', $filearea = 'user_draft') {
         global $DB, $CFG, $USER, $OUTPUT;
@@ -1453,7 +1458,20 @@ abstract class repository {
      *
      * @param string $parent The parent path, this parameter can
      * a folder name, or a identification of folder
-     * @return array the list of files, including meta infomation
+     * @return array the list of files, including meta infomation, containing the following keys
+     *           manage, url to manage url
+     *           client_id
+     *           login, login form
+     *           repo_id, active repository id
+     *           login_btn_action, the login button action
+     *           login_btn_label, the login button label
+     *           total, number of results
+     *           perpage, items per page
+     *           page
+     *           pages, total pages
+     *           search_result, is it a search result?
+     *           list, file list
+     *           path, current path and parent path
      */
     public function get_listing($path = '', $page = '') {
     }
