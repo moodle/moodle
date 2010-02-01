@@ -35,8 +35,6 @@
     $return = optional_param('return', 0, PARAM_BOOL);    //return to course/view.php if false or mod/modname/view.php if true
     $type   = optional_param('type', '', PARAM_ALPHANUM); //TODO: hopefully will be removed in 2.0
 
-    $PAGE->set_pagelayout('base');
-
     $url = new moodle_url('/course/modedit.php');
     if (!empty($add)) {
         $url->param('add', $add);
@@ -52,7 +50,6 @@
         $url->param('type', $type);
     }
     $PAGE->set_url($url);
-
 
     if (!empty($add)) {
         $section = required_param('section', PARAM_INT);
@@ -606,6 +603,7 @@
         $PAGE->set_title($streditinga);
         $PAGE->set_focuscontrol($mform->focus());
         $PAGE->set_cacheable(false);
+        $PAGE->set_pagelayout('admin');
         echo $OUTPUT->header();
 
         if (!empty($cm->id)) {
