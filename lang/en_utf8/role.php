@@ -241,7 +241,6 @@ $string['site:uploadusers'] = 'Upload new users from file';
 $string['site:viewfullnames'] = 'Always see full names of users';
 $string['site:viewparticipants'] = 'View participants';
 $string['site:viewreports'] = 'View reports';
-$string['site:usewebservices'] = 'User can be served by Moodle web services';
 $string['tag:manage'] = 'Manage all tags';
 $string['tag:create'] = 'Create new tags';
 $string['tag:edit'] = 'Edit existing tags';
