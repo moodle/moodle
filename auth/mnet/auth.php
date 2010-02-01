@@ -208,6 +208,17 @@ class auth_plugin_mnet extends auth_plugin_base {
     }
 
     /**
+     * after a successful login, land.php will call complete_user_login
+     * which will in turn regenerate the session id.
+     * this means that what is stored in mnet_session table needs updating.
+     *
+     */
+    function update_session_id() {
+        global $USER, $DB;
+        return $DB->set_field('mnet_session', 'session_id', session_id(), array('username' => $USER->username, 'mnethostid' => $USER->mnethostid, 'useragent' => sha1($_SERVER['HTTP_USER_AGENT'])));
+    }
+
+    /**
      * This function confirms the remote (ID provider) host's mnet session
      * by communicating the token and UA over the XMLRPC transport layer, and
      * returns the local user record on success.
@@ -217,7 +228,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      *   @return array The local user record.
      */
     function confirm_mnet_session($token, $remotewwwroot) {
-        global $CFG, $MNET, $SESSION, $DB;
+        global $CFG, $MNET, $DB;
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
         // verify the remote host is configured locally before attempting RPC call
@@ -912,39 +923,9 @@ class auth_plugin_mnet extends auth_plugin_base {
                 // TODO: Handle this error appropriately
                 $returnString .= "We failed to refresh the session for the following usernames: \n".implode("\n", $subArray)."\n\n";
             } else {
-                // TODO: This process of killing and re-starting the session
-                // will cause PHP to forget any custom session_set_save_handler
-                // stuff. Subsequent attempts to prod existing sessions will
-                // fail, because PHP will look in wherever the default place
-                // may be (files?) and probably create a new session with the
-                // right session ID in that location. If it doesn't have write-
-                // access to that location, then it will fail... not sure how
-                // apparent that will be.
-                // There is no way to capture what the custom session handler
-                // is and then reset it on each pass - I checked that out
-                // already.
-                $sesscache = $_SESSION;
-                $sessidcache = session_id();
-                session_write_close();
-                unset($_SESSION);
-
-                $uc = ini_get('session.use_cookies');
-                ini_set('session.use_cookies', false);
                 foreach($results as $emigrant) {
-
-                    unset($_SESSION);
-                    session_name('MoodleSession'.$CFG->sessioncookie);
-                    session_id($emigrant->session_id);
-                    session_start();
-                    session_write_close();
+                    session_touch($emigrant->session_id);
                 }
-
-                ini_set('session.use_cookies', $uc);
-                session_name('MoodleSession'.$CFG->sessioncookie);
-                session_id($sessidcache);
-                session_start();
-                $_SESSION = $sesscache;
-                session_write_close();
             }
         }
 
@@ -1044,7 +1025,6 @@ class auth_plugin_mnet extends auth_plugin_base {
             }
         }
 
-        $_SESSION = array();
         return true;
     }
 
@@ -1098,42 +1078,13 @@ class auth_plugin_mnet extends auth_plugin_base {
                                  array('useragent'=>$useragent, 'userid'=>$userid));
 
         if (isset($MNET_REMOTE_CLIENT) && isset($MNET_REMOTE_CLIENT->id)) {
-            $start = ob_start();
-
-            // Save current session and cookie-use status
-            $cookieuse = ini_get('session.use_cookies');
-            ini_set('session.use_cookies', false);
-            $sesscache = $_SESSION;
-            $sessidcache = session_id();
-
-            // Replace existing mnet session with user session & unset
-            session_write_close();
-            unset($_SESSION);
-            session_id($mnetsession->session_id);
-            session_start();
-            session_unregister("USER");
-            session_unregister("SESSION");
-            unset($_SESSION);
-            $_SESSION = array();
-            session_write_close();
-
-            // Restore previous info
-            ini_set('session.use_cookies', $cookieuse);
-            session_name('MoodleSession'.$CFG->sessioncookie);
-            session_id($sessidcache);
-            session_start();
-            $_SESSION = $sesscache;
-            session_write_close();
-
-            $end = ob_end_clean();
-        } else {
-            $_SESSION = array();
+            session_kill_user($userid);
         }
         return $returnstring;
     }
 
     /**
-     * TODO:Untested When the IdP requests that child sessions are terminated,
+     * When the IdP requests that child sessions are terminated,
      * this function will be called on each of the child hosts. The machine that
      * calls the function (over xmlrpc) provides us with the mnethostid we need.
      *
@@ -1145,33 +1096,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         global $CFG, $MNET_REMOTE_CLIENT, $DB;
         $session = $DB->get_record('mnet_session', array('username'=>$username, 'mnethostid'=>$MNET_REMOTE_CLIENT->id, 'useragent'=>$useragent));
         if (false != $session) {
-            $start = ob_start();
-
-            $uc = ini_get('session.use_cookies');
-            ini_set('session.use_cookies', false);
-            $sesscache = $_SESSION;
-            $sessidcache = session_id();
-            session_write_close();
-            unset($_SESSION);
-
-
-            session_id($session->session_id);
-            session_start();
-            session_unregister("USER");
-            session_unregister("SESSION");
-            unset($_SESSION);
-            $_SESSION = array();
-            session_write_close();
-
-
-            ini_set('session.use_cookies', $uc);
-            session_name('MoodleSession'.$CFG->sessioncookie);
-            session_id($sessidcache);
-            session_start();
-            $_SESSION = $sesscache;
-            session_write_close();
-
-            $end = ob_end_clean();
+            session_kill($session->session_id);
             return true;
         }
         return false;
@@ -1187,32 +1112,9 @@ class auth_plugin_mnet extends auth_plugin_base {
     function end_local_sessions(&$sessionArray) {
         global $CFG;
         if (is_array($sessionArray)) {
-            $start = ob_start();
-
-            $uc = ini_get('session.use_cookies');
-            ini_set('session.use_cookies', false);
-            $sesscache = $_SESSION;
-            $sessidcache = session_id();
-            session_write_close();
-            unset($_SESSION);
-
             while($session = array_pop($sessionArray)) {
-                session_id($session->session_id);
-                session_start();
-                session_unregister("USER");
-                session_unregister("SESSION");
-                unset($_SESSION);
-                $_SESSION = array();
-                session_write_close();
+                session_kill($session->session_id);
             }
-
-            ini_set('session.use_cookies', $uc);
-            session_name('MoodleSession'.$CFG->sessioncookie);
-            session_id($sessidcache);
-            session_start();
-            $_SESSION = $sesscache;
-
-            $end = ob_end_clean();
             return true;
         }
         return false;

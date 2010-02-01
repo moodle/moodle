@@ -38,6 +38,7 @@ $localuser = $mnetauth->confirm_mnet_session($token, $remotewwwroot);
 // log in
 $user = get_complete_user_data('id', $localuser->id, $localuser->mnethostid);
 complete_user_login($user);
+$mnetauth->update_session_id();
 
 if (!empty($localuser->mnet_foreign_host_array)) {
     $USER->mnet_foreign_host_array = $localuser->mnet_foreign_host_array;
