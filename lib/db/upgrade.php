@@ -3000,6 +3000,18 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010012902);
     }
 
+    /// MDL-17863. Increase the portno column length on mnet_host to handle any port number
+    if ($result && $oldversion < 2010020100) {
+    /// Changing precision of field portno on table mnet_host to (5)
+        $table = new xmldb_table('mnet_host');
+        $field = new xmldb_field('portno', XMLDB_TYPE_INTEGER, '5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'transport');
+
+    /// Launch change of precision for field portno
+        $dbman->change_field_precision($table, $field);
+
+        upgrade_main_savepoint($result, 2010020100);
+    }
+
     return $result;
 }
 
