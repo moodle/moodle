@@ -26,7 +26,7 @@
     $hostid = optional_param('hostid', NULL, PARAM_INT);
     $publishes  = optional_param('publish', null, PARAM_BOOL); // optional_param cleans arrays too
     $subscribes = optional_param('subscribe', null, PARAM_BOOL); // optional_param cleans arrays too
-    $exists     = optional_param('subscribe', null, PARAM_BOOL); // optional_param cleans arrays too
+    $exists     = optional_param('exists', null, PARAM_BOOL); // optional_param cleans arrays too
 
     $nocertstring = '';
     $nocertmatch  = '';
