@@ -129,17 +129,18 @@ abstract class webservice_server implements webservice_server_interface {
             throw new coding_exception('Cookies must be disabled in WS servers!');
         }
 
-        if (!is_enabled_auth('webservice')) {
-            throw new webservice_access_exception(get_string('wsauthnotenabled', 'webservice'));
-        }
-
-        if (!$auth = get_auth_plugin('webservice')) {
-            throw new webservice_access_exception(get_string('wsauthmissing', 'webservice'));
-        }
-
-        // NOTE: the exception details are here for debugging only, it is controlled via the $CFG->degug
-
         if ($this->simple) {
+
+            //we check that authentication plugin is enabled
+            //it is only required by simple authentication
+            if (!is_enabled_auth('webservice')) {
+                throw new webservice_access_exception(get_string('wsauthnotenabled', 'webservice'));
+            }
+
+            if (!$auth = get_auth_plugin('webservice')) {
+                throw new webservice_access_exception(get_string('wsauthmissing', 'webservice'));
+            }
+
             $this->restricted_context = get_context_instance(CONTEXT_SYSTEM);
 
             if (!$this->username) {
