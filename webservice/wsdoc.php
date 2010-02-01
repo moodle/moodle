@@ -194,15 +194,15 @@ class webservice_documentation_generator {
             throw new coding_exception('Cookies must be disabled!');
         }
 
-        if (!is_enabled_auth('webservice')) {
-            throw new webservice_access_exception(get_string('wsauthnotenabled', 'webservice'));
-        }
-
-        if (!$auth = get_auth_plugin('webservice')) {
-            throw new webservice_access_exception(get_string('wsauthmissing', 'webservice'));
-        }
-
         if (!$this->token) {
+            if (!is_enabled_auth('webservice')) {
+                throw new webservice_access_exception(get_string('wsauthnotenabled', 'webservice'));
+            }
+
+            if (!$auth = get_auth_plugin('webservice')) {
+                throw new webservice_access_exception(get_string('wsauthmissing', 'webservice'));
+            }
+
             if (!$this->username) {
                 throw new webservice_access_exception(get_string('missingusername', 'webservice'));
             }
@@ -217,6 +217,7 @@ class webservice_documentation_generator {
 
             $this->webserviceuser = $DB->get_record('user', array('username'=>$this->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);
         } else {
+
             if (!$token = $DB->get_record('external_tokens', array('token'=>$this->token, 'tokentype'=>EXTERNAL_TOKEN_PERMANENT))) {
                 // log failed login attempts
                 throw new webservice_access_exception(get_string('invalidtoken', 'webservice'));
