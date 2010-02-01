@@ -37,7 +37,10 @@ $PAGE->set_url('/admin/webservice/testclient.php');
 $PAGE->navbar->ignore_active(true);
 $PAGE->navbar->add(get_string('administrationsite'));
 $PAGE->navbar->add(get_string('development', 'admin'));
-$PAGE->navbar->add(get_string('testclient', 'webservice'));
+$PAGE->navbar->add(get_string('testclient', 'webservice'), new moodle_url('/admin/webservice/testclient.php'));
+if (!empty($function)) {
+    $PAGE->navbar->add($function);
+}
 
 //require_login();
 //require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
