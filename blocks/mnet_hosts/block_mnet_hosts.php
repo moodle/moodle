@@ -26,6 +26,13 @@ class block_mnet_hosts extends block_list {
             return false;
         }
 
+        // according to start_jump_session,
+        // remote users can't on-jump
+        // so don't show this block to them
+        if (is_mnet_remote_user($USER)) {
+            return '';
+        }
+
         if (!is_enabled_auth('mnet')) {
             // no need to query anything remote related
             debugging( 'mnet authentication plugin is not enabled', DEBUG_ALL );
