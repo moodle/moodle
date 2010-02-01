@@ -40,6 +40,13 @@ if (!$context = get_context_instance_by_id($contextid)) {
     print_error('wrongcontextid', 'error');
 }
 
+$args = array('contextid'=>$contextid);
+$baseurl = new moodle_url('/filter/manage.php', $args);
+if (!empty($forfilter)) {
+    $args['filter'] = $forfilter;
+}
+$PAGE->set_url($baseurl, $args);
+
 // This is a policy decision, rather than something that would be impossible to implement.
 if (!in_array($context->contextlevel, array(CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_MODULE))) {
     print_error('cannotcustomisefiltersblockuser', 'error');
@@ -47,7 +54,6 @@ if (!in_array($context->contextlevel, array(CONTEXT_COURSECAT, CONTEXT_COURSE, C
 
 $isfrontpage = $context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID;
 $contextname = print_context_name($context);
-$baseurl = $CFG->wwwroot . '/filter/manage.php?contextid=' . $context->id;
 
 if ($context->contextlevel == CONTEXT_COURSECAT) {
     $course = clone($SITE);
@@ -152,7 +158,7 @@ if (empty($availablefilters)) {
         TEXTFILTER_ON => $stron,
     );
 
-    echo '<form action="' . $baseurl . '" method="post">';
+    echo '<form action="'.$baseurl->out().'" method="post">';
     echo "\n<div>\n";
     echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
 
@@ -185,7 +191,7 @@ if (empty($availablefilters)) {
         if ($settingscol) {
             $settings = '';
             if ($filterinfo->hassettings) {
-                $settings = '<a href="' . $baseurl . '&amp;filter=' . $filter . '">' . $strsettings . '</a>';
+                $settings = '<a href="' . $baseurl->out(true, array('filter'=>$filter)). '">' . $strsettings . '</a>';
             }
             $row[] = $settings;
         }
