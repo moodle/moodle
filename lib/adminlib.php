@@ -6334,7 +6334,7 @@ class admin_setting_webservicesoverview extends admin_setting {
 
         /// 1. Enable Web Services
         $row = array();
-        $url = new moodle_url("/admin/search.php?query=Enable+web+services");
+        $url = new moodle_url("/admin/search.php?query=enablewebservices");
         $row[0] = "1. "."<a href=".$url.">".get_string('enablews', 'webservice')."</a>";
         $status = '<span class="statuscritical">'.get_string('no').'</span>'; //should never happens as this page should only be seen once web service are activated
         if ($CFG->enablewebservices) {
