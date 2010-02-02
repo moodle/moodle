@@ -84,12 +84,6 @@ die;die;die;
         upgrade_plugins($type);
     }
 
-/// Check for changes to RPC functions
-    if ($CFG->mnet_dispatcher_mode != 'off') {
-        require_once("$CFG->dirroot/$CFG->admin/mnet/adminlib.php");
-        upgrade_RPC_functions($return_url);  // Return here afterwards
-    }
-
 /// just make sure upgrade logging is properly terminated
     upgrade_finished();
 
