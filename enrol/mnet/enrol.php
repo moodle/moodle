@@ -6,6 +6,13 @@
 
 class enrolment_plugin_mnet {
 
+    /** * mnet environment - constructor makes sure its set up */
+    private $mnet;
+
+    function __construct() {
+        $this->mnet = get_mnet_environment();
+    }
+
     /// Override the base config_form() function
     function config_form($frm) {
         global $CFG, $OUTPUT, $PAGE;
@@ -229,12 +236,14 @@ class enrolment_plugin_mnet {
      *                              client machine
      */
     function course_enrolments($courseid, $roles = '') {
-        global $MNET_REMOTE_CLIENT, $CFG, $DB;
+        global $CFG, $DB;
 
         if (! $course = $DB->get_record('course', array('id'=>$courseid))) {
             return 'no course';
             //error("That's an invalid course id");
         }
+
+        $remoteclient = get_mnet_remote_client();
 
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
@@ -254,7 +263,7 @@ class enrolment_plugin_mnet {
                     a.contextid = {$context->id} AND
                     a.roleid = r.id AND
                     a.userid = u.id AND
-                    u.mnethostid = '{$MNET_REMOTE_CLIENT->id}'
+                    u.mnethostid = '{$remoteclient->id}'
                     ";
 
         if(!empty($roles)) {
@@ -284,9 +293,10 @@ class enrolment_plugin_mnet {
     * @return bool              Whether the enrolment has been successful
     */
     function enrol_user($user, $courseid) {
-        global $MNET, $MNET_REMOTE_CLIENT, $DB;
+        global $DB;
+        $remoteclient = get_mnet_remote_client();
 
-        $userrecord = $DB->get_record('user',array('username'=>$user['username'], 'mnethostid'=>$MNET_REMOTE_CLIENT->id));
+        $userrecord = $DB->get_record('user',array('username'=>$user['username'], 'mnethostid'=>$remoteclient->id));
 
         if ($userrecord == false) {
             // We should at least be checking that we allow the remote
@@ -297,7 +307,7 @@ class enrolment_plugin_mnet {
             $userrecord->email      = $user['email'];
             $userrecord->firstname  = $user['firstname'];
             $userrecord->lastname   = $user['lastname'];
-            $userrecord->mnethostid = $MNET_REMOTE_CLIENT->id;
+            $userrecord->mnethostid = $remoteclient->id;
 
             //TODO - username required to use PARAM_USERNAME before inserting into user table (MDL-16919)
             if ($userrecord->id = $DB->insert_record('user', $userrecord)) {
@@ -330,9 +340,10 @@ class enrolment_plugin_mnet {
     * @return bool              Whether the user can login from the remote host
     */
     function unenrol_user($username, $courseid) {
-        global $MNET_REMOTE_CLIENT, $DB;
+        global $DB;
+        $remoteclient = get_mnet_remote_client();
 
-        if (!$userrecord = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$MNET_REMOTE_CLIENT->id))) {
+        if (!$userrecord = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$remoteclient->id))) {
             throw new mnet_exception(5014, get_string('usernotfound', 'enrol_mnet'));
         }
 
@@ -395,7 +406,7 @@ class enrolment_plugin_mnet {
     * @return array              Whether the user can login from the remote host
     */
     function fetch_remote_courses($mnethostid) {
-        global $CFG, $USER, $MNET, $DB;
+        global $CFG, $USER, $DB;
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
         // get the Service Provider info
@@ -491,7 +502,7 @@ class enrolment_plugin_mnet {
     * @return array              Whether the user can login from the remote host
     */
     function req_enrol_user($userid, $courseid) {
-        global $CFG, $USER, $MNET, $DB;
+        global $CFG, $USER, $DB;
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
         // Prepare a basic user record
@@ -537,7 +548,7 @@ class enrolment_plugin_mnet {
     * @return array              Whether the user can login from the remote host
     */
     function req_unenrol_user($userid, $courseid) {
-        global $CFG, $USER, $MNET, $DB;
+        global $CFG, $USER, $DB;
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
         // in case the remote host doesn't have it

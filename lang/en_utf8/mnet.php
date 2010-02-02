@@ -285,4 +285,5 @@ $string['methodhelp'] = 'Method help for $a';
 $string['testclient'] = 'Moodle Network Test Client';
 $string['unknown'] = 'Unknown';
 $string['notmoodleapplication'] = 'WARNING: This is not a moodle application, so some of the inspection methods may not work properly.';
+$string['notinxmlrpcserver'] = 'Attempt to access the MNET remote client, not during XMLRPC server execution';
 ?>

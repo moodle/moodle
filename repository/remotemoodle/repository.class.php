@@ -44,6 +44,7 @@ class repository_remotemoodle extends repository {
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
         global $SESSION, $action, $CFG;
         parent::__construct($repositoryid, $context, $options);
+        $this->mnet = get_mnet_environment();
     }
 
     /**
@@ -51,19 +52,20 @@ class repository_remotemoodle extends repository {
      * The file is encoded in base64
      * @global <type> $DB
      * @global <type> $USER
-     * @global <type> $MNET_REMOTE_CLIENT
      * @param <type> $username
      * @param <type> $source
      * @return <type>
      */
     public function retrieveFile($username, $source) {
-        global $DB, $USER, $MNET_REMOTE_CLIENT;
+        global $DB, $USER;
+
+        $remoteclient = get_mnet_remote_client();
 
         ///check the the user is known
         ///he has to be previously connected to the server site in order to be in the database
         //TODO: MDL-21318 this looks problematic, because global $USER would need to be set back after this,
         //      also is the user allowed to roam?
-        $USER = $DB->get_record('user',array('username' => $username, 'mnethostid' => $MNET_REMOTE_CLIENT->id));
+        $USER = $DB->get_record('user',array('username' => $username, 'mnethostid' => $remoteclient->id));
         if (empty($USER)) {
             throw new mnet_server_exception(9012, get_string('usernotfound', 'repository_remotemoodle',  $username));
         }
@@ -93,20 +95,20 @@ class repository_remotemoodle extends repository {
      * Retrieve file list for a user of the Moodle client calling this function
      * @global <type> $DB
      * @global <type> $USER
-     * @global <type> $MNET_REMOTE_CLIENT
      * @global <type> $CFG
      * @param <type> $username
      * @param <type> $search
      * @return <type>
      */
     public function getFileList($username, $search) {
-        global $DB, $USER, $MNET_REMOTE_CLIENT, $CFG;
+        global $DB, $USER, $CFG;
 
+        $remoteclient = get_mnet_remote_client();
         ///check the the user is known
         ///he has to be previously connected to the server site in order to be in the database
         //TODO: MDL-21318 this looks problematic, because global $USER would need to be set back after this,
         //      also is the user allowed to roam?
-        $USER = $DB->get_record('user',array('username' => $username, 'mnethostid' => $MNET_REMOTE_CLIENT->id));
+        $USER = $DB->get_record('user',array('username' => $username, 'mnethostid' => $remoteclient->id));
         if (empty($USER)) {
             throw new mnet_server_exception(9012, get_string('usernotfound', 'repository_remotemoodle',  $username));
         }
@@ -140,18 +142,6 @@ class repository_remotemoodle extends repository {
     }
 
     /**
-     * Set the MNET environment
-     * @global <type> $MNET
-     */
-    private function ensure_environment() {
-        global $MNET;
-        if (empty($MNET)) {
-            $MNET = new mnet_environment();
-            $MNET->init();
-        }
-    }
-
-    /**
      * Retrieve the file listing - file picker function
      * @global <type> $CFG
      * @global <type> $DB
@@ -168,7 +158,6 @@ class repository_remotemoodle extends repository {
         ///We also check that this method has been activated (if it is not
         ///the method will not be returned by the system method system/listMethods)
         require_once($CFG->dirroot . '/mnet/xmlrpc/client.php');
-        $this->ensure_environment();
 
         ///check that the peer has been setup
         if (!array_key_exists('peer',$this->options)) {
@@ -235,7 +224,6 @@ class repository_remotemoodle extends repository {
 
         ///set mnet environment and set the mnet host
         require_once($CFG->dirroot . '/mnet/xmlrpc/client.php');
-        $this->ensure_environment();
         $host = $DB->get_record('mnet_host',array('id' => $this->options['peer'])); //retrieve the host url
         $mnet_peer = new mnet_peer();
         $mnet_peer->set_wwwroot($host->wwwroot);

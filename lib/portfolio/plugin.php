@@ -497,8 +497,15 @@ abstract class portfolio_plugin_base {
         foreach ($DB->get_records('portfolio_instance_config', array('instance' => $instanceid)) as $config) {
             $this->config->{$config->name} = $config->value;
         }
+        $this->init();
         return $this;
     }
+
+    /**
+     * called after __construct - allows plugins to perform initialisation tasks
+     * without having to override the constructor.
+     */
+    protected function init() { }
 
     /**
     * a list of fields that can be configured per instance.

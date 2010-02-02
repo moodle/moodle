@@ -4619,21 +4619,15 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     // home site (identity provider - idp) before hitting the link itself
     if (is_mnet_remote_user($user)) {
         require_once($CFG->dirroot.'/mnet/lib.php');
-        // Form the request url to hit the idp's jump.php
-        if (isset($mnetjumps[$user->mnethostid])) {
-            $MNETIDPJUMPURL = $mnetjumps[$user->mnethostid];
-        } else {
-            $idp = mnet_get_peer_host($user->mnethostid);
-            $idpjumppath = mnet_get_app_jumppath($idp->applicationid);
-            $MNETIDPJUMPURL = $idp->wwwroot . $idpjumppath . '?hostwwwroot=' . $CFG->wwwroot . '&wantsurl=';
-            $mnetjumps[$user->mnethostid] = $MNETIDPJUMPURL;
-        }
+
+        $jumpurl = mnet_get_idp_jump_url($user);
+        $callback = partial('mnet_sso_apply_redirection', $jumpurl);
 
         $messagetext = preg_replace_callback("%($CFG->wwwroot[^[:space:]]*)%",
-                'mnet_sso_apply_indirection',
+                $callback,
                 $messagetext);
         $messagehtml = preg_replace_callback("%href=[\"'`]($CFG->wwwroot[\w_:\?=#&@/;.~-]*)[\"'`]%",
-                'mnet_sso_apply_indirection',
+                $callback,
                 $messagehtml);
     }
     $mail =& get_mailer();
@@ -9294,4 +9288,69 @@ function partial() {
     $func = array_shift($args);
     $p = new partial($func, $args);
     return array($p, 'method');
+}
+
+/**
+ * helper function to load up and initialise the mnet environment
+ * this must be called before you use mnet functions.
+ *
+ * @return mnet_environment the equivalent of old $MNET global
+ */
+function get_mnet_environment() {
+    global $CFG;
+    require_once($CFG->dirroot . '/mnet/lib.php');
+    static $instance = null;
+    if (empty($instance)) {
+        $instance = new mnet_environment();
+        $instance->init();
+    }
+    return $instance;
+}
+
+/**
+ * during xmlrpc server code execution, any code wishing to access
+ * information about the remote peer must use this to get it.
+ *
+ * @return mnet_remote_client the equivalent of old $MNET_REMOTE_CLIENT global
+ */
+function get_mnet_remote_client() {
+    if (!defined('MNET_SERVER')) {
+        debugging(get_string('notinxmlrpcserver', 'mnet'));
+        return false;
+    }
+    global $MNET_REMOTE_CLIENT;
+    if (isset($MNET_REMOTE_CLIENT)) {
+        return $MNET_REMOTE_CLIENT;
+    }
+    return false;
+}
+
+/**
+ * during the xmlrpc server code execution, this will be called
+ * to setup the object returned by {@see get_mnet_remote_client}
+ *
+ * @param mnet_remote_client $client the client to set up
+ */
+function set_mnet_remote_client($client) {
+    if (!defined('MNET_SERVER')) {
+        throw new moodle_exception('notinxmlrpcserver', 'mnet');
+    }
+    global $MNET_REMOTE_CLIENT;
+    $MNET_REMOTE_CLIENT = $client;
+}
+
+/**
+ * return the jump url for a given remote user
+ * this is used for rewriting forum post links in emails, etc
+ *
+ * @param stdclass $user the user to get the idp url for
+ */
+function mnet_get_idp_jump_url($user) {
+    static $mnetjumps = array();
+    if (!array_key_exists($user->mnethostid, $mnetjumps)) {
+        $idp = mnet_get_peer_host($user->mnethostid);
+        $idpjumppath = mnet_get_app_jumppath($idp->applicationid);
+        $mnetjumps[$user->mnethostid] = $idp->wwwroot . $idpjumppath . '?hostwwwroot=' . $CFG->wwwroot . '&wantsurl=';
+    }
+    return $mnetjumps[$user->mnethostid];
 }

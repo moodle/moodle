@@ -15,8 +15,11 @@ define('NO_DEBUG_DISPLAY', true);
 // cookies are not used, makes sure there is empty global $USER
 define('NO_MOODLE_COOKIES', true);
 
+define('MNET_SERVER', true);
+
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 
+$mnet = get_mnet_environment();
 // Include MNET stuff:
 require_once $CFG->dirroot.'/mnet/lib.php';
 require_once $CFG->dirroot.'/mnet/remote_client.php';
@@ -48,7 +51,8 @@ if (!isset($_SERVER)) {
 
 // New global variable which ONLY gets set in this server page, so you know that
 // if you've been called by a remote Moodle, this should be set:
-$MNET_REMOTE_CLIENT = new mnet_remote_client();
+$remoteclient = new mnet_remote_client();
+set_mnet_remote_client($remoteclient);
 
 try {
     $plaintextmessage = mnet_server_strip_encryption($HTTP_RAW_POST_DATA);
@@ -62,11 +66,11 @@ if (!empty($CFG->mnet_rpcdebug)) {
     error_log(print_r($xmlrpcrequest,1));
 }
 
-if($MNET_REMOTE_CLIENT->pushkey == true) {
+if($remoteclient->pushkey == true) {
     // The peer used one of our older public keys, we will return a
     // signed/encrypted error message containing our new public key
     // Sign message with our old key, and encrypt to the peer's private key.
-    exit(mnet_server_fault_xml(7025, $MNET->public_key, $MNET_REMOTE_CLIENT->useprivatekey));
+    exit(mnet_server_fault_xml(7025, $mnet->public_key, $remoteclient->useprivatekey));
 }
 // Have a peek at what the request would be if we were to process it
 $params = xmlrpc_decode_request($xmlrpcrequest, $method);
@@ -75,9 +79,9 @@ $params = xmlrpc_decode_request($xmlrpcrequest, $method);
 // 1. Request is properly encrypted and signed
 // 2. Request is for a keyswap (we don't mind enencrypted or unsigned requests for a public key)
 // 3. Request is properly signed and we're happy with it being unencrypted
-if ((($MNET_REMOTE_CLIENT->request_was_encrypted == true) && ($MNET_REMOTE_CLIENT->signatureok == true))
+if ((($remoteclient->request_was_encrypted == true) && ($remoteclient->signatureok == true))
     || (($method == 'system.keyswap') || ($method == 'system/keyswap'))
-    || (($MNET_REMOTE_CLIENT->signatureok == true) && ($MNET_REMOTE_CLIENT->plaintext_is_ok() == true))) {
+    || (($remoteclient->signatureok == true) && ($remoteclient->plaintext_is_ok() == true))) {
     try {
         // main dispatch call.  will echo the response directly
         mnet_server_dispatch($xmlrpcrequest);
@@ -88,16 +92,16 @@ if ((($MNET_REMOTE_CLIENT->request_was_encrypted == true) && ($MNET_REMOTE_CLIEN
 }
 // if we get to here, something is wrong
 // so detect a few common cases and send appropriate errors
-if (($MNET_REMOTE_CLIENT->request_was_encrypted == false) && ($MNET_REMOTE_CLIENT->plaintext_is_ok() == false)) {
+if (($remoteclient->request_was_encrypted == false) && ($remoteclient->plaintext_is_ok() == false)) {
     exit(mnet_server_fault(7021, 'forbidden-transport'));
 }
 
-if ($MNET_REMOTE_CLIENT->request_was_signed == false) {
+if ($remoteclient->request_was_signed == false) {
     // Request was not signed
     exit(mnet_server_fault(711, 'verifysignature-error'));
 }
 
-if ($MNET_REMOTE_CLIENT->signatureok == false) {
+if ($remoteclient->signatureok == false) {
     // We were unable to verify the signature
     exit(mnet_server_fault(710, 'verifysignature-invalid'));
 }

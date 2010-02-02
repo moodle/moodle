@@ -50,6 +50,14 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
     private $totalsize; // total size of all included files added together
     private $continueurl; // if we've been sent back a specific url to continue to (eg folder id)
 
+    protected function init() {
+        $this->mnet = get_mnet_environment();
+    }
+
+    public function __wakeup() {
+        $this->mnet = get_mnet_environment();
+    }
+
     public static function get_name() {
         return get_string('pluginname', 'portfolio_mahara');
     }
@@ -181,17 +189,8 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         $this->set('file', $this->exporter->zip_tempfiles());  // this will throw a file_exception which the exporter catches separately.
     }
 
-    private function ensure_environment() {
-        global $MNET;
-        if (empty($MNET)) {
-            $MNET = new mnet_environment();
-            $MNET->init();
-        } // no idea why this happens :(
-    }
-
     public function send_package() {
         global $CFG;
-        $this->ensure_environment();
         // send the 'content_ready' request to mahara
         require_once($CFG->dirroot . '/mnet/xmlrpc/client.php');
         $client = new mnet_xmlrpc_client();
@@ -247,7 +246,6 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
             return preg_replace('/wantsurl=[^&]*&/', 'wantsurl=' . urlencode($remoteurl) . '&', $sessions[$this->get_config('mnethostid')]);
         }
         $this->ensure_mnethost();
-        $this->ensure_environment();
         $mnetauth = get_auth_plugin('mnet');
         if (!$url = $mnetauth->start_jump_session($this->get_config('mnethostid'), $remoteurl)) {
             return false;
@@ -337,7 +335,8 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
     * @param string $token the token recieved previously during send_content_intent
     */
     public static function fetch_file($token) {
-        global $DB, $MNET_REMOTE_CLIENT;;
+        global $DB;
+        $remoteclient = get_mnet_remote_client();
         try {
             if (!$transferid = $DB->get_field('portfolio_mahara_queue', 'transferid', array('token' => $token))) {
                 throw new mnet_server_exception(8009, get_string('mnet_notoken', 'portfolio_mahara'));
@@ -346,7 +345,7 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         } catch (portfolio_exception $e) {
             throw new mnet_server_exception(8010, get_string('mnet_noid', 'portfolio_mahara'));
         }
-        if ($exporter->get('instance')->get_config('mnethostid') != $MNET_REMOTE_CLIENT->id) {
+        if ($exporter->get('instance')->get_config('mnethostid') != $remoteclient->id) {
             throw new mnet_server_exception(8011, get_string('mnet_wronghost', 'portfolio_mahara'));
         }
         global $CFG;

@@ -20,11 +20,14 @@ class mnet_xmlrpc_client {
     var $timeout  = 60;
     var $error    = array();
     var $response = '';
+    var $mnet     = null;
 
     /**
      * Constructor returns true
      */
     function mnet_xmlrpc_client() {
+        // make sure we've got this set up before we try and do anything else
+        $this->mnet = get_mnet_environment();
         return true;
     }
 
@@ -122,7 +125,7 @@ class mnet_xmlrpc_client {
      *                                  remote function
      */
     function send($mnet_peer) {
-        global $CFG, $MNET, $DB;
+        global $CFG, $DB;
 
 
         if (!$this->permission_to_call($mnet_peer)) {
@@ -186,7 +189,7 @@ class mnet_xmlrpc_client {
         $decryptedenvelope = '';
 
         //                                          &$decryptedenvelope
-        $isOpen = openssl_open(base64_decode($data), $decryptedenvelope, base64_decode($key), $MNET->get_private_key());
+        $isOpen = openssl_open(base64_decode($data), $decryptedenvelope, base64_decode($key), $this->mnet->get_private_key());
 
         if (!$isOpen) {
             // Decryption failed... let's try our archived keys

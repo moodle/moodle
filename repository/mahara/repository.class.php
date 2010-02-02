@@ -42,6 +42,7 @@ class repository_mahara extends repository {
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
         global $SESSION, $action, $CFG;
         parent::__construct($repositoryid, $context, $options);
+        $this->mnet = get_mnet_environment();
     }
 
   /**
@@ -64,8 +65,6 @@ class repository_mahara extends repository {
     public function print_login($ajax = true) {
         global $SESSION, $CFG, $DB;
         //jump to the peer to create a session
-        require_once($CFG->dirroot . '/mnet/lib.php');
-        $this->ensure_environment();
 
         $mnetauth = get_auth_plugin('mnet');
         $host = $DB->get_record('mnet_host',array('id' => $this->options['peer'])); //need to retrieve the host url
@@ -92,18 +91,6 @@ class repository_mahara extends repository {
     }
 
     /**
-     * Set the MNET environment
-     * @global <type> $MNET
-     */
-    private function ensure_environment() {
-        global $MNET;
-        if (empty($MNET)) {
-            $MNET = new mnet_environment();
-            $MNET->init();
-        }
-    }
-
-    /**
      * Retrieve the file listing - file picker function
      * @global <type> $CFG
      * @global <type> $DB
@@ -119,7 +106,6 @@ class repository_mahara extends repository {
         ///We also check that the "get file list" method has been activated (if it is not
         ///the method will not be returned by the system method system/listMethods)
         require_once($CFG->dirroot . '/mnet/xmlrpc/client.php');
-        $this->ensure_environment();
 
         ///check that the peer has been setup
         if (!array_key_exists('peer',$this->options)) {
@@ -231,8 +217,6 @@ class repository_mahara extends repository {
         global $CFG, $DB, $USER;
 
         ///set mnet environment and set the mnet host
-        require_once($CFG->dirroot . '/mnet/xmlrpc/client.php');
-        $this->ensure_environment();
         $host = $DB->get_record('mnet_host',array('id' => $this->options['peer'])); //retrieve the host url
         $mnet_peer = new mnet_peer();
         $mnet_peer->set_wwwroot($host->wwwroot);

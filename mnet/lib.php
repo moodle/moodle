@@ -21,9 +21,6 @@ define('RPC_FORBIDDENFUNCTION', 4);
 define('RPC_NOSUCHMETHOD',      5);
 define('RPC_FORBIDDENMETHOD',   6);
 
-$MNET = new mnet_environment();
-$MNET->init();
-
 /**
  * Strip extraneous detail from a URL or URI and return the hostname
  *
@@ -46,7 +43,8 @@ function mnet_get_hostname_from_uri($uri = null) {
  * @return string           A PEM formatted SSL Certificate.
  */
 function mnet_get_public_key($uri, $application=null) {
-    global $CFG, $MNET, $DB;
+    global $CFG, $DB;
+    $mnet = get_mnet_environment();
     // The key may be cached in the mnet_set_public_key function...
     // check this first
     $key = mnet_set_public_key($uri);
@@ -58,7 +56,7 @@ function mnet_get_public_key($uri, $application=null) {
         $application = $DB->get_record('mnet_application', array('name'=>'moodle'));
     }
 
-    $rq = xmlrpc_encode_request('system/keyswap', array($CFG->wwwroot, $MNET->public_key, $application->name), array("encoding" => "utf-8"));
+    $rq = xmlrpc_encode_request('system/keyswap', array($CFG->wwwroot, $mnet->public_key, $application->name), array("encoding" => "utf-8"));
     $ch = curl_init($uri . $application->xmlrpc_server_url);
 
     curl_setopt($ch, CURLOPT_TIMEOUT, 60);
@@ -189,13 +187,14 @@ function mnet_set_public_key($uri, $key = null) {
  * @return string                         An XML-DSig document
  */
 function mnet_sign_message($message, $privatekey = null) {
-    global $CFG, $MNET;
+    global $CFG;
     $digest = sha1($message);
 
+    $mnet = get_mnet_environment();
     // If the user hasn't supplied a private key (for example, one of our older,
     //  expired private keys, we get the current default private key and use that.
     if ($privatekey == null) {
-        $privatekey = $MNET->get_private_key();
+        $privatekey = $mnet->get_private_key();
     }
 
     // The '$sig' value below is returned by reference.
@@ -220,7 +219,7 @@ function mnet_sign_message($message, $privatekey = null) {
             </KeyInfo>
         </Signature>
         <object ID="XMLRPC-MSG">'.base64_encode($message).'</object>
-        <wwwroot>'.$MNET->wwwroot.'</wwwroot>
+        <wwwroot>'.$mnet->wwwroot.'</wwwroot>
         <timestamp>'.time().'</timestamp>
     </signedMessage>';
     return $message;
@@ -252,7 +251,7 @@ function mnet_sign_message($message, $privatekey = null) {
  * @return string                         An XML-ENC document
  */
 function mnet_encrypt_message($message, $remote_certificate) {
-    global $MNET;
+    $mnet = get_mnet_environment();
 
     // Generate a key resource from the remote_certificate text string
     $publickey = openssl_get_publickey($remote_certificate);
@@ -296,7 +295,7 @@ function mnet_encrypt_message($message, $remote_certificate) {
             </ReferenceList>
             <CarriedKeyName>XMLENC</CarriedKeyName>
         </EncryptedKey>
-        <wwwroot>'.$MNET->wwwroot.'</wwwroot>
+        <wwwroot>'.$mnet->wwwroot.'</wwwroot>
     </encryptedMessage>';
     return $message;
 }
@@ -467,12 +466,12 @@ function mnet_get_peer_host ($mnethostid) {
  * log in at their mnet identity provider (if they are not already logged in)
  * before ultimately being directed to the original url.
  *
- * uses global MNETIDPJUMPURL the url which user should initially be directed to
- *     MNETIDPJUMPURL is a URL associated with a moodle networking peer when it
+ * @param string $jumpurl the url which user should initially be directed to.
+ *     This is a URL associated with a moodle networking peer when it
  *     is fulfiling a role as an identity provider (IDP). Different urls for
  *     different peers, the jumpurl is formed partly from the IDP's webroot, and
  *     partly from a predefined local path within that webwroot.
- *     The result of the user hitting MNETIDPJUMPURL is that they will be asked
+ *     The result of the user hitting this jump url is that they will be asked
  *     to login (at their identity provider (if they aren't already)), mnet
  *     will prepare the necessary authentication information, then redirect
  *     them back to somewhere at the content provider(CP) moodle (this moodle)
@@ -481,9 +480,8 @@ function mnet_get_peer_host ($mnethostid) {
  *     1 - the destination url
  * @return string the url the remote user should be supplied with.
  */
-function mnet_sso_apply_indirection ($url) {
-    global $MNETIDPJUMPURL;
-    global $CFG;
+function mnet_sso_apply_indirection ($jumpurl, $url) {
+    global $USER, $CFG;
 
     $localpart='';
     $urlparts = parse_url($url[1]);
@@ -505,7 +503,7 @@ function mnet_sso_apply_indirection ($url) {
             $localpart .= '#'.$urlparts['fragment'];
         }
     }
-    $indirecturl = $MNETIDPJUMPURL . urlencode($localpart);
+    $indirecturl = $jumpurl . urlencode($localpart);
     //If we matched on more than just a url (ie an html link), return the url to an href format
     if ($url[0] != $url[1]) {
         $indirecturl = 'href="'.$indirecturl.'"';

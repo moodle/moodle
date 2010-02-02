@@ -34,16 +34,17 @@
  * @return string XML with any encryption envolope removed
  */
 function mnet_server_strip_encryption($HTTP_RAW_POST_DATA) {
-    global $MNET, $MNET_REMOTE_CLIENT;
+    $remoteclient = get_mnet_remote_client();
     $crypt_parser = new mnet_encxml_parser();
     $crypt_parser->parse($HTTP_RAW_POST_DATA);
+    $mnet = get_mnet_environment();
 
     if (!$crypt_parser->payload_encrypted) {
         return $HTTP_RAW_POST_DATA;
     }
 
     // Make sure we know who we're talking to
-    $host_record_exists = $MNET_REMOTE_CLIENT->set_wwwroot($crypt_parser->remote_wwwroot);
+    $host_record_exists = $remoteclient->set_wwwroot($crypt_parser->remote_wwwroot);
 
     if (false == $host_record_exists) {
         throw new mnet_server_exception(7020, 'wrong-wwwroot', $crypt_parser->remote_wwwroot);
@@ -58,9 +59,9 @@ function mnet_server_strip_encryption($HTTP_RAW_POST_DATA) {
     $payload          = '';    // Initialize payload var
 
     //                                          &$payload
-    $isOpen = openssl_open(base64_decode($data), $payload, base64_decode($key), $MNET->get_private_key());
+    $isOpen = openssl_open(base64_decode($data), $payload, base64_decode($key), $mnet->get_private_key());
     if ($isOpen) {
-        $MNET_REMOTE_CLIENT->was_encrypted();
+        $remoteclient->was_encrypted();
         return $payload;
     }
 
@@ -77,10 +78,9 @@ function mnet_server_strip_encryption($HTTP_RAW_POST_DATA) {
         $isOpen      = openssl_open(base64_decode($data), $payload, base64_decode($key), $keyresource);
         if ($isOpen) {
             // It's an older code, sir, but it checks out
-
-            $MNET_REMOTE_CLIENT->was_encrypted();
-            $MNET_REMOTE_CLIENT->encrypted_to($keyresource);
-            $MNET_REMOTE_CLIENT->set_pushkey();
+            $remoteclient->was_encrypted();
+            $remoteclient->encrypted_to($keyresource);
+            $remoteclient->set_pushkey();
             return $payload;
         }
     }
@@ -96,7 +96,7 @@ function mnet_server_strip_encryption($HTTP_RAW_POST_DATA) {
  * @return string XMLRPC request
  */
 function mnet_server_strip_signature($plaintextmessage) {
-    global $MNET, $MNET_REMOTE_CLIENT;
+    $remoteclient = get_mnet_remote_client();
     $sig_parser = new mnet_encxml_parser();
     $sig_parser->parse($plaintextmessage);
 
@@ -105,14 +105,14 @@ function mnet_server_strip_signature($plaintextmessage) {
     }
 
     // Record that the request was signed in some way
-    $MNET_REMOTE_CLIENT->was_signed();
+    $remoteclient->was_signed();
 
     // Load any information we have about this mnet peer
-    $MNET_REMOTE_CLIENT->set_wwwroot($sig_parser->remote_wwwroot);
+    $remoteclient->set_wwwroot($sig_parser->remote_wwwroot);
 
     $payload = base64_decode($sig_parser->data_object);
     $signature = base64_decode($sig_parser->signature);
-    $certificate = $MNET_REMOTE_CLIENT->public_key;
+    $certificate = $remoteclient->public_key;
 
     // If we don't have any certificate for the host, don't try to check the signature
     // Just return the parsed request
@@ -125,20 +125,20 @@ function mnet_server_strip_signature($plaintextmessage) {
     if ($signature_verified == 0) {
         // $signature was not generated for $payload using $certificate
         // Get the key the remote peer is currently publishing:
-        $currkey = mnet_get_public_key($MNET_REMOTE_CLIENT->wwwroot, $MNET_REMOTE_CLIENT->application);
+        $currkey = mnet_get_public_key($remoteclient->wwwroot, $remoteclient->application);
         // If the key the remote peer is currently publishing is different to $certificate
         if($currkey != $certificate) {
             // Try and get the server's new key through trusted means
-            $MNET_REMOTE_CLIENT->refresh_key();
+            $remoteclient->refresh_key();
             // If we did manage to re-key, try to verify the signature again using the new public key.
-            $certificate = $MNET_REMOTE_CLIENT->public_key;
+            $certificate = $remoteclient->public_key;
             $signature_verified = openssl_verify($payload, $signature, $certificate);
         }
     }
 
     if ($signature_verified == 1) {
-        $MNET_REMOTE_CLIENT->signature_verified();
-        $MNET_REMOTE_CLIENT->touch();
+        $remoteclient->signature_verified();
+        $remoteclient->touch();
     }
 
     $sig_parser->free_resource();
@@ -156,7 +156,6 @@ function mnet_server_strip_signature($plaintextmessage) {
  * @return string $text   The text of the error message
  */
 function mnet_server_fault($code, $text, $param = null) {
-    global $MNET_REMOTE_CLIENT;
     if (!is_numeric($code)) {
         $code = 0;
     }
@@ -179,7 +178,7 @@ function mnet_server_fault($code, $text, $param = null) {
  * @return string   $text   The XML text of the error message
  */
 function mnet_server_fault_xml($code, $text, $privatekey = null) {
-    global $MNET_REMOTE_CLIENT, $CFG;
+    global $CFG;
     // Replace illegal XML chars - is this already in a lib somewhere?
     $text = str_replace(array('<','>','&','"',"'"), array('&lt;','&gt;','&amp;','&quot;','&apos;'), $text);
 
@@ -218,14 +217,13 @@ function mnet_server_fault_xml($code, $text, $privatekey = null) {
  * @return  string                  The encoded response string
  */
 function mnet_server_prepare_response($response, $privatekey = null) {
-    global $MNET_REMOTE_CLIENT;
-
-    if ($MNET_REMOTE_CLIENT->request_was_signed) {
+    $remoteclient = get_mnet_remote_client();
+    if ($remoteclient->request_was_signed) {
         $response = mnet_sign_message($response, $privatekey);
     }
 
-    if ($MNET_REMOTE_CLIENT->request_was_encrypted) {
-        $response = mnet_encrypt_message($response, $MNET_REMOTE_CLIENT->public_key);
+    if ($remoteclient->request_was_encrypted) {
+        $response = mnet_encrypt_message($response, $remoteclient->public_key);
     }
 
     return $response;
@@ -245,7 +243,8 @@ function mnet_server_prepare_response($response, $privatekey = null) {
  * @return                     No return val - just echo the response
  */
 function mnet_server_dispatch($payload) {
-    global $CFG, $MNET_REMOTE_CLIENT, $DB;
+    global $CFG, $DB;
+    $remoteclient = get_mnet_remote_client();
     // xmlrpc_decode_request returns an array of parameters, and the $method
     // variable (which is passed by reference) is instantiated with the value from
     // the methodName tag in the xml payload
@@ -302,7 +301,7 @@ function mnet_server_dispatch($payload) {
             }
             if ($method == 'system.' . $m || $method == 'system/' . $m) {
                 xmlrpc_server_register_method($xmlrpcserver, $method, $handler);
-                $response = xmlrpc_server_call_method($xmlrpcserver, $payload, $MNET_REMOTE_CLIENT, array("encoding" => "utf-8"));
+                $response = xmlrpc_server_call_method($xmlrpcserver, $payload, $remoteclient, array("encoding" => "utf-8"));
                 $response = mnet_server_prepare_response($response);
                 echo $response;
                 xmlrpc_server_destroy($xmlrpcserver);
@@ -321,7 +320,7 @@ function mnet_server_dispatch($payload) {
             return;
     // if the rpc record isn't found, check to see if dangerous mode is on
     ////////////////////////////////////// DANGEROUS
-        } else if ('dangerous' == $CFG->mnet_dispatcher_mode && $MNET_REMOTE_CLIENT->plaintext_is_ok()) {
+        } else if ('dangerous' == $CFG->mnet_dispatcher_mode && $remoteclient->plaintext_is_ok()) {
             $functionname = array_pop($callstack);
 
             $filename = clean_param(implode('/',$callstack), PARAM_PATH);
@@ -522,8 +521,9 @@ function mnet_server_invoke_dangerous_method($includefile, $methodname, $method,
  * @return string                 The XML-RPC response
  */
 function mnet_keyswap($function, $params) {
-    global $CFG, $MNET;
+    global $CFG;
     $return = array();
+    $mnet = get_mnet_environment();
 
     if (!empty($CFG->mnet_register_allhosts)) {
         $mnet_peer = new mnet_peer();
@@ -533,7 +533,7 @@ function mnet_keyswap($function, $params) {
             $mnet_peer->commit();
         }
     }
-    return $MNET->public_key;
+    return $mnet->public_key;
 }
 
 /**
@@ -545,9 +545,10 @@ function mnet_keyswap($function, $params) {
  * @throws mnet_server_exception
  */
 function mnet_verify_permissions($rpcrecord) {
-    global $CFG, $MNET_REMOTE_CLIENT, $DB;
+    global $CFG, $DB;
+    $remoteclient = get_mnet_remote_client();
 
-    $id_list = $MNET_REMOTE_CLIENT->id;
+    $id_list = $remoteclient->id;
     if (!empty($CFG->mnet_all_hosts_id)) {
         $id_list .= ', '.$CFG->mnet_all_hosts_id;
     }
@@ -572,7 +573,7 @@ function mnet_verify_permissions($rpcrecord) {
 }
 
 /**
- * Figure out exactly what needs to be called and stashes it in $MNET_REMOTE_CLIENT
+ * Figure out exactly what needs to be called and stashes it in $remoteclient
  * Does some further verification that the method is callable
  *
  * @param string   $method the full xmlrpc method that was called eg auth/mnet/auth.php/user_authorise
@@ -582,7 +583,8 @@ function mnet_verify_permissions($rpcrecord) {
  * @throws mnet_server_exception
  */
 function mnet_setup_dummy_method($method, $callstack, $rpcrecord) {
-    global $MNET_REMOTE_CLIENT, $CFG;
+    global $CFG;
+    $remoteclient = get_mnet_remote_client();
     // verify that the callpath in the stack matches our records
     // callstack will look like array('mod', 'forum', 'lib.php', 'forum_add_instance');
     $path = get_plugin_directory($rpcrecord->plugintype, $rpcrecord->pluginname, false);
@@ -608,12 +610,12 @@ function mnet_setup_dummy_method($method, $callstack, $rpcrecord) {
             if (!is_callable(array($object, $rpcrecord->functionname))) {
                 throw new mnet_server_exception(706, "nosuchfunction");
             }
-            $MNET_REMOTE_CLIENT->object_to_call($object);
+            $remoteclient->object_to_call($object);
         } else {
             if (!is_callable(array($rpcrecord->classname, $rpcrecord->functionname))) {
                 throw new mnet_server_exception(706, "nosuchfunction");
             }
-            $MNET_REMOTE_CLIENT->static_location($rpcrecord->classname);
+            $remoteclient->static_location($rpcrecord->classname);
         }
     }
 }
@@ -639,13 +641,12 @@ function mnet_setup_dummy_method($method, $callstack, $rpcrecord) {
  *                                 function, whatever it may be.
  */
 function mnet_server_dummy_method($methodname, $argsarray, $functionname) {
-    global $MNET_REMOTE_CLIENT;
-
+    $remoteclient = get_mnet_remote_client();
     try {
-        if (is_object($MNET_REMOTE_CLIENT->object_to_call)) {
-            return @call_user_func_array(array($MNET_REMOTE_CLIENT->object_to_call,$functionname), $argsarray);
-        } else if (!empty($MNET_REMOTE_CLIENT->static_location)) {
-            return @call_user_func_array(array($MNET_REMOTE_CLIENT->static_location, $functionname), $argsarray);
+        if (is_object($remoteclient->object_to_call)) {
+            return @call_user_func_array(array($remoteclient->object_to_call,$functionname), $argsarray);
+        } else if (!empty($remoteclient->static_location)) {
+            return @call_user_func_array(array($remoteclient->static_location, $functionname), $argsarray);
         } else {
             return @call_user_func_array($functionname, $argsarray);
         }
