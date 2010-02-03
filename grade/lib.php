@@ -1498,7 +1498,8 @@ class grade_structure {
             }
 
             $url->param('action', 'show');
-            $hideicon = $OUTPUT->action_icon($url, $title, 't/'.$type, array('alt'=>$strshow, 'class'=>'iconsmall'));
+
+            $hideicon = $OUTPUT->action_icon($url, $tooltip, 't/'.$type, array('alt'=>$strshow, 'class'=>'iconsmall'));
 
         } else {
             $url->param('action', 'hide');
