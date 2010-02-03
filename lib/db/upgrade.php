@@ -3334,6 +3334,7 @@ function xmldb_main_upgrade($oldversion=0) {
             $preamble = preg_replace('/^ +/m', '', $preamble);
             set_config('filter_tex_latexpreamble', $preamble);
         }
+        upgrade_main_savepoint($result, 2007101571.04);
     }
 
     return $result;
