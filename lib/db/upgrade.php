@@ -3328,6 +3328,14 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101571.03);
     }
 
+    // MDL-21407. Trim leading spaces from default tex latexpreamble causing problems under some confs
+    if ($result && $oldversion < 2007101571.04) {
+        if ($preamble = $CFG->filter_tex_latexpreamble) {
+            $preamble = preg_replace('/^ +/m', '', $preamble);
+            set_config('filter_tex_latexpreamble', $preamble);
+        }
+    }
+
     return $result;
 }
 
