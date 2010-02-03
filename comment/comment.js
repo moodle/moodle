@@ -198,7 +198,7 @@ M.core_comment = {
                 });
             },
 
-            delete: function(id) {
+            dodelete: function(id) { // note: delete is a reserved work in javascript!
                 var scope = this;
                 var params = {'commentid': id};
     
@@ -250,7 +250,7 @@ M.core_comment = {
                             var re = new RegExp("comment-delete-"+this.client_id+"-(\\d+)", "i");
                             var result = id.match(re);
                             if (result[1]) {
-                                this.delete(result[1]);
+                                this.dodelete(result[1]);
                             }
                             //this.load(result[1]);
                         }, scope, node);
