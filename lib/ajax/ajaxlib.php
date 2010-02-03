@@ -346,7 +346,7 @@ class page_requirements_manager {
         } else {
             if ($dir = get_component_directory($name, false)) {
                 if (file_exists("$CFG->dirroot/$dir/module.js")) {
-                    $module = array('fullpath'=>"/$dir/module.js", 'requires' => array());
+                    $module = array('name'=>$name, 'fullpath'=>"/$dir/module.js", 'requires' => array());
                 }
             }
         }
