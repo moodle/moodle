@@ -26,14 +26,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * This constant is used for html attributes which need to have an empty
- * value and still be output by the renderers (e.g. alt="");
- *
- * @constant @EMPTY@
- */
-define('HTML_ATTR_EMPTY', '@EMPTY@');
-
 
 /**
  * Interface marking other classes as suitable for renderer_base::render()
@@ -155,7 +147,7 @@ class help_icon implements renderable {
     /**
      * @var string $title A descriptive text for title tooltip
      */
-    public $title = '';
+    public $title = null;
     /**
      * @var string $component Component name, the same as in get_string()
      */
@@ -163,7 +155,7 @@ class help_icon implements renderable {
     /**
      * @var string $linktext Extra descriptive text next to the icon
      */
-    public $linktext = '';
+    public $linktext = null;
 
     /**
      * Constructor: sets up the other components in case they are needed
@@ -225,7 +217,7 @@ class single_button implements renderable {
      * Button tooltip
      * @var string
      */
-    var $tooltip = '';
+    var $tooltip = null;
     /**
      * Form id
      * @var string
@@ -384,12 +376,14 @@ class html_writer {
         if ($value instanceof moodle_url) {
             return ' ' . $name . '="' . $value->out() . '"';
         }
-        $value = trim($value);
-        if ($value == HTML_ATTR_EMPTY) {
-            return ' ' . $name . '=""';
-        } else if ($value || is_numeric($value)) { // We want 0 to be output.
-            return ' ' . $name . '="' . s($value) . '"';
+
+        // special case, we do not want these in output
+        if ($value === null) {
+            return '';
         }
+
+        // no sloppy trimming here!
+        return ' ' . $name . '="' . s($value) . '"';
     }
 
     /**
@@ -698,15 +692,15 @@ class html_component {
     /**
      * @var string value to use for the id attribute of this HTML tag.
      */
-    public $id = '';
+    public $id = null;
     /**
      * @var string $alt value to use for the alt attribute of this HTML tag.
      */
-    public $alt = '';
+    public $alt = null;
     /**
      * @var string $style value to use for the style attribute of this HTML tag.
      */
-    public $style = '';
+    public $style = null;
     /**
      * @var array class names to add to this HTML element.
      */
@@ -714,7 +708,7 @@ class html_component {
     /**
      * @var string $title The title attributes applicable to any XHTML element
      */
-    public $title = '';
+    public $title = null;
     /**
      * An optional array of component_action objects handling the action part of this component.
      * @var array $actions
@@ -1475,7 +1469,7 @@ class html_select_option extends labelled_html_component {
      * @param string $alt
      * @return html_select_option A component ready for $OUTPUT->checkbox()
      */
-    public static function make_checkbox($value, $checked, $label, $alt='') {
+    public static function make_checkbox($value, $checked, $label, $alt=null) {
         $checkbox = new html_select_option();
         $checkbox->value = $value;
         $checkbox->selected = $checked;
@@ -1571,7 +1565,7 @@ class html_field extends labelled_html_component {
      * @param int $maxlength Sets the maxlength attribute of the field. Not set by default
      * @return html_field The field component
      */
-    public static function make_text($name='unnamed', $value='', $alt='', $maxlength=0) {
+    public static function make_text($name='unnamed', $value='', $alt=null, $maxlength=0) {
         $field = new html_field();
         if (empty($alt)) {
             $alt = $name;
@@ -1747,7 +1741,7 @@ class html_table extends labelled_html_component {
                 if ($aa) {
                     $this->align[$key] = 'text-align:'. fix_align_rtl($aa) .';';  // Fix for RTL languages
                 } else {
-                    $this->align[$key] = '';
+                    $this->align[$key] = null;
                 }
             }
         }
@@ -1756,7 +1750,7 @@ class html_table extends labelled_html_component {
                 if ($ss) {
                     $this->size[$key] = 'width:'. $ss .';';
                 } else {
-                    $this->size[$key] = '';
+                    $this->size[$key] = null;
                 }
             }
         }
@@ -1772,13 +1766,13 @@ class html_table extends labelled_html_component {
         if (!empty($this->head)) {
             foreach ($this->head as $key => $val) {
                 if (!isset($this->align[$key])) {
-                    $this->align[$key] = '';
+                    $this->align[$key] = null;
                 }
                 if (!isset($this->size[$key])) {
-                    $this->size[$key] = '';
+                    $this->size[$key] = null;
                 }
                 if (!isset($this->wrap[$key])) {
-                    $this->wrap[$key] = '';
+                    $this->wrap[$key] = null;
                 }
 
             }
@@ -1870,19 +1864,19 @@ class html_table_cell extends html_component {
     /**
      * @var string $abbr Abbreviated version of the contents of the cell
      */
-    public $abbr = '';
+    public $abbr = null;
     /**
      * @var int $colspan Number of columns this cell should span
      */
-    public $colspan = '';
+    public $colspan = null;
     /**
      * @var int $rowspan Number of rows this cell should span
      */
-    public $rowspan = '';
+    public $rowspan = null;
     /**
      * @var string $scope Defines a way to associate header cells and data cells in a table
      */
-    public $scope = '';
+    public $scope = null;
     /**
      * @var boolean $header Whether or not this cell is a header cell
      */
@@ -1918,7 +1912,7 @@ class html_link extends html_component {
     /**
      * @var string $text The HTML text that will appear between the link tags
      */
-    public $text = '';
+    public $text = null;
 
     /**
      * @var boolean $disabled Whether or not this link is disabled (will be rendered as plain text)
@@ -1936,7 +1930,7 @@ class html_link extends html_component {
      * @param moodle_url|string $url url of the image
      * @param array $options link attributes such as title, id, disabled, disableifcurrent, etc.
      */
-    public function __construct($url = null, $text = '', array $options = null) {
+    public function __construct($url = null, $text = null, array $options = null) {
         parent::__construct($options);
 
         if (is_null($url)) {
@@ -2083,9 +2077,9 @@ class html_image extends labelled_html_component {
         // no general class here, use custom class instead or img element directly in css selectors
         parent::prepare($output, $page, $target);
 
-        if ($this->alt === '') {
+        if ($this->alt === null) {
             // needs to be set for accessibility reasons
-            $this->alt = HTML_ATTR_EMPTY;
+            $this->alt = '';
         }
     }
 }

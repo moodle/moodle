@@ -1449,7 +1449,7 @@ class core_renderer extends renderer_base {
                 $alt = get_string('pictureof', '', fullname($user));
             }
         } else {
-            $alt = HTML_ATTR_EMPTY;
+            $alt = '';
         }
 
         if (empty($userpicture->size)) {
