@@ -198,7 +198,7 @@ M.core_comment = {
                 });
             },
 
-            dodelete: function(id) { // note: delete is a reserved work in javascript!
+            dodelete: function(id) { // note: delete is a reserved word in javascript, chrome and safary do not like it at all here!
                 var scope = this;
                 var params = {'commentid': id};
     
