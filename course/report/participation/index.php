@@ -49,8 +49,6 @@
         $action = '';
     }
 
-    $PAGE->requires->js('/course/report/participation/participation.js')->in_head();
-
     $PAGE->set_title($course->shortname .': '. $strparticipation);
     $PAGE->set_heading($course->fullname);
     $PAGE->navbar->add($strreports, new moodle_url('/course/report.php', array('id'=>$course->id)));
@@ -244,7 +242,7 @@
 
         echo '<h2>'.get_string('counteditems', '', $a).'</h2>'."\n";
 
-        echo '<form action="'.$CFG->wwwroot.'/user/action_redir.php" method="post" id="studentsform" onsubmit="return checksubmit(this);">'."\n";
+        echo '<form action="'.$CFG->wwwroot.'/user/action_redir.php" method="post" id="studentsform">'."\n";
         echo '<div>'."\n";
         echo '<input type="hidden" name="id" value="'.$id.'" />'."\n";
         echo '<input type="hidden" name="returnto" value="'. s($FULLME) .'" />'."\n";
@@ -253,7 +251,7 @@
         foreach ($users as $u) {
             $data = array('<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&amp;course='.$course->id.'">'.fullname($u,true).'</a>'."\n",
                           ((!empty($u->count)) ? get_string('yes').' ('.$u->count.') ' : get_string('no')),
-                          '<input type="checkbox" name="user'.$u->userid.'" value="'.$u->count.'" />'."\n",
+                          '<input type="checkbox" class="usercheckbox" name="user'.$u->userid.'" value="'.$u->count.'" />'."\n",
                           );
             $table->add_data($data);
         }
@@ -267,24 +265,25 @@
             echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.SHOW_ALL_PAGE_SIZE.'">'.get_string('showall', '', $matchcount).'</a></div>'."\n";
         }
 
-        echo '<input type="button" onclick="checkall()" value="'.get_string('selectall').'" /> '."\n";
-        echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> '."\n";
+        echo '<div class="selectbuttons">';
+        echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> '."\n";
+        echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> '."\n";
         if ($perpage >= $matchcount) {
-            echo '<input type="button" onclick="checknos()" value="'.get_string('selectnos').'" />'."\n";
+            echo '<input type="button" id="checknos" value="'.get_string('selectnos').'" />'."\n";
         }
+        echo '</div>';
+        echo '<div>';
+        echo '<label for="formaction">'.get_string("withselectedusers").'</label>';
         $displaylist['messageselect.php'] = get_string('messageselectadd');
-        $select = new html_select();
-        $select->options = $displaylist;
-        $select->name = "formaction";
-        $select->label = get_string("withselectedusers");
-        $select->add_action('change', 'conditionalsubmit', array('formid' => 'studentsform'));
-        echo $OUTPUT->select($select);
+        echo html_writer::select($displaylist, 'formaction', '', array(''=>'choosedots'), array('id'=>'formactionselect'));
         echo $OUTPUT->help_icon("participantswithselectedusers", get_string("withselectedusers"));
         echo '<input type="submit" value="' . get_string('ok') . '" />'."\n";
+        echo '</div>';
         echo '</div>'."\n";
         echo '</form>'."\n";
         echo '</div>'."\n";
 
+        $PAGE->requires->js_init_call('M.coursereport_participation.init');
     }
 
     echo $OUTPUT->footer();
