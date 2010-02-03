@@ -223,7 +223,7 @@ YAHOO.moodle.chat.append_msg = function(key, msg, row) {
 
 YAHOO.moodle.chat.update_cb = {
     success: function(o){
-        var data = json_decode(o.responseText);
+        var data = Y.JSON.parse(o.responseText);
         if (!data) {
             return;
         }

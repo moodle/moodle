@@ -86,7 +86,7 @@ foreach ($string as $key=>$value) {
 
 $lang = str_replace('_utf8', '', $lang); // use more standard language codes
 
-$output = 'tinyMCE.addI18n({'.$lang.':'.json_encode($result).'});';
+$output = 'tinyMCE.addI18n({'.$lang.':'.Y.JSON.stringify($result).'});';
 
 $lifetime = '10'; // TODO: increase later
 @header('Content-type: text/javascript; charset=utf-8');

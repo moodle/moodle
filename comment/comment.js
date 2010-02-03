@@ -121,7 +121,7 @@ M.core_comment = {
                                 alert('IO FATAL');
                                 return;
                             }
-                            var data = json_decode(o.responseText);
+                            var data = Y.JSON.parse(o.responseText);
                             if (data.error) {
                                 alert(data.error);
                                 return false;
