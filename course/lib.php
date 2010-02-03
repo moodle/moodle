@@ -1522,6 +1522,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 <form class='togglecompletion$extraclass' method='post' action='togglecompletion.php'><div>";
                         echo "
 <input type='hidden' name='id' value='{$mod->id}' />
+<input type='hidden' name='sesskey' value='".sesskey()."' />
 <input type='hidden' name='completionstate' value='$newstate' />
 <input type='image' src='$imgsrc' alt='$imgalt' title='$imgtitle' />
 </div></form>";

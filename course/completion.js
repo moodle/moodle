@@ -48,12 +48,12 @@ function completion_handle_response(o) {
   }
   // Change image
   if(this.otherState==1) {
-    this.image.src=this.image.src.replace(/n\.gif$/,'y.gif');
+    this.image.src = M.util.image_url('i/completion-manual-y', 'moodle');
     this.image.title=completion_strtitley;
     this.image.alt=completion_stralty;
     this.otherState=0;
   } else {
-    this.image.src=this.image.src.replace(/y\.gif$/,'n.gif');
+    this.image.src = M.util.image_url('i/completion-manual-n', 'moodle');
     this.image.title=completion_strtitlen;
     this.image.alt=completion_straltn;
     this.otherState=1;
@@ -89,7 +89,7 @@ function completion_toggle(e) {
   var target = M.cfg.wwwroot + '/course/togglecompletion.php';
   YAHOO.util.Connect.asyncRequest('POST',target,
       {success:completion_handle_response,failure:completion_handle_failure,scope:this},
-      'id='+this.cmid+'&completionstate='+this.otherState+'&fromajax=1');
+      'id='+this.cmid+'&completionstate='+this.otherState+'&fromajax=1&sesskey='+M.cfg.sesskey);
 }
 
 function completion_set_progressicon_visibility(spanid,displaystatus) {
