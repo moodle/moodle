@@ -3029,6 +3029,16 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
         upgrade_main_savepoint($result, 2010020300);
     }
+
+    // MDL-21407. Trim leading spaces from default tex latexpreamble causing problems under some confs
+    if ($result && $oldversion < 2010020301) {
+        if ($preamble = $CFG->filter_tex_latexpreamble) {
+            $preamble = preg_replace('/^ +/m', '', $preamble);
+            set_config('filter_tex_latexpreamble', $preamble);
+        }
+        upgrade_main_savepoint($result, 2010020301);
+    }
+
     return $result;
 }
 

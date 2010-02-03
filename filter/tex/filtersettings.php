@@ -5,9 +5,8 @@ require_once($CFG->dirroot.'/filter/tex/lib.php');
 $items = array();
 $items[] = new admin_setting_heading('filter_tex_latexheading', get_string('latexsettings', 'admin'), '');
 $items[] = new admin_setting_configtextarea('filter_tex_latexpreamble', get_string('latexpreamble','admin'),
-               '', " \\usepackage[latin1]{inputenc}\n \\usepackage{amsmath}\n \\usepackage{amsfonts}\n \\RequirePackage{amsmath,amssymb,latexsym}\n");
+               '', "\\usepackage[latin1]{inputenc}\n\\usepackage{amsmath}\n\\usepackage{amsfonts}\n\\RequirePackage{amsmath,amssymb,latexsym}\n");
 $items[] = new admin_setting_configtext('filter_tex_latexbackground', get_string('backgroundcolour', 'admin'), '', '#FFFFFF');
-$items[] = new admin_setting_configtext('filter_tex_density', get_string('density', 'admin'), '', '120', PARAM_INT);
 $items[] = new admin_setting_configtext('filter_tex_density', get_string('density', 'admin'), '', '120', PARAM_INT);
 
 if (PHP_OS=='Linux') {
