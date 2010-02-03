@@ -1044,7 +1044,7 @@ class core_renderer extends renderer_base {
     protected function render_single_button(single_button $button) {
         $attributes = array('type'     => 'submit',
                             'value'    => $button->label,
-                            'disabled' => $button->disabled,
+                            'disabled' => $button->disabled ? 'disabled' : null,
                             'title'    => $button->tooltip);
 
         if ($button->actions) {
@@ -1109,7 +1109,7 @@ class core_renderer extends renderer_base {
             $buttonattributes = array('class' => $form->button->get_classes_string(),
                                       'type' => 'submit',
                                       'value' => $form->button->text,
-                                      'disabled' => $form->button->disabled,
+                                      'disabled' => $form->button->disabled ? 'disabled' : null,
                                       'id' => $form->button->id);
 
             if ($form->jssubmitaction) {
@@ -1803,21 +1803,15 @@ class core_renderer extends renderer_base {
 
         $output = html_writer::start_tag('span', array('class' => "checkbox $name")) . "\n";
 
-        if ($option->selected) {
-            $option->selected = 'checked';
-        } else {
-            $option->selected = '';
-        }
-
         $output .= html_writer::empty_tag('input', array(
                 'type' => 'checkbox',
                 'value' => $option->value,
                 'name' => $name,
                 'id' => $option->id,
                 'alt' => $option->alt,
-                'disabled' => $option->disabled,
+                'disabled' => $option->disabled  ? 'disabled' : null,
                 'class' => $option->get_classes_string(),
-                'checked' => $option->selected));
+                'checked' => $option->selected ? 'selected' : null));
         $output .= $this->label($option->label);
 
         $output .= html_writer::end_tag('span');
@@ -1840,9 +1834,9 @@ class core_renderer extends renderer_base {
         if ($option instanceof html_select_option) {
             return html_writer::tag('option', array(
                     'value' => $option->value,
-                    'disabled' => $option->disabled,
+                    'disabled' => $option->disabled ? 'disabled' : null,
                     'class' => $option->get_classes_string(),
-                    'selected' => $option->selected), $option->text);
+                    'selected' => $option->selected ? 'selected' : null), $option->text);
         } else if ($option instanceof html_select_optgroup) {
             $output = html_writer::start_tag('optgroup', array('label' => $option->text, 'class' => $option->get_classes_string()));
             foreach ($option->options as $selectoption) {
@@ -1882,7 +1876,7 @@ class core_renderer extends renderer_base {
                 'name' => $field->name,
                 'id' => $field->id,
                 'value' => $field->value,
-                'disabled' => $field->disabled,
+                'disabled' => $field->disabled ? 'disabled' : null,
                 'style' => $field->style,
                 'alt' => $field->alt,
                 'title' => $field->title,
