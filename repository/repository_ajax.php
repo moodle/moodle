@@ -136,7 +136,7 @@
 <html><head>
 <script type="text/javascript">
 if(window.opener){
-    active_filepicker.list();
+    M.core_filepicker.active.list();
     window.close();
 } else {
     alert("{$strhttpsbug }");

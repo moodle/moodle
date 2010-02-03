@@ -147,6 +147,7 @@ class page_requirements_manager {
         $this->M_yui_loader->insertBefore = 'firstthemesheet';
         $this->M_yui_loader->modules      = array();
         $this->add_yui2_modules(); // adds loading info for YUI2
+        $this->js_module($this->find_module('core_filepicker'));
 
         // YUI3 init code
         $libs = array('cssreset', 'cssbase', 'cssfonts', 'cssgrids', 'node', 'loader'); // full CSS reset + basic libs
@@ -335,9 +336,7 @@ class page_requirements_manager {
         if (strpos($name, 'core_') === 0) {
             // must be some core stuff
             if ($name === 'core_filepicker') {
-                $module = array('name'=>$name, 'fullpath'=>'/repository/filepicker.js', 'requires' => array('base', 'node', 'json', 'async-queue', 'io'));
-            } else if($name === 'core_filemanager') {
-                $module = array('name'=>$name, 'fullpath'=>'/lib/form/filemanager.js', 'requires' => array('base', 'io', 'node', 'json', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview'));
+                $module = array('name'=>$name, 'fullpath'=>'/repository/filepicker.js', 'requires' => array('base', 'node', 'json', 'async-queue', 'io', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview'));
             } else if($name === 'core_comment') {
                 $module = array('name'=>$name, 'fullpath'=>'/comment/comment.js', 'requires' => array('base', 'io', 'node', 'json', 'yui2-animation'));
             } else if($name === 'core_role') {
@@ -496,14 +495,16 @@ class page_requirements_manager {
      *      The first argument is always the YUI3 Y instance with all required dependencies
      *      already loaded.
      * @param bool $ondomready wait for dom ready (helps with some IE problems when modifying DOM)
+     * @param array $module JS module specification array
      * @return void
      */
-    public function js_init_call($function, array $extraarguments = null, $ondomready = false) {
+    public function js_init_call($function, array $extraarguments = null, $ondomready = false, array $module = null) {
         $jscode = js_writer::function_call_with_Y($function, $extraarguments);
-        $module = null;
-        // detect module automatically
-        if (preg_match('/M\.([a-z0-9]+_[^\.]+)/', $function, $matches)) {
-            $module = $this->find_module($matches[1]);
+        if (!$module) {
+            // detect module automatically
+            if (preg_match('/M\.([a-z0-9]+_[^\.]+)/', $function, $matches)) {
+                $module = $this->find_module($matches[1]);
+            }
         }
 
         $this->js_init_code($jscode, $ondomready, $module);

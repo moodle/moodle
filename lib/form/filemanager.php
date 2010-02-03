@@ -46,8 +46,6 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
         }
         parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
-        $PAGE->requires->js_module('core_filepicker');
-        $PAGE->requires->js_module('core_filemanager');
     }
 
     function setName($name) {
@@ -199,9 +197,10 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
 
         $html = $this->_getTabs();
 
-        $PAGE->requires->js_function_call('destroy_item', array("nonjs-filemanager-{$client_id}"))->on_dom_ready();
-        $PAGE->requires->js_function_call('show_item', array("filemanager-wrapper-{$client_id}"))->on_dom_ready();
-        $PAGE->requires->js_function_call('launch_filemanager', array($options))->on_dom_ready();
+        
+        $module = array('name'=>'form_filemanager', 'fullpath'=>'/lib/form/filemanager.js', 'requires' => array('core_filepicker', 'base', 'io', 'node', 'json', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview'));
+        $PAGE->requires->js_module($module);
+        $PAGE->requires->js_init_call('M.form_filemanager.init', array($options), true, $module);
 
         // print out this only once
         if (empty($CFG->filemanagertemplateloaded)) {

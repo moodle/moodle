@@ -52,15 +52,15 @@ class tinymce_texteditor extends texteditor {
     }
 
     public function head_setup() {
-        global $CFG, $PAGE;
-        require_once("$CFG->dirroot/repository/lib.php");
-        $PAGE->requires->js('/lib/editor/tinymce/tiny_mce_src.js');
-        $PAGE->requires->js('/lib/editor/tinymce/extra/tinymce_utils.js');
     }
     
-    public function use_editor($elementid, array $options=null) {
+    public function use_editor($elementid, array $options=null, $fpoptions=null) {
         global $PAGE;
-        $PAGE->requires->js_function_call('mce_init_editor', array($elementid, $this->get_init_params($elementid, $options)));
+        $PAGE->requires->js('/lib/editor/tinymce/tiny_mce_src.js');
+        $PAGE->requires->js_init_call('M.editor_tinymce.init_editor', array($elementid, $this->get_init_params($elementid, $options)), true);
+        if ($fpoptions) {
+            $PAGE->requires->js_init_call('M.editor_tinymce.init_filepicker', array($elementid, $fpoptions), true);
+        }
     }
 
     protected function get_init_params($elementid, array $options=null) {
@@ -131,7 +131,7 @@ class tinymce_texteditor extends texteditor {
 
         if (empty($options['legacy'])) {
             if (isset($options['maxfiles']) and $options['maxfiles'] != 0) {
-                $params['file_browser_callback'] = "mce_moodlefilemanager";
+                $params['file_browser_callback'] = "M.editor_tinymce.filepicker";
             }
         }
 

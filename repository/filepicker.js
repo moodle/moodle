@@ -39,33 +39,47 @@
  * this.logindata, cached login form
  */
 
-var active_filepicker = null;
+M.core_filepicker = M.core_filepicker || {};
 
-M.core_filepicker = (function(){
-    function core_filepicker (args) {
-        core_filepicker.superclass.constructor.apply(this, arguments);
+/**
+ * instances of file pickers used on page
+ */
+M.core_filepicker.instances = M.core_filepicker.instances || {};
+
+/**
+ * Init and show file picker
+ */
+M.core_filepicker.show = function(Y, options) {
+    if (!M.core_filepicker.instances[options.client_id]) {
+        M.core_filepicker.init(Y, options); 
     }
-    core_filepicker.NAME = "FilePicker";
-    core_filepicker.ATTRS = {
+    M.core_filepicker.instances[options.client_id].show();
+};
+
+/**
+ * Add new file picker to current instances
+ */
+M.core_filepicker.init = function(Y, options) {
+    var FilePickerHelper = function(options) {
+        FilePickerHelper.superclass.constructor.apply(this, arguments);
+    }
+
+    FilePickerHelper.NAME = "FilePickerHelper";
+    FilePickerHelper.ATTRS = {
         options: {},
         lang: {}
     };
-    core_filepicker.json_decode = function(string, source) {
-        var obj = null;
-        try {
-            obj = Y.JSON.parse(string);
-        } catch(e) {
-            alert(mstr.repository.invalidjson+' - |'+source+'| -'+stripHTML(string));
-        }
-        return obj;
-    }
-    Y.extend(core_filepicker, Y.Base, {
+
+    Y.extend(FilePickerHelper, Y.Base, {
         api: M.cfg.wwwroot+'/repository/repository_ajax.php',
-        initializer: function(args) {
-            this.options = args;
+
+        initializer: function(options) {
+            this.options = options;
         },
+
         destructor: function() {
         },
+
         request: function(args, redraw) {
             var api = this.api + '?action='+args.action;
             var params = {};
@@ -95,7 +109,12 @@ M.core_filepicker = (function(){
                             alert('IO FATAL');
                             return;
                         }
-                        var data = core_filepicker.json_decode(o.responseText);
+                        var data = null;
+                        try {
+                            data = Y.JSON.parse(o.responseText);
+                        } catch(e) {
+                            alert(mstr.repository.invalidjson+' - |'+source+'| -'+stripHTML(o.responseText));
+                        }
                         args.callback(id,data,p);
                     }
                 },
@@ -106,7 +125,8 @@ M.core_filepicker = (function(){
                     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                     'User-Agent': 'MoodleFilePicker/3.0'
                 },
-                data: build_querystring(params)
+                data: build_querystring(params),
+                context: this
             };
             if (args.form) {
                 cfg.form = args.form;
@@ -116,6 +136,7 @@ M.core_filepicker = (function(){
                 this.wait('load');
             }
         },
+
         build_tree: function(node, level) {
             var client_id = this.options.client_id;
             if(node.children) {
@@ -773,7 +794,7 @@ M.core_filepicker = (function(){
             Y.one('#panel-'+client_id).appendChild(upload_form);
             var scope = this;
             Y.one('#'+id+'_action').on('click', function() {
-                Y.use('io-upload-iframe' ,function() {
+                Y.use('io-upload-iframe', function() {
                     scope.request({
                             scope: scope,
                             action:'upload',
@@ -1043,7 +1064,7 @@ M.core_filepicker = (function(){
             }
             var panel = Y.one('#panel-'+client_id);
             var p = this.filepath;
-            if(p && p.length!=0) {
+            if (p && p.length!=0) {
                 var path = Y.Node.create('<div id="path-'+client_id+'" class="fp-pathbar"></div>');
                 panel.appendChild(path);
                 for(var i = 0; i < p.length; i++) {
@@ -1074,5 +1095,6 @@ M.core_filepicker = (function(){
             this.render();
         }
     });
-    return core_filepicker;
-})();
+
+    M.core_filepicker.instances[options.client_id] = new FilePickerHelper(options);
+};

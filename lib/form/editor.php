@@ -119,6 +119,8 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             return $this->getFrozenHtml();
         }
 
+        $ctx = $this->_options['context'];
+
         $id           = $this->_attributes['id'];
         $elname       = $this->_attributes['name'];
 
@@ -146,9 +148,34 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $formats[$fid] = $strformats[$fid];
         }
 
+        // get filepicker info
+        $fpoptions = null;
+        if ($maxfiles != 0 ) {
+            if (empty($draftitemid)) {
+                // no existing area info provided - let's use fresh new draft area
+                require_once("$CFG->libdir/filelib.php");
+                $this->setValue(array('itemid'=>file_get_unused_draft_itemid()));
+                $draftitemid = $this->_values['itemid'];
+            }
+
+            $args = new stdclass;
+            // need these three to filter repositories list
+            $args->accepted_types = array('image', 'video', 'media');
+            $args->return_types = (FILE_INTERNAL | FILE_EXTERNAL);
+            $args->context = $ctx;
+            $args->env = 'filepicker';
+
+            $fpoptions = initialise_filepicker($args);
+
+            $fpoptions->client_id = uniqid();
+            $fpoptions->maxbytes = $this->_options['maxbytes'];
+            $fpoptions->maxfiles = 1;
+            $fpoptions->env = 'editor';
+            $fpoptions->itemid = $draftitemid;
+        }
+
     /// print text area - TODO: add on-the-fly switching, size configuration, etc.
-        $editor->use_editor($id, $this->_options);
-        $ctx = $this->_options['context'];
+        $editor->use_editor($id, $this->_options, $fpoptions);
 
         $str .= '<div><textarea id="'.$id.'" name="'.$elname.'[text]" rows="15" cols="80">';
         $str .= s($text);
@@ -164,45 +191,15 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         $str .= '</div>';
 
         if ($maxfiles != 0 ) { // 0 means no files, -1 unlimited
-            if (empty($draftitemid)) {
-                // no existing area info provided - let's use fresh new draft area
-                require_once("$CFG->libdir/filelib.php");
-                $this->setValue(array('itemid'=>file_get_unused_draft_itemid()));
-                $draftitemid = $this->_values['itemid'];
-            }
             $str .= '<div><input type="hidden" name="'.$elname.'[itemid]" value="'.$draftitemid.'" /></div>';
         /// embedded image files - TODO: hide on the fly when switching editors
             $str .= '<div id="'.$id.'_filemanager">';
             $editorurl = "$CFG->wwwroot/repository/filepicker.php?action=browse&amp;env=editor&amp;itemid=$draftitemid&amp;subdirs=$subdirs&amp;maxbytes=$maxbytes&amp;ctx_id=".$ctx->id;
             $str .= '<object type="text/html" data="'.$editorurl.'" height="160" width="600" style="border:1px solid #000">Error</object>'; // TODO: localise, fix styles, etc.
             $str .= '</div>';
-
-            $client_id = uniqid();
-
-            $args = new stdclass;
-            // need these three to filter repositories list
-            $args->accepted_types = array('image', 'video', 'media');
-            $args->return_types = (FILE_INTERNAL | FILE_EXTERNAL);
-            $args->context = $ctx;
-            $args->env = 'filepicker';
-
-            $options = initialise_filepicker($args);
-
-            $options->client_id = $client_id;
-            $options->maxbytes = $this->_options['maxbytes'];
-            $options->maxfiles = 1;
-            $options->env = 'editor';
-            $options->itemid = $draftitemid;
-
-            $PAGE->requires->js_module('core_filepicker');
-            $PAGE->requires->js_function_call('editor_init_filepicker', array($id, $options))->on_dom_ready();
-
-            if ($editor->supports_repositories()) {
-                $str .= html_writer::script(js_writer::function_call('destroy_item', array("{$id}_filemanager")));
-            }
         } else {
             // should disable file picker
-            $str .= 'No file allowed';
+            //$str .= 'No file allowed';
         }
 
         $str .= '</div>';

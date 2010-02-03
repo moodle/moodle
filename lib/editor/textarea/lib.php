@@ -45,7 +45,7 @@ class textarea_texteditor extends texteditor {
         return true;
     }
 
-    public function use_editor($elementid, array $options=null) {
+    public function use_editor($elementid, array $options=null, $fpoptions=null) {
         return;
     }
 }

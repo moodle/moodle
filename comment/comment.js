@@ -197,6 +197,7 @@ M.core_comment = {
                     }
                 });
             },
+
             delete: function(id) {
                 var scope = this;
                 var params = {'commentid': id};

@@ -32,7 +32,7 @@
  * @global object
  * @global object
  * @param int $format text format or null of none
- * @return object texteditor object
+ * @return texteditor object
  */
 function get_preferred_texteditor($format=null) {
     global $CFG, $USER;
@@ -171,9 +171,10 @@ abstract class texteditor {
      * Add required JS needed for editor
      * @param string $elementid id of text area to be converted to editor
      * @param array $options
+     * @param obejct $fpoptions file picker options
      * @return void
      */
-    public abstract function use_editor($elementid, array $options=null);
+    public abstract function use_editor($elementid, array $options=null, $fpoptions = null);
 
     /**
      * Setup all JS and CSS needed for editor.
