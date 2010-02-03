@@ -600,8 +600,9 @@
         <FIELD NAME="htmleditor" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="maildisplay" NEXT="ajax"/>
         <FIELD NAME="ajax" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="htmleditor" NEXT="autosubscribe"/>
         <FIELD NAME="autosubscribe" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="ajax" NEXT="trackforums"/>
-        <FIELD NAME="trackforums" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="autosubscribe" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="trackforums" NEXT="trustbitmask"/>
+        <FIELD NAME="trackforums" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="autosubscribe" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="trackforums" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="trustbitmask"/>
         <FIELD NAME="trustbitmask" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timemodified" NEXT="imagealt"/>
         <FIELD NAME="imagealt" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="alt tag for user uploaded image" PREVIOUS="trustbitmask" NEXT="screenreader"/>
         <FIELD NAME="screenreader" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="flag for determining whehter the user uses a screenreader." PREVIOUS="imagealt"/>

@@ -144,7 +144,8 @@ if ($usernew = $userform->get_data()) {
         unset($usernew->id);
         $usernew = file_postupdate_standard_editor($usernew, 'description', $editoroptions, null, 'user_profile', null);
         $usernew->mnethostid = $CFG->mnet_localhost_id; // always local user
-        $usernew->confirmed  = 1;       
+        $usernew->confirmed  = 1;
+        $usernew->timecreated = time();
         $usernew->password = hash_internal_user_password($usernew->newpassword);        
         $usernew->id = $DB->insert_record('user', $usernew);
         $usercreated = true;

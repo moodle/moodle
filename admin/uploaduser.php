@@ -205,6 +205,7 @@ if ($formdata = $mform->is_cancelled()) {
         foreach ($line as $key => $value) {
             if ($value !== '') {
                 $key = $columns[$key];
+                $user->timecreated = time();
                 // password is special field
                 if ($key == 'password') {
                     if ($value !== '') {

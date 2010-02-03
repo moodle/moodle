@@ -3012,6 +3012,23 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010020100);
     }
 
+    if ($result && $oldversion < 2010020300) {
+
+    /// Define field timecreated to be added to user
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'trackforums');
+
+        if (!$dbman->field_exists($table, $field)) {
+        /// Launch add field timecreated
+            $dbman->add_field($table, $field);
+
+            $DB->execute("UPDATE {user} SET timecreated = firstaccess");
+
+            $sql = "UPDATE {user} SET timecreated = " . time() ." where timecreated = 0";
+            $DB->execute($sql);
+        }
+        upgrade_main_savepoint($result, 2010020300);
+    }
     return $result;
 }
 

@@ -58,11 +58,12 @@ if ($mform_signup->is_cancelled()) {
     $user->confirmed   = 0;
     $user->lang        = current_language();
     $user->firstaccess = time();
+    $user->timecreated = time();
     $user->mnethostid  = $CFG->mnet_localhost_id;
     $user->secret      = random_string(15);
     $user->auth        = $CFG->registerauth;
-
-    $authplugin->user_signup($user, true); // prints notice and link to login/index.php
+    
+    $authplugin->user_signup($user, true); // prints notice and link to login/index.php  
     exit; //never reached
 }
 
