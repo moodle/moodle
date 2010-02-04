@@ -50,7 +50,8 @@ M.blocks.dock = {
          */
         display:{
             spacebeforefirstitem: 10,       // Space between the top of the dock and the first item
-            mindisplaywidth: null            // Minimum width for the display of dock items
+            mindisplaywidth: null,          // Minimum width for the display of dock items
+            removeallicon: M.util.image_url('t/dock_to_block', 'moodle')
         },
         /**
          * CSS classes to use with the dock
@@ -94,6 +95,10 @@ M.blocks.dock = {
         Y.augment(M.blocks.dock, Y.EventTarget, true);
         // Re-apply early bindings properly now that we can
         M.blocks.dock.apply_binds();
+        // Check if there is a customisation function
+        if (typeof(customise_dock_for_theme) === 'function') {
+            customise_dock_for_theme();
+        }
     },
     /**
      * Adds a dock item into the dock
@@ -129,9 +134,8 @@ M.blocks.dock = {
         if (Y.UA.ie > 0 && Y.UA.ie < 7) {
             this.node.setStyle('height', this.node.get('winHeight')+'px');
         }
-
         var dockcontrol = Y.Node.create('<div class="'+M.blocks.dock.cfg.css.controls+'"></div>');
-        var removeall = Y.Node.create('<img src="'+M.util.image_url('t/dock_to_block', 'moodle')+'" alt="'+mstr.block.undockall+'" title="'+mstr.block.undockall+'" />');
+        var removeall = Y.Node.create('<img src="'+this.cfg.display.removeallicon+'" alt="'+mstr.block.undockall+'" title="'+mstr.block.undockall+'" />');
         removeall.on('removeall|click', this.remove_all, this);
         dockcontrol.appendChild(removeall);
         this.node.appendChild(dockcontrol);
@@ -160,6 +164,7 @@ M.blocks.dock = {
             this.items = [];
             this.node.remove();
             this.node = null;
+            Y.one(document.body).removeClass(M.blocks.dock.cfg.css.body);
             this.fire('dock:removed');
         }
         return true;
@@ -179,6 +184,7 @@ M.blocks.dock = {
         this.items = [];
         this.node.remove();
         this.node = null;
+        Y.one(document.body).removeClass(M.blocks.dock.cfg.css.body);
         Y.fire('dock:removed');
         return true;
     },
@@ -367,7 +373,7 @@ M.blocks.dock = {
             var spacewidth = this.resize_block_space(placeholder);
 
             var blocktitle = Y.Node.getDOMNode(this.cachedcontentnode.one('.title h2')).cloneNode(true);
-            blocktitle.innerHTML = blocktitle.innerHTML.replace(/(.)/g, "$1<br />");
+            blocktitle = this.fix_title_orientation(blocktitle);
 
             var commands = this.cachedcontentnode.all('.title .commands');
             var blockcommands = Y.Node.create('<div class="commands"></div>');
@@ -405,6 +411,10 @@ M.blocks.dock = {
                 this.skipsetposition = false;
             }
         },
+        fix_title_orientation : function(node) {
+            node.innerHTML = node.innerHTML.replace(/(.)/g, "$1<br />");
+            return node;
+        },
 
         /**
          * Resizes the space that contained blocks if there were no blocks left in
@@ -437,7 +447,13 @@ M.blocks.dock = {
          */
         return_to_block : function(dockitem) {
             var placeholder = Y.one('#content_placeholder_'+this.id);
-            this.cachedcontentnode.appendChild(dockitem.contents);
+            
+            if (this.cachedcontentnode.one('.header')) {
+                this.cachedcontentnode.one('.header').insert(dockitem.contents, 'after');
+            } else {
+                this.cachedcontentnode.insert(dockitem.contents);
+            }
+
             placeholder.replace(Y.Node.getDOMNode(this.cachedcontentnode));
             this.cachedcontentnode = Y.one('#'+this.cachedcontentnode.get('id'));
 
@@ -540,6 +556,7 @@ M.blocks.dock = {
                 xy:position,
                 autofillheight:this.cfg.panel.autofillheight});
             this.panel.showEvent.subscribe(this.resize_panel, this, true);
+            this.panel.renderEvent.subscribe(this.resize_panel, this, true);
             this.panel.setBody(Y.Node.getDOMNode(this.contents));
             this.panel.render(M.blocks.dock.node);
             if (this.cfg.display.mindisplaywidth !== null && Y.one(this.panel.body).getStyle('minWidth') == '0px') {
@@ -662,6 +679,7 @@ M.blocks.genericblock.prototype.init =                    M.blocks.dock.abstract
 M.blocks.genericblock.prototype.move_to_dock =            M.blocks.dock.abstract_block_class.move_to_dock;
 M.blocks.genericblock.prototype.resize_block_space =      M.blocks.dock.abstract_block_class.resize_block_space;
 M.blocks.genericblock.prototype.return_to_block =         M.blocks.dock.abstract_block_class.return_to_block;
+M.blocks.genericblock.prototype.fix_title_orientation =   M.blocks.dock.abstract_block_class.fix_title_orientation;
 
 /**
  * This class represents an item in the dock
