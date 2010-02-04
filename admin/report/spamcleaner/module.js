@@ -23,7 +23,7 @@ M.report_spamcleaner = {
                         }
                     }
                 }
-            }
+            };
             context.Y.io(context.me+'?delall=yes&sesskey='+M.cfg.sesskey, cfg);
         }
     },
