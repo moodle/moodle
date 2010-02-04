@@ -341,6 +341,8 @@ class page_requirements_manager {
                 $module = array('name'=>$name, 'fullpath'=>'/comment/comment.js', 'requires' => array('base', 'io', 'node', 'json', 'yui2-animation'));
             } else if($name === 'core_role') {
                 $module = array('name'=>$name, 'fullpath'=>'/admin/roles/module.js');
+            } else if($name === 'core_completion') {
+                $module = array('name'=>$name, 'fullpath'=>'/course/completion.js');
             }
         } else {
             if ($dir = get_component_directory($name, false)) {

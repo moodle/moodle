@@ -1237,9 +1237,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     static $strunreadpostsone;
     static $usetracking;
     static $groupings;
-    static $shownhelp=false;
-    static $hiddenhelp=false;
-
 
     if (!isset($initialised)) {
         $groupbuttons     = ($course->groupmode or (!$course->groupmodeforce));
@@ -1499,9 +1496,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
                 if ($completionicon) {
                     $imgsrc = $OUTPUT->pix_url('i/completion-'.$completionicon);
-                    $imgalt = get_string('completion-alt-'.$completionicon,'completion');
-                    if ($completion==COMPLETION_TRACKING_MANUAL && !$isediting) {
-                        $imgtitle = get_string('completion-title-'.$completionicon,'completion');
+                    $imgalt = s(get_string('completion-alt-'.$completionicon, 'completion'));
+                    if ($completion == COMPLETION_TRACKING_MANUAL && !$isediting) {
+                        $imgtitle = s(get_string('completion-title-'.$completionicon, 'completion'));
                         $newstate =
                             $completiondata->completionstate==COMPLETION_COMPLETE
                             ? COMPLETION_INCOMPLETE
@@ -1512,15 +1509,13 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                         // conditional activities system, we need to turn
                         // off the JS.
                         if (!empty($CFG->enableavailability) &&
-                            condition_info::completion_value_used_as_condition(
-                            $course, $mod)) {
+                            condition_info::completion_value_used_as_condition($course, $mod)) {
                             $extraclass = ' preventjs';
                         } else {
                             $extraclass = '';
                         }
                         echo "
-<form class='togglecompletion$extraclass' method='post' action='togglecompletion.php'><div>";
-                        echo "
+<form class='togglecompletion$extraclass' method='post' action='togglecompletion.php'><div>
 <input type='hidden' name='id' value='{$mod->id}' />
 <input type='hidden' name='sesskey' value='".sesskey()."' />
 <input type='hidden' name='completionstate' value='$newstate' />
@@ -1530,10 +1525,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                         // In auto mode, or when editing, the icon is just an image
                         echo "<span class='autocompletion'>";
                         echo "<img src='$imgsrc' alt='$imgalt' title='$imgalt' /></span>";
-                    }
-                    if (!$shownhelp && !$isediting) {
-                        $PAGE->requires->js_function_call('completion_set_progressicon_visibility', array('completionprogressid', 'show'));
-                        $shownhelp=true;
                     }
                 }
             }
@@ -1569,12 +1560,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     }
     if (!empty($section->sequence) || $ismoving) {
         echo "</ul><!--class='section'-->\n\n";
-    }
-
-    //use javascript to hide the progress help button when no progress tick boxes have been displayed
-    if (!$shownhelp && !$hiddenhelp && $completioninfo->is_enabled()&& !$isediting && isloggedin() && !isguestuser()) {
-        $PAGE->requires->js_function_call('completion_set_progressicon_visibility', array('completionprogressid', 'hide'));
-        $hiddenhelp = true;
     }
 }
 

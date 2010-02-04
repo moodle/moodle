@@ -178,14 +178,12 @@
 
     $completion = new completion_info($course);
     if ($completion->is_enabled() && ajaxenabled()) {
-        $PAGE->requires->yui2_lib('connection');
-        $PAGE->requires->js('/course/completion.js')->in_head();
-        $PAGE->requires->js_function_call('completion_init')->on_dom_ready();
-        $PAGE->requires->data_for_js('completion_strsaved', get_string('saved', 'completion'));
-        $PAGE->requires->data_for_js('completion_strtitley', get_string('completion-title-manual-y', 'completion'));
-        $PAGE->requires->data_for_js('completion_strtitlen', get_string('completion-title-manual-n', 'completion'));
-        $PAGE->requires->data_for_js('completion_stralty', get_string('completion-alt-manual-y', 'completion'));
-        $PAGE->requires->data_for_js('completion_straltn', get_string('completion-alt-manual-n', 'completion'));
+        $PAGE->requires->string_for_js('completion-title-manual-y', 'completion');
+        $PAGE->requires->string_for_js('completion-title-manual-n', 'completion');
+        $PAGE->requires->string_for_js('completion-alt-manual-y', 'completion');
+        $PAGE->requires->string_for_js('completion-alt-manual-n', 'completion');
+
+        $PAGE->requires->js_init_call('M.core_completion.init');
     }
 
     // The "Editing On" button will be appearing only in the "main" course screen

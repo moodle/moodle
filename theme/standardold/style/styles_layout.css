@@ -2375,13 +2375,11 @@ border-width:0px;
 .course-view li.activity form.togglecompletion div {
   display:inline;
 }
-.course-view .completion-saved-display {
+.course-view .togglecompletion .ajaxworking {
   position:absolute;
-  top:0; left:0;
-  border:1px solid black;
-  padding: 1px 2px;
-  background:white;
-  font-size:0.85em;
+  top:0; left:20px;
+  width: 20px; height: 20px;
+  background: url([[pix:i/ajaxloader]]) no-repeat;
 }
 .course-view .completionprogress {
   font-size:0.80em;
