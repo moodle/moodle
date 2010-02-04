@@ -679,7 +679,7 @@
 
 
         if ($userlist)  {
-            $usersprinted = array();
+            $usersprinted = array();            
             while ($user = rs_fetch_next_record($userlist)) {
                 if (in_array($user->id, $usersprinted)) { /// Prevent duplicates by r.hidden - MDL-13935
                     continue;
@@ -717,11 +717,19 @@
                 } else {
                     $usercontext = $user->context;
                 }
+                
+                $contextcanviewdetails = has_capability('moodle/user:viewdetails', $context);
+                $usercontextcanviewdetails = has_capability('moodle/user:viewdetails', $usercontext);
 
-                if ($piclink = ($USER->id == $user->id || has_capability('moodle/user:viewdetails', $context) || has_capability('moodle/user:viewdetails', $usercontext))) {
-                    $profilelink = '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></strong>';
+                if ($piclink = ($USER->id == $user->id || $contextcanviewdetails || $usercontextcanviewdetails)) {
+                    if ($usercontextcanviewdetails) {
+                        $canviewfullname = has_capability('moodle/site:viewfullnames', $usercontext);
+                    } else {
+                        $canviewfullname = has_capability('moodle/site:viewfullnames', $context);
+                    } 
+                    $profilelink = '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user, $canviewfullname).'</a></strong>';
                 } else {
-                    $profilelink = '<strong>'.fullname($user).'</strong>';
+                    $profilelink = '<strong>'.fullname($user, has_capability('moodle/site:viewfullnames', $context)).'</strong>';
                 }
 
                 $data = array (

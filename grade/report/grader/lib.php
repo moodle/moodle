@@ -657,7 +657,7 @@ class grade_report_grader extends grade_report {
                         $hidden = ' hidden ';
                     }
 
-                    $headerlink = $this->gtree->get_element_header($element, true, $this->get_pref('showactivityicons'), false);
+                    $headerlink = $this->gtree->get_element_header($element, true, $this->get_pref('showactivityicons'), false);                    
                     //MDL-21088 - IE 7 ignores nowraps on tds or ths so we this in a span with a nowrap on it.
                     $headerhtml .= '<th class=" '.$columnclass.' '.$type.$catlevel.$hidden.'" scope="col" onclick="set_col(this.cellIndex)"><span>'
                                 .shorten_text($headerlink) . $arrow;
@@ -687,6 +687,7 @@ class grade_report_grader extends grade_report {
         $showuserimage = $this->get_pref('showuserimage');
         $showuseridnumber = $this->get_pref('showuseridnumber');
         $fixedstudents = $this->is_fixed_students();
+        $canviewfullname = has_capability('moodle/site:viewfullnames', $this->context);
 
         // Preload scale objects for items with a scaleid
         $scales_list = '';
@@ -736,19 +737,18 @@ class grade_report_grader extends grade_report {
                 $userreportcell = '';
                 $userreportcellcolspan = '';
                 if (has_capability('gradereport/'.$CFG->grade_profilereport.':view', $this->context)) {
-                    $a->user = fullname($user);
+                    $a->user = fullname($user, $canviewfullname);
                     $strgradesforuser = get_string('gradesforuser', 'grades', $a);
                     $userreportcell = '<th class="header userreport"><a href="'.$CFG->wwwroot.'/grade/report/'.$CFG->grade_profilereport.'/index.php?id='.$this->courseid.'&amp;userid='.$user->id.'">'
                                     .'<img src="'.$CFG->pixpath.'/t/grades.gif" alt="'.$strgradesforuser.'" title="'.$strgradesforuser.'" /></a></th>';
-                }
-                else {
+                } else {
                     $userreportcellcolspan = 'colspan=2';
                 }
 
                 $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
                               .'<th class="c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);" '.$userreportcellcolspan.' >'.$user_pic
                               .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
-                              .fullname($user)."</a></th>$userreportcell\n";
+                              .fullname($user, $canviewfullname)."</a></th>$userreportcell\n";
 
                 if ($showuseridnumber) {
                     $studentshtml .= '<th class="c'.$columncount++.' useridnumber" onclick="set_row(this.parentNode.rowIndex);">'.
@@ -944,7 +944,8 @@ class grade_report_grader extends grade_report {
         $strsortdesc  = $this->get_lang_string('sortdesc', 'grades');
         $strfirstname = $this->get_lang_string('firstname');
         $strlastname  = $this->get_lang_string('lastname');
-
+        $canviewfullname = has_capability('moodle/site:viewfullnames', $this->context);
+        
         if ($this->sortitemid === 'lastname') {
             if ($this->sortorder == 'ASC') {
                 $lastarrow = print_arrow('up', $strsortasc, true);
@@ -1023,7 +1024,7 @@ class grade_report_grader extends grade_report {
                 $userreportcell = '';
                 $userreportcellcolspan = '';
                 if (has_capability('gradereport/'.$CFG->grade_profilereport.':view', $this->context)) {
-                    $a->user = fullname($user);
+                    $a->user = fullname($user, $canviewfullname);
                     $strgradesforuser = get_string('gradesforuser', 'grades', $a);
                     $userreportcell = '<th class="userreport"><a href="'.$CFG->wwwroot.'/grade/report/'.$CFG->grade_profilereport.'/index.php?id='.$this->courseid.'&amp;userid='.$user->id.'">'
                                     .'<img src="'.$CFG->pixpath.'/t/grades.gif" alt="'.$strgradesforuser.'" title="'.$strgradesforuser.'" /></a></th>';
@@ -1035,7 +1036,7 @@ class grade_report_grader extends grade_report {
                 $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
                               .'<th class="c0 user" scope="row" onclick="set_row(this.parentNode.rowIndex);" '.$userreportcellcolspan.' >'.$user_pic
                               .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
-                              .fullname($user)."</a></th>$userreportcell\n";
+                              .fullname($user, $canviewfullname)."</a></th>$userreportcell\n";
 
                 if ($showuseridnumber) {
                     $studentshtml .= '<th class="c0 useridnumber" onclick="set_row(this.parentNode.rowIndex);">'. $user->idnumber."</th>\n";

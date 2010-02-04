@@ -466,10 +466,10 @@ class quiz_report extends quiz_default_report {
                     }
                     if (!$download){
                         $userlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.
-                                '&amp;course='.$course->id.'">'.fullname($attempt).'</a>';
+                                '&amp;course='.$course->id.'">'.fullname($attempt,has_capability('moodle/site:viewfullnames', $context)).'</a>';
                         $row[] = $userlink;
                     } else {
-                        $row[] = fullname($attempt);
+                        $row[] = fullname($attempt, has_capability('moodle/site:viewfullnames', $context));
                     }
                     
                     if (in_array('idnumber', $columns)){
