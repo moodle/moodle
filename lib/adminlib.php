@@ -6377,10 +6377,10 @@ class admin_setting_webservicesoverview extends admin_setting {
         $row[2] = get_string('checkusercapabilitydescription', 'webservice');
         $table->data[] = $row;
 
-        /// 5. Create a web service
+        /// 5. Select a web service
         $row = array();
-        $url = new moodle_url("/admin/webservice/service.php?id=0");
-        $row[0] = "5. "."<a href=".$url.">".get_string('createservice', 'webservice')."</a>";
+        $url = new moodle_url("/admin/settings.php?section=externalservices");
+        $row[0] = "5. "."<a href=".$url.">".get_string('selectservice', 'webservice')."</a>";
         $row[1] = "";
         $row[2] = get_string('createservicedescription', 'webservice');
         $table->data[] = $row;
@@ -6411,7 +6411,7 @@ class admin_setting_webservicesoverview extends admin_setting {
 
         /// 9. Enable the documentation
         $row = array();
-        $url = new moodle_url("/admin/search.php?query=Web+services+documentation");
+        $url = new moodle_url("/admin/search.php?query=enablewsdocumentation");
         $row[0] = "9. "."<a href=".$url.">".get_string('enabledocumentation', 'webservice')."</a>";
         $status = '<span class="warning">'.get_string('no').'</span>'; //should never happens as this page should only be seen once web service are activated
         if ($CFG->enablewsdocumentation) {
@@ -6445,7 +6445,7 @@ class admin_setting_webservicesoverview extends admin_setting {
 
         /// 1. Enable Web Services
         $row = array();
-        $url = new moodle_url("/admin/search.php?query=Enable+web+services");
+        $url = new moodle_url("/admin/search.php?query=enablewebservices");
         $row[0] = "1. "."<a href=".$url.">".get_string('enablews', 'webservice')."</a>";
         $status = '<span class="statuscritical">'.get_string('no').'</span>'; //should never happens as this page should only be seen once web service are activated
         if ($CFG->enablewebservices) {
@@ -6473,10 +6473,10 @@ class admin_setting_webservicesoverview extends admin_setting {
         $table->data[] = $row;
 
 
-        /// 3. Create a web service
+        /// 3. Select a web service
         $row = array();
-        $url = new moodle_url("/admin/webservice/service.php?id=0");
-        $row[0] = "3. "."<a href=".$url.">".get_string('createservice', 'webservice')."</a>";
+        $url = new moodle_url("/admin/settings.php?section=externalservices");
+        $row[0] = "3. "."<a href=".$url.">".get_string('selectservice', 'webservice')."</a>";
         $row[1] = "";
         $row[2] = get_string('createserviceforusersdescription', 'webservice');
         $table->data[] = $row;
