@@ -220,7 +220,7 @@ class external_api {
         $rcontext = self::$contextrestriction;
 
         if ($rcontext->contextlevel == $context->contextlevel) {
-            if ($rcontex->id != $context->id) {
+            if ($rcontext->id != $context->id) {
                 throw new restricted_context_exception();
             }
         } else if ($rcontext->contextlevel > $context->contextlevel) {
