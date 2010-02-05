@@ -322,5 +322,74 @@ class grade_report {
         $html = '<a href="'.$sort_link .'" title="'.$strsort.'">' . $arrow . '</a>';
         return $html;
     }
+
+    /**
+     * Optionally blank out course/category totals if they contain any hidden items
+     * @param string $courseid the course id
+     * @param string $course_item an instance of grade_item
+     * @param string $finalgrade the grade for the course_item
+     * @return string The new final grade
+     */
+    protected function blank_hidden_total($courseid, $course_item, $finalgrade) {
+        global $CFG;
+        static $hiding_affected = null;//array of items in this course affected by hiding
+
+        if( $this->showtotalsifcontainhidden==GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN ) {
+            return $finalgrade;
+        }
+
+        if( !$hiding_affected ) {
+            $items = grade_item::fetch_all(array('courseid'=>$courseid));
+            $grades = array();
+            $sql = "SELECT g.*
+                      FROM {$CFG->prefix}grade_grades g
+                      JOIN {$CFG->prefix}grade_items gi ON gi.id = g.itemid
+                     WHERE g.userid = {$this->user->id} AND gi.courseid = {$courseid}";
+            if ($gradesrecords = get_records_sql($sql)) {
+                foreach ($gradesrecords as $grade) {
+                    $grades[$grade->itemid] = new grade_grade($grade, false);
+                }
+                unset($gradesrecords);
+            }
+            foreach ($items as $itemid=>$unused) {
+                if (!isset($grades[$itemid])) {
+                    $grade_grade = new grade_grade();
+                    $grade_grade->userid = $this->user->id;
+                    $grade_grade->itemid = $items[$itemid]->id;
+                    $grades[$itemid] = $grade_grade;
+                }
+                $grades[$itemid]->grade_item =& $items[$itemid];
+            }
+            $hiding_affected = grade_grade::get_hiding_affected($grades, $items);
+        }
+
+        //if the item definitely depends on a hidden item
+        if (array_key_exists($course_item->id, $hiding_affected['altered'])) {
+            if( !$this->showtotalsifcontainhidden ) {
+                //hide the grade
+                $finalgrade = null;
+            }
+            else {
+                //use reprocessed marks that exclude hidden items
+                $finalgrade = $hiding_affected['altered'][$course_item->id];
+            }
+        } else if (!empty($hiding_affected['unknown'][$course_item->id])) {
+            //not sure whether or not this item depends on a hidden item
+            if( !$this->showtotalsifcontainhidden ) {
+                //hide the grade
+                $finalgrade = null;
+            }
+            else {
+                //use reprocessed marks that exclude hidden items
+                $finalgrade = $hiding_affected['unknown'][$course_item->id];
+            }
+        }
+
+        //unset($hiding_affected);
+        //unset($grades);
+        //unset($items);
+
+        return $finalgrade;
+    }
 }
 ?>

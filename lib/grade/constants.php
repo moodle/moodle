@@ -79,6 +79,11 @@ define('GRADE_REPORT_AGGREGATION_VIEW_FULL', 0);
 define('GRADE_REPORT_AGGREGATION_VIEW_AGGREGATES_ONLY', 1);
 define('GRADE_REPORT_AGGREGATION_VIEW_GRADES_ONLY', 2);
 
+//What to do if category or course total contains a hidden item
+define('GRADE_REPORT_HIDE_TOTAL_IF_CONTAINS_HIDDEN', 0);//hide the total from students
+define('GRADE_REPORT_SHOW_TOTAL_IF_CONTAINS_HIDDEN', 1);//show the total to students minus grades from the hidden items
+define('GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN', 2);//show students the real total including marks from hidden items
+
 define('GRADE_REPORT_PREFERENCE_DEFAULT', 'default'); // means use setting from site preferences
 define('GRADE_REPORT_PREFERENCE_INHERIT', 'inherit'); // means inherit from parent
 define('GRADE_REPORT_PREFERENCE_UNUSED', -1);
