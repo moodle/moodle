@@ -923,9 +923,7 @@ class page_requirements_manager {
 
         // the global Y can be used only after it is fully loaded, that means
         // from code executed from the following block
-        // TODO: remove global Y, each part needs some other libs, it is loaded asynchronously too,
-        //       it is necessary to pass around the Y manually, that is why the js_init_call() always uses Y as first parameter
-        $js .= "var Y = YUI(M.yui.loader).use('node', function(Y) {\n{$inyuijs}{$ondomreadyjs}{$jsinit}{$handlersjs}\n});";
+        $js .= "YUI(M.yui.loader).use('node', function(Y) {\n{$inyuijs}{$ondomreadyjs}{$jsinit}{$handlersjs}\n});";
 
         $output .= html_writer::script($js);
 
