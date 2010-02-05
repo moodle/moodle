@@ -44,7 +44,11 @@ $category        = optional_param('category', null, PARAM_INT);
 $aggregationtype = optional_param('aggregationtype', null, PARAM_INT);
 $showadvanced    = optional_param('showadvanced', -1, PARAM_BOOL); // sticky editting mode
 
-$PAGE->set_url('/grade/edit/tree/index.php', array('id' => $courseid));
+$url = new moodle_url('/grade/edit/tree/index.php', array('id' => $courseid));
+if($showadvanced!=-1) {
+    $url->param("showadvanced",$showadvanced);
+}
+$PAGE->set_url($url);
 
 /// Make sure they can even access this course
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {

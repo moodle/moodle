@@ -30,7 +30,8 @@ require_once('edit_form.php');
 
 $contextid = optional_param('id', SYSCONTEXTID, PARAM_INT);
 
-$PAGE->set_url('/grade/edit/letter/edit.php');
+$url = new moodle_url('/grade/edit/letter/edit.php', array('id' => $contextid));
+$PAGE->set_url($url);
 
 if (!$context = get_context_instance_by_id($contextid)) {
     print_error('invalidcourseid');
