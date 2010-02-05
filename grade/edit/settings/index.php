@@ -22,7 +22,7 @@ require_once 'form.php';
 
 $courseid  = optional_param('id', SITEID, PARAM_INT);
 
-$PAGE->set_url('/grade/edit/setting/index.php', array('id'=>$courseid));
+$PAGE->set_url('/grade/edit/settings/index.php', array('id'=>$courseid));
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
