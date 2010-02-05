@@ -640,8 +640,8 @@ $string['enrolstartdate'] = 'Start date';
 $string['entercourse'] = 'Click to enter this course';
 $string['enteremailaddress'] = 'Enter in your email address to reset your
    password and have the new password sent to you via email.';
-$string['enteremail']='Enter your email address'; 
-$string['enterusername']='Enter your username'; 
+$string['enteremail']='Enter your email address';
+$string['enterusername']='Enter your username';
 $string['entries'] = 'Entries';
 $string['error'] = 'Error';
 $string['errortoomanylogins'] = 'Sorry, you have exceeded the allowed number of login attempts. Restart your browser.';
@@ -1729,6 +1729,7 @@ $string['userselectorautoselectunique'] = 'If only one user matches the search, 
 $string['userselectorsearchanywhere'] = 'Match the search text anywhere in the user\'s name';
 $string['usersnew'] = 'New users';
 $string['usersnoaccesssince'] = 'Inactive for more than';
+$string['useruploadtype'] = 'User upload type: $a';
 $string['userswithfiles'] = 'Users with files';
 $string['userzones'] = 'User zones';
 $string['usethiscourse'] = 'Use this course';
@@ -1822,4 +1823,6 @@ $string['authenticationplugins'] = 'Authentication Plugins';
 $string['chooseauthmethod'] = 'Choose authentication plugin';
 $string['nocourses'] = 'No courses';
 $string['requestedcourses'] = 'Requested courses';
+$string['addcountertousername'] = 'Create user by adding number to username';
+$string['uploadfilecontentsnovaliddata'] = 'The uploaded file contains no valid data.';
 ?>

@@ -33,6 +33,12 @@ class admin_uploaduser_form1 extends moodleform {
         $mform->addElement('select', 'previewrows', get_string('rowpreviewnum', 'admin'), $choices);
         $mform->setType('previewrows', PARAM_INT);
 
+        $choices = array(UU_ADDNEW    => get_string('uuoptype_addnew', 'admin'),
+                         UU_ADDINC    => get_string('uuoptype_addinc', 'admin'),
+                         UU_ADD_UPDATE => get_string('uuoptype_addupdate', 'admin'),
+                         UU_UPDATE     => get_string('uuoptype_update', 'admin'));
+        $mform->addElement('select', 'uutype', get_string('uuoptype', 'admin'), $choices);
+        
         $this->add_action_buttons(false, get_string('uploadusers'));
     }
 }
@@ -52,12 +58,7 @@ class admin_uploaduser_form2 extends moodleform {
 
 // upload settings and file
         $mform->addElement('header', 'settingsheader', get_string('settings'));
-
-        $choices = array(UU_ADDNEW    => get_string('uuoptype_addnew', 'admin'),
-                         UU_ADDINC    => get_string('uuoptype_addinc', 'admin'),
-                         UU_ADD_UPDATE => get_string('uuoptype_addupdate', 'admin'),
-                         UU_UPDATE     => get_string('uuoptype_update', 'admin'));
-        $mform->addElement('select', 'uutype', get_string('uuoptype', 'admin'), $choices);
+        $mform->addElement('static', 'uutypelabel', get_string('uuoptype', 'admin') );
 
         $choices = array(0 => get_string('infilefield', 'auth'), 1 => get_string('createpasswordifneeded', 'auth'));
         $mform->addElement('select', 'uupasswordnew', get_string('uupasswordnew', 'admin'), $choices);
@@ -92,7 +93,7 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->disabledIf('uuallowdeletes', 'uutype', 'eq', UU_ADDINC);
 
         $mform->addElement('selectyesno', 'uunoemailduplicates', get_string('uunoemailduplicates', 'admin'));
-        $mform->setDefault('uunoemailduplicates', 0);
+        $mform->setDefault('uunoemailduplicates', 1);
 
         $choices = array(0 => get_string('no'),
                          1 => get_string('uubulknew', 'admin'),
@@ -257,6 +258,9 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->addElement('hidden', 'readcount');
         $mform->setType('readcount', PARAM_INT);
 
+        $mform->addElement('hidden', 'uutype');
+        $mform->setType('uutype', PARAM_INT);
+
         $this->add_action_buttons(true, get_string('uploadusers'));
     }
 
@@ -356,7 +360,7 @@ class admin_uploaduser_form2 extends moodleform {
 class admin_uploaduser_form3 extends moodleform {
     function definition (){
         global $CFG, $USER;
-        $mform =& $this->_form;        
+        $mform =& $this->_form;               
         $this->add_action_buttons(false, get_string('uploadnewfile'));
     }
 }

@@ -12,11 +12,17 @@ require_once('uploaduser_form.php');
 $iid         = optional_param('iid', '', PARAM_INT);
 $previewrows = optional_param('previewrows', 10, PARAM_INT);
 $readcount   = optional_param('readcount', 0, PARAM_INT);
+$uploadtype  = optional_param('uutype', 0, PARAM_INT);
 
 define('UU_ADDNEW', 0);
 define('UU_ADDINC', 1);
 define('UU_ADD_UPDATE', 2);
 define('UU_UPDATE', 3);
+
+$choices = array(UU_ADDNEW    => get_string('uuoptype_addnew', 'admin'),
+                 UU_ADDINC    => get_string('uuoptype_addinc', 'admin'),
+                 UU_ADD_UPDATE => get_string('uuoptype_addupdate', 'admin'),
+                 UU_UPDATE     => get_string('uuoptype_update', 'admin'));
 
 @set_time_limit(3600); // 1 hour should be enough
 @raise_memory_limit('256M');
@@ -59,7 +65,7 @@ $strcannotassignrole        = get_string('cannotassignrole', 'error');
 $strduplicateusername       = get_string('duplicateusername', 'error');
 
 $struserauthunsupported     = get_string('userauthunsupported', 'error');
-$stremailduplicate          = get_string('useremailduplicate', 'error');;
+$stremailduplicate          = get_string('useremailduplicate', 'error');
 
 $errorstr                   = get_string('error');
 
@@ -92,7 +98,7 @@ if (empty($iid)) {
         $cir = new csv_import_reader($iid, 'uploaduser');
 
         $content = $mform->get_file_content('userfile');
-
+        $optype = $formdata->uutype;
         $readcount = $cir->load_csv_content($content, $formdata->encoding, $formdata->delimiter_name, 'validate_user_upload_columns');
         unset($content);
 
@@ -122,7 +128,7 @@ if (!$columns = $cir->get_columns()) {
 }
 $mform = new admin_uploaduser_form2(null, $columns);
 // get initial date from form1
-$mform->set_data(array('iid'=>$iid, 'previewrows'=>$previewrows, 'readcount'=>$readcount));
+$mform->set_data(array('iid'=>$iid, 'previewrows'=>$previewrows, 'readcount'=>$readcount, 'uutypelabel'=>$choices[$uploadtype], 'uutype'=>$uploadtype));
 
 // If a file has been uploaded, then process it
 if ($formdata = $mform->is_cancelled()) {
@@ -204,8 +210,7 @@ if ($formdata = $mform->is_cancelled()) {
         // add fields to user object
         foreach ($line as $key => $value) {
             if ($value !== '') {
-                $key = $columns[$key];
-                $user->timecreated = time();
+                $key = $columns[$key];                
                 // password is special field
                 if ($key == 'password') {
                     if ($value !== '') {
@@ -386,7 +391,7 @@ if ($formdata = $mform->is_cancelled()) {
                 if ($existinguser) {
                     $usersskipped++;
                     $upt->track('status', $strusernotadded, 'warning');
-                    $skip = true;;
+                    $skip = true;
                 }
                 break;
 
@@ -428,6 +433,14 @@ if ($formdata = $mform->is_cancelled()) {
                 // no updates of existing data at all
             } else {
                 $existinguser->timemodified = time();
+                if (empty($existinguser->timecreated)) {
+                    if (empty($existinguser->firstaccess)) {
+                        $existinguser->timecreated = time();
+                    } else {
+                        $existinguser->timecreated = $existinguser->firstaccess;
+                    }
+                }
+
                 //load existing profile data
                 profile_load_data($existinguser);
 
@@ -510,6 +523,7 @@ if ($formdata = $mform->is_cancelled()) {
             // save the user to the database
             $user->confirmed = 1;
             $user->timemodified = time();
+            $user->timecreated = time();
 
             if (!$createpasswords and empty($user->password)) {
                 $upt->track('password', get_string('missingfield', 'error', 'password'), 'error');
@@ -747,106 +761,188 @@ admin_externalpage_print_header();
 
 echo $OUTPUT->heading_with_help(get_string('uploaduserspreview', 'admin'), 'uploadusers2');
 
-$ri = 0;
 $cir->init();
 
-$filerows = array();
+$contents = array();
 while ($fields = $cir->next()) {
-    $ci = 0;
-    if ($ri > $previewrows) {
-        $arow .= '<tr class="r'.$ri++.'">';
-        foreach ($fields as $field) {
-            $arow .= '<td class="cell c'.$ci++.'">...</td>';
-        }
-        $arow .= '</tr>';
-        break;
-    }
-
-    $arow = '';
     $errormsg = array();
-    $filerows[$ri] = array();
-    $arow .= '<tr class="r'.$ri.'">';
-    foreach ($fields as $key => $field) {
-        $errorclass = '';
-        if ($ci == 0) { //username field
-            $newusername = clean_param($field, PARAM_USERNAME);
-            if (strcmp($field, $newusername) != 0){
-                $errorclass = 'uuerror';
-                $errormsg[] = get_string('invalidusernameupload');
-            } else if ($DB->record_exists('user', array('username'=>$field)) || $DB->record_exists('user', array('username'=>$field)) ) {
-                $errorclass = 'uuerror';
-                $errormsg[] = get_string('usernameexists');
-            }
-        } else { 
-            if ($ci == 4) {     //email field                
-                if ($DB->record_exists('user', array('email'=>$field))) {
-                    $errorclass = 'uuerror';
-                    $errormsg[] = get_string('emailexists');
-
-                } else if (!validate_email($field)) {
-                    $errorclass = 'uuerror';
-                    $errormsg[] = get_string('invalidemail');
-                }
-            }
-        }
-        $arow .= '<td class="cell c'.$ci++.'">';
-        $arow .= '<div class="'.$errorclass.'">'.s($field). '</div>';
-        $arow .= '</td>';
-
-        if ($key == (count($fields) - 1) && !empty($errormsg)) {
-            $errormsg =  implode('<br />', $errormsg);
-            $arow .=  '<td>' . $errormsg . '</td>';
-            $filerows[$ri]['error'] = $errormsg;            
-        } 
+    $rowcols = array();
+    foreach($fields as $key =>$field) {
+        $rowcols[$columns[$key]] = $field;
     }
-    $arow .= '</tr>';
-   $filerows[$ri]['content'] = $arow;
-   $ri++;
-}                          
+
+    $usernameexist = $DB->record_exists('user', array('username'=>$rowcols['username']));
+    $emailexist    = $DB->record_exists('user', array('email'=>$rowcols['email']));
+    $cleanusername = clean_param($rowcols['username'], PARAM_USERNAME);
+    $validusername = strcmp($rowcols['username'], $cleanusername);
+    $validemail = validate_email($rowcols['email']);
+
+    if ($validusername != 0 || !$validemail) {
+        if ($validusername != 0) {
+            $errormsg['username'] = get_string('invalidusernameupload');
+        }
+        if (!$validemail) {
+            $errormsg['email'] = get_string('invalidemail');
+        }
+    }
+
+    switch($optype) {
+        case UU_ADDNEW:
+            if ($usernameexist || $emailexist ) {
+               $rowcols['action'] = 'skipped';
+            } else {
+                $rowcols['action'] = 'create';
+            }
+            break;
+
+        case UU_ADDINC:
+            if (!$usernameexist && !$emailexist) {
+                $rowcols['action'] = 'create';
+            } else if ($usernameexist && !$emailexist) {
+                $rowcols['action'] = 'addcountertousername';
+                $rowcols['username'] = increment_username($rowcols['username'], $CFG->mnet_localhost_id);
+            } else {
+                $rowcols['action'] = 'skipped';
+            }
+            break;
+
+        case UU_ADD_UPDATE:
+            $oldusernameexist = '';
+            if (isset($rowcols['oldusername'])) {
+                $oldusernameexist = $DB->record_exists('user', array('username'=>$rowcols['oldusername']));
+            }
+            if ($usernameexist || $emailexist || $oldusernameexist ) {
+                $rowcols['action'] = 'update';
+            } else {
+                $rowcols['action'] = 'create';
+            }
+            break;
+
+        case UU_UPDATE:
+             $oldusernameexist = '';
+            if (isset($rowcols['oldusername'])) {
+                $oldusernameexist = $DB->record_exists('user', array('username'=>$rowcols['oldusername']));
+            }
+
+            if ($usernameexist || $emailexist || !empty($oldusernameexist)) {
+                $rowcols['action'] = 'update';
+            } else {
+                $rowcols['action'] = "skipped";
+            }
+            break;
+    }
+
+    if (!empty($errormsg)){
+        $rowcols['error'] = array();
+        $rowcols['error'] = $errormsg;
+    }
+    if ($rowcols['action'] != 'skipped') {
+        $contents[] = $rowcols;
+    }
+}
 $cir->close();
 
-$validcontent = array();
-$invalidcontent = array();
-foreach ($filerows as $arow) {
-    if (array_key_exists('error', $arow)){
-        $invalidcontent[] = $arow['content'];
-        $mform = new admin_uploaduser_form3();
-    } else {
-        $validcontent[] = $arow['content'];
+//get heading
+$headings = array();
+foreach ($contents as $content) {
+    foreach($content as $key => $value) {
+        if (!in_array($key, $headings)) {
+            $headings[] = $key;
+        }
     }
 }
 
-$ri = 0;
-$ci = 0;
-echo '<table id="uupreview" class="generaltable boxaligncenter" summary="'.get_string('uploaduserspreview', 'admin').'">';
-echo '<tr class="heading r'.$ri++.'">';
-foreach ($columns as $col) {
-    echo '<th class="header c'.$ci++.'" scope="col">'.s($col).'</th>';
-}
-if (!empty($invalidcontent)) {
-    echo '<th class="header c'.$ci++.'" scope="col">'.moodle_strtolower(get_string('error', 'moodle')).'</th>';
-}
-echo '</tr>';
+$table = new html_table();
+$table->id = "uupreview";
+$table->set_classes = 'generaltable';
+$table->tablealign = 'center';
+$table->summary = get_string('uploaduserspreview', 'admin');
+$table->head = array();
+$table->data = array();
 
+//print heading
+foreach ($headings as $heading) {
+    $table->head[] = s($heading);
+}
+
+$haserror = false;
 $countcontent = 0;
-if (empty($invalidcontent)) {
-    $countcontent = count($validcontent);
-    echo implode('', $validcontent);
-} else {
-    $countcontent = count($invalidcontent);
-    echo implode('', $invalidcontent);
-}
-echo '</table>';
+if (in_array('error', $headings)) {
+    //print error
+    $haserror = true;
 
-if (!empty($invalidcontent)) {
-    echo '<div class="centerpara">'.get_string('uploadinvalidpreprocessedcount', 'moodle', $countcontent).'</div>';
-    echo '<div class="">'.get_string('invalidusername', 'moodle').'</div>';
-    echo '<div class="">'.get_string('uploadfilecontainerror', 'moodle').'</div>';
+    foreach ($contents as $content) {
+        if (array_key_exists('error', $content)) {
+            $rows = new html_table_row();
+            foreach ($content as $key => $value) {
+                $cells = new html_table_cell();
+                $errclass = '';
+                if (array_key_exists($key, $content['error'])) {
+                    $errclass = 'uuerror';
+                }
+                if ($key == 'error') {
+                    $value = join('<br />', $content['error']);
+                }
+                if ($key == 'action') {
+                    $value = get_string($content[$key]);
+                }
+                $cells->text = $value;
+                $cells->set_classes($errclass);
+                $rows->cells[] = $cells;
+            }
+            $countcontent++;
+            $table->data[] = $rows;
+        }
+    }
+    $mform = new admin_uploaduser_form3();
+    $mform->set_data(array('uutype'=>$uploadtype));
+} else if (empty($contents)) {
+    $mform = new admin_uploaduser_form3();
+    $mform->set_data(array('uutype'=>$uploadtype));
 } else {
-    echo '<div class="">'.get_string('uupreprocessedcount', 'admin', $countcontent).'</div>';
+    //print content
+    foreach ($contents as $content) {
+        $rows = new html_table_row();
+        if ($countcontent >= $previewrows) {
+            foreach ($content as $con) {
+                $cells = new html_table_cell();
+                $cells->text = '...';
+            }
+            $rows->cells[] = $cells;
+            $table->data[] = $rows;
+            break;
+        }
+        foreach ($headings as $heading) {
+            $cells = new html_table_cell();
+            if(array_key_exists($heading, $content)) {
+                if ($heading == 'action') {
+                    $content[$heading] = get_string($content[$heading]);
+                }
+                $cells->text = $content[$heading];
+            } else {
+                $cells->text = '';
+            }
+            $rows->cells[] = $cells;
+        }
+        $table->data[] = $rows;
+        $countcontent++;
+    }
+}
+echo $OUTPUT->table($table);
+
+if ($haserror) {
+
+    echo $OUTPUT->container(get_string('useruploadtype', 'moodle', $choices[$uploadtype]), 'centerpara');
+    echo $OUTPUT->container(get_string('uploadinvalidpreprocessedcount', 'moodle', $countcontent), 'centerpara');
+    echo $OUTPUT->container(get_string('invalidusername', 'moodle'), 'centerpara');
+    echo $OUTPUT->container(get_string('uploadfilecontainerror', 'moodle'), 'centerpara');
+} else if (empty($contents)) {
+    echo $OUTPUT->container(get_string('uupreprocessedcount', 'admin', $countcontent), 'centerpara');
+    echo $OUTPUT->container(get_string('uploadfilecontentsnovaliddata'), 'centerpara');
+} else {
+    echo $OUTPUT->container(get_string('uupreprocessedcount', 'admin', $countcontent), 'centerpara');
 }
 
-//echo '<div class="centerpara">'.get_string('uupreprocessedcount', 'admin', $readcount).'</div>';
 $mform->display();
 echo $OUTPUT->footer();
 die;
