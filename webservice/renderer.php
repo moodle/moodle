@@ -48,9 +48,26 @@ class core_webservice_renderer extends plugin_renderer_base {
         $paramdesc = "";
         if (!empty($params->desc)) {
             $paramdesc .= html_writer::start_tag('span', array('style' => "color:#2A33A6"));
+            if ($params->required == VALUE_REQUIRED) {
+                $required = '';
+            }
+            if ($params->required == VALUE_DEFAULT) {
+                if (empty($params->default)) {
+                    $params->default = "null";
+                }
+                $required = html_writer::start_tag('b', array()).get_string('default', 'webservice', $params->default).html_writer::end_tag('b');
+            }
+            if ($params->required == VALUE_OPTIONAL) {
+                $required = html_writer::start_tag('b', array()).get_string('optional', 'webservice').html_writer::end_tag('b');
+            }
+            $paramdesc .= " ".$required." ";
             $paramdesc .= html_writer::start_tag('i', array());
-            $paramdesc .= "//".$params->desc;
+            $paramdesc .= "//";
+
+            $paramdesc .= $params->desc;
+
             $paramdesc .= html_writer::end_tag('i');
+            
             $paramdesc .= html_writer::end_tag('span');
             $paramdesc .= html_writer::empty_tag('br', array());
         }
@@ -313,7 +330,22 @@ EOF;
             foreach ($description->parameters_desc->keys as $paramname => $paramdesc) {
             /// a argument documentation
                 $documentationhtml .= html_writer::start_tag('span', array('style' => 'font-size:80%'));
-                $required = $paramdesc->required?get_string('required', 'webservice'):get_string('optional', 'webservice');
+                                
+                if ($paramdesc->required == VALUE_REQUIRED) {
+                      $required = get_string('required', 'webservice');
+                }
+                if ($paramdesc->required == VALUE_DEFAULT) {
+                    if (empty($paramdesc->default)) {
+                        $default = "null";
+                    } else {
+                        $default = $paramdesc->default;
+                    }
+                    $required = get_string('default', 'webservice', $default);
+                }
+                if ($paramdesc->required == VALUE_OPTIONAL) {
+                      $required = get_string('optional', 'webservice');
+                }
+                
                 $documentationhtml .= html_writer::start_tag('b', array());
                 $documentationhtml .= $paramname;
                 $documentationhtml .= html_writer::end_tag('b');

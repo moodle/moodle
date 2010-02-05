@@ -155,7 +155,7 @@ class external_api {
                 }
             }
             return validate_param($params, $description->type, $description->allownull, 'Invalid external api parameter');
-
+     
         } else if ($description instanceof external_single_structure) {
             if (!is_array($params)) {
                 throw new invalid_parameter_exception('Only arrays accepted.');
@@ -163,12 +163,14 @@ class external_api {
             $result = array();
             foreach ($description->keys as $key=>$subdesc) {
                 if (!array_key_exists($key, $params)) {
-                    if ($subdesc->required) {
+                    if ($subdesc->required == VALUE_REQUIRED) {
                         throw new invalid_parameter_exception('Missing required key in single structure.');
                     }
                     if ($subdesc instanceof external_value) {
-                        $result[$key] = self::validate_parameters($subdesc, $subdesc->default);
-                    }
+                            if ($subdesc->required == VALUE_DEFAULT) {
+                                $result[$key] = self::validate_parameters($subdesc, $subdesc->default);
+                            }
+                        }
                 } else {
                     $result[$key] = self::validate_parameters($subdesc, $params[$key]);
                 }
@@ -275,7 +277,7 @@ class external_value extends external_description {
      * @param mixed $default
      * @param bool $allownull
      */
-    public function __construct($type, $desc='', $required=true, $default=null, $allownull=true) {
+    public function __construct($type, $desc='', $required=VALUE_REQUIRED, $default=null, $allownull=true) {
         parent::__construct($desc, $required);
         $this->type      = $type;
         $this->default   = $default;
@@ -296,7 +298,7 @@ class external_single_structure extends external_description {
      * @param string $desc
      * @param bool $required
      */
-    public function __construct(array $keys, $desc='', $required=true) {
+    public function __construct(array $keys, $desc='', $required=VALUE_REQUIRED) {
         parent::__construct($desc, $required);
         $this->keys = $keys;
     }
@@ -315,7 +317,7 @@ class external_multiple_structure extends external_description {
      * @param string $desc
      * @param bool $required
      */
-    public function __construct(external_description $content, $desc='', $required=true) {
+    public function __construct(external_description $content, $desc='', $required=VALUE_REQUIRED) {
         parent::__construct($desc, $required);
         $this->content = $content;
     }

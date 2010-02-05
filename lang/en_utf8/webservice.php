@@ -28,6 +28,7 @@ $string['createtokenforuser'] = 'Create a token for a user';
 $string['createtokenforuserdescription'] = 'On the <strong>Manage token</strong> page, click on \'Add\'. Then select the created user and service.';
 $string['createuser'] = 'Create a specific user';
 $string['createuserdescription'] = 'You need to create a specific user for the system controlling Moodle.';
+$string['default'] = 'Default to \"$a\"';
 $string['deleteservice'] = 'Delete the service: $a->name (id: $a->id)';
 $string['deleteaservice'] = 'Delete service';
 $string['deleteserviceconfirm'] = 'Do you really want to delete external service \"$a\"?';

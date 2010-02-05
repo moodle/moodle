@@ -264,7 +264,22 @@ define('PARAM_MULTILANG',  'text');
  */
 define('PARAM_CLEANFILE', 'file');
 
+/// Web Services ///
 
+/**
+ * VALUE_REQUIRED - if the parameter is not supplied, there is an error
+ */
+define('VALUE_REQUIRED', 1);
+
+/**
+ * VALUE_OPTIONAL - if the parameter is not supplied, then the param has no value
+ */
+define('VALUE_OPTIONAL', 2);
+
+/**
+ * VALUE_DEFAULT - if the parameter is not supplied, then the default value is used
+ */
+define('VALUE_DEFAULT', 0);
 
 
 /// Page types ///
