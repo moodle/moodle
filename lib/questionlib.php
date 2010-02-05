@@ -861,7 +861,7 @@ function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid =
                 $sql = "SELECT $statefields".
                        "  FROM {$CFG->prefix}question_states s,".
                        "       {$CFG->prefix}question_sessions n".
-                       " WHERE s.id = n.newgraded".
+                       " WHERE s.id = n.newest".
                        "   AND n.attemptid = '$lastattemptid'".
                        "   AND n.questionid = '$i'";
                 if (!$laststate = get_record_sql($sql)) {

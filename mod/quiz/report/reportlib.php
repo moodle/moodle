@@ -19,7 +19,7 @@ function quiz_get_newgraded_states($attemptids, $idxattemptq = true, $fields='qs
                 "{$CFG->prefix}question_sessions qns, " .
                 "{$CFG->prefix}question_states qs " .
                 "WHERE qns.attemptid IN ($attemptidlist) AND " .
-                "qns.newgraded = qs.id";
+                "qns.newest = qs.id";
         $gradedstates = get_records_sql($gradedstatesql);
         if ($idxattemptq){
             $gradedstatesbyattempt = array();
