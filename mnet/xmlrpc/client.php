@@ -129,6 +129,7 @@ class mnet_xmlrpc_client {
 
 
         if (!$this->permission_to_call($mnet_peer)) {
+            mnet_debug("tried and wasn't allowed to call a method on $mnet_peer->wwwroot");
             return false;
         }
 
@@ -140,7 +141,9 @@ class mnet_xmlrpc_client {
         curl_setopt($httprequest, CURLOPT_POSTFIELDS, $this->encryptedrequest);
 
         $timestamp_send    = time();
+        mnet_debug("about to send the curl request");
         $this->rawresponse = curl_exec($httprequest);
+        mnet_debug("managed to complete a curl request");
         $timestamp_receive = time();
 
         if ($this->rawresponse === false) {
@@ -257,6 +260,7 @@ class mnet_xmlrpc_client {
             // The faultString is the new key - let's save it and try again
             // The re_key attribute stops us from getting into a loop
             if($this->response['faultCode'] == 7025 && empty($mnet_peer->re_key)) {
+                mnet_debug('recieved an old-key fault, so trying to get the new key and update our records');
                 // If the new certificate doesn't come thru clean_param() unmolested, error out
                 if($this->response['faultString'] != clean_param($this->response['faultString'], PARAM_PEM)) {
                     $this->error[] = $this->response['faultCode'] . " : " . $this->response['faultString'];

@@ -210,9 +210,9 @@ function mnet_server_fault_xml($code, $text, $privatekey = null) {
    </fault>
 </methodResponse>', $privatekey);
 
-    if (!empty($CFG->mnet_rpcdebug)) {
-        trigger_error("XMLRPC Error Response $code: $text");
-        trigger_error(print_r($return,1));
+    if ($code != 7025) { // new key responses
+        mnet_debug("XMLRPC Error Response $code: $text");
+        mnet_debug($return);
     }
 
     return $return;

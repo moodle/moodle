@@ -39,10 +39,8 @@ if (empty($HTTP_RAW_POST_DATA)) {
     $HTTP_RAW_POST_DATA = file_get_contents('php://input');
 }
 
-if (!empty($CFG->mnet_rpcdebug)) {
-    error_log("HTTP_RAW_POST_DATA");
-    error_log($HTTP_RAW_POST_DATA);
-}
+mnet_debug("HTTP_RAW_POST_DATA", 2);
+mnet_debug($HTTP_RAW_POST_DATA, 2);
 
 if (!isset($_SERVER)) {
     exit(mnet_server_fault(712, "phperror"));
@@ -58,22 +56,23 @@ try {
     $plaintextmessage = mnet_server_strip_encryption($HTTP_RAW_POST_DATA);
     $xmlrpcrequest = mnet_server_strip_signature($plaintextmessage);
 } catch (Exception $e) {
+    mnet_debug('encryption strip exception thrown: ' . $e->getMessage());
     exit(mnet_server_fault($e->getCode(), $e->getMessage(), $e->a));
 }
 
-if (!empty($CFG->mnet_rpcdebug)) {
-    error_log("XMLRPC Payload");
-    error_log(print_r($xmlrpcrequest,1));
-}
+mnet_debug('XMLRPC Payload', 2);
+mnet_debug($xmlrpcrequest, 2);
 
 if($remoteclient->pushkey == true) {
     // The peer used one of our older public keys, we will return a
     // signed/encrypted error message containing our new public key
     // Sign message with our old key, and encrypt to the peer's private key.
+    mnet_debug('sending back new key');
     exit(mnet_server_fault_xml(7025, $mnet->public_key, $remoteclient->useprivatekey));
 }
 // Have a peek at what the request would be if we were to process it
 $params = xmlrpc_decode_request($xmlrpcrequest, $method);
+mnet_debug("incoming mnet request $method");
 
 // One of three conditions need to be met before we continue processing this request:
 // 1. Request is properly encrypted and signed
@@ -85,24 +84,30 @@ if ((($remoteclient->request_was_encrypted == true) && ($remoteclient->signature
     try {
         // main dispatch call.  will echo the response directly
         mnet_server_dispatch($xmlrpcrequest);
+        mnet_debug('exiting cleanly');
         exit;
     } catch (Exception $e) {
+        mnet_debug('dispatch exception thrown: ' . $e->getMessage());
         exit(mnet_server_fault($e->getCode(), $e->getMessage(), $e->a));
     }
 }
 // if we get to here, something is wrong
 // so detect a few common cases and send appropriate errors
 if (($remoteclient->request_was_encrypted == false) && ($remoteclient->plaintext_is_ok() == false)) {
+    mnet_debug('non encrypted request');
     exit(mnet_server_fault(7021, 'forbidden-transport'));
 }
 
 if ($remoteclient->request_was_signed == false) {
     // Request was not signed
+    mnet_debug('non signed request');
     exit(mnet_server_fault(711, 'verifysignature-error'));
 }
 
 if ($remoteclient->signatureok == false) {
     // We were unable to verify the signature
+    mnet_debug('non verified signature');
     exit(mnet_server_fault(710, 'verifysignature-invalid'));
 }
+mnet_debug('unknown error');
 exit(mnet_server_fault(7000, 'unknownerror'));

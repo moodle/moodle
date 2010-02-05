@@ -521,3 +521,32 @@ function mnet_get_app_jumppath ($applicationid) {
     return $appjumppaths[$applicationid];
 }
 
+
+function mnet_debug($debugdata, $debuglevel=1) {
+    global $CFG;
+    if ($CFG->mnet_rpcdebug < $debuglevel) {
+        return;
+    }
+    if (is_object($debugdata)) {
+        $debugdata = (array)$debugdata;
+    }
+    if (is_array($debugdata)) {
+        mnet_debug('DUMPING ARRAY');
+        foreach ($debugdata as $key => $value) {
+            mnet_debug("$key: $value");
+        }
+        mnet_debug('END DUMPING ARRAY');
+        return;
+    }
+    $prefix = 'MNET DEBUG ';
+    if (defined('MNET_SERVER')) {
+        $prefix .= " (server $CFG->wwwroot";
+        if ($peer = get_mnet_remote_client() && !empty($peer->wwwroot)) {
+            $prefix .= ", remote peer " . $peer->wwwroot;
+        }
+        $prefix .= ')';
+    } else {
+        $prefix .= " (client $CFG->wwwroot) ";
+    }
+    error_log("$prefix $debugdata");
+}

@@ -68,6 +68,7 @@ class mnet_remote_client extends mnet_peer {
     }
 
     function refresh_key() {
+        mnet_debug("remote client refreshing key");
         global $CFG;
         // set up an RPC request
         require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
@@ -77,6 +78,7 @@ class mnet_remote_client extends mnet_peer {
 
         // Do RPC call and store response
         if ($mnetrequest->send($this) === true) {
+            mnet_debug("refresh key request complete");
             // Ok - we actually don't care about the result
             $temp = new mnet_peer();
             $temp->set_id($this->id);
