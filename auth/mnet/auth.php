@@ -210,37 +210,22 @@ class auth_plugin_mnet extends auth_plugin_base {
     }
 
     /**
-     * after a successful login, land.php will call complete_user_login
-     * which will in turn regenerate the session id.
-     * this means that what is stored in mnet_session table needs updating.
-     *
-     */
-    function update_session_id() {
-        global $USER, $DB;
-        return $DB->set_field('mnet_session', 'session_id', session_id(), array('username' => $USER->username, 'mnethostid' => $USER->mnethostid, 'useragent' => sha1($_SERVER['HTTP_USER_AGENT'])));
-    }
-
-    /**
      * This function confirms the remote (ID provider) host's mnet session
      * by communicating the token and UA over the XMLRPC transport layer, and
      * returns the local user record on success.
      *
-     *   @param string $token           The random session token.
-     *   @param string $remotewwwroot   The ID provider wwwroot.
+     *   @param string    $token           The random session token.
+     *   @param mnet_peer $remotepeer   The ID provider mnet_peer object.
      *   @return array The local user record.
      */
-    function confirm_mnet_session($token, $remotewwwroot) {
+    function confirm_mnet_session($token, $remotepeer) {
         global $CFG, $DB;
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
         // verify the remote host is configured locally before attempting RPC call
-        if (! $remotehost = $DB->get_record('mnet_host', array('wwwroot' => $remotewwwroot, 'deleted' => 0))) {
+        if (! $remotehost = $DB->get_record('mnet_host', array('wwwroot' => $remotepeer->wwwroot, 'deleted' => 0))) {
             print_error('notpermittedtoland', 'mnet');
         }
-
-        // get the originating (ID provider) host info
-        $remotepeer = new mnet_peer();
-        $remotepeer->set_wwwroot($remotewwwroot);
 
         // set up the RPC request
         $mnetrequest = new mnet_xmlrpc_client();
@@ -258,7 +243,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                 list($code, $message) = array_map('trim',explode(':', $errormessage, 2));
                 if($code == 702) {
                     $site = get_site();
-                    print_error('mnet_session_prohibited', 'mnet', $remotewwwroot, format_string($site->fullname));
+                    print_error('mnet_session_prohibited', 'mnet', $remotepeer->wwwroot, format_string($site->fullname));
                     exit;
                 }
                 $message .= "ERROR $code:<br/>$errormessage<br/>";
@@ -302,14 +287,8 @@ class auth_plugin_mnet extends auth_plugin_base {
             print_error('sso_mnet_login_refused', 'mnet', '', array($localuser->username, $remotehost->name));
         }
 
-        $session_gc_maxlifetime = 1440;
-
         // update the local user record with remote user data
         foreach ((array) $remoteuser as $key => $val) {
-            if ($key == 'session.gc_maxlifetime') {
-                $session_gc_maxlifetime = $val;
-                continue;
-            }
 
             // TODO: fetch image if it has changed
             if ($key == 'imagehash') {
@@ -366,27 +345,6 @@ class auth_plugin_mnet extends auth_plugin_base {
         }
 
         $DB->update_record('user', $localuser);
-
-        // set up the session
-        $mnet_session = $DB->get_record('mnet_session',
-                                   array('userid'=>$localuser->id, 'mnethostid'=>$remotepeer->id,
-                                   'useragent'=>sha1($_SERVER['HTTP_USER_AGENT'])));
-        if ($mnet_session == false) {
-            $mnet_session = new object();
-            $mnet_session->mnethostid = $remotepeer->id;
-            $mnet_session->userid = $localuser->id;
-            $mnet_session->username = $localuser->username;
-            $mnet_session->useragent = sha1($_SERVER['HTTP_USER_AGENT']);
-            $mnet_session->token = $token; // Needed to support simultaneous sessions
-                                           // and preserving DB rec uniqueness
-            $mnet_session->confirm_timeout = time();
-            $mnet_session->expires = time() + (integer)$session_gc_maxlifetime;
-            $mnet_session->session_id = session_id();
-            $mnet_session->id = $DB->insert_record('mnet_session', $mnet_session);
-        } else {
-            $mnet_session->expires = time() + (integer)$session_gc_maxlifetime;
-            $DB->update_record('mnet_session', $mnet_session);
-        }
 
         if (!$firsttime) {
             // repeat customer! let the IDP know about enrolments
@@ -452,6 +410,43 @@ class auth_plugin_mnet extends auth_plugin_base {
 
         return $localuser;
     }
+
+
+    /**
+     * creates (or updates) the mnet session once
+     * {@see confirm_mnet_session} and {@see complete_user_login} have both been called
+     *
+     * @param stdclass  $user the local user (must exist already
+     * @param string    $token the jump/land token
+     * @param mnet_peer $remotepeer the mnet_peer object of this users's idp
+     */
+    public function update_mnet_session($user, $token, $remotepeer) {
+        global $DB;
+        $session_gc_maxlifetime = 1440;
+        if (isset($user->session_gc_maxlifetime)) {
+            $session_gc_maxlifetime = $user->session_gc_maxlifetime;
+        }
+        if (!$mnet_session = $DB->get_record('mnet_session',
+                                   array('userid'=>$user->id, 'mnethostid'=>$remotepeer->id,
+                                   'useragent'=>sha1($_SERVER['HTTP_USER_AGENT'])))) {
+            $mnet_session = new object();
+            $mnet_session->mnethostid = $remotepeer->id;
+            $mnet_session->userid = $user->id;
+            $mnet_session->username = $user->username;
+            $mnet_session->useragent = sha1($_SERVER['HTTP_USER_AGENT']);
+            $mnet_session->token = $token; // Needed to support simultaneous sessions
+                                           // and preserving DB rec uniqueness
+            $mnet_session->confirm_timeout = time();
+            $mnet_session->expires = time() + (integer)$session_gc_maxlifetime;
+            $mnet_session->session_id = session_id();
+            $mnet_session->id = $DB->insert_record('mnet_session', $mnet_session);
+        } else {
+            $mnet_session->expires = time() + (integer)$session_gc_maxlifetime;
+            $DB->update_record('mnet_session', $mnet_session);
+        }
+    }
+
+
 
     /**
      * Invoke this function _on_ the IDP to update it with enrolment info local to

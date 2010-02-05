@@ -33,12 +33,16 @@ if (!is_enabled_auth('mnet')) {
 
 // confirm the MNET session
 $mnetauth = get_auth_plugin('mnet');
-$localuser = $mnetauth->confirm_mnet_session($token, $remotewwwroot);
+$remotepeer = new mnet_peer();
+$remotepeer->set_wwwroot($remotewwwroot);
+// this creates the local user account if necessary, or updates it if it already exists
+$localuser = $mnetauth->confirm_mnet_session($token, $remotepeer);
 
 // log in
 $user = get_complete_user_data('id', $localuser->id, $localuser->mnethostid);
 complete_user_login($user);
-$mnetauth->update_session_id();
+// now that we've logged in, set up the mnet session properly
+$mnetauth->update_mnet_session($user, $token, $remotepeer);
 
 if (!empty($localuser->mnet_foreign_host_array)) {
     $USER->mnet_foreign_host_array = $localuser->mnet_foreign_host_array;
