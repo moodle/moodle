@@ -92,6 +92,23 @@ class moodle_exception extends Exception {
 }
 
 /**
+ * Web service parameter exception class
+ *
+ * This exception must be thrown to the web service client when a web service parameter is invalid
+ * The error string is gotten from webservice.php
+ */
+class webservice_parameter_exception extends moodle_exception {
+    /**
+     * Constructor
+     * @param string $errorcode The name of the string from webservice.php to print
+     * @param string $a The name of the parameter
+     */
+    function __construct($errorcode=null, $a = '') {
+        parent::__construct($errorcode, 'webservice', '', $a, null);
+    }
+}
+
+/**
  * Exceptions indicating user does not have permissions to do something
  * and the execution can not continue.
  */

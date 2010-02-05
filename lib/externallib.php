@@ -168,11 +168,19 @@ class external_api {
                     }
                     if ($subdesc instanceof external_value) {
                             if ($subdesc->required == VALUE_DEFAULT) {
-                                $result[$key] = self::validate_parameters($subdesc, $subdesc->default);
+                                try {
+                                    $result[$key] = self::validate_parameters($subdesc, $subdesc->default);
+                                } catch (invalid_parameter_exception $e) {
+                                    throw new webservice_parameter_exception('invalidextparam',$key);
+                                }
                             }
                         }
                 } else {
-                    $result[$key] = self::validate_parameters($subdesc, $params[$key]);
+                    try {
+                        $result[$key] = self::validate_parameters($subdesc, $params[$key]);
+                    } catch (invalid_parameter_exception $e) {
+                        throw new webservice_parameter_exception('invalidextparam',$key);
+                    }
                 }
                 unset($params[$key]);
             }

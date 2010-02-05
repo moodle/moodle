@@ -59,6 +59,7 @@ $string['functions'] = 'Functions';
 $string['generalstructure'] = 'General structure';
 $string['httpswarning'] = 'Token strings are only displayed if your connection is secured (https)';
 $string['information'] = 'Information';
+$string['invalidextparam'] = 'Invalid external api parameter: $a';
 $string['invalidiptoken'] = 'Invalid token - your IP is not supported';
 $string['invalidtimedtoken'] = 'Invalid token - token expired';
 $string['invalidtoken'] = 'Invalid token - token not found';
