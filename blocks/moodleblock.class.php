@@ -578,7 +578,7 @@ class block_base {
     function get_required_javascript() {
         $this->_initialise_dock();
         if ($this->instance_can_be_docked()) {
-            $this->page->requires->js_object_init(null, 'M.blocks.genericblock', array($this->instance->id), array('blocks_dock'));
+            $this->page->requires->js_init_call('M.core_dock.init_genericblock', array($this->instance->id));
             user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
         }
     }
@@ -752,7 +752,6 @@ class block_base {
     public function _initialise_dock() {
         global $CFG;
         if (!self::$dockinitialised) {
-            $this->page->requires->js_module(array('name'=>'blocks_dock', 'fullpath'=>'/blocks/dock.js', 'requires'=>array('dom','io','node', 'event-custom', 'cookie')));
             $this->page->requires->strings_for_js(array('addtodock','undockitem','undockall'), 'block');
             self::$dockinitialised = true;
         }

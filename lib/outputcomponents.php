@@ -615,11 +615,11 @@ class js_writer {
         }
 
         if ($var === null) {
-            $js = "new $class($arguments);";
+            $js = "new $class(Y, $arguments);";
         } else if (strpos($var, '.')!==false) {
-            $js = "$var = new $class($arguments);";
+            $js = "$var = new $class(Y, $arguments);";
         } else {
-            $js = "var $var = new $class($arguments);";
+            $js = "var $var = new $class(Y, $arguments);";
         }
 
         if ($delay) {
@@ -629,7 +629,7 @@ class js_writer {
 
         if (count($requirements) > 0) {
             $requirements = implode("', '", $requirements);
-            $js = "Y.use('$requirements', function(){ $js });";
+            $js = "Y.use('$requirements', function(Y){ $js });";
         }
         return $js."\n";
     }

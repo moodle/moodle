@@ -60,7 +60,6 @@ class block_calendar_month extends block_base {
         // Be VERY careful with the format for default courses arguments!
         // Correct formatting is [courseid] => 1 to be concise with moodlelib.php functions.
         calendar_set_filters($courses, $group, $user, $filtercourse, $groupeventsfrom, false);
-        $this->page->requires->js_module(array('name'=>'blocks_calendar', 'fullpath'=>'/calendar/calendar.js', 'requires'=>array('dom', 'event', 'node', 'yui2-animation')));
         if ($courseshown == SITEID) {
             // For the front page
             $this->content->text .= calendar_top_controls('frontpage', array('id' => $courseshown, 'm' => $cal_m, 'y' => $cal_y));

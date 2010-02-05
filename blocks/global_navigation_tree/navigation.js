@@ -24,17 +24,11 @@
  */
 
 /**
- * This namespace will contain all of the information fo the blocks
- * @namespace
- */
-var blocks = blocks || {};
-
-/**
  * This namespace will contain all of the contents of the navigation blocks
  * global navigation and settings.
  * @namespace
  */
-M.blocks.navigation = {
+M.blocks_navigation = {
     /** The number of expandable branches in existence */
     expandablebranchcount:0,
     /** An array of initialised trees */
@@ -51,10 +45,10 @@ M.blocks.navigation = {
      * NOTE: This will only be executed ONCE
      * @function
      */
-    init:function() {
-        if (M.blocks.genericblock) {
+    init:function(Y) {
+        if (M.core_dock.genericblock) {
             // Give the tree class the dock block properties
-            Y.augment(M.blocks.navigation.classes.tree, M.blocks.genericblock);
+            Y.augment(M.blocks_navigation.classes.tree, M.core_dock.genericblock);
         }
     }
 };
@@ -62,15 +56,16 @@ M.blocks.navigation = {
 /**
  * @class tree
  * @constructor
- * @base M.blocks.dock.abstractblock
+ * @base M.core_dock.abstractblock
+ * @param {YUI} Y A yui instance to use with the navigation
  * @param {string} id The name of the tree
  * @param {int} key The internal id within the tree store
  * @param {object} properties Object containing tree properties
  */
-M.blocks.navigation.classes.tree = function(id, properties) {
+M.blocks_navigation.classes.tree = function(Y, id, properties) {
+    this.Y = Y;
     this.id = id;
     this.key = id;
-    this.type = 'M.blocks.navigation.classes.tree';
     this.errorlog = [];
     this.ajaxbranches = 0;
     this.expansions = [];
@@ -91,7 +86,7 @@ M.blocks.navigation.classes.tree = function(id, properties) {
         this.candock = true;
     }
 
-    var node = Y.one('#inst'+this.id);
+    var node = this.Y.one('#inst'+this.id);
     
     // Can't find the block instance within the page
     if (node === null) {
@@ -102,8 +97,8 @@ M.blocks.navigation.classes.tree = function(id, properties) {
 
     // Attache events to expand by AJAX
     for (var i in this.expansions) {
-        Y.one('#'+this.expansions[i].id).on('ajaxload|click', this.init_load_ajax, this, this.expansions[i]);
-        M.blocks.navigation.expandablebranchcount++;
+        this.Y.one('#'+this.expansions[i].id).on('ajaxload|click', this.init_load_ajax, this, this.expansions[i]);
+        M.blocks_navigation.expandablebranchcount++;
     }
 
     if (node.hasClass('block_js_expansion')) {
@@ -113,7 +108,7 @@ M.blocks.navigation.classes.tree = function(id, properties) {
 
     // Call the generic blocks init method to add all the generic stuff
     if (this.candock) {
-        this.init(node);
+        this.init(Y, node);
     }
 }
 
@@ -122,7 +117,7 @@ M.blocks.navigation.classes.tree = function(id, properties) {
  * @param {event} e The event object
  * @param {object} branch A branch to load via ajax
  */
-M.blocks.navigation.classes.tree.prototype.init_load_ajax = function(e, branch) {
+M.blocks_navigation.classes.tree.prototype.init_load_ajax = function(e, branch) {
     e.stopPropagation();
     if (e.target.get('nodeName').toUpperCase() != 'P') {
         return true;
@@ -131,12 +126,12 @@ M.blocks.navigation.classes.tree.prototype.init_load_ajax = function(e, branch) 
     if (this.instance != null) {
         cfginstance = '&instance='+this.instance
     }
-    Y.io(M.cfg.wwwroot+'/lib/ajax/getnavbranch.php', {
+    this.Y.io(M.cfg.wwwroot+'/lib/ajax/getnavbranch.php', {
         method:'POST',
         data:'elementid='+branch.id+'&id='+branch.branchid+'&type='+branch.type+'&sesskey='+M.cfg.sesskey+cfginstance,
         on: {
             complete:this.load_ajax,
-            success:function() {Y.detach('click', this.init_load_ajax, e.target);}
+            success:function() {this.Y.detach('click', this.init_load_ajax, e.target);}
         },
         context:this,
         arguments:{
@@ -153,14 +148,14 @@ M.blocks.navigation.classes.tree.prototype.init_load_ajax = function(e, branch) 
  * @param {mixed} args
  * @return bool
  */
-M.blocks.navigation.classes.tree.prototype.load_ajax = function(tid, outcome, args) {
+M.blocks_navigation.classes.tree.prototype.load_ajax = function(tid, outcome, args) {
     // Check the status
     if (outcome.status!=0 && outcome.responseXML!=null) {
         var branch = outcome.responseXML.documentElement;
         if (branch!=null && this.add_branch(branch, args.target.ancestor('LI') ,1)) {
             // If we get here everything worked perfectly
             if (this.candock) {
-                M.blocks.dock.resize();
+                M.core_dock.resize();
             }
             return true;
         }
@@ -177,17 +172,17 @@ M.blocks.navigation.classes.tree.prototype.load_ajax = function(tid, outcome, ar
  * @param {int} depth
  * @return bool
  */
-M.blocks.navigation.classes.tree.prototype.add_branch = function(branchxml, target, depth) {
+M.blocks_navigation.classes.tree.prototype.add_branch = function(branchxml, target, depth) {
 
     // Make the new branch into an object
-    var branch = new M.blocks.navigation.classes.branch(this, branchxml);
+    var branch = new M.blocks_navigation.classes.branch(this, branchxml);
 
     var childrenul = false;
     if (depth === 1) {
         if (!branch.haschildren) {
             return false;
         }
-        childrenul = Y.Node.create('<ul></ul>');
+        childrenul = this.Y.Node.create('<ul></ul>');
         target.appendChild(childrenul);
     } else {
         childrenul = branch.inject_into_dom(target);
@@ -204,7 +199,7 @@ M.blocks.navigation.classes.tree.prototype.add_branch = function(branchxml, targ
  * Toggle a branch as expanded or collapsed
  * @param {Event} e
  */
-M.blocks.navigation.classes.tree.prototype.toggleexpansion = function(e) {
+M.blocks_navigation.classes.tree.prototype.toggleexpansion = function(e) {
     // First check if they managed to click on the li iteslf, then find the closest
     // LI ancestor and use that
     if (e.target.get('nodeName').toUpperCase() == 'LI') {
@@ -213,7 +208,7 @@ M.blocks.navigation.classes.tree.prototype.toggleexpansion = function(e) {
         e.target.ancestor('LI').toggleClass('collapsed');
     }
     if (this.candock) {
-        M.blocks.dock.resize();
+        M.core_dock.resize();
     }
 }
 
@@ -221,10 +216,10 @@ M.blocks.navigation.classes.tree.prototype.toggleexpansion = function(e) {
  * This class represents a branch for a tree
  * @class branch
  * @constructor
- * @param {M.blocks.navigation.classes.tree} tree
+ * @param {M.blocks_navigation.classes.tree} tree
  * @param {xmldoc|null} xml
  */
-M.blocks.navigation.classes.branch = function(tree, xml) {
+M.blocks_navigation.classes.branch = function(tree, xml) {
     this.tree = tree;
     this.name = null;
     this.title = null;
@@ -248,7 +243,7 @@ M.blocks.navigation.classes.branch = function(tree, xml) {
  * Constructs a branch from XML
  * @param {xmldoc} xml
  */
-M.blocks.navigation.classes.branch.prototype.construct_from_xml = function(xml) {
+M.blocks_navigation.classes.branch.prototype.construct_from_xml = function(xml) {
     // Get required attributes
     this.title = xml.getAttribute('title');
     this.classname = xml.getAttribute('class');
@@ -265,8 +260,8 @@ M.blocks.navigation.classes.branch.prototype.construct_from_xml = function(xml) 
 
     if (this.id && this.id.match(/^expandable_branch_\d+$/)) {
         // Assign a new unique id for this new expandable branch
-        M.blocks.navigation.expandablebranchcount++;
-        this.id = 'expandable_branch_'+M.blocks.navigation.expandablebranchcount;
+        M.blocks_navigation.expandablebranchcount++;
+        this.id = 'expandable_branch_'+M.blocks_navigation.expandablebranchcount;
     }
 
     // Retrieve any additional information
@@ -285,10 +280,10 @@ M.blocks.navigation.classes.branch.prototype.construct_from_xml = function(xml) 
  * Injects a branch into the tree at the given location
  * @param {element} element
  */
-M.blocks.navigation.classes.branch.prototype.inject_into_dom = function(element) {
+M.blocks_navigation.classes.branch.prototype.inject_into_dom = function(element) {
 
-    var branchli = Y.Node.create('<li></li>');
-    var branchp = Y.Node.create('<p class="tree_item"></p>');
+    var branchli = this.tree.Y.Node.create('<li></li>');
+    var branchp = this.tree.Y.Node.create('<p class="tree_item"></p>');
 
     if ((this.expandable !== null || this.haschildren) && this.expansionceiling===null) {
         branchli.addClass('collapsed');
@@ -308,7 +303,7 @@ M.blocks.navigation.classes.branch.prototype.inject_into_dom = function(element)
 
     var branchicon = false;
     if (this.icon != null) {
-        branchicon = Y.Node.create('<img src="'+this.icon+'" alt="" />');
+        branchicon = this.tree.Y.Node.create('<img src="'+this.icon+'" alt="" />');
         this.name = ' '+this.name;
     }
     if (this.link === null) {
@@ -317,7 +312,7 @@ M.blocks.navigation.classes.branch.prototype.inject_into_dom = function(element)
         }
         branchp.append(this.name.replace(/\n/g, '<br />'));
     } else {
-        var branchlink = Y.Node.create('<a title="'+this.title+'" href="'+this.link+'">'+this.name.replace(/\n/g, '<br />')+'</a>');
+        var branchlink = this.tree.Y.Node.create('<a title="'+this.title+'" href="'+this.link+'">'+this.name.replace(/\n/g, '<br />')+'</a>');
         if (branchicon) {
             branchlink.appendChild(branchicon);
         }
@@ -329,7 +324,7 @@ M.blocks.navigation.classes.branch.prototype.inject_into_dom = function(element)
 
     branchli.appendChild(branchp);
     if (this.haschildren) {
-        var childrenul = Y.Node.create('<ul></ul>');
+        var childrenul = this.tree.Y.Node.create('<ul></ul>');
         branchli.appendChild(childrenul);
         element.appendChild(branchli);
         return childrenul
@@ -339,4 +334,11 @@ M.blocks.navigation.classes.branch.prototype.inject_into_dom = function(element)
     }
 }
 
-YUI.add('blocks_navigation', M.blocks.navigation.init, '0.0.0.1', M.yui.loader.modules.blocks_navigation.requires);
+/**
+ * Causes the navigation block module to initalise the first time the module
+ * is used!
+ *
+ * NOTE: Never convert the second argument to a function reference...
+ * doing so causes scoping issues
+ */
+YUI.add('blocks_navigation', function(Y){M.blocks_navigation.init(Y);}, '0.0.0.1', M.yui.loader.modules.blocks_navigation.requires);

@@ -343,6 +343,10 @@ class page_requirements_manager {
                 $module = array('name'=>$name, 'fullpath'=>'/admin/roles/module.js');
             } else if($name === 'core_completion') {
                 $module = array('name'=>$name, 'fullpath'=>'/course/completion.js');
+            } else if ($name === 'core_dock') {
+                $module = array('name'=>'core_dock', 'fullpath'=>'/blocks/dock.js', 'requires'=>array('base', 'cookie', 'dom', 'io', 'node', 'event-custom'));
+            } else if ($name === 'core_calendar') {
+                $module = array('name'=>'core_calendar', 'fullpath'=>'/calendar/calendar.js', 'requires'=>array('dom', 'event', 'node', 'yui2-container','event-mouseenter'));
             }
         } else {
             if ($dir = get_component_directory($name, false)) {

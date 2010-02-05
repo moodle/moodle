@@ -1877,6 +1877,7 @@ a.skip:focus, a.skip:active {
 /* This CSS is for the side panel */
 body.has_dock {
   margin-left:3em;
+  margin-right:3em;
 }
 .dock {
   width:30px;
@@ -1889,6 +1890,10 @@ body.has_dock {
   background-image:url([[pix:theme|gradient_vertical]]);
   background-position:100% 0%;
   background-repeat:repeat-y;
+}
+.dock.dock_right_vertical {
+  left:auto;
+  right:0px;
 }
 .ie6 .dock {
   position:absolute;

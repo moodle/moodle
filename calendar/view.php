@@ -154,8 +154,6 @@ $PAGE->set_title("$site->shortname: $strcalendar: $pagetitle");
 $PAGE->set_heading($strcalendar);
 $PAGE->set_button($prefsbutton);
 
-$PAGE->requires->js_module(array('name'=>'blocks_calendar', 'fullpath'=>'/calendar/calendar.js', 'requires'=>array('dom', 'event', 'node', 'yui2-animation','event-mouseenter')));
-
 echo $OUTPUT->header();
 
 // Layout the whole page as three big columns.

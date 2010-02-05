@@ -1,34 +1,20 @@
 /**
- * START OF BLOCKS CODE
- * This code can be included in the footer instead of the header if we ever
- * have a static JS file that will be loaded in the footer.
- * Once this is done we will then also be able to remove the blocks.dock.init
- * function and call
- */
-
-/**
- * This namespace will contain all of content (functions, classes, properties)
- * for the block system
- * @namespace
- */
-M.blocks = M.blocks || {};
-
-/**
  * The dock namespace: Contains all things dock related
  * @namespace
  */
-M.blocks.dock = {
-    count:0,        // The number of dock items currently
-    totalcount:0,   // The number of dock items through the page life
-    exists:false,   // True if the dock exists
-    items:[],       // An array of dock items
-    node:null,      // The YUI node for the dock itself
-    earlybinds:[],  // Events added before the dock was augmented to support events
+M.core_dock = {
+    count : 0,        // The number of dock items currently
+    totalcount : 0,   // The number of dock items through the page life
+    exists : false,   // True if the dock exists
+    items : [],       // An array of dock items
+    node : null,      // The YUI node for the dock itself
+    earlybinds : [],  // Events added before the dock was augmented to support events
+    Y : null,         // The YUI instance to use with dock related code
     /**
      * Strings used by the dock/dockitems
      * @namespace
      */
-    strings:{
+    strings : {
         addtodock : '[[addtodock]]',
         undockitem : '[[undockitem]]',
         undockall : '[[undockall]]'
@@ -89,12 +75,13 @@ M.blocks.dock = {
     /**
      * Augments the classes as required and processes early bindings
      */
-    init:function() {
+    init:function(Y) {
+        this.Y = Y;
         // Give the dock item class the event properties/methods
-        Y.augment(M.blocks.dock.item, Y.EventTarget);
-        Y.augment(M.blocks.dock, Y.EventTarget, true);
+        this.Y.augment(M.core_dock.item, this.Y.EventTarget);
+        this.Y.augment(M.core_dock, this.Y.EventTarget, true);
         // Re-apply early bindings properly now that we can
-        M.blocks.dock.apply_binds();
+        M.core_dock.apply_binds();
         // Check if there is a customisation function
         if (typeof(customise_dock_for_theme) === 'function') {
             customise_dock_for_theme();
@@ -103,7 +90,7 @@ M.blocks.dock = {
     /**
      * Adds a dock item into the dock
      * @function
-     * @param {M.blocks.dock.item} item
+     * @param {M.core_dock.item} item
      */
     add:function(item) {
         item.id = this.totalcount;
@@ -114,8 +101,22 @@ M.blocks.dock = {
         this.items[item.id].draw();
         this.fire('dock:itemadded', item);
     },
+    /**
+     * Appends a dock item to the dock
+     * @param {YUI.Node} docknode
+     */
     append : function(docknode) {
-        M.blocks.dock.node.one('#dock_item_container').append(docknode);
+        M.core_dock.node.one('#dock_item_container').append(docknode);
+    },
+    /**
+     * Initialises a generic block object
+     * @param {YUI} Y
+     * @param {int} id
+     */
+    init_genericblock : function(Y, id) {
+        var genericblock = new this.genericblock();
+        genericblock.id = id;
+        genericblock.init(Y, Y.one('#inst'+id));
     },
     /**
      * Draws the dock
@@ -127,21 +128,21 @@ M.blocks.dock = {
             return true;
         }
         this.fire('dock:drawstarted');
-        this.item_sizer.init();
-        this.node = Y.Node.create('<div id="dock" class="'+M.blocks.dock.cfg.css.dock+' '+M.blocks.dock.cfg.css.dock+'_'+M.blocks.dock.cfg.position+'_'+M.blocks.dock.cfg.orientation+'"></div>');
-        this.node.appendChild(Y.Node.create('<div class="'+M.blocks.dock.cfg.css.dockspacer+'" style="height:'+M.blocks.dock.cfg.display.spacebeforefirstitem+'px"></div>'));
-        this.node.appendChild(Y.Node.create('<div id="dock_item_container"></div>'));
-        if (Y.UA.ie > 0 && Y.UA.ie < 7) {
+        this.item_sizer.init(this.Y);
+        this.node = this.Y.Node.create('<div id="dock" class="'+M.core_dock.cfg.css.dock+' '+this.cfg.css.dock+'_'+this.cfg.position+'_'+this.cfg.orientation+'"></div>');
+        this.node.appendChild(this.Y.Node.create('<div class="'+M.core_dock.cfg.css.dockspacer+'" style="height:'+M.core_dock.cfg.display.spacebeforefirstitem+'px"></div>'));
+        this.node.appendChild(this.Y.Node.create('<div id="dock_item_container"></div>'));
+        if (this.Y.UA.ie > 0 && this.Y.UA.ie < 7) {
             this.node.setStyle('height', this.node.get('winHeight')+'px');
         }
-        var dockcontrol = Y.Node.create('<div class="'+M.blocks.dock.cfg.css.controls+'"></div>');
-        var removeall = Y.Node.create('<img src="'+this.cfg.display.removeallicon+'" alt="'+mstr.block.undockall+'" title="'+mstr.block.undockall+'" />');
+        var dockcontrol = this.Y.Node.create('<div class="'+M.core_dock.cfg.css.controls+'"></div>');
+        var removeall = this.Y.Node.create('<img src="'+this.cfg.display.removeallicon+'" alt="'+mstr.block.undockall+'" title="'+mstr.block.undockall+'" />');
         removeall.on('removeall|click', this.remove_all, this);
         dockcontrol.appendChild(removeall);
         this.node.appendChild(dockcontrol);
 
-        Y.one(document.body).appendChild(this.node);
-        Y.one(document.body).addClass(M.blocks.dock.cfg.css.body);
+        this.Y.one(document.body).appendChild(this.node);
+        this.Y.one(document.body).addClass(M.core_dock.cfg.css.body);
         this.fire('dock:drawcompleted');
         return true;
     },
@@ -164,7 +165,7 @@ M.blocks.dock = {
             this.items = [];
             this.node.remove();
             this.node = null;
-            Y.one(document.body).removeClass(M.blocks.dock.cfg.css.body);
+            this.Y.one(document.body).removeClass(M.core_dock.cfg.css.body);
             this.fire('dock:removed');
         }
         return true;
@@ -180,12 +181,12 @@ M.blocks.dock = {
             this.count--;
             delete this.items[i];
         }
-        Y.fire('dock:toberemoved');
+        this.Y.fire('dock:toberemoved');
         this.items = [];
         this.node.remove();
         this.node = null;
-        Y.one(document.body).removeClass(M.blocks.dock.cfg.css.body);
-        Y.fire('dock:removed');
+        this.Y.one(document.body).removeClass(M.core_dock.cfg.css.body);
+        this.Y.fire('dock:removed');
         return true;
     },
     /**
@@ -232,18 +233,35 @@ M.blocks.dock = {
         }
         this.earlybinds = [];
     },
+    /**
+     * Namespace for the dock sizer which is responsible for ensuring that dock
+     * items are visible at all times, this is required because otherwise when there
+     * were enough dock items to fit on the dock those that ran over the size of
+     * the dock would not be usable
+     * @namespace
+     */
     item_sizer : {
-        enabled : false,
-        init : function() {
-            M.blocks.dock.on('dock:itemadded', this.check_if_required, this);
-            M.blocks.dock.on('dock:itemremoved', this.check_if_required, this);
-            Y.on('windowresize', this.check_if_required, this);
+        enabled : false,        // True if the item_sizer is being used, false otherwise
+        Y : null,               // The YUI instance
+        /**
+         * Initialises the dock sizer which then attaches itself to the required
+         * events in order to monitor the dock
+         * @param {YUI} Y
+         */
+        init : function(Y) {
+            this.Y = Y;
+            M.core_dock.on('dock:itemadded', this.check_if_required, this);
+            M.core_dock.on('dock:itemremoved', this.check_if_required, this);
+            this.Y.on('windowresize', this.check_if_required, this);
         },
+        /**
+         * Check if the size dock items needs to be adjusted
+         */
         check_if_required : function() {
-            var possibleheight = M.blocks.dock.node.get('offsetHeight') - M.blocks.dock.node.one('.controls').get('offsetHeight') - (M.blocks.dock.cfg.buffer*3) - (M.blocks.dock.items.length*2);
+            var possibleheight = M.core_dock.node.get('offsetHeight') - M.core_dock.node.one('.controls').get('offsetHeight') - (M.core_dock.cfg.buffer*3) - (M.core_dock.items.length*2);
             var totalheight = 0;
-            for (var id in M.blocks.dock.items) {
-                var dockedtitle = Y.get(M.blocks.dock.items[id].title).ancestor('.'+M.blocks.dock.cfg.css.dockedtitle);
+            for (var id in M.core_dock.items) {
+                var dockedtitle = this.Y.get(M.core_dock.items[id].title).ancestor('.'+M.core_dock.cfg.css.dockedtitle);
                 if (dockedtitle) {
                     if (this.enabled) {
                         dockedtitle.setStyle('height', 'auto');
@@ -255,17 +273,20 @@ M.blocks.dock = {
                 this.enable(possibleheight);
             }
         },
+        /**
+         * Enables the dock sizer and resizes where required.
+         */
         enable : function(possibleheight) {
             this.enabled = true;
             var runningcount = 0;
             var usedheight = 0;
-            for (var id in M.blocks.dock.items) {
-                var itemtitle = Y.get(M.blocks.dock.items[id].title).ancestor('.'+M.blocks.dock.cfg.css.dockedtitle);
+            for (var id in M.core_dock.items) {
+                var itemtitle = this.Y.get(M.core_dock.items[id].title).ancestor('.'+M.core_dock.cfg.css.dockedtitle);
                 if (!itemtitle) {
                     continue;
                 }
-                var itemheight = Math.floor((possibleheight-usedheight) / (M.blocks.dock.count - runningcount));
-                Y.log("("+possibleheight+"-"+usedheight+") / ("+M.blocks.dock.count+" - "+runningcount+") = "+itemheight);
+                var itemheight = Math.floor((possibleheight-usedheight) / (M.core_dock.count - runningcount));
+                this.Y.log("("+possibleheight+"-"+usedheight+") / ("+M.core_dock.count+" - "+runningcount+") = "+itemheight);
                 var offsetheight = itemtitle.get('offsetHeight');
                 itemtitle.setStyle('overflow', 'hidden');
                 if (offsetheight > itemheight) {
@@ -276,7 +297,7 @@ M.blocks.dock = {
                 }
                 runningcount++;
             }
-            Y.log('possible: '+possibleheight+' - used height: '+usedheight);
+            this.Y.log('possible: '+possibleheight+' - used height: '+usedheight);
         }
     },
     /**
@@ -286,6 +307,7 @@ M.blocks.dock = {
      */
     abstract_block_class : {
 
+        Y : null,                   // A YUI instance to use with the block
         id : null,                  // The block instance id
         cachedcontentnode : null,   // The cached content node for the actual block
         blockspacewidth : null,     // The width of the block's original container
@@ -298,24 +320,23 @@ M.blocks.dock = {
          *
          * @param {YUI.Node} node The node that contains all of the block's content
          */
-        init : function(node) {
+        init : function(Y, node) {
+
+            this.Y = Y;
             if (!node) {
-                node = Y.one('#inst'+this.id);
-                if (!node) {
-                    return;
-                }
+                return;
             }
 
             var commands = node.one('.header .title .commands');
             if (!commands) {
-                commands = Y.Node.create('<div class="commands"></div>');
+                commands = this.Y.Node.create('<div class="commands"></div>');
                 if (node.one('.header .title')) {
                     node.one('.header .title').append(commands);
                 }
             }
 
-            var moveto = Y.Node.create('<a class="moveto customcommand requiresjs"></a>');
-            moveto.append(Y.Node.create('<img src="'+M.util.image_url('t/dock_to_block', 'moodle')+'" alt="'+mstr.block.undockitem+'" title="'+mstr.block.undockitem+'" />'));
+            var moveto = this.Y.Node.create('<a class="moveto customcommand requiresjs"></a>');
+            moveto.append(this.Y.Node.create('<img src="'+M.util.image_url('t/dock_to_block', 'moodle')+'" alt="'+mstr.block.undockitem+'" title="'+mstr.block.undockitem+'" />'));
             if (location.href.match(/\?/)) {
                 moveto.set('href', location.href+'&dock='+this.id);
             } else {
@@ -347,7 +368,7 @@ M.blocks.dock = {
                 e.halt(true);
             }
 
-            var node = Y.one('#inst'+this.id);
+            var node = this.Y.one('#inst'+this.id);
             var blockcontent = node.one('.content');
             if (!blockcontent) {
                 return;
@@ -356,7 +377,7 @@ M.blocks.dock = {
             this.cachedcontentnode = node;
 
             node.all('a.moveto').each(function(moveto){
-                Y.Event.purgeElement(Y.Node.getDOMNode(moveto), false, 'click');
+                this.Y.Event.purgeElement(this.Y.Node.getDOMNode(moveto), false, 'click');
                 if (moveto.hasClass('customcommand')) {
                     moveto.all('img').each(function(movetoimg){
                         movetoimg.setAttribute('src', M.util.image_url('t/dock_to_block', 'moodle'));
@@ -366,24 +387,24 @@ M.blocks.dock = {
                 }
             }, this);
 
-            var placeholder = Y.Node.create('<div id="content_placeholder_'+this.id+'"></div>');
-            node.replace(Y.Node.getDOMNode(placeholder));
+            var placeholder = this.Y.Node.create('<div id="content_placeholder_'+this.id+'"></div>');
+            node.replace(this.Y.Node.getDOMNode(placeholder));
             node = null;
 
             var spacewidth = this.resize_block_space(placeholder);
 
-            var blocktitle = Y.Node.getDOMNode(this.cachedcontentnode.one('.title h2')).cloneNode(true);
+            var blocktitle = this.Y.Node.getDOMNode(this.cachedcontentnode.one('.title h2')).cloneNode(true);
             blocktitle = this.fix_title_orientation(blocktitle);
 
             var commands = this.cachedcontentnode.all('.title .commands');
-            var blockcommands = Y.Node.create('<div class="commands"></div>');
+            var blockcommands = this.Y.Node.create('<div class="commands"></div>');
             if (commands.size() > 0) {
                 blockcommands = commands.item(0);
             }
 
             // Create a new dock item for the block
-            var dockitem = new M.blocks.dock.item(this.id, blocktitle, blockcontent, blockcommands);
-            if (spacewidth !== null && M.blocks.dock.cfg.display.mindisplaywidth == null) {
+            var dockitem = new M.core_dock.item(this.Y, this.id, blocktitle, blockcontent, blockcommands);
+            if (spacewidth !== null && M.core_dock.cfg.display.mindisplaywidth == null) {
                 dockitem.cfg.display.mindisplaywidth = spacewidth;
             }
             // Wire the draw events to register remove events
@@ -391,18 +412,18 @@ M.blocks.dock = {
                 // check the contents block [editing=off]
                 this.contents.all('a.moveto').on('returntoblock|click', function(e){
                     e.halt();
-                    M.blocks.dock.remove(this.id)
+                    M.core_dock.remove(this.id)
                 }, this);
                 // check the commands block [editing=on]
                 this.commands.all('a.moveto').on('returntoblock|click', function(e){
                     e.halt();
-                    M.blocks.dock.remove(this.id)
+                    M.core_dock.remove(this.id)
                 }, this);
             }, dockitem);
 
             // Register an event so that when it is removed we can put it back as a block
             dockitem.on('dockitem:itemremoved', this.return_to_block, this, dockitem);
-            M.blocks.dock.add(dockitem);
+            M.core_dock.add(dockitem);
 
             if (!this.skipsetposition) {
                 // save the users preference
@@ -411,11 +432,15 @@ M.blocks.dock = {
                 this.skipsetposition = false;
             }
         },
+        /**
+         * Corrects the orientation of the title, which for the default
+         * dock just means making it vertical
+         * @param {YUI.Node} node
+         */
         fix_title_orientation : function(node) {
             node.innerHTML = node.innerHTML.replace(/(.)/g, "$1<br />");
             return node;
         },
-
         /**
          * Resizes the space that contained blocks if there were no blocks left in
          * it. e.g. if all blocks have been moved to the dock
@@ -439,14 +464,13 @@ M.blocks.dock = {
             }
             return null;
         },
-
         /**
          * This function removes a block from the dock and puts it back into the page
          * structure.
-         * @param {M.blocks.dock.class.item}
+         * @param {M.core_dock.class.item}
          */
         return_to_block : function(dockitem) {
-            var placeholder = Y.one('#content_placeholder_'+this.id);
+            var placeholder = this.Y.one('#content_placeholder_'+this.id);
             
             if (this.cachedcontentnode.one('.header')) {
                 this.cachedcontentnode.one('.header').insert(dockitem.contents, 'after');
@@ -454,13 +478,13 @@ M.blocks.dock = {
                 this.cachedcontentnode.insert(dockitem.contents);
             }
 
-            placeholder.replace(Y.Node.getDOMNode(this.cachedcontentnode));
-            this.cachedcontentnode = Y.one('#'+this.cachedcontentnode.get('id'));
+            placeholder.replace(this.Y.Node.getDOMNode(this.cachedcontentnode));
+            this.cachedcontentnode = this.Y.one('#'+this.cachedcontentnode.get('id'));
 
             this.resize_block_space(this.cachedcontentnode);
 
             this.cachedcontentnode.all('a.moveto').each(function(moveto){
-                Y.Event.purgeElement(Y.Node.getDOMNode(moveto), false, 'click');
+                this.Y.Event.purgeElement(this.Y.Node.getDOMNode(moveto), false, 'click');
                 moveto.on('movetodock|click', this.move_to_dock, this);
                 if (moveto.hasClass('customcommand')) {
                     moveto.all('img').each(function(movetoimg){
@@ -486,12 +510,13 @@ M.blocks.dock = {
     },
     /**
      * This namespace contains the generic properties, methods and events
-     * that will be bound to the M.blocks.dock.item class.
+     * that will be bound to the M.core_dock.item class.
      * These can then be overriden to customise the way dock items work/display
      * @namespace
      */
     abstract_item_class : {
 
+        Y : null,               // The YUI instance to use with this dock item
         id : null,              // The unique id for the item
         name : null,            // The name of the item
         title : null,           // The title of the item
@@ -500,7 +525,7 @@ M.blocks.dock = {
         active : false,         // True if the item is being shown
         panel : null,           // The YUI2 panel the item will be shown in
         preventhide : false,    // If true the next call to hide will be ignored
-        cfg : null,             // The config options for this item by default M.blocks.cfg
+        cfg : null,             // The config options for this item by default M.core_dock.cfg
 
         /**
          * Initialises all of the items events
@@ -523,17 +548,17 @@ M.blocks.dock = {
          */
         draw : function() {
             this.fire('dockeditem:drawstart');
-            var dockitemtitle = Y.Node.create('<div id="dock_item_'+this.id+'_title" class="'+this.cfg.css.dockedtitle+'"></div>');
+            var dockitemtitle = this.Y.Node.create('<div id="dock_item_'+this.id+'_title" class="'+this.cfg.css.dockedtitle+'"></div>');
             dockitemtitle.append(this.title);
-            var dockitem = Y.Node.create('<div id="dock_item_'+this.id+'" class="'+this.cfg.css.dockeditem+'"></div>');
-            if (M.blocks.dock.count === 1) {
+            var dockitem = this.Y.Node.create('<div id="dock_item_'+this.id+'" class="'+this.cfg.css.dockeditem+'"></div>');
+            if (M.core_dock.count === 1) {
                 dockitem.addClass('firstdockitem');
             }
             dockitem.append(dockitemtitle);
             if (this.commands.hasChildNodes) {
                 this.contents.appendChild(this.commands);
             }
-            M.blocks.dock.append(dockitem);
+            M.core_dock.append(dockitem);
 
             var position = dockitemtitle.getXY();
             position[0] += parseInt(dockitemtitle.get('offsetWidth'));
@@ -557,11 +582,11 @@ M.blocks.dock = {
                 autofillheight:this.cfg.panel.autofillheight});
             this.panel.showEvent.subscribe(this.resize_panel, this, true);
             this.panel.renderEvent.subscribe(this.resize_panel, this, true);
-            this.panel.setBody(Y.Node.getDOMNode(this.contents));
-            this.panel.render(M.blocks.dock.node);
-            if (this.cfg.display.mindisplaywidth !== null && Y.one(this.panel.body).getStyle('minWidth') == '0px') {
-                Y.one(this.panel.body).setStyle('minWidth', this.cfg.display.mindisplaywidth);
-                Y.one(this.panel.body).setStyle('minHeight', dockitemtitle.get('offsetHeight')+'px');
+            this.panel.setBody(this.Y.Node.getDOMNode(this.contents));
+            this.panel.render(M.core_dock.node);
+            if (this.cfg.display.mindisplaywidth !== null && this.Y.one(this.panel.body).getStyle('minWidth') == '0px') {
+                this.Y.one(this.panel.body).setStyle('minWidth', this.cfg.display.mindisplaywidth);
+                this.Y.one(this.panel.body).setStyle('minHeight', dockitemtitle.get('offsetHeight')+'px');
             }
             dockitem.on('showitem|mouseover', this.show, this);
             this.fire('dockeditem:drawcomplete');
@@ -572,7 +597,7 @@ M.blocks.dock = {
          */
         remove : function (e) {
             this.hide(e);
-            Y.one('#dock_item_'+this.id).remove();
+            this.Y.one('#dock_item_'+this.id).remove();
             this.panel.destroy();
             this.fire('dockitem:itemremoved');
         },
@@ -581,16 +606,16 @@ M.blocks.dock = {
          * @param {event}
          */
         show : function(e) {
-            M.blocks.dock.hide_all();
+            M.core_dock.hide_all();
             this.fire('dockeditem:showstart');
             this.panel.show(e, this);
             this.active = true;
-            Y.one('#dock_item_'+this.id+'_title').addClass(this.cfg.css.activeitem);
-            Y.detach('mouseover', this.show, Y.one('#dock_item_'+this.id));
-            Y.one('#dock_item_panel_'+this.id).on('dockpreventhide|click', function(){this.preventhide=true;}, this);
-            Y.one('#dock_item_'+this.id).on('dockhide|click', this.hide, this);
-            Y.get(window).on('dockresize|resize', this.resize_panel, this);
-            Y.get(document.body).on('dockhide|click', this.hide, this);
+            this.Y.one('#dock_item_'+this.id+'_title').addClass(this.cfg.css.activeitem);
+            this.Y.detach('mouseover', this.show, this.Y.one('#dock_item_'+this.id));
+            this.Y.one('#dock_item_panel_'+this.id).on('dockpreventhide|click', function(){this.preventhide=true;}, this);
+            this.Y.one('#dock_item_'+this.id).on('dockhide|click', this.hide, this);
+            this.Y.get(window).on('dockresize|resize', this.resize_panel, this);
+            this.Y.get(document.body).on('dockhide|click', this.hide, this);
             this.fire('dockeditem:showcomplete');
             return true;
         },
@@ -605,10 +630,10 @@ M.blocks.dock = {
             } else if (this.active) {
                 this.fire('dockeditem:hidestart');
                 this.active = false;
-                Y.one('#dock_item_'+this.id+'_title').removeClass(this.cfg.css.activeitem);
-                Y.one('#dock_item_'+this.id).on('showitem|mouseover', this.show, this);
-                Y.get(window).detach('dockresize|resize');
-                Y.get(document.body).detach('dockhide|click');
+                this.Y.one('#dock_item_'+this.id+'_title').removeClass(this.cfg.css.activeitem);
+                this.Y.one('#dock_item_'+this.id).on('showitem|mouseover', this.show, this);
+                this.Y.get(window).detach('dockresize|resize');
+                this.Y.get(document.body).detach('dockhide|click');
                 this.panel.hide(e, this);
                 this.fire('dockeditem:hidecomplete');
             }
@@ -619,12 +644,12 @@ M.blocks.dock = {
          */
         resize_panel : function() {
             this.fire('dockeditem:resizestart');
-            var panelbody = Y.one(this.panel.body);
+            var panelbody = this.Y.one(this.panel.body);
             var buffer = this.cfg.buffer;
-            var screenheight = parseInt(Y.get(document.body).get('winHeight'));
+            var screenheight = parseInt(this.Y.get(document.body).get('winHeight'));
             var panelheight = parseInt(panelbody.get('offsetHeight'));
             var paneltop = parseInt(this.panel.cfg.getProperty('y'));
-            var titletop = parseInt(Y.one('#dock_item_'+this.id+'_title').getY());
+            var titletop = parseInt(this.Y.one('#dock_item_'+this.id+'_title').getY());
             var scrolltop = window.pageYOffset || document.body.scrollTop || 0;
 
             // This makes sure that the panel is the same height as the dock title to
@@ -658,61 +683,66 @@ M.blocks.dock = {
  * This class represents a generic block
  * @class genericblock
  * @constructor
- * @param {int} uid
  */
-M.blocks.genericblock = function(uid){
-    // Save the unique id as the blocks id
-    if (uid && this.id==null) {
-        this.id = uid;
-    }
-    if (this instanceof M.blocks.genericblock) {
-        this.init();
-    }
-};
+M.core_dock.genericblock = function() {};
 /** Properties */
-M.blocks.genericblock.prototype.name =                    M.blocks.dock.abstract_block_class.name;
-M.blocks.genericblock.prototype.cachedcontentnode =       M.blocks.dock.abstract_block_class.cachedcontentnode;
-M.blocks.genericblock.prototype.blockspacewidth =         M.blocks.dock.abstract_block_class.blockspacewidth;
-M.blocks.genericblock.prototype.skipsetposition =         M.blocks.dock.abstract_block_class.skipsetposition;
+M.core_dock.genericblock.prototype.cachedcontentnode =       M.core_dock.abstract_block_class.cachedcontentnode;
+M.core_dock.genericblock.prototype.blockspacewidth =         M.core_dock.abstract_block_class.blockspacewidth;
+M.core_dock.genericblock.prototype.skipsetposition =         M.core_dock.abstract_block_class.skipsetposition;
 /** Methods **/
-M.blocks.genericblock.prototype.init =                    M.blocks.dock.abstract_block_class.init;
-M.blocks.genericblock.prototype.move_to_dock =            M.blocks.dock.abstract_block_class.move_to_dock;
-M.blocks.genericblock.prototype.resize_block_space =      M.blocks.dock.abstract_block_class.resize_block_space;
-M.blocks.genericblock.prototype.return_to_block =         M.blocks.dock.abstract_block_class.return_to_block;
-M.blocks.genericblock.prototype.fix_title_orientation =   M.blocks.dock.abstract_block_class.fix_title_orientation;
+M.core_dock.genericblock.prototype.init =                    M.core_dock.abstract_block_class.init;
+M.core_dock.genericblock.prototype.move_to_dock =            M.core_dock.abstract_block_class.move_to_dock;
+M.core_dock.genericblock.prototype.resize_block_space =      M.core_dock.abstract_block_class.resize_block_space;
+M.core_dock.genericblock.prototype.return_to_block =         M.core_dock.abstract_block_class.return_to_block;
+M.core_dock.genericblock.prototype.fix_title_orientation =   M.core_dock.abstract_block_class.fix_title_orientation;
 
 /**
  * This class represents an item in the dock
  * @class item
  * @constructor
  * @param {int} uid The unique ID for the item
- * @param {Y.Node} title
- * @param {Y.Node} contents
- * @param {Y.Node} commands
+ * @param {this.Y.Node} title
+ * @param {this.Y.Node} contents
+ * @param {this.Y.Node} commands
  */
-M.blocks.dock.item = function(uid, title, contents, commands){
-    if (uid && this.id==null) this.id = uid;
-    if (title && this.title==null) this.title = title;
-    if (contents && this.contents==null) this.contents = contents;
-    if (commands && this.commands==null) this.commands = commands;
+M.core_dock.item = function(Y, uid, title, contents, commands){
+    this.Y = Y;
+    if (uid && this.id==null) {
+        this.id = uid;
+    }
+    if (title && this.title==null) {
+        this.title = title;
+    }
+    if (contents && this.contents==null) {
+        this.contents = contents;
+    }
+    if (commands && this.commands==null) {
+        this.commands = commands;
+    }
     this.init_events();
 }
 /** Properties */
-M.blocks.dock.item.prototype.id =                 M.blocks.dock.abstract_item_class.id;
-M.blocks.dock.item.prototype.name =               M.blocks.dock.abstract_item_class.name;
-M.blocks.dock.item.prototype.title =              M.blocks.dock.abstract_item_class.title;
-M.blocks.dock.item.prototype.contents =           M.blocks.dock.abstract_item_class.contents;
-M.blocks.dock.item.prototype.commands =           M.blocks.dock.abstract_item_class.commands;
-M.blocks.dock.item.prototype.active =             M.blocks.dock.abstract_item_class.active;
-M.blocks.dock.item.prototype.panel =              M.blocks.dock.abstract_item_class.panel;
-M.blocks.dock.item.prototype.preventhide =        M.blocks.dock.abstract_item_class.preventhide;
-M.blocks.dock.item.prototype.cfg =                M.blocks.dock.cfg;
+M.core_dock.item.prototype.id =                 M.core_dock.abstract_item_class.id;
+M.core_dock.item.prototype.name =               M.core_dock.abstract_item_class.name;
+M.core_dock.item.prototype.title =              M.core_dock.abstract_item_class.title;
+M.core_dock.item.prototype.contents =           M.core_dock.abstract_item_class.contents;
+M.core_dock.item.prototype.commands =           M.core_dock.abstract_item_class.commands;
+M.core_dock.item.prototype.active =             M.core_dock.abstract_item_class.active;
+M.core_dock.item.prototype.panel =              M.core_dock.abstract_item_class.panel;
+M.core_dock.item.prototype.preventhide =        M.core_dock.abstract_item_class.preventhide;
+M.core_dock.item.prototype.cfg =                M.core_dock.cfg;
 /** Methods **/
-M.blocks.dock.item.prototype.init_events =        M.blocks.dock.abstract_item_class.init_events;
-M.blocks.dock.item.prototype.draw =               M.blocks.dock.abstract_item_class.draw;
-M.blocks.dock.item.prototype.remove =             M.blocks.dock.abstract_item_class.remove;
-M.blocks.dock.item.prototype.show =               M.blocks.dock.abstract_item_class.show;
-M.blocks.dock.item.prototype.hide =               M.blocks.dock.abstract_item_class.hide;
-M.blocks.dock.item.prototype.resize_panel =       M.blocks.dock.abstract_item_class.resize_panel;
+M.core_dock.item.prototype.init_events =        M.core_dock.abstract_item_class.init_events;
+M.core_dock.item.prototype.draw =               M.core_dock.abstract_item_class.draw;
+M.core_dock.item.prototype.remove =             M.core_dock.abstract_item_class.remove;
+M.core_dock.item.prototype.show =               M.core_dock.abstract_item_class.show;
+M.core_dock.item.prototype.hide =               M.core_dock.abstract_item_class.hide;
+M.core_dock.item.prototype.resize_panel =       M.core_dock.abstract_item_class.resize_panel;
 
-YUI.add('blocks_dock', M.blocks.dock.init, '0.0.0.1', 'requires', M.yui.loader.modules['blocks_dock'].requires);
+/**
+ * This ensures that the first time the dock module is used it is initiatlised.
+ * 
+ * NOTE: Never convert the second argument to a function reference...
+ * doing so causes scoping issues
+ */
+YUI.add('core_dock', function(Y) {M.core_dock.init(Y);}, '0.0.0.1', 'requires', M.yui.loader.modules['core_dock'].requires);
