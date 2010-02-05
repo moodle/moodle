@@ -3037,6 +3037,11 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $user->theme = '';
                     }
 
+                    //set time created
+                    if (empty($user->timecreated)) {
+                        $user->timecreated = time();
+                    }
+
                     //We are going to create the user
                     //The structure is exactly as we need
 
@@ -7158,6 +7163,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             break;
                         case "MNETHOSTURL":
                             $this->info->tempuser->mnethosturl = $this->getContents();
+                            break;
+                        case "TIMECREATED":
+                            $this->info->tempuser->timecreated = $this->getContents();
                             break;
                         case "TIMEMODIFIED":
                             $this->info->tempuser->timemodified = $this->getContents();

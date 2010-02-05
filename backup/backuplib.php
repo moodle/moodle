@@ -1367,6 +1367,7 @@
                 if ($user->mnethostid != $CFG->mnet_localhost_id && !empty($user->wwwroot)) {
                     fwrite ($bf,full_tag("MNETHOSTURL",4,false,$user->wwwroot));
                 }
+                fwrite ($bf,full_tag("TIMECREATED",4,false,$user->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$user->timemodified));
 
                 /// write assign/override code for context_userid
