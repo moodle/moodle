@@ -128,6 +128,16 @@ function mnet_server_strip_signature($plaintextmessage) {
         $currkey = mnet_get_public_key($remoteclient->wwwroot, $remoteclient->application);
         // If the key the remote peer is currently publishing is different to $certificate
         if($currkey != $certificate) {
+            // if pushkey is already set, it means the request was encrypted to an old key
+            // in mnet_server_strip_encryption.
+            // if we call refresh_key() here before pushing out our new key,
+            // and the other site ALSO has a new key,
+            // we'll get into an infinite keyswap loop
+            // so push just bail here, and push out the new key.
+            // the next request will get through to refresh_key
+            if ($remoteclient->pushkey) {
+                return false;
+            }
             // Try and get the server's new key through trusted means
             $remoteclient->refresh_key();
             // If we did manage to re-key, try to verify the signature again using the new public key.

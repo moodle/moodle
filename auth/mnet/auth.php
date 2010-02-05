@@ -1036,7 +1036,10 @@ class auth_plugin_mnet extends auth_plugin_base {
      */
     function kill_children($username, $useragent) {
         global $CFG, $USER, $DB;
-        $remoteclient = get_mnet_remote_client();
+        $remoteclient = null;
+        if (defined('MNET_SERVER')) {
+            $remoteclient = get_mnet_remote_client();
+        }
         require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
 
         $userid = $DB->get_field('user', 'id', array('mnethostid'=>$CFG->mnet_localhost_id, 'username'=>$username));
@@ -1096,6 +1099,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         global $CFG, $DB;
         $remoteclient = get_mnet_remote_client();
         $session = $DB->get_record('mnet_session', array('username'=>$username, 'mnethostid'=>$remoteclient->id, 'useragent'=>$useragent));
+        $DB->delete_records('mnet_session', array('username'=>$username, 'mnethostid'=>$remoteclient->id, 'useragent'=>$useragent));
         if (false != $session) {
             session_kill($session->session_id);
             return true;
