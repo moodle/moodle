@@ -7,12 +7,12 @@
 
 $THEME->name = 'anomaly';
 
-$THEME->sheets = array('styles', 'styles_layout', 'styles_select');
+$THEME->sheets = array('base', 'general', 'layout', 'browser','navigation');
 /// This variable is an array containing the names of all the
 /// stylesheet files you want included in this theme, and in what order
 ////////////////////////////////////////////////////////////////////////////////
 
-$THEME->parents = array('standardold');  // TODO: new themes can not be based on standardold, instead use 'base' as the base
+$THEME->parents = array('base');  // TODO: new themes can not be based on standardold, instead use 'base' as the base
 /// This variable can be set to the name of a parent theme
 /// which you want to have included before the current theme.
 /// This can make it easy to make modifications to another
@@ -21,7 +21,7 @@ $THEME->parents = array('standardold');  // TODO: new themes can not be based on
 /// is not used.
 ////////////////////////////////////////////////////////////////////////////////
 
-$THEME->parents_exclude_sheets = array('standardold'=>array('styles_moz'));
+$THEME->parents_exclude_sheets = array('base'=>array('styles_moz'));
 
 $THEME->resource_mp3player_colors =
  'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
@@ -41,7 +41,12 @@ $THEME->editor_sheets = array('styles_tinymce');
 
 $THEME->layouts = array(
     // Most pages - if we encounter an unknown or a missing page type, this one is used.
-    'normal' => array(
+    'base' => array(
+        'theme' => 'anomaly',
+        'file' => 'general.php',
+        'regions' => array()
+    ),
+    'standard' => array(
         'theme' => 'anomaly',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
@@ -54,33 +59,47 @@ $THEME->layouts = array(
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post'
     ),
-    // The site home page.
-    'home' => array(
+    // Course page
+    'coursecategory' => array(
         'theme' => 'anomaly',
-        'file' => 'home.php',
+        'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post'
     ),
-    // Server administration scripts.
+    'incourse' => array(
+        'theme' => 'anomaly',
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post'
+    ),
+    'frontpage' => array(
+        'theme' => 'anomaly',
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post'
+    ),
     'admin' => array(
         'theme' => 'anomaly',
         'file' => 'general.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre'
     ),
-    // My moodle page
-    'my' => array(
+    'mydashboard' => array(
         'theme' => 'anomaly',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post'
     ),
-
-    // Settings form pages, like course of module settings.
-    'form' => array(
+    'mypublic' => array(
         'theme' => 'anomaly',
         'file' => 'general.php',
-        'regions' => array(),
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post'
+    ),
+    'login' => array(
+        'theme' => 'anomaly',
+        'file' => 'general.php',
+        'regions' => array()
     ),
     // Pages that appear in pop-up windows - no navigation, no blocks, no header.
     'popup' => array(
@@ -111,5 +130,9 @@ $THEME->layouts = array(
         'file' => 'general.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>true),
-    ),
+    )
 );
+
+$THEME->rendererfactory = 'theme_overridden_renderer_factory';
+$THEME->enable_dock = true;
+$THEME->javascripts_footer = array('navigation');
