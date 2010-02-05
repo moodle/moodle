@@ -1105,7 +1105,7 @@ function question_load_states(&$questions, &$states, $cmoptions, $attempt, $last
                 $statefields = 'n.questionid as question, s.*, n.sumpenalty';
                 $sql = "SELECT $statefields
                           FROM {question_states} s, {question_sessions} n
-                         WHERE s.id = n.newgraded
+                         WHERE s.id = n.newest
                                AND n.attemptid = ?
                                AND n.questionid = ?";
                 if (!$laststate = $DB->get_record_sql($sql, array($lastattemptid, $qid))) {
