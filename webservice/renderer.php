@@ -52,7 +52,7 @@ class core_webservice_renderer extends plugin_renderer_base {
                 $required = '';
             }
             if ($params->required == VALUE_DEFAULT) {
-                if (empty($params->default)) {
+                if ($params->default === null) {
                     $params->default = "null";
                 }
                 $required = html_writer::start_tag('b', array()).get_string('default', 'webservice', $params->default).html_writer::end_tag('b');
@@ -335,7 +335,7 @@ EOF;
                       $required = get_string('required', 'webservice');
                 }
                 if ($paramdesc->required == VALUE_DEFAULT) {
-                    if (empty($paramdesc->default)) {
+                    if ($paramdesc->default === null) {
                         $default = "null";
                     } else {
                         $default = $paramdesc->default;
