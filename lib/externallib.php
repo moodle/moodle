@@ -164,7 +164,7 @@ class external_api {
             foreach ($description->keys as $key=>$subdesc) {
                 if (!array_key_exists($key, $params)) {
                     if ($subdesc->required == VALUE_REQUIRED) {
-                        throw new invalid_parameter_exception('Missing required key in single structure.');
+                        throw new invalid_parameter_exception('Missing required key in single structure: '.$key);
                     }
                     if ($subdesc instanceof external_value) {
                             if ($subdesc->required == VALUE_DEFAULT) {
@@ -179,7 +179,8 @@ class external_api {
                     try {
                         $result[$key] = self::validate_parameters($subdesc, $params[$key]);
                     } catch (invalid_parameter_exception $e) {
-                        throw new webservice_parameter_exception('invalidextparam',$key);
+                        //it's ok to display debug info as here the information is useful for ws client/dev
+                        throw new webservice_parameter_exception('invalidextparam',$key." (".$e->debuginfo.")");
                     }
                 }
                 unset($params[$key]);
