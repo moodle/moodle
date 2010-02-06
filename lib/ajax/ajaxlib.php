@@ -722,7 +722,7 @@ class page_requirements_manager {
         global $CFG;
 
         if ($this->headdone) {
-            $code = $this->yui2loader->script_embed();
+            $code = $this->yui2loader->script();
         } else {
             $code = $this->yui2loader->script();
             if ($this->yui2loader->combine) {
