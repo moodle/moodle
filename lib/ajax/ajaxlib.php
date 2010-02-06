@@ -252,7 +252,7 @@ class page_requirements_manager {
         $this->string_for_js('confirmation', 'admin');
         $this->string_for_js('cancel', 'moodle');
         $this->string_for_js('yes', 'moodle');
-        $this->js_function_call('init_help_icons');
+        $this->js_init_call('M.util.init_help_icons');
     }
 
     /**
