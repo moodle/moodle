@@ -68,8 +68,8 @@ foreach ($chatusers as $chatuser) {
     $uidles[$i] = 'uidle{$chatuser->id}';
     $i++;
 }
-$PAGE->requires->data_for_js('uidles', $uidles)->in_head();
-$PAGE->requires->js('/mod/chat/gui_header_js/chat_gui_header.js')->in_head();
+$PAGE->requires->data_for_js('uidles', $uidles);
+$PAGE->requires->js('/mod/chat/gui_header_js/chat_gui_header.js');
 $PAGE->requires->js_function_call('start')->on_dom_ready();
 ob_start();
 echo $OUTPUT->header();
