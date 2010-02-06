@@ -347,6 +347,10 @@ class page_requirements_manager {
                 $module = array('name'=>'core_dock', 'fullpath'=>'/blocks/dock.js', 'requires'=>array('base', 'cookie', 'dom', 'io', 'node', 'event-custom'));
             } else if ($name === 'core_calendar') {
                 $module = array('name'=>'core_calendar', 'fullpath'=>'/calendar/calendar.js', 'requires'=>array('dom', 'event', 'node', 'yui2-container','event-mouseenter'));
+            } else if ($name === 'core_message') {
+                $module = array('name'=>'core_message', 'fullpath'=>'/message/module.js');
+            } else if ($name === 'core_flashdetect') {
+                $module = array('name'=>'core_flashdetect', 'fullpath'=>'/lib/flashdetect/flashdetect.js', 'requires'=>array('io'));
             }
         } else {
             if ($dir = get_component_directory($name, false)) {
