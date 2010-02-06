@@ -5882,7 +5882,7 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
             echo '<div class="ratingsubmit">';
             echo '<input type="submit" id="forumpostratingsubmit" value="'.get_string('sendinratings', 'forum').'" />';
             if (ajaxenabled() && !empty($CFG->forum_ajaxrating)) { /// AJAX enabled, standard submission form
-                $PAGE->requires->js_function_call('add_menu_listeners', array($OUTPUT->pix_url('i/loading_small')))->on_dom_ready();
+                $PAGE->requires->js_function_call('add_menu_listeners', array($OUTPUT->pix_url('i/loading_small')), true);
             }
             if ($forum->scale < 0) {
                 if ($scale = $DB->get_record("scale", array("id" => abs($forum->scale)))) {

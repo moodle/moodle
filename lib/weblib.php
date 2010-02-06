@@ -817,7 +817,7 @@ function close_window($delay = 0, $reloadopener = false) {
     }
     echo '<p class="centerpara">' . get_string('windowclosing') . '</p>';
 
-    $PAGE->requires->js_function_call($function)->after_delay($delay);
+    $PAGE->requires->js_function_call($function, null, false, $delay);
 
     echo $OUTPUT->footer();
     exit;

@@ -1037,7 +1037,7 @@ function lesson_get_media_html($lesson, $context) {
         $code = resourcelib_embed_general($url, $title, $clicktoopen, $mimetype);
         $PAGE->requires->yui2_lib('dom');
         $PAGE->requires->js('/mod/url/functions.js');
-        $PAGE->requires->js_function_call('imscp_setup_object')->on_dom_ready();
+        $PAGE->requires->js_function_call('imscp_setup_object', null, true);
     }
 
     return $code;

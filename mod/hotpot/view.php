@@ -426,7 +426,7 @@
                 default:
                     $iframe_id = 'hotpot_iframe';
                     $PAGE->requires->js('/mod/hotpot/iframe.js');
-                    $PAGE->requires->js_function_call('set_iframe_height', array($iframe_id))->on_dom_ready();
+                    $PAGE->requires->js_function_call('set_iframe_height', array($iframe_id), true);
                     echo $OUTPUT->header();
                     if (!empty($available_msg)) {
                         echo $OUTPUT->notification($available_msg);

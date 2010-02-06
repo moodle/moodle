@@ -110,7 +110,7 @@
             $efile = get_file_url($filename, null, 'questionfile');
             echo '<p><div class="boxaligncenter">' .
                     get_string('yourfileshoulddownload', 'question', $efile) . '</div></p>';
-            $PAGE->requires->js_function_call('document.location.replace', array($efile))->after_delay(1);
+            $PAGE->requires->js_function_call('document.location.replace', array($efile), false, 1);
         }
 
         echo $OUTPUT->continue_button(new moodle_url('edit.php', $thispageurl->params()));

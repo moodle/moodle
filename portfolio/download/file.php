@@ -27,7 +27,7 @@ $returnurl = $exporter->get('caller')->get_return_url();
 echo $OUTPUT->notification('<a href="' . $returnurl . '">' . get_string('returntowhereyouwere', 'portfolio') . '</a><br />');
 
 $PAGE->requires->js('/portfolio/download/helper.js');
-$PAGE->requires->js_function_call('submit_download_form')->on_dom_ready();
+$PAGE->requires->js_function_call('submit_download_form', null, true);
 
 // if they don't have javascript, they can submit the form here to get the file.
 // if they do, it does it nicely for them.

@@ -546,7 +546,7 @@ class core_renderer extends renderer_base {
                 if (!$debugdisableredirect) {
                     // Don't use exactly the same time here, it can cause problems when both redirects fire at the same time.
                     $this->metarefreshtag = '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />'."\n";
-                    $this->page->requires->js_function_call('document.location.replace', array($url))->after_delay($delay + 3);
+                    $this->page->requires->js_function_call('document.location.replace', array($url), false, ($delay + 3));
                 }
                 $output = $this->header();
                 break;
@@ -558,7 +558,7 @@ class core_renderer extends renderer_base {
                 // We really shouldn't be here but we can deal with this
                 debugging("You should really redirect before you start page output");
                 if (!$debugdisableredirect) {
-                    $this->page->requires->js_function_call('document.location.replace', array($url))->after_delay($delay);
+                    $this->page->requires->js_function_call('document.location.replace', array($url), false, $delay);
                 }
                 $output = $this->opencontainers->pop_all_but_last();
                 break;

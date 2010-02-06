@@ -70,7 +70,7 @@ foreach ($chatusers as $chatuser) {
 }
 $PAGE->requires->data_for_js('uidles', $uidles);
 $PAGE->requires->js('/mod/chat/gui_header_js/chat_gui_header.js');
-$PAGE->requires->js_function_call('start')->on_dom_ready();
+$PAGE->requires->js_function_call('start', null, true);
 ob_start();
 echo $OUTPUT->header();
 

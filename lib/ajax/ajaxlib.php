@@ -33,34 +33,34 @@
  *
  * Typical useage would be
  * <pre>
+ *     $PAGE->requires->init_js_call('M.mod_forum.init_view');
+ * </pre>
+ *
+ * It also supports obsoleted coding style withouth YUI3 modules.
+ * <pre>
  *     $PAGE->requires->css('/mod/mymod/userstyles.php?id='.$id); // not overriddable via themes!
  *     $PAGE->requires->js('/mod/mymod/script.js');
  *     $PAGE->requires->js('/mod/mymod/small_but_urgent.js', true);
- *     $PAGE->requires->js_function_call('init_mymod', array($data))->on_dom_ready();
+ *     $PAGE->requires->js_function_call('init_mymod', array($data), true);
  * </pre>
  *
  * There are some natural restrictions on some methods. For example, {@link css()}
  * can only be called before the <head> tag is output. See the comments on the
  * individual methods for details.
  *
- * @copyright 2009 Tim Hunt
+ * @copyright 2009 Tim Hunt, 2010 Petr Skoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
  */
 class page_requirements_manager {
-    const WHEN_IN_HEAD = 0;
-    const WHEN_AT_END = 10;
-    const WHEN_IN_YUI = 20;
-    const WHEN_ON_DOM_READY = 30;
-
-    protected $requiredjscode = array();
-
     /** List of string available from JS */
     protected $stringsforjs = array();
     /** List of JS variables to be initialised */
     protected $jsinitvariables = array('head'=>array(), 'footer'=>array());
     /** Included JS scripts */
     protected $jsincludes = array('head'=>array(), 'footer'=>array());
+    /** List of needed function calls */
+    protected $jscalls = array('normal'=>array(), 'ondomready'=>array());
     /**
      * List of skip links, those are needed for accessibility reasons
      * @var array
@@ -92,8 +92,9 @@ class page_requirements_manager {
      * @var array
      */
     protected $extramodules = array();
-
+    /** Flag indicated head stuff already printed */
     protected $headdone = false;
+    /** Flag indicating top of body already printed */
     protected $topofbodydone = false;
 
     /** YUI PHPLoader instance responsible for YUI2 loading from PHP only */
@@ -386,7 +387,7 @@ class page_requirements_manager {
             throw new coding_exception('Missing YUI3 module details.');
         }
 
-        $module['fullpath'] = $this->js_fix_url($module['fullpath'])->out();
+        $module['fullpath'] = $this->js_fix_url($module['fullpath'])->out(false);
 
         if ($this->headdone) {
             $this->extramodules[$module['name']] = $module;
@@ -467,6 +468,7 @@ class page_requirements_manager {
     }
 
     /**
+     * !!!DEPRECATED!!! please use js_init_call() if possible
      * Ensure that the specified JavaScript function is called from an inline script
      * somewhere on this page.
      *
@@ -486,16 +488,13 @@ class page_requirements_manager {
      * @param array $arguments and array of arguments to be passed to the function.
      *      When generating the function call, this will be escaped using json_encode,
      *      so passing objects and arrays should work.
-     * @return required_js_function_call The required_js_function_call object.
-     *      This allows you to control when the link to the script is output by
-     *      calling methods like {@link required_js_function_call::in_head()},
-     *      {@link required_js_function_call::on_dom_ready()} or
-     *      {@link required_js_function_call::after_delay()} methods.
+     * @param bool $ondomready
+     * @param int $delay
+     * @return void
      */
-    public function js_function_call($function, array $arguments = null) {
-        $requirement = new required_js_function_call($this, $function, $arguments);
-        $this->requiredjscode[] = $requirement;
-        return $requirement;
+    public function js_function_call($function, array $arguments = null, $ondomready = false, $delay = 0) {
+        $where = $ondomready ? 'ondomready' : 'normal';
+        $this->jscalls[$where][] = array($function, $arguments, $delay);
     }
 
     /**
@@ -668,15 +667,17 @@ class page_requirements_manager {
 
     /**
      * Get the inline JavaScript code that need to appear in a particular place.
-     * @param $when one of the WHEN_... constants.
-     * @return string the javascript that should be output in that place.
+     * @return bool $ondomready
      */
-    protected function get_javascript_code($when, $indent = '') {
+    protected function get_javascript_code($ondomready) {
+        $where = $ondomready ? 'ondomready' : 'normal';
         $output = '';
-        foreach ($this->requiredjscode as $requirement) {
-            if (!$requirement->is_done() && $requirement->get_when() == $when) {
-                $output .= $indent . $requirement->get_js_code();
-                $requirement->mark_done();
+        if ($this->jscalls[$where]) {
+            foreach ($this->jscalls[$where] as $data) {
+                $output = js_writer::function_call($data[0], $data[1], $data[2]);
+            }
+            if (!empty($ondomready)) {
+                $output = "    Y.on('domready', function() {\n$output\n    });";
             }
         }
         return $output;
@@ -830,9 +831,6 @@ class page_requirements_manager {
             }
         }
 
-        // finally all JS that should go directly into head tag
-        $output .= html_writer::script($this->get_javascript_code(self::WHEN_IN_HEAD));
-
         // mark head sending done, it is not possible to anything there
         $this->headdone = true;
 
@@ -901,20 +899,14 @@ class page_requirements_manager {
             $output .= html_writer::script($js);
         }
 
-        $js = $this->get_javascript_code(self::WHEN_AT_END);
-
-        $inyuijs = $this->get_javascript_code(self::WHEN_IN_YUI, '    ');
-        $ondomreadyjs = $this->get_javascript_code(self::WHEN_ON_DOM_READY, '        ');
+        $inyuijs = $this->get_javascript_code(false);
+        $ondomreadyjs = $this->get_javascript_code(true);
         $jsinit = $this->get_javascript_init_code();
         $handlersjs = $this->get_event_handler_code();
 
-        if (!empty($ondomreadyjs)) {
-             $ondomreadyjs = "    Y.on('domready', function() {\n$ondomreadyjs\n    });";
-        }
-
         // the global Y can be used only after it is fully loaded, that means
         // from code executed from the following block
-        $js .= "YUI(M.yui.loader).use('node', function(Y) {\n{$inyuijs}{$ondomreadyjs}{$jsinit}{$handlersjs}\n});";
+        $js = "YUI(M.yui.loader).use('node', function(Y) {\n{$inyuijs}{$ondomreadyjs}{$jsinit}{$handlersjs}\n});";
 
         $output .= html_writer::script($js);
 
@@ -933,196 +925,6 @@ class page_requirements_manager {
      */
     public function is_top_of_body_done() {
         return $this->topofbodydone;
-    }
-}
-
-
-/**
- * This is the base class for all sorts of requirements. just to factor out some
- * common code.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- */
-abstract class requirement_base {
-    protected $manager;
-    protected $when;
-    protected $done = false;
-
-    /**
-     * Constructor. Normally the class and its subclasses should not be created
-     * directly. Client code should create them via a page_requirements_manager
-     * method like ->js(...).
-     *
-     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
-     */
-    protected function __construct(page_requirements_manager $manager) {
-        $this->manager = $manager;
-    }
-
-    /**
-     * Mark that this requirement has been satisfied (that is, that the HTML
-     * returned by {@link get_html()} has been output.
-     * @return boolean has this requirement been satisfied yet? That is, has
-     *      that the HTML returned by {@link get_html()} has been output already.
-     */
-    public function is_done() {
-        return $this->done;
-    }
-
-    /**
-     * Mark that this requirement has been satisfied (that is, that the HTML
-     * returned by {@link get_html()} has been output.
-     */
-    public function mark_done() {
-        $this->done = true;
-    }
-
-    /**
-     * Where on the page the HTML this requirement is meant to go.
-     * @return integer One of the {@link page_requirements_manager}::WHEN_... constants.
-     */
-    public function get_when() {
-        return $this->when;
-    }
-}
-
-/**
- * This class represents something that must be output somewhere in the HTML.
- *
- * Examples include links to JavaScript or CSS files. However, it should not
- * necessarily be output immediately, we may have to wait for an appropriate time.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- */
-abstract class linked_requirement extends requirement_base {
-    protected $url;
-
-    /**
-     * Constructor. Normally the class and its subclasses should not be created
-     * directly. Client code should create them via a page_requirements_manager
-     * method like ->js(...).
-     *
-     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
-     * @param string $url The URL of the thing we are linking to.
-     */
-    protected function __construct(page_requirements_manager $manager, $url) {
-        parent::__construct($manager);
-        $this->url = $url;
-    }
-
-    /**
-     * @return string the HTML needed to satisfy this requirement.
-     */
-    abstract public function get_html();
-}
-
-
-/**
- * This is the base class for requirements that are JavaScript code.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- */
-abstract class required_js_code extends requirement_base {
-
-    /**
-     * Constructor.
-     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
-     */
-    protected function __construct(page_requirements_manager $manager) {
-        parent::__construct($manager);
-        $this->when = page_requirements_manager::WHEN_AT_END;
-    }
-
-    /**
-     * @return string the JavaScript code needed to satisfy this requirement.
-     */
-    abstract public function get_js_code();
-
-    /**
-     * Indicate that the link to this JavaScript file should be output in the
-     * <head> section of the HTML. If it too late for this request to be
-     * satisfied, an exception is thrown.
-     */
-    public function in_head() {
-        if ($this->is_done() || $this->when <= page_requirements_manager::WHEN_IN_HEAD) {
-            return;
-        }
-        if ($this->manager->is_head_done()) {
-            throw new coding_exception('Too late to ask for some JavaScript code to be output in &lt;head>.');
-        }
-        $this->when = page_requirements_manager::WHEN_IN_HEAD;
-    }
-}
-
-
-/**
- * This class represents a JavaScript function that must be called from the HTML
- * page. By default the call will be made at the end of the page when YUI initialised,
- * but you can chage that using the {@link in_head()}, etc. methods.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- */
-class required_js_function_call extends required_js_code {
-    protected $function;
-    protected $arguments;
-    protected $delay = 0;
-
-    /**
-     * Constructor. Normally instances of this class should not be created directly.
-     * Client code should create them via the page_requirements_manager
-     * method {@link page_requirements_manager::js_function_call()}.
-     *
-     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
-     * @param string $function the name of the JavaScritp function to call.
-     *      Can be a compound name like 'Y.Event.purgeElement'. Do not use old YUI2 YAHOO. function names.
-     * @param array $arguments and array of arguments to be passed to the function.
-     *      When generating the function call, this will be escaped using json_encode,
-     *      so passing objects and arrays should work.
-     */
-    public function __construct(page_requirements_manager $manager, $function, $arguments) {
-        parent::__construct($manager);
-        $this->when = page_requirements_manager::WHEN_IN_YUI;
-        $this->function = $function;
-        $this->arguments = $arguments;
-    }
-
-    public function get_js_code() {
-        return js_writer::function_call($this->function, $this->arguments, $this->delay);
-    }
-
-    /**
-     * Indicate that this function should be called in YUI's onDomReady event.
-     *
-     * Thisis needed mostly for buggy IE browsers because they have problems
-     * when JS starts modifying DOM structure before the DOM is ready.
-     */
-    public function on_dom_ready() {
-        if ($this->is_done() || $this->when < page_requirements_manager::WHEN_IN_YUI) {
-            return;
-        }
-        $this->when = page_requirements_manager::WHEN_ON_DOM_READY;
-    }
-
-    /**
-     * Indicate that this function should be called a certain number of seconds
-     * after the page has finished loading. (More exactly, a number of seconds
-     * after the onDomReady event fires.)
-     *
-     * @param integer $seconds the number of seconds delay.
-     */
-    public function after_delay($seconds) {
-        if ($seconds) {
-            $this->on_dom_ready();
-        }
-        $this->delay = $seconds;
     }
 }
 
