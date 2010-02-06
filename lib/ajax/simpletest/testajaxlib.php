@@ -171,36 +171,6 @@ class required_js_function_call_test extends ajaxlib_unit_test_base {
 
 
 /**
- * Unit tests for the required_data_for_js class.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class required_data_for_js_test extends ajaxlib_unit_test_base {
-    public function test_round_trip_to_js_code() {
-        $requirement = new required_data_for_js($this->requires, 'varname', 'Value');
-        $js = $requirement->get_js_code();
-        $this->assertContains($js, 'var varname =');
-        $this->assertContains($js, 'Value');
-    }
-
-    public function test_no_var_for_complex_varname_1() {
-        $requirement = new required_data_for_js($this->requires, 'obj.field', 'Value');
-        $js = $requirement->get_js_code();
-        $this->assertPattern('/^obj\\.field =/', $js);
-        $this->assertContains($js, 'Value');
-    }
-
-    public function test_no_var_for_complex_varname_2() {
-        $requirement = new required_data_for_js($this->requires, 'arry[0]', 'Value');
-        $js = $requirement->get_js_code();
-        $this->assertPattern('/^arry\\[0\\] =/', $js);
-        $this->assertContains($js, 'Value');
-    }
-}
-
-
-/**
  * Unit tests for the page_requirements_manager class.
  *
  * @copyright 2009 Tim Hunt

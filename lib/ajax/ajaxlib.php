@@ -54,9 +54,12 @@ class page_requirements_manager {
     const WHEN_ON_DOM_READY = 30;
 
     protected $linkedrequirements = array();
-    protected $stringsforjs = array();
     protected $requiredjscode = array();
 
+    /** List of string available from JS */
+    protected $stringsforjs = array();
+    /** List of JS variables to be initialised */
+    protected $jsinitvariables = array('head'=>array(), 'footer'=>array());
     /**
      * List of skip links, those are needed for accessibility reasons
      * @var array
@@ -88,8 +91,6 @@ class page_requirements_manager {
      * @var array
      */
     protected $extramodules = array();
-
-    protected $variablesinitialised = array('mstr' => 1); // 'mstr' is special. See string_for_js.
 
     protected $headdone = false;
     protected $topofbodydone = false;
@@ -640,30 +641,17 @@ class page_requirements_manager {
      *      $PAGE->requires->data_for_js('mydata', array('name' => 'Moodle'));
      * </pre>
      * then in JavsScript mydata.name will be 'Moodle'.
-     *
-     * You cannot call this function more than once with the same variable name
-     * (if you try, it will throw an exception). Your code should prepare all the
-     * date you want, and then pass it to this method. There is no way to change
-     * the value associated with a particular variable later.
-     *
      * @param string $variable the the name of the JavaScript variable to assign the data to.
      *      Will probably work if you use a compound name like 'mybuttons.button[1]', but this
      *      should be considered an experimental feature.
      * @param mixed $data The data to pass to JavaScript. This will be escaped using json_encode,
      *      so passing objects and arrays should work.
-     * @return required_data_for_js The required_data_for_js object.
-     *      This allows you to control when the link to the script is output by
-     *      calling methods like {@link required_data_for_js::in_head()} or
+     * @param bool $inhead initialise in head
+     * @return void
      */
-    public function data_for_js($variable, $data) {
-        if (isset($this->variablesinitialised[$variable])) {
-            throw new coding_exception("A variable called '" . $variable .
-                    "' has already been passed ot JavaScript. You cannot overwrite it.");
-        }
-        $requirement = new required_data_for_js($this, $variable, $data);
-        $this->requiredjscode[] = $requirement;
-        $this->variablesinitialised[$variable] = 1;
-        return $requirement;
+    public function data_for_js($variable, $data, $inhead=false) {
+        $where = $inhead ? 'head' : 'footer';
+        $this->jsinitvariables[$where][] = array($variable, $data);
     }
 
     /**
@@ -854,11 +842,21 @@ class page_requirements_manager {
         // link our main JS file, all core stuff should be there
         $output .= html_writer::script('', $CFG->httpswwwroot.'/lib/javascript-static.js');
 
+        // add variables
+        if ($this->jsinitvariables['head']) {
+            $js = '';
+            foreach ($this->jsinitvariables['head'] as $data) {
+                list($var, $value) = $data;
+                $js .= js_writer::set_variable($var, $value, true);
+            }
+            $output .= html_writer::script($js);
+        }
+
         // all the other linked things from HEAD - there should be as few as possible
         // because we need to minimise number of http requests,
         $output .= $this->get_linked_resources_code(self::WHEN_IN_HEAD);
 
-        // finally all JS that should go directly into head tag - mostly global config
+        // finally all JS that should go directly into head tag
         $output .= html_writer::script($this->get_javascript_code(self::WHEN_IN_HEAD));
 
         // mark head sending done, it is not possible to anything there
@@ -910,8 +908,19 @@ class page_requirements_manager {
         // now print all the stuff that was added through ->requires
         $output .= $this->get_linked_resources_code(self::WHEN_AT_END);
 
+        // add all needed strings
         if (!empty($this->stringsforjs)) {
-            array_unshift($this->requiredjscode, new required_data_for_js($this, 'mstr', $this->stringsforjs));
+            $output .= html_writer::script(js_writer::set_variable('mstr', $this->stringsforjs));
+        }
+
+        // add variables
+        if ($this->jsinitvariables['footer']) {
+            $js = '';
+            foreach ($this->jsinitvariables['footer'] as $data) {
+                list($var, $value) = $data;
+                $js .= js_writer::set_variable($var, $value, true);
+            }
+            $output .= html_writer::script($js);
         }
 
         $js = $this->get_javascript_code(self::WHEN_AT_END);
@@ -1274,46 +1283,6 @@ class required_js_function_call extends required_js_code {
             $this->on_dom_ready();
         }
         $this->delay = $seconds;
-    }
-}
-
-
-/**
- * This class represents some data from PHP that needs to be made available in a
- * global JavaScript variable. By default the data will be output at the end of
- * the page, but you can chage that using the {@link in_head()}, etc. methods.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- */
-class required_data_for_js extends required_js_code {
-    protected $variable;
-    protected $data;
-
-    /**
-     * Constructor. Normally the class and its subclasses should not be created directly.
-     * Client code should create them via the page_requirements_manager
-     * method {@link page_requirements_manager::data_for_js()}.
-     *
-     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
-     * @param string $variable the the name of the JavaScript variable to assign the data to.
-     *      Will probably work if you use a compound name like 'mybuttons.button[1]', but this
-     *      should be considered an experimental feature.
-     * @param mixed $data The data to pass to JavaScript. This will be escaped using json_encode,
-     *      so passing objects and arrays should work.
-     */
-    public function __construct(page_requirements_manager $manager, $variable, $data) {
-        parent::__construct($manager);
-        $this->variable = $variable;
-        $this->data = $data;
-        // json_encode immediately, so that if $data is an object (and therefore was
-        // passed in by reference) we get the data at the time the call was made, and
-        // not whatever the data happened to be when this is output.
-    }
-
-    public function get_js_code() {
-        return js_writer::set_variable($this->variable, $this->data) . "\n";
     }
 }
 
