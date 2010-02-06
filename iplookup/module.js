@@ -22,7 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-function iplookup_load(latitude, longitude) {
+M.core_iplookup = {};
+
+M.core_iplookup.init = function(Y, latitude, longitude) {
     if (GBrowserIsCompatible()) {
         var map = new GMap2(document.getElementById("map"));
         map.addControl(new GSmallMapControl());
@@ -32,12 +34,10 @@ function iplookup_load(latitude, longitude) {
         map.addOverlay(new GMarker(point));
         map.setMapType(G_HYBRID_MAP);
 
-        YAHOO.utils.Event.addListener(document.body, 'unload', iplookup_unload);
-    }
-}
-
-function iplookup_unload() {
-    if (GBrowserIsCompatible()) {
-        GUnload();
-    }
+        Y.on('unload', function() {
+            if (GBrowserIsCompatible()) {
+                GUnload();
+            }
+        }, document.body);
+    }		
 }

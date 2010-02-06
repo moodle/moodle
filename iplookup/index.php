@@ -153,10 +153,9 @@ if (empty($CFG->googlemapkey)) {
     $info = implode(' - ', $info);
     $note = implode('<br />', $note);
 
-    $PAGE->requires->js("http://maps.google.com/maps?file=api&amp;v=2&amp;key=$CFG->googlemapkey", true)->in_head();
-    $PAGE->requires->js('/iplookup/functions.js')->in_head();
-    $PAGE->requires->yui2_lib('event');
-    $PAGE->requires->js_function_call('iplookup_load', array($latitude, $longitude));
+    $PAGE->requires->js(new moodle_url("http://maps.google.com/maps?file=api&v=2&key=$CFG->googlemapkey"));
+    $module = array('name'=>'core_iplookup', 'fullpath'=>'/iplookup/module.js');
+    $PAGE->requires->js_init_call('M.core_iplookup.init', array($latitude, $longitude), true, $module);
 
     $PAGE->set_title(get_string('iplookup', 'admin').': '.$info);
     $PAGE->set_heading($info);
