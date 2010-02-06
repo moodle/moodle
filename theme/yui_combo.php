@@ -71,7 +71,7 @@ foreach ($parts as $part) {
 
     if ($mimetype === 'text/css') {
         // search for all images in yui2 CSS and serve them through the yui_image.php script
-        $filecontent = preg_replace('/([a-z-]+)\.(png|gif)/', 'yui_image.php?file='.$version.'/$1.$2', $filecontent);
+        $filecontent = preg_replace('/([a-z_-]+)\.(png|gif)/', 'yui_image.php?file='.$version.'/$1.$2', $filecontent);
     }
 
     $content .= $filecontent;
