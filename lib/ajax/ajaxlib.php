@@ -149,6 +149,7 @@ class page_requirements_manager {
         $this->M_yui_loader->modules      = array();
         $this->add_yui2_modules(); // adds loading info for YUI2
         $this->js_module($this->find_module('core_filepicker'));
+        $this->js_module($this->find_module('core_dock'));
 
         // YUI3 init code
         $libs = array('cssreset', 'cssbase', 'cssfonts', 'cssgrids', 'node', 'loader'); // full CSS reset + basic libs
@@ -352,6 +353,8 @@ class page_requirements_manager {
                 $module = array('name'=>'core_message', 'fullpath'=>'/message/module.js');
             } else if ($name === 'core_flashdetect') {
                 $module = array('name'=>'core_flashdetect', 'fullpath'=>'/lib/flashdetect/flashdetect.js', 'requires'=>array('io'));
+            } else if ($name === 'core_dock') {
+                $module = array('name'=>'core_dock', 'fullpath'=>'/blocks/dock.js', 'requires'=>array('base', 'cookie', 'dom', 'io', 'node', 'event-custom'));
             }
         } else {
             if ($dir = get_component_directory($name, false)) {
@@ -545,21 +548,6 @@ class page_requirements_manager {
         }
 
         $this->jsinitcode[] = $jscode;
-    }
-
-    /**
-     * Adds a required JavaScript object initialisation to the page.
-     *
-     * @param string|null $var If null the object is not assigned to any variable
-     * @param string $class
-     * @param array $arguments
-     * @param array $requirements
-     * @return required_js_object_init
-     */
-    public function js_object_init($var, $class, array $arguments = null, array $requirements = null) {
-        $requirement = new required_js_object_init($this, $var, $class, $arguments, $requirements);
-        $this->requiredjscode[] = $requirement;
-        return $requirement;
     }
 
     /**
@@ -1137,89 +1125,6 @@ abstract class required_js_code extends requirement_base {
     }
 }
 
-/**
- * This class is used to manage an object initialisation in JavaScript.
- *
- * @copyright 2010 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- */
-class required_js_object_init extends required_js_code {
-    /**
-     * The variable to assign the object to or null for none
-     * @var string|null
-     */
-    protected $var;
-    /**
-     * The class of the object to initialise
-     * @var string
-     */
-    protected $class;
-    /**
-     * Arguments to pass in to the constructor
-     */
-    protected $arguments;
-    /**
-     * Required YUI modules
-     */
-    protected $requirements;
-    protected $delay = 0;
-
-    /**
-     * Constructor. Normally instances of this class should not be created directly.
-     * Client code should create them via the page_requirements_manager
-     * method {@link page_requirements_manager::js_object_init()}.
-     *
-     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
-     * @param string|null $var
-     * @param string $class
-     * @param array|null $arguments
-     * @param array|null $requirements
-     */
-    public function __construct(page_requirements_manager $manager, $var, $class, array $arguments = null, array $requirements = null) {
-        parent::__construct($manager);
-        $this->when = page_requirements_manager::WHEN_IN_YUI;
-        $this->var = $var;
-        $this->class = $class;
-        $this->arguments = $arguments;
-        $this->requirements = $requirements;
-    }
-
-    /**
-     * Gets the actual JavaScript code for the required object initialisation
-     * @return string
-     */
-    public function get_js_code() {
-        return js_writer::object_init($this->var, $this->class, $this->arguments, $this->requirements, $this->delay);
-    }
-
-    /**
-     * Indicate that this initalisation should be called in YUI's onDomReady event.
-     *
-     * Thisis needed mostly for buggy IE browsers because they have problems
-     * when JS starts modifying DOM structure before the DOM is ready.
-     */
-    public function on_dom_ready() {
-        if ($this->is_done() || $this->when < page_requirements_manager::WHEN_IN_YUI) {
-            return;
-        }
-        $this->when = page_requirements_manager::WHEN_ON_DOM_READY;
-    }
-
-    /**
-     * Indicate that this function should be called a certain number of seconds
-     * after the page has finished loading. (More exactly, a number of seconds
-     * after the onDomReady event fires.)
-     *
-     * @param integer $seconds the number of seconds delay.
-     */
-    public function after_delay($seconds) {
-        if ($seconds) {
-            $this->on_dom_ready();
-        }
-        $this->delay = $seconds;
-    }
-}
 
 /**
  * This class represents a JavaScript function that must be called from the HTML

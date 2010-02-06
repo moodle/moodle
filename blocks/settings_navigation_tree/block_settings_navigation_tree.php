@@ -80,10 +80,9 @@ class block_settings_navigation_tree extends block_tree {
     function get_required_javascript() {
         global $CFG;
         $this->_initialise_dock();
-        $this->page->requires->js_module(array('name'=>'core_dock', 'fullpath'=>'/blocks/dock.js', 'requires'=>array('base', 'cookie', 'dom', 'io', 'node', 'event-custom')));
-        $this->page->requires->js_module(array('name'=>'blocks_navigation', 'fullpath'=>'/blocks/global_navigation_tree/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom')));
+        $module = array('name'=>'block_navigation', 'fullpath'=>'/blocks/global_navigation_tree/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom'));
         $arguments = array($this->instance->id, array('instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked()));
-        $this->page->requires->js_object_init("M.block_navigation.treecollection[".$this->instance->id."]", 'M.block_navigation.classes.tree', $arguments, array('blocks_navigation'));
+        $this->page->requires->js_init_call('M.block_navigation.init_add_tree', $arguments, false, $module);
         user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
     }
 

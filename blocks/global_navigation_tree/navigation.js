@@ -28,7 +28,7 @@
  * global navigation and settings.
  * @namespace
  */
-M.block_navigation = {
+M.block_navigation = M.block_navigation || {
     /** The number of expandable branches in existence */
     expandablebranchcount:0,
     /** An array of initialised trees */
@@ -50,6 +50,12 @@ M.block_navigation = {
             // Give the tree class the dock block properties
             Y.augment(M.block_navigation.classes.tree, M.core_dock.genericblock);
         }
+    },
+    /**
+     * Add new instance of navigation tree to tree collection
+     */
+    init_add_tree:function(Y, id, properties) {
+    	M.block_navigation.treecollection[id] = new M.block_navigation.classes.tree(Y, id, properties);
     }
 };
 
@@ -341,4 +347,4 @@ M.block_navigation.classes.branch.prototype.inject_into_dom = function(element) 
  * NOTE: Never convert the second argument to a function reference...
  * doing so causes scoping issues
  */
-YUI.add('blocks_navigation', function(Y){M.block_navigation.init(Y);}, '0.0.0.1', M.yui.loader.modules.blocks_navigation.requires);
+YUI.add('block_navigation', function(Y){M.block_navigation.init(Y);}, '0.0.0.1', M.yui.loader.modules.block_navigation.requires);
