@@ -235,18 +235,14 @@ class page_requirements_manager {
         );
         if (debugging('', DEBUG_DEVELOPER)) {
             $this->M_cfg['developerdebug'] = true;
-        }
-
-        if (debugging('', DEBUG_DEVELOPER)) {
             $this->yui2_lib('logger');
         }
 
         // accessibility stuff
         $this->skip_link_to('maincontent', get_string('tocontent', 'access'));
 
-        // For now include YUI2, this will be removed before beta.
-        $this->yui2_lib('dom');        // needs to be migrated to YUI3 before we release 2.0
-        $this->yui2_lib('container');  // needs to be migrated to YUI3 before we release 2.0
+        // to be removed soon
+        $this->yui2_lib('dom');        // at least javascript-static.js needs to be migrated to YUI3
 
         $this->string_for_js('confirmation', 'admin');
         $this->string_for_js('cancel', 'moodle');
