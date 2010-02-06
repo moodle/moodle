@@ -39,7 +39,6 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
 
     $PAGE->set_pagelayout('popup');
     $PAGE->set_title('send');
-    $PAGE->requires->js('/message/message.js');
 
 /// Script parameters
     $userid   = required_param('id', PARAM_INT);
@@ -120,7 +119,7 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
     echo $OUTPUT->link($accesslink);
     echo $OUTPUT->box_end();
 
-    $PAGE->requires->js_function_call('set_focus', Array('id_message_editor'));
+    $PAGE->requires->js_init_call('M.core_message.init_focus', array('id_message_editor'));
 
     echo $OUTPUT->footer();
 }

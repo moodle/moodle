@@ -168,11 +168,7 @@ function message_print_contacts() {
 
     echo '<br />';
 
-    $autorefresh = '<p align="center" class="note">'.get_string('pagerefreshes', 'message', $CFG->message_contacts_refresh).'</p>';
-    $autorefresh = addslashes_js($autorefresh); // js escaping
-
-    $PAGE->requires->js('/message/message.js');
-    $PAGE->requires->js_function_call('refresh_page', Array(60*1000, $PAGE->url->out()));
+    $PAGE->requires->js_init_call('M.core_message.init_refresh_page', array(60*1000, $PAGE->url->out(false)));
 
     echo $OUTPUT->container_start('messagejsautorefresh note center');
     echo get_string('pagerefreshes', 'message', $CFG->message_contacts_refresh);

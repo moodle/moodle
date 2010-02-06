@@ -76,9 +76,7 @@ if ($messages ) {
     }
 }
 
-$PAGE->requires->js('/message/message.js')->in_head();
-$PAGE->requires->js_function_call('refresh_parent_messages_frame');
-$PAGE->requires->data_for_js('chatmessages', Array('msgcount'=>count($jsmessages), 'msg'=>$jsmessages))->in_head();
+$PAGE->requires->js_init_call('M.core_message.init_refresh_parent_frame', array($jsmessages, $jsmessages));
 
 echo $OUTPUT->header();
 if (!empty($playbeep)) {
@@ -87,7 +85,7 @@ if (!empty($playbeep)) {
 }
 
 // Javascript for Mozilla to cope with the redirect bug from editor being on in this page
-$PAGE->requires->js_function_call('refresh_page', Array(($wait*1000), "refresh.php?id=$userid&name=".urlencode($userfullname)."&wait=$wait"));
+$PAGE->requires->js_init_call('M.core_message.init_refresh_page', array(($wait*1000), "refresh.php?id=$userid&name=".urlencode($userfullname)."&wait=$wait"));
 
 echo $OUTPUT->footer();
 
