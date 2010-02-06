@@ -13,10 +13,8 @@ $args['quality'] = 'high';
 $args['flashvars'] = 'amfurl='.$CFG->wwwroot.'/webservice/amf/server.php';
 $args['setcontainercss'] = 'true';
 
-
-$PAGE->requires->js('/lib/ufo.js')->in_head();
-$PAGE->requires->data_for_js('FO', $args);
-$PAGE->requires->js_function_call('create_UFO_object', Array('moodletestclient'));
+$PAGE->requires->js('/lib/ufo.js');
+$PAGE->requires->js_function_call('M.util.create_UFO_object', array('moodletestclient', $args));
 
 $PAGE->set_title('Test Client');
 $PAGE->set_heading('Test Client');
