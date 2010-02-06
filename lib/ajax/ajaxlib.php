@@ -270,9 +270,9 @@ class page_requirements_manager {
     public function js($url) {
         $url = $this->js_fix_url($url);
         if (!isset($this->linkedrequirements[$url->out()])) {
-            $this->linkedrequirements[$url->out()] = new required_js($this, $url->out());
+            $this->linkedrequirements[$url->out(false)] = new required_js($this, $url->out(false));
         }
-        return $this->linkedrequirements[$url->out()];
+        return $this->linkedrequirements[$url->out(false)];
     }
 
     /**
