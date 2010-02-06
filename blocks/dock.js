@@ -427,7 +427,7 @@ M.core_dock = {
 
             if (!this.skipsetposition) {
                 // save the users preference
-                set_user_preference('docked_block_instance_'+this.id, 1);
+                M.util.set_user_preference('docked_block_instance_'+this.id, 1);
             } else {
                 this.skipsetposition = false;
             }
@@ -504,7 +504,7 @@ M.core_dock = {
             }
 
             this.cachedcontentnode = null;
-            set_user_preference('docked_block_instance_'+this.id, 0);
+            M.util.set_user_preference('docked_block_instance_'+this.id, 0);
             return true;
         }
     },

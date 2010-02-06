@@ -516,5 +516,5 @@ function user_selector_options_tracker() {
 }
 
 user_selector_options_tracker.prototype.handle_option_change = function(option) {
-    set_user_preference(option, document.getElementById(option + 'id').checked);
+    M.util.set_user_preference(option, document.getElementById(option + 'id').checked);
 }
