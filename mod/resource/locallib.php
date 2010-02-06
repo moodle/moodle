@@ -105,7 +105,7 @@ function resource_display_embed($resource, $cm, $course, $file) {
         // anything else - just try object tag enlarged as much as possible
         $code = resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype);
         $PAGE->requires->yui2_lib('dom');
-        $PAGE->requires->js('/mod/url/functions.js')->in_head();
+        $PAGE->requires->js('/mod/url/functions.js');
         $PAGE->requires->js_function_call('url_init_object');
     }
 
