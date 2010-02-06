@@ -156,7 +156,7 @@ class block_global_navigation_tree extends block_tree {
 
         // Initialise the JS tree object
         $args = array($this->instance->id, array('expansions'=>$expandable,'instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked()));
-        $this->page->requires->js_object_init("M.blocks_navigation.treecollection[".$this->instance->id."]", 'M.blocks_navigation.classes.tree', $args, array('blocks_navigation'));
+        $this->page->requires->js_object_init("M.block_navigation.treecollection[".$this->instance->id."]", 'M.block_navigation.classes.tree', $args, array('blocks_navigation'));
         
         // Grab the items to display
         $this->content->items = array($this->page->navigation);
