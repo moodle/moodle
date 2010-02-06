@@ -43,7 +43,7 @@ function folder_print_tree($folder, $cm, $course) {
     echo '<div id="folder_tree">';
     echo folder_htmllize_tree($dir, $folder, $context);
     echo '</div>';
-    $PAGE->requires->js_function_call('folder_tree_init', array(true));
+    $PAGE->requires->js_init_call('M.mod_folder.init_tree', array(true));
 }
 
 /**

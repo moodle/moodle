@@ -21,17 +21,21 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-function folder_tree_init(expand_all) {
-    var tree = new YAHOO.widget.TreeView("folder_tree");
+M.mod_folder = {};
 
-    tree.subscribe("clickEvent", function(node, event) {
-        // we want normal clicking which redirects to url
-        return false;
+M.mod_folder.init_tree = function(Y, expand_all) {
+    Y.use('yui2-treeview', function(Y) {
+        var tree = new YAHOO.widget.TreeView("folder_tree");
+
+        tree.subscribe("clickEvent", function(node, event) {
+            // we want normal clicking which redirects to url
+            return false;
+        });
+
+        if (expand_all) {
+            tree.expandAll();
+        }
+
+        tree.render();
     });
-
-    if (expand_all) {
-        tree.expandAll();
-    }
-
-    tree.render();
 }
