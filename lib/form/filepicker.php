@@ -59,19 +59,17 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $strsaved = get_string('filesaved', 'repository');
         $straddfile = get_string('openpicker', 'repository');
         $currentfile = '';
-        $draftvalue  = '';
         if ($draftitemid = (int)$this->getValue()) {
             $fs = get_file_storage();
             $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
             if ($files = $fs->get_area_files($usercontext->id, 'user_draft', $draftitemid, 'id DESC', false)) {
                 $file = reset($files);
                 $currentfile = $file->get_filename();
-                $draftvalue = 'value="'.$draftitemid.'"';
             }
         } else {
             // no existing area info provided - let's use fresh new draft area
-            $this->setValue(file_get_unused_draft_itemid());
-            $draftitemid = $this->getValue();
+            $draftitemid = file_get_unused_draft_itemid();
+            $this->setValue($draftitemid);
         }
         if ($COURSE->id == SITEID) {
             $context = get_context_instance(CONTEXT_SYSTEM);
@@ -99,7 +97,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $elname = $this->_attributes['name'];
 
         $str = $this->_getTabs();
-        $str .= '<input type="hidden" name="'.$elname.'" id="'.$id.'" '.$draftvalue.' />';
+        $str .= '<input type="hidden" name="'.$elname.'" id="'.$id.'" value="'.$draftitemid.'" />';
 
         $str .= <<<EOD
 <div id="filepicker-wrapper-{$client_id}" style="display:none">
@@ -116,7 +114,6 @@ Moodle File Picker
 </noscript>
 EOD;
         $module = array('name'=>'form_filepicker', 'fullpath'=>'/lib/form/filepicker.js', 'requires'=>array('core_filepicker'));
-        $PAGE->requires->js_module($module);
         $PAGE->requires->js_init_call('M.form_filepicker.init', array($options), true, $module);
         return $str;
     }
