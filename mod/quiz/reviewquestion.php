@@ -67,8 +67,8 @@
             ($stateid ? '&state=' . $stateid : ''),
             $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
-    $PAGE->requires->js('/lib/overlib/overlib.js')->in_head();
-    $PAGE->requires->js('/lib/overlib/overlib_cssstyle.js')->in_head();
+    $PAGE->requires->js('/lib/overlib/overlib.js', true);
+    $PAGE->requires->js('/lib/overlib/overlib_cssstyle.js', true);
 
 /// Print the page header
     $attemptobj->get_question_html_head_contributions($questionid);

@@ -337,7 +337,7 @@ class core_renderer extends renderer_base {
 
         // Get the theme javascript head and footer
         $jsurl = $this->page->theme->javascript_url();
-        $this->page->requires->js($jsurl)->in_head();
+        $this->page->requires->js($jsurl, true);
         $jsurl = $this->page->theme->javascript_url(true);
         $this->page->requires->js($jsurl);
 

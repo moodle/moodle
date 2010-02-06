@@ -164,10 +164,10 @@
     $PAGE->set_button($exitlink);
 
     $PAGE->requires->data_for_js('scormplayerdata', Array('cwidth'=>$scorm->width,'cheight'=>$scorm->height), true);
-    $PAGE->requires->js('/mod/scorm/request.js')->in_head();
-    $PAGE->requires->js('/lib/cookies.js')->in_head();
-    $PAGE->requires->js('/mod/scorm/loaddatamodel.php?id='.$cm->id.$scoidstr.$modestr.$attemptstr)->in_head();
-    $PAGE->requires->js('/mod/scorm/rd.js')->in_head();
+    $PAGE->requires->js('/mod/scorm/request.js', true);
+    $PAGE->requires->js('/lib/cookies.js', true);
+    $PAGE->requires->js('/mod/scorm/loaddatamodel.php?id='.$cm->id.$scoidstr.$modestr.$attemptstr, true);
+    $PAGE->requires->js('/mod/scorm/rd.js', true);
 
     echo $OUTPUT->header();
 

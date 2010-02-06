@@ -32,7 +32,7 @@ $USER = $DB->get_record('user', array('id'=>$chatuser->userid));
 
 //Setup course, lang and theme
 $PAGE->set_course($course);
-$PAGE->requires->js('/mod/chat/gui_header_js/chat_gui_header.js')->in_head();
+$PAGE->requires->js('/mod/chat/gui_header_js/chat_gui_header.js', true);
 $PAGE->set_pagelayout('embedded');
 $PAGE->set_focuscontrol('input_chat_message');
 $PAGE->set_cacheable(false);

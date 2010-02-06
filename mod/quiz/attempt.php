@@ -85,8 +85,8 @@
     $attemptobj->load_question_states($questionids);
 
 /// Print the quiz page ////////////////////////////////////////////////////////
-    $PAGE->requires->js('/lib/overlib/overlib.js')->in_head();
-    $PAGE->requires->js('/lib/overlib/overlib_cssstyle.js')->in_head();
+    $PAGE->requires->js('/lib/overlib/overlib.js', true);
+    $PAGE->requires->js('/lib/overlib/overlib_cssstyle.js', true);
 
     // Arrange for the navigation to be displayed.
     $navbc = $attemptobj->get_navigation_panel('quiz_attempt_nav_panel', $page);

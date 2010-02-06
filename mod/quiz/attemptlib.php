@@ -724,7 +724,7 @@ class quiz_attempt extends quiz {
         // as seen as possible, particularly if the page is loading slowly.
         $PAGE->requires->yui2_lib('dom');
         $PAGE->requires->yui2_lib('event');
-        $PAGE->requires->js('/mod/quiz/quiz.js')->in_head();
+        $PAGE->requires->js('/mod/quiz/quiz.js', true);
         get_html_head_contributions($this->get_question_ids($page), $this->questions, $this->states);
     }
 

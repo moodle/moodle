@@ -55,8 +55,8 @@
     $strmodulename  = get_string("modulename", "hotpot");
     // print header
 
-    $PAGE->requires->js('/lib/overlib/overlib.js')->in_head();
-    $PAGE->requires->js('/lib/overlib/overlib_cssstyle.js')->in_head();
+    $PAGE->requires->js('/lib/overlib/overlib.js', true);
+    $PAGE->requires->js('/lib/overlib/overlib_cssstyle.js', true);
     $PAGE->set_title(format_string($course->shortname) . ": $hotpot->name");
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();

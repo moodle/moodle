@@ -54,7 +54,7 @@ $PAGE->requires->yui2_lib('button');
 $PAGE->requires->yui2_lib('container');
 $PAGE->requires->yui2_lib('dragdrop');
 $PAGE->requires->yui2_lib('resize');
-$PAGE->requires->js('/mod/imscp/functions.js')->in_head();
+$PAGE->requires->js('/mod/imscp/functions.js', true);
 
 $PAGE->requires->string_for_js('navigation', 'imscp');
 $PAGE->requires->string_for_js('toc', 'imscp');

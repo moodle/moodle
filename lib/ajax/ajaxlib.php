@@ -35,7 +35,7 @@
  * <pre>
  *     $PAGE->requires->css('/mod/mymod/userstyles.php?id='.$id); // not overriddable via themes!
  *     $PAGE->requires->js('/mod/mymod/script.js');
- *     $PAGE->requires->js('/mod/mymod/small_but_urgent.js')->in_head();
+ *     $PAGE->requires->js('/mod/mymod/small_but_urgent.js', true);
  *     $PAGE->requires->js_function_call('init_mymod', array($data))->on_dom_ready();
  * </pre>
  *
@@ -53,13 +53,14 @@ class page_requirements_manager {
     const WHEN_IN_YUI = 20;
     const WHEN_ON_DOM_READY = 30;
 
-    protected $linkedrequirements = array();
     protected $requiredjscode = array();
 
     /** List of string available from JS */
     protected $stringsforjs = array();
     /** List of JS variables to be initialised */
     protected $jsinitvariables = array('head'=>array(), 'footer'=>array());
+    /** Included JS scripts */
+    protected $jsincludes = array('head'=>array(), 'footer'=>array());
     /**
      * List of skip links, those are needed for accessibility reasons
      * @var array
@@ -266,15 +267,13 @@ class page_requirements_manager {
      *
      * @param string|moodle_url $url The path to the .js file, relative to $CFG->dirroot / $CFG->wwwroot.
      *      For example '/mod/mymod/customscripts.js'; use moodle_url for external scripts
-     * @return required_js The required_js object. This allows you to control when the
-     *      link to the script is output by calling methods like {@link required_js::in_head()}.
+     * @param bool $inhead initialise in head
+     * @return void
      */
-    public function js($url) {
+    public function js($url, $inhead=false) {
         $url = $this->js_fix_url($url);
-        if (!isset($this->linkedrequirements[$url->out()])) {
-            $this->linkedrequirements[$url->out(false)] = new required_js($this, $url->out(false));
-        }
-        return $this->linkedrequirements[$url->out(false)];
+        $where = $inhead ? 'head' : 'footer';
+        $this->jsincludes[$where][$url->out()] = $url;
     }
 
     /**
@@ -668,22 +667,6 @@ class page_requirements_manager {
     }
 
     /**
-     * Get the code for the linked resources that need to appear in a particular place.
-     * @param $when one of the WHEN_... constants.
-     * @return string the HTML that should be output in that place.
-     */
-    protected function get_linked_resources_code($when) {
-        $output = '';
-        foreach ($this->linkedrequirements as $requirement) {
-            if (!$requirement->is_done() && $requirement->get_when() == $when) {
-                $output .= $requirement->get_html();
-                $requirement->mark_done();
-            }
-        }
-        return $output;
-    }
-
-    /**
      * Get the inline JavaScript code that need to appear in a particular place.
      * @param $when one of the WHEN_... constants.
      * @return string the javascript that should be output in that place.
@@ -841,8 +824,11 @@ class page_requirements_manager {
         }
 
         // all the other linked things from HEAD - there should be as few as possible
-        // because we need to minimise number of http requests,
-        $output .= $this->get_linked_resources_code(self::WHEN_IN_HEAD);
+        if ($this->jsincludes['head']) {
+            foreach ($this->jsincludes['head'] as $url) {
+                $output .= html_writer::script('', $url);
+            }
+        }
 
         // finally all JS that should go directly into head tag
         $output .= html_writer::script($this->get_javascript_code(self::WHEN_IN_HEAD));
@@ -893,8 +879,12 @@ class page_requirements_manager {
         // add missing YUI2 YUI - to be removed once we convert everything to YUI3!
         $output .= $this->get_yui2lib_code();
 
-        // now print all the stuff that was added through ->requires
-        $output .= $this->get_linked_resources_code(self::WHEN_AT_END);
+        // all the other linked scripts - there should be as few as possible
+        if ($this->jsincludes['footer']) {
+            foreach ($this->jsincludes['footer'] as $url) {
+                $output .= html_writer::script('', $url);
+            }
+        }
 
         // add all needed strings
         if (!empty($this->stringsforjs)) {
@@ -1028,61 +1018,6 @@ abstract class linked_requirement extends requirement_base {
      * @return string the HTML needed to satisfy this requirement.
      */
     abstract public function get_html();
-}
-
-
-/**
- * A subclass of {@link linked_requirement} to represent a requried JavaScript file.
- *
- * You should not create instances of this class directly. Instead you should
- * work with a {@link page_requirements_manager} - and probably the only
- * page_requirements_manager you will ever need is the one at $PAGE->requires.
- *
- * The methods {@link in_head()}
- * are indented to be used as a fluid API, so you can say things like
- *     $PAGE->requires->js('/mod/mymod/script.js')->in_head();
- *
- * However, by default JavaScript files are included at the end of the HTML.
- * This is recommended practice because it means that the web browser will only
- * start loading the javascript files after the rest of the page is loaded, and
- * that gives the best performance for users.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- */
-class required_js extends linked_requirement {
-    /**
-     * Constructor. Normally instances of this class should not be created
-     * directly. Client code should create them via the page_requirements_manager
-     * method {@link page_requirements_manager::js()}.
-     *
-     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
-     * @param string $url The URL of the JavaScript file we are linking to.
-     */
-    public function __construct(page_requirements_manager $manager, $url) {
-        parent::__construct($manager, $url);
-        $this->when = page_requirements_manager::WHEN_AT_END;
-    }
-
-    public function get_html() {
-        return html_writer::script('', $this->url);
-    }
-
-    /**
-     * Indicate that the link to this JavaScript file should be output in the
-     * <head> section of the HTML. If it too late for this request to be
-     * satisfied, an exception is thrown.
-     */
-    public function in_head() {
-        if ($this->is_done() || $this->when <= page_requirements_manager::WHEN_IN_HEAD) {
-            return;
-        }
-        if ($this->manager->is_head_done()) {
-            throw new coding_exception('Too late to ask for a JavaScript file to be linked to from &lt;head>.');
-        }
-        $this->when = page_requirements_manager::WHEN_IN_HEAD;
-    }
 }
 
 

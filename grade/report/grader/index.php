@@ -118,8 +118,8 @@ $PAGE->requires->yui2_lib('element');
 $PAGE->requires->yui2_lib('container');
 $PAGE->requires->js('/grade/report/grader/functions.js');
 $PAGE->requires->js('/grade/report/grader/grader.js');
-$PAGE->requires->js('/lib/overlib/overlib.js')->in_head();
-$PAGE->requires->js('/lib/overlib/overlib_cssstyle.js')->in_head();
+$PAGE->requires->js('/lib/overlib/overlib.js', true);
+$PAGE->requires->js('/lib/overlib/overlib_cssstyle.js', true);
 
 if ($report->get_pref('enableajax')) {
     $report = new grade_report_grader_ajax($courseid, $gpr, $context, $page, $sortitemid);

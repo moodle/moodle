@@ -117,7 +117,7 @@ if ($data->csstemplate) {
     $PAGE->requires->css('/mod/data/css.php?d='.$data->id);
 }
 if ($data->jstemplate) {
-    $PAGE->requires->js('/mod/data/js.php?d='.$data->id)->in_head();
+    $PAGE->requires->js('/mod/data/js.php?d='.$data->id, true);
 }
 
 
