@@ -77,6 +77,7 @@ $strusergroupmembership = get_string('usergroupmembership', 'group');
 
 $groupname = format_string($group->name);
 
+$PAGE->requires->yui2_lib('connection');
 $PAGE->requires->js('/group/clientlib.js');
 $PAGE->navbar->add($strparticipants, new moodle_url('/user/index.php', array('id'=>$courseid)));
 $PAGE->navbar->add($strgroups, new moodle_url('/group/index.php', array('id'=>$courseid)));

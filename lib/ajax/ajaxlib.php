@@ -247,7 +247,6 @@ class page_requirements_manager {
         // For now include YUI2, this will be removed before beta.
         $this->yui2_lib('dom');        // needs to be migrated to YUI3 before we release 2.0
         $this->yui2_lib('container');  // needs to be migrated to YUI3 before we release 2.0
-        $this->yui2_lib('connection'); // needs to be migrated to YUI3 before we release 2.0
 
         $this->string_for_js('confirmation', 'admin');
         $this->string_for_js('cancel', 'moodle');
