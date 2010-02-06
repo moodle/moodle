@@ -413,7 +413,7 @@ function imscp_extend_settings_navigation($settings, $module) {
 
     // If the user has the capability add an update this module link for the imscp instance
     if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $imscp = new moodle_imscp($CFG->wwwroot.'/course/mod.php', array('update'=>$PAGE->cm->id, 'return'=>true, 'sesskey'=>sesskey()));
+        $imscp = new moodle_url($CFG->wwwroot.'/course/mod.php', array('update'=>$PAGE->cm->id, 'return'=>true, 'sesskey'=>sesskey()));
         $imscpnav->add(get_string('updatethis', '', get_string('modulename', 'imscp')), $imscp);
     }
 

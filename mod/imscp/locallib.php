@@ -48,7 +48,7 @@ function imscp_print_content($imscp, $cm, $course) {
     echo '</div>';
     echo '<div id="imscp_navpanel"></div>';
 
-    echo js_writer::function_call('imscp_init');
+    $PAGE->requires->js_init_call('M.mod_imscp.init');
     return;
 }
 

@@ -46,15 +46,7 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 add_to_log($course->id, 'imscp', 'view', 'view.php?id='.$cm->id, $imscp->id, $cm->id);
 
 $PAGE->set_url('/mod/imscp/view.php', array('id' => $cm->id));
-$PAGE->requires->yui2_lib('json');
-$PAGE->requires->yui2_lib('event');
-$PAGE->requires->yui2_lib('treeview');
-$PAGE->requires->yui2_lib('layout');
-$PAGE->requires->yui2_lib('button');
-$PAGE->requires->yui2_lib('container');
-$PAGE->requires->yui2_lib('dragdrop');
-$PAGE->requires->yui2_lib('resize');
-$PAGE->requires->js('/mod/imscp/functions.js', true);
+$PAGE->requires->js('/mod/imscp/dummyapi.js', true);
 
 $PAGE->requires->string_for_js('navigation', 'imscp');
 $PAGE->requires->string_for_js('toc', 'imscp');
