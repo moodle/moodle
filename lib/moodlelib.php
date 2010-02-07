@@ -1325,28 +1325,6 @@ function get_user_preferences($name=NULL, $default=NULL, $otheruserid=NULL) {
     }
 }
 
-/**
- * You need to call this function if you wish to use the set_user_preference
- * method in javascript_static.php, to white-list the preference you want to update
- * from JavaScript, and to specify the type of cleaning you expect to be done on
- * values.
- *
- * @global object
- * @param string $name the name of the user_perference we should allow to be
- *      updated by remote calls.
- * @param integer $paramtype one of the PARAM_{TYPE} constants, user to clean
- *      submitted values before set_user_preference is called.
- */
-function user_preference_allow_ajax_update($name, $paramtype) {
-    global $USER, $PAGE;
-
-    // Make sure that the required JavaScript libraries are loaded.
-    $PAGE->requires->yui2_lib('connection');
-
-    // Record in the session that this user_preference is allowed to updated remotely.
-    $USER->ajax_updatable_user_prefs[$name] = $paramtype;
-}
-
 /// FUNCTIONS FOR HANDLING TIME ////////////////////////////////////////////
 
 /**
