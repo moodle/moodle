@@ -749,28 +749,26 @@ class theme_config {
 
     /**
      * Get the javascript URL of this theme
-     * @param bool $footer true measn footer url, false means head
+     * @param bool $inhead true means haed url, false means footer
      * @return moodle_url
      */
-    public function javascript_url($footer=false) {
+    public function javascript_url($inhead) {
         global $CFG;
 
         $rev = theme_get_revision();
-
         $params = array('theme'=>$this->name,'rev'=>$rev);
-        if ($footer) {
-            $params['type'] = 'footer';
-        }
-        return new moodle_url($CFG->httpswwwroot.'/theme/javascripts.php', $params);
+        $params['type'] = $inhead ? 'head' : 'footer';
+
+        return new moodle_url($CFG->httpswwwroot.'/theme/javascript.php', $params);
     }
 
     /**
      * Returns the content of the one huge javascript file merged from all theme javascript files.
-     * @param bool $footer true measn footer url, false means head
+     * @param bool $inhead
      * @return string
      */
-    public function javascript_content($footer=false) {
-        $type = $footer ? 'javascripts_footer' : 'javascripts';
+    public function javascript_content($type) {
+        $type = ($type === 'footer') ? 'javascripts_footer' : 'javascripts';
 
         $js = array();
         // find out wanted parent javascripts

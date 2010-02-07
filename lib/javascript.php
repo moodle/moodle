@@ -30,15 +30,14 @@ require('../config.php'); // this stops immediately at the beginning of lib/setu
 $file = min_optional_param('file', '', 'SAFEPATH');
 $rev  = min_optional_param('rev', 0, 'INT');
 
-if (empty($file) or strpos($file, '/') !== 0 or !preg_match('/\.js$/', $file)) {
-    die;
-}
-
 $jspath = $CFG->dirroot.$file;
 
-if (file_exists($jspath)) {
-    send_cached_js($jspath);
+if (empty($file) or strpos($file, '/') !== 0 or !preg_match('/\.js$/', $file) or !file_exists($jspath)) {
+    header('HTTP/1.0 404 not found');
+    die('JS file was not found, sorry.');
 }
+
+send_cached_js($jspath);
 
 
 //=================================================================================

@@ -30,14 +30,12 @@ require('../config.php'); // this stops immediately at the beginning of lib/setu
 
 $themename = min_optional_param('theme', 'standard', 'SAFEDIR');
 $rev       = min_optional_param('rev', 0, 'INT');
-$type      = min_optional_param('type', 'header', 'RAW');
+$type      = min_optional_param('type', 'head', 'RAW');
 
-if ($type !== 'header' and $type !== 'footer') {
+if ($type !== 'head' and $type !== 'footer') {
     header('HTTP/1.0 404 not found');
     die('Theme was not found, sorry.');
 }
-
-$footer = ($type === 'footer');
 
 if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
     // exists
@@ -71,7 +69,7 @@ require("$CFG->dirroot/lib/setup.php");
 
 $theme = theme_config::load($themename);
 
-$js = $theme->javascript_content($footer);
+$js = $theme->javascript_content($type);
 if ($rev > -1) {
     check_dir_exists(dirname($candidate), true, true);
     $fp = fopen($candidate, 'w');
@@ -91,7 +89,7 @@ if ($rev > -1) {
 function send_cached_js($jspath) {
     $lifetime = 60*60*24*20;
 
-    header('Content-Disposition: inline; filename="javascripts.php"');
+    header('Content-Disposition: inline; filename="javascript.php"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($jspath)) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
@@ -106,7 +104,7 @@ function send_cached_js($jspath) {
 }
 
 function send_uncached_js($js) {
-    header('Content-Disposition: inline; filename="javascripts.php"');
+    header('Content-Disposition: inline; filename="javascript.php"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + 2) .' GMT');
     header('Pragma: ');
