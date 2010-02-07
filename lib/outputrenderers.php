@@ -1845,42 +1845,6 @@ class core_renderer extends renderer_base {
     }
 
     /**
-     * Output an <input type="text"> element
-     *
-     * @param html_field $field a html_field object
-     * @return string the HTML for the <input>
-     */
-    public function textfield($field) {
-        return html_writer::tag('span', array('class' => "textfield $field->name"), $this->field($field));
-    }
-
-    /**
-     * Output an <input/> element
-     *
-     * @param html_field $field a html_field object
-     * @return string the HTML for the <input>
-     */
-    public function field($field) {
-        $field = clone($field);
-        $field->prepare($this, $this->page, $this->target);
-        $this->prepare_event_handlers($field);
-        $label = '';
-        if (!empty($field->label->text)) {
-            $label = $this->label($field->label);
-        }
-        return $label . html_writer::empty_tag('input', array(
-                'type' => $field->type,
-                'name' => $field->name,
-                'id' => $field->id,
-                'value' => $field->value,
-                'disabled' => $field->disabled ? 'disabled' : null,
-                'style' => $field->style,
-                'alt' => $field->alt,
-                'title' => $field->title,
-                'maxlength' => $field->maxlength));
-    }
-
-    /**
      * Outputs a <label> element.
      * @param html_label $label A html_label object
      * @return HTML fragment

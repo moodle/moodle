@@ -170,20 +170,22 @@ echo $result->feedback;
 // User is modifying attempts - save button and some instructions
 if (isset($USER->modattempts[$lesson->id])) {
     $url = $CFG->wwwroot.'/mod/lesson/view.php';
-    $options = array('id'=>$cm->id, 'pageid'=>LESSON_EOL);
-    $form = html_form::make($url, $options, get_string('savechanges', 'lesson'));
     $content = $OUTPUT->box(get_string("savechangesandeol", "lesson"), 'center');
     $content .= $OUTPUT->box(get_string("or", "lesson"), 'center');
     $content .= $OUTPUT->box(get_string("continuetoanswer", "lesson"), 'center');
-    echo $OUTPUT->form($form, $content);
+    $content .= html_writer::empty_tag('input', array('type'=>'hidden', 'nam'=>'id', 'value'=>$cm->id));
+    $content .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'pageid', 'value'=>LESSON_EOL));
+    $content .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'submit', 'value'=>get_string('savechanges', 'lesson')));
+    echo html_writer::tag('form', array('method'=>'get', 'target'=>$url), "<div>$content</div>");
 }
 
 // Review button back
 if ($lesson->review && !$result->correctanswer && !$result->noanswer && !$result->isessayquestion) {
     $url = $CFG->wwwroot.'/mod/lesson/view.php';
-    $options = array('id'=>$cm->id, 'pageid'=>$page->id);
-    $form = html_form::make($url, $options, get_string('reviewquestionback', 'lesson'));
-    echo $OUTPUT->form($form);
+    $content = html_writer::empty_tag('input', array('type'=>'hidden', 'nam'=>'id', 'value'=>$cm->id));
+    $content .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'pageid', 'value'=>$page->id));
+    $content .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'submit', 'value'=>get_string('reviewquestionback', 'lesson')));
+    echo html_writer::tag('form', array('method'=>'get', 'target'=>$url), "<div>$content</div>");
 }
 
 $url = new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$result->newpageid));

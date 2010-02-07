@@ -3425,7 +3425,7 @@ function choose_from_radio ($options, $name, $checked='', $return=false) {
  *                     it (defaults to false)
  * @return string|void If $return=true returns string, else echo's and returns void
  */
-function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '', $script='',$return=false) {
+function print_checkbox($name, $value, $checked = true, $label = '', $alt = '', $script='', $return=false) {
 
     // debugging('print_checkbox() has been deprecated. Please change your code to use $OUTPUT->checkbox($checkbox).');
     global $OUTPUT;
@@ -3459,23 +3459,26 @@ function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '',
  *                     it (defaults to false)
  * @return string|void If $return=true returns string, else echo's and returns void
  */
-function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $return=false) {
+function print_textfield($name, $value, $alt = '', $size=50, $maxlength=0, $return=false) {
+    debugging('print_textfield() has been deprecated. Please use mforms or html_writer.');
 
-    debugging('print_textfield() has been deprecated. Please change your code to use $OUTPUT->textfield($field).');
+    if ($al === '') {
+        $alt = null;
+    }
 
-    global $OUTPUT;
+    $style = "width: {$size}px;";
+    $attributes = array('type'=>'text', 'name'=>$name, 'alt'=>$alt, 'style'=>$style, 'value'=>$value);
+    if ($maxlength) {
+        $attributes['maxlength'] = $maxlength;
+    }
 
-    $field = html_field::make_text($name, $value, $alt, $maxlength);
-    $field->style = "width: {$size}px;";
-
-    $output = $OUTPUT->textfield($field);
+    $output = html_writer::empty_tag('input', $attributes);
 
     if (empty($return)) {
         echo $output;
     } else {
         return $output;
     }
-
 }
 
 

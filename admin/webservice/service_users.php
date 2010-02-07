@@ -41,7 +41,8 @@ $PAGE->requires->js('/admin/webservice/script.js');
 
 admin_externalpage_setup('externalserviceusers');
 admin_externalpage_print_header();
-global $DB;
+
+
 /// Get the user_selector we will need.
 $potentialuserselector = new service_user_selector('addselect', array('serviceid' => $id, 'displayallowedusers' => 0));
 $alloweduserselector = new service_user_selector('removeselect', array('serviceid' => $id, 'displayallowedusers' => 1));
@@ -160,21 +161,11 @@ if (!empty($allowedusers)) {
 
         //user settings form
         $contents = "<div class=\"fcontainer clearfix\">";
-        $form = new html_form();
-        $form->url = new moodle_url('service_users.php', array('id' => $id, 'userid' => $user->id, 'updateuser' => 1, 'serviceuserid' => $user->serviceuserid)); // Required
-        $form->button = new html_button();
-        $form->button->text = get_string('update'); // Required
-        $form->button->disabled = false;
-        $form->button->title = get_string('update');
-        $form->method = 'post';
-        $form->id = 'usersetting'.$user->id;
+
         //ip restriction textfield
-        $contents .=  "<div class=\"fitem\"><div class=\"fitemtitle\"><label>".get_string('iprestriction','webservice')." </label></div><div class=\"felement\">";
-        $field = new html_field();
-        $field->name = 'iprestriction';
-        $field->value = $user->iprestriction;
-        $field->style = 'width: 30em;';
-        $contents .= $OUTPUT->textfield($field);
+        $iprestid = 'iprest'.$user->id;
+        $contents .= "<div class=\"fitem\"><div class=\"fitemtitle\"><label for=\"$iprestid\">".get_string('iprestriction','webservice')." </label></div><div class=\"felement\">";
+        $contents .= '<input type="text" id="'.$iprestid.'" name="iprestriction" style="width: 30em;" value="'.s($user->iprestriction).'" />';
         $contents .= "</div></div>";
         //valid until date selector
         $contents .= "<div class=\"fitem\"><div class=\"fitemtitle\"><label>".get_string('validuntil','webservice')." </label></div><div class=\"felement\">";
@@ -208,8 +199,15 @@ if (!empty($allowedusers)) {
         $checkbox->label->text = ' ';
         $checkbox->alt = 'TODO:'.get_string('addrequiredcapability', 'webservice');
         $contents .= $OUTPUT->checkbox($checkbox, 'addcap')."</div></div>";
+        $contents .= '<div><input type="submit" name="submit" value="'.s(get_string('update')).'" /></div>';
+        $contents .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+        $contents .= '<input type="hidden" name="id" value="'.$id.'" />';
+        $contents .= '<input type="hidden" name="userid" value="'.$user->id.'" />';
+        $contents .= '<input type="hidden" name="serviceuserid" value="'.$user->serviceuserid.'" />';
+        $contents .= '<input type="hidden" name="updateuser" value="1" />';
         $contents .= "</div>";
-        echo $OUTPUT->form($form, $contents);
+
+        echo html_writer::tag('form', array('target'=>'service_users.php', 'method'=>'post', 'id'=>'usersetting'.$user->id), $contents);
 
         echo print_collapsible_region_end(true);
 

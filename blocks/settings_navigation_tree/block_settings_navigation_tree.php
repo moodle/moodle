@@ -130,16 +130,14 @@ class block_settings_navigation_tree extends block_tree {
         // only do search if you have moodle/site:config
         if (count($this->content->items)>0) {
             if (has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM)) ) {
-                $searchform = new html_form();
-                $searchform->url = new moodle_url("$CFG->wwwroot/$CFG->admin/search.php");
-                $searchform->method = 'get';
-                $searchform->button->text = get_string('search');
-                $searchfield = html_field::make_text('query', optional_param('query', '', PARAM_RAW), '', 50);
-                $searchfield->id = 'query';
-                $searchfield->style .= 'width: 7em;';
-                $searchfield->set_label(get_string('searchinsettings', 'admin'), 'query');
-                $searchfield->label->add_class('accesshide');
-                $this->content->footer = $OUTPUT->container($OUTPUT->form($searchform, $OUTPUT->field($searchfield)), 'adminsearchform');
+                $value = optional_param('query', '', PARAM_RAW);
+                $target = new moodle_url("$CFG->wwwroot/$CFG->admin/search.php");
+                $form = '<form class="adminsearchform" method="get" action="'.$target.'">';
+                $form .= '<div><label for="adminsearchquery" class="accesshide">'.s(get_string('searchinsettings', 'admin')).'</label>';
+                $form .= '<input id="adminsearchquery" type="text" name="query" value="'.s($value).'"/>';
+                $form .= '<input type="submit" value="'.s(get_string('search')).'" />';
+                $form .= '</div></form>';
+                $this->content->footer = $form;
             } else {
                 $this->content->footer = '';
             }

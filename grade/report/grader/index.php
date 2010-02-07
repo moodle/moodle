@@ -173,11 +173,14 @@ $reporthtml = $report->get_grade_table();
 
 // print submit button
 if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback') || $report->get_pref('quickgrading')) && !$report->get_pref('enableajax')) {
-    $form = new html_form();
-    $form->url = new moodle_url('index.php', array('id' => $courseid, 'report' => 'grader'));
-    $form->button->text = get_string('update');
-    $form->button->add_class('submit');
-    echo $OUTPUT->form($form, $reporthtml);
+    echo '<form action="index.php" method="post">';
+    echo '<div>';
+    echo '<input type="hidden" value="'.s($courseid).'" name="id" />';
+    echo '<input type="hidden" value="'.sesskey().'" name="sesskey" />';
+    echo '<input type="hidden" value="grader" name="report"/>';
+    echo $reporthtml;
+    echo '<div class="submit"><input type="submit" value="'.s(get_string('update')).'" /></div>';
+    echo '</div></form>';
 } else {
     echo $reporthtml;
 }

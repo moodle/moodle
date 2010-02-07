@@ -68,7 +68,6 @@ class block_blog_menu extends block_base {
         $output = '';
 
         $this->content = new stdClass;
-        $this->content->footer = '';
 
         $blogheaders = blog_get_headers();
         $canviewblogs = has_capability('moodle/blog:view', $context);
@@ -121,12 +120,14 @@ class block_blog_menu extends block_base {
 
         // Full-text search field
         if (has_capability('moodle/blog:search', $sitecontext)) {
-            $searchform = new html_form();
-            $searchform->method = 'get';
-            $searchform->url = new moodle_url($blogheaders['url']);
-            $searchform->button->text = get_string('search');
-            $formcontents = $OUTPUT->field(html_field::make_text('search', '', '', 99));
-            $menulist->add_item($OUTPUT->form($searchform, $formcontents));
+            $target = new moodle_url($blogheaders['url']);
+            $form = '<form class="blogsearchform" method="get" action="'.$target.'">';
+            $form .= '<div><label for="blogsearchquery" class="accesshide">'.s(get_string('search', 'admin')).'</label><input id="blogsearchquery" type="text" name="search" />';
+            $form .= '<input type="submit" value="'.s(get_string('search')).'" />';
+            $form .= '</div></form>';
+            $this->content->footer = $form;
+        } else {
+            $this->content->footer = '';
         }
 
         $this->content->text = $OUTPUT->htmllist($menulist);

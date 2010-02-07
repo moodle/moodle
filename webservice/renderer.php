@@ -292,7 +292,6 @@ EOF;
         
 
     /// Print button
-        $form = new html_form();
         $authparams['print'] = true;
         //$parameters = array ('token' => $token, 'wsusername' => $username, 'wspassword' => $password, 'print' => true);
         $url = new moodle_url('/webservice/wsdoc.php', $authparams); // Required
@@ -465,38 +464,22 @@ EOF;
 //        $htmlloginpage .= html_writer::empty_tag('br', array());
 
         //login form - we cannot use moodle form as we don't have sessionkey
-        $form = new html_form();
-        $form->url = new moodle_url('/webservice/wsdoc.php', array()); // Required
-        $form->button = new html_button();
-        $form->button->text = get_string('wsdocumentation','webservice'); // Required
-        $form->button->disabled = false;
-        $form->button->title = get_string('wsdocumentation','webservice');
-        $form->method = 'post';
+        $target = new moodle_url('/webservice/wsdoc.php', array()); // Required
 
-        $contents =get_string('entertoken', 'webservice');
-        $contents .=$br.$br;
-        $field = new html_field();
-        $field->name = 'token';
-        $field->style = 'width: 30em;';
-        $contents .= $OUTPUT->textfield($field);
-        
-        $contents .=$br.$br;
-        $contents .=get_string('wsdocumentationlogin', 'webservice');
-        $contents .=$br.$br;
-        $field = new html_field();
-        $field->name = 'wsusername';
-        $field->value = get_string('wsusername', 'webservice');
-        $field->style = 'width: 30em;';
-        $contents .= $OUTPUT->textfield($field);
+        $contents = get_string('entertoken', 'webservice');
         $contents .= $br.$br;
-        $field = new html_field();
-        $field->name = 'wspassword';
-        $field->value = get_string('wspassword', 'webservice');
-        $field->style = 'width: 30em;';
-        $contents .= $OUTPUT->textfield($field);
-        $contents .=$br.$br;
+        $contents .= html_writer::empty_tag('input', array('type'=>'text', 'name'=>'token', 'style'=>'width: 30em;'));
         
-        $htmlloginpage .= $OUTPUT->form($form, $contents);
+        $contents .= $br.$br;
+        $contents .= get_string('wsdocumentationlogin', 'webservice');
+        $contents .= $br.$br;
+        $contents .= html_writer::empty_tag('input', array('type'=>'text', 'name'=>'wsusername', 'style'=>'width: 30em;', 'value'=>get_string('wsusername', 'webservice')));
+        $contents .= $br.$br;
+        $contents .= html_writer::empty_tag('input', array('type'=>'text', 'name'=>'wspassword', 'style'=>'width: 30em;', 'value'=>get_string('wspassword', 'webservice')));
+        $contents .= $br.$br;
+        $contents .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'submit', 'value'=>get_string('wsdocumentation', 'webservice')));
+        
+        $htmlloginpage .= html_writer::tag('form', array('method'=>'post', 'target'=>$target), "<div>$contents</div>");
 
         $htmlloginpage .= html_writer::end_tag('td');
         $htmlloginpage .= html_writer::end_tag('tr');

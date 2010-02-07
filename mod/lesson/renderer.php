@@ -137,7 +137,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
     /**
      * Returns HTML to display a message
      * @param string $message
-     * @param html_form $button
+     * @param single_button $button
      * @return string
      */
     public function message($message, single_button $button = null) {
