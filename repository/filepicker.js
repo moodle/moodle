@@ -14,7 +14,6 @@
  *
  * Filepicker options:
  * =====
- * this.options.pix, stores all images used in file picker
  * this.options.client_id, the instance id
  * this.options.contextid
  * this.options.itemid
@@ -321,7 +320,7 @@ M.core_filepicker.init = function(Y, options) {
             var panel = Y.one('#panel-'+client_id);
             var html = '<div class="fp-rename-form">';
             html += '<p><img src="'+args.thumbnail+'" /></p>';
-            html += '<p><label for="newname-'+client_id+'">'+mstr.repository.saveas+'</label>';
+            html += '<p><label for="newname-'+client_id+'">'+mstr.repository.saveas+':</label>';
             html += '<input type="text" id="newname-'+client_id+'" value="'+args.title+'" /></p>';
 
             var le_checked = '';
@@ -401,10 +400,10 @@ M.core_filepicker.init = function(Y, options) {
             var name = '';
             var str = '<div style="text-align:center">';
             if(type=='load') {
-                str += '<img src="'+this.options.pix.loading+'" />';
+                str += '<img src="'+M.util.image_url('i/loading')+'" />';
                 str += '<p>'+mstr.repository.loading+'</p>';
             }else{
-                str += '<img src="'+this.options.pix.progressbar+'" />';
+                str += '<img src="'+M.util.image_url('i/progressbar')+'" />';
                 str += '<p>'+mstr.repository.copying+' <strong>'+name+'</strong></p>';
             }
             str += '</div>';
@@ -787,7 +786,7 @@ M.core_filepicker.init = function(Y, options) {
             str += '<label for="'+id+'_file">'+data.upload.label+': </label>';
             str += '<input type="file" id="'+id+'_file" name="repo_upload_file" />';
             str += '<input type="hidden" name="itemid" value="'+this.options.itemid+'" />';
-            str += '<div class="fp-upload-btn"><a id="'+id+'_action" href="###" >'+mstr.repository.upload+'</a></div>';
+            str += '<div class="fp-upload-btn"><a id="'+id+'_action" href="###" >'+mstr.repository.upload+'...</a></div>';
             str += '</form>';
             str += '</div>';
             var upload_form = Y.Node.create(str);
@@ -840,7 +839,7 @@ M.core_filepicker.init = function(Y, options) {
             var toolbar = Y.one('#repo-tb-'+client_id);
 
             if(!r.nosearch) {
-                var html = '<a href="###"><img src="'+this.options.pix.search+'" /> '+mstr.repository.search+'</a>';
+                var html = '<a href="###"><img src="'+this.M.util.image_url('a/search')+'" /> '+mstr.repository.search+'</a>';
                 var search = Y.Node.create(html);
                 search.on('click', function() {
                     scope.request({
@@ -921,7 +920,7 @@ M.core_filepicker.init = function(Y, options) {
             }
             // weather we use cache for this instance, this button will reload listing anyway
             if(!r.norefresh) {
-                var html = '<a href="###"><img src="'+this.options.pix.refresh+'" /> '+mstr.repository.refresh+'</a>';
+                var html = '<a href="###"><img src="'+M.util.image_url('a/refresh')+'" /> '+mstr.repository.refresh+'</a>';
                 var refresh = Y.Node.create(html);
                 refresh.on('click', function() {
                     this.list();
@@ -929,7 +928,7 @@ M.core_filepicker.init = function(Y, options) {
                 toolbar.appendChild(refresh);
             }
             if(!r.nologin) {
-                var html = '<a href="###"><img src="'+this.options.pix.logout+'" /> '+mstr.repository.logout+'</a>';
+                var html = '<a href="###"><img src="'+M.util.image_url('a/logout')+'" /> '+mstr.repository.logout+'</a>';
                 var logout = Y.Node.create(html);
                 logout.on('click', function() {
                     this.request({
@@ -950,14 +949,14 @@ M.core_filepicker.init = function(Y, options) {
                 var mgr = document.createElement('A');
                 mgr.href = r.manage;
                 mgr.target = "_blank";
-                mgr.innerHTML = '<img src="'+this.options.pix.setting+'" /> '+mstr.repository.manageurl;
+                mgr.innerHTML = '<img src="'+M.util.image_url('a/setting')+'" /> '+mstr.repository.manageurl;
                 toolbar.appendChild(mgr);
             }
             if(r.help) {
                 var help = document.createElement('A');
                 help.href = r.help;
                 help.target = "_blank";
-                help.innerHTML = '<img src="'+this.options.pix.help+'" /> '+mstr.repository.help;
+                help.innerHTML = '<img src="'+M.util.image_url('a/help')+'" /> '+mstr.repository.help;
                 toolbar.appendChild(help);
             }
 

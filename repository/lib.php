@@ -1777,50 +1777,6 @@ function initialise_filepicker($args) {
     }
     $return = new stdclass;
 
-    $PAGE->requires->string_for_js('loading', 'repository');
-    $PAGE->requires->string_for_js('title', 'repository');
-    $PAGE->requires->string_for_js('preview', 'repository');
-    $PAGE->requires->string_for_js('add', 'repository');
-    $PAGE->requires->string_for_js('back', 'repository');
-    $PAGE->requires->string_for_js('cancel', 'moodle');
-    $PAGE->requires->string_for_js('close', 'repository');
-    $PAGE->requires->string_for_js('cleancache', 'repository');
-    $PAGE->requires->string_for_js('copying', 'repository');
-    $PAGE->requires->string_for_js('getfile', 'repository');
-    $PAGE->requires->string_for_js('downloadsucc', 'repository');
-    $PAGE->requires->string_for_js('date', 'repository').': ';
-    $PAGE->requires->string_for_js('error', 'repository');
-    $PAGE->requires->string_for_js('emptylist', 'repository');
-    $PAGE->requires->string_for_js('filenotnull', 'repository');
-    $PAGE->requires->string_for_js('federatedsearch', 'repository');
-    $PAGE->requires->string_for_js('help', 'moodle');
-    $PAGE->requires->string_for_js('refresh', 'repository');
-    $PAGE->requires->string_for_js('invalidjson', 'repository');
-    $PAGE->requires->string_for_js('listview', 'repository');
-    $PAGE->requires->string_for_js('linkexternal', 'repository');
-    $PAGE->requires->string_for_js('login', 'repository');
-    $PAGE->requires->string_for_js('logout', 'repository');
-    $PAGE->requires->string_for_js('loading', 'repository');
-    $PAGE->requires->string_for_js('iconview', 'repository');
-    $PAGE->requires->string_for_js('title', 'repository');
-    $PAGE->requires->string_for_js('noresult', 'repository');
-    $PAGE->requires->string_for_js('manageurl', 'repository');
-    $PAGE->requires->string_for_js('noenter', 'repository');
-    $PAGE->requires->string_for_js('save', 'repository');
-    $PAGE->requires->string_for_js('saveas', 'repository').': ';
-    $PAGE->requires->string_for_js('saved', 'repository');
-    $PAGE->requires->string_for_js('saving', 'repository');
-    $PAGE->requires->string_for_js('size', 'repository').': ';
-    $PAGE->requires->string_for_js('sync', 'repository');
-    $PAGE->requires->string_for_js('search', 'repository');
-    $PAGE->requires->string_for_js('searching', 'repository');
-    $PAGE->requires->string_for_js('submit', 'repository');
-    $PAGE->requires->string_for_js('preview', 'repository');
-    $PAGE->requires->string_for_js('popup', 'repository');
-    $PAGE->requires->string_for_js('upload', 'repository').'...';
-    $PAGE->requires->string_for_js('uploading', 'repository');
-    $PAGE->requires->string_for_js('xhtmlerror', 'repository');
-
     $user_context = get_context_instance(CONTEXT_USER, $USER->id);
 
     $externallink = (int)get_config(null, 'repositoryallowexternallinks');
@@ -1838,14 +1794,6 @@ function initialise_filepicker($args) {
         $return->externallink = true;
     }
 
-    $return->pix = array();
-    $return->pix['loading'] = $OUTPUT->pix_url('i/loading')->out();
-    $return->pix['logout']  = $OUTPUT->pix_url('a/logout')->out();
-    $return->pix['help']    = $OUTPUT->pix_url('a/help')->out();
-    $return->pix['progressbar'] = $OUTPUT->pix_url('i/progressbar')->out();
-    $return->pix['search']  = $OUTPUT->pix_url('a/search')->out();
-    $return->pix['setting'] = $OUTPUT->pix_url('a/setting')->out();
-    $return->pix['refresh'] = $OUTPUT->pix_url('a/refresh')->out();
     // provided by form element
     $return->accepted_types = $ft->get_extensions($args->accepted_types);
     foreach ($repositories as $repository) {

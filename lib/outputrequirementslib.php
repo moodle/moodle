@@ -331,6 +331,7 @@ class page_requirements_manager {
 
         $module = null;
 
+        
         if (strpos($name, 'core_') === 0) {
             // must be some core stuff - list here is not complete, this is just the stuff used from multiple places
             // so that we do nto have to repeat the definition of these modules over and over again
@@ -338,7 +339,19 @@ class page_requirements_manager {
                 case 'core_filepicker':
                     $module = array('name'     => 'core_filepicker',
                                     'fullpath' => '/repository/filepicker.js',
-                                    'requires' => array('base', 'node', 'json', 'async-queue', 'io', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview'));
+                                    'requires' => array('base', 'node', 'json', 'async-queue', 'io', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview'),
+                                    'strings'  => array(array('add', 'repository'), array('back', 'repository'), array('cancel', 'moodle'), array('close', 'repository'),
+                                                        array('cleancache', 'repository'), array('copying', 'repository'), array('date', 'repository'), array('downloadsucc', 'repository'),
+                                                        array('emptylist', 'repository'), array('error', 'repository'), array('federatedsearch', 'repository'),
+                                                        array('filenotnull', 'repository'), array('getfile', 'repository'), array('help', 'moodle'), array('iconview', 'repository'),
+                                                        array('invalidjson', 'repository'), array('linkexternal', 'repository'), array('listview', 'repository'),
+                                                        array('loading', 'repository'), array('login', 'repository'), array('logout', 'repository'), array('noenter', 'repository'),
+                                                        array('noresult', 'repository'), array('manageurl', 'repository'), array('popup', 'repository'), array('preview', 'repository'),
+                                                        array('refresh', 'repository'), array('save', 'repository'), array('saveas', 'repository'), array('saved', 'repository'),
+                                                        array('saving', 'repository'), array('search', 'repository'), array('searching', 'repository'), array('size', 'repository'),
+                                                        array('submit', 'repository'), array('sync', 'repository'), array('title', 'repository'), array('upload', 'repository'),
+                                                        array('uploading', 'repository'), array('xhtmlerror', 'repository'),
+                                                        array('xhtml', 'quiz'), array('cancel')));
                     break;
                 case 'core_comment':
                     $module = array('name'     => 'core_comment',
@@ -412,6 +425,17 @@ class page_requirements_manager {
         }
 
         $module['fullpath'] = $this->js_fix_url($module['fullpath'])->out(false);
+
+        // add all needed strings
+        if (!empty($module['strings'])) {
+            foreach ($module['strings'] as $string) {
+                $identifier = $string[0];
+                $component = isset($string[1]) ? $string[1] : 'moodle';
+                $a = isset($string[2]) ? $string[2] : null;
+                $this->string_for_js($identifier, $component, $a);
+            }
+        }
+        unset($module['strings']);
 
         if ($this->headdone) {
             $this->extramodules[$module['name']] = $module;
