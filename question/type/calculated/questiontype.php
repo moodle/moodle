@@ -28,16 +28,22 @@ class question_calculated_qtype extends default_questiontype {
 
     function get_question_options(&$question) {
         // First get the datasets and default options
+        // the code is used for calculated, calculatedsimple and calculatedmulti qtypes
          global $CFG, $DB, $OUTPUT, $QTYPES;
         if (!$question->options = $DB->get_record('question_calculated_options', array('question' => $question->id))) {
           //  echo $OUTPUT->notification('Error: Missing question options for calculated question'.$question->id.'!');
           //  return false;
-          $question->options->synchronize = 0;
-          $question->options->multichoice = 0;
+            $question->options->synchronize = 0;
+        //    $question->options->multichoice = 0;
+            $question->options->single = 0; //$question->single;
+            $question->options->answernumbering = 'abc';
+            $question->options->shuffleanswers = 0 ;
+            $question->options->correctfeedback = '';
+            $question->options->partiallycorrectfeedback = '';
+            $question->options->incorrectfeedback = '';
 
         }
     //    echo "<p> questionoptions <pre>";print_r($question);echo "</pre></p>";
-        $QTYPES['numerical']->get_numerical_options($question);
          /* $question->options->unitgradingtype = 0;
           $question->options->unitpenalty = 0;
           $question->options->showunits = 0 ;
@@ -56,36 +62,10 @@ class question_calculated_qtype extends default_questiontype {
             return false;
         }
 
-/*
-       if(false === parent::get_question_options($question)) {
-            return false;
+        if ( $this->get_virtual_qtype() ==  $QTYPES['numerical']){
+            $QTYPES['numerical']->get_numerical_options($question);
+            $QTYPES['numerical']->get_numerical_units($question);
         }
-
-        if (!$options = $DB->get_records('question_calculated', array('question' =>  $question->id))) {
-            notify("No options were found for calculated question
-             #{$question->id}! Proceeding with defaults.");
-        //     $options = new Array();
-            $options= new stdClass;
-            $options->tolerance           = 0.01;
-            $options->tolerancetype       = 1; // relative
-            $options->correctanswerlength = 2;
-            $options->correctanswerformat = 1; // decimals
-        }
-
-        // For historic reasons we also need these fields in the answer objects.
-        // This should eventually be removed and related code changed to use
-        // the values in $question->options instead.
-         foreach ($question->options->answers as $key => $answer) {
-            $answer = &$question->options->answers[$key]; // for PHP 4.x
-           $answer->calcid              = $options->id;
-            $answer->tolerance           = $options->tolerance;
-            $answer->tolerancetype       = $options->tolerancetype;
-            $answer->correctanswerlength = $options->correctanswerlength;
-            $answer->correctanswerformat = $options->correctanswerformat;
-        }*/
-
-        //$virtualqtype = $this->get_virtual_qtype( $question);
-        $QTYPES['numerical']->get_numerical_units($question);
 
         if( isset($question->export_process)&&$question->export_process){
             $question->options->datasets = $this->get_datasets_for_export($question);
@@ -142,6 +122,7 @@ class question_calculated_qtype extends default_questiontype {
     function save_question_options($question) {
         //$options = $question->subtypeoptions;
         // Get old answers:
+        // the code is used for calculated, calculatedsimple and calculatedmulti qtypes
         global $CFG, $DB, $QTYPES ;
         if (isset($question->answer) && !isset($question->answers)) {
             $question->answers = $question->answer;
@@ -154,10 +135,11 @@ class question_calculated_qtype extends default_questiontype {
             $options = new stdClass;
             $options->question = $question->id;
         }
+        // as used only by calculated
         $options->synchronize = $question->synchronize;
-        $options->multichoice = $question->multichoice;
-        $options->single = $question->single;
-        $options->answernumbering = $question->answernumbering;
+    //    $options->multichoice = 0 ;//$question->multichoice;
+        $options->single = 0; //$question->single;
+        $options->answernumbering =  $question->answernumbering;
         $options->shuffleanswers = $question->shuffleanswers;
         $options->correctfeedback = trim($question->correctfeedback);
         $options->partiallycorrectfeedback = trim($question->partiallycorrectfeedback);
@@ -184,7 +166,7 @@ class question_calculated_qtype extends default_questiontype {
         }
 
         // Save the units.
-        $virtualqtype = $this->get_virtual_qtype( $question);
+        $virtualqtype = $this->get_virtual_qtype();
         $result = $virtualqtype->save_numerical_units($question);
         if (isset($result->error)) {
             return $result;
@@ -330,14 +312,8 @@ class question_calculated_qtype extends default_questiontype {
         $state->options->dataset =
          $this->pick_question_dataset($question,$state->options->datasetitem);
         $state->responses = array('' => $regs[2]);
-        $virtualqtype = $this->get_virtual_qtype( $question);
-   //     if ( isset($question->options->multichoice) && $question->options->multichoice == '1'){
-
-
-            return $virtualqtype->restore_session_and_responses($question, $state);
-      //  }else { // numerical
-
-      //  return true;
+        $virtualqtype = $this->get_virtual_qtype();        
+        return $virtualqtype->restore_session_and_responses($question, $state);
     }
 
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
@@ -378,47 +354,15 @@ class question_calculated_qtype extends default_questiontype {
         };
         $state->options->dataset =
          $this->pick_question_dataset($question,$state->options->datasetitem);
-      //  $state->responses = array('' => '');
-        if ($question->options->multichoice == 1 ) {
-                    // create an array of answerids ??? why so complicated ???
-            $answerids = array_values(array_map(create_function('$val',
-             'return $val->id;'), $question->options->answers));
-            // Shuffle the answers if required
-            if (!empty($cmoptions->shuffleanswers) and !empty($question->options->shuffleanswers)) {
-               $answerids = swapshuffle($answerids);
-            }
-            $state->options->order = $answerids;
-            // Create empty responses
-            if ($question->options->single) {
-                $state->responses = array('' => '');
-            } else {
-                $state->responses = array();
-            }
-            return true;
-        } else { // numerical
-                    $virtualqtype = $this->get_virtual_qtype( $question);
+                    $virtualqtype = $this->get_virtual_qtype( );
             return $virtualqtype->create_session_and_responses($question, $state, $cmoptions, $attempt);
         }
 
-    }
+    
 
     function save_session_and_responses(&$question, &$state) {
         global $DB;
         $responses = 'dataset'.$state->options->datasetitem.'-' ;
-        if ( isset($question->options->multichoice) && $question->options->multichoice == '1'){
-
-        // Bundle the answer order and the responses into the legacy answer
-        // field.
-        // The serialized format for multiple choice quetsions
-        // is (optionally) a comma separated list of answer ids
-        // followed by a colon, followed by another comma separated
-        // list of answer ids, which are the radio/checkboxes that were
-        // ticked.
-        // E.g. 1,3,2,4:2,4 means that the answers were shown in the order
-        // 1, 3, 2 and then 4 and the answers 2 and 4 were checked.
-            $responses .= implode(',', $state->options->order) . ':';
-            $responses .= implode(',', $state->responses);
-        }else {
         // regular numeric type
          if(isset($state->responses['unit']) && isset($question->options->units[$state->responses['unit']])){
             $responses .= $state->responses['answer'].'|||||'.$question->options->units[$state->responses['unit']]->unit;
@@ -426,9 +370,6 @@ class question_calculated_qtype extends default_questiontype {
             $responses .= $state->responses['answer'].'|||||'.$state->responses['unit'] ;
         }else {
             $responses .= $state->responses['answer'].'|||||';
-        }
-
-
         }
 
         // Set the legacy answer field
@@ -573,10 +514,10 @@ class question_calculated_qtype extends default_questiontype {
                 return;
                 break;
             case 'datasetdefinitions':
-                echo $OUTPUT->heading_with_help(get_string("choosedatasetproperties", "quiz"), 'questiondatasets', 'quiz');
+                 echo $OUTPUT->heading_with_help(get_string("choosedatasetproperties", "quiz"), 'questiondatasets', 'quiz');
                 break;
             case 'datasetitems':
-                echo $OUTPUT->heading_with_help(get_string("editdatasets", "quiz"), 'questiondatasets', 'quiz');
+               echo $OUTPUT->heading_with_help(get_string("editdatasets", "quiz"), 'questiondatasets', 'quiz');
                 break;
         }
 
@@ -702,7 +643,7 @@ class question_calculated_qtype extends default_questiontype {
                 // it cannot go here without having done the first page
                 // so the question_calculated_options should exist
                 // only need to update the synchronize field
-                if($form->synchronize == 1 ){
+                if(isset($form->synchronize) && $form->synchronize == 1 ){
                     $options_synchronize = 1 ;
                 }else {
                     $options_synchronize = 0 ;
@@ -731,10 +672,9 @@ class question_calculated_qtype extends default_questiontype {
     */
     function delete_question($questionid) {
         global $DB;
+
         $DB->delete_records("question_calculated", array("question" => $questionid));
-        if ( $DB->table_exists("question_calculated_options") ){
-            $DB->delete_records("question_calculated_options", array("question" => $questionid));
-        };
+        $DB->delete_records("question_calculated_options", array("question" => $questionid));
         $DB->delete_records("question_numerical_units", array("question" => $questionid));
         if ($datasets = $DB->get_records('question_datasets', array('question' => $questionid))) {
             foreach ($datasets as $dataset) {
@@ -751,67 +691,45 @@ class question_calculated_qtype extends default_questiontype {
         return true;
     }
     function test_response(&$question, &$state, $answer) {
-          $virtualqtype = $this->get_virtual_qtype( $question);
+          $virtualqtype = $this->get_virtual_qtype();
         return $virtualqtype->test_response($question, $state, $answer);
 
     }
     function compare_responses(&$question, $state, $teststate) {
-                 $virtualqtype = $this->get_virtual_qtype( $question);
+
+                 $virtualqtype = $this->get_virtual_qtype();
         return $virtualqtype->compare_responses($question, $state, $teststate);
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
-        // Substitute variables in questiontext before giving the data to the
-        // virtual type for printing
-        $virtualqtype = $this->get_virtual_qtype( $question);
-        // why $unit as it is not use
-        if ($question->options->multichoice != 1 ) {
-            if($unit = $virtualqtype->get_default_numerical_unit($question)){
-                 $unit = $unit->unit;
-            } else {
-                $unit = '';
+    function convert_answers (&$question, &$state){
+            foreach ($question->options->answers as $key => $answer) {
+                $answer = fullclone($question->options->answers[$key]);
+                $question->options->answers[$key]->answer = $this->substitute_variables_and_eval($answer->answer,
+                $state->options->dataset);                               
             }
         }
-
-        // We modify the question to look like a numerical question
-        $numericalquestion = fullclone($question);
-        if ($question->options->multichoice == 1 ) {
-            foreach ($numericalquestion->options->answers as $key => $answer) {
-                $answer->answer = $this->substitute_variables($answer->answer, $state->options->dataset);
-                //evaluate the equations i.e {=5+4)
-                $qtext = "";
-                $qtextremaining = $answer->answer ;
-                while  (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
-                    $qtextsplits = explode($regs1[0], $qtextremaining, 2);
-                    $qtext =$qtext.$qtextsplits[0];
-                    $qtextremaining = $qtextsplits[1];
-                    if (empty($regs1[1])) {
-                            $str = '';
-                        } else {
-                            if( $formulaerrors = qtype_calculated_find_formula_errors($regs1[1])){
-                                $str=$formulaerrors ;
-                            }else {
-                                eval('$str = '.$regs1[1].';');
-                            }
-                        }
-                        $qtext = $qtext.$str ;
-                }
-                $answer->answer = $qtext.$qtextremaining ; ;
+    function convert_questiontext (&$question, &$state){
+        $tolerancemax =0.01;
+         $tolerancetypemax = 1 ;
+         $correctanswerlengthmax = 2 ;
+         $correctanswerformatmax = 1 ;
+         $tolerancemaxset = false ;
+        foreach ($question->options->answers as $key => $answer) {
+             if($answer->fraction == 1.0 && !$tolerancemaxset){
+                $tolerancemax = $answer->tolerance;
+                $tolerancetypemax = $answer->tolerancetype ;
+                $correctanswerlengthmax = $answer->correctanswerlength;
+                $correctanswerformatmax =$answer->correctanswerformat;
+                $tolerancemaxset = true ;
             }
-        }else {
-
-        foreach ($numericalquestion->options->answers as $key => $answer) {
-          $answer = fullclone($numericalquestion->options->answers[$key]);
-            $numericalquestion->options->answers[$key]->answer = $this->substitute_variables_and_eval($answer->answer,
-             $state->options->dataset);
         }
-    }
-        $numericalquestion->questiontext = $this->substitute_variables(
-        $numericalquestion->questiontext, $state->options->dataset);
+        $question->questiontext = $this->substitute_variables(
+        $question->questiontext, $state->options->dataset);
         //evaluate the equations i.e {=5+4)
         $qtext = "";
-        $qtextremaining = $numericalquestion->questiontext ;
+        $qtextremaining = $question->questiontext ;
         while  (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
+      //  while  (preg_match('~\{=|%=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
             $qtextsplits = explode($regs1[0], $qtextremaining, 2);
             $qtext =$qtext.$qtextsplits[0];
             $qtextremaining = $qtextsplits[1];
@@ -821,13 +739,86 @@ class question_calculated_qtype extends default_questiontype {
                     if( $formulaerrors = qtype_calculated_find_formula_errors($regs1[1])){
                         $str=$formulaerrors ;
                     }else {
-                        eval('$str = '.$regs1[1].';');
+                       eval('$str = '.$regs1[1].';');
+                       $texteval= qtype_calculated_calculate_answer(
+                     $str, $state->options->dataset, $tolerancemax,
+                     $tolerancetypemax, $correctanswerlengthmax,
+                        $correctanswerformatmax, '');
+                        $str = $texteval->answer;
+                        
+                        ;
+                    }
+                }
+                $qtext = $qtext.$str ;
+        }
+        $question->questiontext = $qtext.$qtextremaining ; // end replace equations
+     }       
+        
+    function get_default_numerical_unit($question,$virtualqtype){
+            if($unit = $virtualqtype->get_default_numerical_unit($question)){
+                 $unit = $unit->unit;
+            } else {
+                $unit = '';
+            }
+            return $unit ;
+        
+    }    
+    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
+        // Substitute variables in questiontext before giving the data to the
+        // virtual type for printing
+        $virtualqtype = $this->get_virtual_qtype();
+        // why $unit as it is not use
+        $unit = $this-> get_default_numerical_unit($question,$virtualqtype);
+        // We modify the question to look like a numerical question
+        $numericalquestion = fullclone($question);
+            $this->convert_answers($numericalquestion, $state);
+            $this->convert_questiontext($numericalquestion, $state);
+ /*        $tolerancemax =0.01;
+         $tolerancetypemax = 1 ;
+         $correctanswerlengthmax = 2 ;
+         $correctanswerformatmax = 1 ;
+         $tolerancemaxset = false ;
+        foreach ($numericalquestion->options->answers as $key => $answer) {
+             if($answer->fraction == 1.0 && !$tolerancemaxset){
+                $tolerancemax = $answer->tolerance;
+                $tolerancetypemax = $answer->tolerancetype ;
+                $correctanswerlengthmax = $answer->correctanswerlength;
+                $correctanswerformatmax =$answer->correctanswerformat;
+                $tolerancemaxset = true ;
+            }
+        }
+
+        $numericalquestion->questiontext = $this->substitute_variables(
+        $numericalquestion->questiontext, $state->options->dataset);
+        //evaluate the equations i.e {=5+4)
+        $qtext = "";
+        $qtextremaining = $numericalquestion->questiontext ;
+        while  (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
+      //  while  (preg_match('~\{=|%=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
+            $qtextsplits = explode($regs1[0], $qtextremaining, 2);
+            $qtext =$qtext.$qtextsplits[0];
+            $qtextremaining = $qtextsplits[1];
+            if (empty($regs1[1])) {
+                    $str = '';
+                } else {
+                    if( $formulaerrors = qtype_calculated_find_formula_errors($regs1[1])){
+                        $str=$formulaerrors ;
+                    }else {
+                       eval('$str = '.$regs1[1].';');
+                       $texteval= qtype_calculated_calculate_answer(
+                     $str, $state->options->dataset, $tolerancemax,
+                     $tolerancetypemax, $correctanswerlengthmax,
+                        $correctanswerformatmax, '');
+                        $str = $texteval->answer;
+                        
+                        ;
                     }
                 }
                 $qtext = $qtext.$str ;
         }
         $numericalquestion->questiontext = $qtext.$qtextremaining ; // end replace equations
-
+        */
+        
         $virtualqtype->print_question_formulation_and_controls($numericalquestion, $state, $cmoptions, $options);
     }
     function grade_responses(&$question, &$state, $cmoptions) {
@@ -839,7 +830,7 @@ class question_calculated_qtype extends default_questiontype {
           $numericalquestion->options->answers[$key]->answer = $this->substitute_variables_and_eval($answer,
              $state->options->dataset);
        }
-         $virtualqtype = $this->get_virtual_qtype( $question);
+         $virtualqtype = $this->get_virtual_qtype();
         return $virtualqtype->grade_responses($numericalquestion, $state, $cmoptions) ;
     }
 
@@ -862,7 +853,7 @@ class question_calculated_qtype extends default_questiontype {
             $answer->answer = $this->substitute_variables_and_eval($answer->answer,
              $state->options->dataset);
         }
-        $virtualqtype = $this->get_virtual_qtype( $question);
+        $virtualqtype = $this->get_virtual_qtype();
         return $virtualqtype->check_response($numericalquestion, $state) ;
     }
 
@@ -870,7 +861,7 @@ class question_calculated_qtype extends default_questiontype {
     function get_actual_response(&$question, &$state) {
         // Substitute variables in questiontext before giving the data to the
         // virtual type
-        $virtualqtype = $this->get_virtual_qtype( $question);
+        $virtualqtype = $this->get_virtual_qtype();
         $unit = $virtualqtype->get_default_numerical_unit($question);
 
         // We modify the question to look like a numerical question
@@ -902,13 +893,8 @@ class question_calculated_qtype extends default_questiontype {
 
     function create_virtual_qtype() {
         global $CFG;
-     /*   if ($this->options->multichoice == 1 ) {
-            require_once("$CFG->dirroot/question/type/multichoice/questiontype.php");
-            return new question_multichoice_qtype();
-        }else { */
             require_once("$CFG->dirroot/question/type/numerical/questiontype.php");
             return new question_numerical_qtype();
-       // }
     }
 
     function supports_dataset_item_generation() {
@@ -958,11 +944,14 @@ class question_calculated_qtype extends default_questiontype {
                                                 ? 'decimals'
                                                 : 'significantfigures'), 'quiz', $i);
             }
-            $menu1 = html_writer::select($lengthoptions, 'calclength[]', $regs[4], false);
+            $select1 = html_select::make($lengthoptions, 'calclength[]', $regs[4], false);
+            $select1->nothingvalue = '';
+            $menu1 = $OUTPUT->select($select1);
 
-            $menu2 = html_writer::select(array('uniform' => get_string('uniform', 'quiz'),
-                                                     'loguniform' => get_string('loguniform', 'quiz')),
-                                               'calcdistribution[]', $regs[1], false);
+            $select2 = html_select::make(array('uniform' => get_string('uniform', 'quiz'),
+                                             'loguniform' => get_string('loguniform', 'quiz')), 'calcdistribution[]', $regs[1], false);
+            $select2->nothingvalue = '';
+            $menu2 = $OUTPUT->select($select2);
             return '<input type="submit" onclick="'
                     . "getElementById('addform').regenerateddefid.value='$defid'; return true;"
                     .'" value="'. get_string('generatevalue', 'quiz') . '"/><br/>'
@@ -1030,29 +1019,29 @@ class question_calculated_qtype extends default_questiontype {
         }
     }
 
-    /**
-    * This function get the dataset items using id as unique parameter and return an
-    * array with itemnumber as index sorted ascendant
-    * If the multiple records with the same itemnumber exist, only the newest one
-    * i.e with the greatest id is used, the others are ignored but not deleted.
-    * MDL-19210
-    */
+		/**
+		* This function get the dataset items using id as unique parameter and return an
+		* array with itemnumber as index sorted ascendant
+		* If the multiple records with the same itemnumber exist, only the newest one
+		* i.e with the greatest id is used, the others are ignored but not deleted.
+		* MDL-19210
+		*/
     function get_database_dataset_items($definition){
-        global $CFG, $DB;
-        $databasedataitems = $DB->get_records_sql( // Use number as key!!
-                    " SELECT id , itemnumber, definition,  value
-                      FROM {question_dataset_items}
-                      WHERE definition = $definition order by id DESC ", array($definition));
-        $dataitems = Array();
-        foreach($databasedataitems as $id => $dataitem  ){
-        if (!isset($dataitems[$dataitem->itemnumber])){
-                $dataitems[$dataitem->itemnumber] = $dataitem ;
-            }else {
-                // deleting the unused records could be added here
-            }
-        }
-        ksort($dataitems);
-        return $dataitems ;
+    	global $CFG, $DB;
+    		$databasedataitems = $DB->get_records_sql( // Use number as key!!
+                        " SELECT id , itemnumber, definition,  value
+                          FROM {question_dataset_items}
+                          WHERE definition = $definition order by id DESC ", array($definition));
+      	$dataitems = Array();
+       	foreach($databasedataitems as $id => $dataitem  ){
+       	if (!isset($dataitems[$dataitem->itemnumber])){
+       		    $dataitems[$dataitem->itemnumber] = $dataitem ;
+       		  }else {
+       		  	// deleting the unused records could be added here
+       		  }
+       	}
+       	ksort($dataitems);
+       	return $dataitems ;
     }
 
     function save_dataset_items($question, $fromform){
@@ -1215,16 +1204,12 @@ class question_calculated_qtype extends default_questiontype {
             } else {
                 $strheader .= $delimiter.$answer->answer;
             }
-            if($question->options->multichoice == 1 ){
-                $delimiter = '<br/>';
-            }else{
                 $delimiter = '<br/><br/><br/>';
-            }
         }
         return $strheader;
     }
 
-    function comment_on_datasetitems($questionid, $answers,$data, $number) {
+    function comment_on_datasetitems($qtypeobj,$questionid,$questiontext, $answers,$data, $number) {
         global $DB, $QTYPES;
         $comment = new stdClass;
         $comment->stranswers = array();
@@ -1242,7 +1227,7 @@ class question_calculated_qtype extends default_questiontype {
         $strmax = get_string('max', 'quiz');
         $errors = '';
         $delimiter = ': ';
-        $virtualqtype = & $QTYPES['numerical'];// $this->get_virtual_qtype( $question);
+        $virtualqtype =  $qtypeobj->get_virtual_qtype();//& $QTYPES['numerical'];
         foreach ($answers as $key => $answer) {
             $formula = $this->substitute_variables($answer->answer,$data);
             $formattedanswer = qtype_calculated_calculate_answer(
@@ -1263,9 +1248,6 @@ class question_calculated_qtype extends default_questiontype {
                 $comment->stranswers[$key] = $formula.' = '.get_string('anyvalue','qtype_calculated').'<br/><br/><br/>';
             }else{
                 $comment->stranswers[$key]= $formula.' = '.$formattedanswer->answer.'<br/>' ;
-                $comment->stranswers[$key] .= $strmin. $delimiter.$answer->min.'---';
-                $comment->stranswers[$key] .= $strmax.$delimiter.$answer->max;
-                $comment->stranswers[$key] .='<br/>';
                 $correcttrue->correct = $formattedanswer->answer ;
                 $correcttrue->true = $answer->answer ;
                 if ($formattedanswer->answer < $answer->min || $formattedanswer->answer > $answer->max){
@@ -1275,12 +1257,15 @@ class question_calculated_qtype extends default_questiontype {
                 }else {
                     $comment->stranswers[$key] .=get_string('trueanswerinsidelimits','qtype_calculated',$correcttrue);//' True answer :'.$calculated->trueanswer.' inside limits';
                 }
+                $comment->stranswers[$key] .='<br/>';
+                $comment->stranswers[$key] .= $strmin.$delimiter.$answer->min.' --- ';
+                $comment->stranswers[$key] .= $strmax.$delimiter.$answer->max;
                 $comment->stranswers[$key] .='';
             }
         }
         return fullclone($comment);
     }
-    function multichoice_comment_on_datasetitems($questionid, $answers,$data, $number) {
+    function multichoice_comment_on_datasetitems($questionid,$questiontext, $answers,$data, $number) {
         global $DB;
         $comment = new stdClass;
         $comment->stranswers = array();
@@ -1314,6 +1299,13 @@ class question_calculated_qtype extends default_questiontype {
                                 $str=$formulaerrors ;
                             }else {
                                 eval('$str = '.$regs1[1].';');
+                                                       
+                       $texteval= qtype_calculated_calculate_answer(
+                     $str, $data, $answer->tolerance,
+                     $answer->tolerancetype, $answer->correctanswerlength,
+                        $answer->correctanswerformat, '');
+                        $str = $texteval->answer;
+                                
                             }
                         }
                         $qtext = $qtext.$str ;
@@ -1397,27 +1389,32 @@ class question_calculated_qtype extends default_questiontype {
                 list($options, $selected) =
                         $this->dataset_options($form, $datasetname);
                 unset($options['0']); // Mandatory...
-                $datasetmenus[$datasetname] = html_writer::select($options, 'dataset[]', $selected, false);
+                $datasetmenus[$datasetname] = $OUTPUT->select(html_select::make($options, 'dataset[]', $selected, false));
             }
         }
         foreach ($optionaldatasets as $datasetname) {
             if (!isset($datasetmenus[$datasetname])) {
                 list($options, $selected) =
                         $this->dataset_options($form, $datasetname);
-                $datasetmenus[$datasetname] = html_writer::select($options, 'dataset[]', $selected, false);
+                $datasetmenus[$datasetname] = $OUTPUT->select(html_select::make($options, 'dataset[]', $selected, false));
             }
         }
         return $datasetmenus;
     }
 
     function print_question_grading_details(&$question, &$state, &$cmoptions, &$options) {
-        $virtualqtype = $this->get_virtual_qtype( $question);
+        $virtualqtype = $this->get_virtual_qtype();
         $virtualqtype->print_question_grading_details($question, $state, $cmoptions, $options) ;
     }
 
     function get_correct_responses(&$question, &$state) {
-        $virtualqtype = $this->get_virtual_qtype( $question);
-        if ($question->options->multichoice != 1 ) {
+        // virtual type for printing
+        $virtualqtype = $this->get_virtual_qtype();
+        $unit = $this-> get_default_numerical_unit($question,$virtualqtype);
+        // We modify the question to look like a numerical question
+   //     $numericalquestion = fullclone($question);
+            $this->convert_answers($question, $state);
+ /*       if ($question->options->multichoice != 1 ) {
             if($unit = $virtualqtype->get_default_numerical_unit($question)){
                  $unit = $unit->unit;
             } else {
@@ -1438,13 +1435,14 @@ class question_calculated_qtype extends default_questiontype {
                     return $correct;
                 }
             }
-        }else{
+        }else{*/
             return $virtualqtype->get_correct_responses($question, $state) ;
-        }
-        return null;
+        /*}
+        return null;*/
     }
 
     function substitute_variables($str, $dataset) {
+        global $OUTPUT ;
           //  testing for wrong numerical values
           // all calculations used this function so testing here should be OK
 
@@ -1874,13 +1872,134 @@ class question_calculated_qtype extends default_questiontype {
         }
         return  $text ;
     }
-    function get_virtual_qtype($question) {
-        global $QTYPES;
-        if ( isset($question->options->multichoice) && $question->options->multichoice == '1'){
-            $this->virtualqtype =& $QTYPES['multichoice'];
-        }else {
-            $this->virtualqtype =& $QTYPES['numerical'];
+    
+    /**
+    * This function build a table showing the available category shareable
+    * wild cards, their name, their definition (Min, Max, Decimal) , the item count
+    * and the name of the question where they are used.
+    * This table is intended to be add before the question text to help the user use
+    * these wild cards
+    */
+
+    function print_dataset_definitions_category_shared($question,$datasetdefsq) {
+        global $CFG, $DB;
+        $datasetdefs = array();
+        $lnamemax = 22;
+        $namestr =get_string('name', 'quiz');
+        $minstr=get_string('min', 'quiz');
+        $maxstr=get_string('max', 'quiz');
+        $rangeofvaluestr=get_string('minmax','qtype_datasetdependent');
+        $questionusingstr = get_string('usedinquestion','qtype_calculated');
+        $itemscountstr = get_string('itemscount','qtype_datasetdependent');
+       $text ='';
+        if (!empty($question->category)) {
+            list($category) = explode(',', $question->category);
+            $sql = "SELECT i.*,d.*
+                    FROM {question_datasets} d,
+                         {question_dataset_definitions} i
+                    WHERE i.id = d.datasetdefinition
+                    AND i.category = ?;
+                    " ;
+            if ($records = $DB->get_records_sql($sql, array($category))) {
+                foreach ($records as $r) {
+                    $sql1 = "SELECT q.*
+                        FROM  {question} q
+                             WHERE q.id = ?
+                    ";
+                    if ( !isset ($datasetdefs["$r->type-$r->category-$r->name"])){
+                        $datasetdefs["$r->type-$r->category-$r->name"]= $r;
+                    }
+                    if ($questionb = $DB->get_records_sql($sql1, array($r->question))) {
+                        $datasetdefs["$r->type-$r->category-$r->name"]->questions[$r->question]->name =$questionb[$r->question]->name ;
+                        $datasetdefs["$r->type-$r->category-$r->name"]->questions[$r->question]->id =$questionb[$r->question]->id ;
+                    }
+                }
+            }
         }
+        if (!empty ($datasetdefs)){
+
+            $text ="<table width=\"100%\" border=\"1\"><tr><th  style=\"white-space:nowrap;\" class=\"header\" scope=\"col\" >$namestr</th>";
+            $text .="<th  style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$itemscountstr</th>";
+            $text .="<th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">&nbsp;&nbsp;$questionusingstr &nbsp;&nbsp; </th>";
+            $text .="<th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">Quiz</th>";
+            $text .="<th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">Attempts</th></tr>";
+            foreach ($datasetdefs as $datasetdef){
+                list($distribution, $min, $max,$dec) = explode(':', $datasetdef->options, 4);
+                $count = count($datasetdef->questions);                
+                $text .="<tr><td style=\"white-space:nowrap;\" valign=\"top\" align=\"center\" rowspan=\"$count\"> $datasetdef->name </td><td align=\"right\" valign=\"top\" rowspan=\"$count\" >$datasetdef->itemcount&nbsp;&nbsp;</td>";
+                //$text .="<td align=\"left\">";
+                $line = 0 ;
+                foreach ($datasetdef->questions as $qu) {
+                    //limit the name length displayed
+                    if (!empty($qu->name)) {
+                        $qu->name = (strlen($qu->name) > $lnamemax) ?
+                        substr($qu->name, 0, $lnamemax).'...' : $qu->name;
+                    } else {
+                        $qu->name = '';
+                    }
+                    if( $line ) {
+                        $text .="<tr>";
+                    }
+                    $line++;  
+                    $text .="<td align=\"left\" style=\"white-space:nowrap;\" >$qu->name</td>";
+                 $nb_of_quiz = 0;
+                 $nb_of_attempts=0;
+                 $used_in_quiz = false ;  
+                 if ($list = $DB->get_records('quiz_question_instances', array( 'question'=> $qu->id))){
+                            $used_in_quiz = true;
+                    foreach($list as $key => $li){
+                        $nb_of_quiz ++;
+                        if($att = $DB->get_records('quiz_attempts',array( 'quiz'=> $li->quiz, 'preview'=> '0'))){
+                            $nb_of_attempts+= count($att);
+                        }
+                    }
+                  }
+                  if($used_in_quiz){
+                    $text .="<td align=\"center\">$nb_of_quiz</td>";
+                }else {
+                    $text .="<td align=\"center\">0</td>";
+                }
+                  if($used_in_quiz){
+                    $text .="<td align=\"center\">$nb_of_attempts";
+                }else {
+                     $text .="<td align=\"left\"><br/>";
+                }   
+                
+                $text .="</td></tr>";
+                }
+            }
+            $text .="</table>";
+        }else{
+             $text .=get_string('nosharedwildcard', 'qtype_calculated');
+        }
+        return  $text ;
+    }
+
+    function find_math_equations($text) {
+    /// Returns the possible dataset names found in the text as an array
+    /// The array has the dataset name for both key and value
+        $equations = array();
+ /*               $qtext = "";
+        $qtextremaining = $numericalquestion->questiontext ;
+        while  (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
+      //  while  (preg_match('~\{=|%=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
+            $qtextsplits = explode($regs1[0], $qtextremaining, 2);
+            $qtext =$qtext.$qtextsplits[0];
+            $qtextremaining = $qtextsplits[1];
+            if (empty($regs1[1])) {
+                    $str = '';
+                } else {
+*/
+        while (preg_match('~\{=([^[:space:]}]*)}~', $text, $regs)) {
+            $equations[] = $regs[1];
+            $text = str_replace($regs[0], '', $text);
+        }
+        return $equations;
+    }
+
+    function get_virtual_qtype() {
+        global $QTYPES;
+            $this->virtualqtype =& $QTYPES['numerical'];
         return $this->virtualqtype;
     }
 
@@ -2002,7 +2121,7 @@ class question_calculated_qtype extends default_questiontype {
                 //Now, build the question_calculated_options record structure
                 $calculated_options->questionid = $new_question_id;
                 $calculated_options->synchronize = backup_todb($cal_info['#']['SYNCHRONIZE']['0']['#']);
-                $calculated_options->multichoice = backup_todb($cal_info['#']['MULTICHOICe']['0']['#']);
+         //       $calculated_options->multichoice = backup_todb($cal_info['#']['MULTICHOICe']['0']['#']);
                 $calculated_options->single = backup_todb($cal_info['#']['SINGLE']['0']['#']);
                 $calculated_options->shuffleanswers = isset($cal_info['#']['SHUFFLEANSWERS']['0']['#'])?backup_todb($mul_info['#']['SHUFFLEANSWERS']['0']['#']):'';
                 $calculated_options->correctfeedback = backup_todb($cal_info['#']['CORRECTFEEDBACK']['0']['#']);

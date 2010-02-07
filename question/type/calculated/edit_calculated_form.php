@@ -57,13 +57,8 @@ class question_edit_calculated_form extends question_edit_form {
         $mform->setType('answer', PARAM_NOTAGS);
 
         $addrepeated = array();
-        if ($this->editasmultichoice == 1){
-            $addrepeated[] =& $mform->createElement('hidden', 'tolerance');
-            $addrepeated[] =& $mform->createElement('hidden', 'tolerancetype',1);
-        }else {
             $addrepeated[] =& $mform->createElement('text', 'tolerance', get_string('tolerance', 'qtype_calculated'));
             $addrepeated[] =& $mform->createElement('select', 'tolerancetype', get_string('tolerancetype', 'quiz'), $this->qtypeobj->tolerance_types());
-        }
         $repeatedoptions['tolerance']['type'] = PARAM_NUMBER;
         $repeatedoptions['tolerance']['default'] = 0.01;
 
@@ -73,12 +68,7 @@ class question_edit_calculated_form extends question_edit_form {
         $answerlengthformats = array('1' => get_string('decimalformat', 'quiz'), '2' => get_string('significantfiguresformat', 'quiz'));
         $addrepeated[] =&  $mform->createElement('select', 'correctanswerformat', get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
         array_splice($repeated, 3, 0, $addrepeated);
-        if ($this->editasmultichoice == 1){
-             $repeated[1]->setLabel('...<strong>{={x}+..}</strong>...');
-        }else {
             $repeated[1]->setLabel(get_string('correctanswerformula', 'quiz').'=');
-
-        }
 
         return $repeated;
     }
@@ -102,21 +92,6 @@ class question_edit_calculated_form extends question_edit_form {
         $addstring=get_string("updatecategory", "qtype_calculated");
                 $mform->registerNoSubmitButton($addfieldsname);
         $this->editasmultichoice =  0 ;
-        if ( isset($this->question->options->multichoice) && $this->question->options->multichoice == '1'){
-            $this->editasmultichoice = 1 ;
-        }else {
-            if ( !isset($this->question->id ) && 1 ==  optional_param('multichoice', '', PARAM_RAW )){
-                $this->editasmultichoice = 1 ;
-            }else {
-                $this->editasmultichoice = 0 ;
-            }
-            if ( !isset($this->question->id ) && '' != optional_param('createoptionbutton', '', PARAM_RAW) && 1 ==  optional_param('multichoice', '', PARAM_RAW)){
-                $this->editasmultichoice = 1 ;
-            }
-            if ( !isset($this->question->id )== 0 && '' != optional_param('createoptionbutton', '', PARAM_RAW) && 0 ==  optional_param('multichoice', '', PARAM_RAW)){
-                $this->editasmultichoice = 0 ;
-            }
-        }
 
    /*      if ( '' !=  optional_param('changetomultichoice', '', PARAM_RAW)){
            $this->editasmultichoice = 1 ;
@@ -128,78 +103,25 @@ class question_edit_calculated_form extends question_edit_form {
         $mform->insertElementBefore(    $mform->createElement('submit', $addfieldsname, $addstring),'listcategory');
         $mform->registerNoSubmitButton('createoptionbutton');
 
-        if(!isset($this->question->id ) ){
-            $mform->addElement('header', 'choicehdr',get_string('Choosingcreationmode', 'qtype_calculated'));
-            $createoptions = Array();
-
-            $createoptions['0']=get_string('Regularcalculated', 'qtype_calculated');
-            $createoptions['1']=get_string('Multiplechoicecalculated', 'qtype_calculated');
-            $addgrp1 = array();
-            $addgrp1[] =& $mform->createElement('submit', 'createoptionbutton', get_string('Createas', 'qtype_calculatedsimple'));
-            $addgrp1[] =& $mform->createElement('select', "multichoice",'' , $createoptions);
-            $mform->addGroup($addgrp1, 'addgrp1', '', '   ', false);
-        }else {
             $mform->addElement('hidden', 'multichoice',$this->editasmultichoice);
             $mform->setType('multichoice', PARAM_INT);
-        }
 
-        if ($this->editasmultichoice == 1){
-            $mform->addElement('header', 'choicehdr',get_string('multichoicecalculatedquestion', 'qtype_calculated'));
-            $menu = array(get_string('answersingleno', 'qtype_multichoice'), get_string('answersingleyes', 'qtype_multichoice'));
-            $mform->addElement('select', 'single', get_string('answerhowmany', 'qtype_multichoice'), $menu);
-            $mform->setDefault('single', 1);
-
-            $mform->addElement('advcheckbox', 'shuffleanswers', get_string('shuffleanswers', 'qtype_multichoice'), null, null, array(0,1));
-            $mform->setHelpButton('shuffleanswers', array('multichoiceshuffle', get_string('shuffleanswers','qtype_multichoice'), 'qtype_multichoice'));
-            $mform->setDefault('shuffleanswers', 1);
-
-            $numberingoptions = $QTYPES['multichoice']->get_numbering_styles();
-            $menu = array();
-            foreach ($numberingoptions as $numberingoption) {
-                $menu[$numberingoption] = get_string('answernumbering' . $numberingoption, 'qtype_multichoice');
-            }
-            $mform->addElement('select', 'answernumbering', get_string('answernumbering', 'qtype_multichoice'), $menu);
-            $mform->setDefault('answernumbering', 'abc');
-        }else { //editing as regular
-            $mform->addElement('header', 'choicehdr', get_string('regularcalculatedquestion', 'qtype_calculated'));
-            $mform->addElement('hidden','single', '1');
+        //editing as regular
             $mform->setType('single', PARAM_INT);
 
             $mform->addElement('hidden','shuffleanswers', '1');
             $mform->setType('shuffleanswers', PARAM_INT);
             $mform->addElement('hidden','answernumbering', 'abc');
             $mform->setType('answernumbering', PARAM_SAFEDIR);
-        }
 
         $creategrades = get_grade_options();
-        if ($this->editasmultichoice == 1){
-            $this->add_per_answer_fields($mform, get_string('choiceno', 'qtype_multichoice', '{no}'),
-                $creategrades->gradeoptionsfull, max(5, QUESTION_NUMANS_START));
-        }else{
+
             $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculated', '{no}'),
                 $creategrades->gradeoptions, 1, 1);
-        }
 
 
         $repeated = array();
-        if ($this->editasmultichoice == 1){
-            $nounits = optional_param('nounits', 1, PARAM_INT);
-            $mform->addElement('hidden', 'nounits', $nounits);
-            $mform->setType('nounits', PARAM_INT);
-            $mform->setConstants(array('nounits'=>$nounits));
-            for ($i=0; $i< $nounits; $i++) {
-                $mform->addElement('hidden','unit'."[$i]", optional_param('unit'."[$i]", '', PARAM_NOTAGS));
-                $mform->setType('unit'."[$i]", PARAM_NOTAGS);
-                $mform->addElement('hidden', 'multiplier'."[$i]", optional_param('multiplier'."[$i]", '', PARAM_NUMBER));
-                $mform->setType('multiplier'."[$i]", PARAM_NUMBER);
-            }
-          $mform->addElement('hidden','unitgradingtype',optional_param('unitgradingtype', '', PARAM_INT)) ;
-          $mform->addElement('hidden','unitpenalty',optional_param('unitpenalty', '', PARAM_NUMBER)) ;
-          $mform->addElement('hidden','showunits',optional_param('showunits', '', PARAM_INT)) ;
-          $mform->addElement('hidden','unitsleft',optional_param('unitsleft', '', PARAM_INT)) ;
-          $mform->addElement('hidden','instructions',optional_param('instructions', '', PARAM_RAW)) ;
 
-        }else {
         $QTYPES['numerical']->edit_numerical_options($mform,$this);
             $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));
             $repeated[] =& $mform->createElement('text', 'unit', get_string('unit', 'quiz'));
@@ -221,36 +143,24 @@ class question_edit_calculated_form extends question_edit_form {
         }
         $this->repeat_elements($repeated, $repeatsatstart, array(), 'nounits', 'addunits', 2, get_string('addmoreunitblanks', 'qtype_calculated', '{no}'));
 
-        }
         if ($mform->elementExists('multiplier[0]')){
             $firstunit =& $mform->getElement('multiplier[0]');
             $firstunit->freeze();
             $firstunit->setValue('1.0');
             $firstunit->setPersistantFreeze(true);
         }
-        if ($this->editasmultichoice == 1){
-            $mform->setType('addunits','hidden');
-            $mform->addElement('header', 'overallfeedbackhdr', get_string('overallfeedback', 'qtype_multichoice'));
-
-            foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $feedbackname) {
-                $mform->addElement('htmleditor', $feedbackname, get_string($feedbackname, 'qtype_multichoice'),
-                                    array('course' => $this->coursefilesid));
-                $mform->setType($feedbackname, PARAM_RAW);
-            }
-        }else {
-            foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $feedbackname) {
-                $mform->addElement('hidden', $feedbackname);
-                $mform->setType($feedbackname, PARAM_RAW);
-            }
+        foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $feedbackname) {
+            $mform->addElement('hidden', $feedbackname);
+            $mform->setType($feedbackname, PARAM_RAW);
         }
         //hidden elements
         $mform->addElement('hidden', 'synchronize', '');
         $mform->setType('synchronize', PARAM_INT);
-        if (isset($this->question->options)&& isset($this->question->options->synchronize) ){
+    /*    if (isset($this->question->options)&& isset($this->question->options->synchronize) ){
             $mform->setDefault("synchronize", $this->question->options->synchronize);
         } else {
             $mform->setDefault("synchronize", 0 );
-        }
+        }*/
         $mform->addElement('hidden', 'wizard', 'datasetdefinitions');
         $mform->setType('wizard', PARAM_ALPHA);
 
@@ -258,9 +168,6 @@ class question_edit_calculated_form extends question_edit_form {
     }
 
     function set_data($question) {
-        if (isset($this->editasmultichoice)){
-             $default_values['multichoice']= $this->editasmultichoice ; //$this->editasmultichoice ;
-        }
         if (isset($question->options)){
             $answers = $question->options->answers;
             if (count($answers)) {
@@ -281,6 +188,7 @@ class question_edit_calculated_form extends question_edit_form {
           $default_values['showunits'] = $question->options->showunits ;
           $default_values['unitsleft'] = $question->options->unitsleft ;
           $default_values['instructions'] = $question->options->instructions  ;
+          $default_values['synchronize'] = $question->options->synchronize ;
 
             if (isset($question->options->units)){
                 $units  = array_values($question->options->units);
@@ -379,77 +287,7 @@ class question_edit_calculated_form extends question_edit_form {
                 $errors['answer['.$key.']'] = get_string('atleastonewildcard', 'qtype_datasetdependent');
             }
         }
-        if ($data['multichoice']== 1 ){
-            foreach ($answers as $key => $answer){
-                $trimmedanswer = trim($answer);
-                if (($trimmedanswer!='')||$answercount==0){
-                    //verifying for errors in {=...} in answer text;
-                    $qanswer = "";
-                    $qanswerremaining =  $trimmedanswer ;
-                    $possibledatasets = $this->qtypeobj->find_dataset_names($trimmedanswer);
-                        foreach ($possibledatasets as $name => $value) {
-                        $qanswerremaining = str_replace('{'.$name.'}', '1', $qanswerremaining);
-                    }
-                //     echo "numericalquestion qanswerremaining <pre>";print_r($possibledatasets);
-                    while  (preg_match('~\{=([^[:space:]}]*)}~', $qanswerremaining, $regs1)) {
-                        $qanswersplits = explode($regs1[0], $qanswerremaining, 2);
-                        $qanswer =$qanswer.$qanswersplits[0];
-                        $qanswerremaining = $qanswersplits[1];
-                        if (!empty($regs1[1]) && $formulaerrors = qtype_calculated_find_formula_errors($regs1[1])) {
-                            if(!isset($errors['answer['.$key.']'])){
-                                $errors['answer['.$key.']'] = $formulaerrors.':'.$regs1[1] ;
-                            }else {
-                                $errors['answer['.$key.']'] .= '<br/>'.$formulaerrors.':'.$regs1[1];
-                            }
-                        }
-                    }
-                }
-                if ($trimmedanswer!=''){
-                    if ('2' == $data['correctanswerformat'][$key]
-                            && '0' == $data['correctanswerlength'][$key]) {
-                        $errors['correctanswerlength['.$key.']'] = get_string('zerosignificantfiguresnotallowed','quiz');
-                    }
-                    if (!is_numeric($data['tolerance'][$key])){
-                        $errors['tolerance['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');
-                    }
-                    if ($data['fraction'][$key] == 1) {
-                       $maxgrade = true;
-                    }
-
-                    $answercount++;
-                }
-                //check grades
-                if ($answer != '') {
-                    if ($data['fraction'][$key] > 0) {
-                        $totalfraction += $data['fraction'][$key];
-                    }
-                    if ($data['fraction'][$key] > $maxfraction) {
-                        $maxfraction = $data['fraction'][$key];
-                    }
-                }
-            }
-            if ($answercount==0){
-                $errors['answer[0]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
-                $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
-            } elseif ($answercount==1){
-                $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
-
-            }
-
-            /// Perform sanity checks on fractional grades
-            if ($data['single']) {
-                if ($maxfraction != 1) {
-                    $maxfraction = $maxfraction * 100;
-                    $errors['fraction[0]'] = get_string('errfractionsnomax', 'qtype_multichoice', $maxfraction);
-                }
-            } else {
-                $totalfraction = round($totalfraction,2);
-                if ($totalfraction != 1) {
-                    $totalfraction = $totalfraction * 100;
-                    $errors['fraction[0]'] = get_string('errfractionsaddwrong', 'qtype_multichoice', $totalfraction);
-                }
-            }
-        }else{ // regular calculated
+ // regular calculated
             foreach ($answers as $key => $answer){
                 //check no of choices
                 // the * for everykind of answer not actually implemented
@@ -526,7 +364,7 @@ class question_edit_calculated_form extends question_edit_form {
             if ($maxgrade == false) {
                 $errors['fraction[0]'] = get_string('fractionsnomax', 'question');
             }
-        }
+        
 
         return $errors;
     }

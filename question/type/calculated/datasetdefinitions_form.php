@@ -130,6 +130,12 @@ class question_dataset_dependent_definitions_form extends moodleform {
         $mform->addElement('hidden', 'wizard', 'datasetitems');
         $mform->setType('wizard', PARAM_ALPHA);
     }
+/*    function set_data($question) {
+        $formdata = array();
+        $fromform = new stdClass();
+                  $default_values['synchronize'] = $question->options->synchronize ;
+        $question = (object)((array)$question + $default_values);
+    }*/
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
         $datasets = $data['dataset'];

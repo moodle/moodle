@@ -429,7 +429,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                         if($this->noofitems != 0 ) {
                                 if (empty($numbererrors )){
                                     if(!isset($question->id)) $question->id = 0 ;
-                                        $comment = $this->qtypeobj->comment_on_datasetitems($question->id,$this->nonemptyanswer, $data, $itemnumber);//$this->
+                                        $comment = $this->qtypeobj->comment_on_datasetitems($question->id,$question->questiontext,$this->nonemptyanswer, $data, $itemnumber);//$this->
                                         if ($comment->outsidelimit) {
                                             $this->outsidelimit=$comment->outsidelimit ;
                                         }

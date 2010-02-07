@@ -67,6 +67,8 @@ class question_dataset_dependent_items_form extends moodleform {
         parent::moodleform($submiturl);
     }
     function definition() {
+                $labelsharedwildcard = get_string("sharedwildcard", "qtype_datasetdependent");
+
         $mform =& $this->_form;
         $strquestionlabel = $this->qtypeobj->comment_header($this->question);
         if ($this->maxnumber != -1){
@@ -74,15 +76,29 @@ class question_dataset_dependent_items_form extends moodleform {
         } else {
             $this->noofitems = 0;
         }
+        $label = get_string("sharedwildcards", "qtype_datasetdependent");
+//
+                $html2 = $this->qtypeobj->print_dataset_definitions_category_shared($this->question,$this->datasetdefs);
+                $mform->addElement('static','listcategory',$label,$html2);
 //------------------------------------------------------------------------------------------------------------------------------
         $mform->addElement('submit', 'updatedatasets', get_string('updatedatasetparam', 'qtype_datasetdependent'));
         $mform->registerNoSubmitButton('updatedatasets');
         $mform->addElement('header', 'additemhdr', get_string('itemtoadd', 'qtype_datasetdependent'));
         $idx = 1;
+        $data = array();
         $j = (($this->noofitems) * count($this->datasetdefs))+1;
         foreach ($this->datasetdefs as $defkey => $datasetdef){
-            $mform->addElement('text', "number[$j]", get_string('param', 'qtype_datasetdependent', $datasetdef->name));
+            $name = get_string('wildcard', 'qtype_calculatedsimple', $datasetdef->name);
+            if($datasetdef->category |= 0 ) { 
+                $name = "Shared ".$name ;
+            }
+            $mform->addElement('text', "number[$j]", $name);
             $mform->setType("number[$j]", PARAM_NUMBER);
+       /*     if($datasetdef->category |= 0 && $datasetdef->category == $this->category){
+                                 $mform->addElement('static', "there is a category", $labelsharedwildcard." <strong>$datasetdef->name </strong>", get_string('dataitemdefined',"qtype_datasetdependent", $datasetdef->itemcount));
+            }else  if($datasetdef->category |= 0 && $datasetdef->category != $this->category){
+                                 $mform->addElement('static', "BAD a category", $labelsharedwildcard." <strong>$datasetdef->name </strong>", get_string('dataitemdefined',"qtype_datasetdependent", $datasetdef->itemcount));
+        }*/
             $this->qtypeobj->custom_generator_tools_part($mform, $idx, $j);
             $idx++;
             $mform->addElement('hidden', "definition[$j]");
@@ -93,6 +109,7 @@ class question_dataset_dependent_items_form extends moodleform {
             $mform->setType("divider[$j]", PARAM_RAW);
             $j++;
         }
+        
         $mform->addElement('header', 'updateanswershdr', get_string('answerstoleranceparam', 'qtype_datasetdependent'));
         $mform->addElement('submit', 'updateanswers', get_string('updatetolerancesparam', 'qtype_datasetdependent'));
         $mform->setAdvanced('updateanswers',true);
@@ -140,13 +157,21 @@ class question_dataset_dependent_items_form extends moodleform {
         for ($i=10; $i<=100 ; $i+=10){
              $addremoveoptions["$i"]="$i";
         }
+        $showoptions = Array();
+        $showoptions['1']='1';
+        $showoptions['2']='2';
+        $showoptions['5']='5';
+        for ($i=10; $i<=100 ; $i+=10){
+             $showoptions["$i"]="$i";
+        }
         $mform->addElement('header', 'additemhdr', get_string('add', 'moodle'));
         $mform->closeHeaderBefore('additemhdr');
 
         if ($this->qtypeobj->supports_dataset_item_generation()){
             $radiogrp = array();
             $radiogrp[] =& $mform->createElement('radio', 'nextpageparam[forceregeneration]', null, get_string('reuseifpossible', 'qtype_datasetdependent'), 0);
-            $radiogrp[] =& $mform->createElement('radio', 'nextpageparam[forceregeneration]', null, get_string('forceregeneration', 'qtype_datasetdependent'), 1);
+            $radiogrp[] =& $mform->createElement('radio', 'nextpageparam[forceregeneration]', null, get_string('forceregeneration of only non shared wild cards', 'qtype_datasetdependent'), 1);
+            $radiogrp[] =& $mform->createElement('radio', 'nextpageparam[forceregeneration]', null, get_string('forceregeneration of all wild cards', 'qtype_datasetdependent'), 2);
             $mform->addGroup($radiogrp, 'forceregenerationgrp', get_string('nextitemtoadd', 'qtype_calculated'), "<br/>", false);
         }
 
@@ -155,7 +180,7 @@ class question_dataset_dependent_items_form extends moodleform {
         $addgrp = array();
         $addgrp[] =& $mform->createElement('submit', 'addbutton', get_string('add', 'moodle'));
         $addgrp[] =& $mform->createElement('select', "selectadd", get_string('additem', 'qtype_datasetdependent'), $addremoveoptions);
-        $addgrp[] = & $mform->createElement('static',"stat","Items",get_string('item(s)', 'qtype_datasetdependent'));
+        $addgrp[] = & $mform->createElement('static',"stat","Items",get_string('newsetwildcardvalues', 'qtype_calculatedsimple'));
         $mform->addGroup($addgrp, 'addgrp', '', '   ', false);
         $mform->addElement('static', "divideradd", '', '');
     //     $mform->closeHeaderBefore('divideradd');
@@ -164,7 +189,7 @@ class question_dataset_dependent_items_form extends moodleform {
             $deletegrp = array();
             $deletegrp[] =& $mform->createElement('submit', 'deletebutton', get_string('delete', 'moodle'));
             $deletegrp[] =& $mform->createElement('select', "selectdelete", get_string('deleteitem', 'qtype_datasetdependent')."1", $addremoveoptions);
-            $deletegrp[] = & $mform->createElement('static',"stat","Items",get_string('lastitem(s)', 'qtype_datasetdependent'));
+            $deletegrp[] = & $mform->createElement('static',"stat","Items",get_string('setwildcardvalues', 'qtype_calculatedsimple'));
             $mform->addGroup($deletegrp, 'deletegrp', '', '   ', false);
    //      $mform->addElement('static', "dividerdelete", '', '<hr />');
    //      $mform->closeHeaderBefore('dividerdelete');
@@ -172,24 +197,67 @@ class question_dataset_dependent_items_form extends moodleform {
             $mform->addElement('static','warning','','<span class="error">'.get_string('youmustaddatleastoneitem', 'qtype_datasetdependent').'</span>');
         }
 
+      //  $mform->addElement('header', 'additemhdr', get_string('showitems', 'moodle'));
+        $addgrp1 = array();
+        $addgrp1[] =& $mform->createElement('submit', 'showbutton', get_string('showitems', 'qtype_calculatedsimple'));
+        $addgrp1[] =& $mform->createElement('select', "selectshow",'' , $showoptions);
+        $addgrp1[] = & $mform->createElement('static',"stat",'',get_string('setwildcardvalues', 'qtype_calculatedsimple'));
+        $mform->addGroup($addgrp1, 'addgrp1', '', '   ', false);
+        $mform->registerNoSubmitButton('showbutton');
+        $mform->closeHeaderBefore('addgrp1');
 //------------------------------------------------------------------------------------------------------------------------------
         $j = $this->noofitems * count($this->datasetdefs);
+        $k = 1 ;
+        if ("" != optional_param('selectshow')){
+            $k = optional_param('selectshow', '', PARAM_INT);
+        }
         for ($i = $this->noofitems; $i >= 1 ; $i--){
-            $mform->addElement('header', '', get_string('itemno', 'qtype_datasetdependent', $i));
+                if($k > 0  ){ //||  $this->outsidelimit || !empty($this->numbererrors )
+            $mform->addElement('header', '',"<b>".get_string('setno', 'qtype_calculatedsimple', $i)."</b>&nbsp;&nbsp;");
+           // $mform->addElement('header', '', get_string('itemno', 'qtype_datasetdependent', $i));
+        }
             foreach ($this->datasetdefs as $defkey => $datasetdef){
-                $mform->addElement('text', "number[$j]", get_string('param', 'qtype_datasetdependent', $datasetdef->name));
+                if($k > 0  ){ //||  $this->outsidelimit || !empty($this->numbererrors )
+                    if($datasetdef->category == 0 ){
+                        $mform->addElement('text', "number[$j]", get_string('wildcard', 'qtype_calculatedsimple', $datasetdef->name));
+                    }else {
+                        $mform->addElement('text', "number[$j]", get_string('sharedwildcard', 'qtype_calculatedsimple', $datasetdef->name));
+                    }
+                        
+            }else {
+                $mform->addElement('hidden',"number[$j]" , '');
+            }    
                 $mform->setType("number[$j]", PARAM_NUMBER);
                 $mform->addElement('hidden', "itemid[$j]");
                 $mform->setType("itemid[$j]", PARAM_INT);
 
                 $mform->addElement('hidden', "definition[$j]");
                 $mform->setType("definition[$j]", PARAM_NOTAGS);
+                $data[$datasetdef->name] =$datasetdef->items[$i]->value;
 
                 $j--;
             }
-            if ('' != $strquestionlabel){
+              if('' != $strquestionlabel && ($k > 0 )){ //||  $this->outsidelimit || !empty($this->numbererrors )
                 $repeated[] =& $mform->addElement('static', "answercomment[$i]", $strquestionlabel);
-            }
+                // decode equations in question text
+                $qtext = $this->qtypeobj->substitute_variables($this->question->questiontext, $data);
+                $textequations = $this->qtypeobj->find_math_equations($qtext);
+                if($textequations != '' && count($textequations) > 0 ){
+                $mform->addElement('static', "divider1[$j]", '', 'Formulas {=..} in question text');
+                    foreach($textequations as $key=>$equation){
+                            if( $formulaerrors = qtype_calculated_find_formula_errors($equation)){
+                                $str=$formulaerrors ;
+                            }else {
+                                eval('$str = '.$equation.';');
+                            }
+
+                        $mform->addElement('static', "textequation","{=$equation}","=".$str);    
+                        }
+                } 
+
+               }
+                        $k-- ;
+
         }
       //  if ($this->outsidelimit){
             $mform->addElement('static','outsidelimit','','');
@@ -257,6 +325,8 @@ class question_dataset_dependent_items_form extends moodleform {
         }
     }
         //fill out all data sets and also the fields for the next item to add.
+   //     echo "<p> qequation <pre>";print_r($question);echo "</pre></p>";
+   //     echo "<p> datasetdefs <pre>";print_r($this->datasetdefs);echo "</pre></p>";
         $j = $this->noofitems * count($this->datasetdefs);
          for ($itemnumber = $this->noofitems; $itemnumber >= 1; $itemnumber--){
             $data = array();
@@ -269,19 +339,18 @@ class question_dataset_dependent_items_form extends moodleform {
                 }
                 $j--;
             }
-            if($question->options->multichoice == 1 ){
-                $comment = $this->qtypeobj->multichoice_comment_on_datasetitems($question->id,$answers, $data, $itemnumber);
-            }else {
-            $comment = $this->qtypeobj->comment_on_datasetitems($question->id,$answers, $data, $itemnumber);
+           /* if($question->options->multichoice == 1 ){
+                $comment = $this->qtypeobj->multichoice_comment_on_datasetitems($question->id,$question->questiontext,$answers, $data, $itemnumber);
+            }else {*/
+            $comment = $this->qtypeobj->comment_on_datasetitems($this->qtypeobj,$question->id,$question->questiontext,$answers, $data, $itemnumber);
              if ($comment->outsidelimit) {
                  $this->outsidelimit=$comment->outsidelimit ;
             }
-        }
+       /* }*/
             $totalcomment='';
             foreach ($question->options->answers as $key => $answer) {
                 $totalcomment .= $comment->stranswers[$key].'<br/>';
             }
-
             $formdata['answercomment['.$itemnumber.']'] = $totalcomment ;
         }
 
@@ -324,15 +393,15 @@ class question_dataset_dependent_items_form extends moodleform {
 
         }
         //default answercomment will get ignored if answer element is not in the form.
-                    if($question->options->multichoice == 1 ){
-                $comment = $this->qtypeobj->multichoice_comment_on_datasetitems($question->id,$answers, $data, $itemnumber);
-            }else {
+                 //   if($question->options->multichoice == 1 ){
+               // $comment = $this->qtypeobj->comment_on_datasetitems($this->qtypeobj,$question->id,$question->questiontext,$answers, $data, $itemnumber);
+           // }else {
 
-            $comment = $this->qtypeobj->comment_on_datasetitems($question->id,$answers, $data, ($this->noofitems+1));
-            if ($comment->outsidelimit) {
+            $comment = $this->qtypeobj->comment_on_datasetitems($this->qtypeobj,$question->id,$question->questiontext,$answers, $data, ($this->noofitems+1));
+            if (isset($comment->outsidelimit)&&$comment->outsidelimit)  {
                  $this->outsidelimit=$comment->outsidelimit ;
             }
-        }
+        //}
             $key1 = 1;
             foreach ($question->options->answers as $key => $answer) {
                 $formdata['answercomment['.($this->noofitems+$key1).']'] = $comment->stranswers[$key];
