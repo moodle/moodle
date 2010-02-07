@@ -369,7 +369,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
             message_update_providers($component);
             upgrade_plugin_mnet_functions($component);
 
-            theme_reset_all_caches();
+            upgrade_reset_caches();
             $endcallback($component, true, $verbose);
 
         } else if ($installedversion < $plugin->version) { // upgrade
@@ -398,7 +398,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
             message_update_providers($component);
             upgrade_plugin_mnet_functions($component);
 
-            theme_reset_all_caches();
+            upgrade_reset_caches();
             $endcallback($component, false, $verbose);
 
         } else if ($installedversion > $plugin->version) {
@@ -497,7 +497,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
             message_update_providers($component);
             upgrade_plugin_mnet_functions($component);
 
-            theme_reset_all_caches();
+            upgrade_reset_caches();
             $endcallback($component, true, $verbose);
 
         } else if ($currmodule->version < $module->version) {
@@ -525,7 +525,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
             message_update_providers($component);
             upgrade_plugin_mnet_functions($component);
 
-            theme_reset_all_caches();
+            upgrade_reset_caches();
             remove_dir($CFG->dataroot.'/cache', true); // flush cache
 
             $endcallback($component, false, $verbose);
@@ -652,7 +652,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
             message_update_providers($component);
             upgrade_plugin_mnet_functions($component);
 
-            theme_reset_all_caches();
+            upgrade_reset_caches();
             $endcallback($component, true, $verbose);
 
         } else if ($currblock->version < $block->version) {
@@ -685,7 +685,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
             message_update_providers($component);
             upgrade_plugin_mnet_functions($component);
 
-            theme_reset_all_caches();
+            upgrade_reset_caches();
             $endcallback($component, false, $verbose);
 
         } else if ($currblock->version > $block->version) {
@@ -1241,7 +1241,7 @@ function upgrade_core($version, $verbose) {
         events_update_definition('moodle');
         message_update_providers('moodle');
 
-        theme_reset_all_caches();
+        upgrade_reset_caches();
         remove_dir($CFG->dataroot . '/cache', true); // flush cache
 
         print_upgrade_part_end('moodle', false, $verbose);
@@ -1288,6 +1288,15 @@ function core_tables_exist() {
         }
         return true;
     }
+}
+
+/**
+ * Invalidates browser caches and cached data in temp
+ * @return void
+ */
+function upgrade_reset_caches() {
+    js_reset_all_caches();
+    theme_reset_all_caches();
 }
 
 /**

@@ -194,6 +194,7 @@ class page_requirements_manager {
         foreach ($modules as $name=>$module) {
             $module['fullpath'] = $urlbase.$module['path']; // fix path to point to correct location
             unset($module['path']);
+            unset($module['skinnable']); // we load all YUI2 css automatically, this prevents weird missing css loader problems
             foreach(array('requires', 'optional', 'supersedes') as $fixme) {
                 if (!empty($module[$fixme])) {
                     $fixed = false;
@@ -314,8 +315,11 @@ class page_requirements_manager {
                     throw new coding_exception('Attept to require a JavaScript file that does not exist.', $url);
                 }
             }
-            //return new moodle_url($CFG->httpswwwroot.'/lib/javascript.php', array('file'=>$url, 'rev'=>$CFG->jsrev));
-            return new moodle_url($CFG->httpswwwroot.$url);
+            if (!empty($CFG->cachejs) and !empty($CFG->jsrev)) {
+                return new moodle_url($CFG->httpswwwroot.'/lib/javascript.php', array('file'=>$url, 'rev'=>$CFG->jsrev));
+            } else {
+                return new moodle_url($CFG->httpswwwroot.$url);
+            }
         } else {
             throw new coding_exception('Invalid JS url, it has to be shortened url starting with / or moodle_url instance.', $url);
         }
@@ -374,7 +378,7 @@ class page_requirements_manager {
                 case 'core_calendar':
                     $module = array('name'     => 'core_calendar',
                                     'fullpath' => '/calendar/calendar.js',
-                                    'requires' => array('dom', 'event', 'node', 'yui2-container','event-mouseenter'));
+                                    'requires' => array('dom', 'event', 'node', 'yui2-container', 'event-mouseenter'));
                     break;
                 case 'core_message':
                     $module = array('name'     => 'core_message',
@@ -860,7 +864,7 @@ class page_requirements_manager {
         $output .= html_writer::script($js);
 
         // link our main JS file, all core stuff should be there
-        $output .= html_writer::script('', $CFG->httpswwwroot.'/lib/javascript-static.js');
+        $output .= html_writer::script('', $this->js_fix_url('/lib/javascript-static.js'));
 
         // add variables
         if ($this->jsinitvariables['head']) {
@@ -952,8 +956,7 @@ class page_requirements_manager {
         $jsinit = $this->get_javascript_init_code();
         $handlersjs = $this->get_event_handler_code();
 
-        // the global Y can be used only after it is fully loaded, that means
-        // from code executed from the following block
+        // there is no global Y, make sure it is available in your scope
         $js = "YUI(M.yui.loader).use('node', function(Y) {\n{$inyuijs}{$ondomreadyjs}{$jsinit}{$handlersjs}\n});";
 
         $output .= html_writer::script($js);
@@ -975,3 +978,16 @@ class page_requirements_manager {
         return $this->topofbodydone;
     }
 }
+
+/**
+ * Invalidate all server and client side JS caches.
+ * @return void
+ */
+function js_reset_all_caches() {
+    global $CFG;
+    require_once("$CFG->libdir/filelib.php");
+
+    set_config('jsrev', empty($CFG->jsrev) ? 1 : $CFG->jsrev+1);
+    //fulldelete("$CFG->dataroot/cache/js");
+}
+

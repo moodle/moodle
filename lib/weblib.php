@@ -3415,7 +3415,7 @@ function print_password_policy() {
 function create_ufo_inline($id, $args) {
     global $CFG;
     // must not use $PAGE, $THEME, $COURSE etc. because the result is cached!
-    
+    // unfortunately this ufo.js can not be cached properly because we do not have access to current $CFG either
     $jsoutput = html_writer::script('', $CFG->wwwroot.'/lib/ufo.js');
     $jsoutput .= html_writer::script(js_writer::function_call('M.util.create_UFO_object', array($id, $args)));
     return $jsoutput;
