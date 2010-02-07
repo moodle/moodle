@@ -222,9 +222,12 @@ while ($section <= $course->numsections) {
             echo get_string('notavailable').'</div>';
         } else {
             echo '<div class="summary">';
-            $summaryformatoptions->noclean = true;
             if ($thissection->summary) {
-               echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                $summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course_section', $thissection->id);
+                $summaryformatoptions = new object();
+                $summaryformatoptions->noclean = true;
+                echo format_text($summarytext, FORMAT_HTML, $summaryformatoptions);
             } else {
                echo '&nbsp;';
             }
