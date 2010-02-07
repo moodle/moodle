@@ -103,7 +103,7 @@ YAHOO.moodle.chat.talkto = function(name) {
 YAHOO.moodle.chat.send_callback = {
     success: function(o) {
         if(o.responseText == 200){
-            document.getElementById('button-send').value = mstr.chat.send;
+            document.getElementById('button-send').value = M.str.chat.send;
             document.getElementById('input-message').value = '';
         }
 
@@ -121,7 +121,7 @@ YAHOO.moodle.chat.send_message = function(ev) {
     if (!msg) {
         return;
     }
-    el_send.value = mstr.chat.sending;
+    el_send.value = M.str.chat.sending;
     var params = {};
     params.chat_message=msg;
     params.chat_sid=chat_cfg.sid;
@@ -158,8 +158,8 @@ YAHOO.moodle.chat.update_users = function(users) {
         }
         html += '<br />';
         if (users[i].id!=chat_cfg.userid) {
-            html += ' <a href="###" onclick="YAHOO.moodle.chat.talkto(\''+users[i].name+'\')">'+mstr.chat.talk+'</a> ';
-            html += ' <a href="###" onclick="YAHOO.moodle.chat.send_beep('+users[i].id+')">'+mstr.chat.beep+'</a>';
+            html += ' <a href="###" onclick="YAHOO.moodle.chat.talkto(\''+users[i].name+'\')">'+M.str.chat.talk+'</a> ';
+            html += ' <a href="###" onclick="YAHOO.moodle.chat.send_beep('+users[i].id+')">'+M.str.chat.beep+'</a>';
         }
         html += '</td>';
         html += '</tr>';

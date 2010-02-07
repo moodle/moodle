@@ -56,7 +56,7 @@ M.core_comment = {
                 var ta = Y.one('#dlg-content-'+this.client_id);
                 var scope = this;
                 var value = ta.get('value');
-                if (value && value != mstr.moodle.addcomment) {
+                if (value && value != M.str.moodle.addcomment) {
                     var params = {'content': value};
                     this.request({
                         action: 'add',
@@ -73,7 +73,7 @@ M.core_comment = {
                             container.appendChild(newcomment);
                             var ids = result.ids;
                             var linktext = Y.one('#comment-link-text-'+cid);
-                            linktext.set('innerHTML', mstr.moodle.comments + ' ('+obj.count+')');
+                            linktext.set('innerHTML', M.str.moodle.comments + ' ('+obj.count+')');
                             for(var i in ids) {
                                 var attributes = {
                                     color: { to: '#06e' },
@@ -158,7 +158,7 @@ M.core_comment = {
                     var val = template.get('innerHTML');
                     val = val.replace('___name___', list[i].username);
                     if (list[i]['delete']||newcmt) {
-                        list[i].content = '<div class="comment-delete"><a href="###" id ="comment-delete-'+this.client_id+'-'+list[i].id+'" title="'+mstr.moodle.deletecomment+'"><img src="'+M.util.image_url('t/delete', 'core')+'" /></a></div>' + list[i].content;
+                        list[i].content = '<div class="comment-delete"><a href="###" id ="comment-delete-'+this.client_id+'-'+list[i].id+'" title="'+M.str.moodle.deletecomment+'"><img src="'+M.util.image_url('t/delete', 'core')+'" /></a></div>' + list[i].content;
                     }
                     val = val.replace('___time___', list[i].time);
                     val = val.replace('___picture___', list[i].avatar);
@@ -181,7 +181,7 @@ M.core_comment = {
                     params: params,
                     callback: function(id, ret, args) {
                         var linktext = Y.one('#comment-link-text-'+scope.client_id);
-                        linktext.set('innerHTML', mstr.moodle.comments + ' ('+ret.count+')');
+                        linktext.set('innerHTML', M.str.moodle.comments + ' ('+ret.count+')');
                         var container = Y.one('#comment-list-'+scope.client_id);
                         var pagination = Y.one('#comment-pagination-'+scope.client_id);
                         if (ret.pagination) {
@@ -305,13 +305,13 @@ M.core_comment = {
             toggle_textarea: function(focus) {
                 var t = Y.one('#dlg-content-'+this.client_id);
                 if (focus) {
-                    if (t.get('value') == mstr.moodle.addcomment) {
+                    if (t.get('value') == M.str.moodle.addcomment) {
                         t.set('value', '');
                         t.setStyle('color', 'black');
                     }
                 }else{
                     if (t.get('value') == '') {
-                        t.set('value', mstr.moodle.addcomment);
+                        t.set('value', M.str.moodle.addcomment);
                         t.setStyle('color','grey');
                         t.set('rows', 1);
                     }

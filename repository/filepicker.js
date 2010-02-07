@@ -112,7 +112,7 @@ M.core_filepicker.init = function(Y, options) {
                         try {
                             data = Y.JSON.parse(o.responseText);
                         } catch(e) {
-                            alert(mstr.repository.invalidjson+' - |'+source+'| -'+stripHTML(o.responseText));
+                            alert(M.str.repository.invalidjson+' - |'+source+'| -'+stripHTML(o.responseText));
                         }
                         args.callback(id,data,p);
                     }
@@ -262,7 +262,7 @@ M.core_filepicker.init = function(Y, options) {
                 link.id = 'img-id-'+client_id+'-'+String(count);
                 if(node.url) {
                     // hide 
-                    //grid.innerHTML += '<p><a target="_blank" href="'+node.url+'">'+mstr.repository.preview+'</a></p>';
+                    //grid.innerHTML += '<p><a target="_blank" href="'+node.url+'">'+M.str.repository.preview+'</a></p>';
                 }
                 link.appendChild(img);
                 frame.appendChild(link);
@@ -320,7 +320,7 @@ M.core_filepicker.init = function(Y, options) {
             var panel = Y.one('#panel-'+client_id);
             var html = '<div class="fp-rename-form">';
             html += '<p><img src="'+args.thumbnail+'" /></p>';
-            html += '<p><label for="newname-'+client_id+'">'+mstr.repository.saveas+':</label>';
+            html += '<p><label for="newname-'+client_id+'">'+M.str.repository.saveas+':</label>';
             html += '<input type="text" id="newname-'+client_id+'" value="'+args.title+'" /></p>';
 
             var le_checked = '';
@@ -334,11 +334,11 @@ M.core_filepicker.init = function(Y, options) {
                 le_style = ' style="display:none;"';
             }
             if (this.options.externallink && this.options.env == 'editor') {
-                html += '<p'+le_style+'><input type="checkbox" id="linkexternal-'+client_id+'" value="" '+le_checked+' />'+mstr.repository.linkexternal+'</p>';
+                html += '<p'+le_style+'><input type="checkbox" id="linkexternal-'+client_id+'" value="" '+le_checked+' />'+M.str.repository.linkexternal+'</p>';
             }
             html += '<p><input type="hidden" id="filesource-'+client_id+'" value="'+args.source+'" />';
-            html += '<input type="button" id="fp-confirm-'+client_id+'" value="'+mstr.repository.getfile+'" />';
-            html += '<input type="button" id="fp-cancel-'+client_id+'" value="'+mstr.moodle.cancel+'" /></p>';
+            html += '<input type="button" id="fp-confirm-'+client_id+'" value="'+M.str.repository.getfile+'" />';
+            html += '<input type="button" id="fp-cancel-'+client_id+'" value="'+M.str.moodle.cancel+'" /></p>';
             html += '</div>';
 
             var getfile_form = Y.Node.create(html);
@@ -401,10 +401,10 @@ M.core_filepicker.init = function(Y, options) {
             var str = '<div style="text-align:center">';
             if(type=='load') {
                 str += '<img src="'+M.util.image_url('i/loading')+'" />';
-                str += '<p>'+mstr.repository.loading+'</p>';
+                str += '<p>'+M.str.repository.loading+'</p>';
             }else{
                 str += '<img src="'+M.util.image_url('i/progressbar')+'" />';
-                str += '<p>'+mstr.repository.copying+' <strong>'+name+'</strong></p>';
+                str += '<p>'+M.str.repository.copying+' <strong>'+name+'</strong></p>';
             }
             str += '</div>';
             try {
@@ -451,14 +451,14 @@ M.core_filepicker.init = function(Y, options) {
 
             var scope = this;
             // adding buttons
-            var view_icons = {label: mstr.repository.iconview, value: 't',
+            var view_icons = {label: M.str.repository.iconview, value: 't',
                 onclick: {
                     fn: function(){
                         scope.view_as_icons();
                     }
                 }
             };
-            var view_listing = {label: mstr.repository.listview, value: 'l',
+            var view_listing = {label: M.str.repository.listview, value: 'l',
                 onclick: {
                     fn: function(){
                         scope.view_as_list();
@@ -531,8 +531,8 @@ M.core_filepicker.init = function(Y, options) {
                 if(l[k].type=='popup') {
                     // pop element
                     loginurl = l[k].url;
-                    str += '<td colspan="2"><p class="fp-popup">'+mstr.repository.popup+'</p>';
-                    str += '<p class="fp-popup"><button id="'+popup_button_id+'">'+mstr.repository.login+'</button>';
+                    str += '<td colspan="2"><p class="fp-popup">'+M.str.repository.popup+'</p>';
+                    str += '<p class="fp-popup"><button id="'+popup_button_id+'">'+M.str.repository.login+'</button>';
                     str += '</p></td>';
                     action = 'popup';
                 }else if(l[k].type=='textarea') {
@@ -585,7 +585,7 @@ M.core_filepicker.init = function(Y, options) {
             str += '</form>';
 
             // custom lable text
-            var btn_label = data['login_btn_label']?data['login_btn_label']:mstr.repository.submit;
+            var btn_label = data['login_btn_label']?data['login_btn_label']:M.str.repository.submit;
             if (action != 'popup') {
                 str += '<p><input type="button" id="';
                 switch (action) {
@@ -608,7 +608,7 @@ M.core_filepicker.init = function(Y, options) {
             try {
                 panel.set('innerHTML', str);
             } catch(e) {
-                alert(e.toString()+mstr.quiz.xhtml);
+                alert(e.toString()+M.str.quiz.xhtml);
             }
             // register buttons
             // process login action
@@ -786,7 +786,7 @@ M.core_filepicker.init = function(Y, options) {
             str += '<label for="'+id+'_file">'+data.upload.label+': </label>';
             str += '<input type="file" id="'+id+'_file" name="repo_upload_file" />';
             str += '<input type="hidden" name="itemid" value="'+this.options.itemid+'" />';
-            str += '<div class="fp-upload-btn"><a id="'+id+'_action" href="###" >'+mstr.repository.upload+'...</a></div>';
+            str += '<div class="fp-upload-btn"><a id="'+id+'_action" href="###" >'+M.str.repository.upload+'...</a></div>';
             str += '</form>';
             str += '</div>';
             var upload_form = Y.Node.create(str);
@@ -839,7 +839,7 @@ M.core_filepicker.init = function(Y, options) {
             var toolbar = Y.one('#repo-tb-'+client_id);
 
             if(!r.nosearch) {
-                var html = '<a href="###"><img src="'+this.M.util.image_url('a/search')+'" /> '+mstr.repository.search+'</a>';
+                var html = '<a href="###"><img src="'+this.M.util.image_url('a/search')+'" /> '+M.str.repository.search+'</a>';
                 var search = Y.Node.create(html);
                 search.on('click', function() {
                     scope.request({
@@ -901,11 +901,11 @@ M.core_filepicker.init = function(Y, options) {
                                constraintoviewport : true,
                                buttons: [
                                {
-                                   text:mstr.repository.submit,
+                                   text:M.str.repository.submit,
                                    handler:dialog_handler,
                                    isDefault:true
                                }, {
-                                   text:mstr.moodle.cancel,
+                                   text:M.str.moodle.cancel,
                                    handler:function(){
                                        this.destroy()
                                    }
@@ -920,7 +920,7 @@ M.core_filepicker.init = function(Y, options) {
             }
             // weather we use cache for this instance, this button will reload listing anyway
             if(!r.norefresh) {
-                var html = '<a href="###"><img src="'+M.util.image_url('a/refresh')+'" /> '+mstr.repository.refresh+'</a>';
+                var html = '<a href="###"><img src="'+M.util.image_url('a/refresh')+'" /> '+M.str.repository.refresh+'</a>';
                 var refresh = Y.Node.create(html);
                 refresh.on('click', function() {
                     this.list();
@@ -928,7 +928,7 @@ M.core_filepicker.init = function(Y, options) {
                 toolbar.appendChild(refresh);
             }
             if(!r.nologin) {
-                var html = '<a href="###"><img src="'+M.util.image_url('a/logout')+'" /> '+mstr.repository.logout+'</a>';
+                var html = '<a href="###"><img src="'+M.util.image_url('a/logout')+'" /> '+M.str.repository.logout+'</a>';
                 var logout = Y.Node.create(html);
                 logout.on('click', function() {
                     this.request({
@@ -949,14 +949,14 @@ M.core_filepicker.init = function(Y, options) {
                 var mgr = document.createElement('A');
                 mgr.href = r.manage;
                 mgr.target = "_blank";
-                mgr.innerHTML = '<img src="'+M.util.image_url('a/setting')+'" /> '+mstr.repository.manageurl;
+                mgr.innerHTML = '<img src="'+M.util.image_url('a/setting')+'" /> '+M.str.repository.manageurl;
                 toolbar.appendChild(mgr);
             }
             if(r.help) {
                 var help = document.createElement('A');
                 help.href = r.help;
                 help.target = "_blank";
-                help.innerHTML = '<img src="'+M.util.image_url('a/help')+'" /> '+mstr.repository.help;
+                help.innerHTML = '<img src="'+M.util.image_url('a/help')+'" /> '+M.str.repository.help;
                 toolbar.appendChild(help);
             }
 

@@ -599,9 +599,9 @@ class page_requirements_manager {
     /**
      * Make a language string available to JavaScript.
      *
-     * All the strings will be available in a mstr object in the global namespace.
+     * All the strings will be available in a M.str object in the global namespace.
      * So, for example, after a call to $PAGE->requires->string_for_js('course', 'moodle');
-     * then the JavaScript variable mstr.moodle.course will be 'Course', or the
+     * then the JavaScript variable M.str.moodle.course will be 'Course', or the
      * equivalent in the current language.
      *
      * The arguments to this function are just like the arguments to get_string
@@ -934,7 +934,7 @@ class page_requirements_manager {
 
         // add all needed strings
         if (!empty($this->stringsforjs)) {
-            $output .= html_writer::script(js_writer::set_variable('mstr', $this->stringsforjs));
+            $output .= html_writer::script(js_writer::set_variable('M.str', $this->stringsforjs));
         }
 
         // add variables

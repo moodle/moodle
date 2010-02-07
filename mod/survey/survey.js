@@ -10,7 +10,7 @@ function checkform(e) {
         }
     }
     if (error) {
-        alert(mstr.survey.questionsnotanswered);
+        alert(M.str.survey.questionsnotanswered);
         YAHOO.util.Event.preventDefault(e);
         return false;
     } else {

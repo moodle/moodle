@@ -6,7 +6,7 @@ M.report_spamcleaner = {
     del_all: function() {
         var context = M.report_spamcleaner;
 
-        var yes = confirm(mstr.report_spamcleaner.spamdeleteallconfirm);
+        var yes = confirm(M.str.report_spamcleaner.spamdeleteallconfirm);
         if (yes) {
             var cfg = {
                 method: "POST",
@@ -15,7 +15,7 @@ M.report_spamcleaner = {
                         try {
                             var resp = context.Y.JSON.parse(o.responseText);
                         } catch(e) {
-                            alert(mstr.report_spamcleaner.spaminvalidresult);
+                            alert(M.str.report_spamcleaner.spaminvalidresult);
                             return;
                         }
                         if (resp == true) {
@@ -36,7 +36,7 @@ M.report_spamcleaner = {
             return;
         }
 
-        var yes = confirm(mstr.report_spamcleaner.spamdeleteconfirm);
+        var yes = confirm(M.str.report_spamcleaner.spamdeleteconfirm);
         if (yes) {
             context.row = obj;
             var cfg = {
@@ -46,7 +46,7 @@ M.report_spamcleaner = {
                         try {
                             var resp = context.Y.JSON.parse(o.responseText);
                         } catch(e) {
-                            alert(mstr.report_spamcleaner.spaminvalidresult);
+                            alert(M.str.report_spamcleaner.spaminvalidresult);
                             return;
                         }
                         if (context.row) {
@@ -57,7 +57,7 @@ M.report_spamcleaner = {
                                 context.row.parentNode.removeChild(context.row);
                                 context.row = null;
                             } else {
-                                alert(mstr.report_spamcleaner.spamcannotdelete);
+                                alert(M.str.report_spamcleaner.spamcannotdelete);
                             }
                         }
                     }
@@ -83,7 +83,7 @@ M.report_spamcleaner = {
                     try {
                         var resp = context.Y.JSON.parse(o.responseText);
                     } catch(e) {
-                        alert(mstr.report_spamcleaner.spaminvalidresult);
+                        alert(M.str.report_spamcleaner.spaminvalidresult);
                         return;
                     }
                     if (context.row) {

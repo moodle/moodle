@@ -22,13 +22,13 @@ M.core_completion.init = function(Y) {
             if (current == 1) {
                 args.state.set('value', 0);
                 args.image.set('src', M.util.image_url('i/completion-manual-y', 'moodle'));
-                args.image.set('alt', mstr.completion['completion-alt-manual-y']);
-                args.image.set('title', mstr.completion['completion-title-manual-y']);
+                args.image.set('alt', M.str.completion['completion-alt-manual-y']);
+                args.image.set('title', M.str.completion['completion-title-manual-y']);
             } else {
                 args.state.set('value', 1);
                 args.image.set('src', M.util.image_url('i/completion-manual-n', 'moodle'));
-                args.image.set('alt', mstr.completion['completion-alt-manual-n']);
-                args.image.set('title', mstr.completion['completion-title-manual-n']);
+                args.image.set('alt', M.str.completion['completion-alt-manual-n']);
+                args.image.set('title', M.str.completion['completion-title-manual-n']);
             }
         }
 

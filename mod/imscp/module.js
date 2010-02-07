@@ -167,14 +167,14 @@ M.mod_imscp.init = function(Y) {
 
 
         // layout
-        YAHOO.widget.LayoutUnit.prototype.STR_COLLAPSE = mstr.moodle.hide;
-        YAHOO.widget.LayoutUnit.prototype.STR_EXPAND = mstr.moodle.show;
+        YAHOO.widget.LayoutUnit.prototype.STR_COLLAPSE = M.str.moodle.hide;
+        YAHOO.widget.LayoutUnit.prototype.STR_EXPAND = M.str.moodle.show;
 
         imscp_layout_widget = new YAHOO.widget.Layout('imscp_layout', {
             minWidth: 600,
             minHeight: 400,
             units: [
-                { position: 'left', body: 'imscp_toc', header: mstr.imscp.toc, width: 250, resize: true, gutter: '2px 5px 5px 2px', collapse: true, minWidth:150},
+                { position: 'left', body: 'imscp_toc', header: M.str.imscp.toc, width: 250, resize: true, gutter: '2px 5px 5px 2px', collapse: true, minWidth:150},
                 { position: 'center', body: '<div id="imscp_content"></div>', gutter: '2px 5px 5px 2px', scroll: true}
             ]
         });
@@ -225,7 +225,7 @@ M.mod_imscp.init = function(Y) {
         // navigation
         imscp_panel = new YAHOO.widget.Panel('imscp_navpanel', { visible:true, draggable:true, close:false,
                                                                context: ['page', 'bl', 'bl', ["windowScroll", "textResize", "windowResize"]], constraintoviewport:true} );
-        imscp_panel.setHeader(mstr.imscp.navigation);
+        imscp_panel.setHeader(M.str.imscp.navigation);
 
         //TODO: make some better&accessible buttons
         imscp_panel.setBody('<span id="imscp_nav"><button id="nav_skipprev">&lt;&lt;</button><button id="nav_prev">&lt;</button><button id="nav_up">^</button><button id="nav_next">&gt;</button><button id="nav_skipnext">&gt;&gt;</button></span>');

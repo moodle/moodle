@@ -136,7 +136,7 @@ M.core_dock = {
             this.node.setStyle('height', this.node.get('winHeight')+'px');
         }
         var dockcontrol = this.Y.Node.create('<div class="'+M.core_dock.cfg.css.controls+'"></div>');
-        var removeall = this.Y.Node.create('<img src="'+this.cfg.display.removeallicon+'" alt="'+mstr.block.undockall+'" title="'+mstr.block.undockall+'" />');
+        var removeall = this.Y.Node.create('<img src="'+this.cfg.display.removeallicon+'" alt="'+M.str.block.undockall+'" title="'+M.str.block.undockall+'" />');
         removeall.on('removeall|click', this.remove_all, this);
         dockcontrol.appendChild(removeall);
         this.node.appendChild(dockcontrol);
@@ -336,7 +336,7 @@ M.core_dock = {
             }
 
             var moveto = this.Y.Node.create('<a class="moveto customcommand requiresjs"></a>');
-            moveto.append(this.Y.Node.create('<img src="'+M.util.image_url('t/dock_to_block', 'moodle')+'" alt="'+mstr.block.undockitem+'" title="'+mstr.block.undockitem+'" />'));
+            moveto.append(this.Y.Node.create('<img src="'+M.util.image_url('t/dock_to_block', 'moodle')+'" alt="'+M.str.block.undockitem+'" title="'+M.str.block.undockitem+'" />'));
             if (location.href.match(/\?/)) {
                 moveto.set('href', location.href+'&dock='+this.id);
             } else {
@@ -381,8 +381,8 @@ M.core_dock = {
                 if (moveto.hasClass('customcommand')) {
                     moveto.all('img').each(function(movetoimg){
                         movetoimg.setAttribute('src', M.util.image_url('t/dock_to_block', 'moodle'));
-                        movetoimg.setAttribute('alt', mstr.block.undockitem);
-                        movetoimg.setAttribute('title', mstr.block.undockitem);
+                        movetoimg.setAttribute('alt', M.str.block.undockitem);
+                        movetoimg.setAttribute('title', M.str.block.undockitem);
                     }, this);
                 }
             }, this);
@@ -489,8 +489,8 @@ M.core_dock = {
                 if (moveto.hasClass('customcommand')) {
                     moveto.all('img').each(function(movetoimg){
                         movetoimg.setAttribute('src', M.util.image_url('t/block_to_dock', 'moodle'));
-                        movetoimg.setAttribute('alt', mstr.block.addtodock);
-                        movetoimg.setAttribute('title', mstr.block.addtodock);
+                        movetoimg.setAttribute('alt', M.str.block.addtodock);
+                        movetoimg.setAttribute('title', M.str.block.addtodock);
                     }, this);
                 }
              }, this);

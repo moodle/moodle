@@ -32,13 +32,13 @@ function init_tag_autocomplete() {
 function ctags_checkinput(val) {
     var len = val.length;
     if (len < 2 || len > 50) {
-        alert(mstr.block_tags.jserror1);
+        alert(M.str.block_tags.jserror1);
         return false;
     } else if (val.indexOf("<") > 0) {
-        alert(mstr.block_tags.jserror2);
+        alert(M.str.block_tags.jserror2);
         return false;
     } else if (val.indexOf(">") > 0) {
-        alert(mstr.block_tags.jserror2);
+        alert(M.str.block_tags.jserror2);
         return false;
     } else {
         return true;
