@@ -315,7 +315,7 @@ class page_requirements_manager {
                     throw new coding_exception('Attept to require a JavaScript file that does not exist.', $url);
                 }
             }
-            if (!empty($CFG->cachejs) and !empty($CFG->jsrev)) {
+            if (!empty($CFG->cachejs) and !empty($CFG->jsrev) and strpos($url, '/lib/editor/') != 0) {
                 return new moodle_url($CFG->httpswwwroot.'/lib/javascript.php', array('file'=>$url, 'rev'=>$CFG->jsrev));
             } else {
                 return new moodle_url($CFG->httpswwwroot.$url);
