@@ -591,10 +591,12 @@ class grade_grade extends grade_object {
         }
 
         $max = count($todo);
+        $hidden_precursors = null;
         for($i=0; $i<$max; $i++) {
             $found = false;
             foreach($todo as $key=>$do) {
-                if (array_intersect($dependson[$do], $unknown)) {
+                $hidden_precursors = array_intersect($dependson[$do], $unknown);
+                if ($hidden_precursors) {
                     // this item depends on hidden grade indirectly
                     $unknown[$do] = $do;
                     unset($todo[$key]);
@@ -602,7 +604,8 @@ class grade_grade extends grade_object {
                     continue;
 
                 } else if (!array_intersect($dependson[$do], $todo)) {
-                    if (!array_intersect($dependson[$do], array_keys($altered))) {
+                    $hidden_precursors = array_intersect($dependson[$do], array_keys($altered));
+                    if (!$hidden_precursors) {
                         // hiding does not affect this grade
                         unset($todo[$key]);
                         $found = true;
@@ -610,7 +613,9 @@ class grade_grade extends grade_object {
 
                     } else {
                         // depends on altered grades - we should try to recalculate if possible
-                        if ($grade_items[$do]->is_calculated() or (!$grade_items[$do]->is_category_item() and !$grade_items[$do]->is_course_item())) {
+                        if ($grade_items[$do]->is_calculated() or
+                            (!$grade_items[$do]->is_category_item() and !$grade_items[$do]->is_course_item())
+                        ) {
                             $unknown[$do] = $do;
                             unset($todo[$key]);
                             $found = true;
@@ -622,8 +627,9 @@ class grade_grade extends grade_object {
                             $values = array();
                             foreach ($dependson[$do] as $itemid) {
                                 if (array_key_exists($itemid, $altered)) {
+                                    //nulling an altered precursor
                                     $values[$itemid] = $altered[$itemid];
-                                } elseif (!empty($values[$itemid])) {
+                                } elseif (empty($values[$itemid])) {
                                     $values[$itemid] = $grade_grades[$itemid]->finalgrade;
                                 }
                             }

@@ -22,7 +22,7 @@
  * @copyright  2007 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+ 
 // category aggregation types
 define('GRADE_AGGREGATE_MEAN', 0);
 define('GRADE_AGGREGATE_MEDIAN', 2);
@@ -69,6 +69,11 @@ define('GRADE_REPORT_AGGREGATION_POSITION_LAST', 1);
 define('GRADE_REPORT_AGGREGATION_VIEW_FULL', 0);
 define('GRADE_REPORT_AGGREGATION_VIEW_AGGREGATES_ONLY', 1);
 define('GRADE_REPORT_AGGREGATION_VIEW_GRADES_ONLY', 2);
+
+//What to do if category or course total contains a hidden item
+define('GRADE_REPORT_HIDE_TOTAL_IF_CONTAINS_HIDDEN', 0);//hide the total from students
+define('GRADE_REPORT_SHOW_TOTAL_IF_CONTAINS_HIDDEN', 1);//show the total to students minus grades from the hidden items
+define('GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN', 2);//show students the real total including marks from hidden items
 
 define('GRADE_REPORT_PREFERENCE_DEFAULT', 'default'); // means use setting from site preferences
 define('GRADE_REPORT_PREFERENCE_INHERIT', 'inherit'); // means inherit from parent
