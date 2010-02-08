@@ -281,6 +281,15 @@ define('VALUE_OPTIONAL', 2);
  */
 define('VALUE_DEFAULT', 0);
 
+/**
+ * NULL_NOT_ALLOWED - the parameter can not be set to null in the database
+ */
+define('NULL_NOT_ALLOWED', false);
+
+/**
+ * NULL_ALLOWED - the parameter can be set to null in the database
+ */
+define('NULL_ALLOWED', true);
 
 /// Page types ///
 /**
@@ -442,9 +451,9 @@ function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
  * @param string $debuginfo optional debug information
  * @return mixed the $param value converted to PHP type or invalid_parameter_exception
  */
-function validate_param($param, $type, $allownull=false, $debuginfo='') {
+function validate_param($param, $type, $allownull=NULL_NOT_ALLOWED, $debuginfo='') {
     if (is_null($param)) {
-        if ($allownull) {
+        if ($allownull == NULL_ALLOWED) {
             return null;
         } else {
             throw new invalid_parameter_exception($debuginfo);
