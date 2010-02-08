@@ -55,6 +55,7 @@
     position: relative;
     background-color: #ddd;
     padding: 3px;
+    min-height: 67px;
 }
 
 .mod-workshop .submission-full .header .title,
@@ -457,7 +458,7 @@
 
 .mod-workshop .grading-report td {
     vertical-align: top;
-    border: 1px solid #ddd !important;
+    border: 1px solid #ddd;
 }
 
 .mod-workshop .grading-report .assessmentdetails {

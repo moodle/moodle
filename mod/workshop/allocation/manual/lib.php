@@ -184,7 +184,7 @@ class workshop_manual_allocator implements workshop_allocator {
                 break;
             }
             if ($m[0] == self::MSG_CONFIRM_DEL) {
-                $aurl = new moodle_url($PAGE->url, array('mode' => 'del', 'what' => $m[1], 'confirm' => 1));
+                $url = new moodle_url($PAGE->url, array('mode' => 'del', 'what' => $m[1], 'confirm' => 1));
                 $msg->extra = $OUTPUT->single_button($url, get_string('iamsure', 'workshop'), 'post');
             }
         }
