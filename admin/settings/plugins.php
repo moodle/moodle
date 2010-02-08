@@ -325,6 +325,11 @@ foreach (get_plugin_list('report') as $plugin => $plugindir) {
 
 
 /// Add all local plugins - must be always last!
+if ($hassiteconfig) {
+    $ADMIN->add('modules', new admin_category('localplugins', get_string('localplugins')));
+    $ADMIN->add('localplugins', new admin_externalpage('managelocalplugins', get_string('localpluginsmanage'),
+                                                        $CFG->wwwroot . '/' . $CFG->admin . '/localplugins.php'));
+}
 
 foreach (get_plugin_list('local') as $plugin => $plugindir) {
     $settings_path = "$plugindir/settings.php";
