@@ -207,7 +207,7 @@ M.core_dock = {
      */
     hide_all:function() {
         for (var i in this.items) {
-            this.items[i].hide();
+            this.items[i].hide(null, true);
         }
     },
     /**
@@ -419,6 +419,11 @@ M.core_dock = {
                     e.halt();
                     M.core_dock.remove(this.id)
                 }, this);
+                // Add a close icon
+                var closeicon = this.Y.Node.create('<span class="hidepanelicon"><img src="'+M.util.image_url('t/delete', 'moodle')+'" alt="" style="width:11px;height:11px;cursor:pointer;" /></span>');
+                closeicon.on('forceclose|click', M.core_dock.hide_all, M.core_dock);
+                closeicon.on('forceclose|click', M.core_dock.hide_all, M.core_dock);
+                this.commands.append(closeicon);
             }, dockitem);
 
             // Register an event so that when it is removed we can put it back as a block
@@ -496,6 +501,9 @@ M.core_dock = {
              }, this);
 
             var commands = this.cachedcontentnode.all('.commands');
+            commands.each(function (command){
+                command.all('.hidepanelicon').remove();
+            });
             var blocktitle = this.cachedcontentnode.all('.title');
 
             if (commands.size() === 1 && blocktitle.size() === 1) {
@@ -589,6 +597,7 @@ M.core_dock = {
                 this.Y.one(this.panel.body).setStyle('minHeight', dockitemtitle.get('offsetHeight')+'px');
             }
             dockitem.on('showitem|mouseover', this.show, this);
+            dockitem.on('showitem|click', this.show, this);
             this.fire('dockeditem:drawcomplete');
         },
         /**
@@ -610,33 +619,88 @@ M.core_dock = {
             this.fire('dockeditem:showstart');
             this.panel.show(e, this);
             this.active = true;
+            // Add active item class first up
             this.Y.one('#dock_item_'+this.id+'_title').addClass(this.cfg.css.activeitem);
+            // Remove the two show event listeners
             this.Y.detach('mouseover', this.show, this.Y.one('#dock_item_'+this.id));
+            this.Y.detach('click', this.show, this.Y.one('#dock_item_'+this.id));
+            // Add control events to ensure we don't cause annoyance
             this.Y.one('#dock_item_panel_'+this.id).on('dockpreventhide|click', function(){this.preventhide=true;}, this);
-            this.Y.one('#dock_item_'+this.id).on('dockhide|click', this.hide, this);
+            // Add resize event so we keep it viewable
             this.Y.get(window).on('dockresize|resize', this.resize_panel, this);
+
+            // If the event was fired by mouse over then we also want to hide when
+            // the user moves the mouse out of the area
+            if (e.type == 'mouseover') {
+                this.Y.one(this.panel.element).on('dockhide|mouseleave', this.delay_hide, this);
+                this.preventhide = true;
+                setTimeout(function(obj){
+                    if (obj.preventhide) {
+                        obj.preventhide = false;
+                    }
+                }, 1000, this);
+            }
+
+            // Attach the default hide events, clicking the heading or the body
+            this.Y.one('#dock_item_'+this.id).on('dockhide|click', this.hide, this);
             this.Y.get(document.body).on('dockhide|click', this.hide, this);
+            
             this.fire('dockeditem:showcomplete');
             return true;
         },
         /**
          * This function hides the item and makes it inactive
-         * @param {event}
+         * @param {event} e
+         * @param {boolean} ignorepreventhide If true preventhide is ignored
          */
         hide : function(e) {
+            // Check whether a second argument has been passed
+            var ignorepreventhide = (arguments.length==2 && arguments[1]);
             // Ignore this call is preventhide is true
-            if (this.preventhide===true) {
+            if (this.preventhide===true && !ignorepreventhide) {
                 this.preventhide = false;
+                if (e) {
+                    // Stop all propagation immediatly or the next element (likely body)
+                    // will fire this event again and the item will hide
+                    e.stopImmediatePropagation();
+                }
             } else if (this.active) {
+                // Display any hide delay running, mouseleave-mouseenter-click
+                this.delayhiderunning = false;
                 this.fire('dockeditem:hidestart');
+                // No longer active
                 this.active = false;
+                // Remove the active class
                 this.Y.one('#dock_item_'+this.id+'_title').removeClass(this.cfg.css.activeitem);
+                // Add the show event again
                 this.Y.one('#dock_item_'+this.id).on('showitem|mouseover', this.show, this);
+                // Remove the hide events
+                this.Y.detach('mouseleave', this.delayhide, this.Y.one(this.panel.element));
                 this.Y.get(window).detach('dockresize|resize');
                 this.Y.get(document.body).detach('dockhide|click');
+                // Hide the panel
                 this.panel.hide(e, this);
                 this.fire('dockeditem:hidecomplete');
             }
+        },
+        /**
+         * This function sets the item to hide after a specific delay, that delay is
+         * this.delayhidetimeout.
+         * @param {Event} e
+         */
+        delay_hide : function(e) {
+            // The hide delay timeout is running now
+            this.delayhiderunning = true;
+            // Add the re-enter event to cancel the delay timeout
+            var delayhideevent = this.Y.one(this.panel.element).on('delayhide|mouseover', function(){this.delayhiderunning = false;}, this);
+            // Set the timeout + callback and pass the this for scope and the event so
+            // it can be easily detached
+            setTimeout(function(obj, ev){
+                if (obj.delayhiderunning) {
+                    ev.detach();
+                    obj.hide();
+                }
+            }, this.delayhidetimeout, this, delayhideevent);
         },
         /**
          * This function checks the size and position of the panel and moves/resizes if
@@ -700,6 +764,7 @@ M.core_dock.genericblock.prototype.fix_title_orientation =   M.core_dock.abstrac
  * This class represents an item in the dock
  * @class item
  * @constructor
+ * @param {YUI} Y The YUI instance to use for this item
  * @param {int} uid The unique ID for the item
  * @param {this.Y.Node} title
  * @param {this.Y.Node} contents
@@ -731,12 +796,15 @@ M.core_dock.item.prototype.active =             M.core_dock.abstract_item_class.
 M.core_dock.item.prototype.panel =              M.core_dock.abstract_item_class.panel;
 M.core_dock.item.prototype.preventhide =        M.core_dock.abstract_item_class.preventhide;
 M.core_dock.item.prototype.cfg =                M.core_dock.cfg;
+M.core_dock.item.prototype.delayhiderunning =   false;
+M.core_dock.item.prototype.delayhidetimeout =   1000; // 1 Second
 /** Methods **/
 M.core_dock.item.prototype.init_events =        M.core_dock.abstract_item_class.init_events;
 M.core_dock.item.prototype.draw =               M.core_dock.abstract_item_class.draw;
 M.core_dock.item.prototype.remove =             M.core_dock.abstract_item_class.remove;
 M.core_dock.item.prototype.show =               M.core_dock.abstract_item_class.show;
 M.core_dock.item.prototype.hide =               M.core_dock.abstract_item_class.hide;
+M.core_dock.item.prototype.delay_hide =         M.core_dock.abstract_item_class.delay_hide;
 M.core_dock.item.prototype.resize_panel =       M.core_dock.abstract_item_class.resize_panel;
 
 /**
