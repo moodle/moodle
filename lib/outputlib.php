@@ -634,16 +634,23 @@ class theme_config {
             }
 
             $baseurl = $CFG->httpswwwroot.'/theme/styles_debug.php';
-            foreach ($css['plugins'] as $plugin=>$unused) {
-                $urls[] = new moodle_url($baseurl, array('theme'=>$this->name,'type'=>'plugin', 'subtype'=>$plugin));
-            }
-            foreach ($css['parents'] as $parent=>$sheets) {
-                foreach ($sheets as $sheet=>$unused2) {
-                    $urls[] = new moodle_url($baseurl, array('theme'=>$this->name,'type'=>'parent', 'subtype'=>$parent, 'sheet'=>$sheet));
+
+            if (check_browser_version('MSIE', 5)) {
+                // lalala, IE does not allow more than 31 linked CSS files from main document
+                $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', array('theme'=>$this->name, 'type'=>'ie'));
+
+            } else {
+                foreach ($css['plugins'] as $plugin=>$unused) {
+                    $urls[] = new moodle_url($baseurl, array('theme'=>$this->name,'type'=>'plugin', 'subtype'=>$plugin));
                 }
-            }
-            foreach ($css['theme'] as $sheet=>$unused) {
-                $urls[] = new moodle_url($baseurl, array('sheet'=>$sheet, 'theme'=>$this->name, 'type'=>'theme')); // sheet first in order to make long urls easier to read
+                foreach ($css['parents'] as $parent=>$sheets) {
+                    foreach ($sheets as $sheet=>$unused2) {
+                        $urls[] = new moodle_url($baseurl, array('theme'=>$this->name,'type'=>'parent', 'subtype'=>$parent, 'sheet'=>$sheet));
+                    }
+                }
+                foreach ($css['theme'] as $sheet=>$unused) {
+                    $urls[] = new moodle_url($baseurl, array('sheet'=>$sheet, 'theme'=>$this->name, 'type'=>'theme')); // sheet first in order to make long urls easier to read
+                }
             }
         }
 

@@ -58,7 +58,10 @@ if (!$css = file_get_contents($candidatesheet)) {
 
 $css = unserialize($css);
 
-if ($type === 'plugin') {
+if ($type === 'ie') {
+    send_ie_css($themename, $css);
+
+} else if ($type === 'plugin') {
     if (isset($css['plugins'][$subtype])) {
         send_uncached_css($css['plugins'][$subtype]);
     }
@@ -80,10 +83,10 @@ css_not_found();
 // we are not using filelib because we need to fine tune all header
 // parameters to get the best performance.
 
-function send_uncached_css($css, $lifetime = THEME_DESIGNER_CACHE_LIFETIME) {
+function send_uncached_css($css) {
     header('Content-Disposition: inline; filename="styles_debug.php"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
-    header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+    header('Expires: '. gmdate('D, d M Y H:i:s', time() + THEME_DESIGNER_CACHE_LIFETIME) .' GMT');
     header('Pragma: ');
     header('Accept-Ranges: none');
     header('Content-Type: text/css');
@@ -96,4 +99,30 @@ function send_uncached_css($css, $lifetime = THEME_DESIGNER_CACHE_LIFETIME) {
 function css_not_found() {
     header('HTTP/1.0 404 not found');
     die('CSS was not found, sorry.');
+}
+
+function send_ie_css($themename, $css) {
+    $output = "/** Unfortunately IE6/7/8 does not support more than 31 CSS files, which means we have to use some ugly hacks :-( **/\n";
+    foreach ($css['plugins'] as $plugin=>$unused) {
+        $output .= "@import url(styles_debug.php?theme=$themename&type=plugin&subtype=$plugin);\n";
+    }
+    foreach ($css['parents'] as $parent=>$sheets) {
+        foreach ($sheets as $sheet=>$unused2) {
+            $output .= "@import url(styles_debug.php?theme=$themename&type=parent&subtype=$parent&sheet=$sheet);\n";
+        }
+    }
+    foreach ($css['theme'] as $sheet=>$unused) {
+        $output .= "@import url(styles_debug.php?theme=$themename&type=theme&sheet=$sheet);\n";
+    }
+    
+    header('Content-Disposition: inline; filename="styles_debug.php"');
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
+    header('Expires: '. gmdate('D, d M Y H:i:s', time() + THEME_DESIGNER_CACHE_LIFETIME) .' GMT');
+    header('Pragma: ');
+    header('Accept-Ranges: none');
+    header('Content-Type: text/css');
+    //header('Content-Length: '.strlen($output));
+
+    echo $output;
+    die;
 }
