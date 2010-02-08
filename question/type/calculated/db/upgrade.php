@@ -61,16 +61,17 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
     if ( $result && $oldversion < 2009092000 ) { //New version in version.php
 
     /// Define field multichoice to be added to question_calculated_options
-        $table = new xmldb_table('question_calculated_options');
-        $field = new xmldb_field('multichoice', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'synchronize');
+    ///ALTER TABLE `moodle`.`mdl_question_calculated_options` DROP COLUMN `multichoice`;
+    //    $table = new xmldb_table('question_calculated_options');
+    //    $field = new xmldb_field('multichoice', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'synchronize');
 
     /// Conditionally launch add field multichoice
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
+     //   if (!$dbman->field_exists($table, $field)) {
+    //        $dbman->add_field($table, $field);
+    //    }
     /// Define field single to be added to question_calculated_options
         $table = new xmldb_table('question_calculated_options');
-        $field = new xmldb_field('single', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'multichoice');
+        $field = new xmldb_field('single', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'synchronize');
 
     /// Conditionally launch add field single
         if (!$dbman->field_exists($table, $field)) {
@@ -119,10 +120,22 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
         upgrade_plugin_savepoint($result, 2009092000, 'qtype', 'calculated');
-
-
     }
 
+   if ($result && $oldversion < 2010020800) {
+
+    /// Define field multiplechoice to be dropped from question_calculated_options
+        $table = new xmldb_table('question_calculated_options');
+        $field = new xmldb_field('multichoice');
+        
+    /// Conditionally launch drop field multiplechoice
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+    /// calculated savepoint reached
+        upgrade_plugin_savepoint($result, 2010020800, 'qtype', 'calculated');
+    }
 /// calculated savepoint reached
 /// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
 ///     $result = result of database_manager methods
