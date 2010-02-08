@@ -45,7 +45,6 @@ class question_edit_calculated_form extends question_edit_form {
    //     $repeated = parent::get_per_answer_fields($mform, $label, $gradeoptions, $repeatedoptions, $answersoption);
            $repeated = array();
         $repeated[] =& $mform->createElement('header', 'answerhdr', $label);
-     //   if ($this->editasmultichoice == 1){
         $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'), array('size' => 50));
         $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
         $repeated[] =& $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'),
@@ -91,20 +90,9 @@ class question_edit_calculated_form extends question_edit_form {
         $addfieldsname='updatecategory';
         $addstring=get_string("updatecategory", "qtype_calculated");
                 $mform->registerNoSubmitButton($addfieldsname);
-        $this->editasmultichoice =  0 ;
-
-   /*      if ( '' !=  optional_param('changetomultichoice', '', PARAM_RAW)){
-           $this->editasmultichoice = 1 ;
-        }
-         if ( '' !=  optional_param('changetocalculated', '', PARAM_RAW)){
-            $this->editasmultichoice = 0 ;
-       }*/
 
         $mform->insertElementBefore(    $mform->createElement('submit', $addfieldsname, $addstring),'listcategory');
         $mform->registerNoSubmitButton('createoptionbutton');
-
-            $mform->addElement('hidden', 'multichoice',$this->editasmultichoice);
-            $mform->setType('multichoice', PARAM_INT);
 
         //editing as regular
             $mform->setType('single', PARAM_INT);

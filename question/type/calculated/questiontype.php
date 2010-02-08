@@ -34,7 +34,6 @@ class question_calculated_qtype extends default_questiontype {
           //  echo $OUTPUT->notification('Error: Missing question options for calculated question'.$question->id.'!');
           //  return false;
             $question->options->synchronize = 0;
-        //    $question->options->multichoice = 0;
             $question->options->single = 0; //$question->single;
             $question->options->answernumbering = 'abc';
             $question->options->shuffleanswers = 0 ;
@@ -137,7 +136,6 @@ class question_calculated_qtype extends default_questiontype {
         }
         // as used only by calculated
         $options->synchronize = $question->synchronize;
-    //    $options->multichoice = 0 ;//$question->multichoice;
         $options->single = 0; //$question->single;
         $options->answernumbering =  $question->answernumbering;
         $options->shuffleanswers = $question->shuffleanswers;
@@ -1410,35 +1408,10 @@ class question_calculated_qtype extends default_questiontype {
     function get_correct_responses(&$question, &$state) {
         // virtual type for printing
         $virtualqtype = $this->get_virtual_qtype();
-        $unit = $this-> get_default_numerical_unit($question,$virtualqtype);
+        $unit = $this->get_default_numerical_unit($question,$virtualqtype);
         // We modify the question to look like a numerical question
-   //     $numericalquestion = fullclone($question);
             $this->convert_answers($question, $state);
- /*       if ($question->options->multichoice != 1 ) {
-            if($unit = $virtualqtype->get_default_numerical_unit($question)){
-                 $unit = $unit->unit;
-            } else {
-                $unit = '';
-            }
-            foreach ($question->options->answers as $answer) {
-                if (((int) $answer->fraction) === 1) {
-                    $answernumerical = qtype_calculated_calculate_answer(
-                     $answer->answer, $state->options->dataset, $answer->tolerance,
-                     $answer->tolerancetype, $answer->correctanswerlength,
-                        $answer->correctanswerformat, ''); // remove unit
-                        $correct = array('' => $answernumerical->answer);
-                        $correct['answer']= $correct[''];
-                    if (isset($correct['']) && $correct[''] != '*' && $unit ) {
-                            $correct[''] .= ' '.$unit;
-                            $correct['unit']= $unit;
-                    }
-                    return $correct;
-                }
-            }
-        }else{*/
             return $virtualqtype->get_correct_responses($question, $state) ;
-        /*}
-        return null;*/
     }
 
     function substitute_variables($str, $dataset) {
@@ -2121,7 +2094,6 @@ class question_calculated_qtype extends default_questiontype {
                 //Now, build the question_calculated_options record structure
                 $calculated_options->questionid = $new_question_id;
                 $calculated_options->synchronize = backup_todb($cal_info['#']['SYNCHRONIZE']['0']['#']);
-         //       $calculated_options->multichoice = backup_todb($cal_info['#']['MULTICHOICe']['0']['#']);
                 $calculated_options->single = backup_todb($cal_info['#']['SINGLE']['0']['#']);
                 $calculated_options->shuffleanswers = isset($cal_info['#']['SHUFFLEANSWERS']['0']['#'])?backup_todb($mul_info['#']['SHUFFLEANSWERS']['0']['#']):'';
                 $calculated_options->correctfeedback = backup_todb($cal_info['#']['CORRECTFEEDBACK']['0']['#']);

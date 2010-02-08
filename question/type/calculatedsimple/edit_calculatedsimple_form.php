@@ -286,7 +286,6 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         $this->qtypeobj =& $QTYPES[$this->qtype()];
         $strquestionlabel = $this->qtypeobj->comment_header($this->nonemptyanswer);
         $label = get_string("sharedwildcards", "qtype_datasetdependent");
-        $mform->addElement('hidden', 'multichoice', 0);
         $mform->addElement('hidden', 'synchronize', 0);
         $mform->addElement('hidden', 'initialcategory', 1);
         $mform->setType('initialcategory', PARAM_INT);
@@ -600,7 +599,6 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                     $key++;
                 }
             }
-            $default_values['multichoice'] = 0 ;
             $default_values['synchronize'] = 0 ;
             if (isset($question->options)){
                     $default_values['unitgradingtype'] = $question->options->unitgradingtype ;

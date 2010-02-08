@@ -25,74 +25,7 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
     function requires_qtypes() {
         return array('multichoice');
     }
-/*
-    function get_question_options(&$question) {
-        // First get the datasets and default options
-         global $CFG, $DB, $OUTPUT, $QTYPES;
-        if (!$question->options = $DB->get_record('question_calculated_options', array('question' => $question->id))) {
-          //  echo $OUTPUT->notification('Error: Missing question options for calculated question'.$question->id.'!');
-          //  return false;
-          $question->options->synchronize = 0;
-        //  $question->options->multichoice = 1;
-          
-        }
-    //    echo "<p> questionoptions <pre>";print_r($question);echo "</pre></p>";
-     //   $QTYPES['numerical']->get_numerical_options($question);
-         /* $question->options->unitgradingtype = 0;
-          $question->options->unitpenalty = 0;
-          $question->options->showunits = 0 ;
-          $question->options->unitsleft = 0 ;
-          $question->options->instructions = '' ;
-   //     echo "<p> questionoptions <pre>";print_r($question);echo "</pre></p>";
 
-        if (!$question->options->answers = $DB->get_records_sql(
-                                "SELECT a.*, c.tolerance, c.tolerancetype, c.correctanswerlength, c.correctanswerformat " .
-                                "FROM {question_answers} a, " .
-                                "     {question_calculated} c " .
-                                "WHERE a.question = ? " .
-                                "AND   a.id = c.answer ".
-                                "ORDER BY a.id ASC", array($question->id))) {
-            echo $OUTPUT->notification('Error: Missing question answer for calculated question ' . $question->id . '!');
-            return false;
-        }
-
-
-       if(false === parent::get_question_options($question)) {
-            return false;
-        }
-
-        if (!$options = $DB->get_records('question_calculated', array('question' =>  $question->id))) {
-            notify("No options were found for calculated question
-             #{$question->id}! Proceeding with defaults.");
-        //     $options = new Array();
-            $options= new stdClass;
-            $options->tolerance           = 0.01;
-            $options->tolerancetype       = 1; // relative
-            $options->correctanswerlength = 2;
-            $options->correctanswerformat = 1; // decimals
-        }
-
-        // For historic reasons we also need these fields in the answer objects.
-        // This should eventually be removed and related code changed to use
-        // the values in $question->options instead.
-         foreach ($question->options->answers as $key => $answer) {
-            $answer = &$question->options->answers[$key]; // for PHP 4.x
-           $answer->calcid              = $options->id;
-            $answer->tolerance           = $options->tolerance;
-            $answer->tolerancetype       = $options->tolerancetype;
-            $answer->correctanswerlength = $options->correctanswerlength;
-            $answer->correctanswerformat = $options->correctanswerformat;
-        }
-
-        //$virtualqtype = $this->get_virtual_qtype( $question);
-      //  $QTYPES['numerical']->get_numerical_units($question);
-
-        if( isset($question->export_process)&&$question->export_process){
-            $question->options->datasets = $this->get_datasets_for_export($question);
-        }
-        return true;
-    }
-*/
 
     function save_question_options($question) {
         //$options = $question->subtypeoptions;
@@ -110,7 +43,6 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
             $options->question = $question->id;
         }
         $options->synchronize = $question->synchronize;
-       // $options->multichoice = $question->multichoice;
         $options->single = $question->single;
         $options->answernumbering = $question->answernumbering;
         $options->shuffleanswers = $question->shuffleanswers;
@@ -283,7 +215,7 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
     }
 
     function create_runtime_question($question, $form) {
-        $question = parent::create_runtime_question($question, $form);
+        $question = default_questiontype::create_runtime_question($question, $form);
         $question->options->answers = array();
         foreach ($form->answers as $key => $answer) {
             $a->answer              = trim($form->answer[$key]);
