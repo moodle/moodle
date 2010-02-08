@@ -590,6 +590,12 @@ interface part_of_admin_tree {
      * @return True is hidden from normal list view
      */
     public function is_hidden();
+
+    /**
+     * Show we display Save button at the page bottom?
+     * @return bool
+     */
+    public function show_save();
 }
 
 /**
@@ -783,6 +789,19 @@ class admin_category implements parentable_part_of_admin_tree {
     public function is_hidden() {
         return $this->hidden;
     }
+
+    /**
+     * Show we display Save button at the page bottom?
+     * @return bool
+     */
+    public function show_save() {
+        foreach ($this->children as $child) {
+            if ($child->show_save()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 /**
@@ -974,6 +993,13 @@ class admin_externalpage implements part_of_admin_tree {
         return $this->hidden;
     }
 
+    /**
+     * Show we display Save button at the page bottom?
+     * @return bool
+     */
+    public function show_save() {
+        return false;
+    }
 }
 
 /**
@@ -1163,6 +1189,18 @@ class admin_settingpage implements part_of_admin_tree {
         return $this->hidden;
     }
 
+    /**
+     * Show we display Save button at the page bottom?
+     * @return bool
+     */
+    public function show_save() {
+        foreach($this->settings as $setting) {
+            if (empty($setting->nosave)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 
@@ -1185,6 +1223,8 @@ abstract class admin_setting {
     public $updatedcallback;
     /** @var mixed can be String or Null.  Null means main config table */
     public $plugin; // null means main config table
+    /** @var bool true indicates this setting does not actually save anything, just information */
+    public $nosave = false;
 
     /**
      * Constructor
@@ -1275,6 +1315,10 @@ abstract class admin_setting {
      */
     public function config_write($name, $value) {
         global $DB, $USER, $CFG;
+
+        if ($this->nosave) {
+            return true;
+        }
 
         // make sure it is a real change
         $oldvalue = get_config($this->plugin, $name);
@@ -1402,6 +1446,7 @@ class admin_setting_heading extends admin_setting {
  * @param string $information text in box
  */
     public function __construct($name, $heading, $information) {
+        $this->nosave = true;
         parent::__construct($name, $heading, $information, '');
     }
 
@@ -4614,6 +4659,7 @@ class admin_setting_manageauths extends admin_setting {
  * Calls parent::__construct with specific arguments
  */
     public function __construct() {
+        $this->nosave = true;
         parent::__construct('authsui', get_string('authsettings', 'admin'), '', '');
     }
 
@@ -4815,6 +4861,7 @@ class admin_setting_manageeditors extends admin_setting {
  * Calls parent::__construct with specific arguments
  */
     public function __construct() {
+        $this->nosave = true;
         parent::__construct('editorsui', get_string('editorsettings', 'editor'), '', '');
     }
 
@@ -5030,6 +5077,7 @@ class admin_setting_manageportfolio extends admin_setting {
 
     public function __construct() {
         global $CFG;
+        $this->nosave = true;
         parent::__construct('manageportfolio', get_string('manageportfolio', 'portfolio'), '', '');
         $this->baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/portfolio.php?sesskey=' . sesskey();
     }
@@ -5253,7 +5301,7 @@ function admin_externalpage_print_header($focus='') {
     $section = $PAGE->url->param('section');
     $current = $adminroot->locate($section, true);
     $visiblepathtosection = array_reverse($current->visiblepath);
-    
+
     if ($PAGE->user_allowed_editing()) {
         $options = $PAGE->url->params();
         if ($PAGE->user_is_editing()) {
@@ -5490,9 +5538,11 @@ function admin_search_settings_html($query) {
                 continue;
             }
         if (!empty($settings)) {
-            $savebutton = true;
             $return .= '<fieldset class="adminsettings">'."\n";
             foreach ($settings as $setting) {
+                if (empty($setting->nosave)) {
+                    $savebutton = true;
+                }
                 $return .= '<div class="clearer"><!-- --></div>'."\n";
                 $fullname = $setting->get_full_name();
                 if (array_key_exists($fullname, $adminroot->errors)) {
@@ -6095,6 +6145,7 @@ class admin_setting_manageexternalservices extends admin_setting {
      * Calls parent::__construct with specific arguments
      */
     public function __construct() {
+        $this->nosave = true;
         parent::__construct('webservicesui', get_string('externalservices', 'webservice'), '', '');
     }
 
@@ -6277,6 +6328,7 @@ class admin_setting_webservicesoverview extends admin_setting {
      * Calls parent::__construct with specific arguments
      */
     public function __construct() {
+        $this->nosave = true;
         parent::__construct('webservicesoverviewui', get_string('webservicesoverview', 'webservice'), '', '');
     }
 
@@ -6428,7 +6480,7 @@ class admin_setting_webservicesoverview extends admin_setting {
         $row[1] = "";
         $row[2] = get_string('testwithtestclientdescription', 'webservice');
         $table->data[] = $row;
-        
+
         $return .= $OUTPUT->table($table);
 
     /// Users as clients with token
@@ -6522,6 +6574,7 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
      * Calls parent::__construct with specific arguments
      */
     public function __construct() {
+        $this->nosave = true;
         parent::__construct('webservicesui', get_string('manageprotocols', 'webservice'), '', '');
     }
 
@@ -6672,6 +6725,7 @@ class admin_setting_managewebservicetokens extends admin_setting {
      * Calls parent::__construct with specific arguments
      */
     public function __construct() {
+        $this->nosave = true;
         parent::__construct('webservicestokenui', get_string('managetokens', 'webservice'), '', '');
     }
 
@@ -6757,7 +6811,7 @@ class admin_setting_managewebservicetokens extends admin_setting {
 
                 $iprestriction = '';
                 if (!empty($token->iprestriction)) {
-                    $iprestriction = $token->iprestriction; 
+                    $iprestriction = $token->iprestriction;
                 }
 
                 $table->data[] = array($token->token, $token->firstname." ".$token->lastname, $token->name, '', $iprestriction, $validuntil, $delete);
