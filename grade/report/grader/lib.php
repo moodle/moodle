@@ -657,9 +657,18 @@ class grade_report_grader extends grade_report {
                         $hidden = ' hidden ';
                     }
 
-                    $headerlink = $this->gtree->get_element_header($element, true, $this->get_pref('showactivityicons'), false);                    
+                    $headerlink = $this->gtree->get_element_header($element, true, $this->get_pref('showactivityicons'), false);
+
+                    //The width of the table varies depending on fixedstudents.
+                    // $fixedstudents == 0, students and grades display in the same table.
+                    // $fixedstudents == 1, students and grades are display in separate table.
+                    if ($fixedstudents) {
+                        $incrementcellindex = '0';
+                    } else {
+                        $incrementcellindex = '1';
+                    }
                     //MDL-21088 - IE 7 ignores nowraps on tds or ths so we this in a span with a nowrap on it.
-                    $headerhtml .= '<th class=" '.$columnclass.' '.$type.$catlevel.$hidden.'" scope="col" onclick="set_col(this.cellIndex)"><span>'
+                    $headerhtml .= '<th class=" '.$columnclass.' '.$type.$catlevel.$hidden.'" scope="col" onclick="set_col(this.cellIndex,' . $incrementcellindex . ')"><span>'
                                 .shorten_text($headerlink) . $arrow;
                     $headerhtml .= '</span></th>';
                 }
