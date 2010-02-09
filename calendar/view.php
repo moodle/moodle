@@ -642,6 +642,7 @@ function calendar_course_filter_selector($getvars = '') {
 
     unset($courses[SITEID]);
 
+    $courseoptions = array();
     $courseoptions[SITEID] = get_string('fulllistofcourses');
     foreach ($courses as $course) {
         $courseoptions[$course->id] = format_string($course->shortname);
@@ -652,7 +653,7 @@ function calendar_course_filter_selector($getvars = '') {
     } else {
         $selected = '';
     }
-    $select = html_select::make_popup_form(CALENDAR_URL.'set.php?var=setcourse&'.$getvars, 'id', $courseoptions, 'cal_courses_flt', $selected);
-    $select->nothinglabel = false;
-    return $OUTPUT->select($select);
+    $select = new single_select(new moodle_url(CALENDAR_URL.'set.php?var=setcourse&'.$getvars), 'id', $courseoptions, $selected, null);
+    $select->class = 'cal_courses_flt';
+    echo $OUTPUT->render($select);
 }

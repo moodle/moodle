@@ -254,10 +254,9 @@ while ($section <= $course->numsections) {
 echo "</ul>\n";
 
 if (!empty($sectionmenu)) {
-    echo '<div class="jumpmenu">';
-    $popupurl = $CFG->wwwroot.'/course/view.php?id='.$course->id;
-    $select = html_select::make_popup_form($popupurl, 'topic', $sectionmenu, 'sectionmenu');
-    $select->set_label(get_string('jumpto'));
-    echo $OUTPUT->select($select);
-    echo '</div>';
+    $select = new single_select(new moodle_url('/course/view.php', array('id'=>$course->id)), 'topic', $sectionmenu);
+    $select->label = get_string('jumpto');
+    $select->class = 'jumpmenu';
+    $select->formid = 'sectionmenu';
+    echo $OUTPUT->render($select);
 }

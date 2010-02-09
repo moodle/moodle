@@ -78,7 +78,7 @@ calendar_session_vars();
 // Required due to changes in view/lib.php mainly (calendar_session_vars())
 $courseid = '';
 if (!empty($id)) {
-    $courseid = '&amp;course='.$id;
+    $courseid = '&course='.$id;
 }
 
 switch($var) {

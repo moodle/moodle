@@ -138,10 +138,10 @@
         echo $OUTPUT->box_start();
         $currlang = current_language();
         $langs = get_list_of_languages(false, true);
-        $select = html_select::make_popup_form("$CFG->wwwroot/$CFG->admin/lang.php", 'lang', $langs, "chooselang", $currlang);
-        $select->nothinglabel = false;
-        $select->set_label($strcurrentlanguage.':');
-        echo $OUTPUT->select($select);
+        $select = new single_select(new moodle_url('/admin/lang.php'), 'lang', $langs, $currlang, null);
+        $select->label = $strcurrentlanguage.':';
+        $select->formid = 'chooselang';
+        echo $OUTPUT->render($select);
         echo $OUTPUT->box_end();
         echo $OUTPUT->footer();
         exit;
@@ -492,10 +492,10 @@
         //$selectionlabel .= $strfilestoredin;
         $selectionlabel .= $uselocal ? "{$currentlang}_local" : $currentlang;
         $selectionlabel .= '/</code>';
-        $select = html_select::make_popup_form("$CFG->wwwroot/$CFG->admin/lang.php?mode=compare", 'currentfile', $menufiles, "choosefile", $currentfile);
-        $select->nothinglabel = $strchoosefiletoedit;
-        $select->set_label($selectionlabel);
-        echo $OUTPUT->select($select);
+        $select = new single_select(new moodle_url('/admin/lang.php?mode=compare'), 'currentfile', $menufiles, $currentfile, array(''=>$strchoosefiletoedit));
+        $select->label = $selectionlabel;
+        $select->formid = 'choosefile';
+        echo $OUTPUT->render($select);
         echo $OUTPUT->help_icon('langswitchstorage', $strfilestoredinhelp);
         echo $OUTPUT->box_end();
 
@@ -759,10 +759,10 @@
         //$selectionlabel .= $strfilestoredin;
         $selectionlabel .= $uselocal ? "{$currentlang}_local" : $currentlang;
         $selectionlabel .= '/help/</code>';
-        $select = html_select::make_popup_form("$CFG->wwwroot/$CFG->admin/lang.php?mode=helpfiles", 'currentfile', $menufiles, "choosefile", $currentfile);
-        $select->nothinglabel = $strchoosefiletoedit;
-        $select->set_label($selectionlabel);
-        echo $OUTPUT->select($select);
+        $select = new single_select(new moodle_url('/admin/lang.php?mode=helpfiles'), 'currentfile', $menufiles, $currentfile, array(''=>$strchoosefiletoedit));
+        $select->label = $selectionlabel;
+        $select->formid = 'choosefile';
+        echo $OUTPUT->render($select);
         echo $OUTPUT->help_icon('langswitchstorage', $strfilestoredinhelp);
         echo $OUTPUT->box_end();
 
