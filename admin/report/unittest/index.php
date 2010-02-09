@@ -28,14 +28,13 @@ $showsearch   = optional_param('showsearch', false, PARAM_BOOL);
 
 admin_externalpage_setup('reportsimpletest', '', array('showpasses'=>$showpasses, 'showsearch'=>$showsearch));
 
-$langfile = 'simpletest';
 $unittest = true;
 
 global $UNITTEST;
 $UNITTEST = new object();
 
 // Print the header.
-$strtitle = get_string('unittests', $langfile);
+$strtitle = get_string('unittests', 'simpletest');
 
 if (!is_null($path)) {
     // Turn off xmlstrictheaders during the unit test run.
@@ -76,45 +75,45 @@ if (!is_null($path)) {
     } else if (is_dir($path)){
         $test->findTestFiles($path);
     } else {
-        echo $OUTPUT->box(get_string('pathdoesnotexist', $langfile, $path), 'errorbox');
+        echo $OUTPUT->box(get_string('pathdoesnotexist', 'simpletest', $path), 'errorbox');
         $ok = false;
     }
 
     // If we have something to test, do it.
     if ($ok) {
         if ($path == $CFG->dirroot) {
-            $title = get_string('moodleunittests', $langfile, get_string('all', $langfile));
+            $title = get_string('moodleunittests', 'simpletest', get_string('all', 'simpletest'));
         } else {
-            $title = get_string('moodleunittests', $langfile, $displaypath);
+            $title = get_string('moodleunittests', 'simpletest', $displaypath);
         }
         echo $OUTPUT->heading($title);
         set_time_limit(300); // 5 mins
         $test->run($reporter);
     }
 
-    $formheader = get_string('retest', $langfile);
+    $formheader = get_string('retest', 'simpletest');
 } else {
     $displaypath = '';
     admin_externalpage_print_header();
-    $formheader = get_string('rununittests', $langfile);
+    $formheader = get_string('rununittests', 'simpletest');
 }
 // Print the form for adjusting options.
 echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
 echo $OUTPUT->heading($formheader);
 echo '<form method="get" action="index.php">';
 echo '<fieldset class="invisiblefieldset">';
-echo '<p>'; echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, $showpasses, get_string('showpasses', $langfile)), 'showpasses') ; echo '</p>';
-echo '<p>'; echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, $showsearch, get_string('showsearch', $langfile)), 'showsearch') ; echo '</p>';
+echo '<p>'.html_writer::checkbox('showpasses', 1, $showpasses, get_string('showpasses', 'simpletest')).'</p>';
+echo '<p>'.html_writer::checkbox('showsearch', 1, $showsearch, get_string('showsearch', 'simpletest')).'</p>';
 if (moodle_coverage_recorder::can_run_codecoverage()) {
-    echo '<p>'; echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, $codecoverage, get_string('codecoverageanalysis', 'simpletest')), 'codecoverage') ; echo '</p>';
+    echo '<p>'.html_writer::checkbox('showsearch', 1, $codecoverage, get_string('codecoverageanalysis', 'simpletest')).'</p>';
 } else {
     echo '<p>'; print_string('codecoveragedisabled', 'simpletest'); echo '<input type="hidden" name="codecoverage" value="0" /></p>';
 }
 echo '<p>';
-    echo '<label for="path">', get_string('onlytest', $langfile), '</label> ';
+    echo '<label for="path">', get_string('onlytest', 'simpletest'), '</label> ';
     echo '<input type="text" id="path" name="path" value="', $displaypath, '" size="40" />';
 echo '</p>';
-echo '<input type="submit" value="' . get_string('runtests', $langfile) . '" />';
+echo '<input type="submit" value="' . get_string('runtests', 'simpletest') . '" />';
 echo '</fieldset>';
 echo '</form>';
 echo $OUTPUT->box_end();

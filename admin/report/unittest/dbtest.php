@@ -110,9 +110,9 @@ echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
 echo '<form method="post" action="dbtest.php">';
 echo '<div>';
 echo $OUTPUT->heading("Run functional database tests"); // TODO: localise
-echo '<p>'; echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, $showpasses, get_string('showpasses', 'simpletest')), 'showpasses') ; echo '</p>';
+echo '<p>'.html_writer::checkbox('showpasses', 1, $showpasses, get_string('showpasses', 'simpletest')).'</p>';
 if (moodle_coverage_recorder::can_run_codecoverage()) {
-    echo '<p>'; echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, $codecoverage, get_string('codecoverageanalysis', 'simpletest')), 'codecoverage') ; echo '</p>';
+    echo '<p>'.html_writer::checkbox('codecoverage', 1, $codecoverage, get_string('codecoverageanalysis', 'simpletest')).'</p>';
 } else {
     echo '<p>'; print_string('codecoveragedisabled', 'simpletest'); echo '<input type="hidden" name="codecoverage" value="0" /></p>';
 }
@@ -124,7 +124,7 @@ foreach ($dbinfos as $i=>$dbinfo) {
         if (!$dbinfo['configured']) {
             $name = "$name (misconfigured)"; // TODO: localise
         }
-        echo '<li>'; echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, intval(!empty($selected[$i])), $name), 'selected['.$i.']') ; echo '</li>';
+        echo '<li>'.html_writer::checkbox('selected['.$i.']', 1, intval(!empty($selected[$i])), $name).'</li>';
     } else {
         echo '<li>'."$name: driver not installed".'</li>'; // TODO: localise
     }
