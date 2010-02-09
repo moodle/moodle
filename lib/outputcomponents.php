@@ -538,6 +538,36 @@ class html_writer {
     }
 
     /**
+     * generates a simple checkbox with optional label
+     * @param string $name
+     * @param string $value
+     * @param bool $checked
+     * @param string $label
+     * @param array $attributes
+     * @return string html fragment
+     */
+    public static function checkbox($name, $value, $checked = true, $label = '', array $attributes = null) {
+        $attributes = (array)$attributes;
+        $output = '';
+
+        if ($label !== '' and !is_null($label)) {
+            if (empty($attributes['id'])) {
+                $attributes['id'] = self::random_id('checkbox_');
+            }
+        }
+
+        $attributes['type'] = 'checkbox';
+        $attributes['checked'] = $checked ? 'selected' : null;
+        $output .= self::empty_tag('input', $attributes);
+
+        if ($label !== '' and !is_null($label)) {
+            $output .= self::tag('label', array('for'=>$attributes['id']), $label);
+        }
+
+        return $output;
+    }
+
+    /**
      * Generates a simple select form field
      * @param array $options associative array value=>label ex.:
      *                array(1=>'One, 2=>Two)
