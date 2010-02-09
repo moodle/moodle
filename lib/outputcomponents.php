@@ -555,9 +555,11 @@ class html_writer {
                 $attributes['id'] = self::random_id('checkbox_');
             }
         }
-
-        $attributes['type'] = 'checkbox';
+        $attributes['type']    = 'checkbox';
+        $attributes['value']   = $value;
+        $attributes['name']    = $name;
         $attributes['checked'] = $checked ? 'selected' : null;
+
         $output .= self::empty_tag('input', $attributes);
 
         if ($label !== '' and !is_null($label)) {
