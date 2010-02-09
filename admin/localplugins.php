@@ -75,6 +75,7 @@ $table->set_attribute('id', 'localplugins');
 $table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
 $table->setup();
 
+$plugins = array();
 foreach (get_plugin_list('local') as $plugin => $plugindir) {
     $strpluginname = get_string('pluginname', 'local_' . $plugin);
     if ($strpluginname == '[[pluginname]]') {
