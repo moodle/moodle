@@ -175,7 +175,7 @@
                             $row[] = '<input type="checkbox" name="attemptid[]" value="'. $scouser->userid . ':' . $a . '" />';
                         }
                         //TODO: fetch the user details elsewhere - this is a performance problem!!
-                        $user = (object)array('id'=>$scouser->id);
+                        $user = (object)array('id'=>$scouser->userid);
                         $row[] = $OUTPUT->user_picture($user, array('courseid'=>$course->id));
                         $row[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$scouser->userid.'&amp;course='.$course->id.'">'.
                                  fullname($userdata).'</a>';
@@ -227,7 +227,8 @@
                     if (!empty($userdata)) {
                         echo $OUTPUT->box_start('generalbox boxaligncenter');
                         echo '<div class="mdl-align">'."\n";
-                        echo $OUTPUT->user_picture($user, array('courseid'=>$course->id));
+                        $userrec = (object)array('id'=>$user);
+                        echo $OUTPUT->user_picture($userrec, array('courseid'=>$course->id));
                         echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id\">".
                              "$userdata->firstname $userdata->lastname</a><br />";
                         echo get_string('attempt','scorm').': '.$attempt;
@@ -289,7 +290,8 @@
             //print_heading(format_string($sco->title));
             echo $OUTPUT->heading('<a href="'.$CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;mode=browse&amp;scoid='.$sco->id.'" target="_new">'.format_string($sco->title).'</a>');
             echo '<div class="mdl-align">'."\n";
-            echo $OUTPUT->user_picture($user, array('courseid'=>$course->id));
+            $userrec = (object)array('id'=>$user);
+            echo $OUTPUT->user_picture($userrec, array('courseid'=>$course->id));
             echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id\">".
                  "$userdata->firstname $userdata->lastname</a><br />";
             $scoreview = '';

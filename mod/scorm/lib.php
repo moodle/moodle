@@ -320,7 +320,13 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
     $lastmodify = 0;
     $sometoreport = false;
     $report = '';
-
+    
+    // First Access and Last Access dates for SCOs
+    require_once("locallib.php");
+    $timetracks = scorm_get_sco_runtime($scorm->id, false, $user->id);
+    $firstmodify = $timetracks->start;
+    $lastmodify = $timetracks->finish;
+    
     $grades = grade_get_grades($course->id, 'mod', 'scorm', $scorm->id, $user->id);
     if (!empty($grades->items[0]->grades)) {
         $grade = reset($grades->items[0]->grades);
@@ -387,7 +393,6 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                     }
 
                     if ($sco->launch) {
-                        require_once('locallib.php');
                         $score = '';
                         $totaltime = '';
                         if ($usertrack=scorm_get_tracks($sco->id,$user->id)) {
@@ -396,14 +401,6 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                             }
                             $strstatus = get_string($usertrack->status,'scorm');
                             $report .= "<img src='".$OUTPUT->pix_url('pix/'.$usertrack->status, 'scorm')."' alt='$strstatus' title='$strstatus' />";
-                            if ($usertrack->timemodified != 0) {
-                                if ($usertrack->timemodified > $lastmodify) {
-                                    $lastmodify = $usertrack->timemodified;
-                                }
-                                if ($usertrack->timemodified < $firstmodify) {
-                                    $firstmodify = $usertrack->timemodified;
-                                }
-                            }
                         } else {
                             if ($sco->scormtype == 'sco') {
                                 $report .= '<img src="'.$OUTPUT->pix_url('pix/notattempted', 'scorm').'" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
