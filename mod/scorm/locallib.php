@@ -1206,7 +1206,12 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
         // check the sub element type
         if (count($matches) > 0 && $current_subelement != $matches[1]) {
             if ($count_sub > 0) {
-                echo '    '.$element_name.'_'.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
+                if ($sversion == 'scorm_13') {
+                    echo '    '.$element_name.'.'.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
+                }
+                else {
+                    echo '    '.$element_name.'_'.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
+                }
             }
             $current_subelement = $matches[1];
             $current_sub = '';
@@ -1228,7 +1233,12 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
         echo '    '.$element.' = \''.$value."';\n";
     }
     if ($count_sub > 0) {
-        echo '    '.$element_name.'_'.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
+        if ($sversion == 'scorm_13') {
+            echo '    '.$element_name.'.'.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
+        }
+        else {
+            echo '    '.$element_name.'_'.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
+        }
     }
     if ($count > 0) {
         echo '    '.$element_name.'._count = '.$count.";\n";
