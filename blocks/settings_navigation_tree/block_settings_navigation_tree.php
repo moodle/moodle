@@ -80,6 +80,7 @@ class block_settings_navigation_tree extends block_tree {
     function get_required_javascript() {
         global $CFG;
         $this->_initialise_dock();
+        $this->page->requires->js_module(array('name'=>'core_dock', 'fullpath'=>'/blocks/dock.js', 'requires'=>array('base', 'cookie', 'dom', 'io', 'node', 'event-custom', 'event-mouseenter', 'yui2-container')));
         $module = array('name'=>'block_navigation', 'fullpath'=>'/blocks/global_navigation_tree/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom'));
         $arguments = array($this->instance->id, array('instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked()));
         $this->page->requires->js_init_call('M.block_navigation.init_add_tree', $arguments, false, $module);

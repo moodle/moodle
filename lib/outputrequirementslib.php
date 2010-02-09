@@ -389,11 +389,6 @@ class page_requirements_manager {
                                     'fullpath' => '/lib/flashdetect/flashdetect.js',
                                     'requires' => array('io'));
                     break;
-                case 'core_dock':
-                    $module = array('name'     => 'core_dock',
-                                    'fullpath' => '/blocks/dock.js',
-                                    'requires' => array('base', 'cookie', 'dom', 'io', 'node', 'event-custom'));
-                    break;
             }
 
         } else {
