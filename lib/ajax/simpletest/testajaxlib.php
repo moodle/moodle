@@ -35,7 +35,7 @@ require_once($CFG->libdir . '/ajax/ajaxlib.php');
  * @copyright 2008 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ajax_test extends ajaxlib_unit_test_base {
+class ajax_test extends UnitTestCase {
 
     var $user_agents = array(
             'MSIE' => array(
