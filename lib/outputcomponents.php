@@ -263,6 +263,120 @@ class single_button implements renderable {
 
 
 /**
+ * Simple form with just one select field that gets submitted automatically.
+ * If JS not enabled small go button is printed too.
+ *
+ * @copyright 2009 Petr Skoda
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class single_select implements renderable {
+    /**
+     * Target url - includes hidden fields
+     * @var moodle_url
+     */
+    var $url;
+    /**
+     * Name of the select element.
+     * @var string
+     */
+    var $name;
+    /**
+     * @var array $options associative array value=>label ex.:
+     *              array(1=>'One, 2=>Two)
+     *              it is also possible to specify optgroup as complex label array ex.:
+     *                array(array('Odd'=>array(1=>'One', 3=>'Three)), array('Even'=>array(2=>'Two')))
+     *                array(1=>'One', '--1uniquekey'=>array('More'=>array(2=>'Two', 3=>'Three')))
+     */
+    var $options;
+    /**
+     * Selected option
+     * @var string
+     */
+    var $selected;
+    /**
+     * Nothing selected
+     * @var array
+     */
+    var $nothing;
+    /**
+     * Extra select field attributes
+     * @var array
+     */
+    var $attributes = array();
+    /**
+     * Button label
+     * @var string
+     */
+    var $label = '';
+    /**
+     * Form submit method
+     * @var string post or get
+     */
+    var $method = 'get';
+    /**
+     * Wrapping div class
+     * @var string
+     * */
+    var $class = 'singleselect';
+    /**
+     * True if button disabled, false if normal
+     * @var boolean
+     */
+    var $disabled = false;
+    /**
+     * Button tooltip
+     * @var string
+     */
+    var $tooltip = null;
+    /**
+     * Form id
+     * @var string
+     */
+    var $formid = null;
+    /**
+     * List of attached actions
+     * @var array of component_action
+     */
+    var $helpicon = null;
+    /**
+     * Constructor
+     * @param moodle_url $url form action target, includes hidden fields
+     * @param string $name name of selection field - the changing parameter in url
+     * @param array $options list of options
+     * @param string $selected selected element
+     * @param array $nothing
+     */
+    public function __construct(moodle_url $url, $name, array $options, $selected='', $nothing=array(''=>'choosedots')) {
+        $this->url      = $url;
+        $this->name     = $name;
+        $this->options  = $options;
+        $this->selected = $selected;
+        $this->nothing  = $nothing;
+    }
+
+    /**
+     * Shortcut for adding a JS confirm dialog when the button is clicked.
+     * The message must be a yes/no question.
+     * @param string $message The yes/no confirmation question. If "Yes" is clicked, the original action will occur.
+     * @return void
+     */
+    public function add_confirm_action($confirmmessage) {
+        $this->add_action(new component_action('submit', 'M.util.show_confirm_dialog', array('message' => $confirmmessage)));
+    }
+
+    /**
+     * Add action to the button.
+     * @param component_action $action
+     * @return void
+     */
+    public function add_action(component_action $action) {
+        $this->actions[] = $action;
+    }
+}
+
+
+/**
  * Data structure describing html link with special action attached.
  * @copyright 2010 Petr Skoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -546,7 +660,7 @@ class html_writer {
         } else if ($url) {
             $attributes = array('type'=>'text/javascript', 'src'=>$url);
             return self::tag('script', $attributes, '') . "\n";
-            
+
         } else {
             return '';
         }

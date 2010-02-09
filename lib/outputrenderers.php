@@ -717,10 +717,10 @@ class core_renderer extends renderer_base {
             return '';
         }
 
-        $select = html_select::make_popup_form($this->page->url, 'lang', $langs, 'chooselang', $currlang);
-        $select->nothinglabel = false;
-        $select->set_label(get_accesshide(get_string('language')));
-        return '<div class="langmenu">'.$this->select($select).'</div>';
+        $s = new single_select($this->page->url, 'lang', $langs, $currlang, null);
+        $s->label = get_accesshide(get_string('language'));
+        $s->class = 'langmenu';
+        return $this->render($s);
     }
 
     /**
@@ -1082,6 +1082,81 @@ class core_renderer extends renderer_base {
     }
 
     /**
+     * Returns a form with a single button.
+     * @param moodle_url $url form action target, includes hidden fields
+     * @param string $name name of selection field - the changing parameter in url
+     * @param array $options list of options
+     * @param string $selected selected element
+     * @param array $nothing
+     * @return string HTML fragment
+     */
+    public function single_select($url, $name, array $options, $selected='', $nothing=array(''=>'choosedots')) {
+        if (!($url instanceof moodle_url)) {
+            $url = new moodle_url($url);
+        }
+        $select = new single_select($url, $url, $name, $options, $selected, $nothing);
+
+        return $this->render($select);
+    }
+
+    /**
+     * Internal implementation of single_select rendering
+     * @param single_select $select
+     * @return string HTML fragment
+     */
+    protected function render_single_select(single_select $select) {
+        $select = clone($select);
+        if (empty($select->formid)) {
+            $select->formid = html_writer::random_id('single_select_f');
+        }
+
+        $output = '';
+        $params = $select->url->params();
+        if ($select->method === 'post') {
+            $params['sesskey'] = sesskey();
+        }
+        foreach ($params as $name=>$value) {
+            $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>$name, 'value'=>$value));
+        }
+
+        if (empty($select->attributes['id'])) {
+            $select->attributes['id'] = html_writer::random_id('single_select');
+        }
+
+        if ($select->tooltip) {
+            $select->attributes['title'] = $select->tooltip;
+        }
+
+        if ($select->label) {
+            $output .= html_writer::tag('label', array('for'=>$select->attributes['id']), $select->label);
+        }
+
+        if ($select->helpicon instanceof help_icon) {
+            $output .= $this->render($select->helpicon);
+        }
+
+        $output .= html_writer::select($select->options, $select->name, $select->selected, $select->nothing, $select->attributes);
+
+        $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
+        $output .= html_writer::tag('noscript', array('style'=>'inline'), $go);
+
+        $nothing = empty($select->nothing) ? false : key($select->nothing);
+        $output .= $this->page->requires->js_init_call('M.util.init_single_select', array($select->formid, $select->attributes['id'], $nothing));
+
+        // then div wrapper for xhtml strictness
+        $output = html_writer::tag('div', array(), $output);
+
+        // now the form itself around it
+        $formattributes = array('method' => $select->method,
+                                'action' => $select->url->out_omit_querystring(),
+                                'id'     => $select->formid);
+        $output = html_writer::tag('form', $formattributes, $output);
+
+        // and finally one more wrapper with class
+        return html_writer::tag('div', array('class' => $select->class), $output);
+    }
+
+    /**
      * Given a html_form component and an optional rendered submit button,
      * outputs a HTML form with correct divs and inputs and a single submit button.
      * This doesn't render any other visible inputs. Use moodleforms for these.
@@ -1110,7 +1185,7 @@ class core_renderer extends renderer_base {
                                       'id' => $form->button->id);
 
             if ($form->jssubmitaction) {
-                $buttonattributes['class'] .= ' hiddenifjs';    
+                $buttonattributes['class'] .= ' hiddenifjs';
             }
 
             $buttonoutput = html_writer::empty_tag('input', $buttonattributes);
