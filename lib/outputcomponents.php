@@ -1606,24 +1606,6 @@ class html_select_option extends labelled_html_component {
 
         parent::prepare($output, $page, $target);
     }
-
-    /**
-     * Shortcut for making a checkbox-ready option
-     * @param string $value The value of the checkbox
-     * @param boolean $checked
-     * @param string $label
-     * @param string $alt
-     * @return html_select_option A component ready for $OUTPUT->checkbox()
-     */
-    public static function make_checkbox($value, $checked, $label, $alt=null) {
-        $checkbox = new html_select_option();
-        $checkbox->value = $value;
-        $checkbox->selected = $checked;
-        $checkbox->text = $label;
-        $checkbox->label->text = $label;
-        $checkbox->alt = $alt;
-        return $checkbox;
-    }
 }
 
 

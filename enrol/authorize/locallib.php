@@ -69,10 +69,10 @@ function authorize_print_orders($courseid, $userid) {
     $popupmenu .= $OUTPUT->select(html_select::make_popup_form($baseurl.'&course='.$courseid, 'status', $statusmenu, 'statusmenu', $status));
     if ($canmanagepayments) {
         $popupmenu .= '<br />';
-        $checkbox = html_select_option::make_checkbox(1, $userid == $USER->id, get_string('mypaymentsonly', 'enrol_authorize'));
+        $id = html_writer::random_id('ea');
         $PAGE->requires->js('/enrol/authorize/authorize.js');
-        $checkbox->add_action('click', 'authorize_jump_to_mypayments', array('userid' => $USER->id, 'status' => $status));
-        $popupmenu .= $OUTPUT->checkbox($checkbox, 'showonlymy');
+        $OUTPUT->add_action_handler($id, new component_action('click', 'authorize_jump_to_mypayments', array('userid' => $USER->id, 'status' => $status)));
+        $popupmenu .= html_writer::checkbox('enrol_authorize', 1, $userid == $USER->id, get_string('mypaymentsonly', 'enrol_authorize'), array('id'=>$id));
     }
 
     if (SITEID != $courseid) {
@@ -670,7 +670,7 @@ function authorize_print_action_button($orderid, $do, $suborderid=0, $confirm=fa
         $ret .= '<input type="hidden" name="confirm" value="1" />';
     }
     if (!empty($unenrol)) {
-        $ret .= $OUTPUT->checkbox(html_select_option::make_checkbox(1, false, $unenrol), 'unenrol') . '<br />';
+        $ret .= html_writer::checkbox('unenrol', 1, false, $unenrol) . '<br />';
     }
     $ret .= $extrahtml;
     $ret .= '<input type="submit" value="'.$authstrs->$do.'" />' .

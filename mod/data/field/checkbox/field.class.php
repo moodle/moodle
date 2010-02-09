@@ -80,16 +80,16 @@ class data_field_checkbox extends data_field_base {
             $checkbox = trim($checkbox);
 
             if (in_array(addslashes($checkbox), $content)) {
-                $str .= $OUTPUT->checkbox(html_select_option::make_checkbox(s($checkbox), true, $checkbox), 'f_'.$this->field->id.'[]');
+                $str .= html_writer::checkbox('f_'.$this->field->id.'[]', s($checkbox), true, $checkbox);
             }
-            $str .= $OUTPUT->checkbox(html_select_option::make_checkbox(s($checkbox), false, $checkbox), 'f_'.$this->field->id.'[]');
+            $str .= html_writer::checkbox('f_'.$this->field->id.'[]', s($checkbox), false, $checkbox);
             $found = true;
         }
         if (!$found) {
             return '';
         }
 
-        $str .= $OUTPUT->checkbox(html_select_option::make_checkbox(null, false, get_string('selectedrequired', 'data')), 'f_'.$this->field->id.'_allreq');
+        $str .= html_writer::checkbox('f_'.$this->field->id.'_allreq', null, false, get_string('selectedrequired', 'data'));
         return $str;
     }
 

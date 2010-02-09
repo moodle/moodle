@@ -177,28 +177,13 @@ if (!empty($allowedusers)) {
             }
             $contents .= $OUTPUT->select($select);
         }
-        $checkbox = new html_select_option();
-        $checkbox->value = 1;
-        $checkbox->id = 'enablevaliduntil'.$user->id;
-        $checkbox->name = 'enablevaliduntil';
-        $checkbox->selected = empty($user->validuntil)?false:true;
-        $checkbox->text = get_string('enabled', 'webservice');
-        $checkbox->label->text = get_string('enabled', 'webservice');
-        $checkbox->alt = get_string('enabled', 'webservice');
-        $checkbox->add_action('change', 'external_disablevaliduntil', array($user->id)); //into admin/webservice/script.js
-        $contents .= $OUTPUT->checkbox($checkbox, 'enablevaliduntil');
-        $contents .= ""; //init date selector disable status
+        $contents .= html_writer::checkbox('enablevaliduntil', 1, !empty($user->validuntil), get_string('enabled', 'webservice'), array('id'=>'enablevaliduntil'.$user->id));
+        // TODO: init date selector using standard $PAGE->requires->js_init_call();
 
         $contents .= "</div></div>";
         //TO IMPLEMENT : assign the required capability (if needed)
         $contents .=  "<div class=\"fitem\"><div class=\"fitemtitle\"><label>".get_string('addrequiredcapability','webservice')." </label></div><div class=\"felement fcheckbox\">";
-        $checkbox = new html_select_option();
-        $checkbox->value = $user->id;
-        $checkbox->selected = false;
-        $checkbox->text = ' ';
-        $checkbox->label->text = ' ';
-        $checkbox->alt = 'TODO:'.get_string('addrequiredcapability', 'webservice');
-        $contents .= $OUTPUT->checkbox($checkbox, 'addcap')."</div></div>";
+        $contents .= html_writer::checkbox('addcap', 1, 'TODO:'.get_string('addrequiredcapability', 'webservice'));
         $contents .= '<div><input type="submit" name="submit" value="'.s(get_string('update')).'" /></div>';
         $contents .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         $contents .= '<input type="hidden" name="id" value="'.$id.'" />';

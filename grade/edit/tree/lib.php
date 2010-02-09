@@ -1149,33 +1149,15 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
     }
 
     public function get_item_cell($item, $params) {
-        global $OUTPUT;
         if (empty($params['itemtype']) || empty($params['eid'])) {
-            throw new Exception('Array key (itemtype or eid) missing from 2nd param of grade_edit_tree_column_select::get_item_cell($item, $params)');
+            error('Array key (itemtype or eid) missing from 2nd param of grade_edit_tree_column_select::get_item_cell($item, $params)');
         }
         $itemselect = '';
 
         if ($params['itemtype'] != 'course' && $params['itemtype'] != 'category') {
-            $itemselect = html_select_option::make_checkbox('0', false, get_string('select'));
-            $itemselect->label->add_class('accesshide');
-            $itemselect->add_action('change', 'toggleCategorySelector');
-            $itemselect->add_class('itemselect');
-            $itemselect = $OUTPUT->checkbox($itemselect, 'select_'.$params['eid']);
+            $itemselect = '<input class="itemselect" type="checkbox" name="select_'.$params['eid'].'" onchange="toggleCategorySelector();"/>'; // TODO: convert to YUI handler
         }
-        /*
-        if (empty($params['itemtype']) || empty($params['eid'])) {
-            throw new Exception('Array key (itemtype or eid) missing from 2nd param of grade_edit_tree_column_select::get_item_cell($item, $params)');
-        }
-        $itemselect = '';
-
-        if ($params['itemtype'] != 'course' && $params['itemtype'] != 'category') {
-            $itemselect = '<input class="itemselect" type="checkbox" name="select_'.$params['eid'].'" onchange="toggleCategorySelector();"/>';
-        }
-        */
-        $itemcell = clone($this->itemcell);
-        $itemcell->add_classes(array('last', 'selection'));
-        $itemcell->text = $itemselect;
-        return $itemcell;
+        return '<td class="cell last selection">' . $itemselect . '</td>';
     }
 
     public function is_hidden($mode='simple') {

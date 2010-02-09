@@ -506,9 +506,9 @@ function feedback_reset_course_form($course) {
     foreach($feedbacks as $feedback) {
         echo '<p>';
         echo get_string('name','feedback').': '.$feedback->name.'<br />';
-        echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, true, get_string('resetting_data','feedback')), FEEDBACK_RESETFORM_RESET.$feedback->id);
+        echo html_writer::checkbox(FEEDBACK_RESETFORM_RESET.$feedback->id, 1, true, get_string('resetting_data','feedback'));
         echo '<br />';
-        echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, false, get_string('drop_feedback','feedback')), FEEDBACK_RESETFORM_DROP.$feedback->id);
+        echo html_writer::checkbox(FEEDBACK_RESETFORM_DROP.$feedback->id, 1, false, get_string('drop_feedback','feedback'));
         echo '</p>';
     }
 }
