@@ -139,8 +139,10 @@ class webservice_rest_server extends webservice_base_server {
 
         } else if ($desc instanceof external_multiple_structure) {
             $mult = '<MULTIPLE>'."\n";
-            foreach ($returns as $val) {
-                $mult .= self::xmlize_result($val, $desc->content);
+            if (!empty($returns)) {
+                foreach ($returns as $val) {
+                    $mult .= self::xmlize_result($val, $desc->content);
+                } 
             }
             $mult .= '</MULTIPLE>'."\n";
             return $mult;
