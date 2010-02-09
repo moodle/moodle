@@ -95,7 +95,7 @@ function min_enable_zlib_compression() {
         if (isset($parts[1])) {
             $parts = explode(' ', trim($parts[1]));
             if (count($parts) > 1) {
-                if ($parts[0] === 'MSIE' and (float)$string[1] < 7) {
+                if ($parts[0] === 'MSIE' and (float)$parts[1] < 7) {
                     @ini_set('zlib.output_compression', '0');
                     return false;
                 }
