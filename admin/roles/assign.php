@@ -364,10 +364,10 @@
 
     /// Print a form to swap roles, and a link back to the all roles list.
         echo '<div class="backlink">';
-        $select = html_select::make_popup_form($baseurl, 'roleid', $nameswithcounts, 'switchrole', $roleid);
-        $select->set_label(get_string('assignanotherrole', 'role'));
-        $select->nothinglabel = false;
-        echo $OUTPUT->select($select);
+        
+        $select = new single_select(new moodle_url($baseurl), 'roleid', $nameswithcounts, $roleid, null);
+        $select->label = get_string('assignanotherrole', 'role');
+        echo $OUTPUT->render($select);
         echo '<p><a href="' . $baseurl . '">' . get_string('backtoallroles', 'role') . '</a></p>';
         echo '</div>';
 
