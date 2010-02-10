@@ -400,6 +400,103 @@ class single_select implements renderable {
 
 
 /**
+ * Simple URL selection widget description.
+ * @copyright 2009 Petr Skoda
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class url_select implements renderable {
+    /**
+     * @var array $urls associative array value=>label ex.:
+     *              array(1=>'One, 2=>Two)
+     *              it is also possible to specify optgroup as complex label array ex.:
+     *                array(array('Odd'=>array(1=>'One', 3=>'Three)), array('Even'=>array(2=>'Two')))
+     *                array(1=>'One', '--1uniquekey'=>array('More'=>array(2=>'Two', 3=>'Three')))
+     */
+    var $urls;
+    /**
+     * Selected option
+     * @var string
+     */
+    var $selected;
+    /**
+     * Nothing selected
+     * @var array
+     */
+    var $nothing;
+    /**
+     * Extra select field attributes
+     * @var array
+     */
+    var $attributes = array();
+    /**
+     * Button label
+     * @var string
+     */
+    var $label = '';
+    /**
+     * Wrapping div class
+     * @var string
+     * */
+    var $class = 'urlselect';
+    /**
+     * True if button disabled, false if normal
+     * @var boolean
+     */
+    var $disabled = false;
+    /**
+     * Button tooltip
+     * @var string
+     */
+    var $tooltip = null;
+    /**
+     * Form id
+     * @var string
+     */
+    var $formid = null;
+    /**
+     * List of attached actions
+     * @var array of component_action
+     */
+    var $helpicon = null;
+    /**
+     * Constructor
+     * @param array $urls list of options
+     * @param string $selected selected element
+     * @param array $nothing
+     * @param string $formid
+     */
+    public function __construct(array $urls, $selected='', $nothing=array(''=>'choosedots'), $formid=null) {
+        $this->urls     = $urls;
+        $this->selected = $selected;
+        $this->nothing  = $nothing;
+        $this->formid   = $formid;
+    }
+
+    /**
+     * Constructor: sets up the other components in case they are needed
+     * @param string $page  The keyword that defines a help page
+     * @param string $title A descriptive text for accesibility only
+     * @param string $component
+     * @param bool $linktext add extra text to icon
+     * @return void
+     */
+    public function set_help_icon($helppage, $title, $component = 'moodle') {
+        $this->helpicon = new help_icon($helppage, $title, $component);
+    }
+
+    /**
+     * Set's select lable
+     * @param string $label
+     * @return void
+     */
+    public function set_label($label) {
+        $this->label = $label;
+    }
+}
+
+
+/**
  * Data structure describing html link with special action attached.
  * @copyright 2010 Petr Skoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

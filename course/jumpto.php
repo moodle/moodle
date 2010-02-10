@@ -26,7 +26,7 @@
 
 require('../config.php');
 
-$jump = optional_param('jump', '', PARAM_RAW);
+$jump = required_param('jump', PARAM_RAW);
 
 $PAGE->set_url('/course/jumpto.php');
 
@@ -34,13 +34,8 @@ if (!confirm_sesskey()) {
     print_error('confirmsesskeybad');
 }
 
-if (strpos($jump, $CFG->wwwroot) === 0) {            // Anything on this site
-    redirect(new moodle_url(urldecode($jump)));
-} else if (preg_match('/^[a-z]+\.php\?/', $jump)) {
-    redirect(new moodle_url(urldecode($jump)));
+if (strpos($jump, '/') === 0) {
+    redirect(new moodle_url($jump));
+} else {
+    print_error('error');
 }
-
-if(isset($_SERVER['HTTP_REFERER'])) {
-    redirect(new moodle_url($_SERVER['HTTP_REFERER']));   // Return to sender, just in case
-}
-

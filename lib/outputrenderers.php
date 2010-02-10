@@ -1127,7 +1127,7 @@ class core_renderer extends renderer_base {
         if ($select->disabled) {
             $select->attributes['disabled'] = 'disabled';
         }
-        
+
         if ($select->tooltip) {
             $select->attributes['title'] = $select->tooltip;
         }
@@ -1154,6 +1154,74 @@ class core_renderer extends renderer_base {
         // now the form itself around it
         $formattributes = array('method' => $select->method,
                                 'action' => $select->url->out_omit_querystring(),
+                                'id'     => $select->formid);
+        $output = html_writer::tag('form', $formattributes, $output);
+
+        // and finally one more wrapper with class
+        return html_writer::tag('div', array('class' => $select->class), $output);
+    }
+
+    /**
+     * Returns a form with a single button.
+     * @param array $urls list of urls - array('/course/view.php?id=1'=>'Frontpage', ....)
+     * @param string $selected selected element
+     * @param array $nothing
+     * @param string $formid
+     * @return string HTML fragment
+     */
+    public function url_select(array $urls, $selected, $nothing=array(''=>'choosedots'), $formid=null) {
+        $select = new url_select($urls, $selected, $nothing, $formid);
+        return $this->render($select);
+    }
+
+    /**
+     * Internal implementation of single_select rendering
+     * @param single_select $select
+     * @return string HTML fragment
+     */
+    protected function render_url_select(url_select $select) {
+        $select = clone($select);
+        if (empty($select->formid)) {
+            $select->formid = html_writer::random_id('url_select_f');
+        }
+
+        if (empty($select->attributes['id'])) {
+            $select->attributes['id'] = html_writer::random_id('url_select');
+        }
+
+        if ($select->disabled) {
+            $select->attributes['disabled'] = 'disabled';
+        }
+
+        if ($select->tooltip) {
+            $select->attributes['title'] = $select->tooltip;
+        }
+
+        $output = '';
+
+        if ($select->label) {
+            $output .= html_writer::tag('label', array('for'=>$select->attributes['id']), $select->label);
+        }
+
+        if ($select->helpicon instanceof help_icon) {
+            $output .= $this->render($select->helpicon);
+        }
+
+        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
+        $output .= html_writer::select($select->urls, 'jump', $select->selected, $select->nothing, $select->attributes);
+
+        $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
+        $output .= html_writer::tag('noscript', array('style'=>'inline'), $go);
+
+        $nothing = empty($select->nothing) ? false : key($select->nothing);
+        $output .= $this->page->requires->js_init_call('M.util.init_url_select', array($select->formid, $select->attributes['id'], $nothing));
+
+        // then div wrapper for xhtml strictness
+        $output = html_writer::tag('div', array(), $output);
+
+        // now the form itself around it
+        $formattributes = array('method' => 'post',
+                                'action' => new moodle_url('/course/jumpto.php'),
                                 'id'     => $select->formid);
         $output = html_writer::tag('form', $formattributes, $output);
 
