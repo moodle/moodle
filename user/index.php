@@ -229,9 +229,9 @@
             unset($courselist[SITEID]);
             $courselist = array(SITEID => format_string($SITE->shortname)) + $courselist;
         }
-        $select = html_select::make_popup_form($popupurl, 'id', $courselist, 'courseform', $course->id);
+        $select = new single_select($popupurl, 'id', $courselist, $course->id, array(''=>'choosedots'), 'courseform');
         $select->set_label(get_string('mycourses'));
-        $controlstable->data[0]->cells[] = $OUTPUT->select($select);
+        $controlstable->data[0]->cells[] = $OUTPUT->render($select);
     }
 
     $controlstable->data[0]->cells[] = groups_print_course_menu($course, $baseurl->out());
@@ -287,9 +287,9 @@
         }
 
         if (count($timeoptions) > 1) {
-            $select = html_select::make_popup_form($baseurl, 'accesssince', $timeoptions, 'timeoptions', $accesssince);
+            $select = new single_select($baseurl, 'accesssince', $timeoptions, $accesssince, null, 'timeoptions');
             $select->set_label(get_string('usersnoaccesssince'));
-            $controlstable->data[0]->cells[] = $OUTPUT->select($select);
+            $controlstable->data[0]->cells[] = $OUTPUT->render($select);
         }
     }
 
@@ -315,12 +315,11 @@
     if ($allowenroldetails) {
         $formatmenu['2']= get_string('enroldetails');
     }
-    $select = html_select::make_popup_form($baseurl, 'mode', $formatmenu, 'formatmenu', $mode);
-    $select->nothinglabel = false;
+    $select = new single_select($baseurl, 'mode', $formatmenu, $mode, null, 'formatmenu');
     $select->set_label(get_string('userlist'));
     $userlistcell = new html_table_cell();
     $userlistcell->add_class('right');
-    $userlistcell->text = $OUTPUT->select($select);
+    $userlistcell->text = $OUTPUT->render($select);
     $controlstable->data[0]->cells[] = $userlistcell;
 
     echo $OUTPUT->table($controlstable);
@@ -604,9 +603,7 @@
                 $rolenames = array('0' => get_string('userswithrole', 'role')) + $rolenames;
             }
         }
-        $select = html_select::make_popup_form($rolenamesurl, 'roleid', $rolenames, 'rolesform', $roleid);
-        $select->nothinglabel = false;
-        echo $OUTPUT->select($select);
+        echo $OUTPUT->single_select($rolenamesurl, 'roleid', $rolenames, $roleid, null, 'rolesform');
         echo '</div>';
 
     } else if (count($rolenames) == 1) {
@@ -829,7 +826,7 @@
 
                     $links[] = html_writer::link(new moodle_url('/user/view.php?id='. $user->id .'&course='. $course->id), get_string('fullprofile') . '...');
 
-                    $row->cells[2]->text .= implode('', $link);
+                    $row->cells[2]->text .= implode('', $links);
 
                     if (!empty($messageselect)) {
                         $row->cells[2]->text .= '<br /><input type="checkbox" name="user'.$user->id.'" /> ';

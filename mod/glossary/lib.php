@@ -1499,6 +1499,7 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
      echo '<td align="center" style="width:60%">';
      echo '<b>';
 
+     $menu = array();
      $menu[GLOSSARY_SHOW_ALL_CATEGORIES] = get_string("allcategories","glossary");
      $menu[GLOSSARY_SHOW_NOT_CATEGORISED] = get_string("notcategorised","glossary");
 
@@ -1537,9 +1538,8 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
      echo '</b></td>';
      echo '<td align="center" style="width:20%">';
 
-     $select = html_select::make_popup_form("$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&mode=cat", 'hook', $menu, "catmenu", $selected);
-     $select->nothinglabel = false;
-     echo $OUTPUT->select($select);
+     $select = new single_select(new moodle_url("/mod/glossary/view.php", array('id'=>$cm->id, 'mode'=>'cat')), 'hook', $menu, $selected, null, "catmenu");
+     echo $OUTPUT->render($select);
 
      echo '</td>';
      echo '</tr>';

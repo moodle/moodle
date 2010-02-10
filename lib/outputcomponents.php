@@ -346,13 +346,15 @@ class single_select implements renderable {
      * @param array $options list of options
      * @param string $selected selected element
      * @param array $nothing
+     * @param string $formid
      */
-    public function __construct(moodle_url $url, $name, array $options, $selected='', $nothing=array(''=>'choosedots')) {
+    public function __construct(moodle_url $url, $name, array $options, $selected='', $nothing=array(''=>'choosedots'), $formid=null) {
         $this->url      = $url;
         $this->name     = $name;
         $this->options  = $options;
         $this->selected = $selected;
         $this->nothing  = $nothing;
+        $this->formid   = $formid;
     }
 
     /**
@@ -372,6 +374,27 @@ class single_select implements renderable {
      */
     public function add_action(component_action $action) {
         $this->actions[] = $action;
+    }
+
+    /**
+     * Constructor: sets up the other components in case they are needed
+     * @param string $page  The keyword that defines a help page
+     * @param string $title A descriptive text for accesibility only
+     * @param string $component
+     * @param bool $linktext add extra text to icon
+     * @return void
+     */
+    public function set_help_icon($helppage, $title, $component = 'moodle') {
+        $this->helpicon = new help_icon($helppage, $title, $component);
+    }
+
+    /**
+     * Set's select lable
+     * @param string $label
+     * @return void
+     */
+    public function set_label($label) {
+        $this->label = $label;
     }
 }
 

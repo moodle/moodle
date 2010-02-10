@@ -188,7 +188,7 @@ class quiz_grading_report extends quiz_default_report {
         if (count($gradeableqs)!=1){
             $qurl = fullclone($this->viewurl);
             $qurl->remove_params('questionid', 'attemptid', 'gradeall', 'gradeungraded', 'gradenextungraded');
-            $menu = $OUTPUT->select(html_select::make_popup_form($qurl->out(), 'questionid', $qmenu, 'questionid', $questionid));
+            $menu = $OUTPUT->single_select($qurl, 'questionid', $qmenu, $questionid, array(''=>'choosedots'), 'questionid');
             echo '<div class="mdl-align">'.$menu.'</div>';
         }
         if (!$questionid){

@@ -146,8 +146,8 @@ echo '<div class="profileeditor">';
 
 /// Create a new field link
 $options = profile_list_datatypes();
-$popupurl = $CFG->wwwroot.'/user/profile/index.php?id=0&action=editfield';
-echo $OUTPUT->select(html_select::make_popup_form($popupurl, 'datatype', $options, 'newfieldform', $strcreatefield));
+$popupurl = new moodle_url('/user/profile/index.php?id=0&action=editfield');
+echo $OUTPUT->single_select($popupurl, 'datatype', $options, '', array(''=>$strcreatefield), 'newfieldform');
 
 /// Create a new category link
 $options = array('action'=>'editcategory');

@@ -44,9 +44,9 @@ function report_stats_mode_menu($course, $mode, $time, $url) {
         $options[STATS_MODE_RANKED] = get_string('reports');
     }
     $popupurl = $url."?course=$course->id&time=$time";
-    $select = html_select::make_popup_form($popupurl, 'mode', $options, 'switchmode', $mode);
-    $select->nothinglabel = false;
-    return $OUTPUT->select($select);
+    $select = new single_select(new moodle_url($popupurl), 'mode', $options, $mode, null);
+    $select->formid = 'switchmode';
+    echo $OUTPUT->render($select);
 }
 
 

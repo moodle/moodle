@@ -2283,11 +2283,10 @@ function switchroles_form($courseid) {
         }
         // unset default user role - it would not work
         unset($roles[$CFG->guestroleid]);
-        $popupurl = $CFG->wwwroot.'/course/view.php?id='.$courseid.'&sesskey='.sesskey();
-        $select = html_select::make_popup_form($popupurl, 'switchrole', $roles, 'switchrole', '');
-        $select->nothinglabel = get_string('switchroleto');
+        $popupurl = new moodle_url('/course/view.php', array('id'=>$courseid, 'sesskey'=>sesskey()));
+        $select = new single_select($popupurl, 'switchrole', $roles, null, array(''=>get_string('switchroleto')), 'switchrole');
         $select->set_help_icon('switchrole', get_string('switchroleto'));
-        return $OUTPUT->select($select);
+        return $OUTPUT->render($select);
     }
 
     return '';

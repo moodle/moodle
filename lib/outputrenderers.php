@@ -1088,13 +1088,14 @@ class core_renderer extends renderer_base {
      * @param array $options list of options
      * @param string $selected selected element
      * @param array $nothing
+     * @param string $formid
      * @return string HTML fragment
      */
-    public function single_select($url, $name, array $options, $selected='', $nothing=array(''=>'choosedots')) {
+    public function single_select($url, $name, array $options, $selected='', $nothing=array(''=>'choosedots'), $formid=null) {
         if (!($url instanceof moodle_url)) {
             $url = new moodle_url($url);
         }
-        $select = new single_select($url, $url, $name, $options, $selected, $nothing);
+        $select = new single_select($url, $name, $options, $selected, $nothing, $formid);
 
         return $this->render($select);
     }

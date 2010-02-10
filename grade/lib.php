@@ -318,9 +318,10 @@ function print_graded_users_selector($course, $actionpage, $userid=0, $groupid=0
     if ($includeall) {
         $menu[0] .= " (" . (count($menu) - 1) . ")";
     }
-    $select = html_select::make_popup_form($CFG->wwwroot.'/grade/' . $actionpage, 'userid', $menu, 'choosegradeuser', $userid);
-    $select->set_label($label);
-    return $OUTPUT->select($select);
+    $select = new single_select(new moodle_url('/grade/'.$actionpage), 'userid', $menu, $userid);
+    $select->label = $label;
+    $select->formid = 'choosegradeuser';
+    return $OUTPUT->render($select);
 }
 
 /**

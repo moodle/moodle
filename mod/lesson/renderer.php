@@ -414,9 +414,8 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $options[0] = get_string('question', 'lesson');
 
             $addpageurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id, 'sesskey'=>sesskey()));
-            $addpageselect = html_select::make_popup_form($addpageurl, 'qtype', $options, 'addpageafter'.$page->id);
-            $addpageselect->nothinglabel = get_string('addanewpage', 'lesson').'...';
-            $addpageselector = $this->output->select($addpageselect);
+            $addpageselect = new single_select($addpageurl, 'qtype', $options, null, array(''=>get_string('addanewpage', 'lesson').'...'), 'addpageafter'.$page->id);
+            $addpageselector = $this->output->render($addpageselect);
         }
 
         foreach ($actions as $key=>$action) {

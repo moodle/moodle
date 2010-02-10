@@ -1445,10 +1445,8 @@ function block_add_block_ui($page, $output) {
     asort($menu, SORT_LOCALE_STRING);
 
     $actionurl = new moodle_url($page->url, array('sesskey'=>sesskey()));
-    $select = html_select::make_popup_form($actionurl, 'bui_addblock', $menu, 'add_block');
-    $select->nothinglabel = get_string('adddots');
-
-    $bc->content = $OUTPUT->select($select);
+    $select = new single_select($actionurl, 'bui_addblock', $menu, null, array(''=>get_string('adddots')), 'add_block');
+    $bc->content = $OUTPUT->render($select);
     return $bc;
 }
 

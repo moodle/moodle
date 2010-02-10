@@ -4186,16 +4186,12 @@ function forum_print_rating_menu($postid, $userid, $scale, $myrating=NULL) {
  */
 function forum_print_mode_form($id, $mode, $forumtype='') {
     global $OUTPUT;
-    $select = html_select::make_popup_form("view.php?f=$id", 'mode', forum_get_layout_modes(), "mode", $mode);
-    $select->nothinglabel = false;
+    $select = new single_select(new moodle_url("/mod/forum/view.php", array('f'=>$id)), 'mode', forum_get_layout_modes(), $mode, null, "mode");
 
     if ($forumtype == 'single') {
-        echo '<div class="forummode">';
-        echo $OUTPUT->select($select);
-        echo '</div>';
-    } else {
-        echo $OUTPUT->select($select);
+        $select->class = "forummode";
     }
+    echo $OUTPUT->render($select);
 }
 
 /**

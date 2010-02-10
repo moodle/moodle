@@ -120,13 +120,10 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
             // todo add an option to exclude users without own submission
             $options = array_diff_key($reviewers, $exclude);
             if ($options) {
-                $handler = new moodle_url($this->page->url,
-                                            array('mode' => 'new', 'of' => $allocation->userid, 'sesskey' => sesskey()));
-                $select = html_select::make_popup_form($handler, 'by', $options, 'addreviewof' . $allocation->userid, '',
-                                            get_string('addreviewer', 'workshopallocation_manual'));
-                $select->nothinglabel = get_string('chooseuser', 'workshop');
-                $select->set_label(get_string('addreviewer', 'workshopallocation_manual'), $select->id);
-                $o .= $this->output->select($select);
+                $handler = new moodle_url($this->page->url, array('mode' => 'new', 'of' => $allocation->userid, 'sesskey' => sesskey()));
+                $select = new single_select($handler, 'by', $options, '', array(''=>get_string('chooseuser', 'workshop')), 'addreviewof' . $allocation->userid);
+                $select->set_label(get_string('addreviewer', 'workshopallocation_manual'));
+                $o .= $this->output->render($select);
             }
         }
         $o .= html_writer::start_tag('ul', array());
@@ -163,13 +160,10 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
         // todo add an option to exclude users without own submission
         $options = array_diff_key($authors, $exclude);
         if ($options) {
-            $handler = new moodle_url($this->page->url,
-                                        array('mode' => 'new', 'by' => $allocation->userid, 'sesskey' => sesskey()));
-            $select = html_select::make_popup_form($handler, 'of', $options, 'addreviewby' . $allocation->userid, '',
-                                        get_string('addreviewee', 'workshopallocation_manual'));
-            $select->nothinglabel = get_string('chooseuser', 'workshop');
-            $select->set_label(get_string('addreviewee', 'workshopallocation_manual'), $select->id);
-            $o .= $this->output->select($select);
+            $handler = new moodle_url($this->page->url, array('mode' => 'new', 'by' => $allocation->userid, 'sesskey' => sesskey()));
+            $select = new single_select($handler, 'of', $options, '', array(''=>get_string('chooseuser', 'workshop')), 'addreviewby' . $allocation->userid);
+            $select->set_label(get_string('addreviewee', 'workshopallocation_manual'));
+            $o .= $this->output->render($select);
         } else {
             $o .= $this->output->container(get_string('nothingtoreview', 'workshop'), 'info');
         }
