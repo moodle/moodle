@@ -428,12 +428,8 @@
             make_categories_list($movetocategories, $notused, 'moodle/category:manage');
             $movetocategories[$category->id] = get_string('moveselectedcoursesto');
             echo '<tr><td colspan="3" align="right">';
-            $select = new html_select();
-            $select->options = $movetocategories;
-            $select->name = 'moveto';
-            $select->selectedvalue = $category->id;
-            $select->add_action('change', 'submit_form_by_id', array('id' => 'movecourses'));
-            echo $OUTPUT->select($select);
+            echo html_writer::select($movetocategories, 'moveto', $category->id, null, array('id'=>'movetoid'));
+            $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('movecourses', 'movetoid', false));
             echo '<input type="hidden" name="id" value="'.$category->id.'" />';
             echo '</td></tr>';
         }

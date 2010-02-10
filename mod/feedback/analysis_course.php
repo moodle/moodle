@@ -157,12 +157,9 @@ if ($courseitemfilter > 0) {
     if ($courses = $DB->get_records_sql_menu($sql, $params)) {
 
          echo ' ' . get_string('filter_by_course', 'feedback') . ': ';
-         $select = new html_select();
-         $select->options = $courses;
-         $select->name = 'coursefilter';
-         $select->selectedvalue = $coursefilter;
-         $select->add_action('change', 'submit_form_by_id', array('id' => 'analysis-form'));
-         echo $OUTPUT->select($select);
+         
+         echo htmL_writer::select($courses, 'coursefilter', $coursefilter, null, array('id'=>'coursefilterid'));
+         $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('analysis-form', 'coursefilterid', false));
     }
     echo '<hr />';
     $itemnr = 0;

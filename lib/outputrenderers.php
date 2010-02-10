@@ -1146,7 +1146,7 @@ class core_renderer extends renderer_base {
         $output .= html_writer::tag('noscript', array('style'=>'inline'), $go);
 
         $nothing = empty($select->nothing) ? false : key($select->nothing);
-        $output .= $this->page->requires->js_init_call('M.util.init_single_select', array($select->formid, $select->attributes['id'], $nothing));
+        $this->page->requires->js_init_call('M.util.init_select_autosubmit', array($select->formid, $select->attributes['id'], $nothing));
 
         // then div wrapper for xhtml strictness
         $output = html_writer::tag('div', array(), $output);

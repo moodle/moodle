@@ -338,12 +338,8 @@
             echo "<br />";
             echo "<input type=\"button\" onclick=\"checkall()\" value=\"$strselectall\" />\n";
             echo "<input type=\"button\" onclick=\"checknone()\" value=\"$strdeselectall\" />\n";
-            $select = new html_select();
-            $select->options = $displaylist;
-            $select->name = "moveto";
-            $select->label = get_string("moveselectedcoursesto");
-            $select->add_action('change', 'submit_form_by_id', array('id' => 'movecourses'));
-            echo $OUTPUT->select($select);
+            echo html_writer::select($displaylist, 'moveto', '', array(''=>get_string('moveselectedcoursesto')), array('id'=>'movetoid'));
+            $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('movecourses', 'movetoid', false));
             echo "</td>\n</tr>\n";
             echo "</table>\n</form>";
 

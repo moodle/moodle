@@ -1176,9 +1176,6 @@ class question_bank_view {
 
         $editurl = new moodle_url('/question/edit.php', $pageurl->params());
         $select = new single_select($editurl, 'category', $catmenu, $current, null, 'catmenu');
-        // The js func submit_form_by_id ignores the first element by default when using
-        // the html_select component so we need to unset the selectid param to make it
-        // work in the way we want for this control
         $select->set_label(get_string('selectacategory', 'question'));
         echo $OUTPUT->render($select);
         echo "</div>\n";

@@ -728,21 +728,10 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     }
     if ($orgs = $DB->get_records_menu('scorm_scoes', array('scorm'=>$scorm->id, 'organization'=>'', 'launch'=>''), 'id', 'id,title')) {
         if (count($orgs) > 1) {
- ?>
-            <div class='scorm-center'>
-                <?php print_string('organizations','scorm') ?>
-                <form id='changeorg' method='post' action='<?php echo $action ?>'>
-                    <?php
-                    $select = new html_select();
-                    $select->options = $orgs;
-                    $select->name = 'organization';
-                    $select->selectedvalue = $organization;
-                    $select->add_action('change', 'submit_form_by_id', array('id' => 'changeorg'));
-                    echo $OUTPUT->select($select);
-                    ?>
-                </form>
-            </div>
-<?php
+            $select = new single_select(new moodle_url($action), 'organization', $orgs, $organization, null);
+            $select->lable = get_string('organizations','scorm');
+            $select->class = 'scorm-center';
+            echo $OUTPUT->render($select);
         }
     }
     $orgidentifier = '';
