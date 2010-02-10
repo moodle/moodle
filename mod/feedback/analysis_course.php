@@ -158,7 +158,7 @@ if ($courseitemfilter > 0) {
 
          echo ' ' . get_string('filter_by_course', 'feedback') . ': ';
          
-         echo htmL_writer::select($courses, 'coursefilter', $coursefilter, null, array('id'=>'coursefilterid'));
+         echo html_writer::select($courses, 'coursefilter', $coursefilter, null, array('id'=>'coursefilterid'));
          $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('analysis-form', 'coursefilterid', false));
     }
     echo '<hr />';

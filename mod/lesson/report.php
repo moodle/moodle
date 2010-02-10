@@ -303,7 +303,7 @@ if ($action == 'reportoverview') {
     if (has_capability('mod/lesson:edit', $context)) {
         $checklinks  = '<a href="javascript: checkall();">'.get_string('selectall').'</a> / ';
         $checklinks .= '<a href="javascript: checknone();">'.get_string('deselectall').'</a>';
-        $checklinks .= htmL_writer::select(array('delete' => get_string('deleteselected')), 'attemptaction', 0, array(''=>'choosedots'), array('id'=>'actionid'));
+        $checklinks .= html_writer::select(array('delete' => get_string('deleteselected')), 'attemptaction', 0, array(''=>'choosedots'), array('id'=>'actionid'));
         $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('theform', 'actionid', ''));
         echo $OUTPUT->box($checklinks, 'center');
         echo '</form>';
