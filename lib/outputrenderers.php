@@ -1124,6 +1124,10 @@ class core_renderer extends renderer_base {
             $select->attributes['id'] = html_writer::random_id('single_select');
         }
 
+        if ($select->disabled) {
+            $select->attributes['disabled'] = 'disabled';
+        }
+        
         if ($select->tooltip) {
             $select->attributes['title'] = $select->tooltip;
         }

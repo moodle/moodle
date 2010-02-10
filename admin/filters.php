@@ -122,7 +122,7 @@
             echo $OUTPUT->heading($title);
 
             $linkcontinue = new moodle_url($returnurl, array('action' => 'delete', 'filterpath' => $filterpath, 'confirm' => 1));
-            $formcancel = new single_button($returnurl, get_string('no'), 'get');
+            $formcancel = new single_button(new moodle_url($returnurl), get_string('no'), 'get');
             echo $OUTPUT->confirm(get_string('deletefilterareyousuremessage', 'admin', $filtername), $linkcontinue, $formcancel);
             echo $OUTPUT->footer();
             exit;
@@ -225,9 +225,7 @@
 /// Display helper functions ===================================================
 
 function filters_action_url($filterpath, $action) {
-    global $returnurl;
-    return $returnurl . '?sesskey=' . sesskey() . '&amp;filterpath=' .
-            urlencode($filterpath) . '&amp;action=' . $action;
+    return new moodle_url('/admin/filters.php', array('sesskey'=>sesskey(), 'filterpath'=>$filterpath, 'action'=>$action));
 }
 
 function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings) {
@@ -243,10 +241,8 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
     }
 
     // Disable/off/on
-    $select = html_select::make_popup_form(filters_action_url($filter, 'setstate'), 'newstate', $activechoices, 'active' . basename($filter), $filterinfo->active);
-    $select->nothinglabel = false;
-    $select->form->button->text = get_string('save', 'admin');
-    $row[] = $OUTPUT->select($select);
+    $select = new single_select(filters_action_url($filter, 'setstate'), 'newstate', $activechoices, $filterinfo->active, null, 'active' . basename($filter));
+    $row[] = $OUTPUT->render($select);
 
     // Re-order
     $updown = '';
@@ -266,11 +262,9 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
     $row[] = $updown;
 
     // Apply to strings.
-    $select = html_select::make_popup_form(filters_action_url($filter, 'setapplyto'), 'stringstoo', $applytochoices, 'applyto' . basename($filter), $applytostrings);
-    $select->nothinglabel = false;
+    $select = new single_select(filters_action_url($filter, 'setapplyto'), 'stringstoo', $applytochoices, $applytostrings, null, 'applyto' . basename($filter));
     $select->disabled = $filterinfo->active == TEXTFILTER_DISABLED;
-    $select->form->button->text = get_string('save', 'admin');
-    $row[] = $OUTPUT->select($select);
+    $row[] = $OUTPUT->render($select);
 
     // Settings link, if required
     if (filter_has_global_settings($filter)) {
