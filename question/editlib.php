@@ -1176,7 +1176,7 @@ class question_bank_view {
 
         $editurl = new moodle_url('/question/edit.php', $pageurl->params());
         $select = html_select::make_popup_form($editurl, 'category', $catmenu, 'catmenu', $current);
-
+echo "<xmp>";var_dump($catmenu);echo "</xmp>";
         // The js func submit_form_by_id ignores the first element by default when using
         // the html_select component so we need to unset the selectid param to make it
         // work in the way we want for this control
@@ -1534,7 +1534,7 @@ function question_edit_setup($edittab, $requirecmid = false, $requirecourseid = 
 
     //$thispageurl is used to construct urls for all question edit pages we link to from this page. It contains an array
     //of parameters that are passed from page to page.
-    $thispageurl = new moodle_url($PAGE->url);
+    $thispageurl = new moodle_url($PAGE->url); //TODO: this looks dumb, because this method is called BEFORE $PAGE->set_page() !!!!
     $thispageurl->remove_all_params(); // We are going to explicity add back everything important - this avoids unwanted params from being retained.
 
     if ($requirecmid){
