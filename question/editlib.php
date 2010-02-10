@@ -1176,7 +1176,6 @@ class question_bank_view {
 
         $editurl = new moodle_url('/question/edit.php', $pageurl->params());
         $select = html_select::make_popup_form($editurl, 'category', $catmenu, 'catmenu', $current);
-echo "<xmp>";var_dump($catmenu);echo "</xmp>";
         // The js func submit_form_by_id ignores the first element by default when using
         // the html_select component so we need to unset the selectid param to make it
         // work in the way we want for this control
