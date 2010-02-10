@@ -8,7 +8,6 @@ $servercount = 0;
 if (is_array($mnethosts)) {
     $servercount = count(array_keys($mnethosts));
 }
-$select = html_select::make_yes_no('enrol_mnet_allow_allcourses', $frm->enrol_mnet_allow_allcourses);
 
 ?>
 <table cellspacing="0" cellpadding="5" border="0" class="boxaligncenter">
@@ -20,7 +19,7 @@ $select = html_select::make_yes_no('enrol_mnet_allow_allcourses', $frm->enrol_mn
 <tr valign="top">
     <td align="right">allow_allcourses:</td>
     <td>
-    <?php echo $OUTPUT->select($select); ?>
+    <?php echo html_writer:.select_yes_no('enrol_mnet_allow_allcourses', $frm->enrol_mnet_allow_allcourses); ?>
     </td>
     <td>
     <?php  print_string("allow_allcourses", "enrol_mnet") ?>

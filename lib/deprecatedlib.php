@@ -3113,10 +3113,7 @@ function choose_from_menu_yesno($name, $selected, $script = '', $return = false,
         debugging('The $script parameter has been deprecated. You must use component_actions instead', DEBUG_DEVELOPER);
     }
 
-    $select = html_select::make_yes_no($name, $selected);
-    $select->disabled = $disabled;
-    $select->tabindex = $tabindex;
-    $output = $OUTPUT->select($select);
+    $output = html_writer::select_yes_no($name, $selected, array('disabled'=>($disabled ? 'disabled' : null), 'tabindex'=>$tabindex));
 
     if ($return) {
         return $output;

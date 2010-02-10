@@ -690,6 +690,18 @@ class html_writer {
     }
 
     /**
+     * Generates a simple select yes/no form field
+     * @param string $name name of select element
+     * @param bool $selected
+     * @param array $attributes - html select element attributes
+     * @return string HRML fragment
+     */
+    public function select_yes_no($name, $selected=true, array $attributes = null) {
+        $options = array('1'=>get_string('yes'), '0'=>get_string('no'));
+        return self::select($options, $name, $selected, null, $attributes);
+    }
+
+    /**
      * Generates a simple select form field
      * @param array $options associative array value=>label ex.:
      *                array(1=>'One, 2=>Two)
@@ -700,7 +712,7 @@ class html_writer {
      * @param string|array $selected value or arary of values depending on multiple attribute
      * @param array|bool $nothing, add nothing selected option, or false of not added
      * @param array $attributes - html select element attributes
-     * @return string HRML fragment
+     * @return string HTML fragment
      */
     public static function select(array $options, $name, $selected = '', $nothing = array(''=>'choosedots'), array $attributes = null) {
         $attributes = (array)$attributes;
@@ -1360,16 +1372,6 @@ class html_select extends labelled_html_component {
         $menu->name = $name;
         $menu->selectedvalue = $selected;
         return $menu;
-    }
-
-    /**
-     * This is a shortcut for making a yes/no select menu.
-     * @param string $name used to initialise {@link $name}.
-     * @param string $selected  used to initialise {@link $selected}.
-     * @return html_select A menu initialised with yes/no options.
-     */
-    public static function make_yes_no($name, $selected) {
-        return self::make(array(0 => get_string('no'), 1 => get_string('yes')), $name, $selected);
     }
 
     /**

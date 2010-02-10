@@ -574,16 +574,6 @@ class core_renderer_test extends UnitTestCase {
         $this->assert(new ContainsTagWithContents('label', 'Cool menu'), $html);
     }
 
-    public function test_select_yesno() {
-        $select = html_select::make_yes_no('question', 1);
-        $html = $this->renderer->select($select);
-        $this->assert(new ContainsTagWithAttributes('select', array('class' => 'menuquestion select', 'name' => 'question', 'id' => 'menuquestion')), $html);
-        $this->assert(new ContainsTagWithContents('option', get_string('choosedots')), $html);
-        $this->assert(new ContainsTagWithContents('option', get_string('yes')), $html);
-        $this->assert(new ContainsTagWithContents('option', get_string('no')), $html);
-        $this->assert(new ContainsTagWithAttributes('option', array('value' => '1', 'selected' => 'selected')), $html);
-    }
-
     public function test_error_text() {
         $html = $this->renderer->error_text('message');
         $this->assert(new ContainsTagWithContents('span', 'message'), $html);
