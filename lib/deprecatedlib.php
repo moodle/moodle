@@ -3233,11 +3233,11 @@ function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $
  */
 function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=false) {
     debugging('print_time_selector() has been deprecated. Please change your code to use $OUTPUT->select($timeselector).');
-    global $OUTPUT;
-    $hourselector = html_select::make_time_selector('hours', $hour, $currenttime);
-    $minuteselector = html_select::make_time_selector('minutes', $minute, $currenttime, $step);
 
-    $output = $OUTPUT->select($hourselector) . $OUTPUT->select($minuteselector);
+    $hourselector = html_writer::select_time('hours', $hour, $currenttime);
+    $minuteselector = html_writer::select_time('minutes', $minute, $currenttime, $step);
+
+    $output = $hourselector . $$minuteselector;
 
     if ($return) {
         return $output;
@@ -3259,15 +3259,13 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=fa
  * @return string|bool Depending on value of $return
  */
 function print_date_selector($day, $month, $year, $currenttime=0, $return=false) {
-
     debugging('print_date_selector() has been deprecated. Please change your code to use $OUTPUT->select($dateselector).');
-    global $OUTPUT;
 
-    $dayselector = html_select::make_time_selector('days', $day, $currenttime);
-    $monthselector = html_select::make_time_selector('months', $month, $currenttime);
-    $yearselector = html_select::make_time_selector('years', $year, $currenttime);
+    $dayselector = html_writer::select_time('days', $day, $currenttime);
+    $monthselector = html_writer::select_time('months', $month, $currenttime);
+    $yearselector = html_writer::select_time('years', $year, $currenttime);
 
-    $output = $OUTPUT->select($dayselector) . $OUTPUT->select($monthselector) . $OUTPUT->select($yearselector);
+    $output = $dayselector . $monthselector . $yearselector;
 
     if ($return) {
         return $output;

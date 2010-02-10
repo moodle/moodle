@@ -310,10 +310,12 @@ function forum_print_big_search_form($course) {
     }
 
     echo '<input name="timefromrestrict" type="checkbox" value="1" alt="'.get_string('searchdatefrom', 'forum').'" onclick="return lockoptions(\'searchform\', \'timefromrestrict\', timefromitems)" '.  $datefromchecked . ' /> ';
-    $selectors = html_select::make_time_selectors(array('days' => 'fromday','months' => 'frommonth', 'years' => 'fromyear', 'hours' => 'fromhour', 'minutes' => 'fromminute'), $datefrom);
-    foreach ($selectors as $select) {
-        echo $OUTPUT->select($select);
-    }
+    $selectors = html_writer::select_time('days', 'fromday', $datefrom)
+               . html_writer::select_time('months', 'frommonth', $datefrom)
+               . html_writer::select_time('years', 'fromyear', $datefrom)
+               . html_writer::select_time('hours', 'fromhour', $datefrom)
+               . html_writer::select_time('minutes', 'fromminute', $datefrom);
+    echo $selectors;
     echo '<input type="hidden" name="hfromday" value="0" />';
     echo '<input type="hidden" name="hfrommonth" value="0" />';
     echo '<input type="hidden" name="hfromyear" value="0" />';
@@ -334,10 +336,12 @@ function forum_print_big_search_form($course) {
     }
 
     echo '<input name="timetorestrict" type="checkbox" value="1" alt="'.get_string('searchdateto', 'forum').'" onclick="return lockoptions(\'searchform\', \'timetorestrict\', timetoitems)" ' .$datetochecked. ' /> ';
-    $selectors = html_select::make_time_selectors(array('days' => 'today','months' => 'tomonth', 'years' => 'toyear', 'hours' => 'tohour', 'minutes' => 'tominute'), $dateto);
-    foreach ($selectors as $select) {
-        echo $OUTPUT->select($select);
-    }
+    $selectors = html_writer::select_time('days', 'fromday', $dateto)
+               . html_writer::select_time('months', 'frommonth', $dateto)
+               . html_writer::select_time('years', 'fromyear', $dateto)
+               . html_writer::select_time('hours', 'fromhour', $dateto)
+               . html_writer::select_time('minutes', 'fromminute', $dateto);
+    echo $selectors;
 
     echo '<input type="hidden" name="htoday" value="0" />';
     echo '<input type="hidden" name="htomonth" value="0" />';

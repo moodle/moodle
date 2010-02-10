@@ -113,9 +113,9 @@ if (!isset($frm->acceptechecktypes)) {
     <td align="right">an_cutoff:</td>
     <td><?php
         $curtime = make_timestamp(2000,1,1,$frm->an_cutoff_hour,$frm->an_cutoff_min);
-        $hourselector = html_select::make_time_selector('hours', 'an_cutoff_hour', $curtime);
-        $minselector = html_select::make_time_selector('minutes', 'an_cutoff_min', $curtime);
-        echo $OUTPUT->select($hourselector) . $OUTPUT->select($minselector);
+        $hourselector = html_writer::select_time('hours', 'an_cutoff_hour', $curtime);
+        $minselector = html_writer::select_time('minutes', 'an_cutoff_min', $curtime);
+        echo $hourselector . $minselector;
         ?><br />
         <?php print_string("cutofftime", "enrol_authorize") ?></td>
 </tr>

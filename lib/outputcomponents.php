@@ -789,6 +789,70 @@ class html_writer {
     }
 
     /**
+     * This is a shortcut for making an hour selector menu.
+     * @param string $type The type of selector (years, months, days, hours, minutes)
+     * @param string $name fieldname
+     * @param int $currenttime A default timestamp in GMT
+     * @param int $step minute spacing
+     * @param array $attributes - html select element attributes
+     * @return HTML fragment
+     */
+    public static function select_time($type, $name, $currenttime=0, $step=5, array $attributes=null) {
+        if (!$currenttime) {
+            $currenttime = time();
+        }
+        $currentdate = usergetdate($currenttime);
+        $userdatetype = $type;
+        $timeunits = array();
+
+        switch ($type) {
+            case 'years':
+                for ($i=1970; $i<=2020; $i++) {
+                    $timeunits[$i] = $i;
+                }
+                $userdatetype = 'year';
+                break;
+            case 'months':
+                for ($i=1; $i<=12; $i++) {
+                    $timeunits[$i] = userdate(gmmktime(12,0,0,$i,15,2000), "%B");
+                }
+                $userdatetype = 'month';
+                $currentdate['month'] = $currentdate['mon'];
+                break;
+            case 'days':
+                for ($i=1; $i<=31; $i++) {
+                    $timeunits[$i] = $i;
+                }
+                $userdatetype = 'mday';
+                break;
+            case 'hours':
+                for ($i=0; $i<=23; $i++) {
+                    $timeunits[$i] = sprintf("%02d",$i);
+                }
+                break;
+            case 'minutes':
+                if ($step != 1) {
+                    $currentdate['minutes'] = ceil($currentdate['minutes']/$step)*$step;
+                }
+
+                for ($i=0; $i<=59; $i+=$step) {
+                    $timeunits[$i] = sprintf("%02d",$i);
+                }
+                break;
+            default:
+                throw new coding_exception("Time type $type is not supported by html_writer::select_time().");
+        }
+
+        if (empty($attributes['id'])) {
+            $attributes['id'] = self::random_id('ts_');
+        }
+        $timerselector = self::select($timeunits, $name, $currentdate[$userdatetype], null, array('id'=>$attributes['id']));
+        $label = self::tag('label', array('for'=>$attributes['id'], 'class'=>'accesshide'), get_string(substr($type, 0, -1), 'form'));
+
+        return $label.$timerselector;
+    }
+
+    /**
      * Returns hidden input fields created from url parameters.
      * @param moodle_url $url
      * @param array $exclude list of excluded parameters
@@ -1372,87 +1436,6 @@ class html_select extends labelled_html_component {
         $menu->name = $name;
         $menu->selectedvalue = $selected;
         return $menu;
-    }
-
-    /**
-     * This is a shortcut for making an hour selector menu.
-     * @param string $type The type of selector (years, months, days, hours, minutes)
-     * @param string $name fieldname
-     * @param int $currenttime A default timestamp in GMT
-     * @param int $step minute spacing
-     * @return html_select A menu initialised with hour options.
-     */
-    public static function make_time_selector($type, $name, $currenttime=0, $step=5) {
-
-        if (!$currenttime) {
-            $currenttime = time();
-        }
-        $currentdate = usergetdate($currenttime);
-        $userdatetype = $type;
-
-        switch ($type) {
-            case 'years':
-                for ($i=1970; $i<=2020; $i++) {
-                    $timeunits[$i] = $i;
-                }
-                $userdatetype = 'year';
-                break;
-            case 'months':
-                for ($i=1; $i<=12; $i++) {
-                    $timeunits[$i] = userdate(gmmktime(12,0,0,$i,15,2000), "%B");
-                }
-                $userdatetype = 'month';
-                $currentdate['month'] = $currentdate['mon'];
-                break;
-            case 'days':
-                for ($i=1; $i<=31; $i++) {
-                    $timeunits[$i] = $i;
-                }
-                $userdatetype = 'mday';
-                break;
-            case 'hours':
-                for ($i=0; $i<=23; $i++) {
-                    $timeunits[$i] = sprintf("%02d",$i);
-                }
-                break;
-            case 'minutes':
-                if ($step != 1) {
-                    $currentdate['minutes'] = ceil($currentdate['minutes']/$step)*$step;
-                }
-
-                for ($i=0; $i<=59; $i+=$step) {
-                    $timeunits[$i] = sprintf("%02d",$i);
-                }
-                break;
-            default:
-                throw new coding_exception("Time type $type is not supported by html_select::make_time_selector().");
-        }
-
-        $timerselector = self::make($timeunits, $name, $currentdate[$userdatetype]);
-        $timerselector->label = new html_label();
-
-        $timerselector->label->text = get_string(substr($type, 0, -1), 'form');
-        $timerselector->label->for = "menu$timerselector->name";
-        $timerselector->label->add_class('accesshide');
-        $timerselector->nothinglabel = '';
-
-        return $timerselector;
-    }
-
-    /**
-     * Given an associative array of type => fieldname and an optional timestamp,
-     * returns an array of html_select components representing date/time selectors.
-     * @param array $selectors Arrays of type => fieldname. Selectors will be returned in the order of the types given
-     * @param int $currenttime A UNIX timestamp
-     * @param int $step minute spacing
-     * @return array Instantiated date/time selectors
-     */
-    public static function make_time_selectors($selectors, $currenttime=0, $step=5) {
-        $selects = array();
-        foreach ($selectors as $type => $name) {
-            $selects[] = html_select::make_time_selector($type, $name, $currenttime, $step);
-        }
-        return $selects;
     }
 
     /**

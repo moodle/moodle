@@ -298,11 +298,11 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     /// (some formats like main page, social..., haven't it and rolling dates
     /// from 0 produces crazy dates. MDL-10125
         if ($form1->startdate) {
-            $dayselector = html_select::make_time_selector('days', "startday", $form1->startdate);
-            $monthselector = html_select::make_time_selector('months', "startmonth", $form1->startdate);
-            $yearselector = html_select::make_time_selector('years', "startyear", $form1->startdate);
+            $dayselector = html_writer::select_time('days', "startday", $form1->startdate);
+            $monthselector = html_writer::select_time('months', "startmonth", $form1->startdate);
+            $yearselector = html_writer::select_time('years', "startyear", $form1->startdate);
 
-            echo $OUTPUT->select($dayselector) . $OUTPUT->select($monthselector) . $OUTPUT->select($yearselector);
+            echo $dayselector . $monthselector . $yearselector;
             echo $OUTPUT->help_icon("coursestartdate", get_string("startdate"));
         } else {
             print_string('notavailable');

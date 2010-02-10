@@ -170,7 +170,9 @@ if (!empty($allowedusers)) {
         //valid until date selector
         $contents .= "<div class=\"fitem\"><div class=\"fitemtitle\"><label>".get_string('validuntil','webservice')." </label></div><div class=\"felement\">";
         // the following date selector needs to have specific day/month/year field ids because we use javascript (enable/disable).
-        $selectors = html_select::make_time_selectors(array('days' => 'fromday'.$user->id,'months' => 'frommonth'.$user->id, 'years' => 'fromyear'.$user->id),$user->validuntil);
+        $selectors = html_writer::select_time('days', 'fromday'.$user->id, $user->validuntil)
+                   . html_writer::select_time('months', 'frommonth'.$user->id, $user->validuntil)
+                   . html_writer::select_time('years', 'fromyear'.$user->id, $user->validuntil);
         foreach ($selectors as $select) {
             if (empty($user->validuntil)) {
                 $select->disabled = true;

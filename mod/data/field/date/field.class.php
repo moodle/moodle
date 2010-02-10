@@ -44,10 +44,10 @@ class data_field_date extends data_field_base {
         }
 
         $str = '<div title="'.s($this->field->description).'">';
-        $dayselector = html_select::make_time_selector('days', 'field_'.$this->field->id.'_day', $content);
-        $monthselector = html_select::make_time_selector('months', 'field_'.$this->field->id.'_month', $content);
-        $yearselector = html_select::make_time_selector('years', 'field_'.$this->field->id.'_year', $content);
-        $str .= $OUTPUT->select($dayselector) . $OUTPUT->select($monthselector) . $OUTPUT->select($yearselector);
+        $dayselector = html_writer::select_time('days', 'field_'.$this->field->id.'_day', $content);
+        $monthselector = html_writer::select_time('months', 'field_'.$this->field->id.'_month', $content);
+        $yearselector = html_writer::select_time('years', 'field_'.$this->field->id.'_year', $content);
+        $str .= $dayselector . $monthselector . $yearselector;
         $str .= '</div>';
 
         return $str;
