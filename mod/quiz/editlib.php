@@ -604,7 +604,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
                 if (!$reordertool && !$quiz->shufflequestions) {
                     echo $OUTPUT->container_start('addpage');
                     $url = new moodle_url($pageurl->out_omit_querystring(), array('cmid' => $quiz->cmid, 'courseid' => $quiz->course, 'addpage' => $count, 'sesskey' => sesskey()));
-                    echo $OUTPUT->single_button($url, get_string('addpagehere', 'quiz'), 'get', $hasattempts);
+                    echo $OUTPUT->single_button($url, get_string('addpagehere', 'quiz'), 'get', array('disabled'=>$hasattempts));
                     echo $OUTPUT->container_end();
                 }
                 $pageopen = false;
