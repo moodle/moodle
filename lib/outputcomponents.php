@@ -1499,50 +1499,6 @@ class html_select extends labelled_html_component {
     }
 
     /**
-     * Override the URLs of the default popup_form, which only supports one base URL
-     * @param array $options value=>label pairs representing select options
-     * @return void
-     */
-    public function override_option_values($options) {
-        // TODO: this is ugly hack because components shoudl never touch global $PAGE with the exception in prepare(),
-        //       in any case this methods needs to be revisited because it does not make much sense to use the same $menu in
-        //       html_select::make_popup_form() and then again in this method!
-        global $PAGE; //TODO: remove
-
-        $originalcount = count($options);
-        $this->initialise_options();
-        $newcount = count($this->options);
-        $first = true;
-
-        reset($options);
-
-        foreach ($this->options as $optkey => $optgroup) {
-            if ($optgroup instanceof html_select_optgroup) {
-                foreach ($optgroup->options as $key => $option) {
-                    next($options);
-                    $this->options[$optkey]->options[$key]->value = key($options);
-
-                    $optionurl = new moodle_url(key($options));
-
-                    if ($optionurl->compare($PAGE->url, URL_MATCH_PARAMS)) {
-                        $this->options[$optkey]->options[$key]->selected = 'selected';
-                    }
-                }
-                next($options);
-            } else if ($optgroup instanceof html_select_option && !($first && $originalcount < $newcount)) {
-                $this->options[$optkey]->value = key($options);
-                $optionurl = new moodle_url(key($options));
-
-                if ($optionurl->compare($PAGE->url, URL_MATCH_PARAMS)) {
-                    $this->options[$optkey]->selected = 'selected';
-                }
-                next($options);
-            }
-            $first = false;
-        }
-    }
-
-    /**
      * Adds a help icon next to the select menu.
      *
      * <pre>

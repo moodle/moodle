@@ -230,7 +230,6 @@
             } else {
                 $strsection = get_string("topic");
             }
-            $section = -1;
             $forummenu = array();
             foreach ($modinfo->instances['forum'] as $forumcm) {
                 if (!$forumcm->uservisible || !has_capability('mod/forum:startdiscussion',
@@ -238,37 +237,20 @@
                     continue;
                 }
 
-                if (!empty($forumcm->sectionnum) and $section != $forumcm->sectionnum) {
-                    $forummenu[] = "-------------- $strsection $forumcm->sectionnum --------------";
-                }
                 $section = $forumcm->sectionnum;
+                if (empty($forummenu[$section])) {
+                    $forummenu[$section] = array("$strsection $section" => array());
+                }
                 if ($forumcm->instance != $forum->id) {
-                    $url = $CFG->wwwroot . "/mod/forum/discuss.php?d=$discussion->id&move=$forumcm->instance&sesskey=".sesskey();
-                    $forummenu[$url] = format_string($forumcm->name);
+                    $url = "/mod/forum/discuss.php?d=$discussion->id&move=$forumcm->instance&sesskey=".sesskey();
+                    $forummenu[$section]["$strsection $section"][$url] = format_string($forumcm->name);
                 }
             }
             if (!empty($forummenu)) {
 
-                // Check for empty groups... This can occur if there is the forum we are in is
-                // the only forum within its course section.
-                foreach ($forummenu as $key=>$item) {
-                    // If this option is a group and the next option is a group OR it is
-                    // the last item in the array then remove it... or we get an exception
-                    if (strpos($item, '--------------')===0 && (!array_key_exists($key+1, $forummenu) || strpos($forummenu[$key+1], '--------------')===0)) {
-                        // Remember foreach acts on a copy of the array so things
-                        // will not get out of order
-                        unset($forummenu[$key]);
-                    }
-                }
-
                 echo "<div style=\"float:right;\">";
-                $select = html_select::make_popup_form('', '', $forummenu, 'forummenu');
-                $select->nothinglabel = get_string("movethisdiscussionto", "forum");
-                $select->form->button->text = get_string('move');
-
-                $select->override_option_values($forummenu);
-
-                echo $OUTPUT->select($select);
+                $select = new url_select($forummenu, '', array(''=>get_string("movethisdiscussionto", "forum")), 'forummenu');
+                echo $OUTPUT->render($select);
                 echo "</div>";
             }
         }

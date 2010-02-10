@@ -332,7 +332,7 @@ function print_graded_users_selector($course, $actionpage, $userid=0, $groupid=0
  *
  * @return nothing or string if $return true
  */
-function print_grade_plugin_selector($plugin_info, $return=false) {
+function print_grade_plugin_selector($plugin_info, $active_type, $active_plugin, $return=false) {
     global $CFG, $OUTPUT, $PAGE;
 
     $menu = array();
@@ -346,25 +346,33 @@ function print_grade_plugin_selector($plugin_info, $return=false) {
 
         $first_plugin = reset($plugins);
 
-        $menu[$first_plugin->link.'&'] = '--'.$plugin_info['strings'][$plugin_type];
-
-        if (empty($plugins->id)) {
-            foreach ($plugins as $plugin) {
-                $menu[$plugin->link] = $plugin->string;
-                $count++;
+        $sectionname = $plugin_info['strings'][$plugin_type];
+        $section = array();
+        
+        foreach ($plugins as $plugin) {
+            // TODO: this is messy, fix plugin_info instead...
+            $link = str_replace($CFG->wwwroot, '', $plugin->link);
+            $link = str_replace('&amp;', '&', $link);
+            $section[$link] = $plugin->string;
+            $count++;
+            if ($plugin_type === $active_type and $plugin->id === $active_plugin) {
+                $active = $link;
             }
+        }
+
+        if ($section) {
+            $menu[] = array($sectionname=>$section);
         }
     }
 
     // finally print/return the popup form
     if ($count > 1) {
-        $select = html_select::make_popup_form('', '', $menu, 'choosepluginreport', '');
-        $select->override_option_values($menu);
+        $select = new url_select($menu, $active, null, 'choosepluginreport');
 
         if ($return) {
-            return $OUTPUT->select($select);
+            return $OUTPUT->render($select);
         } else {
-            echo $OUTPUT->select($select);
+            echo $OUTPUT->render($select);
         }
     } else {
         // only one option - no plugin selector needed
@@ -865,7 +873,7 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
     }
 
     if ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_DROPDOWN) {
-        $returnval .= print_grade_plugin_selector($plugin_info, $return);
+        $returnval .= print_grade_plugin_selector($plugin_info, $active_type, $active_plugin, $return);
     }
     $returnval .= $OUTPUT->heading($heading);
 
