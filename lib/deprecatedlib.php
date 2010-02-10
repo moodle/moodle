@@ -3309,42 +3309,35 @@ function print_date_selector($day, $month, $year, $currenttime=0, $return=false)
  */
 function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false,
     $targetwindow='self', $selectlabel='', $optionsextra=NULL, $submitvalue='', $disabled=false, $showbutton=false) {
-    global $OUTPUT;
+    global $OUTPUT, $CFG;
 
-    // debugging('popup_form() has been deprecated. Please change your code to use $OUTPUT->select($select).');
+    debugging('popup_form() has been deprecated. Please change your code to use $OUTPUT->single_select() or $OUTPUT->url_select().');
 
     if (empty($options)) {
         return '';
     }
 
-    // Extract the last param in the baseurl
-    $name = null;
-    if (preg_match('/([a-zA-Z0-9\-_]*)=$/', $baseurl, $matches)) {
-        $name = $matches[1];
+    $urls = array();
+
+    foreach ($options as $value=>$label) {
+        $url = $baseurl.$value;
+        $url = str_replace($CFG->wwwroot, '', $url);
+        $url = str_replace('&amp;', '&', $url);
+        $urls[$url] = $label;
+        if ($selected == $value) {
+            $active = $url;
+        }
     }
 
-    $baseurl = new moodle_url($baseurl);
-    $select = html_select::make_popup_form($baseurl, $name, $options, $formid, $selected);
+    $nothing = $nothing ? array(''=>$nothing) : null;
+
+    $select = new url_select($urls, $active, $nothing, $formid);
     $select->disabled = $disabled;
-
-    if (!empty($submitvalue)) {
-        $select->form->button->text = $submitvalue;
-    }
-
-    if (!empty($optionsextra)) {
-        // debugging('The $optionsextra (11th) param to popup_form is not supported, please improve your code.', DEBUG_DEVELOPER);
-    }
-
-    if ($nothing == 'choose') {
-        $select->nothinglabel = '';
-    } else {
-        $select->nothinglabel = $nothing;
-    }
 
     $select->set_label($selectlabel);
     $select->set_help_icon($help, $helptext);
 
-    $output = $OUTPUT->select($select);
+    $output = $OUTPUT->render($select);
 
     if ($return) {
         return $output;

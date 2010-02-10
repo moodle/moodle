@@ -1454,51 +1454,6 @@ class html_select extends labelled_html_component {
     }
 
     /**
-     * This is a shortcut for making a select popup form.
-     * @param mixed $baseurl The target URL, string or moodle_url
-     * @param string $name The variable which this select's options are changing in the URL
-     * @param array $options A list of value-label pairs for the popup list
-     * @param string $formid id for the control. Must be unique on the page. Used in the HTML.
-     * @param string $selected The option that is initially selected
-     * @return html_select A menu initialised as a popup form.
-     */
-    public static function make_popup_form($baseurl, $name, $options, $formid, $selected=null) {
-        global $CFG;
-
-        $selectedurl = null;
-
-        if (!($baseurl instanceof moodle_url)) {
-            $baseurl = new moodle_url($baseurl);
-        }
-
-        if (!empty($selected)) {
-            $selectedurl = $baseurl->out(false, array($name => $selected));
-        }
-
-        // Replace real value by formatted URLs
-        foreach ($options as $value => $label) {
-            $options[$baseurl->out(false, array($name => $value))] = $label;
-            unset($options[$value]);
-        }
-
-        $select = self::make($options, 'jump', $selectedurl);
-
-        $select->form = new html_form();
-        $select->form->id = $formid;
-        $select->form->method = 'get';
-        $select->form->jssubmitaction = true;
-        $select->form->add_class('popupform');
-        $select->form->url = new moodle_url('/course/jumpto.php', array('sesskey' => sesskey()));
-        $select->form->button->text = get_string('go');
-
-        $select->id = $formid . '_jump';
-
-        $select->add_action('change', 'submit_form_by_id', array('id' => $formid, 'selectid' => $select->id));
-
-        return $select;
-    }
-
-    /**
      * Adds a help icon next to the select menu.
      *
      * <pre>
