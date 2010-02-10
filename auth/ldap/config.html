@@ -185,7 +185,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 <tr valign="top" class="required">
     <td align="right"><label for="menusearch_sub"><?php print_string('auth_ldap_search_sub_key','auth_ldap') ?></label></td>
     <td>
-        <?php html_writer::select($yesno, 'search_sub', $config->search_sub, false); ?>
+        <?php echo html_writer::select($yesno, 'search_sub', $config->search_sub, false); ?>
     </td>
     <td>
     <?php print_string('auth_ldap_search_sub','auth_ldap') ?>
