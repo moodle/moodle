@@ -21,7 +21,7 @@ if (!$authplugin->can_confirm()) {
 if (!empty($data) || (!empty($p) && !empty($s))) {
 
     if (!empty($data)) {
-        $dataelements = explode('/',$data);
+        $dataelements = explode('/',$data, 2); // Stop after 1st slash. Rest is username. MDL-7647
         $usersecret = $dataelements[0];
         $username   = $dataelements[1];
     } else {
