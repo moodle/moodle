@@ -24,6 +24,21 @@
  */
 
 require_once("$CFG->dirroot/webservice/lib.php");
+require_once( "{$CFG->dirroot}/webservice/amf/introspector.php");
+
+/**
+ * Exception indicating an invalid return value from a function.
+ * Used when an externallib function does not return values of the expected structure. 
+ */
+class invalid_return_value_exception extends moodle_exception {
+    /**
+     * Constructor
+     * @param string $debuginfo some detailed information
+     */
+    function __construct($debuginfo=null) {
+        parent::__construct('invalidreturnvalue', 'debug', '', null, $debuginfo);
+    }
+}
 
 /**
  * AMF service server implementation.
@@ -39,7 +54,108 @@ class webservice_amf_server extends webservice_zend_server {
         parent::__construct($simple, 'Zend_Amf_Server');
         $this->wsname = 'amf';
     }
+    protected function init_service_class(){
+    	parent::init_service_class();
+        //allow access to data about methods available.
+        $this->zend_server->setClass( "MethodDescriptor" );
+        MethodDescriptor::$classnametointrospect = $this->service_class;
+    }
+    
+    protected function service_class_method_body($function, $params){
+    	$params = "webservice_amf_server::cast_objects_to_array($params)";
+    	$externallibcall = $function->classname.'::'.$function->methodname.'('.$params.')';
+    	$descriptionmethod = $function->methodname.'_returns()';
+    	$callforreturnvaluedesc = $function->classname.'::'.$descriptionmethod;
+    	return
+'        return webservice_amf_server::validate_and_cast_values('.$callforreturnvaluedesc.', '.$externallibcall.', true)';
+    }
+    /**
+     * Validates submitted value, comparing it to a description. If anything is incorrect
+     * invalid_return_value_exception is thrown. Also casts the values to the type specified in
+     * the description.
+     * @param external_description $description description of parameters
+     * @param mixed $value the actual values
+     * @param boolean $singleasobject specifies whether a external_single_structure should be cast to a stdClass object
+     *                                 should always be false for use in validating parameters in externallib functions.
+     * @return mixed params with added defaults for optional items, invalid_parameters_exception thrown if any problem found
+     */
+    public static function validate_and_cast_values(external_description $description, $value) {
+    	if (is_null($description)){
+    		return $value;
+    	}
+        if ($description instanceof external_value) {
+            if (is_array($value) or is_object($value)) {
+                throw new invalid_return_value_exception('Scalar type expected, array or object received.');
+            }
 
+            if ($description->type == PARAM_BOOL) {
+                // special case for PARAM_BOOL - we want true/false instead of the usual 1/0 - we can not be too strict here ;-)
+                if (is_bool($value) or $value === 0 or $value === 1 or $value === '0' or $value === '1') {
+                    return (bool)$value;
+                }
+            }
+            return validate_param($value, $description->type, $description->allownull, 'Invalid external api parameter');
+
+        } else if ($description instanceof external_single_structure) {
+            if (!is_array($value)) {
+                throw new invalid_return_value_exception('Only arrays accepted.');
+            }
+            $result = array();
+            foreach ($description->keys as $key=>$subdesc) {
+                if (!array_key_exists($key, $value)) {
+                    if ($subdesc->required == VALUE_REQUIRED) {
+                        throw new invalid_return_value_exception('Missing required key in single structure: '.$key);
+                    }
+                    if ($subdesc instanceof external_value) {
+                            if ($subdesc->required == VALUE_DEFAULT) {
+                                $result[$key] = self::validate_and_cast_values($subdesc, $subdesc->default);
+                            }
+                    }
+                } else {
+                    $result[$key] = self::validate_and_cast_values($subdesc, $value[$key]);
+                }
+                unset($value[$key]);
+            }
+            if (!empty($value)) {
+                throw new invalid_return_value_exception('Unexpected keys detected in parameter array.');
+            }
+            return (object)$result;
+
+        } else if ($description instanceof external_multiple_structure) {
+            if (!is_array($value)) {
+                throw new invalid_return_value_exception('Only arrays accepted.');
+            }
+            $result = array();
+            foreach ($value as $param) {
+                $result[] = self::validate_and_cast_values($description->content, $param);
+            }
+            return $result;
+
+        } else {
+            throw new invalid_return_value_exception('Invalid external api description.');
+        }
+    }    
+	/**
+	 * Recursive function to recurse down into a complex variable and convert all
+	 * objects to arrays. Doesn't recurse down into objects or cast objects other than stdClass
+	 * which is represented in Flash / Flex as an object. 
+	 * @param mixed $params value to cast
+	 * @return mixed Cast value
+	 */
+	public static function cast_objects_to_array($params){
+		if ($params instanceof stdClass){
+			$params = (array)$params;
+		}
+		if (is_array($params)){
+			$toreturn = array();
+			foreach ($params as $key=> $param){
+				$toreturn[$key] = self::cast_objects_to_array($param);
+			}
+			return $toreturn;
+		} else {
+			return $params;
+		}
+	}
     /**
      * Set up zend service class
      * @return void
@@ -50,6 +166,8 @@ class webservice_amf_server extends webservice_zend_server {
                                                  //(complete error message displayed into your AMF client)
         // TODO: add some exception handling
     }
+
+
 }
 
 // TODO: implement AMF test client somehow, maybe we could use moodle form to feed the data to the flash app somehow

@@ -1,20 +1,23 @@
 <?php
 require "../../../config.php";
 
-die('TODO');
 
-$args['movie'] = $CFG->wwwroot.'/webservice/amf/testclient/moodleclient.swf';
-$args['width'] = '100%';
-$args['height'] = 500;
-$args['majorversion'] = 9;
-$args['build'] = 0;
-$args['allowscriptaccess'] = 'never';
-$args['quality'] = 'high';
-$args['flashvars'] = 'amfurl='.$CFG->wwwroot.'/webservice/amf/server.php';
-$args['setcontainercss'] = 'true';
+$flashvars = new object();
+$flashvars->rooturl =$CFG->wwwroot;
 
-$PAGE->requires->js('/lib/ufo.js');
-$PAGE->requires->js_function_call('M.util.create_UFO_object', array('moodletestclient', $args));
+
+$PAGE->requires->js('/lib/swfobject/swfobject.js', true);
+
+$PAGE->requires->js_function_call('swfobject.embedSWF', 
+				array($CFG->wwwroot.'/webservice/amf/testclient/AMFTester.swf', //movie
+					'moodletestclient', // div id
+					'100%', // width
+					'1000', // height
+					'9.0', // version
+					false,//no express install swf
+					$flashvars), //flash vars
+				true
+			);
 
 $PAGE->set_title('Test Client');
 $PAGE->set_heading('Test Client');

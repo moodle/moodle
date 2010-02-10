@@ -408,6 +408,8 @@ class '.$classname.' {
         }
         $params      = implode(', ', $params);
         $params_desc = implode("\n", $params_desc);
+        
+        $serviceclassmethodbody = $this->service_class_method_body($function, $params);
 
         if (is_null($function->returns_desc)) {
             $return = '     * @return void';
@@ -441,12 +443,24 @@ class '.$classname.' {
 '.$return.'
      */
     public function '.$function->name.'('.$params.') {
-        return '.$function->classname.'::'.$function->methodname.'('.$params.');
+'.$serviceclassmethodbody.';
     }
 ';
         return $code;
     }
-
+    
+    /**
+     * You can override this function in your child class to add extra code into the dynamically
+     * created service class. For example it is used in the amf server to cast types of parameters and to
+     * cast the return value to the types as specified in the return value description.
+     * @param unknown_type $function
+     * @param unknown_type $params
+     * @return string body of the method for $function ie. everything within the {} of the method declaration.
+     */
+    protected function service_class_method_body($function, $params){
+    	return '        return '.$function->classname.'::'.$function->methodname.'('.$params.')';
+    }
+    
     /**
      * Set up zend service class
      * @return void
