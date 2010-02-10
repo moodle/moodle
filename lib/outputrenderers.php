@@ -1082,7 +1082,7 @@ class core_renderer extends renderer_base {
     }
 
     /**
-     * Returns a form with a single button.
+     * Returns a form with a single select widget.
      * @param moodle_url $url form action target, includes hidden fields
      * @param string $name name of selection field - the changing parameter in url
      * @param array $options list of options
@@ -1162,7 +1162,7 @@ class core_renderer extends renderer_base {
     }
 
     /**
-     * Returns a form with a single button.
+     * Returns a form with a url select widget.
      * @param array $urls list of urls - array('/course/view.php?id=1'=>'Frontpage', ....)
      * @param string $selected selected element
      * @param array $nothing
@@ -1175,7 +1175,7 @@ class core_renderer extends renderer_base {
     }
 
     /**
-     * Internal implementation of single_select rendering
+     * Internal implementation of url_select rendering
      * @param single_select $select
      * @return string HTML fragment
      */
