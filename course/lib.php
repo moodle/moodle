@@ -1577,6 +1577,8 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     static $resources = false;
     static $activities = false;
 
+    $urlbase = "/course/mod.php?id=$course->id&section=$section&sesskey=".sesskey().'&add=';
+
     if ($resources === false) {
         $resources = array();
         $activities = array();
@@ -1593,27 +1595,46 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
             include_once($libfile);
             $gettypesfunc =  $modname.'_get_types';
             if (function_exists($gettypesfunc)) {
-                $types = $gettypesfunc();
-
-                foreach($types as $type) {
-                    $type->type = str_replace('&amp;', '&', $type->type);
-                    if (!isset($type->modclass) or !isset($type->typestr)) {
-                        debugging('Incorrect activity type in '.$modname);
-                        continue;
+                // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
+                if ($types = $gettypesfunc()) {
+                    $menu = array();
+                    $atype = null;
+                    $groupname = null;
+                    foreach($types as $type) {
+                    if ($type->typestr === '--') {
+                            continue;
+                        }
+                        if (strpos($type->typestr, '--') === 0) {
+                            $groupname = str_replace('--', '', $type->typestr);
+                            continue;
+                        }
+                        $type->type = str_replace('&amp;', '&', $type->type);
+                        if ($type->modclass == MOD_CLASS_RESOURCE) {
+                            $atype = MOD_CLASS_RESOURCE;
+                        }
+                        $menu[$urlbase.$type->type] = $type->typestr;
                     }
-                    if ($type->modclass == MOD_CLASS_RESOURCE) {
-                        $resources[$type->type] = $type->typestr;
+                    if (!is_null($groupname)) {
+                        if ($atype == MOD_CLASS_RESOURCE) {
+                            $resources[] = array($groupname=>$menu);
+                        } else {
+                            $activities[] = array($groupname=>$menu);
+                        }
                     } else {
-                        $activities[$type->type] = $type->typestr;
+                        if ($atype == MOD_CLASS_RESOURCE) {
+                            $resources = array_merge($resources, $menu);
+                        } else {
+                            $activities = array_merge($activities, $menu);
+                        }
                     }
                 }
             } else {
                 $archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
                 if ($archetype == MOD_ARCHETYPE_RESOURCE) {
-                    $resources[$modname] = $modnamestr;
+                    $resources[$urlbase.$modname] = $modnamestr;
                 } else {
                     // all other archetypes are considered activity
-                    $activities[$modname] = $modnamestr;
+                    $activities[$urlbase.$modname] = $modnamestr;
                 }
             }
         }
@@ -1628,20 +1649,16 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
         $output .= '<div class="horizontal">';
     }
 
-    $popupurl = "$CFG->wwwroot/course/mod.php?id=$course->id&section=$section&sesskey=".sesskey();
-
     if (!empty($resources)) {
-        $select = html_select::make_popup_form($popupurl, 'add', $resources, "ressection$section", null);
-        $select->nothinglabel = $straddresource;
+        $select = new url_select($resources, '', array(''=>$straddresource), "ressection$section");
         $select->set_help_icon('resource/types', $straddresource);
-        $output .= $OUTPUT->select($select);
+        $output .= $OUTPUT->render($select);
     }
 
     if (!empty($activities)) {
-        $select = html_select::make_popup_form($popupurl, 'add', $activities, "section$section", null);
-        $select->nothinglabel = $straddactivity;
+        $select = new url_select($activities, '', array(''=>$straddactivity), "section$section");
         $select->set_help_icon('mods', $straddactivity);
-        $output .= $OUTPUT->select($select);
+        $output .= $OUTPUT->render($select);
     }
 
     if (!$vertical) {

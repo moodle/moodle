@@ -164,21 +164,6 @@ function label_get_post_actions() {
 }
 
 /**
- * @return object
- */
-function label_get_types() {
-    $types = array();
-
-    $type = new object();
-    $type->modclass = MOD_CLASS_RESOURCE;
-    $type->type = "label";
-    $type->typestr = get_string('resourcetypelabel', 'resource');
-    $types[] = $type;
-
-    return $types;
-}
-
-/**
  * This function is used by the reset_course_userdata function in moodlelib.
  *
  * @param object $data the data submitted from the reset course.
@@ -219,6 +204,7 @@ function label_supports($feature) {
         case FEATURE_COMPLETION_TRACKS_VIEWS: return false;
         case FEATURE_GRADE_HAS_GRADE:         return false;
         case FEATURE_GRADE_OUTCOMES:          return false;
+        case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
 
         default: return null;
     }
