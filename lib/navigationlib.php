@@ -1754,11 +1754,8 @@ class global_navigation extends navigation_node {
 
         $selectedstructure = optional_param($activeparam,false,PARAM_INT);
 
-        // This is required to make sure that if people have reduced the number
-        // of sections after adding activities to sections that no longer exist
-        // we dont show them
-        // MDL-20242
-        $sections = array_slice($sections, 0, $course->numsections, true);
+        // MDL-20242 + MDL-21564
+        $sections = array_slice($sections, 0, $course->numsections+1, true);
 
         foreach ($sections as $section) {
             if ((!$viewhiddensections && !$section->visible) || (!$this->showemptybranches && !array_key_exists($section->section, $modinfo->sections))) {
