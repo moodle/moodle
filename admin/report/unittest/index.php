@@ -105,7 +105,7 @@ echo '<fieldset class="invisiblefieldset">';
 echo '<p>'.html_writer::checkbox('showpasses', 1, $showpasses, get_string('showpasses', 'simpletest')).'</p>';
 echo '<p>'.html_writer::checkbox('showsearch', 1, $showsearch, get_string('showsearch', 'simpletest')).'</p>';
 if (moodle_coverage_recorder::can_run_codecoverage()) {
-    echo '<p>'.html_writer::checkbox('showsearch', 1, $codecoverage, get_string('codecoverageanalysis', 'simpletest')).'</p>';
+    echo '<p>'.html_writer::checkbox('codecoverage', 1, $codecoverage, get_string('codecoverageanalysis', 'simpletest')).'</p>';
 } else {
     echo '<p>'; print_string('codecoveragedisabled', 'simpletest'); echo '<input type="hidden" name="codecoverage" value="0" /></p>';
 }
