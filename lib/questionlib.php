@@ -2514,9 +2514,12 @@ function question_category_options($contexts, $top = false, $currentcat = 0, $po
     if ($popupform){
         $popupcats = array();
         foreach ($categoriesarray as $contextstring => $optgroup){
-            $popupcats[] = '--'.$contextstring;
-            $popupcats = array_merge($popupcats, $optgroup);
-            $popupcats[] = '--';
+            $group = array();
+            foreach ($optgroup as $key=>$value) {
+                $key = str_replace($CFG->wwwroot, '', $key); 
+                $group[$key] = $value;                
+            }
+            $popupcats[] = array($contextstring=>$group);
         }
         return $popupcats;
     } else {
