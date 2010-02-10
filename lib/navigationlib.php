@@ -2692,39 +2692,37 @@ class settings_navigation extends navigation_node {
      *
      * This function loads the site administration tree by using the lib/adminlib library functions
      *
-     * @param navigation_node $referencebranch A reference to a branch in the settings
+     * @param null|navigation_node $referencebranch A reference to a branch in the settings
      *      navigation tree
-     * @param null|object $adminbranch The branch to add, if null generate the admin
+     * @param null|part_of_admin_tree $adminbranch The branch to add, if null generate the admin
      *      tree and start at the beginning
      * @return mixed A key to access the admin tree by
      */
-    protected function load_administration_settings($referencebranch=null, $adminbranch=null) {
-        global $CFG, $OUTPUT, $FULLME;
+    protected function load_administration_settings(navigation_node $referencebranch=null, part_of_admin_tree $adminbranch=null) {
+        global $CFG, $OUTPUT, $FULLME, $PAGE;
+
         // Check if we are just starting to generate this navigation.
         if ($referencebranch === null) {
-            // Check if we have cached an appropriate generation of the admin branch
-            if (!$this->cache->cached('adminbranch')) {
-                // We dont have a cached admin branch for this page so regenerate
-                if (!function_exists('admin_get_root')) {
-                    require_once($CFG->dirroot.'/lib/adminlib.php');
-                }
-                $adminroot = admin_get_root(false, false);
-                $branchkey = $this->add(get_string('administrationsite'), null, self::TYPE_SETTING);
-                $referencebranch = $this->get($branchkey);
-                foreach ($adminroot->children as $adminbranch) {
-                    $this->load_administration_settings($referencebranch, $adminbranch);
-                }
-                $this->cache->adminbranch = $this->get($branchkey);
-            } else {
-                // We have a cached admin branch so we simply need to stick it back in the tree
-                $adminbranch = $this->cache->adminbranch;
-                $outcome = $adminbranch->reiterate_active_nodes();
-                $branchkey = count($this->children);
-                $adminbranch->key = $branchkey;
-                $this->nodetype = self::NODETYPE_BRANCH;
-                $this->children[$branchkey] = $adminbranch;
+
+            if (!function_exists('admin_get_root')) {
+                require_once($CFG->dirroot.'/lib/adminlib.php');
             }
-            // Return the branch key
+            $adminroot = admin_get_root(false, false);
+            $branchkey = $this->add(get_string('administrationsite'), null, self::TYPE_SETTING);
+            $referencebranch = $this->get($branchkey);
+            foreach ($adminroot->children as $adminbranch) {
+                $this->load_administration_settings($referencebranch, $adminbranch);
+            }
+
+            if (!$this->contains_active_node()) {
+                $section = $PAGE->url->param('section');
+                if ($current = $adminroot->locate($section, true)) {
+                    if ($child = $this->find_child($current->name, self::TYPE_SETTING)) {
+                        $child->make_active();
+                    }
+                }
+            }
+
             return $branchkey;
         } else if ($adminbranch->check_access()) {
             // We have a reference branch that we can access and is not hidden `hurrah`
@@ -2738,7 +2736,7 @@ class settings_navigation extends navigation_node {
             }
 
             // Add the branch
-            $branchkey = $referencebranch->add($adminbranch->visiblename, $url, self::TYPE_SETTING, null, null, $icon);
+            $branchkey = $referencebranch->add($adminbranch->visiblename, $url, self::TYPE_SETTING, null, $adminbranch->name, $icon);
             $reference = $referencebranch->get($branchkey);
 
             if ($adminbranch->is_hidden()) {
