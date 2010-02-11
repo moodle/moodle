@@ -1542,7 +1542,7 @@ class grade_structure {
             $strparamobj->itemname = $element['object']->grade_item->itemname;
             $strnonunlockable = get_string('nonunlockableverbose', 'grades', $strparamobj);
 
-            $action = $OUTPUT->image('t/unlock_gray', array('alt'=>$strnonunlockable, 'title'=>$strnonunlockable, 'class'=>'iconsmall'));
+            $action = $OUTPUT->pix_icon('t/unlock_gray', $strnonunlockable);
 
         } else if ($element['object']->is_locked()) {
             $type = 'unlock';

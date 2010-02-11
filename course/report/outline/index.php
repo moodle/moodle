@@ -107,7 +107,7 @@
             $activitycell = new html_table_cell();
             $activitycell->add_class('activity');
 
-            $activityicon = $OUTPUT->image($OUTPUT->pix_url('icon', $cm->modname), array('alt'=>$modulename, 'class'=>'icon'));
+            $activityicon = $OUTPUT->pix_icon('icon', $modulename, $cm->modname, array('class'=>'icon'));
 
             $attributes = array();
             if (!$cm->visible) {

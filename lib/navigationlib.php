@@ -412,7 +412,7 @@ class navigation_node {
         }
 
         if ($this->icon!==null) {
-            $icon = $OUTPUT->image($this->icon, array('alt'=>'', 'class'=>'icon'));
+            $icon = $OUTPUT->pix_icon($this->icon, '', 'moodle', array('class'=>'icon'));
             $content = $icon.$content; // use CSS for spacing of icons
         } else if ($this->helpbutton!==null) {
             $content = sprintf('%s<span class="clearhelpbutton">%s</span>',trim($this->helpbutton),$content);

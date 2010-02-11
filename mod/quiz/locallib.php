@@ -823,7 +823,7 @@ function quiz_question_preview_button($quiz, $question, $label = false) {
     }
 
     // Build the icon.
-    $image = $OUTPUT->image($OUTPUT->pix_url('t/preview'), array('class'=>'iconsmall', 'alt'=>$strpreviewquestion));
+    $image = $OUTPUT->pix_icon('t/preview', $strpreviewquestion);
 
     $link = new html_link($CFG->wwwroot."/question/preview.php?id=$question->id&quizid=$quiz->id", $image, array('title' => $strpreviewquestion));
     parse_str(QUESTION_PREVIEW_POPUP_OPTIONS, $options);

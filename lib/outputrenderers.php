@@ -1225,10 +1225,9 @@ class core_renderer extends renderer_base {
     public function doc_link($path, $text) {
         global $CFG;
 
-        $options = array('class'=>'iconhelp', 'alt'=>$text);
-        $url = new moodle_url(get_docs_url($path));
+        $icon = $this->pix_icon('docs', $text, 'moodle', array('class'=>'iconhelp'));
 
-        $icon = $this->image('docs', $options);
+        $url = new moodle_url(get_docs_url($path));
 
         $link = new html_link($url, $icon.$text);
 
@@ -1237,6 +1236,30 @@ class core_renderer extends renderer_base {
         }
 
         return $this->link($link);
+    }
+
+    /**
+     * Render icon
+     * @param string $pix short pix name
+     * @param string $alt mandatory alt attribute
+     * @param strin $component standard compoennt name like 'moodle', 'mod_form', etc.
+     * @param array $attributes htm lattributes
+     * @return string HTML fragment
+     */
+    public function pix_icon($pix, $alt, $component='moodle', array $attributes = null) {
+        $icon = new pix_icon($pix, $alt, $component, $attributes);
+        return $this->render($icon);
+    }
+
+    /**
+     * Render icon
+     * @param pix_icon $icon
+     * @return string HTML fragment
+     */
+    public function render_icon(pix_icon $icon) {
+        $attributes = $icon->attributes;
+        $attributes['src'] = $this->pix_url($icon->pix, $icon->component);
+        return html_writer::empty_tag('img', $atrributes);
     }
 
     /**

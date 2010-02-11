@@ -181,6 +181,40 @@ class help_icon implements renderable {
 
 
 /**
+ * Data structure representing an icon.
+ *
+ * @copyright 2010 Petr Skoda
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class pix_icon implements renderable {
+    var $pix;
+    var $component;
+    var $attributes = array();
+
+    /**
+     * Constructor
+     * @param string $pix short icon name
+     * @param string $component component name
+     * @param array $attributes html attributes
+     */
+    public function __construct($pix, $alt, $component='moodle', array $attributes = null) {
+        $this->icon       = $pix;
+        $this->compondent = $component;
+        $this->attributes = (array)$attributes;
+
+        $this->attributes['alt'] = $alt;
+        if (empty($this->attributes['class'])) {
+            $this->attributes['class'] = 'smallicon';
+        }
+        if (!isset($this->attributes['title'])) {
+            $this->attributes['title'] = $this->attributes['alt'];
+        }
+    }
+}
+
+
+/**
  * Data structure representing a simple form with only one button.
  *
  * @copyright 2009 Petr Skoda

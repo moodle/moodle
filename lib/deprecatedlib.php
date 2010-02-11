@@ -2653,7 +2653,7 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
  *
  */
 function print_png() {
-    throw new coding_exception('print_png() has been deprecated since Moodle 2.0. Please use $OUTPUT->image() instead.');
+    throw new coding_exception('print_png() has been deprecated since Moodle 2.0. Please use $OUTPUT->pix_icon() instead.');
 }
 
 

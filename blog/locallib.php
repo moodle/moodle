@@ -494,10 +494,10 @@ class blog_entry {
             $icon     = substr(mimeinfo_from_type("icon", $mimetype), 0, -4);
             $type     = mimeinfo_from_type("type", $mimetype);
 
-            $image = $OUTPUT->image("/f/$icon", array('alt'=>$filename, 'class'=>'icon'));
+            $image = $OUTPUT->pix_icon("/f/$icon", $filename, 'moodle', array('class'=>'icon'));
 
             if ($return == "html") {
-                $output .= html_writer::link($ffurl, $OUTPUT->image($image));
+                $output .= html_writer::link($ffurl, $image);
                 $output .= html_writer::link($ffurl, $filename);
 
             } else if ($return == "text") {
@@ -505,8 +505,7 @@ class blog_entry {
 
             } else {
                 if (in_array($type, array('image/gif', 'image/jpeg', 'image/png'))) {    // Image attachments don't get printed as links
-                    $image = $OUTPUT->image($ffurl, array('alt'=>$filename));
-                    $imagereturn .= "<br />" . $OUTPUT->image($image);
+                    $imagereturn .= "<br />" . $OUTPUT->pix_icon($ffurl, $filename);
                 } else {
                     $imagereturn .= html_writer::link($ffurl, $image);
                     $imagereturn .= filter_text(html_writer::link($ffurl, $filename));

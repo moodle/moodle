@@ -626,7 +626,7 @@ class question_bank_preview_action_column extends question_bank_action_column_ba
         global $OUTPUT;
         if (question_has_capability_on($question, 'use')) {
             // Build the icon.
-            $image = $OUTPUT->image($OUTPUT->pix_url('t/preview'), array('class'=>'iconsmall', 'alt'=>$this->strpreview));
+            $image = $OUTPUT->pix_icon('t/preview', $this->strpreview);
 
             $link = new html_link($this->qbank->preview_question_url($question->id), $image, array('title' => $this->strpreview));
             parse_str(QUESTION_PREVIEW_POPUP_OPTIONS, $options);

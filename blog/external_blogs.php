@@ -73,9 +73,9 @@ if (!empty($blogs)) {
 
     foreach ($blogs as $blog) {
         if ($blog->failedlastsync) {
-            $validicon = $OUTPUT->image('i/cross_red_big', array('alt'=>get_string('feedisinvalid', 'blog'), 'title'=>get_string('feedisinvalid', 'blog')));
+            $validicon = $OUTPUT->pix_icon('i/cross_red_big', get_string('feedisinvalid', 'blog'));
         } else {
-            $validicon = $OUTPUT->image('i/tick_green_big', array('alt'=>get_string('feedisvalid', 'blog'), 'title'=>get_string('feedisvalid', 'blog')));
+            $validicon = $OUTPUT->pix_icon('i/tick_green_big', get_string('feedisvalid', 'blog'));
         }
 
         $editurl = new moodle_url('/blog/external_blog_edit.php', array('id' => $blog->id));
