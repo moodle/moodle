@@ -45,7 +45,7 @@ $logurl = $CFG->wwwroot.
 $tabs = array();
 if (isset($mnet_peer->id) && $mnet_peer->id > 0) {
     $tabs[] = new tabobject('mnetdetails', 'peers.php?step=update&amp;hostid='.$mnet_peer->id, $strmnetedithost, $strmnetedithost, false);
-    $tabs[] = new tabobject('mnetservices', 'mnet_services.php?step=list&amp;hostid='.$mnet_peer->id, $strmnetservices, $strmnetservices, false);
+    $tabs[] = new tabobject('mnetservices', 'services.php?hostid='.$mnet_peer->id, $strmnetservices, $strmnetservices, false);
     $tabs[] = new tabobject('mnetthemes', 'mnet_themes.php?step=list&amp;hostid='.$mnet_peer->id, $strmnetthemes, $strmnetthemes, false);
     if ($mnet_peer->application->name == 'moodle' && $mnet_peer->id != $CFG->mnet_all_hosts_id) {
         $tabs[] = new tabobject('mnetlog', $logurl, $strmnetlog, $strmnetlog, false);

@@ -625,6 +625,12 @@ function mnet_profile_field_options() {
 }
 
 
+/**
+ * Return information about all the current hosts
+ * This is basically just a resultset.
+ *
+ * @return array
+ */
 function mnet_get_hosts() {
     global $CFG, $DB;
     return $DB->get_records_sql('  SELECT
@@ -649,5 +655,152 @@ function mnet_get_hosts() {
                                     h.id <> ? AND
                                     h.deleted = 0 AND
                                     h.applicationid=a.id',
-                        array($CFG->mnet_localhost_id));;
+                        array($CFG->mnet_localhost_id));
+}
+
+
+/**
+ * return an array information about services enabled for the given peer.
+ * in two modes, fulldata or very basic data.
+ *
+ * @param mnet_peer $mnet_peer the peer to get information abut
+ * @param boolean   $fulldata whether to just return which services are published/subscribed, or more information (defaults to full)
+ *
+ * @return array  If $fulldata is false, an array is returned like:
+ *                publish => array(
+ *                    serviceid => boolean,
+ *                    serviceid => boolean,
+ *                ),
+ *                subscribe => array(
+ *                    serviceid => boolean,
+ *                    serviceid => boolean,
+ *                )
+ *                If $fulldata is true, an array is returned like:
+ *                servicename => array(
+ *                   apiversion => array(
+ *                        name           => string
+ *                        offer          => boolean
+ *                        apiversion     => int
+ *                        plugintype     => string
+ *                        pluginname     => string
+ *                        hostsubscribes => boolean
+ *                        hostpublishes  => boolean
+ *                   ),
+ *               )
+ */
+function mnet_get_service_info(mnet_peer $mnet_peer, $fulldata=true) {
+    global $CFG, $DB;
+
+    $requestkey = (!empty($fulldata) ? 'fulldata' : 'mydata');
+
+    static $cache = array();
+    if (array_key_exists($mnet_peer->id, $cache)) {
+        return $cache[$mnet_peer->id][$requestkey];
+    }
+
+    $id_list = $mnet_peer->id;
+    if (!empty($CFG->mnet_all_hosts_id)) {
+        $id_list .= ', '.$CFG->mnet_all_hosts_id;
+    }
+
+    $concat = $DB->sql_concat('COALESCE(h2s.id,0) ', ' \'-\' ', ' svc.id', '\'-\'', 'r.plugintype', '\'-\'', 'r.pluginname');
+
+    $query = "
+        SELECT DISTINCT
+            $concat as id,
+            svc.id as serviceid,
+            svc.name,
+            svc.offer,
+            svc.apiversion,
+            r.plugintype,
+            r.pluginname,
+            h2s.hostid,
+            h2s.publish,
+            h2s.subscribe
+        FROM
+            {mnet_service2rpc} s2r,
+            {mnet_rpc} r,
+            {mnet_service} svc
+        LEFT JOIN
+            {mnet_host2service} h2s
+        ON
+            h2s.hostid in ($id_list) AND
+            h2s.serviceid = svc.id
+        WHERE
+            svc.offer = '1' AND
+            s2r.serviceid = svc.id AND
+            s2r.rpcid = r.id
+        ORDER BY
+            svc.name ASC";
+
+    $resultset = $DB->get_records_sql($query);
+
+    if (is_array($resultset)) {
+        $resultset = array_values($resultset);
+    } else {
+        $resultset = array();
+    }
+
+    require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
+
+    $remoteservices = array();
+    if ($mnet_peer->id != $CFG->mnet_all_hosts_id) {
+        // Create a new request object
+        $mnet_request = new mnet_xmlrpc_client();
+
+        // Tell it the path to the method that we want to execute
+        $mnet_request->set_method('system/listServices');
+        $mnet_request->send($mnet_peer);
+        if (is_array($mnet_request->response)) {
+            foreach($mnet_request->response as $service) {
+                $remoteservices[$service['name']][$service['apiversion']] = $service;
+            }
+        }
+    }
+
+    $myservices = array();
+    $mydata = array();
+    foreach($resultset as $result) {
+        $result->hostpublishes  = false;
+        $result->hostsubscribes = false;
+        if (isset($remoteservices[$result->name][$result->apiversion])) {
+            if ($remoteservices[$result->name][$result->apiversion]['publish'] == 1) {
+                $result->hostpublishes  = true;
+            }
+            if ($remoteservices[$result->name][$result->apiversion]['subscribe'] == 1) {
+                $result->hostsubscribes  = true;
+            }
+        }
+
+        if (empty($myservices[$result->name][$result->apiversion])) {
+            $myservices[$result->name][$result->apiversion] = array('serviceid' => $result->serviceid,
+                                                                    'name' => $result->name,
+                                                                    'offer' => $result->offer,
+                                                                    'apiversion' => $result->apiversion,
+                                                                    'plugintype' => $result->plugintype,
+                                                                    'pluginname' => $result->pluginname,
+                                                                    'hostsubscribes' => $result->hostsubscribes,
+                                                                    'hostpublishes' => $result->hostpublishes
+                                                                    );
+        }
+
+        // allhosts_publish allows us to tell the admin that even though he
+        // is disabling a service, it's still available to the host because
+        // he's also publishing it to 'all hosts'
+        if ($result->hostid == $CFG->mnet_all_hosts_id && $CFG->mnet_all_hosts_id != $mnet_peer->id) {
+            $myservices[$result->name][$result->apiversion]['allhosts_publish'] = $result->publish;
+            $myservices[$result->name][$result->apiversion]['allhosts_subscribe'] = $result->subscribe;
+        } elseif (!empty($result->hostid)) {
+            $myservices[$result->name][$result->apiversion]['I_publish'] = $result->publish;
+            $myservices[$result->name][$result->apiversion]['I_subscribe'] = $result->subscribe;
+        }
+        $mydata['publish'][$result->serviceid] = $result->publish;
+        $mydata['subscribe'][$result->serviceid] = $result->subscribe;
+
+    }
+
+    $cache[$mnet_peer->id]['fulldata'] = $myservices;
+    $cache[$mnet_peer->id]['mydata'] = $mydata;
+
+    return $cache[$mnet_peer->id][$requestkey];
 }
