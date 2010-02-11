@@ -450,10 +450,9 @@ function lesson_mediafile_block_contents($cmid, $lesson) {
     $options['width'] = $lesson->mediawidth;
     $options['height'] = $lesson->mediaheight;
 
-    $link = html_link::make('/mod/lesson/mediafile.php?id='.$cmid, get_string('mediafilepopup', 'lesson'));
-    $link->add_action(new popup_action('click', $link->url, 'lessonmediafile', $options));
-    $link->title = get_string('mediafilepopup', 'lesson');
-    $content = $OUTPUT->link($link);
+    $link = new moodle_url('/mod/lesson/mediafile.php?id='.$cmid);
+    $action = new popup_action('click', $link, 'lessonmediafile', $options);
+    $content = $OUTPUT->action_link($link, get_string('mediafilepopup', 'lesson'), $action, array('title'=>get_string('mediafilepopup', 'lesson')));
 
     $content .= $OUTPUT->help_icon("mediafilestudent", get_string("mediafile", "lesson"), "lesson");
 

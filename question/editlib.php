@@ -628,11 +628,11 @@ class question_bank_preview_action_column extends question_bank_action_column_ba
             // Build the icon.
             $image = $OUTPUT->pix_icon('t/preview', $this->strpreview);
 
-            $link = new html_link($this->qbank->preview_question_url($question->id), $image, array('title' => $this->strpreview));
+            $link = new moodle_url($this->qbank->preview_question_url($question->id));
             parse_str(QUESTION_PREVIEW_POPUP_OPTIONS, $options);
-            $link->add_action(new popup_action('click', $link->url, 'questionpreview', $options));
-        
-            echo $OUTPUT->link($link);
+            $action = new popup_action('click', $link, 'questionpreview', $options);
+
+            echo $OUTPUT->action_link($link, $image, $action, array('title' => $this->strpreview));
         }
     }
 

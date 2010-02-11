@@ -471,7 +471,7 @@ function survey_print_all_responses($cmid, $results, $courseid) {
 
     foreach ($results as $a) {
         $table->data[] = array($OUTPUT->user_picture($a, array('courseid'=>$courseid)),
-               $OUTPUT->link("report.php?action=student&student=$a->id&id=$cmid", fullname($a)),
+               html_writer::link("report.php?action=student&student=$a->id&id=$cmid", fullname($a)),
                userdate($a->time));
     }
 

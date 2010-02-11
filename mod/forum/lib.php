@@ -3854,9 +3854,9 @@ function forum_print_ratings($postid, $scale, $aggregatetype, $link=true, $ratin
 
         if ($link) {
 
-            $link = html_link::make("/mod/forum/report.php?id=$postid", $agg);
-            $link->add_action(new popup_action('click', $link->url, 'ratings', array('height' => 400, 'width' => 600)));
-            $strratings .= $OUTPUT->link($link);
+            $link = new moodle_url("/mod/forum/report.php?id=$postid");
+            $action = new popup_action('click', $link, 'ratings', array('height' => 400, 'width' => 600));
+            $strratings .= $OUTPUT->action_link($link, $agg, $action);
         } else {
             $strratings .= "$agg ";
         }

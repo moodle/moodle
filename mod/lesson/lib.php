@@ -1562,7 +1562,7 @@ class lesson extends lesson_base {
 
     /**
      * Returns the link for the related activity
-     * @return html_link|false
+     * @return array|false
      */
     public function link_for_activitylink() {
         global $DB;

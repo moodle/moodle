@@ -1584,9 +1584,9 @@ function data_print_ratings_mean($recordid, $scale, $link=true) {
 
         echo "$strratings: ";
         if ($link) {
-            $link = html_link::make("/mod/data/report.php?id=$recordid", $mean);
-            $link->add_action(new popup_action('click', $link->url, 'ratings', array('height' => 400, 'width' => 600)));
-            echo $OUTPUT->link($link);
+            $link = new moodle_url("/mod/data/report.php?id=$recordid");
+            $action = new popup_action('click', $link, 'ratings', array('height' => 400, 'width' => 600));
+            echo $OUTPUT->action_link($link, $mean, $action);
         } else {
             echo "$mean ";
         }

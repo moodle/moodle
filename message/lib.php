@@ -361,10 +361,9 @@ function message_print_search_results($frm) {
                         'scrollbars' => true,
                         'resizable' => true);
 
-                $link = html_link::make("/message/discussion.php?id=$user->id", fullname($user));
-                $link->add_action(new popup_action('click', $link->url, "message_$user->id", $popupoptions));
-                $link->title = get_string('sendmessageto', 'message', fullname($user));
-                echo $OUTPUT->link($link);
+                $link = new moodle_url("/message/discussion.php?id=$user->id");
+                $action = new popup_action('click', $link, "message_$user->id", $popupoptions);
+                echo $OUTPUT->action_link($link, fullname($user), $action, array('title'=>get_string('sendmessageto', 'message', fullname($user))));
 
                 echo '</td>';
 
@@ -549,10 +548,9 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
                 'scrollbars' => true,
                 'resizable' => true);
 
-        $link = html_link::make("/message/discussion.php?id=$user->id", fullname($user));
-        $link->add_action(new popup_action('click', $link->url, "message_$user->id", $popupoptions));
-        $link->title = get_string('sendmessageto', 'message', fullname($user));
-        echo $OUTPUT->link($link);
+        $link = new moodle_url("/message/discussion.php?id=$user->id");
+        $action = new popup_action('click', $link, "message_$user->id", $popupoptions);
+        echo $OUTPUT->action_link($link, fullname($user), $action, array('title'=>get_string('sendmessageto', 'message', fullname($user))));
 
     }
 }
@@ -644,10 +642,9 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
             'scrollbars' => true,
             'resizable' => true);
 
-    $link = html_link::make("/message/history.php?user1=$userid1&user2=$userid2$keywords$position", $fulllink);
-    $link->add_action(new popup_action('click', $link->url, "message_history_$userid1", $popupoptions));
-    $link->title = $strmessagehistory;
-    $str = $OUTPUT->link($link);
+    $link = html_link::make("/message/history.php?user1=$userid1&user2=$userid2$keywords$position");
+    $action = new popup_action('click', $link->url, "message_history_$userid1", $popupoptions);
+    $str = $OUTPUT->action_link($link, $fulllink, $action, array('title'=>$strmessagehistory));
 
     $str = '<span class="history">'.$str.'</span>';
 
@@ -1074,10 +1071,9 @@ function message_print_contactlist_user($contact, $incontactlist = true){
             'scrollbars' => true,
             'resizable' => true);
 
-    $link = html_link::make("/message/discussion.php?id=$contact->id", $fullnamelink);
-    $link->add_action(new popup_action('click', $link->url, "message_$contact->id", $popupoptions));
-    $link->title = get_string('sendmessageto', 'message', $fullname);
-    echo $OUTPUT->link($link);
+    $link = html_link::make("/message/discussion.php?id=$contact->id");
+    $action = new popup_action('click', $link, "message_$contact->id", $popupoptions);
+    echo $OUTPUT->action_link($link, $fullnamelink, $action, array('title'=>get_string('sendmessageto', 'message', $fullname)));
 
     echo '</td>';
     echo '<td class="link">&nbsp;'.$strcontact.$strblock.'&nbsp;'.$strhistory.'</td>';

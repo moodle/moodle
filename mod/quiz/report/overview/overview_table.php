@@ -229,10 +229,9 @@ class quiz_report_overview_table extends table_sql {
                                 $newgrade;
                     }
 
-                    $link = html_link::make("/mod/quiz/reviewquestion.php?attempt=$attempt->attempt&question=$question->id", $grade);
-                    $link->add_action(new popup_action('click', $link->url, 'reviewquestion', array('height' => 450, 'width' => 650)));
-                    $link->title = get_string('reviewresponsetoq', 'quiz', $question->formattedname);
-                    $linktopopup = $OUTPUT->link($link);
+                    $link = new moodle_url("/mod/quiz/reviewquestion.php?attempt=$attempt->attempt&question=$question->id");
+                    $action = new popup_action('click', $link, 'reviewquestion', array('height' => 450, 'width' => 650));
+                    $linktopopup = $OUTPUT->action-link($link, $grade, $action, array('title'=>get_string('reviewresponsetoq', 'quiz', $question->formattedname)));
 
                     if (($this->questions[$questionid]->maxgrade != 0)){
                         $fractionofgrade = $stateforqinattempt->grade

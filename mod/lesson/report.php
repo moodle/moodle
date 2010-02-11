@@ -144,8 +144,8 @@ echo $lessonoutput->header($lesson, $cm, $action);
 $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
 if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
     $seeallgradeslink = new moodle_url('/grade/report/grader/index.php', array('id'=>$course->id));
-    $seeallgradeslink = html_link::make($seeallgradeslink, get_string('seeallcoursegrades', 'grades'));
-    echo $OUTPUT->box($OUTPUT->link($seeallgradeslink), 'allcoursegrades');
+    $seeallgradeslink = html_writer::link($seeallgradeslink, get_string('seeallcoursegrades', 'grades'));
+    echo $OUTPUT->box($seeallgradeslink, 'allcoursegrades');
 }
 
 if ($nothingtodisplay) {

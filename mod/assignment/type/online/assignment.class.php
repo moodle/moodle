@@ -197,10 +197,9 @@ class assignment_online extends assignment_base {
             return '';
         }
 
-        $link = html_link::make("/mod/assignment/type/online/file.php?id={$this->cm->id}&userid={$submission->userid}", shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15));
-        $link->add_action(new popup_action('click', $link->url, 'file'.$userid, array('height' => 450, 'width' => 580)));
-        $link->title = get_string('submission', 'assignment');
-        $popup = $OUTPUT->link($link);
+        $link = new moodle_url("/mod/assignment/type/online/file.php?id={$this->cm->id}&userid={$submission->userid}");
+        $action = new popup_action('click', $link, 'file'.$userid, array('height' => 450, 'width' => 580));
+        $popup = $OUTPUT->action_link($link, shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15), $action, array('title'=>get_string('submission', 'assignment')));
 
         $output = '<div class="files">'.
                   '<img src="'.$OUTPUT->pix_url('f/html') . '" class="icon" alt="html" />'.
@@ -216,10 +215,9 @@ class assignment_online extends assignment_base {
             return '';
         }
 
-        $link = html_link::make("/mod/assignment/type/online/file.php?id={$this->cm->id}&userid={$submission->userid}", shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15));
-        $link->add_action(new popup_action('click', $link->url, 'file'.$userid, array('height' => 450, 'width' => 580)));
-        $link->title = get_string('submission', 'assignment');
-        $popup = $OUTPUT->link($link);
+        $link = new moodle_url("/mod/assignment/type/online/file.php?id={$this->cm->id}&userid={$submission->userid}");
+        $action = new popup_action('click', $link, 'file'.$userid, array('height' => 450, 'width' => 580));
+        $popup = $OUTPUT->action_link($link, shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15), $action, array('title'=>get_string('submission', 'assignment')));
 
         $output = '<div class="files">'.
                   '<img align="middle" src="'.$OUTPUT->pix_url('f/html') . '" height="16" width="16" alt="html" />'.

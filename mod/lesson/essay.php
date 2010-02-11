@@ -331,16 +331,16 @@ switch ($mode) {
 
                     // link for each essay
                     $url = new moodle_url('/mod/lesson/essay.php', array('id'=>$cm->id,'mode'=>'grade','attemptid'=>$essay->id,'sesskey'=>sesskey()));
-                    $link = html_link::make($url, userdate($essay->timeseen, get_string('strftimedatetime')).' '.format_string($pages[$essay->pageid]->title,true));
+                    $attributes = array();
                     // Different colors for all the states of an essay (graded, if sent, not graded)
                     if (!$essayinfo->graded) {
-                        $link->set_classes("graded");
+                        $attributes['class'] = "graded";
                     } elseif (!$essayinfo->sent) {
-                        $link->set_classes("sent");
+                        $attributes['class'] = "sent";
                     } else {
-                        $link->set_classes("ungraded");
+                        $attributes['class'] = "ungraded";
                     }
-                    $essaylinks[] = $OUTPUT->link($link);
+                    $essaylinks[] = html_writer::link($url, userdate($essay->timeseen, get_string('strftimedatetime')).' '.format_string($pages[$essay->pageid]->title,true), $attributes);
                 }
             }
             // email link for this user

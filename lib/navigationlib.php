@@ -402,48 +402,53 @@ class navigation_node {
             return '';
         }
         if ($shorttext && $this->shorttext!==null) {
-            $content = clean_text($this->shorttext);
+            $content = format_string($this->shorttext);
         } else {
-            $content = clean_text($this->text);
+            $content = format_string($this->text);
         }
         $title = '';
         if ($this->forcetitle || ($this->shorttext!==null && $this->title !== $this->shorttext) || $this->title !== $this->text) {
              $title = $this->title;
         }
 
-        if ($this->icon!==null) {
+        if ($this->icon !== null) {
             $icon = $OUTPUT->pix_icon($this->icon, '', 'moodle', array('class'=>'icon'));
             $content = $icon.$content; // use CSS for spacing of icons
-        } else if ($this->helpbutton!==null) {
-            $content = sprintf('%s<span class="clearhelpbutton">%s</span>',trim($this->helpbutton),$content);
+        } else if ($this->helpbutton !== null) {
+            $content = sprintf('%s<span class="clearhelpbutton">%s</span>', trim($this->helpbutton), $content);
         }
 
-        if ($content != '' && ((is_object($this->action) && ($this->action instanceof moodle_url || $this->action instanceof html_link)) || is_string($this->action))) {
-            if (!($this->action instanceof html_link)) {
-                $link = new html_link();
-                $link->url = $this->action;
-                $link->text = clean_text($content);
-            } else {
-                $link = $this->action;
-            }
-            if ($title !== '') {
-                $link->title = $title;
-            }
+        if ($content === '') {
+            return '';
+        }
+
+        if ($this->action instanceof html_link) {
+            //TODO: to be replaced with something else
+            $link = $this->action;
             if ($this->hidden) {
                 $link->add_class('dimmed');
             }
             $content = $OUTPUT->link($link);
 
-        } else {
-            $span = new html_span();
-            $span->contents = $content;
+        } else if ($this->action instanceof moodle_url) {
+            $attributes = array();
             if ($title !== '') {
-                $span->title = $title;
+                $attributes['title'] = $title;
             }
             if ($this->hidden) {
-                $span->add_class('dimmed_text');
+                $attributes['class'] = 'dimmed_text';
             }
-            $content = $OUTPUT->span($span);
+            $content = html_writer::link($this->action, $content, $attributes);
+
+        } else if (is_string($this->action)) {
+            $attributes = array();
+            if ($title !== '') {
+                $attributes['title'] = $title;
+            }
+            if ($this->hidden) {
+                $attributes['class'] = 'dimmed_text';
+            }
+            $content = html_writer::tag('span', $attributes, $content);
         }
 
         return $content;

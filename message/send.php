@@ -113,10 +113,8 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
     $mform->display();
     /* TODO: frames are a nono, this has to be redesigned
     echo $OUTPUT->box_start('noframesjslink');
-    $accesslink = new html_link();
-    $accesslink->url = new moodle_url('/message/discussion.php', array('id'=>$userid, 'noframesjs'=>1));
-    $accesslink->text = get_string('noframesjs', 'message');
-    echo $OUTPUT->link($accesslink);
+    $aurl = new moodle_url('/message/discussion.php', array('id'=>$userid, 'noframesjs'=>1));
+    echo $OUTPUT->action_link($aurl, get_string('noframesjs', 'message'), );
     echo $OUTPUT->box_end();
     */
 

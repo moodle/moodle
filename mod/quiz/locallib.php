@@ -825,11 +825,11 @@ function quiz_question_preview_button($quiz, $question, $label = false) {
     // Build the icon.
     $image = $OUTPUT->pix_icon('t/preview', $strpreviewquestion);
 
-    $link = new html_link($CFG->wwwroot."/question/preview.php?id=$question->id&quizid=$quiz->id", $image, array('title' => $strpreviewquestion));
+    $link = new moodle_url($CFG->wwwroot."/question/preview.php?id=$question->id&quizid=$quiz->id");
     parse_str(QUESTION_PREVIEW_POPUP_OPTIONS, $options);
-    $link->add_action(new popup_action('click', $link->url, 'questionpreview', $options));
+    $action = new popup_action('click', $link, 'questionpreview', $options);
 
-    return $OUTPUT->link($link);
+    return $OUTPUT->action_link($link, $image, $action, array('title' => $strpreviewquestion));
 }
 
 /**

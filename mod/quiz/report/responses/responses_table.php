@@ -164,10 +164,9 @@ class quiz_report_responses_table extends table_sql {
                                                 QUIZ_REPORT_RESPONSES_MAX_LEN_TO_DISPLAY, $formathtml);
             if (!$this->is_downloading()) {
                 if ($summary){
-                    $link = html_link::make("/mod/quiz/reviewquestion.php?attempt=$attempt->attempt&question=$question->id", $summary);
-                    $link->add_action(new popup_action('click', $link->url, 'reviewquestion', array('height' => 450, 'width' => 650)));
-                    $link->title = $question->formattedname;
-                    $summary = $OUTPUT->link($link);
+                    $link = new moodle_url("/mod/quiz/reviewquestion.php?attempt=$attempt->attempt&question=$question->id");
+                    $action = new popup_action('click', $link, 'reviewquestion', array('height' => 450, 'width' => 650));
+                    $summary = $OUTPUT->action_link($link, $summary, $action, array('title'=>$question->formattedname));
 
                     if (question_state_is_graded($stateforqinattempt)
                                 && ($question->maxgrade > 0)){

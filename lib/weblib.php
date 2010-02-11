@@ -2470,7 +2470,7 @@ function modgradehelpbutton($courseid){
     $text = '<span class="helplink"><img alt="' . get_string('scales') . '" class="iconhelp" src="' . $OUTPUT->pix_url('help') . '" /></span>';
     $action = new popup_action('click', $link->url, 'ratingscales', array('height' => 400, 'width' => 500));
 
-    return $OUTPUT->link($url, $text, $action, array('title'=>get_string('newwindow')));
+    return $OUTPUT->action_link($url, $text, $action, array('title'=>get_string('newwindow')));
 }
 
 /**

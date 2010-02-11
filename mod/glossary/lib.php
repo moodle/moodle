@@ -2146,9 +2146,9 @@ function glossary_print_ratings_mean($entryid, $scale) {
         }
 
         echo "$strratings: ";
-        $link = html_link::make("/mod/glossary/report.php?id=$entryid", $mean);
-        $link->add_action(new popup_action('click', $link->url, "ratings"));
-        echo $OUTPUT->link($link);
+        $link = new moodle_url("/mod/glossary/report.php?id=$entryid");
+        $action = new popup_action('click', $link, "ratings");
+        echo $OUTPUT->action_link($link, $mean, $action);
     }
 }
 

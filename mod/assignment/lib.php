@@ -1344,10 +1344,8 @@ class assignment_base {
                 $popup_url = '/mod/assignment/submissions.php?id='.$this->cm->id
                            . '&userid='.$auser->id.'&mode=single'.'&offset='.$offset++;
 
-                $link = html_link::make($popup_url, $buttontext);
-                $link->add_action(new popup_action('click', $link->url, 'grade'.$auser->id, array('height' => 600, 'width' => 700)));
-                $link->title = $buttontext;
-                $button = $OUTPUT->link($link);
+                $action = new popup_action('click', $popup_url, 'grade'.$auser->id, array('height' => 600, 'width' => 700));
+                $button = $OUTPUT->action_link($popup_url, $buttontext, $action);
 
                 $status  = '<div id="up'.$auser->id.'" class="s'.$auser->status.'">'.$button.'</div>';
 
