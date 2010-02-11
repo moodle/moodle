@@ -135,7 +135,7 @@ echo '<div class="actionbuttons">' . $OUTPUT->single_button($url, get_string('ad
 
 
 if ($returnurl) {
-    echo '<div class="backlink">' . $OUTPUT->link($returnurl, get_string('back')) . '</div>';
+    echo '<div class="backlink">' . html_writer::link($returnurl, get_string('back')) . '</div>';
 }
 
 echo $OUTPUT->footer();

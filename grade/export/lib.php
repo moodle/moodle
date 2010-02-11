@@ -307,7 +307,7 @@ abstract class grade_export {
 
             $link = $CFG->wwwroot.'/grade/export/'.$this->plugin.'/dump.php'.$paraM.str.'&key='.$this->userkey;
 
-            echo get_string('download', 'admin').': ' . $OUTPUT->link($link, $link);
+            echo get_string('download', 'admin').': ' . html_writer::link($link, $link);
         }
         echo $OUTPUT->container_end();
     }

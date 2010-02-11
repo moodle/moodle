@@ -91,6 +91,6 @@ if (!empty($blogs)) {
 }
 
 $newexternalurl = new moodle_url('/blog/external_blog_edit.php');
-echo $OUTPUT->link(html_link::make($newexternalurl, $straddnewexternalblog));
+echo html_writer::link($newexternalurl, $straddnewexternalblog);
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer();

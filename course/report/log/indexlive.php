@@ -35,9 +35,8 @@
     echo $OUTPUT->heading(get_string('loglive', 'coursereport_log'));
 
     echo $OUTPUT->container_start('info');
-    $link = html_link::make('/course/report/log/live.php?id='. $course->id, get_string('livelogs'));
-    $link->add_action(new popup_action('click', $link->url, 'livelog', array('height' => 500, 'width' => 800)));
-    echo $OUTPUT->link($link);
+    $link = new moodle_url('/course/report/log/live.php?id='. $course->id);
+    echo $OUTPUT->action_link($link, get_string('livelogs'), new popup_action('click', $link, 'livelog', array('height' => 500, 'width' => 800)));
     echo $OUTPUT->container_end();
 
     echo $OUTPUT->footer();

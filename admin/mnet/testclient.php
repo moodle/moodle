@@ -49,7 +49,7 @@ foreach ($hosts as $id => $host) {
         continue;
     }
     $newurl = new moodle_url($url, array('hostid' => $host->id));
-    echo '<p>' . $OUTPUT->link($newurl, $host->wwwroot) . '</p>';
+    echo '<p>' . html_writer::link($newurl, $host->wwwroot) . '</p>';
 }
 
 if (!empty($hostid) && array_key_exists($hostid, $hosts)) {
@@ -118,7 +118,7 @@ if (!empty($hostid) && array_key_exists($hostid, $hosts)) {
             $servicedata['apiversion'],
             $yesno[$servicedata['publish']],
             $yesno[$servicedata['subscribe']],
-            $OUTPUT->link($newurl, get_string('listservices', 'mnet'))
+            html_writer::link($newurl, get_string('listservices', 'mnet'))
         );
 
     }
@@ -153,7 +153,7 @@ if (!empty($hostid) && array_key_exists($hostid, $hosts)) {
         $newurl = new moodle_url($url, $params);
         $table->data[] = array(
             $method,
-            $OUTPUT->link($newurl, get_string('inspect', 'mnet'))
+            html_writer::link($newurl, get_string('inspect', 'mnet'))
         );
     }
     echo $OUTPUT->table($table);

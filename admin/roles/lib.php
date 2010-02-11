@@ -250,10 +250,10 @@ class explain_capability_table extends capability_table_base {
         echo '<td>' . $result . '</td>';
         echo '<td>';
 
-        $link = html_link::make($this->baseurl . $capability->name, $this->strexplanation);
-        $link->add_action(new popup_action('click', $link->url, 'hascapabilityexplanation', array('height' => 600, 'width' => 600)));
-        $link->title = get_string($tooltip, 'role', $a);
-        echo $OUTPUT->link($link);
+        $url = $this->baseurl . $capability->name;
+        echo $OUTPUT->action_link($url, $this->strexplanation,
+            new popup_action('click', $url, 'hascapabilityexplanation', array('height' => 600, 'width' => 600)),
+            array('title'=>get_string($tooltip, 'role', $a)));
 
         echo '</td>';
     }
@@ -419,12 +419,9 @@ abstract class capability_table_with_risks extends capability_table_base {
         global $OUTPUT;
         if (!isset($this->riskicons[$type])) {
             $iconurl = $OUTPUT->pix_url('i/' . str_replace('risk', 'risk_', $type));
-
-            $link = html_link::make($this->risksurl, '<img src="' . $iconurl . '" alt="' . get_string($type . 'short', 'admin') . '" />');
-            $link->add_action(new popup_action('click', $link->url, 'docspopup'));
-            $link->title = get_string($type, 'admin');
-
-            $this->riskicons[$type] = $OUTPUT->link($link);
+            $text = '<img src="' . $iconurl . '" alt="' . get_string($type . 'short', 'admin') . '" />';
+            $action = new popup_action('click', $this->risksurl, 'docspopup');
+            $this->riskicons[$type] = $OUTPUT->action_link($this->risksurl, $text, $action, array('title'=>get_string($type, 'admin')));
         }
         return $this->riskicons[$type];
     }

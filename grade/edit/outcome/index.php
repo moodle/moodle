@@ -268,6 +268,6 @@ function grade_print_scale_link($courseid, $scale, $gpr) {
     global $CFG, $OUTPUT;
     $url = new moodle_url('/grade/edit/scale/edit.php', array('courseid' => $courseid, 'id' => $scale->id));
     $url = $gpr->add_url_params($url);
-    return $OUTPUT->link($url, $scale->get_name());
+    return html_writer::link($url, $scale->get_name());
 }
 

@@ -839,9 +839,7 @@
                 echo '</form>';
                 $preview_url = lang_help_preview_url($currentfile, !$uselocal);
                 if ($preview_url) {
-                    $link = html_link::make($preview_url, get_string('preview'));
-                    $link->add_action(new popup_action('click', $link->url));
-                    echo $OUTPUT->link($link);
+                    echo $OUTPUT->action_link($preview_url, get_string('preview'), new popup_action('click', $preview_url));
                 }
                 echo '</fieldset>';
             }
@@ -859,9 +857,7 @@
                 echo "</textarea>\n</div>\n";
                 $preview_url = lang_help_preview_url($currentfile, $uselocal);
                 if ($preview_url) {
-                    $link = html_link::make($preview_url, get_string('preview'));
-                    $link->add_action(new popup_action('click', $link->url));
-                    echo $OUTPUT->link($link);
+                    echo $OUTPUT->action_link($preview_url, get_string('preview'), new popup_action('click', $preview_url));
                 }
                 echo '</fieldset>';
             }
@@ -883,9 +879,7 @@
                 echo "</textarea>\n</div>\n";
                 $preview_url = lang_help_preview_url($currentfile, true, 'en_utf8');   // do not display en_utf8_local
                 if ($preview_url) {
-                    $link = html_link::make($preview_url, get_string('preview'));
-                    $link->add_action(new popup_action('click', $link->url));
-                    echo $OUTPUT->link($link);
+                    echo $OUTPUT->action_link($preview_url, get_string('preview'), new popup_action('click', $preview_url));
                 }
                 echo '</fieldset>';
             }

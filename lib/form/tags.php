@@ -112,11 +112,12 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
             // If the user can manage official tags, give them a link to manage them.
             $label = get_string('otags', 'tag');
             if (has_capability('moodle/tag:manage', get_context_instance(CONTEXT_SYSTEM))) {
-                $link = html_link::make($CFG->wwwroot .'/tag/manage.php', get_string('manageofficialtags', 'tag'));
-                $link->add_action(new popup_action('click', $link->url, 'managetags'));
-                $link->title = get_string('newwindow');
-
-                $label .= ' (' . $OUTPUT->link($link) . ')';
+                $url = $CFG->wwwroot .'/tag/manage.php';
+                $label .= ' (' . $OUTPUT->action_link(
+                    $url,
+                    get_string('manageofficialtags', 'tag'),
+                    new popup_action('click', $url, 'managetags'),
+                    array('title'=>get_string('newwindow'))) . ')';
             }
 
             // Get the list of official tags.

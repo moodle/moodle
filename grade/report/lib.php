@@ -325,10 +325,7 @@ abstract class grade_report {
         $strsort = $this->get_lang_string('sort' . $matrix[$direction]);
 
         $arrow = print_arrow($direction, $strsort, true);
-        $link = html_link::make($sortlink, $arrow);
-        $link->title = $strsort;
-        $html = $OUTPUT->link($link);
-        return $html;
+        return html_writer::link($sortlink, $arrow, array('title'=>$strsort));
     }
 
     /**

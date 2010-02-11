@@ -221,7 +221,7 @@ foreach($hosts as $host) {
     $hosturl = new moodle_url($baseurl, array('hostid' => $host->id));
     // process all hosts first since it's the easiest
     if ($host->id == $CFG->mnet_all_hosts_id) {
-        $table->data[] = array($OUTPUT->link($hosturl, $host->name), '', '', '');
+        $table->data[] = array(html_writer::tag('a', array('href'=>$hosturl), $host->name), '', '', '');
         continue;
     }
 
@@ -231,8 +231,8 @@ foreach($hosts as $host) {
         $last_connect = date('H:i:s d/m/Y', $host->last_connect_time);
     }
     $table->data[] = array(
-        $OUTPUT->link($hosturl, $host->name),
-        $OUTPUT->link($hosturl, $host->wwwroot),
+        html_writer::link($hosturl, $host->name),
+        html_writer::link($hosturl, $host->wwwroot),
         $last_connect,
         $OUTPUT->single_button(new moodle_url('/admin/mnet/delete.php', array('hostid' => $host->id)), get_string('delete'))
     );

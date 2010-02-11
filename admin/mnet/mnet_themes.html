@@ -58,14 +58,14 @@ $original_theme = fullclone($THEME);
 
         if (file_exists($CFG->themedir.'/'.$theme.'/README.html')) {
             $readme =  '<li>'.
-            $link = html_link::make($CFG->themewww .'/'. $theme .'/README.html', $strinfo);
-            $link->add_action(new popup_action('click', $link->url, $theme, array('height' => 400, 'width' => 500)));
-            echo $OUTPUT->link($link);
+            $link = $CFG->themewww .'/'. $theme .'/README.html';
+            $action = new popup_action('click', $link, $theme, array('height' => 400, 'width' => 500));
+            echo $OUTPUT->action_link($link, strinfo, $action);
         } else if (file_exists($CFG->themedir.'/'.$theme.'/README.txt')) {
             $readme =  '<li>'.
-            $link = html_link::make($CFG->themewww .'/'. $theme .'/README.txt', $strinfo);
-            $link->add_action(new popup_action('click', $link->url, $theme, array('height' => 400, 'width' => 500)));
-            echo $OUTPUT->link($link);
+            $link = $CFG->themewww .'/'. $theme .'/README.txt';
+             $action = new popup_action('click', $link, $theme, array('height' => 400, 'width' => 500));
+            echo $OUTPUT->action_link($link, $strinfo, $action);
         }
         if (file_exists("$theme/screenshot.png")) {
             $screenshotpath = "$theme/screenshot.png";

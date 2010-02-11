@@ -2446,9 +2446,9 @@ function print_table($table, $return=false) {
  * @return string html code to display a link to a popup window.
  */
 function link_to_popup_window ($url, $name=null, $linkname=null, $height=400, $width=500, $title=null, $options=null, $return=false) {
-    debugging('link_to_popup_window() has been removed. Please change your code to use $OUTPUT->link(). Please note popups are discouraged for accessibility reasons');
+    debugging('link_to_popup_window() has been removed. Please change your code to use $OUTPUT->action_link(). Please note popups are discouraged for accessibility reasons');
 
-    return $OUTPUT->link($url, $name);
+    return html_writer::link($url, $name);
 }
 
 /**
@@ -2481,7 +2481,7 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
     }
 
     if (empty($linkname)) {
-        throw new coding_exception('A link must have a descriptive text value! See $OUTPUT->link() for usage.');
+        throw new coding_exception('A link must have a descriptive text value! See $OUTPUT->action_link() for usage.');
     }
 
     // Create a html_button object
@@ -2845,10 +2845,9 @@ function editorhelpbutton(){
 
     $paramstring = join('&', $urlparams);
     $linkobject = '<img alt="'.$alttag.'" class="iconhelp" src="'.$OUTPUT->pix_url('help') . '" />';
-    $link = html_link::make(s('/lib/form/editorhelp.php?'.$paramstring), $linkobject);
-    $link->add_action(new popup_action('click', $link->url, 'popup', array('height' => 400, 'width' => 500)));
-    $link->title = $alttag;
-    return $OUTPUT->link($link);
+    $link = moodle_url('/lib/form/editorhelp.php?'.$paramstring);
+    $action = new popup_action('click', $link->url, 'popup', array('height' => 400, 'width' => 500));
+    return $OUTPUT->action_link($link, $linkobject, $action, array('title'=>$alttag));
 }
 
 /**

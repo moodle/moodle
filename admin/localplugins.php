@@ -87,7 +87,7 @@ asort($plugins, SORT_LOCALE_STRING);
 
 foreach ($plugins as $plugin => $name) {
     $delete = new moodle_url($PAGE->url, array('delete' => $plugin, 'sesskey' => sesskey()));
-    $delete = $OUTPUT->link($delete, get_string('delete'));
+    $delete = html_writer::link($delete, get_string('delete'));
 
     $version = get_config('local_' . $plugin);
     if (!empty($version->version)) {

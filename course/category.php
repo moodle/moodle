@@ -412,10 +412,9 @@
                          $OUTPUT->pix_url('i/key') . '" alt="'.$strrequireskey.'" /></a>';
                 }
                 if (!empty($acourse->summary)) {
-                    $link = html_link::make("/course/info.php?id=$acourse->id", '<img alt="'.get_string('info').'" class="icon" src="'.$OUTPUT->pix_url('i/info') . '" />');
-                    $link->add_action(new popup_action('click', $link->url, 'courseinfo'));
-                    $link->title = $strsummary;
-                    echo $OUTPUT->link($link);
+                    $link = new moodle_url("/course/info.php?id=$acourse->id");
+                    echo $OUTPUT->action_link($link, '<img alt="'.get_string('info').'" class="icon" src="'.$OUTPUT->pix_url('i/info') . '" />',
+                        new popup_action('click', $link, 'courseinfo'), array('title'=>$strsummary));
                 }
                 echo "</td>";
             }

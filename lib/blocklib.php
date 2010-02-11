@@ -816,7 +816,7 @@ class block_manager {
             if ($content->blockinstanceid == $this->movingblock) {
                 $content->add_class('beingmoved');
                 $content->annotation .= get_string('movingthisblockcancel', 'block',
-                        $output->link($this->page->url, get_string('cancel')));
+                        html_writer::link($this->page->url, get_string('cancel')));
             }
 
             $results[] = $content;

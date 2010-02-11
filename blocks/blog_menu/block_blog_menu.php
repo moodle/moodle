@@ -79,43 +79,44 @@ class block_blog_menu extends block_base {
         $menulist->add_class('list');
 
         if (!empty($blogheaders['strview']) && $CFG->useblogassociations) {
-            $url = html_link::make($blogheaders['url'], $blogheaders['strview']);
-            if ($blogheaders['url']->compare($PAGE->url)) {
-                $url->disabled = true;
+            if ($blogheaders['url']->compare($PAGE->url) == URL_MATCH_EXACT) {
+                $menulist->add_item(html_writer::tag('span', array('class'=>'current'), $blogheaders['strview']));
+            } else {
+                $menulist->add_item(html_writer::link($blogheaders['url'], $blogheaders['strview']));
             }
-            $menulist->add_item($OUTPUT->link($url));
         }
 
         // show View site entries link
         if ($CFG->bloglevel >= BLOG_SITE_LEVEL && $canviewblogs) {
-            $viewsiteentriesurl = html_link::make($CFG->wwwroot .'/blog/index.php', get_string('viewsiteentries', 'blog'));
             if (!$PAGE->url->param('search') && !$PAGE->url->param('tag') && !$PAGE->url->param('tagid') &&
                 !$PAGE->url->param('modid') && !$PAGE->url->param('courseid') && !$PAGE->url->param('userid') && !$PAGE->url->param('entryid')) {
-                $viewsiteentriesurl->disableifcurrent = true;
+                // no
+            } else {
+                $menulist->add_item(html_writer::add($CFG->wwwroot .'/blog/index.php', get_string('viewsiteentries', 'blog')));
             }
-            $menulist->add_item($OUTPUT->link($viewsiteentriesurl));
         }
 
         $output .= '';
 
         // show View my entries link
-        $myentrieslink = html_link::make(new moodle_url('/blog/index.php', array('userid' => $USER->id)), get_string('viewmyentries', 'blog'));
-        $myentrieslink->url->params($blogheaders['url']->params());
-        $myentrieslink->url->param('userid', $USER->id);
         $pageuserid = $PAGE->url->param('userid');
         if (!empty($pageuserid) && $pageuserid == $USER->id) {
-            $myentrieslink->disabled = true;
+            // no
+        } else {
+            $murl = new moodle_url('/blog/index.php', array('userid' => $USER->id));
+            $murl->params($blogheaders['url']->params());
+            $murl->param('userid', $USER->id);
+            $menulist->add_item(html_writer::link($murl, get_string('viewmyentries', 'blog')));
         }
-
-        $menulist->add_item($OUTPUT->link($myentrieslink));
 
         // show "Add entry" or "Blog about this" link
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
         if (has_capability('moodle/blog:create', $sitecontext)) {
-            $addentrylink = html_link::make(new moodle_url('/blog/edit.php', array('action' => 'add')), $blogheaders['stradd']);
-            $addentrylink->url->params($blogheaders['url']->params());
-            $addentrylink->disableifcurrent = true;
-            $menulist->add_item($OUTPUT->link($addentrylink));
+            $aurl = new moodle_url('/blog/edit.php', array('action' => 'add'));
+            $aurl->params($blogheaders['url']->params());
+            if ($PAGE->url->compare($aurl) != URL_MATCH_EXACT) {
+                $menulist->add_item(html_writer::link($aurl, $blogheaders['stradd']));
+            }
         }
 
         // Full-text search field

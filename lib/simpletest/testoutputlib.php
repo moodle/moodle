@@ -606,44 +606,6 @@ class core_renderer_test extends UnitTestCase {
 
     }
 
-    public function test_link() {
-        $link = new html_link();
-        $link->url = 'http://test.com';
-        $link->text = 'Resource 1';
-
-        $html = $this->renderer->link($link);
-        $this->assert(new ContainsTagWithAttribute('a', 'href', 'http://test.com'), $html);
-        $this->assert(new ContainsTagWithContents('a', 'Resource 1'), $html);
-
-        // Add a title
-        $link->title = 'Link to resource 1';
-        $html = $this->renderer->link($link);
-        $this->assert(new ContainsTagWithAttributes('a', array('title' => 'Link to resource 1', 'href' => 'http://test.com')), $html);
-        $this->assert(new ContainsTagWithContents('a', 'Resource 1'), $html);
-
-        // Use a moodle_url object instead of string
-        $link->url = new moodle_url($link->url);
-        $html = $this->renderer->link($link);
-        $this->assert(new ContainsTagWithAttributes('a', array('title' => 'Link to resource 1', 'href' => 'http://test.com')), $html);
-        $this->assert(new ContainsTagWithContents('a', 'Resource 1'), $html);
-
-        // Add a few classes to the link object
-        $link->add_classes('cool blue');
-        $html = $this->renderer->link($link);
-        $this->assert(new ContainsTagWithAttributes('a', array('title' => 'Link to resource 1', 'class' => 'cool blue', 'href' => 'http://test.com')), $html);
-        $this->assert(new ContainsTagWithContents('a', 'Resource 1'), $html);
-
-        // Simple use of link() without a html_link object
-        $html = $this->renderer->link($link->url->out(), $link->text);
-        $expected_html = '<a href="http://test.com">Resource 1</a>';
-        $this->assert(new ContainsTagWithAttribute('a', 'href', 'http://test.com'), $html);
-        $this->assert(new ContainsTagWithContents('a', 'Resource 1'), $html);
-
-        // Missing second param when first is a string: exception
-        $this->expectException();
-        $html = $this->renderer->link($link->url->out());
-    }
-
     public function test_paging_bar() {
         global $CFG;
 
