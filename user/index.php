@@ -666,7 +666,7 @@
 
     if ($bulkoperations) {
         $PAGE->requires->js('/user/user.js');
-        echo '<form action="action_redir.php" method="post" id="participantsform" onsubmit="return checksubmit(this);">';
+        echo '<form action="action_redir.php" method="post" id="participantsform">';
         echo '<div>';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<input type="hidden" name="returnto" value="'.s(me()).'" />';
@@ -948,7 +948,7 @@
                 }
 
                 if ($bulkoperations) {
-                    $data[] = '<input type="checkbox" name="user'.$user->id.'" />';
+                    $data[] = '<input type="checkbox" class="usercheckbox" name="user'.$user->id.'" />';
                 }
                 $table->add_data($data);
 
@@ -961,8 +961,8 @@
 
     if ($bulkoperations) {
         echo '<br /><div class="buttons">';
-        echo '<input type="button" onclick="checkall()" value="'.get_string('selectall').'" /> ';
-        echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> ';
+        echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> ';
+        echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> ';
         $displaylist = array();
         $displaylist['messageselect.php'] = get_string('messageselectadd');
         if (!empty($CFG->enablenotes) && has_capability('moodle/notes:manage', $context) && $context->id != $frontpagectx->id) {
@@ -976,19 +976,18 @@
         }
 
         echo $OUTPUT->help_icon("participantswithselectedusers", get_string("withselectedusers"));
-        $select = new html_select();
-        $select->options = $displaylist;
-        $select->name = "formaction";
-        $select->label = get_string("withselectedusers");
-        $select->add_action('change', 'conditionalsubmit', array('formid' => 'participantsform'));
-        echo $OUTPUT->select($select);
+        echo html_writer::tag('label', array('for'=>'formactionid'), get_string("withselectedusers"));
+        echo html_writer::select($displaylist, 'formaction', '', array(''=>'choosedots'), array('id'=>'formactionid'));
+
         echo '<input type="hidden" name="id" value="'.$course->id.'" />';
-        echo '<div id="noscriptparticipantsform" class="hiddenifjs">';
-        echo '<input type="submit" value="'.get_string('ok').'" /></div>';
-        echo '</div>';
-        echo '</div>';
+        echo '<noscript style="display:inline">';
+        echo '<input type="submit" value="'.get_string('ok').'" />';
+        echo '</noscript>';
+        echo '</div></div>';
         echo '</form>';
 
+        $module = array('name'=>'core_user', 'fullpath'=>'/user/module.js');
+        $PAGE->requires->js_init_call('M.core_user.init_participation', null, false, $module);
     }
 
     if (has_capability('moodle/site:viewparticipants', $context) && $totalcount > ($perpage*3)) {
