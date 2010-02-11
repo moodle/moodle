@@ -236,11 +236,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
                                 '/' . $ctx->id . '/workshop_submission_attachment/' . $submission->id . $filepath . $filename, true);
             $type       = $file->get_mimetype();
             $type       = mimeinfo_from_type("type", $type);
-            $icon       = new html_image();
-            $icon->src  = $this->output->pix_url(file_mimetype_icon($type));
-            $icon->set_classes('icon');
-            $icon->alt  = $type;
-            $image      = $this->output->image($icon);
+            $image      = html_writer::empty_tag('img', array('src'=>$this->output->pix_url(file_mimetype_icon($type)), 'alt'=>$type, 'class'=>'icon'));
 
             $linkhtml   = $this->output->link($fileurl, $image) . $this->output->link($fileurl, $filename);
             $linktxt    = "$filename [$fileurl]";
@@ -254,12 +250,9 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
             } else {
                 if (in_array($type, array('image/gif', 'image/jpeg', 'image/png'))) {
-                    $preview        = new html_image();
-                    $preview->src   = $fileurl;
-                    $preview->set_classes('preview');
-                    $preview        = $this->output->image($preview);
-                    $preview        = $this->output->link($fileurl, $preview);
-                    $outputimgs    .= $this->output->container($preview);
+                    $preview     = html_writer::empty_tag('img', array('src'=>$fileurl, 'alt'=>'', 'class'=>'preview'));
+                    $preview     = html_writer::tag('a', array('href'=>$fileurl), $preview);
+                    $outputimgs .= $this->output->container($preview);
                 } else {
                     // this is the same as the code in html if-branch
                     $outputfiles .= html_writer::tag('li', array('class' => $type), $linkhtml);
