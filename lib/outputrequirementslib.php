@@ -226,7 +226,7 @@ class page_requirements_manager {
 
         // JavaScript should always work with $CFG->httpswwwroot rather than $CFG->wwwroot.
         // Otherwise, in some situations, users will get warnings about insecure content
-        // on sercure pages from their web browser.
+        // on secure pages from their web browser.
 
         $this->M_cfg = array(
             'wwwroot'             => $CFG->httpswwwroot, // Yes, really. See above.
@@ -250,6 +250,10 @@ class page_requirements_manager {
         $this->string_for_js('cancel', 'moodle');
         $this->string_for_js('yes', 'moodle');
         $this->js_init_call('M.util.init_help_icons');
+
+        if ($page->pagelayout === 'frametop') {
+            $this->js_init_call('M.util.init_frametop');
+        }
     }
 
     /**

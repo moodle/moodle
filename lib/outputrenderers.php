@@ -423,8 +423,7 @@ class core_renderer extends renderer_base {
         if (session_is_loggedinas()) {
             $realuser = session_get_realuser();
             $fullname = fullname($realuser, true);
-            $realuserinfo = " [<a $CFG->frametarget
-            href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;return=1&amp;sesskey=".sesskey()."\">$fullname</a>] ";
+            $realuserinfo = " [<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;return=1&amp;sesskey=".sesskey()."\">$fullname</a>] ";
         } else {
             $realuserinfo = '';
         }
@@ -438,28 +437,27 @@ class core_renderer extends renderer_base {
             $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
             $fullname = fullname($USER, true);
-            $username = "<a $CFG->frametarget href=\"$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id\">$fullname</a>";
+            $username = "<a href=\"$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id\">$fullname</a>";
             if (is_mnet_remote_user($USER) and $idprovider = $DB->get_record('mnet_host', array('id'=>$USER->mnethostid))) {
-                $username .= " from <a $CFG->frametarget href=\"{$idprovider->wwwroot}\">{$idprovider->name}</a>";
+                $username .= " from <a href=\"{$idprovider->wwwroot}\">{$idprovider->name}</a>";
             }
             if (isset($USER->username) && $USER->username == 'guest') {
                 $loggedinas = $realuserinfo.get_string('loggedinasguest').
-                          " (<a $CFG->frametarget href=\"$loginurl\">".get_string('login').'</a>)';
+                          " (<a href=\"$loginurl\">".get_string('login').'</a>)';
             } else if (!empty($USER->access['rsw'][$context->path])) {
                 $rolename = '';
                 if ($role = $DB->get_record('role', array('id'=>$USER->access['rsw'][$context->path]))) {
                     $rolename = ': '.format_string($role->name);
                 }
                 $loggedinas = get_string('loggedinas', 'moodle', $username).$rolename.
-                          " (<a $CFG->frametarget
-                          href=\"$CFG->wwwroot/course/view.php?id=$course->id&amp;switchrole=0&amp;sesskey=".sesskey()."\">".get_string('switchrolereturn').'</a>)';
+                          " (<a href=\"$CFG->wwwroot/course/view.php?id=$course->id&amp;switchrole=0&amp;sesskey=".sesskey()."\">".get_string('switchrolereturn').'</a>)';
             } else {
                 $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username).' '.
-                          " (<a $CFG->frametarget href=\"$CFG->wwwroot/login/logout.php?sesskey=".sesskey()."\">".get_string('logout').'</a>)';
+                          " (<a href=\"$CFG->wwwroot/login/logout.php?sesskey=".sesskey()."\">".get_string('logout').'</a>)';
             }
         } else {
             $loggedinas = get_string('loggedinnot', 'moodle').
-                          " (<a $CFG->frametarget href=\"$loginurl\">".get_string('login').'</a>)';
+                          " (<a href=\"$loginurl\">".get_string('login').'</a>)';
         }
 
         $loggedinas = '<div class="logininfo">'.$loggedinas.'</div>';
@@ -905,11 +903,6 @@ class core_renderer extends renderer_base {
                             'style' => $link->style,
                             'id'    => $link->id);
 
-        if (!empty($CFG->frametarget)) {
-            //TODO: this seems wrong, we have to use onclick hack in order to be xhtml strict...
-            $attributes['target'] = $CFG->framename;
-        }
-
         return html_writer::tag('a', $attributes, $link->text);
     }
 
@@ -959,13 +952,6 @@ class core_renderer extends renderer_base {
             foreach ($link->actions as $action) {
                 $this->add_action_handler($id, $action);
             }
-        }
-
-        if (!empty($CFG->frametarget)) {
-            //TODO: this seems wrong, we have to use onclick hack in order to be xhtml strict,
-            //      we should instead use YUI and alter all links in frame-top layout,
-            //      that is officially the only place where we have the "breaking out of frame" problems.
-            $attributes['target'] = $CFG->framename;
         }
 
         return html_writer::tag('a', $attributes, $link->text);

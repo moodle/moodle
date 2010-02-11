@@ -461,9 +461,6 @@ if (stristr(PHP_OS, 'win') && !stristr(PHP_OS, 'darwin')) {
 }
 $CFG->os = PHP_OS;
 
-// Set up default frame target string, based on $CFG->framename
-$CFG->frametarget = frametarget();
-
 // Setup cache dir for Smarty and others
 if (!file_exists($CFG->dataroot .'/cache')) {
     make_upload_directory('cache');

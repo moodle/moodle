@@ -686,7 +686,7 @@ function scorm_course_format_display($user,$course) {
             $trackedusers = $DB->get_record('scorm_scoes_track', array('scormid'=>$scorm->id), 'count(distinct(userid)) as c');
             if ($trackedusers->c > 0) {
                 $headertext .= '<td class="reportlink">'.
-                              '<a '.$CFG->frametarget.'" href="'.$CFG->wwwroot.'/mod/scorm/report.php?id='.$cm->id.'">'.
+                              '<a href="'.$CFG->wwwroot.'/mod/scorm/report.php?id='.$cm->id.'">'.
                                get_string('viewallreports','scorm',$trackedusers->c).'</a>';
             } else {
                 $headertext .= '<td class="reportlink">'.get_string('noreports','scorm');

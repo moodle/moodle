@@ -57,7 +57,7 @@
                                             '<a class="data autolink" title="'.
                                             $strippedcontent.'" href="'.
                                             $CFG->wwwroot.'/mod/data/view.php?d='. $datacontent->dataid .
-                                            '&amp;rid='. $datacontent->recordid .'" '.$CFG->frametarget.'>',
+                                            '&amp;rid='. $datacontent->recordid .'">',
                                             '</a>', false, true);
                 }
             } // End foreach

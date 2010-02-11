@@ -42,7 +42,7 @@
 
     admin_externalpage_print_header();
 
-    echo "<form $CFG->frametarget id=\"enrolmenu\" method=\"post\" action=\"enrol_config.php\">";
+    echo "<form id=\"enrolmenu\" method=\"post\" action=\"enrol_config.php\">";
     echo "<div>";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
     echo "<input type=\"hidden\" name=\"enrol\" value=\"".$enrol."\" />";

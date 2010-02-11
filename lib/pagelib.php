@@ -1673,7 +1673,7 @@ class page_generic_activity extends page_base {
 
         $buttons = '<table><tr><td>'.$OUTPUT->update_module_button($this->modulerecord->id, $this->activityname).'</td>';
         if ($this->user_allowed_editing() && !empty($CFG->showblocksonmodpages)) {
-            $buttons .= '<td><form '.$CFG->frametarget.' method="get" action="view.php"><div>'.
+            $buttons .= '<td><form method="get" action="view.php"><div>'.
                 '<input type="hidden" name="id" value="'.$this->modulerecord->id.'" />'.
                 '<input type="hidden" name="edit" value="'.($this->user_is_editing()?'off':'on').'" />'.
                 '<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></div></form></td>';

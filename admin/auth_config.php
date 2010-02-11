@@ -58,7 +58,7 @@ $user_fields = $authplugin->userfields;
 admin_externalpage_print_header();
 
 // choose an authentication method
-echo "<form $CFG->frametarget id=\"authmenu\" method=\"post\" action=\"auth_config.php\">\n";
+echo "<form id=\"authmenu\" method=\"post\" action=\"auth_config.php\">\n";
 echo "<div>\n";
 echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n";
 echo "<input type=\"hidden\" name=\"auth\" value=\"".$auth."\" />\n";

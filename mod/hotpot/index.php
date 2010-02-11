@@ -364,7 +364,7 @@
 
         if (has_capability('moodle/course:manageactivities', $coursecontext)) {
             $updatebutton = ''
-            .   '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/course/mod.php">'
+            .   '<form method="get" action="'.$CFG->wwwroot.'/course/mod.php">'
             .   '<input type="hidden" name="update" value="'.$hotpot->coursemodule.'" />'
             .   $sesskey
             .   '<input type="submit" value="'.$strupdate.'" />'

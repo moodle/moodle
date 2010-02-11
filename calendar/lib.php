@@ -1445,7 +1445,7 @@ function calendar_preferences_button() {
         return '';
     }
 
-    return "<form $CFG->frametarget method=\"get\" ".
+    return "<form method=\"get\" ".
            " action=\"$CFG->wwwroot/calendar/preferences.php\">".
            "<div><input type=\"submit\" value=\"".get_string("preferences", "calendar")." ...\" /></div></form>";
 }

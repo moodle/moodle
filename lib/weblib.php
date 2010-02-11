@@ -2990,22 +2990,6 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
 }
 
 /**
- *  Returns string to add a frame attribute, if required
- *
- * @global object
- * @return bool
- */
-function frametarget() {
-    global $CFG;
-
-    if (empty($CFG->framename) or ($CFG->framename == '_top')) {
-        return '';
-    } else {
-        return ' target="'.$CFG->framename.'" ';
-    }
-}
-
-/**
 * Outputs a HTML comment to the browser. This is used for those hard-to-debug
 * pages that use bits from many different files in very confusing ways (e.g. blocks).
 *

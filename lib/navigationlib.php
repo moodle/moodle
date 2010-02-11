@@ -432,13 +432,8 @@ class navigation_node {
             if ($this->hidden) {
                 $link->add_class('dimmed');
             }
-
-            if (!empty($CFG->framename) && ($PAGE->pagelayout=='frametop' || $CFG->framename!='_top')) {
-                $breakoutaction = new breakout_of_frame_action();
-                $link->add_action($breakoutaction);
-            }
-
             $content = $OUTPUT->link($link);
+
         } else {
             $span = new html_span();
             $span->contents = $content;
@@ -450,6 +445,7 @@ class navigation_node {
             }
             $content = $OUTPUT->span($span);
         }
+
         return $content;
     }
 

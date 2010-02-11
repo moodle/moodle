@@ -54,7 +54,7 @@ class activitynames_filter extends moodle_text_filter {
                         $entitisedname  = s($currentname);
                         /// Avoid empty or unlinkable activity names
                         if (!empty($title)) {
-                            $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/$activity->mod/view.php?id=$activity->cm\" $CFG->frametarget>";
+                            $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/$activity->mod/view.php?id=$activity->cm\">";
                             $this->activitylist[] = new filterobject($currentname, $href_tag_begin, '</a>', false, true);
                             if ($currentname != $entitisedname) { /// If name has some entity (&amp; &quot; &lt; &gt;) add that filter too. MDL-17545
                                 $this->activitylist[] = new filterobject($entitisedname, $href_tag_begin, '</a>', false, true);

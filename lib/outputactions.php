@@ -158,20 +158,3 @@ class popup_action extends component_action {
     }
 }
 
-/**
- * Component action for a breaking out of a frameset for a redirection.
- *
- * This function simply sets a `onclick="this.target='framename'` for the link when
- * it is clicked causing the page to be directed to the target rather than the just
- * the frame.
- */
-class breakout_of_frame_action extends component_action {
-    /**
-     * Constructor to set up the action
-     * Relies on parent::__construct
-     */
-    public function __construct() {
-        global $CFG;
-        parent::__construct('click', 'frame_breakout', array('framename'=>$CFG->framename));
-    }
-}

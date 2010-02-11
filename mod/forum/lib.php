@@ -6248,7 +6248,7 @@ function forum_update_subscriptions_button($courseid, $forumid) {
         $edit = "on";
     }
 
-    return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/mod/forum/subscribers.php\">".
+    return "<form method=\"get\" action=\"$CFG->wwwroot/mod/forum/subscribers.php\">".
            "<input type=\"hidden\" name=\"id\" value=\"$forumid\" />".
            "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
            "<input type=\"submit\" value=\"$string\" /></form>";

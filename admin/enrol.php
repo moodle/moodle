@@ -60,7 +60,7 @@
 
     echo $OUTPUT->box(get_string('configenrolmentplugins', 'admin'));
 
-    echo "<form $CFG->frametarget id=\"enrolmenu\" method=\"post\" action=\"enrol.php\">";
+    echo "<form id=\"enrolmenu\" method=\"post\" action=\"enrol.php\">";
     echo "<div>";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
 
@@ -113,7 +113,7 @@
 
     $yesnooptions = array(0=>get_string('no'), 1=>get_string('yes'));
 
-    echo '<form '.$CFG->frametarget.' id="adminsettings" method="post" action="enrol.php">';
+    echo '<form id="adminsettings" method="post" action="enrol.php">';
     echo '<div class="settingsform clearfix">';
     echo $OUTPUT->heading(get_string('commonsettings', 'admin'));
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';

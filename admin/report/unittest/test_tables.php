@@ -33,8 +33,6 @@ die;die;die;
     $CFG->release             = $real_cfg->release;
     $CFG->version             = $real_cfg->version;
     $CFG->config_php_settings = $real_cfg->config_php_settings;
-    $CFG->frametarget         = $real_cfg->frametarget;
-    $CFG->framename           = $real_cfg->framename;
     $CFG->debug               = 0;
 
     $DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);

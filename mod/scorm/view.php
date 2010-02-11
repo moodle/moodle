@@ -67,7 +67,7 @@
 
         $trackedusers = scorm_get_count_users($scorm->id, $cm->groupingid);
         if ($trackedusers > 0) {
-            echo "<div class=\"reportlink\"><a $CFG->frametarget href=\"report.php?id=$cm->id\"> ".get_string('viewalluserreports','scorm',$trackedusers).'</a></div>';
+            echo "<div class=\"reportlink\"><a href=\"report.php?id=$cm->id\"> ".get_string('viewalluserreports','scorm',$trackedusers).'</a></div>';
         } else {
             echo '<div class="reportlink">'.get_string('noreports','scorm').'</div>';
         }

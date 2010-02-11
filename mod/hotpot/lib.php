@@ -2155,8 +2155,6 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
             $frametarget = ' onsubmit="'."this.target='$targetframe';".'"';
         } else if (! empty($CFG->framename)) {
             $frametarget = ' onsubmit="'."this.target='$CFG->framename';".'"';
-        } else if (! empty($CFG->frametarget)) {
-            $frametarget = $CFG->frametarget;
         } else {
             $frametarget = '';
         }
