@@ -85,29 +85,35 @@ $functions = array(
     ),
 
     // === user related functions ===
-/*
     'moodle_user_create_users' => array(
         'classname'   => 'moodle_user_external',
         'methodname'  => 'create_users',
         'classpath'   => 'user/externallib.php',
+        'description' => 'Create users.',
+        'type'        => 'write',
     ),
 
-    'moodle_user_get_users' => array(
+    'moodle_user_get_users_by_id' => array(
         'classname'   => 'moodle_user_external',
-        'methodname'  => 'get_users',
+        'methodname'  => 'get_users_by_id',
         'classpath'   => 'user/externallib.php',
+        'description' => 'Get users by id.',
+        'type'        => 'read',
     ),
 
     'moodle_user_delete_users' => array(
         'classname'   => 'moodle_user_external',
         'methodname'  => 'delete_users',
         'classpath'   => 'user/externallib.php',
+        'description' => 'Delete users.',
+        'type'        => 'write',
     ),
 
     'moodle_user_update_users' => array(
         'classname'   => 'moodle_user_external',
         'methodname'  => 'update_users',
         'classpath'   => 'user/externallib.php',
+        'description' => 'Update users.',
+        'type'        => 'write',
     ),
-*/
 );

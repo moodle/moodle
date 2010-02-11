@@ -25,6 +25,279 @@ class webservice_test_client_form extends moodleform {
 
 // === Test client forms ===
 
+class moodle_user_create_users_form extends moodleform {
+    public function definition() {
+        global $CFG;
+
+        $mform = $this->_form;
+
+
+        $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
+
+        //note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters
+        $data = $this->_customdata;
+        if ($data['authmethod'] == 'simple') {
+            $mform->addElement('text', 'wsusername', 'wsusername');
+            $mform->addElement('text', 'wspassword', 'wspassword');
+        } else  if ($data['authmethod'] == 'token') {
+            $mform->addElement('text', 'token', 'token');
+        }
+
+        $mform->addElement('hidden', 'authmethod', $data['authmethod']);
+        $mform->setType('authmethod', PARAM_SAFEDIR);
+
+        /// specific to the create users function
+        $mform->addElement('text', 'username', 'username');
+        $mform->addElement('text', 'password', 'password');
+        $mform->addElement('text', 'firstname', 'firstname');
+        $mform->addElement('text', 'lastname', 'lastname');
+        $mform->addElement('text', 'email', 'email');
+
+        $mform->addElement('hidden', 'function');
+        $mform->setType('function', PARAM_SAFEDIR);
+
+        $mform->addElement('hidden', 'protocol');
+        $mform->setType('protocol', PARAM_SAFEDIR);
+
+
+
+        $mform->addElement('static', 'warning', '', get_string('executewarnign', 'webservice'));
+
+        $this->add_action_buttons(true, get_string('execute', 'webservice'));
+    }
+
+    public function get_params() {
+        if (!$data = $this->get_data()) {
+            return null;
+        }
+        // remove unused from form data
+        unset($data->submitbutton);
+        unset($data->protocol);
+        unset($data->function);
+        unset($data->wsusername);
+        unset($data->wspassword);
+        unset($data->token);
+        unset($data->authmethod);
+
+        $params = array();
+        $params['users'] = array();
+        $params['users'][] = (array)$data;
+
+        return $params;
+    }
+}
+
+
+class moodle_user_update_users_form extends moodleform {
+    public function definition() {
+        global $CFG;
+
+        $mform = $this->_form;
+
+
+        $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
+
+        //note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters
+        $data = $this->_customdata;
+        if ($data['authmethod'] == 'simple') {
+            $mform->addElement('text', 'wsusername', 'wsusername');
+            $mform->addElement('text', 'wspassword', 'wspassword');
+        } else  if ($data['authmethod'] == 'token') {
+            $mform->addElement('text', 'token', 'token');
+        }
+
+        $mform->addElement('hidden', 'authmethod', $data['authmethod']);
+        $mform->setType('authmethod', PARAM_SAFEDIR);
+
+        /// specific to the create users function
+        $mform->addElement('text', 'id', 'id');
+        $mform->addRule('id', get_string('required'), 'required', null, 'client');
+        $mform->addElement('text', 'username', 'username');
+        $mform->addElement('text', 'password', 'password');
+        $mform->addElement('text', 'firstname', 'firstname');
+        $mform->addElement('text', 'lastname', 'lastname');
+        $mform->addElement('text', 'email', 'email');
+
+        $mform->addElement('hidden', 'function');
+        $mform->setType('function', PARAM_SAFEDIR);
+
+        $mform->addElement('hidden', 'protocol');
+        $mform->setType('protocol', PARAM_SAFEDIR);
+
+
+
+        $mform->addElement('static', 'warning', '', get_string('executewarnign', 'webservice'));
+
+        $this->add_action_buttons(true, get_string('execute', 'webservice'));
+    }
+
+    public function get_params() {
+        if (!$data = $this->get_data()) {
+            return null;
+        }
+        // remove unused from form data
+        unset($data->submitbutton);
+        unset($data->protocol);
+        unset($data->function);
+        unset($data->wsusername);
+        unset($data->wspassword);
+        unset($data->token);
+        unset($data->authmethod);
+
+        foreach($data as $key => $value) {
+            if (empty($value)) {
+                 unset($data->{$key});
+            }
+        }
+
+        $params = array();
+        $params['users'] = array();
+        $params['users'][] = (array)$data;
+
+        return $params;
+    }
+}
+
+
+class moodle_user_delete_users_form extends moodleform {
+    public function definition() {
+        global $CFG;
+
+        $mform = $this->_form;
+
+
+        $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
+
+        //note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters
+        $data = $this->_customdata;
+        if ($data['authmethod'] == 'simple') {
+            $mform->addElement('text', 'wsusername', 'wsusername');
+            $mform->addElement('text', 'wspassword', 'wspassword');
+        } else  if ($data['authmethod'] == 'token') {
+            $mform->addElement('text', 'token', 'token');
+        }
+
+        $mform->addElement('hidden', 'authmethod', $data['authmethod']);
+        $mform->setType('authmethod', PARAM_SAFEDIR);
+
+        /// beginning of specific code to the create users function
+        $mform->addElement('text', 'userids[0]', 'userids[0]');
+        $mform->addElement('text', 'userids[1]', 'userids[1]');
+        $mform->addElement('text', 'userids[2]', 'userids[2]');
+        $mform->addElement('text', 'userids[3]', 'userids[3]');
+        /// end of specific code to the create users function
+
+        $mform->addElement('hidden', 'function');
+        $mform->setType('function', PARAM_SAFEDIR);
+
+        $mform->addElement('hidden', 'protocol');
+        $mform->setType('protocol', PARAM_SAFEDIR);
+
+
+
+        $mform->addElement('static', 'warning', '', get_string('executewarnign', 'webservice'));
+
+        $this->add_action_buttons(true, get_string('execute', 'webservice'));
+    }
+
+    public function get_params() {
+        if (!$data = $this->get_data()) {
+            return null;
+        }
+        // remove unused from form data
+        unset($data->submitbutton);
+        unset($data->protocol);
+        unset($data->function);
+        unset($data->wsusername);
+        unset($data->wspassword);
+        unset($data->token);
+        unset($data->authmethod);
+
+        ///  beginning of specific code to the create users form
+        $params = array();
+        $params['userids'] = array();
+        for ($i=0; $i<10; $i++) {
+            if (empty($data->userids[$i])) {
+                continue;
+            }
+            $params['userids'][] = $data->userids[$i];
+        }
+        /// end of specific code to the create users function
+        
+        return $params;
+    }
+}
+
+
+class moodle_user_get_users_by_id_form extends moodleform {
+    public function definition() {
+        global $CFG;
+
+        $mform = $this->_form;
+
+
+        $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
+
+        //note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters
+        $data = $this->_customdata;
+        if ($data['authmethod'] == 'simple') {
+            $mform->addElement('text', 'wsusername', 'wsusername');
+            $mform->addElement('text', 'wspassword', 'wspassword');
+        } else  if ($data['authmethod'] == 'token') {
+            $mform->addElement('text', 'token', 'token');
+        }
+
+        $mform->addElement('hidden', 'authmethod', $data['authmethod']);
+        $mform->setType('authmethod', PARAM_SAFEDIR);
+
+        /// beginning of specific code to the create users function
+        $mform->addElement('text', 'userids[0]', 'userids[0]');
+        $mform->addElement('text', 'userids[1]', 'userids[1]');
+        $mform->addElement('text', 'userids[2]', 'userids[2]');
+        $mform->addElement('text', 'userids[3]', 'userids[3]');
+        /// end of specific code to the create users function
+
+        $mform->addElement('hidden', 'function');
+        $mform->setType('function', PARAM_SAFEDIR);
+
+        $mform->addElement('hidden', 'protocol');
+        $mform->setType('protocol', PARAM_SAFEDIR);
+
+
+
+        $mform->addElement('static', 'warning', '', get_string('executewarnign', 'webservice'));
+
+        $this->add_action_buttons(true, get_string('execute', 'webservice'));
+    }
+
+    public function get_params() {
+        if (!$data = $this->get_data()) {
+            return null;
+        }
+        // remove unused from form data
+        unset($data->submitbutton);
+        unset($data->protocol);
+        unset($data->function);
+        unset($data->wsusername);
+        unset($data->wspassword);
+        unset($data->token);
+        unset($data->authmethod);
+
+        ///  beginning of specific code to the create users form
+        $params = array();
+        $params['userids'] = array();
+        for ($i=0; $i<10; $i++) {
+            if (empty($data->userids[$i])) {
+                continue;
+            }
+            $params['userids'][] = $data->userids[$i];
+        }
+        /// end of specific code to the create users function
+
+        return $params;
+    }
+}
+
 class moodle_group_create_groups_form extends moodleform {
     public function definition() {
         global $CFG;

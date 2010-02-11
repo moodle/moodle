@@ -471,18 +471,18 @@ function profile_signup_fields(&$mform) {
 function profile_user_record($userid) {
     global $CFG, $DB;
 
-    $user = new object();
+    $usercustomfields = new object();
 
     if ($fields = $DB->get_records('user_info_field')) {
         foreach ($fields as $field) {
             require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
             $newfield = 'profile_field_'.$field->datatype;
             $formfield = new $newfield($field->id, $userid);
-            if ($formfield->is_user_object_data()) $user->{$field->shortname} = $formfield->data;
+            if ($formfield->is_user_object_data()) $usercustomfields->{$field->shortname} = $formfield->data;
         }
     }
 
-    return $user;
+    return $usercustomfields;
 }
 
 
