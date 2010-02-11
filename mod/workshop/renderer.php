@@ -238,7 +238,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $type       = mimeinfo_from_type("type", $type);
             $image      = html_writer::empty_tag('img', array('src'=>$this->output->pix_url(file_mimetype_icon($type)), 'alt'=>$type, 'class'=>'icon'));
 
-            $linkhtml   = $this->output->link($fileurl, $image) . $this->output->link($fileurl, $filename);
+            $linkhtml   = html_writer::link($fileurl, $image) . $this->output->link($fileurl, $filename);
             $linktxt    = "$filename [$fileurl]";
 
             if ($format == "html") {

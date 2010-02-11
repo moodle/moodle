@@ -1282,7 +1282,7 @@ function ewiki_page_info($id, &$data, $action) {
                      $COURSE->id = SITEID;
                  }
                  $picture = $OUTPUT->user_picture($user);
-                 $value = $picture . $OUTPUT->link("$CFG->wwwroot/user/view.php?id=$user->id&course=$COURSE->id", fullname($user));
+                 $value = $picture . html_writer::link("$CFG->wwwroot/user/view.php?id=$user->id&course=$COURSE->id", fullname($user));
              } else {
                  continue;
                  //$value = @$current['author'];

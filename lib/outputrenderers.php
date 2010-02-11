@@ -1408,11 +1408,10 @@ class core_renderer extends renderer_base {
 
         $icon = $this->image($this->pix_url('help'), array('class'=>'iconhelp', 'alt'=>get_string('scales')));
 
-        $link = new html_link(new moodle_url('/course/scales.php', array('id' => $courseid, 'list' => true, 'scaleid' => $scale->id)), $icon);
-        $popupaction = new popup_action('click', $link->url, 'ratingscale');
-        $link->add_action($popupaction);
+        $link = new moodle_url('/course/scales.php', array('id' => $courseid, 'list' => true, 'scaleid' => $scale->id));
+        $action = new popup_action('click', $link->url, 'ratingscale');
 
-        return html_writer::tag('span', array('class' => 'helplink'), $this->link($link));
+        return html_writer::tag('span', array('class' => 'helplink'), $this->action_link($link, $icon, $action));
     }
 
     /**

@@ -996,7 +996,7 @@ function lesson_get_media_html($lesson, $context) {
     $url = $file_info->get_url();
     $title = $lesson->mediafile;
 
-    $clicktoopen = $OUTPUT->link(new moodle_url($url), get_string('download'));
+    $clicktoopen = html_writer::link(new moodle_url($url), get_string('download'));
 
     $mimetype = resourcelib_guess_url_mimetype($url);
 
@@ -1572,13 +1572,13 @@ class lesson extends lesson_base {
             if ($modname) {
                 $instancename = $DB->get_field($modname, 'name', array('id' => $module->instance));
                 if ($instancename) {
-                    $link = html_link::make(new moodle_url('/mod/'.$modname.'/view.php', array('id'=>$this->properties->activitylink)), get_string('returnto', 'lesson', get_string('activitylinkname', 'lesson', $instancename)));
-                    $link->set_classes(array('centerpadded','lessonbutton','standardbutton'));
-                    return $link;
+                    return html_writer::link(new moodle_url('/mod/'.$modname.'/view.php', array('id'=>$this->properties->activitylink)),
+                        get_string('returnto', 'lesson', get_string('activitylinkname', 'lesson', $instancename)),
+                        array('class'=>'centerpadded lessonbutton standardbutton'));
                 }
             }
         }
-        return false;
+        return '';
     }
 
     /**
@@ -2922,9 +2922,9 @@ class lesson_page_type_manager {
 
         $links = array();
 
-        foreach ($this->types as $type) {
-            if (($link = $type->add_page_link($previd)) instanceof html_link) {
-                $links[] = $OUTPUT->link($link);
+        foreach ($this->types as $key=>$type) {
+            if ($link = $type->add_page_link($previd)) {
+                $links[$key] = $link;
             }
         }
 

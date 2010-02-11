@@ -215,10 +215,10 @@ switch ($mode) {
             echo $OUTPUT->box_start('mdl-align');
             echo $OUTPUT->box_start('lessonbutton standardbutton');
             if ($link) {
-                echo $OUTPUT->link(html_link::make(new moodle_url('/course/view.php', array('id'=>$course->id)), get_string("returntocourse", "lesson")));
+                echo html_writer::link(new moodle_url('/course/view.php', array('id'=>$course->id)), get_string("returntocourse", "lesson"));
             } else {
-                echo $OUTPUT->link(html_link::make(new moodle_url('/course/view.php', array('id'=>$course->id)), get_string("cancel", "lesson"))). ' ';
-                echo $OUTPUT->link(html_link::make(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id, 'viewed'=>'1')), get_string("startlesson", "lesson")));
+                echo html_writer::link(new moodle_url('/course/view.php', array('id'=>$course->id)), get_string("cancel", "lesson")). ' ';
+                echo html_writer::link(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id, 'viewed'=>'1')), get_string("startlesson", "lesson"));
             }
             echo $OUTPUT->box_end();
             echo $OUTPUT->box_end();

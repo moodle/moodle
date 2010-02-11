@@ -58,7 +58,7 @@ class hotpot_report extends hotpot_default_report {
 			$name = fullname($u);
 			if ($is_html) {
 				$picture = $OUTPUT->user_picture($u, array('courseid'=>$course->id));
-				$name = $OUTPUT->link($CFG->wwwroot.'/user/view.php?id='.$u->userid.'&course='.$course->id, $name);
+				$name = html_writer::link($CFG->wwwroot.'/user/view.php?id='.$u->userid.'&course='.$course->id, $name);
 			}
 			if (isset($user->grade)) {
 				$grade = $user->grade;

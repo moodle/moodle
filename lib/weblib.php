@@ -2428,10 +2428,9 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true, $ret
     $output .= html_writer::select($grades, $name, $current, false);
 
     $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$strscales.'" src="'.$OUTPUT->pix_url('help') . '" /></span>';
-    $link = html_link::make('/course/scales.php?id='. $courseid .'&list=true', $linkobject);
-    $link->add_action(new popup_action('click', $link->url, 'ratingscales', array('height' => 400, 'width' => 500)));
-    $link->title = $strscales;
-    $output .= $OUTPUT->link($link);
+    $link = new moodle_url('/course/scales.php', array('id'=>$courseid, 'list'=>1));
+    $action = new popup_action('click', $link->url, 'ratingscales', array('height' => 400, 'width' => 500));
+    $output .= $OUTPUT->action_link($link, $linkobject, $action, array('title'=>$strscales));
 
     if ($return) {
         return $output;
@@ -2468,13 +2467,10 @@ function modgradehelpbutton($courseid){
     global $CFG, $OUTPUT;
 
     $url = new moodle_url('/course/scales.php', array('id' => $courseid, 'list' => true));
-    $link = new html_link();
-    $link->url = $url;
-    $link->text = '<span class="helplink"><img alt="' . get_string('scales') . '" class="iconhelp" src="' . $OUTPUT->pix_url('help') . '" /></span>';
-    $link->add_action(new popup_action('click', $link->url, 'ratingscales', array('height' => 400, 'width' => 500)));
-    $link->title = get_string('newwindow');
+    $text = '<span class="helplink"><img alt="' . get_string('scales') . '" class="iconhelp" src="' . $OUTPUT->pix_url('help') . '" /></span>';
+    $action = new popup_action('click', $link->url, 'ratingscales', array('height' => 400, 'width' => 500));
 
-    return $OUTPUT->link($link);
+    return $OUTPUT->link($url, $text, $action, array('title'=>get_string('newwindow')));
 }
 
 /**

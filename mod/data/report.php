@@ -75,7 +75,7 @@ if (!$ratings = data_get_ratings($record->id, $sqlsort)) {
         echo '<td class="picture">';
         echo $OUTPUT->user_picture($rating, array('courseid'=>$data->course));
         echo '</td>';
-        echo '<td class="author">' . $OUTPUT->link($CFG->wwwroot.'/user/view.php?id='.$rating->id.'&course='.$data->course, fullname($rating)) . '</td>';
+        echo '<td class="author">' . html_writer::link($CFG->wwwroot.'/user/view.php?id='.$rating->id.'&course='.$data->course, fullname($rating)) . '</td>';
         echo '<td style="white-space:nowrap" align="center" class="rating">'.$scalemenu[$rating->rating].'</td>';
         echo "</tr>\n";
     }

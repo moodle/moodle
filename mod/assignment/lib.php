@@ -766,13 +766,9 @@ class assignment_base {
                     'userid' => $submission->userid,
                     'mode' => 'single',
                     'offset' => (optional_param('offset', '', PARAM_INT)-1)));
+            $button = $OUTPUT->action_link($url, $buttontext, new popup_action('click', $url, 'grade'.$submission->userid, array('height' => 450, 'width' => 700)), array('ttile'=>$buttontext));
 
-            $link = html_link::make($url, $buttontext);
-            $link->add_action(new popup_action('click', $link->url, 'grade'.$submission->userid, array('height' => 450, 'width' => 700)));
-            $link->title = $buttontext;
-            $button = $OUTPUT->link($link);
-
-            $output.= 'opener.document.getElementById("up'.$submission->userid.'").innerHTML="'.addslashes_js($button).'";';
+            $output .= 'opener.document.getElementById("up'.$submission->userid.'").innerHTML="'.addslashes_js($button).'";';
         }
 
         $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $submission->userid);

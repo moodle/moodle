@@ -345,14 +345,14 @@ switch ($mode) {
             }
             // email link for this user
             $url = new moodle_url('/mod/lesson/essay.php', array('id'=>$cm->id,'mode'=>'email','userid'=>$userid,'sesskey'=>sesskey()));
-            $emaillink = $OUTPUT->link(html_link::make($url, get_string('emailgradedessays', 'lesson')));
+            $emaillink = html_writer::link($url, get_string('emailgradedessays', 'lesson'));
 
             $table->data[] = array($OUTPUT->user_picture($users[$userid], array('courseid'=>$course->id)).$studentname, implode("<br />", $essaylinks), $emaillink);
         }
 
         // email link for all users
         $url = new moodle_url('/mod/lesson/essay.php', array('id'=>$cm->id,'mode'=>'email','sesskey'=>sesskey()));
-        $emailalllink = $OUTPUT->link(html_link::make($url, get_string('emailallgradedessays', 'lesson')));
+        $emailalllink = html_writer::link($url, get_string('emailallgradedessays', 'lesson'));
 
         $table->data[] = array(' ', ' ', $emailalllink);
 

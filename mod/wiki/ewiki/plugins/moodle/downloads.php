@@ -349,7 +349,7 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
                 $course->id = 1;
             }
             $picture = $OUTPUT->user_picture($user, array('courseid'=>$course->id));
-            $value = $picture . $OUTPUT->link("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id", fullname($user));
+            $value = $picture . html_writer::link("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id", fullname($user));
         }
 
         $o .= '<a href="'.$info->url.'">'.$info->icon.$info->title.'</a>'.$info->size.'<br />'.

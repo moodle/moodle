@@ -335,7 +335,9 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $links[] = html_writer::link($importquestionsurl, get_string('importquestions', 'lesson'));
 
         $manager = lesson_page_type_manager::get($lesson);
-        $links = array_merge($links, $manager->get_add_page_type_links($prevpageid));
+        foreach($manager->get_add_page_type_links($prevpageid) as $link) {
+            $links[] = html_writer::link($link['addurl'], $link['name']);
+        }
 
         $addquestionurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
         $links[] = html_writer::link($addquestionurl, get_string('addaquestionpagehere', 'lesson'));
@@ -356,24 +358,19 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $links = array();
 
         $importquestionsurl = new moodle_url('/mod/lesson/import.php',array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
-        $links[] = html_link::make($importquestionsurl, get_string('importquestions', 'lesson'));
+        $links[] = html_writer::link($importquestionsurl, get_string('importquestions', 'lesson'));
 
         $importppturl = new moodle_url('/mod/lesson/importppt.php',array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
-        $links[] = html_link::make($importppturl, get_string('importppt', 'lesson'));
+        $links[] = html_writer::link($importppturl, get_string('importppt', 'lesson'));
 
         $manager = lesson_page_type_manager::get($lesson);
-        $newpagelinks = $manager->get_add_page_type_links($prevpageid);
-        foreach ($newpagelinks as $link) {
-            $link->url->param('firstpage', 1);
-            $links[] = $link;
+        foreach ($manager->get_add_page_type_links($prevpageid) as $link) {
+            $link['addurl']->param('firstpage', 1);
+            $links[] = html_writer::link($link['addurl'], $link['name']);
         }
 
         $addquestionurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid, 'firstpage'=>1));
-        $links[] = html_link::make($addquestionurl, get_string('addaquestionpage', 'lesson'));
-
-        foreach ($links as $key=>$link) {
-            $links[$key] = $this->output->link($link);
-        }
+        $links[] = html_writer::link($addquestionurl, get_string('addaquestionpage', 'lesson'));
 
         return $this->output->box($output.'<p>'.implode('</p><p>', $links).'</p>', 'generalbox firstpageoptions');
     }
@@ -409,7 +406,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $manager = lesson_page_type_manager::get($page->lesson);
             $links = $manager->get_add_page_type_links($page->id);
             foreach ($links as $link) {
-                $options[$link->url->param('qtype')] = $link->text;
+                $options[$link['type']] = $link['name'];
             }
             $options[0] = get_string('question', 'lesson');
 
@@ -418,9 +415,6 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $addpageselector = $this->output->render($addpageselect);
         }
 
-        foreach ($actions as $key=>$action) {
-            $actions[$key] = $this->output->link($action);
-        }
         if (isset($addpageselector)) {
             $actions[] = $addpageselector;
         }

@@ -541,10 +541,7 @@ if ($pageid != LESSON_EOL) {
     }
 
     if ($lesson->activitylink) {
-        $link = $lesson->link_for_activitylink();
-        if ($link instanceof html_link) {
-            $lessoncontent .= $OUTPUT->link($link);
-        }
+        $lessoncontent .= $lesson->link_for_activitylink();
     }
 
     $url = new moodle_url('/course/view.php', array('id'=>$course->id));
