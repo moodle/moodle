@@ -144,7 +144,7 @@ if (!isset($frm->enrol_ldap_template)) {
     $choices = array();
     $choices["0"] = get_string("no");
     $choices["1"] = get_string("yes");
-    echo $OUTPUT->select(html_select::make ($choices, "enrol_ldap_search_sub", $frm->enrol_ldap_search_sub, false));
+    echo html_writer::select($choices, "enrol_ldap_search_sub", $frm->enrol_ldap_search_sub, null);
 ?>
     <?php  if (isset($err["enrol_ldap_search_sub"])) echo $OUTPUT->error_text($err["enrol_ldap_search_sub"]); ?>
     </td><td>
