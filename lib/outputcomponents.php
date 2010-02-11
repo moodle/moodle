@@ -1806,58 +1806,6 @@ class html_image extends labelled_html_component {
 
 
 /**
- * Component representing a textarea.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_textarea extends html_component {
-    /**
-     * @param string $name Name to use for the textarea element.
-     */
-    public $name;
-    /**
-     * @param string $value Initial content to display in the textarea.
-     */
-    public $value;
-    /**
-     * @param int $rows Number of rows to display  (minimum of 10 when $height is non-null)
-     */
-    public $rows;
-    /**
-     * @param int $cols Number of columns to display (minimum of 65 when $width is non-null)
-     */
-    public $cols;
-    /**
-     * @param bool $usehtmleditor Enables the use of the htmleditor for this field.
-     */
-    public $usehtmleditor;
-
-    /**
-     * @see lib/html_component#prepare()
-     * @return void
-     */
-    public function prepare(renderer_base $output, moodle_page $page, $target) {
-        $this->add_class('form-textarea');
-
-        if (empty($this->id)) {
-            $this->id = "edit-$this->name";
-        }
-
-        if ($this->usehtmleditor) {
-            editors_head_setup();
-            $editor = get_preferred_texteditor(FORMAT_HTML);
-            $editor->use_editor($this->id, array('legacy'=>true));
-            $this->value = htmlspecialchars($value);
-        }
-
-        parent::prepare($output, $page, $target);
-    }
-}
-
-
-/**
  * Component representing a list.
  *
  * The advantage of using this object instead of a flat array is that you can load it
