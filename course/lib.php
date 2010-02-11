@@ -1908,7 +1908,7 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
 }
 
 /**
- * This function will return $options array for $OUTPUT->select(), with whitespace to denote nesting.
+ * This function will return $options array for html_writer::select(), with whitespace to denote nesting.
  */
 function make_categories_options() {
     make_categories_list($cats,$parents);
