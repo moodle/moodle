@@ -23,6 +23,7 @@ class mnet_peer {
     var $applicationid      = 1; // Default of 1 == Moodle
     var $keypair            = array();
     var $error              = array();
+    var $bootstrapped       = false; // set when the object is populated
 
     function mnet_peer() {
         return true;
@@ -96,6 +97,7 @@ class mnet_peer {
             $this->public_key == '';
             return false;
         }
+        $this->bootstrapped = true;
     }
 
     /*
@@ -284,6 +286,7 @@ class mnet_peer {
         $this->theme                = $hostinfo->theme;
         $this->applicationid        = $hostinfo->applicationid;
         $this->application = $DB->get_record('mnet_application', array('id'=>$this->applicationid));
+        $this->bootstrapped = true;
     }
 
     function get_public_key() {

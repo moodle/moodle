@@ -550,3 +550,104 @@ function mnet_debug($debugdata, $debuglevel=1) {
     }
     error_log("$prefix $debugdata");
 }
+
+/**
+ * Return an array of information about all moodle's profile fields
+ * which ones are optional, which ones are forced.
+ * This is used as the basis of providing lists of profile fields to the administrator
+ * to pick which fields to import/export over MNET
+ *
+ * @return array(forced => array, optional => array)
+ */
+function mnet_profile_field_options() {
+    global $DB;
+    static $info;
+    if (!empty($info)) {
+        return $info;
+    }
+
+    $excludes = array(
+        'id',              // makes no sense
+        'mnethostid',      // makes no sense
+        'timecreated',     // will be set to relative to the host anyway
+        'timemodified',    // will be set to relative to the host anyway
+        'auth',            // going to be set to 'mnet'
+        'deleted',         // we should never get deleted users sent over, but don't send this anyway
+        'password',        // no password for mnet users
+        'theme',           // handled separately
+        'lastip',          // will be set to relative to the host anyway
+    );
+
+    // these are the ones that user_not_fully_set_up will complain about
+    $forced = array(
+        'username',
+        'email',
+        'firstname',
+        'lastname',
+    );
+
+    // these are the ones we used to send/receive (pre 2.0)
+    $legacy = array(
+        'username',
+        'email',
+        'auth',
+        'confirmed',
+        'deleted',
+        'firstname',
+        'lastname',
+        'city',
+        'country',
+        'lang',
+        'timezone',
+        'description',
+        'mailformat',
+        'maildigest',
+        'maildisplay',
+        'htmleditor',
+        'wwwroot',
+        'picture',
+    );
+
+    // get a random user field from the database to pull the fields off
+    $randomuser = $DB->get_record('user', array('id' => 1));
+    foreach ($randomuser as $key => $discard) {
+        if (in_array($key, $excludes) || in_array($key, $forced)) {
+            continue;
+        }
+        $fields[$key] = $key;
+    }
+    $info = array(
+        'forced'   => $forced,
+        'optional' => $fields,
+        'legacy'   => $legacy,
+    );
+    return $info;
+}
+
+
+function mnet_get_hosts() {
+    global $CFG, $DB;
+    return $DB->get_records_sql('  SELECT
+                                    h.id,
+                                    h.wwwroot,
+                                    h.ip_address,
+                                    h.name,
+                                    h.public_key,
+                                    h.public_key_expires,
+                                    h.transport,
+                                    h.portno,
+                                    h.last_connect_time,
+                                    h.last_log_id,
+                                    h.applicationid,
+                                    a.name as app_name,
+                                    a.display_name as app_display_name,
+                                    a.xmlrpc_server_url
+                                FROM
+                                    {mnet_host} h,
+                                    {mnet_application} a
+                                WHERE
+                                    h.id <> ? AND
+                                    h.deleted = 0 AND
+                                    h.applicationid=a.id',
+                        array($CFG->mnet_localhost_id));;
+}
