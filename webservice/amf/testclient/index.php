@@ -1,6 +1,7 @@
 <?php
 require "../../../config.php";
 
+$PAGE->set_url('/webservice/amf/testclient/index.php');
 
 $flashvars = new object();
 $flashvars->rooturl =$CFG->wwwroot;
