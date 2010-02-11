@@ -974,7 +974,7 @@ class core_renderer extends renderer_base {
    /**
     * Print a message along with button choices for Continue/Cancel
     *
-    * If a string or moodle_url is given instead of a html_button, method defaults to post.
+    * If a string or moodle_url is given instead of a single_button, method defaults to post.
     *
     * @param string $message The question to ask the user
     * @param single_button|moodle_url|string $continue The single_button component representing the Continue answer. Can also be a moodle_url or string URL
@@ -989,7 +989,7 @@ class core_renderer extends renderer_base {
         } else if ($continue instanceof moodle_url) {
             $continue = new single_button($continue, get_string('continue'), 'post');
         } else {
-            throw new coding_exception('The continue param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a html_form instance.');
+            throw new coding_exception('The continue param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a single_button instance.');
         }
 
         if ($cancel instanceof single_button) {
@@ -999,7 +999,7 @@ class core_renderer extends renderer_base {
         } else if ($cancel instanceof moodle_url) {
             $cancel = new single_button($cancel, get_string('cancel'), 'get');
         } else {
-            throw new coding_exception('The cancel param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a html_form instance.');
+            throw new coding_exception('The cancel param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a single_button instance.');
         }
 
         $output = $this->box_start('generalbox', 'notice');
@@ -1227,65 +1227,6 @@ class core_renderer extends renderer_base {
 
         // and finally one more wrapper with class
         return html_writer::tag('div', array('class' => $select->class), $output);
-    }
-
-    /**
-     * Given a html_form component and an optional rendered submit button,
-     * outputs a HTML form with correct divs and inputs and a single submit button.
-     * This doesn't render any other visible inputs. Use moodleforms for these.
-     * @param html_form $form A html_form instance
-     * @param string $contents HTML fragment to put inside the form. If given, must contain at least the submit button.
-     * @return string HTML fragment
-     */
-    public function form(html_form $form, $contents=null) {
-        $form = clone($form);
-        $form->prepare($this, $this->page, $this->target);
-        $this->prepare_event_handlers($form);
-        $buttonoutput = null;
-
-        if (empty($contents) && !empty($form->button)) {
-            debugging("You probably want to use \$OUTPUT->single_button(\$form), please read that function's documentation", DEBUG_DEVELOPER);
-        } else if (empty($contents)) {
-            $contents = html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('ok')));
-        } else if (!empty($form->button)) {
-            $form->button->prepare($this, $this->page, $this->target);
-            $this->prepare_event_handlers($form->button);
-
-            $buttonattributes = array('class' => $form->button->get_classes_string(),
-                                      'type' => 'submit',
-                                      'value' => $form->button->text,
-                                      'disabled' => $form->button->disabled ? 'disabled' : null,
-                                      'id' => $form->button->id);
-
-            if ($form->jssubmitaction) {
-                $buttonattributes['class'] .= ' hiddenifjs';
-            }
-
-            $buttonoutput = html_writer::empty_tag('input', $buttonattributes);
-
-            // Hide the submit button if the button has a JS submit action
-            if ($form->jssubmitaction) {
-                $buttonoutput = html_writer::start_tag('div', array('id' => "noscript$form->id", 'class'=>'hiddenifjs')) . $buttonoutput . html_writer::end_tag('div');
-            }
-
-        }
-
-        $hiddenoutput = '';
-
-        foreach ($form->url->params() as $var => $val) {
-            $hiddenoutput .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $var, 'value' => $val));
-        }
-
-        $formattributes = array(
-                'method' => $form->method,
-                'action' => $form->url->out_omit_querystring(),
-                'id' => $form->id,
-                'class' => $form->get_classes_string());
-
-        $divoutput = html_writer::tag('div', array(), $hiddenoutput . $contents . $buttonoutput);
-        $output = html_writer::tag('form', $formattributes, $divoutput);
-
-        return $output;
     }
 
     /**
@@ -1770,46 +1711,6 @@ class core_renderer extends renderer_base {
         $button->add_action(new component_action('click', 'close_window'));
 
         return $this->container($this->render($button), 'closewindow');
-    }
-
-    /**
-     * Output an <option> or <optgroup> element. If an optgroup element is detected,
-     * this will recursively output its options as well.
-     *
-     * @param mixed $option a html_select_option or html_select_optgroup
-     * @return string the HTML for the <option> or <optgroup>
-     */
-    public function select_option($option) {
-        $option = clone($option);
-        $option->prepare($this, $this->page, $this->target);
-        $this->prepare_event_handlers($option);
-
-        if ($option instanceof html_select_option) {
-            return html_writer::tag('option', array(
-                    'value' => $option->value,
-                    'disabled' => $option->disabled ? 'disabled' : null,
-                    'class' => $option->get_classes_string(),
-                    'selected' => $option->selected ? 'selected' : null), $option->text);
-        } else if ($option instanceof html_select_optgroup) {
-            $output = html_writer::start_tag('optgroup', array('label' => $option->text, 'class' => $option->get_classes_string()));
-            foreach ($option->options as $selectoption) {
-                $output .= $this->select_option($selectoption);
-            }
-            $output .= html_writer::end_tag('optgroup');
-            return $output;
-        }
-    }
-
-    /**
-     * Outputs a <label> element.
-     * @param html_label $label A html_label object
-     * @return HTML fragment
-     */
-    public function label($label) {
-        $label = clone($label);
-        $label->prepare($this, $this->page, $this->target);
-        $this->prepare_event_handlers($label);
-        return html_writer::tag('label', array('for' => $label->for, 'class' => $label->get_classes_string()), $label->text);
     }
 
     /**
