@@ -100,7 +100,7 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
                     '</label></strong><br />';
             $attributes = array();
             $attributes['disabled'] = $cmoptions->hasattempts ? 'disabled' : null;
-            $select = html_select::make($randomcount, 'randomcount', '1', null, $attributes);
+            $select = html_writer::select($randomcount, 'randomcount', '1', null, $attributes);
             $out .= get_string('addrandom', 'quiz', $select);
             $out .= '<input type="hidden" name="recurse" value="'.$recurse.'" />';
             $out .= '<input type="hidden" name="categoryid" value="' . $category->id . '" />';
