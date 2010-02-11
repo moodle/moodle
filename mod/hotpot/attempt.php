@@ -24,7 +24,7 @@
     // make sure this user is enrolled in this course and can access this HotPot
     require_login($course);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    require_capability('mod/hotpot:attempt', $context);
+    require_capability('mod/hotpot:attempt', $context, $USER->id);
 
     $next_url = "$CFG->wwwroot/course/view.php?id=$course->id";
     $time = time();
