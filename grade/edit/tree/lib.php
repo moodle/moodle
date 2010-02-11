@@ -648,15 +648,14 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
             }
         }
 
-        $select = new html_select();
-        $select->options = $options;
-        $select->name = 'aggregation_'.$category->id;
-        $select->selectedvalue = $category->aggregation;
-        $select->add_action('change', 'update_category_aggregation', array('courseid' => $params['id'], 'category' => $category->id, 'sesskey' => sesskey()));
-        $aggregation = $OUTPUT->select($select);
-
         if ($this->forced) {
             $aggregation = $options[$category->aggregation];
+        } else {
+            $attributes = array();
+            $attributes['id'] = 'aggregation_'.$category->id;
+            $aggregation = html_writer::select($options, 'aggregation_'.$category->id, $category->aggregation, null, $attributes);
+            $action = new component_action('change', 'update_category_aggregation', array('courseid' => $params['id'], 'category' => $category->id, 'sesskey' => sesskey()));
+            $PAGE->add_action_handler('aggregation_'.$category->id, $action);
         }
 
         $categorycell = clone($this->categorycell);

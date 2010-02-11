@@ -322,13 +322,9 @@ if (!$moving && count($grade_edit_tree->categories) > 1) {
     echo '<br /><br />';
     echo '<input type="hidden" name="bulkmove" value="0" id="bulkmoveinput" />';
     echo get_string('moveselectedto', 'grades') . ' ';
-    $select = new html_select();
-    $select->options = $grade_edit_tree->categories;
-    $select->name = 'moveafter';
-    $select->disabled = true;
-    $select->id = 'menumoveafter';
-    $select->add_action('change', 'submit_bulk_move');
-    echo $OUTPUT->select($select);
+    $attributes = array('id'=>'menumoveafter');
+    echo html_writer::select($grade_edit_tree->categories, 'moveafter', '', array(''=>'choosedots'), $attributes);
+    $PAGE->add_action_handler('menumoveafter', new component_action('change', 'submit_bulk_move'));
     echo '<div id="noscriptgradetreeform" class="hiddenifjs">
             <input type="submit" value="'.get_string('go').'" />
           </div>';

@@ -902,10 +902,8 @@ class grade_report_grader extends grade_report {
                             }
                             $itemcell->text .= '<input type="hidden" name="oldgrade_'.$userid.'_'
                                           .$item->id.'" value="'.$oldval.'"/>';
-                            $select = html_select::make($scaleopt, 'grade_'.$userid.'_'.$item->id,$gradeval, $nogradestr);
-                            $select->nothingvalue = '-1';
-                            $select->tabindex = $tabindices[$item->id]['grade'];
-                            $itemcell->text .= $OUTPUT->select($select);
+                            $attributes = array('tabindex' => $tabindices[$item->id]['grade']);
+                            $itemcell->text .= html_writer::select($scaleopt, 'grade_'.$userid.'_'.$item->id, $gradeval, array(-1=>$nogradestr), $attributes);;
                         } elseif(!empty($scale)) {
                             $scales = explode(",", $scale->scale);
 
