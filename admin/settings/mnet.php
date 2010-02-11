@@ -18,16 +18,19 @@ $ADMIN->add('mnet', new admin_externalpage('mnetpeers', get_string('managemnetpe
 
 $ADMIN->add('mnet', new admin_category('mnetpeercat', get_string('mnetpeers', 'mnet')));
 
-$hosts = mnet_get_hosts();
-foreach ($hosts as $host) {
-    $ADMIN->add('mnetpeercat',
-        new admin_externalpage(
-            'mnetpeer' . $host->id,
-            $host->name,
-            $CFG->wwwroot . '/admin/mnet/peers.php?step=update&hostid=' . $host->id,
-            'moodle/site:config'
-        )
-    );
+if (isset($CFG->mnet_dispatcher_mode) and $CFG->mnet_dispatcher_mode === 'off') {
+    require_once($CFG->dirroot.'/mnet/lib.php');
+    $hosts = mnet_get_hosts();
+    foreach ($hosts as $host) {
+        $ADMIN->add('mnetpeercat',
+            new admin_externalpage(
+                'mnetpeer' . $host->id,
+                $host->name,
+                $CFG->wwwroot . '/admin/mnet/peers.php?step=update&hostid=' . $host->id,
+                'moodle/site:config'
+            )
+        );
+    }
 }
 
 $ADMIN->add('mnet', new admin_externalpage('ssoaccesscontrol', get_string('ssoaccesscontrol', 'mnet'),
