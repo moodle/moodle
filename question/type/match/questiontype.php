@@ -295,9 +295,9 @@ class question_match_qtype extends default_questiontype {
                     }
                 }
 
-                $select = html_select::make($answers, $menuname, $response);
-                $select->disabled = $options->readonly;
-                $a->control = $OUTPUT->select($select);
+                $attributes = array();
+                $attributes['disabled'] = $options->readonly ? 'disabled' : null;
+                $a->control = html_writer::select($answers, $menuname, $response, array(''=>'choosedots'), $attributes);
 
                 // Neither the editing interface or the database allow to provide
                 // fedback for this question type.

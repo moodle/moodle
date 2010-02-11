@@ -638,7 +638,7 @@ if ($restoreuserinfo) {
         $roles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
 
         $editteacher = reset($roles);
-        echo $OUTPUT->select(html_select::make ($siterolesarray, "defaultteacheredit", $editteacher->id, 'new role'));
+        echo html_writer::select($siterolesarray, "defaultteacheredit", $editteacher->id, array(''=>'new role'));
         echo ('</td></tr>');
 
         /// Non-editting teacher
@@ -651,7 +651,7 @@ if ($restoreuserinfo) {
         $roles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
         $teacher = reset($roles);
 
-        echo $OUTPUT->select(html_select::make ($siterolesarray, "defaultteacher", $teacher->id, 'new role'));
+        echo html_writer::select($siterolesarray, "defaultteacher", $teacher->id, array(''=>'new role'));
         echo ('</td></tr>');
 
 
@@ -664,7 +664,7 @@ if ($restoreuserinfo) {
         $roles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
         $studentrole = array_shift($roles);
 
-        echo $OUTPUT->select(html_select::make ($siterolesarray, "defaultstudent", $studentrole->id, 'new role'));
+        echo html_writer::select($siterolesarray, "defaultstudent", $studentrole->id, array(''=>'new role'));
         echo ('</td></tr>');
 
     } else {
@@ -703,7 +703,7 @@ if ($restoreuserinfo) {
                         }
                     }
                 }
-                echo $OUTPUT->select(html_select::make ($mappableroles, "roles_".$roleid, $matchrole, 'new role'));
+                echo html_writer::select($mappableroles, "roles_".$roleid, $matchrole, array(''=>'new role'));
                 echo ('</td></tr>');
             }
         }

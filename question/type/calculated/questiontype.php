@@ -942,14 +942,10 @@ class question_calculated_qtype extends default_questiontype {
                                                 ? 'decimals'
                                                 : 'significantfigures'), 'quiz', $i);
             }
-            $select1 = html_select::make($lengthoptions, 'calclength[]', $regs[4], false);
-            $select1->nothingvalue = '';
-            $menu1 = $OUTPUT->select($select1);
+            $menu1 = html_writer::select($lengthoptions, 'calclength[]', $regs[4], null);
 
-            $select2 = html_select::make(array('uniform' => get_string('uniform', 'quiz'),
-                                             'loguniform' => get_string('loguniform', 'quiz')), 'calcdistribution[]', $regs[1], false);
-            $select2->nothingvalue = '';
-            $menu2 = $OUTPUT->select($select2);
+            $options = array('uniform' => get_string('uniform', 'quiz'), 'loguniform' => get_string('loguniform', 'quiz'));
+            $menu2 = html_writer::select($options, 'calcdistribution[]', $regs[1], null);
             return '<input type="submit" onclick="'
                     . "getElementById('addform').regenerateddefid.value='$defid'; return true;"
                     .'" value="'. get_string('generatevalue', 'quiz') . '"/><br/>'
@@ -1387,14 +1383,14 @@ class question_calculated_qtype extends default_questiontype {
                 list($options, $selected) =
                         $this->dataset_options($form, $datasetname);
                 unset($options['0']); // Mandatory...
-                $datasetmenus[$datasetname] = $OUTPUT->select(html_select::make($options, 'dataset[]', $selected, false));
+                $datasetmenus[$datasetname] = html_writer::select($options, 'dataset[]', $selected, null);
             }
         }
         foreach ($optionaldatasets as $datasetname) {
             if (!isset($datasetmenus[$datasetname])) {
                 list($options, $selected) =
                         $this->dataset_options($form, $datasetname);
-                $datasetmenus[$datasetname] = $OUTPUT->select(html_select::make($options, 'dataset[]', $selected, false));
+                $datasetmenus[$datasetname] = html_writer::select($options, 'dataset[]', $selected, null);
             }
         }
         return $datasetmenus;
