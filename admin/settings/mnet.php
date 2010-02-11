@@ -18,7 +18,7 @@ $ADMIN->add('mnet', new admin_externalpage('mnetpeers', get_string('managemnetpe
 
 $ADMIN->add('mnet', new admin_category('mnetpeercat', get_string('mnetpeers', 'mnet')));
 
-if (isset($CFG->mnet_dispatcher_mode) and $CFG->mnet_dispatcher_mode === 'off') {
+if (isset($CFG->mnet_dispatcher_mode) and $CFG->mnet_dispatcher_mode !== 'off') {
     require_once($CFG->dirroot.'/mnet/lib.php');
     $hosts = mnet_get_hosts();
     foreach ($hosts as $host) {
