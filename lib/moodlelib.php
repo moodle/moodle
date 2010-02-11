@@ -124,6 +124,11 @@ define('PARAM_CAPABILITY',   'capability');
 define('PARAM_CLEANHTML', 'cleanhtml');
 
 /**
+ * PARAM_EMAIL - an email address following the RFC
+ */
+define('PARAM_EMAIL',   'email');
+
+/**
  * PARAM_FILE - safe file name, all dangerous chars are stripped, protects against XSS, SQL injections and directory traversals
  */
 define('PARAM_FILE',   'file');
@@ -776,6 +781,13 @@ function clean_param($param, $type) {
                 $param = preg_replace('/[^-\.@_a-z0-9]/', '', $param);
             } 
             return $param;
+
+        case PARAM_EMAIL:
+            if (validate_email($param)) {
+                return $param;
+            } else {
+                return '';
+            }
 
         default:                 // throw error, switched parameters in optional_param or another serious problem
             print_error("unknownparamtype", '', '', $type);
