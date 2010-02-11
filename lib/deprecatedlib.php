@@ -3374,11 +3374,11 @@ function choose_from_radio ($options, $name, $checked='', $return=false) {
  */
 function print_checkbox($name, $value, $checked = true, $label = '', $alt = '', $script='', $return=false) {
 
-    // debugging('print_checkbox() has been deprecated. Please change your code to use $OUTPUT->checkbox($checkbox).');
+    // debugging('print_checkbox() has been deprecated. Please change your code to use html_writer::checkbox().');
     global $OUTPUT;
 
     if (!empty($script)) {
-        debugging('The use of the $script param in print_checkbox has not been migrated into $OUTPUT->checkbox. Please use $checkbox->add_action().', DEBUG_DEVELOPER);
+        debugging('The use of the $script param in print_checkbox has not been migrated into html_writer::checkbox().', DEBUG_DEVELOPER);
     }
 
     $output = html_writer::checkbox($name, $value, $checked, $label);

@@ -1773,43 +1773,6 @@ class core_renderer extends renderer_base {
     }
 
     /**
-     * Outputs a <input type="checkbox" /> element. Optgroups are ignored, so do not
-     * pass a html_select_optgroup as a param to this function.
-     *
-     * @param html_select_option $option a html_select_option
-     * @return string the HTML for the <input type="checkbox">
-     */
-    public function checkbox($option, $name='unnamed') {
-        if ($option instanceof html_select_optgroup) {
-            throw new coding_exception('$OUTPUT->checkbox($option) does not support a html_select_optgroup object as param.');
-        } else if (!($option instanceof html_select_option)) {
-            throw new coding_exception('$OUTPUT->checkbox($option) only accepts a html_select_option object as param.');
-        }
-        $option = clone($option);
-        $option->prepare($this, $this->page, $this->target);
-
-        $option->label->for = $option->id;
-        $this->prepare_event_handlers($option);
-
-        $output = html_writer::start_tag('span', array('class' => "checkbox $name")) . "\n";
-
-        $output .= html_writer::empty_tag('input', array(
-                'type' => 'checkbox',
-                'value' => $option->value,
-                'name' => $name,
-                'id' => $option->id,
-                'alt' => $option->alt,
-                'disabled' => $option->disabled  ? 'disabled' : null,
-                'class' => $option->get_classes_string(),
-                'checked' => $option->selected ? 'selected' : null));
-        $output .= $this->label($option->label);
-
-        $output .= html_writer::end_tag('span');
-
-        return $output;
-    }
-
-    /**
      * Output an <option> or <optgroup> element. If an optgroup element is detected,
      * this will recursively output its options as well.
      *

@@ -158,8 +158,7 @@ if (!isset($frm->acceptechecktypes)) {
             echo("</ul>");
         }
         elseif ($key == AN_METHOD_ECHECK) {
-            $checkbox = html_writer::checkbox('enrol_authorize', AN_METHOD_ECHECK, in_array(AN_METHOD_ECHECK, $paymentmethodsenabled), get_string('method'.AN_METHOD_ECHECK));
-            echo $OUTPUT->checkbox($checkbox, 'acceptmethods[]');
+            echo html_writer::checkbox('acceptmethods[]', AN_METHOD_ECHECK, in_array(AN_METHOD_ECHECK, $paymentmethodsenabled), get_string('method'.AN_METHOD_ECHECK, 'enrol_authorize'));
             echo("<ul>"); // blockquote breaks <span> and <br> tags
             $echecktypesenabled = get_list_of_bank_account_types();
             $allechecktypes = get_list_of_bank_account_types(true);
