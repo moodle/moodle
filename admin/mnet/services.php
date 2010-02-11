@@ -75,7 +75,8 @@ if ($formdata = $mform->get_data()) {
             $DB->update_record('mnet_host2service', $host2service);
         }
     }
-    redirect('/admin/mnet/services.php?hostid=' . $hostid, get_string('changessaved'));
+    $redirecturl = new moodle_url('/admin/mnet/services.php?hostid=' . $hostid);
+    redirect($redirecturl, get_string('changessaved'));
 }
 
 admin_externalpage_print_header();
