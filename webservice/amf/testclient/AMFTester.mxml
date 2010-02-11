@@ -30,9 +30,9 @@
 			import mx.messaging.channels.AMFChannel;
 			import com.adobe.serialization.json.JSON;
 			
-/* 			// Import the debugger
-			import nl.demonsters.debugger.MonsterDebugger;
- */			
+ 			// Import the debugger
+//			import nl.demonsters.debugger.MonsterDebugger;
+			
 			public var api:AMFConnector;
 			protected var methods:Array;
 			protected var introspector:String;
@@ -154,10 +154,11 @@
 			protected function process(event:Event):void
 			{
 				if (api.error) {
-					push(input, time() + ": Exception (code: "+api.data.code+", description: "+api.data.description+", detail: "+api.data.detail+", line: "+api.data.line+")\n");
+					push(input, time() + ": Exception (faultString: "+api.data.faultString+", extendedData: "+api.data.extendedData+", faultDetail: "+api.data.faultDetail+")\n");
 				} else {
 					push(input, time() + ": "+JSON.encode(api.data)+"\n");
 				}
+//				MonsterDebugger.trace(this, {"data":api.data, "error":api.error});
 //				MonsterDebugger.trace(this, api.data);
 			}
 			
@@ -358,31 +359,31 @@
 			<mx:TextArea id="methodDescription" text="" width="100%" height="120"/>
 			<mx:HBox width="100%">
 				<mx:Label id="larg1" text="Arg 1"/>
-				<mx:TextInput id="arg1" toolTip="{argumentToolTip}"/>
+				<mx:TextInput id="arg1" toolTip="{argumentToolTip}" width="100%"/>
 			</mx:HBox>
 			<mx:HBox width="100%">
 				<mx:Label id="larg2" text="Arg 2"/>
-				<mx:TextInput id="arg2" toolTip="{argumentToolTip}"/>
+				<mx:TextInput id="arg2" toolTip="{argumentToolTip}" width="100%"/>
 			</mx:HBox>
 			<mx:HBox width="100%">
 				<mx:Label id="larg3" text="Arg 3"/>
-				<mx:TextInput id="arg3" toolTip="{argumentToolTip}"/>
+				<mx:TextInput id="arg3" toolTip="{argumentToolTip}" width="100%"/>
 			</mx:HBox>
 			<mx:HBox width="100%">
 				<mx:Label id="larg4" text="Arg 4"/>
-				<mx:TextInput id="arg4" toolTip="{argumentToolTip}"/>
+				<mx:TextInput id="arg4" toolTip="{argumentToolTip}" width="100%"/>
 			</mx:HBox>
 			<mx:HBox width="100%">
 				<mx:Label id="larg5" text="Arg 5"/>
-				<mx:TextInput id="arg5" toolTip="{argumentToolTip}"/>
+				<mx:TextInput id="arg5" toolTip="{argumentToolTip}" width="100%"/>
 			</mx:HBox>
 			<mx:HBox width="100%">
 				<mx:Label id="larg6" text="Arg 6"/>
-				<mx:TextInput id="arg6" toolTip="{argumentToolTip}"/>
+				<mx:TextInput id="arg6" toolTip="{argumentToolTip}" width="100%"/>
 			</mx:HBox>
 			<mx:HBox width="100%">
 				<mx:Label id="larg7" text="Arg 7"/>
-				<mx:TextInput id="arg7" toolTip="{argumentToolTip}"/>
+				<mx:TextInput id="arg7" toolTip="{argumentToolTip}" width="100%"/>
 			</mx:HBox>
 			<mx:HBox width="100%">
 				<mx:Button id="call" label="Call" click="execute()"/>

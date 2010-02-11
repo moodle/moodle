@@ -67,21 +67,21 @@ class webservice_amf_server extends webservice_zend_server {
     	$descriptionmethod = $function->methodname.'_returns()';
     	$callforreturnvaluedesc = $function->classname.'::'.$descriptionmethod;
     	return
-'        return webservice_amf_server::validate_and_cast_values('.$callforreturnvaluedesc.', '.$externallibcall.', true)';
+'        return webservice_amf_server::validate_and_cast_values('.$callforreturnvaluedesc.', '.$externallibcall.');';
     }
     /**
      * Validates submitted value, comparing it to a description. If anything is incorrect
      * invalid_return_value_exception is thrown. Also casts the values to the type specified in
      * the description.
-     * @param external_description $description description of parameters
+     * @param mixed $description description of parameters or null if no return value
      * @param mixed $value the actual values
      * @param boolean $singleasobject specifies whether a external_single_structure should be cast to a stdClass object
      *                                 should always be false for use in validating parameters in externallib functions.
      * @return mixed params with added defaults for optional items, invalid_parameters_exception thrown if any problem found
      */
-    public static function validate_and_cast_values(external_description $description, $value) {
+    public static function validate_and_cast_values($description, $value) {
     	if (is_null($description)){
-    		return $value;
+    		return;
     	}
         if ($description instanceof external_value) {
             if (is_array($value) or is_object($value)) {
@@ -116,9 +116,10 @@ class webservice_amf_server extends webservice_zend_server {
                 }
                 unset($value[$key]);
             }
-            if (!empty($value)) {
+/*          Was decided that extra keys should just be ignored and not returned.
+ *          if (!empty($value)) {
                 throw new invalid_return_value_exception('Unexpected keys detected in parameter array.');
-            }
+            }*/
             return (object)$result;
 
         } else if ($description instanceof external_multiple_structure) {

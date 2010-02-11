@@ -443,7 +443,7 @@ class '.$classname.' {
 '.$return.'
      */
     public function '.$function->name.'('.$params.') {
-'.$serviceclassmethodbody.';
+'.$serviceclassmethodbody.'
     }
 ';
         return $code;
@@ -458,7 +458,7 @@ class '.$classname.' {
      * @return string body of the method for $function ie. everything within the {} of the method declaration.
      */
     protected function service_class_method_body($function, $params){
-    	return '        return '.$function->classname.'::'.$function->methodname.'('.$params.')';
+    	return '        return '.$function->classname.'::'.$function->methodname.'('.$params.');';
     }
     
     /**
