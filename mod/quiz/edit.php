@@ -98,10 +98,10 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
             $straddtoquiz = get_string('addtoquiz', 'quiz');
             $out = '<strong><label for="menurandomcount">'.get_string('addrandomfromcategory', 'quiz').
                     '</label></strong><br />';
-            $select = html_select::make($randomcount, 'randomcount', '1', false);
-            $select->nothingvalue = '';
-            $select->disabled = $cmoptions->hasattempts;
-            $out .= get_string('addrandom', 'quiz', $OUTPUT->select($select));
+            $attributes = array();
+            $attributes['disabled'] = $cmoptions->hasattempts ? 'disabled' : null;
+            $select = html_select::make($randomcount, 'randomcount', '1', null, $attributes);
+            $out .= get_string('addrandom', 'quiz', $select);
             $out .= '<input type="hidden" name="recurse" value="'.$recurse.'" />';
             $out .= '<input type="hidden" name="categoryid" value="' . $category->id . '" />';
             $out .= ' <input type="submit" name="addrandom" value="'.
@@ -558,10 +558,10 @@ if ($quiz_reordertool) {
     //YUI does not submit the value of the submit button so
             //we need to add the value:
     echo '<input type="hidden" name="repaginate" value="'.$gostring.'" />';
-    $select = html_select::make($perpage, 'questionsperpage', $quiz->questionsperpage, false);
-    $select->nothingvalue = '';
-    $select->disabled = $repaginatingdisabledhtml;
-    print_string('repaginate', 'quiz', $OUTPUT->select($select));
+    $attributes = array();
+    $attributes['disabled'] = $repaginatingdisabledhtml ? 'disabled' : null;
+    $select = html_writer::select($perpage, 'questionsperpage', $quiz->questionsperpage, null, $attributes);
+    print_string('repaginate', 'quiz', $select);
     echo '<div class="quizquestionlistcontrols">';
     echo ' <input type="submit" name="repaginate" value="'. $gostring .'" '.$repaginatingdisabledhtml.' />';
     echo '</div></fieldset></form></div></div>';

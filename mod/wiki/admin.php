@@ -300,12 +300,9 @@
         while(list($key,$val)=each($wiki_list)) {
           $wiki_admin_list[$key."&amp;action=$action"]=$val;
         }
-        $select = new html_select();
-        $select->options = $wiki_admin_list;
-        $select->name = 'wikiselect';
-        $select->selectedvalue = $selected;
-        $select->add_action('change', 'go_to_wiki');
-        echo $OUTPUT->select($select);
+        $attributes = array('id'=>'changeid');
+        echo html_writer::select($wiki_admin_list, 'wikiselect', $selected, array(''=>'choose'), $attributes);
+        $PAGE->add_action_handler('changeid', new component_action('change', 'go_to_wiki'));
         echo '</td>';
         echo '</tr></table>';
         echo '</fieldset></form>';
