@@ -95,7 +95,7 @@ $params = array("%{$searchcourse}%", "%{$searchcourse}%");
 
 if (($courses = $DB->get_records_sql_menu($sql, $params)) && !empty($searchcourse)) {
     echo ' ' . get_string('courses') . ': ';
-    echo $OUTPUT->select(html_select::make ($courses, 'coursefilter', $coursefilter));
+    echo html_writer::select($courses, 'coursefilter', $coursefilter);
     echo '<input type="submit" value="'.get_string('mapcourse', 'feedback').'"/>';
     echo $OUTPUT->help_icon('mapcourses', '', 'feedback', true);
     echo '<input type="button" value="'.get_string('searchagain').'" onclick="document.location=\'mapcourse.php?id='.$id.'\'"/>';
