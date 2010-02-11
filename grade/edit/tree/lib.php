@@ -655,7 +655,7 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
             $attributes['id'] = 'aggregation_'.$category->id;
             $aggregation = html_writer::select($options, 'aggregation_'.$category->id, $category->aggregation, null, $attributes);
             $action = new component_action('change', 'update_category_aggregation', array('courseid' => $params['id'], 'category' => $category->id, 'sesskey' => sesskey()));
-            $PAGE->add_action_handler('aggregation_'.$category->id, $action);
+            $OUTPUT->add_action_handler($action, 'aggregation_'.$category->id);
         }
 
         $categorycell = clone($this->categorycell);

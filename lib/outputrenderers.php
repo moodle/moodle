@@ -71,12 +71,16 @@ class renderer_base {
 
     /**
      * Adds JS handlers needed for event execution for one html element id
-     * @param string $id
      * @param component_action $actions
-     * @return void
+     * @param string $id
+     * @return string id of element, either original submitted or random new if not supplied
      */
-    public function add_action_handler($id, component_action $action) {
+    public function add_action_handler(component_action $action, $id=null) {
+        if (!$id) {
+            $id = html_writer::random_id($action->event);
+        }
         $this->page->requires->event_handler("#$id", $action->event, $action->jsfunction, $action->jsfunctionargs);
+        return $id;
     }
 
     /**
@@ -950,7 +954,7 @@ class core_renderer extends renderer_base {
                 $id = $attributes['id'];
             }
             foreach ($link->actions as $action) {
-                $this->add_action_handler($id, $action);
+                $this->add_action_handler($action, $id);
             }
         }
 
@@ -1034,7 +1038,7 @@ class core_renderer extends renderer_base {
             $id = html_writer::random_id('single_button');
             $attributes['id'] = $id;
             foreach ($button->actions as $action) {
-                $this->add_action_handler($id, $action);
+                $this->add_action_handler($action, $id);
             }
         }
 
@@ -1229,13 +1233,12 @@ class core_renderer extends renderer_base {
 
         $url = new moodle_url(get_docs_url($path));
 
-        $link = new html_link($url, $icon.$text);
-
+        $attributes = array('href'=>$url);
         if (!empty($CFG->doctonewwindow)) {
-            $link->add_action(new popup_action('click', $url));
+            $attributes['id'] = $this->add_action_handler(new popup_action('click', $url));
         }
-
-        return $this->link($link);
+        
+        return html_writer::tag('a', $attributes, $icon.$text);
     }
 
     /**
@@ -1256,10 +1259,10 @@ class core_renderer extends renderer_base {
      * @param pix_icon $icon
      * @return string HTML fragment
      */
-    public function render_icon(pix_icon $icon) {
+    public function render_pix_icon(pix_icon $icon) {
         $attributes = $icon->attributes;
         $attributes['src'] = $this->pix_url($icon->pix, $icon->component);
-        return html_writer::empty_tag('img', $atrributes);
+        return html_writer::empty_tag('img', $attributes);
     }
 
     /**
@@ -1384,7 +1387,7 @@ class core_renderer extends renderer_base {
         $attributes = array('href'=>$url, 'title'=>$title);
         $id = html_writer::random_id('helpicon');
         $attributes['id'] = $id;
-        $this->add_action_handler($id, new popup_action('click', $url));
+        $this->add_action_handler(new popup_action('click', $url), $id);
         $output = html_writer::tag('a', $attributes, $output);
 
         // and finally span
@@ -1594,7 +1597,7 @@ class core_renderer extends renderer_base {
         if ($userpicture->popup) {
             $id = html_writer::random_id('userpicture');
             $attributes['id'] = $id;
-            $this->add_action_handler($id, new popup_action('click', $url));
+            $this->add_action_handler(new popup_action('click', $url), $id);
         }
 
         return html_writer::tag('a', $attributes, $output);

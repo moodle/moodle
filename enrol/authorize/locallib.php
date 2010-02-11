@@ -69,10 +69,9 @@ function authorize_print_orders($courseid, $userid) {
     $popupmenu .= $OUTPUT->single_select(new moodle_url($baseurl.'&course='.$courseid), 'status', $statusmenu, $status, null, 'statusmenu');
     if ($canmanagepayments) {
         $popupmenu .= '<br />';
-        $id = html_writer::random_id('ea');
         $PAGE->requires->js('/enrol/authorize/authorize.js');
-        $OUTPUT->add_action_handler($id, new component_action('click', 'authorize_jump_to_mypayments', array('userid' => $USER->id, 'status' => $status)));
-        $popupmenu .= html_writer::checkbox('enrol_authorize', 1, $userid == $USER->id, get_string('mypaymentsonly', 'enrol_authorize'), array('id'=>$id));
+        $aid = $OUTPUT->add_action_handler(new component_action('click', 'authorize_jump_to_mypayments', array('userid' => $USER->id, 'status' => $status)));
+        $popupmenu .= html_writer::checkbox('enrol_authorize', 1, $userid == $USER->id, get_string('mypaymentsonly', 'enrol_authorize'), array('id'=>$aid));
     }
 
     if (SITEID != $courseid) {

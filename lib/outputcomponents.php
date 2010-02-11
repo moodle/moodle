@@ -199,8 +199,8 @@ class pix_icon implements renderable {
      * @param array $attributes html attributes
      */
     public function __construct($pix, $alt, $component='moodle', array $attributes = null) {
-        $this->icon       = $pix;
-        $this->compondent = $component;
+        $this->pix        = $pix;
+        $this->component  = $component;
         $this->attributes = (array)$attributes;
 
         $this->attributes['alt'] = $alt;

@@ -325,9 +325,9 @@
 
         echo '<td class="sideblockheading">'
             .get_string('otherwikis', 'wiki').':&nbsp;&nbsp;';
-        $attributes = array('id'=>'changeid');
+        $aid = $OUTPUT->add_action_handler(new component_action('change', 'go_to_wiki'));
+        $attributes = array('id'=>$aid);
         echo html_writer::select($wiki_list, 'wikiselect', $selected, array(''=>'choose'), $attributes);
-        $PAGE->add_action_handler('changeid', new component_action('change', 'go_to_wiki'));
         echo '</td>';
         echo '</tr></table>';
         echo '</form>';
