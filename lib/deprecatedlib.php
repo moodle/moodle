@@ -3060,26 +3060,19 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
                            $id='', $listbox=false, $multiple=false, $class='') {
 
     global $OUTPUT;
-    debugging('choose_from_menu() has been deprecated. Please change your code to use $OUTPUT->select($select).');
+    debugging('choose_from_menu() has been deprecated. Please change your code to use html_writer::select().');
 
     if ($script) {
         debugging('The $script parameter has been deprecated. You must use component_actions instead', DEBUG_DEVELOPER);
     }
-    $select = html_select::make($options, $name, $selected);
-    $select->nothinglabel = $nothing;
-    $select->nothingvalue = $nothingvalue;
-    $select->disabled = $disabled;
-    $select->tabindex = $tabindex;
-    $select->id = $id;
-    $select->listbox = $listbox;
-    $select->multiple = $multiple;
-    $select->add_classes($class);
+    $attributes = array();
+    $attributes['disabled'] = $disabled ? 'disabled' : null;
+    $attributes['tabindex'] = $tabindex ? $tabindex : null;
+    $attributes['multiple'] = $multiple ? $multiple : null;
+    $attributes['class'] = $class ? $class : null;
+    $attributes['id'] = $id ? $id : null;
 
-    if ($nothing == 'choose') {
-        $select->nothinglabel = '';
-    }
-
-    $output = $OUTPUT->select($select);
+    $output = html_writer::select($options, $name, $selected, array($nothingvalue=>$nothing), $attributes);
 
     if ($return) {
         return $output;
@@ -3106,7 +3099,7 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
  * @return string|void If $return=true returns string, else echo's and returns void
  */
 function choose_from_menu_yesno($name, $selected, $script = '', $return = false, $disabled = false, $tabindex = 0) {
-    debugging('choose_from_menu_yesno() has been deprecated. Please change your code to use $OUTPUT->select($select).');
+    debugging('choose_from_menu_yesno() has been deprecated. Please change your code to use html_writer.');
     global $OUTPUT;
 
     if ($script) {
@@ -3150,29 +3143,8 @@ function choose_from_menu_yesno($name, $selected, $script = '', $return = false,
 function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$script = '',
                                  $nothingvalue=0,$return=false,$disabled=false,$tabindex=0) {
 
-    debugging('choose_from_menu_nested() has been deprecated. Please change your code to use $OUTPUT->select($select).');
+    debugging('choose_from_menu_nested() has been removed. Please change your code to use html_writer:.select().');
     global $OUTPUT;
-
-    if ($script) {
-        debugging('The $script parameter has been deprecated. You must use component_actions instead', DEBUG_DEVELOPER);
-    }
-    $select = html_select::make($options, $name, $selected);
-    $select->tabindex = $tabindex;
-    $select->disabled = $disabled;
-    $select->nothingvalue = $nothingvalue;
-    $select->nested = true;
-
-    if ($nothing == 'choose') {
-        $select->nothinglabel = '';
-    }
-
-    $output = $OUTPUT->select($select);
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
 }
 
 /**
@@ -3216,7 +3188,7 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
  * @return string|bool Depending on value of $return
  */
 function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $return=false) {
-    throw new coding_exception('print_timer_selector is completely deprecated. Please use $OUTPUT->select($select) instead');
+    throw new coding_exception('print_timer_selector is completely removed. Please use html_writer instead');
 }
 
 /**
@@ -3232,7 +3204,7 @@ function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $
  * @return string|bool Depending on value of $return
  */
 function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=false) {
-    debugging('print_time_selector() has been deprecated. Please change your code to use $OUTPUT->select($timeselector).');
+    debugging('print_time_selector() has been deprecated. Please change your code to use html_writer.');
 
     $hourselector = html_writer::select_time('hours', $hour, $currenttime);
     $minuteselector = html_writer::select_time('minutes', $minute, $currenttime, $step);
@@ -3259,7 +3231,7 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=fa
  * @return string|bool Depending on value of $return
  */
 function print_date_selector($day, $month, $year, $currenttime=0, $return=false) {
-    debugging('print_date_selector() has been deprecated. Please change your code to use $OUTPUT->select($dateselector).');
+    debugging('print_date_selector() has been deprecated. Please change your code to use html_writer.');
 
     $dayselector = html_writer::select_time('days', $day, $currenttime);
     $monthselector = html_writer::select_time('months', $month, $currenttime);
@@ -3380,20 +3352,7 @@ function close_window_button($name='closewindow', $return=false, $reloadopener =
  * @return string|void If $return=true returns string, else echo's and returns void
  */
 function choose_from_radio ($options, $name, $checked='', $return=false) {
-
-    debugging('choose_from_radio() has been deprecated. Please change your code to use $OUTPUT->select($select).');
-    global $OUTPUT;
-
-    $select = html_select::make($options, $name, $checked);
-    $select->rendertype = 'radio';
-
-    $output = $OUTPUT->select($select);
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    debugging('choose_from_radio() has been removed. Please change your code to use html_writer.');
 }
 
 /**
