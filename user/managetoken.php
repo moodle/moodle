@@ -121,16 +121,18 @@ switch ($action) {
         $stroperation = get_string('operation', 'webservice');
         $strtoken = get_string('key', 'webservice');
         $strservice = get_string('service', 'webservice');
-        $struser = get_string('user');
+        $strcreator = get_string('tokencreator', 'webservice');
         $strcontext = get_string('context', 'webservice');
         $strvaliduntil = get_string('validuntil', 'webservice');
 
         $return = $OUTPUT->heading(get_string('securitykeys', 'webservice'), 3, 'main', true);
         $return .= $OUTPUT->box_start('generalbox webservicestokenui');
 
+        $return .= get_string('keyshelp', 'webservice');
+
         $table = new html_table();
-        $table->head  = array($strtoken, $strservice, $strvaliduntil, $stroperation);
-        $table->align = array('left', 'left', 'left', 'center', 'center');
+        $table->head  = array($strtoken, $strservice, $strvaliduntil, $strcreator, $stroperation);
+        $table->align = array('left', 'left', 'left', 'center', 'left', 'center');
         $table->width = '100%';
         $table->data  = array();
 
@@ -148,25 +150,33 @@ switch ($action) {
             foreach ($tokens as $token) {
                 //TODO: retrieve context
 
-                $reset = "<a href=\"".$returnurl."&amp;action=reset&amp;tokenid=".$token->id."\">";
-                $reset .= get_string('reset')."</a>";
+                if ($token->creatorid == $USER->id) {
+                    $reset = "<a href=\"".$returnurl."&amp;action=reset&amp;tokenid=".$token->id."\">";
+                    $reset .= get_string('reset')."</a>";
+                    $creator = $token->firstname." ".$token->lastname;
+                } else {
+                    //retrive administrator name
+                    require_once($CFG->dirroot.'/user/lib.php');
+                    $creators = user_get_users_by_id(array($token->creatorid));
+                    $admincreator = $creators[$token->creatorid];
+                    $creator = $admincreator->firstname." ".$admincreator->lastname;
+                    $reset = '';
+                }
+
+                $userprofilurl = new moodle_url('/user/view.php?id='.$token->creatorid);
+                $creatoratag = html_writer::start_tag('a', array('href' => $userprofilurl));
+                $creatoratag .= $creator;
+                $creatoratag .= html_writer::end_tag('a');
 
                 $validuntil = '';
                 if (!empty($token->validuntil)) {
                     $validuntil = date("F j, Y"); //TODO: language support (look for moodle function)
                 }
 
-                if ($token->creatorid != $USER->id) {
-                    $reset = get_string('tokencreatedbyadmin', 'webservice');
-                    $admintokeninfo = get_string('tokencreatedbyadminhelp', 'webservice');
-                }
-                $table->data[] = array($token->token, $token->name, $validuntil, $reset);
+                $table->data[] = array($token->token, $token->name, $validuntil, $creatoratag, $reset);
             }
-            
             $return .= $OUTPUT->table($table);
-            if (!empty($admintokeninfo)) {
-                $return .= $admintokeninfo;
-            }
+          
         } else {
             $return .= get_string('notoken', 'webservice');
         }
