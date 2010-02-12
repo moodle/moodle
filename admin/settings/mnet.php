@@ -4,6 +4,7 @@
 
 if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
+require_once($CFG->dirroot.'/mnet/lib.php');
 
 $ADMIN->add('mnet', new admin_externalpage('net', get_string('settings', 'mnet'),
                                            "$CFG->wwwroot/$CFG->admin/mnet/index.php",
@@ -19,7 +20,6 @@ $ADMIN->add('mnet', new admin_externalpage('mnetpeers', get_string('managemnetpe
 $ADMIN->add('mnet', new admin_category('mnetpeercat', get_string('mnetpeers', 'mnet')));
 
 if (isset($CFG->mnet_dispatcher_mode) and $CFG->mnet_dispatcher_mode !== 'off') {
-    require_once($CFG->dirroot.'/mnet/lib.php');
     $hosts = mnet_get_hosts();
     foreach ($hosts as $host) {
         $ADMIN->add('mnetpeercat',
