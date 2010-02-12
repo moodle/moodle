@@ -325,7 +325,7 @@
                 if ($validroleids) {
                     $roleids =  '('.implode(',', $validroleids).')';
 
-                    $select = " SELECT u.id, u.firstname, u.lastname, u.email";
+                    $select = " SELECT DISTINCT u.id, u.firstname, u.lastname, u.email";
                     $countselect = "SELECT COUNT(u.id)";
                     $from   = " FROM {$CFG->prefix}user u
                                 INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
