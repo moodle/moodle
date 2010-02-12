@@ -238,104 +238,103 @@ class grade_report_user extends grade_report {
                     ($this->showhiddenitems == GRADE_REPORT_USER_HIDE_UNTIL && !$grade_grade->is_hiddenuntil()))) {
                 // return false;
             } else {
-
-            /// Excluded Item
-            if ($grade_grade->is_excluded()) {
-                $fullname .= ' ['.get_string('excluded', 'grades').']';
-                $excluded = ' excluded';
-            }
-
-            /// Other class information
-            $class = "$hidden $excluded";
-            if ($this->switch) { // alter style based on whether aggregation is first or last
-               $class .= ($type == 'categoryitem' or $type == 'courseitem') ? " ".$alter."d$depth baggt b2b" : " item b1b";
-            } else {
-               $class .= ($type == 'categoryitem' or $type == 'courseitem') ? " ".$alter."d$depth baggb" : " item b1b";
-            }
-
-            /// Name
-            $data['itemname']['content'] = $fullname;
-            $data['itemname']['class'] = $class;
-            $data['itemname']['colspan'] = ($this->maxdepth - $depth);
-
-            /// Actual Grade
-            $gradeval = $grade_grade->finalgrade;
-            if ($grade_grade->grade_item->needsupdate) {
-                $data['grade']['class'] = $class.' gradingerror';
-                $data['grade']['content'] = get_string('error');
-            } else if (!empty($CFG->grade_hiddenasdate) and $grade_grade->get_datesubmitted() and !$this->canviewhidden and $grade_grade->is_hidden()
-                   and !$grade_grade->grade_item->is_category_item() and !$grade_grade->grade_item->is_course_item()) {
-                // the problem here is that we do not have the time when grade value was modified, 'timemodified' is general modification date for grade_grades records
-                $class .= ' datesubmitted';
-                $data['grade']['class'] = $class;
-                $data['grade']['content'] = get_string('submittedon', 'grades', userdate($grade_grade->get_datesubmitted(), get_string('strftimedatetimeshort')));
-
-            } elseif ($grade_grade->is_hidden()) {
-                    $data['grade']['class'] = $class.' hidden';
-                    $data['grade']['content'] = '-';
-            } else {
-                $data['grade']['class'] = $class;
-                $gradeval = $this->blank_hidden_total($this->courseid, $grade_grade->grade_item, $gradeval);
-                $data['grade']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true);
-            }
-
-            /// Percentage
-            if ($this->showpercentage) {
-                if ($grade_grade->grade_item->needsupdate) {
-                    $data['percentage']['class'] = $class.' gradingerror';
-                    $data['percentage']['content'] = get_string('error');
-                    } elseif ($grade_grade->is_hidden()) {
-                        $data['percentage']['class'] = $class.' hidden';
-                        $data['percentage']['content'] = '-';
-                } else {
-                    $data['percentage']['class'] = $class;
-                    $data['percentage']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE);
+                /// Excluded Item
+                if ($grade_grade->is_excluded()) {
+                    $fullname .= ' ['.get_string('excluded', 'grades').']';
+                    $excluded = ' excluded';
                 }
-            }
 
-            /// Rank
-            if ($this->showrank) {
-                // TODO: this is broken if hidden grades present!!
+                /// Other class information
+                $class = "$hidden $excluded";
+                if ($this->switch) { // alter style based on whether aggregation is first or last
+                   $class .= ($type == 'categoryitem' or $type == 'courseitem') ? " ".$alter."d$depth baggt b2b" : " item b1b";
+                } else {
+                   $class .= ($type == 'categoryitem' or $type == 'courseitem') ? " ".$alter."d$depth baggb" : " item b1b";
+                }
+
+                /// Name
+                $data['itemname']['content'] = $fullname;
+                $data['itemname']['class'] = $class;
+                $data['itemname']['colspan'] = ($this->maxdepth - $depth);
+
+                /// Actual Grade
+                $gradeval = $grade_grade->finalgrade;
                 if ($grade_grade->grade_item->needsupdate) {
-                    $data['rank']['class'] = $class.' gradingerror';
-                    $data['rank']['content'] = get_string('error');
-                    } elseif ($grade_grade->is_hidden()) {
-                        $data['rank']['class'] = $class.' hidden';
+                    $data['grade']['class'] = $class.' gradingerror';
+                    $data['grade']['content'] = get_string('error');
+                } else if (!empty($CFG->grade_hiddenasdate) and $grade_grade->get_datesubmitted() and !$this->canviewhidden and $grade_grade->is_hidden()
+                       and !$grade_grade->grade_item->is_category_item() and !$grade_grade->grade_item->is_course_item()) {
+                    // the problem here is that we do not have the time when grade value was modified, 'timemodified' is general modification date for grade_grades records
+                    $class .= ' datesubmitted';
+                    $data['grade']['class'] = $class;
+                    $data['grade']['content'] = get_string('submittedon', 'grades', userdate($grade_grade->get_datesubmitted(), get_string('strftimedatetimeshort')));
+
+                } elseif ($grade_grade->is_hidden()) {
+                        $data['grade']['class'] = $class.' hidden';
+                        $data['grade']['content'] = '-';
+                } else {
+                    $data['grade']['class'] = $class;
+                    $gradeval = $this->blank_hidden_total($this->courseid, $grade_grade->grade_item, $gradeval);
+                    $data['grade']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true);
+                }
+
+                /// Percentage
+                if ($this->showpercentage) {
+                    if ($grade_grade->grade_item->needsupdate) {
+                        $data['percentage']['class'] = $class.' gradingerror';
+                        $data['percentage']['content'] = get_string('error');
+                        } elseif ($grade_grade->is_hidden()) {
+                            $data['percentage']['class'] = $class.' hidden';
+                            $data['percentage']['content'] = '-';
+                    } else {
+                        $data['percentage']['class'] = $class;
+                        $data['percentage']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE);
+                    }
+                }
+
+                /// Rank
+                if ($this->showrank) {
+                    // TODO: this is broken if hidden grades present!!
+                    if ($grade_grade->grade_item->needsupdate) {
+                        $data['rank']['class'] = $class.' gradingerror';
+                        $data['rank']['content'] = get_string('error');
+                        } elseif ($grade_grade->is_hidden()) {
+                            $data['rank']['class'] = $class.' hidden';
+                            $data['rank']['content'] = '-';
+                    } else if (is_null($gradeval)) {
+                        // no grade, no rank
+                        $data['rank']['class'] = $class;
                         $data['rank']['content'] = '-';
-                } else if (is_null($gradeval)) {
-                    // no grade, no rank
-                    $data['rank']['class'] = $class;
-                    $data['rank']['content'] = '-';
+
+                    } else {
+                        /// find the number of users with a higher grade
+                        $sql = "SELECT COUNT(DISTINCT(userid))
+                                  FROM {grade_grades}
+                                 WHERE finalgrade > ?
+                                       AND itemid = ?";
+                        $rank = $DB->count_records_sql($sql, array($grade_grade->finalgrade, $grade_grade->grade_item->id)) + 1;
+
+                        $data['rank']['class'] = $class;
+                        $data['rank']['content'] = "$rank/".$this->get_numusers(false); // total course users
+                    }
+                }
+
+                /// Feedback
+                if (empty($grade_grade->feedback) or (!$this->canviewhidden and $grade_grade->is_hidden())) {
+                    $data['feedback']['class'] = $class.' feedbacktext';
+                    $data['feedback']['content'] = '&nbsp;';
 
                 } else {
-                    /// find the number of users with a higher grade
-                    $sql = "SELECT COUNT(DISTINCT(userid))
-                              FROM {grade_grades}
-                             WHERE finalgrade > ?
-                                   AND itemid = ?";
-                    $rank = $DB->count_records_sql($sql, array($grade_grade->finalgrade, $grade_grade->grade_item->id)) + 1;
+                    $data['feedback']['class'] = $class.' feedbacktext';
+                    $data['feedback']['content'] = format_text($grade_grade->feedback, $grade_grade->feedbackformat);
+                }
 
-                    $data['rank']['class'] = $class;
-                    $data['rank']['content'] = "$rank/".$this->get_numusers(false); // total course users
+                /// Range
+                if ($this->showrange) {
+                    $data['range']['class'] = $class;
+                    $data['range']['content'] = $grade_grade->grade_item->get_formatted_range();
                 }
             }
-
-            /// Feedback
-            if (empty($grade_grade->feedback) or (!$this->canviewhidden and $grade_grade->is_hidden())) {
-                $data['feedback']['class'] = $class.' feedbacktext';
-                $data['feedback']['content'] = '&nbsp;';
-
-            } else {
-                $data['feedback']['class'] = $class.' feedbacktext';
-                $data['feedback']['content'] = format_text($grade_grade->feedback, $grade_grade->feedbackformat);
-            }
-
-            /// Range
-            if ($this->showrange) {
-                $data['range']['class'] = $class;
-                $data['range']['content'] = $grade_grade->grade_item->get_formatted_range();
-            }
-        }
         }
 
         /// Category
