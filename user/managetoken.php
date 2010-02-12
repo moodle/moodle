@@ -138,11 +138,11 @@ switch ($action) {
 
         //here retrieve token list (including linked users firstname/lastname and linked services name)
         $sql = "SELECT
-                    t.id, t.token, u.firstname, u.lastname, s.name, t.validuntil
+                    t.id, t.creatorid, t.token, u.firstname, u.lastname, s.name, t.validuntil
                 FROM
                     {external_tokens} t, {user} u, {external_services} s
                 WHERE
-                    t.creatorid=? AND t.tokentype = ".EXTERNAL_TOKEN_PERMANENT." AND s.id = t.externalserviceid AND t.userid = u.id";
+                    t.userid=? AND t.tokentype = ".EXTERNAL_TOKEN_PERMANENT." AND s.id = t.externalserviceid AND t.userid = u.id";
         $tokens = $DB->get_records_sql($sql, array( $USER->id));
         if (!empty($tokens)) {
             foreach ($tokens as $token) {
@@ -156,10 +156,17 @@ switch ($action) {
                     $validuntil = date("F j, Y"); //TODO: language support (look for moodle function)
                 }
 
+                if ($token->creatorid != $USER->id) {
+                    $reset = get_string('tokencreatedbyadmin', 'webservice');
+                    $admintokeninfo = get_string('tokencreatedbyadminhelp', 'webservice');
+                }
                 $table->data[] = array($token->token, $token->name, $validuntil, $reset);
             }
-
+            
             $return .= $OUTPUT->table($table);
+            if (!empty($admintokeninfo)) {
+                $return .= $admintokeninfo;
+            }
         } else {
             $return .= get_string('notoken', 'webservice');
         }
