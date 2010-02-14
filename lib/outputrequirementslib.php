@@ -725,7 +725,7 @@ class page_requirements_manager {
         $output = '';
         if ($this->jscalls[$where]) {
             foreach ($this->jscalls[$where] as $data) {
-                $output = js_writer::function_call($data[0], $data[1], $data[2]);
+                $output .= js_writer::function_call($data[0], $data[1], $data[2]);
             }
             if (!empty($ondomready)) {
                 $output = "    Y.on('domready', function() {\n$output\n    });";
