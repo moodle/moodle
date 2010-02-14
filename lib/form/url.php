@@ -27,7 +27,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
             $this->_options['usefilepicker'] = true;
         }
         parent::HTML_QuickForm_text($elementName, $elementLabel, $attributes);
-        repository_head_setup();
+        //repository_head_setup(); TODO: fixme
     }
 
     function setHiddenLabel($hiddenLabel){
@@ -58,7 +58,8 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
         }
         $client_id = uniqid();
 
-        $repojs = repository_get_client($context, $client_id, '*', FILE_EXTERNAL);
+        //$repojs = repository_get_client($context, $client_id, '*', FILE_EXTERNAL);
+        $repojs = ''; //TODO: fixme
 
         $PAGE->requires->js('/lib/form/url.js');
         $str .= $repojs;
