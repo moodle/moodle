@@ -1898,7 +1898,7 @@ function get_all_instances_in_courses($modulename, $courses, $userid=NULL, $incl
             }
             $instance = $rawmods[$cm->id];
             if (!empty($cm->extra)) {
-                $instance->extra = urlencode($cm->extra); // bc compatibility
+                $instance->extra = $cm->extra;
             }
             $outputarray[] = $instance;
         }

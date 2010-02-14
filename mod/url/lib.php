@@ -272,15 +272,15 @@ function url_get_coursemodule_info($coursemodule) {
         $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
         $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
         $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
-        $info->extra = urlencode("onclick=\"window.open('$fullurl', '', '$wh'); return false;\"");
+        $info->extra = "onclick=\"window.open('$fullurl', '', '$wh'); return false;\"";
 
     } else if ($display == RESOURCELIB_DISPLAY_NEW) {
         $fullurl = "$CFG->wwwroot/mod/url/view.php?id=$coursemodule->id&amp;redirect=1";
-        $info->extra = urlencode("onclick=\"window.open('$fullurl'); return false;\"");
+        $info->extra = "onclick=\"window.open('$fullurl'); return false;\"";
 
     } else if ($display == RESOURCELIB_DISPLAY_OPEN) {
         $fullurl = "$CFG->wwwroot/mod/url/view.php?id=$coursemodule->id&amp;redirect=1";
-        $info->extra = urlencode("onclick=\"window.location.href ='$fullurl';return false;\"");
+        $info->extra = "onclick=\"window.location.href ='$fullurl';return false;\"";
     }
 
     return $info;

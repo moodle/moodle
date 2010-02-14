@@ -141,8 +141,8 @@ function label_get_coursemodule_info($coursemodule) {
         }
         $info = new object();
         // no filtering hre because this info is cached and filtered later
-        $info->extra = urlencode(format_module_intro('label', $label, $coursemodule->id, false));
-        $info->name  = urlencode($label->name);
+        $info->extra = format_module_intro('label', $label, $coursemodule->id, false);
+        $info->name  = $label->name;
         return $info;
     } else {
         return null;

@@ -1249,7 +1249,6 @@ class global_navigation extends navigation_node {
         }
         $modinfo =  $this->cache->{'modinfo'.$course->id};
 
-        $resources = array('resource', 'label');
         if (!$this->cache->cached('canviewhiddenactivities')) {
             $this->cache->canviewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $this->context);
         }
@@ -1264,30 +1263,14 @@ class global_navigation extends navigation_node {
                 continue;
             }
             $icon = null;
-            if (!in_array($module->modname, $resources)) {
-                if ($module->icon == '') {
-                    $icon = new pix_icon('icon', '', $module->modname);
-                }
-                $url = new moodle_url('/mod/'.$module->modname.'/view.php', array('id'=>$module->id));
-                $type = navigation_node::TYPE_ACTIVITY;
+            if ($module->icon) {
+                $icon = new pix_icon($module->icon, '', $module->iconcomponent);
             } else {
-                //TODO: this is not nice and should be probably changed on the module level ;-)
-                /*
-                $url = null;
-                $type = navigation_node::TYPE_RESOURCE;
-                if ($module->modname != 'label') {
-                    $url = new moodle_url('/mod/'.$module->modname.'/view.php', array('id'=>$module->id));
-                } else {
-                    if (preg_match('#^\s*<(p|div)>(?<extra>.*?)</\1>\s*$#i', $module->extra, $matches)) {
-                        $module->extra = $matches['extra'];
-                    }
-                    $module->name = format_text($module->extra, FORMAT_HTML, $labelformatoptions);
-                }
-                if ($module->icon!=='') {
-                    $icon = $OUTPUT->pix_url(preg_replace('#\.(png|gif)$#i','',$module->icon));
-                }
-                */
+                $icon = new pix_icon('icon', '', $module->modname);
             }
+            $url = new moodle_url('/mod/'.$module->modname.'/view.php', array('id'=>$module->id));
+            $type = navigation_node::TYPE_ACTIVITY; // TODO: add some new fast test for resource types
+
             $this->add_to_path($keys, $module->id, $module->name, $module->name, $type, $url, $icon);
             $child = $this->find_child($module->id, $type);
             if ($child != false) {
@@ -1323,8 +1306,6 @@ class global_navigation extends navigation_node {
         }
         $sections = $this->cache->{'coursesections'.$course->id};
 
-        $resources = array('resource', 'label');
-
         if (!$this->cache->cached('canviewhiddenactivities')) {
             $this->cache->canviewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $this->context);
         }
@@ -1339,30 +1320,14 @@ class global_navigation extends navigation_node {
                 continue;
             }
             $icon = null;
-            if (!in_array($module->modname, $resources)) {
-                if ($module->icon=='') {
-                    $icon = new pix_icon('icon', '', $module->modname);
-                }
-                $url = new moodle_url('/mod/'.$module->modname.'/view.php', array('id'=>$module->id));
-                $type = navigation_node::TYPE_ACTIVITY;
+            if ($module->icon) {
+                $icon = new pix_icon($module->icon, '', $module->iconcomponent);
             } else {
-                //TODO: this is not nice and should be probably changed on the module level ;-)
-                /*
-                $url = null;
-                $type = navigation_node::TYPE_RESOURCE;
-                if ($module->modname!='label') {
-                    $url = new moodle_url('/mod/'.$module->modname.'/view.php', array('id'=>$module->id));
-                } else {
-                    if (preg_match('#^\s*<(p|div)>(?<extra>.*?)</\1>\s*$#i', $module->extra, $matches)) {
-                        $module->extra = $matches['extra'];
-                    }
-                    $module->name = format_text($module->extra, FORMAT_HTML, $labelformatoptions);
-                }
-                if ($module->icon!=='') {
-                    $icon = $OUTPUT->pix_url(preg_replace('#\.(png|gif)$#i','',$module->icon));
-                }
-                */
+                $icon = new pix_icon('icon', '', $module->modname);
             }
+            $url = new moodle_url('/mod/'.$module->modname.'/view.php', array('id'=>$module->id));
+            $type = navigation_node::TYPE_ACTIVITY; // TODO: add some new fast test for resource types
+
             $path = $keys;
             if ($course->id !== SITEID) {
                 $path[] = $sections[$module->sectionnum]->id;
@@ -2216,8 +2181,6 @@ class limited_global_navigation extends global_navigation {
 
         $modinfo = get_fast_modinfo($course);
 
-        $resources = array('resource', 'label');
-
         if (!$this->cache->cached('canviewhiddenactivities')) {
             $this->cache->canviewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $this->context);
         }
@@ -2228,25 +2191,14 @@ class limited_global_navigation extends global_navigation {
                 continue;
             }
             $icon = null;
-            if (!in_array($module->modname, $resources)) {
-                if ($module->icon=='') {
-                    $icon = new pix_icon('icon', '', $module->modname);
-                }
-                $url = new moodle_url('/mod/'.$module->modname.'/view.php', array('id'=>$module->id));
-                $type = navigation_node::TYPE_ACTIVITY;
+            if ($module->icon) {
+                $icon = new pix_icon($module->icon, '', $module->iconcomponent);
             } else {
-                //TODO: this is not nice and should be probably changed on the module level ;-)
-                /*
-                $url = null;
-                $type = navigation_node::TYPE_RESOURCE;
-                if ($module->modname!='label') {
-                    $url = new moodle_url('/mod/'.$module->modname.'/view.php', array('id'=>$module->id));
-                }
-                if ($module->icon!=='') {
-                    $icon = $OUTPUT->pix_url(preg_replace('#\.(png|gif)$#i','',$module->icon));
-                }
-                */
+                $icon = new pix_icon('icon', '', $module->modname);
             }
+            $url = new moodle_url('/mod/'.$module->modname.'/view.php', array('id'=>$module->id));
+            $type = navigation_node::TYPE_ACTIVITY; // TODO: add some new fast test for resource types
+
             $this->add_to_path($keys, $module->id, $module->name, $module->name, $type, $url, $icon);
             $child = $this->find_child($module->id, $type);
             if ($child != false) {
@@ -3563,6 +3515,8 @@ class navigation_xml {
                     } else {
                         $xml .= ' '.$key.'="false"';
                     }
+                } else if ($value instanceof pix_icon) {
+                    $xml .= ' '.$key.'="'.$OUTPUT->pix_url($value->pix, $value->component).'"';
                 } else if ($value !== null) {
                     $xml .= ' '.$key.'="'.$value.'"';
                 }

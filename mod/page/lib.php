@@ -248,23 +248,23 @@ function page_get_coursemodule_info($coursemodule) {
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
 
+    $info = new object();
+    $info->name = $page->name;
+
     if (!$page = $DB->get_record('page', array('id'=>$coursemodule->instance), 'id, name, display, displayoptions')) {
         return NULL;
     }
 
     if ($page->display != RESOURCELIB_DISPLAY_POPUP) {
-        return null;
+        return $info;
     }
-
-    $info = new object();
-    $info->name = $page->name;
 
     $fullurl = "$CFG->wwwroot/mod/page/view.php?id=$coursemodule->id&amp;inpopup=1";
     $options = empty($page->displayoptions) ? array() : unserialize($page->displayoptions);
     $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
     $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
     $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
-    $info->extra = urlencode("onclick=\"window.open('$fullurl', '', '$wh'); return false;\"");
+    $info->extra = "onclick=\"window.open('$fullurl', '', '$wh'); return false;\"";
 
     return $info;
 }

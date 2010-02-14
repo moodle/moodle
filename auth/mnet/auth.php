@@ -797,7 +797,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                     unset($hostlog->modinfo);
                     $modulearray = array();
                     foreach($modinfo as $module) {
-                        $modulearray[$module->cm] = urldecode($module->name);
+                        $modulearray[$module->cm] = $module->name;
                     }
                     $hostlog->resource_name = $modulearray[$hostlog->cmid];
                 } else {

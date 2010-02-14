@@ -49,8 +49,8 @@ class activitynames_filter extends moodle_text_filter {
                 foreach ($modinfo as $activity) {
                     //Exclude labels, hidden activities and activities for group members only
                     if ($activity->mod != "label" and $activity->visible and empty($activity->groupmembersonly)) {
-                        $title = s(trim(strip_tags(urldecode($activity->name))));
-                        $currentname = trim(urldecode($activity->name));
+                        $title = s(trim(strip_tags($activity->name)));
+                        $currentname = trim($activity->name);
                         $entitisedname  = s($currentname);
                         /// Avoid empty or unlinkable activity names
                         if (!empty($title)) {

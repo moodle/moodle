@@ -2809,7 +2809,7 @@ function &get_fast_modinfo(&$course, $userid=0) {
         $cm->instance         = $mod->id;
         $cm->course           = $course->id;
         $cm->modname          = $mod->mod;
-        $cm->name             = urldecode($mod->name);
+        $cm->name             = $mod->name;
         $cm->visible          = $mod->visible;
         $cm->sectionnum       = $mod->section;
         $cm->groupmode        = $mod->groupmode;
@@ -2817,8 +2817,9 @@ function &get_fast_modinfo(&$course, $userid=0) {
         $cm->groupmembersonly = $mod->groupmembersonly;
         $cm->indent           = $mod->indent;
         $cm->completion       = $mod->completion;
-        $cm->extra            = isset($mod->extra) ? urldecode($mod->extra) : '';
+        $cm->extra            = isset($mod->extra) ? $mod->extra : '';
         $cm->icon             = isset($mod->icon) ? $mod->icon : '';
+        $cm->iconcomponent    = isset($mod->iconcomponent) ? $mod->iconcomponent : '';
         $cm->uservisible      = true;
         if(!empty($CFG->enableavailability)) {
             // We must have completion information from modinfo. If it's not
@@ -2855,17 +2856,16 @@ function &get_fast_modinfo(&$course, $userid=0) {
                 $minimalmodinfo=new stdClass();
                 $minimalmodinfo->cms=array();
                 foreach($info as $mod) {
-                    $minimalcm=new stdClass();
-                    $minimalcm->id=$mod->cm;
-                    $minimalcm->name=urldecode($mod->name);
+                    $minimalcm = new stdClass();
+                    $minimalcm->id = $mod->cm;
+                    $minimalcm->name = $mod->name;
                     $minimalmodinfo->cms[$minimalcm->id]=$minimalcm;
                 }
             }
 
             // Get availability information
             $ci = new condition_info($cm);
-            $cm->available=$ci->is_available($cm->availableinfo,true,$userid,
-                $minimalmodinfo);
+            $cm->available=$ci->is_available($cm->availableinfo, true, $userid, $minimalmodinfo);
         } else {
             $cm->available=true;
         }

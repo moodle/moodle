@@ -2370,7 +2370,7 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
         }
 
         $url = $mod->modname .'/view.php?id='. $mod->id;
-        $mod->name = strip_tags(format_string(urldecode($mod->name),true));
+        $mod->name = strip_tags(format_string($mod->name ,true));
         if (strlen($mod->name) > ($width+5)) {
             $mod->name = substr($mod->name, 0, $width).'...';
         }

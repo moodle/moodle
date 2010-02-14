@@ -1105,13 +1105,16 @@ function get_array_of_activities($courseid) {
                            if (!empty($info->icon)) {
                                $mod[$seq]->icon = $info->icon;
                            }
+                           if (!empty($info->iconcomponent)) {
+                               $mod[$seq]->iconcomponent = $info->iconcomponent;
+                           }
                            if (!empty($info->name)) {
-                               $mod[$seq]->name = urlencode($info->name);
+                               $mod[$seq]->name = $info->name;
                            }
                        }
                    }
                    if (!isset($mod[$seq]->name)) {
-                       $mod[$seq]->name = urlencode($DB->get_field($rawmods[$seq]->modname, "name", array("id"=>$rawmods[$seq]->instance)));
+                       $mod[$seq]->name = $DB->get_field($rawmods[$seq]->modname, "name", array("id"=>$rawmods[$seq]->instance));
                    }
                }
             }

@@ -186,7 +186,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
                 $activities["section/$mod->section"] = "-------------- $strsection $mod->section --------------";
             }
             $section = $mod->section;
-            $mod->name = strip_tags(format_string(urldecode($mod->name),true));
+            $mod->name = strip_tags(format_string($mod->name, true));
             if (strlen($mod->name) > 55) {
                 $mod->name = substr($mod->name, 0, 50)."...";
             }
@@ -410,7 +410,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
                 $activities["section/$mod->section"] = "-------------- $strsection $mod->section --------------";
             }
             $section = $mod->section;
-            $mod->name = strip_tags(format_string(urldecode($mod->name),true));
+            $mod->name = strip_tags(format_string($mod->name, true));
             if (strlen($mod->name) > 55) {
                 $mod->name = substr($mod->name, 0, 50)."...";
             }
