@@ -7983,7 +7983,7 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
     $navref->get($discussionkey)->mainnavonly = true;
 
     foreach ($discussions as $discussion) {
-        $icon = $OUTPUT->pix_url('i/feedback');
+        $icon = new pix_icon('i/feedback', '');
         $url = new moodle_url('/mod/forum/discuss.php', array('d'=>$discussion->discussion));
         $navref->get($discussionkey)->add($discussion->subject, $url, navigation_node::TYPE_SETTING, null, null, $icon);
     }
@@ -8011,7 +8011,7 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
         $recentkey = $navref->add(get_string('recentactivity').' ('.count($recentposts).')');
         $navref->get($recentkey)->mainnavonly = true;
         foreach ($recentposts as $post) {
-            $icon = $OUTPUT->pix_url('i/feedback');
+            $icon = new pic_icon('i/feedback', '');
             $url = new moodle_url('/mod/forum/discuss.php', array('d'=>$post->content->discussion));
             $title = $post->content->subject."\n".userdate($post->timestamp, get_string('strftimerecent', 'langconfig'))."\n".$post->user->firstname.' '.$post->user->lastname;
             $navref->get($recentkey)->add($title, $url, navigation_node::TYPE_SETTING, null, null, $icon);
@@ -8123,7 +8123,7 @@ function forum_extend_settings_navigation($settingsnav, $module=null) {
             $userid = $USER->id;
         }
         $url = new moodle_url(rss_get_url($PAGE->course->id, $userid, "forum", $forumobject->id));
-        $forum->add($string, $url, settings_navigation::TYPE_SETTING, null, null, $OUTPUT->pix_url('i/rss'));
+        $forum->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
     }
 
     return $forumkey;

@@ -1271,7 +1271,7 @@ function chat_extend_navigation($navigation, $course, $module, $cm) {
         $users = $navigation->get($userskey);
         foreach ($chatusers as $chatuser) {
             $userlink = new moodle_url('/user/view.php', array('id'=>$chatuser->id,'course'=>$course->id));
-            $users->add(fullname($chatuser).' '.format_time(time() - $chatuser->lastmessageping), $userlink, navigation_node::TYPE_USER, null, null, $OUTPUT->pix_url('c/user'));
+            $users->add(fullname($chatuser).' '.format_time(time() - $chatuser->lastmessageping), $userlink, navigation_node::TYPE_USER, null, null, new pix_icon('c/user', ''));
         }
     }
 }

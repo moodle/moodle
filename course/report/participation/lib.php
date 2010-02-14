@@ -35,6 +35,6 @@ function participation_report_extend_navigation($navigation, $course, $context) 
     global $CFG, $OUTPUT;
     if (has_capability('coursereport/participation:view', $context)) {
         $url = new moodle_url('/course/report/participation/index.php', array('id'=>$course->id));
-        $navigation->add(get_string('participationreport'), $url, navigation_node::TYPE_SETTING, null, null, $OUTPUT->pix_url('i/report'));
+        $navigation->add(get_string('participationreport'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
     }
 }
