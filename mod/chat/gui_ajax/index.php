@@ -4,7 +4,7 @@ require_once('../lib.php');
 
 $id      = required_param('id', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT); //only for teachers
-$theme   = optional_param('theme', 'compact', PARAM_ALPHANUM);
+$theme   = optional_param('theme', 'compact', PARAM_SAFEDIR);
 
 $url = new moodle_url('/mod/chat/gui_ajax/index.php', array('id'=>$id));
 if ($groupid !== 0) {
@@ -45,11 +45,13 @@ if (!file_exists(dirname(__FILE__) . '/theme/'.$theme.'/chat.css')) {
 }
 
 $module = array(
-    'name'      => 'mod_chat_ajax',
+    'name'      => 'mod_chat_ajax', // chat gui's are not real plugins, we have to break the naming standards for JS modules here :-(
     'fullpath'  => '/mod/chat/gui_ajax/module.js',
-    'requires'  => array('base', 'dom', 'event', 'event-mouseenter', 'event-key', 'json-parse', 'io', 'overlay', 'yui2-resize', 'yui2-layout', 'yui2-menu')
+    'requires'  => array('base', 'dom', 'event', 'event-mouseenter', 'event-key', 'json-parse', 'io', 'overlay', 'yui2-resize', 'yui2-layout', 'yui2-menu'),
+    'strings'   => array(array('send', 'chat'), array('sending', 'chat'), array('inputarea', 'chat'), array('userlist', 'chat'),
+                         array('modulename', 'chat'), array('beep', 'chat'), array('talk', 'chat'))
 );
-$modulecfg = array(array(
+$modulecfg = array(
     'home'=>$CFG->httpswwwroot.'/mod/chat/view.php?id='.$cm->id,
     'chaturl'=>$CFG->httpswwwroot.'/mod/chat/gui_ajax/index.php?id='.$id,
     'theme'=>$theme,
@@ -59,11 +61,10 @@ $modulecfg = array(array(
     'chat_lasttime'=>0,
     'chat_lastrow'=>null,
     'chatroom_name'=>format_string($course->shortname) . ": ".format_string($chat->name,true).$groupname
-));
-$PAGE->requires->js_init_call('M.mod_chat.ajax.init', $modulecfg, false, $module);
-$PAGE->requires->strings_for_js(array('send','sending','inputarea','userlist','modulename','beep','talk'), 'chat');
+);
+$PAGE->requires->js_init_call('M.mod_chat_ajax.init', array($modulecfg), false, $module);
 
-$PAGE->set_title('Chat');
+$PAGE->set_title(get_string('modulename', 'chat').": $course->shortname: ".format_string($chat->name,true)."$groupname");
 $PAGE->add_body_class('yui-skin-sam');
 $PAGE->set_pagelayout('embedded');
 

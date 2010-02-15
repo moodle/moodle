@@ -1,17 +1,24 @@
-/**
- * AJAX Chat Module
- */
-YUI.add('mod_chat_ajax', function(Y) {
 
-    /**
-     * @namespace M.mod_chat
-     */
-    M.mod_chat = M.mod_chat || {};
-    /**
-     * This is the AJAX chat modules main namespace
-     * @namespace M.mod_chat.ajax
-     */
-    M.mod_chat.ajax = {
+/*
+ * NOTE: the /mod/chat/gui_header_js/ is not a real plugin,
+ * ideally this code should be in /mod/chat/module.js
+ */
+
+/**
+ * @namespace M.mod_chat_ajax
+ */
+M.mod_chat_ajax = M.mod_chat_ajax || {};
+
+/**
+ * Init ajax based Chat UI.
+ * @namespace M.mod_chat_ajax
+ * @function
+ * @param {YUI} Y
+ * @param {Object} cfg configuration data
+ */
+M.mod_chat_ajax.init = function(Y, cfg) {
+
+    var gui_ajax = {
 
         // Properties
         api : M.cfg.wwwroot+'/mod/chat/chat_ajax.php',  // The path to the ajax callback script
@@ -27,7 +34,7 @@ YUI.add('mod_chat_ajax', function(Y) {
         sendbutton : null,
         messagebox : null,
 
-        init : function(m, cfg) {
+        init : function(cfg) {
             this.cfg = cfg;
             this.cfg.req_count = this.cfg.req_count || 0;
             this.layout = new YAHOO.widget.Layout({
@@ -52,8 +59,12 @@ YUI.add('mod_chat_ajax', function(Y) {
 
             // Attach the default events for this module
             this.sendbutton.on('click', this.send, this);
-            this.messagebox.on('mouseenter', new function(){this.scrollable = false;}, this);
-            this.messagebox.on('mouseleave', new function(){this.scrollable = true;}, this);
+            this.messagebox.on('mouseenter', function() {
+                this.scrollable = false;
+            }, this);
+            this.messagebox.on('mouseleave', function() {
+                this.scrollable = true;
+            }, this);
 
             // Send the message when the enter key is pressed
             Y.on('key', this.send, this.messageinput,  'press:13', this);
@@ -133,32 +144,32 @@ YUI.add('mod_chat_ajax', function(Y) {
             this.sendbutton.set('value', M.str.chat.sending);
 
             var data = {
-               chat_message : (!beep)?this.messageinput.get('value'):'',
-               chat_sid : this.cfg.sid,
-               theme : this.cfg.theme
-           }
-           if (beep) {
-               data.beep = beep
-           }
+                chat_message : (!beep)?this.messageinput.get('value'):'',
+                chat_sid : this.cfg.sid,
+                theme : this.cfg.theme
+            };
+            if (beep) {
+                data.beep = beep
+            }
 
             Y.io(this.api+'?action=chat', {
-               method : 'POST',
-               data : build_querystring(data),
-               on : {
-                   success : this.send_callback
-               },
-               context : this
+                method : 'POST',
+                data : build_querystring(data),
+                on : {
+                    success : this.send_callback
+                },
+                context : this
             });
         },
 
         send_callback : function(tid, outcome, args) {
-            if(outcome.responseText == 200){
+            if (outcome.responseText == 200) {
                 this.sendbutton.set('value', M.str.chat.send);
                 this.messageinput.set('value', '');
             }
             clearInterval(this.interval);
             this.update_messages();
-            this.interval = setInterval(function(me){
+            this.interval = setInterval(function(me) {
                 me.update_messages();
             }, this.cfg.timer, this);
         },
@@ -201,7 +212,7 @@ YUI.add('mod_chat_ajax', function(Y) {
             this.cfg.chat_lastrow  = data.lastrow;
             // Update messages
             for (var key in data.msgs){
-                if(!M.util.in_array(key, this.messages)){
+                if (!M.util.in_array(key, this.messages)) {
                     this.messages.push(key);
                     this.append_message(key, data.msgs[key], data.lastrow);
                 }
@@ -216,7 +227,7 @@ YUI.add('mod_chat_ajax', function(Y) {
         },
 
         update_users : function(users) {
-            if(!users){
+            if (!users) {
                 return;
             }
             var list = Y.one('#users-list');
@@ -234,7 +245,8 @@ YUI.add('mod_chat_ajax', function(Y) {
                 list.append(li);
             }
         }
-        
-    }
-    
-}, '2.0.0', {requires:['base', 'dom', 'event', 'event-mouseenter', 'event-key', 'json-parse', 'io', 'overlay', 'yui2-resize', 'yui2-layout']});
+
+    };
+
+    gui_ajax.init(cfg);
+};
