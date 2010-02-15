@@ -20,11 +20,6 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_login($course->id, false, $cm);
 require_capability('mod/chat:chat',$context);
 
-if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $cm->id))) {
-    notice(get_string("activityiscurrentlyhidden"));
-    exit;
-}
-
 /// Check to see if groups are being used here
  if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
     if ($groupid = groups_get_activity_group($cm)) {
