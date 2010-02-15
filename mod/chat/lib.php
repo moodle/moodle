@@ -894,7 +894,7 @@ function chat_format_message($message, $courseid, $currentuser, $chat_lastrow=NU
 
     if (isset($users[$message->userid])) {
         $user = $users[$message->userid];
-    } else if ($user = $DB->get_record('user', array('id'=>$message->userid), 'id,picture,firstname,lastname')) {
+    } else if ($user = $DB->get_record('user', array('id'=>$message->userid), 'id,picture,firstname,lastname,imagealt')) {
         $users[$message->userid] = $user;
     } else {
         return NULL;
@@ -923,7 +923,7 @@ function chat_format_message_theme ($message, $courseid, $currentuser, $theme = 
 
     if (isset($users[$message->userid])) {
         $sender = $users[$message->userid];
-    } else if ($sender = $DB->get_record('user', array('id'=>$message->userid), 'id,picture,firstname,lastname')) {
+    } else if ($sender = $DB->get_record('user', array('id'=>$message->userid), 'id,picture,firstname,lastname,imagealt')) {
         $users[$message->userid] = $sender;
     } else {
         return NULL;
@@ -1261,7 +1261,7 @@ function chat_extend_navigation($navigation, $course, $module, $cm) {
         foreach ($links as $link) {
             $link->add_action(new popup_action('click', $link->url, 'chat'.$course->id.$cm->instance.$currentgroup, array('height' => 500, 'width' => 700)));
             $link->title = get_string('modulename', 'chat');
-            $navigation->add($link->title, $link, navigation_node::TYPE_ACTIVITY, null ,null, $OUTPUT->pix_url('c/group'));
+            $navigation->add($link->title, $link, navigation_node::TYPE_ACTIVITY, null ,null, new pix_icon('c/group' , ''));
         }
     }
 

@@ -30,26 +30,31 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 //Get the user theme
 $USER = $DB->get_record('user', array('id'=>$chatuser->userid));
 
+
+$module = array(
+    'name'      => 'mod_chat_js',
+    'fullpath'  => '/mod/chat/gui_header_js/module.js',
+    'requires'  => array('base', 'node')
+);
+$PAGE->requires->js_init_call('M.mod_chat_js.init', array(false), false, $module);
+
 //Setup course, lang and theme
 $PAGE->set_course($course);
-$PAGE->requires->js('/mod/chat/gui_header_js/chat_gui_header.js', true);
 $PAGE->set_pagelayout('embedded');
 $PAGE->set_focuscontrol('input_chat_message');
 $PAGE->set_cacheable(false);
 echo $OUTPUT->header();
 
-?>
-    <form action="../empty.php" method="post" target="empty" id="inputForm"
-          onsubmit="return empty_field_and_submit()" style="margin:0">
-        <input type="text" id="input_chat_message" name="chat_message" size="50" value="" />
-        <?php echo $OUTPUT->help_icon('chatting', get_string('helpchatting', 'chat'), 'chat', true); ?><br />
-        <input type="checkbox" id="auto" size="50" value="" checked="checked" /><label for="auto"><?php echo get_string('autoscroll', 'chat');?></label>
-    </form>
+echo html_writer::start_tag('form', array('action'=>'../empty.php', 'method'=>'post', 'target'=>'empty', 'id'=>'inputForm', 'style'=>'margin:0'));
+echo html_writer::empty_tag('input', array('type'=>'text', 'id'=>'input_chat_message', 'name'=>'chat_message', 'size'=>'50', 'value'=>''));
+echo html_writer::empty_tag('input', array('type'=>'checkbox', 'id'=>'auto', 'checked'=>'checked', 'value'=>''));
+echo html_writer::tag('label', array('for'=>'auto'), get_string('autoscroll', 'chat'));
+echo $OUTPUT->help_icon('chatting', get_string('helpchatting', 'chat'), 'chat', true);
+echo html_writer::end_tag('form');
 
-    <form action="insert.php" method="post" target="empty" id="sendForm">
-        <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>" />
-        <input type="hidden" name="chat_message" />
-    </form>
-<?php
-    echo $OUTPUT->footer();
-?>
+echo html_writer::start_tag('form', array('action'=>'insert.php', 'method'=>'post', 'target'=>'empty', 'id'=>'sendForm'));
+echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'chat_sid', 'value'=>$chat_sid));
+echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'chat_message', 'id'=>'insert_chat_message'));
+echo html_writer::end_tag('form');
+
+echo $OUTPUT->footer();

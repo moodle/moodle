@@ -63,25 +63,25 @@ if (!$chatusers = chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->gro
 }
 
 $uidles = Array();
-$i = 0;
 foreach ($chatusers as $chatuser) {
-    $uidles[$i] = 'uidle{$chatuser->id}';
-    $i++;
+    $uidles[] = $chatuser->id;
 }
-$PAGE->requires->data_for_js('uidles', $uidles);
-$PAGE->requires->js('/mod/chat/gui_header_js/chat_gui_header.js');
-$PAGE->requires->js_function_call('start', null, true);
-ob_start();
-echo $OUTPUT->header();
+
+$module = array(
+    'name'      => 'mod_chat_js',
+    'fullpath'  => '/mod/chat/gui_header_js/module.js',
+    'requires'  => array('base', 'node')
+);
+$PAGE->requires->js_init_call('M.mod_chat_js.init', array($uidles), false, $module);
 
 /// Print user panel body
 $timenow    = time();
 $stridle    = get_string('idle', 'chat');
 $strbeep    = get_string('beep', 'chat');
 
-
-echo '<div style="display: none"><a href="'.$refreshurl.'" id="refreshLink">Refresh link</a></div>';
-echo '<table width="100%">';
+$table = new html_table();
+$table->width = '100%';
+$table->data = array();
 foreach ($chatusers as $chatuser) {
     $lastping = $timenow - $chatuser->lastmessageping;
     $min = (int) ($lastping/60);
@@ -89,19 +89,25 @@ foreach ($chatusers as $chatuser) {
     $min = $min < 10 ? '0'.$min : $min;
     $sec = $sec < 10 ? '0'.$sec : $sec;
     $idle = $min.':'.$sec;
-    echo '<tr><td width="35">';
-    echo "<a target=\"_blank\" onClick=\"return openpopup('/user/view.php?id=$chatuser->id&amp;course=$courseid','user$chatuser->id','');\" href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&amp;course=$courseid\">";
-    echo $OUTPUT->user_picture($chatuser, array('courseid'=>$courseid));
-    echo '</a></td><td valign="center">';
-    echo '<p><font size="1">';
-    echo fullname($chatuser).'<br />';
-    echo "<span class=\"dimmed_text\">$stridle <span name=\"uidles\" id=\"uidle{$chatuser->id}\">$idle</span></span>";
-    echo " <a href=\"users.php?chat_sid=$chat_sid&amp;beep=$chatuser->id\">$strbeep</a>";
-    echo '</font></p>';
-    echo '</td></tr>';
+    
+
+    $row = array();
+    //$popupid = $OUTPUT->add_action_handler(new component_action('click', 'openpopup', array('url'=>'/user/view.php?id=$chatuser->id&amp;course=$courseid', 'name'=>'user'.$chatuser->id, 'options'=>'')));
+    $row[0] = $OUTPUT->user_picture($chatuser, array('courseid'=>$courseid, 'popup'=>true));
+    $row[1]  = html_writer::start_tag('p');
+    $row[1] .= html_writer::start_tag('font', array('size'=>'1'));
+    $row[1] .= fullname($chatuser).'<br />';
+    $row[1] .= html_writer::tag('span', array('class'=>'dimmed_text'), $stridle . html_writer::tag('span', array('name'=>'uidles', 'id'=>'uidle'.$chatuser->id), $idle)).' ';
+    $row[1] .= html_writer::tag('a', array('href'=>new moodle_url('/mod/chat/gui_header_js/users.php', array('chat_sid'=>$chat_sid, 'beep'=>$chatuser->id))), $strbeep);
+    $row[1] .= html_writer::end_tag('font');
+    $row[1] .= html_writer::end_tag('p');
+    $table->data[] = $row;
 }
-// added 2 </div>s, xhtml strict complaints
-echo '</table>';
+
+ob_start();
+echo $OUTPUT->header();
+echo html_writer::tag('div', array('style'=>'display:none'), html_writer::tag('a', array('href'=>$refreshurl, 'id'=>'refreshLink'), 'Refresh link'));
+echo $OUTPUT->table($table);
 echo $OUTPUT->footer();
 
 //
