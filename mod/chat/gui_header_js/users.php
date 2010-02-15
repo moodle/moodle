@@ -68,11 +68,11 @@ foreach ($chatusers as $chatuser) {
 }
 
 $module = array(
-    'name'      => 'mod_chat_js',
+    'name'      => 'mod_chat_header',
     'fullpath'  => '/mod/chat/gui_header_js/module.js',
-    'requires'  => array('base', 'node')
+    'requires'  => array('node')
 );
-$PAGE->requires->js_init_call('M.mod_chat.js.init', array($uidles), false, $module);
+$PAGE->requires->js_init_call('M.mod_chat_header.init_users', array($uidles), false, $module);
 
 /// Print user panel body
 $timenow    = time();

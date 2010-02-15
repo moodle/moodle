@@ -64,16 +64,13 @@ if (!empty($chat_message)) {
 
 if ($chatuser->version == 'header_js') {
 
-    /// force msg referesh ASAP
-    if ($CFG->chat_normal_updatemode != 'jsupdated') {  // See bug MDL-6791
-        $module = array(
-            'name'      => 'mod_chat_js',
-            'fullpath'  => '/mod/chat/gui_header_js/module.js',
-            'requires'  => array('base', 'node')
-        );
-        $PAGE->requires->js_init_call('M.mod_chat.js.insert_redirect', array(false), false, $module);
-    }
-    $PAGE->requires->js_function_call('parent.input.enableForm');
+    $forcerefreshasap = ($CFG->chat_normal_updatemode != 'jsupdated'); // See bug MDL-6791
+
+    $module = array(
+        'name'      => 'mod_chat_header',
+        'fullpath'  => '/mod/chat/gui_header_js/module.js'
+    );
+    $PAGE->requires->js_init_call('M.mod_chat_header.init_insert_nojsupdated', null, array($forcerefreshasap), $module);
 }
 
 redirect('../empty.php');

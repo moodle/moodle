@@ -32,11 +32,11 @@ $USER = $DB->get_record('user', array('id'=>$chatuser->userid));
 
 
 $module = array(
-    'name'      => 'mod_chat_js',
+    'name'      => 'mod_chat_header',
     'fullpath'  => '/mod/chat/gui_header_js/module.js',
-    'requires'  => array('base', 'node')
+    'requires'  => array('node')
 );
-$PAGE->requires->js_init_call('M.mod_chat.js.init', array(false), false, $module);
+$PAGE->requires->js_init_call('M.mod_chat_header.init_input', array(false), false, $module);
 
 //Setup course, lang and theme
 $PAGE->set_course($course);

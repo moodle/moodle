@@ -1,65 +1,136 @@
-/**
- * Module for the general JavaScript chat module
+
+/*
+ * NOTE: the /mod/chat/gui_header_js/ is not a real plugin,
+ * ideally this code should be in /mod/chat/module.js
  */
-YUI.add('mod_chat_js', function(Y){
-    /**
-     * @namespace M.mod_chat
-     */
-    M.mod_chat = M.mod_chat || {};
-    /**
-     * @namespace M.mod_chat.js
-     */
-    M.mod_chat.js = {
+
+/**
+ * @namespace M.mod_chat_header
+ */
+M.mod_chat_header = M.mod_chat_ajax || {};
+
+/**
+ * Init header based Chat UI - frame input
+ *
+ * @namespace M.mod_chat_header
+ * @function
+ * @param {YUI} Y
+ * @param {Boolean} forcerefreshasap refresh users frame asap
+ */
+M.mod_chat_header.init_insert = function(Y, forcerefreshasap) {
+    if (forcerefreshasap) {
+        parent.jsupdate.location.href = parent.jsupdate.document.anchors[0].href;
+    }
+    parent.input.enableForm();
+}
+
+/**
+ * Init header based Chat UI - frame input
+ *
+ * @namespace M.mod_chat_header
+ * @function
+ * @param {YUI} Y
+ */
+M.mod_chat_header.init_input = function(Y) {
+
+    var inputframe = {
 
         waitflag : false,       // True when a submission is in progress
+
+        /**
+         * Initialises the input frame 
+         *
+         * @function
+         */
+        init : function() {
+            Y.one('#inputForm').on('submit', this.submit, this);
+        },
+        /**
+         * Enables the input form
+         * @this {M.mod_chat.js}
+         */
+        enable_form : function() {
+            var el = Y.one('#input_chat_message');
+            this.waitflag = false;
+            el.set('className', '');
+            el.focus();
+        },
+        /**
+         * Submits the entered message
+         * @param {Event} e
+         */
+        submit : function(e) {
+            e.halt();
+            if (this.waitflag) {
+                return false;
+            }
+            this.waitflag = true;
+            var inputchatmessage = Y.one('#input_chat_message');
+            Y.one('#insert_chat_message').set('value', inputchatmessage.get('value'));
+            inputchatmessage.set('value', '');
+            inputchatmessage.addClass('wait');
+            Y.one('#sendForm').submit();
+            this.enable_form();
+            return false;
+        }
+
+    };
+
+    inputframe.init();
+};
+
+/**
+ * Init header based Chat UI - frame users
+ *
+ * @namespace M.mod_chat_header
+ * @function
+ * @param {YUI} Y
+ * @param {Array} users
+ */
+M.mod_chat_header.init_users = function(Y, users) {
+
+    var usersframe = {
+
         timer : null,           // Stores the timer object
         timeout : 1,            // The seconds between updates
         users : [],             // An array of users
 
         /**
-         * Function that kicks everything off depending on what is available
-         * within the page, this means we can call it from within each frame and it
-         * will set up correctly
+         * Initialises the frame with list of users
          *
          * @function
-         * @this {M.mod_chat.js}
-         * @param {YUI} Y
+         * @this
          * @param {Array|null} users
          */
-        init : function(Y, users) {
-            if (users) {
-                this.users = users;
-                this.start();
-                Y.one(document.body).on('unload', this.stop, this);
-            }
-            var inputform = Y.one('#inputForm');
-            if (inputform) {
-                inputform.on('submit', this.submit, this);
-            }
+        init : function(users) {
+            this.users = users;
+            this.start();
+            Y.one(document.body).on('unload', this.stop, this);
         },
         /**
          * Starts the update timeout
          *
          * @function
-         * @this {M.mod_chat.js}
+         * @this
          */
         start : function() {
-            this.timer = setTimeout(function(self){
+            this.timer = setTimeout(function(self) {
                 self.update();
             }, this.timeout*1000, this);
         },
         /**
          * Stops the update timeout
          * @function
-         * @this {M.mod_chat.js}
+         * @this
          */
         stop : function() {
             clearTimeout(this.timer);
         },
         /**
          * Updates the user information
+         *
          * @function
-         * @this {M.mod_chat.js}
+         * @this
          */
         update : function() {
             for (var i in this.users) {
@@ -73,41 +144,8 @@ YUI.add('mod_chat_js', function(Y){
                 }
             }
             this.start();
-        },
-        /**
-         * Redirects the frames parent
-         */
-        insert_redirect : function() {
-            parent.jsupdate.location.href = parent.jsupdate.document.anchors[0].href;
-        },
-        /**
-         * Enables the input form
-         * @this {M.mod_chat.js}
-         */
-        enable_form : function() {
-            var el = Y.one('#input_chat_message');
-            this.waitflag = false;
-            el.set('className','');
-            el.focus();
-        },
-        /**
-         * Submits the entered message
-         * @param {Event} e
-         */
-        submit : function(e) {
-            e.halt();
-            if(this.waitflag) {
-                return false;
-            }
-            this.waitflag = true;
-            var inputchatmessage = Y.one('#input_chat_message');
-            Y.one('#insert_chat_message').set('value', inputchatmessage.get('value'));
-            inputchatmessage.set('value', '');
-            inputchatmessage.addClass('wait');
-            Y.one('#sendForm').submit();
-            this.enable_form();
-            return false;
         }
+    };
 
-    }
-}, '2.0.0', {requires:['base','node']});
+    usersframe.init(users);
+};
