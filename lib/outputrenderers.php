@@ -346,7 +346,7 @@ class core_renderer extends renderer_base {
         $this->page->requires->js($jsurl);
 
         // Perform a browser environment check for the flash version.  Should only run once per login session.
-        if (isloggedin() && !empty($CFG->excludeoldflashclients) && empty($SESSION->flashversion)) {
+        if (!NO_MOODLE_COOKIES && isloggedin() && !empty($CFG->excludeoldflashclients) && empty($SESSION->flashversion)) {
             $this->page->requires->js('/lib/swfobject/swfobject.js');
             $this->page->requires->js_init_call('M.core_flashdetect.init');
         }
