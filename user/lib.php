@@ -52,7 +52,7 @@ function user_create_user($user) {
  */
 function user_update_user($user) {
     global $DB;
-    $user->timemodified = time();
+    $user['timemodified'] = time();
     $DB->update_record('user', $user);
 }
 

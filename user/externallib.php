@@ -262,6 +262,9 @@ class moodle_user_external extends external_api {
     public static function update_users($users) {
         global $CFG, $DB;
         require_once($CFG->dirroot."/user/lib.php");
+        require_once($CFG->dirroot."/user/profile/lib.php"); //required for customfields related function
+                                                             //TODO: move the functions somewhere else as
+                                                             //they are "user" related
 
         // Ensure the current user is allowed to run this function
         $context = get_context_instance(CONTEXT_SYSTEM);
@@ -274,7 +277,20 @@ class moodle_user_external extends external_api {
 
         foreach ($params['users'] as $user) {
             user_update_user($user);
+            //update user custom fields
+            if(!empty($user['customfields'])) {
+
+                foreach($user['customfields'] as $customfield) {
+                    $user["profile_field_".$customfield['type']] = $customfield['value']; //profile_save_data() saves profile file
+                                                                                            //it's expecting a user with the correct id,
+                                                                                            //and custom field to be named profile_field_"shortname"
+                }
+                profile_save_data((object) $user);
+            }
         }
+
+
+
 
         $transaction->allow_commit();
 
