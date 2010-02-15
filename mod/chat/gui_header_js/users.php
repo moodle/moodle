@@ -72,7 +72,7 @@ $module = array(
     'fullpath'  => '/mod/chat/gui_header_js/module.js',
     'requires'  => array('base', 'node')
 );
-$PAGE->requires->js_init_call('M.mod_chat_js.init', array($uidles), false, $module);
+$PAGE->requires->js_init_call('M.mod_chat.js.init', array($uidles), false, $module);
 
 /// Print user panel body
 $timenow    = time();
@@ -92,7 +92,6 @@ foreach ($chatusers as $chatuser) {
     
 
     $row = array();
-    //$popupid = $OUTPUT->add_action_handler(new component_action('click', 'openpopup', array('url'=>'/user/view.php?id=$chatuser->id&amp;course=$courseid', 'name'=>'user'.$chatuser->id, 'options'=>'')));
     $row[0] = $OUTPUT->user_picture($chatuser, array('courseid'=>$courseid, 'popup'=>true));
     $row[1]  = html_writer::start_tag('p');
     $row[1] .= html_writer::start_tag('font', array('size'=>'1'));

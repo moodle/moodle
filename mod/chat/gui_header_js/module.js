@@ -1,12 +1,31 @@
+/**
+ * Module for the general JavaScript chat module
+ */
 YUI.add('mod_chat_js', function(Y){
+    /**
+     * @namespace M.mod_chat
+     */
+    M.mod_chat = M.mod_chat || {};
+    /**
+     * @namespace M.mod_chat.js
+     */
+    M.mod_chat.js = {
 
-    M.mod_chat_js = {
+        waitflag : false,       // True when a submission is in progress
+        timer : null,           // Stores the timer object
+        timeout : 1,            // The seconds between updates
+        users : [],             // An array of users
 
-        waitflag : false,
-        timer : null,
-        timeout : 1,
-        users : [],
-
+        /**
+         * Function that kicks everything off depending on what is available
+         * within the page, this means we can call it from within each frame and it
+         * will set up correctly
+         *
+         * @function
+         * @this {M.mod_chat.js}
+         * @param {YUI} Y
+         * @param {Array|null} users
+         */
         init : function(Y, users) {
             if (users) {
                 this.users = users;
@@ -18,17 +37,30 @@ YUI.add('mod_chat_js', function(Y){
                 inputform.on('submit', this.submit, this);
             }
         },
-
+        /**
+         * Starts the update timeout
+         *
+         * @function
+         * @this {M.mod_chat.js}
+         */
         start : function() {
             this.timer = setTimeout(function(self){
                 self.update();
             }, this.timeout*1000, this);
         },
-
+        /**
+         * Stops the update timeout
+         * @function
+         * @this {M.mod_chat.js}
+         */
         stop : function() {
             clearTimeout(this.timer);
         },
-
+        /**
+         * Updates the user information
+         * @function
+         * @this {M.mod_chat.js}
+         */
         update : function() {
             for (var i in this.users) {
                 var el  = Y.one('#uidle'+this.users[i]);
@@ -42,17 +74,26 @@ YUI.add('mod_chat_js', function(Y){
             }
             this.start();
         },
-
+        /**
+         * Redirects the frames parent
+         */
         insert_redirect : function() {
             parent.jsupdate.location.href = parent.jsupdate.document.anchors[0].href;
         },
-
-        enable_form : function(el) {
+        /**
+         * Enables the input form
+         * @this {M.mod_chat.js}
+         */
+        enable_form : function() {
+            var el = Y.one('#input_chat_message');
             this.waitflag = false;
             el.set('className','');
             el.focus();
         },
-
+        /**
+         * Submits the entered message
+         * @param {Event} e
+         */
         submit : function(e) {
             e.halt();
             if(this.waitflag) {
@@ -64,10 +105,9 @@ YUI.add('mod_chat_js', function(Y){
             inputchatmessage.set('value', '');
             inputchatmessage.addClass('wait');
             Y.one('#sendForm').submit();
-            this.enable_form(inputchatmessage);
+            this.enable_form();
             return false;
         }
 
     }
-
 }, '2.0.0', {requires:['base','node']});

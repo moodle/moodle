@@ -36,7 +36,7 @@ $module = array(
     'fullpath'  => '/mod/chat/gui_header_js/module.js',
     'requires'  => array('base', 'node')
 );
-$PAGE->requires->js_init_call('M.mod_chat_js.init', array(false), false, $module);
+$PAGE->requires->js_init_call('M.mod_chat.js.init', array(false), false, $module);
 
 //Setup course, lang and theme
 $PAGE->set_course($course);
