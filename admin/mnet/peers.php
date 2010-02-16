@@ -44,7 +44,7 @@ $updra = optional_param('updateregisterall', 0, PARAM_INT);
 // first process the register all hosts setting if required
 if (!empty($updra)) {
     set_config('mnet_register_allhosts', optional_param('registerallhosts', 0, PARAM_INT));
-    redirect('/admin/mnet/peers.php', get_string('changessaved'));
+    redirect(new moodle_url('/admin/mnet/peers.php'), get_string('changessaved'));
 }
 
 $adminsection = 'mnetpeers';
@@ -161,7 +161,7 @@ if ($formdata = $reviewform->get_data()) {
     $mnet_peer->public_key_expires = $credentials['validTo_time_t'];
 
     if ($mnet_peer->commit()) {
-        redirect('peers.php?hostid='.$mnet_peer->id, get_string('changessaved'));
+        redirect(new moodle_url('/admin/mnet/peers.php', array('hostid' => $mnet_peer->id)), get_string('changessaved'));
     } else {
         print_error('invalidaction', 'error', 'index.php');
     }

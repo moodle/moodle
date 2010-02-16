@@ -524,7 +524,8 @@ function mnet_get_app_jumppath ($applicationid) {
 
 function mnet_debug($debugdata, $debuglevel=1) {
     global $CFG;
-    if (empty($CFG->mnet_rpcdebug) || $CFG->mnet_rpcdebug < $debuglevel) {
+    $setlevel = get_config('', 'mnet_rpcdebug');
+    if (empty($setlevel) || $setlevel < $debuglevel) {
         return;
     }
     if (is_object($debugdata)) {

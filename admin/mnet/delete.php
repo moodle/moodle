@@ -60,5 +60,5 @@ if ('verify' == $step) {
     echo $OUTPUT->footer();
 } elseif ('delete' == $step) {
     $mnet_peer->delete();
-    redirect('peers.php', get_string('hostdeleted', 'mnet'), 5);
+    redirect(new moodle_url('/admin/mnet/peers.php'), get_string('hostdeleted', 'mnet'), 5);
 }

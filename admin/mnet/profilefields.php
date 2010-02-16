@@ -58,9 +58,9 @@ if ($data = $form->get_data()) {
     set_config('host' . $hostid . 'exportdefault', $data->exportdefault, 'mnet');
     set_config('host' . $hostid . 'exportfields', implode(',', $data->exportfields), 'mnet');
 
-    redirect('/admin/mnet/peers.php', get_string('changessaved'));
+    redirect(new moodle_url('/admin/mnet/peers.php'), get_string('changessaved'));
 } elseif ($form->is_cancelled()) {
-    redirect('/admin/mnet/peers.php?hostid=' . $hostid);
+    redirect(new moodle_url('/admin/mnet/peers.php', array('hostid' => $hostid)));
 }
 
 admin_externalpage_print_header();
