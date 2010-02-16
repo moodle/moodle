@@ -46,7 +46,7 @@ class filelib_test extends UnitTestCase {
 
         //POST params with an empty value
         $postdatatoconvert =array( 'name' => null, 'roleid' => 22);
-        $expectedresult = "name=&roleid=22"; //urlencode: '%26' => '&'
+        $expectedresult = "name=&roleid=22"; 
         $postdata = format_postdata_for_curlcall($postdatatoconvert);
         $this->assertEqual($postdata, $expectedresult);
 
