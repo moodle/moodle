@@ -1276,11 +1276,7 @@ class core_renderer extends renderer_base {
     public function heading_with_help($text, $helppage, $component='moodle', $icon='', $iconalt='') {
         $image = '';
         if ($icon) {
-            if ($icon instanceof moodle_url) {
-                $image = $this->image($icon, array('class'=>'icon', 'alt'=>$iconalt));
-            } else {
-                $image = $this->image($this->pix_url($icon, $component), array('class'=>'icon', 'alt'=>$iconalt));
-            }
+            $image = $this->pix_icon($icon, $iconalt, $component, array('class'=>'icon'));
         }
 
         $help = $this->help_icon($helppage, $text, $component);
@@ -1361,7 +1357,7 @@ class core_renderer extends renderer_base {
 
         $title = get_string('helpprefix2', '', $scale->name) .' ('.get_string('newwindow').')';
 
-        $icon = $this->image($this->pix_url('help'), array('class'=>'iconhelp', 'alt'=>get_string('scales')));
+        $icon = $this->pix_icon('help', get_string('scales'), 'moodle', array('class'=>'iconhelp'));
 
         $link = new moodle_url('/course/scales.php', array('id' => $courseid, 'list' => true, 'scaleid' => $scale->id));
         $action = new popup_action('click', $link->url, 'ratingscale');
@@ -1372,77 +1368,27 @@ class core_renderer extends renderer_base {
     /**
      * Creates and returns a spacer image with optional line break.
      *
-     * @param array $options id, alt, width=1, height=1, etc.
-     *              special options br=false (break after spacer)
+     * @param array $attributes
+     * @param boo spacer
      * @return string HTML fragment
      */
-    public function spacer(array $options = null) {
-        $options = (array)$options;
-        if (empty($options['width'])) {
-            $options['width'] = 1;
+    public function spacer(array $attributes = null, $br = false) {
+        $attributes = (array)$attributes;
+        if (empty($attributes['width'])) {
+            $attributes['width'] = 1;
         }
         if (empty($options['height'])) {
-            $options['height'] = 1;
+            $attributes['height'] = 1;
         }
-        $options['class'] = 'spacer';
+        $attributes['class'] = 'spacer';
 
-        $output = $this->image($this->pix_url('spacer'), $options);
+        $output = $this->pix_icon('spacer', '', 'moodle', $attributes);
 
-        if (!empty($options['br'])) {
+        if (!empty($br)) {
             $output .= '<br />';
         }
 
         return $output;
-    }
-
-    /**
-     * Creates and returns an image.
-     *
-     * @param html_image|moodle_url|string $image_or_url image or url of the image,
-     *        it is also possible to use short pix name for core images
-     * @param array $options image attributes such as title, id, alt, widht, height
-     *
-     * @return string HTML fragment
-     */
-    public function image($image_or_url, array $options = null) {
-        if (empty($image_or_url)) {
-            throw new coding_exception('Empty $image_or_url value in $OUTPTU->image()');
-        }
-
-        if ($image_or_url instanceof html_image) {
-            $image = clone($image_or_url);
-        } else {
-            if ($image_or_url instanceof moodle_url) {
-                $url = $image_or_url;
-            } else if (strpos($image_or_url, 'http')) {
-                $url = new moodle_url($image_or_url);
-            } else {
-                $url = $this->pix_url($image_or_url, 'moodle');
-            }
-            $image = new html_image($url, $options);
-        }
-
-        $image->prepare($this, $this->page, $this->target);
-
-        $this->prepare_event_handlers($image);
-
-        $attributes = array('class' => $image->get_classes_string(),
-                            'src'   => $image->src,
-                            'alt'   => $image->alt,
-                            'style' => $image->style,
-                            'title' => $image->title,
-                            'id'    => $image->id);
-
-        // do not use prepare_legacy_width_and_height() here,
-        // xhtml strict allows width&height and inline styles break theming too!
-        if (!empty($image->height)) {
-            $attributes['height'] = $image->height;
-        }
-        if (!empty($image->width)) {
-            $attributes['width'] = $image->width;
-        }
-
-        return html_writer::empty_tag('img', $attributes);
     }
 
     /**

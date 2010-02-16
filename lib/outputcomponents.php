@@ -1696,69 +1696,6 @@ class html_button extends labelled_html_component {
     }
 }
 
-/**
- * Component representing an image.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_image extends labelled_html_component {
-    /**
-     * @var string $src The path to the image being used
-     */
-    public $src;
-    /**
-     * @var int $width of image
-     */
-    public $width;
-    /**
-     * @var int $height of image
-     */
-    public $height;
-
-    /**
-     * New image constructor.
-     *
-     * @param moodle_url|string $url url of the image
-     * @param array $options image attributes such as title, id, alt, widht, height
-     */
-    public function __construct($src = null, array $options = null) {
-        parent::__construct($options);
-
-        if (is_null($src)) {
-            // to be filled later
-
-        } else if ($src instanceof moodle_url) {
-            $this->src = clone($src);
-
-        } else if (is_string($src)) {
-            $this->src = new moodle_url($src);
-
-        } else {
-            throw new coding_style_exception('Image can be constructed only from moodle_url or string url.');
-        }
-    }
-
-    /**
-     * @see lib/html_component#prepare()
-     * @return void
-     */
-    public function prepare(renderer_base $output, moodle_page $page, $target) {
-        if (empty($this->src)) {
-            throw new coding_exception('html_image requires a $src value (moodle_url).');
-        }
-
-        // no general class here, use custom class instead or img element directly in css selectors
-        parent::prepare($output, $page, $target);
-
-        if ($this->alt === null) {
-            // needs to be set for accessibility reasons
-            $this->alt = '';
-        }
-    }
-}
-
 
 /**
  * Component representing a list.
