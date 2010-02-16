@@ -116,4 +116,20 @@ $functions = array(
         'description' => 'Update users.',
         'type'        => 'write',
     ),
+
+    'moodle_enrol_role_assign' => array(
+        'classname'   => 'moodle_enrol_external',
+        'methodname'  => 'role_assign',
+        'classpath'   => 'enrol/externallib.php',
+        'description' => 'Enrol users.',
+        'type'        => 'write',
+    ),
+
+    'moodle_enrol_role_unassign' => array(
+        'classname'   => 'moodle_enrol_external',
+        'methodname'  => 'role_unassign',
+        'classpath'   => 'enrol/externallib.php',
+        'description' => 'Unenrol users.',
+        'type'        => 'write',
+    ),
 );
