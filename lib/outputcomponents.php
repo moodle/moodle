@@ -1260,35 +1260,6 @@ class html_component {
 
 /// Components representing HTML elements
 
-/**
- * This class represents a label element
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_label extends html_component {
-    /**
-     * @var string $text The text to display in the label
-     */
-    public $text;
-    /**
-     * @var string $for The name of the form field this label is associated with
-     */
-    public $for;
-
-    /**
-     * @see html_component::prepare()
-     * @return void
-     */
-    public function prepare(renderer_base $output, moodle_page $page, $target) {
-        if (empty($this->text)) {
-            throw new coding_exception('html_label must have a $text value.');
-        }
-        parent::prepare($output, $page, $target);
-    }
-}
-
 
 /**
  * Holds all the information required to render a <table> by
