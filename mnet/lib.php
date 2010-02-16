@@ -579,11 +579,15 @@ function mnet_profile_field_options() {
     );
 
     // these are the ones that user_not_fully_set_up will complain about
+    // and also special case ones
     $forced = array(
         'username',
         'email',
         'firstname',
         'lastname',
+        'auth',
+        'wwwroot',
+        'session.gc_lifetime',
     );
 
     // these are the ones we used to send/receive (pre 2.0)
@@ -803,4 +807,79 @@ function mnet_get_service_info(mnet_peer $mnet_peer, $fulldata=true) {
     $cache[$mnet_peer->id]['mydata'] = $mydata;
 
     return $cache[$mnet_peer->id][$requestkey];
+}
+
+/**
+ * return an array of the profile fields to send
+ * with user information to the given mnet host.
+ *
+ * @param mnet_peer $peer the peer to send the information to
+ *
+ * @return array (like 'username', 'firstname', etc)
+ */
+function mnet_fields_to_send(mnet_peer $peer) {
+    return _mnet_field_helper($peer, 'export');
+}
+
+/**
+ * return an array of the profile fields to import
+ * from the given host, when creating/updating user accounts
+ *
+ * @param mnet_peer $peer the peer we're getting the information from
+ *
+ * @return array (like 'username', 'firstname', etc)
+ */
+function mnet_fields_to_import(mnet_peer $peer) {
+    return _mnet_field_helper($peer, 'import');
+}
+
+/**
+ * helper for {@see mnet_fields_to_import} and {@mnet_fields_to_send}
+ *
+ * @access private
+ *
+ * @param mnet_peer $peer the peer object
+ * @param string    $key 'import' or 'export'
+ *
+ * @return array (like 'username', 'firstname', etc)
+ */
+function _mnet_field_helper(mnet_peer $peer, $key) {
+    $tmp = mnet_profile_field_options();
+    $defaults = explode(',', get_config('mnetprofile' . $key . 'fields'));
+    if (1 === get_config('mnet', 'host' . $peer->id . $key . 'default')) {
+        return array_merge($tmp['forced'], $defaults);
+    }
+    $hostsettings = get_config('mnet', 'host' . $peer->id . $key . 'fields');
+    if (false === $hostsettings) {
+        return array_merge($tmp['forced'], $defaults);
+    }
+    return array_merge($tmp['forced'], explode(',', $hostsettings));
+}
+
+
+/**
+ * given a user object (or array) and a list of allowed fields,
+ * strip out all the fields that should not be included.
+ * This can be used both for outgoing data and incoming data.
+ *
+ * @param mixed $user array or object representing a database record
+ * @param array $fields an array of allowed fields (usually from mnet_fields_to_{send,import}
+ *
+ * @return mixed array or object, depending what type of $user object was passed (datatype is respected)
+ */
+function mnet_strip_user($user, $fields) {
+    if (is_object($user)) {
+        $user = (array)$user;
+        $wasobject = true; // so we can cast back before we return
+    }
+
+    foreach ($user as $key => $value) {
+        if (!in_array($key, $fields)) {
+            unset($user[$key]);
+        }
+    }
+    if (!empty($wasobject)) {
+        $user = (object)$user;
+    }
+    return $user;
 }

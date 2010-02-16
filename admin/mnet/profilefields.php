@@ -47,18 +47,17 @@ if ($data = $form->get_data()) {
     if (!isset($data->exportdefault)) {
         $data->exportdefault = 0;
     }
+    if (!isset($data->importfields)) {
+        $data->importfields = array();
+    }
+    if (!isset($data->exportfields)) {
+        $data->exportfields = array();
+    }
     set_config('host' . $hostid . 'importdefault', $data->importdefault, 'mnet');
-    if (!$data->importdefault) {
-        set_config('host' . $hostid . 'importfields', implode(',', $data->importfields), 'mnet');
-    } else {
-        unset_config('host' . $hostid . 'importfields', 'mnet');
-    }
+    set_config('host' . $hostid . 'importfields', implode(',', $data->importfields), 'mnet');
     set_config('host' . $hostid . 'exportdefault', $data->exportdefault, 'mnet');
-    if (!$data->exportdefault) {
-        set_config('host' . $hostid . 'exportfields', implode(',', $data->exportfields), 'mnet');
-    } else {
-        unset_config('host' . $hostid . 'exportfields', 'mnet');
-    }
+    set_config('host' . $hostid . 'exportfields', implode(',', $data->exportfields), 'mnet');
+
     redirect('/admin/mnet/peers.php', get_string('changessaved'));
 } elseif ($form->is_cancelled()) {
     redirect('/admin/mnet/peers.php?hostid=' . $hostid);

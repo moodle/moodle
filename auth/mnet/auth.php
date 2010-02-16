@@ -72,27 +72,14 @@ class auth_plugin_mnet extends auth_plugin_base {
             throw new mnet_server_exception(3, get_string('authfail_usermismatch', 'mnet'));
         }
 
-        $userdata = array();
-        $userdata['username']                = $user->username;
-        $userdata['email']                   = $user->email;
+        $userdata = mnet_strip_user((array)$user, mnet_fields_to_send($remoteclient));
+
+        // extra special ones
         $userdata['auth']                    = 'mnet';
-        $userdata['confirmed']               = $user->confirmed;
-        $userdata['deleted']                 = $user->deleted;
-        $userdata['firstname']               = $user->firstname;
-        $userdata['lastname']                = $user->lastname;
-        $userdata['city']                    = $user->city;
-        $userdata['country']                 = $user->country;
-        $userdata['lang']                    = $user->lang;
-        $userdata['timezone']                = $user->timezone;
-        $userdata['description']             = $user->description;
-        $userdata['mailformat']              = $user->mailformat;
-        $userdata['maildigest']              = $user->maildigest;
-        $userdata['maildisplay']             = $user->maildisplay;
-        $userdata['htmleditor']              = $user->htmleditor;
         $userdata['wwwroot']                 = $this->mnet->wwwroot;
         $userdata['session.gc_maxlifetime']  = ini_get('session.gc_maxlifetime');
-        $userdata['picture']                 = $user->picture;
-        if (!empty($user->picture)) {
+
+        if (array_key_exists('picture', $userdata) && !empty($user->picture)) {
             $imagefile = make_user_directory($user->id, true) . "/f1.jpg";
             if (file_exists($imagefile)) {
                 $userdata['imagehash'] = sha1(file_get_contents($imagefile));
@@ -261,6 +248,11 @@ class auth_plugin_mnet extends auth_plugin_base {
             print_error('notenoughidpinfo', 'mnet');
             exit;
         }
+
+        $remoteuser = mnet_strip_user($remoteuser, mnet_fields_to_import($remotepeer));
+
+        $remoteuser->auth = 'mnet';
+        $remoteuser->wwwroot = $remotepeer->wwwroot;
 
         $firsttime = false;
 

@@ -299,14 +299,10 @@ class enrolment_plugin_mnet {
         $userrecord = $DB->get_record('user',array('username'=>$user['username'], 'mnethostid'=>$remoteclient->id));
 
         if ($userrecord == false) {
-            // We should at least be checking that we allow the remote
-            // site to create users
-            // TODO: more rigour here thanks!
-            $userrecord = new stdClass();
-            $userrecord->username   = $user['username'];
-            $userrecord->email      = $user['email'];
-            $userrecord->firstname  = $user['firstname'];
-            $userrecord->lastname   = $user['lastname'];
+            $userrecord = mnet_strip_user((object)$user, mnet_fields_to_import($remoteclient));
+            // TODO maybe check a setting here to see whether
+            // we allow the remote site to create users
+            // see MDL-21327
             $userrecord->mnethostid = $remoteclient->id;
 
             //TODO - username required to use PARAM_USERNAME before inserting into user table (MDL-16919)
@@ -505,9 +501,9 @@ class enrolment_plugin_mnet {
         global $CFG, $USER, $DB;
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
-        // Prepare a basic user record
+        // Prepare a user record
         // in case the remote host doesn't have it
-        $user = $DB->get_record('user', array('id'=>$userid), 'username, email, firstname, lastname');
+        $user = $DB->get_record('user', array('id'=>$userid));
         $user = (array)$user;
 
         $course = $DB->get_record('mnet_enrol_course', array('id'=>$courseid));
@@ -519,7 +515,7 @@ class enrolment_plugin_mnet {
         // set up the RPC request
         $mnetrequest = new mnet_xmlrpc_client();
         $mnetrequest->set_method('enrol/mnet/enrol.php/enrol_user');
-        $mnetrequest->add_param($user);
+        $mnetrequest->add_param(mnet_strip_user($user, mnet_fields_to_send($mnet_sp)));
         $mnetrequest->add_param($course->remoteid);
 
         // Thunderbirds are go! Do RPC call and store response
