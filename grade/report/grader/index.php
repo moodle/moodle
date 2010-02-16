@@ -110,17 +110,6 @@ $reportname = get_string('modulename', 'gradereport_grader');
 // Initialise the grader report object
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
 
-$PAGE->requires->yui2_lib('event');
-$PAGE->requires->yui2_lib('json');
-$PAGE->requires->yui2_lib('connection');
-$PAGE->requires->yui2_lib('dragdrop');
-$PAGE->requires->yui2_lib('element');
-$PAGE->requires->yui2_lib('container');
-$PAGE->requires->js('/grade/report/grader/functions.js');
-$PAGE->requires->js('/grade/report/grader/grader.js');
-$PAGE->requires->js('/lib/overlib/overlib.js', true);
-$PAGE->requires->js('/lib/overlib/overlib_cssstyle.js', true);
-
 if ($report->get_pref('enableajax')) {
     $report = new grade_report_grader_ajax($courseid, $gpr, $context, $page, $sortitemid);
 }
@@ -172,7 +161,7 @@ if (!empty($studentsperpage)) {
 $reporthtml = $report->get_grade_table();
 
 // print submit button
-if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback') || $report->get_pref('quickgrading')) && !$report->get_pref('enableajax')) {
+if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback') || $report->get_pref('quickgrading'))) {
     echo '<form action="index.php" method="post">';
     echo '<div>';
     echo '<input type="hidden" value="'.s($courseid).'" name="id" />';
@@ -188,11 +177,5 @@ if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback') 
 // prints paging bar at bottom for large pages
 if (!empty($studentsperpage) && $studentsperpage >= 20) {
     echo $OUTPUT->paging_bar(moodle_paging_bar::make($numusers, $report->page, $studentsperpage, $report->pbarurl));
-}
-
-echo $OUTPUT->container('tooltip panel', '', 'hiddentooltiproot');
-// Print AJAX code
-if ($report->get_pref('enableajax')) {
-    require_once 'ajax.php';
 }
 echo $OUTPUT->footer();

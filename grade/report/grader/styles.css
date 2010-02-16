@@ -11,10 +11,6 @@ height:20px;
 background-color:#f9f9f9;
 }
 
-.grade-report-grader table#user-grades td.overridden {
-background-color:#ddd;
-}
-
 .grade-report-grader table#user-grades tr.avg td.cell {
 background-color:#efefff;
 font-weight:700;
@@ -26,13 +22,11 @@ background-color:#efefef;
 white-space:nowrap;
 }
 
-.grade-report-grader table#user-grades tr.even td.overridden {
-background-color:#F3E4C0;
-}
+.grade-report-grader table#user-grades tr td.overridden {background-color:#F3E4C0;}
+.grade-report-grader table#user-grades tr.odd td.overridden {background-color:#EFD9A4;}
 
-.grade-report-grader table#user-grades tr.odd td.overridden {
-background-color:#EFD9A4;
-}
+.grade-report-grader table#user-grades tr td.ajaxoverridden {background-color:#FFE3A0;}
+.grade-report-grader table#user-grades tr.odd td.ajaxoverridden {background-color:#FFDA83;}
 
 .grade-report-grader table#user-grades tr.even td.excluded {
 background-color:#EABFFF;
@@ -53,7 +47,8 @@ font-weight:700;
 color:#006400;
 }
 
-.grade-report-grader table#user-grades td.cat,.grade-report-grader table#user-grades td.course {
+.grade-report-grader table#user-grades td.cat,
+.grade-report-grader table#user-grades td.course {
 font-weight:700;
 }
 
@@ -133,21 +128,13 @@ border-style:solid;
 border-width:0 0 1px 1px;
 }
 
-.grade-report-grader table#user-grades th.categoryitem,.grade-report-grader table#user-grades th.courseitem,.grade-report-grader table#user-grades td.topleft {
+.grade-report-grader table#user-grades th.categoryitem,
+.grade-report-grader table#user-grades th.courseitem,
+.grade-report-grader table#user-grades td.topleft {
 vertical-align:top;
 border-style:solid;
 border-width:0 1px;
 }
-
-/* we don't want 25px height - at all
- * This causes the columns to fall out of line if Static Students Column is enabled
-.grade-report-grader table#user-grades th.category,
-.grade-report-grader table#user-grades th.item,
-.grade-report-grader table#user-grades th.categoryitem,
-.grade-report-grader table#user-grades th.courseitem {
-height: 25px;
-}
-*/
 
 .grade-report-grader td,.grade-report-grader th {
 border-color:#CECECE;
@@ -201,7 +188,8 @@ border:#000 1px dashed;
 text-align:right;
 }
 
-.grade-report-grader table#user-grades .hidden,.grade-report-grader table#user-grades .hidden a {
+.grade-report-grader table#user-grades .hidden,
+.grade-report-grader table#user-grades .hidden a {
 color:#aaa;
 }
 
@@ -243,7 +231,8 @@ border-width:0 0 1px;
 border-top:1px solid #cecece;
 }
 
-.grade-report-grader table#user-grades tr.heading th.categoryitem,.grade-report-grader table#user-grades tr.heading th.courseitem {
+.grade-report-grader table#user-grades tr.heading th.categoryitem,
+.grade-report-grader table#user-grades tr.heading th.courseitem {
 border-width:0 0 0 1px;
 }
 
@@ -259,7 +248,9 @@ margin:0;
 padding:0;
 }
 
-.grade-report-grader table#user-grades th.categoryitem,.grade-report-grader table#user-grades th.courseitem,.grade-report-grader table td.topleft {
+.grade-report-grader table#user-grades th.categoryitem,
+.grade-report-grader table#user-grades th.courseitem,
+.grade-report-grader table td.topleft {
 vertical-align:top;
 border-color:#cecece #cecece #000;
 border-style:solid;
@@ -397,11 +388,21 @@ clear:none;
 overflow-x:scroll;
 }
 
-.grade-report-grader table tr.avg,.grade-report-grader table tr.groupavg td,.grade-report-grader table tr.avg td,.grade-report-grader table tr.groupavg th,.grade-report-grader table tr.avg th,.grade-report-grader table tr.controls_row,.grade-report-grader table tr.controls_row th,.grade-report-grader table tr.range_row,.grade-report-grader table tr.range_row th,div.right_scroller tr {
+.grade-report-grader table tr.avg,
+.grade-report-grader table tr.groupavg td,
+.grade-report-grader table tr.avg td,
+.grade-report-grader table tr.groupavg th,
+.grade-report-grader table tr.avg th,
+.grade-report-grader table tr.controls_row,
+.grade-report-grader table tr.controls_row th,
+.grade-report-grader table tr.range_row,
+.grade-report-grader table tr.range_row th,
+div.right_scroller tr {
 height:2em;
 }
 
-.grade-report-grader table#user-grades tr.groupavg td.cell,.grade-report-grader tr.groupavg th.header {
+.grade-report-grader table#user-grades tr.groupavg td.cell,
+.grade-report-grader tr.groupavg th.header {
 background-color:#efffef;
 }
 
@@ -439,7 +440,15 @@ font-size:86%;
 padding:0;
 }
 
-.grade-report-grader tr.avg,tr.controls,td.controls,th.controls,.grade-report-grader tr.groupavg,tr.range,th.range,td.range,tr.heading th.range {
+.grade-report-grader tr.avg,
+.grade-report-grader tr.controls,
+.grade-report-grader td.controls,
+.grade-report-grader th.controls,
+.grade-report-grader tr.groupavg,
+.grade-report-grader tr.range,
+.grade-report-grader th.range,
+.grade-report-grader td.range,
+.grade-report-grader tr.heading th.range {
 height:2em!important;
 white-space:nowrap;
 }
@@ -458,15 +467,26 @@ heading_name_row th span {
 float:right;
 }
 
-.gradestable th.user,.gradestable th.range,.grade-report-grader .flexible th,.grade-report-grader .flexible td,.grade-report-grader .flexible th a,.grade-report-grader .flexible td a,.grade-report-grader .gradestable th.range,.grade-report-grader td {
+.gradestable th.user,
+.gradestable th.range,
+.grade-report-grader .flexible th,
+.grade-report-grader .flexible td,
+.grade-report-grader .flexible th a,
+.grade-report-grader .flexible td a,
+.grade-report-grader .gradestable th.range,
+.grade-report-grader td {
 white-space:nowrap;
 }
 
-.grade-report-grader table#user-grades .catlevel1,.grade-report-grader .r1,.grade-report-grader table tr.even td.cell,.grade-report-grader table tr.even th {
+.grade-report-grader table#user-grades .catlevel1,
+.grade-report-grader .r1,
+.grade-report-grader table tr.even td.cell,
+.grade-report-grader table tr.even th {
 background-color:#fff;
 }
 
-.grade-report-grader table#user-grades .catlevel3,.grade-report-grader table tr.odd td.cell {
+.grade-report-grader table#user-grades .catlevel3,
+.grade-report-grader table tr.odd td.cell {
 background-color:#efefef;
 }
 
@@ -475,42 +495,67 @@ background-color:#efefef;
 background-color:#efefef;
 }
 
-.grade-report-grader table#user-grades td.vmarked,.grade-report-grader table#user-grades tr.odd td.vmarked,.grade-report-grader table#user-grades td.vmarked,.grade-report-grader table#user-grades tr.odd td.vmarked,.grade-report-grader table#user-grades tr.even td.vmarked {
+.grade-report-grader table#user-grades td.vmarked,
+.grade-report-grader table#user-grades tr.odd td.vmarked,
+.grade-report-grader table#user-grades td.vmarked,
+.grade-report-grader table#user-grades tr.odd td.vmarked,
+.grade-report-grader table#user-grades tr.even td.vmarked {
 background-color:#fc3;
 }
 
-.grade-report-grader table#user-grades td.hmarked,.grade-report-grader table#user-grades tr.odd td.hmarked,.grade-report-grader table#user-grades td.hmarked,.grade-report-grader table#user-grades tr.odd td.hmarked,.grade-report-grader table#user-grades tr.even td.hmarked {
+.grade-report-grader table#user-grades td.hmarked,
+.grade-report-grader table#user-grades tr.odd td.hmarked,
+.grade-report-grader table#user-grades td.hmarked,
+.grade-report-grader table#user-grades tr.odd td.hmarked,
+.grade-report-grader table#user-grades tr.even td.hmarked {
 background-color:#ff9;
 }
 
-.grade-report-grader table#user-grades td.hmarked.vmarked,.grade-report-grader table#user-grades tr.odd td.hmarked.vmarked,.grade-report-grader table#user-grades td.hmarked.vmarked,.grade-report-grader table#user-grades tr.even td.hmarked.vmarked,.grade-report-grader table#user-grades tr.odd td.hmarked.vmarked {
+.grade-report-grader table#user-grades td.hmarked.vmarked,
+.grade-report-grader table#user-grades tr.odd td.hmarked.vmarked,
+.grade-report-grader table#user-grades td.hmarked.vmarked,
+.grade-report-grader table#user-grades tr.even td.hmarked.vmarked,
+.grade-report-grader table#user-grades tr.odd td.hmarked.vmarked {
 background-color:#fc9;
 }
 
-.grade-report-grader table#user-grades tr.heading,.grade-report-grader table#user-grades .heading td {
+.grade-report-grader table#user-grades tr.heading,
+.grade-report-grader table#user-grades .heading td {
 border-style:solid;
 border-width:0;
 }
 
-.grade-report-grader table#user-grades td.useridnumber,.grade-report-grader table#user-grades th,.grade-report-grader div.gradeparent,.ie6 form,.grade-report-grader table#user-grades td.ajax {
+.grade-report-grader table#user-grades td.useridnumber,
+.grade-report-grader table#user-grades th,
+.grade-report-grader div.gradeparent,
+.ie6 form,.grade-report-grader table#user-grades td.ajax {
 text-align:left;
 }
 
-.grade-report-grader table tr.avg td.cell,.grade-report-grader table#user-grades td.controls,.grade-report-grader table tr.avg,.grade-report-grader table tr.avg td,.grade-report-grader table tr.avg th {
+.grade-report-grader table tr.avg td.cell,
+.grade-report-grader table#user-grades td.controls,
+.grade-report-grader table tr.avg,
+.grade-report-grader table tr.avg td,
+.grade-report-grader table tr.avg th {
 background-color:#f3ead8;
 }
 
-.grade-report-grader div.left_scroller tr,.grade-report-grader div.right_scroller tr,.grade-report-grader div.left_scroller td,.grade-report-grader div.right_scroller td,.grade-report-grader div.left_scroller th,.grade-report-grader div.right_scroller th {
+.grade-report-grader div.left_scroller tr,
+.grade-report-grader div.right_scroller tr,
+.grade-report-grader div.left_scroller td,
+.grade-report-grader div.right_scroller td,
+.grade-report-grader div.left_scroller th,
+.grade-report-grader div.right_scroller th {
 height:4.5em;
 font-size:10px;
 }
 
-.grade-report-grader table th.user,.grade-report-grader table td.useridnumber {
+.grade-report-grader table th.user,
+.grade-report-grader table td.useridnumber {
 text-align:left;
 vertical-align:middle;
 }
 
-/*
 .grade-report-grader .yui-overlay {
     background-color: #FFEE69;
     border-color: #D4C237 #A6982B #A6982B;
@@ -520,7 +565,6 @@ vertical-align:middle;
     padding: 2px 5px;
     font-size: 0.7em;
 }
-*/
 
 .grade-report-grader .yui-overlay .fullname {
     color: #5F3E00;

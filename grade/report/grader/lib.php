@@ -545,7 +545,7 @@ class grade_report_grader extends grade_report {
 
         for ($i = 0; $i < $levels; $i++) {
             $fillercell = new html_table_cell();
-            $fillercell->add_classes(array('fixedcolumn', 'cell', 'c0', 'topleft'));
+            $fillercell->add_classes(array('fixedcolumn', 'cell', 'topleft'));
             $fillercell->text = ' ';
             $fillercell->colspan = $colspan;
             $row = html_table_row::make(array($fillercell));
@@ -556,7 +556,7 @@ class grade_report_grader extends grade_report {
         $headerrow->add_class('heading');
 
         $studentheader = new html_table_cell();
-        $studentheader->add_classes(array('header', 'c0'));
+        $studentheader->add_classes(array('header'));
         $studentheader->scope = 'col';
         $studentheader->header = true;
         $studentheader->id = 'studentheader';
@@ -572,7 +572,7 @@ class grade_report_grader extends grade_report {
             $sortidnumberlink = html_writer::link(new moodle_url($this->baseurl, array('sortitemid'=>'idnumber')), get_string('idnumber'));
 
             $idnumberheader = new html_table_cell();
-            $idnumberheader->add_classes(array('header', 'c0', 'useridnumber'));
+            $idnumberheader->add_classes(array('header', 'useridnumber'));
             $idnumberheader->scope = 'col';
             $idnumberheader->header = true;
             $idnumberheader->text = $arrows['idnumber'];
@@ -588,13 +588,13 @@ class grade_report_grader extends grade_report {
 
         foreach ($this->users as $userid => $user) {
             $userrow = new html_table_row();
+            $userrow->id = 'fixed_user_'.$userid;
             $userrow->add_classes(array('r'.$this->rowcount++, $rowclasses[$this->rowcount % 2]));
 
             $usercell = new html_table_cell();
-            $usercell->add_classes(array('c0', 'user'));
+            $usercell->add_classes(array('user'));
             $usercell->header = true;
             $usercell->scope = 'row';
-            $usercell->add_action('click', 'yui_set_row');
 
             if ($showuserimage) {
                 $usercell->text = $OUTPUT->container($OUTPUT->user_picture($user), 'userpic');
@@ -617,10 +617,9 @@ class grade_report_grader extends grade_report {
 
             if ($showuseridnumber) {
                 $idnumbercell = new html_table_cell();
-                $idnumbercell->add_classes(array('header', 'c0', 'useridnumber'));
+                $idnumbercell->add_classes(array('header', 'useridnumber'));
                 $idnumbercell->header = true;
                 $idnumbercell->scope = 'row';
-                $idnumbercell->add_action('click', 'yui_set_row');
                 $userrow->cells[] = $idnumbercell;
             }
 
@@ -639,7 +638,7 @@ class grade_report_grader extends grade_report {
      * @return array Array of html_table_row objects
      */
     public function get_right_rows() {
-        global $CFG, $USER, $OUTPUT, $DB;
+        global $CFG, $USER, $OUTPUT, $DB, $PAGE;
 
         $rows = array();
         $this->rowcount = 0;
@@ -648,10 +647,19 @@ class grade_report_grader extends grade_report {
         $gradetabindex = 1;
         $columnstounset = array();
         $strgrade = $this->get_lang_string('grade');
+        $strfeedback  = $this->get_lang_string("feedback");
         $arrows = $this->get_sort_arrows();
 
+        $jsarguments = array(
+            'id'        => '#fixed_column',
+            'cfg'       => array('ajaxenabled'=>false),
+            'items'     => array(),
+            'users'     => array(),
+            'feedback'  => array()
+        );
+        $jsscales = array();
+
         foreach ($this->gtree->get_levels() as $key=>$row) {
-            $columncount = 0;
             if ($key == 0) {
                 // do not display course grade category
                 // continue;
@@ -673,10 +681,8 @@ class grade_report_grader extends grade_report {
                 $itemmodule = null;
                 $iteminstance = null;
 
-                $columnclass = 'c' . $columncount++;
                 if (!empty($element['colspan'])) {
                     $colspan = $element['colspan'];
-                    $columnclass = '';
                 } else {
                     $colspan = 1;
                 }
@@ -690,7 +696,7 @@ class grade_report_grader extends grade_report {
 // Element is a filler
                 if ($type == 'filler' or $type == 'fillerfirst' or $type == 'fillerlast') {
                     $fillercell = new html_table_cell();
-                    $fillercell->add_classes(array($columnclass, $type, $catlevel));
+                    $fillercell->add_classes(array($type, $catlevel));
                     $fillercell->colspan = $colspan;
                     $fillercell->text = '&nbsp;';
                     $fillercell->header = true;
@@ -700,7 +706,7 @@ class grade_report_grader extends grade_report {
 // Element is a category
                 else if ($type == 'category') {
                     $categorycell = new html_table_cell();
-                    $categorycell->add_classes(array($columnclass, 'category', $catlevel));
+                    $categorycell->add_classes(array('category', $catlevel));
                     $categorycell->colspan = $colspan;
                     $categorycell->text = shorten_text($element['object']->get_name());
                     $categorycell->text .= $this->get_collapsing_icon($element);
@@ -732,7 +738,7 @@ class grade_report_grader extends grade_report {
                     $headerlink = $this->gtree->get_element_header($element, true, $this->get_pref('showactivityicons'), false);
 
                     $itemcell = new html_table_cell();
-                    $itemcell->add_classes(array($columnclass, $type, $catlevel));
+                    $itemcell->add_classes(array($type, $catlevel, 'highlightable'));
 
                     if ($element['object']->is_hidden()) {
                         $itemcell->add_class('hidden');
@@ -742,11 +748,10 @@ class grade_report_grader extends grade_report {
                     $itemcell->text = shorten_text($headerlink) . $arrow;
                     $itemcell->header = true;
                     $itemcell->scope = 'col';
-                    $itemcell->onclick = 'set_col(this.cellIndex);';
 
                     $headingrow->cells[] = $itemcell;
                 }
-
+                
             }
             $rows[] = $headingrow;
         }
@@ -757,11 +762,14 @@ class grade_report_grader extends grade_report {
         $scaleslist = array();
         $tabindices = array();
 
-        foreach ($this->gtree->get_items() as $item) {
+        foreach ($this->gtree->get_items() as $itemid=>$item) {
+            $scale = null;
             if (!empty($item->scaleid)) {
                 $scaleslist[] = $item->scaleid;
+                $jsarguments['items'][$itemid] = array('id'=>$itemid, 'name'=>$item->get_name(true), 'type'=>'scale', 'scale'=>$item->scaleid, 'decimals'=>$item->get_decimals());
+            } else {
+                $jsarguments['items'][$itemid] = array('id'=>$itemid, 'name'=>$item->get_name(true), 'type'=>'value', 'scale'=>false, 'decimals'=>$item->get_decimals());
             }
-
             $tabindices[$item->id]['grade'] = $gradetabindex;
             $tabindices[$item->id]['feedback'] = $gradetabindex + $numusers;
             $gradetabindex += $numusers * 2;
@@ -771,6 +779,7 @@ class grade_report_grader extends grade_report {
         if (!empty($scaleslist)) {
             $scalesarray = $DB->get_records_list('scale', 'id', $scaleslist);
         }
+        $jsscales = $scalesarray;
 
         $rowclasses = array('even', 'odd');
 
@@ -786,16 +795,20 @@ class grade_report_grader extends grade_report {
                 unset($hidingaffected);
             }
 
-            $columncount = 0;
 
             $itemrow = new html_table_row();
+            $itemrow->id = 'user_'.$userid;
             $itemrow->add_class($rowclasses[$this->rowcount % 2]);
+
+            $jsarguments['users'][$userid] = fullname($user);
 
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
                 $grade = $this->grades[$userid][$item->id];
 
                 $itemcell = new html_table_cell();
+
+                $itemcell->id = 'u'.$userid.'i'.$itemid;
 
                 // Get the decimal points preference for this item
                 $decimalpoints = $item->get_decimals();
@@ -840,14 +853,9 @@ class grade_report_grader extends grade_report {
                     // $itemcell->add_class('excluded');
                 }
 
-                $gradetitle = $OUTPUT->container(fullname($user), 'fullname');
-                $gradetitle .= $OUTPUT->container($item->get_name(true), 'itemname');
-
-                if (!empty($grade->feedback) && !$USER->gradeediting[$this->courseid]) {
-                    $gradetitle .= $OUTPUT->container(wordwrap(trim(format_string($grade->feedback, $grade->feedbackformat)), 34, '<br/ >'), 'feedback');
+                if (!empty($grade->feedback)) {
+                    $jsarguments['feedback'][] = array('user'=>$userid, 'item'=>$itemid, 'content'=>wordwrap(trim(format_string($grade->feedback, $grade->feedbackformat)), 34, '<br/ >'));
                 }
-
-                $itemcell->title = s($gradetitle);
 
                 if ($grade->is_excluded()) {
                     $itemcell->text .= $OUTPUT->span(get_string('excluded', 'grades'), 'excludedfloater');
@@ -900,9 +908,8 @@ class grade_report_grader extends grade_report {
                             } else {
                                 $nogradestr = $this->get_lang_string('nooutcome', 'grades');
                             }
-                            $itemcell->text .= '<input type="hidden" name="oldgrade_'.$userid.'_'
-                                          .$item->id.'" value="'.$oldval.'"/>';
-                            $attributes = array('tabindex' => $tabindices[$item->id]['grade']);
+                            $itemcell->text .= '<input type="hidden" id="oldgrade_'.$userid.'_'.$item->id.'" name="oldgrade_'.$userid.'_'.$item->id.'" value="'.$oldval.'"/>';
+                            $attributes = array('tabindex' => $tabindices[$item->id]['grade'], 'id'=>'grade_'.$userid.'_'.$item->id);
                             $itemcell->text .= html_writer::select($scaleopt, 'grade_'.$userid.'_'.$item->id, $gradeval, array(-1=>$nogradestr), $attributes);;
                         } elseif(!empty($scale)) {
                             $scales = explode(",", $scale->scale);
@@ -921,10 +928,10 @@ class grade_report_grader extends grade_report {
                     } else if ($item->gradetype != GRADE_TYPE_TEXT) { // Value type
                         if ($this->get_pref('quickgrading') and $grade->is_editable()) {
                             $value = format_float($gradeval, $decimalpoints);
-                            $itemcell->text .= '<input type="hidden" name="oldgrade_'.$userid.'_'.$item->id.'" value="'.$value.'" />';
+                            $itemcell->text .= '<input type="hidden" id="oldgrade_'.$userid.'_'.$item->id.'" name="oldgrade_'.$userid.'_'.$item->id.'" value="'.$value.'" />';
                             $itemcell->text .= '<input size="6" tabindex="' . $tabindices[$item->id]['grade']
                                           . '" type="text" class="text" title="'. $strgrade .'" name="grade_'
-                                          .$userid.'_' .$item->id.'" value="'.$value.'" />';
+                                          .$userid.'_' .$item->id.'" id="grade_'.$userid.'_'.$item->id.'" value="'.$value.'" />';
                         } else {
                             $itemcell->text .= $OUTPUT->span(format_float($gradeval, $decimalpoints), "gradevalue$hidden$gradepass");
                         }
@@ -934,17 +941,19 @@ class grade_report_grader extends grade_report {
                     // If quickfeedback is on, print an input element
                     if ($this->get_pref('showquickfeedback') and $grade->is_editable()) {
 
-                        $itemcell->text .= '<input type="hidden" name="oldfeedback_'
-                                      .$userid.'_'.$item->id.'" value="' . s($grade->feedback) . '" />';
-                        $itemcell->text .= '<input class="quickfeedback" tabindex="' . $tabindices[$item->id]['feedback']
-                                      . '" size="6" title="' . $strfeedback . '" type="text" name="feedback_'
-                                      .$userid.'_'.$item->id.'" value="' . s($grade->feedback) . '" />';
+                        $itemcell->text .= '<input type="hidden" id="oldfeedback_'.$userid.'_'.$item->id.'" name="oldfeedback_'.$userid.'_'.$item->id.'" value="' . s($grade->feedback) . '" />';
+                        $itemcell->text .= '<input class="quickfeedback" tabindex="' . $tabindices[$item->id]['feedback'].'" id="feedback_'.$userid.'_'.$item->id
+                                      . '" size="6" title="' . $strfeedback . '" type="text" name="feedback_'.$userid.'_'.$item->id.'" value="' . s($grade->feedback) . '" />';
                     }
 
                 } else { // Not editing
                     $gradedisplaytype = $item->get_displaytype();
 
-                    // If feedback present, surround grade with feedback tooltip: Open span here
+                    if ($item->scaleid && !empty($scalesarray[$item->scaleid])) {
+                        $itemcell->add_class('grade_type_scale');
+                    } else if ($item->gradetype != GRADE_TYPE_TEXT) {
+                        $itemcell->add_class('grade_type_text');
+                    }
 
                     if ($item->needsupdate) {
                         $itemcell->text .= $OUTPUT->span(get_string('error'), "gradingerror$hidden$gradepass");
@@ -961,6 +970,29 @@ class grade_report_grader extends grade_report {
             }
             $rows[] = $itemrow;
         }
+
+        if ($this->get_pref('enableajax')) {
+            $jsarguments['cfg']['ajaxenabled'] = true;
+            $jsarguments['cfg']['scales'] = array();
+            foreach ($jsscales as $scale) {
+                $jsarguments['cfg']['scales'][$scale->id] = explode(',',$scale->scale);
+            }
+            $jsarguments['cfg']['feedbacktrunclength'] =  $this->feedback_trunc_length;
+            $jsarguments['cfg']['feedback'] =  $this->feedbacks;
+        }
+        $jsarguments['cfg']['isediting'] = (bool)$USER->gradeediting[$this->courseid];
+        $jsarguments['cfg']['courseid'] =  $this->courseid;
+        $jsarguments['cfg']['studentsperpage'] =  $this->get_pref('studentsperpage');
+        $jsarguments['cfg']['showquickfeedback'] =  (bool)$this->get_pref('showquickfeedback');
+
+        $module = array(
+            'name'      => 'gradereport_grader',
+            'fullpath'  => '/grade/report/grader/module.js',
+            'requires'  => array('base', 'dom', 'event', 'event-mouseenter', 'event-key', 'io', 'json-parse', 'overlay')
+        );
+        $PAGE->requires->js_init_call('M.gradereport_grader.init_report', $jsarguments, false, $module);
+        $PAGE->requires->strings_for_js(array('addfeedback','feedback', 'grade'), 'grades');
+        $PAGE->requires->strings_for_js(array('ajaxchoosescale','ajaxclicktoclose','ajaxerror','ajaxfailedupdate', 'ajaxfieldchanged'), 'gradereport_grader');
 
         $rows = $this->get_right_range_row($rows);
         $rows = $this->get_right_avg_row($rows, true);
@@ -983,6 +1015,7 @@ class grade_report_grader extends grade_report {
         $rightrows = $this->get_right_rows();
 
         $html = '';
+
 
         if ($fixedstudents) {
             $fixedcolumntable = new html_table();
@@ -1027,7 +1060,7 @@ class grade_report_grader extends grade_report {
             $controlsrow = new html_table_row();
             $controlsrow->add_class('controls');
             $controlscell = new html_table_cell();
-            $controlscell->add_classes(array('header', 'c0', 'controls'));
+            $controlscell->add_classes(array('header', 'controls'));
             $controlscell->colspan = $colspan;
             $controlscell->text = $this->get_lang_string('controls','grades');
 
@@ -1050,7 +1083,7 @@ class grade_report_grader extends grade_report {
             $rangerow = new html_table_row();
             $rangerow->add_classes(array('range', 'r'.$this->rowcount++));
             $rangecell = new html_table_cell();
-            $rangecell->add_classes(array('header', 'c0', 'range'));
+            $rangecell->add_classes(array('header', 'range'));
             $rangecell->colspan = $colspan;
             $rangecell->header = true;
             $rangecell->scope = 'row';
@@ -1085,7 +1118,7 @@ class grade_report_grader extends grade_report {
                 $groupavgrow = new html_table_row();
                 $groupavgrow->add_classes(array('groupavg', 'r'.$this->rowcount++));
                 $groupavgcell = new html_table_cell();
-                $groupavgcell->add_classes(array('header', 'c0', 'range'));
+                $groupavgcell->add_classes(array('header', 'range'));
                 $groupavgcell->colspan = $colspan;
                 $groupavgcell->header = true;
                 $groupavgcell->scope = 'row';
@@ -1100,7 +1133,7 @@ class grade_report_grader extends grade_report {
                 $avgrow = new html_table_row();
                 $avgrow->add_classes(array('avg', 'r'.$this->rowcount++));
                 $avgcell = new html_table_cell();
-                $avgcell->add_classes(array('header', 'c0', 'range'));
+                $avgcell->add_classes(array('header', 'range'));
                 $avgcell->colspan = $colspan;
                 $avgcell->header = true;
                 $avgcell->scope = 'row';
@@ -1126,7 +1159,6 @@ class grade_report_grader extends grade_report {
 
             $showuseridnumber = $this->get_pref('showuseridnumber');
 
-            $columncount = 0;
             foreach ($this->gtree->items as $itemid=>$unused) {
                 // emulate grade element
                 $item =& $this->gtree->get_item($itemid);

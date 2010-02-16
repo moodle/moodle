@@ -25,6 +25,7 @@ require_once($CFG->dirroot . '/grade/report/grader/lib.php');
  * Class providing an API for the grader report building and displaying.
  * @uses grade_report
  * @package gradebook
+ * @todo MDL-21562 Look at this class + its methods and try to work out what is still required
  */
 class grade_report_grader_ajax extends grade_report_grader {
 
@@ -131,6 +132,7 @@ class grade_report_grader_ajax extends grade_report_grader {
 
     /**
      * Builds and return the HTML rows of the table (grades headed by student).
+     * @todo MDL-21562 Is this still used anywhere
      * @return string HTML
      */
     function get_studentshtml() {
@@ -154,6 +156,9 @@ class grade_report_grader_ajax extends grade_report_grader {
     /**
      * Given a userid, and provided the gtree is correctly loaded, returns a complete HTML row for this user.
      *
+     * @todo MDL-21562 Apparently not used anywhere please check
+     * @todo MDL-21562 Calls to JavaScript function `set_row` will no longer work
+     *          and need to be replaced
      * @param object $user
      * @return string
      */

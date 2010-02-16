@@ -2008,9 +2008,11 @@ class core_renderer extends renderer_base {
                         if (!($cell instanceof html_table_cell)) {
                             $mycell = new html_table_cell();
                             $mycell->text = $cell;
-                            $this->prepare_event_handlers($mycell);
                             $cell = $mycell;
                         }
+
+                        // Prepare all events handlers for this cell
+                        $this->prepare_event_handlers($cell);
 
                         if (isset($table->colclasses[$key])) {
                             $cell->add_classes(array_unique(html_component::clean_classes($table->colclasses[$key])));
@@ -2060,7 +2062,7 @@ class core_renderer extends renderer_base {
      * @param string $id The target name from the corresponding $PAGE->requires->skip_link_to($target) call.
      * @return string the HTML to output.
      */
-    public function skip_link_target($id = '') {
+    public function skip_link_target($id = null) {
         return html_writer::tag('span', array('id' => $id), '');
     }
 
@@ -2072,7 +2074,7 @@ class core_renderer extends renderer_base {
      * @param string $id An optional ID
      * @return string the HTML to output.
      */
-    public function heading($text, $level = 2, $classes = 'main', $id = '') {
+    public function heading($text, $level = 2, $classes = 'main', $id = null) {
         $level = (integer) $level;
         if ($level < 1 or $level > 6) {
             throw new coding_exception('Heading level must be an integer between 1 and 6.');
@@ -2088,7 +2090,7 @@ class core_renderer extends renderer_base {
      * @param string $id An optional ID
      * @return string the HTML to output.
      */
-    public function box($contents, $classes = 'generalbox', $id = '') {
+    public function box($contents, $classes = 'generalbox', $id = null) {
         return $this->box_start($classes, $id) . $contents . $this->box_end();
     }
 
@@ -2098,7 +2100,7 @@ class core_renderer extends renderer_base {
      * @param string $id An optional ID
      * @return string the HTML to output.
      */
-    public function box_start($classes = 'generalbox', $id = '') {
+    public function box_start($classes = 'generalbox', $id = null) {
         $this->opencontainers->push('box', html_writer::end_tag('div'));
         return html_writer::start_tag('div', array('id' => $id,
                 'class' => 'box ' . renderer_base::prepare_classes($classes)));
@@ -2119,7 +2121,7 @@ class core_renderer extends renderer_base {
      * @param string $id An optional ID
      * @return string the HTML to output.
      */
-    public function container($contents, $classes = '', $id = '') {
+    public function container($contents, $classes = null, $id = null) {
         return $this->container_start($classes, $id) . $contents . $this->container_end();
     }
 
@@ -2129,7 +2131,7 @@ class core_renderer extends renderer_base {
      * @param string $id An optional ID
      * @return string the HTML to output.
      */
-    public function container_start($classes = '', $id = '') {
+    public function container_start($classes = null, $id = null) {
         $this->opencontainers->push('container', html_writer::end_tag('div'));
         return html_writer::start_tag('div', array('id' => $id,
                 'class' => renderer_base::prepare_classes($classes)));
@@ -2286,7 +2288,7 @@ class core_renderer_cli extends core_renderer {
      * @param string $id An optional ID
      * @return string A template fragment for a heading
      */
-    public function heading($text, $level, $classes = 'main', $id = '') {
+    public function heading($text, $level, $classes = 'main', $id = null) {
         $text .= "\n";
         switch ($level) {
             case 1:
