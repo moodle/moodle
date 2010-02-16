@@ -238,13 +238,6 @@ class moodle_user_external extends external_api {
                             'description' => new external_value(PARAM_TEXT, 'User profile description, as HTML', VALUE_OPTIONAL),
                             'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
                             'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
-                            'preferences' => new external_multiple_structure(
-                                new external_single_structure(
-                                    array(
-                                        'type'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preference'),
-                                        'value' => new external_value(PARAM_RAW, 'The value of the preference')
-                                    )
-                                ), 'User preferences', VALUE_OPTIONAL),
                             'customfields' => new external_multiple_structure(
                                 new external_single_structure(
                                     array(
