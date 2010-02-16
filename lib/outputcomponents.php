@@ -1258,58 +1258,6 @@ class html_component {
 }
 
 
-class labelled_html_component extends html_component {
-    /**
-     * @var mixed $label The label for that component. String or html_label object
-     */
-    public $label;
-
-    /**
-     * Compoment constructor.
-     * @param array $options image attributes such as title, id, alt, style, class
-     */
-    public function __construct(array $options = null) {
-        parent::__construct($options);
-    }
-
-    /**
-     * Adds a descriptive label to the component.
-     *
-     * This can be used in two ways:
-     *
-     * <pre>
-     * $component->set_label($elementlabel, $elementid);
-     * // OR
-     * $label = new html_label();
-     * $label->for = $elementid;
-     * $label->text = $elementlabel;
-     * $component->set_label($label);
-     * </pre>
-     *
-     * Use the second form when you need to add additional HTML attributes
-     * to the label and/or JS actions.
-     *
-     * @param mixed $text Either the text of the label or a html_label object
-     * @param text  $for The value of the "for" attribute (the associated element's id)
-     * @return void
-     */
-    public function set_label($text, $for=null) {
-        if ($text instanceof html_label) {
-            $this->label = $text;
-        } else if (!empty($text)) {
-            $this->label = new html_label();
-            $this->label->for = $for;
-            if (empty($for)) {
-                if (empty($this->id)) {
-                    $this->generate_id();
-                }
-                $this->label->for = $this->id;
-            }
-            $this->label->text = $text;
-        }
-    }
-}
-
 /// Components representing HTML elements
 
 /**
@@ -1356,7 +1304,7 @@ class html_label extends html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_table extends labelled_html_component {
+class html_table extends html_component {
     /**
      * For more control over the rendering of the headers, an array of html_table_cell objects
      * can be passed instead of an array of strings.
