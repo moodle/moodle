@@ -1658,46 +1658,6 @@ class html_table_cell extends html_component {
 
 
 /**
- * Component representing a XHTML button (input of type 'button').
- * The renderer will either output it as a button with an onclick event,
- * or as a form with hidden inputs.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_button extends labelled_html_component {
-    /**
-     * @var string $text
-     */
-    public $text;
-
-    /**
-     * @var boolean $disabled Whether or not this button is disabled
-     */
-    public $disabled = false;
-
-    /**
-     * @see lib/html_component#prepare()
-     * @return void
-     */
-    public function prepare(renderer_base $output, moodle_page $page, $target) {
-        $this->add_class('singlebutton');
-
-        if (empty($this->text)) {
-            $this->text = get_string('submit');
-        }
-
-        if ($this->disabled) {
-            $this->disabled = 'disabled';
-        }
-
-        parent::prepare($output, $page, $target);
-    }
-}
-
-
-/**
  * Component representing a list.
  *
  * The advantage of using this object instead of a flat array is that you can load it

@@ -2484,7 +2484,7 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
         throw new coding_exception('A link must have a descriptive text value! See $OUTPUT->action_link() for usage.');
     }
 
-    // Create a html_button object
+    // Create a single_button object
     $form = new single_button($url, $text, 'post');
     $form->button->title = $title;
     $form->button->id = $id;

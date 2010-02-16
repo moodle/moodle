@@ -1257,7 +1257,7 @@ class core_renderer extends renderer_base {
      * @param pix_icon $icon
      * @return string HTML fragment
      */
-    public function render_pix_icon(pix_icon $icon) {
+    protected function render_pix_icon(pix_icon $icon) {
         $attributes = $icon->attributes;
         $attributes['src'] = $this->pix_url($icon->pix, $icon->component);
         return html_writer::empty_tag('img', $attributes);
