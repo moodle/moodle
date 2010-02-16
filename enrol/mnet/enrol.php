@@ -300,9 +300,10 @@ class enrolment_plugin_mnet {
 
         if ($userrecord == false) {
             $userrecord = mnet_strip_user((object)$user, mnet_fields_to_import($remoteclient));
-            // TODO maybe check a setting here to see whether
-            // we allow the remote site to create users
-            // see MDL-21327
+            /* there used to be a setting in auth/mnet called auto_create_users
+             * which we should have been checking here (but weren't).
+             * this setting has now been removed. See MDL-21327
+             */
             $userrecord->mnethostid = $remoteclient->id;
 
             //TODO - username required to use PARAM_USERNAME before inserting into user table (MDL-16919)

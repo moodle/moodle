@@ -4,9 +4,12 @@ global $OUTPUT;
 if (!isset($config->rpc_negotiation_timeout)) {
     $config->rpc_negotiation_timeout = '30';
 }
+/*
+ See MDL-21327   for why this is commented out
 if (!isset ($config->auto_add_remote_users)) {
     $config->auto_add_remote_users = '0';
 }
+*/
 
 $yesno = array(get_string('no'), get_string('yes'));
 
@@ -39,6 +42,8 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
     </td>
 </tr>
 
+<?php /*
+ See MDL-21327   for why this is commented out
 <tr valign="top" class="required">
     <td align="right"><?php print_string('auto_add_remote_users', 'auth_mnet'); ?>: </td>
     <td>
@@ -56,6 +61,7 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
         ?>
     </td>
 </tr>
+*/ ?>
 <tr valign="top" class="required">
     <td colspan="3"><?php print_string('auth_mnet_roamin', 'auth_mnet'); ?>: </td>
 </tr>

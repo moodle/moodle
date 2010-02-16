@@ -262,9 +262,11 @@ class auth_plugin_mnet extends auth_plugin_base {
         // add the remote user to the database if necessary, and if allowed
         // TODO: refactor into a separate function
         if (empty($localuser) || ! $localuser->id) {
+            /*
             if (empty($this->config->auto_add_remote_users)) {
                 print_error('nolocaluser', 'mnet');
-            }
+            } See MDL-21327   for why this is commented out
+            */
             $remoteuser->mnethostid = $remotehost->id;
             $remoteuser->firstaccess = time(); // First time user in this server, grab it here
 
@@ -676,13 +678,15 @@ class auth_plugin_mnet extends auth_plugin_base {
         if (!isset ($config->rpc_negotiation_timeout)) {
             $config->rpc_negotiation_timeout = '30';
         }
+        /*
         if (!isset ($config->auto_add_remote_users)) {
             $config->auto_add_remote_users = '0';
-        }
+        } See MDL-21327   for why this is commented out
+        set_config('auto_add_remote_users',   $config->auto_add_remote_users,   'auth/mnet');
+        */
 
         // save settings
         set_config('rpc_negotiation_timeout', $config->rpc_negotiation_timeout, 'auth/mnet');
-        set_config('auto_add_remote_users',   $config->auto_add_remote_users,   'auth/mnet');
 
         return true;
     }
