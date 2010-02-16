@@ -115,13 +115,12 @@ foreach($feeds as $feed) {
         '<div class="url">' . html_writer::link($feed->url, $feed->url) .'</div>' .
         '<div class="description">' . $feed->description . '</div>';
 
-    $editurl = $CFG->wwwroot .'/blocks/rss_client/editfeed.php?rssid=' . $feed->id . $extraparams;
-    $editaction = $OUTPUT->action_icon($editurl, get_string('edit'), 't/edit');
+    $editurl = new moodle_url('/blocks/rss_client/editfeed.php?rssid=' . $feed->id . $extraparams);
+    $editaction = $OUTPUT->action_icon($editurl, new pix_icon('t/edit', get_string('edit')));
 
-    $deleteurl = $CFG->wwwroot .'/blocks/rss_client/managefeeds.php?deleterssid=' . $feed->id . '&sesskey=' . sesskey() . $extraparams;
-    $deletelink = new html_link($deleteurl);
-    $deletelink->add_confirm_action(get_string('deletefeedconfirm', 'block_rss_client'));
-    $deleteaction = $OUTPUT->action_icon($deletelink, get_string('delete'), 't/delete');
+    $deleteurl = new moodle_url('/blocks/rss_client/managefeeds.php?deleterssid=' . $feed->id . '&sesskey=' . sesskey() . $extraparams);
+    $deleteicon = new pix_icon('t/delete', get_string('delete'));
+    $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action(get_string('deletefeedconfirm', 'block_rss_client')));
 
     $feedicons = $editaction . ' ' . $deleteaction;
 

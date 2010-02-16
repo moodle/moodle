@@ -878,9 +878,9 @@ class core_renderer extends renderer_base {
     /**
      * Given a html_link object, outputs an <a> tag that uses the object's attributes.
      *
-     * @param mixed $link A html_link object or a string URL (text param required in second case)
-     * @param string $text A descriptive text for the link. If $link is a html_link, this is ignored.
-     * @param array $options a tag attributes and link otpions. If $link is a html_link, this is ignored.
+     * @param string|moodle_url $url
+     * @param string $text A descriptive text for the link
+     * @param array $options a tag attributes and link otpions
      * @return string HTML fragment
      */
     public function link($link_or_url, $text = null, array $options = null) {
@@ -919,7 +919,7 @@ class core_renderer extends renderer_base {
      * @param array $attributes associative array of html link attributes + disabled
      * @return HTML fragment
      */
-    public function action_link($url, $text, component_action $action, array $attributes=null) {
+    public function action_link($url, $text, component_action $action = null, array $attributes=null) {
         if (!($url instanceof moodle_url)) {
             $url = new moodle_url($url);
         }
@@ -959,6 +959,39 @@ class core_renderer extends renderer_base {
         }
 
         return html_writer::tag('a', $attributes, $link->text);
+    }
+
+
+    /**
+     * Similar to action_link, image is used instead of the text
+     *
+     * @param string|moodle_url $url A string URL or moodel_url
+     * @param pix_icon $pixicon
+     * @param component_action $action
+     * @param array $attributes associative array of html link attributes + disabled
+     * @param bool $linktext show title next to image in link
+     * @return string HTML fragment
+     */
+    public function action_icon($url, pix_icon $pixicon, component_action $action = null, array $attributes = null, $linktext=false) {
+        if (!($url instanceof moodle_url)) {
+            $url = new moodle_url($url);
+        }
+        $attributes = (array)$attributes;
+
+        if (empty($options['class'])) {
+            // let ppl override the class via $options
+            $attributes['class'] = 'action-icon';
+        }
+
+        $icon = $this->render($pixicon);
+
+        if ($linktext) {
+            $text = $pixicon->attributes['alt'];
+        } else {
+            $text = '';
+        }
+
+        return $this->action_link($url, $text.$icon, $action, $attributes);
     }
 
    /**
@@ -1263,49 +1296,6 @@ class core_renderer extends renderer_base {
         $attributes = $icon->attributes;
         $attributes['src'] = $this->pix_url($icon->pix, $icon->component);
         return html_writer::empty_tag('img', $attributes);
-    }
-
-    /**
-     * Given a moodle_action_icon object, outputs an image linking to an action (URL or AJAX).
-     *
-     * @param mixed $url_or_link A html_link object or a string URL (text param required in second case)
-     * @param string $title link title and also image alt if no alt specified in $options
-     * @param html_image|moodle_url|string $image_or_url image or url of the image,
-     *        it is also possible to use short pix name for core images
-     * @param array $options image attributes such as title, id, alt, widht, height
-     * @param bool $linktext show title next to image in link
-     * @return string HTML fragment
-     */
-    public function action_icon($url_or_link, $title, $image_or_url, array $options = null, $linktext=false) {
-        $options = (array)$options;
-        if (empty($options['class'])) {
-            // let ppl override the class via $options
-            $options['class'] = 'action-icon';
-        }
-
-        if (empty($title)) {
-            debugging('$title should not be empty in action_icon() call');
-        }
-
-        if (!$linktext) {
-            $options['alt'] = $title;
-        }
-
-        $icon = $this->image($image_or_url, $options);
-
-        if ($linktext) {
-            $icon = $icon . $title;
-        }
-
-        if ($url_or_link instanceof html_link) {
-            $link = clone($url_or_link);
-            $link->text = ($icon);
-        } else {
-            $link = new html_link($url_or_link, $icon);
-        }
-        $url = $link->url;
-
-        return $this->link($link);
     }
 
     /*

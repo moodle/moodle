@@ -505,7 +505,7 @@ class grade_report_grader extends grade_report {
         $aurl = clone($this->baseurl);
         $url->params(array('toggle' => $toggleaction, 'toggle_type' => $type));
 
-        $retval = $OUTPUT->container($OUTPUT->action_icon($url, $string, $imagename, array('class'=>'iconsmall'))); // TODO: this container looks wrong here
+        $retval = $OUTPUT->container($OUTPUT->action_icon($url, new pix_icon($imagename, $string))); // TODO: this container looks wrong here
 
         return $retval;
     }
@@ -611,7 +611,7 @@ class grade_report_grader extends grade_report {
                 $a->user = fullname($user);
                 $strgradesforuser = get_string('gradesforuser', 'grades', $a);
                 $url = new moodle_url('/grade/report/'.$CFG->grade_profilereport.'/index.php', array('userid' => $user->id, 'id' => $this->course->id));
-                $userreportcell->text = $OUTPUT->action_icon($url, $strgradesforuser, 't/grades', array('class'=>'iconsmall'));
+                $userreportcell->text = $OUTPUT->action_icon($url, new pix_icon('t/grades', $strgradesforuser));
                 $userrow->cells[] = $userreportcell;
             }
 
@@ -1440,16 +1440,16 @@ class grade_report_grader extends grade_report {
 
             if (in_array($element['object']->id, $this->collapsed['aggregatesonly'])) {
                 $url->param('action', 'switch_plus');
-                $icon = $OUTPUT->action_icon($url, $strswitchplus, 't/switch_plus', array('class'=>'iconsmall'));
+                $icon = $OUTPUT->action_icon($url, new pix_icon('t/switch_plus', $strswitchplus));
 
             } else if (in_array($element['object']->id, $this->collapsed['gradesonly'])) {
                 $url->param('action', 'switch_whole');
-                $icon = $OUTPUT->action_icon($url, $strswitchwhole, 't/switch_whole', array('class'=>'iconsmall'));
+                $icon = $OUTPUT->action_icon($url, new pix_icon('t/switch_whole', $strswitchwhole));
                 $contractexpandicon->image->src = $OUTPUT->pix_url('t/switch_whole');
 
             } else {
                 $url->param('action', 'switch_minus');
-                $icon = $OUTPUT->action_icon($url, $strswitchminus, 't/switch_minus', array('class'=>'iconsmall'));
+                $icon = $OUTPUT->action_icon($url, new pix_icon('t/switch_minus', $strswitchminus));
             }
         }
         return $icon;

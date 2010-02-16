@@ -422,13 +422,13 @@ class navigation_node {
             return '';
         }
 
-        if ($this->action instanceof html_link) {
+        if ($this->action instanceof action_link) {
             //TODO: to be replaced with something else
             $link = $this->action;
             if ($this->hidden) {
                 $link->add_class('dimmed');
             }
-            $content = $OUTPUT->link($link);
+            $content = $OUTPUT->render($link);
 
         } else if ($this->action instanceof moodle_url) {
             $attributes = array();

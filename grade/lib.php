@@ -1465,7 +1465,7 @@ class grade_structure {
         }
 
         if ($url) {
-            return $OUTPUT->action_icon($gpr->add_url_params($url), $stredit, 't/edit', array('class'=>'iconsmall'));
+            return $OUTPUT->action_icon($gpr->add_url_params($url), new pix_icon('t/edit', $stredit));
 
         } else {
             return '';
@@ -1508,11 +1508,11 @@ class grade_structure {
 
             $url->param('action', 'show');
 
-            $hideicon = $OUTPUT->action_icon($url, $tooltip, 't/'.$type, array('alt'=>$strshow, 'class'=>'iconsmall'));
+            $hideicon = $OUTPUT->action_icon($url, new pix_icon('t/'.$type, $tooltip, 'moodle', array('alt'=>$strshow, 'class'=>'iconsmall')));
 
         } else {
             $url->param('action', 'hide');
-            $hideicon = $OUTPUT->action_icon($url, $strhide, 't/hide', array('class'=>'iconsmall'));
+            $hideicon = $OUTPUT->action_icon($url, new pix_icon('t/hide', $strhide));
         }
 
         return $hideicon;
@@ -1559,7 +1559,7 @@ class grade_structure {
                 $action = '';
             } else {
                 $url->param('action', 'unlock');
-                $action = $OUTPUT->action_icon($url, $tooltip, 't/'.$type, array('alt'=>$strunlock, 'class'=>'smallicon'));
+                $action = $OUTPUT->action_icon($url, new pix_icon('t/'.$type, $tooltip, 'moodle', array('alt'=>$strunlock, 'class'=>'smallicon')));
             }
 
         } else {
@@ -1567,7 +1567,7 @@ class grade_structure {
                 $action = '';
             } else {
                 $url->param('action', 'lock');
-                $action = $OUTPUT->action_icon($url, $strlock, 't/lock', array('class'=>'smallicon'));
+                $action = $OUTPUT->action_icon($url, new pix_icon('t/lock', $strlock));
             }
         }
 
@@ -1608,7 +1608,7 @@ class grade_structure {
 
                 $url = new moodle_url('/grade/edit/tree/calculation.php', array('courseid' => $this->courseid, 'id' => $object->id));
                 $url = $gpr->add_url_params($url);
-                return $OUTPUT->action_icon($url, $streditcalculation, $icon, array('class'=>'smallicon')) . "\n";
+                return $OUTPUT->action_icon($url, new pix_icon($icon, $streditcalculation)) . "\n";
             }
         }
 
@@ -2236,6 +2236,6 @@ function grade_button($type, $courseid, $object) {
         $url = new moodle_url('edit.php', array('courseid' => $courseid, 'id' => $object->id));
     }
 
-    return $OUTPUT->action_icon($url, ${'str'.$type}, 't/'.$type, array('class'=>'iconsmall'));
+    return $OUTPUT->action_icon($url, new pix_icon('t/'.$type, ${'str'.$type}));
 
 }

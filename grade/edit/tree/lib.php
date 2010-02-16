@@ -136,11 +136,11 @@ class grade_edit_tree {
         if ($element['type'] == 'item' or ($element['type'] == 'category' and $element['depth'] > 1)) {
             if ($this->element_deletable($element)) {
                 $aurl = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'delete', 'eid' => $eid, 'sesskey' => sesskey()));
-                $actions .= $OUTPUT->action_icon($aurl, get_string('delete'), 't/delete', array('class'=>'iconsmall'));
+                $actions .= $OUTPUT->action_icon($aurl, new pix_icon('t/delete', get_string('delete')));
             }
 
             $aurl = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'moveselect', 'eid' => $eid, 'sesskey' => sesskey()));
-            $actions .= $OUTPUT->action_icon($aurl, get_string('move'), 't/move', array('class'=>'iconsmall'));
+            $actions .= $OUTPUT->action_icon($aurl, new pix_icon('t/move', get_string('move')));
         }
 
         $actions .= $this->gtree->get_hiding_icon($element, $this->gpr);
@@ -215,7 +215,7 @@ class grade_edit_tree {
 
                     $cell = new html_table_cell();
                     $cell->colspan = 12;
-                    $cell->text = $OUTPUT->action_icon($aurl, $strmovehere, 'movehere', array('class'=>'movetarget'));
+                    $cell->text = $OUTPUT->action_icon($aurl, $strmovehere, new pix_icon(array('class'=>'movetarget'), 'movehere'));
 
                     $moveto = html_table_row::make(array($cell));
                 }

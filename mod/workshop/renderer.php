@@ -295,7 +295,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         if ($summary->example->weight == 1) {
             $url = new moodle_url('/mod/workshop/exsubmission.php',
                                         array('cmid' => $this->page->context->instanceid, 'id' => $summary->example->id, 'edit' => 'on'));
-            $o .= $this->output->action_icon($url, get_string('edit'), 'i/edit');
+            $o .= $this->output->action_icon($url, new pix_icon('i/edit', get_string('edit')));
         }
         $o .= $this->output->container_end();
 
@@ -373,7 +373,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             foreach ($phase->actions as $action) {
                 switch ($action->type) {
                 case 'switchphase':
-                    $actions .= $this->output->action_icon($action->url, get_string('switchphase', 'workshop'), 'i/marker');
+                    $actions .= $this->output->action_icon($action->url, new pix_icon('i/marker', get_string('switchphase', 'workshop')));
                     break;
                 }
             }
@@ -597,12 +597,12 @@ class mod_workshop_renderer extends plugin_renderer_base {
             if ($sortby !== $sortid or $sorthow !== 'ASC') {
                 $url = new moodle_url($PAGE->url);
                 $url->params(array('sortby' => $sortid, 'sorthow' => 'ASC'));
-                $out .= $this->output->action_icon($url, get_string('sortasc', 'workshop'), 't/up', array('class' => 'sort asc'));
+                $out .= $this->output->action_icon($url, new pix_icon('t/up', get_string('sortasc', 'workshop')), null, array('class' => 'sort asc'));
             }
             if ($sortby !== $sortid or $sorthow !== 'DESC') {
                 $url = new moodle_url($PAGE->url);
                 $url->params(array('sortby' => $sortid, 'sorthow' => 'DESC'));
-                $out .= $this->output->action_icon($url, get_string('sortdesc', 'workshop'), 't/down', array('class' => 'sort desc'));
+                $out .= $this->output->action_icon($url, new pix_icon('t/down', get_string('sortdesc', 'workshop')), null, array('class' => 'sort desc'));
             }
         }
         return $out;

@@ -314,7 +314,7 @@ case 'plugins':
         if ($env == 'filemanager' && $info->type == 'draft') {
             continue;
         }
-        echo '<li>' . $OUTPUT->action_icon($aurl, $info->name, $info->icon, array('class'=>'smallicon')) . '</li>'; // no hardcoded styles!
+        echo '<li>' . $OUTPUT->action_icon($aurl, new pix_icon($info->icon, $info->name)) . '</li>'; // no hardcoded styles!
     }
     echo '</ul>';
     echo '</div>';

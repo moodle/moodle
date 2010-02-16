@@ -55,11 +55,11 @@ if ($keys = $DB->get_records_select('user_private_key', "script='grade/import' A
 
         $url = new moodle_url('key.php', array('id' => $key->id));
 
-        $buttons = $OUTPUT->action_icon($url, $stredit, 't/edit');
+        $buttons = $OUTPUT->action_icon($url, new pix_icon('t/edit', $stredit));
 
         $url->param('delete', 1);
         $url->param('sesskey', sesskey());
-        $buttons .= $OUTPUT->action_icon($url, $strdelete, 't/delete');
+        $buttons .= $OUTPUT->action_icon($url, new pix_icon('t/delete', $strdelete));
 
         $line[3] = $buttons;
         $data[] = $line;

@@ -581,6 +581,14 @@ class action_link implements renderable {
     public function add_action(component_action $action) {
         $this->actions[] = $action;
     }
+
+    public function add_class($class) {
+        if (empty($this->atribbutes['class'])) {
+            $this->atribbutes['class'] = $class;
+        } else {
+            $this->atribbutes['class'] = $this->atribbutes['class'].' '.$class;
+        }
+    }
 }
 
 

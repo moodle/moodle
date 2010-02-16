@@ -79,11 +79,11 @@ if (!empty($blogs)) {
         }
 
         $editurl = new moodle_url('/blog/external_blog_edit.php', array('id' => $blog->id));
-        $editicon = $OUTPUT->action_icon($editurl, get_string('editexternalblog', 'blog'), 't/edit');
+        $editicon = $OUTPUT->action_icon($editurl, new pix_icon('t/edit', get_string('editexternalblog', 'blog')));
 
-        $deletelink = new html_link(new moodle_url('/blog/external_blog_edit.php', array('id' => $blog->id, 'sesskey'=>sesskey())));
-        $deletelink->add_confirm_action(get_string('externalblogdeleteconfirm', 'blog'));
-        $deleteicon = $OUTPUT->action_icon($deletelink, get_string('deleteexternalblog', 'blog'), 't/delete');
+        $deletelink = new moodle_url('/blog/external_blog_edit.php', array('id' => $blog->id, 'sesskey'=>sesskey()));
+        $action = new confirm_action(get_string('externalblogdeleteconfirm', 'blog'));
+        $deleteicon = $OUTPUT->action_icon($deletelink, new pix_icon('t/delete', get_string('deleteexternalblog', 'blog')), $action);
 
         $table->data[] = html_table_row::make(array($blog->name, $blog->url, userdate($blog->timefetched), $validicon, $editicon . $deleteicon));
     }

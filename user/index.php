@@ -340,7 +340,7 @@
                 $contentheading = $group->name;
                 if (has_capability('moodle/course:managegroups', $context)) {
                     $aurl = new moodle_url('/group/group.php', array('id' => $group->id, 'courseid' => $group->courseid));
-                    $contentheading .= '&nbsp;' . $OUTPUT->action_icon($aurl, get_string('editgroupprofile'), 't/edit');
+                    $contentheading .= '&nbsp;' . $OUTPUT->action_icon($aurl, new pix_icon('t/edit', get_string('editgroupprofile')));
                 }
 
                 $group->description = file_rewrite_pluginfile_urls($group->description, 'pluginfile.php', $context->id, 'course_group_description', $group->id);

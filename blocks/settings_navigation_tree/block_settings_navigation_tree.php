@@ -144,7 +144,7 @@ class block_settings_navigation_tree extends block_tree {
             }
 
             $reloadlink = new moodle_url($this->page->url, array('regenerate'=>'navigation'));
-            $this->content->footer .= $OUTPUT->action_icon($reloadlink, get_string('reload'), 't/reload', array('class'=>'customcommand'));
+            $this->content->footer .= $OUTPUT->action_icon($reloadlink, new pix_icon('t/reload', get_string('reload')), null, array('class'=>'customcommand'));
 
             if (!empty($this->config->enablesidebarpopout) && $this->config->enablesidebarpopout == 'yes') {
                 user_preference_allow_ajax_update('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, PARAM_INT);

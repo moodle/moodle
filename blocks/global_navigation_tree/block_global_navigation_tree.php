@@ -164,7 +164,7 @@ class block_global_navigation_tree extends block_tree {
 
         $reloadlink = new moodle_url($this->page->url, array('regenerate'=>'navigation'));
 
-        $this->content->footer .= $OUTPUT->action_icon($reloadlink, get_string('reload'), 't/reload', array('class'=>'customcommand'));
+        $this->content->footer .= $OUTPUT->action_icon($reloadlink, new pix_icon('t/reload', get_string('reload')), null, array('class'=>'customcommand'));
 
         // Set content generated to true so that we know it has been done
         $this->contentgenerated = true;

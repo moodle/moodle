@@ -249,12 +249,12 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
     $spacer = '<img src="' . $OUTPUT->pix_url('spacer') . '" class="iconsmall" alt="" /> ';
     if ($filterinfo->active != TEXTFILTER_DISABLED) {
         if (!$isfirstrow) {
-            $updown .= $OUTPUT->action_icon(filters_action_url($filter, 'up'), get_string('up'), 't/up');
+            $updown .= $OUTPUT->action_icon(filters_action_url($filter, 'up'), new pix_icon('t/up', get_string('up')));
         } else {
             $updown .= $spacer;
         }
         if (!$islastactive) {
-            $updown .= $OUTPUT->action_icon(filters_action_url($filter, 'down'), get_string('down'), 't/down');
+            $updown .= $OUTPUT->action_icon(filters_action_url($filter, 'down'), new pix_icon('t/down', get_string('down')));
         } else {
             $updown .= $spacer;
         }

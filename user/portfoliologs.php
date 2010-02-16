@@ -86,10 +86,10 @@ if (count($queued) > 0) {
         $queued = $e->get('queued');
         $baseurl = new moodle_url('/portfolio/add.php', array('id'=>$q->id, 'logreturn'=>1, 'sesskey'=>sesskey()));
 
-        $iconstr = $OUTPUT->action_icon(new moodle_url($baseurl, array('cancel'=>1)), get_string('cancel'), 't/stop');
+        $iconstr = $OUTPUT->action_icon(new moodle_url($baseurl, array('cancel'=>1)), new pix_icon('t/stop', get_string('cancel')));
 
         if (!$e->get('queued') && $e->get('expirytime') > $now) {
-            $iconstr .= '&nbsp;' . $OUTPUT->action_icon($baseurl, get_string('continue'), 't/go');
+            $iconstr .= '&nbsp;' . $OUTPUT->action_icon($baseurl, new pix_icon('t/go', get_string('continue')));
         }
         $table->data[] = array(
             $e->get('caller')->display_name(),

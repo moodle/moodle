@@ -58,11 +58,11 @@ if ($keys) {
             $url->param('id', $key->id);
         }
 
-        $buttons = $OUTPUT->action_icon($url, $stredit, 't/edit', array('class'=>'iconsmall'));
+        $buttons = $OUTPUT->action_icon($url, new pix_icon('t/edit', $stredit));
 
         $url->param('delete', 1);
         $url->param('sesskey', sesskey());
-        $buttons .= $OUTPUT->action_icon($url, $strdelete, 't/delete', array('class'=>'iconsmall'));
+        $buttons .= $OUTPUT->action_icon($url, new pix_icon('t/delete', $strdelete));
 
         $line[3] = $buttons;
         $data[] = $line;

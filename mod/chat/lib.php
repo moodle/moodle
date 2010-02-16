@@ -1245,23 +1245,28 @@ function chat_extend_navigation($navigation, $course, $module, $cm) {
         $links = array();
 
         if (!empty($USER->screenreader)) {
-            $links[] = html_link::make(new moodle_url($target.'gui_basic/index.php', $params), $strenterchat);
+            $url = new moodle_url($target.'gui_basic/index.php', $params);
+            $links[] = new action_link($url, $strenterchat, $action);
         } else {
-            $links[] = html_link::make(new moodle_url($target.'gui_'.$CFG->chat_method.'/index.php', $params), $strenterchat);
+            $url = new moodle_url($target.'gui_'.$CFG->chat_method.'/index.php', $params);
+            $action = new popup_action('click', $url, 'chat'.$course->id.$cm->instance.$currentgroup, array('height' => 500, 'width' => 700));
+            $links[] = new action_link($url, $strenterchat, $action);
         }
 
         if ($CFG->enableajax) {
-            $links[] = html_link::make(new moodle_url($target.'gui_ajax/index.php', $params), get_string('ajax_gui', 'message'));
+            $url = new moodle_url($target.'gui_ajax/index.php', $params);
+            $action = new popup_action('click', $url, 'chat'.$course->id.$cm->instance.$currentgroup, array('height' => 500, 'width' => 700));
+            $links[] = new action_link($url, get_string('ajax_gui', 'message'), $action);
         }
 
         if ($CFG->chat_method == 'header_js' && empty($USER->screenreader)) {
-            $links[] = html_link::make(new moodle_url($target.'gui_basic/index.php', $params), get_string('noframesjs', 'message'));
+            $url = new moodle_url($target.'gui_basic/index.php', $params);
+            $action = new popup_action('click', $url, 'chat'.$course->id.$cm->instance.$currentgroup, array('height' => 500, 'width' => 700));
+            $links[] = new action_link($url, get_string('noframesjs', 'message'), $action);
         }
 
         foreach ($links as $link) {
-            $link->add_action(new popup_action('click', $link->url, 'chat'.$course->id.$cm->instance.$currentgroup, array('height' => 500, 'width' => 700)));
-            $link->title = get_string('modulename', 'chat');
-            $navigation->add($link->title, $link, navigation_node::TYPE_ACTIVITY, null ,null, new pix_icon('c/group' , ''));
+            $navigation->add($link->text, $link, navigation_node::TYPE_ACTIVITY, null ,null, new pix_icon('c/group' , ''));
         }
     }
 
