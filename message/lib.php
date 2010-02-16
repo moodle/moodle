@@ -642,8 +642,8 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
             'scrollbars' => true,
             'resizable' => true);
 
-    $link = html_link::make("/message/history.php?user1=$userid1&user2=$userid2$keywords$position");
-    $action = new popup_action('click', $link->url, "message_history_$userid1", $popupoptions);
+    $link = new moodle_url("/message/history.php?user1=$userid1&user2=$userid2$keywords$position");
+    $action = new popup_action('click', $link, "message_history_$userid1", $popupoptions);
     $str = $OUTPUT->action_link($link, $fulllink, $action, array('title'=>$strmessagehistory));
 
     $str = '<span class="history">'.$str.'</span>';
@@ -1071,7 +1071,7 @@ function message_print_contactlist_user($contact, $incontactlist = true){
             'scrollbars' => true,
             'resizable' => true);
 
-    $link = html_link::make("/message/discussion.php?id=$contact->id");
+    $link = new moodle_url("/message/discussion.php?id=$contact->id");
     $action = new popup_action('click', $link, "message_$contact->id", $popupoptions);
     echo $OUTPUT->action_link($link, $fullnamelink, $action, array('title'=>get_string('sendmessageto', 'message', $fullname)));
 

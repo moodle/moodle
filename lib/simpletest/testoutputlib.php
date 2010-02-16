@@ -567,45 +567,6 @@ class core_renderer_test extends UnitTestCase {
         $this->assertEqual('', $html);
     }
 
-    public function test_link_to_popup_empty_link() {
-        // Empty link object: link MUST have a text value
-        $link = new html_link();
-        $popupaction = new popup_action('click', 'http://test.com', 'my_popup');
-        $link->add_action($popupaction);
-        $this->expectException();
-        $html = $this->renderer->link_to_popup($link);
-    }
-
-    public function test_link_to_popup() {
-        $link = new html_link();
-        $link->text = 'Click here';
-        $link->url = 'http://test.com';
-        $link->title = 'Popup window';
-        $popupaction = new popup_action('click', 'http://test.com', 'my_popup');
-        $link->add_action($popupaction);
-
-        $html = $this->renderer->link_to_popup($link);
-        $expectedattributes = array('title' => 'Popup window', 'href' => 'http://test.com');
-        $this->assert(new ContainsTagWithAttributes('a', $expectedattributes), $html);
-        $this->assert(new ContainsTagWithContents('a', 'Click here'), $html);
-
-        // Try a different url for the link than for the popup
-        $link->url = 'http://otheraddress.com';
-        $html = $this->renderer->link_to_popup($link);
-
-        $this->assert(new ContainsTagWithAttribute('a', 'title', 'Popup window'), $html);
-        $this->assert(new ContainsTagWithAttribute('a', 'href', 'http://otheraddress.com'), $html);
-        $this->assert(new ContainsTagWithContents('a', 'Click here'), $html);
-
-        // Give it a moodle_url object instead of a string
-        $link->url = new moodle_url('http://otheraddress.com');
-        $html = $this->renderer->link_to_popup($link);
-        $this->assert(new ContainsTagWithAttribute('a', 'title', 'Popup window'), $html);
-        $this->assert(new ContainsTagWithAttribute('a', 'href', 'http://otheraddress.com'), $html);
-        $this->assert(new ContainsTagWithContents('a', 'Click here'), $html);
-
-    }
-
     public function test_paging_bar() {
         global $CFG;
 

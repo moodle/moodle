@@ -555,7 +555,7 @@ function log_report_extend_navigation($navigation, $course, $context) {
     }
     if (has_capability('coursereport/log:viewlive', $context)) {
         $livelogs = get_string('livelogs');
-        $link = html_link::make('/course/report/log/live.php?id='. $course->id, $livelogs);
+        $link = new moodle_url('/course/report/log/live.php', array('id'=>$course->id));
         $link->add_action(new popup_action('click', $link->url, 'livelog', array('height' => 500, 'width' => 800)));
         $navigation->add($livelogs, $link, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
     }

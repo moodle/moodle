@@ -273,7 +273,7 @@ class assignment_upload extends assignment_base {
         }
 
         if ($this->notes_allowed() and !empty($submission->data1)) {
-            $link = html_link::make("/mod/assignment/type/upload/notes.php?id=$this->cm->id&userid=$userid");
+            $link = new moodle_url("/mod/assignment/type/upload/notes.php", array('id'=>$this->cm->id, 'userid'=>$userid));
             $action = new popup_action('click', $link, 'notes', array('height' => 500, 'width' => 780));
             $output .= $OUTPUT->action_link($link, get_string('notes', 'assignment'), $action, array('title'=>get_string('notes', 'assignment')));
 
