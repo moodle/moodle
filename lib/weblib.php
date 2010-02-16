@@ -2605,7 +2605,7 @@ function redirect($url, $message='', $delay=-1) {
     $length = strlen($email);
     $obfuscated = '';
     while ($i < $length) {
-        if (rand(0,2)) {
+        if (rand(0,2) && $email{$i}!='@') { //MDL-20619 some browsers have problems unobfuscating @
             $obfuscated.='%'.dechex(ord($email{$i}));
         } else {
             $obfuscated.=$email{$i};
