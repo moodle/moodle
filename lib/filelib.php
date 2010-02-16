@@ -798,6 +798,47 @@ function file_get_upload_error($errorcode) {
 }
 
 /**
+ * Recursive function formating an array in POST parameter
+ * @param array $arraydata - the array that we are going to format and add into &$data array
+ * @param string $currentdata - a row of the final postdata array at instant T
+ *                when finish, it's assign to $data under this format: name[keyname][][]...[]='value'
+ * @param array $data - the final data array containing all POST parameters : 1 row = 1 parameter
+ */
+function format_array_postdata_for_curlcall($arraydata, $currentdata, &$data) {
+        foreach ($arraydata as $k=>$v) {
+            if (is_array($v)) { //the value is an array, call the function recursively
+                $currentdata = $currentdata.'['.urlencode($k).']';
+                format_array_postdata_for_curlcall($v, $currentdata, $data);
+            }  else { //add the POST parameter to the $data array
+                $data[] = $currentdata.'['.urlencode($k).']='.urlencode($v);
+            }
+        }
+}
+
+/**
+ * Transform a PHP array into POST parameter
+ * (see the recursive function format_array_postdata_for_curlcall)
+ * @param array $postdata
+ * @return array containing all POST parameters  (1 row = 1 POST parameter)
+ */
+function format_postdata_for_curlcall($postdata) {
+        $data = array();
+        foreach ($postdata as $k=>$v) {
+            if (is_array($v)) {
+                $currentdata = urlencode($k);
+                format_array_postdata_for_curlcall($v, $currentdata, $data);
+            }  else {
+                $data[] = urlencode($k).'='.urlencode($v);            
+            }
+        }
+        $convertedpostdata = implode('&', $data);
+        return $convertedpostdata;
+}
+
+
+
+
+/**
  * Fetches content of file from Internet (using proxy if defined). Uses cURL extension if present.
  * Due to security concerns only downloads from http(s) sources are supported.
  *
@@ -865,27 +906,11 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
 
     // use POST if requested
     if (is_array($postdata)) {
-        $data = array();
-        foreach ($postdata as $k=>$v) {
-            if (is_array($v)) {
-                foreach ($v as $sk=>$sv) {
-                    if (is_array($sv)) {
-                        foreach ($sv as $ssk=>$ssv) {
-                            $data[] = urlencode($k).'['.urlencode($sk).']['.urlencode($ssk).']='.urlencode($ssv);
-                        }
-                    } else {
-                        $data[] = urlencode($k).'['.urlencode($sk).']='.urlencode($sv);
-                    }
-                }
-            }  else {
-                $data[] = urlencode($k).'='.urlencode($v);
-            }
-        }
-        $postdata = implode('&', $data);
+        $postdata = format_postdata_for_curlcall($postdata);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
     }
-
+    
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HEADER, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connecttimeout);
