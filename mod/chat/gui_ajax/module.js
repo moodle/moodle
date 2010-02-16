@@ -83,7 +83,7 @@ M.mod_chat_ajax.init = function(Y, cfg) {
                 on : {
                     success : function(tid, outcome) {
                         this.messageinput.focus();
-                        this.messageinput.removeAttribute('disabled'),
+                        this.messageinput.removeAttribute('disabled');
                         this.messageinput.set('value', '');
                         try {
                             var data = Y.JSON.parse(outcome.responseText);
