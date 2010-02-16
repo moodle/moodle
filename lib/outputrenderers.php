@@ -876,41 +876,6 @@ class core_renderer extends renderer_base {
     }
 
     /**
-     * Given a html_link object, outputs an <a> tag that uses the object's attributes.
-     *
-     * @param string|moodle_url $url
-     * @param string $text A descriptive text for the link
-     * @param array $options a tag attributes and link otpions
-     * @return string HTML fragment
-     */
-    public function link($link_or_url, $text = null, array $options = null) {
-        global $CFG;
-
-        if ($link_or_url instanceof html_link) {
-            $link = clone($link_or_url);
-        } else {
-            $link = new html_link($link_or_url, $text, $options);
-        }
-
-        $link->prepare($this, $this->page, $this->target);
-
-        // A disabled link is rendered as formatted text
-        if ($link->disabled) {
-            return $this->container($link->text, 'currentlink');
-        }
-
-        $this->prepare_event_handlers($link);
-
-        $attributes = array('href'  => $link->url,
-                            'class' => $link->get_classes_string(),
-                            'title' => $link->title,
-                            'style' => $link->style,
-                            'id'    => $link->id);
-
-        return html_writer::tag('a', $attributes, $link->text);
-    }
-
-    /**
      * Renders a sepcial html link with attached action
      *
      * @param string|moodle_url $url
@@ -1844,27 +1809,23 @@ class core_renderer extends renderer_base {
             $output .= get_string('page') . ':';
 
             if (!empty($pagingbar->previouslink)) {
-                $output .= '&#160;(' . $this->link($pagingbar->previouslink) . ')&#160;';
+                $output .= '&#160;(' . $pagingbar->previouslink . ')&#160;';
             }
 
             if (!empty($pagingbar->firstlink)) {
-                $output .= '&#160;' . $this->link($pagingbar->firstlink) . '&#160;...';
+                $output .= '&#160;' . $pagingbar->firstlink . '&#160;...';
             }
 
             foreach ($pagingbar->pagelinks as $link) {
-                if ($link instanceof html_link) {
-                    $output .= '&#160;&#160;' . $this->link($link);
-                } else {
-                    $output .= "&#160;&#160;$link";
-                }
+                $output .= "&#160;&#160;$link";
             }
 
             if (!empty($pagingbar->lastlink)) {
-                $output .= '&#160;...' . $this->link($pagingbar->lastlink) . '&#160;';
+                $output .= '&#160;...' . $pagingbar->lastlink . '&#160;';
             }
 
             if (!empty($pagingbar->nextlink)) {
-                $output .= '&#160;&#160;(' . $this->link($pagingbar->nextlink) . ')';
+                $output .= '&#160;&#160;(' . $pagingbar->nextlink . ')';
             }
         }
 

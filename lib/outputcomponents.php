@@ -1658,93 +1658,6 @@ class html_table_cell extends html_component {
 
 
 /**
- * Component representing a XHTML link.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_link extends html_component {
-    /**
-     * URL can be simple text or a moodle_url object
-     * @var mixed $url
-     */
-    public $url;
-
-    /**
-     * @var string $text The HTML text that will appear between the link tags
-     */
-    public $text = null;
-
-    /**
-     * @var boolean $disabled Whether or not this link is disabled (will be rendered as plain text)
-     */
-    public $disabled = false;
-
-    /**
-     * @var boolean $disableifcurrent Whether or not this link should be disabled if it the same as the current page
-     */
-    public $disableifcurrent = false;
-
-    /**
-     * New link constructor.
-     *
-     * @param moodle_url|string $url url of the image
-     * @param array $options link attributes such as title, id, disabled, disableifcurrent, etc.
-     */
-    public function __construct($url = null, $text = null, array $options = null) {
-        parent::__construct($options);
-
-        if (is_null($url)) {
-            // to be filled later
-
-        } else if ($url instanceof moodle_url) {
-            $this->url = clone($url);
-
-        } else if (is_string($url)) {
-            $this->url = new moodle_url($url);
-
-        } else {
-            throw new coding_style_exception('Image can be constructed only from moodle_url or string url.');
-        }
-
-        $this->text = $text;
-    }
-
-    /**
-     * @see lib/html_component#prepare() Disables the link if it links to the current page.
-     * @return void
-     */
-    public function prepare(renderer_base $output, moodle_page $page, $target) {
-        // We can't accept an empty text value
-        if ($this->text === '' or is_null($this->text)) { // 0 is valid value, do not use empty()
-            throw new coding_exception('A html_link must have a descriptive text value!');
-        }
-
-        if (!($this->url instanceof moodle_url)) {
-            $this->url = new moodle_url($this->url);
-        }
-
-        if ($this->disableifcurrent and $this->url->compare($page->url, URL_MATCH_PARAMS)) {
-            $this->disabled = true;
-        }
-
-        parent::prepare($output, $page, $target);
-    }
-
-    /**
-     * Shortcut for creating a link component.
-     * @param mixed  $url String or moodle_url
-     * @param string $text The text of the link
-     * @return html_link The link component
-     */
-    public static function make($url, $text) {
-        return new html_link($url, $text);
-    }
-}
-
-
-/**
  * Component representing a XHTML button (input of type 'button').
  * The renderer will either output it as a button with an onclick event,
  * or as a form with hidden inputs.
@@ -2012,23 +1925,23 @@ class moodle_paging_bar extends html_component {
      */
     public $pagevar = 'page';
     /**
-     * @var html_link $previouslink A HTML link representing the "previous" page
+     * @var string $previouslink A HTML link representing the "previous" page
      */
     public $previouslink = null;
     /**
-     * @var html_link $nextlink A HTML link representing the "next" page
+     * @var tring $nextlink A HTML link representing the "next" page
      */
     public $nextlink = null;
     /**
-     * @var html_link $firstlink A HTML link representing the first page
+     * @var tring $firstlink A HTML link representing the first page
      */
     public $firstlink = null;
     /**
-     * @var html_link $lastlink A HTML link representing the last page
+     * @var tring $lastlink A HTML link representing the last page
      */
     public $lastlink = null;
     /**
-     * @var array $pagelinks An array of html_links. One of them is just a string: the current page
+     * @var array $pagelinks An array of strings. One of them is just a string: the current page
      */
     public $pagelinks = array();
 
@@ -2057,11 +1970,7 @@ class moodle_paging_bar extends html_component {
             $pagenum = $this->page - 1;
 
             if ($this->page > 0) {
-                $this->previouslink = new html_link();
-                $this->previouslink->add_class('previous');
-                $this->previouslink->url = clone($this->baseurl);
-                $this->previouslink->url->param($this->pagevar, $pagenum);
-                $this->previouslink->text = get_string('previous');
+                $this->previouslink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$pagenum)), array('class'=>'previous'), get_string('previous'));
             }
 
             if ($this->perpage > 0) {
@@ -2073,11 +1982,7 @@ class moodle_paging_bar extends html_component {
             if ($this->page > 15) {
                 $startpage = $this->page - 10;
 
-                $this->firstlink = new html_link();
-                $this->firstlink->url = clone($this->baseurl);
-                $this->firstlink->url->param($this->pagevar, 0);
-                $this->firstlink->text = 1;
-                $this->firstlink->add_class('first');
+                $this->firstlink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>0)), array('class'=>'first'), '1');
             } else {
                 $startpage = 0;
             }
@@ -2091,10 +1996,7 @@ class moodle_paging_bar extends html_component {
                 if ($this->page == $currpage) {
                     $this->pagelinks[] = $displaypage;
                 } else {
-                    $pagelink = new html_link();
-                    $pagelink->url = clone($this->baseurl);
-                    $pagelink->url->param($this->pagevar, $currpage);
-                    $pagelink->text = $displaypage;
+                    $pagelink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$currpage)), $displaypage);
                     $this->pagelinks[] = $pagelink;
                 }
 
@@ -2104,21 +2006,13 @@ class moodle_paging_bar extends html_component {
 
             if ($currpage < $lastpage) {
                 $lastpageactual = $lastpage - 1;
-                $this->lastlink = new html_link();
-                $this->lastlink->url = clone($this->baseurl);
-                $this->lastlink->url->param($this->pagevar, $lastpageactual);
-                $this->lastlink->text = $lastpage;
-                $this->lastlink->add_class('last');
+                $this->lastlink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$lastpageactual)), array('class'=>'last'), $lastpage);
             }
 
             $pagenum = $this->page + 1;
 
             if ($pagenum != $displaypage) {
-                $this->nextlink = new html_link();
-                $this->nextlink->url = clone($this->baseurl);
-                $this->nextlink->url->param($this->pagevar, $pagenum);
-                $this->nextlink->text = get_string('next');
-                $this->nextlink->add_class('next');
+                $this->nextlink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$pagenum)), array('class'=>'next'), get_string('next'));
             }
         }
     }
