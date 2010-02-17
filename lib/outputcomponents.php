@@ -1822,13 +1822,13 @@ class moodle_paging_bar extends html_component {
 
             if ($currpage < $lastpage) {
                 $lastpageactual = $lastpage - 1;
-                $this->lastlink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$lastpageactual)), array('class'=>'last'), $lastpage);
+                $this->lastlink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$lastpageactual)), $lastpage, array('class'=>'last'));
             }
 
             $pagenum = $this->page + 1;
 
             if ($pagenum != $displaypage) {
-                $this->nextlink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$pagenum)), array('class'=>'next'), get_string('next'));
+                $this->nextlink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$pagenum)), get_string('next'), array('class'=>'next'));
             }
         }
     }
