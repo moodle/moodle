@@ -522,6 +522,12 @@ function mnet_get_app_jumppath ($applicationid) {
 }
 
 
+/**
+ * Output debug information about mnet.  this will go to the <b>error_log</b>.
+ *
+ * @param mixed $debugdata this can be a string, or array or object.
+ * @param int   $debuglevel optional , defaults to 1. bump up for very noisy debug info
+ */
 function mnet_debug($debugdata, $debuglevel=1) {
     global $CFG;
     $setlevel = get_config('', 'mnet_rpcdebug');
