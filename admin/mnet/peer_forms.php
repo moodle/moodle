@@ -79,7 +79,7 @@ class mnet_review_host_form extends moodleform {
         $mform->addElement('text', 'wwwroot', get_string('hostname', 'mnet'));
         $mform->setType('name', PARAM_URL);
         $mform->addElement('textarea', 'public_key', get_string('publickey', 'mnet'), array('rows' => 17, 'cols' => 100, 'class' => 'smalltext'));
-        $mform->setType('name', PARAM_PEM);
+        $mform->setType('public_key', PARAM_PEM);
 
         if ($mnet_peer && !empty($mnet_peer->deleted)) {
             $radioarray=array();
@@ -109,14 +109,19 @@ class mnet_review_host_form extends moodleform {
             $mform->addElement('static', 'lastconnect', get_string('last_connect_time', 'mnet'), $lastconnect);
             $mform->addElement('static', 'ipaddress', get_string('ipaddress', 'mnet'), $mnet_peer->ip_address);
 
+            if (isset($mnet_peer->currentkey)) { // key being published is not the same as our records
+                $currentkeystr = '<b>' . get_string('keymismatch', 'mnet') . '</b><br /><br /> ' . $OUTPUT->box('<pre>' . $mnet_peer->currentkey . '</pre>');
+                $mform->addElement('static', 'keymismatch', get_string('currentkey', 'mnet'), $currentkeystr);
+            }
 
             $credstr = '';
-            $credentials = $mnet_peer->check_credentials($mnet_peer->public_key);
-            foreach($credentials['subject'] as $key => $credential) {
-                if (is_scalar($credential)) {
-                    $credstr .= str_pad($key, 16, " ", STR_PAD_LEFT).': '.$credential."\n";
-                } else {
-                    $credstr .= str_pad($key, 16, " ", STR_PAD_LEFT).': '.var_export($credential,1)."\n";
+            if ($credentials = $mnet_peer->check_credentials($mnet_peer->public_key)) {
+                foreach($credentials['subject'] as $key => $credential) {
+                    if (is_scalar($credential)) {
+                        $credstr .= str_pad($key, 16, " ", STR_PAD_LEFT).': '.$credential."\n";
+                    } else {
+                        $credstr .= str_pad($key, 16, " ", STR_PAD_LEFT).': '.var_export($credential,1)."\n";
+                    }
                 }
             }
 

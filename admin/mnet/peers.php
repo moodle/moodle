@@ -99,6 +99,7 @@ if ($formdata = $simpleform->get_data()) {
     $reviewform->display();
     echo $OUTPUT->box_end();
     echo $OUTPUT->footer();
+    exit;
 } else if ($simpleform->is_submitted()) { // validation failed
     $noreviewform = true;
 }
@@ -112,9 +113,14 @@ if (!empty($hostid)) {
     require_once($CFG->dirroot . '/admin/mnet/tabs.php');
 
     if ($hostid != $CFG->mnet_all_hosts_id) {
-        $currentkey = mnet_get_public_key($mnet_peer->wwwroot, $mnet_peer->application);
-        if ($currentkey == $mnet_peer->public_key) {
-            unset($currentkey);
+        $mnet_peer->currentkey = mnet_get_public_key($mnet_peer->wwwroot, $mnet_peer->application);
+        if ($mnet_peer->currentkey == $mnet_peer->public_key) {
+            unset($mnet_peer->currentkey);
+        } else {
+            error_log($mnet_peer->currentkey);
+            error_log($mnet_peer->public_key);
+            error_log(md5($mnet_peer->currentkey));
+            error_log(md5($mnet_peer->public_key));
         }
         $credentials = $mnet_peer->check_credentials($mnet_peer->public_key);
         $reviewform = new mnet_review_host_form(null, array('peer' => $mnet_peer)); // the second step (also the edit host form)
@@ -128,6 +134,7 @@ if (!empty($hostid)) {
         echo $OUTPUT->notification(get_string('allhosts_no_options', 'mnet'));
     }
     echo $OUTPUT->footer();
+    exit;
 }
 
 // either we're in the second step of setting up a new host
@@ -142,7 +149,6 @@ if (empty($noreviewform) && $id = optional_param('id', 0, PARAM_INT)) {
 } else if (empty($noreviewform) && ($wwwroot = optional_param('wwwroot', '', PARAM_URL)) && ($applicationid = optional_param('applicationid', 0, PARAM_INT))) {
     $application = $DB->get_field('mnet_application', 'name', array('id'=>$applicationid));
     $mnet_peer->bootstrap($wwwroot, null, $application);
-    print_object($mnet_peer);
 }
 $reviewform = new mnet_review_host_form(null, array('peer' => $mnet_peer));
 if ($formdata = $reviewform->get_data()) {
@@ -155,7 +161,13 @@ if ($formdata = $reviewform->get_data()) {
         $mnet_peer->set_name($formdata->name);
     }
 
-    $mnet_peer->deleted = $formdata->deleted;
+    $mnet_peer->updateparams->deleted = $formdata->deleted;
+    $oldkey = $mnet_peer->public_key;
+    $mnet_peer->public_key = $formdata->public_key;
+    $mnet_peer->updateparams->public_key = addslashes($formdata->public_key);
+    $mnet_peer->public_key_expires = $mnet_peer->check_common_name($formdata->public_key);
+    $mnet_peer->updateparams->public_key_expires = $mnet_peer->check_common_name($formdata->public_key);
+
 
     $credentials = $mnet_peer->check_credentials($mnet_peer->public_key);
     $mnet_peer->public_key_expires = $credentials['validTo_time_t'];
@@ -171,6 +183,7 @@ if ($formdata = $reviewform->get_data()) {
     $reviewform->display();
     echo $OUTPUT->box_end();
     echo $OUTPUT->footer();
+    exit;
 }
 
 
@@ -247,4 +260,5 @@ echo $OUTPUT->box_end();
 
 // done
 echo $OUTPUT->footer();
+exit;
 
