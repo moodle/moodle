@@ -22,8 +22,8 @@
 */
 function sid_ob_rewrite($buffer){
     $replacements = array(
-        '/(<\s*(a|link|script|frame|area)\s[^>]*(href|src)\s*=\s*")([^"]*)(")/i',
-        '/(<\s*(a|link|script|frame|area)\s[^>]*(href|src)\s*=\s*\')([^\']*)(\')/i');
+        '/(<\s*(a|link|script|frame|area|img)\s[^>]*(href|src)\s*=\s*")([^"]*)(")/i',
+        '/(<\s*(a|link|script|frame|area|img)\s[^>]*(href|src)\s*=\s*\')([^\']*)(\')/i');
  
     $buffer = preg_replace_callback($replacements, "sid_rewrite_link_tag", $buffer);
     $buffer = preg_replace('/<form\s[^>]*>/i',
@@ -42,8 +42,8 @@ function sid_ob_rewrite($buffer){
 */
 function sid_ob_rewrite_absolute($buffer){
     $replacements = array(
-        '/(<\s*(a|link|script|frame|area)\s[^>]*(href|src)\s*=\s*")((?:http|https)[^"]*)(")/i',
-        '/(<\s*(a|link|script|frame|area)\s[^>]*(href|src)\s*=\s*\')((?:http|https)[^\']*)(\')/i');
+        '/(<\s*(a|link|script|frame|area|img)\s[^>]*(href|src)\s*=\s*")((?:http|https)[^"]*)(")/i',
+        '/(<\s*(a|link|script|frame|area|img)\s[^>]*(href|src)\s*=\s*\')((?:http|https)[^\']*)(\')/i');
  
     $buffer = preg_replace_callback($replacements, "sid_rewrite_link_tag", $buffer);
     $buffer = preg_replace('/<form\s[^>]*>/i',
@@ -133,7 +133,7 @@ function sid_start_ob(){
     @ini_set('session.use_trans_sid', '1'); // try and turn on trans_sid
     if (ini_get('session.use_trans_sid')!=0 ){ 
         // use trans sid as its available
-        ini_set('url_rewriter.tags', 'a=href,area=href,script=src,link=href,' 
+        ini_set('url_rewriter.tags', 'a=href,img=src,area=href,script=src,link=href,' 
             . 'frame=src,form=fakeentry');
         ob_start('sid_ob_rewrite_absolute');
     }else{
