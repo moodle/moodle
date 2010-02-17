@@ -1543,47 +1543,6 @@ class core_renderer extends renderer_base {
     }
 
     /**
-     * Outputs a HTML nested list
-     *
-     * @param html_list $list A html_list object
-     * @return string HTML structure
-     */
-    public function htmllist($list) {
-        $list = clone($list);
-        $list->prepare($this, $this->page, $this->target);
-
-        $this->prepare_event_handlers($list);
-
-        if ($list->type == 'ordered') {
-            $tag = 'ol';
-        } else if ($list->type == 'unordered') {
-            $tag = 'ul';
-        }
-
-        $output = html_writer::start_tag($tag, array('class' => $list->get_classes_string()));
-
-        foreach ($list->items as $listitem) {
-            if ($listitem instanceof html_list) {
-                $output .= html_writer::start_tag('li', array()) . "\n";
-                $output .= $this->htmllist($listitem) . "\n";
-                $output .= html_writer::end_tag('li') . "\n";
-            } else if ($listitem instanceof html_list_item) {
-                $listitem->prepare($this, $this->page, $this->target);
-                $this->prepare_event_handlers($listitem);
-                $output .= html_writer::tag('li', array('class' => $listitem->get_classes_string()), $listitem->value) . "\n";
-            } else {
-                $output .= html_writer::tag('li', array(), $listitem) . "\n";
-            }
-        }
-
-        if ($list->text) {
-            $output = $list->text . $output;
-        }
-
-        return $output . html_writer::end_tag($tag);
-    }
-
-    /**
      * Prints a simple button to close a window
      *
      * @param string $text The lang string for the button's label (already output from get_string())

@@ -90,17 +90,16 @@ class block_blog_recent extends block_base {
         $entries = $bloglisting->get_entries(0, $this->config->numberofrecentblogentries, 4);
 
         if (!empty($entries)) {
-            $entrieslist = new html_list();
-            $entrieslist->add_class('list');
+            $entrieslist = array();
             $viewblogurl = new moodle_url('/blog/index.php');
 
             foreach ($entries as $entryid => $entry) {
                 $viewblogurl->param('entryid', $entryid);
                 $entrylink = html_writer::link($viewblogurl, shorten_text($entry->subject));
-                $entrieslist->add_item($entrylink);
+                $entrieslist[] = $entrylink;
             }
 
-            $this->content->text .= $OUTPUT->htmllist($entrieslist);
+            $this->content->text .= html_writer::alist($entrieslist, array('class'=>'list'));
             $strview = get_string('viewsiteentries', 'blog');
             if (!empty($blogheaders['strview'])) {
                 $strview = $blogheaders['strview'];

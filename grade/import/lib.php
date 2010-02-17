@@ -132,12 +132,12 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
         echo $OUTPUT->notification(get_string('importsuccess', 'grades'), 'notifysuccess');
         $unenrolledusers = get_unenrolled_users_in_import($importcode, $courseid);
         if ($unenrolledusers) {
-            $list = new html_list();
+            $list = array();
             foreach ($unenrolledusers as $u) {
                 $u->fullname = fullname($u);
-                $list->add_item(get_string('usergrade', 'grades', $u));
+                $list[] = get_string('usergrade', 'grades', $u);
             }
-            echo $OUTPUT->notification(get_string('unenrolledusersinimport', 'grades', $OUTPUT->htmllist($list)), 'notifysuccess');
+            echo $OUTPUT->notification(get_string('unenrolledusersinimport', 'grades', html_writer::alist($list)), 'notifysuccess');
         }
         echo $OUTPUT->continue_button($CFG->wwwroot.'/grade/index.php?id='.$courseid);
     }

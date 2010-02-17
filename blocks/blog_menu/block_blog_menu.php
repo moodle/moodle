@@ -75,14 +75,13 @@ class block_blog_menu extends block_base {
         /// Accessibility: markup as a list.
 
         $blogmodon = false;
-        $menulist = new html_list();
-        $menulist->add_class('list');
+        $menulist = array();
 
         if (!empty($blogheaders['strview']) && $CFG->useblogassociations) {
             if ($blogheaders['url']->compare($PAGE->url) == URL_MATCH_EXACT) {
-                $menulist->add_item(html_writer::tag('span', array('class'=>'current'), $blogheaders['strview']));
+                $menulist[] = html_writer::tag('span', array('class'=>'current'), $blogheaders['strview']);
             } else {
-                $menulist->add_item(html_writer::link($blogheaders['url'], $blogheaders['strview']));
+                $menulist[] = html_writer::link($blogheaders['url'], $blogheaders['strview']);
             }
         }
 
@@ -92,7 +91,7 @@ class block_blog_menu extends block_base {
                 !$PAGE->url->param('modid') && !$PAGE->url->param('courseid') && !$PAGE->url->param('userid') && !$PAGE->url->param('entryid')) {
                 // no
             } else {
-                $menulist->add_item(html_writer::add($CFG->wwwroot .'/blog/index.php', get_string('viewsiteentries', 'blog')));
+                $menulist[] = html_writer::add($CFG->wwwroot .'/blog/index.php', get_string('viewsiteentries', 'blog'));
             }
         }
 
@@ -106,7 +105,7 @@ class block_blog_menu extends block_base {
             $murl = new moodle_url('/blog/index.php', array('userid' => $USER->id));
             $murl->params($blogheaders['url']->params());
             $murl->param('userid', $USER->id);
-            $menulist->add_item(html_writer::link($murl, get_string('viewmyentries', 'blog')));
+            $menulist[] = html_writer::link($murl, get_string('viewmyentries', 'blog'));
         }
 
         // show "Add entry" or "Blog about this" link
@@ -115,7 +114,7 @@ class block_blog_menu extends block_base {
             $aurl = new moodle_url('/blog/edit.php', array('action' => 'add'));
             $aurl->params($blogheaders['url']->params());
             if ($PAGE->url->compare($aurl) != URL_MATCH_EXACT) {
-                $menulist->add_item(html_writer::link($aurl, $blogheaders['stradd']));
+                $menulist[] =html_writer::link($aurl, $blogheaders['stradd']);
             }
         }
 
@@ -131,6 +130,6 @@ class block_blog_menu extends block_base {
             $this->content->footer = '';
         }
 
-        $this->content->text = $OUTPUT->htmllist($menulist);
+        $this->content->text = html_writer::alist($menulist, array('class'=>'list'));
     }
 }

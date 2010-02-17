@@ -895,6 +895,27 @@ class html_writer {
     }
 
     /**
+     * Shortcut for quick making of lists
+     * @param array $items
+     * @param string $tag ul or ol
+     * @param array $attributes
+     * @return string
+     */
+    public static function alist(array $items, array $attributes = null, $tag = 'ul') {
+        //note: 'list' is a reserved keyword ;-)
+
+        $output = '';
+
+        foreach ($items as $item) {
+            $output .= html_writer::start_tag('li') . "\n";
+            $output .= $item . "\n";
+            $output .= html_writer::end_tag('li') . "\n";
+        }
+
+        return html_writer::tag($tag, $attributes, $output);
+    }
+
+    /**
      * Returns hidden input fields created from url parameters.
      * @param moodle_url $url
      * @param array $exclude list of excluded parameters
@@ -1575,111 +1596,6 @@ class html_table_cell extends html_component {
     }
 }
 
-
-/**
- * Component representing a list.
- *
- * The advantage of using this object instead of a flat array is that you can load it
- * with metadata (CSS classes, event handlers etc.) which can be used by the renderers.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_list extends html_component {
-
-    /**
-     * @var array $items An array of html_list_item or html_list objects
-     */
-    public $items = array();
-
-    /**
-     * @var string $type The type of list (ordered|unordered), definition type not yet supported
-     */
-    public $type = 'unordered';
-
-    /**
-     * @var string $text An optional descriptive text for the list. Will be output as a list item before opening the new list
-     */
-    public $text = false;
-
-    /**
-     * @see lib/html_component#prepare()
-     * @return void
-     */
-    public function prepare(renderer_base $output, moodle_page $page, $target) {
-        parent::prepare($output, $page, $target);
-    }
-
-    /**
-     * This function takes a nested array of data and maps it into this list's $items array
-     * as proper html_list_item and html_list objects, with appropriate metadata.
-     *
-     * @param array $tree A nested array (array keys are ignored);
-     * @param int $row Used in identifying the iteration level and in ul classes
-     * @return void
-     */
-    public function load_data($tree, $level=0) {
-
-        $this->add_class("list-$level");
-
-        $i = 1;
-        foreach ($tree as $key => $element) {
-            if (is_array($element)) {
-                $newhtmllist = new html_list();
-                $newhtmllist->type = $this->type;
-                $newhtmllist->load_data($element, $level + 1);
-                $newhtmllist->text = $key;
-                $this->items[] = $newhtmllist;
-            } else {
-                $listitem = new html_list_item();
-                $listitem->value = $element;
-                $listitem->add_class("list-item-$level-$i");
-                $this->items[] = $listitem;
-            }
-            $i++;
-        }
-    }
-
-    /**
-     * Adds a html_list_item or html_list to this list.
-     * If the param is a string, a html_list_item will be added.
-     * @param mixed $item String, html_list or html_list_item object
-     * @return void
-     */
-    public function add_item($item) {
-        if ($item instanceof html_list_item || $item instanceof html_list) {
-            $this->items[] = $item;
-        } else {
-            $listitem = new html_list_item();
-            $listitem->value = $item;
-            $this->items[] = $item;
-        }
-    }
-}
-
-
-/**
- * Component representing a list item.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_list_item extends html_component {
-    /**
-     * @var string $value The value of the list item
-     */
-    public $value;
-
-    /**
-     * @see lib/html_component#prepare()
-     * @return void
-     */
-    public function prepare(renderer_base $output, moodle_page $page, $target) {
-        parent::prepare($output, $page, $target);
-    }
-}
 
 /// Complex components aggregating simpler components
 
