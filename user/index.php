@@ -665,7 +665,6 @@
 
 
     if ($bulkoperations) {
-        $PAGE->requires->js('/user/user.js');
         echo '<form action="action_redir.php" method="post" id="participantsform">';
         echo '<div>';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
