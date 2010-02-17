@@ -214,7 +214,7 @@ class assignment_uploadsingle extends assignment_base {
                     $filename = $file->get_filename();
                     $mimetype = $file->get_mimetype();
                     $link = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$USER->id.'/'.$filename);
-                    $node->get($filekey)->add($filename, $link, navigation_node::TYPE_SETTING, null, null, $OUTPUT->pix_url(file_mimetype_icon($mimetype)));
+                    $node->get($filekey)->add($filename, $link, navigation_node::TYPE_SETTING, null, null, new pix_icon(file_mimetype_icon($mimetype), ''));
                 }
             }
         }
