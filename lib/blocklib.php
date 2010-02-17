@@ -286,7 +286,7 @@ class block_manager {
      * @return string URL for moving block $this->movingblock to this position.
      */
     protected function get_move_target_url($region, $weight) {
-        return $this->page->url->out(false, array('bui_moveid' => $this->movingblock,
+        return new moodle_url($this->page->url, array('bui_moveid' => $this->movingblock,
                 'bui_newregion' => $region, 'bui_newweight' => $weight, 'sesskey' => sesskey()));
     }
 
@@ -807,10 +807,7 @@ class block_manager {
 
             if ($this->movingblock && $lastweight != $instance->instance->weight &&
                     $content->blockinstanceid != $this->movingblock && $lastblock != $this->movingblock) {
-                $bmt = new block_move_target();
-                $bmt->text = $strmoveblockhere;
-                $bmt->url = $this->get_move_target_url($region, ($lastweight + $instance->instance->weight)/2);
-                $results[] = $bmt;
+                $results[] = new block_move_target($strmoveblockhere, $this->get_move_target_url($region, ($lastweight + $instance->instance->weight)/2));
             }
 
             if ($content->blockinstanceid == $this->movingblock) {
@@ -825,10 +822,7 @@ class block_manager {
         }
 
         if ($this->movingblock && $lastblock != $this->movingblock) {
-            $bmt = new block_move_target();
-            $bmt->text = $strmoveblockhere;
-            $bmt->url = $this->get_move_target_url($region, $lastweight + 1);
-            $results[] = $bmt;
+            $results[] = new block_move_target($strmoveblockhere, $this->get_move_target_url($region, $lastweight + 1));
         }
 
         return $results;

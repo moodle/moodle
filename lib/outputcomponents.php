@@ -1757,7 +1757,7 @@ class paging_bar implements renderable {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class block_contents extends html_component {
+class block_contents {
     /** @var int used to set $skipid. */
     protected static $idcounter = 1;
 
@@ -1766,7 +1766,7 @@ class block_contents extends html_component {
     const HIDDEN = 2;
 
     /**
-     * @param integer $skipid All the blocks (or things that look like blocks)
+     * @var integer $skipid All the blocks (or things that look like blocks)
      * printed on a page are given a unique number that can be used to construct
      * id="" attributes. This is set automatically be the {@link prepare()} method.
      * Do not try to set it manually.
@@ -1790,7 +1790,7 @@ class block_contents extends html_component {
      * @param array $attributes an array of attribute => value pairs that are put on the
      * outer div of this block. {@link $id} and {@link $classes} attributes should be set separately.
      */
-    public $attributes = array();
+    public $attributes;
 
     /**
      * @param string $title The title of this block. If this came from user input,
@@ -1831,24 +1831,31 @@ class block_contents extends html_component {
      */
     public $controls = array();
 
+
     /**
-     * @see html_component::prepare()
-     * @return void
+     * Create new instance of block content
+     * @param array $attributes
      */
-    public function prepare(renderer_base $output, moodle_page $page, $target) {
+    public function __construct(array $attributes=null) {
         $this->skipid = self::$idcounter;
         self::$idcounter += 1;
-        $this->add_class('sideblock');
-        if (empty($this->blockinstanceid) || !strip_tags($this->title)) {
-            $this->collapsible = self::NOT_HIDEABLE;
+
+        if ($attributes) {
+            // standard block
+            $this->attributes = $attributes;
+        } else {
+            // simple "fake" blocks used in some modules and "Add new block" block
+            $this->attributes = array('class'=>'sideblock');
         }
-        if ($this->collapsible == self::HIDDEN) {
-            $this->add_class('hidden');
-        }
-        if (!empty($this->controls)) {
-            $this->add_class('block_with_controls');
-        }
-        parent::prepare($output, $page, $target);
+    }
+
+    /**
+     * Add html class to block
+     * @param string $class
+     * @return void
+     */
+    public function add_class($class) {
+        $this->attributes['class'] .= ' '.$class;
     }
 }
 
@@ -1864,15 +1871,25 @@ class block_contents extends html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class block_move_target extends html_component {
+class block_move_target {
     /**
-     * List of hidden form fields.
-     * @var array
+     * Move url
+     * @var moodle_url
      */
-    public $url = array();
+    public $url;
     /**
-     * List of hidden form fields.
-     * @var array
+     * label
+     * @var string
      */
-    public $text = '';
+    public $text;
+
+    /**
+     * Cosntructor
+     * @param string $text
+     * @param moodle_url $url
+     */
+    public function __construct($text, moodle_url $url) {
+        $this->text = $text;
+        $this->url  = $url;
+    }
 }

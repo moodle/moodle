@@ -358,7 +358,8 @@ class block_base {
     public function get_content_for_output($output) {
         global $CFG;
 
-        $bc = new block_contents();
+        $bc = new block_contents($this->html_attributes());
+
         $bc->blockinstanceid = $this->instance->id;
         $bc->blockpositionid = $this->instance->blockpositionid;
 
@@ -370,17 +371,6 @@ class block_base {
         } else {
             $bc->add_class('invisible');
         }
-
-        $attributes = $this->html_attributes();
-        if (isset($attributes['id'])) {
-            $bc->id = $attributes['id'];
-            unset($attributes['id']);
-        }
-        if (isset($attributes['class'])) {
-            $bc->set_classes($attributes['class']);
-            unset($attributes['class']);
-        }
-        $bc->attributes = $attributes;
 
         if (!$this->hide_header()) {
             $bc->title = $this->title;
@@ -545,7 +535,7 @@ class block_base {
     function html_attributes() {
         $attributes = array(
             'id' => 'inst' . $this->instance->id,
-            'class' => 'block_' . $this->name()
+            'class' => 'block_' . $this->name(). '  sideblock'
         );
         if ($this->instance_can_be_docked() && get_user_preferences('docked_block_instance_'.$this->instance->id, 0)) {
             $attributes['class'] .= ' dock_on_load';
