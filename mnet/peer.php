@@ -113,6 +113,7 @@ class mnet_peer {
 
         $this->delete_all_sessions();
 
+        $this->deleted = 1;
         $this->updateparams->deleted = 1;
         $this->commit();
     }
