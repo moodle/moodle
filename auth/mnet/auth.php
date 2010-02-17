@@ -231,6 +231,17 @@ class auth_plugin_mnet extends auth_plugin_base {
     }
 
     /**
+     * after a successful login, land.php will call complete_user_login
+     * which will in turn regenerate the session id.
+     * this means that what is stored in mnet_session table needs updating.
+     *
+     */
+    function update_session_id() {
+        global $USER;
+        return set_field('mnet_session', 'session_id', session_id(), 'username', $USER->username, 'mnethostid', $USER->mnethostid, 'useragent', sha1($_SERVER['HTTP_USER_AGENT']));
+    }
+
+    /**
      * This function confirms the remote (ID provider) host's mnet session
      * by communicating the token and UA over the XMLRPC transport layer, and
      * returns the local user record on success.
