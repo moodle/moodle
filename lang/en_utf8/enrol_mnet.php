@@ -1,8 +1,9 @@
 <?php
 
-$string['description'] = 'Description of enrolment over Moodle Networking.';
+$string['description'] = 'The MNET enrolment plugin allows networked sites to enrol their users on some or all of the courses on this moodle site.';
 $string['enrolname'] = 'Moodle Networking';
 $string['allow_allcourses'] = 'Allow enrolment in all remote courses.';
+$string['allow_allcourses2'] = 'Allow enrolment for remote users in all courses on this moodle site.';
 $string['allcategories'] = '$a potential categories';
 $string['allowedcategories'] = '$a allowed categories';
 $string['nocategoriesdefined'] = 'No course categories found. Define new categories <a href=\"$a\">here</a>.';
