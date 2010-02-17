@@ -1132,18 +1132,13 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         if (empty($params['eid'])) {
             throw new Exception('Array key (eid) missing from 3rd param of grade_edit_tree_column_select::get_category_cell($category, $levelclass, $params)');
         }
-        $selectall = new html_span();
-        $selectall->add_class('actionlink');
-        $selectnone = clone($selectall);
-        $selectall->add_action('click', 'togglecheckboxes', array('eid' => $params['eid'], 'check' => true));
-        $selectall->contents = get_string('all');
-        $selectnone->add_action('click', 'togglecheckboxes', array('eid' => $params['eid'], 'check' => false));
-        $selectnone->contents = get_string('none');
+        $selectall  = new action_link(new moodle_url('#'), get_string('all'), new component_action('click', 'togglecheckboxes', array('eid' => $params['eid'], 'check' => true)));
+        $selectnone = new action_link(new moodle_url('#'), get_string('none'), new component_action('click', 'togglecheckboxes', array('eid' => $params['eid'], 'check' => false)));
 
         $categorycell = clone($this->categorycell);
         $categorycell->add_classes(array('last', $levelclass));
         $categorycell->style .= 'text-align: center;';
-        $categorycell->text = $OUTPUT->span($selectall) . '<br />' . $OUTPUT->span($selectnone);
+        $categorycell->text = $OUTPUT->render($selectall) . '<br />' . $OUTPUT->render($selectnone);
         return $categorycell;
     }
 

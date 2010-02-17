@@ -1681,29 +1681,6 @@ class html_list_item extends html_component {
     }
 }
 
-
-/**
- * Component representing a span element. It has no special attributes, so
- * it is very low-level and can be used for styling and JS actions.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_span extends html_component {
-    /**
-     * @var string $text The contents of the span
-     */
-    public $contents;
-    /**
-     * @see lib/html_component#prepare()
-     * @return void
-     */
-    public function prepare(renderer_base $output, moodle_page $page, $target) {
-        parent::prepare($output, $page, $target);
-    }
-}
-
 /// Complex components aggregating simpler components
 
 

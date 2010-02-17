@@ -1584,32 +1584,6 @@ class core_renderer extends renderer_base {
     }
 
     /**
-     * Prints an inline span element with optional text contents.
-     *
-     * @param mixed $span A html_span object or some string content to wrap in a span
-     * @param mixed $classes A space-separated list or an array of classes. Only used if $span is a string
-     * @return string A HTML fragment
-     */
-    public function span($span, $classes='') {
-        if (!($span instanceof html_span)) {
-            $text = $span;
-            $span = new html_span();
-            $span->contents = $text;
-            $span->add_classes($classes);
-        }
-
-        $span = clone($span);
-        $span->prepare($this, $this->page, $this->target);
-        $this->prepare_event_handlers($span);
-        $attributes = array('class' => $span->get_classes_string(),
-                            'alt' => $span->alt,
-                            'style' => $span->style,
-                            'title' => $span->title,
-                            'id' => $span->id);
-        return html_writer::tag('span', $attributes, $span->contents);
-    }
-
-    /**
      * Prints a simple button to close a window
      *
      * @param string $text The lang string for the button's label (already output from get_string())

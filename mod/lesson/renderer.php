@@ -162,10 +162,10 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $output .= $this->output->box_start('center');
 
         $yeslink = html_writer::link(new moodle_url('/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$lastpageseenid, 'startlastseen'=>'yes')), get_string('yes'));
-        $output .= $this->output->span($yeslink, 'lessonbutton standardbutton');
+        $output .= html_writer::tag('span', array('class'=>'lessonbutton standardbutton'), $yeslink);
 
         $nolink = html_writer::link(new moodle_url('/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no')), get_string('no'));
-        $output .= $this->output->span($nolink, 'lessonbutton standardbutton');
+        $output .= html_writer::tag('span', array('class'=>'lessonbutton standardbutton'), $nolink);
 
         $output .= $this->output->box_end();
         return $output;
