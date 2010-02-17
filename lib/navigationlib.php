@@ -411,7 +411,7 @@ class navigation_node {
              $title = $this->title;
         }
 
-        if ($this->icon !== null) {
+        if ($this->icon instanceof renderable) {
             $icon = $OUTPUT->render($this->icon);
             $content = $icon.$content; // use CSS for spacing of icons
         } else if ($this->helpbutton !== null) {
