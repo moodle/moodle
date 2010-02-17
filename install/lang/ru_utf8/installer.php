@@ -11,12 +11,14 @@
 
 $string['availablelangs'] = 'Доступные языковые пакеты';
 $string['cannotcreatelangdir'] = 'Невозможно создать языковую папку';
-$string['cannotdownloadcomponents'] = 'Не могу загрузить компоненты';
+$string['cannotdownloadcomponents'] = 'Невозможно загрузить компоненты.';
 $string['cannotdownloadzipfile'] = 'Не могу загрузить ZIP файл';
 $string['cannotfindcomponent'] = 'Не могу найти компонент';
 $string['cannotsavemd5file'] = 'Не могу сохранить MD5 файл';
 $string['cannotsavezipfile'] = 'Не могу сохранить ZIP файл';
 $string['cannotunzipfile'] = 'Не могу распаковать файл';
+$string['chooselanguagehead'] = 'Выберите язык';
+$string['chooselanguagesub'] = 'Сейчас необходимо выбрать язык ТОЛЬКО для сообщений во время установки. Язык сайта и пользовательских интерфейсов можно будет указать далее в процессе установки.';
 $string['cliincorrectvalueerror'] = 'Ошибка, некорректное значение \"$a->value\" для \"$a->option\"'; // ORPHANED
 $string['cliincorrectvalueretry'] = 'Некорректное значение, пожалуйста повторите'; // ORPHANED
 $string['clitypevalue'] = 'тип значения'; // ORPHANED
@@ -30,6 +32,15 @@ $string['environment'] = 'Среда (версии ПО)';
 $string['installation'] = 'Установка';
 $string['language'] = 'Перевод';
 $string['parentlanguage'] = 'ru';
+$string['phpversion'] = 'Версия PHP';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Русский';
+$string['welcomep10'] = '$a->installername ($a->installerversion)';
+$string['welcomep20'] = 'Вы видите эту страницу так как на вашем компьютере успешно установлен и запущен набор программ <strong>$a->packname $a->packversion</strong>. Поздравляем!';
+$string['welcomep30'] = 'Эта версия набора программ <strong>$a->installername</strong> включает следующие программы, необходимые для создания среды в которой будет работать <strong>Moodle</strong>:';
+$string['welcomep40'] = 'Также в этот набор входит <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
+$string['welcomep50'] = 'Порядок использования приложений, входящих в этот набор, регламентируется соответствующими лицензиями. Набор программ <strong>$a->installername</strong> является полностью <a href=\"http://ru.wikipedia.org/wiki/Открытое_программное_обеспечение\">открытым </a> и распространяется на условиях лицензии <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>.';
+$string['welcomep60'] = 'На следующих страницах Вы сможете за несколько простых шагов настроить и установить <strong>Moodle</strong> на Ваш компьютер. Вы сможете принять настройки по умолчанию или изменить их в зависимости от Ваших потребностей.';
+$string['welcomep70'] = 'Нажмите кнопку \"Далее\" чтобы продолжить процесс установки <strong>Moodle</strong>.';
+$string['wwwroot'] = 'Веб-адрес';
 ?>
