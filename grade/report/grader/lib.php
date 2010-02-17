@@ -548,7 +548,7 @@ class grade_report_grader extends grade_report {
             $fillercell->add_classes(array('fixedcolumn', 'cell', 'topleft'));
             $fillercell->text = ' ';
             $fillercell->colspan = $colspan;
-            $row = html_table_row::make(array($fillercell));
+            $row = new html_table_row(array($fillercell));
             $rows[] = $row;
         }
 

@@ -1082,7 +1082,7 @@ class js_writer {
 
 
 // ===============================================================================================
-// TODO: Following components will be refactored soon
+// TODO: Following HTML components still need some refactoring
 
 /**
  * Base class for classes representing HTML elements.
@@ -1119,15 +1119,6 @@ class html_component {
      * @var array $actions
      */
     protected $actions = array();
-
-    /**
-     * Compoment constructor.
-     * @param array $options image attributes such as title, id, alt, style, class
-     */
-    public function __construct(array $options = null) {
-        // not implemented in this class because we want to set only public properties of this component
-        renderer_base::apply_component_options($this, $options);
-    }
 
     /**
      * Ensure some class names are an array.
@@ -1186,100 +1177,12 @@ class html_component {
      * Perform any cleanup or final processing that should be done before an
      * instance of this class is output. This method is supposed to be called
      * only from renderers.
-     *
-     * @param renderer_base $output output renderer
-     * @param moodle_page $page
-     * @param string $target rendering target
      * @return void
      */
-    public function prepare(renderer_base $output, moodle_page $page, $target) {
+    public function prepare() {
         $this->classes = array_unique(self::clean_classes($this->classes));
     }
-
-    /**
-     * This checks developer do not try to assign a property directly
-     * if we have a setter for it. Otherwise, the property is set as expected.
-     * @param string $name The name of the variable to set
-     * @param mixed $value The value to assign to the variable
-     * @return void
-     */
-    public function __set($name, $value) {
-        if ($name == 'class') {
-            debugging('this way of setting css class has been deprecated. use set_classes() method instead.');
-            $this->set_classes($value);
-        } else {
-            $this->{$name} = $value;
-        }
-    }
-
-    /**
-     * Adds a JS action to this component.
-     * Note: the JS function you write must have only two arguments: (string)event and (object|array)args
-     * If you want to add an instantiated component_action (or one of its subclasses), give the object as the only parameter
-     *
-     * @param mixed  $event a DOM event (click, mouseover etc.) or a component_action object
-     * @param string $jsfunction The name of the JS function to call. required if argument 1 is a string (event)
-     * @param array  $jsfunctionargs An optional array of JS arguments to pass to the function
-     */
-    public function add_action($event, $jsfunction=null, $jsfunctionargs=array()) {
-        if (empty($this->id)) {
-            $this->generate_id();
-        }
-
-        if ($event instanceof component_action) {
-            $this->actions[] = $event;
-        } else {
-            if (empty($jsfunction)) {
-                throw new coding_exception('html_component::add_action requires a JS function argument if the first argument is a string event');
-            }
-            $this->actions[] = new component_action($event, $jsfunction, $jsfunctionargs);
-        }
-    }
-
-    /**
-     * Internal method for generating a unique ID for the purpose of event handlers.
-     */
-    protected function generate_id() {
-        $this->id = uniqid(get_class($this));
-    }
-
-    /**
-     * Returns the array of component_actions.
-     * @return array Component actions
-     */
-    public function get_actions() {
-        return $this->actions;
-    }
-
-    /**
-     * Shortcut for adding a JS confirm dialog when the component is clicked.
-     * The message must be a yes/no question.
-     * @param string $message The yes/no confirmation question. If "Yes" is clicked, the original action will occur.
-     * @param string $callback The name of a JS function whose scope will be set to the simpleDialog object and have this
-     *    function's arguments set as this.args.
-     * @return void
-     */
-    public function add_confirm_action($message, $callback=null) {
-        $this->add_action(new component_action('click', 'M.util.show_confirm_dialog', array('message' => $message, 'callback' => $callback)));
-    }
-
-    /**
-     * Returns true if this component has an action of the requested type (component_action by default).
-     * @param string $class The class of the action we are looking for
-     * @return boolean True if action is found
-     */
-    public function has_action($class='component_action') {
-        foreach ($this->actions as $action) {
-            if (get_class($action) == $class) {
-                return true;
-            }
-        }
-        return false;
-    }
 }
-
-
-/// Components representing HTML elements
 
 
 /**
@@ -1437,7 +1340,7 @@ class html_table extends html_component {
      * @see html_component::prepare()
      * @return void
      */
-    public function prepare(renderer_base $output, moodle_page $page, $target) {
+    public function prepare() {
         if (!empty($this->align)) {
             foreach ($this->align as $key => $aa) {
                 if ($aa) {
@@ -1490,21 +1393,7 @@ class html_table extends html_component {
         } else {
             $this->rotateheaders = false; // Makes life easier later.
         }
-        parent::prepare($output, $page, $target);
-    }
-    /**
-     * @param string $name The name of the variable to set
-     * @param mixed $value The value to assign to the variable
-     * @return void
-     */
-    public function __set($name, $value) {
-        if ($name == 'rowclass') {
-            debugging('rowclass[] has been deprecated for html_table ' .
-                      'and should be replaced with rowclasses[]. please fix the code.');
-            $this->rowclasses = $value;
-        } else {
-            parent::__set($name, $value);
-        }
+        parent::prepare();
     }
 }
 
@@ -1526,27 +1415,23 @@ class html_table_row extends html_component {
      * @see lib/html_component#prepare()
      * @return void
      */
-    public function prepare(renderer_base $output, moodle_page $page, $target) {
-        parent::prepare($output, $page, $target);
+    public function prepare() {
+        parent::prepare();
     }
 
     /**
-     * Shortcut method for creating a row with an array of cells. Converts cells to html_table_cell objects.
+     * Constructor
      * @param array $cells
-     * @return html_table_row
      */
-    public static function make($cells=array()) {
-        $row = new html_table_row();
-        foreach ($cells as $celltext) {
-            if (!($celltext instanceof html_table_cell)) {
-                $cell = new html_table_cell();
-                $cell->text = $celltext;
-                $row->cells[] = $cell;
+    public function __construct(array $cells=null) {
+        $cells = (array)$cells;
+        foreach ($cells as $cell) {
+            if ($cell instanceof html_table_cell) {
+                $this->cells[] = $cell;
             } else {
-                $row->cells[] = $celltext;
+                $this->cells[] = new html_table_cell($cell);
             }
         }
-        return $row;
     }
 }
 
@@ -1588,11 +1473,15 @@ class html_table_cell extends html_component {
      * @see lib/html_component#prepare()
      * @return void
      */
-    public function prepare(renderer_base $output, moodle_page $page, $target) {
+    public function prepare() {
         if ($this->header && empty($this->scope)) {
             $this->scope = 'col';
         }
-        parent::prepare($output, $page, $target);
+        parent::prepare();
+    }
+
+    public function __construct($text = null) {
+        $this->text = $text;
     }
 }
 

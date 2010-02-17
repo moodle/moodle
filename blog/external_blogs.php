@@ -85,7 +85,7 @@ if (!empty($blogs)) {
         $action = new confirm_action(get_string('externalblogdeleteconfirm', 'blog'));
         $deleteicon = $OUTPUT->action_icon($deletelink, new pix_icon('t/delete', get_string('deleteexternalblog', 'blog')), $action);
 
-        $table->data[] = html_table_row::make(array($blog->name, $blog->url, userdate($blog->timefetched), $validicon, $editicon . $deleteicon));
+        $table->data[] = new html_table_row(array($blog->name, $blog->url, userdate($blog->timefetched), $validicon, $editicon . $deleteicon));
     }
     echo $OUTPUT->table($table);
 }

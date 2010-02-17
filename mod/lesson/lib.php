@@ -2596,7 +2596,7 @@ abstract class lesson_page extends lesson_base {
             $cells = array();
             $cells[] = "<span class=\"label\">".get_string("jump", "lesson")." $i<span>: ";
             $cells[] = $this->get_jump_name($answer->jumpto);
-            $table->data[] = html_table_row::make($cells);
+            $table->data[] = new html_table_row($cells);
             if ($i === 1){
                 $table->data[count($table->data)-1]->cells[0]->style = 'width:20%;';
             }

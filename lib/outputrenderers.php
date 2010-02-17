@@ -129,44 +129,6 @@ class renderer_base {
     public function pix_url($imagename, $component = 'moodle') {
         return $this->page->theme->pix_url($imagename, $component);
     }
-
-    /**
-     * A helper function that takes a html_component subclass as param.
-     * If that component has an id attribute and an array of valid component_action objects,
-     * it sets up the appropriate event handlers.
-     *
-     * @param html_component $component
-     * @return void;
-     */
-    protected function prepare_event_handlers(html_component $component) {
-        //TODO: to be deleted soon
-        $actions = $component->get_actions();
-        if (!empty($actions) && is_array($actions) && $actions[0] instanceof component_action) {
-            foreach ($actions as $action) {
-                if (!empty($action->jsfunction)) {
-                    $this->page->requires->event_handler("#$component->id", $action->event, $action->jsfunction, $action->jsfunctionargs);
-                }
-            }
-        }
-    }
-
-    /**
-     * Helper function for applying of html_component options
-     * @param html_component $component
-     * @param array $options
-     * @return void
-     */
-    public static function apply_component_options(html_component $component, array $options = null) {
-        //TODO: to be deleted soon
-        $options = (array)$options;
-        foreach ($options as $key => $value) {
-            if ($key === 'class' or $key === 'classes') {
-                $component->add_classes($value);
-            } else if (array_key_exists($key, $component)) {
-                $component->$key = $value;
-            }
-        }
-    }
 }
 
 
@@ -1770,8 +1732,6 @@ class core_renderer extends renderer_base {
                     $heading->header = true;
                 }
 
-                $this->prepare_event_handlers($heading);
-
                 $heading->add_classes(array('header', 'c' . $key));
                 if (isset($table->headspan[$key]) && $table->headspan[$key] > 1) {
                     $heading->colspan = $table->headspan[$key];
@@ -1831,13 +1791,10 @@ class core_renderer extends renderer_base {
                         foreach ($row as $unused => $item) {
                             $cell = new html_table_cell();
                             $cell->text = $item;
-                            $this->prepare_event_handlers($cell);
                             $newrow->cells[] = $cell;
                         }
                         $row = $newrow;
                     }
-
-                    $this->prepare_event_handlers($row);
 
                     $oddeven = $oddeven ? 0 : 1;
                     if (isset($table->rowclasses[$key])) {
@@ -1859,9 +1816,6 @@ class core_renderer extends renderer_base {
                             $mycell->text = $cell;
                             $cell = $mycell;
                         }
-
-                        // Prepare all events handlers for this cell
-                        $this->prepare_event_handlers($cell);
 
                         if (isset($table->colclasses[$key])) {
                             $cell->add_classes(array_unique(html_component::clean_classes($table->colclasses[$key])));

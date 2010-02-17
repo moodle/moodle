@@ -114,22 +114,22 @@ class lesson_page_type_truefalse extends lesson_page {
                 $cells[] = '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
             }
             $cells[] = format_text($answer->answer, FORMAT_MOODLE, $options);
-            $table->data[] = html_table_row::make($cells);
+            $table->data[] = new html_table_row($cells);
 
             $cells = array();
             $cells[] = "<span class=\"label\">".get_string("response", "lesson")." $i</span>";
             $cells[] = format_text($answer->response, FORMAT_MOODLE, $options);
-            $table->data[] = html_table_row::make($cells);
+            $table->data[] = new html_table_row($cells);
 
             $cells = array();
             $cells[] = "<span class=\"label\">".get_string("score", "lesson").'</span>';
             $cells[] = $answer->score;
-            $table->data[] = html_table_row::make($cells);
+            $table->data[] = new html_table_row($cells);
 
             $cells = array();
             $cells[] = "<span class=\"label\">".get_string("jump", "lesson").'</span>';
             $cells[] = $this->get_jump_name($answer->jumpto);
-            $table->data[] = html_table_row::make($cells);
+            $table->data[] = new html_table_row($cells);
 
             if ($i === 1){
                 $table->data[count($table->data)-1]->cells[0]->style = 'width:20%;';

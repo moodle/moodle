@@ -239,7 +239,7 @@ class lesson_page_type_matching extends lesson_page {
                         $cells[] = "<span class=\"label\">".get_string("wrongresponse", "lesson").'</span>';
                     }
                     $cells[] = format_text($answer->answer, FORMAT_MOODLE, $options);
-                    $table->data[] = html_table_row::make($cells);
+                    $table->data[] = new html_table_row($cells);
                 }
                 $n++;
                 $i--;
@@ -256,34 +256,34 @@ class lesson_page_type_matching extends lesson_page {
                     $cells[] = '<span class="label">'.get_string("answer", "lesson")." $i</span>: \n";
                 }
                 $cells[] = format_text($answer->answer, FORMAT_MOODLE, $options);
-                $table->data[] = html_table_row::make($cells);
+                $table->data[] = new html_table_row($cells);
 
                 $cells = array();
                 $cells[] = '<span class="label">'.get_string("matchesanswer", "lesson")." $i</span>: ";
                 $cells[] = format_text($answer->response, FORMAT_MOODLE, $options);
-                $table->data[] = html_table_row::make($cells);
+                $table->data[] = new html_table_row($cells);
             }
 
             if ($i == 1) {
                 $cells = array();
                 $cells[] = '<span class="label">'.get_string("correctanswerscore", "lesson")." $i</span>: ";
                 $cells[] = $answer->score;
-                $table->data[] = html_table_row::make($cells);
+                $table->data[] = new html_table_row($cells);
 
                 $cells = array();
                 $cells[] = '<span class="label">'.get_string("correctanswerjump", "lesson")." $i</span>: ";
                 $cells[] = $this->get_jump_name($answer->jumpto);
-                $table->data[] = html_table_row::make($cells);
+                $table->data[] = new html_table_row($cells);
             } elseif ($i == 2) {
                 $cells = array();
                 $cells[] = '<span class="label">'.get_string("wronganswerscore", "lesson")." $i</span>: ";
                 $cells[] = $answer->score;
-                $table->data[] = html_table_row::make($cells);
+                $table->data[] = new html_table_row($cells);
 
                 $cells = array();
                 $cells[] = '<span class="label">'.get_string("wronganswerjump", "lesson")." $i</span>: ";
                 $cells[] = $this->get_jump_name($answer->jumpto);
-                $table->data[] = html_table_row::make($cells);
+                $table->data[] = new html_table_row($cells);
             }
 
             if ($i === 1){

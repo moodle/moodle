@@ -163,7 +163,7 @@ class grade_edit_tree {
             $cell->colspan = 12;
             $cell->add_classes(array($element['type'], 'moving'));
             $cell->text = $object->name.' ('.get_string('move').')';
-            return array(html_table_row::make(array($cell)));
+            return array(new html_table_row(array($cell)));
         }
 
         if ($element['type'] == 'category') {
@@ -217,7 +217,7 @@ class grade_edit_tree {
                     $cell->colspan = 12;
                     $cell->text = $OUTPUT->action_icon($aurl, $strmovehere, new pix_icon(array('class'=>'movetarget'), 'movehere'));
 
-                    $moveto = html_table_row::make(array($cell));
+                    $moveto = new html_table_row(array($cell));
                 }
 
                 $newparents = $parents;
@@ -306,7 +306,7 @@ class grade_edit_tree {
             $endcell->colspan = (19 - $level);
             $endcell->add_classes(array('colspan', $levelclass));
 
-            $returnrows[] = html_table_row::make(array($endcell));;
+            $returnrows[] = new html_table_row(array($endcell));;
 
         } else { // Dealing with a grade item
 

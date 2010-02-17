@@ -282,13 +282,13 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $cell->colspan = 2;
             $cell->style = 'text-align:center';
             $cell->text = format_text($page->contents, FORMAT_MOODLE, $options);
-            $pagetable->data[] = html_table_row::make(array($cell));
+            $pagetable->data[] = new html_table_row(array($cell));
 
             $cell = new html_table_cell();
             $cell->colspan = 2;
             $cell->style = 'text-align:center';
             $cell->text = '<strong>'.$qtypes[$page->qtype] . $page->option_description_string().'</strong>';
-            $pagetable->data[] = html_table_row::make(array($cell));
+            $pagetable->data[] = new html_table_row(array($cell));
 
             $pagetable = $page->display_answers($pagetable);
 
@@ -546,7 +546,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
         $table = new html_table();
         $table->set_classes(array('progress_bar_table', 'center'));
-        $table->data = array(html_table_row::make($cells));
+        $table->data = array(new html_table_row($cells));
 
         return $this->output->box($this->output->table($table), 'progress_bar');
     }

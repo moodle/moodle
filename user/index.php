@@ -348,7 +348,7 @@
                     $group->descriptionformat = FORMAT_MOODLE;
                 }
                 $contentcell->text = $OUTPUT->heading($contentheading, 3) . format_text($group->description, $group->descriptionformat);
-                $groupinfotable->data[] = html_table_row::make(array($picturecell, $contentcell));
+                $groupinfotable->data[] = new html_table_row(array($picturecell, $contentcell));
                 echo $OUTPUT->table($groupinfotable);
             }
         }
