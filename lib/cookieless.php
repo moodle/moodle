@@ -67,8 +67,16 @@ function sid_rewrite_link_tag($matches){
 */
 function sid_process_url($url) {
     global $CFG;
+    static $wwwroot = null;
+    static $httpswwwroot = null;
+    if ($wwwroot == null){
+        $wwwroot = $CFG->wwwroot;
+    }
+    if ($httpswwwroot == null){
+        $httpswwwroot = $CFG->httpswwwroot;
+    }
     if ((preg_match('/^(http|https):/i', $url)) // absolute url
-        &&  ((stripos($url, $CFG->wwwroot)!==0) && stripos($url, $CFG->httpswwwroot)!==0)) { // and not local one
+        &&  ((stripos($url, $wwwroot)!==0) && stripos($url, $httpswwwroot)!==0)) { // and not local one
         return $url; //don't attach sessid to non local urls
     }
     if ($url[0]=='#' || (stripos($url, 'javascript:')===0)) {
