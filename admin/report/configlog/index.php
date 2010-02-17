@@ -53,7 +53,7 @@ foreach ($columns as $column=>$strcolumn) {
 }
 
 $baseurl = new moodle_url('index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
-echo $OUTPUT->paging_bar(moodle_paging_bar::make($changescount, $page, $perpage, $baseurl));
+echo $OUTPUT->paging_bar($changescount, $page, $perpage, $baseurl);
 
 $override = new object();
 $override->firstname = 'firstname';

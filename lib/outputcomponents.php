@@ -1714,7 +1714,7 @@ class html_span extends html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class moodle_paging_bar extends html_component {
+class paging_bar implements renderable {
     /**
      * @var int $maxdisplay The maximum number of pagelinks to display
      */
@@ -1726,7 +1726,7 @@ class moodle_paging_bar extends html_component {
     /**
      * @var int $page The page you are currently viewing
      */
-    public $page = 0;
+    public $page;
     /**
      * @var int $perpage The number of entries that should be shown per page
      */
@@ -1739,7 +1739,7 @@ class moodle_paging_bar extends html_component {
     /**
      * @var string $pagevar This is the variable name that you use for the page number in your code (ie. 'tablepage', 'blogpage', etc)
      */
-    public $pagevar = 'page';
+    public $pagevar;
     /**
      * @var string $previouslink A HTML link representing the "previous" page
      */
@@ -1762,31 +1762,45 @@ class moodle_paging_bar extends html_component {
     public $pagelinks = array();
 
     /**
+     * Constructor paging_bar with only the required params.
+     *
+     * @param int $totalcount Thetotal number of entries available to be paged through
+     * @param int $page The page you are currently viewing
+     * @param int $perpage The number of entries that should be shown per page
+     * @param string|moodle_url $baseurl url of the current page, the $pagevar parameter is added
+     * @param string $pagevar name of page parameter that holds the page number
+     */
+    public function __construct($totalcount, $page, $perpage, $baseurl, $pagevar = 'page') {
+        $this->totalcount = $totalcount;
+        $this->page       = $page;
+        $this->perpage    = $perpage;
+        $this->baseurl    = $baseurl;
+        $this->pagevar    = $pagevar;
+    }
+
+    /**
      * @see lib/html_component#prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
         if (!isset($this->totalcount) || is_null($this->totalcount)) {
-            throw new coding_exception('moodle_paging_bar requires a totalcount value.');
+            throw new coding_exception('paging_bar requires a totalcount value.');
         }
         if (!isset($this->page) || is_null($this->page)) {
-            throw new coding_exception('moodle_paging_bar requires a page value.');
+            throw new coding_exception('paging_bar requires a page value.');
         }
         if (empty($this->perpage)) {
-            throw new coding_exception('moodle_paging_bar requires a perpage value.');
+            throw new coding_exception('paging_bar requires a perpage value.');
         }
         if (empty($this->baseurl)) {
-            throw new coding_exception('moodle_paging_bar requires a baseurl value.');
-        }
-        if (!($this->baseurl instanceof moodle_url)) {
-            $this->baseurl = new moodle_url($this->baseurl);
+            throw new coding_exception('paging_bar requires a baseurl value.');
         }
 
         if ($this->totalcount > $this->perpage) {
             $pagenum = $this->page - 1;
 
             if ($this->page > 0) {
-                $this->previouslink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$pagenum)), array('class'=>'previous'), get_string('previous'));
+                $this->previouslink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$pagenum)), get_string('previous'), array('class'=>'previous'));
             }
 
             if ($this->perpage > 0) {
@@ -1798,7 +1812,7 @@ class moodle_paging_bar extends html_component {
             if ($this->page > 15) {
                 $startpage = $this->page - 10;
 
-                $this->firstlink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>0)), array('class'=>'first'), '1');
+                $this->firstlink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>0)), '1', array('class'=>'first'));
             } else {
                 $startpage = 0;
             }
@@ -1831,24 +1845,6 @@ class moodle_paging_bar extends html_component {
                 $this->nextlink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$pagenum)), get_string('next'), array('class'=>'next'));
             }
         }
-    }
-
-    /**
-     * Shortcut for initialising a moodle_paging_bar with only the required params.
-     *
-     * @param int $totalcount Thetotal number of entries available to be paged through
-     * @param int $page The page you are currently viewing
-     * @param int $perpage The number of entries that should be shown per page
-     * @param mixed $baseurl If this  is a string then it is the url which will be appended with $pagevar, an equals sign and the page number.
-     *                          If this is a moodle_url object then the pagevar param will be replaced by the page no, for each page.
-     */
-    public static function make($totalcount, $page, $perpage, $baseurl) {
-        $pagingbar = new moodle_paging_bar();
-        $pagingbar->totalcount = $totalcount;
-        $pagingbar->page = $page;
-        $pagingbar->perpage = $perpage;
-        $pagingbar->baseurl = $baseurl;
-        return $pagingbar;
     }
 }
 

@@ -1003,9 +1003,9 @@ class flexible_table {
                 echo $this->download_buttons();
             }
             if($this->use_pages) {
-                $pagingbar = moodle_paging_bar::make($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl);
+                $pagingbar = new paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl);
                 $pagingbar->pagevar = $this->request[TABLE_VAR_PAGE];
-                echo $OUTPUT->paging_bar($pagingbar);
+                echo $OUTPUT->render($pagingbar);
             }
         }
     }
@@ -1140,9 +1140,9 @@ class flexible_table {
 
         // Paging bar
         if($this->use_pages) {
-            $pagingbar = moodle_paging_bar::make($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl);
+            $pagingbar = new paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl);
             $pagingbar->pagevar = $this->request[TABLE_VAR_PAGE];
-            echo $OUTPUT->paging_bar($pagingbar);
+            echo $OUTPUT->render($pagingbar);
         }
 
         if(in_array(TABLE_P_TOP, $this->showdownloadbuttonsat)) {

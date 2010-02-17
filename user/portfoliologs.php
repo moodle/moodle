@@ -137,10 +137,10 @@ if ($logcount > 0) {
         );
     }
     echo $OUTPUT->heading(get_string('logsummary', 'portfolio'));
-    $pagingbar = moodle_paging_bar::make($logcount, $page, $perpage, $CFG->wwwroot . '/user/portfoliologs.php?');
-    echo $OUTPUT->paging_bar($pagingbar);
+    $pagingbar = new paging_bar($logcount, $page, $perpage, $CFG->wwwroot . '/user/portfoliologs.php?');
+    echo $OUTPUT->render($pagingbar);
     echo $OUTPUT->table($table);
-    echo $OUTPUT->paging_bar($pagingbar);
+    echo $OUTPUT->render($pagingbar);
     $somethingprinted = true;
 }
 if (!$somethingprinted) {

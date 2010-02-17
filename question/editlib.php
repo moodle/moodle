@@ -1266,9 +1266,9 @@ class question_bank_view {
         echo '<div class="categorypagingbarcontainer">';
         $pageing_url = new moodle_url('edit.php');
         $r = $pageing_url->params($pageurl->params());
-        $pagingbar = moodle_paging_bar::make($totalnumber, $page, $perpage, $pageing_url);
+        $pagingbar = new paging_bar($totalnumber, $page, $perpage, $pageing_url);
         $pagingbar->pagevar = 'qpage';
-        echo $OUTPUT->paging_bar($pagingbar);
+        echo $OUTPUT->render($pagingbar);
         echo '</div>';
 
         echo '<form method="post" action="edit.php">';
@@ -1287,7 +1287,7 @@ class question_bank_view {
         echo "</div>\n";
 
         echo '<div class="categorypagingbarcontainer pagingbottom">';
-        echo $OUTPUT->paging_bar($pagingbar);
+        echo $OUTPUT->render($pagingbar);
         if ($totalnumber > DEFAULT_QUESTIONS_PER_PAGE) {
             if ($perpage == DEFAULT_QUESTIONS_PER_PAGE) {
                 $url = new moodle_url('edit.php', ($pageurl->params()+array('qperpage'=>1000)));

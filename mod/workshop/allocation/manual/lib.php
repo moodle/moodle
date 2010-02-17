@@ -308,14 +308,9 @@ class workshop_manual_allocator implements workshop_allocator {
         $data->selfassessment   = $this->workshop->useselfassessment;
 
         // prepare paging bar
-        $pagingbar              = new moodle_paging_bar();
-        $pagingbar->totalcount  = $numofparticipants;
-        $pagingbar->page        = $page;
-        $pagingbar->perpage     = $perpage;
-        $pagingbar->baseurl     = $PAGE->url;
-        $pagingbar->pagevar     = $pagingvar;
+        $pagingbar              = new paging_bar($numofparticipants, $page, $perpage, $PAGE->url, $pagingvar);
 
-        $pagingbarout = $OUTPUT->paging_bar($pagingbar);
+        $pagingbarout = $OUTPUT->render($pagingbar);
 
         // we have all data, let us pass it to the renderers and return the output
         $wsoutput = $PAGE->get_renderer('mod_workshop');

@@ -2971,15 +2971,15 @@ function doc_link($path='', $text='', $iconpath='ignored') {
 function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page',$nocurr=false, $return=false) {
     global $OUTPUT;
 
-    debugging('print_paging_bar() has been deprecated. Please change your code to use $OUTPUT->paging_bar($pagingbar).');
+    debugging('print_paging_bar() has been deprecated. Please change your code to use $OUTPUT->render($pagingbar).');
 
     if (empty($nocurr)) {
-        debugging('the feature of parameter $nocurr has been removed from the moodle_paging_bar');
+        debugging('the feature of parameter $nocurr has been removed from the paging_bar');
     }
 
-    $pagingbar = moodle_paging_bar::make($totalcount, $page, $perpage, $baseurl);
+    $pagingbar = new paging_bar($totalcount, $page, $perpage, $baseurl);
     $pagingbar->pagevar = $pagevar;
-    $output = $OUTPUT->paging_bar($pagingbar);
+    $output = $OUTPUT->render($pagingbar);
 
     if ($return) {
         return $output;

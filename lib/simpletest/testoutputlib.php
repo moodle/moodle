@@ -567,38 +567,6 @@ class core_renderer_test extends UnitTestCase {
         $this->assertEqual('', $html);
     }
 
-    public function test_paging_bar() {
-        global $CFG;
-
-        $totalcount = 5;
-        $perpage = 4;
-        $page = 1;
-        $baseurl = new moodle_url('/index.php');
-        $pagevar = 'mypage';
-
-        $pagingbar = new moodle_paging_bar();
-        $pagingbar->totalcount = $totalcount;
-        $pagingbar->page = $page;
-        $pagingbar->perpage = $perpage;
-        $pagingbar->baseurl = $baseurl;
-        $pagingbar->pagevar = $pagevar;
-
-        $originalbar = clone($pagingbar);
-
-        $html = $this->renderer->paging_bar($pagingbar);
-
-        $this->assert(new ContainsTagWithAttribute('div', 'class', 'paging'), $html);
-        // the 'Previous' link
-        $this->assert(new ContainsTagWithAttributes('a', array('class' => 'previous', 'href' => $baseurl->out().'?mypage=0')), $html);
-        // the numeric link to the previous page '1' (does not have the 'previous' class)
-        $this->assert(new ContainsTagWithAttributes('a', array('href' => $baseurl->out().'?mypage=0'), array('class' => 'previous')), $html);
-        // no link to the current page, it's the last page
-        $expectation = new ContainsTagWithAttributes('a', array('href' => $baseurl->out().'?mypage=1'), array());
-        $this->assertFalse($expectation->test($html));
-
-        // TODO test with more different parameters
-    }
-
     public function test_html_list() {
         $htmllist = new html_list();
         $data = array('item1', 'item2', array('item1-1', 'item1-2'));

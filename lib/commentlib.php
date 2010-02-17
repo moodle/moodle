@@ -414,7 +414,7 @@ EOD;
         }
         if (!empty(self::$nonjs)) {
             // used in non-js interface
-            return $OUTPUT->paging_bar(moodle_paging_bar::make($count, $page, $CFG->commentsperpage, $this->link));
+            return $OUTPUT->paging_bar($count, $page, $CFG->commentsperpage, $this->link);
         } else {
             // return ajax paging bar
             $str = '';

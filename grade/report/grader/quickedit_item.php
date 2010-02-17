@@ -97,7 +97,7 @@ foreach($warnings as $warning) {
 $studentsperpage = $report->get_pref('studentsperpage');
 // Don't use paging if studentsperpage is empty or 0 at course AND site levels
 if (!empty($studentsperpage)) {
-    echo $OUTPUT->paging_bar(moodle_paging_bar::make($numusers, $report->page, $studentsperpage, $report->pbarurl));
+    echo $OUTPUT->paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
 }
 
 /// TODO Print links to previous - next grade items in this course
@@ -110,7 +110,7 @@ echo '</div></form>';
 
 // prints paging bar at bottom for large pages
 if (!empty($studentsperpage) && $studentsperpage >= 20) {
-    echo $OUTPUT->paging_bar(moodle_paging_bar::make($numusers, $report->page, $studentsperpage, $report->pbarurl));
+    echo $OUTPUT->paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
 }
 
 echo $OUTPUT->footer();

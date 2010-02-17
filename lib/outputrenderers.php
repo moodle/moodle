@@ -1743,10 +1743,24 @@ class core_renderer extends renderer_base {
     /**
      * Prints a single paging bar to provide access to other pages  (usually in a search)
      *
-     * @param string|moodle_url $link The url the button goes to.
+     * @param int $totalcount Thetotal number of entries available to be paged through
+     * @param int $page The page you are currently viewing
+     * @param int $perpage The number of entries that should be shown per page
+     * @param string|moodle_url $baseurl url of the current page, the $pagevar parameter is added
+     * @param string $pagevar name of page parameter that holds the page number
      * @return string the HTML to output.
      */
-    public function paging_bar($pagingbar) {
+    public function paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar = 'page') {
+        $pb = new paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar);
+        return $this->render($pb);
+    }
+
+    /**
+     * Internal implementation of paging bar rendering.
+     * @param paging_bar $pagingbar
+     * @return string
+     */
+    protected function render_paging_bar(paging_bar $pagingbar) {
         $output = '';
         $pagingbar = clone($pagingbar);
         $pagingbar->prepare($this, $this->page, $this->target);

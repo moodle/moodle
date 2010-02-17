@@ -266,7 +266,7 @@ function tag_print_search_results($query,  $page, $perpage, $return=false) {
         $output .= '</ul>';
         $output .= '<div>&nbsp;</div>'; // <-- small layout hack in order to look good in Firefox
 
-        $output .= $OUTPUT->paging_bar(moodle_paging_bar::make($count, $page, $perpage, $baseurl));
+        $output .= $OUTPUT->paging_bar($count, $page, $perpage, $baseurl);
     }
     else { //no results were found!!
         $output .= $OUTPUT->heading(get_string('noresultsfor', 'tag', htmlspecialchars($query)), 3, 'main');

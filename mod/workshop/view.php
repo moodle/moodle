@@ -185,12 +185,7 @@ case workshop::PHASE_ASSESSMENT:
             $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
 
             // prepare paging bar
-            $pagingbar              = new moodle_paging_bar();
-            $pagingbar->totalcount  = $data->totalcount;
-            $pagingbar->page        = $page;
-            $pagingbar->perpage     = $perpage;
-            $pagingbar->baseurl     = $PAGE->url;
-            $pagingbar->pagevar     = 'page';
+            $pagingbar              = new paging_bar($data->totalcount, $page, $perpage, $PAGE->url, 'page');
 
             // grading report display options
             $reportopts                         = new stdclass();
@@ -201,9 +196,9 @@ case workshop::PHASE_ASSESSMENT:
             $reportopts->showsubmissiongrade    = false;
             $reportopts->showgradinggrade       = false;
 
-            echo $OUTPUT->paging_bar($pagingbar);
+            echo $OUTPUT->render($pagingbar);
             echo $wsoutput->grading_report($data, $reportopts);
-            echo $OUTPUT->paging_bar($pagingbar);
+            echo $OUTPUT->render($pagingbar);
         }
     }
     if (trim(strip_tags($workshop->instructreviewers))) {
@@ -272,12 +267,7 @@ case workshop::PHASE_EVALUATION:
             }
 
             // prepare paging bar
-            $pagingbar              = new moodle_paging_bar();
-            $pagingbar->totalcount  = $data->totalcount;
-            $pagingbar->page        = $page;
-            $pagingbar->perpage     = $perpage;
-            $pagingbar->baseurl     = $PAGE->url;
-            $pagingbar->pagevar     = 'page';
+            $pagingbar              = new paging_bar($data->totalcount, $page, $perpage, $PAGE->url, 'page');
 
             // grading report display options
             $reportopts                         = new stdclass();
@@ -288,9 +278,9 @@ case workshop::PHASE_EVALUATION:
             $reportopts->showsubmissiongrade    = true;
             $reportopts->showgradinggrade       = true;
 
-            echo $OUTPUT->paging_bar($pagingbar);
+            echo $OUTPUT->render($pagingbar);
             echo $wsoutput->grading_report($data, $reportopts);
-            echo $OUTPUT->paging_bar($pagingbar);
+            echo $OUTPUT->render($pagingbar);
         }
     }
     break;

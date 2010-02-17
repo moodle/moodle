@@ -373,8 +373,7 @@
      */
     function print_navigation_bar($totalcount,$page,$perpage,$encodedsearch,$modulelink) {
         global $OUTPUT;
-        $pagingbar = moodle_paging_bar::make($totalcount, $page, $perpage, "search.php?search=$encodedsearch".$modulelink."&perpage=$perpage");
-        echo $OUTPUT->paging_bar($pagingbar);
+        echo $OUTPUT->paging_bar($totalcount, $page, $perpage, "search.php?search=$encodedsearch".$modulelink."&perpage=$perpage");
 
         //display
         if ($perpage != 99999 && $totalcount > $perpage) {

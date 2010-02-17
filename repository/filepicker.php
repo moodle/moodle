@@ -126,14 +126,9 @@ case 'search':
         $search_result['repo_id'] = $repo_id;
 
         // TODO: need a better solution
-        $pagingbar = new moodle_paging_bar();
-        $pagingbar->totalcount = $search_result['total'];
-        $pagingbar->page = $search_result['page'] - 1;
-        $pagingbar->perpage = $search_result['perpage'];
-        $pagingbar->baseurl = clone($url);
-        $pagingbar->baseurl->params(array('search_paging' => 1, 'action' => 'search', 'repo_id' => $repo_id));
-        $pagingbar->pagevar = 'p';
-        echo $OUTPUT->paging_bar($pagingbar);
+        $purl = new moodle_ulr($url, array('search_paging' => 1, 'action' => 'search', 'repo_id' => $repo_id));
+        $pagingbar = new paging_bar($search_result['total'], $search_result['page'] - 1, $search_result['perpage'], $purl, 'p');
+        echo $OUTPUT->render($pagingbar);
 
         echo '<table>';
         foreach ($search_result['list'] as $item) {
@@ -193,7 +188,7 @@ case 'sign':
             if (!empty($list['page'])) {
                 // TODO: need a better solution
                 $pagingurl = new moodle_url("$CFG->httpswwwroot/repository/filepicker.php?action=list&itemid=$itemid&ctx_id=$contextid&repo_id=$repo_id");
-                echo $OUTPUT->paging_bar(moodle_paging_bar::make($list['total'], $list['page'] - 1, $list['perpage'], $pagingurl));
+                echo $OUTPUT->paging_bar($list['total'], $list['page'] - 1, $list['perpage'], $pagingurl);
             }
             echo '<table>';
             foreach ($list['list'] as $item) {

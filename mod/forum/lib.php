@@ -5592,7 +5592,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
         $numdiscussions = forum_get_discussions_count($cm);
 
         ///Show the paging bar
-        echo $OUTPUT->paging_bar(moodle_paging_bar::make($numdiscussions, $page, $perpage, "view.php?f=$forum->id"));
+        echo $OUTPUT->paging_bar($numdiscussions, $page, $perpage, "view.php?f=$forum->id");
         if ($numdiscussions > 1000) {
             // saves some memory on sites with very large forums
             $replies = forum_count_discussion_replies($forum->id, $sort, $maxdiscussions, $page, $perpage);
@@ -5732,7 +5732,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
     }
 
     if ($page != -1) { ///Show the paging bar
-        echo $OUTPUT->paging_bar(moodle_paging_bar::make($numdiscussions, $page, $perpage, "view.php?f=$forum->id"));
+        echo $OUTPUT->paging_bar($numdiscussions, $page, $perpage, "view.php?f=$forum->id");
     }
 }
 

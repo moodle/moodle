@@ -804,11 +804,11 @@ class blog_listing {
         }
 
         $entries = $this->get_entries($start, $limit);
-        $pagingbar = moodle_paging_bar::make($totalentries, $page, $limit, $this->get_baseurl());
+        $pagingbar = new paging_bar($totalentries, $page, $limit, $this->get_baseurl());
         $pagingbar->pagevar = 'blogpage';
         $blogheaders = blog_get_headers();
 
-        echo $OUTPUT->paging_bar($pagingbar);
+        echo $OUTPUT->render($pagingbar);
 
         /* TODO RSS link
         if ($CFG->enablerssfeeds) {
@@ -854,7 +854,7 @@ class blog_listing {
                 $count++;
             }
 
-            echo $OUTPUT->paging_bar($pagingbar);
+            echo $OUTPUT->render($pagingbar);
 
             if (!$count) {
                 print '<br /><div style="text-align:center">'. get_string('noentriesyet', 'blog') .'</div><br />';

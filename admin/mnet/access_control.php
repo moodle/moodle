@@ -187,8 +187,7 @@ if (!empty($table)) {
     echo $OUTPUT->table($table);
     echo '<p>&nbsp;</p>';
     $baseurl = new moodle_url('/admin/mnet/access_control.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
-    $pagingbar = moodle_paging_bar::make($aclcount, $page, $perpage, $baseurl);
-    echo $OUTPUT->paging_bar($pagingbar);
+    echo $OUTPUT->paging_bar($aclcount, $page, $perpage, $baseurl);
 }
 
 

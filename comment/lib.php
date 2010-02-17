@@ -102,7 +102,7 @@ class comment_manager {
             $table->data[] = array($checkbox, $c->username, $c->content, $action);
         }
         echo $OUTPUT->table($table);
-        echo $OUTPUT->paging_bar(moodle_paging_bar::make($count, $page, $this->perpage, $CFG->wwwroot.'/comment/index.php'));
+        echo $OUTPUT->paging_bar($count, $page, $this->perpage, $CFG->wwwroot.'/comment/index.php');
     }
 
     /**

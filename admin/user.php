@@ -166,7 +166,7 @@
     $strall = get_string('all');
 
     $baseurl = new moodle_url('user.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
-    echo $OUTPUT->paging_bar(moodle_paging_bar::make($usercount, $page, $perpage, $baseurl));
+    echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
 
     flush();
 
@@ -299,7 +299,7 @@
     }
     if (!empty($table)) {
         echo $OUTPUT->table($table);
-        echo $OUTPUT->paging_bar(moodle_paging_bar::make($usercount, $page, $perpage, $baseurl));
+        echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
         if (has_capability('moodle/user:create', $sitecontext)) {
             echo $OUTPUT->heading('<a href="'.$securewwwroot.'/user/editadvanced.php?id=-1">'.get_string('addnewuser').'</a>');
         }
