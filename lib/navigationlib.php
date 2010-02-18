@@ -427,7 +427,7 @@ class navigation_node {
                 $link->add_class('dimmed');
             }
             $content = $OUTPUT->render($link);
-
+            
         } else if ($this->action instanceof moodle_url) {
             $attributes = array();
             if ($title !== '') {
@@ -438,7 +438,7 @@ class navigation_node {
             }
             $content = html_writer::link($this->action, $content, $attributes);
 
-        } else if (is_string($this->action)) {
+        } else if (is_string($this->action) || empty($this->action)) {
             $attributes = array();
             if ($title !== '') {
                 $attributes['title'] = $title;
@@ -2326,6 +2326,12 @@ class navbar extends navigation_node {
         } else {
             $output .= $this->parse_branch_to_html($this, true);
         }
+
+        if (!empty($this->children)) {
+            // Add the custom children
+            $output .= $this->parse_branch_to_html($this->children, false, false);
+        }
+
         $output .= html_writer::end_tag('ul');
         $this->content = $output;
         return $output;
@@ -2390,11 +2396,6 @@ class navbar extends navigation_node {
                     $child->action = $oldaction;
                 }
             }
-        }
-
-        if (!empty($this->children)) {
-            // Add the custom children
-            $output .= $this->parse_branch_to_html($this->children, false, false);
         }
 
         // XHTML

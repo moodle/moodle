@@ -53,18 +53,17 @@ class navigation_node_test extends UnitTestCase {
 
         $this->node = new navigation_node('Test Node');
         $this->node->type = navigation_node::TYPE_SYSTEM;
-        $this->node->add('demo1', $this->inactiveurl, navigation_node::TYPE_COURSE, null, 'demo1', $CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->node->add('demo2', $this->inactiveurl, navigation_node::TYPE_COURSE, null, 'demo2', $CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->node->add('demo3', $this->inactiveurl, navigation_node::TYPE_CATEGORY, null, 'demo3',$CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->node->get('demo3')->add('demo4', $this->inactiveurl,navigation_node::TYPE_COURSE,  null, 'demo4', $CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->node->get('demo3')->add('demo5', $this->activeurl, navigation_node::TYPE_COURSE, null, 'demo5',$CFG->httpswwwroot . '/pix/i/course.gif');
-        #$this->node->get('demo3')->get('demo5')->make_active();
+        $this->node->add('demo1', $this->inactiveurl, navigation_node::TYPE_COURSE, null, 'demo1', new pix_icon('i/course', ''));
+        $this->node->add('demo2', $this->inactiveurl, navigation_node::TYPE_COURSE, null, 'demo2', new pix_icon('i/course', ''));
+        $this->node->add('demo3', $this->inactiveurl, navigation_node::TYPE_CATEGORY, null, 'demo3',new pix_icon('i/course', ''));
+        $this->node->get('demo3')->add('demo4', $this->inactiveurl,navigation_node::TYPE_COURSE,  null, 'demo4', new pix_icon('i/course', ''));
+        $this->node->get('demo3')->add('demo5', $this->activeurl, navigation_node::TYPE_COURSE, null, 'demo5',new pix_icon('i/course', ''));
         $this->node->get('demo3')->get('demo5')->add('activity1', null, navigation_node::TYPE_ACTIVITY, null, 'activity1');
         $this->node->get('demo3')->get('demo5')->get('activity1')->make_active();
-        $this->node->add('hiddendemo1', $this->inactiveurl, navigation_node::TYPE_CATEGORY, null, 'hiddendemo1', $CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->add('hiddendemo1', $this->inactiveurl, navigation_node::TYPE_CATEGORY, null, 'hiddendemo1', new pix_icon('i/course', ''));
         $this->node->get('hiddendemo1')->hidden = true;
-        $this->node->get('hiddendemo1')->add('hiddendemo2', $this->inactiveurl, navigation_node::TYPE_COURSE, null, 'hiddendemo2', $CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->node->get('hiddendemo1')->add('hiddendemo3', $this->inactiveurl, navigation_node::TYPE_COURSE,null, 'hiddendemo3', $CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->get('hiddendemo1')->add('hiddendemo2', $this->inactiveurl, navigation_node::TYPE_COURSE, null, 'hiddendemo2', new pix_icon('i/course', ''));
+        $this->node->get('hiddendemo1')->add('hiddendemo3', $this->inactiveurl, navigation_node::TYPE_COURSE,null, 'hiddendemo3', new pix_icon('i/course', ''));
         $this->node->get('hiddendemo1')->get('hiddendemo2')->helpbutton = 'Here is a help button';
         $this->node->get('hiddendemo1')->get('hiddendemo3')->display = false;
     }
@@ -82,7 +81,7 @@ class navigation_node_test extends UnitTestCase {
     public function test_add() {
         global $CFG;
         // Add a node with all args set
-        $key1 = $this->node->add('test_add_1','http://www.moodle.org/',navigation_node::TYPE_COURSE,'testadd1','key',$CFG->httpswwwroot . '/pix/i/course.gif');
+        $key1 = $this->node->add('test_add_1','http://www.moodle.org/',navigation_node::TYPE_COURSE,'testadd1','key',new pix_icon('i/course', ''));
         // Add a node with the minimum args required
         $key2 = $this->node->add('test_add_2',null, navigation_node::TYPE_CUSTOM,'testadd2');
         $key3 = $this->node->add(str_repeat('moodle ', 15),str_repeat('moodle', 15));
@@ -107,7 +106,7 @@ class navigation_node_test extends UnitTestCase {
     public function test_add_to_path() {
         global $CFG;
         $path = array('demo3','demo5');
-        $key1 = $this->node->add_to_path($path,'testatp1', 'Test add to path 1', 'testatp1',  navigation_node::TYPE_COURSE, 'http://www.moodle.org/', $CFG->httpswwwroot . '/pix/i/course.gif');
+        $key1 = $this->node->add_to_path($path,'testatp1', 'Test add to path 1', 'testatp1',  navigation_node::TYPE_COURSE, 'http://www.moodle.org/', new pix_icon('i/course', ''));
         $this->assertEqual($key1, 'testatp1:'.navigation_node::TYPE_COURSE);
 
         // This should generate an exception as we have not provided any text for
@@ -179,7 +178,7 @@ class navigation_node_test extends UnitTestCase {
         $activenode4 = $this->node->get('demo1')->find_active_node(navigation_node::TYPE_COURSE);
         $this->assertIsA($activenode1, 'navigation_node');
         if ($activenode1 instanceof navigation_node) {
-            $this->assertEqual($activenode1, $this->node->get('demo3')->get('demo5'));
+            $this->assertEqual($activenode1, $this->node->get('demo3')->get('demo5')->get('activity1'));
         }
         $this->assertIsA($activenode2, 'navigation_node');
         if ($activenode1 instanceof navigation_node) {
@@ -453,47 +452,47 @@ class global_navigation_test extends UnitTestCase {
         $PAGE->context->contextlevel = CONTEXT_COURSECAT;
         $node2 = clone($test);
         $node2->initialise();
-        $this->assertIsA($node2->get('initcall2'), 'navigation_node');
-        if ($node2->get('initcall2')) {
-            $this->assertEqual($node2->get('initcall2')->text, 'load_for_category');
+        $this->assertIsA($node2->get('initcall3'), 'navigation_node');
+        if ($node2->get('initcall3')) {
+            $this->assertEqual($node2->get('initcall3')->text, 'load_for_category');
         }
         $PAGE->context->contextlevel = CONTEXT_COURSE;
         // For course (we need to adjust the site id so we look like a normal course
         $SITE->id++;
         $node3 = clone($test);
         $node3->initialise();
-        $this->assertIsA($node3->get('initcall3'), 'navigation_node');
-        if ($node3->get('initcall3')) {
-            $this->assertEqual($node3->get('initcall3')->text, 'load_for_course');
+        $this->assertIsA($node3->get('initcall5'), 'navigation_node');
+        if ($node3->get('initcall5')) {
+            $this->assertEqual($node3->get('initcall5')->text, 'load_for_course');
         }
         $SITE->id--;
         // Course is site
         $node4 = clone($test);
         $node4->initialise();
-        $this->assertIsA($node4->get('initcall4'), 'navigation_node');
-        if ($node4->get('initcall4')) {
-            $this->assertEqual($node4->get('initcall4')->text, 'load_for_category');
+        $this->assertIsA($node4->get('initcall7'), 'navigation_node');
+        if ($node4->get('initcall7')) {
+            $this->assertEqual($node4->get('initcall7')->text, 'load_for_category');
         }
         $PAGE->context->contextlevel = CONTEXT_MODULE;
         $node5 = clone($test);
         $node5->initialise();
-        $this->assertIsA($node5->get('initcall5'), 'navigation_node');
-        if ($node5->get('initcall5')) {
-            $this->assertEqual($node5->get('initcall5')->text, 'load_for_activity');
+        $this->assertIsA($node5->get('initcall9'), 'navigation_node');
+        if ($node5->get('initcall9')) {
+            $this->assertEqual($node5->get('initcall9')->text, 'load_for_activity');
         }
         $PAGE->context->contextlevel = CONTEXT_BLOCK;
         $node6 = clone($test);
         $node6->initialise();
-        $this->assertIsA($node6->get('initcall6'), 'navigation_node');
-        if ($node6->get('initcall6')) {
-            $this->assertEqual($node6->get('initcall6')->text, 'load_for_course');
+        $this->assertIsA($node6->get('initcall11'), 'navigation_node');
+        if ($node6->get('initcall11')) {
+            $this->assertEqual($node6->get('initcall11')->text, 'load_for_course');
         }
         $PAGE->context->contextlevel = CONTEXT_USER;
         $node7 = clone($test);
         $node7->initialise();
-        $this->assertIsA($node7->get('initcall7'), 'navigation_node');
-        if ($node7->get('initcall7')) {
-            $this->assertEqual($node7->get('initcall7')->text, 'load_for_user');
+        $this->assertIsA($node7->get('initcall13'), 'navigation_node');
+        if ($node7->get('initcall13')) {
+            $this->assertEqual($node7->get('initcall13')->text, 'load_for_user');
         }
         $PAGE->context = $originalcontext;
     }
@@ -560,7 +559,7 @@ class global_navigation_test extends UnitTestCase {
         $this->assertIsA($this->node->get_by_path(array_merge($keys, array(288))), 'navigation_node');
         $this->assertEqual($this->node->get_by_path(array_merge($keys, array(288)))->type, navigation_node::TYPE_ACTIVITY);
         $this->assertIsA($this->node->get_by_path(array_merge($keys, array(290))), 'navigation_node');
-        $this->assertEqual($this->node->get_by_path(array_merge($keys, array(290)))->type, navigation_node::TYPE_RESOURCE);
+        $this->assertEqual($this->node->get_by_path(array_merge($keys, array(290)))->type, navigation_node::TYPE_ACTIVITY);
     }
     public function test_load_course_sections() {
         $keys = array('cat2', 'sub2', '5');
@@ -621,7 +620,7 @@ class global_navigation_test extends UnitTestCase {
         $this->assertIsA($this->node->get_by_path(array_merge($keys, array(289))),'navigation_node');
         $this->assertEqual($this->node->get_by_path(array_merge($keys, array(289)))->type, navigation_node::TYPE_ACTIVITY);
         $this->assertIsA($this->node->get_by_path(array_merge($keys, array(290))),'navigation_node');
-        $this->assertEqual($this->node->get_by_path(array_merge($keys, array(290)))->type, navigation_node::TYPE_RESOURCE);
+        $this->assertEqual($this->node->get_by_path(array_merge($keys, array(290)))->type, navigation_node::TYPE_ACTIVITY);
     }
     public function test_module_extends_navigation() {
         $this->cache->test1_extends_navigation = true;
@@ -631,108 +630,6 @@ class global_navigation_test extends UnitTestCase {
         $this->assertFalse($this->node->exposed_module_extends_navigation('test2'));
         $this->assertFalse($this->node->exposed_module_extends_navigation('test3'));
     }
-}
-
-class mock_initialise_limited_global_navigation extends limited_global_navigation {
-
-    public function load_categories($id) {
-        $this->add('load_for_category_'.$id, null, null, null, 'initcall');
-        return 0;
-    }
-
-    public function load_course($id) {
-        $this->add('load_for_course_'.$id, null, null, null, 'initcall');
-        return 0;
-    }
-
-    public function load_activity($id) {
-        $this->add('load_for_activity_'.$id, null, null, null, 'initcall');
-        return 0;
-    }
-
-    public function load_section($id) {
-        $this->add('load_for_section_'.$id, null, null, null, 'initcall');
-        return 0;
-    }
-}
-
-/**
- * This is a dummy object that allows us to call protected methods within the
- * global navigation class by prefixing the methods with `exposed_`
- */
-class exposed_limited_global_navigation extends limited_global_navigation {
-    protected $exposedkey = 'exposed_';
-    function __construct() {
-        parent::__construct();
-        $this->cache = new navigation_cache('simpletest_nav');
-    }
-    function __call($method, $arguments) {
-        if (strpos($method,$this->exposedkey) !== false) {
-            $method = substr($method, strlen($this->exposedkey));
-        }
-        if (method_exists($this, $method)) {
-            return call_user_func_array(array($this, $method), $arguments);
-        }
-        throw new coding_exception('You have attempted to access a method that does not exist for the given object '.$method, DEBUG_DEVELOPER);
-    }
-}
-
-class limited_global_navigation_test extends UnitTestCase {
-
-    public $mocknode;
-    public $exposednode;
-
-    public function setUp() {
-        $this->mocknode = new mock_initialise_limited_global_navigation();
-        $this->exposednode = new exposed_limited_global_navigation();
-    }
-
-    public function test_initialise() {
-        $node1 = clone($this->mocknode);
-        $node1->initialise(navigation_node::TYPE_ACTIVITY, 1);
-        $this->assertIsA($node1->get('initcall'), 'navigation_node');
-        if ($node1->get('initcall')) {
-            $this->assertEqual($node1->get('initcall')->text, 'load_for_activity_1');
-        }
-
-        /* Disabled as there is a context check occuring
-        $node2 = clone($this->mocknode);
-        $fakecontext = new stdClass;
-        $this->cache->coursecontext2 = $fakecontext;
-        $node2->initialise(navigation_node::TYPE_CATEGORY, 2);
-        $this->assertIsA($node2->get('initcall'), 'navigation_node');
-        if ($node2->get('initcall')) {
-            $this->assertEqual($node2->get('initcall')->text, 'load_for_category_2');
-        }
-        */
-
-        $node3 = clone($this->mocknode);
-        $node3->initialise(navigation_node::TYPE_COURSE, 3);
-        $this->assertIsA($node3->get('initcall'), 'navigation_node');
-        if ($node3->get('initcall')) {
-            $this->assertEqual($node3->get('initcall')->text, 'load_for_course_3');
-        }
-
-        $node4 = clone($this->mocknode);
-        $node4->initialise(navigation_node::TYPE_SECTION, 4);
-        $this->assertIsA($node4->get('initcall'), 'navigation_node');
-        if ($node4->get('initcall')) {
-            $this->assertEqual($node4->get('initcall')->text, 'load_for_section_4');
-        }
-
-        $node5 = clone($this->mocknode);
-        $node5->initialise(navigation_node::TYPE_RESOURCE, 5);
-        $this->assertFalse($node5->get('initcall'));
-
-        $node6 = clone($this->mocknode);
-        $node6->initialise(navigation_node::TYPE_SETTING, 6);
-        $this->assertFalse($node5->get('initcall'));
-
-        $node7 = clone($this->mocknode);
-        $node7->initialise(navigation_node::TYPE_SYSTEM, 7);
-        $this->assertFalse($node5->get('initcall'));
-    }
-
 }
 
 /**
@@ -781,7 +678,7 @@ class navbar_test extends UnitTestCase {
     public function test_add() {
         global $CFG;
         // Add a node with all args set
-        $this->node->add('test_add_1','http://www.moodle.org/',navigation_node::TYPE_COURSE,'testadd1','testadd1',$CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->add('test_add_1','http://www.moodle.org/',navigation_node::TYPE_COURSE,'testadd1','testadd1',new pix_icon('i/course', ''));
         // Add a node with the minimum args required
         $key2 = $this->node->add('test_add_2');
         $this->assertIsA($this->node->get('testadd1'), 'navigation_node');
@@ -796,7 +693,7 @@ class navbar_test extends UnitTestCase {
     }
     public function test_parse_branch_to_html() {
         global $CFG;
-        $key = $this->node->add('test_add_1','http://www.moodle.org/',navigation_node::TYPE_COURSE,'testadd1','testadd1',$CFG->httpswwwroot . '/pix/i/course.gif');
+        $key = $this->node->add('test_add_1','http://www.moodle.org/',navigation_node::TYPE_COURSE,'testadd1','testadd1',new pix_icon('i/course', ''));
         $this->node->get($key)->make_active();
         $html = $this->node->exposed_parse_branch_to_html($this->node->children, true, true);
         $this->assertTrue( (strpos($html, $this->node->action->out()) !== false) );
