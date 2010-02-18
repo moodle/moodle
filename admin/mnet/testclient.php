@@ -89,7 +89,7 @@ if (!empty($hostid) && array_key_exists($hostid, $hosts)) {
     // so it's best to just do this small query and then remap the results afterwards
     $sql = '
         SELECT DISTINCT
-            ' . $DB->sql_concat('r.plugintype', "'_'", 'r.pluginname', "'_'", 's.name')  . ' AS unique,
+            ' . $DB->sql_concat('r.plugintype', "'_'", 'r.pluginname', "'_'", 's.name')  . ' AS uniqueid,
              s.name,
              r.plugintype,
              r.pluginname
