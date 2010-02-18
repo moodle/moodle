@@ -330,7 +330,7 @@ class grade_report {
      * @param string $finalgrade the grade for the course_item
      * @return string The new final grade
      */
-    protected function blank_hidden_total($courseid, $course_item, $finalgrade) {
+    function blank_hidden_total($courseid, $course_item, $finalgrade) {
         global $CFG;
         static $hiding_affected = null;//array of items in this course affected by hiding
 
