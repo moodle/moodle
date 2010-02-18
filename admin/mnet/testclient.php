@@ -127,7 +127,7 @@ if (!empty($hostid) && array_key_exists($hostid, $hosts)) {
 
     $mnet_request->set_method('system/listMethods');
     if (isset($servicename) && array_key_exists($servicename, $serviceinfo)) {
-        echo $OUTPUT->heading(get_string('methodsavailableonhostinservice', 'mnet', array('host' => $host->wwwroot, 'service' => $servicename)));
+        echo $OUTPUT->heading(get_string('methodsavailableonhostinservice', 'mnet', (object)array('host' => $host->wwwroot, 'service' => $servicename)));
         $service = $serviceinfo[$servicename];
         $mnet_request->add_param($servicename, 'string');
     } else {

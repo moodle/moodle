@@ -25,7 +25,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version  = 2010012902;
+$plugin->version  = 2010021800;
 $plugin->requires = 2008072500;
 $plugin->cron     = 0;
 

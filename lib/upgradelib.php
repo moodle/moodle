@@ -1417,29 +1417,28 @@ function upgrade_plugin_mnet_functions($component) {
             } else {
                 $dataobject->id = $DB->insert_record('mnet_rpc', $dataobject, true);
             }
-        }
 
-        foreach ($publishmethodservices[$dataobject->functionname] as $service) {
-            if ($serviceobj = $DB->get_record('mnet_service', array('name'=>$service['servicename']))) {
-                $serviceobj->apiversion = $service['apiversion'];
-                $DB->update_record('mnet_service', $serviceobj);
-            } else {
-                $serviceobj = new stdClass();
-                $serviceobj->name        = $service['servicename'];
-                $serviceobj->apiversion  = $service['apiversion'];
-                $serviceobj->offer       = 1;
-                $serviceobj->id          = $DB->insert_record('mnet_service', $serviceobj);
-            }
-            $servicecache[$service['servicename']] = $serviceobj;
-            if (!$DB->record_exists('mnet_service2rpc', array('rpcid'=>$dataobject->id, 'serviceid'=>$serviceobj->id))) {
-                $obj = new stdClass();
-                $obj->rpcid = $dataobject->id;
-                $obj->serviceid = $serviceobj->id;
-                $DB->insert_record('mnet_service2rpc', $obj, true);
+            foreach ($publishmethodservices[$dataobject->functionname] as $service) {
+                if ($serviceobj = $DB->get_record('mnet_service', array('name'=>$service['servicename']))) {
+                    $serviceobj->apiversion = $service['apiversion'];
+                    $DB->update_record('mnet_service', $serviceobj);
+                } else {
+                    $serviceobj = new stdClass();
+                    $serviceobj->name        = $service['servicename'];
+                    $serviceobj->apiversion  = $service['apiversion'];
+                    $serviceobj->offer       = 1;
+                    $serviceobj->id          = $DB->insert_record('mnet_service', $serviceobj);
+                }
+                $servicecache[$service['servicename']] = $serviceobj;
+                if (!$DB->record_exists('mnet_service2rpc', array('rpcid'=>$dataobject->id, 'serviceid'=>$serviceobj->id))) {
+                    $obj = new stdClass();
+                    $obj->rpcid = $dataobject->id;
+                    $obj->serviceid = $serviceobj->id;
+                    $DB->insert_record('mnet_service2rpc', $obj, true);
+                }
             }
         }
     }
-
     // finished with methods we publish, now do subscribable methods
     foreach($subscribes as $service => $methods) {
         if (!array_key_exists($service, $servicecache)) {
@@ -1468,7 +1467,7 @@ function upgrade_plugin_mnet_functions($component) {
                 $obj->serviceid = $serviceobj->id;
                 $DB->insert_record('mnet_remote_service2rpc', $obj, true);
             }
-            $subscribemethodservices[$method][] = $servicename;
+            $subscribemethodservices[$method][] = $service;
         }
     }
 
