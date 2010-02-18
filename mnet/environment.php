@@ -169,7 +169,11 @@ class mnet_environment {
         }
         set_config('openssl', implode('@@@@@@@@', $this->keypair), 'mnet');
 
-        update_record('mnet_host', addslashes_object($this));
+        // clone the proper object and then unset anything that isn't required to go into the database
+        // most fields don't matter but things that are arrays, will break things.
+        $dbobject = (object)clone($this);
+        unset($dbobject->keypair);
+        update_record('mnet_host', addslashes_object($dbobject));
         error_log('New public key has been generated. It expires ' . date('Y/m/d h:i:s', $this->public_key_expires));
     }
 
