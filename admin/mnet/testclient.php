@@ -146,7 +146,7 @@ if (!empty($hostid) && array_key_exists($hostid, $hosts)) {
     $table->data = array();
 
     foreach ($methods as $id => $method) {
-        $params = array('hostid' => $host->id, 'method' => $id);
+        $params = array('hostid' => $host->id, 'method' => $id+1);
         if (isset($servicename)) {
             $params['servicename'] = $servicename;
         }
@@ -158,8 +158,8 @@ if (!empty($hostid) && array_key_exists($hostid, $hosts)) {
     }
     echo $OUTPUT->table($table);
 
-    if (isset($methodid) && array_key_exists($methodid, $methods)) {
-        $method = $methods[$methodid];
+    if (isset($methodid) && array_key_exists($methodid-1, $methods)) {
+        $method = $methods[$methodid-1];
 
         $mnet_request = new mnet_xmlrpc_client();
         $mnet_request->set_method('system/methodSignature');
