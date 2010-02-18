@@ -115,7 +115,7 @@
          *    @param Exception $compare     Exception to describe.
          *    @return string                Text description.
          */
-        protected function describeException($exception) {
+        function describeException($exception) {
             return get_class($exception) . ": " . $exception->getMessage();
         }
     }
