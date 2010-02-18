@@ -13,22 +13,27 @@ class theme_anomaly_core_renderer extends core_renderer {
      * @return string the HTML to be output.
      */
     function block($bc, $region) {
+
         $bc = clone($bc); // Avoid messing up the object passed in.
-        $bc->prepare($this, $this->page, $this->target);
+        if (empty($bc->blockinstanceid) || !strip_tags($bc->title)) {
+            $bc->collapsible = block_contents::NOT_HIDEABLE;
+        }
+        if ($bc->collapsible == block_contents::HIDDEN) {
+            $bc->add_class('hidden');
+        }
+        if (!empty($bc->controls)) {
+            $bc->add_class('block_with_controls');
+        }
 
         $skiptitle = strip_tags($bc->title);
         if (empty($skiptitle)) {
             $output = '';
             $skipdest = '';
         } else {
-            $output = html_writer::tag('a', array('href' => '#sb-' . $bc->skipid, 'class' => 'skip-block'),
-                    get_string('skipa', 'access', $skiptitle));
+            $output = html_writer::tag('a', array('href' => '#sb-' . $bc->skipid, 'class' => 'skip-block'), get_string('skipa', 'access', $skiptitle));
             $skipdest = html_writer::tag('span', array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to'), '');
         }
 
-        $bc->attributes['id'] = $bc->id;
-        $bc->attributes['class'] = $bc->get_classes_string();
-        
         $output .= html_writer::start_tag('div', $bc->attributes);
         
         /** Rounded corners **/
