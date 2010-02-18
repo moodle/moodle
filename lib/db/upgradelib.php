@@ -249,7 +249,7 @@ function upgrade_fix_incorrect_mnethostids() {
             'display_name'      => 'Moodle',
             'xmlrpc_server_url' => '/mnet/xmlrpc/server.php',
             'sso_land_url'      => '/auth/mnet/land.php',
-            'sso_jump_url'      => '/auth/mnet/land.php',
+            'sso_jump_url'      => '/auth/mnet/jump.php',
         );
         $moodleapplicationid = $DB->insert_record('mnet_application', $m);
     }
