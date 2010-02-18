@@ -2944,12 +2944,22 @@ div.allcoursegrades {
 }
 
 .loginbox .guestsub,
-.loginbox .forgotsub {
+.loginbox .forgotsub,
+.loginbox .potentialidps {
   border-top:1px solid;
   margin-left:12%;
   margin-right:12%;
   margin-bottom:5px;
 }
+
+.loginbox .potentialidps .potentialidplist {
+    margin-left:40%;
+}
+
+.loginbox .potentialidps .potentialidplist div {
+  text-align:left;
+}
+
 
 .loginbox .loginform {
   margin-top:1em;

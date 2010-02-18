@@ -91,4 +91,14 @@ if ($show_instructions) {
       </div>
     </div>
 <?php } ?>
+<?php if (!empty($potentialidps)) { ?>
+    <div class="subcontent potentialidps">
+        <h6><?php print_string('potentialidps', 'auth'); ?></h6>
+        <div class="potentialidplist">
+<?php foreach ($potentialidps as $idp) {
+    echo  '<div class="potentialidp"><a href="' . $idp['url']->out() . '" title="' . $idp['name'] . '">' . $OUTPUT->render($idp['icon'], $idp['name']) . '&nbsp;' . $idp['name'] . '</a></div>';
+} ?>
+        </div>
+    </div>
+<?php } ?>
 </div>

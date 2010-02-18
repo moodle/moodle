@@ -1240,5 +1240,42 @@ class auth_plugin_mnet extends auth_plugin_base {
         return $logline;
     }
 
-
+    /**
+     * Returns a list of potential IdPs that this authentication plugin supports.
+     * This is used to provide links on the login page.
+     *
+     * @param string $wantsurl the relative url fragment the user wants to get to.  You can use this to compose a returnurl, for example
+     *
+     * @return array like:
+     *              array(
+     *                  array(
+     *                      'url' => 'http://someurl',
+     *                      'icon' => new pix_icon(...),
+     *                      'name' => get_string('somename', 'auth_yourplugin'),
+     *                 ),
+     *             )
+     */
+    function loginpage_idp_list($wantsurl) {
+        global $DB, $CFG;
+        // strip off wwwroot, since the remote site will prefix it's return url with this
+        $wantsurl = preg_replace('/(' . preg_quote($CFG->wwwroot, '/') . '|' . preg_quote($CFG->httpswwwroot, '/') . ')/', '', $wantsurl);
+        if (!$hosts = $DB->get_records_sql('SELECT DISTINCT h.*, a.sso_jump_url,a.name as application
+                FROM {mnet_host} h
+                JOIN {mnet_host2service} m ON h.id=m.hostid
+                JOIN {mnet_service} s ON s.id=m.serviceid
+                JOIN {mnet_application} a ON h.applicationid = a.id
+                WHERE s.name=? AND h.deleted=? AND m.publish = ?',
+                array('sso_sp', 0, 1))) {
+            return array();
+        }
+        $idps = array();
+        foreach ($hosts as $host) {
+            $idps[] = array(
+                'url'  => new moodle_url($host->wwwroot . $host->sso_jump_url, array('hostwwwroot' => $CFG->wwwroot, 'wantsurl' => $wantsurl, 'remoteurl' => 1)),
+                'icon' => new pix_icon('i/' . $host->application . '_host', $host->name),
+                'name' => $host->name,
+            );
+        }
+        return $idps;
+    }
 }

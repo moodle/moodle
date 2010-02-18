@@ -391,6 +391,7 @@ $string['auto_add_remote_users'] = 'Auto add remote users';
 $string['ntlmsso_attempting'] = 'Attempting Single Sign On via NTLM...';
 $string['ntlmsso_failed'] = 'Auto-login failed, try the normal login page...';
 $string['ntlmsso_isdisabled'] = 'NTLM SSO is disabled.';
+$string['potentialidps'] = 'Do you usually log in somewhere else before arriving here?<br />Choose from the following list to log in at your usual place:';
 $string['rpc_negotiation_timeout'] = 'RPC negotiation timeout';
 $string['shib_no_attributes_error'] = 'You seem to be Shibboleth authenticated but Moodle didn\'t receive any user attributes. Please check that your Identity Provider releases the necessary attributes ($a) to the Service Provider Moodle is running on or inform the webmaster of this server.';
 $string['shib_not_all_attributes_error'] = 'Moodle needs certain Shibboleth attributes which are not present in your case. The attributes are: $a<br />Please contact the webmaster of this server or your Identity Provider.';

@@ -234,19 +234,6 @@ if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    /
             $errormsg = get_string("invalidlogin");
             $errorcode = 3;
         }
-
-        if ( !empty($CFG->mnet_dispatcher_mode)
-             && $CFG->mnet_dispatcher_mode === 'strict'
-             && is_enabled_auth('mnet')
-             && $DB->record_exists_sql('SELECT h.id FROM {mnet_host} h
-                INNER JOIN {mnet_host2service} m ON h.id=m.hostid
-                INNER JOIN {mnet_service} s ON s.id=m.serviceid
-                WHERE s.name=? AND h.deleted=? AND m.publish = ?',
-                array('sso_sp', 0, 1))
-            && $DB->record_exists_select('user', 'username = ? AND mnethostid != ?', array($frm->username, $CFG->mnet_localhost_id))
-        ) {
-            $errormsg .= get_string('loginlinkmnetuser', 'mnet', "mnet_email.php?u=$frm->username");
-        }
     }
 }
 
@@ -315,6 +302,12 @@ if (!empty($CFG->registerauth) or is_enabled_auth('none') or !empty($CFG->auth_i
     $show_instructions = true;
 } else {
     $show_instructions = false;
+}
+
+$potentialidps = array();
+foreach($authsequence as $authname) {
+    $authplugin = get_auth_plugin($authname);
+    $potentialidps = array_merge($potentialidps, $authplugin->loginpage_idp_list($SESSION->wantsurl));
 }
 
 $PAGE->set_title("$site->fullname: $loginsite");
