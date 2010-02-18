@@ -155,16 +155,16 @@ M.block_navigation.classes.tree.prototype.init_load_ajax = function(e, branch) {
  * @return bool
  */
 M.block_navigation.classes.tree.prototype.load_ajax = function(tid, outcome, args) {
-    // Check the status
-    if (outcome.status!=0 && outcome.responseXML!=null) {
-        var branch = outcome.responseXML.documentElement;
-        if (branch!=null && this.add_branch(branch, args.target.ancestor('LI') ,1)) {
-            // If we get here everything worked perfectly
+    try {
+        var object = this.Y.JSON.parse(outcome.responseText);
+        if (this.add_branch(object, args.target.ancestor('LI') ,1)) {
             if (this.candock) {
                 M.core_dock.resize();
             }
             return true;
         }
+    } catch (e) {
+        // If we got here then there was an error parsing the result
     }
     // The branch is empty so class it accordingly
     args.target.replaceClass('branch', 'emptybranch');
@@ -178,14 +178,14 @@ M.block_navigation.classes.tree.prototype.load_ajax = function(tid, outcome, arg
  * @param {int} depth
  * @return bool
  */
-M.block_navigation.classes.tree.prototype.add_branch = function(branchxml, target, depth) {
+M.block_navigation.classes.tree.prototype.add_branch = function(branchobj, target, depth) {
 
     // Make the new branch into an object
-    var branch = new M.block_navigation.classes.branch(this, branchxml);
+    var branch = new M.block_navigation.classes.branch(this, branchobj);
 
     var childrenul = false;
     if (depth === 1) {
-        if (!branch.haschildren) {
+        if (!branch.children) {
             return false;
         }
         childrenul = this.Y.Node.create('<ul></ul>');
@@ -194,9 +194,9 @@ M.block_navigation.classes.tree.prototype.add_branch = function(branchxml, targe
         childrenul = branch.inject_into_dom(target);
     }
     if (childrenul) {
-        for (var i=0;i<branch.children.childNodes.length;i++) {
+        for (i in branch.children) {
             // Add each branch to the tree
-            this.add_branch(branch.children.childNodes[i], childrenul, depth+1);
+            this.add_branch(branch.children[i], childrenul, depth+1);
         }
     }
     return true;
@@ -223,9 +223,9 @@ M.block_navigation.classes.tree.prototype.toggleexpansion = function(e) {
  * @class branch
  * @constructor
  * @param {M.block_navigation.classes.tree} tree
- * @param {xmldoc|null} xml
+ * @param {object|null} obj
  */
-M.block_navigation.classes.branch = function(tree, xml) {
+M.block_navigation.classes.branch = function(tree, obj) {
     this.tree = tree;
     this.name = null;
     this.title = null;
@@ -240,46 +240,22 @@ M.block_navigation.classes.branch = function(tree, xml) {
     this.hidden = false;
     this.haschildren = false;
     this.children = false;
-    if (xml !== null) {
+    if (obj !== null) {
         // Construct from the provided xml
-        this.construct_from_xml(xml);
+        this.construct_from_json(obj);
     }
 }
-/**
- * Constructs a branch from XML
- * @param {xmldoc} xml
- */
-M.block_navigation.classes.branch.prototype.construct_from_xml = function(xml) {
-    // Get required attributes
-    this.title = xml.getAttribute('title');
-    this.classname = xml.getAttribute('class');
-    this.id = xml.getAttribute('id');
-    this.link = xml.getAttribute('link');
-    this.icon = xml.getAttribute('icon');
-    this.key = xml.getAttribute('key');
-    this.type = xml.getAttribute('type');
-    this.expandable = xml.getAttribute('expandable');
-    this.expansionceiling = xml.getAttribute('expansionceiling');
-    // Boolean attributes
-    this.hidden = (xml.getAttribute('hidden')=='true');
-    this.haschildren = (xml.getAttribute('haschildren')=='true');
-
+M.block_navigation.classes.branch.prototype.construct_from_json = function(obj) {
+    for (var i in obj) {
+        this[i] = obj[i];
+    }
+    if (this.children) {
+        this.haschildren = true;
+    }
     if (this.id && this.id.match(/^expandable_branch_\d+$/)) {
         // Assign a new unique id for this new expandable branch
         M.block_navigation.expandablebranchcount++;
         this.id = 'expandable_branch_'+M.block_navigation.expandablebranchcount;
-    }
-
-    // Retrieve any additional information
-    for (var i=0; i<xml.childNodes.length;i++) {
-        var node = xml.childNodes[i];
-        switch (node.nodeName.toLowerCase()) {
-            case 'name':
-                this.name = node.firstChild.nodeValue;
-                break;
-            case 'children':
-                this.children = node;
-        }
     }
 }
 /**
