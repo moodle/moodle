@@ -8011,7 +8011,7 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
         $recentkey = $navref->add(get_string('recentactivity').' ('.count($recentposts).')');
         $navref->get($recentkey)->mainnavonly = true;
         foreach ($recentposts as $post) {
-            $icon = new pic_icon('i/feedback', '');
+            $icon = new pix_icon('i/feedback', '');
             $url = new moodle_url('/mod/forum/discuss.php', array('d'=>$post->content->discussion));
             $title = $post->content->subject."\n".userdate($post->timestamp, get_string('strftimerecent', 'langconfig'))."\n".$post->user->firstname.' '.$post->user->lastname;
             $navref->get($recentkey)->add($title, $url, navigation_node::TYPE_SETTING, null, null, $icon);
