@@ -617,7 +617,6 @@ global $HTTPSPAGEREQUIRED;
     }
     if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
         require_once("$CFG->dirroot/lib/cookieless.php");
-        sid_start_ob();
     }
 /// In VERY rare cases old PHP server bugs (it has been found on PHP 4.1.2 running
 /// as a CGI under IIS on Windows) may require that you uncomment the following:
