@@ -695,9 +695,20 @@ class theme_config {
                         and in_array($plugin, $excludes[$type])) {
                         continue;
                     }
+
+                    $plugincontent = '';
                     $sheetfile = "$fulldir/styles.css";
                     if (is_readable($sheetfile)) {
-                        $css['plugins'][$type.'_'.$plugin] = $this->post_process("/*** Standard plugin $type/$plugin ***/\n\n" . file_get_contents($sheetfile));
+                        $plugincontent .= "/*** Standard plugin $type/$plugin ***/\n\n";
+                        $plugincontent .= file_get_contents($sheetfile);
+                    }
+                    $sheetthemefile = "$fulldir/styles_{$this->name}.css";
+                    if (is_readable($sheetthemefile)) {
+                        $plugincontent .= "\n/*** Standard plugin $type/$plugin for the {$this->name} theme ***/\n\n";
+                        $plugincontent .= file_get_contents($sheetthemefile);
+                    }
+                    if (!empty($plugincontent)) {
+                        $css['plugins'][$type.'_'.$plugin] = $this->post_process($plugincontent);
                     }
                 }
             }
