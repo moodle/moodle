@@ -23,7 +23,8 @@
   font-size:1em;
 }
 span.hide,
-div.hide {
+div.hide,
+.jsenabled .advancedbutton .showadvancedbtn {
   display:none;
 }
 
