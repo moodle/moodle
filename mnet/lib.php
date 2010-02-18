@@ -354,6 +354,20 @@ function mnet_generate_keypair($dn = null, $days=28) {
         );
     }
 
+    $dnlimits = array(
+           'countryName'            => 2,
+           'stateOrProvinceName'    => 128,
+           'localityName'           => 128,
+           'organizationName'       => 64,
+           'organizationalUnitName' => 64,
+           'commonName'             => 64,
+           'emailAddress'           => 128
+    );
+
+    foreach ($dnlimits as $key => $length) {
+        $dn[$key] = substr($dn[$key], 0, $length);
+    }
+
     // ensure we remove trailing slashes
     $dn["commonName"] = preg_replace(':/$:', '', $dn["commonName"]);
 
