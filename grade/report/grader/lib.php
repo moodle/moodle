@@ -826,7 +826,7 @@ class grade_report_grader extends grade_report {
                 if (!$this->canviewhidden and $grade->is_hidden()) {
                     if (!empty($CFG->grade_hiddenasdate) and $grade->get_datesubmitted() and !$item->is_category_item() and !$item->is_course_item()) {
                         // the problem here is that we do not have the time when grade value was modified, 'timemodified' is general modification date for grade_grades records
-                        $itemcell->text = html_writer::tag('span', array('class'=>'datesubmitted'), userdate($grade->get_datesubmitted(),get_string('strftimedatetimeshort')));
+                        $itemcell->text = html_writer::tag('span', userdate($grade->get_datesubmitted(),get_string('strftimedatetimeshort')), array('class'=>'datesubmitted'));
                     } else {
                         $itemcell->text = '-';
                     }
@@ -858,7 +858,7 @@ class grade_report_grader extends grade_report {
                 }
 
                 if ($grade->is_excluded()) {
-                    $itemcell->text .= html_writer::tag('span', array('class'=>'excludedfloater'), get_string('excluded', 'grades'));
+                    $itemcell->text .= html_writer::tag('span', get_string('excluded', 'grades'), array('class'=>'excludedfloater'));
                 }
 
                 // Do not show any icons if no grade (no record in DB to match)
@@ -882,7 +882,7 @@ class grade_report_grader extends grade_report {
                 // or a drop down (for scales)
                 // grades in item of type grade category or course are not directly editable
                 if ($item->needsupdate) {
-                    $itemcell->text .= html_writer::tag('span', array('class'=>"gradingerror$hidden"), get_string('error'));
+                    $itemcell->text .= html_writer::tag('span', get_string('error'), array('class'=>"gradingerror$hidden"));
 
                 } else if ($USER->gradeediting[$this->courseid]) {
 
@@ -916,10 +916,10 @@ class grade_report_grader extends grade_report {
 
                             // invalid grade if gradeval < 1
                             if ($gradeval < 1) {
-                                $itemcell->text .= html_writer::tag('span', array('class'=>"gradevalue$hidden$gradepass"), '-');
+                                $itemcell->text .= html_writer::tag('span', '-', array('class'=>"gradevalue$hidden$gradepass"));
                             } else {
                                 $gradeval = $grade->grade_item->bounded_grade($gradeval); //just in case somebody changes scale
-                                $itemcell->text .= html_writer::tag('span', array('class'=>"gradevalue$hidden$gradepass"), $scales[$gradeval-1]);
+                                $itemcell->text .= html_writer::tag('span', $scales[$gradeval-1], array('class'=>"gradevalue$hidden$gradepass"));
                             }
                         } else {
                             // no such scale, throw error?
@@ -933,7 +933,7 @@ class grade_report_grader extends grade_report {
                                           . '" type="text" class="text" title="'. $strgrade .'" name="grade_'
                                           .$userid.'_' .$item->id.'" id="grade_'.$userid.'_'.$item->id.'" value="'.$value.'" />';
                         } else {
-                            $itemcell->text .= html_writer::tag('span', array('class'=>"gradevalue$hidden$gradepass"), format_float($gradeval, $decimalpoints));
+                            $itemcell->text .= html_writer::tag('span', format_float($gradeval, $decimalpoints), array('class'=>"gradevalue$hidden$gradepass"));
                         }
                     }
 
@@ -956,9 +956,9 @@ class grade_report_grader extends grade_report {
                     }
 
                     if ($item->needsupdate) {
-                        $itemcell->text .= html_writer::tag('span', array('class'=>"gradingerror$hidden$gradepass"), get_string('error'));
+                        $itemcell->text .= html_writer::tag('span', get_string('error'), array('class'=>"gradingerror$hidden$gradepass"));
                     } else {
-                        $itemcell->text .= html_writer::tag('span', array('class'=>"gradevalue$hidden$gradepass"), grade_format_gradevalue($gradeval, $item, true, $gradedisplaytype, null));
+                        $itemcell->text .= html_writer::tag('span', grade_format_gradevalue($gradeval, $item, true, $gradedisplaytype, null), array('class'=>"gradevalue$hidden$gradepass"));
                     }
                 }
 

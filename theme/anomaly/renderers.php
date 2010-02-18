@@ -30,8 +30,8 @@ class theme_anomaly_core_renderer extends core_renderer {
             $output = '';
             $skipdest = '';
         } else {
-            $output = html_writer::tag('a', array('href' => '#sb-' . $bc->skipid, 'class' => 'skip-block'), get_string('skipa', 'access', $skiptitle));
-            $skipdest = html_writer::tag('span', array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to'), '');
+            $output = html_writer::tag('a', get_string('skipa', 'access', $skiptitle), array('href' => '#sb-' . $bc->skipid, 'class' => 'skip-block'));
+            $skipdest = html_writer::tag('span', '', array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to'));
         }
 
         $output .= html_writer::start_tag('div', $bc->attributes);
@@ -45,20 +45,18 @@ class theme_anomaly_core_renderer extends core_renderer {
 
         $title = '';
         if ($bc->title) {
-            $title = html_writer::tag('h2', null, $bc->title);
+            $title = html_writer::tag('h2', $bc->title);
         }
 
         if ($title || $controlshtml) {
-            $output .= html_writer::tag('div', array('class' => 'header'),
-                    html_writer::tag('div', array('class' => 'title'),
-                    $title . $controlshtml));
+            $output .= html_writer::tag('div', html_writer::tag('div', $title . $controlshtml, array('class' => 'title')), array('class' => 'header'));
         }
 
         $output .= html_writer::start_tag('div', array('class' => 'content'));
         $output .= $bc->content;
 
         if ($bc->footer) {
-            $output .= html_writer::tag('div', array('class' => 'footer'), $bc->footer);
+            $output .= html_writer::tag('div', $bc->footer, array('class' => 'footer'));
         }
 
         $output .= html_writer::end_tag('div');
@@ -71,7 +69,7 @@ class theme_anomaly_core_renderer extends core_renderer {
         $output .= html_writer::end_tag('div');
 
         if ($bc->annotation) {
-            $output .= html_writer::tag('div', array('class' => 'blockannotation'), $bc->annotation);
+            $output .= html_writer::tag('div', $bc->annotation, array('class' => 'blockannotation'));
         }
         $output .= $skipdest;
 

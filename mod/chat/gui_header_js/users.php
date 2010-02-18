@@ -96,8 +96,8 @@ foreach ($chatusers as $chatuser) {
     $row[1]  = html_writer::start_tag('p');
     $row[1] .= html_writer::start_tag('font', array('size'=>'1'));
     $row[1] .= fullname($chatuser).'<br />';
-    $row[1] .= html_writer::tag('span', array('class'=>'dimmed_text'), $stridle . html_writer::tag('span', array('name'=>'uidles', 'id'=>'uidle'.$chatuser->id), $idle)).' ';
-    $row[1] .= html_writer::tag('a', array('href'=>new moodle_url('/mod/chat/gui_header_js/users.php', array('chat_sid'=>$chat_sid, 'beep'=>$chatuser->id))), $strbeep);
+    $row[1] .= html_writer::tag('span', $stridle . html_writer::tag('span', $idle, array('name'=>'uidles', 'id'=>'uidle'.$chatuser->id)), array('class'=>'dimmed_text')).' ';
+    $row[1] .= html_writer::tag('a', $strbeep, array('href'=>new moodle_url('/mod/chat/gui_header_js/users.php', array('chat_sid'=>$chat_sid, 'beep'=>$chatuser->id))));
     $row[1] .= html_writer::end_tag('font');
     $row[1] .= html_writer::end_tag('p');
     $table->data[] = $row;
@@ -105,7 +105,7 @@ foreach ($chatusers as $chatuser) {
 
 ob_start();
 echo $OUTPUT->header();
-echo html_writer::tag('div', array('style'=>'display:none'), html_writer::tag('a', array('href'=>$refreshurl, 'id'=>'refreshLink'), 'Refresh link'));
+echo html_writer::tag('div', html_writer::tag('a', 'Refresh link', array('href'=>$refreshurl, 'id'=>'refreshLink')), array('style'=>'display:none')); //TODO: localize
 echo $OUTPUT->table($table);
 echo $OUTPUT->footer();
 

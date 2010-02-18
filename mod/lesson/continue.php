@@ -176,7 +176,7 @@ if (isset($USER->modattempts[$lesson->id])) {
     $content .= html_writer::empty_tag('input', array('type'=>'hidden', 'nam'=>'id', 'value'=>$cm->id));
     $content .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'pageid', 'value'=>LESSON_EOL));
     $content .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'submit', 'value'=>get_string('savechanges', 'lesson')));
-    echo html_writer::tag('form', array('method'=>'get', 'target'=>$url), "<div>$content</div>");
+    echo html_writer::tag('form', "<div>$content</div>", array('method'=>'get', 'target'=>$url));
 }
 
 // Review button back
@@ -185,7 +185,7 @@ if ($lesson->review && !$result->correctanswer && !$result->noanswer && !$result
     $content = html_writer::empty_tag('input', array('type'=>'hidden', 'nam'=>'id', 'value'=>$cm->id));
     $content .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'pageid', 'value'=>$page->id));
     $content .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'submit', 'value'=>get_string('reviewquestionback', 'lesson')));
-    echo html_writer::tag('form', array('method'=>'get', 'target'=>$url), "<div>$content</div>");
+    echo html_writer::tag('form', "<div>$content</div>", array('method'=>'get', 'target'=>$url));
 }
 
 $url = new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$result->newpageid));

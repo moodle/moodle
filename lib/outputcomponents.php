@@ -602,11 +602,11 @@ class html_writer {
     /**
      * Outputs a tag with attributes and contents
      * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
-     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
      * @param string $contents What goes between the opening and closing tags
+     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
      * @return string HTML fragment
      */
-    public static function tag($tagname, array $attributes = null, $contents) {
+    public static function tag($tagname, $contents, array $attributes = null) {
         return self::start_tag($tagname, $attributes) . $contents . self::end_tag($tagname);
     }
 
@@ -696,7 +696,7 @@ class html_writer {
     public static function link($url, $text, array $attributes = null) {
         $attributes = (array)$attributes;
         $attributes['href']  = $url;
-        return self::tag('a', $attributes, $text);
+        return self::tag('a', $text, $attributes);
     }
 
     /**
@@ -725,7 +725,7 @@ class html_writer {
         $output .= self::empty_tag('input', $attributes);
 
         if ($label !== '' and !is_null($label)) {
-            $output .= self::tag('label', array('for'=>$attributes['id']), $label);
+            $output .= self::tag('label', $label, array('for'=>$attributes['id']));
         }
 
         return $output;
@@ -805,7 +805,7 @@ class html_writer {
                 $output .= self::select_option($label, $value, $selected);
             }
         }
-        return self::tag('select', $attributes, $output);
+        return self::tag('select', $output, $attributes);
     }
 
     private static function select_option($label, $value, array $selected) {
@@ -815,7 +815,7 @@ class html_writer {
             $attributes['selected'] = 'selected';
         }
         $attributes['value'] = $value;
-        return self::tag('option', $attributes, $label);
+        return self::tag('option', $label, $attributes);
     }
 
     private static function select_optgroup($groupname, $options, array $selected) {
@@ -827,7 +827,7 @@ class html_writer {
         foreach ($options as $value=>$label) {
             $output .= self::select_option($label, $value, $selected);
         }
-        return self::tag('optgroup', $attributes, $output);
+        return self::tag('optgroup', $output, $attributes);
     }
 
     /**
@@ -889,7 +889,7 @@ class html_writer {
             $attributes['id'] = self::random_id('ts_');
         }
         $timerselector = self::select($timeunits, $name, $currentdate[$userdatetype], null, array('id'=>$attributes['id']));
-        $label = self::tag('label', array('for'=>$attributes['id'], 'class'=>'accesshide'), get_string(substr($type, 0, -1), 'form'));
+        $label = self::tag('label', get_string(substr($type, 0, -1), 'form'), array('for'=>$attributes['id'], 'class'=>'accesshide'));
 
         return $label.$timerselector;
     }
@@ -912,7 +912,7 @@ class html_writer {
             $output .= html_writer::end_tag('li') . "\n";
         }
 
-        return html_writer::tag($tag, $attributes, $output);
+        return html_writer::tag($tag, $output, $attributes);
     }
 
     /**
@@ -946,11 +946,11 @@ class html_writer {
     public static function script($jscode, $url=null) {
         if ($jscode) {
             $attributes = array('type'=>'text/javascript');
-            return self::tag('script', $attributes, "\n//<![CDATA[\n$jscode\n//]]>\n") . "\n";
+            return self::tag('script', "\n//<![CDATA[\n$jscode\n//]]>\n", $attributes) . "\n";
 
         } else if ($url) {
             $attributes = array('type'=>'text/javascript', 'src'=>$url);
-            return self::tag('script', $attributes, '') . "\n";
+            return self::tag('script', '', $attributes) . "\n";
 
         } else {
             return '';

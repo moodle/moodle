@@ -902,9 +902,9 @@ class page_requirements_manager {
         $attributes = array('class'=>'skip');
         foreach ($this->skiplinks as $url => $text) {
             $attributes['href'] = '#' . $url;
-            $links .= html_writer::tag('a', $attributes, $text);
+            $links .= html_writer::tag('a', $text, $attributes);
         }
-        $output = html_writer::tag('div', array('class'=>'skiplinks'), $links) . "\n";
+        $output = html_writer::tag('div', $links, array('class'=>'skiplinks')) . "\n";
 
         // then the clever trick for hiding of things not needed when JS works
         $output .= html_writer::script("document.body.className += ' jsenabled';") . "\n";

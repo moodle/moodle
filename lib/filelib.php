@@ -2102,7 +2102,7 @@ function file_modify_html_header($text) {
     if (filter_is_enabled('filter/mediaplugin')) {
         // this script is needed by most media filter plugins.
         $attributes = array('type'=>'text/javascript', 'src'=>$CFG->httpswwwroot . '/lib/ufo.js');
-        $ufo = html_writer::tag('script', $attributes, '') . "\n";
+        $ufo = html_writer::tag('script', '', $attributes) . "\n";
     }
 
     preg_match('/\<head\>|\<HEAD\>/', $text, $matches);

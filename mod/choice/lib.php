@@ -546,7 +546,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                 echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
                 echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
                 echo '&nbsp;&nbsp;';
-                echo html_writer::tag('label', array('for'=>'menuaction'), get_string('withselected', 'quiz')); 
+                echo html_writer::tag('label', get_string('withselected', 'quiz'), array('for'=>'menuaction')); 
                 echo html_writer::select(array('delete' => get_string('delete')), 'action', '', array(''=>get_string('moveselectedcoursesto')), array('id'=>'menuaction'));
                 $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('attemptsform', 'menuaction', ''));
                 echo '<noscript id="noscriptmenuaction" style="display:inline">';

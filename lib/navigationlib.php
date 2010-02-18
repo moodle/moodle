@@ -413,7 +413,7 @@ class navigation_node {
             $icon = $OUTPUT->render($this->icon);
             $content = $icon.$content; // use CSS for spacing of icons
         } else if ($this->helpbutton !== null) {
-            $content = trim($this->helpbutton).html_writer::tag('span', array('class'=>'clearhelpbutton'), $content);
+            $content = trim($this->helpbutton).html_writer::tag('span', $content, array('class'=>'clearhelpbutton'));
         }
 
         if ($content === '') {
@@ -446,7 +446,7 @@ class navigation_node {
             if ($this->hidden) {
                 $attributes['class'] = 'dimmed_text';
             }
-            $content = html_writer::tag('span', $attributes, $content);
+            $content = html_writer::tag('span', $content, $attributes);
         }
 
         return $content;
@@ -2350,7 +2350,7 @@ class navbar extends navigation_node {
         if ($firstnode===true) {
             // If this is the first node add the class first and display the
             // navbar properties (normally sitename)
-            $output .= html_writer::tag('li', array('class'=>'first'), parent::content(true));
+            $output .= html_writer::tag('li', parent::content(true), array('class'=>'first'));
         }
         $count = 0;
         if (!is_array($navarray)) {
@@ -2390,7 +2390,7 @@ class navbar extends navigation_node {
                 }
                 if ($child->type !== navigation_node::TYPE_CATEGORY || !isset($CFG->navshowcategories) || !empty($CFG->navshowcategories)) {
                     // Now display the node
-                    $output .= html_writer::tag('li', null, $separator.' '.$child->content(true));
+                    $output .= html_writer::tag('li', $separator.' '.$child->content(true));
                 }
                 if (isset($oldaction)) {
                     $child->action = $oldaction;

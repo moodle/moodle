@@ -48,7 +48,7 @@ echo $OUTPUT->header();
 echo html_writer::start_tag('form', array('action'=>'../empty.php', 'method'=>'post', 'target'=>'empty', 'id'=>'inputForm', 'style'=>'margin:0'));
 echo html_writer::empty_tag('input', array('type'=>'text', 'id'=>'input_chat_message', 'name'=>'chat_message', 'size'=>'50', 'value'=>''));
 echo html_writer::empty_tag('input', array('type'=>'checkbox', 'id'=>'auto', 'checked'=>'checked', 'value'=>''));
-echo html_writer::tag('label', array('for'=>'auto'), get_string('autoscroll', 'chat'));
+echo html_writer::tag('label', get_string('autoscroll', 'chat'), array('for'=>'auto'));
 echo $OUTPUT->help_icon('chatting', get_string('helpchatting', 'chat'), 'chat', true);
 echo html_writer::end_tag('form');
 

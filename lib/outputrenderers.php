@@ -699,11 +699,10 @@ class core_renderer extends renderer_base {
         $controlshtml = array();
         foreach ($controls as $control) {
             $controlshtml[] = html_writer::tag('a', array('class' => 'icon',
-                    'title' => $control['caption'], 'href' => $control['url']),
-                    html_writer::empty_tag('img',  array('src' => $this->pix_url($control['icon'])->out(false),
-                    'alt' => $control['caption'])));
+                    html_writer::empty_tag('img',  array('src' => $this->pix_url($control['icon'])->out(false), 'alt' => $control['caption'])),
+                    'title' => $control['caption'], 'href' => $control['url']));
         }
-        return html_writer::tag('div', array('class' => 'commands'), implode('', $controlshtml));
+        return html_writer::tag('div', implode('', $controlshtml), array('class' => 'commands'));
     }
 
     /**
@@ -733,8 +732,8 @@ class core_renderer extends renderer_base {
             $output = '';
             $skipdest = '';
         } else {
-            $output = html_writer::tag('a', array('href' => '#sb-' . $bc->skipid, 'class' => 'skip-block'), get_string('skipa', 'access', $skiptitle));
-            $skipdest = html_writer::tag('span', array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to'), '');
+            $output = html_writer::tag('a', get_string('skipa', 'access', $skiptitle), array('href' => '#sb-' . $bc->skipid, 'class' => 'skip-block'));
+            $skipdest = html_writer::tag('span', '', array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to'));
         }
 
         $output .= html_writer::start_tag('div', $bc->attributes);
@@ -743,27 +742,25 @@ class core_renderer extends renderer_base {
 
         $title = '';
         if ($bc->title) {
-            $title = html_writer::tag('h2', null, $bc->title);
+            $title = html_writer::tag('h2', $bc->title, null);
         }
 
         if ($title || $controlshtml) {
-            $output .= html_writer::tag('div', array('class' => 'header'),
-                    html_writer::tag('div', array('class' => 'title'),
-                    $title . $controlshtml));
+            $output .= html_writer::tag('div', html_writer::tag('div', $title . $controlshtml, array('class' => 'title')), array('class' => 'header'));
         }
 
         $output .= html_writer::start_tag('div', array('class' => 'content'));
         $output .= $bc->content;
 
         if ($bc->footer) {
-            $output .= html_writer::tag('div', array('class' => 'footer'), $bc->footer);
+            $output .= html_writer::tag('div', $bc->footer, array('class' => 'footer'));
         }
 
         $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('div');
 
         if ($bc->annotation) {
-            $output .= html_writer::tag('div', array('class' => 'blockannotation'), $bc->annotation);
+            $output .= html_writer::tag('div', $bc->annotation, array('class' => 'blockannotation'));
         }
         $output .= $skipdest;
 
@@ -801,14 +798,14 @@ class core_renderer extends renderer_base {
         foreach ($items as $key => $string) {
             $item = html_writer::start_tag('li', array('class' => 'r' . $row));
             if (!empty($icons[$key])) { //test if the content has an assigned icon
-                $item .= html_writer::tag('div', array('class' => 'icon column c0'), $icons[$key]);
+                $item .= html_writer::tag('div', $icons[$key], array('class' => 'icon column c0'));
             }
-            $item .= html_writer::tag('div', array('class' => 'column c1'), $string);
+            $item .= html_writer::tag('div', $string, array('class' => 'column c1'));
             $item .= html_writer::end_tag('li');
             $lis[] = $item;
             $row = 1 - $row; // Flip even/odd.
         }
-        return html_writer::tag('ul', array('class' => 'list'), implode("\n", $lis));
+        return html_writer::tag('ul', implode("\n", $lis), array('class' => 'list'));
     }
 
     /**
@@ -838,8 +835,7 @@ class core_renderer extends renderer_base {
      * @return string the HTML to be output.
      */
     public function block_move_target($target) {
-        return html_writer::tag('a', array('href' => $target->url, 'class' => 'blockmovetarget'),
-                html_writer::tag('span', array('class' => 'accesshide'), $target->text));
+        return html_writer::tag('a', html_writer::tag('span', array('class' => 'accesshide'), $target->text), array('href' => $target->url, 'class' => 'blockmovetarget'));
     }
 
     /**
@@ -890,7 +886,7 @@ class core_renderer extends renderer_base {
             }
         }
 
-        return html_writer::tag('a', $attributes, $link->text);
+        return html_writer::tag('a', $link->text, $attributes);
     }
 
 
@@ -958,8 +954,8 @@ class core_renderer extends renderer_base {
         }
 
         $output = $this->box_start('generalbox', 'notice');
-        $output .= html_writer::tag('p', array(), $message);
-        $output .= html_writer::tag('div', array('class' => 'buttons'), $this->render($continue) . $this->render($cancel));
+        $output .= html_writer::tag('p', $message);
+        $output .= html_writer::tag('div', $this->render($continue) . $this->render($cancel), array('class' => 'buttons'));
         $output .= $this->box_end();
         return $output;
     }
@@ -1020,7 +1016,7 @@ class core_renderer extends renderer_base {
         }
 
         // then div wrapper for xhtml strictness
-        $output = html_writer::tag('div', array(), $output);
+        $output = html_writer::tag('div', $output);
 
         // now the form itself around it
         $url = $button->url->out_omit_querystring(); // url without params
@@ -1030,10 +1026,10 @@ class core_renderer extends renderer_base {
         $attributes = array('method' => $button->method,
                             'action' => $url,
                             'id'     => $button->formid);
-        $output = html_writer::tag('form', $attributes, $output);
+        $output = html_writer::tag('form', $output, $attributes);
 
         // and finally one more wrapper with class
-        return html_writer::tag('div', array('class' => $button->class), $output);
+        return html_writer::tag('div', $output, array('class' => $button->class));
     }
 
     /**
@@ -1088,7 +1084,7 @@ class core_renderer extends renderer_base {
         }
 
         if ($select->label) {
-            $output .= html_writer::tag('label', array('for'=>$select->attributes['id']), $select->label);
+            $output .= html_writer::tag('label', $select->label, array('for'=>$select->attributes['id']));
         }
 
         if ($select->helpicon instanceof help_icon) {
@@ -1098,22 +1094,22 @@ class core_renderer extends renderer_base {
         $output .= html_writer::select($select->options, $select->name, $select->selected, $select->nothing, $select->attributes);
 
         $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
-        $output .= html_writer::tag('noscript', array('style'=>'inline'), $go);
+        $output .= html_writer::tag('noscript', $go, array('style'=>'inline'));
 
         $nothing = empty($select->nothing) ? false : key($select->nothing);
         $this->page->requires->js_init_call('M.util.init_select_autosubmit', array($select->formid, $select->attributes['id'], $nothing));
 
         // then div wrapper for xhtml strictness
-        $output = html_writer::tag('div', array(), $output);
+        $output = html_writer::tag('div', $output);
 
         // now the form itself around it
         $formattributes = array('method' => $select->method,
                                 'action' => $select->url->out_omit_querystring(),
                                 'id'     => $select->formid);
-        $output = html_writer::tag('form', $formattributes, $output);
+        $output = html_writer::tag('form', $output, $formattributes);
 
         // and finally one more wrapper with class
-        return html_writer::tag('div', array('class' => $select->class), $output);
+        return html_writer::tag('div', $output, array('class' => $select->class));
     }
 
     /**
@@ -1155,7 +1151,7 @@ class core_renderer extends renderer_base {
         $output = '';
 
         if ($select->label) {
-            $output .= html_writer::tag('label', array('for'=>$select->attributes['id']), $select->label);
+            $output .= html_writer::tag('label', $select->label, array('for'=>$select->attributes['id']));
         }
 
         if ($select->helpicon instanceof help_icon) {
@@ -1166,22 +1162,22 @@ class core_renderer extends renderer_base {
         $output .= html_writer::select($select->urls, 'jump', $select->selected, $select->nothing, $select->attributes);
 
         $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
-        $output .= html_writer::tag('noscript', array('style'=>'inline'), $go);
+        $output .= html_writer::tag('noscript', $go, array('style'=>'inline'));
 
         $nothing = empty($select->nothing) ? false : key($select->nothing);
         $output .= $this->page->requires->js_init_call('M.util.init_url_select', array($select->formid, $select->attributes['id'], $nothing));
 
         // then div wrapper for xhtml strictness
-        $output = html_writer::tag('div', array(), $output);
+        $output = html_writer::tag('div', $output);
 
         // now the form itself around it
         $formattributes = array('method' => 'post',
                                 'action' => new moodle_url('/course/jumpto.php'),
                                 'id'     => $select->formid);
-        $output = html_writer::tag('form', $formattributes, $output);
+        $output = html_writer::tag('form', $output, $formattributes);
 
         // and finally one more wrapper with class
-        return html_writer::tag('div', array('class' => $select->class), $output);
+        return html_writer::tag('div', $output, array('class' => $select->class));
     }
 
     /**
@@ -1203,7 +1199,7 @@ class core_renderer extends renderer_base {
             $attributes['id'] = $this->add_action_handler(new popup_action('click', $url));
         }
         
-        return html_writer::tag('a', $attributes, $icon.$text);
+        return html_writer::tag('a', $icon.$text, $attributes);
     }
 
     /**
@@ -1306,10 +1302,10 @@ class core_renderer extends renderer_base {
         $id = html_writer::random_id('helpicon');
         $attributes['id'] = $id;
         $this->add_action_handler(new popup_action('click', $url), $id);
-        $output = html_writer::tag('a', $attributes, $output);
+        $output = html_writer::tag('a', $output, $attributes);
 
         // and finally span
-        return html_writer::tag('span', array('class' => 'helplink'), $output);
+        return html_writer::tag('span', $output, array('class' => 'helplink'));
     }
 
     /**
@@ -1329,7 +1325,7 @@ class core_renderer extends renderer_base {
         $link = new moodle_url('/course/scales.php', array('id' => $courseid, 'list' => true, 'scaleid' => $scale->id));
         $action = new popup_action('click', $link->url, 'ratingscale');
 
-        return html_writer::tag('span', array('class' => 'helplink'), $this->action_link($link, $icon, $action));
+        return html_writer::tag('span', $this->action_link($link, $icon, $action), array('class' => 'helplink'));
     }
 
     /**
@@ -1467,7 +1463,7 @@ class core_renderer extends renderer_base {
             $this->add_action_handler(new popup_action('click', $url), $id);
         }
 
-        return html_writer::tag('a', $attributes, $output);
+        return html_writer::tag('a', $output, $attributes);
     }
 
     /**
@@ -1535,7 +1531,7 @@ class core_renderer extends renderer_base {
         if (empty($message)) {
             return '';
         }
-        return html_writer::tag('span', array('class' => 'error'), $message);
+        return html_writer::tag('span', $message, array('class' => 'error'));
     }
 
     /**
@@ -1620,8 +1616,7 @@ class core_renderer extends renderer_base {
      * @return string the HTML to output.
      */
     public function notification($message, $classes = 'notifyproblem') {
-        return html_writer::tag('div', array('class' =>
-                renderer_base::prepare_classes($classes)), clean_text($message));
+        return html_writer::tag('div', clean_text($message), array('class' => renderer_base::prepare_classes($classes)));
     }
 
     /**
@@ -1689,7 +1684,7 @@ class core_renderer extends renderer_base {
             }
         }
 
-        return html_writer::tag('div', array('class' => 'paging'), $output);
+        return html_writer::tag('div', $output, array('class' => 'paging'));
     }
 
     /**
@@ -1746,7 +1741,7 @@ class core_renderer extends renderer_base {
                 }
                 if ($table->rotateheaders) {
                     // we need to wrap the heading content
-                    $heading->text = html_writer::tag('span', null, $heading->text);
+                    $heading->text = html_writer::tag('span', $heading->text);
                 }
 
                 $attributes = array(
@@ -1759,7 +1754,7 @@ class core_renderer extends renderer_base {
                 if ($heading->header === true) {
                     $tagtype = 'th';
                 }
-                $output .= html_writer::tag($tagtype, $attributes, $heading->text) . "\n";
+                $output .= html_writer::tag($tagtype, $heading->text, $attributes) . "\n";
             }
             $output .= html_writer::end_tag('tr') . "\n";
             $output .= html_writer::end_tag('thead') . "\n";
@@ -1768,7 +1763,7 @@ class core_renderer extends renderer_base {
                 // For valid XHTML strict every table must contain either a valid tr
                 // or a valid tbody... both of which must contain a valid td
                 $output .= html_writer::start_tag('tbody', array('class' => renderer_base::prepare_classes($table->bodyclasses).' empty'));
-                $output .= html_writer::tag('tr', null, html_writer::tag('td', array('colspan'=>count($table->head)), ''));
+                $output .= html_writer::tag('tr', html_writer::tag('td', array('colspan'=>count($table->head)), ''));
                 $output .= html_writer::end_tag('tbody');
             }
         }
@@ -1781,8 +1776,7 @@ class core_renderer extends renderer_base {
 
             foreach ($table->data as $key => $row) {
                 if (($row === 'hr') && ($countcols)) {
-                    $output .= html_writer::tag('td', array('colspan' => $countcols),
-                                                 html_writer::tag('div', array('class' => 'tabledivider'), '')) . "\n";
+                    $output .= html_writer::tag('td', html_writer::tag('div', '', array('class' => 'tabledivider')), array('colspan' => $countcols)) . "\n";
                 } else {
                     // Convert array rows to html_table_rows and cell strings to html_table_cell objects
                     if (!($row instanceof html_table_row)) {
@@ -1843,7 +1837,7 @@ class core_renderer extends renderer_base {
                         if ($cell->header === true) {
                             $tagtype = 'th';
                         }
-                        $output .= html_writer::tag($tagtype, $tdattributes, $cell->text) . "\n";
+                        $output .= html_writer::tag($tagtype, $cell->text, $tdattributes) . "\n";
                     }
                 }
                 $output .= html_writer::end_tag('tr') . "\n";
@@ -1866,7 +1860,7 @@ class core_renderer extends renderer_base {
      * @return string the HTML to output.
      */
     public function skip_link_target($id = null) {
-        return html_writer::tag('span', array('id' => $id), '');
+        return html_writer::tag('span', '', array('id' => $id));
     }
 
     /**
@@ -1882,8 +1876,7 @@ class core_renderer extends renderer_base {
         if ($level < 1 or $level > 6) {
             throw new coding_exception('Heading level must be an integer between 1 and 6.');
         }
-        return html_writer::tag('h' . $level,
-                array('id' => $id, 'class' => renderer_base::prepare_classes($classes)), $text);
+        return html_writer::tag('h' . $level, $text, array('id' => $id, 'class' => renderer_base::prepare_classes($classes)));
     }
 
     /**
@@ -2000,14 +1993,14 @@ class core_renderer extends renderer_base {
             if (!empty($item->id)) {
                 $divattr['id'] = $item->id;
             }
-            $content = html_writer::tag('p', $divattr, $content) . $this->tree_block_contents($item->children);
+            $content = html_writer::tag('p', $content, $divattr) . $this->tree_block_contents($item->children);
             if (!empty($item->preceedwithhr) && $item->preceedwithhr===true) {
-                $content = html_writer::tag('hr', array(), null).$content;
+                $content = html_writer::empty_tag('hr') . $content;
             }
-            $content = html_writer::tag('li', $liattr, $content);
+            $content = html_writer::tag('li', $content, $liattr);
             $lis[] = $content;
         }
-        return html_writer::tag('ul', $attrs, implode("\n", $lis));
+        return html_writer::tag('ul', implode("\n", $lis), $attrs);
     }
 
     /**

@@ -310,7 +310,7 @@ EOF;
                                                                  !$printableformat,
                                                                  true);
             } else {
-                $documentationhtml .= html_writer::tag('strong', array(), $functionname);
+                $documentationhtml .= html_writer::tag('strong', $functionname);
                 $documentationhtml .= $br;
             }
 
@@ -479,7 +479,7 @@ EOF;
         $contents .= $br.$br;
         $contents .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'submit', 'value'=>get_string('wsdocumentation', 'webservice')));
         
-        $htmlloginpage .= html_writer::tag('form', array('method'=>'post', 'target'=>$target), "<div>$contents</div>");
+        $htmlloginpage .= html_writer::tag('form', "<div>$contents</div>", array('method'=>'post', 'target'=>$target));
 
         $htmlloginpage .= html_writer::end_tag('td');
         $htmlloginpage .= html_writer::end_tag('tr');

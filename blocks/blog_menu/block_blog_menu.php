@@ -79,7 +79,7 @@ class block_blog_menu extends block_base {
 
         if (!empty($blogheaders['strview']) && $CFG->useblogassociations) {
             if ($blogheaders['url']->compare($PAGE->url) == URL_MATCH_EXACT) {
-                $menulist[] = html_writer::tag('span', array('class'=>'current'), $blogheaders['strview']);
+                $menulist[] = html_writer::tag('span', $blogheaders['strview'], array('class'=>'current'));
             } else {
                 $menulist[] = html_writer::link($blogheaders['url'], $blogheaders['strview']);
             }
