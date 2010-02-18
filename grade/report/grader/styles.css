@@ -592,7 +592,6 @@ vertical-align:middle;
 }
 
 .ie .right_scroller {
-padding-bottom:15px;
 overflow-y:hidden;
 }
 
@@ -606,11 +605,6 @@ height:2.1em;
 
 .ie div.left_scroller td {
 height:4.5em;
-}
-
-.ie div.left_scroller {
-margin-top:-0.6em;
-margin-right: -0.6em;
 }
 
 .ie6 div.right_scroller {
