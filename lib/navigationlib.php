@@ -2493,6 +2493,7 @@ class settings_navigation extends navigation_node {
                 $settingskey = $this->load_user_settings(SITEID);
                 break;
             case CONTEXT_COURSE:
+            case CONTEXT_BLOCK:
                 if ($this->page->course->id!==SITEID) {
                     $coursekey = $this->load_course_settings();
                     $coursenode = $this->get($coursekey);

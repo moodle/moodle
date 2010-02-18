@@ -1057,7 +1057,7 @@ class block_manager {
         }
 
         $editpage = new moodle_page();
-        $editpage->set_pagelayout('base');
+        $editpage->set_pagelayout('admin');
         $editpage->set_course($this->page->course);
         $editpage->set_context($block->context);
         $editurlbase = str_replace($CFG->wwwroot . '/', '/', $this->page->url->out_omit_querystring());
@@ -1171,7 +1171,7 @@ class block_manager {
 
             $editpage->set_title($strheading);
             $editpage->set_heading($strheading);
-
+            $editpage->navbar->add($strheading);
             $output = $editpage->get_renderer('core');
             echo $output->header();
             echo $output->heading($strheading, 2);
