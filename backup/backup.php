@@ -29,18 +29,18 @@
 
     if (!empty($id)) {
         require_login($id);
-        if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $id))) {
+        if (!has_capability('moodle/backup:backupcourse', get_context_instance(CONTEXT_COURSE, $id))) {
             print_error('cannotuseadminadminorteacher', 'error', $loginurl);
         }
     } else {
         require_login();
-        if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM))) {
+        if (!has_capability('moodle/backup:backupcourse', get_context_instance(CONTEXT_SYSTEM))) {
             print_error('cannotuseadmin', 'error', $loginurl);
         }
     }
 
     if (!empty($to)) {
-        if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $to))) {
+        if (!has_capability('moodle/backup:backupcourse', get_context_instance(CONTEXT_COURSE, $to))) {
             print_error('cannotuseadminadminorteacher', 'error', $loginurl);
         }
     }
@@ -99,7 +99,7 @@
     }
 
     //Print header
-    if (has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM))) {
+    if (has_capability('moodle/backup:backupcourse', get_context_instance(CONTEXT_SYSTEM))) {
         $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php'));
         $PAGE->navbar->add($strcoursebackup, new moodle_url('/backup/backup.php'));
         $PAGE->navbar->add("$course->fullname ($course->shortname)");

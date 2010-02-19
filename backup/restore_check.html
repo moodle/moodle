@@ -206,12 +206,12 @@
 
     //Check admin
     if (!empty($id)) {
-        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))) {
+        if (!has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_COURSE, $id))) {
             print_error("cannotuseadminadminorteacher", '', $loginurl);
         }
         $restoreuserinfo = has_capability('moodle/restore:userinfo', get_context_instance(CONTEXT_COURSE, $id));
     } else {
-        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM))) {
+        if (!has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_SYSTEM))) {
             print_error("cannotuseadmin", '', $loginurl);
         }
         $restoreuserinfo = has_capability('moodle/restore:userinfo', get_context_instance(CONTEXT_SYSTEM));
@@ -228,7 +228,7 @@
     }
 
     // Get all the courses the user is able to restore to
-    $mycourses = get_user_courses_bycap($USER->id, 'moodle/site:restore', $accessinfo, true, 'c.sortorder ASC',  array('id', 'fullname', 'shortname', 'visible'));
+    $mycourses = get_user_courses_bycap($USER->id, 'moodle/restore:restorecourse', $accessinfo, true, 'c.sortorder ASC',  array('id', 'fullname', 'shortname', 'visible'));
 
     // Calculate if the user can create courses
     $cancreatecourses = user_can_create_courses();
@@ -251,7 +251,7 @@
             echo $OUTPUT->heading(get_string("choosecourse"));
             echo $OUTPUT->box_start();
             foreach ($courses as $course) {
-                if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                if (!has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_COURSE, $course->id))) {
                     continue;
                 }
                 if (empty($course->visible)) {
@@ -271,7 +271,7 @@
         //Final access control check
         if (empty($restore->course_id) and !$cancreatecourses) {
             print_error("cannotrestoreadminorcreator");
-        } else if (!empty($restore->course_id) and !has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $restore->course_id))) {
+        } else if (!empty($restore->course_id) and !has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_COURSE, $restore->course_id))) {
             print_error("cannotrestoreadminoredit");
         }
         $show_continue_button = true;
@@ -326,8 +326,8 @@
             }
         }
 
-        // Re-enforce 'moodle/site:restore' at system context to be able to restore all users
-        if ($restore->users == 0 and !has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM))) {
+        // Re-enforce 'moodle/restore:restorecourse' at system context to be able to restore all users
+        if ($restore->users == 0 and !has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_SYSTEM))) {
             $restore->users = 1; // users => course
         }
 

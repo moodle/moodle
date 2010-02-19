@@ -10,18 +10,18 @@
     $backupuserinfo = false;
 
     if (!empty($course->id)) {
-        if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $course->id))) {
+        if (!has_capability('moodle/backup:backupcourse', get_context_instance(CONTEXT_COURSE, $course->id))) {
             if (empty($to)) {
                 print_error("cannotuseadminadminorteacher", '', $loginurl);
             } else {
-                if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $to))) {
+                if (!has_capability('moodle/backup:backupcourse', get_context_instance(CONTEXT_COURSE, $to))) {
                     print_error("cannotuseadminadminorteacher", '', $loginurl);
                 }
             }
         }
         $backupuserinfo = has_capability('moodle/backup:userinfo', get_context_instance(CONTEXT_COURSE, $course->id));
     } else {
-        if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM))) {
+        if (!has_capability('moodle/backup:backupcourse', get_context_instance(CONTEXT_SYSTEM))) {
             print_error("cannotuseadmin", '', $loginurl);
         }
         $backupuserinfo = has_capability('moodle/backup:userinfo', get_context_instance(CONTEXT_SYSTEM));
@@ -71,8 +71,8 @@
 
     }
 
-    // Re-enforce 'moodle/site:backup' at system context to be able to backup all users
-    if ($backupprefs->backup_users == 0 and !has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM))) {
+    // Re-enforce 'moodle/backup:backupcourse' at system context to be able to backup all users
+    if ($backupprefs->backup_users == 0 and !has_capability('moodle/backup:backupcourse', get_context_instance(CONTEXT_SYSTEM))) {
         $backupprefs->backup_users = 1; // users => course
     }
 

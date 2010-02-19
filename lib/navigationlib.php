@@ -2917,13 +2917,13 @@ class settings_navigation extends navigation_node {
         }
 
         // Backup this course
-        if (has_capability('moodle/site:backup', $course->context)) {
+        if (has_capability('moodle/backup:backupcourse', $course->context)) {
             $url = new moodle_url('/backup/backup.php', array('id'=>$course->id));
             $coursenode->add(get_string('backup'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/backup', ''));
         }
 
         // Restore to this course
-        if (has_capability('moodle/site:restore', $course->context)) {
+        if (has_capability('moodle/restore:restorecourse', $course->context)) {
             $url = new moodle_url('/files/index.php', array('id'=>$course->id, 'wdir'=>'/backupdata'));
             $coursenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
         }

@@ -370,7 +370,7 @@ class file_browser {
 
         $fs = get_file_storage();
 
-        if (!has_capability('moodle/site:backup', $context) and !has_capability('moodle/site:restore', $context)) {
+        if (!has_capability('moodle/backup:backupcourse', $context) and !has_capability('moodle/restore:restorecourse', $context)) {
             return null;
         }
         if (is_null($itemid)) {

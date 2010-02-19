@@ -6,7 +6,7 @@
 
     require_login();
 
-    require_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM));
+    require_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_SYSTEM));
 
     $site = get_site();
 

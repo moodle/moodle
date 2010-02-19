@@ -32,12 +32,12 @@
 
     //Check admin
     if (!empty($id)) {
-        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))) {
+        if (!has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_COURSE, $id))) {
             print_error('cannotuseadminadminorteacher', '', $loginurl);
         }
         $restoreuserinfo = has_capability('moodle/restore:userinfo', get_context_instance(CONTEXT_COURSE, $id));
     } else {
-        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM))) {
+        if (!has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_SYSTEM))) {
             print_error('cannotuseadmin', '', $loginurl);
         }
         $restoreuserinfo = has_capability('moodle/restore:userinfo', get_context_instance(CONTEXT_SYSTEM));
@@ -212,10 +212,10 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         $accessinfo = get_user_access_sitewide($USER->id);
     }
 
-    $mycourses = get_user_courses_bycap($USER->id, 'moodle/site:restore', $accessinfo, true);
+    $mycourses = get_user_courses_bycap($USER->id, 'moodle/restore:restorecourse', $accessinfo, true);
 
     // if the user can restore to current course, grant the "current" options
-    if (has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))){
+    if (has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_COURSE, $id))){
         $restore_restoreto_options[RESTORETO_CURRENT_DELETING] = get_string("currentcoursedeleting");
         $restore_restoreto_options[RESTORETO_CURRENT_ADDING] = get_string("currentcourseadding");
     }
@@ -446,8 +446,8 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         //If some user is present in the backup file
         if (($info->backup_users == "all" or $info->backup_users == "course") and $restoreuserinfo) {
             $user_options = array();
-            //If all users are in the backup file and user has 'moodle/site:restore' at system level
-            if ($info->backup_users == "all" and has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM))) {
+            //If all users are in the backup file and user has 'moodle/restore:restorecourse' at system level
+            if ($info->backup_users == "all" and has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_SYSTEM))) {
                 $user_options[0] = get_string("all");
             }
             $user_options[1] = get_string("course");

@@ -359,14 +359,14 @@
                     echo $spacer;
                 }
 
-                if (has_capability('moodle/site:backup', $coursecontext)) {
+                if (has_capability('moodle/backup:backupcourse', $coursecontext)) {
                     echo '<a title="'.$strbackup.'" href="../backup/backup.php?id='.$acourse->id.'">'.
                             '<img src="'.$OUTPUT->pix_url('t/backup') . '" class="iconsmall" alt="'.$strbackup.'" /></a> ';
                 } else {
                     echo $spacer;
                 }
 
-                if (has_capability('moodle/site:restore', $coursecontext)) {
+                if (has_capability('moodle/restore:restorecourse', $coursecontext)) {
                     echo '<a title="'.$strrestore.'" href="../files/index.php?id='.$acourse->id.
                          '&amp;wdir=/backupdata">'.
                          '<img src="'.$OUTPUT->pix_url('t/restore') . '" class="iconsmall" alt="'.$strrestore.'" /></a> ';

@@ -64,9 +64,9 @@ class filelib_test extends UnitTestCaseUsingDatabase {
         $DB->insert_record('capabilities',
             array('id' => 45, 'name' => 'moodle/course:update', 'cattype' => 'write', 'contextlevel' => 50, 'component' => 'moodle', 'riskbitmask' => 4));
         $DB->insert_record('capabilities',
-            array('id' => 14, 'name' => 'moodle/site:backup', 'cattype' => 'write', 'contextlevel' => 50, 'component' => 'moodle', 'riskbitmask' => 28));
+            array('id' => 14, 'name' => 'moodle/backup:backupcourse', 'cattype' => 'write', 'contextlevel' => 50, 'component' => 'moodle', 'riskbitmask' => 28));
         $DB->insert_record('capabilities',
-            array('id' => 17, 'name' => 'moodle/site:restore', 'cattype' => 'write', 'contextlevel' => 50, 'component' => 'moodle', 'riskbitmask' => 28));
+            array('id' => 17, 'name' => 'moodle/restore:restorecourse', 'cattype' => 'write', 'contextlevel' => 50, 'component' => 'moodle', 'riskbitmask' => 28));
         $DB->insert_record('capabilities',
             array('id' => 52, 'name' => 'moodle/course:managefiles', 'cattype' => 'write', 'contextlevel' => 50, 'component' => 'moodle', 'riskbitmask' => 4));
         $DB->insert_record('capabilities',

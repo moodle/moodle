@@ -3,7 +3,7 @@
 // This file defines settingpages and externalpages under the "courses" category
 
 if ($hassiteconfig
- or has_capability('moodle/site:backup', $systemcontext)
+ or has_capability('moodle/backup:backupcourse', $systemcontext)
  or has_capability('moodle/category:manage', $systemcontext)
  or has_capability('moodle/course:create', $systemcontext)
  or has_capability('moodle/site:approvecourse', $systemcontext)) { // speedup for non-admins, add all caps used on this page
@@ -133,7 +133,7 @@ if ($hassiteconfig
     }
 
 /// "backups" settingpage
-    $temp = new admin_settingpage('backups', get_string('backups','admin'), 'moodle/site:backup');
+    $temp = new admin_settingpage('backups', get_string('backups','admin'), 'moodle/backup:backupcourse');
     $temp->add(new admin_setting_configcheckbox('backup/backup_sche_modules', get_string('includemodules'), get_string('backupincludemoduleshelp'), 0));
     $temp->add(new admin_setting_configcheckbox('backup/backup_sche_withuserdata', get_string('includemoduleuserdata'), get_string('backupincludemoduleuserdatahelp'), 0));
     $temp->add(new admin_setting_configcheckbox('backup/backup_sche_metacourse', get_string('metacourse'), get_string('backupmetacoursehelp'), 0));

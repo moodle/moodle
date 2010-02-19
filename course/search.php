@@ -321,13 +321,13 @@
                 }
 
                 // checks whether user can do site backup
-                if (has_capability('moodle/site:backup', $coursecontext)) {
+                if (has_capability('moodle/backup:backupcourse', $coursecontext)) {
                     echo "<a title=\"".get_string("backup")."\" href=\"../backup/backup.php?id=$course->id\">\n<img".
                         " src=\"" . $OUTPUT->pix_url('t/backup') . "\" class=\"iconsmall\" alt=\"".get_string("backup")."\" /></a>\n ";
                 }
 
                 // checks whether user can do restore
-                if (has_capability('moodle/site:restore', $coursecontext)) {
+                if (has_capability('moodle/restore:restorecourse', $coursecontext)) {
                     echo "<a title=\"".get_string("restore")."\" href=\"../files/index.php?id=$course->id&amp;wdir=/backupdata\">\n<img".
                         " src=\"" . $OUTPUT->pix_url('t/restore') . "\" class=\"iconsmall\" alt=\"".get_string("restore")."\" /></a>\n ";
                 }

@@ -78,7 +78,7 @@
             $from_form->exportfilename = default_export_filename($COURSE, $category);
         }
         $qformat->setFilename($from_form->exportfilename);
-        $canaccessbackupdata = has_capability('moodle/site:backup', $contexts->lowest());
+        $canaccessbackupdata = has_capability('moodle/backup:backupcourse', $contexts->lowest());
         $qformat->set_can_access_backupdata($canaccessbackupdata);
         $qformat->setCattofile(!empty($from_form->cattofile));
         $qformat->setContexttofile(!empty($from_form->contexttofile));

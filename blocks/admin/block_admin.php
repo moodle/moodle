@@ -109,13 +109,13 @@ class block_admin extends block_list {
         }
 
     /// Backup this course
-        if ($course->id!==SITEID and has_capability('moodle/site:backup', $this->page->context)) {
+        if ($course->id!==SITEID and has_capability('moodle/backup:backupcourse', $this->page->context)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/backup/backup.php?id='.$course->id.'">'.get_string('backup').'</a>';
             $this->content->icons[]='<img src="'.$OUTPUT->pix_url('i/backup') . '" class="icon" alt="" />';
         }
 
     /// Restore to this course
-        if ($course->id !== SITEID and has_capability('moodle/site:restore', $this->page->context)) {
+        if ($course->id !== SITEID and has_capability('moodle/restore:restorecourse', $this->page->context)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.$course->id.'&amp;wdir=/backupdata">'.get_string('restore').'</a>';
             $this->content->icons[]='<img src="'.$OUTPUT->pix_url('i/restore') . '" class="icon" alt="" />';
         }

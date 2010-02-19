@@ -8,8 +8,8 @@ if (!during_initial_install()) { //do not use during installation
     if ($hassiteconfig or has_any_capability(array(
             'moodle/course:update',
             'moodle/role:assign',
-            'moodle/site:restore',
-            'moodle/site:backup',
+            'moodle/restore:restorecourse',
+            'moodle/backup:backupcourse',
             'moodle/course:managefiles',
             'moodle/question:add',
             'moodle/question:editmine',
@@ -65,9 +65,9 @@ if (!during_initial_install()) { //do not use during installation
 
         $ADMIN->add('frontpage', new admin_externalpage('frontpagefilters', get_string('frontpagefilters', 'admin'), "$CFG->wwwroot/filter/manage.php?contextid=" . $frontpagecontext->id, 'moodle/filter:manage', false, $frontpagecontext));
 
-        $ADMIN->add('frontpage', new admin_externalpage('frontpagebackup', get_string('frontpagebackup', 'admin'), $CFG->wwwroot.'/backup/backup.php?id='.SITEID, 'moodle/site:backup', false, $frontpagecontext));
+        $ADMIN->add('frontpage', new admin_externalpage('frontpagebackup', get_string('frontpagebackup', 'admin'), $CFG->wwwroot.'/backup/backup.php?id='.SITEID, 'moodle/backup:backupcourse', false, $frontpagecontext));
 
-        $ADMIN->add('frontpage', new admin_externalpage('frontpagerestore', get_string('frontpagerestore', 'admin'), $CFG->wwwroot.'/files/index.php?id='.SITEID.'&amp;wdir=/backupdata', 'moodle/site:restore', false, $frontpagecontext));
+        $ADMIN->add('frontpage', new admin_externalpage('frontpagerestore', get_string('frontpagerestore', 'admin'), $CFG->wwwroot.'/files/index.php?id='.SITEID.'&amp;wdir=/backupdata', 'moodle/restore:restorecourse', false, $frontpagecontext));
 
         $questioncapabilites = array(
                 'moodle/question:add',

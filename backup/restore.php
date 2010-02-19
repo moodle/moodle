@@ -75,18 +75,18 @@
 
     if (!empty($id)) {
         require_login($id);
-        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))) {
+        if (!has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_COURSE, $id))) {
             if (empty($to)) {
                 print_error("cannotuseadminadminorteacher", '', $loginurl);
             } else {
-                if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $to))
+                if (!has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_COURSE, $to))
                     && !has_capability('moodle/site:import',  get_context_instance(CONTEXT_COURSE, $to))) {
                     print_error("cannotuseadminadminorteacher", '', $loginurl);
                 }
             }
         }
     } else {
-        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM))) {
+        if (!has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_SYSTEM))) {
             print_error("cannotuseadmin", '', $loginurl);
         }
     }
