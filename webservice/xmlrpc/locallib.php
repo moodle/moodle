@@ -56,7 +56,6 @@ class webservice_xmlrpc_server extends webservice_zend_server {
      * @return array $response the cleaned response
      */
     protected function clean_response($response) {
-        $server = new Zend_XmlRpc_Server();
         //check that the response is not an exception/server fault
         if (!($response instanceof Zend_XmlRpc_Server_Fault)) {
             $methodname = $this->zend_server->getRequest()->getMethod(); //retrieve the method name called by the client
