@@ -170,6 +170,13 @@ class navigation_node {
             }
             if (array_key_exists('icon', $properties)) {
                 $this->icon = $properties['icon'];
+                if ($this->icon instanceof pix_icon) {
+                    if (empty($this->icon->attributes['class'])) {
+                        $this->icon->attributes['class'] = 'navicon';
+                    } else {
+                        $this->icon->attributes['class'] .= ' navicon';
+                    }
+                }
             }
             if (array_key_exists('type', $properties)) {
                 $this->type = $properties['type'];
@@ -411,7 +418,7 @@ class navigation_node {
 
         if ($this->icon instanceof renderable) {
             $icon = $OUTPUT->render($this->icon);
-            $content = $icon.$content; // use CSS for spacing of icons
+            $content = $icon.'&nbsp;'.$content; // use CSS for spacing of icons
         } else if ($this->helpbutton !== null) {
             $content = trim($this->helpbutton).html_writer::tag('span', $content, array('class'=>'clearhelpbutton'));
         }
@@ -3426,8 +3433,25 @@ class navigation_json {
         $attributes['name'] = $child->text;
         $attributes['type'] = $child->type;
         $attributes['key'] = $child->key;
-        $attributes['icon'] = $child->icon;
         $attributes['class'] = $child->get_css_type();
+
+        if ($child->icon instanceof pix_icon) {
+            $attributes['icon'] = array(
+                'component' => $child->icon->component,
+                'pix' => $child->icon->pix,
+            );
+            foreach ($child->icon->attributes as $key=>$value) {
+                if ($key == 'class') {
+                    $attributes['icon']['classes'] = explode(' ', $value);
+                } else if (!array_key_exists($key, $attributes['icon'])) {
+                    $attributes['icon'][$key] = $value;
+                }
+
+            }
+        } else if (!empty($child->icon)) {
+            $attributes['icon'] = (string)$child->icon;
+        }
+
         if ($child->forcetitle || $child->title !== $child->text) {
             $attributes['title'] = htmlentities($child->title);
         }
@@ -3448,10 +3472,6 @@ class navigation_json {
         }
         $attributes['hidden'] = ($child->hidden);
         $attributes['haschildren'] = (count($child->children)>0 || $child->type == navigation_node::TYPE_CATEGORY);
-
-        if ($attributes['icon'] instanceof pix_icon) {
-            $attributes['icon'] = $OUTPUT->pix_url($attributes['icon']->pix, $attributes['icon']->component);
-        }
 
         if (count($child->children)>0) {
             $attributes['children'] = array();

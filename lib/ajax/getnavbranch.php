@@ -94,6 +94,6 @@ if (empty($branch) || $branch->nodetype !== navigation_node::NODETYPE_BRANCH) {
 // Prepare an XML converter for the branch
 $converter->set_expandable($expandable);
 // Set XML headers
-header('Content-type: text/json');
+header('Content-type: text/plain');
 // Convert and output the branch as XML
 echo $converter->convert($branch);

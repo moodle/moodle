@@ -283,21 +283,35 @@ M.block_navigation.classes.branch.prototype.inject_into_dom = function(element) 
         branchp.setAttribute('id', this.id);
     }
 
+    // Prepare the icon, should be an object representing a pix_icon
     var branchicon = false;
     if (this.icon != null) {
-        branchicon = this.tree.Y.Node.create('<img src="'+this.icon+'" alt="" />');
-        this.name = ' '+this.name;
+        branchicon = this.tree.Y.Node.create('<img src="'+M.util.image_url(this.icon.pix, this.icon.component)+'" alt="" />');
+        if (this.icon.alt) {
+            branchicon.setAttribute('alt', this.icon.alt);
+        }
+        if (this.icon.title) {
+            branchicon.setAttribute('alt', this.icon.title);
+        }
+        if (this.icon.classes) {
+            for (var i in this.icon.classes) {
+                branchicon.addClass(this.icon.classes[i]);
+            }
+        }
+        this.name = '&nbsp;'+this.name;
     }
+    
     if (this.link === null) {
         if (branchicon) {
             branchp.appendChild(branchicon);
         }
         branchp.append(this.name.replace(/\n/g, '<br />'));
     } else {
-        var branchlink = this.tree.Y.Node.create('<a title="'+this.title+'" href="'+this.link+'">'+this.name.replace(/\n/g, '<br />')+'</a>');
+        var branchlink = this.tree.Y.Node.create('<a title="'+this.title+'" href="'+this.link+'"></a>');
         if (branchicon) {
             branchlink.appendChild(branchicon);
         }
+        branchlink.append(this.name.replace(/\n/g, '<br />'));
         if (this.hidden) {
             branchlink.addClass('dimmed');
         }
