@@ -145,7 +145,7 @@ class external_api {
     public static function validate_parameters(external_description $description, $params) {
         if ($description instanceof external_value) {
             if (is_array($params) or is_object($params)) {
-                throw new invalid_parameter_exception('Scalar type expected, array or object received.');
+                throw new invalid_parameter_exception(get_string('errorscalartype', 'webservice'));
             }
 
             if ($description->type == PARAM_BOOL) {
@@ -154,17 +154,17 @@ class external_api {
                     return (bool)$params;
                 }
             }
-            return validate_param($params, $description->type, $description->allownull, 'Invalid external api parameter');
+            return validate_param($params, $description->type, $description->allownull, get_string('errorinvalidparamsapi', 'webservice'));
      
         } else if ($description instanceof external_single_structure) {
             if (!is_array($params)) {
-                throw new invalid_parameter_exception('Only arrays accepted.');
+                throw new invalid_parameter_exception(get_string('erroronlyarray', 'webservice'));
             }
             $result = array();
             foreach ($description->keys as $key=>$subdesc) {
                 if (!array_key_exists($key, $params)) {
                     if ($subdesc->required == VALUE_REQUIRED) {
-                        throw new invalid_parameter_exception('Missing required key in single structure: '.$key);
+                        throw new invalid_parameter_exception(get_string('errormissingkey', 'webservice', $key));
                     }
                     if ($subdesc instanceof external_value) {
                             if ($subdesc->required == VALUE_DEFAULT) {
@@ -186,13 +186,13 @@ class external_api {
                 unset($params[$key]);
             }
             if (!empty($params)) {
-                throw new invalid_parameter_exception('Unexpected keys detected in parameter array.');
+                throw new invalid_parameter_exception(get_string('errorunexpectedkey', 'webservice'));
             }
             return $result;
 
         } else if ($description instanceof external_multiple_structure) {
             if (!is_array($params)) {
-                throw new invalid_parameter_exception('Only arrays accepted.');
+                throw new invalid_parameter_exception(get_string('erroronlyarray', 'webservice'));
             }
             $result = array();
             foreach ($params as $param) {
@@ -201,7 +201,7 @@ class external_api {
             return $result;
 
         } else {
-            throw new invalid_parameter_exception('Invalid external api description.');
+            throw new invalid_parameter_exception(get_string('errorinvalidparamsdesc', 'webservice'));
         }
     }
 

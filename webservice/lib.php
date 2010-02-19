@@ -254,17 +254,16 @@ abstract class webservice_zend_server extends webservice_server {
 
         // tell server what functions are available
         $this->zend_server->setClass($this->service_class);
-
+        
         //log the web service request
         add_to_log(1, 'webservice', '', '' , $this->zend_class." ".getremoteaddr() , 0, $this->userid);
 
         // execute and return response, this sends some headers too
         $response = $this->zend_server->handle();
 
-/*
-        error_log(ob_get_clean());
-        error_log($response);
-*/
+        //hook for cleaning response (if necessary)
+        $response = $this->clean_response($response);
+
         // session cleanup
         $this->session_cleanup();
 
@@ -546,6 +545,15 @@ class '.$classname.' {
         } else {
             // close emulated session if used
         }
+    }
+
+    /**
+     * Hook needed for cleaning the response (xml-rpc, soap,...).
+     * @param array $response the response to clean
+     * @return array $response the cleaned response
+     */
+    protected function clean_response($response) {
+        return $response;
     }
 
 }
