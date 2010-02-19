@@ -167,7 +167,7 @@ $capabilities = array(
         'clonepermissionsfrom' =>  'moodle/site:backup'
     ),
 
-    'moodle/site:backupdownload' => array(
+    'moodle/backup:downloadfile' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
 
@@ -178,21 +178,7 @@ $capabilities = array(
             'admin' => CAP_ALLOW
         ),
 
-        'clonepermissionsfrom' =>  'moodle/site:backup'
-    ),
-
-    'moodle/site:backupupload' => array(
-
-        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
-            'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        ),
-
-        'clonepermissionsfrom' =>  'moodle/site:restore'
+        'clonepermissionsfrom' =>  'moodle/site:backupdownload'
     ),
 
     'moodle/backup:userinfo' => array(
@@ -218,6 +204,20 @@ $capabilities = array(
         ),
 
         'clonepermissionsfrom' =>  'moodle/site:restore'
+    ),
+
+    'moodle/restore:uploadfile' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        ),
+
+        'clonepermissionsfrom' =>  'moodle/site:backupupload'
     ),
 
     'moodle/restore:createuser' => array(

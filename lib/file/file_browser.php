@@ -387,8 +387,8 @@ class file_browser {
             }
         }
 
-        $downloadable = has_capability('moodle/site:backupdownload', $context);
-        $uploadable   = has_capability('moodle/site:backupupload', $context);
+        $downloadable = has_capability('moodle/backup:downloadfile', $context);
+        $uploadable   = has_capability('moodle/backup:uploadfile', $context);
         return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areabackup', 'repository'), false, $downloadable, $uploadable, false);
 
     }

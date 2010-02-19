@@ -281,7 +281,7 @@ if (!empty($sendflashupgrader) && (($userplayerversion[0] <  $requiredplayervers
 
     if ($filearea === 'course_backup') {
         require_login($course);
-        require_capability('moodle/site:backupdownload', $context);
+        require_capability('moodle/backup:downloadfile', $context);
 
         $relativepath = '/'.implode('/', $args);
         $fullpath = $context->id.'course_backup0'.$relativepath;
