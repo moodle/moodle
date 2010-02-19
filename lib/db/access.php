@@ -188,10 +188,44 @@ $moodle_capabilities = array(
         'legacy' => array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
+<<<<<<< access.php
+        ),
+
+        'clonepermissionsfrom' =>  'moodle/site:restore'
+    ),
+
+<<<<<<< access.php
+    'moodle/backup:userinfo' => array(
+
+        'riskbitmask' => RISK_PERSONAL | RISK_CONFIG,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'admin' => CAP_ALLOW
         )
     ),
 
+=======
+    'moodle/backup:userinfo' => array(
+
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'admin' => CAP_ALLOW
+=======
+>>>>>>> 1.75.2.23
+        )
+    ),
+
+<<<<<<< access.php
+>>>>>>> 1.113
+    'moodle/site:restore' => array(
+=======
     'moodle/restore:createuser' => array(
+>>>>>>> 1.75.2.23
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL,
 
