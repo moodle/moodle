@@ -2929,7 +2929,7 @@ class settings_navigation extends navigation_node {
         }
 
         // Import data from other courses
-        if (has_capability('moodle/site:import', $course->context)) {
+        if (has_capability('moodle/restore:restoretargetimport', $course->context)) {
             $url = new moodle_url('/course/import.php', array('id'=>$course->id));
             $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
         }

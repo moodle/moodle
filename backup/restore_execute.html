@@ -48,7 +48,7 @@
                 print_error("cannotuseadminadminorteacher", '', $loginurl);
             } else {
                 if (!has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_COURSE, $to))
-                    && !has_capability('moodle/site:import',  get_context_instance(CONTEXT_COURSE, $to))) {
+                    && !has_capability('moodle/restore:restoretargetimport',  get_context_instance(CONTEXT_COURSE, $to))) {
                     print_error("cannotuseadminadminorteacher", '', $loginurl);
                 }
             }

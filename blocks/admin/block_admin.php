@@ -121,7 +121,7 @@ class block_admin extends block_list {
         }
 
     /// Import data from other courses
-        if ($course->id !== SITEID and has_capability('moodle/site:import', $this->page->context)) {
+        if ($course->id !== SITEID and has_capability('moodle/restore:restoretargetimport', $this->page->context)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/import.php?id='.$course->id.'">'.get_string('import').'</a>';
             $this->content->icons[]='<img src="'.$OUTPUT->pix_url('i/restore') . '" class="icon" alt="" />';
         }

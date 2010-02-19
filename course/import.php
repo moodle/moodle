@@ -35,7 +35,7 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
 
 require_login($course->id);
 
-require_capability('moodle/site:import', get_context_instance(CONTEXT_COURSE, $id));
+require_capability('moodle/restore:restoretargetimport', get_context_instance(CONTEXT_COURSE, $id));
 
 /// Always we begin an import, we delete all backup/restore/import session structures
 if (isset($SESSION->course_header)) {
