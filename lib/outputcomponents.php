@@ -738,7 +738,7 @@ class html_writer {
      * @param array $attributes - html select element attributes
      * @return string HRML fragment
      */
-    public function select_yes_no($name, $selected=true, array $attributes = null) {
+    public static function select_yes_no($name, $selected=true, array $attributes = null) {
         $options = array('1'=>get_string('yes'), '0'=>get_string('no'));
         return self::select($options, $name, $selected, null, $attributes);
     }
