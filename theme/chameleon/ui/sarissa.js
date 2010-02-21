@@ -266,7 +266,8 @@ else{ /* end IE initialization, try to deal with real browsers now ;-) */
             * <li>3 == INTERACTIVE,</li>
             * <li>4 == COMPLETED</li></ul>
             */
-            XMLDocument.prototype.readyState = 0;
+            // commented out to solve a FF 3.6 issue, MDL-21606
+        	// XMLDocument.prototype.readyState = 0;
             /**
             * <p>Emulate IE's parseError attribute</p>
             */
