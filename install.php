@@ -533,6 +533,7 @@ if ($nextstage == SAVE) {
     $str .= 'unset($CFG);'."\r\n";
     $str .= "\r\n";
 
+    $str .= '$CFG = new stdClass();'."\r\n";
     $str .= '$CFG->dbtype    = \''.$INSTALL['dbtype']."';\r\n";
     $str .= '$CFG->dbhost    = \''.addslashes($INSTALL['dbhost'])."';\r\n";
     if (!empty($INSTALL['dbname'])) {
