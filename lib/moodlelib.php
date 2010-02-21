@@ -7773,15 +7773,15 @@ function unzip_show_status($list, $removepath, $removepath2) {
             echo "<tr>";
             $item['filename'] = str_replace(cleardoubleslashes($removepath).'/', "", $item['filename']);
             $item['filename'] = str_replace(cleardoubleslashes($removepath2).'/', "", $item['filename']);
-            print_cell("left", s(clean_param($item['filename'], PARAM_PATH)));
+            echo '<td align="left" style="white-space:nowrap ">'.s(clean_param($item['filename'], PARAM_PATH)).'</td>';
             if (! $item['folder']) {
-                print_cell("right", display_size($item['size']));
+                echo '<td align="right" style="white-space:nowrap ">'.display_size($item['size']).'</td>';
             } else {
                 echo "<td>&nbsp;</td>";
             }
             $filedate  = userdate($item['mtime'], get_string("strftimedatetime"));
-            print_cell("right", $filedate);
-            print_cell("right", $item['status']);
+            echo '<td align="right" style="white-space:nowrap ">'.$filedate.'</td>';
+            echo '<td align="right" style="white-space:nowrap ">'.$item['status'].'</td>';
             echo "</tr>";
         }
         echo "</table>";
