@@ -234,7 +234,7 @@ foreach($hosts as $host) {
     $hosturl = new moodle_url($baseurl, array('hostid' => $host->id));
     // process all hosts first since it's the easiest
     if ($host->id == $CFG->mnet_all_hosts_id) {
-        $table->data[] = array(html_writer::tag('a', array('href'=>$hosturl), $host->name), '', '', '');
+        $table->data[] = array(html_writer::tag('a', $host->name, array('href'=>$hosturl)), '', '', '');
         continue;
     }
 
