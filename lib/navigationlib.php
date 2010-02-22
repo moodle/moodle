@@ -120,6 +120,8 @@ class navigation_node {
     protected $namedtypes = array(0=>'system',10=>'category',20=>'course',30=>'structure',40=>'activity',50=>'resource',60=>'custom',70=>'setting', 80=>'user');
     /** @var moodle_url */
     protected static $fullmeurl = null;
+    /** @var bool toogles auto matching of active node */
+    public static $autofindactive = true;
 
     /**
      * Establish the node, with either text string or array or properites
@@ -166,7 +168,9 @@ class navigation_node {
                 if (is_string($this->action)) {
                     $this->action = new moodle_url($this->action);
                 }
-                $this->check_if_active();
+                if (self::$autofindactive) {
+                    $this->check_if_active();
+                }
             }
             if (array_key_exists('icon', $properties)) {
                 $this->icon = $properties['icon'];
@@ -721,6 +725,7 @@ class navigation_node {
         } else {
             $key = array_shift($keys);
             $child = $this->get($key);
+            
             if ($child !== false) {
                 return $child->get_by_path($keys);
             }
@@ -2459,6 +2464,8 @@ class settings_navigation extends navigation_node {
     protected $cache;
     /** @var page object */
     protected $page;
+    /** @var adminsection string */
+    protected $adminsection;
     /**
      * Sets up the object with basic settings and preparse it for use
      */
@@ -2620,25 +2627,31 @@ class settings_navigation extends navigation_node {
         // Check if we are just starting to generate this navigation.
         if ($referencebranch === null) {
 
+            // Require the admin lib then get an admin structure
             if (!function_exists('admin_get_root')) {
                 require_once($CFG->dirroot.'/lib/adminlib.php');
             }
             $adminroot = admin_get_root(false, false);
-            $branchkey = $this->add(get_string('administrationsite'), null, self::TYPE_SETTING);
+            // This is the active section identifier
+            $this->adminsection = $this->page->url->param('section');
+            
+            // Disable the navigation from automatically finding the active node
+            navigation_node::$autofindactive = false;
+            $branchkey = $this->add(get_string('administrationsite'), null, self::TYPE_SETTING, null, 'root');
             $referencebranch = $this->get($branchkey);
             foreach ($adminroot->children as $adminbranch) {
                 $this->load_administration_settings($referencebranch, $adminbranch);
             }
+            navigation_node::$autofindactive = true;
 
-            if (!$this->contains_active_node()) {
-                $section = $this->page->url->param('section');
-                if ($current = $adminroot->locate($section, true)) {
-                    if ($child = $this->find_child($current->name, self::TYPE_SETTING)) {
-                        $child->make_active();
-                    }
+            // Use the admin structure to locate the active page
+            if ($current = $adminroot->locate($this->adminsection, true)) {
+                // Get the active node using the path in the active page
+                if ($child = $this->get_by_path(array_reverse($current->path))) {
+                    // Make the node active!
+                    $child->make_active();
                 }
             }
-
             return $branchkey;
         } else if ($adminbranch->check_access()) {
             // We have a reference branch that we can access and is not hidden `hurrah`
@@ -2656,7 +2669,11 @@ class settings_navigation extends navigation_node {
             $reference = $referencebranch->get($branchkey);
 
             if ($adminbranch->is_hidden()) {
-                $reference->display = false;
+                if (($adminbranch instanceof admin_externalpage || $adminbranch instanceof admin_settingpage) && $adminbranch->name == $this->adminsection) {
+                    $reference->add_class('hidden');
+                } else {
+                    $reference->display = false;
+                }
             }
 
             // Check if we are generating the admin notifications and whether notificiations exist
