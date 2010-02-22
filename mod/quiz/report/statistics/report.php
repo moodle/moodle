@@ -590,6 +590,12 @@ class quiz_statistics_report extends quiz_default_report {
             list($s, $usingattemptsstring, $quizstats, $qstats) = $this->quiz_stats($nostudentsingroup, $quiz->id, $currentgroup, $groupstudents, $questions, $useallattempts);
             if ($s){
                 $toinsert = (object)((array)$quizstats + $params);
+                if (isset($toinsert->errorratio) && is_nan($toinsert->errorratio)) {
+                    $toinsert->errorratio = NULL;
+                }
+                if (isset($toinsert->standarderror) && is_nan($toinsert->standarderror)) {
+                    $toinsert->standarderror = NULL;
+                }
                 $toinsert->timemodified = time();
                 $quizstats->id = $DB->insert_record('quiz_statistics', $toinsert);
                 foreach ($qstats->questions as $question){
