@@ -155,6 +155,22 @@ class invalid_parameter_exception extends moodle_exception {
 }
 
 /**
+ * Exception indicating malformed response problem.
+ * This exception is not supposed to be thrown when processing
+ * user submitted data in forms. It is more suitable
+ * for WS and other low level stuff.
+ */
+class invalid_response_exception extends moodle_exception {
+    /**
+     * Constructor
+     * @param string $debuginfo some detailed information
+     */
+    function __construct($debuginfo=null) {
+        parent::__construct('invalidresponse', 'debug', '', null, $debuginfo);
+    }
+}
+
+/**
  * An exception that indicates something really weird happened. For example,
  * if you do switch ($context->contextlevel), and have one case for each
  * CONTEXT_... constant. You might throw an invalid_state_exception in the

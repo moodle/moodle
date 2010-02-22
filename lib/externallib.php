@@ -206,6 +206,77 @@ class external_api {
     }
 
     /**
+     * Clean response
+     * If a response attribut is unknown from the description, we just ignore the attribut.
+     * If a response attribut is incorrect, invalid_response_exception is thrown.
+     * Note: this function is similar to validate parameters, however it is distinct because
+     * parameters validation must be distinct from cleaning return values.
+     * @param external_description $description description of the return values
+     * @param mixed $response the actual response
+     * @return mixed response with added defaults for optional items, invalid_response_exception thrown if any problem found
+     */
+    public static function clean_returnvalue(external_description $description, $response) {
+        if ($description instanceof external_value) {
+            if (is_array($response) or is_object($response)) {
+                throw new invalid_response_exception(get_string('errorscalartype', 'webservice'));
+            }
+
+            if ($description->type == PARAM_BOOL) {
+                // special case for PARAM_BOOL - we want true/false instead of the usual 1/0 - we can not be too strict here ;-)
+                if (is_bool($response) or $response === 0 or $response === 1 or $response === '0' or $response === '1') {
+                    return (bool)$response;
+                }
+            }
+            return validate_param($response, $description->type, $description->allownull, get_string('errorinvalidresponseapi', 'webservice'));
+
+        } else if ($description instanceof external_single_structure) {
+            if (!is_array($response)) {
+                throw new invalid_response_exception(get_string('erroronlyarray', 'webservice'));
+            }
+            $result = array();
+            foreach ($description->keys as $key=>$subdesc) {
+                if (!array_key_exists($key, $response)) {
+                    if ($subdesc->required == VALUE_REQUIRED) {
+                        throw new invalid_response_exception(get_string('errormissingkey', 'webservice', $key));
+                    }
+                    if ($subdesc instanceof external_value) {
+                            if ($subdesc->required == VALUE_DEFAULT) {
+                                try {
+                                    $result[$key] = self::clean_returnvalue($subdesc, $subdesc->default);
+                                } catch (invalid_response_exception $e) {
+                                    throw new webservice_parameter_exception('invalidextresponse',$key);
+                                }
+                            }
+                        }
+                } else {
+                    try {
+                        $result[$key] = self::clean_returnvalue($subdesc, $response[$key]);
+                    } catch (invalid_response_exception $e) {
+                        //it's ok to display debug info as here the information is useful for ws client/dev
+                        throw new webservice_parameter_exception('invalidextresponse',$key." (".$e->debuginfo.")");
+                    }
+                }
+                unset($response[$key]);
+            }
+
+            return $result;
+
+        } else if ($description instanceof external_multiple_structure) {
+            if (!is_array($response)) {
+                throw new invalid_response_exception(get_string('erroronlyarray', 'webservice'));
+            }
+            $result = array();
+            foreach ($response as $param) {
+                $result[] = self::clean_returnvalue($description->content, $param);
+            }
+            return $result;
+
+        } else {
+            throw new invalid_response_exception(get_string('errorinvalidresponsedesc', 'webservice'));
+        }
+    }
+
+    /**
      * Makes sure user may execute functions in this context.
      * @param object $context
      * @return void

@@ -261,9 +261,6 @@ abstract class webservice_zend_server extends webservice_server {
         // execute and return response, this sends some headers too
         $response = $this->zend_server->handle();
 
-        //hook for cleaning response (if necessary)
-        $response = $this->clean_response($response);
-
         // session cleanup
         $this->session_cleanup();
 
@@ -457,9 +454,11 @@ class '.$classname.' {
      * @return string body of the method for $function ie. everything within the {} of the method declaration.
      */
     protected function service_class_method_body($function, $params){
-    	return '        return '.$function->classname.'::'.$function->methodname.'('.$params.');';
+        $descriptionmethod = $function->methodname.'_returns()';
+    	$callforreturnvaluedesc = $function->classname.'::'.$descriptionmethod;
+        return '        return external_api::clean_returnvalue('.$callforreturnvaluedesc.', '.$function->classname.'::'.$function->methodname.'('.$params.'));';
     }
-    
+
     /**
      * Set up zend service class
      * @return void
@@ -545,15 +544,6 @@ class '.$classname.' {
         } else {
             // close emulated session if used
         }
-    }
-
-    /**
-     * Hook needed for cleaning the response (xml-rpc, soap,...).
-     * @param array $response the response to clean
-     * @return array $response the cleaned response
-     */
-    protected function clean_response($response) {
-        return $response;
     }
 
 }

@@ -16,6 +16,7 @@ $string['fixsetting'] = 'Please fix your settings in config.php: <p>You have:</p
 $string['invalideventdata'] = 'Incorrect eventadata submitted: $a';
 $string['invalidarraysize'] = 'Incorrect size of arrays in params of $a';
 $string['invalidparameter'] = 'Invalid parameter value detected, execution can not continue.';
+$string['invalidresponse'] = 'Invalid response value detected, execution can not continue.';
 $string['missingconfigversion'] = 'Config table does not contain version, can not continue, sorry.';
 $string['mustbeoveride'] = 'Abstract $a method must be overriden.';
 $string['morethanonerecordinfetch'] = 'Found more than one record in fetch() !';
