@@ -62,7 +62,6 @@ class webservice_xmlrpc_server extends webservice_zend_server {
             $function = external_function_info($methodname); //retrieve the description of the method name
             if (is_object($function)) { //if the method is not an object (no description found),
                                         // do not make any change on the response
-                varlog($response);
                 $returnvalue = $response->getReturnValue();
                 $returnvalue = $this->clean_returnvalue($function->returns_desc, $returnvalue);
                 $response->setReturnValue($returnvalue);
