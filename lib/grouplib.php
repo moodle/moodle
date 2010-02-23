@@ -593,7 +593,7 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
         $groupname = reset($groupsmenu);
         $output = $grouplabel.': '.$groupname;
     } else {
-        $select = new single_select($urlroot, 'group', $groupsmenu, $activegroup, null, 'selectgroup');
+        $select = new single_select(new moodle_url($urlroot), 'group', $groupsmenu, $activegroup, null, 'selectgroup');
         $select->label = $grouplabel;
         $output = $OUTPUT->render($select);
     }
