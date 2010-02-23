@@ -184,7 +184,7 @@ var createLoaderImg = function (elClass, parentId, wwwRoot) {
     }
     var loadingImg = document.createElement("img");
 
-    loadingImg.setAttribute("src", M.util.image_url('moodle', '/i/ajaxloader');
+    loadingImg.setAttribute("src", M.util.image_url('moodle', '/i/ajaxloader'));
     loadingImg.setAttribute("class", elClass);
     loadingImg.setAttribute("alt", "Loading");
     loadingImg.setAttribute("id", "loaderImg");
