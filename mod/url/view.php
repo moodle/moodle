@@ -46,6 +46,10 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 add_to_log($course->id, 'url', 'view', 'view.php?id='.$cm->id, $url->id, $cm->id);
 
+// Update 'viewed' state if required by completion system
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
+
 $PAGE->set_url('/mod/url/view.php', array('id' => $cm->id));
 
 if ($redirect) {

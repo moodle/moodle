@@ -304,6 +304,18 @@ function resource_get_coursemodule_info($coursemodule) {
         $context = get_context_instance(CONTEXT_MODULE, $coursemodule->id);
         $path = '/'.$context->id.'/resource_content/'.$resource->revision.$resource->mainfile;
         $fullurl = addslashes_js(file_encode_url($CFG->wwwroot.'/pluginfile.php', $path, true));
+
+        // When completion information is enabled for download files, make
+        // the JavaScript version go to the view page with redirect set,
+        // instead of directly to the file, otherwise we can't make it tick
+        // the box for them
+        if (!$course = $DB->get_record('course', array('id'=>$coursemodule->course), 'id, enablecompletion')) {
+            return NULL;
+        }
+        $completion = new completion_info($course);
+        if ($completion->is_enabled($coursemodule) == COMPLETION_TRACKING_AUTOMATIC) {
+            $fullurl = "$CFG->wwwroot/mod/resource/view.php?id=$coursemodule->id&amp;redirect=1";
+        }
         $info->extra = "onclick=\"window.open('$fullurl'); return false;\"";
     }
 
