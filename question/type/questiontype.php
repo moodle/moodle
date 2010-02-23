@@ -1297,13 +1297,13 @@ class default_questiontype {
     * @param object $state   The state whose responses are to be summarized
     * @param int $length     The maximum length of the returned string
     */
-    function response_summary($question, $state, $length=80, $formatting=true) {
+    function response_summary($question, $state, $length = 80, $formatting = true) {
         // This should almost certainly be overridden
         $responses = $this->get_actual_response($question, $state);
         if ($formatting){
             $responses = $this->format_responses($responses, $question->questiontextformat);
         }
-        $responses = implode(';', $responses);
+        $responses = implode('; ', $responses);
         return shorten_text($responses, $length);
     }
     /**
