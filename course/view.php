@@ -161,8 +161,8 @@
                 $PAGE->requires->yui2_lib('dragdrop');
                 $PAGE->requires->yui2_lib('connection');
                 $PAGE->requires->yui2_lib('selector');
-                $PAGE->requires->js('/lib/ajax/block_classes.js');
-                $PAGE->requires->js('/lib/ajax/section_classes.js');
+                $PAGE->requires->js('/lib/ajax/block_classes.js', true);
+                $PAGE->requires->js('/lib/ajax/section_classes.js', true);
 
                 // Okay, global variable alert. VERY UGLY. We need to create
                 // this object here before the <blockname>_print_block()
