@@ -58,8 +58,7 @@ class mnet_peer {
 
         // Couldn't find the IP address?
         if ($ip_address === $hostname && !preg_match('/^\d+\.\d+\.\d+.\d+$/',$hostname)) {
-            $this->error[] = array('code' => 2, 'text' => get_string("noaddressforhost", 'mnet'));
-            return false;
+            throw new moodle_exception('noaddressforhost', 'mnet', '', $hostname);
         }
 
         $this->name = $wwwroot;

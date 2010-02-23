@@ -301,4 +301,5 @@ $string['importfields'] = 'Fields to import';
 $string['exportfields'] = 'Fields to export';
 $string['defaultfields'] = 'The globally set fields, which you are about to override, are: ';
 $string['leavedefault'] = 'Use the default settings instead';
+$string['noaddressforhost'] = 'Sorry, but that hostname ($a) could not be resolved!';
 ?>
