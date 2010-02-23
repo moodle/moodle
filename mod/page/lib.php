@@ -248,12 +248,12 @@ function page_get_coursemodule_info($coursemodule) {
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
 
-    $info = new object();
-    $info->name = $page->name;
-
     if (!$page = $DB->get_record('page', array('id'=>$coursemodule->instance), 'id, name, display, displayoptions')) {
         return NULL;
     }
+
+    $info = new object();
+    $info->name = $page->name;
 
     if ($page->display != RESOURCELIB_DISPLAY_POPUP) {
         return $info;
