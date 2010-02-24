@@ -337,7 +337,7 @@ class block_quiz_results extends block_base {
                 foreach($best as $userid => $gradeid) {
                     switch($nameformat) {
                         case B_QUIZRESULTS_NAME_FORMAT_ID:
-                            $thisname = $course->student.' '.intval($users[$userid]->idnumber);
+                            $thisname = $course->student.' '.$users[$userid]->idnumber;
                         break;
                         case B_QUIZRESULTS_NAME_FORMAT_ANON:
                             $thisname = $course->student;
