@@ -287,7 +287,7 @@ $string['coursehelphiddensections'] = 'How the hidden sections in the course are
 $string['coursehelpnewsitemsnumber'] = 'Number of recent items appearing on the course home page, in a news box down the right-hand side <br/>(0 means the news box won\'t appear)
 .';
 $string['coursehelpshowgrades'] = 'Enable the display of the gradebook. It does not prevent grades from being displayed within the individual activities.';
-$string['coursehelpmaximumupload'] = 'Define the largest size of file that can be uploaded by students in this course, limited by the site wide setting.';
+$string['coursehelpmaximumupload'] = 'Define the largest size of file that can be uploaded in this course, limited by the site-wide setting.';
 $string['coursehelpmetacourse'] = 'Set the course a metacourse. A meta course takes enrolments (and other role assignments) from a \"child\" course or courses.';
 $string['coursehidden'] = 'This course is currently unavailable to students';
 $string['courseimportnotaught'] = 'You don\'t seem to be an editing teacher in any other courses, there are no courses for you to import from.';
