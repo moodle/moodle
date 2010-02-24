@@ -127,6 +127,14 @@ List of upgrade related files:
 /local/nicehack/version.php    - version specification file
 
 
+Version.php example
+-------------------
+/local/nicehack/version.php
+
+$plugin->version  = 2010022400;   // The (date) version of this plugin
+$plugin->requires = 2010021900;  // Requires this Moodle version
+
+
 Customised site defaults
 ------------------------
 Different default site settings can be stored in file /local/defaults.php.
