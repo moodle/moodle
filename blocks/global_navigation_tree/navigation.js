@@ -65,7 +65,6 @@ M.block_navigation = M.block_navigation || {
  * @base M.core_dock.abstractblock
  * @param {YUI} Y A yui instance to use with the navigation
  * @param {string} id The name of the tree
- * @param {int} key The internal id within the tree store
  * @param {object} properties Object containing tree properties
  */
 M.block_navigation.classes.tree = function(Y, id, properties) {

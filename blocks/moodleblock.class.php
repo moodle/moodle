@@ -567,7 +567,7 @@ class block_base {
 
     function get_required_javascript() {
         $this->_initialise_dock();
-        if ($this->instance_can_be_docked()) {
+        if ($this->instance_can_be_docked() && !$this->hide_header()) {
             $this->page->requires->js_init_call('M.core_dock.init_genericblock', array($this->instance->id));
             user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
         }

@@ -335,26 +335,21 @@ M.core_dock = {
                 }
             }
 
-            var moveto = this.Y.Node.create('<a class="moveto customcommand requiresjs"></a>');
-            moveto.append(this.Y.Node.create('<img src="'+M.util.image_url('t/dock_to_block', 'moodle')+'" alt="'+M.str.block.undockitem+'" title="'+M.str.block.undockitem+'" />'));
-            if (location.href.match(/\?/)) {
-                moveto.set('href', location.href+'&dock='+this.id);
-            } else {
-                moveto.set('href', location.href+'?dock='+this.id);
-            }
-            commands.append(moveto);
-            commands.all('a.moveto').on('movetodock|click', this.move_to_dock, this);
+            var moveto = this.Y.Node.create('<input type="image" class="moveto customcommand requiresjs" src="'+M.util.image_url('t/block_to_dock', 'moodle')+'" alt="'+M.str.block.undockitem+'" title="'+M.str.block.undockitem+'" />');
+            moveto.on('movetodock|click', this.move_to_dock, this, commands);
 
-            node.all('.customcommand').each(function(){
-                this.remove();
-                commands.appendChild(this);
-            });
+            var blockaction = node.one('.block_action');
+            if (blockaction) {
+                blockaction.prepend(moveto);
+            } else {
+                commands.append(moveto);
+            }
 
             // Move the block straight to the dock if required
             if (node.hasClass('dock_on_load')) {
                 node.removeClass('dock_on_load')
                 this.skipsetposition = true;
-                this.move_to_dock();
+                this.move_to_dock(null, commands);
             }
         },
 
@@ -363,7 +358,7 @@ M.core_dock = {
          * dock
          * @param {event}
          */
-        move_to_dock : function(e) {
+        move_to_dock : function(e, commands) {
             if (e) {
                 e.halt(true);
             }
@@ -376,17 +371,6 @@ M.core_dock = {
 
             this.cachedcontentnode = node;
 
-            node.all('a.moveto').each(function(moveto){
-                this.Y.Event.purgeElement(this.Y.Node.getDOMNode(moveto), false, 'click');
-                if (moveto.hasClass('customcommand')) {
-                    moveto.all('img').each(function(movetoimg){
-                        movetoimg.setAttribute('src', M.util.image_url('t/dock_to_block', 'moodle'));
-                        movetoimg.setAttribute('alt', M.str.block.undockitem);
-                        movetoimg.setAttribute('title', M.str.block.undockitem);
-                    }, this);
-                }
-            }, this);
-
             var placeholder = this.Y.Node.create('<div id="content_placeholder_'+this.id+'"></div>');
             node.replace(this.Y.Node.getDOMNode(placeholder));
             node = null;
@@ -396,11 +380,15 @@ M.core_dock = {
             var blocktitle = this.Y.Node.getDOMNode(this.cachedcontentnode.one('.title h2')).cloneNode(true);
             blocktitle = this.fix_title_orientation(blocktitle);
 
-            var commands = this.cachedcontentnode.all('.title .commands');
-            var blockcommands = this.Y.Node.create('<div class="commands"></div>');
-            if (commands.size() > 0) {
-                blockcommands = commands.item(0);
+            var blockcommands = this.cachedcontentnode.one('.title .commands');
+            var moveto = this.Y.Node.create('<a class="moveto customcommand requiresjs"></a>');
+            moveto.append(this.Y.Node.create('<img src="'+M.util.image_url('t/dock_to_block', 'moodle')+'" alt="'+M.str.block.undockitem+'" title="'+M.str.block.undockitem+'" />'));
+            if (location.href.match(/\?/)) {
+                moveto.set('href', location.href+'&dock='+this.id);
+            } else {
+                moveto.set('href', location.href+'?dock='+this.id);
             }
+            blockcommands.append(moveto);
 
             // Create a new dock item for the block
             var dockitem = new M.core_dock.item(this.Y, this.id, blocktitle, blockcontent, blockcommands);
@@ -410,12 +398,12 @@ M.core_dock = {
             // Wire the draw events to register remove events
             dockitem.on('dockeditem:drawcomplete', function(e){
                 // check the contents block [editing=off]
-                this.contents.all('a.moveto').on('returntoblock|click', function(e){
+                this.contents.all('.moveto').on('returntoblock|click', function(e){
                     e.halt();
                     M.core_dock.remove(this.id)
                 }, this);
                 // check the commands block [editing=on]
-                this.commands.all('a.moveto').on('returntoblock|click', function(e){
+                this.commands.all('.moveto').on('returntoblock|click', function(e){
                     e.halt();
                     M.core_dock.remove(this.id)
                 }, this);
@@ -488,29 +476,11 @@ M.core_dock = {
 
             this.resize_block_space(this.cachedcontentnode);
 
-            this.cachedcontentnode.all('a.moveto').each(function(moveto){
-                this.Y.Event.purgeElement(this.Y.Node.getDOMNode(moveto), false, 'click');
-                moveto.on('movetodock|click', this.move_to_dock, this);
-                if (moveto.hasClass('customcommand')) {
-                    moveto.all('img').each(function(movetoimg){
-                        movetoimg.setAttribute('src', M.util.image_url('t/block_to_dock', 'moodle'));
-                        movetoimg.setAttribute('alt', M.str.block.addtodock);
-                        movetoimg.setAttribute('title', M.str.block.addtodock);
-                    }, this);
-                }
-             }, this);
-
-            var commands = this.cachedcontentnode.all('.commands');
-            commands.each(function (command){
-                command.all('.hidepanelicon').remove();
-            });
-            var blocktitle = this.cachedcontentnode.all('.title');
-
-            if (commands.size() === 1 && blocktitle.size() === 1) {
-                commands.item(0).remove();
-                blocktitle.item(0).append(commands.item(0));
-            }
-
+            var commands = this.cachedcontentnode.one('.commands');
+            commands.all('.hidepanelicon').remove();
+            commands.all('.moveto').remove();
+            commands.remove();
+            this.cachedcontentnode.one('.title').append(commands);
             this.cachedcontentnode = null;
             M.util.set_user_preference('docked_block_instance_'+this.id, 0);
             return true;
@@ -564,7 +534,11 @@ M.core_dock = {
             }
             dockitem.append(dockitemtitle);
             if (this.commands.hasChildNodes) {
-                this.contents.appendChild(this.commands);
+                if (this.contents.ancestor().one('.footer')) {
+                    this.contents.ancestor().one('.footer').appendChild(this.commands);
+                } else {
+                    this.contents.appendChild(this.commands);
+                }
             }
             M.core_dock.append(dockitem);
 
