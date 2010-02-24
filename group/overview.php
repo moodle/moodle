@@ -115,9 +115,6 @@ if ($rs = $DB->get_recordset_sql($sql, $params)) {
     $rs->close();
 }
 
-$PAGE->requires->js('/lib/overlib/overlib.js', true);
-$PAGE->requires->js('/lib/overlib/overlib_cssstyle.js', true);
-
 $PAGE->navbar->add($strparticipants, new moodle_url('/user/index.php', array('id'=>$courseid)));
 $PAGE->navbar->add($strgroups);
 
@@ -161,6 +158,7 @@ echo $OUTPUT->render($select);
 
 /// Print table
 $printed = false;
+$hoverevents = array();
 foreach ($members as $gpgid=>$groupdata) {
     if ($groupingid and $groupingid != $gpgid) {
         continue; // do not show
@@ -180,14 +178,12 @@ foreach ($members as $gpgid=>$groupdata) {
         $description = file_rewrite_pluginfile_urls($groups[$gpid]->description, 'pluginfile.php', $context->id, 'course_group_description', $gpid);
         $options = new stdClass;
         $options->noclean = true;
-        $jsdescription = addslashes_js(trim(format_text($description, $groups[$gpid]->descriptionformat, $options)));
+        $jsdescription = trim(format_text($description, $groups[$gpid]->descriptionformat, $options));
         if (empty($jsdescription)) {
             $line[] = $name;
         } else {
-            $jsstrdescription = addslashes_js($strdescription);
-            $overlib = "return overlib('$jsdescription', BORDER, 0, FGCLASS, 'description', "
-                      ."CAPTIONFONTCLASS, 'caption', CAPTION, '$jsstrdescription');";
-            $line[] = '<span onmouseover="'.s($overlib).'" onmouseout="return nd();">'.$name.'</span>';
+            $line[] = html_writer::tag('span', $name, array('id'=>'group_'.$gpid));
+            $hoverevents['group_'.$gpid] = $jsdescription;
         }
         $fullnames = array();
         foreach ($users as $user) {
@@ -213,6 +209,11 @@ foreach ($members as $gpgid=>$groupdata) {
     }
     echo $OUTPUT->table($table);
     $printed = true;
+}
+
+if (count($hoverevents)>0) {
+    $PAGE->requires->string_for_js('description', 'moodle');
+    $PAGE->requires->js_init_call('M.core_group.init_hover_events', array($hoverevents));
 }
 
 echo $OUTPUT->footer();

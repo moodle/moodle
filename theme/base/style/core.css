@@ -58,6 +58,19 @@ a.skip-block {
   display: none;
 }
 
+.yui-overlay .yui-widget-bd {
+    background-color:#FFEE69;
+    border-color:#D4C237 #A6982B #A6982B;
+    border-style:solid;
+    border-width:1px;
+    color:#000000;
+    left:0;
+    padding:2px 5px;
+    position:relative;
+    top:0;
+    z-index:1;
+}
+
 .clearer {
   clear:both;
   margin:0;

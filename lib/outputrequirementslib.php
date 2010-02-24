@@ -393,6 +393,11 @@ class page_requirements_manager {
                                     'fullpath' => '/lib/flashdetect/flashdetect.js',
                                     'requires' => array('io'));
                     break;
+                case 'core_group':
+                    $module = array('name'     => 'core_group',
+                                    'fullpath' => '/group/module.js',
+                                    'requires' => array('node', 'overlay', 'event-mouseenter'));
+                    break;
             }
 
         } else {
