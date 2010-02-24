@@ -63,12 +63,12 @@ class user_edit_form extends moodleform {
             }
         }
 
-        // remove description
-        if (empty($user->description) && !empty($CFG->profilesforenrolledusersonly) && !record_exists('role_assignments', 'userid', $userid)) {
-            $mform->removeElement('description');
-        }
 
         if ($user = get_record('user', 'id', $userid)) {
+            // remove description
+            if (empty($user->description) && !empty($CFG->profilesforenrolledusersonly) && !record_exists('role_assignments', 'userid', $userid)) {
+                $mform->removeElement('description');
+            }
 
             // print picture
             if (!empty($CFG->gdversion)) {
