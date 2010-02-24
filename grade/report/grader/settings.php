@@ -19,7 +19,6 @@ $strinherit             = get_string('inherit', 'grades');
 $strpercentage          = get_string('percentage', 'grades');
 $strreal                = get_string('real', 'grades');
 $strletter              = get_string('letter', 'grades');
-$strinherit             = get_string('inherit', 'grades');
 
 /// Add settings for this module to the $settings object (it's already defined)
 $settings->add(new admin_setting_configtext('grade_report_studentsperpage', get_string('studentsperpage', 'grades'),
