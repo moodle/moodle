@@ -358,7 +358,7 @@ class block_quiz_results extends block_base {
                 foreach($best as $userid => $gradeid) {
                     switch($nameformat) {
                         case B_QUIZRESULTS_NAME_FORMAT_ID:
-                            $thisname = get_string('user').' '.intval($users[$userid]->idnumber);
+                            $thisname = get_string('user').' '.$users[$userid]->idnumber;
                         break;
                         case B_QUIZRESULTS_NAME_FORMAT_ANON:
                             $thisname = get_string('user');
@@ -399,7 +399,7 @@ class block_quiz_results extends block_base {
                 foreach($worst as $userid => $gradeid) {
                     switch($nameformat) {
                         case B_QUIZRESULTS_NAME_FORMAT_ID:
-                            $thisname = get_string('user').' '.intval($users[$userid]->idnumber);
+                            $thisname = get_string('user').' '.$users[$userid]->idnumber;
                         break;
                         case B_QUIZRESULTS_NAME_FORMAT_ANON:
                             $thisname = get_string('user');
