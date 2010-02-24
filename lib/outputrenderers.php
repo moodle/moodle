@@ -906,7 +906,7 @@ class core_renderer extends renderer_base {
         }
         $attributes = (array)$attributes;
 
-        if (empty($options['class'])) {
+        if (empty($attributes['class'])) {
             // let ppl override the class via $options
             $attributes['class'] = 'action-icon';
         }
