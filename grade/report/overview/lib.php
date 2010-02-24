@@ -120,7 +120,7 @@ class grade_report_overview extends grade_report {
                 if (!$course->showgrades) {
                     continue;
                 }
-                $courselink = '<a href="'.$CFG->wwwroot.'/grade/report/user/index.php?id='.$course->id.'">'.$course->shortname.'</a>';
+                $courselink = '<a href="'.$CFG->wwwroot.'/grade/report/user/index.php?id='.$course->id.'&userid='.$this->user->id.'">'.$course->shortname.'</a>';
                 $canviewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $course->id));
 
                 // Get course grade_item
