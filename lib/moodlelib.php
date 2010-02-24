@@ -2957,7 +2957,7 @@ function sync_metacourse($course) {
     // Get assignments of a user to a role that exist in a child course, but
     // not in the meta coure. That is, get a list of the assignments that need to be made.
     if (!$assignments = $DB->get_records_sql("
-            SELECT ra.id, ra.roleid, ra.userid
+            SELECT ra.id, ra.roleid, ra.userid, ra.hidden
               FROM {role_assignments} ra, {context} con, {course_meta} cm
              WHERE ra.contextid = con.id AND
                    con.contextlevel = ".CONTEXT_COURSE." AND
@@ -3005,7 +3005,7 @@ function sync_metacourse($course) {
 
     // Make the assignments.
     foreach ($assignments as $assignment) {
-        $success = role_assign($assignment->roleid, $assignment->userid, 0, $context->id) && $success;
+        $success = role_assign($assignment->roleid, $assignment->userid, 0, $context->id, 0, 0, $assignment->hidden) && $success;
     }
 
     return $success;
