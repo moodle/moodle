@@ -2490,7 +2490,7 @@ function sync_metacourse($course) {
     // not in the meta coure. That is, get a list of the assignments that need to be made.
     if (!$assignments = get_records_sql("
             SELECT
-                ra.id, ra.roleid, ra.userid
+                ra.id, ra.roleid, ra.userid, ra.hidden
             FROM
                 {$CFG->prefix}role_assignments ra,
                 {$CFG->prefix}context con,
@@ -2551,7 +2551,7 @@ function sync_metacourse($course) {
 
     // Make the assignments.
     foreach ($assignments as $assignment) {
-        $success = role_assign($assignment->roleid, $assignment->userid, 0, $context->id) && $success;
+        $success = role_assign($assignment->roleid, $assignment->userid, 0, $context->id, 0, 0, $assignment->hidden) && $success;
     }
 
     return $success;
