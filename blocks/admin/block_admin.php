@@ -91,7 +91,7 @@ class block_admin extends block_list {
         if ($course->metacourse) {
             if (has_capability('moodle/course:managemetacourse', $this->page->context)) {
                 $strchildcourses = get_string('childcourses');
-                $this->content->items[]='<a href="importstudents.php?id='.$course->id.'">'.$strchildcourses.'</a>';
+                $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/importstudents.php?id='.$course->id.'">'.$strchildcourses.'</a>';
                 $this->content->icons[]='<img src="'.$OUTPUT->pix_url('i/course') . '" class="icon" alt="" />';
             } else if (has_capability('moodle/role:assign', $this->page->context)) {
                 $strchildcourses = get_string('childcourses');
