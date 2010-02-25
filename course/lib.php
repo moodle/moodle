@@ -656,9 +656,7 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
         }
 
         $myxls->write($row, 0, $courses[$log->course], '');
-        // Excel counts from 1/1/1900
-        $excelTime=25569+$log->time/(3600*24);
-        $myxls->write($row, 1, $excelTime, $formatDate);
+        $myxls->write_date($row, 1, $log->time, $formatDate); // write_date() does conversion/timezone support. MDL-14934
         $myxls->write($row, 2, $log->ip, '');
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
         $myxls->write($row, 3, $fullname, '');
