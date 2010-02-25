@@ -66,7 +66,7 @@ Custom language strings
 If customisation needs new strings it is recommended to use normal plugin
 strings.
 
-sample language file /local/nicehack/lang/en_utf8.php
+sample language file /local/nicehack/lang/en_utf8/local_nicehack.php
 <?php
 $string['hello'] = 'Hi $a';
 $string['nicehack:nicecapability'] = 'Some capability';
