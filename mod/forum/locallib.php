@@ -111,8 +111,8 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             $this->posts = forum_get_all_discussion_posts($this->discussion->id, 'p.created ASC');
             $this->multifiles = array();
             foreach ($this->posts as $post) {
-                $attach = $fs->get_area_files($this->modcontext->id, 'forum_attachment', $this->post->id, 'timemodified', false) || array();
-                $embed  = $fs->get_area_files($this->modcontext->id, 'forum_post', $this->post->id, 'timemodified', false) || array();
+                $attach = $fs->get_area_files($this->modcontext->id, 'forum_attachment', $post->id, 'timemodified', false);
+                $embed  = $fs->get_area_files($this->modcontext->id, 'forum_post', $post->id, 'timemodified', false);
                 $files = array_merge($attach, $embed);
                 if ($files) {
                     $this->keyedfiles[$post->id] = $files;
