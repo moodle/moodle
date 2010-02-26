@@ -313,7 +313,7 @@ class portfolio_format_leap2a_entry {
         }
         // add on the leap: ns if required
         if (!in_array($reltype, array('related', 'alternate', 'enclosure'))) {
-            $rel = 'leap:' . $reltype;
+            $reltype = 'leap:' . $reltype;
         }
 
         $this->links[$otherentry] = (object)array('rel' => $reltype, 'order' => $displayorder);
