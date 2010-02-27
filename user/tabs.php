@@ -88,6 +88,38 @@
 
     /// Everyone can see posts for this user
 
+        $edittype = 'none';
+        if (isguestuser($user)) {
+            // guest account can not be edited
+
+        } else if (is_mnet_remote_user($user)) {
+            // cannot edit remote users
+
+        } else if (isguestuser() or !isloggedin()) {
+            // guests and not logged in can not edit own profile
+
+        } else if ($USER->id == $user->id) {
+            if (has_capability('moodle/user:update', $systemcontext)) {
+                $edittype = 'advanced';
+            } else if (has_capability('moodle/user:editownprofile', $systemcontext)) {
+                $edittype = 'normal';
+            }
+
+        } else {
+            if (has_capability('moodle/user:update', $systemcontext) and !is_primary_admin($user->id)){
+                $edittype = 'advanced';
+            } else if (has_capability('moodle/user:editprofile', $personalcontext) and !is_primary_admin($user->id)){
+                //teachers, parents, etc.
+                $edittype = 'normal';
+            }
+        }
+
+        if ($edittype == 'advanced') {
+            $toprow[] = new tabobject('editprofile', $wwwroot.'/user/editadvanced.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmyprofile'));
+        } else if ($edittype == 'normal') {
+            $toprow[] = new tabobject('editprofile', $wwwroot.'/user/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmyprofile'));
+        }
+
     /// add logic to see course read posts permission
         if (has_capability('moodle/user:readuserposts', $personalcontext) || has_capability('mod/forum:viewdiscussion', get_context_instance(CONTEXT_COURSE, $course->id))) {
             $toprow[] = new tabobject('forumposts', $CFG->wwwroot.'/mod/forum/user.php?id='.$user->id.'&amp;course='.$course->id,
