@@ -276,7 +276,7 @@
 
         $showroles = 1;
         $currenttab = 'assign';
-        include_once($CFG->dirroot.'/user/tabs.php');
+        include($CFG->dirroot.'/user/tabs.php');
 
     } else if ($context->contextlevel == CONTEXT_SYSTEM) {
         admin_externalpage_setup('assignroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
@@ -286,11 +286,11 @@
         admin_externalpage_setup('frontpageroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
         admin_externalpage_print_header();
         $currenttab = 'assign';
-        include_once('tabs.php');
+        include('tabs.php');
 
     } else {
         $currenttab = 'assign';
-        include_once('tabs.php');
+        include('tabs.php');
     }
 
     /// Print heading.
