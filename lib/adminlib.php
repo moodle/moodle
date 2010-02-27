@@ -5224,15 +5224,25 @@ class admin_setting_manageportfolio extends admin_setting {
  * @param string $actualurl if the actual page being viewed is not the normal one for this
  *      page (e.g. admin/roles/allowassin.php, instead of admin/roles/manage.php, you can pass the alternate URL here.
  */
-function admin_externalpage_setup($section, $extrabutton = '',
-    $extraurlparams = array(), $actualurl = '') {
-    global $CFG, $PAGE, $USER;
+function admin_externalpage_setup($section, $extrabutton = '', array $extraurlparams = null, $actualurl = '') {
+    global $CFG, $PAGE, $USER, $SITE, $OUTPUT;
 
     $site = get_site();
     require_login();
 
     $adminroot = admin_get_root(false, false); // settings not required for external pages
-    $extpage = $adminroot->locate($section);
+    $extpage = $adminroot->locate($section, true);
+
+    if (empty($extpage) or !($extpage instanceof admin_externalpage)) {
+        print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
+        die;
+    }
+
+    // this eliminates our need to authenticate on the actual pages
+    if (!$extpage->check_access()) {
+        print_error('accessdenied', 'admin');
+        die;
+    }
 
     if ($section === 'upgradesettings') {
         $PAGE->set_pagelayout('maintenance');
@@ -5246,85 +5256,73 @@ function admin_externalpage_setup($section, $extrabutton = '',
     if (!$actualurl) {
         $actualurl = $extpage->url;
     }
-    $PAGE->set_url($actualurl, array_merge($extraurlparams, array('section' => $section)));
+
+    $extraurlparams = (array)$extraurlparams;
+    $extraurlparams['section'] = $section; // TODO: this is an ugly hack for navigation that must be eliminated!
+
+    $PAGE->set_url($actualurl, $extraurlparams);
     if (strpos($PAGE->pagetype, 'admin-') !== 0) {
         $PAGE->set_pagetype('admin-' . $PAGE->pagetype);
     }
 
-    if (empty($extpage) or !($extpage instanceof admin_externalpage)) {
-        print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
-        die;
-    }
-
-    // this eliminates our need to authenticate on the actual pages
-    if (!($extpage->check_access())) {
-        print_error('accessdenied', 'admin');
-        die;
-    }
-
-    $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
-    if ($PAGE->user_allowed_editing() && $adminediting != -1) {
-        $USER->editing = $adminediting;
-    }
-
-    $PAGE->navigation->clear_cache();
-}
-
-/**
- * Print header for admin page
- *
- * @param string $focus focus element
- */
-function admin_externalpage_print_header($focus='') {
-    global $CFG, $PAGE, $SITE, $OUTPUT;
-
-    if (!is_string($focus)) {
-        $focus = ''; // BC compatibility, there used to be adminroot parameter
-    }
-
     if (empty($SITE->fullname) || empty($SITE->shortname)) {
-    // During initial install.
+        // During initial install.
         $strinstallation = get_string('installation', 'install');
         $strsettings = get_string('settings');
         $PAGE->navbar->add($strsettings);
         $PAGE->set_title($strinstallation);
         $PAGE->set_heading($strinstallation);
         $PAGE->set_cacheable(false);
-        echo $OUTPUT->header();
         return;
     }
 
     // Normal case.
-    $adminroot = admin_get_root(false, false); //settings not required - only pages
-
-    // fetch the path parameter
-    $section = $PAGE->url->param('section');
-    $current = $adminroot->locate($section, true);
-    $visiblepathtosection = array_reverse($current->visiblepath);
-
-    if ($PAGE->user_allowed_editing()) {
-        $options = $PAGE->url->params();
-        if ($PAGE->user_is_editing()) {
-            $caption = get_string('blockseditoff');
-            $options['adminedit'] = 'off';
-        } else {
-            $caption = get_string('blocksediton');
-            $options['adminedit'] = 'on';
-        }
-        $url = clone($PAGE->url);
-        $url->params($options);
-        $buttons = $OUTPUT->single_button($url, $caption, 'get');
+    $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
+    if ($PAGE->user_allowed_editing() && $adminediting != -1) {
+        $USER->editing = $adminediting;
     }
 
-    $PAGE->set_title("$SITE->shortname: " . implode(": ",$visiblepathtosection));
+    $visiblepathtosection = array_reverse($extpage->visiblepath);
+
+    if ($PAGE->user_allowed_editing()) {
+        if ($PAGE->user_is_editing()) {
+            $caption = get_string('blockseditoff');
+            $url = new moodle_url($PAGE->url, array('adminedit'=>'0'));
+        } else {
+            $caption = get_string('blocksediton');
+            $url = new moodle_url($PAGE->url, array('adminedit'=>'1'));
+        }
+        $PAGE->set_button($OUTPUT->single_button($url, $caption, 'get'));
+    }
+
+    $PAGE->set_title("$SITE->shortname: " . implode(": ", $visiblepathtosection));
     $PAGE->set_heading($SITE->fullname);
+
+    // prevent caching in nav block
+    $PAGE->navigation->clear_cache();
+}
+
+/**
+ * Print header for admin page
+ * @deprecated since Moodle 20. Please use normal $OUTPUT->header() instead
+ * @param string $focus focus element
+ */
+function admin_externalpage_print_header($focus='') {
+    global $CFG, $PAGE, $SITE, $OUTPUT;
+
+    //debugging('admin_externalpage_print_header is deprecated. Please $OUTPUT->header() instead.', DEBUG_DEVELOPER);
+
+    if (!is_string($focus)) {
+        $focus = ''; // BC compatibility, there used to be adminroot parameter
+    }
+
     $PAGE->set_focuscontrol($focus);
-    $PAGE->set_button($buttons);
+
     echo $OUTPUT->header();
 }
 
 /**
- * @deprecated since Moodle 1.9. Please use normal print_footer() instead
+ * @deprecated since Moodle 1.9. Please use normal $OUTPUT->footer() instead
  */
 function admin_externalpage_print_footer() {
 // TODO Still 103 referernces in core code. Don't do debugging output yet.
