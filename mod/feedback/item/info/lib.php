@@ -83,20 +83,20 @@ class feedback_item_info extends feedback_item_base {
         // return $itemnr;
     }
 
-    function excelprint_item(&$worksheet, $rowOffset, $item, $groupid, $courseid = false) {
+    function excelprint_item(&$worksheet, $rowOffset, $xlsFormats, $item, $groupid, $courseid = false) {
         $analysed_item = $this->get_analysed($item, $groupid, $courseid);
 
-        $worksheet->setFormat("<l><f><ro2><vo><c:green>");
-        $worksheet->write_string($rowOffset, 0, $item->label);
-        $worksheet->write_string($rowOffset, 1, $item->name);
+        // $worksheet->setFormat("<l><f><ro2><vo><c:green>");
+        $worksheet->write_string($rowOffset, 0, $item->label, $xlsFormats->head2);
+        $worksheet->write_string($rowOffset, 1, $item->name, $xlsFormats->head2);
         $data = $analysed_item->data;
         if(is_array($data)) {
-            $worksheet->setFormat("<l><ro2><vo>");
-            $worksheet->write_string($rowOffset, 2, $data[0]->show);
+            // $worksheet->setFormat("<l><ro2><vo>");
+            $worksheet->write_string($rowOffset, 2, $data[0]->show, $xlsFormats->value_bold);
             $rowOffset++;
             for($i = 1; $i < sizeof($data); $i++) {
-                $worksheet->setFormat("<l><vo>");
-                $worksheet->write_string($rowOffset, 2, $data[$i]->show);
+                // $worksheet->setFormat("<l><vo>");
+                $worksheet->write_string($rowOffset, 2, $data[$i]->show, $xlsFormats->default);
                 $rowOffset++;
             }
         }

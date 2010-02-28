@@ -151,36 +151,35 @@ class feedback_item_multichoicerated extends feedback_item_base {
         // return $itemnr;
     }
 
-    function excelprint_item(&$worksheet, $rowOffset, $item, $groupid, $courseid = false) {
+    function excelprint_item(&$worksheet, $rowOffset, $xlsFormats, $item, $groupid, $courseid = false) {
         $analysed_item = $this->get_analysed($item, $groupid, $courseid);
-
 
         $data = $analysed_item[2];
 
-        $worksheet->setFormat("<l><f><ro2><vo><c:green>");
+        // $worksheet->setFormat("<l><f><ro2><vo><c:green>");
         //frage schreiben
-        $worksheet->write_string($rowOffset, 0, $item->label);
-        $worksheet->write_string($rowOffset, 1, $analysed_item[1]);
+        $worksheet->write_string($rowOffset, 0, $item->label, $xlsFormats->head2);
+        $worksheet->write_string($rowOffset, 1, $analysed_item[1], $xlsFormats->head2);
         if(is_array($data)) {
             $avg = 0.0;
             for($i = 0; $i < sizeof($data); $i++) {
                 $aData = $data[$i];
 
-                $worksheet->setFormat("<l><f><ro2><vo><c:blue>");
-                $worksheet->write_string($rowOffset, $i + 2, trim($aData->answertext).' ('.$aData->value.')');
+                // $worksheet->setFormat("<l><f><ro2><vo><c:blue>");
+                $worksheet->write_string($rowOffset, $i + 2, trim($aData->answertext).' ('.$aData->value.')', $xlsFormats->value_bold);
 
-                $worksheet->setFormat("<l><vo>");
-                $worksheet->write_number($rowOffset + 1, $i + 2, $aData->answercount);
+                // $worksheet->setFormat("<l><vo>");
+                $worksheet->write_number($rowOffset + 1, $i + 2, $aData->answercount, $xlsFormats->default);
                 //$worksheet->setFormat("<l><f><vo>");
                 //$worksheet->write_number($rowOffset + 2, $i + 1, $aData->avg);
                 $avg += $aData->avg;
             }
             //mittelwert anzeigen
-            $worksheet->setFormat("<l><f><ro2><vo><c:red>");
-            $worksheet->write_string($rowOffset, sizeof($data) + 2, get_string('average', 'feedback'));
+            // $worksheet->setFormat("<l><f><ro2><vo><c:red>");
+            $worksheet->write_string($rowOffset, sizeof($data) + 2, get_string('average', 'feedback'), $xlsFormats->value_bold);
 
-            $worksheet->setFormat("<l><f><vo>");
-            $worksheet->write_number($rowOffset + 1, sizeof($data) + 2, $avg);
+            // $worksheet->setFormat("<l><f><vo>");
+            $worksheet->write_number($rowOffset + 1, sizeof($data) + 2, $avg, $xlsFormats->value_bold);
         }
         $rowOffset +=2 ;
         return $rowOffset;

@@ -10,7 +10,10 @@
 
 require_once("../../config.php");
 require_once("lib.php");
-require_once('easy_excel.php');
+// require_once('easy_excel.php');
+require_once("$CFG->libdir/excellib.class.php");
+
+feedback_load_feedback_items();
 
 $id = required_param('id', PARAM_INT);  //the POST dominated the GET
 $coursefilter = optional_param('coursefilter', '0', PARAM_INT);
@@ -75,37 +78,86 @@ $filename = "feedback.xls";
 $mygroupid = groups_get_activity_group($cm);
 
 // Creating a workbook
-$workbook = new EasyWorkbook("-");
-$workbook->setTempDir($CFG->dataroot.'/temp');
+// $workbook = new EasyWorkbook("-");
+$workbook = new MoodleExcelWorkbook('-');
+// $workbook->setTempDir($CFG->dataroot.'/temp');
 $workbook->send($filename);
-$workbook->setVersion(8);
+// $workbook->setVersion(8);
+
+//creating the needed formats
+$xlsFormats = new object();
+$xlsFormats->head1 = $workbook->add_format(array(
+                        'bold'=>1,
+                        'size'=>12));
+
+$xlsFormats->head2 = $workbook->add_format(array(
+                        'align'=>'left',
+                        'bold'=>1,
+                        'bottum'=>2));
+
+$xlsFormats->default = $workbook->add_format(array(
+                        'align'=>'left',
+                        'v_align'=>'top'));
+
+// $xlsFormats->head2_green = $workbook->add_format(array(
+                        // 'align'=>'left',
+                        // 'bold'=>1,
+                        // 'v_align'=>'top',
+                        // 'bottum'=>2,
+                        // 'fg_color'=>'green'));
+
+$xlsFormats->value_bold = $workbook->add_format(array(
+                        'align'=>'left',
+                        'bold'=>1,
+                        'v_align'=>'top'));
+
+// $xlsFormats->value_blue = $workbook->add_format(array(
+                        // 'align'=>'left',
+                        // 'bold'=>1,
+                        // 'v_align'=>'top',
+                        // 'top'=>2,
+                        // 'fg_color'=>'blue'));
+
+// $xlsFormats->value_red = $workbook->add_format(array(
+                        // 'align'=>'left',
+                        // 'bold'=>1,
+                        // 'v_align'=>'top',
+                        // 'top'=>2,
+                        // 'fg_color'=>'red'));
+
+$xlsFormats->procent = $workbook->add_format(array(
+                        'align'=>'left',
+                        'bold'=>1,
+                        'v_align'=>'top',
+                        'num_format'=>'#,##0.00%'));
+
 // Creating the worksheets
 $sheetname = clean_param($feedback->name, PARAM_ALPHANUM);
 error_reporting(0);
-$worksheet1 =& $workbook->addWorksheet(substr($sheetname, 0, 31));
-$worksheet1->set_workbook($workbook);
-$worksheet2 =& $workbook->addWorksheet('detailed');
-$worksheet2->set_workbook($workbook);
+$worksheet1 =& $workbook->add_worksheet(substr($sheetname, 0, 31));
+// $worksheet1->set_workbook($workbook);
+$worksheet2 =& $workbook->add_worksheet('detailed');
+// $worksheet2->set_workbook($workbook);
 error_reporting($CFG->debug);
-$worksheet1->setPortrait();
-$worksheet1->setPaper(9);
-$worksheet1->centerHorizontally();
-$worksheet1->hideGridlines();
-$worksheet1->setHeader("&\"Arial," . $fstring->bold . "\"&14".$feedback->name);
-$worksheet1->setFooter($fstring->page." &P " . $fstring->of . " &N");
-$worksheet1->setColumn(0, 0, 10);
-$worksheet1->setColumn(1, 1, 30);
-$worksheet1->setColumn(2, 20, 15);
-$worksheet1->setMargins_LR(0.10);
+// $worksheet1->pear_excel_worksheet->set_portrait();
+// $worksheet1->pear_excel_worksheet->set_paper(9);
+// $worksheet1->pear_excel_worksheet->center_horizontally();
+$worksheet1->hide_gridlines();
+// $worksheet1->pear_excel_worksheet->set_header("&\"Arial," . $fstring->bold . "\"&14".$feedback->name);
+// $worksheet1->pear_excel_worksheet->set_footer($fstring->page." &P " . $fstring->of . " &N");
+$worksheet1->set_column(0, 0, 10);
+$worksheet1->set_column(1, 1, 30);
+$worksheet1->set_column(2, 20, 15);
+// $worksheet1->set_margins_LR(0.10);
 
-$worksheet2->setLandscape();
-$worksheet2->setPaper(9);
-$worksheet2->centerHorizontally();
+// $worksheet2->pear_excel_worksheet->set_landscape();
+// $worksheet2->pear_excel_worksheet->set_paper(9);
+// $worksheet2->pear_excel_worksheet->center_horizontally();
 
 //writing the table header
 $rowOffset1 = 0;
-$worksheet1->setFormat("<f>",12,false);
-$worksheet1->write_string($rowOffset1, 0, UserDate(time()));
+// $worksheet1->setFormat("<f>",12,false);
+$worksheet1->write_string($rowOffset1, 0, UserDate(time()), $xlsFormats->head1);
 
 ////////////////////////////////////////////////////////////////////////
 //print the analysed sheet
@@ -115,18 +167,18 @@ $completedscount = feedback_get_completeds_group_count($feedback, $mygroupid, $c
 if($completedscount > 0){
     //write the count of completeds
     $rowOffset1++;
-    $worksheet1->write_string($rowOffset1, 0, $fstring->modulenameplural.': '.strval($completedscount));
+    $worksheet1->write_string($rowOffset1, 0, $fstring->modulenameplural.': '.strval($completedscount), $xlsFormats->head1);
 }
 
 if(is_array($items)){
     $rowOffset1++;
-    $worksheet1->write_string($rowOffset1, 0, $fstring->questions.': '. strval(sizeof($items)));
+    $worksheet1->write_string($rowOffset1, 0, $fstring->questions.': '. strval(sizeof($items)), $xlsFormats->head1);
 }
 
 $rowOffset1 += 2;
-$worksheet1->write_string($rowOffset1, 0, $fstring->itemlabel);
-$worksheet1->write_string($rowOffset1, 1, $fstring->question);
-$worksheet1->write_string($rowOffset1, 2, $fstring->responses);
+$worksheet1->write_string($rowOffset1, 0, $fstring->itemlabel, $xlsFormats->head1);
+$worksheet1->write_string($rowOffset1, 1, $fstring->question, $xlsFormats->head1);
+$worksheet1->write_string($rowOffset1, 2, $fstring->responses, $xlsFormats->head1);
 $rowOffset1++ ;
 
 if (empty($items)) {
@@ -137,7 +189,7 @@ foreach($items as $item) {
     $itemclass = 'feedback_item_'.$item->typ;
     //get the instance of the item-class
     $itemobj = new $itemclass();
-    $rowOffset1 = $itemobj->excelprint_item($worksheet1, $rowOffset1, $item, $mygroupid, $coursefilter);
+    $rowOffset1 = $itemobj->excelprint_item($worksheet1, $rowOffset1, $xlsFormats, $item, $mygroupid, $coursefilter);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -152,12 +204,12 @@ $completeds = feedback_get_completeds_group($feedback, $mygroupid, $coursefilter
 
 $rowOffset2 = 0;
 //first we print the table-header
-$rowOffset2 = feedback_excelprint_detailed_head($worksheet2, $items, $rowOffset2);
+$rowOffset2 = feedback_excelprint_detailed_head($worksheet2, $xlsFormats, $items, $rowOffset2);
 
 
 if(is_array($completeds)){
     foreach($completeds as $completed) {
-        $rowOffset2 = feedback_excelprint_detailed_items($worksheet2, $completed, $items, $rowOffset2);
+        $rowOffset2 = feedback_excelprint_detailed_items($worksheet2, $xlsFormats, $completed, $items, $rowOffset2);
     }
 }
 
@@ -170,42 +222,42 @@ exit;
 ////////////////////////////////////////////////////////////////////////////////
 
 
-function feedback_excelprint_detailed_head(&$worksheet, $items, $rowOffset) {
+function feedback_excelprint_detailed_head(&$worksheet, $xlsFormats, $items, $rowOffset) {
     global $fstring, $feedback;
 
     if(!$items) return;
     $colOffset = 0;
 
-    $worksheet->setFormat('<l><f><ru2>');
+    // $worksheet->setFormat('<l><f><ru2>');
 
-    $worksheet->write_string($rowOffset + 1, $colOffset, $fstring->idnumber);
+    $worksheet->write_string($rowOffset + 1, $colOffset, $fstring->idnumber, $xlsFormats->head2);
     $colOffset++;
 
-    $worksheet->write_string($rowOffset + 1, $colOffset, $fstring->username);
+    $worksheet->write_string($rowOffset + 1, $colOffset, $fstring->username, $xlsFormats->head2);
     $colOffset++;
 
-    $worksheet->write_string($rowOffset + 1, $colOffset, $fstring->fullname);
+    $worksheet->write_string($rowOffset + 1, $colOffset, $fstring->fullname, $xlsFormats->head2);
     $colOffset++;
 
     foreach($items as $item) {
-        $worksheet->setFormat('<l><f><ru2>');
-        $worksheet->write_string($rowOffset, $colOffset, $item->name);
-        $worksheet->write_string($rowOffset + 1, $colOffset, $item->label);
+        // $worksheet->setFormat('<l><f><ru2>');
+        $worksheet->write_string($rowOffset, $colOffset, $item->name, $xlsFormats->head2);
+        $worksheet->write_string($rowOffset + 1, $colOffset, $item->label, $xlsFormats->head2);
         $colOffset++;
     }
 
-    $worksheet->setFormat('<l><f><ru2>');
-    $worksheet->write_string($rowOffset + 1, $colOffset, $fstring->courseid);
+    // $worksheet->setFormat('<l><f><ru2>');
+    $worksheet->write_string($rowOffset + 1, $colOffset, $fstring->courseid, $xlsFormats->head2);
     $colOffset++;
 
-    $worksheet->setFormat('<l><f><ru2>');
-    $worksheet->write_string($rowOffset + 1, $colOffset, $fstring->course);
+    // $worksheet->setFormat('<l><f><ru2>');
+    $worksheet->write_string($rowOffset + 1, $colOffset, $fstring->course, $xlsFormats->head2);
     $colOffset++;
 
     return $rowOffset + 2;
 }
 
-function feedback_excelprint_detailed_items(&$worksheet, $completed, $items, $rowOffset) {
+function feedback_excelprint_detailed_items(&$worksheet, $xlsFormats, $completed, $items, $rowOffset) {
     global $DB, $fstring;
 
     if(!$items) return;
@@ -215,30 +267,30 @@ function feedback_excelprint_detailed_items(&$worksheet, $completed, $items, $ro
     $feedback = $DB->get_record('feedback', array('id'=>$completed->feedback));
     //get the username
     //anonymous users are separated automatically because the userid in the completed is "0"
-    $worksheet->setFormat('<l><f><ru2>');
+    // $worksheet->setFormat('<l><f><ru2>');
     if($user = $DB->get_record('user', array('id'=>$completed->userid))) {
         if ($completed->anonymous_response == FEEDBACK_ANONYMOUS_NO) {
-            $worksheet->write_string($rowOffset, $colOffset, $user->idnumber);
+            $worksheet->write_string($rowOffset, $colOffset, $user->idnumber, $xlsFormats->head2);
             $colOffset++;
             $userfullname = fullname($user);
-            $worksheet->write_string($rowOffset, $colOffset, $user->username);
+            $worksheet->write_string($rowOffset, $colOffset, $user->username, $xlsFormats->head2);
             $colOffset++;
         } else {
             $userfullname = $fstring->anonymous_user;
-            $worksheet->write_string($rowOffset, $colOffset, '-');
+            $worksheet->write_string($rowOffset, $colOffset, '-', $xlsFormats->head2);
             $colOffset++;
-            $worksheet->write_string($rowOffset, $colOffset, '-');
+            $worksheet->write_string($rowOffset, $colOffset, '-', $xlsFormats->head2);
             $colOffset++;
         }
     }else {
         $userfullname = $fstring->anonymous_user;
-        $worksheet->write_string($rowOffset, $colOffset, '-');
+        $worksheet->write_string($rowOffset, $colOffset, '-', $xlsFormats->head2);
         $colOffset++;
-        $worksheet->write_string($rowOffset, $colOffset, '-');
+        $worksheet->write_string($rowOffset, $colOffset, '-', $xlsFormats->head2);
         $colOffset++;
     }
 
-    $worksheet->write_string($rowOffset, $colOffset, $userfullname);
+    $worksheet->write_string($rowOffset, $colOffset, $userfullname, $xlsFormats->head2);
 
     $colOffset++;
     foreach($items as $item) {
@@ -248,21 +300,21 @@ function feedback_excelprint_detailed_items(&$worksheet, $completed, $items, $ro
         $itemobj = new $itemclass();
         $printval = $itemobj->get_printval($item, $value);
 
-        $worksheet->setFormat('<l><vo>');
+        // $worksheet->setFormat('<l><vo>');
         if(is_numeric($printval)) {
-            $worksheet->write_number($rowOffset, $colOffset, trim($printval));
+            $worksheet->write_number($rowOffset, $colOffset, trim($printval), $xlsFormats->default);
         } else {
-            $worksheet->write_string($rowOffset, $colOffset, trim($printval));
+            $worksheet->write_string($rowOffset, $colOffset, trim($printval), $xlsFormats->default);
         }
         $printval = '';
         $colOffset++;
         $courseid = isset($value->course_id) ? $value->course_id : 0;
         if($courseid == 0) $courseid = $feedback->course;
     }
-    $worksheet->write_number($rowOffset, $colOffset, $courseid);
+    $worksheet->write_number($rowOffset, $colOffset, $courseid, $xlsFormats->default);
     $colOffset++;
     if(isset($courseid) AND $course = $DB->get_record('course', array('id'=>$courseid))) {
-        $worksheet->write_string($rowOffset, $colOffset, $course->shortname);
+        $worksheet->write_string($rowOffset, $colOffset, $course->shortname, $xlsFormats->default);
     }
     return $rowOffset + 1;
 }
