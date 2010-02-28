@@ -13,18 +13,18 @@ require_once("lib.php");
 
 feedback_init_feedback_session();
 
-$id = optional_param('id', NULL, PARAM_INT);
+$cmid = optional_param('id', NULL, PARAM_INT);
 $typ = optional_param('typ', false, PARAM_ALPHA);
-$itemid = optional_param('itemid', false, PARAM_INT);
+$id = optional_param('id', false, PARAM_INT);
 
-if(!$typ)redirect(htmlspecialchars('edit.php?id=' . $id));
+if(!$typ)redirect(htmlspecialchars('edit.php?id=' . $cmid));
 
-$url = new moodle_url('/mod/feedback/edit_item.php', array('id'=>$id));
+$url = new moodle_url('/mod/feedback/edit_item.php', array('cmid'=>$cmid));
 if ($typ !== false) {
     $url->param('typ', $typ);
 }
-if ($itemid !== false) {
-    $url->param('itemid', $itemid);
+if ($id !== false) {
+    $url->param('id', $id);
 }
 $PAGE->set_url($url);
 
@@ -36,8 +36,8 @@ if(($formdata = data_submitted()) AND !confirm_sesskey()) {
     print_error('invalidsesskey');
 }
 
-if ($id) {
-    if (! $cm = get_coursemodule_from_id('feedback', $id)) {
+if ($cmid) {
+    if (! $cm = get_coursemodule_from_id('feedback', $cmid)) {
         print_error('invalidcoursemodule');
     }
 
@@ -60,13 +60,13 @@ if(!$capabilities->edititems){
 //if the typ is pagebreak so the item will be saved directly
 if($typ == 'pagebreak') {
     feedback_create_pagebreak($feedback->id);
-    redirect(htmlspecialchars('edit.php?id='.$id));
+    redirect(htmlspecialchars('edit.php?id='.$cmid));
     exit;
 }
 
 //get the existing item or create it
 // $formdata->itemid = isset($formdata->itemid) ? $formdata->itemid : NULL;
-if($itemid and $item = $DB->get_record('feedback_item', array('id'=>$itemid))) {
+if($id and $item = $DB->get_record('feedback_item', array('id'=>$id))) {
     $typ = $item->typ;
     $position = $item->position;
 }else {
@@ -76,7 +76,7 @@ if($itemid and $item = $DB->get_record('feedback_item', array('id'=>$itemid))) {
         $position = 0;
     }
     if (!$typ) {
-        print_error('typemissing', 'feedback', $CFG->wwwroot.'/mod/feedback/edit.php?id='.$id);
+        print_error('typemissing', 'feedback', $CFG->wwwroot.'/mod/feedback/edit.php?id='.$cmid);
     }
 }
 
@@ -89,10 +89,10 @@ $item_form = &$itemobj->show_edit($item);
 
 $i_form = &$item_form->get_item_form();
 // $i_form->addElement('header', 'general', 'Titel');
-$i_form->addElement('hidden', 'id', $id);
+$i_form->addElement('hidden', 'cmid', $cmid);
+$i_form->setType('cmid', PARAM_INT);
+$i_form->addElement('hidden', 'id', isset($item->id)?$item->id:'');
 $i_form->setType('id', PARAM_INT);
-$i_form->addElement('hidden', 'itemid', isset($item->id)?$item->id:'');
-$i_form->setType('itemid', PARAM_INT);
 $i_form->addElement('hidden', 'typ', $typ);
 $i_form->setType('typ', PARAM_ALPHA);
 $i_form->addElement('hidden', 'feedbackid', $feedback->id);
@@ -133,7 +133,7 @@ $i_form->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 $item_form->set_data($item);
 if ($formdata = $item_form->get_data()) {
     if (isset($formdata->cancel)){
-        redirect(htmlspecialchars('edit.php?id=' . $id));
+        redirect(htmlspecialchars('edit.php?id=' . $cmid));
     } else if (isset($formdata->saveitem) AND $formdata->saveitem == 1) {
         $newposition = $formdata->position;
         $formdata->position = $newposition + 1;
@@ -145,7 +145,7 @@ if ($formdata = $item_form->get_data()) {
             if (!feedback_move_item($newitem, $newposition)){
                 $SESSION->feedback->errors[] = get_string('item_creation_failed', 'feedback');
             }else {
-                redirect(htmlspecialchars('edit.php?id='.$id));
+                redirect(htmlspecialchars('edit.php?id='.$cmid));
             }
         }
     } else if (isset($formdata->updateitem) AND $formdata->updateitem == 1) {
@@ -156,7 +156,7 @@ if ($formdata = $item_form->get_data()) {
             if (!feedback_move_item($item, $formdata->position)){
                 $SESSION->feedback->errors[] = get_string('item_update_failed', 'feedback');
             }else {
-                redirect(htmlspecialchars('edit.php?id='.$id));
+                redirect(htmlspecialchars('edit.php?id='.$cmid));
             }
         }
     }
