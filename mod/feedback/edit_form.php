@@ -28,8 +28,8 @@ class feedback_edit_add_question_form extends moodleform {
         $mform->addElement('select', 'typ', '', $feedback_names_options, $attributes);
 
         // hidden elements
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
+        $mform->addElement('hidden', 'cmid');
+        $mform->setType('cmid', PARAM_INT);
         $mform->addElement('hidden', 'position');
         $mform->setType('position', PARAM_INT);
 //-------------------------------------------------------------------------------

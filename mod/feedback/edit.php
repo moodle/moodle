@@ -128,7 +128,7 @@ $lastposition++;
 
 //the add_item-form
 $add_item_form = new feedback_edit_add_question_form('edit_item.php');
-$add_item_form->set_data(array('id'=>$id, 'position'=>$lastposition));
+$add_item_form->set_data(array('cmid'=>$id, 'position'=>$lastposition));
 
 //the use_template-form
 $use_template_form = new feedback_edit_use_template_form('use_templ.php');
