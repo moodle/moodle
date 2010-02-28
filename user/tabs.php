@@ -212,6 +212,56 @@
         }
     }    //close last bracket (individual tags)
 
+    /// this needs permission checkings
+
+
+    if (!empty($showroles) and !empty($user)) { // this variable controls whether this roles is showed, or not, so only user/view page should set this flag
+        $usercontext = get_context_instance(CONTEXT_USER, $user->id);
+        if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
+                'moodle/role:override', 'moodle/role:manage'), $usercontext)) {
+            $toprow[] = new tabobject('roles', $CFG->wwwroot.'/'.$CFG->admin.'/roles/usersroles.php?userid='.$user->id.'&amp;courseid='.$course->id
+                    ,get_string('roles'));
+
+            if (in_array($currenttab, array('usersroles', 'assign', 'override', 'check'))) {
+                $inactive = array('roles');
+                $activetwo = array('roles');
+
+                $secondrow = array();
+                $secondrow[] = new tabobject('usersroles', $CFG->wwwroot.'/'.$CFG->admin.'/roles/usersroles.php?userid='.$user->id.'&amp;courseid='.$course->id
+                        ,get_string('thisusersroles', 'role'));
+                if (!empty($assignableroles) || $currenttab=='assign') {
+                    $secondrow[] = new tabobject('assign', $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id
+                            ,get_string('assignrolesrelativetothisuser', 'role'), '', true);
+                }
+                if (!empty($overridableroles) || $currenttab=='override') {
+                    $secondrow[] = new tabobject('override', $CFG->wwwroot.'/'.$CFG->admin.'/roles/override.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id
+                            ,get_string('overridepermissions', 'role'), '', true);
+                }
+                if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
+                        'moodle/role:override', 'moodle/role:assign'), $usercontext)) {
+                    $secondrow[] = new tabobject('check',
+                            $CFG->wwwroot.'/'.$CFG->admin.'/roles/check.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id,
+                            get_string('checkpermissions', 'role'));
+                }
+            }
+        }
+    }
+
+    if (!empty($user) and empty($userindexpage) && $user->id == $USER->id && !empty($CFG->enableportfolios) && has_capability('moodle/portfolio:export', get_system_context())) {
+
+        /// Portfolio tab
+        if (portfolio_instances(true, false)) {
+            $toprow[] = new tabobject('portfolios', $CFG->wwwroot .'/user/portfolio.php', get_string('portfolios', 'portfolio'));
+            if (in_array($currenttab, array('portfolioconf', 'portfoliologs'))) {
+                $inactive = array('portfolios');
+                $activetwo = array('portfolios');
+                $secondrow = array();
+                $secondrow[] = new tabobject('portfolioconf', $CFG->wwwroot . '/user/portfolio.php', get_string('configure', 'portfolio'));
+                $secondrow[] = new tabobject('portfoliologs', $CFG->wwwroot . '/user/portfoliologs.php', get_string('logs', 'portfolio'));
+            }
+        }
+    }
+
     // Repository Tab
     if (!empty($user) and $user->id == $USER->id) {
         require_once($CFG->dirroot . '/repository/lib.php');
