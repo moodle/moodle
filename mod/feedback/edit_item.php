@@ -13,7 +13,7 @@ require_once("lib.php");
 
 feedback_init_feedback_session();
 
-$cmid = optional_param('id', NULL, PARAM_INT);
+$cmid = optional_param('cmid', NULL, PARAM_INT);
 $typ = optional_param('typ', false, PARAM_ALPHA);
 $id = optional_param('id', false, PARAM_INT);
 

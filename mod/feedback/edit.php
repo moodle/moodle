@@ -312,7 +312,8 @@ if($do_show == 'edit') {
             echo '<td>';
             //print the button to edit the item
             if($feedbackitem->typ != 'pagebreak') {
-                $buttonlink = 'edit_item.php?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&itemid='.$feedbackitem->id.'&typ='.$feedbackitem->typ);
+                // in edit_item.php the param id is used for the itemid and the cmid is the id to get the module
+                $buttonlink = 'edit_item.php?'.htmlspecialchars('do_show='.$do_show.'&cmid='.$id.'&id='.$feedbackitem->id.'&typ='.$feedbackitem->typ);
                 echo '<a class="editing_update" title="'.get_string('edit_item','feedback').'" href="'.$buttonlink.'">
                         <img alt="'.get_string('edit_item','feedback').'" src="'.$OUTPUT->pix_url('t/edit') . '" />
                       </a>';
