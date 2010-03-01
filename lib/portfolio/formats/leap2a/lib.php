@@ -171,6 +171,7 @@ class portfolio_format_leap2a_writer {
     public function to_xml() {
         $this->validate();
         foreach ($this->entries as $entry) {
+            $entry->id = 'portfolio:' . $entry->id;
             $this->feed->appendChild($entry->to_dom($this->dom, $this->user));
         }
         return $this->dom->saveXML();
@@ -416,7 +417,7 @@ class portfolio_format_leap2a_entry {
         foreach ($this->links as $otherentry => $l) {
             $link = $dom->createElement('link');
             $link->setAttribute('rel',  $l->rel);
-            $link->setAttribute('href', $otherentry);
+            $link->setAttribute('href', 'portfolio:' . $otherentry);
             if ($l->order) {
                 $link->setAttribute('leap:display_order', $l->order);
             }
