@@ -40,11 +40,6 @@
 
 M.core_filepicker = M.core_filepicker || {};
 
-<<<<<<< filepicker.js
-YUI.add('core_filepicker', function(Y) {
-    function core_filepicker (args) {
-        core_filepicker.superclass.constructor.apply(this, arguments);
-=======
 /**
  * instances of file pickers used on page
  */
@@ -66,7 +61,6 @@ M.core_filepicker.show = function(Y, options) {
 M.core_filepicker.init = function(Y, options) {
     var FilePickerHelper = function(options) {
         FilePickerHelper.superclass.constructor.apply(this, arguments);
->>>>>>> 1.9
     }
 
     FilePickerHelper.NAME = "FilePickerHelper";
@@ -382,7 +376,6 @@ M.core_filepicker.init = function(Y, options) {
                         scope.hide();
                         obj.client_id = client_id;
                         var formcallback_scope = null;
-                        // XXX: magic here, to let filepicker use filemanager scope
                         if (args.scope.options.magicscope) {
                             formcallback_scope = args.scope.options.magicscope;
                         } else {
@@ -793,11 +786,7 @@ M.core_filepicker.init = function(Y, options) {
             str += '<label for="'+id+'_file">'+data.upload.label+': </label>';
             str += '<input type="file" id="'+id+'_file" name="repo_upload_file" />';
             str += '<input type="hidden" name="itemid" value="'+this.options.itemid+'" />';
-<<<<<<< filepicker.js
-            str += '<div class="fp-upload-btn"><button click="return false" id="'+id+'_action" href="###" >'+mstr.repository.upload+'</button></div>';
-=======
             str += '<div class="fp-upload-btn"><a id="'+id+'_action" href="###" >'+M.str.repository.upload+'...</a></div>';
->>>>>>> 1.9
             str += '</form>';
             str += '</div>';
             var upload_form = Y.Node.create(str);
@@ -820,7 +809,7 @@ M.core_filepicker.init = function(Y, options) {
                                 scope.hide();
                                 o.client_id = client_id;
                                 var formcallback_scope = null;
-                                if (scope.options.magicscope) {
+                                if (args.scope.options.magicscope) {
                                     formcallback_scope = args.scope.options.magicscope;
                                 } else {
                                     formcallback_scope = args.scope;
@@ -1105,11 +1094,6 @@ M.core_filepicker.init = function(Y, options) {
             this.render();
         }
     });
-<<<<<<< filepicker.js
-    Y.filepicker = core_filepicker;
-}, '3.0.1', {requires: ['base', 'io', 'node', 'json']});
-=======
 
     M.core_filepicker.instances[options.client_id] = new FilePickerHelper(options);
 };
->>>>>>> 1.9
