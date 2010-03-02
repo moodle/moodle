@@ -586,11 +586,9 @@ if (empty($CFG->lang)) {
     }
 }
 
-// We used to call moodle_setlocale() and theme_setup() here, even though they
-// would be called again from require_login or $PAGE->set_course. As an experiment
-// I am going to try removing those calls. With luck it will help us find and
-// fix a few bugs where scripts do not initialise things properly, without causing
-// too much grief.
+// Set the default site locale, a lot of the stuff may depend on this
+// it is definitely too late to call this first in require_login()!
+moodle_setlocale();
 
 if (!empty($CFG->debugvalidators) and !empty($CFG->guestloginbutton)) {
     if ($CFG->theme == 'standard' or $CFG->theme == 'standardwhite') {    // Temporary measure to help with XHTML validation
