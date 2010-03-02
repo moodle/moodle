@@ -37,7 +37,9 @@ $contextid = optional_param('contextid', 0, PARAM_INT);
 $usercourseid = optional_param('usercourseid', SITEID, PARAM_INT);  // Extra: used for user context only
 
 $url = new moodle_url('/repository/manage_instances.php');
-$baseurl = $CFG->wwwroot . '/repository/manage_instances.php?contextid=' . $contextid . '&amp;sesskey='. sesskey();
+
+$baseurl = new moodle_url('/repository/manage_instances.php');
+$baseurl->param('sesskey', sesskey());
 
 if ($edit){
     $url->param('edit', $edit);
@@ -57,6 +59,7 @@ if ($sure !== '') {
 }
 if ($contextid !== 0) {
     $url->param('contextid', $contextid);
+    $baseurl->param('contextid', $contextid);
 }
 if ($usercourseid !== SITEID) {
     $url->param('usercourseid', $usercourseid);
