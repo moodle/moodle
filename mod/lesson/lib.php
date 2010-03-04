@@ -832,7 +832,7 @@ function lesson_extend_settings_navigation($settings, $module) {
         $lessonnav->add(get_string('manualgrading', 'lesson'), $url);
     }
 
-    if ($lesson->highscores) {
+    if ($PAGE->activityrecord->highscores) {
         $url = new moodle_url('/mod/lesson/highscores.php', array('id'=>$PAGE->cm->id));
         $lessonnav->add(get_string('highscores', 'lesson'), $url);
     }
