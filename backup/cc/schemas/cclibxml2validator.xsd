@@ -9,9 +9,10 @@
     xmlns:cc        ="http://www.imsglobal.org/xsd/imsccauth_v1p0"
     version="1.0"
     elementFormDefault  ="qualified"
-    attributeFormDefault="unqualified"    
+    attributeFormDefault="unqualified"
     >
-    
+
+    <xs:import namespace ="http://www.w3.org/XML/1998/namespace"          schemaLocation = "xml.xsd"                                      />
     <xs:import namespace ="http://www.imsglobal.org/xsd/imscc/imscp_v1p1" schemaLocation = "imscp_v1p2_localised.xsd"                     />
     <xs:import namespace ="http://ltsc.ieee.org/xsd/imscc/LOM"            schemaLocation = "domainProfile_1/lomLoose_localised.xsd"       />
     <xs:import namespace ="http://ltsc.ieee.org/xsd/LOM"                  schemaLocation = "domainProfile_2/lomLoose_localised.xsd"       />
