@@ -123,7 +123,7 @@ class repository_type {
      * @param boolean $visible
      * @param integer $sortorder (don't really need set, it will be during create() call)
      */
-    public function __construct($typename = '', $typeoptions = array(), $visible = false, $sortorder = 0) {
+    public function __construct($typename = '', $typeoptions = array(), $visible = true, $sortorder = 0) {
         global $CFG;
 
         //set type attributs
@@ -790,7 +790,7 @@ abstract class repository {
         }
 
         require_once($typedirectory);
-        return call_user_func_array(array('repository_' . $plugin, $function), $args);
+        return call_user_func_array(array('repository_' . $plugin, $function), &$args);
     }
 
     /**
