@@ -50,11 +50,11 @@ class lesson_page_type_endofbranch extends lesson_page {
         return $this->typeidstring;
     }
     public function callback_on_view($canmanage) {
-        $this->redirect_to_first_answer();
+        $this->redirect_to_first_answer($canmanage);
         exit;
     }
 
-    public function redirect_to_first_answer($canmanager) {
+    public function redirect_to_first_answer($canmanage) {
         global $USER, $PAGE;
         $answer = array_shift($this->get_answers());
         $jumpto = $answer->jumpto;
