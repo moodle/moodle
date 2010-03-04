@@ -1021,7 +1021,7 @@ class grade_edit_tree_column_multfactor extends grade_edit_tree_column {
 
         $multfactor = '<input type="text" size="4" id="multfactor'.$item->id.'" name="multfactor_'.$item->id.'" value="'.format_float($item->multfactor, 4).'" />';
 
-        $itemcell->text = $multfactorinput;
+        $itemcell->text = $multfactor;
         return $itemcell;
     }
 
@@ -1063,7 +1063,7 @@ class grade_edit_tree_column_plusfactor extends grade_edit_tree_column {
 
         $plusfactor = '<input type="text" size="4" id="plusfactor_'.$item->id.'" name="plusfactor_'.$item->id.'" value="'.format_float($item->plusfactor, 4).'" />';
 
-        $itemcell->text = $plusfactorinput;
+        $itemcell->text = $plusfactor;
         return $itemcell;
 
     }
