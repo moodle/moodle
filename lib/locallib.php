@@ -184,6 +184,10 @@ function upgrade_local_db($continueto) {
         error('Could not set up the capabilities for local!');
     }
 
+    if (!events_update_definition('local')) {
+        error('Could not set up the events definitions for local!');
+    }
+
     upgrade_log_finish();
 }
 

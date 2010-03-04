@@ -223,6 +223,9 @@
     grade_cron();
     mtrace('done.');
 
+    mtrace('Starting processing the event queue...');
+    events_cron();
+    mtrace('done.');
 
 /// Run all core cron jobs, but not every time since they aren't too important.
 /// These don't have a timer to reduce load, so we'll use a random number 
