@@ -49,10 +49,13 @@ class theme_anomaly_core_renderer extends core_renderer {
         }
 
         if ($title || $controlshtml) {
-            $output .= html_writer::tag('div', html_writer::tag('div', $title . $controlshtml, array('class' => 'title')), array('class' => 'header'));
+            $output .= html_writer::tag('div', html_writer::tag('div', html_writer::tag('div', '', array('class'=>'block_action')). $title . $controlshtml, array('class' => 'title')), array('class' => 'header'));
         }
 
         $output .= html_writer::start_tag('div', array('class' => 'content'));
+        if (!$title && !$controlshtml) {
+            $output .= html_writer::tag('div', '', array('class'=>'block_action notitle'));
+        }
         $output .= $bc->content;
 
         if ($bc->footer) {
