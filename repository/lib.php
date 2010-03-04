@@ -620,7 +620,7 @@ abstract class repository {
 
         $onlyvisible = isset($args['onlyvisible']) ? $args['onlyvisible'] : true;
         $type        = isset($args['type']) ? $args['type'] : null;
-        $returntypes   = isset($args['returntypes']) ? $args['returntypes'] : 3;
+        $returntypes   = isset($args['return_types']) ? $args['return_types'] : 3;
 
         $params = array();
         $sql = 'SELECT i.*, r.type AS repositorytype, r.sortorder, r.visible FROM {repository} r, {repository_instances} i WHERE ';
@@ -790,7 +790,7 @@ abstract class repository {
         }
 
         require_once($typedirectory);
-        return call_user_func_array(array('repository_' . $plugin, $function), &$args);
+        return call_user_func_array(array('repository_' . $plugin, $function), $args);
     }
 
     /**
@@ -1783,7 +1783,8 @@ function initialise_filepicker($args) {
     $repositories = repository::get_instances(array(
         'context'=>array($user_context, get_system_context()),
         'currentcontext'=> $context,
-        'accepted_types'=>$args->accepted_types
+        'accepted_types'=>$args->accepted_types, 
+        'return_types'=>$args->return_types
     ));
 
     $return->repositories = array();
