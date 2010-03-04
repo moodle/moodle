@@ -24,12 +24,13 @@ if ($edit) {
     $pagename = 'repositorynew';
 }
 
-admin_externalpage_setup($pagename);
 require_login(SITEID, false);
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+admin_externalpage_setup($pagename);
 
 $sesskeyurl = "$CFG->wwwroot/$CFG->admin/repository.php?sesskey=" . sesskey();
 $baseurl    = "$CFG->wwwroot/$CFG->admin/settings.php?section=managerepositories";
+
 
 $configstr  = get_string('managerepositories', 'repository');
 
@@ -100,8 +101,6 @@ if (!empty($edit) || !empty($new)) {
         }
         if ($success) {
             $savedstr = get_string('configsaved', 'repository');
-            admin_externalpage_print_header();
-            echo $OUTPUT->heading($savedstr);
             redirect($baseurl, $savedstr, 3);
         } else {
             print_error('instancenotsaved', 'repository', $baseurl);
@@ -145,23 +144,24 @@ if (!empty($edit) || !empty($new)) {
     $repositorytype->switch_and_update_visibility();
     $return = true;
 } else if (!empty($delete)) {
-    admin_externalpage_print_header();
     $repositorytype = repository::get_type_by_typename($delete);
     if ($sure) {
+        $PAGE->set_pagetype('admin-repository-' . $delete);
         if (!confirm_sesskey()) {
             print_error('confirmsesskeybad', '', $baseurl);
         }
         if ($repositorytype->delete()) {
             $deletedstr = get_string('removed', 'repository');
-            echo $OUTPUT->heading($deletedstr);
             redirect($baseurl, $deletedstr, 3);
         } else {
             print_error('instancenotdeleted', 'repository', $baseurl);
         }
         exit;
+    } else {
+        admin_externalpage_print_header();
+        echo $OUTPUT->confirm(get_string('confirmremove', 'repository', $repositorytype->get_readablename()), $sesskeyurl . '&delete=' . $delete . '&sure=yes', $baseurl);
+        $return = false;
     }
-    echo $OUTPUT->confirm(get_string('confirmremove', 'repository', $repositorytype->get_readablename()), $sesskeyurl . '&delete=' . $delete . '&sure=yes', $baseurl);
-    $return = false;
 }
 else if (!empty($move) && !empty($type)) {
     $repositorytype = repository::get_type_by_typename($type);
