@@ -39,7 +39,7 @@ class course_settings_form extends moodleform {
         $mform->addElement('header', 'general', get_string('generalsettings', 'grades'));
         if ($can_view_admin_links) {
             $link = '<a href="' . $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=gradessettings">' . $strchangedefaults . '</a>';
-            $mform->addElement('static', 'generalsettingslink', $link);
+            $mform->addElement('static', 'generalsettingslink', null, $link);
         }
         $options = array(-1                                      => get_string('default', 'grades'),
                          GRADE_REPORT_AGGREGATION_POSITION_FIRST => get_string('positionfirst', 'grades'),
@@ -58,7 +58,7 @@ class course_settings_form extends moodleform {
         $mform->addElement('header', 'grade_item_settings', get_string('gradeitemsettings', 'grades'));
         if ($can_view_admin_links) {
             $link = '<a href="' . $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=gradeitemsettings">' . $strchangedefaults . '</a>';
-            $mform->addElement('static', 'gradeitemsettingslink', $link);
+            $mform->addElement('static', 'gradeitemsettingslink', null, $link);
         }
 
         $options = array(-1                            => get_string('default', 'grades'),
@@ -101,7 +101,7 @@ class course_settings_form extends moodleform {
                         $mform->addElement('header', 'grade_'.$type.$plugin, get_string('modulename', 'grade'.$type.'_'.$plugin, NULL));
                         if ($can_view_admin_links) {
                             $link = '<a href="' . $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=gradereport' . $plugin . '">' . $strchangedefaults . '</a>';
-                            $mform->addElement('static', 'gradeitemsettingslink', $link);
+                            $mform->addElement('static', 'gradeitemsettingslink', null, $link);
                         }
                         $functionname($mform);
                     }
