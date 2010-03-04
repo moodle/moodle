@@ -134,7 +134,6 @@ $strgraderreport       = get_string('graderreport', 'grades');
 $strcategoriesedit     = get_string('categoriesedit', 'grades');
 $strcategoriesanditems = get_string('categoriesanditems', 'grades');
 
-grade_build_nav(__FILE__, $strcategoriesanditems, array('courseid' => $courseid));
 $moving = false;
 $movingeid = false;
 
