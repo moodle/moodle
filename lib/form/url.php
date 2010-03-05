@@ -27,7 +27,6 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
             $this->_options['usefilepicker'] = true;
         }
         parent::HTML_QuickForm_text($elementName, $elementLabel, $attributes);
-        //repository_head_setup(); TODO: fixme
     }
 
     function setHiddenLabel($hiddenLabel){
@@ -58,16 +57,26 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
         }
         $client_id = uniqid();
 
-        //$repojs = repository_get_client($context, $client_id, '*', FILE_EXTERNAL);
-        $repojs = ''; //TODO: fixme
-
-        $PAGE->requires->js('/lib/form/url.js');
-        $str .= $repojs;
         $str .= <<<EOD
-<button id="filepicker-btn-{$client_id}" style="display:none" onclick="return url_launch_filepicker('$id', '$client_id', 0)">$straddlink</button>
+<button id="filepicker-button-{$client_id}" style="display:none">
+$straddlink
+</button>
 EOD;
-        // hide the button if javascript is not enabled
-        $str .= html_writer::script(js_writer::function_call('show_item', array("filepicker-btn-{$client_id}")));
+        $args = new stdclass;
+        // need these three to filter repositories list
+        $args->accepted_types = '*';
+        $args->return_types = FILE_EXTERNAL;
+        $args->context = $PAGE->context;
+
+        $options = initialise_filepicker($args);
+
+        $options->client_id = $client_id;
+        $options->env = 'url';
+
+        $module = array('name'=>'form_url', 'fullpath'=>'/lib/form/url.js', 'requires'=>array('core_filepicker'));
+        $PAGE->requires->js_init_call('M.form_url.init', array($options), true, $module);
+        $PAGE->requires->js_function_call('show_item', array('filepicker-button-'.$client_id));
+
         return $str;
     }
    /**
