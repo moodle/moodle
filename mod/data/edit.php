@@ -120,6 +120,14 @@ if ($data->jstemplate) {
     $PAGE->requires->js('/mod/data/js.php?d='.$data->id, true);
 }
 
+$possiblefields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id');
+
+foreach ($possiblefields as $field) {
+    if ($field->type == 'file') {
+        require_once($CFG->dirroot.'/repository/lib.php');
+        break;
+    }
+}
 
 /// Print the page header
 $strdata = get_string('modulenameplural','data');
