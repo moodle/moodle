@@ -87,6 +87,9 @@ if ($id) {
         print_error('notallowedtoedit', 'blog');
     }
     $userid = $entry->userid;
+    $entry->subject      = clean_text($entry->subject);
+    $entry->summary      = clean_text($entry->summary, $entry->format);
+    
 } else {
     if (!has_capability('moodle/blog:create', $sitecontext)) {
         print_error('noentry', 'blog'); // manageentries is not enough for adding
