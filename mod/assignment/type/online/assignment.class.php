@@ -55,7 +55,7 @@ class assignment_online extends assignment_base {
                 $defaults->text   = format_text($submission->data1, $submission->data2, $options);
                 $defaults->format = FORMAT_HTML;
             } else {
-                $defaults->text   = $submission->data1;
+                $defaults->text   = clean_text($submission->data1, $submission->data2);
                 $defaults->format = $submission->data2;
             }
         }

@@ -486,7 +486,7 @@ class assignment_upload extends assignment_base {
         $defaults->id = $this->cm->id;
 
         if ($submission = $this->get_submission($USER->id)) {
-            $defaults->text = $submission->data1;
+            $defaults->text = clean_text($submission->data1);
         } else {
             $defaults->text = '';
         }
