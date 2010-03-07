@@ -15,7 +15,7 @@
       ?>
 </td></tr>
 <tr><td align="center">
-<?php  print_textarea($usehtmleditor, 20, 60, 630, 400, "text", $entry->text); ?>
+<?php  print_textarea($usehtmleditor, 20, 60, 630, 400, "text", clean_text($entry->text, $entry->format)); ?>
 </td></tr>
 <tr><td align="center">
 <?php
