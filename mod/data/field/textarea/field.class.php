@@ -71,6 +71,7 @@ class data_field_textarea extends data_field_base {
 
 
     function gen_textarea($usehtmleditor, $text='') {
+        $text = clean_text($text);
         return print_textarea($usehtmleditor, $this->field->param3, $this->field->param2,
                               '', '', 'field_'.$this->field->id, $text, '', true, 'field_' . $this->field->id);
     }
