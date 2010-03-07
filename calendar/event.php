@@ -334,9 +334,9 @@
 
         case 'edit':
             if(empty($form)) {
-                $form->name = $event->name;
+                $form->name = clean_text($event->name);
                 $form->courseid = $event->courseid; // Not to update, but for date validation
-                $form->description = $event->description;
+                $form->description = clean_text($event->description);
                 $form->timestart = $event->timestart;
                 $form->timeduration = $event->timeduration;
                 $form->id = $event->id;
