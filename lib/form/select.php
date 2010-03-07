@@ -128,5 +128,42 @@ class MoodleQuickForm_select extends HTML_QuickForm_select{
             return 'default';
         }
     }
+
+   /**
+    * We check the options and return only the values that _could_ have been
+    * selected. We also return a scalar value if select is not "multiple"
+    */
+    function exportValue(&$submitValues, $assoc = false)
+    {
+        if (empty($this->_options)) {
+            return $this->_prepareValue(null, $assoc);
+        }
+
+        $value = $this->_findValue($submitValues);
+        if (is_null($value)) {
+            $value = $this->getValue();
+        }
+        $value = (array)$value;
+
+        $cleaned = array();
+        foreach ($value as $v) {
+            foreach ($this->_options as $option) {
+                if ((string)$option['attr']['value'] === (string)$v) {
+                    $cleaned[] = (string)$option['attr']['value'];
+                    break;
+                }
+            }
+        }
+
+        if (empty($cleaned)) {
+            return $this->_prepareValue(null, $assoc);
+        }
+        if ($this->getMultiple()) {
+            return $this->_prepareValue($cleaned, $assoc);
+        } else {
+            return $this->_prepareValue($cleaned[0], $assoc);
+        }
+    }
 }
+
 ?>
