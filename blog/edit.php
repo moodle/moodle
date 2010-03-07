@@ -108,8 +108,8 @@ switch ($action) {
             error('Incorrect blog post id');
         }
         $post->id           = $existing->id;
-        $post->subject      = $existing->subject;
-        $post->summary      = $existing->summary;
+        $post->subject      = clean_text($existing->subject);
+        $post->summary      = clean_text($existing->summary, $existing->format);
         $post->publishstate = $existing->publishstate;
         $post->format       = $existing->format;
         $post->action       = $action;
