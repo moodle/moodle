@@ -53,6 +53,7 @@ class data_field_textarea extends data_field_base {
         if ($recordid && $content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))){
             $text   = $content->content;
             $format = $content->content1;
+            $text = clean_text($text, $format);
         } else if (can_use_html_editor()) {
             $format = FORMAT_HTML;
         } else {
