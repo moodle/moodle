@@ -45,6 +45,7 @@ $itemid      = optional_param('itemid', '',        PARAM_INT);
 // parameters for repository
 $callback    = optional_param('callback', '',      PARAM_CLEANHTML);
 $contextid   = optional_param('ctx_id',    SITEID, PARAM_INT);    // context ID
+$courseid    = optional_param('course',    SITEID, PARAM_INT);    // course ID
 $env         = optional_param('env', 'filepicker', PARAM_ALPHA);  // opened in file picker, file manager or html editor
 $filename    = optional_param('filename', '',      PARAM_FILE);
 $fileurl     = optional_param('fileurl', '',       PARAM_FILE);
@@ -66,6 +67,10 @@ $draftpath   = optional_param('draftpath', '/',    PARAM_PATH);
 $user_context    = get_context_instance(CONTEXT_USER, $USER->id);
 
 $PAGE->set_url('/repository/filepicker.php');
+if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
+    print_error('invalidcourseid');
+}
+$PAGE->set_course($course);
 
 // init repository plugin
 //
@@ -86,7 +91,7 @@ if ($repository = $DB->get_record_sql($sql, array($repo_id))) {
     }
 }
 
-$url = new moodle_url($CFG->httpswwwroot."/repository/filepicker.php", array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env));
+$url = new moodle_url($CFG->httpswwwroot."/repository/filepicker.php", array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env, 'course'=>$courseid));
 $home_url = new moodle_url($url, array('action' => 'browse'));
 
 switch ($action) {
@@ -187,7 +192,7 @@ case 'sign':
             }
             if (!empty($list['page'])) {
                 // TODO: need a better solution
-                $pagingurl = new moodle_url("$CFG->httpswwwroot/repository/filepicker.php?action=list&itemid=$itemid&ctx_id=$contextid&repo_id=$repo_id");
+                $pagingurl = new moodle_url("$CFG->httpswwwroot/repository/filepicker.php?action=list&itemid=$itemid&ctx_id=$contextid&repo_id=$repo_id&course=$courseid");
                 echo $OUTPUT->paging_bar($list['total'], $list['page'] - 1, $list['perpage'], $pagingurl);
             }
             echo '<table>';

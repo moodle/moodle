@@ -134,6 +134,13 @@ FMHTML;
     </div>
 </div>
 FMHTML;
+        $editorurl = "$CFG->wwwroot/repository/filepicker.php?env=filemanager&amp;action=embedded&amp;itemid=$itemid&amp;subdirs=/&amp;maxbytes=$options->maxbytes&amp;ctx_id=".$PAGE->context->id.'&amp;course='.$PAGE->course->id;
+
+        $str .= <<<NONJS
+<div id="nonjs-filemanager-$client_id">
+<object type="text/html" data="$editorurl" height="160" width="600" style="border:1px solid #000">Error</object>
+</div>
+NONJS;
 
         $str .= '</fieldset>';
         $str .= '</div>';

@@ -228,7 +228,7 @@ FMHTML;
 FMHTML;
         // non-javascript file manager, will be destroied automatically if javascript is enabled.
         // will be removed if javascript is enabled
-        $editorurl = "$CFG->wwwroot/repository/filepicker.php?env=filemanager&amp;action=embedded&amp;itemid=$draftitemid&amp;subdirs=/&amp;maxbytes=$options->maxbytes&amp;ctx_id=".$PAGE->context->id;
+        $editorurl = "$CFG->wwwroot/repository/filepicker.php?env=filemanager&amp;action=embedded&amp;itemid=$draftitemid&amp;subdirs=/&amp;maxbytes=$options->maxbytes&amp;ctx_id=".$PAGE->context->id.'&amp;course='.$PAGE->course->id;
         $html .= <<<NONJS
 <div id="nonjs-filemanager-$client_id">
 <object type="text/html" data="$editorurl" height="160" width="600" style="border:1px solid #000">Error</object>
