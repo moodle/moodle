@@ -947,43 +947,6 @@ table.message_search_results td {
   color:#ff0000;
 }
 
-#admin-roles-override .capcurrent {
-  background-color:#FFFFFF;
-  border: 1px solid #cecece;
-}
-table.explainpermissions .decisive.has,
-#explaincaps .rolecap.yes {
-  background-color: #ddffdd;
-}
-table.explainpermissions .decisive.hasnot,
-table.explainpermissions .prohibit,
-#explaincaps .rolecap.no {
-  background-color: #ffdddd;
-}
-table.explainpermissions .prohibit,
-table.explainpermissions .decisive {
-  font-weight: bold;
-}
-table.explainpermissions .overridden {
-  text-decoration: line-through;
-}
-#admin-roles-define .capdefault {
-  background-color:#dddddd;
-  border: 1px solid #cecece;
-}
-
-#admin-roles-manage .rolecap,
-#admin-roles-override .rolecap {
-  border:none;
-  border-bottom:1px solid;
-  border-bottom-color: #cecece;
-}
-
-.rolecap .cap-name,
-.rolecap .note {
-  color: #888;
-}
-
 form.mform .required label {
   color:#a00;
 }
@@ -994,4 +957,163 @@ form.mform .required .fgroup span label {
   color:#000;
 }
 
+/**** role related CSS ****/
+
+.capbox {
+  width: 80%;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+table.rolecap {
+  width: 100%;
+}
+
+table.rolecap th {
+  border: none;
+}
+
+table.rolecap th {
+  text-align: left;
+  font-weight: normal;
+}
+
+table.rolecap thead th {
+  background-color: #dddddd;
+  font-weight: bold;
+}
+
+table.rolecap tr {
+  border-bottom: 1px solid #cecece;
+}
+
+.rolecap .cap-name,
+.rolecap .note {
+  font-size: 0.75em;
+  display: block;
+  padding: 0 0.5em;
+}
+
+.rolecap .cap-name {
+  color: #888;
+}
+
+table.rolecap .hiddenrow {
+  display: none;
+}
+
+table.rolecap .inherit,
+table.rolecap .allow,
+table.rolecap .prevent,
+table.rolecap .prohibit {
+  text-align:center;
+}
+
+table.rolecap label {
+  display: block;
+  width: 100%;
+  min-height: 2.5em;
+}
+
+table#explaincaps {
+  width: 60%;
+  margin-left:auto;
+  margin-right:auto;
+}
+table#explaincaps .rolecap.no {
+  background-color: #ffdddd;
+}
+
+table#explaincaps .rolecap.yes {
+  background-color: #ddffdd;
+}
+
+#admin-roles-define .backlink,
+#admin-roles-permissions .backlink,
+#admin-roles-assign .backlink,
+#admin-roles-check .backlink,
+#admin-roles-override .backlink {
+  text-align: right;
+  margin-top: 2em;
+}
+
+#admin-roles-override .capcurrent {
+  background-color:#FFFFFF;
+  border: 1px solid #cecece;
+}
+
+#admin-roles-permissions .advancedoverride {
+  text-align: right;
+}
+
+#admin-roles-define .capdefault {
+  background-color:#dddddd;
+  border: 1px solid #cecece;
+}
+
+#admin-roles-define .topfields {
+  margin: 1em 0 2em;
+}
+
+.roleassigntable {
+  width: 80%;
+}
+.roleassigntable td {
+  vertical-align: top;
+  padding: 0.2em 0.3em
+}
+.roleassigntable p {
+  text-align: left;
+  margin: 0.2em 0;
+}
+.roleassigntable #existingcell,
+.roleassigntable #potentialcell {
+  width: 42%;
+}
+.roleassigntable #existingcell label,
+.roleassigntable #potentialcell label {
+  font-weight: bold;
+}
+.roleassigntable #buttonscell {
+  width: 16%;
+}
+.roleassigntable #buttonscell #add,
+.roleassigntable #buttonscell #remove {
+  width: 100%;
+  margin: 0.3em 0;
+  padding: 0.5em 0;
+}
+.roleassigntable #buttonscell p {
+  margin: 0.3em 0;
+}
+.roleassigntable #buttonscell #assignoptions {
+  font-size: 0.75em;
+}
+.roleassigntable #buttonscell #assignoptions .collapsibleregioncaption {
+  font-weight: bold;
+}
+.roleassigntable #buttonscell #addcontrols {
+  margin-top: 3em;
+  height: 13em;
+}
+.roleassigntable #removeselect_wrapper,
+.roleassigntable #addselect_wrapper {
+  width: 100%;
+}
+.roleassigntable #removeselect_wrapper label,
+.roleassigntable #addselect_wrapper label {
+  font-weight: normal;
+}
+
+#admin-roles-override .overridenotice,
+#admin-roles-define .definenotice {
+  margin: 1em 10% 2em;
+  text-align: left;
+}
+
+.capabilitysearchui {
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
+}
 

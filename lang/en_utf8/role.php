@@ -282,6 +282,19 @@ $string['whydoesusernothavecap'] = 'Why does $a->fullname not have capability $a
 $string['xroleassignments'] = '$a\'s role assignments';
 $string['xuserswiththerole'] = 'Users with the role \"$a->role\"';
 
+// pending new strings for new permission UI
+$string['advancedoverride'] = 'Advanced role override'; 
+$string['confirmroleunprohibit'] = 'Do you really want to remove <strong>$a->role</strong> from the list of prohibited roles for capability $a->cap in context $a->context?';
+$string['confirmroleprevent'] = 'Do you really want to remove <strong>$a->role</strong> from the list of allowed roles for capability $a->cap in context $a->context?';
+$string['neededroles'] = 'Roles with permission';
+$string['permissionsincontext'] = 'Permissions in $a';
+$string['prohibitedroles'] = 'Prohibited';
+$string['roleallowheader'] = 'Allow role:';
+$string['roleallowinfo'] = 'Select a role to be added to the list of allowed roles in context $a->context, capability $a->cap:';
+$string['roleprohibitheader'] = 'Prohibit role';
+$string['roleprohibitinfo'] = 'Select a role to be added to the list of prohibited roles in context $a->context, capability $a->cap:';
+$string['roleselect'] = 'Select role';
+
 //OBSOLETED in 1.9!
 $string['course:viewcoursegrades'] = 'View course grades';
 $string['user:viewusergrades'] = 'View user grades';

@@ -3010,8 +3010,8 @@ function notice_yesno($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno=
 
     global $OUTPUT;
 
-    $buttoncontinue = new simple_button(new moodle_url($linkyes, $optionsyes), get_string('yes'), $methodyes);
-    $buttoncancel   = new simple_button(new moodle_url($linkno, $optionsno), get_string('no'), $methodno);
+    $buttoncontinue = new single_button(new moodle_url($linkyes, $optionsyes), get_string('yes'), $methodyes);
+    $buttoncancel   = new single_button(new moodle_url($linkno, $optionsno), get_string('no'), $methodno);
 
     echo $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel);
 }
@@ -3664,6 +3664,36 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     // moodle 2.0
 
     return '';
+}
+
+
+/**
+ * Print header for admin page
+ * @deprecated since Moodle 20. Please use normal $OUTPUT->header() instead
+ * @param string $focus focus element
+ */
+function admin_externalpage_print_header($focus='') {
+    global $CFG, $PAGE, $SITE, $OUTPUT;
+
+    //debugging('admin_externalpage_print_header is deprecated. Please $OUTPUT->header() instead.', DEBUG_DEVELOPER);
+
+    if (!is_string($focus)) {
+        $focus = ''; // BC compatibility, there used to be adminroot parameter
+    }
+
+    $PAGE->set_focuscontrol($focus);
+
+    echo $OUTPUT->header();
+}
+
+/**
+ * @deprecated since Moodle 1.9. Please use normal $OUTPUT->footer() instead
+ */
+function admin_externalpage_print_footer() {
+// TODO Still 103 referernces in core code. Don't do debugging output yet.
+    debugging('admin_externalpage_print_footer is deprecated. Please $OUTPUT->footer() instead.', DEBUG_DEVELOPER);
+    global $OUTPUT;
+    echo $OUTPUT->footer();
 }
 
 /// CALENDAR MANAGEMENT  ////////////////////////////////////////////////////////////////

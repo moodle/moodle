@@ -1,34 +1,28 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Lets you assign roles to users in a particular context.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package roles
- *//** */
+ * @package    moodlecore
+ * @subpackage role
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
     require_once(dirname(__FILE__) . '/../../config.php');
     require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
@@ -42,7 +36,6 @@
     $hidden         = optional_param('hidden', 0, PARAM_BOOL); // whether this assignment is hidden
     $extendperiod   = optional_param('extendperiod', 0, PARAM_INT);
     $extendbase     = optional_param('extendbase', 3, PARAM_INT);
-    $returnurl      = optional_param('returnurl', null, PARAM_LOCALURL);
 
     $urlparams = array('contextid' => $contextid);
     if (!empty($userid)) {
@@ -50,9 +43,6 @@
     }
     if ($courseid && $courseid != SITEID) {
         $urlparams['courseid'] = $courseid;
-    }
-    if ($returnurl) {
-        $urlparams['returnurl'] = $returnurl;
     }
     $PAGE->set_url('/admin/roles/assign.php', $urlparams);
     $baseurl = $PAGE->url->out();
@@ -65,26 +55,27 @@
     $contextname = print_context_name($context);
 
     $inmeta = 0;
+    $cm = null;
     if ($context->contextlevel == CONTEXT_COURSE) {
         $courseid = $context->instanceid;
-        if ($course = $DB->get_record('course', array('id'=>$courseid))) {
-            $inmeta = $course->metacourse;
-        } else {
-            print_error('invalidcourse', 'error');
-        }
 
-    } else if (!empty($courseid)){ // we need this for user tabs in user context
-        if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-            print_error('invalidcourse', 'error');
-        }
+    } else if ($context->contextlevel == CONTEXT_MODULE) {
+        $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
+        $courseid = $cm->course;
+
+    } else if (!empty($courseid)) { // we need this for user tabs in user context
+        // pass it
 
     } else {
         $courseid = SITEID;
         $course = clone($SITE);
     }
 
+    $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+    $inmeta = $course->metacourse;
+
 /// Check login and permissions.
-    require_login($course);
+    require_login($course, false, $cm);
     require_capability('moodle/role:assign', $context);
 
 /// These are needed early because of tabs.php
@@ -276,19 +267,21 @@
 
         $showroles = 1;
         $currenttab = 'assign';
+        echo $OUTPUT->header();
         include($CFG->dirroot.'/user/tabs.php');
 
     } else if ($context->contextlevel == CONTEXT_SYSTEM) {
         admin_externalpage_setup('assignroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
 
     } else if ($isfrontpage) {
         admin_externalpage_setup('frontpageroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         $currenttab = 'assign';
         include('tabs.php');
 
     } else {
+        echo $OUTPUT->header();
         $currenttab = 'assign';
         include('tabs.php');
     }
@@ -364,7 +357,7 @@
 
     /// Print a form to swap roles, and a link back to the all roles list.
         echo '<div class="backlink">';
-        
+
         $select = new single_select(new moodle_url($baseurl), 'roleid', $nameswithcounts, $roleid, null);
         $select->label = get_string('assignanotherrole', 'role');
         echo $OUTPUT->render($select);
@@ -440,12 +433,8 @@
 
         echo $OUTPUT->table($table);
 
-        if (!$isfrontpage && ($url = get_context_url($context))) {
-            echo '<div class="backlink"><a href="' . $url . '">' .
-                get_string('backto', '', $contextname) . '</a></div>';
-        } else if ($returnurl) {
-            echo '<div class="backlink"><a href="' . $CFG->wwwroot . '/' . $returnurl . '">' .
-                get_string('backtopageyouwereon') . '</a></div>';
+        if ($context->contextlevel > CONTEXT_USER) {
+            echo '<div class="backlink"><a href="' . get_context_url($context) . '">' . get_string('backto', '', $contextname) . '</a></div>';
         }
     }
 

@@ -780,8 +780,7 @@ function path_inaccessdata($path, $accessdata) {
 }
 
 /**
- *
- * Walk the accessdata array and return true/false
+ * Does the user have a capability to do something?
  *
  * Walk the accessdata array and return true/false.
  * Deals with prohibits, roleswitching, aggregating
@@ -793,7 +792,7 @@ function path_inaccessdata($path, $accessdata) {
  * Notes:
  *
  * Switch Roles exits early
- * -----------------------
+ * ------------------------
  * cap checks within a switchrole need to exit early
  * in our bottom up processing so they don't "see" that
  * there are real RAs that can do all sorts of things.
@@ -805,218 +804,112 @@ function path_inaccessdata($path, $accessdata) {
  * course you'll have techer+defaultloggedinuser.
  * We try to mimic that in switchrole.
  *
- * Local-most role definition and role-assignment wins
- * ---------------------------------------------------
- * So if the local context has said 'allow', it wins
- * over a high-level context that says 'deny'.
- * This is applied when walking rdefs, and RAs.
- * Only at the same context the values are SUM()med.
+ * Permission evaluation
+ * ---------------------
+ * Originaly there was an extremely complicated way
+ * to determine the user access that dealt with
+ * "locality" or role assignemnts and role overrides.
+ * Now we simply evaluate access for each roel separately
+ * and then verify if user has at least one role with allow
+ * and at the same time no role with prohibit.
  *
- * The exception is CAP_PROHIBIT.
+ * Incorrectly set Guest role as Default user role
+ * -----------------------------------------------
+ * Admins have to make sure that the "Default user role" does
+ * not have 'moodle/course:view' or 'moodle/legacy:guest'!
  *
- * "Guest default role" exception
+ * Incorrectly set Frontpage role
  * ------------------------------
+ * Admins have to make sure that the "Frontpage role" does
+ * not have 'moodle/legacy:guest'.
  *
- * See MDL-7513 and $ignoreguest below for details.
- *
- * The rule is that
- *
- *    IF we are being asked about moodle/legacy:guest
- *                             OR moodle/course:view
- *    FOR a real, logged-in user
- *    AND we reached the top of the path in ra and rdef
- *    AND that role has moodle/legacy:guest === 1...
- *    THEN we act as if we hadn't seen it.
- *
- * Note that this function must be kept in synch with has_capability_in_accessdata.
- *
- * To Do:
- * @todo Document how it works
- * @todo Rewrite in ASM
- *
- * @global object
  * @param string $capability
  * @param object $context
  * @param array $accessdata
  * @param bool $doanything
  * @return bool
  */
-function has_capability_in_accessdata($capability, $context, $accessdata, $doanything) {
-
+function has_capability_in_accessdata($capability, $context, array $accessdata, $doanything) {
     global $CFG;
 
-    $path = $context->path;
-
-    // build $contexts as a list of "paths" of the current
-    // contexts and parents with the order top-to-bottom
-    $contexts = array($path);
-    while (preg_match('!^(/.+)/\d+$!', $path, $matches)) {
-        $path = $matches[1];
-        array_unshift($contexts, $path);
+    if (empty($context->id)) {
+        throw new coding_exception('Invalid context specified');
     }
 
-    $ignoreguest = false;
-    if (isset($accessdata['dr'])
-        && ($capability    == 'moodle/course:view'
-            || $capability == 'moodle/legacy:guest')) {
-        // At the base, ignore rdefs where moodle/legacy:guest
-        // is set
-        $ignoreguest = $accessdata['dr'];
+    // Build $paths as a list of current + all parent "paths" with order bottom-to-top
+    $contextids = explode('/', trim($context->path, '/'));
+    $paths = array($context->path);
+    while ($contextids) {
+        array_pop($contextids);
+        $paths[] = '/' . implode('/', $contextids);
+    }
+    unset($contextids);
+
+    if ($doanything and strpos($capability, 'moodle/legacy:') === 0) {
+        // admins do not have any legacy capabilities
+        $doanything = false;
     }
 
-    // Coerce it to an int
-    $CAP_PROHIBIT = (int)CAP_PROHIBIT;
+    $roles = array();
+    $switchedrole = false;
 
-    $cc = count($contexts);
-
-    $can = 0;
-    $capdepth = 0;
-
-    //
-    // role-switches loop
-    //
-    if (isset($accessdata['rsw'])) {
-        // check for isset() is fast
-        // empty() is slow...
-        if (empty($accessdata['rsw'])) {
-            unset($accessdata['rsw']); // keep things fast and unambiguous
-            break;
-        }
+    // Find out if role switched
+    if (!empty($accessdata['rsw'])) {
         // From the bottom up...
-        for ($n=$cc-1;$n>=0;$n--) {
-            $ctxp = $contexts[$n];
+        foreach ($paths as $path) {
             if (isset($accessdata['rsw'][$ctxp])) {
-                // Found a switchrole assignment
-                // check for that role _plus_ the default user role
-                $ras = array($accessdata['rsw'][$ctxp],$CFG->defaultuserroleid);
-                for ($rn=0;$rn<2;$rn++) {
-                    $roleid = (int)$ras[$rn];
-                    // Walk the path for capabilities
-                    // from the bottom up...
-                    for ($m=$cc-1;$m>=0;$m--) {
-                        $capctxp = $contexts[$m];
-                        if (isset($accessdata['rdef']["{$capctxp}:$roleid"][$capability])) {
-                            $perm = (int)$accessdata['rdef']["{$capctxp}:$roleid"][$capability];
+                // Found a switchrole assignment - check for that role _plus_ the default user role
+                $roles = array($accessdata['rsw'][$ctxp]=>null, $CFG->defaultuserroleid=>null);
+                $switchedrole = true;
+                break;
+            }
+        }
+    }
 
-                            // The most local permission (first to set) wins
-                            // the only exception is CAP_PROHIBIT
-                            if ($can === 0) {
-                                $can = $perm;
-                            } elseif ($perm === $CAP_PROHIBIT) {
-                                $can = $perm;
-                                break;
-                            }
-                        }
-                    }
+    if (!$switchedrole) {
+        // get all users roles in this context and above
+        foreach ($paths as $path) {
+            if (isset($accessdata['ra'][$path])) {
+                foreach ($accessdata['ra'][$path] as $roleid) {
+                    $roles[$roleid] = null;
                 }
-                // As we are dealing with a switchrole,
-                // we return _here_, do _not_ walk up
-                // the hierarchy any further
-                if ($can < 1) {
-                    if ($doanything) {
-                        // didn't find it as an explicit cap,
-                        // but maybe the user can doanything in this context...
-                        return has_capability_in_accessdata('moodle/site:doanything', $context, $accessdata, false);
-                    } else {
-                        return false;
-                    }
-                } else {
+            }
+        }
+
+        // Find out if user is admin - it is not possible to override the doanything in any way
+        // and it is not possible to switch to admin role either.
+        if ($doanything or $capability === 'moodle/site:doanything') {
+            $systempath = '/'.SYSCONTEXTID;
+            foreach ($roles as $roleid=>$ignored) {
+                if (isset($accessdata['rdef']["{$systempath}:$roleid"]['moodle/site:doanything']) and $accessdata['rdef']["{$systempath}:$roleid"]['moodle/site:doanything'] == CAP_ALLOW) {
                     return true;
                 }
-
+            }
+            if ($capability === 'moodle/site:doanything') {
+                // do anything can not be overridden, prevented or prohibited
+                return false;
             }
         }
     }
 
-    //
-    // Main loop for normal RAs
-    // From the bottom up...
-    //
-    for ($n=$cc-1;$n>=0;$n--) {
-        $ctxp = $contexts[$n];
-        if (isset($accessdata['ra'][$ctxp])) {
-            // Found role assignments on this leaf
-            $ras = $accessdata['ra'][$ctxp];
-
-            $rc          = count($ras);
-            $ctxcan      = 0;
-            $ctxcapdepth = 0;
-            for ($rn=0;$rn<$rc;$rn++) {
-                $roleid  = (int)$ras[$rn];
-                $rolecan = 0;
-                $rolecapdepth = 0;
-                // Walk the path for capabilities
-                // from the bottom up...
-                for ($m=$cc-1;$m>=0;$m--) {
-                    $capctxp = $contexts[$m];
-                    // ignore some guest caps
-                    // at base ra and rdef
-                    if ($ignoreguest == $roleid
-                        && $n === 0
-                        && $m === 0
-                        && isset($accessdata['rdef']["{$capctxp}:$roleid"]['moodle/legacy:guest'])
-                        && $accessdata['rdef']["{$capctxp}:$roleid"]['moodle/legacy:guest'] > 0) {
-                            continue;
-                    }
-                    if (isset($accessdata['rdef']["{$capctxp}:$roleid"][$capability])) {
-                        $perm = (int)$accessdata['rdef']["{$capctxp}:$roleid"][$capability];
-                        // The most local permission (first to set) wins
-                        // the only exception is CAP_PROHIBIT
-                        if ($rolecan === 0) {
-                            $rolecan      = $perm;
-                            $rolecapdepth = $m;
-                        } elseif ($perm === $CAP_PROHIBIT) {
-                            $rolecan      = $perm;
-                            $rolecapdepth = $m;
-                            break;
-                        }
-                    }
-                }
-                // Rules for RAs at the same context...
-                // - prohibits always wins
-                // - permissions at the same ctxlevel & capdepth are added together
-                // - deeper capdepth wins
-                if ($ctxcan === $CAP_PROHIBIT || $rolecan === $CAP_PROHIBIT) {
-                    $ctxcan      = $CAP_PROHIBIT;
-                    $ctxcapdepth = 0;
-                } elseif ($ctxcapdepth === $rolecapdepth) {
-                    $ctxcan += $rolecan;
-                } elseif ($ctxcapdepth < $rolecapdepth) {
-                    $ctxcan      = $rolecan;
-                    $ctxcapdepth = $rolecapdepth;
-                } else { // ctxcaptdepth is deeper
-                    // rolecap ignored
+    // Now find out what access is given to each role, going bottom-->up direction
+    foreach ($roles as $roleid => $ignored) {
+        foreach ($paths as $path) {
+            if (isset($accessdata['rdef']["{$path}:$roleid"][$capability])) {
+                $perm = (int)$accessdata['rdef']["{$path}:$roleid"][$capability];
+                if ($perm === CAP_PROHIBIT or is_null($roles[$roleid])) {
+                    $roles[$roleid] = $perm;
                 }
             }
-            // The most local RAs with a defined
-            // permission ($ctxcan) win, except
-            // for CAP_PROHIBIT
-            // NOTE: If we want the deepest RDEF to
-            // win regardless of the depth of the RA,
-            // change the elseif below to read
-            // ($can === 0 || $capdepth < $ctxcapdepth) {
-            if ($ctxcan === $CAP_PROHIBIT) {
-                $can = $ctxcan;
-                break;
-            } elseif ($can === 0) { // see note above
-                $can      = $ctxcan;
-                $capdepth = $ctxcapdepth;
-            }
         }
     }
-
-    if ($can < 1) {
-        if ($doanything) {
-            // didn't find it as an explicit cap,
-            // but maybe the user can doanything in this context...
-            return has_capability_in_accessdata('moodle/site:doanything', $context, $accessdata, false);
-        } else {
-            return false;
-        }
-    } else {
-        return true;
+    // any CAP_PROHIBIT found means no permission for the user
+    if (array_search(CAP_PROHIBIT, $roles) !== false) {
+        return false;
     }
 
+    // at least one CAP_ALLOW means the user has a permission
+    return (array_search(CAP_ALLOW, $roles) !== false);
 }
 
 /**
@@ -2604,12 +2497,12 @@ function get_context_instance($contextlevel, $instance=0) {
 /**
  * Get a context instance as an object, from a given context id.
  *
- * @global object
- * @global object
  * @param mixed $id a context id or array of ids.
+ * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+ *                        MUST_EXIST means throw exception if no record or multiple records found
  * @return mixed object, array of the context object, or false.
  */
-function get_context_instance_by_id($id) {
+function get_context_instance_by_id($id, $strictness=IGNORE_MISSING) {
     global $DB, $ACCESSLIB_PRIVATE;
 
     if ($id == SYSCONTEXTID) {
@@ -2620,7 +2513,7 @@ function get_context_instance_by_id($id) {
         return $ACCESSLIB_PRIVATE->contextsbyid[$id];
     }
 
-    if ($context = $DB->get_record('context', array('id'=>$id))) {
+    if ($context = $DB->get_record('context', array('id'=>$id), '*', $strictness)) {
         cache_context($context);
         return $context;
     }
@@ -2642,6 +2535,40 @@ function get_local_override($roleid, $contextid, $capability) {
     return $DB->get_record('role_capabilities', array('roleid'=>$roleid, 'capability'=>$capability, 'contextid'=>$contextid));
 }
 
+/**
+ * Returns context instance plus related course and cm instances
+ * @param int $contextid
+ * @return array of ($context, $course, $cm)
+ */
+function get_context_info_array($contextid) {
+    global $DB;
+
+    $context = get_context_instance_by_id($contextid, MUST_EXIST);
+    $course  = null;
+    $cm      = null;
+
+    if ($context->contextlevel == CONTEXT_COURSE) {
+        $course = $DB->get_record('course', array('id'=>$context->instanceid), '*', MUST_EXIST);
+
+    } else if ($context->contextlevel == CONTEXT_MODULE) {
+        $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
+        $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+
+    } else if ($context->contextlevel == CONTEXT_BLOCK) {
+        $parentcontexts = get_parent_contexts($context, false);
+        $parent = reset($parentcontexts);
+        $parent = get_context_instance_by_id($parent);
+
+        if ($parent->contextlevel == CONTEXT_COURSE) {
+            $course = $DB->get_record('course', array('id'=>$parent->instanceid), '*', MUST_EXIST);
+        } else if ($parent->contextlevel == CONTEXT_MODULE) {
+            $cm = get_coursemodule_from_id('', $parent->instanceid, 0, false, MUST_EXIST);
+            $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+        }
+    }
+
+    return array($context, $course, $cm);
+}
 
 
 //////////////////////////////////////
@@ -3507,52 +3434,44 @@ function print_context_name($context, $withprefix = true, $short = false) {
  * CONTEXT_COURSE, this is the course page. For CONTEXT_USER it is the
  * user profile page.
  *
- * First three parameters as for
- *
- * @global object
- * @global object
- * @global object
  * @param object $context the context.
- * @return string a suitable URL, or blank.
+ * @return moodle_url
  */
 function get_context_url($context) {
-    global $CFG, $COURSE, $DB;
+    global $COURSE, $DB;
 
-    $url = '';
     switch ($context->contextlevel) {
         case CONTEXT_USER:
-            $url = $CFG->wwwroot . '/user/view.php?id=' . $context->instanceid;
+            $url = new moodle_url('/user/view.php', array('id'=>$context->instanceid));
             if ($COURSE->id != SITEID) {
-                $url .= '&amp;courseid=' . $COURSE->id;
+                $url->param('courseid', $COURSE->id);
             }
-            break;
+            return $url;;
 
         case CONTEXT_COURSECAT: // Coursecat -> coursecat or site
-            $url = $CFG->wwwroot . '/course/category.php?id=' . $context->instanceid;
-            break;
+            return new moodle_url('/course/category.php', array('id'=>$context->instanceid));
 
         case CONTEXT_COURSE: // 1 to 1 to course cat
-            if ($context->instanceid == SITEID) {
-                $url = $CFG->wwwroot . '/';
-            } else {
-                $url = $CFG->wwwroot . '/course/view.php?id=' . $context->instanceid;
+            if ($context->instanceid != SITEID) {
+                return new moodle_url('/course/view.php', array('id'=>$context->instanceid));
             }
             break;
 
         case CONTEXT_MODULE: // 1 to 1 to course
             if ($modname = $DB->get_field_sql('SELECT md.name AS modname FROM {course_modules} cm ' .
                     'JOIN {modules} md ON md.id = cm.module WHERE cm.id = ?', array($context->instanceid))) {
-                $url = $CFG->wwwroot . '/mod/' . $modname . '/view.php?id=' . $context->instanceid;
+                return new moodle_url('/mod/' . $modname . '/view.php', array('id'=>$context->instanceid));
             }
             break;
 
-        case CONTEXT_SYSTEM:
         case CONTEXT_BLOCK:
-        default:
-            $url = '';
+            $parentcontexts = get_parent_contexts($context, false);
+            $parent = reset($parentcontexts);
+            $parent = get_context_instance_by_id($parent);
+            return get_context_url($parent);
     }
 
-    return $url;
+    return new moodle_url('/');
 }
 
 /**
@@ -4768,20 +4687,16 @@ function get_default_course_role($course) {
  * which can get rather large - and has a serious perf impact
  * on some DBs.
  *
- * @global object
- * @global object
  * @param object $context
- * @param string $capability - string capability, or an array of capabilities, in which
- *               case users having any of those capabilities will be returned.
- *               For performance reasons, you are advised to put the capability
- *               that the user is most likely to have first.
+ * @param string|array $capability - capability name(s)
  * @param string $fields - fields to be pulled. The user table is aliased to 'u'. u.id MUST be included.
  * @param string $sort - the sort order. Default is lastaccess time.
  * @param mixed $limitfrom - number of records to skip (offset)
  * @param mixed $limitnum - number of records to fetch
- * @param mixed $groups - single group or array of groups - only return
+ * @param string|array $groups - single group or array of groups - only return
  *               users who are in one of these group(s).
- * @param mixed $exceptions - list of users to exclude, comma separated or array
+ * @param string|array $exceptions - list of users to exclude, comma separated or array
+ * @param bool $doanything prohibit takes over admin roles here, in has_capability() it does not
  * @param bool $view - set to true when roles are pulled for display only
  *               this is so that we can filter roles with no visible
  *               assignment, for example, you might want to "hide" all
@@ -4793,17 +4708,23 @@ function get_default_course_role($course) {
  *               in $groups.
  * @return mixed
  */
-function get_users_by_capability($context, $capability, $fields='', $sort='',
-        $limitfrom='', $limitnum='', $groups='', $exceptions='', $doanything=true,
-        $view=false, $useviewallgroups=false) {
+function get_users_by_capability($context, $capability, $fields='', $sort='', $limitfrom='', $limitnum='',
+                                 $groups='', $exceptions='', $doanything=true, $view=false, $useviewallgroups=false) {
     global $CFG, $DB;
 
-    $ctxids = substr($context->path, 1); // kill leading slash
+    if (empty($context->id)) {
+        throw new coding_exception('Invalid context specified');
+    }
+
+    $defaultuserroleid      = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : null;
+    $defaultfrontpageroleid = isset($CFG->defaultfrontpageroleid) ? $CFG->defaultfrontpageroleid : null;
+
+    $ctxids = trim($context->path, '/');
     $ctxids = str_replace('/', ',', $ctxids);
 
     // Context is the frontpage
-    $isfrontpage = false;
     $iscoursepage = false; // coursepage other than fp
+    $isfrontpage = false;
     if ($context->contextlevel == CONTEXT_COURSE) {
         if ($context->instanceid == SITEID) {
             $isfrontpage = true;
@@ -4811,153 +4732,115 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
             $iscoursepage = true;
         }
     }
+    $isfrontpage = ($isfrontpage || is_inside_frontpage($context));
 
-    // What roles/rolecaps are interesting?
-    if (is_array($capability)) {
-        $caps = $capability;
-    } else {
-        $caps = array($capability);
-    }
-    if ($doanything === true) {
+    $caps = (array)$capability;
+    if ($doanything) {
         $caps[] = 'moodle/site:doanything';
-        $doanything_join='';
-        $doanything_cond='';
-
-    } else {
-        // This is an outer join against
-        // admin-ish roleids. Any row that succeeds
-        // in JOINing here ends up removed from
-        // the resultset. This means we remove
-        // rolecaps from roles that also have
-        // 'doanything' capabilities.
-        $doanything_join="LEFT OUTER JOIN (
-                              SELECT DISTINCT rc.roleid
-                              FROM {role_capabilities} rc
-                              WHERE rc.capability=:capany
-                                    AND rc.permission=".CAP_ALLOW."
-                                    AND rc.contextid IN ($ctxids)
-                          ) dar
-                             ON rc.roleid=dar.roleid";
-        $doanything_cond="AND dar.roleid IS NULL";
     }
 
-    // fetch all capability records - we'll walk several
-    // times over them, and should be a small set
+    // contruct list of context paths bottom-->top
+    $contextids = explode(',', $ctxids);
+    $paths = array($context->path);
+    $contextids2 = $contextids;
+    while ($contextids2) {
+        array_pop($contextids2);
+        $paths[] = '/' . implode('/', $contextids2);
+    }
+    unset($contextids2);
 
-    $negperm = false; // has any negative (<0) permission?
-    $roleids = array();
 
-    list($capstest, $params) = $DB->get_in_or_equal($caps, SQL_PARAMS_NAMED, 'cap0');
-    $params['capany'] = 'moodle/site:doanything';
-
-    $sql = "SELECT rc.id, rc.roleid, rc.permission, rc.capability,
-                   ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
+    // we need to find out all roles that have these capabilities either in definition or in overrides
+    $defs = array();
+    list($incontexts, $params) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'con000');
+    list($incaps, $params2) = $DB->get_in_or_equal($caps, SQL_PARAMS_NAMED, 'cap000');
+    $params = array_merge($params, $params2);
+    $sql = "SELECT rc.id, rc.roleid, rc.permission, rc.capability, ctx.path
               FROM {role_capabilities} rc
               JOIN {context} ctx on rc.contextid = ctx.id
-    $doanything_join
-             WHERE rc.capability $capstest AND ctx.id IN ($ctxids)
-                   $doanything_cond
-          ORDER BY rc.roleid ASC, ctx.depth ASC";
+             WHERE rc.contextid $incontexts AND rc.capability $incaps";
 
-    if ($capdefs = $DB->get_records_sql($sql, $params)) {
-        foreach ($capdefs AS $rcid=>$rc) {
-            $roleids[] = (int)$rc->roleid;
-            if ($rc->permission < 0) {
-                $negperm = true;
+    $rcs = $DB->get_records_sql($sql, $params);
+    foreach ($rcs as $rc) {
+        $defs[$rc->capability][$rc->path][$rc->roleid] = $rc->permission;
+    }
+
+    // go through the permissions bottom-->top direction to evaluate the current permission,
+    // first one wins (prohibit is an exception that always wins)
+    $access = array();
+    foreach ($caps as $cap) {
+        foreach ($paths as $path) {
+            if (empty($defs[$cap][$path])) {
+                continue;
+            }
+            foreach($defs[$cap][$path] as $roleid => $perm) {
+                if ($perm == CAP_PROHIBIT) {
+                    $access[$cap][$roleid] = CAP_PROHIBIT;
+                    continue;
+                }
+                if (!isset($access[$cap][$roleid])) {
+                    $access[$cap][$roleid] = (int)$perm;
+                }
             }
         }
     }
 
-    $roleids = array_unique($roleids);
+    // make lists of roles that are needed and prohibited in this context
+    $needed = array(); // one of these is enough
+    $prohibited = array(); // must not have any of these
+    foreach ($caps as $cap) {
+        if (empty($access[$cap])) {
+            continue;
+        }
+        foreach ($access[$cap] as $roleid => $perm) {
+            if ($perm == CAP_PROHIBIT) {
+                unset($needed[$cap][$roleid]);
+                $prohibited[$cap][$roleid] = true;
+            } else if ($perm == CAP_ALLOW and empty($prohibited[$cap][$roleid])) {
+                $needed[$cap][$roleid] = true;
+            }
+        }
+        if (empty($needed[$cap]) or !empty($prohibited[$cap][$defaultuserroleid])) {
+            // easy, nobody has the permission
+            unset($needed[$cap]);
+            unset($prohibited[$cap]);
+        } else if ($isfrontpage and !empty($prohibited[$cap][$defaultfrontpageroleid])) {
+            // everybody is disqualified on the frontapge
+            unset($needed[$cap]);
+            unset($prohibited[$cap]);
+        }
+        if (empty($prohibited[$cap])) {
+            unset($prohibited[$cap]);
+        }
+    }
 
-    if (count($roleids)===0) { // noone here!
+    if (empty($needed)) {
+        // there can not be anybody if no roles match this request
         return array();
     }
 
-    // is the default role interesting? does it have
-    // a relevant rolecap? (we use this a lot later)
-    if (isset($CFG->defaultuserroleid) and in_array((int)$CFG->defaultuserroleid, $roleids, true)) {
-        $defaultroleinteresting = true;
-    } else {
-        $defaultroleinteresting = false;
-    }
-
-    // is the default role interesting? does it have
-    // a relevant rolecap? (we use this a lot later)
-    if (($isfrontpage or is_inside_frontpage($context)) and !empty($CFG->defaultfrontpageroleid) and in_array((int)$CFG->defaultfrontpageroleid, $roleids, true)) {
-        if (!empty($CFG->fullusersbycapabilityonfrontpage)) {
-            // new in 1.9.6 - full support for defaultfrontpagerole MDL-19039
-            $frontpageroleinteresting = true;
-        } else {
-            // old style 1.9.0-1.9.5 - much faster + fewer negative override problems on frontpage
-            $frontpageroleinteresting = ($context->contextlevel == CONTEXT_COURSE);
+    if (empty($prohibited)) {
+        // we can compact the needed roles
+        $n = array();
+        foreach ($needed as $cap) {
+            foreach ($cap as $roleid=>$unused) {
+                $n[$roleid] = true;
+            }
         }
-    } else {
-        $frontpageroleinteresting = false;
+        $needed = array('any'=>$n);
+        unset($n);
     }
 
-    //
-    // Prepare query clauses
-    //
-    $wherecond = array();
-
-    // Non-deleted users. We never return deleted users.
-    $wherecond['nondeleted'] = 'u.deleted = 0';
-
-    /// Groups
-    if ($groups) {
-        if (is_array($groups)) {
-            $grouptest = 'gm.groupid IN (' . implode(',', $groups) . ')';
-        } else {
-            $grouptest = 'gm.groupid = ' . (int)$groups;
-        }
-        $grouptest = 'ra.userid IN (SELECT userid FROM ' .
-            '{groups_members} gm WHERE ' . $grouptest . ')';
-
-        if ($useviewallgroups) {
-            $viewallgroupsusers = get_users_by_capability($context,
-                    'moodle/site:accessallgroups', 'u.id, u.id', '', '', '', '', $exceptions);
-            $wherecond['groups'] =  '('. $grouptest . ' OR ra.userid IN (' .
-                                    implode(',', array_keys($viewallgroupsusers)) . '))';
-        } else {
-            $wherecond['groups'] =  '(' . $grouptest .')';
-        }
-    }
-
-    /// User exceptions
-    if (!empty($exceptions)) {
-        if (is_array($exceptions)) {
-            $exceptions = implode(',', $exceptions);
-        }
-        $wherecond['userexceptions'] = ' u.id NOT IN ('.$exceptions.')';
-    }
-
-    /// Set up hidden role-assignments sql
-    if ($view && !has_capability('moodle/role:viewhiddenassigns', $context)) {
-        $condhiddenra = 'AND ra.hidden = 0 ';
-        $sscondhiddenra = 'AND ssra.hidden = 0 ';
-    } else {
-        $condhiddenra = '';
-        $sscondhiddenra = '';
-    }
-
-    // Collect WHERE conditions
-    $where = implode(' AND ', array_values($wherecond));
-    if ($where != '') {
-        $where = 'WHERE ' . $where;
-    }
-
-    /// Set up default fields
+    /// ***** Set up default fields ******
     if (empty($fields)) {
         if ($iscoursepage) {
-            $fields = 'u.*, ul.timeaccess as lastaccess';
+            $fields = 'u.*, ul.timeaccess AS lastaccess';
         } else {
             $fields = 'u.*';
         }
     } else {
-        if (debugging('', DEBUG_DEVELOPER) && strpos($fields, 'u.*') === false &&
-                strpos($fields, 'u.id') === false) {
-            debugging('u.id must be included in the list of fields passed to get_users_by_capability.', DEBUG_DEVELOPER);
+        if (debugging('', DEBUG_DEVELOPER) && strpos($fields, 'u.*') === false && strpos($fields, 'u.id') === false) {
+            debugging('u.id must be included in the list of fields passed to get_users_by_capability().', DEBUG_DEVELOPER);
         }
     }
 
@@ -4969,377 +4852,140 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
             $sort = 'u.lastaccess';
         }
     }
-    $sortby = $sort ? " ORDER BY $sort " : '';
+    $sortby = "ORDER BY $sort";
+
+    // Prepare query clauses
+    $wherecond = array();
+    $params    = array();
+    $joins     = array();
 
     // User lastaccess JOIN
-    if ((strpos($sort, 'ul.timeaccess') === FALSE) and (strpos($fields, 'ul.timeaccess') === FALSE)) {  // user_lastaccess is not required MDL-13810
-        $uljoin = '';
+    if ((strpos($sort, 'ul.timeaccess') === false) and (strpos($fields, 'ul.timeaccess') === false)) {
+         // user_lastaccess is not required MDL-13810
     } else {
-        $uljoin = "LEFT OUTER JOIN {user_lastaccess} ul
-                         ON (ul.userid = u.id AND ul.courseid = {$context->instanceid})";
-    }
-
-    //
-    // Simple cases - No negative permissions means we can take shortcuts
-    //
-    if (!$negperm) {
-
-        // at the frontpage, and all site users have it - easy!
-        if ($frontpageroleinteresting) {
-            return $DB->get_records_sql("SELECT $fields
-                                           FROM {user} u
-                                          WHERE u.deleted = 0
-                                       ORDER BY $sort",
-                                       $limitfrom, $limitnum);
-        }
-
-        // all site users have it, anyway
-        // TODO: NOT ALWAYS!  Check this case because this gets run for cases like this:
-        // 1) Default role has the permission for a module thing like mod/choice:choose
-        // 2) We are checking for an activity module context in a course
-        // 3) Thus all users are returned even though course:view is also required
-        if ($defaultroleinteresting) {
-            $sql = "SELECT $fields
-                      FROM {user} u
-                   $uljoin
-                    $where
-                  ORDER BY $sort";
-            return $DB->get_records_sql($sql, null, $limitfrom, $limitnum);
-        }
-
-        /// Simple SQL assuming no negative rolecaps.
-        /// We use a subselect to grab the role assignments
-        /// ensuring only one row per user -- even if they
-        /// have many "relevant" role assignments.
-        $select = " SELECT $fields";
-        $from   = " FROM {user} u
-                    JOIN (SELECT DISTINCT ssra.userid
-                          FROM {role_assignments} ssra
-                          WHERE ssra.contextid IN ($ctxids)
-                                AND ssra.roleid IN (".implode(',',$roleids) .")
-                                $sscondhiddenra
-                          ) ra ON ra.userid = u.id
-                    $uljoin ";
-        return $DB->get_records_sql($select.$from.$where.$sortby, null, $limitfrom, $limitnum);
-    }
-
-    //
-    // If there are any negative rolecaps, we need to
-    // work through a subselect that will bring several rows
-    // per user (one per RA).
-    // Since we cannot do the job in pure SQL (not without SQL stored
-    // procedures anyway), we end up tied to processing the data in PHP
-    // all the way down to pagination.
-    //
-    // In some cases, this will mean bringing across a ton of data --
-    // when paginating, we have to walk the permisisons of all the rows
-    // in the _previous_ pages to get the pagination correct in the case
-    // of users that end up not having the permission - this removed.
-    //
-
-    // Prepare the role permissions datastructure for fast lookups
-    $roleperms = array(); // each role cap and depth
-    foreach ($capdefs AS $rcid=>$rc) {
-
-        $rid       = (int)$rc->roleid;
-        $perm      = (int)$rc->permission;
-        $rcdepth   = (int)$rc->ctxdepth;
-        if (!isset($roleperms[$rc->capability][$rid])) {
-            $roleperms[$rc->capability][$rid] = (object)array('perm'  => $perm,
-                                                              'rcdepth' => $rcdepth);
+        if ($iscoursepage) {
+            $joins[] = "LEFT OUTER JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = {$context->instanceid})";
         } else {
-            if ($roleperms[$rc->capability][$rid]->perm == CAP_PROHIBIT) {
-                continue;
-            }
-            // override - as we are going
-            // from general to local perms
-            // (as per the ORDER BY...depth ASC above)
-            // and local perms win...
-            $roleperms[$rc->capability][$rid] = (object)array('perm'  => $perm,
-                                                              'rcdepth' => $rcdepth);
+            throw new coding_exception('Invalid sort in get_users_by_capability(), ul.timeaccess allowed only for course contexts.');
         }
-
     }
 
-    if ($context->contextlevel == CONTEXT_SYSTEM
-        || $isfrontpage
-        || $defaultroleinteresting) {
+    /// We never return deleted users or guest acount.
+    $wherecond[] = "u.deleted = 0 AND u.username <> 'guest'";
 
-        // Handle system / sitecourse / defaultrole-with-perhaps-neg-overrides
-        // with a SELECT FROM user LEFT OUTER JOIN against ra -
-        // This is expensive on the SQL and PHP sides -
-        // moves a ton of data across the wire.
-        $ss = "SELECT u.id as userid, ra.roleid,
-                      ctx.depth
-               FROM {user} u
-               LEFT OUTER JOIN {role_assignments} ra
-                 ON (ra.userid = u.id
-                     AND ra.contextid IN ($ctxids)
-                     AND ra.roleid IN (".implode(',',$roleids) .")
-                     $condhiddenra)
-               LEFT OUTER JOIN {context} ctx
-                 ON ra.contextid=ctx.id
-               WHERE u.deleted=0";
+    /// Groups
+    if ($groups) {
+        $groups = (array)$groups;
+        list($grouptest, $grpparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED, 'grp000');
+        $grouptest = "u.id IN (SELECT userid FROM {groups_members} gm WHERE gm.groupid $grouptest)";
+        $params = array_merge($params, $grpparams);
+
+        if ($useviewallgroups) {
+            $viewallgroupsusers = get_users_by_capability($context, 'moodle/site:accessallgroups', 'u.id, u.id', '', '', '', '', $exceptions);
+            $wherecond[] =  "($grouptest OR u.id IN (" . implode(',', array_keys($viewallgroupsusers)) . '))';
+        } else {
+            $wherecond[] =  "($grouptest)";
+        }
+    }
+
+    /// User exceptions
+    if (!empty($exceptions)) {
+        $exceptions = (array)$exceptions;
+        list($exsql, $exparams) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'exc000', false);
+        $params = array_merge($params, $exparams);
+        $wherecond[] = "u.id $exsql";
+    }
+
+    /// Set up hidden role-assignments sql
+    if ($view and !has_capability('moodle/role:viewhiddenassigns', $context)) {
+        $condhiddenra = 'AND hidden = 0';
     } else {
-        // "Normal complex case" - the rolecaps we are after will
-        // be defined in a role assignment somewhere.
-        $ss = "SELECT ra.userid as userid, ra.roleid,
-                      ctx.depth
-               FROM {role_assignments} ra
-               JOIN {context} ctx
-                 ON ra.contextid=ctx.id
-               WHERE ra.contextid IN ($ctxids)
-                     $condhiddenra
-                     AND ra.roleid IN (".implode(',',$roleids) .")";
+        $condhiddenra = '';
     }
 
-    $select = "SELECT $fields ,ra.roleid, ra.depth ";
-    $from   = "FROM ($ss) ra
-               JOIN {user} u
-                 ON ra.userid=u.id
-               $uljoin ";
-
-    // Each user's entries MUST come clustered together
-    // and RAs ordered in depth DESC - the role/cap resolution
-    // code depends on this.
-    $sort .= ' , ra.userid ASC, ra.depth DESC';
-    $sortby .= ' , ra.userid ASC, ra.depth DESC ';
-
-    if (!$rs = $DB->get_recordset_sql($select.$from.$where.$sortby)) {
-        return array();
-    }
-
-    //
-    // Process the user accounts+RAs, folding repeats together...
-    //
-    // The processing for this recordset is tricky - to fold
-    // the role/perms of users with multiple role-assignments
-    // correctly while still processing one-row-at-a-time
-    // we need to add a few additional 'private' fields to
-    // the results array - so we can treat the rows as a
-    // state machine to track the cap/perms and at what RA-depth
-    // and RC-depth they were defined.
-    //
-    // So what we do here is:
-    // - loop over rows, checking pagination limits
-    // - when we find a new user, if we are in the page add it to the
-    //   $results, and start building $ras array with its role-assignments
-    // - when we are dealing with the next user, or are at the end of the userlist
-    //   (last rec or last in page), trigger the check-permission idiom
-    // - the check permission idiom will
-    //   - add the default enrolment if needed
-    //   - call has_any_capability_from_rarc(), which based on RAs and RCs will return a bool
-    //     (should be fairly tight code ;-) )
-    // - if the user has permission, all is good, just $c++ (counter)
-    // - ...else, decrease the counter - so pagination is kept straight,
-    //      and (if we are in the page) remove from the results
-    //
-    $results = array();
-
-    // pagination controls
-    $c = 0;
-    $limitfrom = (int)$limitfrom;
-    $limitnum = (int)$limitnum;
-
-    //
-    // Track our last user id so we know when we are dealing
-    // with a new user...
-    //
-    $lastuserid  = 0;
-    //
-    // In this loop, we
-    // $ras: role assignments, multidimensional array
-    // treat as a stack - going from local to general
-    // $ras = (( roleid=> x, $depth=>y) , ( roleid=> x, $depth=>y))
-    //
-    foreach($rs as $user) {
-
-        //error_log(" Record: " . print_r($user,1));
-
-        //
-        // Pagination controls
-        // Note that we might end up removing a user
-        // that ends up _not_ having the rights,
-        // therefore rolling back $c
-        //
-        if ($lastuserid != $user->id) {
-
-            // Did the last user end up with a positive permission?
-            if ($lastuserid !=0) {
-                if ($frontpageroleinteresting) {
-                    // add frontpage role if interesting
-                    $ras[] = array('roleid' => $CFG->defaultfrontpageroleid,
-                                   'depth'  => $context->depth);
-                }
-                if ($defaultroleinteresting) {
-                    // add the role at the end of $ras
-                    $ras[] = array( 'roleid' => $CFG->defaultuserroleid,
-                                    'depth'  => 1 );
-                }
-                if (has_any_capability_from_rarc($ras, $roleperms, $caps)) {
-                    $c++;
+    // now add the needed and prohibited roles conditions as joins
+    if (!empty($needed['any'])) {
+        // simple case - there are no prohibits involved
+        if (!empty($needed['any'][$defaultuserroleid]) or ($isfrontpage and !empty($needed['any'][$defaultfrontpageroleid]))) {
+            // everybody
+        } else {
+            $joins[] = "JOIN (SELECT DISTINCT userid
+                                FROM {role_assignments}
+                               WHERE contextid IN ($ctxids)
+                                     AND roleid IN (".implode(',', array_keys($needed['any'])) .")
+                                     $condhiddenra
+                             ) ra ON ra.userid = u.id";
+        }
+    } else {
+        $unions = array();
+        $everybody = false;
+        foreach ($needed as $cap=>$unused) {
+            if (empty($prohibited[$cap])) {
+                if (!empty($needed[$cap][$defaultuserroleid]) or ($isfrontpage and !empty($needed[$cap][$defaultfrontpageroleid]))) {
+                    $everybody = true;
+                    break;
                 } else {
-                    // remove the user from the result set,
-                    // only if we are 'in the page'
-                    if ($limitfrom === 0 || $c >= $limitfrom) {
-                        unset($results[$lastuserid]);
+                    $unions[] = "SELECT userid
+                                   FROM {role_assignments}
+                                  WHERE contextid IN ($ctxids)
+                                        AND roleid IN (".implode(',', array_keys($needed[$cap])) .")
+                                        $condhiddenra";
+                }
+            } else {
+                if (!empty($needed[$cap][$defaultuserroleid]) or ($isfrontpage and !empty($needed[$cap][$defaultfrontpageroleid]))) {
+                    // everybody except the prohibitted - hiding does not matter
+                    $unions[] = "SELECT id AS userid
+                                   FROM {user}
+                                  WHERE id NOT IN (SELECT userid
+                                                     FROM {role_assignments}
+                                                    WHERE contextid IN ($ctxids)
+                                                          AND roleid IN (".implode(',', array_keys($prohibited[$cap])) ."))";
+
+                } else {
+                    if ($condhiddenra) {
+                        $unions[] = "SELECT userid
+                                       FROM {role_assignments}
+                                      WHERE contextid IN ($ctxids)
+                                            AND roleid IN (".implode(',', array_keys($needed[$cap])) .") $condhiddenra
+                                            AND userid NOT IN (SELECT userid
+                                                                 FROM {role_assignments}
+                                                                WHERE contextid IN ($ctxids)
+                                                                      AND roleid IN (".implode(',', array_keys($prohibited[$cap])) ."))";
+                    } else {
+                        $unions[] = "SELECT userid
+                                       FROM {role_assignments}
+                                      WHERE contextid IN ($ctxids)
+                                            AND roleid IN (".implode(',', array_keys($needed[$cap])) .")
+                                            AND roleid NOT IN (".implode(',', array_keys($prohibited[$cap])) .")";
                     }
                 }
             }
-
-            // Did we hit pagination limit?
-            if ($limitnum !==0 && $c >= ($limitfrom+$limitnum)) { // we are done!
-                break;
-            }
-
-            // New user setup, and $ras reset
-            $lastuserid = $user->id;
-            $ras = array();
-            if (!empty($user->roleid)) {
-                $ras[] = array( 'roleid' => (int)$user->roleid,
-                                'depth'  => (int)$user->depth );
-            }
-
-            // if we are 'in the page', also add the rec
-            // to the results...
-            if ($limitfrom === 0 || $c >= $limitfrom) {
-                $results[$user->id] = $user; // trivial
-            }
-        } else {
-            // Additional RA for $lastuserid
-            $ras[] = array( 'roleid'=>(int)$user->roleid,
-                            'depth'=>(int)$user->depth );
         }
-
-    } // end while(fetch)
-    $rs->close();
-
-    // Prune last entry if necessary
-    if ($lastuserid !=0) {
-        if ($frontpageroleinteresting) {
-            // add frontpage role if interesting
-            $ras[] = array('roleid' => $CFG->defaultfrontpageroleid,
-                           'depth'  => $context->depth);
-        }
-        if ($defaultroleinteresting) {
-            // add the role at the end of $ras
-            $ras[] = array( 'roleid' => $CFG->defaultuserroleid,
-                            'depth'  => 1 );
-        }
-        if (!has_any_capability_from_rarc($ras, $roleperms, $caps)) {
-            // remove the user from the result set,
-            // only if we are 'in the page'
-            if ($limitfrom === 0 || $c >= $limitfrom) {
-                if (isset($results[$lastuserid])) {
-                    unset($results[$lastuserid]);
-                }
+        if (!$everybody) {
+            if (count($unions) > 1) {
+                $unions = implode(' UNION ', $unions);
+            } else {
+                $unions = reset($unions);
             }
+            $joins[] = "JOIN (SELECT DISTINCT userid FROM ( $unions ) us) ra ON ra.userid = u.id";
         }
     }
 
-    return $results;
-}
-
-/**
- * Check if any of a list of capabilities is granted
- *
- * Fast (fast!) utility function to resolve if any of a list of capabilities is
- * granted, based on Role Assignments and Role Capabilities.
- *
- * Used (at least) by get_users_by_capability().
- *
- * If PHP had fast built-in memoize functions, we could
- * add a $contextid parameter and memoize the return values.
- *
- * Note that this function must be kept in synch with has_capability_in_accessdata.
- *
- * @param array $ras role assignments
- * @param array $roleperms role permissions
- * @param string $capabilities array of capability names
- * @return bool
- */
-function has_any_capability_from_rarc($ras, $roleperms, $caps) {
-    // Mini-state machine, using $hascap
-    // $hascap[ 'moodle/foo:bar' ]->perm = CAP_SOMETHING (numeric constant)
-    // $hascap[ 'moodle/foo:bar' ]->radepth = depth of the role assignment that set it
-    // $hascap[ 'moodle/foo:bar' ]->rcdepth = depth of the rolecap that set it
-    // -- when resolving conflicts, we need to look into radepth first, if unresolved
-
-    $hascap = array();
-
-    //
-    // Compute which permission/roleassignment/rolecap
-    // wins for each capability we are walking
-    //
-    foreach ($ras as $ra) {
-        foreach ($caps as $cap) {
-            if (!isset($roleperms[$cap][$ra['roleid']])) {
-                // nothing set for this cap - skip
-                continue;
-            }
-            // We explicitly clone here as we
-            // add more properties to it
-            // that must stay separate from the
-            // original roleperm data structure
-            $rp = clone($roleperms[$cap][$ra['roleid']]);
-            $rp->radepth = $ra['depth'];
-
-            // Trivial case, we are the first to set
-            if (!isset($hascap[$cap])) {
-                $hascap[$cap] = $rp;
-            }
-
-            //
-            // Resolve who prevails, in order of precendence
-            // - Prohibits always wins
-            // - Locality of RA
-            // - Locality of RC
-            //
-            //// Prohibits...
-            if ($rp->perm === CAP_PROHIBIT) {
-                $hascap[$cap] = $rp;
-                continue;
-            }
-            if ($hascap[$cap]->perm === CAP_PROHIBIT) {
-                continue;
-            }
-
-            // Locality of RA - the look is ordered by depth DESC
-            // so from local to general -
-            // Higher RA loses to local RA... unless perm===0
-            /// Thanks to the order of the records, $rp->radepth <= $hascap[$cap]->radepth
-            if ($rp->radepth > $hascap[$cap]->radepth) {
-                error_log('Should not happen @ ' . __FUNCTION__.':'.__LINE__);
-            }
-            if ($rp->radepth < $hascap[$cap]->radepth) {
-                if ($hascap[$cap]->perm!==0) {
-                    // Wider RA loses to local RAs...
-                    continue;
-                } else {
-                    // "Higher RA resolves conflict" case,
-                    // local RAs had cancelled eachother
-                    $hascap[$cap] = $rp;
-                    continue;
-                }
-            }
-            // Same ralevel - locality of RC wins
-            if ($rp->rcdepth  > $hascap[$cap]->rcdepth) {
-                $hascap[$cap] = $rp;
-                continue;
-            }
-            if ($rp->rcdepth  > $hascap[$cap]->rcdepth) {
-                continue;
-            }
-            // We match depth - add them
-            $hascap[$cap]->perm += $rp->perm;
-        }
+    // Collect WHERE conditions and needed joins
+    $where = implode(' AND ', $wherecond);
+    if ($where !== '') {
+        $where = 'WHERE ' . $where;
     }
-    foreach ($caps as $capability) {
-        if (isset($hascap[$capability]) && $hascap[$capability]->perm > 0) {
-            return true;
-        }
-    }
-    return false;
+    $joins = implode("\n", $joins);
+
+    /// Ok, let's get the users!
+    $sql = "SELECT $fields
+              FROM {user} u
+            $joins
+            $where
+          ORDER BY $sort";
+
+    return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
 }
 
 /**
@@ -6318,3 +5964,169 @@ function role_cap_duplicate($sourcerole, $targetrole) {
         $DB->insert_record('role_capabilities', $cap);
     }
 }
+
+
+/**
+ * Returns two lists, this can be used to find out if user has capability.
+ * Having any neede role and no forbidden role in this context means
+ * user has this capability in this context,
+ *
+ * @param object $context
+ * @param string $capability
+ * @return array($neededroles, $forbiddenroles)
+ */
+function get_roles_with_cap_in_context($context, $capability) {
+    global $DB;
+
+    $ctxids = trim($context->path, '/'); // kill leading slash
+    $ctxids = str_replace('/', ',', $ctxids);
+
+    $sql = "SELECT rc.id, rc.roleid, rc.permission, ctx.depth
+              FROM {role_capabilities} rc
+              JOIN {context} ctx ON ctx.id = rc.contextid
+             WHERE rc.capability = :cap AND ctx.id IN ($ctxids)
+          ORDER BY rc.roleid ASC, ctx.depth DESC";
+    $params = array('cap'=>$capability);
+
+    if (!$capdefs = $DB->get_records_sql($sql, $params)) {
+        // no cap definitions --> no capability
+        return array(array(), array());
+    }
+
+    $forbidden = array();
+    $needed    = array();
+    foreach($capdefs as $def) {
+        if (isset($forbidden[$def->roleid])) {
+            continue;
+        }
+        if ($def->permission == CAP_PROHIBIT) {
+            $forbidden[$def->roleid] = $def->roleid;
+            unset($needed[$def->roleid]);
+            continue;
+        }
+        if (!isset($needed[$def->roleid])) {
+            if ($def->permission == CAP_ALLOW) {
+                $needed[$def->roleid] = true;
+            } else if ($def->permission == CAP_PREVENT) {
+                $needed[$def->roleid] = false;
+            }
+        }
+    }
+    unset($capdefs);
+
+    // remove all those roles not allowing
+    foreach($needed as $key=>$value) {
+        if (!$value) {
+            unset($needed[$key]);
+        } else {
+            $needed[$key] = $key;
+        }
+    }
+
+    return array($needed, $forbidden);
+}
+
+/**
+ * This function verifies the prohibit comes from this context
+ * and there are no more prohibits in parent contexts.
+ * @param object $context
+ * @param string $capability name
+ * @return bool
+ */
+function prohibit_is_removable($roleid, $context, $capability) {
+    global $DB;
+
+    $ctxids = trim($context->path, '/'); // kill leading slash
+    $ctxids = str_replace('/', ',', $ctxids);
+
+    $params = array('roleid'=>$roleid, 'cap'=>$capability, 'prohibit'=>CAP_PROHIBIT);
+
+    $sql = "SELECT ctx.id
+              FROM {role_capabilities} rc
+              JOIN {context} ctx ON ctx.id = rc.contextid
+             WHERE rc.roleid = :roleid AND rc.permission = :prohibit AND rc.capability = :cap AND ctx.id IN ($ctxids)
+          ORDER BY ctx.depth DESC";
+
+    if (!$prohibits = $DB->get_records_sql($sql, $params)) {
+        // no prohibits == nothing to remove
+        return true;
+    }
+
+    if (count($prohibits) > 1) {
+        // more prohibints can not be removed
+        return false;
+    }
+
+    return !empty($prohibits[$context->id]);
+}
+
+/**
+ * More user friendly role permission changing,
+ * it should produce as few overrides as possible.
+ * @param int $roleid
+ * @param object $context
+ * @param string $capname capability name
+ * @param int $permission
+ * @return void
+ */
+function role_change_permission($roleid, $context, $capname, $permission) {
+    global $DB;
+
+    if ($capname === 'moodle/site:doanything' or is_legacy($capname)) {
+        return;
+    }
+
+    if ($permission == CAP_INHERIT) {
+        unassign_capability($capname, $roleid, $context->id);
+        mark_context_dirty($context->path);
+        return;
+    }
+
+    $ctxids = trim($context->path, '/'); // kill leading slash
+    $ctxids = str_replace('/', ',', $ctxids);
+
+    $params = array('roleid'=>$roleid, 'cap'=>$capname);
+
+    $sql = "SELECT ctx.id, rc.permission, ctx.depth
+              FROM {role_capabilities} rc
+              JOIN {context} ctx ON ctx.id = rc.contextid
+             WHERE rc.roleid = :roleid AND rc.capability = :cap AND ctx.id IN ($ctxids)
+          ORDER BY ctx.depth DESC";
+
+    if ($existing = $DB->get_records_sql($sql, $params)) {
+        foreach($existing as $e) {
+            if ($e->permission == CAP_PROHIBIT) {
+                // prohibit can not be overridden, no point in changing anything
+                return;
+            }
+        }
+        $lowest = array_shift($existing);
+        if ($lowest->permission == $permission) {
+            // permission already set in this context or parent - nothing to do
+            return;
+        }
+        if ($existing) {
+            $parent = array_shift($existing);
+            if ($parent->permission == $permission) {
+                // permission already set in parent context or parent - just unset in this context
+                // we do this because we want as few overrides as possible for performance reasons
+                unassign_capability($capname, $roleid, $context->id);
+                mark_context_dirty($context->path);
+                return;
+            }
+        }
+
+    } else {
+        if ($permission == CAP_PREVENT) {
+            // nothing means role does not have permission
+            return;
+        }
+    }
+
+    // assign the needed capability
+    assign_capability($capname, $permission, $roleid, $context->id, true);
+
+    // force cap reloading
+    mark_context_dirty($context->path);
+}
+

@@ -261,23 +261,12 @@ body#admin-index .copyright {
   font-size: 0.8em;
 }
 
-.rolecap .cap-name,
-.rolecap .note {
-  font-size: 0.75em;
-}
-
 #adminsettings .form-shortname {
   font-size: 0.75em;
 }
 
 #adminsettings .form-defaultinfo {
   font-size: 0.8em;
-}
-
-#admin-roles-override .cell.c1,
-#admin-roles-assign .cell.c3,
-#admin-roles-assign .cell.c1 {
-  font-size: 0.7em;
 }
 
 #admin-lang .translator .strkey {

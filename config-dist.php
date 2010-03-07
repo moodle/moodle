@@ -237,12 +237,6 @@ $CFG->admin = 'admin';
 // logs in. The site front page will always show the same (logged-out) view.
 //     $CFG->disablemycourses = true;
 //
-// Enable this option if you need fully working default frontpage role,
-// please note it might cause serious memory and performance issues,
-// also there should not be any negative capabilities in default
-// frontpage role (MDL-19039).
-//     $CFG->fullusersbycapabilityonfrontpage = true;
-//
 // If this setting is set to true, then Moodle will track the IP of the
 // current user to make sure it hasn't changed during a session.  This
 // will prevent the possibility of sessions being hijacked via XSS, but it

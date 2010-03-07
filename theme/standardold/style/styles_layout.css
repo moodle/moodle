@@ -113,6 +113,22 @@ body {
   text-align: center;
 }
 
+.buttons {
+  text-align:center
+}
+
+.buttons div,
+.buttons form {
+  display:inline;
+}
+
+.singlebutton {
+  text-align:center;
+  padding: 5px;
+  margin: 0px;
+}
+
+
 form {
   margin-bottom:0;
 }
@@ -247,21 +263,6 @@ div.collapsibleregion div.collapsibleregioncaption a {
   width: 60%;
   margin-left:auto;
   margin-right:auto;
-}
-
-#notice .buttons {
-  text-align:center
-}
-
-#notice .buttons div,
-#notice .buttons form {
-  display:inline;
-}
-
-#notice .singlebutton {
-  text-align:center;
-  padding: 5px;
-  margin: 0px;
 }
 
 .errorbox {
@@ -503,16 +504,6 @@ form.popupform label {
 .groupmanagementtable #removeselect_wrapper label,
 .groupmanagementtable #addselect_wrapper label {
   font-weight: normal;
-}
-
-#group-groupings .buttons {
-  margin: 20px;
-  text-align:center;
-}
-
-#group-groupings .buttons .singlebutton {
-  display: inline;
-  padding: 5px;
 }
 
 #group-usersummary {
@@ -1065,10 +1056,6 @@ body#admin-modules table.generaltable td.c0
   text-align: center;
 }
 
-#admin-maintenance .buttons {
-  text-align:center;
-}
-
 #admin-report-unittest-index .exception pre {
   padding: 8px;
 }
@@ -1135,177 +1122,6 @@ body#admin-modules table.generaltable td.c0
 }
 #admin-qtypes #qtypes img.spacer {
   width: 16px;
-}
-#filter-manage .buttons,
-#admin-roles-allow .buttons,
-#admin-roles-manage .buttons,
-#admin-roles-define .buttons,
-#admin-roles-override .buttons {
-  margin: 20px;
-  text-align:center;
-}
-#admin-roles-manage .buttons .singlebutton,
-#admin-roles-define .buttons .singlebutton,
-#admin-roles-override .buttons .singlebutton {
-  display: inline;
-  padding: 5px;
-}
-#admin-roles-define .topfields {
-  margin: 1em 0 2em;
-}
-.roleassigntable {
-  width: 100%;
-}
-.roleassigntable td {
-  vertical-align: top;
-  padding: 0.2em 0.3em
-}
-.roleassigntable p {
-  text-align: left;
-  margin: 0.2em 0;
-}
-.roleassigntable #existingcell,
-.roleassigntable #potentialcell {
-  width: 42%;
-}
-.roleassigntable #existingcell label,
-.roleassigntable #potentialcell label {
-  font-weight: bold;
-}
-.roleassigntable #buttonscell {
-  width: 16%;
-}
-.roleassigntable #buttonscell #add,
-.roleassigntable #buttonscell #remove {
-  width: 100%;
-  margin: 0.3em 0;
-  padding: 0.5em 0;
-}
-.roleassigntable #buttonscell p {
-  margin: 0.3em 0;
-}
-.roleassigntable #buttonscell #assignoptions {
-  font-size: 0.75em;
-}
-.roleassigntable #buttonscell #assignoptions .collapsibleregioncaption {
-  font-weight: bold;
-}
-.roleassigntable #buttonscell #addcontrols {
-  margin-top: 3em;
-  height: 13em;
-}
-.roleassigntable #removeselect_wrapper,
-.roleassigntable #addselect_wrapper {
-  width: 100%;
-}
-.roleassigntable #removeselect_wrapper label,
-.roleassigntable #addselect_wrapper label {
-  font-weight: normal;
-}
-#admin-roles-define .mform {
-  width: 100%;
-}
-#filter-manage .backlink,
-#admin-roles-manage .backlink,
-#admin-roles-define .backlink,
-#admin-roles-explain .backlink,
-#admin-roles-assign .backlink,
-#admin-roles-override .backlink {
-  text-align: right;
-  width: 90%;
-  margin: 2em auto 1em;
-}
-
-#admin-roles-explain #chooseuser h3 {
-  margin-top: 0;
-}
-#admin-roles-explain #chooseusersubmit {
-  margin: 1em 0 0;
-  text-align: center;
-}
-#admin-roles-usersroles .contextname {
-  margin: 0.5em 0 0;
-}
-#admin-roles-usersroles p {
-  margin: 0;
-}
-table.rolecap {
-  margin-left: auto;
-  margin-right: auto;
-}
-.capabilitysearchui {
-  text-align: left;
-  margin-left: auto;
-  margin-right: auto;
-}
-table.rolecap .hiddenrow {
-  display: none;
-}
-
-tr.rolecap th {
-  text-align: left;
-  font-weight: normal;
-}
-table.rolecap .inherit,
-table.rolecap .allow,
-table.rolecap .prevent,
-table.rolecap .prohibit {
-  text-align:center;
-}
-table.rolecap label {
-  display: block;
-  width: 100%;
-  min-height: 2.5em;
-}
-.rolecap .cap-name,
-.rolecap .note {
-  display: block;
-  padding: 0 0.5em;
-}
-
-#admin-roles-override .cell.c1,
-#admin-roles-assign .cell.c3,
-#admin-roles-assign .cell.c1 {
-  padding-top: 0.75em;
-}
-
-#admin-roles-override .overridenotice,
-#admin-roles-define .definenotice {
-  margin: 1em 10% 2em;
-  text-align: left;
-}
-
-table.explainpermissions {
-  border: 1px solid black;
-}
-table.explainpermissions .cell {
-  border-bottom: none;
-}
-table.explainpermissions th.header,
-table.explainpermissions th.cell,
-table.explainpermissions td.cell {
-  border-left: 1px solid black;
-  border-right: 1px solid black;
-  vertical-align: middle;
-}
-table.explainpermissions .newcontext .cell,
-table.explainpermissions .row2 th.header {
-  border-top: 1px solid black;
-}
-table.explainpermissions .cell.inherit,
-table.explainpermissions .cell.noroles {
-  color: gray;
-}
-table.explainpermissions th.assignment {
-  text-align: left;
-  padding-left: 0.5em;
-}
-table.explainpermissions .cell.prohibit {
-  font-weight: bold;
-}
-table.explainpermissions .cell {
-  padding: 0.2em 0.5em;
-  text-align: center;
 }
 #admin-lang .generalbox {
   text-align:center;
@@ -2555,17 +2371,6 @@ body#admin-course-category .addcategory {
   padding: 10px;
 }
 
-body#admin-course-index .buttons .singlebutton,
-body#admin-course-category .buttons .singlebutton {
-  display: inline;
-}
-
-body#admin-course-index .buttons,
-body#admin-course-category .buttons {
-  text-align: center;
-  margin-bottom: 15px;
-}
-
 body#admin-course-index .editcourse {
   margin-left:auto;
   margin-right:auto;
@@ -2793,27 +2598,7 @@ body#doc-contents ul {
 
 /* scales edit */
 
-.grade-edit-scale .buttons {
-  margin: 20px;
-  text-align:center;
-}
-
-.grade-edit-scale .buttons .singlebutton {
-  display: inline;
-  padding: 5px;
-}
-
 /* outcomes edit */
-
-.grade-edit-outcome .buttons {
-  margin: 20px;
-  text-align:center;
-}
-
-.grade-edit-outcome .buttons .singlebutton {
-  display: inline;
-  padding: 5px;
-}
 
 div.allcoursegrades {
   width: 100%;
@@ -2835,18 +2620,8 @@ div.allcoursegrades {
   padding-bottom:15px;
 }
 
-.grade-edit-tree .buttons {
-  margin: 20px;
-  text-align:center;
-}
-
 .grade-edit-tree .idnumber {
   margin-left: 15px;
-}
-
-.grade-edit-tree .buttons .singlebutton {
-  display: inline;
-  padding: 5px;
 }
 
 .grade-edit-tree .movetarget {
@@ -3926,16 +3701,6 @@ table.groupinfobox {
 
 body#user-index h2 {
   text-align: center;
-}
-
-#user-view .buttons,
-#user-index .buttons {
-  text-align: center;
-}
-
-#user-view .buttons form,
-#user-view .buttons form div {
-  display:inline;
 }
 
 body#user-index #longtimenosee,

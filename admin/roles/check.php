@@ -1,34 +1,28 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Shows the result of has_capability for every capability for a user in a context.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package roles
- *//** */
+ * @package    moodlecore
+ * @subpackage role
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
     require_once(dirname(__FILE__) . '/../../config.php');
     require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
@@ -36,7 +30,6 @@
     $contextid = required_param('contextid',PARAM_INT);
     $userid = optional_param('userid', 0, PARAM_INT); // needed for user tabs
     $courseid = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
-    $returnurl      = optional_param('returnurl', null, PARAM_LOCALURL);
 
     $urlparams = array('contextid' => $contextid);
     if (!empty($userid)) {
@@ -44,9 +37,6 @@
     }
     if ($courseid && $courseid != SITEID) {
         $urlparams['courseid'] = $courseid;
-    }
-    if ($returnurl) {
-        $urlparams['returnurl'] = $returnurl;
     }
     $PAGE->set_url('/admin/roles/check.php', $urlparams);
 
@@ -120,21 +110,22 @@
 
         $showroles = 1;
         $currenttab = 'check';
-        include_once($CFG->dirroot.'/user/tabs.php');
+        include($CFG->dirroot.'/user/tabs.php');
 
     } else if ($context->contextlevel == CONTEXT_SYSTEM) {
         admin_externalpage_setup('checkpermissions', '', array('contextid' => $contextid));
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
 
     } else if ($context->contextlevel == CONTEXT_COURSE and $context->instanceid == SITEID) {
         admin_externalpage_setup('frontpageroles', '', array('contextid' => $contextid), $CFG->wwwroot . '/' . $CFG->admin . '/roles/check.php');
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         $currenttab = 'check';
-        include_once('tabs.php');
+        include('tabs.php');
 
     } else {
+        echo $OUTPUT->header();
         $currenttab = 'check';
-        include_once('tabs.php');
+        include('tabs.php');
     }
 
 /// Print heading.
@@ -146,7 +137,7 @@
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
         echo $OUTPUT->heading(get_string('permissionsforuser', 'role', fullname($reportuser)), 3);
 
-        $table = new explain_capability_table($context, $reportuser, $contextname);
+        $table = new check_capability_table($context, $reportuser, $contextname);
         $table->display();
         echo $OUTPUT->box_end();
 
@@ -178,12 +169,8 @@
     echo $OUTPUT->box_end();
 
 /// Appropriate back link.
-    if (!$isfrontpage && ($url = get_context_url($context))) {
-        echo '<div class="backlink"><a href="' . $url . '">' .
-            get_string('backto', '', $contextname) . '</a></div>';
-        } else if ($returnurl) {
-            echo '<div class="backlink"><a href="' . $CFG->wwwroot . '/' . $returnurl . '">' .
-                get_string('backtopageyouwereon') . '</a></div>';
+    if ($context->contextlevel > CONTEXT_USER) {
+        echo '<div class="backlink"><a href="' . get_context_url($context) . '">' . get_string('backto', '', $contextname) . '</a></div>';
     }
 
     echo $OUTPUT->footer();

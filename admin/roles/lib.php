@@ -1,34 +1,34 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Library code used by the roles administration interfaces.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package roles
- *//** */
+ * Responds to actions:
+ *   add       - add a new role
+ *   duplicate - like add, only initialise the new role by using an existing one.
+ *   edit      - edit the definition of a role
+ *   view      - view the definition of a role
+ *
+ * @package    moodlecore
+ * @subpackage role
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/user/selector/lib.php');
@@ -83,6 +83,10 @@ abstract class capability_table_base {
      * Display the table.
      */
     public function display() {
+        if (count($this->capabilities) > capability_table_base::NUM_CAPS_FOR_SEARCH) {
+            global $PAGE;
+            $PAGE->requires->js_init_call('M.core_role.init_cap_table_filter', array($this->id, get_string('filter'), get_string('clear')));
+        }
         echo '<table class="' . implode(' ', $this->classes) . '" id="' . $this->id . '">' . "\n<thead>\n";
         echo '<tr><th class="name" align="left" scope="col">' . get_string('capability','role') . '</th>';
         $this->add_header_cells();
@@ -119,11 +123,7 @@ abstract class capability_table_base {
         }
 
     /// End of the table.
-            echo "</tbody>\n</table>\n";
-            if (count($this->capabilities) > capability_table_base::NUM_CAPS_FOR_SEARCH) {
-                global $PAGE;
-                $PAGE->requires->js_init_call('M.core_role.init_cap_table_filter', array($this->id, get_string('filter'), get_string('clear')));
-            }
+        echo "</tbody>\n</table>\n";
     }
 
     /**
@@ -179,17 +179,14 @@ abstract class capability_table_base {
 /**
  * Subclass of capability_table_base for use on the Check permissions page.
  *
- * We have two additional columns, Allowed, which contains yes/no, and Explanation,
- * which contains a pop-up link to explainhascapability.php.
+ * We have one additional column, Allowed, which contains yes/no.
  */
-class explain_capability_table extends capability_table_base {
+class check_capability_table extends capability_table_base {
     protected $user;
     protected $fullname;
-    protected $baseurl;
     protected $contextname;
     protected $stryes;
     protected $strno;
-    protected $strexplanation;
     private $hascap;
 
     /**
@@ -204,21 +201,16 @@ class explain_capability_table extends capability_table_base {
         $this->user = $user;
         $this->fullname = fullname($user);
         $this->contextname = $contextname;
-        $this->baseurl = $CFG->wwwroot . '/' . $CFG->admin .
-                '/roles/explain.php?user=' . $user->id .
-                '&amp;contextid=' . $context->id . '&amp;capability=';
         $this->stryes = get_string('yes');
         $this->strno = get_string('no');
-        $this->strexplanation = get_string('explanation');
     }
 
     protected function add_header_cells() {
         echo '<th>' . get_string('allowed', 'role') . '</th>';
-        echo '<th>' . $this->strexplanation . '</th>';
     }
 
     protected function num_extra_columns() {
-        return 2;
+        return 1;
     }
 
     protected function skip_row($capability) {
@@ -238,26 +230,149 @@ class explain_capability_table extends capability_table_base {
         global $OUTPUT;
         if ($this->hascap) {
             $result = $this->stryes;
-            $tooltip = 'whydoesuserhavecap';
         } else {
             $result = $this->strno;
-            $tooltip = 'whydoesusernothavecap';
         }
         $a = new stdClass;
         $a->fullname = $this->fullname;
         $a->capability = $capability->name;
         $a->context = $this->contextname;
         echo '<td>' . $result . '</td>';
-        echo '<td>';
-
-        $url = $this->baseurl . $capability->name;
-        echo $OUTPUT->action_link($url, $this->strexplanation,
-            new popup_action('click', $url, 'hascapabilityexplanation', array('height' => 600, 'width' => 600)),
-            array('title'=>get_string($tooltip, 'role', $a)));
-
-        echo '</td>';
     }
 }
+
+
+/**
+ * Subclass of capability_table_base for use on the Permissions page.
+ */
+class permissions_table extends capability_table_base {
+    protected $contextname;
+    protected $allowoverrides;
+    protected $allowsafeoverrides;
+    protected $overridableroles;
+    protected $roles;
+    protected $icons = array();
+
+    /**
+     * Constructor
+     * @param object $context the context this table relates to.
+     * @param string $contextname print_context_name($context) - to save recomputing.
+     */
+    public function __construct($context, $contextname, $allowoverrides, $allowsafeoverrides, $overridableroles) {
+        global $DB;
+
+        parent::__construct($context, 'permissions');
+        $this->contextname = $contextname;
+        $this->allowoverrides = $allowoverrides;
+        $this->allowsafeoverrides = $allowsafeoverrides;
+        $this->overridableroles = $overridableroles;
+
+        $roles = $DB->get_records('role', null, 'sortorder DESC');
+        foreach ($roles as $roleid=>$role) {
+            $roles[$roleid] = $role->name;
+        }
+        $this->roles = role_fix_names($roles, $context);
+
+    }
+
+    protected function add_header_cells() {
+        echo '<th>' . get_string('risks', 'role') . '</th>';
+        echo '<th>' . get_string('neededroles', 'role') . '</th>';
+        echo '<th>' . get_string('prohibitedroles', 'role') . '</th>';
+    }
+
+    protected function num_extra_columns() {
+        return 3;
+    }
+
+    protected function skip_row($capability) {
+        return $capability->name != 'moodle/site:doanything' && is_legacy($capability->name);
+    }
+
+    protected function add_row_cells($capability) {
+        global $OUTPUT, $PAGE;
+
+        $context = $this->context;
+        $contextid = $this->context->id;
+        $allowoverrides = $this->allowoverrides;
+        $allowsafeoverrides = $this->allowsafeoverrides;
+        $overridableroles = $this->overridableroles;
+        $roles = $this->roles;
+
+
+        list($needed, $forbidden) = get_roles_with_cap_in_context($context, $capability->name);
+        $neededroles    = array();
+        $forbiddenroles = array();
+        $allowable      = $overridableroles;
+        $forbitable     = $overridableroles;
+        foreach ($neededroles as $id=>$unused) {
+            unset($allowable[$id]);
+        }
+        foreach ($forbidden as $id=>$unused) {
+            unset($allowable[$id]);
+            unset($forbitable[$id]);
+        }
+
+        foreach ($roles as $id=>$name) {
+            if (isset($needed[$id])) {
+                $neededroles[$id] = $roles[$id];
+                if (isset($overridableroles[$id]) and ($allowoverrides or ($allowsafeoverrides and is_safe_capability($capability)))) {
+                    $preventurl = new moodle_url($PAGE->url, array('contextid'=>$contextid, 'roleid'=>$id, 'capability'=>$capability->name, 'prevent'=>1));
+                    $neededroles[$id] .= $OUTPUT->action_icon($preventurl, new pix_icon('t/delete', get_string('prevent', 'role')));
+                }
+            }
+        }
+        $neededroles = implode(', ', $neededroles);
+        foreach ($roles as $id=>$name) {
+            if (isset($forbidden[$id])  and ($allowoverrides or ($allowsafeoverrides and is_safe_capability($capability)))) {
+                $forbiddenroles[$id] = $roles[$id];
+                if (isset($overridableroles[$id]) and prohibit_is_removable($id, $context, $capability->name)) {
+                    $unprohibiturl = new moodle_url($PAGE->url, array('contextid'=>$contextid, 'roleid'=>$id, 'capability'=>$capability->name, 'unprohibit'=>1));
+                    $forbiddenroles[$id] .= $OUTPUT->action_icon($unprohibiturl, new pix_icon('t/delete', get_string('delete')));
+                }
+            }
+        }
+        $forbiddenroles = implode(', ', $forbiddenroles);
+
+        if ($allowable and ($allowoverrides or ($allowsafeoverrides and is_safe_capability($capability)))) {
+            $allowurl = new moodle_url($PAGE->url, array('contextid'=>$contextid, 'capability'=>$capability->name, 'allow'=>1));
+            $neededroles .= '<div class="allowmore">'.$OUTPUT->action_icon($allowurl, new pix_icon('t/add', get_string('allow', 'role'))).'</div>';
+        }
+
+        if ($forbitable and ($allowoverrides or ($allowsafeoverrides and is_safe_capability($capability)))) {
+            $prohibiturl = new moodle_url($PAGE->url, array('contextid'=>$contextid, 'capability'=>$capability->name, 'prohibit'=>1));
+            $forbiddenroles .= '<div class="prohibitmore">'.$OUTPUT->action_icon($prohibiturl, new pix_icon('t/add', get_string('prohibit', 'role'))).'</div>';
+        }
+
+        $risks = $this->get_risks($capability);
+
+        echo '<td>' . $risks . '</td>';
+        echo '<td>' . $neededroles . '</td>';
+        echo '<td>' . $forbiddenroles . '</td>';
+    }
+
+    protected function get_risks($capability) {
+        global $OUTPUT;
+
+        $allrisks = get_all_risks();
+        $risksurl = new moodle_url(get_docs_url(s(get_string('risks', 'role'))));
+
+        $return = '';
+
+        foreach ($allrisks as $type=>$risk) {
+            if ($risk & (int)$capability->riskbitmask) {
+                if (!isset($this->icons[$type])) {
+                    $pixicon = new pix_icon('/i/' . str_replace('risk', 'risk_', $type), get_string($type . 'short', 'admin'));
+                    $this->icons[$type] = $OUTPUT->action_icon($risksurl, $pixicon, new popup_action('click', $risksurl));
+                }
+                $return .= $this->icons[$type];
+            }
+        }
+
+        return $return;
+    }
+}
+
 
 /**
  * This subclass is the bases for both the define roles and override roles
@@ -896,32 +1011,6 @@ class override_permissions_table_advanced extends capability_table_with_risks {
             }
             echo '<span class="note">' . $strperm . '</span>';
             echo '</label></td>';
-        }
-    }
-}
-
-class override_permissions_table_basic extends override_permissions_table_advanced {
-    protected $stradvmessage;
-
-    public function __construct($context, $roleid, $safeoverridesonly) {
-        parent::__construct($context, $roleid, $safeoverridesonly);
-        unset($this->displaypermissions[CAP_PROHIBIT]);
-        $this->stradvmessage = get_string('useshowadvancedtochange', 'role');
-    }
-
-    protected function skip_row($capability) {
-        return is_legacy($capability->name) || $capability->locked;
-    }
-
-    protected function add_permission_cells($capability) {
-        if ($this->permissions[$capability->name] == CAP_PROHIBIT) {
-            $permname = $this->allpermissions[CAP_PROHIBIT];
-            echo '<td class="' . $permname . '" colspan="' . count($this->displaypermissions) . '">';
-            echo '<input type="hidden" name="' . $capability->name . '" value="' . CAP_PROHIBIT . '" />';
-            echo $this->strperms[$permname] . '<span class="note">' . $this->stradvmessage . '</span>';
-            echo '</td>';
-        } else {
-            parent::add_permission_cells($capability);
         }
     }
 }

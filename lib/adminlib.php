@@ -61,22 +61,14 @@
  *         require_once($CFG->libdir.'/adminlib.php');
  *         admin_externalpage_setup('foo');
  *         // functionality like processing form submissions goes here
- *         admin_externalpage_print_header();
+ *         $OUTPUT->header();
  *         // your HTML goes here
- *         print_footer();
+ *         $OUTPUT->footer();
  * </code>
  *
  *  The admin_externalpage_setup() function call ensures the user is logged in,
  *  and makes sure that they have the proper role permission to access the page.
- *
- *  The admin_externalpage_print_header() function prints the header (it figures
- *  out what category and subcategories the page is classified under) and ensures
- *  that you're using the admin pagelib (which provides the admin tree block and
- *  the admin bookmarks block).
- *
- *  The admin_externalpage_print_footer() function properly closes the tables
- *  opened up by the admin_externalpage_print_header() function and prints the
- *  standard Moodle footer.
+ *  It also configures all $PAGE properties needed for navigation.
  *
  *  ADMIN_CATEGORY OBJECTS
  *
@@ -5264,6 +5256,7 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
     if (strpos($PAGE->pagetype, 'admin-') !== 0) {
         $PAGE->set_pagetype('admin-' . $PAGE->pagetype);
     }
+    $PAGE->set_pagelayout('admin');
 
     if (empty($SITE->fullname) || empty($SITE->shortname)) {
         // During initial install.
@@ -5300,35 +5293,6 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
 
     // prevent caching in nav block
     $PAGE->navigation->clear_cache();
-}
-
-/**
- * Print header for admin page
- * @deprecated since Moodle 20. Please use normal $OUTPUT->header() instead
- * @param string $focus focus element
- */
-function admin_externalpage_print_header($focus='') {
-    global $CFG, $PAGE, $SITE, $OUTPUT;
-
-    //debugging('admin_externalpage_print_header is deprecated. Please $OUTPUT->header() instead.', DEBUG_DEVELOPER);
-
-    if (!is_string($focus)) {
-        $focus = ''; // BC compatibility, there used to be adminroot parameter
-    }
-
-    $PAGE->set_focuscontrol($focus);
-
-    echo $OUTPUT->header();
-}
-
-/**
- * @deprecated since Moodle 1.9. Please use normal $OUTPUT->footer() instead
- */
-function admin_externalpage_print_footer() {
-// TODO Still 103 referernces in core code. Don't do debugging output yet.
-    debugging('admin_externalpage_print_footer is deprecated. Please $OUTPUT->footer() instead.', DEBUG_DEVELOPER);
-    global $OUTPUT;
-    echo $OUTPUT->footer();
 }
 
 /**

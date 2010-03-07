@@ -218,11 +218,11 @@
     if (!empty($showroles) and !empty($user)) { // this variable controls whether this roles is showed, or not, so only user/view page should set this flag
         $usercontext = get_context_instance(CONTEXT_USER, $user->id);
         if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
-                'moodle/role:override', 'moodle/role:manage'), $usercontext)) {
+                'moodle/role:override', 'moodle/role:manage', 'moodle/role:review'), $usercontext)) {
             $toprow[] = new tabobject('roles', $CFG->wwwroot.'/'.$CFG->admin.'/roles/usersroles.php?userid='.$user->id.'&amp;courseid='.$course->id
                     ,get_string('roles'));
 
-            if (in_array($currenttab, array('usersroles', 'assign', 'override', 'check'))) {
+            if (in_array($currenttab, array('usersroles', 'assign', 'permissions', 'check'))) {
                 $inactive = array('roles');
                 $activetwo = array('roles');
 
@@ -233,12 +233,12 @@
                     $secondrow[] = new tabobject('assign', $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id
                             ,get_string('assignrolesrelativetothisuser', 'role'), '', true);
                 }
-                if (!empty($overridableroles) || $currenttab=='override') {
-                    $secondrow[] = new tabobject('override', $CFG->wwwroot.'/'.$CFG->admin.'/roles/override.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id
-                            ,get_string('overridepermissions', 'role'), '', true);
+                if (!empty($overridableroles) || $currenttab=='permissions' || has_capability('moodle/role:review', $usercontext)) {
+                    $secondrow[] = new tabobject('permissions', $CFG->wwwroot.'/'.$CFG->admin.'/roles/permissions.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id
+                            ,get_string('permissions', 'role'), '', true);
                 }
                 if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
-                        'moodle/role:override', 'moodle/role:assign'), $usercontext)) {
+                        'moodle/role:override', 'moodle/role:assign', 'moodle/role:review'), $usercontext)) {
                     $secondrow[] = new tabobject('check',
                             $CFG->wwwroot.'/'.$CFG->admin.'/roles/check.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id,
                             get_string('checkpermissions', 'role'));
