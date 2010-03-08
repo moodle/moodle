@@ -282,7 +282,7 @@ M.core_filepicker.init = function(Y, options) {
                         }
                     }, this, node);
                     y_title.on('click', function(e, p){
-                        //Y.Event.simulate(y_file, 'click');
+                        y_file.simulate('click');
                     }, this, node);
                 } else {
                     var fileinfo = {};
@@ -318,7 +318,8 @@ M.core_filepicker.init = function(Y, options) {
                 path.setStyle('display', 'none');
             }
             var panel = Y.one('#panel-'+client_id);
-            var html = '<div class="fp-rename-form">';
+            var form_id = 'fp-rename-form-'+client_id;
+            var html = '<div class="fp-rename-form" id="'+form_id+'">';
             html += '<p><img src="'+args.thumbnail+'" /></p>';
             html += '<p><label for="newname-'+client_id+'">'+M.str.repository.saveas+':</label>';
             html += '<input type="text" id="newname-'+client_id+'" value="'+args.title+'" /></p>';
@@ -369,7 +370,7 @@ M.core_filepicker.init = function(Y, options) {
                     repository_id: repository_id,
                     'params': params,
                     callback: function(id, obj, args) {
-                        if (scope.options.editor_target&&scope.options.env=='editor') {
+                        if (scope.options.editor_target && scope.options.env=='editor') {
                             scope.options.editor_target.value=obj.url;
                             scope.options.editor_target.onchange();
                         }
@@ -384,6 +385,13 @@ M.core_filepicker.init = function(Y, options) {
                         scope.options.formcallback.apply(formcallback_scope, [obj]);
                     }
                 }, true);
+            }, this);
+            var elform = Y.one('#'+form_id);
+            elform.on('keydown', function(e) {
+                if (e.keyCode == 13) {
+                    getfile.simulate('click');
+                    e.preventDefault(); 
+                }
             }, this);
             var cancel = Y.one('#fp-cancel-'+client_id);
             cancel.on('click', function(e) {
@@ -701,6 +709,20 @@ M.core_filepicker.init = function(Y, options) {
                     active_filepicker = this;
                 }, this);
             }
+            var elform = Y.one('#'+form_id);
+            elform.on('keydown', function(e) {
+                if (e.keyCode == 13) {
+                    switch (action) {
+                        case 'search':
+                            search_button.simulate('click');
+                            break;
+                        default:
+                            login_button.simulate('click');
+                            break;
+                    }
+                    e.preventDefault(); 
+                }
+            }, this);
 
         },
         search: function(args) {
