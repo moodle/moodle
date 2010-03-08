@@ -44,7 +44,7 @@
 
 /// Create an object to manage all the other (non-roles) access rules.
     $timenow = time();
-    $accessmanager = new quiz_access_manager(new quiz($quiz, $cm, $course), $timenow,
+    $accessmanager = new quiz_access_manager(quiz::create($quiz->id, $USER->id), $timenow,
             has_capability('mod/quiz:ignoretimelimits', $context, NULL, false));
 
 /// If no questions have been set up yet redirect to edit.php
@@ -82,7 +82,7 @@
 
     $PAGE->set_title($title);
     $PAGE->set_heading($course->fullname);
-    
+
     echo $OUTPUT->header();
 
 /// Print heading and tabs (if there is more than one).
@@ -128,6 +128,9 @@
         echo $OUTPUT->footer();
         exit;
     }
+
+/// Update the quiz with overrides for the current user
+    $quiz = quiz_update_effective_access($quiz, $USER->id);
 
 /// Get this user's attempts.
     $attempts = quiz_get_user_attempts($quiz->id, $USER->id);

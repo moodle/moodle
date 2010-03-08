@@ -14,7 +14,7 @@ $attemptid = required_param('attempt', PARAM_INT); // The attempt to summarise.
 
 $PAGE->set_url('/mod/quiz/summary.php', array('attempt'=>$attemptid));
 
-$attemptobj = new quiz_attempt($attemptid);
+$attemptobj = quiz_attempt::create($attemptid);
 
 /// Check login.
 require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());

@@ -279,6 +279,8 @@
         $status = backup_quiz_question_instances($bf,$preferences,$quiz->id);
         //Now we print to xml quiz_feedback (Course Level)
         $status = backup_quiz_feedback($bf,$preferences,$quiz->id);
+        //Now we print to xml quiz_overrides (Course Level)
+        $status = backup_quiz_overrides($bf,$preferences,$quiz->id);
         //if we've selected to backup users info, then execute:
         //    - backup_quiz_grades
         //    - backup_quiz_attempts
@@ -337,6 +339,42 @@
             }
             //Write end tag
             $status = fwrite ($bf,end_tag("QUESTION_INSTANCES",4,true));
+        }
+        return $status;
+    }
+
+    //Backup quiz_overrides contents (executed from quiz_backup_mods)
+    function backup_quiz_overrides ($bf,$preferences,$quiz) {
+        global $DB;
+        $status = true;
+        $douserdata = backup_userdata_selected($preferences,'quiz',$quiz);
+
+        $quiz_overrides = $DB->get_records('quiz_overrides',array('quiz' =>$quiz),'id');
+        //If there are quiz_overrides
+        if ($quiz_overrides) {
+            //Write start tag
+            $status = fwrite ($bf,start_tag("OVERRIDES",4,true));
+            //Iterate over each quiz_override
+            foreach ($quiz_overrides as $quiz_override) {
+                // Only backup user overrides if we are backing up user data
+                if ($douserdata || $quiz_override->userid == 0) {
+                    //Start quiz override
+                    $status = fwrite ($bf,start_tag("OVERRIDE",5,true));
+                    //Print quiz_override contents
+                    fwrite ($bf,full_tag("ID",6,false,$quiz_override->id));
+                    fwrite ($bf,full_tag("USERID",6,false,$quiz_override->userid));
+                    fwrite ($bf,full_tag("GROUPID",6,false,$quiz_override->groupid));
+                    fwrite ($bf,full_tag("TIMEOPEN",6,false,$quiz_override->timeopen));
+                    fwrite ($bf,full_tag("TIMECLOSE",6,false,$quiz_override->timeclose));
+                    fwrite ($bf,full_tag("TIMELIMIT",6,false,$quiz_override->timelimit));
+                    fwrite ($bf,full_tag("ATTEMPTS",6,false,$quiz_override->attempts));
+                    fwrite ($bf,full_tag("PASSWORD",6,false,$quiz_override->password));
+                    //End quiz override
+                    $status = fwrite ($bf,end_tag("OVERRIDE",5,true));
+                }
+            }
+            //Write end tag
+            $status = fwrite ($bf,end_tag("OVERRIDES",4,true));
         }
         return $status;
     }

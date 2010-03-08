@@ -27,7 +27,7 @@ $submittedquestionids = required_param('questionids', PARAM_SEQUENCE);
 $finishattempt = optional_param('finishattempt', 0, PARAM_BOOL);
 $timeup = optional_param('timeup', 0, PARAM_BOOL); // True if form was submitted by timer.
 
-$attemptobj = new quiz_attempt($attemptid);
+$attemptobj = quiz_attempt::create($attemptid);
 
 /// Set $nexturl now. It will be updated if a particular question was sumbitted in
 /// adaptive mode.

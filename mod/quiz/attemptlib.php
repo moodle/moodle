@@ -90,6 +90,32 @@ class quiz {
         $this->determine_layout();
     }
 
+    /**
+     * Static function to create a new quiz object for a specific user.
+     *
+     * @param integer $quizid the the quiz id.
+     * @param integer $userid the the userid.
+     * @return object the new quiz object
+     */
+    static public function create($quizid, $userid) {
+        global $DB;
+
+        if (!$quiz = $DB->get_record('quiz', array('id' => $quizid))) {
+            throw new moodle_exception('invalidquizid', 'quiz');
+        }
+        if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
+            throw new moodle_exception('invalidcoursemodule');
+        }
+        if (!$cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id)) {
+            throw new moodle_exception('invalidcoursemodule');
+        }
+
+        // Update quiz with override information
+        $quiz = quiz_update_effective_access($quiz, $userid);
+
+        return new quiz($quiz, $cm, $course);
+    }
+
     // Functions for loading more data =====================================================
     /**
      * Convenience method. Calls {@link load_questions()} with the list of
@@ -418,17 +444,33 @@ class quiz_attempt extends quiz {
 
     // Constructor =========================================================================
     /**
-     * Constructor from just an attemptid.
+     * Constructor assuming we already have the necessary data loaded.
      *
-     * @param integer $attemptid the id of the attempt to load. We automatically load the
-     * associated quiz, course, etc.
+     * @param object $attempt the row of the quiz_attempts table.
+     * @param object $quiz the quiz object for this attempt and user.
+     * @param object $cm the course_module object for this quiz.
+     * @param object $course the row from the course table for the course we belong to.
      */
-    function __construct($attemptid) {
+    function __construct($attempt, $quiz, $cm, $course) {
+        $this->attempt = $attempt;
+        parent::__construct($quiz, $cm, $course);
+        $this->preload_questions();
+        $this->preload_question_states();
+    }
+
+    /**
+     * Static function to create a new quiz_attempt object given an attemptid.
+     *
+     * @param integer $attemptid the attempt id.
+     * @return object the new quiz_attempt object
+     */
+    static public function create($attemptid) {
         global $DB;
-        if (!$this->attempt = quiz_load_attempt($attemptid)) {
+
+        if (!$attempt = quiz_load_attempt($attemptid)) {
             throw new moodle_exception('invalidattemptid', 'quiz');
         }
-        if (!$quiz = $DB->get_record('quiz', array('id' => $this->attempt->quiz))) {
+        if (!$quiz = $DB->get_record('quiz', array('id' => $attempt->quiz))) {
             throw new moodle_exception('invalidquizid', 'quiz');
         }
         if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
@@ -437,9 +479,10 @@ class quiz_attempt extends quiz {
         if (!$cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id)) {
             throw new moodle_exception('invalidcoursemodule');
         }
-        parent::__construct($quiz, $cm, $course);
-        $this->preload_questions();
-        $this->preload_question_states();
+        // Update quiz with override information
+        $quiz = quiz_update_effective_access($quiz, $attempt->userid);
+
+        return new quiz_attempt($attempt, $quiz, $cm, $course);
     }
 
     // Functions for loading more data =====================================================

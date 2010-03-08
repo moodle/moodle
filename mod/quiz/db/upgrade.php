@@ -292,6 +292,40 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009042000, 'quiz');
     }
 
+    if ($result && $oldversion < 2010030501) {
+    /// fix log actions
+        update_log_display_entry('quiz', 'edit override', 'quiz', 'name');
+        update_log_display_entry('quiz', 'delete override', 'quiz', 'name');
+
+    /// Define table quiz_overrides to be created
+        $table = new xmldb_table('quiz_overrides');
+
+    /// Adding fields to table quiz_overrides
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('quiz', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('groupid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('timeopen', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('timeclose', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('timelimit', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('attempts', XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('password', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+
+    /// Adding keys to table quiz_overrides
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('quiz', XMLDB_KEY_FOREIGN, array('quiz'), 'quiz', array('id'));
+        $table->add_key('groupid', XMLDB_KEY_FOREIGN, array('groupid'), 'groups', array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+    /// Conditionally launch create table for quiz_overrides
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+    /// quiz savepoint reached
+        upgrade_mod_savepoint($result, 2010030501, 'quiz');
+    }
+
     return $result;
 }
 

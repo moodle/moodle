@@ -179,6 +179,7 @@ function quiz_delete_instance($id) {
     }
 
     quiz_delete_all_attempts($quiz);
+    quiz_delete_all_overrides($quiz);
 
     $DB->delete_records('quiz_question_instances', array('quiz' => $quiz->id));
     $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
@@ -193,6 +194,147 @@ function quiz_delete_instance($id) {
     $DB->delete_records('quiz', array('id' => $quiz->id));
 
     return true;
+}
+
+/**
+ * Deletes a quiz override from the database and clears any corresponding calendar events
+ *
+ * @param object $quiz The quiz object.
+ * @param integer $overrideid The id of the override being deleted
+ * @return bool true on success
+ */
+function quiz_delete_override($quiz, $overrideid) {
+    global $DB;
+
+    if (!$override = $DB->get_record('quiz_overrides', array('id' => $overrideid))) {
+        return false;
+    }
+    $groupid   = empty($override->groupid)?   0 : $override->groupid;
+    $userid    = empty($override->userid)?    0 : $override->userid;
+
+    // Delete the events
+    $events = $DB->get_records('event', array('modulename'=>'quiz', 'instance'=>$quiz->id, 'groupid'=>$groupid, 'userid'=>$userid));
+    foreach($events as $event) {
+        $eventold = calendar_event::load($event);
+        $eventold->delete();
+    }
+
+    $DB->delete_records('quiz_overrides', array('id' => $overrideid));
+    return true;
+}
+
+/**
+ * Deletes all quiz overrides from the database and clears any corresponding calendar events
+ *
+ * @param object $quiz The quiz object.
+ */
+function quiz_delete_all_overrides($quiz) {
+    global $DB;
+
+    $overrides = $DB->get_records('quiz_overrides', array('quiz' => $quiz->id), 'id');
+    foreach ($overrides as $override) {
+        quiz_delete_override($quiz, $override->id);
+    }
+}
+
+/**
+ * Updates a quiz object with override information for a user.
+ *
+ * Algorithm:  For each quiz setting, if there is a matching user-specific override,
+ *   then use that otherwise, if there are group-specific overrides, return the most
+ *   lenient combination of them.  If neither applies, leave the quiz setting unchanged.
+ *
+ *   Special case: if there is more than one password that applies to the user, then
+ *   quiz->extrapasswords will contain an array of strings giving the remaining
+ *   passwords.
+ *
+ * @param object $quiz The quiz object.
+ * @param integer $userid The userid.
+ * @return object $quiz The updated quiz object.
+ */
+function quiz_update_effective_access($quiz, $userid) {
+    global $DB;
+
+    // check for user override
+    $override = $DB->get_record('quiz_overrides', array('quiz' => $quiz->id, 'userid' => $userid));
+
+    if (!$override) {
+        $override = new stdclass;
+        $override->timeopen = null;
+        $override->timeclose = null;
+        $override->timelimit = null;
+        $override->attempts = null;
+        $override->password = null;
+    }
+
+    // check for group overrides
+    $groupings = groups_get_user_groups($quiz->course, $userid);
+    $groupingid = empty($cm->groupingid)? 0 : $cm->groupingid;
+
+    if (!empty($groupings[$groupingid])) {
+
+        // Select all overrides that apply to the User's groups
+        list($extra, $params) = $DB->get_in_or_equal(array_values($groupings[$groupingid]));
+        $sql = "SELECT * FROM {quiz_overrides}
+                WHERE groupid $extra AND quiz = ?";
+        $params[] = $qiuz->id;
+        $records = $DB->get_records_sql($sql, $params);
+
+        // Combine the overrides
+        $opens = array();
+        $closes = array();
+        $limits = array();
+        $attempts = array();
+        $passwords = array();
+
+        foreach ($records as $gpoverride) {
+            if (isset($gpoverride->timeopen)) {
+                $opens[] = $gpoverride->timeopen;
+            }
+            if (isset($gpoverride->timeclose)) {
+                $closes[] = $gpoverride->timeclose;
+            }
+            if (isset($gpoverride->timelimit)) {
+                $limits[] = $gpoverride->timelimit;
+            }
+            if (isset($gpoverride->attempts)) {
+                $attempts[] = $gpoverride->attempts;
+            }
+            if (isset($gpoverride->password)) {
+                $passwords[] = $gpoverride->password;
+            }
+        }
+        // If there is a user override for a setting, ignore the group override
+        if (is_null($override->timeopen) && count($opens)) {
+            $override->timeopen  = min($opens);
+        }
+        if (is_null($override->timeclose) && count($closes)) {
+            $override->timeclose  = max($closes);
+        }
+        if (is_null($override->timelimit) && count($limits)) {
+            $override->timelimit  = max($limits);
+        }
+        if (is_null($override->attempts) && count($attempts)) {
+            $override->attempts  = max($attempts);
+        }
+        if (is_null($override->password) && count($passwords)) {
+            $override->password  = array_shift($passwords);
+            if (count($passwords)) {
+                $override->extrapasswords  = $passwords;
+            }
+        }
+
+    }
+
+    // merge with quiz defaults
+    $keys = array('timeopen','timeclose', 'timelimit', 'attempts', 'password', 'extrapasswords');
+    foreach ($keys as $key) {
+        if (isset($override->{$key})) {
+            $quiz->{$key} = $override->{$key};
+        }
+    }
+
+    return $quiz;
 }
 
 /**
@@ -639,74 +781,11 @@ function quiz_refresh_events($courseid = 0) {
             return true;
         }
     }
-    $moduleid = $DB->get_field('modules', 'id', array('name' => 'quiz'));
 
     foreach ($quizzes as $quiz) {
-        $cm = get_coursemodule_from_id('quiz', $quiz->id);
-        $event = NULL;
-        $event2 = NULL;
-        $event2old = NULL;
-
-        if ($events = $DB->get_records('event', array('modulename' => 'quiz', 'instance' => $quiz->id), 'timestart')) {
-            $event = array_shift($events);
-            if (!empty($events)) {
-                $event2old = array_shift($events);
-                if (!empty($events)) {
-                    foreach ($events as $badevent) {
-                        $badevent = calendar_event::load($badevent);
-                        $badevent->delete();
-                    }
-                }
-            }
-        }
-
-        $event->name        = $quiz->name;
-        $event->description = format_module_intro('quiz', $quiz, $cm->id);
-        $event->courseid    = $quiz->course;
-        $event->groupid     = 0;
-        $event->userid      = 0;
-        $event->modulename  = 'quiz';
-        $event->instance    = $quiz->id;
-        $event->visible     = instance_is_visible('quiz', $quiz);
-        $event->timestart   = $quiz->timeopen;
-        $event->eventtype   = 'open';
-        $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
-
-        if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Set up two events
-
-            $event2 = $event;
-
-            $event->name         = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
-            $event->timeduration = 0;
-
-            $event2->name        = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
-            $event2->timestart   = $quiz->timeclose;
-            $event2->eventtype   = 'close';
-            $event2->timeduration = 0;
-
-            if (empty($event2old->id)) {
-                unset($event2->id);
-                calendar_event::create($event2);
-            } else {
-                $event2->id = $event2old->id;
-                $event2 = calendar_event::load($event2);
-                $event2->update($event2);
-            }
-        } else if (!empty($event2old->id)) {
-            $event2old = calendar_event::load($event2old);
-            $event2old->delete();
-        }
-
-        if (empty($event->id)) {
-            if (!empty($event->timestart)) {
-                calendar_event::create($event);
-            }
-        } else {
-            $event = calendar_event::load($event);
-            $event->update($event);
-        }
-
+        quiz_update_events($quiz);
     }
+
     return true;
 }
 
@@ -1079,49 +1158,135 @@ function quiz_after_add_or_update($quiz) {
     }
 
     // Update the events relating to this quiz.
-    // This is slightly inefficient, deleting the old events and creating new ones. However,
-    // there are at most two events, and this keeps the code simpler.
-    if ($events = $DB->get_records('event', array('modulename'=>'quiz', 'instance'=>$quiz->id))) {
-        foreach($events as $event) {
-            $event2old = calendar_event::load($event);
-            $event2old->delete();
-        }
-    }
-
-    $event = new stdClass;
-    $event->description = $quiz->intro;
-    $event->courseid    = $quiz->course;
-    $event->groupid     = 0;
-    $event->userid      = 0;
-    $event->modulename  = 'quiz';
-    $event->instance    = $quiz->id;
-    $event->timestart   = $quiz->timeopen;
-    $event->timeduration = $quiz->timeclose - $quiz->timeopen;
-    $event->visible     = instance_is_visible('quiz', $quiz);
-    $event->eventtype   = 'open';
-
-    if ($quiz->timeclose and $quiz->timeopen and $event->timeduration <= QUIZ_MAX_EVENT_LENGTH) {
-        // Single event for the whole quiz.
-        $event->name = $quiz->name;
-        calendar_event::create($event);
-    } else {
-        // Separate start and end events.
-        $event->timeduration  = 0;
-        if ($quiz->timeopen) {
-            $event->name = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
-            calendar_event::create($event);
-            unset($event->id); // So we can use the same object for the close event.
-        }
-        if ($quiz->timeclose) {
-            $event->name      = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
-            $event->timestart = $quiz->timeclose;
-            $event->eventtype = 'close';
-            calendar_event::create($event);
-        }
-    }
+    quiz_update_events($quiz);
 
     //update related grade item
     quiz_grade_item_update($quiz);
+
+}
+
+/**
+ * This function updates the events associated to the quiz.
+ * If $override is non-zero, then it updates only the events
+ * associated with the specified override.
+ *
+ * @uses QUIZ_MAX_EVENT_LENGTH
+ * @param object $quiz the quiz object.
+ * @param object optional $override limit to a specific override
+ */
+function quiz_update_events($quiz, $override = null) {
+    global $DB;
+
+    // Load the old events relating to this quiz.
+    $conds = array('modulename'=>'quiz',
+                   'instance'=>$quiz->id);
+    if (!empty($override)) {
+        // only load events for this override
+        $conds['groupid'] = isset($override->groupid)?  $override->groupid : 0;
+        $conds['userid'] = isset($override->userid)?  $override->userid : 0;
+    }
+    $oldevents = $DB->get_records('event', $conds);
+
+    // Now make a todo list of all that needs to be updated
+    if (empty($override)) {
+        // We are updating the primary settings for the quiz, so we
+        // need to add all the overrides
+        $overrides = $DB->get_records('quiz_overrides', array('quiz' => $quiz->id));
+        // as well as the original quiz (empty override)
+        $overrides[] = new stdClass;
+    }
+    else {
+        // Just do the one override
+        $overrides = array($override);
+    }
+
+    foreach ($overrides as $current) {
+        $groupid   = isset($current->groupid)?  $current->groupid : 0;
+        $userid    = isset($current->userid)? $current->userid : 0;
+        $timeopen  = isset($current->timeopen)?  $current->timeopen : $quiz->timeopen;
+        $timeclose = isset($current->timeclose)? $current->timeclose : $quiz->timeclose;
+
+        // only add open/close events for an override if they differ from the quiz default
+        $addopen  = empty($current->id) || !empty($current->timeopen);
+        $addclose = empty($current->id) || !empty($current->timeclose);
+
+        $event = new stdClass;
+        $event->description = $quiz->intro;
+        $event->courseid    = ($userid) ? 0 : $quiz->course; // Events module won't show user events when the courseid is nonzero
+        $event->groupid     = $groupid;
+        $event->userid      = $userid;
+        $event->modulename  = 'quiz';
+        $event->instance    = $quiz->id;
+        $event->timestart   = $timeopen;
+        $event->timeduration = max($timeclose - $timeopen, 0);
+        $event->visible     = instance_is_visible('quiz', $quiz);
+        $event->eventtype   = 'open';
+
+        // Determine the event name
+        if ($groupid) {
+            $params = new stdClass;
+            $params->quiz = $quiz->name;
+            $params->group = groups_get_group_name($groupid);
+            if ($params->group === false) {
+                // group doesn't exist, just skip it
+                continue;
+            }
+            $eventname = get_string('overridegroupeventname', 'quiz', $params);
+        }
+        else if ($userid) {
+            $params = new stdClass;
+            $params->quiz = $quiz->name;
+            $eventname = get_string('overrideusereventname', 'quiz', $params);
+        } else {
+            $eventname = $quiz->name;
+        }
+        if ($addopen or $addclose) {
+            if ($timeclose and $timeopen and $event->timeduration <= QUIZ_MAX_EVENT_LENGTH) {
+                // Single event for the whole quiz.
+                if ($oldevent = array_shift($oldevents)) {
+                    $event->id = $oldevent->id;
+                }
+                else {
+                    unset($event->id);
+                }
+                $event->name = $eventname;
+                // calendar_event::create will reuse a db record if the id field is set
+                calendar_event::create($event);
+            } else {
+                // Separate start and end events.
+                $event->timeduration  = 0;
+                if ($timeopen && $addopen) {
+                    if ($oldevent = array_shift($oldevents)) {
+                        $event->id = $oldevent->id;
+                    }
+                    else {
+                        unset($event->id);
+                    }
+                    $event->name = $eventname.' ('.get_string('quizopens', 'quiz').')';
+                    // calendar_event::create will reuse a db record if the id field is set
+                    calendar_event::create($event);
+                }
+                if ($timeclose && $addclose) {
+                    if ($oldevent = array_shift($oldevents)) {
+                        $event->id = $oldevent->id;
+                    }
+                    else {
+                        unset($event->id);
+                    }
+                    $event->name      = $eventname.' ('.get_string('quizcloses', 'quiz').')';
+                    $event->timestart = $timeclose;
+                    $event->eventtype = 'close';
+                    calendar_event::create($event);
+                }
+            }
+        }
+    }
+
+    // Delete any leftover events
+    foreach ($oldevents as $badevent) {
+        $badevent = calendar_event::load($badevent);
+        $badevent->delete();
+    }
 }
 
 /**

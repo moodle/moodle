@@ -1203,4 +1203,21 @@ css id's of question bank*/
 #categoryquestions .header {
   border: 0 none;
 }
-
+#mod-quiz-overrides div#quizoverrides{
+    margin-top: 1.5em;
+}
+#mod-quiz-overrides div#quizoverrides table{
+    width: 100%;
+}
+#mod-quiz-overrides div#quizoverrides table .colname{
+    width: 25%;
+}
+#mod-quiz-overrides div#quizoverrides table .colvalue{
+    width: 50%;
+}
+#mod-quiz-overrides div#quizoverrides table .colaction{
+    width: 10%;
+}
+#mod-quiz-overrides div#quizoverrides .buttons{
+    text-align: center;
+}

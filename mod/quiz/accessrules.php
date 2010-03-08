@@ -626,7 +626,19 @@ class password_access_rule extends quiz_access_rule_base {
 
     /// If they entered the right password, let them in.
         $enteredpassword = optional_param('quizpassword', '', PARAM_RAW);
+        $validpassword = false;
         if (strcmp($this->_quiz->password, $enteredpassword) === 0) {
+            $validpassword = true;
+        } else if (isset($this->_quiz->extrapasswords)) {
+            // group overrides may have additional passwords
+            foreach ($this->_quiz->extrapasswords as $password) {
+                if (strcmp($password, $enteredpassword) === 0) {
+                    $validpassword = true;
+                    break;
+                }
+            }
+        }
+        if ($validpassword) {
             $SESSION->passwordcheckedquizzes[$this->_quiz->id] = true;
             return;
         }

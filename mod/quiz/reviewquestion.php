@@ -21,7 +21,7 @@
     }
     $PAGE->set_url($url);
 
-    $attemptobj = new quiz_attempt($attemptid);
+    $attemptobj = quiz_attempt::create($attemptid);
 
 /// Check login.
     require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());

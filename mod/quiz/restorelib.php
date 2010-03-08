@@ -113,6 +113,8 @@
                 $status = quiz_question_instances_restore_mods($newid,$info,$restore);
                 //We have to restore the feedback now (course level table)
                 $status = quiz_feedback_restore_mods($newid, $info, $restore, $quiz);
+                //We have to restore the overrides now (course level table)
+                $status = quiz_overrides_restore_mods($newid, $info, $restore, $quiz);
                 //Now check if want to restore user data and do it.
                 if (restore_userdata_selected($restore,'quiz',$mod->id)) {
                     //Restore quiz_attempts
@@ -236,6 +238,78 @@
             $feedback->mingrade = 0;
             $feedback->maxgrade = $quiz->grade + 1;
             $DB->insert_record('quiz_feedback', $feedback);
+        }
+
+        return $status;
+    }
+
+    //This function restores the quiz_overrides
+    function quiz_overrides_restore_mods($quiz_id, $info, $restore, $quiz) {
+        global $DB;
+
+        $douserdata = restore_userdata_selected($restore,'quiz',$quiz_id);
+
+        $status = true;
+
+        //Get the quiz_feedback array
+        if (array_key_exists('OVERRIDES', $info['MOD']['#'])) {
+            $overrides = $info['MOD']['#']['OVERRIDES']['0']['#']['OVERRIDE'];
+
+            //Iterate over the feedbacks
+            foreach ($overrides as $override_info) {
+                //traverse_xmlize($override_info);                                                            //Debug
+                //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                //$GLOBALS['traverse_array']="";                                                              //Debug
+
+                //We'll need this later!!
+                $oldid = backup_todb($override_info['#']['ID']['0']['#']);
+
+                //Now, build the quiz_overrides record structure
+                $override = new stdClass();
+                $override->quiz = $quiz_id;
+                $override->groupid = backup_todb($override_info['#']['GROUPID']['0']['#']);
+                $override->userid = backup_todb($override_info['#']['USERID']['0']['#']);
+                $override->timeopen = backup_todb($override_info['#']['TIMEOPEN']['0']['#']);
+                $override->timeclose = backup_todb($override_info['#']['TIMECLOSE']['0']['#']);
+                $override->timelimit = backup_todb($override_info['#']['TIMELIMIT']['0']['#']);
+                $override->attempts = backup_todb($override_info['#']['ATTEMPTS']['0']['#']);
+                $override->password = backup_todb($override_info['#']['PASSWORD']['0']['#']);
+
+                // Only restore user overrides if we are restoring user data
+                if ($douserdata || $override->userid == 0) {
+
+                    //We have to recode the userid field
+                    if ($override->userid) {
+                        if (!$user = backup_getid($restore->backup_unique_code,"user",$override->userid)) {
+                            debugging("override can not be restored, user id $override->userid not present in backup");
+                            // do not not block the restore
+                            continue;
+                        }
+                        $override->userid = $user->new_id;
+
+                    }
+
+                    //We have to recode the groupid field
+                    if ($override->groupid) {
+                        if (!$group = backup_getid($restore->backup_unique_code,"groups",$override->groupid)) {
+                            debugging("override can not be restored, group id $override->groupid not present in backup");
+                            // do not not block the restore
+                            continue;
+                        }
+                        $override->groupid = $group->new_id;
+                    }
+
+                    //The structure is equal to the db, so insert the quiz_question_instances
+                    $newid = $DB->insert_record('quiz_overrides', $override);
+
+                    if ($newid) {
+                        //We have the newid, update backup_ids
+                        backup_putid($restore->backup_unique_code, 'quiz_overrides', $oldid, $newid);
+                    } else {
+                        $status = false;
+                    }
+                }
+            }
         }
 
         return $status;

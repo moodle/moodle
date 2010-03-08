@@ -52,6 +52,16 @@ $capabilities = array(
         )
     ),
 
+    // Edit the quiz overrides
+    'mod/quiz:manageoverrides' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+
     // Preview the quiz.
     'mod/quiz:preview' => array(
         'captype' => 'write', // Only just a write.

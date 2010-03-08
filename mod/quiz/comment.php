@@ -15,7 +15,7 @@
 
     $PAGE->set_url('/mod/quiz/comment.php', array('attempt'=>$attemptid, 'question'=>$questionid));
 
-    $attemptobj = new quiz_attempt($attemptid);
+    $attemptobj = quiz_attempt::create($attemptid);
 
 /// Can only grade finished attempts.
     if (!$attemptobj->is_finished()) {

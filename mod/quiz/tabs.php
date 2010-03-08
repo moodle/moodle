@@ -45,6 +45,9 @@ if (has_capability('mod/quiz:preview', $context)) {
 if (has_capability('mod/quiz:manage', $context)) {
     $row[] = new tabobject('edit', "$CFG->wwwroot/mod/quiz/edit.php?cmid=$cm->id", "<img src=\"" . $OUTPUT->pix_url('t/edit') . "\" class=\"iconsmall\" alt=\"$stredit\" /> $stredit",$stredit);
 }
+if (has_capability('mod/quiz:manageoverrides', $context)) {
+    $row[] = new tabobject('overrides', "$CFG->wwwroot/mod/quiz/overrides.php?cmid=$cm->id", get_string('overrides', 'quiz'));
+}
 
 if ($currenttab == 'info' && count($row) == 1) {
     // Don't show only an info tab (e.g. to students).
@@ -89,6 +92,20 @@ if ($currenttab == 'edit' and isset($mode)) {
     //questionbank_navigation_tabs($row, $contexts, $thispageurl->params());
     $tabs[] = $row;
 
+}
+
+if ($currenttab == 'overrides' and isset($mode)) {
+    $activated[] = 'overrides';
+
+    $row  = array();
+    $currenttab = $mode;
+
+    $strgroup = get_string('groupoverrides', 'quiz');
+    $struser = get_string('useroverrides', 'quiz');
+
+    $row[] = new tabobject('group', "$CFG->wwwroot/mod/quiz/overrides.php?cmid=$cm->id", $strgroup);
+    $row[] = new tabobject('user', "$CFG->wwwroot/mod/quiz/overrides.php?cmid=$cm->id&amp;mode=user", $struser);
+    $tabs[] = $row;
 }
 
 if (!$quiz->questions) {

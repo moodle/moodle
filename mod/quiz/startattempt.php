@@ -28,7 +28,7 @@ if (!$quiz = $DB->get_record('quiz', array('id' => $cm->instance))) {
     print_error('invalidcoursemodule');
 }
 
-$quizobj = new quiz($quiz, $cm, $course);
+$quizobj = quiz::create($quiz->id, $USER->id);
 
 /// Check login and sesskey.
 require_login($quizobj->get_courseid(), false, $quizobj->get_cm());

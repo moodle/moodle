@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/quiz/db" VERSION="20090420" COMMENT="XMLDB file for Moodle mod/quiz"
+<XMLDB PATH="mod/quiz/db" VERSION="20100220" COMMENT="XMLDB file for Moodle mod/quiz"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -109,7 +109,7 @@
         <KEY NAME="quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="quiz_report" COMMENT="Lists all the installed quiz reports and their display order and so on. No need to worry about deleting old records. Only records with an equivalent directory are displayed." PREVIOUS="quiz_feedback">
+    <TABLE NAME="quiz_report" COMMENT="Lists all the installed quiz reports and their display order and so on. No need to worry about deleting old records. Only records with an equivalent directory are displayed." PREVIOUS="quiz_feedback" NEXT="quiz_overrides">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="name of the report, same as the directory name" PREVIOUS="id" NEXT="displayorder"/>
@@ -120,6 +120,25 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="quiz_overrides" COMMENT="The overrides to quiz settings on a per-user and per-group basis." PREVIOUS="quiz_report">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="quiz"/>
+        <FIELD NAME="quiz" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references quiz.id" PREVIOUS="id" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key references groups.id.  Can be null if this is a per-user override." PREVIOUS="quiz" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key references user.id.  Can be null if this is a per-group override." PREVIOUS="groupid" NEXT="timeopen"/>
+        <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Time at which students may start attempting this quiz. Can be null, in which case the quiz default is used." PREVIOUS="userid" NEXT="timeclose"/>
+        <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Time by which students must have completed their attempt.  Can be null, in which case the quiz default is used." PREVIOUS="timeopen" NEXT="timelimit"/>
+        <FIELD NAME="timelimit" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Time limit in seconds.  Can be null, in which case the quiz default is used." PREVIOUS="timeclose" NEXT="attempts"/>
+        <FIELD NAME="attempts" TYPE="int" LENGTH="6" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="timelimit" NEXT="password"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Quiz password.  Can be null, in which case the quiz default is used." PREVIOUS="attempts"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="quiz"/>
+        <KEY NAME="quiz" TYPE="foreign" FIELDS="quiz" REFTABLE="quiz" REFFIELDS="id" PREVIOUS="primary" NEXT="groupid"/>
+        <KEY NAME="groupid" TYPE="foreign" FIELDS="groupid" REFTABLE="groups" REFFIELDS="id" PREVIOUS="quiz" NEXT="userid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="groupid"/>
       </KEYS>
     </TABLE>
   </TABLES>

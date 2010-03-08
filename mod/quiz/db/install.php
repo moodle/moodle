@@ -21,6 +21,8 @@ function xmldb_quiz_install() {
     update_log_display_entry('quiz', 'start attempt', 'quiz', 'name');
     update_log_display_entry('quiz', 'close attempt', 'quiz', 'name');
     update_log_display_entry('quiz', 'continue attempt', 'quiz', 'name');
+    update_log_display_entry('quiz', 'edit override', 'quiz', 'name');
+    update_log_display_entry('quiz', 'delete override', 'quiz', 'name');
 
     $record = new object();
     $record->name         = 'overview';
