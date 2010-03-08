@@ -134,7 +134,7 @@
     // A quiz page with a lot of questions can take a long time to load, and we
     // want the protection afforded by init_quiz_form immediately, so include the
     // JS now.
-    echo js_writer::function_call('init_quiz_form');
+    echo html_writer::script(js_writer::function_call('init_quiz_form'));
     echo '<div>';
 
 /// Print all the questions

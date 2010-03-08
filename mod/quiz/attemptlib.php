@@ -1125,7 +1125,7 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base {
         $output = '';
         $output .= '<a href="' . s($this->attemptobj->summary_url()) . '" class="endtestlink">' . get_string('endtest', 'quiz') . '</a>';
         $output .= $this->attemptobj->get_timer_html();
-        $output .= js_writer::function_call('quiz_init_attempt_nav');
+        $output .= html_writer::script(js_writer::function_call('quiz_init_attempt_nav'));
         return $output;
     }
 }
