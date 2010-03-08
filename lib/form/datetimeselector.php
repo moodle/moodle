@@ -176,7 +176,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
                         $value['enabled'] = $requestvalue != 0;
                     }
                 } else {
-                    $value['enabled'] = isset($value['off']);
+                    $value['enabled'] = isset($value['enabled']);
                 }
                 if (null !== $value){
                     $this->setValue($value);
