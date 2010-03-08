@@ -42,7 +42,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
                 $this->_options[$name] = $value;
             }
         }
-        if (!empty($options['maxbytes'])) {
+        if (empty($options['maxbytes'])) {
             $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
         }
         parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
@@ -152,7 +152,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
 
         $options = file_get_draft_area_files($draftitemid);
         $options->mainfile  = $this->_options['mainfile'];
-        $options->maxbytes  = $this->getMaxbytes();
+        $options->maxbytes  = $this->_options['maxbytes'];
         $options->maxfiles  = $this->getMaxfiles();
         $options->client_id = $client_id;
         $options->filecount = $filecount;

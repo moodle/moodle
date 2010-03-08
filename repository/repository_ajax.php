@@ -270,7 +270,7 @@ EOD;
             break;
         case 'upload':
             try {
-                $result = $repo->upload();
+                $result = $repo->upload($maxbytes);
                 $result['client_id'] = $client_id;
                 echo json_encode($result);
             } catch (Exception $e){
