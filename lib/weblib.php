@@ -2708,6 +2708,90 @@ function print_maintenance_message() {
 }
 
 /**
+ * this function is used to print a filemanager
+ *
+ * @param $options array options to setup filemanager
+ * @param $return bool If true output is returned rather than printed out
+ * @return string
+ */
+function print_filemanager($options, $return = false) {
+    global $PAGE, $CFG;
+    // start to setup filemanager
+    // loading filemanager language string
+    $PAGE->requires->string_for_js('loading', 'repository');
+    $PAGE->requires->string_for_js('nomorefiles', 'repository');
+    $PAGE->requires->string_for_js('confirmdeletefile', 'repository');
+    $PAGE->requires->string_for_js('add', 'repository');
+    $PAGE->requires->string_for_js('accessiblefilepicker', 'repository');
+    $PAGE->requires->string_for_js('move', 'moodle');
+    $PAGE->requires->string_for_js('cancel', 'moodle');
+    $PAGE->requires->string_for_js('download', 'moodle');
+    $PAGE->requires->string_for_js('ok', 'moodle');
+    $PAGE->requires->string_for_js('emptylist', 'repository');
+    $PAGE->requires->string_for_js('entername', 'repository');
+    $PAGE->requires->string_for_js('enternewname', 'repository');
+    $PAGE->requires->string_for_js('zip', 'editor');
+    $PAGE->requires->string_for_js('unzip', 'moodle');
+    $PAGE->requires->string_for_js('rename', 'moodle');
+    $PAGE->requires->string_for_js('delete', 'moodle');
+    $PAGE->requires->string_for_js('setmainfile', 'resource');
+    $PAGE->requires->string_for_js('cannotdeletefile', 'error');
+    $PAGE->requires->string_for_js('confirmdeletefile', 'repository');
+    $PAGE->requires->string_for_js('nopathselected', 'repository');
+    $PAGE->requires->string_for_js('popupblockeddownload', 'repository');
+    $PAGE->requires->string_for_js('path', 'moodle');
+    // language strings
+    $straddfile  = get_string('add', 'repository') . '...';
+    $strmakedir  = get_string('makeafolder', 'moodle');
+    $strdownload  = get_string('downloadfolder', 'repository');
+
+    $client_id = $options->client_id;
+    $itemid = $options->itemid;
+
+    $html = '';
+
+    $html .= <<<FMHTML
+<div id="filemanager-wrapper-{$client_id}" style="display:none">
+    <div class="fm-breadcrumb" id="fm-path-{$client_id}"></div>
+    <div class="filemanager-toolbar">
+        <button id="btnadd-{$client_id}" onclick="return false">{$straddfile}</button>
+        <button id="btncrt-{$client_id}" onclick="return false">{$strmakedir}</button>
+        <button id="btndwn-{$client_id}" onclick="return false">{$strdownload}</button>
+    </div>
+    <div class="filemanager-container" id="filemanager-{$client_id}">
+        <ul id="draftfiles-{$client_id}">
+            <li>Loading...</li>
+        </ul>
+    </div>
+</div>
+FMHTML;
+        // print out file entry template only one time
+    if (empty($CFG->filemanagertemplateloaded)) {
+        $CFG->filemanagertemplateloaded = true;
+        $html .= <<<FMHTML
+<div id="fm-template" style="display:none"><div class="fm-file-menu">___action___</div> <div class="fm-file-name">___fullname___</div></div>
+FMHTML;
+    }
+        $filemanagerurl = "$CFG->wwwroot/repository/filepicker.php?env=filemanager&amp;action=embedded&amp;itemid=$itemid&amp;subdirs=/&amp;maxbytes=$options->maxbytes&amp;ctx_id=".$PAGE->context->id.'&amp;course='.$PAGE->course->id;
+
+        $html .= <<<NONJS
+<div id="nonjs-filemanager-$client_id">
+<object type="text/html" data="$filemanagerurl" height="160" width="600" style="border:1px solid #000">Error</object>
+</div>
+NONJS;
+
+    $module = array('name'=>'form_filemanager', 'fullpath'=>'/lib/form/filemanager.js', 'requires' => array('core_filepicker', 'base', 'io', 'node', 'json', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview'));
+    $PAGE->requires->js_module($module);
+    $PAGE->requires->js_init_call('M.form_filemanager.init', array($options), true, $module);
+
+    if ($return) {
+        return $html;
+    } else {
+        echo $html;
+    }
+}
+
+/**
  * Adjust the list of allowed tags based on $CFG->allowobjectembed and user roles (admin)
  *
  * @global object
