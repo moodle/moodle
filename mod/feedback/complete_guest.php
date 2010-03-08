@@ -96,9 +96,12 @@ if ($id) {
 $capabilities = feedback_load_capabilities($cm->id);
 
 //check whether the feedback is anonymous
-if($feedback->anonymous == FEEDBACK_ANONYMOUS_YES) {
+if(isset($CFG->feedback_allowfullanonymous)
+                AND $CFG->feedback_allowfullanonymous
+                AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES ) {
     $capabilities->complete = true;
-}else {
+}
+if($feedback->anonymous != FEEDBACK_ANONYMOUS_YES) {
     print_error('feedback_is_not_for_anonymous', 'feedback');
 }
 

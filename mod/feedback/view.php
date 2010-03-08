@@ -30,7 +30,9 @@ if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
 
 $capabilities = feedback_load_capabilities($cm->id);
 
-if($feedback->anonymous == FEEDBACK_ANONYMOUS_YES ) {
+if(isset($CFG->feedback_allowfullanonymous)
+            AND $CFG->feedback_allowfullanonymous
+            AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES ) {
     $capabilities->complete = true;
 }
 

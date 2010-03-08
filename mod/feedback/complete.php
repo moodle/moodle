@@ -74,7 +74,10 @@ if ($id) {
 
 $capabilities = feedback_load_capabilities($cm->id);
 
-if($feedback->anonymous == FEEDBACK_ANONYMOUS_YES) {
+
+if(isset($CFG->feedback_allowfullanonymous)
+            AND $CFG->feedback_allowfullanonymous
+            AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES ) {
     $capabilities->complete = true;
 }
 
@@ -307,7 +310,11 @@ if($feedback_can_submit) {
             echo $OUTPUT->continue_button(feedback_encode_target_url($feedback->site_after_submit));
         }else {
             if($courseid) {
-                echo $OUTPUT->continue_button($CFG->wwwroot.'/course/view.php?id='.$courseid);
+                if($courseid == SITEID) {
+                    echo $OUTPUT->continue_button($CFG->wwwroot);
+                }else {
+                    echo $OUTPUT->continue_button($CFG->wwwroot.'/course/view.php?id='.$courseid);
+                }
             }else {
                 if($course->id == SITEID) {
                     echo $OUTPUT->continue_button($CFG->wwwroot);
