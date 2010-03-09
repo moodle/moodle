@@ -251,7 +251,7 @@ class repository_boxnet extends repository {
      * Add Plugin settings input to Moodle form
      * @param object $mform
      */
-    public function type_config_form(&$mform) {
+    public function type_config_form($mform) {
         $public_account = get_config('boxnet', 'public_account');
         $api_key = get_config('boxnet', 'api_key');
         if (empty($api_key)) {

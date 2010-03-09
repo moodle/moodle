@@ -132,7 +132,7 @@ class repository_merlot extends repository {
      *
      * @param object $mform
      */
-    public function type_config_form(&$mform) {
+    public function type_config_form($mform) {
         $licensekey = get_config('merlot', 'licensekey');
         if (empty($licensekey)) {
             $licensekey = '';

@@ -419,7 +419,7 @@ class repository_flickr_public extends repository {
      * Add Instance settings input to Moodle form
      * @param object $mform
      */
-    public function instance_config_form(&$mform) {
+    public function instance_config_form($mform) {
         $mform->addElement('text', 'email_address', get_string('emailaddress', 'repository_flickr_public'));
         //$mform->addRule('email_address', get_string('required'), 'required', null, 'client');
     }
@@ -436,7 +436,7 @@ class repository_flickr_public extends repository {
      * Add Plugin settings input to Moodle form
      * @param object $mform
      */
-    public function type_config_form(&$mform) {
+    public function type_config_form($mform) {
         $api_key = get_config('flickr_public', 'api_key');
         if (empty($api_key)) {
             $api_key = '';

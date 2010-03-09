@@ -268,7 +268,7 @@ class repository_remotemoodle extends repository {
      * @global <type> $DB
      * @param <type> $
      */
-    public function instance_config_form(&$mform) {
+    public function instance_config_form($mform) {
         global $CFG, $DB;
 
         //retrieve only Moodle peers
