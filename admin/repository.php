@@ -28,9 +28,8 @@ require_login(SITEID, false);
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 admin_externalpage_setup($pagename);
 
-$sesskeyurl = "$CFG->wwwroot/$CFG->admin/repository.php?sesskey=" . sesskey();
-$baseurl    = "$CFG->wwwroot/$CFG->admin/settings.php?section=managerepositories";
-
+$sesskeyurl = $CFG->wwwroot.'/'.$CFG->admin.'/repository.php?sesskey=' . sesskey();
+$baseurl    = $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=managerepositories';
 
 $configstr  = get_string('managerepositories', 'repository');
 
@@ -43,9 +42,9 @@ if (!empty($edit) || !empty($new)) {
         $configs = call_user_func(array($classname,'get_type_option_names'));
         $plugin = $repositorytype->get_typename();
     } else {
+        $repositorytype = null;
         $plugin = $new;
         $typeid = $new;
-        $repositorytype = null;
     }
     $PAGE->set_pagetype('admin-repository-' . $plugin);
     // display the edit form for this instance
@@ -53,16 +52,16 @@ if (!empty($edit) || !empty($new)) {
     $fromform = $mform->get_data();
 
     //detect if we create a new type without config (in this case if don't want to display a setting page during creation)
-    $createnewtype = false;
+    $nosettings = false;
     if (!empty($new)) {
         $adminconfignames = repository::static_function($new, 'get_type_option_names');
-        $createnewtype = empty($adminconfignames);
+        $nosettings = empty($adminconfignames);
     }
     // end setup, begin output
+
     if ($mform->is_cancelled()){
         redirect($baseurl);
-        exit;
-    } else if (!empty($fromform) || $createnewtype){
+    } else if (!empty($fromform) || $nosettings) {
         if (!confirm_sesskey()) {
             print_error('confirmsesskeybad', '', $baseurl);
         }
@@ -94,14 +93,22 @@ if (!empty($edit) || !empty($new)) {
             }
             $success = $repositorytype->update_options($settings);
         } else {
-            $type = new repository_type($plugin,(array)$fromform);
+            $type = new repository_type($plugin, (array)$fromform);
             $type->create();
             $success = true;
             $data = data_submitted();
         }
         if ($success) {
             $savedstr = get_string('configsaved', 'repository');
-            redirect($baseurl, $savedstr, 3);
+            $has_instance = repository::static_function($plugin, 'get_instance_option_names');
+
+            if (!empty($has_instance)) {
+                // no common setting for this type, so go to setup instances
+                redirect($sesskeyurl.'&amp;edit='.$plugin, $savedstr, 1);
+            } else {
+                // configs saved
+                redirect($baseurl, $savedstr, 1);
+            }
         } else {
             print_error('instancenotsaved', 'repository', $baseurl);
         }
