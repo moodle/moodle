@@ -1557,14 +1557,14 @@ abstract class repository {
      * Edit/Create Admin Settings Moodle form
      * @param object $ Moodle form (passed by reference)
      */
-     public function type_config_form(&$mform) {
+    public function type_config_form($mform) {
     }
 
     /**
      * Edit/Create Instance Settings Moodle form
      * @param object $ Moodle form (passed by reference)
      */
-     public function instance_config_form(&$mform) {
+    public function instance_config_form($mform) {
     }
 
     /**
