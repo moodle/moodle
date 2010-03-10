@@ -114,7 +114,7 @@ $ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'te
  */
 function s($var, $obsolete = false) {
 
-    if ($var == '0') {  // for integer 0, boolean false, string '0'
+    if ($var === '0' or $var === false or $var === 0) {
         return '0';
     }
 
