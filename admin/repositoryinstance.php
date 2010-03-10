@@ -25,7 +25,6 @@ if ($edit){
 }
 
 admin_externalpage_setup($pagename);
-require_login(SITEID, false);
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
 $sesskeyurl = "$CFG->wwwroot/$CFG->admin/repositoryinstance.php?sesskey=" . sesskey();

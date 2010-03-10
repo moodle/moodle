@@ -252,7 +252,7 @@ class repository_alfresco extends repository {
      *
      * @return bool
      */
-    public function instance_config_form(&$mform) {
+    public function instance_config_form($mform) {
         if (!class_exists('SoapClient')) {
             $mform->addElement('static', null, get_string('notice'), get_string('soapmustbeenabled', 'repository_alfresco'));
             return false;

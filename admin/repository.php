@@ -24,7 +24,6 @@ if ($edit) {
     $pagename = 'repositorynew';
 }
 
-require_login(SITEID, false);
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 admin_externalpage_setup($pagename);
 
