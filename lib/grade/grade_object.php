@@ -158,6 +158,7 @@ abstract class grade_object {
         $params    = (array)$params;
 
         $wheresql = array();
+        $newparams = array();
 
         foreach ($params as $var=>$value) {
             if (!in_array($var, $instance->required_fields) and !array_key_exists($var, $instance->optional_fields)) {
@@ -167,7 +168,7 @@ abstract class grade_object {
                 $wheresql[] = " $var IS NULL ";
             } else {
                 $wheresql[] = " $var = ? ";
-                $params[] = $value;
+                $newparams[] = $value;
             }
         }
 
@@ -178,7 +179,7 @@ abstract class grade_object {
         }
 
         global $DB;
-        if ($datas = $DB->get_records_select($table, $wheresql, $params)) {
+        if ($datas = $DB->get_records_select($table, $wheresql, $newparams)) {
 
             $result = array();
             foreach($datas as $data) {
