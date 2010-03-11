@@ -149,7 +149,8 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         }
 
         // get filepicker info
-        $fpoptions = null;
+        //
+        $fpoptions = array();
         if ($maxfiles != 0 ) {
             if (empty($draftitemid)) {
                 // no existing area info provided - let's use fresh new draft area
@@ -160,18 +161,28 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
             $args = new stdclass;
             // need these three to filter repositories list
-            $args->accepted_types = array('image', 'video', 'media');
+            $args->accepted_types = array('image');
             $args->return_types = (FILE_INTERNAL | FILE_EXTERNAL);
             $args->context = $ctx;
             $args->env = 'filepicker';
 
-            $fpoptions = initialise_filepicker($args);
+            $image_options = initialise_filepicker($args);
 
-            $fpoptions->client_id = uniqid();
-            $fpoptions->maxbytes = $this->_options['maxbytes'];
-            $fpoptions->maxfiles = 1;
-            $fpoptions->env = 'editor';
-            $fpoptions->itemid = $draftitemid;
+            $args->accepted_types = array('video', 'media');
+            $media_options = initialise_filepicker($args); 
+
+            $image_options->client_id = uniqid();
+            $media_options->client_id = uniqid();
+            $image_options->maxbytes = $this->_options['maxbytes'];
+            $media_options->maxbytes  = $this->_options['maxbytes'];
+            $image_options->maxfiles = 1;
+            $media_options->maxfiles = 1;
+            $image_options->env = 'editor';
+            $media_options->env = 'editor';
+            $image_options->itemid = $draftitemid;
+            $media_options->itemid = $draftitemid;
+            $fpoptions['image'] = $image_options;
+            $fpoptions['media'] = $media_options;
         }
 
     /// print text area - TODO: add on-the-fly switching, size configuration, etc.
