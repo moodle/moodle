@@ -10,7 +10,7 @@
 //       catch up now, so until 27th October please only increment in very tiny steps
 //       in HEAD, until we get past that date..
 
-$module->version  = 2009042001;   // The (date) version of this module
+$module->version  = 2009042002;   // The (date) version of this module
 $module->requires = 2009041700;   // The version of Moodle that is required
 $module->cron     = 300;            // How often should cron check this module (seconds)?
 

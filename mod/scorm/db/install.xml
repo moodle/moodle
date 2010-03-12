@@ -56,7 +56,7 @@
         <FIELD NAME="organization" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="manifest" NEXT="parent"/>
         <FIELD NAME="parent" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="organization" NEXT="identifier"/>
         <FIELD NAME="identifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="parent" NEXT="launch"/>
-        <FIELD NAME="launch" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="identifier" NEXT="scormtype"/>
+        <FIELD NAME="launch" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="identifier" NEXT="scormtype"/>
         <FIELD NAME="scormtype" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false" PREVIOUS="launch" NEXT="title"/>
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="scormtype"/>
       </FIELDS>

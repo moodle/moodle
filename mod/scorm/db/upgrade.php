@@ -426,6 +426,19 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009042001, 'scorm');
     }
 
+    if ($result && $oldversion < 2009042002) {
+
+    /// Define field introformat to be added to scorm
+        $table = new xmldb_table('scorm_scoes');
+        $field = new xmldb_field('launch', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null);
+
+    /// Launch add field introformat
+        $dbman->change_field_type($table, $field);
+
+    /// scorm savepoint reached
+        upgrade_mod_savepoint($result, 2009042002, 'scorm');
+    }
+
     return $result;
 }
 
