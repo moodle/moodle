@@ -14,3 +14,12 @@ $string['continue'] = 'Gaan voort';
 $string['error'] = 'Fout';
 $string['help'] = 'Help';
 $string['language'] = 'Taal';
+$string['name'] = 'Naam';
+$string['next'] = 'Volgende';
+$string['ok'] = 'OK';
+$string['password'] = 'Wagwoord';
+$string['status'] = 'Status';
+$string['thischarset'] = 'UTF-8';
+$string['thislanguage'] = 'Afrikaans';
+$string['user'] = 'Gebruiker';
+?>
