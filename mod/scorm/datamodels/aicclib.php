@@ -344,6 +344,9 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $usertracks = array();
         foreach ($scoes as $sco) {
             if (!empty($sco->launch)) {
+                if (empty($scoid)) {
+                    $scoid = $sco->id;
+                }
                 if ($usertrack = scorm_get_tracks($sco->id,$user->id,$attempt)) {
                     if ($usertrack->status == '') {
                         $usertrack->status = 'notattempted';
