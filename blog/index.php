@@ -11,7 +11,7 @@ require_once($CFG->dirroot .'/blog/lib.php');
 require_once($CFG->dirroot .'/blog/locallib.php');
 require_once($CFG->dirroot .'/course/lib.php');
 require_once($CFG->dirroot .'/tag/lib.php');
-require_once($CFG->libdir .'/commentlib.php');
+require_once($CFG->dirroot .'/comment/lib.php');
 
 $id       = optional_param('id', null, PARAM_INT);
 $start    = optional_param('formstart', 0, PARAM_INT);
@@ -24,7 +24,7 @@ $groupid  = optional_param('groupid', null, PARAM_INT);
 $courseid = optional_param('courseid', null, PARAM_INT);
 $search   = optional_param('search', null, PARAM_RAW);
 
-comment::js();
+comment::init();
 
 $url_params = compact('id', 'start', 'tag', 'userid', 'tagid', 'modid', 'entryid', 'groupid', 'courseid', 'search');
 foreach ($url_params as $var => $val) {

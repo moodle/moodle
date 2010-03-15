@@ -81,8 +81,8 @@
 
     require_course_login($course, true, $cm);
 
-    require_once($CFG->libdir . '/commentlib.php');
-    comment::js();
+    require_once($CFG->dirroot . '/comment/lib.php');
+    comment::init();
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/data:viewentry', $context);

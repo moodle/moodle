@@ -1277,7 +1277,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
         if (($template == 'listtemplate') && ($data->comments)) {
 
             if (!empty($CFG->usecomments)) {
-                require_once($CFG->libdir . '/commentlib.php');
+                require_once($CFG->dirroot  . '/comment/lib.php');
                 $cmt = new stdclass;
                 $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
                 $cmt->area    = 'database_entry';
@@ -1285,7 +1285,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
                 $cmt->itemid  = $record->id;
                 $cmt->showcount = true;
                 $comment = new comment($cmt);
-                $replacement[] = $comment->init(true);
+                $replacement[] = $comment->output(true);
             }
         } else {
             $replacement[] = '';
@@ -1313,7 +1313,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
              *********************************/
             if (($template == 'singletemplate') && ($data->comments)) {    //prints ratings options
                 if (!empty($CFG->usecomments)) {
-                    require_once($CFG->libdir . '/commentlib.php');
+                    require_once($CFG->dirroot . '/comment/lib.php');
                     $cmt = new stdclass;
                     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
                     $cmt->area    = 'database_entry';
@@ -1321,7 +1321,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
                     $cmt->itemid  = $record->id;
                     $cmt->showcount = true;
                     $comment = new comment($cmt);
-                    $comment->init(false);
+                    $comment->output(false);
                 }
             }
         }

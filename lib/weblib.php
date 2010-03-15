@@ -951,7 +951,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     if (!empty($options->comments) && !empty($CFG->usecomments)) {
         require_once($CFG->libdir . '/commentlib.php');
         $comment = new comment($options->comments);
-        $cmt = $comment->init(true);
+        $cmt = $comment->output(true);
     } else {
         $cmt = '';
     }

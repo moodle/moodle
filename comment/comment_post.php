@@ -19,7 +19,7 @@
  * Handling all ajax request for comments API
  */
 require_once('../config.php');
-require_once($CFG->libdir.'/commentlib.php');
+require_once($CFG->libdir.'/comment/lib.php');
 
 $courseid  = optional_param('courseid',  SITEID, PARAM_INT);
 $contextid = optional_param('contextid', SYSCONTEXTID, PARAM_INT);

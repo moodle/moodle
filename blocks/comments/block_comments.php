@@ -1,6 +1,6 @@
 <?php
 
-require_once($CFG->libdir . '/commentlib.php');
+require_once($CFG->dirroot . '/comment/lib.php');
 
 class block_comments extends block_base {
 
@@ -11,7 +11,7 @@ class block_comments extends block_base {
 
     function specialization() {
         // require js for commenting
-        comment::js();
+        comment::init();
     }
     function applicable_formats() {
         return array('all' => true);

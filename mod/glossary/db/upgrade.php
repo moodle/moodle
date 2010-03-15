@@ -205,7 +205,7 @@ function xmldb_glossary_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009042006, 'glossary');
     }
     if ($result && $oldversion < 2009110800) {
-        require_once($CFG->libdir . '/commentlib.php');
+        require_once($CFG->dirroot . '/comment/lib.php');
         upgrade_set_timeout(60*20);
 
     /// Define table glossary_comments to be dropped

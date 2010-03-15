@@ -181,7 +181,7 @@ function xmldb_data_upgrade($oldversion) {
     }
 
     if ($result && $oldversion < 2009111701) {
-        require_once($CFG->libdir . '/commentlib.php');
+        require_once($CFG->dirroot . '/comment/lib.php');
         upgrade_set_timeout(60*20);
 
     /// Define table data_comments to be dropped
