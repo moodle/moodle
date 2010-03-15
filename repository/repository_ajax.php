@@ -40,12 +40,13 @@
     $contextid = optional_param('ctx_id', SITEID, PARAM_INT);       // context ID
     $env       = optional_param('env', 'filepicker', PARAM_ALPHA);  // opened in editor or moodleform
     $file      = optional_param('file', '', PARAM_RAW);             // file to download
-    $itemid    = optional_param('itemid', '', PARAM_INT);
+    $itemid    = optional_param('itemid', 0, PARAM_INT);
     $title     = optional_param('title', '', PARAM_FILE);           // new file name
     $page      = optional_param('page', '', PARAM_RAW);             // page
     $maxbytes  = optional_param('maxbytes', -1, PARAM_INT);           // repository ID
     $req_path  = optional_param('p', '', PARAM_RAW);                // path
     $save_path = optional_param('savepath', '/', PARAM_PATH);
+    $save_filearea = optional_param('filearea', 'user_draft', PARAM_TEXT);
     $search_text   = optional_param('s', '', PARAM_CLEANHTML);
     $linkexternal = optional_param('linkexternal', '', PARAM_ALPHA);
 
@@ -136,7 +137,7 @@
 <html><head>
 <script type="text/javascript">
 if(window.opener){
-    M.core_filepicker.active.list();
+    window.opener.M.core_filepicker.active_filepicker.list();
     window.close();
 } else {
     alert("{$strhttpsbug }");
@@ -255,7 +256,7 @@ EOD;
                 if (($maxbytes!==-1) && (filesize($filepath) > $maxbytes)) {
                     throw new file_exception('maxbytes');
                 }
-                $info = repository::move_to_filepool($filepath, $title, $itemid, $save_path);
+                $info = repository::move_to_filepool($filepath, $title, $itemid, $save_path, $save_filearea);
                 if (empty($info)) {
                     $info['e'] = get_string('error', 'moodle');
                 }

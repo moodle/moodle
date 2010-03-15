@@ -44,6 +44,7 @@ M.core_filepicker = M.core_filepicker || {};
  * instances of file pickers used on page
  */
 M.core_filepicker.instances = M.core_filepicker.instances || {};
+M.core_filepicker.active_filepicker = null;
 
 /**
  * Init and show file picker
@@ -94,6 +95,7 @@ M.core_filepicker.init = function(Y, options) {
             params['accepted_types']=this.options.accepted_types;
             params['sesskey']=M.cfg.sesskey;
             params['client_id'] = args.client_id;
+            params['filearea'] = this.options.filearea?this.options.filearea:'user_draft';
             params['itemid'] = this.options.itemid?this.options.itemid:0;
             params['maxbytes'] = this.options.maxbytes?this.options.maxbytes:-1;
             if (args['params']) {
@@ -705,9 +707,10 @@ M.core_filepicker.init = function(Y, options) {
             }
             var popup_button = Y.one('#'+popup_button_id);
             if (popup_button) {
-                popup_button.on('click', function(){
-                    window.open(loginurl, 'repo_auth', 'location=0,status=0,scrollbars=0,width=500,height=300');
-                    active_filepicker = this;
+                popup_button.on('click', function(e){
+                    M.core_filepicker.active_filepicker = this;
+                    window.open(loginurl, 'repo_auth', 'location=0,status=0,width=500,height=300');
+                    e.preventDefault(); 
                 }, this);
             }
             var elform = Y.one('#'+form_id);
