@@ -80,10 +80,13 @@ class hotpot_xml_template_default {
         $str = strtr($str, array("\r\n"=>$nl, "\r"=>$nl, "\n"=>$nl));
         // convert (hex and decimal) html entities to unicode, if required
         if ($convert_to_unicode) {
-            $str = preg_replace('|&#x([0-9A-F]+);|i', '\\u\\1', $str);
-            $str = preg_replace('|&#(\d+);|e', "'\\u'.sprintf('%04X', '\\1')", $str);
+            $str = preg_replace('/&#x([0-9A-F]+);/i', '\\u\\1', $str);
+            $str = preg_replace_callback('/&#(\d+);/', array(&$this, 'js_safe_callback'), $str);
         }
         return $str;
+    }
+    function js_safe_callback(&$matches) {
+        return '\\u'.sprintf('%04X', $matches[1]);
     }
     function get_halfway_color($x, $y) {
         // returns the $color that is half way between $x and $y

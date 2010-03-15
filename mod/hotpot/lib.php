@@ -1504,18 +1504,18 @@ class hotpot_xml_tree {
             // remove white space between <table>, <ul|OL|DL> and <OBJECT|EMBED> parts
             // (so it doesn't get converted to <br />)
             $htmltags = '('
-            .   'TABLE|/?CAPTION|/?COL|/?COLGROUP|/?TBODY|/?TFOOT|/?THEAD|/?TD|/?TH|/?TR'
-            .   '|OL|UL|/?LI'
-            .   '|DL|/?DT|/?DD'
-            .   '|EMBED|OBJECT|APPLET|/?PARAM'
-            //. '|SELECT|/?OPTION'
-            //. '|FIELDSET|/?LEGEND'
-            //. '|FRAMESET|/?FRAME'
+            .   'TABLE|\\/?CAPTION|\\/?COL|\\/?COLGROUP|\\/?TBODY|\\/?TFOOT|\\/?THEAD|\\/?TD|\\/?TH|\\/?TR'
+            .   '|OL|UL|\\/?LI'
+            .   '|DL|\\/?DT|\\/?DD'
+            .   '|EMBED|OBJECT|APPLET|\\/?PARAM'
+            //. '|SELECT|\\/?OPTION'
+            //. '|FIELDSET|\\/?LEGEND'
+            //. '|FRAMESET|\\/?FRAME'
             .   ')'
             ;
 
-            $space = '(\s|(<br[^>]*>))+';
-            $search = '#(<'.$htmltags.'[^>]*'.'>)'.$space.'(?='.'<)#is';
+            $space = '(?:\s|(?:<br[^>]*>))+';
+            $search = '/(<'.$htmltags.'[^>]*'.'>)'.$space.'(?='.'<)/is';
             $value = preg_replace($search, '\\1', $value);
 
             // replace remaining newlines with <br />
@@ -1532,10 +1532,13 @@ class hotpot_xml_tree {
             //  F0 - FF : 1st byte of 4-byte char
             // if the string doesn't match the above, it might be
             //  80 - FF : single-byte, non-ascii char
-            $search = '#('.'[\xc0-\xdf][\x80-\xbf]'.'|'.'[\xe0-\xef][\x80-\xbf]{2}'.'|'.'[\xf0-\xff][\x80-\xbf]{3}'.'|'.'[\x80-\xff]'.')#se';
-            $value = preg_replace($search, "hotpot_utf8_to_html_entity('\\1')", $value);
+            $search = '/'.'[\xc0-\xdf][\x80-\xbf]'.'|'.'[\xe0-\xef][\x80-\xbf]{2}'.'|'.'[\xf0-\xff][\x80-\xbf]{3}'.'|'.'[\x80-\xff]'.'/';
+            $value = preg_replace_callback($search, array(&$this, 'xml_value_callback'), $value);
         }
         return $value;
+    }
+    function xml_value_callback(&$matches) {
+        return hotpot_utf8_to_html_entity($matches[0]);
     }
     function xml_values($tags) {
         $i = 0;
@@ -1550,14 +1553,6 @@ class hotpot_xml_tree {
     }
     function encode_cdata(&$str, $tag) {
 
-        // conversion tables
-        static $HTML_ENTITIES = array(
-            '&apos;' => "'",
-            '&quot;' => '"',
-            '&lt;'   => '<',
-            '&gt;'   => '>',
-            '&amp;'  => '&',
-        );
         static $ILLEGAL_STRINGS = array(
             "\r\n"  => '&lt;br /&gt;',
             "\r"    => '&lt;br /&gt;',
@@ -1576,12 +1571,21 @@ class hotpot_xml_tree {
             // if there are any ampersands in "open text"
             // surround them by CDATA start and end markers
             // (and convert HTML entities to plain text)
-            $search = '/>([^<]*&[^<]*)</e';
-            $replace = '"><![CDATA[".strtr("$1", $HTML_ENTITIES)."]]><"';
-            $matches[2] = preg_replace($search, $replace, $matches[2]);
+            $search = '/(?<=>)'.'[^<]*&[^<]*'.'(?=<)/';
+            $matches[2] = preg_replace_callback($search, array(&$this, 'encode_cdata_callback'), $matches[2]);
 
             $str = $matches[1].$matches[2].$matches[3];
         }
+    }
+    function encode_cdata_callback(&$matches) {
+        static $HTML_ENTITIES = array(
+            '&apos;' => "'",
+            '&quot;' => '"',
+            '&lt;'   => '<',
+            '&gt;'   => '>',
+            '&amp;'  => '&',
+        );
+        return '<![CDATA['.strtr($matches[0], $HTML_ENTITIES).']]>';
     }
 }
 
@@ -1680,31 +1684,26 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
                 $this->html = &$this->source;
 
                 // relative URLs in stylesheets
-                $search = '|'.'(<style[^>]*>)'.'(.*?)'.'(</style>)'.'|ise';
-                $replace = "hotpot_stripslashes('\\1').hotpot_convert_stylesheets_urls('".$this->get_baseurl()."','".$this->reference."','\\2'.'\\3')";
-                $this->source = preg_replace($search, $replace, $this->source);
+                $search = '/'.'(<style[^>]*>)'.'(.*?)'.'(<\/style>)'.'/is';
+                $this->source = preg_replace_callback($search, array(&$this, 'callback_stylesheets_urls'), $this->source);
 
                 // relative URLs in "PreloadImages(...);"
-                $search = '|'.'(?<='.'PreloadImages'.'\('.')'."([^)]+?)".'(?='.'\);'.')'.'|se';
-                $replace = "hotpot_convert_preloadimages_urls('".$this->get_baseurl()."','".$this->reference."','\\1')";
-                $this->source = preg_replace($search, $replace, $this->source);
+                $search = '/'.'(?<='.'PreloadImages'.'\('.')'."([^)]+?)".'(?='.'\);'.')'.'/is';
+                $this->source = preg_replace_callback($search, array(&$this, 'callback_preloadimages_urls'), $this->source);
 
                 // relative URLs in <button class="NavButton" ... onclick="location='...'">
-                $search = '|'.'(?<='.'onclick="'."location='".')'."([^']*)".'(?='."'; return false;".'")'.'|ise';
-                $replace = "hotpot_convert_navbutton_url('".$this->get_baseurl()."','".$this->reference."','\\1','".$this->course."')";
-                $this->source = preg_replace($search, $replace, $this->source);
+                $search = '/'.'(?<='.'onclick="'."location='".')'."([^']*)".'(?='."'; return false;".'")'.'/is';
+                $this->source = preg_replace_callback($search, array(&$this, 'callback_navbutton_url'), $this->source);
 
                 // relative URLs in <a ... onclick="window.open('...')...">...</a>
-                $search = '|'.'(?<='.'onclick="'."window.open\\('".')'."([^']*)".'(?='."'\\);return false;".'")'.'|ise';
-                $replace = "hotpot_convert_url('".$this->get_baseurl()."','".$this->reference."','\\1')";
-                $this->source = preg_replace($search, $replace, $this->source);
+                $search = '/'.'(?<='.'onclick="'."window.open\\('".')'."([^']*)".'(?='."'\\);return false;".'")'.'/is';
+                $this->source = preg_replace_callback($search, array(&$this, 'callback_url'), $this->source);
 
             } else {
 
                 // relative URLs in <a ... onclick="window.open('...')...">...</a>
-                $search = '|'.'(?<='.'onclick=&quot;'."window.open\\(&apos;".')'."(.*?)".'(?='."&apos;\\);return false;".'&quot;)'.'|ise';
-                $replace = "hotpot_convert_url('".$this->get_baseurl()."','".$this->reference."','\\1')";
-                $this->source = preg_replace($search, $replace, $this->source);
+                $search = '/'.'(?<='.'onclick=&quot;'."window.open\\(&apos;".')'."(.*?)".'(?='."&apos;\\);return false;".'&quot;)'.'/is';
+                $this->source = preg_replace_callback($search, array(&$this, 'callback_url'), $this->source);
 
                 if ($this->parse_xml) {
 
@@ -1780,6 +1779,22 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         } // end if $this->read_file
     } // end constructor function
 
+    function callback_stylesheets_urls(&$matches) {
+        return $matches[1].hotpot_convert_stylesheets_urls($this->get_baseurl(), $this->reference , $matches[2], false).$matches[3];
+    }
+    function callback_preloadimages_urls(&$matches) {
+        return hotpot_convert_preloadimages_urls($this->get_baseurl(), $this->reference, $matches[1], false);
+    }
+    function callback_navbutton_url(&$matches) {
+        return hotpot_convert_navbutton_url($this->get_baseurl(), $this->reference, $matches[1], $this->course, false);
+    }
+    function callback_url(&$matches) {
+        return hotpot_convert_url($this->get_baseurl(), $this->reference, $matches[1], false);
+    }
+    function callback_relative_url(&$matches) {
+        return hotpot_convert_relative_url($this->get_baseurl(), $this->reference, $matches[1], $matches[6], $matches[7], false);
+    }
+
     function hotpot_convert_relative_urls(&$str) {
         $tagopen = '(?:(<)|(&lt;)|(&amp;#x003C;))'; // left angle bracket
         $tagclose = '(?(2)>|(?(3)&gt;|(?(4)&amp;#x003E;)))'; //  right angle bracket (to match left angle bracket)
@@ -1790,8 +1805,6 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         $quoteopen = '("|&quot;|&amp;quot;)'; // open quote
         $quoteclose = '\\5'; //  close quote (to match open quote)
 
-        $replace = "hotpot_convert_relative_url('".$this->get_baseurl()."', '".$this->reference."', '\\1', '\\6', '\\7')";
-
         $tags = array('script'=>'src', 'link'=>'href', 'a'=>'href','img'=>'src','param'=>'value', 'object'=>'data', 'embed'=>'src');
         foreach ($tags as $tag=>$attribute) {
             if ($tag=='param') {
@@ -1799,8 +1812,8 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
             } else {
                 $url = '.*?';
             }
-            $search = "%($tagopen$tag$space$anychar$attribute=$quoteopen)($url)($quoteclose$anychar$tagclose)%ise";
-            $str = preg_replace($search, $replace, $str);
+            $search = "/($tagopen$tag$space$anychar$attribute=$quoteopen)($url)($quoteclose$anychar$tagclose)/is";
+            $str = preg_replace_callback($search, array(&$this, 'callback_relative_url'), $str);
         }
     }
 
@@ -1818,7 +1831,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
     // insert forms and messages
 
     function remove_nav_buttons() {
-        $search = '#<!-- Begin(Top|Bottom)NavButtons -->(.*?)<!-- End(Top|Bottom)NavButtons -->#s';
+        $search = '/<!-- Begin(Top|Bottom)NavButtons -->(.*?)<!-- End(Top|Bottom)NavButtons -->/s';
         $this->html = preg_replace($search, '', $this->html);
     }
     function insert_script($src=HOTPOT_JS) {
@@ -1852,7 +1865,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
     }
     function insert_form($startblock, $endblock, $form_id, $form_fields, $keep_contents, $center=false, $targetframe='') {
         global $CFG;
-        $search = '#('.preg_quote($startblock).')(.*?)('.preg_quote($endblock).')#s';
+        $search = '/('.preg_quote($startblock, '/').')(.*?)('.preg_quote($endblock, '/').')/s';
         $replace = $form_fields;
         if ($keep_contents) {
             $replace .= '\\2';
@@ -1958,17 +1971,33 @@ function hotpot_convert_stylesheets_urls($baseurl, $reference, $css, $stripslash
     if ($stripslashes) {
         $css = hotpot_stripslashes($css);
     }
-    $search = '|'.'(?<='.'url'.'\('.')'."(.+?)".'(?='.'\)'.')'.'|ise';
-    $replace = "hotpot_convert_url('".$baseurl."','".$reference."','\\1')";
-    return preg_replace($search, $replace, $css);
+    $search = '/(?<=url\()'.'(?:.+?)'.'(?=\))/is';
+    if (preg_match_all($search, $css, $matches, PREG_OFFSET_CAPTURE)) {
+        $i_max = count($matches[0]) - 1;
+        for ($i=$i_max; $i>=0; $i--) {
+            $match = $matches[0][$i][0];
+            $start = $matches[0][$i][1];
+            $replace = hotpot_convert_url($baseurl, $reference, $match, false);
+            $css = substr_replace($css, $replace, $start, strlen($match));
+        }
+    }
+    return $css;
 }
 function hotpot_convert_preloadimages_urls($baseurl, $reference, $urls, $stripslashes=true) {
     if ($stripslashes) {
         $urls = hotpot_stripslashes($urls);
     }
-    $search = '|(?<=["'."'])([^,'".'"]*?)(?=["'."'])|ise";
-    $replace = "hotpot_convert_url('".$baseurl."','".$reference."','\\1')";
-    return preg_replace($search, $replace, $urls);
+    $search = '|(?<=["'."'])(?:[^,'".'"]*?)(?=["'."'])|is";
+    if (preg_match_all($search, $urls, $matches, PREG_OFFSET_CAPTURE)) {
+        $i_max = count($matches[0]) - 1;
+        for ($i=$i_max; $i>=0; $i--) {
+            $match = $matches[0][$i][0];
+            $start = $matches[0][$i][1];
+            $replace = hotpot_convert_url($baseurl, $reference, $match, false);
+            $urls = substr_replace($urls, $replace, $start, strlen($match));
+        }
+    }
+    return $urls;
 }
 function hotpot_convert_navbutton_url($baseurl, $reference, $url, $course, $stripslashes=true) {
     global $CFG;
@@ -1979,7 +2008,7 @@ function hotpot_convert_navbutton_url($baseurl, $reference, $url, $course, $stri
     $url = hotpot_convert_url($baseurl, $reference, $url, false);
 
     // is this a $url for another hotpot in this course ?
-    if (preg_match("|^".preg_quote($baseurl)."(.*)$|", $url, $matches)) {
+    if (preg_match("/^".preg_quote($baseurl, '/')."(.*)$/", $url, $matches)) {
         if ($records = get_records_select('hotpot', "course='$course' AND reference='".$matches[1]."'")) {
             $ids = array_keys($records);
             $url = "$CFG->wwwroot/mod/hotpot/view.php?hp=".$ids[0];
@@ -1998,7 +2027,7 @@ function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $clos
 
     // catch <PARAM name="FlashVars" value="TheSound=soundfile.mp3">
     //  ampersands can appear as "&", "&amp;" or "&amp;#x0026;amp;"
-    if (preg_match('|^'.'\w+=[^&]+'.'('.'&((amp;#x0026;)?amp;)?'.'\w+=[^&]+)*'.'$|', $url)) {
+    if (preg_match('/^'.'\w+=[^&]+'.'('.'&((amp;#x0026;)?amp;)?'.'\w+=[^&]+)*'.'$/', $url)) {
         $query = $url;
         $url = '';
         $fragment = '';
@@ -2007,7 +2036,7 @@ function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $clos
     //  [1] path
     //  [2] query string, if any
     //  [3] anchor fragment, if any
-    } else if (preg_match('|^'.'([^?]*)'.'((?:\\?[^#]*)?)'.'((?:#.*)?)'.'$|', $url, $matches)) {
+    } else if (preg_match('/^'.'([^?]*)'.'((?:\\?[^#]*)?)'.'((?:#.*)?)'.'$/', $url, $matches)) {
         $url = $matches[1];
         $query = $matches[2];
         $fragment = $matches[3];
@@ -2023,9 +2052,16 @@ function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $clos
     }
 
     if ($query) {
-        $search = '#'.'(file|src|thesound|mp3)='."([^&]+)".'#ise';
-        $replace = "'\\1='.hotpot_convert_url('".$baseurl."','".$reference."','\\2')";
-        $query = preg_replace($search, $replace, $query);
+        $search = '/'.'(file|src|thesound|mp3)='."([^&]+)".'/is';
+        if (preg_match_all($search, $query, $matches, PREG_OFFSET_CAPTURE)) {
+            $i_max = count($matches[0]) - 1;
+            for ($i=$i_max; $i>=0; $i--) {
+                $match = $matches[2][$i][0];
+                $start = $matches[2][$i][1];
+                $replace = hotpot_convert_url($baseurl, $reference, $match, false);
+                $query = substr_replace($query, $replace, $start, strlen($match));
+            }
+        }
     }
 
     $url = $opentag.$url.$query.$fragment.$closetag;
