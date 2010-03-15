@@ -837,11 +837,13 @@ abstract class repository {
             $existingfile->delete();
         }
         if ($file = $fs->create_file_from_pathname($entry, $thefile)) {
+            echo_fb($file);
             if (empty($CFG->repository_no_delete)) {
                 $delete = unlink($thefile);
                 unset($CFG->repository_no_delete);
             }
             $fileinfo = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+            echo_fb($fileinfo);
             if(!empty($fileinfo)) {
                 return array(
                     'url'=>$fileinfo->get_url(),

@@ -27,7 +27,7 @@ global $CFG;
 
 require_once('HTML/QuickForm/element.php');
 require_once($CFG->dirroot.'/lib/filelib.php');
-require_once("$CFG->dirroot/repository/lib.php");
+require_once($CFG->dirroot.'/repository/lib.php');
 
 class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     public $_helpbutton = '';
@@ -142,15 +142,13 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $params->context = $PAGE->context;
         $params->env = 'filemanager';
 
+        // including the repository instances list
         $filepicker_options = initialise_filepicker($params);
 
-        $filepicker_options->client_id = $client_id;
-        $filepicker_options->maxbytes = $this->_options['maxbytes'];
-        $filepicker_options->maxfiles = $this->_options['maxfiles'];
-        $filepicker_options->env      = 'filemanager';
-        $filepicker_options->itemid   = $draftitemid;
-
-        $options = file_get_draft_area_files($draftitemid);
+        // including draft files
+        $options = file_get_user_area_files($draftitemid, '/', 'user_draft');
+        // filemanager options
+        $options->filepicker = $filepicker_options;
         $options->mainfile  = $this->_options['mainfile'];
         $options->maxbytes  = $this->_options['maxbytes'];
         $options->maxfiles  = $this->getMaxfiles();
@@ -159,7 +157,6 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $options->itemid    = $draftitemid;
         $options->subdirs   = $this->_options['subdirs'];
         // store filepicker options
-        $options->filepicker = $filepicker_options;
         $options->target    = $id;
 
         $html = $this->_getTabs();

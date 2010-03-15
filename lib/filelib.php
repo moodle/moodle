@@ -500,12 +500,12 @@ function file_correct_filepath($str) {
  * @param string $filepath
  * @param mixed $data
  */
-function file_get_draft_area_folders($draftitemid, $filepath, &$data) {
+function file_get_user_area_folders($draftitemid, $filepath, &$data, $filearea = 'user_draft') {
     global $USER, $OUTPUT, $CFG;
     $data->children = array();
     $context = get_context_instance(CONTEXT_USER, $USER->id);
     $fs = get_file_storage();
-    if ($files = $fs->get_directory_files($context->id, 'user_draft', $draftitemid, $filepath, false)) {
+    if ($files = $fs->get_directory_files($context->id, $filearea, $draftitemid, $filepath, false)) {
         foreach ($files as $file) {
             if ($file->is_directory()) {
                 $item = new stdclass;
@@ -531,7 +531,7 @@ function file_get_draft_area_folders($draftitemid, $filepath, &$data) {
  * @param string $filepath
  * @return mixed
  */
-function file_get_draft_area_files($draftitemid, $filepath = '/') {
+function file_get_user_area_files($draftitemid, $filepath = '/', $filearea = 'user_draft') {
     global $USER, $OUTPUT, $CFG;
 
     $context = get_context_instance(CONTEXT_USER, $USER->id);
@@ -555,7 +555,7 @@ function file_get_draft_area_files($draftitemid, $filepath = '/') {
     }
 
     $list = array();
-    if ($files = $fs->get_directory_files($context->id, 'user_draft', $draftitemid, $filepath, false)) {
+    if ($files = $fs->get_directory_files($context->id, $filearea, $draftitemid, $filepath, false)) {
         foreach ($files as $file) {
             $item = new stdclass;
             $item->filename = $file->get_filename();

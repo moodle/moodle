@@ -44,7 +44,7 @@ if (!confirm_sesskey()) {
 
 $action     = optional_param('action', 'list', PARAM_ALPHA);
 $filename   = optional_param('filename', '', PARAM_FILE);
-$filearea   = optional_param('filearea', '', PARAM_ALPHAEXT);
+$filearea   = optional_param('filearea', 'user_draft', PARAM_ALPHAEXT);
 $filepath   = optional_param('filepath', '/', PARAM_PATH);
 $itemid     = optional_param('itemid', -1, PARAM_INT);
 $newfilepath = optional_param('newfilepath', '/', PARAM_PATH);
@@ -56,18 +56,18 @@ $user_context = get_context_instance(CONTEXT_USER, $USER->id);
 switch ($action) {
 case 'dir':
     $data = new stdclass;
-    file_get_draft_area_folders($itemid, $filepath, $data);
+    file_get_user_area_folders($itemid, $filepath, $data, $filearea);
     echo json_encode($data);
     break;
 
 case 'list':
-    $data = file_get_draft_area_files($itemid, $filepath);
+    $data = file_get_user_area_files($itemid, $filepath, $filearea);
     echo json_encode($data);
     break;
 
 case 'mkdir':
     $fs = get_file_storage();
-    $fs->create_directory($user_context->id, 'user_draft', $itemid, file_correct_filepath(file_correct_filepath($filepath).$newdirname));
+    $fs->create_directory($user_context->id, $filearea, $itemid, file_correct_filepath(file_correct_filepath($filepath).$newdirname));
     $return = new stdclass;
     $return->filepath = $filepath;
     echo json_encode($return);
@@ -77,7 +77,7 @@ case 'delete':
     $fs = get_file_storage();
     $filepath = file_correct_filepath($filepath);
     $return = new stdclass;
-    if ($stored_file = $fs->get_file($user_context->id, 'user_draft', $itemid, $filepath, $filename)) {
+    if ($stored_file = $fs->get_file($user_context->id, $filearea, $itemid, $filepath, $filename)) {
         $parent_path = $stored_file->get_parent_directory()->get_filepath();
         if($result = $stored_file->delete()) {
             $return->filepath = $parent_path;
@@ -94,9 +94,9 @@ case 'renamedir':
     $fs = get_file_storage();
     $fb = get_file_browser();
     $return = new stdclass;
-    $fileinfo = $fb->get_file_info($user_context, 'user_draft', $itemid, $filepath, '.');
+    $fileinfo = $fb->get_file_info($user_context, $filearea, $itemid, $filepath, '.');
     if ($result = $fileinfo->delete()) {
-        $newdir = $fs->create_directory($user_context->id, 'user_draft', $itemid, file_correct_filepath($newfilename));
+        $newdir = $fs->create_directory($user_context->id, $filearea, $itemid, file_correct_filepath($newfilename));
         $return->filepath = $newdir->get_parent_directory()->get_filepath();
         echo json_encode($return);
     } else {
@@ -106,8 +106,8 @@ case 'renamedir':
 
 case 'rename':
     $fb = get_file_browser();
-    $file = $fb->get_file_info($user_context, 'user_draft', $itemid, $filepath, $filename);
-    $file->copy_to_storage($user_context->id, 'user_draft', $itemid, $filepath, $newfilename);
+    $file = $fb->get_file_info($user_context, $filearea, $itemid, $filepath, $filename);
+    $file->copy_to_storage($user_context->id, $filearea, $itemid, $filepath, $newfilename);
     if ($file->delete()) {
         $return = new stdclass;
         $return->filepath = $filepath;
@@ -122,8 +122,8 @@ case 'movedir':
     $fb = get_file_browser();
     $return = new stdclass;
     if ($filepath != $newfilepath) {
-        $file = $fb->get_file_info($user_context, 'user_draft', $itemid, $filepath, $filename);
-        $file->copy_to_storage($user_context->id, 'user_draft', $itemid, $newfilepath, $filename);
+        $file = $fb->get_file_info($user_context, $filearea, $itemid, $filepath, $filename);
+        $file->copy_to_storage($user_context->id, $filearea, $itemid, $newfilepath, $filename);
         if ($file->delete()) {
             $return->filepath = $newfilepath;
         }
@@ -138,11 +138,11 @@ case 'zip':
     $zipper = new zip_packer();
     $fs = get_file_storage();
 
-    $file = $fs->get_file($user_context->id, 'user_draft', $itemid, $filepath, '.');
+    $file = $fs->get_file($user_context->id, $filearea, $itemid, $filepath, '.');
 
     $parent_path = $file->get_parent_directory()->get_filepath();
 
-    if ($newfile = $zipper->archive_to_storage(array($file), $user_context->id, 'user_draft', $itemid, $parent_path, $filepath.'.zip', $USER->id)) {
+    if ($newfile = $zipper->archive_to_storage(array($file), $user_context->id, $filearea, $itemid, $parent_path, $filepath.'.zip', $USER->id)) {
         $return = new stdclass;
         $return->filepath = $parent_path;
         echo json_encode($return);
@@ -155,7 +155,7 @@ case 'downloaddir':
     $zipper = new zip_packer();
     $fs = get_file_storage();
 
-    $stored_file = $fs->get_file($user_context->id, 'user_draft', $itemid, $filepath, '.');
+    $stored_file = $fs->get_file($user_context->id, $filearea, $itemid, $filepath, '.');
     if ($filepath === '/') {
         $parent_path = '/';
         $filename = get_string('files').'.zip';
@@ -166,9 +166,9 @@ case 'downloaddir':
 
     // archive compressed file to an unused draft area
     $newdraftitemid = file_get_unused_draft_itemid();
-    if ($newfile = $zipper->archive_to_storage(array($stored_file), $user_context->id, 'user_draft', $newdraftitemid, '/', $filename, $USER->id)) {
+    if ($newfile = $zipper->archive_to_storage(array($stored_file), $user_context->id, $filearea, $newdraftitemid, '/', $filename, $USER->id)) {
         $return = new stdclass;
-        $return->fileurl  = $CFG->wwwroot . '/draftfile.php/' . $user_context->id .'/user_draft/'.$newdraftitemid.'/'.$filename;
+        $return->fileurl  = $CFG->wwwroot . '/draftfile.php/' . $user_context->id .'/'.$filearea.'/'.$newdraftitemid.'/'.$filename;
         $return->filepath = $parent_path;
         echo json_encode($return);
     } else {
@@ -181,9 +181,9 @@ case 'unzip':
 
     $fs = get_file_storage();
 
-    $file = $fs->get_file($user_context->id, 'user_draft', $itemid, $filepath, $filename);
+    $file = $fs->get_file($user_context->id, $filearea, $itemid, $filepath, $filename);
 
-    if ($newfile = $file->extract_to_storage($zipper, $user_context->id, 'user_draft', $itemid, $filepath, $USER->id)) {
+    if ($newfile = $file->extract_to_storage($zipper, $user_context->id, $filearea, $itemid, $filepath, $USER->id)) {
         $return = new stdclass;
         $return->filepath = $filepath;
         echo json_encode($return);
