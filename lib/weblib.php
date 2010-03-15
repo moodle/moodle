@@ -2747,6 +2747,7 @@ function print_filemanager($options, $return = false) {
 
     $client_id = $options->client_id;
     $itemid = $options->itemid;
+    $filearea = $options->filearea ? $options->filearea : 'user_draft';
 
     $html = '';
 
@@ -2765,16 +2766,16 @@ function print_filemanager($options, $return = false) {
     </div>
 </div>
 FMHTML;
-        // print out file entry template only one time
+    // print out file entry template only one time
     if (empty($CFG->filemanagertemplateloaded)) {
         $CFG->filemanagertemplateloaded = true;
         $html .= <<<FMHTML
 <div id="fm-template" style="display:none"><div class="fm-file-menu">___action___</div> <div class="fm-file-name">___fullname___</div></div>
 FMHTML;
     }
-        $filemanagerurl = "$CFG->wwwroot/repository/filepicker.php?env=filemanager&amp;action=embedded&amp;itemid=$itemid&amp;subdirs=/&amp;maxbytes=$options->maxbytes&amp;ctx_id=".$PAGE->context->id.'&amp;course='.$PAGE->course->id;
+    $filemanagerurl = "$CFG->wwwroot/repository/filepicker.php?filearea=$filearea&amp;env=filemanager&amp;action=embedded&amp;itemid=$itemid&amp;subdirs=/&amp;maxbytes=$options->maxbytes&amp;ctx_id=".$PAGE->context->id.'&amp;course='.$PAGE->course->id;
 
-        $html .= <<<NONJS
+    $html .= <<<NONJS
 <div id="nonjs-filemanager-$client_id">
 <object type="text/html" data="$filemanagerurl" height="160" width="600" style="border:1px solid #000">Error</object>
 </div>

@@ -44,11 +44,12 @@ $itemid      = optional_param('itemid', '',        PARAM_INT);
 
 // parameters for repository
 $callback    = optional_param('callback', '',      PARAM_CLEANHTML);
-$contextid   = optional_param('ctx_id',    SITEID, PARAM_INT);    // context ID
+$contextid   = optional_param('ctx_id',    SYSCONTEXTID, PARAM_INT);    // context ID
 $courseid    = optional_param('course',    SITEID, PARAM_INT);    // course ID
 $env         = optional_param('env', 'filepicker', PARAM_ALPHA);  // opened in file picker, file manager or html editor
 $filename    = optional_param('filename', '',      PARAM_FILE);
 $fileurl     = optional_param('fileurl', '',       PARAM_FILE);
+$filearea    = optional_param('filearea', '',      PARAM_TEXT);
 $thumbnail   = optional_param('thumbnail', '',     PARAM_RAW);
 $targetpath  = optional_param('targetpath', '',    PARAM_PATH);
 $repo_id     = optional_param('repo_id', 0,        PARAM_INT);    // repository ID
@@ -450,7 +451,7 @@ default:
     $params['returntypes'] = 2;
     $repos = repository::get_instances($params);
     $fs = get_file_storage();
-    $files = $fs->get_directory_files($user_context->id, 'user_draft', $itemid, $draftpath, false);
+    $files = $fs->get_directory_files($user_context->id, $filearea, $itemid, $draftpath, false);
 
     echo $OUTPUT->header();
     if ((!empty($files) or $draftpath != '/') and $env == 'filemanager') {
