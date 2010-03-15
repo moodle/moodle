@@ -50,7 +50,7 @@ class block_comments extends block_base {
             $cmt->linktext  = get_string('showcomments');
             $comment = new comment($cmt);
             $this->content = new stdClass;
-            $this->content->text = $comment->init(true);
+            $this->content->text = $comment->output(true);
             $this->content->footer = '';
 
         }
