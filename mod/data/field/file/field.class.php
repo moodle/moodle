@@ -82,14 +82,11 @@ class data_field_file extends data_field_base {
         $params->return_types = FILE_INTERNAL;
         $params->context = $PAGE->context;
 
+        // including repoisitory instances list
         $filepicker_options = initialise_filepicker($params);
 
-        $filepicker_options->client_id = $client_id;
-        $filepicker_options->env      = 'filemanager';
-        $filepicker_options->itemid   = $itemid;
-
         // get existing files
-        $filemanager_options = file_get_draft_area_files($itemid);
+        $filemanager_options = file_get_user_area_files($itemid);
         $filemanager_options->client_id = $client_id;
         $filemanager_options->filecount = $filecount;
         $filemanager_options->itemid    = $itemid;
