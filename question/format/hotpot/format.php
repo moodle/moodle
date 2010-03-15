@@ -541,9 +541,15 @@ class qformat_hotpot extends qformat_default {
     }
     function hotpot_prepare_str($str) {
         // convert html entities to unicode and add slashes
-        $str = preg_replace('/&#x([0-9a-f]+);/ie', "hotpot_charcode_to_utf8(hexdec('\\1'))", $str);
-        $str = preg_replace('/&#([0-9]+);/e', "hotpot_charcode_to_utf8(\\1)", $str);
+        $str = preg_replace_callback('/&#([0-9]+);/', array(&$this, 'hotpot_prepare_str_dec'), $str);
+        $str = preg_replace_callback('/&#x([0-9a-f]+);/i', array(&$this, 'hotpot_prepare_str_hexdec'), $str);
         return addslashes($str);
+    }
+    function hotpot_prepare_str_dec(&$matches) {
+        return hotpot_charcode_to_utf8($matches[1]);
+    }
+    function hotpot_prepare_str_hexdec(&$matches) {
+        return hotpot_charcode_to_utf8(hexdec($matches[1]));
     }
 } // end class
 
@@ -588,8 +594,18 @@ function hotpot_convert_relative_urls($str, $baseurl, $filename) {
         } else {
             $url = '.*?';
         }
-        $search = "%($tagopen$tag$space$anychar$attribute=$quoteopen)($url)($quoteclose$anychar$tagclose)%ise";
-        $str = preg_replace($search, $replace, $str);
+        $search = "/($tagopen$tag$space$anychar$attribute=$quoteopen)($url)($quoteclose$anychar$tagclose)/is";
+        if (preg_match_all($search, $str, $matches, PREG_OFFSET_CAPTURE)) {
+            $i_max = count($matches[0]) - 1;
+            for ($i=$i_max; $i>=0; $i--) {
+                $match = $matches[0][$i][0];
+                $start = $matches[0][$i][1];
+                $replace = hotpot_convert_relative_url(
+                    $baseurl, $filename, $matches[1][$i][0], $matches[6][$i][0], $matches[7][$i][0], false
+                );
+                $str = substr_replace($str, $replace, $start, strlen($match));
+            }
+        }
     }
 
     return $str;
