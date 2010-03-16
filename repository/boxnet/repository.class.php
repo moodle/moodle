@@ -38,7 +38,7 @@ class repository_boxnet extends repository {
      * @param object $context
      * @param array $options
      */
-    public function __construct($repositoryid, $context = SITEID, $options = array()) {
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         global $SESSION;
         $options['username']   = optional_param('boxusername', '', PARAM_RAW);
         $options['password']   = optional_param('boxpassword', '', PARAM_RAW);

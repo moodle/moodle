@@ -30,7 +30,7 @@ require_once('wikimedia.php');
  */
 
 class repository_wikimedia extends repository {
-    public function __construct($repositoryid, $context = SITEID, $options = array()) {
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         parent::__construct($repositoryid, $context, $options);
         $this->keyword = optional_param('wikimedia_keyword', '', PARAM_RAW);
         if (empty($this->keyword)) {   

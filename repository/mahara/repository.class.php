@@ -39,7 +39,7 @@ class repository_mahara extends repository {
      * @param <type> $context
      * @param <type> $options
      */
-    public function __construct($repositoryid, $context = SITEID, $options = array()) {
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         global $SESSION, $action, $CFG;
         parent::__construct($repositoryid, $context, $options);
         $this->mnet = get_mnet_environment();

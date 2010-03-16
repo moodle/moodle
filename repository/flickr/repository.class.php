@@ -42,7 +42,7 @@ class repository_flickr extends repository {
      * @param object $context
      * @param array $options
      */
-    public function __construct($repositoryid, $context = SITEID, $options = array()) {
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         global $SESSION, $CFG;
         $options['page']    = optional_param('p', 1, PARAM_INT);
         parent::__construct($repositoryid, $context, $options);

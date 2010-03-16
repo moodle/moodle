@@ -31,7 +31,7 @@ require_once($CFG->libdir.'/googleapi.php');
 class repository_picasa extends repository {
     private $subauthtoken = '';
 
-    public function __construct($repositoryid, $context = SITEID, $options = array()) {
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         global $USER;
         parent::__construct($repositoryid, $context, $options);
 

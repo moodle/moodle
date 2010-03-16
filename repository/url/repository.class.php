@@ -36,7 +36,7 @@ class repository_url extends repository {
      * @param object $context
      * @param array $options
      */
-    public function __construct($repositoryid, $context = SITEID, $options = array()){
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()){
         global $CFG;
         parent::__construct($repositoryid, $context, $options);
         if (!empty($options['client_id'])) {

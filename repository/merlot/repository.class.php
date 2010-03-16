@@ -27,7 +27,7 @@
  */
 class repository_merlot extends repository {
 
-    public function __construct($repositoryid, $context = SITEID, $options = array()) {
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         parent::__construct($repositoryid, $context, $options);
         $this->keyword = optional_param('merlot_keyword', '', PARAM_RAW);
         $this->author = optional_param('merlot_author', '', PARAM_RAW);

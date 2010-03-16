@@ -34,7 +34,7 @@ class repository_local extends repository {
      * @param int $context
      * @param array $options
      */
-    public function __construct($repositoryid, $context = SITEID, $options = array()) {
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         parent::__construct($repositoryid, $context, $options);
     }
 

@@ -37,7 +37,7 @@ class repository_s3 extends repository {
      * @param object $context
      * @param array $options
      */
-    public function __construct($repositoryid, $context = SITEID, $options = array()) {
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         parent::__construct($repositoryid, $context, $options);
         $this->access_key = get_config('s3', 'access_key');
         $this->secret_key = get_config('s3', 'secret_key');

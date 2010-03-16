@@ -29,7 +29,7 @@
 require_once($CFG->libdir.'/webdavlib.php');
 
 class repository_webdav extends repository {
-    public function __construct($repositoryid, $context = SITEID, $options = array()) {
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         parent::__construct($repositoryid, $context, $options);
         // set up webdav client
         $this->wd = new webdav_client();

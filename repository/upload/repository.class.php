@@ -35,7 +35,7 @@ class repository_upload extends repository {
      * @param object $context
      * @param array $options
      */
-    public function __construct($repositoryid, $context = SITEID, $options = array()){
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()){
         parent::__construct($repositoryid, $context, $options);
         $this->itemid = optional_param('itemid', '', PARAM_INT);
         $this->filepath = urldecode(optional_param('savepath', '/', PARAM_PATH));

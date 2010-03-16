@@ -29,7 +29,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class repository_filesystem extends repository {
-    public function __construct($repositoryid, $context = SITEID, $options = array()) {
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         global $CFG;
         parent::__construct($repositoryid, $context, $options);
         $this->root_path = $CFG->dataroot.'/repository/';

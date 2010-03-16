@@ -33,16 +33,15 @@ require_once($CFG->dirroot.'/repository/lib.php');
 class repository_remotemoodle extends repository {
 
     /**
-     * Constructor
-     * @global <type> $SESSION
-     * @global <type> $action
-     * @global <type> $CFG
-     * @param <type> $repositoryid
-     * @param <type> $context
-     * @param <type> $options
+     * Constructor of remotemoodle plugin, used to setup mnet environment
+     * @global object $SESSION
+     * @global object $CFG
+     * @param int $repositoryid
+     * @param object $context
+     * @param array $options
      */
-    public function __construct($repositoryid, $context = SITEID, $options = array()) {
-        global $SESSION, $action, $CFG;
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
+        global $SESSION, $CFG;
         parent::__construct($repositoryid, $context, $options);
         $this->mnet = get_mnet_environment();
     }
@@ -50,11 +49,11 @@ class repository_remotemoodle extends repository {
     /**
      * Retrieve a file for a user of the Moodle client calling this function
      * The file is encoded in base64
-     * @global <type> $DB
-     * @global <type> $USER
-     * @param <type> $username
-     * @param <type> $source
-     * @return <type>
+     * @global object $DB
+     * @global object $USER
+     * @param string $username
+     * @param string $source
+     * @return array
      */
     public function retrieveFile($username, $source) {
         global $DB, $USER;
@@ -93,12 +92,12 @@ class repository_remotemoodle extends repository {
 
     /**
      * Retrieve file list for a user of the Moodle client calling this function
-     * @global <type> $DB
-     * @global <type> $USER
-     * @global <type> $CFG
-     * @param <type> $username
-     * @param <type> $search
-     * @return <type>
+     * @global object $DB
+     * @global object $USER
+     * @global object $CFG
+     * @param string $username
+     * @param string $search
+     * @return array
      */
     public function getFileList($username, $search) {
         global $DB, $USER, $CFG;
@@ -123,19 +122,16 @@ class repository_remotemoodle extends repository {
 
     /**
      * Display the file listing - no login required
-     * @global <type> $SESSION
-     * @param <type> $ajax
-     * @return <type>
+     * @return array
      */
-    public function print_login($ajax = true) {
-        global $SESSION;
+    public function print_login() {
         return $this->get_listing();
     }
 
     /**
      * Display the file listing for the search term
-     * @param <type> $search_text
-     * @return <type>
+     * @param string $search_text
+     * @return array
      */
     public function search($search_text) {
         return $this->get_listing('', '', $search_text);
@@ -143,12 +139,12 @@ class repository_remotemoodle extends repository {
 
     /**
      * Retrieve the file listing - file picker function
-     * @global <type> $CFG
-     * @global <type> $DB
-     * @global <type> $USER
-     * @param <type> $encodedpath
-     * @param <type> $search
-     * @return <type>
+     * @global object $CFG
+     * @global object $DB
+     * @global object $USER
+     * @param string $encodedpath
+     * @param string $search
+     * @return array
      */
     public function get_listing($encodedpath = '', $page = '', $search = '') {
         global $CFG, $DB, $USER;
@@ -264,9 +260,9 @@ class repository_remotemoodle extends repository {
 
     /**
      * Add Instance settings input to Moodle form
-     * @global <type> $CFG
-     * @global <type> $DB
-     * @param <type> $
+     * @global object $CFG
+     * @global object $DB
+     * @param object $mform
      */
     public function instance_config_form($mform) {
         global $CFG, $DB;
@@ -311,7 +307,7 @@ class repository_remotemoodle extends repository {
 
     /**
      * Names of the instance settings
-     * @return <type>
+     * @return array
      */
     public static function get_instance_option_names() {
         ///the administrator just need to set a peer

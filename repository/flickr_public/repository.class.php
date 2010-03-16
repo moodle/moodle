@@ -87,7 +87,7 @@ class repository_flickr_public extends repository {
      * @param array $options
      * @param boolean $readonly
      */
-    public function __construct($repositoryid, $context = SITEID, $options = array(), $readonly=0) {
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array(), $readonly=0) {
         global $CFG, $SESSION;
         parent::__construct($repositoryid, $context, $options,$readonly);
         $this->api_key = $this->get_option('api_key');

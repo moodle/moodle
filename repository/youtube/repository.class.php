@@ -27,7 +27,7 @@
  */
 
 class repository_youtube extends repository {
-    public function __construct($repositoryid, $context = SITEID, $options = array()) {
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         $this->keyword = optional_param('youtube_keyword', '', PARAM_RAW);
         $this->start =1;
         $this->max = 27;

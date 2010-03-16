@@ -33,7 +33,7 @@ class repository_alfresco extends repository {
     private $user_session = null;
     private $store = null;
 
-    public function __construct($repositoryid, $context = SITEID, $options = array()) {
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         global $SESSION, $CFG;
         parent::__construct($repositoryid, $context, $options);
         $this->sessname = 'alfresco_ticket_'.$this->id;
