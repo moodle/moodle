@@ -1344,6 +1344,51 @@ class ddl_test extends UnitTestCase {
         // Have dropped all these temp tables here, to avoid conflicts with other (normal tables) tests!
     }
 
+    public function test_concurrent_temp_tables() {
+        $DB = $this->tdb; // do not use global $DB!
+        $dbman = $this->tdb->get_manager();
+
+        // Define 2 records
+        $record1 = (object)array(
+                        'course'     =>  1,
+                        'secondname' => '11 important',
+                        'intro'      => '111 important');
+        $record2 = (object)array(
+                        'course'     =>  2,
+                        'secondname' => '22 important',
+                        'intro'      => '222 important');
+
+        // Create temp table1 and insert 1 record (in DB)
+        $table = $this->tables['test_table1'];
+        $dbman->create_temp_table($table);
+        $this->assertTrue($dbman->table_exists('test_table1'));
+        $inserted = $DB->insert_record('test_table1', $record1);
+
+        // Switch to new connection
+        $cfg = $DB->export_dbconfig();
+        if (!isset($cfg->dboptions)) {
+            $cfg->dboptions = array();
+        }
+        $DB2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
+        $DB2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
+        $dbman2 = $DB2->get_manager();
+        $this->assertFalse($dbman2->table_exists('test_table1')); // Temp table not exists in DB2
+
+        // Create temp table1 and insert 1 record (in DB2)
+        $table = $this->tables['test_table1'];
+        $dbman2->create_temp_table($table);
+        $this->assertTrue($dbman2->table_exists('test_table1'));
+        $inserted = $DB2->insert_record('test_table1', $record2);
+
+        $dbman2->drop_temp_table($table); // Drop temp table before closing DB2
+        $this->assertFalse($dbman2->table_exists('test_table1'));
+        $DB2->dispose(); // Close DB2
+
+        $this->assertTrue($dbman->table_exists('test_table1')); // Check table continues existing for DB
+        $dbman->drop_temp_table($table); // Drop temp table
+        $this->assertFalse($dbman->table_exists('test_table1'));
+    }
+
     public function test_reset_sequence() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
