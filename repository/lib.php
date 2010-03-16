@@ -456,7 +456,7 @@ abstract class repository {
      * @param integer $contextid
      * @param array $options
      */
-    public function __construct($repositoryid, $contextid = SITEID, $options = array(), $readonly = 0) {
+    public function __construct($repositoryid, $contextid = SYSCONTEXTID, $options = array(), $readonly = 0) {
         $this->id = $repositoryid;
         $this->context = get_context_instance_by_id($contextid);
         $this->readonly = $readonly;
@@ -478,7 +478,7 @@ abstract class repository {
      * Return a type for a given type name.
      * @global object $DB
      * @param string $typename the type name
-     * @return integer
+     * @return object
      */
     public static function get_type_by_typename($typename) {
         global $DB;
@@ -493,8 +493,8 @@ abstract class repository {
     /**
      * Return a type for a given type id.
      * @global object $DB
-     * @param string $typename the type name
-     * @return integer
+     * @param int $id the type id
+     * @return object
      */
     public static function get_type_by_id($id) {
         global $DB;
@@ -598,7 +598,7 @@ abstract class repository {
      *           onlyvisible
      *           type
      *           accepted_types
-     *           returntypes
+     *           return_types
      *           userid
      *
      * @return array repository instances
@@ -799,7 +799,7 @@ abstract class repository {
      * @global object $CFG
      * @global object $USER
      * @global object $OUTPUT
-     * @param string $filepath file path in download folder
+     * @param string $thefile file path in download folder
      * @param string $name file name
      * @param integer $itemid item id to identify a file in filepool
      * @param string $filearea file area
@@ -863,7 +863,7 @@ abstract class repository {
      * @param string $search
      * @return array
      */
-    public static function get_user_file_tree($search = ""){
+    public static function get_user_file_tree($search = ''){
         global $CFG;
         $ret = array();
         $ret['nologin'] = true;
@@ -903,7 +903,7 @@ abstract class repository {
     }
 
     /**
-     *
+     * Serialize file path
      * @param string $filearea
      * @param string $path
      * @param string $visiblename
@@ -1004,6 +1004,7 @@ abstract class repository {
      * Display a repository instance list (with edit/delete/create links)
      * @global object $CFG
      * @global object $USER
+     * @global object $OUTPUT
      * @param object $context the context for which we display the instance
      * @param string $typename if set, we display only one type of instance
      */
@@ -1153,6 +1154,7 @@ abstract class repository {
      * convert file id to original url.
      *
      * @param string $url the url of file
+     * @return string
      */
     public function get_link($url) {
         return $url;
@@ -1456,8 +1458,9 @@ abstract class repository {
      *
      * See details on http://docs.moodle.org/en/Development:Repository_plugins
      *
-     * @param string $parent The parent path, this parameter can
+     * @param string $path, this parameter can
      * a folder name, or a identification of folder
+     * @param string $page, the page number of file list
      * @return array the list of files, including meta infomation, containing the following keys
      *           manage, url to manage url
      *           client_id
@@ -1753,20 +1756,19 @@ final class repository_type_form extends moodleform {
     }
 }
 
-function repository_setup_default_plugins() {
-    global $OUTPUT;
-    //if the plugin type has no multiple instance (e.g. has no instance option name)
-    //repository_type::create will create an instance automatically
-    $local_plugin = new repository_type('local', array(), true);
-    $local_plugin_id = $local_plugin->create(true);
-    $upload_plugin = new repository_type('upload', array(), true);
-    $upload_plugin_id = $upload_plugin->create(true);
-    if (is_int($local_plugin_id) or is_int($upload_plugin_id)) {
-        echo $OUTPUT->box(get_string('setupdefaultplugins', 'repository'));
-    }
-    return true;
-}
-
+/**
+ * Generate all options needed by filepicker
+ *
+ * @param array $args, including following keys
+ *          context
+ *          accepted_types
+ *          return_types
+ *
+ * @return array the list of repository instances, including meta infomation, containing the following keys
+ *          externallink
+ *          repositories
+ *          accepted_types
+ */
 function initialise_filepicker($args) {
     global $CFG, $USER, $PAGE, $OUTPUT;
     $ft = new filetype_parser();
@@ -1802,4 +1804,25 @@ function initialise_filepicker($args) {
         $return->repositories[$repository->id] = $meta;
     }
     return $return;
+}
+
+/**
+ * The plugins should be enabled by defaulted once moodle installed
+ *
+ * @global object $OUTPUT
+ *
+ * @return boolean
+ */
+function repository_setup_default_plugins() {
+    global $OUTPUT;
+    //if the plugin type has no multiple instance (e.g. has no instance option name)
+    //repository_type::create will create an instance automatically
+    $local_plugin = new repository_type('local', array(), true);
+    $local_plugin_id = $local_plugin->create(true);
+    $upload_plugin = new repository_type('upload', array(), true);
+    $upload_plugin_id = $upload_plugin->create(true);
+    if (is_int($local_plugin_id) or is_int($upload_plugin_id)) {
+        echo $OUTPUT->box(get_string('setupdefaultplugins', 'repository'));
+    }
+    return true;
 }
