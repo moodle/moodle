@@ -49,6 +49,9 @@ abstract class moodleform_mod extends moodleform {
     /** current context, course or module depends if already exists*/
     protected $context;
 
+    /** a flag indicating whether outcomes are being used*/
+    protected $_outcomesused;
+
     function moodleform_mod($current, $section, $cm, $course) {
         $this->current   = $current;
         $this->_instance = $current->instance;
@@ -328,10 +331,10 @@ abstract class moodleform_mod extends moodleform {
         global $COURSE, $CFG, $DB;
         $mform =& $this->_form;
 
-        $outcomesused = false;
+        $this->_outcomesused = false;
         if ($this->_features->outcomes) {
             if ($outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
-                $outcomesused = true;
+                $this->_outcomesused = true;
                 $mform->addElement('header', 'modoutcomes', get_string('outcomes', 'grades'));
                 foreach($outcomes as $outcome) {
                     $mform->addElement('advcheckbox', 'outcome_'.$outcome->id, $outcome->get_name());
@@ -399,11 +402,6 @@ abstract class moodleform_mod extends moodleform {
         if ($this->_features->idnumber) {
             $mform->addElement('text', 'cmidnumber', get_string('idnumbermod'));
             $mform->setHelpButton('cmidnumber', array('cmidnumber', get_string('idnumbermod')), true);
-        }
-
-        if ($this->_features->gradecat) {
-            $categories = grade_get_categories_menu($COURSE->id, $outcomesused);
-            $mform->addElement('select', 'gradecat', get_string('gradecategory', 'grades'), $categories);
         }
 
         if (!empty($CFG->enableavailability)) {
@@ -618,6 +616,23 @@ abstract class moodleform_mod extends moodleform {
 
         $mform->addElement('hidden', 'return', 0);
         $mform->setType('return', PARAM_BOOL);
+    }
+
+    public function coursemodule_grading_elements() {
+        global $COURSE;
+        $mform =& $this->_form;
+
+        if (plugin_supports('mod', $this->_modname, FEATURE_GRADE_HAS_GRADE, false)) {
+            $mform->addElement('header', 'modstandardgrade', get_string('grade'));
+
+            $mform->addElement('modgrade', 'grade', get_string('grade'));
+            $mform->setDefault('grade', 100);
+
+            if ($this->_features->gradecat) {
+                $categories = grade_get_categories_menu($COURSE->id, $this->_outcomesused);
+                $mform->addElement('select', 'gradecat', get_string('gradecategory', 'grades'), $categories);
+            }
+        }
     }
 
     function add_intro_editor($required=false, $customlabel=null) {

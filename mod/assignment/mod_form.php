@@ -43,9 +43,6 @@ class mod_assignment_mod_form extends moodleform_mod {
 
         $this->add_intro_editor(true, get_string('description', 'assignment'));
 
-        $mform->addElement('modgrade', 'grade', get_string('grade'));
-        $mform->setDefault('grade', 100);
-
         $mform->addElement('date_time_selector', 'timeavailable', get_string('availabledate', 'assignment'), array('optional'=>true));
         $mform->setDefault('timeavailable', time());
         $mform->addElement('date_time_selector', 'timedue', get_string('duedate', 'assignment'), array('optional'=>true));
@@ -56,7 +53,7 @@ class mod_assignment_mod_form extends moodleform_mod {
         $mform->addElement('select', 'preventlate', get_string('preventlate', 'assignment'), $ynoptions);
         $mform->setDefault('preventlate', 0);
 
-
+        $this->coursemodule_grading_elements();
 
         $typetitle = get_string('type'.$type, 'assignment');
 
