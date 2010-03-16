@@ -67,7 +67,7 @@ function update_rating($rating) {
     global $DB;
 
     $data = new stdclass();
-    $table = 'ratings';
+    $table = 'rating';
 
     $item = new stdclass();
     $item->id = $this->itemid;
@@ -153,7 +153,7 @@ public static function load_ratings_for_item($context, $itemid, $sort) {
 
     $sql = "SELECT r.id, r.rating, r.itemid, r.userid, r.timemodified,
 u.firstname, u.lastname, u.imagealt, u.picture
-FROM {ratings} r
+FROM {rating} r
 LEFT JOIN {user} u ON r.userid = u.id
 WHERE
     r.contextid = :contextid AND
@@ -202,8 +202,8 @@ public static function load_ratings($context, $items, $aggregate=RATING_AGGREGAT
     $aggregatestr(r.rating) AS aggrrating,
     COUNT(r.rating) AS numratings,
     ur.rating AS usersrating
-FROM {ratings} r
-LEFT JOIN {ratings} ur ON ur.contextid = r.contextid AND
+FROM {rating} r
+LEFT JOIN {rating} ur ON ur.contextid = r.contextid AND
         ur.itemid = r.itemid AND
         ur.userid = :userid
 WHERE

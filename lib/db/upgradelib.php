@@ -433,7 +433,7 @@ where m.name=:modulename and cm.instance=:moduleinstanceid and cxt.contextlevel=
         $rating->timecreated = $old_rating->timecreated;
         $rating->timemodified = $old_rating->timemodified;
 
-        $result = $result && $DB->insert_record('ratings', $rating);
+        $result = $result && $DB->insert_record('rating', $rating);
     }
 
     //$ratings->close();

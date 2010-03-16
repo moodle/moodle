@@ -3052,10 +3052,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
 
     if ($result && $oldversion < 2010031600) {
-        //create the ratings table (replaces module specific ratings implementations)
-        $table = new xmldb_table('ratings');
+        //create the rating table (replaces module specific rating implementations)
+        $table = new xmldb_table('rating');
 
-    /// Adding fields to table ratings
+    /// Adding fields to table rating
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
@@ -3067,12 +3067,12 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
-    /// Adding keys to table ratings
+    /// Adding keys to table rating
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
         $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
 
-    /// Adding indexes to table ratings
+    /// Adding indexes to table rating
         $table->add_index('itemid', XMLDB_INDEX_NOTUNIQUE, array('itemid'));
 
     /// Create table for ratings
@@ -3080,7 +3080,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $dbman->create_table($table);
         }
 
-        //migrate ratings out of the modules into the central ratings table
+        //migrate ratings out of the modules into the central rating table
 
         //migrate forumratings
         //forum ratings only have a single time column so use it for both time created and modified
