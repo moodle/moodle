@@ -411,7 +411,7 @@ function upgrade_module_ratings($ratingssql, $modulename) {
             upgrade_set_timeout(60);//prevent a timeout
         }
 
-        //all posts within a given forum will have the same context id so store them in an array
+        //all posts within a given forum, glossary etc will have the same context id so store them in an array
         if( !array_key_exists($old_rating->mid, $contextarray) ) {
             $sql = 'select cxt.id from {course_modules} cm inner join {modules} m on cm.module=m.id
 inner join {context} cxt on cxt.instanceid=cm.id
@@ -436,7 +436,7 @@ where m.name=:modulename and cm.instance=:moduleinstanceid and cxt.contextlevel=
         $result = $result && $DB->insert_record('ratings', $rating);
     }
 
-    $ratings->close();
+    //$ratings->close();
 
     return $result;
 }

@@ -3076,7 +3076,9 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table->add_index('itemid', XMLDB_INDEX_NOTUNIQUE, array('itemid'));
 
     /// Create table for ratings
-        $dbman->create_table($table);
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
 
         //migrate ratings out of the modules into the central ratings table
 
