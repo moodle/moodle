@@ -681,14 +681,22 @@ function portfolio_most_specific_formats($specificformats, $generalformats) {
         $fobj = new $allformats[$f];
         foreach ($generalformats as $key => $cf) {
             $cfclass = $allformats[$cf];
+            $cfobj = new $allformats[$cf];
             if ($fobj instanceof $cfclass && $cfclass != get_class($fobj)) {
                 debugging("unsetting $key $cf because it's not specific enough ($f is better)");
                 unset($generalformats[$key]);
+                continue;
             }
             // check for conflicts
             if ($fobj->conflicts($cf)) {
                 debugging("unsetting $key $cf because it conflicts with $f");
                 unset($generalformats[$key]);
+                continue;
+            }
+            if ($cfobj->conflicts($f)) {
+                debugging("unsetting $key $cf because it reverse-conflicts with $f");
+                unset($generalformats[$key]);
+                continue;
             }
         }
         //debugging('inside loop');

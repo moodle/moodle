@@ -315,8 +315,6 @@ abstract class portfolio_caller_base {
     * and what the selected portfolio plugin supports
     * will be used
     * use the constants PORTFOLIO_FORMAT_*
-    * if $caller is passed, that can be used for more specific guesses
-    * as this function <b>must</b> be called statically.
     *
     * @return array list of formats
     *
@@ -327,7 +325,7 @@ abstract class portfolio_caller_base {
             $specific = array();
         } else if (!is_array($this->supportedformats)) {
             debugging(get_class($caller) . ' has set a non array value of member variable supported formats - working around but should be fixed in code');
-            $specific = array($formats);
+            $specific = array($this->supportedformats);
         } else {
             $specific = $this->supportedformats;
         }
@@ -428,27 +426,13 @@ abstract class portfolio_caller_base {
         $base = $this->base_supported_formats();
         if (count($base) != count($formats)
                 || count($base) != count(array_intersect($base, $formats))) {
-                return $this->supportedformats = portfolio_most_specific_formats($formats, $base);
+                $this->supportedformats = portfolio_most_specific_formats($formats, $base);
+                return;
         }
         // in the case where the button hasn't actually set anything,
         // we need to run through again and resolve conflicts
-        $removed = array();
-        foreach ($formats as $f1key => $f1) {
-            if (in_array($f1, $removed)) {
-                continue;
-            }
-            $f1obj = portfolio_format_object($f1);
-            foreach ($formats as $f2key => $f2) {
-                if (in_array($f2, $removed)) {
-                    continue;
-                }
-                if ($f1obj->conflicts($f2)) {
-                    unset($formats[$f2key]);
-                    $removed[] = $f2;
-                }
-            }
-        }
-        $this->supportedformats = $formats;
+        // TODO revisit this comment - it looks to me like it's lying
+        $this->supportedformats = portfolio_most_specific_formats($formats, $formats);
     }
 
     /**
@@ -465,13 +449,19 @@ abstract class portfolio_caller_base {
             return;
         }
         $formatobj = portfolio_format_object($format);
+        // TODO look at replacing this code with another call to
+        //$this->supportedformats = portfolio_most_specific_formats($this->supportedformats, $formats);
+        //requires testing forum, which is the only place this is implemented right now
         foreach ($this->supportedformats as $key => $f) {
             $f2obj = portfolio_format_object($f);
+            $class = get_class($f2obj);
+            if ($formatobj instanceof $class) {
+                unset($this->supportedformats[$key]);
+            }
             if ($formatobj->conflicts($f)) {
                 unset($this->supportedformats[$key]);
             }
-            $class = get_class($f2obj);
-            if ($formatobj instanceof $class) {
+            if ($f2obj->conflicts($format)) {
                 unset($this->supportedformats[$key]);
             }
         }

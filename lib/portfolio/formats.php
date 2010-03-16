@@ -154,7 +154,8 @@ class portfolio_format_plainhtml extends portfolio_format_file {
     }
 
     public static function conflicts($format) {
-        return ($format == PORTFOLIO_FORMAT_RICHHTML);
+        return ($format == PORTFOLIO_FORMAT_RICHHTML
+            || $format == PORTFOLIO_FORMAT_FILE);
     }
 }
 

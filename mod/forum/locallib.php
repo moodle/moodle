@@ -126,10 +126,12 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             $this->multifiles = array($this->singlefile); // copy_files workaround
         }
         // depending on whether there are files or not, we might have to change richhtml/plainhtml
-        if (!empty($this->multifiles)) {
-            $this->add_format(PORTFOLIO_FORMAT_RICHHTML);
-        } else {
-            $this->add_format(PORTFOLIO_FORMAT_PLAINHTML);
+        if (empty($this->attachment)) {
+            if (!empty($this->multifiles)) {
+                $this->add_format(PORTFOLIO_FORMAT_RICHHTML);
+            } else {
+                $this->add_format(PORTFOLIO_FORMAT_PLAINHTML);
+            }
         }
     }
 
