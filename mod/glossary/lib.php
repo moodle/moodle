@@ -2667,7 +2667,7 @@ function glossary_supports($feature) {
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return true;
-        case FEATURE_RATINGS:                 return true;
+        case FEATURE_RATE:                 return true;
 
         default: return null;
     }

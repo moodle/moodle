@@ -342,7 +342,7 @@ abstract class moodleform_mod extends moodleform {
             }
         }
 
-        if (plugin_supports('mod', $this->_modname, FEATURE_RATINGS, false)) {
+        if (plugin_supports('mod', $this->_modname, FEATURE_RATE, false)) {
             $mform->addElement('header', 'modstandardratings', get_string('ratings', 'ratings'));
 
             //$mform->addElement('checkbox', 'assessed', get_string('allowratings', 'ratings') , get_string('ratingsuse', 'ratings'));

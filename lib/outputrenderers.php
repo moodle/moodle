@@ -1244,7 +1244,7 @@ class core_renderer extends renderer_base {
         }
 
         if (empty($strrate)) {
-            $strrate = get_string("rate", "forum");
+            $strrate = get_string("rate", "rating");
         }
 
         $strratings = '';
@@ -1313,13 +1313,16 @@ END;
 
             //generate an array of values for numeric scales
             $scalearray = $rating->settings->scale->scaleitems;
-            if( !is_array($scalearray) && is_int($scalearray) ) {
-                $scalearray = array();
-                for($i=0; $i<=$rating->settings->scale->scaleitems; $i++) {
-                    $scalearray[$i] = $i;
+            if( !is_array($scalearray) ) { //almost certainly a numerical scale
+                $intscalearray = intval($scalearray);//just in case theyve passed "5" instead of 5
+                if( is_int($intscalearray) && $intscalearray>0 ){
+                    $scalearray = array();
+                    for($i=0; $i<=$rating->settings->scale->scaleitems; $i++) {
+                        $scalearray[$i] = $i;
+                    }
                 }
             }
-            
+
             $scalearray = array(RATING_UNSET_RATING => $strrate.'...') + $scalearray;
             $strratings .= html_writer::select($scalearray, 'rating'.$rating->itemid, $rating->rating, false, array('class'=>'postratingmenu ratinginput'));
 

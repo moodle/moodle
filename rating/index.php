@@ -45,10 +45,10 @@ $PAGE->set_url($url);
 
 $permissions = rating::get_rating_permissions(context);
 if (!$permissions[RATING_VIEW]) {
-    print_error('noviewrate', 'ratings');
+    print_error('noviewrate', 'rating');
 }
 if (!$permissions[RATING_VIEW_ALL] and $USER->id != $item->userid) {
-    print_error('noviewanyrate', 'ratings');
+    print_error('noviewanyrate', 'rating');
 }
 
 switch ($sort) {
@@ -59,8 +59,8 @@ switch ($sort) {
 
 $scalemenu = make_grades_menu($scaleid);
 
-$strratings = get_string('ratings', 'ratings');
-$strrating  = get_string('rating', 'ratings');
+$strratings = get_string('ratings', 'rating');
+$strrating  = get_string('rating', 'rating');
 $strname    = get_string('name');
 $strtime    = get_string('time');
 

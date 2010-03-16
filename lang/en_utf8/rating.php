@@ -1,4 +1,5 @@
 <?php
+$string['rate'] = 'Rate';
 $string['rating'] = 'Rating';
 $string['ratings'] = 'Ratings';
 $string['aggregatetype'] = 'Aggregate type';
