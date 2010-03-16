@@ -1,5 +1,5 @@
 <?php
-require_once($CFG->dirroot.'/mnet/lib.php');
+
 // This file defines settingpages and externalpages under the "mnet" category
 
 if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
