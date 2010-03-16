@@ -1292,6 +1292,9 @@ function mimeinfo_from_icon($element, $icon, $all=false) {
         }
     }
     if ($all) {
+        if (count($info) > 1) {
+            array_shift($info); // take off document/unknown if we have better options
+        }
         return $info;
     }
     return array_pop($info); // Return last match (mimicking behaviour/comment inside foreach loop)
