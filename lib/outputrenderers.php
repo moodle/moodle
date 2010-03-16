@@ -1229,6 +1229,116 @@ class core_renderer extends renderer_base {
         return html_writer::empty_tag('img', $attributes);
     }
 
+    /**
+    * Produces the html that represents this rating in the UI
+    * @param $page the page object on which this rating will appear
+    */
+    function render_rating(rating $rating) {
+        global $CFG, $USER, $PAGE;
+        static $strrate;//holds the string "rate". Its static so we only fetch it once.
+        static $havesetupjavascript = false;
+
+        if( !$havesetupjavascript && !empty($CFG->enableajax) ) {
+            $PAGE->requires->js_init_call('M.core_ratings.init');
+            $havesetupjavascript = true;
+        }
+
+        if (empty($strrate)) {
+            $strrate = get_string("rate", "forum");
+        }
+
+        $strratings = '';
+
+        if($rating->settings->permissions[RATING_VIEW] || $rating->settings->permissions[RATING_VIEW_ALL]) {
+            switch ($rating->settings->aggregationmethod) {
+                case RATING_AGGREGATE_AVERAGE :
+                    $strratings .= get_string("aggregateavg", "forum");
+                    break;
+                case RATING_AGGREGATE_COUNT :
+                    $strratings .= get_string("aggregatecount", "forum");
+                    break;
+                case RATING_AGGREGATE_MAXIMUM :
+                    $strratings .= get_string("aggregatemax", "forum");
+                    break;
+                case RATING_AGGREGATE_MINIMUM :
+                    $strratings .= get_string("aggregatemin", "forum");
+                    break;
+                case RATING_AGGREGATE_SUM :
+                    $strratings .= get_string("aggregatesum", "forum");
+                    break;
+            }
+
+            if (empty($strratings)) {
+                $strratings .= $strrate;
+            }
+            $strratings .= ': ';
+
+            $scalemax = 0;
+            $ratingstr = null;
+
+            if ( is_array($rating->settings->scale->scaleitems) ) {
+                $scalemax = $rating->settings->scale->scaleitems[ count($rating->settings->scale->scaleitems)-1 ];
+                $ratingstr = $rating->settings->scale->scaleitems[$rating->rating];
+            }
+            else { //its numeric
+                $scalemax = $rating->settings->scale->scaleitems;
+                $ratingstr = round($rating->aggregate,1);
+            }
+            
+            $aggstr = "{$ratingstr} / $scalemax ({$rating->count}) ";
+
+            if ($rating->settings->permissions[RATING_VIEW_ALL]) {
+                $link = new moodle_url("/rating/index.php?contextid={$rating->context->id}&itemid={$rating->itemid}&scaleid={$rating->scaleid}");
+                $action = new popup_action('click', $link, 'ratings', array('height' => 400, 'width' => 600));
+                $strratings .= $this->action_link($link, $aggstr, $action);
+            } else if ($rating->settings->permissions[RATING_VIEW_ALL]) {
+                $strratings .= $aggstr;
+            }
+        }
+
+        //todo andrew alter the below if to deny guest users the ability to post ratings.
+        //Petr to define "guest"
+        $formstart = null;
+        if($rating->settings->permissions[RATING_POST]) {
+            //dont use $rating->userid below as it will be null if the user hasnt already rated the item
+            $formstart = <<<END
+<form id="postrating{$rating->itemid}" class="postratingform" method="post" action="rating/rate.php">
+<div class="ratingform">
+<input type="hidden" class="ratinginput" name="contextid" value="{$rating->context->id}" />
+<input type="hidden" class="ratinginput" name="itemid" value="{$rating->itemid}" />
+<input type="hidden" class="ratinginput" name="scaleid" value="{$rating->settings->scale->id}" />
+<input type="hidden" class="ratinginput" name="returnurl" value="{$rating->settings->returnurl}" />
+END;
+            $strratings = $formstart.$strratings;
+
+            //generate an array of values for numeric scales
+            $scalearray = $rating->settings->scale->scaleitems;
+            if( !is_array($scalearray) && is_int($scalearray) ) {
+                $scalearray = array();
+                for($i=0; $i<=$rating->settings->scale->scaleitems; $i++) {
+                    $scalearray[$i] = $i;
+                }
+            }
+            
+            $scalearray = array(RATING_UNSET_RATING => $strrate.'...') + $scalearray;
+            $strratings .= html_writer::select($scalearray, 'rating'.$rating->itemid, $rating->rating, false, array('class'=>'postratingmenu ratinginput'));
+
+            //output submit button
+            $strratings .= '<span class="ratingsubmit"><input type="submit" class="postratingmenusubmit" id="postratingsubmit'.$rating->itemid.'" value="'.get_string('rate', 'forum').'" />';
+
+            //ajax code is included by rating::load_ratings()
+
+            if ( is_array($rating->settings->scale) ) {
+                //todo andrew where can we get the course id from?
+                //$strratings .= $this->help_icon_scale($course->id, $scale);
+                $strratings .= $this->help_icon_scale(1, $rating->settings->scale);
+            }
+            $strratings .= '</span></div></form>';
+        }
+
+        return $strratings;
+    }
+
     /*
      * Centered heading with attached help button (same title text)
      * and optional icon attached

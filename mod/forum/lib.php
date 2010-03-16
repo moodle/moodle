@@ -42,8 +42,10 @@ define('FORUM_TRACKING_OFF', 0);
 define('FORUM_TRACKING_OPTIONAL', 1);
 define('FORUM_TRACKING_ON', 2);
 
+//todo andrew remove this
 define('FORUM_UNSET_POST_RATING', -999);
 
+//todo andrew and remove these
 define ('FORUM_AGGREGATE_NONE', 0); //no ratings
 define ('FORUM_AGGREGATE_AVG', 1);
 define ('FORUM_AGGREGATE_COUNT', 2);
@@ -274,6 +276,7 @@ function forum_supports($feature) {
         case FEATURE_COMPLETION_HAS_RULES:    return true;
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return true;
+        case FEATURE_RATINGS:                 return true;
 
         default: return null;
     }
@@ -1453,6 +1456,7 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
  * @param int $userid optional user id, 0 means all users
  * @return array array of grades, false if none
  */
+ //todo andrew pretty sure I can remove this
 function forum_get_user_grades($forum, $userid=0) {
     global $CFG, $DB;
 
@@ -4155,6 +4159,7 @@ function forum_get_ratings_summary($postid, $scale, $ratings=NULL) {
  * @param array $scale is an array of ratings
  * @param int $myrating
  */
+ //todo andrew remove this function
 function forum_print_rating_menu($postid, $userid, $scale, $myrating=NULL) {
 
     static $strrate;

@@ -398,6 +398,11 @@ class page_requirements_manager {
                                     'fullpath' => '/group/module.js',
                                     'requires' => array('node', 'overlay', 'event-mouseenter'));
                     break;
+                case 'core_ratings':
+                    $module = array('name'     => 'core_ratings',
+                                    'fullpath' => '/rating/module.js',
+                                    'requires' => array('node', 'event', 'overlay', 'io', 'json'));
+                    break;
             }
 
         } else {

@@ -3051,6 +3051,80 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010021800);
     }
 
+    if ($result && $oldversion < 2010031600) {
+        //create the ratings table (replaces module specific ratings implementations)
+        $table = new xmldb_table('ratings');
+
+    /// Adding fields to table ratings
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+
+        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('scaleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('rating', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+
+    /// Adding keys to table ratings
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+    /// Adding indexes to table ratings
+        $table->add_index('itemid', XMLDB_INDEX_NOTUNIQUE, array('itemid'));
+
+    /// Create table for ratings
+        $dbman->create_table($table);
+
+        //migrate ratings out of the modules into the central ratings table
+
+        //migrate forumratings
+        //forum ratings only have a single time column so use it for both time created and modified
+        $ratingssql = 'select r.id as rid, r.post as itemid, r.rating, r.userid, r.time as timecreated, r.time as timemodified, f.scale, f.id as mid from {forum_ratings} r
+inner join {forum_posts} p on p.id=r.post
+inner join {forum_discussions} d on d.id=p.discussion
+inner join {forum} f on f.id=d.forum';
+        echo "migrating forum ratings<br>";
+        $result = $result && upgrade_module_ratings($ratingssql,'forum');
+        
+        //migrate glossary_ratings
+        //glossary ratings only have a single time column so use it for both time created and modified
+        $ratingssql = 'select r.id as rid, r.entryid as itemid, r.rating, r.userid, r.time as timecreated, r.time as timemodified, g.id as mid, g.scale
+from {glossary_ratings} r inner join {glossary_entries} ge on ge.id=r.entryid
+inner join {glossary} g on g.id=ge.glossaryid';
+        echo "migrating glossary ratings<br>";
+        $result = $result && upgrade_module_ratings($ratingssql,'glossary');
+        
+        //migrate data_ratings
+        //data ratings didnt store time created and modified so Im using the times from the record the rating was attached to
+        $ratingssql = 'select r.id as rid, r.recordid as itemid, r.rating, r.userid, re.timecreated, re.timemodified, d.scale, d.id as mid
+from {data_ratings} r inner join {data_records} re on r.recordid=re.id
+inner join {data} d on d.id=re.dataid';
+        echo "migrating data ratings<br>";
+        $result = $result && upgrade_module_ratings($ratingssql,'data');
+
+        //add assesstimestart and assesstimefinish columns to data
+        $table = new xmldb_table('data');
+        $field = new xmldb_field('assesstimestart');
+        if (!$dbman->field_exists($table, $field)) {
+            $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'assessed');
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('assesstimefinish');
+        if (!$dbman->field_exists($table, $field)) {
+            $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'assesstimestart');
+            $dbman->add_field($table, $field);
+        }
+
+        //todo set permissions based on current value of glossary.assessed
+        
+        //todo drop forum_ratings, data_ratings and glossary_ratings
+
+        upgrade_main_savepoint($result, 2010031600);
+    }
+
     return $result;
 }
 

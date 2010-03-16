@@ -107,7 +107,7 @@ class mod_forum_mod_form extends moodleform_mod {
         }
 
 //-------------------------------------------------------------------------------
-        $mform->addElement('header', '', get_string('grade'));
+        /*$mform->addElement('header', '', get_string('grade'));
 
         $mform->addElement('select', 'assessed', get_string('aggregatetype', 'forum') , forum_get_aggregate_types());
         $mform->setDefault('assessed', 0);
@@ -125,7 +125,7 @@ class mod_forum_mod_form extends moodleform_mod {
 
         $mform->addElement('date_time_selector', 'assesstimefinish', get_string('to'));
         $mform->disabledIf('assesstimefinish', 'assessed', 'eq', 0);
-        $mform->disabledIf('assesstimefinish', 'ratingtime');
+        $mform->disabledIf('assesstimefinish', 'ratingtime');*/
 
 
 //-------------------------------------------------------------------------------
@@ -188,17 +188,6 @@ class mod_forum_mod_form extends moodleform_mod {
     }
 
     function data_preprocessing(&$default_values) {
-        if (empty($default_values['scale'])) {
-            $default_values['assessed'] = 0;
-        }
-
-        if (empty($default_values['assessed'])) {
-            $default_values['ratingtime'] = 0;
-        } else {
-            $default_values['ratingtime']=
-                ($default_values['assesstimestart'] && $default_values['assesstimefinish']) ? 1 : 0;
-        }
-
         // Set up the completion checkboxes which aren't part of standard data.
         // We also make the default value (if you turn on the checkbox) for those
         // numbers to be 1, this will not apply unless checkbox is ticked.

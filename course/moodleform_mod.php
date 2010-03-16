@@ -93,6 +93,18 @@ abstract class moodleform_mod extends moodleform {
      * @param array $default_values passed by reference
      */
     function data_preprocessing(&$default_values){
+        if (empty($default_values['scale'])) {
+            $default_values['assessed'] = 0;
+        }
+
+        if (empty($default_values['assessed'])){
+            //$default_values['userating'] = 0;//this was used by glossary to check/uncheck a 'use ratings' checkbox
+            $default_values['ratingtime'] = 0;
+        } else {
+            //$default_values['userating'] = 1;
+            $default_values['ratingtime']=
+                ($default_values['assesstimestart'] && $default_values['assesstimefinish']) ? 1 : 0;
+        }
     }
 
     /**
@@ -325,6 +337,30 @@ abstract class moodleform_mod extends moodleform {
                     $mform->addElement('advcheckbox', 'outcome_'.$outcome->id, $outcome->get_name());
                 }
             }
+        }
+
+        if (plugin_supports('mod', $this->_modname, FEATURE_RATINGS, false)) {
+            $mform->addElement('header', 'modstandardratings', get_string('ratings', 'ratings'));
+
+            //$mform->addElement('checkbox', 'assessed', get_string('allowratings', 'ratings') , get_string('ratingsuse', 'ratings'));
+
+            $mform->addElement('select', 'assessed', get_string('aggregatetype', 'ratings') , forum_get_aggregate_types());
+            $mform->setDefault('assessed', 0);
+            $mform->setHelpButton('assessed', array('assessaggregate', get_string('aggregatetype', 'ratings'), 'forum'));
+
+            $mform->addElement('modgrade', 'scale', get_string('grade'), false);
+            $mform->disabledIf('scale', 'assessed', 'eq', 0);
+
+            $mform->addElement('checkbox', 'ratingtime', get_string('ratingtime', 'forum'));
+            $mform->disabledIf('ratingtime', 'assessed', 'eq', 0);
+
+            $mform->addElement('date_time_selector', 'assesstimestart', get_string('from'));
+            $mform->disabledIf('assesstimestart', 'assessed', 'eq', 0);
+            $mform->disabledIf('assesstimestart', 'ratingtime');
+
+            $mform->addElement('date_time_selector', 'assesstimefinish', get_string('to'));
+            $mform->disabledIf('assesstimefinish', 'assessed', 'eq', 0);
+            $mform->disabledIf('assesstimefinish', 'ratingtime');
         }
 
         $mform->addElement('header', 'modstandardelshdr', get_string('modstandardels', 'form'));

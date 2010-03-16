@@ -121,7 +121,7 @@ class mod_glossary_mod_form extends moodleform_mod {
         }
 
 //-------------------------------------------------------------------------------
-        $mform->addElement('header', '', get_string('grade'));
+        /*$mform->addElement('header', '', get_string('grade'));
         $mform->addElement('checkbox', 'userating', get_string('allowratings', 'glossary') , get_string('ratingsuse', 'glossary'));
 
         $options=array();
@@ -142,7 +142,7 @@ class mod_glossary_mod_form extends moodleform_mod {
 
         $mform->addElement('date_time_selector', 'assesstimefinish', get_string('to'));
         $mform->disabledIf('assesstimefinish', 'userating');
-        $mform->disabledIf('assesstimefinish', 'ratingtime');
+        $mform->disabledIf('assesstimefinish', 'ratingtime');*/
 
 //-------------------------------------------------------------------------------
         $this->standard_coursemodule_elements();
@@ -172,18 +172,6 @@ class mod_glossary_mod_form extends moodleform_mod {
     }
 
     function data_preprocessing(&$default_values){
-        if (empty($default_values['scale'])){
-            $default_values['assessed'] = 0;
-        }
-
-        if (empty($default_values['assessed'])){
-            $default_values['userating'] = 0;
-            $default_values['ratingtime'] = 0;
-        } else {
-            $default_values['userating'] = 1;
-            $default_values['ratingtime']=
-                ($default_values['assesstimestart'] && $default_values['assesstimefinish']) ? 1 : 0;
-        }
     }
 
 }

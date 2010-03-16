@@ -364,6 +364,8 @@ define('FEATURE_MODEDIT_DEFAULT_COMPLETION', 'modedit_default_completion');
 
 define('FEATURE_COMMENT', 'comment');
 
+define('FEATURE_RATINGS', 'ratings');
+
 /** Unspecified module archetype */
 define('MOD_ARCHETYPE_OTHER', 0);
 /** Resource-like type module */

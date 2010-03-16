@@ -396,3 +396,47 @@ function upgrade_cleanup_unwanted_block_contexts($contextidarray) {
 
     return ($outcome1 && $outcome2 && $outcome4 && $outcome4);
 }
+
+function upgrade_module_ratings($ratingssql, $modulename) {
+    global $DB;
+    $contextid = null;
+    $contextarray = array();
+    $result = true;
+    $i=0;
+
+    $ratings = $DB->get_records_sql($ratingssql);
+
+    foreach ($ratings as $old_rating) {
+        if($i++%500==0) {
+            upgrade_set_timeout(60);//prevent a timeout
+        }
+
+        //all posts within a given forum will have the same context id so store them in an array
+        if( !array_key_exists($old_rating->mid, $contextarray) ) {
+            $sql = 'select cxt.id from {course_modules} cm inner join {modules} m on cm.module=m.id
+inner join {context} cxt on cxt.instanceid=cm.id
+where m.name=:modulename and cm.instance=:moduleinstanceid and cxt.contextlevel='.CONTEXT_MODULE;
+            $params = array();
+            $params['moduleinstanceid'] = $old_rating->mid;
+            $params['modulename'] = $modulename;
+            $results = $DB->get_record_sql($sql, $params);
+            $contextarray[$old_rating->mid] = $results->id;
+        }
+        $contextid = $contextarray[$old_rating->mid];
+
+        $rating = new stdclass;
+        $rating->contextid = $contextid;
+        $rating->scaleid = $old_rating->scale;
+        $rating->itemid = $old_rating->itemid;
+        $rating->rating = $old_rating->rating;
+        $rating->userid = $old_rating->userid;
+        $rating->timecreated = $old_rating->timecreated;
+        $rating->timemodified = $old_rating->timemodified;
+
+        $result = $result && $DB->insert_record('ratings', $rating);
+    }
+
+    $ratings->close();
+
+    return $result;
+}
