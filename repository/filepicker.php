@@ -39,7 +39,7 @@ $PAGE->set_pagelayout('embedded');
 
 // general parameters
 $action      = optional_param('action', '',        PARAM_ALPHA);
-$client_id   = optional_param('client_id', SITEID, PARAM_RAW);    // client ID
+$client_id   = optional_param('client_id', '', PARAM_RAW);    // client ID
 $itemid      = optional_param('itemid', '',        PARAM_INT);
 
 // parameters for repository

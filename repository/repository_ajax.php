@@ -36,8 +36,8 @@ require_login();
 $action    = optional_param('action', '', PARAM_ALPHA);
 $repo_id   = optional_param('repo_id', 1, PARAM_INT);           // repository ID
 $callback  = optional_param('callback', '', PARAM_CLEANHTML);
-$client_id = optional_param('client_id', SITEID, PARAM_RAW);    // client ID
-$contextid = optional_param('ctx_id', SITEID, PARAM_INT);       // context ID
+$client_id = optional_param('client_id', '', PARAM_RAW);        // client ID
+$contextid = optional_param('ctx_id', SYSCONTEXTID, PARAM_INT);       // context ID
 $env       = optional_param('env', 'filepicker', PARAM_ALPHA);  // opened in editor or moodleform
 $file      = optional_param('file', '', PARAM_RAW);             // file to download
 $itemid    = optional_param('itemid', 0, PARAM_INT);
