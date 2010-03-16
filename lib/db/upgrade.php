@@ -3051,7 +3051,13 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010021800);
     }
 
-    if ($result && $oldversion < 2010031600) {
+    if ($result && $oldversion < 2010031602) {
+        //drop the erroneously created ratings table
+        $table = new xmldb_table('ratings');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
         //create the rating table (replaces module specific rating implementations)
         $table = new xmldb_table('rating');
 
@@ -3124,7 +3130,7 @@ inner join {data} d on d.id=re.dataid';
         
         //todo drop forum_ratings, data_ratings and glossary_ratings
 
-        upgrade_main_savepoint($result, 2010031600);
+        upgrade_main_savepoint($result, 2010031602);
     }
 
     return $result;
