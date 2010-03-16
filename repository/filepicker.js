@@ -434,7 +434,7 @@ M.core_filepicker.init = function(Y, options) {
                 draggable: true,
                 close: true,
                 underlay: 'none',
-                zindex: 9999999,
+                zindex: 9999990,
                 monitorresize: false,
                 xy: [50, YAHOO.util.Dom.getDocumentScrollTop()+20]
             });
@@ -917,12 +917,12 @@ M.core_filepicker.init = function(Y, options) {
                                 search_dialog.cancel();
                             }
 
-                            var search_dialog = new YAHOO.widget.Dialog("fp-search-dlg", {
+                            search_dialog = new YAHOO.widget.Dialog("fp-search-dlg", {
                                postmethod: 'async',
                                draggable: true,
                                width : "30em",
                                fixedcenter : true,
-                               zindex: 766667,
+                               zindex: 9999991,
                                visible : false,
                                constraintoviewport : true,
                                buttons: [
