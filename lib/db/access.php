@@ -1531,14 +1531,14 @@ $capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    'moodle/ratings:view' => array(
+    'moodle/rating:view' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
             'admin' => CAP_ALLOW
         )
     ),
-    'moodle/ratings:viewall' => array(
+    'moodle/rating:viewall' => array(
 
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
@@ -1547,7 +1547,7 @@ $capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    'moodle/ratings:rate' => array(
+    'moodle/rating:rate' => array(
 
         'riskbitmask' => RISK_DATALOSS,
         'captype' => 'write',

@@ -306,7 +306,7 @@ private static function make_rating_subobjs( $context, $items, $ratingsrecords, 
 }
 
 public static function get_rating_permissions($context) {
-    return array(RATING_VIEW=>has_capability('moodle/ratings:view',$context), RATING_VIEW_ALL=>has_capability('moodle/ratings:viewall',$context), RATING_POST=>has_capability('moodle/ratings:rate',$context));
+    return array(RATING_VIEW=>has_capability('moodle/rating:view',$context), RATING_VIEW_ALL=>has_capability('moodle/rating:viewall',$context), RATING_POST=>has_capability('moodle/rating:rate',$context));
 }
 
 } //end rating class definition
