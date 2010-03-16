@@ -21,8 +21,8 @@
 require_once('../config.php');
 require_once($CFG->dirroot . '/comment/lib.php');
 
-$courseid  = optional_param('courseid',  SITEID, PARAM_INT);
 $contextid = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
+list($context, $course, $cm) = get_context_info_array($contextid);
 
 $context   = get_context_instance_by_id($contextid);
 if ($context->contextlevel == CONTEXT_MODULE) {
@@ -30,7 +30,7 @@ if ($context->contextlevel == CONTEXT_MODULE) {
 } else {
     $cm = null;
 }
-require_login($courseid, true, $cm);
+require_login($course->id, true, $cm);
 
 $err = new stdclass;
 
@@ -55,7 +55,7 @@ $returnurl = optional_param('returnurl', '',     PARAM_URL);
 
 $cmt = new stdclass;
 $cmt->contextid = $contextid;
-$cmt->courseid  = $courseid;
+$cmt->courseid  = $course->id;
 $cmt->area      = $area;
 $cmt->itemid    = $itemid;
 $comment = new comment($cmt);
