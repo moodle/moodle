@@ -26,264 +26,272 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-    require_once('../config.php');
-    require_once('../lib/filelib.php');
-    require_once('lib.php');
+require_once('../config.php');
+require_once('../lib/filelib.php');
+require_once('lib.php');
 
-    require_login();
+require_login();
 
 /// Parameters
-    $action    = optional_param('action', '', PARAM_ALPHA);
-    $repo_id   = optional_param('repo_id', 1, PARAM_INT);           // repository ID
-    $callback  = optional_param('callback', '', PARAM_CLEANHTML);
-    $client_id = optional_param('client_id', SITEID, PARAM_RAW);    // client ID
-    $contextid = optional_param('ctx_id', SITEID, PARAM_INT);       // context ID
-    $env       = optional_param('env', 'filepicker', PARAM_ALPHA);  // opened in editor or moodleform
-    $file      = optional_param('file', '', PARAM_RAW);             // file to download
-    $itemid    = optional_param('itemid', 0, PARAM_INT);
-    $title     = optional_param('title', '', PARAM_FILE);           // new file name
-    $page      = optional_param('page', '', PARAM_RAW);             // page
-    $maxbytes  = optional_param('maxbytes', -1, PARAM_INT);           // repository ID
-    $req_path  = optional_param('p', '', PARAM_RAW);                // path
-    $save_path = optional_param('savepath', '/', PARAM_PATH);
-    $save_filearea = optional_param('filearea', 'user_draft', PARAM_TEXT);
-    $search_text   = optional_param('s', '', PARAM_CLEANHTML);
-    $linkexternal = optional_param('linkexternal', '', PARAM_ALPHA);
+$action    = optional_param('action', '', PARAM_ALPHA);
+$repo_id   = optional_param('repo_id', 1, PARAM_INT);           // repository ID
+$callback  = optional_param('callback', '', PARAM_CLEANHTML);
+$client_id = optional_param('client_id', SITEID, PARAM_RAW);    // client ID
+$contextid = optional_param('ctx_id', SITEID, PARAM_INT);       // context ID
+$env       = optional_param('env', 'filepicker', PARAM_ALPHA);  // opened in editor or moodleform
+$file      = optional_param('file', '', PARAM_RAW);             // file to download
+$itemid    = optional_param('itemid', 0, PARAM_INT);
+$title     = optional_param('title', '', PARAM_FILE);           // new file name
+$page      = optional_param('page', '', PARAM_RAW);             // page
+$maxbytes  = optional_param('maxbytes', -1, PARAM_INT);
+$req_path  = optional_param('p', '', PARAM_RAW);                // path
+$save_path = optional_param('savepath', '/', PARAM_PATH);
+$save_filearea = optional_param('filearea', 'user_draft', PARAM_TEXT);
+$search_text   = optional_param('s', '', PARAM_CLEANHTML);
+$linkexternal  = optional_param('linkexternal', '', PARAM_ALPHA);
 
 /// Headers to make it not cacheable
-    header("Cache-Control: no-cache, must-revalidate");
-    header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-    $err = new stdclass;
-    $err->client_id = $client_id;
+header('Cache-Control: no-cache, must-revalidate');
+header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+
+$err = new stdclass;
+$err->client_id = $client_id;
 
 /// Check permissions
-    if (! (isloggedin() && repository::check_context($contextid)) ) {
-        $err->e = get_string('nopermissiontoaccess', 'repository');
-        die(json_encode($err));
-    }
+if (! (isloggedin() && repository::check_context($contextid)) ) {
+    $err->e = get_string('nopermissiontoaccess', 'repository');
+    die(json_encode($err));
+}
 
 /// Wait as long as it takes for this script to finish
-    set_time_limit(0);
+set_time_limit(0);
 
-/// Check for actions that do not need repository ID
-    switch ($action) {
-        case 'gsearch': //  Global Search
-            $params = array();
-            $params['context'] = array(get_context_instance_by_id($contextid), get_system_context());
-            $params['currentcontext'] = get_context_instance_by_id($contextid);
-            $repos = repository::get_instances($params);
-            $list = array();
-            foreach($repos as $repo){
-                if ($repo->global_search()) {
-                    try {
-                        $ret = $repo->search($search_text);
-                        array_walk($ret['list'], 'repository_attach_id', $repo->id);  // See function below
-                        $tmp = array_merge($list, $ret['list']);
-                        $list = $tmp;
-                    } catch (repository_exception $e) {
-                        $err->e = $e->getMessage();
-                        die(json_encode($err));
-                    }
-                }
-            }
-            $listing = array('list'=>$list);
-            $listing['gsearch'] = true;
-            $listing['client_id'] = $client_id;
-            die(json_encode($listing));
-            break;
-
-        case 'ccache':      // Clean cache
-            $cache = new curl_cache;
-            $cache->refresh();
-            $action = 'list';
-            break;
-    }
-
-/// Get repository instance information
-    $sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i '.
-           'WHERE i.id=? AND i.typeid=r.id';
-    if (!$repository = $DB->get_record_sql($sql, array($repo_id))) {
-        $err->e = get_string('invalidrepositoryid', 'repository');
-        die(json_encode($err));
-    } else {
-        $type = $repository->type;
-    }
-
-    if (file_exists($CFG->dirroot.'/repository/'.$type.'/repository.class.php')) {
-        require_once($CFG->dirroot.'/repository/'.$type.'/repository.class.php');
-        $classname = 'repository_' . $type;
-        try {
-            $repo = new $classname($repo_id, $contextid, array('ajax'=>true, 'name'=>$repository->name, 'type'=>$type, 'client_id'=>$client_id));
-        } catch (repository_exception $e){
-            $err->e = $e->getMessage();
-            die(json_encode($err));
-        }
-    } else {
-        $err->e = get_string('invalidplugin', 'repository', $type);
-        die(json_encode($err));
-    }
-
-    if (!empty($callback)) {
-        // call opener window to refresh repository
-        // the callback url should be something like this:
-        // http://xx.moodle.com/repository/repository_ajax.php?callback=yes&repo_id=1&sid=xxx
-        // sid is the attached auth token from external source
-        // If Moodle is working on HTTPS mode, then we are not allowed to access
-        // parent window, in this case, we need to alert user to refresh the repository
-        // manually.
-        $strhttpsbug = get_string('cannotaccessparentwin', 'repository');
-        $strrefreshnonjs = get_string('refreshnonjsfilepicker', 'repository');
-        $js  =<<<EOD
-<html><head>
-<script type="text/javascript">
-if(window.opener){
-    window.opener.M.core_filepicker.active_filepicker.list();
-    window.close();
-} else {
-    alert("{$strhttpsbug }");
-}
-</script>
-<body>
-<noscript>
-    {$strrefreshnonjs}
-</noscript>
-</body>
-</html>
-EOD;
-        echo $js;
-        die;
-    }
-
-
-/// These actions all occur on the currently active repository instance
-    switch ($action) {
-        case 'sign':
-        case 'signin':
-        case 'list':
-            if ($repo->check_login()) {
+// Early actions which need to be done before repository instaces initialised
+switch ($action) {
+    // global search
+    case 'gsearch':
+        $params = array();
+        $params['context'] = array(get_context_instance_by_id($contextid), get_system_context());
+        $params['currentcontext'] = get_context_instance_by_id($contextid);
+        $repos = repository::get_instances($params);
+        $list = array();
+        foreach($repos as $repo){
+            if ($repo->global_search()) {
                 try {
-                    $listing = $repo->get_listing($req_path, $page);
-                    $listing['client_id'] = $client_id;
-                    $listing['repo_id'] = $repo_id;
-                    echo json_encode($listing);
+                    $ret = $repo->search($search_text);
+                    array_walk($ret['list'], 'repository_attach_id', $repo->id);  // See function below
+                    $tmp = array_merge($list, $ret['list']);
+                    $list = $tmp;
                 } catch (repository_exception $e) {
                     $err->e = $e->getMessage();
                     die(json_encode($err));
                 }
-                break;
-            } else {
-                $action = 'login';
             }
-        case 'login':
+        }
+        $listing = array('list'=>$list);
+        $listing['gsearch'] = true;
+        $listing['client_id'] = $client_id;
+        die(json_encode($listing));
+        break;
+
+    // remove the cache files & logout
+    case 'ccache':
+        $cache = new curl_cache;
+        $cache->refresh();
+        $action = 'list';
+        break;
+}
+
+/// Get repository instance information
+$sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i '.
+       'WHERE i.id=? AND i.typeid=r.id';
+
+if (!$repository = $DB->get_record_sql($sql, array($repo_id))) {
+    $err->e = get_string('invalidrepositoryid', 'repository');
+    die(json_encode($err));
+} else {
+    $type = $repository->type;
+}
+
+if (file_exists($CFG->dirroot.'/repository/'.$type.'/repository.class.php')) {
+    require_once($CFG->dirroot.'/repository/'.$type.'/repository.class.php');
+    $classname = 'repository_' . $type;
+    try {
+        $repo = new $classname($repo_id, $contextid, array('ajax'=>true, 'name'=>$repository->name, 'type'=>$type, 'client_id'=>$client_id));
+    } catch (repository_exception $e){
+        $err->e = $e->getMessage();
+        die(json_encode($err));
+    }
+} else {
+    $err->e = get_string('invalidplugin', 'repository', $type);
+    die(json_encode($err));
+}
+
+
+if (!empty($callback)) {
+    // call opener window to refresh repository
+    // the callback url should be something like this:
+    // http://xx.moodle.com/repository/repository_ajax.php?callback=yes&repo_id=1&sid=xxx
+    // sid is the attached auth token from external source
+    // If Moodle is working on HTTPS mode, then we are not allowed to access
+    // parent window, in this case, we need to alert user to refresh the repository
+    // manually.
+    $strhttpsbug = get_string('cannotaccessparentwin', 'repository');
+    $strrefreshnonjs = get_string('refreshnonjsfilepicker', 'repository');
+    $js =<<<EOD
+<html>
+<head>
+    <script type="text/javascript">
+    if(window.opener){
+        window.opener.M.core_filepicker.active_filepicker.list();
+        window.close();
+    } else {
+        alert("{$strhttpsbug }");
+    }
+    </script>
+</head>
+<body>
+    <noscript>
+    {$strrefreshnonjs}
+    </noscript>
+</body>
+</html>
+EOD;
+    die($js);
+}
+
+/// These actions all occur on the currently active repository instance
+switch ($action) {
+    case 'sign':
+    case 'signin':
+    case 'list':
+        if ($repo->check_login()) {
             try {
-                $listing = $repo->print_login();
+                $listing = $repo->get_listing($req_path, $page);
                 $listing['client_id'] = $client_id;
                 $listing['repo_id'] = $repo_id;
                 echo json_encode($listing);
-            } catch (repository_exception $e){
-                $err->e = $e->getMessage();
-                die(json_encode($err));
-            }
-            break;
-        case 'logout':
-            $logout = $repo->logout();
-            $logout['client_id'] = $client_id;
-            $logout['repo_id'] = $repo_id;
-            echo json_encode($logout);
-            break;
-        case 'searchform':
-            $search_form['form'] = $repo->print_search($client_id);
-            $search_form['client_id'] = $client_id;
-            echo json_encode($search_form);
-            break;
-        case 'search':
-            try {
-                $search_result = $repo->search($search_text, (int)$page);
-                $search_result['client_id'] = $client_id;
-                $search_result['repo_id'] = $repo_id;
-                $search_result['search_result'] = true;
-                echo json_encode($search_result);
             } catch (repository_exception $e) {
                 $err->e = $e->getMessage();
                 die(json_encode($err));
             }
             break;
-        case 'download':
-            try {
-                // we have two special repoisitory type need to deal with
-                if ($repo->options['type'] == 'local') {
-                    $fileinfo = $repo->move_to_draft($file, $title, $itemid, $save_path);
-                    $info = array();
-                    $info['client_id'] = $client_id;
-                    $info['file'] = $fileinfo['title'];
-                    $info['id'] = $itemid;
-                    $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
-                    $filesize = $fileinfo['filesize'];
-                    if (($maxbytes!==-1) && ($filesize > $maxbytes)) {
-                        $fileinfo->delete();
-                        throw new file_exception('maxbytes');
-                    }
-                    die(json_encode($info));
-                }
-
-                $allowexternallink = (int)get_config(null, 'repositoryallowexternallinks');
-                if (!empty($allowexternallink)) {
-                    $allowexternallink = true;
-                } else {
-                    $allowexternallink = false;
-                }
-                // allow external links in url element all the time
-                $allowexternallink = ($allowexternallink || ($env == 'url'));
-
-                if ($allowexternallink and $linkexternal === 'yes' and ($repo->supported_returntypes() || FILE_EXTERNAL)) {
-                    try {
-                        $link = $repo->get_link($file);
-                    } catch (repository_exception $e){
-                    }
-                    $info = array();
-                    $info['filename'] = $title;
-                    $info['type'] = 'link';
-                    $info['url'] = $link;
-                    die(json_encode($info));
-                }
-
-                // get the file location
-                $filepath = $repo->get_file($file, $title, $itemid, $save_path);
-                if ($filepath === false) {
-                    $err->e = get_string('cannotdownload', 'repository');
-                    die(json_encode($err));
-                }
-                if (($maxbytes!==-1) && (filesize($filepath) > $maxbytes)) {
+        } else {
+            $action = 'login';
+        }
+    case 'login':
+        try {
+            $listing = $repo->print_login();
+            $listing['client_id'] = $client_id;
+            $listing['repo_id'] = $repo_id;
+            echo json_encode($listing);
+        } catch (repository_exception $e){
+            $err->e = $e->getMessage();
+            die(json_encode($err));
+        }
+        break;
+    case 'logout':
+        $logout = $repo->logout();
+        $logout['client_id'] = $client_id;
+        $logout['repo_id'] = $repo_id;
+        echo json_encode($logout);
+        break;
+    case 'searchform':
+        $search_form['form'] = $repo->print_search($client_id);
+        $search_form['client_id'] = $client_id;
+        echo json_encode($search_form);
+        break;
+    case 'search':
+        try {
+            $search_result = $repo->search($search_text, (int)$page);
+            $search_result['client_id'] = $client_id;
+            $search_result['repo_id'] = $repo_id;
+            $search_result['search_result'] = true;
+            echo json_encode($search_result);
+        } catch (repository_exception $e) {
+            $err->e = $e->getMessage();
+            die(json_encode($err));
+        }
+        break;
+    case 'download':
+        try {
+            // we have two special repoisitory type need to deal with
+            if ($repo->options['type'] == 'local') {
+                $fileinfo = $repo->move_to_draft($file, $title, $itemid, $save_path);
+                $info = array();
+                $info['client_id'] = $client_id;
+                $info['file'] = $fileinfo['title'];
+                $info['id'] = $itemid;
+                $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
+                $filesize = $fileinfo['filesize'];
+                if (($maxbytes!==-1) && ($filesize > $maxbytes)) {
+                    $fileinfo->delete();
                     throw new file_exception('maxbytes');
                 }
-                $info = repository::move_to_filepool($filepath, $title, $itemid, $save_path, $save_filearea);
-                if (empty($info)) {
-                    $info['e'] = get_string('error', 'moodle');
+                die(json_encode($info));
+            }
+
+            $allowexternallink = (int)get_config(null, 'repositoryallowexternallinks');
+            if (!empty($allowexternallink)) {
+                $allowexternallink = true;
+            } else {
+                $allowexternallink = false;
+            }
+            // allow external links in url element all the time
+            $allowexternallink = ($allowexternallink || ($env == 'url'));
+
+            if ($allowexternallink and $linkexternal === 'yes' and ($repo->supported_returntypes() || FILE_EXTERNAL)) {
+                try {
+                    $link = $repo->get_link($file);
+                } catch (repository_exception $e){
                 }
-                echo json_encode($info);
-            } catch (repository_exception $e){
-                $err->e = $e->getMessage();
-                die(json_encode($err));
-            } catch (Exception $e) {
-                $err->e = $e->getMessage();
+                $info = array();
+                $info['filename'] = $title;
+                $info['type'] = 'link';
+                $info['url'] = $link;
+                die(json_encode($info));
+            }
+
+            // get the file location
+            $filepath = $repo->get_file($file, $title, $itemid, $save_path);
+            if ($filepath === false) {
+                $err->e = get_string('cannotdownload', 'repository');
                 die(json_encode($err));
             }
-            break;
-        case 'upload':
-            try {
-                $result = $repo->upload($maxbytes);
-                $result['client_id'] = $client_id;
-                echo json_encode($result);
-            } catch (Exception $e){
-                $err->e = $e->getMessage();
-                $err->client_id = $client_id;
-                die(json_encode($err));
+            if (($maxbytes!==-1) && (filesize($filepath) > $maxbytes)) {
+                throw new file_exception('maxbytes');
             }
-            break;
-    }
+            $info = repository::move_to_filepool($filepath, $title, $itemid, $save_path, $save_filearea);
+            if (empty($info)) {
+                $info['e'] = get_string('error', 'moodle');
+            }
+            echo json_encode($info);
+        } catch (repository_exception $e){
+            $err->e = $e->getMessage();
+            die(json_encode($err));
+        } catch (Exception $e) {
+            $err->e = $e->getMessage();
+            die(json_encode($err));
+        }
+        break;
+    case 'upload':
+        try {
+            $result = $repo->upload($maxbytes);
+            $result['client_id'] = $client_id;
+            echo json_encode($result);
+        } catch (Exception $e){
+            $err->e = $e->getMessage();
+            $err->client_id = $client_id;
+            die(json_encode($err));
+        }
+        break;
+}
 
 /**
  * Small function to walk an array to attach repository ID
+ * @param array $value
+ * @param string $key
+ * @param int $id
  */
 function repository_attach_id(&$value, $key, $id){
     $value['repo_id'] = $id;
