@@ -30,7 +30,7 @@ if ($context->contextlevel == CONTEXT_MODULE) {
 } else {
     $cm = null;
 }
-require_login($course->id, true, $cm);
+require_login($course, true, $cm);
 
 $err = new stdclass;
 

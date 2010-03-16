@@ -24,7 +24,7 @@ require_once($CFG->dirroot . '/comment/lib.php');
 $contextid = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
 list($context, $course, $cm) = get_context_info_array($contextid);
 
-require_login($course->id, true, $cm);
+require_login($course, true, $cm);
 
 $err = new stdclass;
 
