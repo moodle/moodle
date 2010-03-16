@@ -32,22 +32,21 @@ class repository_mahara extends repository {
 
     /**
      * Constructor
-     * @global <type> $SESSION
-     * @global <type> $action
-     * @global <type> $CFG
-     * @param <type> $repositoryid
-     * @param <type> $context
-     * @param <type> $options
+     * @global object $CFG
+     * @param int $repositoryid
+     * @param int $context
+     * @param array $options
      */
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
-        global $SESSION, $action, $CFG;
+        global $CFG;
         parent::__construct($repositoryid, $context, $options);
         $this->mnet = get_mnet_environment();
     }
 
-  /**
-     *
-     * @return <type>
+    /**
+     * Check if user logged in to mahara
+     * @global object $SESSION
+     * @return boolean
      */
     public function check_login() {
         //check session
@@ -58,11 +57,10 @@ class repository_mahara extends repository {
 
     /**
      * Display the file listing - no login required
-     * @global <type> $SESSION
-     * @param <type> $ajax
-     * @return <type>
+     * @global object $SESSION
+     * @return array
      */
-    public function print_login($ajax = true) {
+    public function print_login() {
         global $SESSION, $CFG, $DB;
         //jump to the peer to create a session
 
@@ -83,8 +81,8 @@ class repository_mahara extends repository {
 
     /**
      * Display the file listing for the search term
-     * @param <type> $search_text
-     * @return <type>
+     * @param string $search_text
+     * @return array
      */
     public function search($search_text) {
         return $this->get_listing('', '', $search_text);
@@ -92,12 +90,12 @@ class repository_mahara extends repository {
 
     /**
      * Retrieve the file listing - file picker function
-     * @global <type> $CFG
-     * @global <type> $DB
-     * @global <type> $USER
-     * @param <type> $encodedpath
-     * @param <type> $search
-     * @return <type>
+     * @global object $CFG
+     * @global object $DB
+     * @global object $USER
+     * @param string $encodedpath
+     * @param string $search
+     * @return array
      */
     public function get_listing($path = null, $page = 1, $search = '') {
         global $CFG, $DB, $USER, $OUTPUT;
@@ -258,9 +256,9 @@ class repository_mahara extends repository {
 
     /**
      * Add Instance settings input to Moodle form
-     * @global <type> $CFG
-     * @global <type> $DB
-     * @param <type> $
+     * @global object $CFG
+     * @global object $DB
+     * @param object $mform
      */
     public function instance_config_form($mform) {
         global $CFG, $DB;
@@ -305,7 +303,7 @@ class repository_mahara extends repository {
 
     /**
      * Names of the instance settings
-     * @return <type>
+     * @return int
      */
     public static function get_instance_option_names() {
         ///the administrator just need to set a peer
