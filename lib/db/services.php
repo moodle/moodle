@@ -83,6 +83,20 @@ $functions = array(
         'description' => 'Deletes group members.',
         'type'        => 'delete',
     ),
+    'moodle_file_get_files' => array(
+        'classname'   => 'moodle_file_external',
+        'methodname'  => 'get_files',
+        'description' => 'browse moodle files',
+        'type'        => 'read',
+        'classpath'   => 'files/externallib.php',
+    ),
+    'moodle_file_upload' => array(
+        'classname'   => 'moodle_file_external',
+        'methodname'  => 'upload',
+        'description' => 'upload a file to moodle',
+        'type'        => 'write',
+        'classpath'   => 'files/externallib.php',
+    ),
 
     // === user related functions ===
     'moodle_user_create_users' => array(
