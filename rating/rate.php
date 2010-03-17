@@ -40,7 +40,7 @@ $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);//will only be su
 $result = new stdClass;
 
 if( !isloggedin() && !$returnurl ){ //session has expired and its an ajax request
-    $result->error = get_string('sessionexpired', 'ratings');
+    $result->error = get_string('sessionerroruser', 'error');
     echo json_encode($result);
     die();
 }

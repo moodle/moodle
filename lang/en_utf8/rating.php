@@ -9,4 +9,3 @@ $string['noviewrate'] = 'You do not have the capability to view post ratings';
 $string['noviewanyrate'] = 'You can only look at results for posts that you made';
 $string['ratepermissiondenied'] = 'You do not have permission to rate this item';
 $string['ratingsuse'] = 'Use ratings';
-$string['sessionexpired'] = 'Your session has expired. Please log in again.';

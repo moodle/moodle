@@ -1234,11 +1234,11 @@ class core_renderer extends renderer_base {
     * @param $page the page object on which this rating will appear
     */
     function render_rating(rating $rating) {
-        global $CFG, $USER, $PAGE;
+        global $CFG, $USER;
         static $havesetupjavascript = false;
 
         if( !$havesetupjavascript && !empty($CFG->enableajax) ) {
-            $PAGE->requires->js_init_call('M.core_ratings.init');
+            $this->page->requires->js_init_call('M.core_ratings.init');
             $havesetupjavascript = true;
         }
 

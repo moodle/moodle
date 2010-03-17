@@ -44,9 +44,34 @@ define ('RATING_AGGREGATE_SUM', 5);
  * @since     Moodle 2.0
  */
 class rating implements renderable {
+
+    /**
+     * The context in which this rating exists
+     * @var context
+     */
+    public $context;
+
+    /**
+     * The id of the item (forum post, glossary item etc) being rated
+     * @var int
+     */
+    public $itemid;
+
+    /**
+     * The id scale (1-5, 0-100) that was in use when the rating was submitted
+     * @var int
+     */
+    public $scaleid;
+
+    /**
+     * The id of the user who submitted the rating
+     * @var int
+     */
+    public $userid;
+
     /**
     * Constructor.
-    * @param int $contextid the current context
+    * @param context $context the current context object
     * @param int $itemid the id of the associated item (forum post, glossary item etc)
     * @param int $scaleid the scale to use
     * @param int $userid the user submitting the rating
@@ -120,7 +145,7 @@ class rating implements renderable {
     * Static method that converts an aggregation method constant into something that can be included in SQL
     * @param $aggregate An aggregation constant. For example, RATING_AGGREGATE_AVERAGE.
     */
-    public static function rating_get_aggregation_method($aggregate) {
+    public static function get_aggregation_method($aggregate) {
         $aggregatestr = null;
         switch($aggregate){
             case RATING_AGGREGATE_AVERAGE:
@@ -168,7 +193,7 @@ class rating implements renderable {
     /**
     * Static method that adds rating objects to an array of items (forum posts, glossary entries etc)
     * Rating objects are available at $item->rating
-    * @param int $contextid the current context
+    * @param context $context the current context object
     * @param array $items an array of items such as forum posts or glossary items. They must have an 'id' member ie $items[0]->id
     * @param $aggregate what aggregation method should be applied. AVG, MAX etc
     * @param int $scaleid the scale from which the user can select a rating
@@ -186,7 +211,7 @@ class rating implements renderable {
             $userid = $USER->id;
         }
 
-        $aggregatestr = rating::rating_get_aggregation_method($aggregate);
+        $aggregatestr = rating::get_aggregation_method($aggregate);
 
         //create an array of item ids
         $itemids = array();

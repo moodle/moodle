@@ -34,7 +34,7 @@ $sort = optional_param('sort', '', PARAM_ALPHA);
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm);
 
-$url = new moodle_url('/rating/index.php', array('contextid'=>$contextid,'itemid'=>$itemid));
+$url = new moodle_url('/rating/index.php', array('contextid'=>$contextid,'itemid'=>$itemid,'scaleid'=>$scaleid));
 if ($sort !== 0) {
     $url->param('sort', $sort);
 }
@@ -80,7 +80,7 @@ if (!$ratings) {
     echo "<th class=\"header\" scope=\"col\"><a href=\"report.php?id=$itemid&amp;sort=time\">$strtime</a></th>";
     echo "</tr>";
     foreach ($ratings as $rating) {
-        echo '<tr class="forumpostheader">';
+        echo '<tr class="ratingitemheader">';
         echo "<td>";
         if($courseid) {
             echo $OUTPUT->user_picture($rating, array('courseid'=>$courseid));
