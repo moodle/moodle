@@ -29,6 +29,7 @@
  */
 
 require_once('../config.php');
+require_once('ratinglib.php');
 
 $contextid = required_param('contextid', PARAM_INT);
 $itemid = required_param('itemid', PARAM_INT);
@@ -36,22 +37,20 @@ $scaleid = required_param('scaleid', PARAM_INT);
 $userrating = required_param('rating'.$itemid, PARAM_INT);
 $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);//will only be supplied for non-ajax requests
 
-require_once('ratinglib.php');
-
 $result = new stdClass;
 
-if( !isloggedin() ){ //session has expired
+if( !isloggedin() && !$returnurl ){ //session has expired and its an ajax request
     $result->error = get_string('sessionexpired', 'ratings');
     echo json_encode($result);
     die();
 }
 
-$context = get_context_instance_by_id($contextid);
+list($context, $course, $cm) = get_context_info_array($contextid);
+require_login($course, false, $cm);
 
 $permissions = rating::get_rating_permissions($context);
 if( !$permissions[RATING_POST] ) {
-    //check if its a non-ajax request
-    if( $returnurl ) {
+    if( $returnurl ) { //if its a non-ajax request
         echo $OUTPUT->header();
         echo get_string('ratepermissiondenied', 'ratings');
         echo $OUTPUT->footer();
@@ -75,10 +74,6 @@ $PAGE->set_url('/lib/rate.php', array(
         'userid'=>$userid,
         'returnurl'=>$returnurl,
     ));
-
-if( $returnurl ) {
-    //
-}
 
 //todo how can we validate the forum post,glossary entry or whatever id?
 //how do we know where to look for the item? how we we work from module to forum_posts, glossary_entries etc?

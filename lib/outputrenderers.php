@@ -1235,7 +1235,6 @@ class core_renderer extends renderer_base {
     */
     function render_rating(rating $rating) {
         global $CFG, $USER, $PAGE;
-        static $strrate;//holds the string "rate". Its static so we only fetch it once.
         static $havesetupjavascript = false;
 
         if( !$havesetupjavascript && !empty($CFG->enableajax) ) {
@@ -1243,11 +1242,8 @@ class core_renderer extends renderer_base {
             $havesetupjavascript = true;
         }
 
-        if (empty($strrate)) {
-            $strrate = get_string("rate", "rating");
-        }
-
-        $strratings = '';
+        $strrate = get_string("rate", "rating");
+        $strratings = ''; //the string we'll return
 
         if($rating->settings->permissions[RATING_VIEW] || $rating->settings->permissions[RATING_VIEW_ALL]) {
             switch ($rating->settings->aggregationmethod) {
@@ -1327,7 +1323,7 @@ END;
             $strratings .= html_writer::select($scalearray, 'rating'.$rating->itemid, $rating->rating, false, array('class'=>'postratingmenu ratinginput'));
 
             //output submit button
-            $strratings .= '<span class="ratingsubmit"><input type="submit" class="postratingmenusubmit" id="postratingsubmit'.$rating->itemid.'" value="'.get_string('rate', 'forum').'" />';
+            $strratings .= '<span class="ratingsubmit"><input type="submit" class="postratingmenusubmit" id="postratingsubmit'.$rating->itemid.'" value="'.s(get_string('rate', 'rating')).'" />';
 
             //ajax code is included by rating::load_ratings()
 

@@ -26,18 +26,15 @@
 require_once("../config.php");
 require_once("ratinglib.php");
 
-$itemcontextid   = required_param('contextid', PARAM_INT);
+$contextid   = required_param('contextid', PARAM_INT);
 $itemid   = required_param('itemid', PARAM_INT);
 $scaleid   = required_param('scaleid', PARAM_INT);
 $sort = optional_param('sort', '', PARAM_ALPHA);
 
-$context = get_context_instance_by_id($itemcontextid);
-$cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
-$courseid = $cm->course;
-//$course = get_course_from_path($context->path);
-require_login($courseid, false, $cm);
+list($context, $course, $cm) = get_context_info_array($contextid);
+require_login($course, false, $cm);
 
-$url = new moodle_url('/rating/index.php', array('contextid'=>$itemcontextid,'itemid'=>$itemid));
+$url = new moodle_url('/rating/index.php', array('contextid'=>$contextid,'itemid'=>$itemid));
 if ($sort !== 0) {
     $url->param('sort', $sort);
 }

@@ -152,13 +152,12 @@ class rating implements renderable {
         global $DB;
 
         $sql = "SELECT r.id, r.rating, r.itemid, r.userid, r.timemodified,
-    u.firstname, u.lastname, u.imagealt, u.picture
-    FROM {rating} r
-    LEFT JOIN {user} u ON r.userid = u.id
-    WHERE
-        r.contextid = :contextid AND
-        r.itemid  = :itemid
-    $sort";
+                    u.firstname, u.lastname, u.imagealt, u.picture
+                FROM {rating} r
+                LEFT JOIN {user} u ON r.userid = u.id
+                WHERE r.contextid = :contextid AND
+                      r.itemid  = :itemid
+                $sort";
 
         $params['contextid'] = $context->id;
         $params['itemid'] = $itemid;
