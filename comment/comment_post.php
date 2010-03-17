@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
- * Handling all ajax request for comments API
+ * Handling new comments from non-js comments interface
  */
 require_once('../config.php');
 require_once($CFG->dirroot . '/comment/lib.php');
@@ -24,15 +24,7 @@ require_once($CFG->dirroot . '/comment/lib.php');
 $contextid = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
 list($context, $course, $cm) = get_context_info_array($contextid);
 
-$context   = get_context_instance_by_id($contextid);
-if ($context->contextlevel == CONTEXT_MODULE) {
-    $cm = get_coursemodule_from_id('', $context->instanceid);
-} else {
-    $cm = null;
-}
 require_login($course, true, $cm);
-
-$err = new stdclass;
 
 if (!confirm_sesskey()) {
     print_error('invalidsesskey');
