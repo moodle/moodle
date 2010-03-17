@@ -947,17 +947,6 @@ abstract class sql_generator {
 
         $name = '';
 
-    /// Implement one basic cache to avoid object name duplication
-    /// and to speed up repeated queries for the same objects
-        if (!isset($used_names)) {
-            static $used_names = array();
-        }
-
-    /// If this exact object has been requested, return it
-        if (array_key_exists($tablename.'-'.$fields.'-'.$suffix, $used_names)) {
-            return $used_names[$tablename.'-'.$fields.'-'.$suffix];
-        }
-
     /// Use standard naming. See http://docs.moodle.org/en/XMLDB_key_and_index_naming
         $tablearr = explode ('_', $tablename);
         foreach ($tablearr as $table) {
@@ -980,7 +969,7 @@ abstract class sql_generator {
         }
 
     /// If the calculated name is in the cache, or if we detect it by introspecting the DB let's modify if
-        if (in_array($namewithsuffix, $used_names) || $this->isNameInUse($namewithsuffix, $suffix, $tablename)) {
+        if ($this->isNameInUse($namewithsuffix, $suffix, $tablename)) {
             $counter = 2;
         /// If have free space, we add 2
             if (strlen($namewithsuffix) < $this->names_max_length) {
@@ -994,7 +983,7 @@ abstract class sql_generator {
                 $newnamewithsuffix = $newnamewithsuffix . '_' . $suffix;
             }
         /// Now iterate until not used name is found, incrementing the counter
-            while (in_array($newnamewithsuffix, $used_names) || $this->isNameInUse($newnamewithsuffix, $suffix, $tablename)) {
+            while ($this->isNameInUse($newnamewithsuffix, $suffix, $tablename)) {
                 $counter++;
                 $newname = substr($name, 0, strlen($newname)-1) . $counter;
                 $newnamewithsuffix = $newname;
@@ -1004,9 +993,6 @@ abstract class sql_generator {
             }
             $namewithsuffix = $newnamewithsuffix;
         }
-
-    /// Add the name to the cache
-        $used_names[$tablename.'-'.$fields.'-'.$suffix] = $namewithsuffix;
 
     /// Quote it if necessary (reserved words)
         $namewithsuffix = $this->getEncQuoted($namewithsuffix);
