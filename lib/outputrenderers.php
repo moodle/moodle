@@ -838,7 +838,7 @@ class core_renderer extends renderer_base {
      * @return string the HTML to be output.
      */
     public function block_move_target($target) {
-        return html_writer::tag('a', html_writer::tag('span', array('class' => 'accesshide'), $target->text), array('href' => $target->url, 'class' => 'blockmovetarget'));
+        return html_writer::tag('a', html_writer::tag('span', $target->text, array('class' => 'accesshide')), array('href' => $target->url, 'class' => 'blockmovetarget'));
     }
 
     /**
