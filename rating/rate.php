@@ -29,7 +29,7 @@
  */
 
 require_once('../config.php');
-require_once('ratinglib.php');
+require_once('lib.php');
 
 $contextid = required_param('contextid', PARAM_INT);
 $itemid = required_param('itemid', PARAM_INT);
