@@ -233,6 +233,26 @@ function xmldb_data_upgrade($oldversion) {
     /// data savepoint reached
         upgrade_mod_savepoint($result, 2009111701, 'data');
     }
+
+    if ($result && $oldversion < 2010031602) {
+        //add assesstimestart and assesstimefinish columns to data
+        $table = new xmldb_table('data');
+
+        $field = new xmldb_field('assesstimestart');
+        if (!$dbman->field_exists($table, $field)) {
+            $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'assessed');
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('assesstimefinish');
+        if (!$dbman->field_exists($table, $field)) {
+            $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'assesstimestart');
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_mod_savepoint($result, 2010031602, 'data');
+    }
+
     return $result;
 }
 

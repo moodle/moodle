@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/data/db" VERSION="20091006" COMMENT="XMLDB file for Moodle mod/data"
+<XMLDB PATH="mod/data/db" VERSION="20100317" COMMENT="XMLDB file for Moodle mod/data"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -32,8 +32,10 @@
         <FIELD NAME="asearchtemplate" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="jstemplate" NEXT="approval"/>
         <FIELD NAME="approval" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="asearchtemplate" NEXT="scale"/>
         <FIELD NAME="scale" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="approval" NEXT="assessed"/>
-        <FIELD NAME="assessed" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="scale" NEXT="defaultsort"/>
-        <FIELD NAME="defaultsort" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessed" NEXT="defaultsortdir"/>
+        <FIELD NAME="assessed" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="scale" NEXT="assesstimestart"/>
+        <FIELD NAME="assesstimestart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessed" NEXT="assesstimefinish"/>
+        <FIELD NAME="assesstimefinish" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assesstimestart" NEXT="defaultsort"/>
+        <FIELD NAME="defaultsort" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assesstimefinish" NEXT="defaultsortdir"/>
         <FIELD NAME="defaultsortdir" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultsort" NEXT="editany"/>
         <FIELD NAME="editany" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultsortdir" NEXT="notification"/>
         <FIELD NAME="notification" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Notify people when things change" PREVIOUS="editany"/>

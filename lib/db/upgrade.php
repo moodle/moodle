@@ -3111,19 +3111,6 @@ FROM {data_ratings} r INNER JOIN {data_records} re ON r.recordid=re.id
 INNER JOIN {data} d ON d.id=re.dataid';
         $result = $result && upgrade_module_ratings($ratingssql,'data');
 
-        //add assesstimestart and assesstimefinish columns to data
-        $table = new xmldb_table('data');
-        $field = new xmldb_field('assesstimestart');
-        if (!$dbman->field_exists($table, $field)) {
-            $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'assessed');
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('assesstimefinish');
-        if (!$dbman->field_exists($table, $field)) {
-            $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'assesstimestart');
-            $dbman->add_field($table, $field);
-        }
-
         //todo set permissions based on current value of glossary.assessed
         
         //todo drop forum_ratings, data_ratings and glossary_ratings
