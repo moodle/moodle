@@ -3090,27 +3090,25 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
         //migrate forumratings
         //forum ratings only have a single time column so use it for both time created and modified
-        $ratingssql = 'select r.id as rid, r.post as itemid, r.rating, r.userid, r.time as timecreated, r.time as timemodified, f.scale, f.id as mid from {forum_ratings} r
-inner join {forum_posts} p on p.id=r.post
-inner join {forum_discussions} d on d.id=p.discussion
-inner join {forum} f on f.id=d.forum';
-        echo "migrating forum ratings<br>";
+        $ratingssql = 'SELECT r.id AS rid, r.post AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified, f.scale, f.id AS mid
+FROM {forum_ratings} r
+INNER JOIN {forum_posts} p on p.id=r.post
+INNER JOIN {forum_discussions} d on d.id=p.discussion
+INNER JOIN {forum} f on f.id=d.forum';
         $result = $result && upgrade_module_ratings($ratingssql,'forum');
         
         //migrate glossary_ratings
         //glossary ratings only have a single time column so use it for both time created and modified
-        $ratingssql = 'select r.id as rid, r.entryid as itemid, r.rating, r.userid, r.time as timecreated, r.time as timemodified, g.id as mid, g.scale
-from {glossary_ratings} r inner join {glossary_entries} ge on ge.id=r.entryid
-inner join {glossary} g on g.id=ge.glossaryid';
-        echo "migrating glossary ratings<br>";
+        $ratingssql = 'SELECT r.id AS rid, r.entryid AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified, g.id AS mid, g.scale
+FROM {glossary_ratings} r INNER JOIN {glossary_entries} ge ON ge.id=r.entryid
+INNER JOIN {glossary} g ON g.id=ge.glossaryid';
         $result = $result && upgrade_module_ratings($ratingssql,'glossary');
         
         //migrate data_ratings
         //data ratings didnt store time created and modified so Im using the times from the record the rating was attached to
-        $ratingssql = 'select r.id as rid, r.recordid as itemid, r.rating, r.userid, re.timecreated, re.timemodified, d.scale, d.id as mid
-from {data_ratings} r inner join {data_records} re on r.recordid=re.id
-inner join {data} d on d.id=re.dataid';
-        echo "migrating data ratings<br>";
+        $ratingssql = 'SELECT r.id AS rid, r.recordid AS itemid, r.rating, r.userid, re.timecreated, re.timemodified, d.scale, d.id AS mid
+FROM {data_ratings} r INNER JOIN {data_records} re ON r.recordid=re.id
+INNER JOIN {data} d ON d.id=re.dataid';
         $result = $result && upgrade_module_ratings($ratingssql,'data');
 
         //add assesstimestart and assesstimefinish columns to data
@@ -3132,6 +3130,19 @@ inner join {data} d on d.id=re.dataid';
 
         upgrade_main_savepoint($result, 2010031602);
     }
+
+    //upgrade.php was out of step with install.xml for 16 hours. Its theoretically possible someone could
+    //have done a fresh install during that time with version 2010031602 and wound up with a table called 'ratings'
+    if ($result && $oldversion < 2010031700) {
+        $table = new xmldb_table('ratings');
+        
+        if ( $dbman->table_exists($table) ) {
+            $dbman->rename_table($table, 'rating');
+        }
+
+        upgrade_main_savepoint($result, 2010031700);
+    }
+
 
     return $result;
 }
