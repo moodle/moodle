@@ -558,6 +558,29 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
+     * Given three strings (table name, list of fields (comma separated) and suffix),
+     * create the proper object name quoting it if necessary.
+     *
+     * IMPORTANT: This function must be used to CALCULATE NAMES of objects TO BE CREATED,
+     *            NEVER TO GUESS NAMES of EXISTING objects!!!
+     *
+     * IMPORTANT: We are overriding this function for the MSSQL generator because objects
+     * belonging to temporary tables aren't searchable in the catalog neither in information
+     * schema tables. So, for temporary tables, we are going to add 4 randomly named "virtual"
+     * fields, so the generated names won't cause concurrency problems. Really nasty hack,
+     * but the alternative involves modifying all the creation table code to avoid naming
+     * constraints for temp objects and that will dupe a lot of code.
+     *
+     */
+    public function getNameForObject($tablename, $fields, $suffix='') {
+        if ($this->temptables->is_temptable($tablename)) { // Is temp table, inject random field names
+            $random = strtolower(random_string(12)); // 12cc to be split in 4 parts
+            $fields = $fields . ', ' . implode(', ', str_split($random, 3));
+        }
+        return parent::getNameForObject($tablename, $fields, $suffix); // Delegate to parent (common) algorithm
+    }
+
+    /**
      * Given one object name and it's type (pk, uk, fk, ck, ix, uix, seq, trg)
      * return if such name is currently in use (true) or no (false)
      * (invoked from getNameForObject()

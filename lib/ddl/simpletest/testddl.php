@@ -1294,7 +1294,7 @@ class ddl_test extends UnitTestCase {
         // Try to create table with same name, must throw exception
         $dupetable = $this->tables['test_table0'];
         try {
-            $dbman->create_temp_table($dupetable);
+            $dbman->create_table($dupetable);
             $this->assertTrue(false);
         } catch (Exception $e) {
             $this->assertTrue($e instanceof ddl_exception);
