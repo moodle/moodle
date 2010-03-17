@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20100129" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20100317" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2374,7 +2374,7 @@
         <KEY NAME="blogid" TYPE="foreign" FIELDS="blogid" REFTABLE="post" REFFIELDS="id" PREVIOUS="contextid"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="blog_external" COMMENT="External blog links used for RSS copying of blog entries to Moodle user blogs" PREVIOUS="blog_association" NEXT="ratings">
+    <TABLE NAME="blog_external" COMMENT="External blog links used for RSS copying of blog entries to Moodle user blogs" PREVIOUS="blog_association" NEXT="rating">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
@@ -2391,7 +2391,7 @@
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="ratings" COMMENT="moodle ratings" PREVIOUS="blog_external">
+    <TABLE NAME="rating" COMMENT="moodle ratings" PREVIOUS="blog_external">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="contextid"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="itemid"/>
