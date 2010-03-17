@@ -268,9 +268,12 @@ class pgsql_native_moodle_database extends moodle_database {
         }
         $this->tables = array();
         $prefix = str_replace('_', '\\\\_', $this->prefix);
-        $sql = "SELECT tablename
-                  FROM pg_catalog.pg_tables
-                 WHERE tablename LIKE '$prefix%'";
+        // Get them from information_schema instead of catalog as far as
+        // we want to get only own session temp objects (catalog returns all)
+        $sql = "SELECT table_name
+                  FROM information_schema.tables
+                 WHERE table_name LIKE '$prefix%'
+                   AND table_type IN ('BASE TABLE', 'LOCAL TEMPORARY')";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
