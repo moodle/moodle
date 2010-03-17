@@ -29,10 +29,13 @@ $a
 $string['dataroot'] = 'Каталог данных';
 $string['dirroot'] = 'Каталог Moodle';
 $string['environment'] = 'Среда (версии ПО)';
+$string['environmentrequireinstall'] = 'необходимо установить и включить';
+$string['environmentrequireversion'] = 'требуется версия $a->needed, у Вас используется версия $a->current';
 $string['installation'] = 'Установка';
 $string['language'] = 'Перевод';
 $string['parentlanguage'] = 'ru';
 $string['phpversion'] = 'Версия PHP';
+$string['reload'] = 'Обновить';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Русский';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
