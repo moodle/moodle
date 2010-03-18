@@ -23,10 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define('RATING_VIEW','moodle/rating:view');
-define('RATING_VIEW_ALL','moodle/rating:viewall');
-define('RATING_RATE','moodle/rating:rate');
-
 define('RATING_UNSET_RATING', -999);
 
 //define ('RATING_AGGREGATE_NONE', 0); //no ratings
@@ -282,9 +278,9 @@ class rating implements renderable {
         $settings->returnurl = $returnurl;
 
         $settings->permissions = new stdclass();
-        $settings->permissions->canview = has_capability(RATING_VIEW,$context);
-        $settings->permissions->canviewall = has_capability(RATING_VIEW_ALL,$context);
-        $settings->permissions->canrate = has_capability(RATING_RATE,$context);
+        $settings->permissions->canview = has_capability('moodle/rating:view',$context);
+        $settings->permissions->canviewall = has_capability('moodle/rating:viewall',$context);
+        $settings->permissions->canrate = has_capability('moodle/rating:rate',$context);
 
         $rating = null;
         foreach($items as $item) {

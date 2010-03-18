@@ -40,10 +40,10 @@ if ($sort !== 0) {
 }
 $PAGE->set_url($url);
 
-if ( !has_capability(RATING_VIEW,$context) ) {
+if ( !has_capability('moodle/rating:view',$context) ) {
     print_error('noviewrate', 'rating');
 }
-if ( !has_capability(RATING_VIEW,$context) and $USER->id != $item->userid) {
+if ( !has_capability('moodle/rating:viewall',$context) and $USER->id != $item->userid) {
     print_error('noviewanyrate', 'rating');
 }
 
