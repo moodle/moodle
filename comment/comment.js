@@ -39,9 +39,12 @@ M.core_comment = {
                 this.commentarea = args.commentarea;
                 this.courseid = args.courseid;
                 this.contextid = args.contextid;
+                this.env = args.env;
+                // expand comments?
                 if (args.autostart) {
                     this.view(args.page);
                 }
+                // hide toggle link
                 if (args.notoggle) {
                     Y.one('#comment-link-'+this.client_id).setStyle('display', 'none');
                 }
@@ -82,6 +85,8 @@ M.core_comment = {
                                 var anim = new YAHOO.util.ColorAnim(ids[i], attributes);
                                 anim.animate();
                             }
+                            scope.register_pagination();
+                            scope.register_delete_buttons();
                         }
                     }, true);
                 } else {
@@ -278,7 +283,12 @@ M.core_comment = {
                 var d = container.getStyle('display');
                 if (d=='none'||d=='') {
                     // show
-                    this.load(page);
+                    if (this.env != 'block_comments') {
+                        this.load(page);
+                    } else {
+                        this.register_delete_buttons();
+                        this.register_pagination();
+                    }
                     container.setStyle('display', 'block');
                     img.src=M.util.image_url('t/expanded', 'core');
                 } else {
@@ -313,7 +323,7 @@ M.core_comment = {
                     if (t.get('value') == '') {
                         t.set('value', M.str.moodle.addcomment);
                         t.setStyle('color','grey');
-                        t.set('rows', 1);
+                        t.set('rows', 2);
                     }
                 }
             },

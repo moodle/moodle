@@ -86,13 +86,16 @@ class comment {
      */
     public function __construct($options) {
         global $CFG, $DB;
+
         $this->viewcap = false;
         $this->postcap = false;
+
         if (!empty($options->client_id)) {
             $this->cid = $options->client_id;
         } else {
             $this->cid = uniqid();
         }
+
         if (!empty($options->context)) {
             $this->context = $options->context;
             $this->contextid = $this->context->id;
@@ -102,16 +105,19 @@ class comment {
         } else {
             print_error('invalidcontext');
         }
+
         if (!empty($options->area)) {
             $this->commentarea = $options->area;
         }
+
         if (!empty($options->itemid)) {
             $this->itemid = $options->itemid;
         }
+
         if (!empty($options->env)) {
             $this->env = $options->env;
         } else {
-            $this->env = '';
+            $this->env = 'embedded';
         }
 
         if (!empty($options->linktext)) {
@@ -152,6 +158,7 @@ EOD;
             $courseid = SITEID;
             $this->_setup_course($courseid);
         }
+
         if (!empty($options->showcount)) {
             $count = $this->count();
             if (empty($count)) {
@@ -251,7 +258,6 @@ EOD;
     public function output($return = true) {
         global $CFG, $COURSE, $PAGE;
 
-
         $this->link = qualified_me();
         $murl = new moodle_url($this->link);
         $murl->remove_params('nonjscomment');
@@ -261,6 +267,7 @@ EOD;
         $murl->param('comment_area', $this->options->commentarea);
         $murl->remove_params('page');
         $this->link = $murl->out();
+
         $options = new stdclass;
         $options->client_id = $this->cid;
         $options->commentarea = $this->commentarea;
@@ -268,6 +275,7 @@ EOD;
         $options->page   = 0;
         $options->courseid = $this->course->id;
         $options->contextid = $this->contextid;
+        $options->env = $this->env;
         if ($this->env == 'block_comments') {
             $options->autostart = true;
             $options->notoggle = true;
@@ -276,13 +284,16 @@ EOD;
         $PAGE->requires->js_init_call('M.core_comment.init', array($options), true);
 
         if (!empty(self::$nonjs)) {
-            return $this->print_comments($this->page, $return);
+            // return non js comments interface
+            return $this->print_comments($this->page, $return, true);
         }
+
         $strsubmit = get_string('submit');
         $strcancel = get_string('cancel');
         $sesskey = sesskey();
 
         // print html template
+        // Javascript will use the template to render new comments
         if (empty($CFG->commentcommentcode) && !empty($this->viewcap)) {
             echo '<div style="display:none" id="cmt-tmpl">' . $this->template . '</div>';
             $CFG->commentcommentcode = true;
@@ -293,11 +304,18 @@ EOD;
             $html = <<<EOD
 <div style="text-align:left">
 <a id="comment-link-{$this->cid}" href="{$this->link}">
-<img id="comment-img-{$this->cid}" src="{$CFG->wwwroot}/pix/t/collapsed.png" alt="{$this->linktext}" title="{$this->linktext}" />
-<span id="comment-link-text-{$this->cid}">{$this->linktext} {$this->count}</span>
+    <img id="comment-img-{$this->cid}" src="{$CFG->wwwroot}/pix/t/collapsed.png" alt="{$this->linktext}" title="{$this->linktext}" />
+    <span id="comment-link-text-{$this->cid}">{$this->linktext} {$this->count}</span>
 </a>
 <div id="comment-ctrl-{$this->cid}" class="comment-ctrl">
     <ul id="comment-list-{$this->cid}" class="comment-list">
+EOD;
+            // in comments block, we print comments list right away
+            if ($this->env == 'block_comments') {
+                $html .= $this->print_comments(0, true, false);
+            }
+
+            $html .= <<<EOD
     </ul>
     <div id="comment-pagination-{$this->cid}" class="comment-pagination"></div>
 EOD;
@@ -307,7 +325,7 @@ EOD;
                 $html .= <<<EOD
 <div class='comment-area'>
     <div class="bd">
-        <textarea name="content" rows="1" id="dlg-content-{$this->cid}"></textarea>
+        <textarea name="content" rows="2" id="dlg-content-{$this->cid}"></textarea>
     </div>
     <div class="fd" id="comment-action-{$this->cid}">
         <a href="###" id="comment-action-post-{$this->cid}"> {$strsubmit} </a>
@@ -327,7 +345,7 @@ EOD;
             }
 
             $html .= <<<EOD
-</div>
+</div><!-- end of comment-ctrl -->
 </div>
 EOD;
         } else {
@@ -351,7 +369,7 @@ EOD;
         if (empty($this->viewcap)) {
             return false;
         }
-        $CFG->commentsperpage = 15;
+        $CFG->commentsperpage = 3;
         if (!is_numeric($page)) {
             $page = 0;
         }
@@ -501,7 +519,14 @@ EOD;
         return $DB->delete_records('comments', array('id'=>$commentid));
     }
 
-    public function print_comments($page = 0, $return = true) {
+    /**
+     * Print comments
+     * @param int $page
+     * @param boolean $return return comments list string or print it out
+     * @param boolean $nonjs print nonjs comments list or not?
+     * @return mixed
+     */
+    public function print_comments($page = 0, $return = true, $nonjs = true) {
         global $DB, $CFG;
         $html = '';
         if (!(self::$comment_itemid == $this->options->itemid &&
@@ -511,22 +536,30 @@ EOD;
         }
         $comments = $this->get_comments($page);
 
-        $html .= '<h3>'.get_string('comments').'</h3>';
-        $html .= "<ul id='comment-list-$this->cid' class='comment-list'>";
+        $html = '';
+        if ($nonjs) {
+            $html .= '<h3>'.get_string('comments').'</h3>';
+            $html .= "<ul id='comment-list-$this->cid' class='comment-list'>";
+        }
         $results = array();
         $list = '';
+
         foreach ($comments as $cmt) {
-            $list = $this->print_comment($cmt, $this->contextid, $this->commentarea, $this->itemid) . $list;
+            $list = '<li id="comment-'.$cmt->id.'-'.$this->cid.'">'.$this->print_comment($cmt, $nonjs).'</li>' . $list;
         }
         $html .= $list;
-        $html .= '</ul>';
+
+        if ($nonjs) {
+            $html .= '</ul>';
+        }
         $html .= $this->get_pagination($page);
         $sesskey = sesskey();
         $returnurl = qualified_me();
         $strsubmit = get_string('submit');
+        if ($nonjs) {
         $html .= <<<EOD
 <form method="POST" action="{$CFG->wwwroot}/comment/comment_post.php">
-<textarea name="content" rows="1"></textarea>
+<textarea name="content" rows="2"></textarea>
 <input type="hidden" name="contextid" value="$this->contextid" />
 <input type="hidden" name="action" value="add" />
 <input type="hidden" name="area" value="$this->commentarea" />
@@ -537,6 +570,7 @@ EOD;
 <input type="submit" value="{$strsubmit}" />
 </form>
 EOD;
+        }
         if ($return) {
             return $html;
         } else {
@@ -544,10 +578,15 @@ EOD;
         }
     }
 
-    public function print_comment($cmt) {
+    public function print_comment($cmt, $nonjs = true) {
+        global $OUTPUT;
         $patterns = array();
         $replacements = array();
 
+        if (!empty($cmt->delete) && empty($nonjs)) {
+            $cmt->content = '<div class="comment-delete"><a href="###" id ="comment-delete-'.$this->cid.'-'.$cmt->id.'"><img src="'.$OUTPUT->pix_url('t/delete').'" /></a></div>' . $cmt->content;
+            // add the button
+        }
         $patterns[] = '___picture___';
         $patterns[] = '___name___';
         $patterns[] = '___content___';
