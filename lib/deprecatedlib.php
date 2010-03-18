@@ -2231,10 +2231,6 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
         $bc->id = $attributes['id'];
         unset($attributes['id']);
     }
-    if (isset($attributes['class'])) {
-        $bc->set_classes($attributes['class']);
-        unset($attributes['class']);
-    }
     $bc->attributes = $attributes;
 
     echo $OUTPUT->block($bc, BLOCK_POS_LEFT); // POS LEFT may be wrong, but no way to get a better guess here.
