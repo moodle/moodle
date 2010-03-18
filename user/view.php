@@ -77,7 +77,7 @@
             }
 
             if (!has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
-                if (has_capability('moodle/course:view', $coursecontext)) {
+                if (has_capability('moodle/role:assign', $coursecontext)) {
                     print_header("$strpersonalprofile: ", "$strpersonalprofile: ",
                                      "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
                                   <a href=\"index.php?id=$course->id\">$strparticipants</a> -> $fullname",
