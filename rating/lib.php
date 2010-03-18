@@ -92,6 +92,7 @@ class rating implements renderable {
     /**
     * Update this rating in the database
     * @param int $rating the integer value of this rating
+    * @return void
     */
     public function update_rating($rating) {
         global $DB;
@@ -118,11 +119,7 @@ class rating implements renderable {
             $DB->insert_record($table, $data);
         }
         else {
-            //$data->id       = $this->id;
             $data->id       = $items[0]->rating->id;
-            /*$data->contextid    = $this->context->id;
-            $data->scaleid      = $this->scaleid;
-            $data->userid       = $this->userid;*/
             $data->rating       = $rating;
 
             $time = time();
@@ -134,7 +131,7 @@ class rating implements renderable {
 
     /**
     * Retreive the integer value of this rating
-    * @return the integer value of this rating object
+    * @return int the integer value of this rating object
     */
     public function get_rating() {
         return $this->rating;
@@ -142,6 +139,7 @@ class rating implements renderable {
 
     /**
     * Remove this rating from the database
+    * @return void
     */
     public function delete_rating() {
         //todo implement this if its actually needed
@@ -149,7 +147,8 @@ class rating implements renderable {
 
     /**
     * Static method that converts an aggregation method constant into something that can be included in SQL
-    * @param $aggregate An aggregation constant. For example, RATING_AGGREGATE_AVERAGE.
+    * @param int $aggregate An aggregation constant. For example, RATING_AGGREGATE_AVERAGE.
+    * @return string an SQL aggregation method
     */
     public static function get_aggregation_method($aggregate) {
         $aggregatestr = null;
@@ -178,6 +177,8 @@ class rating implements renderable {
      * This returns all users ratings for a single item
     * @param context $context the context in which the rating exists
     * @param int $itemid The id of the forum posts, glossary items or whatever
+    * @param string SQL sort by clause
+    * @return array an array of ratings
     */
     public static function load_ratings_for_item($context, $itemid, $sort) {
         global $DB;
@@ -202,10 +203,11 @@ class rating implements renderable {
     * Rating objects are available at $item->rating
     * @param context $context the current context object
     * @param array $items an array of items such as forum posts or glossary items. They must have an 'id' member ie $items[0]->id
-    * @param $aggregate what aggregation method should be applied. AVG, MAX etc
+    * @param int $aggregate what aggregation method should be applied. AVG, MAX etc
     * @param int $scaleid the scale from which the user can select a rating
     * @param int $userid the id of the current user
-    * @return returns the array of items with their ratings attached at $items[0]->rating
+    * @param string $returnurl the url to return the user to after submitting a rating. Can be left null for ajax requests.
+    * @return array the array of items with their ratings attached at $items[0]->rating
     */
     public static function load_ratings($context, $items, $aggregate=RATING_AGGREGATE_AVERAGE, $scaleid=5, $userid = null, $returnurl = null) {
         global $DB, $USER, $PAGE, $CFG;
