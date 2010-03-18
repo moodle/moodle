@@ -89,7 +89,7 @@
             }
 
             if (!has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
-                if (has_capability('moodle/course:view', $coursecontext)) {
+                if (has_capability('moodle/role:assign', $coursecontext)) {
                     $navlinks[] = array('name' => $fullname, 'link' => null, 'type' => 'misc');
                     $navigation = build_navigation($navlinks);
                     print_header("$strpersonalprofile: ", "$strpersonalprofile: ", $navigation, "", "", true, "&nbsp;", navmenu($course));
