@@ -242,11 +242,11 @@
         $emailswitch = '';
 
         if (has_capability('moodle/course:useremail', $coursecontext) or $currentuser) {   /// Can use the enable/disable email stuff
-            if (!empty($enable)) {     /// Recieved a parameter to enable the email address
+            if (!empty($enable) and confirm_sesskey()) {     /// Recieved a parameter to enable the email address
                 set_field('user', 'emailstop', 0, 'id', $user->id);
                 $user->emailstop = 0;
             }
-            if (!empty($disable)) {     /// Recieved a parameter to disable the email address
+            if (!empty($disable) and confirm_sesskey()) {     /// Recieved a parameter to disable the email address
                 set_field('user', 'emailstop', 1, 'id', $user->id);
                 $user->emailstop = 1;
             }
@@ -265,7 +265,7 @@
                 $switchpix   = 'email.gif';
             }
             $emailswitch = "&nbsp;<a title=\"$switchclick\" ".
-                           "href=\"view.php?id=$user->id&amp;course=$course->id&amp;$switchparam=1\">".
+                           "href=\"view.php?id=$user->id&amp;course=$course->id&amp;$switchparam=1&amp;sesskey=".sesskey()."\">".
                            "<img src=\"$CFG->pixpath/t/$switchpix\" alt=\"$switchclick\" /></a>";
 
         } else if ($currentuser) {         /// Can only re-enable an email this way
@@ -275,7 +275,7 @@
                 $switchclick = get_string('emailenableclick');
 
                 $emailswitch = "&nbsp;(<a title=\"$switchclick\" ".
-                               "href=\"view.php?id=$user->id&amp;course=$course->id&amp;enable=1\">$switchtitle</a>)";
+                               "href=\"view.php?id=$user->id&amp;course=$course->id&amp;enable=1&amp;sesskey=".sesskey()."\">$switchtitle</a>)";
             }
         }
 
