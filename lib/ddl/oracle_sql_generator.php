@@ -203,7 +203,7 @@ class oracle_sql_generator extends sql_generator {
 
         $results[] = $sequence;
 
-        $results = array_merge($results, $this->getCreateTriggerSQL ($xmldb_table, $xmldb_field));
+        $results = array_merge($results, $this->getCreateTriggerSQL ($xmldb_table, $xmldb_field, $sequence_name));
 
         return $results;
     }
@@ -211,10 +211,9 @@ class oracle_sql_generator extends sql_generator {
     /**
      * Returns the code needed to create one trigger for the xmldb_table and xmldb_field passed
      */
-    public function getCreateTriggerSQL($xmldb_table, $xmldb_field) {
+    public function getCreateTriggerSQL($xmldb_table, $xmldb_field, $sequence_name) {
 
         $trigger_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'trg');
-        $sequence_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'seq');
 
         $trigger = "CREATE TRIGGER " . $trigger_name;
         $trigger.= "\n    BEFORE INSERT";
@@ -293,7 +292,7 @@ class oracle_sql_generator extends sql_generator {
 
     /// Create new trigger
         $newt = new xmldb_table($newname); /// Temp table for trigger code generation
-        $results = array_merge($results, $this->getCreateTriggerSQL($newt, $xmldb_field));
+        $results = array_merge($results, $this->getCreateTriggerSQL($newt, $xmldb_field, $newseqname));
 
     /// Rename all the check constraints in the table
         $oldtablename = $this->getTableName($xmldb_table);
