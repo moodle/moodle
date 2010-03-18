@@ -119,15 +119,27 @@ class user_picture implements renderable {
 
     /**
      * Returns a list of required user fields, usefull when fetching required user info from db.
+     *
+     * In some cases we have to fetch the user data together with some other information,
+     * the idalias is useful there because the id would otherwise override the main
+     * id of the result record. Please note it has to be converted back to id before rendering.
+     *
      * @param string $tableprefix name of database table prefix in query
+     * @param string $idalias alias of id field
      * @return string
      */
-    public static function fields($tableprefix = '') {
-        if ($tableprefix === '') {
+    public static function fields($tableprefix = '', $idalias = '') {
+        if ($tableprefix === '' and $idalias === '') {
             return self::FIELDS;
-        } else {
-            return "$tableprefix." . str_replace(',', ",$tableprefix.", self::FIELDS);
         }
+        $fields = explode(',', self::FIELDS);
+        foreach ($fields as $key=>$field) {
+            if ($field === 'id' and $idalias !== '') {
+                $field = "$field AS $idalias";
+            }
+            $fields[$key] = "$tableprefix.$field";
+        }
+        return implode(',', $fields);
     }
 }
 
