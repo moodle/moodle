@@ -28,9 +28,11 @@ class editcategory_form extends moodleform {
         $mform->addElement('editor', 'description_editor', get_string('description'), null, $editoroptions);
         $mform->setType('description_editor', PARAM_RAW);
         if (!empty($CFG->allowcategorythemes)) {
-            $themes=array();
-            $themes[''] = get_string('forceno');
-            $themes += get_list_of_themes();
+            $themes = array(''=>get_string('forceno'));
+            $allthemes = get_list_of_themes();
+            foreach ($allthemes as $key=>$theme) {
+                $themes[$key] = $theme->name;
+            }
             $mform->addElement('select', 'theme', get_string('forcetheme'), $themes);
         }
         $mform->setHelpButton('description_editor', array('writing', 'richtext2'), false, 'editorhelpbutton');
