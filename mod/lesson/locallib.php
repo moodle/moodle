@@ -458,7 +458,7 @@ function lesson_mediafile_block_contents($cmid, $lesson) {
 
     $bc = new block_contents();
     $bc->title = get_string('linkedmedia', 'lesson');
-    $bc->set_classes('mediafile');
+    $bc->attributes['class'] = 'mediafile';
     $bc->content = $content;
 
     return $bc;
@@ -491,7 +491,7 @@ function lesson_clock_block_contents($cmid, $lesson, $timer, $page) {
 
     $bc = new block_contents();
     $bc->title = get_string('timeremaining', 'lesson');
-    $bc->set_classes('clock');
+    $bc->attributes['class'] = 'clock';
     $bc->content = $content;
 
     return $bc;
@@ -545,7 +545,7 @@ function lesson_menu_block_contents($cmid, $lesson) {
 
     $bc = new block_contents();
     $bc->title = get_string('lessonmenu', 'lesson');
-    $bc->set_classes('menu');
+    $bc->attributes['class'] = 'menu';
     $bc->content = $content;
 
     return $bc;
