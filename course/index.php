@@ -63,6 +63,7 @@ $strcourses = get_string('courses');
 $stredit = get_string('edit');
 $strdelete = get_string('delete');
 $straction = get_string('action');
+$strfulllistofcourses = get_string('fulllistofcourses');
 
 
 /// Unless it's an editing admin, just print the regular listing of courses/categories
