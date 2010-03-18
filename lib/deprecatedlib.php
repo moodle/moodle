@@ -2484,7 +2484,6 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
     $form = new single_button($url, $text, 'post');
     $form->button->title = $title;
     $form->button->id = $id;
-    $form->add_class($class);
 
     // Parse the $options string
     $popupparams = array();
