@@ -183,7 +183,7 @@ class rating implements renderable {
     public static function load_ratings_for_item($context, $itemid, $sort) {
         global $DB;
 
-        $userfields = user_picture::fields('u');
+        $userfields = user_picture::fields('u','uid');
         $sql = "SELECT r.id, r.rating, r.itemid, r.userid, r.timemodified,
                     $userfields
                 FROM {rating} r
