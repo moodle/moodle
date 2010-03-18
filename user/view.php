@@ -130,7 +130,7 @@ if (!$currentuser) {
         }
 
         if (!has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
-            if (has_capability('moodle/course:view', $coursecontext)) {
+            if (has_capability('moodle/role:assign', $coursecontext)) {
                 $PAGE->navbar->add($fullname);
                 echo $OUTPUT->heading(get_string('notenrolled', $fullname));
             } else {
