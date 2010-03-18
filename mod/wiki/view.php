@@ -10,7 +10,7 @@
     require_once($CFG->libdir . '/ajax/ajaxlib.php');
     require_js(array('yui_yahoo', 'yui_event', 'yui_connection'));
 
-    $ewiki_action = optional_param('ewiki_action', '', PARAM_ALPHA);     // Action on Wiki-Page
+    $ewiki_action = null; // this is a bloody global which is set up elsewhere
     $id           = optional_param('id', 0, PARAM_INT);                  // Course Module ID, or
     $wid          = optional_param('wid', 0, PARAM_INT);                 // Wiki ID
     $page         = optional_param('page', false);                       // Wiki Page Name
@@ -265,9 +265,15 @@
                addslashes("view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$ewiki_title"),
                format_string($wiki->name,true).": ".$ewiki_title, $cm->id, $userid);
     } else if ($ewiki_action != 'edit') {
-        add_to_log($course->id, "wiki", $ewiki_action, 
-               addslashes("view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$ewiki_title"),
-               format_string($wiki->name,true).": ".$ewiki_title, $cm->id, $userid);
+        if (!in_array($ewiki_action, array('view', 'links', 'info'))) {
+            add_to_log($course->id, "wiki", 'bogus', 
+                   addslashes("view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$ewiki_title"),
+                   format_string($wiki->name,true).": ".$ewiki_title, $cm->id, $userid);
+        } else {
+            add_to_log($course->id, "wiki", $ewiki_action, 
+                   addslashes("view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$ewiki_title"),
+                   format_string($wiki->name,true).": ".$ewiki_title, $cm->id, $userid);
+        }
     } 
 
 
