@@ -6705,8 +6705,8 @@ function notify_login_failures() {
                 "\n\n".get_string('notifyloginfailuresmessageend','',$CFG->wwwroot)."\n\n";
 
     /// For each destination, send mail
+        mtrace('Emailing admins about '. $count .' failed login attempts');
         foreach ($recip as $admin) {
-            mtrace('Emailing '. $admin->username .' about '. $count .' failed login attempts');
             email_to_user($admin,get_admin(), $subject, $body);
         }
 
