@@ -40,11 +40,10 @@ if ($sort !== 0) {
 }
 $PAGE->set_url($url);
 
-$permissions = rating::get_rating_permissions(context);
-if (!$permissions[RATING_VIEW]) {
+if ( !has_capability(RATING_VIEW,$context) ) {
     print_error('noviewrate', 'rating');
 }
-if (!$permissions[RATING_VIEW_ALL] and $USER->id != $item->userid) {
+if ( !has_capability(RATING_VIEW,$context) and $USER->id != $item->userid) {
     print_error('noviewanyrate', 'rating');
 }
 

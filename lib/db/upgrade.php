@@ -3051,7 +3051,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010021800);
     }
 
-    if ($result && $oldversion < 2010031602) {
+    if ($result && $oldversion < 2010031800) {
         //drop the erroneously created ratings table
         $table = new xmldb_table('ratings');
         if ($dbman->table_exists($table)) {
@@ -3060,6 +3060,9 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
         //create the rating table (replaces module specific rating implementations)
         $table = new xmldb_table('rating');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
 
     /// Adding fields to table rating
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
@@ -3086,7 +3089,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $dbman->create_table($table);
         }
 
-        //migrate ratings out of the modules into the central rating table
+        //pull in the ratings from the modules into the central rating table
 
         //migrate forumratings
         //forum ratings only have a single time column so use it for both time created and modified
@@ -3099,37 +3102,24 @@ INNER JOIN {forum} f on f.id=d.forum';
         
         //migrate glossary_ratings
         //glossary ratings only have a single time column so use it for both time created and modified
-        $ratingssql = 'SELECT r.id AS rid, r.entryid AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified, g.id AS mid, g.scale
-FROM {glossary_ratings} r INNER JOIN {glossary_entries} ge ON ge.id=r.entryid
+        $ratingssql = 'SELECT r.id AS rid, r.entryid AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified, g.scale, g.id AS mid
+FROM {glossary_ratings} r
+INNER JOIN {glossary_entries} ge ON ge.id=r.entryid
 INNER JOIN {glossary} g ON g.id=ge.glossaryid';
         $result = $result && upgrade_module_ratings($ratingssql,'glossary');
         
         //migrate data_ratings
         //data ratings didnt store time created and modified so Im using the times from the record the rating was attached to
         $ratingssql = 'SELECT r.id AS rid, r.recordid AS itemid, r.rating, r.userid, re.timecreated, re.timemodified, d.scale, d.id AS mid
-FROM {data_ratings} r INNER JOIN {data_records} re ON r.recordid=re.id
+FROM {data_ratings} r
+INNER JOIN {data_records} re ON r.recordid=re.id
 INNER JOIN {data} d ON d.id=re.dataid';
         $result = $result && upgrade_module_ratings($ratingssql,'data');
-
-        //todo set permissions based on current value of glossary.assessed
         
         //todo drop forum_ratings, data_ratings and glossary_ratings
 
-        upgrade_main_savepoint($result, 2010031602);
+        upgrade_main_savepoint($result, 2010031800);
     }
-
-    //upgrade.php was out of step with install.xml for 16 hours. Its theoretically possible someone could
-    //have done a fresh install during that time with version 2010031602 and wound up with a table called 'ratings'
-    if ($result && $oldversion < 2010031700) {
-        $table = new xmldb_table('ratings');
-        
-        if ( $dbman->table_exists($table) ) {
-            $dbman->rename_table($table, 'rating');
-        }
-
-        upgrade_main_savepoint($result, 2010031700);
-    }
-
 
     return $result;
 }

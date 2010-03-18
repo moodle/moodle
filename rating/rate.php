@@ -48,8 +48,7 @@ if( !isloggedin() && !$returnurl ){ //session has expired and its an ajax reques
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm);
 
-$permissions = rating::get_rating_permissions($context);
-if( !$permissions[RATING_POST] ) {
+if( !has_capability(RATING_RATE,$context) ) {
     if( $returnurl ) { //if its a non-ajax request
         echo $OUTPUT->header();
         echo get_string('ratepermissiondenied', 'ratings');
@@ -67,12 +66,7 @@ if( !$permissions[RATING_POST] ) {
 $userid = $USER->id;
 
 $PAGE->set_url('/lib/rate.php', array(
-        'contextid'=>$contextid,
-        'itemid'=>$itemid,
-        'scaleid'=>$scaleid,
-        'rating'=>$userrating,
-        'userid'=>$userid,
-        'returnurl'=>$returnurl,
+        'contextid'=>$contextid
     ));
 
 //todo how can we validate the forum post,glossary entry or whatever id?

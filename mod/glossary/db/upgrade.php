@@ -257,6 +257,8 @@ function xmldb_glossary_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009110800, 'glossary');
     }
 
+    //todo andrew set rating permissions based on current value of glossary.assessed
+
     return $result;
 }
 

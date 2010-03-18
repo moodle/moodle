@@ -1245,7 +1245,7 @@ class core_renderer extends renderer_base {
         $strrate = get_string("rate", "rating");
         $strratings = ''; //the string we'll return
 
-        if($rating->settings->permissions[RATING_VIEW] || $rating->settings->permissions[RATING_VIEW_ALL]) {
+        if($rating->settings->permissions->canview || $rating->settings->permissions->canviewall) {
             switch ($rating->settings->aggregationmethod) {
                 case RATING_AGGREGATE_AVERAGE :
                     $strratings .= get_string("aggregateavg", "forum");
@@ -1283,11 +1283,11 @@ class core_renderer extends renderer_base {
             
             $aggstr = "{$ratingstr} / $scalemax ({$rating->count}) ";
 
-            if ($rating->settings->permissions[RATING_VIEW_ALL]) {
+            if ($rating->settings->permissions->canviewall) {
                 $link = new moodle_url("/rating/index.php?contextid={$rating->context->id}&itemid={$rating->itemid}&scaleid={$rating->scaleid}");
                 $action = new popup_action('click', $link, 'ratings', array('height' => 400, 'width' => 600));
                 $strratings .= $this->action_link($link, $aggstr, $action);
-            } else if ($rating->settings->permissions[RATING_VIEW_ALL]) {
+            } else if ($rating->settings->permissions->canview) {
                 $strratings .= $aggstr;
             }
         }
@@ -1295,7 +1295,7 @@ class core_renderer extends renderer_base {
         //todo andrew alter the below if to deny guest users the ability to post ratings.
         //Petr to define "guest"
         $formstart = null;
-        if($rating->settings->permissions[RATING_POST]) {
+        if($rating->settings->permissions->canrate) {
             //dont use $rating->userid below as it will be null if the user hasnt already rated the item
             $formstart = <<<END
 <form id="postrating{$rating->itemid}" class="postratingform" method="post" action="rating/rate.php">

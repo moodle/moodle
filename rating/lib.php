@@ -23,9 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define('RATING_VIEW','view');
-define('RATING_VIEW_ALL','viewall');
-define('RATING_POST','post');
+define('RATING_VIEW','moodle/rating:view');
+define('RATING_VIEW_ALL','moodle/rating:viewall');
+define('RATING_RATE','moodle/rating:rate');
 
 define('RATING_UNSET_RATING', -999);
 
@@ -68,6 +68,12 @@ class rating implements renderable {
      * @var int
      */
     public $userid;
+
+    /**
+     * settings for this rating. Necessary to render the rating.
+     * @var stdclass
+     */
+    public $settings;
 
     /**
     * Constructor.
@@ -243,8 +249,6 @@ class rating implements renderable {
         $ratingsrecords = $DB->get_records_sql($sql, $params);
 
         //now create the rating sub objects
-        $permissions = rating::get_rating_permissions($context);
-
         $scaleobj = new stdClass();
         $scalemax = null;
 
@@ -268,11 +272,16 @@ class rating implements renderable {
             $scalemax = $scaleid;
         }
 
+        //should $settings and $settings->permissions be declared as proper classes?
         $settings = new stdclass(); //settings that are common to all ratings objects in this context
         $settings->scale = $scaleobj; //the scale to use now
-        $settings->permissions = $permissions;
         $settings->aggregationmethod = $aggregate;
         $settings->returnurl = $returnurl;
+
+        $settings->permissions = new stdclass();
+        $settings->permissions->canview = has_capability(RATING_VIEW,$context);
+        $settings->permissions->canviewall = has_capability(RATING_VIEW_ALL,$context);
+        $settings->permissions->canrate = has_capability(RATING_RATE,$context);
 
         $rating = null;
         foreach($items as $item) {
@@ -316,14 +325,5 @@ class rating implements renderable {
             }
         }
         return $items;
-    }
-
-    /**
-    * Static method that retrieves the current user's permissions to do with ratings
-    * @param context $contextid the current context
-    * @return returns the array of permissions
-    */
-    public static function get_rating_permissions($context) {
-        return array(RATING_VIEW=>has_capability('moodle/rating:view',$context), RATING_VIEW_ALL=>has_capability('moodle/rating:viewall',$context), RATING_POST=>has_capability('moodle/rating:rate',$context));
     }
 } //end rating class definition
