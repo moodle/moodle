@@ -313,12 +313,14 @@ EOD;
             // in comments block, we print comments list right away
             if ($this->env == 'block_comments') {
                 $html .= $this->print_comments(0, true, false);
-            }
-
-            $html .= <<<EOD
+                $html .= '</ul>';
+                $html .= $this->get_pagination(0);
+            } else {
+                $html .= <<<EOD
     </ul>
     <div id="comment-pagination-{$this->cid}" class="comment-pagination"></div>
 EOD;
+            }
 
             // print posting textarea
             if (!empty($this->postcap)) {
@@ -369,7 +371,7 @@ EOD;
         if (empty($this->viewcap)) {
             return false;
         }
-        $CFG->commentsperpage = 3;
+        $CFG->commentsperpage = 15;
         if (!is_numeric($page)) {
             $page = 0;
         }
@@ -435,7 +437,7 @@ EOD;
         } else {
             // return ajax paging bar
             $str = '';
-            $str .= '<div class="comment-paging" id="comment-paging-'.$this->cid.'">';
+            $str .= '<div class="comment-paging" id="comment-pagination-'.$this->cid.'">';
             for ($p=0; $p<$pages; $p++) {
                 $extra = '';
                 if ($p == $page) {
@@ -551,8 +553,8 @@ EOD;
 
         if ($nonjs) {
             $html .= '</ul>';
+            $html .= $this->get_pagination($page);
         }
-        $html .= $this->get_pagination($page);
         $sesskey = sesskey();
         $returnurl = qualified_me();
         $strsubmit = get_string('submit');

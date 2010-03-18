@@ -265,7 +265,7 @@ M.core_comment = {
             register_pagination: function() {
                 var scope = this;
                 // page buttons
-                Y.all('#comment-paging-'+this.client_id+' a').each(
+                Y.all('#comment-pagination-'+this.client_id+' a').each(
                     function(node, id) {
                         node.on('click', function(e, node) {
                             var id = node.get('id');
