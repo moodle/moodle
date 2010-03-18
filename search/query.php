@@ -202,23 +202,23 @@
     else {
         print_box_start();
       ?>
-        <input type="hidden" name="a" value="<?php print $advanced; ?>"/>
+        <input type="hidden" name="a" value="<?php p($advanced); ?>"/>
     
         <table border="0" cellpadding="3" cellspacing="3">
     
         <tr>
           <td width="240"><?php print_string('thesewordsmustappear', 'search') ?>:</td>
-          <td><input type="text" name="mustappear" length="50" value="<?php print $adv->mustappear; ?>" /></td>
+          <td><input type="text" name="mustappear" length="50" value="<?php p($adv->mustappear); ?>" /></td>
         </tr>
     
         <tr>
           <td><?php print_string('thesewordsmustnotappear', 'search') ?>:</td>
-          <td><input type="text" name="notappear" length="50" value="<?php print $adv->notappear; ?>" /></td>
+          <td><input type="text" name="notappear" length="50" value="<?php p($adv->notappear); ?>" /></td>
         </tr>
     
         <tr>
           <td><?php print_string('thesewordshelpimproverank', 'search') ?>:</td>
-          <td><input type="text" name="canappear" length="50" value="<?php print $adv->canappear; ?>" /></td>
+          <td><input type="text" name="canappear" length="50" value="<?php p($adv->canappear); ?>" /></td>
         </tr>
     
         <tr>
@@ -251,16 +251,16 @@
     
         <tr>
           <td><?php print_string('wordsintitle', 'search') ?>:</td>
-          <td><input type="text" name="title" length="50" value="<?php print $adv->title; ?>" /></td>
+          <td><input type="text" name="title" length="50" value="<?php p($adv->title); ?>" /></td>
         </tr>
     
         <tr>
           <td><?php print_string('authorname', 'search') ?>:</td>
-          <td><input type="text" name="author" length="50" value="<?php print $adv->author; ?>" /></td>
+          <td><input type="text" name="author" length="50" value="<?php p($adv->author); ?>" /></td>
         </tr>
     
         <tr>
-          <td colspan="3" align="center"><br /><input type="submit" value="<?php print_string('search', 'search') ?>" /></td>
+          <td colspan="3" align="center"><br /><input type="submit" value="<?php p(get_string('search', 'search')) ?>" /></td>
         </tr>
     
         <tr>
