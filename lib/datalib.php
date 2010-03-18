@@ -2263,21 +2263,20 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
 function get_logs_userday($userid, $courseid, $daystart) {
     global $DB;
 
-    $params = array();
+    $params = array($daystart, $userid, $daystart);
 
     $courseselect = '';
     if ($courseid) {
-        $courseselect = "AND course = :courseid";
-        $params['courseid'] = $courseid;
+        $courseselect = "AND course = ?";
+        $params[] = $courseid;
     }
-    $params['userid'] = $userid;
-    $params['daystart'] = $daystart;
+    $params[] = $daystart;
 
-    return $DB->get_records_sql("SELECT FLOOR((time - :daystart)/". HOURSECS .") AS hour, COUNT(*) AS num
+    return $DB->get_records_sql("SELECT FLOOR((time - ?)/". HOURSECS .") AS hour, COUNT(*) AS num
                                    FROM {log}
-                                  WHERE userid = :userid
-                                        AND time > :daystart $courseselect
-                               GROUP BY FLOOR((time - :daystart)/". HOURSECS .") ");
+                                  WHERE userid = ?
+                                        AND time > ? $courseselect
+                               GROUP BY FLOOR((time - ?)/". HOURSECS .") ", $params);
 }
 
 /**
