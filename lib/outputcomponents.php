@@ -596,10 +596,10 @@ class action_link implements renderable {
     }
 
     public function add_class($class) {
-        if (empty($this->atribbutes['class'])) {
-            $this->atribbutes['class'] = $class;
+        if (empty($this->attributes['class'])) {
+            $this->attributes['class'] = $class;
         } else {
-            $this->atribbutes['class'] = $this->atribbutes['class'].' '.$class;
+            $this->attributes['class'] .= ' ' . $class;
         }
     }
 }
