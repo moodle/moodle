@@ -78,12 +78,12 @@ if (!$ratings) {
     echo "<th class=\"header\" scope=\"col\" style=\"width:100%\"><a href=\"report.php?id=$itemid&amp;sort=rating\">$strrating</a></th>";
     echo "<th class=\"header\" scope=\"col\"><a href=\"report.php?id=$itemid&amp;sort=time\">$strtime</a></th>";
     echo "</tr>";
-    $user = null;
+
     foreach ($ratings as $rating) {
-        //undo the aliasing necessary for user_picture::fields
-        $user = clone($rating);//could get away with just overwriting rating->id and not cloning
-        //the rating object as we don't use rating->id again. That just seems like a bad idea.
-        $user->id = $user->uid;
+        //Undo the aliasing of the user id column from user_picture::fields()
+        //we could clone the rating object or preserve the rating id if we needed it again
+        //but we don't
+        $rating->id = $rating->uid;
         
         echo '<tr class="ratingitemheader">';
         echo "<td>";
