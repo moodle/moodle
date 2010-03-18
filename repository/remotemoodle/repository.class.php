@@ -143,6 +143,7 @@ class repository_remotemoodle extends repository {
      * @global object $DB
      * @global object $USER
      * @param string $encodedpath
+     * @param int $page
      * @param string $search
      * @return array
      */

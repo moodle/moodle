@@ -93,7 +93,8 @@ class repository_mahara extends repository {
      * @global object $CFG
      * @global object $DB
      * @global object $USER
-     * @param string $encodedpath
+     * @param string $path
+     * @param string $page
      * @param string $search
      * @return array
      */
