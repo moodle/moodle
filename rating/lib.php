@@ -182,8 +182,9 @@ class rating implements renderable {
     public static function load_ratings_for_item($context, $itemid, $sort) {
         global $DB;
 
+        $userfields = user_picture::fields('u');
         $sql = "SELECT r.id, r.rating, r.itemid, r.userid, r.timemodified,
-                    u.firstname, u.lastname, u.imagealt, u.picture
+                    $userfields
                 FROM {rating} r
                 LEFT JOIN {user} u ON r.userid = u.id
                 WHERE r.contextid = :contextid AND
@@ -252,7 +253,7 @@ class rating implements renderable {
         $scaleobj = new stdClass();
         $scalemax = null;
 
-        //todo we could look for a scale id on each item to allow each item to use a different scale
+        //we could look for a scale id on each item to allow each item to use a different scale
 
         if($scaleid < 0 ) { //if its a scale (not numeric)
             $scalerecord = $DB->get_record('scale', array('id' => -$scaleid));

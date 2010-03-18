@@ -81,8 +81,8 @@ if (!$ratings) {
     foreach ($ratings as $rating) {
         echo '<tr class="ratingitemheader">';
         echo "<td>";
-        if($courseid) {
-            echo $OUTPUT->user_picture($rating, array('courseid'=>$courseid));
+        if($course && $course->id) {
+            echo $OUTPUT->user_picture($rating, array('courseid'=>$course->id));
         } else {
             echo $OUTPUT->user_picture($rating);
         }
