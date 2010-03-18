@@ -32,6 +32,8 @@ define ('RATING_AGGREGATE_MAXIMUM', 3);
 define ('RATING_AGGREGATE_MINIMUM', 4);
 define ('RATING_AGGREGATE_SUM', 5);
 
+define ('RATING_SCALE_OUT_OF_5', 5);
+
 /**
  * The rating class represents a single rating by a single user. It also contains a static method to retrieve sets of ratings.
  *
@@ -205,7 +207,7 @@ class rating implements renderable {
     * @param string $returnurl the url to return the user to after submitting a rating. Can be left null for ajax requests.
     * @return array the array of items with their ratings attached at $items[0]->rating
     */
-    public static function load_ratings($context, $items, $aggregate=RATING_AGGREGATE_AVERAGE, $scaleid=5, $userid = null, $returnurl = null) {
+    public static function load_ratings($context, $items, $aggregate=RATING_AGGREGATE_AVERAGE, $scaleid=RATING_SCALE_OUT_OF_5, $userid = null, $returnurl = null) {
         global $DB, $USER, $PAGE, $CFG;
 
         if(empty($items)) {
