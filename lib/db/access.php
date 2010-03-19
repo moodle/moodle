@@ -1553,8 +1553,6 @@ $capabilities = array(
         )
     ),
     'moodle/rating:rate' => array(
-
-        'riskbitmask' => RISK_DATALOSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
