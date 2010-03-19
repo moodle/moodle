@@ -3121,6 +3121,12 @@ JOIN {data} d ON d.id=re.dataid';
         upgrade_main_savepoint($result, 2010031800);
     }
 
+    if ($result && $oldversion < 2010031900) {
+        // regeneration of sessions is always enabled, no need for this setting any more
+        unset_config('regenloginsession');
+        upgrade_main_savepoint($result, 2010031900);
+    }
+    
     return $result;
 }
 
