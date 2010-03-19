@@ -35,7 +35,7 @@ define ('RATING_AGGREGATE_SUM', 5);
 define ('RATING_DEFAULT_SCALE', 5);
 
 /**
- * The rating class represents a single rating by a single user. It also contains a static method to retrieve sets of ratings.
+ * The rating class represents a single rating by a single user
  *
  * @copyright 2010 Andrew Davis
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -110,7 +110,9 @@ class rating implements renderable {
         $ratingoptions->aggregate = RATING_AGGREGATE_AVERAGE;//we dont actually care what aggregation is applied
         $ratingoptions->scaleid = $this->scaleid;
         $ratingoptions->userid = $this->userid;
-        $items = rating::load_ratings($ratingoptions);
+
+        $rm = new rating_manager();
+        $items = $rm->load_ratings($ratingoptions);
         if( !isset($items[0]->rating) || !isset($items[0]->rating->id) ) {
             $data->contextid    = $this->context->id;
             $data->rating       = $rating;
@@ -150,36 +152,18 @@ class rating implements renderable {
     public function delete_rating() {
         //todo implement this if its actually needed
     }
+} //end rating class definition
 
+/**
+ * The rating_manager class provides the ability to retrieve sets of ratings from the database
+ *
+ * @copyright 2010 Andrew Davis
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class rating_manager {
     /**
-    * Static method that converts an aggregation method constant into something that can be included in SQL
-    * @param int $aggregate An aggregation constant. For example, RATING_AGGREGATE_AVERAGE.
-    * @return string an SQL aggregation method
-    */
-    public static function get_aggregation_method($aggregate) {
-        $aggregatestr = null;
-        switch($aggregate){
-            case RATING_AGGREGATE_AVERAGE:
-                $aggregatestr = 'AVG';
-                break;
-            case RATING_AGGREGATE_COUNT:
-                $aggregatestr = 'CNT';
-                break;
-            case RATING_AGGREGATE_MAXIMUM:
-                $aggregatestr = 'MAX';
-                break;
-            case RATING_AGGREGATE_MINIMUM:
-                $aggregatestr = 'MIN';
-                break;
-            case RATING_AGGREGATE_SUM:
-                $aggregatestr = 'SUM';
-                break;
-        }
-        return $aggregatestr;
-    }
-
-    /**
-    * Static method that returns an array of ratings for a given item (forum post, glossary entry etc)
+    * Returns an array of ratings for a given item (forum post, glossary entry etc)
     * This returns all users ratings for a single item
     * @param object $options {
     *            context => context the context in which the ratings exists [required]
@@ -188,7 +172,7 @@ class rating implements renderable {
     * }
     * @return array an array of ratings
     */
-    public static function load_ratings_for_item($options) {
+    public function load_ratings_for_item($options) {
         global $DB;
 
         $userfields = user_picture::fields('u','uid');
@@ -207,7 +191,7 @@ class rating implements renderable {
     }
 
     /**
-    * Static method that adds rating objects to an array of items (forum posts, glossary entries etc)
+    * Adds rating objects to an array of items (forum posts, glossary entries etc)
     * Rating objects are available at $item->rating
     * @param object $options {
     *            context => context the context in which the ratings exists [required]
@@ -218,7 +202,7 @@ class rating implements renderable {
     *            returnurl => string the url to return the user to after submitting a rating. Can be left null for ajax requests [optional]
     * @return array the array of items with their ratings attached at $items[0]->rating
     */
-    public static function load_ratings($options) {
+    public function load_ratings($options) {
         global $DB, $USER, $PAGE, $CFG;
 
         if(empty($options->items)) {
@@ -229,7 +213,7 @@ class rating implements renderable {
             $userid = $USER->id;
         }
 
-        $aggregatestr = rating::get_aggregation_method($options->aggregate);
+        $aggregatestr = $this->get_aggregation_method($options->aggregate);
 
         //create an array of item ids
         $itemids = array();
@@ -349,4 +333,31 @@ class rating implements renderable {
         }
         return $options->items;
     }
-} //end rating class definition
+
+    /**
+    * Converts an aggregation method constant into something that can be included in SQL
+    * @param int $aggregate An aggregation constant. For example, RATING_AGGREGATE_AVERAGE.
+    * @return string an SQL aggregation method
+    */
+    private function get_aggregation_method($aggregate) {
+        $aggregatestr = null;
+        switch($aggregate){
+            case RATING_AGGREGATE_AVERAGE:
+                $aggregatestr = 'AVG';
+                break;
+            case RATING_AGGREGATE_COUNT:
+                $aggregatestr = 'CNT';
+                break;
+            case RATING_AGGREGATE_MAXIMUM:
+                $aggregatestr = 'MAX';
+                break;
+            case RATING_AGGREGATE_MINIMUM:
+                $aggregatestr = 'MIN';
+                break;
+            case RATING_AGGREGATE_SUM:
+                $aggregatestr = 'SUM';
+                break;
+        }
+        return $aggregatestr;
+    }
+}//end rating_manager class definition

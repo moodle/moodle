@@ -70,7 +70,9 @@ $ratingoptions = new stdclass();
 $ratingoptions->context = $context;
 $ratingoptions->itemid = $itemid;
 $ratingoptions->sort = $sort;
-$ratings = rating::load_ratings_for_item($ratingoptions);
+
+$rm = new rating_manager();
+$ratings = $rm->load_ratings_for_item($ratingoptions);
 if (!$ratings) {
     //print_error('noresult', 'forum', '', format_string($post->subject));
     print_error('noresult');
