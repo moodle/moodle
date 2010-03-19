@@ -257,7 +257,21 @@ function xmldb_glossary_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009110800, 'glossary');
     }
 
-    //todo andrew set rating permissions based on current value of glossary.assessed
+    if($result && $oldversion < 2010031800) {
+        //migrate glossary_ratings to the central rating table
+        //glossary ratings only have a single time column so use it for both time created and modified
+        $ratingssql = 'SELECT r.id AS rid, r.entryid AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified, g.scale, g.id AS mid
+FROM {glossary_ratings} r
+JOIN {glossary_entries} ge ON ge.id=r.entryid
+JOIN {glossary} g ON g.id=ge.glossaryid';
+        $result = $result && upgrade_module_ratings($ratingssql,'glossary');
+
+        //todo andrew drop glossary_ratings
+
+        //todo andrew set rating permissions based on current value of glossary.assessed
+
+        upgrade_mod_savepoint($result, 2010031800, 'glossary');
+    }
 
     return $result;
 }

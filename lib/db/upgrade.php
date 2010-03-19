@@ -3089,35 +3089,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $dbman->create_table($table);
         }
 
-        //pull in the ratings from the modules into the central rating table
-
-        //migrate forumratings
-        //forum ratings only have a single time column so use it for both time created and modified
-        $ratingssql = 'SELECT r.id AS rid, r.post AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified, f.scale, f.id AS mid
-FROM {forum_ratings} r
-JOIN {forum_posts} p on p.id=r.post
-JOIN {forum_discussions} d on d.id=p.discussion
-JOIN {forum} f on f.id=d.forum';
-        $result = $result && upgrade_module_ratings($ratingssql,'forum');
-        
-        //migrate glossary_ratings
-        //glossary ratings only have a single time column so use it for both time created and modified
-        $ratingssql = 'SELECT r.id AS rid, r.entryid AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified, g.scale, g.id AS mid
-FROM {glossary_ratings} r
-JOIN {glossary_entries} ge ON ge.id=r.entryid
-JOIN {glossary} g ON g.id=ge.glossaryid';
-        $result = $result && upgrade_module_ratings($ratingssql,'glossary');
-        
-        //migrate data_ratings
-        //data ratings didnt store time created and modified so Im using the times from the record the rating was attached to
-        $ratingssql = 'SELECT r.id AS rid, r.recordid AS itemid, r.rating, r.userid, re.timecreated, re.timemodified, d.scale, d.id AS mid
-FROM {data_ratings} r
-JOIN {data_records} re ON r.recordid=re.id
-JOIN {data} d ON d.id=re.dataid';
-        $result = $result && upgrade_module_ratings($ratingssql,'data');
-        
-        //todo drop forum_ratings, data_ratings and glossary_ratings
-
         upgrade_main_savepoint($result, 2010031800);
     }
 

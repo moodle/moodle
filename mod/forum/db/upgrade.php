@@ -285,6 +285,21 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009050400, 'forum');
     }
 
+    if($result && $oldversion < 2010031800) {
+        //migrate forumratings to the central rating table
+        //forum ratings only have a single time column so use it for both time created and modified
+        $ratingssql = 'SELECT r.id AS rid, r.post AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified, f.scale, f.id AS mid
+FROM {forum_ratings} r
+JOIN {forum_posts} p on p.id=r.post
+JOIN {forum_discussions} d on d.id=p.discussion
+JOIN {forum} f on f.id=d.forum';
+        $result = $result && upgrade_module_ratings($ratingssql,'forum');
+
+        //todo andrew drop forum_ratings
+
+        upgrade_mod_savepoint($result, 2010031800, 'forum');
+    }
+
     return $result;
 }
 

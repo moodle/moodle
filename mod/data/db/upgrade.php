@@ -253,6 +253,20 @@ function xmldb_data_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2010031602, 'data');
     }
 
+    if($result && $oldversion < 2010031800) {
+        //migrate data_ratings to the central rating table
+        //data ratings didnt store time created and modified so Im using the times from the record the rating was attached to
+        $ratingssql = 'SELECT r.id AS rid, r.recordid AS itemid, r.rating, r.userid, re.timecreated, re.timemodified, d.scale, d.id AS mid
+FROM {data_ratings} r
+JOIN {data_records} re ON r.recordid=re.id
+JOIN {data} d ON d.id=re.dataid';
+        $result = $result && upgrade_module_ratings($ratingssql,'data');
+
+        //todo andrew drop data_ratings
+
+        upgrade_mod_savepoint($result, 2010031800, 'data');
+    }
+
     return $result;
 }
 
