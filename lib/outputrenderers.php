@@ -1320,7 +1320,7 @@ END;
             }
 
             $scalearray = array(RATING_UNSET_RATING => $strrate.'...') + $scalearray;
-            $strratings .= html_writer::select($scalearray, 'rating'.$rating->itemid, $rating->rating, false, array('class'=>'postratingmenu ratinginput'));
+            $strratings .= html_writer::select($scalearray, 'rating', $rating->rating, false, array('class'=>'postratingmenu ratinginput','id'=>'menurating'.$rating->itemid));
 
             //output submit button
             $strratings .= '<span class="ratingsubmit"><input type="submit" class="postratingmenusubmit" id="postratingsubmit'.$rating->itemid.'" value="'.s(get_string('rate', 'rating')).'" />';

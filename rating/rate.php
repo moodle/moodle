@@ -34,7 +34,7 @@ require_once('lib.php');
 $contextid = required_param('contextid', PARAM_INT);
 $itemid = required_param('itemid', PARAM_INT);
 $scaleid = required_param('scaleid', PARAM_INT);
-$userrating = required_param('rating'.$itemid, PARAM_INT);
+$userrating = required_param('rating', PARAM_INT);
 $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);//will only be supplied for non-ajax requests
 
 $result = new stdClass;
