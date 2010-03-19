@@ -197,7 +197,7 @@ Com esta operação Moodle será capaz de configurar o limite de memória sózin
 <li>Se você tiver acesso ao arquivo php.ini, você pode mudar o parâmetro <b>memory_limit</b> para um valor próximo a 40M. Se você não tiver acesso direto, peça ao administrador do sistema para fazer esta operação.</li>
 <li>Em alguns servidores é possível fazer esta mudança criando um arquivo .htaccess no diretório Moodle. O arquivo deve conter a seguinte expressão:
 <p><blockquote>php_value memory_limit 40M</blockquote></p>
-<p>Alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário cancelar o arquivo .htaccess .</p>
+<p>Alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário excluir o arquivo .htaccess .</p>
 </li></ol>';
 $string['missingrequiredfield'] = 'Faltam informações obrigatórias';
 $string['moodledocslink'] = 'Documentação de Moodle relativa a esta página';
