@@ -949,7 +949,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         return ''; // no need to do any filters and cleaning
     }
     if (!empty($options->comments) && !empty($CFG->usecomments)) {
-        require_once($CFG->libdir . '/commentlib.php');
+        require_once($CFG->dirroot . '/comment/lib.php');
         $comment = new comment($options->comments);
         $cmt = $comment->output(true);
     } else {

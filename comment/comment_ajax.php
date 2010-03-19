@@ -24,6 +24,12 @@ require_once($CFG->dirroot . '/comment/lib.php');
 $contextid = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
 list($context, $course, $cm) = get_context_info_array($contextid);
 
+if (!empty($course)) {
+    $PAGE->set_course($course);
+} else {
+    $PAGE->set_course($SITE);
+}
+
 require_login($course, true, $cm);
 
 $err = new stdclass;
@@ -54,7 +60,9 @@ $page      = optional_param('page',      0,      PARAM_INT);
 if (!empty($client_id)) {
     $cmt = new stdclass;
     $cmt->contextid = $contextid;
-    $cmt->courseid  = $course->id;
+    if (!empty($course)) {
+        $cmt->courseid  = $course->id;
+    }
     $cmt->area      = $area;
     $cmt->itemid    = $itemid;
     $cmt->client_id = $client_id;

@@ -117,7 +117,7 @@ class comment {
         if (!empty($options->env)) {
             $this->env = $options->env;
         } else {
-            $this->env = 'embedded';
+            $this->env = '';
         }
 
         if (!empty($options->linktext)) {
