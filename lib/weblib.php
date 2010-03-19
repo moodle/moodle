@@ -2747,7 +2747,7 @@ function print_filemanager($options, $return = false) {
 
     $client_id = $options->client_id;
     $itemid = $options->itemid;
-    $filearea = $options->filearea ? $options->filearea : 'user_draft';
+    $filearea = !empty($options->filearea) ? $options->filearea : 'user_draft';
 
     $html = '';
 
