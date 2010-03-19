@@ -1237,7 +1237,10 @@ class core_renderer extends renderer_base {
         global $CFG, $USER;
         static $havesetupjavascript = false;
 
-        if( !$havesetupjavascript && !empty($CFG->enableajax) ) {
+        $useajax = !empty($CFG->enableajax);
+
+        //include required Javascript
+        if( !$havesetupjavascript && $useajax ) {
             $this->page->requires->js_init_call('M.core_ratings.init');
             $havesetupjavascript = true;
         }
@@ -1324,8 +1327,6 @@ END;
 
             //output submit button
             $strratings .= '<span class="ratingsubmit"><input type="submit" class="postratingmenusubmit" id="postratingsubmit'.$rating->itemid.'" value="'.s(get_string('rate', 'rating')).'" />';
-
-            //ajax code is included by rating::load_ratings()
 
             if ( is_array($rating->settings->scale) ) {
                 //todo andrew where can we get the course id from?

@@ -16,9 +16,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This page receives non-ajax rating submissions
+* This page receives ajax rating submissions
  *
- * It is similar to rate_ajax.php. Unlike rate_ajax.php a return url is required.
+ * It is similar to rate.php. Unlike rate.php a return url is NOT required.
  *
  * @package   moodlecore
  * @copyright 2010 Andrew Davis
@@ -32,17 +32,22 @@ $contextid = required_param('contextid', PARAM_INT);
 $itemid = required_param('itemid', PARAM_INT);
 $scaleid = required_param('scaleid', PARAM_INT);
 $userrating = required_param('rating', PARAM_INT);
-$returnurl = required_param('returnurl', null, PARAM_LOCALURL);//required for non-ajax requests
 
 $result = new stdClass;
+
+//if session has expired and its an ajax request so we cant do a page redirect
+if( !isloggedin() ){
+    $result->error = get_string('sessionerroruser', 'error');
+    echo json_encode($result);
+    die();
+}
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm);
 
 if( !has_capability('moodle/rating:rate',$context) ) {
-    echo $OUTPUT->header();
-    echo get_string('ratepermissiondenied', 'ratings');
-    echo $OUTPUT->footer();
+    $result->error = get_string('ratepermissiondenied', 'ratings');
+    echo json_encode($result);
     die();
 }
 
@@ -66,4 +71,6 @@ $rating = new rating($ratingoptions);
 
 $rating->update_rating($userrating);
 
-redirect($CFG->wwwroot.'/'.$returnurl);
+$result = new stdClass;
+$result->success = true;
+echo json_encode($result);

@@ -28,7 +28,7 @@ M.core_ratings={
         }
         
         this.Y.io.queue.stop();
-        this.transaction.push({transaction:this.Y.io.queue(M.cfg.wwwroot+'/rating/rate.php', {
+        this.transaction.push({transaction:this.Y.io.queue(M.cfg.wwwroot+'/rating/rate_ajax.php', {
             method : 'POST',
             data : build_querystring(thedata),
             on : {

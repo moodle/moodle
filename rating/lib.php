@@ -75,16 +75,18 @@ class rating implements renderable {
 
     /**
     * Constructor.
-    * @param context $context the current context object
-    * @param int $itemid the id of the associated item (forum post, glossary item etc)
-    * @param int $scaleid the scale to use
-    * @param int $userid the user submitting the rating
+    * @param object $options {
+    *            context => context context to use for the rating [required]
+    *            itemid  => int the id of the associated item (forum post, glossary item etc) [required]
+    *            scaleid => int The scale in use when the rating was submitted [required]
+    *            userid  => int The id of the user who submitted the rating [required]
+    * }
     */
-    public function __construct($context, $itemid, $scaleid, $userid) {
-        $this->context = $context;
-        $this->itemid = $itemid;
-        $this->scaleid = $scaleid;
-        $this->userid = $userid;
+    public function __construct($options) {
+        $this->context = $options->context;
+        $this->itemid = $options->itemid;
+        $this->scaleid = $options->scaleid;
+        $this->userid = $options->userid;
     }
 
     /**
@@ -102,7 +104,13 @@ class rating implements renderable {
         $item->id = $this->itemid;
         $items = array($item);
 
-        $items = rating::load_ratings($this->context, $items, null, $this->scaleid, $this->userid);
+        $ratingoptions = new stdclass();
+        $ratingoptions->context = $this->context;
+        $ratingoptions->items = $items;
+        $ratingoptions->aggregate = RATING_AGGREGATE_AVERAGE;//we dont actually care what aggregation is applied
+        $ratingoptions->scaleid = $this->scaleid;
+        $ratingoptions->userid = $this->userid;
+        $items = rating::load_ratings($ratingoptions);
         if( !isset($items[0]->rating) || !isset($items[0]->rating->id) ) {
             $data->contextid    = $this->context->id;
             $data->rating       = $rating;
@@ -172,13 +180,15 @@ class rating implements renderable {
 
     /**
     * Static method that returns an array of ratings for a given item (forum post, glossary entry etc)
-     * This returns all users ratings for a single item
-    * @param context $context the context in which the rating exists
-    * @param int $itemid The id of the forum posts, glossary items or whatever
-    * @param string SQL sort by clause
+    * This returns all users ratings for a single item
+    * @param object $options {
+    *            context => context the context in which the ratings exists [required]
+    *            itemid  =>  int the id of the associated item (forum post, glossary item etc) [required]
+    *            sort    => string SQL sort by clause [optional]
+    * }
     * @return array an array of ratings
     */
-    public static function load_ratings_for_item($context, $itemid, $sort) {
+    public static function load_ratings_for_item($options) {
         global $DB;
 
         $userfields = user_picture::fields('u','uid');
@@ -188,10 +198,10 @@ class rating implements renderable {
                 LEFT JOIN {user} u ON r.userid = u.id
                 WHERE r.contextid = :contextid AND
                       r.itemid  = :itemid
-                $sort";
+                {$options->sort}";
 
-        $params['contextid'] = $context->id;
-        $params['itemid'] = $itemid;
+        $params['contextid'] = $options->context->id;
+        $params['itemid'] = $options->itemid;
 
         return $DB->get_records_sql($sql, $params);
     }
@@ -199,30 +209,31 @@ class rating implements renderable {
     /**
     * Static method that adds rating objects to an array of items (forum posts, glossary entries etc)
     * Rating objects are available at $item->rating
-    * @param context $context the current context object
-    * @param array $items an array of items such as forum posts or glossary items. They must have an 'id' member ie $items[0]->id
-    * @param int $aggregate what aggregation method should be applied. AVG, MAX etc
-    * @param int $scaleid the scale from which the user can select a rating
-    * @param int $userid the id of the current user
-    * @param string $returnurl the url to return the user to after submitting a rating. Can be left null for ajax requests.
+    * @param object $options {
+    *            context => context the context in which the ratings exists [required]
+    *            items  => array an array of items such as forum posts or glossary items. They must have an 'id' member ie $items[0]->id[required]
+    *            aggregate    => int what aggregation method should be applied. RATING_AGGREGATE_AVERAGE, RATING_AGGREGATE_MAXIMUM etc [required]
+    *            scaleid => int the scale from which the user can select a rating [required]
+    *            userid => int the id of the current user [optional]
+    *            returnurl => string the url to return the user to after submitting a rating. Can be left null for ajax requests [optional]
     * @return array the array of items with their ratings attached at $items[0]->rating
     */
-    public static function load_ratings($context, $items, $aggregate=RATING_AGGREGATE_AVERAGE, $scaleid=RATING_DEFAULT_SCALE, $userid = null, $returnurl = null) {
+    public static function load_ratings($options) {
         global $DB, $USER, $PAGE, $CFG;
 
-        if(empty($items)) {
-            return $items;
+        if(empty($options->items)) {
+            return $options->items;
         }
 
-        if (is_null($userid)) {
+        if (is_null($options->userid)) {
             $userid = $USER->id;
         }
 
-        $aggregatestr = rating::get_aggregation_method($aggregate);
+        $aggregatestr = rating::get_aggregation_method($options->aggregate);
 
         //create an array of item ids
         $itemids = array();
-        foreach($items as $item) {
+        foreach($options->items as $item) {
             $itemids[] = $item->id;
         }
 
@@ -244,8 +255,8 @@ class rating implements renderable {
     GROUP BY r.itemid, ur.rating
     ORDER BY r.itemid";
 
-        $params['userid'] = $userid;
-        $params['contextid'] = $context->id;
+        $params['userid'] = $options->userid;
+        $params['contextid'] = $options->context->id;
 
         $ratingsrecords = $DB->get_records_sql($sql, $params);
 
@@ -255,8 +266,8 @@ class rating implements renderable {
 
         //we could look for a scale id on each item to allow each item to use a different scale
 
-        if($scaleid < 0 ) { //if its a scale (not numeric)
-            $scalerecord = $DB->get_record('scale', array('id' => -$scaleid));
+        if($options->scaleid < 0 ) { //if its a scale (not numeric)
+            $scalerecord = $DB->get_record('scale', array('id' => -$options->scaleid));
             if ($scalerecord) {
                 $scaleobj->scaleitems = explode(',', $scalerecord->scale);
                 $scaleobj->id = $scalerecord->id;
@@ -266,33 +277,41 @@ class rating implements renderable {
             }
         }
         else { //its numeric
-            $scaleobj->scaleitems = $scaleid;
-            $scaleobj->id = $scaleid;
+            $scaleobj->scaleitems = $options->scaleid;
+            $scaleobj->id = $options->scaleid;
             $scaleobj->name = null;
 
-            $scalemax = $scaleid;
+            $scalemax = $options->scaleid;
         }
 
         //should $settings and $settings->permissions be declared as proper classes?
         $settings = new stdclass(); //settings that are common to all ratings objects in this context
         $settings->scale = $scaleobj; //the scale to use now
-        $settings->aggregationmethod = $aggregate;
-        $settings->returnurl = $returnurl;
+        $settings->aggregationmethod = $options->aggregate;
+        if( !empty($options->returnurl) ) {
+            $settings->returnurl = $options->returnurl;
+        }
 
         $settings->permissions = new stdclass();
-        $settings->permissions->canview = has_capability('moodle/rating:view',$context);
-        $settings->permissions->canviewall = has_capability('moodle/rating:viewall',$context);
-        $settings->permissions->canrate = has_capability('moodle/rating:rate',$context);
+        $settings->permissions->canview = has_capability('moodle/rating:view',$options->context);
+        $settings->permissions->canviewall = has_capability('moodle/rating:viewall',$options->context);
+        $settings->permissions->canrate = has_capability('moodle/rating:rate',$options->context);
 
         $rating = null;
-        foreach($items as $item) {
+        $ratingoptions = new stdclass();
+        $ratingoptions->context = $options->context;//context is common to all ratings in the set
+        foreach($options->items as $item) {
             $rating = null;
             //match the item with its corresponding rating
             foreach($ratingsrecords as $rec) {
                 if( $item->id==$rec->itemid ) {
                     //Note: rec->scaleid = the id of scale at the time the rating was submitted
                     //may be different from the current scale id
-                    $rating = new rating($context, $item->id, $rec->scaleid, $rec->userid);
+                    $ratingoptions->itemid = $item->id;
+                    $ratingoptions->scaleid = $rec->scaleid;
+                    $ratingoptions->userid = $rec->userid;
+
+                    $rating = new rating($ratingoptions);
                     $rating->id         = $rec->id;    //unset($rec->id);
                     $rating->aggregate  = $rec->aggrrating; //unset($rec->aggrrating);
                     $rating->count      = $rec->numratings; //unset($rec->numratings);
@@ -302,8 +321,11 @@ class rating implements renderable {
             }
             //if there are no ratings for this item
             if( !$rating ) {
-                $scaleid = $userid = null;
-                $rating = new rating($context, $item->id, $scaleid, $userid);
+                $ratingoptions->itemid = $item->id;
+                $ratingoptions->scaleid = null;
+                $ratingoptions->userid = null;
+
+                $rating = new rating($ratingoptions);
                 $rating->id         = null;
                 $rating->aggregate  = null;
                 $rating->count      = 0;
@@ -325,6 +347,6 @@ class rating implements renderable {
                 $rating->rating = $scalemax;
             }
         }
-        return $items;
+        return $options->items;
     }
 } //end rating class definition
