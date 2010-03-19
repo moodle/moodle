@@ -88,4 +88,8 @@ groups_groupings_deleted        - int course id - deleted all course groupings
 role_assigned         - object role_assignments table record
 role_unassigned       - object role_assignments table record
 
+==== Assignment Related events ====
+
+assignment_finalize_sent - object course, object user, object cm, object assignment, fileareaname
+assignment_file_sent - object course, object user, object cm, object assignment, object file
 */

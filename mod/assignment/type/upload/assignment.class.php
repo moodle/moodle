@@ -585,6 +585,16 @@ class assignment_upload extends assignment_base {
                             if (!$this->drafts_tracked()) {
                                 $this->email_teachers($submission);
                             }
+                            //trigger event with information about this file.
+                            $eventdata = new object();
+                            $eventdata->component  = 'mod/assignment';
+                            $eventdata->course     = $this->course;
+                            $eventdata->assignment = $this->assignment;
+                            $eventdata->cm         = $this->cm;
+                            $eventdata->user       = $USER;
+                            $eventdata->file       = $file;
+                            events_trigger('assignment_file_sent', $eventdata);
+
                             redirect('view.php?id='.$this->cm->id);
                         } else {
                             $file->delete();
@@ -673,6 +683,16 @@ class assignment_upload extends assignment_base {
             $this->view_footer();
             die;
         }
+        //trigger event with information about this file.
+        $eventdata = new object();
+        $eventdata->component  = 'mod/assignment';
+        $eventdata->course     = $this->course;
+        $eventdata->assignment = $this->assignment;
+        $eventdata->cm         = $this->cm;
+        $eventdata->user       = $USER;
+        $eventdata->basedir    = $this->file_area($USER->id);
+        events_trigger('assignment_finalize_sent', $eventdata);
+
         redirect($returnurl);
     }
 

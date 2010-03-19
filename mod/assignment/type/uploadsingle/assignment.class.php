@@ -108,6 +108,16 @@ class assignment_uploadsingle extends assignment_base {
                             $this->update_grade($submission);
                             $this->email_teachers($submission);
                             echo $OUTPUT->heading(get_string('uploadedfile'));
+                            //trigger event with information about this file.
+                            $eventdata = new object();
+                            $eventdata->component  = 'mod/assignment';
+                            $eventdata->course     = $this->course;
+                            $eventdata->assignment = $this->assignment;
+                            $eventdata->cm         = $this->cm;
+                            $eventdata->user       = $USER;
+                            $eventdata->file       = $file;
+                            events_trigger('assignment_file_sent', $eventdata);
+
                             redirect('view.php?id='.$this->cm->id);
                         } else {
                             echo $OUTPUT->notification(get_string("uploadnotregistered", "assignment", $newfile_name) );
