@@ -3337,6 +3337,14 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101571.04);
     }
 
+    if ($result && $oldversion < 2007101571.05) {
+        // make the session regeneration setting enabled by default
+        if (empty($CFG->regenloginsession)) {
+            unset_config('regenloginsession');
+        }
+        upgrade_main_savepoint($result, 2007101571.05);
+    }
+
     return $result;
 }
 

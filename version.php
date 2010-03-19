@@ -6,7 +6,7 @@
 // This is compared against the values stored in the database to determine
 // whether upgrades should be performed (see lib/db/*.php)
 
-    $version = 2007101571.04;  // YYYYMMDD      = date of the 1.9 branch (don't change)
+    $version = 2007101571.05;  // YYYYMMDD      = date of the 1.9 branch (don't change)
                             //         X     = release number 1.9.[0,1,2,3,4,5...]
                             //          Y.YY = micro-increments between releases
 
