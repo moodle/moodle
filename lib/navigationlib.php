@@ -1147,7 +1147,7 @@ class global_navigation extends navigation_node {
             require_once($CFG->dirroot . '/repository/lib.php');
             $editabletypes = repository::get_editable_types($usercontext);
             if (!empty($editabletypes)) {
-                $usernode->add(get_string('repositories', 'repository'), new moodle_url('/repository/manage_instances.php', array('contextid', $usercontext->id)));
+                $usernode->add(get_string('repositories', 'repository'), new moodle_url('/repository/manage_instances.php', array('contextid' => $usercontext->id)));
             }
         }
         return true;
