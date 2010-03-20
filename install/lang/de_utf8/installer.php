@@ -24,6 +24,8 @@ $string['cliincorrectvalueretry'] = 'Falscher Wert - versuchen Sie es nochmal';
 $string['cliinstallheader'] = 'Installation von Moodle $a über die Kommandozeile';
 $string['clitypevalue'] = 'Wert eingeben';
 $string['clitypevaluedefault'] = 'Wert eingeben. Drücken Sie Enter, um den Standardwert zu benutzen ($a)';
+$string['cliunknowoption'] = 'Nicht erkannte Optionen: $a.
+Für Hilfe nutzen Sie bitte die Option --help';
 $string['dataroot'] = 'Daten-Verzeichnis';
 $string['dirroot'] = 'Moodle-Verzeichnis';
 $string['environment'] = 'Serverinformationen';
