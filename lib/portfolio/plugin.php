@@ -114,7 +114,7 @@ abstract class portfolio_plugin_base {
 
     /**
     * override this if you are supporting the 'file' type (or a subformat)
-    * but have restrictions on mimetypes (see googledocs plugin for more info)
+    * but have restrictions on mimetypes 
     *
     * @return boolean
     */
