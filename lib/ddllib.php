@@ -126,7 +126,7 @@ class ddl_change_structure_exception extends ddl_exception {
     function __construct($error, $sql=null) {
         $this->error = $error;
         $this->sql   = $sql;
-        $errorinfo   = s($error).'<br /><br />'.s($sql);
+        $errorinfo   = $error."\n".$sql;
         parent::__construct('ddlexecuteerror', NULL, $errorinfo);
     }
 }

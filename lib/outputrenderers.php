@@ -1698,7 +1698,9 @@ END;
 
         if (debugging('', DEBUG_DEVELOPER)) {
             if (!empty($debuginfo)) {
-                $output .= $this->notification('<strong>Debug info:</strong> '.s($debuginfo), 'notifytiny');
+                $debuginfo = s($debuginfo); // removes all nasty JS
+                $debuginfo = str_replace("\n", '<br />', $debuginfo); // keep newlines
+                $output .= $this->notification('<strong>Debug info:</strong> '.$debuginfo, 'notifytiny');
             }
             if (!empty($backtrace)) {
                 $output .= $this->notification('<strong>Stack trace:</strong> '.format_backtrace($backtrace), 'notifytiny');

@@ -71,7 +71,7 @@ class dml_connection_exception extends dml_exception {
      * @param string $error
      */
     function __construct($error) {
-        $errorinfo = '<em>'.s($error).'</em>';
+        $errorinfo = $error;
         parent::__construct('dbconnectionfailed', NULL, $errorinfo);
     }
 }
@@ -97,7 +97,7 @@ class dml_read_exception extends dml_exception {
         $this->error  = $error;
         $this->sql    = $sql;
         $this->params = $params;
-        $errorinfo = s($error).'<br /><br />'.s($sql).'<br />['.s(var_export($params, true)).']';
+        $errorinfo = $error."\n".$sql."\n[".var_export($params, true).']';
         parent::__construct('dmlreadexception', NULL, $errorinfo);
     }
 }
@@ -118,7 +118,7 @@ class dml_multiple_records_exception extends dml_exception {
      * @param array $params
      */
     function __construct($sql='', array $params=null) {
-        $errorinfo = s($sql).'<br />['.s(var_export($params, true)).']';
+        $errorinfo = $sql."\n[".var_export($params, true).']';
         parent::__construct('multiplerecordsfound', null, $errorinfo);
     }
 }
@@ -165,7 +165,7 @@ class dml_missing_record_exception extends dml_exception {
                 $errcode = 'invalidrecord';
                 break;
         }
-        $errorinfo = s($sql).'<br />['.s(var_export($params, true)).']';
+        $errorinfo = $sql."\n[".var_export($params, true).']';
         parent::__construct($errcode, $tablename, $errorinfo);
     }
 }
@@ -191,7 +191,7 @@ class dml_write_exception extends dml_exception {
         $this->error  = $error;
         $this->sql    = $sql;
         $this->params = $params;
-        $errorinfo = s($error).'<br /><br />'.s($sql).'<br />['.s(var_export($params, true)).']';
+        $errorinfo = $error."\n".$sql."\n[".var_export($params, true).']';
         parent::__construct('dmlwriteexception', NULL, $errorinfo);
     }
 }

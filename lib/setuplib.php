@@ -933,7 +933,9 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
 </div>';
         if (!empty($CFG->debug) && $CFG->debug >= DEBUG_DEVELOPER) {
             if (!empty($debuginfo)) {
-                $content .= '<div class="notifytiny">Debug info: ' . s($debuginfo) . '</div>';
+                $debuginfo = s($debuginfo); // removes all nasty JS
+                $debuginfo = str_replace("\n", '<br />', $debuginfo); // keep newlines
+                $content .= '<div class="notifytiny">Debug info: ' . $debuginfo . '</div>';
             }
             if (!empty($backtrace)) {
                 $content .= '<div class="notifytiny">Stack trace: ' . format_backtrace($backtrace, false) . '</div>';
