@@ -140,6 +140,11 @@ class portfolio_format_image extends portfolio_format_file {
     public static function mimetypes() {
         return mimeinfo_from_icon('type', 'image.gif', true);
     }
+
+    public static function conflicts($format) {
+        return ($format == PORTFOLIO_FORMAT_RICHHTML
+            || $format == PORTFOLIO_FORMAT_PLAINHTML);
+    }
 }
 
 /**
