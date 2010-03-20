@@ -279,8 +279,8 @@
                                            {user} u
                                       WHERE d.forum = ? AND
                                             p.discussion = d.id AND
-                                            u.id = p.userid ?
-                                      ORDER BY p.created desc", array($forum->id, $newsince), 0, $forum->rssarticles)) {
+                                            u.id = p.userid $newsince
+                                      ORDER BY p.created desc", array($forum->id), 0, $forum->rssarticles)) {
 
             $item = NULL;
             $user = NULL;
