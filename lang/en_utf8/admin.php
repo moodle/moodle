@@ -815,6 +815,7 @@ $string['showdetails'] = 'Show details';
 $string['simpletest'] = 'Unit tests';
 $string['simplexmlrequired'] = 'The SimpleXML PHP extension is now required by Moodle.';
 $string['dbtest'] = 'Functional DB tests';
+$string['sessionautostartwarning'] = '<p>Serious configuration error detected, please notify server administrator.</p><p> To operate properly, Moodle requires that administrator changes PHP settings.</p><p><code>session.auto_start</code> must be set to <code>off</code>.</p><p>This setting is controlled by editing <code>php.ini</code>, Apache/IIS <br />configuration or <code>.htaccess</code> file on the server.</p>';
 $string['sitelangchanged'] = 'Site language setting changed successfully';
 $string['sitemailcharset'] = 'Character set';
 $string['sitemaintenance'] = 'The site is undergoing maintenance and is currently not available';
