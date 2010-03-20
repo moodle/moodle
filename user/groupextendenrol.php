@@ -171,7 +171,7 @@ foreach ($_POST as $k => $v) {
         );
     }
 }
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 echo '<div style="width:100%;text-align:center;"><strong>';
 echo get_string('extendperiod') . ' ';
 echo html_writer::select($periodmenu, 'extendperiod');

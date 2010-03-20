@@ -67,7 +67,7 @@
         .'<div>'."\n"
         .'<input type="hidden" name="mode" value="'.$mode.'" />'."\n";
 
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
 
     echo '</div>';
     echo '</form>';
@@ -221,7 +221,7 @@
                 $lastrecord[] = $lastlink;
                 $table->data[] = $lastrecord;
             }
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
         }
     }
 

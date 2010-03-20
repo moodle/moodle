@@ -87,7 +87,7 @@ if ($mform->is_cancelled()) {
         $table->align = array('left', 'left', 'left');
         $table->width = '80%';
         $table->data  = $data;
-        echo $OUTPUT->table($table);
+        echo html_writer::table($table);
 
         echo $OUTPUT->continue_button('view.php?id='.$course->id);  // Back to course page
         echo $OUTPUT->footer();

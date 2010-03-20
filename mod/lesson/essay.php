@@ -296,7 +296,7 @@ switch ($mode) {
         // Setup table
         $table = new html_table();
         $table->head = array(get_string('name'), get_string('essays', 'lesson'), get_string('email', 'lesson'));
-        $table->set_classes(array('standardtable', 'generaltable'));
+        $table->attributes['class'] = 'standardtable generaltable';
         $table->align = array('left', 'left', 'left');
         $table->wrap = array('nowrap', 'nowrap', '');
 
@@ -356,7 +356,7 @@ switch ($mode) {
 
         $table->data[] = array(' ', ' ', $emailalllink);
 
-        echo $OUTPUT->table($table);
+        echo html_writer::table($table);
         break;
     case 'grade':
         // Grading form

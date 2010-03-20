@@ -431,7 +431,7 @@
             $table->data[] = $row;
         }
 
-        echo $OUTPUT->table($table);
+        echo html_writer::table($table);
 
         if ($context->contextlevel > CONTEXT_USER) {
             echo '<div class="backlink"><a href="' . get_context_url($context) . '">' . get_string('backto', '', $contextname) . '</a></div>';

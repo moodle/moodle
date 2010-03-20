@@ -854,7 +854,7 @@ foreach ($contents as $content) {
 
 $table = new html_table();
 $table->id = "uupreview";
-$table->set_classes = 'generaltable';
+$table->attributes['class'] = 'generaltable';
 $table->tablealign = 'center';
 $table->summary = get_string('uploaduserspreview', 'admin');
 $table->head = array();
@@ -887,7 +887,7 @@ if (in_array('error', $headings)) {
                     $value = get_string($content[$key]);
                 }
                 $cells->text = $value;
-                $cells->set_classes($errclass);
+                $cells->attributes['class'] = $errclass;
                 $rows->cells[] = $cells;
             }
             $countcontent++;
@@ -928,7 +928,7 @@ if (in_array('error', $headings)) {
         $countcontent++;
     }
 }
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 
 if ($haserror) {
 

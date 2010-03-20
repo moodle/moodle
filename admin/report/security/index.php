@@ -92,7 +92,7 @@ if ($issue and ($result = $issue(true))) {
 
     $table->data[] = $row;
 
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
 
     echo $OUTPUT->box($result->details, 'generalbox boxwidthnormal boxaligncenter'); // TODO: add proper css
 
@@ -121,7 +121,7 @@ if ($issue and ($result = $issue(true))) {
 
         $table->data[] = $row;
     }
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
 }
 
 echo $OUTPUT->footer();

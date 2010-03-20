@@ -221,10 +221,10 @@ if ($action == 'reportoverview') {
 
     // set up the table object
     $table->head = array(get_string('name'), get_string('attempts', 'lesson'), get_string('highscore', 'lesson'));
-    $table->align = array("center", "left", "left");
-    $table->wrap = array("nowrap", "nowrap", "nowrap");
-    $table->set_classes(array('standardtable', 'generaltable'));
-    $table->size = array("*", "70%", "*");
+    $table->align = array('center', 'left', 'left');
+    $table->wrap = array('nowrap', 'nowrap', 'nowrap');
+    $table->attributes['class'] = 'standardtable generaltable';
+    $table->size = array(null, '70%', null);
 
     // print out the $studentdata array
     // going through each student that has attempted the lesson, so, each student should have something to be displayed
@@ -299,7 +299,7 @@ if ($action == 'reportoverview') {
                <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n
                <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
     }
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
     if (has_capability('mod/lesson:edit', $context)) {
         $checklinks  = '<a href="javascript: checkall();">'.get_string('selectall').'</a> / ';
         $checklinks .= '<a href="javascript: checknone();">'.get_string('deselectall').'</a>';
@@ -344,12 +344,12 @@ if ($action == 'reportoverview') {
     $stattable->head = array(get_string('averagescore', 'lesson'), get_string('averagetime', 'lesson'),
                             get_string('highscore', 'lesson'), get_string('lowscore', 'lesson'),
                             get_string('hightime', 'lesson'), get_string('lowtime', 'lesson'));
-    $stattable->align = array("center", "center", "center", "center", "center", "center");
-    $stattable->wrap = array("nowrap", "nowrap", "nowrap", "nowrap", "nowrap", "nowrap");
-    $stattable->set_classes(array('standardtable', 'generaltable'));
+    $stattable->align = array('center', 'center', 'center', 'center', 'center', 'center');
+    $stattable->wrap = array('nowrap', 'nowrap', 'nowrap', 'nowrap', 'nowrap', 'nowrap');
+    $stattable->attributes['class'] = 'standardtable generaltable';
     $stattable->data[] = array($avescore.'%', $avetime, $highscore.'%', $lowscore.'%', $hightime, $lowtime);
 
-    echo $OUTPUT->table($stattable);
+    echo html_writer::table($stattable);
 } else if ($action == 'reportdetail') {
     /**************************************************************************
     this action is for a student detailed view and for the general detailed view
@@ -475,8 +475,8 @@ if ($action == 'reportoverview') {
         echo $OUTPUT->heading(get_string('attempt', 'lesson', $try+1));
 
         $table->head = array();
-        $table->align = array("right", "left");
-        $table->set_classes(array('compacttable', 'generaltable'));
+        $table->align = array('right', 'left');
+        $table->attributes['class'] = 'compacttable generaltable';
 
         $params = array("lessonid"=>$lesson->id, "userid"=>$userid);
         if (!$grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid and userid = :userid", $params, "completed", "*", $try, 1)) {
@@ -509,16 +509,16 @@ if ($action == 'reportoverview') {
             $table->data[] = array(get_string('rawgrade', 'lesson').':', $gradeinfo->earned.'/'.$gradeinfo->total);
             $table->data[] = array(get_string("grade", "lesson").":", $grade."%");
         }
-        echo $OUTPUT->table($table);
+        echo html_writer::table($table);
 
         // Don't want this class for later tables
-        $table->set_classes(array());
+        $table->attributes['class'] = '';
     }
 
 
-    $table->align = array("left", "left");
-    $table->size = array("70%", "*");
-    $table->set_classes(array('compacttable', 'generaltable'));
+    $table->align = array('left', 'left');
+    $table->size = array('70%', null);
+    $table->attributes['class'] = 'compacttable generaltable';
 
     foreach ($answerpages as $page) {
         unset($table->data);
@@ -554,7 +554,7 @@ if ($action == 'reportoverview') {
         } else {
             $table->data[] = array(0, " ");
         }
-        echo $OUTPUT->table($table);
+        echo html_writer::table($table);
     }
 } else {
     print_error('unknowaction');

@@ -103,7 +103,7 @@
     }
     asort($table->data);
 
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
 
     echo "<div style=\"text-align:center\"><input type=\"submit\" value=\"".get_string("savechanges")."\" /></div>\n";
     echo "</div>";

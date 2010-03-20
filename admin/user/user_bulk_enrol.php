@@ -125,7 +125,7 @@ foreach($users as $user)
     $table->data[] = $temparray;
 }
 echo $OUTPUT->heading("$usercount / $usertotal ".get_string('users'));
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 echo '<div class="continuebutton">';
 echo '<input type="submit" name="multienrolsubmit" value="save changes" />';
 echo '</div>';

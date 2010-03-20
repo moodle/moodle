@@ -70,6 +70,6 @@ $table->align = array('left', 'left', 'left');
 $table->width = '30%';
 $table->data  = $data;
 $table->tablealign  = 'center';
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 
 echo $OUTPUT->footer();

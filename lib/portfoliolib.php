@@ -894,7 +894,7 @@ function portfolio_report_insane($insane, $instances=false, $return=false) {
         }
         $table->data[] = array($name, get_string($reason, 'portfolio_' . $plugin));
     }
-    $output .= $OUTPUT->table($table);
+    $output .= html_writer::table($table);
     $output .= '<br /><br /><br />';
 
     if ($return) {

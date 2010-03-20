@@ -545,7 +545,7 @@ class grade_report_grader extends grade_report {
 
         for ($i = 0; $i < $levels; $i++) {
             $fillercell = new html_table_cell();
-            $fillercell->add_classes(array('fixedcolumn', 'cell', 'topleft'));
+            $fillercell->attributes['class'] = 'fixedcolumn cell topleft';
             $fillercell->text = ' ';
             $fillercell->colspan = $colspan;
             $row = new html_table_row(array($fillercell));
@@ -553,10 +553,10 @@ class grade_report_grader extends grade_report {
         }
 
         $headerrow = new html_table_row();
-        $headerrow->add_class('heading');
+        $headerrow->attributes['class'] = 'heading';
 
         $studentheader = new html_table_cell();
-        $studentheader->add_classes(array('header'));
+        $studentheader->attributes['class'] = 'header';
         $studentheader->scope = 'col';
         $studentheader->header = true;
         $studentheader->id = 'studentheader';
@@ -572,7 +572,7 @@ class grade_report_grader extends grade_report {
             $sortidnumberlink = html_writer::link(new moodle_url($this->baseurl, array('sortitemid'=>'idnumber')), get_string('idnumber'));
 
             $idnumberheader = new html_table_cell();
-            $idnumberheader->add_classes(array('header', 'useridnumber'));
+            $idnumberheader->attributes['class'] = 'header useridnumber';
             $idnumberheader->scope = 'col';
             $idnumberheader->header = true;
             $idnumberheader->text = $arrows['idnumber'];
@@ -589,10 +589,10 @@ class grade_report_grader extends grade_report {
         foreach ($this->users as $userid => $user) {
             $userrow = new html_table_row();
             $userrow->id = 'fixed_user_'.$userid;
-            $userrow->add_classes(array('r'.$this->rowcount++, $rowclasses[$this->rowcount % 2]));
+            $userrow->attributes['class'] = 'r'.$this->rowcount++ . $rowclasses[$this->rowcount % 2];
 
             $usercell = new html_table_cell();
-            $usercell->add_classes(array('user'));
+            $usercell->attributes['class'] = 'user';
             $usercell->header = true;
             $usercell->scope = 'row';
 
@@ -606,7 +606,7 @@ class grade_report_grader extends grade_report {
 
             if (has_capability('gradereport/'.$CFG->grade_profilereport.':view', $this->context)) {
                 $userreportcell = new html_table_cell();
-                $userreportcell->add_class('userreport');
+                $userreportcell->attributes['class'] = 'userreport';
                 $userreportcell->header = true;
                 $a->user = fullname($user);
                 $strgradesforuser = get_string('gradesforuser', 'grades', $a);
@@ -617,7 +617,7 @@ class grade_report_grader extends grade_report {
 
             if ($showuseridnumber) {
                 $idnumbercell = new html_table_cell();
-                $idnumbercell->add_classes(array('header', 'useridnumber'));
+                $idnumbercell->attributes['class'] = 'header useridnumber';
                 $idnumbercell->header = true;
                 $idnumbercell->scope = 'row';
                 $userrow->cells[] = $idnumbercell;
@@ -666,7 +666,7 @@ class grade_report_grader extends grade_report {
             }
 
             $headingrow = new html_table_row();
-            $headingrow->add_class('heading_name_row');
+            $headingrow->attributes['class'] = 'heading_name_row';
 
             foreach ($row as $columnkey => $element) {
                 $sortlink = clone($this->baseurl);
@@ -696,7 +696,7 @@ class grade_report_grader extends grade_report {
 // Element is a filler
                 if ($type == 'filler' or $type == 'fillerfirst' or $type == 'fillerlast') {
                     $fillercell = new html_table_cell();
-                    $fillercell->add_classes(array($type, $catlevel));
+                    $fillercell->attributes['class'] = $type . ' ' . $catlevel;
                     $fillercell->colspan = $colspan;
                     $fillercell->text = '&nbsp;';
                     $fillercell->header = true;
@@ -706,7 +706,7 @@ class grade_report_grader extends grade_report {
 // Element is a category
                 else if ($type == 'category') {
                     $categorycell = new html_table_cell();
-                    $categorycell->add_classes(array('category', $catlevel));
+                    $categorycell->attributes['class'] = 'category ' . $catlevel;
                     $categorycell->colspan = $colspan;
                     $categorycell->text = shorten_text($element['object']->get_name());
                     $categorycell->text .= $this->get_collapsing_icon($element);
@@ -738,10 +738,10 @@ class grade_report_grader extends grade_report {
                     $headerlink = $this->gtree->get_element_header($element, true, $this->get_pref('showactivityicons'), false);
 
                     $itemcell = new html_table_cell();
-                    $itemcell->add_classes(array($type, $catlevel, 'highlightable'));
+                    $itemcell->attributes['class'] = $type . ' ' . $catlevel . 'highlightable';
 
                     if ($element['object']->is_hidden()) {
-                        $itemcell->add_class('hidden');
+                        $itemcell->attributes['class'] .= ' hidden';
                     }
 
                     $itemcell->colspan = $colspan;
@@ -751,7 +751,6 @@ class grade_report_grader extends grade_report {
 
                     $headingrow->cells[] = $itemcell;
                 }
-                
             }
             $rows[] = $headingrow;
         }
@@ -798,7 +797,7 @@ class grade_report_grader extends grade_report {
 
             $itemrow = new html_table_row();
             $itemrow->id = 'user_'.$userid;
-            $itemrow->add_class($rowclasses[$this->rowcount % 2]);
+            $itemrow->attributes['class'] = $rowclasses[$this->rowcount % 2];
 
             $jsarguments['users'][$userid] = fullname($user);
 
@@ -838,19 +837,19 @@ class grade_report_grader extends grade_report {
                 $eid = $this->gtree->get_grade_eid($grade);
                 $element = array('eid'=>$eid, 'object'=>$grade, 'type'=>'grade');
 
-                $itemcell->add_class('grade');
+                $itemcell->attributes['class'] .= ' grade';
                 if ($item->is_category_item()) {
-                    $itemcell->add_class('cat');
+                    $itemcell->attributes['class'] .= ' cat';
                 }
                 if ($item->is_course_item()) {
-                    $itemcell->add_class('course');
+                    $itemcell->attributes['class'] .= ' course';
                 }
                 if ($grade->is_overridden()) {
-                    $itemcell->add_class('overridden');
+                    $itemcell->attributes['class'] .= ' overridden';
                 }
 
                 if ($grade->is_excluded()) {
-                    // $itemcell->add_class('excluded');
+                    // $itemcell->attributes['class'] .= ' excluded';
                 }
 
                 if (!empty($grade->feedback)) {
@@ -950,9 +949,9 @@ class grade_report_grader extends grade_report {
                     $gradedisplaytype = $item->get_displaytype();
 
                     if ($item->scaleid && !empty($scalesarray[$item->scaleid])) {
-                        $itemcell->add_class('grade_type_scale');
+                        $itemcell->attributes['class'] .= ' grade_type_scale';
                     } else if ($item->gradetype != GRADE_TYPE_TEXT) {
-                        $itemcell->add_class('grade_type_text');
+                        $itemcell->attributes['class'] .= ' grade_type_text';
                     }
 
                     if ($item->needsupdate) {
@@ -1020,20 +1019,17 @@ class grade_report_grader extends grade_report {
         if ($fixedstudents) {
             $fixedcolumntable = new html_table();
             $fixedcolumntable->id = 'fixed_column';
-            $fixedcolumntable->add_class('fixed_grades_column');
-            $fixedcolumntable->bodyclasses = 'leftbody';
             $fixedcolumntable->data = $leftrows;
-            $html .= $OUTPUT->container($OUTPUT->table($fixedcolumntable), 'left_scroller');
+            $html .= $OUTPUT->container(html_writer::table($fixedcolumntable), 'left_scroller');
 
             $righttable = new html_table();
             $righttable->id = 'user-grades';
-            $righttable->bodyclasses = array('righttest');
             $righttable->data = $rightrows;
 
-            $html .= $OUTPUT->container($OUTPUT->table($righttable), 'right_scroller');
+            $html .= $OUTPUT->container(html_writer::table($righttable), 'right_scroller');
         } else {
             $fulltable = new html_table();
-            $fulltable->add_classes(array('gradestable', 'flexible', 'boxaligncenter', 'generaltable'));
+            $fulltable->attributes['class'] = 'gradestable flexible boxaligncenter generaltable';
             $fulltable->id = 'user-grades';
 
             // Extract rows from each side (left and right) and collate them into one row each
@@ -1041,7 +1037,7 @@ class grade_report_grader extends grade_report {
                 $row->cells = array_merge($row->cells, $rightrows[$key]->cells);
                 $fulltable->data[] = $row;
             }
-            $html .= $OUTPUT->table($fulltable);
+            $html .= html_writer::table($fulltable);
         }
         return $OUTPUT->container($html, 'gradeparent');
     }
@@ -1058,9 +1054,9 @@ class grade_report_grader extends grade_report {
 
         if ($USER->gradeediting[$this->courseid]) {
             $controlsrow = new html_table_row();
-            $controlsrow->add_class('controls');
+            $controlsrow->attributes['class'] = 'controls';
             $controlscell = new html_table_cell();
-            $controlscell->add_classes(array('header', 'controls'));
+            $controlscell->attributes['class'] = 'header controls';
             $controlscell->colspan = $colspan;
             $controlscell->text = $this->get_lang_string('controls','grades');
 
@@ -1081,9 +1077,9 @@ class grade_report_grader extends grade_report {
 
         if ($this->get_pref('showranges')) {
             $rangerow = new html_table_row();
-            $rangerow->add_classes(array('range', 'r'.$this->rowcount++));
+            $rangerow->attributes['class'] = 'range r'.$this->rowcount++;
             $rangecell = new html_table_cell();
-            $rangecell->add_classes(array('header', 'range'));
+            $rangecell->attributes['class'] = 'header range';
             $rangecell->colspan = $colspan;
             $rangecell->header = true;
             $rangecell->scope = 'row';
@@ -1116,9 +1112,9 @@ class grade_report_grader extends grade_report {
         if ($groupavg) {
             if ($showaveragesgroup) {
                 $groupavgrow = new html_table_row();
-                $groupavgrow->add_classes(array('groupavg', 'r'.$this->rowcount++));
+                $groupavgrow->attributes['class'] = 'groupavg r'.$this->rowcount++;
                 $groupavgcell = new html_table_cell();
-                $groupavgcell->add_classes(array('header', 'range'));
+                $groupavgcell->attributes['class'] = 'header range';
                 $groupavgcell->colspan = $colspan;
                 $groupavgcell->header = true;
                 $groupavgcell->scope = 'row';
@@ -1131,9 +1127,9 @@ class grade_report_grader extends grade_report {
 
             if ($showaverages) {
                 $avgrow = new html_table_row();
-                $avgrow->add_classes(array('avg', 'r'.$this->rowcount++));
+                $avgrow->attributes['class'] = 'avg r'.$this->rowcount++;
                 $avgcell = new html_table_cell();
-                $avgcell->add_classes(array('header', 'range'));
+                $avgcell->attributes['class'] = 'header range';
                 $avgcell->colspan = $colspan;
                 $avgcell->header = true;
                 $avgcell->scope = 'row';
@@ -1155,7 +1151,7 @@ class grade_report_grader extends grade_report {
         global $USER;
         if ($USER->gradeediting[$this->courseid]) {
             $iconsrow = new html_table_row();
-            $iconsrow->add_class('controls');
+            $iconsrow->attributes['class'] = 'controls';
 
             $showuseridnumber = $this->get_pref('showuseridnumber');
 
@@ -1166,7 +1162,7 @@ class grade_report_grader extends grade_report {
                 $eid = $this->gtree->get_item_eid($item);
                 $element = $this->gtree->locate_element($eid);
                 $itemcell = new html_table_cell();
-                $itemcell->add_classes(array('controls', 'icons'));
+                $itemcell->attributes['class'] = 'controls icons';
                 $itemcell->text = $this->get_icons($element);
                 $iconsrow->cells[] = $itemcell;
             }
@@ -1187,13 +1183,13 @@ class grade_report_grader extends grade_report {
             $rangesdisplaytype   = $this->get_pref('rangesdisplaytype');
             $rangesdecimalpoints = $this->get_pref('rangesdecimalpoints');
             $rangerow = new html_table_row();
-            $rangerow->add_classes(array('heading', 'range'));
+            $rangerow->attributes['class'] = 'heading range';
 
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
                 $itemcell = new html_table_cell();
                 $itemcell->header = true;
-                $itemcell->add_classes(array('header', 'range'));
+                $itemcell->attributes['class'] .= ' header range';
 
                 $hidden = '';
                 if ($item->is_hidden()) {
@@ -1301,7 +1297,7 @@ class grade_report_grader extends grade_report {
             $ungradedcounts = $DB->get_records_sql($SQL, $params);
 
             $avgrow = new html_table_row();
-            $avgrow->add_class('avg');
+            $avgrow->attributes['class'] = 'avg';
 
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];

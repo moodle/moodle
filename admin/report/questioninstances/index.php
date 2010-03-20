@@ -122,7 +122,7 @@ if ($requestedqtype) {
             $totalhidden);
 
     // Print it.
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
 }
 
 // Footer.

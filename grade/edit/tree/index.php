@@ -309,7 +309,7 @@ echo '<form id="gradetreeform" method="post" action="'.$returnurl.'">';
 echo '<div>';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 
-echo $OUTPUT->table($grade_edit_tree->table);
+echo html_writer::table($grade_edit_tree->table);
 
 echo '<div id="gradetreesubmit">';
 if (!$moving) {

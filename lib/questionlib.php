@@ -672,7 +672,7 @@ function question_delete_course($course, $feedback=true) {
             $table = new html_table();
             $table->head = array(get_string('category','quiz'), get_string('action'));
             $table->data = $feedbackdata;
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
         }
     }
     return true;
@@ -738,7 +738,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
             $table = new html_table();
             $table->head = array(get_string('questioncategory','question'), get_string('action'));
             $table->data = $feedbackdata;
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
         }
 
     } else {
@@ -835,7 +835,7 @@ function question_delete_activity($cm, $feedback=true) {
             $table = new html_table();
             $table->head = array(get_string('category','quiz'), get_string('action'));
             $table->data = $feedbackdata;
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
         }
     }
     return true;

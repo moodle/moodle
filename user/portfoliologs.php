@@ -101,7 +101,7 @@ if (count($queued) > 0) {
         unset($e); // this could potentially be quite big, so free it.
     }
     echo $OUTPUT->heading(get_string('queuesummary', 'portfolio'));
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
     $somethingprinted = true;
 }
 // paging - get total count separately
@@ -139,7 +139,7 @@ if ($logcount > 0) {
     echo $OUTPUT->heading(get_string('logsummary', 'portfolio'));
     $pagingbar = new paging_bar($logcount, $page, $perpage, $CFG->wwwroot . '/user/portfoliologs.php?');
     echo $OUTPUT->render($pagingbar);
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
     echo $OUTPUT->render($pagingbar);
     $somethingprinted = true;
 }

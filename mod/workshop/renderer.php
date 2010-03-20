@@ -362,11 +362,11 @@ class mod_workshop_renderer extends plugin_renderer_base {
             throw new coding_exception('you must provide the prepared user plan to be rendered');
         }
         $table = new html_table();
-        $table->set_classes('userplan');
+        $table->attributes['class'] = 'userplan';
         $table->head = array();
         $table->colclasses = array();
         $row = new html_table_row();
-        $row->set_classes('phasetasks');
+        $row->attributes['class'] = 'phasetasks';
         foreach ($plan as $phasecode => $phase) {
             $title = html_writer::tag('span', $phase->title);
             $actions = '';
@@ -394,7 +394,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         }
         $table->data = array($row);
 
-        return $this->output->table($table);
+        return html_writer::table($table);
     }
 
     /**
@@ -450,7 +450,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         }
 
         $table = new html_table();
-        $table->set_classes('grading-report');
+        $table->attributes['class'] = 'grading-report';
 
         $sortbyfirstname = $this->sortable_heading(get_string('firstname'), 'firstname', $options->sortby, $options->sorthow);
         $sortbylastname = $this->sortable_heading(get_string('lastname'), 'lastname', $options->sortby, $options->sorthow);
@@ -509,7 +509,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
                     $cell = new html_table_cell();
                     $cell->text = $this->grading_report_participant($participant, $userinfo);
                     $cell->rowspan = $numoftrs;
-                    $cell->add_class('participant');
+                    $cell->attributes['class'] = 'participant';
                     $row->cells[] = $cell;
                 }
                 // column #2 - submission - spans over all rows
@@ -517,7 +517,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
                     $cell = new html_table_cell();
                     $cell->text = $this->grading_report_submission($participant);
                     $cell->rowspan = $numoftrs;
-                    $cell->add_class('submission');
+                    $cell->attributes['class'] = 'submission';
                     $row->cells[] = $cell;
                 }
                 // column #3 - received grades
@@ -528,11 +528,11 @@ class mod_workshop_renderer extends plugin_renderer_base {
                     $cell->text = $this->grading_report_assessment($assessment, $options->showreviewernames, $userinfo,
                             get_string('gradereceivedfrom', 'workshop'));
                     $cell->rowspan = $spanreceived;
-                    $cell->add_class('receivedgrade');
+                    $cell->attributes['class'] = 'receivedgrade';
                     if (is_null($assessment) or is_null($assessment->grade)) {
-                        $cell->add_class('null');
+                        $cell->attributes['class'] .= ' null';
                     } else {
-                        $cell->add_class('notnull');
+                        $cell->attributes['class'] .= ' notnull';
                     }
                     $row->cells[] = $cell;
                 }
@@ -541,7 +541,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
                     $cell = new html_table_cell();
                     $cell->text = $this->grading_report_grade($participant->submissiongrade, $participant->submissiongradeover);
                     $cell->rowspan = $numoftrs;
-                    $cell->add_class('submissiongrade');
+                    $cell->attributes['class'] = 'submissiongrade';
                     $row->cells[] = $cell;
                 }
                 // column #5 - given grades
@@ -552,11 +552,11 @@ class mod_workshop_renderer extends plugin_renderer_base {
                     $cell->text = $this->grading_report_assessment($assessment, $options->showauthornames, $userinfo,
                             get_string('gradegivento', 'workshop'));
                     $cell->rowspan = $spangiven;
-                    $cell->add_class('givengrade');
+                    $cell->attributes['class'] = 'givengrade';
                     if (is_null($assessment) or is_null($assessment->grade)) {
-                        $cell->add_class('null');
+                        $cell->attributes['class'] .= ' null';
                     } else {
-                        $cell->add_class('notnull');
+                        $cell->attributes['class'] .= ' notnull';
                     }
                     $row->cells[] = $cell;
                 }
@@ -565,7 +565,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
                     $cell = new html_table_cell();
                     $cell->text = $this->grading_report_grade($participant->gradinggrade);
                     $cell->rowspan = $numoftrs;
-                    $cell->add_class('gradinggrade');
+                    $cell->attributes['class'] = 'gradinggrade';
                     $row->cells[] = $cell;
                 }
 
@@ -573,7 +573,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             }
         }
 
-        return $this->output->table($table);
+        return html_writer::table($table);
     }
 
     /**

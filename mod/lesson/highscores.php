@@ -208,7 +208,7 @@ switch ($mode) {
                     break;
                 }
             }
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
         }
 
         if (!has_capability('mod/lesson:manage', $context)) {  // teachers don't need the links

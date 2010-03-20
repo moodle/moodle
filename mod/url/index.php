@@ -54,7 +54,7 @@ if (!$urls = get_all_instances_in_course('url', $course)) {
 }
 
 $table = new html_table();
-$table->set_classes(array('generaltable', 'mod_index'));
+$table->attributes['class'] = 'generaltable mod_index';
 
 if ($course->format == 'weeks') {
     $table->head  = array ($strweek, $strname, $strintro);
@@ -100,6 +100,6 @@ foreach ($urls as $url) {
         format_module_intro('url', $url, $cm->id));
 }
 
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 
 echo $OUTPUT->footer();

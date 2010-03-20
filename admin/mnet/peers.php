@@ -218,7 +218,7 @@ $table->data = array(
         $registerrow
     ),
 );
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 
 // print the list of all hosts, with little action links and buttons
 $table = new html_table();
@@ -250,7 +250,7 @@ foreach($hosts as $host) {
         $OUTPUT->single_button(new moodle_url('/admin/mnet/delete.php', array('hostid' => $host->id)), get_string('delete'))
     );
 }
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 
 // finally, print the initial form to add a new host
 echo $OUTPUT->box_start();

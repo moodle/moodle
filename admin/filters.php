@@ -218,7 +218,7 @@
         $table->rowclasses[] = 'dimmed_text';
     }
 
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
     echo '<p class="filtersettingnote">' . get_string('filterallwarning', 'filters') . '</p>';
     echo $OUTPUT->footer();
 

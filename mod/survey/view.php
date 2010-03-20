@@ -115,7 +115,7 @@
                         $table->head = array(get_string($question->text, "survey"));
                         $table->align = array ("left");
                         $table->data[] = array(s($answer->answer1));//no html here, just plain text
-                        echo $OUTPUT->table($table);
+                        echo html_writer::table($table);
                         echo $OUTPUT->spacer(clone($spacer)) . '<br />';
                     }
                 }

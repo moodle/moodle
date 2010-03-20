@@ -302,7 +302,7 @@
 
                     $table->data[] = array($contents);
 
-                    echo $OUTPUT->table($table);
+                    echo html_writer::table($table);
 
                     echo $OUTPUT->spacer(array('height'=>30)); // should be done with CSS instead
                 }
@@ -354,7 +354,7 @@
             }
         }
 
-        echo $OUTPUT->table($table);
+        echo html_writer::table($table);
 
         break;
 
@@ -440,7 +440,7 @@
                      $table->head = array(get_string($question->text, "survey"));
                      $table->align = array ("left");
                      $table->data[] = array(s($answer->answer1)); // no html here, just plain text
-                     echo $OUTPUT->table($table);
+                     echo html_writer::table($table);
                      echo $OUTPUT->spacer(30);
                  }
              }

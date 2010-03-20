@@ -68,7 +68,7 @@ echo $OUTPUT->box_start('generalbox boxaligncenter');
 if (!empty($blogs)) {
     $table = new html_table();
     $table->cellpadding = 4;
-    $table->add_class('generaltable boxaligncenter');
+    $table->attributes['class'] = 'generaltable boxaligncenter';
     $table->head = array(get_string('name'), get_string('url'), get_string('timefetched', 'blog'), get_string('valid', 'blog'), get_string('actions'));
 
     foreach ($blogs as $blog) {
@@ -87,7 +87,7 @@ if (!empty($blogs)) {
 
         $table->data[] = new html_table_row(array($blog->name, $blog->url, userdate($blog->timefetched), $validicon, $editicon . $deleteicon));
     }
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
 }
 
 $newexternalurl = new moodle_url('/blog/external_blog_edit.php');

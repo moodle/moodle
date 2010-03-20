@@ -423,7 +423,7 @@ class portfolio_exporter {
         foreach ($mainsummary as $string => $value) {
             $table->data[] = array($string, $value);
         }
-        echo $OUTPUT->table($table);
+        echo html_writer::table($table);
         echo $OUTPUT->confirm($strconfirm, $yesurl, $nourl);
         echo $OUTPUT->box_end();
         echo $OUTPUT->footer();

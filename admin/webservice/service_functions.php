@@ -137,7 +137,7 @@ foreach ($functions as $function) {
     }
 }
 
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 
 
 // we can edit only custom functions, the build-in would be overridden after each upgrade

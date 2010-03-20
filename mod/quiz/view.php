@@ -181,7 +181,7 @@
 
         // Prepare table header
         $table = new html_table();
-        $table->set_classes('generaltable quizattemptsummary');
+        $table->attributes['class'] = 'generaltable quizattemptsummary';
         $table->head = array();
         $table->align = array();
         $table->size = array();
@@ -298,7 +298,7 @@
                 $table->data[$attempt->attempt] = $row;
             }
         } // End of loop over attempts.
-        echo $OUTPUT->table($table);
+        echo html_writer::table($table);
     }
 
 /// Print information about the student's best score for this quiz if possible.

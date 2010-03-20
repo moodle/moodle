@@ -60,7 +60,7 @@
                            '<input type="text" name="numcourses" size="3" maxlength="2" value="'.$numcourses.'" />',
                            '<input type="submit" value="'.get_string('view').'" />') ;
 
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
     echo '</div>';
     echo '</form>';
 
@@ -117,7 +117,7 @@
                 }
                 $table->data[] = $a;
             }
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
         }
     }
     echo $OUTPUT->footer();

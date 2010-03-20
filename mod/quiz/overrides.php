@@ -199,7 +199,7 @@ foreach ($overrides as $override) {
 
 echo html_writer::start_tag('div', array('id' => 'quizoverrides'));
 if (count($table->data)) {
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
 }
 
 echo html_writer::start_tag('div', array('class' => 'buttons'));

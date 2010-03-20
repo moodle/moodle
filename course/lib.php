@@ -419,7 +419,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         $table->data[] = $row;
     }
 
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
     echo $OUTPUT->paging_bar($totalcount, $page, $perpage, "$url&perpage=$perpage");
 }
 

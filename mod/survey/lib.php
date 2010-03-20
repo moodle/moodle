@@ -191,7 +191,7 @@ function survey_user_complete($course, $user, $mod, $survey) {
                 }
                 $table->data[] = array("<b>$questiontext</b>", $answertext);
             }
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
 
         } else {
 
@@ -475,7 +475,7 @@ function survey_print_all_responses($cmid, $results, $courseid) {
                userdate($a->time));
     }
 
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
 }
 
 /**

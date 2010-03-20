@@ -175,7 +175,7 @@ switch ($action) {
 
                 $table->data[] = array($token->token, $token->name, $validuntil, $creatoratag, $reset);
             }
-            $return .= $OUTPUT->table($table);
+            $return .= html_writer::table($table);
           
         } else {
             $return .= get_string('notoken', 'webservice');

@@ -184,7 +184,7 @@ if (!$acl) {
 }
 
 if (!empty($table)) {
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
     echo '<p>&nbsp;</p>';
     $baseurl = new moodle_url('/admin/mnet/access_control.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
     echo $OUTPUT->paging_bar($aclcount, $page, $perpage, $baseurl);

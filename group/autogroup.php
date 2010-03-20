@@ -171,7 +171,7 @@ if ($editform->is_cancelled()) {
             $table->data[] = $line;
         }
 
-        $preview .= $OUTPUT->table($table);
+        $preview .= html_writer::table($table);
 
     } else {
         $grouping = null;

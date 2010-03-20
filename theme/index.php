@@ -106,7 +106,7 @@ foreach ($themes as $themename => $themedir) {
     }
 }
 
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 
 echo $OUTPUT->footer();
 

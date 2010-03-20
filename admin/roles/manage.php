@@ -256,7 +256,7 @@
 
         $table->data[] = $row;
     }
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
 
     echo $OUTPUT->container_start('buttons');
     echo $OUTPUT->single_button(new moodle_url($defineurl, array('action' => 'add')), get_string('addrole', 'role'), 'get');

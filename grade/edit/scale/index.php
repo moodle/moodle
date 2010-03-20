@@ -158,9 +158,9 @@ if ($courseid) {
 }
 
 echo $OUTPUT->heading($strcustomscales, 3, 'main');
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 echo $OUTPUT->heading($strstandardscale, 3, 'main');
-echo $OUTPUT->table($table2);
+echo html_writer::table($table2);
 echo $OUTPUT->container_start('buttons');
 echo $OUTPUT->single_button(new moodle_url('edit.php', array('courseid'=>$courseid)), $srtcreatenewscale);
 echo $OUTPUT->container_end();

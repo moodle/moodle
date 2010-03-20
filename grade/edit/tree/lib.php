@@ -84,7 +84,7 @@ class grade_edit_tree {
         $this->table = new html_table();
         $this->table->id = "grade_edit_tree_table";
         $this->table->cellpadding = 5;
-        $this->table->add_classes(array('generaltable', $mode));
+        $this->table->attributes['class'] = 'generaltable ' . $mode;
         $this->table->style = $widthstyle;
 
         foreach ($this->columns as $column) {
@@ -161,7 +161,7 @@ class grade_edit_tree {
             // do not diplay children
             $cell = new html_table_cell();
             $cell->colspan = 12;
-            $cell->add_classes(array($element['type'], 'moving'));
+            $cell->attributes['class'] = $element['type'] . ' moving';
             $cell->text = $object->name.' ('.get_string('move').')';
             return array(new html_table_row(array($cell)));
         }
@@ -278,16 +278,16 @@ class grade_edit_tree {
             }
 
             $row = new html_table_row();
-            $row->add_classes(array($courseclass, 'category', $dimmed));
+            $row->attributes['class'] = $courseclass . ' category ' . $dimmed;
             foreach ($rowclasses as $class) {
-                $row->add_class($class);
+                $row->attributes['class'] .= ' ' . $class;
             }
 
             $headercell = new html_table_cell();
             $headercell->header = true;
             $headercell->scope = 'row';
-            $headercell->title = $object->stripped_name;
-            $headercell->add_classes(array('cell', 'rowspan', $levelclass));
+            $headercell->attributes['title'] = $object->stripped_name;
+            $headercell->attributes['class'] = 'cell rowspan ' . $levelclass;
             $headercell->rowspan = $row_count+1+$row_count_offset;
             $row->cells[] = $headercell;
 
@@ -304,7 +304,7 @@ class grade_edit_tree {
             // Print a coloured row to show the end of the category accross the table
             $endcell = new html_table_cell();
             $endcell->colspan = (19 - $level);
-            $endcell->add_classes(array('colspan', $levelclass));
+            $endcell->attributes['class'] = 'colspan ' . $levelclass;
 
             $returnrows[] = new html_table_row(array($endcell));;
 
@@ -321,9 +321,9 @@ class grade_edit_tree {
 
             $dimmed = ($item->is_hidden()) ? "dimmed_text" : "";
             $gradeitemrow = new html_table_row();
-            $gradeitemrow->add_classes(array($categoryitemclass, 'item', $dimmed));
+            $gradeitemrow->attributes['class'] = $categoryitemclass . ' item ' . $dimmed;
             foreach ($rowclasses as $class) {
-                $gradeitemrow->add_class($class);
+                $gradeitemrow->attributes['class'] .= ' ' . $class;
             }
 
             foreach ($this->columns as $column) {
@@ -518,13 +518,13 @@ abstract class grade_edit_tree_column {
         $this->headercell = new html_table_cell();
         $this->headercell->header = true;
         $this->headercell->style = 'whitespace: normal;';
-        $this->headercell->add_class('header');
+        $this->headercell->attributes['class'] = 'header';
 
         $this->categorycell = new html_table_cell();
-        $this->categorycell->add_class('cell');
+        $this->categorycell->attributes['class']  = 'cell';
 
         $this->itemcell = new html_table_cell();
-        $this->itemcell->add_class('cell');
+        $this->itemcell->attributes['class'] = 'cell';
     }
 }
 
@@ -573,7 +573,7 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
 
     public function get_header_cell() {
         $headercell = clone($this->headercell);
-        $headercell->add_class('name');
+        $headercell->attributes['class'] .= ' name';
         $headercell->colspan = $this->deepest_level + 1;
         $headercell->text = get_string('name');
         return $headercell;
@@ -585,7 +585,7 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
             throw new Exception('Array key (name or level) missing from 3rd param of grade_edit_tree_column_name::get_category_cell($category, $levelclass, $params)');
         }
         $categorycell = clone($this->categorycell);
-        $categorycell->add_classes(array('name', $levelclass));
+        $categorycell->attributes['class'] .= ' name ' . $levelclass;
         $categorycell->colspan = ($this->deepest_level +1) - $params['level'];
         $categorycell->text = $OUTPUT->heading($params['name'], 4);
         return $categorycell;
@@ -601,7 +601,7 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
         $name = $params['name'];
 
         $itemcell = clone($this->itemcell);
-        $itemcell->add_class('name');
+        $itemcell->attributes['class'] .= ' name';
         $itemcell->colspan = ($this->deepest_level + 1) - $params['level'];
         $itemcell->text = $name;
         return $itemcell;
@@ -659,7 +659,7 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
         }
 
         $categorycell = clone($this->categorycell);
-        $categorycell->add_class($levelclass);
+        $categorycell->attributes['class'] .= ' ' . $levelclass;
         $categorycell->text = $aggregation;
         return $categorycell;
 
@@ -684,7 +684,7 @@ class grade_edit_tree_column_extracredit extends grade_edit_tree_column {
     public function get_category_cell($category, $levelclass, $params) {
         $item = $category->get_grade_item();
         $categorycell = clone($this->categorycell);
-        $categorycell->add_class($levelclass);
+        $categorycell->attributes['class'] .= ' ' . $levelclass;
         $categorycell->text = grade_edit_tree::get_weight_input($item, 'extra');
         return $categorycell;
     }
@@ -727,7 +727,7 @@ class grade_edit_tree_column_weight extends grade_edit_tree_column {
 
         $item = $category->get_grade_item();
         $categorycell = clone($this->categorycell);
-        $categorycell->add_class($levelclass);
+        $categorycell->attributes['class']  .= ' ' . $levelclass;
         $categorycell->text = grade_edit_tree::get_weight_input($item, 'weight');
         return $categorycell;
     }
@@ -766,7 +766,7 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
 
     public function get_category_cell($category, $levelclass, $params) {
         $categorycell = clone($this->categorycell);
-        $categorycell->add_classes(array('range', $levelclass));
+        $categorycell->attributes['class'] .= ' range ' . $levelclass;
         $categorycell->text = ' - ';
         return $categorycell;
     }
@@ -828,7 +828,7 @@ class grade_edit_tree_column_aggregateonlygraded extends grade_edit_tree_column_
         }
 
         $categorycell = clone($this->categorycell);
-        $categorycell->add_class($levelclass);
+        $categorycell->attributes['class'] .= ' ' . $levelclass;
         $categorycell->text = $hidden.$aggregateonlygraded;
         return $categorycell;
     }
@@ -865,7 +865,7 @@ class grade_edit_tree_column_aggregatesubcats extends grade_edit_tree_column_cat
         }
 
         $categorycell = clone($this->categorycell);
-        $categorycell->add_class($levelclass);
+        $categorycell->attributes['class'] .= ' ' . $levelclass;
         $categorycell->text = $hidden.$aggregatesubcats;
         return $categorycell;
 
@@ -903,7 +903,7 @@ class grade_edit_tree_column_aggregateoutcomes extends grade_edit_tree_column_ca
         }
 
         $categorycell = clone($this->categorycell);
-        $categorycell->add_class($levelclass);
+        $categorycell->attributes['class'] .= ' ' . $levelclass;
         $categorycell->text = $hidden.$aggregateoutcomes;
         return $categorycell;
     }
@@ -945,7 +945,7 @@ class grade_edit_tree_column_droplow extends grade_edit_tree_column_category {
         }
 
         $categorycell = clone($this->categorycell);
-        $categorycell->add_class($levelclass);
+        $categorycell->attributes['class']  .= ' ' . $levelclass;
         $categorycell->text = $droplow;
         return $categorycell;
     }
@@ -978,7 +978,7 @@ class grade_edit_tree_column_keephigh extends grade_edit_tree_column_category {
         }
 
         $categorycell = clone($this->categorycell);
-        $categorycell->add_class($levelclass);
+        $categorycell->attributes['class'] .= ' ' . $levelclass;
         $categorycell->text = $keephigh;
         return $categorycell;
     }
@@ -1005,7 +1005,7 @@ class grade_edit_tree_column_multfactor extends grade_edit_tree_column {
 
     public function get_category_cell($category, $levelclass, $params) {
         $categorycell = clone($this->categorycell);
-        $categorycell->add_class($levelclass);
+        $categorycell->attributes['class'] .= ' ' . $levelclass;
         $categorycell->text = ' - ';
         return $categorycell;
     }
@@ -1046,7 +1046,7 @@ class grade_edit_tree_column_plusfactor extends grade_edit_tree_column {
 
     public function get_category_cell($category, $levelclass, $params) {
         $categorycell = clone($this->categorycell);
-        $categorycell->add_class($levelclass);
+        $categorycell->attributes['class'] .= ' ' . $levelclass;
         $categorycell->text = ' - ';
         return $categorycell;
 
@@ -1086,7 +1086,7 @@ class grade_edit_tree_column_actions extends grade_edit_tree_column {
 
     public function get_header_cell() {
         $headercell = clone($this->headercell);
-        $headercell->add_class('actions');
+        $headercell->attributes['class'] .= ' actions';
         $headercell->text = get_string('actions');
         return $headercell;
     }
@@ -1098,7 +1098,7 @@ class grade_edit_tree_column_actions extends grade_edit_tree_column {
         }
 
         $categorycell = clone($this->categorycell);
-        $categorycell->add_class($levelclass);
+        $categorycell->attributes['class'] .= ' ' . $levelclass;
         $categorycell->text = $params['actions'];
         return $categorycell;
     }
@@ -1108,7 +1108,7 @@ class grade_edit_tree_column_actions extends grade_edit_tree_column {
             throw new Exception('Array key (actions) missing from 2nd param of grade_edit_tree_column_actions::get_item_cell($item, $params)');
         }
         $itemcell = clone($this->itemcell);
-        $itemcell->add_class('actions');
+        $itemcell->attributes['class'] .= ' actions';
         $itemcell->text = $params['actions'];
         return $itemcell;
     }
@@ -1122,7 +1122,7 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
 
     public function get_header_cell() {
         $headercell = clone($this->headercell);
-        $headercell->add_class('selection');
+        $headercell->attributes['class'] .= ' selection';
         $headercell->text = get_string('select');
         return $headercell;
     }
@@ -1136,7 +1136,7 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         $selectnone = new action_link(new moodle_url('#'), get_string('none'), new component_action('click', 'togglecheckboxes', array('eid' => $params['eid'], 'check' => false)));
 
         $categorycell = clone($this->categorycell);
-        $categorycell->add_classes(array('last', $levelclass));
+        $categorycell->attributes['class'] .= ' last ' . $levelclass;
         $categorycell->style .= 'text-align: center;';
         $categorycell->text = $OUTPUT->render($selectall) . '<br />' . $OUTPUT->render($selectnone);
         return $categorycell;

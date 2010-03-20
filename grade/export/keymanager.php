@@ -74,7 +74,7 @@ $table->size  = array('50%', '30%', '10%', '10%');
 $table->align = array('left', 'left', 'left', 'center');
 $table->width = '90%';
 $table->data  = $data;
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 
 echo $OUTPUT->container_start('buttons mdl-align');
 echo $OUTPUT->single_button(new moodle_url('key.php', array('courseid'=>$course->id)), get_string('newuserkey', 'userkey'));

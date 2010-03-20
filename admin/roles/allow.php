@@ -67,7 +67,7 @@ echo $OUTPUT->box($controller->get_intro_text());
 
 echo '<form action="' . $baseurl . '" method="post">';
 echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 echo '<div class="buttons"><input type="submit" name="submit" value="'.get_string('savechanges').'"/>';
 echo '</div></form>';
 

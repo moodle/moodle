@@ -235,7 +235,7 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
         if ($npages) {
                 $table->data[] = array($retry + 1, $npages, $ncorrect, userdate($timeseen));
         }
-        echo $OUTPUT->table($table);
+        echo html_writer::table($table);
         echo $OUTPUT->box_end();
     }
 

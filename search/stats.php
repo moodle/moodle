@@ -105,7 +105,7 @@ require_once($CFG->dirroot.'/search/lib.php');
             }
         }
 
-        echo $OUTPUT->table($admin_table);
+        echo html_writer::table($admin_table);
         echo $OUTPUT->spacer(array('height'=>20, 'br'=>true)); // should be done with CSS instead
         echo $OUTPUT->heading($solutionsstr);
 
@@ -120,7 +120,7 @@ require_once($CFG->dirroot.'/search/lib.php');
         $admin_table->data[] = array($runindexerteststr, '<a href="tests/index.php" target="_blank">tests/index.php</a>');
         $admin_table->data[] = array($runindexerstr, '<a href="indexersplash.php" target="_blank">indexersplash.php</a>');
 
-        echo $OUTPUT->table($admin_table);
+        echo html_writer::table($admin_table);
         echo $OUTPUT->spacer($spacer) . '<br />';
     }
 
@@ -161,7 +161,7 @@ require_once($CFG->dirroot.'/search/lib.php');
     }
 
     echo $OUTPUT->heading($databasestatestr);
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
 
     echo $OUTPUT->box_end();
     echo $OUTPUT->box_end();

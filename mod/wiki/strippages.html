@@ -11,7 +11,7 @@
 <input type="hidden" name="wikipage" value="<?php print $wikipage?>" />
 <?php
   $strip_table=wiki_admin_strip_list($form->pagestostrip, $form->version, $err);
-  echo $OUTPUT->table($strip_table);
+  echo html_writer::table($strip_table);
 ?>
 <div class="boxaligncenter">
 <?php

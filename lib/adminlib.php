@@ -4836,7 +4836,7 @@ class admin_setting_manageauths extends admin_setting {
             // add a row to the table
             $table->data[] =array($displayname, $hideshow, $updown, $settings);
         }
-        $return .= $OUTPUT->table($table);
+        $return .= html_writer::table($table);
         $return .= get_string('configauthenticationplugins', 'admin').'<br />'.get_string('tablenosave', 'filters');
         $return .= $OUTPUT->box_end();
         return highlight($query, $return);
@@ -5001,7 +5001,7 @@ class admin_setting_manageeditors extends admin_setting {
             // add a row to the table
             $table->data[] =array($displayname, $hideshow, $updown, $settings);
         }
-        $return .= $OUTPUT->table($table);
+        $return .= html_writer::table($table);
         $return .= get_string('configeditorplugins', 'editor').'<br />'.get_string('tablenosave', 'admin');
         $return .= $OUTPUT->box_end();
         return highlight($query, $return);
@@ -5177,7 +5177,7 @@ class admin_setting_manageportfolio extends admin_setting {
             }
         }
 
-        $output .= $OUTPUT->table($table);
+        $output .= html_writer::table($table);
 
         $instancehtml = '<br /><br />' . get_string('addnewportfolio', 'portfolio') . ': <br /><br />';
         $addable = 0;
@@ -6072,7 +6072,7 @@ class admin_setting_managerepository extends admin_setting {
                 $alreadyplugins[] = $i->get_typename();
             }
         }
-        $output .= $OUTPUT->table($table);
+        $output .= html_writer::table($table);
         $instancehtml = '<div><h3>';
         $instancehtml .= get_string('addplugin', 'repository');
         $instancehtml .= '</h3><ul>';
@@ -6228,7 +6228,7 @@ class admin_setting_manageexternalservices extends admin_setting {
                 // add a row to the table
                 $table->data[] = array($displayname, $plugin, $functions, $users, $edit);
             }
-            $return .= $OUTPUT->table($table);
+            $return .= html_writer::table($table);
         }
 
         // Custom services
@@ -6270,7 +6270,7 @@ class admin_setting_manageexternalservices extends admin_setting {
             $table->data[] = array($displayname, $delete, $functions, $users, $edit);
         }
         // add new custom service option
-        $return .= $OUTPUT->table($table);
+        $return .= html_writer::table($table);
 
         $return .= '<br />';
         // add a token to the table
@@ -6443,7 +6443,7 @@ class admin_setting_webservicesoverview extends admin_setting {
         $row[2] = get_string('testwithtestclientdescription', 'webservice');
         $table->data[] = $row;
 
-        $return .= $OUTPUT->table($table);
+        $return .= html_writer::table($table);
 
     /// Users as clients with token
         $return .= "<br/><br/><br/>";
@@ -6519,7 +6519,7 @@ class admin_setting_webservicesoverview extends admin_setting {
         $row[2] = get_string('testauserwithtestclientdescription', 'webservice');
         $table->data[] = $row;
 
-        $return .= $OUTPUT->table($table);
+        $return .= html_writer::table($table);
 
         return highlight($query, $return);
     }
@@ -6667,7 +6667,7 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
             // add a row to the table
             $table->data[] = array($displayname, $version, $hideshow, $uninstall, $settings);
         }
-        $return .= $OUTPUT->table($table);
+        $return .= html_writer::table($table);
         $return .= get_string('configwebserviceplugins', 'webservice');
         $return .= $OUTPUT->box_end();
 
@@ -6783,7 +6783,7 @@ class admin_setting_managewebservicetokens extends admin_setting {
                 $table->data[] = array($token->token, $useratag, $token->name, '', $iprestriction, $validuntil, $delete);
             }
 
-            $return .= $OUTPUT->table($table);
+            $return .= html_writer::table($table);
             $return .= get_string('httpswarning', 'webservice');
         } else {
             $return .= get_string('notoken', 'webservice');

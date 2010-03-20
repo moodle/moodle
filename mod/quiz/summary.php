@@ -77,7 +77,7 @@ echo $OUTPUT->heading($title);
 
 /// Prepare the summary table header
 $table = new html_table();
-$table->add_class('generaltable quizsummaryofattempt boxaligncenter');
+$table->attributes['class'] = 'generaltable quizsummaryofattempt boxaligncenter';
 $table->head = array(get_string('question', 'quiz'), get_string('status', 'quiz'));
 $table->align = array('left', 'left');
 $table->size = array('', '');
@@ -109,7 +109,7 @@ foreach ($attemptobj->get_question_iterator() as $number => $question) {
 }
 
 /// Print the summary table.
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 
 /// countdown timer
 echo $attemptobj->get_timer_html();

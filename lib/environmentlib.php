@@ -173,8 +173,7 @@ function print_moodle_environment($result, $environment_results) {
     $servertable->align = array ('center', 'center', 'left', 'center');
     $servertable->wrap  = array ('nowrap', '', '', 'nowrap');
     $servertable->size  = array ('10', 10, '100%', '10');
-    $servertable->width = '90%';
-    $servertable->add_class('environmenttable generaltable');
+    $servertable->attributes['class'] = 'environmenttable generaltable';
 
     $serverdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());
 
@@ -183,8 +182,7 @@ function print_moodle_environment($result, $environment_results) {
     $othertable->align = array ('center', 'left', 'center');
     $othertable->wrap  = array ('', '', 'nowrap');
     $othertable->size  = array (10, '100%', '10');
-    $othertable->width = '90%';
-    $othertable->add_class('environmenttable generaltable');
+    $othertable->attributes['class'] = 'environmenttable generaltable';
 
     $otherdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());
 
@@ -309,10 +307,10 @@ function print_moodle_environment($result, $environment_results) {
 
 /// Print table
     echo $OUTPUT->heading(get_string('serverchecks', 'admin'));
-    echo $OUTPUT->table($servertable);
+    echo html_writer::table($servertable);
     if (count($othertable->data)){
         echo $OUTPUT->heading(get_string('customcheck', 'admin'));
-        echo $OUTPUT->table($othertable);
+        echo html_writer::table($othertable);
     }
 
 /// Finally, if any error has happened, print the summary box

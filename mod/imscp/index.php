@@ -54,7 +54,7 @@ if (!$imscps = get_all_instances_in_course('imscp', $course)) {
 }
 
 $table = new html_table();
-$table->set_classes(array('generaltable', 'mod_index'));
+$table->attributes['class'] = 'generaltable mod_index';
 
 if ($course->format == 'weeks') {
     $table->head  = array ($strweek, $strname, $strintro);
@@ -93,6 +93,6 @@ foreach ($imscps as $imscp) {
         format_module_intro('imscp', $imscp, $cm->id));
 }
 
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 
 echo $OUTPUT->footer();

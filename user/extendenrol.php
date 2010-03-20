@@ -181,7 +181,7 @@ foreach ($_POST as $k => $v) {
                 $checkbox2);
     }
 }
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 echo "\n<div style=\"width:100%;text-align:center;\"><input type=\"submit\" value=\"".get_string('savechanges')."\" /></div>\n</form>\n";
 
 echo $OUTPUT->footer();

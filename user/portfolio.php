@@ -119,7 +119,7 @@ if ($display) {
         );
     }
 
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
     echo $OUTPUT->box_end();
 }
 echo $OUTPUT->footer();

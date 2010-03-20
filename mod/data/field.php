@@ -298,7 +298,7 @@ if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          /// 
                 );
             }
         }
-        echo $OUTPUT->table($table);
+        echo html_writer::table($table);
     }
 
 

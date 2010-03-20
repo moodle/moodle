@@ -199,7 +199,7 @@ if (empty($availablefilters)) {
         $table->data[] = $row;
     }
 
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
     echo '<div class="buttons">' . "\n";
     echo '<input type="submit" name="savechanges" value="' . get_string('savechanges') . '" />';
     echo "\n</div>\n";

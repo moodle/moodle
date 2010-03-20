@@ -122,7 +122,7 @@ if (!empty($hostid) && array_key_exists($hostid, $hosts)) {
         );
 
     }
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
 
 
     $mnet_request->set_method('system/listMethods');
@@ -156,7 +156,7 @@ if (!empty($hostid) && array_key_exists($hostid, $hosts)) {
             html_writer::link($newurl, get_string('inspect', 'mnet'))
         );
     }
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
 
     if (isset($methodid) && array_key_exists($methodid-1, $methods)) {
         $method = $methods[$methodid-1];
@@ -194,7 +194,7 @@ if (!empty($hostid) && array_key_exists($hostid, $hosts)) {
             $signature['return']['description']
         );
 
-        echo $OUTPUT->table($table);
+        echo html_writer::table($table);
 
         $mnet_request->set_method('system/methodHelp');
         $mnet_request->add_param($method, 'string');

@@ -198,7 +198,7 @@
                 if (has_capability('mod/scorm:deleteresponses',$contextmodule)) {
                     echo '<form id="attemptsform" method="post" action="'.$FULLSCRIPT.'" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.addslashes_js(get_string('deleteattemptcheck','quiz')).'\' : true);">';
                     echo '<input type="hidden" name="id" value="'.$id.'">';
-                    echo $OUTPUT->table($table);
+                    echo html_writer::table($table);
                     echo '<a href="javascript:select_all_in(\'DIV\',null,\'scormtablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
                     echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'scormtablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
                     echo '&nbsp;&nbsp;';
@@ -210,7 +210,7 @@
                     echo '<input type="submit" value="'.get_string('go').'" /></div></noscript>';
                     echo '</form>';
                 } else {
-                    echo $OUTPUT->table($table);
+                    echo html_writer::table($table);
                 }
                 echo '</div>';
             } else {
@@ -272,7 +272,7 @@
                             }
                             $table->data[] = $row;
                         }
-                        echo $OUTPUT->table($table);
+                        echo html_writer::table($table);
                     }
                 }
             } else {
@@ -347,7 +347,7 @@
             }
             if ($existelements) {
                 echo '<h3>'.get_string('general','scorm').'</h3>';
-                echo $OUTPUT->table($table);
+                echo html_writer::table($table);
             }
 
             // Print Interactions data
@@ -389,7 +389,7 @@
             }
             if ($existinteraction) {
                 echo '<h3>'.get_string('interactions','scorm').'</h3>';
-                echo $OUTPUT->table($table);
+                echo html_writer::table($table);
             }
 
             // Print Objectives data
@@ -433,7 +433,7 @@
             }
             if ($existobjective) {
                 echo '<h3>'.get_string('objectives','scorm').'</h3>';
-                echo $OUTPUT->table($table);
+                echo html_writer::table($table);
             }
             $table = new html_table();
             $table->head = array(get_string('element','scorm'), get_string('value','scorm'));
@@ -461,7 +461,7 @@
             }
             if ($existelements) {
                 echo '<h3>'.get_string('othertracks','scorm').'</h3>';
-                echo $OUTPUT->table($table);
+                echo html_writer::table($table);
             }
             echo $OUTPUT->box_end();
         } else {

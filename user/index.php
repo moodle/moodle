@@ -214,7 +214,7 @@
 
 /// Print settings and things in a table across the top
     $controlstable = new html_table();
-    $controlstable->add_class('controls');
+    $controlstable->attributes['class'] = 'controls';
     $controlstable->cellspacing = 0;
     $controlstable->data[] = new html_table_row();
 
@@ -318,23 +318,23 @@
     $select = new single_select($baseurl, 'mode', $formatmenu, $mode, null, 'formatmenu');
     $select->set_label(get_string('userlist'));
     $userlistcell = new html_table_cell();
-    $userlistcell->add_class('right');
+    $userlistcell->attributes['class'] = 'right';
     $userlistcell->text = $OUTPUT->render($select);
     $controlstable->data[0]->cells[] = $userlistcell;
 
-    echo $OUTPUT->table($controlstable);
+    echo html_writer::table($controlstable);
 
     if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', $context))) {    /// Display info about the group
         if ($group = groups_get_group($currentgroup)) {
             if (!empty($group->description) or (!empty($group->picture) and empty($group->hidepicture))) {
                 $groupinfotable = new html_table();
-                $groupinfotable->add_class('groupinfobox');
+                $groupinfotable->attributes['class'] = 'groupinfobox';
                 $picturecell = new html_table_cell();
-                $picturecell->add_classes(array('left', 'side', 'picture'));
+                $picturecell->attributes['class'] = 'left side picture';
                 $picturecell->text = print_group_picture($group, $course->id, true, false, false);
 
                 $contentcell = new html_table_cell();
-                $contentcell->add_class('content');
+                $contentcell->attributes['class'] = 'content';
                 $contentcell->text = print_group_picture($group, $course->id, true, false, false);
 
                 $contentheading = $group->name;
@@ -349,7 +349,7 @@
                 }
                 $contentcell->text = $OUTPUT->heading($contentheading, 3) . format_text($group->description, $group->descriptionformat);
                 $groupinfotable->data[] = new html_table_row(array($picturecell, $contentcell));
-                echo $OUTPUT->table($groupinfotable);
+                echo html_writer::table($groupinfotable);
             }
         }
     }
@@ -751,15 +751,15 @@
                         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
                     }
                     $table = new html_table();
-                    $table->add_class('userinfobox');
+                    $table->attributes['class'] = 'userinfobox';
 
                     $row = new html_table_row();
                     $row->cells[0] = new html_table_cell();
-                    $row->cells[0]->add_class('left side');
+                    $row->cells[0]->attributes['class'] = 'left side';
 
                     $row->cells[0]->text = $OUTPUT->user_picture($user, array('courseid'=>$course->id));
                     $row->cells[1] = new html_table_cell();
-                    $row->cells[1]->add_class('content');
+                    $row->cells[1]->attributes['class'] = 'content';
 
                     $row->cells[1]->text = $OUTPUT->container(fullname($user, has_capability('moodle/site:viewfullnames', $context)), 'username');
                     $row->cells[1]->text .= $OUTPUT->container_start('info');
@@ -797,7 +797,7 @@
                     $row->cells[1]->text .= $OUTPUT->container_end();
 
                     $row->cells[2] = new html_table_cell();
-                    $row->cells[2]->add_class('links');
+                    $row->cells[2]->attributes['class'] = 'links';
                     $row->cells[2]->text = '';
 
                     $links = array();
@@ -831,7 +831,7 @@
                         $row->cells[2]->text .= '<br /><input type="checkbox" name="user'.$user->id.'" /> ';
                     }
                     $table->data = array($row);
-                    echo $OUTPUT->table($table);
+                    echo html_writer::table($table);
                 }
 
             } else {

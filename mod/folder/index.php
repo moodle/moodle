@@ -54,7 +54,7 @@ if (!$folders = get_all_instances_in_course('folder', $course)) {
 }
 
 $table = new html_table();
-$table->set_classes(array('generaltable', 'mod_index'));
+$table->attributes['class'] = 'generaltable mod_index';
 
 if ($course->format == 'weeks') {
     $table->head  = array ($strweek, $strname, $strintro);
@@ -93,6 +93,6 @@ foreach ($folders as $folder) {
         format_module_intro('folder', $folder, $cm->id));
 }
 
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 
 echo $OUTPUT->footer();

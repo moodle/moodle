@@ -181,7 +181,7 @@ if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
     $table->align = array('left', 'left', 'left', 'center', 'center');
     $table->width = '90%';
     $table->data  = $data;
-    $return .= $OUTPUT->table($table);
+    $return .= html_writer::table($table);
     $outcomes_tables[] = $return;
 }
 
@@ -233,7 +233,7 @@ if ($outcomes = grade_outcome::fetch_all_global()) {
     $table->align = array('left', 'left', 'left', 'center', 'center', 'center');
     $table->width = '90%';
     $table->data  = $data;
-    $return .= $OUTPUT->table($table);
+    $return .= html_writer::table($table);
     $outcomes_tables[] = $return;
 }
 

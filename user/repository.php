@@ -83,7 +83,7 @@ foreach ($instances as $i) {
             .get_string('settings', 'repository').'</a>' : '');
 }
 
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 echo $OUTPUT->footer();
 
 

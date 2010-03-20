@@ -79,7 +79,7 @@ $table->data = array(
         '<a id="choosetheme" href="###">'.get_string('themes').' ▶</a>'
     )
 );
-echo $OUTPUT->box($OUTPUT->table($table), '', 'chat-input-area');
+echo $OUTPUT->box(html_writer::table($table), '', 'chat-input-area');
 echo $OUTPUT->box('', '', 'chat-notify');
 echo $OUTPUT->footer();
 

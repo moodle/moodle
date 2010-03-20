@@ -533,7 +533,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             echo $OUTPUT->heading(get_string("backup").":");
             $table->data = $tab;
             //Print backup general info
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
 
             if ($info->backup_backup_version <= 2005070500) {
                  echo $OUTPUT->notification(get_string('backupnonisowarning'));  // Message informing that this backup may not work!
@@ -643,7 +643,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //Print title
             echo $OUTPUT->heading(get_string("backupdetails").":");
             //Print backup general info
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
         } else {
             $status = false;
         }
@@ -672,7 +672,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //Print title
             echo $OUTPUT->heading(get_string("course").":");
             //Print backup course header info
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
         } else {
             $status = false;
         }

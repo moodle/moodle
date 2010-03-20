@@ -120,7 +120,7 @@ foreach ($categories as $category) {
     $table->head  = array(get_string('profilefield', 'admin'), get_string('edit'));
     $table->align = array('left', 'right');
     $table->width = '95%';
-    $table->add_class ('generaltable profilefield');
+    $table->attributes['class'] = 'generaltable profilefield';
     $table->data = array();
 
     if ($fields = $DB->get_records('user_info_field', array('categoryid'=>$category->id), 'sortorder ASC')) {
@@ -131,7 +131,7 @@ foreach ($categories as $category) {
 
     echo $OUTPUT->heading(format_string($category->name) .' '.profile_category_icons($category));
     if (count($table->data)) {
-        echo $OUTPUT->table($table);
+        echo html_writer::table($table);
     } else {
         echo $OUTPUT->notification($strnofields);
     }

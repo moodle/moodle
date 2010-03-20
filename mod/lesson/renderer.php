@@ -228,7 +228,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $pageid = $page->nextpageid;
         }
 
-        return $this->output->table($table);
+        return html_writter::table($table);
     }
 
     /**
@@ -292,7 +292,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
             $pagetable = $page->display_answers($pagetable);
 
-            $content .= $this->output->table($pagetable);
+            $content .= html_writer::table($pagetable);
 
             if ($canedit) {
                 $content .= $this->add_page_links($lesson, $pageid);
@@ -539,16 +539,16 @@ class mod_lesson_renderer extends plugin_renderer_base {
         if ($progress != 0) {  // some browsers do not repsect the 0 width.
             $cells[0] = new html_table_cell();
             $cells[0]->style = 'width:'.$progress.'%';
-            $cells[0]->set_classes('progress_bar_completed');
+            $cells[0]->attributes['class'] = 'progress_bar_completed';
             $cells[0]->text = ' ';
         }
         $cells[] = '<div class="progress_bar_token"></div>';
 
         $table = new html_table();
-        $table->set_classes(array('progress_bar_table', 'center'));
+        $table->attributes['class'] = 'progress_bar_table';
         $table->data = array(new html_table_row($cells));
 
-        return $this->output->box($this->output->table($table), 'progress_bar');
+        return $this->output->box(html_writer::table($table), 'progress_bar');
     }
 
     /**

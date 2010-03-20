@@ -95,6 +95,6 @@
         }
     }
     if (!empty($table)) {
-        echo $OUTPUT->table($table);
+        echo html_writer::table($table);
     }
 

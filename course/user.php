@@ -256,7 +256,7 @@ switch ($mode) {
             $a[] = $stat->line3;
             $table->data[] = $a;
         }
-        echo $OUTPUT->table($table);
+        echo html_writer::table($table);
         break;
 
     case "outline" :

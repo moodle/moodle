@@ -47,7 +47,7 @@
     echo $OUTPUT->container(get_string('computedfromlogs', 'admin', userdate($logstart)), 'loginfo');
 
     $outlinetable = new html_table();
-    $outlinetable->add_class('generaltable boxaligncenter');
+    $outlinetable->attributes['class'] = 'generaltable boxaligncenter';
     $outlinetable->cellpadding = 5;
     $outlinetable->id = 'outlinetable';
     $outlinetable->head = array($stractivity, $strviews);
@@ -82,7 +82,7 @@
             }
             if ($prevsecctionnum != $sectionnum) {
                 $sectionrow = new html_table_row();
-                $sectionrow->add_class('section');
+                $sectionrow->attributes['class'] = 'section';
                 $sectioncell = new html_table_cell();
                 $sectioncell->colspan = count($outlinetable->head);
 
@@ -105,7 +105,7 @@
 
             $reportrow = new html_table_row();
             $activitycell = new html_table_cell();
-            $activitycell->add_class('activity');
+            $activitycell->attributes['class'] = 'activity';
 
             $activityicon = $OUTPUT->pix_icon('icon', $modulename, $cm->modname, array('class'=>'icon'));
 
@@ -119,7 +119,7 @@
             $reportrow->cells[] = $activitycell;
 
             $numviewscell = new html_table_cell();
-            $numviewscell->add_class('numviews');
+            $numviewscell->attributes['class'] = 'numviews';
 
             if (!empty($views[$cm->id]->numviews)) {
                 $numviewscell->text = $views[$cm->id]->numviews;
@@ -131,7 +131,7 @@
 
             if ($CFG->useblogassociations) {
                 $blogcell = new html_table_cell();
-                $blogcell->add_class('blog');
+                $blogcell->attributes['class'] = 'blog';
                 if ($blogcount = blog_get_associated_count($course->id, $cm->id)) {
                     $blogcell->text = html_writer::link('/blog/index.php?modid='.$cm->id, $blogcount);
                 } else {
@@ -142,7 +142,7 @@
 
             if ($showlastaccess) {
                 $lastaccesscell = new html_table_cell();
-                $lastaccesscell->add_class('lastaccess');
+                $lastaccesscell->attributes['class'] = 'lastaccess';
 
                 if (isset($views[$cm->id]->lasttime)) {
                     $timeago = format_time(time() - $views[$cm->id]->lasttime);
@@ -153,7 +153,7 @@
             $outlinetable->data[] = $reportrow;
         }
     }
-    echo $OUTPUT->table($outlinetable);
+    echo html_writer::table($outlinetable);
 
     echo $OUTPUT->footer();
 

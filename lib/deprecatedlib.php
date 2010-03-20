@@ -2400,7 +2400,7 @@ function blocks_move_block($page, &$instance, $destpos, $destweight=NULL, $pinne
 function print_table($table, $return=false) {
     global $OUTPUT;
     // TODO MDL-19755 turn debugging on once we migrate the current core code to use the new API
-    debugging('print_table() has been deprecated. Please change your code to use $OUTPUT->table().');
+    debugging('print_table() has been deprecated. Please change your code to use html_writer::table().');
     $newtable = new html_table();
     foreach ($table as $property => $value) {
         if (property_exists($newtable, $property)) {
@@ -2408,13 +2408,13 @@ function print_table($table, $return=false) {
         }
     }
     if (isset($table->class)) {
-        $newtable->set_classes($table->class);
+        $newtable->attributes['class'] = $table->class;
     }
     if (isset($table->rowclass) && is_array($table->rowclass)) {
         debugging('rowclass[] has been deprecated for html_table and should be replaced by rowclasses[]. please fix the code.');
         $newtable->rowclasses = $table->rowclass;
     }
-    $output = $OUTPUT->table($newtable);
+    $output = html_writer::table($newtable);
     if ($return) {
         return $output;
     } else {

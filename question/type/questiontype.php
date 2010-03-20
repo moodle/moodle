@@ -1144,7 +1144,7 @@ class default_questiontype {
             }
             $table->data[] = $data;
         }
-        return $OUTPUT->table($table);
+        return html_writer::table($table);
     }
 
     /**

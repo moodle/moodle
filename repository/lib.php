@@ -1083,7 +1083,7 @@ abstract class repository {
                 $alreadyplugins[] = $i->name;
             }
         }
-        $output .= $OUTPUT->table($table);
+        $output .= html_writer::table($table);
         $instancehtml = '<div>';
         $addable = 0;
 

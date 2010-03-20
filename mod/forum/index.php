@@ -421,12 +421,12 @@ if (!isguestuser()) {
 
 if ($generalforums) {
     echo $OUTPUT->heading(get_string('generalforums', 'forum'));
-    echo $OUTPUT->table($generaltable);
+    echo html_writer::table($generaltable);
 }
 
 if ($learningforums) {
     echo $OUTPUT->heading(get_string('learningforums', 'forum'));
-    echo $OUTPUT->table($learningtable);
+    echo html_writer::table($learningtable);
 }
 
 echo $OUTPUT->footer();

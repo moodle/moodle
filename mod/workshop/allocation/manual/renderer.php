@@ -54,7 +54,7 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
         $reviewers  =  array_map('fullname', $reviewers);
 
         $table              = new html_table();
-        $table->set_classes('allocations');
+        $table->attributes['class'] = 'allocations';
         $table->head        = array(get_string('participantreviewedby', 'workshop'),
                                     get_string('participant', 'workshop'),
                                     get_string('participantrevierof', 'workshop'));
@@ -77,7 +77,7 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
             $table->data[] = $row;
         }
 
-        return $this->output->container($this->output->table($table), 'manual-allocator');
+        return $this->output->container(html_writer::table($table), 'manual-allocator');
     }
 
     /**

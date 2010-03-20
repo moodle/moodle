@@ -14,7 +14,7 @@
 <input type="hidden" name="wikipage" value="<?php print $wikipage?>" />
 <?php
   $remove_table=wiki_admin_remove_list($form->listall);
-  echo $OUTPUT->table($remove_table);
+  echo html_writer::table($remove_table);
 ?>
 <div class="boxaligncenter">
 <?php

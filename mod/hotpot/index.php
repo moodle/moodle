@@ -399,7 +399,7 @@
 
     echo "<br />";
 
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
 
     // Finish the page
     echo $OUTPUT->footer();

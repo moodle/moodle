@@ -207,7 +207,7 @@ foreach ($members as $gpgid=>$groupdata) {
             echo $OUTPUT->box(format_text($description, $groupings[$gpgid]->descriptionformat, $options), 'generalbox boxwidthnarrow boxaligncenter');
         }
     }
-    echo $OUTPUT->table($table);
+    echo html_writer::table($table);
     $printed = true;
 }
 

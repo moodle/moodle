@@ -199,7 +199,7 @@
                         }
                     }
                     $table->data = $modcheckbackup($id,$backupprefs->$var,$backupprefs->backup_unique_code,$instancestopass);
-                    echo $OUTPUT->table($table);
+                    echo html_writer::table($table);
                     echo "</td></tr>";
                 }
             }
@@ -219,7 +219,7 @@
             echo $user_options[$backupprefs->backup_users].'</b>';
             //Print info
             $table->data = user_check_backup($id,$backupprefs->backup_unique_code,$backupprefs->backup_users,$backupprefs->backup_messages, $backupprefs->backup_blogs);
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
             echo "</td></tr>";
 
         }
@@ -231,7 +231,7 @@
             echo get_string("includelogentries").'</b>';
             //Print info
             $table->data = log_check_backup($id);
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
             echo "</td></tr>";
         }
 
@@ -242,7 +242,7 @@
             echo get_string("includeuserfiles").'</b>';
             //Print info
             $table->data = user_files_check_backup($id,$backupprefs->backup_unique_code);
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
             echo "</td></tr>";
         }
 
@@ -253,7 +253,7 @@
             echo get_string("includecoursefiles").'</b>';
             //Print info
             $table->data = course_files_check_backup($id,$backupprefs->backup_unique_code);
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
             echo "</td></tr>";
         }
 
@@ -264,7 +264,7 @@
             echo get_string("includesitefiles").'</b>';
             //Print info
             $table->data = site_files_check_backup($id,$backupprefs->backup_unique_code);
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
             echo "</td></tr>";
         }
 
@@ -275,7 +275,7 @@
             echo get_string("includeroleassignments").'</b>';
             //Print info
             $table->data = array(array(get_string('roles'), count($backupprefs->backuproleassignments)));
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
             echo "</td></tr>";
         }
     }

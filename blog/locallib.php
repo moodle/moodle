@@ -133,17 +133,17 @@ class blog_entry {
         // Start printing of the blog
         $table = new html_table();
         $table->cellspacing = 0;
-        $table->add_classes('forumpost blog_entry blog'. ($unassociatedentry ? 'draft' : $template['publishstate']));
+        $table->attributes['class'] = 'forumpost blog_entry blog'. ($unassociatedentry ? 'draft' : $template['publishstate']);
         $table->width = '100%';
 
         $picturecell = new html_table_cell();
-        $picturecell->add_classes('picture left');
+        $picturecell->attributes['class'] = 'picture left';
         $picturecell->text = $OUTPUT->user_picture($user);
 
         $table->head[] = $picturecell;
 
         $topiccell = new html_table_cell();
-        $topiccell->add_classes('topic starter');
+        $topiccell->attributes['class'] = 'topic starter';
         $topiccell->text = $OUTPUT->container($template['title'], 'subject');
         $topiccell->text .= $OUTPUT->container_start('author');
 
@@ -169,11 +169,11 @@ class blog_entry {
         $mainrow = new html_table_row();
 
         $leftsidecell = new html_table_cell();
-        $leftsidecell->add_classes('left side');
+        $leftsidecell->attributes['class'] = 'left side';
         $mainrow->cells[] = $leftsidecell;
 
         $contentcell = new html_table_cell();
-        $contentcell->add_class('content');
+        $contentcell->attributes['class'] = 'content';
 
         $attachedimages = $OUTPUT->container($this->print_attachments(), 'attachments');
 
@@ -299,9 +299,9 @@ class blog_entry {
         $table->data = array($mainrow);
 
         if ($return) {
-            return $OUTPUT->table($table);
+            return html_writer::table($table);
         } else {
-            echo $OUTPUT->table($table);
+            echo html_writer::table($table);
         }
     }
 

@@ -11,7 +11,7 @@
 <input type="hidden" name="wikipage" value="<?php print $wikipage?>" />
 <?php
   $pageflags_table=wiki_admin_setpageflags_list($pageflagstatus);
-  echo $OUTPUT->table($pageflags_table);
+  echo html_writer::table($pageflags_table);
 ?>
 <br />
 <div class="boxaligncenter">

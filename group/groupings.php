@@ -98,7 +98,7 @@ $table->size  = array('30%', '50%', '10%', '10%');
 $table->align = array('left', 'left', 'center', 'center');
 $table->width = '90%';
 $table->data  = $data;
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 
 echo $OUTPUT->container_start('buttons');
 echo $OUTPUT->single_button(new moodle_url('grouping.php', array('courseid'=>$courseid)), $srtnewgrouping);

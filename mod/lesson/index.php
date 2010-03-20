@@ -116,5 +116,5 @@ foreach ($lessons as $lesson) {
         $table->data[] = array ($link, $lesson->grade, $due);
     }
 }
-echo $OUTPUT->table($table);
+echo html_writer::table($table);
 echo $OUTPUT->footer();

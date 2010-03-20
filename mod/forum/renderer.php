@@ -51,22 +51,22 @@ class mod_forum_renderer extends plugin_renderer_base {
 
         $existingcell = new html_table_cell();
         $existingcell->text = $existinguc->display(true);
-        $existingcell->set_classes(array('existing'));
+        $existingcell->attributes['class'] = 'existing';
         $actioncell = new html_table_cell();
         $actioncell->text  = html_writer::start_tag('div', array());
         $actioncell->text .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'subscribe', 'value'=>$this->page->theme->larrow.' '.get_string('add'), 'class'=>'actionbutton'));
         $actioncell->text .= html_writer::empty_tag('br', array());
         $actioncell->text .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'unsubscribe', 'value'=>$this->page->theme->rarrow.' '.get_string('remove'), 'class'=>'actionbutton'));
         $actioncell->text .= html_writer::end_tag('div', array());
-        $actioncell->set_classes(array('actions'));
+        $actioncell->attributes['class'] = 'actions';
         $potentialcell = new html_table_cell();
         $potentialcell->text = $potentialuc->display(true);
-        $potentialcell->set_classes(array('potential'));
+        $potentialcell->attributes['class'] = 'potential';
 
         $table = new html_table();
-        $table->set_classes(array('subscribertable','boxaligncenter'));
+        $table->attributes['class'] = 'subscribertable boxaligncenter';
         $table->data = array(new html_table_row(array($existingcell, $actioncell, $potentialcell)));
-        $output .= $this->output->table($table);
+        $output .= html_writer::table($table);
 
         $output .= html_writer::end_tag('form');
         return $output;
@@ -95,7 +95,7 @@ class mod_forum_renderer extends plugin_renderer_base {
             foreach ($users as $user) {
                 $table->data[] = array($this->output->user_picture($user, array('courseid'=>$course->id)), fullname($user), $user->email);
             }
-            $output .= $this->output->table($table);
+            $output .= html_writer::table($table);
         }
         return $output;
     }

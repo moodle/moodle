@@ -298,7 +298,7 @@
         echo $OUTPUT->heading('<a href="'.$securewwwroot.'/user/editadvanced.php?id=-1">'.get_string('addnewuser').'</a>');
     }
     if (!empty($table)) {
-        echo $OUTPUT->table($table);
+        echo html_writer::table($table);
         echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
         if (has_capability('moodle/user:create', $sitecontext)) {
             echo $OUTPUT->heading('<a href="'.$securewwwroot.'/user/editadvanced.php?id=-1">'.get_string('addnewuser').'</a>');

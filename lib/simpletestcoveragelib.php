@@ -433,7 +433,7 @@ class moodle_coverage_reporter extends HtmlCoverageReporter {
                 $table = new html_table();
                 $table->align = array('right', 'left');
                 $table->tablealign = 'center';
-                $table->add_class('codecoveragetable');
+                $table->attributes['class'] = 'codecoveragetable';
                 $table->id = 'codecoveragetable_' . $type;
                 $table->rowclasses = array('label', 'value');
                 $table->data = array(
@@ -450,7 +450,7 @@ class moodle_coverage_reporter extends HtmlCoverageReporter {
                 $result .= $OUTPUT->heading($data->title, 3, 'main codecoverageheading');
                 $result .= $OUTPUT->heading('<a href="' . $url . '" onclick="javascript:window.open(' . "'" . $url . "'" . ');return false;"' .
                                    ' title="">' . get_string('codecoveragecompletereport', 'simpletest') . '</a>', 4, 'main codecoveragelink');
-                $result .= $OUTPUT->table($table);
+                $result .= html_writer::table($table);
 
                 return $OUTPUT->box($result, 'generalbox boxwidthwide boxaligncenter codecoveragebox', '', true);
             }

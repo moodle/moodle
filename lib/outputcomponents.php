@@ -604,7 +604,6 @@ class action_link implements renderable {
     }
 }
 
-
 // ==== HTML writer and helper classes, will be probably moved elsewhere ======
 
 /**
@@ -969,6 +968,216 @@ class html_writer {
             return '';
         }
     }
+
+    /**
+     * Renders HTML table
+     *
+     * This method may modify the passed instance by adding some default properties if they are not set yet.
+     * If this is not what you want, you should make a full clone of your data before passing them to this
+     * method. In most cases this is not an issue at all so we do not clone by default for performance
+     * and memory consumption reasons.
+     *
+     * @param html_table $table data to be rendered
+     * @return string HTML code
+     */
+    public static function table(html_table $table) {
+        // prepare table data and populate missing properties with reasonable defaults
+        if (!empty($table->align)) {
+            foreach ($table->align as $key => $aa) {
+                if ($aa) {
+                    $table->align[$key] = 'text-align:'. fix_align_rtl($aa) .';';  // Fix for RTL languages
+                } else {
+                    $table->align[$key] = null;
+                }
+            }
+        }
+        if (!empty($table->size)) {
+            foreach ($table->size as $key => $ss) {
+                if ($ss) {
+                    $table->size[$key] = 'width:'. $ss .';';
+                } else {
+                    $table->size[$key] = null;
+                }
+            }
+        }
+        if (!empty($table->wrap)) {
+            foreach ($table->wrap as $key => $ww) {
+                if ($ww) {
+                    $table->wrap[$key] = 'white-space:nowrap;';
+                } else {
+                    $table->wrap[$key] = '';
+                }
+            }
+        }
+        if (!empty($table->head)) {
+            foreach ($table->head as $key => $val) {
+                if (!isset($table->align[$key])) {
+                    $table->align[$key] = null;
+                }
+                if (!isset($table->size[$key])) {
+                    $table->size[$key] = null;
+                }
+                if (!isset($table->wrap[$key])) {
+                    $table->wrap[$key] = null;
+                }
+
+            }
+        }
+        if (empty($table->attributes['class'])) {
+            $table->attributes['class'] = 'generaltable';
+        }
+        if (!empty($table->tablealign)) {
+            $table->attributes['class'] .= ' boxalign' . $table->tablealign;
+        }
+
+        // explicitly assigned properties override those defined via $table->attributes
+        $attributes = array_merge($table->attributes, array(
+                'id'            => $table->id,
+                'width'         => $table->width,
+                'summary'       => $table->summary,
+                'cellpadding'   => $table->cellpadding,
+                'cellspacing'   => $table->cellspacing,
+            ));
+        $output = html_writer::start_tag('table', $attributes) . "\n";
+
+        $countcols = 0;
+
+        if (!empty($table->head)) {
+            $countcols = count($table->head);
+            $output .= html_writer::start_tag('thead', array()) . "\n";
+            $output .= html_writer::start_tag('tr', array()) . "\n";
+            $keys = array_keys($table->head);
+            $lastkey = end($keys);
+
+            foreach ($table->head as $key => $heading) {
+                // Convert plain string headings into html_table_cell objects
+                if (!($heading instanceof html_table_cell)) {
+                    $headingtext = $heading;
+                    $heading = new html_table_cell();
+                    $heading->text = $headingtext;
+                    $heading->header = true;
+                }
+
+                if ($heading->header !== false) {
+                    $heading->header = true;
+                }
+
+                $heading->attributes['class'] .= ' header c' . $key;
+                if (isset($table->headspan[$key]) && $table->headspan[$key] > 1) {
+                    $heading->colspan = $table->headspan[$key];
+                    $countcols += $table->headspan[$key] - 1;
+                }
+
+                if ($key == $lastkey) {
+                    $heading->attributes['class'] .= ' lastcol';
+                }
+                if (isset($table->colclasses[$key])) {
+                    $heading->attributes['class'] .= ' ' . $table->colclasses[$key];
+                }
+
+                $attributes = array_merge($heading->attributes, array(
+                        'style'     => $table->align[$key] . $table->size[$key] . $heading->style,
+                        'scope'     => $heading->scope,
+                        'colspan'   => $heading->colspan,
+                    ));
+
+                $tagtype = 'td';
+                if ($heading->header === true) {
+                    $tagtype = 'th';
+                }
+                $output .= html_writer::tag($tagtype, $heading->text, $attributes) . "\n";
+            }
+            $output .= html_writer::end_tag('tr') . "\n";
+            $output .= html_writer::end_tag('thead') . "\n";
+
+            if (empty($table->data)) {
+                // For valid XHTML strict every table must contain either a valid tr
+                // or a valid tbody... both of which must contain a valid td
+                $output .= html_writer::start_tag('tbody', array('class' => 'empty'));
+                $output .= html_writer::tag('tr', html_writer::tag('td', '', array('colspan'=>count($table->head))));
+                $output .= html_writer::end_tag('tbody');
+            }
+        }
+
+        if (!empty($table->data)) {
+            $oddeven    = 1;
+            $keys       = array_keys($table->data);
+            $lastrowkey = end($keys);
+            $output .= html_writer::start_tag('tbody', array());
+
+            foreach ($table->data as $key => $row) {
+                if (($row === 'hr') && ($countcols)) {
+                    $output .= html_writer::tag('td', html_writer::tag('div', '', array('class' => 'tabledivider')), array('colspan' => $countcols));
+                } else {
+                    // Convert array rows to html_table_rows and cell strings to html_table_cell objects
+                    if (!($row instanceof html_table_row)) {
+                        $newrow = new html_table_row();
+
+                        foreach ($row as $unused => $item) {
+                            $cell = new html_table_cell();
+                            $cell->text = $item;
+                            $newrow->cells[] = $cell;
+                        }
+                        $row = $newrow;
+                    }
+
+                    $oddeven = $oddeven ? 0 : 1;
+                    if (isset($table->rowclasses[$key])) {
+                        $row->attributes['class'] .= ' ' . $table->rowclasses[$key];
+                    }
+
+                    $row->attributes['class'] .= ' r' . $oddeven;
+                    if ($key == $lastrowkey) {
+                        $row->attributes['class'] .= ' lastrow';
+                    }
+
+                    $output .= html_writer::start_tag('tr', array('class' => $row->attributes['class'], 'style' => $row->style, 'id' => $row->id)) . "\n";
+                    $keys2 = array_keys($row->cells);
+                    $lastkey = end($keys2);
+
+                    foreach ($row->cells as $key => $cell) {
+                        if (!($cell instanceof html_table_cell)) {
+                            $mycell = new html_table_cell();
+                            $mycell->text = $cell;
+                            $cell = $mycell;
+                        }
+
+                        if (isset($table->colclasses[$key])) {
+                            $cell->attributes['class'] .= ' ' . $table->colclasses[$key];
+                        }
+
+                        $cell->attributes['class'] .= ' cell c' . $key;
+                        if ($key == $lastkey) {
+                            $cell->attributes['class'] .= ' lastcol';
+                        }
+                        $tdstyle = '';
+                        $tdstyle .= isset($table->align[$key]) ? $table->align[$key] : '';
+                        $tdstyle .= isset($table->size[$key]) ? $table->size[$key] : '';
+                        $tdstyle .= isset($table->wrap[$key]) ? $table->wrap[$key] : '';
+                        $tdattributes = array_merge($cell->attributes, array(
+                                'style' => $tdstyle . $cell->style,
+                                'colspan' => $cell->colspan,
+                                'rowspan' => $cell->rowspan,
+                                'id' => $cell->id,
+                                'abbr' => $cell->abbr,
+                                'scope' => $cell->scope,
+                            ));
+                        $tagtype = 'td';
+                        if ($cell->header === true) {
+                            $tagtype = 'th';
+                        }
+                        $output .= html_writer::tag($tagtype, $cell->text, $tdattributes) . "\n";
+                    }
+                }
+                $output .= html_writer::end_tag('tr') . "\n";
+            }
+            $output .= html_writer::end_tag('tbody') . "\n";
+        }
+        $output .= html_writer::end_tag('table') . "\n";
+
+        return $output;
+    }
+
 }
 
 // ==== JS writer and helper classes, will be probably moved elsewhere ======
@@ -1093,126 +1302,31 @@ class js_writer {
     }
 }
 
-
-// ===============================================================================================
-// TODO: Following HTML components still need some refactoring
-
 /**
- * Base class for classes representing HTML elements.
- *
- * Handles the id and class attributes.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_component {
-    /**
-     * @var string value to use for the id attribute of this HTML tag.
-     */
-    public $id = null;
-    /**
-     * @var string $alt value to use for the alt attribute of this HTML tag.
-     */
-    public $alt = null;
-    /**
-     * @var string $style value to use for the style attribute of this HTML tag.
-     */
-    public $style = null;
-    /**
-     * @var array class names to add to this HTML element.
-     */
-    public $classes = array();
-    /**
-     * @var string $title The title attributes applicable to any XHTML element
-     */
-    public $title = null;
-    /**
-     * An optional array of component_action objects handling the action part of this component.
-     * @var array $actions
-     */
-    protected $actions = array();
-
-    /**
-     * Ensure some class names are an array.
-     * @param mixed $classes either an array of class names or a space-separated
-     *      string containing class names.
-     * @return array the class names as an array.
-     */
-    public static function clean_classes($classes) {
-        if (empty($classes)) {
-            return array();
-        } else if (is_array($classes)) {
-            return $classes;
-        } else {
-            return explode(' ', trim($classes));
-        }
-    }
-
-    /**
-     * Set the class name array.
-     * @param mixed $classes either an array of class names or a space-separated
-     *      string containing class names.
-     * @return void
-     */
-    public function set_classes($classes) {
-        $this->classes = self::clean_classes($classes);
-    }
-
-    /**
-     * Add a class name to the class names array.
-     * @param string $class the new class name to add.
-     * @return void
-     */
-    public function add_class($class) {
-        $this->classes[] = $class;
-    }
-
-    /**
-     * Add a whole lot of class names to the class names array.
-     * @param mixed $classes either an array of class names or a space-separated
-     *      string containing class names.
-     * @return void
-     */
-    public function add_classes($classes) {
-        $this->classes = array_merge($this->classes, self::clean_classes($classes));
-    }
-
-    /**
-     * Get the class names as a string.
-     * @return string the class names as a space-separated string. Ready to be put in the class="" attribute.
-     */
-    public function get_classes_string() {
-        return implode(' ', $this->classes);
-    }
-
-    /**
-     * Perform any cleanup or final processing that should be done before an
-     * instance of this class is output. This method is supposed to be called
-     * only from renderers.
-     * @return void
-     */
-    public function prepare() {
-        $this->classes = array_unique(self::clean_classes($this->classes));
-    }
-}
-
-
-/**
- * Holds all the information required to render a <table> by
- * {@see core_renderer::table()} or by an overridden version of that
- * method in a subclass.
+ * Holds all the information required to render a <table> by {@see core_renderer::table()}
  *
  * Example of usage:
  * $t = new html_table();
  * ... // set various properties of the object $t as described below
- * echo $OUTPUT->table($t);
+ * echo html_writer::table($t);
  *
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_table extends html_component {
+class html_table {
+    /**
+     * @var string value to use for the id attribute of the table
+     */
+    public $id = null;
+    /**
+     * @var string $style value to use for the style attribute of the table
+     */
+    public $style = null;
+    /**
+     * @var array attributes of HTML attributes for the <table> element
+     */
+    public $attributes = array();
     /**
      * For more control over the rendering of the headers, an array of html_table_cell objects
      * can be passed instead of an array of strings.
@@ -1287,7 +1401,7 @@ class html_table extends html_component {
      */
     public $data;
     /**
-     * @var string width of the table, percentage of the page preferred. Defaults to 80% of the page width.
+     * @var string width of the table, percentage of the page preferred. Defaults to 80%
      * @deprecated since Moodle 2.0. Styling should be in the CSS.
      */
     public $width = null;
@@ -1331,82 +1445,12 @@ class html_table extends html_component {
      * @var string description of the contents for screen readers.
      */
     public $summary;
-    /**
-     * @var bool true causes the contents of the heading cells to be rotated 90 degrees.
-     */
-    public $rotateheaders = false;
-    /**
-     * @var array $headclasses Array of CSS classes to apply to the table's thead.
-     */
-    public $headclasses = array();
-    /**
-     * @var array $bodyclasses Array of CSS classes to apply to the table's tbody.
-     */
-    public $bodyclasses = array();
-    /**
-     * @var array $footclasses Array of CSS classes to apply to the table's tfoot.
-     */
-    public $footclasses = array();
-
 
     /**
-     * @see html_component::prepare()
-     * @return void
+     * Constructor
      */
-    public function prepare() {
-        if (!empty($this->align)) {
-            foreach ($this->align as $key => $aa) {
-                if ($aa) {
-                    $this->align[$key] = 'text-align:'. fix_align_rtl($aa) .';';  // Fix for RTL languages
-                } else {
-                    $this->align[$key] = null;
-                }
-            }
-        }
-        if (!empty($this->size)) {
-            foreach ($this->size as $key => $ss) {
-                if ($ss) {
-                    $this->size[$key] = 'width:'. $ss .';';
-                } else {
-                    $this->size[$key] = null;
-                }
-            }
-        }
-        if (!empty($this->wrap)) {
-            foreach ($this->wrap as $key => $ww) {
-                if ($ww) {
-                    $this->wrap[$key] = 'white-space:nowrap;';
-                } else {
-                    $this->wrap[$key] = '';
-                }
-            }
-        }
-        if (!empty($this->head)) {
-            foreach ($this->head as $key => $val) {
-                if (!isset($this->align[$key])) {
-                    $this->align[$key] = null;
-                }
-                if (!isset($this->size[$key])) {
-                    $this->size[$key] = null;
-                }
-                if (!isset($this->wrap[$key])) {
-                    $this->wrap[$key] = null;
-                }
-
-            }
-        }
-        if (empty($this->classes)) { // must be done before align
-            $this->set_classes(array('generaltable'));
-        }
-        if (!empty($this->tablealign)) {
-            $this->add_class('boxalign' . $this->tablealign);
-        }
-        if (!empty($this->rotateheaders)) {
-            $this->add_class('rotateheaders');
-        } else {
-            $this->rotateheaders = false; // Makes life easier later.
-        }
-        parent::prepare();
+    public function __construct() {
+        $this->attributes['class'] = '';
     }
 }
 
@@ -1418,25 +1462,30 @@ class html_table extends html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_table_row extends html_component {
+class html_table_row {
+    /**
+     * @var string value to use for the id attribute of the row
+     */
+    public $id = null;
     /**
      * @var array $cells Array of html_table_cell objects
      */
     public $cells = array();
-
     /**
-     * @see lib/html_component#prepare()
-     * @return void
+     * @var string $style value to use for the style attribute of the table row
      */
-    public function prepare() {
-        parent::prepare();
-    }
+    public $style = null;
+    /**
+     * @var array attributes of additional HTML attributes for the <tr> element
+     */
+    public $attributes = array();
 
     /**
      * Constructor
      * @param array $cells
      */
     public function __construct(array $cells=null) {
+        $this->attributes['class'] = '';
         $cells = (array)$cells;
         foreach ($cells as $cell) {
             if ($cell instanceof html_table_cell) {
@@ -1456,7 +1505,11 @@ class html_table_row extends html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_table_cell extends html_component {
+class html_table_cell {
+    /**
+     * @var string value to use for the id attribute of the cell
+     */
+    public $id = null;
     /**
      * @var string $text The contents of the cell
      */
@@ -1481,20 +1534,29 @@ class html_table_cell extends html_component {
      * @var boolean $header Whether or not this cell is a header cell
      */
     public $header = null;
+    /**
+     * @var string $style value to use for the style attribute of the table cell
+     */
+    public $style = null;
+    /**
+     * @var array attributes of additional HTML attributes for the <tr> element
+     */
+    public $attributes = array();
 
     /**
+     * XXX TODO DONOTCOMMIT
      * @see lib/html_component#prepare()
      * @return void
-     */
     public function prepare() {
         if ($this->header && empty($this->scope)) {
             $this->scope = 'col';
         }
-        parent::prepare();
     }
+     */
 
     public function __construct($text = null) {
         $this->text = $text;
+        $this->attributes['class'] = '';
     }
 }
 
@@ -1574,7 +1636,6 @@ class paging_bar implements renderable {
     }
 
     /**
-     * @see lib/html_component#prepare()
      * @return void
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
