@@ -1572,68 +1572,63 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
         return false;
     }
 
-    static $resources = false;
-    static $activities = false;
-
     $urlbase = "/course/mod.php?id=$course->id&section=$section&sesskey=".sesskey().'&add=';
 
-    if ($resources === false) {
-        $resources = array();
-        $activities = array();
+    $resources = array();
+    $activities = array();
 
-        foreach($modnames as $modname=>$modnamestr) {
-            if (!course_allowed_module($course, $modname)) {
-                continue;
-            }
+    foreach($modnames as $modname=>$modnamestr) {
+        if (!course_allowed_module($course, $modname)) {
+            continue;
+        }
 
-            $libfile = "$CFG->dirroot/mod/$modname/lib.php";
-            if (!file_exists($libfile)) {
-                continue;
-            }
-            include_once($libfile);
-            $gettypesfunc =  $modname.'_get_types';
-            if (function_exists($gettypesfunc)) {
-                // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
-                if ($types = $gettypesfunc()) {
-                    $menu = array();
-                    $atype = null;
-                    $groupname = null;
-                    foreach($types as $type) {
+        $libfile = "$CFG->dirroot/mod/$modname/lib.php";
+        if (!file_exists($libfile)) {
+            continue;
+        }
+        include_once($libfile);
+        $gettypesfunc =  $modname.'_get_types';
+        if (function_exists($gettypesfunc)) {
+            // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
+            if ($types = $gettypesfunc()) {
+                $menu = array();
+                $atype = null;
+                $groupname = null;
+                foreach($types as $type) {
                     if ($type->typestr === '--') {
-                            continue;
-                        }
-                        if (strpos($type->typestr, '--') === 0) {
-                            $groupname = str_replace('--', '', $type->typestr);
-                            continue;
-                        }
-                        $type->type = str_replace('&amp;', '&', $type->type);
-                        if ($type->modclass == MOD_CLASS_RESOURCE) {
-                            $atype = MOD_CLASS_RESOURCE;
-                        }
-                        $menu[$urlbase.$type->type] = $type->typestr;
+                        continue;
                     }
-                    if (!is_null($groupname)) {
-                        if ($atype == MOD_CLASS_RESOURCE) {
-                            $resources[] = array($groupname=>$menu);
-                        } else {
-                            $activities[] = array($groupname=>$menu);
-                        }
+                    if (strpos($type->typestr, '--') === 0) {
+                        $groupname = str_replace('--', '', $type->typestr);
+                        continue;
+                    }
+                    $type->type = str_replace('&amp;', '&', $type->type);
+                    if ($type->modclass == MOD_CLASS_RESOURCE) {
+                        $atype = MOD_CLASS_RESOURCE;
+                    }
+                    $menu[$urlbase.$type->type] = $type->typestr;
+                }
+                if (!is_null($groupname)) {
+                    if ($atype == MOD_CLASS_RESOURCE) {
+                        $resources[] = array($groupname=>$menu);
                     } else {
-                        if ($atype == MOD_CLASS_RESOURCE) {
-                            $resources = array_merge($resources, $menu);
-                        } else {
-                            $activities = array_merge($activities, $menu);
-                        }
+                        $activities[] = array($groupname=>$menu);
+                    }
+                } else {
+                    if ($atype == MOD_CLASS_RESOURCE) {
+                        $resources = array_merge($resources, $menu);
+                    } else {
+                        $activities = array_merge($activities, $menu);
                     }
                 }
+            }
+        } else {
+            $archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
+            if ($archetype == MOD_ARCHETYPE_RESOURCE) {
+                $resources[$urlbase.$modname] = $modnamestr;
             } else {
-                $archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
-                if ($archetype == MOD_ARCHETYPE_RESOURCE) {
-                    $resources[$urlbase.$modname] = $modnamestr;
-                } else {
-                    // all other archetypes are considered activity
-                    $activities[$urlbase.$modname] = $modnamestr;
-                }
+                // all other archetypes are considered activity
+                $activities[$urlbase.$modname] = $modnamestr;
             }
         }
     }
