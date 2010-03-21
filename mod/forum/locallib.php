@@ -202,7 +202,8 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             $manifest = ($this->exporter->get('format') instanceof PORTFOLIO_FORMAT_RICH);
             if ($writingleap) {
                 // add on an extra 'selection' entry
-                $selection = new portfolio_format_leap2a_entry('forumdiscussion' . $this->discussionid, get_string('discussion', 'forum'), 'selection');
+                $selection = new portfolio_format_leap2a_entry('forumdiscussion' . $this->discussionid,
+                    get_string('discussion', 'forum') . ': ' . $this->discussion->name, 'selection');
                 $leapwriter->add_entry($selection);
                 $leapwriter->make_selection($selection, $ids, 'Grouping');
                 $content = $leapwriter->to_xml();
