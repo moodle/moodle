@@ -5760,6 +5760,7 @@ function print_plugin_tables() {
         'news_items',
         'online_users',
         'participants',
+        'private_files',
         'quiz_results',
         'recent_activity',
         'rss_client',
