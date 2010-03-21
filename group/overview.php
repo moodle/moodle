@@ -139,7 +139,7 @@ if (!empty($CFG->enablegroupings)) {
         $options[$grouping->id] = strip_tags(format_string($grouping->name));
     }
     $popupurl = new moodle_url($rooturl.'&group='.$groupid);
-    $select = new single_select($popupurl, 'grouping', $options, $groupingid);
+    $select = new single_select($popupurl, 'grouping', $options, $groupingid, array());
     $select->label = $strgrouping;
     $select->formid = 'selectgrouping';
     echo $OUTPUT->render($select);
@@ -151,7 +151,7 @@ foreach ($groups as $group) {
     $options[$group->id] = strip_tags(format_string($group->name));
 }
 $popupurl = new moodle_url($rooturl.'&grouping='.$groupingid);
-$select = new single_select($popupurl, 'group', $options, $groupid);
+$select = new single_select($popupurl, 'group', $options, $groupid, array());
 $select->label = $strgroup;
 $select->formid = 'selectgroup';
 echo $OUTPUT->render($select);
