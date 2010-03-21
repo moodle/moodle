@@ -434,7 +434,7 @@ class portfolio_format_leap2a_entry {
             $cat = $dom->createElement('category');
             $cat->setAttribute('term', $category->term);
             if ($category->scheme) {
-                $cat->setAttribute('scheme', $category->scheme);
+                $cat->setAttribute('scheme', 'categories:' .$category->scheme . '#');
             }
             if ($category->label && $category->label != $category->term) {
                 $cat->setAttribute('label', $category->label);
