@@ -34,7 +34,7 @@ require_login();
 
 /// Parameters
 $action    = optional_param('action', '', PARAM_ALPHA);
-$repo_id   = optional_param('repo_id', 1, PARAM_INT);           // repository ID
+$repo_id   = optional_param('repo_id', 0, PARAM_INT);           // repository ID
 $callback  = optional_param('callback', '', PARAM_CLEANHTML);
 $client_id = optional_param('client_id', '', PARAM_RAW);        // client ID
 $contextid = optional_param('ctx_id', SYSCONTEXTID, PARAM_INT);       // context ID
