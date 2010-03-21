@@ -1031,6 +1031,7 @@ class html_writer {
         }
 
         // explicitly assigned properties override those defined via $table->attributes
+        $table->attributes['class'] = trim($table->attributes['class']);
         $attributes = array_merge($table->attributes, array(
                 'id'            => $table->id,
                 'width'         => $table->width,
@@ -1062,6 +1063,10 @@ class html_writer {
                     $heading->header = true;
                 }
 
+                if ($heading->header && empty($heading->scope)) {
+                    $heading->scope = 'col';
+                }
+
                 $heading->attributes['class'] .= ' header c' . $key;
                 if (isset($table->headspan[$key]) && $table->headspan[$key] > 1) {
                     $heading->colspan = $table->headspan[$key];
@@ -1074,7 +1079,7 @@ class html_writer {
                 if (isset($table->colclasses[$key])) {
                     $heading->attributes['class'] .= ' ' . $table->colclasses[$key];
                 }
-
+                $heading->attributes['class'] = trim($heading->attributes['class']);
                 $attributes = array_merge($heading->attributes, array(
                         'style'     => $table->align[$key] . $table->size[$key] . $heading->style,
                         'scope'     => $heading->scope,
@@ -1113,7 +1118,7 @@ class html_writer {
                     if (!($row instanceof html_table_row)) {
                         $newrow = new html_table_row();
 
-                        foreach ($row as $unused => $item) {
+                        foreach ($row as $item) {
                             $cell = new html_table_cell();
                             $cell->text = $item;
                             $newrow->cells[] = $cell;
@@ -1131,7 +1136,7 @@ class html_writer {
                         $row->attributes['class'] .= ' lastrow';
                     }
 
-                    $output .= html_writer::start_tag('tr', array('class' => $row->attributes['class'], 'style' => $row->style, 'id' => $row->id)) . "\n";
+                    $output .= html_writer::start_tag('tr', array('class' => trim($row->attributes['class']), 'style' => $row->style, 'id' => $row->id)) . "\n";
                     $keys2 = array_keys($row->cells);
                     $lastkey = end($keys2);
 
@@ -1140,6 +1145,10 @@ class html_writer {
                             $mycell = new html_table_cell();
                             $mycell->text = $cell;
                             $cell = $mycell;
+                        }
+
+                        if (($cell->header === true) && empty($cell->scope)) {
+                            $cell->scope = 'row';
                         }
 
                         if (isset($table->colclasses[$key])) {
@@ -1154,6 +1163,7 @@ class html_writer {
                         $tdstyle .= isset($table->align[$key]) ? $table->align[$key] : '';
                         $tdstyle .= isset($table->size[$key]) ? $table->size[$key] : '';
                         $tdstyle .= isset($table->wrap[$key]) ? $table->wrap[$key] : '';
+                        $cell->attributes['class'] = trim($cell->attributes['class']);
                         $tdattributes = array_merge($cell->attributes, array(
                                 'style' => $tdstyle . $cell->style,
                                 'colspan' => $cell->colspan,
@@ -1542,17 +1552,6 @@ class html_table_cell {
      * @var array attributes of additional HTML attributes for the <tr> element
      */
     public $attributes = array();
-
-    /**
-     * XXX TODO DONOTCOMMIT
-     * @see lib/html_component#prepare()
-     * @return void
-    public function prepare() {
-        if ($this->header && empty($this->scope)) {
-            $this->scope = 'col';
-        }
-    }
-     */
 
     public function __construct($text = null) {
         $this->text = $text;
