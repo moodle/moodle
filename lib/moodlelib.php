@@ -8432,6 +8432,12 @@ function cleardoubleslashes ($path) {
 function remoteip_in_list($list){
     $inlist = false;
     $client_ip = getremoteaddr();
+
+    if(!$client_ip){
+        // ensure access on cli
+        return true;
+    }
+
     $list = explode("\n", $list);
     foreach($list as $subnet) {
         $subnet = trim($subnet);
