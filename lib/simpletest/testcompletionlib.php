@@ -96,6 +96,7 @@ class completionlib_test extends UnitTestCase {
         global $DB,$CFG,$SESSION,$USER;
         $this->realdb=$DB;
         $this->realcfg=$CFG;
+        $this->realsession=$SESSION;
         $this->prevuser=$USER;
         $DB=new mock_database();
         $CFG=clone($this->realcfg);
