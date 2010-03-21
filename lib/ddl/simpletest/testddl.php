@@ -815,10 +815,19 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($columns['grade']->meta_type, 'N');
         //TODO: chek the rest of attributes
 
-        // change integer field from 10 to 6
+        // change integer field from 10 to 2
         $field = new xmldb_field('userid');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $dbman->change_field_precision($table, $field);
+        $columns = $DB->get_columns('test_table1');
+        $this->assertEqual($columns['userid']->meta_type, 'I');
+        //TODO: chek the rest of attributes
+
+        // change the column from integer (2) to integer (6) (forces change of type in some DBs)
+        $field = new xmldb_field('userid');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, null, null, null);
+        $dbman->change_field_precision($table, $field);
+        // column is integer 6 null default null now
         $columns = $DB->get_columns('test_table1');
         $this->assertEqual($columns['userid']->meta_type, 'I');
         //TODO: chek the rest of attributes

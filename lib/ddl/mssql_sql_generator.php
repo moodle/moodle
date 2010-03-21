@@ -321,6 +321,28 @@ class mssql_sql_generator extends sql_generator {
             $typechanged = false;
         }
 
+    /// If the new field (and old) specs are for integer, let's be a bit more specific diferentiating
+    /// types of integers. Else, some combinations can cause things like MDL-21868
+        if ($xmldb_field->getType() == XMLDB_TYPE_INTEGER && $oldmetatype == 'I') {
+            if ($xmldb_field->getLength() > 9) { // Convert our new lenghts to detailed meta types
+                $newmssqlinttype = 'I8';
+            } else if ($xmldb_field->getLength() > 4) {
+                $newmssqlinttype = 'I';
+            } else {
+                $newmssqlinttype = 'I2';
+            }
+            if ($metac->type == 'bigint') { // Convert current DB type to detailed meta type (our metatype is not enough!)
+                $oldmssqlinttype = 'I8';
+            } else if ($metac->type == 'smallint') {
+                $oldmssqlinttype = 'I2';
+            } else {
+                $oldmssqlinttype = 'I';
+            }
+            if ($newmssqlinttype != $oldmssqlinttype) { // Compare new and old meta types
+                $typechanged = true; // Change in meta type means change in type at all effects
+            }
+        }
+
     /// Detect if we are changing the length of the column, not always necessary to drop defaults
     /// if only the length changes, but it's safe to do it always
         if ($xmldb_field->getLength() == $oldlength) {
