@@ -40,3 +40,7 @@ M.core_group.init_hover_events = function(Y, events) {
     }
 }
 
+M.core_group.init_index = function(Y) {
+    M.core_group.groupsCombo = new UpdatableGroupsCombo();
+    M.core_group.membersCombo = new UpdatableMembersCombo;
+}

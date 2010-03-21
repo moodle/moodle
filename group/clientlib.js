@@ -19,7 +19,6 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
             if (o.responseText !== undefined) {
                 var groupsComboEl = document.getElementById("groups");
                 var membersComboEl = document.getElementById("members");
-
                 if (membersComboEl) {
                     // Clear the members list box.
                     while (membersComboEl.firstChild) {

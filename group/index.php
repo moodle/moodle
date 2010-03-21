@@ -11,8 +11,6 @@
 require_once('../config.php');
 require_once('lib.php');
 
-ini_set('include_path', $CFG->libdir.'/pear'.PATH_SEPARATOR.ini_get('include_path'));
-
 $PAGE->requires->yui2_lib('connection');
 $PAGE->requires->js('/group/clientlib.js');
 
@@ -172,8 +170,8 @@ echo '<tr>'."\n";
 echo "<td>\n";
 echo '<p><label for="groups"><span id="groupslabel">'.get_string('groups').':</span><span id="thegrouping">&nbsp;</span></label></p>'."\n";
 
-if (ajaxenabled()) {
-    $onchange = 'membersCombo.refreshMembers();';
+if (ajaxenabled()) { // TODO: move this to JS init!
+    $onchange = 'M.core_group.membersCombo.refreshMembers();';
 } else {
     $onchange = '';
 }
@@ -263,10 +261,7 @@ echo '</div>'."\n";
 echo '</form>'."\n";
 
 if (ajaxenabled()) {
-    $PAGE->requires->js_function_call('var groupsCombo = new UpdatableGroupsCombo',
-            array($CFG->httpswwwroot, $course->id));
-    $PAGE->requires->js_function_call('var membersCombo = new UpdatableMembersCombo',
-            array($CFG->httpswwwroot, $course->id));
+    $PAGE->requires->js_init_call('M.core_group.init_index');
 }
 
 echo $OUTPUT->footer();
