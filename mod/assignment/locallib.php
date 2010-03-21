@@ -92,6 +92,7 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
                 throw new portfolio_caller_exception('invalidpreparepackagefile', 'portfolio', $this->get_return_url());
             }
             $baseid = 'assignment' . $this->assignment->assignment->assignmenttype . $this->assignment->assignment->id . 'submission';
+            $entryids = array();
             foreach ($files as $file) {
                 $id = $baseid . $file->get_id();
                 $entry = new portfolio_format_leap2a_entry($id, $file->get_filename(), 'resource',  $file);
@@ -101,6 +102,13 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
                 $entry->author = $this->user;
                 $leapwriter->add_entry($entry);
                 $this->exporter->copy_existing_file($file);
+                $entryids[] = $id;
+            }
+            if (count($files) > 1) {
+                // if we have multiple files, they should be grouped together into a folder
+                $entry = new portfolio_format_leap2a_entry($baseid . 'group', $this->assignment->assignment->name, 'selection');
+                $leapwriter->add_entry($entry);
+                $leapwriter->make_selection($entry, $entryids, 'Folder');
             }
             return $this->exporter->write_new_file($leapwriter->to_xml(), $this->exporter->get('format')->manifest_name(), true);
         }
