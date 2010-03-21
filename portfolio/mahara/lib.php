@@ -236,20 +236,10 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
     }
 
     public function resolve_static_continue_url($remoteurl) {
-        static $sessions = array();
-        // if this is called mutliple times for the same host, stuff breaks
-        // so we have to keep track and just replace the wantsurl bit
-        // in case things go to different plugins or whatever
-        if (array_key_exists($this->get_config('mnethostid'), $sessions)) {
-            return preg_replace('/wantsurl=[^&]*&/', 'wantsurl=' . urlencode($remoteurl) . '&', $sessions[$this->get_config('mnethostid')]);
-        }
+        global $CFG;
         $this->ensure_mnethost();
-        $mnetauth = get_auth_plugin('mnet');
-        if (!$url = $mnetauth->start_jump_session($this->get_config('mnethostid'), $remoteurl)) {
-            return false;
-        }
-        $sessions[$this->get_config('mnethostid')] = $url;
-        return $url;
+        $u = new moodle_url('/auth/mnet/jump.php', array('hostid' => $this->get_config('mnethostid'), 'wantsurl' => $remoteurl));
+        return $u->out();
     }
 
     public function get_interactive_continue_url() {
