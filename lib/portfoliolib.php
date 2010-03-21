@@ -670,31 +670,44 @@ function portfolio_most_specific_formats($specificformats, $generalformats) {
     } else if (empty($generalformats)) {
         return $specificformats;
     }
-    foreach ($specificformats as $f) {
+    $removedformats = array();
+    foreach ($specificformats as $k => $f) {
         // look for something less specific and remove it, ie outside of the inheritance tree of the current formats.
         if (!array_key_exists($f, $allformats)) {
             if (!portfolio_format_is_abstract($f)) {
                 throw new portfolio_button_exception('invalidformat', 'portfolio', $f);
             }
         }
+        if (in_array($f, $removedformats)) {
+            // already been removed from the general list
+            debugging("skipping $f because it was already removed");
+            unset($specificformats[$k]);
+        }
         require_once($CFG->libdir . '/portfolio/formats.php');
         $fobj = new $allformats[$f];
         foreach ($generalformats as $key => $cf) {
+            if (in_array($cf, $removedformats)) {
+                debugging("skipping $cf because it was already removed");
+                continue;
+            }
             $cfclass = $allformats[$cf];
             $cfobj = new $allformats[$cf];
             if ($fobj instanceof $cfclass && $cfclass != get_class($fobj)) {
                 debugging("unsetting $key $cf because it's not specific enough ($f is better)");
                 unset($generalformats[$key]);
+                $removedformats[] = $cf;
                 continue;
             }
             // check for conflicts
             if ($fobj->conflicts($cf)) {
                 debugging("unsetting $key $cf because it conflicts with $f");
                 unset($generalformats[$key]);
+                $removedformats[] = $cf;
                 continue;
             }
             if ($cfobj->conflicts($f)) {
                 debugging("unsetting $key $cf because it reverse-conflicts with $f");
+                $removedformats[] = $cf;
                 unset($generalformats[$key]);
                 continue;
             }

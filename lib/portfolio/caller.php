@@ -448,24 +448,7 @@ abstract class portfolio_caller_base {
         if (in_array($format, $this->supportedformats)) {
             return;
         }
-        $formatobj = portfolio_format_object($format);
-        // TODO look at replacing this code with another call to
-        //$this->supportedformats = portfolio_most_specific_formats($this->supportedformats, $formats);
-        //requires testing forum, which is the only place this is implemented right now
-        foreach ($this->supportedformats as $key => $f) {
-            $f2obj = portfolio_format_object($f);
-            $class = get_class($f2obj);
-            if ($formatobj instanceof $class) {
-                unset($this->supportedformats[$key]);
-            }
-            if ($formatobj->conflicts($f)) {
-                unset($this->supportedformats[$key]);
-            }
-            if ($f2obj->conflicts($format)) {
-                unset($this->supportedformats[$key]);
-            }
-        }
-        $this->supportedformats[] = $format;
+        $this->supportedformats = portfolio_most_specific_formats(array($format), $this->supportedformats);
     }
 
     public function get_mimetype() {
