@@ -67,8 +67,6 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
     }
 
     public static function supported_formats() {
-        return array(PORTFOLIO_FORMAT_FILE);
-        // TODO remove above line once leap over mnet is tested
         return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_LEAP2A);
     }
 
