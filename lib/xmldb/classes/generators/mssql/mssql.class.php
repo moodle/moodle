@@ -304,9 +304,9 @@ class XMLDBmssql extends XMLDBgenerator {
             $typechanged = false;
         }
 
-    /// If the new field specs are for integer, lett's be a bit more specific diferentiating
+    /// If the new (and old) field specs are for integer, let's be a bit more specific diferentiating
     /// types of integers. Else, some combinations can cause things like MDL-21868
-        if ($xmldb_field->getType() == XMLDB_TYPE_INTEGER) {
+        if ($xmldb_field->getType() == XMLDB_TYPE_INTEGER && substr($oldmetatype, 0, 1) == 'I') {
             if ($xmldb_field->getLength() > 9) { // Convert our new lenghts to detailed meta types
                 $newmssqlinttype = 'I8';
             } else if ($xmldb_field->getLength() > 4) {
