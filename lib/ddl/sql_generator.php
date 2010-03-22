@@ -950,7 +950,7 @@ abstract class sql_generator {
     /// Implement one basic cache to avoid object name duplication
     /// along all the request life, but never to return cached results
     /// We need this because sql statements are created before executing
-    /// them, hence names doesn't exist "phisically" yet in DB, so we need
+    /// them, hence names doesn't exist "physically" yet in DB, so we need
     /// to known which ones have been used
         if (!isset($used_names)) {
             static $used_names = array();
