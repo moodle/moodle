@@ -3189,7 +3189,7 @@ function xmldb_main_upgrade($oldversion=0) {
         // As part of security changes password policy will now be enabled by default.
         // If it has not already been enabled then we will enable it... Admins will still
         // be able to switch it off after this upgrade
-        if (record_exists('config', 'name', 'passwordpolicy', 'value', 0)) {
+        if (record_exists('config', 'name', 'passwordpolicy', sql_compare_text('value'), 0)) {
             unset_config('passwordpolicy');
         }
 
