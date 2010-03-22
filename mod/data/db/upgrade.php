@@ -193,7 +193,7 @@ function xmldb_data_upgrade($oldversion) {
                 d.course AS courseid,
                 r.id AS itemid,
                 c.id AS commentid,
-                c.content AS comment,
+                c.content AS commentcontent,
                 c.format AS format,
                 c.created AS timemodified
                 FROM {data_comments} c, {data_records} r, {data} d
@@ -220,7 +220,7 @@ function xmldb_data_upgrade($oldversion) {
                     $cmt->itemid    = $res->itemid;
                     $comment = new comment($cmt);
                     // comments class will throw an exception if error occurs
-                    $cmt = $comment->add($res->comment, $res->format);
+                    $cmt = $comment->add($res->commentcontent, $res->format);
                     if (!empty($cmt)) {
                         $DB->delete_records('data_comments', array('id'=>$res->commentid));
                     }

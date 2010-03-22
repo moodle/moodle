@@ -217,7 +217,7 @@ function xmldb_glossary_upgrade($oldversion) {
                 g.course AS courseid,
                 e.id AS itemid,
                 c.id AS old_id,
-                c.entrycomment AS comment,
+                c.entrycomment AS commentcontent,
                 c.entrycommentformat AS format,
                 c.entrycommenttrust AS trust,
                 c.timemodified AS timemodified
@@ -244,7 +244,7 @@ function xmldb_glossary_upgrade($oldversion) {
                     $cmt->area      = 'glossary_entry';
                     $cmt->itemid    = $res->itemid;
                     $comment = new comment($cmt);
-                    $cmt = $comment->add($res->comment, $res->format);
+                    $cmt = $comment->add($res->commentcontent, $res->format);
                     if (!empty($cmt)) {
                         $DB->delete_records('glossary_comments', array('id'=>$res->old_id));
                     }
