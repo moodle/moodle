@@ -228,7 +228,10 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
     }
 
     public function get_static_continue_url() {
-        $remoteurl = '/artefact/file/';// @todo penny this might change later when we change formats.
+        $remoteurl = '';
+        if ($this->resolve_format() == 'file') {
+            $remoteurl = '/artefact/file/'; // we hopefully get the files that were imported highlighted
+        }
         if (isset($this->continueurl)) {
             $remoteurl .= $this->continueurl;
         }
