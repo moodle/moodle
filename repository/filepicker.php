@@ -132,7 +132,7 @@ case 'search':
         $search_result['repo_id'] = $repo_id;
 
         // TODO: need a better solution
-        $purl = new moodle_ulr($url, array('search_paging' => 1, 'action' => 'search', 'repo_id' => $repo_id));
+        $purl = new moodle_url($url, array('search_paging' => 1, 'action' => 'search', 'repo_id' => $repo_id));
         $pagingbar = new paging_bar($search_result['total'], $search_result['page'] - 1, $search_result['perpage'], $purl, 'p');
         echo $OUTPUT->render($pagingbar);
 
