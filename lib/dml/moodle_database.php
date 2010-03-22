@@ -485,9 +485,10 @@ abstract class moodle_database {
                 $where[] = "$key IS NULL";
             } else {
                 if ($allowed_types & SQL_PARAMS_NAMED) {
-                    $where[] = "$key = :$key";
-                    $params[$key] = $value;
-                } else {
+                    $normkey = trim(preg_replace('/[^a-zA-Z0-9-_]/', '_', $key), '-_'); // Need to normalize key names
+                    $where[] = "$key = :$normkey";                                      // because they can contain, originally,
+                    $params[$normkey] = $value;                                         // spaces and other forbiden chars when
+                } else {                                                                // using sql_xxx() functions and friends.
                     $where[] = "$key = ?";
                     $params[] = $value;
                 }
