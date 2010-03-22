@@ -1330,10 +1330,6 @@ class html_table {
      */
     public $id = null;
     /**
-     * @var string $style value to use for the style attribute of the table
-     */
-    public $style = null;
-    /**
      * @var array attributes of HTML attributes for the <table> element
      */
     public $attributes = array();
