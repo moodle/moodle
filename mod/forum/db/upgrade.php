@@ -287,6 +287,8 @@ function xmldb_forum_upgrade($oldversion) {
 
     if($result && $oldversion < 2010031800) {
         //migrate forumratings to the central rating table
+        require_once('../lib/db/upgradelib.php');
+
         //forum ratings only have a single time column so use it for both time created and modified
         $ratingssql = 'SELECT r.id AS rid, r.post AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified, f.scale, f.id AS mid
 FROM {forum_ratings} r

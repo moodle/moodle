@@ -225,6 +225,8 @@ class rating_manager {
         list($itemidtest, $params) = $DB->get_in_or_equal(
                 $itemids, SQL_PARAMS_NAMED, 'itemid0000');
 
+	//note: all the group bys arent really necessary but PostgreSQL complains
+	//about selecting a mixture of grouped and non-grouped columns
         $sql = "SELECT r.itemid, ur.id, ur.userid, ur.scaleid,
         $aggregatestr(r.rating) AS aggrrating,
         COUNT(r.rating) AS numratings,
@@ -236,7 +238,7 @@ class rating_manager {
     WHERE
         r.contextid = :contextid AND
         r.itemid $itemidtest
-    GROUP BY r.itemid, ur.rating
+    GROUP BY r.itemid, ur.rating, ur.id, ur.userid, ur.scaleid
     ORDER BY r.itemid";
 
         $params['userid'] = $options->userid;
