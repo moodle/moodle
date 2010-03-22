@@ -2333,40 +2333,38 @@ function feedback_encode_target_url($url) {
     }
 }
 
-function feedback_extend_settings_navigation($settings, $module) {
-    global $PAGE, $USER, $OUTPUT, $CFG, $DB;
-
-    $feedback = $DB->get_record('feedback', array('id'=>$PAGE->cm->instance));
-    $feedbacknavkey = $settings->add(get_string('feedbackadministration', 'feedback'));
-    $feedbacknav = $settings->get($feedbacknavkey);
-    $feedbacknav->forceopen = true;
+/**
+ * Adds module specific settings to the settings block
+ *
+ * @param settings_navigation $settings The settings navigation object
+ * @param navigation_node $feedbacknode The node to add module settings to
+ */
+function feedback_extend_settings_navigation(settings_navigation $settings, navigation_node $feedbacknode) {
+    global $PAGE, $DB;
 
     $capabilities = feedback_load_capabilities($PAGE->cm->id);
 
     if($capabilities->edititems) {
-        $qkey = $feedbacknav->add(get_string('questions', 'feedback'));
-        $feedbacknav->get($qkey)->add(get_string('edit_items', 'feedback'), new moodle_url('/mod/feedback/edit.php', array('id'=>$PAGE->cm->id, 'do_show'=>'edit')));
-        $feedbacknav->get($qkey)->add(get_string('export_questions', 'feedback'), new moodle_url('/mod/feedback/export.php', array('id'=>$PAGE->cm->id, 'action'=>'exportfile')));
-        $feedbacknav->get($qkey)->add(get_string('import_questions', 'feedback'), new moodle_url('/mod/feedback/import.php', array('id'=>$PAGE->cm->id)));
-        $feedbacknav->get($qkey)->add(get_string('templates', 'feedback'), new moodle_url('/mod/feedback/edit.php', array('id'=>$PAGE->cm->id, 'do_show'=>'templates')));
+        $qkey = $feedbacknode->add(get_string('questions', 'feedback'));
+        $feedbacknode->get($qkey)->add(get_string('edit_items', 'feedback'), new moodle_url('/mod/feedback/edit.php', array('id'=>$PAGE->cm->id, 'do_show'=>'edit')));
+        $feedbacknode->get($qkey)->add(get_string('export_questions', 'feedback'), new moodle_url('/mod/feedback/export.php', array('id'=>$PAGE->cm->id, 'action'=>'exportfile')));
+        $feedbacknode->get($qkey)->add(get_string('import_questions', 'feedback'), new moodle_url('/mod/feedback/import.php', array('id'=>$PAGE->cm->id)));
+        $feedbacknode->get($qkey)->add(get_string('templates', 'feedback'), new moodle_url('/mod/feedback/edit.php', array('id'=>$PAGE->cm->id, 'do_show'=>'templates')));
     }
 
     if($capabilities->viewreports) {
+        $feedback = $DB->get_record('feedback', array('id'=>$PAGE->cm->instance));
         if($feedback->course == SITEID){
-            $feedbacknav->add(get_string('analysis', 'feedback'), new moodle_url('/mod/feedback/analysis_course.php', array('id'=>$PAGE->cm->id, 'course'=>$PAGE->course->id,'do_show'=>'analysis')));
+            $feedbacknode->add(get_string('analysis', 'feedback'), new moodle_url('/mod/feedback/analysis_course.php', array('id'=>$PAGE->cm->id, 'course'=>$PAGE->course->id,'do_show'=>'analysis')));
         }else {
-            $feedbacknav->add(get_string('analysis', 'feedback'), new moodle_url('/mod/feedback/analysis.php', array('id'=>$PAGE->cm->id, 'course'=>$PAGE->course->id,'do_show'=>'analysis')));
+            $feedbacknode->add(get_string('analysis', 'feedback'), new moodle_url('/mod/feedback/analysis.php', array('id'=>$PAGE->cm->id, 'course'=>$PAGE->course->id,'do_show'=>'analysis')));
         }
     }
 
     if($capabilities->viewreports) {
-        $feedbacknav->add(get_string('show_entries', 'feedback'), new moodle_url('/mod/feedback/show_entries.php', array('id'=>$PAGE->cm->id, 'do_show'=>'showentries')));
+        $feedbacknode->add(get_string('show_entries', 'feedback'), new moodle_url('/mod/feedback/show_entries.php', array('id'=>$PAGE->cm->id, 'do_show'=>'showentries')));
     }
-
-    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $feedbacknav->add(get_string('updatethis', '', get_string('modulename', 'feedback')), new moodle_url('/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
     }
-}
 
 function feedback_init_feedback_session() {
     //initialize the feedback-Session - not nice at all!!

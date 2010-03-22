@@ -693,21 +693,13 @@ function workshop_extend_navigation(navigation_node $navref, stdclass $course, s
  * so it is safe to rely on the $PAGE.
  *
  * @param settings_navigation $settingsnav {@link settings_navigation}
- * @param stdclass $module
- * @return void|mixed The key to the modules branch
+ * @param navigation_node $workshopnode {@link navigation_node}
  */
-function workshop_extend_settings_navigation(settings_navigation $settingsnav, stdclass $module=null) {
-    global $CFG, $PAGE;
+function workshop_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $workshopnode=null) {
+    global $PAGE;
 
-    $workshopkey = $settingsnav->add(get_string('workshopadministration', 'workshop'));
-    $workshopnode = $settingsnav->get($workshopkey);
-    $workshopnode->forceopen = true;
     //$workshopobject = $DB->get_record("workshop", array("id" => $PAGE->cm->instance));
 
-    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $url = new moodle_url('/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey()));
-        $workshopnode->add(get_string('updatethis', '', get_string('modulename', 'workshop')), $url, settings_navigation::TYPE_SETTING);
-    }
     if (has_capability('mod/workshop:editdimensions', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/workshop/editform.php', array('cmid' => $PAGE->cm->id));
         $workshopnode->add(get_string('editassessmentform', 'workshop'), $url, settings_navigation::TYPE_SETTING);

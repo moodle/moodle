@@ -2856,16 +2856,18 @@ function data_extend_navigation($navigation, $course, $module, $cm) {
     $navigation->add(get_string('search', 'data'), new moodle_url('/mod/data/view.php', array('d'=>$cm->instance, 'mode'=>'search')));
 }
 
-function data_extend_settings_navigation($settings, $module) {
-    global $PAGE, $OUTPUT, $CFG;
+/**
+ * Adds module specific settings to the settings block
+ *
+ * @param settings_navigation $settings The settings navigation object
+ * @param navigation_node $datanode The node to add module settings to
+ */
+function data_extend_settings_navigation(settings_navigation $settings, navigation_node $datanode) {
+    global $PAGE;
 
     // We only actually need the id here for functions
     $data = new stdClass;
     $data->id = $PAGE->cm->instance;
-
-    $datanavkey = $settings->add(get_string('dataadministration', 'data'));
-    $datanav = $settings->get($datanavkey);
-    $datanav->forceopen = true;
 
     $currentgroup = groups_get_activity_group($PAGE->cm);
     $groupmode = groups_get_activity_groupmode($PAGE->cm);
@@ -2876,13 +2878,13 @@ function data_extend_settings_navigation($settings, $module) {
         } else {
             $addstring = get_string('editentry', 'data');
         }
-        $datanav->add($addstring, new moodle_url('/mod/data/edit.php', array('d'=>$PAGE->cm->instance)));
+        $datanode->add($addstring, new moodle_url('/mod/data/edit.php', array('d'=>$PAGE->cm->instance)));
     }
 
     if (has_capability(DATA_CAP_EXPORT, $PAGE->cm->context)) {
         // The capability required to Export database records is centrally defined in 'lib.php'
         // and should be weaker than those required to edit Templates, Fields and Presets.
-        $datanav->add(get_string('export', 'data'), new moodle_url('/mod/data/export.php', array('d'=>$data->id)));
+        $datanode->add(get_string('export', 'data'), new moodle_url('/mod/data/export.php', array('d'=>$data->id)));
     }
 
     if (has_capability('mod/data:managetemplates', $PAGE->cm->context)) {
@@ -2897,19 +2899,15 @@ function data_extend_settings_navigation($settings, $module) {
             $defaultemplate = 'singletemplate';
         }
 
-        $templatekey = $datanav->add(get_string('templates', 'data'));
-        $templates = $datanav->get($templatekey);
+        $templatekey = $datanode->add(get_string('templates', 'data'));
+        $templates = $datanode->get($templatekey);
 
         $templatelist = array ('listtemplate', 'singletemplate', 'asearchtemplate', 'addtemplate', 'rsstemplate', 'csstemplate', 'jstemplate');
         foreach ($templatelist as $template) {
             $templates->add(get_string($template, 'data'), new moodle_url('/mod/data/templates.php', array('d'=>$data->id,'mode'=>$template)));
         }
 
-        $datanav->add(get_string('fields', 'data'), new moodle_url('/mod/data/field.php', array('d'=>$data->id)));
-        $datanav->add(get_string('presets', 'data'), new moodle_url('/mod/data/preset.php', array('d'=>$data->id)));
+        $datanode->add(get_string('fields', 'data'), new moodle_url('/mod/data/field.php', array('d'=>$data->id)));
+        $datanode->add(get_string('presets', 'data'), new moodle_url('/mod/data/preset.php', array('d'=>$data->id)));
     }
-
-    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $datanav->add(get_string('updatethis', '', get_string('modulename', 'choice')), new moodle_url('/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
     }
-}

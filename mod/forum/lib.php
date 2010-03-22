@@ -8025,18 +8025,13 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
 }
 
 /**
- * This function is used to extend the settings navigation with settings for the module
- * It is called when the context for the page is a forum module
+ * Adds module specific settings to the settings block
  *
- * @param settings_navigation $settingsnav {@link settings_navigation}
- * @param stdClass $module
- * @return void|mixed The key to the modules branch
+ * @param settings_navigation $settings The settings navigation object
+ * @param navigation_node $forumnode The node to add module settings to
  */
-function forum_extend_settings_navigation($settingsnav, $module=null) {
-    global $USER, $PAGE, $FULLME, $CFG, $DB, $OUTPUT;
-    $forumkey = $settingsnav->add(get_string('forumadministration', 'forum'));
-    $forum = $settingsnav->get($forumkey);
-    $forum->forceopen = true;
+function forum_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $forumnode) {
+    global $USER, $PAGE, $CFG, $DB, $OUTPUT;
 
     $forumobject = $DB->get_record("forum", array("id" => $PAGE->cm->instance));
     if (empty($PAGE->cm->context)) {
@@ -8046,33 +8041,33 @@ function forum_extend_settings_navigation($settingsnav, $module=null) {
         $notekey = false;
         $helpbutton = false;
         if (forum_is_forcesubscribed($forumobject)) {
-            $notekey = $forum->add(get_string("forcessubscribe", 'forum'));
+            $notekey = $forumnode->add(get_string("forcessubscribe", 'forum'));
             $string = get_string('allowchoice', 'forum');
             $helpbutton = $OUTPUT->help_icon("subscription", $string, "forum");
             if (has_capability('mod/forum:managesubscriptions', $PAGE->cm->context)) {
                 $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'force'=>'no'));
-                $forum->add($string, $url, navigation_node::TYPE_SETTING);
+                $forumnode->add($string, $url, navigation_node::TYPE_SETTING);
             } else {
-                $forum->add(get_string('everyoneisnowsubscribed', 'forum'), null, navigation_node::TYPE_SETTING);
+                $forumnode->add(get_string('everyoneisnowsubscribed', 'forum'), null, navigation_node::TYPE_SETTING);
             }
         } else if ($forumobject->forcesubscribe == FORUM_DISALLOWSUBSCRIBE) {
             $string = get_string('disallowsubscribe', 'forum');
-            $notekey = $forum->add($string);
+            $notekey = $forumnode->add($string);
             $helpbutton = $OUTPUT->help_icon("subscription", $string, "forum");
         } else {
             $string = get_string("forcesubscribe", "forum");
-            $notekey = $forum->add(get_string("allowsallsubscribe", 'forum'));
+            $notekey = $forumnode->add(get_string("allowsallsubscribe", 'forum'));
             $helpbutton = $OUTPUT->help_icon("subscription", $string, "forum");
 
             if (has_capability('mod/forum:managesubscriptions', $PAGE->cm->context)) {
                 $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'force'=>'yes'));
-                $forum->add($string, $url, navigation_node::TYPE_SETTING);
+                $forumnode->add($string, $url, navigation_node::TYPE_SETTING);
             } else {
-                $forum->add(get_string('everyonecannowchoose', 'forum'), null, navigation_node::TYPE_SETTING);
+                $forumnode->add(get_string('everyonecannowchoose', 'forum'), null, navigation_node::TYPE_SETTING);
             }
             if(has_capability('mod/forum:viewsubscribers', $PAGE->cm->context)){
                 $url = new moodle_url('/mod/forum/subscribers.php', array('id'=>$forumobject->id));
-                $forum->add(get_string('showsubscribers', 'forum'), $url, navigation_node::TYPE_SETTING);
+                $forumnode->add(get_string('showsubscribers', 'forum'), $url, navigation_node::TYPE_SETTING);
             }
 
             if (forum_is_forcesubscribed($forumobject) || ($forumobject->forcesubscribe == FORUM_DISALLOWSUBSCRIBE && !has_capability('mod/forum:managesubscriptions', $PAGE->cm->context))) {
@@ -8084,7 +8079,7 @@ function forum_extend_settings_navigation($settingsnav, $module=null) {
                     $linktext = get_string('subscribe', 'forum');
                 }
                 $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id));
-                $forum->add($linktext, $url, navigation_node::TYPE_SETTING);
+                $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
             }
         }
 
@@ -8095,21 +8090,15 @@ function forum_extend_settings_navigation($settingsnav, $module=null) {
                 $linktext = get_string('trackforum', 'forum');
             }
             $url = new moodle_url('/mod/forum/settracking.php', array('id'=>$forumobject->id));
-            $forum->add($linktext, $url, navigation_node::TYPE_SETTING);
+            $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
         }
         if ($notekey!==false) {
-            $forum->get($notekey)->add_class('note');
+            $forumnode->get($notekey)->add_class('note');
             if ($helpbutton!==false) {
-                $forum->get($notekey)->helpbutton = $helpbutton;
+                $forumnode->get($notekey)->helpbutton = $helpbutton;
             }
         }
-        if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-            $modulename = get_string('modulename', 'forum');
-            $string = get_string('updatethis', '', $modulename);
-            $url = new moodle_url("$CFG->wwwroot/course/mod.php", array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey()));
-            $forum->add($string, $url, navigation_node::TYPE_SETTING);
         }
-    }
 
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->forum_enablerssfeeds) && $forumobject->rsstype && $forumobject->rssarticles) {
 
@@ -8128,10 +8117,8 @@ function forum_extend_settings_navigation($settingsnav, $module=null) {
             $userid = $USER->id;
         }
         $url = new moodle_url(rss_get_url($PAGE->course->id, $userid, "forum", $forumobject->id));
-        $forum->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
+        $forumnode->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
     }
-
-    return $forumkey;
 }
 
 /**

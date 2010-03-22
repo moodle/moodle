@@ -795,57 +795,40 @@ function lesson_extend_navigation($navigation, $course, $module, $cm) {
  * It is safe to rely on PAGE here as we will only ever be within the module
  * context when this is called
  *
- * @param navigation_node $settings
- * @param stdClass $module
+ * @param settings_navigation $settings
+ * @param navigation_node $lessonnode
  */
-function lesson_extend_settings_navigation($settings, $module) {
-    global $PAGE, $CFG, $USER, $OUTPUT;
-
-    $lessonnavkey = $settings->add(get_string('lessonadministration', 'lesson'));
-    $lessonnav = $settings->get($lessonnavkey);
-    $lessonnav->forceopen = true;
-
-    if (empty($PAGE->cm->context)) {
-        $PAGE->cm->context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->instance);
-    }
+function lesson_extend_settings_navigation($settings, $lessonnode) {
+    global $PAGE, $DB;
 
     $canedit = has_capability('mod/lesson:edit', $PAGE->cm->context);
 
     $url = new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id));
-    $key = $lessonnav->add(get_string('preview', 'lesson'), $url);
+    $key = $lessonnode->add(get_string('preview', 'lesson'), $url);
 
     if ($canedit) {
         $url = new moodle_url('/mod/lesson/edit.php', array('id'=>$PAGE->cm->id));
-        $key = $lessonnav->add(get_string('edit', 'lesson'), $url);
+        $key = $lessonnode->add(get_string('edit', 'lesson'), $url);
     }
 
     if (has_capability('mod/lesson:manage', $PAGE->cm->context)) {
-        $key = $lessonnav->add(get_string('reports', 'lesson'));
+        $key = $lessonnode->add(get_string('reports', 'lesson'));
         $url = new moodle_url('/mod/lesson/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportoverview'));
-        $lessonnav->get($key)->add(get_string('overview', 'lesson'), $url);
+        $lessonnode->get($key)->add(get_string('overview', 'lesson'), $url);
         $url = new moodle_url('/mod/lesson/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportdetail'));
-        $lessonnav->get($key)->add(get_string('detailedstats', 'lesson'), $url);
+        $lessonnode->get($key)->add(get_string('detailedstats', 'lesson'), $url);
     }
 
     if ($canedit) {
         $url = new moodle_url('/mod/lesson/essay.php', array('id'=>$PAGE->cm->id));
-        $lessonnav->add(get_string('manualgrading', 'lesson'), $url);
+        $lessonnode->add(get_string('manualgrading', 'lesson'), $url);
     }
 
     if ($PAGE->activityrecord->highscores) {
         $url = new moodle_url('/mod/lesson/highscores.php', array('id'=>$PAGE->cm->id));
-        $lessonnav->add(get_string('highscores', 'lesson'), $url);
+        $lessonnode->add(get_string('highscores', 'lesson'), $url);
     }
-
-    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $url = new moodle_url('/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey()));
-        $lessonnav->add(get_string('updatethis', '', get_string('modulename', 'lesson')), $url);
     }
-
-    if (count($lessonnav->children)<1) {
-        $settings->remove_child($lessonnavkey);
-    }
-}
 
 /**
  * Get list of available import or export formats

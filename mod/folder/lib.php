@@ -326,32 +326,3 @@ function folder_extend_navigation($navigation, $course, $module, $cm) {
      */
     $navigation->nodetype = navigation_node::NODETYPE_LEAF;
 }
-
-/**
- * This function extends the settings navigation block for the site.
- *
- * It is safe to rely on PAGE here as we will only ever be within the module
- * context when this is called.
- *
- * @param settings_navigation $settings
- * @param stdClass $module
- */
-function folder_extend_settings_navigation($settings, $module) {
-    global $PAGE, $CFG;
-
-    // Add a folder node to the settings navigation.
-    $foldernavkey = $settings->add(get_string('folderadministration', 'folder'));
-    $foldernav = $settings->get($foldernavkey);
-    $foldernav->forceopen = true;
-
-    // If the user has the capability add an update this module link for the folder instance
-    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $url = new moodle_url('/course/mod.php', array('update'=>$PAGE->cm->id, 'return'=>true, 'sesskey'=>sesskey()));
-        $foldernav->add(get_string('updatethis', '', get_string('modulename', 'folder')), $url);
-    }
-
-    // Check if any children have been added. If not remove the node to save on clutter.
-    if (count($foldernav->children)<1) {
-        $settings->remove_child($foldernavkey);
-    }
-}

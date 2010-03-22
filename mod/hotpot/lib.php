@@ -2998,34 +2998,3 @@ function hotpot_extend_navigation($navigation, $course, $module, $cm) {
      */
     $navigation->nodetype = navigation_node::NODETYPE_LEAF;
 }
-
-/**
- * This function extends the settings navigation block for the site.
- *
- * It is safe to rely on PAGE here as we will only ever be within the module
- * context when this is called.
- *
- * @param settings_navigation $settings
- * @param stdClass $module
- */
-function hotpot_extend_settings_navigation($settings, $module) {
-    global $PAGE, $CFG, $DB;
-
-    // Load the hotpot instance from the database
-    $hotpot = $DB->get_record('hotpot', array('id'=>$PAGE->cm->instance));
-    // Add a hotpot node to the settings navigation.
-    $hotpotnavkey = $settings->add(get_string('hotpotadministration', 'hotpot'));
-    $hotpotnav = $settings->get($hotpotnavkey);
-    $hotpotnav->forceopen = true;
-
-    // If the user has the capability add an update this module link for the hotpot instance
-    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $url = new moodle_url('/course/mod.php', array('update'=>$PAGE->cm->id, 'return'=>true, 'sesskey'=>sesskey()));
-        $hotpotnav->add(get_string('updatethis', '', get_string('modulename', 'hotpot')), $url);
-    }
-
-    // Check if any children have been added. If not remove the node to save on clutter.
-    if (count($hotpotnav->children)<1) {
-        $settings->remove_child($hotpotnav);
-    }
-}

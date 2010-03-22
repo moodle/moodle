@@ -921,12 +921,14 @@ function choice_supports($feature) {
     }
 }
 
-function choice_extend_settings_navigation($settings, $module) {
-    global $PAGE, $OUTPUT, $CFG;
-
-    $choicenavkey = $settings->add(get_string('choiceadministration', 'choice'));
-    $choicenav = $settings->get($choicenavkey);
-    $choicenav->forceopen = true;
+/**
+ * Adds module specific settings to the settings block
+ *
+ * @param settings_navigation $settings The settings navigation object
+ * @param navigation_node $choicenode The node to add module settings to
+ */
+function choice_extend_settings_navigation(settings_navigation $settings, navigation_node $choicenode) {
+    global $PAGE;
 
     if (has_capability('mod/choice:readresponses', $PAGE->cm->context)) {
 
@@ -945,10 +947,6 @@ function choice_extend_settings_navigation($settings, $module) {
                 $responsecount += count($userlist);
             }
         }
-        $choicenav->add(get_string("viewallresponses", "choice", $responsecount), new moodle_url('/mod/choice/report.php', array('id'=>$PAGE->cm->id)));
+        $choicenode->add(get_string("viewallresponses", "choice", $responsecount), new moodle_url('/mod/choice/report.php', array('id'=>$PAGE->cm->id)));
     }
-
-    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $choicenav->add(get_string('updatethis', '', get_string('modulename', 'choice')), new moodle_url('/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
     }
-}

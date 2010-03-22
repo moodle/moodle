@@ -305,32 +305,3 @@ function url_extend_navigation($navigation, $course, $module, $cm) {
      */
     $navigation->nodetype = navigation_node::NODETYPE_LEAF;
 }
-
-/**
- * This function extends the settings navigation block for the site.
- *
- * It is safe to rely on PAGE here as we will only ever be within the module
- * context when this is called.
- *
- * @param settings_navigation $settings
- * @param stdClass $module
- */
-function url_extend_settings_navigation($settings, $module) {
-    global $PAGE, $CFG;
-
-    // Add a url node to the settings navigation.
-    $urlnavkey = $settings->add(get_string('urladministration', 'url'));
-    $urlnav = $settings->get($urlnavkey);
-    $urlnav->forceopen = true;
-
-    // If the user has the capability add an update this module link for the url instance
-    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $url = new moodle_url('/course/mod.php', array('update'=>$PAGE->cm->id, 'return'=>true, 'sesskey'=>sesskey()));
-        $urlnav->add(get_string('updatethis', '', get_string('modulename', 'url')), $url);
-    }
-
-    // Check if any children have been added. If not remove the node to save on clutter.
-    if (count($urlnav->children)<1) {
-        $settings->remove_child($urlnavkey);
-    }
-}

@@ -1231,9 +1231,11 @@ function chat_supports($feature) {
 
 function chat_extend_navigation($navigation, $course, $module, $cm) {
     global $CFG, $USER, $PAGE, $OUTPUT;
+
+    $currentgroup = groups_get_activity_group($cm, true);
+    
     if (has_capability('mod/chat:chat',$cm->context)) {
         $strenterchat    = get_string('enterchat', 'chat');
-        $currentgroup = groups_get_activity_group($cm, true);
 
         $target = $CFG->wwwroot.'/mod/chat/';
         $params = array('id'=>$cm->instance);
@@ -1281,15 +1283,19 @@ function chat_extend_navigation($navigation, $course, $module, $cm) {
     }
 }
 
-function chat_extend_settings_navigation($settingsnav, $module) {
-    global $DB, $PAGE, $USER, $CFG;
+/**
+ * Adds module specific settings to the settings block
+ *
+ * @param settings_navigation $settings The settings navigation object
+ * @param navigation_node $chatnode The node to add module settings to
+ */
+function chat_extend_settings_navigation(settings_navigation $settings, navigation_node $chatnode) {
+    global $DB, $PAGE, $USER;
     $chat = $DB->get_record("chat", array("id" => $PAGE->cm->instance));
-    $chatnavkey = $settingsnav->add(get_string('chatadministration', 'chat'));
-    $chatnav = $settingsnav->get($chatnavkey);
-    $chatnav->forceopen = true;
+
     if ($chat->chattime && $chat->schedule) {
-        $key = $chatnav->add(get_string('nextsession', 'chat').': '.userdate($chat->chattime).' ('.usertimezone($USER->timezone));
-        $chatnav->get($key)->add_class('note');
+        $key = $chatnode->add(get_string('nextsession', 'chat').': '.userdate($chat->chattime).' ('.usertimezone($USER->timezone));
+        $chatnode->get($key)->add_class('note');
     }
 
     $currentgroup = groups_get_activity_group($PAGE->cm, true);
@@ -1301,11 +1307,7 @@ function chat_extend_settings_navigation($settingsnav, $module) {
 
     if ($chat->studentlogs || has_capability('mod/chat:readlog',$PAGE->cm->context)) {
         if ($DB->get_records_select('chat_messages', "chatid = ? $groupselect", array($chat->id))) {
-            $chatnav->add(get_string('viewreport', 'chat'), new moodle_url('/mod/chat/report.php', array('id'=>$PAGE->cm->id)));
+            $chatnode->add(get_string('viewreport', 'chat'), new moodle_url('/mod/chat/report.php', array('id'=>$PAGE->cm->id)));
         }
     }
-
-    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $chatnav->add(get_string('updatethis', '', get_string('modulename', 'chat')), new moodle_url('/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
     }
-}

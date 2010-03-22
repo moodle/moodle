@@ -819,56 +819,29 @@ function survey_extend_navigation($navigation, $course, $module, $cm) {
  * context when this is called
  *
  * @param navigation_node $settings
- * @param stdClass $module
+ * @param navigation_node $surveynode
  */
-function survey_extend_settings_navigation($settings, $module) {
-    global $PAGE, $CFG, $OUTPUT;
-
-    $surveynavkey = $settings->add(get_string('surveyadministration', 'survey'));
-    $surveynav = $settings->get($surveynavkey);
-    $surveynav->forceopen = true;
-
-    $strreport = get_string("report", "survey");
-    $strsurvey = get_string("modulename", "survey");
-    $strsurveys = get_string("modulenameplural", "survey");
-    $strsummary = get_string("summary", "survey");
-    $strscales = get_string("scales", "survey");
-    $strquestion = get_string("question", "survey");
-    $strquestions = get_string("questions", "survey");
-    $strdownload = get_string("download", "survey");
-    $strallscales = get_string("allscales", "survey");
-    $strallquestions = get_string("allquestions", "survey");
-    $strselectedquestions = get_string("selectedquestions", "survey");
-    $strseemoredetail = get_string("seemoredetail", "survey");
-    $strnotes = get_string("notes", "survey");
+function survey_extend_settings_navigation($settings, $surveynode) {
+    global $PAGE;
 
     if (has_capability('mod/survey:readresponses', $PAGE->cm->context)) {
-        $key = $surveynav->add(get_string("responsereports", "survey"));
+        $key = $surveynode->add(get_string("responsereports", "survey"));
 
         $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'summary'));
-        $surveynav->get($key)->add(get_string("summary", "survey"), $url);
+        $surveynode->get($key)->add(get_string("summary", "survey"), $url);
 
         $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'scales'));
-        $surveynav->get($key)->add(get_string("scales", "survey"), $url);
+        $surveynode->get($key)->add(get_string("scales", "survey"), $url);
 
         $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'questions'));
-        $surveynav->get($key)->add(get_string("question", "survey"), $url);
+        $surveynode->get($key)->add(get_string("question", "survey"), $url);
 
         $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'students'));
-        $surveynav->get($key)->add(get_string('participants'), $url);
+        $surveynode->get($key)->add(get_string('participants'), $url);
 
         if (has_capability('mod/survey:download', $PAGE->cm->context)) {
             $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'download'));
-            $surveynav->add(get_string('downloadresults', 'survey'), $url);
+            $surveynode->add(get_string('downloadresults', 'survey'), $url);
         }
     }
-
-    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
-        $url = new moodle_url('/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey()));
-        $surveynav->add(get_string('updatethis', '', get_string('modulename', 'quiz')), $url);
     }
-
-    if (count($surveynav->children)<1) {
-        $settings->remove_child($surveynavkey);
-    }
-}
