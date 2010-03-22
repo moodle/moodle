@@ -9339,7 +9339,7 @@ WHERE
      * It isn't now, just overwriting
      */
     function restore_create_roles($restore, $xmlfile) {
-        global $DB;
+        global $DB, $CFG;
         if (!defined('RESTORE_SILENTLY')) {
             echo "<li>".get_string("creatingrolesdefinitions").'</li>';
         }
@@ -9374,7 +9374,8 @@ WHERE
                     $status = backup_putid($restore->backup_unique_code,"role",$oldroleid,
                                      $rolemappings[$oldroleid]); // adding a new id
 
-                } else {
+                // check for permissions before create new roles
+                } else if (has_capability('moodle/role:manage', get_context_instance(CONTEXT_SYSTEM))) {
 
                     // code to make new role name/short name if same role name or shortname exists
                     $fullname = $roledata->name;
@@ -9432,7 +9433,14 @@ WHERE
 
                         $DB->insert_record('role_capabilities', $roleinfo);
                     }
+                } else {
+                    // map the new role to course default role
+                    if (!$default_role = get_field("course", "defaultrole", "id", $restore->course_id)) {
+                        $default_role = $CFG->defaultcourseroleid;
+                    }
+                    $status = backup_putid($restore->backup_unique_code, "role", $oldroleid, $default_role);
                 }
+
             /// Now, restore role nameincourse (only if the role had nameincourse in backup)
                 if (!empty($roledata->nameincourse)) {
                     $newrole = backup_getid($restore->backup_unique_code, 'role', $oldroleid); /// Look for target role
