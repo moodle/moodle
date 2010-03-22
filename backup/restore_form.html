@@ -622,9 +622,10 @@ if ($restoreuserinfo) {
     $allroles = get_records('role');
 
     echo ('<table width="100%" class="restore-form-instances">');
-    echo ('<tr><td align="right" style="width:50%"><b>'.get_string('sourcerole').'</b></td><td align="left" style="width:50%"><b>'.get_string('targetrole').'</b></td></tr>');
 
     if ($info->backup_moodle_version < 2006092801) {
+        echo ('<tr><td align="right" style="width:50%"><b>'.get_string('sourcerole').'</b></td><td align="left" style="width:50%"><b>'.get_string('targetrole').'</b></td></tr>');
+
         // 1.6 and below backup
 
         /// Editting teacher
@@ -669,6 +670,20 @@ if ($restoreuserinfo) {
         // 1.7 and above backup
         $roles = restore_read_xml_roles($xml_file);
 
+        // Calculate if any role can be mapped
+        $str_new = '';
+        $canmaproles = false;
+        if (has_capability('moodle/role:manage', get_context_instance(CONTEXT_SYSTEM))) {
+            $str_new = 'new role';
+            $canmaproles = true;
+        } else if (!empty($siterolesarray)) {
+            $canmaproles = true;
+        }
+
+        if ($canmaproles) {
+            echo ('<tr><td align="right" style="width:50%"><b>'.get_string('sourcerole').'</b></td><td align="left" style="width:50%"><b>'.get_string('targetrole').'</b></td></tr>');
+        }
+
         if (!empty($roles->roles)) { // possible to have course with no roles
             foreach ($siterolesarray as $siteroleid=>$siteroleshortname) {
                 $siteroleschoicearray[$siteroleid] = $siterolesnamearray[$siteroleid]." (". $siterolesarray[$siteroleid].")";
@@ -676,7 +691,12 @@ if ($restoreuserinfo) {
 
             foreach ($roles->roles as $roleid=>$role) {
 
-                $mappableroles = $siteroleschoicearray;
+                if (!$canmaproles) { // User cannot map roles at all, add hidden element and continue
+                    echo "<tr><td colspan=\"2\"><input type=\"hidden\" name=\"roles_{$roleid}\" value=\"0\" /></td></tr>";
+                    continue;
+                }
+
+                $mappableroles = !empty($siteroleschoicearray) ? $siteroleschoicearray : array();
 
                 echo ('<tr><td align="right">');
                 echo '<label for="menuroles_'.$roleid.'">'.format_string($role->name)." (".($role->shortname).")".'</label>';
@@ -700,8 +720,21 @@ if ($restoreuserinfo) {
                             break;
                         }
                     }
+                    // Hack a bit, so, if role continues unmatched, and was "editingteacher", and "teacher" is available
+                    // preselect it as fallback matching (can happen a lot)
+                    if ($matchrole == 0 && $role->shortname == 'editingteacher' && in_array('teacher', $siterolesarray)) {
+                        $matchrole = array_search('teacher', $siterolesarray);
+                    }
+
+                    // If arrived here, role continues unmatched and the user lacks the 'moodle/role:manage' capability
+                    // perform automatic matching to site defaultcourseroleid (only if available in the list)
+                    if ($matchrole == 0 && !has_capability('moodle/role:manage', get_context_instance(CONTEXT_SYSTEM))) {
+                        if (array_key_exists($CFG->defaultcourseroleid, $siterolesarray)) {
+                            $matchrole = $CFG->defaultcourseroleid;
+                        }
+                    }
                 }
-                choose_from_menu ($mappableroles, "roles_".$roleid, $matchrole, 'new role', '', '0');
+                choose_from_menu ($mappableroles, "roles_".$roleid, $matchrole, $str_new, '', '0');
                 echo ('</td></tr>');
             }
         }

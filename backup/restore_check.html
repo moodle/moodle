@@ -352,6 +352,40 @@
             }
         }
 
+        // Re-check all the roles creation/mapping stuff
+        if (!empty($restore->course_id)) {
+            $contexttosearch = get_context_instance(CONTEXT_COURSE, $restore->course_id);
+        // if we know the target category, check capability on it
+        } else if (!empty($restore->restore_restorecatto)) {
+            $contexttosearch = get_context_instance(CONTEXT_COURSECAT, $restore->restore_restorecatto);
+        } else {
+            $contexttosearch = get_context_instance(CONTEXT_SYSTEM);
+        }
+        $cancreateroles = has_capability('moodle/role:manage', get_context_instance(CONTEXT_SYSTEM));
+        $canassignroles = has_capability('moodle/role:assign', $contexttosearch);
+        $canoverridecaps= has_capability('moodle/role:override', $contexttosearch) || has_capability('moodle/role:safeoverride', $contexttosearch);
+        if (!empty($restore->rolesmapping)) {
+            foreach ($restore->rolesmapping as $originalrole => $targetrole) {
+                // First, if new role is selected, check used really can do that
+                if (empty($targetrole) && !$cancreateroles) {
+                    $messages[] = get_string('restorecannotcreateorassignroles');
+                    $show_continue_button = false;
+                    break;
+                }
+                // Now, check that the target role is available for role assignments
+                if (!empty($targetrole) && !$canassignroles) {
+                    $messages[] = get_string('restorecannotassignroles');
+                    $show_continue_button = false;
+                    break;
+                }
+                // Now, check that the target role is available for capability overrides
+                if (!empty($targetrole) && !$canoverridecaps) {
+                    $messages[] = get_string('restorecannotoverrideperms');
+                    $show_continue_button = false;
+                    break;
+                }
+            }
+        }
 
     /// If restoring users and backup has mnet remote users and we are restoring to different site, forbid restore to non-admins. MDL-17009
         if ($restore->users != 2 &&                                                   /// If restoring users
