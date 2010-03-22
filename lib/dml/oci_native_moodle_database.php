@@ -850,12 +850,20 @@ class oci_native_moodle_database extends moodle_database {
                 $columns = $this->get_columns($tablename);
             }
             foreach($params as $key => $value) {
-                // First of all, handle already detected LOBs
+                // Decouple column name and param name as far as sometimes they aren't the same
+                $columnname = $key; // Defaul columname (for DB introspecting is key), but...
+                if ($key == 'newfieldtoset') { // found case where column and key diverge, handle that
+                    $columnname   = key($value);    // columnname is the key of the array
+                    $params[$key] = $value[$columnname]; // set the proper value in the $params array and
+                    $value        = $value[$columnname]; // set the proper value in the $value variable
+                }
+                // Continue processing
+                // Now, handle already detected LOBs
                 if (is_array($value)) { // Let's go to bind special cases (lob descriptors)
                     if (isset($value['clob'])) {
                         $lob = oci_new_descriptor($this->oci, OCI_DTYPE_LOB);
                         oci_bind_by_name($stmt, $key, $lob, -1, SQLT_CLOB);
-                        $lob->writeTemporary($this->oracle_dirty_hack($tablename, $key, $params[$key]['clob']), OCI_TEMP_CLOB);
+                        $lob->writeTemporary($this->oracle_dirty_hack($tablename, $columnname, $params[$key]['clob']), OCI_TEMP_CLOB);
                         $descriptors[] = $lob;
                         continue; // Column binding finished, go to next one
                     } else if (isset($value['blob'])) {
@@ -868,9 +876,9 @@ class oci_native_moodle_database extends moodle_database {
                 }
                 // TODO: Put propper types and length is possible (enormous speedup)
                 // Arrived here, continue with standard processing, using metadata if possible
-                if (isset($columns[$key])) {
-                    $type = $columns[$key]->meta_type;
-                    $maxlength = $columns[$key]->max_length;
+                if (isset($columns[$columnname])) {
+                    $type = $columns[$columnname]->meta_type;
+                    $maxlength = $columns[$columnname]->max_length;
                 } else {
                     $type = '?';
                     $maxlength = -1;
@@ -898,7 +906,7 @@ class oci_native_moodle_database extends moodle_database {
 
                     default: // Bind as CHAR (applying dirty hack)
                         // TODO: Optimise
-                        oci_bind_by_name($stmt, $key, $this->oracle_dirty_hack($tablename, $key, $params[$key]));
+                        oci_bind_by_name($stmt, $key, $this->oracle_dirty_hack($tablename, $columnname, $params[$key]));
                 }
             }
         }
@@ -1330,8 +1338,14 @@ class oci_native_moodle_database extends moodle_database {
         if (is_null($newvalue)) {
             $newsql = "$newfield = NULL";
         } else {
-            $params[$newfield] = $newvalue;
-            $newsql = "$newfield = :$newfield";
+            // Set the param to array ($newfield => $newvalue) and key to 'newfieldtoset'
+            // name in the build sql. Later, bind_params() will detect the value array and
+            // perform the needed modifications to allow the query to work. Note that
+            // 'newfieldtoset' is one arbitrary name that hopefully won't be used ever
+            // in order to avoid problems where the same field is used both in the set clause and in
+            // the conditions. This was breaking badly in drivers using NAMED params like oci.
+            $params['newfieldtoset'] = array($newfield => $newvalue);
+            $newsql = "$newfield = :newfieldtoset";
         }
         $sql = "UPDATE {" . $table . "} SET $newsql $select";
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
