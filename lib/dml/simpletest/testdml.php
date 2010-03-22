@@ -1038,6 +1038,11 @@ class dml_test extends UnitTestCase {
 
         $this->assertTrue($course = $DB->get_field($tablename, 'course', array('id' => 1)));
         $this->assertEqual(3, $course);
+
+        // Add one get_field() example where the field being get is also one condition
+        // to check we haven't problem with any type of param (specially NAMED ones)
+        $DB->get_field($tablename, 'course', array('course' => 3));
+        $this->assertEqual(3, $DB->get_field($tablename, 'course', array('course' => 3)));
     }
 
     public function test_get_field_select() {
@@ -1569,6 +1574,11 @@ class dml_test extends UnitTestCase {
 
         $this->assertTrue($DB->set_field($tablename, 'course', 2, array('id' => 1)));
         $this->assertEqual(2, $DB->get_field($tablename, 'course', array('id' => 1)));
+
+        // Add one set_field() example where the field being set is also one condition
+        // to check we haven't problem with any type of param (specially NAMED ones)
+        $DB->set_field($tablename, 'course', '1', array('course' => 2));
+        $this->assertEqual(1, $DB->get_field($tablename, 'course', array('id' => 1)));
 
         // Note: All the nulls, booleans, empties, quoted and backslashes tests
         // go to set_field_select() because set_field() is just one wrapper over it
@@ -2367,14 +2377,15 @@ class dml_test extends UnitTestCase {
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('content', XMLDB_TYPE_TEXT, 'big', XMLDB_UNSIGNED, XMLDB_NOTNULL);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
         $this->tables[$tablename] = $table;
 
-        $DB->insert_record($tablename, array('course' => 3));
-        $DB->insert_record($tablename, array('course' => 3));
-        $DB->insert_record($tablename, array('course' => 5));
-        $DB->insert_record($tablename, array('course' => 2));
+        $DB->insert_record($tablename, array('course' => 3, 'content' => 'hello'));
+        $DB->insert_record($tablename, array('course' => 3, 'content' => 'world'));
+        $DB->insert_record($tablename, array('course' => 5, 'content' => 'hello'));
+        $DB->insert_record($tablename, array('course' => 2, 'content' => 'universe'));
 
         // we have sql like this in moodle, this syntax breaks on older versions of sqlite for example..
         $sql = 'SELECT a.id AS id, a.course AS course
@@ -2387,6 +2398,10 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(2, count($records));
         $this->assertEqual(1, reset($records)->id);
         $this->assertEqual(2, next($records)->id);
+
+        // try embeding sql_xxxx() helper functions, to check they don't break params/binding
+        $count = $DB->count_records($tablename, array('course' => 3, $DB->sql_compare_text('content') => 'hello'));
+        $this->assertEqual(1, $count);
     }
 
     function test_onelevel_commit() {
