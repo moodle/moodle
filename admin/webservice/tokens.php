@@ -27,6 +27,7 @@
 require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once('forms.php');
+require_once($CFG->libdir.'/externallib.php');
 
 $action  = optional_param('action', '', PARAM_ACTION);
 $tokenid = optional_param('tokenid', '', PARAM_SAFEDIR);
@@ -66,37 +67,9 @@ switch ($action) {
             redirect($returnurl);
         } else if ($data = $mform->get_data()) {
             ignore_user_abort(true); // no interruption here!
-
-            //generate token
-            $generatedtoken = md5(uniqid(rand(),1));
-
-            // make sure the token doesn't exist (even if it should be almost impossible with the random generation)
-            if ($DB->record_exists('external_tokens', array('token'=>$generatedtoken))) {
-                throw new moodle_exception('tokenalreadyexist');
-            } else {
-                $newtoken = new object();
-                $newtoken->token = $generatedtoken;
-                if (empty($service->requiredcapability) || has_capability($service->requiredcapability, $systemcontext, $data->user)) {
-                    $newtoken->externalserviceid = $data->service;
-                } else {
-                    throw new moodle_exception('nocapabilitytousethisservice');
-                }
-                $newtoken->tokentype = EXTERNAL_TOKEN_PERMANENT;
-                $newtoken->userid = $data->user;
-                //TODO: find a way to get the context - UPDATE FOLLOWING LINE
-                $newtoken->contextid = get_context_instance(CONTEXT_SYSTEM)->id; 
-                $newtoken->creatorid = $USER->id;
-                $newtoken->timecreated = time();
-                $newtoken->validuntil = $data->validuntil;
-                if (!empty($data->iprestriction)) {
-                    $newtoken->iprestriction = $data->iprestriction;
-                }
-                $DB->insert_record('external_tokens', $newtoken);
-            }
+            external_generate_token(EXTERNAL_TOKEN_PERMANENT, $data->service, $data->user, get_context_instance(CONTEXT_SYSTEM), $data->validuntil, $data->iprestriction);
             redirect($returnurl);
         }
-
-
 
         //ask for function id
         admin_externalpage_print_header();

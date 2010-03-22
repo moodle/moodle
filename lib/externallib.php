@@ -410,3 +410,45 @@ class external_multiple_structure extends external_description {
  */
 class external_function_parameters extends external_single_structure {
 }
+
+function external_generate_token($tokentype, $serviceorid, $userid, $contextorid, $validuntil=0, $iprestriction=''){
+    global $DB, $USER;
+    // make sure the token doesn't exist (even if it should be almost impossible with the random generation)
+    $numtries = 0;
+    do {
+        $numtries ++;
+        $generatedtoken = md5(uniqid(rand(),1));
+        if ($numtries > 5){
+            throw new moodle_exception('tokengenerationfailed');
+        }
+    } while ($DB->record_exists('external_tokens', array('token'=>$generatedtoken)));
+    $newtoken = new object();
+    $newtoken->token = $generatedtoken;
+    if (!is_object($serviceorid)){
+        $service = $DB->get_record('external_services', array('id' => $serviceorid));
+    } else {
+        $service = $serviceorid;
+    }
+    if (!is_object($contextorid)){
+        $context = get_context_instance_by_id($contextorid, MUST_EXIST);
+    } else {
+        $context = $contextorid;
+    }
+    if (empty($service->requiredcapability) || has_capability($service->requiredcapability, $context, $userid)) {
+        $newtoken->externalserviceid = $service->id;
+    } else {
+        throw new moodle_exception('nocapabilitytousethisservice');
+    }
+    $newtoken->tokentype = $tokentype;
+    $newtoken->userid = $userid;
+    
+    $newtoken->contextid = $context->id; 
+    $newtoken->creatorid = $USER->id;
+    $newtoken->timecreated = time();
+    $newtoken->validuntil = $validuntil;
+    if (!empty($iprestriction)) {
+        $newtoken->iprestriction = $iprestriction;
+    }
+    $DB->insert_record('external_tokens', $newtoken);
+    return $newtoken->token;
+}
