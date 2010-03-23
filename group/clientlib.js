@@ -224,17 +224,19 @@ function updateUserSummary() {
      return(true);
 }
 
-function init_add_remove_members_page() {
-    var addselect = user_selector.get('addselect');
-    document.getElementById('add').disabled = addselect.is_selection_empty();
-    addselect.subscribe('selectionchanged', function(isempty) {
-        document.getElementById('add').disabled = isempty;
+function init_add_remove_members_page(Y) {
+    var add = Y.one('#add');
+    var addselect = M.core_user.get_user_selector('addselect');
+    add.set('disabled', addselect.is_selection_empty());
+    addselect.on('user_selector:selectionchanged', function(isempty) {
+        add.set('disabled', isempty);
     });
 
-    var removeselect = user_selector.get('removeselect');
-    document.getElementById('remove').disabled = removeselect.is_selection_empty();
-    removeselect.subscribe('selectionchanged', function(isempty) {
-        document.getElementById('remove').disabled = isempty;
+    var remove = Y.one('#remove');
+    var removeselect = M.core_user.get_user_selector('removeselect');
+    remove.set('disabled', removeselect.is_selection_empty());
+    removeselect.on('user_selector:selectionchanged', function(isempty) {
+        remove.set('disabled', isempty);
     });
 
     addselect = document.getElementById('addselect');

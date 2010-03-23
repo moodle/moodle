@@ -1,33 +1,26 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Code for ajax user selectors.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package userselector
+ * @package   user
+ * @copyright 1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -43,32 +36,43 @@ define('USER_SELECTOR_DEFAULT_ROWS', 20);
  * specified.
  */
 abstract class user_selector_base {
-    /** The control name (and id) in the HTML. */
+    /** @var string The control name (and id) in the HTML. */
     protected $name;
-    /** Extra fields to search on and return in addition to firstname and lastname. */
+    /** @var array Extra fields to search on and return in addition to firstname and lastname. */
     protected $extrafields;
-    /** Whether the conrol should allow selection of many users, or just one. */
+    /** @var boolean Whether the conrol should allow selection of many users, or just one. */
     protected $multiselect = true;
-    /** The height this control should have, in rows. */
+    /** @var int The height this control should have, in rows. */
     protected $rows = USER_SELECTOR_DEFAULT_ROWS;
-    /** A list of userids that should not be returned by this control. */
+    /** @var array A list of userids that should not be returned by this control. */
     protected $exclude = array();
-    /** A list of the users who are selected. */
+    /** @var array|null A list of the users who are selected. */
     protected $selected = null;
-    /** When the search changes, do we keep previously selected options that do
+    /** @var boolean When the search changes, do we keep previously selected options that do
      * not match the new search term? */
     protected $preserveselected = false;
-    /** If only one user matches the search, should we select them automatically. */
+    /** @var boolean If only one user matches the search, should we select them automatically. */
     protected $autoselectunique = false;
-    /** When searching, do we only match the starts of fields (better performace)
+    /** @var boolean When searching, do we only match the starts of fields (better performace)
      * or do we match occurrences anywhere? */
     protected $searchanywhere = false;
-    // This is used by get selected users,
+    /** @var mixed This is used by get selected users */
     protected $validatinguserids = null;
 
-    // Used to ensure we only output the search options for one user selector on
-    // each page.
+    /**  @var boolean Used to ensure we only output the search options for one user selector on
+     * each page. */
     private static $searchoptionsoutput = false;
+    
+    /** @var array JavaScript YUI3 Module definition */
+    protected static $jsmodule = array(
+                'name' => 'user_selector',
+                'fullpath' => '/user/selector/module.js',
+                'requires'  => array('node', 'event-custom', 'datasource', 'json'),
+                'strings' => array(
+                    array('previouslyselectedusers', 'moodle', '%%SEARCHTERM%%'),
+                    array('nomatchingusers', 'moodle', '%%SEARCHTERM%%'),
+                    array('none', 'moodle')
+                ));
 
 
     // Public API ==============================================================
@@ -103,12 +107,6 @@ abstract class user_selector_base {
         $this->preserveselected = $this->initialise_option('userselector_preserveselected', $this->preserveselected);
         $this->autoselectunique = $this->initialise_option('userselector_autoselectunique', $this->autoselectunique);
         $this->searchanywhere = $this->initialise_option('userselector_searchanywhere', $this->searchanywhere);
-
-        // Required JavaScript code.
-        $PAGE->requires->yui2_lib('json');
-        $PAGE->requires->yui2_lib('connection');
-        $PAGE->requires->yui2_lib('datasource');
-        $PAGE->requires->js('/user/selector/script.js');
     }
 
     /**
@@ -225,7 +223,7 @@ abstract class user_selector_base {
             $output .= $this->option_checkbox('searchanywhere', $this->searchanywhere, get_string('userselectorsearchanywhere'));
             $output .= print_collapsible_region_end(true);
 
-            $PAGE->requires->js_function_call('new user_selector_options_tracker');
+            $PAGE->requires->js_init_call('M.core_user.init_user_selector_options_tracker', array(), false, self::$jsmodule);
             user_selector_base::$searchoptionsoutput = true;
         }
         $output .= "</div>\n</div>\n\n";
@@ -638,10 +636,7 @@ abstract class user_selector_base {
         $USER->userselectors[$hash] = $options;
 
         // Initialise the selector.
-        $PAGE->requires->js_function_call('new user_selector', array($this->name, $hash, $this->extrafields,
-                $search, get_string('previouslyselectedusers', '', '%%SEARCHTERM%%'),
-                get_string('nomatchingusers', '', '%%SEARCHTERM%%'), get_string('none'), $OUTPUT->pix_url('i/loading')));
-
+        $PAGE->requires->js_init_call('M.core_user.init_user_selector', array($this->name, $hash, $this->extrafields, $search), false, self::$jsmodule);
         return $output;
     }
 }
