@@ -89,17 +89,24 @@ switch ($action) {
             $pagename = 'editorsettings' . $editor;
             admin_externalpage_setup($pagename);
             $form = new $classname();
+            $options = $classname::option_names();
             $data = $form->get_data();
-            // $form->addElement('hidden', 'action', 'edit');
+
             if ($form->is_cancelled()){
+                // do nothing
             } else if (!empty($data)) {
                 foreach ($data as $key=>$value) {
-                    if (strpos($key, 'editor_') === 0) {
+                    // editor options must be started with 'editor_'
+                    if (strpos($key, 'editor_') === 0 && in_array($key, $options)) {
                         set_config($key, $value, 'editor');
                     }
                 }
             } else {
-                $form->set_data(array('editor_tinymce_spellengine'=>get_config('editor', 'editor_tinymce_spellengine')));
+                $data = array();
+                foreach ($options as $key) {
+                    $data[$key] = get_config('editor', $key);
+                }
+                $form->set_data($data);
                 $PAGE->set_pagetype('admin-editors-' . $editor);
                 admin_externalpage_print_header();
                 echo $OUTPUT->heading(get_string('modulename', 'editor_'.$editor));

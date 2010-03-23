@@ -19,4 +19,7 @@ class editor_settings_tinymce extends editor_settings_form {
 
         parent::definition();
     }
+    static public function option_names() {
+        return array('editor_tinymce_spellengine');
+    }
 }
