@@ -180,7 +180,8 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         if ($this->attachment) { // simplest case first - single file attachment
             $this->copy_files(array($this->singlefile), $this->attachment);
             if ($writingleap) { // if we're writing leap, make the manifest to go along with the file
-                $entry = new portfolio_format_leap2a_entry('forumattachment' . $this->singlefile->get_id(), $this->singlefile->get_filename(), 'resource',  $this->single
+                $entry = new portfolio_format_leap2a_entry('forumattachment' . $this->singlefile->get_id(),
+                    $this->singlefile->get_filename(), 'resource',  $this->singlefile);
                 $entry->published = $this->singlefile->get_timecreated();
                 $entry->updated = $this->singlefile->get_timemodified();
                 $entry->add_category('offline', 'resource_type');
