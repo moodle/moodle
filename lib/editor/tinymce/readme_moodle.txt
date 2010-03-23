@@ -25,6 +25,7 @@ Added:
  * plugins/gragmath/*
  * plugins/moodlenolink/*
  * plugins/moodlemedia/*
+ * plugins/spellchecker/*
 
 Modified:
  * Popup.js --> compressed into tiny_mce_popup.js (extra/patches/tinymce_strings.patch)
@@ -32,7 +33,3 @@ Modified:
 
 Removed:
  *
-
-TODO:
- * reimplement spellchecker support in plugins/spellchecker/*
-

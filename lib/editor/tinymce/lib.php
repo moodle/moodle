@@ -112,7 +112,7 @@ class tinymce_texteditor extends texteditor {
                     'apply_source_formatting' => true,
                     'remove_script_host' => false,
                     'entity_encoding' => "raw",
-                    'plugins' => "{$xmedia}advimage,safari,table,style,layer,advhr,advlink,emotions,inlinepopups,searchreplace,paste,directionality,fullscreen,moodlenolink,{$xdragmath}nonbreaking,contextmenu,insertdatetime,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,pagebreak",
+                    'plugins' => "{$xmedia}advimage,safari,table,style,layer,advhr,advlink,emotions,inlinepopups,searchreplace,paste,directionality,fullscreen,moodlenolink,{$xdragmath}nonbreaking,contextmenu,insertdatetime,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,pagebreak,spellchecker",
                     'theme_advanced_font_sizes' => "1,2,3,4,5,6,7",
                     'theme_advanced_layout_manager' => "SimpleLayout",
                     'theme_advanced_toolbar_align' => "left",
@@ -121,12 +121,13 @@ class tinymce_texteditor extends texteditor {
                     'theme_advanced_buttons2' => "bold,italic,underline,strikethrough,sub,sup,|,justifyleft,justifycenter,justifyright,justifyfull,|,cite,abbr,acronym",
                     'theme_advanced_buttons2_add' => "|,selectall,cleanup,removeformat,pastetext,pasteword,|,forecolor,backcolor,|,ltr,rtl",
                     'theme_advanced_buttons3' => "bullist,numlist,outdent,indent,|,link,unlink,moodlenolink,anchor,|,image,{$xmedia},emotions,{$xdragmath}advhr,nonbreaking,charmap",
-                    'theme_advanced_buttons3_add' => "|,table,insertlayer,styleprops,visualchars,|,code,preview",
+                    'theme_advanced_buttons3_add' => "|,table,insertlayer,styleprops,visualchars,|,code,preview,spellchecker",
                     'theme_advanced_fonts' => "Trebuchet=Trebuchet MS,Verdana,Arial,Helvetica,sans-serif;Arial=arial,helvetica,sans-serif;Courier New=courier new,courier,monospace;Georgia=georgia,times new roman,times,serif;Tahoma=tahoma,arial,helvetica,sans-serif;Times New Roman=times new roman,times,serif;Verdana=verdana,arial,helvetica,sans-serif;Impact=impact;Wingdings=wingdings",
                     'theme_advanced_resize_horizontal' => true,
                     'theme_advanced_resizing' => true,
                     'theme_advanced_toolbar_location' => "top",
                     'theme_advanced_statusbar_location' => "bottom",
+                    'spellchecker_rpc_url' => $CFG->wwwroot."/lib/editor/tinymce/plugins/spellchecker/rpc.php"
                   );
 
         if (empty($options['legacy'])) {

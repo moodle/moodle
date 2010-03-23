@@ -17,6 +17,7 @@ $action = optional_param('action', '', PARAM_ACTION);
 $editor = optional_param('editor', '', PARAM_SAFEDIR);
 
 // get currently installed and enabled auth plugins
+$settingsurl = "$CFG->wwwroot/$CFG->admin/editors.php?sesskey=".sesskey()."&amp;action=edit&amp;editor=$editor";
 $available_editors = get_available_editors();
 if (!empty($editor) and empty($available_editors[$editor])) {
     redirect ($returnurl);
@@ -36,6 +37,8 @@ if (!confirm_sesskey()) {
     redirect($returnurl);
 }
 
+
+$return = true;
 switch ($action) {
     case 'disable':
         // remove from enabled list
@@ -77,6 +80,37 @@ switch ($action) {
         }
         break;
 
+    case 'edit':
+
+        $form_file = $CFG->dirroot . '/lib/editor/'.$editor.'/settings.php';
+        if (file_exists($form_file)) {
+            require_once($form_file);
+            $classname = 'editor_settings_' . $editor;
+            $pagename = 'editorsettings' . $editor;
+            admin_externalpage_setup($pagename);
+            $form = new $classname();
+            $data = $form->get_data();
+            // $form->addElement('hidden', 'action', 'edit');
+            if ($form->is_cancelled()){
+            } else if (!empty($data)) {
+                foreach ($data as $key=>$value) {
+                    if (strpos($key, 'editor_') === 0) {
+                        set_config($key, $value, 'editor');
+                    }
+                }
+            } else {
+                $form->set_data(array('editor_tinymce_spellengine'=>get_config('editor', 'editor_tinymce_spellengine')));
+                $PAGE->set_pagetype('admin-editors-' . $editor);
+                admin_externalpage_print_header();
+                echo $OUTPUT->heading(get_string('modulename', 'editor_'.$editor));
+                $OUTPUT->box_start();
+                $form->display();
+                $OUTPUT->box_end();
+                echo $OUTPUT->footer();
+                $return = false;
+            }
+        }
+        break;
     default:
         break;
 }
@@ -88,4 +122,6 @@ if (empty($active_editors)) {
 
 set_config('texteditors', implode(',', $active_editors));
 
-redirect ($returnurl);
+if ($return) {
+    redirect ($returnurl);
+}

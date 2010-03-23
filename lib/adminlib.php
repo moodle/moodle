@@ -4992,8 +4992,8 @@ class admin_setting_manageeditors extends admin_setting {
             }
 
             // settings link
-            if (file_exists($CFG->dirroot.'/editor/'.$editor.'/settings.php')) {
-                $settings = "<a href=\"settings.php?section=editorsetting$editor\">{$txt->settings}</a>";
+            if (file_exists($CFG->dirroot.'/lib/editor/'.$editor.'/settings.php')) {
+                $settings = "<a href='$url&amp;editor=$editor&amp;action=edit'>{$txt->settings}</a>";
             } else {
                 $settings = '';
             }

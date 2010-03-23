@@ -184,7 +184,22 @@ abstract class texteditor {
     }
 }
 
+require_once($CFG->libdir.'/formslib.php');
+/**
+ * Editor settings moodle form class.
+ *
+ * @copyright  2010 Dongsheng Cai
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
+ */
+class editor_settings_form extends moodleform {
+    public function definition() {
+        $mform =& $this->_form;
 
+        $mform->addElement('hidden', 'action', 'edit');
+        $this->add_action_buttons(true, get_string('savechanges'));
+    }
+}
 
 //=== DEPRECATED =====================
 /**

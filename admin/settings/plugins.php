@@ -75,6 +75,14 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_manageeditors());
     $ADMIN->add('editorsettings', $temp);
 
+    $editors_available = get_available_editors();
+    $url = $CFG->wwwroot.'/'.$CFG->admin.'/editors.php?sesskey='.sesskey();
+    foreach ($editors_available as $editor=>$editorstr) {
+        if (file_exists($CFG->dirroot . '/lib/editor/'.$editor.'/settings.php')) {
+            $editor_setting = new admin_externalpage('editorsettings'.$editor, $editorstr, $url.'&amp;action=edit&amp;editor='.$editor);
+            $ADMIN->add('editorsettings', $editor_setting);
+        } 
+    }
 
 /// Filter plugins
     $ADMIN->add('modules', new admin_category('filtersettings', get_string('managefilters')));
