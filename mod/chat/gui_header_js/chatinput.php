@@ -2,8 +2,8 @@
 
 define('NO_MOODLE_COOKIES', true); // session not used here
 
-require('../../../config.php');
-require('../lib.php');
+require_once('../../../config.php');
+require_once($CFG->dirroot.'/mod/chat/lib.php');
 
 $chat_sid = required_param('chat_sid', PARAM_ALPHANUM);
 $chatid   = required_param('chat_id', PARAM_INT);
