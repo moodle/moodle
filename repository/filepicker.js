@@ -216,6 +216,7 @@ M.core_filepicker.init = function(Y, options) {
             this.treeview.draw();
         },
         view_as_icons: function() {
+            var scope = this;
             var client_id = this.options.client_id;
             var list = this.filelist;
             var panel_id = '#panel-'+client_id;
@@ -275,10 +276,13 @@ M.core_filepicker.init = function(Y, options) {
 
                 var y_title = Y.one('#'+title.id);
                 var y_file = Y.one('#'+link.id);
+                var dynload = this.active_repo.dynload;
                 if(node.children) {
                     y_file.on('click', function(e, p) {
-                        if(p.dynload) {
-                            var params = {};
+                        if(dynload) {
+                            console.info(p);
+                            var params = {'path':p.path};
+                            scope.list(params);
                         }else{
                             this.filelist = p.children;
                             this.view_files();
@@ -508,6 +512,7 @@ M.core_filepicker.init = function(Y, options) {
             this.filepath = data.path?data.path:null;
             this.active_repo = {};
             this.active_repo.issearchresult = Boolean(data.issearchresult);
+            this.active_repo.dynload = data.dynload?data.dynload:false;
             this.active_repo.pages = Number(data.pages?data.pages:null);
             this.active_repo.page = Number(data.page?data.page:null);
             this.active_repo.id = data.repo_id?data.repo_id:null;
