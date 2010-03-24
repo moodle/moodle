@@ -7,10 +7,11 @@ required changes in code:
 * use new DML syntax everywhere
 * use new DDL syntax in db/upgrade.php
 * replace defaults.php by settings.php and db/install.php
-* replace STATEMENTS section in db/install.xml by db/install.php
+* replace STATEMENTS section in db/install.xml with PHP code db/install.php
 * move post installation code from lib.php into db/install.php
 * move uninstallation code from lib.php to db/uninstall.php
-* new mandatory intro and introformat table fields in module tables
+* new mandatory naming of intro and introformat table fields in module tables,
+  the presence of these fields is indicated in xxx_plugin_supports()
 * completely rewrite file handling
 * rewrite backup/restore
 * rewrite trusttext support - new db table columns needed
@@ -23,12 +24,15 @@ required changes in code:
                  move all images into new mod/xxx/pix/ directory and use new outputlib api
                  move module icon to mod/xxx/pix/icon.gif
                  old global $THEME is fully replaced by $OUTPUT
+                 create plugin renderers
 
 
 optional - no changes needed in older code:
 * portfolio support
 * course completion tracking support
-* add new navigation features
+* new navigation features
+* new comments API
+* new ratings API
 
 
 
