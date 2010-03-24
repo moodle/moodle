@@ -2127,18 +2127,18 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     if (isloggedin() && !empty($CFG->excludeoldflashclients) && empty($SESSION->flashversion)) {
         // Unfortunately we can't use require_js here and keep it all clean in 1.8 ...
         // require_js(array('yui_yahoo', 'yui_event', 'yui_connection', $CFG->httpswwwroot."/lib/swfobject/swfobject.js"));
-        $meta .= '<script type="text/javascript"  src="'.$CFG->wwwroot.'/lib/yui/yahoo/yahoo-min.js"></script>';
-        $meta .= '<script type="text/javascript"  src="'.$CFG->wwwroot.'/lib/yui/event/event-min.js"></script>';
-        $meta .= '<script type="text/javascript"  src="'.$CFG->wwwroot.'/lib/yui/connection/connection-min.js"></script>';
-        $meta .= '<script type="text/javascript"  src="'.$CFG->wwwroot.'/lib/swfobject/swfobject.js"></script>';
-        $meta .= '<script type="text/javascript"  src="'.$CFG->wwwroot.'/lib/flashdetect/flashdetect.js"></script>';
+        $meta .= '<script type="text/javascript"  src="'.$CFG->httpswwwroot.'/lib/yui/yahoo/yahoo-min.js"></script>';
+        $meta .= '<script type="text/javascript"  src="'.$CFG->httpswwwroot.'/lib/yui/event/event-min.js"></script>';
+        $meta .= '<script type="text/javascript"  src="'.$CFG->httpswwwroot.'/lib/yui/connection/connection-min.js"></script>';
+        $meta .= '<script type="text/javascript"  src="'.$CFG->httpswwwroot.'/lib/swfobject/swfobject.js"></script>';
+        $meta .= '<script type="text/javascript"  src="'.$CFG->httpswwwroot.'/lib/flashdetect/flashdetect.js"></script>';
         $meta .=
            "<script type=\"text/javascript\">\n".
            "  var flashversion = swfobject.getFlashPlayerVersion();\n".
            "  var params = [];\n".
            "  params['flashversion'] = flashversion.major+'.'+flashversion.minor+'.'+flashversion.release;\n".
            "  params['sesskey'] = '".sesskey()."';\n".
-           "  YAHOO.util.Connect.asyncRequest('POST','".$CFG->wwwroot."/login/environment.php', null , build_flashquerystring(params));\n".
+           "  YAHOO.util.Connect.asyncRequest('POST','".$CFG->httpswwwroot."/login/environment.php', null , build_flashquerystring(params));\n".
            "</script>";
     }
 
