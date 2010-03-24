@@ -37,13 +37,18 @@ function user_create_user($user) {
     if (!is_object($user)) {
             $user = (object)$user;
     }
+
+    /// hash the password
+    $user->password = hash_internal_user_password($user->password);
+
     $user->timecreated = time();
+    $user->timemodified = $user->timecreated;
 
 /// insert the user into the database
     $newuserid = $DB->insert_record('user', $user);
 
     return $newuserid;
-    
+
 }
 
 /**
@@ -52,7 +57,16 @@ function user_create_user($user) {
  */
 function user_update_user($user) {
     global $DB;
-    $user['timemodified'] = time();
+
+    /// set the timecreate field to the current time
+    if (!is_object($user)) {
+            $user = (object)$user;
+    }
+
+    /// hash the password
+    $user->password = hash_internal_user_password($user->password);
+
+    $user->timemodified = time();
     $DB->update_record('user', $user);
 }
 
