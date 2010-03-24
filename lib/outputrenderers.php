@@ -1436,7 +1436,7 @@ END;
         $icon = $this->pix_icon('help', get_string('scales'), 'moodle', array('class'=>'iconhelp'));
 
         $link = new moodle_url('/course/scales.php', array('id' => $courseid, 'list' => true, 'scaleid' => $scale->id));
-        $action = new popup_action('click', $link->url, 'ratingscale');
+        $action = new popup_action('click', $link, 'ratingscale');
 
         return html_writer::tag('span', $this->action_link($link, $icon, $action), array('class' => 'helplink'));
     }
