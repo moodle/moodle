@@ -3,9 +3,13 @@ information provided here is intended especially for developers.
 
 === 2.0 ===
 
+WORK IN PROGRESS...
+
 required changes in code:
 * use new DML syntax everywhere
+  (http://docs.moodle.org/en/Development:DML_functions)
 * use new DDL syntax in db/upgrade.php
+  (http://docs.moodle.org/en/Development:DDL_functions)
 * replace defaults.php by settings.php and db/install.php
 * replace STATEMENTS section in db/install.xml with PHP code db/install.php
 * move post installation code from lib.php into db/install.php
@@ -13,12 +17,14 @@ required changes in code:
 * new mandatory naming of intro and introformat table fields in module tables,
   the presence of these fields is indicated in xxx_plugin_supports()
 * completely rewrite file handling
+  (http://docs.moodle.org/en/Development:File_API)
 * rewrite backup/restore
+  (not finished yet)
 * rewrite trusttext support - new db table columns needed
 * migrate all module features from mod_edit.php form to lib.php/modulename_supports() function
 * implement new gradebook support (legacy 1.8.x grading not supported anymore)
-* migrate custom resource module subtypes into separate modules
-* migrate to new comments subsystem
+* migrate custom resource module subtypes into separate modules,
+  necessary only for custom plugins in mod/resource/
 * use new $PAGE and $OUTPUT instead of old weblib functions
 * theme changes: move plugin styles into mod/xxx/styles.css and use new css markers for images,
                  move all images into new mod/xxx/pix/ directory and use new outputlib api
@@ -29,11 +35,11 @@ required changes in code:
 
 optional - no changes needed in older code:
 * portfolio support
+  (http://docs.moodle.org/en/Development:Portfolio_API)
 * course completion tracking support
 * new navigation features
 * new comments API
+  (http://docs.moodle.org/en/Development:Comments_2.0)
 * new ratings API
+  (http://docs.moodle.org/en/Development:Ratings_2.0)
 
-
-
-TODO: add links to docs
