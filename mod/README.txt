@@ -10,7 +10,7 @@ Each of these modules contains a number of expected components:
 
   version.php: defines some meta-info and provides upgrading code
 
-  icon.gif: a 16x16 icon for the module
+  pix/icon.gif: a 16x16 icon for the module
 
   db/install.xml: an SQL dump of all the required db tables and data
 
