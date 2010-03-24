@@ -857,9 +857,9 @@ function has_capability_in_accessdata($capability, $context, array $accessdata, 
     if (!empty($accessdata['rsw'])) {
         // From the bottom up...
         foreach ($paths as $path) {
-            if (isset($accessdata['rsw'][$ctxp])) {
+            if (isset($accessdata['rsw'][$path])) {
                 // Found a switchrole assignment - check for that role _plus_ the default user role
-                $roles = array($accessdata['rsw'][$ctxp]=>null, $CFG->defaultuserroleid=>null);
+                $roles = array($accessdata['rsw'][$path]=>null, $CFG->defaultuserroleid=>null);
                 $switchedrole = true;
                 break;
             }
