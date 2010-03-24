@@ -89,7 +89,7 @@ switch ($action) {
             $pagename = 'editorsettings' . $editor;
             admin_externalpage_setup($pagename);
             $form = new $classname();
-            $options = $classname::option_names();
+            $options = call_user_func($classname . '::option_names');
             $data = $form->get_data();
 
             if ($form->is_cancelled()){
