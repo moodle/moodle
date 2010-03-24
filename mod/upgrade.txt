@@ -37,6 +37,8 @@ required changes in code:
 
 
 optional - no changes needed in older code:
+* support for new mforms editor element and embedded files
+  (not finished yet)
 * portfolio support
   (http://docs.moodle.org/en/Development:Portfolio_API)
 * course completion tracking support
