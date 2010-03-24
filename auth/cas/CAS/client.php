@@ -1994,15 +1994,22 @@ class CASClient
 	    }
       }
 
-	  $final_uri .= strtok($_SERVER['REQUEST_URI'],"?");
-	  $cgi_params = '?'.strtok("?");
-	  // remove the ticket if present in the CGI parameters
-	  $cgi_params = preg_replace('/&ticket=[^&]*/','',$cgi_params);
-	  $cgi_params = preg_replace('/\?ticket=[^&;]*/','?',$cgi_params);
-	  $cgi_params = preg_replace('/\?%26/','?',$cgi_params);
-	  $cgi_params = preg_replace('/\?&/','?',$cgi_params);
-	  $cgi_params = preg_replace('/\?$/','',$cgi_params);
-	  $final_uri .= $cgi_params;
+      $baseurl = split("\?", $_SERVER['REQUEST_URI'], 2);
+      $final_uri .= $baseurl[0];
+      $query_string = '';
+      if ($_GET) {
+          $kv = array();
+          foreach ($_GET as $key => $value) {
+              if($key !== "ticket"){
+                  $kv[] = urlencode($key). "=" . urlencode($value);
+              }
+          }
+          $query_string = join("&", $kv);
+      }
+      if($query_string){
+          $final_uri .= "?" . $query_string;
+      }
+
 	  $this->setURL($final_uri);
     }
     phpCAS::traceEnd($this->_url);
