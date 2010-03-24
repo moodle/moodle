@@ -986,6 +986,7 @@ $string['makeeditable'] = 'If you make \'$a\' editable by the web server process
 $string['manageblocks'] = 'Blocks';
 $string['managecourses'] = 'Manage courses';
 $string['managedatabase'] = 'Database';
+$string['manageeditorfiles'] = 'Manage files used by editor';
 $string['managefilters'] = 'Filters';
 $string['managemeta'] = 'Is this a meta course?';
 $string['managemetadisabled'] = 'This is disabled because this course is already in a meta course';

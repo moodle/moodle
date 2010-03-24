@@ -201,17 +201,20 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         $str .= '</select>';
         $str .= '</div>';
 
-        if ($maxfiles != 0 ) { // 0 means no files, -1 unlimited
-            $str .= '<div><input type="hidden" name="'.$elname.'[itemid]" value="'.$draftitemid.'" /></div>';
-        /// embedded image files - TODO: hide on the fly when switching editors
-            $str .= '<div id="'.$id.'_filemanager">';
-            $editorurl = "$CFG->wwwroot/repository/filepicker.php?action=browse&amp;env=editor&amp;itemid=$draftitemid&amp;subdirs=$subdirs&amp;maxbytes=$maxbytes&amp;ctx_id=".$ctx->id.'&amp;course='.$PAGE->course->id;
-            $str .= '<object type="text/html" data="'.$editorurl.'" height="160" width="600" style="border:1px solid #000">Error</object>'; // TODO: localise, fix styles, etc.
-            $str .= '</div>';
-        } else {
-            // should disable file picker
-            //$str .= 'No file allowed';
+        // during moodle installation, user area doesn't exist
+        // so we need to disable filepicker here.
+        if (!during_initial_install() && empty($CFG->adminsetuppending)) {
+            // 0 means no files, -1 unlimited
+            if ($maxfiles != 0 ) {
+                $str .= '<div><input type="hidden" name="'.$elname.'[itemid]" value="'.$draftitemid.'" /></div>';
+                $str .= '<div id="'.$id.'_filemanager">';
+                $editorurl = "$CFG->wwwroot/repository/filepicker.php?action=browse&amp;env=editor&amp;itemid=$draftitemid&amp;subdirs=$subdirs&amp;maxbytes=$maxbytes&amp;ctx_id=".$ctx->id.'&amp;course='.$PAGE->course->id;
+                $str .= html_writer::link($editorurl, get_string('manageeditorfiles'), array('target'=>'_blank'));
+                //$str .= '<object type="text/html" data="'.$editorurl.'" height="160" width="600" style="border:1px solid #000">Error</object>';
+                $str .= '</div>';
+            }
         }
+
 
         $str .= '</div>';
 
