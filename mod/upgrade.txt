@@ -31,6 +31,7 @@ required changes in code:
                  move module icon to mod/xxx/pix/icon.gif
                  old global $THEME is fully replaced by $OUTPUT
                  create plugin renderers
+  (http://docs.moodle.org/en/Development:Theme_changes_in_2.0)
 * migrate all javascript new coding style using YUI3+YUI2
   (http://docs.moodle.org/en/Development:JavaScript_usage_guide)
 
