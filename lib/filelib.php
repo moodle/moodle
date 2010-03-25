@@ -581,7 +581,9 @@ function file_get_user_area_files($draftitemid, $filepath = '/', $filearea = 'us
                 $foldername = explode('/', trim($item->filepath, '/'));
                 $item->fullname = trim(array_pop($foldername), '/');
             } else {
-                $item->url = $CFG->wwwroot . '/draftfile.php/' . $context->id .'/user_draft/'.$draftitemid.$item->filepath.$item->fullname;
+                $fb = get_file_browser();
+                $fileinfo = $fb->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+                $item->url = $fileinfo->get_url();
             }
             $list[] = $item;
         }
