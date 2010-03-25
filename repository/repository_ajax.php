@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../config.php');
-require_once('../lib/filelib.php');
-require_once('lib.php');
+require_once(dirname(dirname(__FILE__)).'/config.php');
+require_once(dirname(dirname(__FILE__)).'/lib/filelib.php');
+require_once(dirname(__FILE__).'/lib.php');
 
 require_login();
 
@@ -39,14 +39,14 @@ $callback  = optional_param('callback', '', PARAM_CLEANHTML);
 $client_id = optional_param('client_id', '', PARAM_RAW);        // client ID
 $contextid = optional_param('ctx_id', SYSCONTEXTID, PARAM_INT);       // context ID
 $env       = optional_param('env', 'filepicker', PARAM_ALPHA);  // opened in editor or moodleform
-$file      = optional_param('file', '', PARAM_RAW);             // file to download
+$source    = optional_param('source', '', PARAM_RAW);           // file to download
 $itemid    = optional_param('itemid', 0, PARAM_INT);
-$title     = optional_param('title', '', PARAM_FILE);           // new file name
 $page      = optional_param('page', '', PARAM_RAW);             // page
 $maxbytes  = optional_param('maxbytes', -1, PARAM_INT);
 $req_path  = optional_param('p', '', PARAM_RAW);                // path
-$save_path = optional_param('savepath', '/', PARAM_PATH);
-$save_filearea = optional_param('filearea', 'user_draft', PARAM_TEXT);
+$saveas_filearea = optional_param('filearea', 'user_draft', PARAM_TEXT);
+$saveas_filename = optional_param('title', '', PARAM_FILE);           // new file name
+$saveas_path   = optional_param('saveaspath', '/', PARAM_PATH);
 $search_text   = optional_param('s', '', PARAM_CLEANHTML);
 $linkexternal  = optional_param('linkexternal', '', PARAM_ALPHA);
 
@@ -217,7 +217,7 @@ switch ($action) {
         try {
             // we have two special repoisitory type need to deal with
             if ($repo->options['type'] == 'local') {
-                $fileinfo = $repo->move_to_draft($file, $title, $itemid, $save_path);
+                $fileinfo = $repo->move_to_draft($source, $saveas_filename, $itemid, $saveas_path);
                 $info = array();
                 $info['client_id'] = $client_id;
                 $info['file'] = $fileinfo['title'];
@@ -242,26 +242,36 @@ switch ($action) {
 
             if ($allowexternallink and $linkexternal === 'yes' and ($repo->supported_returntypes() || FILE_EXTERNAL)) {
                 try {
-                    $link = $repo->get_link($file);
+                    $link = $repo->get_link($source);
                 } catch (repository_exception $e){
                 }
                 $info = array();
-                $info['filename'] = $title;
+                $info['filename'] = $saveas_filename;
                 $info['type'] = 'link';
                 $info['url'] = $link;
                 die(json_encode($info));
             }
 
             // get the file location
-            $filepath = $repo->get_file($file, $title, $itemid, $save_path);
-            if ($filepath === false) {
+            list($thefile, $url) = $repo->get_file($source, $saveas_filename);
+            if ($thefile === false) {
                 $err->e = get_string('cannotdownload', 'repository');
                 die(json_encode($err));
             }
-            if (($maxbytes!==-1) && (filesize($filepath) > $maxbytes)) {
+            if (($maxbytes!==-1) && (filesize($thefile) > $maxbytes)) {
                 throw new file_exception('maxbytes');
             }
-            $info = repository::move_to_filepool($filepath, $title, $itemid, $save_path, $save_filearea);
+
+            $record = new stdclass;
+            $record->filepath = $saveas_path;
+            $record->filename = $saveas_filename;
+            $record->filearea = $saveas_filearea;
+            $record->itemid   = $itemid;
+            $record->license  = '';
+            $record->author   = '';
+            $record->source   = $url;
+
+            $info = repository::move_to_filepool($thefile, $record);
             if (empty($info)) {
                 $info['e'] = get_string('error', 'moodle');
             }

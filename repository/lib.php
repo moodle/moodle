@@ -809,34 +809,29 @@ abstract class repository {
      *           id
      *           url
      */
-    public static function move_to_filepool($thefile, $name, $itemid, $filepath = '/', $filearea = 'user_draft') {
+    public static function move_to_filepool($thefile, $record) {
         global $DB, $CFG, $USER, $OUTPUT;
-        if ($filepath !== '/') {
-            $filepath = trim($filepath, '/');
-            $filepath = '/'.$filepath.'/';
+        if ($record->filepath !== '/') {
+            $record->filepath = trim($record->filepath, '/');
+            $record->filepath = '/'.$record->filepath.'/';
         }
         $context = get_context_instance(CONTEXT_USER, $USER->id);
         $now = time();
-        $entry = new object();
-        $entry->filearea  = $filearea;
-        $entry->contextid = $context->id;
-        $entry->filename  = $name;
-        $entry->filepath  = $filepath;
-        $entry->timecreated  = $now;
-        $entry->timemodified = $now;
-        $entry->userid       = $USER->id;
-        $entry->mimetype     = mimeinfo('type', $thefile);
-        if(is_numeric($itemid)) {
-            $entry->itemid = $itemid;
-        } else {
-            $entry->itemid = 0;
+
+        $record->contextid = $context->id;
+        $record->timecreated  = $now;
+        $record->timemodified = $now;
+        $record->userid       = $USER->id;
+        $record->mimetype     = mimeinfo('type', $thefile);
+        if(!is_numeric($record->itemid)) {
+            $record->itemid = 0;
         }
         $fs = get_file_storage();
         $browser = get_file_browser();
-        if ($existingfile = $fs->get_file($context->id, $filearea, $itemid, $filepath, $name)) {
+        if ($existingfile = $fs->get_file($context->id, $record->filearea, $record->itemid, $record->filepath, $record->filename)) {
             $existingfile->delete();
         }
-        if ($file = $fs->create_file_from_pathname($entry, $thefile)) {
+        if ($file = $fs->create_file_from_pathname($record, $thefile)) {
             if (empty($CFG->repository_no_delete)) {
                 $delete = unlink($thefile);
                 unset($CFG->repository_no_delete);
@@ -1176,7 +1171,7 @@ abstract class repository {
         $fp = fopen($path, 'w');
         $c = new curl;
         $c->download(array(array('url'=>$url, 'file'=>$fp)));
-        return $path;
+        return array($path, $url);
     }
 
     /**

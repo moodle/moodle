@@ -120,7 +120,7 @@ class repository_googledocs extends repository {
         $gdocs = new google_docs(new google_authsub($this->subauthtoken));
         $gdocs->download_file($url, $fp);
 
-        return $path;
+        return array($path, $url);
     }
 
     public function supported_filetypes() {

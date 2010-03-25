@@ -111,7 +111,7 @@ class repository_s3 extends repository {
         $filename = $arr[1];
         $path = $this->prepare_file($file);
         $this->s->getObject($bucket, $filename, $path);
-        return $path;
+        return array($path, '');
     }
 
     /**

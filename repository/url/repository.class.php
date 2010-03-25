@@ -53,7 +53,7 @@ class repository_url extends repository {
         $fp = fopen($path, 'w');
         $c = new curl;
         $c->download(array(array('url'=>$url, 'file'=>$fp)));
-        return $path;
+        return array($path, $url);
     }
 
     public function check_login() {

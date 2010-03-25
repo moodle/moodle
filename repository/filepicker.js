@@ -359,7 +359,7 @@ M.core_filepicker.init = function(Y, options) {
                 var repository_id = this.active_repo.id;
                 var title = Y.one('#newname-'+client_id).get('value');
                 var filesource = Y.one('#filesource-'+client_id).get('value');
-                var params = {'title':title, 'file':filesource, 'savepath': this.options.savepath};
+                var params = {'title':title, 'source':filesource, 'savepath': this.options.savepath};
 
                 if (this.options.env == 'editor') {
                     var linkexternal = Y.one('#linkexternal-'+client_id).get('checked');

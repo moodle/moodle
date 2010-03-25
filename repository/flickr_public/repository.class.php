@@ -412,7 +412,7 @@ class repository_flickr_public extends repository {
             unlink($path);
             $path = $newpath;
         }
-        return $path;
+        return array($path, $url);
     }
 
     /**

@@ -239,10 +239,18 @@ case 'sign':
     break;
 
 case 'download':
-    $filepath = $repo->get_file($fileurl, $filename, $itemid);
-    if (!empty($filepath)) {
-        if (!is_array($filepath)) {
-            $info = repository::move_to_filepool($filepath, $filename, $itemid, $draftpath);
+    $thefile = $repo->get_file($fileurl, $filename, $itemid);
+    if (!empty($thefile)) {
+        if (!is_array($thefile)) {
+            $record = new stdclass;
+            $record->filepath = $draftpath;
+            $record->filename = $filename;
+            $record->filearea = 'user_draft';
+            $record->itemid   = $itemid;
+            $record->license  = '';
+            $record->author   = '';
+            $record->source   = $fileurl;
+            $info = repository::move_to_filepool($thefile, $record);
         }
         redirect($url, get_string('downloadsucc','repository'));
     } else {
