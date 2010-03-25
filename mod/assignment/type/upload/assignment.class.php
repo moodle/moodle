@@ -690,7 +690,6 @@ class assignment_upload extends assignment_base {
         $eventdata->assignment = $this->assignment;
         $eventdata->cm         = $this->cm;
         $eventdata->user       = $USER;
-        $eventdata->basedir    = $this->file_area($USER->id);
         events_trigger('assignment_finalize_sent', $eventdata);
 
         redirect($returnurl);
