@@ -67,7 +67,7 @@ M.core_dock = {
             monitorresize:false,            // Monitor the resize of the panel
             context:null,                   // Sets up contexts for the panel
             fixedcenter:false,              // Always displays the panel in the center of the screen
-            zIndex:null,                    // Sets a specific z index for the panel
+            zIndex:9999999,                 // Sets a specific z index for the panel. Has to be high to avoid MCE and filepicker
             constraintoviewport: false,     // Constrain the panel to the viewport
             autofillheight:'body'           // Which container element should fill out empty space
         }
