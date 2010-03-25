@@ -434,12 +434,12 @@ if ($interactive) {
         }
 
         $CFG->dbpass = cli_input($prompt, $options['dbpass']);
-        $hint_database = install_db_validate($database, $CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, array('dbpersit'=>0, 'dbsocket'=>$options['dbsocket']));
+        $hint_database = install_db_validate($database, $CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, array('dbpersist'=>0, 'dbsocket'=>$options['dbsocket']));
     } while ($hint_database !== '');
 
 } else {
     $CFG->dbpass = $options['dbpass'];
-    $hint_database = install_db_validate($database, $CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, array('dbpersit'=>0, 'dbsocket'=>$options['dbsocket']));
+    $hint_database = install_db_validate($database, $CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, array('dbpersist'=>0, 'dbsocket'=>$options['dbsocket']));
     if ($hint_database !== '') {
         cli_error(get_string('dbconnectionerror', 'install'));
     }

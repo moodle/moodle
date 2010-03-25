@@ -243,9 +243,9 @@ if ($config->stage == INSTALL_SAVE) {
         $config->stage = INSTALL_DATABASETYPE;
     } else {
         if (function_exists('distro_pre_create_db')) { // Hook for distros needing to do something before DB creation
-            $distro = distro_pre_create_db($database, $config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, $config->prefix, array('dbpersit'=>0, 'dbsocket'=>$config->dbsocket), $distro);
+            $distro = distro_pre_create_db($database, $config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, $config->prefix, array('dbpersist'=>0, 'dbsocket'=>$config->dbsocket), $distro);
         }
-        $hint_database = install_db_validate($database, $config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, $config->prefix, array('dbpersit'=>0, 'dbsocket'=>$config->dbsocket));
+        $hint_database = install_db_validate($database, $config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, $config->prefix, array('dbpersist'=>0, 'dbsocket'=>$config->dbsocket));
 
         if ($hint_database === '') {
             // extra hackery needed for symbolic link support

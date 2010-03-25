@@ -190,7 +190,7 @@ class oci_native_moodle_database extends moodle_database {
         }
 
         ob_start();
-        if (empty($this->dboptions['dbpersit'])) {
+        if (empty($this->dboptions['dbpersist'])) {
             $this->oci = oci_new_connect($this->dbuser, $this->dbpass, $dbstring, 'AL32UTF8');
         } else {
             $this->oci = oci_pconnect($this->dbuser, $this->dbpass, $dbstring, 'AL32UTF8');

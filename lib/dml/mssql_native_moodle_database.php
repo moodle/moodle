@@ -161,7 +161,7 @@ class mssql_native_moodle_database extends moodle_database {
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
         ob_start();
-        if (!empty($this->dboptions['dbpersit'])) { // persistent connection
+        if (!empty($this->dboptions['dbpersist'])) { // persistent connection
             $this->mssql = mssql_pconnect($this->dbhost, $this->dbuser, $this->dbpass, true);
         } else {
             $this->mssql = mssql_connect($this->dbhost, $this->dbuser, $this->dbpass, true);
