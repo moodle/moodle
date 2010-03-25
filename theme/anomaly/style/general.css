@@ -6,18 +6,18 @@ img.icon,
 img.iconhelp {vertical-align:middle;}
 
 html, body {background-color:#C8C9C7;}
-#page .page-middle {background-color:#FFF;}
-.page-header {background-color: #222; color:#FFF;border-bottom:5px solid #697F55;}
-.hasnavbar .page-header {border-bottom-width:0px;}
-.page-footer {background-color: #222; color:#FFF;}
-.page-header .headermain span {color:#C8C9C7;}
+#page #page-content {background-color:#FFF;}
+#page-header {background-color: #222; color:#FFF;border-bottom:5px solid #697F55;}
+.hasnavbar #page-header {border-bottom-width:0px;}
+#page-footer {background-color: #222; color:#FFF;}
+#page-header .headermain span {color:#C8C9C7;}
 
-.page-header .navbar {background-color:#697F55;width:100%;}
-.page-header .navbar {color:#000;}
-.page-header .navbar a:link {color:#fff;}
-.page-header .navbar a:visited {color:#fff;}
-.page-header .navbar .breadcrumb {margin:5px 1em;float:left;}
-.page-header .navbar .navbutton {float:right;margin:5px 1em;}
+#page-header .navbar {background-color:#697F55;width:100%;}
+#page-header .navbar {color:#000;}
+#page-header .navbar a:link {color:#fff;}
+#page-header .navbar a:visited {color:#fff;}
+#page-header .navbar .breadcrumb {margin:5px 1em;float:left;}
+#page-header .navbar .navbutton {float:right;margin:5px 1em;}
 
 /** General **/
 .generalbox {border: 1px solid #DDDDDD;}
@@ -65,13 +65,13 @@ html, body {background-color:#C8C9C7;}
 .loginbox .guestsub {margin-left:10%;margin-right:10%;padding:10px;margin-bottom:5px;border-top:1px solid #DDD;}
 
 /** Blocks **/
-.block-region .sideblock {border:1px solid #C8C9C7;background-color: #E3E3E3;margin-bottom:10px;overflow:hidden;}
-.block-region .sideblock h1,
-.block-region .sideblock h2,
-.block-region .sideblock h3,
-.block-region .sideblock h4 {margin:0px;}
-.block-region .sideblock .header {margin:10px 6px 3px 6px;}
-.block-region .sideblock .content {margin:10px 6px 3px 6px;}
+.sideblock {border:1px solid #C8C9C7;background-color: #E3E3E3;margin-bottom:10px;overflow:hidden;}
+.sideblock h1,
+.sideblock h2,
+.sideblock h3,
+.sideblock h4 {margin:0px;}
+.sideblock .header {margin:10px 6px 3px 6px;}
+.sideblock .content {margin:10px 6px 3px 6px;}
 
 /** Admin **/
 .box.adminwarning {text-align:center;border:1px solid #C8C9C7;background-color:#E3E3E3;margin-bottom:1em;padding:10px 10%;}
@@ -191,10 +191,10 @@ html, body {background-color:#C8C9C7;}
 #calendar .filters table {padding:2px;background-color: #EEE;border:1px solid #DDD;border-spacing:2px;border-collapse: separate;}
 #calendar .filters table td {font-size:100%;width:auto;}
 #calendar .filters .eventskey {border:1px solid #444;overflow:hidden;}
-#calendar .event_global {background-color: #D6F8CD;}
-#calendar .event_course {background-color: #FFD3BD;}
-#calendar .event_group {background-color: #FEE7AE;}
-#calendar .event_user {background-color: #DCE7EC;}
+#calendar .calendar_event_global {background-color: #D6F8CD;}
+#calendar .calendar_event_course {background-color: #FFD3BD;}
+#calendar .calendar_event_group {background-color: #FEE7AE;}
+#calendar .calendar_event_user {background-color: #DCE7EC;}
 #calendar .maincalendar .calendarmonth {border-collapse: separate;}
 #calendar .maincalendar .calendarmonth th {font-size:0.9em;border-bottom:2px solid #444;}
 #calendar .maincalendar .calendarmonth td {border:1px solid #EEE;border-bottom-color:#CCC;border-right-color:#CCC;height:6em;}

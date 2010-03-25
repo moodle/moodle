@@ -96,9 +96,8 @@ function theme_get_revision() {
 class theme_config {
     /**
      * @var string default theme, used when requested theme not found
-     *      TODO: MDL-21149 replace with some new default theme when implemented
      */
-    const DEFAULT_THEME = 'standardold';
+    const DEFAULT_THEME = 'standard';
 
     /**
      * You can base your theme on other themes by linking to the other theme as

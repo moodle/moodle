@@ -1,0 +1,4 @@
+.block_messages .content {text-align:left;font-size:0.75em;padding-top:5px;}
+.block_messages .content .list li.listentry {clear:both;}
+.block_messages .content .list li.listentry div.user {float:left;}
+.block_messages .content .list li.listentry div.message {float:right;}

@@ -3097,6 +3097,22 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         unset_config('regenloginsession');
         upgrade_main_savepoint($result, 2010031900);
     }
+
+    if ($result && $oldversion < 2010032400) {
+        // Upgrade all of those using the standardold theme to the use the standard
+        // theme instead
+        if ($CFG->theme == 'standardold') {
+            // The config setting that affects the whole site
+            set_config('theme', 'standard');
+        }
+        // Course Categories
+        $DB->execute('UPDATE {course_categories} SET theme=? WHERE theme=?', array('standard', 'standardold'));
+        // Course
+        $DB->execute('UPDATE {course} SET theme=? WHERE theme=?', array('standard', 'standardold'));
+        // User
+        $DB->execute('UPDATE {user} SET theme=? WHERE theme=?', array('standard', 'standardold'));
+        upgrade_main_savepoint($result, 2010032400);
+    }
     
     return $result;
 }

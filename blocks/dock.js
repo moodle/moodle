@@ -369,6 +369,12 @@ M.core_dock = {
                 return;
             }
 
+            var blockclass = (function(classes){
+                var r = /(^|\s)(block_[a-zA-Z0-9_]+)(\s|$)/;
+                var m = r.exec(classes);
+                return (m)?m[2]:m;
+            })(node.getAttribute('className').toString());
+
             this.cachedcontentnode = node;
 
             var placeholder = this.Y.Node.create('<div id="content_placeholder_'+this.id+'"></div>');
@@ -391,7 +397,7 @@ M.core_dock = {
             blockcommands.append(moveto);
 
             // Create a new dock item for the block
-            var dockitem = new M.core_dock.item(this.Y, this.id, blocktitle, blockcontent, blockcommands);
+            var dockitem = new M.core_dock.item(this.Y, this.id, blocktitle, blockcontent, blockcommands, blockclass);
             if (spacewidth !== null && M.core_dock.cfg.display.mindisplaywidth == null) {
                 dockitem.cfg.display.mindisplaywidth = spacewidth;
             }
@@ -566,6 +572,7 @@ M.core_dock = {
             this.panel.renderEvent.subscribe(this.resize_panel, this, true);
             this.panel.setBody(this.Y.Node.getDOMNode(this.contents));
             this.panel.render(M.core_dock.node);
+            this.Y.one(this.panel.body).addClass(this.blockclass);
             if (this.cfg.display.mindisplaywidth !== null && this.Y.one(this.panel.body).getStyle('minWidth') == '0px') {
                 this.Y.one(this.panel.body).setStyle('minWidth', this.cfg.display.mindisplaywidth);
                 this.Y.one(this.panel.body).setStyle('minHeight', dockitemtitle.get('offsetHeight')+'px');
@@ -744,7 +751,7 @@ M.core_dock.genericblock.prototype.fix_title_orientation =   M.core_dock.abstrac
  * @param {this.Y.Node} contents
  * @param {this.Y.Node} commands
  */
-M.core_dock.item = function(Y, uid, title, contents, commands){
+M.core_dock.item = function(Y, uid, title, contents, commands, blockclass){
     this.Y = Y;
     if (uid && this.id==null) {
         this.id = uid;
@@ -758,6 +765,9 @@ M.core_dock.item = function(Y, uid, title, contents, commands){
     if (commands && this.commands==null) {
         this.commands = commands;
     }
+    if (blockclass && this.blockclass==null) {
+        this.blockclass = blockclass
+    }
     this.init_events();
 }
 /** Properties */
@@ -770,6 +780,7 @@ M.core_dock.item.prototype.active =             M.core_dock.abstract_item_class.
 M.core_dock.item.prototype.panel =              M.core_dock.abstract_item_class.panel;
 M.core_dock.item.prototype.preventhide =        M.core_dock.abstract_item_class.preventhide;
 M.core_dock.item.prototype.cfg =                M.core_dock.cfg;
+M.core_dock.item.prototype.blockclass =         null;
 M.core_dock.item.prototype.delayhiderunning =   false;
 M.core_dock.item.prototype.delayhidetimeout =   1000; // 1 Second
 /** Methods **/

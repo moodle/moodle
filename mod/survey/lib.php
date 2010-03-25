@@ -528,7 +528,7 @@ function survey_print_multi($question) {
     $strresponses  = get_string('responses', 'survey');
 
     echo $OUTPUT->heading($question->text, 3, 'questiontext');
-    echo "\n<table width=\"90%\" cellpadding=\"4\" cellspacing=\"1\" border=\"0\">";
+    echo "\n<table width=\"90%\" cellpadding=\"4\" cellspacing=\"1\" border=\"0\" class=\"surveytable\">";
 
     $options = explode( ",", $question->options);
     $numoptions = count($options);

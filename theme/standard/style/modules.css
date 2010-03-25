@@ -1,0 +1,193 @@
+/**********************************************************
+ * This file contains style information for the modules   *
+ * for this particular theme.                             *
+ **********************************************************/
+
+/** General **/
+#page-mod-assignment-index .cell,
+#page-mod-chat-index .cell,
+#page-mod-choice-index .cell,
+#page-mod-forum-index .generalbox .cell,
+#page-mod-glossary-index .cell,
+#page-mod-resource-index .cell,
+#page-mod-scorm-index .cell,
+#page-mod-survey-index .cell,
+#page-mod-wiki-index .cell {font-size:0.8em;}
+.mod_introbox {width:90%;margin:1em auto;}
+table.mod_index {width:90%;margin:1em auto;}
+
+/** Assignment **/
+.path-mod-assignment .feedback .files {background-color: #EFEFEF;padding:5px;}
+.path-mod-assignment .feedback .time,
+#page-mod-assignment-view .feedback .date {font-size: 0.8em;}
+.path-mod-assignment .late {color: red;}
+.path-mod-assignment #wordcount {font-size: 0.8em;text-align: right;}
+#page-mod-assignment-submissions .feedback .content,
+#page-mod-assignment-submissions .feedback .topic,
+#page-mod-assignment-submissions .feedback .picture {padding: 10px;border:1px solid #DDD;}
+#page-mod-assignment-submissions .generaltable .r1 {background-color: #FFFFFF;}
+#page-mod-assignment-submissions .s0 {background: #FFD991;}
+#page-mod-assignment-submissions table.submissions td,
+#page-mod-assignment-submissions table.submissions th{border:1px solid #DDD;vertical-align: middle;padding-left: 5px;padding-right: 5px;}
+#page-mod-assignment-submissions .timemodified,
+#page-mod-assignment-submissions .timemarked {font-size: 0.9em;}
+#page-mod-assignment-submissions .fgcontrols {margin-top: 1em;text-align:center;}
+#page-mod-assignment-submissions .fgcontrols .fastgbutton{margin-top: 0.5em;}
+#page-mod-assignment-view #dates {font-size: 0.8em;margin:30px auto;}
+#page-mod-assignment-view #dates .c0 {text-align:right;font-weight:bold;}
+#page-mod-assignment-view .feedback {border:1px solid #DDD;}
+#page-mod-assignment-view .feedback .topic {padding: 4px;border:0px solid #DDD;border-bottom-width: 1px;}
+#page-mod-assignment-view .feedback .content {padding: 4px;}
+#page-mod-assignment-view .feedback .left {width: 35px;padding: 4px;text-align: center;vertical-align: top;}
+#page-mod-assignment-view #dates {font-size: 0.8em;margin:30px auto;}
+#page-mod-assignment-submissions .status,
+#page-mod-assignment-view #online .singlebutton {text-align: center;}
+#page-mod-assignment-submissions .submissions .grade,
+#page-mod-assignment-view .feedback .fullname,
+#page-mod-assignment-view .feedback .grade {font-weight:bold;}
+
+/** Chat **/
+.path-mod-chat .time {font-weight: bold;}
+.path-mod-chat .user {color:blue;}
+.path-mod-chat .chat-event {text-align:center;color:gray;}
+.path-mod-chat .chat-event .event,
+.path-mod-chat .chat-message .title {color:#888}
+.path-mod-chat .chat-event .text,
+.path-mod-chat .chat-message .text {text-align: left;color:#000;}
+.path-mod-chat #chat-header {background: transparent;font-size: 200%;}
+.path-mod-chat #chat-header p {font-size: 50%;color: gray;}
+#page-mod-chat-gui_basic h1 {font-size:1.4em;}
+#page-mod-chat-gui_header_js-chatinput .wait {background: #dddddd;}
+#page-mod-chat-gui_header_js-jsupdate {margin:10px}
+#page-mod-chat-gui_header_js-jsupdate .chat-event,
+#page-mod-chat-gui_header_js-jsupdate .chat-message {padding:0;margin-top:7px;}
+#page-mod-chat-view .nextchatsession {text-align:center;}
+#page-mod-chat-view #enterlink {text-align: center;margin-left: auto;margin-right: auto;width: 50%;}
+#page-mod-chat-view #chatcurrentusers .idletime {color: #888888;}
+#page-mod-chat-gui_basic #participants .idle,
+#page-mod-chat-view #chatcurrentusers .chatuserdetails {font-size: 0.6em;}
+
+/** Choice **/
+.path-mod-choice .results .data {border:1px solid #999;}
+
+/** Feedback **/
+.feedback_required_mark {color: #FF0000;}
+
+/** Folder **/
+#page-mod-folder-view .foldertree {width: 90%;margin:0 auto;}
+
+/** Forum **/
+.forumpost {border-color:#DDDDDD;} /** header of reply posts and lower corners of all posts in */
+.forumpost .starter {background-color:#DDDDDD;} /** header of the first post in */
+.forumpost .topic {border-bottom-color: #EEEEEE;} /** line between header and post body in */
+.forumpost .topic .author {font-size: 0.8em;}
+.forumpost .topic .subject {font-weight: bold;}
+.forumpost .ratings {padding-top: 1em;}
+.forumpost .attachments {padding: 7px;}
+.forumpost .content {padding: 4px;background-color: #FFFFFF;}
+.forumpost .commands,
+.forumpost .footer,
+.forumpost .link {padding-top: 0.5em;font-size: 0.9em;}
+.forumpost .left {padding: 4px;text-align: center;background-color:#EEEEEE;}
+.forumpost .edited {font-style: italic;}
+.forumpost.unread {background: #9EBEFF;}
+#page-mod-forum-view .forummode,
+.path-mod-forum .forumheaderlist .replies {text-align: center;}
+.path-mod-forum .forumheaderlist .discussion .lastpost {font-size: 0.7em;}
+.path-mod-forum .forumnodiscuss {font-weight:bold;text-align:center;}
+#page-mod-forum-subscribers .subscriberdiv,
+#page-mod-forum-subscribers .subscribertable {background-color:#EEEEEE;border:1px solid #BBBBBB;}
+#page-mod-forum-subscribers .subscriberdiv,
+#page-mod-forum-subscribers .subscribertable tr td {padding:0.2em 0.3em;}
+#page-mod-forum-discuss .ratingsubmit {text-align:center;padding:10px;}
+#page-mod-forum-discuss .forumpost.unread .content {border:2px solid #0046C7;} /** inside border of unread posts in nested format in */
+#page-mod-forum-view .forumheaderlist .discussion .starter, /** Discussion column background in */
+#page-mod-forum-view .forumaddnew {margin-bottom: 20px;text-align:center;}
+#page-mod-forum-view .forumheaderlist td {border-color: #FFFFFF;} /** wire frame around cells in */
+#page-mod-forum-view .unread {padding: 0 3px;} /** unread column background on */
+#page-mod-forum-view .forumheaderlist  {border-color:#DDDDDD;} /** border around posts in */
+#email .unsubscribelink {border-width: 0px 1px 0px 0px;border-style: solid;text-align:center;}
+#page-mod-forum-view .highlight2 {color:#AA0000;}
+
+/** Glossary **/
+.path-mod-glossary .glossarypost {width: 95%;border:1px solid #DDD;}
+.path-mod-glossary .glossarypost .entry {padding: 3px;}
+.path-mod-glossary .glossarypost .concept h3 {font-size: 1em;margin: 0;font-weight: normal;text-align: left;}
+.path-mod-glossary .glossarypost .entryheader {font-weight: normal;text-align: left;}
+.path-mod-glossary .glossarypost .entryheader,
+.path-mod-glossary .glossarypost .entryapproval,
+.path-mod-glossary .glossarypost .picture,
+.path-mod-glossary .glossarypost .entryattachment,
+.path-mod-glossary .glossarypost .left {background-color: #F0F0F0;}
+.path-mod-glossary .glossarypost .entrylowersection {padding-top: 10px;}
+.path-mod-glossary .glossarypost .commands,
+.path-mod-glossary .glossarypost .author,
+.path-mod-glossary .glossarypost .time,
+.path-mod-glossary .glossarypost .entrylowersection .icons,
+.path-mod-glossary .glossarypost .entrylowersection .ratings,
+.path-mod-glossary .glossarypost .entrylowersection .aliases {font-size: 0.8em;}
+.path-mod-glossary .glossaryexplain,
+#page-mod-glossary-view .glossaryaddentry,
+#page-mod-glossary-import table.glossaryimportexport {text-align: center;}
+.path-mod-glossary .glossarydisplay {width: 90%;text-align:center;}
+.path-mod-glossary .entrybox {border-width: 0px 1px 1px 1px;border-style: solid;border-color: #BBB;}
+.path-mod-glossary .entrybox hr {border-left:none;border-right:none;}
+#page-mod-glossary-report table tr.teacher {background: #F0F0F0;}
+#page-mod-glossary-view table.glossarycategoryheader {width: 95%;background-color: #DDD;}
+#page-mod-glossary-view table.glossarycategoryheader h2 {font-size: 1em;margin: 0;}
+
+/** Lesson **/
+.path-mod-lesson .compacttable,
+.path-mod-lesson .standardtable,
+.path-mod-lesson .mform .box.contents {margin:1em auto;width:80%;}
+.path-mod-lesson .addlinks {font-size: 0.8em;margin:5px auto;}
+.path-mod-lesson .response {padding-top: 10px;}
+.path-mod-lesson .menu .content {padding: 0;}
+.path-mod-lesson .edit_pages_box {width:80%;margin-left:10%;}
+.path-mod-lesson .lessonbutton a {padding-left:1em;padding-right:1em;color: #000;text-decoration: none;border-top: 1px solid #cecece;border-bottom: 2px solid #4a4a4a;border-left: 1px solid #cecece;border-right: 2px solid #4a4a4a;}
+.path-mod-lesson .lessonbutton a:hover {border-bottom: 1px solid #cecece;border-top: 2px solid #4a4a4a;border-right: 1px solid #cecece;border-left: 2px solid #4a4a4a;}
+.path-mod-lesson .progress_bar {padding: 20px;}
+.path-mod-lesson .progress_bar_table {width: 80%;}
+.path-mod-lesson .progress_bar_completed {background-color: green;}
+.path-mod-lesson .progress_bar_todo {background-color: red;text-align: left;}
+.path-mod-lesson .progress_bar_token {background-color: #000000;}
+#page-mod-lesson-view .password-form {margin-top: 20px;}
+#page-mod-lesson-essay .graded {color:#DF041E;}
+#page-mod-lesson-essay .sent {color:#006600;}
+#page-mod-lesson-essay .ungraded {color:#999999;}
+#page-mod-lesson-essay .gradetable {margin-bottom: 20px;}
+.path-mod-lesson .branchbuttoncontainer.vertical .lessonbutton,
+.path-mod-lesson .centerpadded {padding:5px;}
+#page-mod-lesson-essay .buttons,
+.path-mod-lesson .center,
+.path-mod-lesson .firstpageoptions,
+.path-mod-lesson .clock .content,
+.path-mod-lesson .centerpadded,
+#page-mod-lesson-view .password-form,
+.path-mod-lesson .edit_pages_box .addlinks {text-align:center;}
+
+/** Page **/
+.path-mod-page .modified {font-size:0.6em;}
+
+/** Resource **/
+#page-mod-resource-view .resourcecontent {text-align:center;margin:20px;}
+#page-mod-resource-view .resourcecontent.resourcepdf {padding-top: 15px;text-align: center;}
+.path-mod-resource .modified {text-align:center;font-size:0.6em;}
+
+/** Scorm **/
+.path-mod-scorm .orgtitle {font-weight: bold;font-size: small;}
+#page-mod-scorm-player .toc {width: 80%;margin-left: 20%;}
+#page-mod-scorm-player .structlist  {font-size: small;}
+#page-mod-scorm-view .structurehead {text-align: center;}
+a#mod-scorm-log-toggle {font-size: 0.7em;font-weight: bold;}
+
+/** Survey **/
+.path-mod-survey .resultgraph {text-align:center;border-width:1px;border-style: solid;}
+.path-mod-survey .questiontext {font-size:1em;}
+.path-mod-survey .surveytable .rblock label {text-align: center;}
+#page-mod-survey-view .r0 {background-color: #EEEEEE;}
+#page-mod-survey-view .r1 {background-color: #DDDDDD;}
+#page-mod-survey-report .reportsummary,
+#page-mod-survey-report .studentreport,
+#page-mod-survey-report .reportbuttons,
+#page-mod-survey-report .centerpara {text-align:center;}

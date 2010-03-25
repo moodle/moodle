@@ -1,0 +1,48 @@
+/** General Styles **/
+.forumpost {border-width:1px;border-style:solid;border-collapse:separate;margin-top: 10px;}
+.forumpost .topic {padding: 4px;border-style:solid;border-width: 0px;border-bottom-width: 1px;}
+.forumpost .commands,
+.forumpost .ratings,
+.forumpost .attachments,
+.forumpost .footer,
+.forumpost .link,
+.path-mod-forum .forumolddiscuss,
+#page-mod-forum-search .c0 {text-align:right;}
+.forumpost .left {width: 35px;vertical-align: top;}
+.path-mod-forum .indent {margin-left: 30px;}
+.path-mod-forum .forumheaderlist {width: 100%;border-width:1px;border-style:solid;border-collapse:separate;margin-top: 10px;}
+.path-mod-forum .forumheaderlist td {border-width:1px 0px 0px 1px;border-style:solid;}
+.path-mod-forum .forumheaderlist .picture {width: 35px;}
+.path-mod-forum .forumheaderlist .discussion .starter {vertical-align: middle;}
+.path-mod-forum .forumheaderlist .discussion .lastpost {white-space: nowrap;text-align: right;}
+.path-mod-forum .forumheaderlist .replies,
+.path-mod-forum .forumheaderlist .discussion .author {white-space: nowrap;}
+
+/** Styles for subscribers.php */
+#page-mod-forum-subscribers .subscriberdiv,
+#page-mod-forum-subscribers .subscribertable {width:100%;vertical-align:top;}
+#page-mod-forum-subscribers .subscribertable tr td {vertical-align:top;}
+#page-mod-forum-subscribers .subscribertable tr td.actions {width:16%;padding-top:3em;}
+#page-mod-forum-subscribers .subscribertable tr td.actions .actionbutton {margin:0.3em 0;padding:0.5em 0;width:100%;}
+#page-mod-forum-subscribers .subscribertable tr td.existing,
+#page-mod-forum-subscribers .subscribertable tr td.potential {width:42%;}
+
+/** Styles for discuss.php **/
+#page-mod-forum-discuss .discussioncontrols td {width: 33%;text-align:center;}
+
+/** Styles for view.php **/
+#page-mod-forum-view .forumaddnew {margin-bottom: 20px;}
+#page-mod-forum-view .groupmenu {float: left;text-align:left;white-space: nowrap;}
+#page-mod-forum-index .subscription,
+#page-mod-forum-view .subscription {float: right;text-align:right;white-space: nowrap;margin: 5px 0;}
+
+/** Styles for search.php */
+#page-mod-forum-search .introcontent {padding: 15px;font-weight:bold;}
+
+#page-mod-forum-index .unread img,
+#page-mod-forum-view .unread img {margin-left: 5px;}
+
+/** Unknown Styles ??? */
+#user-view .forumpost,
+.course .forumpost {width: 100%;}
+#email .unsubscribelink {margin-top:20px;}

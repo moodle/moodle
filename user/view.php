@@ -233,7 +233,7 @@ if (is_mnet_remote_user($user)) {
     }
 }
 
-echo '<table width="80%" class="userinfobox" summary="">';
+echo '<table class="userinfobox" summary="">';
 echo '<tr>';
 echo '<td class="side">';
 echo $OUTPUT->user_picture($user, array('courseid'=>$course->id, 'size'=>100));

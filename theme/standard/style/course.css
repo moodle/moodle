@@ -1,0 +1,87 @@
+/** Course formats **/
+.course-content ul.weeks li.section {border:1px solid #DDD;background-color:#FFF;}
+.course-content ul.weeks li.section .content {background-color:#FAFAFA;padding:5px 10px;}
+.course-content ul.weeks li.section .content h3 {margin:0;color:#777;font-weight: normal;}
+.course-content ul.weeks li.section .left {padding:5px 0;}
+.course-content ul.weeks li.section .right {padding:5px 0;}
+
+/** Course **/
+.coursebox {border:1px solid #DDD;border-color:#DDDDDD;}
+.coursebox .info {margin:5px;font-size:1em;}
+.coursebox .info .name {margin:3px 0;}
+.coursebox .info .teachers {margin:0 1em;font-size:0.9em;}
+.coursebox .cost {font-size:0.9em;padding-top: 20px;}
+.coursebox .summary {margin:5px 5px 5px 51%;font-size:0.9em;}
+
+#page-course-recent h2.main {font-size:1.1em;}
+#page-course-recent .user {font-size:0.75em;}
+#page-course-recent .grade {font-style: italic;font-size:0.9em;}
+#page-course-recent .forum-recent .reply .title {font-style: italic;font-size:0.9em;}
+#page-course-recent .forum-recent .discussion .title {font-weight:bold;font-style: italic;font-size:0.9em;}
+
+.path-course-view .availabilityinfo {font-size:0.85em;color:#aaa;}
+.path-course-view .availabilityinfo strong {font-weight:normal;color:black;}
+.path-course-view .dimmed_text img {opacity:0.3;filter: alpha(opacity='30');}
+.path-course-view .section {font-size:0.95em;line-height:1.2em;}
+.path-course-view .section .activity {padding:0.2em 0;}
+.path-course-view .section .activity a {line-height:1em;}
+.path-course-view .section .weekdates {margin: 0;font-weight: normal;font-size: 1em;}
+.path-course-view .section .groupinglabel {color: #666666;}
+.path-course-view .section .left {font-weight:bold;}
+
+.path-course-view .weeks .section,
+.path-course-view .topics .section,
+.path-course-view .section td {border-color:#DDDDDD;}
+.path-course-view .weeks .content ,
+.path-course-view .topics .content,
+.path-course-view .weeks .section,
+.path-course-view .topics .section {background: #FAFAFA;}
+.path-course-view .section td.side {background: #FFFFFF;}
+.path-course-view .weeks .current,
+.path-course-view .topics .current,
+.path-course-view .current td.side {background: #FFD991;}
+.path-course-view .weeks .hidden,
+.path-course-view .topics .hidden,
+.path-course-view .hidden td.side {background: #DDDDDD;}
+.path-course-view .section .weekdates {color: #777777;}
+.path-course-view .weeks .weekdates ,
+.path-course-view .topics .weekdates {color: #333333;}
+
+.weeks li.section ,
+.topics li.section {border-style:solid;border-width:1px;}
+
+.weeks .content,
+.topics .content {padding: 5px;}
+
+.categoryboxcontent {border-color:#DDDDDD;}
+
+#page-course-user .graph {text-align: center;}
+#page-course-user .section {border-color:#AAAAAA;}
+#page-course-user .info {text-align:center;}
+
+#page-admin-report .plugin,
+#page-course-report .plugin,
+#page-course-import .plugin {margin-bottom: 20px;margin-left:10%;margin-right:10%;border: 1px solid #cecece;background-color: #fdfdfd;}
+
+.path-course-view .unread {background: #9EBEFF;}
+.path-course-view .completionprogress {font-size:0.80em; padding:8px 26px 5px 5px;}
+
+#page-course-category .courseboxes,
+#page-course-index .courseboxes {padding:20px;}
+
+#page-course-report #content {padding-top:15px;padding-bottom:15px;}
+
+#page-course-report p,
+#page-course-report-log-index .info,
+#page-course-report-log-indexlive .info,
+#page-course-report-stats-index .graph {text-align: center;}
+
+#page-course-report .logselectform,
+#page-course-report .participationselectform,
+#page-course-report-log-index .logselectform,
+#page-course-report-participation-index .participationselectform {text-align:center;}
+
+.addcoursebutton {text-align:center;}
+.categorypicker {text-align:center;margin-bottom:10px;}
+.path-course-report-outline .loginfo {text-align:center;margin: 1em;}
+.categorylist {width: 90%;margin:0 auto;text-align: left;}

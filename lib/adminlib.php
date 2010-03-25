@@ -4769,8 +4769,8 @@ class admin_setting_manageauths extends admin_setting {
         $table = new html_table();
         $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->settings);
         $table->align = array('left', 'center', 'center', 'center');
-        $table->width = '90%';
         $table->data  = array();
+        $table->attributes['class'] = 'manageauthtable generaltable';
 
         //add always enabled plugins first
         $displayname = "<span>".$displayauths['manual']."</span>";

@@ -208,7 +208,7 @@ $PAGE->set_heading($strcalendar);
 echo $OUTPUT->header();
 
 
-echo '<table id="calendar">';
+echo '<table class="calendarlayout">';
 echo '<tr><td class="maincalendar">';
 echo $OUTPUT->heading($title);
 $mform->display();

@@ -1,0 +1,22 @@
+.path-mod-data .fieldadd,
+.path-mod-data .sortdefault,
+.path-mod-data .defaulttemplate,
+#page-mod-data-view .datapreferences,
+#page-mod-data-preset .presetmapping{text-align:center;}
+
+.path-mod-data-field .c0,
+#page-mod-data-view #sortsearch .c0 {text-align: right;}
+#page-mod-data-view .approve img.icon {width:34px;height:34px;}
+
+/** Styles for preset.php **/
+#page-mod-data-preset .presetmapping table {text-align: left;margin-left: auto;margin-right: auto;}
+#page-mod-data-preset .overwritesettings {margin-bottom: 1em;}
+#page-mod-data-preset table.presets {margin-left: auto;margin-right: auto;}
+
+/** Styles for field.php **/
+.path-mod-data-field .fieldadd,
+.path-mod-data-field .sortdefault {margin:1em 0;}
+.path-mod-data-field .fieldadd select,
+.path-mod-data-field .sortdefault select {margin-left: 1em;}
+.path-mod-data-field .fieldname,
+.path-mod-data-field .fielddescription {width:300px;}

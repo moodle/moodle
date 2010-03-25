@@ -6,45 +6,10 @@ h1.main, h2.main, h3.main, h4.main, h5.main, h6.main {text-align:center;}
 .generalbox {padding:10px;margin-bottom:15px;}
 .generaltable, .userinfobox {margin-left:auto;margin-right:auto;}
 #notice.generalbox {margin-left: auto;margin-right: auto;width: 60%;}
-.notifytiny {font-size:0.7em;color:#333;}
-.notifytiny li, .notifytiny td {font-size:100%;}
-.notifyproblem {text-align:center;}
-.notifysuccess {text-align:center;}
-
-.sideblock .list,
-.unlist, .inline-list,
-.sideblock .list li,
-.unlist li, .inline-list li,
-.sitetopic .section li,
-.course-content .section,
-.course-content .section li,
-.tabtree li {list-style: none;margin:0px;padding:0px;}
-
-.jsenabled .collapsibleregion {overflow:hidden;}
+.notifyproblem {padding:10px;color:#660000;text-align:center;}
+.notifysuccess {padding:10px;color:#006600;text-align:center;}
 
 .paging {text-align:center;}
-
-/** 
- * Mforms
- */
-.mform {margin:0px auto;width:80%;}
-.mform fieldset {width:100%;border:1px solid #000;}
-.mform fieldset fieldset {border-width:0px;}
-.mform fieldset legend {font-weight:bold;margin-left:0.5em;}
-.mform fieldset div {margin:0px 10px 10px 10px;}
-.mform fieldset div div {margin:0px;}
-.mform fieldset .advancedbutton {text-align:right;}
-.mform fieldset.hidden {border-width:0px;}
-.mform .fitem {width:100%;overflow:hidden;margin-top:5px;margin-bottom:1px;clear:right;}
-.mform .fitem .fitemtitle {width:30%;text-align:right;float:left;}
-.mform .fitem .felement {width:60%;margin-left:31%;}
-.mform .fitem fieldset.felement {margin-left:0px;padding-left:1%;} /** Fix fieldset margin issue **/
-.mform .required label {color:#A00;}
-.mform .fdescription.required {color:#A00;text-align:right;}
-.mform .fpassword .unmask {display:inline;margin-left:0.5em;}
-
-.ie .mform .fitem .felement {margin-left:0px;text-align:left;float:left;} /** Fix IE double margin + float bugs **/
-.ie .mform .fitem .fitemtitle {padding-right:1em;}
 
 /**
  * Tabs
@@ -64,14 +29,6 @@ h1.main, h2.main, h3.main, h4.main, h5.main, h6.main {text-align:center;}
 .tabtree .tabrow1 li a:hover,
 .tabtree .tabrow1 li a span,
 .tabtree .tabrow1 li a:hover span {background-image:none !important;}
-
-/** phpinfo styles **/
-.phpinfo .center {text-align: center;}
-.phpinfo .center table {margin-left: auto;margin-right: auto;text-align: left;border-collapse: collapse;}
-.phpinfo .center th {text-align: center;}
-.phpinfo .e,.phpinfo .v,.phpinfo .h {border: 1px solid #000000;font-size: 0.8em;vertical-align: baseline;color: #000000;background-color: #cccccc;}
-.phpinfo .e {background-color: #ccccff;font-weight: bold;}
-.phpinfo .h {background-color: #9999cc;font-weight: bold;}
 
 .groupmanagementtable {width:90%;}
 .groupmanagementtable td {vertical-align:top;border-width:0px;}

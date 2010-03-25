@@ -346,7 +346,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     echo $OUTPUT->paging_bar($totalcount, $page, $perpage, "$url&perpage=$perpage");
 
     $table = new html_table();
-    $table->classes = array('logtable','generalbox','boxaligncenter');
+    $table->classes = array('logtable','generalbox');
     $table->align = array('right', 'left', 'left');
     $table->head = array(
         get_string('time'),
@@ -2164,9 +2164,9 @@ function print_course($course, $highlightterms = '') {
 
     echo '<div class="coursebox clearfix">';
     echo '<div class="info">';
-    echo '<div class="name"><a title="'.get_string('entercourse').'"'.
+    echo '<h3 class="name"><a title="'.get_string('entercourse').'"'.
          $linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.
-         highlight($highlightterms, format_string($course->fullname)).'</a></div>';
+         highlight($highlightterms, format_string($course->fullname)).'</a></h3>';
 
     /// first find all roles that are supposed to be displayed
 

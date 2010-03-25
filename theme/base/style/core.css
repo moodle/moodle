@@ -1,167 +1,510 @@
+/**
+ * General
+ */
+th,
+td,
+a img {border-width:0;}
+acronym,
+abbr {cursor: help;}
+.dir-ltr,
+.mdl-left {text-align: left;}
+.dir-rtl,
+.mdl-right {text-align: right;}
+#add,
+#remove,
+.centerpara,
+.mdl-align {text-align: center;}
+a.dimmed,
+a.dimmed_text,
+.dimmed_text a {color:#AAAAAA;}
+.unlist,
+.unlist li,
+.inline-list,
+.inline-list li,
+.sideblock .list,
+.sideblock .list li,
+.sitetopic .section li,
+.course-content .section li,
+.tabtree li {list-style: none;margin:0;padding:0;}
+.inline-list li {display: inline;}
+.notifytiny {font-size:0.7em;}
+.notifytiny li,
+.notifytiny td {font-size:100%;}
+.red,
+.notifyproblem {color:#660000;}
+.green,
+.notifysuccess {color:#006600;}
+.reportlink {text-align:right;}
+a.autolink.glossary:hover {cursor: help;}
+/* Block which is hidden if javascript enabled, prevents fickering visible when JS from footer used! */
+.collapsibleregioncaption {white-space: nowrap;}
+.collapsibleregioncaption img {vertical-align: middle;}
+.jsenabled .hiddenifjs {display: none;}
+.jsenabled .collapsibleregion {overflow:hidden;}
+.jsenabled .collapsed .collapsibleregioninner {visibility: hidden;}
+.yui-overlay .yui-widget-bd {background-color:#FFEE69;border:1px solid #A6982B;border-top-color: #D4C237;color:#000000;left:0;padding:2px 5px;position:relative;top:0;z-index:1;}
+.clearer {background:transparent;border-width:0;clear:both;display:block;height:1px;margin:0;padding:0;}
+.clearfix:after {clear: both;content: ".";display: block;height: 0;min-width: 0;visibility: hidden;}
+.bold,
+.warning,
+.errorbox .title,
+.pagingbar .title,
+.pagingbar .thispage,
+.headingblock {font-weight: bold;}
+img.resize {height: 1em;width: 1em;}
+.sideblock img.resize,
+.breadcrumb img.resize {height: 0.9em;width: 0.8em;}
+img.icon {height:16px;vertical-align:middle;width:16px;}
+img.iconsmall {height:11px;margin-right:1px;vertical-align:middle;width:11px;}
+img.iconhelp {height:17px;margin-right:4px;vertical-align:middle;width:17px;}
+img.icontoggle {height:17px;vertical-align:middle;width:50px;}
+img.iconkbhelp {height:17px;width:49px;}
+.categorybox .category {font-size:1.2em;font-weight:bold;}
+.generalbox {border:1px solid;}
+.boxaligncenter {margin-left:auto;margin-right:auto;}
+.boxalignright {margin-left:auto;margin-right:0;}
+.boxalignleft {margin-left:0;margin-right:auto;}
+.boxwidthnarrow {width: 30%;}
+.boxwidthnormal {width: 50%;}
+.boxwidthwide {width: 80%;}
+.buttons .singlebutton,
+.buttons .singlebutton form,
+.buttons .singlebutton div {display: inline;}
+.buttons .singlebutton input {margin:20px 5px;}
+.blink {text-decoration: blink;}
+.headermain {font-weight:bold;}
+#maincontent {display: block;height: 1px;overflow: hidden;}
+img.uihint {cursor: help;}
+#addmembersform table {margin-left: auto;margin-right: auto;}
+.formtable tbody th,
+.generaltable th.header {vertical-align: top;}
+.flexible th {white-space: nowrap;}
+.cell {vertical-align: top;}
+.helplink img {height: 17px;vertical-align: middle;width: 17px;}
+img.emoticon {vertical-align: middle;width: 15px;height: 15px;}
+form.popupform,
+form.popupform div {display: inline;}
+.arrow_button input {overflow:hidden;}
+/** IE6 float + background bug solution **/
+.ie6 li.section {line-height:1.2em;width:100%;}
 
-/* custom moodle style resets, differencies from the YUI reset */
-
-.dir-ltr {
-  text-align: left;
-}
-
-.dir-rtl {
-  text-align: right;
-}
-
-
-/***
+/**
  * Accessibility features
- **/
-
+ */
 /*Accessibility: text 'seen' by screen readers but not visual users. */
-.accesshide {
-  position:absolute;
-  top:-100000px;
-  left:10px;
-  font-weight:normal;
-  font-size:1em;
-}
+.accesshide {position:absolute;top:-100000px;left:10px;font-weight:normal;font-size:1em;}
 span.hide,
 div.hide,
-.jsenabled .advancedbutton .showadvancedbtn {
-  display:none;
-}
-
+.jsenabled .advancedbutton .showadvancedbtn {display:none;}
+.invisiblefieldset {display:inline;border-width:0;padding:0;margin:0;}
 /*Accessibility: Skip block link, for keyboard-only users. */
-a.skip-block, a.skip {
-  position: absolute;
-  top: -1000em;
-  font-size: 0.85em;
-}
-a.skip-block:focus, a.skip-block:active,
-a.skip:focus, a.skip:active {
-  position: static;
-  display: block;
-}
-.skip-block-to {
-  display: block;
-  height: 1px;
-  overflow: hidden;
-}
+a.skip-block,
+a.skip {position: absolute;top: -1000em;font-size: 0.85em;text-decoration:none;}
+a.skip-block:focus,
+a.skip-block:active,
+a.skip:focus,
+a.skip:active {position: static;display: block;}
+.skip-block-to {display: block;height: 1px;overflow: hidden;}
+/* Accessibility: only certain fonts support Unicode chars like &#x25BA; in IE6 */
+.arrow,
+.arrow_button input {font-family: Arial,Helvetica,Courier,sans-serif;}
 
-a.skip-block {
-  text-decoration:none;
-}
-
-/***
- * General
- **/
-
-/* Block which is hidden if javascript enabled, prevents fickering visible when JS from footer used! */
-.jsenabled .hiddenifjs {
-  display: none;
-}
-
-.yui-overlay .yui-widget-bd {
-    background-color:#FFEE69;
-    border-color:#D4C237 #A6982B #A6982B;
-    border-style:solid;
-    border-width:1px;
-    color:#000000;
-    left:0;
-    padding:2px 5px;
-    position:relative;
-    top:0;
-    z-index:1;
-}
-
-.clearer {
-  clear:both;
-  margin:0;
-  padding:0;
-  height:1px;
-  border:none;
-  background:transparent;
-  display:block;
-}
-
-.clearfix:after {
-  min-width: 0;
-  content: ".";
-  display: block;
-  height: 0;
-  clear: both;
-  visibility: hidden;
-}
-
-.generalbox {
-  border-width: 1px;
-  border-style: solid;
-}
-
-.boxaligncenter {
-  margin-left:auto;
-  margin-right:auto;
-}
-
-.boxalignright {
-  margin-left:auto;
-  margin-right:0;
-}
-
-.boxalignleft {
-  margin-left:0;
-  margin-right:auto;
-}
-
-.boxwidthnarrow {
-  width: 30%
-}
-
-.boxwidthnormal {
-  width: 50%
-}
-
-.boxwidthwide {
-  width: 80%
-}
-
-.mdl-align {
-  text-align: center;
-}
-.mdl-left {
-  text-align: left;
-}
-.mdl-right {
-  text-align: right;
-}
-
-/***
+/**
  * Header
- **/
+ */
+#page-header .headermain {float:left;margin:15px;font-size:2.3em;}
+#page-header .headermenu {float:right;margin:15px;font-size:0.8em;text-align:right;}
+#page-header .navbar {clear:both;overflow:hidden;}
+#page-header .navbar .breadcrumb {float:left;}
+#page-header .navbar .navbutton {text-align:right;}
+#page-header .navbar .breadcrumb ul {padding:0;margin:0;text-indent:0;list-style:none;}
+#page-header .navbar .breadcrumb li,
+#page-header .navbar .navbutton div,
+#page-header .navbar .navbutton form {display:inline;}
+.ie6 #page-header .navbar {overflow:hidden;height:100%;}
 
-.breadcrumb ul {
-  padding:0;
-  margin:0;
-  text-indent:0;
-  list-style:none;
-}
-.breadcrumb li {
-  display:inline;
-}
+/**
+ * Footer
+ */
+#page-footer {text-align:center;font-size:0.9em;}
+#page-footer .homelink {margin: 1em 0;}
+#page-footer .homelink a {padding-left:1em;padding-right:1em;}
+#page-footer .logininfo,
+#page-footer .sitelink,
+#page-footer .helplink {margin:0px 10px;}
+#page-footer .performanceinfo {text-align:center;margin:10px 20%;}
+#page-footer .performanceinfo span {display:block;}
+#page-footer .validators {margin-top:40px;padding-top:5px;border-top: 1px dotted gray;}
+#page-footer .validators ul {margin:0px;padding:0px;list-style-type:none;}
+#page-footer .validators ul li {display:inline;margin-right:10px;margin-left:10px;}
 
-.navbar .navbutton div,
-.navbar .navbutton form {
-  display:inline;
-}
+/**
+ * Tabs
+ */
+.tabtree {position:relative;margin-bottom:3.5em;}
+.tabtree li {display:inline;}
+.tabtree ul {margin:5px;}
+.tabtree ul li.here ul {position:absolute;top:100%;width:100%;}
+.tabtree ul li.here .empty {display:none;}
 
-/***
- ** Course stuff
- **/
+/**
+ * Mforms
+ */
+.mform fieldset {border:1px solid;}
+.mform fieldset fieldset {border-width:0px;}
+.mform fieldset legend {font-weight:bold;margin-left:0.5em;}
+.mform fieldset div {margin:10px;margin-top:0;}
+.mform fieldset div div {margin:0;}
+.mform fieldset .advancedbutton {text-align:right;}
+.mform fieldset.hidden {border-width:0;}
+.mform fieldset.error {border: 1px solid #A00;}
+.mform .fitem {width:100%;overflow:hidden;margin-top:5px;margin-bottom:1px;clear:right;}
+.mform .fitem .fitemtitle {width:30%;text-align:right;float:left;}
+.mform .fitem .fitemtitle div {display: inline;}
+.mform .fitem .felement {border-width: 0;width:60%;margin-left:31%;}
+.mform .fitem fieldset.felement {margin-left:0;padding-left:1%;}
+.mform .error,
+.mform .required {color:#A00;}
+.mform .required .fgroup span label {color:#000;}
+.mform .fdescription.required {color:#A00;text-align:right;}
+.mform .fpassword .unmask {display:inline;margin-left:0.5em;}
+.mform .ftextarea #id_alltext {width: 100%;}
+.mform ul.file-list {padding:0;margin:0;list-style:none;}
+.mform label .req,
+.mform label .adv {cursor: help;}
+.mform .fcheckbox input {margin-left: 0;}
+.mform .fitem fieldset.fgroup label,
+.mform .fradio label,
+.mform .fcheckbox label,
+.mform fieldset.fdate_selector label {display:inline;float: none;width: auto;}
+.mform .ftags label.accesshide {display: block;position: static;}
+.mform .ftags select {margin-bottom: 0.7em;min-width: 22em;}
+/** Browser corrections for mforms **/
+.ie .mform .fitem .felement {margin-left:0;text-align:left;float:left;}
+/** Fix IE double margin + float bugs **/
+.ie .mform .fitem .fitemtitle {padding-right:1em;}
+#date_selector_calendar_panel .bd {padding: 0;}
+#date_selector_calendar_panel .yui-calcontainer {border: none;float: none;}
+/* Prevent border-collapse:collapse from bleeding through in IE6, IE7 */
+#date_selector_calendar_panel.yui-overlay-hidden table {*display:none;}
+#date_selector_calendar_panel th.calhead {padding-right: 2em;}
+#date_selector_calendar_panel a.container-close {top: 10px;}
+#portfolio-add-button {display:inline;}
 
-.section_add_menus .horizontal div,
-.section_add_menus .horizontal form {
-  display:inline;
-}
+/**
+ * phpinfo styles
+ */
+.phpinfo .center {text-align: center;}
+.phpinfo .center table {margin-left: auto;margin-right: auto;text-align: left;border-collapse: collapse;}
+.phpinfo .center th {text-align: center;}
+.phpinfo .e,
+.phpinfo .v,
+.phpinfo .h {border: 1px solid #000000;font-size: 0.8em;vertical-align: baseline;color: #000000;background-color: #cccccc;}
+.phpinfo .e {background-color: #ccccff;font-weight: bold;}
+.phpinfo .h {background-color: #9999cc;font-weight: bold;}
 
-.course-content .section .activity img.activityicon {
-  vertical-align:middle;
-  height:16px;
-  width:16px;
-}
+/**
+ * Navigation
+ */
+.block_js_expansion .block_tree {overflow-x:scroll;}
+.block_js_expansion.mouseover .content {width:200%;z-index:1000;position:relative;}
+.block_js_expansion.mouseover .content .block_tree {width:100%;background-color:#fcfcfc;padding-bottom:0;}
+.ie6 .block_js_expansion.mouseover .content,
+.ie7 .block_js_expansion.mouseover .content {padding-bottom:2px;}
+
+/**
+ * Blogs
+ */
+.addbloglink {text-align: center;}
+.blog_entry .audience {text-align: right;}
+.blog_entry .tags {margin-top: 15px;}
+
+/**
+ * Group
+ */
+#page-group-index #groupeditform {text-align: center;}
+#doc-contents h1 {margin: 1em 0 0 0;}
+#doc-contents ul {margin: 0;padding: 0;width: 90%;}
+#doc-contents ul li {list-style-type: none;}
+.groupmanagementtable td {vertical-align: top;}
+.groupmanagementtable #existingcell,
+.groupmanagementtable #potentialcell {width: 42%;}
+.groupmanagementtable #buttonscell {width: 16%;}
+.groupmanagementtable #buttonscell input {width: 80%;}
+.groupmanagementtable #removeselect_wrapper,
+.groupmanagementtable #addselect_wrapper {width: 100%;}
+.groupmanagementtable #removeselect_wrapper label,
+.groupmanagementtable #addselect_wrapper label {font-weight: normal;}
+#group-usersummary {width: 14em;}
+div.groupselector {float: left;margin-top: 3px;margin-bottom: 3px;}
+
+/**
+ * Login
+ */
+.loginbox {margin:15px;overflow:hidden;}
+.loginbox.twocolumns {margin:15px;}
+.loginbox h2,
+.loginbox .subcontent {margin:5px;padding:10px;text-align:center;}
+.loginbox .loginpanel .desc {margin:0;padding:0;margin-bottom:5px;}
+.loginbox .signuppanel .subcontent {text-align:left;}
+.loginbox .loginsub {margin-left:0;margin-right:0;}
+.loginbox .guestsub,
+.loginbox .forgotsub,
+.loginbox .potentialidps {margin:5px 12%;}
+.loginbox .potentialidps .potentialidplist {margin-left:40%;}
+.loginbox .potentialidps .potentialidplist div {text-align:left;}
+.loginbox .loginform {margin-top:1em;text-align:left;}
+.loginbox .loginform .form-label {float:left;text-align:right;width:40%;}
+.loginbox .loginform .form-input {float:right;width:59%;}
+.loginbox .loginform .form-input input {width: 6em;}
+.loginbox .signupform {margin-top:1em;text-align:center;}
+.loginbox.twocolumns .loginpanel {float:left;width:49.5%;border-right: 1px solid;margin-bottom:-2000px;padding-bottom:2000px;}
+.loginbox.twocolumns .signuppanel {float:right;width:50%;margin-bottom:-2000px;padding-bottom:2000px;}
+
+/**
+ * Notes
+ */
+.notepost {margin-bottom: 1em;}
+.notepost .userpicture {float: left;margin-right: 5px;}
+.notepost .content,
+.notepost .footer {clear: both;}
+.notesgroup {margin-left:20px;}
+
+/**
+ * My Moodle
+ */
+.my .coursebox .overview .info {margin-left:20px;}
+.my .coursebox .overview {margin-bottom:10px;}
+#page-my-index .coursebox .info {float: none;}
+#page-my-index .name {margin-left: 5px;}
+
+/**
+ * Logs
+ */
+.logtable th {text-align:left;}
+
+/**
+ * Modules
+ */
+.mod_introbox {border:1px solid;padding:10px;}
+table.mod_index {width:100%;}
+
+/**
+ * Help
+ */
+#help_icon_tooltip div.bd {width: 35em;}
+#help hr {border: none;height: 1px;background: #ccc;}
+#help .center {text-align: center;}
+#help .moreinfo {text-align: right;}
+#help .indent {margin-left: 40px;}
+#help .indent-big {margin-left: 160px;margin-right: 160px;}
+#help #emoticons{text-align: center;clear:both;width: 300px;margin-right: auto;margin-left:auto;}
+#help #emoticons ul{list-style-type: none;}
+#help #emoticons li{margin-bottom: 3px;width: 120px;border-left: 3px solid gray;padding-left: 7px;float: left;}
+
+/**
+ * Comments
+ */
+.comment-ctrl {max-width: 200px;font-size: 12px;display: none;margin:0;padding:0;}
+.comment-ctrl h5 {margin:0;padding: 5px;}
+.comment-area {padding: 5px;}
+.comment-area textarea {width:100%;overflow:auto;}
+.comment-area .fd {text-align:right;}
+.comment-meta span {color:gray;}
+.comment-list {font-size: 11px;overflow:auto;list-style:none;padding:0;margin:0;}
+.comment-list li {margin: 2px;margin-bottom:5px;clear:both;}
+.comment-paging{text-align:center;}
+.comment-paging .pageno{padding: 2px;}
+.comment-userpicture {width: 20px;float:left;}
+.comment-content {margin-left: 22px;}
+.comment-content div {margin:0;padding:0;}
+.comment-content p {padding:0;margin:0 18px 0 0;}
+.comment-delete {float:right;text-align:right;}
+.comment-container {float:left;width: 305px;margin: 4px;}
+
+/**
+ * Completion progress report
+ */
+.completion-expired {background:#FFDDDD;}
+.completion-expected {font-size:0.75em;}
+.completion-sortchoice {font-size:0.75em;vertical-align:bottom;}
+.completion-progresscell {text-align:right;}
+.completion-expired .completion-expected {font-weight:bold;}
+#page-course-report-progress-index th,
+#page-course-report-progress-index td {padding:2px 4px;font-weight:normal;border-right: 1px solid #EEE;}
+#page-course-report-progress-index .progress-actions {text-align:center;}
+#page-course-report-progress-index .completion_pagingbar {margin:1em 0;text-align:center;}
+#page-course-report-progress-index .completion_prev {display:inline;margin-right:2em;}
+#page-course-report-progress-index .completion_pagingbar p {display:inline;margin:0;}
+#page-course-report-progress-index .completion_next {display:inline;margin-left:2em;}
+
+/**
+ * Tags
+ */
+#page-tag-coursetags_edit .coursetag_edit_centered {position: relative;width: 600px;margin: 20px auto;}
+#page-tag-coursetags_edit .coursetag_edit_row {clear:both;}
+#page-tag-coursetags_edit .coursetag_edit_row .coursetag_edit_left {float:left;width:50%;text-align:right;}
+#page-tag-coursetags_edit .coursetag_edit_row .coursetag_edit_right {margin-left:50%;}
+#page-tag-coursetags_edit .coursetag_edit_input3 {display: none;}
+#page-tag-coursetags_more .coursetag_more_large {font-size: 120%;}
+#page-tag-coursetags_more .coursetag_more_small {font-size: 80%;}
+#page-tag-coursetags_more .coursetag_more_link {font-size: 80%;}
+#tag-description,
+#tag-blogs {width:100%;}
+#tag-management-box {margin-bottom:10px;line-height:20px;}
+#tag-user-table {padding:3px;clear: both;width:100%;}
+#tag-user-table:after {content:".";display:block;clear:both;visibility:hidden;height:0;overflow:hidden;}
+img.user-image {height:100px;width:100px;}
+#small-tag-cloud-box {width:300px;margin:0 auto;}
+#big-tag-cloud-box {width:600px;margin:0 auto;float:none;}
+ul#tag-cloud-list {list-style:none;padding:5px;margin:0;}
+ul#tag-cloud-list li {margin:0;display:inline;list-style-type:none;}
+#tag-search-box {text-align:center;margin:10px auto;}
+#tag-search-results-container {padding:0;width:100%;}
+#tag-search-results {padding:0;margin: 15px 20% 0 20%;float:left;width:60%;display:block;}
+#tag-search-results li {width:30%;float:left;padding-left:1%;text-align:left;line-height:20px;padding-right:1%;list-style:none;}
+span.flagged-tag,
+span.flagged-tag a {color:#FF0000;}
+table#tag-management-list {text-align:left;width:100%;}
+table#tag-management-list td,
+table#tag-management-list th {vertical-align: middle;text-align: left;padding: 4px;}
+.tag-management-form {text-align:center;}
+#relatedtags-autocomplete-container {margin-left:auto;margin-right:auto;min-height:4.6em;width:100%;}
+#relatedtags-autocomplete {position:relative;display:block;width:60%;margin-left:auto;margin-right:auto;}
+#relatedtags-autocomplete .yui-ac-content {position:absolute;width:420px;left:20%;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
+#relatedtags-autocomplete .ysearchquery {position:absolute;right:10px;color:#808080;z-index:10;}
+#relatedtags-autocomplete .yui-ac-shadow {position:absolute;margin:.3em;width:100%;background:#a0a0a0;z-index:9049;}
+#relatedtags-autocomplete ul {padding:0;width:100%;margin:0;list-style-type:none;}
+#relatedtags-autocomplete li {padding:0 5px;cursor:default;white-space:nowrap;}
+#relatedtags-autocomplete li.yui-ac-highlight{background:#FFFFCC;}
+h2.tag-heading,
+div#tag-description,
+div#tag-blogs,
+body.tag .managelink {padding: 5px;}
+.tag_cloud .s20 {font-size: 1.5em;font-weight: bold;}
+.tag_cloud .s19 {font-size: 1.5em;}
+.tag_cloud .s18 {font-size: 1.4em;font-weight: bold;}
+.tag_cloud .s17 {font-size: 1.4em;}
+.tag_cloud .s16 {font-size: 1.3em;font-weight: bold;}
+.tag_cloud .s15 {font-size: 1.3em;}
+.tag_cloud .s14 {font-size: 1.2em;font-weight: bold;}
+.tag_cloud .s13 {font-size: 1.2em;}
+.tag_cloud .s12,
+.tag_cloud .s11 {font-size: 1.1em;font-weight: bold;}
+.tag_cloud .s10,
+.tag_cloud .s9 {font-size: 1.1em;}
+.tag_cloud .s8,
+.tag_cloud .s7 {font-size: 1em;font-weight: bold;}
+.tag_cloud .s6,
+.tag_cloud .s5 {font-size: 1em;}
+.tag_cloud .s4,
+.tag_cloud .s3 {font-size: 0.9em;font-weight: bold;}
+.tag_cloud .s2,
+.tag_cloud .s1 {font-size: 0.9em;}
+.tag_cloud .s0 {font-size: 0.8em;}
+
+/**
+ * File picker
+ * Copyright (c) 2006 Yahoo! Inc. All rights reserved.
+ * copy from yui/examples/treeview/assets/css/folders/tree.css
+ * first or middle sibling, no children
+ */
+/* first or middle sibling, no children */
+.file-picker .ygtvtn {background: url(../pix/y/tn.gif) 0 0 no-repeat;width:17px;height:22px;}
+/* first or middle sibling, collapsable */
+.file-picker .ygtvtm {background: url(../pix/y/tm.gif) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+/* first or middle sibling, collapsable, hover */
+.file-picker .ygtvtmh {background: url(../pix/y/tmh.gif) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+/* first or middle sibling, expandable */
+.file-picker .ygtvtp {background: url(../pix/y/tp.gif) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+/* first or middle sibling, expandable, hover */
+.file-picker .ygtvtph {background: url(../pix/y/tph.gif) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+/* last sibling, no children */
+.file-picker .ygtvln {background: url(../pix/y/ln.gif) 0 0 no-repeat;width:17px;height:22px;}
+/* Last sibling, collapsable */
+.file-picker .ygtvlm {background: url(../pix/y/lm.gif) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+/* Last sibling, collapsable, hover */
+.file-picker .ygtvlmh {background: url(../pix/y/lmh.gif) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+/* Last sibling, expandable */
+.file-picker .ygtvlp {background: url(../pix/y/lp.gif) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+/* Last sibling, expandable, hover */
+.file-picker .ygtvlph {background: url(../pix/y/lph.gif) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+/* Loading icon */
+.file-picker .ygtvloading {background: url(../pix/y/loading.gif) 0 0 no-repeat;width:16px;height:22px;}
+/* the style for the empty cells that are used for rendering the depth* of the node */
+.file-picker .ygtvdepthcell {background: url(../pix/y/vline.gif) 0 0 no-repeat;width:17px;height:22px;}
+.file-picker .ygtvblankdepthcell {width:17px;height:22px;}
+/* the style of the div around each node */
+.file-picker .ygtvitem  table{margin-bottom:0;}
+.file-picker .ygtvitem  td {border:none;padding:0;}
+/* the style of the div around each node's collection of children */
+* html .file-picker .ygtvchildren {height:1%;}
+/* the style of the text label in ygTextNode */
+.file-picker .ygtvlabel,
+.file-picker .ygtvlabel:link,
+.file-picker .ygtvlabel:visited,
+.file-picker .ygtvlabel:hover {margin-left:2px;text-decoration: none;}
+.file-picker {font-size:12px;}
+.file-picker strong {background:#FFFFCC;}
+.file-picker a {color: #336699;}
+.file-picker a:hover {background:#003366;color:white;}
+.file-picker .fp-panel {padding:0;margin:0;text-align:left;}
+.file-picker .fp-login-form {text-align:center;}
+.file-picker .fp-searchbar {float:right;}
+.file-picker .fp-viewbar {width:300px;float:left;}
+.file-picker .fp-toolbar {padding: .8em;background: #FFFFCC;text-align:center;margin: 3px;}
+.file-picker .fp-toolbar a {padding: 0 .5em;}
+.file-picker .fp-list {list-style-type:none;padding:0;float:left;width:100%;margin:0;}
+.file-picker .fp-list li {border-bottom:1px dotted gray;margin-bottom: 1em;}
+.file-picker .fp-repo-name {display:block;padding: .5em;margin-bottom: .5em;}
+.file-picker .fp-pathbar {margin: .4em;border-bottom: 1px dotted gray;}
+.file-picker .fp-pathbar a {padding: .4em;}
+.file-picker .fp-rename-form {text-align:center;}
+.file-picker .fp-rename-form p {margin: 1em;}
+.file-picker .fp-upload-form {margin: 2em 0;text-align:center;}
+.file-picker .fp-upload-btn {clear:both;margin-top: 2em;}
+.file-picker .fp-upload-btn a {cursor: default;background: white;border:1px solid gray;color:black;padding: .5em;}
+.file-picker .fp-upload-btn a:hover {background: gray;color:white;}
+.file-picker .fp-paging {margin:1em .5em;clear:both;text-align:center;line-height: 2.5em;}
+.file-picker .fp-paging a {padding: .5em;border: 1px solid #CCC;}
+.file-picker .fp-paging a.cur_page {border: 1px solid blue;}
+.file-picker .fp-popup {text-align:center;}
+.file-picker .fp-grid {float:left;text-align:center;}
+.file-picker .fp-grid div {overflow: hidden;}
+.file-picker .fp-grid p {margin:0;padding:0;background: #FFFFCC;}
+.file-picker .fp-grid .label {height:48px;text-align:center;}
+.file-picker .fp-grid span {color:gray;}
+.file-picker .fp-error {padding: 2em 0;margin: 3em 5px;text-align:center;background: #FFBBBB;}
+.file-picker .fp-msg {padding: 2em 0;margin: 3em 5px;text-align:center;background: green;}
+/* file picker search dialog */
+.file-picker div.bd {text-align:left;}
+
+/**
+ * File Manager
+ */
+.filemanager-toolbar {margin: 5px 0;}
+.filemanager-toolbar a:link,
+.filemanager-toolbar a:visited {border: 1px solid gray;background: #ccc;color: black;padding: 3px;}
+.filemanager-toolbar a:hover {background: white;text-decoration: none;}
+.fm-breadcrumb {margin:0;}
+.filemanager-container {padding: 5px;margin: 6px 0;}
+.filemanager-container ul{margin:0;padding:0;list-style-type:none;}
+.filemanager-container li{clear:both;}
+#fm-move-div {margin: 6px;}
+#fm-move-div strong{color:red;}
+.fm-file-menu {width:18px;height:18px;float:left;}
+.fm-file-menu img {width: 16px;}
+.fm-file-name {float:left;}
+.fm-file-entry{border: 1px solid red;}
+.fm-operation {font-weight: bold;}
+
+/**
+ * Backup and restore
+ */
+.backup-form-instances,
+.restore-form-instances {margin:0 20px;}
+
+/**
+ * Web Service
+ */
+#webservice-doc-generator td {text-align: left;border: 0px solid black;}

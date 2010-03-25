@@ -1,0 +1,31 @@
+/** Message **/
+.message-discussion-noframes h1 {font-size:1em;}
+.message-discussion-noframes #userinfo .commands {font-size:0.8em;}
+
+.message .noframesjslink {font-size:0.8em;}
+.message .link {font-size:0.8em;}
+.message_form {font-size:0.8em;}
+.message .heading {font-size:1.0em;font-weight:bold;}
+.message .date,
+.message .contact,
+.message .summary {font-size:0.9em;}
+.message .note,
+.message .pix {font-size:0.8em;}
+.message .author {font-weight: bold;font-size:0.8em;}
+.message .time {font-style: italic;font-size:0.8em;}
+.message .content {font-size:0.8em;}
+
+#page-message-user .commands span {font-size:0.7em;}
+#page-message-user .name {font-weight: bold;font-size:1.1em;}
+table.message_search_results td {border-color:#DDDDDD;}
+
+.message .time {color: #999999;}
+.message.me .author {color: #999999;}
+.message.other .author {color: #8888CC;}
+
+#page-message-messages {padding:10px;}
+#page-message-send .notifysuccess {padding:1px;}
+#page-message-send td.fixeditor {text-align:center;}
+
+.message .note {padding:10px;}
+table.message .searchresults td {padding:5px;}

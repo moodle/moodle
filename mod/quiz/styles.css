@@ -1,0 +1,338 @@
+#page-mod-quiz-comment #manualgradingform,
+#page-mod-quiz-report #manualgradingform {width: 100%;}
+
+/** Mixed **/
+#page-mod-quiz-attempt .submitbtns,
+#page-mod-quiz-review .submitbtns,
+#page-mod-quiz-summary .submitbtns {text-align: left;margin-top: 1.5em;}
+
+#page-mod-quiz-attempt #page .controls,
+#page-mod-quiz-summary #page .controls,
+#page-mod-quiz-review #page .controls {text-align: center;margin: 8px auto;}
+
+#page-mod-quiz-edit div.question div.content .questiontext,
+#categoryquestions .questiontext {-o-text-overflow:ellipsis;text-overflow:ellipsis;position:relative;zoom:1;padding-left:0.3em;max-width:40%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+
+#page-mod-quiz-edit div.question div.content .questionname,
+#categoryquestions .questionname {white-space:nowrap;overflow:hidden;zoom:1;position:relative;max-width:20%;}
+
+#page-mod-quiz-edit div.editq div.question div.content .singlequestion a .questionname,
+div.editq div.question div.content .singlequestion a .questiontext{text-decoration:underline;}
+
+#page-mod-quiz-edit.ie6 div.question div.content .questiontext,
+#categoryquestions .questiontext {width:50%;}
+#page-mod-quiz-edit.ie6 div.question div.content .questionname,
+#categoryquestions .questionname {width:20%;}
+
+#page-mod-quiz-mod #reviewoptionshdr .fitem,
+#adminquizreviewoptions .group {float: left;width: 33%;clear: none;}
+
+#page-mod-quiz-mod #reviewoptionshdr .fitemtitle,
+#adminquizreviewoptions .fitemtitle {width: 100%;font-weight: bold;text-align: left;height: 2.5em;margin-left: 0;}
+
+#page-mod-quiz-mod #reviewoptionshdr fieldset.fgroup span,
+#adminquizreviewoptions span {float: left;clear: left;}
+
+table#categoryquestions td,
+#page-mod-quiz-edit table#categoryquestions th{overflow:hidden;white-space:nowrap;}
+
+/** mod quiz mod **/
+#page-mod-quiz-mod #reviewoptionshdr .fitem {width: 30%;margin-left: 10px;}
+#page-mod-quiz-mod #reviewoptionshdr fieldset.fgroup {width: 100%;text-align: left;margin-left: 0;}
+
+/** Mod quiz view **/
+#page-mod-quiz-view .quizinfo,
+#page-mod-quiz-view #page .quizgradefeedback,
+#page-mod-quiz-view #page .quizattempt {text-align: center;}
+#page-mod-quiz-view #page .quizattemptsummary td p {margin-top: 0;}
+#page-mod-quiz-view .generalbox#feedback {width:70%;margin-left:auto;margin-right:auto;padding-bottom:15px;}
+#page-mod-quiz-view .generalbox#feedback h2 {margin: 0;}
+#page-mod-quiz-view .generalbox#feedback h3 {text-align: left;}
+#page-mod-quiz-view .generalbox#feedback .overriddennotice {text-align: center;font-size: 0.7em;}
+
+/** Mod quiz summary **/
+#page-mod-quiz-summary #content {text-align: center;}
+#page-mod-quiz-summary .questionflag {width: 16px;height: 16px;vertical-align: middle;}
+#page-mod-quiz-summary #quiz-timer {margin-top: 1em;display: none; /* Revealed by JavaScript if applicable */}
+
+/** Mod quiz review **/
+#page-mod-quiz-review .pagingbar {margin: 1.5em auto;}
+
+/** Mod quiz report **/
+#page-mod-quiz-report h2.main {clear: both;}
+#page-mod-quiz-report div#commands,
+#page-mod-quiz-report .controls {text-align: center;}
+#page-mod-quiz-report .dubious{background-color: #fcc;}
+#page-mod-quiz-report .highlight{border :medium solid yellow;background-color:lightYellow;}
+#page-mod-quiz-report .negcovar{border :medium solid pink;}
+#page-mod-quiz-report #manualgradingform .que {margin-bottom: 0.7em;}
+#page-mod-quiz-report table.titlesleft td.c0{font-weight: bold;}
+#page-mod-quiz-report table .numcol {text-align: center;vertical-align : middle !important;}
+#page-mod-quiz-report table#attempts {clear: both;width: 80%;margin: 20px auto;}
+#page-mod-quiz-report table#attempts .header,
+#page-mod-quiz-report table#attempts .cell{padding: 4px;}
+#page-mod-quiz-report table#attempts .header .commands {display: inline;}
+#page-mod-quiz-report table#attempts .picture {width: 40px;}
+#page-mod-quiz-report table#attempts td {border-left-width: 1px;border-right-width: 1px;border-left-style: solid;border-right-style: solid;vertical-align: middle;}
+#page-mod-quiz-report table#attempts .header {text-align: left;}
+#page-mod-quiz-report table#attempts .picture {text-align: center !important;}
+#page-mod-quiz-report table#itemanalysis {width: 80%;margin: 20px auto;}
+#page-mod-quiz-report table#itemanalysis td {border-width: 1px;border-style: solid;}
+#page-mod-quiz-report table#itemanalysis .header {text-align: left;padding: 4px;}
+#page-mod-quiz-report table#itemanalysis .header .commands {display: inline;}
+#page-mod-quiz-report table#itemanalysis .uncorrect {color: red;}
+#page-mod-quiz-report table#itemanalysis .correct {color: blue;font-weight : bold;}
+#page-mod-quiz-report table#itemanalysis .partialcorrect {color: green !important;}
+#page-mod-quiz-report table#itemanalysis .cell{padding: 4px;}
+#page-mod-quiz-report table#itemanalysis .qname {color: green !important;}
+
+/** Mod quiz grading **/
+#page-mod-quiz-grading table#grading {width: 80%;margin: 20px auto;}
+#page-mod-quiz-grading table#grading .header,
+#page-mod-quiz-grading table#grading .cell {padding: 4px;}
+#page-mod-quiz-grading table#grading .header .commands{display: inline;}
+#page-mod-quiz-grading table#grading .picture{width: 40px;}
+#page-mod-quiz-grading table#grading td {border-left-width: 1px;border-right-width: 1px;border-left-style: solid;border-right-style: solid;vertical-align: bottom;}
+
+/** Mod quiz attempt **/
+#page-mod-quiz-attempt #quiz-timer {display: none; /* Revealed by JavaScript if applicable */}
+#page-mod-quiz-attempt #quiz-time-left {font-weight: bold;}
+#page-mod-quiz-attempt #quiz-timer-outer {border-color: #dddddd;background: white;}
+
+#categoryquestions .r1 {background: #e4e4e4;}
+#categoryquestions .header {text-align: center;padding: 0 2px;border: 0 none;}
+#categoryquestions th.modifiername .sorters,
+#categoryquestions th.creatorname .sorters {font-weight: normal;font-size: 0.8em;}
+table#categoryquestions {width: 100%;overflow: hidden;table-layout: fixed;}
+#categoryquestions .iconcol {width: 15px;text-align: center;padding: 0;}
+#categoryquestions .checkbox {width: 19px;text-align: center;padding: 0;}
+#categoryquestions .qtype {text-align: center;}
+#categoryquestions .qtype {width: 24px;padding: 0;}
+#categoryquestions .questiontext p {margin: 0;}
+
+table.quizattemptsummary .bestrow td {background-color: #e8e8e8;}
+table.quizattemptsummary .noreviewmessage {color: gray;}
+
+table.quizreviewsummary {width: 100%;}
+table.quizreviewsummary th.cell {padding: 1px 0.5em 1px 1em;font-weight: bold;text-align: right;width: 10em;background: #f0f0f0;}
+table.quizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: left;background: #fafafa;}
+
+#quiznavigation #user-picture {margin: 0.5em 0;}
+#quiznavigation #user-picture img {width: auto;height: auto;float: left;}
+#quiznavigation .othernav {clear: both;}
+#quiznavigation .othernav a,
+#quiznavigation .othernav input {display: block;margin: 0.5em 0;}
+#quiznavigation .qnbutton {display: block;float: left;width: 1.5em;height: 1.5em;overflow: hidden;margin: 0.3em 0.3em 0.3em 0;padding: 0;border: 1px solid #bbb;background: #eee no-repeat top right;text-align: center;vertical-align: middle;cursor: pointer;white-space: normal;font: inherit;line-height: 1.5em;font-weight: bold;color: #00f;border-color: #bbb;background-color: #ddd;}
+#quiznavigation .qnbutton:hover {text-decoration: underline;color: #f00;}
+#quiznavigation .qnbutton.flagged {background-image: url([[pix:i/ne_red_mark]]);}
+#quiznavigation .qnbutton.thispage {border-color: black;}
+#quiznavigation .qnbutton.open {background-color: white;}
+#quiznavigation .qnbutton.correct {background-color: #cfc;}
+#quiznavigation .qnbutton.partiallycorrect {background-color: #ffa;}
+#quiznavigation .qnbutton.incorrect {background-color: #fcc;}
+
+#quiznojswarning {color: red;}
+#quiznojswarning {font-size: 0.7em;line-height: 1.1;}
+.jsenabled #quiznojswarning {display: none;}
+
+body #quizcontentsblock #repaginatedialog{display: none;}
+body.jsenabled #quizcontentsblock #repaginatedialog{display: block;}
+body.jsenabled #quizcontentsblock #repaginatedialog .hd{display:block;}
+body.jsenabled #quizcontentsblock #repaginatedialog .bd{padding:1em;}
+body.jsenabled #quizcontentsblock  .repaginatecommand #repaginatecommand{display:block;}
+
+body#question-preview .quemodname,
+body#question-preview .controls{text-align: center;}
+
+.quizattemptcounts {clear : left;text-align: center;margin: 6px 0;}
+.generalbox#passwordbox { /* Should probably match .generalbox#intro above */width:70%;margin-left:auto;margin-right:auto;}
+#passwordform {margin: 1em 0;}
+
+.questionbankwindow .choosecategory,
+.questionbankwindow .createnewquestion {padding: 0.3em;}
+.questionbankwindow .createnewquestion .singlebutton {display: inline;}
+.questionbankwindow #catmenu_jump {display: block;}
+.questionbank div.categoryquestionscontainer,
+.questionbank .categorysortopotionscontainer,
+.questionbank .categorypagingbarcontainer,
+.questionbank .categoryselectallcontainer{padding-left:0.3em;padding-right:0.3em;}
+
+.noquestionsincategory{clear:both;padding-top:1em;padding-bottom:1em;}
+.modulespecificbuttonscontainer{padding-left:0.3em;padding-right:0.3em;}
+
+#adminquizreviewoptions {margin-bottom: 0.5em;}
+.quizquestionlistcontrols {text-align: center;}
+
+#randomquestiondialog_c select{width:100%;}
+
+.categoryinfo {padding: 0.3em;}
+
+.path-mod-quiz .gradingdetails {font-size: small;}
+.path-mod-quiz .highlightgraded {background:yellow;}
+.path-mod-quiz div.tabtree a span img.iconsmall {vertical-align: baseline;}
+.ie6.path-mod-quiz div.tabtree a span img.iconsmall {margin: 0;vertical-align: baseline;position: relative;top: 1px;}
+.ie7.path-mod-quiz div.tabtree a span img.iconsmall {margin: 0;vertical-align: baseline;position: relative;top: 2px;}
+
+/** Mod quiz edit **/
+#page-mod-quiz-edit h2.main{display:inline;padding-right:1em;clear:left;}
+
+#page-mod-quiz-edit div.sideblock {float:right;width:30%;right:0.3em;padding-bottom:0.5em;display:block;border-width:0;}
+#page-mod-quiz-edit div.sideblock .content {padding:0;}
+#page-mod-quiz-edit div.quizcontents {float:left;width:70%;display:block;clear:left;}
+#page-mod-quiz-edit div.quizwhenbankcollapsed {width:100%;}
+#page-mod-quiz-edit div.quizpage {display:block;clear:both;width:100%;}
+#page-mod-quiz-edit div.quizpage span.pagetitle {margin-top:0.3em;float:left;display:block;color:#006;}
+#page-mod-quiz-edit div.quizpage .pagecontent {margin-top:0.3em;display:block;float:left;position:relative;margin-left:0.3em;margin-bottom:0.2em;border-left:solid #777 thin;line-height:1.3em;-webkit-border-radius:0.6em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.6em;border-radius-bottomleft:0;border-radius-topleft:0;width:88%;padding:0.15em 0 0.3em;background-color:#d6d6d6;}
+#page-mod-quiz-edit div.quizpage .pagecontent .pagestatus {-webkit-border-radius-bottomright:0.3em;-webkit-border-radius-topright:0.3em;border-radius-bottomright:0.3em;border-radius-topright:0.3em;margin:0.3em;padding:0.1em 0.1em 0.1em 0.3em;background-color:#eee;font-weight:bold;}
+#page-mod-quiz-edit div.quizpage .pagecontent form#addquestion{background-color:#fff;}
+#page-mod-quiz-edit div.quizpage .pagecontent form.randomquestionform div {/* it is a mystery why this has to be inline-table but otherwise the layout gets screwed, even if it is "inline" */display: inline-table;}
+#page-mod-quiz-edit div.quizpage .pagecontent form.randomquestionform div input {display: inline;}
+
+#page-mod-quiz-edit .addpage{clear:both;padding-top:0.3em;float:right;margin-right:2em;}
+#page-mod-quiz-edit .statusdisplay {background-color: #ffc;clear: both;margin: 0.3em 1em 0.3em 0;padding: 1px ; /* Stop margin collapse. */}
+#page-mod-quiz-edit .statusdisplay p {margin: 0.4em;}
+
+#page-mod-quiz-edit div.reorder .reordercontrols{clear:both;padding-right:1em;margin-top:0.5em;padding-top:0.5em;padding-bottom:0.5em}
+#page-mod-quiz-edit div.reorder .reordercontrols .moveselectedonpage{clear:right;float:right;padding:0.5em 0.3em;text-align:right;}
+#page-mod-quiz-edit div.reorder .reordercontrols .addnewpagesafterselected,
+#page-mod-quiz-edit .repaginatecommand {float:right;clear:right;padding-right:1em;}
+#page-mod-quiz-edit div.reorder .reordercontrols .deleteselected{float:right;margin-right:1em;}
+#page-mod-quiz-edit div.reorder div.question{padding-top:0.2em;}
+#page-mod-quiz-edit div.reorder div.question div.qnum {width:2.9em;padding-top:0.1em;}
+#page-mod-quiz-edit .reorder div.question div.content {width:87%;float:left;position:relative;-webkit-border-radius:0.3em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.3em;border-radius-bottomleft:0;border-radius-topleft:0;line-height:1.2em;padding:0.1em;background-color:#F9F9F9;}
+#page-mod-quiz-edit .reorder .questioncontentcontainer .quiz_randomquestion {position:relative;}
+#page-mod-quiz-edit .reorder div.question div.content div.quiz_randomquestion {line-height:1em;}
+
+#page-mod-quiz-edit .reorder .questioncontentcontainer {position:relative;overflow:hidden;white-space:nowrap;}
+#page-mod-quiz-edit .reorder .questioncontentcontainer .randomquestioncategory {overflow:hidden;white-space:nowrap;display:inline;float:none;}
+#page-mod-quiz-edit .reorder .questioncontentcontainer .randomquestioncategory label {max-width: 25%;overflow:hidden;padding-left:0.3em;white-space:nowrap;display:inline-block;}
+#page-mod-quiz-edit .reorder .questioncontentcontainer .randomquestionfromcategory label {overflow:hidden;white-space:nowrap;display:inline-block;}
+#page-mod-quiz-edit .reorder .questioncontentcontainer .randomquestionfromcategory,
+#page-mod-quiz-edit .reorder div.question div.content .questionpreview {display:inline;float:none;}
+
+#page-mod-quiz-edit .reorder fieldset{display:inline;}
+#page-mod-quiz-edit div.reorder div.question div.qnum{text-align:right;font-size:1em;}
+
+#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist {padding-left:0.2em;padding-right:0.2em;clear:both;margin:0.5em;margin-top:0.8em;}
+#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist .totalquestionsinrandomqcategory{overflow:auto;white-space:normal;}
+#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist ul{list-style-type:none;margin:0;padding:0;}
+#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist ul li {clear:left;width:100%;overflow:hidden;white-space:nowrap;}
+#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist ul li img{padding-right:0.3em;}
+#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist ul li span{display:inline;}
+#page-mod-quiz-edit .questioncontentcontainer a {text-decoration:underline;}
+#page-mod-quiz-edit .questioncontentcontainer div.singlequestion a{text-decoration:underline;}
+#page-mod-quiz-edit .questioncontentcontainer .randomquestioncategory{font-weight:bold;}
+
+#page-mod-quiz-edit div.question {clear:left;width:100%;}
+#page-mod-quiz-edit div.question div.qnum {display:block;float:left;width:1.4em;padding-right:0.3em;padding-left:0;z-index:99;text-align:right;color:#333;}
+#page-mod-quiz-edit div.question div.questioncontainer{background-color:#ffc;}
+#page-mod-quiz-edit div.editq div.question div.content{width:87%;float:left;position:relative;-webkit-border-radius:0.6em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.6em;border-radius-bottomleft:0;border-radius-topleft:0;line-height:1.4em;padding:0.5em;}
+#page-mod-quiz-edit div.question div.content div.points{top:0.5em;border-left:#FFF solid 0.4em;width:8.5em;padding:0.2em;line-height:1em;max-width:30%;position:absolute;right:50px;-webkit-border-radius:0.2em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.2em;border-radius-bottomleft:0;border-radius-topleft:0;z-index:900;display:block;margin:0;background-color:#ddf;}
+#page-mod-quiz-edit div.question div.content div.points input{width:2em;padding:0;}
+#page-mod-quiz-edit div.question div.content div.points input.pointssubmitbutton{width:auto;}
+#page-mod-quiz-edit div.question div.content div.qorder {line-height:1em;max-width:30%;position:absolute;right:50px;-webkit-border-radius:0.2em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.2em;border-radius-bottomleft:0;border-radius-topleft:0;z-index:900;display:block;margin:0;background-color:#ddf;}
+#page-mod-quiz-edit div.question div.content .editicon {width:15px;}
+#page-mod-quiz-edit div.question div.content .singlequestion .questionname,
+#page-mod-quiz-edit div.question div.content .singlequestion .questiontext{display:inline-block;}
+#page-mod-quiz-edit div.question div.content .singlequestion .questionpreview{background-color:#eee;}
+#page-mod-quiz-edit div.question div.content .questiontype{display:block;clear:left;float:left;}
+#page-mod-quiz-edit div.question div.content .questionpreview {display:block;float:left;margin-left:0.3em;padding-left:0.2em;padding-right:0.2em;}
+#page-mod-quiz-edit div.question div.content .questionpreview a{background-color:#eee;}
+#page-mod-quiz-edit div.question div.content div.quiz_randomquestion .questionpreview{display:inline;float:none;}
+#page-mod-quiz-edit div.question div.content div.questioncontrols{float:right;width:45px;position:absolute;right:0.3em;top:0;z-index:900;display:block;padding:0.2em;background-color:#F9F9F9;text-align:right;}
+#page-mod-quiz-edit div.question div.content div.questioncontrols img.upwithoutdown{padding-right:12px;display:inline;}
+#page-mod-quiz-edit div.question div.content .questiontext {font-weight:bold;}
+#page-mod-quiz-edit div.question div.content .questiontype{font-style:italic;}
+
+#page-mod-quiz-edit .editq div.question div.qnum {padding-top:0.2em;}
+#page-mod-quiz-edit .editq div.question {padding-top:0.3em;}
+#page-mod-quiz-edit .editq div.questioncontentcontainer  div.singlequestion img {float:left;padding-top:0.3em;padding-right:0.3em;}
+#page-mod-quiz-edit .editq div.question div.content {background-color:#F9F9F9;}
+#page-mod-quiz-edit .editq div.question div.content .randomquestioncategory{margin-top:0.4em;position:relative;display:inline-block;}
+#page-mod-quiz-edit .editq div.question div.content .randomquestioncategory a{display:block;max-width:15em;overflow: hidden;text-overflow:ellipsis;-o-text-overflow:ellipsis;white-space: nowrap;float:left;position:relative;}
+#page-mod-quiz-edit .editq div.question div.content .questionpreview {float:left;}
+#page-mod-quiz-edit .editq div.question div.content .questionpreview a{font-weight:normal;margin-left:0em;display:inline;float:none;}
+#page-mod-quiz-edit .editq div.question div.content .randomquestioncategory .questionpreview img{padding-right:0.3em;}
+#page-mod-quiz-edit .editq div.question div.content .singlequestion a .questionname,
+#page-mod-quiz-edit .editq div.question div.content .singlequestion a .questiontext{float:left;}
+#page-mod-quiz-edit .editq div.question div.description div.content .questiontext {max-width: 75%;}
+#page-mod-quiz-edit .editq div.question div.qnum{font-size:1.5em;}
+
+#page-mod-quiz-edit .questionbankwindow select#catmenu_jump{
+/* In Opera9, IE6 the width of the
+select obeys the width of its content
+by default. This prevents that. */width:100%;}
+
+/*this color might need to be theme-specific,
+but in terms of usability, as testing showed,
+http://docs.moodle.org/en/Development:Quiz_UI_redesign/usability_testing_of_August_2008/Issues#Question_bank_.2F_question_adding_controls_visibility
+it must be ensured that the question
+bank window's title is prominent enough*/
+#page-mod-quiz-edit .questionbankwindow div.header {background-color:#009;color:#fff;background-image:none;padding-top:0.2em;font-weight:bold;}
+#page-mod-quiz-edit .questionbankwindow div.header a{text-decoration:underline;color:#FFF;}
+#page-mod-quiz-edit .collapsed .container{display: none;}
+#page-mod-quiz-edit .questionbankwindow #showbankcmd{display:none;}
+#page-mod-quiz-edit .collapsed #showbankcmd{display:inline;}
+#page-mod-quiz-edit .questionbankwindow #hidebankcmd{display:inline;}
+#page-mod-quiz-edit .collapsed #hidebankcmd{display:none;}
+
+#page-mod-quiz-edit .quizquestionlistcontrols {display:inline;}
+
+#page-mod-quiz-edit .quizpagedelete{position:absolute;top:0.2em;right:0.2em;display:inline;z-index:900;}
+#page-mod-quiz-edit .quizpagedelete img {background-color:#d6d6d6;padding:0.6em;}
+#page-mod-quiz-edit .pagecontrols {clear:both;margin-left:0.5em;padding-top:0.5em;}
+#page-mod-quiz-edit .pagecontrols .singlebutton {float:left;margin-left: 1em;}
+#page-mod-quiz-edit .pagecontrols .helplink {float:left;}
+
+#page-mod-quiz-edit div#randomquestiondialog_c{width:90%;}
+#page-mod-quiz-edit div#randomquestiondialog_c .mform,
+#page-mod-quiz-edit div#repaginatedialog .mform{margin-left:auto;margin-right:auto;}
+#page-mod-quiz-edit div.container div.generalbox{position:relative;display:block;border:0 none;margin:0;padding:0;}
+
+#page-mod-quiz-edit .questionbankwindow .createnewquestion select,
+#page-mod-quiz-edit .questionbankwindow #catmenu select,
+#page-mod-quiz-edit .questionbankwindow #menucategory {width: 100%;}
+
+#page-mod-quiz-edit .paging {margin-top:0;margin-bottom:0;display:block;background-color:#ddd;}
+#page-mod-quiz-edit .pagingbottom {padding-bottom:0.3em;}
+#page-mod-quiz-edit .paging a:hover{background-color:#eef;}
+
+#page-mod-quiz-edit #page-footer {clear:both;padding-top:1em;}
+
+.ie6#page-mod-quiz-edit div.question div.content .questiontext,
+.ie6#page-mod-quiz-edit #categoryquestions .questionname{/*ie6 shows this as an arrow if this is not specified*/cursor: pointer;}
+.ie6#page-mod-quiz-edit div.question div.content .questionname,
+.ie6#page-mod-quiz-edit #categoryquestions .questiontext{/*ie6 shows this as an arrow if this is not specified*/cursor: pointer;}
+.ie6#page-mod-quiz-edit .reorder .questioncontentcontainer .randomquestioncategory label{width: 35%;}
+.ie6#page-mod-quiz-edit .editq div.question div.content .randomquestioncategory a{width:40%;}
+
+#page-mod-quiz-edit #categoryquestions .questiontext {font-weight:bold;}
+#page-mod-quiz-edit .categoryinfofield{font-style:italic;}
+#page-mod-quiz-edit .categorynamefield{font-weight:bold;}
+#page-mod-quiz-edit a.configurerandomquestion{font-size:small;text-decoration:underline;}
+#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist{background-color:#eee;}
+#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist ul{color:#555;}
+#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist .totalquestionsinrandomqcategory{color:#000;}
+#page-mod-quiz-edit .categoryinfo {background-color:#eee;border-bottom:1px solid #bbb;}
+#page-mod-quiz-edit .questionsortoptions {background-color:#ddd;}
+
+#page-mod-quiz-edit div.questionbank{background-color:#e6e6ff;}
+#page-mod-quiz-edit div.questionbank form .invisiblefieldset{clear:both;}
+#page-mod-quiz-edit div.questionbank .categorysortopotionscontainer{padding-top:0.5em;margin-top:0.3em;}
+#page-mod-quiz-edit div.questionbank .categoryquestionscontainer,
+.questionbank .categorysortopotionscontainer,
+.questionbank .categorypagingbarcontainer,
+.questionbank .categoryselectallcontainer{background-color:#FFF;}
+
+#categoryquestions .questiontext {width:50%;}
+#categoryquestions .questionname {width:20%;}
+
+.ie6#page-mod-quiz-edit div.question div.content .questiontext,
+.ie6#page-mod-quiz-edit #categoryquestions .questionname{/*ie6 shows this as an arrow if this is not specified*/cursor: pointer;}
+.ie6#page-mod-quiz-edit div.question div.content .questionname,
+.ie6#page-mod-quiz-edit #categoryquestions .questiontext{/*ie6 shows this as an arrow if this is not specified*/cursor: pointer;}
+.ie6.path-mod-quiz div.tabtree a span img.iconsmall {margin: 0;vertical-align: baseline;position: relative;top: 1px;}
+.ie6#page-mod-quiz-edit div.question div.content .questiontext {width:50%;}
+.ie6#page-mod-quiz-edit div.question div.content .questionname {width:20%;}
+.ie6#page-mod-quiz-edit .editq div.question div.content .randomquestioncategory a{width:40%;}
+.ie6#page-mod-quiz-edit .reorder .questioncontentcontainer .randomquestioncategory label{width: 35%;}

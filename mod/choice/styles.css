@@ -1,0 +1,10 @@
+.path-mod-choice .results {border-collapse: separate;}
+.path-mod-choice .results .data {vertical-align:top;white-space: nowrap;}
+.path-mod-choice .button {text-align:center;}
+.path-mod-choice .attemptcell {width:5px;white-space: nowrap;}
+.path-mod-choice .anonymous,
+.path-mod-choice .names {margin-left:auto;margin-right:auto;}
+.path-mod-choice .downloadreport {border-width:0;margin-left:auto;margin-right:auto;}
+.path-mod-choice .choiceresponse {width:100%;}
+.path-mod-choice .choiceresponse .picture {width:10px;white-space: nowrap;}
+.path-mod-choice .choiceresponse .fullname {width:100%;white-space: nowrap;}

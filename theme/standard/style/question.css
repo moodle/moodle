@@ -1,0 +1,31 @@
+/** Question **/
+
+.que {border-color: #DDD;}
+.que .correct {background-color: #afa;}
+.que .info h2 {font-size: 1.25em;font-weight: bold;}
+.que .grade {font-size: 0.8em;}
+.que .feedback {border-color: #DDD;}
+.que .history {font-size:75%;}
+.que .incorrect {background-color: #faa;}
+.que.multianswer .incorrect {background-color: #faa;}
+.que .partiallycorrect {background-color: #ff9;}
+.que .r0 {background-color: #F5F5F5;}
+.que .r1 {background-color: #EEE;}
+
+#chooseqtype .qtypename {font-weight: bold;}
+
+#qtypechoicecontainer #chooseqtype .qtypename {font-weight: normal;}
+#qtypechoicecontainer #chooseqtype .qtypes {border-bottom-color: gray;}
+#qtypechoicecontainer #chooseqtype .selected {background: #dddddd;}
+#qtypechoicecontainer #chooseqtype .instruction,
+#qtypechoicecontainer #chooseqtype .qtypesummary {border-left-color: gray;background-color: white;}
+
+
+.calculated .answer,
+.numerical .answer,
+.shortanswer .answer {background-color: #EEE;}
+
+.essay .answerreview {background-color: #EEE;}
+
+
+

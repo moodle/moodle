@@ -1,0 +1,22 @@
+/** JavaScript state rules **/
+.jsenabled .block_settings_navigation_tree.dock_on_load,
+.block_settings_navigation_tree .block_tree_box .requiresjs {display:none;}
+.jsenabled .block_settings_navigation_tree .block_tree_box .requiresjs {display:inline;}
+
+/** General display rules **/
+.block_settings_navigation_tree .block_tree {margin:5px;padding-left:0px;overflow-x:auto;overflow-y:visible;}
+.block_settings_navigation_tree .block_tree li {margin:0;list-style: none;}
+.block_settings_navigation_tree .block_tree li ul {padding-left:16px;margin:0;}
+.block_settings_navigation_tree .block_tree .tree_item {white-space:nowrap;margin:2px 0px;padding-left: 16px;margin:3px 0px;white-space:nowrap;text-align:left;}
+.block_settings_navigation_tree .block_tree .tree_item.branch {background-image: url([[pix:t/expanded]]);background-position: center left;background-repeat: no-repeat;}
+.block_settings_navigation_tree .block_tree .root_node.leaf {padding-left:0px;}
+.block_settings_navigation_tree .block_tree .current_branch {font-weight:bold;}
+.jsenabled .block_settings_navigation_tree .block_tree .tree_item.branch {cursor:pointer;}
+.jsenabled .block_settings_navigation_tree .block_tree .tree_item.emptybranch {background-image: url([[pix:t/collapsed_empty]]);background-position: center left;background-repeat: no-repeat;}
+.jsenabled .block_settings_navigation_tree .block_tree .collapsed ul {display: none;}
+.jsenabled .block_settings_navigation_tree .block_tree .collapsed .tree_item.branch {background-image: url([[pix:t/collapsed]]);}
+
+/** Internet explorer specific rules **/
+.ie6 .block_settings_navigation_tree .block_tree,
+.ie7 .block_settings_navigation_tree .block_tree {overflow-x:scroll;}
+.ie6 .block_settings_navigation_tree .block_tree .tree_item {width:100%;}

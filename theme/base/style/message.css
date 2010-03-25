@@ -1,0 +1,32 @@
+/* Message */
+.message .messagejsmanualrefresh,
+.jsenabled .messagejsautorefresh {display:block;}
+
+.message .messagejsautorefresh,
+.jsenabled .messagejsmanualrefresh {display:none;}
+
+#page-message-user .userpicture,
+#page-message-history .userpicture {width: 100px;height: 100px;}
+
+.message .summary .link {text-align:right;}
+.message .heading,
+.message .note {text-align:center;}
+.message .noframesjslink {margin-top:20px;}
+.message .link {vertical-align:middle;}
+.message .searchresults td {border-width:1px;border-style:solid;border-collapse:collapse;border-spacing:0px;}
+
+.message-discussion-noframes #userinfo .userpicture {float:left;}
+.message-discussion-noframes #userinfo .name {text-align:center;margin-left:60px;}
+.message-discussion-noframes #send h1,
+.message-discussion-noframes #userinfo .name h1 {margin:0;}
+.message-discussion-noframes #userinfo .commands {text-align:left;margin-left:60px;}
+.message-discussion-noframes #userinfo .commands ul {margin:0;padding:0;list-style-type:none;}
+.message-discussion-noframes #userinfo .commands ul li {display:inline;padding-right:16px;}
+.message-discussion-noframes #send {padding-top:10px;clear:both;}
+.message-discussion-noframes #messages {padding-top:10px;}
+.message-discussion-noframes #messages ul.messagelist {margin:0;padding:0;}
+
+#page-message-user .commands span {margin-left:10px;margin-right:10px;white-space:nowrap;}
+
+#page-message-edit fieldset {padding: 20px;}
+#page-message-edit th {padding-top: 10px;padding-left: 20px;}

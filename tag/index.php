@@ -69,7 +69,7 @@ echo $OUTPUT->heading($tagname, 2, 'headingblock header tag-heading');
 tag_print_management_box($tag);
 tag_print_description_box($tag);
 
-echo '<div style="text-align: center "><p><a href="#course">'.get_string('courses').
+echo '<div class="relatedpages"><p><a href="#course">'.get_string('courses').
  '</a> | <a href="#blog">'.get_string('relatedblogs', 'tag').
  '</a> | <a href="#user">'.get_string('users').'</a></p></div>';
 

@@ -281,14 +281,14 @@ function install_print_header($config, $stagename, $heading, $stagetext) {
           <head>
           <link rel="shortcut icon" href="theme/standard/pix/favicon.ico" />';
 
-    $sheets = array('styles_layout', 'styles_fonts', 'styles_color', 'styles_moz');
+    $sheets = array('pagelayout','core');
     $csss = array();
     foreach ($sheets as $sheet) {
-        $csss[] = $CFG->wwwroot.'/theme/standard/'.$sheet.'.css';
+        $csss[] = $CFG->wwwroot.'/theme/base/style/'.$sheet.'.css';
     }
-    $sheets = array('gradients');
+    $sheets = array('core', 'css3');
     foreach ($sheets as $sheet) {
-        $csss[] = $CFG->wwwroot.'/theme/standardwhite/'.$sheet.'.css';
+        $csss[] = $CFG->wwwroot.'/theme/standard/style/'.$sheet.'.css';
     }
     foreach ($csss as $css) {
         echo '<link rel="stylesheet" type="text/css" href="'.$css.'" />'."\n";
@@ -302,12 +302,17 @@ function install_print_header($config, $stagename, $heading, $stagetext) {
 
     echo '</head><body class="notloggedin">
             <div id="page" class="stage'.$config->stage.'">
-                <div id="header" class=" clearfix"><h1 class="headermain">'.get_string('installation','install').'</h1>
-                    <div class="headermenu">&nbsp;</div></div><div class="navbar clearfix">
-                    <div class="breadcrumb">
-                        <ul><li class="first">'.$stagename.'</li></ul>
+                <div id="page-header">
+                    <div id="header" class=" clearfix">
+                        <h1 class="headermain">'.get_string('installation','install').'</h1>
+                        <div class="headermenu">&nbsp;</div>
                     </div>
-                    <div class="navbutton">&nbsp;</div>
+                    <div class="navbar clearfix">
+                        <div class="breadcrumb">
+                            <ul><li class="first">'.$stagename.'</li></ul>
+                        </div>
+                        <div class="navbutton">&nbsp;</div>
+                    </div>
                 </div>
           <!-- END OF HEADER -->
           <div id="installdiv">';

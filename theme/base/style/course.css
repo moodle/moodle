@@ -1,0 +1,88 @@
+/**
+ * CSS for displaying courses and everything in them
+ */
+.section_add_menus {text-align:right;}
+.section_add_menus .horizontal div,
+.section_add_menus .horizontal form {display:inline;}
+.section_add_menus optgroup {font-weight:normal;font-style: italic;}
+
+.course-content .section .activity img.activityicon {vertical-align:middle;height:16px;width:16px;}
+
+#page-site-index .subscribelink {text-align:right;}
+#page-site-index .headingblock {margin-bottom: 9px;}
+
+.path-course-view .headingblock {margin-bottom: 9px;}
+.path-course-view .subscribelink {text-align:right;}
+.path-course-view .unread {margin-left: 3em;}
+.path-course-view .sideblock.drag .header {cursor: move;}
+.path-course-view .completionprogress {float:right;}
+.path-course-view .completionprogress img.iconhelp {vertical-align:top;}
+
+.path-course-view li.activity {margin-right:20px; position:relative;}
+.path-course-view li.activity span.autocompletion,
+.path-course-view li.activity form.togglecompletion {display:inline;position:absolute;right:-20px;top:0;z-index:10;padding:0.2em 0;}
+.path-course-view li.activity form.togglecompletion div {display:inline;}
+.path-course-view li.activity form.togglecompletion .ajaxworking {position:absolute;top:0; left:20px;width: 20px; height: 20px;background: url([[pix:i/ajaxloader]]) no-repeat;}
+.dir-rtl.path-course-view li.activity {margin-right:0px;margin-left:20px;}
+.dir-rtl.path-course-view li.activity form.togglecompletion,
+.dir-rtl.path-course-view li.activity span.autocompletion {right:auto;left:-20px;}
+
+.section img.movetarget {height:16px;width:80px;}
+
+#page-course-enrol .generalbox,
+#page-course-enrol .coursebox {margin-top: 20px;}
+
+#page-course-user .content {margin-left: 30px;margin-right: 30px;}
+#page-course-user .section {margin-left: 30px;margin-right: 30px;margin-bottom: 20px;}
+#page-course-user .section h2 {margin-top: 0;}
+#page-course-user .info {margin:10px;}
+
+#page-course-pending .singlebutton,
+#page-course-category #renameform,
+#page-course-category #themeform,
+#page-course-category #coursesearch,
+#page-course-category .singlebutton,
+#page-course-editsection .singlebutton {text-align:center;}
+
+#coursesearch,
+#coursesearch2 {margin-top: 1em;text-align:center;}
+
+#page-course-info .generalbox.icons {text-align: center;}
+#page-course-info .generalbox.info {margin-left:auto;margin-right:auto;}
+
+#page-course-pending .pendingcourserequests {margin-bottom: 1em;}
+#page-course-pending .pendingcourserequests .singlebutton {display: inline;}
+#page-course-pending .pendingcourserequests .cell {padding: 0 5px;}
+#page-course-pending .pendingcourserequests .cell.c6 {white-space: nowrap;}
+
+#page-course-report-log-index .info,
+#page-course-report-log-indexlive .info {margin:10px;}
+#page-course-report-stats-index .graph {margin-bottom: 1em;}
+
+#page-course-report .logselectform,
+#page-course-report .participationselectform,
+#page-course-report-log-index .logselectform,
+#page-course-report-participation-index .participationselectform {margin:10px auto;}
+#page-course-report .participationselectform label,
+#page-course-report-participation-index .participationselectform label {margin-left:15px;margin-right:5px;}
+
+.coursebox {width: 100%;margin-bottom: 15px;}
+.coursebox .info {float: left;text-align:left;width: 48%;}
+.coursebox .summary {float: right;text-align:left;width: 48%;}
+.coursebox .summary .category {text-align:right;}
+.coursebox .teachers li {list-style-type:none;padding:0;margin:0;}
+
+.categorylist {width: 100%;}
+.categorylist .category.image {width: 20px;}
+.categorylist .category.number {text-align: right;}
+.categorylist .category.indentation {width: 1px;}
+
+.path-course-report-outline td.numviews {text-align:right;}
+.path-course-report-outline tr.section {text-align: center;}
+
+.course ul.section {margin:5px;padding:0;}
+
+.weeks-format, /* Window-width: 800 pixels.IE doesn't support, see inline IE conditional comment. */
+.topics-format {margin-top: 8px;min-width: 763px;}
+#page-course-user .section {border-width:1px;border-style:solid;padding:10px;}
+.categoryboxcontent {border-width:1px;border-style:solid;}

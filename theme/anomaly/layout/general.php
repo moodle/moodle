@@ -13,7 +13,7 @@ if ($properties->sidepre && !$properties->sidepost) {
 }
 
 if (!$properties->sidepost && !$properties->sidepre) {
-    $bodyclasses[] = 'noblocks';
+    $bodyclasses[] = 'content-only';
 }
 if (empty($PAGE->layout_options['nonavbar']) && $PAGE->has_navbar()) {
     $bodyclasses[] = 'hasnavbar';
@@ -30,8 +30,7 @@ echo $OUTPUT->doctype() ?>
 <body id="<?php echo $PAGE->pagetype ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html(); ?>
 <div id="page">
-
-    <div class="page-header">
+    <div id="page-header">
         <div class="rounded-corner top-left"></div>
         <div class="rounded-corner top-right"></div>
         <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
@@ -49,29 +48,27 @@ echo $OUTPUT->doctype() ?>
         </div>
         <?php } ?>
     </div>
-    <div class="page-middle">
-        <div class="column-container">
-            <div class="column-mask">
-                <div class="column-centre">
-                    <div class="column-wrap">
-                        <div class="column-pad">
-                            <div class="column-content">
-                                <!-- MAIN CONTENT START -->
-                                <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
-                                <!-- MAIN CONTENT END -->
-                            </div>
+    <div id="page-content">
+        <div id="regions">
+            <div id="regions-mask">
+                <div id="region-main">
+                    <div id="region-main-mask">
+                        <div class="region-content">
+                            <!-- MAIN CONTENT START -->
+                            <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
+                            <!-- MAIN CONTENT END -->
                         </div>
                     </div>
                 </div>
-                <div class="column-left">
-                    <div class="column-content  block-region side-pre"><?php
+                <div id="region-pre">
+                    <div class="region-content side-pre"><?php
                         if ($properties->sidepre) {
                             echo $OUTPUT->blocks_for_region('side-pre');
                         } ?>
                     </div>
                 </div>
-                <div class="column-right">
-                    <div class="column-content block-region side-post"><?php
+                <div id="region-post">
+                    <div class="region-content side-post"><?php
                         if ($properties->sidepost) {
                             echo $OUTPUT->blocks_for_region('side-post');
                         } ?>
@@ -82,7 +79,7 @@ echo $OUTPUT->doctype() ?>
         </div>
     </div>
     <?php if (empty($PAGE->layout_options['nofooter'])) { ?>
-    <div class="page-footer">
+    <div id="page-footer">
         <p class="helplink">
             <?php echo page_doc_link(get_string('moodledocslink')) ?>
         </p>

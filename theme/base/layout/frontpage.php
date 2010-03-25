@@ -1,11 +1,15 @@
 <?php
 
-$regionsinfo = 'pagelayout';
-if ($PAGE->blocks->region_has_content('side-pre', $OUTPUT)) {
-    $regionsinfo .= '-pre';
-}
-if ($PAGE->blocks->region_has_content('side-post', $OUTPUT)) {
-    $regionsinfo .= '-post';
+$hassidepre = $PAGE->blocks->region_has_content('side-pre', $OUTPUT);
+$hassidepost = $PAGE->blocks->region_has_content('side-post', $OUTPUT);
+
+$bodyclasses = array();
+if ($hassidepre && !$hassidepost) {
+    $bodyclasses[] = 'side-pre-only';
+} else if ($hassidepost && !$hassidepre) {
+    $bodyclasses[] = 'side-post-only';
+} else if (!$hassidepost && !$hassidepre) {
+    $bodyclasses[] = 'content-only';
 }
 
 echo $OUTPUT->doctype() ?>
@@ -16,12 +20,12 @@ echo $OUTPUT->doctype() ?>
     <meta name="description" content="<?php echo strip_tags(format_text($SITE->summary, FORMAT_HTML)) ?>" />
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
-<body id="<?php echo $PAGE->pagetype ?>" class="<?php echo $PAGE->bodyclasses ?>">
+<body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
-<div id="page" class="<?php echo $regionsinfo ?>">
+<div id="page">
 
-    <div id="header-home" class="clearfix">
+    <div id="page-header" class="clearfix">
         <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
         <div class="headermenu"><?php
             echo $OUTPUT->login_info();
@@ -31,22 +35,28 @@ echo $OUTPUT->doctype() ?>
     </div>
 <!-- END OF HEADER -->
 
-    <div class="regions-outer clearfix">
+    <div id="page-content">
         <div id="regions">
-            <div class="regions-inner">
-                <div class="contentwrap">
-                    <div id="content">
-                        <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
+            <div id="regions-mask">
+                <div id="region-main">
+                    <div id="region-main-mask">
+                        <div class="region-content">
+                            <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
+                        </div>
                     </div>
                 </div>
-                <?php if ($PAGE->blocks->region_has_content('side-pre', $OUTPUT)) { ?>
-                <div id="region-side-pre" class="block-region">
-                    <?php echo $OUTPUT->blocks_for_region('side-pre') ?>
+                <?php if ($hassidepre) { ?>
+                <div id="region-pre">
+                    <div class="region-content">
+                        <?php echo $OUTPUT->blocks_for_region('side-pre') ?>
+                    </div>
                 </div>
                 <?php } ?>
-                <?php if ($PAGE->blocks->region_has_content('side-post', $OUTPUT)) { ?>
-                <div id="region-side-post" class="block-region">
-                    <?php echo $OUTPUT->blocks_for_region('side-post') ?>
+                <?php if ($hassidepost) { ?>
+                <div id="region-post">
+                    <div class="region-content">
+                        <?php echo $OUTPUT->blocks_for_region('side-post') ?>
+                    </div>
                 </div>
                 <?php } ?>
             </div>
@@ -54,7 +64,7 @@ echo $OUTPUT->doctype() ?>
     </div>
 
 <!-- START OF FOOTER -->
-    <div id="footer" class="clearfix">
+    <div id="page-footer">
         <p class="helplink">
         <?php echo page_doc_link(get_string('moodledocslink')) ?>
         </p>

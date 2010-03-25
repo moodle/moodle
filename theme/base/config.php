@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Configuration for Moodle's standard theme.
  *
@@ -33,15 +32,21 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$THEME->name = 'base';
 
 $THEME->parents = array();
 
 $THEME->sheets = array(
-    'pagelayout',
-    'core',
+    'pagelayout',   /** Must come first: Page layout **/
+    'core',         /** Must come second: General styles **/
+    'admin',
     'blocks',
+    'calendar',
     'course',
-    'block_calendar_month',
+    'grade',
+    'message',
+    'question',
+    'user'
 );
 
 $THEME->editor_sheets = array();
@@ -151,4 +156,4 @@ $THEME->layouts = array(
 
 /** List of javascript files that need to included on each page */
 $THEME->javascripts = array();
-$THEME->javascripts_footer = array('navigation');
+$THEME->javascripts_footer = array();

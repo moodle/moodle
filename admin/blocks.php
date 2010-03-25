@@ -131,8 +131,7 @@
     $table->define_columns(array('name', 'instances', 'version', 'hideshow', 'delete', 'settings'));
     $table->define_headers(array($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strdelete, $strsettings));
     $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/blocks.php');
-    $table->set_attribute('id', 'blocks');
-    $table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
+    $table->set_attribute('class', 'compatibleblockstable blockstable generaltable');
     $table->setup();
 
     foreach ($blockbyname as $blockname => $blockid) {
@@ -188,7 +187,7 @@
     $table->print_html();
 
     if(!empty($incompatible)) {
-        echo $OUTPUT->heading(get_string('incompatibleblocks', 'admin'));
+        echo $OUTPUT->heading(get_string('incompatibleblocks', 'blockstable', 'admin'));
 
         $table = new flexible_table('admin-blocks-incompatible');
 
@@ -196,8 +195,7 @@
         $table->define_headers(array($strname, $strdelete));
         $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/blocks.php');
 
-        $table->set_attribute('id', 'incompatible');
-        $table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
+        $table->set_attribute('class', 'incompatibleblockstable generaltable');
 
         $table->setup();
 

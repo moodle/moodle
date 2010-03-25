@@ -1,11 +1,18 @@
 <?php
 
-$regionsinfo = 'pagelayout';
-if ($PAGE->blocks->region_has_content('side-pre', $OUTPUT)) {
-    $regionsinfo .= '-pre';
-}
-if ($PAGE->blocks->region_has_content('side-post', $OUTPUT)) {
-    $regionsinfo .= '-post';
+$hasheading = ($PAGE->heading);
+$hasnavbar = (empty($PAGE->layout_options['nonavbar']) && $PAGE->has_navbar());
+$hasfooter = (empty($PAGE->layout_options['nofooter']));
+$hassidepre = $PAGE->blocks->region_has_content('side-pre', $OUTPUT);
+$hassidepost = $PAGE->blocks->region_has_content('side-post', $OUTPUT);
+
+$bodyclasses = array();
+if ($hassidepre && !$hassidepost) {
+    $bodyclasses[] = 'side-pre-only';
+} else if ($hassidepost && !$hassidepre) {
+    $bodyclasses[] = 'side-post-only';
+} else if (!$hassidepost && !$hassidepre) {
+    $bodyclasses[] = 'content-only';
 }
 
 echo $OUTPUT->doctype() ?>
@@ -15,13 +22,13 @@ echo $OUTPUT->doctype() ?>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->pix_url('favicon', 'theme')?>" />
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
-<body id="<?php echo $PAGE->pagetype ?>" class="<?php echo $PAGE->bodyclasses ?>">
+<body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
-<div id="page"  class="<?php echo $regionsinfo ?>">
-
-<?php if ($PAGE->heading) { ?>
-    <div id="header" class="clearfix">
+<div id="page">
+<?php if ($hasheading || $hasnavbar) { ?>
+    <div id="page-header">
+        <?php if ($hasheading) { ?>
         <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
         <div class="headermenu"><?php
             echo $OUTPUT->login_info();
@@ -29,34 +36,38 @@ echo $OUTPUT->doctype() ?>
                 echo $OUTPUT->lang_menu();
             }
             echo $PAGE->headingmenu
-         ?></div>
-    </div>
-<?php } ?>
-
-<?php if (empty($PAGE->layout_options['nonavbar']) and $PAGE->has_navbar()) { // This is the navigation bar with breadcrumbs  ?>
-    <div class="navbar clearfix">
-        <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
-        <div class="navbutton"><?php echo $PAGE->button; ?></div>
+        ?></div><?php } ?>
+        <?php if ($hasnavbar) { ?>
+            <div class="navbar clearfix">
+                <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
+                <div class="navbutton"> <?php echo $PAGE->button; ?></div>
+            </div>
+        <?php } ?>
     </div>
 <?php } ?>
 <!-- END OF HEADER -->
-
-    <div class="regions-outer clearfix">
+    <div id="page-content">
         <div id="regions">
-            <div class="regions-inner">
-                <div class="contentwrap">
-                    <div id="content">
-                        <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
+            <div id="regions-mask">
+                <div id="region-main">
+                    <div id="region-main-mask">
+                        <div class="region-content">
+                            <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
+                        </div>
                     </div>
                 </div>
-                <?php if ($PAGE->blocks->region_has_content('side-pre', $OUTPUT)) { ?>
-                <div id="region-side-pre" class="block-region">
-                    <?php echo $OUTPUT->blocks_for_region('side-pre') ?>
+                <?php if ($hassidepre) { ?>
+                <div id="region-pre">
+                    <div class="region-content">
+                        <?php echo $OUTPUT->blocks_for_region('side-pre') ?>
+                    </div>
                 </div>
                 <?php } ?>
-                <?php if ($PAGE->blocks->region_has_content('side-post', $OUTPUT)) { ?>
-                <div id="region-side-post" class="block-region">
-                    <?php echo $OUTPUT->blocks_for_region('side-post') ?>
+                <?php if ($hassidepost) { ?>
+                <div id="region-post">
+                    <div class="region-content">
+                        <?php echo $OUTPUT->blocks_for_region('side-post') ?>
+                    </div>
                 </div>
                 <?php } ?>
             </div>
@@ -64,12 +75,9 @@ echo $OUTPUT->doctype() ?>
     </div>
 
 <!-- START OF FOOTER -->
-    <?php if (empty($PAGE->layout_options['nofooter'])) { ?>
-    <div id="footer" class="clearfix">
-        <p class="helplink">
-        <?php echo page_doc_link(get_string('moodledocslink')) ?>
-        </p>
-
+    <?php if ($hasfooter) { ?>
+    <div id="page-footer" class="clearfix">
+        <p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')) ?></p>
         <?php
         echo $OUTPUT->login_info();
         echo $OUTPUT->home_link();

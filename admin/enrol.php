@@ -68,7 +68,7 @@
     $table->head = array(get_string('name'), get_string('enable'), get_string('default'), $str->settings);
     $table->align = array('left', 'center', 'center', 'center');
     $table->size = array('60%', '', '', '15%');
-    $table->width = '700';
+    $table->attributes['class'] = 'generaltable enrolplugintable';
     $table->data = array();
 
     $enabledplugins = explode(',', $CFG->enrol_plugins_enabled);

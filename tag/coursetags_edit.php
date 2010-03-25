@@ -75,7 +75,7 @@ echo $OUTPUT->header();
 
     // Print personal tags for all courses
     $title = get_string('edittitle', $tagslang);
-    echo $OUTPUT->heading($title, 2, 'center');
+    echo $OUTPUT->heading($title, 2, 'mdl-align');
 
     $mytags = coursetag_print_cloud(coursetag_get_tags(0, $USER->id, 'default'), true);
     $outstr = '
@@ -99,7 +99,7 @@ echo $OUTPUT->header();
     // Personal tag editing
     if ($canedit) {
         $title = get_string('editmytagsfor', $tagslang, '"'.$coursefullname.' ('.$courseshortname.')"');
-        echo $OUTPUT->heading($title);
+        echo $OUTPUT->heading($title, 2, 'main mdl-align');
 
         // Deletion here is open to the users own tags for this course only
         $selectoptions = '<option value="0">'.get_string('select', $tagslang).'</option>';

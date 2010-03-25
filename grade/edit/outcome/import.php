@@ -133,7 +133,7 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
                 }
             }
             if ($error) {
-                echo $OUTPUT->box_start('generalbox importoutcomenofile');
+                echo $OUTPUT->box_start('generalbox importoutcomenofile buttons');
                 echo get_string('importoutcomenofile', 'grades', $line);
                 echo $OUTPUT->single_button(new moodle_url('/grade/edit/outcome/index.php', array('id'=> $courseid)), get_string('back'), 'get');
                 echo $OUTPUT->box_end();

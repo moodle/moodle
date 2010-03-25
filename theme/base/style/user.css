@@ -1,0 +1,43 @@
+/*$$$$$$$$$$$$$$$$$ User $$$$$$$$$$$$$$$$$$$$*/
+.user-box {margin:8px;width:115px;height:160px;text-align:center;float:left;clear: none;}
+
+.userinfobox {width:100%;border:1px solid;border-collapse: separate;padding:10px;}
+.userinfobox .left,
+.userinfobox .side {width: 100px;vertical-align: top;}
+.userinfobox .userpicture {width: 100px;height: 100px;}
+.userinfobox .content {vertical-align: top;}
+.userinfobox .links {width: 100px;padding: 5px;vertical-align: bottom;}
+.userinfobox .list td {padding: 3px;}
+.userinfobox .username {padding-bottom: 20px;font-weight: bold;}
+.userinfobox td.label {text-align:right;white-space: nowrap;vertical-align: top;font-weight:bold;}
+
+.groupinfobox {border:1px solid;}
+.groupinfobox .left {padding: 10px;width: 100px;vertical-align: top;}
+
+.iplookup #note,
+#course-participation h2,
+#user-index .rolesform,
+#user-view .buttons,
+#user-index .buttons {text-align: center;}
+#user-view .buttons form,
+#user-view .buttons form div {display:inline;}
+
+#user-index #showall {margin: 10px 0px;}
+#user-index table#participants,
+#user-index table#participants td,
+#user-index table#participants th {vertical-align: middle;text-align: left;padding: 4px;}
+#user-index table.controls {width: 100%;}
+#user-index table.controls tr {vertical-align: top;}
+#user-index table.controls td.right,
+#user-index table.controls td.left {padding: 4px;}
+#user-index table.controls .right {text-align: right;}
+#course-participation #showall {text-align:center;margin: 10px 0px;}
+#user-policy .noticebox {text-align:center;margin-left:auto;margin-right:auto;margin-bottom:10px;width:80%;height:250px;}
+#user-policy #policyframe {width:100%;height:100%;}
+.iplookup #map {margin:auto;}
+
+.userselector select {width: 100%;}
+.userselector div {margin-top: 0.2em;}
+.userselector div label {margin-right: 0.3em;}
+#userselector_options .collapsibleregioncaption {font-weight: bold;}
+#userselector_options p {margin:0.2em 0;text-align:left;}

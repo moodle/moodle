@@ -336,7 +336,7 @@ echo '</div></form>';
 echo $OUTPUT->box_end();
 
 // Print action buttons
-echo $OUTPUT->container_start('buttons');
+echo $OUTPUT->container_start('buttons mdl-align');
 
 if ($moving) {
     echo $OUTPUT->single_button(new moodle_url('index.php', array('id'=>$course->id)), get_string('cancel'), 'get');

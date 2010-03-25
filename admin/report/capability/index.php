@@ -67,7 +67,7 @@ if (count($cleanedroleids) == count($allroles)) {
 }
 
 // Print the settings form.
-echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter centerpara');
+echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
 echo '<form method="get" action="." id="settingsform"><div>';
 echo $OUTPUT->heading(get_string('reportsettings', 'report_capability'));
 echo '<p id="intro">', get_string('intro', 'report_capability') , '</p>';

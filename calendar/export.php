@@ -139,7 +139,7 @@ $PAGE->set_focuscontrol('eventform.name');
 echo $OUTPUT->header();
 
 // Layout the whole page as three big columns.
-echo '<table id="calendar">';
+echo '<table class="calendarlayout">';
 echo '<tr>';
 
 // START: Main column

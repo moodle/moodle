@@ -149,6 +149,7 @@ class moodle_page {
 
     protected $_docspath = null;
 
+    /** @var string|null A legacy class that will be added to the body tag */
     protected $_legacyclass = null;
 
     protected $_url = null;
@@ -318,13 +319,21 @@ class moodle_page {
 
     /**
      * Please do not call this method directly, use the ->pagetype syntax. {@link __get()}.
-     * @return string e.g. 'my-index' or 'mod-quiz-attempt'. Same as the id attribute on <body>.
+     * @return string e.g. 'my-index' or 'mod-quiz-attempt'.
      */
     protected function magic_get_pagetype() {
         if (is_null($this->_pagetype) || isset($CFG->pagepath)) {
             $this->initialise_default_pagetype();
         }
         return $this->_pagetype;
+    }
+
+    /**
+     * Please do not call this method directly, use the ->pagetype syntax. {@link __get()}.
+     * @return string The id to use on the body tag, uses {@link magic_get_pagetype()}.
+     */
+    protected function magic_get_bodyid() {
+        return 'page-'.$this->pagetype;
     }
 
     /**
@@ -1211,10 +1220,13 @@ class moodle_page {
             $this->_legacyclass = 'course';
         } else if (substr($pagetype, 0, 6) == 'admin-') {
             $this->_legacyclass = 'admin';
-        } else {
-            $this->_legacyclass = substr($pagetype, 0, strrpos($pagetype, '-'));
         }
         $this->add_body_class($this->_legacyclass);
+
+        $pathbits = explode('-', trim($pagetype));
+        for ($i=1;$i<count($pathbits);$i++) {
+            $this->add_body_class('path-'.join('-',array_slice($pathbits, 0, $i)));
+        }
 
         $this->add_body_classes(get_browser_version_classes());
         $this->add_body_class('dir-' . get_string('thisdirection'));

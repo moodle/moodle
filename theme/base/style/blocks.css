@@ -1,134 +1,27 @@
+.sideblock.hidden .header {border-bottom-width:0;}
+.sideblock.hidden .content {display: none;}
 
-/** General **/
+.sideblock {border-style: solid;border-width:1px;margin-bottom:1em;}
+.sideblock .header h2 {margin:4px;}
+.sideblock .header .block_action {float:right;margin:0 4px;vertical-align:top;}
+.sideblock .header .block_action input {margin-right:2px;}
+.sideblock .content {margin:4px;}
+.sideblock .footer {margin-bottom: 4px;}
 
-.block-region .hidden .content {
-  display: none;
-}
+.sideblock img.userpicture {width:16px;height:16px;margin-right:4px;}
+.sideblock.beingmoved {border-width: 2px;border-style: dashed;}
 
-.sideblock .header .block_action {
-  float:right;
-}
+.block-region .hidden .header {border-bottom: 1px solid;}
+.block-region .hidden .content {display: none;}
+.block-region .invisible {opacity: 0.5;filter: alpha(opacity=0.5);}
 
-.sideblock div.column {
-  margin:0px;
-  margin-right:4px;
-  padding:0px;
-}
+.blockmovetarget {display: block;height: 1em;margin-bottom: 1em;border-width: 2px;border-style: dashed;}
 
-.sideblock div.column.c0 {
-  float: left;
-}
+.sideblock .blockannotation {font-size:0.75em;margin: -1em 0 1em;}
+.sideblock.beingmoved {border-width: 2px;border-style: dashed;}
+.sideblock .content ul.list li.listentry {clear:both;}
+.sideblock .content div.info {text-align:center;}
 
-.sideblock div.column.c1 {
-  display: inline;
-}
-
-.sideblock .content .c0 img.icon {
-  margin:0px;
-}
-
-.sideblock .content .list, .unlist, .inline-list {
-  list-style:none;
-  padding:0;
-  margin:0;
-}
-
-.sideblock .content .list {
-  width: 100%;
-}
-
-.sideblock .content .list li {
-  clear: left;
-}
-
-.sideblock .content .inline-list li, .inline-list li {
-  display: inline;
-}
-
-.sideblock .content ul.list li.listentry {
-  clear:both;
-}
-
-.sideblock .content div.info {
-  text-align:center;
-}
-
-.sideblock .footer {
-  margin-bottom: 4px;
-  text-align:center;
-  clear:both;
-}
-
-.sideblock img.userpicture {
-  width:16px;
-  height:16px;
-  margin-right:4px;
-}
-
-.sideblock.beingmoved {
-  border-width: 2px;
-  border-style: dashed;
-}
-
-/** Navigation and settings block **/
-.ie6 .sideblock .block_tree,
-.ie7 .sideblock .block_tree {
-  overflow-x:scroll;
-}
-.block_tree {
-  list-style: none;
-  padding-left:0px;
-}
-.block_tree ul {
-  margin-left: 0px;
-  padding-left:16px;
-  list-style: none;
-}
-.sideblock .block_tree {
-  overflow-x:auto;
-  overflow-y:visible;
-}
-.block_tree .tree_item {
-  white-space:nowrap;
-  margin:2px 0px;
-  padding-left: 16px;
-  margin:3px 0px;
-  white-space:nowrap;
-  text-align:left;
-}
-.ie6 .block_tree .tree_item {
-  width:100%;
-}
-.block_tree .tree_item.branch {
-  background-image: url([[pix:t/expanded]]);
-  background-position: center left;
-  background-repeat: no-repeat;
-}
-.block_tree .root_node.leaf {
-  padding-left:0px;
-}
-.block_tree .current_branch {
-  font-weight:bold;
-}
-
-.jsenabled .dock_on_load,
-.jsenabled .block_tree .collapsed ul {
-  display: none;
-}
-.jsenabled .block_tree .tree_item.branch {
-  cursor:pointer;
-}
-.jsenabled .block_tree .collapsed .tree_item.branch {
-  background-image: url([[pix:t/collapsed]]);
-}
-.jsenabled .block_tree .tree_item.emptybranch {
-  background-image: url([[pix:t/collapsed_empty]]);
-  background-position: center left;
-  background-repeat: no-repeat;
-}
-.block_tree_box .requiresjs {
-  display:none;
-}
-.jsenabled .block_tree_box .requiresjs {
-  display:inline;
-}
+/** List block contents **/
+.sideblock .list .c0 {display:inline;}
+.sideblock .list .c1 {margin-left:5px;display:inline;}

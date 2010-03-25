@@ -1,0 +1,3 @@
+.block_online_users .content .list li.listentry {clear:both;}
+.block_online_users .content .list li.listentry div.user {float:left;}
+.block_online_users .content .list li.listentry div.message {float:right;}

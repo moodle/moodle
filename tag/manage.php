@@ -137,8 +137,6 @@ switch($action) {
         break;
 }
 
-echo '<br/>';
-
 if ($err_notice) {
     echo $OUTPUT->notification($err_notice, 'red');
 }
