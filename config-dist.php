@@ -36,28 +36,26 @@ $CFG = new stdClass();
 // First, you need to configure the database where all Moodle data       //
 // will be stored.  This database must already have been created         //
 // and a username/password created to access it.                         //
-//                                                                       //
-//   mysql      - the prefix is optional, but useful when installing     //
-//                into databases that already contain tables.            //
-//
-//   postgres7  - the prefix is REQUIRED, regardless of whether the      //
-//                database already contains tables.                      //
-//                                                                       //
-// A special case exists when using PostgreSQL databases via sockets.    //
-// Define dbhost as follows, leaving dbname, dbuser, dbpass BLANK!:      //
-//    $CFG->dbhost = " user='muser' password='mpass' dbname='mdata'";    //
-//
 
-$CFG->dbtype    = 'mysql';       // mysql or postgres7 (for now)
-$CFG->dbhost    = 'localhost';   // eg localhost or db.isp.com
-$CFG->dbname    = 'moodle';      // database name, eg moodle
-$CFG->dbuser    = 'username';    // your database username
-$CFG->dbpass    = 'password';    // your database password
-$CFG->prefix    = 'mdl_';        // Prefix to use for all table names
-
-$CFG->dbpersist = false;         // Should database connections be reused?
-                 // "false" is the most stable setting
-                 // "true" can improve performance sometimes
+$CFG->dbtype    = 'pgsql';      // 'pgsql', 'mysqli', 'mssql' or 'oci'
+$CFG->dblibrary = 'native';     // 'native' only at the moment
+$CFG->dbhost    = 'localhost';  // eg 'localhost' or 'db.isp.com' or IP
+$CFG->dbname    = 'moodle';     // database name, eg moodle
+$CFG->dbuser    = 'username';   // your database username
+$CFG->dbpass    = 'password';   // your database password
+$CFG->prefix    = 'mdl_';       // prefix to use for all table names
+$CFG->dboptions = array(
+    'dbpersist' => false,       // should persistent database connections be
+                                //  used? set to 'false' for the most stable
+                                //  setting, 'true' can improve performance
+                                //  sometimes
+    'dbsocket'  => false,       // should connection via UNIX socket be
+                                //  used? if you set it to 'true' here,
+                                //  set dbhost to 'localhost'
+    'dbport'    => '',          // the TCP port number to use when connecting
+                                //  to the server. keep empty string for the
+                                //  default port
+);
 
 
 //=========================================================================
