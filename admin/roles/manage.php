@@ -85,7 +85,7 @@
                 $a->count = $DB->count_records('role_assignments', array('roleid'=>$roleid));
 
                 $formcontinue = new single_button(new moodle_url($baseurl, $optionsyes), get_string('yes'));
-                $formcancel = new single_button($baseurl, get_string('no'), 'get');
+                $formcancel = new single_button(new moodle_url($baseurl), get_string('no'), 'get');
                 echo $OUTPUT->confirm(get_string('deleterolesure', 'role', $a), $formcontinue, $formcancel);
                 echo $OUTPUT->footer();
                 die;
