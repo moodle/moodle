@@ -59,8 +59,8 @@
 <tr valign="top">
     <td align="right"><?php print_string("auth_shib_idp_list", "auth_shibboleth") ?>:</td>
     <td>
-        <textarea name="organization_selection" rows="10" cols="30" style="overflow: auto; white-space: nowrap;"
-><?php
+        <textarea name="organization_selection" rows="10" cols="30" style="overflow: auto;"
+><?php 
         if (!isset($config->organization_selection)){
             echo  'urn:mace:organization1:providerID, Example Organization 1
 https://another.idp-id.com/shibboleth, Other Example Organization, /Shibboleth.sso/DS/SWITCHaai
