@@ -167,7 +167,7 @@ $string['globalsquoteshelp'] = '<p>Não é aconselhável habilitar Register Glob
 </p>';
 $string['globalswarning'] = '<p><strong>Aviso de segurança</strong>: para operar propriamente, Moodle requer <br /> que você faça certas mudanças nas configurações atuais do seu PHP.<p/><p>Você <em>deve</em> ajustar<code>register_globals=off</code>.<p>Essa configuração é controlada editando a configuração de <code>php.ini</code>, Apache/IIS <br /> ou <code>.htaccess</code> file.</p>';
 $string['help'] = 'Ajuda';
-$string['iconvrecommended'] = 'Instalar ICONV library é altamente recomendável para aumentar a performance do site, especialmente quando o site suporta o uso de idiomas não-latinos';
+$string['iconvrecommended'] = 'Instalar a extensão ICONV é altamente recomendável para aumentar a performance do site, especialmente quando o site suporta o uso de idiomas não-latinos';
 $string['info'] = 'Informação';
 $string['installation'] = 'Instalação';
 $string['invalidmd5'] = 'md5 inválido';
@@ -269,5 +269,5 @@ $string['wrongzipfilename'] = 'Nome do arquivo ZIP errado';
 $string['wwwroot'] = 'Endereço web';
 $string['wwwrooterror'] = 'Este endereço web não está correto - a instalação do Moodle não foi encontrada.';
 $string['xmlrpcrecommended'] = 'Instalar a extensão opcional xmlrpc é útil para a funcionalidade Moodle Networking.';
-$string['ziprequired'] = 'A extensão Zip do PHP é necessária. Binários infoZIP ou PclZip não são mais utilizados.';
+$string['ziprequired'] = 'A extensão Zip do PHP é obrigatória. Binários infoZIP ou PclZip não são mais utilizados.';
 ?>
