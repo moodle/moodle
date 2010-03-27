@@ -19,7 +19,6 @@ $string['cannotaddmodule'] = '$a module could not be added to the module list!';
 $string['cannotaddnewmodule'] = 'Could not add a new module of $a';
 $string['cannotaddrss'] = 'You do not have permission to add rss feeds';
 $string['cannotaddthisblocktype'] = 'You cannot add a $a block to this page.';
-$string['cannotassignanthing'] = 'Cannot assign moodle/site:doanything';
 $string['cannotassignrole'] = 'Cannot assign role in course';
 $string['cannotassignrolehere'] = 'You are not allowed to assign this role (id = $a->roleid) in this context ($a->context)';
 $string['cannotassignselfasparent'] = 'Cannot assign self as parent!';
@@ -171,7 +170,7 @@ $string['dbsessionbroken'] = 'Serious database session problem detected.<br /><b
 $string['dbsessionhandlerproblem'] = 'Setting up of database session failed.<br /><br />Please notify server administrator.';
 $string['dbsessionmysqlpacketsize'] = 'Serious session error detected.<br /><br />Please notify administrator, this problem is most probably caused by small value in max_allowed_packet MySQL setting.';
 $string['ddlexecuteerror'] = 'DDL sql execution error';
-$string['ddlfieldalreadyexists'] = 'Field \"$a\" does not exist';
+$string['ddlfieldalreadyexists'] = 'Field \"$a\" already exists';
 $string['ddlfieldnotexist'] = 'Field \"$a->fieldname\" does not exist in table \"$a->tablename\"';
 $string['ddldependencyerror'] = '$a->targettype \"$a->targetname\" cannot be modifed. Dependency found with $a->offendingtype \"$a->offendingname\"';
 $string['ddltablealreadyexists'] = 'Table \"$a\" already exists';
