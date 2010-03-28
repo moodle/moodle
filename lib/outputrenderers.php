@@ -1201,7 +1201,7 @@ class core_renderer extends renderer_base {
         if (!empty($CFG->doctonewwindow)) {
             $attributes['id'] = $this->add_action_handler(new popup_action('click', $url));
         }
-        
+
         return html_writer::tag('a', $icon.$text, $attributes);
     }
 
@@ -1283,7 +1283,7 @@ class core_renderer extends renderer_base {
                 $scalemax = $rating->settings->scale->scaleitems;
                 $ratingstr = round($rating->aggregate,1);
             }
-            
+
             $aggstr = "{$ratingstr} / $scalemax ({$rating->count}) ";
 
             if ($rating->settings->permissions->canviewall) {
@@ -2078,6 +2078,55 @@ class core_renderer_cli extends core_renderer {
             return "++ $message ++\n";
         }
         return "!! $message !!\n";
+    }
+}
+
+
+/**
+ * A renderer that generates output for ajax scripts.
+ *
+ * This renderer prevents accidental sends back only json
+ * encoded error messages, all other output is ignored.
+ *
+ * @copyright 2010 Petr Skoda
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class core_renderer_ajax extends core_renderer {
+    /**
+     * Returns a template fragment representing a fatal error.
+     * @param string $message The message to output
+     * @param string $moreinfourl URL where more info can be found about the error
+     * @param string $link Link for the Continue button
+     * @param array $backtrace The execution backtrace
+     * @param string $debuginfo Debugging information
+     * @return string A template fragment for a fatal error
+     */
+    public function fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
+        $e = new stdClass();
+        $e->error      = $message;
+        $e->stacktrace = NULL;
+        $e->debuginfo  = NULL;
+        if (!empty($CFG->debug) and $CFG->debug >= DEBUG_DEVELOPER) {
+            if (!empty($debuginfo)) {
+                $e->debuginfo = $debuginfo;
+            }
+            if (!empty($backtrace)) {
+                $e->stacktrace = format_backtrace($backtrace, true);
+            }
+        }
+        return json_encode($e);
+    }
+
+    public function notification($message, $classes = 'notifyproblem') {
+    }
+    public function redirect_message($encodedurl, $message, $delay, $debugdisableredirect) {
+    }
+    public function header() {
+    }
+    public function footer() {
+    }
+    public function heading($text, $level, $classes = 'main', $id = null) {
     }
 }
 

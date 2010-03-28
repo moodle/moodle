@@ -207,6 +207,11 @@ if (!defined('CLI_SCRIPT')) { // CLI_SCRIPT might be defined in 'fake' CLI scrip
     }
 }
 
+// Detect ajax scripts - they are similar to CLI because we can not redirect, output html, etc.
+if (!defined('AJAX_SCRIPT')) {
+    define('AJAX_SCRIPT', false);
+}
+
 // sometimes default PHP settings are borked on shared hosting servers, I wonder why they have to do that??
 @ini_set('precision', 14); // needed for upgrades and gradebook
 

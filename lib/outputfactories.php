@@ -33,6 +33,9 @@ define('RENDERER_TARGET_GENERAL', 'general');
 /** Plain text rendering for CLI scripts and cron */
 define('RENDERER_TARGET_CLI', 'cli');
 
+/** Plain text rendering for Ajax scripts*/
+define('RENDERER_TARGET_AJAX', 'ajax');
+
 /** Plain text rendering intended for sending via email */
 define('RENDERER_TARGET_TEXTEMAIL', 'textemail');
 
@@ -120,13 +123,18 @@ abstract class renderer_factory_base implements renderer_factory {
      * @return array two element array, first element is target, second the target suffix string
      */
     protected function get_target_suffix($target) {
-        if (empty($target) and CLI_SCRIPT) {
-            // automatically guessed default for all CLI scripts
-            $target = RENDERER_TARGET_CLI;
+        if (empty($target)) {
+            // automatically guessed defaults
+            if (CLI_SCRIPT) {
+                $target = RENDERER_TARGET_CLI;
+            } else if (AJAX_SCRIPT) {
+                $target = RENDERER_TARGET_AJAX;
+            }
         }
 
         switch ($target) {
             case RENDERER_TARGET_CLI: $suffix = '_cli'; break;
+            case RENDERER_TARGET_AJAX: $suffix = '_ajax'; break;
             case RENDERER_TARGET_TEXTEMAIL: $suffix = '_textemail'; break;
             case RENDERER_TARGET_HTMLEMAIL: $suffix = '_htmlemail'; break;
             default: $target = RENDERER_TARGET_GENERAL; $suffix = '';

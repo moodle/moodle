@@ -384,6 +384,7 @@ $string['prefixcannotbeempty'] = '<p>Error: database table prefix cannot be empt
 $string['prefixtoolong'] = '<p>Error: database table prefix is too long ($a->dbfamily)</p>
 <p>The site administrator must fix this problem. Maximum length for table prefixes in $a->dbfamily is $a->maxlength characters.</p>';
 $string['processingstops'] = 'Processing stops here. Remaining records ignored.';
+$string['redirecterrordetected'] = 'Unsupported redirect detected, script execution terminated';
 $string['refoundtoorigi'] = 'Refunded to original amount: $a';
 $string['refoundto'] = 'Can be refunded to $a';
 $string['remotedownloaderror'] = 'Download of component to your server failed, please verify proxy settings, PHP cURL extension is highly recommended.<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';

@@ -2523,6 +2523,12 @@ function notice ($message, $link='', $course=NULL) {
 function redirect($url, $message='', $delay=-1) {
     global $OUTPUT, $PAGE, $SESSION, $CFG;
 
+    if (CLI_SCRIPT or AJAX_SCRIPT) {
+        // this is wrong - developers should not use redirect in these scripts,
+        // but it should not be very likely
+        throw new moodle_exception('redirecterrordetected', 'error');
+    }
+
     if ($url instanceof moodle_url) {
         $url = $url->out(false);
     }

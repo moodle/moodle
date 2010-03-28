@@ -224,9 +224,14 @@ function default_exception_handler($ex) {
             // default exception handler MUST not throw any exceptions!!
             // the problem here is we do not know if page already started or not, we only know that somebody messed up in outputlib or theme
             // so we just print at least something instead of "Exception thrown without a stack frame in Unknown on line 0":-(
-            echo bootstrap_renderer::early_error_content($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
-            $outinfo = get_exception_info($out_ex);
-            echo bootstrap_renderer::early_error_content($outinfo->message, $outinfo->moreinfourl, $outinfo->link, $outinfo->backtrace, $outinfo->debuginfo);
+            if (CLI_SCRIPT or AJAX_SCRIPT) {
+                // just ignore the error and send something back using the safest method
+                echo bootstrap_renderer::early_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
+            } else {
+                echo bootstrap_renderer::early_error_content($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
+                $outinfo = get_exception_info($out_ex);
+                echo bootstrap_renderer::early_error_content($outinfo->message, $outinfo->moreinfourl, $outinfo->link, $outinfo->backtrace, $outinfo->debuginfo);
+            }
         }
     }
 
@@ -950,6 +955,37 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
      * @return string
      */
     public static function early_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
+        global $CFG;
+
+        if (CLI_SCRIPT) {
+            echo "!!! $message !!!\n";
+            if (!empty($CFG->debug) and $CFG->debug >= DEBUG_DEVELOPER) {
+                if (!empty($debuginfo)) {
+                    echo "\nDebug info: $debuginfo";
+                }
+                if (!empty($backtrace)) {
+                    echo "\nStack trace: " . format_backtrace($backtrace, true);
+                }
+            }
+            return;
+
+        } else if (AJAX_SCRIPT) {
+            $e = new stdClass();
+            $e->error      = $message;
+            $e->stacktrace = NULL;
+            $e->debuginfo  = NULL;
+            if (!empty($CFG->debug) and $CFG->debug >= DEBUG_DEVELOPER) {
+                if (!empty($debuginfo)) {
+                    $e->debuginfo = $debuginfo;
+                }
+                if (!empty($backtrace)) {
+                    $e->stacktrace = format_backtrace($backtrace, true);
+                }
+            }
+            echo json_encode($e);
+            return;
+        }
+
         // In the name of protocol correctness, monitoring and performance
         // profiling, set the appropriate error headers for machine consumption
         if (isset($_SERVER['SERVER_PROTOCOL'])) {
