@@ -25,14 +25,7 @@ $contextid = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
 list($context, $course, $cm) = get_context_info_array($contextid);
 
 require_login($course, true, $cm);
-
-if (!confirm_sesskey()) {
-    print_error('invalidsesskey');
-}
-
-if (!isloggedin()){
-    print_error('loggedinnot');
-}
+require_sesskey();
 
 if (isguestuser()) {
     print_error('loggedinnot');
@@ -54,13 +47,9 @@ $comment = new comment($cmt);
 
 switch ($action) {
 case 'add':
-    try {
-        $cmt = $comment->add($content);
-        if (!empty($cmt) && is_object($cmt)) {
-            redirect($returnurl, get_string('pageshouldredirect'), 0);
-        }
-    } catch(comment_exception $e) {
-        print_error($e->errorcode);
+    $cmt = $comment->add($content);
+    if (!empty($cmt) && is_object($cmt)) {
+        redirect($returnurl);
     }
     break;
 default:
