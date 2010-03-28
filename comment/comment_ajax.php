@@ -18,33 +18,19 @@
 /*
  * Handling all ajax request for comments API
  */
+define('AJAX_SCRIPT', true);
+
 require_once('../config.php');
 require_once($CFG->dirroot . '/comment/lib.php');
 
 $contextid = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
 list($context, $course, $cm) = get_context_info_array($contextid);
 
-if (!empty($course)) {
-    $PAGE->set_course($course);
-} else {
-    $PAGE->set_course($SITE);
-}
-
 require_login($course, true, $cm);
-
-$err = new stdclass;
-
-if (!confirm_sesskey()) {
-    $err->error = get_string('invalidsesskey');
-    die(json_encode($err));
-}
-
-if (!isloggedin()){
-    $err->error = get_string('loggedinnot');
-    die(json_encode($err));
-}
+require_sesskey();
 
 if (isguestuser()) {
+	$err = new stdclass;
     $err->error = get_string('loggedinnot');
     die(json_encode($err));
 }
@@ -69,39 +55,27 @@ if (!empty($client_id)) {
     $comment = new comment($cmt);
 }
 switch ($action) {
-case 'add':
-    try {
+    case 'add':
         $cmt = $comment->add($content);
         $cmt->count = $comment->count();
         if (!empty($cmt) && is_object($cmt)) {
             $cmt->client_id = $client_id;
             echo json_encode($cmt);
         }
-    } catch (comment_exception $e) {
-        echo json_encode(array('error'=>$e->message));
-    }
-    break;
-case 'delete':
-    try {
+        break;
+    case 'delete':
         $result = $comment->delete($commentid);
         if ($result === true) {
             echo json_encode(array('client_id'=>$client_id, 'commentid'=>$commentid));
         }
-    } catch (comment_exception $e) {
-        echo json_encode(array('error'=>$e->message));
-    }
-    break;
-case 'get':
-default:
-    $ret = array();
-    try {
+        break;
+    case 'get':
+    default:
+        $ret = array();
         $comments = $comment->get_comments($page);
         $ret['list'] = $comments;
         $ret['count'] = $comment->count();
         $ret['pagination'] = $comment->get_pagination($page);
         $ret['client_id']  = $client_id;
         echo json_encode($ret);
-    } catch (comment_exception $e) {
-        echo json_encode(array('error'=>$e->message));
-    }
 }
