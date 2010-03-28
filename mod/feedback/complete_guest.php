@@ -247,10 +247,14 @@ if($feedback_can_submit) {
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
+    $analysisurl = new moodle_url('/mod/feedback/analysis.php', array('id'=>$id));
+    if($courseid > 0) {
+        $analysisurl->param('courseid', $courseid);
+    }
     echo $OUTPUT->heading(format_text($feedback->name));
 
     if( (intval($feedback->publish_stats) == 1) AND ( $capabilities->viewanalysepage) AND !( $capabilities->viewreports) ) {
-        echo '<div class="mdl-align"><a href="'.htmlspecialchars('analysis.php?id=' . $id . '&courseid='.$courseid).'">';
+        echo '<div class="mdl-align"><a href="'.$analysisurl->out().'">';
         echo get_string('completed_feedbacks', 'feedback').'</a>';
         echo '</div>';
     }
@@ -263,7 +267,7 @@ if($feedback_can_submit) {
         } else {
             echo '<p align="center"><b><font color="green">'.get_string('entries_saved','feedback').'</font></b></p>';
             if( intval($feedback->publish_stats) == 1) {
-                echo '<p align="center"><a href="analysis.php?id=' . $id . '&courseid='.$courseid.'">';
+                echo '<p align="center"><a href="'.$analysisurl->out().'">';
                 echo get_string('completed_feedbacks', 'feedback').'</a>';
                 echo '</p>';
             }

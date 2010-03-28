@@ -28,21 +28,21 @@ if($userid) {
     $formdata->userid = intval($userid);
 }
 
-if ($id) {
-    if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-        print_error('invalidcoursemodule');
-    }
-
-    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-        print_error('coursemisconf');
-    }
-
-    if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-        print_error('invalidcoursemodule');
-    }
+if (! $cm = get_coursemodule_from_id('feedback', $id)) {
+    print_error('invalidcoursemodule');
 }
 
-$PAGE->set_url('/mod/feedback/show_entries.php', array('id'=>$cm->id, 'do_show'=>$do_show));
+if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
+    print_error('coursemisconf');
+}
+
+if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
+    print_error('invalidcoursemodule');
+}
+
+$url = new moodle_url('/mod/feedback/show_entries.php', array('id'=>$cm->id, 'do_show'=>$do_show));
+
+$PAGE->set_url($url);
 
 $capabilities = feedback_load_capabilities($cm->id);
 
@@ -92,8 +92,9 @@ if($do_show == 'showentries'){
         } else {
             $groupmode = $course->groupmode;
         }
-
-        $groupselect = groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/feedback/show_entries.php?id=' . $cm->id.'&do_show=showentries', true);
+        
+        // $groupselect = groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/feedback/show_entries.php?id=' . $cm->id.'&do_show=showentries', true);
+        $groupselect = groups_print_activity_menu($cm, $url->out(), true);
         $mygroupid = groups_get_activity_group($cm);
 
         //get students in conjunction with groupmode
@@ -110,12 +111,14 @@ if($do_show == 'showentries'){
 
         $completedFeedbackCount = feedback_get_completeds_group_count($feedback, $mygroupid);
         if($feedback->course == SITEID){
-            echo '<div class="mdl-align"><a href="'.htmlspecialchars('analysis_course.php?id=' . $id . '&courseid='.$courseid).'">';
+            $analysisurl = new moodle_url('/mod/feedback/analysis_course.php', array('id'=>$id, 'courseid'=>$courseid));
+            echo '<div class="mdl-align"><a href="'.$analysisurl->out().'">';
             echo get_string('course') .' '. get_string('analysis', 'feedback') . ' ('.get_string('completed_feedbacks', 'feedback').': '.intval($completedFeedbackCount).')</a>';
             echo $OUTPUT->help_icon('viewcompleted', '', 'feedback', true);
             echo '</div>';
         }else {
-            echo '<div class="mdl-align"><a href="'.htmlspecialchars('analysis.php?id=' . $id . '&courseid='.$courseid).'">';
+            $analysisurl = new moodle_url('/mod/feedback/analysis.php', array('id'=>$id, 'courseid'=>$courseid));
+            echo '<div class="mdl-align"><a href="'.$analysisurl->out().'">';
             echo get_string('analysis', 'feedback') . ' ('.get_string('completed_feedbacks', 'feedback').': '.intval($completedFeedbackCount).')</a>';
             echo '</div>';
         }
@@ -152,7 +155,7 @@ if($do_show == 'showentries'){
                             </td>
                             <td align="right">
                             <?php
-                                $aurl = new moodle_url('show_entries.php', array('sesskey'=>sesskey(), 'userid'=>$student->id, 'do_show'=>'showoneentry', 'id'=>$id));
+                                $aurl = new moodle_url($url, array('sesskey'=>sesskey(), 'userid'=>$student->id, 'do_show'=>'showoneentry'));
                                 echo $OUTPUT->single_button($aurl, get_string('show_entries', 'feedback'));
                             ?>
                             </td>
@@ -161,7 +164,7 @@ if($do_show == 'showentries'){
                 ?>
                             <td align="right">
                             <?php
-                                $aurl = new moodle_url('delete_completed.php', array('sesskey'=>sesskey(), 'completedid'=>$feedbackcompleted->id, 'do_show'=>'showoneentry', 'id'=>$id));
+                                $aurl = new moodle_url($url, array('sesskey'=>sesskey(), 'completedid'=>$feedbackcompleted->id, 'do_show'=>'showoneentry'));
                                 echo $OUTPUT->single_button($aurl, get_string('delete_entry', 'feedback'));
                             ?>
                             </td>
@@ -242,7 +245,8 @@ if($do_show == 'showoneentry') {
         echo '</form>';
         echo $OUTPUT->box_end();
     }
-    echo $OUTPUT->continue_button(htmlspecialchars('show_entries.php?id='.$id.'&do_show=showentries'));
+    // echo $OUTPUT->continue_button(htmlspecialchars('show_entries.php?id='.$id.'&do_show=showentries'));
+    echo $OUTPUT->continue_button(new moodle_url($url, array('do_show'=>'showentries')));
 }
 /// Finish the page
 ///////////////////////////////////////////////////////////////////////////

@@ -38,7 +38,8 @@ if(($formdata = data_submitted()) AND !confirm_sesskey()) {
 }
 
 if($canceldelete == 1){
-    redirect(htmlspecialchars('edit.php?id='.$id.'&do_show=templates'));
+    $editurl = new moodle_url('/mod/feedback/edit.php', array('id'=>$id, 'do_show'=>'templates'));
+    redirect($editurl->out(false));
 }
 
 if ($id) {
@@ -70,13 +71,15 @@ $newformdata = array('id'=>$id,
 $mform->set_data($newformdata);
 $formdata = $mform->get_data();
 
+$deleteurl = new moodle_url('/mod/feedback/delete_template.php', array('id'=>$id));
+
 if ($mform->is_cancelled()) {
-    redirect(htmlspecialchars('delete_template.php?id='.$id));
+    redirect($deleteurl->out(false));
 }
 
 if(isset($formdata->confirmdelete) AND $formdata->confirmdelete == 1){
     feedback_delete_template($formdata->deletetempl);
-    redirect(htmlspecialchars('delete_template.php?id=' . $id));
+    redirect($deleteurl->out(false));
 }
 
 /// Print the page header

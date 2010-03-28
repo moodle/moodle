@@ -44,7 +44,8 @@ if (!$capabilities->mapcourse) {
 feedback_clean_up_sitecourse_map();
 
 if ($DB->delete_records('feedback_sitecourse_map', array('id'=>$cmapid))) {
-    redirect (htmlspecialchars('mapcourse.php?id='.$id));
+    $mapurl = new moodle_url('/mod/feedback/mapcourse.php', array('id'=>$id));
+    redirect ($mapurl->out(false));
 } else {
     print_error('cannotunmap', 'feedback');
 }

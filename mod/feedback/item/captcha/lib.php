@@ -94,8 +94,9 @@ class feedback_item_captcha extends feedback_item_base {
                 echo '('.$item->label.') ';
             }
             echo format_text($item->name . $requiredmark, true, false, false);
+            $imglink = new moodle_url('/mod/feedback/item/captcha/print_captcha.php', array('id'=>$cmid));
         ?>
-            <img alt="<?php echo $this->type;?>" src="<?php echo $CFG->wwwroot.htmlspecialchars('/mod/feedback/item/captcha/print_captcha.php?id='.$cmid);?>" />
+            <img alt="<?php echo $this->type;?>" src="<?php echo $imglink->out();?>" />
         </td>
         <td valign="top" align="<?php echo $align;?>">
     <?php

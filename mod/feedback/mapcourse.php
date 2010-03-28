@@ -116,8 +116,10 @@ if($coursemap = feedback_get_courses_from_sitecourse_map($feedback->id)) {
 
     $table->setup();
 
+    $unmapurl = new moodle_url('/mod/feedback/unmapcourse.php');
     foreach ($coursemap as $cmap) {
-        $table->add_data(array('<a href="'.htmlspecialchars('unmapcourse.php?id='.$id.'&cmapid='.$cmap->id).'"><img src="'.$OUTPUT->pix_url('t/delete') . '" alt="Delete" /></a> ('.$cmap->shortname.') '.$cmap->fullname));
+        $unmapurl->params(array('id'=>$id, 'cmapid'=>$cmap->id));
+        $table->add_data(array('<a href="'.$unmapurl->out().'"><img src="'.$OUTPUT->pix_url('t/delete') . '" alt="Delete" /></a> ('.$cmap->shortname.') '.$cmap->fullname));
     }
 
     $table->print_html();

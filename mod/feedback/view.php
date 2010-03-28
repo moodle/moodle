@@ -122,7 +122,8 @@ if($capabilities->edititems) {
 
 if( (intval($feedback->publish_stats) == 1) AND ( $capabilities->viewanalysepage) AND !( $capabilities->viewreports) ) {
     if($multiple_count = $DB->count_records('feedback_tracking', array('userid'=>$USER->id, 'feedback'=>$feedback->id))) {
-        echo '<div class="mdl-align"><a href="'.htmlspecialchars('analysis.php?id=' . $id . '&courseid='.$courseid).'">';
+        $analysisurl = new moodle_url('/mod/feedback/analysis.php', array('id'=>$id, 'courseid'=>$courseid));
+        echo '<div class="mdl-align"><a href="'.$analysisurl->out().'">';
         echo get_string('completed_feedbacks', 'feedback').'</a>';
         echo '</div>';
     }
@@ -177,14 +178,15 @@ if($capabilities->complete) {
             $completefile = 'complete.php';
             $guestid = false;
         }
+        $completeurl = new moodle_url('/mod/feedback/'.$completefile, array('id'=>$id, 'courseid'=>$courseid, 'gopage'=>0));
+        
         if($feedbackcompletedtmp = feedback_get_current_completed($feedback->id, true, $courseid, $guestid)) {
             if($startpage = feedback_get_page_to_continue($feedback->id, $courseid, $guestid)) {
-                echo '<a href="'.htmlspecialchars($completefile.'?id='.$id.'&gopage='.$startpage.'&courseid='.$courseid).'">'.get_string('continue_the_form', 'feedback').'</a>';
-            }else {
-                echo '<a href="'.htmlspecialchars($completefile.'?id='.$id.'&gopage=0&courseid='.$courseid).'">'.get_string('continue_the_form', 'feedback').'</a>';
+                $completeurl->param('gopage', $startpage);
             }
+            echo '<a href="'.$completeurl->out().'">'.get_string('continue_the_form', 'feedback').'</a>';
         }else {
-            echo '<a href="'.htmlspecialchars($completefile.'?id='.$id.'&gopage=0&courseid='.$courseid).'">'.get_string('complete_the_form', 'feedback').'</a>';
+            echo '<a href="'.$completeurl->out().'">'.get_string('complete_the_form', 'feedback').'</a>';
         }
     }else {
         echo '<h2><font color="red">'.get_string('this_feedback_is_already_submitted', 'feedback').'</font></h2>';

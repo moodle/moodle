@@ -17,7 +17,9 @@ $cmid = optional_param('cmid', NULL, PARAM_INT);
 $typ = optional_param('typ', false, PARAM_ALPHA);
 $id = optional_param('id', false, PARAM_INT);
 
-if(!$typ)redirect(htmlspecialchars('edit.php?id=' . $cmid));
+$editurl = new moodle_url('/mod/feedback/edit.php', array('id'=>$cmid));
+
+if(!$typ)redirect($editurl->out(false));
 
 $url = new moodle_url('/mod/feedback/edit_item.php', array('cmid'=>$cmid));
 if ($typ !== false) {
@@ -60,7 +62,7 @@ if(!$capabilities->edititems){
 //if the typ is pagebreak so the item will be saved directly
 if($typ == 'pagebreak') {
     feedback_create_pagebreak($feedback->id);
-    redirect(htmlspecialchars('edit.php?id='.$cmid));
+    redirect($editurl->out(false));
     exit;
 }
 
@@ -76,7 +78,7 @@ if($id and $item = $DB->get_record('feedback_item', array('id'=>$id))) {
         $position = 0;
     }
     if (!$typ) {
-        print_error('typemissing', 'feedback', $CFG->wwwroot.'/mod/feedback/edit.php?id='.$cmid);
+        print_error('typemissing', 'feedback', $editurl->out(false));
     }
 }
 
@@ -133,7 +135,7 @@ $i_form->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 $item_form->set_data($item);
 if ($formdata = $item_form->get_data()) {
     if (isset($formdata->cancel)){
-        redirect(htmlspecialchars('edit.php?id=' . $cmid));
+        redirect($editurl->out(false));
     } else if (isset($formdata->saveitem) AND $formdata->saveitem == 1) {
         $newposition = $formdata->position;
         $formdata->position = $newposition + 1;
@@ -145,7 +147,7 @@ if ($formdata = $item_form->get_data()) {
             if (!feedback_move_item($newitem, $newposition)){
                 $SESSION->feedback->errors[] = get_string('item_creation_failed', 'feedback');
             }else {
-                redirect(htmlspecialchars('edit.php?id='.$cmid));
+                redirect($editurl->out(false));
             }
         }
     } else if (isset($formdata->updateitem) AND $formdata->updateitem == 1) {
@@ -156,7 +158,7 @@ if ($formdata = $item_form->get_data()) {
             if (!feedback_move_item($item, $formdata->position)){
                 $SESSION->feedback->errors[] = get_string('item_update_failed', 'feedback');
             }else {
-                redirect(htmlspecialchars('edit.php?id='.$cmid));
+                redirect($editurl->out(false));
             }
         }
     }

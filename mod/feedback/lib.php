@@ -2282,9 +2282,9 @@ function feedback_send_email_text($info, $course) {
 function feedback_send_email_html($info, $course, $cm) {
     global $CFG;
     $posthtml  = '<p><font face="sans-serif">'.
-                '<a href="'.$CFG->wwwroot.htmlspecialchars('/course/view.php?id='.$course->id).'">'.$course->shortname.'</a> ->'.
-                '<a href="'.$CFG->wwwroot.htmlspecialchars('/mod/feedback/index.php?id='.$course->id).'">'.get_string('modulenameplural', 'feedback').'</a> ->'.
-                '<a href="'.$CFG->wwwroot.htmlspecialchars('/mod/feedback/view.php?id='.$cm->id).'">'.$info->feedback.'</a></font></p>';
+                '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> ->'.
+                '<a href="'.$CFG->wwwroot.'/mod/feedback/index.php?id='.$course->id.'">'.get_string('modulenameplural', 'feedback').'</a> ->'.
+                '<a href="'.$CFG->wwwroot.'/mod/feedback/view.php?id='.$cm->id.'">'.$info->feedback.'</a></font></p>';
     $posthtml .= '<hr /><font face="sans-serif">';
     $posthtml .= '<p>'.get_string('emailteachermailhtml', 'feedback', $info).'</p>';
     $posthtml .= '</font><hr />';

@@ -13,29 +13,44 @@
     $inactive = array();
     $activated = array();
 
+    //some pages deliver the cmid instead the id
+    if(isset($cmid) AND intval($cmid) AND $cmid > 0) {
+        $usedid = $cmid;
+    }else {
+        $usedid = $id;
+    }
+
+
     $courseid = optional_param('courseid', false, PARAM_INT);
     // $current_tab = $SESSION->feedback->current_tab;
     if (!isset($current_tab)) {
         $current_tab = '';
     }
 
-    $row[] = new tabobject('view', $CFG->wwwroot.htmlspecialchars('/mod/feedback/view.php?id='.$id.'&do_show=view'), get_string('overview', 'feedback'));
+    $viewurl = new moodle_url('/mod/feedback/view.php', array('id'=>$usedid, 'do_show'=>'view'));
+    $row[] = new tabobject('view', $viewurl->out(), get_string('overview', 'feedback'));
 
     if($capabilities->edititems) {
-        $row[] = new tabobject('edit', $CFG->wwwroot.htmlspecialchars('/mod/feedback/edit.php?id='.$id.'&do_show=edit'), get_string('edit_items', 'feedback'));
-        $row[] = new tabobject('templates', $CFG->wwwroot.htmlspecialchars('/mod/feedback/edit.php?id='.$id.'&do_show=templates'), get_string('templates', 'feedback'));
+        $editurl = new moodle_url('/mod/feedback/edit.php', array('id'=>$usedid, 'do_show'=>'edit'));
+        $row[] = new tabobject('edit', $editurl->out(), get_string('edit_items', 'feedback'));
+        
+        $templateurl = new moodle_url('/mod/feedback/edit.php', array('id'=>$usedid, 'do_show'=>'templates'));
+        $row[] = new tabobject('templates', $templateurl->out(), get_string('templates', 'feedback'));
     }
 
     if($capabilities->viewreports) {
         if($feedback->course == SITEID){
-            $row[] = new tabobject('analysis', $CFG->wwwroot.htmlspecialchars('/mod/feedback/analysis_course.php?id='.$id.'&courseid='.$courseid.'&do_show=analysis'), get_string('analysis', 'feedback'));
+            $analysisurl = new moodle_url('/mod/feedback/analysis_course.php', array('id'=>$usedid, 'courseid'=>$courseid, 'do_show'=>'analysis'));
+            $row[] = new tabobject('analysis', $analysisurl->out(), get_string('analysis', 'feedback'));
         }else {
-            $row[] = new tabobject('analysis', $CFG->wwwroot.htmlspecialchars('/mod/feedback/analysis.php?id='.$id.'&courseid='.$courseid.'&do_show=analysis'), get_string('analysis', 'feedback'));
+            $analysisurl = new moodle_url('/mod/feedback/analysis.php', array('id'=>$usedid, 'courseid'=>$courseid, 'do_show'=>'analysis'));
+            $row[] = new tabobject('analysis', $analysisurl->out(), get_string('analysis', 'feedback'));
         }
     }
 
     if($capabilities->viewreports) {
-        $row[] = new tabobject('showentries', $CFG->wwwroot.htmlspecialchars('/mod/feedback/show_entries.php?id='.$id.'&do_show=showentries'), get_string('show_entries', 'feedback'));
+        $reporturl = new moodle_url('/mod/feedback/show_entries.php', array('id'=>$usedid, 'do_show'=>'showentries'));
+        $row[] = new tabobject('showentries', $reporturl->out(), get_string('show_entries', 'feedback'));
     }
 
     if(count($row) > 1) {

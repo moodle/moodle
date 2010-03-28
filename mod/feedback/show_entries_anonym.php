@@ -82,7 +82,8 @@ include('tabs.php');
 
 echo $OUTPUT->heading(format_text($feedback->name));
 
-echo $OUTPUT->continue_button(htmlspecialchars('show_entries.php?id='.$id.'&do_show=showentries'));
+$continueurl = new moodle_url('/mod/feedback/show_entries.php', array('id'=>$id, 'do_show'=>'showentries'));
+echo $OUTPUT->continue_button($continueurl);
 //print the list with anonymous completeds
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 $PAGE->requires->js('/mod/feedback/feedback.js');

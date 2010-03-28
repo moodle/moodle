@@ -13,7 +13,9 @@ require_once("lib.php");
 
 $id = required_param('id', PARAM_INT);
 
-$PAGE->set_url('/mod/feedback/index.php', array('id'=>$id));
+$url = new moodle_url('/mod/feedback/index.php', array('id'=>$id));
+
+$PAGE->set_url($url);
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourseid');
@@ -23,7 +25,7 @@ $capabilities = feedback_load_course_capabilities($course->id);
 require_login($course->id);
 $PAGE->set_pagelayout('incourse');
 
-add_to_log($course->id, 'feedback', 'view all', htmlspecialchars('index.php?id='.$course->id), $course->id);
+add_to_log($course->id, 'feedback', 'view all', $url->out(false), $course->id);
 
 
 /// Print the page header
@@ -80,18 +82,14 @@ if ($course->format == "weeks") {
 
 foreach ($feedbacks as $feedback) {
     //get the responses of each feedback
+    $viewurl = new moodle_url('/mod/feedback/view.php', array('id'=>$feedback->coursemodule));
 
     if($capabilities->viewreports) {
         $completedFeedbackCount = intval(feedback_get_completeds_group_count($feedback));
     }
 
-    if (!$feedback->visible) {
-        //Show dimmed if the mod is hidden
-        $link = '<a class="dimmed" href="'.htmlspecialchars('view.php?id='.$feedback->coursemodule).'">'.$feedback->name.'</a>';
-    } else {
-        //Show normal if the mod is visible
-        $link = '<a href="'.htmlspecialchars('view.php?id='.$feedback->coursemodule).'">'.$feedback->name.'</a>';
-    }
+    $dimmedclass = $feedback->visible ? '' : 'class="dimmed"';
+    $link = '<a '.$dimmedclass.' href="'.$viewurl->out().'">'.$feedback->name.'</a>';
 
     if ($course->format == "weeks" or $course->format == "topics") {
         $tabledata = array ($feedback->section, $link);
