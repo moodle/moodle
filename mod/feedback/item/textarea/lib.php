@@ -1,5 +1,5 @@
 <?php
-defined('FEEDBACK_INCLUDE_TEST') OR die('not allowed');
+defined('MOODLE_INTERNAL') OR die('not allowed');
 require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 
 class feedback_item_textarea extends feedback_item_base {

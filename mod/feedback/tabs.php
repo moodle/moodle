@@ -6,7 +6,7 @@
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @package feedback
 */
-    defined('FEEDBACK_INCLUDE_TEST') OR die('not allowed');
+    defined('MOODLE_INTERNAL') OR die('not allowed');
 
     $tabs = array();
     $row  = array();
