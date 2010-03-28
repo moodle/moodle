@@ -52,9 +52,7 @@ $capabilities = array(
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
             'user' => CAP_ALLOW,
-            'student' => CAP_ALLOW,
-            'editingteacher' => CAP_PREVENT,
-            'admin' => CAP_PREVENT
+            'student' => CAP_ALLOW
         )
     ),
 
@@ -158,8 +156,7 @@ $capabilities = array(
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
             'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_PREVENT
+            'editingteacher' => CAP_ALLOW
         )
     ),
 
