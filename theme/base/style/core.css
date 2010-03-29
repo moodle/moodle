@@ -490,7 +490,7 @@ body.tag .managelink {padding: 5px;}
 .fm-breadcrumb {margin:0;}
 .filemanager-container {padding: 5px;margin: 6px 0;}
 .filemanager-container ul{margin:0;padding:0;list-style-type:none;}
-.filemanager-container li{clear:both;}
+.filemanager-container li{clear:both;list-style-type:none;white-space:nowrap}
 #fm-move-div {margin: 6px;}
 #fm-move-div strong{color:red;}
 .fm-file-menu {width:18px;height:18px;float:left;}
