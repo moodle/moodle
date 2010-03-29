@@ -102,6 +102,7 @@ class blog_entry {
         $cmt = new stdClass();
         $cmt->contextid = get_context_instance(CONTEXT_USER, $user->id)->id;
         $cmt->area = 'format_blog';
+        $cmt->env = 'blog';
         $cmt->itemid = $this->id;
         $options->comments = $cmt;
         $this->summary = file_rewrite_pluginfile_urls($this->summary, 'pluginfile.php', SYSCONTEXTID, 'blog_post', $this->id);
