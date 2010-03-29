@@ -258,7 +258,7 @@ EOD;
     public function output($return = true) {
         global $CFG, $COURSE, $PAGE;
 
-        $this->link = qualified_me();
+        $this->link = $PAGE->url;
         $murl = new moodle_url($this->link);
         $murl->remove_params('nonjscomment');
         $murl->param('nonjscomment', 'true');
@@ -529,7 +529,7 @@ EOD;
      * @return mixed
      */
     public function print_comments($page = 0, $return = true, $nonjs = true) {
-        global $DB, $CFG;
+        global $DB, $CFG, $PAGE;
         $html = '';
         if (!(self::$comment_itemid == $this->options->itemid &&
             self::$comment_context == $this->options->context->id &&
@@ -556,7 +556,7 @@ EOD;
             $html .= $this->get_pagination($page);
         }
         $sesskey = sesskey();
-        $returnurl = qualified_me();
+        $returnurl = $PAGE->url;
         $strsubmit = get_string('submit');
         if ($nonjs) {
         $html .= <<<EOD
