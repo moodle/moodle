@@ -58,13 +58,13 @@ class comment_manager {
     }
 
     private function _setup_course($courseid) {
-        global $COURSE, $DB;
+        global $PAGE, $DB;
         if (!empty($this->course)) {
             // already set, stop
             return;
         }
-        if ($courseid == $COURSE->id) {
-            $this->course = $COURSE;
+        if ($courseid == $PAGE->course->id) {
+            $this->course = $PAGE->course;
         } else if (!$this->course = $DB->get_record('course', array('id'=>$courseid))) {
             $this->course = null;
         }
