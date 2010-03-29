@@ -5009,6 +5009,92 @@ class admin_setting_manageeditors extends admin_setting {
 }
 
 /**
+ * Special class for license administration.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_managelicenses extends admin_setting {
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        $this->nosave = true;
+        parent::__construct('licensesui', get_string('licensesettings', 'admin'), '', '');
+    }
+
+    /**
+     * Always returns true, does nothing
+     *
+     * @return true
+     */
+    public function get_setting() {
+        return true;
+    }
+
+    /**
+     * Always returns true, does nothing
+     *
+     * @return true
+     */
+    public function get_defaultsetting() {
+        return true;
+    }
+
+    /**
+     * Always returns '', does not write anything
+     *
+     * @return string Always returns ''
+     */
+    public function write_setting($data) {
+    // do not write any setting
+        return '';
+    }
+
+    /**
+     * Builds the XHTML to display the control
+     *
+     * @param string $data Unused
+     * @param string $query
+     * @return string
+     */
+    public function output_html($data, $query='') {
+        global $CFG, $OUTPUT;
+        require_once($CFG->libdir . '/licenselib.php');
+
+        // display strings
+        $txt = get_strings(array('administration', 'settings', 'name', 'enable', 'disable', 'none'));
+        $licenses = license_manager::get();
+
+        $return = $OUTPUT->heading(get_string('managelicenses', 'admin'), 3, 'main', true);
+        $return .= $OUTPUT->box_start('generalbox editorsui');
+
+        $table = new html_table();
+        $table->head  = array($txt->name, $txt->enable);
+        $table->align = array('left', 'center');
+        $table->width = '100%';
+        $table->data  = array();
+
+        $url = "licenses.php?sesskey=" . sesskey();
+        foreach ($licenses as $key => $value) {
+            $displayname = html_writer::link($value->source, $value->fullname, array('target'=>'_blank'));
+
+            if ($value->enabled == 1) {
+                $hideshow = html_writer::link($url.'&action=disable&license='.$value->shortname, 
+                    html_writer::tag('img', '', array('src'=>$OUTPUT->pix_url('i/hide'), 'class'=>'icon', 'alt'=>'disable')));
+            } else {
+                $hideshow = html_writer::link($url.'&action=enable&license='.$value->shortname, 
+                    html_writer::tag('img', '', array('src'=>$OUTPUT->pix_url('i/show'), 'class'=>'icon', 'alt'=>'enable')));
+            }
+            $enabled = true;
+
+            $table->data[] =array($displayname, $hideshow);
+        }
+        $return .= html_writer::table($table);
+        $return .= $OUTPUT->box_end();
+        return highlight($query, $return);
+    }
+}
+/**
  * Special class for filter administration.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

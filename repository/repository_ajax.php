@@ -39,6 +39,8 @@ $callback  = optional_param('callback', '', PARAM_CLEANHTML);
 $client_id = optional_param('client_id', '', PARAM_RAW);        // client ID
 $contextid = optional_param('ctx_id', SYSCONTEXTID, PARAM_INT);       // context ID
 $env       = optional_param('env', 'filepicker', PARAM_ALPHA);  // opened in editor or moodleform
+$license   = optional_param('license', $CFG->sitedefaultlicense, PARAM_TEXT);
+$author    = optional_param('author', '', PARAM_TEXT);
 $source    = optional_param('source', '', PARAM_RAW);           // file to download
 $itemid    = optional_param('itemid', 0, PARAM_INT);
 $page      = optional_param('page', '', PARAM_RAW);             // page
@@ -253,12 +255,12 @@ switch ($action) {
             }
 
             // get the file location
-            list($thefile, $url) = $repo->get_file($source, $saveas_filename);
-            if ($thefile === false) {
+            $file = $repo->get_file($source, $saveas_filename);
+            if ($file['path'] === false) {
                 $err->e = get_string('cannotdownload', 'repository');
                 die(json_encode($err));
             }
-            if (($maxbytes!==-1) && (filesize($thefile) > $maxbytes)) {
+            if (($maxbytes!==-1) && (filesize($file['path']) > $maxbytes)) {
                 throw new file_exception('maxbytes');
             }
 
@@ -267,11 +269,20 @@ switch ($action) {
             $record->filename = $saveas_filename;
             $record->filearea = $saveas_filearea;
             $record->itemid   = $itemid;
-            $record->license  = '';
-            $record->author   = '';
-            $record->source   = $url;
 
-            $info = repository::move_to_filepool($thefile, $record);
+            if (!empty($file['license'])) {
+                $record->license  = $file['license'];
+            } else {
+                $record->license  = $license;
+            }
+            if (!empty($file['author'])) {
+                $record->author   = $file['author'];
+            } else {
+                $record->author   = $author;
+            }
+            $record->source = !empty($file['url']) ? $file['url'] : '';
+
+            $info = repository::move_to_filepool($file['path'], $record);
             if (empty($info)) {
                 $info['e'] = get_string('error', 'moodle');
             }
@@ -286,7 +297,7 @@ switch ($action) {
         break;
     case 'upload':
         try {
-            $result = $repo->upload($maxbytes);
+            $result = $repo->upload();
             $result['client_id'] = $client_id;
             echo json_encode($result);
         } catch (Exception $e){

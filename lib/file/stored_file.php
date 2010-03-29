@@ -372,4 +372,28 @@ class stored_file {
     public function get_pathnamehash() {
         return $this->file_record->pathnamehash;
     }
+
+    /**
+     * Returns the license type of the file, it is a short name referred from license table
+     * @return string
+     */
+    public function get_license() {
+        return $this->file_record->license;
+    }
+
+    /**
+     * returns the author name of the file
+     * @return string
+     */
+    public function get_author() {
+        return $this->file_record->license;
+    }
+
+    /**
+     * Returns the source of the file, usually it is a url
+     * @return string
+     */
+    public function get_source() {
+        return $this->file_record->source;
+    }
 }

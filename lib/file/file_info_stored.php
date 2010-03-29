@@ -176,6 +176,30 @@ class file_info_stored extends file_info {
     }
 
     /**
+     * Returns the license type of the file
+     * @return string license short name or null
+     */
+    public function get_license() {
+        return $this->lf->get_license();
+    }
+
+    /**
+     * Returns the author name of the file
+     * @return string author name or null
+     */
+    public function get_author() {
+        return $this->lf->get_author();
+    }
+
+    /**
+     * Returns the source of the file
+     * @return string a source url or null
+     */
+    public function get_source() {
+        return $this->lf->get_source();
+    }
+
+    /**
      * Returns list of children.
      * @return array of file_info instances
      */

@@ -36,8 +36,12 @@ class repository_upload extends repository {
      * @param array $options
      */
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()){
+        global $CFG;
         parent::__construct($repositoryid, $context, $options);
         $this->itemid = optional_param('itemid', '', PARAM_INT);
+        $this->license = optional_param('license', $CFG->sitedefaultlicense, PARAM_TEXT);
+        $this->author = optional_param('author', '', PARAM_TEXT);
+        $this->filearea = optional_param('filearea', 'user_draft', PARAM_TEXT);
         $this->filepath = urldecode(optional_param('savepath', '/', PARAM_PATH));
     }
 
@@ -57,7 +61,13 @@ class repository_upload extends repository {
      */
     public function upload() {
         try {
-            $this->info = $this->upload_to_filepool('repo_upload_file', 'user_draft', $this->filepath, $this->itemid);
+            $record = new stdclass;
+            $record->filearea = $this->filearea;;
+            $record->filepath = $this->filepath;
+            $record->itemid   = $this->itemid;
+            $record->license  = $this->license;
+            $record->author   = $this->author;
+            $this->info = $this->upload_to_filepool('repo_upload_file', $record);
         } catch(Exception $e) {
             throw $e;
         }
@@ -102,12 +112,15 @@ class repository_upload extends repository {
      * @param bool $override override file if exists
      * @return mixed stored_file object or false if error; may throw exception if duplicate found
      */
-    public function upload_to_filepool($elname, $filearea='user_draft', $filepath='/', $itemid='', $filename = '', $override = true) {
+    public function upload_to_filepool($elname, $record, $override = true) {
         global $USER;
+        $context = get_context_instance(CONTEXT_USER, $USER->id);
+        $fs = get_file_storage();
+        $browser = get_file_browser();
 
-        if ($filepath !== '/') {
-            $filepath = trim($filepath, '/');
-            $filepath = '/'.$filepath.'/';
+        if ($record->filepath !== '/') {
+            $record->filepath = trim($record->filepath, '/');
+            $record->filepath = '/'.$record->filepath.'/';
         }
 
         if (!isset($_FILES[$elname])) {
@@ -118,18 +131,15 @@ class repository_upload extends repository {
             throw new moodle_exception('maxbytes');
         }
 
-        if (!$filename) {
-            $filename = $_FILES[$elname]['name'];
+        if (empty($record->filename)) {
+            $record->filename = $_FILES[$elname]['name'];
         }
 
-        $context = get_context_instance(CONTEXT_USER, $USER->id);
-        if (empty($itemid)) {
-            $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
+        if (empty($record->itemid)) {
+            $record->itemid = 0;
         }
-        $fs = get_file_storage();
-        $browser = get_file_browser();
 
-        if ($file = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
+        if ($file = $fs->get_file($context->id, $record->filearea, $record->itemid, $record->filepath, $record->filename)) {
             if ($override) {
                 $file->delete();
             } else {
@@ -137,26 +147,22 @@ class repository_upload extends repository {
             }
         }
 
-        $file_record = new object();
-        $file_record->contextid = $context->id;
-        $file_record->filearea  = $filearea;
-        $file_record->itemid    = $itemid;
-        $file_record->filepath  = $filepath;
-        $file_record->filename  = $filename;
-        $file_record->userid    = $USER->id;
+        $record->contextid = $context->id;
+        $record->userid    = $USER->id;
+        $record->source    = '';
 
         try {
-            $file = $fs->create_file_from_pathname($file_record, $_FILES[$elname]['tmp_name']);
+            $file = $fs->create_file_from_pathname($record, $_FILES[$elname]['tmp_name']);
         } catch (Exception $e) {
             $e->obj = $_FILES[$elname];
             throw $e;
         }
+
         $info = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
         return array(
             'url'=>$info->get_url(),
-            'id'=>$itemid,
+            'id'=>$record->itemid,
             'file'=>$file->get_filename()
         );
     }
 }
-

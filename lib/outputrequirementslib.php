@@ -359,7 +359,7 @@ class page_requirements_manager {
                                                         array('saving', 'repository'), array('search', 'repository'), array('searching', 'repository'), array('size', 'repository'),
                                                         array('submit', 'repository'), array('sync', 'repository'), array('title', 'repository'), array('upload', 'repository'),
                                                         array('uploading', 'repository'), array('xhtmlerror', 'repository'),
-                                                        array('xhtml', 'quiz'), array('cancel')));
+                                                        array('xhtml', 'quiz'), array('cancel'), array('chooselicense', 'repository'), array('author', 'repository')));
                     break;
                 case 'core_comment':
                     $module = array('name'     => 'core_comment',

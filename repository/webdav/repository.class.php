@@ -76,7 +76,7 @@ class repository_webdav extends repository {
         $this->wd->get($url, $buffer);
         $fp = fopen($path, 'wb');
         fwrite($fp, $buffer);
-        return array($path, '');
+        return array('path'=>$path);
     }
     public function global_search() {
         return false;

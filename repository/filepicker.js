@@ -117,7 +117,14 @@ M.core_filepicker.init = function(Y, options) {
                         } catch(e) {
                             alert(M.str.repository.invalidjson+' - |'+source+'| -'+stripHTML(o.responseText));
                         }
-                        args.callback(id,data,p);
+                        // error checking
+                        if (data.e) {
+                            var panel_id = '#panel-'+data.client_id;
+                            Y.one(panel_id).set('innerHTML', 'ERROR: '+data.e);
+                            return;
+                        } else {
+                            args.callback(id,data,p);
+                        }
                     }
                 },
                 arguments: {
@@ -280,7 +287,6 @@ M.core_filepicker.init = function(Y, options) {
                 if(node.children) {
                     y_file.on('click', function(e, p) {
                         if(dynload) {
-                            console.info(p);
                             var params = {'path':p.path};
                             scope.list(params);
                         }else{
@@ -296,6 +302,8 @@ M.core_filepicker.init = function(Y, options) {
                     fileinfo['title'] = list[k].title;
                     fileinfo['source'] = list[k].source;
                     fileinfo['thumbnail'] = list[k].thumbnail;
+                    fileinfo['haslicense'] = list[k].haslicense?true:false;
+                    fileinfo['hasauthor'] = list[k].hasauthor?true:false;
                     y_title.on('click', function(e, args) {
                         this.select_file(args);
                     }, this, fileinfo);
@@ -344,6 +352,25 @@ M.core_filepicker.init = function(Y, options) {
             if (this.options.externallink && this.options.env == 'editor') {
                 html += '<p'+le_style+'><input type="checkbox" id="linkexternal-'+client_id+'" value="" '+le_checked+' />'+M.str.repository.linkexternal+'</p>';
             }
+
+            if (!args.hasauthor) {
+                // the author of the file
+                html += '<p><label for="text-author">'+M.str.repository.author+' :</label>';
+                html += '<input id="text-author-'+client_id+'" type="text" name="author" value="'+this.options.author+'" />';
+                html += '</p>';
+            }
+
+            if (!args.haslicense) {
+                // the license of the file
+                var licenses = this.options.licenses;
+                html += '<p><label for="select-license-'+client_id+'">'+M.str.repository.chooselicense+' :</label>';
+                html += '<select name="license" id="select-license-'+client_id+'">';
+                for (var i in licenses) {
+                    html += '<option value="'+licenses[i].shortname+'">'+licenses[i].fullname+'</option>';
+                }
+                html += '</select></p>';
+            }
+
             html += '<p><input type="hidden" id="filesource-'+client_id+'" value="'+args.source+'" />';
             html += '<input type="button" id="fp-confirm-'+client_id+'" value="'+M.str.repository.getfile+'" />';
             html += '<input type="button" id="fp-cancel-'+client_id+'" value="'+M.str.moodle.cancel+'" /></p>';
@@ -360,6 +387,14 @@ M.core_filepicker.init = function(Y, options) {
                 var title = Y.one('#newname-'+client_id).get('value');
                 var filesource = Y.one('#filesource-'+client_id).get('value');
                 var params = {'title':title, 'source':filesource, 'savepath': this.options.savepath};
+                var license = Y.one('#select-license-'+client_id);
+                if (license) {
+                    params['license'] = license.get('value');
+                }
+                var author = Y.one('#text-author-'+client_id);
+                if (author) {
+                    params['author'] = author.get('value');
+                }
 
                 if (this.options.env == 'editor') {
                     var linkexternal = Y.one('#linkexternal-'+client_id).get('checked');
@@ -814,9 +849,26 @@ M.core_filepicker.init = function(Y, options) {
             var id = data.upload.id+'_'+client_id;
             var str = '<div id="'+id+'_div" class="fp-upload-form">';
             str += '<form id="'+id+'" method="POST">';
-            str += '<label for="'+id+'_file">'+data.upload.label+': </label>';
-            str += '<input type="file" id="'+id+'_file" name="repo_upload_file" />';
-            str += '<input type="hidden" name="itemid" value="'+this.options.itemid+'" />';
+            str += '<table border=1>';
+            str += '<tr><td>';
+            str += '<label for="'+id+'_file">'+data.upload.label+': </label></td>';
+            str += '<td><input type="file" id="'+id+'_file" name="repo_upload_file" />';
+            str += '<input type="hidden" name="itemid" value="'+this.options.itemid+'" /></tr>';
+            str += '<tr>';
+            str += '<td><label>'+M.str.repository.author+': </label></td>';
+            str += '<td><input type="text" name="author" value="'+this.options.author+'" /></td>';
+            str += '</tr>';
+            str += '<tr>';
+            str += '<td>'+M.str.repository.chooselicense+': </td>';
+            str += '<td>';
+            var licenses = this.options.licenses;
+            str += '<select name="license" id="select-license-'+client_id+'">';
+            for (var i in licenses) {
+                str += '<option value="'+licenses[i].shortname+'">'+licenses[i].fullname+'</option>';
+            }
+            str += '</select>';
+            str += '</td>';
+            str += '</tr></table>';
             str += '<div class="fp-upload-btn"><a id="'+id+'_action" href="###" >'+M.str.repository.upload+'...</a></div>';
             str += '</form>';
             str += '</div>';

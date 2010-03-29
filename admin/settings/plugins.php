@@ -83,6 +83,11 @@ if ($hassiteconfig) {
             $ADMIN->add('editorsettings', $editor_setting);
         } 
     }
+/// License types
+    $ADMIN->add('modules', new admin_category('licensesettings', get_string('license')));
+    $temp = new admin_settingpage('managelicenses', get_string('license'));
+    $temp->add(new admin_setting_managelicenses());
+    $ADMIN->add('licensesettings', $temp);
 
 /// Filter plugins
     $ADMIN->add('modules', new admin_category('filtersettings', get_string('managefilters')));

@@ -457,7 +457,7 @@ class file_storage {
      * @return object stored_file instance of newly created file
      */
     public function create_file_from_storedfile($file_record, $fileorid) {
-        global $DB;
+        global $DB, $CFG;
 
         if ($fileorid instanceof stored_file) {
             $fid = $fileorid->get_id();
@@ -511,6 +511,21 @@ class file_storage {
                 if ($value === '') {
                     // path must start and end with '/'
                     throw new file_exception('storedfileproblem', 'Invalid file name');
+                }
+            }
+
+            if ($key == 'source') {
+                $value = clean_param($value, PARAM_URL);
+            }
+
+            if ($key == 'author') {
+                $value = clean_param($value, PARAM_TEXT);
+            }
+
+            if ($key == 'license') {
+                $value = clean_param($value, PARAM_TEXT);
+                if ($value === '') {
+                    $value = $CFG->sitedefaultlicense;
                 }
             }
 
@@ -573,6 +588,8 @@ class file_storage {
             $filename = array_pop($parts);
             $file_record->filename = clean_param($filename, PARAM_FILE);
         }
+        $source = !empty($file_record->source) ? $file_record->source : $url;
+        $file_record->source = clean_param($source, PARAM_URL);
 
         return $this->create_file_from_string($file_record, $content);
     }
@@ -584,7 +601,7 @@ class file_storage {
      * @return object stored_file instance
      */
     public function create_file_from_pathname($file_record, $pathname) {
-        global $DB;
+        global $DB, $CFG;
 
         $file_record = (array)$file_record;  //do not modify the submitted record, this cast unlinks objects
         $file_record = (object)$file_record; // we support arrays too
@@ -615,6 +632,13 @@ class file_storage {
             throw new file_exception('storedfileproblem', 'Invalid file name');
         }
 
+        $file_record->source = clean_param($file_record->source, PARAM_URL);
+        $file_record->author = clean_param($file_record->author, PARAM_TEXT);
+        $file_record->license = clean_param($file_record->license, PARAM_TEXT);
+        if ($file_record->license === '') {
+            $file_record->license = $CFG->sitedefaultlicense;
+        }
+
         $now = time();
 
         $newrecord = new object();
@@ -629,6 +653,9 @@ class file_storage {
         $newrecord->timemodified = empty($file_record->timemodified) ? $now : $file_record->timemodified;
         $newrecord->mimetype     = empty($file_record->mimetype) ? mimeinfo('type', $file_record->filename) : $file_record->mimetype;
         $newrecord->userid       = empty($file_record->userid) ? null : $file_record->userid;
+        $newrecord->source       = $file_record->source;
+        $newrecord->author       = $file_record->author;
+        $newrecord->license      = $file_record->license;
 
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_file_to_pool($pathname);
 
@@ -660,7 +687,7 @@ class file_storage {
      * @return object stored_file instance
      */
     public function create_file_from_string($file_record, $content) {
-        global $DB;
+        global $DB, $CFG;
 
         $file_record = (array)$file_record;  //do not modify the submitted record, this cast unlinks objects
         $file_record = (object)$file_record; // we support arrays too
@@ -691,6 +718,13 @@ class file_storage {
             throw new file_exception('storedfileproblem', 'Invalid file name');
         }
 
+        $file_record->source = clean_param($file_record->source, PARAM_URL);
+        $file_record->author = clean_param($file_record->author, PARAM_TEXT);
+        $file_record->license = clean_param($file_record->license, PARAM_TEXT);
+        if ($file_record->license === '') {
+            $file_record->license = $CFG->sitedefaultlicense;
+        }
+
         $now = time();
 
         $newrecord = new object();
@@ -705,6 +739,10 @@ class file_storage {
         $newrecord->timemodified = empty($file_record->timemodified) ? $now : $file_record->timemodified;
         $newrecord->mimetype     = empty($file_record->mimetype) ? mimeinfo('type', $file_record->filename) : $file_record->mimetype;
         $newrecord->userid       = empty($file_record->userid) ? null : $file_record->userid;
+
+        $newrecord->license      = empty($file_record->license) ? null : $CFG->sitedefaultlicense;
+        $newrecord->source       = empty($file_record->source) ? null : '';
+        $newrecord->author       = empty($file_record->author) ? null : '';
 
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_string_to_pool($content);
 

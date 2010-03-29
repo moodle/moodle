@@ -14,7 +14,7 @@
  *   Please submit all problems or questions to the Help Forum on my project page:
  *     {@link http://sourceforge.net/forum/forum.php?forum_id=469652}
  *
- * Modified by Dongsheng Cai <dongsheng@cvs.moodle.org>
+ * Modified by Dongsheng Cai <dongsheng@moodle.com>
  * ChangeLog:
  *   1. Remove PEAR HTTP LIB, use curl.class.php (created by myself)
  *   2. Remove PEAR DB LIB

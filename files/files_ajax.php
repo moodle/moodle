@@ -20,7 +20,7 @@
  *
  * @package    moodlecore
  * @subpackage file
- * @copyright  1999 onwards Dongsheng Cai <dongsheng@moodle.com>
+ * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

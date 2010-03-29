@@ -1171,7 +1171,7 @@ abstract class repository {
         $fp = fopen($path, 'w');
         $c = new curl;
         $c->download(array(array('url'=>$url, 'file'=>$fp)));
-        return array($path, $url);
+        return array('path'=>$path, 'url'=>$url);
     }
 
     /**
@@ -1766,13 +1766,20 @@ final class repository_type_form extends moodleform {
  */
 function initialise_filepicker($args) {
     global $CFG, $USER, $PAGE, $OUTPUT;
+    $return = new stdclass;
+    require_once($CFG->libdir . '/licenselib.php');
+
+    $licenses = license_manager::get(array('enabled'=>1));
+    $return->licenses = $licenses;
+
+    $return->author = fullname($USER);
+
     $ft = new filetype_parser();
     if (empty($args->context)) {
         $context = $PAGE->context;
     } else {
         $context = $args->context;
     }
-    $return = new stdclass;
 
     $user_context = get_context_instance(CONTEXT_USER, $USER->id);
 

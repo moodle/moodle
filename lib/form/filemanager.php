@@ -31,7 +31,7 @@ require_once($CFG->dirroot.'/repository/lib.php');
 
 class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     public $_helpbutton = '';
-    protected $_options    = array('mainfile'=>'', 'subdirs'=>1, 'maxbytes'=>0, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
+    protected $_options    = array('mainfile'=>'', 'subdirs'=>1, 'maxbytes'=>-1, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
 
     function MoodleQuickForm_filemanager($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG, $PAGE;

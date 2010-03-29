@@ -123,7 +123,7 @@ class repository_filesystem extends repository {
         // this is a hack to prevent move_to_file deleteing files
         // in local repository
         $CFG->repository_no_delete = true;
-        return array($file, '');
+        return array('path'=>$file);
     }
 
     public function logout() {

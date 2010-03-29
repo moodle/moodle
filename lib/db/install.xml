@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20100317" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20100325" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2099,7 +2099,10 @@
         <FIELD NAME="mimetype" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="type of file - jpeg image, open document spreadsheet" PREVIOUS="filesize" NEXT="status"/>
         <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="number greater than 0 means something is wrong with this file (virus, missing, etc.)" PREVIOUS="mimetype" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="status" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="timecreated"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="timecreated" NEXT="source"/>
+        <FIELD NAME="source" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="store the reference if the file is imported from external sites" PREVIOUS="timemodified" NEXT="author"/>
+        <FIELD NAME="author" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The original author of the file" PREVIOUS="source" NEXT="license"/>
+        <FIELD NAME="license" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="license of the file to guide reuse" PREVIOUS="author"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="contextid"/>
@@ -2391,7 +2394,7 @@
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="rating" COMMENT="moodle ratings" PREVIOUS="blog_external">
+    <TABLE NAME="rating" COMMENT="moodle ratings" PREVIOUS="blog_external" NEXT="license">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="contextid"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="itemid"/>
@@ -2401,6 +2404,19 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="rating" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="userid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="timecreated"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="license" COMMENT="store licenses used by moodle" PREVIOUS="rating">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="shortname"/>
+        <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="id" NEXT="fullname"/>
+        <FIELD NAME="fullname" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="shortname" NEXT="source"/>
+        <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="fullname" NEXT="enabled"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="source" NEXT="version"/>
+        <FIELD NAME="version" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="enabled"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

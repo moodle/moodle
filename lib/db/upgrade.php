@@ -3098,6 +3098,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010031900);
     }
 
+
     if ($result && $oldversion < 2010032400) {
         // Upgrade all of those using the standardold theme to the use the standard
         // theme instead
@@ -3112,6 +3113,59 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // User
         $DB->execute('UPDATE {user} SET theme=? WHERE theme=?', array('standard', 'standardold'));
         upgrade_main_savepoint($result, 2010032400);
+    }
+
+    if ($result && $oldversion < 2010032405) {
+
+    /// Define field source to be added to files
+        $table = new xmldb_table('files');
+
+        $field = new xmldb_field('source', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'timemodified');
+
+    /// Conditionally launch add field source
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('author', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'source');
+
+    /// Conditionally launch add field author
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('license', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'author');
+
+    /// Conditionally launch add field license
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define table license to be created
+        $table = new xmldb_table('license');
+
+    /// Adding fields to table license
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('shortname', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('fullname', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
+        $table->add_field('source', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('enabled', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1');
+        $table->add_field('version', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+    /// Adding keys to table license
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Conditionally launch create table for license
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        require_once($CFG->libdir . '/licenselib.php');
+        license_manager::install_licenses();
+    /// set site default license
+        set_config('sitedefaultlicense', 'allrightsreserved');
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2010032405);
     }
     
     return $result;

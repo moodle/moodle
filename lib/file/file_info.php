@@ -146,6 +146,30 @@ abstract class file_info {
     }
 
     /**
+     * Returns the license type of the file
+     * @return string license short name or null
+     */
+    public function get_license() {
+        return null;
+    }
+
+    /**
+     * Returns the author name of the file
+     * @return string author name or null
+     */
+    public function get_author() {
+        return null;
+    }
+
+    /**
+     * Returns the source of the file
+     * @return string a source url or null
+     */
+    public function get_source() {
+        return null;
+    }
+
+    /**
      * Create new directory, may throw exception - make sure
      * params are valid.
      * @param string $newdirname name of new directory

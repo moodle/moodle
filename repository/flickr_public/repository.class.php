@@ -15,10 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
-require_once($CFG->libdir.'/flickrlib.php');
-require_once(dirname(__FILE__) . '/image.php');
-
 /**
  * repository_flickr_public class
  * This one is used to create public repository
@@ -32,6 +28,9 @@ require_once(dirname(__FILE__) . '/image.php');
  * @author Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+require_once($CFG->libdir.'/flickrlib.php');
+
 class repository_flickr_public extends repository {
     private $flickr;
     public $photos;
@@ -205,6 +204,19 @@ class repository_flickr_public extends repository {
         return $this->print_login();
     }
 
+    public function license4moodle ($license_id) {
+        $license = array(
+            '1' => 'cc-nc-sa',
+            '2' => 'cc-nc',
+            '3' => 'cc-nc-nd',
+            '4' => 'cc',
+            '5' => 'cc-sa',
+            '6' => 'cc-nd',
+            '7' => 'allrightsreserved'
+            );
+        return $license[$license_id];
+    }
+
     /**
      * search images on flickr
      *
@@ -343,9 +355,17 @@ class repository_flickr_public extends repository {
                     // append file extension
                     $p['title'] .= $format;
                 }
-                $ret['list'][] = array('title'=>$p['title'], 'source'=>$p['id'],
-                    'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'),
-                    'date'=>'', 'size'=>'unknown', 'url'=>'http://www.flickr.com/photos/'.$p['owner'].'/'.$p['id']);
+                $ret['list'][] = array(
+                    'title'=>$p['title'],
+                    'source'=>$p['id'],
+                    'id'=>$p['id'],
+                    'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'),
+                    'date'=>'',
+                    'size'=>'unknown',
+                    'url'=>'http://www.flickr.com/photos/'.$p['owner'].'/'.$p['id'],
+                    'haslicense'=>true,
+                    'hasauthor'=>true
+                );
             }
         }
         return $ret;
@@ -389,30 +409,28 @@ class repository_flickr_public extends repository {
      */
     public function get_file($photo_id, $file = '') {
         global $CFG;
+        $info = $this->flickr->photos_getInfo($photo_id);
         $result = $this->flickr->photos_getSizes($photo_id);
+        // download link
+        $source = '';
+        // flickr photo page
         $url = '';
         if (!empty($result[4])) {
-            $url = $result[4]['source'];
+            $source = $result[4]['source'];
+            $url = $result[4]['url'];
         } elseif(!empty($result[3])) {
-            $url = $result[3]['source'];
+            $source = $result[3]['source'];
+            $url = $result[3]['url'];
         } elseif(!empty($result[2])) {
-            $url = $result[2]['source'];
+            $source = $result[2]['source'];
+            $url = $result[2]['url'];
         }
         $path = $this->prepare_file($file);
         $fp = fopen($path, 'w');
         $c = new curl;
-        $c->download(array(array('url'=>$url, 'file'=>$fp)));
+        $c->download(array(array('url'=>$source, 'file'=>$fp)));
 
-        $watermark = get_config('flickr_public', 'watermark');
-        if ($watermark === 'on') {
-            $img = new moodle_image($path);
-            $pathinfo = pathinfo($path);
-            $newpath = $pathinfo['dirname'] . '/wm_' . $pathinfo['basename'];
-            $img->watermark($url, array(10,10), array('ttf'=>true, 'fontsize'=>9))->saveas($newpath);
-            unlink($path);
-            $path = $newpath;
-        }
-        return array($path, $url);
+        return array('path'=>$path, 'url'=>$url, 'author'=>$info['owner']['realname'], 'license'=>$this->license4moodle($info['license']));
     }
 
     /**
@@ -443,11 +461,8 @@ class repository_flickr_public extends repository {
         }
         $strrequired = get_string('required');
 
-        $mform->addElement('checkbox', 'watermark', get_string('watermark', 'repository_flickr_public'));
-
         $mform->addElement('text', 'api_key', get_string('apikey', 'repository_flickr_public'), array('value'=>$api_key,'size' => '40'));
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
-
 
         $mform->addElement('static', null, '',  get_string('information','repository_flickr_public'));
     }
@@ -457,7 +472,7 @@ class repository_flickr_public extends repository {
      * @return array 
      */
     public static function get_type_option_names() {
-        return array('api_key', 'watermark');
+        return array('api_key');
     }
 
     /**

@@ -251,7 +251,7 @@ class repository_mahara extends repository {
         fwrite($fp,$content);
         fclose($fp);
 
-        return array($path, '');
+        return array('path'=>$path);
 
     }
 

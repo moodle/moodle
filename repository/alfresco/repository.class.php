@@ -199,7 +199,7 @@ class repository_alfresco extends repository {
         $fp = fopen($path, 'w');
         $c = new curl;
         $c->download(array(array('url'=>$url, 'file'=>$fp)));
-        return array($path, $url);
+        return array('path'=>$path, 'url'=>$url);
     }
 
     public function print_search($client_id) {
