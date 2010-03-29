@@ -5901,7 +5901,8 @@ class string_manager {
             return $this->searchpathsformodule[$module];
         }
 
-        $locations = array();
+        $locations = $this->corelocations;
+
         if (!array_key_exists($module, $this->nonpluginfiles)) {
             foreach ($locations as $location => $ignored) {
                 $locations[$location] = $module . '/';
@@ -5913,7 +5914,6 @@ class string_manager {
                 }
             }
         }
-        $locations = $locations + $this->corelocations;
 
         $this->searchpathsformodule[$module] = $locations;
         return $locations;
