@@ -57,7 +57,7 @@ class comment_manager {
         return $comments;
     }
 
-    private function _setup_course($courseid) {
+    private function setup_course($courseid) {
         global $PAGE, $DB;
         if (!empty($this->course)) {
             // already set, stop
@@ -70,7 +70,7 @@ class comment_manager {
         }
     }
 
-    private function _setup_plugin($comment) {
+    private function setup_plugin($comment) {
         global $DB;
         $this->context = get_context_instance_by_id($comment->contextid);
         if (!is_object($this->context)) {
@@ -85,7 +85,7 @@ class comment_manager {
         if ($this->context->contextlevel == CONTEXT_MODULE) {
             $this->plugintype = 'mod';
             $this->cm = get_coursemodule_from_id('', $this->context->instanceid);
-            $this->_setup_course($this->cm->course);
+            $this->setup_course($this->cm->course);
             $this->modinfo = get_fast_modinfo($this->course);
             $this->pluginname = $this->modinfo->cms[$this->cm->id]->modname;
         }
@@ -106,7 +106,7 @@ class comment_manager {
         $table->width = "95%";
         $table->data = array();
         foreach ($comments as $c) {
-            $this->_setup_plugin($c);
+            $this->setup_plugin($c);
             if (!empty($this->plugintype)) {
                 $url = plugin_callback($this->plugintype, $this->pluginname, FEATURE_COMMENT, 'url', array($c));
             }

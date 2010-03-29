@@ -130,7 +130,7 @@ class comment {
             $this->linktext = get_string('comments');
         }
 
-        $this->_setup_plugin();
+        $this->setup_plugin();
 
         $this->options = new stdclass;
         $this->options->context     = $this->context;
@@ -150,17 +150,17 @@ EOD;
         }
 
         // setting post and view permissions
-        $this->_check_permissions();
+        $this->check_permissions();
 
         // setup course
         if (!empty($options->course)) {
             $this->course   = $options->course;
         } else if (!empty($options->courseid)) {
             $courseid = $options->courseid;
-            $this->_setup_course($courseid);
+            $this->setup_course($courseid);
         } else {
             $courseid = SITEID;
-            $this->_setup_course($courseid);
+            $this->setup_course($courseid);
         }
 
         if (!empty($options->showcount)) {
@@ -193,7 +193,7 @@ EOD;
         $PAGE->requires->string_for_js('comments', 'moodle');
     }
 
-    private function _setup_course($courseid) {
+    private function setup_course($courseid) {
         global $PAGE, $DB;
         if (!empty($this->course)) {
             // already set, stop
@@ -210,7 +210,7 @@ EOD;
      * Setting module info
      *
      */
-    private function _setup_plugin() {
+    private function setup_plugin() {
         global $DB;
         // blog needs to set env as "blog"
         if ($this->env == 'blog') {
@@ -231,7 +231,7 @@ EOD;
         if ($this->context->contextlevel == CONTEXT_MODULE) {
             $this->plugintype = 'mod';
             $this->cm = get_coursemodule_from_id('', $this->context->instanceid);
-            $this->_setup_course($this->cm->course);
+            $this->setup_course($this->cm->course);
             $this->modinfo = get_fast_modinfo($this->course);
             $this->pluginname = $this->modinfo->cms[$this->cm->id]->modname;
         }
@@ -243,7 +243,7 @@ EOD;
      * If you need to check permission by modules, a
      * function named $pluginname_check_comment_post must be implemented
      */
-    private function _check_permissions() {
+    private function check_permissions() {
         global $CFG;
         $this->postcap = has_capability('moodle/comment:post', $this->context);
         $this->viewcap = has_capability('moodle/comment:view', $this->context);
