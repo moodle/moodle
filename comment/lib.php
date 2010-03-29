@@ -260,7 +260,7 @@ EOD;
      * @return mixed
      */
     public function output($return = true) {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $OUTPUT;
 
         $this->link = $PAGE->url;
         $murl = new moodle_url($this->link);
@@ -305,10 +305,11 @@ EOD;
 
         if (!empty($this->viewcap)) {
             // print commenting icon and tooltip
+            $icon = $OUTPUT->pix_url('t/collapsed');
             $html = <<<EOD
 <div class="mdl-left">
 <a id="comment-link-{$this->cid}" href="{$this->link}">
-    <img id="comment-img-{$this->cid}" src="{$CFG->wwwroot}/pix/t/collapsed.png" alt="{$this->linktext}" title="{$this->linktext}" />
+    <img id="comment-img-{$this->cid}" src="$icon" alt="{$this->linktext}" title="{$this->linktext}" />
     <span id="comment-link-text-{$this->cid}">{$this->linktext} {$this->count}</span>
 </a>
 <div id="comment-ctrl-{$this->cid}" class="comment-ctrl">
