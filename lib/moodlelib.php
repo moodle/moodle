@@ -5901,8 +5901,7 @@ class string_manager {
             return $this->searchpathsformodule[$module];
         }
 
-        $locations = $this->corelocations;
-
+        $locations = array();
         if (!array_key_exists($module, $this->nonpluginfiles)) {
             foreach ($locations as $location => $ignored) {
                 $locations[$location] = $module . '/';
@@ -5914,6 +5913,7 @@ class string_manager {
                 }
             }
         }
+        $locations = $locations + $this->corelocations;
 
         $this->searchpathsformodule[$module] = $locations;
         return $locations;
@@ -6286,7 +6286,7 @@ class string_manager {
  *      If none is specified then moodle.php is used.
  * @param mixed $a An object, string or number that can be used
  *      within translation strings
- * @param array $extralocations DEPRICATED. An array of strings with other
+ * @param array $extralocations DEPRECATED. An array of strings with other
  *      locations to look for string files. This used to be used by plugins so
  *      they could package their language strings in the plugin folder, however,
  *      There is now a better way to achieve this. See
