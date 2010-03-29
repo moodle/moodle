@@ -54,6 +54,8 @@ if (!during_initial_install()) { //do not use during installation
                    '8' => '8',
                    '9' => '9',
                    '10' => '10')));
+        $temp->add(new admin_setting_configtext('commentsperpage', get_string('commentsperpage', 'admin'), '', 15, PARAM_INT));
+
         $temp->add(new admin_setting_configtext('coursesperpage', get_string('coursesperpage', 'admin'), get_string('configcoursesperpage', 'admin'), 20, PARAM_INT));
         $temp->add(new admin_setting_configcheckbox('allowvisiblecoursesinhiddencategories', get_string('allowvisiblecoursesinhiddencategories', 'admin'), get_string('configvisiblecourses', 'admin'), 0));
 
