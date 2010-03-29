@@ -87,6 +87,10 @@ class comment {
     public function __construct($options) {
         global $CFG, $DB;
 
+        if (empty($CFG->commentsperpage)) {
+            $CFG->commentsperpage = 15;
+        }
+
         $this->viewcap = false;
         $this->postcap = false;
 
@@ -371,7 +375,6 @@ EOD;
         if (empty($this->viewcap)) {
             return false;
         }
-        $CFG->commentsperpage = 15;
         if (!is_numeric($page)) {
             $page = 0;
         }
@@ -439,11 +442,12 @@ EOD;
             $str = '';
             $str .= '<div class="comment-paging" id="comment-pagination-'.$this->cid.'">';
             for ($p=0; $p<$pages; $p++) {
-                $extra = '';
                 if ($p == $page) {
-                    $class = ' curpage ';
+                    $class = 'curpage';
+                } else {
+                    $class = 'pageno';
                 }
-                $str .= '<a class="pageno '.$class.'" href="###" id="comment-page-'.$this->cid.'-'.$p.'">'.($p+1).'</a> ';
+                $str .= '<a class="'.$class.'" href="###" id="comment-page-'.$this->cid.'-'.$p.'">'.($p+1).'</a> ';
             }
             $str .= '</div>';
         }
