@@ -315,6 +315,7 @@ table.mod_index {width:100%;}
 .comment-list li {margin: 2px;margin-bottom:5px;clear:both;}
 .comment-paging{text-align:center;}
 .comment-paging .pageno{padding: 2px;}
+.comment-paging .curpage{border:1px solid grey}
 .comment-userpicture {width: 20px;float:left;}
 .comment-content {margin-left: 22px;}
 .comment-content div {margin:0;padding:0;}

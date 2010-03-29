@@ -302,7 +302,7 @@ EOD;
         if (!empty($this->viewcap)) {
             // print commenting icon and tooltip
             $html = <<<EOD
-<div style="text-align:left">
+<div class="mdl-left">
 <a id="comment-link-{$this->cid}" href="{$this->link}">
     <img id="comment-img-{$this->cid}" src="{$CFG->wwwroot}/pix/t/collapsed.png" alt="{$this->linktext}" title="{$this->linktext}" />
     <span id="comment-link-text-{$this->cid}">{$this->linktext} {$this->count}</span>
@@ -342,7 +342,7 @@ EOD;
         $html .= <<<EOD
     </div>
 </div>
-<div style="clear:both"></div>
+<div class="clearer"></div>
 EOD;
             }
 
@@ -441,9 +441,9 @@ EOD;
             for ($p=0; $p<$pages; $p++) {
                 $extra = '';
                 if ($p == $page) {
-                    $extra = ' style="border:1px solid grey" ';
+                    $class = ' curpage ';
                 }
-                $str .= '<a class="pageno" href="###"'.$extra.' id="comment-page-'.$this->cid.'-'.$p.'">'.($p+1).'</a> ';
+                $str .= '<a class="pageno '.$class.'" href="###" id="comment-page-'.$this->cid.'-'.$p.'">'.($p+1).'</a> ';
             }
             $str .= '</div>';
         }
