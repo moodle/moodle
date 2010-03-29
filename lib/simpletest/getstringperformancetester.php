@@ -88,13 +88,13 @@ try {
         time_log_file('admin_index.php_old_get_string.log.php');
         time_log_file('course_view.php_old_get_string.log.php');
 
-//        test_one_case('info', '', null);
-//        test_one_case('attemptquiznow', 'quiz', null);
-//        $a = new stdClass;
-//        $a->firstname = 'Martin';
-//        $a->lastname = 'Dougiamas';
-//        test_one_case('fullnamedisplay', '', $a);
-//        test_one_case('stringthatdoesnotexistinanyfile', 'qtype_shortanswer', null);
+        test_one_case('info', '', null);
+        test_one_case('attemptquiznow', 'quiz', null);
+        $a = new stdClass;
+        $a->firstname = 'Martin';
+        $a->lastname = 'Dougiamas';
+        test_one_case('fullnamedisplay', '', $a);
+        test_one_case('stringthatdoesnotexistinanyfile', 'qtype_shortanswer', null);
     }
 
 } catch(Exception $e) { // Did they really leave finally out of PHP?
