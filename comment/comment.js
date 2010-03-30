@@ -250,10 +250,13 @@ M.core_comment = {
                 // page buttons
                 Y.all('div.comment-content a').each(
                     function(node, id) {
+                        var theid = node.get('id');
+                        var re = new RegExp("comment-delete-"+scope.client_id+"-(\\d+)", "i");
+                        var result = theid.match(re);
+                        if (result[1]) {
+                            Y.Event.purgeElement('#'+theid, false, 'click');
+                        }
                         node.on('click', function(e, node) {
-                            var id = node.get('id');
-                            var re = new RegExp("comment-delete-"+this.client_id+"-(\\d+)", "i");
-                            var result = id.match(re);
                             if (result[1]) {
                                 this.dodelete(result[1]);
                             }
