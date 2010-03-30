@@ -1443,7 +1443,7 @@ function upgrade_plugin_mnet_functions($component) {
     foreach($subscribes as $service => $methods) {
         if (!array_key_exists($service, $servicecache)) {
             if (!$serviceobj = $DB->get_record('mnet_service', array('name' =>  $service))) {
-                debugging("skipping unknown service $service");
+                debugging("TODO: skipping unknown service $service - somebody needs to fix MDL-21993");
                 continue;
             }
             $servicecache[$service] = $serviceobj;
