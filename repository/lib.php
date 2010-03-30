@@ -800,9 +800,7 @@ abstract class repository {
      * @global object $USER
      * @global object $OUTPUT
      * @param string $thefile file path in download folder
-     * @param string $name file name
-     * @param integer $itemid item id to identify a file in filepool
-     * @param string $filearea file area
+     * @param object $record
      * @return array containing the following keys:
      *           icon
      *           file
