@@ -218,4 +218,8 @@ function xmldb_main_install() {
 
     // init themes
     set_config('themerev', 1);
+
+    // Install licenses
+    require_once($CFG->libdir . '/licenselib.php');
+    license_manager::install_licenses();
 }
