@@ -764,8 +764,8 @@ EOD;
     public static function comment_url($options) {
         return null;
     }
-    public static function comment_display(&$comments, $options) {
-        return true;
+    public static function comment_display($comments, $options) {
+        return $comments;
     }
     public static function comment_add(&$comments, $options) {
         return true;

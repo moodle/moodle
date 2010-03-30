@@ -413,7 +413,7 @@ EOD;
 
         if (!empty($this->plugintype)) {
             // moodle module will filter comments
-            plugin_callback($this->plugintype, $this->pluginname, FEATURE_COMMENT, 'display', array(&$comments, $this->options));
+            $comments = plugin_callback($this->plugintype, $this->pluginname, FEATURE_COMMENT, 'display', array($comments, $this->options));
         }
 
         return $comments;
