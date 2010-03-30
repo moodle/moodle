@@ -502,11 +502,12 @@ EOD;
      */
     public function delete_comments() {
         global $DB;
-        return $DB->delete_records('comments', array(
+        $DB->delete_records('comments', array(
             'contextid'=>$this->context->id,
             'commentarea'=>$this->commentarea,
             'itemid'=>$this->itemid)
         );
+        return true;
     }
 
     /**
@@ -523,7 +524,8 @@ EOD;
         if (!($USER->id == $comment->userid || !empty($candelete))) {
             throw new comment_exception('nopermissiontocomment');
         }
-        return $DB->delete_records('comments', array('id'=>$commentid));
+        $DB->delete_records('comments', array('id'=>$commentid));
+        return true;
     }
 
     /**

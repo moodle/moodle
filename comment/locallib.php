@@ -130,7 +130,8 @@ class comment_manager {
     public function delete_comment($commentid) {
         global $DB;
         if ($comment = $DB->get_record('comments', array('id'=>$commentid))) {
-            return $DB->delete_records('comments', array('id'=>$commentid));
+            $DB->delete_records('comments', array('id'=>$commentid));
+            return true;
         }
         return false;
     }
