@@ -24,277 +24,267 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-    require_once(dirname(__FILE__) . '/../../config.php');
-    require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
+require_once(dirname(__FILE__) . '/../../config.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
 
-    define("MAX_USERS_TO_LIST_PER_ROLE", 10);
+define("MAX_USERS_TO_LIST_PER_ROLE", 10);
 
-    $contextid      = required_param('contextid',PARAM_INT);
-    $roleid         = optional_param('roleid', 0, PARAM_INT);
-    $userid         = optional_param('userid', 0, PARAM_INT); // needed for user tabs
-    $courseid       = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
-    $extendperiod   = optional_param('extendperiod', 0, PARAM_INT);
-    $extendbase     = optional_param('extendbase', 3, PARAM_INT);
+$contextid      = required_param('contextid',PARAM_INT);
+$roleid         = optional_param('roleid', 0, PARAM_INT);
+$courseid       = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
+$extendperiod   = optional_param('extendperiod', 0, PARAM_INT);
+$extendbase     = optional_param('extendbase', 3, PARAM_INT);
 
-    $urlparams = array('contextid' => $contextid);
-    if (!empty($userid)) {
-        $urlparams['userid'] = $userid;
-    }
-    if ($courseid && $courseid != SITEID) {
-        $urlparams['courseid'] = $courseid;
-    }
-    $PAGE->set_url('/admin/roles/assign.php', $urlparams);
-    $baseurl = $PAGE->url->out();
+list($context, $course, $cm) = get_context_info_array($contextid);
 
-    if (! $context = get_context_instance_by_id($contextid)) {
-        print_error('wrongcontextid', 'error');
-    }
-    $isfrontpage = $context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID;
-    $PAGE->set_context($context);
-    $contextname = print_context_name($context);
+$PAGE->set_url('/admin/roles/assign.php', array('contextid' => $contextid));
+$PAGE->set_context($context);
 
-    $inmeta = 0;
-    $cm = null;
-    if ($context->contextlevel == CONTEXT_COURSE) {
-        $courseid = $context->instanceid;
+$userid  = 0;
+$tabfile = null;
 
-    } else if ($context->contextlevel == CONTEXT_MODULE) {
-        $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
-        $courseid = $cm->course;
+if ($course) {
+    $isfrontpage = ($context->contextlevel == CONTEXT_COURSE and $context->instanceid == SITEID);
 
-    } else if (!empty($courseid)) { // we need this for user tabs in user context
-        // pass it
-
+} else {
+    $isfrontpage = false;
+    if ($context->contextlevel == CONTEXT_USER) {
+        $courseid = optional_param('courseid', SITEID, PARAM_INT); // needed for user/tabs.php
+        $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+        $PAGE->url->param('courseid', $courseid);
+        $userid = $context->instanceid;
     } else {
-        $courseid = SITEID;
-        $course = clone($SITE);
+        $course = $SITE;
     }
+}
 
-    $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
-    $inmeta = $course->metacourse;
+// security
+require_login($course, false, $cm);
+require_capability('moodle/role:assign', $context);
+$PAGE->set_context($context);
 
-/// Check login and permissions.
-    require_login($course, false, $cm);
-    require_capability('moodle/role:assign', $context);
+$contextname = print_context_name($context);
+$courseid = $course->id;
+$inmeta = $course->metacourse;
 
-/// These are needed early because of tabs.php
-    list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
-    $overridableroles = get_overridable_roles($context, ROLENAME_BOTH);
+// These are needed early because of tabs.php
+list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
+$overridableroles = get_overridable_roles($context, ROLENAME_BOTH);
 
-/// Make sure this user can assign this role
-    if ($roleid && !isset($assignableroles[$roleid])) {
-        $a = new stdClass;
-        $a->roleid = $roleid;
-        $a->context = $contextname;
-        print_error('cannotassignrolehere', '', get_context_url($context), $a);
-    }
+// Make sure this user can assign this role
+if ($roleid && !isset($assignableroles[$roleid])) {
+    $a = new stdClass;
+    $a->roleid = $roleid;
+    $a->context = $contextname;
+    print_error('cannotassignrolehere', '', get_context_url($context), $a);
+}
 
-/// Get some language strings
-    $straction = get_string('assignroles', 'role'); // Used by tabs.php
+// Get some language strings
+$straction = get_string('assignroles', 'role'); // Used by tabs.php
 
-/// Work out an appropriate page title.
-    if ($roleid) {
-        $a = new stdClass;
-        $a->role = $assignableroles[$roleid];
-        $a->context = $contextname;
-        $title = get_string('assignrolenameincontext', 'role', $a);
+// Work out an appropriate page title.
+if ($roleid) {
+    $a = new stdClass;
+    $a->role = $assignableroles[$roleid];
+    $a->context = $contextname;
+    $title = get_string('assignrolenameincontext', 'role', $a);
+} else {
+    if ($isfrontpage) {
+        $title = get_string('frontpageroles', 'admin');
     } else {
-        if ($isfrontpage) {
-            $title = get_string('frontpageroles', 'admin');
-        } else {
-            $title = get_string('assignrolesin', 'role', $contextname);
-        }
+        $title = get_string('assignrolesin', 'role', $contextname);
     }
+}
 
-/// Build the list of options for the enrolment period dropdown.
-    $unlimitedperiod = get_string('unlimited');
-    for ($i=1; $i<=365; $i++) {
-        $seconds = $i * 86400;
-        $periodmenu[$seconds] = get_string('numdays', '', $i);
+// Build the list of options for the enrolment period dropdown.
+$unlimitedperiod = get_string('unlimited');
+for ($i=1; $i<=365; $i++) {
+    $seconds = $i * 86400;
+    $periodmenu[$seconds] = get_string('numdays', '', $i);
+}
+// Work out the apropriate default setting.
+if ($extendperiod) {
+    $defaultperiod = $extendperiod;
+} else {
+    $defaultperiod = $course->enrolperiod;
+}
+
+// Build the list of options for the starting from dropdown.
+$timeformat = get_string('strftimedatefullshort');
+$today = time();
+$today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
+
+// MDL-12420, preventing course start date showing up as an option at system context and front page roles.
+if ($course->startdate > 0) {
+    $basemenu[2] = get_string('coursestart') . ' (' . userdate($course->startdate, $timeformat) . ')';
+}
+if ($course->enrollable != 2 || ($course->enrolstartdate == 0 || $course->enrolstartdate <= $today) && ($course->enrolenddate == 0 || $course->enrolenddate > $today)) {
+    $basemenu[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
+}
+if ($course->enrollable == 2) {
+    if($course->enrolstartdate > 0) {
+        $basemenu[4] = get_string('courseenrolstart') . ' (' . userdate($course->enrolstartdate, $timeformat) . ')';
     }
-/// Work out the apropriate default setting.
-    if ($extendperiod) {
-        $defaultperiod = $extendperiod;
-    } else {
-        $defaultperiod = $course->enrolperiod;
+    if($course->enrolenddate > 0) {
+        $basemenu[5] = get_string('courseenrolend') . ' (' . userdate($course->enrolenddate, $timeformat) . ')';
     }
+}
 
-/// Build the list of options for the starting from dropdown.
-    $timeformat = get_string('strftimedatefullshort');
-    $today = time();
-    $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
+// Process any incoming role assignments before printing the header.
+if ($roleid) {
 
-    // MDL-12420, preventing course start date showing up as an option at system context and front page roles.
-    if ($course->startdate > 0) {
-        $basemenu[2] = get_string('coursestart') . ' (' . userdate($course->startdate, $timeformat) . ')';
-    }
-    if ($course->enrollable != 2 || ($course->enrolstartdate == 0 || $course->enrolstartdate <= $today) && ($course->enrolenddate == 0 || $course->enrolenddate > $today)) {
-        $basemenu[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
-    }
-    if($course->enrollable == 2) {
-        if($course->enrolstartdate > 0) {
-            $basemenu[4] = get_string('courseenrolstart') . ' (' . userdate($course->enrolstartdate, $timeformat) . ')';
-        }
-        if($course->enrolenddate > 0) {
-            $basemenu[5] = get_string('courseenrolend') . ' (' . userdate($course->enrolenddate, $timeformat) . ')';
-        }
-    }
+    // Create the user selector objects.
+    $options = array('context' => $context, 'roleid' => $roleid);
 
-/// Process any incoming role assignments before printing the header.
-    if ($roleid) {
+    $potentialuserselector = roles_get_potential_user_selector($context, 'addselect', $options);
+    $currentuserselector = new existing_role_holders('removeselect', $options);
 
-    /// Create the user selector objects.
-        $options = array('context' => $context, 'roleid' => $roleid);
+    // Process incoming role assignments
+    $errors = array();
+    if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
+        $userstoassign = $potentialuserselector->get_selected_users();
+        if (!empty($userstoassign)) {
 
-        $potentialuserselector = roles_get_potential_user_selector($context, 'addselect', $options);
-        $currentuserselector = new existing_role_holders('removeselect', $options);
-
-    /// Process incoming role assignments
-        $errors = array();
-        if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
-            $userstoassign = $potentialuserselector->get_selected_users();
-            if (!empty($userstoassign)) {
-
-                foreach ($userstoassign as $adduser) {
-                    $allow = true;
-                    if ($inmeta) {
-                        if (has_capability('moodle/course:managemetacourse', $context, $adduser->id)) {
-                            //ok
-                        } else {
-                            $managerroles = get_roles_with_capability('moodle/course:managemetacourse', CAP_ALLOW, $context);
-                            if (!empty($managerroles) and !array_key_exists($roleid, $managerroles)) {
-                                $erruser = $DB->get_record('user', array('id'=>$adduser->id), 'id, firstname, lastname');
-                                $errors[] = get_string('metaassignerror', 'role', fullname($erruser));
-                                $allow = false;
-                            }
-                        }
-                    }
-
-                    if ($allow) {
-                        switch($extendbase) {
-                            case 2:
-                                $timestart = $course->startdate;
-                                break;
-                            case 3:
-                                $timestart = $today;
-                                break;
-                            case 4:
-                                $timestart = $course->enrolstartdate;
-                                break;
-                            case 5:
-                                $timestart = $course->enrolenddate;
-                                break;
-                        }
-
-                        if($extendperiod > 0) {
-                            $timeend = $timestart + $extendperiod;
-                        } else {
-                            $timeend = 0;
-                        }
-                        if (! role_assign($roleid, $adduser->id, 0, $context->id, $timestart, $timeend)) {
-                            $a = new stdClass;
-                            $a->role = $assignableroles[$roleid];
-                            $a->user = fullname($adduser);
-                            $errors[] = get_string('assignerror', 'role', $a);
+            foreach ($userstoassign as $adduser) {
+                $allow = true;
+                if ($inmeta) {
+                    if (has_capability('moodle/course:managemetacourse', $context, $adduser->id)) {
+                        //ok
+                    } else {
+                        $managerroles = get_roles_with_capability('moodle/course:managemetacourse', CAP_ALLOW, $context);
+                        if (!empty($managerroles) and !array_key_exists($roleid, $managerroles)) {
+                            $erruser = $DB->get_record('user', array('id'=>$adduser->id), 'id, firstname, lastname');
+                            $errors[] = get_string('metaassignerror', 'role', fullname($erruser));
+                            $allow = false;
                         }
                     }
                 }
 
-                $potentialuserselector->invalidate_selected_users();
-                $currentuserselector->invalidate_selected_users();
+                if ($allow) {
+                    switch($extendbase) {
+                        case 2:
+                            $timestart = $course->startdate;
+                            break;
+                        case 3:
+                            $timestart = $today;
+                            break;
+                        case 4:
+                            $timestart = $course->enrolstartdate;
+                            break;
+                        case 5:
+                            $timestart = $course->enrolenddate;
+                            break;
+                    }
 
-                $rolename = $assignableroles[$roleid];
-                add_to_log($course->id, 'role', 'assign', 'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
-                // Counts have changed, so reload.
-                list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
-            }
-        }
-
-    /// Process incoming role unassignments
-        if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
-            $userstounassign = $currentuserselector->get_selected_users();
-            if (!empty($userstounassign)) {
-
-                foreach ($userstounassign as $removeuser) {
-                    if (! role_unassign($roleid, $removeuser->id, 0, $context->id)) {
+                    if($extendperiod > 0) {
+                        $timeend = $timestart + $extendperiod;
+                    } else {
+                        $timeend = 0;
+                    }
+                    if (! role_assign($roleid, $adduser->id, 0, $context->id, $timestart, $timeend)) {
                         $a = new stdClass;
                         $a->role = $assignableroles[$roleid];
-                        $a->user = fullname($removeuser);
-                        $errors[] = get_string('unassignerror', 'role', $a);
-                    } else if ($inmeta) {
-                        sync_metacourse($courseid);
-                        $newroles = get_user_roles($context, $removeuser->id, false);
-                        if (empty($newroles) || array_key_exists($roleid, $newroles)) {
-                            $errors[] = get_string('metaunassignerror', 'role', fullname($removeuser));
-                        }
+                        $a->user = fullname($adduser);
+                        $errors[] = get_string('assignerror', 'role', $a);
                     }
                 }
-
-                $potentialuserselector->invalidate_selected_users();
-                $currentuserselector->invalidate_selected_users();
-
-                $rolename = $assignableroles[$roleid];
-                add_to_log($course->id, 'role', 'unassign', 'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
-                // Counts have changed, so reload.
-                list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
             }
+
+            $potentialuserselector->invalidate_selected_users();
+            $currentuserselector->invalidate_selected_users();
+
+            $rolename = $assignableroles[$roleid];
+            add_to_log($course->id, 'role', 'assign', 'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
+            // Counts have changed, so reload.
+            list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
         }
     }
 
-/// Print the header and tabs
-    if ($context->contextlevel == CONTEXT_USER) {
-        $user = $DB->get_record('user', array('id'=>$userid));
-        $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
+    // Process incoming role unassignments
+    if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
+        $userstounassign = $currentuserselector->get_selected_users();
+        if (!empty($userstounassign)) {
 
-        /// course header
-        $PAGE->set_title($title);
-        if ($courseid != SITEID) {
-            if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $courseid))) {
-                $PAGE->navbar->add(get_string('participants'), new moodle_url('/user/index.php', array('id'=>$courseid)));
+            foreach ($userstounassign as $removeuser) {
+                if (! role_unassign($roleid, $removeuser->id, 0, $context->id)) {
+                    $a = new stdClass;
+                    $a->role = $assignableroles[$roleid];
+                    $a->user = fullname($removeuser);
+                    $errors[] = get_string('unassignerror', 'role', $a);
+                } else if ($inmeta) {
+                    sync_metacourse($courseid);
+                    $newroles = get_user_roles($context, $removeuser->id, false);
+                    if (empty($newroles) || array_key_exists($roleid, $newroles)) {
+                        $errors[] = get_string('metaunassignerror', 'role', fullname($removeuser));
+                    }
+                }
             }
-            $PAGE->set_heading($fullname);
-        } else {
-            $PAGE->set_heading($course->fullname);
+
+            $potentialuserselector->invalidate_selected_users();
+            $currentuserselector->invalidate_selected_users();
+
+            $rolename = $assignableroles[$roleid];
+            add_to_log($course->id, 'role', 'unassign', 'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
+            // Counts have changed, so reload.
+            list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
         }
-        $PAGE->navbar->add($fullname, new moodle_url("$CFG->wwwroot/user/view.php", array('id'=>$userid,'course'=>$courseid)));
-        $PAGE->navbar->add($straction);
-        echo $OUTPUT->header();
+    }
+}
 
-        $showroles = 1;
-        $currenttab = 'assign';
-        echo $OUTPUT->header();
-        include($CFG->dirroot.'/user/tabs.php');
+// Print the header and tabs
+if ($context->contextlevel == CONTEXT_USER) {
+    $user = $DB->get_record('user', array('id'=>$userid));
+    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
 
-    } else if ($context->contextlevel == CONTEXT_SYSTEM) {
-        admin_externalpage_setup('assignroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
-        echo $OUTPUT->header();
-
-    } else if ($isfrontpage) {
-        admin_externalpage_setup('frontpageroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
-        echo $OUTPUT->header();
-        $currenttab = 'assign';
-        include('tabs.php');
-
+    /// course header
+    $PAGE->set_title($title);
+    if ($courseid != SITEID) {
+        if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $courseid))) {
+            $PAGE->navbar->add(get_string('participants'), new moodle_url('/user/index.php', array('id'=>$courseid)));
+        }
+        $PAGE->set_heading($fullname);
     } else {
-        echo $OUTPUT->header();
-        $currenttab = 'assign';
-        include('tabs.php');
+        $PAGE->set_heading($course->fullname);
+    }
+    $PAGE->navbar->add($fullname, new moodle_url("$CFG->wwwroot/user/view.php", array('id'=>$userid,'course'=>$courseid)));
+    $PAGE->navbar->add($straction);
+    echo $OUTPUT->header();
+
+    $showroles = 1;
+    $currenttab = 'assign';
+    echo $OUTPUT->header();
+    include($CFG->dirroot.'/user/tabs.php');
+
+} else if ($context->contextlevel == CONTEXT_SYSTEM) {
+    admin_externalpage_setup('assignroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
+    echo $OUTPUT->header();
+
+} else if ($isfrontpage) {
+    admin_externalpage_setup('frontpageroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
+    echo $OUTPUT->header();
+    $currenttab = 'assign';
+    include('tabs.php');
+
+} else {
+    echo $OUTPUT->header();
+    $currenttab = 'assign';
+    include('tabs.php');
+}
+
+// Print heading.
+echo $OUTPUT->heading_with_help($title, 'assignroles');
+
+if ($roleid) {
+    // Show UI for assigning a particular role to users.
+    // Print a warning if we are assigning system roles.
+    if ($context->contextlevel == CONTEXT_SYSTEM) {
+        echo $OUTPUT->box(get_string('globalroleswarning', 'role'));
     }
 
-    /// Print heading.
-    echo $OUTPUT->heading_with_help($title, 'assignroles');
-
-    if ($roleid) {
-    /// Show UI for assigning a particular role to users.
-
-    /// Print a warning if we are assigning system roles.
-        if ($context->contextlevel == CONTEXT_SYSTEM) {
-            echo $OUTPUT->box(get_string('globalroleswarning', 'role'));
-        }
-
-    /// Print the form.
+    // Print the form.
+$assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
 ?>
-<form id="assignform" method="post" action="<?php echo $baseurl . '&amp;roleid=' . $roleid ?>"><div>
+<form id="assignform" method="post" action="<?php echo $assignurl ?>"><div>
   <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
 
   <table summary="" class="roleassigntable generaltable generalbox boxaligncenter" cellspacing="0">
@@ -331,100 +321,102 @@
 </div></form>
 
 <?php
-        $PAGE->requires->js_init_call('M.core_role.init_add_assign_page');
+    $PAGE->requires->js_init_call('M.core_role.init_add_assign_page');
 
-        if (!empty($errors)) {
-            $msg = '<p>';
-            foreach ($errors as $e) {
-                $msg .= $e.'<br />';
-            }
-            $msg .= '</p>';
-            echo $OUTPUT->box_start();
-            echo $OUTPUT->notification($msg);
-            echo $OUTPUT->box_end();
+    if (!empty($errors)) {
+        $msg = '<p>';
+        foreach ($errors as $e) {
+            $msg .= $e.'<br />';
         }
+        $msg .= '</p>';
+        echo $OUTPUT->box_start();
+        echo $OUTPUT->notification($msg);
+        echo $OUTPUT->box_end();
+    }
 
-    /// Print a form to swap roles, and a link back to the all roles list.
-        echo '<div class="backlink">';
+    // Print a form to swap roles, and a link back to the all roles list.
+    echo '<div class="backlink">';
 
-        $select = new single_select(new moodle_url($baseurl), 'roleid', $nameswithcounts, $roleid, null);
-        $select->label = get_string('assignanotherrole', 'role');
-        echo $OUTPUT->render($select);
-        echo '<p><a href="' . $baseurl . '">' . get_string('backtoallroles', 'role') . '</a></p>';
-        echo '</div>';
+    $select = new single_select($PAGE->url, 'roleid', $nameswithcounts, $roleid, null);
+    $select->label = get_string('assignanotherrole', 'role');
+    echo $OUTPUT->render($select);
+    echo '<p><a href="' . $PAGE->url . '">' . get_string('backtoallroles', 'role') . '</a></p>';
+    echo '</div>';
 
-    } else if (empty($assignableroles)) {
-    /// Print a message that there are no roles that can me assigned here.
-        echo $OUTPUT->heading(get_string('notabletoassignroleshere', 'role'), 3);
+} else if (empty($assignableroles)) {
+    // Print a message that there are no roles that can me assigned here.
+    echo $OUTPUT->heading(get_string('notabletoassignroleshere', 'role'), 3);
 
-    } else {
-    /// Show UI for choosing a role to assign.
+} else {
+    // Show UI for choosing a role to assign.
 
-        // Print a warning if we are assigning system roles.
-        if ($context->contextlevel == CONTEXT_SYSTEM) {
-            echo $OUTPUT->box(get_string('globalroleswarning', 'role'));
-        }
+    // Print a warning if we are assigning system roles.
+    if ($context->contextlevel == CONTEXT_SYSTEM) {
+        echo $OUTPUT->box(get_string('globalroleswarning', 'role'));
+    }
 
-        // Print instruction
-        echo $OUTPUT->heading(get_string('chooseroletoassign', 'role'), 3);
+    // Print instruction
+    echo $OUTPUT->heading(get_string('chooseroletoassign', 'role'), 3);
 
-        // sync metacourse enrolments if needed
-        if ($inmeta) {
-            sync_metacourse($course);
-        }
+    // sync metacourse enrolments if needed
+    if ($inmeta) {
+        sync_metacourse($course);
+    }
 
-        // Get the names of role holders for roles with between 1 and MAX_USERS_TO_LIST_PER_ROLE users,
-        // and so determine whether to show the extra column.
-        $roleholdernames = array();
-        $strmorethanmax = get_string('morethan', 'role', MAX_USERS_TO_LIST_PER_ROLE);
-        $showroleholders = false;
-        foreach ($assignableroles as $roleid => $notused) {
-            $roleusers = '';
-            if (0 < $assigncounts[$roleid] && $assigncounts[$roleid] <= MAX_USERS_TO_LIST_PER_ROLE) {
-                $roleusers = get_role_users($roleid, $context, false, 'u.id, u.lastname, u.firstname');
-                if (!empty($roleusers)) {
-                    $strroleusers = array();
-                    foreach ($roleusers as $user) {
-                        $strroleusers[] = '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $user->id . '" >' . fullname($user) . '</a>';
-                    }
-                    $roleholdernames[$roleid] = implode('<br />', $strroleusers);
-                    $showroleholders = true;
+    // Get the names of role holders for roles with between 1 and MAX_USERS_TO_LIST_PER_ROLE users,
+    // and so determine whether to show the extra column.
+    $roleholdernames = array();
+    $strmorethanmax = get_string('morethan', 'role', MAX_USERS_TO_LIST_PER_ROLE);
+    $showroleholders = false;
+    foreach ($assignableroles as $roleid => $notused) {
+        $roleusers = '';
+        if (0 < $assigncounts[$roleid] && $assigncounts[$roleid] <= MAX_USERS_TO_LIST_PER_ROLE) {
+            $roleusers = get_role_users($roleid, $context, false, 'u.id, u.lastname, u.firstname');
+            if (!empty($roleusers)) {
+                $strroleusers = array();
+                foreach ($roleusers as $user) {
+                    $strroleusers[] = '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $user->id . '" >' . fullname($user) . '</a>';
                 }
-            } else if ($assigncounts[$roleid] > MAX_USERS_TO_LIST_PER_ROLE) {
-                $roleholdernames[$roleid] = '<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$strmorethanmax.'</a>';
-            } else {
-                $roleholdernames[$roleid] = '';
+                $roleholdernames[$roleid] = implode('<br />', $strroleusers);
+                $showroleholders = true;
             }
-        }
-
-        // Print overview table
-        $table = new html_table();
-        $table->tablealign = 'center';
-        $table->width = '60%';
-        $table->head = array(get_string('role'), get_string('description'), get_string('userswiththisrole', 'role'));
-        $table->wrap = array('nowrap', '', 'nowrap');
-        $table->align = array('left', 'left', 'center');
-        if ($showroleholders) {
-            $table->headspan = array(1, 1, 2);
-            $table->wrap[] = 'nowrap';
-            $table->align[] = 'left';
-        }
-
-        foreach ($assignableroles as $roleid => $rolename) {
-            $description = format_string($DB->get_field('role', 'description', array('id'=>$roleid)));
-            $row = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>',
-                    $description, $assigncounts[$roleid]);
-            if ($showroleholders) {
-                $row[] = $roleholdernames[$roleid];
-            }
-            $table->data[] = $row;
-        }
-
-        echo html_writer::table($table);
-
-        if ($context->contextlevel > CONTEXT_USER) {
-            echo '<div class="backlink"><a href="' . get_context_url($context) . '">' . get_string('backto', '', $contextname) . '</a></div>';
+        } else if ($assigncounts[$roleid] > MAX_USERS_TO_LIST_PER_ROLE) {
+            $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
+            $roleholdernames[$roleid] = '<a href="'.$assignurl.'">'.$strmorethanmax.'</a>';
+        } else {
+            $roleholdernames[$roleid] = '';
         }
     }
 
-    echo $OUTPUT->footer();
+    // Print overview table
+    $table = new html_table();
+    $table->tablealign = 'center';
+    $table->width = '60%';
+    $table->head = array(get_string('role'), get_string('description'), get_string('userswiththisrole', 'role'));
+    $table->wrap = array('nowrap', '', 'nowrap');
+    $table->align = array('left', 'left', 'center');
+    if ($showroleholders) {
+        $table->headspan = array(1, 1, 2);
+        $table->wrap[] = 'nowrap';
+        $table->align[] = 'left';
+    }
+
+    foreach ($assignableroles as $roleid => $rolename) {
+        $description = format_string($DB->get_field('role', 'description', array('id'=>$roleid)));
+        $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
+        $row = array('<a href="'.$assignurl.'">'.$rolename.'</a>',
+                $description, $assigncounts[$roleid]);
+        if ($showroleholders) {
+            $row[] = $roleholdernames[$roleid];
+        }
+        $table->data[] = $row;
+    }
+
+    echo html_writer::table($table);
+
+    if ($context->contextlevel > CONTEXT_USER) {
+        echo '<div class="backlink"><a href="' . get_context_url($context) . '">' . get_string('backto', '', $contextname) . '</a></div>';
+    }
+}
+
+echo $OUTPUT->footer();
