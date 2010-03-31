@@ -261,6 +261,7 @@ $string['confirm'] = 'Confirm';
 $string['confirmcheckfull'] = 'Are you absolutely sure you want to confirm $a ?';
 $string['confirmed'] = 'Your registration has been confirmed';
 $string['confirmednot'] = 'Your registration has not yet been confirmed!';
+$string['content'] = 'Content';
 $string['continue'] = 'Continue';
 $string['continuetocourse'] = 'Click here to enter your course';
 $string['convertingwikitomarkdown'] = 'Converting Wiki to Markdown';

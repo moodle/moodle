@@ -327,6 +327,7 @@ $string['configzip'] = 'Indicate the location of your zip program (Unix only, op
 $string['confirmation'] = 'Confirmation';
 $string['confirmed'] = 'Confirmed';
 $string['confirminstall'] = 'You are about to install language pack ($a), are you sure?';
+$string['confirmdeletecomments'] = 'You are about to delete comments, are you sure?';
 $string['cookiehttponly'] = 'Only http cookies';
 $string['cookiesecure'] = 'Secure cookies only';
 $string['country'] = 'Default country';

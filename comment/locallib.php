@@ -23,6 +23,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class comment_manager {
+    private $perpage;
+    function __construct() {
+        global $CFG;
+        $this->perpage = $CFG->commentsperpage;
+    }
 
     /**
      * Return comments by pages
@@ -97,25 +102,25 @@ class comment_manager {
      */
     function print_comments($page=0) {
         global $CFG, $OUTPUT, $DB;
-        $this->perpage = 10;
         $count = $DB->count_records_sql('SELECT COUNT(*) FROM {comments} c');
         $comments = $this->get_comments($page);
         $table = new html_table();
-        $table->head = array ('<input type="checkbox" id="comment_select_all" />', 'author', 'content', 'action');
+        $table->head = array (html_writer::checkbox('selectall', '', false, get_string('selectall'), array('id'=>'comment_select_all', 'class'=>'comment-report-selectall')), get_string('author', 'search'), get_string('content'), get_string('action'));
         $table->align = array ('left', 'left', 'left', 'left');
         $table->width = "95%";
         $table->data = array();
+        $linkbase = $CFG->wwwroot.'/comment/index.php?action=delete&sesskey='.sesskey();
         foreach ($comments as $c) {
+            $link = $linkbase . '&commentid='. $c->id;
             $this->setup_plugin($c);
             if (!empty($this->plugintype)) {
-                $url = plugin_callback($this->plugintype, $this->pluginname, FEATURE_COMMENT, 'url', array($c));
+                $context_url = plugin_callback($this->plugintype, $this->pluginname, FEATURE_COMMENT, 'url', array($c));
             }
-            $checkbox = '<input type="checkbox" name="comments" value="'. $c->id .'" />';
-            $action = '';
-            $action .= "<a href='{$CFG->wwwroot}/comment/index.php?action=delete&amp;sesskey=".sesskey()."&amp;commentid={$c->id}'>".get_string('delete').'</a>';
-            $action .= "<br />";
-            if (!empty($url)) {
-                $action .= "<a target='_blank' href='{$url}'>".get_string('commentincontext').'</a>';
+            $checkbox = html_writer::checkbox('comments', $c->id, false);
+            $action = html_writer::link($link, get_string('delete'));
+            if (!empty($context_url)) {
+                $action .= html_writer::tag('br', null);
+                $action .= html_writer::link($context_url, get_string('commentincontext'), array('target'=>'_blank'));
             }
             $table->data[] = array($checkbox, $c->username, $c->content, $action);
         }

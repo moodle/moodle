@@ -28,18 +28,13 @@ admin_externalpage_setup('comments');
 $context = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/comment:delete', $context);
 
-$PAGE->requires->yui2_lib('yahoo');
-$PAGE->requires->yui2_lib('dom');
-$PAGE->requires->yui2_lib('event');
-$PAGE->requires->yui2_lib('animation');
-$PAGE->requires->yui2_lib('json');
-$PAGE->requires->yui2_lib('connection');
-$PAGE->requires->js('/comment/admin.js');
+$PAGE->requires->js_init_call('M.core_comment.init_admin', null, true);
 
 $action     = optional_param('action', '', PARAM_ALPHA);
 $commentid  = optional_param('commentid', 0, PARAM_INT);
 $commentids = optional_param('commentids', '', PARAM_ALPHANUMEXT);
 $page       = optional_param('page', 0, PARAM_INT);
+$confirm    = optional_param('confirm', 0, PARAM_INT);
 
 $manager = new comment_manager();
 
@@ -51,10 +46,21 @@ if ($action and !confirm_sesskey()) {
 if ($action === 'delete') {
     // delete a single comment
     if (!empty($commentid)) {
-        if ($manager->delete_comment($commentid)) {
-            redirect($CFG->httpswwwroot.'/comment/', get_string('deleted'));
+        if (!$confirm) {
+            echo $OUTPUT->header();
+            $optionsyes = array('action'=>'delete', 'commentid'=>$commentid, 'confirm'=>1, 'sesskey'=>sesskey());
+            $optionsno  = array('sesskey'=>sesskey());
+            $buttoncontinue = new single_button(new moodle_url('/comment/index.php', $optionsyes), get_string('delete'));
+            $buttoncancel = new single_button(new moodle_url('/comment/index.php', $optionsno), get_string('cancel'));
+            echo $OUTPUT->confirm(get_string('confirmdeletecomments', 'admin'), $buttoncontinue, $buttoncancel);
+            echo $OUTPUT->footer();
+            die;
         } else {
-            $err = 'cannotdeletecomment';
+            if ($manager->delete_comment($commentid)) {
+                redirect($CFG->httpswwwroot.'/comment/');
+            } else {
+                $err = 'cannotdeletecomment';
+            }
         }
     }
     // delete a list of comments
@@ -69,13 +75,16 @@ if ($action === 'delete') {
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('comments'));
+echo $OUTPUT->box_start('generalbox commentsreport');
 if (!empty($err)) {
     print_error($err, 'error', $CFG->httpswwwroot.'/comment/');
 }
 if (empty($action)) {
+    echo '<form method="post">';
     $manager->print_comments($page);
-    echo '<div class="mdl-align">';
-    echo '<button id="comments_delete">'.get_string('delete').'</button>';
-    echo '</div>';
+    echo '<input type="submit" id="comments_delete" name="batchdelete" value="'.get_string('delete').'" />';
+    echo '</form>';
 }
+
+echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
