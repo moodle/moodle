@@ -74,7 +74,7 @@ if ($data = $user_bulk_form->get_data()) {
     $user_bulk_form = new user_bulk_form(null, get_selection_data($ufiltering));
 }
 // do output
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 $ufiltering->display_add();
 $ufiltering->display_active();

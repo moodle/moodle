@@ -56,7 +56,7 @@ $userfield = optional_param('userfield', 0, PARAM_INT);
 $overwritepicture = optional_param('overwritepicture', 0, PARAM_BOOL);
 
 /// Print the header
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 echo $OUTPUT->heading_with_help($struploadpictures, 'uploadpictures');
 

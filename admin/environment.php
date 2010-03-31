@@ -52,7 +52,7 @@
     $strmisc = get_string('miscellaneous');
 
 /// Print the header stuff
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 
 /// Print the component download link
     echo '<div class="reportlink"><a href="environment.php?action=updatecomponent&amp;sesskey='.sesskey().'">'.$strupdate.'</a></div>';

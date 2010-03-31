@@ -34,7 +34,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
 
 // and finally, if we get here, then there are matching settings and we have to print a form
 // to modify them
-admin_externalpage_print_header($focus);
+echo $OUTPUT->header($focus);
 
 if ($errormsg !== '') {
     echo $OUTPUT->notification($errormsg);

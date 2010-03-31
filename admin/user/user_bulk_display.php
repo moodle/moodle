@@ -20,7 +20,7 @@ $usercount = count($users);
 
 $strnever = get_string('never');
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 $countries = get_list_of_countries();
 

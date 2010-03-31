@@ -22,7 +22,7 @@
 
     if ($course->id == SITEID) {
         admin_externalpage_setup('reportloglive');
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
 
     } else {
         $PAGE->set_title($course->shortname .': '. $strlogs);

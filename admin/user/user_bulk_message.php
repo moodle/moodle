@@ -55,7 +55,7 @@ if ($msgform->is_cancelled()) {
     list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
     $userlist = $DB->get_records_select_menu('user', "id $in", $params, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
     $usernames = implode(', ', $userlist);
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('confirmation', 'admin'));
     echo $OUTPUT->box($msg, 'boxwidthnarrow boxaligncenter generalbox', 'preview');
 
@@ -66,6 +66,6 @@ if ($msgform->is_cancelled()) {
     die;
 }
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 $msgform->display();
 echo $OUTPUT->footer();

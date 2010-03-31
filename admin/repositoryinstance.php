@@ -79,7 +79,7 @@ if (!empty($edit) || !empty($new)) {
         }
         if ($success) {
             $savedstr = get_string('configsaved', 'repository');
-            admin_externalpage_print_header();
+            echo $OUTPUT->header();
             echo $OUTPUT->heading($savedstr);
             redirect($baseurl, $savedstr, 3);
         } else {
@@ -87,7 +87,7 @@ if (!empty($edit) || !empty($new)) {
         }
         exit;
     } else {
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('configplugin', 'repository_'.$plugin));
         echo $OUTPUT->box_start();
         $mform->display();
@@ -102,7 +102,7 @@ if (!empty($edit) || !empty($new)) {
     $instance->hide();
     $return = true;
 } else if (!empty($delete)) {
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     $instance = repository::get_instance($delete);
     //if you try to delete an instance set as readonly, display an error message
     if ($instance->readonly) {

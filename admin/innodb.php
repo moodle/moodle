@@ -11,7 +11,7 @@
 
     require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading('Convert all MySQL tables from MYISAM to InnoDB');
 
     if ($DB->get_dbfamily() != 'mysql') {

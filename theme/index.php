@@ -41,7 +41,7 @@ if ($reset and confirm_sesskey()) {
 
     set_config('theme', $choose);
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('themesaved'));
 
     echo $OUTPUT->box_start();
@@ -56,7 +56,7 @@ if ($reset and confirm_sesskey()) {
 }
 
 // Otherwise, show a list of themes.
-admin_externalpage_print_header('themeselector');
+echo $OUTPUT->header('themeselector');
 echo $OUTPUT->heading(get_string('themes'));
 
 echo $OUTPUT->single_button(new moodle_url('index.php', array('sesskey'=>sesskey(),'reset'=>1)), get_string('themeresetcaches', 'admin'));

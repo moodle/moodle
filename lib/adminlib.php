@@ -23,8 +23,7 @@
  *  This file performs the following tasks:
  *   -it defines the necessary objects and interfaces to build the Moodle
  *    admin hierarchy
- *   -it defines the admin_externalpage_setup(), admin_externalpage_print_header(),
- *    and admin_externalpage_print_footer() functions used on admin pages
+ *   -it defines the admin_externalpage_setup()
  *
  *  ADMIN_SETTING OBJECTS
  *

@@ -53,7 +53,7 @@ if ($format) {
     die;
 }
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('download', 'admin'));
 
 echo $OUTPUT->box_start();

@@ -28,7 +28,7 @@
 
     $site = get_site();
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 
 echo <<<STYLES
 <style type="text/css">

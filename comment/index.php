@@ -67,7 +67,7 @@ if ($action === 'delete') {
     }
 }
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('comments'));
 if (!empty($err)) {
     print_error($err, 'error', $CFG->httpswwwroot.'/comment/');

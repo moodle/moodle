@@ -44,7 +44,7 @@ if (array_search($issue, $issues, true) === false) {
 
 // Print the header.
 admin_externalpage_setup('reportsecurity');
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 echo $OUTPUT->heading(get_string('reportsecurity', 'report_security'));
 

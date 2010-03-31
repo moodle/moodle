@@ -15,7 +15,7 @@ if ($data = $form->get_data()) {
     die;
 }
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 // TODO: add some more info here
 $form->display();
 echo $OUTPUT->footer();

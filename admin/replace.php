@@ -16,7 +16,7 @@ $search  = optional_param('search', '', PARAM_RAW);
 $replace = optional_param('replace', '', PARAM_RAW);
 
 ###################################################################
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 echo $OUTPUT->heading('Search and replace text throughout the whole database');
 

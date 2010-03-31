@@ -47,7 +47,7 @@ if (!empty($adminroot->errors)) {
 
 // and finally, if we get here, then there are new settings and we have to print a form
 // to modify them
-admin_externalpage_print_header($focus);
+echo $OUTPUT->header($focus);
 
 if (!empty($SITE->fullname) and !empty($SITE->shortname)) {
     echo $OUTPUT->box(get_string('upgradesettingsintro','admin'), 'generalbox');

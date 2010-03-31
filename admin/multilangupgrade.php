@@ -10,7 +10,7 @@ admin_externalpage_setup('multilangupgrade');
 $go = optional_param('go', 0, PARAM_BOOL);
 
 ###################################################################
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 echo $OUTPUT->heading(get_string('multilangupgrade', 'admin'));
 

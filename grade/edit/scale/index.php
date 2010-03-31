@@ -91,7 +91,7 @@ switch ($action) {
 }
 
 if (!$courseid) {
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 }
 
 $table = new html_table();

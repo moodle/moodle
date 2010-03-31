@@ -88,7 +88,7 @@ if (!isset($protocols[$protocol])) { // whitelisting security
 
 if (!$function or !$protocol) {
     $mform = new webservice_test_client_form(null, array($functions, $protocols));
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('testclient', 'webservice'));
     echo $OUTPUT->box_start();
     $url = new moodle_url('/admin/settings.php?section=debugging');
@@ -140,7 +140,7 @@ if ($mform->is_cancelled()) {
     // now test the parameters, this also fixes PHP data types
     $params = external_api::validate_parameters($functioninfo->parameters_desc, $params);
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('pluginname', 'webservice_'.$protocol).': '.$function);
 
     echo 'URL: '.s($serverurl);
@@ -162,7 +162,7 @@ if ($mform->is_cancelled()) {
     die;
 
 } else {
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('pluginname', 'webservice_'.$protocol).': '.$function);
     $mform->display();
     echo $OUTPUT->footer();

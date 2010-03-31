@@ -10,7 +10,7 @@ $sort    = optional_param('sort', 'timemodified', PARAM_ALPHA);
 $dir     = optional_param('dir', 'DESC', PARAM_ALPHA);
 
 admin_externalpage_setup('reportconfiglog');
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 echo $OUTPUT->heading(get_string('configlog', 'report_configlog'));
 

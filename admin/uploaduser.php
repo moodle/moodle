@@ -111,7 +111,7 @@ if (empty($iid)) {
         // continue to form2
 
     } else {
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
 
         echo $OUTPUT->heading_with_help(get_string('uploadusers'), 'uploadusers3');
 
@@ -137,7 +137,7 @@ if ($formdata = $mform->is_cancelled()) {
 
 } else if ($formdata = $mform->get_data()) {
     // Print the header
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('uploadusersresult', 'admin'));
 
     $optype = $formdata->uutype;
@@ -755,7 +755,7 @@ if ($formdata = $mform->is_cancelled()) {
 }
 
 // Print the header
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 /// Print the form
 

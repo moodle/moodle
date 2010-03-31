@@ -56,7 +56,7 @@ $service = $DB->get_record('external_services', array('id'=>$id), '*', MUST_EXIS
 if ($action === 'delete' and confirm_sesskey() and $service and empty($service->component)) {
     $function = $DB->get_record('external_functions', array('id'=>$fid), '*', MUST_EXIST);
     if (!$confirm) {
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         $optionsyes = array('id'=>$id, 'action'=>'delete', 'confirm'=>1, 'sesskey'=>sesskey(), 'fid'=>$function->id);
         $optionsno  = array('id'=>$id);
         $formcontinue = new single_button(new moodle_url('service_functions.php', $optionsyes), get_string('remove'));
@@ -89,14 +89,14 @@ if ($action === 'delete' and confirm_sesskey() and $service and empty($service->
     }
 
     //ask for function id
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading($service->name);
     $mform->display();
     echo $OUTPUT->footer();
     die;
 }
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 echo $OUTPUT->heading($service->name);
 

@@ -18,7 +18,7 @@ if (empty($SESSION->bulk_users)) {
     redirect($return);
 }
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 //TODO: add support for large number of users
 

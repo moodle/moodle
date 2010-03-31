@@ -40,7 +40,7 @@
     }
     asort($options);
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 
     echo "<form id=\"enrolmenu\" method=\"post\" action=\"enrol_config.php\">";
     echo "<div>";

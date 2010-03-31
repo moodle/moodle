@@ -101,7 +101,7 @@
             break;
     }
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 
     // Prepare and render menu tabs
     $firstrow = array();

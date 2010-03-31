@@ -12,7 +12,7 @@ $PAGE->set_pagelayout('maintenance');
 
 $go = optional_param('go', 0, PARAM_BOOL);
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('bloglevelupgrade', 'admin'));
 
 $strbloglevelupgrade = get_string('bloglevelupgradeinfo', 'admin');

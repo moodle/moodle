@@ -16,7 +16,7 @@
 
     /// get language strings
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 
     echo $OUTPUT->box(get_string("remoteenrolhosts_desc", "mnet"));
 

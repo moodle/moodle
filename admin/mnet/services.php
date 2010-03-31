@@ -79,7 +79,7 @@ if ($formdata = $mform->get_data()) {
     redirect($redirecturl, get_string('changessaved'));
 }
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 $currenttab = 'mnetservices';
 require_once($CFG->dirroot . '/admin/mnet/tabs.php');
 echo $OUTPUT->box_start();

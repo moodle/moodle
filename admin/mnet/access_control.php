@@ -16,7 +16,7 @@ require_login();
 
 admin_externalpage_setup('ssoaccesscontrol');
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 if (!extension_loaded('openssl')) {
     print_error('requiresopenssl', 'mnet');

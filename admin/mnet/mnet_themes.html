@@ -2,7 +2,7 @@
 
 //TODO: this code needs to be redesigned, see MDL-21137
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('themes'));
 $original_theme = fullclone($THEME);
     $currenttab = 'mnetthemes';

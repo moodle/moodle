@@ -132,7 +132,7 @@ if ($mform->is_cancelled()) {
 
 //page header
 if ($admin) {
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 
 } else {
     print_grade_page_head($COURSE->id, 'letter', 'edit', get_string('editgradeletters', 'grades'));

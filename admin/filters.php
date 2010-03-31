@@ -118,7 +118,7 @@
         // If not yet confirmed, display a confirmation message.
         if (!optional_param('confirm', '', PARAM_BOOL)) {
             $title = get_string('deletefilterareyousure', 'admin', $filtername);
-            admin_externalpage_print_header();
+            echo $OUTPUT->header();
             echo $OUTPUT->heading($title);
 
             $linkcontinue = new moodle_url($returnurl, array('action' => 'delete', 'filterpath' => $filterpath, 'confirm' => 1));
@@ -130,7 +130,7 @@
 
         // Do the deletion.
         $title = get_string('deletingfilter', 'admin', $filtername);
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->heading($title);
 
         // Delete all data for this plugin.
@@ -159,7 +159,7 @@
 /// End of process actions =====================================================
 
 /// Print the page heading.
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('filtersettings', 'admin'));
 
     $activechoices = array(

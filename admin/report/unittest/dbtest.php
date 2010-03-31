@@ -17,7 +17,7 @@ $selected     = optional_param('selected', array(), PARAM_INT);
 
 // Print the header and check access.
 admin_externalpage_setup('reportdbtest');
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 global $UNITTEST;
 $UNITTEST = new object();

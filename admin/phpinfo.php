@@ -6,7 +6,7 @@
 
     admin_externalpage_setup('phpinfo');
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 
     echo '<div class="phpinfo">';
 

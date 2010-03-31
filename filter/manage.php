@@ -124,7 +124,7 @@ $straction = get_string('filters', 'admin'); // Used by tabs.php
 /// Print the header and tabs
 if ($context->contextlevel == CONTEXT_COURSE and $context->instanceid == SITEID) {
     admin_externalpage_setup('frontpagefilters');
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 } else {
     $currenttab = 'filters';
     include_once($CFG->dirroot . '/' . $CFG->admin . '/roles/tabs.php');

@@ -51,7 +51,7 @@ switch ($action) {
         //ask for confirmation
         $fieldcount = $DB->count_records('user_info_field', array('categoryid'=>$id));
         $optionsyes = array ('id'=>$id, 'confirm'=>1, 'action'=>'deletecategory', 'sesskey'=>sesskey());
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->heading('profiledeletecategory', 'admin');
 
         $formcontinue = new single_button(new moodle_url($redirect, $optionsyes), get_string('yes'), 'post');
@@ -74,7 +74,7 @@ switch ($action) {
         $optionsyes = array ('id'=>$id, 'confirm'=>1, 'action'=>'deletefield', 'sesskey'=>sesskey());
         $strheading = get_string('profiledeletefield', 'admin');
         $PAGE->navbar->add($strheading);
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->heading($strheading);
         $formcontinue = new single_button(new moodle_url($redirect, $optionsyes), get_string('yes'), 'post');
         $formcancel = new single_button($redirect, get_string('no'), 'get');
@@ -100,7 +100,7 @@ switch ($action) {
 }
 
 /// Print the header
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('profilefields', 'admin'));
 
 /// Check that we have at least one category defined

@@ -49,7 +49,7 @@ $mnet_peer = new mnet_peer();
 $mnet_peer->set_id($hostid);
 
 if ('verify' == $step) {
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('deleteaserver', 'mnet'));
     if ($mnet_peer->count_live_sessions() > 0) {
         echo $OUTPUT->notification(get_string('usersareonline', 'mnet', $live_users));

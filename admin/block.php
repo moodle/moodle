@@ -49,7 +49,7 @@
     $strmanageblocks = get_string('manageblocks');
     $strblockname = $block->get_title();
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 
     echo $OUTPUT->heading($strblockname);
 

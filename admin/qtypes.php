@@ -120,7 +120,7 @@
         // If not yet confirmed, display a confirmation message.
         if (!optional_param('confirm', '', PARAM_BOOL)) {
             $qtypename = $QTYPES[$delete]->local_name();
-            admin_externalpage_print_header();
+            echo $OUTPUT->header();
             echo $OUTPUT->heading(get_string('deleteqtypeareyousure', 'admin', $qtypename));
             echo $OUTPUT->confirm(get_string('deleteqtypeareyousuremessage', 'admin', $qtypename),
                     admin_url('qtypes.php?delete=' . $delete . '&confirm=1'),
@@ -130,7 +130,7 @@
         }
 
         // Do the deletion.
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('deletingqtype', 'admin', $qtypename));
 
         // Delete any configuration records.
@@ -157,7 +157,7 @@
     // End of process actions ==================================================
 
 /// Print the page heading.
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('manageqtypes', 'admin'));
 
 /// Set up the table.

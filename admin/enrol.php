@@ -49,7 +49,7 @@
 
     $str = get_strings(array('enrolmentplugins', 'users', 'administration', 'settings', 'edit'));
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 
     $modules = get_plugin_list('enrol');
     $options = array();

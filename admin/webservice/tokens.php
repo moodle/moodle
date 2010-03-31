@@ -72,7 +72,7 @@ switch ($action) {
         }
 
         //ask for function id
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('createtoken', 'webservice'));
         $mform->display();
         echo $OUTPUT->footer();
@@ -88,7 +88,7 @@ switch ($action) {
                     t.creatorid=? AND t.id=? AND t.tokentype = ".EXTERNAL_TOKEN_PERMANENT." AND s.id = t.externalserviceid AND t.userid = u.id";
         $token = $DB->get_record_sql($sql, array($USER->id, $tokenid), MUST_EXIST); //must be the token creator
         if (!$confirm) {
-            admin_externalpage_print_header();
+            echo $OUTPUT->header();
             $optionsyes = array('tokenid'=>$tokenid, 'action'=>'delete', 'confirm'=>1, 'sesskey'=>sesskey());
             $optionsno  = array('section'=>'webservicetokens', 'sesskey'=>sesskey());
             $formcontinue = new single_button(new moodle_url('/admin/webservice/tokens.php', $optionsyes), get_string('delete'));

@@ -57,7 +57,7 @@ if ($id) {
 
 if ($action == 'delete' and confirm_sesskey() and $service and empty($service->component)) {
     if (!$confirm) {
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         $optionsyes = array('id'=>$id, 'action'=>'delete', 'confirm'=>1, 'sesskey'=>sesskey());
         $optionsno  = array('section'=>'externalservices');
         $formcontinue = new single_button(new moodle_url('service.php', $optionsyes), get_string('delete'), 'post');
@@ -98,7 +98,7 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 $mform->display();
 echo $OUTPUT->footer();
 

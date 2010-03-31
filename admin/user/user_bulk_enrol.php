@@ -20,7 +20,7 @@ $users = $SESSION->bulk_users; //Get users to display
 $usertotal = get_users(false); //Total number of users registered
 $usercount = count($users);    //number of users
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 //take user info
 foreach ($users as $key => $id) {

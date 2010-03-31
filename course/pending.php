@@ -82,14 +82,14 @@ if (!empty($reject)) {
     }
 
 /// Display the form for giving a reason for rejecting the request.
-    admin_externalpage_print_header($rejectform->focus());
+    echo $OUTPUT->header($rejectform->focus());
     $rejectform->display();
     echo $OUTPUT->footer();
     exit;
 }
 
 /// Print a list of all the pending requests.
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 $pending = $DB->get_records('course_request');
 if (empty($pending)) {

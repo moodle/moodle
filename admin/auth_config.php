@@ -55,7 +55,7 @@ $user_fields = $authplugin->userfields;
     $authdescription = $authplugin->get_description();
 
 // output configuration form
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 // choose an authentication method
 echo "<form id=\"authmenu\" method=\"post\" action=\"auth_config.php\">\n";

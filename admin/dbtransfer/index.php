@@ -23,7 +23,7 @@ if ($data = $form->get_data()) {
     }
 
     // Start output.
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     $data->dbtype = $dbtype;
     echo $OUTPUT->heading(get_string('transferringdbto', 'dbtransfer', $data));
 
@@ -40,7 +40,7 @@ if ($data = $form->get_data()) {
 }
 
 // Otherwise display the settings form.
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('transferdbtoserver', 'dbtransfer'));
 echo '<p>', get_string('transferdbintro', 'dbtransfer'), "</p>\n\n";
 $form->display();

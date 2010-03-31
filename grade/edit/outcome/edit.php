@@ -145,7 +145,7 @@ if ($courseid) {
 } else {
     require_once $CFG->libdir.'/adminlib.php';
     admin_externalpage_setup('outcomes');
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 }
 
 if (!grade_scale::fetch_all_local($courseid) && !grade_scale::fetch_all_global()) {

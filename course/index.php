@@ -134,14 +134,14 @@ if (!empty($delete) and confirm_sesskey()) {
 
     } else if (!$data= $mform->get_data()) {
         require_once($CFG->libdir . '/questionlib.php');
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->heading($heading);
         $mform->display();
         echo $OUTPUT->footer();
         exit();
     }
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading($heading);
 
     if ($data->fulldelete) {
@@ -236,7 +236,7 @@ if ((!empty($moveup) or !empty($movedown)) and confirm_sesskey()) {
 }
 
 /// Print headings
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 echo $OUTPUT->heading($strcategories);
 
 /// Print out the categories with all the knobs

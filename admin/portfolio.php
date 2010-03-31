@@ -60,12 +60,12 @@ if (!empty($edit) || !empty($new)) {
             portfolio_static_function($plugin, 'create_instance', $plugin, $fromform->name, $fromform);
         }
         $savedstr = get_string('instancesaved', 'portfolio');
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->heading($savedstr);
         redirect($baseurl, $savedstr, 3);
         exit;
     } else {
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('configplugin', 'portfolio'));
         echo $OUTPUT->box_start();
         $mform->display();
@@ -85,7 +85,7 @@ if (!empty($edit) || !empty($new)) {
     $instance->save();
     $return = true;
 } else if (!empty($delete)) {
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     $instance = portfolio_instance($delete);
     if ($sure) {
         if (!confirm_sesskey()) {

@@ -50,7 +50,7 @@
         if ($result == AUTH_CONFIRM_OK or $result == AUTH_CONFIRM_ALREADY) {
             redirect($returnurl);
         } else {
-            admin_externalpage_print_header();
+            echo $OUTPUT->header();
             redirect($returnurl, get_string('usernotconfirmed', '', fullname($user, true)));
         }
 
@@ -69,7 +69,7 @@
         }
 
         if ($confirm != md5($delete)) {
-            admin_externalpage_print_header();
+            echo $OUTPUT->header();
             $fullname = fullname($user, true);
             echo $OUTPUT->heading(get_string('deleteuser', 'admin'));
             $optionsyes = array('delete'=>$delete, 'confirm'=>md5($delete), 'sesskey'=>sesskey());
@@ -82,7 +82,7 @@
                 redirect($returnurl);
             } else {
                 session_gc(); // remove stale sessions
-                admin_externalpage_print_header();
+                echo $OUTPUT->header();
                 echo $OUTPUT->notification($returnurl, get_string('deletednot', '', fullname($user, true)));
             }
         }
@@ -118,7 +118,7 @@
 
     // create the user filter form
     $ufiltering = new user_filtering();
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 
     // Carry on with the user listing
 

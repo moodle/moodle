@@ -93,7 +93,7 @@
             case 'showashtml':
                 if ($hostid != $CFG->mnet_localhost_id || $course->id == SITEID) {
                     admin_externalpage_setup('reportlog');
-                    admin_externalpage_print_header();
+                    echo $OUTPUT->header();
 
                 } else {
                     $PAGE->set_title($course->shortname .': '. $strlogs);
@@ -142,7 +142,7 @@
     } else {
         if ($hostid != $CFG->mnet_localhost_id || $course->id == SITEID) {
                     admin_externalpage_setup('reportlog');
-                    admin_externalpage_print_header();
+                    echo $OUTPUT->header();
         } else {
             $PAGE->set_title($course->shortname .': '. $strlogs);
             $PAGE->set_heading($course->fullname);

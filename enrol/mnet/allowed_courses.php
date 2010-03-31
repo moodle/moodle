@@ -12,7 +12,7 @@ include_once $CFG->dirroot . '/mnet/lib.php';
 
 
 admin_externalpage_setup('ssoaccesscontrol');
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 $addcategory    = optional_param('addcategory', 0, PARAM_BOOL);
 $removecategory = optional_param('removecategory', 0, PARAM_BOOL);

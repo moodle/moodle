@@ -44,7 +44,7 @@
     }
 
     if (!empty($delete) && confirm_sesskey()) {
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->heading($strmanageblocks);
 
         if (!$block = blocks_get_record($delete)) {
@@ -96,7 +96,7 @@
         }
     }
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading($strmanageblocks);
 
 /// Main display starts here

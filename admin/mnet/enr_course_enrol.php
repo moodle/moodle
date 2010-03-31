@@ -291,7 +291,7 @@ $strshowall = get_string('showall');
 $strparticipants = get_string('participants');
 $strsearchresults = get_string('searchresults');
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 echo $OUTPUT->box('<strong>' . s($mnet_peer->name) . ' : '
           . format_string($course->shortname) .' '. format_string($course->fullname)

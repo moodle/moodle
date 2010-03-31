@@ -17,13 +17,13 @@
     $mnet = get_mnet_environment();
 
     if (!extension_loaded('openssl')) {
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         set_config('mnet_dispatcher_mode', 'off');
         print_error('requiresopenssl', 'mnet');
     }
 
     if (!function_exists('curl_init') ) {
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         set_config('mnet_dispatcher_mode', 'off');
         print_error('nocurl', 'mnet');
     }
@@ -82,7 +82,7 @@
     }
     $hosts = $DB->get_records_select('mnet_host', "id <> ? AND deleted = 0", array($CFG->mnet_localhost_id), 'wwwroot ASC');
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 ?>
 <center>
 <form method="post" action="index.php">

@@ -12,7 +12,7 @@
     admin_externalpage_setup('langimport');
 
     if (!empty($CFG->skiplangupgrade)) {
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->box(get_string('langimportdisabled', 'admin'));
         echo $OUTPUT->footer();
         die;
@@ -103,7 +103,7 @@
                 $notice_error[] = 'en_utf8 can not be uninstalled!';
 
             } else if (!$confirm && confirm_sesskey()) {
-                admin_externalpage_print_header();
+                echo $OUTPUT->header();
                 echo $OUTPUT->confirm(get_string('uninstallconfirm', 'admin', $uninstalllang),
                              'langimport.php?mode='.DELETION_OF_SELECTED_LANG.'&uninstalllang='.$uninstalllang.'&confirm=1',
                              'langimport.php');
@@ -241,7 +241,7 @@
     }    //close of main switch
 
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 
     $installedlangs = get_list_of_languages(true, true);
 

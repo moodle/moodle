@@ -7,7 +7,7 @@ if (!isset($CFG)) {
 
     admin_externalpage_setup('oacleanup');
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     online_assignment_cleanup(true);
     echo $OUTPUT->footer();
 

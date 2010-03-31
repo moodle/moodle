@@ -16,7 +16,7 @@ $requestedqtype = optional_param('qtype', '', PARAM_SAFEDIR);
 
 // Print the header & check permissions.
 admin_externalpage_setup('reportquestioninstances');
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 // Log.
 add_to_log(SITEID, "admin", "report questioninstances", "report/questioninstances/index.php?qtype=$requestedqtype", $requestedqtype);

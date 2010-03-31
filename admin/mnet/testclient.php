@@ -27,7 +27,7 @@ require_capability('moodle/site:config', $context);
 
 error_reporting(E_ALL);
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 if (!extension_loaded('openssl')) {
     print_error('requiresopenssl', 'mnet', '', NULL, true);
 }

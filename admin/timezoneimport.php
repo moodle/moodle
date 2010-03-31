@@ -16,7 +16,7 @@
 
     $strimporttimezones = get_string('importtimezones', 'admin');
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 
     echo $OUTPUT->heading($strimporttimezones);
 

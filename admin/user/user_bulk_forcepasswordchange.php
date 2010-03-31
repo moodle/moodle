@@ -19,7 +19,7 @@ if (empty($SESSION->bulk_users)) {
     redirect($return);
 }
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 if ($confirm and confirm_sesskey()) {
     // only force password change if user may actually change the password

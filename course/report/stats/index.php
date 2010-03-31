@@ -45,7 +45,7 @@
 
     if ($course->id == SITEID) {
         admin_externalpage_setup('reportstats');
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
     } else {
         $strreports = get_string("reports");
         $strstats = get_string('stats');

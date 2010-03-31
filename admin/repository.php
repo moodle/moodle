@@ -113,7 +113,7 @@ if (!empty($edit) || !empty($new)) {
         }
         exit;
     } else {
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('configplugin', 'repository_'.$plugin));
         $displaysettingform = true;
         if ($edit) {
@@ -164,7 +164,7 @@ if (!empty($edit) || !empty($new)) {
         }
         exit;
     } else {
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->confirm(get_string('confirmremove', 'repository', $repositorytype->get_readablename()), $sesskeyurl . '&delete=' . $delete . '&sure=yes', $baseurl);
         $return = false;
     }

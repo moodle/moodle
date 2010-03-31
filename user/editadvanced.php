@@ -235,9 +235,9 @@ if ($usernew = $userform->get_data()) {
 /// Display page header
 if ($user->id == -1 or ($user->id != $USER->id)) {
     if ($user->id == -1) {
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
     } else {
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         $userfullname = fullname($user, true);
         echo $OUTPUT->heading($userfullname);
     }

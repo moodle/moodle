@@ -75,7 +75,7 @@ if ($courseid) {
     $caneditcoursescales = has_capability('moodle/course:managescales', $context);
 
 } else {
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     $caneditcoursescales = $caneditsystemscales;
 }
 

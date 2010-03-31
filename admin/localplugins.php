@@ -39,7 +39,7 @@ $confirm = optional_param('confirm', '', PARAM_BOOL);
 /// If data submitted, then process and store.
 
 if (!empty($delete) and confirm_sesskey()) {
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('localplugins'));
 
     if (!$confirm) {
@@ -62,7 +62,7 @@ if (!empty($delete) and confirm_sesskey()) {
     }
 }
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('localplugins'));
 
 /// Print the table of all installed local plugins

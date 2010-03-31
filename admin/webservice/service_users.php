@@ -40,7 +40,7 @@ $PAGE->navbar->add(get_string('serviceusers', 'webservice'));
 $PAGE->requires->js('/admin/webservice/script.js');
 
 admin_externalpage_setup('externalserviceusers');
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 
 /// Get the user_selector we will need.

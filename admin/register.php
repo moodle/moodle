@@ -22,7 +22,7 @@
     }
 
 /// Print the header stuff
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 
 /// Print headings
     $stradministration = get_string("administration");

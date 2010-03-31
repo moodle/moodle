@@ -40,7 +40,7 @@ if (!is_null($path)) {
     // Turn off xmlstrictheaders during the unit test run.
     $origxmlstrictheaders = !empty($CFG->xmlstrictheaders);
     $CFG->xmlstrictheaders = false;
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     $CFG->xmlstrictheaders = $origxmlstrictheaders;
     unset($origxmlstrictheaders);
 
@@ -94,7 +94,7 @@ if (!is_null($path)) {
     $formheader = get_string('retest', 'simpletest');
 } else {
     $displaypath = '';
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     $formheader = get_string('rununittests', 'simpletest');
 }
 // Print the form for adjusting options.

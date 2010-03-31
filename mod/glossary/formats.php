@@ -50,7 +50,7 @@ if ( $mode == 'visible' and confirm_sesskey()) {
 $strmodulename = get_string("modulename", "glossary");
 $strdisplayformats = get_string("displayformats","glossary");
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 echo $OUTPUT->heading($strmodulename . ': ' . get_string("displayformats","glossary"));
 

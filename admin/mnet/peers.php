@@ -94,7 +94,7 @@ if ($formdata = $simpleform->get_data()) {
     $reviewform = new mnet_review_host_form(null, array('peer' => $mnet_peer)); // the second step (also the edit host form)
     $formdata->oldpublickey = $mnet_peer->public_key; // set this so we can confirm on form post without having to recreate the mnet_peer object
     $reviewform->set_data($mnet_peer);
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->box_start();
     $reviewform->display();
     echo $OUTPUT->box_end();
@@ -108,7 +108,7 @@ if ($formdata = $simpleform->get_data()) {
 if (!empty($hostid)) {
     // TODO print a nice little heading
     $mnet_peer->set_id($hostid);
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     $currenttab = 'mnetdetails';
     require_once($CFG->dirroot . '/admin/mnet/tabs.php');
 
@@ -178,7 +178,7 @@ if ($formdata = $reviewform->get_data()) {
         print_error('invalidaction', 'error', 'index.php');
     }
 } else if ($reviewform->is_submitted()) { // submitted, but errors
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->box_start();
     $reviewform->display();
     echo $OUTPUT->box_end();
@@ -188,7 +188,7 @@ if ($formdata = $reviewform->get_data()) {
 
 
 // normal flow - just display all hosts with links
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 $hosts = mnet_get_hosts();
 
 // print the table to display the register all hosts setting

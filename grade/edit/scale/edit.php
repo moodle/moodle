@@ -131,7 +131,7 @@ if ($mform->is_cancelled()) {
 if ($courseid) {
     print_grade_page_head($course->id, 'scale', 'edit', $heading);
 } else {
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 }
 
 $mform->display();

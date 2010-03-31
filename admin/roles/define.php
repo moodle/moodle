@@ -100,7 +100,7 @@
     }
 
 /// Print the page header and tabs.
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 
     $currenttab = 'manage';
     include('managetabs.php');

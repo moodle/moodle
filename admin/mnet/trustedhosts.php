@@ -13,7 +13,7 @@
     require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
 
     if (!extension_loaded('openssl')) {
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         print_error('requiresopenssl', 'mnet', '', NULL, true);
     }
 

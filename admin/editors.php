@@ -108,7 +108,7 @@ switch ($action) {
                 }
                 $form->set_data($data);
                 $PAGE->set_pagetype('admin-editors-' . $editor);
-                admin_externalpage_print_header();
+                echo $OUTPUT->header();
                 echo $OUTPUT->heading(get_string('modulename', 'editor_'.$editor));
                 $OUTPUT->box_start();
                 $form->display();

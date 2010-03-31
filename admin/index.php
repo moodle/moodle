@@ -355,7 +355,7 @@ if (any_new_admin_settings($adminroot)){
 
 // Print default admin page with notifications.
 admin_externalpage_setup('adminnotifications');
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 if ($insecuredataroot == INSECURE_DATAROOT_WARNING) {
     echo $OUTPUT->box(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot), 'generalbox adminwarning');

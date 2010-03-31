@@ -9,7 +9,7 @@
     $numcourses = optional_param('numcourses', 20, PARAM_INT);
 
     admin_externalpage_setup('reportcourseoverview');
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 
     if (empty($CFG->enablestats)) {
         if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {

@@ -3651,15 +3651,9 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
  * @param string $focus focus element
  */
 function admin_externalpage_print_header($focus='') {
-    global $CFG, $PAGE, $SITE, $OUTPUT;
+    global $OUTPUT;
 
-    //debugging('admin_externalpage_print_header is deprecated. Please $OUTPUT->header() instead.', DEBUG_DEVELOPER);
-
-    if (!is_string($focus)) {
-        $focus = ''; // BC compatibility, there used to be adminroot parameter
-    }
-
-    $PAGE->set_focuscontrol($focus);
+    debugging('admin_externalpage_print_header is deprecated. Please $OUTPUT->header() instead.', DEBUG_DEVELOPER);
 
     echo $OUTPUT->header();
 }

@@ -63,7 +63,7 @@ if ($data = $form->get_data()) {
     redirect(new moodle_url('/admin/mnet/peers.php', array('hostid' => $hostid)));
 }
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 $currenttab = 'mnetprofilefields';
 require_once('tabs.php');

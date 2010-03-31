@@ -83,7 +83,7 @@ $PAGE->requires->js_init_call('M.report_spamcleaner.init', array(me()), true);
 $strings = Array('spaminvalidresult','spamdeleteallconfirm','spamcannotdelete','spamdeleteconfirm');
 $PAGE->requires->strings_for_js($strings, 'report_spamcleaner');
 
-admin_externalpage_print_header();
+echo $OUTPUT->header();
 
 // Print headers and things
 echo $OUTPUT->box(get_string('spamcleanerintro', 'report_spamcleaner'));

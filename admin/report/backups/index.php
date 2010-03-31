@@ -8,7 +8,7 @@
     $courseid = optional_param('courseid', 0, PARAM_INT);
 
     admin_externalpage_setup('reportbackups');
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
 
 /// Scheduled backups are disabled by the server admin
     if (!empty($CFG->disablescheduledbackups)) {

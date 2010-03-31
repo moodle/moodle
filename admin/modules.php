@@ -71,7 +71,7 @@
     }
 
     if (!empty($delete) and confirm_sesskey()) {
-        admin_externalpage_print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->heading($stractivities);
 
         $strmodulename = get_string("modulename", "$delete");
@@ -97,7 +97,7 @@
         }
     }
 
-    admin_externalpage_print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading($stractivities);
 
 /// Get and sort the existing modules
