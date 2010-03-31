@@ -57,23 +57,20 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         $syscontext = get_system_context(false);
 
     /// Install the roles system.
-        $adminrole          = create_role(get_string('administrator'), 'admin',
-                                          get_string('administratordescription'), 'moodle/legacy:admin');
         $coursecreatorrole  = create_role(get_string('coursecreators'), 'coursecreator',
-                                          get_string('coursecreatorsdescription'), 'moodle/legacy:coursecreator');
+                                          get_string('coursecreatorsdescription'), 'coursecreator');
         $editteacherrole    = create_role(get_string('defaultcourseteacher'), 'editingteacher',
-                                          get_string('defaultcourseteacherdescription'), 'moodle/legacy:editingteacher');
+                                          get_string('defaultcourseteacherdescription'), 'editingteacher');
         $noneditteacherrole = create_role(get_string('noneditingteacher'), 'teacher',
-                                          get_string('noneditingteacherdescription'), 'moodle/legacy:teacher');
+                                          get_string('noneditingteacherdescription'), 'teacher');
         $studentrole        = create_role(get_string('defaultcoursestudent'), 'student',
-                                          get_string('defaultcoursestudentdescription'), 'moodle/legacy:student');
+                                          get_string('defaultcoursestudentdescription'), 'student');
         $guestrole          = create_role(get_string('guest'), 'guest',
-                                          get_string('guestdescription'), 'moodle/legacy:guest');
+                                          get_string('guestdescription'), 'guest');
         $userrole           = create_role(get_string('authenticateduser'), 'user',
-                                          get_string('authenticateduserdescription'), 'moodle/legacy:user');
+                                          get_string('authenticateduserdescription'), 'user');
 
         /// Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
-        assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $syscontext->id);
         update_capabilities('moodle');
         update_capabilities('mod_forum');
         update_capabilities('mod_quiz');
@@ -174,11 +171,6 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
                     array_map(create_function('$o', 'return $o->id;'),
                     get_users_by_capability($contexts[$conindex], array('mod/quiz:attempt', 'mod/quiz:reviewmyattempts'))));
         }
-        // System context, specifically checking doanything.
-        $this->assert(new ArraysHaveSameValuesExpectation(
-                array($users['a']->id)),
-                array_map(create_function('$o', 'return $o->id;'),
-                get_users_by_capability($contexts[0], 'moodle/site:doanything')));
 
 // For reference: get_users_by_capability argument order:
 // $context, $capability, $fields='', $sort='', $limitfrom='', $limitnum='',
@@ -271,8 +263,7 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
 
         $this->load_test_data('capabilities',
                 array('name'), array(
-                array('moodle/site:doanything'),
-                array('moodle/course:view')));
+                array('moodle/course:participate')));
 
         $roles = $this->load_test_data('role',
                    array( 'name', 'shortname', 'description', 'sortorder'), array(
@@ -283,15 +274,13 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         $adminid = $roles['admin']->id;
         $r1id = $roles['r1']->id;
         $r2id = $roles['r2']->id;
-        $funnyid = $roles['funny']->id; // strange role to test that roles with 'moodle/site:doanything' and 'moodle/course:view' are not returned.
+        $funnyid = $roles['funny']->id; // strange role to test that roles with 'moodle/course:participate' are not returned.
 
         $this->load_test_data('role_capabilities',
                 array('roleid',             'capability', 'contextid', 'permission'), array(
-                array($adminid, 'moodle/site:doanything', SYSCONTEXTID, CAP_ALLOW),
-                array(   $r1id,     'moodle/course:view', SYSCONTEXTID + 1, CAP_ALLOW),
-                array(   $r2id,     'moodle/course:view', SYSCONTEXTID, CAP_ALLOW),
-                array($funnyid, 'moodle/site:doanything', SYSCONTEXTID, CAP_ALLOW),
-                array($funnyid,     'moodle/course:view', SYSCONTEXTID, CAP_ALLOW)));
+                array(   $r1id,     'moodle/course:participate', SYSCONTEXTID + 1, CAP_ALLOW),
+                array(   $r2id,     'moodle/course:participate', SYSCONTEXTID, CAP_ALLOW),
+                array($funnyid,     'moodle/course:participate', SYSCONTEXTID, CAP_ALLOW)));
 
         $this->load_test_data('role_assignments',
                 array('userid', 'contextid',   'roleid'), array(
@@ -306,7 +295,7 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
                 array(  $r2id ,        $r2id),
                 array(  $r2id ,     $funnyid)));
 
-        // Admin should be able to switch to any role with 'moodle/course:view' in any context.
+        // Admin should be able to switch to any role with 'moodle/course:participate' in any context.
         $this->switch_global_user_id(1);
         accesslib_clear_all_caches_for_unit_testing();
         $this->assert(new ArraysHaveSameValuesExpectation(array($r2id)), array_keys(get_switchable_roles($syscontext)));
@@ -333,13 +322,10 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         $this->load_test_data('role_capabilities',
                 array('roleid',            'capability', 'contextid', 'permission'), array(
                 array(      1, 'moodle/forum:replypost', SYSCONTEXTID, CAP_ALLOW),
-                array(      2,     'moodle/course:view', SYSCONTEXTID, CAP_ALLOW),
-                array(      3, 'moodle/site:doanything', SYSCONTEXTID, CAP_ALLOW),
-                array(      4, 'moodle/site:doanything', SYSCONTEXTID, CAP_ALLOW),
-                array(      4,     'moodle/course:view', SYSCONTEXTID, CAP_ALLOW),
-                array(      5,     'moodle/course:view', SYSCONTEXTID, CAP_ALLOW),
-                array(      5, 'moodle/site:doanything', SYSCONTEXTID, CAP_PREVENT),
-                array(      6,     'moodle/course:view', SYSCONTEXTID, CAP_PREVENT),
+                array(      2,     'moodle/course:participate', SYSCONTEXTID, CAP_ALLOW),
+                array(      4,     'moodle/course:participate', SYSCONTEXTID, CAP_ALLOW),
+                array(      5,     'moodle/course:participate', SYSCONTEXTID, CAP_ALLOW),
+                array(      6,     'moodle/course:participate', SYSCONTEXTID, CAP_PREVENT),
                 ));
 
         $this->switch_to_test_db();

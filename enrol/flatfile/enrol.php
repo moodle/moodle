@@ -197,12 +197,10 @@ function get_access_icons($course) {
 
                         if ($fields[1] == "student") {
 
-                            if ($teachers = get_users_by_capability($context, 'moodle/course:update', 'u.*,ra.hidden', 'ra.sortorder ASC')) {
+                            // TODO: replace this with check for $CFG->couremanager, 'moodle/course:update' is definitely wrong
+                            if ($teachers = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'ra.sortorder ASC')) {
                                 foreach ($teachers as $u) {
-                                    if (!$u->hidden || has_capability('moodle/role:viewhiddenassigns', $context)) {
-                                        $teacher = $u;
-                                        break;
-                                    }
+                                    $teacher = $u;
                                 }
                             }
 
@@ -233,22 +231,19 @@ function get_access_icons($course) {
                         if (!empty($CFG->enrol_mailteachers) && $teachers) {
 
                             foreach($teachers as $teacher) {
+                                $a->course = "$course->fullname";
+                                $a->user = fullname($user);
 
-                                if (!$u->hidden || has_capability('moodle/role:viewhiddenassigns', $context)) {
-                                    $a->course = "$course->fullname";
-                                    $a->user = fullname($user);
-
-                                    $eventdata = new object();
-                                    $eventdata->modulename        = 'moodle';
-                                    $eventdata->userfrom          = $user;
-                                    $eventdata->userto            = $teacher;
-                                    $eventdata->subject           = get_string("enrolmentnew", '', $course->shortname);
-                                    $eventdata->fullmessage       = get_string('enrolmentnewuser', '', $a);
-                                    $eventdata->fullmessageformat = FORMAT_PLAIN;
-                                    $eventdata->fullmessagehtml   = '';
-                                    $eventdata->smallmessage      = '';
-                                    message_send($eventdata);
-                                }
+                                $eventdata = new object();
+                                $eventdata->modulename        = 'moodle';
+                                $eventdata->userfrom          = $user;
+                                $eventdata->userto            = $teacher;
+                                $eventdata->subject           = get_string("enrolmentnew", '', $course->shortname);
+                                $eventdata->fullmessage       = get_string('enrolmentnewuser', '', $a);
+                                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                                $eventdata->fullmessagehtml   = '';
+                                $eventdata->smallmessage      = '';
+                                message_send($eventdata);
                             }
                         }
                     }

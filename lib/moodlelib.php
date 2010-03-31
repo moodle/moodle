@@ -733,7 +733,7 @@ function clean_param($param, $type) {
             }
 
         case PARAM_CAPABILITY:
-            if (is_valid_capability($param)) {
+            if (get_capability_info($param)) {
                 return $param;
             } else {
                 return '';
@@ -781,7 +781,7 @@ function clean_param($param, $type) {
                 // regular expression, eliminate all chars EXCEPT:
                 // alphanum, dash (-), underscore (_), at sign (@) and period (.) characters.
                 $param = preg_replace('/[^-\.@_a-z0-9]/', '', $param);
-            } 
+            }
             return $param;
 
         case PARAM_EMAIL:
@@ -1326,7 +1326,7 @@ function unset_user_preference($name, $otheruserid=NULL) {
 function get_user_preferences($name=NULL, $default=NULL, $otheruserid=NULL) {
     global $USER, $DB;
 
-    if (empty($otheruserid) || (!empty($USER->id) && ($USER->id == $otheruserid))){
+    if (empty($otheruserid) || (isloggedin() && ($USER->id == $otheruserid))){
         check_user_preferences_loaded();
 
         if (empty($name)) {
@@ -2098,7 +2098,7 @@ function get_login_url($loginguest=false) {
  * in the course then the user is redirected to the course home page.
  *
  * When $cm parameter specified, this function sets page layout to 'module'.
- * You need to change it manually later if some other layout needed. 
+ * You need to change it manually later if some other layout needed.
  *
  * @global object
  * @global object
@@ -2225,21 +2225,15 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
     }
 
     // Fetch the course context, and prefetch its child contexts
-    if (!isset($COURSE->context)) {
-        if ( ! $COURSE->context = get_context_instance(CONTEXT_COURSE, $COURSE->id) ) {
-            print_error('nocontext');
-        }
-    }
-    if (!empty($cm) && !isset($cm->context)) {
-        if ( ! $cm->context = get_context_instance(CONTEXT_MODULE, $cm->id) ) {
-            print_error('nocontext');
-        }
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $COURSE->id, MUST_EXIST);
+    if ($cm) {
+        $cmcontext = get_context_instance(CONTEXT_MODULE, $cm->id, MUST_EXIST);
     }
 
     // Conditional activity access control
-    if(!empty($CFG->enableavailability) and $cm) {
+    if (!empty($CFG->enableavailability) and $cm) {
         // We cache conditional access in session
-        if(!isset($SESSION->conditionaccessok)) {
+        if (!isset($SESSION->conditionaccessok)) {
             $SESSION->conditionaccessok = array();
         }
         // If you have been allowed into the module once then you are allowed
@@ -2250,8 +2244,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
             $ci = new condition_info($cm, CONDITION_MISSING_EXTRATABLE);
             // Check condition for user (this will do a query if the availability
             // information depends on grade or completion information)
-            if ($ci->is_available($junk) ||
-                has_capability('moodle/course:viewhiddenactivities', $cm->context)) {
+            if ($ci->is_available($junk) || has_capability('moodle/course:viewhiddenactivities', $cmcontext)) {
                 $SESSION->conditionaccessok[$cm->id] = true;
             } else {
                 print_error('activityiscurrentlyhidden');
@@ -2261,8 +2254,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
 
     if ($COURSE->id == SITEID) {
         /// Eliminate hidden site activities straight away
-        if (!empty($cm) && !$cm->visible
-            && !has_capability('moodle/course:viewhiddenactivities', $cm->context)) {
+        if ($cm && !$cm->visible && !has_capability('moodle/course:viewhiddenactivities', $cmcontext)) {
             redirect($CFG->wwwroot, get_string('activityiscurrentlyhidden'));
         }
         user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
@@ -2271,52 +2263,52 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
     } else {
 
         /// Check if the user can be in a particular course
-        if (empty($USER->access['rsw'][$COURSE->context->path])) {
+        if (empty($USER->access['rsw'][$coursecontext->path])) {
             //
             // MDL-13900 - If the course or the parent category are hidden
             // and the user hasn't the 'course:viewhiddencourses' capability, prevent access
             //
-            if ( !($COURSE->visible && course_parent_visible($COURSE)) &&
-                   !has_capability('moodle/course:viewhiddencourses', $COURSE->context)) {
+            if ( !($COURSE->visible && course_parent_visible($COURSE)) && !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
                 echo $OUTPUT->header();
                 notice(get_string('coursehidden'), $CFG->wwwroot .'/');
             }
         }
 
-    /// Non-guests who don't currently have access, check if they can be allowed in as a guest
-
-        if ($USER->username != 'guest' and !has_capability('moodle/course:view', $COURSE->context)) {
-            if ($COURSE->guest == 1) {
-                 // Temporarily assign them guest role for this context, if it fails later user is asked to enrol
-                 $USER->access = load_temp_role($COURSE->context, $CFG->guestroleid, $USER->access);
-            }
-        }
-
-    /// If the user is a guest then treat them according to the course policy about guests
-
-        if (has_capability('moodle/legacy:guest', $COURSE->context, NULL, false)) {
-            if (has_capability('moodle/site:doanything', $sysctx)) {
-                // administrators must be able to access any course - even if somebody gives them guest access
-                user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
-                return;
+        if (is_enrolled($coursecontext) or is_viewing($coursecontext)) {
+            // Enrolled user or allowed to visit course (managers, inspectors, etc.)
+            if (session_is_loggedinas()) {   // Make sure the REAL person can also access this course
+                $realuser = session_get_realuser();
+                if (!is_enrolled($coursecontext, $realuser->id) and !is_viewing($coursecontext, $realuser->id) and !is_siteadmin($realuser->id)) {
+                    echo $OUTPUT->header();
+                    notice(get_string('studentnotallowed', '', fullname($USER, true)), $CFG->wwwroot .'/');
+                }
             }
 
+            // Make sure they can read this activity too, if specified
+            if ($cm && !$cm->visible && !has_capability('moodle/course:viewhiddenactivities', $cmcontext)) {
+                redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
+            }
+            user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
+            return;   // User is allowed to see this course
+
+        } else {
+            // guest access
             switch ($COURSE->guest) {    /// Check course policy about guest access
 
                 case 1:    /// Guests always allowed
-                    if (!has_capability('moodle/course:view', $COURSE->context)) {    // Prohibited by capability
-                        echo $OUTPUT->header();
-                        notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), get_login_url());
-                    }
-                    if (!empty($cm) and !$cm->visible) { // Not allowed to see module, send to course page
+                    if ($cm and !$cm->visible) { // Not allowed to see module, send to course page
                         redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course,
                                  get_string('activityiscurrentlyhidden'));
                     }
 
+                    if ($USER->username != 'guest' and !empty($CFG->guestroleid)) {
+                        // Non-guests who don't currently have access, check if they can be allowed in as a guest
+                        // Temporarily assign them guest role for this context, if it fails later user is asked to enrol
+                        $USER->access = load_temp_role($coursecontext, $CFG->guestroleid, $USER->access);
+                    }
+
                     user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
                     return;   // User is allowed to see this course
-
-                    break;
 
                 case 2:    /// Guests allowed with key
                     if (!empty($USER->enrolkey[$COURSE->id])) {   // Set by enrol/manual/enrol.php
@@ -2330,7 +2322,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
                     $strloggedinasguest = get_string('loggedinasguest');
                     $PAGE->navbar->add($strloggedinasguest);
                     echo $OUTPUT->header();
-                    if (empty($USER->access['rsw'][$COURSE->context->path])) {  // Normal guest
+                    if (empty($USER->access['rsw'][$coursecontext->path])) {  // Normal guest
                         notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), get_login_url());
                     } else {
                         echo $OUTPUT->notification(get_string('guestsnotallowed', '', format_string($COURSE->fullname)));
@@ -2340,30 +2332,9 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
                     }
                     break;
             }
-
-    /// For non-guests, check if they have course view access
-
-        } else if (has_capability('moodle/course:view', $COURSE->context)) {
-            if (session_is_loggedinas()) {   // Make sure the REAL person can also access this course
-                $realuser = session_get_realuser();
-                if (!has_capability('moodle/course:view', $COURSE->context, $realuser->id)) {
-                    echo $OUTPUT->header();
-                    notice(get_string('studentnotallowed', '', fullname($USER, true)), $CFG->wwwroot .'/');
-                }
-            }
-
-        /// Make sure they can read this activity too, if specified
-
-            if (!empty($cm) && !$cm->visible && !has_capability('moodle/course:viewhiddenactivities', $cm->context)) {
-                redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
-            }
-            user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
-            return;   // User is allowed to see this course
-
         }
 
-
-    /// Currently not enrolled in the course, so see if they want to enrol
+        // Currently not enrolled in the course, so see if they want to enrol
         $SESSION->wantsurl = $FULLME;
         redirect($CFG->wwwroot .'/course/enrol.php?id='. $COURSE->id);
         die;
@@ -2957,7 +2928,7 @@ function sync_metacourse($course) {
     // Get assignments of a user to a role that exist in a child course, but
     // not in the meta coure. That is, get a list of the assignments that need to be made.
     if (!$assignments = $DB->get_records_sql("
-            SELECT ra.id, ra.roleid, ra.userid, ra.hidden
+            SELECT ra.id, ra.roleid, ra.userid
               FROM {role_assignments} ra, {context} con, {course_meta} cm
              WHERE ra.contextid = con.id AND
                    con.contextlevel = ".CONTEXT_COURSE." AND
@@ -3005,7 +2976,7 @@ function sync_metacourse($course) {
 
     // Make the assignments.
     foreach ($assignments as $assignment) {
-        $success = role_assign($assignment->roleid, $assignment->userid, 0, $context->id, 0, 0, $assignment->hidden) && $success;
+        $success = role_assign($assignment->roleid, $assignment->userid, 0, $context->id, 0, 0) && $success;
     }
 
     return $success;
@@ -3059,45 +3030,6 @@ function remove_from_metacourse($metacourseid, $courseid) {
         return sync_metacourse($metacourseid);
     }
     return false;
-}
-
-
-/**
- * Determines if a user is currently logged in
- *
- * @global object
- * @return bool
- */
-function isloggedin() {
-    global $USER;
-
-    return (!empty($USER->id));
-}
-
-/**
- * Determines if a user is logged in as real guest user with username 'guest'.
- * This function is similar to original isguest() in 1.6 and earlier.
- * Current isguest() is deprecated - do not use it anymore.
- *
- * @global object
- * @global object
- * @param int $user mixed user object or id, $USER if not specified
- * @return bool true if user is the real guest user, false if not logged in or other user
- */
-function isguestuser($user=NULL) {
-    global $USER, $DB;
-
-    if ($user === NULL) {
-        $user = $USER;
-    } else if (is_numeric($user)) {
-        $user = $DB->get_record('user', array('id'=>$user), 'id, username');
-    }
-
-    if (empty($user->id)) {
-        return false; // not logged in, can not be guest
-    }
-
-    return ($user->username == 'guest');
 }
 
 /**
@@ -4310,7 +4242,7 @@ function reset_course_userdata($data) {
             if ($users = get_role_users($roleid, $context, false, 'u.id', 'u.id ASC')) {
                 foreach ($users as $user) {
                     role_unassign($roleid, $user->id, 0, $context->id);
-                    if (!has_capability('moodle/course:view', $context, $user->id)) {
+                    if (!is_enrolled($context, $user->id)) {
                         $data->unenrolled[$user->id] = $user->id;
                     }
                 }
@@ -5090,7 +5022,7 @@ function email_welcome_message_to_user($course, $user=NULL) {
     if (!empty($course->welcomemessage)) {
         $message = $course->welcomemessage;
     } else {
-        $a = new Object();
+        $a = new object();
         $a->coursename = $course->fullname;
         $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
         $message = get_string("welcometocoursetext", "", $a);
@@ -5101,7 +5033,7 @@ function email_welcome_message_to_user($course, $user=NULL) {
         $subject = get_string('welcometocourse', '', format_string($course->fullname));
 
          $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        // Pass $view=true to filter hidden caps if the user cannot see them
+        // TODO: replace with $CFG->coursemanager test, 'moodle/course:update' is very wrong!!
         if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'u.id ASC','', '', '', '', false, true)) {
             $users = sort_by_roleassignment_authority($users, $context);
             $teacher = array_shift($users);

@@ -146,15 +146,15 @@ function data_restore_mods($mod,$restore) {
             // backup_version to make sure.
             if (isset($database->participants) && isset($database->assesspublic)) {
 
-                if (!$teacherroles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW)) {
+                if (!$teacherroles = get_archetype_roles('teacher')) {
                       notice('Default teacher role was not found. Roles and permissions '.
                              'for your database modules will have to be manually set.');
                 }
-                if (!$studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
+                if (!$studentroles = get_archetype_roles('student')) {
                       notice('Default student role was not found. Roles and permissions '.
                              'for all your database modules will have to be manually set.');
                 }
-                if (!$guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
+                if (!$guestroles = get_archetype_roles('guest')) {
                       notice('Default guest role was not found. Roles and permissions '.
                              'for all your database modules will have to be manually set.');
                 }

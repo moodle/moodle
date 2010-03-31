@@ -969,7 +969,7 @@ class admin_externalpage implements part_of_admin_tree {
         global $CFG;
         $context = empty($this->context) ? get_context_instance(CONTEXT_SYSTEM) : $this->context;
         foreach($this->req_capability as $cap) {
-            if (is_valid_capability($cap) and has_capability($cap, $context)) {
+            if (has_capability($cap, $context)) {
                 return true;
             }
         }
@@ -1144,7 +1144,7 @@ class admin_settingpage implements part_of_admin_tree {
         global $CFG;
         $context = empty($this->context) ? get_context_instance(CONTEXT_SYSTEM) : $this->context;
         foreach($this->req_capability as $cap) {
-            if (is_valid_capability($cap) and has_capability($cap, $context)) {
+            if (has_capability($cap, $context)) {
                 return true;
             }
         }
@@ -3732,9 +3732,8 @@ class admin_setting_pickroles extends admin_setting_configmulticheckbox {
      * @param string $name Name of config variable
      * @param string $visiblename Display name
      * @param string $description Description
-     * @param array $types Array of capabilities (usually moodle/legacy:something)
-     *   which identify roles that will be enabled by default. Default is the
-     *   student role
+     * @param array $types Array of archetypes which identify
+     *              roles that will be enabled by default.
      */
     public function __construct($name, $visiblename, $description, $types) {
         parent::__construct($name, $visiblename, $description, NULL, NULL);
@@ -3776,8 +3775,8 @@ class admin_setting_pickroles extends admin_setting_configmulticheckbox {
             return null;
         }
         $result = array();
-        foreach($this->types as $capability) {
-            if ($caproles = get_roles_with_capability($capability, CAP_ALLOW)) {
+        foreach($this->types as $archetype) {
+            if ($caproles = get_archetype_roles($archetype)) {
                 foreach ($caproles as $caprole) {
                     $result[$caprole->id] = 1;
                 }
@@ -4074,7 +4073,7 @@ class admin_setting_special_gradebookroles extends admin_setting_pickroles {
     public function __construct() {
         parent::__construct('gradebookroles', get_string('gradebookroles', 'admin'),
             get_string('configgradebookroles', 'admin'),
-            array('moodle/legacy:student'));
+            array('student'));
     }
 }
 
@@ -4117,7 +4116,7 @@ class admin_setting_special_coursemanager extends admin_setting_pickroles {
     public function __construct() {
         parent::__construct('coursemanager', get_string('coursemanager', 'admin'),
             get_string('configcoursemanager', 'admin'),
-            array('moodle/legacy:editingteacher'));
+            array('editingteacher'));
     }
 }
 

@@ -438,7 +438,7 @@ class navigation_node {
                 $link->add_class('dimmed');
             }
             $content = $OUTPUT->render($link);
-            
+
         } else if ($this->action instanceof moodle_url) {
             $attributes = array();
             if ($title !== '') {
@@ -725,7 +725,7 @@ class navigation_node {
         } else {
             $key = array_shift($keys);
             $child = $this->get($key);
-            
+
             if ($child !== false) {
                 return $child->get_by_path($keys);
             }
@@ -996,7 +996,7 @@ class global_navigation extends navigation_node {
      */
     protected function load_for_user($user=null) {
         global $DB, $PAGE, $CFG, $USER;
-        
+
         $iscurrentuser = false;
         if ($user === null) {
             // We can't require login here but if the user isn't logged in we don't
@@ -1101,7 +1101,7 @@ class global_navigation extends navigation_node {
             $reporttab->add(get_string('outlinereport'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'outline'))));
             $reporttab->add(get_string('completereport'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'complete'))));
         }
-        
+
         if ($viewreports || has_capability('coursereport/log:viewtoday', $coursecontext)) {
             $reporttab->add(get_string('todaylogs'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'todaylogs'))));
         }
@@ -1156,7 +1156,7 @@ class global_navigation extends navigation_node {
     /**
      * Adds the provided user to an array and when the navigation is generated
      * it is extended for this user.
-     * 
+     *
      * @param object $user
      */
     public function extend_for_user($user) {
@@ -1206,7 +1206,7 @@ class global_navigation extends navigation_node {
             return $depth;
         }
 
-        if (isloggedin() && has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $PAGE->course->id))) {
+        if (isloggedin() && has_capability('moodle/course:participate', get_context_instance(CONTEXT_COURSE, $PAGE->course->id))) {
             $depth += $this->load_course_activities($keys);
             $depth += $this->load_course_sections($keys);
         }
@@ -1420,30 +1420,15 @@ class global_navigation extends navigation_node {
             // itself hasn't set PAGE->cm (usually set by require_login)
             // Chances are this is a front page module.
             $cm = get_coursemodule_from_id(false, $this->context->instanceid);
-            if ($cm) {
-                $cm->context = $this->context;
-                $PAGE->set_cm($cm, $PAGE->course);
-            } else {
-                debugging('The module has not been set against the page but we are attempting to generate module specific information for navigation', DEBUG_DEVELOPER);
-                return;
-            }
+            $PAGE->set_cm($cm, $PAGE->course);
         }
 
         $node = $this->find_child($PAGE->cm->id, self::TYPE_ACTIVITY);
         if ($node) {
             $node->make_active();
-            if (!isset($PAGE->course->context)) {
-                // If we get here chances we are on a front page module
-                $this->context = $PAGE->context;
-            } else {
-                $this->context = $PAGE->course->context;
-            }
+            $this->context = $PAGE->context;
             $file = $CFG->dirroot.'/mod/'.$PAGE->activityname.'/lib.php';
             $function = $PAGE->activityname.'_extend_navigation';
-
-            if (empty($PAGE->cm->context)) {
-                $PAGE->cm->context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->instance);
-            }
 
             if (file_exists($file)) {
                 require_once($file);
@@ -1795,15 +1780,10 @@ class global_navigation extends navigation_node {
 
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
-        // Cache capability moodle/site:config we use this in the next bit of code
-        if (!$this->cache->cached('hassiteconfig')) {
-            $this->cache->hassiteconfig = has_capability('moodle/site:config', $systemcontext);
-        }
-
         // If the user is logged in (but not as a guest), doesnt have the site config capability,
         // and my courses havn't been disabled then we will show the user's courses in the
         // global navigation, otherwise we will show up to FRONTPAGECOURSELIMIT available courses
-        if (isloggedin() && !$this->cache->hassiteconfig && !isguestuser() && empty($CFG->disablemycourses)) {
+        if (isloggedin() && !is_siteadmin() && !isguestuser() && empty($CFG->disablemycourses)) {
             if (!$this->cache->cached('mycourses')) {
                 $this->cache->mycourses = get_my_courses($USER->id);
             }
@@ -1818,7 +1798,7 @@ class global_navigation extends navigation_node {
                     $accessinfo = get_user_access_sitewide($USER->id);
                 }
                 // Get the available courses using get_user_courses_bycap
-                $this->cache->availablecourses = get_user_courses_bycap($USER->id, 'moodle/course:view',
+                $this->cache->availablecourses = get_user_courses_bycap($USER->id, 'moodle/course:participate',
                                                                         $accessinfo, true, 'c.sortorder ASC',
                                                                         array('fullname','visible', 'category'),
                                                                         FRONTPAGECOURSELIMIT);
@@ -2048,7 +2028,7 @@ class global_navigation_for_ajax extends global_navigation {
         $keys = array();
         parent::load_course($keys, $course);
 
-        if (isloggedin() && has_capability('moodle/course:view', $this->context)) {
+        if (isloggedin() && has_capability('moodle/course:participate', $this->context)) {
             if (!$this->cache->cached('course'.$course->id.'section0')) {
                 $this->cache->{'course'.$course->id.'section0'} = get_course_section('0', $course->id);
             }
@@ -2066,7 +2046,7 @@ class global_navigation_for_ajax extends global_navigation {
      */
     protected function load_section($instanceid=0) {
         global $DB, $PAGE, $CFG;
-        
+
         $section = $DB->get_record('course_sections', array('id'=>$instanceid), '*', MUST_EXIST);
 
         if (!$this->cache->cached('course'.$section->course)) {
@@ -2500,7 +2480,7 @@ class settings_navigation extends navigation_node {
      */
     public function initialise() {
         global $DB;
-        
+
         if (during_initial_install()) {
             return false;
         }
@@ -2635,7 +2615,7 @@ class settings_navigation extends navigation_node {
             $adminroot = admin_get_root(false, false);
             // This is the active section identifier
             $this->adminsection = $this->page->url->param('section');
-            
+
             // Disable the navigation from automatically finding the active node
             navigation_node::$autofindactive = false;
             $branchkey = $this->add(get_string('administrationsite'), null, self::TYPE_SETTING, null, 'root');
@@ -2762,17 +2742,12 @@ class settings_navigation extends navigation_node {
      * @return bool|mixed Either false of a key to access the course tree by
      */
     protected function load_course_settings($forceopen = false) {
-        global $CFG, $USER, $SESSION;
+        global $CFG, $USER, $SESSION, $OUTPUT;
 
         $course = $this->page->course;
-        if (empty($course->context)) {
-            if (!$this->cache->cached('coursecontext'.$course->id)) {
-                $this->cache->{'coursecontext'.$course->id} = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
-            }
-            $course->context = $this->cache->{'coursecontext'.$course->id};
-        }
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         if (!$this->cache->cached('canviewcourse'.$course->id)) {
-            $this->cache->{'canviewcourse'.$course->id} = has_capability('moodle/course:view', $course->context);
+            $this->cache->{'canviewcourse'.$course->id} = has_capability('moodle/course:participate', $coursecontext);
         }
         if ($course->id === SITEID || !$this->cache->{'canviewcourse'.$course->id}) {
             return false;
@@ -2782,7 +2757,7 @@ class settings_navigation extends navigation_node {
         $coursenode = $this->get($coursenodekey);
         $coursenode->forceopen = ($forceopen==true);
 
-        if (has_capability('moodle/course:update', $course->context)) {
+        if (has_capability('moodle/course:update', $coursecontext)) {
             // Add the turn on/off settings
             $url = new moodle_url('/course/view.php', array('id'=>$course->id, 'sesskey'=>sesskey()));
             if ($this->page->user_is_editing()) {
@@ -2880,37 +2855,37 @@ class settings_navigation extends navigation_node {
             $coursenode->add(get_string('settings'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
         }
 
-        if (has_capability('moodle/role:assign', $course->context)) {
+        if (has_capability('moodle/role:assign', $coursecontext)) {
             // Add assign or override roles if allowed
-            $url = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid'=>$course->context->id));
+            $url = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid'=>$coursecontext->id));
             $coursenode->add(get_string('assignroles', 'role'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/roles', ''));
             // Override roles
-            if (has_capability('moodle/role:review', $course->context) or count(get_overridable_roles($course->context))>0) {
-                $url = new moodle_url('/'.$CFG->admin.'/roles/permissions.php', array('contextid'=>$course->context->id));
+            if (has_capability('moodle/role:review', $coursecontext) or count(get_overridable_roles($coursecontext))>0) {
+                $url = new moodle_url('/'.$CFG->admin.'/roles/permissions.php', array('contextid'=>$coursecontext->id));
                 $coursenode->add(get_string('permissions', 'role'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/roles', ''));
             }
             // Check role permissions
-            if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride','moodle/role:override', 'moodle/role:assign'), $course->context)) {
-                $url = new moodle_url('/'.$CFG->admin.'/roles/check.php', array('contextid'=>$course->context->id));
+            if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride','moodle/role:override', 'moodle/role:assign'), $coursecontext)) {
+                $url = new moodle_url('/'.$CFG->admin.'/roles/check.php', array('contextid'=>$coursecontext->id));
                 $coursenode->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/roles', ''));
             }
             // Manage filters
-            if (has_capability('moodle/filter:manage', $course->context) && count(filter_get_available_in_context($course->context))>0) {
-                $url = new moodle_url('/filter/manage.php', array('contextid'=>$course->context->id));
+            if (has_capability('moodle/filter:manage', $coursecontext) && count(filter_get_available_in_context($coursecontext))>0) {
+                $url = new moodle_url('/filter/manage.php', array('contextid'=>$coursecontext->id));
                 $coursenode->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/filter', ''));
             }
         }
 
         // Add view grade report is permitted
         $reportavailable = false;
-        if (has_capability('moodle/grade:viewall', $course->context)) {
+        if (has_capability('moodle/grade:viewall', $coursecontext)) {
             $reportavailable = true;
         } else if (!empty($course->showgrades)) {
             $reports = get_plugin_list('gradereport');
             if (is_array($reports) && count($reports)>0) {     // Get all installed reports
                 arsort($reports); // user is last, we want to test it first
                 foreach ($reports as $plugin => $plugindir) {
-                    if (has_capability('gradereport/'.$plugin.':view', $course->context)) {
+                    if (has_capability('gradereport/'.$plugin.':view', $coursecontext)) {
                         //stop when the first visible plugin is found
                         $reportavailable = true;
                         break;
@@ -2924,48 +2899,48 @@ class settings_navigation extends navigation_node {
         }
 
         //  Add outcome if permitted
-        if (!empty($CFG->enableoutcomes) && has_capability('moodle/course:update', $course->context)) {
+        if (!empty($CFG->enableoutcomes) && has_capability('moodle/course:update', $coursecontext)) {
             $url = new moodle_url('/grade/edit/outcome/course.php', array('id'=>$course->id));
             $coursenode->add(get_string('outcomes', 'grades'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/outcomes', ''));
         }
 
         // Add meta course links
         if ($course->metacourse) {
-            if (has_capability('moodle/course:managemetacourse', $course->context)) {
+            if (has_capability('moodle/course:managemetacourse', $coursecontext)) {
                 $url = new moodle_url('/course/importstudents.php', array('id'=>$course->id));
                 $coursenode->add(get_string('childcourses'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/course', ''));
-            } else if (has_capability('moodle/role:assign', $course->context)) {
+            } else if (has_capability('moodle/role:assign', $coursecontext)) {
                 $key = $coursenode->add(get_string('childcourses'), null,  self::TYPE_SETTING, null, null, new pix_icon('i/course', ''));
                 $coursenode->get($key)->hidden = true;;
             }
         }
 
         // Manage groups in this course
-        if (($course->groupmode || !$course->groupmodeforce) && has_capability('moodle/course:managegroups', $course->context)) {
+        if (($course->groupmode || !$course->groupmodeforce) && has_capability('moodle/course:managegroups', $coursecontext)) {
             $url = new moodle_url('/group/index.php', array('id'=>$course->id));
             $coursenode->add(get_string('groups'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/group', ''));
         }
 
         // Backup this course
-        if (has_capability('moodle/backup:backupcourse', $course->context)) {
+        if (has_capability('moodle/backup:backupcourse', $coursecontext)) {
             $url = new moodle_url('/backup/backup.php', array('id'=>$course->id));
             $coursenode->add(get_string('backup'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/backup', ''));
         }
 
         // Restore to this course
-        if (has_capability('moodle/restore:restorecourse', $course->context)) {
+        if (has_capability('moodle/restore:restorecourse', $coursecontext)) {
             $url = new moodle_url('/files/index.php', array('id'=>$course->id, 'wdir'=>'/backupdata'));
             $coursenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
         }
 
         // Import data from other courses
-        if (has_capability('moodle/restore:restoretargetimport', $course->context)) {
+        if (has_capability('moodle/restore:restoretargetimport', $coursecontext)) {
             $url = new moodle_url('/course/import.php', array('id'=>$course->id));
             $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
         }
 
         // Reset this course
-        if (has_capability('moodle/course:reset', $course->context)) {
+        if (has_capability('moodle/course:reset', $coursecontext)) {
             $url = new moodle_url('/course/reset.php', array('id'=>$course->id));
             $coursenode->add(get_string('reset'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/return', ''));
         }
@@ -3017,13 +2992,19 @@ class settings_navigation extends navigation_node {
         }
 
         // Unenrol link
-        if (empty($course->metacourse)) {
-            if (has_capability('moodle/legacy:guest', $this->context, NULL, false)) {   // Are a guest now
-                $url = new moodle_url('/course/enrol.php', array('id'=>$course->id));
-                $coursenode->add(get_string('enrolme', '', format_string($course->shortname)), $url, self::TYPE_SETTING, null, null, new pix_icon('i/user', ''));
-            } else if (has_capability('moodle/role:unassignself', $this->context, NULL, false) && get_user_roles($this->context, 0, false)) {  // Have some role
-                $url = new moodle_url('/course/unenrol.php', array('id'=>$course->id));
-                $coursenode->add(get_string('unenrolme', '', format_string($course->shortname)), $url, self::TYPE_SETTING, null, null, new pix_icon('i/user', ''));
+        if (empty($course->metacourse) && ($course->id!==SITEID)) {
+            if (is_enrolled(get_context_instance(CONTEXT_COURSE, $course->id))) {
+                if (has_capability('moodle/role:unassignself', $this->page->context, NULL, false) and get_user_roles($this->page->context, $USER->id, false)) {  // Have some role
+                    $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/unenrol.php?id='.$course->id.'">'.get_string('unenrolme', '', format_string($course->shortname)).'</a>';
+                    $this->content->icons[]='<img src="'.$OUTPUT->pix_url('i/user') . '" class="icon" alt="" />';
+                }
+
+            } else if (is_viewing(get_context_instance(CONTEXT_COURSE, $course->id))) {
+                // inspector, manager, etc. - do not show anything
+            } else {
+                // access because otherwise they would not get into this course at all
+                $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/enrol.php?id='.$course->id.'">'.get_string('enrolme', '', format_string($course->shortname)).'</a>';
+                $this->content->icons[]='<img src="'.$OUTPUT->pix_url('i/user') . '" class="icon" alt="" />';
             }
         }
 
@@ -3083,22 +3064,13 @@ class settings_navigation extends navigation_node {
 
         if (!$this->page->cm && $this->context->contextlevel == CONTEXT_MODULE && $this->context->instanceid) {
             $cm = get_coursemodule_from_id(false, $this->context->instanceid, 0, false, MUST_EXIST);
-            $cm->context = $this->context;
             $this->page->set_cm($cm, $this->page->course);
-        }
-
-        if (empty($this->page->cm->context)) {
-            if ($this->context->instanceid === $this->page->cm->id) {
-                $this->page->cm->context = $this->context;
-            } else {
-                $this->page->cm->context = get_context_instance(CONTEXT_MODULE, $this->page->cm->instance);
-            }
         }
 
         $modulekey = $this->add(get_string($this->page->activityname.'administration', $this->page->activityname));
         $modulenode = $this->get($modulekey);
         $modulenode->forceopen = true;
-        
+
         // Settings for the module
         if (has_capability('moodle/course:manageactivities', $this->page->cm->context)) {
             $url = new moodle_url('/course/modedit.php', array('update' => $this->page->cm->id, 'return' => true, 'sesskey' => sesskey()));
@@ -3124,7 +3096,7 @@ class settings_navigation extends navigation_node {
             $url = new moodle_url('/filter/manage.php', array('contextid'=>$this->page->cm->context->id));
             $modulenode->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING);
         }
-        
+
         $file = $CFG->dirroot.'/mod/'.$this->page->activityname.'/lib.php';
         $function = $this->page->activityname.'_extend_settings_navigation';
 
@@ -3214,7 +3186,7 @@ class settings_navigation extends navigation_node {
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
         $systemcontext   = get_system_context();
         $currentuser = ($USER->id == $userid);
-        
+
         if ($currentuser) {
             $user = $USER;
             $usercontext = get_context_instance(CONTEXT_USER, $user->id);       // User context
@@ -3225,12 +3197,12 @@ class settings_navigation extends navigation_node {
             // Check that the user can view the profile
             $usercontext = get_context_instance(CONTEXT_USER, $user->id);       // User context
             if ($course->id==SITEID) {
-                if ($CFG->forceloginforprofiles && !isteacherinanycourse() && !isteacherinanycourse($user->id) && !has_capability('moodle/user:viewdetails', $usercontext)) {  // Reduce possibility of "browsing" userbase at site level
+                if ($CFG->forceloginforprofiles && !!has_coursemanager_role($user->id) && !has_capability('moodle/user:viewdetails', $usercontext)) {  // Reduce possibility of "browsing" userbase at site level
                     // Teachers can browse and be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
                     return false;
                 }
             } else {
-                if ((!has_capability('moodle/user:viewdetails', $coursecontext) && !has_capability('moodle/user:viewdetails', $usercontext)) || !has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
+                if ((!has_capability('moodle/user:viewdetails', $coursecontext) && !has_capability('moodle/user:viewdetails', $usercontext)) || !has_capability('moodle/course:participate', $coursecontext, $user->id, false)) {
                     return false;
                 }
                 if (groups_get_course_groupmode($course) == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $coursecontext)) {
@@ -3357,7 +3329,7 @@ class settings_navigation extends navigation_node {
 
     /**
      * Loads block specific settings in the navigation
-     * 
+     *
      * @return string The key that can be used to retrieve the navigation node
      */
     protected function load_block_settings() {
@@ -3453,16 +3425,14 @@ class settings_navigation extends navigation_node {
         global $SITE, $CFG;
 
         $course = clone($SITE);
-        if (empty($course->context)) {
-            $course->context = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
-        }
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
 
         $frontpagekey = $this->add(get_string('frontpagesettings'), null, self::TYPE_SETTING, null, 'frontpage');
         $frontpage = $this->get($frontpagekey);
         $frontpage->forceopen = $forceopen;
         $frontpage->id = 'frontpagesettings';
 
-        if (has_capability('moodle/course:update', $course->context)) {
+        if (has_capability('moodle/course:update', $coursecontext)) {
 
             // Add the turn on/off settings
             $url = new moodle_url('/course/view.php', array('id'=>$course->id, 'sesskey'=>sesskey()));
@@ -3481,41 +3451,41 @@ class settings_navigation extends navigation_node {
         }
 
         //Participants
-        if (has_capability('moodle/site:viewparticipants', $course->context)) {
-            $url = new moodle_url('/user/index.php', array('contextid'=>$course->context->id));
+        if (has_capability('moodle/site:viewparticipants', $coursecontext)) {
+            $url = new moodle_url('/user/index.php', array('contextid'=>$coursecontext->id));
             $frontpage->add(get_string('participants'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/users', ''));
         }
 
         // Roles
-        if (has_capability('moodle/role:assign', $course->context)) {
+        if (has_capability('moodle/role:assign', $coursecontext)) {
             // Add assign or override roles if allowed
-            $url = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid'=>$course->context->id));
+            $url = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid'=>$coursecontext->id));
             $frontpage->add(get_string('assignroles', 'role'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/roles', ''));
             // Override roles
-            if (has_capability('moodle/role:review', $course->context) or count(get_overridable_roles($course->context))>0) {
-                $url = new moodle_url('/'.$CFG->admin.'/roles/permissions.php', array('contextid'=>$course->context->id));
+            if (has_capability('moodle/role:review', $coursecontext) or count(get_overridable_roles($coursecontext))>0) {
+                $url = new moodle_url('/'.$CFG->admin.'/roles/permissions.php', array('contextid'=>$coursecontext->id));
                 $frontpage->add(get_string('permissions', 'role'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/roles', ''));
             }
             // Check role permissions
-            if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride','moodle/role:override', 'moodle/role:assign'), $course->context)) {
-                $url = new moodle_url('/'.$CFG->admin.'/roles/check.php', array('contextid'=>$course->context->id));
+            if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride','moodle/role:override', 'moodle/role:assign'), $coursecontext)) {
+                $url = new moodle_url('/'.$CFG->admin.'/roles/check.php', array('contextid'=>$coursecontext->id));
                 $frontpage->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/roles', ''));
             }
             // Manage filters
-            if (has_capability('moodle/filter:manage', $course->context) && count(filter_get_available_in_context($course->context))>0) {
-                $url = new moodle_url('/filter/manage.php', array('contextid'=>$course->context->id));
+            if (has_capability('moodle/filter:manage', $coursecontext) && count(filter_get_available_in_context($coursecontext))>0) {
+                $url = new moodle_url('/filter/manage.php', array('contextid'=>$coursecontext->id));
                 $frontpage->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/filter', ''));
             }
         }
 
         // Backup this course
-        if (has_capability('moodle/backup:backupcourse', $course->context)) {
+        if (has_capability('moodle/backup:backupcourse', $coursecontext)) {
             $url = new moodle_url('/backup/backup.php', array('id'=>$course->id));
             $frontpage->add(get_string('backup'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/backup', ''));
         }
 
         // Restore to this course
-        if (has_capability('moodle/restore:restorecourse', $course->context)) {
+        if (has_capability('moodle/restore:restorecourse', $coursecontext)) {
             $url = new moodle_url('/files/index.php', array('id'=>$course->id, 'wdir'=>'/backupdata'));
             $frontpage->add(get_string('restore'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
         }

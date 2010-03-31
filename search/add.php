@@ -46,7 +46,7 @@
 
     /*
     Obsolete with the MOODLE INTERNAL check
-    if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
+    if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
         print_error('beadmin', 'search', get_login_url());
     }
     */

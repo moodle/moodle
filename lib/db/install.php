@@ -6,14 +6,14 @@
 function xmldb_main_install() {
     global $CFG, $DB, $SITE;
 
-/// make sure system context exists
+    /// make sure system context exists
     $syscontext = get_system_context(false);
     if ($syscontext->id != 1) {
         throw new moodle_exception('generalexceptionmessage', 'error', '', 'Unexpected system context id created!');
     }
 
 
-// create site course
+    /// create site course
     $newsite = new object();
     $newsite->fullname = "";
     $newsite->shortname = "";
@@ -35,10 +35,10 @@ function xmldb_main_install() {
     }
 
 
-/// make sure site course context exists
+    /// make sure site course context exists
     get_context_instance(CONTEXT_COURSE, $SITE->id);
 
-/// create default course category
+    /// create default course category
     $cat = get_course_category();
 
     $defaults = array(
@@ -66,7 +66,7 @@ function xmldb_main_install() {
     }
 
 
-/// bootstrap mnet
+    /// bootstrap mnet
     $mnethost = new object();
     $mnethost->wwwroot    = $CFG->wwwroot;
     $mnethost->name       = '';
@@ -108,7 +108,7 @@ function xmldb_main_install() {
     $DB->insert_record('mnet_application', $mnet_app);
 
 
-/// insert log entries - replaces statements section in install.xml
+    /// insert log entries - replaces statements section in install.xml
     update_log_display_entry('user', 'view', 'user', 'CONCAT(firstname,\' \',lastname)');
     update_log_display_entry('course', 'user report', 'user', 'CONCAT(firstname,\' \',lastname)');
     update_log_display_entry('course', 'view', 'course', 'fullname');
@@ -130,7 +130,7 @@ function xmldb_main_install() {
     update_log_display_entry('tag', 'update', 'tag', 'name');
 
 
-/// Create guest record
+    /// Create guest record - do not assign any role, guest user get's the default guest role automatically on the fly
     $guest = new object();
     $guest->auth        = 'manual';
     $guest->username    = 'guest';
@@ -146,7 +146,7 @@ function xmldb_main_install() {
     $guest->id = $DB->insert_record('user', $guest);
 
 
-/// Now create admin user
+    /// Now create admin user
     $admin = new object();
     $admin->auth         = 'manual';
     $admin->firstname    = get_string('admin');
@@ -161,54 +161,81 @@ function xmldb_main_install() {
     $admin->timemodified = time();
     $admin->lastip       = CLI_SCRIPT ? '0.0.0.0' : getremoteaddr(); // installation hijacking prevention
     $admin->id = $DB->insert_record('user', $admin);
+    /// Store list of admins
+    set_config('siteadmins', $admin->id);
 
 
-/// Install the roles system.
-    $adminrole          = create_role(get_string('administrator'), 'admin',
-                                      get_string('administratordescription'), 'moodle/legacy:admin');
-    $coursecreatorrole  = create_role(get_string('coursecreators'), 'coursecreator',
-                                      get_string('coursecreatorsdescription'), 'moodle/legacy:coursecreator');
-    $editteacherrole    = create_role(get_string('defaultcourseteacher'), 'editingteacher',
-                                      get_string('defaultcourseteacherdescription'), 'moodle/legacy:editingteacher');
-    $noneditteacherrole = create_role(get_string('noneditingteacher'), 'teacher',
-                                      get_string('noneditingteacherdescription'), 'moodle/legacy:teacher');
-    $studentrole        = create_role(get_string('defaultcoursestudent'), 'student',
-                                      get_string('defaultcoursestudentdescription'), 'moodle/legacy:student');
-    $guestrole          = create_role(get_string('guest'), 'guest',
-                                      get_string('guestdescription'), 'moodle/legacy:guest');
-    $userrole           = create_role(get_string('authenticateduser'), 'user',
-                                      get_string('authenticateduserdescription'), 'moodle/legacy:user');
+    /// Install the roles system.
+    $managerrole        = create_role(get_string('manager', 'role'), 'manager', get_string('managerdescription', 'role'), 'manager');
+    $coursecreatorrole  = create_role(get_string('coursecreators'), 'coursecreator', get_string('coursecreatorsdescription'), 'coursecreator');
+    $editteacherrole    = create_role(get_string('defaultcourseteacher'), 'editingteacher', get_string('defaultcourseteacherdescription'), 'editingteacher');
+    $noneditteacherrole = create_role(get_string('noneditingteacher'), 'teacher', get_string('noneditingteacherdescription'), 'teacher');
+    $studentrole        = create_role(get_string('defaultcoursestudent'), 'student', get_string('defaultcoursestudentdescription'), 'student');
+    $guestrole          = create_role(get_string('guest'), 'guest', get_string('guestdescription'), 'guest');
+    $userrole           = create_role(get_string('authenticateduser'), 'user', get_string('authenticateduserdescription'), 'user');
+    $frontpagerole      = create_role(get_string('frontpageuser', 'role'), 'frontpage', get_string('frontpageuserdescription', 'role'), 'frontpage');
 
     /// Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
-    assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $syscontext->id);
     update_capabilities('moodle');
     external_update_descriptions('moodle');
 
-    /// assign default roles
-    role_assign($guestrole, $guest->id, 0, $syscontext->id);
-    role_assign($adminrole, $admin->id, 0, $syscontext->id);
+    /// Default allow assign
+    $defaultallowassigns = array(
+        array($managerrole, $managerrole),
+        array($managerrole, $coursecreatorrole),
+        array($managerrole, $editteacherrole),
+        array($managerrole, $noneditteacherrole),
+        array($managerrole, $studentrole),
 
-    /// Default allow assign/override/switch.
-    $defaultallows = array(
-        $coursecreatorrole => $noneditteacherrole,
-        $coursecreatorrole => $editteacherrole,
-        $coursecreatorrole => $studentrole,
-        $coursecreatorrole => $guestrole,
-
-        $editteacherrole => $noneditteacherrole,
-        $editteacherrole => $studentrole,
-        $editteacherrole => $guestrole,
+        array($editteacherrole, $noneditteacherrole),
+        array($editteacherrole, $studentrole),
     );
-
-    foreach ($defaultallows as $fromroleid => $toroleid) {
+    foreach ($defaultallowassigns as $allow) {
+        list($fromroleid, $toroleid) = $allow;
         allow_assign($fromroleid, $toroleid);
+    }
+
+    /// Default allow override
+    $defaultallowoverrides = array(
+        array($managerrole, $managerrole),
+        array($managerrole, $coursecreatorrole),
+        array($managerrole, $editteacherrole),
+        array($managerrole, $noneditteacherrole),
+        array($managerrole, $studentrole),
+        array($managerrole, $guestrole),
+        array($managerrole, $userrole),
+        array($managerrole, $frontpagerole),
+
+        array($editteacherrole, $noneditteacherrole),
+        array($editteacherrole, $studentrole),
+        array($editteacherrole, $guestrole),
+    );
+    foreach ($defaultallowoverrides as $allow) {
+        list($fromroleid, $toroleid) = $allow;
         allow_override($fromroleid, $toroleid); // There is a rant about this in MDL-15841.
+    }
+
+    /// Default allow switch.
+    $defaultallowswitch = array(
+        array($managerrole, $editteacherrole),
+        array($managerrole, $noneditteacherrole),
+        array($managerrole, $studentrole),
+        array($managerrole, $guestrole),
+
+        array($editteacherrole, $noneditteacherrole),
+        array($editteacherrole, $studentrole),
+        array($editteacherrole, $guestrole),
+
+        array($noneditteacherrole, $studentrole),
+        array($noneditteacherrole, $guestrole),
+    );
+    foreach ($defaultallowswitch as $allow) {
+        list($fromroleid, $toroleid) = $allow;
         allow_switch($fromroleid, $toroleid);
     }
-    allow_switch($noneditteacherrole, $studentrole);
 
     /// Set up the context levels where you can assign each role.
-    set_role_contextlevels($adminrole,          get_default_contextlevels('admin'));
+    set_role_contextlevels($managerrole,        get_default_contextlevels('manager'));
     set_role_contextlevels($coursecreatorrole,  get_default_contextlevels('coursecreator'));
     set_role_contextlevels($editteacherrole,    get_default_contextlevels('editingteacher'));
     set_role_contextlevels($noneditteacherrole, get_default_contextlevels('teacher'));
@@ -216,7 +243,7 @@ function xmldb_main_install() {
     set_role_contextlevels($guestrole,          get_default_contextlevels('guest'));
     set_role_contextlevels($userrole,           get_default_contextlevels('user'));
 
-    // init themes
+    // Init themes
     set_config('themerev', 1);
 
     // Install licenses

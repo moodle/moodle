@@ -542,7 +542,7 @@ abstract class repository {
         $level = $context->contextlevel;
 
         if ($level == CONTEXT_COURSE) {
-            if (!has_capability('moodle/course:view', $context)) {
+            if (!has_capability('moodle/course:participate', $context)) {
                 return false;
             } else {
                 return true;
@@ -1764,15 +1764,18 @@ final class repository_type_form extends moodleform {
  */
 function initialise_filepicker($args) {
     global $CFG, $USER, $PAGE, $OUTPUT;
-    $return = new stdclass;
     require_once($CFG->libdir . '/licenselib.php');
-    $array = explode(',', $CFG->licenses);
+
+    $return = new stdclass;
     $licenses = array();
-    foreach ($array as $license) {
-        $l = new stdclass;
-        $l->shortname = $license;
-        $l->fullname = get_string($license, 'license');
-        $licenses[] = $l;
+    if (!empty($CFG->licenses)) {
+        $array = explode(',', $CFG->licenses);
+        foreach ($array as $license) {
+            $l = new stdclass;
+            $l->shortname = $license;
+            $l->fullname = get_string($license, 'license');
+            $licenses[] = $l;
+        }
     }
 
     $return->licenses = $licenses;

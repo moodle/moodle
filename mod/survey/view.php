@@ -81,7 +81,7 @@
         notice(get_string("activityiscurrentlyhidden"));
     }
 
-    if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
+    if (!is_enrolled($context)) {
         echo $OUTPUT->notification(get_string("guestsnotallowed", "survey"));
     }
 
@@ -175,7 +175,7 @@
         }
     }
 
-    if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
+    if (!is_enrolled($context)) {
         echo '</div>';
         echo "</form>";
         echo $OUTPUT->footer();

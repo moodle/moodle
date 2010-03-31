@@ -103,7 +103,7 @@
     admin_externalpage_print_header();
 
     $currenttab = 'manage';
-    include_once('managetabs.php');
+    include('managetabs.php');
 
     if ($action == 'add') {
         $title = get_string('addinganewrole', 'role');
@@ -131,7 +131,7 @@
         $options['action'] = 'edit';
         echo $OUTPUT->single_button(new moodle_url($defineurl, $options), get_string('edit'));
         $options['action'] = 'reset';
-        if ($definitiontable->get_legacy_type()) {
+        if ($definitiontable->get_archetype()) {
             echo $OUTPUT->single_button(new moodle_url($manageurl, $options), get_string('resetrole', 'role'));
         } else {
             echo $OUTPUT->single_button(new moodle_url($manageurl, $options), get_string('resetrolenolegacy', 'role'));

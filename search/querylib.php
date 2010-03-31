@@ -393,7 +393,7 @@ class SearchQuery {
       * course related checks
       */
       // admins can see everything, anyway.
-      if (has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))){
+      if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))){
         return true;
       }
             

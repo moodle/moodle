@@ -61,13 +61,12 @@
     $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course_summary', $course->id);
     echo format_text($course->summary, $course->summaryformat, NULL, $course->id);
 
-    if ($managerroles = get_config('', 'coursemanager')) {
-        $coursemanagerroles = split(',', $managerroles);
+    if (!empty($CFG->coursemanager)) {
+        $coursemanagerroles = explode(',', $CFG->coursemanager);
         foreach ($coursemanagerroles as $roleid) {
             $role = $DB->get_record('role', array('id'=>$roleid));
-            $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
             $roleid = (int) $roleid;
-            if ($users = get_role_users($roleid, $context, true, '', 'u.lastname ASC', $canseehidden)) {
+            if ($users = get_role_users($roleid, $context, true)) {
                 foreach ($users as $teacher) {
                     $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context));
                     $namesarray[] = format_string(role_get_name($role, $context)).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.

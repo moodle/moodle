@@ -132,7 +132,7 @@ class blog_edit_form extends moodleform {
             $coursecontext = $DB->get_record('context', array('id' => $data['courseassoc'], 'contextlevel' => CONTEXT_COURSE));
 
             if ($coursecontext)  {
-                if (!has_capability('moodle/course:view', $coursecontext, $USER->id)) {
+                if (!is_enrolled($coursecontext) and !is_viewing($coursecontext)) {
                     $errors['courseassoc'] = get_string('studentnotallowed', '', fullname($USER, true));
                 }
             } else {
@@ -161,7 +161,7 @@ class blog_edit_form extends moodleform {
                 }
 
                 // ensure the user has access to each mod's course
-                if (!has_capability('moodle/course:view', $coursecontext)) {
+                if (!is_enrolled($modcontext) and !is_viewing($modcontext)) {
                     $errors['modassoc'] = get_string('studentnotallowed', '', fullname($USER, true));
                 }
             } else {

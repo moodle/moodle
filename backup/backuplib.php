@@ -162,10 +162,10 @@
     function backup_get_enrolled_users ($courseid) {
         global $CFG;
 
-        // get all users with moodle/course:view capability, this will include people
+        // get all users with moodle/course:participate capability, this will include people
         // assigned at cat level, or site level
         // but it should be ok if they have no direct assignment at course, mod, block level
-        return get_users_by_capability(get_context_instance(CONTEXT_COURSE, $courseid), 'moodle/course:view', '', '', '', '', '', '', false);
+        return get_users_by_capability(get_context_instance(CONTEXT_COURSE, $courseid), 'moodle/course:participate', '', '', '', '', '', '', false);
     }
 
     //Returns all users ids (every record in users table)
@@ -2911,7 +2911,6 @@
                         if (backup_getid($preferences->backup_unique_code, 'user', $assignment->userid)) {
                             fwrite ($bf, start_tag("ASSIGNMENT", $startlevel+3, true));
                             fwrite ($bf, full_tag("USERID", $startlevel+4, false, $assignment->userid));
-                            fwrite ($bf, full_tag("HIDDEN", $startlevel+4, false, $assignment->hidden));
                             fwrite ($bf, full_tag("TIMESTART", $startlevel+4, false, $assignment->timestart));
                             fwrite ($bf, full_tag("TIMEEND", $startlevel+4, false, $assignment->timeend));
                             fwrite ($bf, full_tag("TIMEMODIFIED", $startlevel+4, false, $assignment->timemodified));

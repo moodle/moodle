@@ -429,15 +429,17 @@ abstract class user_selector_base {
             foreach ($this->extrafields as $field) {
                 $conditions[] = $u . $field;
             }
-            $ilike = ' ' . $DB->sql_ilike() . ' ?';
+            $ilike = ' ' . $DB->sql_ilike();
             if ($this->searchanywhere) {
                 $searchparam = '%' . $search . '%';
             } else {
                 $searchparam = $search . '%';
             }
+            $i = 0;
             foreach ($conditions as &$condition) {
-                $condition .= $ilike;
-                $params[] = $searchparam;
+                $condition .= "$ilike :con{$i}00";
+                $params["con{$i}00"] = $searchparam;
+                $i++;
             }
             $tests[] = '(' . implode(' OR ', $conditions) . ')';
         }
@@ -449,14 +451,14 @@ abstract class user_selector_base {
 
         // If we are being asked to exclude any users, do that.
         if (!empty($this->exclude)) {
-            list($usertest, $userparams) = $DB->get_in_or_equal($this->exclude, SQL_PARAMS_QM, '', false);
+            list($usertest, $userparams) = $DB->get_in_or_equal($this->exclude, SQL_PARAMS_NAMED, 'ex000', false);
             $tests[] = $u . 'id ' . $usertest;
             $params = array_merge($params, $userparams);
         }
 
         // If we are validating a set list of userids, add an id IN (...) test.
         if (!empty($this->validatinguserids)) {
-            list($usertest, $userparams) = $DB->get_in_or_equal($this->validatinguserids);
+            list($usertest, $userparams) = $DB->get_in_or_equal($this->validatinguserids, SQL_PARAMS_NAMED, 'val000');
             $tests[] = $u . 'id ' . $usertest;
             $params = array_merge($params, $userparams);
         }
@@ -793,17 +795,21 @@ END;
         if (!$validroleids = groups_get_possible_roles($context)) {
             return array();
         }
-        list($roleids, $roleparams) = $DB->get_in_or_equal($validroleids);
+        list($roleids, $roleparams) = $DB->get_in_or_equal($validroleids, SQL_PARAMS_NAMED, 'r00');
 
         // Get the search condition.
         list($searchcondition, $searchparams) = $this->search_sql($search, 'u');
 
         // Build the SQL
-        $fields = "SELECT r.id AS roleid, r.shortname AS roleshortname, r.name AS rolename, u.id AS userid, " .
-                $this->required_fields_sql('u') .
-                ', (SELECT count(igm.groupid) FROM {groups_members} igm JOIN {groups} ig ON
-                    igm.groupid = ig.id WHERE igm.userid = u.id AND ig.courseid = ?) AS numgroups ';
+        list($enrolsql, $enrolparams) = get_enrolled_sql($context);
+        $fields = "SELECT r.id AS roleid, r.shortname AS roleshortname, r.name AS rolename, u.id AS userid,
+                          " . $this->required_fields_sql('u') . ",
+                          (SELECT count(igm.groupid)
+                             FROM {groups_members} igm
+                             JOIN {groups} ig ON igm.groupid = ig.id
+                            WHERE igm.userid = u.id AND ig.courseid = :courseid) AS numgroups";
         $sql = "   FROM {user} u
+                   JOIN ($enrolsql) e ON e.id = u.id
                    JOIN {role_assignments} ra ON ra.userid = u.id
                    JOIN {role} r ON r.id = ra.roleid
                   WHERE ra.contextid " . get_related_contexts_string($context) . "
@@ -811,21 +817,21 @@ END;
                         AND ra.roleid $roleids
                         AND u.id NOT IN (SELECT userid
                                           FROM {groups_members}
-                                         WHERE groupid = ?)
+                                         WHERE groupid = :groupid)
                         AND $searchcondition";
-        $orderby = " ORDER BY u.lastname, u.firstname";
+        $orderby = "ORDER BY u.lastname, u.firstname";
 
-        $params = array_merge($roleparams, array($this->groupid), $searchparams);
+        $params = array_merge($searchparams, $roleparams, array('groupid'=>$this->groupid), $searchparams);
+        $params['courseid'] = $this->courseid;
 
         if (!$this->is_validating()) {
-            $potentialmemberscount = $DB->count_records_sql('SELECT count(DISTINCT u.id) ' . $sql, $params);
+            $potentialmemberscount = $DB->count_records_sql("SELECT COUNT(DISTINCT u.id) $sql", $params);
             if ($potentialmemberscount > group_non_members_selector::MAX_USERS_PER_PAGE) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
 
-        array_unshift($params, $this->courseid);
-        $rs = $DB->get_recordset_sql($fields . $sql . $orderby, $params);
+        $rs = $DB->get_recordset_sql("$fields $sql $orderby", $params);
         $roles =  groups_calculate_role_people($rs, $context);
 
         //don't hold onto user IDs if we're doing validation

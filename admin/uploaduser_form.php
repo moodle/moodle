@@ -121,7 +121,7 @@ class admin_uploaduser_form2 extends moodleform {
             unset($choices[0]);
 
             $mform->addElement('select', 'uulegacy2', get_string('uulegacy2role', 'admin'), $choices);
-            if ($editteacherroles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW)) {
+            if ($editteacherroles = get_archetype_roles('editingteacher')) {
                 $editteacherrole = array_shift($editteacherroles);   /// Take the first one
                 $mform->setDefault('uulegacy2', $editteacherrole->id);
                 unset($editteacherroles);
@@ -130,7 +130,7 @@ class admin_uploaduser_form2 extends moodleform {
             }
 
             $mform->addElement('select', 'uulegacy3', get_string('uulegacy3role', 'admin'), $choices);
-            if ($teacherroles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW)) {
+            if ($teacherroles = get_archetype_roles('teacher')) {
                 $teacherrole = array_shift($teacherroles);   /// Take the first one
                 $mform->setDefault('uulegacy3', $teacherrole->id);
                 unset($teacherroles);

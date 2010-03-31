@@ -417,7 +417,7 @@ function url_get_variable_values($url, $cm, $course, $config) {
         'urlidnumber'     => $cm->idnumber,
     );
 
-    if (!empty($USER->id)) {
+    if (isloggedin()) {
         $values['userid']          = $USER->id;
         $values['userusername']    = $USER->username;
         $values['useridnumber']    = $USER->idnumber;

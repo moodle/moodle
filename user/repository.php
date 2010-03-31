@@ -35,9 +35,7 @@ if ($config !== 0) {
 }
 $PAGE->set_url($url);
 
-if (! $course = $DB->get_record("course", array("id"=>$course))) {
-    print_error('invalidcourseid');
-}
+$course = $DB->get_record("course", array("id"=>$course), '*', MUST_EXIST);
 
 $user = $USER;
 $baseurl = $CFG->wwwroot . '/user/repository.php';
@@ -48,6 +46,7 @@ $configstr = get_string('manageuserrepository', 'repository');
 $pluginstr = get_string('plugin', 'repository');
 
 require_login($course, false);
+$coursecontext = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
 
 $link = new moodle_url('/user/view.php', array('id'=>$user->id));
 $PAGE->navbar->add($fullname, $link);
@@ -64,7 +63,7 @@ echo $OUTPUT->heading($configstr);
 echo $OUTPUT->box_start();
 
 $params = array();
-$params['context'] = array($COURSE->context);
+$params['context'] = $coursecontext;
 $params['currentcontext'] = $PAGE->context;
 $params['userid']   = $USER->id;
 if (!$instances = repository::get_instances($params)) {

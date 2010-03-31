@@ -14,33 +14,26 @@ require_once($CFG->dirroot . '/user/selector/lib.php');
 require_once($CFG->dirroot . '/course/lib.php');
 
 $groupid = required_param('group', PARAM_INT);
+$cancel  = optional_param('cancel', false, PARAM_BOOL);
 
-if (!$group = $DB->get_record('groups', array('id'=>$groupid))) {
-    print_error('invalidgroupid');
-}
-
-if (!$course = $DB->get_record('course', array('id'=>$group->courseid))) {
-    print_error('invalidcourse');
-}
-$courseid = $course->id;
+$group = $DB->get_record('groups', array('id'=>$groupid), '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id'=>$group->courseid), '*', MUST_EXIST);
 
 $PAGE->set_url('/groups/members.php', array('id'=>$groupid));
 
 require_login($course);
-$context = get_context_instance(CONTEXT_COURSE, $courseid);
+$context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('moodle/course:managegroups', $context);
 
-$returnurl = $CFG->wwwroot.'/group/index.php?id='.$courseid.'&group='.$group->id;
+$returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id.'&group='.$group->id;
 
-if (optional_param('cancel', false, PARAM_BOOL)) {
+if ($cancel) {
     redirect($returnurl);
 }
 
-$groupmembersselector = new group_members_selector('removeselect',
-        array('groupid' => $groupid, 'courseid' => $course->id));
+$groupmembersselector = new group_members_selector('removeselect', array('groupid' => $groupid, 'courseid' => $course->id));
 $groupmembersselector->set_extra_fields(array());
-$potentialmembersselector = new group_non_members_selector('addselect',
-        array('groupid' => $groupid, 'courseid' => $course->id));
+$potentialmembersselector = new group_non_members_selector('addselect', array('groupid' => $groupid, 'courseid' => $course->id));
 $potentialmembersselector->set_extra_fields(array());
 
 if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
@@ -79,8 +72,8 @@ $groupname = format_string($group->name);
 
 $PAGE->requires->yui2_lib('connection');
 $PAGE->requires->js('/group/clientlib.js');
-$PAGE->navbar->add($strparticipants, new moodle_url('/user/index.php', array('id'=>$courseid)));
-$PAGE->navbar->add($strgroups, new moodle_url('/group/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strparticipants, new moodle_url('/user/index.php', array('id'=>$course->id)));
+$PAGE->navbar->add($strgroups, new moodle_url('/group/index.php', array('id'=>$course->id)));
 $PAGE->navbar->add($stradduserstogroup);
 
 /// Print header

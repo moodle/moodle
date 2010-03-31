@@ -105,19 +105,9 @@ if(!checkdate($mon, $day, $yr)) {
 }
 $time = make_timestamp($yr, $mon, $day);
 
-$isguest = has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false);
-
-if (empty($USER->id) or $isguest) {
+if (!isloggedin() or isguestuser()) {
     $defaultcourses = calendar_get_default_courses();
     calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
-} else {
-    calendar_set_filters($courses, $groups, $users);
-}
-
-if (empty($USER->id) or $isguest) {
-    $defaultcourses = calendar_get_default_courses();
-    calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
-
 } else {
     calendar_set_filters($courses, $groups, $users);
 }

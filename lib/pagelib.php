@@ -703,12 +703,13 @@ class moodle_page {
      * @param objcet $cm a full cm objcet obtained from get_coursemodule_from_id or get_coursemodule_from_instance.
      */
     public function set_cm($cm, $course = null, $module = null) {
-        if (!isset($cm->name) || !isset($cm->modname)) {
+        if (!isset($cm->name) || !isset($cm->modname) || !isset($cm->id)) {
             throw new coding_exception('The $cm you set on $PAGE must have been obtained with get_coursemodule_from_id or get_coursemodule_from_instance. That is, the ->name and -> modname fields must be present and correct.');
         }
         $this->_cm = $cm;
+        $this->_cm->context = get_context_instance(CONTEXT_MODULE, $cm->id); // hacky shortcut
         if (!$this->_context) {
-            $this->set_context(get_context_instance(CONTEXT_MODULE, $cm->id));
+            $this->set_context($this->_cm->context);
         }
         if (!$this->_course || $this->_course->id != $cm->course) {
             if (!$course) {

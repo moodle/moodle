@@ -27,10 +27,6 @@ list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, true, $cm);
 require_sesskey();
 
-if (isguestuser()) {
-    print_error('loggedinnot');
-}
-
 $action    = optional_param('action',    '',     PARAM_ALPHA);
 $area      = optional_param('area',      '',     PARAM_ALPHAEXT);
 $commentid = optional_param('commentid', -1,     PARAM_INT);

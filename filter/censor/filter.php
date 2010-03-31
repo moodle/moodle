@@ -13,17 +13,11 @@
 /// options to be filtered (In HTML form).
 class censor_filter extends moodle_text_filter {
     private function _canseecensor() {
-        $cansee = false;
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        if (has_capability('moodle/site:doanything', $context)) {
-            $cansee = true;
-        }
-        return $cansee;
+        return is_siteadmin(); //TODO: add proper access control
     }
     function hash(){
         $cap = "mod/filter:censor";
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        if (has_capability('moodle/site:doanything', $context)) {
+        if (is_siteadmin()) {  //TODO: add proper access control
             $cap = "mod/filter:seecensor";
         }
         return $cap;

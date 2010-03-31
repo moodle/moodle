@@ -23,7 +23,7 @@ function get_text_for_indexing_xml(&$resource, $directfile = ''){
     global $CFG;
     
     // SECURITY : do not allow non admin execute anything on system !!
-    if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) return;
+    if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) return;
 
     // just get text
     if ($directfile == ''){

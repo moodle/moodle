@@ -54,7 +54,7 @@ $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
 $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
 
 require_login();
-if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext) and !has_capability('moodle/course:view', $coursecontext)) {
+if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext) and !has_capability('moodle/course:participate', $coursecontext)) {
     // do not require parents to be enrolled in courses ;-)
     $PAGE->set_course($course);
 } else {

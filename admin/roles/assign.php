@@ -33,7 +33,6 @@
     $roleid         = optional_param('roleid', 0, PARAM_INT);
     $userid         = optional_param('userid', 0, PARAM_INT); // needed for user tabs
     $courseid       = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
-    $hidden         = optional_param('hidden', 0, PARAM_BOOL); // whether this assignment is hidden
     $extendperiod   = optional_param('extendperiod', 0, PARAM_INT);
     $extendbase     = optional_param('extendbase', 3, PARAM_INT);
 
@@ -148,11 +147,7 @@
         $options = array('context' => $context, 'roleid' => $roleid);
 
         $potentialuserselector = roles_get_potential_user_selector($context, 'addselect', $options);
-        if ($context->contextlevel == CONTEXT_SYSTEM && is_admin_role($roleid)) {
-            $currentuserselector = new existing_role_holders_site_admin('removeselect', $options);
-        } else {
-            $currentuserselector = new existing_role_holders('removeselect', $options);
-        }
+        $currentuserselector = new existing_role_holders('removeselect', $options);
 
     /// Process incoming role assignments
         $errors = array();
@@ -196,7 +191,7 @@
                         } else {
                             $timeend = 0;
                         }
-                        if (! role_assign($roleid, $adduser->id, 0, $context->id, $timestart, $timeend, $hidden)) {
+                        if (! role_assign($roleid, $adduser->id, 0, $context->id, $timestart, $timeend)) {
                             $a = new stdClass;
                             $a->role = $assignableroles[$roleid];
                             $a->user = fullname($adduser);
@@ -314,12 +309,6 @@
 
               <?php print_collapsible_region_start('', 'assignoptions', get_string('enrolmentoptions', 'role'),
                     'assignoptionscollapse', true); ?>
-              <p><input type="checkbox" name="hidden" id="hidden" value="1" <?php
-              if ($hidden) { echo 'checked="checked" '; } ?>/>
-              <label for="hidden" title="<?php print_string('createhiddenassign', 'role'); ?>">
-                  <?php print_string('hidden', 'role'); ?>
-                  <?php echo $OUTPUT->help_icon('hiddenassign', get_string('createhiddenassign', 'role')); ?>
-              </label></p>
 
               <p><label for="extendperiod"><?php print_string('enrolperiod') ?></label><br />
               <?php echo html_writer::select($periodmenu, 'extendperiod', $defaultperiod, $unlimitedperiod); ?></p>

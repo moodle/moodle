@@ -52,14 +52,14 @@ class recent_form extends moodleform {
 
             if (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS) {
                 $groups = groups_get_user_groups($COURSE->id);
-                $groups = $groups[0];
+                $group = $groups[0];
             } else {
-                $groups = '';
+                $group = '';
             }
 
-            if ($courseusers = get_users_by_capability($context, 'moodle/course:view', 'u.id, u.firstname, u.lastname', 'lastname ASC, firstname DESC', '', '', $groups)) {
-                foreach ($courseusers as $courseuser) {
-                    $options[$courseuser->id] = fullname($courseuser, $viewfullnames);
+            if ($enrolled = get_enrolled_users($context, null, $group, user_picture::fields('u'))) {
+                foreach ($enrolled as $euser) {
+                    $options[$euser->id] = fullname($euser, $viewfullnames);
                 }
             }
             $mform->addElement('select', 'user', get_string('participants'), $options);

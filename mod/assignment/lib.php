@@ -363,7 +363,7 @@ class assignment_base {
                              get_string('noattempts', 'assignment').'</a>';
             }
         } else {
-            if (!empty($USER->id)) {
+            if (isloggedin()) {
                 if ($submission = $this->get_submission($USER->id)) {
                     if ($submission->timemodified) {
                         if ($submission->timemodified <= $this->assignment->timedue || empty($this->assignment->timedue)) {
@@ -2283,7 +2283,7 @@ function assignment_cron () {
             /// mail is customised for the receiver.
             cron_setup_user($user, $course);
 
-            if (!has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $submission->course), $user->id)) {
+            if (!is_enrolled(get_context_instance(CONTEXT_COURSE, $submission->course), $user->id)) {
                 echo fullname($user)." not an active participant in " . format_string($course->shortname) . "\n";
                 continue;
             }
@@ -3361,28 +3361,25 @@ function assignment_extend_settings_navigation(settings_navigation $settings, na
     $assignmentclass = 'assignment_'.$assignmentrow->assignmenttype;
     $assignmentinstance = new $assignmentclass($PAGE->cm->id, $assignmentrow, $PAGE->cm, $PAGE->course);
 
-    if (!empty($USER->id) && !has_capability('moodle/legacy:guest', $PAGE->cm->context, NULL, false)) {
+    $allgroups = false;
 
-        $allgroups = false;
+    // Add assignment submission information
+    if (has_capability('mod/assignment:grade', $PAGE->cm->context)) {
+        if ($allgroups && has_capability('moodle/site:accessallgroups', $PAGE->cm->context)) {
+            $group = 0;
+        } else {
+            $group = groups_get_activity_group($PAGE->cm);
+        }
+        $link = new moodle_url('/mod/assignment/submissions.php', array('id'=>$PAGE->cm->id));
+        if ($count = $assignmentinstance->count_real_submissions($group)) {
+            $string = get_string('viewsubmissions', 'assignment', $count);
+        } else {
+            $string = get_string('noattempts', 'assignment');
+        }
+        $assignmentnode->add($string, $link, navigation_node::TYPE_SETTING);
+    }
 
-        // Add assignment submission information
-        if (has_capability('mod/assignment:grade', $PAGE->cm->context)) {
-            if ($allgroups && has_capability('moodle/site:accessallgroups', $PAGE->cm->context)) {
-                $group = 0;
-            } else {
-                $group = groups_get_activity_group($PAGE->cm);
-            }
-            $link = new moodle_url('/mod/assignment/submissions.php', array('id'=>$PAGE->cm->id));
-            if ($count = $assignmentinstance->count_real_submissions($group)) {
-                $string = get_string('viewsubmissions', 'assignment', $count);
-            } else {
-                $string = get_string('noattempts', 'assignment');
-            }
-            $assignmentnode->add($string, $link, navigation_node::TYPE_SETTING);
-        }
-
-        if (is_object($assignmentinstance) && method_exists($assignmentinstance, 'extend_settings_navigation')) {
-            $assignmentinstance->extend_settings_navigation($assignmentnode);
-        }
-        }
-        }
+    if (is_object($assignmentinstance) && method_exists($assignmentinstance, 'extend_settings_navigation')) {
+        $assignmentinstance->extend_settings_navigation($assignmentnode);
+    }
+}

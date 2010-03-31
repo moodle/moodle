@@ -38,7 +38,7 @@ if ($loginasguest !== 0) {
 }
 $PAGE->set_url($url);
 
-if (!isloggedin()) {
+if (!isloggedin() or isguestuser()) {
     // do not use require_login here because we are usually comming from it
     redirect(get_login_url());
 }
@@ -66,7 +66,7 @@ load_all_capabilities();
 /// thus got to this script by mistake.  This might occur if enrolments
 /// changed during this session or something
 
-if (has_capability('moodle/course:view', $context) and !has_capability('moodle/legacy:guest', $context, NULL, false)) {
+if (has_capability('moodle/course:participate', $context)) {
     if (!empty($SESSION->wantsurl)) {
         $destination = $SESSION->wantsurl;
         unset($SESSION->wantsurl);

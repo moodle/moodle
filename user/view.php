@@ -27,10 +27,10 @@ require_once("../config.php");
 require_once($CFG->dirroot.'/user/profile/lib.php');
 require_once($CFG->dirroot.'/tag/lib.php');
 
-$id      = optional_param('id',     0,      PARAM_INT);   // user id
-$course  = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
-$enable  = optional_param('enable', 0, PARAM_BOOL);       // enable email
-$disable = optional_param('disable', 0, PARAM_BOOL);      // disable email
+$id        = optional_param('id', 0, PARAM_INT);   // user id
+$courseid  = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
+$enable    = optional_param('enable', 0, PARAM_BOOL);       // enable email
+$disable   = optional_param('disable', 0, PARAM_BOOL);      // disable email
 
 if (empty($id)) {         // See your own profile by default
     require_login();
@@ -38,61 +38,62 @@ if (empty($id)) {         // See your own profile by default
 }
 
 $url = new moodle_url('/user/view.php', array('id'=>$id));
-if ($course != SITEID) {
-    $url->param('course', $course);
-}
-if ($enable !== 0) {
-    $url->param('enable', $enable);
-}
-if ($disable !== 0) {
-    $url->param('disable', $disable);
+if ($courseid != SITEID) {
+    $url->param('course', $courseid);
 }
 $PAGE->set_url($url);
 
-if (! $user = $DB->get_record("user", array("id"=>$id))) {
+$user = $DB->get_record('user', array('id'=>$id), '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+
+$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$usercontext = get_context_instance(CONTEXT_USER, $user->id, MUST_EXIST);
+
+// Require login first
+if (isguestuser($user)) {
+    // can not view profile of guest - thre is nothing to see there
     print_error('invaliduserid');
 }
 
-if (! $course = $DB->get_record("course", array("id"=>$course))) {
-    print_error('invalidcourseid');
-}
-
-// special hack for cli installer - continue to site settings
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
-if ($SITE->shortname === '' and has_capability('moodle/site:config', $systemcontext)) {
-    redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
-}
-
-/// Make sure the current user is allowed to see this user
-
-if (empty($USER->id)) {
-   $currentuser = false;
-} else {
-   $currentuser = ($user->id == $USER->id);
-}
+$currentuser = ($user->id == $USER->id);
 
 if ($course->id == SITEID) {
-    $coursecontext = $systemcontext;   // SYSTEM context
+    $isfrontpage = true;
+    // do not use frontpage course context because there is no frontpage profile, instead it is the site profile
+    $coursecontext = $systemcontext;
 } else {
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
+    $isfrontpage = false;
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 }
-$usercontext   = get_context_instance(CONTEXT_USER, $user->id);       // User context
 
 $PAGE->set_context($usercontext);
 
-if (!empty($CFG->forcelogin) || $course->id != SITEID) {
-    // do not force parents to enrol
-    if (!$DB->get_record('role_assignments', array('userid'=>$USER->id, 'contextid'=>$usercontext->id))) {
-        require_login($course->id);
+$isparent = false;
+if ($isfrontpage) {
+    if (!empty($CFG->forceloginforprofiles)) {
+        require_login();
+        if (isguestuser()) {
+            redirect(get_login_url());
+        }
+    } else if (!empty($CFG->forcelogin)) {
+        require_login();
     }
+
+} else if (!$currentuser
+  and $DB->record_exists('role_assignments', array('userid'=>$USER->id, 'contextid'=>$usercontext->id))
+  and has_capability('moodle/user:viewdetails', $usercontext)) {
+    // TODO: very ugly hack - do not force "parents" to enrol into course their child is enrolled in,
+    //       this way they may access the profile where they get overview of grades and child activity in course,
+    //       please note this is just a guess!
+    require_login();
+    $isparent = true;
+
+} else {
+    // normal course
+    require_login($course);
+    // what to do with users temporary accessing this course? shoudl they see the details?
 }
 
-if (!empty($CFG->forceloginforprofiles)) {
-    require_login();
-    if (has_capability('moodle/legacy:guest', $systemcontext, 0, false)) {
-        redirect(get_login_url());
-    }
-}
 
 $strpersonalprofile = get_string('personalprofile');
 $strparticipants = get_string("participants");
@@ -100,56 +101,73 @@ $struser = get_string("user");
 
 $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $coursecontext));
 
-$link = null;
-if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
-    $link = new moodle_url("/user/index.php", array('id'=>$course->id));
-}
+/// Now test the actual capabilities and enrolment in course
+if ($currentuser) {
+    // me
+    if (!$isfrontpage and !is_enrolled($coursecontext) and !is_viewing($coursecontext)) { // Need to have full access to a course to see the rest of own info
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('notenrolled', '', $fullname));
+        if (!empty($_SERVER['HTTP_REFERER'])) {
+            echo $OUTPUT->continue_button($_SERVER['HTTP_REFERER']);
+        }
+        echo $OUTPUT->footer();
+        die;
+    }
 
-/// If the user being shown is not ourselves, then make sure we are allowed to see them!
-if (!$currentuser) {
-
+} else {
+    // somebody else
     $PAGE->set_title("$strpersonalprofile: ");
     $PAGE->set_heading("$strpersonalprofile: ");
 
-    if ($course->id == SITEID) {  // Reduce possibility of "browsing" userbase at site level
-        if ($CFG->forceloginforprofiles and !isteacherinanycourse()
-                and !isteacherinanycourse($user->id)
-                and !has_capability('moodle/user:viewdetails', $usercontext)) {  // Teachers can browse and be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
-
+    if ($isfrontpage) {
+        // Reduce possibility of "browsing" userbase at site level
+        if (!empty($CFG->forceloginforprofiles) and !has_capability('moodle/user:viewdetails', $usercontext) and !has_coursemanager_role($user->id)) {
+            // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
             $PAGE->navbar->add($struser);
             echo $OUTPUT->header();
             echo $OUTPUT->heading(get_string('usernotavailable', 'error'));
             echo $OUTPUT->footer();
             exit;
         }
-    } else {   // Normal course
-        // check capabilities
-        if (!has_capability('moodle/user:viewdetails', $coursecontext) &&
-            !has_capability('moodle/user:viewdetails', $usercontext)) {
+
+    } else {
+        // check course level capabilities
+        if (!has_capability('moodle/user:viewdetails', $coursecontext) && // normal enrolled user or mnager
+            !has_capability('moodle/user:viewdetails', $usercontext)) {   // usually parent
             print_error('cannotviewprofile');
         }
 
-        if (!has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
+        if (!is_enrolled($coursecontext, $user->id)) {
+            // TODO: the only potential problem is that managers and inspectors might post in forum, but the link
+            //       to profile would not work - maybe a new capability - moodle/user:freely_acessile_profile_for_anybody
+            //       or test for course:inspect capability
             if (has_capability('moodle/role:assign', $coursecontext)) {
                 $PAGE->navbar->add($fullname);
-                echo $OUTPUT->heading(get_string('notenrolled', $fullname));
+                echo $OUTPUT->header();
+                echo $OUTPUT->heading(get_string('notenrolled', '', $fullname));
             } else {
+                echo $OUTPUT->header();
                 $PAGE->navbar->add($struser);
                 echo $OUTPUT->heading(get_string('notenrolledprofile'));
             }
-            echo $OUTPUT->continue_button($_SERVER['HTTP_REFERER']);
+            if (!empty($_SERVER['HTTP_REFERER'])) {
+                echo $OUTPUT->continue_button($_SERVER['HTTP_REFERER']);
+            }
             echo $OUTPUT->footer();
             exit;
         }
     }
 
-
-    // If groups are in use, make sure we can see that group
-    if (groups_get_course_groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $coursecontext)) {
-        require_login();
-        ///this is changed because of mygroupid
-        $gtrue = (bool)groups_get_all_groups($course->id, $user->id);
-        if (!$gtrue) {
+    // If groups are in use and enforced throughout the course, then make sure we can meet in at least one course level group
+    if (groups_get_course_groupmode($course) == SEPARATEGROUPS and $course->groupmodeforce
+      and !has_capability('moodle/site:accessallgroups', $coursecontext) and !has_capability('moodle/site:accessallgroups', $coursecontext, $user->id)) {
+        if (!isloggedin() or isguestuser()) {
+            // do not use require_login() here because we might have already used require_login($course)
+            redirect(get_login_url());
+        }
+        $mygroups = array_keys(groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid, 'g.id, g.name'));
+        $usergroups = array_keys(groups_get_all_groups($course->id, $user->id, $course->defaultgroupingid, 'g.id, g.name'));
+        if (!array_intersect($mygroups, $usergroups)) {
             print_error("groupnotamember", '', "../course/view.php?id=$course->id");
         }
     }
@@ -164,14 +182,6 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');
 echo $OUTPUT->header();
 
-if (($course->id != SITEID) and ! has_capability('moodle/legacy:guest', $systemcontext, 0, false) ) {   // Need to have access to a course to see that info
-    if (!has_capability('moodle/course:view', $coursecontext, $user->id)) {
-        echo $OUTPUT->heading(get_string('notenrolled', '', $fullname));
-        echo $OUTPUT->footer();
-        die;
-    }
-}
-
 if ($user->deleted) {
     echo $OUTPUT->heading(get_string('userdeleted'));
     if (!has_capability('moodle/user:update', $coursecontext)) {
@@ -184,7 +194,7 @@ if ($user->deleted) {
 
 add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
 
-if ($course->id != SITEID) {
+if (!$isfrontpage) {
     $user->lastaccess = false;
     if ($lastaccess = $DB->get_record('user_lastaccess', array('userid'=>$user->id, 'courseid'=>$course->id))) {
         $user->lastaccess = $lastaccess->timeaccess;
@@ -214,7 +224,7 @@ if (!$user->deleted) {
 if (is_mnet_remote_user($user)) {
     $sql = "
          SELECT DISTINCT h.id, h.name, h.wwwroot,
-                         a.name as application, a.display_name
+                a.name as application, a.display_name
            FROM {mnet_host} h, {mnet_application} a
           WHERE h.id = ? AND h.applicationid = a.id
        ORDER BY a.display_name, h.name";
@@ -222,7 +232,7 @@ if (is_mnet_remote_user($user)) {
     $remotehost = $DB->get_record_sql($sql, array($user->mnethostid));
 
     echo '<p class="errorboxcontent">'.get_string('remoteappuser', $remotehost->application)." <br />\n";
-    if ($USER->id == $user->id) {
+    if ($currentuser) {
         if ($remotehost->application =='moodle') {
             echo "Remote {$remotehost->display_name}: <a href=\"{$remotehost->wwwroot}/user/edit.php\">{$remotehost->name}</a> ".get_string('editremoteprofile')." </p>\n";
         } else {
@@ -242,11 +252,9 @@ echo '</td><td class="content">';
 // Print the description
 
 if ($user->description && !isset($hiddenfields['description'])) {
-    $has_courseid = ($course->id != SITEID);
-    if (!$has_courseid && !empty($CFG->profilesforenrolledusersonly) && !$DB->record_exists('role_assignments', array('userid'=>$id))) {
+    if (!$isfrontpage && !empty($CFG->profilesforenrolledusersonly) && !$DB->record_exists('role_assignments', array('userid'=>$id))) {
         echo get_string('profilenotshown', 'moodle').'<hr />';
     } else {
-
         $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $usercontext->id, 'user_profile', $id);
         echo format_text($user->description, $user->descriptionformat)."<hr />";
     }
@@ -277,13 +285,13 @@ if (has_capability('moodle/user:viewhiddendetails', $coursecontext)) {
     }
 }
 
-if ($user->maildisplay == 1 or
-   ($user->maildisplay == 2 and ($course->id != SITEID) and !isguestuser()) or
-   has_capability('moodle/course:useremail', $coursecontext)) {
+if ($user->maildisplay == 1
+   or ($user->maildisplay == 2 and !$isfrontpage and !isguestuser())
+   or has_capability('moodle/course:useremail', $coursecontext)) {
 
     $emailswitch = '';
 
-    if (has_capability('moodle/course:useremail', $coursecontext) or $currentuser) {   /// Can use the enable/disable email stuff
+    if ($currentuser or has_capability('moodle/course:useremail', $coursecontext)) {   /// Can use the enable/disable email stuff
         if (!empty($enable) and confirm_sesskey()) {     /// Recieved a parameter to enable the email address
             $DB->set_field('user', 'emailstop', 0, array('id'=>$user->id));
             $user->emailstop = 0;
@@ -329,11 +337,11 @@ if ($user->url && !isset($hiddenfields['webpage'])) {
     if (strpos($user->url, '://') === false) {
         $url = 'http://'. $url;
     }
-    print_row(get_string("webpage") .":", "<a href=\"$url\">$user->url</a>");
+    print_row(get_string("webpage") .":", '<a href="'.s($url).'">'.s($user->url).'</a>');
 }
 
 if ($user->icq && !isset($hiddenfields['icqnumber'])) {
-    print_row(get_string('icqnumber').':',"<a href=\"http://web.icq.com/wwp?uin=$user->icq\">$user->icq <img src=\"http://web.icq.com/whitepages/online?icq=$user->icq&amp;img=5\" alt=\"\" /></a>");
+    print_row(get_string('icqnumber').':',"<a href=\"http://web.icq.com/wwp?uin=".urlencode($user->icq)."\">".s($user->icq)." <img src=\"http://web.icq.com/whitepages/online?icq=".urlencode($user->icq)."&amp;img=5\" alt=\"\" /></a>");
 }
 
 if ($user->skype && !isset($hiddenfields['skypeid'])) {
@@ -345,7 +353,7 @@ if ($user->yahoo && !isset($hiddenfields['yahooid'])) {
     print_row(get_string('yahooid').':', '<a href="http://edit.yahoo.com/config/send_webmesg?.target='.urlencode($user->yahoo).'&amp;.src=pg">'.s($user->yahoo)." <img src=\"http://opi.yahoo.com/online?u=".urlencode($user->yahoo)."&m=g&t=0\" alt=\"\"></a>");
 }
 if ($user->aim && !isset($hiddenfields['aimid'])) {
-    print_row(get_string('aimid').':', '<a href="aim:goim?screenname='.s($user->aim).'">'.s($user->aim).'</a>');
+    print_row(get_string('aimid').':', '<a href="aim:goim?screenname='.urlencode($user->aim).'">'.s($user->aim).'</a>');
 }
 if ($user->msn && !isset($hiddenfields['msnid'])) {
     print_row(get_string('msnid').':', s($user->msn));
@@ -403,15 +411,14 @@ if (!isset($hiddenfields['lastaccess'])) {
 }
 /// printing roles
 
-if ($rolestring = get_user_roles_in_context($id, $coursecontext)) {
-    print_row(get_string('roles').':', format_string($rolestring, false));
+if ($rolestring = get_user_roles_in_course($id, $course->id)) {
+    print_row(get_string('roles').':', $rolestring);
 }
 
 /// Printing groups
 if (!isset($hiddenfields['groups'])) {
-    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $coursecontext));
-    if (!$isseparategroups){
-        if ($usergroups = groups_get_all_groups($course->id, $user->id)){
+    if ($course->groupmode != SEPARATEGROUPS or has_capability('moodle/site:accessallgroups', $coursecontext)) {
+        if ($usergroups = groups_get_all_groups($course->id, $user->id)) {
             $groupstr = '';
             foreach ($usergroups as $group){
                 $groupstr .= ' <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$group->id.'">'.format_string($group->name).'</a>,';
@@ -481,40 +488,26 @@ if ($passwordchangeurl) {
     echo "</form>";
 }
 
-if ($course->id != SITEID && empty($course->metacourse)) {   // Mostly only useful at course level
+if (!$isfrontpage && empty($course->metacourse)) {   // Mostly only useful at course level
 
-    $canunenrol = false;
-
-    if ($user->id == $USER->id) { // Myself
-        $canunenrol = has_capability('moodle/course:view', $coursecontext, NULL) &&              // Course participant
-                      has_capability('moodle/role:unassignself', $coursecontext, NULL, false) && // Can unassign myself
-                      get_user_roles($coursecontext, $user->id, false);                          // Must have role in course
-
-    } else if (has_capability('moodle/role:assign', $coursecontext, NULL)) { // I can assign roles
-        if ($roles = get_user_roles($coursecontext, $user->id, false)) {
-            $canunenrol = true;
-            foreach($roles as $role) {
-                if (!user_can_assign($coursecontext, $role->roleid)) {
-                    $canunenrol = false; // I can not unassign all roles in this course :-(
-                    break;
-                }
-            }
+    if ($currentuser) {
+        if (is_enrolled($coursecontext, NULL, 'moodle/role:unassignself')) {
+            echo '<form action="'.$CFG->wwwroot.'/course/unenrol.php" method="get">';
+            echo '<div>';
+            echo '<input type="hidden" name="id" value="'.$course->id.'" />';
+            echo '<input type="hidden" name="user" value="'.$user->id.'" />';
+            echo '<input type="submit" value="'.s(get_string('unenrolme', '', $course->shortname)).'" />';
+            echo '</div>';
+            echo '</form>';
         }
-    }
-
-    if ($canunenrol) {
-        echo '<form action="'.$CFG->wwwroot.'/course/unenrol.php" method="get">';
-        echo '<div>';
-        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
-        echo '<input type="hidden" name="user" value="'.$user->id.'" />';
-        echo '<input type="submit" value="'.s(get_string('unenrolme', '', $course->shortname)).'" />';
-        echo '</div>';
-        echo '</form>';
+    } else {
+        if (is_enrolled($coursecontext, $user->id, 'moodle/role:assign')) { // I can unassign roles
+            // add some button to unenroll user
+        }
     }
 }
 
-if (!$user->deleted and $USER->id != $user->id  && !session_is_loggedinas() && has_capability('moodle/user:loginas', $coursecontext) &&
-                             ! has_capability('moodle/site:doanything', $coursecontext, $user->id, false)) {
+if (!$user->deleted and !$currentuser && !session_is_loggedinas() && has_capability('moodle/user:loginas', $coursecontext) && !is_siteadmin($user->id)) {
     echo '<form action="'.$CFG->wwwroot.'/course/loginas.php" method="get">';
     echo '<div>';
     echo '<input type="hidden" name="id" value="'.$course->id.'" />';
@@ -526,7 +519,7 @@ if (!$user->deleted and $USER->id != $user->id  && !session_is_loggedinas() && h
 }
 
 if (!$user->deleted and !empty($CFG->messaging) and !isguestuser() and has_capability('moodle/site:sendmessage', $systemcontext)) {
-    if (!empty($USER->id) and ($USER->id == $user->id)) {
+    if (isloggedin() and $currentuser) {
         if ($countmessages = $DB->count_records('message', array('useridto'=>$user->id))) {
             $messagebuttonname = get_string("messages", "message")."($countmessages)";
         } else {
@@ -546,7 +539,9 @@ if (!$user->deleted and !empty($CFG->messaging) and !isguestuser() and has_capab
         echo "</form>";
     }
 }
+
 // Authorize.net: User Payments
+// TODO: replace this hack with proper callback into all plugins
 if ($course->enrol == 'authorize' || (empty($course->enrol) && $CFG->enrol == 'authorize')) {
     echo "<form action=\"../enrol/authorize/index.php\" method=\"get\">";
     echo "<div>";
@@ -558,7 +553,7 @@ if ($course->enrol == 'authorize' || (empty($course->enrol) && $CFG->enrol == 'a
 }
 echo "</div>\n";
 
-if ($CFG->debugdisplay && debugging('', DEBUG_DEVELOPER) && $USER->id == $user->id) {  // Show user object
+if ($CFG->debugdisplay && debugging('', DEBUG_DEVELOPER) && $currentuser) {  // Show user object
     echo '<hr />';
     echo $OUTPUT->heading('DEBUG MODE:  User session variables');
     print_object($USER);

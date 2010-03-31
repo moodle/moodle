@@ -66,7 +66,7 @@ require_once($CFG->dirroot.'/search/lib.php');
 
 /// this table is only for admins, shows index directory size and location
 
-    if (has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
+    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
         $datadirectorystr = get_string('datadirectory', 'search');
         $inindexdirectorystr = get_string('filesinindexdirectory', 'search');
         $totalsizestr = get_string('totalsize', 'search');
@@ -138,7 +138,7 @@ require_once($CFG->dirroot.'/search/lib.php');
 
 /// add extra fields if we're admin
 
-    if (has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
+    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
         //don't want to confuse users if the two totals don't match (hint: they should)
         $table->data[] = array($documentsinindexstr, $indexinfo->indexcount);
 

@@ -3,7 +3,6 @@
 /**
  * SQL.PHP
  *    This file is include from view.php and print.php
- * @version $Id$
  * @copyright 2003
  **/
 
@@ -40,7 +39,7 @@
     $params = array('gid1'=>$glossary->id, 'gid2'=>$glossary->id, 'myid'=>$USER->id, 'hook'=>$hook);
 
     $userid = '';
-    if ( !empty($USER->id) ) {
+    if ( isloggedin() ) {
         $userid = "OR ge.userid = :myid";
     }
     switch ($tab) {

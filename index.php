@@ -62,7 +62,7 @@
         set_moodle_cookie('nobody');   // To help search for cookies on login page
     }
 
-    if (!empty($USER->id)) {
+    if (isloggedin()) {
         add_to_log(SITEID, 'course', 'view', 'view.php?id='.SITEID, SITEID);
     }
 
@@ -142,7 +142,7 @@
                         print_error('cannotfindorcreateforum', 'forum');
                     }
 
-                    if (!empty($USER->id)) {
+                    if (isloggedin()) {
                         $SESSION->fromdiscussion = $CFG->wwwroot;
                         $subtext = '';
                         if (forum_is_subscribed($USER->id, $newsforum)) {

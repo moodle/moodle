@@ -128,7 +128,7 @@ if (!empty($courseid)) {
     $course = null;
 }
 
-if (empty($USER->id) or has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
+if (!isloggedin() or isguestuser()) {
     $defaultcourses = calendar_get_default_courses();
     calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
 
@@ -182,7 +182,7 @@ echo $OUTPUT->container_start('bottom');
 if (!empty($CFG->enablecalendarexport)) {
     echo $OUTPUT->single_button(new moodle_url('export.php', array('course'=>$courseid)), get_string('exportcalendar', 'calendar'));
 
-    if (!empty($USER->id)) {
+    if (isloggedin()) {
         $authtoken = sha1($USER->username . $USER->password . $CFG->calendar_exportsalt);
         $usernameencoded = urlencode($USER->username);
 
@@ -257,7 +257,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users, $courseid) {
     $events = calendar_get_upcoming($courses, $groups, $users, 1, 100, $starttime);
 
     $text = '';
-    if (!has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false) && !empty($USER->id) && calendar_user_can_add_event()) {
+    if (!isguestuser() && isloggedin() && calendar_user_can_add_event()) {
         $text.= '<div class="buttons">';
         $text.= '<form action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<div>';
@@ -403,7 +403,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
     calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday, $courses);
 
     $text = '';
-    if(!has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false) && !empty($USER->id) && calendar_user_can_add_event()) {
+    if(!isguestuser() && isloggedin() && calendar_user_can_add_event()) {
         $text.= '<div class="buttons"><form action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<div>';
         $text.= '<input type="hidden" name="action" value="new" />';
@@ -562,7 +562,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
 
     echo "</tr>\n";
 
-    if(!empty($USER->id) && !has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
+    if(isloggedin() && !isguestuser()) {
         echo '<tr>';
         // Group events
         if($SESSION->cal_show_groups) {
@@ -593,7 +593,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
 
     $text = '';
 
-    if(!has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false) && !empty($USER->id) && calendar_user_can_add_event()) {
+    if(!isguestuser() && isloggedin() && calendar_user_can_add_event()) {
         $text.= '<div class="buttons">';
         $text.= '<form action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<div>';
@@ -629,7 +629,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
 function calendar_course_filter_selector($getvars = '') {
     global $USER, $SESSION, $OUTPUT;
 
-    if (empty($USER->id) or has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
+    if (!isloggedin() or isguestuser()) {
         return '';
     }
 

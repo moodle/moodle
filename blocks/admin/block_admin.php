@@ -20,15 +20,14 @@ class block_admin extends block_list {
 
         $course = $this->page->course;
 
-        if (!has_capability('moodle/course:view', $this->page->context)) {  // Just return
-            return $this->content;
-        }
-
         if (empty($CFG->loginhttps)) {
             $securewwwroot = $CFG->wwwroot;
         } else {
             $securewwwroot = str_replace('http:','https:',$CFG->wwwroot);
         }
+
+        $isenrolled = is_enrolled($this->page->context);
+        $isviewing = is_viewing($this->page->context);
 
     /// Course editing on/off
         if ($course->id !== SITEID and has_capability('moodle/course:update', $this->page->context)) {
@@ -56,7 +55,7 @@ class block_admin extends block_list {
 
     /// View course grades (or just your own grades, same link)
     /// find all accessible reports
-        if ($course->id !== SITEID) {
+        if ($course->id !== SITEID and ($isenrolled or $isviewing)) {
             $reportavailable = false;
             if (has_capability('moodle/grade:viewall', $this->page->context)) {
                 $reportavailable = true;
@@ -194,17 +193,23 @@ class block_admin extends block_list {
 
     /// Unenrol link
         if (empty($course->metacourse) && ($course->id!==SITEID)) {
-            if (has_capability('moodle/legacy:guest', $this->page->context, NULL, false)) {   // Are a guest now
+            if ($isenrolled) {
+                if (has_capability('moodle/role:unassignself', $this->page->context, NULL, false) and get_user_roles($this->page->context, $USER->id, false)) {  // Have some role
+                    $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/unenrol.php?id='.$course->id.'">'.get_string('unenrolme', '', format_string($course->shortname)).'</a>';
+                    $this->content->icons[]='<img src="'.$OUTPUT->pix_url('i/user') . '" class="icon" alt="" />';
+                }
+                
+            } else if ($isviewing) {
+                // inspector, manager, etc. - do not show anything
+            } else {
+                // access because otherwise they would not get into this course at all
                 $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/enrol.php?id='.$course->id.'">'.get_string('enrolme', '', format_string($course->shortname)).'</a>';
-                $this->content->icons[]='<img src="'.$OUTPUT->pix_url('i/user') . '" class="icon" alt="" />';
-            } else if (has_capability('moodle/role:unassignself', $this->page->context, NULL, false) and get_user_roles($this->page->context, $USER->id, false)) {  // Have some role
-                $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/unenrol.php?id='.$course->id.'">'.get_string('unenrolme', '', format_string($course->shortname)).'</a>';
                 $this->content->icons[]='<img src="'.$OUTPUT->pix_url('i/user') . '" class="icon" alt="" />';
             }
         }
 
-    /// Link to the user own profile (except guests)
-        if (!isguestuser() and isloggedin()) {
+    /// Link to the user own profile if they are enrolled
+        if ($isenrolled) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/user/view.php?id='.$USER->id.'&amp;course='.$course->id.'">'.get_string('profile').'</a>';
             $this->content->icons[]='<img src="'.$OUTPUT->pix_url('i/user') . '" alt="" />';
         }

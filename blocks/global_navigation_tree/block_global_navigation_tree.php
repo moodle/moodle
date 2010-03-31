@@ -94,7 +94,7 @@ class block_global_navigation_tree extends block_tree {
         global $CFG, $OUTPUT;
         // First check if we have already generated, don't waste cycles
         if ($this->contentgenerated === true) {
-            return true;
+            return $this->content;
         }
         $this->page->requires->yui2_lib('dom');
         // JS for navigation moved to the standard theme, the code will probably have to depend on the actual page structure
@@ -158,7 +158,7 @@ class block_global_navigation_tree extends block_tree {
         $module = array('name'=>'block_navigation', 'fullpath'=>'/blocks/global_navigation_tree/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom', 'json-parse'));
         $arguments = array($this->instance->id, array('expansions'=>$expandable, 'instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked()));
         $this->page->requires->js_init_call('M.block_navigation.init_add_tree', $arguments, false, $module);
-        
+
         // Grab the items to display
         $this->content->items = array($this->page->navigation);
 
@@ -168,7 +168,8 @@ class block_global_navigation_tree extends block_tree {
 
         // Set content generated to true so that we know it has been done
         $this->contentgenerated = true;
-        return true;
+
+        return $this->content;
     }
 
     /**

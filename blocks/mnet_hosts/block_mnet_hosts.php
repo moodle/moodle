@@ -21,7 +21,7 @@ class block_mnet_hosts extends block_list {
     function get_content() {
         global $CFG, $USER, $DB, $OUTPUT;
 
-        // only for logged in users!
+        // shortcut -  only for logged in users!
         if (!isloggedin() || isguestuser()) {
             return false;
         }

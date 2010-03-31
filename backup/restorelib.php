@@ -1557,7 +1557,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     // anything except id
                     $restore->userswhocanviewcourse=get_users_by_capability(
                         get_context_instance(CONTEXT_COURSE, $restore->course_id),
-                        'moodle/course:view','u.id');
+                        'moodle/course:participate','u.id');
                 }
 
                 foreach($info->completiondata as $data) {
@@ -5952,9 +5952,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 $this->info->tempuser = $this->getContents();
                                 $this->info->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->userid = $this->getContents();
                             break;
-                            case "HIDDEN":
-                                $this->info->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->hidden = $this->getContents();
-                            break;
                             case "TIMESTART":
                                 $this->info->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->timestart = $this->getContents();
                             break;
@@ -6174,9 +6171,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 $this->info->tempuser = $this->getContents();
 
                                 $this->info->tempinstance->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->userid = $this->getContents();
-                            break;
-                            case "HIDDEN":
-                                $this->info->tempinstance->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->hidden = $this->getContents();
                             break;
                             case "TIMESTART":
                                 $this->info->tempinstance->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->timestart = $this->getContents();
@@ -6427,9 +6421,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 $this->info->tempuser = $this->getContents();
 
                                 $this->info->tempsection->mods[$this->info->tempmod->id]->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->userid = $this->getContents();
-                            break;
-                            case "HIDDEN":
-                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->hidden = $this->getContents();
                             break;
                             case "TIMESTART":
                                 $this->info->tempsection->mods[$this->info->tempmod->id]->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->timestart = $this->getContents();
@@ -7314,9 +7305,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 $this->info->tempuserid = $this->getContents();
 
                                 $this->info->tempuser->roleassignments[$this->info->tempid]->assignments[$this->info->tempuserid]->userid = $this->getContents();
-                            break;
-                            case "HIDDEN":
-                                $this->info->tempuser->roleassignments[$this->info->tempid]->assignments[$this->info->tempuserid]->hidden = $this->getContents();
                             break;
                             case "TIMESTART":
                                 $this->info->tempuser->roleassignments[$this->info->tempid]->assignments[$this->info->tempuserid]->timestart = $this->getContents();
@@ -9171,7 +9159,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 if ($CFG->creatornewroleid) {
                     role_assign($CFG->creatornewroleid, $USER->id, 0, $newcontext->id);
                 } else {
-                    if ($legacyteachers = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM))) {
+                    if ($legacyteachers = get_archetype_roles('editingteacher')) {
                         if ($legacyteacher = array_shift($legacyteachers)) {
                             role_assign($legacyteacher->id, $USER->id, 0, $newcontext->id);
                         }

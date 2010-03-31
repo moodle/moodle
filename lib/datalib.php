@@ -27,21 +27,22 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /**
-  * The maximum courses in a category
-  * MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES must not be more than max integer!
-  */
+/**
+ * The maximum courses in a category
+ * MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES must not be more than max integer!
+ */
 define('MAX_COURSES_IN_CATEGORY', 10000);
+
 /**
   * The maximum number of course categories
   * MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES must not be more than max integer!
   */
 define('MAX_COURSE_CATEGORIES', 10000);
 
- /**
-  * Number of seconds to wait before updating lastaccess information in DB.
-  */
- define('LASTACCESS_UPDATE_SECS', 60);
+/**
+ * Number of seconds to wait before updating lastaccess information in DB.
+ */
+define('LASTACCESS_UPDATE_SECS', 60);
 
 /**
  * Returns $user object of the main admin user
@@ -51,44 +52,33 @@ define('MAX_COURSE_CATEGORIES', 10000);
  * @static object $myadmin
  * @return object An associative array representing the admin user.
  */
-function get_admin () {
-    static $myadmin;
+function get_admin() {
+    static $mainadmin = null;
 
-    if (! isset($admin)) {
+    if (!isset($mainadmin)) {
         if (! $admins = get_admins()) {
             return false;
         }
-        $admin = reset($admins);//reset returns first element
+        //TODO: add some admin setting for specifying of THE main admin
+        //      for now return the first assigned admin
+        $mainadmin = reset($admins);
     }
-    return $admin;
+    return $mainadmin;
 }
 
 /**
- * Returns list of all admins, using 1 DB query. It depends on DB schema v1.7
- * but does not depend on the v1.9 datastructures (context.path, etc).
+ * Returns list of all admins, using 1 DB query
  *
- * @global object
  * @return array
  */
 function get_admins() {
-    global $DB;
+    global $DB, $CFG;
 
-    $sql = "SELECT ra.userid, SUM(rc.permission) AS permission, MIN(ra.id) AS adminid
-              FROM {role_capabilities} rc
-              JOIN {context} ctx ON ctx.id=rc.contextid
-              JOIN {role_assignments} ra ON ra.roleid=rc.roleid AND ra.contextid=ctx.id
-             WHERE ctx.contextlevel=10 AND rc.capability IN (?, ?, ?)
-          GROUP BY ra.userid
-            HAVING SUM(rc.permission) > 0";
-    $params = array('moodle/site:config', 'moodle/legacy:admin', 'moodle/site:doanything');
-
-    $sql = "SELECT u.*, ra.adminid
+    $sql = "SELECT u.*
               FROM {user} u
-              JOIN ($sql) ra
-                   ON u.id=ra.userid
-          ORDER BY ra.adminid ASC";
+             WHERE u.deleted = 0 AND u.id IN ($CFG->siteadmins)";
 
-    return $DB->get_records_sql($sql, $params);
+    return $DB->get_records_sql($sql);
 }
 
 /**
@@ -454,12 +444,11 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
 
     $visiblecourses = array();
 
-    $sql = "SELECT $fields,
-                   ctx.id AS ctxid, ctx.path AS ctxpath,
-                   ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
+    list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+
+    $sql = "SELECT $fields $ccselect
               FROM {course} c
-              JOIN {context} ctx
-                   ON (c.id = ctx.instanceid  AND ctx.contextlevel=".CONTEXT_COURSE.")
+           $ccjoin
               $categoryselect
               $sortstatement";
 
@@ -468,10 +457,10 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
 
         // loop throught them
         foreach ($courses as $course) {
-            $course = make_context_subobj($course);
+            context_instance_preload($course);
             if (isset($course->visible) && $course->visible <= 0) {
                 // for hidden courses, require visibility check
-                if (has_capability('moodle/course:viewhiddencourses', $course->context)) {
+                if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
                     $visiblecourses [$course->id] = $course;
                 }
             } else {
@@ -517,12 +506,11 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
         $categoryselect = "";
     }
 
-    $sql = "SELECT $fields,
-                   ctx.id AS ctxid, ctx.path AS ctxpath,
-                   ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
+    list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+
+    $sql = "SELECT $fields $ccselect
               FROM {course} c
-              JOIN {context} ctx
-                   ON (c.id = ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+              $ccjoin
            $categoryselect
           ORDER BY $sort";
 
@@ -539,10 +527,10 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     // iteration will have to be done inside loop to keep track of the limitfrom and limitnum
     $visiblecourses = array();
     foreach($rs as $course) {
-        $course = make_context_subobj($course);
+        context_instance_preload($course);
         if ($course->visible <= 0) {
             // for hidden courses, require visibility check
-            if (has_capability('moodle/course:viewhiddencourses', $course->context)) {
+            if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
                 $totalcount++;
                 if ($totalcount > $limitfrom && (!$limitnum or count($visiblecourses) < $limitnum)) {
                     $visiblecourses [$course->id] = $course;
@@ -566,7 +554,6 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  * role assignments, etc.
  *
  * The returned array is indexed on c.id, and each course will have
- * - $course->context - a context obj
  * - $course->managers - array containing RA objects that include a $user obj
  *                       with the minimal fields needed for fullname()
  *
@@ -646,12 +633,10 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
     }
 
     // pull out all courses matching the cat
-    $sql = "SELECT $coursefields,
-                   ctx.id AS ctxid, ctx.path AS ctxpath,
-                   ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
+    list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+    $sql = "SELECT $coursefields $ccselect
               FROM {course} c
-              JOIN {context} ctx
-                   ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+           $ccjoin
                $where
                $sortstatement";
 
@@ -662,17 +647,19 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
         // the context, and prepping data to fetch the
         // managers efficiently later...
         foreach ($courses as $k => $course) {
-            $courses[$k] = make_context_subobj($courses[$k]);
+            context_instance_preload($course);
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            $courses[$k] = $course;
             $courses[$k]->managers = array();
             if ($allcats === false) {
                 // single cat, so take just the first one...
                 if ($catpath === NULL) {
-                    $catpath = preg_replace(':/\d+$:', '',$courses[$k]->context->path);
+                    $catpath = preg_replace(':/\d+$:', '', $coursecontext->path);
                 }
             } else {
                 // chop off the contextid of the course itself
                 // like dirname() does...
-                $catpaths[] = preg_replace(':/\d+$:', '',$courses[$k]->context->path);
+                $catpaths[] = preg_replace(':/\d+$:', '', $coursecontext->path);
             }
         }
     } else {
@@ -717,7 +704,6 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
          *
          */
         $sql = "SELECT ctx.path, ctx.instanceid, ctx.contextlevel,
-                       ra.hidden,
                        r.id AS roleid, r.name as rolename,
                        u.id AS userid, u.firstname, u.lastname
                   FROM {role_assignments} ra
@@ -742,7 +728,7 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
         // This loop is fairly stupid as it stands - might get better
         // results doing an initial pass clustering RAs by path.
         foreach($rs as $ra) {
-            $user = new StdClass;
+            $user = new stdClass;
             $user->id        = $ra->userid;    unset($ra->userid);
             $user->firstname = $ra->firstname; unset($ra->firstname);
             $user->lastname  = $ra->lastname;  unset($ra->lastname);
@@ -751,7 +737,7 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
                 foreach ($courses as $k => $course) {
                     $courses[$k]->managers[] = $ra;
                 }
-            } elseif ($ra->contextlevel == CONTEXT_COURSECAT) {
+            } else if ($ra->contextlevel == CONTEXT_COURSECAT) {
                 if ($allcats === false) {
                     // It always applies
                     foreach ($courses as $k => $course) {
@@ -759,15 +745,16 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
                     }
                 } else {
                     foreach ($courses as $k => $course) {
+                        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                         // Note that strpos() returns 0 as "matched at pos 0"
-                        if (strpos($course->context->path, $ra->path.'/')===0) {
+                        if (strpos($coursecontext->path, $ra->path.'/') === 0) {
                             // Only add it to subpaths
                             $courses[$k]->managers[] = $ra;
                         }
                     }
                 }
             } else { // course-level
-                if(!array_key_exists($ra->instanceid, $courses)) {
+                if (!array_key_exists($ra->instanceid, $courses)) {
                     //this course is not in a list, probably a frontpage course
                     continue;
                 }
@@ -821,9 +808,8 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
 function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NULL, $doanything=false,$limit=0) {
     global $CFG, $USER, $DB;
 
-    // Guest's do not have any courses
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-    if (has_capability('moodle/legacy:guest', $sitecontext, $userid, false)) {
+    // Guest account does not have any courses
+    if (isguestuser()) {
         return(array());
     }
 
@@ -902,14 +888,11 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
             // the same...
             // (but here we don't need to check has_cap)
             $coursefields = 'c.' .join(',c.', $fields);
-            $sql = "SELECT $coursefields,
-                           ctx.id AS ctxid, ctx.path AS ctxpath,
-                           ctx.depth as ctxdepth, ctx.contextlevel AS ctxlevel,
-                           cc.path AS categorypath
+            list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+            $sql = "SELECT $coursefields $ccselect, cc.path AS categorypath
                       FROM {course} c
                       JOIN {course_categories} cc ON c.category=cc.id
-                      JOIN {context} ctx
-                           ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+                   $ccjoin
                      WHERE c.id IN ($courseids)
                   $orderby";
             $rs = $DB->get_recordset_sql($sql);
@@ -917,7 +900,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
             $cc = 0; // keep count
             foreach ($rs as $c) {
                 // build the context obj
-                $c = make_context_subobj($c);
+                context_instance_preload($c);
 
                 if ($limit > 0 && $cc >= $limit) {
                     break;
@@ -939,7 +922,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
     }
 
 
-    $courses = get_user_courses_bycap($userid, 'moodle/course:view', $accessinfo,
+    $courses = get_user_courses_bycap($userid, 'moodle/course:participate', $accessinfo,
                                       $doanything, $sort, $fields,
                                       $limit);
 
@@ -947,12 +930,10 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
     // If we have to walk category visibility
     // to eval course visibility, get the categories
     if (empty($CFG->allowvisiblecoursesinhiddencategories)) {
-        $sql = "SELECT cc.id, cc.path, cc.visible,
-                       ctx.id AS ctxid, ctx.path AS ctxpath,
-                       ctx.depth as ctxdepth, ctx.contextlevel AS ctxlevel
+        list($ccselect, $ccjoin) = context_instance_preload_sql('cc.id', CONTEXT_COURSECAT, 'ctx');
+        $sql = "SELECT cc.id, cc.path, cc.visible $ccselect
                   FROM {course_categories} cc
-                  JOIN {context} ctx ON (cc.id = ctx.instanceid)
-                 WHERE ctx.contextlevel = ".CONTEXT_COURSECAT."
+               $ccjoin
               ORDER BY cc.id";
         $rs = $DB->get_recordset_sql($sql);
 
@@ -960,7 +941,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
         $categories = array();
         foreach($rs as $course_cat) {
             // build the context obj
-            $course_cat = make_context_subobj($course_cat);
+            context_instance_preload($course_cat);
             $categories[$course_cat->id] = $course_cat;
         }
         $rs->close();
@@ -1142,12 +1123,10 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 
     $searchcond = implode(" AND ", $searchcond);
 
-    $sql = "SELECT c.*,
-                   ctx.id AS ctxid, ctx.path AS ctxpath,
-                   ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
+    list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+    $sql = "SELECT c.* $ccselect
               FROM {course} c
-              JOIN {context} ctx
-                   ON (c.id = ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+           $ccjoin
              WHERE $searchcond AND c.id <> ".SITEID."
           ORDER BY $sort";
     $courses = array();
@@ -1159,8 +1138,9 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
         $limitto   = $limitfrom + $recordsperpage;
 
         foreach($rs as $course) {
-            $course = make_context_subobj($course);
-            if ($course->visible || has_capability('moodle/course:viewhiddencourses', $course->context)) {
+            context_instance_preload($course);
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            if ($course->visible || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
                 // Don't exit this loop till the end
                 // we need to count all the visible courses
                 // to update $totalcount
@@ -1207,34 +1187,27 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
         $sort = "ORDER BY $sort";
     }
 
+    list($ccselect, $ccjoin) = context_instance_preload_sql('cc.id', CONTEXT_COURSECAT, 'ctx');
+
     if ($parent === 'none') {
-        $sql = "SELECT cc.*,
-                       ctx.id AS ctxid, ctx.path AS ctxpath,
-                       ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
+        $sql = "SELECT cc.* $ccselect
                   FROM {course_categories} cc
-                  JOIN {context} ctx
-                       ON cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT."
+               $ccjoin
                 $sort";
         $params = array();
 
     } elseif ($shallow) {
-        $sql = "SELECT cc.*,
-                       ctx.id AS ctxid, ctx.path AS ctxpath,
-                       ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
+        $sql = "SELECT cc.* $ccselect
                   FROM {course_categories} cc
-                  JOIN {context} ctx
-                       ON cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT."
+               $ccjoin
                  WHERE cc.parent=?
                 $sort";
         $params = array($parent);
 
     } else {
-        $sql = "SELECT cc.*,
-                       ctx.id AS ctxid, ctx.path AS ctxpath,
-                       ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
+        $sql = "SELECT cc.* $ccselect
                   FROM {course_categories} cc
-                  JOIN {context} ctx
-                       ON cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT."
+               $ccjoin
                   JOIN {course_categories} ccp
                        ON (cc.path LIKE ".$DB->sql_concat('ccp.path',"'%'").")
                  WHERE ccp.id=?
@@ -1245,8 +1218,9 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
 
     if( $rs = $DB->get_recordset_sql($sql, $params) ){
         foreach($rs as $cat) {
-            $cat = make_context_subobj($cat);
-            if ($cat->visible || has_capability('moodle/category:viewhiddencategories',$cat->context)) {
+            context_instance_preload($cat);
+            $catcontext = get_context_instance(CONTEXT_COURSECAT, $cat->id);
+            if ($cat->visible || has_capability('moodle/category:viewhiddencategories', $catcontext)) {
                 $categories[$cat->id] = $cat;
             }
         }
@@ -2289,7 +2263,7 @@ function get_logs_userday($userid, $courseid, $daystart) {
  *
  * @global object
  * @uses CONTEXT_SYSTEM
- * @param string $mode Either 'admin', 'teacher' or 'everybody'
+ * @param string $mode Either 'admin' or 'everybody'
  * @param string $username The username we are searching for
  * @param string $lastlogin The date from which we are searching
  * @return int
@@ -2302,12 +2276,12 @@ function count_login_failures($mode, $username, $lastlogin) {
 
     $count = new object();
 
-    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {    // Return information about all accounts
+    if (is_siteadmin()) {
         if ($count->attempts = $DB->count_records_select('log', $select, $params)) {
             $count->accounts = $DB->count_records_select('log', $select, $params, 'COUNT(DISTINCT info)');
             return $count;
         }
-    } else if ($mode == 'everybody' or ($mode == 'teacher' and isteacherinanycourse())) {
+    } else if ($mode == 'everybody') {
         if ($count->attempts = $DB->count_records_select('log', "$select AND info = :username", $params)) {
             return $count;
         }

@@ -17,7 +17,11 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('forcelogin', get_string('forcelogin', 'admin'), get_string('configforcelogin', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('forceloginforprofiles', get_string('forceloginforprofiles', 'admin'), get_string('configforceloginforprofiles', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('opentogoogle', get_string('opentogoogle', 'admin'), get_string('configopentogoogle', 'admin'), 0));
-
+    $temp->add(new admin_setting_pickroles('profileroles',
+        get_string('profileroles','admin'),
+        get_string('configprofileroles', 'admin'),
+        array('student', 'teacher', 'editingteacher')));
+    
     $max_upload_choices = get_max_upload_sizes();
     // maxbytes set to 0 will allow the maxium server lmit for uploads
     $max_upload_choices[0] = get_string('serverlimit', 'admin');

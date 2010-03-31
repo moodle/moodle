@@ -297,7 +297,7 @@ if ($showcommonelements) {
         $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds && $glossary->rsstype && $glossary->rssarticles) {
 
         $tooltiptext = get_string("rsssubscriberss","glossary",format_string($glossary->name,true));
-        if (empty($USER->id)) {
+        if (!isloggedin()) {
             $userid = 0;
         } else {
             $userid = $USER->id;

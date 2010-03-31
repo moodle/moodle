@@ -299,7 +299,7 @@
     print_string('documents', 'search');
     print '.';
 
-    if (!$sq->is_valid_index() and has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
+    if (!$sq->is_valid_index() and has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
         print '<p>' . get_string('noindexmessage', 'search') . '<a href="indexersplash.php">' . get_string('createanindex', 'search')."</a></p>\n";
     }
 

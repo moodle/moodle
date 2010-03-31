@@ -32,7 +32,7 @@ $capabilities = array(
         'legacy' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
+            'manager' => CAP_ALLOW
         ),
 
         'clonepermissionsfrom' => 'moodle/site:viewreports',
@@ -45,7 +45,7 @@ $capabilities = array(
         'legacy' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
+            'manager' => CAP_ALLOW
         ),
 
         'clonepermissionsfrom' => 'moodle/site:viewreports',
@@ -58,7 +58,7 @@ $capabilities = array(
         'legacy' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
+            'manager' => CAP_ALLOW
         ),
 
         'clonepermissionsfrom' => 'moodle/site:viewreports',

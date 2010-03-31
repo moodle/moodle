@@ -322,7 +322,7 @@ if ($formdata = $mform->is_cancelled()) {
                 continue;
             }
             if ($existinguser) {
-                if (has_capability('moodle/site:doanything', $systemcontext, $existinguser->id)) {
+                if (is_siteadmin($existinguser->id)) {
                     $upt->track('status', $strusernotdeletedadmin, 'error');
                     $deleteerrors++;
                     continue;
@@ -360,7 +360,7 @@ if ($formdata = $mform->is_cancelled()) {
 
             if ($olduser = $DB->get_record('user', array('username'=>$oldusername, 'mnethostid'=>$user->mnethostid))) {
                 $upt->track('id', $olduser->id, 'normal', false);
-                if (has_capability('moodle/site:doanything', $systemcontext, $olduser->id)) {
+                if (is_siteadmin($olduser->id)) {
                     $upt->track('status', $strusernotrenamedadmin, 'error');
                     $renameerrors++;
                     continue;
@@ -423,7 +423,7 @@ if ($formdata = $mform->is_cancelled()) {
         if ($existinguser) {
             $user->id = $existinguser->id;
 
-            if (has_capability('moodle/site:doanything', $systemcontext, $user->id)) {
+            if (is_siteadmin($user->id)) {
                 $upt->track('status', $strusernotupdatedadmin, 'error');
                 $userserrors++;
                 continue;
@@ -668,7 +668,7 @@ if ($formdata = $mform->is_cancelled()) {
             // find group to add to
             if (!empty($user->{'group'.$i})) {
                 // make sure user is enrolled into course before adding into groups
-                if (!has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
+                if (!is_enrolled($coursecontext, $user->id)) {
                     $upt->track('enrolments', get_string('addedtogroupnotenrolled', '', $gname), 'error');
                     continue;
                 }
@@ -1173,12 +1173,6 @@ function uu_allowed_roles($shortname=false) {
             $choices[$role->id] = $role->shortname;
         } else {
             $choices[$role->id] = format_string($role->name);
-        }
-    }
-    // get rid of all admin roles
-    if ($adminroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW)) {
-        foreach($adminroles as $adminrole) {
-            unset($choices[$adminrole->id]);
         }
     }
 

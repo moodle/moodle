@@ -286,7 +286,7 @@ class block_quiz_results extends block_base {
             case SEPARATEGROUPS:
             // This is going to be just like no-groups mode, only we 'll filter
             // out the grades from people not in our group.
-            if(empty($USER) || empty($USER->id)) {
+            if (!isloggedin()) {
                 // Not logged in, so show nothing
                 return $this->content;
             }

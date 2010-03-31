@@ -31,7 +31,7 @@
 
 /// Only SITE users can access to this page
     require_login(); // Don't use $courseid! User may want to see old orders.
-    if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), $USER->id, false)) {
+    if (isguestuser()) {
         print_error('noguest');
     }
 

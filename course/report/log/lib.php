@@ -88,7 +88,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
 
     // If looking at a different host, we're interested in all our site users
     if ($hostid == $CFG->mnet_localhost_id && $course->id != SITEID) {
-        $courseusers = get_users_by_capability($context, 'moodle/course:view', 'u.id, u.firstname, u.lastname, u.idnumber', 'lastname ASC, firstname ASC', $limitfrom, $limitnum, $selectedgroup,'', false);
+        $courseusers = get_users_by_capability($context, 'moodle/course:participate', 'u.id, u.firstname, u.lastname, u.idnumber', 'lastname ASC, firstname ASC', $limitfrom, $limitnum, $selectedgroup,'', false);
     } else {
         // this may be a lot of users :-(
         $courseusers = $DB->get_records('user', array('deleted'=>0), 'lastaccess DESC', 'id, firstname, lastname, idnumber', $limitfrom, $limitnum);
@@ -357,7 +357,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     $users = array();
 
     if ($course->id != SITEID) {
-        $courseusers = get_users_by_capability($context, 'moodle/course:view', 'u.id, u.firstname, u.lastname, u.idnumber', 'lastname ASC, firstname ASC', '','',$selectedgroup,null, false);
+        $courseusers = get_users_by_capability($context, 'moodle/course:participate', 'u.id, u.firstname, u.lastname, u.idnumber', 'lastname ASC, firstname ASC', '','',$selectedgroup,null, false);
     } else {
         // this may be a lot of users :-(
         $courseusers = $DB->get_records('user', array('deleted'=>0), 'lastaccess DESC', 'id, firstname, lastname, idnumber');

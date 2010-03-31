@@ -67,7 +67,7 @@ function blog_user_can_view_user_entry($targetuserid, $blogentry=null) {
         return false; // blog system disabled
     }
 
-    if (!empty($USER->id) && $USER->id == $targetuserid) {
+    if (isloggdin() && $USER->id == $targetuserid) {
         return true; // can view own entries in any case
     }
 
@@ -92,7 +92,7 @@ function blog_user_can_view_user_entry($targetuserid, $blogentry=null) {
         break;
 
         case BLOG_SITE_LEVEL:
-            if (!empty($USER->id)) { // not logged in viewers forbidden
+            if (isloggedin()) { // not logged in viewers forbidden
                 return true;
             }
             return false;
@@ -366,7 +366,6 @@ function blog_get_headers() {
         $cm = $DB->get_record('course_modules', array('id' => $modid));
         $cm->modname = $DB->get_field('modules', 'name', array('id' => $cm->module));
         $cm->name = $DB->get_field($cm->modname, 'name', array('id' => $cm->instance));
-        $cm->context = get_context_instance(CONTEXT_MODULE, $modid);
         $a->type = get_string('modulename', $cm->modname);
         $PAGE->set_cm($cm, $course);
         $headers['stradd'] = get_string('blogaboutthis', 'blog', $a);

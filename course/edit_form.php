@@ -35,7 +35,7 @@ class course_edit_form extends moodleform {
                 // users with metacourse manage permission are exception
                 // please note that we do not need exact results - anything unexpected here prevents metacourse
                 $managers = get_users_by_capability($coursecontext, 'moodle/course:managemetacourse', 'u.id');
-                $enrolroles = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $coursecontext);
+                $enrolroles = get_roles_with_capability('moodle/course:participate', CAP_ALLOW, $coursecontext);
                 if ($users = get_role_users(array_keys($enrolroles), $coursecontext, false, 'u.id', 'u.id ASC')) {
                     foreach($users as $user) {
                         if (!isset($managers[$user->id])) {

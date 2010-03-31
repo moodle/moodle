@@ -39,7 +39,7 @@ function get_text_for_indexing_ppt(&$resource, $directfile = ''){
     $indextext = null;
     
     // SECURITY : do not allow non admin execute anything on system !!
-    if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) return;
+    if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) return;
 
     if ($directfile == ''){
         $text = implode('', file("{$CFG->dataroot}/{$resource->course}/{$resource->reference}"));

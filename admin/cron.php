@@ -280,14 +280,14 @@
             }
             $rs->close();
         /// Execute the same query again, looking for remaining records and deleting them
-        /// if the user hasn't moodle/course:view in the CONTEXT_COURSE context (orphan records)
+        /// if the user hasn't moodle/course:participate in the CONTEXT_COURSE context (orphan records)
             $rs = $DB->get_recordset_sql ("SELECT id, userid, courseid
                                              FROM {user_lastaccess}
                                             WHERE courseid != ".SITEID."
                                                   AND timeaccess < ?", array($cuttime));
             foreach ($rs as $assign) {
                 if ($context = get_context_instance(CONTEXT_COURSE, $assign->courseid)) {
-                    if (!has_capability('moodle/course:view', $context, $assign->userid)) {
+                    if (!is_enrolled($context, $assign->userid) and !is_viewing($context, $assign->userid)) {
                         $DB->delete_records('user_lastaccess', array('userid'=>$assign->userid, 'courseid'=>$assign->courseid));
                         mtrace("Deleted orphan user_lastaccess for user $assign->userid from course $assign->courseid");
                     }

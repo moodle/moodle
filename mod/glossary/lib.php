@@ -947,7 +947,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         $return .= get_string('entryishidden','glossary');
     }
 
-    if (has_capability('mod/glossary:manageentries', $context) or (!empty($USER->id) and has_capability('mod/glossary:write', $context) and $entry->userid == $USER->id)) {
+    if (has_capability('mod/glossary:manageentries', $context) or (isloggedin() and has_capability('mod/glossary:write', $context) and $entry->userid == $USER->id)) {
         // only teachers can export entries so check it out
         if (has_capability('mod/glossary:export', $context) and !$ismainglossary and !$importedentry) {
             $mainglossary = $DB->get_record('glossary', array('mainglossary'=>1,'course'=>$course->id));
@@ -1756,7 +1756,7 @@ function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $ratingsmenuused = false;
-    if (!empty($ratings) and !empty($USER->id)) {
+    if (!empty($ratings) and isloggedin()) {
         $useratings = true;
         if ($ratings->assesstimestart and $ratings->assesstimefinish) {
             if ($entry->timecreated < $ratings->assesstimestart or $entry->timecreated > $ratings->assesstimefinish) {
@@ -2605,7 +2605,7 @@ function glossary_reset_userdata($data) {
         if ($rs = $DB->get_recordset_sql($entriessql, $params)) {
             foreach ($rs as $entry) {
                 if (array_key_exists($entry->userid, $notenrolled) or !$entry->userexists or $entry->userdeleted
-                  or !has_capability('moodle/course:view', $course_context , $entry->userid)) {
+                  or !is_enrolled($course_context , $entry->userid)) {
                     $DB->delete_records('glossary_ratings', array('entryid'=>$entry->id));
                     $DB->delete_records('glossary_comments', array('entryid'=>$entry->id));
                     $DB->delete_records('glossary_entries', array('id'=>$entry->id));

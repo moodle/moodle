@@ -29,140 +29,61 @@
  */
 
 /**
- * Determines if a user is a teacher (or better)
- *
- * @global object
- * @uses CONTEXT_COURSE
- * @uses CONTEXT_SYSTEM
- * @param int $courseid The id of the course that is being viewed, if any
- * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
- * @param bool $obsolete_includeadmin Not used any more
- * @return bool
- */
-function isteacher($courseid=0, $userid=0, $obsolete_includeadmin=true) {
-/// Is the user able to access this course as a teacher?
-    global $CFG;
-
-    if ($courseid) {
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    } else {
-        $context = get_context_instance(CONTEXT_SYSTEM);
-    }
-
-    return (has_capability('moodle/legacy:teacher', $context, $userid, false)
-         or has_capability('moodle/legacy:editingteacher', $context, $userid, false)
-         or has_capability('moodle/legacy:admin', $context, $userid, false));
-}
-
-/**
- * Determines if a user is a teacher in any course, or an admin
- *
- * @global object
- * @global object
- * @global object
- * @uses CAP_ALLOW
- * @uses CONTEXT_SYSTEM
- * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
- * @param bool $includeadmin Include anyone wo is an admin as well
- * @return bool
- */
-function isteacherinanycourse($userid=0, $includeadmin=true) {
-    global $USER, $CFG, $DB;
-
-    if (!$userid) {
-        if (empty($USER->id)) {
-            return false;
-        }
-        $userid = $USER->id;
-    }
-
-    if (!$DB->record_exists('role_assignments', array('userid'=>$userid))) {    // Has no roles anywhere
-        return false;
-    }
-
-/// If this user is assigned as an editing teacher anywhere then return true
-    if ($roles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW)) {
-        foreach ($roles as $role) {
-            if ($DB->record_exists('role_assignments', array('roleid'=>$role->id, 'userid'=>$userid))) {
-                return true;
-            }
-        }
-    }
-
-/// If this user is assigned as a non-editing teacher anywhere then return true
-    if ($roles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW)) {
-        foreach ($roles as $role) {
-            if ($DB->record_exists('role_assignments', array('roleid'=>$role->id, 'userid'=>$userid))) {
-                return true;
-            }
-        }
-    }
-
-/// Include admins if required
-    if ($includeadmin) {
-        $context = get_context_instance(CONTEXT_SYSTEM);
-        if (has_capability('moodle/legacy:admin', $context, $userid, false)) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-
-/**
- * Determines if the specified user is logged in as guest.
- *
- * See {@link isguestuser()} as an alternative
- *
  * @deprecated
- * @global object
- * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
- * @return bool
  */
-function isguest($userid=0) {
-    global $CFG;
-
-    $context = get_context_instance(CONTEXT_SYSTEM);
-
-    return has_capability('moodle/legacy:guest', $context, $userid, false);
+function isteacher() {
+    error('Function isteacher() was removed, please use capabilities instead!');
 }
 
+/**
+ * @deprecated
+ */
+function isteacherinanycourse() {
+    error('Function isteacherinanycourse() was removed, please use capabilities instead!');
+}
 
 /**
- * Get the guest user information from the database
- *
- * @todo Is object(user) a correct return type? Or is array the proper return type with a
- * note that the contents include all details for a user.
- *
- * @return object(user) An associative array with the details of the guest user account.
+ * @deprecated
  */
 function get_guest() {
-    return get_complete_user_data('username', 'guest');
+    error('Function get_guest() was removed, please use capabilities instead!');
 }
 
 /**
- * Returns $user object of the main teacher for a course
- *
- * @global object
- * @uses CONTEXT_COURSE
- * @param int $courseid The course in question.
- * @return user|false  A {@link $USER} record of the main teacher for the specified course or false if error.
+ * @deprecated
  */
-function get_teacher($courseid) {
+function isguest() {
+    error('Function isguest() was removed, please use capabilities instead!');
+}
 
-    global $CFG;
+/**
+ * @deprecated
+ */
+function get_teacher() {
+    error('Function get_teacher() was removed, please use capabilities instead!');
+}
 
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+/**
+ * Return all course participant for a given course
+ *
+ * @deprecated
+ * @param integer $courseid
+ * @return array of user
+ */
+function get_course_participants($courseid) {
+    return get_enrolled_users(get_context_instance(CONTEXT_COURSE, $courseid));
+}
 
-    // Pass $view=true to filter hidden caps if the user cannot see them
-    if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'u.id ASC',
-                                         '', '', '', '', false, true)) {
-        $users = sort_by_roleassignment_authority($users, $context);
-        return array_shift($users);
-    }
-
-    return false;
+/**
+ * Return true if the user is a participant for a given course
+ *
+ * @deprecated
+ * @param integer $userid
+ * @param integer $courseid
+ * @return boolean
+ */
+function is_course_participant($userid, $courseid) {
+    return is_enrolled(get_context_instance(CONTEXT_COURSE, $courseid), $userid);
 }
 
 /**
@@ -193,6 +114,68 @@ function get_recent_enrolments($courseid, $timestart) {
           ORDER BY l.time ASC";
     $params = array($timestart, $courseid);
     return $DB->get_records_sql($sql, $params);
+}
+
+
+/**
+ * Turn the ctx* fields in an objectlike record into a context subobject
+ * This allows us to SELECT from major tables JOINing with
+ * context at no cost, saving a ton of context lookups...
+ *
+ * Use context_instance_preload() instead.
+ *
+ * @deprecated since 2.0
+ * @param object $rec
+ * @return object
+ */
+function make_context_subobj($rec) {
+    $ctx = new StdClass;
+    $ctx->id           = $rec->ctxid;    unset($rec->ctxid);
+    $ctx->path         = $rec->ctxpath;  unset($rec->ctxpath);
+    $ctx->depth        = $rec->ctxdepth; unset($rec->ctxdepth);
+    $ctx->contextlevel = $rec->ctxlevel; unset($rec->ctxlevel);
+    $ctx->instanceid   = $rec->id;
+
+    $rec->context = $ctx;
+    return $rec;
+}
+
+/**
+ * Do some basic, quick checks to see whether $rec->context looks like a valid context object.
+ *
+ * Use context_instance_preload() instead.
+ *
+ * @deprecated since 2.0
+ * @param object $rec a think that has a context, for example a course,
+ *      course category, course modules, etc.
+ * @param int $contextlevel the type of thing $rec is, one of the CONTEXT_... constants.
+ * @return bool whether $rec->context looks like the correct context object
+ *      for this thing.
+ */
+function is_context_subobj_valid($rec, $contextlevel) {
+    return isset($rec->context) && isset($rec->context->id) &&
+            isset($rec->context->path) && isset($rec->context->depth) &&
+            isset($rec->context->contextlevel) && isset($rec->context->instanceid) &&
+            $rec->context->contextlevel == $contextlevel && $rec->context->instanceid == $rec->id;
+}
+
+/**
+ * Ensure that $rec->context is present and correct before you continue
+ *
+ * When you have a record (for example a $category, $course, $user or $cm that may,
+ * or may not, have come from a place that does make_context_subobj, you can use
+ * this method to ensure that $rec->context is present and correct before you continue.
+ *
+ * Use context_instance_preload() instead.
+ *
+ * @deprecated since 2.0
+ * @param object $rec a thing that has an associated context.
+ * @param integer $contextlevel the type of thing $rec is, one of the CONTEXT_... constants.
+ */
+function ensure_context_subobj_present(&$rec, $contextlevel) {
+    if (!is_context_subobj_valid($rec, $contextlevel)) {
+        $rec->context = get_context_instance($contextlevel, $rec->id);
+    }
 }
 
 ########### FROM weblib.php ##########################################################################

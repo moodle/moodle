@@ -48,7 +48,7 @@
     // Add an advanced search tab.
     $row[] = new tabobject('asearch', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;mode=asearch', get_string('search', 'data'));
 
-    if (isloggedin()) {
+    if (isloggedin()) { // just a perf shortcut
         if (data_user_can_add_entry($data, $currentgroup, $groupmode)) { // took out participation list here!
             $addstring = empty($editentry) ? get_string('add', 'data') : get_string('editentry', 'data');
             $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/edit.php?d='.$data->id, $addstring);

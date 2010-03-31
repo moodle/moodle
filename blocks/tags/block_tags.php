@@ -79,8 +79,7 @@ class block_tags extends block_base {
 
             // Permissions and page awareness
             $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-            $isguest = has_capability('moodle/legacy:guest', $systemcontext, $USER->id, false);
-            $loggedin = isloggedin() && !$isguest;
+            $loggedin = isloggedin() && !isguestuser();
             $coursepage = $canedit = false;
             $coursepage = (isset($this->page->course->id) && $this->page->course->id != SITEID);
             $mymoodlepage = ($SCRIPT == '/my/index.php') ? true : false;

@@ -25,7 +25,7 @@
         $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
     }
 
-    if (has_capability('moodle/course:view', $context)) {
+    if (has_capability('moodle/course:participate', $context)) {
         redirect($destination, get_string('paymentthanks', '', $course->fullname));
 
     } else {   /// Somehow they aren't enrolled yet!  :-(

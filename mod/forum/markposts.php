@@ -54,7 +54,7 @@ if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
 
 $user = $USER;
 
-require_course_login($course, false, $cm);
+require_login($course, false, $cm);
 
 if ($returnpage == 'index.php') {
     $returnto = forum_go_back_to($returnpage.'?id='.$course->id);
@@ -62,7 +62,7 @@ if ($returnpage == 'index.php') {
     $returnto = forum_go_back_to($returnpage.'?f='.$forum->id);
 }
 
-if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {   // Guests can't change forum
+if (isguestuser()) {   // Guests can't change forum
     $PAGE->set_title($course->shortname);
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();

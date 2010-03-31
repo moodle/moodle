@@ -188,13 +188,13 @@ if (!defined('MAX_CONTEXT_CACHE_SIZE')) {
 $ACCESSLIB_PRIVATE = new stdClass;
 $ACCESSLIB_PRIVATE->contexts = array(); // Cache of context objects by level and instance
 $ACCESSLIB_PRIVATE->contextsbyid = array(); // Cache of context objects by id
-$ACCESSLIB_PRIVATE->systemcontext = null; // Used in get_system_context
-$ACCESSLIB_PRIVATE->dirtycontexts = null; // Dirty contexts cache
+$ACCESSLIB_PRIVATE->systemcontext = NULL; // Used in get_system_context
+$ACCESSLIB_PRIVATE->dirtycontexts = NULL; // Dirty contexts cache
 $ACCESSLIB_PRIVATE->accessdatabyuser = array(); // Holds the $accessdata structure for users other than $USER
 $ACCESSLIB_PRIVATE->roledefinitions = array(); // role definitions cache - helps a lot with mem usage in cron
 $ACCESSLIB_PRIVATE->croncache = array(); // Used in get_role_access
 $ACCESSLIB_PRIVATE->preloadedcourses = array(); // Used in preload_course_contexts.
-$ACCESSLIB_PRIVATE->capabilitynames = null; // Used in is_valid_capability (only in developer debug mode)
+$ACCESSLIB_PRIVATE->capabilities = NULL; // detailed information about the capabilities
 
 /**
  * Clears accesslib's private caches. ONLY BE USED BY UNIT TESTS
@@ -213,13 +213,13 @@ function accesslib_clear_all_caches_for_unit_testing() {
     }
     $ACCESSLIB_PRIVATE->contexts = array();
     $ACCESSLIB_PRIVATE->contextsbyid = array();
-    $ACCESSLIB_PRIVATE->systemcontext = null;
-    $ACCESSLIB_PRIVATE->dirtycontexts = null;
+    $ACCESSLIB_PRIVATE->systemcontext = NULL;
+    $ACCESSLIB_PRIVATE->dirtycontexts = NULL;
     $ACCESSLIB_PRIVATE->accessdatabyuser = array();
     $ACCESSLIB_PRIVATE->roledefinitions = array();
     $ACCESSLIB_PRIVATE->croncache = array();
     $ACCESSLIB_PRIVATE->preloadedcourses = array();
-    $ACCESSLIB_PRIVATE->capabilitynames = null;
+    $ACCESSLIB_PRIVATE->capabilities = NULL;
 
     unset($USER->access);
 }
@@ -295,7 +295,7 @@ function get_role_context_caps($roleid, $context) {
  * @global object
  * @global object
  * @param int $roleid
- * @param array $accessdata defaults to null
+ * @param array $accessdata defaults to NULL
  * @return array
  */
 function get_role_access($roleid, $accessdata=NULL) {
@@ -366,7 +366,7 @@ function get_role_access($roleid, $accessdata=NULL) {
  * @global object
  * @global object
  * @param int $roleid
- * @param array $accessdata defaults to null
+ * @param array $accessdata defaults to NULL
  * @return array
  */
 function get_default_frontpage_role_access($roleid, $accessdata=NULL) {
@@ -414,7 +414,7 @@ function get_guest_role() {
     global $CFG, $DB;
 
     if (empty($CFG->guestroleid)) {
-        if ($roles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
+        if ($roles = $DB->get_records('role', array('archetype'=>'guest'))) {
             $guestrole = array_shift($roles);   // Pick the first one
             set_config('guestroleid', $guestrole->id);
             return $guestrole;
@@ -441,16 +441,18 @@ function get_guest_role() {
  *      has_capability('mod/forum:replypost',$context)
  *
  * By default checks the capabilties of the current user, but you can pass a
- * different userid. By default will return true for admin-like users who have the
- * moodle/site:doanything capability, but you can override that with the fourth argument.
+ * different userid. By default will return true for admin users, but you can override that with the fourth argument.
+ *
+ * Guest and not-logged-in users can never get any dangerous capability - that is any write capability
+ * or capabilities with XSS, config or data loss risks.
  *
  * @param string $capability the name of the capability to check. For example mod/forum:view
  * @param object $context the context to check the capability in. You normally get this with {@link get_context_instance}.
- * @param integer $userid A user id. By default (null) checks the permissions of the current user.
- * @param boolean $doanything If false, ignore the special moodle/site:doanything capability that admin-like roles have.
+ * @param integer|object $user A user id or object. By default (NULL) checks the permissions of the current user.
+ * @param boolean $doanything If false, ignores effect of admin role assignment
  * @return boolean true if the user has this capability. Otherwise false.
  */
-function has_capability($capability, $context, $userid=NULL, $doanything=true) {
+function has_capability($capability, $context, $user = NULL, $doanything=true) {
     global $USER, $CFG, $DB, $SCRIPT, $ACCESSLIB_PRIVATE;
 
     if (during_initial_install()) {
@@ -462,29 +464,36 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
         }
     }
 
+    if (strpos($capability, 'moodle/legacy:') === 0) {
+        throw new coding_exception('Legacy capabilities can not be used any more!');
+    }
+
     // the original $CONTEXT here was hiding serious errors
     // for security reasons do not reuse previous context
     if (empty($context)) {
         debugging('Incorrect context specified');
         return false;
     }
-
-/// Some sanity checks
-    if (debugging('',DEBUG_DEVELOPER)) {
-        if (!is_valid_capability($capability)) {
-            debugging('Capability "'.$capability.'" was not found! This should be fixed in code.');
-        }
-        if (!is_bool($doanything)) {
-            debugging('Capability parameter "doanything" is wierd ("'.$doanything.'"). This should be fixed in code.');
-        }
+    if (!is_bool($doanything)) {
+        throw new coding_exception('Capability parameter "doanything" is wierd ("'.$doanything.'"). This has to be fixed in code.');
     }
 
-    if (empty($userid)) { // we must accept null, 0, '0', '' etc. in $userid
-        if (empty($USER->id)) {
-            // Session not set up yet.
-            $userid = 0;
-        } else {
-            $userid = $USER->id;
+    // make sure there is a real user specified
+    if ($user === NULL) {
+        $userid = !empty($USER->id) ? $USER->id : 0;
+    } else {
+        $userid = !empty($user->id) ? $user->id : $user;
+    }
+
+    // capability must exist
+    if (!$capinfo = get_capability_info($capability)) {
+        debugging('Capability "'.$capability.'" was not found! This should be fixed in code.');
+        return false;
+    }
+    // make sure the guest account and not-logged-in users never get any risky caps no matter what the actual settings are.
+    if (($capinfo->captype === 'write') or ((int)$capinfo->riskbitmask & (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))) {
+        if (isguestuser($userid) or $userid == 0) {
+            return false;
         }
     }
 
@@ -546,6 +555,14 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
         }
     }
 
+    // Find out if user is admin - it is not possible to override the doanything in any way
+    // and it is not possible to switch to admin role either.
+    if ($doanything) {
+        if (is_siteadmin($userid)) {
+            return true;
+        }
+    }
+
     // divulge how many times we are called
     //// error_log("has_capability: id:{$context->id} path:{$context->path} userid:$userid cap:$capability");
 
@@ -561,7 +578,7 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
         //
         if ($context->contextlevel <= CONTEXT_COURSE) {
             // Course and above are always preloaded
-            return has_capability_in_accessdata($capability, $context, $USER->access, $doanything);
+            return has_capability_in_accessdata($capability, $context, $USER->access);
         }
         // Load accessdata for below-the-course contexts
         if (!path_inaccessdata($context->path,$USER->access)) {
@@ -570,15 +587,16 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
             // error_log("bt {$bt[0]['file']} {$bt[0]['line']}");
             load_subcontext($USER->id, $context, $USER->access);
         }
-        return has_capability_in_accessdata($capability, $context, $USER->access, $doanything);
+        return has_capability_in_accessdata($capability, $context, $USER->access);
     }
 
     if (!isset($ACCESSLIB_PRIVATE->accessdatabyuser[$userid])) {
         load_user_accessdata($userid);
     }
+
     if ($context->contextlevel <= CONTEXT_COURSE) {
         // Course and above are always preloaded
-        return has_capability_in_accessdata($capability, $context, $ACCESSLIB_PRIVATE->accessdatabyuser[$userid], $doanything);
+        return has_capability_in_accessdata($capability, $context, $ACCESSLIB_PRIVATE->accessdatabyuser[$userid]);
     }
     // Load accessdata for below-the-course contexts as needed
     if (!path_inaccessdata($context->path, $ACCESSLIB_PRIVATE->accessdatabyuser[$userid])) {
@@ -587,7 +605,7 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
         // error_log("bt {$bt[0]['file']} {$bt[0]['line']}");
         load_subcontext($userid, $context, $ACCESSLIB_PRIVATE->accessdatabyuser[$userid]);
     }
-    return has_capability_in_accessdata($capability, $context, $ACCESSLIB_PRIVATE->accessdatabyuser[$userid], $doanything);
+    return has_capability_in_accessdata($capability, $context, $ACCESSLIB_PRIVATE->accessdatabyuser[$userid]);
 }
 
 /**
@@ -603,8 +621,8 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
  * @see has_capability()
  * @param array $capabilities an array of capability names.
  * @param object $context the context to check the capability in. You normally get this with {@link get_context_instance}.
- * @param integer $userid A user id. By default (null) checks the permissions of the current user.
- * @param boolean $doanything If false, ignore the special moodle/site:doanything capability that admin-like roles have.
+ * @param integer $userid A user id. By default (NULL) checks the permissions of the current user.
+ * @param boolean $doanything If false, ignore effect of admin role assignment
  * @return boolean true if the user has any of these capabilities. Otherwise false.
  */
 function has_any_capability($capabilities, $context, $userid=NULL, $doanything=true) {
@@ -633,8 +651,8 @@ function has_any_capability($capabilities, $context, $userid=NULL, $doanything=t
  * @see has_capability()
  * @param array $capabilities an array of capability names.
  * @param object $context the context to check the capability in. You normally get this with {@link get_context_instance}.
- * @param integer $userid A user id. By default (null) checks the permissions of the current user.
- * @param boolean $doanything If false, ignore the special moodle/site:doanything capability that admin-like roles have.
+ * @param integer $userid A user id. By default (NULL) checks the permissions of the current user.
+ * @param boolean $doanything If false, ignore effect of admin role assignment
  * @return boolean true if the user has all of these capabilities. Otherwise false.
  */
 function has_all_capabilities($capabilities, $context, $userid=NULL, $doanything=true) {
@@ -651,101 +669,58 @@ function has_all_capabilities($capabilities, $context, $userid=NULL, $doanything
 }
 
 /**
- * Check if the user is an admin at the site level
+ * Check if the user is an admin at the site level.
  *
- * Uses 1 DB query to answer whether a user is an admin at the sitelevel.
- * It depends on DB schema >=1.7 but does not depend on the new datastructures
- * in v1.9 (context.path, or $USER->access)
+ * Please note that use of proper capabilities is always encouraged,
+ * this function is supposed to be used from core or for temporary hacks.
  *
- * Will return true if the userid has any of
- *  - moodle/site:config
- *  - moodle/legacy:admin
- *  - moodle/site:doanything
- *
- * @global object
- * @global object
- * @param   int  $userid
- * @returns bool true is user can administer server settings
+ * @param   int|object  $user_or_id user id or user object
+ * @returns bool true if user is one of the administrators, false otherwise
  */
-function is_siteadmin($userid) {
-    global $CFG, $DB;
+function is_siteadmin($user_or_id = NULL) {
+    global $CFG, $USER;
 
-    $sql = "SELECT SUM(rc.permission)
-              FROM {role_capabilities} rc
-              JOIN {context} ctx
-                   ON ctx.id=rc.contextid
-              JOIN {role_assignments} ra
-                   ON ra.roleid=rc.roleid AND ra.contextid=ctx.id
-             WHERE ctx.contextlevel=10
-                   AND ra.userid=?
-                   AND rc.capability IN (?, ?, ?)
-          GROUP BY rc.capability
-            HAVING SUM(rc.permission) > 0";
-    $params = array($userid, 'moodle/site:config', 'moodle/legacy:admin', 'moodle/site:doanything');
+    if ($user_or_id === NULL) {
+        $user_or_id = $USER;
+    }
 
-    return $DB->record_exists_sql($sql, $params);
+    if (empty($user_or_id)) {
+        return false;
+    }
+    if (!empty($user_or_id->id)) {
+        // we support
+        $userid = $user_or_id->id;
+    } else {
+        $userid = $user_or_id;
+    }
+
+    $siteadmins = explode(',', $CFG->siteadmins);
+    return in_array($userid, $siteadmins);
 }
 
 /**
- * Check whether a role is an admin at the site level
- *
- * Will return true if the userid has any of
- *  - moodle/site:config
- *  - moodle/legacy:admin
- *  - moodle/site:doanything
- *
- * @global object
- * @param integer $roleid a role id.
- * @return boolean, whether this role is an admin role.
+ * Returns true if user has at least one role assign
+ * of 'coursemanager' role (is potentially listed in some course descriptions).
+ * @param $userid
+ * @return unknown_type
  */
-function is_admin_role($roleid) {
+function has_coursemanager_role($userid) {
     global $DB;
 
+    if (empty($CFG->coursemanager)) {
+        return false;
+    }
     $sql = "SELECT 1
-              FROM {role_capabilities} rc
-              JOIN {context} ctx ON ctx.id = rc.contextid
-             WHERE ctx.contextlevel = 10
-                   AND rc.roleid = ?
-                   AND rc.capability IN (?, ?, ?)
-          GROUP BY rc.capability
-            HAVING SUM(rc.permission) > 0";
-    $params = array($roleid, 'moodle/site:config', 'moodle/legacy:admin', 'moodle/site:doanything');
-
-    return $DB->record_exists_sql($sql, $params);
-}
-
-/**
- * Returns all the roles for which is_admin_role($role->id) is true.
- *
- * @global object
- * @return array
- */
-function get_admin_roles() {
-    global $DB;
-
-    $sql = "SELECT *
-              FROM {role} r
-             WHERE EXISTS (
-                    SELECT 1
-                      FROM {role_capabilities} rc
-                      JOIN {context} ctx ON ctx.id = rc.contextid
-                     WHERE ctx.contextlevel = 10
-                           AND rc.roleid = r.id
-                           AND rc.capability IN (?, ?, ?)
-                  GROUP BY rc.capability
-                    HAVING SUM(rc.permission) > 0
-             )
-          ORDER BY r.sortorder";
-    $params = array('moodle/site:config', 'moodle/legacy:admin', 'moodle/site:doanything');
-
-    return $DB->get_records_sql($sql, $params);
+              FROM {role_assignments}
+             WHERE userid = :userid AND roleid IN ($CFG->coursemanager)";
+    return $DB->record_exists($sql, array('userid'=>$userid));
 }
 
 /**
  * @param string $path
  * @return string
  */
-function get_course_from_path ($path) {
+function get_course_from_path($path) {
     // assume that nothing is more than 1 course deep
     if (preg_match('!^(/.+)/\d+$!', $path, $matches)) {
         return $matches[1];
@@ -759,6 +734,9 @@ function get_course_from_path ($path) {
  * @return bool
  */
 function path_inaccessdata($path, $accessdata) {
+    if (empty($accessdata['loaded'])) {
+        return false;
+    }
 
     // assume that contexts hang from sys or from a course
     // this will only work well with stuff that hangs from a course
@@ -813,23 +791,12 @@ function path_inaccessdata($path, $accessdata) {
  * and then verify if user has at least one role with allow
  * and at the same time no role with prohibit.
  *
- * Incorrectly set Guest role as Default user role
- * -----------------------------------------------
- * Admins have to make sure that the "Default user role" does
- * not have 'moodle/course:view' or 'moodle/legacy:guest'!
- *
- * Incorrectly set Frontpage role
- * ------------------------------
- * Admins have to make sure that the "Frontpage role" does
- * not have 'moodle/legacy:guest'.
- *
  * @param string $capability
  * @param object $context
  * @param array $accessdata
- * @param bool $doanything
  * @return bool
  */
-function has_capability_in_accessdata($capability, $context, array $accessdata, $doanything) {
+function has_capability_in_accessdata($capability, $context, array $accessdata) {
     global $CFG;
 
     if (empty($context->id)) {
@@ -845,11 +812,6 @@ function has_capability_in_accessdata($capability, $context, array $accessdata, 
     }
     unset($contextids);
 
-    if ($doanything and strpos($capability, 'moodle/legacy:') === 0) {
-        // admins do not have any legacy capabilities
-        $doanything = false;
-    }
-
     $roles = array();
     $switchedrole = false;
 
@@ -859,7 +821,7 @@ function has_capability_in_accessdata($capability, $context, array $accessdata, 
         foreach ($paths as $path) {
             if (isset($accessdata['rsw'][$path])) {
                 // Found a switchrole assignment - check for that role _plus_ the default user role
-                $roles = array($accessdata['rsw'][$path]=>null, $CFG->defaultuserroleid=>null);
+                $roles = array($accessdata['rsw'][$path]=>NULL, $CFG->defaultuserroleid=>NULL);
                 $switchedrole = true;
                 break;
             }
@@ -871,23 +833,8 @@ function has_capability_in_accessdata($capability, $context, array $accessdata, 
         foreach ($paths as $path) {
             if (isset($accessdata['ra'][$path])) {
                 foreach ($accessdata['ra'][$path] as $roleid) {
-                    $roles[$roleid] = null;
+                    $roles[$roleid] = NULL;
                 }
-            }
-        }
-
-        // Find out if user is admin - it is not possible to override the doanything in any way
-        // and it is not possible to switch to admin role either.
-        if ($doanything or $capability === 'moodle/site:doanything') {
-            $systempath = '/'.SYSCONTEXTID;
-            foreach ($roles as $roleid=>$ignored) {
-                if (isset($accessdata['rdef']["{$systempath}:$roleid"]['moodle/site:doanything']) and $accessdata['rdef']["{$systempath}:$roleid"]['moodle/site:doanything'] == CAP_ALLOW) {
-                    return true;
-                }
-            }
-            if ($capability === 'moodle/site:doanything') {
-                // do anything can not be overridden, prevented or prohibited
-                return false;
             }
         }
     }
@@ -958,8 +905,8 @@ function aggregate_roles_from_accessdata($context, $accessdata) {
  *
  * @param string $capability the name of the capability to check. For example mod/forum:view
  * @param object $context the context to check the capability in. You normally get this with {@link get_context_instance}.
- * @param integer $userid A user id. By default (null) checks the permissions of the current user.
- * @param bool $doanything If false, ignore the special moodle/site:doanything capability that admin-like roles have.
+ * @param integer $userid A user id. By default (NULL) checks the permissions of the current user.
+ * @param bool $doanything If false, ignore effect of admin role assignment
  * @param string $errorstring The error string to to user. Defaults to 'nopermissions'.
  * @param string $stringfile The language file to load the error string from. Defaults to 'error'.
  * @return void terminates with an error if the user does not have the given capability.
@@ -1015,13 +962,13 @@ function require_capability($capability, $context, $userid = NULL, $doanything =
  * @global object
  * @param string $capability - name of the capability
  * @param array  $accessdata - accessdata session array
- * @param bool   $doanything - if false, ignore do anything
+ * @param bool   $doanything_ignored - admin roles are completely ignored here
  * @param string $sort - sorting fields - prefix each fieldname with "c."
  * @param array  $fields - additional fields you are interested in...
  * @param int    $limit  - set if you want to limit the number of courses
  * @return array $courses - ordered array of course objects - see notes above
  */
-function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='c.sortorder ASC', $fields=NULL, $limit=0) {
+function get_user_courses_bycap($userid, $cap, $accessdata, $doanything_ignored, $sort='c.sortorder ASC', $fields=NULL, $limit=0) {
 
     global $CFG, $DB;
 
@@ -1047,7 +994,7 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
     }
 
     $sysctx = get_context_instance(CONTEXT_SYSTEM);
-    if (has_capability_in_accessdata($cap, $sysctx, $accessdata, $doanything)) {
+    if (has_capability_in_accessdata($cap, $sysctx, $accessdata)) {
         //
         // Apparently the user has the cap sitewide, so walk *every* course
         // (the cap checks are moderately fast, but this moves massive bandwidth w the db)
@@ -1080,7 +1027,7 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
         $catpaths = array();
         foreach ($rs as $catctx) {
             if ($catctx->path != ''
-                && has_capability_in_accessdata($cap, $catctx, $accessdata, $doanything)) {
+                && has_capability_in_accessdata($cap, $catctx, $accessdata)) {
                 $catpaths[] = $catctx->path;
             }
         }
@@ -1096,12 +1043,6 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
         }
         unset($catpaths);
 
-        $capany = '';
-        if ($doanything) {
-            $capany = " OR rc.capability=:doany";
-            $params['doany'] = 'moodle/site:doanything';
-        }
-
         /// UNION 3 queries:
         /// - user role assignments in courses
         /// - user capability (override - any status) in courses
@@ -1109,11 +1050,11 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
         /// Enclosing the 3-UNION into an inline_view to avoid column names conflict and making the ORDER BY cross-db
         /// and to allow selection of TEXT columns in the query (MSSQL and Oracle limitation). MDL-16209
         $sql = "
-            SELECT $coursefields, ctxid, ctxpath, ctxdepth, ctxlevel, categorypath
+            SELECT $coursefields, ctxid, ctxpath, ctxdepth, ctxlevel, ctxinstance, categorypath
               FROM (
                     SELECT c.id,
                            ctx.id AS ctxid, ctx.path AS ctxpath,
-                           ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel,
+                           ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel, ctx.instanceid AS ctxinstance,
                            cc.path AS categorypath
                     FROM {course} c
                     JOIN {course_categories} cc
@@ -1125,7 +1066,7 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
                     UNION
                     SELECT c.id,
                            ctx.id AS ctxid, ctx.path AS ctxpath,
-                           ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel,
+                           ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel, ctx.instanceid AS ctxinstance,
                            cc.path AS categorypath
                     FROM {course} c
                     JOIN {course_categories} cc
@@ -1133,14 +1074,14 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
                     JOIN {context} ctx
                       ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
                     JOIN {role_capabilities} rc
-                      ON (rc.contextid=ctx.id AND (rc.capability=:cap $capany)) ";
+                      ON (rc.contextid=ctx.id AND (rc.capability=:cap)) ";
 
         if (!empty($catclause)) { /// If we have found the right in categories, add child courses here too
             $sql .= "
                     UNION
                     SELECT c.id,
                            ctx.id AS ctxid, ctx.path AS ctxpath,
-                           ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel,
+                           ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel, ctx.instanceid AS ctxinstance,
                            cc.path AS categorypath
                     FROM {course} c
                     JOIN {course_categories} cc
@@ -1171,9 +1112,10 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
     if ($rs) {
         foreach ($rs as $c) {
             // build the context obj
-            $c = make_context_subobj($c);
+            context_instance_preload($c);
+            $context = get_context_instance(CONTEXT_COURSE, $c->id);
 
-            if (has_capability_in_accessdata($cap, $c->context, $accessdata, $doanything)) {
+            if (has_capability_in_accessdata($cap, $context, $accessdata)) {
                 if ($limit > 0 && $cc >= $limit) {
                     break;
                 }
@@ -1489,7 +1431,7 @@ function load_subcontext($userid, $context, &$accessdata) {
  * @global object
  * @param integer $roleid the id of the user
  * @param object $context needs path!
- * @param array $accessdata accessdata array null by default
+ * @param array $accessdata accessdata array NULL by default
  * @return array
  */
 function get_role_access_bycontext($roleid, $context, $accessdata=NULL) {
@@ -1850,44 +1792,21 @@ function check_enrolment_plugins(&$user) {
 }
 
 /**
- * Returns array of all legacy roles.
+ * Returns array of all role archetypes.
  *
  * @return array
  */
-function get_legacy_roles() {
+function get_role_archetypes() {
     return array(
-        'admin'          => 'moodle/legacy:admin',
-        'coursecreator'  => 'moodle/legacy:coursecreator',
-        'editingteacher' => 'moodle/legacy:editingteacher',
-        'teacher'        => 'moodle/legacy:teacher',
-        'student'        => 'moodle/legacy:student',
-        'guest'          => 'moodle/legacy:guest',
-        'user'           => 'moodle/legacy:user'
+        'manager'        => 'manager',
+        'coursecreator'  => 'coursecreator',
+        'editingteacher' => 'editingteacher',
+        'teacher'        => 'teacher',
+        'student'        => 'student',
+        'guest'          => 'guest',
+        'user'           => 'user',
+        'frontpage'      => 'frontpage'
     );
-}
-
-/**
- * @param int roleid
- * @return string
- */
-function get_legacy_type($roleid) {
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-    $legacyroles = get_legacy_roles();
-
-    $result = '';
-    foreach($legacyroles as $ltype=>$lcap) {
-        $localoverride = get_local_override($roleid, $sitecontext->id, $lcap);
-        if (!empty($localoverride->permission) and $localoverride->permission == CAP_ALLOW) {
-            //choose first selected legacy capability - reset the rest
-            if (empty($result)) {
-                $result = $ltype;
-            } else {
-                unassign_capability($lcap, $roleid);
-            }
-        }
-    }
-
-    return $result;
 }
 
 /**
@@ -1901,22 +1820,26 @@ function get_legacy_type($roleid) {
  *                      'teacher' => CAP_ALLOW,
  *                      'editingteacher' => CAP_ALLOW,
  *                      'coursecreator' => CAP_ALLOW,
- *                      'admin' => CAP_ALLOW
+ *                      'manager' => CAP_ALLOW
  * @return boolean success or failure.
  */
 function assign_legacy_capabilities($capability, $legacyperms) {
 
-    $legacyroles = get_legacy_roles();
+    $archetypes = get_role_archetypes();
 
     foreach ($legacyperms as $type => $perm) {
 
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        if ($type === 'admin') {
+            debugging('Legacy type admin in access.php was renamed to manager, please update the code.');
+            $type = 'manager';
+        }
 
-        if (!array_key_exists($type, $legacyroles)) {
+        if (!array_key_exists($type, $archetypes)) {
             print_error('invalidlegacy', '', '', $type);
         }
 
-        if ($roles = get_roles_with_capability($legacyroles[$type], CAP_ALLOW)) {
+        if ($roles = get_archetype_roles($type)) {
             foreach ($roles as $role) {
                 // Assign a site level capability.
                 if (!assign_capability($capability, $perm, $role->id, $systemcontext->id)) {
@@ -1926,24 +1849,6 @@ function assign_legacy_capabilities($capability, $legacyperms) {
         }
     }
     return true;
-}
-
-
-/**
- * Checks to see if a capability is one of the special capabilities
- *
- * Checks to see if a capability is one of the special capabilities
- *      (either a legacy capability, or moodle/site:doanything).
- *
- * @param string $capabilityname the capability name, e.g. mod/forum:view.
- * @return boolean whether this is one of the special capabilities.
- */
-function is_legacy($capabilityname) {
-    if ($capabilityname == 'moodle/site:doanything' || strpos($capabilityname, 'moodle/legacy') === 0) {
-        return true;
-    } else {
-        return false;
-    }
 }
 
 /**
@@ -1969,9 +1874,10 @@ function is_safe_capability($capability) {
  * @global object
  * @param int $contextlevel
  * @param int $instanceid
+ * @param int $strictness
  * @return object newly created context
  */
-function create_context($contextlevel, $instanceid) {
+function create_context($contextlevel, $instanceid, $strictness=IGNORE_MISSING) {
 
     global $CFG, $DB;
 
@@ -1989,7 +1895,7 @@ function create_context($contextlevel, $instanceid) {
     $basedepth = 1;
 
     $result = true;
-    $error_message = null;
+    $error_message = NULL;
 
     switch ($contextlevel) {
         case CONTEXT_COURSECAT:
@@ -2002,7 +1908,7 @@ function create_context($contextlevel, $instanceid) {
             if ($p = $DB->get_record_sql($sql, $params)) {
                 $basepath  = $p->path;
                 $basedepth = $p->depth;
-            } else if ($category = $DB->get_record('course_categories', array('id'=>$instanceid))) {
+            } else if ($category = $DB->get_record('course_categories', array('id'=>$instanceid), '*', $strictness)) {
                 if (empty($category->parent)) {
                     // ok - this is a top category
                 } else if ($parent = get_context_instance(CONTEXT_COURSECAT, $category->parent)) {
@@ -2010,7 +1916,7 @@ function create_context($contextlevel, $instanceid) {
                     $basedepth = $parent->depth;
                 } else {
                     // wrong parent category - no big deal, this can be fixed later
-                    $basepath  = null;
+                    $basepath  = NULL;
                     $basedepth = 0;
                 }
             } else {
@@ -2030,7 +1936,7 @@ function create_context($contextlevel, $instanceid) {
             if ($p = $DB->get_record_sql($sql, $params)) {
                 $basepath  = $p->path;
                 $basedepth = $p->depth;
-            } else if ($course = $DB->get_record('course', array('id'=>$instanceid))) {
+            } else if ($course = $DB->get_record('course', array('id'=>$instanceid), '*', $strictness)) {
                 if ($course->id == SITEID) {
                     //ok - no parent category
                 } else if ($parent = get_context_instance(CONTEXT_COURSECAT, $course->category)) {
@@ -2038,7 +1944,7 @@ function create_context($contextlevel, $instanceid) {
                     $basedepth = $parent->depth;
                 } else {
                     // wrong parent category of course - no big deal, this can be fixed later
-                    $basepath  = null;
+                    $basepath  = NULL;
                     $basedepth = 0;
                 }
             } else if ($instanceid == SITEID) {
@@ -2061,8 +1967,8 @@ function create_context($contextlevel, $instanceid) {
             if ($p = $DB->get_record_sql($sql, $params)) {
                 $basepath  = $p->path;
                 $basedepth = $p->depth;
-            } else if ($cm = $DB->get_record('course_modules', array('id'=>$instanceid))) {
-                if ($parent = get_context_instance(CONTEXT_COURSE, $cm->course)) {
+            } else if ($cm = $DB->get_record('course_modules', array('id'=>$instanceid), '*', $strictness)) {
+                if ($parent = get_context_instance(CONTEXT_COURSE, $cm->course, $strictness)) {
                     $basepath  = $parent->path;
                     $basedepth = $parent->depth;
                 } else {
@@ -2083,7 +1989,7 @@ function create_context($contextlevel, $instanceid) {
                       JOIN {block_instances} bi ON (bi.parentcontextid=ctx.id)
                      WHERE bi.id = ?";
             $params = array($instanceid, CONTEXT_COURSE);
-            if ($p = $DB->get_record_sql($sql, $params)) {
+            if ($p = $DB->get_record_sql($sql, $params, '*', $strictness)) {
                 $basepath  = $p->path;
                 $basedepth = $p->depth;
             } else {
@@ -2102,24 +2008,24 @@ function create_context($contextlevel, $instanceid) {
         $context->depth = $basedepth+1;
     }
 
-    if ($result and $id = $DB->insert_record('context', $context)) {
-        // can't set the full path till we know the id!
-        if ($basedepth != 0 and !empty($basepath)) {
-            $DB->set_field('context', 'path', $basepath.'/'. $id, array('id'=>$id));
-        }
-        return get_context_instance_by_id($id);
-
-    } else {
+    if (!$result) {
         debugging('Error: could not insert new context level "'.
                   s($contextlevel).'", instance "'.
                   s($instanceid).'". ' . $error_message);
 
         return false;
     }
+
+    $id = $DB->insert_record('context', $context);
+    // can't set the full path till we know the id!
+    if ($basedepth != 0 and !empty($basepath)) {
+        $DB->set_field('context', 'path', $basepath.'/'. $id, array('id'=>$id));
+    }
+    return get_context_instance_by_id($id);
 }
 
 /**
- * Returns system context or null if can not be created yet.
+ * Returns system context or NULL if can not be created yet.
  *
  * @todo can not use get_record() because we do not know if query failed :-(
  * switch to get_record() later
@@ -2127,7 +2033,7 @@ function create_context($contextlevel, $instanceid) {
  * @global object
  * @global object
  * @param bool $cache use caching
- * @return mixed system context or null
+ * @return mixed system context or NULL
  */
 function get_system_context($cache=true) {
     global $DB, $ACCESSLIB_PRIVATE;
@@ -2146,7 +2052,7 @@ function get_system_context($cache=true) {
         $context = $DB->get_record('context', array('contextlevel'=>CONTEXT_SYSTEM));
     } catch (dml_exception $e) {
         //table does not exist yet, sorry
-        return null;
+        return NULL;
     }
 
     if (!$context) {
@@ -2160,7 +2066,7 @@ function get_system_context($cache=true) {
             $context->id = $DB->insert_record('context', $context);
         } catch (dml_exception $e) {
             // can not create context yet, sorry
-            return null;
+            return NULL;
         }
     }
 
@@ -2227,7 +2133,7 @@ function delete_context($contextlevel, $instanceid) {
  * @param bool $buildpaths update paths and depths
  * @return void
  */
-function create_contexts($contextlevel=null, $buildpaths=true) {
+function create_contexts($contextlevel=NULL, $buildpaths=true) {
     global $DB;
 
     //make sure system context exists
@@ -2404,9 +2310,11 @@ function preload_course_contexts($courseid) {
  * @param integer $level The context level, for example CONTEXT_COURSE, or CONTEXT_MODULE.
  * @param integer $instance The instance id. For $level = CONTEXT_COURSE, this would be $course->id,
  *      for $level = CONTEXT_MODULE, this would be $cm->id. And so on. Defaults to 0
+ * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+ *      MUST_EXIST means throw exception if no record or multiple records found
  * @return object The context object.
  */
-function get_context_instance($contextlevel, $instance=0) {
+function get_context_instance($contextlevel, $instance=0, $strictness=IGNORE_MISSING) {
 
     global $DB, $ACCESSLIB_PRIVATE;
     static $allowed_contexts = array(CONTEXT_SYSTEM, CONTEXT_USER, CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_MODULE, CONTEXT_BLOCK);
@@ -2439,7 +2347,7 @@ function get_context_instance($contextlevel, $instance=0) {
 
     /// Get it from the database, or create it
         if (!$context = $DB->get_record('context', array('contextlevel'=>$contextlevel, 'instanceid'=>$instance))) {
-            $context = create_context($contextlevel, $instance);
+            $context = create_context($contextlevel, $instance, $strictness);
         }
 
     /// Only add to cache if context isn't empty.
@@ -2544,8 +2452,8 @@ function get_context_info_array($contextid) {
     global $DB;
 
     $context = get_context_instance_by_id($contextid, MUST_EXIST);
-    $course  = null;
-    $cm      = null;
+    $course  = NULL;
+    $cm      = NULL;
 
     if ($context->contextlevel == CONTEXT_COURSE) {
         $course = $DB->get_record('course', array('id'=>$context->instanceid), '*', MUST_EXIST);
@@ -2582,11 +2490,21 @@ function get_context_info_array($contextid) {
  * @param string $name role name
  * @param string $shortname role short name
  * @param string $description role description
- * @param string $legacy optional legacy capability
+ * @param string $archetype
  * @return mixed id or dml_exception
  */
-function create_role($name, $shortname, $description, $legacy='') {
+function create_role($name, $shortname, $description, $archetype='') {
     global $DB;
+
+    if (strpos($archetype, 'moodle/legacy:') !== false) {
+        throw new coding_exception('Use new role archetype parameter in create_role() instead of old legacy capabilities.');
+    }
+
+    // verify role archetype actually exists
+    $archetypes = get_role_archetypes();
+    if (empty($archetypes[$archetype])) {
+        $archetype = '';
+    }
 
     // Get the system context.
     $context = get_context_instance(CONTEXT_SYSTEM);
@@ -2596,6 +2514,7 @@ function create_role($name, $shortname, $description, $legacy='') {
     $role->name        = $name;
     $role->shortname   = $shortname;
     $role->description = $description;
+    $role->archetype   = $archetype;
 
     //find free sortorder number
     $role->sortorder = $DB->get_field('role', 'MAX(sortorder) + 1', array());
@@ -2604,83 +2523,39 @@ function create_role($name, $shortname, $description, $legacy='') {
     }
     $id = $DB->insert_record('role', $role);
 
-    if ($legacy) {
-        assign_capability($legacy, CAP_ALLOW, $id, $context->id);
-    }
-
     return $id;
 }
 
 /**
  * Function that deletes a role and cleanups up after it
  *
- * @global object
- * @global object
  * @param int $roleid id of role to delete
- * @return bool
+ * @return bool lways true
  */
 function delete_role($roleid) {
     global $CFG, $DB;
-    $success = true;
 
-// mdl 10149, check if this is the last active admin role
-// if we make the admin role not deletable then this part can go
+    // first unssign all users
+    role_unassign($roleid);
 
-    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    // cleanup all references to this role, ignore errors
+    $DB->delete_records('role_capabilities',   array('roleid'=>$roleid));
+    $DB->delete_records('role_allow_assign',   array('roleid'=>$roleid));
+    $DB->delete_records('role_allow_assign',   array('allowassign'=>$roleid));
+    $DB->delete_records('role_allow_override', array('roleid'=>$roleid));
+    $DB->delete_records('role_allow_override', array('allowoverride'=>$roleid));
+    $DB->delete_records('role_names',          array('roleid'=>$roleid));
+    $DB->delete_records('role_context_levels', array('roleid'=>$roleid));
 
-    if ($role = $DB->get_record('role', array('id'=>$roleid))) {
-        if ($DB->record_exists('role_capabilities', array('contextid'=>$systemcontext->id, 'roleid'=>$roleid, 'capability'=>'moodle/site:doanything'))) {
-            // deleting an admin role
-            $status = false;
-            if ($adminroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $systemcontext)) {
-                foreach ($adminroles as $adminrole) {
-                    if ($adminrole->id != $roleid) {
-                        // some other admin role
-                        if ($DB->record_exists('role_assignments', array('roleid'=>$adminrole->id, 'contextid'=>$systemcontext->id))) {
-                            // found another admin role with at least 1 user assigned
-                            $status = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            if ($status !== true) {
-                print_error('cannotdeleterolenoadmin', 'access');
-            }
-        }
-    }
-
-// first unssign all users
-    if (!role_unassign($roleid)) {
-        debugging("Error while unassigning all users from role with ID $roleid!");
-        $success = false;
-    }
-
-// cleanup all references to this role, ignore errors
-    if ($success) {
-        $DB->delete_records('role_capabilities',   array('roleid'=>$roleid));
-        $DB->delete_records('role_allow_assign',   array('roleid'=>$roleid));
-        $DB->delete_records('role_allow_assign',   array('allowassign'=>$roleid));
-        $DB->delete_records('role_allow_override', array('roleid'=>$roleid));
-        $DB->delete_records('role_allow_override', array('allowoverride'=>$roleid));
-        $DB->delete_records('role_names',          array('roleid'=>$roleid));
-        $DB->delete_records('role_context_levels', array('roleid'=>$roleid));
-    }
-
-// finally delete the role itself
+    // finally delete the role itself
     // get this before the name is gone for logging
     $rolename = $DB->get_field('role', 'name', array('id'=>$roleid));
 
-    if ($success and !$DB->delete_records('role', array('id'=>$roleid))) {
-        debugging("Could not delete role record with ID $roleid!");
-        $success = false;
-    }
+    $DB->delete_records('role', array('id'=>$roleid));
 
-    if ($success) {
-        add_to_log(SITEID, 'role', 'delete', 'admin/roles/action=delete&roleid='.$roleid, $rolename, '');
-    }
+    add_to_log(SITEID, 'role', 'delete', 'admin/roles/action=delete&roleid='.$roleid, $rolename, '');
 
-    return $success;
+    return true;
 }
 
 /**
@@ -2696,7 +2571,6 @@ function delete_role($roleid) {
  * @return bool
  */
 function assign_capability($capability, $permission, $roleid, $contextid, $overwrite=false) {
-
     global $USER, $DB;
 
     if (empty($permission) || $permission == CAP_INHERIT) { // if permission is not set
@@ -2720,11 +2594,12 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
 
     if ($existing) {
         $cap->id = $existing->id;
-        return $DB->update_record('role_capabilities', $cap);
+        $DB->update_record('role_capabilities', $cap);
     } else {
         $c = $DB->get_record('context', array('id'=>$contextid));
-        return $DB->insert_record('role_capabilities', $cap);
+        $DB->insert_record('role_capabilities', $cap);
     }
+    return true;
 }
 
 /**
@@ -2738,15 +2613,13 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
 function unassign_capability($capability, $roleid, $contextid=NULL) {
     global $DB;
 
-    if (isset($contextid)) {
+    if (!empty($contextid)) {
         // delete from context rel, if this is the last override in this context
-        $status = $DB->delete_records('role_capabilities', array('capability'=>$capability,
-                'roleid'=>$roleid, 'contextid'=>$contextid));
+        $DB->delete_records('role_capabilities', array('capability'=>$capability, 'roleid'=>$roleid, 'contextid'=>$contextid));
     } else {
-        $status = $DB->delete_records('role_capabilities', array('capability'=>$capability,
-                'roleid'=>$roleid));
+        $DB->delete_records('role_capabilities', array('capability'=>$capability, 'roleid'=>$roleid));
     }
-    return $status;
+    return true;
 }
 
 
@@ -2759,13 +2632,12 @@ function unassign_capability($capability, $roleid, $contextid=NULL) {
  * @global object
  * @global object
  * @param string $capability - capability name (string)
- * @param null $permission - optional, the permission defined for this capability
+ * @param string $permission - optional, the permission defined for this capability
  *                      either CAP_ALLOW, CAP_PREVENT or CAP_PROHIBIT. Defaults to NULL
  * @param object $contect
  * @return mixed array or role objects
  */
-function get_roles_with_capability($capability, $permission=NULL, $context='') {
-
+function get_roles_with_capability($capability, $permission=NULL, $context=NULL) {
     global $CFG, $DB;
 
     $params = array();
@@ -2802,21 +2674,18 @@ function get_roles_with_capability($capability, $permission=NULL, $context='') {
 /**
  * This function makes a role-assignment (a role for a user or group in a particular context)
  *
- * @global object
- * @global object
- * @global object
  * @param int $roleid the role of the id
  * @param int $userid userid
  * @param int $groupid group id
  * @param int $contextid id of the context
  * @param int $timestart time this assignment becomes effective defaults to 0
  * @param int $timeend time this assignemnt ceases to be effective defaults to 0
- * @param int $hidden defaults to 0
+ * @param int $hidden_ignored - use roels with moodle/course:view capability or enrolemnt instead
  * @param string $enrol defaults to 'manual'
  * @param string $timemodified defaults to ''
  * @return int new id of the assigment
  */
-function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $timeend=0, $hidden=0, $enrol='manual',$timemodified='') {
+function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $timeend=0, $hidden_ignored=0, $enrol='manual',$timemodified='') {
     global $USER, $CFG, $DB;
 
 /// Do some data validation
@@ -2867,7 +2736,6 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         $ra->roleid = $roleid;
         $ra->contextid = $context->id;
         $ra->userid = $userid;
-        $ra->hidden = $hidden;
         $ra->enrol = $enrol;
     /// Always round timestart downto 100 secs to help DBs to use their own caching algorithms
     /// by repeating queries with the same exact parameters in a 100 secs time window
@@ -2880,7 +2748,6 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
 
     } else {                      // We already have one, just update it
         $ra->id = $ra->id;
-        $ra->hidden = $hidden;
         $ra->enrol = $enrol;
     /// Always round timestart downto 100 secs to help DBs to use their own caching algorithms
     /// by repeating queries with the same exact parameters in a 100 secs time window
@@ -2944,8 +2811,6 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NU
     global $USER, $CFG, $DB;
     require_once($CFG->dirroot.'/group/lib.php');
 
-    $success = true;
-
     $args = array('roleid', 'userid', 'groupid', 'contextid');
     $select = array();
     $params = array();
@@ -2965,16 +2830,11 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NU
         if ($ras = $DB->get_records_select('role_assignments', implode(' AND ', $select), $params)) {
             $mods = get_plugin_list('mod');
             foreach($ras as $ra) {
-                $fireevent = false;
                 /// infinite loop protection when deleting recursively
                 if (!$ra = $DB->get_record('role_assignments', array('id'=>$ra->id))) {
                     continue;
                 }
-                if ($DB->delete_records('role_assignments', array('id'=>$ra->id))) {
-                    $fireevent = true;
-                } else {
-                    $success = false;
-                }
+                $DB->delete_records('role_assignments', array('id'=>$ra->id));
 
                 if (!$context = get_context_instance_by_id($ra->contextid)) {
                     // strange error, not much to do
@@ -3007,7 +2867,7 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NU
                     // cleanup leftover course groups/subscriptions etc when user has
                     // no capability to view course
                     // this may be slow, but this is the proper way of doing it
-                    if (!has_capability('moodle/course:view', $context, $ra->userid)) {
+                    if (!has_capability('moodle/course:participate', $context, $ra->userid)) {
                         // remove from groups
                         groups_delete_group_members($context->instanceid, $ra->userid);
 
@@ -3023,14 +2883,12 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NU
                     }
                 }
 
-                if ($fireevent) {
-                    events_trigger('role_unassigned', $ra);
-                }
+                events_trigger('role_unassigned', $ra);
             }
         }
     }
 
-    return $success;
+    return true;
 }
 
 /**
@@ -3078,6 +2936,410 @@ function enrol_into_course($course, $user, $enrol) {
 }
 
 /**
+ * Determines if a user is currently logged in
+ *
+ * @return bool
+ */
+function isloggedin() {
+    global $USER;
+
+    return (!empty($USER->id));
+}
+
+/**
+ * Determines if a user is logged in as real guest user with username 'guest'.
+ *
+ * @param int $user mixed user object or id, $USER if not specified
+ * @return bool true if user is the real guest user, false if not logged in or other user
+ */
+function isguestuser($user = NULL) {
+    global $USER, $DB, $CFG;
+
+    // make sure we have the user id cached in config table, because we are going to use it a lot
+    if (empty($CFG->siteguest)) {
+        if (!$guestid = $DB->get_field('user', 'id', array('username'=>'guest', 'mnethostid'=>$CFG->mnet_localhost_id))) {
+            // guest does not exist yet, weird
+            return false;
+        }
+        set_config('siteguest', $guestid);
+    }
+    if ($user === NULL) {
+        $user = $USER;
+    }
+
+    if ($user === NULL) {
+        // happens when setting the $USER
+        return false;
+
+    } else if (is_numeric($user)) {
+        return ($CFG->siteguest == $user);
+
+    } else if (is_object($user)) {
+        if (empty($user->id)) {
+            return false; // not logged in means is not be guest
+        } else {
+            return ($CFG->siteguest == $user->id);
+        }
+
+    } else {
+        throw new coding_exception('Invalid user parameter supplied for isguestuser() function!');
+    }
+}
+
+/**
+ * Does user have a (temporary or real) guest access to course?
+ *
+ * @param object $context
+ * @param object|int $user
+ * @return bool
+ */
+function is_guest($context, $user = NULL) {
+    // first find the course context
+    $coursecontext = get_course_context($context);
+
+    // make sure there is a real user specified
+    if ($user === NULL) {
+        $userid = !empty($USER->id) ? $USER->id : 0;
+    } else {
+        $userid = !empty($user->id) ? $user->id : $user;
+    }
+
+    if (isguestuser($userid)) {
+        // can not inspect or be enrolled
+        return true;
+    }
+
+    if (has_capability('moodle/course:view', $coursecontext, $user)) {
+        // viewing users appear out of nowhere, they are neither guests nor participants
+        return false;
+    }
+
+    if (has_capability('moodle/course:participate', $coursecontext, $userid, false)) {
+        return false;
+    }
+
+    return true;
+}
+
+
+/**
+ * Returns true if user has course:inspect capability in course,
+ * this is intended for admins, managers (aka small admins), inspectors, etc.
+ *
+ * @param object $context
+ * @param int|object $user, if NULL $USER is used
+ * @param string $withcapability extra capability name
+ * @return bool
+ */
+function is_viewing($context, $user = NULL, $withcapability = '') {
+    global $USER;
+
+    // first find the course context
+    $coursecontext = get_course_context($context);
+
+    if (isguestuser($user)) {
+        // can not inspect
+        return true;
+    }
+
+    if (!has_capability('moodle/course:view', $coursecontext, $user)) {
+        // admins are allowed to inspect courses
+        return false;
+    }
+
+    if ($withcapability and !has_capability($withcapability, $context, $user)) {
+        // site admins always have the capability, but the enrolment above blocks
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Returns true if user is enrolled (is participating) in course
+ * this is intended for students and teachers.
+ *
+ * @param object $context
+ * @param int|object $user, if NULL $USER is used, oherwise user object or id expected
+ * @param string $withcapability extra capability name
+ * @return bool
+ */
+function is_enrolled($context, $user = NULL, $withcapability = '') {
+    global $USER;
+
+    // first find the course context
+    $coursecontext = get_course_context($context);
+
+    // make sure there is a real user specified
+    if ($user === NULL) {
+        $userid = !empty($USER->id) ? $USER->id : 0;
+    } else {
+        $userid = !empty($user->id) ? $user->id : $user;
+    }
+
+    if (empty($userid)) {
+        // not-logged-in!
+        return false;
+    } else if (isguestuser($userid)) {
+        // guest account can not be enrolled anywhere
+        return false;
+    }
+
+    if ($coursecontext->instanceid != SITEID and !has_capability('moodle/course:participate', $coursecontext, $userid, false)) {
+        // admins are not enrolled, everybody is "enrolled" in the frontpage course
+        return false;
+    }
+
+    if ($withcapability and !has_capability($withcapability, $context, $userid)) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Returns array with sql code and parameters returning all ids
+ * of users enrolled into course.
+ * @param object $context
+ * @param string $withcapability
+ * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+ * @param string $prefix used for alias of user table, parameter names and in aliases of other used tables
+ * @return array list($sql, $params)
+ */
+function get_enrolled_sql($context, $withcapability = '', $groupid = 0, $prefix = 'eu') {
+    global $DB;
+
+    if ($context->contextlevel < CONTEXT_COURSE) {
+        throw new coding_exception('get_enrolled_sql() expects course context and bellow!');
+    }
+
+    // first find the course context
+    if ($context->contextlevel == CONTEXT_COURSE) {
+        $coursecontext = $context;
+
+    } else if ($context->contextlevel == CONTEXT_MODULE) {
+        $coursecontext = get_context_instance_by_id(get_parent_contextid($context, MUST_EXIST));
+
+    } else if ($context->contextlevel == CONTEXT_BLOCK) {
+        $parentcontext = get_context_instance_by_id(get_parent_contextid($context, MUST_EXIST));
+        if ($parentcontext->contextlevel == CONTEXT_COURSE) {
+            $coursecontext = $parentcontext;
+        } else if ($parentcontext->contextlevel == CONTEXT_MODULE) {
+            $coursecontext = get_context_instance_by_id(get_parent_contextid($parentcontext, MUST_EXIST));
+        } else {
+            throw new coding_exception('Invalid context supplied to get_enrolled_sql()!');
+        }
+
+    } else {
+        throw new coding_exception('Invalid context supplied to get_enrolled_sql()!');
+    }
+
+    list($contextids, $contextpaths) = get_context_info_list($context);
+    list($coursecontextids, $coursecontextpaths) = get_context_info_list($coursecontext);
+
+    // get all relevant capability info for all roles
+    if ($withcapability) {
+        list($incontexts, $params) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'con00');
+        $incaps = "IN (:participate, :withcap)";
+        $params['participate'] = 'moodle/course:participate';
+        $params['withcap']     = $withcapability;
+    } else {
+        list($incontexts, $params) = $DB->get_in_or_equal($coursecontextids, SQL_PARAMS_NAMED, 'con00');
+        $incaps = "= :participate";
+        $params['participate'] = 'moodle/course:participate';
+    }
+    $defs = array();
+    $sql = "SELECT rc.id, rc.roleid, rc.permission, rc.capability, ctx.path
+              FROM {role_capabilities} rc
+              JOIN {context} ctx on rc.contextid = ctx.id
+             WHERE rc.contextid $incontexts AND rc.capability $incaps";
+    $rcs = $DB->get_records_sql($sql, $params);
+    foreach ($rcs as $rc) {
+        $defs[$rc->capability][$rc->path][$rc->roleid] = $rc->permission;
+    }
+
+    $courseaccess = array();
+    if (!empty($defs['moodle/course:participate'])) {
+        foreach ($coursecontextpaths as $path) {
+            if (empty($defs['moodle/course:participate'][$path])) {
+                continue;
+            }
+
+            foreach($defs['moodle/course:participate'][$path] as $roleid => $perm) {
+                if ($perm == CAP_PROHIBIT) {
+                    $courseaccess[$roleid] = CAP_PROHIBIT;
+                    continue;
+                }
+                if (!isset($courseaccess[$roleid])) {
+                    $courseaccess[$roleid] = (int)$perm;
+                }
+            }
+        }
+    }
+
+    $access = array();
+    if (!empty($defs[$withcapability])) {
+        foreach ($contextpaths as $path) {
+            if (empty($defs[$withcapability][$path])) {
+                continue;
+            }
+            foreach($defs[$withcapability][$path] as $roleid => $perm) {
+                if ($perm == CAP_PROHIBIT) {
+                    $access[$roleid] = CAP_PROHIBIT;
+                    continue;
+                }
+                if (!isset($access[$roleid])) {
+                    $access[$roleid] = (int)$perm;
+                }
+            }
+        }
+    }
+
+    unset($defs);
+
+    // make lists of roles that are needed and prohibited
+    $courseneeded     = array(); // one of these is enough
+    $courseprohibited = array(); // must not have any of these
+    foreach ($courseaccess as $roleid => $perm) {
+        if ($perm == CAP_PROHIBIT) {
+            unset($courseneeded[$roleid]);
+            $courseprohibited[$roleid] = true;
+        } else if ($perm == CAP_ALLOW and empty($courseprohibited[$roleid])) {
+            $courseneeded[$roleid] = true;
+        }
+    }
+    $needed     = array(); // one of these is enough
+    $prohibited = array(); // must not have any of these
+    if ($withcapability) {
+        foreach ($access as $roleid => $perm) {
+            if ($perm == CAP_PROHIBIT) {
+                unset($needed[$roleid]);
+                $prohibited[$roleid] = true;
+            } else if ($perm == CAP_ALLOW and empty($prohibited[$roleid])) {
+                $needed[$roleid] = true;
+            }
+        }
+    }
+
+    $isfrontpage = ($coursecontext->instanceid == SITEID);
+
+    $defaultuserroleid      = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : NULL;
+    $defaultfrontpageroleid = isset($CFG->defaultfrontpageroleid) ? $CFG->defaultfrontpageroleid : NULL;
+
+    $nobody = false;
+
+    if ($isfrontpage) {
+        // on the frontpage all users are kind of enrolled, we have to respect only the prohibits
+        $courseneeded = array();
+    } else {
+        if (empty($courseneeded)) {
+            $nobody = true;
+        }
+    }
+
+    if ($withcapability and !$nobody) {
+        if ($isfrontpage) {
+            if (!empty($prohibited[$defaultuserroleid]) or !empty($prohibited[$defaultfrontpageroleid])) {
+                $nobody = true;
+            } else if (!empty($neded[$defaultuserroleid]) or !empty($neded[$defaultfrontpageroleid])) {
+                // everybody not having prohibit has the capability
+                $needed = array();
+            } else if (empty($needed)) {
+                $nobody = true;
+            }
+        } else {
+            if (!empty($prohibited[$defaultuserroleid])) {
+                $nobody = true;
+            } else if (!empty($neded[$defaultuserroleid])) {
+                // everybody not having prohibit has the capability
+                $needed = array();
+            } else if (empty($needed)) {
+                $nobody = true;
+            }
+        }
+    }
+
+    if ($nobody) {
+        // nobody can match so return some SQL that does not return any results
+        return array("SELECT {$prefix}.id FROM {user} {$prefix} WHERE 1=2", array());
+    }
+
+    $joins  = array();
+    $params = array();
+    $wheres = array("{$prefix}.deleted = 0 AND {$prefix}.username <> 'guest'");
+
+    if ($courseneeded) {
+        $ctxids = implode(',', $coursecontextids);
+        $roleids = implode(',', array_keys($courseneeded));
+        $joins[] = "JOIN {role_assignments} {$prefix}_ra1 ON ({$prefix}_ra1.userid = {$prefix}.id AND {$prefix}_ra1.roleid IN ($roleids) AND {$prefix}_ra1.contextid IN ($ctxids))";
+    }
+
+    if ($courseprohibited) {
+        $ctxids = implode(',', $coursecontextids);
+        $roleids = implode(',', array_keys($courseprohibited));
+        $joins[] = "LEFT JOIN {role_assignments} {$prefix}_ra2 ON ({$prefix}_ra2.userid = {$prefix}.id AND {$prefix}_ra2.roleid IN ($roleids) AND {$prefix}_ra2.contextid IN ($ctxids))";
+        $wheres[] = "{$prefix}_ra2 IS NULL";
+    }
+
+    if ($needed) {
+        $ctxids = implode(',', $contextids);
+        $roleids = implode(',', array_keys($needed));
+        $joins[] = "JOIN {role_assignments} {$prefix}_ra3 ON ({$prefix}_ra3.userid = {$prefix}.id AND {$prefix}_ra3.roleid IN ($roleids) AND {$prefix}_ra3.contextid IN ($ctxids))";
+    }
+
+    if ($prohibited) {
+        $ctxids = implode(',', $contextids);
+        $roleids = implode(',', array_keys($prohibited));
+        $joins[] = "LEFT JOIN {role_assignments} {$prefix}_ra4 ON ({$prefix}_ra4.userid = {$prefix}.id AND {$prefix}_ra4.roleid IN ($roleids) AND {$prefix}_ra4.contextid IN ($ctxids))";
+        $wheres[] = "{$prefix}_ra4 IS NULL";
+    }
+
+    if ($groupid) {
+        $joins[] = "JOIN {groups_members} {$prefix}gm ON ({$prefix}gm.userid = {$prefix}.id AND {$prefix}.roleid = :{$prefix}gmid)";
+        $params["{$prefix}gmid"] = $groupid;
+    }
+
+    $joins = implode("\n", $joins);
+    $wheres = "WHERE ".implode(" AND ", $wheres);
+
+    $sql = "SELECT DISTINCT {$prefix}.id
+               FROM {user} {$prefix}
+             $joins
+            $wheres";
+
+    return array($sql, $params);
+}
+
+/**
+ * Returns list of users enrolled into course.
+ * @param object $context
+ * @param string $withcapability
+ * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+ * @param string $userfields requested user record fields
+ * @param string $orderby
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
+ * @return array of user records
+ */
+function get_enrolled_users($context, $withcapability = '', $groupid = 0, $userfields = 'u.*', $orderby = '', $limitfrom = 0, $limitnum = 0) {
+    global $DB;
+
+    list($esql, $params) = get_enrolled_sql($context, $withcapability, $groupid);
+    $sql = "SELECT $userfields
+              FROM {user} u
+              JOIN ($esql) je ON je.id = u.id
+             WHERE u.deleted = 0";
+
+    if ($orderby) {
+        $sql = "$sql ORDER BY $orderby";
+    } else {
+        $sql = "$sql ORDER BY u.lastname ASC, u.firstname ASC";
+    }
+
+    return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+}
+
+/**
  * Loads the capability definitions for the component (from file).
  *
  * Loads the capability definitions for the component (from file). If no
@@ -3094,8 +3356,9 @@ function load_capability_def($component) {
     if (file_exists($defpath)) {
         require($defpath);
         if (!empty(${$component.'_capabilities'})) {
-            // legacy capability array name
+            // BC capability array name
             // since 2.0 we prefer $capabilities instead - it is easier to use and matches db/* files
+            debugging('componentname_capabilities array is deprecated, please use capabilities array only in access.php files');
             $capabilities = ${$component.'_capabilities'};
         }
     }
@@ -3115,16 +3378,22 @@ function get_cached_capabilities($component='moodle') {
 }
 
 /**
- * Returns default capabilities for given legacy role type.
- * @param string $legacyrole legacy role name
+ * Returns default capabilities for given role archetype.
+ * @param string $archetype role archetype
  * @return array
  */
-function get_default_capabilities($legacyrole) {
+function get_default_capabilities($archetype) {
     global $DB;
-    $allcaps = $DB->get_records('capabilities');
+
+    if (!$archetype) {
+        return array();
+    }
+
     $alldefs = array();
     $defaults = array();
     $components = array();
+    $allcaps = $DB->get_records('capabilities');
+
     foreach ($allcaps as $cap) {
         if (!in_array($cap->component, $components)) {
             $components[] = $cap->component;
@@ -3132,46 +3401,31 @@ function get_default_capabilities($legacyrole) {
         }
     }
     foreach($alldefs as $name=>$def) {
-        if (isset($def['legacy'][$legacyrole])) {
-            $defaults[$name] = $def['legacy'][$legacyrole];
+        if (isset($def['legacy'][$archetype])) {
+            $defaults[$name] = $def['legacy'][$archetype];
         }
     }
 
-    //some exceptions
-    $defaults['moodle/legacy:'.$legacyrole] = CAP_ALLOW;
-    if ($legacyrole == 'admin') {
-        $defaults['moodle/site:doanything'] = CAP_ALLOW;
-    }
     return $defaults;
 }
 
 /**
- * Reset role capabilitites to default according to selected legacy capability.
- * If several legacy caps selected, use the first from get_default_capabilities.
- * If no legacy selected, removes all capabilities.
+ * Reset role capabilitites to default according to selected role archetype.
+ * If no archetype selected, removes all capabilities.
  * @param int @roleid
  */
 function reset_role_capabilities($roleid) {
     global $DB;
 
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-    $legacyroles = get_legacy_roles();
+    $role = $DB->get_record('role', array('id'=>$roleid), '*', MUST_EXIST);
+    $defaultcaps = get_default_capabilities($role->archetype);
 
-    $defaultcaps = array();
-    foreach($legacyroles as $ltype=>$lcap) {
-        $localoverride = get_local_override($roleid, $sitecontext->id, $lcap);
-        if (!empty($localoverride->permission) and $localoverride->permission == CAP_ALLOW) {
-            //choose first selected legacy capability
-            $defaultcaps = get_default_capabilities($ltype);
-            break;
-        }
-    }
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
     $DB->delete_records('role_capabilities', array('roleid'=>$roleid));
-    if (!empty($defaultcaps)) {
-        foreach($defaultcaps as $cap=>$permission) {
-            assign_capability($cap, $permission, $roleid, $sitecontext->id);
-        }
+
+    foreach($defaultcaps as $cap=>$permission) {
+        assign_capability($cap, $permission, $roleid, $sitecontext->id);
     }
 }
 
@@ -3202,6 +3456,12 @@ function update_capabilities($component='moodle') {
             if (array_key_exists($cachedcap->name, $filecaps)) {
                 if (!array_key_exists('riskbitmask', $filecaps[$cachedcap->name])) {
                     $filecaps[$cachedcap->name]['riskbitmask'] = 0; // no risk if not specified
+                }
+                if ($cachedcap->captype != $filecaps[$cachedcap->name]['captype']) {
+                    $updatecap = new object();
+                    $updatecap->id = $cachedcap->id;
+                    $updatecap->captype = $filecaps[$cachedcap->name]['captype'];
+                    $DB->update_record('capabilities', $updatecap);
                 }
                 if ($cachedcap->riskbitmask != $filecaps[$cachedcap->name]['riskbitmask']) {
                     $updatecap = new object();
@@ -3237,7 +3497,7 @@ function update_capabilities($component='moodle') {
     }
     // Add new capabilities to the stored definition.
     foreach ($newcaps as $capname => $capdef) {
-        $capability = new object;
+        $capability = new object();
         $capability->name = $capname;
         $capability->captype = $capdef['captype'];
         $capability->contextlevel = $capdef['contextlevel'];
@@ -3256,12 +3516,9 @@ function update_capabilities($component='moodle') {
                     }
                 }
             }
-        // Do we need to assign the new capabilities to roles that have the
-        // legacy capabilities moodle/legacy:* as well?
         // we ignore legacy key if we have cloned permissions
-        } else if (isset($capdef['legacy']) && is_array($capdef['legacy']) &&
-                    !assign_legacy_capabilities($capname, $capdef['legacy'])) {
-            echo $OUTPUT->notification('Could not assign legacy capabilities for '.$capname);
+        } else if (isset($capdef['legacy']) && is_array($capdef['legacy'])) {
+            assign_legacy_capabilities($capname, $capdef['legacy']);
         }
     }
     // Are there any capabilities that have been removed from the file
@@ -3270,7 +3527,7 @@ function update_capabilities($component='moodle') {
     capabilities_cleanup($component, $filecaps);
 
     // reset static caches
-    is_valid_capability('reset', false);
+    $ACCESSLIB_PRIVATE->capabilities = NULL;
 
     return true;
 }
@@ -3324,7 +3581,7 @@ function capabilities_cleanup($component, $newcapdef=NULL) {
  * @return string the name for this type of context.
  */
 function get_contextlevel_name($contextlevel) {
-    static $strcontextlevels = null;
+    static $strcontextlevels = NULL;
     if (is_null($strcontextlevels)) {
         $strcontextlevels = array(
             CONTEXT_SYSTEM => get_string('coresystem'),
@@ -3708,6 +3965,53 @@ function get_parent_contextid($context) {
 }
 
 /**
+ * Constructs array with contextids as first parameter and context paths,
+ * in both cases bottom top including self.
+ *
+ * @param object $context
+ * @return array
+ */
+function get_context_info_list($context) {
+    $contextids = explode('/', ltrim($context->path, '/'));
+    $contextpaths = array();
+    $contextids2 = $contextids;
+    while ($contextids2) {
+        $contextpaths[] = '/' . implode('/', $contextids2);
+        array_pop($contextids2);
+    }
+    return array($contextids, $contextpaths);
+}
+
+/**
+ * Find course context
+ * @param object $context - course or lower context
+ * @return object context of the enclosing course, throws exception when related course context can not be found
+ */
+function get_course_context($context) {
+    if (empty($context->contextlevel)) {
+        throw coding_exception('Invalid context parameter.');
+
+    } if ($context->contextlevel == CONTEXT_COURSE) {
+        return $context;
+
+    } else if ($context->contextlevel == CONTEXT_MODULE) {
+        return get_context_instance_by_id(get_parent_contextid($context, MUST_EXIST));
+
+    } else if ($context->contextlevel == CONTEXT_BLOCK) {
+        $parentcontext = get_context_instance_by_id(get_parent_contextid($context, MUST_EXIST));
+        if ($parentcontext->contextlevel == CONTEXT_COURSE) {
+            return $parentcontext;
+        } else if ($parentcontext->contextlevel == CONTEXT_MODULE) {
+            return get_context_instance_by_id(get_parent_contextid($parentcontext, MUST_EXIST));
+        } else {
+            throw new coding_exception('Invalid level of block context parameter.');
+        }
+    }
+
+    throw new coding_exception('Invalid context level of parameter.');
+}
+
+/**
  * Check if contect is the front page context or a context inside it
  *
  * Returns true if this context is the front page context, or a context inside it,
@@ -3880,22 +4184,28 @@ function get_related_contexts_string($context) {
 }
 
 /**
- * Verifies if given capability installed.
+ * Returns capability information (cached)
  *
- * @global object
  * @param string $capabilityname
- * @param bool $cached
- * @return book true if capability exists
+ * @return object or NULL if capability not found
  */
-function is_valid_capability($capabilityname, $cached = true) {
-    global $ACCESSLIB_PRIVATE; // one request per page only
+function get_capability_info($capabilityname) {
+    global $ACCESSLIB_PRIVATE, $DB; // one request per page only
 
-    if (is_null($ACCESSLIB_PRIVATE->capabilitynames) or !$cached) {
-        global $DB;
-        $ACCESSLIB_PRIVATE->capabilitynames = $DB->get_records_menu('capabilities', null, '', 'name, 1');
+    // TODO: cache this in shared memory if available, use new $CFG->roledefrev for version check
+
+    if (empty($ACCESSLIB_PRIVATE->capabilities)) {
+        $ACCESSLIB_PRIVATE->capabilities = array();
+        $caps = $DB->get_records('capabilities', array(), 'id, name, captype, riskbitmask');
+        foreach ($caps as $cap) {
+            $capname = $cap->name;
+            unset($cap->id);
+            unset($cap->name);
+            $ACCESSLIB_PRIVATE->capabilities[$capname] = $cap;
+        }
     }
 
-    return array_key_exists($capabilityname, $ACCESSLIB_PRIVATE->capabilitynames);
+    return isset($ACCESSLIB_PRIVATE->capabilities[$capabilityname]) ? $ACCESSLIB_PRIVATE->capabilities[$capabilityname] : NULL;
 }
 
 /**
@@ -4065,32 +4375,49 @@ function get_component_string($component, $contextlevel) {
 
 /**
  * Gets the list of roles assigned to this context and up (parents)
+ * from the list of roles that are visible on user profile page
+ * and participants page.
  *
- * set $view to true when roles are pulled for display only
- * this is so that we can filter roles with no visible
- * assignment, for example, you might want to "hide" all
- * course creators when browsing the course participants
- * list.
- *
- * @global object
  * @param object $context
- * @param bool $view
  * @return array
  */
-function get_roles_used_in_context($context, $view = false) {
-    global $DB;
+function get_profile_roles($context) {
+    global $CFG, $DB;
 
-    // filter for roles with all hidden assignments
-    // no need to return when only pulling roles for reviewing
-    // e.g. participants page.
-    $hiddensql = ($view && !has_capability('moodle/role:viewhiddenassigns', $context))? ' AND ra.hidden = 0 ':'';
+    if (empty($CFG->profileroles)) {
+        return array();
+    }
+
+    $allowed = explode(',', $CFG->profileroles);
+    list($rallowed, $params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED);
+
     $contextlist = get_related_contexts_string($context);
 
     $sql = "SELECT DISTINCT r.id, r.name, r.shortname, r.sortorder
               FROM {role_assignments} ra, {role} r
              WHERE r.id = ra.roleid
                    AND ra.contextid $contextlist
-                   $hiddensql
+                   AND r.id $rallowed
+          ORDER BY r.sortorder ASC";
+
+    return $DB->get_records_sql($sql, $params);
+}
+
+/**
+ * Gets the list of roles assigned to this context and up (parents)
+ *
+ * @param object $context
+ * @return array
+ */
+function get_roles_used_in_context($context) {
+    global $DB;
+
+    $contextlist = get_related_contexts_string($context);
+
+    $sql = "SELECT DISTINCT r.id, r.name, r.shortname, r.sortorder
+              FROM {role_assignments} ra, {role} r
+             WHERE r.id = ra.roleid
+                   AND ra.contextid $contextlist
           ORDER BY r.sortorder ASC";
 
     return $DB->get_records_sql($sql);
@@ -4098,31 +4425,49 @@ function get_roles_used_in_context($context, $view = false) {
 
 /**
  * This function is used to print roles column in user profile page.
+ * It is using the CFG->profileroles to limit the list to only interesting roles.
+ * (The permission tab has full details of user role assingments.)
  *
- * @global object
- * @global object
- * @global object
  * @param int $userid
- * @param object $context
- * @param bool $view
+ * @param int $courseid
  * @return string
  */
-function get_user_roles_in_context($userid, $context, $view=true){
+function get_user_roles_in_course($userid, $courseid) {
     global $CFG, $DB,$USER;
 
+    if (empty($CFG->profileroles)) {
+        return '';
+    }
+
+    if ($courseid == SITEID) {
+        $context = get_context_instance(CONTEXT_SYSTEM);
+    } else {
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    }
+
+    if (empty($CFG->profileroles)) {
+        return array();
+    }
+
+    $allowed = explode(',', $CFG->profileroles);
+    list($rallowed, $params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED);
+
+    $contextlist = get_related_contexts_string($context);
+
+    $sql = "SELECT DISTINCT r.id, r.name, r.shortname, r.sortorder
+              FROM {role_assignments} ra, {role} r
+             WHERE r.id = ra.roleid
+                   AND ra.contextid $contextlist
+                   AND r.id $rallowed
+                   AND ra.userid = :userid
+          ORDER BY r.sortorder ASC";
+    $params['userid'] = $userid;
+
     $rolestring = '';
-    $sql = "SELECT *
-            FROM {role_assignments} ra, {role} r
-           WHERE ra.userid = ? and ra.contextid = ? and ra.roleid = r.id";
-    $params = array($userid, $context->id);
-    $rolenames = array();
+
     if ($roles = $DB->get_records_sql($sql, $params)) {
         foreach ($roles as $userrole) {
-            // MDL-12544, if we are in view mode and current user has no capability to view hidden assignment, skip it
-            if ($userrole->hidden && $view && !has_capability('moodle/role:viewhiddenassigns', $context)) {
-                continue;
-            }
-            $rolenames[$userrole->roleid] = $userrole->name;
+            $rolenames[$userrole->id] = $userrole->name;
         }
 
         $rolenames = role_fix_names($rolenames, $context);   // Substitute aliases
@@ -4132,41 +4477,8 @@ function get_user_roles_in_context($userid, $context, $view=true){
         }
         $rolestring = implode(',', $rolenames);
     }
+
     return $rolestring;
-}
-
-
-/**
- * Checks if a user can override capabilities of a particular role in this context
- *
- * @deprecated As of version 2.0
- * @todo not needed anymore, remove in 2.0
- * @param object $context
- * @param int $targetroleid the id of the role you want to override
- * @return boolean
- */
-function user_can_override($context, $targetroleid) {
-
-// TODO: not needed anymore, remove in 2.0
-
-    global $DB;
-    // first check if user has override capability
-    // if not return false;
-    if (!has_capability('moodle/role:override', $context)) {
-        return false;
-    }
-    // pull out all active roles of this user from this context(or above)
-    if ($userroles = get_user_roles($context)) {
-        foreach ($userroles as $userrole) {
-            // if any in the role_allow_override table, then it's ok
-            if ($DB->get_record('role_allow_override', array('roleid'=>$userrole->roleid, 'allowoverride'=>$targetroleid))) {
-                return true;
-            }
-        }
-    }
-
-    return false;
-
 }
 
 /**
@@ -4201,36 +4513,36 @@ function user_can_assign($context, $targetroleid) {
 /**
  * Returns all site roles in correct sort order.
  *
- * @global object
  * @return array
  */
 function get_all_roles() {
     global $DB;
-    return $DB->get_records('role', null, 'sortorder ASC');
+    return $DB->get_records('role', NULL, 'sortorder ASC');
 }
 
 /**
- * gets all the user roles assigned in this context, or higher contexts
+ * Returns roles of a specified archetype
+ * @param string $archetype
+ * @return array of full role records
+ */
+function get_archetype_roles($archetype) {
+    global $DB;
+    return $DB->get_records('role', array('archetype'=>$archetype));
+}
+
+/**
+ * Gets all the user roles assigned in this context, or higher contexts
  * this is mainly used when checking if a user can assign a role, or overriding a role
  * i.e. we need to know what this user holds, in order to verify against allow_assign and
  * allow_override tables
  *
- * set $view to true when roles are pulled for display only
- * this is so that we can filter roles with no visible
- * assignment, for example, you might want to "hide" all
- * course creators when browsing the course participants
- * list.
- *
- * @global object
- * @global object
  * @param object $context
  * @param int $userid
  * @param bool $checkparentcontexts defaults to true
  * @param string $order defaults to 'c.contextlevel DESC, r.sortorder ASC'
- * @param bool $view
  * @return array
  */
-function get_user_roles($context, $userid=0, $checkparentcontexts=true, $order='c.contextlevel DESC, r.sortorder ASC', $view=false) {
+function get_user_roles($context, $userid=0, $checkparentcontexts=true, $order='c.contextlevel DESC, r.sortorder ASC') {
     global $USER, $DB;
 
     if (empty($userid)) {
@@ -4239,8 +4551,6 @@ function get_user_roles($context, $userid=0, $checkparentcontexts=true, $order='
         }
         $userid = $USER->id;
     }
-    // set up hidden sql
-    $hiddensql = ($view && !has_capability('moodle/role:viewhiddenassigns', $context)) ? "AND ra.hidden = 0" : "";
 
     if ($checkparentcontexts) {
         $contextids = get_parent_contexts($context);
@@ -4259,7 +4569,6 @@ function get_user_roles($context, $userid=0, $checkparentcontexts=true, $order='
                    AND ra.roleid = r.id
                    AND ra.contextid = c.id
                    AND ra.contextid $contextids
-                   $hiddensql
           ORDER BY $order";
 
     return $DB->get_records_sql($sql ,$params);
@@ -4293,7 +4602,7 @@ function allow_override($sroleid, $troleid) {
 function allow_assign($fromroleid, $targetroleid) {
     global $DB;
 
-    $record = new object;
+    $record = new object();
     $record->roleid      = $fromroleid;
     $record->allowassign = $targetroleid;
     $DB->insert_record('role_allow_assign', $record);
@@ -4310,7 +4619,7 @@ function allow_assign($fromroleid, $targetroleid) {
 function allow_switch($fromroleid, $targetroleid) {
     global $DB;
 
-    $record = new object;
+    $record = new object();
     $record->roleid      = $fromroleid;
     $record->allowswitch = $targetroleid;
     $DB->insert_record('role_allow_switch', $record);
@@ -4340,53 +4649,49 @@ function get_assignable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $with
         }
     }
 
-    $parents = get_parent_contexts($context);
-    $parents[] = $context->id;
+    $parents = get_parent_contexts($context, true);
     $contexts = implode(',' , $parents);
 
     $params = array();
     $extrafields = '';
     if ($rolenamedisplay == ROLENAME_ORIGINALANDSHORT) {
-        $extrafields .= ', ro.shortname';
+        $extrafields .= ', r.shortname';
     }
 
     if ($withusercounts) {
         $extrafields = ', (SELECT count(u.id)
                              FROM {role_assignments} cra JOIN {user} u ON cra.userid = u.id
-                            WHERE cra.roleid = ro.id AND cra.contextid = :conid AND u.deleted = 0
+                            WHERE cra.roleid = r.id AND cra.contextid = :conid AND u.deleted = 0
                           ) AS usercount';
         $params['conid'] = $context->id;
     }
 
-    $raafrom  = ", {role_allow_assign} raa";
-    $raawhere = "AND raa.roleid = ra.roleid AND r.id = raa.allowassign";
-    if (has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
+    if (is_siteadmin()) {
         // show all roles allowed in this context to admins
-        $raafrom  = "";
-        $raawhere = "";
+        $assignrestriction = "";
+    } else {
+        $assignrestriction = "JOIN (SELECT DISTINCT raa.allowassign AS id
+                                      FROM {role_allow_assign} raa
+                                      JOIN {role_assignments} ra ON ra.roleid = raa.roleid
+                                     WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
+                                   ) ar ON ar.id = r.id";
+        $params['userid'] = $USER->id;
     }
-
-    $params['userid'] = $USER->id;
     $params['contextlevel'] = $context->contextlevel;
-    $roles = $DB->get_records_sql("
-             SELECT ro.id, ro.name$extrafields
-               FROM {role} ro
-               JOIN (SELECT DISTINCT r.id
-                       FROM {role} r,
-                            {role_assignments} ra $raafrom
-                      WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
-                            $raawhere
-                    ) inline_view ON ro.id = inline_view.id
-               JOIN {role_context_levels} rcl ON ro.id = rcl.roleid
-              WHERE rcl.contextlevel = :contextlevel
-           ORDER BY ro.sortorder ASC", $params);
+    $sql = "SELECT r.id, r.name $extrafields
+              FROM {role} r
+              $assignrestriction
+              JOIN {role_context_levels} rcl ON r.id = rcl.roleid
+             WHERE rcl.contextlevel = :contextlevel
+          ORDER BY r.sortorder ASC";
+    $roles = $DB->get_records_sql($sql, $params);
 
     $rolenames = array();
     foreach ($roles as $role) {
         $rolenames[$role->id] = $role->name;
         if ($rolenamedisplay == ROLENAME_ORIGINALANDSHORT) {
             $rolenames[$role->id] .= ' (' . $role->shortname . ')';
-    }
+        }
     }
     if ($rolenamedisplay != ROLENAME_ORIGINALANDSHORT) {
         $rolenames = role_fix_names($rolenames, $context, $rolenamedisplay);
@@ -4425,9 +4730,9 @@ function get_switchable_roles($context) {
     $params = array();
     $extrajoins = '';
     $extrawhere = '';
-    if (!has_capability('moodle/site:doanything', $systemcontext)) {
-        // Admins are allowed to switch to any role with 'moodle/course:view' in the
-        // role definition, and without 'moodle/site:doanything' anywhere.
+    if (!is_siteadmin()) {
+        // Admins are allowed to switch to any role with 'moodle/course:participate' in the
+        // role definition.
         // Others are subject to the additional constraint that the switch-to role must be allowed by
         // 'role_allow_switch' for some role they have assigned in this context or any parent.
         $parents = get_parent_contexts($context);
@@ -4436,8 +4741,7 @@ function get_switchable_roles($context) {
 
         $extrajoins = "JOIN {role_allow_switch} ras ON ras.allowswitch = rc.roleid
         JOIN {role_assignments} ra ON ra.roleid = ras.roleid";
-        $extrawhere = "AND ra.userid = :userid
-              AND ra.contextid IN ($contexts)";
+        $extrawhere = "AND ra.userid = :userid AND ra.contextid IN ($contexts)";
         $params['userid'] = $USER->id;
     }
 
@@ -4451,15 +4755,11 @@ function get_switchable_roles($context) {
               AND rc.permission = " . CAP_ALLOW . "
               AND rc.contextid = :syscontextid
               $extrawhere
-              AND NOT EXISTS (
-                 SELECT 1 FROM {role_capabilities} irc WHERE irc.roleid = rc.roleid AND
-                     irc.capability = :anythingcap AND irc.permission = " . CAP_ALLOW . ")
         ) idlist
         JOIN {role} r ON r.id = idlist.roleid
         ORDER BY r.sortorder";
     $params['syscontextid'] = $systemcontext->id;
-    $params['viewcap'] = 'moodle/course:view';
-    $params['anythingcap'] = 'moodle/site:doanything';
+    $params['viewcap'] = 'moodle/course:participate';
 
     $rolenames = $DB->get_records_sql_menu($query, $params);
     return role_fix_names($rolenames, $context, ROLENAME_ALIAS);
@@ -4467,29 +4767,26 @@ function get_switchable_roles($context) {
 
 /**
  * Get an array of role ids that might possibly be the target of a switchrole.
- * Our policy is that you cannot switch to a role with moodle/site:doanything
- * and you can only switch to a role with moodle/course:view. This method returns
+ * Our policy is that you cannot switch to admin role
+ * and you can only switch to a role with moodle/course:participate. This method returns
  * a list of those role ids.
  *
  * @global object
  * @return array an array whose keys are the allowed role ids.
  */
 function get_allowed_switchable_roles() {
-    global $DB;
+    global $CFG, $DB;
 
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
     $query = "
         SELECT DISTINCT rc.roleid, 1
         FROM {role_capabilities} rc
-        WHERE rc.capability = :viewcap
+        JOIN {role} r ON r.id = rc.roleid
+        WHERE rc.capability = :participate
           AND rc.permission = " . CAP_ALLOW . "
-          AND rc.contextid = :syscontextid
-          AND NOT EXISTS (
-             SELECT 1 FROM {role_capabilities} irc WHERE irc.roleid = rc.roleid AND
-                 irc.capability = :anythingcap AND irc.permission = " . CAP_ALLOW . ")";
-    $params = array('syscontextid' => $systemcontext->id,
-            'viewcap' => 'moodle/course:view', 'anythingcap' => 'moodle/site:doanything');
+          AND rc.contextid = :syscontextid";
+    $params = array('syscontextid' => $systemcontext->id, 'participate' => 'moodle/course:participate');
 
     return $DB->get_records_sql_menu($query, $params);
 }
@@ -4535,7 +4832,7 @@ function get_overridable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $wit
         $params['conid'] = $context->id;
     }
 
-    if (has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
+    if (is_siteadmin()) {
         // show all roles to admins
         $roles = $DB->get_records_sql("
             SELECT ro.id, ro.name$extrafields
@@ -4602,22 +4899,23 @@ function get_roles_for_contextlevels($contextlevel) {
 }
 
 /**
- * @param string $roleid one of the legacy role types - that is, one of the keys
- *      from the array returned by get_legacy_roles();
+ * @param string $rolearchetype one of the role archetypes - that is, one of the keys
+ *      from the array returned by get_role_archetypes();
  * @return array list of the context levels at which this type of role may be assigned by default.
  */
-function get_default_contextlevels($roletype) {
+function get_default_contextlevels($rolearchetype) {
     static $defaults = array(
-        'admin' => array(CONTEXT_SYSTEM),
+        'manager' => array(CONTEXT_SYSTEM, CONTEXT_COURSECAT, CONTEXT_COURSE),
         'coursecreator' => array(CONTEXT_SYSTEM, CONTEXT_COURSECAT),
         'editingteacher' => array(CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_MODULE),
         'teacher' => array(CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_MODULE),
         'student' => array(CONTEXT_COURSE, CONTEXT_MODULE),
         'guest' => array(),
-        'user' => array()
+        'user' => array(),
+        'frontpage' => array()
     );
-    if (isset($defaults[$roletype])) {
-        return $defaults[$roletype];
+    if (isset($defaults[$rolearchetype])) {
+        return $defaults[$rolearchetype];
     } else {
         return array();
     }
@@ -4669,7 +4967,7 @@ function get_default_course_role($course) {
     }
 
 /// It's unlikely we'll get here, but just in case, try and find a student role
-    if ($studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
+    if ($studentroles = $DB->get_records('role', array('archetype'=>'student'))) {
         return array_shift($studentroles);   /// Take the first one
     }
 
@@ -4696,12 +4994,8 @@ function get_default_course_role($course) {
  * @param string|array $groups - single group or array of groups - only return
  *               users who are in one of these group(s).
  * @param string|array $exceptions - list of users to exclude, comma separated or array
- * @param bool $doanything prohibit takes over admin roles here, in has_capability() it does not
- * @param bool $view - set to true when roles are pulled for display only
- *               this is so that we can filter roles with no visible
- *               assignment, for example, you might want to "hide" all
- *               course creators when browsing the course participants
- *               list.
+ * @param bool $doanything_ignored not used any more, admin accounts are never returned
+ * @param bool $view_ignored - use get_enrolled_sql() instead
  * @param bool $useviewallgroups if $groups is set the return users who
  *               have capability both $capability and moodle/site:accessallgroups
  *               in this context, as well as users who have $capability and who are
@@ -4709,15 +5003,15 @@ function get_default_course_role($course) {
  * @return mixed
  */
 function get_users_by_capability($context, $capability, $fields='', $sort='', $limitfrom='', $limitnum='',
-                                 $groups='', $exceptions='', $doanything=true, $view=false, $useviewallgroups=false) {
+                                 $groups='', $exceptions='', $doanything_ignored=NULL, $view_ignored=NULL, $useviewallgroups=false) {
     global $CFG, $DB;
 
     if (empty($context->id)) {
         throw new coding_exception('Invalid context specified');
     }
 
-    $defaultuserroleid      = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : null;
-    $defaultfrontpageroleid = isset($CFG->defaultfrontpageroleid) ? $CFG->defaultfrontpageroleid : null;
+    $defaultuserroleid      = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : NULL;
+    $defaultfrontpageroleid = isset($CFG->defaultfrontpageroleid) ? $CFG->defaultfrontpageroleid : NULL;
 
     $ctxids = trim($context->path, '/');
     $ctxids = str_replace('/', ',', $ctxids);
@@ -4735,20 +5029,9 @@ function get_users_by_capability($context, $capability, $fields='', $sort='', $l
     $isfrontpage = ($isfrontpage || is_inside_frontpage($context));
 
     $caps = (array)$capability;
-    if ($doanything) {
-        $caps[] = 'moodle/site:doanything';
-    }
 
     // contruct list of context paths bottom-->top
-    $contextids = explode(',', $ctxids);
-    $paths = array($context->path);
-    $contextids2 = $contextids;
-    while ($contextids2) {
-        array_pop($contextids2);
-        $paths[] = '/' . implode('/', $contextids2);
-    }
-    unset($contextids2);
-
+    list($contextids, $paths) = get_context_info_list($context);
 
     // we need to find out all roles that have these capabilities either in definition or in overrides
     $defs = array();
@@ -4896,13 +5179,6 @@ function get_users_by_capability($context, $capability, $fields='', $sort='', $l
         $wherecond[] = "u.id $exsql";
     }
 
-    /// Set up hidden role-assignments sql
-    if ($view and !has_capability('moodle/role:viewhiddenassigns', $context)) {
-        $condhiddenra = 'AND hidden = 0';
-    } else {
-        $condhiddenra = '';
-    }
-
     // now add the needed and prohibited roles conditions as joins
     if (!empty($needed['any'])) {
         // simple case - there are no prohibits involved
@@ -4913,7 +5189,6 @@ function get_users_by_capability($context, $capability, $fields='', $sort='', $l
                                 FROM {role_assignments}
                                WHERE contextid IN ($ctxids)
                                      AND roleid IN (".implode(',', array_keys($needed['any'])) .")
-                                     $condhiddenra
                              ) ra ON ra.userid = u.id";
         }
     } else {
@@ -4928,8 +5203,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='', $l
                     $unions[] = "SELECT userid
                                    FROM {role_assignments}
                                   WHERE contextid IN ($ctxids)
-                                        AND roleid IN (".implode(',', array_keys($needed[$cap])) .")
-                                        $condhiddenra";
+                                        AND roleid IN (".implode(',', array_keys($needed[$cap])) .")";
                 }
             } else {
                 if (!empty($needed[$cap][$defaultuserroleid]) or ($isfrontpage and !empty($needed[$cap][$defaultfrontpageroleid]))) {
@@ -4942,22 +5216,11 @@ function get_users_by_capability($context, $capability, $fields='', $sort='', $l
                                                           AND roleid IN (".implode(',', array_keys($prohibited[$cap])) ."))";
 
                 } else {
-                    if ($condhiddenra) {
-                        $unions[] = "SELECT userid
-                                       FROM {role_assignments}
-                                      WHERE contextid IN ($ctxids)
-                                            AND roleid IN (".implode(',', array_keys($needed[$cap])) .") $condhiddenra
-                                            AND userid NOT IN (SELECT userid
-                                                                 FROM {role_assignments}
-                                                                WHERE contextid IN ($ctxids)
-                                                                      AND roleid IN (".implode(',', array_keys($prohibited[$cap])) ."))";
-                    } else {
-                        $unions[] = "SELECT userid
-                                       FROM {role_assignments}
-                                      WHERE contextid IN ($ctxids)
-                                            AND roleid IN (".implode(',', array_keys($needed[$cap])) .")
-                                            AND roleid NOT IN (".implode(',', array_keys($prohibited[$cap])) .")";
-                    }
+                    $unions[] = "SELECT userid
+                                   FROM {role_assignments}
+                                  WHERE contextid IN ($ctxids)
+                                        AND roleid IN (".implode(',', array_keys($needed[$cap])) .")
+                                        AND roleid NOT IN (".implode(',', array_keys($prohibited[$cap])) .")";
                 }
             }
         }
@@ -5011,7 +5274,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='', $l
  * a good idea to see what roles have the capabilities you want
  * (array_diff() them against roiles that have 'can-do-anything'
  * to weed out admin-ish roles. Or fetch a list of roles from
- * variables like $CFG->coursemanagers .
+ * variables like $CFG->coursemanager .
  *
  * @global object
  * @param array $users Users array, keyed on userid
@@ -5079,7 +5342,7 @@ function sort_by_roleassignment_authority($users, $context, $roles=array(), $sor
  * @param bool $parent if true, get list of users assigned in higher context too
  * @param string $fields fields from user (u.) , role assignment (ra) or role (r.)
  * @param string $sort sort from user (u.) , role assignment (ra) or role (r.)
- * @param bool $gethidden whether to fetch hidden enrolments too
+ * @param bool $gethidden_ignored use enrolments instead
  * @param string $group defaults to ''
  * @param mixed $limitfrom defaults to ''
  * @param mixed $limitnum defaults to ''
@@ -5088,7 +5351,7 @@ function sort_by_roleassignment_authority($users, $context, $roles=array(), $sor
  * @return array
  */
 function get_role_users($roleid, $context, $parent=false, $fields='',
-        $sort='u.lastname, u.firstname', $gethidden=true, $group='',
+        $sort='u.lastname, u.firstname', $gethidden_ignored=NULL, $group='',
         $limitfrom='', $limitnum='', $extrawheretest='', $whereparams=array()) {
     global $DB;
 
@@ -5098,9 +5361,6 @@ function get_role_users($roleid, $context, $parent=false, $fields='',
                   'u.country, u.picture, u.idnumber, u.department, u.institution, '.
                   'u.emailstop, u.lang, u.timezone, u.lastaccess, u.mnethostid, r.name as rolename';
     }
-
-    // whether this assignment is hidden
-    $hiddensql = $gethidden ? '': ' AND ra.hidden = 0 ';
 
     $parentcontexts = '';
     if ($parent) {
@@ -5143,7 +5403,6 @@ function get_role_users($roleid, $context, $parent=false, $fields='',
              WHERE (ra.contextid = ? $parentcontexts)
                    $roleselect
                    $groupselect
-                   $hiddensql
                    $extrawheretest
           ORDER BY $sort";                  // join now so that we can just use fullname() later
 
@@ -5198,7 +5457,7 @@ function count_role_users($roleid, $context, $parent=false) {
  *
  * @global object
  * @param string $capability Capability in question
- * @param int $userid User ID or null for current user
+ * @param int $userid User ID or NULL for current user
  * @param bool $doanything True if 'doanything' is permitted (default)
  * @param string $fieldsexceptid Leave blank if you only need 'id' in the course records;
  *   otherwise use a comma-separated list of the fields you require, not including id
@@ -5792,58 +6051,44 @@ function context_moved($context, $newparent) {
     mark_context_dirty($newpath);
 }
 
+/**
+ * Preloads context information together with instances.
+ * NOTE: in future this function may return empty strings
+ *       if we implement different caching.
+ *
+ * @param string $joinon for example 'u.id'
+ * @param string $contextlevel context level of instance in $joinon
+ * @param string $tablealias context table alias
+ * @return array with two values - select and join part
+ */
+function context_instance_preload_sql($joinon, $contextlevel, $tablealias) {
+    $select = ", $tablealias.id AS ctxid, $tablealias.path AS ctxpath, $tablealias.depth AS ctxdepth, $tablealias.contextlevel AS ctxlevel, $tablealias.instanceid AS ctxinstance";
+    $join = "LEFT JOIN {context} $tablealias ON ($tablealias.instanceid = $joinon AND $tablealias.contextlevel = $contextlevel)";
+    return array($select, $join);
+}
 
 /**
- * Turn the ctx* fields in an objectlike record into a context subobject
- * This allows us to SELECT from major tables JOINing with
- * context at no cost, saving a ton of context
- * lookups...
+ * Preloads context information from db record and strips the cached info.
+ * The db request has to ontain both the $join and $select from context_instance_preload_sql()
  *
  * @param object $rec
- * @return object
+ * @return void (modifies $rec)
  */
-function make_context_subobj($rec) {
-    $ctx = new StdClass;
-    $ctx->id           = $rec->ctxid;    unset($rec->ctxid);
-    $ctx->path         = $rec->ctxpath;  unset($rec->ctxpath);
-    $ctx->depth        = $rec->ctxdepth; unset($rec->ctxdepth);
-    $ctx->contextlevel = $rec->ctxlevel; unset($rec->ctxlevel);
-    $ctx->instanceid   = $rec->id;
-
-    $rec->context = $ctx;
-    return $rec;
-}
-
-/**
- * Do some basic, quick checks to see whether $rec->context looks like a valid context object.
- *
- * @param object $rec a think that has a context, for example a course,
- *      course category, course modules, etc.
- * @param int $contextlevel the type of thing $rec is, one of the CONTEXT_... constants.
- * @return bool whether $rec->context looks like the correct context object
- *      for this thing.
- */
-function is_context_subobj_valid($rec, $contextlevel) {
-    return isset($rec->context) && isset($rec->context->id) &&
-            isset($rec->context->path) && isset($rec->context->depth) &&
-            isset($rec->context->contextlevel) && isset($rec->context->instanceid) &&
-            $rec->context->contextlevel == $contextlevel && $rec->context->instanceid == $rec->id;
-}
-
-/**
- * Ensure that $rec->context is present and correct before you continue
- *
- * When you have a record (for example a $category, $course, $user or $cm that may,
- * or may not, have come from a place that does make_context_subobj, you can use
- * this method to ensure that $rec->context is present and correct before you continue.
- *
- * @param object $rec a thing that has an associated context.
- * @param integer $contextlevel the type of thing $rec is, one of the CONTEXT_... constants.
- */
-function ensure_context_subobj_present(&$rec, $contextlevel) {
-    if (!is_context_subobj_valid($rec, $contextlevel)) {
-        $rec->context = get_context_instance($contextlevel, $rec->id);
+function context_instance_preload(stdClass $rec) {
+    if (empty($rec->ctxid)) {
+        // $rec does not have enough data, passed here repeatedly or context does not exist yet
+        return;
     }
+
+    // note: in PHP5 the objects are passed by reference, no need to return $rec
+    $context = new object();
+    $context->id           = $rec->ctxid;       unset($rec->ctxid);
+    $context->path         = $rec->ctxpath;     unset($rec->ctxpath);
+    $context->depth        = $rec->ctxdepth;    unset($rec->ctxdepth);
+    $context->contextlevel = $rec->ctxlevel;    unset($rec->ctxlevel);
+    $context->instanceid   = $rec->ctxinstance; unset($rec->ctxinstance);
+
+    cache_context($context);
 }
 
 /**
@@ -6071,10 +6316,6 @@ function prohibit_is_removable($roleid, $context, $capability) {
  */
 function role_change_permission($roleid, $context, $capname, $permission) {
     global $DB;
-
-    if ($capname === 'moodle/site:doanything' or is_legacy($capname)) {
-        return;
-    }
 
     if ($permission == CAP_INHERIT) {
         unassign_capability($capname, $roleid, $context->id);

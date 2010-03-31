@@ -35,9 +35,7 @@ if ($CFG->forcelogin or $show == 'my') {
 }
 
 // Permissions
-$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-$isguest = has_capability('moodle/legacy:guest', $sitecontext, $USER->id, false);
-$loggedin = isloggedin() && !$isguest;
+$loggedin = isloggedin() && !isguestuser();
 
 // Course check
 if ($courseid) {

@@ -113,10 +113,11 @@ if (!empty($CFG->usetags)) {
 }
 
 if ($user->id !== -1) {
-    $user->context = get_context_instance(CONTEXT_USER, $user->id);
+    $usercontext = get_context_instance(CONTEXT_USER, $user->id);
     $editoroptions = array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'forcehttps'=>false);
-    $user = file_prepare_standard_editor($user, 'description', $editoroptions, $user->context, 'user_profile', $user->id);
+    $user = file_prepare_standard_editor($user, 'description', $editoroptions, $usercontext, 'user_profile', $user->id);
 } else {
+    $usercontext = null;
     // This is a new user, we don't want to add files here
     $editoroptions = array('maxfiles'=>0, 'maxbytes'=>0, 'trusttext'=>false, 'forcehttps'=>false);
 }
@@ -151,7 +152,7 @@ if ($usernew = $userform->get_data()) {
         $usercreated = true;
 
     } else {
-        $usernew = file_postupdate_standard_editor($usernew, 'description', $editoroptions, $user->context, 'user_profile', $usernew->id);
+        $usernew = file_postupdate_standard_editor($usernew, 'description', $editoroptions, $usercontext, 'user_profile', $usernew->id);
         $DB->update_record('user', $usernew);
         // pass a true $userold here
         if (! $authplugin->user_update($user, $userform->get_data())) {

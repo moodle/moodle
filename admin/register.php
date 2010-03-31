@@ -122,11 +122,11 @@
               FROM {role_capabilities} rc,
                    {role_assignments} ra,
                    {user} u
-             WHERE (rc.capability = ? or rc.capability = ?)
+             WHERE (rc.capability = ?)
                    AND rc.roleid = ra.roleid
                    AND u.id = ra.userid";
 
-    $count = $DB->count_records_sql($sql, array('moodle/course:update', 'moodle/site:doanything'));
+    $count = $DB->count_records_sql($sql, array('moodle/course:update'));
     echo get_string("teachers").": ".$count;
     echo "<input type=\"hidden\" name=\"courseupdaters\" value=\"$count\" />\n";
     echo '<br />';

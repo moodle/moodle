@@ -40,10 +40,10 @@ define('UPGRADE_LOG_ERROR',  2);
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class upgrade_exception extends moodle_exception {
-    function __construct($plugin, $version) {
+    function __construct($plugin, $version, $debuginfo=NULL) {
         global $CFG;
         $a = (object)array('plugin'=>$plugin, 'version'=>$version);
-        parent::__construct('upgradeerror', 'admin', "$CFG->wwwroot/$CFG->admin/index.php", $a);
+        parent::__construct('upgradeerror', 'admin', "$CFG->wwwroot/$CFG->admin/index.php", $a, $debuginfo);
     }
 }
 

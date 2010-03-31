@@ -24,9 +24,9 @@ if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
     print_error('invalidcoursemodule');
 }
 
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 
-if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
+if (isguestuser()) {
     print_error('noguests');
 }
 

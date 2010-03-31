@@ -183,15 +183,15 @@
 
                 $forummod = $DB->get_record('modules', array('name'=>'forum'));
 
-                if (!$teacherroles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW)) {
+                if (!$teacherroles = get_archetype_roles('teacher')) {
                       notice('Default teacher role was not found. Roles and permissions '.
                              'for all your forums will have to be manually set.');
                 }
-                if (!$studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
+                if (!$studentroles = get_archetype_roles('student')) {
                       notice('Default student role was not found. Roles and permissions '.
                              'for all your forums will have to be manually set.');
                 }
-                if (!$guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
+                if (!$guestroles = get_archetype_roles('guest')) {
                       notice('Default guest role was not found. Roles and permissions '.
                              'for teacher forums will have to be manually set.');
                 }

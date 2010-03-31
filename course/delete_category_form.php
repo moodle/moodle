@@ -12,7 +12,7 @@ class delete_category_form extends moodleform {
 
         $mform    =& $this->_form;
         $category = $this->_customdata;
-        ensure_context_subobj_present($category, CONTEXT_COURSECAT);
+        $categorycontext = get_context_instance(CONTEXT_COURSECAT, $category->id);
         $this->_category = $category;
 
     /// Check permissions, to see if it OK to give the option to delete
@@ -26,7 +26,8 @@ class delete_category_form extends moodleform {
             $checkcat = array_pop($tocheck);
             $childcategoryids[] = $checkcat->id;
             $tocheck = $tocheck + get_child_categories($checkcat->id);
-            if ($candeletecontent && !has_capability('moodle/category:manage', $checkcat->context)) {
+            $chcontext = get_context_instance(CONTEXT_COURSECAT, $checkcat->id);
+            if ($candeletecontent && !has_capability('moodle/category:manage', $chcontext)) {
                 $candeletecontent = false;
             }
         }
@@ -47,7 +48,7 @@ class delete_category_form extends moodleform {
         }
 
     /// Are there any questions in the question bank here?
-        $containsquestions = question_context_has_any_questions($category->context);
+        $containsquestions = question_context_has_any_questions($categorycontext);
 
     /// Get the list of categories we might be able to move to.
         $testcaps = array();

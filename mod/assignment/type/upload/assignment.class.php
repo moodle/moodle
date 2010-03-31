@@ -1072,7 +1072,7 @@ class assignment_upload extends assignment_base {
 
         // get users submission if there is one
         $submission = $this->get_submission();
-        if (has_capability('mod/assignment:submit', $this->cm->context)) {
+        if (has_capability('mod/assignment:submit', get_context_instance(COURSE_MODULE, $this->cm->id))) {
             $editable = $this->isopen() && (!$submission || $this->assignment->resubmit || !$submission->timemarked);
         } else {
             $editable = false;

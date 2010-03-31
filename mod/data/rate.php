@@ -23,10 +23,6 @@ if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
 
 require_login($course, false, $cm);
 
-if (isguestuser()) {
-    print_error('guestrate', 'data');
-}
-
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/data:rate', $context);
 

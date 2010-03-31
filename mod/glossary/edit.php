@@ -19,10 +19,6 @@ require_login($course, false, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-if (isguestuser()) {
-    print_error('guestnoedit', 'glossary', "$CFG->wwwroot/mod/glossary/view.php?id=$cmid");
-}
-
 if (!$glossary = $DB->get_record('glossary', array('id'=>$cm->instance))) {
     print_error('invalidid', 'glossary');
 }
@@ -34,6 +30,10 @@ if (!empty($id)) {
 $PAGE->set_url($url);
 
 if ($id) { // if entry is specified
+    if (isguestuser()) {
+        print_error('guestnoedit', 'glossary', "$CFG->wwwroot/mod/glossary/view.php?id=$cmid");
+    }
+
     if (!$entry = $DB->get_record('glossary_entries', array('id'=>$id, 'glossaryid'=>$glossary->id))) {
         print_error('invalidentry');
     }
@@ -58,6 +58,7 @@ if ($id) { // if entry is specified
 
 } else { // new entry
     require_capability('mod/glossary:write', $context);
+    // note: guest user does not have any write capability
     $entry = new object();
     $entry->id = null;
 }

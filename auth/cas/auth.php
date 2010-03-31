@@ -797,7 +797,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
 
                 $sitecontext = get_context_instance(CONTEXT_SYSTEM);
                 if (!empty($this->config->creators) and !empty($this->config->memberattribute)
-                  and $roles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
+                  and $roles = get_archetype_roles('coursecreator')) {
                     $creatorrole = array_shift($roles);      // We can only use one, let's use the first one
                 } else {
                     $creatorrole = false;
@@ -846,7 +846,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
 
             $sitecontext = get_context_instance(CONTEXT_SYSTEM);
             if (!empty($this->config->creators) and !empty($this->config->memberattribute)
-              and $roles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
+              and $roles = get_archetype_roles('coursecreator')) {
                 $creatorrole = array_shift($roles);      // We can only use one, let's use the first one
             } else {
                 $creatorrole = false;
@@ -1118,7 +1118,7 @@ if (!empty($this->config->attrcreators)) {
         if ($iscreator === null) {
             return; //nothing to sync - creators not configured
         }
-        if ($roles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
+        if ($roles = get_archetype_roles('coursecreator')) {
             $creatorrole = array_shift($roles);      // We can only use one, let's use the first one
             $systemcontext = get_context_instance(CONTEXT_SYSTEM);
             if ($iscreator) { // Following calls will not create duplicates

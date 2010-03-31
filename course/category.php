@@ -307,11 +307,7 @@
 
         $spacer = '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ';
         foreach ($courses as $acourse) {
-            if (isset($acourse->context)) {
-                $coursecontext = $acourse->context;
-            } else {
-                $coursecontext = get_context_instance(CONTEXT_COURSE, $acourse->id);
-            }
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $acourse->id);
 
             $count++;
             $up = ($count > 1 || !$atfirstpage);

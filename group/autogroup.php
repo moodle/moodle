@@ -42,17 +42,8 @@ $error = '';
 
 /// Get applicable roles
 $rolenames = array();
-if ($roles = get_roles_used_in_context($context, true)) {
-    $canviewroles    = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $context);
-    $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $systemcontext);
-
+if ($roles = get_profile_roles($context)) {
     foreach ($roles as $role) {
-        if (!isset($canviewroles[$role->id])) {   // Avoid this role (eg course creator)
-            continue;
-        }
-        if (isset($doanythingroles[$role->id])) {   // Avoid this role (ie admin)
-            continue;
-        }
         $rolenames[$role->id] = strip_tags(role_get_name($role, $context));   // Used in menus etc later on
     }
 }

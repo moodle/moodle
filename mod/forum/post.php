@@ -50,7 +50,12 @@ $page_params = array('reply'=>$reply, 'forum'=>$forum, 'edit'=>$edit);
 
 $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
-if (has_capability('moodle/legacy:guest', $sitecontext, NULL, false)) {
+if (!isloggedin() or isguestuser()) {
+    
+    if (!isloggedin() and !get_referer()) {
+        // No referer+not logged in - probably coming in via email  See MDL-9052
+        require_login();
+    }
 
     if (!empty($forum)) {      // User is starting a new discussion in a forum
         if (! $forum = $DB->get_record('forum', array('id' => $forum))) {
@@ -75,10 +80,6 @@ if (has_capability('moodle/legacy:guest', $sitecontext, NULL, false)) {
         print_error('invalidcoursemodule');
     } else {
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    }
-
-    if (!get_referer()) {   // No referer - probably coming in via email  See MDL-9052
-        require_login();
     }
 
     $PAGE->set_title($course->shortname);
@@ -106,13 +107,14 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
     if (! forum_user_can_post_discussion($forum, $groupid, -1, $cm)) {
-        if (has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {  // User is a guest here!
-            $SESSION->wantsurl = $FULLME;
-            $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
-            redirect($CFG->wwwroot.'/course/enrol.php?id='.$course->id, get_string('youneedtoenrol'));
-        } else {
-            print_error('nopostforum', 'forum');
+        if (!isguestuser()) {
+            if (!is_enrolled($coursecontext)) {
+                $SESSION->wantsurl = $FULLME;
+                $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
+                redirect($CFG->wwwroot.'/course/enrol.php?id='.$course->id, get_string('youneedtoenrol'));
+            }
         }
+        print_error('nopostforum', 'forum');
     }
 
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
@@ -172,13 +174,14 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     $modcontext    = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (! forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext)) {
-        if (has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {  // User is a guest here!
-            $SESSION->wantsurl = $FULLME;
-            $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
-            redirect($CFG->wwwroot.'/course/enrol.php?id='.$course->id, get_string('youneedtoenrol'));
-        } else {
-            print_error('nopostforum', 'forum');
+        if (!isguestuser) {
+            if (!is_enrolled($coursecontext)) {  // User is a guest here!
+                $SESSION->wantsurl = $FULLME;
+                $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
+                redirect($CFG->wwwroot.'/course/enrol.php?id='.$course->id, get_string('youneedtoenrol'));
+            }
         }
+        print_error('nopostforum', 'forum');
     }
 
     // Make sure user can post here

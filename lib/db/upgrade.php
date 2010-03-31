@@ -106,24 +106,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008050700);
     }
 
-    if ($result && $oldversion < 2008051200) {
-        // if guest role used as default user role unset it and force admin to choose new setting
-        if (!empty($CFG->defaultuserroleid)) {
-            if ($role = $DB->get_record('role', array('id'=>$CFG->defaultuserroleid))) {
-                if ($guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
-                    if (isset($guestroles[$role->id])) {
-                        set_config('defaultuserroleid', null);
-                        echo $OUTPUT->notification('Guest role removed from "Default role for all users" setting, please select another role.', 'notifysuccess');
-                    }
-                }
-            } else {
-                set_config('defaultuserroleid', null);
-            }
-        }
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2008051200);
-    }
-
     if ($result && $oldversion < 2008051201) {
         echo $OUTPUT->notification('Increasing size of user idnumber field, this may take a while...', 'notifysuccess');
         upgrade_set_timeout(60*20); // this may take a while
@@ -207,14 +189,6 @@ function xmldb_main_upgrade($oldversion) {
     if ($result && $oldversion < 2008070300) {
         $result = $DB->delete_records_select('role_names', $DB->sql_isempty('role_names', 'name', false, false));
         upgrade_main_savepoint($result, 2008070300);
-    }
-
-    if ($result && $oldversion < 2008070700) {
-        if (isset($CFG->defaultuserroleid) and isset($CFG->guestroleid) and $CFG->defaultuserroleid == $CFG->guestroleid) {
-            // guest can not be selected in defaultuserroleid!
-            unset_config('defaultuserroleid');
-        }
-        upgrade_main_savepoint($result, 2008070700);
     }
 
     if ($result && $oldversion < 2008070701) {
@@ -920,9 +894,6 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Defaults, should match moodle_install_roles.
         $rolecontextlevels = array();
-        if (isset($roleids['admin'])) {
-            $rolecontextlevels[$roleids['admin']] = get_default_contextlevels('admin');
-        }
         if (isset($roleids['coursecreator'])) {
             $rolecontextlevels[$roleids['coursecreator']] = get_default_contextlevels('coursecreator');
         }
@@ -961,50 +932,6 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2008110602);
-    }
-
-    /// Remove any role overrides for moodle/site:doanything, or any permissions
-    /// for it in a role without legacy:admin.
-    if ($result && $oldversion < 2008110603) {
-        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-
-        // Remove all overrides.
-        $DB->delete_records_select('role_capabilities', 'capability = ? AND contextid <> ?', array('moodle/site:doanything', $systemcontext->id));
-
-        // Get the ids of all the roles that are moodle/legacy:admin.
-        $adminroleids = $DB->get_records_menu('role_capabilities',
-                array('capability' => 'moodle/legacy:admin', 'permission' => 1, 'contextid' => $systemcontext->id),
-                '', 'id, roleid');
-
-        // Remove moodle/site:doanything from all other roles.
-        list($notroletest, $params) = $DB->get_in_or_equal($adminroleids, SQL_PARAMS_QM, '', false);
-        $DB->delete_records_select('role_capabilities', "roleid $notroletest AND capability = ? AND contextid = ?",
-                array_merge($params, array('moodle/site:doanything', $systemcontext->id)));
-
-        // Ensure that for all admin-y roles, the permission for moodle/site:doanything is 1
-        list($isroletest, $params) = $DB->get_in_or_equal($adminroleids);
-        $DB->set_field_select('role_capabilities', 'permission', 1,
-                "roleid $isroletest AND capability = ? AND contextid = ?",
-                array_merge($params, array('moodle/site:doanything', $systemcontext->id)));
-
-        // And for any admin-y roles where moodle/site:doanything is not set, set it.
-        $doanythingroleids = $DB->get_records_menu('role_capabilities',
-                array('capability' => 'moodle/site:doanything', 'permission' => 1, 'contextid' => $systemcontext->id),
-                '', 'id, roleid');
-        foreach ($adminroleids as $roleid) {
-            if (!in_array($roleid, $doanythingroleids)) {
-                $rc = new stdClass;
-                $rc->contextid = $systemcontext->id;
-                $rc->roleid = $roleid;
-                $rc->capability = 'moodle/site:doanything';
-                $rc->permission = 1;
-                $rc->timemodified = time();
-                $DB->insert_record('role_capabilities', $rc);
-            }
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2008110603);
     }
 
     /// Drop the deprecated teacher, teachers, student and students columns from the course table.
@@ -1098,25 +1025,6 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2008120700);
-    }
-
-    /// For MDL-17501. Ensure that any role that has moodle/course:update also
-    /// has moodle/course:visibility.
-    if ($result && $oldversion < 2008120800) {
-    /// Get the roles with 'moodle/course:update'.
-        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-        $roles = get_roles_with_capability('moodle/course:update', CAP_ALLOW, $systemcontext);
-
-    /// Give those roles 'moodle/course:visibility'.
-        foreach ($roles as $role) {
-            assign_capability('moodle/course:visibility', CAP_ALLOW, $role->id, $systemcontext->id);
-        }
-
-    /// Force all sessions to refresh access data.
-        mark_context_dirty($systemcontext->path);
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2008120800);
     }
 
     if ($result && $oldversion < 2008120801) {
@@ -3072,7 +2980,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table->add_field('scaleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('rating', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        
+
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
@@ -3333,7 +3241,192 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2010033101);
     }
-    
+
+    if ($result && $oldversion < 2010033102.00) {
+        // rename course view capability to participate
+        $params = array('view'=>'moodle/course:view', 'participate'=>'moodle/course:participate');
+        $sql = "UPDATE {role_capabilities} SET capability = :participate WHERE capability = :view";
+        $DB->execute($sql, $params);
+        $sql = "UPDATE {capabilities} SET name = :participate WHERE name = :view";
+        $DB->execute($sql, $params);
+        // note: the view capability is readded again at the end of upgrade, but with different meaning
+        upgrade_main_savepoint($result, 2010033102.00);
+    }
+
+    if ($result && $oldversion < 2010033102.01) {
+        // Define field archetype to be added to role table
+        $table = new xmldb_table('role');
+        $field = new xmldb_field('archetype', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, 'sortorder');
+        $dbman->add_field($table, $field);
+        upgrade_main_savepoint($result, 2010033102.01);
+    }
+
+    if ($result && $oldversion < 2010033102.02) {
+        // Set archetype for existing roles and change admin role to manager role
+        $sql = "SELECT r.*, rc.capability
+                  FROM {role} r
+                  JOIN {role_capabilities} rc ON rc.roleid = r.id
+                 WHERE rc.contextid = :syscontextid AND rc.capability LIKE :legacycaps
+              ORDER BY r.id";
+        $params = array('syscontextid'=>SYSCONTEXTID, 'legacycaps'=>'moodle/legacy:%');
+        $substart = strlen('moodle/legacy:');
+        $roles = $DB->get_recordset_sql($sql, $params); // in theory could be multiple legacy flags in one role
+        foreach ($roles as $role) {
+            $role->archetype = substr($role->capability, $substart);
+            unset($role->capability);
+            if ($role->archetype === 'admin') {
+                $role->archetype = 'manager';
+                if ($role->shortname === 'admin') {
+                    $role->shortname   = 'manager';
+                    $role->name        = get_string('manager', 'role');
+                    $role->description = get_string('managerdescription', 'role');
+                }
+            }
+            $DB->update_record('role', $role);
+        }
+        $roles->close();
+
+        upgrade_main_savepoint($result, 2010033102.02);
+    }
+
+    if ($result && $oldversion < 2010033102.03) {
+        // Now pick site admins (===have manager role assigned at the system context)
+        // and store them in the new $CFG->siteadmins setting as comma separated list
+        $sql = "SELECT ra.id, ra.userid
+                  FROM {role_assignments} ra
+                  JOIN {role} r ON r.id = ra.roleid
+                  JOIN {user} u ON u.id = ra.userid
+                 WHERE ra.contextid = :syscontext AND r.archetype = 'manager' AND u.deleted = 0
+              ORDER BY ra.id";
+        $ras = $DB->get_records_sql($sql, array('syscontext'=>SYSCONTEXTID));
+        $admins = array();
+        foreach ($ras as $ra) {
+            $admins[$ra->userid] = $ra->userid;
+            set_config('siteadmins', implode(',', $admins)); // better to save it repeatedly, we do need at least one admin
+            $DB->delete_records('role_assignments', array('id'=>$ra->id));
+        }
+
+        upgrade_main_savepoint($result, 2010033102.03);
+    }
+
+    if ($result && $oldversion < 2010033102.04) {
+        // clean up the manager roles
+        $managers = $DB->get_records('role', array('archetype'=>'manager'));
+        foreach ($managers as $manager) {
+            // now sanitize the capabilities and overrides
+            $DB->delete_records('role_capabilities', array('capability'=>'moodle/site:config', 'roleid'=>$manager->id)); // only site admins may configure servers
+            // note: doanything and legacy caps are deleted automatically, they get moodle/course:view later at the end of the upgrade
+
+            // set usable contexts
+            $DB->delete_records('role_context_levels', array('roleid'=>$manager->id));
+            $assignlevels = array(CONTEXT_SYSTEM, CONTEXT_COURSECAT, CONTEXT_COURSE);
+            foreach ($assignlevels as $assignlevel) {
+                $record = (object)array('roleid'=>$manager->id, 'contextlevel'=>$assignlevel);
+                $DB->insert_record('role_context_levels', $record);
+            }
+
+            // remove manager role assignments bellow the course context level - admin role was never intended for activities and blocks,
+            // the problem is that those assignments would not be visible after upgrade and old style admins in activities make no sense anyway
+            $DB->delete_records_select('role_assignments', "roleid = :manager AND contextid IN (SELECT id FROM {context} WHERE contextlevel > 50)", array('manager'=>$manager->id));
+
+            // allow them to assign all roles except default user, guest and frontpage - users get these roles automatically on the fly when needed
+            $DB->delete_records('role_allow_assign', array('roleid'=>$manager->id));
+            $roles = $DB->get_records_sql("SELECT * FROM {role} WHERE archetype <> 'user' AND archetype <> 'guest' AND archetype <> 'frontpage'");
+            foreach ($roles as $role) {
+                $record = (object)array('roleid'=>$manager->id, 'allowassign'=>$role->id);
+                $DB->insert_record('role_allow_assign', $record);
+            }
+
+            // allow them to override all roles
+            $DB->delete_records('role_allow_override', array('roleid'=>$manager->id));
+            $roles = $DB->get_records_sql("SELECT * FROM {role}");
+            foreach ($roles as $role) {
+                $record = (object)array('roleid'=>$manager->id, 'allowoverride'=>$role->id);
+                $DB->insert_record('role_allow_override', $record);
+            }
+
+            // allow them to switch to all following roles
+            $DB->delete_records('role_allow_switch', array('roleid'=>$manager->id));
+            $roles = $DB->get_records_sql("SELECT * FROM {role} WHERE archetype IN ('student', 'teacher', 'editingteacher')");
+            foreach ($roles as $role) {
+                $record = (object)array('roleid'=>$manager->id, 'allowswitch'=>$role->id);
+                $DB->insert_record('role_allow_switch', $record);
+            }
+        }
+
+        upgrade_main_savepoint($result, 2010033102.04);
+    }
+
+    if ($result && $oldversion < 2010033102.05) {
+        // remove course:view from all roles that are not used for enrolment, it does NOT belong there because it really means user is enrolled!
+        $noenrolroles = $DB->get_records_select('role', "archetype IN ('guest', 'user', 'manager', 'coursecreator', 'frontpage')");
+        foreach ($noenrolroles as $role) {
+            $DB->delete_records('role_capabilities', array('roleid'=>$role->id, 'capability'=>'moodle/course:participate'));
+        }
+        upgrade_main_savepoint($result, 2010033102.05);
+    }
+
+    if ($result && $oldversion < 2010033102.06) {
+        // make sure there is nothing weird in default user role
+        if (!empty($CFG->defaultuserroleid)) {
+            if ($role = $DB->get_record('role', array('id'=>$CFG->defaultuserroleid))) {
+                if ($role->archetype !== '' and $role->archetype !== 'user') {
+                    upgrade_log(UPGRADE_LOG_NOTICE, null, 'Default authenticated user role (defaultuserroleid) value is invalid, setting cleared.');
+                    unset_config('defaultuserroleid');
+                }
+            } else {
+                unset_config('defaultuserroleid');
+            }
+        }
+        upgrade_main_savepoint($result, 2010033102.06);
+    }
+
+    if ($result && $oldversion < 2010033102.07) {
+        if (!empty($CFG->displayloginfailures) and $CFG->displayloginfailures === 'teacher') {
+            upgrade_log(UPGRADE_LOG_NOTICE, null, 'Displaying of login failuters to teachers is not supported any more.');
+            unset_config('displayloginfailures');
+        }
+        upgrade_main_savepoint($result, 2010033102.07);
+    }
+
+    if ($result && $oldversion < 2010033102.08) {
+        // make sure there are no problems in default guest role settings
+        if (!empty($CFG->guestroleid)) {
+            if ($role = $DB->get_record('role', array('id'=>$CFG->guestroleid))) {
+                if ($role->archetype !== '' and $role->archetype !== 'guest') {
+                    upgrade_log(UPGRADE_LOG_NOTICE, null, 'Default guest role (guestroleid) value is invalid, setting cleared.');
+                    unset_config('guestroleid');
+                }
+            } else {
+                upgrade_log(UPGRADE_LOG_NOTICE, null, 'Role specified in Default guest role (guestroleid) doeas not exist, setting cleared.');
+                unset_config('guestroleid');
+            }
+        }
+        // remove all roles of the guest account - the only way to change it is to override the guest role, sorry
+        // the guest account gets all the role assignemnts on the fly whcih works fine in has_capability(),
+        $DB->delete_records_select('role_assignments', "userid IN (SELECT id FROM {user} WHERE username = 'guest')");
+
+        upgrade_main_savepoint($result, 2010033102.08);
+    }
+
+    if ($result && $oldversion < 2010033102.09) {
+        // For MDL-17501. Ensure that any role that has moodle/course:update also has moodle/course:visibility.
+        // Get the roles with 'moodle/course:update'.
+        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        $roles = get_roles_with_capability('moodle/course:update', CAP_ALLOW, $systemcontext);
+
+        // Give those roles 'moodle/course:visibility'.
+        foreach ($roles as $role) {
+            assign_capability('moodle/course:visibility', CAP_ALLOW, $role->id, $systemcontext->id);
+        }
+
+        // Force all sessions to refresh access data.
+        mark_context_dirty($systemcontext->path);
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010033102.09);
+    }
+
     return $result;
 }
 

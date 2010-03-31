@@ -70,7 +70,7 @@ switch ($action) {
     default: //display the list of token
 
     /// generate a token for non admin if web service are enable and the user has the capability to create a token
-        if (!is_siteadmin($USER->id) && has_capability('moodle/webservice:createtoken', get_context_instance(CONTEXT_SYSTEM)) && !empty($CFG->enablewebservices)) {
+        if (!is_siteadmin() && has_capability('moodle/webservice:createtoken', get_context_instance(CONTEXT_SYSTEM)) && !empty($CFG->enablewebservices)) {
         /// for every service than the user is authorised on, create a token (if it doesn't already exist)
 
             ///get all services which are set to all user (no restricted to specific users)

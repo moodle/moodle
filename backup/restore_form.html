@@ -636,7 +636,7 @@ if ($restoreuserinfo) {
         echo ('</td><td algin="left">');
 
         // get the first teacheredit legacy
-        $roles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
+        $roles = get_archetype_roles('editingteacher');
 
         $editteacher = reset($roles);
         echo html_writer::select($siterolesarray, "defaultteacheredit", $editteacher->id, array(''=>'new role'));
@@ -649,7 +649,7 @@ if ($restoreuserinfo) {
         echo ('</td><td algin="left">');
 
         // get the first teacheredit legacy
-        $roles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
+        $roles = get_archetype_roles('teacher');
         $teacher = reset($roles);
 
         echo html_writer::select($siterolesarray, "defaultteacher", $teacher->id, array(''=>'new role'));
@@ -662,7 +662,7 @@ if ($restoreuserinfo) {
         echo ('</td><td algin="left">');
 
         // get the first teacheredit legacy
-        $roles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
+        $roles = get_archetype_roles('student');
         $studentrole = array_shift($roles);
 
         echo html_writer::select($siterolesarray, "defaultstudent", $studentrole->id, array(''=>'new role'));

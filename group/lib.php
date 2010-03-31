@@ -40,7 +40,7 @@ function groups_add_member($grouporid, $userorid) {
     }
 
     //check if the user a participant of the group course
-    if (!is_course_participant ($userid, $group->courseid)) {
+    if (!is_enrolled(get_context_instance(CONTEXT_COURSE, $group->courseid), $userid)) {
         return false;
     }
 
@@ -487,25 +487,12 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
  * @return Array of role ID integers, or false if error/none.
  */
 function groups_get_possible_roles($context) {
-    $capability = 'moodle/course:view';
-    $doanything = false;
+    $capability = 'moodle/course:participate';
 
     // find all possible "student" roles
     if ($possibleroles = get_roles_with_capability($capability, CAP_ALLOW, $context)) {
-        if (!$doanything) {
-            if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
-                return false;    // Something is seriously wrong
-            }
-            $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
-        }
-
         $validroleids = array();
         foreach ($possibleroles as $possiblerole) {
-            if (!$doanything) {
-                if (isset($doanythingroles[$possiblerole->id])) {  // We don't want these included
-                    continue;
-                }
-            }
             if ($caps = role_context_capabilities($possiblerole->id, $context, $capability)) { // resolved list
                 if (isset($caps[$capability]) && $caps[$capability] > 0) { // resolved capability > 0
                     $validroleids[] = $possiblerole->id;
@@ -529,64 +516,30 @@ function groups_get_possible_roles($context) {
  * @param string $orderby The colum to sort users by
  * @return array An array of the users
  */
-function groups_get_potential_members($courseid, $roleid = null, $orderby = 'lastname,firstname') {
+function groups_get_potential_members($courseid, $roleid = null, $orderby = 'lastname ASC, firstname ASC') {
     global $DB;
 
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-    $rolenames = array();
-    $avoidroles = array();
-
-    if ($roles = get_roles_used_in_context($context, true)) {
-
-        $canviewroles    = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $context);
-        $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
-
-        foreach ($roles as $role) {
-            if (!isset($canviewroles[$role->id])) {   // Avoid this role (eg course creator)
-                $avoidroles[] = $role->id;
-                unset($roles[$role->id]);
-                continue;
-            }
-            if (isset($doanythingroles[$role->id])) {   // Avoid this role (ie admin)
-                $avoidroles[] = $role->id;
-                unset($roles[$role->id]);
-                continue;
-            }
-            $rolenames[$role->id] = strip_tags(role_get_name($role, $context));   // Used in menus etc later on
-        }
-    }
-
-    if ($avoidroles) {
-        list($adminroles, $params) = $DB->get_in_or_equal($avoidroles, SQL_PARAMS_NAMED, 'ar0', false);
-        $adminroles = "AND r.roleid $adminroles";
-    } else {
-        $adminroles = "";
-        $params = array();
-    }
 
     // we are looking for all users with this role assigned in this context or higher
-    if ($usercontexts = get_parent_contexts($context)) {
-        $listofcontexts = 'IN ('.implode(',', $usercontexts).')';
-    } else {
-        $listofcontexts = '='.$sitecontext->id.')'; // must be site
-    }
+    $listofcontexts = get_related_contexts_string($context);
 
+    list($esql, $params) = get_enrolled_sql($context);
+    
     if ($roleid) {
-        $selectrole = "AND r.roleid = :roleid";
         $params['roleid'] = $roleid;
+        $where = "WHERE u.id IN (SELECT userid
+                                   FROM {role_assignments}
+                                  WHERE roleid = :roleid AND contextid $listofcontexts)";
     } else {
-        $selectrole = "";
+        $where = "";
     }
 
     $sql = "SELECT u.id, u.username, u.firstname, u.lastname, u.idnumber
               FROM {user} u
-              JOIN {role_assignments} r on u.id=r.userid
-             WHERE (r.contextid = :contextid OR r.contextid $listofcontexts)
-                   AND u.deleted = 0 AND u.username != 'guest'
-                   $selectrole $adminroles
+              JOIN ($esql) e ON e.id = u.id
+            $where
           ORDER BY $orderby";
-    $params['contextid'] = $context->id;
 
     return $DB->get_records_sql($sql, $params);
 
@@ -660,7 +613,7 @@ function groups_unassign_grouping($groupingid, $groupid) {
  * @param string $fields List of fields from user table prefixed with u, default 'u.*'
  * @param string $sort SQL ORDER BY clause, default 'u.lastname ASC'
  * @param string $extrawheretest extra SQL conditions ANDed with the existing where clause.
- * @param array $whereparams any parameters required by $extrawheretest.
+ * @param array $whereparams any parameters required by $extrawheretest (named parameters).
  * @return array Complex array as described above
  */
 function groups_get_members_by_role($groupid, $courseid, $fields='u.*',
@@ -681,11 +634,11 @@ function groups_get_members_by_role($groupid, $courseid, $fields='u.*',
               JOIN {user} u ON u.id = gm.userid
               JOIN {role_assignments} ra ON ra.userid = u.id
               JOIN {role} r ON r.id = ra.roleid
-             WHERE gm.groupid=?
+             WHERE gm.groupid=:mgroupid
                    AND ra.contextid ".get_related_contexts_string($context).
                    $extrawheretest."
           ORDER BY r.sortorder, $sort";
-    array_unshift($whereparams, $groupid);
+    $whereparams['mgroupid'] = $groupid;
     $rs = $DB->get_recordset_sql($sql, $whereparams);
 
     return groups_calculate_role_people($rs, $context);

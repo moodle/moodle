@@ -74,7 +74,7 @@ if ($groupmode && !forum_is_subscribed($user->id, $forum) && !has_capability('mo
 
 require_login($course->id, false, $cm);
 
-if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {   // Guests can't subscribe
+if (!is_enrolled($context)) {   // Guests and visitors can't subscribe - only enrolled
     $PAGE->set_title($course->shortname);
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();

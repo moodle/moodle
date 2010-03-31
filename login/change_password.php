@@ -46,7 +46,7 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
 }
 
 // require proper login; guest user can not change password
-if (empty($USER->id) or isguestuser()) {
+if (!isloggedin() or isguestuser()) {
     if (empty($SESSION->wantsurl)) {
         $SESSION->wantsurl = $CFG->httpswwwroot.'/login/change_password.php';
     }

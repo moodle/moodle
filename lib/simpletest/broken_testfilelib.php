@@ -81,10 +81,8 @@ class filelib_test extends UnitTestCaseUsingDatabase {
 
         // User and capability stuff (stolen from testaccesslib.php)
         $syscontext = get_system_context(false);
-        $adminrole  = create_role(get_string('administrator'), 'admin', get_string('administratordescription'), 'moodle/legacy:admin');
 
         /// Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
-        assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $syscontext->id);
         update_capabilities('moodle');
         update_capabilities('mod_forum');
 

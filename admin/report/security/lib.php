@@ -576,16 +576,6 @@ function report_security_check_defaultuserrole($detailed=false) {
         return $result;
     }
 
-    // first test if do anything enabled - that would be really crazy!
-    $params = array('doanything'=>'moodle/site:doanything', 'capallow'=>CAP_ALLOW, 'roleid'=>$default_role->id);
-    $sql = "SELECT COUNT(DISTINCT rc.contextid)
-              FROM {role_capabilities} rc
-             WHERE rc.capability = :doanything
-                   AND rc.permission = :capallow
-                   AND rc.roleid = :roleid";
-
-    $anythingcount = $DB->count_records_sql($sql, $params);
-
     // risky caps - usually very dangerous
     $params = array('capallow'=>CAP_ALLOW, 'roleid'=>$default_role->id);
     $sql = "SELECT COUNT(DISTINCT rc.contextid)
@@ -598,24 +588,16 @@ function report_security_check_defaultuserrole($detailed=false) {
     $riskycount = $DB->count_records_sql($sql, $params);
 
     // default role can not have view cap in all courses - this would break moodle badly
-    $viewcap = $DB->record_exists('role_capabilities', array('roleid'=>$default_role->id, 'permission'=>CAP_ALLOW, 'capability'=>'moodle/course:view'));
+    $viewcap = $DB->record_exists('role_capabilities', array('roleid'=>$default_role->id, 'permission'=>CAP_ALLOW, 'capability'=>'moodle/course:participate'));
 
-    // it may have either no or 'user' legacy type - nothing else, or else it would break during upgrades badly
-    $legacyok = false;
-    $params = array('capallow'=>CAP_ALLOW, 'roleid'=>$default_role->id, 'legacy'=>'moodle/legacy:%');
-    $sql = "SELECT rc.capability, 1
-              FROM {role_capabilities} rc
-             WHERE rc.capability LIKE :legacy
-                   AND rc.permission = :capallow
-                   AND rc.roleid = :roleid";
-    $legacycaps = $DB->get_records_sql($sql, $params);
-    if (!$legacycaps) {
+    // it may have either none or 'user' archetype - nothing else, or else it would break during upgrades badly
+    if ($default_role->archetype === '' or $default_role->archetype === 'user') {
         $legacyok = true;
-    } else if (count($legacycaps) == 1 and isset($legacycaps['moodle/legacy:user'])) {
-        $legacyok = true;
+    } else {
+        $legacyok = false;
     }
 
-    if ($anythingcount or $riskycount or $viewcap or !$legacyok) {
+    if ($riskycount or $viewcap or !$legacyok) {
         $result->status  = REPORT_SECURITY_CRITICAL;
         $result->info    = get_string('check_defaultuserrole_error', 'report_security', format_string($default_role->name));
 
@@ -655,16 +637,6 @@ function report_security_check_guestrole($detailed=false) {
         return $result;
     }
 
-    // first test if do anything enabled - that would be really crazy!
-    $params = array('doanything'=>'moodle/site:doanything', 'capallow'=>CAP_ALLOW, 'roleid'=>$guest_role->id);
-    $sql = "SELECT COUNT(DISTINCT rc.contextid)
-              FROM {role_capabilities} rc
-             WHERE rc.capability = :doanything
-                   AND rc.permission = :capallow
-                   AND rc.roleid = :roleid";
-
-    $anythingcount = $DB->count_records_sql($sql, $params);
-
     // risky caps - usually very dangerous
     $params = array('capallow'=>CAP_ALLOW, 'roleid'=>$guest_role->id);
     $sql = "SELECT COUNT(DISTINCT rc.contextid)
@@ -676,22 +648,14 @@ function report_security_check_guestrole($detailed=false) {
 
     $riskycount = $DB->count_records_sql($sql, $params);
 
-    // it may have either no or 'guest' legacy type - nothing else, or else it would break during upgrades badly
-    $legacyok = false;
-    $params = array('capallow'=>CAP_ALLOW, 'roleid'=>$guest_role->id, 'legacy'=>'moodle/legacy:%');
-    $sql = "SELECT rc.capability, 1
-              FROM {role_capabilities} rc
-             WHERE rc.capability LIKE :legacy
-                   AND rc.permission = :capallow
-                   AND rc.roleid = :roleid";
-    $legacycaps = $DB->get_records_sql($sql, $params);
-    if (!$legacycaps) {
+    // it may have either no or 'guest' archetype - nothing else, or else it would break during upgrades badly
+    if ($guest_role->archetype === '' or $guest_role->archetype === 'guest') {
         $legacyok = true;
-    } else if (count($legacycaps) == 1 and isset($legacycaps['moodle/legacy:guest'])) {
-        $legacyok = true;
+    } else {
+        $legacyok = false;
     }
 
-    if ($anythingcount or $riskycount or !$legacyok) {
+    if ($riskycount or !$legacyok) {
         $result->status  = REPORT_SECURITY_CRITICAL;
         $result->info    = get_string('check_guestrole_error', 'report_security', format_string($guest_role->name));
 
@@ -731,16 +695,6 @@ function report_security_check_frontpagerole($detailed=false) {
         return $result;
     }
 
-    // first test if do anything enabled - that would be really crazy!
-    $params = array('doanything'=>'moodle/site:doanything', 'capallow'=>CAP_ALLOW, 'roleid'=>$frontpage_role->id);
-    $sql = "SELECT COUNT(DISTINCT rc.contextid)
-              FROM {role_capabilities} rc
-             WHERE rc.capability = :doanything
-                   AND rc.permission = :capallow
-                   AND rc.roleid = :roleid";
-
-    $anythingcount = $DB->count_records_sql($sql, $params);
-
     // risky caps - usually very dangerous
     $params = array('capallow'=>CAP_ALLOW, 'roleid'=>$frontpage_role->id);
     $sql = "SELECT COUNT(DISTINCT rc.contextid)
@@ -753,19 +707,14 @@ function report_security_check_frontpagerole($detailed=false) {
     $riskycount = $DB->count_records_sql($sql, $params);
 
     // there is no legacy role type for frontpage yet - anyway we can not allow teachers or admins there!
-    $params = array('capallow'=>CAP_ALLOW, 'roleid'=>$frontpage_role->id, 'legacy'=>'moodle/legacy:%');
-    $sql = "SELECT rc.capability, 1
-              FROM {role_capabilities} rc
-             WHERE rc.capability LIKE :legacy
-                   AND rc.permission = :capallow
-                   AND rc.roleid = :roleid";
-    $legacycaps = $DB->get_records_sql($sql, $params);
-    $legacyok = (!isset($legacycaps['moodle/legacy:teacher'])
-                 and !isset($legacycaps['moodle/legacy:editingteacher'])
-                 and !isset($legacycaps['moodle/legacy:coursecreator'])
-                 and !isset($legacycaps['moodle/legacy:admin']));
+    if ($frontpage_role->archetype === 'teacher' or $frontpage_role->archetype === 'editingteacher'
+      or $frontpage_role->archetype === 'coursecreator' or $frontpage_role->archetype === 'manager') {
+        $legacyok = false;
+    } else {
+        $legacyok = true;
+    }
 
-    if ($anythingcount or $riskycount or !$legacyok) {
+    if ($riskycount or !$legacyok) {
         $result->status  = REPORT_SECURITY_CRITICAL;
         $result->info    = get_string('check_frontpagerole_error', 'report_security', format_string($frontpage_role->name));
 
@@ -811,25 +760,6 @@ function report_security_check_defaultcourserole($detailed=false) {
         return $result;
     }
 
-    // first test if do anything enabled - that would be really crazy!
-    $params = array('doanything'=>'moodle/site:doanything', 'capallow'=>CAP_ALLOW, 'roleid'=>$student_role->id);
-    $sql = "SELECT DISTINCT rc.contextid
-              FROM {role_capabilities} rc
-             WHERE rc.capability = :doanything
-                   AND rc.permission = :capallow
-                   AND rc.roleid = :roleid";
-
-    if ($anything_contexts = $DB->get_records_sql($sql, $params)) {
-        foreach($anything_contexts as $contextid) {
-            if ($contextid == SYSCONTEXTID) {
-                $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&amp;roleid=$CFG->defaultcourseroleid";
-            } else {
-                $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&amp;roleid=$CFG->defaultcourseroleid";
-            }
-            $problems[] = get_string('check_defaultcourserole_anything', 'report_security', $a);
-        }
-    }
-
     // risky caps - usually very dangerous
     $params = array('capallow'=>CAP_ALLOW, 'roleid'=>$student_role->id);
     $sql = "SELECT DISTINCT rc.contextid
@@ -851,14 +781,7 @@ function report_security_check_defaultcourserole($detailed=false) {
     }
 
     // course creator or administrator does not make any sense here
-    $params = array('capallow'=>CAP_ALLOW, 'roleid'=>$student_role->id, 'legacy'=>'moodle/legacy:%');
-    $sql = "SELECT rc.capability, 1
-              FROM {role_capabilities} rc
-             WHERE rc.capability LIKE :legacy
-                   AND rc.permission = :capallow
-                   AND rc.roleid = :roleid";
-    $legacycaps = $DB->get_records_sql($sql, $params);
-    if (isset($legacycaps['moodle/legacy:coursecreator']) or isset($legacycaps['moodle/legacy:admin'])) {
+    if ($student_role->archetype === 'coursecreator' or $student_role->archetype === 'manager') {
         $problems[] = get_string('check_defaultcourserole_legacy', 'report_security');
     }
 
@@ -922,42 +845,15 @@ function report_security_check_courserole($detailed=false) {
 
     $sql = "SELECT DISTINCT rc.roleid
               FROM {role_capabilities} rc
-             WHERE (rc.capability = :coursecreator OR rc.capability = :admin OR rc.capability = :teacher OR rc.capability = :editingteacher)
-                   AND rc.permission = ".CAP_ALLOW."";
-    $params = array('coursecreator'  => 'moodle/legacy:coursecreator',
-                    'admin'          => 'moodle/legacy:admin',
-                    'teacher'        => 'moodle/legacy:teacher',
-                    'editingteacher' => 'moodle/legacy:editingteacher');
+              JOIN {role} r ON r.id = rc.roleid
+             WHERE (r.archetype = :coursecreator OR r.archetype = :teacher OR r.archetype = :editingteacher OR r.archetype = :manager)";
+    $params = array('coursecreator'  => 'coursecreator',
+                    'teacher'        => 'teacher',
+                    'editingteacher' => 'editingteacher',
+                    'manager'        => 'manager');
 
     $riskyroleids = $DB->get_records_sql($sql, $params);
     $riskyroleids = array_keys($riskyroleids);
-
-
-    // first test if do anything enabled - that would be really crazy!!!!!!
-    list($inroles, $params) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'r0', true);
-    $params = array_merge($params, array('doanything'=>'moodle/site:doanything', 'capallow'=>CAP_ALLOW));
-    $params['doanything'] = 'moodle/site:doanything';
-    $params['capallow']   = CAP_ALLOW;
-    $sql = "SELECT rc.roleid, rc.contextid
-              FROM {role_capabilities} rc
-             WHERE rc.capability = :doanything
-                   AND rc.permission = :capallow
-                   AND rc.roleid $inroles
-          GROUP BY rc.roleid, rc.contextid
-          ORDER BY rc.roleid, rc.contextid";
-
-    $rs = $DB->get_recordset_sql($sql, $params);
-    foreach($rs as $res) {
-        $roleid    = $res->roleid;
-        $contextid = $res->contextid;
-        if ($contextid == SYSCONTEXTID) {
-            $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&amp;roleid=$roleid";
-        } else {
-            $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&amp;roleid=$roleid";
-        }
-        $problems[] = get_string('check_courserole_anything', 'report_security', $a);
-    }
-    $rs->close();
 
     // any XSS legacy cap does not make any sense here!
     list($inroles, $params) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'r0', true);
@@ -1034,36 +930,12 @@ function report_security_check_riskadmin($detailed=false) {
     $result->status  = null;
     $result->link    = null;
 
-    $params = array('doanything'=>'moodle/site:doanything', 'syscontextid'=>SYSCONTEXTID, 'capallow'=>CAP_ALLOW);
+    $sql = "SELECT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email
+              FROM {user} u
+             WHERE u.id IN ($CFG->siteadmins)";
 
-    $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email
-              FROM {role_capabilities} rc
-              JOIN {role_assignments} ra ON (ra.contextid = rc.contextid AND ra.roleid = rc.roleid)
-              JOIN {user} u ON u.id = ra.userid
-             WHERE rc.capability = :doanything
-                   AND rc.permission = :capallow
-                   AND u.deleted = 0
-                   AND rc.contextid = :syscontextid";
-
-    $admins = $DB->get_records_sql($sql, $params);
+    $admins = $DB->get_records_sql($sql);
     $admincount = count($admins);
-
-    $sqlunsup = "SELECT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, ra.contextid, ra.roleid
-                  FROM (SELECT rcx.*
-                       FROM {role_capabilities} rcx
-                       WHERE rcx.capability = :doanything AND rcx.permission = :capallow) rc,
-                     {context} c,
-                     {context} sc,
-                     {role_assignments} ra,
-                     {user} u
-               WHERE c.id = rc.contextid
-                     AND (sc.path = c.path OR sc.path LIKE ".$DB->sql_concat('c.path', "'/%'")." OR c.path LIKE ".$DB->sql_concat('sc.path', "'/%'").")
-                     AND u.id = ra.userid AND u.deleted = 0
-                     AND ra.contextid = sc.id AND ra.roleid = rc.roleid AND ra.contextid <> :syscontextid
-            GROUP BY u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, ra.contextid, ra.roleid
-            ORDER BY u.lastname, u.firstname";
-
-    $unsupcount = $DB->count_records_sql("SELECT COUNT('x') FROM ($sqlunsup) unsup", $params);
 
     if ($detailed) {
         foreach ($admins as $uid=>$user) {
@@ -1073,32 +945,11 @@ function report_security_check_riskadmin($detailed=false) {
         $admins = '<ul>'.implode($admins).'</ul>';
     }
 
-    if (!$unsupcount) {
-        $result->status  = REPORT_SECURITY_OK;
-        $result->info = get_string('check_riskadmin_ok', 'report_security', $admincount);
+    $result->status  = REPORT_SECURITY_OK;
+    $result->info = get_string('check_riskadmin_ok', 'report_security', $admincount);
 
-        if ($detailed) {
-            $result->details = get_string('check_riskadmin_detailsok', 'report_security', $admins);
-        }
-
-    } else {
-        $result->status  = REPORT_SECURITY_WARNING;
-        $a = (object)array('admincount'=>$admincount, 'unsupcount'=>$unsupcount);
-        $result->info = get_string('check_riskadmin_warning', 'report_security', $a);
-
-        if ($detailed) {
-            $rs = $DB->get_recordset_sql($sqlunsup, $params);
-            $users = array();
-            foreach ($rs as $user) {
-                $url = "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=$user->contextid&amp;roleid=$user->roleid";
-                $a = (object)array('fullname'=>fullname($user), 'url'=>$url, 'email'=>$user->email);
-                $users[] = '<li>'.get_string('check_riskadmin_unassign', 'report_security', $a).'</li>';
-            }
-            $rs->close();
-            $users = '<ul>'.implode($users).'</ul>';
-            $a = (object)array('admins'=>$admins, 'unsupported'=>$users);
-            $result->details = get_string('check_riskadmin_detailswarning', 'report_security', $a);
-        }
+    if ($detailed) {
+        $result->details = get_string('check_riskadmin_detailsok', 'report_security', $admins);
     }
 
     return $result;

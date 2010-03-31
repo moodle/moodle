@@ -855,24 +855,21 @@ function stats_cron_monthly() {
  * @param bool $includedoanything include also admins
  * @return array ra join and where string
  */
-function stats_get_enrolled_sql($limit, $includedoanything) {
+function stats_get_enrolled_sql($limit, $ignored) {
     global $CFG;
     static $n = 0;
 
     $params = array();
     $n++;
 
-    $adm = $includedoanything ? " OR rc.capability =  :sge_doanything_$n " : "";
-    $params['sge_doanything_'.$n] = 'moodle/site:doanything';
-
     $join = "JOIN {context} ctx ON ctx.id = ra.contextid
             CROSS JOIN {course} c
              JOIN {role_capabilities} rc ON rc.roleid = ra.roleid";
-    $where = "((rc.capability = :sge_courseview_$n $adm)
+    $where = "((rc.capability = :sge_courseview_$n)
                AND rc.permission = 1 AND rc.contextid = ".SYSCONTEXTID."
                AND (ctx.contextlevel = ".CONTEXT_SYSTEM."
                     OR (c.id = ctx.instanceid AND ctx.contextlevel = ".CONTEXT_COURSE.")";
-    $params['sge_courseview_'.$n] = 'moodle/course:view';
+    $params['sge_courseview_'.$n] = 'moodle/course:participate';
 
     for($i=1; $i<=$limit; $i++) {
         if ($i == 1) {

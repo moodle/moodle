@@ -502,11 +502,7 @@ function hotpot_is_visible(&$cm) {
     }
 
     // check if user can view hidden activities
-    if (isset($COURSE->context)) {
-        $coursecontext = &$COURSE->context;
-    } else {
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $cm->course);
-    }
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $cm->course);
     if (has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
         return true; // user can view hidden activities
     }

@@ -858,7 +858,7 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL, $courses 
     }
 
 
-    if(!empty($USER->id) && !has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
+    if (isloggedin() && !isguestuser()) {
         $content .= "</tr>\n<tr>";
 
         if($groupevents) {
@@ -1191,8 +1191,8 @@ function calendar_session_vars($course=null) {
         // The empty() instead of !isset() here makes a whole world of difference,
         // as it will automatically change to the user's id when the user first logs
         // in. With !isset(), it would never do that.
-        $SESSION->cal_users_shown = !empty($USER->id) ? $USER->id : false;
-    } else if(is_numeric($SESSION->cal_users_shown) && !empty($USER->id) && $SESSION->cal_users_shown != $USER->id) {
+        $SESSION->cal_users_shown = isloggedin() ? $USER->id : false;
+    } else if(is_numeric($SESSION->cal_users_shown) && isloggedin() && $SESSION->cal_users_shown != $USER->id) {
         // Follow the white rabbit, for example if a teacher logs in as a student
         $SESSION->cal_users_shown = $USER->id;
     }
@@ -1312,7 +1312,7 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
                 }
 
                 // If the user is an editing teacher in there,
-                if (!empty($USER->id) && isset($courseeventsfrom[$courseid]->context) && has_capability('moodle/calendar:manageentries', $courseeventsfrom[$courseid]->context)) {
+                if (isloggedin() && isset($courseeventsfrom[$courseid]->context) && has_capability('moodle/calendar:manageentries', $courseeventsfrom[$courseid]->context)) {
                     // If this course has groups, show events from all of them
                     if(is_int($groupeventsfrom)) {
                         if (is_object($courseeventsfrom[$courseid])) { // SHOULD be set MDL-11221
@@ -1412,7 +1412,7 @@ function calendar_get_default_courses($ignoreref = false) {
         return array($SESSION->cal_course_referer => 1);
     }
 
-    if(empty($USER->id)) {
+    if (!isloggedin()) {
         return array();
     }
 
@@ -1438,7 +1438,7 @@ function calendar_preferences_button() {
     global $CFG, $USER;
 
     // Guests have no preferences
-    if (empty($USER->id) || has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
+    if (!isloggedin() || isguestuser()) {
         return '';
     }
 
@@ -1559,7 +1559,7 @@ function calendar_get_filters_status() {
 function calendar_set_filters_status($packed_bitfield) {
     global $SESSION, $USER;
 
-    if(!isset($USER) || empty($USER->id)) {
+    if (!isloggedin()) {
         return false;
     }
 
@@ -1617,7 +1617,7 @@ function calendar_add_event_allowed($event) {
     global $USER, $DB;
 
     // can not be using guest account
-    if (empty($USER->id) or $USER->username == 'guest') {
+    if (!isloggedin() or isguestuser()) {
         return false;
     }
 

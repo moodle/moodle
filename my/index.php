@@ -9,7 +9,7 @@
 
     $strmymoodle = get_string('mymoodle','my');
 
-    if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
+    if (isguestuser()) {
         $PAGE->set_title($strmymoodle);
         echo $OUTPUT->header();
         echo $OUTPUT->confirm(get_string('noguest', 'my') . '<br /><br />' . get_string('liketologin'), get_login_url(), $CFG->wwwroot);

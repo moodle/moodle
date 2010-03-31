@@ -49,18 +49,18 @@
     require_login();
 
     if (has_capability('moodle/user:loginas', $systemcontext)) {
-        if (has_capability('moodle/site:doanything', $systemcontext, $userid, false)) {
+        if (is_siteadmin($userid)) {
             print_error('nologinas');
         }
         $context = $systemcontext;
     } else {
         require_login($course);
         require_capability('moodle/user:loginas', $coursecontext);
-        if (!has_capability('moodle/course:view', $coursecontext, $userid, false)) {
-            print_error('usernotincourse');
-        }
-        if (has_capability('moodle/site:doanything', $coursecontext, $userid, false)) {
+        if (is_siteadmin($userid)) {
             print_error('nologinas');
+        }
+        if (!is_enrolled($coursecontext, $userid)) {
+            print_error('usernotincourse');
         }
         $context = $coursecontext;
     }

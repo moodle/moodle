@@ -91,7 +91,7 @@ if ($usetracking = forum_tp_can_track_forums()) {
 
 $subscribed_forums = forum_get_subscribed_forums($course);
 
-if ($can_subscribe = (!isguestuser() && has_capability('moodle/course:view', $coursecontext))) {
+if ($can_subscribe = (!is_enrolled($coursecontext))) {
     $generaltable->head[] = $strsubscribed;
     $generaltable->align[] = 'center';
 }

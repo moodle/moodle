@@ -100,7 +100,7 @@ if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    /
     $errormsg = get_string("cookiesnotenabled");
     $errorcode = 1;
 
-} else if ($frm) {                             // Login WITH cookies
+} else if ($frm and isset($frm->username)) {                             // Login WITH cookies
 
     $frm->username = trim(moodle_strtolower($frm->username));
 
@@ -188,7 +188,7 @@ if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    /
         }
 
     /// Go to my-moodle page instead of homepage if mymoodleredirect enabled
-        if (!has_capability('moodle/site:config', $context) and !empty($CFG->mymoodleredirect) and !has_capability('moodle/legacy:guest',$context, 0, false)) {
+        if (!empty($CFG->mymoodleredirect) and !is_siteadmin() and !isguestuser()) {
             if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
                 $urltogo = $CFG->wwwroot.'/my/';
             }

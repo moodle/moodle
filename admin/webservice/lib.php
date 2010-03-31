@@ -59,7 +59,7 @@ class service_user_selector extends user_selector_base {
         //by default wherecondition retrieves all users except the deleted, not
         //confirmed and guest
         list($wherecondition, $params) = $this->search_sql($search, 'u');
-        $params[] = $this->serviceid;
+        $params['serviceid'] = $this->serviceid;
 
 
         $fields      = 'SELECT ' . $this->required_fields_sql('u');
@@ -70,13 +70,13 @@ class service_user_selector extends user_selector_base {
             $sql = " FROM {user} u, {external_services_users} esu
                  WHERE $wherecondition
                        AND esu.userid = u.id
-                       AND esu.externalserviceid = ?";
+                       AND esu.externalserviceid = :serviceid";
         }
         else {
             ///the following SQL retrieve all users that are not allowed to the serviceid
             $sql = " FROM {user} u WHERE $wherecondition
                  AND NOT EXISTS (SELECT esu.userid FROM {external_services_users} esu
-                                                  WHERE esu.externalserviceid = ?
+                                                  WHERE esu.externalserviceid = :serviceid
                                                         AND esu.userid = u.id)";
         }
 

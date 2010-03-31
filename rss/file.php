@@ -74,10 +74,10 @@ define('NO_MOODLE_COOKIES', true); // session not used here
             rss_not_found();
         }
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $isuser = has_capability('moodle/course:view', $context, $userid);   // Not ideal, this should be module-specific, but deferring until RSS gets a revamp with codes in the URLs
+        $isuser = has_capability('moodle/course:participate', $context, $userid);   // Not ideal, this should be module-specific, but deferring until RSS gets a revamp with codes in the URLs
     } else {
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        $isuser = has_capability('moodle/course:view', $context, $userid);
+        $isuser = has_capability('moodle/course:participate', $context, $userid);
     }
 
     //Check for "security" if !course->guest or course->password

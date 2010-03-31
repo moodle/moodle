@@ -723,7 +723,7 @@ function data_get_field($field, $data, $cm=null) {
 function data_isowner($record) {
     global $USER, $DB;
 
-    if (!isloggedin()) {
+    if (!isloggedin()) { // perf shortcut
         return false;
     }
 
@@ -1527,7 +1527,7 @@ function data_print_ratings($data, $record) {
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    if ($data->assessed and !empty($USER->id) and (has_capability('mod/data:rate', $context) or has_capability('mod/data:viewrating', $context) or data_isowner($record->id))) {
+    if ($data->assessed and isloggedin() and (has_capability('mod/data:rate', $context) or has_capability('mod/data:viewrating', $context) or data_isowner($record->id))) {
         if ($ratingsscale = make_grades_menu($data->scale)) {
             $ratingsmenuused = false;
 
@@ -1748,9 +1748,9 @@ function data_convert_arrays_to_strings(&$fieldinput) {
  * @param object $data a data object with the same attributes as a record
  *                     from the data database table
  * @param int $datamodid the id of the data module, from the modules table
- * @param array $teacherroles array of roles that have moodle/legacy:teacher
- * @param array $studentroles array of roles that have moodle/legacy:student
- * @param array $guestroles array of roles that have moodle/legacy:guest
+ * @param array $teacherroles array of roles that have archetype teacher
+ * @param array $studentroles array of roles that have archetype student
+ * @param array $guestroles array of roles that have archetype guest
  * @param int $cmid the course_module id for this data instance
  * @return boolean data module was converted or not
  */
@@ -2505,7 +2505,7 @@ function data_reset_userdata($data) {
         if ($rs = $DB->get_recordset_sql($recordssql, array($data->courseid))) {
             foreach ($rs as $record) {
                 if (array_key_exists($record->userid, $notenrolled) or !$record->userexists or $record->userdeleted
-                  or !has_capability('moodle/course:view', $course_context , $record->userid)) {
+                  or !is_enrolled($course_context, $record->userid)) {
                     $DB->delete_records('data_ratings', array('recordid'=>$record->id));
                     $DB->delete_records('comments', array('itemid'=>$record->id, 'commentarea'=>'database_entry'));
                     $DB->delete_records('data_content', array('recordid'=>$record->id));
@@ -2841,7 +2841,7 @@ function data_extend_navigation($navigation, $course, $module, $cm) {
 
      $numentries = data_numentries($data);
     /// Check the number of entries required against the number of entries already made (doesn't apply to teachers)
-    if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:manageentries', $cm->context)) {
+    if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:manageentries', get_context_instance(CONTEXT_MODULE, $cm->id))) {
         $data->entriesleft = $data->requiredentries - $numentries;
         $key = $navigation->add(get_string('entrieslefttoadd', 'data', $data));
         $navigation->get($key)->add_class('note');

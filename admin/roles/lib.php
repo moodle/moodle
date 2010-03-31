@@ -144,7 +144,7 @@ abstract class capability_table_base {
     protected abstract function num_extra_columns();
 
     /**
-     * For subclasses to override. Allows certain capabilties (e.g. legacy capabilities)
+     * For subclasses to override. Allows certain capabilties
      * to be left out of the table.
      *
      * @param object $capability the capability this row relates to.
@@ -213,10 +213,6 @@ class check_capability_table extends capability_table_base {
         return 1;
     }
 
-    protected function skip_row($capability) {
-        return $capability->name != 'moodle/site:doanything' && is_legacy($capability->name);
-    }
-
     protected function get_row_classes($capability) {
         $this->hascap = has_capability($capability->name, $this->context, $this->user->id);
         if ($this->hascap) {
@@ -283,10 +279,6 @@ class permissions_table extends capability_table_base {
 
     protected function num_extra_columns() {
         return 3;
-    }
-
-    protected function skip_row($capability) {
-        return $capability->name != 'moodle/site:doanything' && is_legacy($capability->name);
     }
 
     protected function add_row_cells($capability) {
@@ -554,7 +546,6 @@ class define_role_table_advanced extends capability_table_with_risks {
     protected $errors;
     protected $contextlevels;
     protected $allcontextlevels;
-    protected $legacyroles;
     protected $disabled = '';
 
     public function __construct($context, $roleid) {
@@ -571,8 +562,6 @@ class define_role_table_advanced extends capability_table_with_risks {
             CONTEXT_MODULE => get_string('activitymodule'),
             CONTEXT_BLOCK => get_string('block')
         );
-
-        $this->legacyroles = get_legacy_roles();
     }
 
     protected function load_current_permissions() {
@@ -581,7 +570,6 @@ class define_role_table_advanced extends capability_table_with_risks {
             if (!$this->role = $DB->get_record('role', array('id' => $this->roleid))) {
                 throw new moodle_exception('invalidroleid');
             }
-            $this->role->legacytype = get_legacy_type($this->roleid);
             $contextlevels = get_role_contextlevels($this->roleid);
             // Put the contextlevels in the array keys, as well as the values.
             if (!empty($contextlevels)) {
@@ -594,7 +582,7 @@ class define_role_table_advanced extends capability_table_with_risks {
             $this->role->name = '';
             $this->role->shortname = '';
             $this->role->description = '';
-            $this->role->legacytype = '';
+            $this->role->archetype = '';
             $this->contextlevels = array();
         }
         parent::load_current_permissions();
@@ -638,12 +626,13 @@ class define_role_table_advanced extends capability_table_with_risks {
         }
 
         // Legacy type.
-        $legacytype = optional_param('legacytype', null, PARAM_RAW);
-        if (!is_null($legacytype)) {
-            if (array_key_exists($legacytype, $this->legacyroles)) {
-                $this->role->legacytype = $legacytype;
+        $archetype = optional_param('archetype', null, PARAM_RAW);
+        if ($archetype) {
+            $archetypes = get_role_archetypes();
+            if (isset($archetypes[$archetype])){
+                $this->role->archetype = $archetype;
             } else {
-                $this->role->legacytype = '';
+                $this->role->archetype = '';
             }
         }
 
@@ -686,16 +675,12 @@ class define_role_table_advanced extends capability_table_with_risks {
         return $this->role->id;
     }
 
-    public function get_legacy_type() {
-        return $this->role->legacytype;
+    public function get_archetype() {
+        return $this->role->archetype;
     }
 
     protected function load_parent_permissions() {
-        if ($this->role->legacytype) {
-            $this->parentpermissions = get_default_capabilities($this->role->legacytype);
-        } else {
-            $this->parentpermissions = array();
-        }
+        $this->parentpermissions = get_default_capabilities($this->role->archetype);
     }
 
     public function save_changes() {
@@ -703,25 +688,11 @@ class define_role_table_advanced extends capability_table_with_risks {
 
         if (!$this->roleid) {
             // Creating role
-            if (isset($this->legacyroles[$this->role->legacytype])) {
-                $legacycap = $this->legacyroles[$this->role->legacytype];
-            } else {
-                $legacycap = '';
-            }
-            $this->role->id = create_role($this->role->name, $this->role->shortname, $this->role->description, $legacycap);
+            $this->role->id = create_role($this->role->name, $this->role->shortname, $this->role->description, $this->role->archetype);
             $this->roleid = $this->role->id; // Needed to make the parent::save_changes(); call work.
         } else {
             // Updating role
             $DB->update_record('role', $this->role);
-
-            // Legacy type
-            foreach($this->legacyroles as $type => $cap) {
-                if ($type == $this->role->legacytype) {
-                    assign_capability($cap, CAP_ALLOW, $this->role->id, $this->context->id);
-                } else {
-                    unassign_capability($cap, $this->role->id);
-                }
-            }
         }
 
         // Assignable contexts.
@@ -729,10 +700,6 @@ class define_role_table_advanced extends capability_table_with_risks {
 
         // Permissions.
         parent::save_changes();
-    }
-
-    protected function skip_row($capability) {
-        return is_legacy($capability->name);
     }
 
     protected function get_name_field($id) {
@@ -747,14 +714,14 @@ class define_role_table_advanced extends capability_table_with_risks {
         return print_textarea(true, 10, 50, 50, 10, 'description', $this->role->description, 0, true);
     }
 
-    protected function get_legacy_type_field($id) {
+    protected function get_archetype_field($id) {
         global $OUTPUT;
         $options = array();
         $options[''] = get_string('none');
-        foreach($this->legacyroles as $type => $cap) {
-            $options[$type] = get_string('legacy:'.$type, 'role');
+        foreach(get_role_archetypes() as $type) {
+            $options[$type] = get_string('archetype'.$type, 'role');
         }
-        return html_writer::select($options, 'legacytype', $this->role->legacytype, false);
+        return html_writer::select($options, 'archetype', $this->role->archetype, false);
     }
 
     protected function get_assignable_levels_control() {
@@ -814,7 +781,7 @@ class define_role_table_advanced extends capability_table_with_risks {
         $this->print_field('name', get_string('name'), $this->get_name_field('name'));
         $this->print_field('shortname', get_string('shortname'), $this->get_shortname_field('shortname'));
         $this->print_field('edit-description', get_string('description'), $this->get_description_field('description'));
-        $this->print_field('menulegacytype', get_string('legacytype', 'role'), $this->get_legacy_type_field('legacytype'));
+        $this->print_field('menuarchetype', get_string('archetype', 'role'), $this->get_archetype_field('archetype'));
         $this->print_field('', get_string('maybeassignedin', 'role'), $this->get_assignable_levels_control());
         echo "</div>";
 
@@ -905,11 +872,11 @@ class view_role_definition_table extends define_role_table_advanced {
         return format_text($this->role->description, FORMAT_HTML);
     }
 
-    protected function get_legacy_type_field($id) {
-        if (empty($this->role->legacytype)) {
+    protected function get_archetype_field($id) {
+        if (empty($this->role->archetype)) {
             return get_string('none');
         } else {
-            return get_string('legacy:'.$this->role->legacytype, 'role');
+            return get_string('archetype'.$this->role->archetype, 'role');
         }
     }
 
@@ -974,10 +941,6 @@ class override_permissions_table_advanced extends capability_table_with_risks {
 
     public function has_locked_capabiltites() {
         return $this->haslockedcapabiltites;
-    }
-
-    protected function skip_row($capability) {
-        return is_legacy($capability->name);
     }
 
     protected function add_permission_cells($capability) {
@@ -1058,7 +1021,7 @@ abstract class role_assign_user_selector_base extends user_selector_base {
  * some CONTEXT_BLOCK).
  *
  * In this case we replicate part of get_users_by_capability() get the users
- * with moodle/course:view (or moodle/site:doanything). We can't use
+ * with moodle/course:participate. We can't use
  * get_users_by_capability() becuase
  *   1) get_users_by_capability() does not deal with searching by name
  *   2) exceptions array can be potentially large for large courses
@@ -1067,26 +1030,20 @@ class potential_assignees_below_course extends role_assign_user_selector_base {
     public function find_users($search) {
         global $DB;
 
-        // Get roles with some assignement to the 'moodle/course:view' capability.
-        $possibleroles = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $this->context);
+        // Get roles with some assignement to the 'moodle/course:participate' capability.
+        $possibleroles = get_roles_with_capability('moodle/course:participate', CAP_ALLOW, $this->context);
         if (empty($possibleroles)) {
             // If there aren't any, we are done.
             return array();
         }
 
         // Now exclude the admin roles, and check the actual permission on
-        // 'moodle/course:view' to make sure it is allow.
-        $doanythingroles = get_roles_with_capability('moodle/site:doanything',
-                CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
+        // 'moodle/course:participate' to make sure it is allow.
         $validroleids = array();
 
         foreach ($possibleroles as $possiblerole) {
-            if (isset($doanythingroles[$possiblerole->id])) {
-                    continue;
-            }
-
-            if ($caps = role_context_capabilities($possiblerole->id, $this->context, 'moodle/course:view')) { // resolved list
-                if (isset($caps['moodle/course:view']) && $caps['moodle/course:view'] > 0) { // resolved capability > 0
+            if ($caps = role_context_capabilities($possiblerole->id, $this->context, 'moodle/course:participate')) { // resolved list
+                if (isset($caps['moodle/course:participate']) && $caps['moodle/course:participate'] > 0) { // resolved capability > 0
                     $validroleids[] = $possiblerole->id;
                 }
             }
@@ -1116,13 +1073,13 @@ class potential_assignees_below_course extends role_assign_user_selector_base {
                         AND u.id NOT IN (
                            SELECT u.id
                              FROM {role_assignments} r, {user} u
-                            WHERE r.contextid = ?
+                            WHERE r.contextid = :contextid
                                   AND u.id = r.userid
-                                  AND r.roleid = ?)";
+                                  AND r.roleid = :roleid)";
         $order = ' ORDER BY lastname ASC, firstname ASC';
 
-        $params[] = $this->context->id;
-        $params[] = $this->roleid;
+        $params['contextid'] = $this->context->id;
+        $params['roleid'] = $this->roleid;
 
         // Check to see if there are too many to show sensibly.
         if (!$this->is_validating()) {
@@ -1168,13 +1125,13 @@ class potential_assignees_course_and_above extends role_assign_user_selector_bas
                       AND id NOT IN (
                          SELECT u.id
                            FROM {role_assignments} r, {user} u
-                          WHERE r.contextid = ?
+                          WHERE r.contextid = :contextid
                                 AND u.id = r.userid
-                                AND r.roleid = ?)";
+                                AND r.roleid = :roleid)";
         $order = ' ORDER BY lastname ASC, firstname ASC';
 
-        $params[] = $this->context->id;
-        $params[] = $this->roleid;
+        $params['contextid'] = $this->context->id;
+        $params['roleid'] = $this->roleid;
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
@@ -1204,29 +1161,27 @@ class potential_assignees_course_and_above extends role_assign_user_selector_bas
  * question on the assign roles page.
  */
 class existing_role_holders extends role_assign_user_selector_base {
-    protected $strhidden;
 
     public function __construct($name, $options) {
         parent::__construct($name, $options);
-        $this->strhidden = get_string('hiddenassign');
     }
 
     public function find_users($search) {
         global $DB;
 
         list($wherecondition, $params) = $this->search_sql($search, 'u');
-        list($ctxcondition, $ctxparams) = $DB->get_in_or_equal(get_parent_contexts($this->context, true));
+        list($ctxcondition, $ctxparams) = $DB->get_in_or_equal(get_parent_contexts($this->context, true), SQL_PARAMS_NAMED, 'ctx00');
         $params = array_merge($params, $ctxparams);
-        $params[] = $this->roleid;
+        $params['roleid'] = $this->roleid;
 
-        $sql = "SELECT ra.id as raid," . $this->required_fields_sql('u') . ",ra.hidden,ra.contextid
+        $sql = "SELECT ra.id as raid," . $this->required_fields_sql('u') . ",ra.contextid
                 FROM {role_assignments} ra
                 JOIN {user} u ON u.id = ra.userid
                 JOIN {context} ctx ON ra.contextid = ctx.id
                 WHERE
                     $wherecondition AND
                     ctx.id $ctxcondition AND
-                    ra.roleid = ?
+                    ra.roleid = :roleid
                 ORDER BY ctx.depth DESC, u.lastname, u.firstname";
         $contextusers = $DB->get_records_sql($sql, $params);
 
@@ -1313,34 +1268,6 @@ class existing_role_holders extends role_assign_user_selector_base {
         } else {
             return get_string('usersfrom', 'role', $contextname);
         }
-    }
-
-    // Override to add (hidden) to hidden role assignments.
-    public function output_user($user) {
-        $output = parent::output_user($user);
-        if ($user->hidden) {
-            $output .= ' (' . $this->strhidden . ')';
-        }
-        return $output;
-    }
-}
-
-/**
- * A special subclass to use when unassigning admins at site level. Disables
- * the option for admins to unassign themselves.
- */
-class existing_role_holders_site_admin extends existing_role_holders {
-    public function find_users($search) {
-        global $USER;
-        $groupedusers = parent::find_users($search);
-        foreach ($groupedusers as $group) {
-            foreach ($group as &$user) {
-                if ($user->id == $USER->id) {
-                    $user->disabled = true;
-                }
-            }
-        }
-        return $groupedusers;
     }
 }
 
@@ -1590,3 +1517,82 @@ function roles_get_potential_user_selector($context, $name, $options) {
     return $potentialuserselector;
 }
 
+class admins_potential_selector extends user_selector_base {
+    /**
+     * @param string $name control name
+     * @param array $options should have two elements with keys groupid and courseid.
+     */
+    public function __construct() {
+        global $CFG, $USER;
+        $admins = explode(',', $CFG->siteadmins);
+        parent::__construct('addselect', array('multiselect'=>false, 'exclude'=>$admins));
+    }
+
+    public function find_users($search) {
+        global $DB;
+        list($wherecondition, $params) = $this->search_sql($search, '');
+
+        $fields      = 'SELECT ' . $this->required_fields_sql('');
+        $countfields = 'SELECT COUNT(1)';
+
+        $sql = " FROM {user}
+                WHERE $wherecondition";
+        $order = ' ORDER BY lastname ASC, firstname ASC';
+
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+
+        if (empty($availableusers)) {
+            return array();
+        }
+
+        if ($search) {
+            $groupname = get_string('potusersmatching', 'role', $search);
+        } else {
+            $groupname = get_string('potusers', 'role');
+        }
+
+        return array($groupname => $availableusers);
+    }
+}
+
+class admins_existing_selector extends user_selector_base {
+    /**
+     * @param string $name control name
+     * @param array $options should have two elements with keys groupid and courseid.
+     */
+    public function __construct() {
+        global $CFG, $USER;
+        parent::__construct('removeselect', array('multiselect'=>false));
+    }
+
+    public function find_users($search) {
+        global $DB, $CFG;
+        list($wherecondition, $params) = $this->search_sql($search, '');
+
+        $fields      = 'SELECT ' . $this->required_fields_sql('');
+        $countfields = 'SELECT COUNT(1)';
+
+        if ($wherecondition) {
+            $wherecondition = "$wherecondition AND id IN ($CFG->siteadmins)";
+        } else {
+            $wherecondition = "id IN ($CFG->siteadmins)";
+        }
+        $sql = " FROM {user}
+                WHERE $wherecondition";
+        $order = ' ORDER BY lastname ASC, firstname ASC';
+
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+
+        if (empty($availableusers)) {
+            return array();
+        }
+
+        if ($search) {
+            $groupname = get_string('extusersmatching', 'role', $search);
+        } else {
+            $groupname = get_string('extusers', 'role');
+        }
+
+        return array($groupname => $availableusers);
+    }
+}

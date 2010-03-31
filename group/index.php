@@ -20,21 +20,18 @@ $userid   = optional_param('user', false, PARAM_INT);
 $action   = groups_param_action();
 // Support either single group= parameter, or array groups[]
 if ($groupid) {
-    $groupids=array($groupid);
+    $groupids = array($groupid);
 } else {
     $groupids = optional_param('groups', array(), PARAM_INT);
 }
-$singlegroup=count($groupids) == 1;
+$singlegroup = (count($groupids) == 1);
 
 $returnurl = $CFG->wwwroot.'/group/index.php?id='.$courseid;
 
 // Get the course information so we can print the header and
 // check the course id is valid
 
-if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-    $success = false;
-    print_error('invalidcourse'); //'The course ID is invalid'
-}
+$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 
 $url = new moodle_url('/group/index.php', array('id'=>$courseid));
 if ($userid) {
@@ -48,19 +45,19 @@ $PAGE->set_url($url);
 // Make sure that the user has permissions to manage groups.
 require_login($course);
 
-$context = get_context_instance(CONTEXT_COURSE, $courseid);
-if (! has_capability('moodle/course:managegroups', $context)) {
-    redirect(); //"group.php?id=$course->id");   // Not allowed to see all groups
+$context = get_context_instance(CONTEXT_COURSE, $course->id);
+if (!has_capability('moodle/course:managegroups', $context)) {
+    redirect('/course/view.php', array('id'=>$course->id)); // Not allowed to manage all groups
 }
 
 // Check for multiple/no group errors
-if(!$singlegroup) {
+if (!$singlegroup) {
     switch($action) {
         case 'ajax_getmembersingroup':
         case 'showgroupsettingsform':
         case 'showaddmembersform':
         case 'updatemembers':
-            print_error('errorselectone','group',$returnurl);
+            print_error('errorselectone', 'group', $returnurl);
     }
 }
 
@@ -70,41 +67,41 @@ switch ($action) {
 
     case 'ajax_getmembersingroup':
         $roles = array();
-        if ($groupmemberroles = groups_get_members_by_role($groupids[0],$courseid,'u.id,u.firstname,u.lastname')) {
+        if ($groupmemberroles = groups_get_members_by_role($groupids[0], $courseid, 'u.id,u.firstname,u.lastname')) {
             foreach($groupmemberroles as $roleid=>$roledata) {
-                $shortroledata=new StdClass;
-                $shortroledata->name=$roledata->name;
-                $shortroledata->users=array();
+                $shortroledata = new stdClass();
+                $shortroledata->name = $roledata->name;
+                $shortroledata->users = array();
                 foreach($roledata->users as $member) {
-                    $shortmember=new StdClass;
-                    $shortmember->id=$member->id;
-                    $shortmember->name=fullname($member, true);
-                    $shortroledata->users[]=$shortmember;
+                    $shortmember = new stdClass();
+                    $shortmember->id = $member->id;
+                    $shortmember->name = fullname($member, true);
+                    $shortroledata->users[] = $shortmember;
                 }
-                $roles[]=$shortroledata;
+                $roles[] = $shortroledata;
             }
         }
         echo json_encode($roles);
         die;  // Client side JavaScript takes it from here.
 
     case 'deletegroup':
-        if(count($groupids)==0) {
+        if (count($groupids) == 0) {
             print_error('errorselectsome','group',$returnurl);
         }
-        $groupidlist=implode(',',$groupids);
-        redirect('delete.php?courseid='.$courseid.'&groups='.$groupidlist);
+        $groupidlist = implode(',', $groupids);
+        redirect(new moodle_url('/group/delete.php', array('courseid'=>$courseid, 'groups'=>$groupidlist)));
         break;
 
     case 'showcreateorphangroupform':
-        redirect('group.php?courseid='.$courseid);
+        redirect(new moodle_url('/group/group.php', array('courseid'=>$courseid)));
         break;
 
     case 'showautocreategroupsform':
-        redirect('autogroup.php?courseid='.$courseid);
+        redirect(new moodle_url('/group/autogroup.php', array('courseid'=>$courseid)));
         break;
 
     case 'showgroupsettingsform':
-        redirect('group.php?courseid='.$courseid.'&amp;id='.$groupids[0]);
+        redirect(new moodle_url('/group/group.php', array('courseid'=>$courseid, 'id'=>$groupids[0])));
         break;
 
     case 'updategroups': //Currently reloading.
@@ -114,17 +111,15 @@ switch ($action) {
         break;
 
     case 'showaddmembersform':
-        redirect('members.php?group='.$groupids[0]);
+        redirect(new moodle_url('/group/members.php', array('group'=>$groupids[0])));
         break;
 
     case 'updatemembers': //Currently reloading.
         break;
 
     default: //ERROR.
-        if (debugging()) {
-            print_error('unknowaction', '', $returnurl);
+        print_error('unknowaction', '', $returnurl);
         break;
-    }
 }
 
 // Print the page and form

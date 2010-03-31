@@ -74,7 +74,7 @@ if ($id) {
 
 require_login($course->id, false, $cm);
 
-if (!isloggedin() or has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
+if (isguestuser()) {
     redirect('view.php?d='.$data->id);
 }
 

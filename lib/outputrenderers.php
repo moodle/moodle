@@ -399,7 +399,7 @@ class core_renderer extends renderer_base {
         if (empty($course->id)) {
             // $course->id is not defined during installation
             return '';
-        } else if (!empty($USER->id)) {
+        } else if (isloggedin()) {
             $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
             $fullname = fullname($USER, true);

@@ -48,7 +48,7 @@
     $currentsection = '';
 
     foreach ($surveys as $survey) {
-        if (!empty($USER->id) and survey_already_done($survey->id, $USER->id)) {
+        if (isloggedin() and survey_already_done($survey->id, $USER->id)) {
             $ss = $strdone;
         } else {
             $ss = $strnotdone;

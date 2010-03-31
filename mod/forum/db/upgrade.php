@@ -61,7 +61,7 @@ function xmldb_forum_upgrade($oldversion) {
     /// Cleanup the forum subscriptions
         echo $OUTPUT->notification('Removing stale forum subscriptions', 'notifysuccess');
 
-        $roles = get_roles_with_capability('moodle/course:view', CAP_ALLOW);
+        $roles = get_roles_with_capability('moodle/course:participate', CAP_ALLOW);
         $roles = array_keys($roles);
 
         list($usql, $params) = $DB->get_in_or_equal($roles);

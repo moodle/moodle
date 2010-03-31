@@ -38,9 +38,10 @@ class block_comments extends block_base {
         }
         $this->content->footer = '';
         $this->content->text = '';
+        //TODO: guest and not-logged-in shoudl be able to read comments, right?
         if (isloggedin() && !isguestuser()) {   // Show the block
             $cmt = new stdclass;
-            $cmt->context   = $this->instance->context;
+            $cmt->context   = $this->context;
             $cmt->area      = 'block_comments';
             $cmt->itemid    = $this->instance->id;
             $cmt->course    = $this->page->course;

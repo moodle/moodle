@@ -368,8 +368,10 @@ class moodle_group_external extends external_api {
             require_capability('moodle/course:managegroups', $context);
 
             // now make sure user is enrolled in course - this is mandatory requirement,
-            // unfortunately this is extermely slow
-            require_capability('moodle/course:view', $context, $userid, false);
+            // unfortunately this is slow
+            if (!is_enrolled($context, $userid)) {
+                throw new invalid_parameter_exception('Only enrolled users may be members of groups');
+            }
 
             groups_add_member($group, $user);
         }

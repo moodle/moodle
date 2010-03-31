@@ -29,12 +29,6 @@ list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, true, $cm);
 require_sesskey();
 
-if (isguestuser()) {
-	$err = new stdclass;
-    $err->error = get_string('loggedinnot');
-    die(json_encode($err));
-}
-
 $action    = optional_param('action',    '',     PARAM_ALPHA);
 $area      = optional_param('area',      '',     PARAM_ALPHAEXT);
 $client_id = optional_param('client_id', '',     PARAM_RAW);

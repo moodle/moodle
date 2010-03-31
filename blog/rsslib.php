@@ -9,8 +9,8 @@ function blog_rss_print_link($filtertype, $filterselect, $tagid=0, $tooltiptext=
 
     global $CFG, $USER, $OUTPUT;
 
-    if (empty($USER->id)) {
-        $userid = 1;
+    if (!isloggedin()) {
+        $userid = $CFG->siteguest;
     } else {
         $userid = $USER->id;
     }

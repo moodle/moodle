@@ -289,7 +289,7 @@ function choice_show_form($choice, $user, $cm, $allresponses) {
     echo '<div class="button">';
     echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
-    if (has_capability('mod/choice:choose', $context, $user->id, false)) { //don't show save button if the logged in user is the guest user.
+    if (is_enrolled($context, NULL, 'mod/choice:choose')) { //only enrolled users are allowed to make a choice
         if ($choicefull) {
             print_string('choicefull', 'choice');
             echo "</br>";
@@ -346,7 +346,7 @@ WHERE
 
         if ($answers) {
             foreach ($answers as $a) { //only return enrolled users.
-                if (has_capability('mod/choice:choose', $context, $a->userid, false)) {
+                if (is_enrolled($context, $a->userid, 'mod/choice:choose')) {
                     $countanswers++;
                 }
             }
@@ -865,7 +865,7 @@ function choice_get_response_data($choice, $cm, $groupmode) {
 
 /// First get all the users who have access here
 /// To start with we assume they are all "unanswered" then move them later
-    $allresponses[0] = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.lastname ASC,u.firstname ASC', '', '', $currentgroup, '', false, true);
+    $allresponses[0] = get_enrolled_users($context, 'mod/choice:choose', $currentgroup, 'u.id, u.picture, u.imagealt, u.firstname, u.lastname, u.idnumber', 'u.lastname ASC,u.firstname ASC');
 
 /// Get all the recorded responses for this choice
     $rawresponses = $DB->get_records('choice_answers', array('choiceid' => $choice->id));

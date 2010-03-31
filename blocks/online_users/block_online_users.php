@@ -55,12 +55,14 @@ class block_online_users extends block_base {
             $params['currentgroup'] = $currentgroup;
         }
 
+        $userfields = user_picture::fields('u').', username';
+
         if ($this->page->course->id == SITEID) {  // Site-level
-            $sql = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, MAX(u.lastaccess) AS lastaccess
+            $sql = "SELECT $userfields, MAX(u.lastaccess) AS lastaccess
                       FROM {user} u $groupmembers
                      WHERE u.lastaccess > $timefrom
                            $groupselect
-                  GROUP BY u.id, u.username, u.firstname, u.lastname, u.picture
+                  GROUP BY $userfields
                   ORDER BY lastaccess DESC ";
 
            $csql = "SELECT COUNT(u.id), u.id
@@ -69,24 +71,26 @@ class block_online_users extends block_base {
                            $groupselect
                   GROUP BY u.id";
 
-        } else { // Course-level
-            if (!has_capability('moodle/role:viewhiddenassigns', $this->page->context)) {
-                $pcontext = get_related_contexts_string($this->page->context);
-                $rafrom  = ", {role_assignments} ra";
-                $rawhere = " AND ra.userid = u.id AND ra.contextid $pcontext AND ra.hidden = 0";
-            }
+        } else {
+            // Course level - show only enrolled users for now
+            // TODO: add a new capability for viewing of all users (guests+enrolled+viewing)
 
-            $sql = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, MAX(ul.timeaccess) AS lastaccess
+            list($esqljoin, $eparams) = get_enrolled_sql($this->page->context);
+            $params = array_merge($params, $eparams);
+
+            $sql = "SELECT $userfields, MAX(ul.timeaccess) AS lastaccess
                       FROM {user_lastaccess} ul, {user} u $groupmembers $rafrom
+                      JOIN ($esqljoin) euj ON euj.id = u.id     
                      WHERE ul.timeaccess > $timefrom
                            AND u.id = ul.userid
                            AND ul.courseid = :courseid
                            $groupselect $rawhere
-                  GROUP BY u.id, u.username, u.firstname, u.lastname, u.picture
+                  GROUP BY $userfields
                   ORDER BY lastaccess DESC";
 
            $csql = "SELECT u.id
                       FROM {user_lastaccess} ul, {user} u $groupmembers $rafrom
+                      JOIN ($esqljoin) euj ON euj.id = u.id
                      WHERE ul.timeaccess > $timefrom
                            AND u.id = ul.userid
                            AND ul.courseid = :courseid
@@ -131,7 +135,7 @@ class block_online_users extends block_base {
             //Accessibility: Don't want 'Alt' text for the user picture; DO want it for the envelope/message link (existing lang string).
             //Accessibility: Converted <div> to <ul>, inherit existing classes & styles.
             $this->content->text .= "<ul class='list'>\n";
-            if (!empty($USER->id) && has_capability('moodle/site:sendmessage', $this->page->context)
+            if (isloggedin() && has_capability('moodle/site:sendmessage', $this->page->context)
                            && !empty($CFG->messaging) && !isguestuser()) {
                 $canshowicon = true;
             } else {

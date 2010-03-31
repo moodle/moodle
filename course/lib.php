@@ -889,7 +889,7 @@ function print_recent_activity($course) {
 
     $timestart = round(time() - COURSE_MAX_RECENT_PERIOD, -2); // better db caching for guests - 100 seconds
 
-    if (!has_capability('moodle/legacy:guest', $context, NULL, false)) {
+    if (!isguestuser()) {
         if (!empty($USER->lastcourseaccess[$course->id])) {
             if ($USER->lastcourseaccess[$course->id] > $timestart) {
                 $timestart = $USER->lastcourseaccess[$course->id];
@@ -1184,7 +1184,7 @@ function course_set_display($courseid, $display=0) {
         $display = 0;
     }
 
-    if (empty($USER->id) or $USER->username == 'guest') {
+    if (!isloggedin() or isguestuser()) {
         //do not store settings in db for guests
     } else if ($DB->record_exists("course_display", array("userid" => $USER->id, "course"=>$courseid))) {
         $DB->set_field("course_display", "display", $display, array("userid"=>$USER->id, "course"=>$courseid));
@@ -2036,7 +2036,7 @@ function print_course_request_buttons($systemcontext) {
     if (empty($CFG->enablecourserequests)) {
         return;
     }
-    if (isloggedin() && !isguestuser() && !has_capability('moodle/course:create', $systemcontext) && has_capability('moodle/course:request', $systemcontext)) {
+    if (!has_capability('moodle/course:create', $systemcontext) && has_capability('moodle/course:request', $systemcontext)) {
     /// Print a button to request a new course
         echo $OUTPUT->single_button('request.php', get_string('requestcourse'), 'get');
     }
@@ -2121,8 +2121,8 @@ function print_courses($category) {
     if ($courses) {
         echo '<ul class="unlist">';
         foreach ($courses as $course) {
-            if ($course->visible == 1
-                || has_capability('moodle/course:viewhiddencourses',$course->context)) {
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            if ($course->visible == 1 || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
                 echo '<li>';
                 print_course($course);
                 echo "</li>\n";
@@ -2151,11 +2151,7 @@ function print_courses($category) {
 function print_course($course, $highlightterms = '') {
     global $CFG, $USER, $DB, $OUTPUT;
 
-    if (isset($course->context)) {
-        $context = $course->context;
-    } else {
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    }
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
     // Rewrite file URLs so that they are correct
     $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course_summary', $course->id);
@@ -2172,7 +2168,6 @@ function print_course($course, $highlightterms = '') {
 
     if (!empty($CFG->coursemanager)) {
         $managerroles = split(',', $CFG->coursemanager);
-        $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
         $namesarray = array();
         if (isset($course->managers)) {
             if (count($course->managers)) {
@@ -2194,27 +2189,20 @@ function print_course($course, $highlightterms = '') {
                     }
                     $usersshown[] = $ra->user->id;
 
-                    if ($ra->hidden == 0 || $canseehidden) {
-                        $fullname = fullname($ra->user, $canviewfullnames);
-                        if ($ra->hidden == 1) {
-                            $status = " <img src=\"" . $OUTPUT->pix_url('t/show') . "\" title=\"".get_string('userhashiddenassignments', 'role')."\" alt=\"".get_string('hiddenassign')."\" class=\"hide-show-image\"/>";
-                        } else {
-                            $status = '';
-                        }
+                    $fullname = fullname($ra->user, $canviewfullnames);
 
-                        if (isset($aliasnames[$ra->roleid])) {
-                            $ra->rolename = $aliasnames[$ra->roleid]->name;
-                        }
-
-                        $namesarray[] = format_string($ra->rolename)
-                            . ': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$ra->user->id.'&amp;course='.SITEID.'">'
-                            . $fullname . '</a>' . $status;
+                    if (isset($aliasnames[$ra->roleid])) {
+                        $ra->rolename = $aliasnames[$ra->roleid]->name;
                     }
+
+                    $namesarray[] = format_string($ra->rolename)
+                        . ': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$ra->user->id.'&amp;course='.SITEID.'">'
+                        . $fullname . '</a>';
                 }
             }
         } else {
             $rusers = get_role_users($managerroles, $context,
-                                     true, '', 'r.sortorder ASC, u.lastname ASC', $canseehidden);
+                                     true, '', 'r.sortorder ASC, u.lastname ASC');
             if (is_array($rusers) && count($rusers)) {
                 $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
@@ -2268,7 +2256,7 @@ function print_course($course, $highlightterms = '') {
 function print_my_moodle() {
     global $USER, $CFG, $DB, $OUTPUT;
 
-    if (empty($USER->id)) {
+    if (!isloggedin() or isguestuser()) {
         print_error('nopermissions', '', '', 'See My Moodle');
     }
 
@@ -3402,43 +3390,6 @@ function update_course($data) {
     return false;
 }
 
-/**
- * Return all course participant for a given course
- * @global object $DB
- * @param integer $courseid
- * @return array of user
- */
-function get_course_participants ($courseid) {
-    global $DB;
-    $users = get_users_by_capability(
-                        get_context_instance(CONTEXT_COURSE, $courseid),
-                        'moodle/course:view');
-    return $users;
-}
-
-
-/**
- * Return true if the user is a participant for a given course
- * @global object $DB
- * @param integer $userid
- * @param integer $courseid
- * @return boolean
- */
-function is_course_participant ($userid, $courseid) {
-    global $DB;
-    $users = get_users_by_capability(
-                        get_context_instance(CONTEXT_COURSE, $courseid),
-                        'moodle/course:view','u.id');
-
-    foreach($users as $user) {
-        if ($user->id == $userid) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 function get_course_by_id ($id) {
     global $DB;
     return $DB->get_record('course', array('id' => $id));
@@ -3759,8 +3710,8 @@ class course_request {
         if ($course->id) {
             $course = $DB->get_record('course', array('id' => $course->id));
             blocks_add_default_course_blocks($course);
-            $course->context = get_context_instance(CONTEXT_COURSE, $course->id);
-            role_assign($CFG->creatornewroleid, $this->properties->requester, 0, $course->context->id); // assing teacher role
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            role_assign($CFG->creatornewroleid, $this->properties->requester, 0, $coursecontext->id); // assing teacher role
             if (!empty($CFG->restrictmodulesfor) && $CFG->restrictmodulesfor != 'none' && !empty($CFG->restrictbydefault)) {
                 // if we're all or requested we're ok.
                 $allowedmods = explode(',',$CFG->defaultallowedmodules);
@@ -3823,8 +3774,9 @@ class course_request {
             $fs = get_file_storage();
             $files = $fs->get_area_files(self::summary_editor_context()->id, self::summary_editor_filearea(), $this->properties->id);
             foreach ($files as $file) {
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                 if (!$file->is_directory()) {
-                    $filerecord = array('contextid'=>$course->context->id, 'filearea'=>'course_summary', 'itemid'=>$course->id, 'filepath'=>$file->get_filepath(), 'filename'=>$file->get_filename());
+                    $filerecord = array('contextid'=>$coursecontext->id, 'filearea'=>'course_summary', 'itemid'=>$course->id, 'filepath'=>$file->get_filepath(), 'filename'=>$file->get_filename());
                     $fs->create_file_from_storedfile($filerecord, $file);
                 }
             }

@@ -48,16 +48,13 @@ if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
 
 require_login($course, false, $cm);
 
-if (isguestuser()) {
-    print_error('noguestrate', 'forum');
-}
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('mod/forum:rate', $context);
+
 
 if (!$forum->assessed) {
     print_error('norate', 'forum');
 }
-
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
-require_capability('mod/forum:rate', $context);
 
 if ($data = data_submitted() and confirm_sesskey()) {
 

@@ -102,7 +102,7 @@ class block_news_items extends block_base {
                 } else {
                     $tooltiptext = get_string('rsssubscriberssposts','forum',format_string($forum->name));
                 }
-                if (empty($USER->id)) {
+                if (!isloggedin()) {
                     $userid = 0;
                 } else {
                     $userid = $USER->id;

@@ -307,6 +307,7 @@ class block_manager {
      * @return boolean Whether there is anything in this region.
      */
     public function region_has_content($region, $output) {
+
         if (!$this->is_known_region($region)) {
             return false;
         }
@@ -448,13 +449,14 @@ class block_manager {
         list($pagetypepatterntest, $pagetypepatternparams) =
                 $DB->get_in_or_equal($pagetypepatterns, SQL_PARAMS_NAMED, 'pagetypepatterntest0000');
 
+        list($ccselect, $ccjoin) = context_instance_preload_sql('b.id', CONTEXT_BLOCK, 'ctx');
+
         $params = array(
             'subpage1' => $this->page->subpage,
             'subpage2' => $this->page->subpage,
             'contextid1' => $context->id,
             'contextid2' => $context->id,
             'pagetype' => $this->page->pagetype,
-            'contextblock' => CONTEXT_BLOCK,
         );
         $sql = "SELECT
                     bi.id,
@@ -469,11 +471,8 @@ class block_manager {
                     COALESCE(bp.visible, 1) AS visible,
                     COALESCE(bp.region, bi.defaultregion) AS region,
                     COALESCE(bp.weight, bi.defaultweight) AS weight,
-                    bi.configdata,
-                    ctx.id AS ctxid,
-                    ctx.path AS ctxpath,
-                    ctx.depth AS ctxdepth,
-                    ctx.contextlevel AS ctxlevel
+                    bi.configdata
+                    $ccselect
 
                 FROM {block_instances} bi
                 JOIN {block} b ON bi.blockname = b.name
@@ -481,8 +480,7 @@ class block_manager {
                                                   AND bp.contextid = :contextid1
                                                   AND bp.pagetype = :pagetype
                                                   AND bp.subpage = :subpage1
-                JOIN {context} ctx ON ctx.contextlevel = :contextblock
-                                      AND ctx.instanceid = bi.id
+                $ccjoin
 
                 WHERE
                 $contexttest
@@ -500,7 +498,7 @@ class block_manager {
         $this->birecordsbyregion = $this->prepare_per_region_arrays();
         $unknown = array();
         foreach ($blockinstances as $bi) {
-            $bi = make_context_subobj($bi);
+            context_instance_preload($bi);
             if ($this->is_known_region($bi->region)) {
                 $this->birecordsbyregion[$bi->region][] = $bi;
             } else {
@@ -824,7 +822,6 @@ class block_manager {
         if ($this->movingblock && $lastblock != $this->movingblock) {
             $results[] = new block_move_target($strmoveblockhere, $this->get_move_target_url($region, $lastweight + 1));
         }
-
         return $results;
     }
 
@@ -890,10 +887,10 @@ class block_manager {
             //TODO: please note it is sloppy to pass urls through page parameters!!
             //      it is shortened because some web servers (e.g. IIS by default) give
             //      a 'security' error if you try to pass a full URL as a GET parameter in another URL.
-            
+
             $return = $this->page->url->out(false);
             $return = str_replace($CFG->wwwroot . '/', '', $return);
-            
+
             $controls[] = array('url' => $CFG->wwwroot . '/' . $CFG->admin .
                     '/roles/assign.php?contextid=' . $block->context->id . '&returnurl=' . urlencode($return),
                     'icon' => 'i/roles', 'caption' => get_string('assignroles', 'role'));

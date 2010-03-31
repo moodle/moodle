@@ -24,7 +24,7 @@ function get_text_for_indexing_odt(&$resource, $directfile = ''){
     global $CFG;
     
     // SECURITY : do not allow non admin execute anything on system !!
-    if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) return;
+    if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) return;
 
     // adds moodle root switch if none was defined
     if (!isset($CFG->block_search_usemoodleroot)){

@@ -35,7 +35,7 @@
         print_error('badcontext');
     }
 
-    if ($action == 'delchoice' and confirm_sesskey() and has_capability('mod/choice:choose', $context) and $choice->allowupdate) {
+    if ($action == 'delchoice' and confirm_sesskey() and is_enrolled($context, NULL, 'mod/choice:choose') and $choice->allowupdate) {
         if ($answer = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id))) {
             //print_object($answer);
             $DB->delete_records('choice_answers', array('id' => $answer->id));
@@ -46,7 +46,7 @@
     echo $OUTPUT->header();
 
 /// Submit any new data if there is any
-    if ($form = data_submitted() && has_capability('mod/choice:choose', $context) && confirm_sesskey()) {
+    if ($form = data_submitted() && is_enrolled($context, NULL, 'mod/choice:choose') && confirm_sesskey()) {
         $timenow = time();
         if (has_capability('mod/choice:deleteresponses', $context)) {
             if ($action == 'delete') { //some responses need to be deleted
@@ -90,7 +90,7 @@
 
     $current = false;  // Initialise for later
     //if user has already made a selection, and they are not allowed to update it, show their selected answer.
-    if (!empty($USER->id) && ($current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id))) &&
+    if (isloggedin() && ($current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id))) &&
         empty($choice->allowupdate) ) {
         echo $OUTPUT->box(get_string("yourselection", "choice", userdate($choice->timeopen)).": ".format_string(choice_get_option_text($choice, $current->optionid)));
     }
@@ -109,8 +109,7 @@
         }
     }
 
-    if ( (!$current or $choice->allowupdate) and $choiceopen and
-          has_capability('mod/choice:choose', $context) ) {
+    if ( (!$current or $choice->allowupdate) and $choiceopen and is_enrolled($context, NULL, 'mod/choice:choose')) {
     // They haven't made their choice yet or updates allowed and choice is open
 
         echo '<form id="form" method="post" action="view.php">';
@@ -130,11 +129,13 @@
 
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
-        if (has_capability('moodle/legacy:guest', $sitecontext, NULL, false)) {      // Guest on whole site
+        if (isguestuser()) {
+            // Guest account
             echo $OUTPUT->confirm(get_string('noguestchoose', 'choice').'<br /><br />'.get_string('liketologin'),
                          get_login_url(), new moodle_url);
 
-        } else if (has_capability('moodle/legacy:guest', $context, NULL, false)) {   // Guest in this course only
+        } else if (!is_enrolled($context)) {
+            // Only people enrolled can make a choice
             $SESSION->wantsurl = $FULLME;
             $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
 

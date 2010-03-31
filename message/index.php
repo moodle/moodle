@@ -28,7 +28,7 @@ require('lib.php');
 
 require_login(0, false);
 
-if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
+if (isguestuser()) {
     redirect($CFG->wwwroot);
 }
 

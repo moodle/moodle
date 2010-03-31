@@ -28,7 +28,7 @@ define('MESSAGE_DEFAULT_REFRESH', 5);
 
 require_login();
 
-if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
+if (isguestuser()) {
     redirect($CFG->wwwroot);
 }
 

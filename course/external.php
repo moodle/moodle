@@ -84,7 +84,7 @@ final class course_external extends moodle_external {
      */
     static function get_courses($params) {
         global $USER;
-        if (has_capability('moodle/course:view', get_context_instance(CONTEXT_SYSTEM))) {
+        if (has_capability('moodle/course:participate', get_context_instance(CONTEXT_SYSTEM))) {
             $courses = array();
             foreach ($params as $param) {
                 $course = new stdClass();
@@ -681,7 +681,7 @@ final class course_external extends moodle_external {
      */
     static function get_course_modules($params, $type=null) {
         global $DB;
-        if (has_capability('moodle/course:view', get_context_instance(CONTEXT_SYSTEM))) {
+        if (has_capability('moodle/course:participate', get_context_instance(CONTEXT_SYSTEM))) {
             $modules = array();
             foreach ($params as $courseparams) {
                 if (array_key_exists('id', $courseparams)) {

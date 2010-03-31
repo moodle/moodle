@@ -90,8 +90,7 @@ if ($currentmembers) {
         $coursemanagerroles = split(',', $managerroles);
         foreach ($coursemanagerroles as $roleid) {
             $role = $DB->get_record('role', array('id'=>$roleid));
-            $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
-            $managers = get_role_users($roleid, $context, true, 'u.id', 'u.id ASC', $canseehidden);
+            $managers = get_role_users($roleid, $context, true, 'u.id', 'u.id ASC');
         }
     }
 } else {

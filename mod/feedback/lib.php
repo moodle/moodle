@@ -639,8 +639,6 @@ function feedback_load_capabilities($cmid) {
     $cb->createpublictemplate = has_capability('mod/feedback:createpublictemplate', $context, NULL, false);
     $cb->deletetemplate = has_capability('mod/feedback:deletetemplate', $context, NULL, false);
 
-    $cb->siteadmin = has_capability('moodle/site:doanything', $context);
-
     $cb->viewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $context, NULL, false);
 
     return $cb;
@@ -674,8 +672,6 @@ function feedback_load_course_capabilities($courseid) {
     $ccb->createprivatetemplate = has_capability('mod/feedback:createprivatetemplate', $context, NULL, false);
     $ccb->createpublictemplate = has_capability('mod/feedback:createpublictemplate', $context, NULL, false);
     $ccb->deletetemplate = has_capability('mod/feedback:deletetemplate', $context, NULL, false);
-
-    $ccb->siteadmin = has_capability('moodle/site:doanything', $context);
 
     $ccb->viewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $context, NULL, false);
 

@@ -588,7 +588,7 @@ class blog_entry {
             return false; // blog system disabled or user has no blog view capability
         }
 
-        if (!empty($USER->id) && $USER->id == $targetuserid) {
+        if (isloggedin() && $USER->id == $targetuserid) {
             return true; // can view own entries in any case
         }
 
@@ -612,7 +612,7 @@ class blog_entry {
                 break;
 
             case BLOG_SITE_LEVEL:
-                if (!empty($USER->id)) { // not logged in viewers forbidden
+                if (isloggedin()) { // not logged in viewers forbidden
                     return true;
                 }
                 return false;
@@ -743,7 +743,7 @@ class blog_listing {
             // don't add permission constraints
 
         } else {
-            if (isloggedin() && !has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM, SITEID), $userid, false)) {
+            if (isloggedin() and !isguestuser()) {
                 $assocexists = $DB->record_exists('blog_association', array());  //dont check association records if there aren't any
 
                 //begin permission sql clause

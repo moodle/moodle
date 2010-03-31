@@ -1187,7 +1187,8 @@ class generator_cli extends generator {
             }
             complete_user_login($user);
             $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-            if (!has_capability('moodle/site:doanything', $systemcontext)) {
+
+            if (!is_siteadmin($user->id)) {//TODO: add some proper access control check here!!
                 echo "You do not have administration privileges on this Moodle site. "
                     ."These are required for running the generation script.{$this->eolchar}";
                 die();

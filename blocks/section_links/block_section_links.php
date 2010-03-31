@@ -102,7 +102,7 @@ class block_section_links extends block_base {
             }
         }
 
-        if (!empty($USER->id)) {
+        if (isloggedin()) {
             $display = $DB->get_field('course_display', 'display', array('course'=>$this->page->course->id, 'userid'=>$USER->id));
         }
         if (!empty($display)) {

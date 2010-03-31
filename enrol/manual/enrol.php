@@ -62,7 +62,7 @@ function print_entry($course) {
 
     if ($course->password == '') {   // no password, so enrol
 
-        if (has_capability('moodle/legacy:guest', $context, $USER->id, false)) {
+        if (isguestuser()) {
             add_to_log($course->id, 'course', 'guest', 'view.php?id='.$course->id, getremoteaddr());
 
         } else if (empty($_GET['confirm']) && empty($_GET['cancel'])) {
@@ -404,19 +404,16 @@ function get_access_icons($course) {
  * A bit clunky because I didn't want to change the standard strings
  */
 function print_enrolmentkeyfrom($course) {
-    global $CFG;
-    global $USER;
+    global $CFG, $USER;
 
     $context = get_context_instance(CONTEXT_SYSTEM);
-    $guest = has_capability('moodle/legacy:guest', $context, $USER->id, false);
 
     // if a keyholder role is defined we list teachers in that role (if any exist)
     $contactslisted = false;
-    $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
     if (!empty($CFG->enrol_manual_keyholderrole)) {
-        if ($contacts = get_role_users($CFG->enrol_manual_keyholderrole, get_context_instance(CONTEXT_COURSE, $course->id),true,'','u.lastname ASC',$canseehidden  )) {
+        if ($contacts = get_role_users($CFG->enrol_manual_keyholderrole, get_context_instance(CONTEXT_COURSE, $course->id),true,'','u.lastname ASC')) {
             // guest user has a slightly different message
-            if ($guest) {
+            if (isguestuser()) {
                 print_string('enrolmentkeyfromguest', '', ':<br />' );
             }
             else {
@@ -444,7 +441,7 @@ function print_enrolmentkeyfrom($course) {
         }
 
         // guest user has a slightly different message
-        if ($guest) {
+        if (isguestuser()) {
             print_string('enrolmentkeyfromguest', '', $teachername );
         }
         else {

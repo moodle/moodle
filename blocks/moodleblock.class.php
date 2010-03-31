@@ -555,11 +555,7 @@ class block_base {
             $this->config = unserialize(base64_decode($instance->configdata));
         }
         $this->instance = $instance;
-        if (isset($instance->context)) {
-            $this->context = $instance->context;
-        } else {
-            $this->context = get_context_instance(CONTEXT_BLOCK, $instance->id);
-        }
+        $this->context = get_context_instance(CONTEXT_BLOCK, $instance->id);
         $this->page = $page;
         $this->specialization();
         $this->get_required_javascript();

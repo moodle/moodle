@@ -194,11 +194,11 @@ function forum_get_discussions_fast($forum_id) {
             $systemcontext = $coursecontext;
         }
 
-        if (!((has_capability('moodle/site:doanything', $systemcontext) && !empty($CFG->admineditalways))
-                || has_any_capability(array('moodle/legacy:teacher', 'moodle/legacy:editingteacher', 'moodle/legacy:admin'), $coursecontext, $userid, false))) {
+        if (true) {
+            // TODO: can not test teachers and admins here, use proper capability and enrolment test
             $now = time();
             $timelimit = " AND ((d.timestart = 0 OR d.timestart <= '$now') AND (d.timeend = 0 OR d.timeend > '$now')";
-            if (!empty($USER->id)) {
+            if (isloggedin()) {
                 $timelimit .= " OR d.userid = '$USER->id'";
             }
             $timelimit .= ')';

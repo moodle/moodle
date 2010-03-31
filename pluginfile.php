@@ -220,7 +220,7 @@ if (!empty($sendflashupgrader) && (($userplayerversion[0] <  $requiredplayervers
             if ($USER->id !== $userid) {
                 $usercontext = get_context_instance(CONTEXT_USER, $userid);
                 // The browsing user is not the current user
-                if (!isteacherinanycourse() && !isteacherinanycourse($userid) && !has_capability('moodle/user:viewdetails', $usercontext)) {
+                if (!has_coursemanager_role($userid) && !has_capability('moodle/user:viewdetails', $usercontext)) {
                     send_file_not_found();
                 }
 
@@ -349,7 +349,7 @@ if (!empty($sendflashupgrader) && (($userplayerversion[0] <  $requiredplayervers
         }
 
         // Must be able to at least view the course
-        if (!has_capability('moodle/course:view', $context)) {
+        if (!is_enrolled($context) and !is_viewing($context)) {
             send_file_not_found();
         }
 
@@ -412,6 +412,10 @@ if (!empty($sendflashupgrader) && (($userplayerversion[0] <  $requiredplayervers
     } else if ($filearea === 'user_profile') {
         $userid = (int)array_shift($args);
         $usercontext = get_context_instance(CONTEXT_USER, $userid);
+        
+        if ($CFG->forcelogin) {
+            require_login();
+        }
 
         if (!empty($CFG->forceloginforprofiles)) {
             require_login();
@@ -419,16 +423,14 @@ if (!empty($sendflashupgrader) && (($userplayerversion[0] <  $requiredplayervers
                 print_error('noguest');
             }
 
-            if (!isteacherinanycourse()
-                and !isteacherinanycourse($userid)
-                and !has_capability('moodle/user:viewdetails', $usercontext)) {
+            if (!has_coursemanager_role($userid) and !has_capability('moodle/user:viewdetails', $usercontext)) {
                 print_error('usernotavailable');
             }
             if (!has_capability('moodle/user:viewdetails', $context) &&
                 !has_capability('moodle/user:viewdetails', $usercontext)) {
                 print_error('cannotviewprofile');
             }
-            if (!has_capability('moodle/course:view', $context, $userid, false)) {
+            if (!is_enrolled($context, $userid)) {
                 print_error('notenrolledprofile');
             }
             if (groups_get_course_groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {

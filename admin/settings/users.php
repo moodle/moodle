@@ -84,65 +84,78 @@ if ($hassiteconfig
     if ($ADMIN->fulltree) {
         if (!during_initial_install()) {
             $context = get_context_instance(CONTEXT_SYSTEM);
-            if (!$guestrole = get_guest_role()) {
-                $guestrole->id = 0;
-            }
-            if ($studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
-                $studentrole = array_shift($studentroles);   /// Take the first one
-            } else {
-                $studentrole->id = 0;
-            }
-            if ($userroles = get_roles_with_capability('moodle/legacy:user', CAP_ALLOW)) {
-                $userrole = array_shift($userroles);   /// Take the first one
-            } else {
-                $userrole->id = 0;
-            }
-            if (empty($CFG->creatornewroleid)) {
-                if ($teacherroles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, $context)) {
-                    $teachereditrole = array_shift($teacherroles);
-                    set_config('creatornewroleid', $teachereditrole->id);
-                } else {
-                    set_config('creatornewroleid', 0);
+            $allroles        = array();
+            $generalroles    = array();
+            $guestroles      = array();
+            $userroles       = array();
+            $studentroles    = array();
+            $teacherroles    = array();
+            $creatornewroles = array();
+            
+            foreach (get_all_roles() as $role) {
+                $rolename = strip_tags(format_string($role->name)) . ' ('. $role->shortname . ')';
+                $allroles[$role->id] = $rolename;
+                switch ($role->archetype) {
+                    case 'manager':
+                        $creatornewroles[$role->id] = $rolename;
+                        break;
+                    case 'coursecreator':
+                        break;
+                    case 'editingteacher':
+                        $teacherroles[$role->id] = $rolename;
+                        $creatornewroles[$role->id] = $rolename;
+                        break;
+                    case 'teacher':
+                        $creatornewroles[$role->id] = $rolename;
+                        break;
+                    case 'student':
+                        $studentroles[$role->id] = $rolename;
+                        break;
+                    case 'guest':
+                        $guestroles[$role->id] = $rolename;
+                        break;
+                    case 'user':
+                        $userroles[$role->id] = $rolename;
+                        break;
+                    case 'frontpage':
+                        break;
+                    default:
+                        $creatornewroles[$role->id] = $rolename;
+                        $generalroles[$role->id] = $rolename;
+                        break;
                 }
-            }
-            if (!$guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
-                $guestroles = array();
-                $defaultguestid = null;
-            } else {
-                $defaultguestid = reset($guestroles);
-                $defaultguestid = $defaultguestid->id;
             }
 
-            // we must not use assignable roles here:
-            //   1/ unsetting roles as assignable for admin might bork the settings!
-            //   2/ default user role should not be assignable anyway
-            $allroles = array();
-            $nonguestroles = array();
-            if ($roles = get_all_roles()) {
-                foreach ($roles as $role) {
-                    $rolename = strip_tags(format_string($role->name, true));
-                    $allroles[$role->id] = $rolename;
-                    if (!isset($guestroles[$role->id])) {
-                        $nonguestroles[$role->id] = $rolename;
-                    }
-                }
+            reset($guestroles);
+            $defaultguestid = key($guestroles);
+            reset($studentroles);
+            $defaultstudentid = key($studentroles);
+            reset($teacherroles);
+            $defaultteacherid = key($teacherroles);
+            
+            if ($userroles) {
+                reset($userroles);
+                $defaultuserid = key($userroles);
+            } else {
+                $userroles = array('0'=>get_string('none'));
+                $defaultuserid = 0;
             }
 
             $temp->add(new admin_setting_configselect('notloggedinroleid', get_string('notloggedinroleid', 'admin'),
-                          get_string('confignotloggedinroleid', 'admin'), $defaultguestid, $allroles ));
+                          get_string('confignotloggedinroleid', 'admin'), $defaultguestid, ($guestroles + $generalroles)));
             $temp->add(new admin_setting_configselect('guestroleid', get_string('guestroleid', 'admin'),
-                          get_string('configguestroleid', 'admin'), $defaultguestid, $allroles));
+                          get_string('configguestroleid', 'admin'), $defaultguestid, ($guestroles + $generalroles)));
             $temp->add(new admin_setting_configselect('defaultuserroleid', get_string('defaultuserroleid', 'admin'),
-                          get_string('configdefaultuserroleid', 'admin'), $userrole->id, $nonguestroles)); // guest role here breaks a lot of stuff
+                          get_string('configdefaultuserroleid', 'admin'), $defaultuserid, ($userroles + $generalroles)));
         }
 
         $temp->add(new admin_setting_configcheckbox('nodefaultuserrolelists', get_string('nodefaultuserrolelists', 'admin'), get_string('confignodefaultuserrolelists', 'admin'), 0));
 
         if (!during_initial_install()) {
             $temp->add(new admin_setting_configselect('defaultcourseroleid', get_string('defaultcourseroleid', 'admin'),
-                          get_string('configdefaultcourseroleid', 'admin'), $studentrole->id, $allroles));
+                          get_string('configdefaultcourseroleid', 'admin'), $defaultstudentid, $allroles));
             $temp->add(new admin_setting_configselect('creatornewroleid', get_string('creatornewroleid', 'admin'),
-                          get_string('configcreatornewroleid', 'admin'), $CFG->creatornewroleid, $allroles));
+                          get_string('configcreatornewroleid', 'admin'), $defaultteacherid, $creatornewroles));
         }
 
         $temp->add(new admin_setting_configcheckbox('autologinguests', get_string('autologinguests', 'admin'), get_string('configautologinguests', 'admin'), 0));
@@ -174,6 +187,9 @@ if ($hassiteconfig
     }
     $ADMIN->add('roles', $temp);
 
+    if (is_siteadmin()) {
+        $ADMIN->add('roles', new admin_externalpage('admins', get_string('siteadministrators', 'role'), "$CFG->wwwroot/$CFG->admin/roles/admins.php"));
+    }
     $ADMIN->add('roles', new admin_externalpage('defineroles', get_string('defineroles', 'role'), "$CFG->wwwroot/$CFG->admin/roles/manage.php", 'moodle/role:manage'));
     $ADMIN->add('roles', new admin_externalpage('assignroles', get_string('assignglobalroles', 'role'), "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=".$systemcontext->id, 'moodle/role:assign'));
     $ADMIN->add('roles', new admin_externalpage('checkpermissions', get_string('checkglobalpermissions', 'role'), "$CFG->wwwroot/$CFG->admin/roles/check.php?contextid=".$systemcontext->id, array('moodle/role:assign', 'moodle/role:safeoverride', 'moodle/role:override', 'moodle/role:manage')));

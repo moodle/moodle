@@ -42,13 +42,6 @@ if (debugging('', DEBUG_DEVELOPER) && optional_param('debug', false, PARAM_BOOL)
 /// Here we maintain response contents
 $response = array('status'=> 'Error', 'message'=>'kk');
 
-/// Check access.
-if (!isloggedin()) {
-    print_error('mustbeloggedin');
-}
-if (isguestuser()) {
-    print_error('noguestrate', 'forum');
-}
 if (!confirm_sesskey()) {
     print_error('invalidsesskey');
 }
@@ -93,6 +86,7 @@ if (!$forum->assessed) {
 
 /// Check user can rate
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_login($course, false, $cm);
 require_capability('mod/forum:rate', $context);
 
 /// Check timed ratings

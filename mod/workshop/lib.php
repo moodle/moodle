@@ -679,7 +679,7 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
 function workshop_extend_navigation(navigation_node $navref, stdclass $course, stdclass $module, stdclass $cm) {
     global $CFG;
 
-    if (has_capability('mod/workshop:submit', $cm->context)) {
+    if (has_capability('mod/workshop:submit', get_context_instance(CONTEXT_MODULE, $cm->id))) {
         $url = new moodle_url('/mod/workshop/submission.php', array('cmid' => $cm->id));
         $mysubmissionkey = $navref->add(get_string('mysubmission', 'workshop'), $url);
         $navref->get($mysubmissionkey)->mainnavonly = true;

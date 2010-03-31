@@ -105,7 +105,7 @@
             $DB->update_record('course', $editordata);
 
             // assign default role to creator if not already having permission to manage course assignments
-            if (!has_capability('moodle/course:view', $context) or !has_capability('moodle/role:assign', $context)) {
+            if (!is_viewing($context, NULL, 'moodle/role:assign') and !is_enrolled($context, NULL, 'moodle/role:assign')) {
                 role_assign($CFG->creatornewroleid, $USER->id, 0, $context->id);
             }
 

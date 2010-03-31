@@ -108,7 +108,7 @@ class block_admin_tree extends block_base {
         }
 
         if (isguestuser() or !isloggedin()) {
-            // these users can not change any settings
+            // shortcut - these users can not change any settings
             $this->content = '';
             return '';
         }

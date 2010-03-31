@@ -399,7 +399,7 @@ function coursetag_get_tagged_courses($tagid) {
             //view, but arguably it is best that when clicking on a tag, the tagged course summary should
             //be seen and then if the student clicks on that they will be given the opportunity to join
             //note courses not visible should not have their tagid sent to this function
-            //if (has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $c->itemid))) {
+            //if (has_capability('moodle/course:participate', get_context_instance(CONTEXT_COURSE, $c->itemid))) {
                 $course = $DB->get_record('course', array('id'=>$c->itemid));
                 $courses[$c->itemid] = $course;
             //}

@@ -101,6 +101,7 @@
     }
 
     $roleoptions = array();
+    // TODO: we need a new list of roles that are visible here
     if ($roles = get_roles_used_in_context($context)) {
         foreach ($roles as $r) {
             $roleoptions[$r->id] = $r->name;

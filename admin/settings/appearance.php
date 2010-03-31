@@ -128,7 +128,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configtext('mycoursesperpage', get_string('mycoursesperpage', 'admin'), get_string('configmycoursesperpage', 'admin'), 21, PARAM_INT));
     $ADMIN->add('appearance', $temp);
 
-    // new CFG variable for coursemanager (what roles to display)
+    // coursemanager is the person responsible for course - usually manages enrolments, receives notification, etc.
     $temp = new admin_settingpage('coursemanager', get_string('coursemanager', 'admin'));
     $temp->add(new admin_setting_special_coursemanager());
     $ADMIN->add('appearance', $temp);

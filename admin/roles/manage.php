@@ -61,11 +61,6 @@
     $undeletableroles[$CFG->guestroleid] = 1;
     $undeletableroles[$CFG->defaultuserroleid] = 1;
     $undeletableroles[$CFG->defaultcourseroleid] = 1;
-    // If there is only one admin role, add that to $undeletableroles too.
-    $adminroles = get_admin_roles();
-    if (count($adminroles) == 1) {
-        $undeletableroles[reset($adminroles)->id] = 1;
-    }
 
 ///.Process submitted data.
     $confirmed = optional_param('confirm', false, PARAM_BOOL) && data_submitted() && confirm_sesskey();
@@ -160,7 +155,7 @@
                 $a->id = $roleid;
                 $a->name = $roles[$roleid]->name;
                 $a->shortname = $roles[$roleid]->shortname;
-                $a->legacytype = get_legacy_type($roleid);
+                $a->legacytype = $roles[$roleid]->archetype;
                 if (empty($a->legacytype)) {
                     $warning = get_string('resetrolesurenolegacy', 'role', $a);
                 } else {
@@ -168,22 +163,21 @@
                 }
                 $formcontinue = new single_button(new moodle_url('manage.php', $optionsyes), get_string('yes'));
                 $formcancel = new single_button(new moodle_url('manage.php', $optionsno), get_string('no'), 'get');
-                echo $OUTPUT->confirm(get_string('confirmmessage', 'bulkusers', $usernames), $formcontinue, $formcancel);
+                echo $OUTPUT->confirm($warning, $formcontinue, $formcancel);
                 echo $OUTPUT->footer();
                 die;
             }
 
             // Do the reset.
-            $legacytype = get_legacy_type($roleid);
-            if ($legacytype) {
-                set_role_contextlevels($roleid, get_default_contextlevels($legacytype));
+            if ($roles[$roleid]->archetype) {
+                set_role_contextlevels($roleid, get_default_contextlevels($roles[$roleid]->archetype));
             }
             reset_role_capabilities($roleid);
 
             // Mark context dirty, log and redirect.
             mark_context_dirty($systemcontext->path);
             add_to_log(SITEID, 'role', 'reset', 'admin/roles/manage.php?action=reset&roleid=' . $roleid, $roles[$roleid]->localname, '', $USER->id);
-            redirect($defineurl . '?action=view&amp;roleid=' . $roleid);
+            redirect($defineurl . '?action=view&roleid=' . $roleid);
             break;
     }
 
