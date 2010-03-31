@@ -46,7 +46,7 @@ class moodle_user_external extends external_api {
                             'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user'),
                             'email'       => new external_value(PARAM_EMAIL, 'A valid and unique email address'),
                             'auth'        => new external_value(PARAM_SAFEDIR, 'Auth plugins include manual, ldap, imap, etc', VALUE_DEFAULT, 'manual', NULL_NOT_ALLOWED),
-                            'idnumber'    => new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution', VALUE_DEFAULT, null),
+                            'idnumber'    => new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution', VALUE_DEFAULT, ''),
                             'emailstop'   => new external_value(PARAM_NUMBER, 'Email is blocked: 1 is blocked and 0 otherwise', VALUE_DEFAULT, 0),
                             'lang'        => new external_value(PARAM_SAFEDIR, 'Language code such as "en_utf8", must exist on server', VALUE_DEFAULT, $CFG->lang, NULL_NOT_ALLOWED),
                             'theme'       => new external_value(PARAM_SAFEDIR, 'Theme name such as "standard", must exist on server', VALUE_OPTIONAL),
@@ -132,9 +132,9 @@ class moodle_user_external extends external_api {
             // make sure there is no data loss during truncation
             $truncated = truncate_userinfo($user);
             foreach ($truncated as $key=>$value) {
-                if ($truncated[$key] !== $user[$key]) {
-                    throw new invalid_parameter_exception('Property: '.$key.' is too long: '.$user[$key]);
-                }
+                    if ($truncated[$key] !== $user[$key]) {
+                        throw new invalid_parameter_exception('Property: '.$key.' is too long: '.$user[$key]);
+                    }
             }
 
             $user['confirmed'] = true;
