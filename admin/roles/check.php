@@ -28,47 +28,36 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
 
 $contextid = required_param('contextid',PARAM_INT);
-$userid = optional_param('userid', 0, PARAM_INT); // needed for user tabs
-$courseid = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
 
-$urlparams = array('contextid' => $contextid);
-if (!empty($userid)) {
-    $urlparams['userid'] = $userid;
-}
-if ($courseid && $courseid != SITEID) {
-    $urlparams['courseid'] = $courseid;
-}
-$PAGE->set_url('/admin/roles/check.php', $urlparams);
+list($context, $course, $cm) = get_context_info_array($contextid);
+$PAGE->set_url('/admin/roles/check.php', array('contextid' => $contextid));
+$PAGE->set_context($context);
 
-if (! $context = get_context_instance_by_id($contextid)) {
-    print_error('wrongcontextid', 'error');
-}
-$isfrontpage = $context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID;
-$contextname = print_context_name($context);
-
-if ($context->contextlevel == CONTEXT_COURSE) {
-    $courseid = $context->instanceid;
-    if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-        print_error('invalidcourse', 'error');
-    }
-
-} else if (!empty($courseid)){ // we need this for user tabs in user context
-    if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-        print_error('invalidcourse', 'error');
-    }
+if ($course) {
+    $isfrontpage = ($context->contextlevel == CONTEXT_COURSE and $context->instanceid == SITEID);
 
 } else {
-    $courseid = SITEID;
-    $course = clone($SITE);
+    $isfrontpage = false;
+    if ($context->contextlevel == CONTEXT_USER) {
+        $courseid = optional_param('courseid', SITEID, PARAM_INT); // needed for user/tabs.php
+        $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+        $PAGE->url->param('courseid', $courseid);
+        $userid = $context->instanceid;
+    } else {
+        $course = $SITE;
+    }
 }
 
-// Check login and permissions.
-require_login($course);
+// security first
+require_login($course, false, $cm);
 $canview = has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
         'moodle/role:override', 'moodle/role:manage'), $context);
 if (!$canview) {
     print_error('nopermissions', 'error', '', get_string('checkpermissions', 'role'));
 }
+
+$courseid = $course->id;
+$contextname = print_context_name($context);
 
 // These are needed early because of tabs.php
 $assignableroles = get_assignable_roles($context, ROLENAME_BOTH);
