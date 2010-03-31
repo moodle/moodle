@@ -30,13 +30,7 @@ require_once("$CFG->dirroot/$CFG->admin/roles/lib.php");
 $contextid = required_param('contextid', PARAM_INT);   // context id
 $roleid    = required_param('roleid', PARAM_INT);   // requested role id
 
-// security first
 list($context, $course, $cm) = get_context_info_array($contextid);
-require_login($course, false, $cm);
-$safeoverridesonly = !has_capability('moodle/role:override', $context);
-if ($safeoverridesonly) {
-    require_capability('moodle/role:safeoverride', $context);
-}
 
 $PAGE->set_url('/admin/roles/override.php', array('contextid' => $contextid, 'roleid' => $roleid));
 $PAGE->set_context($context);
@@ -57,6 +51,13 @@ if ($course) {
     } else {
         $course = $SITE;
     }
+}
+
+// security first
+require_login($course, false, $cm);
+$safeoverridesonly = !has_capability('moodle/role:override', $context);
+if ($safeoverridesonly) {
+    require_capability('moodle/role:safeoverride', $context);
 }
 
 $courseid = $course->id;

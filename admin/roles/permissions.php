@@ -38,10 +38,7 @@ $allow      = optional_param('allow', 0, PARAM_BOOL);
 $unprohibit = optional_param('unprohibit', 0, PARAM_BOOL);
 $prohibit   = optional_param('prohibit', 0, PARAM_BOOL);
 
-// security first
 list($context, $course, $cm) = get_context_info_array($contextid);
-require_login($course, false, $cm);
-require_capability('moodle/role:review', $context);
 
 $PAGE->set_url('/admin/roles/permissions.php', array('contextid' => $contextid));
 $PAGE->set_context($context);
@@ -63,6 +60,10 @@ if ($course) {
         $course = $SITE;
     }
 }
+
+// security first
+require_login($course, false, $cm);
+require_capability('moodle/role:review', $context);
 
 $courseid = $course->id;
 
