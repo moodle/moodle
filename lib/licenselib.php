@@ -43,17 +43,31 @@ class license_manager {
             // record exists
             if ($record->version < $license->version) {
                 // update license record
+                $license->enabled = $record->enabled;
                 $license->id = $record->id;
                 $DB->update_record('license', $license);
-            } else {
-                debugging('won\'t update');
             }
         } else {
-            if ($license_id = $DB->insert_record('license', $license)) {
-                return $license_id;
-            } else {
-                return false;
-            }
+            $DB->insert_record('license', $license);
+        }
+        return true;
+    }
+
+    /**
+     * Get license records
+     * @param mixed $param
+     * @return array
+     */
+    static public function get_licenses($param = null) {
+        global $DB;
+        if (empty($param) || !is_array($param)) {
+            $param = array();
+        }
+        // get licenses by conditions
+        if ($records = $DB->get_records('license', $param)) {
+            return $records;
+        } else {
+            return array();
         }
     }
 
@@ -62,26 +76,12 @@ class license_manager {
      * @param mixed $param the shortname of license, or an array
      * @return object
      */
-    static public function get($param = null) {
+    static public function get_license_by_shortname($name) {
         global $DB;
-        if (empty($param)) {
-            $param = array();
-        }
-
-        // get license by shortname
-        if (is_string($param)) {
-            if ($record = $DB->get_record('license', array('shortname'=>$name))) {
-                return $record;
-            } else {
-                return null;
-            }
-        } else if (is_array($param)) {
-            // get licenses by conditions
-            if ($records = $DB->get_records('license', $param)) {
-                return $records;
-            } else {
-                return null;
-            }
+        if ($record = $DB->get_record('license', array('shortname'=>$name))) {
+            return $record;
+        } else {
+            return null;
         }
     }
 
@@ -92,13 +92,12 @@ class license_manager {
      */
     static public function enable($license) {
         global $DB;
-        if ($record = $DB->get_record('license', array('shortname'=>$license))) {
-            $record->enabled = 1;
-            $DB->update_record('license', $record);
-            return true;
-        } else {
-            return false;
+        if ($license = self::get_license_by_shortname($license)) {
+            $license->enabled = 1;
+            $DB->update_record('license', $license);
         }
+        self::set_active_licenses();
+        return true;
     }
 
     /**
@@ -108,13 +107,25 @@ class license_manager {
      */
     static public function disable($license) {
         global $DB;
-        if ($record = $DB->get_record('license', array('shortname'=>$license))) {
-            $record->enabled = 0;
-            $DB->update_record('license', $record);
-            return true;
-        } else {
-            return false;
+        if ($license = self::get_license_by_shortname($license)) {
+            $license->enabled = 0;
+            $DB->update_record('license', $license);
         }
+        self::set_active_licenses();
+        return true;
+    }
+
+    /**
+     * Store active licenses in global $CFG
+     */
+    static private function set_active_licenses() {
+        // set to global $CFG
+        $licenses = self::get_licenses(array('enabled'=>1));
+        $result = array();
+        foreach ($licenses as $l) {
+            $result[] = $l->shortname;
+        }
+        set_config('licenses', implode(',', $result));
     }
 
     /**
@@ -123,60 +134,67 @@ class license_manager {
     static public function install_licenses() {
         $license = new stdclass;
 
+        $license->shortname = 'unknown';
+        $license->fullname = 'Unknown license';
+        $license->source = '';
+        $license->enabled = 1;
+        $license->version = '2010033100';
+        self::add($license);
+
         $license->shortname = 'allrightsreserved';
         $license->fullname = 'All rights reserved';
         $license->source = 'http://en.wikipedia.org/wiki/All_rights_reserved';
         $license->enabled = 1;
-        $license->version = '2010032500';
+        $license->version = '2010033100';
         self::add($license);
 
         $license->shortname = 'public';
         $license->fullname = 'Public Domain';
         $license->source = 'http://creativecommons.org/licenses/publicdomain/';
         $license->enabled = 1;
-        $license->version = '2010032500';
+        $license->version = '2010033100';
         self::add($license);
 
         $license->shortname = 'cc';
         $license->fullname = 'Creative Commons';
         $license->source = 'http://creativecommons.org/licenses/by/3.0/';
         $license->enabled = 1;
-        $license->version = '2010032500';
+        $license->version = '2010033100';
         self::add($license);
 
         $license->shortname = 'cc-nd';
         $license->fullname = 'Creative Commons - NoDerivs';
         $license->source = 'http://creativecommons.org/licenses/by-nd/3.0/';
         $license->enabled = 1;
-        $license->version = '2010032500';
+        $license->version = '2010033100';
         self::add($license);
 
         $license->shortname = 'cc-nc-nd';
         $license->fullname = 'Creative Commons - No Commercial NoDerivs';
         $license->source = 'http://creativecommons.org/licenses/by-nc-nd/3.0/';
         $license->enabled = 1;
-        $license->version = '2010032500';
+        $license->version = '2010033100';
         self::add($license);
 
         $license->shortname = 'cc-nc';
         $license->fullname = 'Creative Commons - No Commercial';
         $license->source = 'http://creativecommons.org/licenses/by-nd/3.0/';
         $license->enabled = 1;
-        $license->version = '2010032500';
+        $license->version = '2010033100';
         self::add($license);
 
         $license->shortname = 'cc-nc-sa';
         $license->fullname = 'Creative Commons - No Commercial ShareAlike';
         $license->source = 'http://creativecommons.org/licenses/by-nc-sa/3.0/';
         $license->enabled = 1;
-        $license->version = '2010032500';
+        $license->version = '2010033100';
         self::add($license);
 
         $license->shortname = 'cc-sa';
         $license->fullname = 'Creative Commons - ShareAlike';
         $license->source = 'http://creativecommons.org/licenses/by-sa/3.0/';
         $license->enabled = 1;
-        $license->version = '2010032500';
+        $license->version = '2010033100';
         self::add($license);
     }
 }

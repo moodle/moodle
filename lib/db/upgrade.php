@@ -3115,7 +3115,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010032400);
     }
 
-    if ($result && $oldversion < 2010032405) {
+    if ($result && $oldversion < 2010033101) {
 
     /// Define field source to be added to files
         $table = new xmldb_table('files');
@@ -3159,13 +3159,179 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
-        require_once($CFG->libdir . '/licenselib.php');
-        license_manager::install_licenses();
+        $active_licenses = array();
+
+        $license = new stdclass;
+
+        // add unknown license
+        $license->shortname = 'unknown';
+        $license->fullname = 'Unknown license';
+        $license->source = '';
+        $license->enabled = 1;
+        $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
+        if ($record = $DB->get_record('license', array('shortname'=>$license->shortname))) {
+            if ($record->version < $license->version) {
+                // update license record
+                $license->enabled = $record->enabled;
+                $license->id = $record->id;
+                $DB->update_record('license', $license);
+            }
+        } else {
+            $DB->insert_record('license', $license);
+        }
+
+        // add all rights reserved license
+        $license->shortname = 'allrightsreserved';
+        $license->fullname = 'All rights reserved';
+        $license->source = 'http://en.wikipedia.org/wiki/All_rights_reserved';
+        $license->enabled = 1;
+        $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
+        if ($record = $DB->get_record('license', array('shortname'=>$license->shortname))) {
+            if ($record->version < $license->version) {
+                // update license record
+                $license->id = $record->id;
+                $license->enabled = $record->enabled;
+                $DB->update_record('license', $license);
+            }
+        } else {
+            $DB->insert_record('license', $license);
+        }
+
+        // add public domain license
+        $license->shortname = 'public';
+        $license->fullname = 'Public Domain';
+        $license->source = 'http://creativecommons.org/licenses/publicdomain/';
+        $license->enabled = 1;
+        $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
+        if ($record = $DB->get_record('license', array('shortname'=>$license->shortname))) {
+            if ($record->version < $license->version) {
+                // update license record
+                $license->enabled = $record->enabled;
+                $license->id = $record->id;
+                $DB->update_record('license', $license);
+            }
+        } else {
+            $DB->insert_record('license', $license);
+        }
+
+        // add creative commons license
+        $license->shortname = 'cc';
+        $license->fullname = 'Creative Commons';
+        $license->source = 'http://creativecommons.org/licenses/by/3.0/';
+        $license->enabled = 1;
+        $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
+        if ($record = $DB->get_record('license', array('shortname'=>$license->shortname))) {
+            if ($record->version < $license->version) {
+                // update license record
+                $license->enabled = $record->enabled;
+                $license->id = $record->id;
+                $DB->update_record('license', $license);
+            }
+        } else {
+            $DB->insert_record('license', $license);
+        }
+
+        // add creative commons no derivs license
+        $license->shortname = 'cc-nd';
+        $license->fullname = 'Creative Commons - NoDerivs';
+        $license->source = 'http://creativecommons.org/licenses/by-nd/3.0/';
+        $license->enabled = 1;
+        $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
+        if ($record = $DB->get_record('license', array('shortname'=>$license->shortname))) {
+            if ($record->version < $license->version) {
+                // update license record
+                $license->enabled = $record->enabled;
+                $license->id = $record->id;
+                $DB->update_record('license', $license);
+            }
+        } else {
+            $DB->insert_record('license', $license);
+        }
+
+        // add creative commons no commercial no derivs license
+        $license->shortname = 'cc-nc-nd';
+        $license->fullname = 'Creative Commons - No Commercial NoDerivs';
+        $license->source = 'http://creativecommons.org/licenses/by-nc-nd/3.0/';
+        $license->enabled = 1;
+        $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
+        if ($record = $DB->get_record('license', array('shortname'=>$license->shortname))) {
+            if ($record->version < $license->version) {
+                // update license record
+                $license->enabled = $record->enabled;
+                $license->id = $record->id;
+                $DB->update_record('license', $license);
+            }
+        } else {
+            $DB->insert_record('license', $license);
+        }
+
+        // add creative commons no commercial
+        $license->shortname = 'cc-nc-nd';
+        $license->shortname = 'cc-nc';
+        $license->fullname = 'Creative Commons - No Commercial';
+        $license->source = 'http://creativecommons.org/licenses/by-nd/3.0/';
+        $license->enabled = 1;
+        $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
+        if ($record = $DB->get_record('license', array('shortname'=>$license->shortname))) {
+            if ($record->version < $license->version) {
+                // update license record
+                $license->enabled = $record->enabled;
+                $license->id = $record->id;
+                $DB->update_record('license', $license);
+            }
+        } else {
+            $DB->insert_record('license', $license);
+        }
+
+        // add creative commons no commercial sharealike
+        $license->shortname = 'cc-nc-sa';
+        $license->fullname = 'Creative Commons - No Commercial ShareAlike';
+        $license->source = 'http://creativecommons.org/licenses/by-nc-sa/3.0/';
+        $license->enabled = 1;
+        $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
+        if ($record = $DB->get_record('license', array('shortname'=>$license->shortname))) {
+            if ($record->version < $license->version) {
+                // update license record
+                $license->enabled = $record->enabled;
+                $license->id = $record->id;
+                $DB->update_record('license', $license);
+            }
+        } else {
+            $DB->insert_record('license', $license);
+        }
+
+        // add creative commons sharealike
+        $license->shortname = 'cc-sa';
+        $license->fullname = 'Creative Commons - ShareAlike';
+        $license->source = 'http://creativecommons.org/licenses/by-sa/3.0/';
+        $license->enabled = 1;
+        $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
+        if ($record = $DB->get_record('license', array('shortname'=>$license->shortname))) {
+            if ($record->version < $license->version) {
+                // update license record
+                $license->enabled = $record->enabled;
+                $license->id = $record->id;
+                $DB->update_record('license', $license);
+            }
+        } else {
+            $DB->insert_record('license', $license);
+        }
+
+        set_config('licenses', implode(',', $active_licenses));
     /// set site default license
         set_config('sitedefaultlicense', 'allrightsreserved');
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2010032405);
+        upgrade_main_savepoint($result, 2010033101);
     }
     
     return $result;

@@ -1766,8 +1766,15 @@ function initialise_filepicker($args) {
     global $CFG, $USER, $PAGE, $OUTPUT;
     $return = new stdclass;
     require_once($CFG->libdir . '/licenselib.php');
+    $array = explode(',', $CFG->licenses);
+    $licenses = array();
+    foreach ($array as $license) {
+        $l = new stdclass;
+        $l->shortname = $license;
+        $l->fullname = get_string($license, 'license');
+        $licenses[] = $l;
+    }
 
-    $licenses = license_manager::get(array('enabled'=>1));
     $return->licenses = $licenses;
 
     $return->author = fullname($USER);

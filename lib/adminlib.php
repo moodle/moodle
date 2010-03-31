@@ -5060,12 +5060,14 @@ class admin_setting_managelicenses extends admin_setting {
     public function output_html($data, $query='') {
         global $CFG, $OUTPUT;
         require_once($CFG->libdir . '/licenselib.php');
+        $url = "licenses.php?sesskey=" . sesskey();
 
         // display strings
         $txt = get_strings(array('administration', 'settings', 'name', 'enable', 'disable', 'none'));
-        $licenses = license_manager::get();
+        $licenses = license_manager::get_licenses();
 
         $return = $OUTPUT->heading(get_string('managelicenses', 'admin'), 3, 'main', true);
+
         $return .= $OUTPUT->box_start('generalbox editorsui');
 
         $table = new html_table();
@@ -5074,9 +5076,8 @@ class admin_setting_managelicenses extends admin_setting {
         $table->width = '100%';
         $table->data  = array();
 
-        $url = "licenses.php?sesskey=" . sesskey();
-        foreach ($licenses as $key => $value) {
-            $displayname = html_writer::link($value->source, $value->fullname, array('target'=>'_blank'));
+        foreach ($licenses as $value) {
+            $displayname = html_writer::link($value->source, get_string($value->shortname, 'license'), array('target'=>'_blank'));
 
             if ($value->enabled == 1) {
                 $hideshow = html_writer::link($url.'&action=disable&license='.$value->shortname, 

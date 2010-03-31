@@ -35,9 +35,9 @@ if (!during_initial_install()) { //do not use during installation
         $temp->add(new admin_setting_configselect('maxcategorydepth', get_string('configsitemaxcategorydepth','admin'), get_string('configsitemaxcategorydepthhelp','admin'), 0, $options));
         require_once($CFG->libdir . '/licenselib.php');
         $licenses = array();
-        $array = license_manager::get();
-        foreach ($array as $key=>$value) {
-            $licenses[$value->shortname] = $value->fullname;
+        $array = explode(',', $CFG->licenses);
+        foreach ($array as $value) {
+            $licenses[$value] = get_string($value, 'license');
         }
         $temp->add(new admin_setting_configselect('sitedefaultlicense', get_string('configsitedefaultlicense','admin'), get_string('configsitedefaultlicensehelp','admin'), 'allrightsreserved', $licenses));
 
