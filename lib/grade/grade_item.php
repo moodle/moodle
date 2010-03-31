@@ -1448,8 +1448,6 @@ class grade_item extends grade_object {
         if ($finalgrade !== false) {
             if ($this->is_overridable_item()) {
                 $grade->overridden = time();
-            } else {
-                $grade->overridden = 0;
             }
 
             $grade->finalgrade = $this->bounded_grade($finalgrade);
@@ -1474,7 +1472,7 @@ class grade_item extends grade_object {
         } else if (grade_floats_different($grade->finalgrade, $oldgrade->finalgrade)
                 or $grade->feedback       !== $oldgrade->feedback
                 or $grade->feedbackformat != $oldgrade->feedbackformat
-                or $grade->overridden     != $oldgrade->overridden) {
+                or ($oldgrade->overridden == 0 and $grade->overridden > 0)) {
             $grade->timemodified = time(); // hack alert - date graded
             $result = $grade->update($source);
         } else {
