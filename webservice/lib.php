@@ -383,7 +383,35 @@ class '.$classname.' {
         $params      = array();
         $params_desc = array();
         foreach ($function->parameters_desc->keys as $name=>$keydesc) {
-            $params[]      = '$'.$name;
+            $param = '$'.$name;
+            //need to generate the default if there is any
+            if ($keydesc instanceof external_value) {
+                if ($keydesc->required == VALUE_DEFAULT) {
+                    if ($keydesc->default===null) {
+                        $param .= '=null';
+                    } else {
+                        switch($keydesc->type) {
+                            case PARAM_BOOL:
+                                $param .= $keydesc->default; break;
+                            case PARAM_INT:
+                                $param .= $keydesc->default; break;
+                            case PARAM_FLOAT;
+                                $param .= $keydesc->default; break;
+                            default:
+                                $param .= '=\''.$keydesc->default.'\'';
+                        }
+                    }
+                } else if ($keydesc->required == VALUE_OPTIONAL) {
+                    //it does make sens to declare a parameter VALUE_OPTIONAL
+                    //VALUE_OPTIONAL is used only for array/object key
+                    throw new moodle_exception('parametercannotbevalueoptional');
+                }
+            } else { //for the moment we do not support default for other structure types
+                 if ($keydesc->required == VALUE_OPTIONAL or $keydesc->required == VALUE_DEFAULT) {
+                     throw new moodle_exception('paramdefaultarraynotsupported');
+                 }
+            }
+            $params[]      = $param;
             $type = 'string';
             if ($keydesc instanceof external_value) {
                 switch($keydesc->type) {
