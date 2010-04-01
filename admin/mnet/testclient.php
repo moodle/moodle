@@ -25,7 +25,7 @@ admin_externalpage_setup('mnettestclient');
 $context = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/site:config', $context);
 
-error_reporting(E_ALL);
+error_reporting(DEBUG_ALL);
 
 echo $OUTPUT->header();
 if (!extension_loaded('openssl')) {
