@@ -157,11 +157,15 @@ abstract class renderer_factory_base implements renderer_factory {
     protected function standard_renderer_classname($component, $subtype = null) {
         global $CFG; // needed in incldued files
 
+        // standardize component name ala frankenstyle
+        list($plugin, $type) = normalize_component($component);
+        if ($type === null) {
+            $component = $plugin;
+        } else {
+            $component = $plugin.'_'.$type;
+        }
+
         if ($component !== 'core') {
-            // standardize component names
-            if (strpos($component, '_') === false) {
-                $component = 'mod_' . $component;
-            }
             // renderers are stored in renderer.php files
             if (!$compdirectory = get_component_directory($component)) {
                 throw new coding_exception('Invalid component specified in renderer request');

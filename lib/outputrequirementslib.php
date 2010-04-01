@@ -331,19 +331,19 @@ class page_requirements_manager {
 
     /**
      * Find out if JS modulke present and return details.
-     * @param string $name name of module, ex: core_group, mod_forum
+     * @param string $component name of component in frankenstyle, ex: core_group, mod_forum
      * @return array description of module or null if not found
      */
-    protected function find_module($name) {
+    protected function find_module($component) {
         global $CFG;
 
         $module = null;
 
         
-        if (strpos($name, 'core_') === 0) {
+        if (strpos($component, 'core_') === 0) {
             // must be some core stuff - list here is not complete, this is just the stuff used from multiple places
             // so that we do nto have to repeat the definition of these modules over and over again
-            switch($name) {
+            switch($component) {
                 case 'core_filepicker':
                     $module = array('name'     => 'core_filepicker',
                                     'fullpath' => '/repository/filepicker.js',
@@ -408,9 +408,9 @@ class page_requirements_manager {
             }
 
         } else {
-            if ($dir = get_component_directory($name, false)) {
+            if ($dir = get_component_directory($component, false)) {
                 if (file_exists("$CFG->dirroot/$dir/module.js")) {
-                    $module = array('name'=>$name, 'fullpath'=>"/$dir/module.js", 'requires' => array());
+                    $module = array('name'=>$component, 'fullpath'=>"/$dir/module.js", 'requires' => array());
                 }
             }
         }

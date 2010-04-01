@@ -6676,7 +6676,7 @@ function get_plugin_directory($plugintype, $name, $fullpaths=true) {
  * this method support "simpletest_" prefix designed for unit testing.
  * @param string $component name such as 'moodle', 'mod_forum' or special simpletest value
  * @param bool $fullpaths false means relative paths from dirroot
- * @return directory path, full or relative to dirroot
+ * @return directory path, full or relative to dirroot; NULL if not found
  */
 function get_component_directory($component, $fullpaths=true) {
     global $CFG;
@@ -6686,19 +6686,122 @@ function get_component_directory($component, $fullpaths=true) {
         $subdir = substr($component, strlen('simpletest_'));
         return $subdir;
     }
-    if ($component == 'moodle') {
-        $path = ($fullpaths ? $CFG->libdir : 'lib');
-    } else {
-        if (strpos($component, '_') === false) {
-            $type   = 'mod';
-            $plugin = $component;
+
+    list($type, $plugin) = normalize_component($component);
+
+    if ($type === 'core') {
+        if ($plugin === NULL ) {
+            $path = ($fullpaths ? $CFG->libdir : 'lib');
         } else {
-            list($type, $plugin) = explode('_', $component, 2);
+            $subsystems = get_core_subsystems();
+            if (isset($subsystems[$plugin])) {
+                $path = ($fullpaths ? $CFG->dirroot.'/'.$subsystems[$plugin] : $subsystems[$plugin]);
+            } else {
+                $path = NULL;
+            }
         }
+
+    } else {
         $path = get_plugin_directory($type, $plugin, $fullpaths);
     }
 
     return $path;
+}
+
+/**
+ * Normalize the component name using the "frankenstyle" names.
+ * @param string $component
+ * @return array $type+$plugin elements
+ */
+function normalize_component($component) {
+    if ($component === 'moodle' or $component === 'core') {
+        $type = 'core';
+        $plugin = NULL;
+
+    } else if (strpos($component, '_') === false) {
+        $subsystems = get_core_subsystems();
+        if (array_key_exists($component, $subsystems)) {
+            $type   = 'core';
+            $plugin = $component;
+        } else {
+            // everything else is a module
+            $type   = 'mod';
+            $plugin = $component;
+        }
+
+    } else {
+        list($type, $plugin) = explode('_', $component, 2);
+    }
+
+    return array($type, $plugin);
+}
+
+/**
+ * List all core subsystems, this is especially useful for get_string()
+ * and output renderers. The relative location is not always included.
+ *
+ * @return array of strings - name=>location
+ */
+function get_core_subsystems() {
+    global $CFG;
+
+    static $info     = null;
+
+    if (!$info) {
+        $info = array(
+            'access'      => NULL,
+            'admin'       => 'admin',
+            'auth'        => 'auth',
+            'block'       => 'blocks',
+            'blog'        => 'blog',
+            'bulkusers'   => NULL,
+            'calendar'    => 'calendar',
+            'condition'   => NULL,
+            'completion'  => NULL,
+            'countries'   => NULL,
+            'currencies'  => NULL,
+            'dbtransfer'  => NULL,
+            'debug'       => NULL,
+            'dock'        => NULL,
+            'editor'      => 'lib/editor',
+            'error'       => NULL,
+            'filepicker'  => NULL,
+            'filters'     => NULL,
+            'flashdetect' => NULL,
+            'fonts'       => NULL,
+            'form'        => 'lib/form',
+            'grades'      => 'grade',
+            'group'       => 'group',
+            'help'        => NULL,
+            'imscc'       => NULL,
+            'install'     => NULL,
+            'langconfig'  => NULL,
+            'license'     => NULL,
+            'message'     => 'message',
+            'mimetypes'   => NULL,
+            'mnet'        => 'mnet',
+            'moodle.org'  => NULL, // the dot is nasty, watch out! should be renamed to moodleorg
+            'my'          => 'my',
+            'notes'       => 'notes',
+            'pagetype'    => NULL,
+            'pix'         => NULL,
+            'portfolio'   => 'portfolio',
+            'question'    => 'question',
+            'rating'      => 'rating',
+            'repository'  => 'repository',
+            'role'        => $CFG->admin.'/role',
+            'simpletest'  => NULL,
+            'search'      => 'search',
+            'table'       => NULL,
+            'tag'         => 'tag',
+            'timezones'   => NULL,
+            'userkey'     => NULL,
+            'webservice'  => 'webservice',
+            'xmldb'       => NULL,
+        );
+    }
+
+    return $info;
 }
 
 /**
