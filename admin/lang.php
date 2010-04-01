@@ -1195,7 +1195,7 @@ function lang_standard_locations() {
 function lang_extra_locations() {
     global $CFG;
     $files = array();
-    $places = string_manager::instance()->get_registered_plugin_types();
+    $places = get_string_manager()->get_registered_plugin_types();
     foreach ($places as $prefix => $directories) {
         foreach ($directories as $directory) {
             foreach (get_list_of_plugins($directory) as $plugin) {
@@ -1295,7 +1295,7 @@ function lang_help_standard_locations() {
 function lang_help_extra_locations() {
     global $CFG;
     $files = array();
-    $places = string_manager::instance()->get_registered_plugin_types();
+    $places = get_string_manager()->get_registered_plugin_types();
     foreach ($places as $prefix => $directories) {
         foreach ($directories as $directory) {
             foreach (get_list_of_plugins($directory) as $plugin) {

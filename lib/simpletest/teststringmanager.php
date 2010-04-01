@@ -39,10 +39,7 @@ require_once($CFG->libdir . '/moodlelib.php');
 /**
  * Test subclass that makes all the protected methods we want to test pubic.
  */
-class testable_string_manager extends string_manager {
-    public function __construct($dirroot, $dataroot, $runninginstaller) {
-        parent::__construct($dirroot, $dataroot, $runninginstaller);
-    }
+class testable_string_manager extends legacy_string_manager {
     public function locations_to_search($module) {
         return parent::locations_to_search($module);
     }

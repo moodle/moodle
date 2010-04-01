@@ -5686,14 +5686,67 @@ function get_parent_language($lang=null) {
  * @param mixed $a An object, string or number that can be used within translation strings
  */
 function print_string($identifier, $module='', $a=NULL) {
-    echo string_manager::instance()->get_string($identifier, $module, $a);
+    echo get_string_manager()->get_string($identifier, $module, $a);
 }
 
 /**
- * Singleton class for managing the search for language strings.
- *
- * Most code should not use this class directly. Instead you should use the
- * {@link get_string()} function.
+ * Returns current string_manager instance.
+ * @return string_manager
+ */
+function get_string_manager() {
+    global $CFG;
+
+    static $singleton = null;
+
+    // TODO: here will be some switching code for other new string managers
+
+    if ($singleton === null) {
+        $singleton = new legacy_string_manager($CFG->dirroot, $CFG->dataroot, !empty($CFG->running_installer), !empty($CFG->debugstringids));
+        // Uncomment the followign line to log every call to get_string
+        // to a file in $CFG->dataroot/temp/getstringlog/...
+        // $singleton->start_logging();
+    }
+
+    return $singleton;
+}
+
+/**
+ * Interface describing class which is responsible for getting
+ * of localised strings.
+ */
+interface string_manager {
+    /**
+     * Mega Function - Get String returns a requested string
+     *
+     * @param string $identifier The identifier of the string to search for
+     * @param string $component The module the string is associated with
+     * @param string $a An object, string or number that can be used
+     *      within translation strings
+     * @return string The String !
+     */
+    public function get_string($identifier, $component='', $a=NULL);
+
+    /**
+     * Returns a list of country names in the current language
+     * @return array two-letter country code => translated name.
+     */
+    public function get_list_of_countries();
+
+    /**
+     * TODO: this will be probably removed soon
+     */
+    public function get_registered_plugin_types();
+
+    /**
+     * TODO: will be removed really soon
+     */
+    public function find_help_file($file, $module, $forcelang, $skiplocal);
+}
+
+/**
+ * No code should use this class directly. Instead you should use the
+ * {@link get_string()} function. Core code has to use {@link get_string_manage()}
+ * to get the instance.
  *
  * Notes for develpers
  * ===================
@@ -5703,12 +5756,12 @@ function print_string($identifier, $module='', $a=NULL) {
  *
  * In some cases (for example bootstrap_renderer::early_error) get_string gets
  * called very early on during Moodle's self-initialisation. Think very carefully
- * before relying on the normal Moodle libraries here.
+ * before relying on the normal Moodle libraries.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package moodlecore
  */
-class string_manager {
+class legacy_string_manager implements string_manager {
     private $parentlangs = array('en_utf8' => NULL);
     private $searchpathsformodule = array();
     private $strings = array();
@@ -5730,25 +5783,6 @@ class string_manager {
     private $logtofile = false;
     private $showstringsource = false;
     private $allcountrycodes = NULL;
-    private static $singletoninstance = NULL;
-
-    /**
-    * Creates a new instance of string_manager
-    *
-    * @global object
-    * @return string_manager Returns a new instance of string_manager
-    */
-    public static function instance() {
-        if (is_null(self::$singletoninstance)) {
-            global $CFG;
-            self::$singletoninstance = new self($CFG->dirroot, $CFG->dataroot,
-                    isset($CFG->running_installer), !empty($CFG->debugstringids));
-            // Uncomment the followign line to log every call to get_string
-            // to a file in $CFG->dataroot/temp/getstringlog/...
-            // self::$singletoninstance->start_logging();
-        }
-        return self::$singletoninstance;
-    }
 
     // Some of our arrays need $CFG.
     /**
@@ -5761,7 +5795,7 @@ class string_manager {
     * @param boolean $showstringsource add debug info to each string before it is
     *       returned, to say where it came from.
     */
-    protected function __construct($dirroot, $dataroot, $runninginstaller, $showstringsource = false) {
+    public function __construct($dirroot, $dataroot, $runninginstaller, $showstringsource = false) {
         $this->dirroot = $dirroot;
         $this->corelocations = array(
             $dirroot . '/lang/' => '',
@@ -5867,34 +5901,6 @@ class string_manager {
             $plugin = substr($module, $dividerpos + 1);
         }
         return array($type, $plugin);
-    }
-
-    /**
-     * An deprecated function to allow plugins to load thier language strings
-     * from the plugin dir
-     *
-     * @deprecated Deprecated function if no longer used remove
-     * @todo Remove deprecated function when no longer used
-     *
-     * @param array $locations Array of existing locations
-     * @param array $extralocations Array or new locations to add
-     * @return array Array of combined locations
-     */
-    protected function add_extra_locations($locations, $extralocations) {
-        // This is an old, deprecated mechanism that predates the
-        // current mechanism that lets plugins include their lang strings in the
-        // plugin folder. So tell people who use it to change.
-        debugging('The fourth, $extralocations parameter to get_string is deprecated. ' .
-                'See http://docs.moodle.org/en/Development:Places_to_search_for_lang_strings ' .
-                'for a better way to package language strings with your plugin.', DEBUG_DEVELOPER);
-        if (is_array($extralocations)) {
-            $locations = array_merge($locations, $extralocations);
-        } else if (is_string($extralocations)) {
-            $locations[] = $extralocations;
-        } else {
-            debugging('Bad lang path provided');
-        }
-        return $locations;
     }
 
     /**
@@ -6050,10 +6056,9 @@ class string_manager {
      * @param string $module The module the string is associated with
      * @param string $a An object, string or number that can be used
      *      within translation strings
-     * @param array extralocations Add extra locations --- Deprecated ---
      * @return string The String !
      */
-    public function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
+    public function get_string($identifier, $module='', $a=NULL) {
         if ($this->logtofile) {
             $this->log_get_string_call($identifier, $module, $a);
         }
@@ -6076,10 +6081,6 @@ class string_manager {
         if (!is_null($this->installstrings) && in_array($identifier, $this->installstrings)) {
             $module = 'installer';
             $locations = array_merge(array($this->dirroot . '/install/lang/' => ''), $locations);
-        }
-
-        if ($extralocations) {
-            $locations = $this->add_extra_locations($locations, $extralocations);
         }
 
     /// Now do the search.
@@ -6226,7 +6227,11 @@ class string_manager {
  * @return string The localized string.
  */
 function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
-    return string_manager::instance()->get_string($identifier, $module, $a, $extralocations);
+    if ($extralocations !== NULL) {
+        debugging('extralocations parameter in get_string() is not supported any more, please use standard lang locations only.');
+    }
+
+    return get_string_manager()->get_string($identifier, $module, $a);
 }
 
 /**
@@ -6239,7 +6244,7 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
 function get_strings($array, $module='') {
    $string = new stdClass;
    foreach ($array as $item) {
-       $string->$item = string_manager::instance()->get_string($item, $module);
+       $string->$item = get_string_manager()->get_string($item, $module);
    }
    return $string;
 }
@@ -6401,7 +6406,7 @@ function get_list_of_charsets() {
  * @return array two-letter country code => translated name.
  */
 function get_list_of_countries() {
-    return string_manager::instance()->get_list_of_countries();
+    return get_string_manager()->get_list_of_countries();
 }
 
 /**

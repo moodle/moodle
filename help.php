@@ -53,7 +53,7 @@ ob_start();
 
 if (!empty($file)) {
     // The help to display is from a help file.
-    list($filepath, $foundlang) = string_manager::instance()->find_help_file($file, $module, $forcelang, $skiplocal);
+    list($filepath, $foundlang) = get_string_manager()->find_help_file($file, $module, $forcelang, $skiplocal);
 
     if ($filepath) {
         $helpfound = true;
@@ -171,7 +171,7 @@ function include_help_for_each_module($file, $forcelang, $skiplocal) {
     ksort($modulebyname, SORT_LOCALE_STRING);
 
     foreach ($modulebyname as $mod) {
-        list($filepath, $foundlang) = string_manager::instance()->find_help_file($file, $mod->name, $forcelang, $skiplocal);
+        list($filepath, $foundlang) = get_string_manager()->find_help_file($file, $mod->name, $forcelang, $skiplocal);
         if ($filepath) {
             echo '<hr />';
             include($filepath);
