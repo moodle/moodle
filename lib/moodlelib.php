@@ -5736,7 +5736,7 @@ class string_manager {
     * Creates a new instance of string_manager
     *
     * @global object
-    * @return object Returns a new instance of string_manager
+    * @return string_manager Returns a new instance of string_manager
     */
     public static function instance() {
         if (is_null(self::$singletoninstance)) {
