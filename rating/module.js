@@ -1,4 +1,4 @@
-M.core_ratings={
+M.core_rating={
 
     Y : null,
     transaction : [],

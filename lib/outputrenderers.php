@@ -1241,7 +1241,7 @@ class core_renderer extends renderer_base {
 
         //include required Javascript
         if( !$havesetupjavascript && $useajax ) {
-            $this->page->requires->js_init_call('M.core_ratings.init');
+            $this->page->requires->js_init_call('M.core_rating.init');
             $havesetupjavascript = true;
         }
 
