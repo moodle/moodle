@@ -201,7 +201,7 @@ $processors = $DB->get_records('message_processors');
 $number_procs = count($processors);
 echo '<table cellpadding="2"><tr><td>&nbsp;</td>'."\n";
 foreach ( $processors as $processorid => $processor){
-    echo '<th align="center">'.get_string($processor->name, 'messageprocessor_'.$processor->name).'</th>';
+    echo '<th align="center">'.get_string($processor->name, 'message_'.$processor->name).'</th>';
 }
 echo '</tr>';
 
@@ -247,7 +247,7 @@ foreach ($processors as $processorid => $processor) {
         if (class_exists($processclass)) {
             $pclass = new $processclass();
             echo '<fieldset id="messageprocessor_'.$processor->name.'" class="clearfix">';
-            echo '<legend class="ftoggler">'.get_string($processor->name, 'messageprocessor_'.$processor->name).'</legend>';
+            echo '<legend class="ftoggler">'.get_string($processor->name, 'message_'.$processor->name).'</legend>';
 
             echo $pclass->config_form($preferences);
 
