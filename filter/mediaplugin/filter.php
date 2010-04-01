@@ -150,7 +150,7 @@ function mediaplugin_filter_mp3_callback($link) {
 
     $jsoutput = create_ufo_inline($id, $args);
 
-    $output = $link[0].'<span class="mediaplugin mediaplugin_mp3" id="'.$id.'">('.get_string('mp3audio', 'mediaplugin').')</span>'.$jsoutput;
+    $output = $link[0].'<span class="mediaplugin mediaplugin_mp3" id="'.$id.'">('.get_string('mp3audio', 'filter_mediaplugin').')</span>'.$jsoutput;
 
     return $output;
 }
@@ -176,7 +176,7 @@ function mediaplugin_filter_swf_callback($link) {
 
     $jsoutput = create_ufo_inline($id, $args);
     
-    $output = $link[0].'<span class="mediaplugin mediaplugin_swf" id="'.$id.'">('.get_string('flashanimation', 'mediaplugin').')</span>'.$jsoutput;
+    $output = $link[0].'<span class="mediaplugin mediaplugin_swf" id="'.$id.'">('.get_string('flashanimation', 'filter_mediaplugin').')</span>'.$jsoutput;
 
     return $output;
 }
@@ -203,7 +203,7 @@ function mediaplugin_filter_flv_callback($link) {
     $args['allowfullscreen'] = 'true';
     $jsoutput = create_ufo_inline($id, $args);
 
-    $output = $link[0].'<span class="mediaplugin mediaplugin_flv" id="'.$id.'">('.get_string('flashvideo', 'mediaplugin').')</span>'.$jsoutput;
+    $output = $link[0].'<span class="mediaplugin mediaplugin_flv" id="'.$id.'">('.get_string('flashvideo', 'filter_mediaplugin').')</span>'.$jsoutput;
 
     return $output;
 }

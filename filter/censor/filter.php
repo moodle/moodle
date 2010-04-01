@@ -33,7 +33,7 @@ class censor_filter extends moodle_text_filter {
         if (empty($words)) {
             $words = array();
             if (empty($CFG->filter_censor_badwords)) {
-                $badwords = explode(',',get_string('badwords','censor'));
+                $badwords = explode(',',get_string('badwords', 'filter_censor'));
             }
             else {
                 $badwords = explode(',', $CFG->filter_censor_badwords);
