@@ -909,7 +909,7 @@ class assignment_base {
                                                                       AND s.assignment = '.$this->assignment->id.' '.
                    'WHERE u.id IN ('.implode(',', $users).') ';
 
-            if ($sort = flexible_table::get_sql_sort('mod-assignment-submissions')) {
+            if ($sort = flexible_table::get_sort_for_table('mod-assignment-submissions')) {
                 $sort = 'ORDER BY '.$sort.' ';
             }
 
