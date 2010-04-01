@@ -6750,7 +6750,7 @@ function get_core_subsystems() {
     if (!$info) {
         $info = array(
             'access'      => NULL,
-            'admin'       => 'admin',
+            'admin'       => $CFG->admin,
             'auth'        => 'auth',
             'block'       => 'blocks',
             'blog'        => 'blog',
