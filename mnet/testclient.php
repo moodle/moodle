@@ -17,7 +17,7 @@ require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
 $context = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/site:config', $context);
 
-error_reporting(E_ALL);
+error_reporting(DEBUG_ALL);
 
 // Some HTML sugar
 echo '<?xml version="1.0" encoding="utf-8"?>';
