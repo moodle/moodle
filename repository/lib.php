@@ -514,7 +514,7 @@ abstract class repository {
      * @return array Repository types
      */
     public static function get_types($visible=null) {
-        global $DB;
+        global $DB, $CFG;
 
         $types = array();
         $params = null;
@@ -523,7 +523,9 @@ abstract class repository {
         }
         if ($records = $DB->get_records('repository',$params,'sortorder')) {
             foreach($records as $type) {
-                $types[] = new repository_type($type->type, (array)get_config($type->type), $type->visible, $type->sortorder);
+                if (file_exists($CFG->dirroot . '/repository/'. $type->type .'/repository.class.php')) { 
+                    $types[] = new repository_type($type->type, (array)get_config($type->type), $type->visible, $type->sortorder);
+                }
             }
         }
 
