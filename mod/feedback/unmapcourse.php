@@ -33,9 +33,12 @@ if ($id) {
         print_error('invalidcoursemodule');
     }
 }
-$capabilities = feedback_load_capabilities($cm->id);
 
-if (!$capabilities->mapcourse) {
+if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+        print_error('badcontext');
+}
+
+if (!has_capability('mod/feedback:mapcourse', $context)) {
     print_error('invalidaccess');
 }
 

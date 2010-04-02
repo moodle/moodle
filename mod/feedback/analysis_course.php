@@ -57,11 +57,14 @@ if ($id) {
         print_error('invalidcoursemodule');
     }
 }
-$capabilities = feedback_load_capabilities($cm->id);
+
+if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+        print_error('badcontext');
+}
 
 require_login($course->id, true, $cm);
 
-if( !( (intval($feedback->publish_stats) == 1) || $capabilities->viewreports)) {
+if( !( (intval($feedback->publish_stats) == 1) OR has_capability('mod/feedback:viewreports', $context))) {
     print_error('error');
 }
 
@@ -81,7 +84,7 @@ include('tabs.php');
 //print the analysed items
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
-if( $capabilities->viewreports ) {
+if( has_capability('mod/feedback:viewreports', $context) ) {
     //button "export to excel"
     echo $OUTPUT->container_start('mdl-align');
     $aurl = new moodle_url('analysis_to_excel.php', array('sesskey'=>sesskey(), 'id'=>$id, 'coursefilter'=>$coursefilter));

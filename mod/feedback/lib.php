@@ -613,73 +613,6 @@ function feedback_get_context($cmid) {
 }
 
 /**
- *  get the capabilities for the feedback
- *
- * @staticvar object $cb
- *  @param int $cmid
- *  @return object the available capabilities from current user
- */
-function feedback_load_capabilities($cmid) {
-    static $cb;
-
-    if(isset($cb)) return $cb;
-
-    $context = feedback_get_context($cmid);
-
-    $cb = new object;
-    $cb->view = has_capability('mod/feedback:view', $context, NULL, false);
-    $cb->complete = has_capability('mod/feedback:complete', $context, NULL, false);
-    $cb->viewanalysepage = has_capability('mod/feedback:viewanalysepage', $context, NULL, false);
-    $cb->deletesubmissions = has_capability('mod/feedback:deletesubmissions', $context, NULL, false);
-    $cb->mapcourse = has_capability('mod/feedback:mapcourse', $context, NULL, false);
-    $cb->edititems = has_capability('mod/feedback:edititems', $context, NULL, false);
-    $cb->viewreports = has_capability('mod/feedback:viewreports', $context, NULL, false);
-    $cb->receivemail = has_capability('mod/feedback:receivemail', $context, NULL, false);
-    $cb->createprivatetemplate = has_capability('mod/feedback:createprivatetemplate', $context, NULL, false);
-    $cb->createpublictemplate = has_capability('mod/feedback:createpublictemplate', $context, NULL, false);
-    $cb->deletetemplate = has_capability('mod/feedback:deletetemplate', $context, NULL, false);
-
-    $cb->viewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $context, NULL, false);
-
-    return $cb;
-
-}
-
-/**
- *  get the capabilities for the course.
- *  this is used by feedback/index.php
- *
- * @staticvar object $ccb
- *  @param int $courseid
- *  @return object the available capabilities from current user
- */
-function feedback_load_course_capabilities($courseid) {
-    static $ccb;
-
-    if(isset($ccb)) return $ccb;
-
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
-
-    $ccb = new object;
-    $ccb->view = has_capability('mod/feedback:view', $context, NULL, false);
-    $ccb->complete = has_capability('mod/feedback:complete', $context, NULL, false);
-    $ccb->viewanalysepage = has_capability('mod/feedback:viewanalysepage', $context, NULL, false);
-    $ccb->deletesubmissions = has_capability('mod/feedback:deletesubmissions', $context, NULL, false);
-    $ccb->mapcourse = has_capability('mod/feedback:mapcourse', $context, NULL, false);
-    $ccb->edititems = has_capability('mod/feedback:edititems', $context, NULL, false);
-    $ccb->viewreports = has_capability('mod/feedback:viewreports', $context, NULL, false);
-    $ccb->receivemail = has_capability('mod/feedback:receivemail', $context, NULL, false);
-    $ccb->createprivatetemplate = has_capability('mod/feedback:createprivatetemplate', $context, NULL, false);
-    $ccb->createpublictemplate = has_capability('mod/feedback:createpublictemplate', $context, NULL, false);
-    $ccb->deletetemplate = has_capability('mod/feedback:deletetemplate', $context, NULL, false);
-
-    $ccb->viewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $context, NULL, false);
-
-    return $ccb;
-
-}
-
-/**
  *  returns true if the current role is faked by switching role feature
  *
  * @global object
@@ -2337,9 +2270,14 @@ function feedback_encode_target_url($url) {
 function feedback_extend_settings_navigation(settings_navigation $settings, navigation_node $feedbacknode) {
     global $PAGE, $DB;
 
-    $capabilities = feedback_load_capabilities($PAGE->cm->id);
+    if (!$context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->id)) {
+            print_error('badcontext');
+    }
 
-    if($capabilities->edititems) {
+    // $capabilities = feedback_load_capabilities($PAGE->cm->id);
+
+    // if($capabilities->edititems) {
+    if(has_capability('mod/feedback:edititems', $context)) {
         $qkey = $feedbacknode->add(get_string('questions', 'feedback'));
         $feedbacknode->get($qkey)->add(get_string('edit_items', 'feedback'), new moodle_url('/mod/feedback/edit.php', array('id'=>$PAGE->cm->id, 'do_show'=>'edit')));
         $feedbacknode->get($qkey)->add(get_string('export_questions', 'feedback'), new moodle_url('/mod/feedback/export.php', array('id'=>$PAGE->cm->id, 'action'=>'exportfile')));
@@ -2347,19 +2285,18 @@ function feedback_extend_settings_navigation(settings_navigation $settings, navi
         $feedbacknode->get($qkey)->add(get_string('templates', 'feedback'), new moodle_url('/mod/feedback/edit.php', array('id'=>$PAGE->cm->id, 'do_show'=>'templates')));
     }
 
-    if($capabilities->viewreports) {
+    // if($capabilities->viewreports) {
+    if(has_capability('mod/feedback:viewreports', $context)) {
         $feedback = $DB->get_record('feedback', array('id'=>$PAGE->cm->instance));
         if($feedback->course == SITEID){
             $feedbacknode->add(get_string('analysis', 'feedback'), new moodle_url('/mod/feedback/analysis_course.php', array('id'=>$PAGE->cm->id, 'course'=>$PAGE->course->id,'do_show'=>'analysis')));
         }else {
             $feedbacknode->add(get_string('analysis', 'feedback'), new moodle_url('/mod/feedback/analysis.php', array('id'=>$PAGE->cm->id, 'course'=>$PAGE->course->id,'do_show'=>'analysis')));
         }
-    }
 
-    if($capabilities->viewreports) {
         $feedbacknode->add(get_string('show_entries', 'feedback'), new moodle_url('/mod/feedback/show_entries.php', array('id'=>$PAGE->cm->id, 'do_show'=>'showentries')));
     }
-    }
+}
 
 function feedback_init_feedback_session() {
     //initialize the feedback-Session - not nice at all!!

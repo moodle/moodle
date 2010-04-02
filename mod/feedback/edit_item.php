@@ -51,11 +51,14 @@ if ($cmid) {
         print_error('invalidcoursemodule');
     }
 }
-$capabilities = feedback_load_capabilities($cm->id);
+
+if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+        print_error('badcontext');
+}
 
 require_login($course->id, true, $cm);
 
-if(!$capabilities->edititems){
+if(!has_capability('mod/feedback:edititems', $context)){
     print_error('error');
 }
 

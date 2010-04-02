@@ -44,7 +44,9 @@ $url = new moodle_url('/mod/feedback/show_entries.php', array('id'=>$cm->id, 'do
 
 $PAGE->set_url($url);
 
-$capabilities = feedback_load_capabilities($cm->id);
+if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+        print_error('badcontext');
+}
 
 require_login($course->id, true, $cm);
 
@@ -52,7 +54,7 @@ if(($formdata = data_submitted()) AND !confirm_sesskey()) {
     print_error('invalidsesskey');
 }
 
-if(!$capabilities->viewreports){
+if(!has_capability('mod/feedback:viewreports', $context)){
     print_error('error');
 }
 
@@ -85,7 +87,7 @@ include('tabs.php');
 ////////////////////////////////////////////////////////
 if($do_show == 'showentries'){
     //print the link to analysis
-    if($capabilities->viewreports) {
+    if(has_capability('mod/feedback:viewreports', $context)) {
         //get the effective groupmode of this course and module
         if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
             $groupmode =  $cm->groupmode;
@@ -125,7 +127,7 @@ if($do_show == 'showentries'){
     }
 
     //####### viewreports-start
-    if($capabilities->viewreports) {
+    if(has_capability('mod/feedback:viewreports', $context)) {
         //print the list of students
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
         echo isset($groupselect) ? $groupselect : '';
@@ -160,7 +162,7 @@ if($do_show == 'showentries'){
                             ?>
                             </td>
                 <?php
-                    if($capabilities->deletesubmissions) {
+                    if(has_capability('mod/feedback:deletesubmissions', $context)) {
                 ?>
                             <td align="right">
                             <?php

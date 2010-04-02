@@ -72,13 +72,20 @@ if ($id) {
     }
 }
 
-$capabilities = feedback_load_capabilities($cm->id);
+if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+        print_error('badcontext');
+}
 
+$feedback_complete_cap = false;
+
+if(has_capability('mod/feedback:complete', $context)) {
+    $feedback_complete_cap = true;
+}
 
 if(isset($CFG->feedback_allowfullanonymous)
             AND $CFG->feedback_allowfullanonymous
             AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES ) {
-    $capabilities->complete = true;
+    $feedback_complete_cap = true;
 }
 
 //check whether the feedback is located and! started from the mainsite
@@ -87,7 +94,7 @@ if($course->id == SITEID AND !$courseid) {
 }
 
 //check whether the feedback is mapped to the given courseid
-if($course->id == SITEID AND !$capabilities->edititems) {
+if($course->id == SITEID AND !has_capability('mod/feedback:edititems', $context)) {
     if($DB->get_records('feedback_sitecourse_map', array('feedbackid'=>$feedback->id))) {
         if(!$DB->get_record('feedback_sitecourse_map', array('feedbackid'=>$feedback->id, 'courseid'=>$courseid))){
             print_error('notavailable', 'feedback');
@@ -119,7 +126,7 @@ if($courseid AND $courseid != SITEID) {
     }
 }
 
-if(!$capabilities->complete) {
+if(!$feedback_complete_cap) {
     print_error('error');
 }
 
@@ -134,13 +141,17 @@ echo $OUTPUT->header();
 
 //ishidden check.
 //feedback in courses
-if ((empty($cm->visible) and !$capabilities->viewhiddenactivities) AND $course->id != SITEID) {
+if ((empty($cm->visible) AND
+        !has_capability('moodle/course:viewhiddenactivities', $context)) AND
+        $course->id != SITEID) {
     notice(get_string("activityiscurrentlyhidden"));
 }
 
 //ishidden check.
 //feedback on mainsite
-if ((empty($cm->visible) and !$capabilities->viewhiddenactivities) AND $courseid == SITEID) {
+if ((empty($cm->visible) AND
+        !has_capability('moodle/course:viewhiddenactivities', $context)) AND
+        $courseid == SITEID) {
     notice(get_string("activityiscurrentlyhidden"));
 }
 
@@ -284,7 +295,9 @@ if($feedback_can_submit) {
     }
     echo $OUTPUT->heading(format_text($feedback->name));
 
-    if( (intval($feedback->publish_stats) == 1) AND ( $capabilities->viewanalysepage) AND !( $capabilities->viewreports) ) {
+    if( (intval($feedback->publish_stats) == 1) AND
+            ( has_capability('mod/feedback:viewanalysepage', $context)) AND
+            !( has_capability('mod/feedback:viewreports', $context)) ) {
         if($multiple_count = $DB->count_records('feedback_tracking', array('userid'=>$USER->id, 'feedback'=>$feedback->id))) {
             echo '<div class="mdl-align"><a href="'.$analysisurl->out().'">';
             echo get_string('completed_feedbacks', 'feedback').'</a>';

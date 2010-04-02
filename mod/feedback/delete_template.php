@@ -55,11 +55,14 @@ if ($id) {
         print_error('invalidcoursemodule');
     }
 }
-$capabilities = feedback_load_capabilities($cm->id);
+
+if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+        print_error('badcontext');
+}
 
 require_login($course->id, true, $cm);
 
-if(!$capabilities->deletetemplate){
+if(!has_capability('mod/feedback:deletetemplate', $context)){
     print_error('error');
 }
 

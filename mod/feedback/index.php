@@ -20,7 +20,10 @@ $PAGE->set_url($url);
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourseid');
 }
-$capabilities = feedback_load_course_capabilities($course->id);
+
+if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
+        print_error('badcontext');
+}
 
 require_login($course->id);
 $PAGE->set_pagelayout('incourse');
@@ -54,7 +57,7 @@ $strresponses = get_string('responses', 'feedback');
 $table = new html_table();
 
 if ($course->format == "weeks") {
-    if($capabilities->viewreports) {
+    if(has_capability('mod/feedback:viewreports', $context)) {
         $table->head  = array ($strweek, $strname, $strresponses);
         $table->align = array ("center", "left", 'center');
     }else{
@@ -62,7 +65,7 @@ if ($course->format == "weeks") {
         $table->align = array ("center", "left");
     }
 } else if ($course->format == "topics") {
-    if($capabilities->viewreports) {
+    if(has_capability('mod/feedback:viewreports', $context)) {
         $table->head  = array ($strtopic, $strname, $strresponses);
         $table->align = array ("center", "left", "center");
     }else{
@@ -70,7 +73,7 @@ if ($course->format == "weeks") {
         $table->align = array ("center", "left");
     }
 } else {
-    if($capabilities->viewreports) {
+    if(has_capability('mod/feedback:viewreports', $context)) {
         $table->head  = array ($strname, $strresponses);
         $table->align = array ("left", "center");
     }else{
@@ -84,7 +87,7 @@ foreach ($feedbacks as $feedback) {
     //get the responses of each feedback
     $viewurl = new moodle_url('/mod/feedback/view.php', array('id'=>$feedback->coursemodule));
 
-    if($capabilities->viewreports) {
+    if(has_capability('mod/feedback:viewreports', $context)) {
         $completedFeedbackCount = intval(feedback_get_completeds_group_count($feedback));
     }
 
@@ -96,7 +99,7 @@ foreach ($feedbacks as $feedback) {
     } else {
         $tabledata = array ($link);
     }
-    if($capabilities->viewreports) {
+    if(has_capability('mod/feedback:viewreports', $context)) {
         $tabledata[] = $completedFeedbackCount;
     }
 

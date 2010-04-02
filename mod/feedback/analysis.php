@@ -37,7 +37,9 @@ if ($id) {
     }
 }
 
-$capabilities = feedback_load_capabilities($cm->id);
+if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+        print_error('badcontext');
+}
 
 if($course->id == SITEID) {
     require_login($course->id, true);
@@ -55,7 +57,9 @@ if($courseid AND $courseid != SITEID) {
     }
 }
 
-if( !( ((intval($feedback->publish_stats) == 1) AND $capabilities->viewanalysepage) || $capabilities->viewreports)) {
+if( !( ((intval($feedback->publish_stats) == 1) AND
+        has_capability('mod/feedback:viewanalysepage', $context)) OR
+        has_capability('mod/feedback:viewreports', $context))) {
     print_error('error');
 }
 
@@ -78,7 +82,7 @@ echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 $groupselect = groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/feedback/analysis.php?id=' . $cm->id.'&do_show=analysis', true);
 $mygroupid = groups_get_activity_group($cm);
 
-if( $capabilities->viewreports ) {
+if( has_capability('mod/feedback:viewreports', $context) ) {
 
     echo isset($groupselect) ? $groupselect : '';
     echo '<div class="clearer"></div>';

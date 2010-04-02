@@ -45,11 +45,14 @@ if ($id) {
         print_error('invalidcoursemodule');
     }
 }
-$capabilities = feedback_load_capabilities($cm->id);
+
+if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+        print_error('badcontext');
+}
 
 require_login($course->id, true, $cm);
 
-if(!$capabilities->edititems){
+if(!has_capability('mod/feedback:edititems', $context)){
     print_error('error');
 }
 
@@ -86,20 +89,21 @@ if($switchitemrequired) {
 
 //the create_template-form
 $create_template_form = new feedback_edit_create_template_form();
-$create_template_form->set_feedbackdata(array('capabilities' => $capabilities));
+$create_template_form->set_feedbackdata(array('context' => $context));
 $create_template_form->set_form_elements();
 $create_template_form->set_data(array('id'=>$id, 'do_show'=>'templates'));
 $create_template_formdata = $create_template_form->get_data();
 if(isset($create_template_formdata->savetemplate) && $create_template_formdata->savetemplate == 1) {
     //check the capabilities to create templates
-    if(!$capabilities->createprivatetemplate AND !$capabilities->createpublictemplate) {
+    if(!has_capability('mod/feedback:createprivatetemplate', $context) AND
+        !has_capability('mod/feedback:createpublictemplate', $context)) {
         print_error('cannotsavetempl', 'feedback');
     }
     if(trim($create_template_formdata->templatename) == '')
     {
         $savereturn = 'notsaved_name';
     }else {
-        if($capabilities->createpublictemplate) {
+        if(has_capability('mod/feedback:createpublictemplate', $context)) {
             $create_template_formdata->ispublic = isset($create_template_formdata->ispublic) ? 1 : 0;
         }else {
             $create_template_formdata->ispublic = 0;
@@ -186,7 +190,8 @@ if($do_show == 'templates') {
     echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
     $use_template_form->display();
 
-    if($capabilities->createprivatetemplate OR $capabilities->createpublictemplate) {
+    if(has_capability('mod/feedback:createprivatetemplate', $context) OR
+                has_capability('mod/feedback:createpublictemplate', $context)) {
         $deleteurl = new moodle_url('/mod/feedback/delete_template.php', array('id'=>$id));
         $create_template_form->display();
         echo '<p><a href="'.$deleteurl->out().'">'.get_string('delete_templates', 'feedback').'</a></p>';
@@ -194,7 +199,7 @@ if($do_show == 'templates') {
         echo '&nbsp;';
     }
 
-    if($capabilities->edititems) {
+    if(has_capability('mod/feedback:edititems', $context)) {
         $exporturl = new moodle_url('/mod/feedback/export.php', array('action'=>'exportfile', 'id'=>$id));
         $importurl = new moodle_url('/mod/feedback/import.php', array('id'=>$id));
         echo '<p>

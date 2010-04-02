@@ -111,7 +111,7 @@ class feedback_edit_create_template_form extends moodleform {
 
     function set_form_elements(){
         $mform =& $this->_form;
-        $capabilities = $this->feedbackdata->capabilities;
+        // $capabilities = $this->feedbackdata->capabilities;
 
         // hidden elements
         $mform->addElement('hidden', 'id');
@@ -129,7 +129,7 @@ class feedback_edit_create_template_form extends moodleform {
 
         $elementgroup[] =& $mform->createElement('static', 'templatenamelabel', get_string('name', 'feedback'));
         $elementgroup[] =& $mform->createElement('text', 'templatename', get_string('name', 'feedback'), array('size'=>'40', 'maxlength'=>'200'));
-        if($capabilities->createpublictemplate) {
+        if(has_capability('mod/feedback:createpublictemplate', $this->feedbackdata->context)) {
             $elementgroup[] =& $mform->createElement('checkbox', 'ispublic', get_string('public', 'feedback'), get_string('public', 'feedback'));
         }
 
