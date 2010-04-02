@@ -118,7 +118,7 @@ foreach ($categories as $category) {
 
     if ($fields = get_records_select('user_info_field', "categoryid=$category->id", 'sortorder ASC')) {
         foreach ($fields as $field) {
-            $table->data[] = array($field->name, profile_field_icons($field));
+            $table->data[] = array(format_string($field->name), profile_field_icons($field));
         }
     }
 
