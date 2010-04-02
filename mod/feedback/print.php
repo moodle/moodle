@@ -37,9 +37,7 @@ if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
 
 require_login($course->id, true, $cm);
 
-if(!has_capability('mod/feedback:edititems', $context)){
-    print_error('error');
-}
+require_capability('mod/feedback:edititems', $context);
 
 /// Print the page header
 $strfeedbacks = get_string("modulenameplural", "feedback");

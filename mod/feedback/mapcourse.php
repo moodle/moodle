@@ -56,9 +56,7 @@ if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
 
 require_login($course->id, true, $cm);
 
-if (!has_capability('mod/feedback:mapcourse', $context)) {
-    print_error('invalidaccess');
-}
+require_capability('mod/feedback:mapcourse', $context);
 
 if ($coursefilter) {
     $map->feedbackid = $feedback->id;

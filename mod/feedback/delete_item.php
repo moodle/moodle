@@ -36,9 +36,7 @@
 
     require_login($course->id, true, $cm);
 
-    if(!has_capability('mod/feedback:edititems', $context)){
-        print_error('error');
-    }
+    require_capability('mod/feedback:edititems', $context);
 
     $mform = new mod_feedback_delete_item_form();
     $newformdata = array('id'=>$id,

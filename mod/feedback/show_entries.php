@@ -54,9 +54,7 @@ if(($formdata = data_submitted()) AND !confirm_sesskey()) {
     print_error('invalidsesskey');
 }
 
-if(!has_capability('mod/feedback:viewreports', $context)){
-    print_error('error');
-}
+require_capability('mod/feedback:viewreports', $context);
 
 ////////////////////////////////////////////////////////
 //get the responses of given user

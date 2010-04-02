@@ -38,10 +38,7 @@ if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
         print_error('badcontext');
 }
 
-if (!has_capability('mod/feedback:mapcourse', $context)) {
-    print_error('invalidaccess');
-}
-
+require_capability('mod/feedback:mapcourse', $context);
 
 // cleanup all lost entries after deleting courses or feedbacks
 feedback_clean_up_sitecourse_map();

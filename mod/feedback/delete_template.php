@@ -62,9 +62,7 @@ if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
 
 require_login($course->id, true, $cm);
 
-if(!has_capability('mod/feedback:deletetemplate', $context)){
-    print_error('error');
-}
+require_capability('mod/feedback:deletetemplate', $context);
 
 $mform = new mod_feedback_delete_template_form();
 $newformdata = array('id'=>$id,

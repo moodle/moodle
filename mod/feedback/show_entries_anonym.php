@@ -47,10 +47,7 @@ if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
 
 require_login($course->id, true, $cm);
 
-if(!has_capability('mod/feedback:viewreports', $context)){
-    print_error('error');
-}
-
+require_capability('mod/feedback:viewreports', $context);
 
 //get the completeds
 // if a new anonymous record has not been assigned a random response number

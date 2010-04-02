@@ -49,9 +49,7 @@
 
     require_login($course->id, true, $cm);
 
-    if(!has_capability('mod/feedback:edititems', $context)){
-        print_error('invalidaction');
-    }
+    require_capability('mod/feedback:edititems', $context);
 
     unset($filename);
     if ($action == 'choosefile' AND confirm_sesskey() ) {

@@ -46,9 +46,7 @@ if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
 
 require_login($course->id, true, $cm);
 
-if(!has_capability('mod/feedback:viewreports', $context)){
-    print_error('error');
-}
+require_capability('mod/feedback:viewreports', $context);
 
 //buffering any output
 //this prevents some output before the excel-header will be send

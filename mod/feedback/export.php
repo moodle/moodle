@@ -41,9 +41,7 @@ if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
 
 require_login($course->id, true, $cm);
 
-if(!has_capability('mod/feedback:edititems', $context)){
-    print_error('invalidaction');
-}
+require_capability('mod/feedback:edititems', $context);
 
 if ($action == 'exportfile') {
     if(!$exportdata = feedback_get_xml_data($feedback->id)) {
