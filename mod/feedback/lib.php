@@ -231,32 +231,35 @@ function feedback_get_recent_mod_activity(&$activities, &$index, $timemodified, 
     $modinfo =& get_fast_modinfo($course);
 
     $cm = $modinfo->cms[$cmid];
+    
+    $sqlargs = array();
+
+    $sql = " SELECT fk . * , fc . * , u.firstname, u.lastname, u.email, u.picture
+                                            FROM {feedback_completed} fc
+                                                JOIN {feedback} fk ON fk.id = fc.feedback
+                                                JOIN {user} u ON u.id = fc.userid ";
+
+    if ($groupid) {
+        $sql .= " JOIN {groups_members} gm ON  gm.userid=u.id ";
+    }
+    
+    $sql .= " WHERE fc.timemodified > ? AND fk.id = ? ";
+    $sqlargs[] = $timemodified;
+    $sqlargs[] = $cm->instace;
 
     if ($userid) {
-        $userselect = "AND u.id = $userid";
-    } else {
-        $userselect = "";
+        $sql .= " AND u.id = ? ";
+        $sqlargs[] = $userid;
     }
 
     if ($groupid) {
-        $groupselect = "AND gm.groupid = $groupid";
-        $groupjoin   = "JOIN {groups_members} gm ON  gm.userid=u.id";
-    } else {
-        $groupselect = "";
-        $groupjoin   = "";
+        $sql .= " AND gm.groupid = ? ";
+        $sqlargs[] = $groupid;
     }
-
-    if (!$feedbackitems = $DB->get_records_sql("SELECT fk . * , fc . * , u.firstname, u.lastname, u.email, u.picture
-                                            FROM {feedback_completed} fc
-                                                JOIN {feedback} fk ON fk.id = fc.feedback
-                                                JOIN {user} u ON u.id = fc.userid
-                                                $groupjoin
-                                            WHERE fc.timemodified > $timemodified AND fk.id = $cm->instance
-                                                $userselect $groupselect
-                                            ORDER BY fc.timemodified DESC")) {
-         return;
+    
+    if (!$feedbackitems = $DB->get_records_sql($sql, $sqlargs)) {
+        return;
     }
-
 
     $cm_context      = get_context_instance(CONTEXT_MODULE, $cm->id);
     $accessallgroups = has_capability('moodle/site:accessallgroups', $cm_context);
