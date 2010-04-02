@@ -45,6 +45,9 @@ if ($hassiteconfig) {
         $blockbyname = array();
 
         foreach ($blocks as $block) {
+            if (!file_exists("$CFG->dirroot/blocks/$block->name")) {
+                continue;
+            }
             if(($blockobject = block_instance($block->name)) === false) {
                 // Failed to load
                 continue;
