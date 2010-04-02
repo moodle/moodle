@@ -21,18 +21,16 @@ if($completedid == 0){
 
 $PAGE->set_url('/mod/feedback/delete_completed.php', array('id'=>$id, 'completed'=>$completedid));
 
-if ($id) {
-    if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-        print_error('invalidcoursemodule');
-    }
+if (! $cm = get_coursemodule_from_id('feedback', $id)) {
+    print_error('invalidcoursemodule');
+}
 
-    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-        print_error('coursemisconf');
-    }
+if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
+    print_error('coursemisconf');
+}
 
-    if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-        print_error('invalidcoursemodule');
-    }
+if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
+    print_error('invalidcoursemodule');
 }
 
 if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {

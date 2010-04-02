@@ -13,7 +13,8 @@ require_once("lib.php");
 
 feedback_init_feedback_session();
 
-$cmid = optional_param('cmid', NULL, PARAM_INT);
+// $cmid = optional_param('cmid', NULL, PARAM_INT);
+$cmid = required_param('cmid', PARAM_INT);
 $typ = optional_param('typ', false, PARAM_ALPHA);
 $id = optional_param('id', false, PARAM_INT);
 
@@ -38,18 +39,16 @@ if(($formdata = data_submitted()) AND !confirm_sesskey()) {
     print_error('invalidsesskey');
 }
 
-if ($cmid) {
-    if (! $cm = get_coursemodule_from_id('feedback', $cmid)) {
-        print_error('invalidcoursemodule');
-    }
+if (! $cm = get_coursemodule_from_id('feedback', $cmid)) {
+    print_error('invalidcoursemodule');
+}
 
-    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-        print_error('coursemisconf');
-    }
+if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
+    print_error('coursemisconf');
+}
 
-    if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-        print_error('invalidcoursemodule');
-    }
+if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
+    print_error('invalidcoursemodule');
 }
 
 if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
