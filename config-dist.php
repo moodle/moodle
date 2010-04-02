@@ -364,6 +364,8 @@ $CFG->admin = 'admin';
 // When working with production data on test servers, no emails should ever be send to real users
 // $CFG->noemailever = true;
 //
+// Divert all outgoing emails to this address to test and debug emailing features
+// $CFG->divertallemailsto = 'root@localhost.local';
 //
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
