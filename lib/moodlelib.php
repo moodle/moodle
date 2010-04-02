@@ -5686,7 +5686,7 @@ function get_parent_language($lang=null) {
  * @param mixed $a An object, string or number that can be used within translation strings
  */
 function print_string($identifier, $module='', $a=NULL) {
-    echo get_string_manager()->get_string($identifier, $module, $a);
+    echo get_string($identifier, $module, $a);
 }
 
 /**
@@ -5826,34 +5826,6 @@ class legacy_string_manager implements string_manager {
      */
     public function get_registered_plugin_types() {
         return fullclone($this->searchplacesbyplugintype);
-    }
-
-    /**
-     * Correct deprecated module names
-     *
-     * @param string $module The module name that is deprecated
-     * @return string The current (now converted) module name
-     */
-    protected function fix_deprecated_module_name($module) {
-        debugging('The module name you passed to get_string is the deprecated format ' .
-                'like mod/mymod or block/myblock. The correct form looks like mymod, or block_myblock.' , DEBUG_DEVELOPER);
-        $modulepath = split('/', $module);
-
-        switch ($modulepath[0]) {
-            case 'mod':
-                return $modulepath[1];
-            case 'blocks':
-            case 'block':
-                return 'block_'.$modulepath[1];
-            case 'enrol':
-                return 'enrol_'.$modulepath[1];
-            case 'format':
-                return 'format_'.$modulepath[1];
-            case 'grade':
-                return 'grade'.$modulepath[1].'_'.$modulepath[2];
-            default:
-                return $module;
-        }
     }
 
     /**
@@ -6072,10 +6044,6 @@ class legacy_string_manager implements string_manager {
             $module = 'langconfig';
         }
 
-        if (strpos($module, '/') !== false) {
-            $module = $this->fix_deprecated_module_name($module);
-        }
-
         $locations = $this->locations_to_search($module);
 
         if (!is_null($this->installstrings) && in_array($identifier, $this->installstrings)) {
@@ -6231,6 +6199,31 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
         debugging('extralocations parameter in get_string() is not supported any more, please use standard lang locations only.');
     }
 
+    if (strpos($module, '/') !== false) {
+        debugging('The module name you passed to get_string is the deprecated format ' .
+                'like mod/mymod or block/myblock. The correct form looks like mymod, or block_myblock.' , DEBUG_DEVELOPER);
+        $modulepath = split('/', $module);
+
+        switch ($modulepath[0]) {
+            case 'mod':
+                $module = $modulepath[1];
+                break;
+            case 'blocks':
+            case 'block':
+                $module = 'block_'.$modulepath[1];
+                break;
+            case 'enrol':
+                $module = 'enrol_'.$modulepath[1];
+                break;
+            case 'format':
+                $module = 'format_'.$modulepath[1];
+                break;
+            case 'grade':
+                $module = 'grade'.$modulepath[1].'_'.$modulepath[2];
+                break;
+        }
+    }
+    
     return get_string_manager()->get_string($identifier, $module, $a);
 }
 
@@ -6244,7 +6237,7 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
 function get_strings($array, $module='') {
    $string = new stdClass;
    foreach ($array as $item) {
-       $string->$item = get_string_manager()->get_string($item, $module);
+       $string->$item = get_string($item, $module);
    }
    return $string;
 }
