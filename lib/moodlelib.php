@@ -357,8 +357,6 @@ define('FEATURE_GROUPMEMBERSONLY', 'groupmembersonly');
 define('FEATURE_MOD_ARCHETYPE', 'mod_archetype');
 /** True if module supports intro editor */
 define('FEATURE_MOD_INTRO', 'mod_intro');
-/** True if module supports subplugins */
-define('FEATURE_MOD_SUBPLUGINS', 'mod_subplugins');
 /** True if module has default completion */
 define('FEATURE_MODEDIT_DEFAULT_COMPLETION', 'modedit_default_completion');
 
@@ -6223,7 +6221,7 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
                 break;
         }
     }
-    
+
     return get_string_manager()->get_string($identifier, $module, $a);
 }
 
@@ -6833,11 +6831,12 @@ function get_plugin_types($fullpaths=true) {
 
         $mods = get_plugin_list('mod');
         foreach ($mods as $mod => $moddir) {
-            if (!$subplugins = plugin_supports('mod', $mod, FEATURE_MOD_SUBPLUGINS, false)) {
-                continue;
-            }
-            foreach ($subplugins as $subtype=>$dir) {
-                $info[$subtype] = $dir;
+            if (file_exists("$moddir/db/subplugins.php")) {
+                $subplugins = array();
+                include("$moddir/db/subplugins.php");
+                foreach ($subplugins as $subtype=>$dir) {
+                    $info[$subtype] = $dir;
+                }
             }
         }
 
@@ -7058,21 +7057,6 @@ function plugin_supports($type, $name, $feature, $default=null) {
 
         $function = $name.'_supports';
 
-    } else {
-        if ($feature == FEATURE_MOD_SUBPLUGINS) {
-            //sorry only modules
-            return false;
-        }
-        if (!$dir = get_plugin_directory($type, $name)) {
-            throw new coding_exception("Unsupported plugin type or name ($type/$name)");
-        }
-
-        $libfile = $dir.'/lib.php';
-        if (file_exists($libfile)) {
-            include_once($libfile);
-        }
-
-        $function = $type.'_'.$name.'_supports';
     }
 
     if (function_exists($function)) {

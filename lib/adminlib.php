@@ -120,15 +120,19 @@ define('INSECURE_DATAROOT_ERROR', 2);
 function uninstall_plugin($type, $name) {
     global $CFG, $DB, $OUTPUT;
 
-    // recursively uninstall all the subplugins first
-    $subpluginlocations = plugin_supports($type, $name, FEATURE_MOD_SUBPLUGINS);
-    if (is_array($subpluginlocations)) {
-        foreach ($subpluginlocations as $subplugintype => $notusedlocationpath) {
-            $subplugins = get_plugin_list($subplugintype);
-            foreach ($subplugins as $subpluginname => $notusedpluginpath) {
-                uninstall_plugin($subplugintype, $subpluginname);
+    // recursively uninstall all module subplugins first
+    if ($type === 'mod') {
+        if (file_exists("$CFG->dirroot/$name/db/subplugins.php")) {
+            $subplugins = array();
+            include("$moddir/db/subplugins.php");
+            foreach ($subplugins as $subplugintype=>$dir) {
+                $instances = get_plugin_list($subplugintype);
+                foreach ($instances as $subpluginname => $notusedpluginpath) {
+                    uninstall_plugin($subplugintype, $subpluginname);
+                }
             }
         }
+
     }
 
     $component = $type . '_' . $name;  // eg. 'qtype_multichoice' or 'workshopgrading_accumulative' or 'mod_forum'
@@ -5078,10 +5082,10 @@ class admin_setting_managelicenses extends admin_setting {
             $displayname = html_writer::link($value->source, get_string($value->shortname, 'license'), array('target'=>'_blank'));
 
             if ($value->enabled == 1) {
-                $hideshow = html_writer::link($url.'&action=disable&license='.$value->shortname, 
+                $hideshow = html_writer::link($url.'&action=disable&license='.$value->shortname,
                     html_writer::tag('img', '', array('src'=>$OUTPUT->pix_url('i/hide'), 'class'=>'icon', 'alt'=>'disable')));
             } else {
-                $hideshow = html_writer::link($url.'&action=enable&license='.$value->shortname, 
+                $hideshow = html_writer::link($url.'&action=enable&license='.$value->shortname,
                     html_writer::tag('img', '', array('src'=>$OUTPUT->pix_url('i/show'), 'class'=>'icon', 'alt'=>'enable')));
             }
             $enabled = true;

@@ -1567,7 +1567,6 @@ function quiz_supports($feature) {
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return true;
-        case FEATURE_MOD_SUBPLUGINS:          return array('quiz'=>'mod/quiz/report');
 
         default: return null;
     }
