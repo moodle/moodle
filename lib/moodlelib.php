@@ -7335,29 +7335,84 @@ function check_gd_version() {
 function moodle_needs_upgrading() {
     global $CFG, $DB, $OUTPUT;
 
-    $version = null;
-    include_once($CFG->dirroot .'/version.php');  # defines $version and upgrades
-    if ($CFG->version) {
-        if ($version > $CFG->version) {
-            return true;
-        }
-        $mods = get_plugin_list('mod');
-        foreach ($mods as $mod => $fullmod) {
-            $module = new object();
-            if (!is_readable($fullmod .'/version.php')) {
-                echo $OUTPUT->notification('Module "'. $mod .'" is not readable - check permissions');
-                continue;
-            }
-            include_once($fullmod .'/version.php');  # defines $module with version etc
-            if ($currmodule = $DB->get_record('modules', array('name'=>$mod))) {
-                if ($module->version > $currmodule->version) {
-                    return true;
-                }
-            }
-        }
-    } else {
+    if (empty($CFG->version)) {
         return true;
     }
+
+    // main versio nfirst
+    $version = null;
+    include($CFG->dirroot.'/version.php');  // defines $version and upgrades
+    if ($version > $CFG->version) {
+        return true;
+    }
+
+    // modules
+    $mods = get_plugin_list('mod');
+    $installed = $DB->get_records('modules', array(), '', 'name, version');
+    foreach ($mods as $mod => $fullmod) {
+        if ($mod === 'NEWMODULE') {   // Someone has unzipped the template, ignore it
+            continue;
+        }
+        $module = new object();
+        if (!is_readable($fullmod.'/version.php')) {
+            continue;
+        }
+        include($fullmod.'/version.php');  // defines $module with version etc
+        if (empty($installed[$mod])) {
+            return true;
+        } else if ($module->version > $installed[$mod]->version) {
+            return true;
+        }
+    }
+    unset($installed);
+
+    // blocks
+    $blocks = get_plugin_list('block');
+    $installed = $DB->get_records('block', array(), '', 'name, version');
+    require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
+    foreach ($blocks as $blockname=>$fullblock) {
+        if ($blockname === 'NEWBLOCK') {   // Someone has unzipped the template, ignore it
+            continue;
+        }
+        if (!is_readable($fullblock.'/block_'.$blockname.'.php')) {
+            continue;
+        }
+        include_once($fullblock.'/block_'.$blockname.'.php');
+        $classname = 'block_'.$blockname;
+        if (!class_exists($classname)) {
+            continue;
+        }
+        $blockobj = new $classname;
+        if (empty($installed[$blockname])) {
+            return true;
+        } else if ($blockobj->get_version() > $installed[$blockname]->version) {
+            return true;
+        }
+    }
+    unset($installed);
+
+    // now the rest of plugins
+    $plugintypes = get_plugin_types();
+    unset($plugintypes['mod']);
+    unset($plugintypes['block']);
+    foreach ($plugintypes as $type=>$unused) {
+        $plugs = get_plugin_list($type);
+        foreach ($plugs as $plug=>$fullplug) {
+            $component = $type.'_'.$plug;
+            if (!is_readable($fullplug.'/version.php')) {
+                continue;
+            }
+            $plugin = new object();
+            include($fullplug.'/version.php');  // defines $plugin with version etc
+            $installedversion = get_config($component, 'version');
+            if (empty($installedversion)) { // new installation
+                return true;
+            } else if ($installedversion < $plugin->version) { // upgrade
+                return true;
+            }
+        }
+    }
+
     return false;
 }
 
