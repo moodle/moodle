@@ -5696,16 +5696,227 @@ function get_string_manager() {
 
     static $singleton = null;
 
-    // TODO: here will be some switching code for other new string managers
-
     if ($singleton === null) {
-        $singleton = new legacy_string_manager($CFG->dirroot, $CFG->dataroot, !empty($CFG->running_installer), !empty($CFG->debugstringids));
-        // Uncomment the followign line to log every call to get_string
-        // to a file in $CFG->dataroot/temp/getstringlog/...
-        // $singleton->start_logging();
+        if (!empty($CFG->amosgetstring)) {
+            // not yet fully implemented - needs new format of lang strings and removal of _utf8
+            $singleton = new amos_string_manager("$CFG->dirroot/lang", "$CFG->dataroot/lang", "$CFG->dataroot/lang");
+        } else {
+            $singleton = new legacy_string_manager($CFG->dirroot, $CFG->dataroot, !empty($CFG->running_installer), !empty($CFG->debugstringids));
+            // Uncomment the followign line to log every call to get_string
+            // to a file in $CFG->dataroot/temp/getstringlog/...
+            // $singleton->start_logging();
+        }
     }
 
     return $singleton;
+}
+
+class amos_string_manager implements string_manager {
+    private $coreroot;
+    private $otherroot;
+    private $localroot;
+
+    /**
+     * Crate new instance of amos string manager
+     *
+     * TODO: precompilation in dataroot cache,
+     *       please note this does not work with current cvs lang format yet
+     *
+     * @param string $coreroot $CFG->dirroot (used in unit tests only)
+     * @param string $otherroot location of downlaoded lang packs - usually $CFG->dataroot/lang
+     * @param string $localroot usually the same as $otherroot
+     */
+    public function __construct($coreroot, $otherroot, $localroot) {
+        $this->coreroot  = $coreroot;
+        $this->otherroot = $otherroot;
+        $this->localroot = $localroot;
+    }
+
+    /**
+     * Returns dependacies of current language, en is not included.
+     * @param string $lang
+     * @return array all parents, the lang itself is last
+     */
+    public function get_language_dependencies($lang) {
+        if ($lang === 'en') {
+            return array();
+        }
+        if (!file_exists("$this->otherroot/$lang/langconfig.php")) {
+            return array();
+        }
+        $string = array();
+        include("$this->otherroot/$lang/langconfig.php");
+
+        if (empty($string['parentlanguage'])) {
+            return array($lang);
+        } else {
+            $parentlang = $string['parentlanguage'];
+            unset($string);
+            return array_merge($this->get_language_dependency($parentlang), $lang);
+        }
+    }
+
+    /**
+     * Load all strings for one component
+     * @param string $component The module the string is associated with
+     * @param string $lang
+     * @return array of all string for given component and lang
+     */
+    public function load_component_strings($component, $lang) {
+        list($plugintype, $pluginname) = normalize_component($component);
+
+        if ($plugintype === 'core') {
+            $file = $pluginname;
+            if ($file === null) {
+                $file = 'moodle';
+            }
+            $string = array();
+            // first load english pack
+            if (!file_exists("$this->coreroot/en/$file.php")) {
+                debugging('Invalid get_string() $component', DEBUG_DEVELOPER);
+                return array();
+            }
+            include("$this->coreroot/en/$file.php");
+            $originalkeys = array_keys($string);
+            $originalkeys = array_flip($originalkeys);
+
+            // and then corresponding local if present
+            if (file_exists("$this->localroot/en_local/$file.php")) {
+                include("$this->localroot/en_local/$file.php");
+            }
+            // now loop through all langs in correct order
+            $deps = $this->get_language_dependencies($lang);
+            foreach ($deps as $dep) {
+                // the main lang string location
+                if (file_exists("$this->otherroot/$dep/$file.php")) {
+                    include("$this->otherroot/$dep/$file.php");
+                }
+                if (file_exists("$this->localroot/{$dep}_local/$file.php")) {
+                    include("$this->localroot/{$dep}_local/$file.php");
+                }
+            }
+
+        } else {
+            if (!$location = get_plugin_directory($plugintype, $pluginname) or !is_dir($location)) {
+                debugging('Invalid get_string() $component, missing plugin files: '.$component, DEBUG_DEVELOPER);
+                return array();
+            }
+            if ($plugintype === 'mod') {
+                // bloody mod hack
+                $file = $pluginname;
+            } else {
+                $file = $plugintype . '_' . $pluginname;
+            }
+            $string = array();
+            // first load english pack
+            if (!file_exists("$location/lang/en/$file.php")) {
+                debugging('Invalid get_string() $component, missing en lang file: '.$component, DEBUG_DEVELOPER);
+                return array();
+            }
+            include("$location/lang/en/$file.php");
+            $originalkeys = array_keys($string);
+            $originalkeys = array_flip($originalkeys);
+
+            // now loop through all langs in correct order
+            $deps = $this->get_language_dependencies($lang);
+            foreach ($deps as $dep) {
+                // legacy location - used by contrib only
+                if (file_exists("$location/lang/$dep/$file.php")) {
+                    include("$location/lang/$dep/$file.php");
+                }
+                // the main lang string location
+                if (file_exists("$this->otherroot/$dep/$file.php")) {
+                    include("$this->otherroot/$dep/$file.php");
+                }
+                // local customisations
+                if (file_exists("$this->localroot/{$dep}_local/$file.php")) {
+                    include("$this->localroot/{$dep}_local/$file.php");
+                }
+            }
+        }
+
+        // we do not want any extra strings from other languages - everything must be in en lang pack
+        $string = array_intersect_key($string, $originalkeys);
+
+        return $string;
+    }
+
+    /**
+     * Get String returns a requested string
+     *
+     * @param string $identifier The identifier of the string to search for
+     * @param string $component The module the string is associated with
+     * @param string $a An object, string or number that can be used
+     *      within translation strings
+     * @return string The String !
+     */
+    public function get_string($identifier, $component='', $a=NULL) {
+        if (empty($component)) {
+            $component = 'moodle';
+        }
+        $lang = current_language();
+        $lang = str_replace('_utf8', '', $lang); //TODO: to be removed soon
+
+        $string = $this->load_component_strings($component, $lang);
+
+        if (empty($string)) {
+            debugging('Invalid get_string() $component', DEBUG_DEVELOPER);
+            return "[[$identifier]]";
+        }
+        if (!isset($string[$identifier])) {
+            debugging('Invalid get_string() $identifier', DEBUG_DEVELOPER);
+            return "[[$identifier]]";
+        }
+
+        $string = $string[$identifier];
+
+        if ($a !== NULL) {
+            if (is_object($a) or is_array($a)) {
+                $a = (array)$a;
+                $search = array();
+                $replace = array();
+                foreach ($a as $key=>$value) {
+                    if (is_int($key)) {
+                        // we do not support numeric keys - sorry!
+                        continue;
+                    }
+                    $search[]  = '{$a->'.$key.'}';
+                    $replace[] = (string)$value;
+                }
+                if ($search) {
+                    $string = str_replace($search, $replace, $string);
+                }
+            } else {
+                $string = str_replace('{$a}', (string)$a, $string);
+            }
+        }
+
+        return $string;
+    }
+
+    /**
+     * Returns a list of country names in the current language
+     * @return array two-letter country code => translated name.
+     */
+    public function get_list_of_countries() {
+        $lang = current_language();
+        $lang = str_replace('_utf8', '', $lang); //TODO: to be removed soon
+        return $this->load_component_strings('countries', $lang);
+    }
+
+    /**
+     * TODO: this will be probably removed soon
+     */
+    public function get_registered_plugin_types() {
+        error('to be removed soon');
+    }
+
+    /**
+     * TODO: will be removed really soon
+     */
+    public function find_help_file($file, $module, $forcelang, $skiplocal) {
+        error('to be removed soon');
+    }
 }
 
 /**
