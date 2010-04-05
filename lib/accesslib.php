@@ -3340,6 +3340,26 @@ function get_enrolled_users($context, $withcapability = '', $groupid = 0, $userf
 }
 
 /**
+ * Counts list of users enrolled into course (as per above function)
+ * @param object $context
+ * @param string $withcapability
+ * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+ * @return array of user records
+ */
+function count_enrolled_users($context, $withcapability = '', $groupid = 0) {
+    global $DB;
+
+    list($esql, $params) = get_enrolled_sql($context, $withcapability, $groupid);
+    $sql = "SELECT count(u.id)
+              FROM {user} u
+              JOIN ($esql) je ON je.id = u.id
+             WHERE u.deleted = 0";
+
+    return $DB->count_records_sql($sql, $params);
+}
+
+
+/**
  * Loads the capability definitions for the component (from file).
  *
  * Loads the capability definitions for the component (from file). If no
