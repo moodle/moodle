@@ -266,6 +266,8 @@ if ($context->contextlevel == CONTEXT_USER) {
     include('tabs.php');
 
 } else {
+    $PAGE->set_title($title);
+    $PAGE->set_heading(print_context_name($context, false));
     echo $OUTPUT->header();
     $currenttab = 'assign';
     include('tabs.php');
