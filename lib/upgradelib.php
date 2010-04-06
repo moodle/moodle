@@ -559,7 +559,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
     foreach ($blocks as $blockname=>$fullblock) {
 
         if (is_null($first_install)) {
-            $first_install = ($DB->count_records('block') == 0);
+            $first_install = ($DB->count_records('block_instances') == 0);
         }
 
         if ($blockname == 'NEWBLOCK') {   // Someone has unzipped the template, ignore it
