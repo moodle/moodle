@@ -132,6 +132,8 @@ class license_manager {
      * Install moodle build-in licenses
      */
     static public function install_licenses() {
+        $active_licenses = array();
+
         $license = new stdclass;
 
         $license->shortname = 'unknown';
@@ -139,6 +141,7 @@ class license_manager {
         $license->source = '';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
         self::add($license);
 
         $license->shortname = 'allrightsreserved';
@@ -146,6 +149,7 @@ class license_manager {
         $license->source = 'http://en.wikipedia.org/wiki/All_rights_reserved';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
         self::add($license);
 
         $license->shortname = 'public';
@@ -153,6 +157,7 @@ class license_manager {
         $license->source = 'http://creativecommons.org/licenses/publicdomain/';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
         self::add($license);
 
         $license->shortname = 'cc';
@@ -160,6 +165,7 @@ class license_manager {
         $license->source = 'http://creativecommons.org/licenses/by/3.0/';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
         self::add($license);
 
         $license->shortname = 'cc-nd';
@@ -167,6 +173,7 @@ class license_manager {
         $license->source = 'http://creativecommons.org/licenses/by-nd/3.0/';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
         self::add($license);
 
         $license->shortname = 'cc-nc-nd';
@@ -174,6 +181,7 @@ class license_manager {
         $license->source = 'http://creativecommons.org/licenses/by-nc-nd/3.0/';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
         self::add($license);
 
         $license->shortname = 'cc-nc';
@@ -181,6 +189,7 @@ class license_manager {
         $license->source = 'http://creativecommons.org/licenses/by-nd/3.0/';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
         self::add($license);
 
         $license->shortname = 'cc-nc-sa';
@@ -188,6 +197,7 @@ class license_manager {
         $license->source = 'http://creativecommons.org/licenses/by-nc-sa/3.0/';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
         self::add($license);
 
         $license->shortname = 'cc-sa';
@@ -195,6 +205,9 @@ class license_manager {
         $license->source = 'http://creativecommons.org/licenses/by-sa/3.0/';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $active_licenses[] = $license->shortname;
         self::add($license);
+
+        set_config('licenses', implode(',', $active_licenses));
     }
 }
