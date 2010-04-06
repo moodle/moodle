@@ -43,6 +43,9 @@ if (file_exists($configfile)) {
     die;
 }
 
+define('CLI_SCRIPT', false); // prevents some warnings later
+define('AJAX_SCRIPT', false); // prevents some warnings later
+
 // make sure PHP errors are displayed - helps with diagnosing of problems
 @error_reporting(E_ALL);
 @ini_set('display_errors', '1');
