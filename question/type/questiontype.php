@@ -945,7 +945,7 @@ class default_questiontype {
             $strcomment = get_string('commentorgrade', 'quiz');
 
             $link = new moodle_url("$options->questioncommentlink?attempt=$state->attempt&question=$actualquestionid");
-            $action = new popup_action('click', $link->url, 'commentquestion', array('height' => 480, 'width' => 750));
+            $action = new popup_action('click', $link, 'commentquestion', array('height' => 480, 'width' => 750));
             $commentlink = $OUTPUT->container($OUTPUT->action_link($link, $strcomment, $action), 'commentlink');
         }
 
