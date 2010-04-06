@@ -5905,13 +5905,6 @@ class amos_string_manager implements string_manager {
     }
 
     /**
-     * TODO: this will be probably removed soon
-     */
-    public function get_registered_plugin_types() {
-        error('to be removed soon');
-    }
-
-    /**
      * TODO: will be removed really soon
      */
     public function find_help_file($file, $module, $forcelang, $skiplocal) {
@@ -5940,11 +5933,6 @@ interface string_manager {
      * @return array two-letter country code => translated name.
      */
     public function get_list_of_countries();
-
-    /**
-     * TODO: this will be probably removed soon
-     */
-    public function get_registered_plugin_types();
 
     /**
      * TODO: will be removed really soon
@@ -6022,19 +6010,6 @@ class legacy_string_manager implements string_manager {
             $this->parentlangfile = 'installer.php';
         }
         $this->showstringsource = $showstringsource;
-    }
-
-    /**
-     * This returns an array of all the types of plugin that may have language
-     * strings.
-     *
-     * The array keys are the lang file prefix, like qtype_, and the value is
-     * an array of paths relative to $CFG->dirroot.
-     *
-     * @return array as described above.
-     */
-    public function get_registered_plugin_types() {
-        return fullclone($this->searchplacesbyplugintype);
     }
 
     /**
