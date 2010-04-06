@@ -97,7 +97,7 @@ function xmldb_main_install() {
     $mnet_app->xmlrpc_server_url = '/mnet/xmlrpc/server.php';
     $mnet_app->sso_land_url      = '/auth/mnet/land.php';
     $mnet_app->sso_jump_url      = '/auth/mnet/land.php';
-    $DB->insert_record('mnet_application', $mnet_app);
+    $moodleapplicationid = $DB->insert_record('mnet_application', $mnet_app);
 
     $mnet_app = new object();
     $mnet_app->name              = 'mahara';
@@ -107,6 +107,19 @@ function xmldb_main_install() {
     $mnet_app->sso_jump_url      = '/auth/xmlrpc/jump.php';
     $DB->insert_record('mnet_application', $mnet_app);
 
+    // Set up the probably-to-be-removed-soon 'All hosts' record
+    $mnetallhosts                     = new object();
+    $mnetallhosts->wwwroot            = '';
+    $mnetallhosts->ip_address         = '';
+    $mnetallhosts->public_key         = '';
+    $mnetallhosts->public_key_expires = 0;
+    $mnetallhosts->last_connect_time  = 0;
+    $mnetallhosts->last_log_id        = 0;
+    $mnetallhosts->deleted            = 0;
+    $mnetallhosts->name               = 'All Hosts';
+    $mnetallhosts->applicationid      = $moodleapplicationid;
+    $mnetallhosts->id                 = $DB->insert_record('mnet_host', $mnetallhosts, true);
+    set_config('mnet_all_hosts_id', $mnetallhosts->id);
 
     /// insert log entries - replaces statements section in install.xml
     update_log_display_entry('user', 'view', 'user', 'CONCAT(firstname,\' \',lastname)');
