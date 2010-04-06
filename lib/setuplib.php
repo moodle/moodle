@@ -558,17 +558,17 @@ function setup_get_remote_url() {
         $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
 
     } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'lighttpd') !== false) {
-        //lighttpd
+        //lighttpd - not officially supported
         $rurl['scheme']   = empty($_SERVER['HTTPS']) ? 'http' : 'https';
         $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
 
     } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== false) {
-        //nginx
+        //nginx - not officially supported
         $rurl['scheme']   = empty($_SERVER['HTTPS']) ? 'http' : 'https';
         $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
 
     } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'iis') !== false) {
-        //IIS
+        //IIS - needs a lot of tweaking to make it work
         $rurl['scheme']   = ($_SERVER['HTTPS'] == 'off') ? 'http' : 'https';
         $rurl['fullpath'] = $_SERVER['SCRIPT_NAME'];
 
@@ -580,6 +580,11 @@ function setup_get_remote_url() {
             $rurl['fullpath'] .= '?'.$_SERVER['QUERY_STRING'];
         }
         $_SERVER['REQUEST_URI'] = $rurl['fullpath']; // extra IIS compatibility
+
+     } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'cherokee') !== false) {
+         //cherokee - not officially supported
+         $rurl['scheme']   = ($_SERVER['HTTPS'] == 'off') ? 'http' : 'https';
+         $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
 
     } else {
         throw new moodle_exception('unsupportedwebserver', 'error', '', $_SERVER['SERVER_SOFTWARE']);
