@@ -642,9 +642,7 @@ $string['mymoodle'] = 'My Moodle';
 $string['mymoodleredirect'] = 'Force users to use My Moodle';
 $string['mysql416bypassed'] = 'However, if your site is using iso-8859-1 (latin) languages ONLY, you may continue using your currently installed MySQL 4.1.12 (or higher).';
 $string['mysql416required'] = 'MySQL 4.1.16 is the minimum version required for Moodle 1.6 in order to guarantee that all data can be converted to UTF-8 in the future.';
-$string['navigationupgrade'] = 'This upgrade introduces two new navigation blocks that will replace these blocks: Administration, Courses, Activities and Participants.  If you had set any special permissions on those blocks you should check to make sure everything
-is behaving as you want it.<br /><br />
-You should also "Shift-Refresh" your browser to load the new styles, otherwise the new blocks will not work correctly.';
+$string['navigationupgrade'] = 'This upgrade introduces two new navigation blocks that will replace these blocks: Administration, Courses, Activities and Participants.  If you had set any special permissions on those blocks you should check to make sure everything is behaving as you want it.';
 $string['navshowcategories'] = 'Show course categories';
 $string['navshowallcourses'] = 'Show all users courses';
 $string['nobookmarksforuser'] = 'You do not have any bookmarks.';
