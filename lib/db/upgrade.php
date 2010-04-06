@@ -474,6 +474,9 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_field('filesize', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('mimetype', XMLDB_TYPE_CHAR, '100', null, null, null, null);
         $table->add_field('status', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('source', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
+        $table->add_field('author', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('license', XMLDB_TYPE_CHAR, '255', null, null, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
@@ -3023,12 +3026,12 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010032400);
     }
 
-    if ($result && $oldversion < 2010033101) {
+    if ($result && $oldversion < 2010033101.01) {
 
     /// Define field source to be added to files
         $table = new xmldb_table('files');
 
-        $field = new xmldb_field('source', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'timemodified');
+        $field = new xmldb_field('source', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'status');
 
     /// Conditionally launch add field source
         if (!$dbman->field_exists($table, $field)) {
@@ -3049,6 +3052,11 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $dbman->add_field($table, $field);
         }
 
+        upgrade_main_savepoint($result, 2010033101.01);
+    }
+
+    if ($result && $oldversion < 2010033101.02) {
+        
     /// Define table license to be created
         $table = new xmldb_table('license');
 
@@ -3239,7 +3247,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         set_config('sitedefaultlicense', 'allrightsreserved');
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2010033101);
+        upgrade_main_savepoint($result, 2010033101.02);
     }
 
     if ($result && $oldversion < 2010033102.00) {
@@ -3430,7 +3438,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     return $result;
 }
 
-//TODO: Before 2.0 release
+//TODO: Cleanup before the 2.0 release - we do not want to drag along these dev machine fixes forever
 // 1/ remove the automatic enabling of completion lib if debug enabled ( in 2008121701 block)
 // 2/ move 2009061300 block to the top of the file so that we may log upgrade queries
-// 3/ force admin password change if salt not set, to be done after planned role changes
+// 3/ remove 2010033101 block
+// 4/ remove 2010032400 block
