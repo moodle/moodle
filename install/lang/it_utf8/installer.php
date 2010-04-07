@@ -39,7 +39,7 @@ $string['continue'] = 'Continua';
 $string['ctyperecommended'] = 'L\'installazione dell\'estensione opzionale ctype PHP è fortemente raccomandata per migliorare le performance del sito, specialmente se sono previste lingue non latine.';
 $string['ctyperequired'] = 'L\'estensione ctype PHP è richiesta da Moodle, per migliorare le performance del sito e offrire compatibilità multilingua.';
 $string['curlrecommended'] = 'L\'installazione della libreria opzionale Curl è fortemente raccomandata per usare il Moodle Networking.';
-$string['curlrequired'] = 'L\'estensione PHP cURL è necessaria per consentire a Moodle di comunicare  con i repostory.';
+$string['curlrequired'] = 'L\'estensione PHP cURL è necessaria per consentire a Moodle di comunicare  con i repostory.'; // ORPHANED
 $string['customcheck'] = 'Altri controlli';
 $string['database'] = 'Database';
 $string['databasecreationsettingshead'] = 'Specificate le impostazioni del Database dove Moodle memorizzerà larga parte dei dati. Il Database sarà configurato automaticamente in accordo alle specifiche fornite.';
@@ -213,11 +213,15 @@ $string['password'] = 'Password';
 $string['pgsqlextensionisnotpresentinphp'] = 'Il PHP non è stato configurato correttamente con l\'estensione PGSQL e non può comunicare con PostgreSQL. Controllate il vostro php.ini o ricompilate il PHP.';
 $string['php50restricted'] = 'PHP 5.0.x ha diversi problemi conosciuti, si prega di aggiornare alla versione 5.1.x o tornare alle versioni 4.3.x o 4.4.x';
 $string['phpversion'] = 'Versione PHP';
+$string['phpversionerror'] = 'La versione del PHP deve essere almeno 4.3.0 o 5.1.0 (la versione 5.0.x ha numerosi bug noti).';
 $string['phpversionhelp'] = '<p>Moodle necessita come minimo della versione 4.3.0 o 5.1.0 del PHP. (La versione 5.0.x soffre di problemi ben conosciuti)</p>
 <p>La versione installata nel vostro sistema è la $a</p>
 <p>Dovete aggiornare la versione del PHP oppure spostarsi su un host che abbia una versione più aggiornata del PHP!<br>
 (Se avete la 5.0.x, potete fare il downgrade alla versione 4.4.x)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
+$string['postgresqlwarning'] = '<strong>Nota:</strong> Se incontri problemi di connessione, prova ad impostare il campo Host Server 
+host=\'postgresql_host\' port=\'5432\' dbname=\'postgresql_database_name\' user=\'postgresql_user\' password=\'postgresql_user_password\'
+lsciando vuoti i campi Database, User e Password. Per maggiorni informazioni <a href=\"http://docs.moodle.org/en/Installing_Postgres_for_PHP\">Moodle Docs</a>';
 $string['previous'] = 'Precedente';
 $string['qtyperqpwillberemoved'] = 'Durante l\'aggiornamento, il tipo di domanda RQP sarà rimosso. Il sito non ha utilizzato tale tipo di domanda, per cui non si dovrebbe manifestare alcun problema.';
 $string['qtyperqpwillberemovedanyway'] = 'Durante l\'aggiornamento, il tipo di domanda RQP sarà rimosso. Il sito ha alcune domande RPQ nel database e queste non funzioneranno più a meno di reinstallare il codice da http://moodle.org/mod/data/view.php?d=13&amp;rid=797 prima di continuare con l\'aggiornamento.';
