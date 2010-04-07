@@ -364,8 +364,8 @@ class page_requirements_manager {
                 case 'core_comment':
                     $module = array('name'     => 'core_comment',
                                     'fullpath' => '/comment/comment.js',
-                                    'requires' => array('base', 'io', 'node', 'json', 'yui2-animation'),
-                                    'strings' => array(array('confirmdeletecomments', 'admin'))
+                                    'requires' => array('base', 'io', 'node', 'json', 'yui2-animation', 'overlay'),
+                                    'strings' => array(array('confirmdeletecomments', 'admin'), array('sure', 'moodle'), array('cancel', 'moodle'))
                                 );
                     break;
                 case 'core_role':

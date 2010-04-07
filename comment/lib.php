@@ -260,7 +260,8 @@ EOD;
      * @return mixed
      */
     public function output($return = true) {
-        global $CFG, $PAGE, $OUTPUT;
+        global $PAGE, $OUTPUT;
+		static $template_printed;
 
         $this->link = $PAGE->url;
         $murl = new moodle_url($this->link);
@@ -295,18 +296,18 @@ EOD;
         $strsubmit = get_string('submit');
         $strcancel = get_string('cancel');
         $sesskey = sesskey();
-
+        $html = '';
         // print html template
         // Javascript will use the template to render new comments
-        if (empty($CFG->commentcommentcode) && !empty($this->viewcap)) {
-            echo '<div style="display:none" id="cmt-tmpl">' . $this->template . '</div>';
-            $CFG->commentcommentcode = true;
+        if (empty($template_printed) && !empty($this->viewcap)) {
+            $html .= '<div style="display:none" id="cmt-tmpl">' . $this->template . '</div>';
+            $template_printed = true;
         }
 
         if (!empty($this->viewcap)) {
             // print commenting icon and tooltip
             $icon = $OUTPUT->pix_url('t/collapsed');
-            $html = <<<EOD
+            $html .= <<<EOD
 <div class="mdl-left">
 <a id="comment-link-{$this->cid}" href="{$this->link}">
     <img id="comment-img-{$this->cid}" src="$icon" alt="{$this->linktext}" title="{$this->linktext}" />
@@ -448,7 +449,7 @@ EOD;
                 } else {
                     $class = 'pageno';
                 }
-                $str .= '<a class="'.$class.'" href="###" id="comment-page-'.$this->cid.'-'.$p.'">'.($p+1).'</a> ';
+                $str .= '<a href="###" class="'.$class.'" id="comment-page-'.$this->cid.'-'.$p.'">'.($p+1).'</a> ';
             }
             $str .= '</div>';
         }

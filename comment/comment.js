@@ -54,6 +54,11 @@ M.core_comment = {
                     this.view(0);
                     return false;
                 }, this);
+                CommentHelper.confirmoverlay = new Y.Overlay({
+bodyContent: '<a href="###" id="confirmdelete-'+this.client_id+'">'+M.str.moodle.sure+'</a> <a href="###" id="canceldelete-'+this.client_id+'">'+M.str.moodle.cancel+'</a>',
+                                        visible: false
+                                        });
+                CommentHelper.confirmoverlay.render(document.body);
             },
             post: function() {
                 var ta = Y.one('#dlg-content-'+this.client_id);
@@ -124,7 +129,7 @@ M.core_comment = {
                         complete: function(id,o,p) {
                             if (!o) {
                                 alert('IO FATAL');
-                                return;
+                                return false;
                             }
                             var data = Y.JSON.parse(o.responseText);
                             if (data.error) {
@@ -179,7 +184,7 @@ M.core_comment = {
                 var scope = this;
                 var container = Y.one('#comment-ctrl-'+this.client_id);
                 var params = {
-                    'page': page,
+                    'page': page
                 }
                 this.request({
                     scope: scope,
@@ -206,7 +211,7 @@ M.core_comment = {
             dodelete: function(id) { // note: delete is a reserved word in javascript, chrome and safary do not like it at all here!
                 var scope = this;
                 var params = {'commentid': id};
-    
+                scope.cancel_delete();
                 function remove_dom(type, anmi, cmt) {
                     cmt.remove();
                 }
@@ -251,19 +256,41 @@ M.core_comment = {
                 Y.all('div.comment-content a').each(
                     function(node, id) {
                         var theid = node.get('id');
-                        var re = new RegExp("comment-delete-"+scope.client_id+"-(\\d+)", "i");
-                        var result = theid.match(re);
-                        if (result[1]) {
+                        var parseid = new RegExp("comment-delete-"+scope.client_id+"-(\\d+)", "i");
+                        var commentid = theid.match(parseid);
+                        if (commentid[1]) {
                             Y.Event.purgeElement('#'+theid, false, 'click');
                         }
                         node.on('click', function(e, node) {
+                            var width = CommentHelper.confirmoverlay.bodyNode.getStyle('width');
+                            var re = new RegExp("(\\d+).*", "i");
+                            var result = width.match(re);
                             if (result[1]) {
-                                this.dodelete(result[1]);
+                                width = Number(result[1]);
+                            } else {
+                                width = 0;
                             }
-                            //this.load(result[1]);
+                            CommentHelper.confirmoverlay.set('xy', [e.pageX-(width/2), e.pageY+10]);
+                            CommentHelper.confirmoverlay.set('visible', true);
+							// XXX: YUI3 bug, a temp workaround in firefox, still have problem on webkit
+							CommentHelper.confirmoverlay.bodyNode.setStyle('visibility', 'visible');
+                            Y.one('#canceldelete-'+scope.client_id).on('click', function() {
+                                scope.cancel_delete();
+                                });
+                            Y.Event.purgeElement('#confirmdelete-'+scope.client_id, false, 'click');
+                            Y.one('#confirmdelete-'+scope.client_id).on('click', function() {
+                                    if (commentid[1]) {
+                                        scope.dodelete(commentid[1]);
+                                    }
+                                });
                         }, scope, node);
                     }
                 );
+            },
+            cancel_delete: function() {
+                CommentHelper.confirmoverlay.set('visible', false);
+				// XXX: YUI3 bug, a temp workaround in firefox, still have problem on webkit
+				CommentHelper.confirmoverlay.bodyNode.setStyle('visibility', 'hidden');
             },
             register_pagination: function() {
                 var scope = this;
@@ -348,7 +375,7 @@ M.core_comment = {
                     checked=true;
                 }
             }
-            for (var i in comments) {
+            for (i in comments) {
                 comments[i].checked = !checked;
             }
             this.set('checked', !checked);

@@ -1614,6 +1614,7 @@ $string['success'] = 'Success';
 $string['summary'] = 'Summary';
 $string['summaryof'] = 'Summary of $a';
 $string['supplyinfo'] = 'More details';
+$string['sure'] = 'Sure';
 $string['switchrolereturn'] = 'Return to my normal role';
 $string['switchroleto'] = 'Switch role to...';
 $string['tag'] = 'Tag';
