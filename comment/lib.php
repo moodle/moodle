@@ -336,12 +336,12 @@ EOD;
         <textarea name="content" rows="2" id="dlg-content-{$this->cid}"></textarea>
     </div>
     <div class="fd" id="comment-action-{$this->cid}">
-        <a href="###" id="comment-action-post-{$this->cid}"> {$strsubmit} </a>
+        <a href="#" id="comment-action-post-{$this->cid}"> {$strsubmit} </a>
 EOD;
         if ($this->env != 'block_comments') {
             $html .= <<<EOD
         <span> | </span>
-        <a href="###" id="comment-action-cancel-{$this->cid}"> {$strcancel} </a>
+        <a href="#" id="comment-action-cancel-{$this->cid}"> {$strcancel} </a>
 EOD;
         }
 
@@ -449,7 +449,7 @@ EOD;
                 } else {
                     $class = 'pageno';
                 }
-                $str .= '<a href="###" class="'.$class.'" id="comment-page-'.$this->cid.'-'.$p.'">'.($p+1).'</a> ';
+                $str .= '<a href="#" class="'.$class.'" id="comment-page-'.$this->cid.'-'.$p.'">'.($p+1).'</a> ';
             }
             $str .= '</div>';
         }
@@ -594,7 +594,7 @@ EOD;
         $replacements = array();
 
         if (!empty($cmt->delete) && empty($nonjs)) {
-            $cmt->content = '<div class="comment-delete"><a href="###" id ="comment-delete-'.$this->cid.'-'.$cmt->id.'"><img src="'.$OUTPUT->pix_url('t/delete').'" /></a></div>' . $cmt->content;
+            $cmt->content = '<div class="comment-delete"><a href="#" id ="comment-delete-'.$this->cid.'-'.$cmt->id.'"><img src="'.$OUTPUT->pix_url('t/delete').'" /></a></div>' . $cmt->content;
             // add the button
         }
         $patterns[] = '___picture___';

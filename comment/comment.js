@@ -55,7 +55,7 @@ M.core_comment = {
                     return false;
                 }, this);
                 CommentHelper.confirmoverlay = new Y.Overlay({
-bodyContent: '<a href="###" id="confirmdelete-'+this.client_id+'">'+M.str.moodle.sure+'</a> <a href="###" id="canceldelete-'+this.client_id+'">'+M.str.moodle.cancel+'</a>',
+bodyContent: '<a href="#" id="confirmdelete-'+this.client_id+'">'+M.str.moodle.sure+'</a> <a href="#" id="canceldelete-'+this.client_id+'">'+M.str.moodle.cancel+'</a>',
                                         visible: false
                                         });
                 CommentHelper.confirmoverlay.render(document.body);
@@ -168,7 +168,7 @@ bodyContent: '<a href="###" id="confirmdelete-'+this.client_id+'">'+M.str.moodle
                     var val = template.get('innerHTML');
                     val = val.replace('___name___', list[i].username);
                     if (list[i]['delete']||newcmt) {
-                        list[i].content = '<div class="comment-delete"><a href="###" id ="comment-delete-'+this.client_id+'-'+list[i].id+'" title="'+M.str.moodle.deletecomment+'"><img src="'+M.util.image_url('t/delete', 'core')+'" /></a></div>' + list[i].content;
+                        list[i].content = '<div class="comment-delete"><a href="#" id ="comment-delete-'+this.client_id+'-'+list[i].id+'" title="'+M.str.moodle.deletecomment+'"><img src="'+M.util.image_url('t/delete', 'core')+'" /></a></div>' + list[i].content;
                     }
                     val = val.replace('___time___', list[i].time);
                     val = val.replace('___picture___', list[i].avatar);
@@ -262,6 +262,7 @@ bodyContent: '<a href="###" id="confirmdelete-'+this.client_id+'">'+M.str.moodle
                             Y.Event.purgeElement('#'+theid, false, 'click');
                         }
                         node.on('click', function(e, node) {
+							e.preventDefault();
                             var width = CommentHelper.confirmoverlay.bodyNode.getStyle('width');
                             var re = new RegExp("(\\d+).*", "i");
                             var result = width.match(re);
@@ -274,11 +275,13 @@ bodyContent: '<a href="###" id="confirmdelete-'+this.client_id+'">'+M.str.moodle
                             CommentHelper.confirmoverlay.set('visible', true);
 							// XXX: YUI3 bug, a temp workaround in firefox, still have problem on webkit
 							CommentHelper.confirmoverlay.bodyNode.setStyle('visibility', 'visible');
-                            Y.one('#canceldelete-'+scope.client_id).on('click', function() {
+                            Y.one('#canceldelete-'+scope.client_id).on('click', function(e) {
+								e.preventDefault();
                                 scope.cancel_delete();
                                 });
                             Y.Event.purgeElement('#confirmdelete-'+scope.client_id, false, 'click');
-                            Y.one('#confirmdelete-'+scope.client_id).on('click', function() {
+                            Y.one('#confirmdelete-'+scope.client_id).on('click', function(e) {
+									e.preventDefault();
                                     if (commentid[1]) {
                                         scope.dodelete(commentid[1]);
                                     }
@@ -298,6 +301,7 @@ bodyContent: '<a href="###" id="confirmdelete-'+this.client_id+'">'+M.str.moodle
                 Y.all('#comment-pagination-'+this.client_id+' a').each(
                     function(node, id) {
                         node.on('click', function(e, node) {
+							e.preventDefault();
                             var id = node.get('id');
                             var re = new RegExp("comment-page-"+this.client_id+"-(\\d+)", "i");
                             var result = id.match(re);
@@ -367,7 +371,7 @@ bodyContent: '<a href="###" id="confirmdelete-'+this.client_id+'">'+M.str.moodle
     },
     init_admin: function(Y) {
         var select_all = Y.one('#comment_select_all');
-        select_all.on('click', function() {
+        select_all.on('click', function(e) {
             var comments = document.getElementsByName('comments');
             var checked = false;
             for (var i in comments) {
