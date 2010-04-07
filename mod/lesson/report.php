@@ -44,7 +44,7 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/lesson:manage', $context);
 
 $params = array("lessonid" => $lesson->id);
-if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
+if (!empty($cm->groupingid)) {
     $params["groupid"] = $cm->groupingid;
     $sql = "SELECT DISTINCT u.id, u.*
                 FROM {lesson_attempts} a

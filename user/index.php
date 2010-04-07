@@ -356,10 +356,8 @@
         if ($groupmode != 0) {
             $tablecolumns[] = 'groups';
             $tableheaders[] = get_string('groups');
-            if (!empty($CFG->enablegroupings)) {
-                $tablecolumns[] = 'groupings';
-                $tableheaders[] = get_string('groupings', 'group');
-            }
+            $tablecolumns[] = 'groupings';
+            $tableheaders[] = get_string('groupings', 'group');
         }
     }
 
@@ -821,9 +819,7 @@
                     if ($groupmode != 0) {
                         // htmlescape with s() and implode the array
                         $data[] = implode(', ', array_map('s',$userlist_extra[$user->id]['group']));
-                        if (!empty($CFG->enablegroupings)) {
-                            $data[] = implode(', ', array_map('s', $userlist_extra[$user->id]['gping']));
-                        }
+                        $data[] = implode(', ', array_map('s', $userlist_extra[$user->id]['gping']));
                     }
                 }
 
@@ -930,16 +926,11 @@ function get_participants_extra ($userids, $course, $context) {
     $contextids = substr($context->path, 1); // kill leading slash
     $contextids = str_replace('/', ',', $contextids);;
 
-    if (!empty($CFG->enablegroupings)) {
-        $gpjoin = "LEFT OUTER JOIN {groupings_groups} gpg
-                        ON gpg.groupid=g.id
-                   LEFT OUTER JOIN {groupings} gp
-                        ON (gp.courseid={$course->id} AND gp.id=gpg.groupingid)";
-        $gpselect = ',gp.id AS gpid, gp.name AS gpname ';
-    } else {
-        $gpjoin   = '';
-        $gpselect = '';
-    }
+    $gpjoin = "LEFT OUTER JOIN {groupings_groups} gpg
+                    ON gpg.groupid=g.id
+               LEFT OUTER JOIN {groupings} gp
+                    ON (gp.courseid={$course->id} AND gp.id=gpg.groupingid)";
+    $gpselect = ',gp.id AS gpid, gp.name AS gpname ';
 
     // Note: this returns strange redundant rows, perhaps
     // due to the multiple OUTER JOINs. If we can tweak the

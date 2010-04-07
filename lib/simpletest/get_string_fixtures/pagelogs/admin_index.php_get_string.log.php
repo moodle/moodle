@@ -1248,8 +1248,6 @@ get_string('configmemcachedpconn', 'admin', NULL);
 get_string('no', '', NULL);
 get_string('yes', '', NULL);
 get_string('registration', 'admin', NULL);
-get_string('enablegroupings', 'admin', NULL);
-get_string('configenablegroupings', 'admin', NULL);
 get_string('enableoutcomes', 'grades', NULL);
 get_string('configenableoutcomes', 'grades', NULL);
 get_string('usetags', 'admin', NULL);

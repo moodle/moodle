@@ -1937,10 +1937,7 @@ function forum_get_readable_forums($userid, $courseid=0) {
                 if (is_null($modinfo->groups)) {
                     $modinfo->groups = groups_get_user_groups($course->id, $USER->id);
                 }
-                if (empty($CFG->enablegroupings)) {
-                    $forum->onlygroups = $modinfo->groups[0];
-                    $forum->onlygroups[] = -1;
-                } else if (isset($modinfo->groups[$cm->groupingid])) {
+                if (isset($modinfo->groups[$cm->groupingid])) {
                     $forum->onlygroups = $modinfo->groups[$cm->groupingid];
                     $forum->onlygroups[] = -1;
                 } else {
@@ -2556,14 +2553,10 @@ function forum_count_discussions($forum, $cm, $course) {
         $modinfo->groups = groups_get_user_groups($course->id, $USER->id);
     }
 
-    if (empty($CFG->enablegroupings)) {
-        $mygroups = $modinfo->groups[0];
+    if (array_key_exists($cm->groupingid, $modinfo->groups)) {
+        $mygroups = $modinfo->groups[$cm->groupingid];
     } else {
-        if (array_key_exists($cm->groupingid, $modinfo->groups)) {
-            $mygroups = $modinfo->groups[$cm->groupingid];
-        } else {
-            $mygroups = false; // Will be set below
-        }
+        $mygroups = false; // Will be set below
     }
 
     // add all groups posts
@@ -7062,11 +7055,7 @@ function forum_tp_count_forum_unread_posts($cm, $course) {
         $modinfo->groups = groups_get_user_groups($course->id, $USER->id);
     }
 
-    if (empty($CFG->enablegroupings)) {
-        $mygroups = $modinfo->groups[0];
-    } else {
-        $mygroups = $modinfo->groups[$cm->groupingid];
-    }
+    $mygroups = $modinfo->groups[$cm->groupingid];
 
     // add all groups posts
     if (empty($mygroups)) {

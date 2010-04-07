@@ -3056,7 +3056,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
 
     if ($result && $oldversion < 2010033101.02) {
-        
+
     /// Define table license to be created
         $table = new xmldb_table('license');
 
@@ -3433,6 +3433,17 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
         // Main savepoint reached
         upgrade_main_savepoint($result, 2010033102.09);
+    }
+
+    if ($result && $oldversion < 2010040700) {
+        // migrate old groupings --> groupmembersonly setting
+        if (isset($CFG->enablegroupings)) {
+            set_config('enablegroupmembersonly', $CFG->enablegroupings);
+            unset_config('enablegroupings');
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010040700);
     }
 
     return $result;

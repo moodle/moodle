@@ -107,7 +107,7 @@
         if (empty($a)) {
             // No options, show the global scorm report
 
-            if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
+            if (!empty($cm->groupingid)) {
                 $sql = "SELECT st.userid, st.scormid
                         FROM {scorm_scoes_track} st
                             INNER JOIN {groups_members} gm ON st.userid = gm.userid

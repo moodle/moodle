@@ -320,7 +320,7 @@ class external_api {
                 throw new invalid_parameter_exception('Invalid activity.');
             }
             // verify group memebers
-            if (!empty($CFG->enablegroupings) and $cm and $cm->groupmembersonly and !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+            if (!empty($CFG->enablegroupmembersonly) and $cm and $cm->groupmembersonly and !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id))) {
                 if (!groups_has_membership($cm)) {
                     throw new invalid_parameter_exception('Must be member of at least one group.');
                 }

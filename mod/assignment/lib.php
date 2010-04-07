@@ -891,7 +891,7 @@ class assignment_base {
         }
 
         // if groupmembersonly used, remove users who are not in any group
-        if ($users and !empty($CFG->enablegroupings) and $cm->groupmembersonly) {
+        if ($users and !empty($CFG->enablegroupmembersonly) and $cm->groupmembersonly) {
             if ($groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id')) {
                 $users = array_intersect($users, array_keys($groupingusers));
             }
@@ -1143,7 +1143,7 @@ class assignment_base {
         }
 
         // if groupmembersonly used, remove users who are not in any group
-        if ($users and !empty($CFG->enablegroupings) and $cm->groupmembersonly) {
+        if ($users and !empty($CFG->enablegroupmembersonly) and $cm->groupmembersonly) {
             if ($groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id')) {
                 $users = array_intersect($users, array_keys($groupingusers));
             }
@@ -2952,7 +2952,7 @@ function assignment_count_real_submissions($cm, $groupid=0) {
     }
 
     // if groupmembersonly used, remove users who are not in any group
-    if ($users and !empty($CFG->enablegroupings) and $cm->groupmembersonly) {
+    if ($users and !empty($CFG->enablegroupmembersonly) and $cm->groupmembersonly) {
         if ($groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id')) {
             $users = array_intersect($users, array_keys($groupingusers));
         }

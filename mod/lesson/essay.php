@@ -243,7 +243,7 @@ switch ($mode) {
             list($usql, $parameters) = $DB->get_in_or_equal(array_keys($pages));
             if ($essayattempts = $DB->get_records_select('lesson_attempts', 'pageid '.$usql, $parameters)) {
                 // Get all the users who have taken this lesson, order by their last name
-                if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
+                if (!empty($cm->groupingid)) {
                     $params["groupinid"] = $cm->groupingid;
                     $sql = "SELECT DISTINCT u.*
                             FROM {lesson_attempts} a

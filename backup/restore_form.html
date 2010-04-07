@@ -87,11 +87,7 @@
     }
 
     if (!isset($restore_groups)) {
-        if (empty($CFG->enablegroupings)) {
-            $restore_groups = RESTORE_GROUPS_ONLY;
-        } else {
-            $restore_groups = RESTORE_GROUPS_GROUPINGS;
-        }
+        $restore_groups = RESTORE_GROUPS_GROUPINGS;
     }
 
     if (!isset($restore_logs)) {
@@ -466,15 +462,10 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         $helplink = $OUTPUT->help_icon('grouprestore', get_string('groups'));
         echo '<label for="menurestore_groups">'.get_string ("groups").'</label>'.$helplink;
         echo "</b></td><td colspan=\"2\">";
-        if (empty($CFG->enablegroupings)) {
-            $group_options[RESTORE_GROUPS_NONE] = get_string('no');
-            $group_options[RESTORE_GROUPS_ONLY] = get_string('yes');
-        } else {
-            $group_options[RESTORE_GROUPS_NONE] = get_string('none');
-            $group_options[RESTORE_GROUPS_ONLY] = get_string('groupsonly', 'group');
-            $group_options[RESTORE_GROUPINGS_ONLY] = get_string('groupingsonly', 'group');
-            $group_options[RESTORE_GROUPS_GROUPINGS] = get_string('groupsgroupings', 'group'); //all.
-        }
+        $group_options[RESTORE_GROUPS_NONE] = get_string('none');
+        $group_options[RESTORE_GROUPS_ONLY] = get_string('groupsonly', 'group');
+        $group_options[RESTORE_GROUPINGS_ONLY] = get_string('groupingsonly', 'group');
+        $group_options[RESTORE_GROUPS_GROUPINGS] = get_string('groupsgroupings', 'group'); //all.
         echo html_writer::select($group_options, 'restore_groups', $restore_groups, false);
         echo "</td></tr>";
 

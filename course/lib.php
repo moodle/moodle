@@ -1356,7 +1356,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 if ($accessiblebutdim || !$mod->uservisible) {
                     echo "</div>";
                 }
-                if (!empty($CFG->enablegroupings) && !empty($mod->groupingid) && has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                if (!empty($mod->groupingid) && has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
                     if (!isset($groupings)) {
                         $groupings = groups_get_all_groupings($course->id);
                     }
@@ -1417,7 +1417,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                          '<img src="'.$icon.'" class="activityicon" alt="" /> '.
                          $accesstext.'<span>'.$instancename.$altname.'</span></a>';
 
-                    if (!empty($CFG->enablegroupings) && !empty($mod->groupingid) && has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                    if (!empty($mod->groupingid) && has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
                         if (!isset($groupings)) {
                             $groupings = groups_get_all_groupings($course->id);
                         }

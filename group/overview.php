@@ -47,18 +47,12 @@ $strnogroups         = get_string('nogroups', 'group');
 $strdescription      = get_string('description');
 
 // Get all groupings
-if (empty($CFG->enablegroupings)) {
-    $groupings  = array();
-    $members    = array(-1 => array()); //groups not in a grouping
-    $groupingid = 0;
-} else {
-    $groupings = $DB->get_records('groupings', array('courseid'=>$courseid), 'name');
-    $members = array();
-    foreach ($groupings as $grouping) {
-        $members[$grouping->id] = array();
-    }
-    $members[-1] = array(); //groups not in a grouping
+$groupings = $DB->get_records('groupings', array('courseid'=>$courseid), 'name');
+$members = array();
+foreach ($groupings as $grouping) {
+    $members[$grouping->id] = array();
 }
+$members[-1] = array(); //groups not in a grouping
 
 // Get all groups
 $groups = $DB->get_records('groups', array('courseid'=>$courseid), 'name');
@@ -71,28 +65,19 @@ if ($groupid) {
     $groupwhere = "";
 }
 
-if (empty($CFG->enablegroupings)) {
-    $sql = "SELECT g.id AS groupid, NULL AS groupingid, u.id AS userid, u.firstname, u.lastname, u.idnumber, u.username
-              FROM {groups} g
-                   LEFT JOIN {groups_members} gm ON g.id = gm.groupid
-                   LEFT JOIN {user} u ON gm.userid = u.id
-             WHERE g.courseid = :courseid $groupwhere
-          ORDER BY g.name, u.lastname, u.firstname";
+if ($groupingid) {
+    $groupingwhere = "AND gg.groupingid = :groupingid";
+    $params['groupingid'] = $groupingid;
 } else {
-    if ($groupingid) {
-        $groupingwhere = "AND gg.groupingid = :groupingid";
-        $params['groupingid'] = $groupingid;
-    } else {
-        $groupingwhere = "";
-    }
-    $sql = "SELECT g.id AS groupid, gg.groupingid, u.id AS userid, u.firstname, u.lastname, u.idnumber, u.username
-              FROM {groups} g
-                   LEFT JOIN {groupings_groups} gg ON g.id = gg.groupid
-                   LEFT JOIN {groups_members} gm ON g.id = gm.groupid
-                   LEFT JOIN {user} u ON gm.userid = u.id
-             WHERE g.courseid = :courseid $groupwhere $groupingwhere
-          ORDER BY g.name, u.lastname, u.firstname";
+    $groupingwhere = "";
 }
+$sql = "SELECT g.id AS groupid, gg.groupingid, u.id AS userid, u.firstname, u.lastname, u.idnumber, u.username
+          FROM {groups} g
+               LEFT JOIN {groupings_groups} gg ON g.id = gg.groupid
+               LEFT JOIN {groups_members} gm ON g.id = gm.groupid
+               LEFT JOIN {user} u ON gm.userid = u.id
+         WHERE g.courseid = :courseid $groupwhere $groupingwhere
+      ORDER BY g.name, u.lastname, u.firstname";
 
 if ($rs = $DB->get_recordset_sql($sql, $params)) {
     foreach ($rs as $row) {
@@ -132,18 +117,16 @@ echo $OUTPUT->heading(format_string($course->shortname) .' '.$stroverview, 3);
 
 echo $strfiltergroups;
 
-if (!empty($CFG->enablegroupings)) {
-    $options = array();
-    $options[0] = get_string('all');
-    foreach ($groupings as $grouping) {
-        $options[$grouping->id] = strip_tags(format_string($grouping->name));
-    }
-    $popupurl = new moodle_url($rooturl.'&group='.$groupid);
-    $select = new single_select($popupurl, 'grouping', $options, $groupingid, array());
-    $select->label = $strgrouping;
-    $select->formid = 'selectgrouping';
-    echo $OUTPUT->render($select);
+$options = array();
+$options[0] = get_string('all');
+foreach ($groupings as $grouping) {
+    $options[$grouping->id] = strip_tags(format_string($grouping->name));
 }
+$popupurl = new moodle_url($rooturl.'&group='.$groupid);
+$select = new single_select($popupurl, 'grouping', $options, $groupingid, array());
+$select->label = $strgrouping;
+$select->formid = 'selectgrouping';
+echo $OUTPUT->render($select);
 
 $options = array();
 $options[0] = get_string('all');
@@ -196,16 +179,14 @@ foreach ($members as $gpgid=>$groupdata) {
     if ($groupid and empty($table->data)) {
         continue;
     }
-    if (!empty($CFG->enablegroupings)) {
-        if ($gpgid < 0) {
-            echo $OUTPUT->heading($strnotingrouping, 3);
-        } else {
-            echo $OUTPUT->heading(format_string($groupings[$gpgid]->name), 3);
-            $description = file_rewrite_pluginfile_urls($groupings[$gpgid]->description, 'pluginfile.php', $context->id, 'course_grouping_description', $gpgid);
-            $options = new stdClass;
-            $options->noclean = true;
-            echo $OUTPUT->box(format_text($description, $groupings[$gpgid]->descriptionformat, $options), 'generalbox boxwidthnarrow boxaligncenter');
-        }
+    if ($gpgid < 0) {
+        echo $OUTPUT->heading($strnotingrouping, 3);
+    } else {
+        echo $OUTPUT->heading(format_string($groupings[$gpgid]->name), 3);
+        $description = file_rewrite_pluginfile_urls($groupings[$gpgid]->description, 'pluginfile.php', $context->id, 'course_grouping_description', $gpgid);
+        $options = new stdClass;
+        $options->noclean = true;
+        echo $OUTPUT->box(format_text($description, $groupings[$gpgid]->descriptionformat, $options), 'generalbox boxwidthnarrow boxaligncenter');
     }
     echo html_writer::table($table);
     $printed = true;

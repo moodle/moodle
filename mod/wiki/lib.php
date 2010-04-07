@@ -760,7 +760,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
     $cm->groupmode = $wiki->groupmode;
     $cm->groupingid = $wiki->groupingid;
     $cm->groupmembersonly = $wiki->groupmembersonly;
-    if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
+    if (!empty($cm->groupingid)) {
         $groupingid = $wiki->groupingid;
     }
 
@@ -771,7 +771,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
         /// Get all the existing entries for this wiki.
         $wiki_entries = wiki_get_entries($wiki, 'student');
 
-        if (!empty($CFG->enablegroupings) && !empty($wiki->groupingid)) {
+        if (!empty($wiki->groupingid)) {
             $sql = "SELECT gm.userid FROM {groups_members} gm " .
                     "INNER JOIN {groupings_groups} gg ON gm.groupid = gg.groupid " .
                     "WHERE gg.groupingid = ? ";
@@ -789,7 +789,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                     $defpagename = empty($wiki->pagename) ? get_string('wikidefaultpagename', 'wiki') : $wiki->pagename;
 
                     foreach ($students as $student) {
-                        if (!empty($CFG->enablegroupings) && !empty($wiki->groupingid) && empty($groupingmembers[$student->id])) {
+                        if (!empty($wiki->groupingid) && empty($groupingmembers[$student->id])) {
                             continue;
                         }
                         /// If this student already has an entry, use its pagename.
@@ -810,7 +810,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                 if ($students = wiki_get_students($wiki, $mygroupid)) {
                     $defpagename = empty($wiki->pagename) ? get_string('wikidefaultpagename', 'wiki') : $wiki->pagename;
                     foreach ($students as $student) {
-                        if (!empty($CFG->enablegroupings) && !empty($wiki->groupingid) && empty($groupingmembers[$student->id])) {
+                        if (!empty($wiki->groupingid) && empty($groupingmembers[$student->id])) {
                             continue;
                         }
                         /// If this student already has an entry, use its pagename.
@@ -831,7 +831,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                 if ($students = wiki_get_students($wiki, $mygroupid)) {
                     $defpagename = empty($wiki->pagename) ? get_string('wikidefaultpagename', 'wiki') : $wiki->pagename;
                     foreach ($students as $student) {
-                        if (!empty($CFG->enablegroupings) && !empty($wiki->groupingid) && empty($groupingmembers[$student->id])) {
+                        if (!empty($wiki->groupingid) && empty($groupingmembers[$student->id])) {
                             continue;
                         }
                         /// If this student already has an entry, use its pagename.
@@ -846,7 +846,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                     }
                 }
                 /// Get all student wikis created, regardless of group.
-                if (!empty($CFG->enablegroupings) && !empty($wiki->groupingid)) {
+                if (!empty($wiki->groupingid)) {
                     $sql = 'SELECT w.id, w.userid, w.pagename, u.firstname, u.lastname '
                           .'    FROM {wiki_entries} w '
                           .'    INNER JOIN {user} u ON w.userid = u.id '
@@ -891,7 +891,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
             }
 
             if ($viewall !== false) {
-                if (!empty($CFG->enablegroupings) && !empty($wiki->groupingid)) {
+                if (!empty($wiki->groupingid)) {
                     $sql = 'SELECT w.id, w.userid, w.pagename, u.firstname, u.lastname '
                           .'    FROM {wiki_entries} w '
                           .'    INNER JOIN {user} u ON w.userid = u.id '
@@ -910,7 +910,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                 $wiki_entries = $DB->get_records_sql($sql, $params);
                 $wiki_entries=is_array($wiki_entries)?$wiki_entries:array();
                 foreach ($wiki_entries as $wiki_entry) {
-                    if (!empty($CFG->enablegroupings) && !empty($wiki->groupingid) && empty($groupingmembers[$wiki_entry->userid])) {
+                    if (!empty($wiki->groupingid) && empty($groupingmembers[$wiki_entry->userid])) {
                         continue;
                     }
 
@@ -975,7 +975,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
         }
         /// A user can see other group wikis if there are visible groups.
         else if ($groupmode == VISIBLEGROUPS) {
-            if (!empty($CFG->enablegroupings) && !empty($wiki->groupingid)) {
+            if (!empty($wiki->groupingid)) {
                 $sql = 'SELECT w.id, w.groupid, w.pagename, g.name as gname '
                       .'    FROM {wiki_entries} w '
                       .'    INNER JOIN {groups} g ON g.id = w.groupid '
@@ -1025,7 +1025,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
             }
             /// A teacher can see all other group teacher wikis.
             else if ($groupmode) {
-            if (!empty($CFG->enablegroupings) && !empty($wiki->groupingid)) {
+            if (!empty($wiki->groupingid)) {
                 $sql = 'SELECT w.id, w.groupid, w.pagename, g.name as gname '
                       .'    FROM {wiki_entries} w '
                       .'    INNER JOIN {groups} g ON g.id = w.groupid '
@@ -1064,7 +1064,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                 $viewall = false;
             }
             if ($viewall !== false) {
-                if (!empty($CFG->enablegroupings) && !empty($wiki->groupingid)) {
+                if (!empty($wiki->groupingid)) {
                     $sql = 'SELECT w.id, w.groupid, w.pagename, g.name as gname '
                           .'    FROM {wiki_entries} w '
                           .'    INNER JOIN {groups} g ON g.id = w.groupid '

@@ -492,7 +492,7 @@ function hotpot_is_visible(&$cm) {
 
     // check grouping
     $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    if (empty($CFG->enablegroupings) || empty($cm->groupmembersonly) || has_capability('moodle/site:accessallgroups', $modulecontext)) {
+    if (empty($CFG->enablegroupmembersonly) || empty($cm->groupmembersonly) || has_capability('moodle/site:accessallgroups', $modulecontext)) {
         // groupings not applicable
     } else if (!isguestuser() && groups_has_membership($cm)) {
         // user is in one of the groups in the allowed grouping

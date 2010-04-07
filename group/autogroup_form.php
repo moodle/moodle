@@ -55,23 +55,21 @@ class autogroup_form extends moodleform {
             $mform->setDefault('namingscheme', $template);
         }
 
-        if (!empty($CFG->enablegroupings)) {
-            $options = array('0' => get_string('no'),
-                             '-1'=> get_string('newgrouping', 'group'));
-            if ($groupings = groups_get_all_groupings($COURSE->id)) {
-                foreach ($groupings as $grouping) {
-                    $options[$grouping->id] = strip_tags(format_string($grouping->name));
-                }
+        $options = array('0' => get_string('no'),
+                         '-1'=> get_string('newgrouping', 'group'));
+        if ($groupings = groups_get_all_groupings($COURSE->id)) {
+            foreach ($groupings as $grouping) {
+                $options[$grouping->id] = strip_tags(format_string($grouping->name));
             }
-            $mform->addElement('select', 'grouping', get_string('createingrouping', 'group'), $options);
-            if ($groupings) {
-                $mform->setDefault('grouping', '-1');
-            }
-
-            $mform->addElement('text', 'groupingname', get_string('groupingname', 'group'), $options);
-            $mform->setType('groupingname', PARAM_MULTILANG);
-            $mform->disabledIf('groupingname', 'grouping', 'noteq', '-1');
         }
+        $mform->addElement('select', 'grouping', get_string('createingrouping', 'group'), $options);
+        if ($groupings) {
+            $mform->setDefault('grouping', '-1');
+        }
+
+        $mform->addElement('text', 'groupingname', get_string('groupingname', 'group'), $options);
+        $mform->setType('groupingname', PARAM_MULTILANG);
+        $mform->disabledIf('groupingname', 'grouping', 'noteq', '-1');
 
         $mform->addElement('hidden','courseid');
         $mform->setType('courseid', PARAM_INT);

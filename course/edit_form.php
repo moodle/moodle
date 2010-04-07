@@ -299,12 +299,10 @@ class course_edit_form extends moodleform {
         $mform->setHelpButton('groupmodeforce', array('groupmodeforce', get_string('groupmodeforce')), true);
         $mform->setDefault('groupmodeforce', $courseconfig->groupmodeforce);
 
-        if (!empty($CFG->enablegroupings)) {
-            //default groupings selector
-            $options = array();
-            $options[0] = get_string('none');
-            $mform->addElement('select', 'defaultgroupingid', get_string('defaultgrouping', 'group'), $options);
-        }
+        //default groupings selector
+        $options = array();
+        $options[0] = get_string('none');
+        $mform->addElement('select', 'defaultgroupingid', get_string('defaultgrouping', 'group'), $options);
 
 //--------------------------------------------------------------------------------
         $mform->addElement('header','', get_string('availability'));

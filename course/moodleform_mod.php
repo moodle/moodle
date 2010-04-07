@@ -375,26 +375,24 @@ abstract class moodleform_mod extends moodleform {
             $mform->setHelpButton('groupmode', array('groupmode', get_string('groupmode')));
         }
 
-        if (!empty($CFG->enablegroupings)) {
-            if ($this->_features->groupings or $this->_features->groupmembersonly) {
-                //groupings selector - used for normal grouping mode or also when restricting access with groupmembersonly
-                $options = array();
-                $options[0] = get_string('none');
-                if ($groupings = $DB->get_records('groupings', array('courseid'=>$COURSE->id))) {
-                    foreach ($groupings as $grouping) {
-                        $options[$grouping->id] = format_string($grouping->name);
-                    }
+        if ($this->_features->groupings or $this->_features->groupmembersonly) {
+            //groupings selector - used for normal grouping mode or also when restricting access with groupmembersonly
+            $options = array();
+            $options[0] = get_string('none');
+            if ($groupings = $DB->get_records('groupings', array('courseid'=>$COURSE->id))) {
+                foreach ($groupings as $grouping) {
+                    $options[$grouping->id] = format_string($grouping->name);
                 }
-                $mform->addElement('select', 'groupingid', get_string('grouping', 'group'), $options);
-                $mform->setHelpButton('groupingid', array('grouping', get_string('grouping', 'group')));
-                $mform->setAdvanced('groupingid');
             }
+            $mform->addElement('select', 'groupingid', get_string('grouping', 'group'), $options);
+            $mform->setHelpButton('groupingid', array('grouping', get_string('grouping', 'group')));
+            $mform->setAdvanced('groupingid');
+        }
 
-            if ($this->_features->groupmembersonly) {
-                $mform->addElement('checkbox', 'groupmembersonly', get_string('groupmembersonly', 'group'));
-                $mform->setHelpButton('groupmembersonly', array('groupmembersonly', get_string('groupmembersonly', 'group')));
-                $mform->setAdvanced('groupmembersonly');
-            }
+        if ($this->_features->groupmembersonly) {
+            $mform->addElement('checkbox', 'groupmembersonly', get_string('groupmembersonly', 'group'));
+            $mform->setHelpButton('groupmembersonly', array('groupmembersonly', get_string('groupmembersonly', 'group')));
+            $mform->setAdvanced('groupmembersonly');
         }
 
         $mform->addElement('modvisible', 'visible', get_string('visible'));

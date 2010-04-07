@@ -372,7 +372,7 @@ class workshop {
         if (empty($users)) {
             return $grouped;
         }
-        if (!empty($CFG->enablegroupings) and $this->cm->groupmembersonly) {
+        if (!empty($CFG->enablegroupmembersonly) and $this->cm->groupmembersonly) {
             // Available for group members only - the workshop is available only
             // to users assigned to groups within the selected grouping, or to
             // any group if no grouping is selected.

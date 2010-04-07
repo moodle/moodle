@@ -132,7 +132,7 @@
 
     if ($currentgroup) {
         $users = get_users_by_capability($context, 'mod/survey:participate', '', '', '', '', $currentgroup, null, false);
-    } else if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
+    } else if (!empty($cm->groupingid)) {
         $groups = groups_get_all_groups($courseid, 0, $cm->groupingid);
         $groups = array_keys($groups);
         $users = get_users_by_capability($context, 'mod/survey:participate', '', '', '', '', $groups, null, false);

@@ -2216,7 +2216,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
     }
 
 /// groupmembersonly access control
-    if (!empty($CFG->enablegroupings) and $cm and $cm->groupmembersonly and !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+    if (!empty($CFG->enablegroupmembersonly) and $cm and $cm->groupmembersonly and !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id))) {
         if (isguestuser() or !groups_has_membership($cm)) {
             print_error('groupmembersonlyerror', 'group', $CFG->wwwroot.'/course/view.php?id='.$cm->course);
         }
@@ -2393,7 +2393,7 @@ function require_course_login($courseorid, $autologinguest=true, $cm=null, $setw
         if ($cm and empty($cm->visible)) {
             // hidden activities are not accessible without login
             require_login($courseorid, $autologinguest, $cm, $setwantsurltome);
-        } else if ($cm and !empty($CFG->enablegroupings) and $cm->groupmembersonly) {
+        } else if ($cm and !empty($CFG->enablegroupmembersonly) and $cm->groupmembersonly) {
             // not-logged-in users do not have any group membership
             require_login($courseorid, $autologinguest, $cm, $setwantsurltome);
         } else {
@@ -2841,7 +2841,7 @@ function &get_fast_modinfo(&$course, $userid=0) {
         if ((!$cm->visible or !$cm->available) and !has_capability('moodle/course:viewhiddenactivities', $modcontext, $userid)) {
             $cm->uservisible = false;
 
-        } else if (!empty($CFG->enablegroupings) and !empty($cm->groupmembersonly)
+        } else if (!empty($CFG->enablegroupmembersonly) and !empty($cm->groupmembersonly)
                 and !has_capability('moodle/site:accessallgroups', $modcontext, $userid)) {
             if (is_null($modinfo->groups)) {
                 $modinfo->groups = groups_get_user_groups($course->id, $userid);

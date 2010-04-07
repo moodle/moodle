@@ -857,7 +857,7 @@ function scorm_simple_play($scorm,$user) {
 function scorm_get_count_users($scormid, $groupingid=null) {
     global $CFG, $DB;
 
-    if (!empty($CFG->enablegroupings) && !empty($groupingid)) {
+    if (!empty($groupingid)) {
         $sql = "SELECT COUNT(DISTINCT st.userid)
                 FROM {scorm_scoes_track} st
                     INNER JOIN {groups_members} gm ON st.userid = gm.userid

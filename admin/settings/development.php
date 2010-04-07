@@ -15,6 +15,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('experimentalsplitrestore', get_string('experimentalsplitrestore', 'admin'), get_string('configexperimentalsplitrestore', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('enableimsccimport', get_string('enable_cc_import', 'imscc'), get_string('enable_cc_import_description', 'imscc'), 0));
     $temp->add(new admin_setting_configcheckbox('enablesafebrowserintegration', get_string('enablesafebrowserintegration', 'admin'), get_string('configenablesafebrowserintegration', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('enablegroupmembersonly', get_string('enablegroupmembersonly', 'admin'), get_string('configenablegroupmembersonly', 'admin'), 0));
 
     $ADMIN->add('experimental', $temp);
 

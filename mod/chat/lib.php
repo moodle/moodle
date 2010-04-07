@@ -531,7 +531,7 @@ function chat_get_users($chatid, $groupid=0, $groupingid=0) {
         $groupselect = "";
     }
 
-    if (!empty($CFG->enablegroupings) && !(empty($groupingid))) {
+    if (!empty($groupingid)) {
         $groupingjoin = "JOIN {groups_members} gm ON u.id = gm.userid
                          JOIN {groupings_groups} gg ON gm.groupid = gg.groupid AND gg.groupingid = :groupingid ";
 

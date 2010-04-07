@@ -42,13 +42,11 @@ class course_reset_form extends moodleform {
         $mform->setAdvanced('reset_groups_members');
         $mform->disabledIf('reset_groups_members', 'reset_groups_remove', 'checked');
 
-        if (!empty($CFG->enablegroupings)) {
-            $mform->addElement('checkbox', 'reset_groupings_remove', get_string('deleteallgroupings', 'group'));
-            $mform->setAdvanced('reset_groupings_remove');
-            $mform->addElement('checkbox', 'reset_groupings_members', get_string('removegroupingsmembers', 'group'));
-            $mform->setAdvanced('reset_groupings_members');
-            $mform->disabledIf('reset_groupings_members', 'reset_groupings_remove', 'checked');
-        }
+        $mform->addElement('checkbox', 'reset_groupings_remove', get_string('deleteallgroupings', 'group'));
+        $mform->setAdvanced('reset_groupings_remove');
+        $mform->addElement('checkbox', 'reset_groupings_members', get_string('removegroupingsmembers', 'group'));
+        $mform->setAdvanced('reset_groupings_members');
+        $mform->disabledIf('reset_groupings_members', 'reset_groupings_remove', 'checked');
 
         $unsupported_mods = array();
         if ($allmods = $DB->get_records('modules') ) {

@@ -144,12 +144,6 @@ function groups_get_grouping($groupingid, $fields='*', $strictness=IGNORE_MISSIN
 function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*') {
     global $CFG, $DB;
 
-    // groupings are ignored when not enabled
-    if (empty($CFG->enablegroupings)) {
-        $groupingid = 0;
-    }
-
-
     if (empty($userid)) {
         $userfrom  = "";
         $userwhere = "";
@@ -238,10 +232,6 @@ function groups_get_user_groups($courseid, $userid=0) {
 function groups_get_all_groupings($courseid) {
     global $CFG, $DB;
 
-    // groupings are ignored when not enabled
-    if (empty($CFG->enablegroupings)) {
-        return(false);
-    }
     return $DB->get_records_sql("SELECT *
                                    FROM {groupings}
                                   WHERE courseid = ?
@@ -286,11 +276,6 @@ function groups_has_membership($cm, $userid=null) {
     global $CFG, $USER, $DB;
 
     static $cache = array();
-
-    // groupings are ignored when not enabled
-    if (empty($CFG->enablegroupings)) {
-        $cm->groupingid = 0;
-    }
 
     if (empty($userid)) {
         $userid = $USER->id;
@@ -521,11 +506,6 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
             DEBUG_DEVELOPER);
     }
 
-    // groupings are ignored when not enabled
-    if (empty($CFG->enablegroupings)) {
-        $cm->groupingid = 0;
-    }
-
     if (!$groupmode = groups_get_activity_groupmode($cm)) {
         if ($return) {
             return '';
@@ -694,11 +674,6 @@ function groups_get_course_group($course, $update=false) {
 function groups_get_activity_group($cm, $update=false) {
     global $CFG, $USER, $SESSION;
 
-    // groupings are ignored when not enabled
-    if (empty($CFG->enablegroupings)) {
-        $cm->groupingid = 0;
-    }
-
     if (!$groupmode = groups_get_activity_groupmode($cm)) {
         // NOGROUPS used
         return false;
@@ -807,7 +782,7 @@ function groups_course_module_visible($cm, $userid=null) {
     if (empty($userid)) {
         $userid = $USER->id;
     }
-    if (empty($CFG->enablegroupings)) {
+    if (empty($CFG->enablegroupmembersonly)) {
         return true;
     }
     if (empty($cm->groupmembersonly)) {
