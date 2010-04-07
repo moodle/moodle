@@ -2676,7 +2676,7 @@ function get_roles_with_capability($capability, $permission=NULL, $context=NULL)
  *
  * @param int $roleid the role of the id
  * @param int $userid userid
- * @param int $groupid group id
+ * @param int $groupid_ignored - never implemented!
  * @param int $contextid id of the context
  * @param int $timestart time this assignment becomes effective defaults to 0
  * @param int $timeend time this assignemnt ceases to be effective defaults to 0
@@ -2685,7 +2685,7 @@ function get_roles_with_capability($capability, $permission=NULL, $context=NULL)
  * @param string $timemodified defaults to ''
  * @return int new id of the assigment
  */
-function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $timeend=0, $hidden_ignored=0, $enrol='manual',$timemodified='') {
+function role_assign($roleid, $userid, $groupid_ignored, $contextid, $timestart=0, $timeend=0, $hidden_ignored=0, $enrol='manual',$timemodified='') {
     global $USER, $CFG, $DB;
 
 /// Do some data validation
@@ -2695,18 +2695,13 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         return false;
     }
 
-    if (empty($userid) && empty($groupid)) {
-        debugging('Either userid or groupid must be provided');
+    if (empty($userid)) {
+        debugging('Userid or groupid must be provided');
         return false;
     }
 
     if ($userid && !$DB->record_exists('user', array('id'=>$userid))) {
         debugging('User ID '.intval($userid).' does not exist!');
-        return false;
-    }
-
-    if ($groupid && !groups_group_exists($groupid)) {
-        debugging('Group ID '.intval($groupid).' does not exist!');
         return false;
     }
 
@@ -2725,11 +2720,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
     }
 
 /// Check for existing entry
-    if ($userid) {
-        $ra = $DB->get_record('role_assignments', array('roleid'=>$roleid, 'contextid'=>$context->id, 'userid'=>$userid));
-    } else {
-        $ra = $DB->get_record('role_assignments', array('roleid'=>$roleid, 'contextid'=>$context->id, 'groupid'=>$groupid));
-    }
+    $ra = $DB->get_record('role_assignments', array('roleid'=>$roleid, 'contextid'=>$context->id, 'userid'=>$userid));
 
     if (empty($ra)) {             // Create a new entry
         $ra = new object();
@@ -2801,12 +2792,12 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
  * @global object
  * @param int $roleid defaults to 0
  * @param int $userid defaults to 0
- * @param int $groupid defaults to 0
+ * @param int $groupid_ignored never implemented
  * @param int $contextid defaults to 0
  * @param mixed $enrol unassign only if enrolment type matches, NULL means anything. Defaults to NULL
  * @return boolean success or failure
  */
-function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NULL) {
+function role_unassign($roleid=0, $userid=0, $groupid_ignored=0, $contextid=0, $enrol=NULL) {
 
     global $USER, $CFG, $DB;
     require_once($CFG->dirroot.'/group/lib.php');
