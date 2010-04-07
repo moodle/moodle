@@ -38,6 +38,7 @@ class quiz_report_responses_table extends table_sql {
                         '" onsubmit="confirm(\''.$strreallydel.'\');">';
                 echo '<div style="display: none;">';
                 echo html_writer::input_hidden_params($displayurl);
+                echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())) . "\n";
                 echo '</div>';
                 echo '<div>';
             }

@@ -54,26 +54,6 @@ class quiz_overview_report extends quiz_default_report {
             $allowed = $groupstudents;
         }
 
-        if (empty($currentgroup)||$groupstudents) {
-            if (optional_param('delete', 0, PARAM_BOOL)){
-                if($attemptids = optional_param('attemptid', array(), PARAM_INT)) {
-                    //attempts need to be deleted
-                    $this->delete_selected_attempts($quiz, $cm, $attemptids, $groupstudents);
-                    //No need for a redirect, any attemptids that do not exist are ignored.
-                    //So no problem if the user refreshes and tries to delete the same attempts
-                    //twice.
-                }
-            } else if (optional_param('regrade', 0, PARAM_BOOL)){
-                if($attemptids = optional_param('attemptid', array(), PARAM_INT)) {
-                    $this->regrade_selected_attempts($quiz, $attemptids, $groupstudents);
-                    //No need for a redirect, any attemptids that do not exist are ignored.
-                    //So no problem if the user refreshes and tries to delete the same attempts
-                    //twice.
-                }
-            }
-        }
-
-
         $pageoptions = array();
         $pageoptions['id'] = $cm->id;
         $pageoptions['q'] = $quiz->id;
@@ -146,6 +126,22 @@ class quiz_overview_report extends quiz_default_report {
         $displayoptions['qmfilter'] = $qmfilter;
         $displayoptions['regradefilter'] = $regradefilter;
 
+        if (empty($currentgroup) || $groupstudents) {
+            if (optional_param('delete', 0, PARAM_BOOL) && confirm_sesskey()) {
+                if ($attemptids = optional_param('attemptid', array(), PARAM_INT)) {
+                    require_capability('mod/quiz:deleteattempts', $this->context);
+                    $this->delete_selected_attempts($quiz, $cm, $attemptids, $groupstudents);
+                    redirect($reporturl->out(false, $displayoptions));
+                }
+            } else if (optional_param('regrade', 0, PARAM_BOOL) && confirm_sesskey()) {
+                if ($attemptids = optional_param('attemptid', array(), PARAM_INT)) {
+                    $this->regrade_selected_attempts($quiz, $attemptids, $groupstudents);
+                    redirect($reporturl->out(false, $displayoptions));
+                }
+            }
+        }
+
+
         //work out the sql for this table.
         if ($detailedmarks) {
             $questions = quiz_report_load_questions($quiz);
@@ -162,11 +158,11 @@ class quiz_overview_report extends quiz_default_report {
             $this->print_header_and_tabs($cm, $course, $quiz, "overview");
         }
 
-        if ($regradeall){
+        if ($regradeall && confirm_sesskey()) {
             $this->regrade_all(false, $quiz, $groupstudents);
-        } else if ($regradealldry){
+        } else if ($regradealldry && confirm_sesskey()) {
             $this->regrade_all(true, $quiz, $groupstudents);
-        } else if ($regradealldrydo){
+        } else if ($regradealldrydo && confirm_sesskey()) {
             $this->regrade_all_needed($quiz, $groupstudents);
         }
         if ($regradeall || $regradealldry || $regradealldrydo){
@@ -297,6 +293,7 @@ class quiz_overview_report extends quiz_default_report {
                     echo '<form action="'.$displayurl->out_omit_querystring().'">';
                     echo '<div>';
                     echo html_writer::input_hidden_params($displayurl);
+                    echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())) . "\n";
                     echo '<input type="submit" name="regradeall" value="'.$regradealllabel.'"/>';
                     echo '<input type="submit" name="regradealldry" value="'.$regradealldrylabel.'"/>';
                     if ($countregradeneeded){
@@ -623,16 +620,14 @@ class quiz_overview_report extends quiz_default_report {
     }
     function delete_selected_attempts($quiz, $cm, $attemptids, $groupstudents){
         global $DB, $COURSE;
-        require_capability('mod/quiz:deleteattempts', $this->context);
-        $attemptids = optional_param('attemptid', array(), PARAM_INT);
-        if ($groupstudents){
-            list($usql, $params) = $DB->get_in_or_equal($groupstudents);
-            $where = "qa.userid $usql AND ";
-        }
         foreach($attemptids as $attemptid) {
+            $attempt = $DB->get_record('quiz_attempts', array('id' => $attemptid));
+            if ($groupstudents && !in_array($attempt->userid, $groupstudents)) {
+                continue;
+            }
             add_to_log($COURSE->id, 'quiz', 'delete attempt', 'report.php?id=' . $cm->id,
                     $attemptid, $cm->id);
-            quiz_delete_attempt($attemptid, $quiz);
+            quiz_delete_attempt($attempt, $quiz);
         }
     }
     function regrade_selected_attempts($quiz, $attemptids, $groupstudents){

@@ -79,6 +79,7 @@ class quiz_report_overview_table extends table_sql {
                 echo '<form id="attemptsform" method="post" action="' . $this->reporturl->out_omit_querystring() .'">';
                 echo '<div style="display: none;">';
                 echo html_writer::input_hidden_params($url);
+                echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())) . "\n";
                 echo '</div>';
                 echo '<div>';
             }

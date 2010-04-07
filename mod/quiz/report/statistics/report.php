@@ -72,7 +72,7 @@ class quiz_statistics_report extends quiz_default_report {
             $groupstudents = array();
         }
 
-        if ($recalculate){
+        if ($recalculate && confirm_sesskey()) {
             if ($todelete = $DB->get_records_menu('quiz_statistics', array('quizid' => $quiz->id, 'groupid'=> (int)$currentgroup, 'allattempts'=>$useallattempts))){
                 list($todeletesql, $todeleteparams) = $DB->get_in_or_equal(array_keys($todelete));
                 if (!$DB->delete_records_select('quiz_statistics', "id $todeletesql", $todeleteparams)){
@@ -409,7 +409,7 @@ class quiz_statistics_report extends quiz_default_report {
                 }
                 $quizinformationtablehtml .= $OUTPUT->box_start('boxaligncenter generalbox boxwidthnormal mdl-align');
                 $quizinformationtablehtml .= get_string('lastcalculated', 'quiz_statistics', $a);
-                $aurl = new moodle_url($reporturl->out_omit_querystring(), $reporturl->params()+array('recalculate'=>1));
+                $aurl = new moodle_url($reporturl->out_omit_querystring(), $reporturl->params() + array('recalculate' => 1, 'sesskey' => sesskey()));
                 $quizinformationtablehtml .= $OUTPUT->single_button($aurl, get_string('recalculatenow', 'quiz_statistics'));
                 $quizinformationtablehtml .= $OUTPUT->box_end();
             }

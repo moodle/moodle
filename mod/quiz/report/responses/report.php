@@ -32,20 +32,6 @@ class quiz_responses_report extends quiz_default_report {
 
         $download = optional_param('download', '', PARAM_ALPHA);
 
-        if($attemptids = optional_param('attemptid', array(), PARAM_INT)) {
-            //attempts need to be deleted
-            require_capability('mod/quiz:deleteattempts', $context);
-            $attemptids = optional_param('attemptid', array(), PARAM_INT);
-            foreach($attemptids as $attemptid) {
-                add_to_log($course->id, 'quiz', 'delete attempt', 'report.php?id=' . $cm->id,
-                        $attemptid, $cm->id);
-                quiz_delete_attempt($attemptid, $quiz);
-            }
-            //No need for a redirect, any attemptids that do not exist are ignored.
-            //So no problem if the user refreshes and tries to delete the same attempts
-            //twice.
-        }
-
 
         $pageoptions = array();
         $pageoptions['id'] = $cm->id;
@@ -122,6 +108,21 @@ class quiz_responses_report extends quiz_default_report {
                 $groupstudents = array_keys($groupstudents);
             }
             $allowed = $groupstudents;
+        }
+
+        if ($students && ($attemptids = optional_param('attemptid', array(), PARAM_INT)) && confirm_sesskey()) {
+            //attempts need to be deleted
+            require_capability('mod/quiz:deleteattempts', $context);
+            foreach ($attemptids as $attemptid) {
+                $attempt = $DB->get_record('quiz_attempts', array('id' => $attemptid));
+                if ($groupstudents && !in_array($attempt->userid, $groupstudents)) {
+                    continue;
+                }
+                add_to_log($course->id, 'quiz', 'delete attempt', 'report.php?id=' . $cm->id,
+                        $attemptid, $cm->id);
+                quiz_delete_attempt($attempt, $quiz);
+            }
+            redirect($reporturl->out(false, $displayoptions));
         }
 
         $questions = quiz_report_load_questions($quiz);
