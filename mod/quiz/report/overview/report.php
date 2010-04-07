@@ -29,20 +29,6 @@ class quiz_report extends quiz_default_report {
             $this->print_header_and_tabs($cm, $course, $quiz, "overview");
         }
 
-        if($attemptids = optional_param('attemptid', array(), PARAM_INT)) {
-            //attempts need to be deleted
-            require_capability('mod/quiz:deleteattempts', $context);
-            $attemptids = optional_param('attemptid', array(), PARAM_INT);
-            foreach($attemptids as $attemptid) {
-                add_to_log($course->id, 'quiz', 'delete attempt', 'report.php?id=' . $cm->id,
-                        $attemptid, $cm->id);
-                quiz_delete_attempt($attemptid, $quiz);
-            }
-            //No need for a redirect, any attemptids that do not exist are ignored.
-            //So no problem if the user refreshes and tries to delete the same attempts
-            //twice.
-        }
-
         // Work out some display options - whether there is feedback, and whether scores should be shown.
         $hasfeedback = quiz_has_feedback($quiz->id) && $quiz->grade > 1.e-7 && $quiz->sumgrades > 1.e-7;
         $fakeattempt = new stdClass();
@@ -129,6 +115,7 @@ class quiz_report extends quiz_default_report {
         if (empty($currentgroup)) {
             // all users who can attempt quizzes
             $groupstudentslist = '';
+            $groupstudents = array();
             $allowedlist = $studentslist;
         } else {
             // all users who can attempt quizzes and who are in the currently selected group
@@ -139,6 +126,23 @@ class quiz_report extends quiz_default_report {
             }
             $groupstudentslist = join(',', array_keys($groupstudents));
             $allowedlist = $groupstudentslist;
+        }
+
+        if ($students && ($attemptids = optional_param('attemptid', array(), PARAM_INT)) && confirm_sesskey()) {
+            //attempts need to be deleted
+            require_capability('mod/quiz:deleteattempts', $context);
+            foreach ($attemptids as $attemptid) {
+                $attempt = get_record('quiz_attempts', 'id', $attemptid);
+                if ($groupstudents && !in_array($attempt->userid, $groupstudents)) {
+                    continue;
+                }
+                add_to_log($course->id, 'quiz', 'delete attempt', 'report.php?id=' . $cm->id,
+                        $attemptid, $cm->id);
+                quiz_delete_attempt($attempt, $quiz);
+            }
+            //No need for a redirect, any attemptids that do not exist are ignored.
+            //So no problem if the user refreshes and tries to delete the same attempts
+            //twice.
         }
 
         if (!$nostudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)){
@@ -607,6 +611,7 @@ class quiz_report extends quiz_default_report {
                             '" onsubmit="return confirm(\''.$strreallydel.'\');">';
                     echo '<div style="display: none;">';
                     echo $reporturlwithdisplayoptions->hidden_params_out();
+                    echo '<input type="hidden" name="sesskey" value="' . sesskey() . '">';
                     echo '</div>';
                     echo '<div>';
     
