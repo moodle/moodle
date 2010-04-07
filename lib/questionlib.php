@@ -822,7 +822,9 @@ function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid =
 
     // The question field must be listed first so that it is used as the
     // array index in the array returned by get_records_sql
-    $statefields = 'n.questionid as question, s.*, n.sumpenalty, n.manualcomment';
+    $statefields = 'n.questionid as question, s.id, s.attempt, s.originalquestion, ' .
+            's.seq_number, s.answer, s.timestamp, s.event, s.grade, s.raw_grade, ' .
+            's.penalty, n.sumpenalty, n.manualcomment';
     // Load the newest states for the questions
     $sql = "SELECT $statefields".
            "  FROM {$CFG->prefix}question_states s,".
@@ -856,8 +858,11 @@ function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid =
                 // If the new attempt is to be based on this previous attempt.
                 // Find the responses from the previous attempt and save them to the new session
 
-                // Load the last graded state for the question
-                $statefields = 'n.questionid as question, s.*, n.sumpenalty';
+                // Load the last graded state for the question. Note, $statefields is
+                // the same as above, except that we don't want n.manualcomment.
+                $statefields = 'n.questionid as question, s.id, s.attempt, s.originalquestion, ' .
+                        's.seq_number, s.answer, s.timestamp, s.event, s.grade, s.raw_grade, ' .
+                        's.penalty, n.sumpenalty';
                 $sql = "SELECT $statefields".
                        "  FROM {$CFG->prefix}question_states s,".
                        "       {$CFG->prefix}question_sessions n".
