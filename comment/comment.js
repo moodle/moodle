@@ -55,7 +55,7 @@ M.core_comment = {
                     return false;
                 }, this);
                 CommentHelper.confirmoverlay = new Y.Overlay({
-bodyContent: '<a href="#" id="confirmdelete-'+this.client_id+'">'+M.str.moodle.sure+'</a> <a href="#" id="canceldelete-'+this.client_id+'">'+M.str.moodle.cancel+'</a>',
+bodyContent: '<a href="#" id="confirmdelete-'+this.client_id+'">'+M.str.moodle.yes+'</a> <a href="#" id="canceldelete-'+this.client_id+'">'+M.str.moodle.no+'</a>',
                                         visible: false
                                         });
                 CommentHelper.confirmoverlay.render(document.body);
