@@ -253,7 +253,7 @@ bodyContent: '<a href="#" id="confirmdelete-'+this.client_id+'">'+M.str.moodle.y
             register_delete_buttons: function() {
                 var scope = this;
                 // page buttons
-                Y.all('div.comment-content a').each(
+                Y.all('div.comment-delete a').each(
                     function(node, id) {
                         var theid = node.get('id');
                         var parseid = new RegExp("comment-delete-"+scope.client_id+"-(\\d+)", "i");
