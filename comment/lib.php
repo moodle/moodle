@@ -79,6 +79,7 @@ class comment {
     private static $comment_itemid = null;
     private static $comment_context = null;
     private static $comment_area = null;
+	private static $comment_page = null;
     /**
      * Construct function of comment class, initilize
      * class members
@@ -186,6 +187,7 @@ EOD;
         self::$nonjs = optional_param('nonjscomment', '', PARAM_ALPHA);
         self::$comment_itemid  = optional_param('comment_itemid',  '', PARAM_INT);
         self::$comment_context = optional_param('comment_context', '', PARAM_INT);
+		self::$comment_page    = optional_param('comment_page',    '', PARAM_INT);
         self::$comment_area    = optional_param('comment_area',    '', PARAM_ALPHAEXT);
 
         $PAGE->requires->string_for_js('addcomment', 'moodle');
@@ -270,7 +272,7 @@ EOD;
         $murl->param('comment_itemid', $this->options->itemid);
         $murl->param('comment_context', $this->options->context->id);
         $murl->param('comment_area', $this->options->commentarea);
-        $murl->remove_params('page');
+        $murl->remove_params('comment_page');
         $this->link = $murl->out();
 
         $options = new stdclass;
@@ -290,7 +292,7 @@ EOD;
 
         if (!empty(self::$nonjs)) {
             // return non js comments interface
-            return $this->print_comments($this->page, $return, true);
+            return $this->print_comments(self::$comment_page, $return, true);
         }
 
         $strsubmit = get_string('submit');
@@ -438,7 +440,7 @@ EOD;
         }
         if (!empty(self::$nonjs)) {
             // used in non-js interface
-            return $OUTPUT->paging_bar($count, $page, $CFG->commentsperpage, $this->link);
+            return $OUTPUT->paging_bar($count, $page, $CFG->commentsperpage, $this->link, 'comment_page');
         } else {
             // return ajax paging bar
             $str = '';
@@ -558,7 +560,6 @@ EOD;
             $list = '<li id="comment-'.$cmt->id.'-'.$this->cid.'">'.$this->print_comment($cmt, $nonjs).'</li>' . $list;
         }
         $html .= $list;
-
         if ($nonjs) {
             $html .= '</ul>';
             $html .= $this->get_pagination($page);
