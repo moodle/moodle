@@ -8,12 +8,22 @@ class feedback_item_captcha extends feedback_item_base {
 
     }
 
-    function show_edit($item) {
+/**
+ * Build the editform for the item
+ *
+ * @global object
+ * @param object $item the instance of the recordset feedback_item
+ * @param array $commonparams all hidden values needed in the form
+ * @param array $positionlist this array build the selection list for itemposition
+ * @param int $position the current itemposition
+ * @return object instance of the built form
+ */
+    function show_edit($item, $commonparams, $positionlist, $position) {
         global $CFG;
 
         require_once('captcha_form.php');
 
-        $item_form = new feedback_captcha_form();
+        $item_form = new feedback_captcha_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position));
 
         $item->presentation = empty($item->presentation) ? 3 : $item->presentation;
         $item->name = empty($item->name) ? '' : $item->name;

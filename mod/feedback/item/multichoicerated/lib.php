@@ -17,12 +17,12 @@ class feedback_item_multichoicerated extends feedback_item_base {
 
     }
 
-    function show_edit($item) {
+    function show_edit($item, $commonparams, $positionlist, $position) {
         global $CFG;
 
         require_once('multichoicerated_form.php');
 
-        $item_form = new feedback_multichoicerated_form();
+        $item_form = new feedback_multichoicerated_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position));
 
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
         $item->name = empty($item->name) ? '' : $item->name;

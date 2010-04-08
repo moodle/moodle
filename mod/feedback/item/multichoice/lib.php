@@ -12,12 +12,12 @@ class feedback_item_multichoice extends feedback_item_base {
 
     }
 
-    function show_edit($item) {
+    function show_edit($item, $commonparams, $positionlist, $position) {
         global $CFG;
 
         require_once('multichoice_form.php');
 
-        $item_form = new feedback_multichoice_form();
+        $item_form = new feedback_multichoice_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position));
 
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
         $item->name = empty($item->name) ? '' : $item->name;

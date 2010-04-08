@@ -84,22 +84,8 @@ if($id and $item = $DB->get_record('feedback_item', array('id'=>$id))) {
 
 require_once($CFG->dirroot.'/mod/feedback/item/'.$typ.'/lib.php');
 
-//new formdefinition
 $itemclass = 'feedback_item_'.$typ;
 $itemobj = new $itemclass();
-$item_form = &$itemobj->show_edit($item);
-
-$i_form = &$item_form->get_item_form();
-// $i_form->addElement('header', 'general', 'Titel');
-$i_form->addElement('hidden', 'cmid', $cmid);
-$i_form->setType('cmid', PARAM_INT);
-$i_form->addElement('hidden', 'id', isset($item->id)?$item->id:'');
-$i_form->setType('id', PARAM_INT);
-$i_form->addElement('hidden', 'typ', $typ);
-$i_form->setType('typ', PARAM_ALPHA);
-$i_form->addElement('hidden', 'feedbackid', $feedback->id);
-$i_form->setType('feedbackid', PARAM_INT);
-
 
 $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
 if($position == -1){
@@ -109,27 +95,14 @@ if($position == -1){
     $i_formselect_last = $lastposition;
     $i_formselect_value = $item->position;
 }
-$i_formselect = $i_form->addElement('select',
-                                    'position',
-                                    get_string('position', 'feedback').'&nbsp;',
-                                    array_slice(range(0,$i_formselect_last),1,$i_formselect_last,true));
-$i_formselect->setValue($i_formselect_value);
+$positionlist = array_slice(range(0,$i_formselect_last),1,$i_formselect_last,true);
 
-$buttonarray = array();
-if(!empty($item->id)){
-    $i_form->addElement('hidden', 'updateitem', '1');
-    $i_form->setType('updateitem', PARAM_INT);
-    // $i_form->addElement('submit', 'update_item', get_string('update_item', 'feedback'));
-    $buttonarray[] = &$i_form->createElement('submit', 'update_item', get_string('update_item', 'feedback'));
-}else{
-    $i_form->addElement('hidden', 'saveitem', '1');
-    $i_form->setType('saveitem', PARAM_INT);
-    // $i_form->addElement('submit', 'save_item', get_string('save_item', 'feedback'));
-    $buttonarray[] = &$i_form->createElement('submit', 'save_item', get_string('save_item', 'feedback'));
-}
-// $i_form->addElement('cancel');
-$buttonarray[] = &$i_form->createElement('cancel');
-$i_form->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+$commonarams = array('cmid'=>$cmid,
+                     'id'=>isset($item->id) ? $item->id : NULL,
+                     'typ'=>$typ,
+                     'feedbackid'=>$feedback->id);
+                     
+$item_form = &$itemobj->show_edit($item, $commonarams, $positionlist, $i_formselect_value);
 
 ////////////////////////////////////////////////////////////////////////////////////
 $item_form->set_data($item);

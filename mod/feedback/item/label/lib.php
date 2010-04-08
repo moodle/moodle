@@ -8,12 +8,12 @@ class feedback_item_label extends feedback_item_base {
 
     }
 
-    function show_edit($item) {
+    function show_edit($item, $commonparams, $positionlist, $position) {
         global $CFG;
 
         require_once('label_form.php');
 
-        $item_form = new feedback_label_form();
+        $item_form = new feedback_label_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position));
         
         return $item_form;
     }
