@@ -107,7 +107,7 @@ if ($scales = $DB->get_records("scale", array("courseid"=>$course->id), "name AS
 } else {
     if (has_capability('moodle/course:managescales', $context)) {
         echo "<p align=\"center\">(";
-        print_string("scalestip");
+        print_string("scalestip2");
         echo ")</p>";
     }
 }
