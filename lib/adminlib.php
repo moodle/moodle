@@ -5088,6 +5088,12 @@ class admin_setting_managelicenses extends admin_setting {
                 $hideshow = html_writer::link($url.'&action=enable&license='.$value->shortname,
                     html_writer::tag('img', '', array('src'=>$OUTPUT->pix_url('i/show'), 'class'=>'icon', 'alt'=>'enable')));
             }
+
+            if ($value->shortname == $CFG->sitedefaultlicense) {
+                $displayname .= ' '.html_writer::tag('img', '', array('src'=>$OUTPUT->pix_url('i/lock'), 'class'=>'icon', 'alt'=>get_string('default'), 'title'=>get_string('default')));
+                $hideshow = '';
+            }
+
             $enabled = true;
 
             $table->data[] =array($displayname, $hideshow);

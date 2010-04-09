@@ -106,7 +106,11 @@ class license_manager {
      * @return boolean
      */
     static public function disable($license) {
-        global $DB;
+        global $DB, $CFG;
+        // Site default license cannot be disabled!
+        if ($license == $CFG->sitedefaultlicense) {
+            print_error('error');
+        }
         if ($license = self::get_license_by_shortname($license)) {
             $license->enabled = 0;
             $DB->update_record('license', $license);

@@ -89,6 +89,17 @@ if ($hassiteconfig) {
 /// License types
     $ADMIN->add('modules', new admin_category('licensesettings', get_string('license')));
     $temp = new admin_settingpage('managelicenses', get_string('license'));
+
+    require_once($CFG->libdir . '/licenselib.php');
+    $licenses = array();
+    $array = explode(',', $CFG->licenses);
+    foreach ($array as $value) {
+        $licenses[$value] = get_string($value, 'license');
+    }
+    $temp->add(new admin_setting_configselect('sitedefaultlicense', get_string('configsitedefaultlicense','admin'), get_string('configsitedefaultlicensehelp','admin'), 'allrightsreserved', $licenses));
+
+    $ADMIN->add('licensesettings', $temp);
+
     $temp->add(new admin_setting_managelicenses());
     $ADMIN->add('licensesettings', $temp);
 
