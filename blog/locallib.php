@@ -101,7 +101,7 @@ class blog_entry {
         // Comments
         $cmt = new stdClass();
         $cmt->context = get_context_instance(CONTEXT_USER, $user->id);
-        $cmt->courseid = $COURSE->id;
+        $cmt->courseid = $PAGE->course->id;
         $cmt->area = 'format_blog';
         $cmt->env = 'blog';
         $cmt->itemid = $this->id;
@@ -149,9 +149,9 @@ class blog_entry {
         $topiccell->text = $OUTPUT->container($template['title'], 'subject');
         $topiccell->text .= $OUTPUT->container_start('author');
 
-        $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $COURSE->id)));
+        $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $PAGE->course->id)));
         $by = new object();
-        $by->name =  html_writer::link(new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $COURSE->id)), $fullname);
+        $by->name =  html_writer::link(new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $PAGE->course->id)), $fullname);
         $by->date = $template['created'];
 
         $topiccell->text .= get_string('bynameondate', 'forum', $by);
