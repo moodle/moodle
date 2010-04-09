@@ -39,20 +39,22 @@ $page      = optional_param('page',      0,      PARAM_INT);
 
 if (!empty($client_id)) {
     $cmt = new stdclass;
-    $cmt->contextid = $contextid;
-    if (!empty($course)) {
-        $cmt->courseid  = $course->id;
-    }
+    $cmt->context   = $context;
+    $cmt->course    = $course;
+    $cmt->cm        = $cm;
     $cmt->area      = $area;
     $cmt->itemid    = $itemid;
     $cmt->client_id = $client_id;
     $comment = new comment($cmt);
+} else {
+    die;
 }
+
 switch ($action) {
     case 'add':
         $cmt = $comment->add($content);
-        $cmt->count = $comment->count();
         if (!empty($cmt) && is_object($cmt)) {
+            $cmt->count = $comment->count();
             $cmt->client_id = $client_id;
             echo json_encode($cmt);
         }

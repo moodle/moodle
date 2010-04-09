@@ -439,7 +439,6 @@ function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
     } else {
         return $default;
     }
-
     return clean_param($param, $type);
 }
 
@@ -520,7 +519,6 @@ function validate_param($param, $type, $allownull=NULL_NOT_ALLOWED, $debuginfo='
 function clean_param($param, $type) {
 
     global $CFG;
-
     if (is_array($param)) {              // Let's loop
         $newparam = array();
         foreach ($param as $key => $value) {
@@ -4883,6 +4881,7 @@ function send_password_change_confirmation_email($user) {
     $data->lastname  = $user->lastname;
     $data->sitename  = format_string($site->fullname);
     $data->link      = $CFG->httpswwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. urlencode($user->username);
+    debug($data);
     $data->admin     = generate_email_signoff();
 
     $message = get_string('emailpasswordconfirmation', '', $data);
@@ -9637,4 +9636,17 @@ function mnet_get_idp_jump_url($user) {
         $mnetjumps[$user->mnethostid] = $idp->wwwroot . $idpjumppath . '?hostwwwroot=' . $CFG->wwwroot . '&wantsurl=';
     }
     return $mnetjumps[$user->mnethostid];
+}
+
+function echo_fb($var, $label='info') {
+    require_once('FirePHPCore/FirePHP.class.php');
+    $firephp = FirePHP::getInstance(true);
+    $firephp->log($var, $label);
+}
+
+function debug($text) {
+    $str = time();
+    $str .= var_export($text, true);
+    $str .= "\n==\n";
+    file_put_contents('/Library/WebServer/moodledata/output.log', $str, FILE_APPEND);
 }

@@ -100,7 +100,8 @@ class blog_entry {
         $user = $DB->get_record('user', array('id'=>$this->userid));
         // Comments
         $cmt = new stdClass();
-        $cmt->contextid = get_context_instance(CONTEXT_USER, $user->id)->id;
+        $cmt->context = get_context_instance(CONTEXT_USER, $user->id);
+        $cmt->courseid = $COURSE->id;
         $cmt->area = 'format_blog';
         $cmt->env = 'blog';
         $cmt->itemid = $this->id;

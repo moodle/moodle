@@ -1278,10 +1278,13 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
 
             if (!empty($CFG->usecomments)) {
                 require_once($CFG->dirroot  . '/comment/lib.php');
+                list($context, $course, $cm) = get_context_info_array($context->id);
                 $cmt = new stdclass;
-                $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-                $cmt->area    = 'database_entry';
+                $cmt->pluginname = 'data';
                 $cmt->context = $context;
+                $cmt->course  = $course;
+                $cmt->cm      = $cm;
+                $cmt->area    = 'database_entry';
                 $cmt->itemid  = $record->id;
                 $cmt->showcount = true;
                 $comment = new comment($cmt);
@@ -1314,10 +1317,13 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
             if (($template == 'singletemplate') && ($data->comments)) {    //prints ratings options
                 if (!empty($CFG->usecomments)) {
                     require_once($CFG->dirroot . '/comment/lib.php');
+                    list($context, $course, $cm) = get_context_info_array($context->id);
                     $cmt = new stdclass;
-                    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-                    $cmt->area    = 'database_entry';
+                    $cmt->pluginname = 'data';
                     $cmt->context = $context;
+                    $cmt->course  = $course;
+                    $cmt->cm      = $cm;
+                    $cmt->area    = 'database_entry';
                     $cmt->itemid  = $record->id;
                     $cmt->showcount = true;
                     $comment = new comment($cmt);

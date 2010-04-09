@@ -227,7 +227,7 @@ function xmldb_glossary_upgrade($oldversion) {
             $lastcourseid   = null;
             $modcontext     = null;
 
-        /// move glossary comments to new comments table
+        /// move glossary comments to comments table
             if ($rs = $DB->get_recordset_sql($sql)) {
                 foreach($rs as $res) {
                     if ($res->glossaryid != $lastglossaryid || $res->courseid != $lastcourseid) {
@@ -238,11 +238,14 @@ function xmldb_glossary_upgrade($oldversion) {
                         $lastglossaryid = $res->glossaryid;
                         $lastcourseid   = $res->courseid;
                     }
+                    list($context, $course, $cm) = get_context_info_array($contextid);
                     $cmt = new stdclass;
-                    $cmt->contextid = $modcontext->id;
-                    $cmt->courseid  = $res->courseid;
-                    $cmt->area      = 'glossary_entry';
-                    $cmt->itemid    = $res->itemid;
+                    $cmt->pluginname = 'glossary';
+                    $cmt->context  = $modcontext;
+                    $cmt->courseid = $res->courseid;
+                    $cmt->cm       = $cm;
+                    $cmt->area     = 'glossary_entry';
+                    $cmt->itemid   = $res->itemid;
                     $comment = new comment($cmt);
                     $cmt = $comment->add($res->commentcontent, $res->format);
                     if (!empty($cmt)) {

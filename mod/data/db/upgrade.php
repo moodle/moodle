@@ -199,7 +199,7 @@ function xmldb_data_upgrade($oldversion) {
                 FROM {data_comments} c, {data_records} r, {data} d
                 WHERE c.recordid=r.id AND r.dataid=d.id ORDER BY dataid, courseid';
 
-            /// move data comments to new comments table
+            /// move data comments to comments table
             $lastdataid = null;
             $lastcourseid = null;
             $modcontext = null;
@@ -214,7 +214,8 @@ function xmldb_data_upgrade($oldversion) {
                         $lastcourseid = $res->courseid;
                     }
                     $cmt = new stdclass;
-                    $cmt->contextid = $modcontext->id;
+                    $cmt->pluginname = 'data';
+                    $cmt->context   = $modcontext;
                     $cmt->courseid  = $res->courseid;
                     $cmt->area      = 'database_entry';
                     $cmt->itemid    = $res->itemid;

@@ -1009,13 +1009,15 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         if (!empty($CFG->usecomments)) {
             require_once($CFG->dirroot . '/comment/lib.php');
             $cmt = new stdclass;
-            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-            $cmt->area    = 'glossary_entry';
-            $cmt->context = $modcontext;
-            $cmt->itemid  = $entry->id;
+            $cmt->pluginname = 'glossary';
+            $cmt->context  = $context;
+            $cmt->course   = $course->id;
+            $cmt->cm       = $cm;
+            $cmt->area     = 'glossary_entry';
+            $cmt->itemid   = $entry->id;
             $cmt->showcount = true;
             $comment = new comment($cmt);
-            $return .= '<div style="width:500px">'.$comment->output(true).'</div>';
+            $return .= '<div>'.$comment->output(true).'</div>';
         }
     }
 
