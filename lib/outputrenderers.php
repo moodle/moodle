@@ -2032,7 +2032,7 @@ class core_renderer_cli extends core_renderer {
      * @param string $id An optional ID
      * @return string A template fragment for a heading
      */
-    public function heading($text, $level, $classes = 'main', $id = null) {
+    public function heading($text, $level = 2, $classes = 'main', $id = null) {
         $text .= "\n";
         switch ($level) {
             case 1:
@@ -2126,7 +2126,7 @@ class core_renderer_ajax extends core_renderer {
     }
     public function footer() {
     }
-    public function heading($text, $level, $classes = 'main', $id = null) {
+    public function heading($text, $level = 2, $classes = 'main', $id = null) {
     }
 }
 
