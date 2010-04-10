@@ -5702,11 +5702,19 @@ interface string_manager {
      * @return array two-letter country code => translated name.
      */
     public function get_list_of_countries();
+
+    /**
+     * Returns localised list of installed languages
+     * @param bool $returnall return all or just enabled
+     */
+    public function get_list_of_languages($returnall = false);
 }
 
 
 /**
  * Low level string getching implementation.
+ *
+ * TODO: implement lang precompilation
  *
  * @package    moodlecore
  * @copyright  2010 Petr Skoda (http://skodak.org)
@@ -5934,6 +5942,59 @@ class amos_string_manager implements string_manager {
         $lang = current_language();
         return $this->load_component_strings('countries', $lang);
     }
+
+    /**
+     * Returns localised list of installed languages
+     * @param bool $returnall return all or just enabled
+     */
+    public function get_list_of_languages($returnall = false) {
+        global $CFG;
+
+        $languages = array();
+
+        if (!$returnall && !empty($CFG->langlist)) {
+            // return only languages allowed in langlist admin setting
+            $langlist = explode(',', $CFG->langlist);
+            // find existing langs from langlist
+            foreach ($langlist as $lang) {
+                $lang = trim($lang);   //Just trim spaces to be a bit more permissive
+                if (strstr($lang, '_local') !== false) {
+                    continue;
+                }
+                if ($lang !== 'en' and !file_exists("$this->otherroot/$lang/langconfig.php")) {
+                    // some broken or missing lang - can not swith to it anyway
+                    continue;
+                }
+                $string = $this->load_component_strings('langconfig', $lang);
+                if (!empty($string['thislanguage'])) {
+                    $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
+                }
+                unset($string);
+            }
+
+        } else {
+            // return all languages available in system
+            $langdirs = get_list_of_plugins('', '', $this->otherroot);
+
+            $langdirs = array_merge($langdirs, array("$CFG->dirroot/lang/en"=>'en'));
+            // Sort all
+
+            asort($langdirs);
+            // Loop through all langs and get info
+            foreach ($langdirs as $lang) {
+                if (strstr($lang, '_local') !== false) {
+                    continue;
+                }
+                $string = $this->load_component_strings('langconfig', $lang);
+                if (!empty($string['thislanguage'])) {
+                    $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
+                }
+                unset($string);
+            }
+        }
+
+        return $languages;
+    }
 }
 
 
@@ -6015,6 +6076,30 @@ class install_string_manager implements string_manager {
      */
     public function get_list_of_countries() {
         return array();
+    }
+
+    /**
+     * Returns localised list of installed languages
+     * @param bool $returnall return all or just enabled
+     */
+    public function get_list_of_languages($returnall = false) {
+        // return all is ignored here - we need to know all langs in installer
+        $languages = array();
+        // Get raw list of lang directories
+        $langdirs = get_list_of_plugins('install/lang');
+        asort($langdirs);
+        // Get some info from each lang
+        foreach ($langdirs as $lang) {
+            if (file_exists($this->installroot.'/'.$lang.'/installer.php')) {
+                $string = array();
+                include($this->installroot.'/'.$lang.'/installer.php');
+                if (!empty($string['thislanguage'])) {
+                    $languages[$lang] = $string['thislanguage'].' ('.$lang.')';
+                }
+            }
+        }
+        // Return array
+        return $languages;
     }
 }
 
@@ -6159,105 +6244,11 @@ function print_string($identifier, $component = '', $a = NULL) {
  */
 function get_list_of_languages($refreshcache=false, $returnall=false) {
 
-    global $CFG;
-
-    $languages = array();
-
-    $filetocheck = 'langconfig.php';
-
-    if (!$refreshcache && !$returnall && !empty($CFG->langcache) && file_exists($CFG->dataroot .'/cache/languages')) {
-/// read available langs from cache
-
-        $lines = file($CFG->dataroot .'/cache/languages');
-        foreach ($lines as $line) {
-            $line = trim($line);
-            if (preg_match('/^(\w+)\s+(.+)/', $line, $matches)) {
-                $languages[$matches[1]] = $matches[2];
-            }
-        }
-        unset($lines); unset($line); unset($matches);
-        return $languages;
+    if ($refreshcache) {
+        // TODO: reimplement caching?; this may not be necessary if we implement lang pack precompilation in dataroot
     }
 
-    if (!$returnall && !empty($CFG->langlist)) {
-/// return only languages allowed in langlist admin setting
-
-        $langlist = explode(',', $CFG->langlist);
-        // find existing langs from langlist
-        foreach ($langlist as $lang) {
-            $lang = trim($lang);   //Just trim spaces to be a bit more permissive
-            if (strstr($lang, '_local')!==false) {
-                continue;
-            }
-        /// Search under dirroot/lang
-            if (file_exists($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck)) {
-                include($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck);
-                if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
-                }
-                unset($string);
-            }
-        /// And moodledata/lang
-            if (file_exists($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck)) {
-                include($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck);
-                if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
-                }
-                unset($string);
-            }
-        }
-
-    } else {
-/// return all languages available in system
-    /// Fetch langs from moodle/lang directory
-        $langdirs = get_list_of_plugins('lang');
-    /// Fetch langs from moodledata/lang directory
-        $langdirs2 = get_list_of_plugins('lang', '', $CFG->dataroot);
-    /// Merge both lists of langs
-        $langdirs = array_merge($langdirs, $langdirs2);
-    /// Sort all
-        asort($langdirs);
-    /// Get some info from each lang (first from moodledata, then from moodle)
-        foreach ($langdirs as $lang) {
-            if (strstr($lang, '_local')!==false) {
-                continue;
-            }
-        /// Search under moodledata/lang
-            if (file_exists($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck)) {
-                include($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck);
-                if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
-                }
-                unset($string);
-            }
-        /// And dirroot/lang
-            if (file_exists($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck)) {
-                include($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck);
-                if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
-                }
-                unset($string);
-            }
-        }
-    }
-
-    if ($refreshcache && !empty($CFG->langcache)) {
-        if ($returnall) {
-            // we have a list of all langs only, just delete old cache
-            @unlink($CFG->dataroot.'/cache/languages');
-
-        } else {
-            // store the list of allowed languages
-            if ($file = fopen($CFG->dataroot .'/cache/languages', 'w')) {
-                foreach ($languages as $key => $value) {
-                    fwrite($file, "$key $value\n");
-                }
-                fclose($file);
-            }
-        }
-    }
-
-    return $languages;
+    return get_string_manager()->get_list_of_languages($returnall);
 }
 
 /**

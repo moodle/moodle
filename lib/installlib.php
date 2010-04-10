@@ -124,36 +124,6 @@ function install_db_validate($database, $dbhost, $dbuser, $dbpass, $dbname, $pre
 }
 
 /**
- * This function returns a list of languages and their full names. The
- * list of available languages is fetched from install/lang/xx/installer.php
- * and it's used exclusively by the installation process
- *
- * @global object
- * @return array An associative array with contents in the form of LanguageCode => LanguageName
- */
-function install_get_list_of_languages() {
-    global $CFG;
-
-    $languages = array();
-
-    // Get raw list of lang directories
-    $langdirs = get_list_of_plugins('install/lang');
-    asort($langdirs);
-    // Get some info from each lang
-    foreach ($langdirs as $lang) {
-        if (file_exists($CFG->dirroot.'/install/lang/'.$lang.'/installer.php')) {
-            $string = array();
-            include($CFG->dirroot.'/install/lang/'.$lang.'/installer.php');
-            if (!empty($string['thislanguage'])) {
-                $languages[$lang] = $string['thislanguage'].' ('.$lang.')';
-            }
-        }
-    }
-    // Return array
-    return $languages;
-}
-
-/**
  * Returns content of config.php file.
  * @param moodle_database $database database instance
  * @param object $cfg copy of $CFG

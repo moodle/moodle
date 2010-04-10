@@ -3468,6 +3468,16 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             set_config('lang', $lang);
         }
 
+        // tweak langlist
+        if (!empty($CFG->langlist)) {
+            $langs = explode(',', $CFG->langlist);
+            foreach ($langs as $key=>$lang) {
+                $lang = str_replace('_utf8', '', $lang);
+                $langs[$key] = $lang;
+            }
+            set_config('langlist', implode(',', $langs));
+        }
+
         // Main savepoint reached
         upgrade_main_savepoint($result, 2010040900);
     }
