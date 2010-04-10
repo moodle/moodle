@@ -1343,19 +1343,19 @@ END;
      * Centered heading with attached help button (same title text)
      * and optional icon attached
      * @param string $text A heading text
-     * @param string $page The keyword that defines a help page
+     * @param string $helpidentifier The keyword that defines a help page
      * @param string $component component name
      * @param string|moodle_url $icon
      * @param string $iconalt icon alt text
      * @return string HTML fragment
      */
-    public function heading_with_help($text, $helppage, $component='moodle', $icon='', $iconalt='') {
+    public function heading_with_help($text, $helpidentifier, $component='moodle', $icon='', $iconalt='') {
         $image = '';
         if ($icon) {
             $image = $this->pix_icon($icon, $iconalt, $component, array('class'=>'icon'));
         }
 
-        $help = $this->help_icon($helppage, $text, $component);
+        $help = $this->help_icon($helpidentifier, $text, $component);
 
         return $this->heading($image.$text.$help, 2, 'main help');
     }
@@ -1369,8 +1369,8 @@ END;
      * @param string|bool $linktext true means use $title as link text, string means link text value
      * @return string HTML fragment
      */
-    public function help_icon($helppage, $title, $component = 'moodle', $linktext='') {
-        $icon = new help_icon($helppage, $title, $component);
+    public function help_icon($helpidentifier, $title, $component = 'moodle', $linktext = '') {
+        $icon = new help_icon($helpidentifier, $title, $component);
         if ($linktext === true) {
             $icon->linktext = $title;
         } else if (!empty($linktext)) {
@@ -1405,8 +1405,8 @@ END;
             $output .= $helpicon->linktext;
         }
 
-        // now create the link around it - TODO: this will be changed during the big lang cleanup in 2.0
-        $url = new moodle_url('/help.php', array('module' => $helpicon->component, 'file' => $helpicon->helppage .'.html'));
+        // now create the link around it
+        $url = new moodle_url('/help.php', array('component' => $helpicon->component, 'identifier' => $helpicon->helpidentifier, 'lang'=>current_language()));
 
         // note: this title is displayed only if JS is disabled, otherwise the link will have the new ajax tooltip
         $title = get_string('helpprefix2', '', trim($helpicon->title, ". \t"));

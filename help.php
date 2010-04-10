@@ -10,16 +10,27 @@
  * @author Martin Dougiamas
  * @package moodlecore
  */
+
+define('NO_MOODLE_COOKIES', true);
+
 require_once('config.php');
 
+$identifier = required_param('identifier', PARAM_SAFEDIR);
+$component  = required_param('component', PARAM_SAFEDIR);
+$lang       = required_param('component', PARAM_LANG);
 
-// Legacy url parameters - just dispaply error
-$file = optional_param('file', '', PARAM_PATH);
-$text = optional_param('text', 'No text to display', PARAM_CLEAN);
-$module = optional_param('module', 'moodle', PARAM_ALPHAEXT);
+if (!$lang) {
+    $lang = 'en';
+}
 
-// New get_string() parameters
-// $identifier =
-// $component =
+$SESSION->lang = $lang; // does not actually modify session because we do not use cookies here
 
-die('TODO: help files will be soon reimplemented by using normal get_string().');
+// send basic headers only, we do not need full html page here
+@header('Content-Type: text/plain; charset=utf-8');
+
+if (strpos('_hlp', $identifier) === false) {
+    echo '<strong>Old 1.9 style help files need to be converted to standard strings with "_hlp" suffix: '.$component.'/'.$identifier.'</strong>';
+    die;
+}
+
+echo get_string($identifier, $component);

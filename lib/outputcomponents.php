@@ -153,9 +153,9 @@ class user_picture implements renderable {
  */
 class help_icon implements renderable {
     /**
-     * @var string $page name of help page
+     * @var string $helpidentifier lang pack identifier (should inlcude the "_hlp" suffix)
      */
-    public $helppage;
+    public $helpidentifier;
     /**
      * @var string $title A descriptive text for title tooltip
      */
@@ -171,23 +171,23 @@ class help_icon implements renderable {
 
     /**
      * Constructor: sets up the other components in case they are needed
-     * @param string $page  The keyword that defines a help page
+     * @param string $helpidentifier  The keyword that defines a help page
      * @param string $title A descriptive text for accesibility only
      * @param string $component
      * @param bool $linktext add extra text to icon
      * @return void
      */
-    public function __construct($helppage, $title, $component = 'moodle') {
+    public function __construct($helpidentifier, $title, $component = 'moodle') {
         if (empty($title)) {
             throw new coding_exception('A help_icon object requires a $text parameter');
         }
-        if (empty($helppage)) {
-            throw new coding_exception('A help_icon object requires a $helppage parameter');
+        if (empty($helpidentifier)) {
+            throw new coding_exception('A help_icon object requires a $helpidentifier parameter');
         }
 
-        $this->helppage  = $helppage;
-        $this->title     = $title;
-        $this->component = $component;
+        $this->helpidentifier  = $helpidentifier;
+        $this->title           = $title;
+        $this->component       = $component;
     }
 }
 
