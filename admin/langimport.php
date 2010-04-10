@@ -33,7 +33,7 @@ die('Work in progress, to be replaced by the new language update interface...');
 
     $strlang         = get_string('langimport','admin');
     $strlanguage     = get_string('language');
-    $strthislanguage = get_string('thislanguage');
+    $strthislanguage = get_string('thislanguage', 'langconfig');
     $title           = $strlang;
 
     //reset and diagnose lang cache permissions
