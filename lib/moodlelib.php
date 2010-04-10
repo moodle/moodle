@@ -6525,20 +6525,20 @@ function endecrypt ($pwd, $data, $case) {
 /// ENVIRONMENT CHECKING  ////////////////////////////////////////////////////////////
 
 /**
- * Return exact path to plugin directory
+ * Returns the exact absolute path to plugin directory.
+ *
  * @param string $plugintype type of plugin
  * @param string $name name of the plugin
- * @param bool $fullpaths false means relative paths from dirroot
- * @return directory path, full or relative to dirroot
+ * @return string full path to plugin directory; NULL if not found
  */
-function get_plugin_directory($plugintype, $name, $fullpaths=true) {
+function get_plugin_directory($plugintype, $name) {
     if ($plugintype === '') {
         $plugintype = 'mod';
     }
 
-    $types = get_plugin_types($fullpaths);
+    $types = get_plugin_types(true);
     if (!array_key_exists($plugintype, $types)) {
-        return null;
+        return NULL;
     }
     $name = clean_param($name, PARAM_SAFEDIR); // just in case ;-)
 
@@ -6546,37 +6546,38 @@ function get_plugin_directory($plugintype, $name, $fullpaths=true) {
 }
 
 /**
- * Return exact path to plugin directory,
+ * Return exact absolute path to a plugin directory,
  * this method support "simpletest_" prefix designed for unit testing.
+ *
  * @param string $component name such as 'moodle', 'mod_forum' or special simpletest value
- * @param bool $fullpaths false means relative paths from dirroot
- * @return directory path, full or relative to dirroot; NULL if not found
+ * @return string full path to component directory; NULL if not found
  */
-function get_component_directory($component, $fullpaths=true) {
+function get_component_directory($component) {
     global $CFG;
-
+/*
     $simpletest = false;
     if (strpos($component, 'simpletest_') === 0) {
         $subdir = substr($component, strlen('simpletest_'));
+        //TODO: this looks borked, where is it used actually?
         return $subdir;
     }
-
+*/
     list($type, $plugin) = normalize_component($component);
 
     if ($type === 'core') {
         if ($plugin === NULL ) {
-            $path = ($fullpaths ? $CFG->libdir : 'lib');
+            $path = $CFG->libdir;
         } else {
             $subsystems = get_core_subsystems();
             if (isset($subsystems[$plugin])) {
-                $path = ($fullpaths ? $CFG->dirroot.'/'.$subsystems[$plugin] : $subsystems[$plugin]);
+                $path = $CFG->dirroot.'/'.$subsystems[$plugin];
             } else {
                 $path = NULL;
             }
         }
 
     } else {
-        $path = get_plugin_directory($type, $plugin, $fullpaths);
+        $path = get_plugin_directory($type, $plugin);
     }
 
     return $path;

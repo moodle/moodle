@@ -408,9 +408,12 @@ class page_requirements_manager {
             }
 
         } else {
-            if ($dir = get_component_directory($component, false)) {
-                if (file_exists("$CFG->dirroot/$dir/module.js")) {
-                    $module = array('name'=>$component, 'fullpath'=>"/$dir/module.js", 'requires' => array());
+            if ($dir = get_component_directory($component)) {
+                if (file_exists("$dir/module.js")) {
+                    if (strpos($dir, $CFG->dirroot.'/') === 0) {
+                        $dir = substr($dir, strlen($CFG->dirroot));
+                        $module = array('name'=>$component, 'fullpath'=>"$dir/module.js", 'requires' => array());
+                    }
                 }
             }
         }
