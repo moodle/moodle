@@ -1590,7 +1590,7 @@ function make_default_scale() {
 
     /// Read in the big description from the file.  Note this is not
     /// HTML (despite the file extension) but Moodle format text.
-    $parentlang = get_string('parentlanguage');
+    $parentlang = get_parent_language();
     if ($parentlang[0] == '[') {
         $parentlang = '';
     }

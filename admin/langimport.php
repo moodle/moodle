@@ -252,7 +252,7 @@ die('Work in progress, to be replaced by the new language update interface...');
 
     foreach($installedlangs as $l=>$unused) {
         $SESSION->lang = $l;
-        $parent = get_string('parentlanguage');
+        $parent = get_string('parentlanguage', 'langconfig');
         if ($parent == 'en') {
             continue;
         }

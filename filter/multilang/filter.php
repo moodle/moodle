@@ -76,7 +76,7 @@ function multilang_filter_impl($langblock) {
         $parentcache = array();
     }
     if (!array_key_exists($mylang, $parentcache)) {
-        $parentlang = get_string('parentlanguage');
+        $parentlang = get_parent_language($mylang);
         $parentcache[$mylang] = $parentlang;
     } else {
         $parentlang = $parentcache[$mylang];

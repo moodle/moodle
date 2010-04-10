@@ -5642,7 +5642,7 @@ function get_parent_language($lang=null) {
         $SESSION->lang = $lang;
     }
 
-    $parentlang = get_string('parentlanguage');
+    $parentlang = get_string('parentlanguage', 'langconfig');
     if ($parentlang === 'en' or $parentlang === '[[parentlanguage]]' or strpos($parentlang, '<') !== false) {
         $parentlang = '';
     }

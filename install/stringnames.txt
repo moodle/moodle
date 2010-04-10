@@ -28,7 +28,7 @@ language,moodle
 langdownloaderror,install
 memorylimithelp,install
 next,moodle
-parentlanguage,moodle
+parentlanguage,langconfig
 paths,install
 pathserrcreatedataroot,install
 pathsrodataroot,install
