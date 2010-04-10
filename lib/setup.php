@@ -260,10 +260,6 @@ if (!isset($CFG->prefix)) {   // Just in case it isn't defined in config.php
     $CFG->prefix = '';
 }
 
-if (empty($CFG->sitedefaultlicense)) {
-    $CFG->sitedefaultlicense = 'allrightsreserved';
-}
-
 //point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else
 //the problem is that we need specific version of quickforms and hacked excel files :-(
 ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
