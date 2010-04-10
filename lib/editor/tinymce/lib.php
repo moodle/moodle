@@ -71,7 +71,7 @@ class tinymce_texteditor extends texteditor {
         //TODO: reimplement rulesets, maybe it would be better to implement it some other way
         //$xmlruleset     = file_get_contents('extra/xhtml_ruleset.txt');
 
-        $directionality = get_string('thisdirection');
+        $directionality = get_string('thisdirection', 'langconfig');
         $strtime        = get_string('strftimetime');
         $strdate        = get_string('strftimedaydate');
         $lang           = current_language();

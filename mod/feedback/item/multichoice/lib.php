@@ -198,7 +198,7 @@ class feedback_item_multichoice extends feedback_item_base {
     function print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
         global $OUTPUT;
         $info = $this->get_info($item);
-        $align = get_string('thisdirection') == 'ltr' ? 'left' : 'right';
+        $align = right_to_left() ? 'right' : 'left';
 
         $presentation = explode (FEEDBACK_MULTICHOICE_LINE_SEP, $info->presentation);
 

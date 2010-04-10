@@ -1928,7 +1928,7 @@ function highlightfast($needle, $haystack) {
 function get_html_lang($dir = false) {
     $direction = '';
     if ($dir) {
-        if (get_string('thisdirection') == 'rtl') {
+        if (right_to_left()) {
             $direction = ' dir="rtl"';
         } else {
             $direction = ' dir="ltr"';
@@ -3101,12 +3101,7 @@ function print_location_comment($file, $line, $return = false)
  * @return boolean true if the current language is right-to-left (Hebrew, Arabic etc)
  */
 function right_to_left() {
-    static $result;
-
-    if (!isset($result)) {
-        $result = get_string('thisdirection') == 'rtl';
-    }
-    return $result;
+    return (get_string('thisdirection', 'langconfig') === 'rtl');
 }
 
 

@@ -147,7 +147,7 @@ function resource_display_frame($resource, $cm, $course, $file) {
         $title = strip_tags(format_string($course->shortname.': '.$resource->name));
         $framesize = $config->framesize;
         $modulename = s(get_string('modulename','resource'));
-        $dir = get_string('thisdirection');
+        $dir = get_string('thisdirection', 'langconfig');
 
         $file = <<<EOF
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">

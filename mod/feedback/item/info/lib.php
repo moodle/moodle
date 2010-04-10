@@ -106,7 +106,7 @@ class feedback_item_info extends feedback_item_base {
 
     function print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
         global $USER, $DB, $OUTPUT;
-        $align = get_string('thisdirection') == 'ltr' ? 'left' : 'right';
+        $align = right_to_left() ? 'right' : 'left';
 
         $presentation = $item->presentation;
         if($highlightrequire AND $item->required AND strval($value) == '') {

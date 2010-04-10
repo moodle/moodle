@@ -61,7 +61,7 @@ class feedback_item_captcha extends feedback_item_base {
     function print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
         global $SESSION, $CFG, $DB, $OUTPUT;
 
-        $align = get_string('thisdirection') == 'ltr' ? 'left' : 'right';
+        $align = right_to_left() ? 'right' : 'left';
 
         $presentation = $item->presentation;
         $SESSION->feedback->item->captcha->charcount = $presentation;

@@ -120,7 +120,7 @@ class pdf extends TCPDF {
         $this->l['w_page']          = get_string('page');
         $this->l['a_meta_language'] = current_language();
         $this->l['a_meta_charset']  = 'UTF-8';
-        $this->l['a_meta_dir']      = get_string('thisdirection');
+        $this->l['a_meta_dir']      = get_string('thisdirection', 'langconfig');
     }
 
     /**

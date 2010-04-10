@@ -98,7 +98,7 @@ class feedback_item_textfield extends feedback_item_base {
 
     function print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
         global $OUTPUT;
-        $align = get_string('thisdirection') == 'ltr' ? 'left' : 'right';
+        $align = right_to_left() ? 'right' : 'left';
 
         $presentation = explode ("|", $item->presentation);
         if($highlightrequire AND $item->required AND strval($value) == '') {

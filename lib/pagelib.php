@@ -1230,7 +1230,7 @@ class moodle_page {
         }
 
         $this->add_body_classes(get_browser_version_classes());
-        $this->add_body_class('dir-' . get_string('thisdirection'));
+        $this->add_body_class('dir-' . get_string('thisdirection', 'langconfig'));
         $this->add_body_class('lang-' . current_language());
         $this->add_body_class('yui-skin-sam'); // Make YUI happy, if it is used.
         $this->add_body_class($this->url_to_class_name($CFG->wwwroot));
