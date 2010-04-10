@@ -5801,7 +5801,7 @@ class amos_string_manager implements string_manager {
 
         } else {
             if (!$location = get_plugin_directory($plugintype, $pluginname) or !is_dir($location)) {
-                debugging('Invalid get_string() $component, missing plugin files: '.$component, DEBUG_DEVELOPER);
+                debugging('Invalid get_string() $component, plugin files are missing: '.$component, DEBUG_DEVELOPER);
                 return array();
             }
             if ($plugintype === 'mod') {
@@ -5813,7 +5813,7 @@ class amos_string_manager implements string_manager {
             $string = array();
             // first load english pack
             if (!file_exists("$location/lang/en/$file.php")) {
-                //debugging('Invalid get_string() $component, missing en lang file: '.$component, DEBUG_DEVELOPER);
+                //english pack does not exist, so do not try to laod anything else
                 return array();
             }
             include("$location/lang/en/$file.php");
@@ -5856,11 +5856,9 @@ class amos_string_manager implements string_manager {
      * @return string The String !
      */
     public function get_string($identifier, $component='', $a=NULL) {
-        static $langconfigstrs = array('alphabet' => 1, 'backupnameformat' => 1, 'decsep' => 1,
-                'firstdayofweek' => 1, 'listsep' => 1, 'locale' => 1, 'localewin' => 1,
-                'localewincharset' => 1, 'oldcharset' => 1, 'parentlanguage' => 1,
-                'thisdirection' => 1, 'thislanguage' => 1, 'thousandssep' => 1,
-
+        // there are very many uses of these time formating strings without the 'langconfig' component,
+        // it would not be reasonable to expect that all of them would be converted during 2.0 migration
+        static $langconfigstrs = array(
                 'strftimedate' => 1,
                 'strftimedatefullshort' => 1,
                 'strftimedateshort' => 1,
@@ -5873,15 +5871,14 @@ class amos_string_manager implements string_manager {
                 'strftimemonthyear' => 1,
                 'strftimerecent' => 1,
                 'strftimerecentfull' => 1,
-                'strftimetime' => 1,
-        );
-
-        if ((empty($component)) and isset($langconfigstrs[$identifier])) {
-            $component = 'core_langconfig';
-        }
+                'strftimetime' => 1);
 
         if (empty($component)) {
-            $component = 'moodle';
+            if (isset($langconfigstrs[$identifier])) {
+                $component = 'langconfig';
+            } else {
+                $component = 'moodle';
+            }
         }
 
         $lang = current_language();
@@ -5889,8 +5886,9 @@ class amos_string_manager implements string_manager {
         $string = $this->load_component_strings($component, $lang);
 
         if (!isset($string[$identifier])) {
-            if ($identifier !== 'parentlanguage' and $identifier !== 'blockname') {
-                //debugging('Invalid get_string() $identifier: '.$identifier, DEBUG_DEVELOPER);
+            if ($identifier !== 'parentlanguage' and $identifier !== 'blockname' and strpos($component, 'format_') !== 0) {
+                //TODO: enable after fixing more missing string warnings, it talks too much now
+                //debugging("Invalid get_string() identifier: '$identifier' or component '$component'", DEBUG_DEVELOPER);
             }
             return "[[$identifier]]";
         }
