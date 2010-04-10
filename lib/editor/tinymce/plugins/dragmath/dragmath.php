@@ -8,11 +8,9 @@ $lang = required_param('elanguage', PARAM_SAFEDIR);
 
 if (file_exists("$CFG->dataroot/lang/$lang") or file_exists("$CFG->dirroot/lang/$lang")) {
     $SESSION->lang = $lang;
-} else if (file_exists("$CFG->dataroot/lang/{$lang}_utf8") or file_exists("$CFG->dirroot/lang/{$lang}_utf8")) {
-    $SESSION->lang = $lang.'_utf8';
+} else if (file_exists("$CFG->dataroot/lang/{$lang}") or file_exists("$CFG->dirroot/lang/{$lang}")) {
+    $SESSION->lang = $lang;
 }
-
-$lang = str_replace('_utf8', '', $lang);
 
 $langmapping = array('cs'=>'cz', 'pt_br'=>'pt-br');
 

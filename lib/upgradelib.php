@@ -1134,7 +1134,7 @@ function upgrade_language_pack($lang='') {
         $lang = current_language();
     }
 
-    if ($lang == 'en_utf8') {
+    if ($lang == 'en') {
         return true;  // Nothing to do
     }
 
@@ -1145,21 +1145,22 @@ function upgrade_language_pack($lang='') {
     @mkdir ($CFG->dataroot.'/lang/');
 
     require_once($CFG->libdir.'/componentlib.class.php');
-
-    if ($cd = new component_installer('http://download.moodle.org', 'lang16', $lang.'.zip', 'languages.md5', 'lang')) {
+debugging('TODO: add language update');
+/*
+    if ($cd = new component_installer('http://download.moodle.org', 'lang20', $lang.'.zip', 'languages.md5', 'lang')) {
         $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
 
         if ($status == COMPONENT_INSTALLED) {
             @unlink($CFG->dataroot.'/cache/languages');
             if ($parentlang = get_parent_language($lang)) {
-                if ($cd = new component_installer('http://download.moodle.org', 'lang16', $parentlang.'.zip', 'languages.md5', 'lang')) {
+                if ($cd = new component_installer('http://download.moodle.org', 'lang20', $parentlang.'.zip', 'languages.md5', 'lang')) {
                     $cd->install();
                 }
             }
             echo $OUTPUT->notification(get_string('success'), 'notifysuccess');
         }
     }
-
+*/
     print_upgrade_separator();
 }
 

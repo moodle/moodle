@@ -7,7 +7,7 @@ revision 1.76 from http://savannah.nongnu.org/projects/freefont/)
 is suitable for most languages.
 
 Unsupported languages may add special font
-lang/xx_utf8/fonts/default.ttf, it will be used for that language
+lang/xx/fonts/default.ttf, it will be used for that language
 only.
 
 If you want to override the default font dirroot/lib/default.ttf,

@@ -581,7 +581,7 @@
         <FIELD NAME="address" TYPE="char" LENGTH="70" NOTNULL="true" SEQUENCE="false" PREVIOUS="department" NEXT="city"/>
         <FIELD NAME="city" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="address" NEXT="country"/>
         <FIELD NAME="country" TYPE="char" LENGTH="2" NOTNULL="true" SEQUENCE="false" PREVIOUS="city" NEXT="lang"/>
-        <FIELD NAME="lang" TYPE="char" LENGTH="30" NOTNULL="true" DEFAULT="en_utf8" SEQUENCE="false" PREVIOUS="country" NEXT="theme"/>
+        <FIELD NAME="lang" TYPE="char" LENGTH="30" NOTNULL="true" DEFAULT="en" SEQUENCE="false" PREVIOUS="country" NEXT="theme"/>
         <FIELD NAME="theme" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="lang" NEXT="timezone"/>
         <FIELD NAME="timezone" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="99" SEQUENCE="false" PREVIOUS="theme" NEXT="firstaccess"/>
         <FIELD NAME="firstaccess" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timezone" NEXT="lastaccess"/>

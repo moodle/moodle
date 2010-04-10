@@ -67,14 +67,14 @@
  * To install one component:
  * <code>
  *     require_once($CFG->libdir.'/componentlib.class.php');
- *     if ($cd = new component_installer('http://download.moodle.org', 'lang16',
- *                                       'es_utf8.zip', 'languages.md5', 'lang')) {
+ *     if ($cd = new component_installer('http://download.moodle.org', 'lang20',
+ *                                       'es.zip', 'languages.md5', 'lang')) {
  *         $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
  *         switch ($status) {
  *             case COMPONENT_ERROR:
  *                 if ($cd->get_error() == 'remotedownloaderror') {
  *                     $a = new stdClass();
- *                     $a->url = 'http://download.moodle.org/lang16/es_utf8.zip';
+ *                     $a->url = 'http://download.moodle.org/lang20/es.zip';
  *                     $a->dest= $CFG->dataroot.'/lang';
  *                     print_error($cd->get_error(), 'error', '', $a);
  *                 } else {
@@ -97,7 +97,7 @@
  *
  * To switch of component (maintaining the rest of settings):
  * <code>
- *     $status = $cd->change_zip_file('en_utf8.zip'); //returns boolean false on error
+ *     $status = $cd->change_zip_file('en.zip'); //returns boolean false on error
  * </code>
  *
  * To retrieve all the components in one remote md5 file

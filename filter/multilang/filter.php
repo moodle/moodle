@@ -70,13 +70,13 @@ class multilang_filter extends moodle_text_filter {
 function multilang_filter_impl($langblock) {
     global $CFG;
 
-    $mylang = str_replace('_utf8', '', current_language());
+    $mylang = current_language();
     static $parentcache;
     if (!isset($parentcache)) {
         $parentcache = array();
     }
     if (!array_key_exists($mylang, $parentcache)) {
-        $parentlang = str_replace('_utf8', '', get_string('parentlanguage'));
+        $parentlang = get_string('parentlanguage');
         $parentcache[$mylang] = $parentlang;
     } else {
         $parentlang = $parentcache[$mylang];
@@ -91,7 +91,7 @@ function multilang_filter_impl($langblock) {
 
     $langlist = array();
     foreach ($rawlanglist[1] as $index=>$lang) {
-        $lang = str_replace('_utf8', '', str_replace('-','_',strtolower($lang))); // normalize languages
+        $lang = str_replace('-','_',strtolower($lang)); // normalize languages
         $langlist[$lang] = $rawlanglist[2][$index];
     }
 

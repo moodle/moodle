@@ -34,16 +34,16 @@ $theme = optional_param('etheme', 'advanced', PARAM_SAFEDIR);
 
 if (file_exists($CFG->dataroot .'/lang/'. $lang) or file_exists($CFG->dirroot .'/lang/'. $lang)) {
     //ok
-} else if (file_exists($CFG->dataroot.'/lang/'.$lang.'_utf8') or
-           file_exists($CFG->dirroot .'/lang/'.$lang.'_utf8')) {
-    $lang = $lang.'_utf8';
+} else if (file_exists($CFG->dataroot.'/lang/'.$lang) or
+           file_exists($CFG->dirroot .'/lang/'.$lang)) {
+    //$lang = $lang;
 } else {
-    $lang = 'en_utf8';
+    $lang = 'en';
 }
 
 // load english defaults
 $string = array();
-foreach (get_langpack_locations('en_utf8') as $location) {
+foreach (get_langpack_locations('en') as $location) {
     if (!file_exists($location)) {
         continue;
     }
@@ -61,7 +61,7 @@ if ($parent = get_parent_language($lang)) {
 }
 
 // load wanted language
-if ($lang !== 'en_utf8') {
+if ($lang !== 'en') {
     foreach (get_langpack_locations($lang) as $location) {
         if (!file_exists($location)) {
             continue;
@@ -83,8 +83,6 @@ foreach ($string as $key=>$value) {
 
     $result[$parts[0]][$parts[1]] = $value;
 }
-
-$lang = str_replace('_utf8', '', $lang); // use more standard language codes
 
 $output = 'tinyMCE.addI18n({'.$lang.':'.json_encode($result).'});';
 

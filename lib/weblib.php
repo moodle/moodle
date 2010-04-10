@@ -1935,7 +1935,7 @@ function get_html_lang($dir = false) {
         }
     }
     //Accessibility: added the 'lang' attribute to $direction, used in theme <html> tag.
-    $language = str_replace('_', '-', str_replace('_utf8', '', current_language()));
+    $language = str_replace('_', '-', current_language());
     @header('Content-Language: '.$language);
     return ($direction.' lang="'.$language.'" xml:lang="'.$language.'"');
 }
@@ -3004,7 +3004,7 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
  */
 function get_docs_url($path) {
     global $CFG;
-    return $CFG->docroot . '/' . str_replace('_utf8', '', current_language()) . '/' . $path;
+    return $CFG->docroot . '/' . current_language() . '/' . $path;
 }
 
 

@@ -5907,11 +5907,12 @@ function print_plugin_tables() {
     $html .= '<table class="generaltable plugincheckwrapper" cellspacing="4" cellpadding="1"><tr valign="top">';
 
     foreach ($plugins_ondisk as $cat => $list_ondisk) {
-        $strcaption = get_string($cat);
         if ($cat == 'mod') {
             $strcaption = get_string('activitymodule');
         } elseif ($cat == 'filter') {
             $strcaption = get_string('managefilters');
+        } else {
+            $strcaption = get_string($cat);
         }
 
         $html .= '<td><table class="plugincompattable generaltable boxaligncenter" cellspacing="1" cellpadding="5" '

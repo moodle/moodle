@@ -27,7 +27,7 @@
 if (isset($_REQUEST['lang'])) {
     $lang = preg_replace('/[^A-Za-z0-9_-]/i', '', $_REQUEST['lang']);
 } else {
-    $lang = 'en_utf8';
+    $lang = 'en';
 }
 
 if (isset($_REQUEST['admin'])) {
@@ -148,6 +148,7 @@ $CFG->admin                = $config->admin;
 $CFG->docroot              = 'http://docs.moodle.org';
 $CFG->directorypermissions = 00777;
 $CFG->running_installer    = true;
+$CFG->early_install_lang   = true;
 
 // Require all needed libs
 require_once($CFG->libdir.'/setuplib.php');
@@ -241,6 +242,8 @@ if ($config->stage > INSTALL_SAVE) {
 
 
 if ($config->stage == INSTALL_SAVE) {
+    $CFG->early_install_lang = false;
+
     $database = moodle_database::get_driver_instance($config->dbtype, 'native');
     if (!$database->driver_installed()) {
         $config->stage = INSTALL_DATABASETYPE;
@@ -332,7 +335,7 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
 
 if ($config->stage == INSTALL_DOWNLOADLANG) {
     // no need to download anything if en lang selected
-    if ($CFG->lang == 'en_utf8') {
+    if ($CFG->lang == 'en') {
         $config->stage = INSTALL_DATABASETYPE;
     }
 }
@@ -355,11 +358,11 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
         $downloaderror = get_string('cannotcreatelangdir', 'error');
 
 // Download and install lang component
-    } else if ($cd = new component_installer('http://download.moodle.org', 'lang16', $CFG->lang.'.zip', 'languages.md5', 'lang')) {
+    } else if ($cd = new component_installer('http://download.moodle.org', 'lang20', $CFG->lang.'.zip', 'languages.md5', 'lang')) {
         if ($cd->install() == COMPONENT_ERROR) {
             if ($cd->get_error() == 'remotedownloaderror') {
                 $a = new stdClass();
-                $a->url  = 'http://download.moodle.org/lang16/'.$INSTALL['language'].'.zip';
+                $a->url  = 'http://download.moodle.org/lang20/'.$INSTALL['language'].'.zip';
                 $a->dest = $CFG->dataroot.'/lang';
                 $downloaderror = get_string($cd->get_error(), 'error', $a);
             } else {
@@ -368,7 +371,7 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
         } else {
             // install parent lang if defined
             if ($parentlang = get_parent_language()) {
-                if ($cd = new component_installer('http://download.moodle.org', 'lang16', $parentlang.'.zip', 'languages.md5', 'lang')) {
+                if ($cd = new component_installer('http://download.moodle.org', 'lang20', $parentlang.'.zip', 'languages.md5', 'lang')) {
                     $cd->install();
                 }
             }
@@ -390,6 +393,8 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
 
 
 if ($config->stage == INSTALL_DATABASE) {
+    $CFG->early_install_lang = false;
+
     $database = moodle_database::get_driver_instance($config->dbtype, 'native');
 
     $sub = '<h3>'.$database->get_name().'</h3>'.$database->get_configuration_help();
@@ -444,6 +449,8 @@ if ($config->stage == INSTALL_DATABASE) {
 
 
 if ($config->stage == INSTALL_DATABASETYPE) {
+    $CFG->early_install_lang = false;
+
     // Finally ask for DB type
     install_print_header($config, get_string('database', 'install'),
                                   get_string('databasetypehead', 'install'),
@@ -487,8 +494,8 @@ if ($config->stage == INSTALL_DATABASETYPE) {
 
 if ($config->stage == INSTALL_ENVIRONMENT or $config->stage == INSTALL_PATHS) {
     $version_fail = (version_compare(phpversion(), "5.2.8") < 0);
-    $curl_fail    = ($lang !== 'en_utf8' and !extension_loaded('curl')); // needed for lang pack download
-    $zip_fail     = ($lang !== 'en_utf8' and !extension_loaded('zip'));  // needed for lang pack download
+    $curl_fail    = ($lang !== 'en' and !extension_loaded('curl')); // needed for lang pack download
+    $zip_fail     = ($lang !== 'en' and !extension_loaded('zip'));  // needed for lang pack download
 
     if ($version_fail or $curl_fail or $zip_fail) {
         $config->stage = INSTALL_ENVIRONMENT;

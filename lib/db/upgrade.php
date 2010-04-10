@@ -64,6 +64,26 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008030600);
     }
 
+    if ($result && $oldversion < 2008030601) {
+        @unlink($CFG->dataroot.'/cache/languages');
+
+        // rename old lang directory so that the new and old langs do not mix
+        if (rename("$CFG->dataroot/lang", "$CFG->dataroot/oldlang")) {
+            $oldlang = "$CFG->dataroot/oldlang";
+        } else {
+            $oldlang = "$CFG->dataroot/lang";
+        }
+        // TODO: fetch previously installed languages ("*_utf8") found in $oldlang from moodle.org
+        upgrade_set_timeout(60*20); // this may take a while
+
+
+        // TODO: add some info file to $oldlang describing what to do with "$oldlang/*_utf8_local" dirs
+
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2008030601);
+    }
+
     if ($result && $oldversion < 2008030700) {
         upgrade_set_timeout(60*20); // this may take a while
 
@@ -840,19 +860,6 @@ function xmldb_main_upgrade($oldversion) {
         unset_config('editordictionary');
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2008092300);
-    }
-
-    if ($result && $oldversion < 2008101000) {
-
-    /// Changing the default of field lang on table user to en_utf8
-        $table = new xmldb_table('user');
-        $field = new xmldb_field('lang', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, 'en_utf8', 'country');
-
-    /// Launch change of default for field lang
-        $dbman->change_field_default($table, $field);
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2008101000);
     }
 
     if ($result && $oldversion < 2008101300) {
@@ -3444,6 +3451,40 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
         // Main savepoint reached
         upgrade_main_savepoint($result, 2010040700);
+    }
+
+    if ($result && $oldversion < 2010040900) {
+
+        // Changing the default of field lang on table user to good old "en"
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('lang', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, 'en', 'country');
+
+        // Launch change of default for field lang
+        $dbman->change_field_default($table, $field);
+
+        // update main site lang
+        if (strpos($CFG->lang, '_utf8') !== false) {
+            $lang = str_replace('_utf8', '', $CFG->lang);
+            set_config('lang', $lang);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010040900);
+    }
+
+    if ($result && $oldversion < 2010040901) {
+
+        // Remove "_utf8" suffix from all langs in user table
+        $langs = $DB->get_records_sql("SELECT DISTINCT lang FROM {user} WHERE lang LIKE ?", array('%_utf8'));
+
+        foreach ($langs as $lang=>$unused) {
+            $newlang = str_replace('_utf8', '', $lang);
+            $sql = "UPDATE {user} SET lang = :newlang WHERE lang = :lang";
+            $DB->execute($sql, array('newlang'=>$newlang, 'lang'=>$lang));
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010040901);
     }
 
     return $result;

@@ -23,7 +23,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package
  */
-//TODO (nfreear): Accessibility: evaluation, lang/en_utf8/moodle.php: $string['formatweekscss']
+//TODO (nfreear): Accessibility: evaluation, lang/en/moodle.php: $string['formatweekscss']
 
     require_once($CFG->libdir.'/filelib.php');
 

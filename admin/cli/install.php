@@ -105,7 +105,7 @@ if (version_compare(phpversion(), "5.2.8") < 0) {
 
 // set up configuration
 $CFG = new stdClass();
-$CFG->lang                 = 'en_utf8';
+$CFG->lang                 = 'en';
 $CFG->dirroot              = str_replace('\\', '/', dirname(dirname(dirname(__FILE__)))); // Fix for win32
 $CFG->libdir               = "$CFG->dirroot/lib";
 $CFG->wwwroot              = "http://localhost";
@@ -114,6 +114,8 @@ $CFG->dataroot             = str_replace('\\', '/', dirname(dirname(dirname(__FI
 $CFG->docroot              = 'http://docs.moodle.org';
 $CFG->directorypermissions = 00777;
 $CFG->running_installer    = true;
+$CFG->early_install_lang   = true;
+
 $parts = explode('/', str_replace('\\', '/', dirname(dirname(__FILE__))));
 $CFG->admin                = array_pop($parts);
 
@@ -170,10 +172,6 @@ $interactive = empty($options['non-interactive']);
 $lang = clean_param($options['lang'], PARAM_SAFEDIR);
 if (file_exists($CFG->dirroot.'/install/lang/'.$lang)) {
     $CFG->lang = $lang;
-} else {
-    if (file_exists($CFG->dirroot.'/install/lang/'.$lang.'_utf8')) {
-        $CFG->lang = $lang.'_utf8';
-    }
 }
 
 if ($unrecognized) {
@@ -205,23 +203,23 @@ if ($interactive) {
             $langlist .= "\n";
         }
     }
-    $default = str_replace('_utf8', '', $CFG->lang);
+    $default = $CFG->lang;
     cli_heading(get_string('availablelangs', 'install'));
     echo $langlist."\n";
-    $prompt = get_string('clitypevaluedefault', 'admin', $default);
+    $prompt = get_string('clitypevaluedefault', 'admin', $CFG->lang);
     $error = '';
     do {
         echo $error;
         $input = cli_input($prompt, $default);
         $input = clean_param($input, PARAM_SAFEDIR);
 
-        if (!file_exists($CFG->dirroot.'/install/lang/'.$input.'_utf8')) {
+        if (!file_exists($CFG->dirroot.'/install/lang/'.$input)) {
             $error = get_string('cliincorrectvalueretry', 'admin')."\n";
         } else {
             $error = '';
         }
     } while ($error !== '');
-    $CFG->lang = $input.'_utf8';
+    $CFG->lang = $input;
 } else {
     // already selected and verified
 }
@@ -314,12 +312,12 @@ if ($interactive) {
 }
 
 //download lang pack with optional notification
-if ($CFG->lang != 'en_utf8') {
-    if ($cd = new component_installer('http://download.moodle.org', 'lang16', $CFG->lang.'.zip', 'languages.md5', 'lang')) {
+if ($CFG->lang != 'en') {
+    if ($cd = new component_installer('http://download.moodle.org', 'lang20', $CFG->lang.'.zip', 'languages.md5', 'lang')) {
         if ($cd->install() == COMPONENT_ERROR) {
             if ($cd->get_error() == 'remotedownloaderror') {
                 $a = new stdClass();
-                $a->url  = 'http://download.moodle.org/lang16/'.$CFG->lang.'.zip';
+                $a->url  = 'http://download.moodle.org/lang20/'.$CFG->lang.'.zip';
                 $a->dest = $CFG->dataroot.'/lang';
                 cli_problem(get_string($cd->get_error(), 'error', $a));
             } else {
@@ -328,13 +326,15 @@ if ($CFG->lang != 'en_utf8') {
         } else {
             // install parent lang if defined
             if ($parentlang = get_parent_language()) {
-                if ($cd = new component_installer('http://download.moodle.org', 'lang16', $parentlang.'.zip', 'languages.md5', 'lang')) {
+                if ($cd = new component_installer('http://download.moodle.org', 'lang20', $parentlang.'.zip', 'languages.md5', 'lang')) {
                     $cd->install();
                 }
             }
         }
     }
 }
+
+$CFG->early_install_lang = false;
 
 // ask for db type - show only drivers available
 if ($interactive) {

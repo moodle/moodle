@@ -25,7 +25,7 @@ Standard files
   Configuration file, mainly controlling default blocks for the format.
   See existing formats for examples.
 
-* yourformat/lang/en_utf8/format_yourformat.php
+* yourformat/lang/en/format_yourformat.php
 
   Language file containing basic language strings for your format. Here
   is a minimal language file:

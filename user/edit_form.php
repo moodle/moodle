@@ -53,12 +53,6 @@ class user_edit_form extends moodleform {
         // if language does not exist, use site default lang
         if ($langsel = $mform->getElementValue('lang')) {
             $lang = reset($langsel);
-            // missing _utf8 in language, add it before further processing. MDL-11829 MDL-16845
-            if (strpos($lang, '_utf8') === false) {
-                $lang = $lang . '_utf8';
-                $lang_el =& $mform->getElement('lang');
-                $lang_el->setValue($lang);
-            }
             // check lang exists
             if (!file_exists($CFG->dataroot.'/lang/'.$lang) and
               !file_exists($CFG->dirroot .'/lang/'.$lang)) {

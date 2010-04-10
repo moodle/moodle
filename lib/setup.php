@@ -578,9 +578,6 @@ if (($lang = optional_param('lang', '', PARAM_SAFEDIR))) {
     if (file_exists($CFG->dataroot .'/lang/'. $lang) or
             file_exists($CFG->dirroot .'/lang/'. $lang)) {
         $SESSION->lang = $lang;
-    } else if (file_exists($CFG->dataroot.'/lang/'.$lang.'_utf8') or
-            file_exists($CFG->dirroot .'/lang/'.$lang.'_utf8')) {
-        $SESSION->lang = $lang.'_utf8';
     }
 }
 unset($lang);
@@ -589,7 +586,7 @@ setup_lang_from_browser();
 
 if (empty($CFG->lang)) {
     if (empty($SESSION->lang)) {
-        $CFG->lang = 'en_utf8';
+        $CFG->lang = 'en';
     } else {
         $CFG->lang = $SESSION->lang;
     }

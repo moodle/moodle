@@ -9,7 +9,7 @@ if ($hassiteconfig
     // "languageandlocation" settingpage
     $temp = new admin_settingpage('langsettings', get_string('languagesettings', 'admin'));
     $temp->add(new admin_setting_configcheckbox('autolang', get_string('autolang', 'admin'), get_string('configautolang', 'admin'), 1));
-    $temp->add(new admin_setting_configselect('lang', get_string('lang', 'admin'), get_string('configlang', 'admin'), current_language(), get_list_of_languages())); // $CFG->lang might be set in installer already, default en or en_utf8 is in setup.php
+    $temp->add(new admin_setting_configselect('lang', get_string('lang', 'admin'), get_string('configlang', 'admin'), current_language(), get_list_of_languages())); // $CFG->lang might be set in installer already, default en is in setup.php
     $temp->add(new admin_setting_configcheckbox('langmenu', get_string('langmenu', 'admin'), get_string('configlangmenu', 'admin'), 1));
     $temp->add(new admin_setting_langlist());
     $temp->add(new admin_setting_configcheckbox('langcache', get_string('langcache', 'admin'), get_string('configlangcache', 'admin'), 1));

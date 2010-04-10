@@ -34,7 +34,7 @@ if (!debugging('', DEBUG_DEVELOPER)) {
     die('Only for developers!!!!!');
 }
 
-// mapping of Moodle langs (without _utf8 suffix) to TinyMCE langs
+// mapping of Moodle langs to TinyMCE langs
 $langconversion = array(
     'no'    => 'nb',
     'ko'    => false,  // ignore Korean translation for now - does not parse
@@ -44,7 +44,7 @@ $langconversion = array(
 
 $targetlangdir = "$CFG->dirroot/../lang"; // change if needed
 $tempdir       = "$CFG->dirroot/lib/editor/tinymce/extra/tools/temp";
-$enfile        = "$CFG->dirroot/lang/en_utf8/editor_tinymce.php";
+$enfile        = "$CFG->dirroot/lang/en/editor_tinymce.php";
 
 
 /// first update English lang pack
@@ -109,11 +109,11 @@ foreach ($langs as $lang) {
 
     $lang = $lang->getFilename();
 
-    if ($lang == 'en' or $lang == 'en_utf8' or $lang == 'CVS' or $lang == '.settings') {
+    if ($lang == 'en' or $lang == 'CVS' or $lang == '.settings') {
         continue;
     }
 
-    $xmllang = str_replace('_utf8', '', $lang);
+    $xmllang = $lang;
     if (array_key_exists($xmllang, $langconversion)) {
         $xmllang = $langconversion[$xmllang];
         if (empty($xmllang)) {

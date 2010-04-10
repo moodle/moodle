@@ -1,8 +1,10 @@
 <?php
-///This file only manages the installation of 1.6 lang packs.
-///in downloads.moodle.org, they are store in separate directory /lang16
+///This file only manages the installation of 2.0 lang packs.
+///in downloads.moodle.org, they are store in separate directory /lang20
 ///in local server, they are stored in $CFG->dataroot/lang
 ///This helps to avoid confusion.
+
+die('Work in progress, to be replaced by the new language update interface...');
 
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
@@ -60,7 +62,7 @@
                 }
 
                 foreach ($packs as $pack) {
-                    if ($cd = new component_installer('http://download.moodle.org', 'lang16',
+                    if ($cd = new component_installer('http://download.moodle.org', 'lang20',
                                                         $pack.'.zip', 'languages.md5', 'lang')) {
                         $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
                         switch ($status) {
@@ -68,7 +70,7 @@
                             case COMPONENT_ERROR:
                                 if ($cd->get_error() == 'remotedownloaderror') {
                                     $a = new object();
-                                    $a->url = 'http://download.moodle.org/lang16/'.$pack.'.zip';
+                                    $a->url = 'http://download.moodle.org/lang20/'.$pack.'.zip';
                                     $a->dest= $CFG->dataroot.'/lang';
                                     print_error($cd->get_error(), 'error', 'langimport.php', $a);
                                 } else {
@@ -80,7 +82,7 @@
                                 $notice_ok[] = get_string('langpackinstalled','admin',$pack);
                                 if ($parentlang = get_parent_language($pack)) {
                                     // install also parent pack if specified
-                                    if ($cd = new component_installer('http://download.moodle.org', 'lang16', $parentlang.'.zip', 'languages.md5', 'lang')) {
+                                    if ($cd = new component_installer('http://download.moodle.org', 'lang20', $parentlang.'.zip', 'languages.md5', 'lang')) {
                                         $cd->install();
                                     }
                                 }
@@ -99,8 +101,8 @@
 
         case DELETION_OF_SELECTED_LANG:    //delete a directory(ies) containing a lang pack completely
 
-            if ($uninstalllang == 'en_utf8') {
-                $notice_error[] = 'en_utf8 can not be uninstalled!';
+            if ($uninstalllang == 'en') {
+                $notice_error[] = 'en can not be uninstalled!';
 
             } else if (!$confirm && confirm_sesskey()) {
                 echo $OUTPUT->header();
@@ -139,7 +141,7 @@
             $md5array = array();
             $updated = 0;    //any packs updated?
             $alllangs = array_keys(get_list_of_languages(false, true)); //get all available langs
-            $lang16 = array();   //all the Moodle 1.6 unicode lang packs (updated and not updated)
+            $lang20 = array();   //all the Moodle 1.6 unicode lang packs (updated and not updated)
             $packs = array();    //all the packs that needs updating
 
 
@@ -162,12 +164,12 @@
                 $dest2 = $CFG->dirroot.'/lang/'.$clang;
 
                 if (file_exists($dest1.'/langconfig.php') || file_exists($dest2.'/langconfig.php')){
-                    $lang16[] = $clang;
+                    $lang20[] = $clang;
                 }
             }
 
             //then filter out packs that have the same md5 key
-            foreach ($lang16 as $clang) {
+            foreach ($lang20 as $clang) {
                 if (!is_installed_lang($clang, $md5array[$clang])){
                     $packs[] = $clang;
                 }
@@ -176,7 +178,7 @@
             @mkdir ($CFG->dataroot.'/temp/', $CFG->directorypermissions);
             @mkdir ($CFG->dataroot.'/lang/', $CFG->directorypermissions);
             foreach ($packs as $pack){    //for each of the remaining in the list, we
-                if ($pack == 'en_utf8') {    // no update for en_utf8
+                if ($pack == 'en') {    // no update for en
                     continue;
                 }
 
@@ -201,7 +203,7 @@
 
                 //2. copy & unzip into new
 
-                if ($cd = new component_installer('http://download.moodle.org', 'lang16',
+                if ($cd = new component_installer('http://download.moodle.org', 'lang20',
                                        $pack.'.zip', 'languages.md5', 'lang')) {
                 $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
                 switch ($status) {
@@ -209,7 +211,7 @@
                     case COMPONENT_ERROR:
                         if ($cd->get_error() == 'remotedownloaderror') {
                             $a = new stdClass();
-                            $a->url = 'http://download.moodle.org/lang16/'.$pack.'.zip';
+                            $a->url = 'http://download.moodle.org/lang20/'.$pack.'.zip';
                             $a->dest= $CFG->dataroot.'/lang';
                             print_error($cd->get_error(), 'error', "", $a); // not probable
                         } else {
@@ -251,7 +253,7 @@
     foreach($installedlangs as $l=>$unused) {
         $SESSION->lang = $l;
         $parent = get_string('parentlanguage');
-        if ($parent == 'en_utf8') {
+        if ($parent == 'en') {
             continue;
         }
         if (strpos($parent, '[[') !== false) {
@@ -297,11 +299,7 @@
             $a->parent = $parent;
             foreach ($availablelangs as $alang) {
                 if ($alang[0] == $parent) {
-                    if (substr($alang[0], -5) == '_utf8') {   //Remove the _utf8 suffix from the lang to show
-                        $shortlang = substr($alang[0], 0, -5);
-                    } else {
-                        $shortlang = $alang[0];
-                    }
+                    $shortlang = $alang[0];
                     $a->parent = $alang[2].' ('.$shortlang.')';
                 }
             }
@@ -359,18 +357,14 @@
         if ($alang[0] == '') {
             continue;
         }
-        if (trim($alang[0]) != "en_utf8") {
+        if (trim($alang[0]) != "en") {
             if ($remote) {
-                if (substr($alang[0], -5) == '_utf8') {   //Remove the _utf8 suffix from the lang to show
-                    $shortlang = substr($alang[0], 0, -5);
-                } else {
-                    $shortlang = $alang[0];
-                }
+                $shortlang = $alang[0];
                 if (!is_installed_lang($alang[0], $alang[1])){    //if not already installed
                     echo '<option value="'.$alang[0].'">'.$alang[2].' ('.$shortlang.')</option>';
                 }
             } else {    //print list in local format, and instruction to install
-                echo '<tr><td>'.$alang[2].'</td><td><a href="http://download.moodle.org/lang16/'.$alang[0].'.zip">'.get_string('download','admin').'</a></td></tr>';
+                echo '<tr><td>'.$alang[2].'</td><td><a href="http://download.moodle.org/lang20/'.$alang[0].'.zip">'.get_string('download','admin').'</a></td></tr>';
             }
             $empty = 0;
         }
@@ -433,7 +427,7 @@
      * @return array or false if can not download
      */
     function get_remote_list_of_languages() {
-        $source = 'http://download.moodle.org/lang16/languages.md5';
+        $source = 'http://download.moodle.org/lang20/languages.md5';
         $availablelangs = array();
 
         if ($content = download_file_content($source)) {

@@ -141,19 +141,11 @@ function install_get_list_of_languages() {
     asort($langdirs);
     // Get some info from each lang
     foreach ($langdirs as $lang) {
-        if ($lang == 'en') {
-            continue;
-        }
         if (file_exists($CFG->dirroot.'/install/lang/'.$lang.'/installer.php')) {
             $string = array();
             include($CFG->dirroot.'/install/lang/'.$lang.'/installer.php');
-            if (substr($lang, -5) === '_utf8') {   //Remove the _utf8 suffix from the lang to show
-                $shortlang = substr($lang, 0, -5);
-            } else {
-                $shortlang = $lang;
-            }
             if (!empty($string['thislanguage'])) {
-                $languages[$lang] = $string['thislanguage'].' ('.$shortlang.')';
+                $languages[$lang] = $string['thislanguage'].' ('.$lang.')';
             }
         }
     }
@@ -221,7 +213,7 @@ function install_generate_configphp($database, $cfg, $userealpath=false) {
  * @param string $help
  */
 function install_print_help_page($help) {
-    global $CFG, $OUTPUT;
+    global $CFG, $OUTPUT; //TODO: MUST NOT USE $OUTPUT HERE!!!
 
     @header('Content-Type: text/html; charset=UTF-8');
     @header('Cache-Control: no-store, no-cache, must-revalidate');
@@ -251,7 +243,7 @@ function install_print_help_page($help) {
         default:
             print_string($help, 'install');
     }
-    echo $OUTPUT->close_window_button();
+    echo $OUTPUT->close_window_button(); //TODO: MUST NOT USE $OUTPUT HERE!!!
     echo '</body></html>';
     die;
 }

@@ -5617,11 +5617,7 @@ function current_language() {
         $return = $CFG->lang;
 
     } else {
-        $return = 'en_utf8';
-    }
-
-    if ($return == 'en') {
-        $return = 'en_utf8';
+        $return = 'en';
     }
 
     return $return;
@@ -5647,7 +5643,7 @@ function get_parent_language($lang=null) {
     }
 
     $parentlang = get_string('parentlanguage');
-    if ($parentlang === 'en_utf8' or $parentlang === '[[parentlanguage]]' or strpos($parentlang, '<') !== false) {
+    if ($parentlang === 'en' or $parentlang === '[[parentlanguage]]' or strpos($parentlang, '<') !== false) {
         $parentlang = '';
     }
 
@@ -5697,14 +5693,10 @@ function get_string_manager() {
     static $singleton = null;
 
     if ($singleton === null) {
-        if (!empty($CFG->amosgetstring)) {
-            // not yet fully implemented - needs new format of lang strings and removal of _utf8
+        if (empty($CFG->early_install_lang)) {
             $singleton = new amos_string_manager("$CFG->dirroot/lang", "$CFG->dataroot/lang", "$CFG->dataroot/lang");
         } else {
-            $singleton = new legacy_string_manager($CFG->dirroot, $CFG->dataroot, !empty($CFG->running_installer), !empty($CFG->debugstringids));
-            // Uncomment the followign line to log every call to get_string
-            // to a file in $CFG->dataroot/temp/getstringlog/...
-            // $singleton->start_logging();
+            $singleton = new install_string_manager("$CFG->dirroot/install/lang");
         }
     }
 
@@ -5715,6 +5707,9 @@ class amos_string_manager implements string_manager {
     private $coreroot;
     private $otherroot;
     private $localroot;
+
+    // to be optimised later
+    private $cache = array();
 
     /**
      * Crate new instance of amos string manager
@@ -5765,6 +5760,14 @@ class amos_string_manager implements string_manager {
     public function load_component_strings($component, $lang) {
         list($plugintype, $pluginname) = normalize_component($component);
 
+        if (!isset($this->cache[$lang])) {
+            $this->cache[$lang] = array();
+        }
+
+        if (isset($this->cache[$lang][$plugintype.$pluginname])) {
+            return $this->cache[$lang][$plugintype.$pluginname];
+        }
+
         if ($plugintype === 'core') {
             $file = $pluginname;
             if ($file === null) {
@@ -5810,7 +5813,7 @@ class amos_string_manager implements string_manager {
             $string = array();
             // first load english pack
             if (!file_exists("$location/lang/en/$file.php")) {
-                debugging('Invalid get_string() $component, missing en lang file: '.$component, DEBUG_DEVELOPER);
+                //debugging('Invalid get_string() $component, missing en lang file: '.$component, DEBUG_DEVELOPER);
                 return array();
             }
             include("$location/lang/en/$file.php");
@@ -5838,6 +5841,8 @@ class amos_string_manager implements string_manager {
         // we do not want any extra strings from other languages - everything must be in en lang pack
         $string = array_intersect_key($string, $originalkeys);
 
+        $this->cache[$lang][$plugintype.$pluginname] = $string;
+
         return $string;
     }
 
@@ -5854,17 +5859,29 @@ class amos_string_manager implements string_manager {
         if (empty($component)) {
             $component = 'moodle';
         }
+        // this will be replaced by merging of lang and langconfig
+        static $langconfigstrs = array('alphabet' => 1, 'backupnameformat' => 1, 'decsep' => 1,
+                'firstdayofweek' => 1, 'listsep' => 1, 'locale' => 1, 'localewin' => 1,
+                'localewincharset' => 1, 'oldcharset' => 1, 'parentlanguage' => 1,
+                'strftimedate' => 1, 'strftimedateshort' => 1, 'strftimedatefullshort' => 1,
+                'strftimedatetime' => 1, 'strftimedaydate' => 1, 'strftimedaydatetime' => 1,
+                'strftimedayshort' => 1, 'strftimedaytime' => 1, 'strftimemonthyear' => 1,
+                'strftimerecent' => 1, 'strftimerecentfull' => 1, 'strftimetime' => 1,
+                'thischarset' => 1, 'thisdirection' => 1, 'thislanguage' => 1,
+                'strftimedatetimeshort' => 1, 'thousandssep' => 1);
+
+        if ((empty($component) or $component === 'moodle') and isset($langconfigstrs[$identifier])) {
+            $component = 'core_langconfig';
+        }
+
         $lang = current_language();
-        $lang = str_replace('_utf8', '', $lang); //TODO: to be removed soon
 
         $string = $this->load_component_strings($component, $lang);
 
-        if (empty($string)) {
-            debugging('Invalid get_string() $component', DEBUG_DEVELOPER);
-            return "[[$identifier]]";
-        }
         if (!isset($string[$identifier])) {
-            debugging('Invalid get_string() $identifier', DEBUG_DEVELOPER);
+            if ($identifier !== 'parentlanguage' and $identifier !== 'blockanme') {
+                //debugging('Invalid get_string() $identifier: '.$identifier, DEBUG_DEVELOPER);
+            }
             return "[[$identifier]]";
         }
 
@@ -5880,14 +5897,91 @@ class amos_string_manager implements string_manager {
                         // we do not support numeric keys - sorry!
                         continue;
                     }
-                    $search[]  = '{$a->'.$key.'}';
+                    $search[]  = '$a->'.$key.'';
+                    //$search[]  = '{$a->'.$key.'}'; // TODO: uncomment after switch to {a->aa}
                     $replace[] = (string)$value;
                 }
                 if ($search) {
                     $string = str_replace($search, $replace, $string);
                 }
             } else {
-                $string = str_replace('{$a}', (string)$a, $string);
+                $string = str_replace('$a', (string)$a, $string);
+                //$string = str_replace('{$a}', (string)$a, $string); // TODO: uncomment after switch to {a}
+            }
+        }
+
+        $string = str_replace('%%', '%', $string); //TODO: remove after lang cleanup
+
+        return $string;
+    }
+
+    /**
+     * Returns a list of country names in the current language
+     * @return array two-letter country code => translated name.
+     */
+    public function get_list_of_countries() {
+        $lang = current_language();
+        return $this->load_component_strings('countries', $lang);
+    }
+}
+
+class install_string_manager implements string_manager {
+    private $installroot;
+
+    /**
+     * Crate new instance of install string manager
+     *
+     * @param string $installroot $CFG->dirroot/install/lang (used in unit tests only)
+     */
+    public function __construct($installroot) {
+        $this->installroot = $installroot;
+    }
+
+    /**
+     * Get String returns a requested string
+     *
+     * @param string $identifier The identifier of the string to search for
+     * @param string $component The module the string is associated with
+     * @param string $a An object, string or number that can be used
+     *      within translation strings
+     * @return string The String !
+     */
+    public function get_string($identifier, $component='', $a=NULL) {
+        $lang = current_language();
+
+        $string = array();
+        include("$this->installroot/en/installer.php");
+
+        if (file_exists("$this->installroot/$lang/installer.php") and $lang !== 'en') {
+            include("$this->installroot/$lang/installer.php");
+        }
+
+        if (!isset($string[$identifier])) {
+            return "[[$identifier]]";
+        }
+
+        $string = $string[$identifier];
+
+        if ($a !== NULL) {
+            if (is_object($a) or is_array($a)) {
+                $a = (array)$a;
+                $search = array();
+                $replace = array();
+                foreach ($a as $key=>$value) {
+                    if (is_int($key)) {
+                        // we do not support numeric keys - sorry!
+                        continue;
+                    }
+                    $search[]  = '$a->'.$key.'';
+                    //$search[]  = '{$a->'.$key.'}'; // TODO: uncomment after switch to {a->aa}
+                    $replace[] = (string)$value;
+                }
+                if ($search) {
+                    $string = str_replace($search, $replace, $string);
+                }
+            } else {
+                $string = str_replace('$a', (string)$a, $string);
+                //$string = str_replace('{$a}', (string)$a, $string); // TODO: uncomment after switch to {a}
             }
         }
 
@@ -5899,16 +5993,7 @@ class amos_string_manager implements string_manager {
      * @return array two-letter country code => translated name.
      */
     public function get_list_of_countries() {
-        $lang = current_language();
-        $lang = str_replace('_utf8', '', $lang); //TODO: to be removed soon
-        return $this->load_component_strings('countries', $lang);
-    }
-
-    /**
-     * TODO: will be removed really soon
-     */
-    public function find_help_file($file, $module, $forcelang, $skiplocal) {
-        error('to be removed soon');
+        return array();
     }
 }
 
@@ -5933,11 +6018,6 @@ interface string_manager {
      * @return array two-letter country code => translated name.
      */
     public function get_list_of_countries();
-
-    /**
-     * TODO: will be removed really soon
-     */
-    public function find_help_file($file, $module, $forcelang, $skiplocal);
 }
 
 /**
@@ -5959,7 +6039,7 @@ interface string_manager {
  * @package moodlecore
  */
 class legacy_string_manager implements string_manager {
-    private $parentlangs = array('en_utf8' => NULL);
+    private $parentlangs = array('en' => NULL);
     private $searchpathsformodule = array();
     private $strings = array();
     private $nonpluginfiles = array('moodle' => 1, 'langconfig' => 1);
@@ -6069,7 +6149,7 @@ class legacy_string_manager implements string_manager {
         if (array_key_exists($lang, $this->parentlangs)) {
             return $this->parentlangs[$lang];
         }
-        $parent = 'en_utf8'; // Will be used if nothing is specified explicitly.
+        $parent = 'en'; // Will be used if nothing is specified explicitly.
         foreach ($this->corelocations as $location => $ignored) {
             foreach (array('_local', '') as $suffix) {
                 $file = $location . $lang . $suffix . '/' . $this->parentlangfile;
@@ -6145,7 +6225,7 @@ class legacy_string_manager implements string_manager {
      */
     public function find_help_file($file, $module, $forcelang, $skiplocal) {
         if ($forcelang) {
-            $langs = array($forcelang, 'en_utf8');
+            $langs = array($forcelang, 'en');
         } else {
             $langs = array();
             for ($lang = current_language(); $lang; $lang = $this->get_parent_language($lang)) {
@@ -6280,7 +6360,7 @@ class legacy_string_manager implements string_manager {
             $this->allcountrycodes = explode(',', $CFG->allcountrycodes);
         } else {
             $this->allcountrycodes = array_keys(
-                    $this->load_lang_file($this->dirroot . '/lang/en_utf8/countries.php'));
+                    $this->load_lang_file($this->dirroot . '/lang/en/countries.php'));
         }
         return $this->allcountrycodes;
     }
@@ -6461,28 +6541,17 @@ function get_list_of_languages($refreshcache=false, $returnall=false) {
 /// return only languages allowed in langlist admin setting
 
         $langlist = explode(',', $CFG->langlist);
-        // fix short lang names first - non existing langs are skipped anyway...
-        foreach ($langlist as $lang) {
-            if (strpos($lang, '_utf8') === false) {
-                $langlist[] = $lang.'_utf8';
-            }
-        }
         // find existing langs from langlist
         foreach ($langlist as $lang) {
             $lang = trim($lang);   //Just trim spaces to be a bit more permissive
             if (strstr($lang, '_local')!==false) {
                 continue;
             }
-            if (substr($lang, -5) == '_utf8') {   //Remove the _utf8 suffix from the lang to show
-                $shortlang = substr($lang, 0, -5);
-            } else {
-                $shortlang = $lang;
-            }
         /// Search under dirroot/lang
             if (file_exists($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck);
                 if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'].' ('. $shortlang .')';
+                    $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
                 }
                 unset($string);
             }
@@ -6490,7 +6559,7 @@ function get_list_of_languages($refreshcache=false, $returnall=false) {
             if (file_exists($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck);
                 if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'].' ('. $shortlang .')';
+                    $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
                 }
                 unset($string);
             }
@@ -6511,16 +6580,11 @@ function get_list_of_languages($refreshcache=false, $returnall=false) {
             if (strstr($lang, '_local')!==false) {
                 continue;
             }
-            if (substr($lang, -5) == '_utf8') {   //Remove the _utf8 suffix from the lang to show
-                $shortlang = substr($lang, 0, -5);
-            } else {
-                $shortlang = $lang;
-            }
         /// Search under moodledata/lang
             if (file_exists($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck);
                 if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'] .' ('. $shortlang .')';
+                    $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
                 }
                 unset($string);
             }
@@ -6528,7 +6592,7 @@ function get_list_of_languages($refreshcache=false, $returnall=false) {
             if (file_exists($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck);
                 if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'] .' ('. $shortlang .')';
+                    $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
                 }
                 unset($string);
             }
@@ -6628,7 +6692,7 @@ function get_list_of_pixnames($lang = '') {
 
     $string = array();
 
-    $path = $CFG->dirroot .'/lang/en_utf8/pix.php'; // always exists
+    $path = $CFG->dirroot .'/lang/en/pix.php'; // always exists
 
     if (file_exists($CFG->dataroot .'/lang/'. $lang .'_local/pix.php')) {
         $path = $CFG->dataroot .'/lang/'. $lang .'_local/pix.php';
@@ -6710,16 +6774,16 @@ function get_list_of_currencies() {
             if (file_exists($CFG->dataroot .'/lang/'. $parentlang .'/currencies.php')) {
                 $lang = $parentlang;
             } else {
-                $lang = 'en_utf8';  // currencies.php must exist in this pack
+                $lang = 'en';  // currencies.php must exist in this pack
             }
         } else {
-            $lang = 'en_utf8';  // currencies.php must exist in this pack
+            $lang = 'en';  // currencies.php must exist in this pack
         }
     }
 
     if (file_exists($CFG->dataroot .'/lang/'. $lang .'/currencies.php')) {
         include_once($CFG->dataroot .'/lang/'. $lang .'/currencies.php');
-    } else {    //if en_utf8 is not installed in dataroot
+    } else {    //if en is not installed in dataroot
         include_once($CFG->dirroot .'/lang/'. $lang .'/currencies.php');
     }
 
@@ -9304,7 +9368,7 @@ function setup_lang_from_browser() {
 
 /// Look for such langs under standard locations
     foreach ($langs as $lang) {
-        $lang = strtolower(clean_param($lang.'_utf8', PARAM_SAFEDIR)); // clean it properly for include
+        $lang = strtolower(clean_param($lang, PARAM_SAFEDIR)); // clean it properly for include
         if (!array_key_exists($lang, $langlist)) {
             continue; // language not allowed, try next one
         }

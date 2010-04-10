@@ -1602,8 +1602,8 @@ function make_default_scale() {
         $file = file($CFG->dataroot .'/lang/'. $parentlang .'/help/forum/ratings.html');
     } else if ($parentlang and is_readable($CFG->dirroot .'/lang/'. $parentlang .'/help/forum/ratings.html')) {
         $file = file($CFG->dirroot .'/lang/'. $parentlang .'/help/forum/ratings.html');
-    } else if (is_readable($CFG->dirroot .'/lang/en_utf8/help/forum/ratings.html')) {
-        $file = file($CFG->dirroot .'/lang/en_utf8/help/forum/ratings.html');
+    } else if (is_readable($CFG->dirroot .'/lang/en/help/forum/ratings.html')) {
+        $file = file($CFG->dirroot .'/lang/en/help/forum/ratings.html');
     } else {
         $file = '';
     }

@@ -1,10 +1,10 @@
-Index: lang/en_utf8/editor_tinymce.php
+Index: lang/en/editor_tinymce.php
 ===================================================================
-RCS file: /cvsroot/moodle/moodle/lang/en_utf8/editor_tinymce.php,v
+RCS file: /cvsroot/moodle/moodle/lang/en/editor_tinymce.php,v
 retrieving revision 1.7
 diff -u -r1.7 editor_tinymce.php
---- lang/en_utf8/editor_tinymce.php	19 Jul 2009 13:05:24 -0000	1.7
-+++ lang/en_utf8/editor_tinymce.php	10 Nov 2009 08:09:43 -0000
+--- lang/en/editor_tinymce.php	19 Jul 2009 13:05:24 -0000	1.7
++++ lang/en/editor_tinymce.php	10 Nov 2009 08:09:43 -0000
 @@ -234,6 +234,8 @@
  $string['autosave:unload_msg'] = 'The changes you made will be lost if you navigate away from this page.';
  $string['common:apply'] = 'Apply';

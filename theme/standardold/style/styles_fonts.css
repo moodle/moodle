@@ -45,11 +45,11 @@ body, table, td, th, li {
  * rule, so that other themes that inherit from that standard theme do not
  * un-intentionally break Vietnamese sites by changing the font.
  */
-body.lang-vi_utf8,
-body.lang-vi_utf8 table,
-body.lang-vi_utf8 td,
-body.lang-vi_utf8 th,
-body.lang-vi_utf8 li {
+body.lang-vi,
+body.lang-vi table,
+body.lang-vi td,
+body.lang-vi th,
+body.lang-vi li {
   font-family: Arial, Verdana, Helvetica, sans-serif !important;
 }
 

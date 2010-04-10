@@ -25,7 +25,7 @@ For more information, see the INSTALL DOCUMENTATION:
 
 A local copy can also be found in
 
-   lang/en_utf8/help/install.html   (or your language)
+   lang/en/help/install.html   (or your language)
 
 
 Good luck and have fun!

@@ -66,7 +66,7 @@ Custom language strings
 If customisation needs new strings it is recommended to use normal plugin
 strings.
 
-sample language file /local/nicehack/lang/en_utf8/local_nicehack.php
+sample language file /local/nicehack/lang/en/local_nicehack.php
 <?php
 $string['hello'] = 'Hi $a';
 $string['nicehack:nicecapability'] = 'Some capability';
@@ -174,7 +174,7 @@ Moodle supports other type of local customisation of standard language
 packs. If you want to create your own language pack based on another
 language create new dataroot directory with "_local" suffix, for example
 following file with content changes string "Login" to "Sign in":
-moodledata/lang/en_utf8_local
+moodledata/lang/en_local
 <?php
   $string['login'] = 'Sign in';
 ?>
