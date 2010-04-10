@@ -1644,7 +1644,6 @@ $string['themesaved'] = 'New theme saved';
 $string['thereareno'] = 'There are no {$a} in this course';
 $string['thiscategorycontains'] = 'This category contains';
 $string['thisdirection'] = 'ltr';
-$string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'English';
 $string['time'] = 'Time';
 $string['timezone'] = 'Timezone';

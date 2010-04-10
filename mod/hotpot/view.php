@@ -442,16 +442,11 @@
         case HOTPOT_NAVIGATION_GIVEUP:
             // replace charset , if necessary
             // HotPots are plain ascii (iso-8859-1) with unicode chars encoded as HTML entities
-            $charset = get_string("thischarset");
-            if ($charset == 'iso-8859-1') {
-                // do nothing
-            } else {
-                $hp->html = preg_replace(
-                    '|<meta[^>]*charset=iso-8859-1[^>]*>|is',
-                    '<meta http-equiv="Content-Type" content="text/html; charset='.$charset.'" />',
-                    $hp->html
-                );
-            }
+            $hp->html = preg_replace(
+                '|<meta[^>]*charset=iso-8859-1[^>]*>|is',
+                '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />',
+                $hp->html
+            );
             // no break (continue to print html to browser)
         default:
             // HOTPOT_NAVIGATION_BUTTONS

@@ -814,7 +814,7 @@ class hotpot_default_report {
                         $in_charset = mb_detect_encoding($cell, 'auto');
                     }
                     if (empty($in_charset)) {
-                        $in_charset = get_string('thischarset');
+                        $in_charset = 'UTF-8';
                     }
                     if ($in_charset != 'ASCII' && function_exists('mb_convert_encoding')) {
                         $cell = mb_convert_encoding($cell, $options['reportencoding'], $in_charset);

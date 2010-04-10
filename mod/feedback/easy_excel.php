@@ -230,7 +230,6 @@ function feedback_convert_to_win($text) {
     global $CFG;
     static $textlib;
     static $newwincharset;
-    static $oldcharset;
 
     if(!isset($textlib)) {
         $textlib = textlib_get_instance();
@@ -247,15 +246,11 @@ function feedback_convert_to_win($text) {
         }
     }
 
-    if(!isset($oldcharset)) {
-        $oldcharset = get_string('thischarset');
-    }
-
     //converting <br /> into newline
     $newtext = str_ireplace('<br />', "\n", $text);
     $newtext = str_ireplace('<br>', "\n", $newtext);
 
-    return $textlib->convert($newtext, $oldcharset, $newwincharset);
+    return $textlib->convert($newtext, 'UTF-8', $newwincharset);
 }
 
 

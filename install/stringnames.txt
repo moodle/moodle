@@ -46,7 +46,6 @@ phpversion,install
 phpversionhelp,install
 previous,moodle
 reload,admin
-thischarset,langconfig
 thisdirection,langconfig
 thislanguage,langconfig
 welcomep10,install

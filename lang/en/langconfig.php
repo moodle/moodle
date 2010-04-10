@@ -46,6 +46,5 @@ $string['strftimerecent'] = '%d %b, %H:%M';
 $string['strftimerecentfull'] = '%a, %d %b %Y, %I:%M %p';
 $string['strftimetime'] = '%I:%M %p';
 $string['thisdirection'] = 'ltr';
-$string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'English';
 $string['thousandssep'] = ',';

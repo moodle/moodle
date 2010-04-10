@@ -103,7 +103,6 @@ function feedback_get_xml_data($feedbackid) {
 }
 
 function feedback_send_xml_data($data, $filename) {
-    $charset = get_string('thischarset');
     @header('Content-Type: application/xml; charset=UTF-8');
     @header('Content-Disposition: attachment; filename='.$filename);
     print($data);

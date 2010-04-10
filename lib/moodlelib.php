@@ -5859,7 +5859,7 @@ class amos_string_manager implements string_manager {
         static $langconfigstrs = array('alphabet' => 1, 'backupnameformat' => 1, 'decsep' => 1,
                 'firstdayofweek' => 1, 'listsep' => 1, 'locale' => 1, 'localewin' => 1,
                 'localewincharset' => 1, 'oldcharset' => 1, 'parentlanguage' => 1,
-                'thischarset' => 1, 'thisdirection' => 1, 'thislanguage' => 1, 'thousandssep' => 1,
+                'thisdirection' => 1, 'thislanguage' => 1, 'thousandssep' => 1,
 
                 'strftimedate' => 1,
                 'strftimedatefullshort' => 1,
