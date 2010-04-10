@@ -82,11 +82,11 @@
         }
 
         /**
-         * Render TeX string into gif
+         * Render TeX string into gif/png
          * @param string $formula TeX formula
          * @param string $filename base of filename for output (no extension)
          * @param int $fontsize font size
-         * @param int $density density value for .ps to .gif conversion
+         * @param int $density density value for .ps to .gif/.png conversion
          * @param string $background background color (e.g, #FFFFFF).
          * @param file $log valid open file handle for optional logging (debugging only)
          * @return bool true if successful
@@ -106,7 +106,7 @@
             $tex = "{$this->temp_dir}/$filename.tex";
             $dvi = "{$this->temp_dir}/$filename.dvi";
             $ps  = "{$this->temp_dir}/$filename.ps";
-            $gif = "{$this->temp_dir}/$filename.gif";
+            $img = "{$this->temp_dir}/$filename.{$CFG->filter_tex_convertformat}";
 
             // turn the latex doc into a .tex file in the temp area
             $fh = fopen( $tex, 'w' );
@@ -126,30 +126,32 @@
                 return false;
             }
 
-            // run convert on document (.ps to .gif)
+            // run convert on document (.ps to .gif/.png)
             if ($background) {
                 $bg_opt = "-transparent \"$background\""; // Makes transparent background
             } else {
                 $bg_opt = "";
             }
-            $command = "{$CFG->filter_tex_pathconvert} -density $density -trim $bg_opt $ps $gif";
+            $command = "{$CFG->filter_tex_pathconvert} -density $density -trim $bg_opt $ps $img";
             if ($this->execute($command, $log )) {
                 return false;
             }
 
-            return $gif;
+            return $img;
         }
 
         /**
          * Delete files created in temporary area
-         * Don't forget to copy the final gif before calling this
+         * Don't forget to copy the final gif/png before calling this
          * @param string $filename file base (no extension)
          */
         function clean_up( $filename ) {
+            global $CFG;
+
             unlink( "{$this->temp_dir}/$filename.tex" );
             unlink( "{$this->temp_dir}/$filename.dvi" );
             unlink( "{$this->temp_dir}/$filename.ps" );
-            unlink( "{$this->temp_dir}/$filename.gif" );
+            unlink( "{$this->temp_dir}/$filename.{$CFG->filter_tex_convertformat}" );
             unlink( "{$this->temp_dir}/$filename.aux" );
             unlink( "{$this->temp_dir}/$filename.log" );
             return;

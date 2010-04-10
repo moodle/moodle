@@ -84,6 +84,13 @@ function filter_tex_updatedcallback($name) {
 
     $DB->delete_records('cache_filters', array('filter'=>'tex'));
     $DB->delete_records('cache_filters', array('filter'=>'algebra'));
+ 
+    if (!(is_file($CFG->filter_tex_pathlatex) && is_executable($CFG->filter_tex_pathlatex) &&
+          is_file($CFG->filter_tex_pathdvips) && is_executable($CFG->filter_tex_pathdvips) &&
+          is_file($CFG->filter_tex_pathconvert) && is_executable($CFG->filter_tex_pathconvert))) {
+        // LaTeX, dvips or convert are not available, and mimetex can only produce GIFs so...
+        set_config('filter_tex_convertformat', 'gif');
+    }
 }
 
 

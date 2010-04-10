@@ -165,7 +165,7 @@ class tex_filter extends moodle_text_filter {
                 $texcache->timemodified = time();
                 $DB->insert_record("cache_filters", $texcache, false);
             }
-            $filename = $md5 . ".gif";
+            $filename = $md5 . ".{$CFG->filter_tex_convertformat}";
             $text = str_replace( $matches[0][$i], string_file_picture_tex($filename, $texexp, '', '', $align, $alt), $text);
         }
         return $text;

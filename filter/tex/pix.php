@@ -32,7 +32,7 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
     }
 
     if (!file_exists($pathname)) {
-        $md5 = str_replace('.gif','',$image);
+        $md5 = str_replace(".{$CFG->filter_tex_convertformat}",'',$image);
         if ($texcache = $DB->get_record('cache_filters', array('filter'=>'tex', 'md5key'=>$md5))) {
             if (!file_exists($CFG->dataroot.'/filter/tex')) {
                 make_upload_directory('filter/tex');
