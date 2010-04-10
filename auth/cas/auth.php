@@ -773,9 +773,9 @@ if ( !is_object($PHPCAS_CLIENT) ) {
                     $updateuser->id = $user->id;
                     $updateuser->auth = 'cas';
                     if (update_record('user', $updateuser)) {
-                        echo "\t"; print_string('auth_dbreviveser', 'auth', array($user->username, $user->id)); echo "\n";
+                        echo "\t"; print_string('auth_dbreviveduser', 'auth', array($user->username, $user->id)); echo "\n";
                     } else {
-                        echo "\t"; print_string('auth_dbreviveusererror', 'auth', $user->username); echo "\n";
+                        echo "\t"; print_string('auth_dbrevivedusererror', 'auth', $user->username); echo "\n";
                     }
                 }
                 commit_sql();

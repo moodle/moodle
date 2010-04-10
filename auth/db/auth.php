@@ -364,7 +364,7 @@ class auth_plugin_db extends auth_plugin_base {
                 if ($old_user = get_record('user', 'username', $user->username, 'deleted', 1, 'mnethostid', $user->mnethostid)) {
                     $user->id = $old_user->id;
                     set_field('user', 'deleted', 0, 'username', $user->username);
-                    echo "\t"; print_string('auth_dbreviveuser', 'auth', array(stripslashes($user->username), $user->id)); echo "\n";
+                    echo "\t"; print_string('auth_dbreviveduser', 'auth', array(stripslashes($user->username), $user->id)); echo "\n";
                 } elseif ($id = insert_record ('user',$user)) { // it is truly a new user
                     echo "\t"; print_string('auth_dbinsertuser','auth',array(stripslashes($user->username), $id)); echo "\n";
                     // if relevant, tag for password generation
