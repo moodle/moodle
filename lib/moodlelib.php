@@ -5856,16 +5856,25 @@ class amos_string_manager implements string_manager {
      * @return string The String !
      */
     public function get_string($identifier, $component='', $a=NULL) {
-        // this will be replaced by merging of lang and langconfig
         static $langconfigstrs = array('alphabet' => 1, 'backupnameformat' => 1, 'decsep' => 1,
                 'firstdayofweek' => 1, 'listsep' => 1, 'locale' => 1, 'localewin' => 1,
                 'localewincharset' => 1, 'oldcharset' => 1, 'parentlanguage' => 1,
-                'strftimedate' => 1, 'strftimedateshort' => 1, 'strftimedatefullshort' => 1,
-                'strftimedatetime' => 1, 'strftimedaydate' => 1, 'strftimedaydatetime' => 1,
-                'strftimedayshort' => 1, 'strftimedaytime' => 1, 'strftimemonthyear' => 1,
-                'strftimerecent' => 1, 'strftimerecentfull' => 1, 'strftimetime' => 1,
-                'thischarset' => 1, 'thisdirection' => 1, 'thislanguage' => 1,
-                'strftimedatetimeshort' => 1, 'thousandssep' => 1);
+                'thischarset' => 1, 'thisdirection' => 1, 'thislanguage' => 1, 'thousandssep' => 1,
+
+                'strftimedate' => 1,
+                'strftimedatefullshort' => 1,
+                'strftimedateshort' => 1,
+                'strftimedatetime' => 1,
+                'strftimedatetimeshort' => 1,
+                'strftimedaydate' => 1,
+                'strftimedaydatetime' => 1,
+                'strftimedayshort' => 1,
+                'strftimedaytime' => 1,
+                'strftimemonthyear' => 1,
+                'strftimerecent' => 1,
+                'strftimerecentfull' => 1,
+                'strftimetime' => 1,
+        );
 
         if ((empty($component)) and isset($langconfigstrs[$identifier])) {
             $component = 'core_langconfig';
