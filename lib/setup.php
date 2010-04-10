@@ -580,9 +580,9 @@ if (!isset($CFG->theme)) {
 // in the language file.  Otherwise, if the admin hasn't specified a locale
 // then use the one from the default language.  Otherwise (and this is the
 // majority of cases), use the stored locale specified by admin.
-if (($lang = optional_param('lang', '', PARAM_SAFEDIR))) {
-    if (file_exists($CFG->dataroot .'/lang/'. $lang) or
-            file_exists($CFG->dirroot .'/lang/'. $lang)) {
+// note: do not accept lang parameter from POST
+if (isset($_GET['lang']) and ($lang = optional_param('lang', '', PARAM_SAFEDIR))) {
+    if (file_exists($CFG->langotherroot.'/'.$lang) or file_exists($CFG->dirroot.'/lang/'.$lang)) {
         $SESSION->lang = $lang;
     }
 }
