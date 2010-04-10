@@ -260,6 +260,16 @@ if (!isset($CFG->prefix)) {   // Just in case it isn't defined in config.php
     $CFG->prefix = '';
 }
 
+// location of all languages except core English pack
+if (!isset($CFG->langotherroot)) {
+    $CFG->langotherroot = $CFG->dataroot.'/lang';
+}
+
+// location of local lang pack customisations (dirs with _local suffix)
+if (!isset($CFG->langlocalroot)) {
+    $CFG->langlocalroot = $CFG->dataroot.'/lang';
+}
+
 //point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else
 //the problem is that we need specific version of quickforms and hacked excel files :-(
 ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));

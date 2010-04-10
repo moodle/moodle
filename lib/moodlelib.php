@@ -5667,9 +5667,9 @@ function get_string_manager() {
 
     if ($singleton === null) {
         if (empty($CFG->early_install_lang)) {
-            $singleton = new amos_string_manager("$CFG->dirroot/lang", "$CFG->dataroot/lang", "$CFG->dataroot/lang");
+            $singleton = new amos_string_manager($CFG->langotherroot, $CFG->langlocalroot);
         } else {
-            $singleton = new install_string_manager("$CFG->dirroot/install/lang");
+            $singleton = new install_string_manager();
         }
     }
 
@@ -5713,27 +5713,23 @@ interface string_manager {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class amos_string_manager implements string_manager {
-    private $coreroot;
-    private $otherroot;
-    private $localroot;
+    /** @var string location of all packs except 'en' */
+    protected $otherroot;
+    /** @var string location of all lang pack local modifications */
+    protected $localroot;
 
-    // to be optimised later
-    private $cache = array();
+    /** @var array lang string cache - it will be optimised more later */
+    protected $cache = array();
 
     /**
      * Crate new instance of amos string manager
      *
-     * TODO: precompilation in dataroot cache,
-     *       please note this does not work with current cvs lang format yet
-     *
-     * @param string $coreroot $CFG->dirroot (used in unit tests only)
      * @param string $otherroot location of downlaoded lang packs - usually $CFG->dataroot/lang
      * @param string $localroot usually the same as $otherroot
      */
-    public function __construct($coreroot, $otherroot, $localroot) {
-        $this->coreroot  = $coreroot;
-        $this->otherroot = $otherroot;
-        $this->localroot = $localroot;
+    public function __construct($otherroot, $localroot) {
+        $this->otherroot  = $otherroot;
+        $this->localroot  = $localroot;
     }
 
     /**
@@ -5767,6 +5763,8 @@ class amos_string_manager implements string_manager {
      * @return array of all string for given component and lang
      */
     protected function load_component_strings($component, $lang) {
+        global $CFG;
+
         list($plugintype, $pluginname) = normalize_component($component);
 
         if (!isset($this->cache[$lang])) {
@@ -5784,11 +5782,11 @@ class amos_string_manager implements string_manager {
             }
             $string = array();
             // first load english pack
-            if (!file_exists("$this->coreroot/en/$file.php")) {
+            if (!file_exists("$CFG->dirroot/lang/en/$file.php")) {
                 debugging("Invalid component parameter in get_string() call: $component", DEBUG_DEVELOPER);
                 return array();
             }
-            include("$this->coreroot/en/$file.php");
+            include("$CFG->dirroot/lang/en/$file.php");
             $originalkeys = array_keys($string);
             $originalkeys = array_flip($originalkeys);
 
@@ -5949,15 +5947,15 @@ class amos_string_manager implements string_manager {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class install_string_manager implements string_manager {
-    private $installroot;
+    /** @var string location of pre-install packs for all langs */
+    protected $installroot;
 
     /**
      * Crate new instance of install string manager
-     *
-     * @param string $installroot $CFG->dirroot/install/lang (used in unit tests only)
      */
-    public function __construct($installroot) {
-        $this->installroot = $installroot;
+    public function __construct() {
+        global $CFG;
+        $this->installroot = "$CFG->dirroot/install/lang";
     }
 
     /**
