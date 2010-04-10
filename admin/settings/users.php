@@ -25,7 +25,7 @@ if ($hassiteconfig
                                             get_string('alternatelogin', 'auth', htmlspecialchars($CFG->wwwroot.'/login/index.php')), ''));
     $temp->add(new admin_setting_configtext('forgottenpasswordurl', get_string('forgottenpasswordurl', 'auth'),
                                             get_string('forgottenpassword', 'auth'), ''));
-    $temp->add(new admin_setting_configtextarea('auth_instructions', get_string('instructions', 'auth'),
+    $temp->add(new admin_setting_confightmltextarea('auth_instructions', get_string('instructions', 'auth'),
                                                 get_string('authinstructions', 'auth'), ''));
     $temp->add(new admin_setting_configtext('allowemailaddresses', get_string('allowemailaddresses', 'admin'), get_string('configallowemailaddresses', 'admin'), '', PARAM_NOTAGS));
     $temp->add(new admin_setting_configtext('denyemailaddresses', get_string('denyemailaddresses', 'admin'), get_string('configdenyemailaddresses', 'admin'), '', PARAM_NOTAGS));

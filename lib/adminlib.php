@@ -1917,6 +1917,25 @@ class admin_setting_configtextarea extends admin_setting_configtext {
 }
 
 /**
+ * General text area with html editor.
+ */
+class admin_setting_confightmltextarea extends admin_setting_configtext {
+
+    function admin_setting_confightmltextarea($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW) {
+        parent::admin_setting_configtext($name, $visiblename, $description, $defaultsetting, $paramtype);
+    }
+
+    function output_html($data, $query='') {
+        global $CFG;
+
+        $CFG->adminusehtmleditor = can_use_html_editor();
+        $return = '<div class="form-htmlarea">'.print_textarea($CFG->adminusehtmleditor, 15, 60, 0, 0, $this->get_full_name(), $data, 0, true).'</div>';
+
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', NULL, $query);
+    }
+}
+
+/**
  * Password field, allows unmasking of password
  */
 class admin_setting_configpasswordunmask extends admin_setting_configtext {
