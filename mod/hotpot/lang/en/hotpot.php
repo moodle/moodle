@@ -1,9 +1,31 @@
-<?PHP // $Id$ 
-      // hotpot.php - created with Moodle 1.7 beta + (2006101003)
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'hotpot', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   hotpot
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['abandoned'] = 'Abandoned';
 $string['addquizchain'] = 'Add quiz chain';
+$string['allmycourses'] = 'All my courses';
 $string['allusers'] = 'All users';
 $string['alwaysopen'] = 'Always open';
 $string['attemptsall'] = 'All attempts';
@@ -11,8 +33,7 @@ $string['attemptsbest'] = 'Best attempt';
 $string['attemptsfirst'] = 'First attempt';
 $string['attemptslast'] = 'Last attempt';
 $string['average'] = 'Average';
-$string['cannotfindmethod'] = 'Template block expand method not found: ($a)';
-$string['checks'] = 'Checks';
+$string['cannotfindmethod'] = 'Template block expand method not found: ({$a})';
 $string['clickreporting'] = 'Enable click reporting';
 $string['clues'] = 'Clues';
 $string['completed'] = 'Completed';
@@ -22,23 +43,22 @@ $string['copiedtoclipboard'] = 'The contents of this page have been copied to th
 $string['copytoclipboard'] = 'Copy to Clipboard';
 $string['correct'] = 'Correct';
 $string['deleteabandoned'] = 'Delete abandoned';
-$string['deleteabandonedcheck'] = 'Do you really want to delete all $a abandoned attempts?';
+$string['deleteabandonedcheck'] = 'Do you really want to delete all {$a} abandoned attempts?';
 $string['deleteallattempts'] = 'Delete all attempts';
 $string['displaycoursenext'] = 'Display Course page next';
 $string['displayhotpotnext'] = 'Display Hot Potatoes quiz next';
 $string['displayindexnext'] = 'Display HotPot index next';
 $string['enterafilename'] = 'Please enter a file name';
-$string['error_couldnotopenfolder'] = 'Could not access the folder &quot;$a&quot;';
-$string['error_couldnotopensourcefile'] = 'Could not open the source file \"$a\"';
-$string['error_couldnotopentemplate'] = 'Could not open template for &quot;$a&quot; format';
+$string['error_couldnotopenfolder'] = 'Could not access the folder &quot;{$a}&quot;';
+$string['error_couldnotopensourcefile'] = 'Could not open the source file "{$a}"';
+$string['error_couldnotopentemplate'] = 'Could not open template for &quot;{$a}&quot; format';
 $string['error_invalidquiztype'] = 'Quiz type is missing or invalid';
 $string['error_nocourseorfilename'] = 'Could not create XML tree: missing course or file name';
 $string['error_nofeedbackurlformmail'] = 'Please enter a URL for the form processing script';
 $string['error_nofeedbackurlwebpage'] = 'Please enter a URL for the webpage';
 $string['error_nofilename'] = 'Please enter a file name';
 $string['error_noquizzesfound'] = 'No Hot Potatoes quizzes found';
-$string['error_notfileorfolder'] = '&quot;$a&quot; is not file or folder';
-$stirng['error_processreport'] = 'Error occurred during report processing!';
+$string['error_notfileorfolder'] = '&quot;{$a}&quot; is not file or folder';
 $string['excelencodings'] = 'Excel encodings';
 $string['feedbackformmail'] = 'Feedback form';
 $string['feedbackmoodleforum'] = 'Moodle forum';
@@ -49,18 +69,19 @@ $string['filetype'] = 'File type';
 $string['forceplugins'] = 'Force media plugins';
 $string['giveup'] = 'Give Up';
 $string['hints'] = 'Hints';
+$string['hotpotadministration'] = 'Hot Potatoes quiz administration';
 $string['hotpot:attempt'] = 'Attempt a quiz';
+$string['hotpotcloses'] = 'Hot Potatoes quiz closes';
 $string['hotpot:deleteattempt'] = 'Delete quiz attempts';
 $string['hotpot:grade'] = 'Modify grades';
+$string['hotpotopens'] = 'Hot Potatoes quiz opens';
 $string['hotpot:view'] = 'Use quiz';
 $string['hotpot:viewreport'] = 'View reports';
-$string['hotpotadministration'] = 'Hot Potatoes quiz administration';
-$string['hotpotcloses'] = 'Hot Potatoes quiz closes';
-$string['hotpotopens'] = 'Hot Potatoes quiz opens';
+$string['checks'] = 'Checks';
 $string['ignored'] = 'Ignored';
 $string['inprogress'] = 'In progress';
-$string['invalidhotpotid'] = 'hotpot ID was incorrect';
 $string['invalidattemptid'] = 'Attempt ID was incorrect';
+$string['invalidhotpotid'] = 'hotpot ID was incorrect';
 $string['location'] = 'File location';
 $string['modulename'] = 'Hot Potatoes Quiz';
 $string['modulenameplural'] = 'Hot Potatoes Quizzes';
@@ -86,12 +107,12 @@ $string['outputformat_v5_plus'] = 'v5+';
 $string['outputformat_v6'] = 'v6';
 $string['outputformat_v6_plus'] = 'v6+';
 $string['penalties'] = 'Penalties';
-$string['questionshort'] = 'Q-$a';
+$string['questionshort'] = 'Q-{$a}';
 $string['quiztype'] = 'Quiz type';
 $string['quizunavailable'] = 'Quiz is unavailable at the moment';
 $string['rawdetails'] = 'Raw attempt details';
 $string['regrade'] = 'Regrade';
-$string['regradecheck'] = 'Do you really want to regrade &quot;$a&quot;?';
+$string['regradecheck'] = 'Do you really want to regrade &quot;{$a}&quot;?';
 $string['regraderequired'] = 'Regrade required';
 $string['removegradeitem'] = 'Remove grade item';
 $string['reportanswers'] = 'Answers';
@@ -99,8 +120,6 @@ $string['reportattemptfinish'] = 'Att. finish';
 $string['reportattemptnumber'] = 'Attempt';
 $string['reportattemptstart'] = 'Att. start';
 $string['reportbutton'] = 'Generate report';
-$string['reportchanges'] = 'Changes';
-$string['reportchecks'] = 'Checks';
 $string['reportclick'] = 'Click trail report';
 $string['reportclicknumber'] = 'Click';
 $string['reportclicktime'] = 'Click time';
@@ -115,13 +134,13 @@ $string['reportexercisename'] = 'Ex. name';
 $string['reportexercisenumber'] = 'Exercise';
 $string['reportexercisetype'] = 'Ex. type';
 $string['reportformat'] = 'Format';
-$string['allmycourses'] = 'All my courses'; //necessary for 1.6 and older
-$string['allusers'] = 'All users';
 $string['reportformatexcel'] = 'Excel';
 $string['reportformathtml'] = 'HTML';
 $string['reportformattext'] = 'Text';
 $string['reporthints'] = 'Hints';
 $string['reporthotpotscore'] = 'Hotpot score';
+$string['reportchanges'] = 'Changes';
+$string['reportchecks'] = 'Checks';
 $string['reportlegend'] = 'Legend';
 $string['reportlogindate'] = 'Login date';
 $string['reportlogintime'] = 'Login time';
@@ -130,17 +149,17 @@ $string['reportmaxscore'] = 'Max score';
 $string['reportnottried'] = 'Not tried';
 $string['reportnottriedsymbol'] = '-';
 $string['reportnumberofquestions'] = 'No. of q\'s';
-$string['reportpercentscore'] = '%% Score';
+$string['reportpercentscore'] = '% Score';
 $string['reportquestionstried'] = 'Q\'s tried';
 $string['reportrawscore'] = 'Raw score';
 $string['reportright'] = 'Right';
 $string['reportsectionnumber'] = 'Section';
 $string['reportshowanswer'] = 'Show answers';
 $string['reportshowlegend'] = 'Show legend';
-$string['reportsofar'] = '$a so far';
+$string['reportsofar'] = '{$a} so far';
 $string['reportstatus'] = 'Status';
 $string['reportstudentid'] = 'Student id';
-$string['reportthisclick'] = '$a this click';
+$string['reportthisclick'] = '{$a} this click';
 $string['reporttimerecorded'] = 'Responses recorded';
 $string['reportwrapdata'] = 'Wrap data';
 $string['reportwrong'] = 'Wrong';
@@ -158,11 +177,9 @@ $string['textsourcefilename'] = 'Use file name';
 $string['textsourcefilepath'] = 'Use file path';
 $string['textsourcequiz'] = 'Get from quiz';
 $string['textsourcespecific'] = 'Specific text';
-$string['thiscourse'] = 'This course'; //necessary for 1.6 and older
+$string['thiscourse'] = 'This course';
 $string['timedout'] = 'Timed out';
+$string['unknownreport'] = 'Report not known ({$a})';
 $string['updatequizchain'] = 'Update quiz chain';
-$string['unknownreport'] = 'Report not known ($a)';
 $string['weighting'] = 'Weighting';
 $string['wrong'] = 'Wrong';
-
-?>

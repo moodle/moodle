@@ -1,30 +1,51 @@
-<?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.7 beta + (2006101003)
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'assignment', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   assignment
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['allowdeleting'] = 'Allow deleting';
 $string['allowmaxfiles'] = 'Maximum number of uploaded files';
 $string['allownotes'] = 'Allow notes';
 $string['allowresubmit'] = 'Allow resubmitting';
 $string['alreadygraded'] = 'Your assignment has already been graded and resubmission is not allowed.';
+$string['assignmentadministration'] = 'Assignment administration';
+$string['assignmentdetails'] = 'Assignment details';
 $string['assignment:exportownsubmission'] = 'Export own submission';
 $string['assignment:exportsubmission'] = 'Export submission';
 $string['assignment:grade'] = 'Grade assignment';
-$string['assignment:submit'] = 'Submit assignment';
-$string['assignment:view'] = 'View assignment';
-$string['assignmentadministration'] = 'Assignment administration';
-$string['assignmentdetails'] = 'Assignment details';
-$string['assignmentmail'] = '$a->teacher has posted some feedback on your
-assignment submission for \'$a->assignment\'
+$string['assignmentmail'] = '{$a->teacher} has posted some feedback on your
+assignment submission for \'{$a->assignment}\'
 
 You can see it appended to your assignment submission:
 
-    $a->url';
-$string['assignmentmailhtml'] = '$a->teacher has posted some feedback on your
-assignment submission for \'<i>$a->assignment</i>\'<br /><br />
-You can see it appended to your <a href=\"$a->url\">assignment submission</a>.';
+    {$a->url}';
+$string['assignmentmailhtml'] = '{$a->teacher} has posted some feedback on your
+assignment submission for \'<i>{$a->assignment}</i>\'<br /><br />
+You can see it appended to your <a href="{$a->url}">assignment submission</a>.';
 $string['assignmentname'] = 'Assignment name';
+$string['assignment:submit'] = 'Submit assignment';
 $string['assignmenttype'] = 'Assignment type';
+$string['assignment:view'] = 'View assignment';
 $string['availabledate'] = 'Available from';
 $string['cannotdeletefiles'] = 'An error occurred and files could not be deleted';
 $string['cannotviewassignment'] = 'You can not view this assignment';
@@ -33,34 +54,34 @@ $string['commentinline'] = 'Comment inline';
 $string['configitemstocount'] = 'Nature of items to be counted for student submissions in online assignments.';
 $string['configmaxbytes'] = 'Default maximum assignment size for all assignments on the site (subject to course limits and other local settings)';
 $string['configshowrecentsubmissions'] = 'Everyone can see notifications of submissions in recent activity reports.';
-$string['confirmdeletefile'] = 'Are you absolutely sure you want to delete this file?<br /><strong>$a</strong>';
-$string['coursemisconf'] = 'Course is misconfigured'; 
+$string['confirmdeletefile'] = 'Are you absolutely sure you want to delete this file?<br /><strong>{$a}</strong>';
+$string['coursemisconf'] = 'Course is misconfigured';
 $string['deleteallsubmissions'] = 'Delete all submissions';
 $string['deletefilefailed'] = 'Deleting of file failed.';
 $string['description'] = 'Description';
 $string['draft'] = 'Draft';
 $string['duedate'] = 'Due date';
 $string['duedateno'] = 'No due date';
-$string['early'] = '$a early';
+$string['early'] = '{$a} early';
 $string['editmysubmission'] = 'Edit my submission';
 $string['emailstudents'] = 'Email alerts to students';
-$string['emailteachermail'] = '$a->username has updated their assignment submission
-for \'$a->assignment\'
+$string['emailteachermail'] = '{$a->username} has updated their assignment submission
+for \'{$a->assignment}\'
 
 It is available here:
 
-    $a->url';
-$string['emailteachermailhtml'] = '$a->username has updated their assignment submission
-for <i>\'$a->assignment\'</i><br /><br />
-It is <a href=\"$a->url\">available on the web site</a>.';
+    {$a->url}';
+$string['emailteachermailhtml'] = '{$a->username} has updated their assignment submission
+for <i>\'{$a->assignment}\'</i><br /><br />
+It is <a href="{$a->url}">available on the web site</a>.';
 $string['emailteachers'] = 'Email alerts to teachers';
 $string['emptysubmission'] = 'You have not submitted anything yet';
 $string['enableemailnotification'] = 'Send notification emails';
-$string['existingfiledeleted'] = 'Existing file has been deleted: $a';
-$string['failedupdatefeedback'] = 'Failed to update submission feedback for user $a';
+$string['existingfiledeleted'] = 'Existing file has been deleted: {$a}';
+$string['failedupdatefeedback'] = 'Failed to update submission feedback for user {$a}';
 $string['feedback'] = 'Feedback';
-$string['feedbackfromteacher'] = 'Feedback from the $a';
-$string['feedbackupdated'] = 'Submissions feedback updated for $a people';
+$string['feedbackfromteacher'] = 'Feedback from the {$a}';
+$string['feedbackupdated'] = 'Submissions feedback updated for {$a} people';
 $string['finalize'] = 'No more submissions';
 $string['finalizeerror'] = 'An error occurred and that submission could not be finalised';
 $string['graded'] = 'Graded';
@@ -85,29 +106,31 @@ $string['helpuploadsingle'] = '<p>This type of assignment allows each participan
    single file, of any type.</p> <p>This might be a Word processor document, an image, 
    a zipped web site, or anything you ask them to submit.</p>';
 $string['hideintro'] = 'Hide description before available date';
-$string['itemstocount'] = 'Count';
-$string['invalidid'] = 'assignment ID was incorrect';
 $string['invalidassignment'] = 'incorrect assignment';
-$string['invalidtype']= 'Incorrect assignment type';
+$string['invalidid'] = 'assignment ID was incorrect';
+$string['invalidtype'] = 'Incorrect assignment type';
 $string['invaliduserid'] = 'Invalid user ID';
-$string['late'] = '$a late';
+$string['itemstocount'] = 'Count';
+$string['late'] = '{$a} late';
 $string['maximumgrade'] = 'Maximum grade';
 $string['maximumsize'] = 'Maximum size';
+$string['maxpublishstate'] = 'Maximum visibility for blog entry before duedate';
 $string['modulename'] = 'Assignment';
 $string['modulenameplural'] = 'Assignments';
 $string['newsubmissions'] = 'Assignments submitted';
 $string['noassignments'] = 'There are no assignments yet';
 $string['noattempts'] = 'No attempts have been made on this assignment';
+$string['noblogs'] = 'You have no blog entries to submit!';
 $string['nofiles'] = 'No files were submitted';
 $string['nofilesyet'] = 'No files submitted yet';
 $string['nomoresubmissions'] = 'No further submissions are allowed.';
+$string['nosubmitusers'] = 'No users were found with permissions to submit this assignment';
 $string['notavailableyet'] = 'Sorry, this assignment is not yet available.<br />Assignment instructions will be displayed here on the date given below.';
 $string['notes'] = 'Notes';
 $string['notesempty'] = 'No entry';
 $string['notesupdateerror'] = 'Error when updating notes';
 $string['notgradedyet'] = 'Not graded yet';
 $string['notsubmittedyet'] = 'Not submitted yet';
-$string['nosubmitusers'] = 'No users were found with permissions to submit this assignment';
 $string['onceassignmentsent'] = 'Once the assignment is sent for marking, you will no longer be able to delete or attach file(s). Do you want to continue?';
 $string['overwritewarning'] = 'Warning: uploading again will REPLACE your current submission';
 $string['pagesize'] = 'Submissions shown per page';
@@ -116,6 +139,7 @@ $string['quickgrade'] = 'Allow quick grading';
 $string['responsefiles'] = 'Response files';
 $string['reviewed'] = 'Reviewed';
 $string['saveallfeedback'] = 'Save all my feedback';
+$string['selectblog'] = 'Select which blog entry you wish to submit';
 $string['sendformarking'] = 'Send for marking';
 $string['showrecentsubmissions'] = 'Show recent submissions';
 $string['submission'] = 'Submission';
@@ -123,34 +147,30 @@ $string['submissiondraft'] = 'Submission draft';
 $string['submissionfeedback'] = 'Submission feedback';
 $string['submissions'] = 'Submissions';
 $string['submissionsaved'] = 'Your changes have been saved';
-$string['submissionsnotgraded'] = '$a submissions not graded';
+$string['submissionsnotgraded'] = '{$a} submissions not graded';
 $string['submitassignment'] = 'Submit your assignment using this form';
 $string['submitedformarking'] = 'Assignment was already submitted for marking and can not be updated';
 $string['submitformarking'] = 'Final submission for assignment marking';
 $string['submitted'] = 'Submitted';
 $string['submittedfiles'] = 'Submitted files';
 $string['trackdrafts'] = 'Enable Send for marking';
+$string['typeblog'] = 'Blog post';
 $string['typeoffline'] = 'Offline activity';
 $string['typeonline'] = 'Online text';
 $string['typeupload'] = 'Advanced uploading of files';
 $string['typeuploadsingle'] = 'Upload a single file';
-$string['typeblog'] = 'Blog post';
 $string['unfinalize'] = 'Revert to draft';
 $string['unfinalizeerror'] = 'An error occurred and that submission could not be reverted to draft';
 $string['uploadbadname'] = 'This filename contained strange characters and couldn\'t be uploaded';
 $string['uploadedfiles'] = 'uploaded files';
 $string['uploaderror'] = 'An error happened while saving the file on the server';
 $string['uploadfailnoupdate'] = 'File was uploaded OK but could not update your submission!';
-$string['uploadfiletoobig'] = 'Sorry, but that file is too big (limit is $a bytes)';
+$string['uploadfiletoobig'] = 'Sorry, but that file is too big (limit is {$a} bytes)';
 $string['uploadnofilefound'] = 'No file was found - are you sure you selected one to upload?';
-$string['uploadnotregistered'] = '\'$a\' was uploaded OK but submission did not register!';
-$string['uploadsuccess'] = 'Uploaded \'$a\' successfully';
+$string['uploadnotregistered'] = '\'{$a}\' was uploaded OK but submission did not register!';
+$string['uploadsuccess'] = 'Uploaded \'{$a}\' successfully';
 $string['usermisconf'] = 'User is misconfigured';
 $string['viewfeedback'] = 'View assignment grades and feedback';
 $string['viewmysubmission'] = 'View my submission';
-$string['viewsubmissions'] = 'View $a submitted assignments';
+$string['viewsubmissions'] = 'View {$a} submitted assignments';
 $string['yoursubmission'] = 'Your submission';
-$string['maxpublishstate'] = 'Maximum visibility for blog entry before duedate';
-$string['selectblog'] = 'Select which blog entry you wish to submit';
-$string['noblogs'] = 'You have no blog entries to submit!';
-?>

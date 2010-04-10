@@ -16,24 +16,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * English strings for Workshop subplugin - "Accumulative" grading strategy
+ * Strings for component 'workshopform_rubric', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   mod-workshop
- * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
+ * @package   workshopform_rubric
+ * @copyright 2009 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$string['addmoredimensions'] = 'Blanks for $a more criteria';
+$string['addmoredimensions'] = 'Blanks for {$a} more criteria';
 $string['configuration'] = 'Rubric configuration';
+$string['criteria'] = 'Criteria';
 $string['dimensiondescription'] = 'Description';
-$string['dimensionnumber'] = 'Criterion $a';
+$string['dimensionnumber'] = 'Criterion {$a}';
+$string['layout'] = 'Rubric layout';
 $string['layoutgrid'] = 'Grid';
 $string['layoutlist'] = 'List';
-$string['layout'] = 'Rubric layout';
 $string['levelgroup'] = 'Level grade and definition';
-$string['pluginname'] = 'Rubric';
-$string['criteria'] = 'Criteria';
 $string['levels'] = 'Levels';
 $string['mustchooseone'] = 'You have to select one of these items';
+$string['pluginname'] = 'Rubric';

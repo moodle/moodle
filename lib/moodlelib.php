@@ -5897,20 +5897,16 @@ class amos_string_manager implements string_manager {
                         // we do not support numeric keys - sorry!
                         continue;
                     }
-                    $search[]  = '$a->'.$key.'';
-                    //$search[]  = '{$a->'.$key.'}'; // TODO: uncomment after switch to {a->aa}
+                    $search[]  = '{$a->'.$key.'}';
                     $replace[] = (string)$value;
                 }
                 if ($search) {
                     $string = str_replace($search, $replace, $string);
                 }
             } else {
-                $string = str_replace('$a', (string)$a, $string);
-                //$string = str_replace('{$a}', (string)$a, $string); // TODO: uncomment after switch to {a}
+                $string = str_replace('{$a}', (string)$a, $string);
             }
         }
-
-        $string = str_replace('%%', '%', $string); //TODO: remove after lang cleanup
 
         return $string;
     }

@@ -16,27 +16,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * English strings for Workshop allocation subplugin - Random allocation
+ * Strings for component 'workshopallocation_random', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   mod-workshop
- * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
+ * @package   workshopallocation_random
+ * @copyright 2009 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 $string['addselfassessment'] = 'Add self-assessments';
-$string['allocationaddeddetail'] = 'New assessment to be done: <strong>$a->reviewername</strong> is reviewer of <strong>$a->authorname</strong>';
-$string['allocationdeallocategraded'] = 'Unable to deallocate already graded assessment: reviewer <strong>$a->reviewername</strong>, submission author: <strong>$a->authorname</strong>';
+$string['allocationaddeddetail'] = 'New assessment to be done: <strong>{$a->reviewername}</strong> is reviewer of <strong>{$a->authorname}</strong>';
+$string['allocationdeallocategraded'] = 'Unable to deallocate already graded assessment: reviewer <strong>{$a->reviewername}</strong>, submission author: <strong>{$a->authorname}</strong>';
 $string['allocationsettings'] = 'Allocation settings';
-$string['assessmentdeleteddetail'] = 'Assessment deallocated: <strong>$a->reviewername</strong> is no longer reviewer of <strong>$a->authorname</strong>';
+$string['assessmentdeleteddetail'] = 'Assessment deallocated: <strong>{$a->reviewername}</strong> is no longer reviewer of <strong>{$a->authorname}</strong>';
 $string['assesswosubmission'] = 'Participants can assess without having submitted anything';
 $string['confignumofreviews'] = 'Default number of submissions to be randomly allocated';
 $string['noallocationtoadd'] = 'No allocations to add';
-$string['numofdeallocatedassessment'] = 'Deallocating $a assessment(s)';
-$string['numofrandomlyallocatedsubmissions'] = 'Randomly allocating $a submissions';
+$string['numofdeallocatedassessment'] = 'Deallocating {$a} assessment(s)';
+$string['numofrandomlyallocatedsubmissions'] = 'Randomly allocating {$a} submissions';
 $string['numofreviews'] = 'Number of reviews';
-$string['numofselfallocatedsubmissions'] = 'Self-allocating $a submission(s)';
+$string['numofselfallocatedsubmissions'] = 'Self-allocating {$a} submission(s)';
 $string['numperauthor'] = 'per submission';
 $string['numperreviewer'] = 'per reviewer';
 $string['pluginname'] = 'Random allocation';

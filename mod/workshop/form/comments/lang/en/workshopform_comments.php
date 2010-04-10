@@ -16,17 +16,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * English strings for Workshop subplugin - "Comments" grading strategy
+ * Strings for component 'workshopform_comments', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   mod-workshopform-commentsform-comments
- * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
+ * @package   workshopform_comments
+ * @copyright 2009 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$string['addmoredimensions'] = 'Blanks for $a more aspects';
+$string['addmoredimensions'] = 'Blanks for {$a} more aspects';
 $string['dimensioncomment'] = 'Comment';
 $string['dimensiondescription'] = 'Description';
-$string['dimensionnumber'] = 'Aspect $a';
+$string['dimensionnumber'] = 'Aspect {$a}';
 $string['pluginname'] = 'Comments';

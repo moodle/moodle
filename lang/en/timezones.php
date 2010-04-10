@@ -1,6 +1,27 @@
-<?PHP // $Id$ 
-      // timezones.php - created with Moodle 1.7 beta + (2006101003)
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'timezones', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   timezones
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['africa/abidjan'] = 'Africa/Abidjan';
 $string['africa/accra'] = 'Africa/Accra';
@@ -55,8 +76,8 @@ $string['africa/tripoli'] = 'Africa/Tripoli';
 $string['africa/tunis'] = 'Africa/Tunis';
 $string['africa/windhoek'] = 'Africa/Windhoek';
 $string['america/adak'] = 'America/Adak';
-$string['america/anchorage'] = 'America/Anchorage';
 $string['america/anguilla'] = 'America/Anguilla';
+$string['america/anchorage'] = 'America/Anchorage';
 $string['america/antigua'] = 'America/Antigua';
 $string['america/araguaina'] = 'America/Araguaina';
 $string['america/argentina/buenos_aires'] = 'America/Argentina/Buenos_Aires';
@@ -85,8 +106,6 @@ $string['america/cancun'] = 'America/Cancun';
 $string['america/caracas'] = 'America/Caracas';
 $string['america/cayenne'] = 'America/Cayenne';
 $string['america/cayman'] = 'America/Cayman';
-$string['america/chicago'] = 'America/Chicago';
-$string['america/chihuahua'] = 'America/Chihuahua';
 $string['america/costa_rica'] = 'America/Costa_Rica';
 $string['america/cuiaba'] = 'America/Cuiaba';
 $string['america/curacao'] = 'America/Curacao';
@@ -112,10 +131,12 @@ $string['america/guyana'] = 'America/Guyana';
 $string['america/halifax'] = 'America/Halifax';
 $string['america/havana'] = 'America/Havana';
 $string['america/hermosillo'] = 'America/Hermosillo';
+$string['america/chicago'] = 'America/Chicago';
+$string['america/chihuahua'] = 'America/Chihuahua';
 $string['america/indiana/knox'] = 'America/Indiana/Knox';
 $string['america/indiana/marengo'] = 'America/Indiana/Marengo';
-$string['america/indiana/vevay'] = 'America/Indiana/Vevay';
 $string['america/indianapolis'] = 'America/Indianapolis';
+$string['america/indiana/vevay'] = 'America/Indiana/Vevay';
 $string['america/inuvik'] = 'America/Inuvik';
 $string['america/iqaluit'] = 'America/Iqaluit';
 $string['america/jamaica'] = 'America/Jamaica';
@@ -202,8 +223,6 @@ $string['asia/beirut'] = 'Asia/Beirut';
 $string['asia/bishkek'] = 'Asia/Bishkek';
 $string['asia/brunei'] = 'Asia/Brunei';
 $string['asia/calcutta'] = 'Asia/Calcutta';
-$string['asia/choibalsan'] = 'Asia/Choibalsan';
-$string['asia/chongqing'] = 'Asia/Chongqing';
 $string['asia/colombo'] = 'Asia/Colombo';
 $string['asia/damascus'] = 'Asia/Damascus';
 $string['asia/dhaka'] = 'Asia/Dhaka';
@@ -214,6 +233,8 @@ $string['asia/gaza'] = 'Asia/Gaza';
 $string['asia/harbin'] = 'Asia/Harbin';
 $string['asia/hong_kong'] = 'Asia/Hong_Kong';
 $string['asia/hovd'] = 'Asia/Hovd';
+$string['asia/choibalsan'] = 'Asia/Choibalsan';
+$string['asia/chongqing'] = 'Asia/Chongqing';
 $string['asia/irkutsk'] = 'Asia/Irkutsk';
 $string['asia/jayapura'] = 'Asia/Jayapura';
 $string['asia/jerusalem'] = 'Asia/Jerusalem';
@@ -269,8 +290,8 @@ $string['atlantic/faeroe'] = 'Atlantic/Faeroe';
 $string['atlantic/madeira'] = 'Atlantic/Madeira';
 $string['atlantic/reykjavik'] = 'Atlantic/Reykjavik';
 $string['atlantic/south_georgia'] = 'Atlantic/South_Georgia';
-$string['atlantic/st_helena'] = 'Atlantic/St_Helena';
 $string['atlantic/stanley'] = 'Atlantic/Stanley';
+$string['atlantic/st_helena'] = 'Atlantic/St_Helena';
 $string['australia/adelaide'] = 'Australia/Adelaide';
 $string['australia/brisbane'] = 'Australia/Brisbane';
 $string['australia/broken_hill'] = 'Australia/Broken_Hill';
@@ -288,13 +309,13 @@ $string['europe/belfast'] = 'Europe/Belfast';
 $string['europe/belgrade'] = 'Europe/Belgrade';
 $string['europe/berlin'] = 'Europe/Berlin';
 $string['europe/brussels'] = 'Europe/Brussels';
-$string['europe/bucharest'] = 'Europe/Bucharest';
 $string['europe/budapest'] = 'Europe/Budapest';
-$string['europe/chisinau'] = 'Europe/Chisinau';
+$string['europe/bucharest'] = 'Europe/Bucharest';
 $string['europe/copenhagen'] = 'Europe/Copenhagen';
 $string['europe/dublin'] = 'Europe/Dublin';
 $string['europe/gibraltar'] = 'Europe/Gibraltar';
 $string['europe/helsinki'] = 'Europe/Helsinki';
+$string['europe/chisinau'] = 'Europe/Chisinau';
 $string['europe/istanbul'] = 'Europe/Istanbul';
 $string['europe/kaliningrad'] = 'Europe/Kaliningrad';
 $string['europe/kiev'] = 'Europe/Kiev';
@@ -325,9 +346,9 @@ $string['europe/warsaw'] = 'Europe/Warsaw';
 $string['europe/zaporozhye'] = 'Europe/Zaporozhye';
 $string['europe/zurich'] = 'Europe/Zurich';
 $string['indian/antananarivo'] = 'Indian/Antananarivo';
+$string['indian/comoro'] = 'Indian/Comoro';
 $string['indian/chagos'] = 'Indian/Chagos';
 $string['indian/christmas'] = 'Indian/Christmas';
-$string['indian/comoro'] = 'Indian/Comoro';
 $string['indian/kerguelen'] = 'Indian/Kerguelen';
 $string['indian/mahe'] = 'Indian/Mahe';
 $string['indian/maldives'] = 'Indian/Maldives';
@@ -336,7 +357,6 @@ $string['indian/mayotte'] = 'Indian/Mayotte';
 $string['indian/reunion'] = 'Indian/Reunion';
 $string['pacific/apia'] = 'Pacific/Apia';
 $string['pacific/auckland'] = 'Pacific/Auckland';
-$string['pacific/chatham'] = 'Pacific/Chatham';
 $string['pacific/easter'] = 'Pacific/Easter';
 $string['pacific/efate'] = 'Pacific/Efate';
 $string['pacific/enderbury'] = 'Pacific/Enderbury';
@@ -348,6 +368,7 @@ $string['pacific/gambier'] = 'Pacific/Gambier';
 $string['pacific/guadalcanal'] = 'Pacific/Guadalcanal';
 $string['pacific/guam'] = 'Pacific/Guam';
 $string['pacific/honolulu'] = 'Pacific/Honolulu';
+$string['pacific/chatham'] = 'Pacific/Chatham';
 $string['pacific/kiritimati'] = 'Pacific/Kiritimati';
 $string['pacific/kosrae'] = 'Pacific/Kosrae';
 $string['pacific/kwajalein'] = 'Pacific/Kwajalein';
@@ -372,5 +393,3 @@ $string['pacific/truk'] = 'Pacific/Truk';
 $string['pacific/wake'] = 'Pacific/Wake';
 $string['pacific/wallis'] = 'Pacific/Wallis';
 $string['pacific/yap'] = 'Pacific/Yap';
-
-?>

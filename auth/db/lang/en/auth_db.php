@@ -1,46 +1,68 @@
-<?php 
-// Database plugin
-$string['auth_dbdescription'] = 'This method uses an external database table to check whether a given username and password is valid.  If the account is a new one, then information from other fields may also be copied across into Moodle.';
-$string['auth_dbextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>external database fields</b> that you specify here. <p>If you leave these blank, then defaults will be used.</p><p>In either case, the user will be able to edit all of these fields after they log in.</p>';
-$string['auth_dbfieldpass'] = 'Name of the field containing passwords';
-$string['auth_dbfielduser'] = 'Name of the field containing usernames';
-$string['auth_dbhost'] = 'The computer hosting the database server.';
-$string['auth_dbname'] = 'Name of the database itself';
-$string['auth_dbpass'] = 'Password matching the above username';
-$string['auth_dbpasstype'] = '<p>Specify the format that the password field is using. MD5 hashing is useful for connecting to other common web applications like PostNuke.</p> <p>Use \'internal\' if you want to the external DB to manage usernames &amp; email addresses, but Moodle to manage passwords. If you use \'internal\', you <i>must</i> provide a populated email address field in the external DB, and you must execute both admin/cron.php and auth/db/auth_db_sync_users.php regularly. Moodle will send an email to new users with a temporary password.</p>';
-$string['auth_dbtable'] = 'Name of the table in the database';
-$string['auth_dbtitle'] = 'External database';
-$string['auth_dbtype'] = 'The database type (See the <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb documentation</a> for details)';
-$string['auth_dbuser'] = 'Username with read access to the database';
-$string['auth_dbcantconnect'] ='Could not connect to the specified authentication database...';
-$string['auth_dbuserstoadd'] = 'User entries to add: $a';
-$string['auth_dbuserstoremove'] = 'User entries to remove: $a';
-$string['auth_dbhost_key'] = 'Host';
-$string['auth_dbtype_key'] = 'Database';
-$string['auth_dbsybasequoting'] = 'Use sybase quotes';
-$string['auth_dbsybasequotinghelp'] = 'Sybase style single quote escaping - needed for Oracle, MS SQL and some other databases. Do not use for MySQL!';
-$string['auth_dbname_key'] = 'DB Name';
-$string['auth_dbuser_key'] = 'DB User';
-$string['auth_dbpass_key'] = 'Password';
-$string['auth_dbtable_key'] = 'Table';
-$string['auth_dbfielduser_key'] = 'Username field';
-$string['auth_dbfieldpass_key'] = 'Password field';
-$string['auth_dbpasstype_key'] = 'Password format';
-$string['auth_dbextencoding'] = 'External db encoding';
-$string['auth_dbextencodinghelp'] = 'Encoding used in external database';
-$string['auth_dbsetupsql'] = 'SQL setup command';
-$string['auth_dbsetupsqlhelp'] = 'SQL command for special database setup, often used to setup communication encoding - example for MySQL and PostgreSQL: <em>SET NAMES \'utf8\'</em>';
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'auth_db', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   auth_db
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+$string['auth_dbcantconnect'] = 'Could not connect to the specified authentication database...';
 $string['auth_dbdebugauthdb'] = 'Debug ADOdb';
 $string['auth_dbdebugauthdbhelp'] = 'Debug ADOdb connection to external database - use when getting empty page during login. Not suitable for production sites.';
+$string['auth_dbdeleteuser'] = 'Deleted user {$a}[0] id {$a}[1]';
+$string['auth_dbdeleteusererror'] = 'Error deleting user {$a}';
+$string['auth_dbdescription'] = 'This method uses an external database table to check whether a given username and password is valid.  If the account is a new one, then information from other fields may also be copied across into Moodle.';
+$string['auth_dbextencoding'] = 'External db encoding';
+$string['auth_dbextencodinghelp'] = 'Encoding used in external database';
+$string['auth_dbextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>external database fields</b> that you specify here. <p>If you leave these blank, then defaults will be used.</p><p>In either case, the user will be able to edit all of these fields after they log in.</p>';
+$string['auth_dbfieldpass'] = 'Name of the field containing passwords';
+$string['auth_dbfieldpass_key'] = 'Password field';
+$string['auth_dbfielduser'] = 'Name of the field containing usernames';
+$string['auth_dbfielduser_key'] = 'Username field';
+$string['auth_dbhost'] = 'The computer hosting the database server.';
+$string['auth_dbhost_key'] = 'Host';
 $string['auth_dbchangepasswordurl_key'] = 'Password-change URL';
-$string['auth_dbinsertuser'] ='Inserted user $a[0] id $a[1]';
-$string['auth_dbinsertusererror'] = 'Error inserting user $a';
-$string['auth_dbdeleteuser'] ='Deleted user $a[0] id $a[1]';
-$string['auth_dbdeleteusererror'] = 'Error deleting user $a';
-$string['auth_dbreviveduser'] ='Revived user $a[0] id $a[1]';
-$string['auth_dbrevivedusererror'] = 'Error reviving user $a';
-$string['auth_dbsuspenduser'] ='Suspended user $a[0] id $a[1]';
-$string['auth_dbsuspendusererror'] = 'Error suspending user $a';
-$string['auth_dbusernotexist'] = 'Cannot update non-existent user: $a';
-$string['auth_dbupdatinguser'] ='Updating user $a[0] id $a[1]';
-?>
+$string['auth_dbinsertuser'] = 'Inserted user {$a}[0] id {$a}[1]';
+$string['auth_dbinsertusererror'] = 'Error inserting user {$a}';
+$string['auth_dbname'] = 'Name of the database itself';
+$string['auth_dbname_key'] = 'DB Name';
+$string['auth_dbpass'] = 'Password matching the above username';
+$string['auth_dbpass_key'] = 'Password';
+$string['auth_dbpasstype'] = '<p>Specify the format that the password field is using. MD5 hashing is useful for connecting to other common web applications like PostNuke.</p> <p>Use \'internal\' if you want to the external DB to manage usernames &amp; email addresses, but Moodle to manage passwords. If you use \'internal\', you <i>must</i> provide a populated email address field in the external DB, and you must execute both admin/cron.php and auth/db/auth_db_sync_users.php regularly. Moodle will send an email to new users with a temporary password.</p>';
+$string['auth_dbpasstype_key'] = 'Password format';
+$string['auth_dbreviveduser'] = 'Revived user {$a}[0] id {$a}[1]';
+$string['auth_dbrevivedusererror'] = 'Error reviving user {$a}';
+$string['auth_dbsetupsql'] = 'SQL setup command';
+$string['auth_dbsetupsqlhelp'] = 'SQL command for special database setup, often used to setup communication encoding - example for MySQL and PostgreSQL: <em>SET NAMES \'utf8\'</em>';
+$string['auth_dbsuspenduser'] = 'Suspended user {$a}[0] id {$a}[1]';
+$string['auth_dbsuspendusererror'] = 'Error suspending user {$a}';
+$string['auth_dbsybasequoting'] = 'Use sybase quotes';
+$string['auth_dbsybasequotinghelp'] = 'Sybase style single quote escaping - needed for Oracle, MS SQL and some other databases. Do not use for MySQL!';
+$string['auth_dbtable'] = 'Name of the table in the database';
+$string['auth_dbtable_key'] = 'Table';
+$string['auth_dbtitle'] = 'External database';
+$string['auth_dbtype'] = 'The database type (See the <a href="../lib/adodb/readme.htm#drivers">ADOdb documentation</a> for details)';
+$string['auth_dbtype_key'] = 'Database';
+$string['auth_dbupdatinguser'] = 'Updating user {$a}[0] id {$a}[1]';
+$string['auth_dbuser'] = 'Username with read access to the database';
+$string['auth_dbuser_key'] = 'DB User';
+$string['auth_dbusernotexist'] = 'Cannot update non-existent user: {$a}';
+$string['auth_dbuserstoadd'] = 'User entries to add: {$a}';
+$string['auth_dbuserstoremove'] = 'User entries to remove: {$a}';

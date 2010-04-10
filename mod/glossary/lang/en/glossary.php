@@ -1,6 +1,27 @@
-<?PHP // $Id$
-      // glossary.php - created with Moodle 1.7 beta + (2006101003)
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'glossary', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   glossary
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['addcomment'] = 'Add comment';
 $string['addentry'] = 'Add a new entry';
@@ -54,13 +75,8 @@ $string['commentupdated'] = 'The comment has been updated.';
 $string['concept'] = 'Concept';
 $string['concepts'] = 'Concepts';
 $string['configenablerssfeeds'] = 'This switch will enable the possibility of RSS feeds for all glossaries.  You will still need to turn feeds on manually in the settings for each glossary.';
+$string['current'] = 'Currently sorted {$a}';
 $string['currentglossary'] = 'Current glossary';
-$string['changeto'] = 'change to $a';
-$string['current']= 'Currently sorted $a';
-$string['errconceptalreadyexists'] = 'This concept already exists. No duplicates allowed in this glossary.';
-$string['erredittimeexpired'] = 'The editing time for this entry has expired.';
-$string['errdeltimeexpired'] = 'You can\'t delete this. Time expired!';
-$string['errcannoteditothers'] = 'You cannot edit other people\'s entries.';
 $string['date'] = 'date';
 $string['dateview'] = 'Browse by date';
 $string['defaultapproval'] = 'Approved by default';
@@ -104,6 +120,10 @@ $string['entryleveldefaultsettings'] = 'Entry Level Default Settings';
 $string['entrysaved'] = 'This entry has been saved';
 $string['entryupdated'] = 'This entry has been updated';
 $string['entryusedynalink'] = 'This entry should be automatically linked';
+$string['errcannoteditothers'] = 'You cannot edit other people\'s entries.';
+$string['errconceptalreadyexists'] = 'This concept already exists. No duplicates allowed in this glossary.';
+$string['errdeltimeexpired'] = 'You can\'t delete this. Time expired!';
+$string['erredittimeexpired'] = 'The editing time for this entry has expired.';
 $string['errorparsingxml'] = 'Errors occurred while parsing the file. Make sure it is valid XML syntax.';
 $string['explainaddentry'] = 'Add a new entry to the current glossary.<br />Concept and definition are mandatory fields.';
 $string['explainall'] = 'Shows ALL entries on one page';
@@ -129,29 +149,30 @@ $string['glossary:export'] = 'Export entries';
 $string['glossary:exportentry'] = 'Export single entry';
 $string['glossary:exportownentry'] = 'Export single entry of yours';
 $string['glossary:import'] = 'Import entries';
+$string['glossaryleveldefaultsettings'] = 'Glossary Level Default Settings';
 $string['glossary:managecategories'] = 'Manage categories';
 $string['glossary:managecomments'] = 'Manage comments';
 $string['glossary:manageentries'] = 'Manage entries';
 $string['glossary:rate'] = 'Rate entries';
+$string['glossarytype'] = 'Glossary Type';
 $string['glossary:view'] = 'View glossary';
 $string['glossary:viewrating'] = 'View ratings';
 $string['glossary:write'] = 'Create new entries';
-$string['glossaryleveldefaultsettings'] = 'Glossary Level Default Settings';
-$string['glossarytype'] = 'Glossary Type';
 $string['guestnoedit'] = 'Guests are not allowed to edit glossaries';
+$string['changeto'] = 'change to {$a}';
 $string['importcategories'] = 'Import categories';
 $string['importedcategories'] = 'Imported categories';
 $string['importedentries'] = 'Imported entries';
 $string['importentries'] = 'Import entries';
 $string['importentriesfromxml'] = 'Import entries from XML file';
 $string['includegroupbreaks'] = 'Include group breaks';
-$string['invalidrate'] = 'Invalid glossary rate ($a)';
+$string['invalidrate'] = 'Invalid glossary rate ({$a})';
 $string['isglobal'] = 'Is this glossary global?';
 $string['letter'] = 'letter';
 $string['linkcategory'] = 'Automatically link this category';
 $string['linking'] = 'Auto-linking';
 $string['mainglossary'] = 'Main glossary';
-$string['maxtimehaspassed'] = 'Sorry, but the maximum time for editing this comment ($a) has passed!';
+$string['maxtimehaspassed'] = 'Sorry, but the maximum time for editing this comment ({$a}) has passed!';
 $string['modulename'] = 'Glossary';
 $string['modulenameplural'] = 'Glossaries';
 $string['newentries'] = 'New glossary entries';
@@ -163,10 +184,10 @@ $string['nocomments'] = '(No comments found on this entry)';
 $string['noconceptfound'] = 'No concept or definition found.';
 $string['noentries'] = 'No entries found in this section';
 $string['noentry'] = 'No entry found.';
-$string['notcategorised'] = 'Not categorised';
 $string['nopermissiontodelcomment'] = 'You can\'t delete other people\'s comments!';
 $string['nopermissiontodelinglossary'] = 'You can\'t comments in this glossary!';
 $string['nopermissiontoviewresult'] = 'You can only look at results for your own entries';
+$string['notcategorised'] = 'Not categorised';
 $string['numberofentries'] = 'Number of entries';
 $string['onebyline'] = '(one per line)';
 $string['popupformat'] = 'Popup format';
@@ -177,7 +198,7 @@ $string['rate'] = 'Rate';
 $string['rating'] = 'Rating';
 $string['ratingeveryone'] = 'Everyone can rate entries';
 $string['ratingno'] = 'No ratings';
-$string['ratingonlyteachers'] = 'Only $a can rate entries';
+$string['ratingonlyteachers'] = 'Only {$a} can rate entries';
 $string['ratingonlywithpermissions'] = 'Only people with permission to rate entries';
 $string['ratings'] = 'Ratings';
 $string['ratingssaved'] = 'Ratings saved';
@@ -185,9 +206,9 @@ $string['ratingsuse'] = 'Use ratings';
 $string['ratingtime'] = 'Restrict ratings to entries with dates in this range:';
 $string['rejectedentries'] = 'Rejected entries';
 $string['rejectionrpt'] = 'Rejection Report';
-$string['resetglossariesall'] = 'Delete entries from all glossaries';
 $string['resetglossaries'] = 'Delete entries from';
-$string['rsssubscriberss'] = 'Display the RSS feed for \'$a\' concepts';
+$string['resetglossariesall'] = 'Delete entries from all glossaries';
+$string['rsssubscriberss'] = 'Display the RSS feed for \'{$a}\' concepts';
 $string['searchindefinition'] = 'Search full text';
 $string['secondaryglossary'] = 'Secondary glossary';
 $string['sendinratings'] = 'Send in my latest ratings';
@@ -209,5 +230,3 @@ $string['withauthor'] = 'Concepts with author';
 $string['withoutauthor'] = 'Concepts without author';
 $string['writtenby'] = 'by';
 $string['youarenottheauthor'] = 'You are not the author of this comment, so you are not allowed to edit it.';
-
-?>

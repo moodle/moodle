@@ -1,36 +1,57 @@
-<?PHP // $Id$ 
-      // enrol_database.php - created with Moodle 1.7 beta + (2006101003)
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'enrol_database', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   enrol_database
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['autocreate'] = 'Courses can be created automatically if there are enrolments to a course that doesn\'t yet exist in Moodle.';
 $string['autocreation_settings'] = 'Autocreation Settings';
 $string['category'] = 'The category for auto-created courses.';
 $string['course_fullname'] = 'The name of the field where the course fullname is stored.';
-$string['course_id'] = 'The name of the field where the course ID is stored. The values of this field are used to match those in the \"enrol_db_l_coursefield\" field in Moodle\'s course table.';
+$string['course_id'] = 'The name of the field where the course ID is stored. The values of this field are used to match those in the "enrol_db_l_coursefield" field in Moodle\'s course table.';
 $string['course_shortname'] = 'The name of the field where the course shortname is stored.';
 $string['course_table'] = 'Then name of the table where we expect to find the course details in (short name, fullname, ID, etc.)';
-$string['dbtype'] = 'Database type';
 $string['dbhost'] = 'Server IP name or number';
-$string['dbuser'] = 'Server user';
-$string['dbpass'] = 'Server password';
 $string['dbname'] = 'Database name';
+$string['dbpass'] = 'Server password';
 $string['dbtable'] = 'Database table';
+$string['dbtype'] = 'Database type';
+$string['dbuser'] = 'Server user';
 $string['defaultcourseroleid'] = 'The role that will be assigned by default if no other role is specified.';
 $string['description'] = 'You can use a external database (of nearly any kind) to control your enrolments. It is assumed your external database contains a field containing a course ID, and a field containing a user ID. These are compared against fields that you choose in the local course and user tables.';
 $string['disableunenrol'] = 'If set to yes users previously enrolled by the external database plugin will not be unenrolled by the same plugin regardless of the database contents.';
-$string['enrolname'] = 'External Database';
 $string['enrol_database_autocreation_settings'] = 'Auto-creation of new courses';
+$string['enrolname'] = 'External Database';
 $string['general_options'] = 'General Options';
 $string['host'] = 'Database server hostname.';
 $string['ignorehiddencourse'] = 'If set to yes users will not be enroled on courses that are set to be unavailable to students.';
 $string['localcoursefield'] = 'The name of the field in the course table that we are using to match entries in the remote database (eg idnumber).';
+$string['local_fields_mapping'] = 'Moodle (local) database fields';
 $string['localrolefield'] = 'The name of the field in the roles table that we are using to match entries in the remote database (eg shortname).';
 $string['localuserfield'] = 'The name of the field in the user table that we are using to match entries in the remote database (eg idnumber).';
-$string['local_fields_mapping'] = 'Moodle (local) database fields';
 $string['name'] = 'The specific database to use.';
 $string['pass'] = 'Password to access the server.';
-$string['remote_fields_mapping'] = 'Enrolment (remote) database fields.';
 $string['remotecoursefield'] = 'The name of the field in the remote table that we are using to match entries in the course table.';
+$string['remote_fields_mapping'] = 'Enrolment (remote) database fields.';
 $string['remoterolefield'] = 'The name of the field in the remote table that we are using to match entries in the roles table.';
 $string['remoteuserfield'] = 'The name of the field in the remote table that we are using to match entries in the user table.';
 $string['server_settings'] = 'External Database Server Settings';
@@ -45,5 +66,3 @@ $string['teacher_table'] = 'The name of the table where teacher enrolments are s
 $string['template'] = 'Optional: auto-created courses can copy their settings from a template course. Type here the shortname of the template course.';
 $string['type'] = 'Database server type.';
 $string['user'] = 'Username to access the server.';
-
-?>

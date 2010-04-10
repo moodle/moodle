@@ -1,6 +1,27 @@
-<?PHP // $Id$ 
-      // enrol_imsenterprise.php - created with Moodle 1.7 beta + (2006101003)
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'enrol_imsenterprise', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   enrol_imsenterprise
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['aftersaving...'] = 'Once you have saved your settings, you may wish to';
 $string['allowunenrol'] = 'Allow the IMS data to <strong>unenrol</strong> students/teachers';
@@ -14,7 +35,7 @@ $string['deleteusers'] = 'Delete user accounts when specified in IMS data';
 $string['description'] = 'This method will repeatedly check for and process a specially-formatted text file in the location that you specify.  The file must follow the <a href=\'../help.php?module=enrol/imsenterprise&amp;file=formatoverview.html\'>IMS Enterprise specifications</a> containing person, group, and membership XML elements.';
 $string['doitnow'] = 'perform an IMS Enterprise import right now';
 $string['enrolname'] = 'IMS Enterprise file';
-$string['filelockedmail'] = 'The text file you are using for IMS-file-based enrolments ($a) can not be deleted by the cron process.  This usually means the permissions are wrong on it.  Please fix the permissions so that Moodle can delete the file, otherwise it might be processed repeatedly.';
+$string['filelockedmail'] = 'The text file you are using for IMS-file-based enrolments ({$a}) can not be deleted by the cron process.  This usually means the permissions are wrong on it.  Please fix the permissions so that Moodle can delete the file, otherwise it might be processed repeatedly.';
 $string['filelockedmailsubject'] = 'Important error: Enrolment file';
 $string['fixcasepersonalnames'] = 'Change personal names to Title Case';
 $string['fixcaseusernames'] = 'Change usernames to lower case';
@@ -32,5 +53,3 @@ $string['truncatecoursecodes'] = 'Truncate course codes to this length';
 $string['usecapitafix'] = 'Tick this box if using &quot;Capita&quot; (their XML format is slightly wrong)';
 $string['usersettings'] = 'User data options';
 $string['zeroisnotruncation'] = '0 indicates no truncation';
-
-?>

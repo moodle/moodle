@@ -1,32 +1,54 @@
-<?PHP // $Id$
-      // note.php 
-$string['addnewnote'] = 'Add a new note';    
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'notes', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   notes
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+$string['addnewnote'] = 'Add a new note';
 $string['addnewnoteselect'] = 'Select users to write notes about';
-$string['bynameondate'] = 'by $a->name - $a->date';
+$string['bynameondate'] = 'by {$a->name} - {$a->date}';
 $string['cannotdeletepost'] = 'Error occured while deleting post';
 $string['configenablenotes'] = 'Enable storing of notes about individual users.';
 $string['content'] = 'Content';
 $string['course'] = 'course';
-$string['created'] = 'created';
 $string['coursenotes'] = 'Course notes';
-$string['deletenotes'] = 'Delete all notes';
+$string['created'] = 'created';
 $string['deleteconfirm'] = 'Delete this note?';
+$string['deletenotes'] = 'Delete all notes';
 $string['editnote'] = 'Edit note';
 $string['enablenotes'] = 'Enable notes';
-$string['invalidid'] = 'Invalid note ID specified';
 $string['groupaddnewnote'] = 'Add a common note';
-$string['note'] = 'Note';
-$string['notes'] = 'Notes';
+$string['invalidid'] = 'Invalid note ID specified';
+$string['nocontent'] = 'Note content can not be empty';
 $string['nonotes'] = 'There are no notes of this type yet';
 $string['nopermissiontodelete'] = 'You may not delete this note';
+$string['note'] = 'Note';
+$string['notes'] = 'Notes';
 $string['notesdisabled'] = 'Notes are disabled, sorry.';
 $string['notesnotvisible'] = 'You are not allowed to view the notes.';
-$string['nocontent'] = 'Note content can not be empty';
 $string['nouser'] = 'You must select a user';
+$string['personal'] = 'personal';
 $string['personalnotes'] = 'Personal notes';
 $string['publishstate'] = 'Status';
-$string['personal'] = 'personal';
-$string['unknown'] = 'unknown';
 $string['site'] = 'site';
 $string['sitenotes'] = 'Site notes';
-?>
+$string['unknown'] = 'unknown';

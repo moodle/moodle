@@ -1,4 +1,4 @@
-<?PHP
+<?php
 
 // This file is part of Moodle - http://moodle.org/
 //
@@ -16,22 +16,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Language strings for the survey module as introduced in Moodle 1.7 beta
+ * Strings for component 'survey', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   mod-survey
+ * @package   survey
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['actual'] = 'Actual';
 $string['actualclass'] = 'Class actual';
-$string['actualstudent'] = '$a actual';
+$string['actualstudent'] = '{$a} actual';
 $string['allquestions'] = 'All questions in order, all students';
 $string['allscales'] = 'All scales, all students';
 $string['alreadysubmitted'] = 'You have already submitted this survey';
-$string['analysisof'] = 'Analysis of $a';
+$string['analysisof'] = 'Analysis of {$a}';
 $string['answers'] = 'Answers';
+$string['attlsintro'] = 'The purpose of this questionnaire is to help us evaluate your attitudes towards thinking and learning.
+
+There are no \'right\' or \'wrong\' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.';
+$string['attlsmintro'] = 'In discussion ...';
+$string['attlsm1'] = 'Attitudes Towards Thinking and Learning';
+$string['attlsm2'] = 'Connected Learning';
+$string['attlsm3'] = 'Separate Learning';
+$string['attlsname'] = 'ATTLS (20 item version)';
 $string['attls1'] = 'In evaluating what someone says, I focus on the quality of their argument, not on the person who\'s presenting it.';
+$string['attls1short'] = 'focus quality of argument';
 $string['attls10'] = 'It\'s important for me to remain as objective as possible when I analyze something.';
 $string['attls10short'] = 'remain objective';
 $string['attls11'] = 'I try to think with people instead of against them.';
@@ -52,11 +61,10 @@ $string['attls18'] = 'I can obtain insight into opinions that differ from mine t
 $string['attls18short'] = 'insight from empathy';
 $string['attls19'] = 'When I encounter people whose opinions seem alien to me, I make a deliberate effort to \'extend\' myself into that person, to try to see how they could have those opinions.';
 $string['attls19short'] = 'make effort to extend';
-$string['attls1short'] = 'focus quality of argument';
 $string['attls2'] = 'I like playing devil\'s advocate - arguing the opposite of what someone is saying.';
+$string['attls2short'] = 'play devil\'s advocate';
 $string['attls20'] = 'I spend time figuring out what\'s \'wrong\' with things. For example, I\'ll look for something in a literary interpretation that isn\'t argued well enough.';
 $string['attls20short'] = 'what\'s wrong?';
-$string['attls2short'] = 'play devil\'s advocate';
 $string['attls3'] = 'I like to understand where other people are \'coming from\', what experiences have led them to feel the way they do.';
 $string['attls3short'] = 'where people come from';
 $string['attls4'] = 'The most important part of my education has been learning to understand people who are very different to me.';
@@ -71,17 +79,11 @@ $string['attls8'] = 'I am always interested in knowing why people say and believ
 $string['attls8short'] = 'know why people do';
 $string['attls9'] = 'I often find myself arguing with the authors of books that I read, trying to logically figure out why they\'re wrong.';
 $string['attls9short'] = 'argue with authors';
-$string['attlsintro'] = 'The purpose of this questionnaire is to help us evaluate your attitudes towards thinking and learning.
-
-There are no \'right\' or \'wrong\' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.';
-$string['attlsm1'] = 'Attitudes Towards Thinking and Learning';
-$string['attlsm2'] = 'Connected Learning';
-$string['attlsm3'] = 'Separate Learning';
-$string['attlsmintro'] = 'In discussion ...';
-$string['attlsname'] = 'ATTLS (20 item version)';
-$string['cannotfindsurveytmpt'] = 'No survey templates found!';
-$string['cannotfindquestion'] = 'Question doesn\'t exist';
 $string['cannotfindanswer'] = 'There are no answers for this survey yet.';
+$string['cannotfindquestion'] = 'Question doesn\'t exist';
+$string['cannotfindsurveytmpt'] = 'No survey templates found!';
+$string['ciqintro'] = 'While thinking about recent events in this class, answer the questions below.';
+$string['ciqname'] = 'Critical Incidents';
 $string['ciq1'] = 'At what moment in class were you most engaged as a learner?';
 $string['ciq1short'] = 'Most engaged';
 $string['ciq2'] = 'At what moment in class were you most distanced as a learner?';
@@ -92,58 +94,8 @@ $string['ciq4'] = 'What action from anyone in the forums did you find most puzzl
 $string['ciq4short'] = 'Confusing moment';
 $string['ciq5'] = 'What event surprised you most?';
 $string['ciq5short'] = 'Suprising moment';
-$string['ciqintro'] = 'While thinking about recent events in this class, answer the questions below.';
-$string['ciqname'] = 'Critical Incidents';
 $string['clicktocontinue'] = 'Click here to continue';
 $string['clicktocontinuecheck'] = 'Click here to check and continue';
-$string['colles1'] = 'my learning focuses on issues that interest me.';
-$string['colles10'] = 'I ask other students to explain their ideas.';
-$string['colles10short'] = 'I ask for explanations';
-$string['colles11'] = 'other students ask me to explain my ideas.';
-$string['colles11short'] = 'I\'m asked to explain';
-$string['colles12'] = 'other students respond to my ideas.';
-$string['colles12short'] = 'students respond to me';
-$string['colles13'] = 'the tutor stimulates my thinking.';
-$string['colles13short'] = 'tutor stimulates thinking';
-$string['colles14'] = 'the tutor encourages me to participate.';
-$string['colles14short'] = 'tutor encourages me';
-$string['colles15'] = 'the tutor models good discourse.';
-$string['colles15short'] = 'tutor models discourse';
-$string['colles16'] = 'the tutor models critical self-reflection.';
-$string['colles16short'] = 'tutor models self-reflection';
-$string['colles17'] = 'other students encourage my participation.';
-$string['colles17short'] = 'students encourage me';
-$string['colles18'] = 'other students praise my contribution.';
-$string['colles18short'] = 'students praise me';
-$string['colles19'] = 'other students value my contribution.';
-$string['colles19short'] = 'students value me';
-$string['colles1short'] = 'focus on interesting issues';
-$string['colles2'] = 'what I learn is important for my professional practice.';
-$string['colles20'] = 'other students empathise with my struggle to learn.';
-$string['colles20short'] = 'students empathise';
-$string['colles21'] = 'I make good sense of other students\' messages.';
-$string['colles21short'] = 'I understand other students';
-$string['colles22'] = 'other students make good sense of my messages.';
-$string['colles22short'] = 'students understand me';
-$string['colles23'] = 'I make good sense of the tutor\'s messages.';
-$string['colles23short'] = 'I understand the tutor';
-$string['colles24'] = 'the tutor makes good sense of my messages.';
-$string['colles24short'] = 'tutor understands me';
-$string['colles2short'] = 'important to my practice';
-$string['colles3'] = 'I learn how to improve my professional practice.';
-$string['colles3short'] = 'improve my practice';
-$string['colles4'] = 'what I learn connects well with my professional practice.';
-$string['colles4short'] = 'connects with my practice';
-$string['colles5'] = 'I think critically about how I learn.';
-$string['colles5short'] = 'I\'m critical of my learning';
-$string['colles6'] = 'I think critically about my own ideas.';
-$string['colles6short'] = 'I\'m critical of my own ideas';
-$string['colles7'] = 'I think critically about other students\' ideas.';
-$string['colles7short'] = 'I\'m critical of other students';
-$string['colles8'] = 'I think critically about ideas in the readings.';
-$string['colles8short'] = 'I\'m critical of readings';
-$string['colles9'] = 'I explain my ideas to other students.';
-$string['colles9short'] = 'I explain my ideas';
 $string['collesaintro'] = 'The purpose of this survey is to help us understand how well the online delivery of this unit enabled you to learn.
 
 Each one of the 24 statements below asks about your experience in this unit.
@@ -164,6 +116,7 @@ Your carefully considered responses will help us improve the way this unit is pr
 
 Thanks very much.';
 $string['collesapname'] = 'COLLES (Preferred and Actual)';
+$string['collesmintro'] = 'In this online unit...';
 $string['collesm1'] = 'Relevance';
 $string['collesm1short'] = 'Relevance';
 $string['collesm2'] = 'Reflective Thinking';
@@ -176,7 +129,6 @@ $string['collesm5'] = 'Peer Support';
 $string['collesm5short'] = 'Peer Support';
 $string['collesm6'] = 'Interpretation';
 $string['collesm6short'] = 'Interpretation';
-$string['collesmintro'] = 'In this online unit...';
 $string['collespintro'] = 'The purpose of this survey is to help us understand what you value in an online learning experience.
 
 Each one of the 24 statements below asks about your <b>preferred</b> (ideal) experience in this unit.
@@ -187,7 +139,57 @@ Your carefully considered responses will help us improve the way this unit is pr
 
 Thanks very much.';
 $string['collespname'] = 'COLLES (Preferred)';
+$string['colles1'] = 'my learning focuses on issues that interest me.';
+$string['colles1short'] = 'focus on interesting issues';
+$string['colles10'] = 'I ask other students to explain their ideas.';
+$string['colles10short'] = 'I ask for explanations';
+$string['colles11'] = 'other students ask me to explain my ideas.';
+$string['colles11short'] = 'I\'m asked to explain';
+$string['colles12'] = 'other students respond to my ideas.';
+$string['colles12short'] = 'students respond to me';
+$string['colles13'] = 'the tutor stimulates my thinking.';
+$string['colles13short'] = 'tutor stimulates thinking';
+$string['colles14'] = 'the tutor encourages me to participate.';
+$string['colles14short'] = 'tutor encourages me';
+$string['colles15'] = 'the tutor models good discourse.';
+$string['colles15short'] = 'tutor models discourse';
+$string['colles16'] = 'the tutor models critical self-reflection.';
+$string['colles16short'] = 'tutor models self-reflection';
+$string['colles17'] = 'other students encourage my participation.';
+$string['colles17short'] = 'students encourage me';
+$string['colles18'] = 'other students praise my contribution.';
+$string['colles18short'] = 'students praise me';
+$string['colles19'] = 'other students value my contribution.';
+$string['colles19short'] = 'students value me';
+$string['colles2'] = 'what I learn is important for my professional practice.';
+$string['colles2short'] = 'important to my practice';
+$string['colles20'] = 'other students empathise with my struggle to learn.';
+$string['colles20short'] = 'students empathise';
+$string['colles21'] = 'I make good sense of other students\' messages.';
+$string['colles21short'] = 'I understand other students';
+$string['colles22'] = 'other students make good sense of my messages.';
+$string['colles22short'] = 'students understand me';
+$string['colles23'] = 'I make good sense of the tutor\'s messages.';
+$string['colles23short'] = 'I understand the tutor';
+$string['colles24'] = 'the tutor makes good sense of my messages.';
+$string['colles24short'] = 'tutor understands me';
+$string['colles3'] = 'I learn how to improve my professional practice.';
+$string['colles3short'] = 'improve my practice';
+$string['colles4'] = 'what I learn connects well with my professional practice.';
+$string['colles4short'] = 'connects with my practice';
+$string['colles5'] = 'I think critically about how I learn.';
+$string['colles5short'] = 'I\'m critical of my learning';
+$string['colles6'] = 'I think critically about my own ideas.';
+$string['colles6short'] = 'I\'m critical of my own ideas';
+$string['colles7'] = 'I think critically about other students\' ideas.';
+$string['colles7short'] = 'I\'m critical of other students';
+$string['colles8'] = 'I think critically about ideas in the readings.';
+$string['colles8short'] = 'I\'m critical of readings';
+$string['colles9'] = 'I explain my ideas to other students.';
+$string['colles9short'] = 'I explain my ideas';
 $string['customintro'] = 'Custom intro';
+$string['deleteallanswers'] = 'Delete all survey responses';
+$string['deleteanalysis'] = 'Delete response analysis';
 $string['done'] = 'Done';
 $string['download'] = 'Download';
 $string['downloadexcel'] = 'Download data as Excel spreadsheet';
@@ -212,15 +214,13 @@ $string['nobodyyet'] = 'Nobody has yet completed this survey';
 $string['notdone'] = 'Not done yet';
 $string['notes'] = 'Your private analysis and notes';
 $string['othercomments'] = 'Do you have any other comments?';
-$string['peoplecompleted'] = '$a people have completed this survey so far';
+$string['peoplecompleted'] = '{$a} people have completed this survey so far';
 $string['preferred'] = 'Preferred';
 $string['preferredclass'] = 'Class preferred';
-$string['preferredstudent'] = '$a preferred';
+$string['preferredstudent'] = '{$a} preferred';
 $string['question'] = 'Question';
 $string['questions'] = 'Questions';
 $string['questionsnotanswered'] = 'Some of the multiple choice questions have not been answered.';
-$string['deleteallanswers'] = 'Delete all survey responses';
-$string['deleteanalysis'] = 'Delete response analysis';
 $string['report'] = 'Survey report';
 $string['responsereports'] = 'Response reports';
 $string['responses'] = 'Responses';
@@ -231,17 +231,15 @@ $string['scaletimes5'] = 'Almost Never,Seldom,Sometimes,Often,Almost Always';
 $string['seemoredetail'] = 'Click here to see more detail';
 $string['selectedquestions'] = 'Selected questions from a scale, all students';
 $string['summary'] = 'Summary';
-$string['survey:download'] = 'Download responses';
-$string['survey:participate'] = 'Respond to survey';
-$string['survey:readresponses'] = 'View responses';
 $string['surveyadministration'] = 'Survey Administration';
 $string['surveycompleted'] = 'You\'ve completed this survey.  The graph below shows a summary of your results compared to the class averages.';
+$string['survey:download'] = 'Download responses';
 $string['surveygraph'] = 'Survey graph';
 $string['surveyname'] = 'Survey name';
+$string['survey:participate'] = 'Respond to survey';
+$string['survey:readresponses'] = 'View responses';
 $string['surveysaved'] = 'Survey saved';
 $string['surveytype'] = 'Survey type';
-$string['thanksforanswers'] = 'Thanks for answering this survey, $a';
+$string['thanksforanswers'] = 'Thanks for answering this survey, {$a}';
 $string['time'] = 'Time';
-$string['viewsurveyresponses'] = 'View $a survey responses';
-
-?>
+$string['viewsurveyresponses'] = 'View {$a} survey responses';

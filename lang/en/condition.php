@@ -1,38 +1,61 @@
 <?php
-$string['addgrades']='Add {no} grade conditions to form';
-$string['addcompletions']='Add {no} activity conditions to form';
-$string['availabilityconditions']='Restrict availability';
-$string['availablefrom']='Only available from';
-$string['availableuntil']='Only available until end';
-$string['badavailabledates']='Invalid dates. If you set both dates, the \'available from\' date should be before the \'until\' date.';
-$string['completion_complete']=' must be marked complete';
-$string['completion_incomplete']=' must not be marked complete';
-$string['completion_pass']=' must be complete with pass grade';
-$string['completion_fail']=' must be complete with fail grade';
-$string['configenableavailability']='When enabled, this lets you set conditions (based on date, grade, or completion) that control whether an activity is available.';
-$string['enableavailability']='Enable conditional availability';
-$string['grade_atleast']='must be at least';
-$string['grade_upto']='and less than';
-$string['gradecondition']='Grade condition';
-$string['completioncondition']='Activity completion condition';
-$string['help_conditiondates']='available dates';
-$string['help_showavailability']='display of unavailable activities';
-$string['none']='(none)';
-$string['notavailableyet']='Not available yet';
-$string['requires_completion_0']='Not available unless the activity <strong>$a</strong> is incomplete.';
-$string['requires_completion_1']='Not available until the activity <strong>$a</strong> is marked complete.';
-$string['requires_completion_2']='Not available until the activity <strong>$a</strong> is complete and passed.';
-$string['requires_completion_3']='Not available unless the activity <strong>$a</strong> is complete and failed.';
-$string['requires_date']='Available from $a.';
-$string['requires_date_before']='Available until $a.';
-$string['requires_date_both']='Available from $a->from to $a->until.';
-$string['requires_grade_any']='Not available until you have a grade in <strong>$a</strong>.';
-$string['requires_grade_min']='Not available until you achieve a required score in <strong>$a</strong>.';
-$string['requires_grade_max']='Not available unless you get an appropriate score in <strong>$a</strong>.';
-$string['requires_grade_range']='Not available unless you get a particular score in <strong>$a</strong>.';
-$string['showavailability']='Before activity is available';
-$string['showavailability_show']='Show activity greyed-out, with restriction information';
-$string['showavailability_hide']='Hide activity entirely';
-$string['userrestriction_visible']='Restricted: &lsquo;$a&rsquo;';
-$string['userrestriction_hidden']='Restricted (completely hidden, no message): &lsquo;$a&rsquo;';
-?>
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'condition', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   condition
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+$string['addcompletions'] = 'Add {no} activity conditions to form';
+$string['addgrades'] = 'Add {no} grade conditions to form';
+$string['availabilityconditions'] = 'Restrict availability';
+$string['availablefrom'] = 'Only available from';
+$string['availableuntil'] = 'Only available until end';
+$string['badavailabledates'] = 'Invalid dates. If you set both dates, the \'available from\' date should be before the \'until\' date.';
+$string['completion_complete'] = 'must be marked complete';
+$string['completioncondition'] = 'Activity completion condition';
+$string['completion_fail'] = 'must be complete with fail grade';
+$string['completion_incomplete'] = 'must not be marked complete';
+$string['completion_pass'] = 'must be complete with pass grade';
+$string['configenableavailability'] = 'When enabled, this lets you set conditions (based on date, grade, or completion) that control whether an activity is available.';
+$string['enableavailability'] = 'Enable conditional availability';
+$string['grade_atleast'] = 'must be at least';
+$string['gradecondition'] = 'Grade condition';
+$string['grade_upto'] = 'and less than';
+$string['help_conditiondates'] = 'available dates';
+$string['help_showavailability'] = 'display of unavailable activities';
+$string['none'] = '(none)';
+$string['notavailableyet'] = 'Not available yet';
+$string['requires_completion_0'] = 'Not available unless the activity <strong>{$a}</strong> is incomplete.';
+$string['requires_completion_1'] = 'Not available until the activity <strong>{$a}</strong> is marked complete.';
+$string['requires_completion_2'] = 'Not available until the activity <strong>{$a}</strong> is complete and passed.';
+$string['requires_completion_3'] = 'Not available unless the activity <strong>{$a}</strong> is complete and failed.';
+$string['requires_date'] = 'Available from {$a}.';
+$string['requires_date_before'] = 'Available until {$a}.';
+$string['requires_date_both'] = 'Available from {$a->from} to {$a->until}.';
+$string['requires_grade_any'] = 'Not available until you have a grade in <strong>{$a}</strong>.';
+$string['requires_grade_max'] = 'Not available unless you get an appropriate score in <strong>{$a}</strong>.';
+$string['requires_grade_min'] = 'Not available until you achieve a required score in <strong>{$a}</strong>.';
+$string['requires_grade_range'] = 'Not available unless you get a particular score in <strong>{$a}</strong>.';
+$string['showavailability'] = 'Before activity is available';
+$string['showavailability_hide'] = 'Hide activity entirely';
+$string['showavailability_show'] = 'Show activity greyed-out, with restriction information';
+$string['userrestriction_hidden'] = 'Restricted (completely hidden, no message): &lsquo;{$a}&rsquo;';
+$string['userrestriction_visible'] = 'Restricted: &lsquo;{$a}&rsquo;';

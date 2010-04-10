@@ -1,13 +1,34 @@
-<?PHP // $Id$
-      // blog.php - created with Moodle 1.7 beta + (2006101003)
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'blog', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   blog
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['addnewentry'] = 'Add a new entry';
 $string['addnewexternalblog'] = 'Register an external blog...';
 $string['assocdescription'] = 'If you are writing about a course and/or activity modules, select them here.';
-$string['associatewithcourse'] = 'Blog about course $a->coursename';
-$string['associatewithmodule'] = 'Blog about $a->modtype: $a->modname';
-$string['associated'] = 'Associated $a';
+$string['associated'] = 'Associated {$a}';
+$string['associatewithcourse'] = 'Blog about course {$a->coursename}';
+$string['associatewithmodule'] = 'Blog about {$a->modtype}: {$a->modname}';
 $string['association'] = 'Association';
 $string['associations'] = 'Associations';
 $string['associationunviewable'] = 'This entry cannot be viewed by others until a course is associated with it or the \'Publish To\' field is changed';
@@ -19,17 +40,17 @@ $string['blockrecenttitle'] = 'Recent Blog Entries';
 $string['blocktagstitle'] = 'Blog Tags';
 $string['blocktitle'] = 'Blog tags block title';
 $string['blog'] = 'Blog';
-$string['blogaboutthis'] = 'Blog about this $a->type';
+$string['blogaboutthis'] = 'Blog about this {$a->type}';
 $string['blogadministration'] = 'Blog administration';
 $string['blogdeleteconfirm'] = 'Delete this blog?';
 $string['blogdisable'] = 'Blogging is disabled!';
 $string['blogentries'] = 'Blog entries';
-$string['blogentriesabout'] = 'Blog entries about $a';
-$string['blogentriesbygroupaboutcourse'] = 'Blog entries about $a->course by $a->group';
-$string['blogentriesbygroupaboutmodule'] = 'Blog entries about $a->mod by $a->group';
-$string['blogentriesbyuseraboutcourse'] = 'Blog entries about $a->course by $a->user';
-$string['blogentriesbyuseraboutmodule'] = 'Blog entries about $a->mod by $a->user';
-$string['blogentrybyuser'] = 'Blog entry by $a';
+$string['blogentriesabout'] = 'Blog entries about {$a}';
+$string['blogentriesbygroupaboutcourse'] = 'Blog entries about {$a->course} by {$a->group}';
+$string['blogentriesbygroupaboutmodule'] = 'Blog entries about {$a->mod} by {$a->group}';
+$string['blogentriesbyuseraboutcourse'] = 'Blog entries about {$a->course} by {$a->user}';
+$string['blogentriesbyuseraboutmodule'] = 'Blog entries about {$a->mod} by {$a->user}';
+$string['blogentrybyuser'] = 'Blog entry by {$a}';
 $string['blogpreferences'] = 'Blog preferences';
 $string['blogs'] = 'Blogs';
 $string['blogtags'] = 'Blog Tags';
@@ -41,7 +62,7 @@ $string['configexternalblogcrontime'] = 'How often Moodle checks the external bl
 $string['configmaxexternalblogsperuser'] = 'The number of external blogs each user is allowed to link to their Moodle blog.';
 $string['configuseblogassociations'] = 'Enables the association of blog entries with courses and course modules.';
 $string['configuseexternalblogs'] = 'Enables users to add links to external blogs. Moodle regularly checks if these blogs, then copies new entries to the blog of the Moodle user.';
-$string['courseblog'] = 'Course blog: $a';
+$string['courseblog'] = 'Course blog: {$a}';
 $string['courseblogdisable'] = 'Course blogs is not enabled';
 $string['courseblogs'] = 'Users can only see blogs for people who share a course';
 $string['deleteblogassociations'] = 'Delete blog associations';
@@ -60,16 +81,16 @@ $string['entrysaved'] = 'Your entry has been saved';
 $string['entrytitle'] = 'Entry title';
 $string['entryupdated'] = 'Blog entry updated';
 $string['externalblogcrontime'] = 'External blog cron schedule';
-$string['externalblogs'] = 'External blogs';
 $string['externalblogdeleteconfirm'] = 'Unregister this external blog?';
 $string['externalblogdeleted'] = 'External blog unregistered';
+$string['externalblogs'] = 'External blogs';
 $string['feedisinvalid'] = 'This feed is invalid';
 $string['feedisvalid'] = 'This feed is valid';
 $string['filterblogsby'] = 'Filter entries by...';
 $string['filtertags'] = 'External tags';
-$string['groupblog'] = 'Group blog: $a';
+$string['groupblog'] = 'Group blog: {$a}';
 $string['groupblogdisable'] = 'Group blog is not enabled';
-$string['groupblogentries'] = 'Blog entries associated with $a->coursename by group $a->groupname';
+$string['groupblogentries'] = 'Blog entries associated with {$a->coursename} by group {$a->groupname}';
 $string['groupblogs'] = 'Users can only see blogs for people who share a group';
 $string['incorrectblogfilter'] = 'Incorrect blog filter type specified';
 $string['intro'] = 'This RSS feed was automatically generated from one or more blogs.';
@@ -82,10 +103,10 @@ $string['mustassociatecourse'] = 'If you are publishing to course or group membe
 $string['noentriesyet'] = 'No visible entries here';
 $string['noguestpost'] = 'Guest can not post blogs!';
 $string['nopermissionstodeleteentry'] = 'You lack the permissions required to delete this blog entry';
-$string['norighttodeletetag'] = 'You have no rights to delete this tag - $a';
+$string['norighttodeletetag'] = 'You have no rights to delete this tag - {$a}';
 $string['nosuchentry'] = 'No such blog entry';
 $string['notallowedtoedit'] = 'You are not allowed to edit this entry';
-$string['numberofentries'] = 'Entries: $a';
+$string['numberofentries'] = 'Entries: {$a}';
 $string['numberoftags'] = 'Number of tags to display';
 $string['pagesize'] = 'Number of blog entries per Page';
 $string['permalink'] = 'Permalink';
@@ -94,23 +115,23 @@ $string['preferences'] = 'Preferences';
 $string['publishto'] = 'Publish to';
 $string['publishtocourse'] = 'Users sharing a course with you';
 $string['publishtocourseassoc'] = 'Members of the associated course';
-$string['publishtocourseassocparam'] = 'Members of $a';
+$string['publishtocourseassocparam'] = 'Members of {$a}';
 $string['publishtogroup'] = 'Users sharing a group with you';
 $string['publishtogroupassoc'] = 'Your group members in the associated course';
-$string['publishtogroupassocparam'] = 'Your group members in $a';
+$string['publishtogroupassocparam'] = 'Your group members in {$a}';
 $string['publishtonoone'] = 'Yourself (draft)';
 $string['publishtosite'] = 'Anyone on this site';
 $string['publishtoworld'] = 'Anyone in the world';
 $string['readfirst'] = 'Read this first';
 $string['relatedblogentries'] = 'Related blog entries';
-$string['retrievedfrom'] = 'Retrieved from ';
-$string['searchterm'] = 'Search: $a';
+$string['retrievedfrom'] = 'Retrieved from';
+$string['searchterm'] = 'Search: {$a}';
 $string['settingsupdatederror'] = 'An error has occurred, blog preference setting could not be updated';
-$string['siteblog'] = 'Site blog: $a';
+$string['siteblog'] = 'Site blog: {$a}';
 $string['siteblogdisable'] = 'Site blog is not enabled';
 $string['siteblogs'] = 'All site users can see all blog entries';
 $string['tagdatelastused'] = 'Date tag was last used';
-$string['tagparam'] = 'Tag: $a';
+$string['tagparam'] = 'Tag: {$a}';
 $string['tags'] = 'Tags';
 $string['tagsort'] = 'Sort the tag display by';
 $string['tagtext'] = 'Tag text';
@@ -119,12 +140,12 @@ $string['timewithin'] = 'Display tags used within this many days';
 $string['updateentrywithid'] = 'Updating entry';
 $string['useblogassociations'] = 'Enable blog associations';
 $string['useexternalblogs'] = 'Enable external blogs';
-$string['userblog'] = 'User blog: $a';
-$string['userblogentries'] = 'Blog entries by $a';
+$string['userblog'] = 'User blog: {$a}';
+$string['userblogentries'] = 'Blog entries by {$a}';
 $string['valid'] = 'Valid';
-$string['viewallblogentries'] = 'All entries about this $a';
-$string['viewallmodentries'] = 'All entries about this $a->type';
-$string['viewblogentries'] = 'Entries about this $a->type';
+$string['viewallblogentries'] = 'All entries about this {$a}';
+$string['viewallmodentries'] = 'All entries about this {$a->type}';
+$string['viewblogentries'] = 'Entries about this {$a->type}';
 $string['viewblogsfor'] = 'View all entries for...';
 $string['viewcourseblogs'] = 'View entries for course...';
 $string['viewgroupblogs'] = 'View entries for group...';
@@ -136,4 +157,3 @@ $string['viewsiteentries'] = 'All entries';
 $string['viewuserentries'] = 'User entries';
 $string['worldblogs'] = 'The world can read entries set to be world-accessible';
 $string['wrongpostid'] = 'Wrong blog post id';
-?>

@@ -1,10 +1,32 @@
-<?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.7 beta + (2006101003)
+<?php
 
-$string['allday'] = 'All day';
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'calendar', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   calendar
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 $string['advancedoptions'] = 'Advanced options';
+$string['allday'] = 'All day';
 $string['calendar'] = 'Calendar';
-$string['calendarheading'] = '$a Calendar';
+$string['calendarheading'] = '{$a} Calendar';
 $string['clickhide'] = 'click to hide';
 $string['clickshow'] = 'click to show';
 $string['commontasks'] = 'Options';
@@ -39,22 +61,22 @@ $string['eventname'] = 'Name';
 $string['eventnone'] = 'No events';
 $string['eventrepeat'] = 'Repeats';
 $string['eventsall'] = 'All events';
-$string['eventsfor'] = '$a events';
+$string['eventsfor'] = '{$a} events';
 $string['eventskey'] = 'Events Key';
 $string['eventsrelatedtocourses'] = 'Events related to courses';
 $string['eventstarttime'] = 'Start time';
 $string['eventtime'] = 'Time';
 $string['eventview'] = 'Event Details';
 $string['expired'] = 'Expired';
-$string['explain_lookahead'] = 'This sets the (maximum) number of days in the future that an event has to start in in order to be displayed as an upcoming event. Events that start beyond this will never be displayed as upcoming. Please note that <strong>there is no guarantee</strong> that all events starting in this time frame will be displayed; if there are too many (more than the \"Maximum upcoming events\" preference) then the most distant events will not be shown.';
+$string['explain_lookahead'] = 'This sets the (maximum) number of days in the future that an event has to start in in order to be displayed as an upcoming event. Events that start beyond this will never be displayed as upcoming. Please note that <strong>there is no guarantee</strong> that all events starting in this time frame will be displayed; if there are too many (more than the "Maximum upcoming events" preference) then the most distant events will not be shown.';
 $string['explain_maxevents'] = 'This sets the maximum number of upcoming events that can be displayed. If you pick a large number here it is possible that upcoming events displays will take up a lot of space on your screen.';
 $string['explain_persistflt'] = 'If this is enabled, then Moodle will remember your last event filter settings and automatically restore them each time you login.';
+$string['explain_site_timeformat'] = 'You can choose to see times in either 12 or 24 hour format for the whole site. If you choose "default", then the format will be automatically chosen according to the language you use in the site. This setting can be overridden by user preferences.';
 $string['explain_startwday'] = 'Calendar weeks will be shown as starting on the day that you select here.';
-$string['explain_timeformat'] = 'You can choose to see times in either 12 or 24 hour format. If you choose \"default\", then the format will be automatically chosen according to the language you use in the site.';
-$string['explain_site_timeformat'] = 'You can choose to see times in either 12 or 24 hour format for the whole site. If you choose \"default\", then the format will be automatically chosen according to the language you use in the site. This setting can be overridden by user preferences.';
+$string['explain_timeformat'] = 'You can choose to see times in either 12 or 24 hour format. If you choose "default", then the format will be automatically chosen according to the language you use in the site.';
 $string['export'] = 'Export';
-$string['exportcalendar'] = 'Export calendar';
 $string['exportbutton'] = 'Export';
+$string['exportcalendar'] = 'Export calendar';
 $string['for'] = 'for';
 $string['fri'] = 'Fri';
 $string['friday'] = 'Friday';
@@ -68,10 +90,10 @@ $string['groupevent'] = 'Group event';
 $string['groupevents'] = 'Group events';
 $string['hidden'] = 'hidden';
 $string['ical'] = 'iCal';
-$string['iwanttoexport'] = 'Export';
-$string['invalidtimedurationuntil'] = 'The date and time you selected for duration until is before the start time of the event. Please correct this before proceeding.';
 $string['invalidtimedurationminutes'] = 'The duration in minutes you have entered in invalid please enter the duration in minutes greater than 0 or select no duration.';
-$string['manyevents'] = '$a events';
+$string['invalidtimedurationuntil'] = 'The date and time you selected for duration until is before the start time of the event. Please correct this before proceeding.';
+$string['iwanttoexport'] = 'Export';
+$string['manyevents'] = '{$a} events';
 $string['mon'] = 'Mon';
 $string['monday'] = 'Monday';
 $string['monthlyview'] = 'Monthly View';
@@ -80,17 +102,17 @@ $string['monththis'] = 'This month';
 $string['newevent'] = 'New Event';
 $string['noupcomingevents'] = 'There are no upcoming events';
 $string['oneevent'] = '1 event';
+$string['preferences'] = 'Preferences';
+$string['preferences_available'] = 'Your personal preferences';
 $string['pref_lookahead'] = 'Upcoming events look-ahead';
 $string['pref_maxevents'] = 'Maximum upcoming events';
 $string['pref_persistflt'] = 'Remember filter settings';
 $string['pref_startwday'] = 'First day of week';
 $string['pref_timeformat'] = 'Time display format';
-$string['preferences'] = 'Preferences';
-$string['preferences_available'] = 'Your personal preferences';
 $string['quickdownloadcalendar'] = 'Quick download / subscribe to calendar';
 $string['recentupcoming'] = 'Recent and next 60 days';
 $string['repeatedevents'] = 'Repeated events';
-$string['repeateditall'] = 'Apply changes to all $a events in this repeat series';
+$string['repeateditall'] = 'Apply changes to all {$a} events in this repeat series';
 $string['repeateditthis'] = 'Apply changes to this event only';
 $string['repeatevent'] = 'Repeat this event';
 $string['repeatnone'] = 'No repeats';
@@ -134,6 +156,4 @@ $string['wednesday'] = 'Wednesday';
 $string['weeknext'] = 'Next week';
 $string['weekthis'] = 'This week';
 $string['yesterday'] = 'Yesterday';
-$string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all $a events in the series at once.';
-
-?>
+$string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all {$a} events in the series at once.';

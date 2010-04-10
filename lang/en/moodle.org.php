@@ -1,39 +1,60 @@
-<?php   // $Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'moodle.org', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   moodle.org
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['aboutdemosite'] = 'Our demonstration site is a full Moodle site with some sample courses that you can try as a teacher, student or even an administrator.  Don\'t worry about making a mess, the whole site is reset to a clean state every hour.';
 $string['aboutdemositetitle'] = 'Demonstration site';
 $string['aboutintro'] = 'Moodle is an Open Source Course Management System (CMS), also known as a Learning Management System (LMS) or a Virtual Learning Environment (VLE).  It has become very popular among educators around the world as a tool for creating online dynamic web sites for their students.  To work, it needs to be installed on a web server somewhere, either on one of your own computers or one at a web hosting company.';
-$string['aboutoverview'] = '
-<p>The focus of the Moodle project is always on giving educators the best tools to manage and promote learning, but there are many ways to use Moodle:</p>
+$string['aboutoverview'] = '<p>The focus of the Moodle project is always on giving educators the best tools to manage and promote learning, but there are many ways to use Moodle:</p>
 <ul>
 <li>Moodle has features that allow it to scale to very large deployments and hundreds of thousands of students, yet it can also be used for a primary school or an education hobbyist.</li>
 <li>Many institutions use it as their platform to conduct fully online courses, while some use it simply to augment face-to-face courses (known as blended learning).</li>
 <li>Many of our users love to use the activity modules (such as forums, databases and wikis) to build richly collaborative communities of learning around their subject matter (in the social constructionist tradition), while others prefer to use Moodle as a way to deliver content to students (such as standard SCORM packages) and assess learning using assignments or quizzes.</li>
-</ul>
-';
+</ul>';
 $string['aboutoverviewtitle'] = 'What is Moodle?';
 $string['aboutstatistics'] = 'Moodle is free to download and registration is voluntary, so we don\'t have full information about everyone that uses it.  However, using what we do know, we automatically generate some interesting graphs and numbers on our Statistics page.';
 $string['aboutstatisticstitle'] = 'Statistics';
 $string['browsecvstitle'] = 'Browse our source code';
-$string['communityintro'] = 'Moodle has a large and diverse user community with over <a href=\"http://moodle.org/userpics\">$a->usercount registered users</a> on this Moodle site alone, speaking over <a href=\"http://download.moodle.org/lang16/\">$a->langcount languages</a> in <a href=\"http://moodle.org/sites\">$a->countrycount countries</a> (we have <a href=\"http://moodle.org/stats\">more statistics</a>).';
+$string['communityintro'] = 'Moodle has a large and diverse user community with over <a href="http://moodle.org/userpics">{$a->usercount} registered users</a> on this Moodle site alone, speaking over <a href="http://download.moodle.org/lang16/">{$a->langcount} languages</a> in <a href="http://moodle.org/sites">{$a->countrycount} countries</a> (we have <a href="http://moodle.org/stats">more statistics</a>).';
 $string['conferencecenter'] = 'Moodle Conference Center';
 $string['connectedsites'] = 'Some Moodle sites have been connected to moodle.org using Moodle Networking, so you can log in there directly once you are authenticated here.';
 $string['connectedsitestitle'] = 'Connected sites';
+$string['contactbugs'] = 'You can report problems in Moodle software and on any moodle.org site by creating a new issue in the Moodle Tracker.';
+$string['contactbugstitle'] = 'Bug reporting';
 $string['contactintro'] = 'Please choose from the following contact options:';
 $string['contactlogin'] = 'For all other queries, log in to this site and then use the contact form which will appear on this page.';
-$string['contactsent'] = 'Your message was sent via email to the Moodle Community Manager.';
-$string['contactsupporttitle'] = 'Support';
-$string['contactsupport'] = 'For support with using Moodle software, please see our support page which lists many helpful resources available to you.';
-$string['contactmoodleorgtitle'] = 'Moodle.org';
-$string['contactmoodleorgemail'] = 'For problems with moodle.org account confirmation, email this address:';
-$string['contactmoodleorgother'] = 'For all other queries, please use the contact form below.';
-$string['contactmoodleorglogin'] =  'Log in to this site now';
-$string['contactmoodlecomtitle'] = 'Moodle.com';
-$string['contactmoodlecom'] = 'For any queries relating to licensing, trademark or commercial issues, as well as major Moodle developments, please contact the helpdesk on <a href=\"http://moodle.com/\">Moodle.com</a>';
+$string['contactmoodlecom'] = 'For any queries relating to licensing, trademark or commercial issues, as well as major Moodle developments, please contact the helpdesk on <a href="http://moodle.com/">Moodle.com</a>';
 $string['contactmoodlecomhelpdesk'] = 'Moodle.com helpdesk';
-$string['contactbugstitle'] = 'Bug reporting';
-$string['contactbugs'] = 'You can report problems in Moodle software and on any moodle.org site by creating a new issue in the Moodle Tracker.';
+$string['contactmoodlecomtitle'] = 'Moodle.com';
+$string['contactmoodleorgemail'] = 'For problems with moodle.org account confirmation, email this address:';
+$string['contactmoodleorglogin'] = 'Log in to this site now';
+$string['contactmoodleorgother'] = 'For all other queries, please use the contact form below.';
+$string['contactmoodleorgtitle'] = 'Moodle.org';
 $string['contactsecurity'] = 'Security issues can also be reported safely in the tracker, providing you set the security level appropriately.';
+$string['contactsent'] = 'Your message was sent via email to the Moodle Community Manager.';
+$string['contactsupport'] = 'For support with using Moodle software, please see our support page which lists many helpful resources available to you.';
+$string['contactsupporttitle'] = 'Support';
 $string['developercontributors'] = 'Credits';
 $string['developerlist'] = 'Full list of developers with write access';
 $string['developermeetings'] = 'Developer meetings';
@@ -49,7 +70,7 @@ $string['downloadcore'] = 'Our main method of distribution is via these standard
 $string['downloadcoretitle'] = 'Standard Moodle packages';
 $string['downloadcvs'] = 'Another way to get the core source code is by using CVS to connect directly to one of our mirrors of the code repository used by Moodle developers.  This makes upgrading very easy, even if you have made local changes to the source code.';
 $string['downloadcvstitle'] = 'Moodle via CVS';
-$string['downloadintro'] = 'Moodle is open source under the <a href=\"http://docs.moodle.org/en/License\">GPL licence</a>.  Everything we produce is available for you to download and use for free.';
+$string['downloadintro'] = 'Moodle is open source under the <a href="http://docs.moodle.org/en/License">GPL licence</a>.  Everything we produce is available for you to download and use for free.';
 $string['downloadlang'] = 'In current versions of Moodle, adding support for new languages has been automated from the administration menu within your site.  However, for some older versions of Moodle, new language packs need to be downloaded manually.';
 $string['downloadlangtitle'] = 'Language packs';
 $string['downloadlogotitle'] = 'Moodle logos';
@@ -81,7 +102,7 @@ $string['moodlesupport'] = 'Moodle Support';
 $string['moodlethemes'] = 'Moodle Themes';
 $string['moodletrackertitle'] = 'Moodle Tracker';
 $string['moodletraining'] = 'Moodle Training';
-$string['mycoursesintro'] = 'You are currently enrolled in the following \"courses\" on this community site, each containing one or more forums.';
+$string['mycoursesintro'] = 'You are currently enrolled in the following "courses" on this community site, each containing one or more forums.';
 $string['nameabout'] = 'About';
 $string['nameaboutmoodle'] = 'About Moodle';
 $string['namecommercial'] = 'Commercial services';
@@ -127,14 +148,14 @@ $string['shoptitle'] = 'Moodle Shop';
 $string['sourcecodetitle'] = 'Open source code';
 $string['supportbooks'] = 'We maintain a listing of many Moodle books available for purchase.';
 $string['supportbookstitle'] = 'Books and manuals';
-$string['supportcommercial'] = 'The <a href=\"http://moodle.com/\">Moodle Partners</a> are a worldwide group of authorised service companies committed to financially supporting the open source Moodle project. They provide a range of optional commercial services for Moodle users around the world:';
+$string['supportcommercial'] = 'The <a href="http://moodle.com/">Moodle Partners</a> are a worldwide group of authorised service companies committed to financially supporting the open source Moodle project. They provide a range of optional commercial services for Moodle users around the world:';
 $string['supportcommercialtitle'] = 'Commercial services';
-$string['supportdocs1'] = 'Moodle Docs is a great place to start, especially our Frequently Asked Questions (FAQ) pages.';
-$string['supportdocs2'] = 'A nice way to access relevant documentation is to use the \"Moodle Docs for this page\" link at the bottom of each page on your own Moodle site.';
 $string['supportdocsfaq'] = 'Frequently Asked Questions';
 $string['supportdocslang'] = 'Moodle Docs in other languages';
 $string['supportdocstitle'] = 'Documentation';
-$string['supportforums'] = 'Our user community mostly communicates via forums inside \"courses\" on this Moodle-based site.  You must \"enrol\" in the course to post to forums (enrolment is completely free).';
+$string['supportdocs1'] = 'Moodle Docs is a great place to start, especially our Frequently Asked Questions (FAQ) pages.';
+$string['supportdocs2'] = 'A nice way to access relevant documentation is to use the "Moodle Docs for this page" link at the bottom of each page on your own Moodle site.';
+$string['supportforums'] = 'Our user community mostly communicates via forums inside "courses" on this Moodle-based site.  You must "enrol" in the course to post to forums (enrolment is completely free).';
 $string['supportforumsenglish'] = 'The main support and developer discussions between users and developers are in English here:';
 $string['supportforumsenglishname'] = 'Using Moodle';
 $string['supportforumslang'] = 'The key forum for Moodlers to socialise in English is here:';
@@ -144,5 +165,3 @@ $string['supportforumslist'] = 'We have many other forums too, in many languages
 $string['supportforumslistname'] = 'List of all forums';
 $string['supportforumstitle'] = 'Forums';
 $string['supportintro'] = 'You are not alone!  There are a variety of ways to get help with Moodle if you need it.';
-
-

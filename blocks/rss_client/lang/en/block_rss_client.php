@@ -1,6 +1,27 @@
-<?PHP // $Id$ 
-      // block_rss_client.php - created with Moodle 1.7 beta + (2006101003)
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'block_rss_client', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   block_rss_client
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['addfeed'] = 'Add a news feed URL:';
 $string['addheadlineblock'] = 'Add RSS headline block';
@@ -8,7 +29,6 @@ $string['addnew'] = 'Add New';
 $string['addnewfeed'] = 'Add a new feed';
 $string['blockname'] = 'RSS Client';
 $string['cannotmakemodification'] = 'You are not allowed to make modifications to this RSS feed at this time.';
-$string['choosefeedlabel'] = 'Choose the feeds which you would like to make available in this block:';
 $string['clientchannellink'] = 'Source site...';
 $string['clientnumentries'] = 'The default number of entries to show per feed.';
 $string['clientshowchannellinklabel'] = 'Should a link to the original site (channel link) be displayed? (Note that if no feed link is supplied in the news feed then no link will be shown) :';
@@ -24,7 +44,7 @@ $string['editfeeds'] = 'Edit, subscribe or unsubsribe from RSS/Atom news feeds';
 $string['editnewsfeeds'] = 'Edit news feeds';
 $string['editrssblock'] = 'Edit RSS Headline Block';
 $string['enableautodiscovery'] = 'Enable auto-discovery of feeds?';
-$string['errorloadingfeed'] = 'Error loading this RSS feed ($a)';
+$string['errorloadingfeed'] = 'Error loading this RSS feed ({$a})';
 $string['feed'] = 'Feed';
 $string['feedadded'] = 'News feed added';
 $string['feeddeleted'] = 'News feed deleted';
@@ -36,9 +56,10 @@ $string['feedstitle'] = 'Remote RSS Feeds';
 $string['feedupdated'] = 'News feed updated';
 $string['feedurl'] = 'Feed URL';
 $string['findmorefeeds'] = 'Find more rss feeds';
+$string['choosefeedlabel'] = 'Choose the feeds which you would like to make available in this block:';
 $string['managefeeds'] = 'Manage all my feeds';
-$string['numentries'] = 'Entries per feed';
 $string['nofeeds'] = 'There are no RSS feeds defined for this site.';
+$string['numentries'] = 'Entries per feed';
 $string['pickfeed'] = 'Pick a news feed';
 $string['remotenewsfeed'] = 'Remote News Feed';
 $string['rss_client:createprivatefeeds'] = 'Create private RSS feeds';
@@ -51,10 +72,8 @@ $string['shownumentrieslabel'] = 'Max number entries to show per block.';
 $string['submitters'] = 'Who will be allowed to define new rss feeds? Defined feeds are available for any page on your site.';
 $string['submitters2'] = 'Submitters';
 $string['timeout'] = 'Time in minutes before an RSS feed expires in cache. Note that this time defines the minimum time before expiry; the feed will be refreshed in cache on the next cron execution after expiry. Recommended values are 30 mins or greater.';
-$string['timeout2'] = 'Timeout';
 $string['timeoutdesc'] = 'Time in minutes for an RSS feed to live in cache.';
+$string['timeout2'] = 'Timeout';
 $string['updatefeed'] = 'Update a news feed URL:';
 $string['validatefeed'] = 'Validate feed';
 $string['viewfeed'] = 'View feed';
-
-?>

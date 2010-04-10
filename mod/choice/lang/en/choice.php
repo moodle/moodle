@@ -1,29 +1,50 @@
-<?PHP // $Id$
-      // choice.php - created with Moodle 1.7 beta + (2006101003)
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'choice', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   choice
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['addmorechoices'] = 'Add more choices';
 $string['allowupdate'] = 'Allow choice to be updated';
 $string['answered'] = 'Answered';
-$string['choice'] = 'Choice';
-$string['choiceadministration'] = 'Choice administration';
-$string['choice:choose'] = 'Record a choice';
-$string['choice:deleteresponses'] = 'Delete responses';
-$string['choice:downloadresponses'] = 'Download responses';
-$string['choice:readresponses'] = 'Read responses';
-$string['choiceclose'] = 'Until';
-$string['choicefull'] = 'This choice is full and there are no available places.';
-$string['choicename'] = 'Choice name';
-$string['choiceopen'] = 'Open';
-$string['choicesaved'] = 'Your choice has been saved';
-$string['choicetext'] = 'Choice text';
 $string['displayhorizontal'] = 'Display horizontally';
 $string['displaymode'] = 'Display Mode';
 $string['displayvertical'] = 'Display vertically';
-$string['expired'] = 'Sorry, this activity closed on $a and is no longer available';
+$string['expired'] = 'Sorry, this activity closed on {$a} and is no longer available';
 $string['fillinatleastoneoption'] = 'You need to provide at least two possible answers.';
 $string['full'] = '(Full)';
 $string['havetologin'] = 'You have to log in before you can submit your choice';
+$string['choice'] = 'Choice';
+$string['choiceadministration'] = 'Choice administration';
+$string['choiceclose'] = 'Until';
+$string['choice:deleteresponses'] = 'Delete responses';
+$string['choice:downloadresponses'] = 'Download responses';
+$string['choicefull'] = 'This choice is full and there are no available places.';
+$string['choice:choose'] = 'Record a choice';
+$string['choicename'] = 'Choice name';
+$string['choiceopen'] = 'Open';
+$string['choice:readresponses'] = 'Read responses';
+$string['choicesaved'] = 'Your choice has been saved';
+$string['choicetext'] = 'Choice text';
 $string['limit'] = 'Limit';
 $string['limitanswers'] = 'Limit the number of responses allowed';
 $string['modulename'] = 'Choice';
@@ -32,7 +53,7 @@ $string['mustchooseone'] = 'You must choose an answer before saving.  Nothing wa
 $string['noguestchoose'] = 'Sorry, guests are not allowed to make choices.';
 $string['noresultsviewable'] = 'The results are not currently viewable.';
 $string['notanswered'] = 'Not answered yet';
-$string['notopenyet'] = 'Sorry, this activity is not available until $a';
+$string['notopenyet'] = 'Sorry, this activity is not available until {$a}';
 $string['option'] = 'Option';
 $string['privacy'] = 'Privacy of results';
 $string['publish'] = 'Publish results';
@@ -42,16 +63,15 @@ $string['publishalways'] = 'Always show results to students';
 $string['publishanonymous'] = 'Publish anonymous results, do not show student names';
 $string['publishnames'] = 'Publish full results, showing names and their choices';
 $string['publishnot'] = 'Do not publish results to students';
+$string['removemychoice'] = 'Remove my choice';
 $string['removeresponses'] = 'Remove all responses';
 $string['responses'] = 'Responses';
-$string['responsesto'] = 'Responses to $a';
+$string['responsesto'] = 'Responses to {$a}';
 $string['savemychoice'] = 'Save my choice';
-$string['removemychoice'] = 'Remove my choice';
 $string['showunanswered'] = 'Show column for unanswered';
 $string['spaceleft'] = 'space available';
 $string['spacesleft'] = 'spaces available';
 $string['taken'] = 'Taken';
 $string['timerestrict'] = 'Restrict answering to this time period';
-$string['viewallresponses'] = 'View $a responses';
+$string['viewallresponses'] = 'View {$a} responses';
 $string['yourselection'] = 'Your selection';
-?>

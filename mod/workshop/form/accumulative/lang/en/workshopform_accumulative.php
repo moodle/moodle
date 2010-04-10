@@ -16,23 +16,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * English strings for Workshop subplugin - "Accumulative" grading strategy
+ * Strings for component 'workshopform_accumulative', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   mod-workshop
- * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
+ * @package   workshopform_accumulative
+ * @copyright 2009 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 $string['absent'] = 'Absent';
-$string['addmoredimensions'] = 'Blanks for $a more aspects';
+$string['addmoredimensions'] = 'Blanks for {$a} more aspects';
 $string['correct'] = 'Correct';
 $string['dimensioncomment'] = 'Comment';
 $string['dimensiondescription'] = 'Description';
 $string['dimensiongrade'] = 'Grade';
 $string['dimensionmaxgrade'] = 'Best possible grade / Scale to use';
-$string['dimensionnumber'] = 'Aspect $a';
+$string['dimensionnumber'] = 'Aspect {$a}';
 $string['dimensionweight'] = 'Weight';
 $string['excellent'] = 'Excellent';
 $string['good'] = 'Good';

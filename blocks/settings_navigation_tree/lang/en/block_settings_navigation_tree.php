@@ -16,10 +16,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains language strings used in the settings navigation block
+ * Strings for component 'block_settings_navigation_tree', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @since 2.0
- * @package blocks
+ * @package   block_settings_navigation_tree
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

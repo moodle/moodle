@@ -1,4 +1,27 @@
-<?PHP // $Id$ 
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'data', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   data
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['action'] = 'Action';
 $string['add'] = 'Add entry';
@@ -24,24 +47,20 @@ $string['availabletags'] = 'Available tags';
 $string['availabletodate'] = 'Available to';
 $string['blank'] = 'Blank';
 $string['buttons'] = 'Actions';
-$string['bynameondate'] = 'by $a->name - $a->date';
+$string['bynameondate'] = 'by {$a->name} - {$a->date}';
+$string['cancel'] = 'Cancel';
 $string['cannotaccesspresentsother'] = 'You are not allowed to access presets from other users';
 $string['cannotadd'] = 'Can not add entries!';
 $string['cannotdeletepreset'] = 'Error deleting a preset!';
 $string['cannotrate'] = 'Rating of items not allowed!';
 $string['cannotunziptopreset'] = 'Cannot unzip to the preset directory';
-$string['cancel'] = 'Cancel';
-$string['checkbox'] = 'Checkbox';
-$string['chooseexportfields'] = 'Choose the fields you wish to export:';
-$string['chooseexportformat'] = 'Choose the format you wish to export to:';
-$string['chooseorupload'] = 'Choose file';
 $string['columns'] = 'columns';
+$string['comment'] = 'Comment';
 $string['commentdeleted'] = 'Comment deleted';
 $string['commentempty'] = 'Comment was empty';
-$string['comment'] = 'Comment';
 $string['comments'] = 'Comments';
 $string['commentsaved'] = 'Comment saved';
-$string['commentsn'] = '$a comment(s)';
+$string['commentsn'] = '{$a} comment(s)';
 $string['configenablerssfeeds'] = 'This switch will enable the possibility of RSS feeds for all databases. You will still need to turn feeds on manually in the settings for each database.';
 $string['confirmdeletefield'] = 'You are about to delete this field, are you sure?';
 $string['confirmdeleterecord'] = 'Are you sure you want to delete this entry?';
@@ -49,13 +68,13 @@ $string['csstemplate'] = 'CSS template';
 $string['csvfailed'] = 'Unable to read the raw data from the CSV file';
 $string['csvfile'] = 'CSV file';
 $string['csvimport'] = 'CSV file import';
-$string['csvwithselecteddelimiter'] = '<acronym title=\"Comma Separated Values\">CSV</acronym> text with selected delimiter:';
+$string['csvwithselecteddelimiter'] = '<acronym title="Comma Separated Values">CSV</acronym> text with selected delimiter:';
 $string['dataadministration'] = 'Database activity administration';
 $string['data:approve'] = 'Approve unapproved entries';
 $string['data:comment'] = 'Write comments';
+$string['data:exportallentries'] = 'Export all database entries';
 $string['data:exportentry'] = 'Export a database entry';
 $string['data:exportownentry'] = 'Export own database entry';
-$string['data:exportallentries'] = 'Export all database entries';
 $string['data:managecomments'] = 'Manage comments';
 $string['data:manageentries'] = 'Manage entries';
 $string['data:managetemplates'] = 'Manage templates';
@@ -74,23 +93,23 @@ $string['defaultsortfield'] = 'Default sort field';
 $string['delete'] = 'Delete';
 $string['deleteallentries'] = 'Delete all entries';
 $string['deletecomment'] = 'Are you sure you want to delete this comment?';
-$string['deletenotenrolled'] = 'Delete entries by users not enrolled';
 $string['deleted'] = 'deleted';
 $string['deletefield'] = 'Delete an existing field';
+$string['deletenotenrolled'] = 'Delete entries by users not enrolled';
 $string['deletewarning'] = 'Are you sure you want to delete this preset?';
 $string['descending'] = 'Descending';
-$string['directorynotapreset'] = '$a->directory Not a preset: missing files: $a->missing_files';
+$string['directorynotapreset'] = '{$a->directory} Not a preset: missing files: {$a->missing_files}';
 $string['download'] = 'Download';
 $string['edit'] = 'Edit';
 $string['editcomment'] = 'Edit comment';
 $string['editentry'] = 'Edit entry';
-$string['editorenable'] = 'Enable editor';
 $string['editordisable'] = 'Disable editor';
+$string['editorenable'] = 'Enable editor';
 $string['emptyadd'] = 'The Add template is empty, generating a default form...';
 $string['emptyaddform'] = 'You did not fill out any fields!';
 $string['entries'] = 'Entries';
-$string['entrieslefttoaddtoview'] = 'You must add $a->entrieslefttoview more entry/entries before you can view other participants\' entries.';
-$string['entrieslefttoadd'] = 'You must add $a->entriesleft more entry/entries in order to complete this activity';
+$string['entrieslefttoadd'] = 'You must add {$a->entriesleft} more entry/entries in order to complete this activity';
+$string['entrieslefttoaddtoview'] = 'You must add {$a->entrieslefttoview} more entry/entries before you can view other participants\' entries.';
 $string['entry'] = 'Entry';
 $string['entrysaved'] = 'Your entry has been saved';
 $string['errormustbeteacher'] = 'You need to be a teacher to use this page!';
@@ -110,23 +129,23 @@ $string['fieldenclosure'] = 'Field enclosure';
 $string['fieldheight'] = 'Height';
 $string['fieldheightlistview'] = 'Height in list view';
 $string['fieldheightsingleview'] = 'Height in single view';
+$string['fieldids'] = 'Field ids';
 $string['fieldmappings'] = 'Field Mappings';
 $string['fieldname'] = 'Field name';
+$string['fieldnotmatched'] = 'The following fields in your file are not known in this database: {$a}';
 $string['fieldoptions'] = 'Options (one per line)';
 $string['fields'] = 'Fields';
-$string['fieldids'] = 'Field ids';
-$string['fieldnotmatched'] = 'The following fields in your file are not known in this database: $a';
 $string['fieldupdated'] = 'Field updated';
 $string['fieldwidth'] = 'Width';
 $string['fieldwidthlistview'] = 'Width in list view';
 $string['fieldwidthsingleview'] = 'Width in single view';
 $string['file'] = 'File';
-$string['filesnotgenerated'] = 'Not all files were generated: $a';
+$string['filesnotgenerated'] = 'Not all files were generated: {$a}';
 $string['filtername'] = 'Database Auto-linking';
 $string['footer'] = 'Footer';
 $string['forcelinkname'] = 'Forced name for the link';
-$string['foundrecords'] = 'Found records: $a->num/$a->max (<a href=\"$a->reseturl\">Reset filters</a>)';
-$string['foundnorecords'] = 'No records found (<a href=\"$a->reseturl\">Reset filters</a>)';
+$string['foundnorecords'] = 'No records found (<a href="{$a->reseturl}">Reset filters</a>)';
+$string['foundrecords'] = 'Found records: {$a->num}/{$a->max} (<a href="{$a->reseturl}">Reset filters</a>)';
 $string['fromfile'] = 'Import from zip file';
 $string['generateerror'] = 'Not all files generated!';
 $string['guestrate'] = 'Guests are not allowed to rate entries.';
@@ -138,6 +157,10 @@ $string['headerjstemplate'] = 'Defines custom Javascript for the other templates
 $string['headerlisttemplate'] = 'Defines browsing interface for multiple entries';
 $string['headerrsstemplate'] = 'Defines appearance of entries in RSS feeds';
 $string['headersingletemplate'] = 'Defines browsing interface for a single entry';
+$string['checkbox'] = 'Checkbox';
+$string['chooseexportfields'] = 'Choose the fields you wish to export:';
+$string['chooseexportformat'] = 'Choose the format you wish to export to:';
+$string['chooseorupload'] = 'Choose file';
 $string['importsuccess'] = 'The preset has been successfully applied.';
 $string['insufficiententries'] = 'more entries needed to view this database';
 $string['intro'] = 'Introduction';
@@ -146,8 +169,8 @@ $string['invalidfieldid'] = 'Field ID is incorrect';
 $string['invalidfieldname'] = 'Please choose another name for this field';
 $string['invalidfieldtype'] = 'Field Type is incorrect';
 $string['invalidid'] = 'Incorrect data ID';
-$string['invalidpreset'] = '$a is not a preset.';
-$string['invalidrate'] = 'Invalid database rate ($a)';
+$string['invalidpreset'] = '{$a} is not a preset.';
+$string['invalidrate'] = 'Invalid database rate ({$a})';
 $string['invalidratedata'] = 'Incorrect submitted ratings data';
 $string['invalidrecord'] = 'Incorrect record';
 $string['invalidurl'] = 'The URL you just entered is not valid';
@@ -166,8 +189,8 @@ $string['maxentries'] = 'Maximum entries';
 $string['maxsize'] = 'Maximum size';
 $string['menu'] = 'Menu';
 $string['menuchoose'] = 'Choose...';
-$string['missingfield'] = 'Programmer error: You must specify field and/or data when defining field class. ';
 $string['missingdata'] = 'Data id or object must be provided to field class';
+$string['missingfield'] = 'Programmer error: You must specify field and/or data when defining field class.';
 $string['modulename'] = 'Database';
 $string['modulenameplural'] = 'Databases';
 $string['more'] = 'More';
@@ -176,9 +199,9 @@ $string['movezipfailed'] = 'Can\'t move zip';
 $string['multientry'] = 'Repeated entry';
 $string['multimenu'] = 'Menu (Multi-select)';
 $string['multipletags'] = 'Multiple tags found! Template not saved';
-$string['namecheckbox'] = 'Checkbox field';
 $string['namedate'] = 'Date field';
 $string['namefile'] = 'File field';
+$string['namecheckbox'] = 'Checkbox field';
 $string['namelatlong'] = 'Latitude/longitude field';
 $string['namemenu'] = 'Menu field';
 $string['namemultimenu'] = 'Multiple-selection menu field';
@@ -191,22 +214,22 @@ $string['nameurl'] = 'URL field';
 $string['newentry'] = 'New entry';
 $string['newfield'] = 'Create a new field';
 $string['noaccess'] = 'You do not have access to this page';
-$string['nofieldcontent'] = 'Field content not found';
 $string['nodefinedfields'] = 'New preset has no defined fields!';
+$string['nofieldcontent'] = 'Field content not found';
 $string['nofieldindatabase'] = 'There are no fields defined for this database.';
 $string['nolisttemplate'] = 'List template is not yet defined';
 $string['nomatch'] = 'No matching entries found!';
 $string['nomaximum'] = 'No maximum';
-$string['norecords'] = 'No entries in database';
 $string['norating'] = 'This activity does not use ratings';
+$string['norecords'] = 'No entries in database';
 $string['nosingletemplate'] = 'Single template is not yet defined';
 $string['notapproved'] = 'Entry is not approved yet.';
 $string['notinjectivemap'] = 'Not an injective map';
 $string['number'] = 'Number';
 $string['numberrssarticles'] = 'RSS articles';
 $string['numnotapproved'] = 'Pending';
-$string['numrecords'] = '$a entries';
-$string['ods'] = '<acronym title=\"OpenDocument Spreadsheet\">ODS</acronym> (OpenOffice)';
+$string['numrecords'] = '{$a} entries';
+$string['ods'] = '<acronym title="OpenDocument Spreadsheet">ODS</acronym> (OpenOffice)';
 $string['optionaldescription'] = 'Short description (optional)';
 $string['optionalfilename'] = 'Filename (optional)';
 $string['other'] = 'Other';
@@ -215,7 +238,7 @@ $string['overwritesettings'] = 'Overwrite current settings';
 $string['pagesize'] = 'Entries per page';
 $string['participants'] = 'Participants';
 $string['picture'] = 'Picture';
-$string['pleaseaddsome'] = 'Please create some below or <a href=\"$a\">choose a predefined set</a> to get started.';
+$string['pleaseaddsome'] = 'Please create some below or <a href="{$a}">choose a predefined set</a> to get started.';
 $string['portfolionotfile'] = 'Export to a portfolio rather than a file (csv and leap2a only)';
 $string['presetinfo'] = 'Saving as a preset will publish this template. Other users may be able to use it in their databases.';
 $string['presets'] = 'Presets';
@@ -224,9 +247,9 @@ $string['rate'] = 'Rate';
 $string['rating'] = 'Rating';
 $string['ratingeveryone'] = 'Everyone can rate posts';
 $string['ratingno'] = 'No ratings';
-$string['ratingonlyteachers'] = 'Only $a can rate posts';
-$string['ratingpublic'] = '$a can see everyone\'s ratings';
-$string['ratingpublicnot'] = '$a can only see their own ratings';
+$string['ratingonlyteachers'] = 'Only {$a} can rate posts';
+$string['ratingpublic'] = '{$a} can see everyone\'s ratings';
+$string['ratingpublicnot'] = '{$a} can only see their own ratings';
 $string['ratings'] = 'Ratings';
 $string['ratingssaved'] = 'Ratings saved';
 $string['ratingsuse'] = 'Use ratings';
@@ -237,8 +260,8 @@ $string['recordssaved'] = 'entries saved';
 $string['requireapproval'] = 'Require approval?';
 $string['requiredentries'] = 'Required entries';
 $string['requiredentriestoview'] = 'Entries required before viewing';
-$string['resettemplate'] = 'Reset template';
 $string['resetsettings'] = 'Reset filters';
+$string['resettemplate'] = 'Reset template';
 $string['resizingimages'] = 'Resizing image thumbnails...';
 $string['rows'] = 'rows';
 $string['rssglobaldisabled'] = 'Disabled. See site configuration variables.';
@@ -255,10 +278,10 @@ $string['savetemplate'] = 'Save template';
 $string['search'] = 'Search';
 $string['selectedrequired'] = 'All selected required';
 $string['sendinratings'] = 'Send in my latest ratings';
+$string['showall'] = 'Show all entries';
 $string['single'] = 'View single';
 $string['singletemplate'] = 'Single template';
-$string['showall'] = 'Show all entries';
-$string['teachersandstudents'] = '$a->teachers and $a->students';
+$string['teachersandstudents'] = '{$a->teachers} and {$a->students}';
 $string['templates'] = 'Templates';
 $string['templatesaved'] = 'Template saved';
 $string['text'] = 'Text';
@@ -267,8 +290,8 @@ $string['timeadded'] = 'Time added';
 $string['timemodified'] = 'Time modified';
 $string['todatabase'] = 'to this database.';
 $string['type'] = 'Field type';
-$string['undefinedprocessactionmethod'] = 'No action method defined in Data_Preset to handle action \"$a\".';
-$string['unsupportedexport'] = '($a->fieldtype) cannot be exported.';
+$string['undefinedprocessactionmethod'] = 'No action method defined in Data_Preset to handle action "{$a}".';
+$string['unsupportedexport'] = '({$a->fieldtype}) cannot be exported.';
 $string['updatefield'] = 'Update an existing field';
 $string['uploadfile'] = 'Upload file';
 $string['uploadrecords'] = 'Upload entries from a file';
@@ -277,4 +300,3 @@ $string['usestandard'] = 'Use a preset';
 $string['viewfromdate'] = 'Viewable from';
 $string['viewtodate'] = 'Viewable to';
 $string['wrongdataid'] = 'Wrong data id provided';
-?>

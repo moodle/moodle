@@ -1,6 +1,27 @@
-<?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.7 beta + (2006101003)
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'wiki', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   wiki
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['action'] = '-- Action --';
 $string['administration'] = 'Administration';
@@ -17,36 +38,27 @@ $string['binimgtoolarge'] = 'Image file is too large!';
 $string['binnoimg'] = 'This is an inacceptable file format!';
 $string['browse'] = 'Browse';
 $string['canceledit'] = 'Cancel';
-$string['cannotaccessgroup'] = 'Cannot access any groups for this wiki';
 $string['cannotacceptbin'] = 'This wiki does not accept binaries';
+$string['cannotaccessgroup'] = 'Cannot access any groups for this wiki';
 $string['cannotaddentry'] = 'Could not add wiki entry.';
-$string['cannotchangepage'] = 'This page cannot be changed.';
 $string['cannotgetentry'] = 'Cannot get entry.';
-$string['cannotstartwith'] = 'Binary entry does not start with ($a)';
-$string['changes'] = '$a changes';
-$string['changesfield'] = 'Within how many hours from the last change';
-$string['changesfielderror'] = 'Please enter a correct hour count.';
-$string['checklinks'] = 'Check links';
-$string['checklinkscheck'] = 'Are you sure that you want to check the links on this page:';
-$string['checklinksnotice'] = 'Please be patient when this page is working.';
-$string['chooseadministration'] = '-- Administration --';
-$string['chooseafile'] = 'Choose/upload initial page';
-$string['choosewikilinks'] = '-- Choose Wiki Links --';
+$string['cannotchangepage'] = 'This page cannot be changed.';
+$string['cannotstartwith'] = 'Binary entry does not start with ({$a})';
 $string['comment'] = 'Comment';
 $string['contentsize'] = 'Content size';
 $string['created'] = 'Created';
 $string['deletemewikiword'] = 'DeleteMe';
-$string['deletemewikiwordfound'] = '$a found on page';
+$string['deletemewikiwordfound'] = '{$a} found on page';
 $string['deletepage'] = 'Delete page';
 $string['deleteversions'] = 'Delete how many last versions';
 $string['deleteversionserror'] = 'Please enter a correct version count.';
 $string['diff'] = 'Diff';
-$string['differences'] = 'Differences between version $a->new_ver and $a->old_ver of $a->pagename.';
+$string['differences'] = 'Differences between version {$a->new_ver} and {$a->old_ver} of {$a->pagename}.';
 $string['disablecamel'] = 'Disable CamelCase linking';
 $string['disabledpage'] = 'This page is currently not available.';
 $string['doesnotexist'] = 'This page does not yet exist, please click on the edit Button if you would like to create it.';
 $string['downloadaszip'] = 'Downloadable zip archive';
-$string['downloadtimes'] = 'Downloaded $a times';
+$string['downloadtimes'] = 'Downloaded {$a} times';
 $string['dwnlnofiles'] = 'No files uploaded yet.';
 $string['dwnlsection'] = 'Download section';
 $string['editform1'] = 'Try not to worry too much about formatting, it can always be improved later.';
@@ -81,20 +93,29 @@ $string['flagtxt'] = 'TXT';
 $string['flagwr'] = 'WR';
 $string['for'] = 'for';
 $string['forbidden'] = 'You are not authorized to access this page.';
-$string['groups'] = 'Groups';
 $string['groupmodeerror'] = 'Can\'t access wiki in group mode when no groups are configured for the course';
-$string['hits'] = '$a hits';
+$string['groups'] = 'Groups';
+$string['hits'] = '{$a} hits';
 $string['howtooperate'] = 'How to operate';
 $string['howtowiki'] = 'How to wiki';
 $string['html'] = 'HTML-Format';
 $string['htmlmode'] = 'HTML Mode';
 $string['htmlonly'] = 'HTML only';
+$string['changes'] = '{$a} changes';
+$string['changesfield'] = 'Within how many hours from the last change';
+$string['changesfielderror'] = 'Please enter a correct hour count.';
+$string['checklinks'] = 'Check links';
+$string['checklinkscheck'] = 'Are you sure that you want to check the links on this page:';
+$string['checklinksnotice'] = 'Please be patient when this page is working.';
+$string['chooseadministration'] = '-- Administration --';
+$string['chooseafile'] = 'Choose/upload initial page';
+$string['choosewikilinks'] = '-- Choose Wiki Links --';
 $string['index'] = 'Index';
 $string['infoaboutpage'] = 'History for:';
 $string['initialcontent'] = 'Choose an Initial Page';
-$string['invalidroot'] = 'You are not authorized to access the current root page so no sitemap can be created.';
 $string['invalidpageval'] = 'Unsupported page value';
-$string['lastchanged'] = 'Last changed on $a';
+$string['invalidroot'] = 'You are not authorized to access the current root page so no sitemap can be created.';
+$string['lastchanged'] = 'Last changed on {$a}';
 $string['lastmodified'] = 'Last modification';
 $string['linkdead'] = 'DEAD';
 $string['linkok'] = 'OK';
@@ -110,13 +131,13 @@ $string['mostoftenchangedpages'] = 'Most often changed pages';
 $string['mostvisitedpages'] = 'Most visited pages';
 $string['newestpages'] = 'Newest pages';
 $string['noadministrationaction'] = 'No administration action given.';
-$string['nocandidatestoremove'] = 'No candidate pages to remove, choose \'$a\' to show all pages.';
-$string['nochangestorevert'] = 'No changes to revert.';
+$string['nocandidatestoremove'] = 'No candidate pages to remove, choose \'{$a}\' to show all pages.';
 $string['nohtml'] = 'No HTML';
+$string['nochangestorevert'] = 'No changes to revert.';
 $string['nojslockwarning'] = 'Because Javascript is disabled in your browser, it is possible that somebody else could edit this page. If that happens, you won\'t be able to save your changes. Please try to make your edits quickly, or turn Javascript on and reload this page.';
 $string['nolinksfound'] = 'No links found on page.';
-$string['noregexp'] = 'This must be a fixed string (you cannot use * or regex), at best use the attackers` IP address or host name, but do not include the port number (because it increased with every http access).';
 $string['nopermissiontooverride'] = 'You do not have the capability to override editing locks';
+$string['noregexp'] = 'This must be a fixed string (you cannot use * or regex), at best use the attackers` IP address or host name, but do not include the port number (because it increased with every http access).';
 $string['notadministratewiki'] = 'You are not allowed to administrate this wiki !';
 $string['nothingtostrip'] = 'There are no pages with more than one version.';
 $string['nowikicreated'] = 'No entries have been created for this wiki.';
@@ -132,7 +153,7 @@ $string['ownerunknown'] = 'unknown';
 $string['pageactions'] = 'Page actions';
 $string['pageindex'] = 'Page Index';
 $string['pageinfo'] = 'Page information';
-$string['pagelocked'] = '<p><strong>This page is being edited by $a->name.</strong> They began editing at $a->since and still have the window open as of $a->seen.</p><p>You need to wait for them to finish before you can edit this page.</p>';
+$string['pagelocked'] = '<p><strong>This page is being edited by {$a->name}.</strong> They began editing at {$a->since} and still have the window open as of {$a->seen}.</p><p>You need to wait for them to finish before you can edit this page.</p>';
 $string['pagename'] = 'Page name';
 $string['pagenamechoice'] = '- or -';
 $string['pageslinkingto'] = 'Pages linking to this page';
@@ -180,10 +201,10 @@ $string['updatedwikipages'] = 'Updated wiki pages';
 $string['uplerror'] = 'We are sorry, but something went wrong during the file upload.';
 $string['uplinsect'] = 'Upload into';
 $string['uplnewnam'] = 'Save with different filename';
-$string['upload0'] = 'Use this form to upload an arbitrary binary file into the wiki:';
 $string['uploadedon'] = 'Uploaded on';
-$string['uploaderror'] = 'Error occur during uploading ($a)';
+$string['uploaderror'] = 'Error occur during uploading ({$a})';
 $string['uploadpicturebutton'] = 'Upload';
+$string['upload0'] = 'Use this form to upload an arbitrary binary file into the wiki:';
 $string['uplok'] = 'Your file was uploaded correctly.';
 $string['version'] = 'Version';
 $string['versionrangetoobig'] = 'You cannot delete all versions of a page! The last version should remain.';
@@ -192,20 +213,18 @@ $string['versionstodelete'] = 'Version(s) to delete';
 $string['viewpage'] = 'View Page';
 $string['viewsmfor'] = 'View sitemap for';
 $string['wantedpages'] = 'Wanted pages';
-$string['wiki:manage'] = 'Manage wiki settings';
-$string['wiki:overridelock'] = 'Override locked pages';
-$string['wiki:participate'] = 'Edit wiki pages';
 $string['wikidefaultpagename'] = 'WikiIndex';
 $string['wikiexport'] = 'Export pages';
 $string['wikiexportcomment'] = 'Here you can configure the export to your needs.';
 $string['wikilinkoptions'] = 'Wiki auto-linking options';
 $string['wikilinks'] = 'Wiki Links';
+$string['wiki:manage'] = 'Manage wiki settings';
 $string['wikiname'] = 'Page Name';
+$string['wiki:overridelock'] = 'Override locked pages';
+$string['wiki:participate'] = 'Edit wiki pages';
 $string['wikistartederror'] = 'Wiki already has entries - can\'t change.';
 $string['wikitype'] = 'Type';
 $string['wikiusage'] = 'Wiki usage';
 $string['withbinaries'] = 'Include binary content';
 $string['withvirtualpages'] = 'Include Wiki-Links';
-$string['wrongversionrange'] = '$a is not a correct range!';
-
-?>
+$string['wrongversionrange'] = '{$a} is not a correct range!';

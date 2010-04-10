@@ -1,12 +1,35 @@
-<?php //$Id$
-$string['accessiblefilepicker']='Accessible file picker';
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'repository', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package   repository
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+$string['accessiblefilepicker'] = 'Accessible file picker';
+$string['activaterep'] = 'Active repositories';
 $string['activerepository'] = 'Active repository plugins';
 $string['add'] = 'Add';
 $string['addfile'] = 'Add...';
 $string['addplugin'] = 'Add a repository plugin';
-$string['activaterep'] = 'Active repositories';
 $string['allowexternallinks'] = 'Allow external links';
-$string['configallowexternallinks'] = 'This option enables all users to choose whether or not external media is copied into Moodle or not. If this is off then media is always copied into Moodle (this is usually best for overall data integrity and security).  If this is on then users can choose each time they add media to a text.';
 $string['areabackup'] = 'Backups';
 $string['areacategoryintro'] = 'Category introduction';
 $string['areacourseintro'] = 'Course introduction';
@@ -14,44 +37,43 @@ $string['arearoot'] = 'System';
 $string['areauserdraft'] = 'Drafts';
 $string['areauserpersonal'] = 'Personal';
 $string['areauserprofile'] = 'Profile';
-$string['attachment'] = 'Attachment';
 $string['attachedfiles'] = 'Attached files';
+$string['attachment'] = 'Attachment';
 $string['author'] = 'Author';
 $string['back'] = '&laquo; Back';
-$string['cacheexpire'] = 'Cache expire';
 $string['cachecleared'] = 'Cached files are removed';
+$string['cacheexpire'] = 'Cache expire';
 $string['cannotaccessparentwin'] = 'If parent window is on HTTPS, then we are not allowed to access window.opener object, so we cannot refresh the repository for you automatically, but we already got your session, just go back to file picker and select the repository again, it should work now.';
 $string['cannotdelete'] = 'Cannot delete this file.';
 $string['cannotdownload'] = 'Cannot download this file';
 $string['cannotdownloaddir'] = 'Cannot download this folder';
 $string['cannotinitplugin'] = 'Call plugin_init failed';
-$string['choosealink'] = 'Choose a link...';
-$string['chooselicense'] = 'Choose license';
+$string['cleancache'] = 'Clean my cache files';
 $string['clicktohide'] = 'Click here to hide';
 $string['clicktoshow'] = 'Click here to show';
 $string['close'] = 'Close';
-$string['cleancache'] = 'Clean my cache files';
-$string['copying'] = 'Copying';
+$string['configallowexternallinks'] = 'This option enables all users to choose whether or not external media is copied into Moodle or not. If this is off then media is always copied into Moodle (this is usually best for overall data integrity and security).  If this is on then users can choose each time they add media to a text.';
 $string['configcacheexpire'] = 'The amount of time that file listings are cached locally (in seconds) when browsing external repositories.';
 $string['configsaved'] = 'Configuration saved!';
-$string['confirmdelete'] = 'Are you sure you want to delete this repository - $a?';
+$string['confirmdelete'] = 'Are you sure you want to delete this repository - {$a}?';
 $string['confirmdeletefile'] = 'Are you sure to delete this file?';
-$string['confirmremove'] = 'Are you sure you want to remove this repository plugin, its options and <strong>all of its instances</strong> - $a?';
+$string['confirmremove'] = 'Are you sure you want to remove this repository plugin, its options and <strong>all of its instances</strong> - {$a}?';
+$string['copying'] = 'Copying';
 $string['create'] = 'Create';
-$string['createrepository'] = 'Create a repository instance';
-$string['createinstance'] = 'Create a repository instance';
-$string['createxxinstance'] = 'Create \"$a\" instance';
-$string['createfoldersuccess'] = 'Create folder successfully';
 $string['createfolderfail'] = 'Fail to create this folder';
+$string['createfoldersuccess'] = 'Create folder successfully';
+$string['createinstance'] = 'Create a repository instance';
+$string['createrepository'] = 'Create a repository instance';
+$string['createxxinstance'] = 'Create "{$a}" instance';
 $string['date'] = 'Date';
-$string['deleterepository'] = 'Delete this repository';
 $string['deleted'] = 'Repository deleted';
+$string['deleterepository'] = 'Delete this repository';
 $string['download'] = 'Download';
 $string['downloadfolder'] = 'Download this folder';
 $string['downloadsucc'] = 'The file has been downloaded successfully';
 $string['editrepositoryinstance'] = 'Edit repository instance';
-$string['emptytype'] = 'Cannot create repository type: type name is empty';
 $string['emptylist'] = 'Empty result';
+$string['emptytype'] = 'Cannot create repository type: type name is empty';
 $string['enablecourseinstances'] = 'Allow teachers to add a repository instance into the file picker';
 $string['enableuserinstances'] = 'Allow users to add a repository instance into the file picker';
 $string['enter'] = 'Enter';
@@ -59,67 +81,69 @@ $string['entername'] = 'Please enter folder name';
 $string['enternewname'] = 'Please enter the new file name';
 $string['error'] = 'An unknown error occurred!';
 $string['existingrepository'] = 'This repository already exists';
+$string['federatedsearch'] = 'Federated search';
 $string['filename'] = 'Filename';
 $string['filenotnull'] = 'You must select a file to upload.';
 $string['filesaved'] = 'The file has been saved';
-$string['federatedsearch'] = 'Federated search';
 $string['getfile'] = 'Select this file';
 $string['hiddenshow'] = 'Hide/Show';
-$string['keyword'] = 'Keyword';
+$string['choosealink'] = 'Choose a link...';
+$string['chooselicense'] = 'Choose license';
+$string['iconview'] = 'View as icons';
 $string['instance'] = 'instance';
 $string['instancedeleted'] = 'Instance deleted';
 $string['instances'] = 'Repository instances';
 $string['instancesforadmin'] = 'common instance(s)';
 $string['instancesforothers'] = 'private instance(s)';
-$string['invalidrepositoryid'] = 'Invalid repository ID';
-$string['invalidplugin'] = 'Invalid repository $a plug-in';
 $string['invalidjson'] = 'Invalid JSON string';
-$string['listview'] = 'View as list';
+$string['invalidplugin'] = 'Invalid repository {$a} plug-in';
+$string['invalidrepositoryid'] = 'Invalid repository ID';
+$string['keyword'] = 'Keyword';
 $string['linkexternal'] = 'Link external';
+$string['listview'] = 'View as list';
+$string['loading'] = 'Loading...';
 $string['login'] = 'Login';
 $string['logout'] = 'Logout';
-$string['loading'] = 'Loading...';
 $string['manage'] = 'Manage repositories';
 $string['manageurl'] = 'Manage';
 $string['manageuserrepository'] = 'Manage individual repository';
 $string['noenter'] = 'Nothing entered';
 $string['nofilesattached'] = 'No files attached';
-$string['nopermissiontoaccess'] = 'No permission to access this repository';
-$string['nopathselected'] = 'No destination path select yet (double click tree node to select)';
 $string['nomorefiles'] = 'No more attachments allowed';
-$string['notyourinstances'] = 'You can not view/edit repository instances of another user';
+$string['nopathselected'] = 'No destination path select yet (double click tree node to select)';
+$string['nopermissiontoaccess'] = 'No permission to access this repository';
 $string['noresult'] = 'No search result';
-$string['operation'] = 'Operation';
+$string['notyourinstances'] = 'You can not view/edit repository instances of another user';
 $string['openpicker'] = 'Choose a file...';
+$string['operation'] = 'Operation';
 $string['personalrepositories'] = 'Avaiable repository instances';
 $string['plugin'] = 'Repository plug-ins';
 $string['pluginerror'] = 'Errors in repository plugin.';
-$string['preview'] = 'Preview';
 $string['popup'] = 'Click "Login" button to login';
 $string['popupblockeddownload'] = 'The downloading windows blocked, please allow the popup window, and try again.';
+$string['preview'] = 'Preview';
 $string['readonlyinstance'] = 'You cannot edit/delete a read-only instance';
 $string['refresh'] = 'Refresh';
 $string['refreshnonjsfilepicker'] = 'Please close this window and refresh non-javascript file picker';
 $string['removed'] = 'Repository removed';
+$string['repositories'] = 'Repositories';
 $string['repository'] = 'Repository';
 $string['repositorycourse'] = 'Course repositories';
-$string['repositories'] = 'Repositories';
 $string['save'] = 'Save';
 $string['saveas'] = 'Save as';
 $string['saved'] = 'Saved';
 $string['saving'] = 'Saving';
+$string['search'] = 'Search';
+$string['searching'] = 'Search in';
+$string['select'] = 'Select';
 $string['settings'] = 'Settings';
 $string['setupdefaultplugins'] = 'Setting up default repository plugins';
-$string['search'] = 'Search ';
-$string['searching'] = 'Search in ';
-$string['select'] = 'Select';
 $string['siteinstances'] = 'Repositories instances of the site';
 $string['size'] = 'Size';
 $string['submit'] = 'Submit';
 $string['sync'] = 'Sync';
-$string['title'] = 'Choose a file...';
 $string['thumbview'] = 'View as icons';
-$string['iconview'] = 'View as icons';
+$string['title'] = 'Choose a file...';
 $string['typenotvisible'] = 'Type not visible';
 $string['updown'] = 'Display order';
 $string['upload'] = 'Upload this file';
