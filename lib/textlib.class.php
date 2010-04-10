@@ -385,11 +385,11 @@ class textlib {
     function get_encodings() {
         $encodings = array();
         $encodings['UTF-8'] = 'UTF-8';
-        $winenc = strtoupper(get_string('localewincharset'));
+        $winenc = strtoupper(get_string('localewincharset', 'langconfig'));
         if ($winenc != '') {
             $encodings[$winenc] = $winenc;
         }
-        $nixenc = strtoupper(get_string('oldcharset'));
+        $nixenc = strtoupper(get_string('oldcharset', 'langconfig'));
         $encodings[$nixenc] = $nixenc;
 
         foreach ($this->typo3cs->synonyms as $enc) {

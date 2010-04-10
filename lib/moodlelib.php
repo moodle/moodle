@@ -1520,7 +1520,7 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true) {
 /// (because it's impossible to specify UTF-8 to fetch locale info in Win32)
 
    if ($CFG->ostype == 'WINDOWS') {
-       if ($localewincharset = get_string('localewincharset')) {
+       if ($localewincharset = get_string('localewincharset', 'langconfig')) {
            $textlib = textlib_get_instance();
            $datestring = $textlib->convert($datestring, $localewincharset, 'utf-8');
        }
@@ -7841,7 +7841,7 @@ function moodle_setlocale($locale='') {
     $oldlocale = $currentlocale;
 
 /// Fetch the correct locale based on ostype
-    if($CFG->ostype == 'WINDOWS') {
+    if ($CFG->ostype == 'WINDOWS') {
         $stringtofetch = 'localewin';
     } else {
         $stringtofetch = 'locale';
@@ -7853,7 +7853,7 @@ function moodle_setlocale($locale='') {
     } else if (!empty($CFG->locale)) { // override locale for all language packs
         $currentlocale = $CFG->locale;
     } else {
-        $currentlocale = get_string($stringtofetch);
+        $currentlocale = get_string($stringtofetch, 'langconfig');
     }
 
 /// do nothing if locale already set up

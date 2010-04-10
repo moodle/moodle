@@ -240,7 +240,7 @@ function feedback_convert_to_win($text) {
         if(!isset($CFG->latinexcelexport) || !$CFG->latinexcelexport) {
             $newwincharset = 'UTF-16LE';
         }else {
-            $newwincharset = get_string('localewincharset');
+            $newwincharset = get_string('localewincharset', 'langconfig');
             if($newwincharset == '') {
                 $newwincharset = 'windows-1252';
             }
