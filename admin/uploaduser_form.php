@@ -18,7 +18,7 @@ class admin_uploaduser_form1 extends moodleform {
         $mform->addElement('select', 'delimiter_name', get_string('csvdelimiter', 'admin'), $choices);
         if (array_key_exists('cfg', $choices)) {
             $mform->setDefault('delimiter_name', 'cfg');
-        } else if (get_string('listsep') == ';') {
+        } else if (get_string('listsep', 'langconfig') == ';') {
             $mform->setDefault('delimiter_name', 'semicolon');
         } else {
             $mform->setDefault('delimiter_name', 'comma');

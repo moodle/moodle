@@ -8212,7 +8212,7 @@ function format_float($float, $decimalpoints=1, $localized=true) {
         return '';
     }
     if ($localized) {
-        return number_format($float, $decimalpoints, get_string('decsep'), '');
+        return number_format($float, $decimalpoints, get_string('decsep', 'langconfig'), '');
     } else {
         return number_format($float, $decimalpoints, '.', '');
     }
@@ -8234,7 +8234,7 @@ function unformat_float($locale_float) {
 
     $locale_float = str_replace(' ', '', $locale_float); // no spaces - those might be used as thousand separators
 
-    return (float)str_replace(get_string('decsep'), '.', $locale_float);
+    return (float)str_replace(get_string('decsep', 'langconfig'), '.', $locale_float);
 }
 
 /**

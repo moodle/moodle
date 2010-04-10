@@ -157,7 +157,7 @@ function user_download_csv($fields) {
     header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
     header("Pragma: public");
 
-    $delimiter = get_string('listsep');
+    $delimiter = get_string('listsep', 'langconfig');
     $encdelim  = '&#'.ord($delimiter);
 
     $row = array();

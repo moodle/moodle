@@ -41,7 +41,7 @@ class mod_data_export_form extends moodleform {
         $mform->setDefault('exporttype', 'csv');
         if (array_key_exists('cfg', $choices)) {
             $mform->setDefault('delimiter_name', 'cfg');
-        } else if (get_string('listsep') == ';') {
+        } else if (get_string('listsep', 'langconfig') == ';') {
             $mform->setDefault('delimiter_name', 'semicolon');
         } else {
             $mform->setDefault('delimiter_name', 'comma');
