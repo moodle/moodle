@@ -680,9 +680,9 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $updateuser->id = $user->id;
                     $updateuser->auth = 'ldap';
                     if ($DB->pdate_record('user', $updateuser)) {
-                        echo "\t"; print_string('auth_dbreviveser', 'auth_db', array($user->username, $user->id)); echo "\n";
+                        echo "\t"; print_string('auth_dbreviveduser', 'auth_db', array($user->username, $user->id)); echo "\n";
                     } else {
-                        echo "\t"; print_string('auth_dbreviveusererror', 'auth_db', $user->username); echo "\n";
+                        echo "\t"; print_string('auth_dbrevivedusererror', 'auth_db', $user->username); echo "\n";
                     }
                 }
             } else {
