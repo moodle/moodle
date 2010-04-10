@@ -72,7 +72,7 @@ function form_init_date_js() {
         $PAGE->requires->yui2_lib('calendar');
         $PAGE->requires->yui2_lib('container');
         $PAGE->requires->js_function_call('init_date_selectors',
-                array(get_string('firstdayofweek')));
+                array(get_string('firstdayofweek', 'langconfig')));
         $done = true;
     }
 }

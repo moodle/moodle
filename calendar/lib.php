@@ -73,7 +73,7 @@ function calendar_get_starting_weekday() {
     if (isset($CFG->calendar_startwday)) {
         $firstday = $CFG->calendar_startwday;
     } else {
-        $firstday = get_string('firstdayofweek');
+        $firstday = get_string('firstdayofweek', 'langconfig');
     }
 
     if(!is_numeric($firstday)) {
