@@ -162,7 +162,7 @@
         echo $OUTPUT->heading("$usercount ".get_string('users'));
     }
 
-    $alphabet = explode(',', get_string('alphabet'));
+    $alphabet = explode(',', get_string('alphabet', 'langconfig'));
     $strall = get_string('all');
 
     $baseurl = new moodle_url('user.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));

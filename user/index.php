@@ -578,7 +578,7 @@
                 $firstinitial = $table->get_initial_first();
                 $lastinitial  = $table->get_initial_last();
                 $strall = get_string('all');
-                $alpha  = explode(',', get_string('alphabet'));
+                $alpha  = explode(',', get_string('alphabet', 'langconfig'));
 
                 // Bar of first initials
 

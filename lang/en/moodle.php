@@ -133,7 +133,6 @@ $string['allownone'] = 'Allow none';
 $string['allownot'] = 'Do not allow';
 $string['allparticipants'] = 'All participants';
 $string['allteachers'] = 'All teachers';
-$string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
 $string['alphanumerical'] = 'Can only contain alphanumeric characters, hyphen (-) or  period (.)';
 $string['alreadyconfirmed'] = 'Registration has already been confirmed';
 $string['always'] = 'Always';

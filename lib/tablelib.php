@@ -849,7 +849,7 @@ class flexible_table {
                     && isset($this->columns['fullname'])) {
 
             $strall = get_string('all');
-            $alpha  = explode(',', get_string('alphabet'));
+            $alpha  = explode(',', get_string('alphabet', 'langconfig'));
 
             // Bar of first initials
 

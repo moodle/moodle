@@ -5856,9 +5856,6 @@ class amos_string_manager implements string_manager {
      * @return string The String !
      */
     public function get_string($identifier, $component='', $a=NULL) {
-        if (empty($component)) {
-            $component = 'moodle';
-        }
         // this will be replaced by merging of lang and langconfig
         static $langconfigstrs = array('alphabet' => 1, 'backupnameformat' => 1, 'decsep' => 1,
                 'firstdayofweek' => 1, 'listsep' => 1, 'locale' => 1, 'localewin' => 1,
@@ -5870,8 +5867,12 @@ class amos_string_manager implements string_manager {
                 'thischarset' => 1, 'thisdirection' => 1, 'thislanguage' => 1,
                 'strftimedatetimeshort' => 1, 'thousandssep' => 1);
 
-        if ((empty($component) or $component === 'moodle') and isset($langconfigstrs[$identifier])) {
+        if ((empty($component)) and isset($langconfigstrs[$identifier])) {
             $component = 'core_langconfig';
+        }
+
+        if (empty($component)) {
+            $component = 'moodle';
         }
 
         $lang = current_language();
