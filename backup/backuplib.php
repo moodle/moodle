@@ -3506,7 +3506,7 @@
         $backup_word = backup_get_backup_string($course);
 
         //Calculate the date format string
-        $backup_date_format = str_replace(" ","_",get_string("backupnameformat"));
+        $backup_date_format = str_replace(" ","_",get_string("backupnameformat", 'langconfig'));
         //If non-translated, use "%Y%m%d-%H%M"
         if (substr($backup_date_format,0,1) == "[") {
             $backup_date_format = "%%Y%%m%%d-%%H%%M";

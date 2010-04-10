@@ -560,7 +560,7 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
 
     $strftimedatetime = get_string("strftimedatetime");
 
-    $filename = 'logs_'.userdate(time(),get_string('backupnameformat'),99,false);
+    $filename = 'logs_'.userdate(time(),get_string('backupnameformat', 'langconfig'),99,false);
     $filename .= '.txt';
     header("Content-Type: application/download\n");
     header("Content-Disposition: attachment; filename=$filename");
@@ -638,7 +638,7 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
     $strftimedatetime = get_string("strftimedatetime");
 
     $nroPages = ceil(count($logs)/(EXCELROWS-FIRSTUSEDEXCELROW+1));
-    $filename = 'logs_'.userdate(time(),get_string('backupnameformat'),99,false);
+    $filename = 'logs_'.userdate(time(),get_string('backupnameformat', 'langconfig'),99,false);
     $filename .= '.xls';
 
     $workbook = new MoodleExcelWorkbook('-');
@@ -749,7 +749,7 @@ function print_log_ods($course, $user, $date, $order='l.time DESC', $modname,
     $strftimedatetime = get_string("strftimedatetime");
 
     $nroPages = ceil(count($logs)/(EXCELROWS-FIRSTUSEDEXCELROW+1));
-    $filename = 'logs_'.userdate(time(),get_string('backupnameformat'),99,false);
+    $filename = 'logs_'.userdate(time(),get_string('backupnameformat', 'langconfig'),99,false);
     $filename .= '.ods';
 
     $workbook = new MoodleODSWorkbook('-');
