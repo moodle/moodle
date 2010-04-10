@@ -123,6 +123,7 @@
             return;
         }
 
+        $texexp = stripslashes($texexp);
         $image  = md5($texexp) . ".gif";
         $filetype = 'image/gif';
         if (!file_exists("$CFG->dataroot/filter/tex")) {
@@ -217,7 +218,7 @@
         $tex = "$latex->temp_dir/$md5.tex";
         $dvi = "$latex->temp_dir/$md5.dvi";
         $ps = "$latex->temp_dir/$md5.ps";
-        $gif = "$latex->temp_dir/$md5.gif";
+        $img = "$latex->temp_dir/$md5.{$CFG->filter_tex_convertformat}";
 
         // put the expression as a file into the temp area
         $expression = stripslashes($expression);
@@ -240,13 +241,13 @@
         $output .= execute($cmd);
 
         // step 3: convert command
-        $cmd = "$CFG->filter_tex_pathconvert -density 240 -trim $ps $gif ";
+        $cmd = "$CFG->filter_tex_pathconvert -density 240 -trim $ps $img ";
         $output .= execute($cmd);
 
         if (!$graphic) {
             echo($output);
         } else {
-            send_file($gif, "$md5.gif");
+            send_file($img, "$md5.{$CFG->filter_tex_convertformat}");
          }
     }
 
@@ -287,13 +288,13 @@
            target="inlineframe">
             <center>
              <input type="text" name="tex" size="50"
-                    value="f(x)=\Bigint_{-\infty}^x~e^{-t^2}dt" />
+                    value="f(x)=\int_{-\infty}^x~e^{-t^2}dt" />
             </center>
            <p>The following tests are available:</p>
            <ol>
            <li><input type="radio" name="action" value="ShowDB" id="ShowDB" />
                <label for="ShowDB">See the cache_filters database entry for this expression (if any).</label></li>
-           <li><input type="radio" name="DeleteDB" value="DeleteDB" id="DeleteDB" />
+           <li><input type="radio" name="action" value="DeleteDB" id="DeleteDB" />
                <label for="DeleteDB">Delete the cache_filters database entry for this expression (if any).</label></li>
            <li><input type="radio" name="action" value="ShowImageMimetex" id="ShowImageMimetex"  checked="checked" />
                <label for="ShowImageMimetex">Show a graphic image of the algebraic expression rendered with mimetex.</label></li>
@@ -320,7 +321,7 @@ searches the database cache_filters table to see if this TeX expression had been
 processed before. If not, it adds a DB entry for that expression.  It then
 replaces the TeX expression by an &lt;img src=&quot;.../filter/tex/pix.php...&quot;&gt;
 tag.  The filter/tex/pix.php script then searches the database to find an
-appropriate gif image file for that expression and to create one if it doesn't exist.
+appropriate gif/png image file for that expression and to create one if it doesn't exist.
 It will then use either the LaTex/Ghostscript renderer (using external executables
 on your system) or the bundled Mimetex executable. The full Latex/Ghostscript
 renderer produces better results and is tried first. 
@@ -331,7 +332,7 @@ you might try to fix them.</p>
 process this expression. Then the database entry for that expression contains
 a bad TeX expression in the rawtext field (usually blank). You can fix this
 by clicking on &quot;Delete DB Entry&quot;</li>
-<li>The TeX to gif image conversion process does not work. 
+<li>The TeX to gif/png image conversion process does not work. 
 If paths are specified in the filter configuation screen for the three
 executables these will be tried first. Note that they still must be correctly
 installed and have the correct permissions. In particular make sure that you 

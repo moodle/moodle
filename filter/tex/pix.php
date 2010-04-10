@@ -38,7 +38,7 @@
     }
 
     if (!file_exists($pathname)) {
-        $md5 = str_replace('.gif','',$image);
+        $md5 = str_replace(".{$CFG->filter_tex_convertformat}",'',$image);
         if ($texcache = get_record('cache_filters', 'filter', 'tex', 'md5key', $md5)) {
             if (!file_exists($CFG->dataroot.'/filter/tex')) {
                 make_upload_directory('filter/tex');
