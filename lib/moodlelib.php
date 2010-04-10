@@ -5657,33 +5657,6 @@ function get_parent_language($lang=null) {
 }
 
 /**
- * Prints out a translated string.
- *
- * Prints out a translated string using the return value from the {@link get_string()} function.
- *
- * Example usage of this function when the string is in the moodle.php file:<br/>
- * <code>
- * echo '<strong>';
- * print_string('wordforstudent');
- * echo '</strong>';
- * </code>
- *
- * Example usage of this function when the string is not in the moodle.php file:<br/>
- * <code>
- * echo '<h1>';
- * print_string('typecourse', 'calendar');
- * echo '</h1>';
- * </code>
- *
- * @param string $identifier The key identifier for the localized string
- * @param string $module The module where the key identifier is stored. If none is specified then moodle.php is used.
- * @param mixed $a An object, string or number that can be used within translation strings
- */
-function print_string($identifier, $module='', $a=NULL) {
-    echo get_string($identifier, $module, $a);
-}
-
-/**
  * Returns current string_manager instance.
  * @return string_manager
  */
@@ -5703,6 +5676,42 @@ function get_string_manager() {
     return $singleton;
 }
 
+
+/**
+ * Interface describing class which is responsible for getting
+ * of localised strings from language packs.
+ *
+ * @package    moodlecore
+ * @copyright  2010 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+interface string_manager {
+    /**
+     * Mega Function - Get String returns a requested string
+     *
+     * @param string $identifier The identifier of the string to search for
+     * @param string $component The module the string is associated with
+     * @param string $a An object, string or number that can be used
+     *      within translation strings
+     * @return string The String !
+     */
+    public function get_string($identifier, $component = '', $a = NULL);
+
+    /**
+     * Returns a list of country names in the current language
+     * @return array two-letter country code => translated name.
+     */
+    public function get_list_of_countries();
+}
+
+
+/**
+ * Low level string getching implementation.
+ *
+ * @package    moodlecore
+ * @copyright  2010 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class amos_string_manager implements string_manager {
     private $coreroot;
     private $otherroot;
@@ -5757,7 +5766,7 @@ class amos_string_manager implements string_manager {
      * @param string $lang
      * @return array of all string for given component and lang
      */
-    public function load_component_strings($component, $lang) {
+    protected function load_component_strings($component, $lang) {
         list($plugintype, $pluginname) = normalize_component($component);
 
         if (!isset($this->cache[$lang])) {
@@ -5776,7 +5785,7 @@ class amos_string_manager implements string_manager {
             $string = array();
             // first load english pack
             if (!file_exists("$this->coreroot/en/$file.php")) {
-                debugging('Invalid get_string() $component', DEBUG_DEVELOPER);
+                debugging("Invalid component parameter in get_string() call: $component", DEBUG_DEVELOPER);
                 return array();
             }
             include("$this->coreroot/en/$file.php");
@@ -5801,7 +5810,7 @@ class amos_string_manager implements string_manager {
 
         } else {
             if (!$location = get_plugin_directory($plugintype, $pluginname) or !is_dir($location)) {
-                debugging('Invalid get_string() $component, plugin files are missing: '.$component, DEBUG_DEVELOPER);
+                debugging("Invalid component parameter in get_string() call, plugin files are missing: $component", DEBUG_DEVELOPER);
                 return array();
             }
             if ($plugintype === 'mod') {
@@ -5855,7 +5864,7 @@ class amos_string_manager implements string_manager {
      *      within translation strings
      * @return string The String !
      */
-    public function get_string($identifier, $component='', $a=NULL) {
+    public function get_string($identifier, $component = '', $a = NULL) {
         // there are very many uses of these time formating strings without the 'langconfig' component,
         // it would not be reasonable to expect that all of them would be converted during 2.0 migration
         static $langconfigstrs = array(
@@ -5887,7 +5896,7 @@ class amos_string_manager implements string_manager {
 
         if (!isset($string[$identifier])) {
             if ($identifier !== 'parentlanguage' and $identifier !== 'blockname' and strpos($component, 'format_') !== 0) {
-                //TODO: enable after fixing more missing string warnings, it talks too much now
+// TODO: enable after fixing more missing string warnings, it talks too much now
                 //debugging("Invalid get_string() identifier: '$identifier' or component '$component'", DEBUG_DEVELOPER);
             }
             return "[[$identifier]]";
@@ -5929,6 +5938,16 @@ class amos_string_manager implements string_manager {
     }
 }
 
+
+/**
+ * Minimalistic string fetching implementation
+ * that is used in installer before we getch the wanted
+ * language pack from moodle.org lang download site.
+ *
+ * @package    moodlecore
+ * @copyright  2010 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class install_string_manager implements string_manager {
     private $installroot;
 
@@ -5950,7 +5969,7 @@ class install_string_manager implements string_manager {
      *      within translation strings
      * @return string The String !
      */
-    public function get_string($identifier, $component='', $a=NULL) {
+    public function get_string($identifier, $component = '', $a = NULL) {
         $lang = current_language();
 
         $string = array();
@@ -6001,407 +6020,6 @@ class install_string_manager implements string_manager {
     }
 }
 
-/**
- * Interface describing class which is responsible for getting
- * of localised strings.
- */
-interface string_manager {
-    /**
-     * Mega Function - Get String returns a requested string
-     *
-     * @param string $identifier The identifier of the string to search for
-     * @param string $component The module the string is associated with
-     * @param string $a An object, string or number that can be used
-     *      within translation strings
-     * @return string The String !
-     */
-    public function get_string($identifier, $component='', $a=NULL);
-
-    /**
-     * Returns a list of country names in the current language
-     * @return array two-letter country code => translated name.
-     */
-    public function get_list_of_countries();
-}
-
-/**
- * No code should use this class directly. Instead you should use the
- * {@link get_string()} function. Core code has to use {@link get_string_manage()}
- * to get the instance.
- *
- * Notes for develpers
- * ===================
- * Performance of this class is important. If you decide to change this class,
- * please use the lib/simpletest/getstringperformancetester.php script to make
- * sure your changes do not cause a performance problem.
- *
- * In some cases (for example bootstrap_renderer::early_error) get_string gets
- * called very early on during Moodle's self-initialisation. Think very carefully
- * before relying on the normal Moodle libraries.
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package moodlecore
- */
-class legacy_string_manager implements string_manager {
-    private $parentlangs = array('en' => NULL);
-    private $searchpathsformodule = array();
-    private $strings = array();
-    private $nonpluginfiles = array('moodle' => 1, 'langconfig' => 1);
-    private $langconfigstrs = array('alphabet' => 1, 'backupnameformat' => 1, 'decsep' => 1,
-                'firstdayofweek' => 1, 'listsep' => 1, 'locale' => 1, 'localewin' => 1,
-                'localewincharset' => 1, 'oldcharset' => 1, 'parentlanguage' => 1,
-                'strftimedate' => 1, 'strftimedateshort' => 1, 'strftimedatefullshort' => 1,
-                'strftimedatetime' => 1, 'strftimedaydate' => 1, 'strftimedaydatetime' => 1,
-                'strftimedayshort' => 1, 'strftimedaytime' => 1, 'strftimemonthyear' => 1,
-                'strftimerecent' => 1, 'strftimerecentfull' => 1, 'strftimetime' => 1,
-                'thischarset' => 1, 'thisdirection' => 1, 'thislanguage' => 1,
-                'strftimedatetimeshort' => 1, 'thousandssep' => 1);
-    private $searchplacesbyplugintype;
-    private $dirroot;
-    private $corelocations;
-    private $installstrings = NULL;
-    private $parentlangfile = 'langconfig.php';
-    private $logtofile = false;
-    private $showstringsource = false;
-    private $allcountrycodes = NULL;
-
-    // Some of our arrays need $CFG.
-    /**
-    * string_manager construct method to instatiate this instance
-    *
-    * @param string $dirroot root directory path.
-    * @param string $dataroot Path to the data root.
-    * @param string $admin path to the admin directory.
-    * @param boolean $runninginstaller Set to true if we are in the installer.
-    * @param boolean $showstringsource add debug info to each string before it is
-    *       returned, to say where it came from.
-    */
-    public function __construct($dirroot, $dataroot, $runninginstaller, $showstringsource = false) {
-        $this->dirroot = $dirroot;
-        $this->corelocations = array(
-            $dirroot . '/lang/' => '',
-            $dataroot . '/lang/' => '',
-        );
-        $this->searchplacesbyplugintype = array(''=>array('mod'));
-        $plugintypes = get_plugin_types(false);
-        foreach ($plugintypes as $plugintype => $dir) {
-            $this->searchplacesbyplugintype[$plugintype.'_'] = array($dir);
-        }
-        unset($this->searchplacesbyplugintype['mod_']);
-        if ($runninginstaller) {
-            $stringnames = file($dirroot . '/install/stringnames.txt');
-            $this->installstrings = array_map('trim', $stringnames);
-            $this->parentlangfile = 'installer.php';
-        }
-        $this->showstringsource = $showstringsource;
-    }
-
-    /**
-     * Returns an array of locations to search for modules
-     *
-     * @param string $module The name of the module you are looking for
-     * @return string|array A location or array of locations to search
-     */
-    protected function locations_to_search($module) {
-        if (isset($this->searchpathsformodule[$module])) {
-            return $this->searchpathsformodule[$module];
-        }
-
-        $locations = $this->corelocations;
-
-        if (!array_key_exists($module, $this->nonpluginfiles)) {
-            foreach ($locations as $location => $ignored) {
-                $locations[$location] = $module . '/';
-            }
-            list($type, $plugin) = $this->parse_module_name($module);
-            if (isset($this->searchplacesbyplugintype[$type])) {
-                foreach ($this->searchplacesbyplugintype[$type] as $location) {
-                    $locations[$this->dirroot . "/$location/$plugin/lang/"] = $plugin . '/';
-                }
-            }
-        }
-
-        $this->searchpathsformodule[$module] = $locations;
-        return $locations;
-    }
-
-    /**
-     * Returns a deciphered module name
-     *
-     * @param string $module The module name to decipher
-     * @return array Array ( $type, $plugin )
-     */
-    protected function parse_module_name($module) {
-        $dividerpos = strpos($module, '_');
-        if ($dividerpos === false) {
-            $type = '';
-            $plugin = $module;
-        } else {
-            $type = substr($module, 0, $dividerpos + 1);
-            $plugin = substr($module, $dividerpos + 1);
-        }
-        return array($type, $plugin);
-    }
-
-    /**
-     * Get the path to the parent lanugage file of a given language
-     *
-     * @param string $lang The language to get the parent of
-     * @return string The parent language
-     */
-    protected function get_parent_language($lang) {
-        if (array_key_exists($lang, $this->parentlangs)) {
-            return $this->parentlangs[$lang];
-        }
-        $parent = 'en'; // Will be used if nothing is specified explicitly.
-        foreach ($this->corelocations as $location => $ignored) {
-            foreach (array('_local', '') as $suffix) {
-                $file = $location . $lang . $suffix . '/' . $this->parentlangfile;
-                if ($result = $this->get_string_from_file('parentlanguage', $file, NULL)) {
-                    $parent = $result;
-                    break 2;
-                }
-            }
-        }
-        $this->parentlangs[$lang] = $parent;
-        return $parent;
-    }
-
-    /**
-     * Loads the requested language
-     *
-     * @param $langfile The language file to load
-     * @return string
-     */
-    protected function load_lang_file($langfile) {
-        if (isset($this->strings[$langfile])) {
-            return $this->strings[$langfile];
-        }
-        $string = array();
-        if (file_exists($langfile)) {
-            include($langfile);
-        }
-        $this->strings[$langfile] = $string;
-        return $string;
-    }
-
-    /**
-     * Get the requested string to a given language file
-     *
-     * @param string $identifier The identifier for the desired string
-     * @param string $langfile The language file the string should reside in
-     * @param string $a An object, string or number that can be used
-     *      within translation strings
-     * @return mixed The resulting string now parsed, or false if not found
-     */
-    protected function get_string_from_file($identifier, $langfile, $a) {
-        $string = &$this->load_lang_file($langfile);
-        if (!isset($string[$identifier])) {
-            return false;
-        }
-        $result = $string[$identifier];
-        // Skip the eval if we can - slight performance win. Pity there are 3
-        // different problem characters, so we have to use preg_match,
-        // rather than a faster str... function.
-        if (!preg_match('/[%$\\\\]/', $result)) {
-            return $result;
-        }
-        // Moodle used to use $code = '$result = sprintf("' . $result . ')";' for no good reason,
-        // (it had done that since revision 1.1 of moodllib.php if you check CVS). However, this
-        // meant you had to double up '%' chars in $a first. We now skip that. However, lang strings
-        // still contain %% as a result, so we need to fix those.
-        $result = str_replace('%%', '%', $result);
-        $code = '$result = "' . $result . '";';
-        if (eval($code) === FALSE) { // Means parse error.
-            debugging('Parse error while trying to load string "'.$identifier.'" from file "' . $langfile . '".', DEBUG_DEVELOPER);
-        }
-        return $result;
-    }
-
-    /**
-     * Find a desired help file in the correct language
-     *
-     * @param string $file The helpd file to locate
-     * @param string $module The module the help file is associated with
-     * @param string $forcelang override the default language
-     * @param bool $skiplocal Skip local help files
-     * @return array An array containing the filepath, and then the language
-     */
-    public function find_help_file($file, $module, $forcelang, $skiplocal) {
-        if ($forcelang) {
-            $langs = array($forcelang, 'en');
-        } else {
-            $langs = array();
-            for ($lang = current_language(); $lang; $lang = $this->get_parent_language($lang)) {
-                $langs[] = $lang;
-            }
-        }
-
-        $locations = $this->locations_to_search($module);
-
-        if ($skiplocal) {
-            $localsuffices = array('');
-        } else {
-            $localsuffices = array('_local', '');
-        }
-
-        foreach ($langs as $lang) {
-            foreach ($locations as $location => $locationsuffix) {
-                foreach ($localsuffices as $localsuffix) {
-                    $filepath = $location . $lang . $localsuffix . '/help/' . $locationsuffix . $file;
-                    // Now, try to include the help text from this file, if we can.
-                    if (file_exists_and_readable($filepath)) {
-                        return array($filepath, $lang);
-                    }
-                }
-            }
-        }
-
-        return array('', '');
-    }
-
-    /**
-     * Set the internal log var to true to enable logging
-     */
-    private function start_logging() {
-        $this->logtofile = true;
-    }
-
-    /**
-     * Log a call to get_string (only if logtofile is true)
-     * @see start_logging()
-     *
-     * @global object
-     * @param string $identifier The strings identifier
-     * @param string $module The module the string exists for
-     * @param string $a An object, string or number that can be used
-     *      within translation strings
-     */
-    private function log_get_string_call($identifier, $module, $a) {
-        global $CFG;
-        if ($this->logtofile === true) {
-            $logdir = $CFG->dataroot . '/temp/getstringlog';
-            $filename = strtr(str_replace($CFG->wwwroot . '/', '', qualified_me()), ':/', '__') . '_get_string.log.php';
-            @mkdir($logdir, $CFG->directorypermissions, true);
-            $this->logtofile = fopen("$logdir/$filename", 'w');
-            fwrite($this->logtofile, "<?php\n// Sequence of get_string calls for page " . qualified_me() . "\n");
-        }
-        fwrite($this->logtofile, "get_string('$identifier', '$module', " . var_export($a, true) . ");\n");
-    }
-
-    /**
-     * Mega Function - Get String returns a requested string
-     *
-     * @param string $identifier The identifier of the string to search for
-     * @param string $module The module the string is associated with
-     * @param string $a An object, string or number that can be used
-     *      within translation strings
-     * @return string The String !
-     */
-    public function get_string($identifier, $module='', $a=NULL) {
-        if ($this->logtofile) {
-            $this->log_get_string_call($identifier, $module, $a);
-        }
-
-    /// Preprocess the arguments.
-        if ($module == '') {
-            $module = 'moodle';
-        }
-
-        if ($module == 'moodle' && array_key_exists($identifier, $this->langconfigstrs)) {
-            $module = 'langconfig';
-        }
-
-        $locations = $this->locations_to_search($module);
-
-        if (!is_null($this->installstrings) && in_array($identifier, $this->installstrings)) {
-            $module = 'installer';
-            $locations = array_merge(array($this->dirroot . '/install/lang/' => ''), $locations);
-        }
-
-    /// Now do the search.
-        for ($lang = current_language(); $lang; $lang = $this->get_parent_language($lang)) {
-            foreach ($locations as $location => $ignored) {
-                foreach (array('_local', '') as $suffix) {
-                    $file = $location . $lang . $suffix . '/' . $module . '.php';
-                    $result = $this->get_string_from_file($identifier, $file, $a);
-                    if ($result !== false) {
-                        if ($this->showstringsource) {
-                            $result = $this->add_source_info($result, $module, $identifier, $file);
-                        }
-                        return $result;
-                    }
-                }
-            }
-        }
-
-        return $this->missing_string($identifier); // Last resort.
-    }
-
-    protected function missing_string($identifier) {
-        return '[[' . $identifier . ']]';
-    }
-
-    /**
-     * Add debug information about where this string came from.
-     */
-    protected function add_source_info($string, $module, $identifier, $file) {
-        // This should not start with '[' or we will confuse code that checks for
-        // missing language strings.
-        // It is a good idea to bracked the entire string. Sometimes on string
-        // is put inside another (For example, Default: No on the admin strings.
-        // The bracketing makes that clear.
-        return '{' . $string . ' ' . $module . '/' . $identifier . '}';
-    }
-
-    protected function get_list_of_country_codes() {
-        if (!is_null($this->allcountrycodes)) {
-            return $this->allcountrycodes;
-        }
-
-        global $CFG;
-        if (!empty($CFG->allcountrycodes)) {
-            $this->allcountrycodes = explode(',', $CFG->allcountrycodes);
-        } else {
-            $this->allcountrycodes = array_keys(
-                    $this->load_lang_file($this->dirroot . '/lang/en/countries.php'));
-        }
-        return $this->allcountrycodes;
-    }
-
-    /**
-     * Returns a list of country names in the current language
-     * @return array two-letter country code => translated name.
-     */
-    public function get_list_of_countries() {
-        $locations = $this->locations_to_search('countries');
-
-        // Now load all the translated country names. We load the files in
-        // the order most specific to lease specific.
-        $rawcountries = array();
-        for ($lang = current_language(); $lang; $lang = $this->get_parent_language($lang)) {
-            foreach ($locations as $location => $ignored) {
-                foreach (array('_local', '') as $suffix) {
-                    $file = $location . $lang . $suffix . '/countries.php';
-                    $rawcountries = array_merge($this->load_lang_file($file), $rawcountries);
-                }
-            }
-        }
-
-        // Now trim the array to just contain the codes $codes.
-        $codes = $this->get_list_of_country_codes();
-        $countries = array();
-        foreach ($codes as $code) {
-            if (array_key_exists($code, $rawcountries)) {
-                $countries[$code] = $rawcountries[$code];
-            } else {
-                $countries[$code] = $this->missing_string($code);
-            }
-        }
-
-        return $countries;
-    }
-}
 
 /**
  * Returns a localized string.
@@ -6411,8 +6029,8 @@ class legacy_string_manager implements string_manager {
  * $a is an object, string or number that can be used
  * within translation strings
  *
- * eg "hello \$a->firstname \$a->lastname"
- * or "hello \$a"
+ * eg 'hello {$a->firstname} {$a->lastname}'
+ * or 'hello {$a}'
  *
  * If you would like to directly echo the localized string use
  * the function {@link print_string()}
@@ -6420,16 +6038,16 @@ class legacy_string_manager implements string_manager {
  * Example usage of this function involves finding the string you would
  * like a local equivalent of and using its identifier and module information
  * to retrive it.<br/>
- * If you open moodle/lang/en/moodle.php and look near line 1031
- * you will find a string to prompt a user for their word for student
+ * If you open moodle/lang/en/moodle.php and look near line 278
+ * you will find a string to prompt a user for their word for 'course'
  * <code>
- * $string['wordforstudent'] = 'Your word for Student';
+ * $string['course'] = 'Course';
  * </code>
- * So if you want to display the string 'Your word for student'
+ * So if you want to display the string 'Course'
  * in any language that supports it on your site
- * you just need to use the identifier 'wordforstudent'
+ * you just need to use the identifier 'course'
  * <code>
- * $mystring = '<strong>'. get_string('wordforstudent') .'</strong>';
+ * $mystring = '<strong>'. get_string('course') .'</strong>';
  * or
  * </code>
  * If the string you want is in another file you'd take a slightly
@@ -6449,50 +6067,45 @@ class legacy_string_manager implements string_manager {
  * the returned string will be [[ $identifier ]]
  *
  * @param string $identifier The key identifier for the localized string
- * @param string $module The module where the key identifier is stored,
+ * @param string $component The module where the key identifier is stored,
  *      usually expressed as the filename in the language pack without the
  *      .php on the end but can also be written as mod/forum or grade/export/xls.
  *      If none is specified then moodle.php is used.
  * @param mixed $a An object, string or number that can be used
  *      within translation strings
- * @param array $extralocations DEPRECATED. An array of strings with other
- *      locations to look for string files. This used to be used by plugins so
- *      they could package their language strings in the plugin folder, however,
- *      There is now a better way to achieve this. See
- *      http://docs.moodle.org/en/Development:Places_to_search_for_lang_strings.
  * @return string The localized string.
  */
-function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
-    if ($extralocations !== NULL) {
+function get_string($identifier, $component = '', $a = NULL) {
+    if (func_num_args() > 3) {
         debugging('extralocations parameter in get_string() is not supported any more, please use standard lang locations only.');
     }
 
-    if (strpos($module, '/') !== false) {
+    if (strpos($component, '/') !== false) {
         debugging('The module name you passed to get_string is the deprecated format ' .
                 'like mod/mymod or block/myblock. The correct form looks like mymod, or block_myblock.' , DEBUG_DEVELOPER);
-        $modulepath = split('/', $module);
+        $componentpath = split('/', $component);
 
-        switch ($modulepath[0]) {
+        switch ($componentpath[0]) {
             case 'mod':
-                $module = $modulepath[1];
+                $component = $componentpath[1];
                 break;
             case 'blocks':
             case 'block':
-                $module = 'block_'.$modulepath[1];
+                $component = 'block_'.$componentpath[1];
                 break;
             case 'enrol':
-                $module = 'enrol_'.$modulepath[1];
+                $component = 'enrol_'.$componentpath[1];
                 break;
             case 'format':
-                $module = 'format_'.$modulepath[1];
+                $component = 'format_'.$componentpath[1];
                 break;
             case 'grade':
-                $module = 'grade'.$modulepath[1].'_'.$modulepath[2];
+                $component = 'grade'.$componentpath[1].'_'.$componentpath[2];
                 break;
         }
     }
 
-    return get_string_manager()->get_string($identifier, $module, $a);
+    return get_string_manager()->get_string($identifier, $component, $a);
 }
 
 /**
@@ -6502,12 +6115,39 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
  * @param string $module The language module that these strings can be found in.
  * @return array and array of translated strings.
  */
-function get_strings($array, $module='') {
+function get_strings($array, $component = '') {
    $string = new stdClass;
    foreach ($array as $item) {
-       $string->$item = get_string($item, $module);
+       $string->$item = get_string($item, $component);
    }
    return $string;
+}
+
+/**
+ * Prints out a translated string.
+ *
+ * Prints out a translated string using the return value from the {@link get_string()} function.
+ *
+ * Example usage of this function when the string is in the moodle.php file:<br/>
+ * <code>
+ * echo '<strong>';
+ * print_string('course');
+ * echo '</strong>';
+ * </code>
+ *
+ * Example usage of this function when the string is not in the moodle.php file:<br/>
+ * <code>
+ * echo '<h1>';
+ * print_string('typecourse', 'calendar');
+ * echo '</h1>';
+ * </code>
+ *
+ * @param string $identifier The key identifier for the localized string
+ * @param string $component The module where the key identifier is stored. If none is specified then moodle.php is used.
+ * @param mixed $a An object, string or number that can be used within translation strings
+ */
+function print_string($identifier, $component = '', $a = NULL) {
+    echo get_string($identifier, $component, $a);
 }
 
 /**
