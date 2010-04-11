@@ -32,10 +32,9 @@ require_once('../../../../config.php');
 $lang  = optional_param('elanguage', 'en', PARAM_SAFEDIR);
 $theme = optional_param('etheme', 'advanced', PARAM_SAFEDIR);
 
-if (file_exists($CFG->dataroot .'/lang/'. $lang) or file_exists($CFG->dirroot .'/lang/'. $lang)) {
+if ($lang === 'en') {
     //ok
-} else if (file_exists($CFG->dataroot.'/lang/'.$lang) or
-           file_exists($CFG->dirroot .'/lang/'.$lang)) {
+} else if (file_exists($CFG->langotherroot .'/'. $lang)) {
     //$lang = $lang;
 } else {
     $lang = 'en';
@@ -43,7 +42,7 @@ if (file_exists($CFG->dataroot .'/lang/'. $lang) or file_exists($CFG->dirroot .'
 
 // load english defaults
 $string = array();
-foreach (get_langpack_locations('en') as $location) {
+foreach (get_langpack_en_locations() as $location) {
     if (!file_exists($location)) {
         continue;
     }
@@ -99,13 +98,22 @@ echo $output;
 
 /// ======= Functions =================
 
+function get_langpack_en_locations() {
+    global $CFG;
+
+    $result = array();
+    $result[] = "$CFG->dirroot/lib/editor/tinymce/lang/en/editor_tinymce.php";
+    $result[] = "$CFG->langlocalroot/en_local/editor_tinymce.php";
+
+    return $result;
+}
+
 function get_langpack_locations($lang) {
     global $CFG;
 
     $result = array();
-    $result[] = "$CFG->dirroot/lang/$lang/editor_tinymce.php";
-    $result[] = "$CFG->dataroot/lang/$lang/editor_tinymce.php";
-    $result[] = "$CFG->dataroot/lang/{$lang}_local/editor_tinymce.php";
+    $result[] = "$CFG->langotherroot/$lang/editor_tinymce.php";
+    $result[] = "$CFG->langlocalroot/{$lang}_local/editor_tinymce.php";
 
     return $result;
 }
