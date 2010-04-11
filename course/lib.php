@@ -1126,7 +1126,7 @@ function get_array_of_activities($courseid) {
  * Returns a number of useful structures for course displays
  */
 function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modnamesused) {
-    global $DB,$COURSE;
+    global $CFG, $DB, $COURSE;
 
     $mods          = array();    // course modules indexed by id
     $modnames      = array();    // all course module names (except resource!)
@@ -1135,6 +1135,9 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
 
     if ($allmods = $DB->get_records("modules")) {
         foreach ($allmods as $mod) {
+            if (!file_exists("$CFG->dirroot/mod/$mod->name/lib.php")) {
+                continue;
+            }
             if ($mod->visible) {
                 $modnames[$mod->name] = get_string("modulename", "$mod->name");
                 $modnamesplural[$mod->name] = get_string("modulenameplural", "$mod->name");
