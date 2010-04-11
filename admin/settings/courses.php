@@ -20,10 +20,7 @@ if ($hassiteconfig
     $courseformats = get_plugin_list('format');
     $formcourseformats = array();
     foreach ($courseformats as $courseformat => $courseformatdir) {
-        $formcourseformats["$courseformat"] = get_string("format$courseformat","format_$courseformat");
-        if ($formcourseformats["$courseformat"]=="[[format$courseformat]]") {
-            $formcourseformats["$courseformat"] = get_string("format$courseformat");
-        }
+        $formcourseformats[$courseformat] = get_string('pluginname', "format_$courseformat");
     }
     $temp->add(new admin_setting_configselect('moodlecourse/format', get_string('format'), get_string('coursehelpformat'), 'weeks',$formcourseformats));
     for ($i=1; $i<=52; $i++) {

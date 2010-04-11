@@ -126,10 +126,7 @@ class course_edit_form extends moodleform {
         $courseformats = get_plugin_list('format');
         $formcourseformats = array();
         foreach ($courseformats as $courseformat => $formatdir) {
-            $formcourseformats["$courseformat"] = get_string("format$courseformat", "format_$courseformat");
-            if($formcourseformats["$courseformat"]=="[[format$courseformat]]") {
-                $formcourseformats["$courseformat"] = get_string("format$courseformat");
-            }
+            $formcourseformats[$courseformat] = get_string('pluginname', "format_$courseformat");
         }
         $mform->addElement('select', 'format', get_string('format'), $formcourseformats);
         $mform->setHelpButton('format', array('courseformats', get_string('courseformats')), true);
