@@ -103,26 +103,11 @@
 
 /// Get and sort the existing blocks
 
-    if (!$blocks = $DB->get_records('block')) {
+    if (!$blocks = $DB->get_records('block', array(), 'name ASC')) {
         print_error('noblocks', 'error');  // Should never happen
     }
 
     $incompatible = array();
-
-    foreach ($blocks as $block) {
-        if (($blockobject = block_instance($block->name)) === false) {
-            // Failed to load
-            continue;
-        }
-        $blockbyname[$blockobject->get_title()] = $block->id;
-        $blockobjects[$block->id] = $blockobject;
-    }
-
-    if(empty($blockbyname)) {
-        print_error('failtoloadblocks', 'error');
-    }
-
-    ksort($blockbyname);
 
 /// Print the table of all blocks
 
@@ -134,15 +119,24 @@
     $table->set_attribute('class', 'compatibleblockstable blockstable generaltable');
     $table->setup();
 
-    foreach ($blockbyname as $blockname => $blockid) {
+    foreach ($blocks as $blockid=>$block) {
+        $blockname = $block->name;
 
-        $blockobject = $blockobjects[$blockid];
-        $block       = $blocks[$blockid];
-
+        if (!file_exists("$CFG->dirroot/blocks/$blockname/block_$blockname.php")) {
+            $blockobject  = false;
+            $strblockname = '<span class="notifyproblem">'.$blockname.' ('.get_string('missingfromdisk').')</span>';
+        } else {
+            if (!$blockobject  = block_instance($block->name)) {
+                $incompatible[] = $block;
+                continue;
+            }
+            $strblockname = get_string('pluginname', 'block_'.$blockname);
+        }
+        
         $delete = '<a href="blocks.php?delete='.$blockid.'&amp;sesskey='.sesskey().'">'.$strdelete.'</a>';
 
         $settings = ''; // By default, no configuration
-        if ($blockobject->has_config()) {
+        if ($blockobject and $blockobject->has_config()) {
             if (file_exists($CFG->dirroot.'/blocks/'.$block->name.'/settings.php')) {
                 $settings = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=blocksetting'.$block->name.'">'.$strsettings.'</a>';
             } else {
@@ -165,7 +159,10 @@
         }
         $class = ''; // Nothing fancy, by default
 
-        if ($blocks[$blockid]->visible) {
+        if (!$blockobject) {
+            // ignore
+            $visible = '';
+        } else if ($blocks[$blockid]->visible) {
             $visible = '<a href="blocks.php?hide='.$blockid.'&amp;sesskey='.sesskey().'" title="'.$strhide.'">'.
                        '<img src="'.$OUTPUT->pix_url('i/hide') . '" class="icon" alt="'.$strhide.'" /></a>';
         } else {
@@ -174,10 +171,14 @@
             $class = ' class="dimmed_text"'; // Leading space required!
         }
 
+
+        if ($blockobject) {
+            $blockobject->get_version();
+        }
         $table->add_data(array(
-            '<span'.$class.'>'.$blockobject->get_title().'</span>',
+            '<span'.$class.'>'.$strblockname.'</span>',
             $blocklist,
-            '<span'.$class.'>'.$blockobject->get_version().'</span>',
+            '<span'.$class.'>'.$block->version.'</span>',
             $visible,
             $delete,
             $settings
@@ -186,7 +187,7 @@
 
     $table->print_html();
 
-    if(!empty($incompatible)) {
+    if (!empty($incompatible)) {
         echo $OUTPUT->heading(get_string('incompatibleblocks', 'blockstable', 'admin'));
 
         $table = new flexible_table('admin-blocks-incompatible');

@@ -1369,7 +1369,7 @@ function block_load_class($blockname) {
         require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
         include_once($blockpath);
     }else{
-        debugging("$blockname code does not exist in $blockpath", DEBUG_DEVELOPER);
+        //debugging("$blockname code does not exist in $blockpath", DEBUG_DEVELOPER);
         return false;
     }
 
