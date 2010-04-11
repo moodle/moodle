@@ -23,7 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['blockname'] = 'Section Links';
 $string['incbydesc1'] = 'This is the value the section is incremented each time a section link is displayed starting at 1.';
 $string['incbydesc2'] = 'This is the value the section is incremented each time a section link is displayed starting at 1.';
 $string['incby1'] = 'Increase by';
@@ -34,5 +33,6 @@ $string['numsectionsdesc1'] = 'Once the number of sections in the course reaches
 $string['numsectionsdesc2'] = 'Once the number of sections in the course reaches this number then the Alternative increment by value is used.';
 $string['numsections1'] = 'Number of Sections';
 $string['numsections2'] = 'Alternative Number of Sections';
+$string['pluginname'] = 'Section Links';
 $string['topics'] = 'Topics';
 $string['weeks'] = 'Weeks';

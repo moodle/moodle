@@ -25,7 +25,7 @@
 class block_section_links extends block_base {
 
     function init() {
-        $this->title = get_string('blockname', 'block_section_links');
+        $this->title = get_string('pluginname', 'block_section_links');
         $this->version = 2007101511;
     }
 
