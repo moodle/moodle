@@ -3433,16 +3433,6 @@ class html_list_progress_trace extends progress_trace {
 }
 
 /**
- * Return the authentication plugin title
- *
- * @param string $authtype plugin type
- * @return string
- */
-function auth_get_plugin_title($authtype) {
-    return get_string("auth_{$authtype}title", "auth_{$authtype}");
-}
-
-/**
  * Returns a localized sentence in the current language summarizing the current password policy
  *
  * @todo this should be handled by a function/method in the language pack library once we have a support for it

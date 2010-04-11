@@ -36,7 +36,7 @@ class user_editadvanced_form extends moodleform {
         $auths = get_plugin_list('auth');
         $auth_options = array();
         foreach ($auths as $auth => $unused) {
-            $auth_options[$auth] = auth_get_plugin_title($auth);
+            $auth_options[$auth] = get_string('pluginname', "auth_{$auth}");
         }
         $mform->addElement('select', 'auth', get_string('chooseauthmethod','auth'), $auth_options);
         $mform->setHelpButton('auth', array('authchange', get_string('chooseauthmethod','auth')));

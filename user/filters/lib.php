@@ -119,7 +119,7 @@ class user_filtering {
                 $plugins = get_plugin_list('auth');
                 $choices = array();
                 foreach ($plugins as $auth => $unused) {
-                    $choices[$auth] = auth_get_plugin_title ($auth);
+                    $choices[$auth] = get_string('pluginname', "auth_{$auth}");
                 }
                 return new user_filter_simpleselect('auth', get_string('authentication'), $advanced, 'auth', $choices);
 

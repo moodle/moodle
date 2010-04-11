@@ -32,7 +32,6 @@ $string['auth_emailnowexists'] = 'The email address you tried to assign to your 
 $string['auth_emailrecaptcha'] = 'Adds a visual/audio confirmation form element to the signup page for email self-registering users. This protects your site against spammers and contributes to a worthwhile cause. See http://recaptcha.net/learnmore.html for more details. <br /><em>PHP cURL extension is required.</em>';
 $string['auth_emailrecaptcha_key'] = 'Enable reCAPTCHA element';
 $string['auth_emailsettings'] = 'Settings';
-$string['auth_emailtitle'] = 'Email-based self-registration';
 $string['auth_emailupdate'] = 'Email address update';
 $string['auth_emailupdatemessage'] = 'Dear {$a->fullname},
 
@@ -44,3 +43,4 @@ $string['auth_emailupdatetitle'] = 'Confirmation of email update at {$a->site}';
 $string['auth_changingemailaddress'] = 'You have requested a change of email address, from {$a->oldemail} to {$a->newemail}. For security reasons, we are sending you an email message at the new address to confirm that it belongs to you. Your email address will be updated as soon as you open the URL sent to you in that message.';
 $string['auth_invalidnewemailkey'] = 'Error: if you are trying to confirm a change of email address, you may have made a mistake in copying the URL we sent you by email. Please copy the address and try again.';
 $string['auth_outofnewemailupdateattempts'] = 'You have run out of allowed attempts to update your email address. Your update request has been cancelled.';
+$string['pluginname'] = 'Email-based self-registration';

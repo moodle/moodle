@@ -30,4 +30,4 @@ $string['auth_nntpchangepasswordurl_key'] = 'Password-change URL';
 $string['auth_nntpnotinstalled'] = 'Cannot use NNTP authentication. The PHP IMAP module is not installed.';
 $string['auth_nntpport'] = 'Server port (119 is the most common)';
 $string['auth_nntpport_key'] = 'Port';
-$string['auth_nntptitle'] = 'NNTP server';
+$string['pluginname'] = 'NNTP server';

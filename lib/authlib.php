@@ -414,7 +414,7 @@ class auth_plugin_base {
      * @todo Document this function
      */
     function get_title() {
-        return auth_get_plugin_title($this->authtype);
+        return get_string('pluginname', "auth_{$this->authtype}");
     }
 
     /**

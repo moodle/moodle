@@ -32,6 +32,6 @@ $string['auth_pop3mailbox_key'] = 'Mailbox';
 $string['auth_pop3notinstalled'] = 'Cannot use POP3 authentication. The PHP IMAP module is not installed.';
 $string['auth_pop3port'] = 'Server port (110 is the most common, 995 is common for SSL)';
 $string['auth_pop3port_key'] = 'Port';
-$string['auth_pop3title'] = 'POP3 server';
 $string['auth_pop3type'] = 'Server type. If your server uses certificate security, choose pop3cert.';
 $string['auth_pop3type_key'] = 'Type';
+$string['pluginname'] = 'POP3 server';

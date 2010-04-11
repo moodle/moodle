@@ -29,6 +29,18 @@
  */
 
 /**
+ * Return the authentication plugin title
+ *
+ * @param string $authtype plugin type
+ * @return string
+ */
+function auth_get_plugin_title($authtype) {
+    debugging('Function auth_get_plugin_title() is deprecated, please use standard get_string("pluginname", "auth_'.$authtype.'")!');
+    return get_string('pluginname', "auth_{$authtype}");
+}
+
+
+/**
  * @deprecated
  */
 function isteacher() {
