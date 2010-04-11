@@ -5,7 +5,7 @@ require_once($CFG->dirroot . '/comment/lib.php');
 class block_comments extends block_base {
 
     function init() {
-        $this->title = get_string('comments');
+        $this->title = get_string('pluginname', 'block_comments');
         $this->version = 2009072000;
     }
 
