@@ -1000,7 +1000,6 @@ $string['lookback'] = 'Look back';
 $string['mailadmins'] = 'Inform admins';
 $string['mailstudents'] = 'Inform students';
 $string['mailteachers'] = 'Inform teachers';
-$string['mainmenu'] = 'Main Menu';
 $string['makeafolder'] = 'Make a folder';
 $string['makeeditable'] = 'If you make \'{$a}\' editable by the web server process (eg apache) then you could edit this file directly from this page';
 $string['manageblocks'] = 'Blocks';
