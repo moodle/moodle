@@ -23,7 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['blockname'] = 'Navigation';
 $string['courseactivities'] = 'Categories, courses, and course Activities';
 $string['courses'] = 'Categories and courses';
 $string['coursestructures'] = 'Categories, courses, and course structures';
@@ -31,6 +30,7 @@ $string['enablehoverexpansiondesc'] = 'Enable mouseover expansion of this block'
 $string['enablesidebarpopoutdesc'] = 'Allow the user to switch the block to a sidbar popout';
 $string['everything'] = 'Everything';
 $string['expansionlimit'] = 'Generate navigation for the following';
+$string['pluginname'] = 'Navigation';
 $string['showemptybranchesdesc'] = 'Show empty course section branches';
 $string['showmycoursesdesc'] = 'Show my courses in the navigation';
 $string['showmyhistorydesc'] = 'Show my history as a branch in the navigation';
