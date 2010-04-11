@@ -51,9 +51,10 @@
             print_error('blockdoesnotexist', 'error');
         }
 
-        else {
-            $blockobject = block_instance($block->name);
-            $strblockname = $blockobject->get_title();
+        if (file_exists("$CFG->dirroot/blocks/$block->name/lang/en/block_$block->name.php")) {
+            $strblockname = get_string('pluginname', "block_$block->name");
+        } else {
+            $strblockname = $block->name;
         }
 
         if (!$confirm) {
@@ -63,9 +64,11 @@
 
         } else {
             // Inform block it's about to be deleted
-            $blockobject = block_instance($block->name);
-            if ($blockobject) {
-                $blockobject->before_delete();  //only if we can create instance, block might have been already removed
+            if (file_exists("$CFG->dirroot/blocks/$block->name/block_$block->name.php")) {
+                $blockobject = block_instance($block->name);
+                if ($blockobject) {
+                    $blockobject->before_delete();  //only if we can create instance, block might have been already removed
+                }
             }
 
             // First delete instances and then block
@@ -77,9 +80,7 @@
             }
 
             // Delete block
-            if (!$DB->delete_records('block', array('id'=>$block->id))) {
-                echo $OUTPUT->notification("Error occurred while deleting the $strblockname record from blocks table");
-            }
+            $DB->delete_records('block', array('id'=>$block->id));
 
             drop_plugin_tables($block->name, "$CFG->dirroot/blocks/$block->name/db/install.xml", false); // old obsoleted table names
             drop_plugin_tables('block_'.$block->name, "$CFG->dirroot/blocks/$block->name/db/install.xml", false);
@@ -132,7 +133,7 @@
             }
             $strblockname = get_string('pluginname', 'block_'.$blockname);
         }
-        
+
         $delete = '<a href="blocks.php?delete='.$blockid.'&amp;sesskey='.sesskey().'">'.$strdelete.'</a>';
 
         $settings = ''; // By default, no configuration
