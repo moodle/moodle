@@ -2,7 +2,7 @@
 
 class block_calendar_upcoming extends block_base {
     function init() {
-        $this->title = get_string('upcomingevents', 'calendar');
+        $this->title = get_string('pluginname', 'block_calendar_upcoming');
         $this->version = 2007101509;
     }
 
