@@ -3,7 +3,7 @@
 class block_mentees extends block_base {
 
     function init() {
-        $this->title = get_string('blockname', 'block_mentees');
+        $this->title = get_string('pluginname', 'block_mentees');
         $this->version = 2007101509;
     }
 
