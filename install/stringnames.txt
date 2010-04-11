@@ -46,6 +46,7 @@ phpversion,install
 phpversionhelp,install
 previous,moodle
 reload,admin
+remotedownloaderror,error
 thisdirection,langconfig
 thislanguage,langconfig
 welcomep10,install
