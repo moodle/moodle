@@ -397,7 +397,7 @@ class question_category_object {
 
         if ($parentid) {
             if(!($DB->get_field('question_categories', 'contextid', array('id' => $parentid)) == $contextid)) {
-                print_error('cannotinsertquestioncatecontext', 'question', '', array($newcategory, $contextid));
+                print_error('cannotinsertquestioncatecontext', 'question', '', array('cat'=>$newcategory, 'ctx'=>$contextid));
             }
         }
 
