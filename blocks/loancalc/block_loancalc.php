@@ -3,7 +3,7 @@
 class block_loancalc extends block_base {
 
     function init() {
-        $this->title = get_string('loancalc','block_loancalc');
+        $this->title = get_string('pluginname','block_loancalc');
         $this->content_type = BLOCK_TYPE_TEXT;
         $this->version = 2007101509;
     }

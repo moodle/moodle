@@ -26,9 +26,9 @@
 $string['amountofloan'] = 'Amount of loan';
 $string['fortnightly'] = 'Fortnightly';
 $string['interestrate'] = 'Interest rate';
-$string['loancalc'] = 'Loan calculator';
 $string['loanterm'] = 'Loan term (years)';
 $string['monthly'] = 'Monthly';
+$string['pluginname'] = 'Loan calculator';
 $string['repaymentamount'] = 'Repayment amount';
 $string['repaymentfreq'] = 'Repayment frequency';
 $string['weekly'] = 'Weekly';
