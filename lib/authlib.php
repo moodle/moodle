@@ -423,10 +423,7 @@ class auth_plugin_base {
      * @return string The description
      */
     function get_description() {
-        $authdescription = get_string("auth_{$this->authtype}description", "auth");
-        if ($authdescription == "[[auth_{$this->authtype}description]]") {
-            $authdescription = get_string("auth_{$this->authtype}description", "auth_{$this->authtype}");
-        }
+        $authdescription = get_string("auth_{$this->authtype}description", "auth_{$this->authtype}");
         return $authdescription;
     }
 
