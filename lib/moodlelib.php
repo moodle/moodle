@@ -5964,6 +5964,9 @@ class amos_string_manager implements string_manager {
                 if (strstr($lang, '_local') !== false) {
                     continue;
                 }
+                if (strstr($lang, '_utf8') !== false) {
+                    continue;
+                }
                 if ($lang !== 'en' and !file_exists("$this->otherroot/$lang/langconfig.php")) {
                     // some broken or missing lang - can not swith to it anyway
                     continue;
@@ -5986,6 +5989,9 @@ class amos_string_manager implements string_manager {
             // Loop through all langs and get info
             foreach ($langdirs as $lang) {
                 if (strstr($lang, '_local') !== false) {
+                    continue;
+                }
+                if (strstr($lang, '_utf8') !== false) {
                     continue;
                 }
                 $string = $this->load_component_strings('langconfig', $lang);
