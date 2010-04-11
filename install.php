@@ -146,6 +146,8 @@ $CFG->httpswwwroot         = $CFG->wwwroot;
 $CFG->dataroot             = $config->dataroot;
 $CFG->admin                = $config->admin;
 $CFG->docroot              = 'http://docs.moodle.org';
+$CFG->langotherroot        = $CFG->dataroot.'/lang';
+$CFG->langlocalroot        = $CFG->dataroot.'/lang';
 $CFG->directorypermissions = 00777;
 $CFG->running_installer    = true;
 $CFG->early_install_lang   = true;
@@ -362,7 +364,7 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
         if ($cd->install() == COMPONENT_ERROR) {
             if ($cd->get_error() == 'remotedownloaderror') {
                 $a = new stdClass();
-                $a->url  = 'http://download.moodle.org/lang20/'.$INSTALL['language'].'.zip';
+                $a->url  = 'http://download.moodle.org/lang20/'.$config->lang.'.zip';
                 $a->dest = $CFG->dataroot.'/lang';
                 $downloaderror = get_string($cd->get_error(), 'error', $a);
             } else {

@@ -6038,13 +6038,39 @@ class install_string_manager implements string_manager {
      * @return string The String !
      */
     public function get_string($identifier, $component = '', $a = NULL) {
+        if (!$component) {
+            $component = 'moodle';
+        }
         $lang = current_language();
 
-        $string = array();
-        include("$this->installroot/en/installer.php");
+        //get parent lang
+        $parent = '';
+        if ($lang !== 'en' and $identifier !== 'parentlanguage' and $component !== 'langconfig') {
+            if (file_exists("$this->installroot/$lang/langconfig.php")) {
+                $string = array();
+                include("$this->installroot/$lang/langconfig.php");
+                if (isset($string['parentlanguage'])) {
+                    $parent = $string['parentlanguage'];
+                }
+                unset($string);
+            }
+        }
 
-        if (file_exists("$this->installroot/$lang/installer.php") and $lang !== 'en') {
-            include("$this->installroot/$lang/installer.php");
+        // include en string first
+        if (!file_exists("$this->installroot/en/$component.php")) {
+            return "[[$identifier]]";
+        }
+        $string = array();
+        include("$this->installroot/en/$component.php");
+
+        // now override en with parent if defined
+        if ($parent and $parent !== 'en' and file_exists("$this->installroot/$parent/$component.php")) {
+            include("$this->installroot/$parent/$component.php");
+        }
+
+        // finally override with requested language
+        if ($lang !== 'en' and file_exists("$this->installroot/$lang/$component.php")) {
+            include("$this->installroot/$lang/$component.php");
         }
 
         if (!isset($string[$identifier])) {
@@ -6063,16 +6089,14 @@ class install_string_manager implements string_manager {
                         // we do not support numeric keys - sorry!
                         continue;
                     }
-                    $search[]  = '$a->'.$key.'';
-                    //$search[]  = '{$a->'.$key.'}'; // TODO: uncomment after switch to {a->aa}
+                    $search[]  = '{$a->'.$key.'}';
                     $replace[] = (string)$value;
                 }
                 if ($search) {
                     $string = str_replace($search, $replace, $string);
                 }
             } else {
-                $string = str_replace('$a', (string)$a, $string);
-                //$string = str_replace('{$a}', (string)$a, $string); // TODO: uncomment after switch to {a}
+                $string = str_replace('{$a}', (string)$a, $string);
             }
         }
 
@@ -6099,9 +6123,9 @@ class install_string_manager implements string_manager {
         asort($langdirs);
         // Get some info from each lang
         foreach ($langdirs as $lang) {
-            if (file_exists($this->installroot.'/'.$lang.'/installer.php')) {
+            if (file_exists($this->installroot.'/'.$lang.'/langconfig.php')) {
                 $string = array();
-                include($this->installroot.'/'.$lang.'/installer.php');
+                include($this->installroot.'/'.$lang.'/langconfig.php');
                 if (!empty($string['thislanguage'])) {
                     $languages[$lang] = $string['thislanguage'].' ('.$lang.')';
                 }
