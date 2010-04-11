@@ -2,7 +2,7 @@
 
 class block_activity_modules extends block_list {
     function init() {
-        $this->title = get_string('activities');
+        $this->title = get_string('pluginname', 'block_activity_modules');
         $this->version = 2007101509;
     }
 
