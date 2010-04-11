@@ -2,7 +2,7 @@
 
 class block_admin extends block_list {
     function init() {
-        $this->title = get_string('administration');
+        $this->title = get_string('pluginname', 'block_admin');
         $this->version = 2007101509;
     }
 
