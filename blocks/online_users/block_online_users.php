@@ -7,7 +7,7 @@
  */
 class block_online_users extends block_base {
     function init() {
-        $this->title = get_string('blockname','block_online_users');
+        $this->title = get_string('pluginname','block_online_users');
         $this->version = 2007101510;
     }
 
