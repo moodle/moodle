@@ -6006,7 +6006,7 @@ class admin_setting_managerepository extends admin_setting {
      */
     public function __construct() {
         global $CFG;
-        parent::__construct('managerepository', get_string('managerepository', 'repository'), '', '');
+        parent::__construct('managerepository', get_string('manage', 'repository'), '', '');
         $this->baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/repository.php?sesskey=' . sesskey();
     }
 

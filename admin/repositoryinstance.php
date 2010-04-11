@@ -78,10 +78,7 @@ if (!empty($edit) || !empty($new)) {
             $data = data_submitted();
         }
         if ($success) {
-            $savedstr = get_string('configsaved', 'repository');
-            echo $OUTPUT->header();
-            echo $OUTPUT->heading($savedstr);
-            redirect($baseurl, $savedstr, 3);
+            redirect($baseurl);
         } else {
             print_error('instancenotsaved', 'repository', $baseurl);
         }

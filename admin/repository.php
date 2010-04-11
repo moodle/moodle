@@ -30,7 +30,7 @@ admin_externalpage_setup($pagename);
 $sesskeyurl = $CFG->wwwroot.'/'.$CFG->admin.'/repository.php?sesskey=' . sesskey();
 $baseurl    = $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=managerepositories';
 
-$configstr  = get_string('managerepositories', 'repository');
+$configstr  = get_string('manage', 'repository');
 
 $return = true;
 
@@ -98,15 +98,14 @@ if (!empty($edit) || !empty($new)) {
             $data = data_submitted();
         }
         if ($success) {
-            $savedstr = get_string('configsaved', 'repository');
             $has_instance = repository::static_function($plugin, 'get_instance_option_names');
 
             if (!empty($has_instance)) {
                 // no common setting for this type, so go to setup instances
-                redirect($sesskeyurl.'&amp;edit='.$plugin, $savedstr, 1);
+                redirect($sesskeyurl.'&amp;edit='.$plugin);
             } else {
                 // configs saved
-                redirect($baseurl, $savedstr, 1);
+                redirect($baseurl);
             }
         } else {
             print_error('instancenotsaved', 'repository', $baseurl);
@@ -157,8 +156,7 @@ if (!empty($edit) || !empty($new)) {
             print_error('confirmsesskeybad', '', $baseurl);
         }
         if ($repositorytype->delete()) {
-            $deletedstr = get_string('removed', 'repository');
-            redirect($baseurl, $deletedstr, 3);
+            redirect($baseurl);
         } else {
             print_error('instancenotdeleted', 'repository', $baseurl);
         }

@@ -478,7 +478,7 @@ abstract class repository {
      * Return a type for a given type name.
      * @global object $DB
      * @param string $typename the type name
-     * @return object
+     * @return repository_type
      */
     public static function get_type_by_typename($typename) {
         global $DB;

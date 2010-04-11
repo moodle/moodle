@@ -244,7 +244,7 @@ if ($hassiteconfig) {
         get_string('deleterepository', 'repository'), $url, 'moodle/site:config', true),
         '', $url);
     $ADMIN->add('repositorysettings', new admin_externalpage('repositorycontroller',
-        get_string('managerepositories', 'repository'), $url, 'moodle/site:config', true),
+        get_string('manage', 'repository'), $url, 'moodle/site:config', true),
         '', $url);
     $ADMIN->add('repositorysettings', new admin_externalpage('repositoryinstancenew',
         get_string('createrepository', 'repository'), $url, 'moodle/site:config', true),
