@@ -52,3 +52,4 @@ $string['choosereadme'] = '<div style="text-align:center;">
 <h3 style="margin-bottom:5px; margin-top:5px;">Licensing</h3>
 <p>This theme is licensed under <a href="http://docs.moodle.org/en/License">Moodle\'s GNU General Public License</a>. Feel free to use it, share it and edit it as you see fit. All that I ask is that you give me credit for the work, and do not ever take credit for making it yourself.</p>
 <p>Please enjoy the theme.</p>';
+$string['pluginname'] = 'Anomaly';
