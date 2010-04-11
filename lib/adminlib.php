@@ -4453,7 +4453,7 @@ class admin_page_managemods extends admin_externalpage {
      * @return array
      */
     public function search($query) {
-        global $DB;
+        global $CFG, $DB;
         if ($result = parent::search($query)) {
             return $result;
         }
@@ -4462,6 +4462,9 @@ class admin_page_managemods extends admin_externalpage {
         if ($modules = $DB->get_records('modules')) {
             $textlib = textlib_get_instance();
             foreach ($modules as $module) {
+                if (!file_exists("$CFG->dirroot/mod/$module->name/lib.php")) {
+                    continue;
+                }
                 if (strpos($module->name, $query) !== false) {
                     $found = true;
                     break;
@@ -4574,6 +4577,9 @@ class admin_page_manageblocks extends admin_externalpage {
         if ($blocks = $DB->get_records('block')) {
             $textlib = textlib_get_instance();
             foreach ($blocks as $block) {
+                if (!file_exists("$CFG->dirroot/blocks/$block->name/")) {
+                    continue;
+                }
                 if (strpos($block->name, $query) !== false) {
                     $found = true;
                     break;

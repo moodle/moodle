@@ -3665,7 +3665,7 @@ function validate_internal_user_password(&$user, $password) {
 
     // get password original encoding in case it was not updated to unicode yet
     $textlib = textlib_get_instance();
-    $convpassword = $textlib->convert($password, 'utf-8', get_string('oldcharset'));
+    $convpassword = $textlib->convert($password, 'utf-8', get_string('oldcharset', 'langconfig'));
 
     if ($user->password == md5($password.$CFG->passwordsaltmain) or $user->password == md5($password)
         or $user->password == md5($convpassword.$CFG->passwordsaltmain) or $user->password == md5($convpassword)) {
@@ -5905,9 +5905,8 @@ class amos_string_manager implements string_manager {
         $string = $this->load_component_strings($component, $lang);
 
         if (!isset($string[$identifier])) {
-            if ($identifier !== 'parentlanguage' and $identifier !== 'blockname' and strpos($component, 'format_') !== 0) {
-// TODO: enable after fixing more missing string warnings, it talks too much now
-                //debugging("Invalid get_string() identifier: '$identifier' or component '$component'", DEBUG_DEVELOPER);
+            if ($identifier !== 'parentlanguage' and $identifier !== 'blockname' and strpos($component, 'format_') !== 0 and $component !== 'pix') {
+                debugging("Invalid get_string() identifier: '$identifier' or component '$component'", DEBUG_DEVELOPER);
             }
             return "[[$identifier]]";
         }
