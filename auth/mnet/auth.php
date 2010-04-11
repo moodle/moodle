@@ -278,7 +278,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
         // check sso access control list for permission first
         if (!$this->can_login_remotely($localuser->username, $remotehost->id)) {
-            print_error('sso_mnet_login_refused', 'mnet', '', array($localuser->username, $remotehost->name));
+            print_error('sso_mnet_login_refused', 'mnet', '', array('user'=>$localuser->username, 'host'=>$remotehost->name));
         }
 
         // update the local user record with remote user data
