@@ -11,6 +11,9 @@ if ($hassiteconfig) {
         $modulebyname = array();
 
         foreach ($modules as $module) {
+            if (!file_exists("$CFG->dirroot/mod/$module->name/lib.php")) {
+                continue;
+            }
             $strmodulename = get_string('modulename', $module->name);
             // Deal with modules which are lacking the language string
             if ($strmodulename == '[[modulename]]') {

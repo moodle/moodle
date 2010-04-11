@@ -2825,6 +2825,10 @@ function &get_fast_modinfo(&$course, $userid=0) {
                 $minimalmodinfo=new stdClass();
                 $minimalmodinfo->cms=array();
                 foreach($info as $mod) {
+                    if (empty($mod->name)) {
+                        // something is wrong here
+                        continue;
+                    }
                     $minimalcm = new stdClass();
                     $minimalcm->id = $mod->cm;
                     $minimalcm->name = $mod->name;
