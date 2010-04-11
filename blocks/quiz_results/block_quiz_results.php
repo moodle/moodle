@@ -9,7 +9,7 @@ define('B_QUIZRESULTS_GRADE_FORMAT_ABS', 3);
 
 class block_quiz_results extends block_base {
     function init() {
-        $this->title = get_string('formaltitle', 'block_quiz_results');
+        $this->title = get_string('pluginname', 'block_quiz_results');
         $this->version = 2007101509;
     }
 
