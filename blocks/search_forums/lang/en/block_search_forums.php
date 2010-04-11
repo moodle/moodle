@@ -24,4 +24,4 @@
  */
 
 $string['advancedsearch'] = 'Advanced search';
-$string['blocktitle'] = 'Search Forums';
+$string['pluginname'] = 'Search Forums';
