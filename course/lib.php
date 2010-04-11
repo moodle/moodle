@@ -3169,11 +3169,7 @@ function move_category($category, $newparentcat) {
  * @return Name that the course format prefers for sections
  */
 function get_section_name($format) {
-    $sectionname = get_string("name$format","format_$format");
-    if($sectionname == "[[name$format]]") {
-        $sectionname = get_string("name$format");
-    }
-    return $sectionname;
+    return get_string('sectionname', "format_$format");
 }
 
 /**
