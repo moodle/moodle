@@ -4326,7 +4326,7 @@ function get_component_string($component, $contextlevel) {
                 $string = get_string('enrolname', $langname);
             } else if (preg_match('|^block/|', $component)) {
                 $langname = str_replace('/', '_', $component);
-                $string = get_string('blockname', $langname);
+                $string = get_string('pluginname', $langname);
             } else if (preg_match('|^local|', $component)) {
                 $langname = str_replace('/', '_', $component);
                 $string = get_string('local');
@@ -4372,7 +4372,7 @@ function get_component_string($component, $contextlevel) {
             if( $component == 'moodle' ){
                 $string = get_string('block');
             }else{
-                $string = get_string('blockname', basename($component));
+                $string = get_string('pluginname', basename($component));
             }
         break;
 

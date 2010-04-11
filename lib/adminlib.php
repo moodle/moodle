@@ -4584,7 +4584,7 @@ class admin_page_manageblocks extends admin_externalpage {
                     $found = true;
                     break;
                 }
-                $strblockname = get_string('blockname', 'block_'.$block->name);
+                $strblockname = get_string('pluginname', 'block_'.$block->name);
                 if (strpos($textlib->strtolower($strblockname), $query) !== false) {
                     $found = true;
                     break;

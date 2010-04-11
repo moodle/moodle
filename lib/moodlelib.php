@@ -9145,8 +9145,8 @@ function get_plugin_name($plugin, $type='mod') {
             $plugin_name = get_string('modulename', $plugin);
             break;
         case 'blocks':
-            $plugin_name = get_string('blockname', "block_$plugin");
-            if (empty($plugin_name) || $plugin_name == '[[blockname]]') {
+            $plugin_name = get_string('pluginname', "block_$plugin");
+            if (empty($plugin_name) || $plugin_name == '[[pluginname]]') {
                 if (($block = block_instance($plugin)) !== false) {
                     $plugin_name = $block->get_title();
                 } else {
