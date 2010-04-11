@@ -23,6 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['blockname'] = 'Settings';
 $string['enablehoverexpansion'] = 'Enable mouseover expansion of this block';
 $string['enablesidebarpopout'] = 'Allow the user to switch the block to a sidbar popout';
+$string['pluginname'] = 'Settings';

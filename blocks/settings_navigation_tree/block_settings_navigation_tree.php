@@ -49,7 +49,7 @@ class block_settings_navigation_tree extends block_tree {
      */
     function init() {
         $this->blockname = get_class($this);
-        $this->title = get_string('blockname', $this->blockname);
+        $this->title = get_string('pluginname', $this->blockname);
         $this->version = 2009082800;
     }
 
