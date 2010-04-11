@@ -5712,6 +5712,14 @@ interface string_manager {
      * @param bool $returnall return all or just enabled
      */
     public function get_list_of_languages($returnall = false);
+
+    /**
+     * Load all strings for one component
+     * @param string $component The module the string is associated with
+     * @param string $lang
+     * @return array of all string for given component and lang
+     */
+    public function load_component_strings($component, $lang);
 }
 
 
@@ -5774,7 +5782,7 @@ class amos_string_manager implements string_manager {
      * @param string $lang
      * @return array of all string for given component and lang
      */
-    protected function load_component_strings($component, $lang) {
+    public function load_component_strings($component, $lang) {
         global $CFG;
 
         list($plugintype, $pluginname) = normalize_component($component);
@@ -6033,6 +6041,16 @@ class install_string_manager implements string_manager {
     public function __construct() {
         global $CFG;
         $this->installroot = "$CFG->dirroot/install/lang";
+    }
+
+    /**
+     * Load all strings for one component
+     * @param string $component The module the string is associated with
+     * @param string $lang
+     * @return array of all string for given component and lang
+     */
+    public function load_component_strings($component, $lang) {
+        return array();
     }
 
     /**

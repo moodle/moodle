@@ -40,34 +40,7 @@ if ($lang === 'en') {
     $lang = 'en';
 }
 
-// load english defaults
-$string = array();
-foreach (get_langpack_en_locations() as $location) {
-    if (!file_exists($location)) {
-        continue;
-    }
-    include($location);
-}
-
-// find parent language
-if ($parent = get_parent_language($lang)) {
-    foreach (get_langpack_locations($parent) as $location) {
-        if (!file_exists($location)) {
-            continue;
-        }
-        include($location);
-    }
-}
-
-// load wanted language
-if ($lang !== 'en') {
-    foreach (get_langpack_locations($lang) as $location) {
-        if (!file_exists($location)) {
-            continue;
-        }
-        include($location);
-    }
-}
+$string = get_string_manager()->load_component_strings('editor_tinymce', $lang);
 
 //process the $strings to match expected tinymce lang array stucture
 $result = array();
@@ -94,26 +67,3 @@ $lifetime = '10'; // TODO: increase later
 @header('Pragma: ');
 
 echo $output;
-
-
-/// ======= Functions =================
-
-function get_langpack_en_locations() {
-    global $CFG;
-
-    $result = array();
-    $result[] = "$CFG->dirroot/lib/editor/tinymce/lang/en/editor_tinymce.php";
-    $result[] = "$CFG->langlocalroot/en_local/editor_tinymce.php";
-
-    return $result;
-}
-
-function get_langpack_locations($lang) {
-    global $CFG;
-
-    $result = array();
-    $result[] = "$CFG->langotherroot/$lang/editor_tinymce.php";
-    $result[] = "$CFG->langlocalroot/{$lang}_local/editor_tinymce.php";
-
-    return $result;
-}
