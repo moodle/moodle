@@ -18,7 +18,7 @@ class block_glossary_random extends block_base {
 
         // load userdefined title and make sure it's never empty
         if (empty($this->config->title)) {
-            $this->title = get_string('blockname','block_glossary_random');
+            $this->title = get_string('pluginname','block_glossary_random');
         } else {
             $this->title = $this->config->title;
         }
