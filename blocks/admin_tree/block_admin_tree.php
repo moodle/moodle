@@ -11,7 +11,7 @@ class block_admin_tree extends block_base {
     var $expandnodes = array();
 
     function init() {
-        $this->title = get_string('administrationsite');
+        $this->title = get_string('pluginname', 'block_admin_tree');
         $this->version = 2007101509;
         $this->currentdepth = 0;
         $this->divcounter = 1;
