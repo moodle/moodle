@@ -718,7 +718,6 @@ $string['formatmarkdown'] = 'Markdown format';
 $string['formatplain'] = 'Plain text format';
 $string['formattext'] = 'Moodle auto-format';
 $string['formattexttype'] = 'Formatting';
-$string['formatwiki'] = 'Wiki-like format';
 $string['framesetinfo'] = 'This frameset document contains:';
 $string['from'] = 'From';
 $string['frontpagecategorycombo'] = 'Combo list';
