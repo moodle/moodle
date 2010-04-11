@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['auth_fcconnfail'] = 'Connection failed with Errno: {$a}[0] and Error String: {$a}[1]';
+$string['auth_fcconnfail'] = 'Connection failed with Errno: {$a->no} and Error String: {$a->str}';
 $string['auth_fccreators'] = 'List of groups whose members are allowed to create new courses. Separate multiple groups with \';\'. Names must be spelled exactly as on FirstClass server. System is case-sensitive.';
 $string['auth_fccreators_key'] = 'Creators';
 $string['auth_fcdescription'] = 'This method uses a FirstClass server to check whether a given username and password is valid.';
