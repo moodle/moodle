@@ -3439,7 +3439,7 @@ class html_list_progress_trace extends progress_trace {
  * @return string
  */
 function auth_get_plugin_title($authtype) {
-    $authtitle = get_string("auth_{$authtype}title", "auth_{$authtype}");
+    return get_string("auth_{$authtype}title", "auth_{$authtype}");
 }
 
 /**

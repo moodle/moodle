@@ -3158,7 +3158,7 @@ function is_enabled_auth($auth) {
  *
  * @global object
  * @param string $auth name of authentication plugin
- * @return object An instance of the required authentication plugin.
+ * @return auth_plugin_base An instance of the required authentication plugin.
  */
 function get_auth_plugin($auth) {
     global $CFG;
