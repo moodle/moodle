@@ -31,7 +31,7 @@ require_once($CFG->dirroot .'/blog/lib.php');
 class block_blog_menu extends block_base {
 
     function init() {
-        $this->title = get_string('blockmenutitle', 'blog');
+        $this->title = get_string('pluginname', 'block_blog_menu');
         $this->version = 2009071700;
     }
 
