@@ -643,7 +643,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 foreach ($remove_users as $user) {
                     if ($this->config->removeuser == AUTH_REMOVEUSER_FULLDELETE) {
                         if (delete_user($user)) {
-                            echo "\t"; print_string('auth_dbdeleteuser', 'auth_db', array($user->username, $user->id)); echo "\n";
+                            echo "\t"; print_string('auth_dbdeleteuser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)); echo "\n";
                         } else {
                             echo "\t"; print_string('auth_dbdeleteusererror', 'auth_db', $user->username); echo "\n";
                         }
@@ -652,7 +652,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                         $updateuser->id = $user->id;
                         $updateuser->auth = 'nologin';
                         if ($DB->update_record('user', $updateuser)) {
-                            echo "\t"; print_string('auth_dbsuspenduser', 'auth_db', array($user->username, $user->id)); echo "\n";
+                            echo "\t"; print_string('auth_dbsuspenduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)); echo "\n";
                         } else {
                             echo "\t"; print_string('auth_dbsuspendusererror', 'auth_db', $user->username); echo "\n";
                         }
@@ -680,7 +680,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $updateuser->id = $user->id;
                     $updateuser->auth = 'ldap';
                     if ($DB->pdate_record('user', $updateuser)) {
-                        echo "\t"; print_string('auth_dbreviveduser', 'auth_db', array($user->username, $user->id)); echo "\n";
+                        echo "\t"; print_string('auth_dbreviveduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)); echo "\n";
                     } else {
                         echo "\t"; print_string('auth_dbrevivedusererror', 'auth_db', $user->username); echo "\n";
                     }
@@ -735,7 +735,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $maxxcount = 100;
 
                 foreach ($users as $user) {
-                    echo "\t"; print_string('auth_dbupdatinguser', 'auth_db', array($user->username, $user->id));
+                    echo "\t"; print_string('auth_dbupdatinguser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id));
                     if (!$this->update_user_record($user->username, $updatekeys)) {
                         echo " - ".get_string('skipped');
                     }
@@ -798,7 +798,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
                 //TODO - username required to use PARAM_USERNAME before inserting into user table (MDL-16919)
                 if ($id = $DB->insert_record('user', $user)) {
-                    echo "\t"; print_string('auth_dbinsertuser', 'auth_db', array($user->username, $id)); echo "\n";
+                    echo "\t"; print_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)); echo "\n";
                     $userobj = $this->update_user_record($user->username);
                     if (!empty($this->config->forcechangepassword)) {
                         set_user_preference('auth_forcepasswordchange', 1, $userobj->id);

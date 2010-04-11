@@ -255,7 +255,7 @@ class auth_plugin_db extends auth_plugin_base {
                 foreach ($remove_users as $user) {
                     if ($this->config->removeuser == AUTH_REMOVEUSER_FULLDELETE) {
                         if (delete_user($user)) {
-                            echo "\t"; print_string('auth_dbdeleteuser', 'auth_db', array($user->username, $user->id)); echo "\n";
+                            echo "\t"; print_string('auth_dbdeleteuser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)); echo "\n";
                         } else {
                             echo "\t"; print_string('auth_dbdeleteusererror', 'auth_db', $user->username); echo "\n";
                         }
@@ -264,7 +264,7 @@ class auth_plugin_db extends auth_plugin_base {
                         $updateuser->id   = $user->id;
                         $updateuser->auth = 'nologin';
                         if ($DB->update_record('user', $updateuser)) {
-                            echo "\t"; print_string('auth_dbsuspenduser', 'auth_db', array($user->username, $user->id)); echo "\n";
+                            echo "\t"; print_string('auth_dbsuspenduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)); echo "\n";
                         } else {
                             echo "\t"; print_string('auth_dbsuspendusererror', 'auth_db', $user->username); echo "\n";
                         }
@@ -307,7 +307,7 @@ class auth_plugin_db extends auth_plugin_base {
                     print "User entries to update: ". count($update_users). "\n";
 
                     foreach ($update_users as $user) {
-                        echo "\t"; print_string('auth_dbupdatinguser', 'auth_db', array($user->username, $user->id));
+                        echo "\t"; print_string('auth_dbupdatinguser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id));
                         if (!$this->update_user_record($user->username, $updatekeys)) {
                             echo " - ".get_string('skipped');
                         }
@@ -363,11 +363,11 @@ class auth_plugin_db extends auth_plugin_base {
                 if ($old_user = $DB->get_record('user', array('username'=>$user->username, 'deleted'=>1, 'mnethostid'=>$user->mnethostid))) {
                     $user->id = $old_user->id;
                     $DB->set_field('user', 'deleted', 0, array('username'=>$user->username));
-                    echo "\t"; print_string('auth_dbreviveduser', 'auth_db', array($user->username, $user->id)); echo "\n";
+                    echo "\t"; print_string('auth_dbreviveduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)); echo "\n";
                     
                 //TODO - username required to use PARAM_USERNAME before inserting into user table (MDL-16919)
                 } elseif ($id = $DB->insert_record ('user',$user)) { // it is truly a new user
-                    echo "\t"; print_string('auth_dbinsertuser','auth_db',array($user->username, $id)); echo "\n";
+                    echo "\t"; print_string('auth_dbinsertuser','auth_db',array('name'=>$user->username, 'id'=>$id)); echo "\n";
                     // if relevant, tag for password generation
                     if ($this->config->passtype === 'internal') {
                         set_user_preference('auth_forcepasswordchange', 1, $id);
