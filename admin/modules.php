@@ -74,7 +74,11 @@
         echo $OUTPUT->header();
         echo $OUTPUT->heading($stractivities);
 
-        $strmodulename = get_string("modulename", "$delete");
+        if (file_exists("$CFG->dirroot/mod/$delete/lang/en/$delete.php")) {
+            $strmodulename = get_string("modulename", "$delete");
+        } else {
+            $strmodulename = $delete;
+        }
 
         if (!$confirm) {
             echo $OUTPUT->confirm(get_string("moduledeleteconfirm", "", $strmodulename), "modules.php?delete=$delete&confirm=1", "modules.php");
@@ -102,19 +106,9 @@
 
 /// Get and sort the existing modules
 
-    if (!$modules = $DB->get_records("modules")) {
+    if (!$modules = $DB->get_records('modules', array(), 'name ASC')) {
         print_error('moduledoesnotexist', 'error');
     }
-
-    foreach ($modules as $module) {
-        $strmodulename = get_string("modulename", "$module->name");
-        // Deal with modules which are lacking the language string
-        if ($strmodulename == '[[modulename]]') {
-            $strmodulename = $module->name;
-        }
-        $modulebyname[$strmodulename] = $module;
-    }
-    ksort($modulebyname, SORT_LOCALE_STRING);
 
 /// Print the table of all modules
     // construct the flexible table ready to display
@@ -126,10 +120,17 @@
     $table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
     $table->setup();
 
-    foreach ($modulebyname as $modulename => $module) {
+    foreach ($modules as $module) {
 
-        // took out hspace="\10\", because it does not validate. don't know what to replace with.
-        $icon = "<img src=\"" . $OUTPUT->pix_url('icon', $module->name) . "\" class=\"icon\" alt=\"\" />";
+        if (!file_exists("$CFG->dirroot/mod/$module->name/lib.php")) {
+            $strmodulename = '<span class="notifyproblem">'.$module->name.' ('.get_string('missingfromdisk').')</span>';
+            $missing = true;
+        } else {
+            // took out hspace="\10\", because it does not validate. don't know what to replace with.
+            $icon = "<img src=\"" . $OUTPUT->pix_url('icon', $module->name) . "\" class=\"icon\" alt=\"\" />";
+            $strmodulename = $icon.' '.get_string('modulename', $module->name);
+            $missing = false;
+        }
 
         $delete = "<a href=\"modules.php?delete=$module->name&amp;sesskey=".sesskey()."\">$strdelete</a>";
 
@@ -149,14 +150,17 @@
             $countlink = "$count";
         }
 
-        if ($module->visible) {
+        if ($missing) {
+            $visible = '';
+            $class   = '';
+        } else if ($module->visible) {
             $visible = "<a href=\"modules.php?hide=$module->name&amp;sesskey=".sesskey()."\" title=\"$strhide\">".
                        "<img src=\"" . $OUTPUT->pix_url('i/hide') . "\" class=\"icon\" alt=\"$strhide\" /></a>";
-            $class = "";
+            $class   = '';
         } else {
             $visible = "<a href=\"modules.php?show=$module->name&amp;sesskey=".sesskey()."\" title=\"$strshow\">".
                        "<img src=\"" . $OUTPUT->pix_url('i/show') . "\" class=\"icon\" alt=\"$strshow\" /></a>";
-            $class = " class=\"dimmed_text\"";
+            $class =   ' class="dimmed_text"';
         }
         if ($module->name == "forum") {
             $delete = "";
@@ -164,13 +168,9 @@
             $class = "";
         }
 
-        $extra = '';
-        if (!file_exists("$CFG->dirroot/mod/$module->name/lib.php")) {
-            $extra = ' <span class="notifyproblem">('.get_string('missingfromdisk').')</span>';
-        }
 
         $table->add_data(array(
-            '<span'.$class.'>'.$icon.' '.$modulename.$extra.'</span>',
+            '<span'.$class.'>'.$strmodulename.'</span>',
             $countlink,
             '<span'.$class.'>'.$module->version.'</span>',
             $visible,
