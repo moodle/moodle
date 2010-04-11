@@ -25,6 +25,6 @@
 
 $string['configcontent'] = 'Content';
 $string['configtitle'] = 'Block Title';
-$string['html'] = 'HTML';
 $string['leaveblanktohide'] = 'leave blank to hide the title';
 $string['newhtmlblock'] = '(new HTML block)';
+$string['pluginname'] = 'HTML';
