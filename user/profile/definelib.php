@@ -388,13 +388,9 @@ function profile_list_datatypes() {
 
     $datatypes = array();
 
-    if ($dirlist = get_directory_list($CFG->dirroot.'/user/profile/field', '', false, true, false)) {
-        foreach ($dirlist as $type) {
-            $datatypes[$type] = get_string('profilefieldtype'.$type, 'profilefield_'.$type);
-            if (strpos($datatypes[$type], '[[') !== false) {
-                $datatypes[$type] = get_string('profilefieldtype'.$type, 'admin');
-            }
-        }
+    $plugins = get_plugin_list('profilefield');
+    foreach ($plugins as $type=>$unused) {
+        $datatypes[$type] = get_string('pluginname', 'profilefield_'.$type);
     }
     asort($datatypes);
 
