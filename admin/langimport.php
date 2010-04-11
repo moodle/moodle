@@ -253,11 +253,8 @@ die('Work in progress, to be replaced by the new language update interface...');
     foreach($installedlangs as $l=>$unused) {
         $SESSION->lang = $l;
         $parent = get_string('parentlanguage', 'langconfig');
-        if ($parent == 'en') {
+        if ($parent === 'en') {
             continue;
-        }
-        if (strpos($parent, '[[') !== false) {
-            continue; // no parent
         }
         if (!isset($installedlangs[$parent])) {
             $missingparents[$l] = $parent;

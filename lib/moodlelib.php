@@ -5647,7 +5647,7 @@ function get_parent_language($lang=null) {
     }
 
     $parentlang = get_string('parentlanguage', 'langconfig');
-    if ($parentlang === 'en' or $parentlang === '[[parentlanguage]]' or strpos($parentlang, '<') !== false) {
+    if ($parentlang === 'en') {
         $parentlang = '';
     }
 
@@ -5910,9 +5910,11 @@ class amos_string_manager implements string_manager {
                 // not all of them are supposed to be defined
                 return '';
             }
-            if ($identifier !== 'parentlanguage') {
-                debugging("Invalid get_string() identifier: '$identifier' or component '$component'", DEBUG_DEVELOPER);
+            if ($identifier === 'parentlanguage' and ($component === 'langconfig' or $component === 'core_langconfig')) {
+                // parentlanguage is a special string, undefined means use english if not defined
+                return 'en';
             }
+            debugging("Invalid get_string() identifier: '$identifier' or component '$component'", DEBUG_DEVELOPER);
             return "[[$identifier]]";
         }
 
