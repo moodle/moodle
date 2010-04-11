@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['blockname'] = 'Recent blog entries';
 $string['norecentblogentries'] = 'No recent entries';
 $string['numentriestodisplay'] = 'Number of recent entries to display';
+$string['pluginname'] = 'Recent blog entries';
 $string['recentinterval'] = 'Interval of time considered "recent"';

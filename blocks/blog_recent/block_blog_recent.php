@@ -35,7 +35,7 @@ require_once($CFG->dirroot .'/blog/locallib.php');
 class block_blog_recent extends block_base {
 
     function init() {
-        $this->title = get_string('blockrecenttitle', 'blog');
+        $this->title = get_string('pluginname', 'block_blog_recent');
         $this->content_type = BLOCK_TYPE_TEXT;
         $this->version = 2009070900;
     }
