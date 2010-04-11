@@ -5905,7 +5905,12 @@ class amos_string_manager implements string_manager {
         $string = $this->load_component_strings($component, $lang);
 
         if (!isset($string[$identifier])) {
-            if ($identifier !== 'parentlanguage' and $component !== 'pix') {
+            if ($component === 'pix' or $component === 'core_pix') {
+                // this component contains only alt tags for emoticons,
+                // not all of them are supposed to be defined
+                return '';
+            }
+            if ($identifier !== 'parentlanguage') {
                 debugging("Invalid get_string() identifier: '$identifier' or component '$component'", DEBUG_DEVELOPER);
             }
             return "[[$identifier]]";
