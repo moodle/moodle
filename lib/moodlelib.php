@@ -5741,7 +5741,7 @@ class amos_string_manager implements string_manager {
     }
 
     /**
-     * Returns dependacies of current language, en is not included.
+     * Returns dependencies of current language, en is not included.
      * @param string $lang
      * @return array all parents, the lang itself is last
      */
@@ -5760,7 +5760,7 @@ class amos_string_manager implements string_manager {
         } else {
             $parentlang = $string['parentlanguage'];
             unset($string);
-            return array_merge($this->get_language_dependency($parentlang), $lang);
+            return array_merge($this->get_language_dependencies($parentlang), array($lang));
         }
     }
 
