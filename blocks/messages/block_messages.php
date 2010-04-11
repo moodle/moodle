@@ -2,7 +2,7 @@
 
 class block_messages extends block_base {
     function init() {
-        $this->title = get_string('messages','message');
+        $this->title = get_string('pluginname', 'block_messages');
         $this->version = 2007101509;
     }
 
