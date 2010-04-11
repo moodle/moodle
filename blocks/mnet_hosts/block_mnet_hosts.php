@@ -2,7 +2,7 @@
 
 class block_mnet_hosts extends block_list {
     function init() {
-        $this->title = get_string('mnet_hosts','block_mnet_hosts') ;
+        $this->title = get_string('pluginname','block_mnet_hosts') ;
         $this->version = 2007101509;
     }
 
