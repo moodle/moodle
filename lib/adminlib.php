@@ -5171,7 +5171,7 @@ class admin_setting_manageportfolio extends admin_setting {
     public function __construct() {
         global $CFG;
         $this->nosave = true;
-        parent::__construct('manageportfolio', get_string('manageportfolio', 'portfolio'), '', '');
+        parent::__construct('manageportfolio', get_string('manageportfolios', 'portfolio'), '', '');
         $this->baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/portfolio.php?sesskey=' . sesskey();
     }
 
