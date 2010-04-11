@@ -35,7 +35,6 @@ $string['associationunviewable'] = 'This entry cannot be viewed by others until 
 $string['autotags'] = 'Tags associated with each imported blog entry';
 $string['backupblogshelp'] = 'If enabled then blogs will be included in SITE automated backups';
 $string['blockexternalstitle'] = 'External Blogs';
-$string['blocktagstitle'] = 'Blog Tags';
 $string['blocktitle'] = 'Blog tags block title';
 $string['blog'] = 'Blog';
 $string['blogaboutthis'] = 'Blog about this {$a->type}';
