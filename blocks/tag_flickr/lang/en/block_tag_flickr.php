@@ -23,7 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['blockname'] = 'Flickr';
 $string['configtitle'] = 'Title';
 $string['date-posted-asc'] = 'Date Posted ASC';
 $string['date-posted-desc'] = 'Date Posted DESC';
@@ -35,5 +34,6 @@ $string['includerelatedtags'] = 'Include related tags in query';
 $string['interestingness-asc'] = 'Interestingness ASC';
 $string['interestingness-desc'] = 'Interestingness DESC';
 $string['numberofphotos'] = 'Number of photos';
+$string['pluginname'] = 'Flickr';
 $string['relevance'] = 'Relevance';
 $string['sortby'] = 'Sort by';

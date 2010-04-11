@@ -9,7 +9,7 @@ define('DEFAULT_NUMBER_OF_PHOTOS', 6);
 class block_tag_flickr extends block_base {
 
     function init() {
-        $this->title = get_string('defaulttile','block_tag_flickr');
+        $this->title = get_string('pluginname','block_tag_flickr');
         $this->version = 2007101509;
     }
 
@@ -18,7 +18,7 @@ class block_tag_flickr extends block_base {
     }
 
     function specialization() {
-        $this->title = !empty($this->config->title) ? $this->config->title : get_string('blockname', 'block_tag_flickr');
+        $this->title = !empty($this->config->title) ? $this->config->title : get_string('pluginname', 'block_tag_flickr');
     }
 
     function instance_allow_multiple() {
