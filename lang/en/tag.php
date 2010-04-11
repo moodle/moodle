@@ -26,7 +26,6 @@
 $string['addedotag'] = '"{$a}" was added as an official tag.';
 $string['addotags'] = 'Add official tags';
 $string['addtagtomyinterests'] = 'Add "{$a}" to my interests';
-$string['blocktagstitle'] = 'Tags';
 $string['count'] = 'Count';
 $string['delete'] = 'Delete';
 $string['deleted'] = 'Deleted';

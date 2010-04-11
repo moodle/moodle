@@ -78,6 +78,7 @@ $string['officialtags'] = 'Official course tags:';
 $string['officialtags1'] = 'official tags';
 $string['officialtags2'] = 'Show official course tags';
 $string['please'] = 'Please';
+$string['pluginname'] = 'Tags';
 $string['select'] = 'Select...';
 $string['showcoursetags'] = 'Show course tags';
 $string['showcoursetagsdef'] = 'Display the course tagging features in the tags block, allowing students to tag courses.';
