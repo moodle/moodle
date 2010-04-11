@@ -7,35 +7,22 @@
 if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('modsettings', get_string('activitymodules')));
     $ADMIN->add('modsettings', new admin_page_managemods());
-    if ($modules = $DB->get_records('modules')) {
-        $modulebyname = array();
-
-        foreach ($modules as $module) {
-            if (!file_exists("$CFG->dirroot/mod/$module->name/lib.php")) {
-                continue;
-            }
-            $strmodulename = get_string('modulename', $module->name);
-            // Deal with modules which are lacking the language string
-            if ($strmodulename == '[[modulename]]') {
-                $textlib = textlib_get_instance();
-                $strmodulename = $textlib->strtotitle($module->name);
-            }
-            $modulebyname[$strmodulename] = $module;
+    $modules = $DB->get_records('modules', array(), "name ASC");
+    foreach ($modules as $module) {
+        $modulename = $module->name;
+        if (!file_exists("$CFG->dirroot/mod/$modulename/lib.php")) {
+            continue;
         }
-        ksort($modulebyname);
-
-        foreach ($modulebyname as $strmodulename=>$module) {
-            $modulename = $module->name;
-            if (file_exists($CFG->dirroot.'/mod/'.$modulename.'/settingstree.php')) {
-                include($CFG->dirroot.'/mod/'.$modulename.'/settingstree.php');
-            } else if (file_exists($CFG->dirroot.'/mod/'.$modulename.'/settings.php')) {
-                // do not show disabled modules in tree, keep only settings link on manage page
-                $settings = new admin_settingpage('modsetting'.$modulename, $strmodulename, 'moodle/site:config', !$module->visible);
-                if ($ADMIN->fulltree) {
-                    include($CFG->dirroot.'/mod/'.$modulename.'/settings.php');
-                }
-                $ADMIN->add('modsettings', $settings);
+        $strmodulename = get_string('modulename', 'mod_'.$modulename);
+        if (file_exists($CFG->dirroot.'/mod/'.$modulename.'/settingstree.php')) {
+            include($CFG->dirroot.'/mod/'.$modulename.'/settingstree.php');
+        } else if (file_exists($CFG->dirroot.'/mod/'.$modulename.'/settings.php')) {
+            // do not show disabled modules in tree, keep only settings link on manage page
+            $settings = new admin_settingpage('modsetting'.$modulename, $strmodulename, 'moodle/site:config', !$module->visible);
+            if ($ADMIN->fulltree) {
+                include($CFG->dirroot.'/mod/'.$modulename.'/settings.php');
             }
+            $ADMIN->add('modsettings', $settings);
         }
     }
 
@@ -44,33 +31,22 @@ if ($hassiteconfig) {
 
     $ADMIN->add('modules', new admin_category('blocksettings', get_string('blocks')));
     $ADMIN->add('blocksettings', new admin_page_manageblocks());
-    if ($blocks = $DB->get_records('block')) {
-        $blockbyname = array();
-
-        foreach ($blocks as $block) {
-            if (!file_exists("$CFG->dirroot/blocks/$block->name")) {
-                continue;
-            }
-            if(($blockobject = block_instance($block->name)) === false) {
-                // Failed to load
-                continue;
-            }
-            $blockbyname[$blockobject->get_title()] = $block;
+    $blocks = $DB->get_records('block', array(), "name ASC");
+    foreach ($blocks as $block) {
+        $blockname = $block->name;
+        if (!file_exists("$CFG->dirroot/blocks/$blockname/block_$blockname.php")) {
+            continue;
         }
-        ksort($blockbyname);
-
-        foreach ($blockbyname as $strblockname=>$block) {
-            $blockname = $block->name;
-            if (file_exists($CFG->dirroot.'/blocks/'.$blockname.'/settings.php')) {
-                $settings = new admin_settingpage('blocksetting'.$blockname, $strblockname, 'moodle/site:config', !$block->visible);
-                if ($ADMIN->fulltree) {
-                    include($CFG->dirroot.'/blocks/'.$blockname.'/settings.php');
-                }
-                $ADMIN->add('blocksettings', $settings);
-
-            } else if (file_exists($CFG->dirroot.'/blocks/'.$blockname.'/config_global.html')) {
-                $ADMIN->add('blocksettings', new admin_externalpage('blocksetting'.$blockname, $strblockname, "$CFG->wwwroot/$CFG->admin/block.php?block=$block->id", 'moodle/site:config', !$block->visible));
+        $strblockname = get_string('pluginname', 'block_'.$blockname);
+        if (file_exists($CFG->dirroot.'/blocks/'.$blockname.'/settings.php')) {
+            $settings = new admin_settingpage('blocksetting'.$blockname, $strblockname, 'moodle/site:config', !$block->visible);
+            if ($ADMIN->fulltree) {
+                include($CFG->dirroot.'/blocks/'.$blockname.'/settings.php');
             }
+            $ADMIN->add('blocksettings', $settings);
+
+        } else if (file_exists($CFG->dirroot.'/blocks/'.$blockname.'/config_global.html')) {
+            $ADMIN->add('blocksettings', new admin_externalpage('blocksetting'.$blockname, $strblockname, "$CFG->wwwroot/$CFG->admin/block.php?block=$block->id", 'moodle/site:config', !$block->visible));
         }
     }
 
