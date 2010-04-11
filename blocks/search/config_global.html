@@ -272,7 +272,7 @@ if ($blocks = $DB->get_records_select('block', "name $searchable_list", $params,
         echo "<input type=\"checkbox\" name=\"search_in_{$block->name}\" value=\"1\" {$checked} />";
 
         // multiple fallback strategy to get the name of the block
-        $blocklabel = get_string('blockname', 'block_'.$block->name);
+        $blocklabel = get_string('pluginname', 'block_'.$block->name);
         if ($blocklabel == '[[blockname]]') $blocklabel = get_string($block->name, 'block_'.$block->name);
         if ($blocklabel == "[[{$block->name}]]") $blocklabel = "<span class=\"dimmed_text\">$block->name</span>";
         echo " - ".$blocklabel.'<br/>';

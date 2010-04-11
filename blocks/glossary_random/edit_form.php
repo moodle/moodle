@@ -37,7 +37,7 @@ class block_glossary_random_edit_form extends block_edit_form {
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
 
         $mform->addElement('text', 'config_title', get_string('title', 'block_glossary_random'));
-        $mform->setDefault('config_title', get_string('blockname','block_glossary_random'));
+        $mform->setDefault('config_title', get_string('pluginname','block_glossary_random'));
         $mform->setType('config_title', PARAM_MULTILANG);
 
         // Select glossaries to put in dropdown box ...

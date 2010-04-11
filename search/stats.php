@@ -153,7 +153,7 @@ require_once($CFG->dirroot.'/search/lib.php');
         if ($type->type == 'mod'){
             $table->data[] = array(get_string('documentsfor', 'search') . " '".get_string('modulenameplural', $type->name)."'", $type->records);
         } else if ($type->type == 'block') {
-            $table->data[] = array(get_string('documentsfor', 'search') . " '".get_string('blockname', $type->name)."'", $type->records);
+            $table->data[] = array(get_string('documentsfor', 'search') . " '".get_string('pluginname', $type->name)."'", $type->records);
         } else {
             $table->data[] = array(get_string('documentsfor', 'search') . " '".get_string($type->name)."'", $type->records);
         }

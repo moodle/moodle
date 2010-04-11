@@ -40,7 +40,7 @@ class block_section_links extends block_base {
             } else if ($course->format == 'weeks') {
                 $this->title = get_string('weeks', 'block_section_links');
             } else {
-                $this->title = get_string('blockname', 'block_section_links');
+                $this->title = get_string('pluginname', 'block_section_links');
             }
         }
     }

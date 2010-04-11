@@ -5905,7 +5905,7 @@ class amos_string_manager implements string_manager {
         $string = $this->load_component_strings($component, $lang);
 
         if (!isset($string[$identifier])) {
-            if ($identifier !== 'parentlanguage' and $identifier !== 'blockname' and strpos($component, 'format_') !== 0 and $component !== 'pix') {
+            if ($identifier !== 'parentlanguage' and strpos($component, 'format_') !== 0 and $component !== 'pix') {
                 debugging("Invalid get_string() identifier: '$identifier' or component '$component'", DEBUG_DEVELOPER);
             }
             return "[[$identifier]]";
