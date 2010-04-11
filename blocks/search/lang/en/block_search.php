@@ -23,7 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['blockname'] = 'Global Search';
 $string['blockssearchswitches'] = 'Indexer activation for blocks';
 $string['bytes'] = 'bytes (0 stands for no limits)';
 $string['configbuttonlabel'] = 'Button label';
@@ -42,6 +41,7 @@ $string['modulessearchswitches'] = 'Indexer activation for modules';
 $string['nosearchableblocks'] = 'No searchable blocks';
 $string['nosearchablemodules'] = 'No searchable modules';
 $string['pdfhandling'] = 'Acrobat PDF handling';
+$string['pluginname'] = 'Global Search';
 $string['searchdiscovery'] = 'Searchable items discovery';
 $string['searchmoodle'] = 'Search Moodle';
 $string['usemoodleroot'] = 'Use moodle root for external converters';
