@@ -2,7 +2,7 @@
 
 class block_social_activities extends block_list {
     function init(){
-        $this->title = get_string('blockname', 'block_social_activities');
+        $this->title = get_string('pluginname', 'block_social_activities');
         $this->version = 2007101509;
     }
 
