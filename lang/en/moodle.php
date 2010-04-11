@@ -1295,7 +1295,6 @@ $string['payments'] = 'Payments';
 $string['paymentsorry'] = 'Thank you for your payment!  Unfortunately your payment has not yet been fully processed, and you are not yet registered to enter the course "{$a->fullname}".  Please try continuing to the course in a few seconds, but if you continue to have trouble then please alert the {$a->teacher} or the site administrator';
 $string['paymentthanks'] = 'Thank you for your payment!  You are now enrolled in your course:<br />"{$a}"';
 $string['pendingrequests'] = 'Pending requests';
-$string['people'] = 'People';
 $string['periodending'] = 'Period ending ({$a})';
 $string['personal'] = 'Personal';
 $string['personalprofile'] = 'Personal profile';

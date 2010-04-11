@@ -2,7 +2,7 @@
 
 class block_participants extends block_list {
     function init() {
-        $this->title = get_string('people');
+        $this->title = get_string('pluginname', 'block_participants');
         $this->version = 2007101509;
     }
 
