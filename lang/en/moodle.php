@@ -714,7 +714,6 @@ $string['forgottenduplicate'] = 'The email address is shared by several accounts
 $string['forgotteninvalidurl'] = 'Invalid password reset URL';
 $string['format'] = 'Format';
 $string['formathtml'] = 'HTML format';
-$string['formatlams'] = 'LAMS course format';
 $string['formatmarkdown'] = 'Markdown format';
 $string['formatplain'] = 'Plain text format';
 $string['formatscorm'] = 'SCORM format';
