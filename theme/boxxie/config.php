@@ -34,3 +34,84 @@ $THEME->enable_dock = false;
 ////////////////////////////////////////////////////
 // Do you want to use the new navigation dock?
 ////////////////////////////////////////////////////
+
+$THEME->layouts = array(
+    'base' => array(
+        'theme' => 'boxxie',
+        'file' => 'general.php',
+        'regions' => array(),
+    ),
+    'general' => array(
+        'theme' => 'boxxie',
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post',
+    ),
+    'course' => array(
+        'theme' => 'boxxie',
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post'
+    ),
+    'coursecategory' => array(
+        'theme' => 'boxxie',
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post',
+    ),
+    'incourse' => array(
+        'theme' => 'boxxie',
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post',
+    ),
+    'frontpage' => array(
+        'theme' => 'boxxie',
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post',
+    ),
+    'admin' => array(
+        'theme' => 'boxxie',
+        'file' => 'general.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
+    'mydashboard' => array(
+        'theme' => 'boxxie',
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post',
+        'options' => array('langmenu'=>true),
+    ),
+    'mypublic' => array(
+        'theme' => 'boxxie',
+        'file' => 'general.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post',
+    ),
+    'login' => array(
+        'theme' => 'boxxie',
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('langmenu'=>true),
+    ),
+    'popup' => array(
+        'theme' => 'boxxie',
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true),
+    ),
+    'frametop' => array(
+        'theme' => 'boxxie',
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true),
+    ),
+    'maintenance' => array(
+        'theme' => 'boxxie',
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true),
+    ),
+);
