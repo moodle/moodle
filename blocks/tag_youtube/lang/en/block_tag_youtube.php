@@ -25,7 +25,6 @@
 
 $string['anycategory'] = 'Any Category';
 $string['autosvehicles'] = 'Autos &amp; Vehicles';
-$string['blockname'] = 'Youtube';
 $string['category'] = 'Category';
 $string['comedy'] = 'Comedy';
 $string['configtitle'] = 'Title';
@@ -40,6 +39,7 @@ $string['newspolitics'] = 'News &amp; Politics';
 $string['numberofvideos'] = 'Number of videos';
 $string['peopleblogs'] = 'People &amp; Blogs';
 $string['petsanimals'] = 'Pets &amp; Animals';
+$string['pluginname'] = 'Youtube';
 $string['scienceandtech'] = 'Science &amp; Tech';
 $string['sports'] = 'Sports';
 $string['travel'] = 'Travel &amp; Places';

@@ -8,7 +8,7 @@ define('DEFAULT_NUMBER_OF_VIDEOS', 5);
 class block_tag_youtube extends block_base {
 
     function init() {
-        $this->title = get_string('blockname','block_tag_youtube');
+        $this->title = get_string('pluginname','block_tag_youtube');
         $this->version = 2007101509;
     }
 
@@ -17,7 +17,7 @@ class block_tag_youtube extends block_base {
     }
 
     function specialization() {
-        $this->title = !empty($this->config->title) ? $this->config->title : get_string('blockname', 'block_tag_youtube');
+        $this->title = !empty($this->config->title) ? $this->config->title : get_string('pluginname', 'block_tag_youtube');
         // Convert numeric categories (old YouTube API) to
         // textual ones (new Google Data API)
         $this->config->category = !empty($this->config->category) ? $this->category_map_old2new($this->config->category) : '0';
