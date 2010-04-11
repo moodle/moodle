@@ -2,7 +2,7 @@
 
 class block_calendar_month extends block_base {
     function init() {
-        $this->title = get_string('calendar', 'calendar');
+        $this->title = get_string('pluginname', 'block_calendar_month');
         $this->version = 2007101509;
     }
 
