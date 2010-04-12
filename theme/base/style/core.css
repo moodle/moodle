@@ -114,14 +114,18 @@ a.skip:active {position: static;display: block;}
  */
 #page-header .headermain {float:left;margin:15px;font-size:2.3em;}
 #page-header .headermenu {float:right;margin:15px;font-size:0.8em;text-align:right;}
-#page-header .navbar {clear:both;overflow:hidden;}
-#page-header .navbar .breadcrumb {float:left;}
-#page-header .navbar .navbutton {text-align:right;}
-#page-header .navbar .breadcrumb ul {padding:0;margin:0;text-indent:0;list-style:none;}
-#page-header .navbar .breadcrumb li,
-#page-header .navbar .navbutton div,
-#page-header .navbar .navbutton form {display:inline;}
-.ie6 #page-header .navbar {overflow:hidden;height:100%;}
+
+/**
+ * Navbar
+ */
+.navbar {clear:both;overflow:hidden;}
+.ie6 .navbar {overflow:hidden;height:100%;}
+.navbar .breadcrumb {float:left;}
+.navbar .navbutton {text-align:right;}
+.navbar .breadcrumb ul {padding:0;margin:0;text-indent:0;list-style:none;}
+.navbar .breadcrumb li,
+.navbar .navbutton div,
+.navbar .navbutton form {display:inline;}
 
 /**
  * Footer
