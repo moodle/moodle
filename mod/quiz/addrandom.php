@@ -12,7 +12,8 @@ require_once('../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/editlib.php');
 require_once($CFG->dirroot . '/question/category_class.php');
 
-list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) = question_edit_setup('editq', true);
+list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
+        question_edit_setup('editq', '/mod/quiz/addrandom.php', true);
 
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategoryid = $defaultcategoryobj->id;

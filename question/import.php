@@ -15,7 +15,8 @@
     require_once($CFG->libdir . '/questionlib.php');
     require_once("import_form.php");
 
-    list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) = question_edit_setup('import', false, false);
+    list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
+            question_edit_setup('import', '/question/import.php', false, false);
 
    // get display strings
     $txt = new stdClass();

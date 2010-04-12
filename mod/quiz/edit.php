@@ -113,8 +113,8 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
 }
 
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
-        question_edit_setup('editq', true);
-$PAGE->set_url('/mod/quiz/edit.php', $thispageurl->params());
+        question_edit_setup('editq', '/mod/quiz/edit.php', true);
+$PAGE->set_url($thispageurl);
 $PAGE->set_pagelayout('base');
 
 $defaultcategoryobj = question_make_default_categories($contexts->all());

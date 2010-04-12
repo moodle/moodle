@@ -12,14 +12,11 @@
     require_once($CFG->dirroot."/question/editlib.php");
     require_once($CFG->dirroot."/question/category_class.php");
 
-
-
-    list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) = question_edit_setup('categories');
+    list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
+            question_edit_setup('categories', '/question/category.php');
 
     // get values from form for actions on this page
     $param = new stdClass();
-
-
     $param->moveup = optional_param('moveup', 0, PARAM_INT);
     $param->movedown = optional_param('movedown', 0, PARAM_INT);
     $param->moveupcontext = optional_param('moveupcontext', 0, PARAM_INT);

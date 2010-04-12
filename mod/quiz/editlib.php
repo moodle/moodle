@@ -970,9 +970,9 @@ class question_bank_add_to_quiz_action_column extends question_bank_action_colum
     protected function display_content($question, $rowclasses) {
         // for RTL languages: switch right and left arrows
         if (right_to_left()) {
-            $movearrow = 't/removeright.gif';
+            $movearrow = 't/removeright';
         } else {
-            $movearrow = 't/moveleft.gif';
+            $movearrow = 't/moveleft';
         }
         $this->print_icon($movearrow, $this->stradd, $this->qbank->add_to_quiz_url($question->id));
     }

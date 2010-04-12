@@ -12,7 +12,8 @@
     require_once($CFG->dirroot."/question/editlib.php");
     require_once($CFG->dirroot."/question/contextmove_form.php");
 
-    list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) = question_edit_setup('categories');
+    list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
+            question_edit_setup('categories', '/question/contextmove.php');
 
     // get values from form for actions on this page
     $toparent = required_param('toparent', PARAM_SEQUENCE);

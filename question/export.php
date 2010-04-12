@@ -13,8 +13,8 @@
     require_once("editlib.php");
     require_once("export_form.php");
 
-    list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) = question_edit_setup('export');
-
+    list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
+            question_edit_setup('export', '/question/export.php');
 
     // get display strings
     $strexportquestions = get_string('exportquestions', 'quiz');

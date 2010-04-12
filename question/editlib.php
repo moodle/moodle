@@ -1515,17 +1515,19 @@ class question_bank_view {
 
 /**
  * Common setup for all pages for editing questions.
+ * @param string $baseurl the name of the script calling this funciton. For examle 'qusetion/edit.php'.
  * @param string $edittab code for this edit tab
  * @param boolean $requirecmid require cmid? default false
  * @param boolean $requirecourseid require courseid, if cmid is not given? default true
  * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
-function question_edit_setup($edittab, $requirecmid = false, $requirecourseid = true){
+function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirecourseid = true) {
     global $QUESTION_EDITTABCAPS, $DB, $PAGE;
 
     //$thispageurl is used to construct urls for all question edit pages we link to from this page. It contains an array
     //of parameters that are passed from page to page.
-    $thispageurl = new moodle_url($PAGE->url); //TODO: this looks dumb, because this method is called BEFORE $PAGE->set_page() !!!!
+//    $thispageurl = new moodle_url($PAGE->url); //TODO: this looks dumb, because this method is called BEFORE $PAGE->set_page() !!!!
+    $thispageurl = new moodle_url($baseurl);
     $thispageurl->remove_all_params(); // We are going to explicity add back everything important - this avoids unwanted params from being retained.
 
     if ($requirecmid){
@@ -1651,7 +1653,6 @@ function question_edit_setup($edittab, $requirecmid = false, $requirecourseid = 
     if ($pagevars['cpage'] != 1){
         $thispageurl->param('cpage', $pagevars['cpage']);
     }
-
 
     return array($thispageurl, $contexts, $cmid, $cm, $module, $pagevars);
 }

@@ -54,7 +54,8 @@
     }
     $PAGE->set_url($url);
 
-    list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) = question_edit_setup('questions');
+    list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
+            question_edit_setup('questions', '/question/edit.php');
     $questionbank = new question_bank_view($contexts, $thispageurl, $COURSE, $cm);
     $questionbank->process_actions();
 
