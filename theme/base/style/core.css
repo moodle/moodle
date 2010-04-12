@@ -321,6 +321,7 @@ table.mod_index {width:100%;}
 .comment-content div {margin:0;padding:0;}
 .comment-content p {padding:0;margin:0 18px 0 0;}
 .comment-delete {float:right;text-align:right;}
+.comment-delete-confirm {background: #89B31F; padding: 2px;}
 .comment-container {float:left;width: 305px;margin: 4px;}
 .comment-report-selectall{display:none}
 .jsenabled .comment-report-selectall{display:inline}

@@ -55,7 +55,7 @@ M.core_comment = {
                     return false;
                 }, this);
                 CommentHelper.confirmoverlay = new Y.Overlay({
-bodyContent: '<a href="#" id="confirmdelete-'+this.client_id+'">'+M.str.moodle.yes+'</a> <a href="#" id="canceldelete-'+this.client_id+'">'+M.str.moodle.no+'</a>',
+bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-'+this.client_id+'">'+M.str.moodle.yes+'</a> <a href="#" id="canceldelete-'+this.client_id+'">'+M.str.moodle.no+'</a></div>',
                                         visible: false
                                         });
                 CommentHelper.confirmoverlay.render(document.body);
@@ -212,7 +212,7 @@ bodyContent: '<a href="#" id="confirmdelete-'+this.client_id+'">'+M.str.moodle.y
                 var scope = this;
                 var params = {'commentid': id};
                 scope.cancel_delete();
-                function remove_dom(type, anmi, cmt) {
+                function remove_dom(type, anim, cmt) {
                     cmt.remove();
                 }
                 this.request({
@@ -273,8 +273,6 @@ bodyContent: '<a href="#" id="confirmdelete-'+this.client_id+'">'+M.str.moodle.y
                             }
                             CommentHelper.confirmoverlay.set('xy', [e.pageX-(width/2), e.pageY+10]);
                             CommentHelper.confirmoverlay.set('visible', true);
-							// XXX: YUI3 bug, a temp workaround in firefox, still have problem on webkit
-							CommentHelper.confirmoverlay.bodyNode.setStyle('visibility', 'visible');
                             Y.one('#canceldelete-'+scope.client_id).on('click', function(e) {
 								e.preventDefault();
                                 scope.cancel_delete();
@@ -292,8 +290,6 @@ bodyContent: '<a href="#" id="confirmdelete-'+this.client_id+'">'+M.str.moodle.y
             },
             cancel_delete: function() {
                 CommentHelper.confirmoverlay.set('visible', false);
-				// XXX: YUI3 bug, a temp workaround in firefox, still have problem on webkit
-				CommentHelper.confirmoverlay.bodyNode.setStyle('visibility', 'hidden');
             },
             register_pagination: function() {
                 var scope = this;
