@@ -35,11 +35,13 @@ $THEME->enable_dock = false;
 // Do you want to use the new navigation dock?
 ////////////////////////////////////////////////////
 
+
 $THEME->layouts = array(
     'base' => array(
         'theme' => 'boxxie',
         'file' => 'general.php',
-        'regions' => array(),
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post',
     ),
     'general' => array(
         'theme' => 'boxxie',
@@ -115,3 +117,12 @@ $THEME->layouts = array(
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
     ),
 );
+
+///////////////////////////////////////////////////////////////
+// These are all of the possible layouts in Moodle. The
+// simplest way to do this is to keep the theme and file
+// variables the same for every layout. Including them
+// all in this way allows some flexibility down the road
+// if you want to add a different layout template to a
+// specific page.
+///////////////////////////////////////////////////////////////

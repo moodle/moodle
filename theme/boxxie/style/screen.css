@@ -1,1 +1,89 @@
-body {}
+html {
+  background: #6e8c45;
+}
+
+#page-wrapper {
+  margin: 10px 5%;
+  background: #5b7439;
+  padding: 5px;
+}
+
+#page {
+  background: #fff;
+  padding: 5px;
+  width: auto;
+}
+
+a:link,
+a:visited {
+  color: #69804e;
+  text-decoration: none;
+}
+
+a:hover,
+a:active {
+  text-decoration: underline;
+}
+
+/* Header */
+
+#page-header {
+  background: #3b4c25;
+  color: #fff;
+}
+
+#page-header a:link,
+#page-header a:visited {
+  color: #b3c79d;
+}
+
+#page-header h1.headermain {
+  color: #fff;
+  font-weight: normal;
+  margin:1em;
+}
+
+.sideblock {
+  border: none;
+}
+
+.sideblock .header {
+  background: #69804e;
+  padding:2px 5px;
+}
+
+.sideblock .header h2 {
+  color: #fff;
+}
+
+.sideblock .content {
+  background: #f3f8ed;
+  border-width: 1px;
+  border-color: #69804e;
+  border-style: solid;
+}
+
+/* Course */
+
+.coursebox {
+  border-bottom: 1px solid #eee;
+}
+
+.coursebox h3.name {
+  margin-top: 0;
+}
+
+.categorybox {
+  border: none;
+}
+
+h2.headingblock {
+  font-weight: normal;
+  border-bottom: 1px solid #eee;
+}
+
+/* Forum */
+
+.forumpost .topic {
+  background: #c9dfb2;
+}
