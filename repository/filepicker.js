@@ -75,6 +75,9 @@ M.core_filepicker.init = function(Y, options) {
 
         initializer: function(options) {
             this.options = options;
+            if (!this.options.savepath) {
+                this.options.savepath = '/';
+            }
         },
 
         destructor: function() {
@@ -392,11 +395,13 @@ M.core_filepicker.init = function(Y, options) {
                     params['license'] = license.get('value');
                 }
                 var author = Y.one('#text-author-'+client_id);
-                if (author) {
+                if (author){
                     params['author'] = author.get('value');
                 }
 
                 if (this.options.env == 'editor') {
+                    // in editor, images are stored in '/' only
+                    params.savepath = '/';
                     var linkexternal = Y.one('#linkexternal-'+client_id).get('checked');
                     if (linkexternal) {
                         params['linkexternal'] = 'yes';
