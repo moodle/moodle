@@ -30,8 +30,12 @@ div.editq div.question div.content .singlequestion a .questiontext{text-decorati
 #page-mod-quiz-mod #reviewoptionshdr .fitemtitle,
 #adminquizreviewoptions .fitemtitle {width: 100%;font-weight: bold;text-align: left;height: 2.5em;margin-left: 0;}
 
+#page-mod-quiz-mod #reviewoptionshdr fieldset.fgroup,
+#adminquizreviewoptions {clear: left;}
 #page-mod-quiz-mod #reviewoptionshdr fieldset.fgroup span,
-#adminquizreviewoptions span {float: left;clear: left;}
+#adminquizreviewoptions span {float: left;clear: left; margin: 0.1em 0;}
+#page-mod-quiz-mod #reviewoptionshdr fieldset.fgroup span label,
+#adminquizreviewoptions span label {margin-left: 0.4em;}
 
 table#categoryquestions td,
 #page-mod-quiz-edit table#categoryquestions th{overflow:hidden;white-space:nowrap;}
@@ -135,12 +139,6 @@ table.quizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: left;bac
 #quiznojswarning {font-size: 0.7em;line-height: 1.1;}
 .jsenabled #quiznojswarning {display: none;}
 
-body #quizcontentsblock #repaginatedialog{display: none;}
-body.jsenabled #quizcontentsblock #repaginatedialog{display: block;}
-body.jsenabled #quizcontentsblock #repaginatedialog .hd{display:block;}
-body.jsenabled #quizcontentsblock #repaginatedialog .bd{padding:1em;}
-body.jsenabled #quizcontentsblock  .repaginatecommand #repaginatecommand{display:block;}
-
 body#question-preview .quemodname,
 body#question-preview .controls{text-align: center;}
 
@@ -162,8 +160,6 @@ body#question-preview .controls{text-align: center;}
 
 #adminquizreviewoptions {margin-bottom: 0.5em;}
 .quizquestionlistcontrols {text-align: center;}
-
-#randomquestiondialog_c select{width:100%;}
 
 .categoryinfo {padding: 0.3em;}
 
@@ -258,6 +254,18 @@ body#question-preview .controls{text-align: center;}
 #page-mod-quiz-edit .editq div.question div.description div.content .questiontext {max-width: 75%;}
 #page-mod-quiz-edit .editq div.question div.qnum{font-size:1.5em;}
 
+body #quizcontentsblock #repaginatedialog{display: none;}
+body.jsenabled #quizcontentsblock #repaginatedialog{display: block;}
+body.jsenabled #quizcontentsblock #repaginatedialog .hd{display:block;}
+body.jsenabled #quizcontentsblock #repaginatedialog .bd{padding:1em;}
+body.jsenabled #quizcontentsblock  .repaginatecommand #repaginatecommand{display:block;}
+
+body #quizcontentsblock #randomquestiondialog{display: none;}
+body.jsenabled #quizcontentsblock #randomquestiondialog{display: block;}
+
+body #quizcontentsblock #qtypechoicecontainer{display: none;}
+body.jsenabled #quizcontentsblock #qtypechoicecontainer{display: block;}
+
 #page-mod-quiz-edit .questionbankwindow select#catmenu_jump{
 /* In Opera9, IE6 the width of the
 select obeys the width of its content
@@ -286,6 +294,8 @@ bank window's title is prominent enough*/
 
 #page-mod-quiz-edit div#randomquestiondialog_c{width:90%;}
 #page-mod-quiz-edit div#randomquestiondialog_c .mform,
+#randomquestiondialog_c select{width:100%;}
+
 #page-mod-quiz-edit div#repaginatedialog .mform{margin-left:auto;margin-right:auto;}
 #page-mod-quiz-edit div.container div.generalbox{position:relative;display:block;border:0 none;margin:0;padding:0;}
 
