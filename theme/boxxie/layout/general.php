@@ -35,14 +35,16 @@ echo $OUTPUT->doctype() ?>
     <div id="page-header">
       <?php if ($PAGE->heading) { ?>
         <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
-        <div class="headermenu"><?php
-          echo $OUTPUT->login_info();
+        <div class="headermenu">
+          <?php echo $OUTPUT->login_info();
           if (!empty($PAGE->layout_options['langmenu'])) {
             echo $OUTPUT->lang_menu();
           }
-          echo $PAGE->headingmenu
-        ?></div><?php 
-      } ?>
+          echo $PAGE->headingmenu; ?>
+        </div>
+      <?php } ?>
+    </div>
+
       
       <?php if ($hasnavbar) { ?>
         <div class="navbar clearfix">
@@ -50,7 +52,6 @@ echo $OUTPUT->doctype() ?>
           <div class="navbutton"> <?php echo $PAGE->button; ?></div>
         </div>
       <?php } ?>
-    </div>
   
 <?php } ?>
       
