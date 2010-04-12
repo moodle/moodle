@@ -5671,7 +5671,7 @@ function get_string_manager() {
 
     if ($singleton === null) {
         if (empty($CFG->early_install_lang)) {
-            $singleton = new amos_string_manager($CFG->langotherroot, $CFG->langlocalroot);
+            $singleton = new core_string_manager($CFG->langotherroot, $CFG->langlocalroot);
         } else {
             $singleton = new install_string_manager();
         }
@@ -5724,7 +5724,7 @@ interface string_manager {
 
 
 /**
- * Low level string getching implementation.
+ * Standard string_manager implementation
  *
  * TODO: implement lang precompilation
  *
@@ -5732,7 +5732,7 @@ interface string_manager {
  * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class amos_string_manager implements string_manager {
+class core_string_manager implements string_manager {
     /** @var string location of all packs except 'en' */
     protected $otherroot;
     /** @var string location of all lang pack local modifications */
