@@ -15,10 +15,12 @@
 #qtypechoicecontainer {display: none;}
 body.jsenabled #qtypechoicecontainer {display: block;}
 
+#qtypechoicecontainer {background: white;}
 #qtypechoicecontainer #chooseqtype {width: 30em;}
 #qtypechoicecontainer #chooseqtypehead h3 {margin: 0;}
 #qtypechoicecontainer #chooseqtype .qtypes {position: relative;border-bottom: 1px solid grey;padding: 0.24em 0;}
-#qtypechoicecontainer #chooseqtype .qtypeoption {margin-bottom: 0;}
+#qtypechoicecontainer #chooseqtype .qtypeoption {margin-bottom: 0; padding: 0.2em 0 0.2em 0.3em;}
+#qtypechoicecontainer #chooseqtype .qtypeoption img {vertical-align: middle;}
 #qtypechoicecontainer #chooseqtype .instruction,
 #qtypechoicecontainer #chooseqtype .qtypesummary {display: none;position: absolute;top: 0px;right: 0px;bottom: 0px;left: 60%;margin: 0;border-left: 1px solid grey;padding: 0.3em 0.5em;}
 #qtypechoicecontainer #chooseqtype .instruction,
