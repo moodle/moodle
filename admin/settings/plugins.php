@@ -76,9 +76,6 @@ if ($hassiteconfig) {
         $licenses[$value] = get_string($value, 'license');
     }
     $temp->add(new admin_setting_configselect('sitedefaultlicense', get_string('configsitedefaultlicense','admin'), get_string('configsitedefaultlicensehelp','admin'), 'allrightsreserved', $licenses));
-
-    $ADMIN->add('licensesettings', $temp);
-
     $temp->add(new admin_setting_managelicenses());
     $ADMIN->add('licensesettings', $temp);
 
