@@ -67,8 +67,8 @@
 #page-course-report-participation-index .participationselectform label {margin-left:15px;margin-right:5px;}
 
 .coursebox {width: 100%;margin-bottom: 15px;}
-.coursebox .info {float: left;text-align:left;width: 48%;}
-.coursebox .summary {float: right;text-align:left;width: 48%;}
+.coursebox .info {float: left;text-align:left;width: 40%;}
+.coursebox .summary {float: right;text-align:left;width: 55%;}
 .coursebox .summary .category {text-align:right;}
 .coursebox .teachers li {list-style-type:none;padding:0;margin:0;}
 

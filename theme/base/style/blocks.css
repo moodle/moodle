@@ -5,7 +5,7 @@
 .sideblock .header h2 {margin:4px;}
 .sideblock .header .block_action {float:right;margin:0 4px;vertical-align:top;}
 .sideblock .header .block_action input {margin-right:2px;}
-.sideblock .content {margin:4px;}
+.sideblock .content {padding:4px;}
 .sideblock .footer {margin-bottom: 4px;}
 
 .sideblock img.userpicture {width:16px;height:16px;margin-right:4px;}
