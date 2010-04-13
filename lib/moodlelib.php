@@ -5938,6 +5938,10 @@ class core_string_manager implements string_manager {
                         // we do not support numeric keys - sorry!
                         continue;
                     }
+                    if (is_object($value) or is_array($value)) {
+                        // we support just string as value
+                        continue;
+                    }
                     $search[]  = '{$a->'.$key.'}';
                     $replace[] = (string)$value;
                 }
