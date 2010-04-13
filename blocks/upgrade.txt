@@ -14,7 +14,8 @@ required changes in code:
 * theme changes: move plugin styles into blocks/xxx/styles.css and use new css markers for images,
                  move all images into new blocks/xxx/pix/ directory and use new outputlib api
                  old global $THEME is fully replaced by $OUTPUT
-
+* remove '_utf8' from language pack names, use new {$a} syntax in language packs
+* use 'pluginname' lang pack identifier instead of 'blockname' 
 
 optional - no changes needed in older code:
 *
