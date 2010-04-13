@@ -293,21 +293,21 @@ class portfolio_add_button {
             $formats = portfolio_supported_formats_intersect($this->formats, $instance->supported_formats());
             if (count($formats) == 0) {
                 // bail. no common formats.
-                debugging(get_string('nocommonformats', 'portfolio', (object)array('location' => $this->callbackclass, 'formats' => implode(',', $this->formats))));
+                //debugging(get_string('nocommonformats', 'portfolio', (object)array('location' => $this->callbackclass, 'formats' => implode(',', $this->formats))));
                 return;
             }
             if ($error = portfolio_instance_sanity_check($instance)) {
                 // bail, plugin is misconfigured
-                debugging(get_string('instancemisconfigured', 'portfolio', get_string($error[$instance->get('id')], 'portfolio_' . $instance->get('plugin'))));
+                //debugging(get_string('instancemisconfigured', 'portfolio', get_string($error[$instance->get('id')], 'portfolio_' . $instance->get('plugin'))));
                 return;
             }
             if (!$instance->allows_multiple_exports() && $already = portfolio_existing_exports($USER->id, $instance->get('plugin'))) {
-                debugging(get_string('singleinstancenomultiallowed', 'portfolio'));
+                //debugging(get_string('singleinstancenomultiallowed', 'portfolio'));
                 return;
             }
             if ($mimetype&& !$instance->file_mime_check($mimetype)) {
                 // bail, we have a specific file or mimetype and this plugin doesn't support it
-                debugging(get_string('mimecheckfail', 'portfolio', (object)array('plugin' => $instance->get('plugin'), 'mimetype' => $mimetype)));
+                //debugging(get_string('mimecheckfail', 'portfolio', (object)array('plugin' => $instance->get('plugin'), 'mimetype' => $mimetype)));
                 return;
             }
             $url->param('instance', $instance->get('id'));
@@ -447,11 +447,11 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass, $
         }
         if (array_key_exists($instance->get('id'), $insane)) {
             // bail, plugin is misconfigured
-            debugging(get_string('instanceismisconfigured', 'portfolio', get_string($insane[$instance->get('id')], 'portfolio_' . $instance->get('plugin'))));
+            //debugging(get_string('instanceismisconfigured', 'portfolio', get_string($insane[$instance->get('id')], 'portfolio_' . $instance->get('plugin'))));
             continue;
         } else if (array_key_exists($instance->get('plugin'), $pinsane)) {
             // bail, plugin is misconfigured
-            debugging(get_string('pluginismisconfigured', 'portfolio', get_string($pinsane[$instance->get('plugin')], 'portfolio_' . $instance->get('plugin'))));
+            //debugging(get_string('pluginismisconfigured', 'portfolio', get_string($pinsane[$instance->get('plugin')], 'portfolio_' . $instance->get('plugin'))));
             continue;
         }
         if (!$instance->allows_multiple_exports() && in_array($instance->get('plugin'), $existingexports)) {
@@ -459,7 +459,7 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass, $
             continue;
         }
         if ($mimetype && !$instance->file_mime_check($mimetype)) {
-            debugging(get_string('mimecheckfail', 'portfolio', (object)array('plugin' => $instance->get('plugin'), 'mimetype' => $mimetype())));
+            //debugging(get_string('mimecheckfail', 'portfolio', (object)array('plugin' => $instance->get('plugin'), 'mimetype' => $mimetype())));
             // bail, we have a specific file and this plugin doesn't support it
             continue;
         }
@@ -469,7 +469,7 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass, $
     }
     if (empty($count)) {
         // bail. no common formats.
-        debugging(get_string('nocommonformats', 'portfolio', (object)array('location' => $callbackclass, 'formats' => implode(',', $callerformats))));
+        //debugging(get_string('nocommonformats', 'portfolio', (object)array('location' => $callbackclass, 'formats' => implode(',', $callerformats))));
         return;
     }
     $selectoutput .= "\n" . "</select>\n";
@@ -680,33 +680,33 @@ function portfolio_most_specific_formats($specificformats, $generalformats) {
         }
         if (in_array($f, $removedformats)) {
             // already been removed from the general list
-            debugging("skipping $f because it was already removed");
+            //debugging("skipping $f because it was already removed");
             unset($specificformats[$k]);
         }
         require_once($CFG->libdir . '/portfolio/formats.php');
         $fobj = new $allformats[$f];
         foreach ($generalformats as $key => $cf) {
             if (in_array($cf, $removedformats)) {
-                debugging("skipping $cf because it was already removed");
+                //debugging("skipping $cf because it was already removed");
                 continue;
             }
             $cfclass = $allformats[$cf];
             $cfobj = new $allformats[$cf];
             if ($fobj instanceof $cfclass && $cfclass != get_class($fobj)) {
-                debugging("unsetting $key $cf because it's not specific enough ($f is better)");
+                //debugging("unsetting $key $cf because it's not specific enough ($f is better)");
                 unset($generalformats[$key]);
                 $removedformats[] = $cf;
                 continue;
             }
             // check for conflicts
             if ($fobj->conflicts($cf)) {
-                debugging("unsetting $key $cf because it conflicts with $f");
+                //debugging("unsetting $key $cf because it conflicts with $f");
                 unset($generalformats[$key]);
                 $removedformats[] = $cf;
                 continue;
             }
             if ($cfobj->conflicts($f)) {
-                debugging("unsetting $key $cf because it reverse-conflicts with $f");
+                //debugging("unsetting $key $cf because it reverse-conflicts with $f");
                 $removedformats[] = $cf;
                 unset($generalformats[$key]);
                 continue;
