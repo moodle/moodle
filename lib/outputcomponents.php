@@ -217,12 +217,25 @@ class help_icon implements renderable {
     /**
      * Constructor
      * @param string $identifier  string for help page title,
-     *  string with _hlp suffix is used for the actual help text. 
+     *  string with _hlp suffix is used for the actual help text.
      * @param string $component
      */
-    public function __construct($pidentifier, $component) {
-        $this->identifier = $helpidentifier;
+    public function __construct($identifier, $component) {
+        $this->identifier = $identifier;
         $this->component  = $component;
+    }
+
+    /**
+     * Verifies that both help strings exists, shows debug warnings if not
+     */
+    public function diag_strings() {
+        $sm = get_string_manager();
+        if (!$sm->string_exists($this->identifier, $this->component)) {
+            debugging("Help title string does not exist: [$this->identifier, $this->component]");
+        }
+        if (!$sm->string_exists($this->identifier.'_hlp', $this->component)) {
+            debugging("Help title string does not exist: [{$this->identifier}_hlp, $this->component]");
+        }
     }
 }
 
@@ -458,7 +471,7 @@ class single_select implements renderable {
     }
 
     /**
-     * Constructor: sets up the other components in case they are needed
+     * Adds help icon.
      * @param string $page  The keyword that defines a help page
      * @param string $title A descriptive text for accesibility only
      * @param string $component
@@ -467,6 +480,17 @@ class single_select implements renderable {
      */
     public function set_old_help_icon($helppage, $title, $component = 'moodle') {
         $this->helpicon = new old_help_icon($helppage, $title, $component);
+    }
+
+    /**
+     * Adds help icon.
+     * @param string $identifier The keyword that defines a help page
+     * @param string $component
+     * @param bool $linktext add extra text to icon
+     * @return void
+     */
+    public function set_help_icon($identifier, $component = 'moodle') {
+        $this->helpicon = new old_help_icon($identifier, $component);
     }
 
     /**
@@ -555,7 +579,7 @@ class url_select implements renderable {
     }
 
     /**
-     * Constructor: sets up the other components in case they are needed
+     * Adds help icon.
      * @param string $page  The keyword that defines a help page
      * @param string $title A descriptive text for accesibility only
      * @param string $component
@@ -564,6 +588,17 @@ class url_select implements renderable {
      */
     public function set_old_help_icon($helppage, $title, $component = 'moodle') {
         $this->helpicon = new old_help_icon($helppage, $title, $component);
+    }
+
+    /**
+     * Adds help icon.
+     * @param string $identifier The keyword that defines a help page
+     * @param string $component
+     * @param bool $linktext add extra text to icon
+     * @return void
+     */
+    public function set_help_icon($identifier, $component = 'moodle') {
+        $this->helpicon = new _help_icon($identifier, $component);
     }
 
     /**

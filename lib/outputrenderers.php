@@ -1092,6 +1092,8 @@ class core_renderer extends renderer_base {
 
         if ($select->helpicon instanceof help_icon) {
             $output .= $this->render($select->helpicon);
+        } else if ($select->helpicon instanceof old_help_icon) {
+            $output .= $this->render($select->helpicon);
         }
 
         $output .= html_writer::select($select->options, $select->name, $select->selected, $select->nothing, $select->attributes);
@@ -1158,6 +1160,8 @@ class core_renderer extends renderer_base {
         }
 
         if ($select->helpicon instanceof help_icon) {
+            $output .= $this->render($select->helpicon);
+        } else if ($select->helpicon instanceof old_help_icon) {
             $output .= $this->render($select->helpicon);
         }
 
@@ -1355,7 +1359,10 @@ END;
             $image = $this->pix_icon($icon, $iconalt, $component, array('class'=>'icon'));
         }
 
-        $help = $this->old_help_icon($helpidentifier, $text, $component);
+        $help = '';
+        if ($helpidentifier) {
+            $help = $this->help_icon($helpidentifier, $component);
+        }
 
         return $this->heading($image.$text.$help, 2, 'main help');
     }
@@ -1410,6 +1417,69 @@ END;
 
         // note: this title is displayed only if JS is disabled, otherwise the link will have the new ajax tooltip
         $title = get_string('helpprefix2', '', trim($helpicon->title, ". \t"));
+
+        $attributes = array('href'=>$url, 'title'=>$title);
+        $id = html_writer::random_id('helpicon');
+        $attributes['id'] = $id;
+        $this->add_action_handler(new popup_action('click', $url), $id);
+        $output = html_writer::tag('a', $output, $attributes);
+
+        // and finally span
+        return html_writer::tag('span', $output, array('class' => 'helplink'));
+    }
+
+    /**
+     * Print a help icon.
+     *
+     * @param string $identifier The keyword that defines a help page
+     * @param string $component component name
+     * @param string|bool $linktext true means use $title as link text, string means link text value
+     * @return string HTML fragment
+     */
+    public function help_icon($identifier, $component = 'moodle', $linktext = '') {
+        $icon = new help_icon($identifier, $component);
+        $icon->diag_strings();
+        if ($linktext === true) {
+            $icon->linktext = get_string($icon->identifier, $icon->component);
+        } else if (!empty($linktext)) {
+            $icon->linktext = $linktext;
+        }
+        return $this->render($icon);
+    }
+
+    /**
+     * Implementation of user image rendering.
+     * @param help_icon $helpicon
+     * @return string HTML fragment
+     */
+    protected function render_help_icon(help_icon $helpicon) {
+        global $CFG;
+
+        // first get the help image icon
+        $src = $this->pix_url('help');
+
+        $title = get_string($helpicon->identifier, $helpicon->component);
+
+        if (empty($helpicon->linktext)) {
+            $alt = $title;
+        } else {
+            $alt = get_string('helpwiththis');
+        }
+
+        $attributes = array('src'=>$src, 'alt'=>$alt, 'class'=>'iconhelp');
+        $output = html_writer::empty_tag('img', $attributes);
+
+        // add the link text if given
+        if (!empty($helpicon->linktext)) {
+            // the spacing has to be done through CSS
+            $output .= $helpicon->linktext;
+        }
+
+        // now create the link around it
+        $url = new moodle_url('/help.php', array('component' => $helpicon->component, 'identifier' => $helpicon->identifier, 'lang'=>current_language()));
+
+        // note: this title is displayed only if JS is disabled, otherwise the link will have the new ajax tooltip
+        $title = get_string('helpprefix2', '', trim($title, ". \t"));
 
         $attributes = array('href'=>$url, 'title'=>$title);
         $id = html_writer::random_id('helpicon');

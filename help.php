@@ -17,7 +17,8 @@ require_once('config.php');
 
 $identifier = required_param('identifier', PARAM_SAFEDIR);
 $component  = required_param('component', PARAM_SAFEDIR);
-$lang       = required_param('component', PARAM_LANG);
+$lang       = required_param('component', PARAM_LANG); // TODO: maybe split into separate scripts
+$ajax       = optional_param('ajax', 0, PARAM_BOOL);
 
 if (!$lang) {
     $lang = 'en';
@@ -25,12 +26,25 @@ if (!$lang) {
 
 $SESSION->lang = $lang; // does not actually modify session because we do not use cookies here
 
-// send basic headers only, we do not need full html page here
-@header('Content-Type: text/plain; charset=utf-8');
+$sm = get_string_manager();
 
-if (strpos('_hlp', $identifier) === false) {
-    echo '<strong>Old 1.9 style help files need to be converted to standard strings with "_hlp" suffix: '.$component.'/'.$identifier.'</strong>';
-    die;
+//TODO: this is a minimalistic help page, needs a lot more love 
+
+$PAGE->set_url('/help.php');
+$PAGE->set_pagelayout('popup'); // not really a popup because this page gets dispalyed directly only when JS disabled
+
+if ($ajax) {
+    @header('Content-Type: text/plain; charset=utf-8');
+} else {
+    echo $OUTPUT->header();
 }
 
-echo get_string($identifier, $component);
+if ($sm->string_exists($identifier.'_hlp', $component)) {
+    echo get_string($identifier.'_hlp', $component);
+} else {
+    echo "<p><strong>TODO</strong>: fix help for [{$identifier}_hlp, $component]</p>";
+}
+
+if (!$ajax) {
+    echo $OUTPUT->footer();
+}
