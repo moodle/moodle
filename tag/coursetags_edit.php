@@ -127,7 +127,7 @@ echo $OUTPUT->header();
 
         // Print the add and delete form
         coursetag_get_jscript();
-        $addtagshelp = $OUTPUT->help_icon('addtags', 'adding tags', $tagslang);
+        $addtagshelp = $OUTPUT->old_help_icon('addtags', 'adding tags', $tagslang);
         $edittagthisunit = get_string('edittagthisunit', $tagslang);
         $arrowtitle = get_string('arrowtitle', $tagslang);
         $sesskey = sesskey();
@@ -160,7 +160,7 @@ echo $OUTPUT->header();
                     </div>
 EOT;
         if ($coursetabs) {
-            $deletetagshelp = $OUTPUT->help_icon('deletetags', 'deleting tags', $tagslang);
+            $deletetagshelp = $OUTPUT->old_help_icon('deletetags', 'deleting tags', $tagslang);
             $editdeletemytag = get_string('editdeletemytag', $tagslang);
             $outstr .= <<<EOT1
                     <div class="coursetag_edit_row">

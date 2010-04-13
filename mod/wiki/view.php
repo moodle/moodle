@@ -367,7 +367,7 @@
 
         /// Formatting Rules
         echo '<td class="howtowiki">';
-        echo $OUTPUT->help_icon('howtowiki', get_string('howtowiki', 'wiki'), 'wiki');
+        echo $OUTPUT->old_help_icon('howtowiki', get_string('howtowiki', 'wiki'), 'wiki');
         echo '</td>';
 
         echo '</tr></table>';

@@ -2733,11 +2733,11 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
  * @return string|void Depending on value of $return
  */
 function helpbutton($page, $title, $module='moodle', $image=true, $linktext=false, $text='', $return=false, $imagetext='') {
-    debugging('helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_icon().');
+    debugging('helpbutton() has been deprecated. Please change your code to use $OUTPUT->old_help_icon().');
 
     global $OUTPUT;
 
-    $output = $OUTPUT->help_icon($page, $title, $module, $linktext);
+    $output = $OUTPUT->old_help_icon($page, $title, $module, $linktext);
 
     // hide image with CSS if needed
 
@@ -3291,7 +3291,7 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
     $select->disabled = $disabled;
 
     $select->set_label($selectlabel);
-    $select->set_help_icon($help, $helptext);
+    $select->set_old_help_icon($help, $helptext);
 
     $output = $OUTPUT->render($select);
 

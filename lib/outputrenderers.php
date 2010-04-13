@@ -1355,7 +1355,7 @@ END;
             $image = $this->pix_icon($icon, $iconalt, $component, array('class'=>'icon'));
         }
 
-        $help = $this->help_icon($helpidentifier, $text, $component);
+        $help = $this->old_help_icon($helpidentifier, $text, $component);
 
         return $this->heading($image.$text.$help, 2, 'main help');
     }
@@ -1369,8 +1369,8 @@ END;
      * @param string|bool $linktext true means use $title as link text, string means link text value
      * @return string HTML fragment
      */
-    public function help_icon($helpidentifier, $title, $component = 'moodle', $linktext = '') {
-        $icon = new help_icon($helpidentifier, $title, $component);
+    public function old_help_icon($helpidentifier, $title, $component = 'moodle', $linktext = '') {
+        $icon = new old_help_icon($helpidentifier, $title, $component);
         if ($linktext === true) {
             $icon->linktext = $title;
         } else if (!empty($linktext)) {
@@ -1384,7 +1384,7 @@ END;
      * @param help_icon $helpicon
      * @return string HTML fragment
      */
-    protected function render_help_icon(help_icon $helpicon) {
+    protected function render_old_help_icon(old_help_icon $helpicon) {
         global $CFG;
 
         // first get the help image icon

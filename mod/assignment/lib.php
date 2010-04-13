@@ -1000,7 +1000,7 @@ class assignment_base {
             } else {
                 echo '<div class="format">';
                 echo html_writer::select(format_text_menu(), "format", $submission->format, false);
-                echo $OUTPUT->help_icon("textformat", get_string("helpformatting"));
+                echo $OUTPUT->old_help_icon("textformat", get_string("helpformatting"));
                 echo '</div>';
             }
         }
@@ -1402,7 +1402,7 @@ class assignment_base {
             echo '<label for="mailinfo">'.get_string('enableemailnotification','assignment').'</label>';
             echo '<input type="hidden" name="mailinfo" value="0" />';
             echo '<input type="checkbox" id="mailinfo" name="mailinfo" value="1" '.$lastmailinfo.' />';
-            echo $OUTPUT->help_icon('emailnotification', get_string('enableemailnotification', 'assignment'), 'assignment').'</p></div>';
+            echo $OUTPUT->old_help_icon('emailnotification', get_string('enableemailnotification', 'assignment'), 'assignment').'</p></div>';
             echo '</div>';
             echo '<div class="fastgbutton"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></div>';
             echo '</div>';
@@ -1420,7 +1420,7 @@ class assignment_base {
         echo '</td>';
         echo '<td>';
         echo '<input type="text" id="perpage" name="perpage" size="1" value="'.$perpage.'" />';
-        echo $OUTPUT->help_icon('pagesize', get_string('pagesize','assignment'), 'assignment');
+        echo $OUTPUT->old_help_icon('pagesize', get_string('pagesize','assignment'), 'assignment');
         echo '</td></tr>';
         echo '<tr><td>';
         echo '<label for="quickgrade">'.get_string('quickgrade','assignment').'</label>';
@@ -1428,7 +1428,7 @@ class assignment_base {
         echo '<td>';
         $checked = $quickgrade ? 'checked="checked"' : '';
         echo '<input type="checkbox" id="quickgrade" name="quickgrade" value="1" '.$checked.' />';
-        echo $OUTPUT->help_icon('quickgrade', get_string('quickgrade', 'assignment'), 'assignment').'</p></div>';
+        echo $OUTPUT->old_help_icon('quickgrade', get_string('quickgrade', 'assignment'), 'assignment').'</p></div>';
         echo '</td></tr>';
         echo '<tr><td colspan="2">';
         echo '<input type="submit" value="'.get_string('savepreferences').'" />';

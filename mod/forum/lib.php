@@ -4204,7 +4204,7 @@ function forum_search_form($course, $search='') {
     $output  = '<div class="forumsearch">';
     $output .= '<form action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
     $output .= '<fieldset class="invisiblefieldset">';
-    $output .= $OUTPUT->help_icon('search', get_string('search'));
+    $output .= $OUTPUT->old_help_icon('search', get_string('search'));
     $output .= '<input name="search" type="text" size="18" value="'.s($search, true).'" alt="search" />';
     $output .= '<input value="'.get_string('searchforums', 'forum').'" type="submit" />';
     $output .= '<input name="id" type="hidden" value="'.$course->id.'" />';
@@ -8032,7 +8032,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         if (forum_is_forcesubscribed($forumobject)) {
             $notekey = $forumnode->add(get_string("forcessubscribe", 'forum'));
             $string = get_string('allowchoice', 'forum');
-            $helpbutton = $OUTPUT->help_icon("subscription", $string, "forum");
+            $helpbutton = $OUTPUT->old_help_icon("subscription", $string, "forum");
             if (has_capability('mod/forum:managesubscriptions', $PAGE->cm->context)) {
                 $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'force'=>'no'));
                 $forumnode->add($string, $url, navigation_node::TYPE_SETTING);
@@ -8042,11 +8042,11 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         } else if ($forumobject->forcesubscribe == FORUM_DISALLOWSUBSCRIBE) {
             $string = get_string('disallowsubscribe', 'forum');
             $notekey = $forumnode->add($string);
-            $helpbutton = $OUTPUT->help_icon("subscription", $string, "forum");
+            $helpbutton = $OUTPUT->old_help_icon("subscription", $string, "forum");
         } else {
             $string = get_string("forcesubscribe", "forum");
             $notekey = $forumnode->add(get_string("allowsallsubscribe", 'forum'));
-            $helpbutton = $OUTPUT->help_icon("subscription", $string, "forum");
+            $helpbutton = $OUTPUT->old_help_icon("subscription", $string, "forum");
 
             if (has_capability('mod/forum:managesubscriptions', $PAGE->cm->context)) {
                 $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'force'=>'yes'));

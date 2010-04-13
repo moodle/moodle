@@ -548,7 +548,7 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
     );
 
     print '<tr><td>';
-    echo $OUTPUT->help_icon('reportcontent', get_string('reportcontent', 'hotpot'), 'hotpot');
+    echo $OUTPUT->old_help_icon('reportcontent', get_string('reportcontent', 'hotpot'), 'hotpot');
     print '</td><th align="right" scope="col">'.get_string('reportcontent', 'hotpot').':</th><td colspan="7">';
     foreach ($menus as $name => $options) {
         $value = $formdata[$name];
@@ -587,7 +587,7 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
     );
 
     print '<tr><td>';
-    echo $OUTPUT->help_icon('reportformat', get_string('reportformat', 'hotpot'), 'hotpot');
+    echo $OUTPUT->old_help_icon('reportformat', get_string('reportformat', 'hotpot'), 'hotpot');
     print '</td>';
     foreach ($menus as $name => $options) {
         $value = $formdata[$name];

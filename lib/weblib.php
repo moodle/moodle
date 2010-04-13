@@ -2287,7 +2287,7 @@ function switchroles_form($courseid) {
         unset($roles[$CFG->guestroleid]);
         $popupurl = new moodle_url('/course/view.php', array('id'=>$courseid, 'sesskey'=>sesskey()));
         $select = new single_select($popupurl, 'switchrole', $roles, null, array(''=>get_string('switchroleto')), 'switchrole');
-        $select->set_help_icon('switchrole', get_string('switchroleto'));
+        $select->set_old_help_icon('switchrole', get_string('switchroleto'));
         return $OUTPUT->render($select);
     }
 

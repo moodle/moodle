@@ -942,7 +942,7 @@ class flexible_table {
             $html .= '<div class="mdl-align">';
             $html .= '<input type="submit" value="'.get_string('downloadas', 'table').'"/>';
             $html .= html_writer::select($downloadoptions, 'download', $this->defaultdownloadformat, false);
-            $html .= $OUTPUT->help_icon('tableexportformats', get_string('tableexportformats', 'table'));
+            $html .= $OUTPUT->old_help_icon('tableexportformats', get_string('tableexportformats', 'table'));
             $html .= '</div></form>';
 
             return $html;

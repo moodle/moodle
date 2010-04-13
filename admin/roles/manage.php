@@ -194,7 +194,7 @@
     $table->wrap = array('nowrap', '', 'nowrap','nowrap');
     $table->width = '90%';
     $table->head = array(
-        get_string('role') . ' ' . $OUTPUT->help_icon('roles', get_string('roles')),
+        get_string('role') . ' ' . $OUTPUT->old_help_icon('roles', get_string('roles')),
         get_string('description'),
         get_string('shortname'),
         get_string('edit')

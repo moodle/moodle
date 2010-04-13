@@ -125,7 +125,7 @@
     echo html_writer::select($roleoptions,'roleid',$roleid,false);
     echo '<label for="menuaction">'.get_string('showactions').'</label>'."\n";
     echo html_writer::select($actionoptions,'action',$action,false);
-    echo $OUTPUT->help_icon('participationreport', get_string('participationreport'));
+    echo $OUTPUT->old_help_icon('participationreport', get_string('participationreport'));
     echo '<input type="submit" value="'.get_string('go').'" />'."\n</div></form>\n";
 
     $baseurl =  $CFG->wwwroot.'/course/report/participation/index.php?id='.$course->id.'&amp;roleid='
@@ -277,7 +277,7 @@
         echo '<label for="formaction">'.get_string("withselectedusers").'</label>';
         $displaylist['messageselect.php'] = get_string('messageselectadd');
         echo html_writer::select($displaylist, 'formaction', '', array(''=>'choosedots'), array('id'=>'formactionselect'));
-        echo $OUTPUT->help_icon("participantswithselectedusers", get_string("withselectedusers"));
+        echo $OUTPUT->old_help_icon("participantswithselectedusers", get_string("withselectedusers"));
         echo '<input type="submit" value="' . get_string('ok') . '" />'."\n";
         echo '</div>';
         echo '</div>'."\n";

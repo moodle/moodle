@@ -151,7 +151,7 @@ class user_picture implements renderable {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class help_icon implements renderable {
+class old_help_icon implements renderable {
     /**
      * @var string $helpidentifier lang pack identifier (should inlcude the "_hlp" suffix)
      */
@@ -430,8 +430,8 @@ class single_select implements renderable {
      * @param bool $linktext add extra text to icon
      * @return void
      */
-    public function set_help_icon($helppage, $title, $component = 'moodle') {
-        $this->helpicon = new help_icon($helppage, $title, $component);
+    public function set_old_help_icon($helppage, $title, $component = 'moodle') {
+        $this->helpicon = new old_help_icon($helppage, $title, $component);
     }
 
     /**
@@ -527,8 +527,8 @@ class url_select implements renderable {
      * @param bool $linktext add extra text to icon
      * @return void
      */
-    public function set_help_icon($helppage, $title, $component = 'moodle') {
-        $this->helpicon = new help_icon($helppage, $title, $component);
+    public function set_old_help_icon($helppage, $title, $component = 'moodle') {
+        $this->helpicon = new old_help_icon($helppage, $title, $component);
     }
 
     /**

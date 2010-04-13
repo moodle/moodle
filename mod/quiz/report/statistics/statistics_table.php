@@ -146,7 +146,7 @@ class quiz_report_statistics_table extends flexible_table {
             if ($question->_stats->negcovar){
                 $negcovar = get_string('negcovar', 'quiz_statistics');
                 if (!$this->is_downloading()){
-                    $negcovar .= $OUTPUT->help_icon('negcovar', $negcovar, 'quiz_statistics');
+                    $negcovar .= $OUTPUT->old_help_icon('negcovar', $negcovar, 'quiz_statistics');
                     return '<div class="negcovar">'.$negcovar.'</div>';
                 } else {
                     return $negcovar;

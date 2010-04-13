@@ -96,14 +96,14 @@ if (($courses = $DB->get_records_sql_menu($sql, $params)) && !empty($searchcours
     echo ' ' . get_string('courses') . ': ';
     echo html_writer::select($courses, 'coursefilter', $coursefilter);
     echo '<input type="submit" value="'.get_string('mapcourse', 'feedback').'"/>';
-    echo $OUTPUT->help_icon('mapcourses', '', 'feedback', true);
+    echo $OUTPUT->old_help_icon('mapcourses', '', 'feedback', true);
     echo '<input type="button" value="'.get_string('searchagain').'" onclick="document.location=\'mapcourse.php?id='.$id.'\'"/>';
     echo '<input type="hidden" name="searchcourse" value="'.$searchcourse.'"/>';
     echo '<input type="hidden" name="feedbackid" value="'.$feedback->id.'"/>';
-    echo $OUTPUT->help_icon('searchcourses', '', 'feedback', true);
+    echo $OUTPUT->old_help_icon('searchcourses', '', 'feedback', true);
 } else {
     echo '<input type="text" name="searchcourse" value="'.$searchcourse.'"/> <input type="submit" value="'.get_string('searchcourses').'"/>';
-    echo $OUTPUT->help_icon('searchcourses', '', 'feedback', true);
+    echo $OUTPUT->old_help_icon('searchcourses', '', 'feedback', true);
 }
 
 echo '</form>';

@@ -210,9 +210,9 @@ foreach ( $providers as $providerid => $provider){
 
 /// TODO XXX: This is only a quick hack ... helpfile locations should be provided as part of the provider definition
     if ($provider->component == 'moodle') {
-        $helpbtn = $OUTPUT->help_icon('moodle_'.$provider->name, $providername, 'message');
+        $helpbtn = $OUTPUT->old_help_icon('moodle_'.$provider->name, $providername, 'message');
     } else {
-        $helpbtn = $OUTPUT->help_icon('message_'.$provider->name, $providername, basename($provider->component));
+        $helpbtn = $OUTPUT->old_help_icon('message_'.$provider->name, $providername, basename($provider->component));
     }
 
     echo '<tr><th align="right">'.$providername.$helpbtn.'</th><td colspan="'.$number_procs.'"></td></tr>'."\n";

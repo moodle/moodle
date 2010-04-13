@@ -2216,7 +2216,7 @@ class PresetImporter {
 
         if (!empty($currentfields) && !empty($newfields)) {
             echo "<h3>$strfieldmappings ";
-            echo $OUTPUT->help_icon('fieldmappings', $strfieldmappings, 'data');
+            echo $OUTPUT->old_help_icon('fieldmappings', $strfieldmappings, 'data');
             echo '</h3><table>';
 
             foreach ($newfields as $nid => $newfield) {

@@ -669,7 +669,7 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts) {
             </div>
         </form>
     </div>
-    <?php echo $OUTPUT->help_icon('random', get_string('random', 'quiz'), 'quiz'); ?>
+    <?php echo $OUTPUT->old_help_icon('random', get_string('random', 'quiz'), 'quiz'); ?>
     <?php
     echo "\n</div>";
 }
@@ -1139,7 +1139,7 @@ function quiz_print_grading_form($quiz, $pageurl, $tabindex) {
     echo '<label for="inputmaxgrade">' . get_string('maximumgradex', '', $a) . "</label>";
     echo '<input type="hidden" name="savechanges" value="save" />';
     echo '<input type="submit" value="' . $strsave . '" />';
-    echo $OUTPUT->help_icon('maxgrade', get_string('maximumgrade'), 'quiz');
+    echo $OUTPUT->old_help_icon('maxgrade', get_string('maximumgrade'), 'quiz');
     echo '</fieldset>';
     echo "</div></form>\n";
     return $tabindex + 1;

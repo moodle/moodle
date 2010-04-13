@@ -38,7 +38,7 @@
         <input type="checkbox" value="1" name="enrol_createnewusers" <?php if ($frm->enrol_createnewusers) echo "checked=\"checked\"" ?> />
     </td>
     <td>
-    <?php echo $OUTPUT->help_icon('createnewusers', 'More detail about this option', 'enrol/imsenterprise'); ?>
+    <?php echo $OUTPUT->old_help_icon('createnewusers', 'More detail about this option', 'enrol/imsenterprise'); ?>
     </td>
 </tr>
 
@@ -48,7 +48,7 @@
         <input type="checkbox" value="1" name="enrol_imsdeleteusers" <?php if ($frm->enrol_imsdeleteusers) echo "checked=\"checked\"" ?> />
     </td>
     <td>
-    <?php echo $OUTPUT->help_icon('deleteusers', 'More detail about this option', 'enrol/imsenterprise'); ?>
+    <?php echo $OUTPUT->old_help_icon('deleteusers', 'More detail about this option', 'enrol/imsenterprise'); ?>
     </td>
 </tr>
 
@@ -78,7 +78,7 @@
         <input type="checkbox" value="1" name="enrol_imssourcedidfallback" <?php if ($frm->enrol_imssourcedidfallback) echo "checked=\"checked\"" ?> />
     </td>
     <td>
-    <?php echo $OUTPUT->help_icon('sourceddidfallback', 'More detail about this option', 'enrol/imsenterprise'); ?>
+    <?php echo $OUTPUT->old_help_icon('sourceddidfallback', 'More detail about this option', 'enrol/imsenterprise'); ?>
     </td>
 </tr>
 <!--
@@ -138,7 +138,7 @@ foreach($this->imsroles as $imsrolenum=>$imsrolename){
         <input type="text" <?php echo 'value="'.intval($frm->enrol_truncatecoursecodes).'"' ?> name="enrol_truncatecoursecodes" size="3" maxlength="3" />
     </td>
     <td>
-    <?php echo $OUTPUT->help_icon('truncatecoursecodes', 'More detail about this option', 'enrol/imsenterprise'); ?>
+    <?php echo $OUTPUT->old_help_icon('truncatecoursecodes', 'More detail about this option', 'enrol/imsenterprise'); ?>
     </td>
 </tr>
 
@@ -148,7 +148,7 @@ foreach($this->imsroles as $imsrolenum=>$imsrolename){
         <input type="checkbox" value="1" name="enrol_createnewcourses" <?php if ($frm->enrol_createnewcourses) echo "checked=\"checked\"" ?> />
     </td>
     <td>
-    <?php echo $OUTPUT->help_icon('createnewcourses', 'More detail about this option', 'enrol/imsenterprise'); ?>
+    <?php echo $OUTPUT->old_help_icon('createnewcourses', 'More detail about this option', 'enrol/imsenterprise'); ?>
     </td>
 </tr>
 
@@ -158,7 +158,7 @@ foreach($this->imsroles as $imsrolenum=>$imsrolename){
         <input type="checkbox" value="1" name="enrol_createnewcategories" <?php if ($frm->enrol_createnewcategories) echo "checked=\"checked\"" ?> />
     </td>
     <td>
-    <?php echo $OUTPUT->help_icon('categorisation', 'More detail about this option', 'enrol/imsenterprise'); ?>
+    <?php echo $OUTPUT->old_help_icon('categorisation', 'More detail about this option', 'enrol/imsenterprise'); ?>
     </td>
 </tr>
 
@@ -168,7 +168,7 @@ foreach($this->imsroles as $imsrolenum=>$imsrolename){
         <input type="checkbox" value="1" name="enrol_imsunenrol" <?php if ($frm->enrol_imsunenrol) echo "checked=\"checked\"" ?> />
     </td>
     <td>
-    <?php echo $OUTPUT->help_icon('unenrol', 'More detail about this option', 'enrol/imsenterprise'); ?>
+    <?php echo $OUTPUT->old_help_icon('unenrol', 'More detail about this option', 'enrol/imsenterprise'); ?>
     </td>
 </tr>
 
@@ -180,7 +180,7 @@ foreach($this->imsroles as $imsrolenum=>$imsrolename){
     <td align="right"><?php  print_string('restricttarget', 'enrol_imsenterprise') ?>:</td>
     <td colspan="2">
         <input type="text" <?php echo 'value="'.htmlspecialchars($frm->enrol_imsrestricttarget).'"' ?> name="enrol_imsrestricttarget" size="20" maxlength="32" />
-    <?php echo $OUTPUT->help_icon('target', 'More detail about this option', 'enrol/imsenterprise'); ?>
+    <?php echo $OUTPUT->old_help_icon('target', 'More detail about this option', 'enrol/imsenterprise'); ?>
     </td>
 </tr>
 
@@ -190,7 +190,7 @@ foreach($this->imsroles as $imsrolenum=>$imsrolename){
         <input type="checkbox" value="1" name="enrol_imscapitafix" <?php if ($frm->enrol_imscapitafix) echo "checked=\"checked\"" ?> />
     </td>
     <td>
-    <?php echo $OUTPUT->help_icon('capita', 'More detail about this option', 'enrol/imsenterprise'); ?>
+    <?php echo $OUTPUT->old_help_icon('capita', 'More detail about this option', 'enrol/imsenterprise'); ?>
     </td>
 </tr>
 

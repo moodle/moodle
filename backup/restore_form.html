@@ -265,7 +265,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo '<label for="shortnamefield">'.get_string ('shortname').'</label>';
         echo "</td>";
         echo "<td><input type=\"text\" id=\"shortnamefield\" name=\"shortname\" maxlength=\"100\"  size=\"20\" value=\"".s($form1->shortname)."\" alt=\"".get_string("shortname")."\"  />" ;
-        echo $OUTPUT->help_icon("courseshortname", get_string("shortname"));
+        echo $OUTPUT->old_help_icon("courseshortname", get_string("shortname"));
         if (isset($err["shortname"])) echo $OUTPUT->error_text($err["shortname"]);
         echo "</td>";
         echo "</tr>";
@@ -274,7 +274,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo '<label for="fullnamefield">'.get_string ('fullname').'</label>';
         echo "</td>";
         echo "<td><input type=\"text\" id=\"fullnamefield\" name=\"fullname\" maxlength=\"254\" size=\"50\" value=\"".s($form1->fullname)."\" alt=\" ".get_string("fullname")."\"  />" ;
-        echo $OUTPUT->help_icon("coursefullname", get_string("fullname"));
+        echo $OUTPUT->old_help_icon("coursefullname", get_string("fullname"));
         if (isset($err["fullname"])) echo $OUTPUT->error_text($err["fullname"]);
         echo"</td></tr>";
     } else {
@@ -299,7 +299,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             $yearselector = html_writer::select_time('years', "startyear", $form1->startdate);
 
             echo $dayselector . $monthselector . $yearselector;
-            echo $OUTPUT->help_icon("coursestartdate", get_string("startdate"));
+            echo $OUTPUT->old_help_icon("coursestartdate", get_string("startdate"));
         } else {
             print_string('notavailable');
             echo '<input type="hidden" name="startyear" value="0" />';
@@ -459,7 +459,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         //Now print the Groups tr (assume there is no $info->backup_groups)
         echo "<tr>";
         echo "<td align=\"right\" colspan=\"2\"><b>";
-        $helplink = $OUTPUT->help_icon('grouprestore', get_string('groups'));
+        $helplink = $OUTPUT->old_help_icon('grouprestore', get_string('groups'));
         echo '<label for="menurestore_groups">'.get_string ("groups").'</label>'.$helplink;
         echo "</b></td><td colspan=\"2\">";
         $group_options[RESTORE_GROUPS_NONE] = get_string('none');

@@ -136,7 +136,7 @@ class hotpot_report extends hotpot_default_report {
 							if (empty($table->caption)) {
 								$table->caption = get_string('indivresp', 'quiz');
 								if ($is_html) {
-									$table->caption .= $OUTPUT->help_icon('responsestable', $table->caption, 'hotpot');
+									$table->caption .= $OUTPUT->old_help_icon('responsestable', $table->caption, 'hotpot');
 								}
 							}
 							$hints = empty($response->hints) ? 0 : $response->hints;
@@ -260,14 +260,14 @@ class hotpot_report extends hotpot_default_report {
 			$br = $is_html ? '<br />' : "\n";
 			$space = $is_html ? '&nbsp;' : "";
 			$no_value = $is_html ? '--' : "";
-			$help_button = $is_html ? $OUTPUT->help_icon("discrimination", get_string('discrimination', 'quiz'), "quiz") : "";
+			$help_button = $is_html ? $OUTPUT->old_help_icon("discrimination", get_string('discrimination', 'quiz'), "quiz") : "";
 			// table properties
 			unset($table);
 			$table->border = 1;
 			$table->width = '100%';
 			$table->caption = get_string('itemanal', 'quiz');
 			if ($is_html) {
-				$table->caption .= $OUTPUT->help_icon('analysistable', $table->caption, 'hotpot');
+				$table->caption .= $OUTPUT->old_help_icon('analysistable', $table->caption, 'hotpot');
 			}
 			// initialize legend, if necessary
 			if (!empty($options['reportshowlegend'])) {

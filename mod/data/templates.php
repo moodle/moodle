@@ -203,7 +203,7 @@ echo '<tr><td valign="top">';
 if ($mode != 'csstemplate' and $mode != 'jstemplate') {
     // Add all the available fields for this data.
     echo '<label for="availabletags">'.get_string('availabletags','data').'</label>';
-    echo $OUTPUT->help_icon('tags', get_string('tags'), 'data');
+    echo $OUTPUT->old_help_icon('tags', get_string('tags'), 'data');
     echo '<br />';
 
 

@@ -106,7 +106,7 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
             $out .= '<input type="hidden" name="categoryid" value="' . $category->id . '" />';
             $out .= ' <input type="submit" name="addrandom" value="'.
                     $straddtoquiz.'" '.$disabled.' />';
-            $out .= $OUTPUT->help_icon('random', get_string('random', 'quiz'), 'quiz');
+            $out .= $OUTPUT->old_help_icon('random', get_string('random', 'quiz'), 'quiz');
         }
     }
     return $out;
@@ -516,7 +516,7 @@ if ($quiz_reordertool) {
     echo '</div>';
 }
 echo $OUTPUT->heading($pagetitle.": ".$quiz->name, 2);
-echo $OUTPUT->help_icon('editconcepts', get_string('basicideasofquiz', 'quiz'), 'quiz', true);
+echo $OUTPUT->old_help_icon('editconcepts', get_string('basicideasofquiz', 'quiz'), 'quiz', true);
 quiz_print_status_bar($quiz);
 
 $tabindex = 0;

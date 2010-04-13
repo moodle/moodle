@@ -333,7 +333,7 @@ echo '<table class="presets" cellpadding="5">';
 echo '<tr><td valign="top" colspan="2" align="center"><h3>'.$strexport.'</h3></td></tr>';
 
 echo '<tr><td><label>'.$strexportaszip.'</label>';
-echo $OUTPUT->help_icon('exportzip', get_string('help'), 'data', false);
+echo $OUTPUT->old_help_icon('exportzip', get_string('help'), 'data', false);
 echo '</td><td>';
 $options = array();
 $options['sesskey'] = sesskey();
@@ -343,7 +343,7 @@ echo $OUTPUT->single_button(new moodle_url('preset.php', $options), $strexport);
 echo '</td></tr>';
 
 echo '<tr><td><label>'.$strsaveaspreset.'</label>';
-echo $OUTPUT->help_icon('savepreset', get_string('help'), 'data', false);
+echo $OUTPUT->old_help_icon('savepreset', get_string('help'), 'data', false);
 echo '</td><td>';
 $options = array();
 $options['sesskey'] = sesskey();
@@ -353,7 +353,7 @@ echo $OUTPUT->single_button(new moodle_url('preset.php', $options), $strsave);
 echo '</td></tr>';
 echo '<tr><td valign="top" colspan="2" align="center"><h3>'.$strimport.'</h3></td></tr>';
 echo '<tr><td><label for="fromfile">'.$strfromfile.'</label>';
-echo $OUTPUT->help_icon('importfromfile', get_string('help'), 'data', true);
+echo $OUTPUT->old_help_icon('importfromfile', get_string('help'), 'data', true);
 echo '</td><td>';
 echo '<form id="uploadpreset" method="post" action="preset.php">';
 echo '<fieldset class="invisiblefieldset">';
@@ -366,7 +366,7 @@ echo '</fieldset></form>';
 echo '</td></tr>';
 
 echo '<tr valign="top"><td><label>'.$strusestandard.'</label>';
-echo $OUTPUT->help_icon('usepreset', get_string('help'), 'data', true);
+echo $OUTPUT->old_help_icon('usepreset', get_string('help'), 'data', true);
 echo '</td><td>';
 
 echo '<form id="presets" method="post" action="preset.php" >';

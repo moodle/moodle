@@ -134,7 +134,7 @@ if($course->enrollable == 2) {
 }
 
 $title = get_string('groupextendenrol');
-echo $OUTPUT->heading($title . $OUTPUT->help_icon('groupextendenrol', $title));
+echo $OUTPUT->heading($title . $OUTPUT->old_help_icon('groupextendenrol', $title));
 echo '<form method="post" action="groupextendenrol.php">';
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';

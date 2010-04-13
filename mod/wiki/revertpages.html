@@ -28,7 +28,7 @@ if($err->remark) {
     <td>
         <input type="text" name="authorfieldpattern" size="30" value="<?php p($form->authorfieldpattern) ?>" />
 <?php
-        echo $OUTPUT->help_icon('revertauthorfieldpattern', get_string('authorfieldpattern', 'wiki'), 'wiki');
+        echo $OUTPUT->old_help_icon('revertauthorfieldpattern', get_string('authorfieldpattern', 'wiki'), 'wiki');
         if (!empty($err->authorfieldpattern)) { echo $OUTPUT->error_text($err->authorfieldpattern); }
 ?>
     </td>
