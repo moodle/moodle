@@ -55,9 +55,8 @@ if (!during_initial_install()) { //do not use during installation
         // front page default role
         $roleoptions = array(0=>get_string('none')); // roles to choose from
         if ($roles = get_all_roles()) {
-            role_fix_names($roles, $frontpagecontext, ROLENAME_ALIAS_RAW);
             foreach ($roles as $role) {
-                $roleoptions[$role->id] = $role->name;
+                $roleoptions[$role->id] = strip_tags(format_string($role->name, true));
             }
         }
         $temp->add(new admin_setting_configselect('defaultfrontpageroleid', get_string('frontpagedefaultrole', 'admin'), '', 0, $roleoptions));

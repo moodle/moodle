@@ -5320,6 +5320,8 @@ class admin_setting_manageportfolio extends admin_setting {
 function admin_externalpage_setup($section, $extrabutton = '', array $extraurlparams = null, $actualurl = '') {
     global $CFG, $PAGE, $USER, $SITE, $OUTPUT;
 
+    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+
     $site = get_site();
     require_login();
 
@@ -5343,7 +5345,6 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
         $PAGE->set_pagelayout('admin');
     }
 
-    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
     // $PAGE->set_extra_button($extrabutton); TODO
 
     if (!$actualurl) {
