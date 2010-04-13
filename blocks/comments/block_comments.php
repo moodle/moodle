@@ -22,7 +22,7 @@ class block_comments extends block_base {
     }
 
     function get_content() {
-        global $CFG;
+        global $CFG, $PAGE;
         if (!$CFG->usecomments) {
             $this->content->text = '';
             if ($this->page->user_is_editing()) {
@@ -38,18 +38,17 @@ class block_comments extends block_base {
         }
         $this->content->footer = '';
         $this->content->text = '';
-        //TODO: guest and not-logged-in shoudl be able to read comments, right?
-        if (isloggedin() && !isguestuser()) {   // Show the block
+        if (isloggedin() && !isguestuser()) {
             list($context, $course, $cm) = get_context_info_array($this->context->id);
-            $cmt = new stdclass;
-            $cmt->context   = $context;
-            $cmt->course    = $course;
-            $cmt->area      = 'block_comments';
-            $cmt->itemid    = $this->instance->id;
-            // this is a hack to adjust commenting UI in block_comments
-            $cmt->env       = 'block_comments';
-            $cmt->linktext  = get_string('showcomments');
-            $comment = new comment($cmt);
+            $args = new stdclass;
+            $args->context   = $PAGE->context;
+            $args->course    = $course;
+            $args->area      = 'block_comments';
+            $args->itemid    = $this->instance->id;
+            //XXX: this is a hack to adjust commenting UI in block_comments
+            $args->env       = 'block_comments';
+            $args->linktext  = get_string('showcomments');
+            $comment = new comment($args);
 
             $this->content = new stdClass;
             $this->content->text = $comment->output(true);
