@@ -733,6 +733,7 @@ $string['frontpagetopiconly'] = 'Topic section';
 $string['fulllistofcourses'] = 'All courses';
 $string['fullname'] = 'Full name';
 $string['fullnamecourse'] = 'Course full name';
+$string['fullnamecourse_hlp'] = 'The full name of the course is displayed at the top of the screen and in the course listings.';
 $string['fullnamedisplay'] = '{$a->firstname} {$a->lastname}';
 $string['fullnameuser'] = 'User full name';
 $string['fullprofile'] = 'Full profile';
