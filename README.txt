@@ -23,10 +23,6 @@ For more information, see the INSTALL DOCUMENTATION:
 
    http://docs.moodle.org/en/Installing_Moodle
 
-A local copy can also be found in
-
-   lang/en/help/install.html   (or your language)
-
 
 Good luck and have fun!
 Martin Dougiamas, Lead Developer
