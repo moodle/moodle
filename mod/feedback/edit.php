@@ -215,7 +215,7 @@ if($do_show == 'edit') {
     if(is_array($feedbackitems)){
         $itemnr = 0;
 
-        $helpbutton = $OUTPUT->old_help_icon('preview', get_string('preview','feedback'), 'feedback',true);
+        $helpbutton = $OUTPUT->help_icon('preview', 'feedback');
 
         echo $OUTPUT->heading($helpbutton . get_string('preview', 'feedback'));
         if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {

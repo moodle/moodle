@@ -167,6 +167,7 @@ $string['picture_file_list'] = 'List of pictures';
 $string['picture_values'] = 'Choose one or more<br />picture files from the list:';
 $string['position'] = 'Position';
 $string['preview'] = 'Preview';
+$string['preview_hlp'] = 'In the preview you can change the position order of questions.';
 $string['previous_page'] = 'Previous page';
 $string['public'] = 'Public';
 $string['question'] = 'Question';
