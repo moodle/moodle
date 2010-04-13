@@ -61,6 +61,7 @@ M.core_dock = {
             draggable:false,                // Make the panel draggable
             underlay:"none",                // Use a special underlay
             modal:false,                    // Throws a lightbox if set to true
+            modalzindex:1000,               // Sets the zIndex for the modal to avoid collisions
             keylisteners:null,              // An array of keylisterners to attach
             visible:false,                  // Visible by default
             effect: null,                   // An effect that should be used with the panel
@@ -569,6 +570,9 @@ M.core_dock = {
                 xy:position,
                 autofillheight:this.cfg.panel.autofillheight});
             this.panel.showEvent.subscribe(this.resize_panel, this, true);
+            this.panel.showMaskEvent.subscribe(function(){
+                this.Y.one(this.panel.mask).setStyle('zIndex', this.cfg.panel.modalzindex);
+            }, this, true);
             this.panel.renderEvent.subscribe(this.resize_panel, this, true);
             this.panel.setBody(this.Y.Node.getDOMNode(this.contents));
             this.panel.render(M.core_dock.node);
