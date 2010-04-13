@@ -5702,6 +5702,20 @@ interface string_manager {
     public function get_string($identifier, $component = '', $a = NULL);
 
     /**
+     * Does the string actually exist?
+     *
+     * get_string() is throwing debug warnings, sometimes we do not want them
+     * or we want to display better explanation of the problem.
+     *
+     * Use with care!
+     *
+     * @param string $identifier The identifier of the string to search for
+     * @param string $component The module the string is associated with
+     * @return boot true if exists
+     */
+    public function string_exists($identifier, $component);
+    
+    /**
      * Returns a list of country names in the current language
      * @return array two-letter country code => translated name.
      */
@@ -5803,7 +5817,6 @@ class core_string_manager implements string_manager {
             $string = array();
             // first load english pack
             if (!file_exists("$CFG->dirroot/lang/en/$file.php")) {
-                debugging("Invalid component parameter in get_string() call: $component", DEBUG_DEVELOPER);
                 return array();
             }
             include("$CFG->dirroot/lang/en/$file.php");
@@ -5828,7 +5841,6 @@ class core_string_manager implements string_manager {
 
         } else {
             if (!$location = get_plugin_directory($plugintype, $pluginname) or !is_dir($location)) {
-                debugging("Invalid component parameter in get_string() call, plugin files are missing: $component", DEBUG_DEVELOPER);
                 return array();
             }
             if ($plugintype === 'mod') {
@@ -5840,7 +5852,7 @@ class core_string_manager implements string_manager {
             $string = array();
             // first load english pack
             if (!file_exists("$location/lang/en/$file.php")) {
-                //english pack does not exist, so do not try to laod anything else
+                //english pack does not exist, so do not try to load anything else
                 return array();
             }
             include("$location/lang/en/$file.php");
@@ -5871,6 +5883,24 @@ class core_string_manager implements string_manager {
         $this->cache[$lang][$plugintype.$pluginname] = $string;
 
         return $string;
+    }
+
+    /**
+     * Does the string actually exist?
+     *
+     * get_string() is throwing debug warnings, sometimes we do not want them
+     * or we want to display better explanation of the problem.
+     *
+     * Use with care!
+     *
+     * @param string $identifier The identifier of the string to search for
+     * @param string $component The module the string is associated with
+     * @return boot true if exists
+     */
+    public function string_exists($identifier, $component) {
+        $lang = current_language();
+        $string = $this->load_component_strings($component, $lang);
+        return isset($string[$identifier]);
     }
 
     /**
@@ -6054,7 +6084,26 @@ class install_string_manager implements string_manager {
      * @return array of all string for given component and lang
      */
     public function load_component_strings($component, $lang) {
+        // not needed in installer
         return array();
+    }
+
+    /**
+     * Does the string actually exist?
+     *
+     * get_string() is throwing debug warnings, sometimes we do not want them
+     * or we want to display better explanation of the problem.
+     *
+     * Use with care!
+     *
+     * @param string $identifier The identifier of the string to search for
+     * @param string $component The module the string is associated with
+     * @return boot true if exists
+     */
+    public function string_exists($identifier, $component) {
+        // simple old style hack ;)
+        $str = get_string($identifier, $component);
+        return (strpos($str, '[[') === false);
     }
 
     /**
