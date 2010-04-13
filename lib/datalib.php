@@ -1591,9 +1591,6 @@ function make_default_scale() {
     /// Read in the big description from the file.  Note this is not
     /// HTML (despite the file extension) but Moodle format text.
     $parentlang = get_parent_language();
-    if ($parentlang[0] == '[') {
-        $parentlang = '';
-    }
     if (is_readable($CFG->dataroot .'/lang/'. $CFG->lang .'/help/forum/ratings.html')) {
         $file = file($CFG->dataroot .'/lang/'. $CFG->lang .'/help/forum/ratings.html');
     } else if (is_readable($CFG->dirroot .'/lang/'. $CFG->lang .'/help/forum/ratings.html')) {
