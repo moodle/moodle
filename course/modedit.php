@@ -626,7 +626,11 @@
             require($CFG->dirroot.'/'.$CFG->admin.'/roles/tabs.php');
         }
 
-        echo $OUTPUT->heading_with_help($pageheading, 'mods', $module->name, 'icon');
+        if (get_string_manager()->string_exists('modulename_hlp', $module->name)) {
+            echo $OUTPUT->heading_with_help($pageheading, 'modulename', $module->name, 'icon');
+        } else {
+            echo $OUTPUT->heading_with_help($pageheading, '', '', 'icon');
+        }
 
         $mform->display();
 
