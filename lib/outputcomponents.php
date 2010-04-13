@@ -153,7 +153,7 @@ class user_picture implements renderable {
  */
 class old_help_icon implements renderable {
     /**
-     * @var string $helpidentifier lang pack identifier (should inlcude the "_hlp" suffix)
+     * @var string $helpidentifier lang pack identifier
      */
     public $helpidentifier;
     /**
@@ -188,6 +188,41 @@ class old_help_icon implements renderable {
         $this->helpidentifier  = $helpidentifier;
         $this->title           = $title;
         $this->component       = $component;
+    }
+}
+
+/**
+ * Data structure representing a help icon.
+ *
+ * @copyright 2010 Petr Skoda (info@skodak.org)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class help_icon implements renderable {
+    /**
+     * @var string $identifier lang pack identifier (without the "_hlp" suffix),
+     *    both get_string($identifier, $component) and get_string($identifier.'_hlp', $component)
+     *    must exist.
+     */
+    public $identifier;
+    /**
+     * @var string $component Component name, the same as in get_string()
+     */
+    public $component;
+    /**
+     * @var string $linktext Extra descriptive text next to the icon
+     */
+    public $linktext = null;
+
+    /**
+     * Constructor
+     * @param string $identifier  string for help page title,
+     *  string with _hlp suffix is used for the actual help text. 
+     * @param string $component
+     */
+    public function __construct($pidentifier, $component) {
+        $this->identifier = $helpidentifier;
+        $this->component  = $component;
     }
 }
 
