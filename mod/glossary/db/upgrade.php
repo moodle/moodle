@@ -260,7 +260,7 @@ function xmldb_glossary_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009110800, 'glossary');
     }
 
-    if($result && $oldversion < 2010031800) {
+    if($result && $oldversion < 2010041300) {
         //migrate glossary_ratings to the central rating table
         require_once('../lib/db/upgradelib.php');
 
@@ -275,7 +275,7 @@ JOIN {glossary} g ON g.id=ge.glossaryid';
 
         //todo andrew set rating permissions based on current value of glossary.assessed
 
-        upgrade_mod_savepoint($result, 2010031800, 'glossary');
+        upgrade_mod_savepoint($result, 2010041300, 'glossary');
     }
 
     return $result;

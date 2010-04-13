@@ -285,7 +285,7 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009050400, 'forum');
     }
 
-    if($result && $oldversion < 2010031800) {
+    if($result && $oldversion < 2010041300) {
         //migrate forumratings to the central rating table
         require_once('../lib/db/upgradelib.php');
 
@@ -299,7 +299,7 @@ JOIN {forum} f on f.id=d.forum';
 
         //todo andrew drop forum_ratings
 
-        upgrade_mod_savepoint($result, 2010031800, 'forum');
+        upgrade_mod_savepoint($result, 2010041300, 'forum');
     }
 
     return $result;

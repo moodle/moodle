@@ -254,7 +254,7 @@ function xmldb_data_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2010031602, 'data');
     }
 
-    if($result && $oldversion < 2010031800) {
+    if($result && $oldversion < 2010041300) {
         //migrate data_ratings to the central rating table
 	require_once('../lib/db/upgradelib.php');
 	
@@ -267,7 +267,7 @@ JOIN {data} d ON d.id=re.dataid';
 
         //todo andrew drop data_ratings
 
-        upgrade_mod_savepoint($result, 2010031800, 'data');
+        upgrade_mod_savepoint($result, 2010041300, 'data');
     }
 
     return $result;
