@@ -106,7 +106,7 @@ class user_filtering {
             case 'firstname':    return new user_filter_text('firstname', get_string('firstname'), $advanced, 'firstname');
             case 'email':       return new user_filter_text('email', get_string('email'), $advanced, 'email');
             case 'city':        return new user_filter_text('city', get_string('city'), $advanced, 'city');
-            case 'country':     return new user_filter_select('country', get_string('country'), $advanced, 'country', get_list_of_countries(), $USER->country);
+            case 'country':     return new user_filter_select('country', get_string('country'), $advanced, 'country', get_string_manager()->get_list_of_countries(), $USER->country);
             case 'confirmed':   return new user_filter_yesno('confirmed', get_string('confirmed', 'admin'), $advanced, 'confirmed');
             case 'profile':     return new user_filter_profilefield('profile', get_string('profile'), $advanced);
             case 'courserole':  return new user_filter_courserole('courserole', get_string('courserole', 'filters'), $advanced);

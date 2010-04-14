@@ -71,7 +71,7 @@
     echo '<div class="fitem">';
     echo '<div class="fitemtitle"><label for="menucountry">'.get_string("country").'</label></div>';
     echo '<div class="felement ftext">';
-    echo html_writer::select(get_list_of_countries(), "country", $admin->country, array(''=>get_string("selectacountry")."..."));
+    echo html_writer::select(get_string_manager()->get_list_of_countries(), "country", $admin->country, array(''=>get_string("selectacountry")."..."));
     echo '</div>';
     echo '</div>';
 

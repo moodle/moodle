@@ -75,7 +75,7 @@ if (!empty($CFG->geoipfile) and file_exists($CFG->geoipfile)) {
     }
 
     if (!empty($location->country_code)) {
-        $countries = get_list_of_countries();
+        $countries = get_string_manager()->get_list_of_countries(true);
         if (isset($countries[$location->country_code])) {
             // prefer our localized country names
             $info[] = $countries[$location->country_code];
@@ -111,7 +111,7 @@ if (!empty($CFG->geoipfile) and file_exists($CFG->geoipfile)) {
     if (preg_match('/COUNTRY:\s*([^<]*)/', $ipdata, $matches)) {
         if (!empty($matches[1])) {
             $countrycode = $matches[1];
-            $countries = get_list_of_countries();
+            $countries = get_string_manager()->get_list_of_countries(true);
             if (isset($countries[$countrycode])) {
                 // prefer our localized country names
                 $info[] = $countries[$countrycode];

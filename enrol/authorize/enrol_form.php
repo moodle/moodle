@@ -124,7 +124,7 @@ class enrol_authorize_form extends moodleform
                 $mform->setDefault('cccity', $USER->city);
                 $mform->setDefault('ccstate', '');
 
-                $mform->addElement('select', 'cccountry', get_string('country'), get_list_of_countries());
+                $mform->addElement('select', 'cccountry', get_string('country'), get_string_manager()->get_list_of_countries());
                 $mform->addRule('cccountry', get_string('missingcountry'), 'required', null, 'client');
                 $mform->setType('cccountry', PARAM_ALPHA);
                 $mform->setDefault('cccountry', $USER->country);

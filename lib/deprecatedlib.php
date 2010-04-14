@@ -55,7 +55,6 @@ function get_list_of_languages($refreshcache=false, $returnall=false) {
     return get_string_manager()->get_list_of_translations($returnall);
 }
 
-
 /**
  * Returns a list of currencies in the current language
  * @deprecated
@@ -64,6 +63,16 @@ function get_list_of_languages($refreshcache=false, $returnall=false) {
 function get_list_of_currencies() {
     debugging('get_list_of_currencies() is deprecated, please use get_string_manager()->get_list_of_currencies() instead.');
     return get_string_manager()->get_list_of_currencies();
+}
+
+/**
+ * Returns a list of all enabled country names in the current translation
+ * @deprecated
+ * @return array two-letter country code => translated name.
+ */
+function get_list_of_countries() {
+    debugging('get_list_of_countries() is deprecated, please use get_string_manager()->get_list_of_countries() instead.');
+    return get_string_manager()->get_list_of_countries(false);
 }
 
 /**

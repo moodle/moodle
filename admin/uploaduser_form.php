@@ -199,7 +199,7 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->setType('city', PARAM_MULTILANG);
         $mform->setDefault('city', $templateuser->city);
 
-        $mform->addElement('select', 'country', get_string('selectacountry'), get_list_of_countries());
+        $mform->addElement('select', 'country', get_string('selectacountry'), get_string_manager()->get_list_of_countries());
         $mform->setDefault('country', $templateuser->country);
         $mform->setAdvanced('country');
 

@@ -200,7 +200,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     $mform->addRule('city', $strrequired, 'required', null, 'client');
 
 
-    $choices = get_list_of_countries();
+    $choices = get_string_manager()->get_list_of_countries();
     $choices= array(''=>get_string('selectacountry').'...') + $choices;
     $mform->addElement('select', 'country', get_string('selectacountry'), $choices);
     $mform->addRule('country', $strrequired, 'required', null, 'client');

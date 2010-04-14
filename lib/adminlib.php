@@ -3529,7 +3529,9 @@ class admin_setting_langlist extends admin_setting_configtext {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_settings_country_select extends admin_setting_configselect {
-    public function __construct($name, $visiblename, $description, $defaultsetting) {
+    protected $includeall;
+    public function __construct($name, $visiblename, $description, $defaultsetting, $includeall=false) {
+        $this->includeall = $includeall;
         parent::__construct($name, $visiblename, $description, $defaultsetting, NULL);
     }
 
@@ -3543,7 +3545,7 @@ class admin_settings_country_select extends admin_setting_configselect {
         }
         $this->choices = array_merge(
                 array('0' => get_string('choosedots')),
-                get_list_of_countries());
+                get_string_manager()->get_list_of_countries($this->includeall));
         return true;
     }
 }

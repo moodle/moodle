@@ -6534,14 +6534,6 @@ function get_list_of_charsets() {
 }
 
 /**
- * Returns a list of all enabled country names in the current translation
- * @return array two-letter country code => translated name.
- */
-function get_list_of_countries() {
-    return get_string_manager()->get_list_of_countries(false);
-}
-
-/**
  * Returns a list of valid and compatible themes
  *
  * @global object

@@ -265,7 +265,7 @@ if ($user->description && !isset($hiddenfields['description'])) {
 echo '<table class="list">';
 
 if (! isset($hiddenfields['country']) && $user->country) {
-    $countries = get_list_of_countries();
+    $countries = get_string_manager()->get_list_of_countries();
     print_row(get_string('country') . ':', $countries[$user->country]);
 }
 

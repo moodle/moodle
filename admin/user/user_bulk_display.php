@@ -22,7 +22,7 @@ $strnever = get_string('never');
 
 echo $OUTPUT->header();
 
-$countries = get_list_of_countries();
+$countries = get_string_manager()->get_list_of_countries(true);
 
 foreach ($users as $key => $id) {
     $user = $DB->get_record('user', array('id'=>$id), 'id, firstname, lastname, username, email, country, lastaccess, city');
