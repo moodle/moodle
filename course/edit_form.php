@@ -344,7 +344,7 @@ class course_edit_form extends moodleform {
         // If the print_entry method exists and the course enrol method isn't manual (both set or inherited from site), show cost
         if (method_exists(enrolment_factory::factory($enrol_object->enrol), 'print_entry') && !($enrol_object->enrol == 'manual' || (empty($enrol_object->enrol) && $CFG->enrol == 'manual'))) {
             $costgroup=array();
-            $currencies = get_list_of_currencies();
+            $currencies = get_string_manager()->get_list_of_currencies();
             $costgroup[]= &MoodleQuickForm::createElement('text','cost', '', 'maxlength="6" size="6"');
             $costgroup[]= &MoodleQuickForm::createElement('select', 'currency', '', $currencies);
             $mform->addGroup($costgroup, 'costgrp', get_string('cost'), '&nbsp;', false);

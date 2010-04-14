@@ -5749,6 +5749,14 @@ interface string_manager {
     public function get_list_of_translations($returnall = false);
 
     /**
+     * Returns localised list of currencies.
+     *
+     * @param string $lang moodle translation language, NULL means use current
+     * @return array currency code => localised currency name
+     */
+    public function get_list_of_currencies($lang = NULL);
+
+    /**
      * Load all strings for one component
      * @param string $component The module the string is associated with
      * @param string $lang
@@ -6087,7 +6095,7 @@ class core_string_manager implements string_manager {
             // part of distribution
             return true;
         }
-        return file_exists("$this->otherroot/$lang/longconfig.php"); 
+        return file_exists("$this->otherroot/$lang/longconfig.php");
     }
 
     /**
@@ -6148,6 +6156,23 @@ class core_string_manager implements string_manager {
         }
 
         return $languages;
+    }
+
+    /**
+     * Returns localised list of currencies.
+     *
+     * @param string $lang moodle translation language, NULL means use current
+     * @return array currency code => localised currency name
+     */
+    public function get_list_of_currencies($lang = NULL) {
+        if ($lang === NULL) {
+            $lang = current_language();
+        }
+
+        $currencies = $this->load_component_strings('core_currencies', $lang);
+        asort($currencies);
+
+        return $currencies;
     }
 }
 
@@ -6220,7 +6245,7 @@ class install_string_manager implements string_manager {
         if ($lang === NULL) {
             $lang = current_language();
         }
-        
+
         //get parent lang
         $parent = '';
         if ($lang !== 'en' and $identifier !== 'parentlanguage' and $component !== 'langconfig') {
@@ -6314,7 +6339,7 @@ class install_string_manager implements string_manager {
      * @return boot true if exists
      */
     public function translation_exists($lang, $includeall = true) {
-        return file_exists($this->installroot.'/'.$lang.'/langconfig.php'); 
+        return file_exists($this->installroot.'/'.$lang.'/langconfig.php');
     }
 
     /**
@@ -6340,6 +6365,17 @@ class install_string_manager implements string_manager {
         }
         // Return array
         return $languages;
+    }
+
+    /**
+     * Returns localised list of currencies.
+     *
+     * @param string $lang moodle translation language, NULL means use current
+     * @return array currency code => localised currency name
+     */
+    public function get_list_of_currencies($lang = NULL) {
+        // not used in installer
+        return array();
     }
 }
 
@@ -6611,44 +6647,6 @@ function get_list_of_timezones() {
 
     return $timezones;
 }
-
-/**
- * Returns a list of currencies in the current language
- *
- * @global object
- * @global object
- * @return array
- */
-function get_list_of_currencies() {
-    global $CFG, $USER;
-
-    $lang = current_language();
-
-    if (!file_exists($CFG->dataroot .'/lang/'. $lang .'/currencies.php')) {
-        if ($parentlang = get_parent_language()) {
-            if (file_exists($CFG->dataroot .'/lang/'. $parentlang .'/currencies.php')) {
-                $lang = $parentlang;
-            } else {
-                $lang = 'en';  // currencies.php must exist in this pack
-            }
-        } else {
-            $lang = 'en';  // currencies.php must exist in this pack
-        }
-    }
-
-    if (file_exists($CFG->dataroot .'/lang/'. $lang .'/currencies.php')) {
-        include_once($CFG->dataroot .'/lang/'. $lang .'/currencies.php');
-    } else {    //if en is not installed in dataroot
-        include_once($CFG->dirroot .'/lang/'. $lang .'/currencies.php');
-    }
-
-    if (!empty($string)) {
-        asort($string);
-    }
-
-    return $string;
-}
-
 
 /// ENCRYPTION  ////////////////////////////////////////////////
 

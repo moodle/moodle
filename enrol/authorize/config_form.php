@@ -65,7 +65,7 @@ if (!isset($frm->acceptechecktypes)) {
 <tr valign="top">
     <td align="right">enrol_currency:</td>
     <td><?php
-        echo html_writer::select(get_list_of_currencies(), "enrol_currency", $frm->enrol_currency, false);
+        echo html_writer::select(get_string_manager()->get_list_of_currencies(), "enrol_currency", $frm->enrol_currency, false);
         ?>
         <br />
         <?php print_string("currency") ?>

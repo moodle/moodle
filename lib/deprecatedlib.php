@@ -48,10 +48,22 @@ function auth_get_plugin_title($authtype) {
  * @return array An associative array with contents in the form of LanguageCode => LanguageName
  */
 function get_list_of_languages($refreshcache=false, $returnall=false) {
+    debugging('get_list_of_languages() is deprecated, please use get_string_manager()->get_list_of_translations() instead.');
     if ($refreshcache) {
         // TODO: reset lang cache
     }
     return get_string_manager()->get_list_of_translations($returnall);
+}
+
+
+/**
+ * Returns a list of currencies in the current language
+ * @deprecated
+ * @return array
+ */
+function get_list_of_currencies() {
+    debugging('get_list_of_currencies() is deprecated, please use get_string_manager()->get_list_of_currencies() instead.');
+    return get_string_manager()->get_list_of_currencies();
 }
 
 /**
