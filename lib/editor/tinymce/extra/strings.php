@@ -32,11 +32,7 @@ require_once('../../../../config.php');
 $lang  = optional_param('elanguage', 'en', PARAM_SAFEDIR);
 $theme = optional_param('etheme', 'advanced', PARAM_SAFEDIR);
 
-if ($lang === 'en') {
-    //ok
-} else if (file_exists($CFG->langotherroot .'/'. $lang)) {
-    //$lang = $lang;
-} else {
+if (!get_string_manager()->translation_exists($lang, false)) {
     $lang = 'en';
 }
 

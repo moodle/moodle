@@ -6,11 +6,10 @@ require("../../../../../config.php");
 
 $lang = required_param('elanguage', PARAM_SAFEDIR);
 
-if (file_exists("$CFG->dataroot/lang/$lang") or file_exists("$CFG->dirroot/lang/$lang")) {
-    $SESSION->lang = $lang;
-} else if (file_exists("$CFG->dataroot/lang/{$lang}") or file_exists("$CFG->dirroot/lang/{$lang}")) {
-    $SESSION->lang = $lang;
+if (!get_string_manager()->translation_exists($lang, false)) {
+    $lang = 'en';
 }
+$SESSION->lang = $lang;
 
 $langmapping = array('cs'=>'cz', 'pt_br'=>'pt-br');
 
