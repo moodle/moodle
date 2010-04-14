@@ -755,11 +755,10 @@ function clean_param($param, $type) {
 
         case PARAM_LANG:
             $param = clean_param($param, PARAM_SAFEDIR);
-            $langs = get_string_manager()->get_list_of_translations(true);
-            if (in_array($param, $langs)) {
+            if (get_string_manager()->translation_exists($param)) {
                 return $param;
             } else {
-                return '';  // Specified language is not installed
+                return ''; // Specified language is not installed or param malformed
             }
 
         case PARAM_THEME:
@@ -3296,8 +3295,7 @@ function create_user_record($username, $password, $auth='manual') {
     // fix for MDL-8480
     // user CFG lang for user if $newuser->lang is empty
     // or $user->lang is not an installed language
-    $sitelangs = get_string_manager()->get_list_of_translations();
-    if (empty($newuser->lang) || !isset($sitelangs[$newuser->lang])) {
+    if (empty($newuser->lang) || !get_string_manager()->translation_exists($newuser->lang)) {
         $newuser->lang = $CFG->lang;
     }
     $newuser->confirmed = 1;
@@ -5735,6 +5733,15 @@ interface string_manager {
     public function get_list_of_languages($lang = NULL, $standard = 'iso6392');
 
     /**
+     * Does the translation exist?
+     *
+     * @param string $lang moodle translation language code
+     * @param bool include also disabled translations?
+     * @return boot true if exists
+     */
+    public function translation_exists($lang, $includeall = true);
+
+    /**
      * Returns localised list of installed translations
      * @param bool $returnall return all or just enabled
      */
@@ -6056,6 +6063,33 @@ class core_string_manager implements string_manager {
     }
 
     /**
+     * Does the translation exist?
+     *
+     * @param string $lang moodle translation language code
+     * @param bool include also disabled translations?
+     * @return boot true if exists
+     */
+    public function translation_exists($lang, $includeall = true) {
+        global $CFG;
+
+        if (strpos($lang, '_local') !== false) {
+            // _local packs are not real translations
+            return false;
+        }
+        if (!$includeall and !empty($CFG->langlist)) {
+            $enabled = explode(',', $CFG->langlist);
+            if (!in_array($lang, $enabled)) {
+                return false;
+            }
+        }
+        if ($lang === 'en') {
+            // part of distribution
+            return true;
+        }
+        return file_exists("$this->otherroot/$lang/longconfig.php"); 
+    }
+
+    /**
      * Returns localised list of installed translations
      * @param bool $returnall return all or just enabled
      */
@@ -6268,6 +6302,17 @@ class install_string_manager implements string_manager {
     public function get_list_of_languages($lang = NULL, $standard = 'iso6392') {
         //not used in installer
         return array();
+    }
+
+    /**
+     * Does the translation exist?
+     *
+     * @param string $lang moodle translation language code
+     * @param bool include also disabled translations?
+     * @return boot true if exists
+     */
+    public function translation_exists($lang, $includeall = true) {
+        return file_exists($this->installroot.'/'.$lang.'/langconfig.php'); 
     }
 
     /**
@@ -9173,15 +9218,10 @@ function setup_lang_from_browser() {
     }
     krsort($langs, SORT_NUMERIC);
 
-    $langlist = get_string_manager()->get_list_of_translations();
-
 /// Look for such langs under standard locations
     foreach ($langs as $lang) {
         $lang = strtolower(clean_param($lang, PARAM_SAFEDIR)); // clean it properly for include
-        if (!array_key_exists($lang, $langlist)) {
-            continue; // language not allowed, try next one
-        }
-        if (file_exists($CFG->dataroot .'/lang/'. $lang) or file_exists($CFG->dirroot .'/lang/'. $lang)) {
+        if (get_string_manager()->translation_exists($lang, false)) {
             $SESSION->lang = $lang; /// Lang exists, set it in session
             break; /// We have finished. Go out
         }
