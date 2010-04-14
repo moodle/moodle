@@ -74,7 +74,7 @@ class user_editadvanced_form extends moodleform {
         if ($langsel = $mform->getElementValue('lang')) {
             $lang = reset($langsel);
             // check lang exists
-            if (get_string_manager()->translation_exists($lang, false)) {
+            if (!get_string_manager()->translation_exists($lang, false)) {
                 $lang_el =& $mform->getElement('lang');
                 $lang_el->setValue($CFG->lang);
             }
