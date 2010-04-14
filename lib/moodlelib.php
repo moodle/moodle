@@ -5744,6 +5744,7 @@ interface string_manager {
     /**
      * Returns localised list of installed translations
      * @param bool $returnall return all or just enabled
+     * @return array moodle translation code => localised translation name
      */
     public function get_list_of_translations($returnall = false);
 
@@ -6092,6 +6093,7 @@ class core_string_manager implements string_manager {
     /**
      * Returns localised list of installed translations
      * @param bool $returnall return all or just enabled
+     * @return array moodle translation code => localised translation name
      */
     public function get_list_of_translations($returnall = false) {
         global $CFG;
@@ -6318,6 +6320,7 @@ class install_string_manager implements string_manager {
     /**
      * Returns localised list of installed translations
      * @param bool $returnall return all or just enabled
+     * @return array moodle translation code => localised translation name
      */
     public function get_list_of_translations($returnall = false) {
         // return all is ignored here - we need to know all langs in installer
