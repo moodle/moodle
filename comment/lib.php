@@ -146,6 +146,8 @@ class comment {
         // setup itemid
         if (!empty($options->itemid)) {
             $this->itemid = $options->itemid;
+        } else {
+            $this->itemid = 0;
         }
 
         // setup env
