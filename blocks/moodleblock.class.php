@@ -413,6 +413,7 @@ class block_base {
     protected function formatted_contents($output) {
         $this->get_content();
         if (!empty($this->content->text)) {
+            $this->get_required_javascript();
             return $this->content->text;
         } else {
             return '';
@@ -558,7 +559,6 @@ class block_base {
         $this->context = get_context_instance(CONTEXT_BLOCK, $instance->id);
         $this->page = $page;
         $this->specialization();
-        $this->get_required_javascript();
     }
 
     function get_required_javascript() {
@@ -793,6 +793,7 @@ class block_list extends block_base {
     protected function formatted_contents($output) {
         $this->get_content();
         if (!empty($this->content->items)) {
+            $this->get_required_javascript();
             return $output->list_block_contents($this->content->icons, $this->content->items);
         } else {
             return '';
@@ -844,6 +845,7 @@ class block_tree extends block_list {
             $this->content = new stdClass;
             $this->content->items = array();
         }
+        $this->get_required_javascript();
         $this->get_content();
         $content = $output->tree_block_contents($this->content->items,array('class'=>'block_tree list'));
         if (isset($this->id) && !is_numeric($this->id)) {
