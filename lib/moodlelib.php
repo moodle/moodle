@@ -6567,42 +6567,6 @@ function get_list_of_themes() {
     return $themes;
 }
 
-
-/**
- * Returns a list of picture names in the current or specified language
- *
- * @global object
- * @return array
- */
-function get_list_of_pixnames($lang = '') {
-    global $CFG;
-
-    if (empty($lang)) {
-        $lang = current_language();
-    }
-
-    $string = array();
-
-    $path = $CFG->dirroot .'/lang/en/pix.php'; // always exists
-
-    if (file_exists($CFG->dataroot .'/lang/'. $lang .'_local/pix.php')) {
-        $path = $CFG->dataroot .'/lang/'. $lang .'_local/pix.php';
-
-    } else if (file_exists($CFG->dirroot .'/lang/'. $lang .'/pix.php')) {
-        $path = $CFG->dirroot .'/lang/'. $lang .'/pix.php';
-
-    } else if (file_exists($CFG->dataroot .'/lang/'. $lang .'/pix.php')) {
-        $path = $CFG->dataroot .'/lang/'. $lang .'/pix.php';
-
-    } else if ($parentlang = get_parent_language()) {
-        return get_list_of_pixnames($parentlang); //return pixnames from parent language instead
-    }
-
-    include($path);
-
-    return $string;
-}
-
 /**
  * Returns a list of timezones in the current language
  *
