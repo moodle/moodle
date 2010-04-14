@@ -5716,10 +5716,12 @@ interface string_manager {
     public function string_exists($identifier, $component);
 
     /**
-     * Returns a localised list of all country names
+     * Returns a localised list of all country names, sorted by country keys.
+     * @param bool $returnall return all or just enabled
+     * @param string $lang moodle translation language, NULL means use current
      * @return array two-letter country code => translated name.
      */
-    public function get_list_of_countries();
+    public function get_list_of_countries($returnall = false, $lang = NULL);
 
     /**
      * Returns a localised list of languages, sorted by code keys.
@@ -5997,12 +5999,34 @@ class core_string_manager implements string_manager {
     }
 
     /**
-     * Returns a localised list of all country names
+     * Returns a localised list of all country names, sorted by country keys.
+     *
+     * @param bool $returnall return all or just enabled
+     * @param string $lang moodle translation language, NULL means use current
      * @return array two-letter country code => translated name.
      */
-    public function get_list_of_countries() {
-        $lang = current_language();
-        return $this->load_component_strings('countries', $lang);
+    public function get_list_of_countries($returnall = false, $lang = NULL) {
+        global $CFG;
+
+        if ($lang === NULL) {
+            $lang = current_language();
+        }
+
+        $countries = $this->load_component_strings('core_countries', $lang);
+        ksort($countries);
+
+        if (!$returnall and !empty($CFG->allcountrycodes)) {
+            $enabled = explode(',', $CFG->allcountrycodes);
+            $return = array();
+            foreach ($enabled as $c) {
+                if (isset($countries[$c])) {
+                    $return[$c] = $countries[$c];
+                }
+            }
+            return $return;
+        }
+
+        return $countries;
     }
 
     /**
@@ -6019,7 +6043,7 @@ class core_string_manager implements string_manager {
         }
         if ($standard === 'iso6392') {
             $langs = $this->load_component_strings('core_iso6392', $lang);
-            $lang = ksort($langs);
+            ksort($langs);
             return $langs;
         } else {
             debugging('Unsupported $standard parameter in get_list_of_languages() method: '.$standard);
@@ -6214,10 +6238,13 @@ class install_string_manager implements string_manager {
     }
 
     /**
-     * Returns a localised list of all country names
+     * Returns a localised list of all country names, sorted by country keys.
+     *
+     * @param bool $returnall return all or just enabled
+     * @param string $lang moodle translation language, NULL means use current
      * @return array two-letter country code => translated name.
      */
-    public function get_list_of_countries() {
+    public function get_list_of_countries($returnall = false, $lang = NULL) {
         //not used in installer
         return array();
     }
@@ -6415,11 +6442,11 @@ function get_list_of_charsets() {
 }
 
 /**
- * Returns a list of country names in the current language
+ * Returns a list of all enabled country names in the current translation
  * @return array two-letter country code => translated name.
  */
 function get_list_of_countries() {
-    return get_string_manager()->get_list_of_countries();
+    return get_string_manager()->get_list_of_countries(false);
 }
 
 /**
