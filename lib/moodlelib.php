@@ -5691,15 +5691,16 @@ function get_string_manager() {
  */
 interface string_manager {
     /**
-     * Mega Function - Get String returns a requested string
+     * Get String returns a requested string
      *
      * @param string $identifier The identifier of the string to search for
      * @param string $component The module the string is associated with
-     * @param string $a An object, string or number that can be used
+     * @param string|object|array $a An object, string or number that can be used
      *      within translation strings
+     * @param string $lang moodle translation language, NULL means use current
      * @return string The String !
      */
-    public function get_string($identifier, $component = '', $a = NULL);
+    public function get_string($identifier, $component = '', $a = NULL, $lang = NULL);
 
     /**
      * Does the string actually exist?
@@ -5920,11 +5921,12 @@ class core_string_manager implements string_manager {
      *
      * @param string $identifier The identifier of the string to search for
      * @param string $component The module the string is associated with
-     * @param string $a An object, string or number that can be used
+     * @param string|object|array $a An object, string or number that can be used
      *      within translation strings
+     * @param string $lang moodle translation language, NULL means use current
      * @return string The String !
      */
-    public function get_string($identifier, $component = '', $a = NULL) {
+    public function get_string($identifier, $component = '', $a = NULL, $lang = NULL) {
         // there are very many uses of these time formating strings without the 'langconfig' component,
         // it would not be reasonable to expect that all of them would be converted during 2.0 migration
         static $langconfigstrs = array(
@@ -5950,7 +5952,9 @@ class core_string_manager implements string_manager {
             }
         }
 
-        $lang = current_language();
+        if ($lang === NULL) {
+            $lang = current_language();
+        }
 
         $string = $this->load_component_strings($component, $lang);
 
@@ -6167,16 +6171,20 @@ class install_string_manager implements string_manager {
      *
      * @param string $identifier The identifier of the string to search for
      * @param string $component The module the string is associated with
-     * @param string $a An object, string or number that can be used
+     * @param string|object|array $a An object, string or number that can be used
      *      within translation strings
+     * @param string $lang moodle translation language, NULL means use current
      * @return string The String !
      */
-    public function get_string($identifier, $component = '', $a = NULL) {
+    public function get_string($identifier, $component = '', $a = NULL, $lang = NULL) {
         if (!$component) {
             $component = 'moodle';
         }
-        $lang = current_language();
 
+        if ($lang === NULL) {
+            $lang = current_language();
+        }
+        
         //get parent lang
         $parent = '';
         if ($lang !== 'en' and $identifier !== 'parentlanguage' and $component !== 'langconfig') {
@@ -6338,7 +6346,7 @@ class install_string_manager implements string_manager {
  *      usually expressed as the filename in the language pack without the
  *      .php on the end but can also be written as mod/forum or grade/export/xls.
  *      If none is specified then moodle.php is used.
- * @param mixed $a An object, string or number that can be used
+ * @param string|object|array $a An object, string or number that can be used
  *      within translation strings
  * @return string The localized string.
  */
