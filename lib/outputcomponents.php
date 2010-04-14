@@ -490,7 +490,7 @@ class single_select implements renderable {
      * @return void
      */
     public function set_help_icon($identifier, $component = 'moodle') {
-        $this->helpicon = new old_help_icon($identifier, $component);
+        $this->helpicon = new help_icon($identifier, $component);
     }
 
     /**
@@ -598,7 +598,7 @@ class url_select implements renderable {
      * @return void
      */
     public function set_help_icon($identifier, $component = 'moodle') {
-        $this->helpicon = new _help_icon($identifier, $component);
+        $this->helpicon = new help_icon($identifier, $component);
     }
 
     /**
