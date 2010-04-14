@@ -5722,6 +5722,12 @@ interface string_manager {
     public function get_list_of_countries();
 
     /**
+     * Returns a localised list of languages defined by ISO 639-3
+     * @return array three-letter language code => translated name.
+     */
+    public function get_list_of_languages();
+
+    /**
      * Returns localised list of installed translations
      * @param bool $returnall return all or just enabled
      */
@@ -5996,6 +6002,15 @@ class core_string_manager implements string_manager {
     }
 
     /**
+     * Returns a localised list of languages defined by ISO 639-3
+     * @return array three-letter language code => translated name.
+     */
+    public function get_list_of_languages() {
+        //TODO: import ISO 639-3 lang codes to en lang pack and return it here
+        return array();
+    }
+
+    /**
      * Returns localised list of installed translations
      * @param bool $returnall return all or just enabled
      */
@@ -6186,6 +6201,16 @@ class install_string_manager implements string_manager {
      * @return array two-letter country code => translated name.
      */
     public function get_list_of_countries() {
+        //not used in installer
+        return array();
+    }
+
+    /**
+     * Returns a localised list of languages defined by ISO 639-3
+     * @return array three-letter language code => translated name.
+     */
+    public function get_list_of_languages() {
+        //not used in installer
         return array();
     }
 
