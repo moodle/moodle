@@ -51,7 +51,7 @@
             print_error('blockdoesnotexist', 'error');
         }
 
-        if (file_exists("$CFG->dirroot/blocks/$block->name/lang/en/block_$block->name.php")) {
+        if (get_string_manager()->string_exists('pluginname', "block_$block->name")) {
             $strblockname = get_string('pluginname', "block_$block->name");
         } else {
             $strblockname = $block->name;

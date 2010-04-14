@@ -74,8 +74,8 @@
         echo $OUTPUT->header();
         echo $OUTPUT->heading($stractivities);
 
-        if (file_exists("$CFG->dirroot/mod/$delete/lang/en/$delete.php")) {
-            $strmodulename = get_string("modulename", "$delete");
+        if (get_string_manager()->string_exists('modulename', $delete)) {
+            $strmodulename = get_string('modulename', $delete);
         } else {
             $strmodulename = $delete;
         }
