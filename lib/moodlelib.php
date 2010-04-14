@@ -6095,7 +6095,7 @@ class core_string_manager implements string_manager {
             // part of distribution
             return true;
         }
-        return file_exists("$this->otherroot/$lang/longconfig.php");
+        return file_exists("$this->otherroot/$lang/langconfig.php");
     }
 
     /**
