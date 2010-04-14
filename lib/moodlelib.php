@@ -5714,7 +5714,7 @@ interface string_manager {
      * @return boot true if exists
      */
     public function string_exists($identifier, $component);
-    
+
     /**
      * Returns a localised list of all country names
      * @return array two-letter country code => translated name.
@@ -5722,10 +5722,14 @@ interface string_manager {
     public function get_list_of_countries();
 
     /**
-     * Returns a localised list of languages defined by ISO 639-3
-     * @return array three-letter language code => translated name.
+     * Returns a localised list of languages, sorted by code keys.
+     *
+     * @param string $lang moodle translation language, NULL means use current
+     * @param string $standard language list standard
+     *                     iso6392: three-letter language code (ISO 639-2/T) => translated name.
+     * @return array language code => translated name
      */
-    public function get_list_of_languages();
+    public function get_list_of_languages($lang = NULL, $standard = 'iso6392');
 
     /**
      * Returns localised list of installed translations
@@ -6002,11 +6006,24 @@ class core_string_manager implements string_manager {
     }
 
     /**
-     * Returns a localised list of languages defined by ISO 639-3
-     * @return array three-letter language code => translated name.
+     * Returns a localised list of languages, sorted by code keys.
+     *
+     * @param string $lang moodle translation language, NULL means use current
+     * @param string $standard language list standard
+     *    - iso6392: three-letter language code (ISO 639-2/T) => translated name
+     * @return array language code => translated name
      */
-    public function get_list_of_languages() {
-        //TODO: import ISO 639-3 lang codes to en lang pack and return it here
+    public function get_list_of_languages($lang = NULL, $standard = 'iso6392') {
+        if ($lang === NULL) {
+            $lang = current_language();
+        }
+        if ($standard === 'iso6392') {
+            $langs = $this->load_component_strings('core_iso6392', $lang);
+            $lang = ksort($langs);
+            return $langs;
+        } else {
+            debugging('Unsupported $standard parameter in get_list_of_languages() method: '.$standard);
+        }
         return array();
     }
 
@@ -6206,10 +6223,14 @@ class install_string_manager implements string_manager {
     }
 
     /**
-     * Returns a localised list of languages defined by ISO 639-3
-     * @return array three-letter language code => translated name.
+     * Returns a localised list of languages, sorted by code keys.
+     *
+     * @param string $lang moodle translation language, NULL means use current
+     * @param string $standard language list standard
+     *                     iso6392: three-letter language code (ISO 639-2/T) => translated name.
+     * @return array language code => translated name
      */
-    public function get_list_of_languages() {
+    public function get_list_of_languages($lang = NULL, $standard = 'iso6392') {
         //not used in installer
         return array();
     }
@@ -6768,6 +6789,7 @@ function get_core_subsystems() {
             'help'        => NULL,
             'imscc'       => NULL,
             'install'     => NULL,
+            'iso6392'     => NULL,
             'langconfig'  => NULL,
             'license'     => NULL,
             'message'     => 'message',
