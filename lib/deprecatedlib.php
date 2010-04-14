@@ -39,6 +39,20 @@ function auth_get_plugin_title($authtype) {
     return get_string('pluginname', "auth_{$authtype}");
 }
 
+/**
+ * Was returning list of translations, use new string_manager instead
+ *
+ * @deprecated
+ * @param bool $refreshcache force refreshing of lang cache
+ * @param bool $returnall ignore langlist, return all languages available
+ * @return array An associative array with contents in the form of LanguageCode => LanguageName
+ */
+function get_list_of_languages($refreshcache=false, $returnall=false) {
+    if ($refreshcache) {
+        // TODO: reset lang cache
+    }
+    return get_string_manager()->get_list_of_translations($returnall);
+}
 
 /**
  * @deprecated

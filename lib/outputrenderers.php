@@ -675,7 +675,7 @@ class core_renderer extends renderer_base {
         }
 
         $currlang = current_language();
-        $langs = get_list_of_languages();
+        $langs = get_string_manager()->get_list_of_translations();
 
         if (count($langs) < 2) {
             return '';

@@ -106,7 +106,7 @@ if ($hassiteconfig
     $temp->add(new admin_setting_heading('language', get_string('language'), ''));
     $languages=array();
     $languages[''] = get_string('forceno');
-    $languages += get_list_of_languages();
+    $languages += get_string_manager()->get_list_of_translations();
     $temp->add(new admin_setting_configselect('moodlecourse/lang', get_string('forcelanguage'), '',key($languages),$languages));
 
     if (!empty($CFG->enablecompletion)) {

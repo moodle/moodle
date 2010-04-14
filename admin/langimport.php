@@ -41,7 +41,7 @@ die('Work in progress, to be replaced by the new language update interface...');
     if (file_exists($CFG->dataroot.'/cache/languages')) {
         print_error('cannotdeletelangcache', 'error');
     }
-    get_list_of_languages(true); //refresh lang cache
+    //TODO: refresh lang cache
 
     $notice_ok     = array();
     $notice_error = array();
@@ -123,7 +123,7 @@ die('Work in progress, to be replaced by the new language update interface...');
                 if (file_exists($dest2)){
                     $rm2 = remove_dir($dest2);
                 }
-                get_list_of_languages(true); //refresh lang cache
+                //TODO: refresh lang cache
                 //delete the direcotries
                 if ($rm1 or $rm2) {
                     $notice_ok[] = get_string('langpackremoved','admin');
@@ -140,7 +140,7 @@ die('Work in progress, to be replaced by the new language update interface...');
             //key = langname, value = md5
             $md5array = array();
             $updated = 0;    //any packs updated?
-            $alllangs = array_keys(get_list_of_languages(false, true)); //get all available langs
+            $alllangs = array_keys(get_string_manager()->get_list_of_translations(true)); //get all available langs
             $lang20 = array();   //all the Moodle 1.6 unicode lang packs (updated and not updated)
             $packs = array();    //all the packs that needs updating
 
@@ -245,7 +245,7 @@ die('Work in progress, to be replaced by the new language update interface...');
 
     echo $OUTPUT->header();
 
-    $installedlangs = get_list_of_languages(true, true);
+    $installedlangs = get_string_manager()->get_list_of_translations(true);
 
     $missingparents = array();
     $oldlang = isset($SESSION->lang) ? $SESSION->lang : null; // override current lang

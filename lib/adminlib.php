@@ -3517,7 +3517,7 @@ class admin_setting_langlist extends admin_setting_configtext {
      */
     public function write_setting($data) {
         $return = parent::write_setting($data);
-        get_list_of_languages(true);//refresh the list
+        //TODO: reset lang cache
         return $return;
     }
 }

@@ -100,7 +100,7 @@ class moodle_user_external extends external_api {
         unset($availableauths['webservice']); // we do not want new webservice users for now
 
         $availablethemes = get_plugin_list('theme');
-        $availablelangs  = get_list_of_languages();
+        $availablelangs  = get_string_manager()->get_list_of_translations();
 
         $transaction = $DB->start_delegated_transaction();
 

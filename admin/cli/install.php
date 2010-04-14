@@ -190,7 +190,7 @@ echo get_string('cliinstallheader', 'install', $CFG->target_release)."\n";
 //Fist select language
 if ($interactive) {
     cli_separator();
-    $languages = get_list_of_languages();
+    $languages = get_string_manager()->get_list_of_translations();
     // format the langs nicely - 3 per line
     $c = 0;
     $langlist = '';

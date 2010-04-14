@@ -2848,7 +2848,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         if (!empty($userids)) {
 
         /// Get languages for quick search later
-            $languages = get_list_of_languages();
+            $languages = get_string_manager()->get_list_of_translations();
 
         /// Iterate over all users loaded from xml
             $counter = 0;

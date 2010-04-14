@@ -365,7 +365,7 @@ class course_edit_form extends moodleform {
 
         $languages=array();
         $languages[''] = get_string('forceno');
-        $languages += get_list_of_languages();
+        $languages += get_string_manager()->get_list_of_translations();
         $mform->addElement('select', 'lang', get_string('forcelanguage'), $languages);
         $mform->setDefault('lang', $courseconfig->lang);
 

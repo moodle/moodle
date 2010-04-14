@@ -605,7 +605,7 @@ if ($distro) {
                                   get_string('chooselanguagesub', 'install'));
 }
 
-$languages = get_list_of_languages();
+$languages = get_string_manager()->get_list_of_translations();
 echo '<div class="userinput">';
 echo '<div class="formrow"><label class="formlabel" for="langselect">'.get_string('language').'</label>';
 echo '<select id="langselect" name="lang" class="forminput" onchange="this.form.submit()">';

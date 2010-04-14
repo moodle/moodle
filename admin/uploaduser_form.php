@@ -209,7 +209,7 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->setDefault('timezone', $templateuser->timezone);
         $mform->setAdvanced('timezone');
 
-        $mform->addElement('select', 'lang', get_string('preferredlanguage'), get_list_of_languages());
+        $mform->addElement('select', 'lang', get_string('preferredlanguage'), get_string_manager()->get_list_of_translations());
         $mform->setDefault('lang', $templateuser->lang);
         $mform->setAdvanced('lang');
 

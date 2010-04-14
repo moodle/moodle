@@ -755,7 +755,7 @@ function clean_param($param, $type) {
 
         case PARAM_LANG:
             $param = clean_param($param, PARAM_SAFEDIR);
-            $langs = get_list_of_languages(false, true);
+            $langs = get_string_manager()->get_list_of_translations(true);
             if (in_array($param, $langs)) {
                 return $param;
             } else {
@@ -3296,8 +3296,8 @@ function create_user_record($username, $password, $auth='manual') {
     // fix for MDL-8480
     // user CFG lang for user if $newuser->lang is empty
     // or $user->lang is not an installed language
-    $sitelangs = array_keys(get_list_of_languages());
-    if (empty($newuser->lang) || !in_array($newuser->lang, $sitelangs)) {
+    $sitelangs = get_string_manager()->get_list_of_translations();
+    if (empty($newuser->lang) || !isset($sitelangs[$newuser->lang])) {
         $newuser->lang = $CFG->lang;
     }
     $newuser->confirmed = 1;
@@ -5722,10 +5722,10 @@ interface string_manager {
     public function get_list_of_countries();
 
     /**
-     * Returns localised list of installed languages
+     * Returns localised list of installed translations
      * @param bool $returnall return all or just enabled
      */
-    public function get_list_of_languages($returnall = false);
+    public function get_list_of_translations($returnall = false);
 
     /**
      * Load all strings for one component
@@ -5996,10 +5996,10 @@ class core_string_manager implements string_manager {
     }
 
     /**
-     * Returns localised list of installed languages
+     * Returns localised list of installed translations
      * @param bool $returnall return all or just enabled
      */
-    public function get_list_of_languages($returnall = false) {
+    public function get_list_of_translations($returnall = false) {
         global $CFG;
 
         $languages = array();
@@ -6190,10 +6190,10 @@ class install_string_manager implements string_manager {
     }
 
     /**
-     * Returns localised list of installed languages
+     * Returns localised list of installed translations
      * @param bool $returnall return all or just enabled
      */
-    public function get_list_of_languages($returnall = false) {
+    public function get_list_of_translations($returnall = false) {
         // return all is ignored here - we need to know all langs in installer
         $languages = array();
         // Get raw list of lang directories
@@ -6342,24 +6342,6 @@ function get_strings($array, $component = '') {
  */
 function print_string($identifier, $component = '', $a = NULL) {
     echo get_string($identifier, $component, $a);
-}
-
-/**
- * Returns a list of language codes and their full names
- * hides the _local files from everyone.
- *
- * @global object
- * @param bool $refreshcache force refreshing of lang cache
- * @param bool $returnall ignore langlist, return all languages available
- * @return array An associative array with contents in the form of LanguageCode => LanguageName
- */
-function get_list_of_languages($refreshcache=false, $returnall=false) {
-
-    if ($refreshcache) {
-        // TODO: reimplement caching?; this may not be necessary if we implement lang pack precompilation in dataroot
-    }
-
-    return get_string_manager()->get_list_of_languages($returnall);
 }
 
 /**
@@ -9109,7 +9091,7 @@ function setup_lang_from_browser() {
     }
     krsort($langs, SORT_NUMERIC);
 
-    $langlist = get_list_of_languages();
+    $langlist = get_string_manager()->get_list_of_translations();
 
 /// Look for such langs under standard locations
     foreach ($langs as $lang) {
