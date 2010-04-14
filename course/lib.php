@@ -1647,13 +1647,13 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
 
     if (!empty($resources)) {
         $select = new url_select($resources, '', array(''=>$straddresource), "ressection$section");
-        $select->set_old_help_icon('resource/types', $straddresource);
+        $select->set_help_icon('resources');
         $output .= $OUTPUT->render($select);
     }
 
     if (!empty($activities)) {
         $select = new url_select($activities, '', array(''=>$straddactivity), "section$section");
-        $select->set_old_help_icon('mods', $straddactivity);
+        $select->set_help_icon('activities');
         $output .= $OUTPUT->render($select);
     }
 
