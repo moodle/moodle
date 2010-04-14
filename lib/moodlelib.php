@@ -5716,7 +5716,7 @@ interface string_manager {
     public function string_exists($identifier, $component);
     
     /**
-     * Returns a list of country names in the current language
+     * Returns a localised list of all country names
      * @return array two-letter country code => translated name.
      */
     public function get_list_of_countries();
@@ -5987,7 +5987,7 @@ class core_string_manager implements string_manager {
     }
 
     /**
-     * Returns a list of country names in the current language
+     * Returns a localised list of all country names
      * @return array two-letter country code => translated name.
      */
     public function get_list_of_countries() {
@@ -6182,7 +6182,7 @@ class install_string_manager implements string_manager {
     }
 
     /**
-     * Returns a list of country names in the current language
+     * Returns a localised list of all country names
      * @return array two-letter country code => translated name.
      */
     public function get_list_of_countries() {
