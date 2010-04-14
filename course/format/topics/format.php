@@ -24,7 +24,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package
  */
-//TODO (nfreear): Accessibility: evaluation, lang/en/moodle.php: $string['formattopicscss']
 
 require_once($CFG->libdir.'/filelib.php');
 
