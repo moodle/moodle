@@ -93,7 +93,7 @@ if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing())
 
     // Note, no need for a 'left side' cell or DIV.
     // Note, 'right side' is BEFORE content.
-    echo '<li id="section-0" class="section main" >';
+    echo '<li id="section-0" class="section main clearfix" >';
     echo '<div class="left side">&nbsp;</div>';
     echo '<div class="right side" >&nbsp;</div>';
     echo '<div class="content">';
@@ -136,7 +136,7 @@ while ($section <= $course->numsections) {
         $thissection = $sections[$section];
 
     } else {
-        unset($thissection);
+        $thissection = new stdClass;
         $thissection->course  = $course->id;   // Create a new section structure
         $thissection->section = $section;
         $thissection->summary  = '';
@@ -174,7 +174,7 @@ while ($section <= $course->numsections) {
             $sectionstyle = '';
         }
 
-        echo '<li id="section-'.$section.'" class="section main'.$sectionstyle.'" >'; //'<div class="left side">&nbsp;</div>';
+        echo '<li id="section-'.$section.'" class="section main clearfix'.$sectionstyle.'" >'; //'<div class="left side">&nbsp;</div>';
 
             echo '<div class="left side">'.$currenttext.$section.'</div>';
         // Note, 'right side' is BEFORE content.
