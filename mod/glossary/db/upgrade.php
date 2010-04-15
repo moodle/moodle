@@ -262,7 +262,7 @@ function xmldb_glossary_upgrade($oldversion) {
 
     if($result && $oldversion < 2010041300) {
         //migrate glossary_ratings to the central rating table
-        require_once('../lib/db/upgradelib.php');
+        require_once($CFG->dirroot . '/lib/db/upgradelib.php');
 
         //glossary ratings only have a single time column so use it for both time created and modified
         $ratingssql = 'SELECT r.id AS rid, r.entryid AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified, g.scale, g.id AS mid

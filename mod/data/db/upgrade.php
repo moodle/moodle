@@ -256,8 +256,8 @@ function xmldb_data_upgrade($oldversion) {
 
     if($result && $oldversion < 2010041300) {
         //migrate data_ratings to the central rating table
-	require_once('../lib/db/upgradelib.php');
-	
+        require_once($CFG->dirroot . '/lib/db/upgradelib.php');
+
         //data ratings didnt store time created and modified so Im using the times from the record the rating was attached to
         $ratingssql = 'SELECT r.id AS rid, r.recordid AS itemid, r.rating, r.userid, re.timecreated, re.timemodified, d.scale, d.id AS mid
 FROM {data_ratings} r
