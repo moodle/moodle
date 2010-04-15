@@ -443,7 +443,7 @@ class theme_config {
             // may contain core and plugin renderers and renderer factory
             include_once($rendererfile);
         }
-
+        
         // cascade all layouts properly
         foreach ($baseconfig->layouts as $layout=>$value) {
             if (!isset($this->layouts[$layout])) {
@@ -1068,14 +1068,21 @@ class theme_config {
 
         $layoutinfo = $this->layout_info_for_page($pagelayout);
         $layoutfile = $layoutinfo['file'];
-        $theme = $layoutinfo['theme'];
 
-        if ($dir = $this->find_theme_location($theme)) {
-            $path = "$dir/layout/$layoutfile";
+        if (array_key_exists('theme', $layoutinfo)) {
+            $themes = array($layoutinfo['theme']);
+        } else {
+            $themes = array_merge(array($this->name),$this->parents);
+        }
+        
+        foreach ($themes as $theme) {
+            if ($dir = $this->find_theme_location($theme)) {
+                $path = "$dir/layout/$layoutfile";
 
-            // Check the template exists, return general base theme template if not.
-            if (is_readable($path)) {
-                return $path;
+                // Check the template exists, return general base theme template if not.
+                if (is_readable($path)) {
+                    return $path;
+                }
             }
         }
 
