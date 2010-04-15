@@ -883,7 +883,7 @@ class grade_item extends grade_object {
      * @return object Grade_category
      */
     function load_item_category() {
-        if (empty($this->category->id)) {
+        if (empty($this->item_category->id)) {
             $this->item_category = $this->get_item_category();
         }
         return $this->item_category;
