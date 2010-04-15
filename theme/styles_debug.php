@@ -28,7 +28,7 @@ define('ABORT_AFTER_CONFIG', true);
 require('../config.php'); // this stops immediately at the beginning of lib/setup.php
 
 $themename = min_optional_param('theme', 'standard', 'SAFEDIR');
-$type      = min_optional_param('type', 'all', 'SAFEDIR');
+$type      = min_optional_param('type', '', 'SAFEDIR');
 $subtype   = min_optional_param('subtype', '', 'SAFEDIR');
 $sheet     = min_optional_param('sheet', '', 'SAFEDIR');
 
@@ -59,7 +59,26 @@ if (!$css = file_get_contents($candidatesheet)) {
 $css = unserialize($css);
 
 if ($type === 'ie') {
-    send_ie_css($themename, $css);
+    // IE is a sloppy browser with weird limits, sorry
+    if ($subtype === 'plugins') {
+        $sendcss = implode("\n\n", $css['plugins']);
+        $sendcss = str_replace("\n", "\r\n", $sendcss);
+        send_uncached_css($sendcss);
+
+    } else if ($subtype === 'parents') {
+        $sendcss = array();
+        foreach ($css['parents'] as $parent=>$sheets) {
+            $sendcss = array_merge($sendcss, $sheets);
+        }
+        $sendcss = implode("\n\n", $sendcss);
+        $sendcss = str_replace("\n", "\r\n", $sendcss);
+        send_uncached_css($sendcss);
+
+    } else if ($subtype === 'theme') {
+        $sendcss = implode("\n\n", $css['theme']);
+        $sendcss = str_replace("\n", "\r\n", $sendcss);
+        send_uncached_css($sendcss);
+    }
 
 } else if ($type === 'plugin') {
     if (isset($css['plugins'][$subtype])) {
@@ -101,28 +120,3 @@ function css_not_found() {
     die('CSS was not found, sorry.');
 }
 
-function send_ie_css($themename, $css) {
-    $output = "/** Unfortunately IE6/7/8 does not support more than 31 CSS files, which means we have to use some ugly hacks :-( **/\n";
-    foreach ($css['plugins'] as $plugin=>$unused) {
-        $output .= "@import url(styles_debug.php?theme=$themename&type=plugin&subtype=$plugin);\n";
-    }
-    foreach ($css['parents'] as $parent=>$sheets) {
-        foreach ($sheets as $sheet=>$unused2) {
-            $output .= "@import url(styles_debug.php?theme=$themename&type=parent&subtype=$parent&sheet=$sheet);\n";
-        }
-    }
-    foreach ($css['theme'] as $sheet=>$unused) {
-        $output .= "@import url(styles_debug.php?theme=$themename&type=theme&sheet=$sheet);\n";
-    }
-    
-    header('Content-Disposition: inline; filename="styles_debug.php"');
-    header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
-    header('Expires: '. gmdate('D, d M Y H:i:s', time() + THEME_DESIGNER_CACHE_LIFETIME) .' GMT');
-    header('Pragma: ');
-    header('Accept-Ranges: none');
-    header('Content-Type: text/css');
-    //header('Content-Length: '.strlen($output));
-
-    echo $output;
-    die;
-}

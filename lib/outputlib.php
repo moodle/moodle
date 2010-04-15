@@ -159,7 +159,7 @@ class theme_config {
      * @var array
      */
     public $javascripts_footer = array();
-    
+
     /**
      * The names of all the javascript files from parents that should be excluded.
      * true value may be used to specify all parents or all themes from one parent.
@@ -443,7 +443,7 @@ class theme_config {
             // may contain core and plugin renderers and renderer factory
             include_once($rendererfile);
         }
-        
+
         // cascade all layouts properly
         foreach ($baseconfig->layouts as $layout=>$value) {
             if (!isset($this->layouts[$layout])) {
@@ -636,7 +636,9 @@ class theme_config {
 
             if (check_browser_version('MSIE', 5)) {
                 // lalala, IE does not allow more than 31 linked CSS files from main document
-                $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', array('theme'=>$this->name, 'type'=>'ie'));
+                $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'plugins'));
+                $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'parents'));
+                $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'theme'));
 
             } else {
                 foreach ($css['plugins'] as $plugin=>$unused) {
@@ -1074,7 +1076,7 @@ class theme_config {
         } else {
             $themes = array_merge(array($this->name),$this->parents);
         }
-        
+
         foreach ($themes as $theme) {
             if ($dir = $this->find_theme_location($theme)) {
                 $path = "$dir/layout/$layoutfile";
