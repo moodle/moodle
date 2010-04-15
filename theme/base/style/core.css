@@ -1,4 +1,9 @@
 /**
+ * Required to undo YUI resets that override input size
+ */
+input[type=text],input[type=password],textarea{width:auto;}
+
+/**
  * General
  */
 th,
