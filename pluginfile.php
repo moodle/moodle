@@ -510,9 +510,26 @@ if (!empty($sendflashupgrader) && (($userplayerversion[0] <  $requiredplayervers
     send_file_not_found();
 
 } else if ($context->contextlevel == CONTEXT_BLOCK) {
-    //not supported yet
-    send_file_not_found();
 
+    if (!$context = get_context_instance_by_id($contextid)) {
+        send_file_not_found();
+    }
+    $birecord = $DB->get_record('block_instances', array('id'=>$context->instanceid), '*',MUST_EXIST);
+    $blockinstance = block_instance($birecord->blockname, $birecord);
+
+    if (strpos(get_class($blockinstance), $filearea) !== 0) {
+        send_file_not_found();
+    }
+
+    $itemid = array_shift($args);
+    $filename = array_pop($args);
+    $filepath = '/'.join('/', $args);
+
+    if (method_exists($blockinstance, 'send_file')) {
+        $blockinstance->send_file($context, $filearea, $itemid, $filepath, $filename);
+    }
+
+    send_file_not_found();
 
 } else {
     send_file_not_found();
