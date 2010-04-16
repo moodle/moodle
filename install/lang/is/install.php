@@ -28,10 +28,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['dataroot'] = 'Gagnamappa';
-$string['dirroot'] = 'Moodle skráarsafnið';
 $string['chooselanguagehead'] = 'Tungumál valið';
 $string['chooselanguagesub'] = 'Veldu tungumál sem þú vilt nota við uppsetninguna. Síðar er hægt að velja tungumál á sjálfan vefinn.';
+$string['dataroot'] = 'Gagnamappa';
+$string['dirroot'] = 'Moodle skráarsafnið';
 $string['installation'] = 'Uppsetning';
 $string['langdownloaderror'] = 'Því miður tókst ekki að setja upp tungumálið {$a}. Uppsetning heldur áfram á ensku.';
 $string['phpversion'] = 'PHP útgáfa';

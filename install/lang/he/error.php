@@ -35,3 +35,7 @@ $string['cannotfindcomponent'] = 'הרכיב לא נמצא.';
 $string['cannotsavemd5file'] = 'לא ניתן לשמור קובץ md5.';
 $string['cannotsavezipfile'] = 'לא ניתן לשמור קובץ ZIP.';
 $string['cannotunzipfile'] = 'לא ניתן לפתוח את קובץ ה-ZIP.';
+$string['remotedownloaderror'] = 'הורדת הרכיב לשרת שלך כשלה, אנא וודא את הגדרות ה-proxy שלך. תוספת PHP cURL מומלצת מאוד להתקנה.
+<br /><br />
+הינך צריך להוריד את קובץ ההדרכה <a href="{$a->url}">{$a->url}</a> ולהעתיק אותו ל "{$a->dest}"
+בשרת שלך ולכווץ אותו שם.';

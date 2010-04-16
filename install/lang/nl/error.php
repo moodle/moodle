@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = 'Kan component niet vinden.';
 $string['cannotsavemd5file'] = 'Kan md5-bestand niet bewaren.';
 $string['cannotsavezipfile'] = 'Kan ZIP-bestand niet bewaren.';
 $string['cannotunzipfile'] = 'Kon bestand niet unzippen';
+$string['remotedownloaderror'] = 'De download van de component naar jouw server is mislukt, controleer je proxy-instellingen, de PHP cURL-extentie wordt ten zeerste aanbevolen te installeren.<br /><br />Je moet je <a href="{$a->url}">{$a->url}</a> bestand manueel downloaden , kopiëren naar de map "{$a->dest}" op je server en het daar unzippen.';

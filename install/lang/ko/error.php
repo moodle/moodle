@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = '구성요소를 찾을 수 없음';
 $string['cannotsavemd5file'] = 'md5 파일을 저장할 수 없음';
 $string['cannotsavezipfile'] = 'ZIP 파일을 저장할 수 없음';
 $string['cannotunzipfile'] = '압축된 파일을 풀 수 없음';
+$string['remotedownloaderror'] = '서버로 구성요소를 다운로드하는데 실패하였습니다. 프록시 설정을 확인하십시요. PHP cURL 확장라이브러리를 추천합니다. <br /><br /> <a href="{$a->url}">{$a->url}</a> 파일을 수동으로 다운로드해서 서버의 "{$a->dest}"에 복사한 다음 거기서 압축을 해제하십시요.';

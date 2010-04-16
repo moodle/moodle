@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = 'Nie można znaleźć komponentu';
 $string['cannotsavemd5file'] = 'Nie można zapisać pliku md5';
 $string['cannotsavezipfile'] = 'Nie można zapisać pliku ZIP';
 $string['cannotunzipfile'] = 'Nie można rozpakować (unzip) pliku';
+$string['remotedownloaderror'] = 'Pobieranie składnika na serwer nie powiodło się. Sprawdź ustawienia proxy. Rozszerzenie PHP cURL jest bardzo zalecane. <br /><br />Musisz pobrać następująćy plik <a href="{$a->url}">{$a->url}</a> ręcznie, skopiować go do lokalizacji "{$a->dest}" i rozpakować poleceniem unzip.';

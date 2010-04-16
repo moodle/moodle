@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = '找不到组件。';
 $string['cannotsavemd5file'] = '无法保存 md5 文件';
 $string['cannotsavezipfile'] = '无法保存 ZIP 文件';
 $string['cannotunzipfile'] = '无法解压文件';
+$string['remotedownloaderror'] = '下载组件至服务器失败，请校验代理设置，推荐安装 PHP cURL 扩展。<br /><br />您必须手动下载下载<a href="{$a->url}">{$a->url}</a> ，拷贝至服务器上的“{$a->dest}”并解压至此。';

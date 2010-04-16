@@ -30,12 +30,12 @@
 
 $string['admindirname'] = 'Adminディレクトリ';
 $string['availablelangs'] = '利用可能な言語一覧';
+$string['chooselanguagehead'] = '言語を選択してください。';
+$string['chooselanguagesub'] = 'インストールのみに使用する言語を選択してください。この言語は、サイトのデフォルト言語としても使用されます。サイト言語は、後で変更することが可能です。';
 $string['dataroot'] = 'データディレクトリ';
 $string['dirroot'] = 'Moodleディレクトリ';
 $string['environmentsub2'] = 'それぞれのMoodleリリースには、PHPバージョンの最小必要条件および多くの必須PHP拡張モジュールがあります。完全な環境チェックは、インストールおよびアップグレードごとに実行されます。新しいPHPバージョンのインストールまたはPHP拡張モジュールの有効化に関して分からない場合、あなたのサーバ管理者に連絡してください。';
 $string['errorsinenvironment'] = '環境エラー!';
-$string['chooselanguagehead'] = '言語を選択してください。';
-$string['chooselanguagesub'] = 'インストールのみに使用する言語を選択してください。この言語は、サイトのデフォルト言語としても使用されます。サイト言語は、後で変更することが可能です。';
 $string['installation'] = 'インストレーション';
 $string['langdownloaderror'] = '残念ですが、言語「 {$a} 」がインストールされていません。インストール処理は英語で継続されます。';
 $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリー制限が {$a} に設定されています。</p>

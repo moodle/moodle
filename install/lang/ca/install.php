@@ -30,11 +30,11 @@
 
 $string['admindirname'] = 'Directori d\'administració';
 $string['availablelangs'] = 'Llista d\'idiomes disponibles';
+$string['chooselanguagehead'] = 'Trieu un idioma';
+$string['chooselanguagesub'] = 'Trieu un idioma NOMÉS per a la instal·lació. En una pantalla posterior podreu triar idiomes per al lloc i per als usuaris.';
 $string['dataroot'] = 'Directori de dades';
 $string['dirroot'] = 'Directori de Moodle';
 $string['errorsinenvironment'] = 'Hi ha errors en l\'entorn.';
-$string['chooselanguagehead'] = 'Trieu un idioma';
-$string['chooselanguagesub'] = 'Trieu un idioma NOMÉS per a la instal·lació. En una pantalla posterior podreu triar idiomes per al lloc i per als usuaris.';
 $string['installation'] = 'Instal·lació';
 $string['langdownloaderror'] = 'Dissortadament l\'idioma "{$a}" no està instal·lat. La instal·lació prosseguirà en anglès.';
 $string['memorylimithelp'] = '<p>El límit de memòria del PHP del vostre servidor actualment està definit en {$a}.</p>

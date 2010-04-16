@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = 'Nu a fost găsită componenta';
 $string['cannotsavemd5file'] = 'Fişierul md5 nu poate fi salvat';
 $string['cannotsavezipfile'] = 'Arhiva ZIP nu poate fi salvată';
 $string['cannotunzipfile'] = 'Arhiva nu poate fi deschisă';
+$string['remotedownloaderror'] = 'Operaţiunea de descărcare a componentei pe serverul dumneavoastră a eşuat, vă rugăm verificaţi setările proxy, se recomandă cu tărie folosirea extensiei PHP cURL.<br /><br />Va trebui să descărcaţi manual fişierul <a href="{$a->url}">{$a->url}</a>, să îl copiaţi în folderul "{$a->dest}" de pe serverul dumnevoastră şi să îl dezarhivaţi în acelaşi loc.';

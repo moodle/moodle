@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = 'Kāore i taea te wae te kite.';
 $string['cannotsavemd5file'] = 'Kāore i taea te kōnae md5 te tiaki.';
 $string['cannotsavezipfile'] = 'Kāore i taea te kōnae KŌTUI te tiaki.';
 $string['cannotunzipfile'] = 'Kāore i taea te kōnae te whewhera.';
+$string['remotedownloaderror'] = 'Tiki ake o to mōtete ki te tūmau i hinga, manatoko koa i ō tautuhinga takawaenga, PHP cURL  toronga kei te tino tutohua.<br /><br /> Me tiki ake koe i te <a href="{$a->url}">{$a->url}</a> kōnae ā-ringa, tāruangia ki te  "{$a->dest}"  i tō tūmau me te pōutāpeta ki reira.';

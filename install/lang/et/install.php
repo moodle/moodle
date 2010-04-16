@@ -30,11 +30,11 @@
 
 $string['admindirname'] = 'Administreerimiskataloog';
 $string['availablelangs'] = 'Saadaval keelte nimekiri';
+$string['chooselanguagehead'] = 'Keele valik';
+$string['chooselanguagesub'] = 'Palun vali keel, mida kasutatakse AINULT installeerimise käigus. Hiljem saab valida õpikeskkonna ja kasutajate keelt.';
 $string['dataroot'] = 'Andmete kataloog';
 $string['dirroot'] = 'Moodle kataloog';
 $string['errorsinenvironment'] = 'Keskkonna sobivuse kontroll ebaõnnestus!';
-$string['chooselanguagehead'] = 'Keele valik';
-$string['chooselanguagesub'] = 'Palun vali keel, mida kasutatakse AINULT installeerimise käigus. Hiljem saab valida õpikeskkonna ja kasutajate keelt.';
 $string['installation'] = 'Installeerimine';
 $string['langdownloaderror'] = 'Kahjuks keelt "{$a}" ei paigaldatud. Paigaldamine jätkub inglise keeles.';
 $string['memorylimithelp'] = '<p>PHP mälu limiit sinu serveri jaoks on hetkel {$a}.</p>

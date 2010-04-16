@@ -29,10 +29,10 @@
  */
 
 $string['admindirname'] = 'Direutoriu d\'alministración';
-$string['dataroot'] = 'Direutoriu de datos';
-$string['dirroot'] = 'Direutoriu Moodle';
 $string['chooselanguagehead'] = 'Escueya idioma';
 $string['chooselanguagesub'] = 'Escueya un idioma NAMÁS pa la instalación. va poder escoyer l\'idioma del sitiu y l\'idioma d\'usuariu nes pantayes vinientes.';
+$string['dataroot'] = 'Direutoriu de datos';
+$string['dirroot'] = 'Direutoriu Moodle';
 $string['installation'] = 'Instalación';
 $string['langdownloaderror'] = 'Desgraciadamente l\'idioma "{$a}" nun ta instaláu. El procesu d\'instalación va siguir n\'inglés.';
 $string['memorylimithelp'] = '<p>La llende de memoria del PHP del so servidor ta actualmente establecida en {$a}.</p>

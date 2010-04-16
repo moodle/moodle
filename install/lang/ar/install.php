@@ -29,9 +29,9 @@
  */
 
 $string['admindirname'] = 'مجلد الإدارة';
+$string['chooselanguagehead'] = 'اختر اللغة';
 $string['dataroot'] = 'دليل البيانات';
 $string['dirroot'] = 'دليل مودل';
-$string['chooselanguagehead'] = 'اختر اللغة';
 $string['installation'] = 'تثبيت';
 $string['phpversion'] = 'أصدار PHP';
 $string['phpversionhelp'] = '<p> يتطلب مودل على الاقل الأصدار 4.1.0 لـ PHP </p>

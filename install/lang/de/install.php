@@ -30,12 +30,12 @@
 
 $string['admindirname'] = 'Name des Admin-Verzeichnisses';
 $string['availablelangs'] = 'Liste der verfügbaren Sprachen';
+$string['chooselanguagehead'] = 'Sprache wählen';
+$string['chooselanguagesub'] = 'Wählen Sie eine Sprache, die Sie während der Installation verwenden wollen. Nach der Installation können Sie die Sprache für die Oberfläche und die Nutzer/innen festlegen.';
 $string['dataroot'] = 'Daten-Verzeichnis';
 $string['dirroot'] = 'Moodle-Verzeichnis';
 $string['environmentsub2'] = 'Jede Moodle-Version hat Mindestvoraussetzungen für der PHP-Version und für einige verbindliche PHP-Extensions. Vor einer Installation oder einer Aktualisierung wird immer eine vollständige Prüfung der Serverausstattung durchgeführt. Bitte fragen Sie den Administrator Ihres Servers, wenn Sie mit der Installation einer neuen Version oder mit der Aktivierung von PHP-Extensions nicht weiterkommen.';
 $string['errorsinenvironment'] = 'Fehler bei der Prüfung der Systemvoraussetzungen!';
-$string['chooselanguagehead'] = 'Sprache wählen';
-$string['chooselanguagesub'] = 'Wählen Sie eine Sprache, die Sie während der Installation verwenden wollen. Nach der Installation können Sie die Sprache für die Oberfläche und die Nutzer/innen festlegen.';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Leider konnte das Sprachpaket "{$a}" nicht heruntergeladen werden. Die Installation wird in englischer Sprache fortgesetzt.';
 $string['memorylimithelp'] = '<p>Die PHP-Einstellung memory_limit für Ihren Server ist zur Zeit auf {$a} eingestellt. </p>

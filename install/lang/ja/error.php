@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = 'コンポーネントを見つけることが�
 $string['cannotsavemd5file'] = 'mp5ファイルを保存できません。';
 $string['cannotsavezipfile'] = 'ZIPファイルを保存できません。';
 $string['cannotunzipfile'] = 'ZIPファイルを解凍できません。';
+$string['remotedownloaderror'] = 'あなたのサーバへのコンポーネントのダウンロードに失敗しました。プロクシ設定を確認してください。PHP cURL拡張モジュールの使用を強くお勧めします。<br /><br /><a href="{$a->url}">{$a->url}</a>ファイルを手動でダウンロードした後、あなたのサーバの「{$a->dest}」にコピーおよび解凍してください。';

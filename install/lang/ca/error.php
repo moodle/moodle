@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = 'No s\'ha pogut trobar un component';
 $string['cannotsavemd5file'] = 'No s\'ha pogut desar el fitxer md5';
 $string['cannotsavezipfile'] = 'No s\'ha pogut desar el fitxer zip';
 $string['cannotunzipfile'] = 'No s\'ha pogut descomprimir el fitxer';
+$string['remotedownloaderror'] = 'No s\'ha pogut baixar el component al vostre servidor. Verifiqueu els paràmetres de servidor intermediari. Es recomana l\'extensió cURL.<br /><br />Haureu de baixar manualment el fitxer <a href="{$a->url}">{$a->url}</a>, copiar-lo a la ubicació "{$a->dest}" del vostre servidor i descomprimir-lo allí.';

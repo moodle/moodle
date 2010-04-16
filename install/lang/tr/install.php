@@ -30,11 +30,11 @@
 
 $string['admindirname'] = 'Yönetici Dizini';
 $string['availablelangs'] = 'Kullanılabilir diller';
+$string['chooselanguagehead'] = 'Bir dil seçin';
+$string['chooselanguagesub'] = 'Lütfen, SADECE kurulum için bir dil seçin. Site ve kullanıcı dillerini sonraki ekranda seçebilirsiniz.';
 $string['dataroot'] = 'Veri Dizini';
 $string['dirroot'] = 'Moodle Dizini';
 $string['errorsinenvironment'] = 'Ortamda hatalar var!';
-$string['chooselanguagehead'] = 'Bir dil seçin';
-$string['chooselanguagesub'] = 'Lütfen, SADECE kurulum için bir dil seçin. Site ve kullanıcı dillerini sonraki ekranda seçebilirsiniz.';
 $string['installation'] = 'Kurulum';
 $string['langdownloaderror'] = 'Maalesef "{$a}" dil paketi kurulamadı. Kuruluma İngilizce olarak devam edilecek.';
 $string['memorylimithelp'] = '<p>Sunucunuz için PHP bellek limiti şu anda {$a} olarak ayarlanmış durumda.</p>

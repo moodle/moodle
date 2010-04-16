@@ -30,12 +30,12 @@
 
 $string['admindirname'] = '관리 디렉토리';
 $string['availablelangs'] = '가능한 언어 목록';
+$string['chooselanguagehead'] = '언어를 선택하시오';
+$string['chooselanguagesub'] = '설치 과정에서 사용할 언어를 선택하십시오. 선택한 언어는 사이트의 기본 언어로 사용할 수 있으며, 추후 다른 언어로 바꿀 수도 있습니다.';
 $string['dataroot'] = '데이타 경로';
 $string['dirroot'] = '무들 디렉토리';
 $string['environmentsub2'] = '개개의 무들 배포본은 필요로하는 최소한의 PHP 버전과 확장기능이 다릅니다. 각 판을 설치하거나 판올림하기 전에 완벽한 구동환경을 점검해야 합니다. 혹 여러분이 어떻게 새 판을 설치해야 할지 또 어떻게 PHP 확장 기능을 설치해야 할지 모르겠다면, 서버 관리자에게 문의하기 바랍니다.';
 $string['errorsinenvironment'] = '환경설정에 오류가 있습니다!';
-$string['chooselanguagehead'] = '언어를 선택하시오';
-$string['chooselanguagesub'] = '설치 과정에서 사용할 언어를 선택하십시오. 선택한 언어는 사이트의 기본 언어로 사용할 수 있으며, 추후 다른 언어로 바꿀 수도 있습니다.';
 $string['installation'] = '설치';
 $string['langdownloaderror'] = '안타깝게도 "{$a}" 언어팩이 설치되지 않았습니다. 대신 영어를 이용하여 설치될 것입니다.';
 $string['memorylimithelp'] = '<p>현재 서버의 PHP 메모리 사용량은 {$a} 로 설정되어 있습니다.</p>

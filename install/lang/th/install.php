@@ -29,10 +29,10 @@
  */
 
 $string['admindirname'] = 'ไดเรกทอรี admin';
-$string['dataroot'] = 'ไดเรกทอรีข้อมูล';
-$string['dirroot'] = 'Moodle ไดเรกทอรี';
 $string['chooselanguagehead'] = 'เลื่อกภาษา';
 $string['chooselanguagesub'] = 'กรุณาเลือกภาษาที่ใช้ในการติดตั้งเท่านั้น คุณจะสามารถเลือกตั้งค่าภาษาสำหรับเว็บไซต์และสำหรับสมาชิกแต่ละคนในหน้าจอต่อไป';
+$string['dataroot'] = 'ไดเรกทอรีข้อมูล';
+$string['dirroot'] = 'Moodle ไดเรกทอรี';
 $string['installation'] = 'การติดตั้ง';
 $string['langdownloaderror'] = 'ภาษา "{$a}" ไม่ได้รับการติดตั้ง กระบวนการติดตั้งจะดำเนินไปด้วยภาษาอังกฤษ';
 $string['memorylimithelp'] = '<p>ค่าความจำสูงสุดของเซิร์ฟเวอร์ของคุณตั้งไว้ที่  {$a}</p>

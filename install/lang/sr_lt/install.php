@@ -30,13 +30,13 @@
 
 $string['admindirname'] = 'Administratorski direktorijum';
 $string['availablelangs'] = 'Spisak dostupnih jezika';
+$string['chooselanguagehead'] = 'Izaberite jezik';
+$string['chooselanguagesub'] = 'Molimo izaberite jezik koji će se koristiti samo tokom instalacije. Kasnije ćete moći da izaberete jezička podešavanja na nivou sajta i korisnika.';
 $string['dataroot'] = 'Direktorijum podataka';
 $string['dirroot'] = 'Moodle direktorijum';
 $string['environmentsub2'] = 'Svaka verzija Moodlea ima minimum zahteva po pitanju odgovarajuće PHP verѕije i nekoliko obaveznih PHP ekstenzija.
 Puna provera okruženja se vrši pre svake instalacije ili ažuriranja postojeće verzije. Ukoliko ne znate kako da instalirate novu verziju ili omogućite PHP ektenzije kontaktirajte Vašeg server administratora.';
 $string['errorsinenvironment'] = 'Greške u okruženju';
-$string['chooselanguagehead'] = 'Izaberite jezik';
-$string['chooselanguagesub'] = 'Molimo izaberite jezik koji će se koristiti samo tokom instalacije. Kasnije ćete moći da izaberete jezička podešavanja na nivou sajta i korisnika.';
 $string['installation'] = 'Instalacija';
 $string['langdownloaderror'] = 'Nažalost jezik "{$a}" nije instaliran. Proces instalacije biće nastavljen na engleskom jeziku.';
 $string['memorylimithelp'] = '<p>PHP ograničenje memorije za Vaš server je trenutno podešeno na {$a}.</p>

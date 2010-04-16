@@ -29,10 +29,10 @@
  */
 
 $string['admindirname'] = 'Adresár pre správu (admin)';
-$string['dataroot'] = 'Adresár pre údaje';
-$string['dirroot'] = 'Adresár Moodle';
 $string['chooselanguagehead'] = 'Vyberte jazyk';
 $string['chooselanguagesub'] = 'Zvoľte si jazyk PRE INŠTALOVANIE. Jazyk pre stránky Moodle a pre užívateľov budete môcť vybrať neskôr.';
+$string['dataroot'] = 'Adresár pre údaje';
+$string['dirroot'] = 'Adresár Moodle';
 $string['installation'] = 'Inštalácia';
 $string['langdownloaderror'] = 'Bohužiaľ, jazyk "{$a}" sa nepodarilo nainštalovať. Inštalácia bude pokračovať v angličtine.';
 $string['memorylimithelp'] = '<p>PHP limit pamäte pre Váš server je momentálne nastavený na {$a}.</p>

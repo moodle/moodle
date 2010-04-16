@@ -29,10 +29,10 @@
  */
 
 $string['admindirname'] = 'Katalog admin';
-$string['dataroot'] = 'Katalog z danymi';
-$string['dirroot'] = 'Katalog Moodle';
 $string['chooselanguagehead'] = 'Wybierz język';
 $string['chooselanguagesub'] = 'Proszę wybrać język TYLKO do instalacji. Stronę i języki dla użytkowników będzie można wybrać na następnym ekranie.';
+$string['dataroot'] = 'Katalog z danymi';
+$string['dirroot'] = 'Katalog Moodle';
 $string['installation'] = 'Instalacja';
 $string['langdownloaderror'] = 'Niestety język "{$a}" nie jest zainstalowany. Instalacja będzie przebiegać dalej po angielsku.';
 $string['memorylimithelp'] = 'Limit pamięci PHP dla Twojego serwera jest ustawiony obecnie na {$a}.</p>

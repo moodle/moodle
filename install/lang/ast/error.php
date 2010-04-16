@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = 'Nun puen atopaser componentes.';
 $string['cannotsavemd5file'] = 'Nun se pue guardar el ficheru md5.';
 $string['cannotsavezipfile'] = 'Nun se pue guardar un ficheru ZIP.';
 $string['cannotunzipfile'] = 'Nun se pue descomprimir el ficheru.';
+$string['remotedownloaderror'] = 'La descarga del componente al so servidor falló. Por favor, asegúrese de que les carauterístiques del proxy son les correutes. La estensión PHP cURL ye perrecomendable.<br/><br/>Tien de descargar el ficheru <a href="{$a->url}">{$a->url}</a> manualmente, copialu en "{$a->dest}" del so servidor y descomprimilu ellí.';

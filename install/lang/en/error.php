@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = 'Cannot find component';
 $string['cannotsavemd5file'] = 'Cannot save md5 file';
 $string['cannotsavezipfile'] = 'Cannot save ZIP file';
 $string['cannotunzipfile'] = 'Cannot unzip file';
+$string['remotedownloaderror'] = 'Download of component to your server failed, please verify proxy settings, PHP cURL extension is highly recommended.<br /><br />You must download the <a href="{$a->url}">{$a->url}</a> file manually, copy it to "{$a->dest}" in your server and unzip it there.';

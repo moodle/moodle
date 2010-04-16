@@ -29,10 +29,10 @@
  */
 
 $string['admindirname'] = '管理目录';
-$string['dataroot'] = '数据目录';
-$string['dirroot'] = 'Moodle目录';
 $string['chooselanguagehead'] = '选择一种语言';
 $string['chooselanguagesub'] = '请选择在安装过程中使用的语言。稍后您可以根据需要重新选择用于站点和用户的语言。';
+$string['dataroot'] = '数据目录';
+$string['dirroot'] = 'Moodle目录';
 $string['installation'] = '安装';
 $string['langdownloaderror'] = '很不幸，语言“{$a}”并未安装。安装过程将以英文继续。';
 $string['memorylimithelp'] = '<p>您的服务器的PHP内存限制是${a}。</p>

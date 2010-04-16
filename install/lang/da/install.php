@@ -29,10 +29,10 @@
  */
 
 $string['admindirname'] = 'Admin-mappe';
-$string['dataroot'] = 'Datamappe';
-$string['dirroot'] = 'Moodle-mappe';
 $string['chooselanguagehead'] = 'Vælg et sprog';
 $string['chooselanguagesub'] = 'Vælg et sprog til brug under installationen. Senere vil du kunne vælge hvilke sprog Moodle skal kunne bruge.';
+$string['dataroot'] = 'Datamappe';
+$string['dirroot'] = 'Moodle-mappe';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Sproget "{$a}" blev desværre ikke installeret. Installationen vil fortsætte på engelsk.';
 $string['memorylimithelp'] = '<p>Den mængde hukommelse PHP kan bruge, er sat til {$a}.</p> 

@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = 'Ezin da osagaia aurkitu';
 $string['cannotsavemd5file'] = 'Ezin da Md5 fitxategia gorde';
 $string['cannotsavezipfile'] = 'Ezin da ZIP fitxategia gorde';
 $string['cannotunzipfile'] = 'Ezin da fitxategia deskonprimatu';
+$string['remotedownloaderror'] = 'Errorea osagaia zure zerbitzarian jaistean, mesedez egiaztatu proxy-ezarpenak, PHP cURL luzapea erabat gomendatzen da.<br/><br /> <a href="*{$a->url}*">*{$a->url}*</a> fitxategia eskuz jaitsi beharko zenuke, zure zerbitzariko "*{$a->dest}*" -ra kopiatu eta bertan deskonprimatu.';

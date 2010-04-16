@@ -30,13 +30,13 @@
 
 $string['admindirname'] = 'Admin Directory';
 $string['availablelangs'] = 'List of available languages';
+$string['chooselanguagehead'] = 'Choose a language';
+$string['chooselanguagesub'] = 'Please choose a language for the installation. This language will also be used as the default language for the site, though it may be changed later.';
 $string['dataroot'] = 'Data Directory';
 $string['dirroot'] = 'Moodle Directory';
 $string['environmentsub2'] = 'Each Moodle release has some minimum PHP version requirement and a number of mandatory PHP extensions.
 Full environment check is done before each install and upgrade. Please contact server administrator if you do not know how to install new version or enable PHP extensions.';
 $string['errorsinenvironment'] = 'Environment check failed!';
-$string['chooselanguagehead'] = 'Choose a language';
-$string['chooselanguagesub'] = 'Please choose a language for the installation. This language will also be used as the default language for the site, though it may be changed later.';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Unfortunately the language "{$a}" could not be downloaded. The installation process will continue in English.';
 $string['memorylimithelp'] = '<p>The PHP memory limit for your server is currently set to {$a}.</p>

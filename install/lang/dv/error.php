@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = 'ކޮމްޕޯނަންޓް ނުފެނުނު';
 $string['cannotsavemd5file'] = 'އެމްޑީފައިވް ފައިލް ސޭވެއް ނުކުރެވުނު';
 $string['cannotsavezipfile'] = 'ޒިޕް ފައިލް ސޭވެއް ނުކުރެވުނު';
 $string['cannotunzipfile'] = 'ފައިލް އަންޒިޕެއް ނުކުރެވުނު';
+$string['remotedownloaderror'] = '"{$a->url}">{$a->url}</a> file manually, copy it to "{$a->dest}" in your server and unzip it there.';

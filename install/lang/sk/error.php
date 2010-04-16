@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = 'Komponent nenájdený.';
 $string['cannotsavemd5file'] = 'Nie je možné uložiť súbor MD5.';
 $string['cannotsavezipfile'] = 'Nie je možné uložiť súbor ZIP.';
 $string['cannotunzipfile'] = 'Nie je možné dekomprimovať súbor.';
+$string['remotedownloaderror'] = 'Stiahnutie komponentu na server zlyhalo, skontrolujte nastavenia proxy, doporučené je PHP rozšírenie cURL. <br /><br />Musíte stiahnuť súbor <a href="{$a->url}">{$a->url}</a> manuálne, skopírovať ho do "{$a->dest}" na serveri a rozzipovať ho tam.';

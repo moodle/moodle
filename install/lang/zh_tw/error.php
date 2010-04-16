@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = '找不到元件。';
 $string['cannotsavemd5file'] = '無法儲存 md5 檔案。';
 $string['cannotsavezipfile'] = '無法儲存 ZIP 檔案。';
 $string['cannotunzipfile'] = '無法解壓縮檔案。';
+$string['remotedownloaderror'] = '下載元件至伺服器失敗，檢查代理伺服器的設定、高度建議安裝PHP cURL，您必須手動下載<a href="{$a->url}">{$a->url}</a>，並且複製到伺服器"{$a->dest}" 解壓縮';

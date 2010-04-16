@@ -29,10 +29,10 @@
  */
 
 $string['admindirname'] = 'Админ директор';
-$string['dataroot'] = 'Өгөгдлийн директор';
-$string['dirroot'] = 'Моодл хавтас';
 $string['chooselanguagehead'] = 'Хэлээ сонго';
 $string['chooselanguagesub'] = 'Зөвхөн суулгах үед ашиглагдах хэлээ сонго. Та дараа нь сайтны болон хэрэглэгчийн хэлийг сонгож болно.';
+$string['dataroot'] = 'Өгөгдлийн директор';
+$string['dirroot'] = 'Моодл хавтас';
 $string['installation'] = 'Суулгах';
 $string['langdownloaderror'] = 'Харамсалтай нь "{$a}" хэл суусангүй. Суулгах үйл ажиллагаа Англи хэл дээр үргэлжлэх болно.';
 $string['memorylimithelp'] = '<p>Таны серверийн PHP санах ойн хязгаар нь {$a} гэж тохируулсан байна.</p>

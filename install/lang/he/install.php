@@ -29,10 +29,10 @@
  */
 
 $string['admindirname'] = 'ספריית מנהל המערכת';
-$string['dataroot'] = 'ספריית הנתנים';
-$string['dirroot'] = 'ספריית ה-Moodle';
 $string['chooselanguagehead'] = 'בחר שפה';
 $string['chooselanguagesub'] = 'אנא בחר שפה עבור ההתקנה בלבד. תוכל לבחור בשפה שונה לאתר ולמשתמש באחד מהמסכים הבאים.';
+$string['dataroot'] = 'ספריית הנתנים';
+$string['dirroot'] = 'ספריית ה-Moodle';
 $string['installation'] = 'התקנה';
 $string['langdownloaderror'] = 'לצערינו השפה "{$a}" לא הותקנה. תהליך ההתקנה ימשיך באנגלית.';
 $string['memorylimithelp'] = '<p>

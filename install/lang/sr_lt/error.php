@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = 'Nije moguće pronaći komponentu.';
 $string['cannotsavemd5file'] = 'Nije moguće sačuvati md5 datoteku.';
 $string['cannotsavezipfile'] = 'Nije moguće sačuvti ZIP arhivu.';
 $string['cannotunzipfile'] = 'Nije moguće raspakovati ZIP datoteku.';
+$string['remotedownloaderror'] = 'Preuzimanje komponente na Vaš server nije uspelo. Proverite podešavanja proksi serevera. PHP cURL ekstenzija se preporučuje.<br /><br />Morate da preuzmete <a href="{$a->url}">{$a->url}</a> datoteku ručno, kopirate je u direktorijum "{$a->dest}" na svom sereveru tamo je raspakujete.';

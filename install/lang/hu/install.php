@@ -30,12 +30,12 @@
 
 $string['admindirname'] = 'Rendszergazdakönyvtár';
 $string['availablelangs'] = 'Elérhető nyelvek listája';
+$string['chooselanguagehead'] = 'Nyelv kiválasztása';
+$string['chooselanguagesub'] = 'KIZÁRÓLAG a telepítéshez válasszon nyelvet! A portál és a felhasználó nyelvét egy későbbi képernyőn adhatja meg.';
 $string['dataroot'] = 'Adatkönyvtár';
 $string['dirroot'] = 'Moodle-könyvtár';
 $string['environmentsub2'] = 'Minden Moodle-változat valamilyen minimális verziójú PHP és szükséges számú PHP-kibővítés használatát írja elő. A telepítések és frissítések előtt teljes környezet-ellenőrzésre kerül sor. Ha nem tudja, hogyan kell egy új verziót telepíteni és a PHP-bővítéseket bekapcsolni, forduljon a rendszergazdához.';
 $string['errorsinenvironment'] = 'Hibák vannak a környezetben!';
-$string['chooselanguagehead'] = 'Nyelv kiválasztása';
-$string['chooselanguagesub'] = 'KIZÁRÓLAG a telepítéshez válasszon nyelvet! A portál és a felhasználó nyelvét egy későbbi képernyőn adhatja meg.';
 $string['installation'] = 'Telepítés';
 $string['langdownloaderror'] = 'A(z) "{$a}" nyelv nincs telepítve. A telepítés angol nyelven folytatódik.';
 $string['memorylimithelp'] = '<p>Szerverén a PHP memóriakorlátja jelenleg {$a}. </p><p>Ez a Moodle számára a későbbiekben gondot okozhat, különösen akkor, ha sok modulja és/vagy sok felhasználója van bekapcsolva.</p><p> Ha lehet, állítsa be a PHP-t magasabb korláttal, pl. 40M-tal. Többféleképpen próbálkozhat:</p><ol><li> Ha lehet, fordítsa újra a PHP-t <i>--enable-memory-limit</i>-tel. Így a Moodle maga állíthatja be a memóriakorlátot.</li><li>Ha elérhető a php.ini állomány, módosítsa a <b>memory_limit</b> beállítását pl. 40M-ra. Ha nem éri el az állományt, kérje meg a rendszergazdát a módosítás elvégzésére.</li><li>Egyes PHP-szervereken létrehozhat egy .htaccess állományt a Moodle-könyvtárban az alábbi sorral: <blockquote><div>php_value memory_limit 40M.</div></blockquote>    <p> Vannak szerverek, ahol ez az összes PHP-oldal működését megakadályozza (az oldalak hibát jeleznek), ezért el kell távolítania a .htaccess állományt.</p></li></ol>';

@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = 'Awatholakali ama component';
 $string['cannotsavemd5file'] = 'Aligcineki ifayela le md5';
 $string['cannotsavezipfile'] = 'Aligcineki ifayela le ZIP.';
 $string['cannotunzipfile'] = 'Alivuleki iafayela';
+$string['remotedownloaderror'] = 'Download of component to your server failed, please verify proxy settings, PHP cURL extension is highly recommended.<br /><br />You must download the <a href="{$a->url}">{$a->url}</a> file manually, copy it to "{$a->dest}" in your server and unzip it there.';

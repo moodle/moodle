@@ -29,10 +29,10 @@
  */
 
 $string['admindirname'] = 'Adminmappe';
-$string['dataroot'] = 'Datamappe';
-$string['dirroot'] = 'Moodlemappe';
 $string['chooselanguagehead'] = 'Velg et språk';
 $string['chooselanguagesub'] = 'Velg språk (bare for INSTALLASJONEN). Du vil kunne velge språk for nettsted og bruker på et skjermbilde senere.';
+$string['dataroot'] = 'Datamappe';
+$string['dirroot'] = 'Moodlemappe';
 $string['installation'] = 'Installasjon';
 $string['langdownloaderror'] = 'Beklageligvis ble ikke språkpakken "{$a}" installert. Installasjonsprosessen vil fortsette på Engelsk.';
 $string['memorylimithelp'] = '<p>PHP minnegrensen for serveren din er nå satt til {$a}.</p>

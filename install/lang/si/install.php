@@ -30,10 +30,10 @@
 
 $string['admindirname'] = 'admin ඩිරෙක්ටරිය';
 $string['availablelangs'] = 'පවතින භාෂා ලයිස්තුව';
+$string['chooselanguagehead'] = 'භාෂාවක් තෝරාගන්න';
 $string['dataroot'] = 'දත්ත ඩිරෙක්ටරිය';
 $string['dirroot'] = 'මූඩ්ල් ඩිරෙක්ටරිය';
 $string['errorsinenvironment'] = 'පරිසරයේ දෝෂයකි!';
-$string['chooselanguagehead'] = 'භාෂාවක් තෝරාගන්න';
 $string['installation'] = 'පිහිටුවීම';
 $string['phpversion'] = 'PHP සංස්කරණය';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';

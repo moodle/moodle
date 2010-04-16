@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = 'Det går inte att hitta komponent';
 $string['cannotsavemd5file'] = 'Det går inte att spara md5-fil';
 $string['cannotsavezipfile'] = 'Det går inte att spara ZIP-fil';
 $string['cannotunzipfile'] = 'Det går inte att packa upp fil';
+$string['remotedownloaderror'] = 'Nedladdningen av en komponent till din server misslyckades, var snäll och verifiera inställningar för proxy. <br /><br />Du måste ladda ner <a href="{$a->url}">{$a->url}</a> filen manuellt, kopiera den till "{$a->dest}" på din server och packa upp den där.';

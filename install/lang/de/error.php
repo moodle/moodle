@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = 'Eine Komponente kann nicht gefunden werden';
 $string['cannotsavemd5file'] = 'Die md5-Datei kann nicht gespeichert werden.';
 $string['cannotsavezipfile'] = 'Die ZIP-Datei kann nicht gespeichert werden.';
 $string['cannotunzipfile'] = 'Die Datei kann nicht entpackt werden.';
+$string['remotedownloaderror'] = 'Der Download auf Ihren Server konnte nicht ausgeführt werden. Prüfen Sie bitte die Proxy-Einstellungen, die PHP CURL Erweiterung wird dringend empfohlen.<br /><br />Die Datei <a href="{$a->url}">{$a->url}</a> muss nun manuell herunter geladen, entpackt und auf den Server nach "{$a->dest}" kopiert werden. there.';

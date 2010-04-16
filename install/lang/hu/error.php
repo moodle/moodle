@@ -35,3 +35,4 @@ $string['cannotfindcomponent'] = 'Nincs meg az összetevő.';
 $string['cannotsavemd5file'] = 'Az md5 állományt nem lehet elmenteni.';
 $string['cannotsavezipfile'] = 'A tömörített állományt nem lehet elmenteni.';
 $string['cannotunzipfile'] = 'A tömörített állományt nem lehet kicsomagolni.';
+$string['remotedownloaderror'] = 'Az összetevőt nem lehet szerverére letölteni, ellenőrizze a proxy beállításait. Ajánlatos a PHP cURL-kiterjesztés használata. A(z) <a href="{$a->url}">{$a->url}</a> állományt töltse le kézzel, másolja át szerverén a(z) "{$a->dest}" célkönyvtárba, és csomagolja ki ott.';

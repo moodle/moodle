@@ -30,11 +30,11 @@
 
 $string['admindirname'] = 'Whaiaronga Whakahaere';
 $string['availablelangs'] = 'Rārangi o ngā reo wātea ki db n';
+$string['chooselanguagehead'] = 'Kōwhiritia tētahi reo';
+$string['chooselanguagesub'] = 'Kōwhiritia koa tētahi reo mō te tāutanga ANAKE. Mā tētahi atu mata o muri mai, ka taea ai te kōwhiri i ngā reo a te pae, a te kaiwhakamahi hoki';
 $string['dataroot'] = 'Whaiaronga Raraunga';
 $string['dirroot'] = 'Whaiaronga Moodle';
 $string['errorsinenvironment'] = 'He hapa i te taiao!n';
-$string['chooselanguagehead'] = 'Kōwhiritia tētahi reo';
-$string['chooselanguagesub'] = 'Kōwhiritia koa tētahi reo mō te tāutanga ANAKE. Mā tētahi atu mata o muri mai, ka taea ai te kōwhiri i ngā reo a te pae, a te kaiwhakamahi hoki';
 $string['installation'] = 'Tāutatanga';
 $string['langdownloaderror'] = 'Kāore te reo "{$a}" i utaina. Ka tāuta tonu i te reo Ingarihi.';
 $string['memorylimithelp'] = '<p>I tēnei wā ko te tepe pūmahara PHP mō tō tūmau ko te {$a}.</p><p>Mā tēnei pea ka raru ai te pūmahara o Moodle, inā ki te maha ake ngā kōwae e hohe ana, ngā kaiwhakamahi hoki/rānei.</p> <p>Ko tāku ki a koe, me whirihora te PHP ki te tepe teitei ake mēnā e taea ana, pēnei ake i te 40M. Arā atu ngā huarahi hei whakatutuki i tēnei:</p><ol><li>Mēnā ka taea, whakahiato anōtia te PHP ki te <i>--enable-memory-limit</i>. Mā tēnei ka taea e Moodle te tepe pūmahara te whakarite.</li><li>Mēnā he āheitanga tāu ki tō kōnae php.ini, ka taea te tautuhinga <b>memory_limit</b> te huri kia āhua 40M. Ki te kore ō āheitanga, pātaihia tō kaiwhakahaere, māna tērā āheitanga e hoatu ki a koe.</li><li>I runga i ētahi tūmau PHP ka taea te waihanga kōnae .htaccess ki roto i te whaiaronga Moodle e pupuru ana i tēnei rārangi: <p><blockquote>php_value memory_limit 40M</blockquote></p> <p>Heoi, i runga i ētahi tūmau ka kaupare pea te mahinga o ngā whārangi PHP <b>katoa</b> (ka kitea ngā hapa inā tirohia ngā whārangi) nō reira, me tango te kōnae .htaccess.</p></li></ol>';

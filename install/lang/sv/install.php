@@ -29,10 +29,10 @@
  */
 
 $string['admindirname'] = 'Katalog för administration';
-$string['dataroot'] = 'katalog för data';
-$string['dirroot'] = 'Katalogen för Moodle';
 $string['chooselanguagehead'] = 'Välj ett språk';
 $string['chooselanguagesub'] = 'Var snäll och välj ett språk ENDAST för installationen. Du kommer att ha möjlighet att välja språk för webbplatsen och användarna på en senare skärm.';
+$string['dataroot'] = 'katalog för data';
+$string['dirroot'] = 'Katalogen för Moodle';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Språket "{$a}" installerades tyvärr inte. Installationen kommer att fullföljas på engelska.';
 $string['memorylimithelp'] = '<p>Minnesbegränsningen för PHP på Din server är f n inställt till {$a}.</p>

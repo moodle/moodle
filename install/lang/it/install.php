@@ -30,12 +30,12 @@
 
 $string['admindirname'] = 'Cartella Admin';
 $string['availablelangs'] = 'Elenco delle lingue disponibili:';
+$string['chooselanguagehead'] = 'Scegli la lingua';
+$string['chooselanguagesub'] = 'Scegliete la lingua da usare durante l\'installazione. La lingua usata nel sito e dagli utenti potrà essere modificata in seguito.';
 $string['dataroot'] = 'Cartella dei dati';
 $string['dirroot'] = 'Cartella di Moodle';
 $string['environmentsub2'] = 'Ciascuna release di Moodle prevede come requisito minimo una certa versione del PHP assieme ad una serie di estensioni. Prima di una installazione o di un aggiornamento viene eseguita la verifica di questi requisiti minimi. Se non sapete come installare nuove versioni del PHP o le sue estensioni, contattate l\'amministratore del vostro server.';
 $string['errorsinenvironment'] = 'Ci sono problemi nel vostro ambiente';
-$string['chooselanguagehead'] = 'Scegli la lingua';
-$string['chooselanguagesub'] = 'Scegliete la lingua da usare durante l\'installazione. La lingua usata nel sito e dagli utenti potrà essere modificata in seguito.';
 $string['installation'] = 'Installazione';
 $string['langdownloaderror'] = 'Purtroppo la lingua "{$a}" non è stata installata. L\'installazione proseguirà in lingua Inglese.';
 $string['memorylimithelp'] = '<p>Il limite della memoria assegnata al PHP attualmente è {$a}.</p>

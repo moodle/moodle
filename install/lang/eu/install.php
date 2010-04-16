@@ -30,11 +30,11 @@
 
 $string['admindirname'] = 'Admin direktorioa';
 $string['availablelangs'] = 'Hizkuntza eskuragarrien zerrenda';
+$string['chooselanguagehead'] = 'Aukeratu hizkuntza bat';
+$string['chooselanguagesub'] = 'Instalazio-prozesurako hizkuntza aukeratu, mesedez.';
 $string['dataroot'] = 'Datu-direktorioa';
 $string['dirroot'] = 'Moodle-ren direktorioa';
 $string['errorsinenvironment'] = 'Kale egin du ingurunearen egiaztatzeak!';
-$string['chooselanguagehead'] = 'Aukeratu hizkuntza bat';
-$string['chooselanguagesub'] = 'Instalazio-prozesurako hizkuntza aukeratu, mesedez.';
 $string['installation'] = 'Instalazioa';
 $string['langdownloaderror'] = '"{$a}" hizkuntza ezin izan da instalatu. Instalazio-prozesuak ingelesez jarraituko du.';
 $string['memorylimithelp'] = '<p>Zure zerbitzarian PHP memoria-muga {$a} da.</p>
