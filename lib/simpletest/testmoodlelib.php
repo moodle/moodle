@@ -263,9 +263,14 @@ class moodlelib_test extends UnitTestCase {
     }
     
     function test_usergetdate() {
+        global $USER;
+
+        $userstimezone = $USER->timezone;
+        $USER->timezone = 2;//set the timezone to a known state
+
         $ts = 1261540267; //the time this function was created
 
-        $arr = usergetdate($ts,1);
+        $arr = usergetdate($ts,1);//specify the timezone as an argument
         $arr = array_values($arr);
         
         list($seconds,$minutes,$hours,$mday,$wday,$mon,$year,$yday,$weekday,$month) = $arr;
@@ -280,20 +285,23 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual($weekday,'Wednesday');
         $this->assertEqual($month,'December');
 
-        $arr = usergetdate($ts);
+        $arr = usergetdate($ts);//gets the timezone from the $USER object
         $arr = array_values($arr);
 
         list($seconds,$minutes,$hours,$mday,$wday,$mon,$year,$yday,$weekday,$month) = $arr;
         $this->assertEqual($seconds,7);
         $this->assertEqual($minutes,51);
-        $this->assertEqual($hours,11);
+        $this->assertEqual($hours,5);
         $this->assertEqual($mday,23);
         $this->assertEqual($wday,3);
         $this->assertEqual($mon,12);
         $this->assertEqual($year,2009);
-        $this->assertEqual($yday,356);
+        $this->assertEqual($yday,357);
         $this->assertEqual($weekday,'Wednesday');
         $this->assertEqual($month,'December');
+
+        //set the timezone back to what it was
+        $USER->timezone = $userstimezone;
     }
 
 }
