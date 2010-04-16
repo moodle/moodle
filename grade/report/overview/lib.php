@@ -63,8 +63,8 @@ class grade_report_overview extends grade_report {
         parent::grade_report($COURSE->id, $gpr, $context);
 
         $this->showrank = grade_get_setting($this->courseid, 'report_overview_showrank', !empty($CFG->grade_report_overview_showrank));
-
-        $this->showtotalsifcontainhidden = grade_get_setting($this->courseid, 'report_overview_showtotalsifcontainhidden', !empty($CFG->grade_report_overview_showtotalsifcontainhidden));
+        
+        $this->showtotalsifcontainhidden = grade_get_setting($this->courseid, 'report_overview_showtotalsifcontainhidden', $CFG->grade_report_overview_showtotalsifcontainhidden);
 
         // get the user (for full name)
         $this->user = get_record('user', 'id', $userid);
