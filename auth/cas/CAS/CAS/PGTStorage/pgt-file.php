@@ -114,15 +114,26 @@ class PGTStorageFile extends PGTStorage
       if (empty($path) ) $path = CAS_PGT_STORAGE_FILE_DEFAULT_PATH;
 
       // check that the path is an absolute path
-      if ( $path[0] != '/' ) {
-	phpCAS::error('an absolute path is needed for PGT storage to file');
+      if (getenv("OS")=="Windows_NT"){
+      	
+      	 if (!preg_match('`^[a-zA-Z]:`', $path)) {
+	     	phpCAS::error('an absolute path is needed for PGT storage to file');
+      	}
+      	
       }
+      else
+      {
+      
+      	if ( $path[0] != '/' ) {
+			phpCAS::error('an absolute path is needed for PGT storage to file');
+      	}
 
-      // store the path (with a leading and trailing '/')      
-      $path = preg_replace('|[/]*$|','/',$path);
-      $path = preg_replace('|^[/]*|','/',$path);
+      	// store the path (with a leading and trailing '/')      
+      	$path = preg_replace('|[/]*$|','/',$path);
+      	$path = preg_replace('|^[/]*|','/',$path);
+      }
+      
       $this->_path = $path;
-
       // check the format and store it
       switch ($format) {
       case CAS_PGT_STORAGE_FILE_FORMAT_PLAIN:
@@ -171,7 +182,6 @@ class PGTStorageFile extends PGTStorage
     {
       phpCAS::traceBegin();
       $filename = $this->getPath().$pgt_iou.'.'.$this->getFormat();
-
       phpCAS::traceEnd($filename);
       return $filename;
     }
@@ -215,7 +225,6 @@ class PGTStorageFile extends PGTStorage
       phpCAS::traceBegin();
       $pgt = FALSE;
       $fname = $this->getPGTIouFilename($pgt_iou);
-
       if ( !($f=fopen($fname,"r")) ) {
 	phpCAS::trace('could not open `'.$fname.'\'');
       } else {

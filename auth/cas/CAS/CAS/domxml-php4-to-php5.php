@@ -10,7 +10,7 @@
 			require_once('domxml-php4-to-php5.php');
 	}
 
-	Version 1.20a, 2008-11-06, http://alexandre.alapetite.net/doc-alex/domxml-php4-php5/
+	Version 1.21, 2008-12-05, http://alexandre.alapetite.net/doc-alex/domxml-php4-php5/
 
 	------------------------------------------------------------------
 	Written by Alexandre Alapetite, http://alexandre.alapetite.net/cv/
@@ -179,6 +179,7 @@ class php4DOMDocument extends php4DOMNode
 	}
 	function html_dump_mem() {return $this->myDOMNode->saveHTML();}
 	function root() {return parent::_newDOMElement($this->myDOMNode->documentElement,$this);}
+	function xinclude() {return $this->myDOMNode->xinclude();}
 	function xpath_new_context() {return new php4DOMXPath($this);}
 }
 
