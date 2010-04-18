@@ -149,7 +149,7 @@ if($feedback_complete_cap) {
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<input type="hidden" name="id" value="'.$id.'" />';
         echo '<button type="submit">'.get_string('mapcourses', 'feedback').'</button>';
-        echo $OUTPUT->old_help_icon('mapcourse', '', 'feedback', true);
+        echo $OUTPUT->help_icon('mapcourse', 'feedback');
         echo '</form>';
         echo '<br />';
         echo '</div>';

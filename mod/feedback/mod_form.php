@@ -32,14 +32,14 @@ class mod_feedback_mod_form extends moodleform_mod {
         $enableopengroup[] =& $mform->createElement('checkbox', 'openenable', get_string('feedbackopen', 'feedback'));
         $enableopengroup[] =& $mform->createElement('date_time_selector', 'timeopen', '');
         $mform->addGroup($enableopengroup, 'enableopengroup', get_string('feedbackopen', 'feedback'), ' ', false);
-        $mform->setHelpButton('enableopengroup', array('timeopen', get_string('feedbackopens', 'feedback'), 'feedback'));
+        $mform->addHelpButton('enableopengroup', 'timeopen', 'feedback');
         $mform->disabledIf('enableopengroup', 'openenable', 'notchecked');
 
         $enableclosegroup = array();
         $enableclosegroup[] =& $mform->createElement('checkbox', 'closeenable', get_string('feedbackclose', 'feedback'));
         $enableclosegroup[] =& $mform->createElement('date_time_selector', 'timeclose', '');
         $mform->addGroup($enableclosegroup, 'enableclosegroup', get_string('feedbackclose', 'feedback'), ' ', false);
-        $mform->setHelpButton('enableclosegroup', array('timeclose', get_string('feedbackcloses', 'feedback'), 'feedback'));
+        $mform->addHelpButton('enableclosegroup', 'timeclose', 'feedback');
         $mform->disabledIf('enableclosegroup', 'closeenable', 'notchecked');
 
         //-------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ class mod_feedback_mod_form extends moodleform_mod {
 
         $mform->addElement('selectyesno', 'publish_stats', get_string('show_analysepage_after_submit', 'feedback'));
         $mform->addElement('selectyesno', 'email_notification', get_string('email_notification', 'feedback'));
-        $mform->setHelpButton('email_notification', array('emailnotification', get_string('email_notification', 'feedback'), 'feedback'));
+        $mform->addHelpButton('email_notification', 'emailnotification', 'feedback');
 
         // check if there is existing responses to this feedback
         if (is_numeric($this->_instance) AND $this->_instance and $feedback = $DB->get_record("feedback", array("id"=>$this->_instance))) {
@@ -66,13 +66,13 @@ class mod_feedback_mod_form extends moodleform_mod {
             $mform->addElement('text', 'multiple_submit_static', get_string('multiple_submit', 'feedback'), array('size'=>'4','disabled'=>'disabled', 'value'=>$multiple_submit_value));
             $mform->addElement('hidden', 'multiple_submit', '');
             $mform->setType('', PARAM_INT);
-            $mform->setHelpButton('multiple_submit_static', array('multiplesubmit', get_string('multiple_submit', 'feedback'), 'feedback'));
+            $mform->addHelpButton('multiple_submit_static', 'multiplesubmit', 'feedback');
         }else {
             $mform->addElement('selectyesno', 'multiple_submit', get_string('multiple_submit', 'feedback'));
-            $mform->setHelpButton('multiple_submit', array('multiplesubmit', get_string('multiple_submit', 'feedback'), 'feedback'));
+            $mform->addHelpButton('multiple_submit', 'multiplesubmit', 'feedback');
         }
         $mform->addElement('selectyesno', 'autonumbering', get_string('autonumbering', 'feedback'));
-        $mform->setHelpButton('autonumbering', array('autonumbering', get_string('autonumbering', 'feedback'), 'feedback'));
+        $mform->addHelpButton('autonumbering', 'autonumbering', 'feedback');
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'aftersubmithdr', get_string('after_submit', 'feedback'));
@@ -82,7 +82,7 @@ class mod_feedback_mod_form extends moodleform_mod {
 
         $mform->addElement('text', 'site_after_submit', get_string('url_for_continue_button', 'feedback'), array('size'=>'64','maxlength'=>'255'));
         $mform->setType('site_after_submit', PARAM_TEXT);
-        $mform->setHelpButton('site_after_submit', array('url_for_continue', get_string('url_for_continue_button', 'feedback'), 'feedback'));
+        $mform->addHelpButton('site_after_submit', 'url_for_continue', 'feedback');
         //-------------------------------------------------------------------------------
         $this->standard_coursemodule_elements();
         //-------------------------------------------------------------------------------

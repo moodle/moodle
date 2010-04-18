@@ -114,7 +114,7 @@ if($do_show == 'showentries'){
             $analysisurl = new moodle_url('/mod/feedback/analysis_course.php', array('id'=>$id, 'courseid'=>$courseid));
             echo '<div class="mdl-align"><a href="'.$analysisurl->out().'">';
             echo get_string('course') .' '. get_string('analysis', 'feedback') . ' ('.get_string('completed_feedbacks', 'feedback').': '.intval($completedFeedbackCount).')</a>';
-            echo $OUTPUT->old_help_icon('viewcompleted', '', 'feedback', true);
+            echo $OUTPUT->help_icon('viewcompleted', 'feedback');
             echo '</div>';
         }else {
             $analysisurl = new moodle_url('/mod/feedback/analysis.php', array('id'=>$id, 'courseid'=>$courseid));
