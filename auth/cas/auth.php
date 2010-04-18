@@ -97,8 +97,10 @@ class auth_plugin_cas extends auth_plugin_base {
       $username = optional_param("username");
 
       if (!empty($username)) {
-		  if (strstr($SESSION->wantsurl,'ticket') || strstr($SESSION->wantsurl,'NOCAS'))
-			  unset($SESSION->wantsurl);
+          if (isset($SESSION->wantsurl) && (strstr($SESSION->wantsurl, 'ticket') ||
+                                            strstr($SESSION->wantsurl, 'NOCAS'))) {
+              unset($SESSION->wantsurl);
+          }
           return;		
         }
 
@@ -112,6 +114,9 @@ class auth_plugin_cas extends auth_plugin_base {
 // Connection to CAS server
 	 $this->connectCAS();
 
+         // Don't try to validate the server SSL credentials
+         phpCAS::setNoCasServerValidation();
+
 	  // Gestion de la connection CAS si acc�s direct d'un ent ou autre	
 	 if (phpCAS::checkAuthentication()) {
 		$frm->username=phpCAS::getUser();
@@ -121,7 +126,7 @@ class auth_plugin_cas extends auth_plugin_base {
 		return;
 	 }	 	
 
-	  if ($_GET["loginguest"]== true) {
+          if (isset($_GET["loginguest"]) && ($_GET["loginguest"]== true)) {
 			$frm->username="guest";
 			$frm->password="guest";
 			return;
@@ -161,7 +166,7 @@ class auth_plugin_cas extends auth_plugin_base {
 	  if ($this->config->logoutcas ) {
 	        $backurl = $CFG->wwwroot;
 		  $this->connectCAS();
-	        phpCAS::logout($backurl);
+                phpCAS::logoutWithURL($backurl);
 	     }
     }
     /**
@@ -175,12 +180,13 @@ class auth_plugin_cas extends auth_plugin_base {
 	global $PHPCAS_CLIENT;
 // mode proxy CAS
 if ( !is_object($PHPCAS_CLIENT) ) {
+        // Make sure phpCAS doesn't try to start a new PHP session when connecting to the CAS server.
 	if  ($this->config->proxycas) {
-	    phpCAS::proxy($this->config->casversion, $this-> config->hostname, (int) $this->config->port, $this->config->baseuri);
+	    phpCAS::proxy($this->config->casversion, $this-> config->hostname, (int) $this->config->port, $this->config->baseuri, false);
 	}
 // mode client CAS
 	else {
-	    phpCAS::client($this->config->casversion, $this-> config->hostname, (int) $this->config->port, $this->config->baseuri);
+	    phpCAS::client($this->config->casversion, $this-> config->hostname, (int) $this->config->port, $this->config->baseuri, false);
 	}
     }
 	
