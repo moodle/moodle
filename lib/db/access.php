@@ -514,8 +514,8 @@ $capabilities = array(
         )
     ),
 
-    /* originaly this capability was called modole/coruse:view,
-     * but since 2.0 it is used for access to course without the enrolemnt
+    /* originally this capability was called moodle/course:view,
+     * but since 2.0 it is used for access to course without the enrolment
      */
     'moodle/course:participate' => array(
 
