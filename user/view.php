@@ -455,7 +455,7 @@ if ($currentuser and $userauth->can_change_password() and !isguestuser() and has
 }
 
 //  Print other functions
-echo '<div class="buttons">';
+echo '<div class="buttons clearfix">';
 
 if ($passwordchangeurl) {
     $params = array('id'=>$course->id);
