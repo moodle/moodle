@@ -215,7 +215,6 @@ a.skip:active {position: static;display: block;}
 /**
  * Navigation
  */
-.block_js_expansion .block_tree {overflow-x:scroll;}
 .block_js_expansion.mouseover .content {width:200%;z-index:1000;position:relative;}
 .block_js_expansion.mouseover .content .block_tree {width:100%;background-color:#fcfcfc;padding-bottom:0;}
 .ie6 .block_js_expansion.mouseover .content,
