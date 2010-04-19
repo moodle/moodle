@@ -125,6 +125,8 @@ class comment {
             $this->courseid = $options->course->id;
         } else if (!empty($options->courseid)) {
             $this->courseid = $options->courseid;
+        } else {
+            print_error('commentsrequirecourseid');
         }
 
         if (!empty($options->pluginname)) {
