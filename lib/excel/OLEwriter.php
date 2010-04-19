@@ -232,7 +232,7 @@ class OLEwriter
     *
     * @param string $data string of bytes to be written
     */
-    function write($data) //por ahora sólo a STDOUT
+    function write($data) //por ahora sï¿½lo a STDOUT
     {
         fwrite($this->_filehandle,$data,strlen($data));
     }
