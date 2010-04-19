@@ -243,7 +243,7 @@ EOD;
             }
         }
 
-        if ($this->context->contextlevel == CONTEXT_MODULE) {
+        if ($this->context->contextlevel == CONTEXT_MODULE && $this->env != 'block_comments') {
             $this->plugintype = 'mod';
             // to improve performance, pluginname should be assigned before initilise comment object
             // if it is empty, we will try to guess, it will rarely be used.
