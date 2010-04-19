@@ -209,8 +209,6 @@ class navigation_node implements renderable {
      * This is determined by comparing the action for the node against the
      * defined URL for the page. A match will see this node marked as active.
      *
-     * @global string $FULLME
-     * @global moodle_page $PAGE
      * @param int $strength One of URL_MATCH_EXACT, URL_MATCH_PARAMS, or URL_MATCH_BASE
      * @return bool
      */
@@ -575,7 +573,6 @@ class navigation_node_collection implements IteratorAggregate {
     /**
      * Adds a navigation node to the collection
      *
-     * @global stdClass $CFG
      * @param navigation_node $node
      * @return navigation_node
      */
@@ -759,8 +756,6 @@ class global_navigation extends navigation_node {
     /**
      * Constructs a new global navigation
      *
-     * @global stdClass $SITE
-     * @global stdClass $USER
      * @param moodle_page $page The page this navigation object belongs to
      */
     public function __construct(moodle_page $page) {
@@ -801,8 +796,6 @@ class global_navigation extends navigation_node {
      * which will normally be either when the navbar is called to be displayed or
      * when a block makes use of it.
      *
-     * @global stdClass $SITE
-     * @global stdClass $USER
      * @return bool
      */
     public function initialise() {
@@ -946,7 +939,6 @@ class global_navigation extends navigation_node {
      * It doesn't get any arguments and should return true if additional content is
      * desired. If the callback doesn't exist we assume additional content is wanted.
      *
-     * @global stdClass $CFG
      * @param string $format The course format
      * @return bool
      */
@@ -966,8 +958,6 @@ class global_navigation extends navigation_node {
     /**
      * Loads of the the courses in Moodle into the navigation.
      *
-     * @global moodle_database $DB
-     * @global stdClass $USER
      * @return array An array of navigation_node
      */
     protected function load_all_courses() {
@@ -1018,7 +1008,6 @@ class global_navigation extends navigation_node {
      * By default (if not defined) the method {@see load_generic_course_sections} is
      * called instead.
      *
-     * @global stdClass $CFG
      * @param stdClass $course Database record for the course
      * @param navigation_node $coursenode The course node within the navigation
      * @return array Array of navigation nodes for the section with key = section id
@@ -1130,8 +1119,6 @@ class global_navigation extends navigation_node {
      *  * {@see forum_extend_navigation()}
      *  * {@see workshop_extend_navigation()}
      *
-     * @global stdClass $CFG
-     * @global moodle_database $DB
      * @param stdClass $cm
      * @param stdClass $course
      * @param navigation_node $activity
@@ -1160,9 +1147,6 @@ class global_navigation extends navigation_node {
      *
      * If no user is provided the current user is assumed.
      *
-     * @global moodle_database $DB
-     * @global stdClass $CFG
-     * @global stdClass $USER
      * @param stdClass $user
      * @return bool
      */
@@ -1323,7 +1307,6 @@ class global_navigation extends navigation_node {
     /**
      * This method simply checks to see if a given module can extend the navigation.
      *
-     * @global stdClass $CFG
      * @param string $modname
      * @return bool
      */
@@ -1392,7 +1375,6 @@ class global_navigation extends navigation_node {
      *
      * This method adds nodes such as reports, blogs and participants
      *
-     * @global stdClass $CFG
      * @param navigation_node $coursenode
      * @param stdClass $course
      * @return bool
@@ -1533,7 +1515,6 @@ class global_navigation_for_ajax extends global_navigation {
 
     /**
      * Constructs the navigation for use in AJAX request
-     * @global stdClass $SITE
      */
     public function __construct() {
         global $SITE;
@@ -1546,8 +1527,6 @@ class global_navigation_for_ajax extends global_navigation {
     /**
      * Initialise the navigation given the type and id for the branch to expand.
      *
-     * @global moodle_database $DB
-     * @global moodle_page $PAGE
      * @param int $branchtype One of navigation_node::TYPE_*
      * @param int $id
      * @return array The expandable nodes
@@ -1862,7 +1841,6 @@ class settings_navigation extends navigation_node {
      * This function initialises the settings navigation tree for a given context
      * by calling supporting functions to generate major parts of the tree.
      *
-     * @global moodle_database $DB
      */
     public function initialise() {
         global $DB;
