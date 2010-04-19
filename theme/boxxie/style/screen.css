@@ -1,4 +1,5 @@
-html {
+html,
+body {
   background: #6e8c45;
 }
 
@@ -22,7 +23,18 @@ a:visited {
 
 a:hover,
 a:active {
-  text-decoration: underline;
+  color: #41512f;
+}
+
+h2.main {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+
+.rolelink {
+  text-align: right;
+  margin: 10px 0;
 }
 
 /* Header */
@@ -40,8 +52,37 @@ a:active {
 #page-header h1.headermain {
   color: #fff;
   font-weight: normal;
-  margin:1em;
+  margin: 1em;
+  font-size: 2em;
 }
+
+.pagelayout-frontpage #page-header h1.headermain {
+  font-size: 2.75em;
+}
+
+/* Navbar */
+
+.navbar {
+  padding: 4px 2px;
+  font-size: 0.95em;
+  color: #333;
+}
+
+.navbar .sep {
+  color: #999;
+}
+
+.navicon {
+  display: none;
+}
+
+/* Content */
+
+.sitetopic {
+  border: none;
+}
+
+/* Sideblock */
 
 .sideblock {
   border: none;
@@ -49,11 +90,13 @@ a:active {
 
 .sideblock .header {
   background: #69804e;
-  padding:2px 5px;
+  padding: 2px 5px;
 }
 
 .sideblock .header h2 {
   color: #fff;
+  font-size: 1.2em;
+  line-height: 1;
 }
 
 .sideblock .content {
@@ -61,6 +104,11 @@ a:active {
   border-width: 1px;
   border-color: #69804e;
   border-style: solid;
+  padding: 4px;
+}
+
+.block_js_expansion .block_tree {
+  overflow: auto;
 }
 
 /* Course */
@@ -69,8 +117,23 @@ a:active {
   border-bottom: 1px solid #eee;
 }
 
+.coursebox .info {
+  width: 35%;
+}
+
+.coursebox .summary {
+  width: 63%;
+}
+
 .coursebox h3.name {
-  margin-top: 0;
+  margin: 0;
+  font-size: 1.2em;
+  line-height: 1.4;
+}
+
+.coursebox .info .teachers {
+  margin-left: 0.6em;
+  font-size: 0.95em;
 }
 
 .categorybox {
@@ -78,12 +141,287 @@ a:active {
 }
 
 h2.headingblock {
-  font-weight: normal;
   border-bottom: 1px solid #eee;
+  font-size: 1.5em;
+}
+
+#page-course-category .categorypicker {
+  text-align: center;
+  margin: 10px 0 20px;
+}
+
+#page-course-category .buttons {
+  text-align: center;
+}
+
+/* Users */
+
+/* Tabs */
+
+.tabtree ul {
+  text-align: center;
+}
+
+.tabtree .tabrow0 {
+  width: 100%;
+  margin: 1em 0px;
+}
+
+.tabtree .tabrow0 li {
+  margin-right: -4px;
+}
+
+.tabtree .tabrow0 li.here {
+  font-weight: bold;
+}
+
+.tabtree .tabrow0 li.here a {
+  position: relative;
+  z-index: 102;
+}
+
+.tabtree .tabrow0 li a {
+  background:#f3f8ed;
+  border-width:1px 1px 0;
+  border-style: solid;
+  font-weight: bold;
+  border-color: #dadfd5;
+  padding:6px 6px 5px;
+  margin-right: 3px;
+  color: #3b4c25;
+}
+
+.tabtree .tabrow0 li.here a {
+  background: #fff;
+  border-color: #5b7439;
+  border-bottom-width: 0;
+  cursor: pointer;
+}
+
+.tabtree .tabrow0 li a:hover {
+  background:#fff;
+  border-color: #84a754;
+}
+
+.tabtree .tabrow0 ul,
+.tabtree .tabrow0 div {
+  font-weight: normal;
+  background:#fff;
+  border-top: 1px solid #5b7439;
+  padding: 0;
+  margin: 0;
+}
+
+.tabtree tabrow2 ul {
+  border: none;
+}
+
+.tabtree .tabrow0 li.here .empty {
+  display: block;
+  height: 1px;
+  overflow: hidden;
+  padding: 0px;
+  position: absolute;
+  width: 100%;
+  background: #fff;
+}
+
+.tabtree .tabrow1 li a,
+.tabtree .tabrow1 li a:hover,
+.tabtree .tabrow1 li a span,
+.tabtree .tabrow1 li a:hover span {
+  background: none !important;
+  border: none;
+  font-size: 0.95em;
+}
+
+.tabtree a.nolink,
+.tabtree .here ul a.nolink,
+.tabtree a.nolink:hover,
+.tabtree .here ul a.nolink:hover {
+  color: #888;
+  text-decoration: none;
+}
+
+.tabtree .here a.nolink,
+.tabtree .here ul .here a.nolink,
+.tabtree .here a.nolink:hover,
+.tabtree .here ul .here a.nolink:hover {
+  color: black;
+  text-decoration: none;
+}
+
+.ie7 .tabtree .tabrow0 li {
+  margin-left: 0;
+}
+
+.ie7 .tabtree .tabrow0 li.first {
+  margin-right: -4px;
+}
+
+.ie7 .tabtree .tabrow0 li.onerow {
+  margin-right: 0;
+}
+
+.ie7 .tabtree .tabrow0 a {
+  display: inline-block;
+  padding: 8px 0 0.35em 13px;
+  line-height: 1.5em;
+}
+
+.ie7 .tabtree .tabrow0 a span {
+  padding: 10px 1em 10px 0;
+}
+
+.ie7 .tabtree .tabrow0 div {
+  top: 2.6em;
+  padding: 0.2em 0;
+}
+
+.ie7 .tabtree .tabrow0 div.empty {
+  margin-right: 0;
+}
+
+.ie7.mod-quiz div.tabtree a span img.iconsmall {
+  margin: 0;
+  vertical-align: baseline;
+  position: relative;
+  top: 2px;
+}
+
+.ie6 .tabtree {
+  height: 100%;
+}
+
+.ie6 .tabtree .tabrow0 {
+  padding-top: 10px;
+}
+
+.ie6 .tabtree .tabrow0 li {
+  margin-left: 0;
+}
+
+.ie6 .tabtree .tabrow0 li.first {
+  margin-left: -4px;
+  margin-right: -4px;
+}
+
+.ie6 .tabtree .tabrow0 li.last a {
+  margin-right: 0;
+}
+
+.ie6 .tabtree .tabrow0 li.onerow {
+  margin-right: 0;
+}
+
+.ie6 .tabtree .tabrow0 a {
+  padding: 0 0 0 13px;
+}
+
+.ie6 .tabtree .tabrow0 a span {
+  padding: 12px 1em 4px 0;
+}
+
+.ie6 .tabtree .tabrow0 div {
+  top: 3.5em;
+  padding: 0.2em 0;
 }
 
 /* Forum */
 
+.forumpost {
+  border: none;
+}
+
 .forumpost .topic {
   background: #c9dfb2;
+  border: 1px solid #a0c278;
+  padding: 5px 10px;
+}
+
+.forumpost .subject {
+  font-size: 1.2em;
+}
+
+.forumpost .author {
+  font-style: italic;
+  color: #555;
+  font-size: 0.95em;
+}
+
+.forumpost .author a:link,
+.forumpost .author a:visited {
+  color: #566b3f;
+  text-decoration: underline;
+}
+
+.forumpost .author a:hover {
+  text-decoration: none;
+}
+
+.forumpost .content {
+  border-width: 0 1px 1px;
+  border-color: #a0c278;
+  border-style: solid;
+  padding: 5px 10px;
+}
+
+.forumaddnew {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* Footer */
+
+#page-footer {
+  background: #4e6632;
+  color: #fff;
+}
+
+#page-footer a {
+  color: #b3c79d;
+}
+
+#page-footer a:hover {
+  color: #fff;
+}
+
+#page-footer .logininfo {
+  float: left;
+  padding: 5px;
+  margin: 0;
+}
+
+#page-footer .helplink {
+  float: right;
+  padding: 5px;
+  margin: 0;
+}
+
+.homelink,
+.performanceinfo {
+  text-align: center;
+  margin: 10px 20%;
+}
+
+.performanceinfo span {
+  display: block;
+}
+
+.validators {
+  margin-top: 40px;
+  padding-top: 5px;
+  border-top: 1px dotted gray;
+}
+
+.validators ul {
+  margin: 0px;
+  padding: 0px;
+  list-style-type: none;
+}
+
+.validators ul li {
+  display: inline;
+  margin-right: 10px;
+  margin-left: 10px;
 }

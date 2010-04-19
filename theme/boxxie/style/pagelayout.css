@@ -1,0 +1,57 @@
+
+/*-----------------------------------------------------------------------------------|
+|--------------LEFT--------------------MIDDLE-------------------RIGHT----------------|
+|--------------210px--------------------------------------------210px----------------|
+|-----------------------------------------------------------------------------------*/
+
+#page-content #regions {
+  left: 210px; /* Width of left sideblock */
+}
+
+#page-content #regions #regions-mask {
+  margin-left: -420px; /* Twice width of left sideblock */
+  padding-top: 5px;
+}
+
+#page-content #regions #regions-mask #region-main #region-main-mask {
+  margin-left: 420px; /* Twice width of left sideblock */
+  padding: 0 15px; /* Padding around middle column */
+}
+
+#page-content #regions #regions-mask #region-pre {
+  left: 210px; /* Width of left sideblock */
+  width: 210px; /* Width of left sideblock */
+}
+
+#page-content #regions #regions-mask #region-post {
+  width: 210px; /* Width of right sideblock */
+}
+
+#page-content #regions .region-content {
+  padding: 0;
+}
+
+/** Only side pre **/
+
+.side-pre-only #page-content #regions #regions-mask {
+  margin-left: -210px; 
+}
+
+.side-pre-only #page-content #regions #regions-mask #region-main #region-main-mask {
+  margin-left: 210px;
+}
+
+/** Only side post **/
+
+.side-post-only #page-content #regions #regions-mask {
+  margin-left: -210px;
+}
+
+.side-post-only #page-content #regions #regions-mask #region-main #region-main-mask {
+  margin-left: 210px;
+}
+
+
+.has_dock.side-post-only .page-middle #regions #regions-mask #region-main #region-main-mask {
+  margin-left: 210px;
+}	

@@ -91,7 +91,11 @@ echo $OUTPUT->doctype() ?>
   
     <div id="page-footer" class="clearfix">
       <p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')) ?></p>
-      <?php echo $OUTPUT->login_info(); ?>
+      <?php
+        echo $OUTPUT->login_info();
+        echo $OUTPUT->home_link();
+        echo $OUTPUT->standard_footer_html();
+      ?>
     </div>
 
 <?php }
@@ -102,14 +106,7 @@ if ($hasheading || $hasnavbar) { ?>
 </div> <!-- END #page-wrapper -->
 
 <?php } ?>
-
-<?php if ($hasfooter) {
-
-  echo $OUTPUT->home_link();
-  echo $OUTPUT->standard_footer_html();
-
-} ?>
-     
+      
 
 <?php echo $OUTPUT->standard_end_of_body_html() ?>
 </body>

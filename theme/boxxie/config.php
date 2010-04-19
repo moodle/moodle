@@ -21,7 +21,7 @@ $THEME->parents = array('base');
 ////////////////////////////////////////////////////
 
 
-$THEME->sheets = array('screen');
+$THEME->sheets = array('pagelayout', 'boilerplate', 'screen');
 
 ////////////////////////////////////////////////////
 // Name of the stylesheet(s) you've including in 
@@ -69,7 +69,7 @@ $THEME->layouts = array(
     ),
     'frontpage' => array(
         'theme' => 'boxxie',
-        'file' => 'general.php',
+        'file' => 'frontpage.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
