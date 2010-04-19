@@ -17,6 +17,4 @@
 .jsenabled .block_settings_navigation_tree .block_tree .collapsed .tree_item.branch {background-image: url([[pix:t/collapsed]]);}
 
 /** Internet explorer specific rules **/
-.ie6 .block_settings_navigation_tree .block_tree,
-.ie7 .block_settings_navigation_tree .block_tree {overflow-x:scroll;}
 .ie6 .block_settings_navigation_tree .block_tree .tree_item {width:100%;}
