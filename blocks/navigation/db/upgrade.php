@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file keeps track of upgrades to the global_navigation_tree block
+ * This file keeps track of upgrades to the navigation block
  *
  * Sometimes, changes between versions involve alterations to database structures
  * and other major things that may break installations.
@@ -41,7 +41,7 @@
 /**
  * As of the implementation of this block and the general navigation code
  * in Moodle 2.0 the body of immediate upgrade work for this block and
- * settings_navigation_tree is done in core upgrade {@see lib/db/upgrade.php}
+ * settings is done in core upgrade {@see lib/db/upgrade.php}
  *
  * There were several reasons that they were put there and not here, both becuase
  * the process for the two blocks was very similar and because the upgrade process
@@ -51,7 +51,7 @@
  * @param int $oldversion
  * @param object $block
  */
-function xmldb_block_global_navigation_tree_upgrade($oldversion, $block) {
+function xmldb_block_navigation_upgrade($oldversion, $block) {
     // Implemented at 2009082800
     return true;
 }

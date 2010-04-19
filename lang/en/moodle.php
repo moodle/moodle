@@ -1094,6 +1094,7 @@ $string['msnid'] = 'MSN ID';
 $string['mustconfirm'] = 'You need to confirm your login';
 $string['mustchangepassword'] = 'The new password must be different than the current one';
 $string['mycourses'] = 'My courses';
+$string['myhome'] = 'My home';
 $string['mymoodledashboard'] = 'My Moodle dashboard';
 $string['myprofile'] = 'My profile';
 $string['name'] = 'Name';

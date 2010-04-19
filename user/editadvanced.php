@@ -41,14 +41,14 @@ if ($id !== $USER->id) {
 }
 $PAGE->set_url($url);
 
-if (!$course = $DB->get_record('course', array('id'=>$course))) {
-    print_error('invalidcourseid');
-}
+$course = $DB->get_record('course', array('id'=>$course), '*', MUST_EXIST);
+
 if (!empty($USER->newadminuser)) {
     $PAGE->set_course($SITE);
     $PAGE->set_pagelayout('maintenance');
 } else {
     require_login($course);
+    $PAGE->set_pagelayout('admin');
 }
 
 if ($course->id == SITEID) {
@@ -60,18 +60,19 @@ $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
 if ($id == -1) {
     // creating new user
-    require_capability('moodle/user:create', $systemcontext);
     $user = new object();
     $user->id = -1;
     $user->auth = 'manual';   
     $user->confirmed = 1;
     $user->deleted = 0;
+    require_capability('moodle/user:create', $systemcontext);
+    admin_externalpage_setup('addnewuser', '', array('id' => -1));
 } else {
     // editing existing user
     require_capability('moodle/user:update', $systemcontext);
-    if (!$user = $DB->get_record('user', array('id'=>$id))) {
-        print_error('invaliduserid');
-    }
+    $user = $DB->get_record('user', array('id'=>$id), '*', MUST_EXIST);
+    $PAGE->set_context(get_context_instance(CONTEXT_USER, $user->id));
+    $PAGE->navigation->extend_for_user($user);
 }
 
 // remote users cannot be edited
@@ -92,12 +93,6 @@ if ($user->deleted) {
     echo $OUTPUT->heading(get_string('userdeleted'));
     echo $OUTPUT->footer();
     die;
-}
-
-if ($user->id == -1) {
-    admin_externalpage_setup('addnewuser', '', array('id' => -1));
-} else if ($user->id != $USER->id) {
-    admin_externalpage_setup('editusers', '', array('id' => $user->id, 'course' => SITEID), $CFG->wwwroot . '/user/editadvanced.php');
 }
 
 //load user preferences
@@ -258,15 +253,6 @@ if ($user->id == -1 or ($user->id != $USER->id)) {
     $strparticipants  = get_string('participants');
     $strnewuser       = get_string('newuser');
     $userfullname     = fullname($user, true);
-
-    $link = null;
-    if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
-        $link = new moodle_url("/user/index.php", array('id'=>$course->id));
-    }
-    $PAGE->navbar->add($strparticipants, $link);
-    $link = new moodle_url('/user/view.php', array('id'=>$user->id, 'course'=>$course->id));
-    $PAGE->navbar->add($userfullname, $link);
-    $PAGE->navbar->add($streditmyprofile);
 
     $PAGE->set_title("$course->shortname: $streditmyprofile");
     $PAGE->set_heading($course->fullname);

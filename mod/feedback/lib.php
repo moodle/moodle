@@ -2274,22 +2274,18 @@ function feedback_extend_settings_navigation(settings_navigation $settings, navi
     global $PAGE, $DB;
 
     if (!$context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->id)) {
-            print_error('badcontext');
+        print_error('badcontext');
     }
 
-    // $capabilities = feedback_load_capabilities($PAGE->cm->id);
-
-    // if($capabilities->edititems) {
-    if(has_capability('mod/feedback:edititems', $context)) {
-        $qkey = $feedbacknode->add(get_string('questions', 'feedback'));
-        $feedbacknode->get($qkey)->add(get_string('edit_items', 'feedback'), new moodle_url('/mod/feedback/edit.php', array('id'=>$PAGE->cm->id, 'do_show'=>'edit')));
-        $feedbacknode->get($qkey)->add(get_string('export_questions', 'feedback'), new moodle_url('/mod/feedback/export.php', array('id'=>$PAGE->cm->id, 'action'=>'exportfile')));
-        $feedbacknode->get($qkey)->add(get_string('import_questions', 'feedback'), new moodle_url('/mod/feedback/import.php', array('id'=>$PAGE->cm->id)));
-        $feedbacknode->get($qkey)->add(get_string('templates', 'feedback'), new moodle_url('/mod/feedback/edit.php', array('id'=>$PAGE->cm->id, 'do_show'=>'templates')));
+    if (has_capability('mod/feedback:edititems', $context)) {
+        $questionnode = $feedbacknode->add(get_string('questions', 'feedback'));
+        $questionnode->add(get_string('edit_items', 'feedback'), new moodle_url('/mod/feedback/edit.php', array('id'=>$PAGE->cm->id, 'do_show'=>'edit')));
+        $questionnode->add(get_string('export_questions', 'feedback'), new moodle_url('/mod/feedback/export.php', array('id'=>$PAGE->cm->id, 'action'=>'exportfile')));
+        $questionnode->add(get_string('import_questions', 'feedback'), new moodle_url('/mod/feedback/import.php', array('id'=>$PAGE->cm->id)));
+        $questionnode->add(get_string('templates', 'feedback'), new moodle_url('/mod/feedback/edit.php', array('id'=>$PAGE->cm->id, 'do_show'=>'templates')));
     }
 
-    // if($capabilities->viewreports) {
-    if(has_capability('mod/feedback:viewreports', $context)) {
+    if (has_capability('mod/feedback:viewreports', $context)) {
         $feedback = $DB->get_record('feedback', array('id'=>$PAGE->cm->instance));
         if($feedback->course == SITEID){
             $feedbacknode->add(get_string('analysis', 'feedback'), new moodle_url('/mod/feedback/analysis_course.php', array('id'=>$PAGE->cm->id, 'course'=>$PAGE->course->id,'do_show'=>'analysis')));

@@ -41,7 +41,6 @@
     $button = $OUTPUT->single_button($url, $string);
 
     $header = $SITE->shortname . ': ' . $strmymoodle;
-    $PAGE->navbar->add($strmymoodle);
 
     $PAGE->set_title($strmymoodle);
     $PAGE->set_heading($header);

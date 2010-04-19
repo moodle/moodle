@@ -171,7 +171,7 @@ class moodle_page {
     protected $_button = '';
 
     protected $_theme = null;
-    /** @var null|global_navigation Contains the global navigation structure*/
+    /** @var global_navigation Contains the global navigation structure*/
     protected $_navigation = null;
     /** @var null|settings_navigation Contains the settings navigation structure*/
     protected $_settingsnav = null;
@@ -520,7 +520,7 @@ class moodle_page {
      */
     protected function magic_get_navigation() {
         if ($this->_navigation === null) {
-            $this->_navigation = new global_navigation();
+            $this->_navigation = new global_navigation($this);
         }
         return $this->_navigation;
     }

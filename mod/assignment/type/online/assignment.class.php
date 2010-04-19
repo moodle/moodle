@@ -348,13 +348,13 @@ class assignment_online extends assignment_base {
             $node->add(get_string('viewmysubmission', 'assignment'), $link, navigation_node::TYPE_SETTING);
 
             if (!empty($submission->timemodified)) {
-                $key = $node->add(get_string('submitted', 'assignment') . ' ' . userdate($submission->timemodified));
-                $node->get($key)->text = preg_replace('#([^,])\s#', '$1&nbsp;', $node->get($key)->text);
-                $node->get($key)->add_class('note');
+                $submittednode = $node->add(get_string('submitted', 'assignment') . ' ' . userdate($submission->timemodified));
+                $submittednode->text = preg_replace('#([^,])\s#', '$1&nbsp;', $submittednode->text);
+                $submittednode->add_class('note');
                 if ($submission->timemodified <= $this->assignment->timedue || empty($this->assignment->timedue)) {
-                    $node->get($key)->add_class('early');
+                    $submittednode->add_class('early');
                 } else {
-                    $node->get($key)->add_class('late');
+                    $submittednode->add_class('late');
                 }
             }
         }

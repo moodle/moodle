@@ -874,7 +874,7 @@ class block_manager {
         global $CFG;
 
         if (!isset($CFG->undeletableblocktypes) || (!is_array($CFG->undeletableblocktypes) && !is_string($CFG->undeletableblocktypes))) {
-            $CFG->undeletableblocktypes = array('global_navigation_tree','settings_navigation_tree');
+            $CFG->undeletableblocktypes = array('navigation','settings');
         } else if (is_string($CFG->undeletableblocktypes)) {
             $CFG->undeletableblocktypes = explode(',', $CFG->undeletableblocktypes);
         }
@@ -1775,6 +1775,6 @@ function blocks_add_default_course_blocks($course) {
 function blocks_add_default_system_blocks() {
     $page = new moodle_page();
     $page->set_context(get_context_instance(CONTEXT_SYSTEM));
-    $page->blocks->add_blocks(array(BLOCK_POS_LEFT => array('global_navigation_tree', 'settings_navigation_tree')), '*', null, true);
+    $page->blocks->add_blocks(array(BLOCK_POS_LEFT => array('navigation', 'settings')), '*', null, true);
     $page->blocks->add_blocks(array(BLOCK_POS_LEFT => array('admin_bookmarks')), 'admin-*', null, null, 2);
 }

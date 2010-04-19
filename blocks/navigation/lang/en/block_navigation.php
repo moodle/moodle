@@ -16,22 +16,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'block_global_navigation_tree', language 'en', branch 'MOODLE_20_STABLE'
+ * This file contains language strings used in the global navigation block
  *
- * @package   block_global_navigation_tree
+ * @since 2.0
+ * @package blocks
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['courseactivities'] = 'Categories, courses, and course Activities';
+$string['everything'] = 'Everything';
 $string['courses'] = 'Categories and courses';
 $string['coursestructures'] = 'Categories, courses, and course structures';
+$string['courseactivities'] = 'Categories, courses, and course Activities';
 $string['enablehoverexpansiondesc'] = 'Enable mouseover expansion of this block';
-$string['enablesidebarpopoutdesc'] = 'Allow the user to switch the block to a sidbar popout';
-$string['everything'] = 'Everything';
-$string['expansionlimit'] = 'Generate navigation for the following';
+$string['enabledockdesc'] = 'Allow the user to dock this block';
 $string['pluginname'] = 'Navigation';
-$string['showemptybranchesdesc'] = 'Show empty course section branches';
-$string['showmycoursesdesc'] = 'Show my courses in the navigation';
 $string['showmyhistorydesc'] = 'Show my history as a branch in the navigation';
 $string['showmyhistorytitle'] = 'My history';

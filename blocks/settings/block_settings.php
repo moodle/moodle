@@ -34,7 +34,7 @@
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_settings_navigation_tree extends block_tree {
+class block_settings extends block_base {
 
     /** @var string */
     public static $navcount;
@@ -77,11 +77,14 @@ class block_settings_navigation_tree extends block_tree {
         return true;
     }
 
+    function instance_can_be_docked() {
+        return (parent::instance_can_be_docked() && (empty($this->config->enabledock) || $this->config->enabledock=='yes'));
+    }
+
     function get_required_javascript() {
         global $CFG;
-        $this->_initialise_dock();
         $this->page->requires->js_module(array('name'=>'core_dock', 'fullpath'=>'/blocks/dock.js', 'requires'=>array('base', 'cookie', 'dom', 'io', 'node', 'event-custom', 'event-mouseenter', 'yui2-container')));
-        $module = array('name'=>'block_navigation', 'fullpath'=>'/blocks/global_navigation_tree/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom', 'json-parse'));
+        $module = array('name'=>'block_navigation', 'fullpath'=>'/blocks/navigation/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom', 'json-parse'));
         $arguments = array($this->instance->id, array('instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked()));
         $this->page->requires->js_init_call('M.block_navigation.init_add_tree', $arguments, false, $module);
         user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
@@ -99,55 +102,42 @@ class block_settings_navigation_tree extends block_tree {
         $this->page->requires->yui2_lib('dom');
         // JS for navigation moved to the standard theme, the code will probably have to depend on the actual page structure
         // $this->page->requires->js('/lib/javascript-navigation.js');
-        block_settings_navigation_tree::$navcount++;
+        block_settings::$navcount++;
 
         // Check if this block has been docked
         if ($this->docked === null) {
-            $this->docked = get_user_preferences('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, 0);
+            $this->docked = get_user_preferences('nav_in_tab_panel_settingsnav'.block_settings::$navcount, 0);
         }
 
         // Check if there is a param to change the docked state
         if ($this->docked && optional_param('undock', null, PARAM_INT)==$this->instance->id) {
-            unset_user_preference('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, 0);
+            unset_user_preference('nav_in_tab_panel_settingsnav'.block_settings::$navcount, 0);
             $url = $this->page->url;
             $url->remove_params(array('undock'));
             redirect($url);
         } else if (!$this->docked && optional_param('dock', null, PARAM_INT)==$this->instance->id) {
-            set_user_preferences(array('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount=>1));
+            set_user_preferences(array('nav_in_tab_panel_settingsnav'.block_settings::$navcount=>1));
             $url = $this->page->url;
             $url->remove_params(array('dock'));
             redirect($url);
         }
 
-        if (!$this->page->settingsnav->contains_active_node() && !$this->page->navigation->contains_active_node()) {
-            if (!$this->page->settingsnav->reiterate_active_nodes()) {
-                $this->page->settingsnav->reiterate_active_nodes(URL_MATCH_BASE);
-            }
-        }
+        $renderer = $this->page->get_renderer('block_settings');
+        $this->content->text = $renderer->settings_tree($this->page->settingsnav);
 
-        // Grab the children from settings nav, we have more than one root node
-        // and we dont want to show the site node
-        $this->content->items = $this->page->settingsnav->children;
         // only do search if you have moodle/site:config
-        if (count($this->content->items)>0) {
+        if (!empty($this->content->text)) {
             if (has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM)) ) {
-                $value = optional_param('query', '', PARAM_RAW);
-                $target = new moodle_url("$CFG->wwwroot/$CFG->admin/search.php");
-                $form = '<form class="adminsearchform" method="get" action="'.$target.'">';
-                $form .= '<div><label for="adminsearchquery" class="accesshide">'.s(get_string('searchinsettings', 'admin')).'</label>';
-                $form .= '<input id="adminsearchquery" type="text" name="query" value="'.s($value).'"/>';
-                $form .= '<input type="submit" value="'.s(get_string('search')).'" />';
-                $form .= '</div></form>';
-                $this->content->footer = $form;
+                $this->content->footer = $renderer->search_form(new moodle_url("$CFG->wwwroot/$CFG->admin/search.php"), optional_param('query', '', PARAM_RAW));
             } else {
                 $this->content->footer = '';
             }
 
             $reloadlink = new moodle_url($this->page->url, array('regenerate'=>'navigation'));
-            $this->content->footer .= $OUTPUT->action_icon($reloadlink, new pix_icon('t/reload', get_string('reload')), null, array('class'=>'customcommand'));
+            $this->content->footer .= $OUTPUT->action_icon($reloadlink, new pix_icon('t/reload', get_string('reload')), null, array('class'=>'customcommand reloadnavigation'));
 
-            if (!empty($this->config->enablesidebarpopout) && $this->config->enablesidebarpopout == 'yes') {
-                user_preference_allow_ajax_update('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, PARAM_INT);
+            if (!empty($this->config->enabledock) && $this->config->enabledock == 'yes') {
+                user_preference_allow_ajax_update('nav_in_tab_panel_settingsnav'.block_settings::$navcount, PARAM_INT);
             }
         }
 

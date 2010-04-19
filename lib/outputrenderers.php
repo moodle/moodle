@@ -1959,7 +1959,7 @@ END;
         return $this->opencontainers->pop('container');
     }
 
-   /**
+    /**
      * Make nested HTML lists out of the items
      *
      * The resulting list will look something like this:
@@ -1990,7 +1990,7 @@ END;
             // this applies to the li item which contains all child lists too
             $content = $item->content($this);
             $liclasses = array($item->get_css_type());
-            if (!$item->forceopen || (!$item->forceopen && $item->collapse) || (count($item->children)==0  && $item->nodetype==navigation_node::NODETYPE_BRANCH)) {
+            if (!$item->forceopen || (!$item->forceopen && $item->collapse) || ($item->children->count()==0  && $item->nodetype==navigation_node::NODETYPE_BRANCH)) {
                 $liclasses[] = 'collapsed';
             }
             if ($item->isactive === true) {
@@ -1999,7 +1999,7 @@ END;
             $liattr = array('class'=>join(' ',$liclasses));
             // class attribute on the div item which only contains the item content
             $divclasses = array('tree_item');
-            if (!empty($item->children)  || $item->nodetype==navigation_node::NODETYPE_BRANCH) {
+            if ($item->children->count()>0  || $item->nodetype==navigation_node::NODETYPE_BRANCH) {
                 $divclasses[] = 'branch';
             } else {
                 $divclasses[] = 'leaf';
@@ -2026,7 +2026,63 @@ END;
      * @return string XHTML navbar
      */
     public function navbar() {
-        return $this->page->navbar->content();
+        //return $this->page->navbar->content();
+
+        $items = $this->page->navbar->get_items();
+
+        $count = 0;
+
+        $htmlblocks = array();
+        // Iterate the navarray and display each node
+        foreach ($items as $item) {
+            $htmlblocks[] = html_writer::tag('li', $this->render($item));
+        }
+
+        // XHTML
+        return join(get_separator(), $htmlblocks);
+    }
+
+    protected function render_navigation_node(navigation_node $item) {
+        $content = $item->get_content();
+        $title = $item->get_title();
+        if ($item->icon instanceof renderable) {
+            $icon = $this->render($item->icon);
+            $content = $icon.'&nbsp;'.$content; // use CSS for spacing of icons
+        }
+        if ($item->helpbutton !== null) {
+            $content = trim($item->helpbutton).html_writer::tag('span', $content, array('class'=>'clearhelpbutton'));
+        }
+        if ($content === '') {
+            continue;
+        }
+        if ($item->action instanceof action_link) {
+            //TODO: to be replaced with something else
+            $link = $item->action;
+            if ($item->hidden) {
+                $link->add_class('dimmed');
+            }
+            $content = $this->output->render($link);
+        } else if ($item->action instanceof moodle_url) {
+            $attributes = array();
+            if ($title !== '') {
+                $attributes['title'] = $title;
+            }
+            if ($item->hidden) {
+                $attributes['class'] = 'dimmed_text';
+            }
+            $content = html_writer::link($item->action, $content, $attributes);
+
+        } else if (is_string($item->action) || empty($item->action)) {
+            $attributes = array();
+            if ($title !== '') {
+                $attributes['title'] = $title;
+            }
+            if ($item->hidden) {
+                $attributes['class'] = 'dimmed_text';
+            }
+            $content = html_writer::tag('span', $content, $attributes);
+        }
+        return $content;
     }
 
     /**

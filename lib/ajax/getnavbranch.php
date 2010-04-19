@@ -41,22 +41,17 @@ try {
     $instanceid = optional_param('instance', null, PARAM_INT);
 
     // Create a global nav object
-    $navigation = new global_navigation_for_ajax();
+    $navigation = new global_navigation_for_ajax($PAGE);
 
     // If set to true then we need to call toggle display
     $toggledisplay = false;
     if ($instanceid!==null) {
         // Get the db record for the block instance
-        $blockrecords = $DB->get_record('block_instances', array('id'=>$instanceid,'blockname'=>'global_navigation_tree'));
+        $blockrecords = $DB->get_record('block_instances', array('id'=>$instanceid,'blockname'=>'navigation'));
         if ($blockrecords!=false) {
                 // Instantiate a block_instance object so we can access congif
-            $block = block_instance('global_navigation_tree', $blockrecords);
+            $block = block_instance('navigation', $blockrecords);
             // Check if the expansion limit config option has been set and isn't the default [everything]
-            if (!empty($block->config->expansionlimit) && $block->config->expansionlimit > '0') {
-                // Set the expansion limit
-                $navigation->expansionlimit = $block->config->expansionlimit;
-                $toggledisplay = true;
-            }
             if (empty($block->config->showemptybranches) || $block->config->showemptybranches=='no') {
                 $navigation->showemptybranches = false;
             }
@@ -66,14 +61,9 @@ try {
     // Create a navigation object to use, we can't guarantee PAGE will be complete
     $expandable = $navigation->initialise($branchtype, $branchid);
     $converter = new navigation_json();
-
-    if ($toggledisplay) {
-        // Toggle display of item types we dont' want to display
-        $navigation->toggle_type_display($navigation->expansionlimit);
-        $converter->set_expansionceiling($navigation->expansionlimit);
-    }
+    
     // Find the actuall branch we are looking for
-    $branch = $navigation->find_child($branchid, $branchtype);
+    $branch = $navigation->find($branchid, $branchtype);
 
     // Stop buffering errors at this point
     $html = ob_get_contents();

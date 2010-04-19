@@ -22,12 +22,6 @@ if ($courseid !== SITEID) {
 if ($userid !== 0) {
     $url->param('user', $userid);
 }
-if ($filtertype !== '') {
-    $url->param('filtertype', $filtertype);
-}
-if ($filterselect !== 0) {
-    $url->param('filterselect', $filterselect);
-}
 $PAGE->set_url($url);
 
 /// tabs compatibility
@@ -41,15 +35,11 @@ switch($filtertype) {
 }
 
 /// locate course information
-if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-    print_error('invalidcourseid');
-}
+$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 
 /// locate user information
 if ($userid) {
-    if (!$user = $DB->get_record('user', array('id'=>$userid))) {
-        print_error('invaliduserid');
-    }
+    $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
     $filtertype = 'user';
     $filterselect = $user->id;
 
@@ -82,16 +72,19 @@ if ($course->id == SITEID) {
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
 
 $strnotes = get_string('notes', 'notes');
-$link = null;
-if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
-    $link = new moodle_url('/user/index.php',array('id'=>$course->id));
-}
 if ($userid) {
+    $PAGE->set_context(get_context_instance(CONTEXT_USER, $user->id));
     $PAGE->navigation->extend_for_user($user);
 } else {
+    $link = null;
+    if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
+        $link = new moodle_url('/user/index.php',array('id'=>$course->id));
+    }
     $PAGE->navbar->add(get_string('participants'), $link);
     $PAGE->navbar->add($strnotes);
 }
+
+$PAGE->set_pagelayout('course');
 $PAGE->set_title($course->shortname . ': ' . $strnotes);
 $PAGE->set_heading($course->fullname);
 

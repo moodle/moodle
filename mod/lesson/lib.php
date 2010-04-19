@@ -804,19 +804,19 @@ function lesson_extend_settings_navigation($settings, $lessonnode) {
     $canedit = has_capability('mod/lesson:edit', $PAGE->cm->context);
 
     $url = new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id));
-    $key = $lessonnode->add(get_string('preview', 'lesson'), $url);
+    $lessonnode->add(get_string('preview', 'lesson'), $url);
 
     if ($canedit) {
         $url = new moodle_url('/mod/lesson/edit.php', array('id'=>$PAGE->cm->id));
-        $key = $lessonnode->add(get_string('edit', 'lesson'), $url);
+        $lessonnode->add(get_string('edit', 'lesson'), $url);
     }
 
     if (has_capability('mod/lesson:manage', $PAGE->cm->context)) {
-        $key = $lessonnode->add(get_string('reports', 'lesson'));
+        $reportsnode = $lessonnode->add(get_string('reports', 'lesson'));
         $url = new moodle_url('/mod/lesson/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportoverview'));
-        $lessonnode->get($key)->add(get_string('overview', 'lesson'), $url);
+        $reportsnode->add(get_string('overview', 'lesson'), $url);
         $url = new moodle_url('/mod/lesson/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportdetail'));
-        $lessonnode->get($key)->add(get_string('detailedstats', 'lesson'), $url);
+        $reportsnode->add(get_string('detailedstats', 'lesson'), $url);
     }
 
     if ($canedit) {
@@ -828,7 +828,7 @@ function lesson_extend_settings_navigation($settings, $lessonnode) {
         $url = new moodle_url('/mod/lesson/highscores.php', array('id'=>$PAGE->cm->id));
         $lessonnode->add(get_string('highscores', 'lesson'), $url);
     }
-    }
+}
 
 /**
  * Get list of available import or export formats

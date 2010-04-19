@@ -2710,4 +2710,4 @@ function glossary_extend_settings_navigation(settings_navigation $settings, navi
     if (has_capability('mod/glossary:write', $PAGE->cm->context)) {
         $glossarynode->add(get_string('addentry', 'glossary'), new moodle_url('/mod/glossary/edit.php', array('cmid'=>$PAGE->cm->id)));
     }
-    }
+}

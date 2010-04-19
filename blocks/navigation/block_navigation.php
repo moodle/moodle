@@ -34,7 +34,7 @@
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_global_navigation_tree extends block_tree {
+class block_navigation extends block_base {
 
     /** @var int */
     public static $navcount;
@@ -79,11 +79,14 @@ class block_global_navigation_tree extends block_tree {
         return true;
     }
 
+    function instance_can_be_docked() {
+        return (parent::instance_can_be_docked() && (empty($this->config->enabledock) || $this->config->enabledock=='yes'));
+    }
+
     function get_required_javascript() {
         global $CFG;
-        $this->_initialise_dock();
         $this->page->requires->js_module(array('name'=>'core_dock', 'fullpath'=>'/blocks/dock.js', 'requires'=>array('base', 'cookie', 'dom', 'io', 'node', 'event-custom', 'event-mouseenter', 'yui2-container')));
-        $this->page->requires->js_module(array('name'=>'block_navigation', 'fullpath'=>'/blocks/global_navigation_tree/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom', 'json-parse')));
+        $this->page->requires->js_module(array('name'=>'block_navigation', 'fullpath'=>'/blocks/navigation/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom', 'json-parse')));
         user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
     }
 
@@ -102,49 +105,28 @@ class block_global_navigation_tree extends block_tree {
         // Navcount is used to allow us to have multiple trees although I dont' know why
         // you would want to trees the same
 
-        block_global_navigation_tree::$navcount++;
+        block_navigation::$navcount++;
 
         // Check if this block has been docked
         if ($this->docked === null) {
-            $this->docked = get_user_preferences('nav_in_tab_panel_globalnav'.block_global_navigation_tree::$navcount, 0);
+            $this->docked = get_user_preferences('nav_in_tab_panel_globalnav'.block_navigation::$navcount, 0);
         }
 
         // Check if there is a param to change the docked state
         if ($this->docked && optional_param('undock', null, PARAM_INT)==$this->instance->id) {
-            unset_user_preference('nav_in_tab_panel_globalnav'.block_global_navigation_tree::$navcount);
+            unset_user_preference('nav_in_tab_panel_globalnav'.block_navigation::$navcount);
             $url = $this->page->url;
             $url->remove_params(array('undock'));
             redirect($url);
         } else if (!$this->docked && optional_param('dock', null, PARAM_INT)==$this->instance->id) {
-            set_user_preferences(array('nav_in_tab_panel_globalnav'.block_global_navigation_tree::$navcount=>1));
+            set_user_preferences(array('nav_in_tab_panel_globalnav'.block_navigation::$navcount=>1));
             $url = $this->page->url;
             $url->remove_params(array('dock'));
             redirect($url);
         }
 
-        // Set the expansionlimit if one has been set in block config
-        if (!empty($this->config->expansionlimit) && $this->config->expansionlimit!='0') {
-            $this->page->navigation->expansionlimit = $this->config->expansionlimit;
-        }
-
         // Initialise (only actually happens if it hasn't already been done yet
         $this->page->navigation->initialise();
-
-        // Remove empty branches if the user has selected to
-
-        if (empty($this->config->showemptybranches) || $this->config->showemptybranches=='no') {
-            $this->remove_empty_section_branches();
-        }
-
-        // Load the my courses branch if the user has selected to
-        if (isset($CFG->navshowcategories) && empty($CFG->navshowcategories)) {
-            $this->page->navigation->collapse_course_categories();
-        }
-
-        // Load the my courses branch if the user has selected to
-        if (!empty($this->config->showmycourses) && $this->config->showmycourses=='yes') {
-            $this->showmycourses();
-        }
 
         if (!empty($this->config->showmyhistory) && $this->config->showmyhistory=='yes') {
             $this->showmyhistory();
@@ -155,16 +137,17 @@ class block_global_navigation_tree extends block_tree {
         $this->page->navigation->find_expandable($expandable);
 
         // Initialise the JS tree object
-        $module = array('name'=>'block_navigation', 'fullpath'=>'/blocks/global_navigation_tree/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom', 'json-parse'));
+        $module = array('name'=>'block_navigation', 'fullpath'=>'/blocks/navigation/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom', 'json-parse'));
         $arguments = array($this->instance->id, array('expansions'=>$expandable, 'instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked()));
         $this->page->requires->js_init_call('M.block_navigation.init_add_tree', $arguments, false, $module);
 
         // Grab the items to display
-        $this->content->items = array($this->page->navigation);
+        $renderer = $this->page->get_renderer('block_navigation');
+        $this->content->text = $renderer->navigation_tree($this->page->navigation);
 
         $reloadlink = new moodle_url($this->page->url, array('regenerate'=>'navigation'));
 
-        $this->content->footer .= $OUTPUT->action_icon($reloadlink, new pix_icon('t/reload', get_string('reload')), null, array('class'=>'customcommand'));
+        $this->content->footer .= $OUTPUT->action_icon($reloadlink, new pix_icon('t/reload', get_string('reload')), null, array('class'=>'customcommand reloadnavigation'));
 
         // Set content generated to true so that we know it has been done
         $this->contentgenerated = true;
@@ -294,79 +277,16 @@ class block_global_navigation_tree extends block_tree {
         // If we have `more than nothing` in the history display it :D
         if ($historycount > 0) {
             // Add a branch to hold the users history
-            $mymoodle = $PAGE->navigation->get('mymoodle', navigation_node::TYPE_CUSTOM);
+            $mymoodle = $PAGE->navigation->get('profile', navigation_node::TYPE_USER);
             $myhistorybranch = $mymoodle->add(get_string('showmyhistorytitle', $this->blockname), null, navigation_node::TYPE_CUSTOM, null, 'myhistory');
-            $mymoodle->get($myhistorybranch)->children = array_reverse($history);
+            foreach (array_reverse($history) as $node) {
+                $myhistorybranch->children->add($node);
+            }
         }
 
         // Cache the history (or update the cached history as it is)
         $cache->history = $history;
 
         return true;
-    }
-
-    /**
-     * This function loads the users my courses array into the navigation
-     *
-     * @return bool
-     */
-    protected function showmycourses() {
-        global $USER, $PAGE;
-
-        // Create a navigation cache to point at the same node as the main navigation
-        // cache
-        $cache = new navigation_cache('navigation');
-
-        // If the user isn't logged in or is a guest we don't want to display anything
-        if (!isloggedin() || isguestuser()) {
-            return false;
-        }
-
-        // Check the cache to see if we have loaded my courses already
-        // there is a very good chance that we have
-        if (!$cache->cached('mycourses')) {
-            $cache->mycourses = get_my_courses($USER->id);
-        }
-        $courses = $cache->mycourses;
-
-        // If no courses to display here, return before adding anything
-        if (!is_array($courses) || count($courses)==0) {
-            return false;
-        }
-
-        // Add a branch labelled something like My Courses
-        $mymoodle = $PAGE->navigation->get('mymoodle', navigation_node::TYPE_CUSTOM);
-        $mycoursesbranch = $mymoodle->add(get_string('mycourses'), null,navigation_node::TYPE_CATEGORY, null, 'mycourses');
-        $PAGE->navigation->add_courses($courses, 'mycourses');
-        $mymoodle->get($mycoursesbranch)->type = navigation_node::TYPE_CUSTOM;
-        return true;
-    }
-
-    /**
-     * This function searches all branches and removes any empty section branches
-     * for the global navigation structure. This is usually called by the global
-     * navigation block based on a block setting
-     */
-    protected function remove_empty_section_branches() {
-        global $PAGE;
-        $cache = new navigation_cache('navigation');
-        $course = &$PAGE->navigation->find_active_node(navigation_node::TYPE_COURSE);
-        if ($course===false || !$cache->cached('modinfo'.$course->key) || !$cache->cached('coursesections'.$course->key)) {
-            return 0;
-        }
-        $sectionstoremove = array();
-        $coursesections = $cache->{'coursesections'.$course->key};
-        $modinfosections = $cache->{'modinfo'.$course->key}->sections;
-        foreach ($coursesections as $id=>$section) {
-            if (!array_key_exists($id, $modinfosections)) {
-                $sectionstoremove[] = $section->id;
-            }
-        }
-
-        foreach ($course->children as $key=>$node) {
-            if ($node->type == navigation_node::TYPE_SECTION && in_array($node->key, $sectionstoremove)) {
-                $course->remove_child($key);
-            }
-        }
     }
 }

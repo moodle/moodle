@@ -949,4 +949,4 @@ function choice_extend_settings_navigation(settings_navigation $settings, naviga
         }
         $choicenode->add(get_string("viewallresponses", "choice", $responsecount), new moodle_url('/mod/choice/report.php', array('id'=>$PAGE->cm->id)));
     }
-    }
+}

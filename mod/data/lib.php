@@ -2848,8 +2848,8 @@ function data_extend_navigation($navigation, $course, $module, $cm) {
     /// Check the number of entries required against the number of entries already made (doesn't apply to teachers)
     if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:manageentries', get_context_instance(CONTEXT_MODULE, $cm->id))) {
         $data->entriesleft = $data->requiredentries - $numentries;
-        $key = $navigation->add(get_string('entrieslefttoadd', 'data', $data));
-        $navigation->get($key)->add_class('note');
+        $entriesnode = $navigation->add(get_string('entrieslefttoadd', 'data', $data));
+        $entriesnode->add_class('note');
     }
 
     $navigation->add(get_string('list', 'data'), new moodle_url('/mod/data/view.php', array('d'=>$cm->instance)));
@@ -2904,8 +2904,7 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
             $defaultemplate = 'singletemplate';
         }
 
-        $templatekey = $datanode->add(get_string('templates', 'data'));
-        $templates = $datanode->get($templatekey);
+        $templates = $datanode->add(get_string('templates', 'data'));
 
         $templatelist = array ('listtemplate', 'singletemplate', 'asearchtemplate', 'addtemplate', 'rsstemplate', 'csstemplate', 'jstemplate');
         foreach ($templatelist as $template) {
@@ -2915,4 +2914,4 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
         $datanode->add(get_string('fields', 'data'), new moodle_url('/mod/data/field.php', array('d'=>$data->id)));
         $datanode->add(get_string('presets', 'data'), new moodle_url('/mod/data/preset.php', array('d'=>$data->id)));
     }
-    }
+}

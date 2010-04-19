@@ -113,8 +113,6 @@ class block_base {
 
     var $cron          = NULL;
 
-    static $dockinitialised = false;
-
 /// Class Functions
 
     /**
@@ -562,7 +560,6 @@ class block_base {
     }
 
     function get_required_javascript() {
-        $this->_initialise_dock();
         if ($this->instance_can_be_docked() && !$this->hide_header()) {
             $this->page->requires->js_init_call('M.core_dock.init_genericblock', array($this->instance->id));
             user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
@@ -733,14 +730,6 @@ class block_base {
     public function instance_can_be_docked() {
         global $CFG;
         return (!empty($CFG->allowblockstodock) && $this->page->theme->enable_dock);
-    }
-
-    public function _initialise_dock() {
-        global $CFG;
-        if (!self::$dockinitialised) {
-            $this->page->requires->strings_for_js(array('addtodock','undockitem','undockall'), 'block');
-            self::$dockinitialised = true;
-        }
     }
 
     /** @callback callback functions for comments api */

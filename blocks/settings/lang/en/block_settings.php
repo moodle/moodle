@@ -16,13 +16,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'block_settings_navigation_tree', language 'en', branch 'MOODLE_20_STABLE'
+ * This file contains language strings used in the settings navigation block
  *
- * @package   block_settings_navigation_tree
+ * @since 2.0
+ * @package blocks
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['enablehoverexpansion'] = 'Enable mouseover expansion of this block';
-$string['enablesidebarpopout'] = 'Allow the user to switch the block to a sidbar popout';
+$string['enabledock'] = 'Allow the user to dock this block';
 $string['pluginname'] = 'Settings';

@@ -1625,13 +1625,13 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
     }
     if (has_capability('mod/quiz:viewreports', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/quiz/report.php', array('q'=>$PAGE->cm->instance));
-        $reportkey = $quiznode->add(get_string('results', 'quiz'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
+        $reportnode = $quiznode->add(get_string('results', 'quiz'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
 
         require_once($CFG->dirroot.'/mod/quiz/report/reportlib.php');
         $reportlist = quiz_report_list($PAGE->cm->context);
         foreach ($reportlist as $report) {
             $url = new moodle_url('/mod/quiz/report.php', array('q'=>$PAGE->cm->instance, 'mode'=>$report));
-            $quiznode->get($reportkey)->add(get_string($report, 'quiz_'.$report), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/item', ''));
+            $reportnode->add(get_string($report, 'quiz_'.$report), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/item', ''));
         }
     }
     if (has_capability('mod/quiz:preview', $PAGE->cm->context)) {

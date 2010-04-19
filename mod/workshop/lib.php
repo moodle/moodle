@@ -676,8 +676,8 @@ function workshop_extend_navigation(navigation_node $navref, stdclass $course, s
 
     if (has_capability('mod/workshop:submit', get_context_instance(CONTEXT_MODULE, $cm->id))) {
         $url = new moodle_url('/mod/workshop/submission.php', array('cmid' => $cm->id));
-        $mysubmissionkey = $navref->add(get_string('mysubmission', 'workshop'), $url);
-        $navref->get($mysubmissionkey)->mainnavonly = true;
+        $mysubmission = $navref->add(get_string('mysubmission', 'workshop'), $url);
+        $mysubmission->mainnavonly = true;
     }
 }
 

@@ -7965,7 +7965,7 @@ function forum_get_extra_capabilities() {
  */
 function forum_extend_navigation($navref, $course, $module, $cm) {
     global $CFG, $OUTPUT, $USER;
-
+    
     $limit = 5;
 
     $discussions = forum_get_discussions($cm,"d.timemodified DESC", false, -1, $limit);
@@ -7973,13 +7973,13 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
     if (!is_array($discussions) || count($discussions)==0) {
         return;
     }
-    $discussionkey = $navref->add(get_string('discussions', 'forum').' ('.$discussioncount.')');
-    $navref->get($discussionkey)->mainnavonly = true;
+    $discussionnode = $navref->add(get_string('discussions', 'forum').' ('.$discussioncount.')');
+    $discussionnode->mainnavonly = true;
 
     foreach ($discussions as $discussion) {
         $icon = new pix_icon('i/feedback', '');
         $url = new moodle_url('/mod/forum/discuss.php', array('d'=>$discussion->discussion));
-        $navref->get($discussionkey)->add($discussion->subject, $url, navigation_node::TYPE_SETTING, null, null, $icon);
+        $discussionnode->add($discussion->subject, $url, navigation_node::TYPE_SETTING, null, null, $icon);
     }
 
     if ($discussioncount > count($discussions)) {
@@ -7988,7 +7988,7 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
         } else {
             $url = new moodle_url('/mod/forum/view.php', array('id'=>$cm->id));
         }
-        $childkey = $navref->get($discussionkey)->add(get_string('viewalldiscussions', 'forum'), $url, navigation_node::TYPE_SETTING, null, null, $icon);
+        $discussionnode->add(get_string('viewalldiscussions', 'forum'), $url, navigation_node::TYPE_SETTING, null, null, $icon);
     }
 
     $index = 0;
@@ -8002,13 +8002,13 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
     forum_get_recent_mod_activity($recentposts, $index, $lastlogin, $course->id, $cm->id);
 
     if (is_array($recentposts) && count($recentposts)>0) {
-        $recentkey = $navref->add(get_string('recentactivity').' ('.count($recentposts).')');
-        $navref->get($recentkey)->mainnavonly = true;
+        $recentnode = $navref->add(get_string('recentactivity').' ('.count($recentposts).')');
+        $recentnode->mainnavonly = true;
         foreach ($recentposts as $post) {
             $icon = new pix_icon('i/feedback', '');
             $url = new moodle_url('/mod/forum/discuss.php', array('d'=>$post->content->discussion));
             $title = $post->content->subject."\n".userdate($post->timestamp, get_string('strftimerecent', 'langconfig'))."\n".$post->user->firstname.' '.$post->user->lastname;
-            $navref->get($recentkey)->add($title, $url, navigation_node::TYPE_SETTING, null, null, $icon);
+            $recentnode->add($title, $url, navigation_node::TYPE_SETTING, null, null, $icon);
         }
     }
 }
@@ -8027,10 +8027,10 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         $PAGE->cm->context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->instance);
     }
     if (is_enrolled($PAGE->cm->context)) { // means enrolled users only
-        $notekey = false;
+        $notenode = false;
         $helpbutton = false;
         if (forum_is_forcesubscribed($forumobject)) {
-            $notekey = $forumnode->add(get_string("forcessubscribe", 'forum'));
+            $notenode = $forumnode->add(get_string("forcessubscribe", 'forum'));
             $string = get_string('allowchoice', 'forum');
             $helpbutton = $OUTPUT->old_help_icon("subscription", $string, "forum");
             if (has_capability('mod/forum:managesubscriptions', $PAGE->cm->context)) {
@@ -8041,11 +8041,11 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
             }
         } else if ($forumobject->forcesubscribe == FORUM_DISALLOWSUBSCRIBE) {
             $string = get_string('disallowsubscribe', 'forum');
-            $notekey = $forumnode->add($string);
+            $notenode = $forumnode->add($string);
             $helpbutton = $OUTPUT->old_help_icon("subscription", $string, "forum");
         } else {
             $string = get_string("forcesubscribe", "forum");
-            $notekey = $forumnode->add(get_string("allowsallsubscribe", 'forum'));
+            $notenode = $forumnode->add(get_string("allowsallsubscribe", 'forum'));
             $helpbutton = $OUTPUT->old_help_icon("subscription", $string, "forum");
 
             if (has_capability('mod/forum:managesubscriptions', $PAGE->cm->context)) {
@@ -8081,13 +8081,13 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
             $url = new moodle_url('/mod/forum/settracking.php', array('id'=>$forumobject->id));
             $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
         }
-        if ($notekey!==false) {
-            $forumnode->get($notekey)->add_class('note');
+        if ($notenode!==false) {
+            $notenode->add_class('note');
             if ($helpbutton!==false) {
-                $forumnode->get($notekey)->helpbutton = $helpbutton;
+                $notenode->helpbutton = $helpbutton;
             }
         }
-        }
+    }
 
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->forum_enablerssfeeds) && $forumobject->rsstype && $forumobject->rssarticles) {
 

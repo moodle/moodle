@@ -62,7 +62,7 @@ M.block_navigation = M.block_navigation || {
 /**
  * @class tree
  * @constructor
- * @base M.core_dock.abstractblock
+ * @base M.core_dock.genericblock
  * @param {YUI} Y A yui instance to use with the navigation
  * @param {string} id The name of the tree
  * @param {object} properties Object containing tree properties
@@ -97,6 +97,12 @@ M.block_navigation.classes.tree = function(Y, id, properties) {
     if (node === null) {
         return;
     }
+
+    var reloadicon = node.one('.footer .reloadnavigation');
+    if (reloadicon) {
+        reloadicon.remove();
+    }
+    
     // Attach event to toggle expansion
     node.all('.tree_item.branch').on('click', this.toggleexpansion , this);
 
@@ -114,6 +120,10 @@ M.block_navigation.classes.tree = function(Y, id, properties) {
     // Call the generic blocks init method to add all the generic stuff
     if (this.candock) {
         this.init(Y, node);
+    }
+
+    if (reloadicon) {
+        node.one('.header .block_action').insert(reloadicon, 0);
     }
 }
 
@@ -207,6 +217,13 @@ M.block_navigation.classes.tree.prototype.add_branch = function(branchobj, targe
 M.block_navigation.classes.tree.prototype.toggleexpansion = function(e) {
     // First check if they managed to click on the li iteslf, then find the closest
     // LI ancestor and use that
+
+    if (e.target.get('nodeName').toUpperCase() == 'A') {
+        // A link has been clicked don't fire any more events just do the default.
+        e.stopPropagation();
+        return;
+    }
+
     if (e.target.get('nodeName').toUpperCase() == 'LI') {
         e.target.toggleClass('collapsed');
     } else if (e.target.ancestor('LI')) {
@@ -244,12 +261,18 @@ M.block_navigation.classes.branch = function(tree, obj) {
         this.construct_from_json(obj);
     }
 }
+/**
+ * Populates this branch from a JSON object
+ * @param {object} obj
+ */
 M.block_navigation.classes.branch.prototype.construct_from_json = function(obj) {
     for (var i in obj) {
         this[i] = obj[i];
     }
-    if (this.children) {
+    if (this.children && this.children.length > 0) {
         this.haschildren = true;
+    } else {
+        this.children = [];
     }
     if (this.id && this.id.match(/^expandable_branch_\d+$/)) {
         // Assign a new unique id for this new expandable branch

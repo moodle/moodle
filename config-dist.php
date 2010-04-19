@@ -217,7 +217,7 @@ $CFG->admin = 'admin';
 // The blocks in this list will be protected from deletion, and this is primarily
 // used to protect the navigation and settings blocks which can be very hard to
 // get back if accidentally delete.
-//      $CFG->undeletableblocktypes = 'global_navigation_tree,settings_navigation_tree';
+//      $CFG->undeletableblocktypes = 'navigation,settings';
 //
 // You can specify a different class to be created for the $PAGE global, and to
 // compute which blocks appear on each page. However, I cannot think of any good

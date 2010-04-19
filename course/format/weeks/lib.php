@@ -33,8 +33,8 @@
  * @param array $path An array of keys to the course node
  * @param stdClass $course The course we are loading the section for
  */
-function callback_weeks_load_content(&$navigation, $keys, $course) {
-    $navigation->add_course_section_generic($keys, $course, get_string('week'), 'week');
+function callback_weeks_load_content(&$navigation, $course, $coursenode) {
+    return $navigation->load_generic_course_sections($course, $coursenode, get_string('week'), 'week');
 }
 
 /**

@@ -1084,13 +1084,13 @@ class assignment_upload extends assignment_base {
             $link = new moodle_url('/mod/assignment/view.php', array('id'=>$this->cm->id));
             $node->add(get_string('viewmysubmission', 'assignment'), $link, navigation_node::TYPE_SETTING);
             if (!empty($submission->timemodified)) {
-                $key = $node->add(get_string('submitted', 'assignment') . ' ' . userdate($submission->timemodified));
-                $node->get($key)->text = preg_replace('#([^,])\s#', '$1&nbsp;', $node->get($key)->text);
-                $node->get($key)->add_class('note');
+                $submittednode = $node->add(get_string('submitted', 'assignment') . ' ' . userdate($submission->timemodified));
+                $submittednode->text = preg_replace('#([^,])\s#', '$1&nbsp;', $submittednode->text);
+                $submittednode->add_class('note');
                 if ($submission->timemodified <= $this->assignment->timedue || empty($this->assignment->timedue)) {
-                    $node->get($key)->add_class('early');
+                    $submittednode->add_class('early');
                 } else {
-                    $node->get($key)->add_class('late');
+                    $submittednode->add_class('late');
                 }
             }
         }
@@ -1100,15 +1100,15 @@ class assignment_upload extends assignment_base {
             $fs = get_file_storage();
             if ($files = $fs->get_area_files($this->context->id, 'assignment_submission', $USER->id, "timemodified", false)) {
                 if (!$this->drafts_tracked() or !$this->isopen() or $this->is_finalized($submission)) {
-                    $filekey = $node->add(get_string('submission', 'assignment'));
+                    $filenode = $node->add(get_string('submission', 'assignment'));
                 } else {
-                    $filekey = $node->add(get_string('submissiondraft', 'assignment'));
+                    $filenode = $node->add(get_string('submissiondraft', 'assignment'));
                 }
                 foreach ($files as $file) {
                     $filename = $file->get_filename();
                     $mimetype = $file->get_mimetype();
                     $link = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$USER->id.'/'.$filename);
-                    $node->get($filekey)->add($filename, $link, navigation_node::TYPE_SETTING, null, null, new pix_icon(file_mimetype_icon($mimetype),''));
+                    $filenode->add($filename, $link, navigation_node::TYPE_SETTING, null, null, new pix_icon(file_mimetype_icon($mimetype),''));
                 }
             }
         }

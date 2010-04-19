@@ -1274,8 +1274,7 @@ function chat_extend_navigation($navigation, $course, $module, $cm) {
 
     $chatusers = chat_get_users($cm->instance, $currentgroup, $cm->groupingid);
     if (is_array($chatusers) && count($chatusers)>0) {
-        $userskey = $navigation->add(get_string('currentusers', 'chat'));
-        $users = $navigation->get($userskey);
+        $users = $navigation->add(get_string('currentusers', 'chat'));
         foreach ($chatusers as $chatuser) {
             $userlink = new moodle_url('/user/view.php', array('id'=>$chatuser->id,'course'=>$course->id));
             $users->add(fullname($chatuser).' '.format_time(time() - $chatuser->lastmessageping), $userlink, navigation_node::TYPE_USER, null, null, new pix_icon('c/user', ''));
@@ -1294,8 +1293,8 @@ function chat_extend_settings_navigation(settings_navigation $settings, navigati
     $chat = $DB->get_record("chat", array("id" => $PAGE->cm->instance));
 
     if ($chat->chattime && $chat->schedule) {
-        $key = $chatnode->add(get_string('nextsession', 'chat').': '.userdate($chat->chattime).' ('.usertimezone($USER->timezone));
-        $chatnode->get($key)->add_class('note');
+        $nextsessionnode = $chatnode->add(get_string('nextsession', 'chat').': '.userdate($chat->chattime).' ('.usertimezone($USER->timezone));
+        $nextsessionnode->add_class('note');
     }
 
     $currentgroup = groups_get_activity_group($PAGE->cm, true);
@@ -1310,4 +1309,4 @@ function chat_extend_settings_navigation(settings_navigation $settings, navigati
             $chatnode->add(get_string('viewreport', 'chat'), new moodle_url('/mod/chat/report.php', array('id'=>$PAGE->cm->id)));
         }
     }
-    }
+}

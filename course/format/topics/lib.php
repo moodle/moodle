@@ -33,8 +33,8 @@
  * @param stdClass $modinfo The mod info object for the current course
  * @return bool Returns true
  */
-function callback_topics_load_content(&$navigation, $keys, $course) {
-    $navigation->add_course_section_generic($keys, $course, get_string('topic'), 'topic');
+function callback_topics_load_content(&$navigation, $course, $coursenode) {
+    return $navigation->load_generic_course_sections($course, $coursenode, get_string('topic'), 'topic');
 }
 
 /**

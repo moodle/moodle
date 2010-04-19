@@ -19,6 +19,15 @@
 // Please do not forget to use upgrade_set_timeout()
 // before any action that may take longer time to finish.
 
+/**
+ *
+ * @global stdClass $CFG
+ * @global stdClass $USER
+ * @global moodle_database $DB
+ * @global core_renderer $OUTPUT
+ * @param int $oldversion
+ * @return bool
+ */
 function xmldb_main_upgrade($oldversion) {
     global $CFG, $USER, $DB, $OUTPUT;
 
@@ -3495,6 +3504,17 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         upgrade_main_savepoint($result, 2010041300);
+    }
+
+    if ($result && $oldversion < 2010041301) {
+        $sql = "UPDATE {block} SET name=? WHERE name=?";
+        $DB->execute($sql, array('navigation', 'global_navigation_tree'));
+        $DB->execute($sql, array('settings', 'settings_navigation_tree'));
+
+        $sql = "UPDATE {block_instances} SET blockname=? WHERE blockname=?";
+        $DB->execute($sql, array('navigation', 'global_navigation_tree'));
+        $DB->execute($sql, array('settings', 'settings_navigation_tree'));
+        upgrade_main_savepoint($result, 2010041301);
     }
 
     return $result;

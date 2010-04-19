@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form for editing settings navigation instances.
+ * Form for editing global navigation instances.
  *
  * @since 2.0
  * @package blocks
@@ -25,30 +25,30 @@
  */
 
 /**
- * Form for setting navigation instances.
+ * Form for editing global navigation instances.
  *
  * @package blocks
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_settings_navigation_tree_edit_form extends block_edit_form {
+class block_navigation_edit_form extends block_edit_form {
     protected function specific_definition($mform) {
+        global $CFG;
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
 
+        $mods = array('enabledock'=>'yes', 'enablehoverexpansion'=>'no', 'showmyhistory'=>'no');
         $yesnooptions = array('yes'=>get_string('yes'), 'no'=>get_string('no'));
-
-        $mform->addElement('select', 'config_enablehoverexpansion', get_string('enablehoverexpansion', $this->block->blockname), $yesnooptions);
-        if (empty($this->block->config->enablehoverexpansion) || $this->block->config->enablehoverexpansion=='no') {
-            $mform->getElement('config_enablehoverexpansion')->setSelected('no');
-        } else {
-            $mform->getElement('config_enablehoverexpansion')->setSelected('yes');
-        }
-
-        $mform->addElement('select', 'config_enablesidebarpopout', get_string('enablesidebarpopout', $this->block->blockname), $yesnooptions);
-        if (empty($this->block->config->enablesidebarpopout) || $this->block->config->enablesidebarpopout=='no') {
-            $mform->getElement('config_enablesidebarpopout')->setSelected('no');
-        } else {
-            $mform->getElement('config_enablesidebarpopout')->setSelected('yes');
+        foreach ($mods as $modname=>$default) {
+            $mform->addElement('select', 'config_'.$modname, get_string($modname.'desc', $this->block->blockname), $yesnooptions);
+            if (isset($this->block->config->{$modname}) && $this->block->config->{$modname}!=$default) {
+                if ($default=='no') {
+                    $mform->getElement('config_'.$modname)->setSelected('yes');
+                } else {
+                    $mform->getElement('config_'.$modname)->setSelected('no');
+                }
+            } else {
+                $mform->getElement('config_'.$modname)->setSelected($default);
+            }
         }
     }
 }

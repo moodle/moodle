@@ -597,8 +597,7 @@ function blog_get_headers() {
  */
 function blog_extend_settings_navigation($settingsnav) {
     global $USER, $PAGE, $FULLME, $CFG, $DB, $OUTPUT;
-    $blogkey = $settingsnav->add(get_string('blogadministration', 'blog'));
-    $blog = $settingsnav->get($blogkey);
+    $blog = $settingsnav->add(get_string('blogadministration', 'blog'));
     $blog->forceopen = true;
 
     $blog->add(get_string('preferences', 'blog'), new moodle_url('preferences.php'), navigation_node::TYPE_SETTING);
@@ -607,7 +606,7 @@ function blog_extend_settings_navigation($settingsnav) {
         $blog->add(get_string('externalblogs', 'blog'), new moodle_url('external_blogs.php'), navigation_node::TYPE_SETTING);
     }
 
-    return $blogkey;
+    return $blog;
 }
 
 /**

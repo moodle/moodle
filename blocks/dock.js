@@ -336,7 +336,7 @@ M.core_dock = {
                 }
             }
 
-            var moveto = this.Y.Node.create('<input type="image" class="moveto customcommand requiresjs" src="'+M.util.image_url('t/block_to_dock', 'moodle')+'" alt="'+M.str.block.undockitem+'" title="'+M.str.block.undockitem+'" />');
+            var moveto = this.Y.Node.create('<input type="image" class="moveto customcommand requiresjs" src="'+M.util.image_url('t/block_to_dock', 'moodle')+'" alt="'+M.str.block.addtodock+'" title="'+M.str.block.addtodock+'" />');
             moveto.on('movetodock|click', this.move_to_dock, this, commands);
 
             var blockaction = node.one('.block_action');
@@ -483,10 +483,13 @@ M.core_dock = {
 
             this.resize_block_space(this.cachedcontentnode);
 
+
             var commands = this.cachedcontentnode.one('.commands');
-            commands.all('.hidepanelicon').remove();
-            commands.all('.moveto').remove();
-            commands.remove();
+            if (commands) {
+                commands.all('.hidepanelicon').remove();
+                commands.all('.moveto').remove();
+                commands.remove();
+            }
             this.cachedcontentnode.one('.title').append(commands);
             this.cachedcontentnode = null;
             M.util.set_user_preference('docked_block_instance_'+this.id, 0);
@@ -540,13 +543,6 @@ M.core_dock = {
                 dockitem.addClass('firstdockitem');
             }
             dockitem.append(dockitemtitle);
-            if (this.commands.hasChildNodes) {
-                if (this.contents.ancestor().one('.footer')) {
-                    this.contents.ancestor().one('.footer').appendChild(this.commands);
-                } else {
-                    this.contents.appendChild(this.commands);
-                }
-            }
             M.core_dock.append(dockitem);
 
             var position = dockitemtitle.getXY();
@@ -573,7 +569,9 @@ M.core_dock = {
             this.panel.showMaskEvent.subscribe(function(){
                 this.Y.one(this.panel.mask).setStyle('zIndex', this.cfg.panel.modalzindex);
             }, this, true);
-            this.panel.renderEvent.subscribe(this.resize_panel, this, true);
+            if (this.commands.hasChildNodes) {
+                this.panel.setHeader(this.Y.Node.getDOMNode(this.commands));
+            }
             this.panel.setBody(this.Y.Node.getDOMNode(this.contents));
             this.panel.render(M.core_dock.node);
             this.Y.one(this.panel.body).addClass(this.blockclass);
@@ -693,10 +691,14 @@ M.core_dock = {
          */
         resize_panel : function() {
             this.fire('dockeditem:resizestart');
+
+            var panelheader = this.Y.one(this.panel.header);
+            panelheader = (panelheader)?panelheader.get('offsetHeight'):0;
             var panelbody = this.Y.one(this.panel.body);
+
             var buffer = this.cfg.buffer;
             var screenheight = parseInt(this.Y.get(document.body).get('winHeight'));
-            var panelheight = parseInt(panelbody.get('offsetHeight'));
+            var panelheight = parseInt(panelheader + panelbody.get('offsetHeight'));
             var paneltop = parseInt(this.panel.cfg.getProperty('y'));
             var titletop = parseInt(this.Y.one('#dock_item_'+this.id+'_title').getY());
             var scrolltop = window.pageYOffset || document.body.scrollTop || 0;
@@ -720,7 +722,7 @@ M.core_dock = {
             // This makes the panel constrain to the screen's height if the panel is big
             if (paneltop <= buffer && ((panelheight+paneltop*2) > screenheight || panelbody.hasClass('oversized_content'))) {
                 this.panel.cfg.setProperty('height', screenheight-(buffer*3));
-                panelbody.setStyle('height', (screenheight-(buffer*3)-10)+'px');
+                panelbody.setStyle('height', (screenheight-panelheader-(buffer*3)-10)+'px');
                 panelbody.addClass('oversized_content');
             }
             this.fire('dockeditem:resizecomplete');
@@ -754,6 +756,7 @@ M.core_dock.genericblock.prototype.fix_title_orientation =   M.core_dock.abstrac
  * @param {this.Y.Node} title
  * @param {this.Y.Node} contents
  * @param {this.Y.Node} commands
+ * @param {string} blockclass
  */
 M.core_dock.item = function(Y, uid, title, contents, commands, blockclass){
     this.Y = Y;
