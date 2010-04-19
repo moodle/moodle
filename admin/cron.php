@@ -15,6 +15,8 @@
 
 /// this cron script might be considered to be a CLI script even when accessed over HTTP,
 /// we do not want HTML in output and there is no real session ;-)
+/// NOTE: do not use this hack in your cli scripts, it is defined automatically
+///       in lib/setup.php, all you need to do is to prevent access via web
     define('CLI_SCRIPT', true);
 
 /// Following hack used to identify cron and other CLI scripts - use CLI_SCRIPT or $FULLME == "/$CFG->admin/cropn.php" instead
