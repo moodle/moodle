@@ -37,6 +37,10 @@ h2.main {
   margin: 10px 0;
 }
 
+.buttons {
+  text-align: center;
+}
+
 /* Header */
 
 #page-header {
@@ -150,11 +154,28 @@ h2.headingblock {
   margin: 10px 0 20px;
 }
 
-#page-course-category .buttons {
-  text-align: center;
+/* Users */
+
+.userinfobox {
+  border: none;
+  width: 75%;
+  margin: 0 auto;
 }
 
-/* Users */
+.userinfobox .content {
+  border: 1px solid #dadfd5;
+  background: #f3f8ed;
+  padding: 10px;
+}
+
+#page-user-view .buttons {
+  margin: 0 auto;
+  width: 250px;
+}
+#page-user-view .buttons div {
+  float: left;
+  padding: 10px;
+}
 
 /* Tabs */
 
@@ -210,6 +231,7 @@ h2.headingblock {
   border-top: 1px solid #5b7439;
   padding: 0;
   margin: 0;
+  margin-top: 1px;
 }
 
 .tabtree tabrow2 ul {

@@ -32,7 +32,7 @@ echo $OUTPUT->doctype() ?>
 <div id="page-wrapper">
   <div id="page" class="clearfix">
     
-    <div id="page-header">
+    <div id="page-header" class="clearfix">
       <?php if ($PAGE->heading) { ?>
         <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
         <div class="headermenu">
