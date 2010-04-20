@@ -16,16 +16,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Configuration for Moodle's standard theme.
+ * Configuration for Moodle's base theme.
  *
- * DO NOT COPY THIS INTO NEW THEMES! Instead use some other theme as a base
- * for your experiments.
+ * This theme is special, and implements a minimalist theme with only
+ * basic layout. It is intended as a base for other themes to build upon.
+ * It is not recommend to actually choose this theme for production sites!
  *
- * Options related to theme customisations can be found at
- * http://phpdocs.moodle.org/HEAD/moodlecore/theme_config.html
+ * DO NOT COPY THIS TO START NEW THEMES! 
+ * Start with another theme, like "standard".
  *
- * For an overview of how Moodle themes work, Please see
- * http://docs.moodle.org/en/Developement:How_Moodle_outputs_HTML
+ * For full information about creating Moodle themes, see:
+ *  http://docs.moodle.org/en/Development:Themes_2.0
  *
  * @package   moodlecore
  * @copyright 2009 Tim Hunt
