@@ -169,7 +169,11 @@ if ($usernew = $userform->get_data()) {
     $authplugin = get_auth_plugin($user->auth);
 
     $usernew->timemodified = time();
-    $usernew = file_postupdate_standard_editor($usernew, 'description', $editoroptions, $personalcontext, 'user_profile', $usernew->id);
+
+    // description editor element may not exist!
+    if (isset($usernew->description_editor)) {
+        $usernew = file_postupdate_standard_editor($usernew, 'description', $editoroptions, $personalcontext, 'user_profile', $usernew->id);
+    }
 
     $DB->update_record('user', $usernew);
 
