@@ -68,6 +68,11 @@ $table->head = array(get_string('theme'), get_string('info'));
 $themes = get_plugin_list('theme');
 
 foreach ($themes as $themename => $themedir) {
+    
+    // Skip the base theme unless we are in theme designer mode (they might want to look at it)
+    if (!$CFG->themedesignermode && $themename == 'base') {
+        continue;
+    }
 
     // Load the theme config.
     try {
