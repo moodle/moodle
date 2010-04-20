@@ -124,7 +124,7 @@ if (!empty($delete) and confirm_sesskey()) {
     require_capability('moodle/category:manage', $context);
     require_capability('moodle/category:manage', get_category_or_system_context($deletecat->parent));
 
-    $heading = get_string('deletecategory', format_string($deletecat->name));
+    $heading = get_string('deletecategory', 'moodle', format_string($deletecat->name));
     require_once('delete_category_form.php');
     $mform = new delete_category_form(null, $deletecat);
     $mform->set_data(array('delete'=>$delete));
