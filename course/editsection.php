@@ -66,11 +66,11 @@ if ($mform->is_cancelled()){
 /// Inelegant hack for bug 3408
 if ($course->format == 'site') {
     $sectionname  = get_string('site');
-    $stredit      = get_string('edit', '', " $sectionname");
+    $stredit      = get_string('edita', '', " $sectionname");
     $strsummaryof = get_string('summaryof', '', " $sectionname");
 } else {
     $sectionname  = get_section_name($course->format);
-    $stredit      = get_string('edit', '', " $sectionname $section->section");
+    $stredit      = get_string('edita', '', " $sectionname $section->section");
     $strsummaryof = get_string('summaryof', '', " $sectionname $section->section");
 }
 
