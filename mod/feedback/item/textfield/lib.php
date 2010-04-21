@@ -95,8 +95,43 @@ class feedback_item_textfield extends feedback_item_base {
         $rowOffset++;
         return $rowOffset;
     }
+    
+    /**     
+     * print the item at the edit-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @return void
+     */
+    function print_item_preview($item) {
+        global $OUTPUT;
+        $align = right_to_left() ? 'right' : 'left';
 
-    function print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
+        $presentation = explode ("|", $item->presentation);
+        $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+        ?>
+        <td valign="top" align="<?php echo $align;?>">
+        <?php
+            echo '('.$item->label.') ';
+            echo format_text($item->name . $requiredmark, true, false, false);
+        ?>
+        </td>
+        <td valign="top" align="<?php echo $align;?>">
+            <input type="text" name="<?php echo $item->typ . '_' . $item->id;?>" size="<?php echo $presentation[0];?>" maxlength="<?php echo $presentation[1];?>" value="" />
+        </td>
+        <?php
+    }
+    
+    /**     
+     * print the item at the complete-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @param string $value
+     * @param bool $highlightrequire
+     * @return void
+     */
+    function print_item_complete($item, $value = '', $highlightrequire = false) {
         global $OUTPUT;
         $align = right_to_left() ? 'right' : 'left';
 
@@ -107,32 +142,47 @@ class feedback_item_textfield extends feedback_item_base {
             $highlight = '';
         }
         $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
-    ?>
+        ?>
         <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
         <?php
-            if($edit OR $readonly) {
-                echo '('.$item->label.') ';
-            }
             echo format_text($item->name . $requiredmark, true, false, false);
         ?>
         </td>
         <td valign="top" align="<?php echo $align;?>">
-    <?php
-        if($readonly){
-            echo $OUTPUT->box_start('generalbox boxalign'.$align);
-            echo $value?$value:'&nbsp;';
-            echo $OUTPUT->box_end();
-        }else {
-    ?>
-            <input type="text" name="<?php echo $item->typ . '_' . $item->id;?>"
-                                    size="<?php echo $presentation[0];?>"
-                                    maxlength="<?php echo $presentation[1];?>"
-                                    value="<?php echo $value?htmlspecialchars($value):'';?>" />
-    <?php
-        }
-    ?>
+            <input type="text" name="<?php echo $item->typ . '_' . $item->id;?>" size="<?php echo $presentation[0];?>" maxlength="<?php echo $presentation[1];?>" value="<?php echo $value ? htmlspecialchars($value) : '';?>" />
         </td>
-    <?php
+        <?php
+    }
+
+    /**     
+     * print the item at the complete-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @param string $value
+     * @return void
+     */
+    function print_item_show_value($item, $value = '') {
+        global $OUTPUT;
+        $align = right_to_left() ? 'right' : 'left';
+
+        $presentation = explode ("|", $item->presentation);
+        $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+        ?>
+        <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
+        <?php
+            echo '('.$item->label.') ';
+            echo format_text($item->name . $requiredmark, true, false, false);
+        ?>
+        </td>
+        <td valign="top" align="<?php echo $align;?>">
+        <?php
+        echo $OUTPUT->box_start('generalbox boxalign'.$align);
+        echo $value?$value:'&nbsp;';
+        echo $OUTPUT->box_end();
+        ?>
+        </td>
+        <?php
     }
 
     function check_value($value, $item) {

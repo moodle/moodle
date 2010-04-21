@@ -103,8 +103,64 @@ class feedback_item_info extends feedback_item_base {
         $rowOffset++;
         return $rowOffset;
     }
+    
+    /**     
+     * print the item at the edit-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @return void
+     */
+    function print_item_preview($item) {
+        global $USER, $DB, $OUTPUT;
+        $align = right_to_left() ? 'right' : 'left';
 
-    function print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
+        $presentation = $item->presentation;
+        $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+        ?>
+        <td valign="top" align="<?php echo $align;?>">
+        <?php
+            echo '('.$item->label.') ';
+            echo format_text($item->name . $requiredmark, true, false, false);
+        ?>
+        </td>
+        <td valign="top" align="<?php echo $align;?>">
+        <?php
+            $feedback = $DB->get_record('feedback', array('id'=>$item->feedback));
+            $course = $DB->get_record('course', array('id'=>$feedback->course));
+            $coursecategory = $DB->get_record('course_categories', array('id'=>$course->category));
+            switch($presentation) {
+                case 1:
+                    $itemvalue = time();
+                    $itemshowvalue = UserDate($itemvalue);
+                    break;
+                case 2:
+                    $itemvalue = $course->shortname;
+                    $itemshowvalue = $itemvalue;
+                    break;
+                case 3:
+                    $itemvalue = $coursecategory->name;
+                    $itemshowvalue = $itemvalue;
+                    break;
+            }
+        ?>
+            <input type="hidden" name="<?php echo $item->typ . '_' . $item->id;?>"
+                                    value="<?php echo $itemvalue;?>" />
+            <span><?php echo $itemshowvalue;?></span>
+        </td>
+        <?php
+    }
+    
+    /**     
+     * print the item at the complete-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @param string $value
+     * @param bool $highlightrequire
+     * @return void
+     */
+    function print_item_complete($item, $value = '', $highlightrequire = false) {
         global $USER, $DB, $OUTPUT;
         $align = right_to_left() ? 'right' : 'left';
 
@@ -118,19 +174,11 @@ class feedback_item_info extends feedback_item_base {
     ?>
         <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
         <?php
-            if($edit OR $readonly) {
-                echo '('.$item->label.') ';
-            }
             echo format_text($item->name . $requiredmark, true, false, false);
         ?>
         </td>
         <td valign="top" align="<?php echo $align;?>">
     <?php
-        if($readonly){
-            echo $OUTPUT->box_start('generalbox boxalign'.$align);
-            echo $value ? UserDate($value):'&nbsp;';
-            echo $OUTPUT->box_end();
-        }else {
             $feedback = $DB->get_record('feedback', array('id'=>$item->feedback));
             $course = $DB->get_record('course', array('id'=>$feedback->course));
             $coursecategory = $DB->get_record('course_categories', array('id'=>$course->category));
@@ -152,8 +200,36 @@ class feedback_item_info extends feedback_item_base {
             <input type="hidden" name="<?php echo $item->typ . '_' . $item->id;?>"
                                     value="<?php echo $itemvalue;?>" />
             <span><?php echo $itemshowvalue;?></span>
+        </td>
     <?php
-        }
+    }
+
+    /**     
+     * print the item at the complete-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @param string $value
+     * @return void
+     */
+    function print_item_show_value($item, $value = '') {
+        global $USER, $DB, $OUTPUT;
+        $align = right_to_left() ? 'right' : 'left';
+
+        $presentation = $item->presentation;
+        $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+    ?>
+        <td valign="top" align="<?php echo $align;?>">
+        <?php
+            echo '('.$item->label.') ';
+            echo format_text($item->name . $requiredmark, true, false, false);
+        ?>
+        </td>
+        <td valign="top" align="<?php echo $align;?>">
+    <?php
+            echo $OUTPUT->box_start('generalbox boxalign'.$align);
+            echo $value ? UserDate($value):'&nbsp;';
+            echo $OUTPUT->box_end();
     ?>
         </td>
     <?php

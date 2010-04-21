@@ -194,8 +194,101 @@ class feedback_item_multichoice extends feedback_item_base {
         $rowOffset +=3 ;
         return $rowOffset;
     }
+    
+    /**     
+     * print the item at the edit-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @return void
+     */
+    function print_item_preview($item) {
+        global $OUTPUT;
+        $info = $this->get_info($item);
+        $align = right_to_left() ? 'right' : 'left';
 
-    function print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
+        $presentation = explode (FEEDBACK_MULTICHOICE_LINE_SEP, $info->presentation);
+
+
+        //test if required and no value is set so we have to mark this item
+        //we have to differ check and the other subtypes
+        if($info->subtype == 'c') {
+            $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+
+            echo '<td valign="top" align="'.$align.'">';
+            echo '('.$item->label.') ';
+            echo format_text($item->name.$requiredmark, true, false, false).'</td>';
+            echo '<td valign="top" align="'.$align.'">';
+        }else {
+            $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+            ?>
+                <td valign="top" align="<?php echo $align;?>">
+                <?php
+                echo '('.$item->label.') ';
+                echo format_text($item->name . $requiredmark, true, false, false);
+                ?>
+                </td>
+                <td valign="top" align="<?php echo $align;?>">
+            <?php
+        }
+        $index = 1;
+        $checked = '';
+        //print the "not_selected" item on radiobuttons
+        if($info->subtype == 'r') {
+        ?>
+            <table><tr>
+            <td valign="top" align="<?php echo $align;?>">
+                <input type="radio" name="<?php echo $item->typ . '_' . $item->id ;?>" id="<?php echo $item->typ . '_' . $item->id.'_xxx';?>" value="" checked="checked" />
+            </td>
+            <td align="<?php echo $align;?>">
+                <label for="<?php echo $item->typ . '_' . $item->id.'_xxx';?>"><?php print_string('not_selected', 'feedback');?>&nbsp;</label>
+            </td>
+            </tr></table>
+        <?php
+        }
+        if($info->subtype != 'd') {
+            if($info->horizontal) {
+                echo '<table><tr>';
+            }
+        }
+
+        switch($info->subtype) {
+            case 'r':
+                $this->print_item_radio($presentation, $item, false, $info, $align);
+                break;
+            case 'c':
+                $this->print_item_check($presentation, $item, false, $info, $align);
+                break;
+            case 'd':
+                $this->print_item_dropdown($presentation, $item, false, $info, $align);
+                break;
+        }
+
+        if($info->subtype != 'd') {
+            if($info->horizontal) {
+                echo '</tr></table>';
+            }
+        }
+        /*
+        if($item->required == 1) {
+            echo '<input type="hidden" name="'.$item->typ . '_' . $item->id.'" value="1" />';
+        }
+        */
+        ?>
+        </td>
+        <?php
+    }
+    
+    /**     
+     * print the item at the complete-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @param string $value
+     * @param bool $highlightrequire
+     * @return void
+     */
+    function print_item_complete($item, $value = '', $highlightrequire = false) {
         global $OUTPUT;
         $info = $this->get_info($item);
         $align = right_to_left() ? 'right' : 'left';
@@ -219,9 +312,6 @@ class feedback_item_multichoice extends feedback_item_base {
             $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
 
             echo '<td '.$highlight.' valign="top" align="'.$align.'">';
-            if($edit OR $readonly) {
-                echo '('.$item->label.') ';
-            }
             echo format_text($item->name.$requiredmark, true, false, false).'</td>';
             echo '<td valign="top" align="'.$align.'">';
         }else {
@@ -234,9 +324,6 @@ class feedback_item_multichoice extends feedback_item_base {
             ?>
                 <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
                 <?php
-                if($edit OR $readonly) {
-                    echo '('.$item->label.') ';
-                }
                 echo format_text($item->name . $requiredmark, true, false, false);
                 ?>
                 </td>
@@ -245,74 +332,120 @@ class feedback_item_multichoice extends feedback_item_base {
         }
         $index = 1;
         $checked = '';
-        if($readonly){
-            if($info->subtype == 'c') {
-                echo $OUTPUT->box_start('generalbox boxalign'.$align);
-                foreach($presentation as $pres){
-                    foreach($values as $val) {
-                        if($val == $index){
-                            echo text_to_html($pres . '<br />', true, false, false);
-                            break;
-                        }
-                    }
-                    $index++;
-                }
-                echo $OUTPUT->box_end();
+        //print the "not_selected" item on radiobuttons
+        if($info->subtype == 'r') {
+        ?>
+            <table><tr>
+            <td valign="top" align="<?php echo $align;?>"><input type="radio"
+                    name="<?php echo $item->typ . '_' . $item->id ;?>"
+                    id="<?php echo $item->typ . '_' . $item->id.'_xxx';?>"
+                    value="" <?php echo $value ? '' : 'checked="checked"';?> />
+            </td>
+            <td align="<?php echo $align;?>">
+                <label for="<?php echo $item->typ . '_' . $item->id.'_xxx';?>"><?php print_string('not_selected', 'feedback');?>&nbsp;</label>
+            </td>
+            </tr></table>
+        <?php
+        }
+        if($info->subtype != 'd') {
+            if($info->horizontal) {
+                echo '<table><tr>';
+            }
+        }
+
+        switch($info->subtype) {
+            case 'r':
+                $this->print_item_radio($presentation, $item, $value, $info, $align);
+                break;
+            case 'c':
+                $this->print_item_check($presentation, $item, $value, $info, $align);
+                break;
+            case 'd':
+                $this->print_item_dropdown($presentation, $item, $value, $info, $align);
+                break;
+        }
+
+        if($info->subtype != 'd') {
+            if($info->horizontal) {
+                echo '</tr></table>';
+            }
+        }
+        /*
+        if($item->required == 1) {
+            echo '<input type="hidden" name="'.$item->typ . '_' . $item->id.'" value="1" />';
+        }
+        */
+        ?>
+        </td>
+        <?php
+    }
+
+    /**     
+     * print the item at the complete-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @param string $value
+     * @return void
+     */
+    function print_item_show_value($item, $value = '') {
+        global $OUTPUT;
+        $info = $this->get_info($item);
+        $align = right_to_left() ? 'right' : 'left';
+
+        $presentation = explode (FEEDBACK_MULTICHOICE_LINE_SEP, $info->presentation);
+
+
+        //test if required and no value is set so we have to mark this item
+        //we have to differ check and the other subtypes
+        if($info->subtype == 'c') {
+            if (is_array($value)) {
+                $values = $value;
             }else {
-                foreach($presentation as $pres){
-                    if($value == $index){
-                        echo $OUTPUT->box_start('generalbox boxalign'.$align);
-                        echo text_to_html($pres, true, false, false);
-                        echo $OUTPUT->box_end();
+                $values = explode(FEEDBACK_MULTICHOICE_LINE_SEP, $value);
+            }
+            $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+
+            echo '<td valign="top" align="'.$align.'">';
+            echo '('.$item->label.') ';
+            echo format_text($item->name.$requiredmark, true, false, false).'</td>';
+            echo '<td valign="top" align="'.$align.'">';
+        }else {
+            $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+            ?>
+                <td valign="top" align="<?php echo $align;?>">
+                <?php
+                echo '('.$item->label.') ';
+                echo format_text($item->name . $requiredmark, true, false, false);
+                ?>
+                </td>
+                <td valign="top" align="<?php echo $align;?>">
+            <?php
+        }
+        $index = 1;
+        $checked = '';
+        if($info->subtype == 'c') {
+            echo $OUTPUT->box_start('generalbox boxalign'.$align);
+            foreach($presentation as $pres){
+                foreach($values as $val) {
+                    if($val == $index){
+                        echo text_to_html($pres . '<br />', true, false, false);
                         break;
                     }
-                    $index++;
                 }
+                $index++;
             }
-        } else {
-            //print the "not_selected" item on radiobuttons
-            if($info->subtype == 'r') {
-    ?>
-                <table><tr>
-                <td valign="top" align="<?php echo $align;?>"><input type="radio"
-                        name="<?php echo $item->typ . '_' . $item->id ;?>"
-                        id="<?php echo $item->typ . '_' . $item->id.'_xxx';?>"
-                        value="" <?php echo $value ? '' : 'checked="checked"';?> />
-                </td>
-                <td align="<?php echo $align;?>">
-                    <label for="<?php echo $item->typ . '_' . $item->id.'_xxx';?>"><?php print_string('not_selected', 'feedback');?>&nbsp;</label>
-                </td>
-                </tr></table>
-    <?php
-            }
-            if($info->subtype != 'd') {
-                if($info->horizontal) {
-                    echo '<table><tr>';
+            echo $OUTPUT->box_end();
+        }else {
+            foreach($presentation as $pres){
+                if($value == $index){
+                    echo $OUTPUT->box_start('generalbox boxalign'.$align);
+                    echo text_to_html($pres, true, false, false);
+                    echo $OUTPUT->box_end();
+                    break;
                 }
+                $index++;
             }
-
-            switch($info->subtype) {
-                case 'r':
-                    $this->print_item_radio($presentation, $item, $value, $info, $align);
-                    break;
-                case 'c':
-                    $this->print_item_check($presentation, $item, $value, $info, $align);
-                    break;
-                case 'd':
-                    $this->print_item_dropdown($presentation, $item, $value, $info, $align);
-                    break;
-            }
-
-            if($info->subtype != 'd') {
-                if($info->horizontal) {
-                    echo '</tr></table>';
-                }
-            }
-            /*
-            if($item->required == 1) {
-                echo '<input type="hidden" name="'.$item->typ . '_' . $item->id.'" value="1" />';
-            }
-            */
         }
     ?>
         </td>

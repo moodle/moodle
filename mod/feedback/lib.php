@@ -1136,16 +1136,38 @@ function feedback_move_item($moveitem, $pos){
  * each item-class has an own print_item function implemented.
  *
  * @param object $item the item what we want to print out
+ * @return void
+ */
+function feedback_print_item_preview($item){
+    global $CFG;
+    if($item->typ == 'pagebreak') {
+        return;
+    }
+    //get the class of the given item-typ
+    $itemclass = 'feedback_item_'.$item->typ;
+    if (!class_exists($itemclass)) {
+        require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
+    }
+    //get the instance of the item-class
+    $itemobj = new $itemclass();
+    $itemobj->print_item_preview($item);
+}
+
+/**
+ * prints the given item.
+ * if $readonly is set true so the ouput only is for showing responses and not for editing or completing.
+ * each item-class has an own print_item function implemented.
+ *
+ * @param object $item the item what we want to print out
  * @param mixed $value the value if $readonly is set true and we showing responses
- * @param boolean $readonly
- * @param boolean $edit should the item print out for completing or for editing?
  * @param boolean $highlightrequire if this set true and the value are false on completing so the item will be highlighted
  * @return void
  */
-function feedback_print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
+function feedback_print_item_complete($item, $value = false, $highlightrequire = false){
     global $CFG;
-    if($item->typ == 'pagebreak') return;
-    if($readonly)$ro = 'readonly="readonly" disabled="disabled"';
+    if($item->typ == 'pagebreak') {
+        return;
+    }
 
     //get the class of the given item-typ
     $itemclass = 'feedback_item_'.$item->typ;
@@ -1154,7 +1176,32 @@ function feedback_print_item($item, $value = false, $readonly = false, $edit = f
     }
     //get the instance of the item-class
     $itemobj = new $itemclass();
-    $itemobj->print_item($item, $value, $readonly, $edit, $highlightrequire);
+    $itemobj->print_item_complete($item, $value, $highlightrequire);
+}
+
+/**
+ * prints the given item.
+ * if $readonly is set true so the ouput only is for showing responses and not for editing or completing.
+ * each item-class has an own print_item function implemented.
+ *
+ * @param object $item the item what we want to print out
+ * @param mixed $value the value if $readonly is set true and we showing responses
+ * @return void
+ */
+function feedback_print_item_show_value($item, $value = false){
+    global $CFG;
+    if($item->typ == 'pagebreak') {
+        return;
+    }
+    
+    //get the class of the given item-typ
+    $itemclass = 'feedback_item_'.$item->typ;
+    if (!class_exists($itemclass)) {
+        require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
+    }
+    //get the instance of the item-class
+    $itemobj = new $itemclass();
+    $itemobj->print_item_show_value($item, $value);
 }
 
 /**

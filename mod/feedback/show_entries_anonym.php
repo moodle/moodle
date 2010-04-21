@@ -148,7 +148,7 @@ if(isset($formdata->showanonym) && $formdata->showanonym == FEEDBACK_ANONYMOUS_Y
             }
             if($feedbackitem->typ != 'pagebreak') {
                 $itemvalue = isset($value->value) ? $value->value : false;
-                feedback_print_item($feedbackitem, $itemvalue, true);
+                feedback_print_item_show_value($feedbackitem, $itemvalue);
             }else {
                 echo '<td colspan="2"><hr /></td>';
             }

@@ -106,7 +106,7 @@ if(is_array($templateitems)){
             echo '<td>&nbsp;</td>';
         }
         if($templateitem->typ != 'pagebreak') {
-            feedback_print_item($templateitem);
+            feedback_print_item_preview($templateitem);
         }else {
             echo '<td><hr /></td><td>'.get_string('pagebreak', 'feedback').'</td>';
         }

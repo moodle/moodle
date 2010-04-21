@@ -17,12 +17,41 @@ class feedback_item_label extends feedback_item_base {
         
         return $item_form;
     }
-    function print_item($item){
-    ?>
-        <td colspan="2">
-            <?php echo format_text($item->presentation, FORMAT_HTML);?>
-        </td>
-    <?php
+    
+    /**     
+     * print the item at the edit-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @return void
+     */
+    function print_item_preview($item) {
+        $this->print_item($item);
+    }
+    
+    /**     
+     * print the item at the complete-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @param string $value
+     * @param bool $highlightrequire
+     * @return void
+     */
+    function print_item_complete($item, $value = '', $highlightrequire = false) {
+        $this->print_item($item);
+    }
+
+    /**     
+     * print the item at the complete-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @param string $value
+     * @return void
+     */
+    function print_item_show_value($item, $value = '') {
+        $this->print_item($item);
     }
 
     function create_value($data) {

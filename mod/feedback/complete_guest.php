@@ -350,7 +350,7 @@ if($feedback_can_submit) {
                     echo '<td>&nbsp;</td>';
                 }
                 if($feedbackitem->typ != 'pagebreak') {
-                    feedback_print_item($feedbackitem, $value, false, false, $highlightrequired);
+                    feedback_print_item_complete($feedbackitem, $value, $highlightrequired);
                 }
                 echo '</tr>';
                 echo '<tr><td>&nbsp;</td></tr>';

@@ -184,8 +184,55 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $rowOffset +=2 ;
         return $rowOffset;
     }
+    
+    /**     
+     * print the item at the edit-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @return void
+     */
+    function print_item_preview($item) {
+        global $OUTPUT;
+        $align = right_to_left() ? 'right' : 'left';
+        $info = $this->get_info($item);
 
-    function print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
+        $lines = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, $info->presentation);
+        $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+        ?>
+        <td valign="top" align="<?php echo $align;?>">
+        <?php
+            echo '('.$item->label.') ';
+            echo format_text($item->name . $requiredmark, true, false, false);
+        ?>
+        </td>
+        <td valign="top" align="<?php echo $align;?>">
+        <?php
+        $index = 1;
+        $checked = '';
+        switch($info->subtype) {
+            case 'r':
+                $this->print_item_radio($item, false, $info, $align, true, $lines);
+                break;
+            case 'd':
+                $this->print_item_dropdown($item, false, $info, $align, true, $lines);
+                break;
+        }
+        ?>
+        </td>
+        <?php
+    }
+    
+    /**     
+     * print the item at the complete-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @param string $value
+     * @param bool $highlightrequire
+     * @return void
+     */
+    function print_item_complete($item, $value = '', $highlightrequire = false) {
         global $OUTPUT;
         $align = right_to_left() ? 'right' : 'left';
         $info = $this->get_info($item);
@@ -197,12 +244,48 @@ class feedback_item_multichoicerated extends feedback_item_base {
         }else {
             $highlight = '';
         }
-    ?>
+        ?>
         <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
         <?php
-            if($edit OR $readonly) {
-                echo '('.$item->label.') ';
-            }
+            echo format_text($item->name . $requiredmark, true, false, false);
+        ?>
+        </td>
+        <td valign="top" align="<?php echo $align;?>">
+        <?php
+        $index = 1;
+        $checked = '';
+        switch($info->subtype) {
+            case 'r':
+                $this->print_item_radio($item, $value, $info, $align, false, $lines);
+                break;
+            case 'd':
+                $this->print_item_dropdown($item, $value, $info, $align, false, $lines);
+                break;
+        }
+        ?>
+        </td>
+        <?php
+    }
+
+    /**     
+     * print the item at the complete-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @param string $value
+     * @return void
+     */
+    function print_item_show_value($item, $value = '') {
+        global $OUTPUT;
+        $align = right_to_left() ? 'right' : 'left';
+        $info = $this->get_info($item);
+
+        $lines = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, $info->presentation);
+        $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+    ?>
+        <td valign="top" align="<?php echo $align;?>">
+        <?php
+            echo '('.$item->label.') ';
             echo format_text($item->name . $requiredmark, true, false, false);
         ?>
         </td>
@@ -210,26 +293,15 @@ class feedback_item_multichoicerated extends feedback_item_base {
     <?php
         $index = 1;
         $checked = '';
-        if($readonly){
-            foreach($lines as $line){
-                if($value == $index){
-                    $item_value = explode(FEEDBACK_MULTICHOICERATED_VALUE_SEP, $line);
-                    echo $OUTPUT->box_start('generalbox boxalign'.$align);
-                    echo text_to_html($item_value[1], true, false, false);
-                    echo $OUTPUT->box_end();
-                    break;
-                }
-                $index++;
+        foreach($lines as $line){
+            if($value == $index){
+                $item_value = explode(FEEDBACK_MULTICHOICERATED_VALUE_SEP, $line);
+                echo $OUTPUT->box_start('generalbox boxalign'.$align);
+                echo text_to_html($item_value[1], true, false, false);
+                echo $OUTPUT->box_end();
+                break;
             }
-        } else {
-            switch($info->subtype) {
-                case 'r':
-                    $this->print_item_radio($item, $value, $info, $align, $edit, $lines);
-                    break;
-                case 'd':
-                    $this->print_item_dropdown($item, $value, $info, $align, $edit, $lines);
-                    break;
-            }
+            $index++;
         }
     ?>
         </td>
@@ -294,7 +366,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         return $info;
     }
 
-    function print_item_radio($item, $value, $info, $align, $edit, $lines) {
+    function print_item_radio($item, $value, $info, $align, $showrating, $lines) {
         $index = 1;
         $checked = '';
         ?>
@@ -328,7 +400,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
                         id="<?php echo $inputid;?>"
                         value="<?php echo $index;?>" <?php echo $checked;?> />
                 </td><td align="<?php echo $align;?>"><label for="<?php echo $inputid;?>"><?php
-                                if($edit) {
+                                if($showrating) {
                                     echo text_to_html('('.$radio_value[0].') '.$radio_value[1], true, false, false);
                                 }else {
                                     echo text_to_html($radio_value[1], true, false, false);
@@ -344,7 +416,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
                         id="<?php echo $inputid;?>"
                         value="<?php echo $index;?>" <?php echo $checked;?> />
                 </td><td align="<?php echo $align;?>"><label for="<?php echo $inputid;?>"><?php
-                                if($edit) {
+                                if($showrating) {
                                     echo text_to_html('('.$radio_value[0].') '.$radio_value[1], true, false, false);
                                 }else {
                                     echo text_to_html($radio_value[1], true, false, false);
@@ -360,7 +432,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         }
     }
 
-    function print_item_dropdown($item, $value, $info, $align, $edit, $lines) {
+    function print_item_dropdown($item, $value, $info, $align, $showrating, $lines) {
         echo '<select name="'. $item->typ . '_' . $item->id . '">';
         echo '<option value="0">&nbsp;</option>';
         $index = 1;
@@ -372,7 +444,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
                 $selected = '';
             }
             $dropdown_value = explode(FEEDBACK_MULTICHOICERATED_VALUE_SEP, $line);
-            if($edit) {
+            if($showrating) {
                 echo '<option value="'. $index.'" '. $selected.'>'. clean_text('('.$dropdown_value[0].') '.$dropdown_value[1]).'</option>';
             }else {
                 echo '<option value="'. $index.'" '. $selected.'>'. clean_text($dropdown_value[1]).'</option>';

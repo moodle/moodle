@@ -230,9 +230,9 @@ if($do_show == 'showoneentry') {
 
             if($feedbackitem->typ != 'pagebreak') {
                 if(isset($value->value)) {
-                    feedback_print_item($feedbackitem, $value->value, true);
+                    feedback_print_item_show_value($feedbackitem, $value->value);
                 }else {
-                    feedback_print_item($feedbackitem, false, true);
+                    feedback_print_item_show_value($feedbackitem, false);
                 }
             }else {
                 echo '<td><hr /></td>';

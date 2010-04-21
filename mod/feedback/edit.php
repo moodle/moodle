@@ -265,7 +265,7 @@ if($do_show == 'edit') {
                 echo '<td>&nbsp;</td>';
             }
             if($feedbackitem->typ != 'pagebreak') {
-                feedback_print_item($feedbackitem, false, false, true);
+                feedback_print_item_preview($feedbackitem);
             }else {
                 echo '<td class="feedback_pagebreak"><b>'.get_string('pagebreak', 'feedback').'</b></td><td><hr width="100%" size="8px" noshade="noshade" /></td>';
             }

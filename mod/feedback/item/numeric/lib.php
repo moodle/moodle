@@ -134,8 +134,15 @@ class feedback_item_numeric extends feedback_item_base {
         $rowOffset++;
         return $rowOffset;
     }
-
-    function print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
+    
+    /**     
+     * print the item at the edit-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @return void
+     */
+    function print_item_preview($item) {
         global $OUTPUT;
         $align = right_to_left() ? 'right' : 'left';
 
@@ -145,18 +152,11 @@ class feedback_item_numeric extends feedback_item_base {
         $range_from = (isset($range_from_to[0]) AND is_numeric($range_from_to[0])) ? floatval($range_from_to[0]) : 0;
         //get the max-value
         $range_to = (isset($range_from_to[1]) AND is_numeric($range_from_to[1])) ? floatval($range_from_to[1]) : 0;
-        if($highlightrequire AND (!$this->check_value($value, $item))) {
-            $highlight = 'bgcolor="#FFAAAA" class="missingrequire"';
-        }else {
-            $highlight = '';
-        }
         $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
-    ?>
-        <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
+        ?>
+        <td valign="top" align="<?php echo $align;?>">
             <?php
-                if($edit OR $readonly) {
-                    echo '('.$item->label.') ';
-                }
+                echo '('.$item->label.') ';
                 echo format_text($item->name . $requiredmark, true, false, false);
                 switch(true) {
                     case ($range_from === '-' AND is_numeric($range_to)):
@@ -174,22 +174,108 @@ class feedback_item_numeric extends feedback_item_base {
             ?>
         </td>
         <td valign="top" align="<?php echo $align;?>">
-    <?php
-        if($readonly){
-            echo $OUTPUT->box_start('generalbox boxalign'.$align);
-            echo (is_numeric($value)) ? number_format($value, 2, $this->sep_dec, $this->sep_thous) : '&nbsp;';
-            echo $OUTPUT->box_end();
-        }else {
-    ?>
-            <input type="text" name="<?php echo $item->typ.'_'.$item->id; ?>"
-                                    size="10"
-                                    maxlength="10"
-                                    value="<?php echo $value ? $value : ''; ?>" />
-    <?php
-        }
-    ?>
+            <input type="text" name="<?php echo $item->typ.'_'.$item->id; ?>" size="10" maxlength="10" value="" />
         </td>
-    <?php
+        <?php
+    }
+    
+    /**     
+     * print the item at the complete-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @param string $value
+     * @param bool $highlightrequire
+     * @return void
+     */
+    function print_item_complete($item, $value = '', $highlightrequire = false) {
+        global $OUTPUT;
+        $align = right_to_left() ? 'right' : 'left';
+
+        //get the range
+        $range_from_to = explode('|',$item->presentation);
+        //get the min-value
+        $range_from = (isset($range_from_to[0]) AND is_numeric($range_from_to[0])) ? floatval($range_from_to[0]) : 0;
+        //get the max-value
+        $range_to = (isset($range_from_to[1]) AND is_numeric($range_from_to[1])) ? floatval($range_from_to[1]) : 0;
+        if($highlightrequire AND (!$this->check_value($value, $item))) {
+            $highlight = 'bgcolor="#FFAAAA" class="missingrequire"';
+        }else {
+            $highlight = '';
+        }
+        $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+        ?>
+        <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
+            <?php
+                echo format_text($item->name . $requiredmark, true, false, false);
+                switch(true) {
+                    case ($range_from === '-' AND is_numeric($range_to)):
+                        echo ' ('.get_string('maximal', 'feedback').': '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_to).')';
+                        break;
+                    case (is_numeric($range_from) AND $range_to === '-'):
+                        echo ' ('.get_string('minimal', 'feedback').': '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_from).')';
+                        break;
+                    case ($range_from === '-' AND $range_to === '-'):
+                        break;
+                    default:
+                        echo ' ('.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_from).' - '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_to).')';
+                        break;
+                }
+            ?>
+        </td>
+        <td valign="top" align="<?php echo $align;?>">
+            <input type="text" name="<?php echo $item->typ.'_'.$item->id; ?>" size="10" maxlength="10" value="<?php echo $value ? $value : ''; ?>" />
+        </td>
+        <?php
+    }
+
+    /**     
+     * print the item at the complete-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @param string $value
+     * @return void
+     */
+    function print_item_show_value($item, $value = '') {
+        global $OUTPUT;
+        $align = right_to_left() ? 'right' : 'left';
+
+        //get the range
+        $range_from_to = explode('|',$item->presentation);
+        //get the min-value
+        $range_from = (isset($range_from_to[0]) AND is_numeric($range_from_to[0])) ? floatval($range_from_to[0]) : 0;
+        //get the max-value
+        $range_to = (isset($range_from_to[1]) AND is_numeric($range_from_to[1])) ? floatval($range_from_to[1]) : 0;
+        $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+        ?>
+        <td valign="top" align="<?php echo $align;?>">
+            <?php
+                echo '('.$item->label.') ';
+                echo format_text($item->name . $requiredmark, true, false, false);
+                switch(true) {
+                    case ($range_from === '-' AND is_numeric($range_to)):
+                        echo ' ('.get_string('maximal', 'feedback').': '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_to).')';
+                        break;
+                    case (is_numeric($range_from) AND $range_to === '-'):
+                        echo ' ('.get_string('minimal', 'feedback').': '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_from).')';
+                        break;
+                    case ($range_from === '-' AND $range_to === '-'):
+                        break;
+                    default:
+                        echo ' ('.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_from).' - '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_to).')';
+                        break;
+                }
+            ?>
+        </td>
+        <td valign="top" align="<?php echo $align;?>">
+        <?php
+        echo $OUTPUT->box_start('generalbox boxalign'.$align);
+        echo (is_numeric($value)) ? number_format($value, 2, $this->sep_dec, $this->sep_thous) : '&nbsp;';
+        echo $OUTPUT->box_end();
+        ?>
+        </td>
+        <?php
     }
 
     function check_value($value, $item) {

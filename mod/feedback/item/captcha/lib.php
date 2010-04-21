@@ -57,8 +57,15 @@ class feedback_item_captcha extends feedback_item_base {
     function excelprint_item(&$worksheet, $rowOffset, $item, $groupid, $courseid = false) {
         return $rowOffset;
     }
-
-    function print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
+  
+    /**     
+     * print the item at the edit-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @return void
+     */
+    function print_item_preview($item) {
         global $SESSION, $CFG, $DB, $OUTPUT;
 
         $align = right_to_left() ? 'right' : 'left';
@@ -67,13 +74,65 @@ class feedback_item_captcha extends feedback_item_base {
         $SESSION->feedback->item->captcha->charcount = $presentation;
 
         $cmid = 0;
-        if(!$readonly) {
-            $feedbackid = $item->feedback;
-            if($feedbackid > 0) {
-                $feedback = $DB->get_record('feedback', array('id'=>$feedbackid));
-                if($cm = get_coursemodule_from_instance("feedback", $feedback->id, $feedback->course)) {
-                    $cmid = $cm->id;
-                }
+        $feedbackid = $item->feedback;
+        if($feedbackid > 0) {
+            $feedback = $DB->get_record('feedback', array('id'=>$feedbackid));
+            if($cm = get_coursemodule_from_instance("feedback", $feedback->id, $feedback->course)) {
+                $cmid = $cm->id;
+            }
+        }
+
+        if(isset($SESSION->feedback->item->captcha->checked)) {
+            $checked = $SESSION->feedback->item->captcha->checked == true;
+            unset($SESSION->feedback->item->captcha->checked);
+        }else {
+            $checked = false;
+        }
+
+        $requiredmark = ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+        ?>
+        <td valign="top" align="<?php echo $align;?>">
+        <?php
+            echo '('.$item->label.') ';
+            echo format_text($item->name . $requiredmark, true, false, false);
+            $imglink = new moodle_url('/mod/feedback/item/captcha/print_captcha.php', array('id'=>$cmid));
+        ?>
+            <img alt="<?php echo $this->type;?>" src="<?php echo $imglink->out();?>" />
+        </td>
+        <td valign="top" align="<?php echo $align;?>">
+        <?php
+        ?>
+            <input type="text" name="<?php echo $item->typ . '_' . $item->id;?>"
+                                    size="<?php echo $presentation;?>"
+                                    maxlength="<?php echo $presentation;?>"
+                                    value="" />
+        </td>
+        <?php
+    }
+    
+    /**     
+     * print the item at the complete-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @param string $value
+     * @param bool $highlightrequire
+     * @return void
+     */
+    function print_item_complete($item, $value = '', $highlightrequire = false) {
+        global $SESSION, $CFG, $DB, $OUTPUT;
+
+        $align = right_to_left() ? 'right' : 'left';
+
+        $presentation = $item->presentation;
+        $SESSION->feedback->item->captcha->charcount = $presentation;
+
+        $cmid = 0;
+        $feedbackid = $item->feedback;
+        if($feedbackid > 0) {
+            $feedback = $DB->get_record('feedback', array('id'=>$feedbackid));
+            if($cm = get_coursemodule_from_instance("feedback", $feedback->id, $feedback->course)) {
+                $cmid = $cm->id;
             }
         }
 
@@ -85,7 +144,7 @@ class feedback_item_captcha extends feedback_item_base {
         }
 
         //check if an false value even the value is not required
-        if(!$readonly AND !$item->required AND $value != '' AND $SESSION->feedback->item->captcha->checkchar != $value) {
+        if(!$item->required AND $value != '' AND $SESSION->feedback->item->captcha->checkchar != $value) {
             $falsevalue = true;
         }else {
             $falsevalue = false;
@@ -97,35 +156,68 @@ class feedback_item_captcha extends feedback_item_base {
             $highlight = '';
         }
         $requiredmark = ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
-    ?>
+        ?>
         <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
         <?php
-            if($edit OR $readonly) {
-                echo '('.$item->label.') ';
-            }
             echo format_text($item->name . $requiredmark, true, false, false);
             $imglink = new moodle_url('/mod/feedback/item/captcha/print_captcha.php', array('id'=>$cmid));
         ?>
             <img alt="<?php echo $this->type;?>" src="<?php echo $imglink->out();?>" />
         </td>
         <td valign="top" align="<?php echo $align;?>">
-    <?php
-        if($readonly){
-            echo $OUTPUT->box_start('generalbox boxalign'.$align);
-            echo $value ? $value : '&nbsp;';
-            echo $OUTPUT->box_end();
-        }else {
-    ?>
             <input type="text" name="<?php echo $item->typ . '_' . $item->id;?>"
                                     size="<?php echo $presentation;?>"
                                     maxlength="<?php echo $presentation;?>"
                                     value="" />
-    <?php
-        }
-    ?>
         </td>
-    <?php
+        <?php
     }
+
+    /**     
+     * print the item at the complete-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @param string $value
+     * @return void
+     */
+    function print_item_show_value($item, $value = '') {
+        global $SESSION, $CFG, $DB, $OUTPUT;
+
+        $align = right_to_left() ? 'right' : 'left';
+
+        $presentation = $item->presentation;
+        $SESSION->feedback->item->captcha->charcount = $presentation;
+
+        $cmid = 0;
+
+        if(isset($SESSION->feedback->item->captcha->checked)) {
+            $checked = $SESSION->feedback->item->captcha->checked == true;
+            unset($SESSION->feedback->item->captcha->checked);
+        }else {
+            $checked = false;
+        }
+
+        $requiredmark = ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+        ?>
+        <td valign="top" align="<?php echo $align;?>">
+        <?php
+            echo '('.$item->label.') ';
+            echo format_text($item->name . $requiredmark, true, false, false);
+            $imglink = new moodle_url('/mod/feedback/item/captcha/print_captcha.php', array('id'=>$cmid));
+        ?>
+            <img alt="<?php echo $this->type;?>" src="<?php echo $imglink->out();?>" />
+        </td>
+        <td valign="top" align="<?php echo $align;?>">
+        <?php
+        echo $OUTPUT->box_start('generalbox boxalign'.$align);
+        echo $value ? $value : '&nbsp;';
+        echo $OUTPUT->box_end();
+        ?>
+        </td>
+        <?php
+    }
+
 
     function check_value($value, $item) {
         global $SESSION;

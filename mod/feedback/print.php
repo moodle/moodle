@@ -74,7 +74,7 @@ if(is_array($feedbackitems)){
             echo '<td>&nbsp;</td>';
         }
         if($feedbackitem->typ != 'pagebreak') {
-            feedback_print_item($feedbackitem, false, false, true);
+            feedback_print_item_complete($feedbackitem, false, false);
         }else {
             echo '<td class="feedback_print_pagebreak" colspan="2">&nbsp;</td>';
         }
