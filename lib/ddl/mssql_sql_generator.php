@@ -72,16 +72,6 @@ class mssql_sql_generator extends sql_generator {
     public $rename_key_sql = null; //SQL sentence to rename one key
                                           //TABLENAME, OLDKEYNAME, NEWKEYNAME are dinamically replaced
 
-    private $temptables; // Control existing temptables (mssql_native_moodle_temptables object)
-
-    /**
-     * Creates one new XMLDBmssql
-     */
-    public function __construct($mdb, $temptables = null) {
-        $this->temptables = $temptables;
-        parent::__construct($mdb);
-    }
-
     /**
      * Reset a sequence to the id field of a table.
      * @param string $table name of table or xmldb_table object

@@ -27,6 +27,7 @@
 
 require_once($CFG->libdir.'/dml/moodle_database.php');
 require_once($CFG->libdir.'/dml/pgsql_native_moodle_recordset.php');
+require_once($CFG->libdir.'/dml/pgsql_native_moodle_temptables.php');
 
 /**
  * Native pgsql class representing moodle database interface.
@@ -180,6 +181,9 @@ class pgsql_native_moodle_database extends moodle_database {
             $this->pgsql = null;
             throw new dml_connection_exception('Can not read bytea type.');
         }
+
+        // Connection stabilished and configured, going to instantiate the temptables controller
+        $this->temptables = new pgsql_native_moodle_temptables($this);
 
         return true;
     }

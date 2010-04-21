@@ -125,14 +125,17 @@ abstract class sql_generator {
 
     public $mdb;
 
+    protected $temptables; // Control existing temptables
+
     /**
      * Creates new sql_generator
      * @param object moodle_database instance
      */
-    public function __construct($mdb) {
+    public function __construct($mdb, $temptables = null) {
         $this->prefix         = $mdb->get_prefix();
         $this->reserved_words = $this->getReservedWords();
         $this->mdb            = $mdb; // this creates circular reference - the other link must be unset when closing db
+        $this->temptables     = $temptables;
     }
 
     /**
@@ -178,13 +181,6 @@ abstract class sql_generator {
 
         return $exists;
     }
-
-    /**
-     * Reset a sequence to the id field of a table.
-     * @param string $table name of table
-     * @return success
-     */
-    public abstract function getResetSequenceSQL($tablename);
 
     /**
      * This function will return the SQL code needed to create db tables and statements
@@ -357,16 +353,6 @@ abstract class sql_generator {
         }
 
         return $results;
-    }
-
-    /**
-     * Given one correct xmldb_table, returns the SQL statements
-     * to create temporary table (inside one array)
-     */
-    public function getCreateTempTableSQL($xmldb_table) {
-        $sqlarr = $this->getCreateTableSQL($xmldb_table);
-        $sqlarr = preg_replace('/^CREATE TABLE/', "CREATE TEMPORARY TABLE", $sqlarr);
-        return $sqlarr;
     }
 
     /**
@@ -601,14 +587,6 @@ abstract class sql_generator {
         $results = array_merge($results, $extra_sentences);
 
         return $results;
-    }
-
-    /**
-     * Given one correct xmldb_table and the new name, returns the SQL statements
-     * to drop it (inside one array)
-     */
-    public function getDropTempTableSQL($xmldb_table) {
-        return $this->getDropTableSQL($xmldb_table);
     }
 
     /**
@@ -1128,6 +1106,25 @@ abstract class sql_generator {
 
 
 /// ALL THESE FUNCTION MUST BE CUSTOMISED BY ALL THE XMLDGenerator classes
+
+    /**
+     * Reset a sequence to the id field of a table.
+     * @param string $table name of table
+     * @return success
+     */
+    public abstract function getResetSequenceSQL($tablename);
+
+    /**
+     * Given one correct xmldb_table, returns the SQL statements
+     * to create temporary table (inside one array)
+     */
+    abstract public function getCreateTempTableSQL($xmldb_table);
+
+    /**
+     * Given one correct xmldb_table and the new name, returns the SQL statements
+     * to drop it (inside one array)
+     */
+    abstract public function getDropTempTableSQL($xmldb_table);
 
     /**
      * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type

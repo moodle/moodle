@@ -55,13 +55,6 @@ class postgres_sql_generator extends sql_generator {
                                           //TABLENAME, OLDKEYNAME, NEWKEYNAME are dinamically replaced
 
     /**
-     * Creates one new XMLDBpostgres7
-     */
-    public function __construct($mdb) {
-        parent::__construct($mdb);
-    }
-
-    /**
      * Reset a sequence to the id field of a table.
      * @param string $table name of table or xmldb_table object
      * @return array sql commands to execute
@@ -78,6 +71,27 @@ class postgres_sql_generator extends sql_generator {
         $value = (int)$this->mdb->get_field_sql('SELECT MAX(id) FROM {'.$tablename.'}');
         $value++;
         return array("ALTER SEQUENCE $this->prefix{$tablename}_id_seq RESTART WITH $value");
+    }
+
+    /**
+     * Given one correct xmldb_table, returns the SQL statements
+     * to create temporary table (inside one array)
+     */
+    public function getCreateTempTableSQL($xmldb_table) {
+        $this->temptables->add_temptable($xmldb_table->getName());
+        $sqlarr = $this->getCreateTableSQL($xmldb_table);
+        $sqlarr = preg_replace('/^CREATE TABLE/', "CREATE TEMPORARY TABLE", $sqlarr);
+        return $sqlarr;
+    }
+
+    /**
+     * Given one correct xmldb_table and the new name, returns the SQL statements
+     * to drop it (inside one array)
+     */
+    public function getDropTempTableSQL($xmldb_table) {
+        $sqlarr = $this->getDropTableSQL($xmldb_table);
+        $this->temptables->delete_temptable($xmldb_table->getName());
+        return $sqlarr;
     }
 
     /**

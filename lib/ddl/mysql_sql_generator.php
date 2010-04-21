@@ -75,16 +75,6 @@ class mysql_sql_generator extends sql_generator {
     public $rename_key_sql = null; //SQL sentence to rename one key (MySQL doesn't support this!)
                                       //TABLENAME, OLDKEYNAME, NEWKEYNAME are dinamically replaced
 
-    private $temptables; // Control existing temptables (mssql_native_moodle_temptables object)
-
-    /**
-     * Creates one new XMLDBmysql
-     */
-    public function __construct($mdb, $temptables = null) {
-        $this->temptables = $temptables;
-        parent::__construct($mdb);
-    }
-
     /**
      * Reset a sequence to the id field of a table.
      * @param string $table name of table or xmldb_table object
@@ -120,7 +110,7 @@ class mysql_sql_generator extends sql_generator {
      * to drop it (inside one array)
      */
     public function getDropTempTableSQL($xmldb_table) {
-        $sqlarr = parent::getDropTableSQL($xmldb_table);
+        $sqlarr = $this->getDropTableSQL($xmldb_table);
         $sqlarr = preg_replace('/^DROP TABLE/', "DROP TEMPORARY TABLE", $sqlarr);
         $this->temptables->delete_temptable($xmldb_table->getName());
         return $sqlarr;

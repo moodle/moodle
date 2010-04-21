@@ -58,16 +58,6 @@ class oracle_sql_generator extends sql_generator {
 
     public $alter_column_sql = 'ALTER TABLE TABLENAME MODIFY (COLUMNSPECS)'; //The SQL template to alter columns
 
-    private $temptables; // Control existing temptables (oci_native_moodle_temptables object)
-
-    /**
-     * Creates one new XMLDBoci8po
-     */
-    public function __construct($mdb, $temptables = null) {
-        $this->temptables = $temptables;
-        parent::__construct($mdb);
-    }
-
     /**
      * Reset a sequence to the id field of a table.
      * @param string $table name of table or xmldb_table object

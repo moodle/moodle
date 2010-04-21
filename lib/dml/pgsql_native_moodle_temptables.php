@@ -16,18 +16,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MYSQL specific temptables store. Needed because temporary tables
+ * PGSQL specific temptables store. Needed because temporary tables
  * are named diferently than normal tables. Also used to be able to retrieve
- * temp table names included in the get_tables() method od the DB.
+ * temp table names included in the get_tables() method of the DB.
  *
  * @package    moodlecore
  * @subpackage DML
- * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once($CFG->libdir.'/dml/moodle_temptables.php');
 
-class mysqli_native_moodle_temptables extends moodle_temptables {
-    /// I love these classes :-P
+class pgsql_native_moodle_temptables extends moodle_temptables {
+    // I love these classes :-P
 }

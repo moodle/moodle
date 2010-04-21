@@ -38,7 +38,6 @@ require_once($CFG->libdir.'/dml/oci_native_moodle_temptables.php');
 class oci_native_moodle_database extends moodle_database {
 
     protected $oci     = null;
-    private $temptables; // Control existing temptables (oci_native_moodle_temptables object)
 
     private $last_stmt_error = null; // To store stmt errors and enable get_last_error() to detect them
     private $commit_status = null;   // default value initialised in connect method, we need the driver to be present
@@ -96,30 +95,6 @@ class oci_native_moodle_database extends moodle_database {
     public function get_name() {
         return get_string('nativeoci', 'install'); // TODO: localise
     }
-
-    /**
-     * Returns sql generator used for db manipulation.
-     * Used mostly in upgrade.php scripts. oci overrides it
-     * in order to share the oci_native_moodle_temptables
-     * between the driver and the generator
-     *
-     * @return object database_manager instance
-     */
-    public function get_manager() {
-        global $CFG;
-
-        if (!$this->database_manager) {
-            require_once($CFG->libdir.'/ddllib.php');
-
-            $classname = $this->get_dbfamily().'_sql_generator';
-            require_once("$CFG->libdir/ddl/$classname.php");
-            $generator = new $classname($this, $this->temptables);
-
-            $this->database_manager = new database_manager($this, $generator);
-        }
-        return $this->database_manager;
-    }
-
 
     /**
      * Returns localised database configuration help.

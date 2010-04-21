@@ -63,6 +63,8 @@ abstract class moodle_database {
 
     /** @var database_manager db manager which allows db structure modifications */
     protected $database_manager;
+    /** @var moodle_temptables temptables manager to provide cross-db support for temp tables */
+    protected $temptables;
     /** @var array cache of column info */
     protected $columns = array(); // I wish we had a shared memory cache for this :-(
     /** @var array cache of table info */
@@ -299,6 +301,10 @@ abstract class moodle_database {
             // this is needed because we need to save session to db before closing it
             session_get_instance()->write_close();
             $this->used_for_db_sessions = false;
+        }
+        if ($this->temptables) {
+            $this->temptables->dispose();
+            $this->temptables = null;
         }
         if ($this->database_manager) {
             $this->database_manager->dispose();
@@ -787,7 +793,7 @@ abstract class moodle_database {
 
             $classname = $this->get_dbfamily().'_sql_generator';
             require_once("$CFG->libdir/ddl/$classname.php");
-            $generator = new $classname($this);
+            $generator = new $classname($this, $this->temptables);
 
             $this->database_manager = new database_manager($this, $generator);
         }

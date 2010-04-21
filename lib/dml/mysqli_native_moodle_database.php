@@ -35,7 +35,6 @@ require_once($CFG->libdir.'/dml/mysqli_native_moodle_temptables.php');
 class mysqli_native_moodle_database extends moodle_database {
 
     protected $mysqli = null;
-    private $temptables; // Control existing temptables (mysql_moodle_temptables object)
 
     private $transactions_supported = null;
 
@@ -122,29 +121,6 @@ class mysqli_native_moodle_database extends moodle_database {
      */
     public function get_name() {
         return get_string('nativemysqli', 'install');
-    }
-
-    /**
-     * Returns sql generator used for db manipulation.
-     * Used mostly in upgrade.php scripts. mysql overrides it
-     * in order to share the mysqli_native_moodle_temptables
-     * between the driver and the generator
-     *
-     * @return object database_manager instance
-     */
-    public function get_manager() {
-        global $CFG;
-
-        if (!$this->database_manager) {
-            require_once($CFG->libdir.'/ddllib.php');
-
-            $classname = $this->get_dbfamily().'_sql_generator';
-            require_once("$CFG->libdir/ddl/$classname.php");
-            $generator = new $classname($this, $this->temptables);
-
-            $this->database_manager = new database_manager($this, $generator);
-        }
-        return $this->database_manager;
     }
 
     /**
