@@ -149,7 +149,7 @@ class ExHtmlReporter extends HtmlReporter {
             $message.='<br/><br/>Error string: <tt>'.s($exception->errorcode).
                 '</tt> from <tt>'.s($exception->module).'</tt>';
             if($exception->a!==null) {
-                $message.='(<tt>'.s($exception->a).'</tt>)';
+                $message.='(<tt>'.s(implode(', ', (array)$exception->a)).'</tt>)';
             }
             $message.=' &ndash; <i>'.get_string($exception->errorcode,
                 $exception->module,$exception->a).'</i>';
