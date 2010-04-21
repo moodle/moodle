@@ -24,9 +24,13 @@
  */
 
 $string['allowdeleting'] = 'Allow deleting';
+$string['allowdeleting_help'] = 'If enabled, students may delete uploaded files at any time before submitting for grading.';
 $string['allowmaxfiles'] = 'Maximum number of uploaded files';
+$string['allowmaxfiles_help'] = 'The maximum number of files each student may upload. As this figure is not displayed to students, it is suggested that it is mentioned in the assignment description.';
 $string['allownotes'] = 'Allow notes';
+$string['allownotes_help'] = 'If enabled, students may enter notes into a text area, as in an online text assignment.';
 $string['allowresubmit'] = 'Allow resubmitting';
+$string['allowresubmit_help'] = 'If enabled, students will be allowed to resubmit assignments after they have been graded (for them to be re-graded).';
 $string['alreadygraded'] = 'Your assignment has already been graded and resubmission is not allowed.';
 $string['assignmentadministration'] = 'Assignment administration';
 $string['assignmentdetails'] = 'Assignment details';
@@ -51,6 +55,7 @@ $string['cannotdeletefiles'] = 'An error occurred and files could not be deleted
 $string['cannotviewassignment'] = 'You can not view this assignment';
 $string['comment'] = 'Comment';
 $string['commentinline'] = 'Comment inline';
+$string['commentinline_help'] = 'If enabled, the student's submission will be copied into the feedback comment field during grading, making it easier to comment inline (using a different colour, perhaps) or to edit the original text.';
 $string['configitemstocount'] = 'Nature of items to be counted for student submissions in online assignments.';
 $string['configmaxbytes'] = 'Default maximum assignment size for all assignments on the site (subject to course limits and other local settings)';
 $string['configshowrecentsubmissions'] = 'Everyone can see notifications of submissions in recent activity reports.';
@@ -75,8 +80,12 @@ $string['emailteachermailhtml'] = '{$a->username} has updated their assignment s
 for <i>\'{$a->assignment}\'</i><br /><br />
 It is <a href="{$a->url}">available on the web site</a>.';
 $string['emailteachers'] = 'Email alerts to teachers';
+$string['emailteachers_help'] = 'If enabled, teachers receive email notification whenever students add or update an assignment submission.
+
+Only teachers who are able to grade the particular assignment are notified. So, for example, if the course uses separate groups, teachers restricted to particular groups won't receive notification about students in other groups.';
 $string['emptysubmission'] = 'You have not submitted anything yet';
 $string['enableemailnotification'] = 'Send notification emails';
+$string['enableemailnotification_help'] = 'If enabled, students will receive email notification when their assignment submissions are graded.';
 $string['existingfiledeleted'] = 'Existing file has been deleted: {$a}';
 $string['failedupdatefeedback'] = 'Failed to update submission feedback for user {$a}';
 $string['feedback'] = 'Feedback';
@@ -85,7 +94,7 @@ $string['feedbackupdated'] = 'Submissions feedback updated for {$a} people';
 $string['finalize'] = 'No more submissions';
 $string['finalizeerror'] = 'An error occurred and that submission could not be finalised';
 $string['graded'] = 'Graded';
-$string['guestnosubmit'] = 'Sorry, guests are not allowed to submit an assignment. You have to log in/ register before you can submit your answer';
+$string['guestnosubmit'] = 'Sorry, guests are not allowed to submit an assignment. You have to log in/ register before you can submit your answer.';
 $string['guestnoupload'] = 'Sorry, guests are not allowed to upload';
 $string['helpoffline'] = '<p>This is useful when the assignment is performed outside of Moodle.  It could be
    something elsewhere on the web or face-to-face.</p><p>Students can see a description of the assignment, 
@@ -106,6 +115,7 @@ $string['helpuploadsingle'] = '<p>This type of assignment allows each participan
    single file, of any type.</p> <p>This might be a Word processor document, an image, 
    a zipped web site, or anything you ask them to submit.</p>';
 $string['hideintro'] = 'Hide description before available date';
+$string['hideintro_help'] = 'If enabled, the assignment description is hidden before the "Available from" date. Only the assignment name is displayed.';
 $string['invalidassignment'] = 'incorrect assignment';
 $string['invalidid'] = 'assignment ID was incorrect';
 $string['invalidtype'] = 'Incorrect assignment type';
@@ -114,9 +124,10 @@ $string['itemstocount'] = 'Count';
 $string['late'] = '{$a} late';
 $string['maximumgrade'] = 'Maximum grade';
 $string['maximumsize'] = 'Maximum size';
-$string['maxpublishstate'] = 'Maximum visibility for blog entry before duedate';
+$string['maxpublishstate'] = 'Maximum visibility for blog entry before due date';
 $string['modulename'] = 'Assignment';
 $string['modulenameplural'] = 'Assignments';
+$string['modulenameplural_help'] = 'Assignments enable the teacher to specify a task either on or offline which can then be graded.';
 $string['newsubmissions'] = 'Assignments submitted';
 $string['noassignments'] = 'There are no assignments yet';
 $string['noattempts'] = 'No attempts have been made on this assignment';
@@ -136,6 +147,7 @@ $string['overwritewarning'] = 'Warning: uploading again will REPLACE your curren
 $string['pagesize'] = 'Submissions shown per page';
 $string['preventlate'] = 'Prevent late submissions';
 $string['quickgrade'] = 'Allow quick grading';
+$string['quickgrade_help'] = 'If enabled, multiple assignments can be graded on one page. Add grades and comments then click the "Save all my feedback" button to save all changes for that page.';
 $string['responsefiles'] = 'Response files';
 $string['reviewed'] = 'Reviewed';
 $string['saveallfeedback'] = 'Save all my feedback';
@@ -154,6 +166,7 @@ $string['submitformarking'] = 'Final submission for assignment marking';
 $string['submitted'] = 'Submitted';
 $string['submittedfiles'] = 'Submitted files';
 $string['trackdrafts'] = 'Enable Send for marking';
+$string['trackdrafts_help'] = 'The "Send for marking" button allows students to indicate to the teacher that they have finished working on an assignment. The teacher may choose to revert the assignment to draft status (if it requires further work, for example).';
 $string['typeblog'] = 'Blog post';
 $string['typeoffline'] = 'Offline activity';
 $string['typeonline'] = 'Online text';
