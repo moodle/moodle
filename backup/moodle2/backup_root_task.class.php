@@ -1,0 +1,99 @@
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package moodlecore
+ * @subpackage backup-moodle2
+ * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+ * Start task that provides all the settings common to all backups and some initializaton steps
+ *
+ * TODO: Finish phpdocs
+ */
+class backup_root_task extends backup_task {
+
+    /**
+     * Create all the steps that will be part of this task
+     */
+    public function build() {
+
+        // Add all the steps needed to prepare any moodle2 backup to work
+        $this->add_step(new create_and_clean_temp_stuff('create_and_clean_temp_stuff'));
+
+        $this->built = true;
+    }
+
+// Protected API starts here
+
+    /**
+     * Define the common setting that any backup type will have
+     */
+    protected function define_settings() {
+
+        // Define filename setting
+        $this->add_setting(new backup_filename_setting('filename', base_setting::IS_FILENAME, 'backup.zip'));
+
+        // Define users setting (keeping it on hand to define dependencies)
+        $users = new backup_users_setting('users', base_setting::IS_BOOLEAN, true);
+        $this->add_setting($users);
+
+        // Define anonymize (dependent of users)
+        $anonymize = new backup_anonymize_setting('anonymize', base_setting::IS_BOOLEAN, false);
+        $this->add_setting($anonymize);
+        $users->add_dependency($anonymize);
+
+        // Define role_assignments (dependent of users)
+        $roleassignments = new backup_role_assignments_setting('role_assignments', base_setting::IS_BOOLEAN, true);
+        $this->add_setting($roleassignments);
+        $users->add_dependency($roleassignments);
+
+        // Define user_files (dependent of users)
+        $userfiles = new backup_user_files_setting('user_files', base_setting::IS_BOOLEAN, true);
+        $this->add_setting($userfiles);
+        $users->add_dependency($userfiles);
+
+        // Define blocks
+        $blocks = new backup_generic_setting('blocks', base_setting::IS_BOOLEAN, true);
+        $this->add_setting($blocks);
+
+        // Define filters
+        $filters = new backup_generic_setting('filters', base_setting::IS_BOOLEAN, true);
+        $this->add_setting($filters);
+
+        // Define comments (dependent of users)
+        $comments = new backup_comments_setting('comments', base_setting::IS_BOOLEAN, true);
+        $this->add_setting($comments);
+        $users->add_dependency($comments);
+
+        // Define completion (dependent of users)
+        $completion = new backup_userscompletion_setting('userscompletion', base_setting::IS_BOOLEAN, true);
+        $this->add_setting($completion);
+        $users->add_dependency($completion);
+
+        // Define logs (dependent of users)
+        $logs = new backup_logs_setting('logs', base_setting::IS_BOOLEAN, true);
+        $this->add_setting($logs);
+        $users->add_dependency($logs);
+
+        // Define grade_histories
+        $gradehistories = new backup_generic_setting('grade_histories', base_setting::IS_BOOLEAN, true);
+        $this->add_setting($gradehistories);
+    }
+}
