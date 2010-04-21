@@ -2410,7 +2410,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="license" COMMENT="store licenses used by moodle" PREVIOUS="rating">
+    <TABLE NAME="license" COMMENT="store licenses used by moodle" PREVIOUS="rating" NEXT="backup_controllers">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="id" NEXT="fullname"/>
@@ -2422,6 +2422,49 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+    </TABLE>
+    <TABLE NAME="backup_controllers" COMMENT="To store the backup_controllers as they are used" PREVIOUS="license" NEXT="backup_ids_template">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="backupid"/>
+        <FIELD NAME="backupid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="unique id of the backup" PREVIOUS="id" NEXT="type"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="6" NOTNULL="true" SEQUENCE="false" COMMENT="Type of the backup (activity/section/course)" PREVIOUS="backupid" NEXT="itemid"/>
+        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="id of the module/section/activity being backup" PREVIOUS="type" NEXT="format"/>
+        <FIELD NAME="format" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="format of the backup (moodle/imscc...)" PREVIOUS="itemid" NEXT="interactive"/>
+        <FIELD NAME="interactive" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="is the backup interactive (1-yes/0-no)" PREVIOUS="format" NEXT="purpose"/>
+        <FIELD NAME="purpose" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="purpose (target) of the backup (general, import, hub...)" PREVIOUS="interactive" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="user that owns/performs the backup" PREVIOUS="purpose" NEXT="status"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="current status of the backup (configured, ui, running...)" PREVIOUS="userid" NEXT="execution"/>
+        <FIELD NAME="execution" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="type of execution (immediate/delayed)" PREVIOUS="status" NEXT="executiontime"/>
+        <FIELD NAME="executiontime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="epoch secs when the backup should be executed (for delayed backups only)" PREVIOUS="execution" NEXT="checksum"/>
+        <FIELD NAME="checksum" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="checksum of the backup_controller object" PREVIOUS="executiontime" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="time the controller was created" PREVIOUS="checksum" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="last time the controller was modified" PREVIOUS="timecreated" NEXT="controller"/>
+        <FIELD NAME="controller" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" COMMENT="serialised backup_controller object" PREVIOUS="timemodified"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="backupid_uk"/>
+        <KEY NAME="backupid_uk" TYPE="unique" FIELDS="backupid" PREVIOUS="primary" NEXT="userid_fk"/>
+        <KEY NAME="userid_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="backupid_uk"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="typeitem_ix" UNIQUE="false" FIELDS="type, itemid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="backup_ids_template" COMMENT="To store all sort of ids along the backup process. Note this table isn't really used but its temporary counterpart." PREVIOUS="backup_controllers">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="backupid"/>
+        <FIELD NAME="backupid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="unique id of the backup" PREVIOUS="id" NEXT="itemname"/>
+        <FIELD NAME="itemname" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="name of the component this id belongs to (usually table names)" PREVIOUS="backupid" NEXT="itemid"/>
+        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="id of the component (usually table-&amp;gt;id values)" PREVIOUS="itemname" NEXT="parentitemid"/>
+        <FIELD NAME="parentitemid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="other id that can be useful to represent parent-child relations" PREVIOUS="itemid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="backupid_itemname_itemid_uk"/>
+        <KEY NAME="backupid_itemname_itemid_uk" TYPE="unique" FIELDS="backupid, itemname, itemid" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="backupid_parentitemid_ix" UNIQUE="false" FIELDS="backupid, itemname, parentitemid"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>
