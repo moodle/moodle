@@ -26,7 +26,7 @@
 $string['allowdeleting'] = 'Allow deleting';
 $string['allowdeleting_help'] = 'If enabled, students may delete uploaded files at any time before submitting for grading.';
 $string['allowmaxfiles'] = 'Maximum number of uploaded files';
-$string['allowmaxfiles_help'] = 'The maximum number of files each student may upload. As this figure is not displayed to students, it is suggested that it is mentioned in the assignment description.';
+$string['allowmaxfiles_help'] = 'The maximum number of files which may be uploaded. As this figure is not displayed anywhere, it is suggested that it is mentioned in the assignment description.';
 $string['allownotes'] = 'Allow notes';
 $string['allownotes_help'] = 'If enabled, students may enter notes into a text area, as in an online text assignment.';
 $string['allowresubmit'] = 'Allow resubmitting';
@@ -55,7 +55,7 @@ $string['cannotdeletefiles'] = 'An error occurred and files could not be deleted
 $string['cannotviewassignment'] = 'You can not view this assignment';
 $string['comment'] = 'Comment';
 $string['commentinline'] = 'Comment inline';
-$string['commentinline_help'] = 'If enabled, the student\'s submission will be copied into the feedback comment field during grading, making it easier to comment inline (using a different colour, perhaps) or to edit the original text.';
+$string['commentinline_help'] = 'If enabled, the submission text will be copied into the feedback comment field during grading, making it easier to comment inline (using a different colour, perhaps) or to edit the original text.';
 $string['configitemstocount'] = 'Nature of items to be counted for student submissions in online assignments.';
 $string['configmaxbytes'] = 'Default maximum assignment size for all assignments on the site (subject to course limits and other local settings)';
 $string['configshowrecentsubmissions'] = 'Everyone can see notifications of submissions in recent activity reports.';
