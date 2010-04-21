@@ -55,7 +55,7 @@ $string['cannotdeletefiles'] = 'An error occurred and files could not be deleted
 $string['cannotviewassignment'] = 'You can not view this assignment';
 $string['comment'] = 'Comment';
 $string['commentinline'] = 'Comment inline';
-$string['commentinline_help'] = 'If enabled, the student's submission will be copied into the feedback comment field during grading, making it easier to comment inline (using a different colour, perhaps) or to edit the original text.';
+$string['commentinline_help'] = 'If enabled, the student\'s submission will be copied into the feedback comment field during grading, making it easier to comment inline (using a different colour, perhaps) or to edit the original text.';
 $string['configitemstocount'] = 'Nature of items to be counted for student submissions in online assignments.';
 $string['configmaxbytes'] = 'Default maximum assignment size for all assignments on the site (subject to course limits and other local settings)';
 $string['configshowrecentsubmissions'] = 'Everyone can see notifications of submissions in recent activity reports.';
@@ -82,7 +82,7 @@ It is <a href="{$a->url}">available on the web site</a>.';
 $string['emailteachers'] = 'Email alerts to teachers';
 $string['emailteachers_help'] = 'If enabled, teachers receive email notification whenever students add or update an assignment submission.
 
-Only teachers who are able to grade the particular assignment are notified. So, for example, if the course uses separate groups, teachers restricted to particular groups won't receive notification about students in other groups.';
+Only teachers who are able to grade the particular assignment are notified. So, for example, if the course uses separate groups, teachers restricted to particular groups won\'t receive notification about students in other groups.';
 $string['emptysubmission'] = 'You have not submitted anything yet';
 $string['enableemailnotification'] = 'Send notification emails';
 $string['enableemailnotification_help'] = 'If enabled, students will receive email notification when their assignment submissions are graded.';
