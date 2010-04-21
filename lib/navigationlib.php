@@ -1092,7 +1092,7 @@ class global_navigation extends navigation_node {
             $activitynode->title(get_string('modulename', $cm->modname));
             $activitynode->hidden = (!$cm->visible);
             if ($this->module_extends_navigation($cm->modname)) {
-                $child->nodetype = navigation_node::NODETYPE_BRANCH;
+                $activitynode->nodetype = navigation_node::NODETYPE_BRANCH;
             }
             $activities[$cmid] = $activitynode;
         }
