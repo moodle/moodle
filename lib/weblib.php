@@ -2520,8 +2520,10 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $meta .= '<script type="text/javascript"  src="'.$CFG->httpswwwroot.'/lib/swfobject/swfobject.js"></script>';
         $meta .= 
            "<script type=\"text/javascript\">\n".
+           "//<![CDATA[\n".
            "  var flashversion = swfobject.getFlashPlayerVersion();\n".
-           "  YAHOO.util.Connect.asyncRequest('GET','".$CFG->httpswwwroot."/login/environment.php?sesskey=".sesskey()."&amp;flashversion='+flashversion.major+'.'+flashversion.minor+'.'+flashversion.release);\n".
+           "  YAHOO.util.Connect.asyncRequest('GET','".$CFG->httpswwwroot."/login/environment.php?sesskey=".sesskey()."&flashversion='+flashversion.major+'.'+flashversion.minor+'.'+flashversion.release);\n".
+           "//]]>\n".
            "</script>";
     }
 
