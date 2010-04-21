@@ -616,7 +616,7 @@
 
                 $pagingbar = new paging_bar($matchcount, intval($table->get_page_start() / $perpage), $perpage, $baseurl);
                 $pagingbar->pagevar = 'spage';
-                echo $OUTPUT->new($pagingbar);
+                echo $OUTPUT->render($pagingbar);
             }
 
             if ($matchcount > 0) {
