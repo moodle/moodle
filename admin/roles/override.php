@@ -32,22 +32,14 @@ $roleid    = required_param('roleid', PARAM_INT);   // requested role id
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
-$PAGE->set_url('/admin/roles/override.php', array('contextid' => $contextid, 'roleid' => $roleid));
-$PAGE->set_context($context);
+$url = new moodle_url('/admin/roles/override.php', array('contextid' => $contextid, 'roleid' => $roleid));
 
-$userid  = 0;
-$tabfile = null;
-
-if ($course) {
-    $isfrontpage = ($context->contextlevel == CONTEXT_COURSE and $context->instanceid == SITEID);
-
-} else {
-    $isfrontpage = false;
+if (!$course) {
     if ($context->contextlevel == CONTEXT_USER) {
-        $courseid = optional_param('courseid', SITEID, PARAM_INT); // needed for user/tabs.php
-        $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
-        $PAGE->url->param('courseid', $courseid);
-        $userid = $context->instanceid;
+        $course = $DB->get_record('course', array('id'=>optional_param('courseid', SITEID, PARAM_INT)), '*', MUST_EXIST);
+        $user = $DB->get_record('user', array('id'=>$context->instanceid), '*', MUST_EXIST);
+        $url->param('courseid', $course->id);
+        $url->param('userid', $user->id);
     } else {
         $course = $SITE;
     }
@@ -55,15 +47,21 @@ if ($course) {
 
 // security first
 require_login($course, false, $cm);
-$safeoverridesonly = !has_capability('moodle/role:override', $context);
-if ($safeoverridesonly) {
+if (!has_capability('moodle/role:override', $context)) {
     require_capability('moodle/role:safeoverride', $context);
 }
+$PAGE->set_url($url);
+$PAGE->set_context($context);
 
 $courseid = $course->id;
+$isfrontpage = ($course->id == SITEID);
 
-$baseurl = $PAGE->url->out();
 $returnurl = new moodle_url('/admin/roles/permissions.php', array('contextid' => $context->id));
+
+// Handle the cancel button.
+if (optional_param('cancel', false, PARAM_BOOL)) {
+    redirect($returnurl);
+}
 
 $role = $DB->get_record('role', array('id'=>$roleid), '*', MUST_EXIST);
 
@@ -77,46 +75,43 @@ $straction = get_string('overrideroles', 'role'); // Used by tabs.php
 $a = (object)array('context' => $contextname, 'role' => $overridableroles[$roleid]);
 $title = get_string('overridepermissionsforrole', 'role', $a);
 
-// Print the header and tabs
-if ($context->contextlevel == CONTEXT_SYSTEM) {
-    print_error('cannotoverridebaserole', 'error');
+$tabfile = $CFG->dirroot.'/'.$CFG->admin.'/roles/tabs.php';
+$currenttab = 'permissions';
 
-} else if ($context->contextlevel == CONTEXT_USER) {
-    // NOTE: this is not linked from UI for now
-    $userid = $context->instanceid;
-    $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0), '*', MUST_EXIST);
-    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
-
-    // course header
-    if ($isfrontpage) {
-        $PAGE->set_heading($course->fullname);
-    } else {
-        if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $courseid))) {
-            $PAGE->navbar->add(get_string('participants'), new moodle_url('/user/index.php', array('id'=>$courseid)));
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($title);
+$PAGE->navbar->add($straction);
+switch ($context->contextlevel) {
+    case CONTEXT_SYSTEM:
+        print_error('cannotoverridebaserole', 'error');
+        break;
+    case CONTEXT_USER:
+        $tabfile = $CFG->dirroot.'/user/tabs.php';
+        if ($isfrontpage) {
+            $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
+            $PAGE->set_heading($fullname);
+        } else {
+            $PAGE->set_heading($course->fullname);
         }
-        $PAGE->set_heading($fullname);
-    }
-    $PAGE->navbar->add($fullname, new moodle_url("$CFG->wwwroot/user/view.php", array('id'=>$userid,'course'=>$courseid)));
-    $PAGE->navbar->add($straction);
-
-    $showroles = 1;
-    $currenttab = 'permissions';
-    $tabfile = $CFG->dirroot.'/user/tabs.php';
-
-} else if ($isfrontpage) {
-    admin_externalpage_setup('frontpageroles', '', array(), $PAGE->url);
-    $currenttab = 'permissions';
-    $tabfile = 'tabs.php';
-
-} else {
-    $currenttab = 'permissions';
-    $tabfile = 'tabs.php';
-}
-
-
-// Handle the cancel button.
-if (optional_param('cancel', false, PARAM_BOOL)) {
-    redirect($returnurl);
+        $showroles = 1;
+        break;
+    case CONTEXT_COURSECAT:
+        $PAGE->set_heading("$SITE->fullname: ".get_string("categories"));
+        break;
+    case CONTEXT_COURSE:
+        if ($isfrontpage) {
+            admin_externalpage_setup('frontpageroles', '', array(), $PAGE->url);
+        } else {
+            $PAGE->set_heading($course->fullname);
+        }
+        break;
+    case CONTEXT_MODULE:
+        $PAGE->set_heading(print_context_name($context, false));
+        $PAGE->set_cacheable(false);
+        break;
+    case CONTEXT_BLOCK:
+        $PAGE->set_heading($PAGE->course->fullname);
+        break;
 }
 
 // Make sure this user can override that role
@@ -128,7 +123,7 @@ if (empty($overridableroles[$roleid])) {
 }
 
 // If we are actually overriding a role, create the table object, and save changes if appropriate.
-$overridestable = new override_permissions_table_advanced($context, $roleid, $safeoverridesonly);
+$overridestable = new override_permissions_table_advanced($context, $roleid, false);
 $overridestable->read_submitted_permissions();
 
 if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
@@ -140,10 +135,8 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
 // Finally start page output
 echo $OUTPUT->header();
-if ($tabfile) {
-    include($tabfile);
-}
-echo $OUTPUT->heading_with_help($title, 'overrides');
+include($tabfile);
+echo $OUTPUT->heading_with_help($title, 'overrides', 'role');
 
 // Show UI for overriding roles.
 if (!empty($capabilities)) {
@@ -152,37 +145,32 @@ if (!empty($capabilities)) {
 } else {
     // Print the capabilities overrideable in this context
     echo $OUTPUT->box_start('generalbox capbox');
+    echo html_writer::start_tag('form', array('id'=>'overrideform', 'action'=>$PAGE->url->out(), 'method'=>'post'));
+    echo html_writer::start_tag('div');
+    echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
+    echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'roleid', 'value'=>$roleid));
+    echo html_writer::tag('p', get_string('highlightedcellsshowinherit', 'role'), array('class'=>'overridenotice'));
+    
+    $overridestable->display();
+    if ($overridestable->has_locked_capabiltites()) {
+        echo '<p class="overridenotice">' . get_string('safeoverridenotice', 'role') . "</p>\n";
+    }
 
-    ?>
-<form id="overrideform" action="<?php echo $baseurl ?>" method="post"><div>
-    <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
-    <input type="hidden" name="roleid" value="<?php p($roleid); ?>" />
-            <?php
-
-            echo '<p class="overridenotice">' . get_string('highlightedcellsshowinherit', 'role') . ' </p>';
-            $overridestable->display();
-
-            if ($overridestable->has_locked_capabiltites()) {
-                echo '<p class="overridenotice">' . get_string('safeoverridenotice', 'role') . "</p>\n";
-            }
-
-            ?>
-    <div class="submit buttons">
-        <input type="submit" name="savechanges" value="<?php print_string('savechanges') ?>" />
-        <input type="submit" name="cancel" value="<?php print_string('cancel') ?>" />
-    </div>
-</div></form>
-    <?php
+    echo html_writer::start_tag('div', array('class'=>'submit_buttons'));
+    echo html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'savechanges', 'value'=>get_string('savechanges')));
+    echo html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'cancel', 'value'=>get_string('cancel')));
+    echo html_writer::end_tag('div');
+    echo html_writer::end_tag('div');
+    echo html_writer::end_tag('form');
     echo $OUTPUT->box_end();
-
 }
 
 // Print a form to swap roles, and a link back to the all roles list.
-echo '<div class="backlink">';
-$select = new single_select(new moodle_url($baseurl), 'roleid', $nameswithcounts, $roleid, null);
+echo html_writer::start_tag('div', array('class'=>'backlink'));
+$select = new single_select($PAGE->url, 'roleid', $nameswithcounts, $roleid, null);
 $select->label = get_string('overrideanotherrole', 'role');
 echo $OUTPUT->render($select);
-echo '<p><a href="' . $returnurl . '">' . get_string('backtoallroles', 'role') . '</a></p>';
-echo '</div>';
+echo html_writer::tag('p', html_writer::tag('a', get_string('backtoallroles', 'role'), array('href'=>$returnurl)));
+echo html_writer::end_tag('div');
 
 echo $OUTPUT->footer();

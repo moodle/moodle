@@ -2733,30 +2733,35 @@ class settings_navigation extends navigation_node {
     protected function load_category_settings() {
         global $CFG;
 
-        $blocknode = $this->add(print_context_name($this->context));
-        $blocknode->force_open();
+        $categorynode = $this->add(print_context_name($this->context));
+        $categorynode->force_open();
 
         if ($this->page->user_is_editing() && has_capability('moodle/category:manage', $this->context)) {
-            $blocknode->add(get_string('editcategorythis'), new moodle_url('/course/editcategory.php', array('id' => $this->context->instanceid)));
-            $blocknode->add(get_string('addsubcategory'), new moodle_url('/course/editcategory.php', array('parent' => $this->context->instanceid)));
+            $categorynode->add(get_string('editcategorythis'), new moodle_url('/course/editcategory.php', array('id' => $this->context->instanceid)));
+            $categorynode->add(get_string('addsubcategory'), new moodle_url('/course/editcategory.php', array('parent' => $this->context->instanceid)));
         }
 
         // Assign local roles
         $assignurl = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid'=>$this->context->id));
-        $blocknode->add(get_string('assignroles', 'role'), $assignurl, self::TYPE_SETTING);
+        $categorynode->add(get_string('assignroles', 'role'), $assignurl, self::TYPE_SETTING);
 
         // Override roles
         if (has_capability('moodle/role:review', $this->context) or count(get_overridable_roles($this->context))>0) {
             $url = new moodle_url('/'.$CFG->admin.'/roles/permissions.php', array('contextid'=>$this->context->id));
-            $blocknode->add(get_string('permissions', 'role'), $url, self::TYPE_SETTING);
+            $categorynode->add(get_string('permissions', 'role'), $url, self::TYPE_SETTING);
         }
         // Check role permissions
         if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride','moodle/role:override', 'moodle/role:assign'), $this->context)) {
             $url = new moodle_url('/'.$CFG->admin.'/roles/check.php', array('contextid'=>$this->context->id));
-            $blocknode->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING);
+            $categorynode->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING);
+        }
+        // Manage filters
+        if (has_capability('moodle/filter:manage', $this->context) && count(filter_get_available_in_context($this->context))>0) {
+            $url = new moodle_url('/filter/manage.php', array('contextid'=>$this->context->id));
+            $categorynode->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING);
         }
 
-        return $blocknode;
+        return $categorynode;
     }
 
     /**

@@ -38,90 +38,6 @@ if (!isset($availablefilters)) {
     }
 }
 
-if ($currenttab != 'update') {
-    switch ($context->contextlevel) {
-
-        case CONTEXT_SYSTEM:
-            $stradministration = get_string('administration');
-            if (empty($title)) {
-                $title = $SITE->fullname;
-            }
-            $PAGE->navbar->add($stradministration, new moodle_url('/admin/'), navigation_node::TYPE_SETTING);
-            $PAGE->navbar->add($straction);
-            $PAGE->set_title($title);
-            $PAGE->set_heading($SITE->fullname);
-            break;
-
-        case CONTEXT_USER:
-            break;
-
-        case CONTEXT_COURSECAT:
-            $category = $DB->get_record('course_categories', array('id'=>$context->instanceid));
-            $strcategories = get_string("categories");
-            $strcategory = get_string("category");
-            $strcourses = get_string("courses");
-
-            if (empty($title)) {
-                $title = "$SITE->shortname: $category->name";
-            }
-
-            $PAGE->navbar->add($strcategories, new moodle_url('/course/index.php'), navigation_node::TYPE_SETTING);
-            $PAGE->navbar->add($category->name, new moodle_url('/course/category.php', array('id'=>$category->id)), navigation_node::TYPE_SETTING);
-            $PAGE->navbar->add(get_string("roles"));
-            $PAGE->set_title($title);
-            $PAGE->set_heading("$SITE->fullname: $strcourses");
-            break;
-
-        case CONTEXT_COURSE:
-            if ($context->instanceid != SITEID) {
-                $course = $DB->get_record('course', array('id'=>$context->instanceid));
-
-                if (empty($title)) {
-                    $title = get_string("editcoursesettings");
-                }
-                $roleslink = new moodle_url("$CFG->wwwroot/$CFG->admin/roles/assign.php", array('contextid'=>$context->id));
-                $PAGE->navbar->add(get_string('roles'), $roleslink, navigation_node::TYPE_SETTING);
-                $PAGE->set_title($title);
-                $PAGE->set_heading($course->fullname);
-            }
-            break;
-
-        case CONTEXT_MODULE:
-            if (!$cm = get_coursemodule_from_id('', $context->instanceid)) {
-                print_error('invalidcoursemodule', 'error');
-            }
-            if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-                print_error('invalidcourse');
-            }
-
-            $PAGE->navigation->add(get_string('roles'));
-
-            if (empty($title)) {
-                $title = get_string("editinga", "moodle", $fullmodulename);
-            }
-            $PAGE->set_title($title);
-            $PAGE->set_cacheable(false);
-            break;
-
-        case CONTEXT_BLOCK:
-            if ($blockinstance = $DB->get_record('block_instances', array('id' => $context->instanceid))) {
-                $blockname = print_context_name($context);
-
-                $PAGE->navbar->add($blockname);
-                $PAGE->navbar->add($straction);
-                $PAGE->set_title("$straction: $blockname");
-                $PAGE->set_heading($PAGE->course->fullname);
-            }
-            break;
-
-        default:
-            print_error('unknowncontext');
-            return false;
-
-    }
-}
-
-
 $toprow = array();
 $inactive = array();
 $activetwo = array();
@@ -132,27 +48,23 @@ $permissionsrow = array();
 if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything except SYSTEM context
 
     if ($context->contextlevel == CONTEXT_MODULE) {  // Only show update button if module
-        $toprow[] = new tabobject('update', $CFG->wwwroot.'/course/mod.php?update='.
-                        $context->instanceid.'&amp;return=true&amp;sesskey='.sesskey(), get_string('settings'));
+        $url = new moodle_url('/course/mod.php', array('update'=>$context->instanceid, 'return'=>'true', 'sesskey'=>sesskey()));
+        $toprow[] = new tabobject('update', $url, get_string('settings'));
     }
 
     if (!empty($assignableroles) || $currenttab=='assign') {
-        $toprow[] = new tabobject('assign',
-                new moodle_url('/admin/roles/assign.php', array('contextid'=>$context->id)),
-                get_string('localroles', 'role'), '', true);
+        $url = new moodle_url('/admin/roles/assign.php', array('contextid'=>$context->id));
+        $toprow[] = new tabobject('assign', $url, get_string('localroles', 'role'), '', true);
     }
 
     if (has_capability('moodle/role:review', $context) or !empty($overridableroles)) {
-        $permissionsrow['permissions'] = new tabobject('permissions',
-                new moodle_url('/admin/roles/permissions.php', array('contextid'=>$context->id)),
-                get_string('permissions', 'role'), '', true);
+        $url = new moodle_url('/admin/roles/permissions.php', array('contextid'=>$context->id));
+        $permissionsrow['permissions'] = new tabobject('permissions', $url, get_string('permissions', 'role'), '', true);
     }
 
-    if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
-            'moodle/role:override', 'moodle/role:assign'), $context)) {
-        $permissionsrow['check'] = new tabobject('check',
-                new moodle_url('/admin/roles/check.php', array('contextid'=>$context->id)),
-                get_string('checkpermissions', 'role'));
+    if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride', 'moodle/role:override', 'moodle/role:assign'), $context)) {
+        $url = new moodle_url('/admin/roles/check.php', array('contextid'=>$context->id));
+        $permissionsrow['check'] = new tabobject('check', $url, get_string('checkpermissions', 'role'));
     }
 
     if ($permissionsrow) {
@@ -166,9 +78,8 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
     }
 
     if (!empty($availablefilters)) {
-        $toprow[] = new tabobject('filters',
-                new moodle_url('/filter/manage.php', array('contextid'=>$context->id)),
-                get_string('filters', 'admin'));
+        $url = new moodle_url('/filter/manage.php', array('contextid'=>$context->id));
+        $toprow[] = new tabobject('filters', $url, get_string('filters', 'admin'));
     }
 }
 unset($permissionsrow);

@@ -31,41 +31,35 @@ define("MAX_USERS_TO_LIST_PER_ROLE", 10);
 
 $contextid      = required_param('contextid',PARAM_INT);
 $roleid         = optional_param('roleid', 0, PARAM_INT);
-$courseid       = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
 $extendperiod   = optional_param('extendperiod', 0, PARAM_INT);
 $extendbase     = optional_param('extendbase', 3, PARAM_INT);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
-$PAGE->set_url('/admin/roles/assign.php', array('contextid' => $contextid));
-$PAGE->set_context($context);
+$url = new moodle_url('/admin/roles/assign.php', array('contextid' => $contextid));
 
-$userid  = 0;
-$tabfile = null;
-
-if ($course) {
-    $isfrontpage = ($context->contextlevel == CONTEXT_COURSE and $context->instanceid == SITEID);
-
-} else {
-    $isfrontpage = false;
+if (!$course) {
     if ($context->contextlevel == CONTEXT_USER) {
-        $courseid = optional_param('courseid', SITEID, PARAM_INT); // needed for user/tabs.php
-        $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
-        $PAGE->url->param('courseid', $courseid);
-        $userid = $context->instanceid;
+        $course = $DB->get_record('course', array('id'=>optional_param('courseid', SITEID, PARAM_INT)), '*', MUST_EXIST);
+        $user = $DB->get_record('user', array('id'=>$context->instanceid), '*', MUST_EXIST);
+        $url->param('courseid', $course->id);
+        $url->param('userid', $user->id);
     } else {
         $course = $SITE;
     }
 }
 
+
 // security
 require_login($course, false, $cm);
 require_capability('moodle/role:assign', $context);
+$PAGE->set_url($url);
 $PAGE->set_context($context);
 
 $contextname = print_context_name($context);
 $courseid = $course->id;
 $inmeta = $course->metacourse;
+$isfrontpage = ($course->id == SITEID);
 
 // These are needed early because of tabs.php
 list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
@@ -78,9 +72,6 @@ if ($roleid && !isset($assignableroles[$roleid])) {
     $a->context = $contextname;
     print_error('cannotassignrolehere', '', get_context_url($context), $a);
 }
-
-// Get some language strings
-$straction = get_string('assignroles', 'role'); // Used by tabs.php
 
 // Work out an appropriate page title.
 if ($roleid) {
@@ -231,50 +222,49 @@ if ($roleid) {
     }
 }
 
-// Print the header and tabs
-if ($context->contextlevel == CONTEXT_USER) {
-    $user = $DB->get_record('user', array('id'=>$userid));
-    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($title);
+$tabfile = $CFG->dirroot.'/'.$CFG->admin.'/roles/tabs.php';
 
-    /// course header
-    $PAGE->set_title($title);
-    if ($courseid != SITEID) {
-        if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $courseid))) {
-            $PAGE->navbar->add(get_string('participants'), new moodle_url('/user/index.php', array('id'=>$courseid)));
+switch ($context->contextlevel) {
+    case CONTEXT_SYSTEM:
+        admin_externalpage_setup('assignroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
+        break;
+    case CONTEXT_USER:
+        $tabfile = $CFG->dirroot.'/user/tabs.php';
+        if ($isfrontpage) {
+            $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
+            $PAGE->set_heading($fullname);
+        } else {
+            $PAGE->set_heading($course->fullname);
         }
-        $PAGE->set_heading($fullname);
-    } else {
-        $PAGE->set_heading($course->fullname);
-    }
-    $PAGE->navbar->add($fullname, new moodle_url("$CFG->wwwroot/user/view.php", array('id'=>$userid,'course'=>$courseid)));
-    $PAGE->navbar->add($straction);
-    echo $OUTPUT->header();
-
-    $showroles = 1;
-    $currenttab = 'assign';
-    echo $OUTPUT->header();
-    include($CFG->dirroot.'/user/tabs.php');
-
-} else if ($context->contextlevel == CONTEXT_SYSTEM) {
-    admin_externalpage_setup('assignroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
-    echo $OUTPUT->header();
-
-} else if ($isfrontpage) {
-    admin_externalpage_setup('frontpageroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
-    echo $OUTPUT->header();
-    $currenttab = 'assign';
-    include('tabs.php');
-
-} else {
-    $PAGE->set_title($title);
-    $PAGE->set_heading(print_context_name($context, false));
-    echo $OUTPUT->header();
-    $currenttab = 'assign';
-    include('tabs.php');
+        $showroles = 1;
+        break;
+    case CONTEXT_COURSECAT:
+        $PAGE->set_heading("$SITE->fullname: ".get_string("categories"));
+        break;
+    case CONTEXT_COURSE:
+        if ($isfrontpage) {
+            admin_externalpage_setup('frontpageroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
+        } else {
+            $PAGE->set_heading($course->fullname);
+        }
+        break;
+    case CONTEXT_MODULE:
+        $PAGE->set_heading(print_context_name($context, false));
+        $PAGE->set_cacheable(false);
+        break;
+    case CONTEXT_BLOCK:
+        $PAGE->set_heading($PAGE->course->fullname);
+        break;
 }
 
+$currenttab = 'assign';
+echo $OUTPUT->header();
+include($tabfile);
+
 // Print heading.
-echo $OUTPUT->heading_with_help($title, 'assignroles');
+echo $OUTPUT->heading_with_help($title, 'assignroles', 'role');
 
 if ($roleid) {
     // Show UI for assigning a particular role to users.
@@ -417,7 +407,9 @@ $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
     echo html_writer::table($table);
 
     if ($context->contextlevel > CONTEXT_USER) {
-        echo '<div class="backlink"><a href="' . get_context_url($context) . '">' . get_string('backto', '', $contextname) . '</a></div>';
+        echo html_writer::start_tag('div', array('class'=>'backlink'));
+        echo html_writer::tag('a', get_string('backto', '', $contextname), array('href'=>get_context_url($context)));
+        echo html_writer::end_tag('div');
     }
 }
 

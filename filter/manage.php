@@ -36,9 +36,7 @@ require_once($CFG->libdir . '/adminlib.php');
 $contextid = required_param('contextid',PARAM_INT);
 $forfilter = optional_param('filter', '', PARAM_SAFEPATH);
 
-if (!$context = get_context_instance_by_id($contextid)) {
-    print_error('wrongcontextid', 'error');
-}
+$context = get_context_instance_by_id($contextid, MUST_EXIST);
 
 $args = array('contextid'=>$contextid);
 $baseurl = new moodle_url('/filter/manage.php', $args);
@@ -52,25 +50,33 @@ if (!in_array($context->contextlevel, array(CONTEXT_COURSECAT, CONTEXT_COURSE, C
     print_error('cannotcustomisefiltersblockuser', 'error');
 }
 
-$isfrontpage = $context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID;
+$isfrontpage = ($context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID);
 $contextname = print_context_name($context);
 
+$cm = null;
 if ($context->contextlevel == CONTEXT_COURSECAT) {
     $course = clone($SITE);
+    $heading = "$SITE->fullname: ".get_string("categories");
+    $PAGE->set_heading();
 } else if ($context->contextlevel == CONTEXT_COURSE) {
-    $course = $DB->get_record('course', array('id' => $context->instanceid));
+    $course = $DB->get_record('course', array('id' => $context->instanceid), '*', MUST_EXIST);
+    $heading = $course->fullname;
 } else {
     // Must be module context.
-    $course = $DB->get_record_sql('SELECT c.* FROM {course} c JOIN {context} ctx ON c.id = ctx.instanceid WHERE ctx.id = ?',
-            array(get_parent_contextid($context)));
-}
-if (!$course) {
-    print_error('invalidcourse', 'error');
+    $cm = get_coursemodule_from_id(null, $context->instanceid, false, 0, MUST_EXIST);
+    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 }
 
 /// Check login and permissions.
-require_login($course);
+require_login($course, false, $cm);
 require_capability('moodle/filter:manage', $context);
+
+if ($cm) {
+    $heading = $PAGE->activityrecord->name;
+}
+
+$PAGE->set_context($context);
+$PAGE->set_heading($heading);
 
 /// Get the list of available filters.
 $availablefilters = filter_get_available_in_context($context);
@@ -106,10 +112,6 @@ if ($forfilter == '' && optional_param('savechanges', false, PARAM_BOOL) && conf
     redirect($CFG->wwwroot . '/filter/manage.php?contextid=' . $context->id, get_string('changessaved'), 1);
 }
 
-/// These are needed early because of tabs.php
-$assignableroles = get_assignable_roles($context, ROLENAME_BOTH);
-$overridableroles = get_overridable_roles($context, ROLENAME_BOTH);
-
 /// Work out an appropriate page title.
 if ($forfilter) {
     $a = new stdClass;
@@ -122,16 +124,24 @@ if ($forfilter) {
 $straction = get_string('filters', 'admin'); // Used by tabs.php
 
 /// Print the header and tabs
-if ($context->contextlevel == CONTEXT_COURSE and $context->instanceid == SITEID) {
+if ($isfrontpage) {
     admin_externalpage_setup('frontpagefilters');
     echo $OUTPUT->header();
 } else {
+    $PAGE->set_cacheable(false);
+    $PAGE->set_title($title);
+    $PAGE->set_pagelayout('admin');
+    echo $OUTPUT->header();
+    
+    // These are because of /roles/tabs.php
     $currenttab = 'filters';
-    include_once($CFG->dirroot . '/' . $CFG->admin . '/roles/tabs.php');
+    $assignableroles = get_assignable_roles($context, ROLENAME_BOTH);
+    $overridableroles = get_overridable_roles($context, ROLENAME_BOTH);
+    include($CFG->dirroot . '/' . $CFG->admin . '/roles/tabs.php');
 }
 
 /// Print heading.
-echo $OUTPUT->heading_with_help($title, 'localfiltersettings');
+echo $OUTPUT->heading_with_help($title, 'localfiltersettings', 'filters');
 
 if (empty($availablefilters)) {
     echo '<p class="centerpara">' . get_string('nofiltersenabled', 'filters') . "</p>\n";
@@ -158,9 +168,9 @@ if (empty($availablefilters)) {
         TEXTFILTER_ON => $stron,
     );
 
-    echo '<form action="'.$baseurl->out().'" method="post">';
-    echo "\n<div>\n";
-    echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
+    echo html_writer::start_tag('form', array('action'=>$baseurl->out(), 'method'=>'post'));
+    echo html_writer::start_tag('div');
+    echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
 
     $table = new html_table();
     $table->head  = array(get_string('filter'), get_string('isactive', 'filters'));
@@ -200,18 +210,18 @@ if (empty($availablefilters)) {
     }
 
     echo html_writer::table($table);
-    echo '<div class="buttons">' . "\n";
-    echo '<input type="submit" name="savechanges" value="' . get_string('savechanges') . '" />';
-    echo "\n</div>\n";
-    echo "</div>\n";
-    echo "</form>\n";
-
+    echo html_writer::start_tag('div', array('class'=>'buttons'));
+    echo html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'savechanges', 'value'=>get_string('savechanges')));
+    echo html_writer::end_tag('div');
+    echo html_writer::end_tag('div');
+    echo html_writer::end_tag('form');
 }
 
 /// Appropriate back link.
-if (!$isfrontpage && ($url = get_context_url($context))) {
-    echo '<div class="backlink"><a href="' . $url . '">' .
-        get_string('backto', '', $contextname) . '</a></div>';
+if (!$isfrontpage) {
+    echo html_writer::start_tag('div', array('class'=>'backlink'));
+    echo html_writer::tag('a', get_string('backto', '', $contextname), array('href'=>get_context_url($context)));
+    echo html_writer::end_tag('div');
 }
 
 echo $OUTPUT->footer();

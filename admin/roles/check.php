@@ -30,19 +30,15 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
 $contextid = required_param('contextid',PARAM_INT);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
-$PAGE->set_url('/admin/roles/check.php', array('contextid' => $contextid));
-$PAGE->set_context($context);
 
-if ($course) {
-    $isfrontpage = ($context->contextlevel == CONTEXT_COURSE and $context->instanceid == SITEID);
+$url = new moodle_url('/admin/roles/check.php', array('contextid' => $contextid));
 
-} else {
-    $isfrontpage = false;
+if (!$course) {
     if ($context->contextlevel == CONTEXT_USER) {
-        $courseid = optional_param('courseid', SITEID, PARAM_INT); // needed for user/tabs.php
-        $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
-        $PAGE->url->param('courseid', $courseid);
-        $userid = $context->instanceid;
+        $course = $DB->get_record('course', array('id'=>optional_param('courseid', SITEID, PARAM_INT)), '*', MUST_EXIST);
+        $user = $DB->get_record('user', array('id'=>$context->instanceid), '*', MUST_EXIST);
+        $url->param('courseid', $course->id);
+        $url->param('userid', $user->id);
     } else {
         $course = $SITE;
     }
@@ -50,18 +46,15 @@ if ($course) {
 
 // security first
 require_login($course, false, $cm);
-$canview = has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
-        'moodle/role:override', 'moodle/role:manage'), $context);
-if (!$canview) {
+if (!has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride', 'moodle/role:override', 'moodle/role:manage'), $context)) {
     print_error('nopermissions', 'error', '', get_string('checkpermissions', 'role'));
 }
+$PAGE->set_url($url);
+$PAGE->set_context($context);
 
 $courseid = $course->id;
 $contextname = print_context_name($context);
-
-// These are needed early because of tabs.php
-$assignableroles = get_assignable_roles($context, ROLENAME_BOTH);
-$overridableroles = get_overridable_roles($context, ROLENAME_BOTH);
+$isfrontpage = ($course->id == SITEID);
 
 // Get the user_selector we will need.
 // Teachers within a course just get to see the same list of people they can
@@ -77,48 +70,53 @@ $userselector->set_rows(10);
 
 // Work out an appropriate page title.
 $title = get_string('checkpermissionsin', 'role', $contextname);
-$straction = get_string('checkpermissions', 'role'); // Used by tabs.php
 
-// Print the header and tabs
-if ($context->contextlevel == CONTEXT_USER) {
-    $user = $DB->get_record('user', array('id' => $userid));
-    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($title);
+$tabfile = $CFG->dirroot.'/'.$CFG->admin.'/roles/tabs.php';
 
-    $PAGE->set_title($title);
-    if ($courseid != SITEID) {
-        if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $courseid))) {
-            $PAGE->navbar->add(get_string('participants'), new moodle_url('/user/index.php', array('id'=>$courseid)));
+switch ($context->contextlevel) {
+    case CONTEXT_SYSTEM:
+        admin_externalpage_setup('assignroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
+        break;
+    case CONTEXT_USER:
+        $tabfile = $CFG->dirroot.'/user/tabs.php';
+        if ($isfrontpage) {
+            $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
+            $PAGE->set_heading($fullname);
+        } else {
+            $PAGE->set_heading($course->fullname);
         }
-        $PAGE->set_heading($fullname);
-    } else {
-        $PAGE->set_heading($course->fullname);
-    }
-    $PAGE->navbar->add($fullname, new moodle_url("$CFG->wwwroot/user/view.php", array('id'=>$userid,'course'=>$courseid)));
-    $PAGE->navbar->add($straction);
-    echo $OUTPUT->header();
-
-    $showroles = 1;
-    $currenttab = 'check';
-    include($CFG->dirroot.'/user/tabs.php');
-
-} else if ($context->contextlevel == CONTEXT_SYSTEM) {
-    admin_externalpage_setup('checkpermissions', '', array('contextid' => $contextid));
-    echo $OUTPUT->header();
-
-} else if ($context->contextlevel == CONTEXT_COURSE and $context->instanceid == SITEID) {
-    admin_externalpage_setup('frontpageroles', '', array('contextid' => $contextid), $CFG->wwwroot . '/' . $CFG->admin . '/roles/check.php');
-    echo $OUTPUT->header();
-    $currenttab = 'check';
-    include('tabs.php');
-
-} else {
-    echo $OUTPUT->header();
-    $currenttab = 'check';
-    include('tabs.php');
+        $showroles = 1;
+        break;
+    case CONTEXT_COURSECAT:
+        $PAGE->set_heading("$SITE->fullname: ".get_string("categories"));
+        break;
+    case CONTEXT_COURSE:
+        if ($isfrontpage) {
+            admin_externalpage_setup('frontpageroles', '', array('contextid' => $contextid), $CFG->wwwroot . '/' . $CFG->admin . '/roles/check.php');
+        } else {
+            $PAGE->set_heading($course->fullname);
+        }
+        break;
+    case CONTEXT_MODULE:
+        $PAGE->set_heading(print_context_name($context, false));
+        $PAGE->set_cacheable(false);
+        break;
+    case CONTEXT_BLOCK:
+        $PAGE->set_heading($PAGE->course->fullname);
+        break;
 }
 
+$currenttab = 'check';
+echo $OUTPUT->header();
+// These are needed early because of tabs.php
+$assignableroles = get_assignable_roles($context, ROLENAME_BOTH);
+$overridableroles = get_overridable_roles($context, ROLENAME_BOTH);
+include($tabfile);
+
 // Print heading.
-echo $OUTPUT->heading_with_help($title, 'checkpermissions');
+echo $OUTPUT->heading_with_help($title, 'checkpermissions', 'role');
 
 // If a user has been chosen, show all the permissions for this user.
 $reportuser = $userselector->get_selected_user();
@@ -141,10 +139,10 @@ echo '<form method="get" action="' . $CFG->wwwroot . '/' . $CFG->admin . '/roles
 
 // Hidden fields.
 echo '<input type="hidden" name="contextid" value="' . $context->id . '" />';
-if (!empty($userid)) {
-    echo '<input type="hidden" name="userid" value="' . $userid . '" />';
+if (!empty($user->id)) {
+    echo '<input type="hidden" name="userid" value="' . $user->id . '" />';
 }
-if ($courseid && $courseid != SITEID) {
+if ($isfrontpage) {
     echo '<input type="hidden" name="courseid" value="' . $courseid . '" />';
 }
 
@@ -159,7 +157,9 @@ echo $OUTPUT->box_end();
 
 // Appropriate back link.
 if ($context->contextlevel > CONTEXT_USER) {
-    echo '<div class="backlink"><a href="' . get_context_url($context) . '">' . get_string('backto', '', $contextname) . '</a></div>';
+    echo html_writer::start_tag('div', array('class'=>'backlink'));
+    echo html_writer::tag('a', get_string('backto', '', $contextname), array('href'=>get_context_url($context)));
+    echo html_writer::end_tag('div');
 }
 
 echo $OUTPUT->footer();
