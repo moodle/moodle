@@ -132,7 +132,7 @@ abstract class backup_plan_builder {
         // For the given section, add as many activity tasks as necessary
         $coursemodules = backup_plan_dbops::get_modules_from_sectionid($id);
         foreach ($coursemodules as $coursemodule) {
-            if (plugin_supports('mod', $coursemodule->modname, $controller->get_format())) { // Check we support the format
+            if (plugin_supports('mod', $coursemodule->modname, FEATURE_BACKUP_MOODLE2)) { // Check we support the format
                 self::build_activity_plan($controller, $coursemodule->id);
             } else {
                 // TODO: Debug information about module not supported
