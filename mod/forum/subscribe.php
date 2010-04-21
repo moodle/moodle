@@ -27,12 +27,12 @@ require_once("../../config.php");
 require_once("lib.php");
 
 $id = required_param('id',PARAM_INT);      // The forum to subscribe or unsubscribe to
-$force = optional_param('force','',PARAM_ALPHA);  // Force everyone to be subscribed to this forum?
+$mode = optional_param('mode',false,PARAM_INT);  // Force everyone to be subscribed to this forum?
 $user = optional_param('user',0,PARAM_INT);
 
 $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$id));
-if ($force !== '') {
-    $url->param('force', $force);
+if ($mode !== '') {
+    $url->param('force', $mode);
 }
 if ($user !== 0) {
     $url->param('user', $user);
@@ -88,13 +88,26 @@ $returnto = optional_param('backtoindex',0,PARAM_INT)
     ? "index.php?id=".$course->id
     : "view.php?f=$id";
 
-if ($force and has_capability('mod/forum:managesubscriptions', $context)) {
-    if (forum_is_forcesubscribed($forum)) {
-        forum_forcesubscribe($forum->id, 0);
-        redirect($returnto, get_string("everyonecannowchoose", "forum"), 1);
-    } else {
-        forum_forcesubscribe($forum->id, 1);
-        redirect($returnto, get_string("everyoneisnowsubscribed", "forum"), 1);
+if ($mode !== false && has_capability('mod/forum:managesubscriptions', $context)) {
+    switch ($mode) {
+        case FORUM_CHOOSESUBSCRIBE : // 0
+            forum_forcesubscribe($forum->id, 0);
+            redirect($returnto, get_string("everyonecannowchoose", "forum"), 1);
+            break;
+        case FORUM_FORCESUBSCRIBE : // 1
+            forum_forcesubscribe($forum->id, 1);
+            redirect($returnto, get_string("everyoneisnowsubscribed", "forum"), 1);
+            break;
+        case FORUM_INITIALSUBSCRIBE : // 2
+            forum_forcesubscribe($forum->id, 2);
+            redirect($returnto, get_string("everyoneisnowsubscribed", "forum"), 1);
+            break;
+        case FORUM_DISALLOWSUBSCRIBE : // 3
+            forum_forcesubscribe($forum->id, 3);
+            redirect($returnto, get_string("noonecansubscribenow", "forum"), 1);
+            break;
+        default:
+            print_error(get_string('invalidforcesubscribe', 'forum'));
     }
 }
 

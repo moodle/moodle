@@ -34,6 +34,7 @@ define('FORUM_MODE_FLATNEWEST', -1);
 define('FORUM_MODE_THREADED', 2);
 define('FORUM_MODE_NESTED', 3);
 
+define('FORUM_CHOOSESUBSCRIBE', 0);
 define('FORUM_FORCESUBSCRIBE', 1);
 define('FORUM_INITIALSUBSCRIBE', 2);
 define('FORUM_DISALLOWSUBSCRIBE',3);
@@ -4824,6 +4825,15 @@ function forum_is_forcesubscribed($forum) {
     }
 }
 
+function forum_get_forcesubscribed($forum) {
+    global $DB;
+    if (isset($forum->forcesubscribe)) {    // then we use that
+        return $forum->forcesubscribe;
+    } else {   // Check the database
+        return $DB->get_field('forum', 'forcesubscribe', array('id' => $forum));
+    }
+}
+
 /**
  * @global object
  * @param int $userid
@@ -8029,47 +8039,69 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
     if (is_enrolled($PAGE->cm->context)) { // means enrolled users only
         $notenode = false;
         $helpbutton = false;
-        if (forum_is_forcesubscribed($forumobject)) {
-            $notenode = $forumnode->add(get_string("forcessubscribe", 'forum'));
-            $string = get_string('allowchoice', 'forum');
-            $helpbutton = $OUTPUT->old_help_icon("subscription", $string, "forum");
-            if (has_capability('mod/forum:managesubscriptions', $PAGE->cm->context)) {
-                $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'force'=>'no'));
-                $forumnode->add($string, $url, navigation_node::TYPE_SETTING);
-            } else {
-                $forumnode->add(get_string('everyoneisnowsubscribed', 'forum'), null, navigation_node::TYPE_SETTING);
+
+        $canmanage  = has_capability('mod/forum:managesubscriptions', $PAGE->cm->context);
+        $subscriptionmode = forum_get_forcesubscribed($forumobject);
+        $cansubscribe = ($subscriptionmode != FORUM_FORCESUBSCRIBE && ($subscriptionmode != FORUM_DISALLOWSUBSCRIBE || $canmanage));
+
+        if ($canmanage) {
+            $mode = $forumnode->add(get_string('subscriptionmode', 'forum'), null, navigation_node::TYPE_CONTAINER);
+
+            $allowchoice = $mode->add(get_string('subscriptionoptional', 'forum'), new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'mode'=>'0')), navigation_node::TYPE_SETTING);
+            $forceforever = $mode->add(get_string("subscriptionforced", "forum"), new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'mode'=>'1')), navigation_node::TYPE_SETTING);
+            $forceinitially = $mode->add(get_string("subscriptionauto", "forum"), new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'mode'=>'2')), navigation_node::TYPE_SETTING);
+            $disallowchoice = $mode->add(get_string('subscriptiondisabled', 'forum'), new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'mode'=>'3')), navigation_node::TYPE_SETTING);
+
+            switch ($subscriptionmode) {
+                case FORUM_CHOOSESUBSCRIBE : // 0
+                    $allowchoice->action = null;
+                    $allowchoice->add_class('activesetting');
+                    break;
+                case FORUM_FORCESUBSCRIBE : // 1
+                    $forceforever->action = null;
+                    $forceforever->add_class('activesetting');
+                    break;
+                case FORUM_INITIALSUBSCRIBE : // 2
+                    $forceinitially->action = null;
+                    $forceinitially->add_class('activesetting');
+                    break;
+                case FORUM_DISALLOWSUBSCRIBE : // 3
+                    $disallowchoice->action = null;
+                    $disallowchoice->add_class('activesetting');
+                    break;
             }
-        } else if ($forumobject->forcesubscribe == FORUM_DISALLOWSUBSCRIBE) {
-            $string = get_string('disallowsubscribe', 'forum');
-            $notenode = $forumnode->add($string);
-            $helpbutton = $OUTPUT->old_help_icon("subscription", $string, "forum");
+
         } else {
-            $string = get_string("forcesubscribe", "forum");
-            $notenode = $forumnode->add(get_string("allowsallsubscribe", 'forum'));
-            $helpbutton = $OUTPUT->old_help_icon("subscription", $string, "forum");
 
-            if (has_capability('mod/forum:managesubscriptions', $PAGE->cm->context)) {
-                $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'force'=>'yes'));
-                $forumnode->add($string, $url, navigation_node::TYPE_SETTING);
-            } else {
-                $forumnode->add(get_string('everyonecannowchoose', 'forum'), null, navigation_node::TYPE_SETTING);
+            switch ($subscriptionmode) {
+                case FORUM_CHOOSESUBSCRIBE : // 0
+                    $notenode = $forumnode->add(get_string('subscriptionoptional', 'forum'));
+                    break;
+                case FORUM_FORCESUBSCRIBE : // 1
+                    $notenode = $forumnode->add(get_string('subscriptionforced', 'forum'));
+                    break;
+                case FORUM_INITIALSUBSCRIBE : // 2
+                    $notenode = $forumnode->add(get_string('subscriptionauto', 'forum'));
+                    break;
+                case FORUM_DISALLOWSUBSCRIBE : // 3
+                    $notenode = $forumnode->add(get_string('subscriptiondisabled', 'forum'));
+                    break;
             }
-            if(has_capability('mod/forum:viewsubscribers', $PAGE->cm->context)){
-                $url = new moodle_url('/mod/forum/subscribers.php', array('id'=>$forumobject->id));
-                $forumnode->add(get_string('showsubscribers', 'forum'), $url, navigation_node::TYPE_SETTING);
-            }
+        }
 
-            if (forum_is_forcesubscribed($forumobject) || ($forumobject->forcesubscribe == FORUM_DISALLOWSUBSCRIBE && !has_capability('mod/forum:managesubscriptions', $PAGE->cm->context))) {
-                // Do nothing
+        if ($cansubscribe) {
+            if (forum_is_subscribed($USER->id, $forumobject)) {
+                $linktext = get_string('unsubscribe', 'forum');
             } else {
-                if (forum_is_subscribed($USER->id, $forumobject)) {
-                    $linktext = get_string('unsubscribe', 'forum');
-                } else {
-                    $linktext = get_string('subscribe', 'forum');
-                }
-                $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id));
-                $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
+                $linktext = get_string('subscribe', 'forum');
             }
+            $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id));
+            $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
+        }
+
+        if (has_capability('mod/forum:viewsubscribers', $PAGE->cm->context)){
+            $url = new moodle_url('/mod/forum/subscribers.php', array('id'=>$forumobject->id));
+            $forumnode->add(get_string('showsubscribers', 'forum'), $url, navigation_node::TYPE_SETTING);
         }
 
         if (forum_tp_can_track_forums($forumobject)) {
@@ -8080,12 +8112,6 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
             }
             $url = new moodle_url('/mod/forum/settracking.php', array('id'=>$forumobject->id));
             $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
-        }
-        if ($notenode!==false) {
-            $notenode->add_class('note');
-            if ($helpbutton!==false) {
-                $notenode->helpbutton = $helpbutton;
-            }
         }
     }
 
