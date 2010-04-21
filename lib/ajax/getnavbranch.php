@@ -49,17 +49,30 @@ try {
         // Get the db record for the block instance
         $blockrecords = $DB->get_record('block_instances', array('id'=>$instanceid,'blockname'=>'navigation'));
         if ($blockrecords!=false) {
-                // Instantiate a block_instance object so we can access congif
+
+            // Instantiate a block_instance object so we can access config
             $block = block_instance('navigation', $blockrecords);
-            // Check if the expansion limit config option has been set and isn't the default [everything]
-            if (empty($block->config->showemptybranches) || $block->config->showemptybranches=='no') {
-                $navigation->showemptybranches = false;
+
+            $trimmode = block_navigation::TRIM_RIGHT;
+            $trimlength = 50;
+
+            // Set the trim mode
+            if (!empty($block->config->trimmode)) {
+                $trimmode = (int)$block->config->trimmode;
+            }
+            // Set the trim length
+            if (!empty($block->config->trimlength)) {
+                $trimlength = (int)$block->config->trimlength;
             }
         }
     }
 
     // Create a navigation object to use, we can't guarantee PAGE will be complete
+
     $expandable = $navigation->initialise($branchtype, $branchid);
+    if (isset($block)) {
+        $block->trim($navigation, $trimmode, $trimlength, ceil($trimlength/2));
+    }
     $converter = new navigation_json();
     
     // Find the actuall branch we are looking for

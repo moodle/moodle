@@ -190,15 +190,6 @@ class navigation_node implements renderable {
         }
         // Default the title to the text
         $this->title = $this->text;
-        $textlib = textlib_get_instance();
-        if (strlen($this->text)>50) {
-            // Truncate the text to 50 characters
-            $this->text = $textlib->substr($this->text, 0, 50).'...';
-        }
-        if (is_string($this->shorttext) && strlen($this->shorttext)>25) {
-            // Truncate the shorttext
-            $this->shorttext = $textlib->substr($this->shorttext, 0, 25).'...';
-        }
         // Instantiate a new navigation node collection for this nodes children
         $this->children = new navigation_node_collection();
     }

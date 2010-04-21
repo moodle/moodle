@@ -32,6 +32,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class block_navigation_edit_form extends block_edit_form {
+    /**
+     * @param MoodleQuickForm $mform
+     */
     protected function specific_definition($mform) {
         global $CFG;
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
@@ -40,15 +43,19 @@ class block_navigation_edit_form extends block_edit_form {
         $yesnooptions = array('yes'=>get_string('yes'), 'no'=>get_string('no'));
         foreach ($mods as $modname=>$default) {
             $mform->addElement('select', 'config_'.$modname, get_string($modname.'desc', $this->block->blockname), $yesnooptions);
-            if (isset($this->block->config->{$modname}) && $this->block->config->{$modname}!=$default) {
-                if ($default=='no') {
-                    $mform->getElement('config_'.$modname)->setSelected('yes');
-                } else {
-                    $mform->getElement('config_'.$modname)->setSelected('no');
-                }
-            } else {
-                $mform->getElement('config_'.$modname)->setSelected($default);
-            }
+            $mform->setDefault('config_'.$modname, $default);
         }
+
+        $options = array(
+            block_navigation::TRIM_RIGHT => get_string('trimmoderight', $this->block->blockname),
+            block_navigation::TRIM_LEFT => get_string('trimmodeleft', $this->block->blockname),
+            block_navigation::TRIM_CENTER => get_string('trimmodecenter', $this->block->blockname)
+        );
+        $mform->addElement('select', 'config_trimmode', get_string('trimmode', $this->block->blockname), $options);
+        $mform->setType('config_trimmode', PARAM_INT);
+
+        $mform->addElement('text', 'config_trimlength', get_string('trimlength', $this->block->blockname));
+        $mform->setDefault('config_trimlength', 50);
+        $mform->setType('config_trimlength', PARAM_INT);
     }
 }

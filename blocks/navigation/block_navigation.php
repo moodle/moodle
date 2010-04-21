@@ -45,6 +45,13 @@ class block_navigation extends block_base {
     /** @var bool|null */
     protected $docked = null;
 
+    /** @var int Trim characters from the right */
+    const TRIM_RIGHT = 1;
+    /** @var int Trim characters from the left */
+    const TRIM_LEFT = 2;
+    /** @var int Trim characters from the center */
+    const TRIM_CENTER = 3;
+
     /**
      * Set the initial properties for the block
      */
@@ -125,8 +132,21 @@ class block_navigation extends block_base {
             redirect($url);
         }
 
+        $trimmode = self::TRIM_LEFT;
+        $trimlength = 50;
+
+        if (!empty($this->config->trimmode)) {
+            $trimmode = (int)$this->config->trimmode;
+        }
+
+        if (!empty($this->config->trimlength)) {
+            $trimlength = (int)$this->config->trimlength;
+        }
+
         // Initialise (only actually happens if it hasn't already been done yet
         $this->page->navigation->initialise();
+        $navigation = clone($this->page->navigation);
+        $this->trim($navigation, $trimmode, $trimlength, ceil($trimlength/2));
 
         if (!empty($this->config->showmyhistory) && $this->config->showmyhistory=='yes') {
             $this->showmyhistory();
@@ -277,7 +297,7 @@ class block_navigation extends block_base {
         // If we have `more than nothing` in the history display it :D
         if ($historycount > 0) {
             // Add a branch to hold the users history
-            $mymoodle = $PAGE->navigation->get('profile', navigation_node::TYPE_USER);
+            $mymoodle = $PAGE->navigation->get('myprofile', navigation_node::TYPE_USER);
             $myhistorybranch = $mymoodle->add(get_string('showmyhistorytitle', $this->blockname), null, navigation_node::TYPE_CUSTOM, null, 'myhistory');
             foreach (array_reverse($history) as $node) {
                 $myhistorybranch->children->add($node);
@@ -288,5 +308,92 @@ class block_navigation extends block_base {
         $cache->history = $history;
 
         return true;
+    }
+
+    /**
+     * Trims the text and shorttext properties of this node and optionally
+     * all of its children.
+     *
+     * @param int $mode One of navigation_node::TRIM_*
+     * @param int $long The length to trim text to
+     * @param int $short The length to trim shorttext to
+     * @param bool $recurse Recurse all children
+     * @param textlib|null $textlib
+     */
+    public function trim(navigation_node $node, $mode=1, $long=50, $short=25, $recurse=true, $textlib=null) {
+        if ($textlib == null) {
+            $textlib = textlib_get_instance();
+        }
+        switch ($mode) {
+            case self::TRIM_RIGHT :
+                if ($textlib->strlen($node->text)>($long+3)) {
+                    // Truncate the text to $long characters
+                    $node->text = $this->trim_right($textlib, $node->text, $long);
+                }
+                if (is_string($node->shorttext) && $textlib->strlen($node->shorttext)>($short+3)) {
+                    // Truncate the shorttext
+                    $node->shorttext = $this->trim_right($textlib, $node->shorttext, $short);
+                }
+                break;
+            case self::TRIM_LEFT :
+                if ($textlib->strlen($node->text)>($long+3)) {
+                    // Truncate the text to $long characters
+                    $node->text = $this->trim_left($textlib, $node->text, $long);
+                }
+                if (is_string($node->shorttext) && strlen($node->shorttext)>($short+3)) {
+                    // Truncate the shorttext
+                    $node->shorttext = $this->trim_left($textlib, $node->shorttext, $short);
+                }
+                break;
+            case self::TRIM_CENTER :
+                if ($textlib->strlen($node->text)>($long+3)) {
+                    // Truncate the text to $long characters
+                    $node->text = $this->trim_center($textlib, $node->text, $long);
+                }
+                if (is_string($node->shorttext) && strlen($node->shorttext)>($short+3)) {
+                    // Truncate the shorttext
+                    $node->shorttext = $this->trim_center($textlib, $node->shorttext, $short);
+                }
+                break;
+        }
+        if ($recurse && $node->children->count()) {
+            foreach ($node->children as &$child) {
+                $this->trim($child, $mode, $long, $short, true, $textlib);
+            }
+        }
+    }
+    /**
+     * Truncate a string from the left
+     * @param textlib $textlib
+     * @param string $string The string to truncate
+     * @param int $length The length to truncate to
+     * @return string The truncated string
+     */
+    protected function trim_left($textlib, $string, $length) {
+        return '...'.$textlib->substr($string, $textlib->strlen($string)-$length);
+    }
+    /**
+     * Truncate a string from the right
+     * @param textlib $textlib
+     * @param string $string The string to truncate
+     * @param int $length The length to truncate to
+     * @return string The truncated string
+     */
+    protected function trim_right($textlib, $string, $length) {
+        return $textlib->substr($string, 0, $length).'...';
+    }
+    /**
+     * Truncate a string in the center
+     * @param textlib $textlib
+     * @param string $string The string to truncate
+     * @param int $length The length to truncate to
+     * @return string The truncated string
+     */
+    protected function trim_center($textlib, $string, $length) {
+        $trimlength = ceil($length/2);
+        $start = $textlib->substr($string, 0, $trimlength);
+        $end = $textlib->substr($string, $textlib->strlen($string)-$trimlength);
+        $string = $start.'...'.$end;
+        return $string;
     }
 }

@@ -1149,7 +1149,7 @@ class theme_config {
         $regions = array();
         foreach ($this->layouts as $layoutinfo) {
             foreach ($layoutinfo['regions'] as $region) {
-                $regions[$region] = $this->get_region_name($region, $layoutinfo['theme']);
+                $regions[$region] = $this->get_region_name($region, $this->name);
             }
         }
         return $regions;
