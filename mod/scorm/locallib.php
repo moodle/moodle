@@ -350,9 +350,6 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
             $track->value = stripslashes_safe($track->value);
             $usertrack->{$element} = $track->value;
             switch ($element) {
-                case 'x.start.time':
-                    $usertrack->x_start_time = $track->value;
-                    break;
                 case 'cmi.core.lesson_status':
                 case 'cmi.completion_status':
                     if ($track->value == 'not attempted') {
@@ -405,11 +402,7 @@ function scorm_get_sco_runtime($scormid, $scoid, $userid, $attempt=1) {
         $tracks = array_values($tracks);
     }
 
-    if ($start_track = get_records_select('scorm_scoes_track',"$sql AND element='x.start.time' ORDER BY scoid ASC")) {
-        $start_track = array_values($start_track);
-        $timedata->start = $start_track[0]->value;
-    }
-    else if ($tracks) {
+    if ($tracks) {
         $timedata->start = $tracks[0]->timemodified;
     }
     else {
