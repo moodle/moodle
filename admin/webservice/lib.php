@@ -69,12 +69,13 @@ class service_user_selector extends user_selector_base {
             ///the following SQL retrieve all users that are allowed to the serviceid
             $sql = " FROM {user} u, {external_services_users} esu
                  WHERE $wherecondition
+                       AND u.deleted = 0
                        AND esu.userid = u.id
                        AND esu.externalserviceid = :serviceid";
         }
         else {
             ///the following SQL retrieve all users that are not allowed to the serviceid
-            $sql = " FROM {user} u WHERE $wherecondition
+            $sql = " FROM {user} u WHERE $wherecondition AND u.deleted = 0
                  AND NOT EXISTS (SELECT esu.userid FROM {external_services_users} esu
                                                   WHERE esu.externalserviceid = :serviceid
                                                         AND esu.userid = u.id)";
