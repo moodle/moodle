@@ -363,6 +363,8 @@ define('FEATURE_MODEDIT_DEFAULT_COMPLETION', 'modedit_default_completion');
 define('FEATURE_COMMENT', 'comment');
 
 define('FEATURE_RATE', 'rate');
+/** True if module supports backup/restore of moodle2 format */
+define('FEATURE_BACKUP_MOODLE2', 'backup_moodle2');
 
 /** Unspecified module archetype */
 define('MOD_ARCHETYPE_OTHER', 0);
