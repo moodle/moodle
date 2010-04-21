@@ -30,6 +30,7 @@ $string['coursestructures'] = 'Categories, courses, and course structures';
 $string['courseactivities'] = 'Categories, courses, and course Activities';
 $string['enablehoverexpansiondesc'] = 'Enable mouseover expansion of this block';
 $string['enabledockdesc'] = 'Allow the user to dock this block';
+$string['expansionlimit'] = 'Generate navigation for the following';
 $string['pluginname'] = 'Navigation';
 $string['showmyhistorydesc'] = 'Show my history as a branch in the navigation';
 $string['showmyhistorytitle'] = 'My history';

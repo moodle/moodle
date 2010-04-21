@@ -146,6 +146,11 @@ class block_navigation extends block_base {
         // Initialise (only actually happens if it hasn't already been done yet
         $this->page->navigation->initialise();
         $navigation = clone($this->page->navigation);
+        $expansionlimit = null;
+        if (!empty($this->config->expansionlimit)) {
+            $expansionlimit = $this->config->expansionlimit;
+            $navigation->set_expansion_limit($this->config->expansionlimit);
+        }
         $this->trim($navigation, $trimmode, $trimlength, ceil($trimlength/2));
 
         if (!empty($this->config->showmyhistory) && $this->config->showmyhistory=='yes') {
@@ -154,7 +159,7 @@ class block_navigation extends block_base {
 
         // Get the expandable items so we can pass them to JS
         $expandable = array();
-        $this->page->navigation->find_expandable($expandable);
+        $navigation->find_expandable($expandable);
 
         // Initialise the JS tree object
         $module = array('name'=>'block_navigation', 'fullpath'=>'/blocks/navigation/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom', 'json-parse'));
@@ -163,7 +168,7 @@ class block_navigation extends block_base {
 
         // Grab the items to display
         $renderer = $this->page->get_renderer('block_navigation');
-        $this->content->text = $renderer->navigation_tree($this->page->navigation);
+        $this->content->text = $renderer->navigation_tree($navigation, $expansionlimit);
 
         $reloadlink = new moodle_url($this->page->url, array('regenerate'=>'navigation'));
 

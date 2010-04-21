@@ -512,13 +512,22 @@ class navigation_node implements renderable {
             return;
         }
         foreach ($this->children as &$child) {
-            if ($child->nodetype == self::NODETYPE_BRANCH && $child->children->count()==0) {
+            if ($child->nodetype == self::NODETYPE_BRANCH && $child->children->count()==0 && $child->display) {
                 $child->id = 'expandable_branch_'.(count($expandable)+1);
                 $this->add_class('canexpand');
                 $expandable[] = array('id'=>$child->id,'branchid'=>$child->key,'type'=>$child->type);
             }
             $child->find_expandable($expandable);
         }
+    }
+
+    public function find_all_of_type($type) {
+        $nodes = $this->children->type($type);
+        foreach ($this->children as &$node) {
+            $childnodes = $node->find_all_of_type($type);
+            $nodes = array_merge($nodes, $childnodes);
+        }
+        return $nodes;
     }
 }
 
@@ -744,6 +753,9 @@ class global_navigation extends navigation_node {
     protected $cache;
     /** @var array */
     protected $addedcourses = array();
+    /** @var int */
+    protected $expansionlimit = 0;
+
     /**
      * Constructs a new global navigation
      *
@@ -1480,6 +1492,16 @@ class global_navigation extends navigation_node {
      */
     public function clear_cache() {
         $this->cache->clear();
+    }
+
+    public function set_expansion_limit($type) {
+        $nodes = $this->find_all_of_type($type);
+        foreach ($nodes as &$node) {
+            foreach ($node->children as &$child) {
+                $child->display = false;
+            }
+        }
+        return true;
     }
 }
 

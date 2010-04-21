@@ -57,5 +57,15 @@ class block_navigation_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_trimlength', get_string('trimlength', $this->block->blockname));
         $mform->setDefault('config_trimlength', 50);
         $mform->setType('config_trimlength', PARAM_INT);
+
+        $options = array(
+            0 => get_string('everything', $this->block->blockname),
+            global_navigation::TYPE_COURSE => get_string('courses', $this->block->blockname),
+            global_navigation::TYPE_SECTION => get_string('coursestructures', $this->block->blockname),
+            global_navigation::TYPE_ACTIVITY => get_string('courseactivities', $this->block->blockname)
+        );
+        $mform->addElement('select', 'config_expansionlimit', get_string('expansionlimit', $this->block->blockname), $options);
+        $mform->setType('config_expansionlimit', PARAM_INT);
+
     }
 }

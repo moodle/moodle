@@ -43,15 +43,13 @@ try {
     // Create a global nav object
     $navigation = new global_navigation_for_ajax($PAGE);
 
-    // If set to true then we need to call toggle display
-    $toggledisplay = false;
     if ($instanceid!==null) {
         // Get the db record for the block instance
-        $blockrecords = $DB->get_record('block_instances', array('id'=>$instanceid,'blockname'=>'navigation'));
-        if ($blockrecords!=false) {
+        $blockrecord = $DB->get_record('block_instances', array('id'=>$instanceid,'blockname'=>'navigation'));
+        if ($blockrecord!=false) {
 
             // Instantiate a block_instance object so we can access config
-            $block = block_instance('navigation', $blockrecords);
+            $block = block_instance('navigation', $blockrecord);
 
             $trimmode = block_navigation::TRIM_RIGHT;
             $trimlength = 50;
@@ -70,6 +68,9 @@ try {
     // Create a navigation object to use, we can't guarantee PAGE will be complete
 
     $expandable = $navigation->initialise($branchtype, $branchid);
+    if (isset($block) && !empty($block->config->expansionlimit)) {
+        $navigation->set_expansion_limit($block->config->expansionlimit);
+    }
     if (isset($block)) {
         $block->trim($navigation, $trimmode, $trimlength, ceil($trimlength/2));
     }
