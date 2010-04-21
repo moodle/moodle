@@ -68,6 +68,7 @@
  * @property-read string $heading The main heading that should be displayed at the top of the <body>.
  * @property-read string $headingmenu The menu (or actions) to display in the heading
  * @property-read array $layout_options Returns arrays with options for layout file.
+ * @property-read bool $legacythemeinuse Returns true if the legacy theme is being used.
  * @property-read navbar $navbar Returns the navbar object used to display the navbar
  * @property-read global_navigation $navigation Returns the global navigation structure
  * @property-read xml_container_stack $opencontainers Tracks XHTML tags on this page that have been opened but not closed.
@@ -205,6 +206,19 @@ class moodle_page {
      */
     protected $_legacypageobject = null;
 
+    /**
+     * Associative array of browser shortnames (as used by check_browser_version)
+     * and their minimum required versions
+     * @var array
+     */
+    protected $_legacybrowsers = array('MSIE' => 6.0);
+
+    /**
+     * Is set to true if the chosen legacy theme is in use. False by default.
+     * @var bool
+     */
+    protected $_legacythemeinuse = false;
+    
 /// Magic getter methods =============================================================
 /// Due to the __get magic below, you normally do not call these as $PAGE->magic_get_x
 /// methods, but instead use the $PAGE->x syntax.
@@ -491,6 +505,14 @@ class moodle_page {
             $this->initialise_theme_and_output();
         }
         return $this->_theme;
+    }
+
+    /**
+     * Please do not call this method directly, use the ->legacythemeinuse syntax. {@link __get()}.
+     * @return bool
+     */
+    protected function magic_get_legacythemeinuse() {
+        return ($this->_legacythemeinuse);
     }
 
     /**
@@ -1168,13 +1190,34 @@ class moodle_page {
                 case 'site':
                     if ($mnetpeertheme) {
                         return $mnetpeertheme;
+                    } else if(!empty($CFG->themelegacy) && $this->browser_is_outdated()) {
+                        $this->_legacythemeinuse = true;
+                        return $CFG->themelegacy;
                     } else {
-                        return $CFG->theme;
+                    	return $CFG->theme;
                     }
             }
         }
     }
 
+    /**
+     * Determines whether the current browser should
+     * default to the admin-selected legacy theme
+     *
+     * @return  true if legacy theme should be used, otherwise false
+     * 
+     */
+    protected function browser_is_outdated() {
+    	foreach($this->_legacybrowsers as $browser => $version) {
+            // Check the browser is valid first then that its version is suitable
+    	    if(check_browser_version($browser, '0') &&
+    	       !check_browser_version($browser, $version)) {
+    	       	return true;
+    	    }
+    	}
+    	return false;
+    }
+    
     /**
      * Sets ->pagetype from the script name. For example, if the script that was
      * run is mod/quiz/view.php, ->pagetype will be set to 'mod-quiz-view'.
@@ -1274,6 +1317,10 @@ class moodle_page {
 
         if (!empty($CFG->blocksdrag)) {
             $this->add_body_class('drag');
+        }
+
+        if ($this->_legacythemeinuse) {
+            $this->add_body_class('legacytheme');
         }
     }
 

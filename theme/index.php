@@ -23,6 +23,7 @@ require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 $choose = optional_param('choose', '', PARAM_SAFEDIR);
+$chooselegacy = optional_param('chooselegacy', '', PARAM_SAFEDIR);
 $reset  = optional_param('reset', 0, PARAM_BOOL);
 
 admin_externalpage_setup('themeselector');
@@ -32,25 +33,26 @@ unset($SESSION->theme);
 if ($reset and confirm_sesskey()) {
     theme_reset_all_caches();
 
-} else if ($choose and confirm_sesskey()) {
-    // The user has chosen one theme from the list of all themes, show a
-    // 'You have chosen a new theme' confirmation page.
+} else if (($choose || $chooselegacy) && confirm_sesskey()) {
 
-    $theme = theme_config::load($choose);
-    $choose = $theme->name;
-
-    set_config('theme', $choose);
+    if ($choose) {
+        $chosentheme = $choose;
+        $heading = get_string('themesaved');
+        $config = 'theme';
+    } else {
+        $chosentheme = $chooselegacy;
+        $heading = get_string('legacythemesaved');
+        $config = 'themelegacy';
+    }
+    $theme = theme_config::load($chosentheme);
+    set_config($config, $theme->name);
 
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('themesaved'));
-
+    echo $OUTPUT->heading($heading);
     echo $OUTPUT->box_start();
-    $text = get_string('choosereadme', 'theme_'.$CFG->theme);
-    echo format_text($text, FORMAT_MOODLE);
+    echo format_text(get_string('choosereadme', 'theme_'.$CFG->theme), FORMAT_MOODLE);
     echo $OUTPUT->box_end();
-
     echo $OUTPUT->continue_button($CFG->wwwroot . '/' . $CFG->admin . '/index.php');
-
     echo $OUTPUT->footer();
     exit;
 }
@@ -89,29 +91,45 @@ foreach ($themes as $themename => $themedir) {
     // Build the table row, and also a list of items to go in the second cell.
     $row = array();
     $infoitems = array();
+    $rowclasses = array();
 
+    // Set up bools whether this theme is chosen either main or legacy
+    $ischosentheme = ($themename == $CFG->theme);
+    $ischosenlegacytheme = (!empty($CFG->themelegacy) && $themename == $CFG->themelegacy);
+
+    if ($ischosentheme) {
+        // Is the chosen main theme
+        $rowclasses[] = 'selectedtheme';
+    }
+    if ($ischosenlegacytheme) {
+        // Is the chosen legacy theme
+        $rowclasses[] = 'selectedlegacytheme';
+    }
 
     // link to the screenshot, now mandatory - the image path is hardcoded because we need image from other themes, not the current one
-    $screenshotpath = "$CFG->wwwroot/theme/image.php?theme=$themename&amp;image=screenshot&amp;component=theme";
-
+    $screenshotpath = new moodle_url('/theme/image.php', array('theme'=>$themename, 'image'=>'screenshot','component'=>'theme'));
     // Contents of the first screenshot/preview cell.
-    $row[] = "<img src=\"$screenshotpath\" alt=\"$themename\" />";
+    $row[] = html_writer::empty_tag('img', array('src'=>$screenshotpath, 'alt'=>$themename));
 
     // Contents of the second cell.
     $infocell = $OUTPUT->heading($themename, 3);
-    if ($themename != $CFG->theme) {
-        $infocell .= $OUTPUT->single_button(new moodle_url('index.php', array('choose' => $themename, 'sesskey' => sesskey())), get_string('choose'), 'get');
 
-    }
+    // Button to choose this as the main theme
+    $maintheme = new single_button(new moodle_url('/theme/index.php', array('choose' => $themename, 'sesskey' => sesskey())), get_string('useformaintheme'), 'get');
+    $maintheme->disabled = $ischosentheme;
+    $infocell .= $OUTPUT->render($maintheme);
+
+    // Button to choose this as the legacy theme
+    $legacytheme = new single_button(new moodle_url('/theme/index.php', array('chooselegacy' => $themename, 'sesskey' => sesskey())), get_string('useforlegacytheme'), 'get');
+    $legacytheme->disabled = $ischosenlegacytheme;
+    $infocell .= $OUTPUT->render($legacytheme);
+    
     $row[] = $infocell;
-
+    
     $table->data[$themename] = $row;
-    if ($themename == $CFG->theme) {
-        $table->rowclasses[$themename] = 'selectedtheme';
-    }
+    $table->rowclasses[$themename] = join(' ', $rowclasses);
 }
 
 echo html_writer::table($table);
 
 echo $OUTPUT->footer();
-
