@@ -775,6 +775,10 @@ class global_navigation extends navigation_node {
             'text' => get_string('myhome'),
             'action' => new moodle_url('/my/')
         );
+        if (!isloggedin()) {
+            $properties['text'] = get_string('home');
+            $properties['action'] = new moodle_url('/');
+        }
         parent::__construct($properties);
 
         // Initalise and set defaults
@@ -926,7 +930,6 @@ class global_navigation extends navigation_node {
             foreach ($children as $child) {
                 $this->children->add($child);
             }
-            $this->action = new moodle_url('/');
         }
 
         $this->initialised = true;
