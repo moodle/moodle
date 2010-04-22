@@ -225,10 +225,15 @@ M.block_navigation.classes.tree.prototype.toggleexpansion = function(e) {
     }
 
     if (e.target.get('nodeName').toUpperCase() == 'LI') {
-        e.target.toggleClass('collapsed');
+        var target = e.target;
     } else if (e.target.ancestor('LI')) {
-        e.target.ancestor('LI').toggleClass('collapsed');
+        var target = e.target.ancestor('LI');
     }
+
+    if (target && !target.hasClass('depth_1')) {
+        target.toggleClass('collapsed');
+    }
+
     if (this.candock) {
         M.core_dock.resize();
     }

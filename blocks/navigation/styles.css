@@ -6,11 +6,14 @@
 /** General display rules **/
 .block_navigation .block_tree {margin:5px;padding-left:0px;overflow:visible;}
 .block_navigation .block_tree li {margin:0;list-style: none;}
-.block_navigation .block_tree li ul {padding-left:16px;margin:0;}
+.block_navigation .block_tree li ul {padding-left:0;margin:0;}
+.block_navigation .block_tree li.depth_2 ul {padding-left:16px;margin:0;}
 .block_navigation .block_tree .tree_item {padding-left: 16px;margin:3px 0px;text-align:left;}
 .block_navigation .block_tree .tree_item.branch {background-image: url([[pix:t/expanded]]);background-position: center left;background-repeat: no-repeat;}
+.block_navigation .block_tree .navigation_node.tree_item.branch {background-image:none;padding-left:0;}
 .block_navigation .block_tree .root_node.leaf {padding-left:0px;}
 .block_navigation .block_tree .current_branch {font-weight:bold;}
+.block_navigation .block_tree .depth_1.current_branch ul {font-weight:normal;}
 .jsenabled .block_navigation .block_tree .tree_item.branch {cursor:pointer;}
 .jsenabled .block_navigation .block_tree .tree_item.emptybranch {background-image: url([[pix:t/collapsed_empty]]);background-position: center left;background-repeat: no-repeat;}
 .jsenabled .block_navigation .block_tree .collapsed ul {display: none;}

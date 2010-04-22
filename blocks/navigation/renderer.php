@@ -3,6 +3,7 @@
 class block_navigation_renderer extends plugin_renderer_base {
 
     public function navigation_tree(global_navigation $navigation, $expansionlimit) {
+        $navigation->add_class('navigation_node');
         $content = $this->navigation_node(array($navigation), array('class'=>'block_tree list'), $expansionlimit);
         if (isset($navigation->id) && !is_numeric($navigation->id) && !empty($content)) {
             $content = $this->output->box($content, 'block_tree_box', $navigation->id);
@@ -10,7 +11,7 @@ class block_navigation_renderer extends plugin_renderer_base {
         return $content;
     }
 
-    protected function navigation_node($items, $attrs=array(), $expansionlimit=null) {
+    protected function navigation_node($items, $attrs=array(), $expansionlimit=null, $depth=1) {
 
         // exit if empty, we don't want an empty ul element
         if (count($items)==0) {
@@ -66,7 +67,7 @@ class block_navigation_renderer extends plugin_renderer_base {
             }
 
             // this applies to the li item which contains all child lists too
-            $liclasses = array($item->get_css_type());
+            $liclasses = array($item->get_css_type(), 'depth_'.$depth);
             if ($item->has_children() && (!$item->forceopen || $item->collapse)) {
                 $liclasses[] = 'collapsed';
             }
@@ -88,7 +89,7 @@ class block_navigation_renderer extends plugin_renderer_base {
             if (!empty($item->id)) {
                 $divattr['id'] = $item->id;
             }
-            $content = html_writer::tag('p', $content, $divattr) . $this->navigation_node($item->children, array(), $expansionlimit);
+            $content = html_writer::tag('p', $content, $divattr) . $this->navigation_node($item->children, array(), $expansionlimit, $depth+1);
             if (!empty($item->preceedwithhr) && $item->preceedwithhr===true) {
                 $content = html_writer::empty_tag('hr') . $content;
             }
