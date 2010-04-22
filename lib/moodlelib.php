@@ -6821,14 +6821,20 @@ function normalize_component($component) {
 
 /**
  * List all core subsystems, this is especially useful for get_string()
- * and output renderers. The relative location is not always included.
+ * and output renderers.
+ *
+ * The location is dirroot relative path, NULL means there is no special
+ * directory for this subsystem.
+ *
+ * Unfortunately no module may be named like any core subsystem because
+ * we are still lazy to use proper "mod_" prefix in get_string() and elsewhere.
  *
  * @return array of strings - name=>location
  */
 function get_core_subsystems() {
     global $CFG;
 
-    static $info     = null;
+    static $info = null;
 
     if (!$info) {
         $info = array(

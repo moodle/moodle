@@ -106,9 +106,6 @@ abstract class renderer_factory_base implements renderer_factory {
     /** @var theme_config the theme we belong to. */
     protected $theme;
 
-    /** @var hardcoded list of core subtypes and their locations, add more if ßneeded */
-    protected $core_subtypes = array('webservice' => 'webservice');
-
     /**
      * Constructor.
      * @param theme_config $theme the theme we belong to.
@@ -176,10 +173,11 @@ abstract class renderer_factory_base implements renderer_factory {
             }
 
         } else if (!empty($subtype)) {
-            if (!isset($this->core_subtypes[$subtype])) {
+            $coresubsystems = get_core_subsystems();
+            if (!isset($coresubsystems[$subtype])) {
                 throw new coding_exception('Invalid core subtype "' . $subtype . '" in renderer request');
             }
-            $rendererfile = $CFG->dirroot . '/' . $this->core_subtypes[$subtype] . '/renderer.php';
+            $rendererfile = $CFG->dirroot . '/' . $coresubsystems[$subtype] . '/renderer.php';
             if (file_exists($rendererfile)) {
                 include_once($rendererfile);
             }
