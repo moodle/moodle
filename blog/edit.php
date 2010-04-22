@@ -56,6 +56,11 @@ if (!empty($modid)) {
     $PAGE->set_context(get_context_instance(CONTEXT_MODULE, $modid));
 }
 
+// If courseid is empty use the system context
+if (empty($courseid)) {
+    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+}
+
 $blogheaders = blog_get_headers();
 
 require_login($courseid);
