@@ -109,9 +109,9 @@ function glossary_update_instance($glossary) {
     $glossary->timemodified = time();
     $glossary->id           = $glossary->instance;
 
-    if (empty($glossary->userating)) {
-        $glossary->assessed = 0;
-    }
+    //if (empty($glossary->userating)) {
+//        $glossary->assessed = 0;
+  //  }
 
     if (empty($glossary->ratingtime) or empty($glossary->assessed)) {
         $glossary->assesstimestart  = 0;
@@ -423,7 +423,7 @@ function glossary_cron () {
  * @return array array of grades, false if none
  */
 function glossary_get_user_grades($glossary, $userid=0) {
-    global $DB;
+    /*global $DB;
 
     $params = array('userid'=>$userid, 'gid'=>$glossary->id);
 
@@ -436,7 +436,25 @@ function glossary_get_user_grades($glossary, $userid=0) {
                    $user
           GROUP BY u.id";
 
-    return $DB->get_records_sql($sql, $params);
+    return $DB->get_records_sql($sql, $params);*/
+    global $CFG;
+
+    require_once($CFG->dirroot.'/rating/lib.php');
+    $rm = new rating_manager();
+
+    $ratingoptions = new stdclass();
+
+    //need these to work backwards to get a context id. Is there a better way to get contextid from a module instance?
+    $ratingoptions->modulename = 'glossary';
+    $ratingoptions->moduleid   = $glossary->id;
+
+    $ratingoptions->userid = $userid;
+    $ratingoptions->aggregationmethod = $glossary->assessed;
+    $ratingoptions->scaleid = $glossary->scale;
+    $ratingoptions->itemtable = 'glossary_entries';
+    $ratingoptions->itemtableusercolumn = 'userid';
+
+    return $rm->get_user_grades($ratingoptions);
 }
 
 /**
@@ -760,11 +778,10 @@ function glossary_get_entries_search($concept, $courseid) {
  * @param string $hook
  * @param int $printicons
  * @param int $displayformat
- * @param array $ratings
  * @param bool $printview
  * @return mixed
  */
-function glossary_print_entry($course, $cm, $glossary, $entry, $mode='',$hook='',$printicons = 1, $displayformat  = -1, $ratings = NULL, $printview = false) {
+function glossary_print_entry($course, $cm, $glossary, $entry, $mode='',$hook='',$printicons = 1, $displayformat  = -1, $printview = false) {
     global $USER, $CFG;
     $return = false;
     if ( $displayformat < 0 ) {
@@ -781,7 +798,7 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode='',$hook=''
         if (file_exists($formatfile)) {
             include_once($formatfile);
             if (function_exists($functionname)) {
-                $return = $functionname($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
+                $return = $functionname($course, $cm, $glossary, $entry,$mode,$hook,$printicons);
             } else if ($printview) {
                 //If the glossary_print_entry_XXXX function doesn't exist, print default (old) print format
                 $return = glossary_print_entry_default($entry, $glossary, $cm);
@@ -1041,21 +1058,18 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
  * @param string $mode
  * @param object $hook
  * @param bool $printicons
- * @param array $ratings
  * @param bool $aliases
- * @return mixed
+ * @return void
  */
-function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases=true) {
-
+function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $aliases=true) {
     if ($aliases) {
         $aliases = glossary_print_entry_aliases($course, $cm, $glossary, $entry, $mode, $hook,'html');
     }
     $icons   = '';
-    $return   = '';
     if ($printicons) {
         $icons   = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,'html');
     }
-    if ($aliases || $icons || $ratings) {
+    if ($aliases || $icons || $entry->rating) {
         echo '<table>';
         if ( $aliases ) {
             echo '<tr valign="top"><td class="aliases">' .
@@ -1064,14 +1078,13 @@ function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $m
         if ($icons) {
             echo '<tr valign="top"><td class="icons">'.$icons.'</td></tr>';
         }
-        if ($ratings) {
+        if ($entry->rating) {
             echo '<tr valign="top"><td class="ratings">';
-            $return = glossary_print_entry_ratings($course, $entry, $ratings);
+            glossary_print_entry_ratings($course, $entry);
             echo '</td></tr>';
         }
         echo '</table>';
     }
-    return $return;
 }
 
 /**
@@ -1743,11 +1756,10 @@ function glossary_sort_entries ( $entry0, $entry1 ) {
  * @global object
  * @param object $course
  * @param object $entry
- * @param array $ratings
  * @return bool
  */
-function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {
-    global $USER, $CFG, $DB;
+function  glossary_print_entry_ratings($course, $entry) {
+/*    global $USER, $CFG, $DB;
 
     $glossary = $DB->get_record('glossary', array('id'=>$entry->glossaryid));
     $glossarymod = $DB->get_record('modules', array('name'=>'glossary'));
@@ -1757,10 +1769,9 @@ function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    $ratingsmenuused = false;
     if (!empty($ratings) and isloggedin()) {
         $useratings = true;
-        if ($ratings->assesstimestart and $ratings->assesstimefinish) {
+        if ($entry->rating->settings->assesstimestart and $entry->rating->settings->assesstimefinish) {
             if ($entry->timecreated < $ratings->assesstimestart or $entry->timecreated > $ratings->assesstimefinish) {
                 $useratings = false;
             }
@@ -1781,6 +1792,11 @@ function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {
         }
     }
     return $ratingsmenuused;
+    */
+    global $OUTPUT;
+    if( !empty($entry->rating) ){
+        echo $OUTPUT->render($entry->rating);
+    }
 }
 
 /**
@@ -2126,150 +2142,6 @@ function glossary_count_unrated_entries($glossaryid, $userid) {
     } else {
         return 0;
     }
-}
-
-/**
- * Print the multiple ratings on a entry given to the current user by others.
- * Scale is an array of ratings
- *
- * @param int $entryid
- * @param array $scale
- */
-function glossary_print_ratings_mean($entryid, $scale) {
-    global $OUTPUT;
-    static $strrate;
-
-    $mean = glossary_get_ratings_mean($entryid, $scale);
-
-    if ($mean !== "") {
-
-        if (empty($strratings)) {
-            $strratings = get_string("ratings", "glossary");
-        }
-
-        echo "$strratings: ";
-        $link = new moodle_url("/mod/glossary/report.php?id=$entryid");
-        $action = new popup_action('click', $link, "ratings");
-        echo $OUTPUT->action_link($link, $mean, $action);
-    }
-}
-
-/**
- * Return the mean rating of a entry given to the current user by others.
- * Scale is an array of possible ratings in the scale
- * Ratings is an optional simple array of actual ratings (just integers)
- *
- * @global object
- * @param int $entryid
- * @param array $scale
- * @param array $ratings
- * @return string
- */
-function glossary_get_ratings_mean($entryid, $scale, $ratings=NULL) {
-    global $DB;
-
-    if (!$ratings) {
-        $ratings = array();
-        if ($rates = $DB->get_records("glossary_ratings", array("entryid"=>$entryid))) {
-            foreach ($rates as $rate) {
-                $ratings[] = $rate->rating;
-            }
-        }
-    }
-
-    $count = count($ratings);
-
-    if ($count == 0) {
-        return "";
-
-    } else if ($count == 1) {
-        return $scale[$ratings[0]];
-
-    } else {
-        $total = 0;
-        foreach ($ratings as $rating) {
-            $total += $rating;
-        }
-        $mean = round( ((float)$total/(float)$count) + 0.001);  // Little fudge factor so that 0.5 goes UP
-
-        if (isset($scale[$mean])) {
-            return $scale[$mean]." ($count)";
-        } else {
-            return "$mean ($count)";    // Should never happen, hopefully
-        }
-    }
-}
-
-/**
- * Return a summary of entry ratings given to the current user by others.
- * Scale is an array of possible ratings in the scale
- *  Ratings is an optional simple array of actual ratings (just integers)
- *
- * @global object
- * @param int $entryid
- * @param array $scale
- * @param array $ratings
- * @return string
- */
-function glossary_get_ratings_summary($entryid, $scale, $ratings=NULL) {
-    global $DB;
-
-    if (!$ratings) {
-        $ratings = array();
-        if ($rates = $DB->get_records("glossary_ratings", array("entryid"=>$entryid))) {
-            foreach ($rates as $rate) {
-                $rating[] = $rate->rating;
-            }
-        }
-    }
-
-
-    if (!$count = count($ratings)) {
-        return "";
-    }
-
-
-    foreach ($scale as $key => $scaleitem) {
-        $sumrating[$key] = 0;
-    }
-
-    foreach ($ratings as $rating) {
-        $sumrating[$rating]++;
-    }
-
-    $summary = "";
-    foreach ($scale as $key => $scaleitem) {
-        $summary = $sumrating[$key].$summary;
-        if ($key > 1) {
-            $summary = "/$summary";
-        }
-    }
-    return $summary;
-}
-
-/**
- * Print the menu of ratings as part of a larger form.
- * If the entry has already been - set that value.
- * Scale is an array of ratings
- *
- * @global object
- * @param int $entryid
- * @param int $userid
- * @param array $scale
- */
-function glossary_print_rating_menu($entryid, $userid, $scale) {
-    global $DB, $OUTPUT;
-
-    static $strrate;
-
-    if (!$rating = $DB->get_record("glossary_ratings", array("userid"=>$userid, "entryid"=>$entryid))) {
-        $rating->rating = -999;
-    }
-
-    if (empty($strrate)) {
-        $strrate = get_string("rate", "glossary");
-    }
-    echo html_writer::select($scale, $entryid, $rating->rating, array('-999'=>"$strrate..."));
 }
 
 /**
@@ -2669,7 +2541,7 @@ function glossary_supports($feature) {
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return true;
-        case FEATURE_RATE:                 return false;
+        case FEATURE_RATE:                    return true;
 
         default: return null;
     }

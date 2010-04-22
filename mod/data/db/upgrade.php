@@ -254,7 +254,8 @@ function xmldb_data_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2010031602, 'data');
     }
 
-    if($result && $oldversion < 2010041300) {
+    /*leave this commented out until the data module is switched to the new rating system MDL-21657
+     * if($result && $oldversion < 2010041300) {
         //migrate data_ratings to the central rating table
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
 
@@ -265,10 +266,10 @@ JOIN {data_records} re ON r.recordid=re.id
 JOIN {data} d ON d.id=re.dataid';
         $result = $result && upgrade_module_ratings($ratingssql,'data');
 
-        //todo andrew drop data_ratings
+        //todo drop data_ratings
 
         upgrade_mod_savepoint($result, 2010041300, 'data');
-    }
+    }*/
 
     return $result;
 }

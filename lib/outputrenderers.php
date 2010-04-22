@@ -1245,6 +1245,10 @@ class core_renderer extends renderer_base {
         global $CFG, $USER;
         static $havesetupjavascript = false;
 
+        if( $rating->settings->aggregationmethod == RATING_AGGREGATE_NONE ){
+            return null;//ratings are turned off
+        }
+
         $useajax = !empty($CFG->enableajax);
 
         //include required Javascript
@@ -1253,98 +1257,122 @@ class core_renderer extends renderer_base {
             $havesetupjavascript = true;
         }
 
-        $strrate = get_string("rate", "rating");
-        $strratings = ''; //the string we'll return
-
-        if($rating->settings->permissions->canview || $rating->settings->permissions->canviewall) {
-            switch ($rating->settings->aggregationmethod) {
-                case RATING_AGGREGATE_AVERAGE :
-                    $strratings .= get_string("aggregateavg", "forum");
-                    break;
-                case RATING_AGGREGATE_COUNT :
-                    $strratings .= get_string("aggregatecount", "forum");
-                    break;
-                case RATING_AGGREGATE_MAXIMUM :
-                    $strratings .= get_string("aggregatemax", "forum");
-                    break;
-                case RATING_AGGREGATE_MINIMUM :
-                    $strratings .= get_string("aggregatemin", "forum");
-                    break;
-                case RATING_AGGREGATE_SUM :
-                    $strratings .= get_string("aggregatesum", "forum");
-                    break;
-            }
-
-            if (empty($strratings)) {
-                $strratings .= $strrate;
-            }
-            $strratings .= ': ';
-
-            $scalemax = 0;
-            $ratingstr = null;
-
-            if ( is_array($rating->settings->scale->scaleitems) ) {
-                $scalemax = $rating->settings->scale->scaleitems[ count($rating->settings->scale->scaleitems)-1 ];
-                $ratingstr = $rating->settings->scale->scaleitems[$rating->rating];
-            }
-            else { //its numeric
-                $scalemax = $rating->settings->scale->scaleitems;
-                $ratingstr = round($rating->aggregate,1);
-            }
-
-            $aggstr = "{$ratingstr} / $scalemax ({$rating->count}) ";
-
-            if ($rating->settings->permissions->canviewall) {
-                $link = new moodle_url("/rating/index.php?contextid={$rating->context->id}&itemid={$rating->itemid}&scaleid={$rating->scaleid}");
-                $action = new popup_action('click', $link, 'ratings', array('height' => 400, 'width' => 600));
-                $strratings .= $this->action_link($link, $aggstr, $action);
-            } else if ($rating->settings->permissions->canview) {
-                $strratings .= $aggstr;
+        //check the item we're rating was created in the assessable time window
+        $inassessablewindow = true;
+        if ( $rating->settings->assesstimestart && $rating->settings->assesstimefinish ) {
+            if ($rating->itemtimecreated < $rating->settings->assesstimestart || $item->itemtimecreated > $rating->settings->assesstimefinish) {
+                $inassessablewindow = false;
             }
         }
 
-        //todo andrew alter the below if to deny guest users the ability to post ratings.
-        //Petr to define "guest"
-        $formstart = null;
-        if($rating->settings->permissions->canrate) {
-            //dont use $rating->userid below as it will be null if the user hasnt already rated the item
-            $formstart = <<<END
-<form id="postrating{$rating->itemid}" class="postratingform" method="post" action="rating/rate.php">
+        $strrate = get_string("rate", "rating");
+        $ratinghtml = ''; //the string we'll return
+
+        //if the item doesnt belong to the current user
+        if ($rating->itemuserid!=$USER->id ) {
+            if ($rating->settings->permissions->canview || $rating->settings->permissions->canviewall) {
+                $aggregatelabel = '';
+                switch ($rating->settings->aggregationmethod) {
+                    case RATING_AGGREGATE_AVERAGE :
+                        $aggregatelabel .= get_string("aggregateavg", "forum");
+                        break;
+                    case RATING_AGGREGATE_COUNT :
+                        $aggregatelabel .= get_string("aggregatecount", "forum");
+                        break;
+                    case RATING_AGGREGATE_MAXIMUM :
+                        $aggregatelabel .= get_string("aggregatemax", "forum");
+                        break;
+                    case RATING_AGGREGATE_MINIMUM :
+                        $aggregatelabel .= get_string("aggregatemin", "forum");
+                        break;
+                    case RATING_AGGREGATE_SUM :
+                        $aggregatelabel .= get_string("aggregatesum", "forum");
+                        break;
+                }
+
+                //$scalemax = 0;//no longer displaying scale max
+                $aggregatestr = '';
+
+                if ($rating->rating) { //this will prevent the user seeing the aggregate until they have submitted a rating
+                    if (is_array($rating->settings->scale->scaleitems)) {
+                        //$scalemax = $rating->settings->scale->scaleitems[ count($rating->settings->scale->scaleitems) ];
+                        $aggregatestr .= $rating->settings->scale->scaleitems[round($rating->aggregate)];//round aggregate as we're using it as an index
+                    }
+                    else { //its numeric
+                        //$scalemax = $rating->settings->scale->scaleitems;
+                        $aggregatestr .= round($rating->aggregate,1);
+                    }
+                }
+
+                $countstr = null;
+                if ($rating->count>0) {
+                    $countstr = "<span id='ratingcount{$rating->itemid}'>({$rating->count})</span>";
+                } else {
+                    $countstr = "<span id='ratingcount{$rating->itemid}'></span>";
+                }
+
+                //$aggregatehtml = "{$ratingstr} / $scalemax ({$rating->count}) ";
+                $aggregatehtml = "$aggregatelabel: <span id='ratingaggregate{$rating->itemid}'>{$aggregatestr}</span> $countstr ";
+
+                if ($rating->settings->permissions->canviewall) {
+                    $url = "/rating/index.php?contextid={$rating->context->id}&itemid={$rating->itemid}&scaleid={$rating->settings->scale->id}";
+                    $nonpopuplink = new moodle_url($url);
+                    $popuplink = new moodle_url("$url&popup=1");
+
+                    $action = new popup_action('click', $popuplink, 'ratings', array('height' => 400, 'width' => 600));
+                    $ratinghtml .= $this->action_link($nonpopuplink, $aggregatehtml, $action);
+                } else if ($rating->settings->permissions->canview) {
+                    $ratinghtml .= $aggregatehtml;
+                }
+            }
+
+            $formstart = null;
+            //if the item doesnt belong to the current user, the user has permission to rate
+            //and we're not outside of a defined assessable period
+            //if( $rating->itemuserid!=$USER->id && $rating->settings->permissions->canrate && $inassessablewindow) {
+            if ($rating->itemuserid!=$USER->id && $rating->settings->permissions->canrate && $inassessablewindow) {
+                $formstart = <<<END
+<form id="postrating{$rating->itemid}" class="postratingform" method="post" action="{$CFG->wwwroot}/rating/rate.php">
 <div class="ratingform">
 <input type="hidden" class="ratinginput" name="contextid" value="{$rating->context->id}" />
 <input type="hidden" class="ratinginput" name="itemid" value="{$rating->itemid}" />
 <input type="hidden" class="ratinginput" name="scaleid" value="{$rating->settings->scale->id}" />
 <input type="hidden" class="ratinginput" name="returnurl" value="{$rating->settings->returnurl}" />
+<input type="hidden" class="ratinginput" name="rateduserid" value="{$rating->itemuserid}" />
+<input type="hidden" class="ratinginput" name="aggregation" value="{$rating->settings->aggregationmethod}" />
 END;
-            $strratings = $formstart.$strratings;
+                if (empty($ratinghtml)) {
+                    $ratinghtml .= $strrate.': ';
+                }
 
-            //generate an array of values for numeric scales
-            $scalearray = $rating->settings->scale->scaleitems;
-            if( !is_array($scalearray) ) { //almost certainly a numerical scale
-                $intscalearray = intval($scalearray);//just in case theyve passed "5" instead of 5
-                if( is_int($intscalearray) && $intscalearray>0 ){
-                    $scalearray = array();
-                    for($i=0; $i<=$rating->settings->scale->scaleitems; $i++) {
-                        $scalearray[$i] = $i;
+                $ratinghtml = $formstart.$ratinghtml;
+
+                //generate an array of values for numeric scales
+                $scalearray = $rating->settings->scale->scaleitems;
+                if (!is_array($scalearray)) { //almost certainly a numerical scale
+                    $intscalearray = intval($scalearray);//just in case theyve passed "5" instead of 5
+                    if( is_int($intscalearray) && $intscalearray>0 ){
+                        $scalearray = array();
+                        for($i=0; $i<=$rating->settings->scale->scaleitems; $i++) {
+                            $scalearray[$i] = $i;
+                        }
                     }
                 }
+
+                $scalearray = array(RATING_UNSET_RATING => $strrate.'...') + $scalearray;
+                $ratinghtml .= html_writer::select($scalearray, 'rating', $rating->rating, false, array('class'=>'postratingmenu ratinginput','id'=>'menurating'.$rating->itemid));
+
+                //output submit button
+                $ratinghtml .= '<span class="ratingsubmit"><input type="submit" class="postratingmenusubmit" id="postratingsubmit'.$rating->itemid.'" value="'.s(get_string('rate', 'rating')).'" />';
+
+                if (is_array($rating->settings->scale->scaleitems)) {
+                    $ratinghtml .= $this->help_icon_scale($rating->settings->scale->courseid, $rating->settings->scale);
+                }
+                $ratinghtml .= '</span></div></form>';
             }
-
-            $scalearray = array(RATING_UNSET_RATING => $strrate.'...') + $scalearray;
-            $strratings .= html_writer::select($scalearray, 'rating', $rating->rating, false, array('class'=>'postratingmenu ratinginput','id'=>'menurating'.$rating->itemid));
-
-            //output submit button
-            $strratings .= '<span class="ratingsubmit"><input type="submit" class="postratingmenusubmit" id="postratingsubmit'.$rating->itemid.'" value="'.s(get_string('rate', 'rating')).'" />';
-
-            if ( is_array($rating->settings->scale) ) {
-                //todo andrew where can we get the course id from?
-                //$strratings .= $this->help_icon_scale($course->id, $scale);
-                $strratings .= $this->help_icon_scale(1, $rating->settings->scale);
-            }
-            $strratings .= '</span></div></form>';
         }
 
-        return $strratings;
+        return $ratinghtml;
     }
 
     /*

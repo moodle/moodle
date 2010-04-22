@@ -1,13 +1,12 @@
 <?php
 
-function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode='',$hook='',$printicons=1,$ratings=NULL, $aliases=true) {
+function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode='',$hook='',$printicons=1, $aliases=true) {
     global $CFG, $USER, $DB, $OUTPUT;
 
 
     $user = $DB->get_record('user', array('id'=>$entry->userid));
     $strby = get_string('writtenby', 'glossary');
 
-    $return = false;
     if ($entry) {
         echo '<table class="glossarypost encyclopedia" cellspacing="0">';
         echo '<tr valign="top">';
@@ -50,11 +49,11 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
         }
         glossary_print_entry_definition($entry, $glossary, $cm);
 
-        if ($printicons or $ratings or $aliases) {
+        if ($printicons or $aliases) {
             echo '</td></tr>';
             echo '<tr>';
             echo '<td colspan="2" class="entrylowersection">';
-            $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings, $aliases);
+            glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$aliases);
             echo ' ';
         }
 
@@ -66,11 +65,9 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
         print_string('noentry', 'glossary');
         echo '</div>';
     }
-
-    return $return;
 }
 
-function glossary_print_entry_encyclopedia($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL) {
+function glossary_print_entry_encyclopedia($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1) {
 
     //The print view for this format is exactly the normal view, so we use it
 
@@ -79,7 +76,7 @@ function glossary_print_entry_encyclopedia($course, $cm, $glossary, $entry, $mod
 
     //Call to view function (without icons, ratings and aliases) and return its result
 
-    return glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);
+    return glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode, $hook, false, false);
 
 }
 

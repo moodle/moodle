@@ -94,8 +94,15 @@ if ($confirm and confirm_sesskey()) { // the operation was confirmed.
         $fs->delete_area_files($context->id, 'glossary_attachment', $entry->id);
         $DB->delete_records("comments", array('itemid'=>$entry->id, 'commentarea'=>'glossary_entry', 'contextid'=>$context->id));
         $DB->delete_records("glossary_alias", array("entryid"=>$entry->id));
-        $DB->delete_records("glossary_ratings", array("entryid"=>$entry->id));
         $DB->delete_records("glossary_entries", array("id"=>$entry->id));
+
+        //delete glossary entry ratings
+        require_once($CFG->dirroot.'/rating/lib.php');
+        $delopt = new stdclass();
+        $delopt->contextid = $context->id;
+        $delopt->itemid = $entry->id;
+        $rm = new rating_manager();
+        $rm->delete_ratings($delopt);
     }
 
     add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&amp;mode=$prevmode&amp;hook=$hook", $entry->id,$cm->id);

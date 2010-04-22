@@ -1,6 +1,7 @@
 <?php
 
 //  For a given entry, shows a report of all the ratings it has
+//todo andrew this file can be removed
 
 require_once("../../config.php");
 require_once("lib.php");

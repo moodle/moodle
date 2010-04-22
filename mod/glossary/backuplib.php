@@ -246,7 +246,8 @@
     }
 
    //Backup glossary_ratings contents (executed from backup_glossary_entries)
-    function backup_glossary_ratings ($bf,$preferences,$entryid) {
+   //todo andrew can this be removed?
+    /*function backup_glossary_ratings ($bf,$preferences,$entryid) {
         global $CFG, $DB;
 
         $status = true;
@@ -267,7 +268,7 @@
             $status =fwrite ($bf,end_tag("RATINGS",6,true));
         }
         return $status;
-    }
+    }*/
 
     //Backup glossary_alias contents (executed from backup_glossary_entries)
     function backup_glossary_aliases ($bf,$preferences,$entryid) {

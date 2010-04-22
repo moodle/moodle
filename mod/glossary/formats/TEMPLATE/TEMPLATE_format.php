@@ -1,6 +1,6 @@
 <?php
 
-function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL, $aliases=true) {
+function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $aliases=true) {
     global $CFG, $USER, $DB, $OUTPUT;
 
 
@@ -86,13 +86,10 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
         //----Define when to show the aliases popup
         //    use it only if you are really sure!
         //$aliases = true; //Values: true, false (Default: true)
-        //----Uncoment this line to avoid ratings being showed
-        //    use it only if you are really sure! You can define this in the glossary conf. page.
-        //$ratings = NULL;
         //----Uncoment this line to avoid editing icons being showed
         //    use it only if you are really sure!
         //$printicons = false;
-        $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
+        glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $aliases);
 
         echo '</td>';
         echo '</tr>';
@@ -102,11 +99,9 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
         print_string('noentry', 'glossary');
         echo '</div>';
     }
-
-    return $return;
 }
 
-function glossary_print_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL) {
+function glossary_print_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1) {
 
     //The print view for this format is exactly the normal view, so we use it
     //Anyway, you can modify this to use your own print format!!

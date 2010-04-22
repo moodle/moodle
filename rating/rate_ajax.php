@@ -32,6 +32,8 @@ $contextid = required_param('contextid', PARAM_INT);
 $itemid = required_param('itemid', PARAM_INT);
 $scaleid = required_param('scaleid', PARAM_INT);
 $userrating = required_param('rating', PARAM_INT);
+$rateduserid = required_param('rateduserid', PARAM_INT);//which user is being rated. Required to update their grade
+$aggregationmethod = optional_param('aggregation', PARAM_INT);//we're going to calculate the aggregate and return it to the client
 
 $result = new stdClass;
 
@@ -51,8 +53,6 @@ if( !has_capability('moodle/rating:rate',$context) ) {
     die();
 }
 
-//todo andrew deny access to guest user. Petr to define "guest"
-
 $userid = $USER->id;
 
 $PAGE->set_url('/lib/rate.php', array(
@@ -71,6 +71,47 @@ $rating = new rating($ratingoptions);
 
 $rating->update_rating($userrating);
 
+//todo add a setting to turn grade updating off for those who don't want them in gradebook
+//note that this needs to be done in both rate.php and rate_ajax.php
+if(true){
+    //tell the module that its grades have changed
+    if ( $modinstance = $DB->get_record($cm->modname, array('id' => $cm->instance)) ) {
+        $modinstance->cmidnumber = $cm->id; //MDL-12961
+        $functionname = $cm->modname.'_update_grades';
+        require_once("../mod/{$cm->modname}/lib.php");
+        if(function_exists($functionname)) {
+            $functionname($modinstance, $rateduserid);
+        }
+    }
+}
+
+//need to retrieve the updated item to get its new aggregate value
+$item = new stdclass();
+$item->id = $rating->itemid;
+$items = array($item);
+
+//most of $ratingoptions variables are set correctly
+$ratingoptions->items = $items;
+$ratingoptions->aggregate = $aggregationmethod;
+
+$rm = new rating_manager();
+$items = $rm->get_ratings($ratingoptions);
+
+//for custom scales return text not the value
+//this scales weirdness will go away when scales are refactored
+$scalearray = null;
+$aggregatetoreturn = round($items[0]->rating->aggregate,1);
+if($rating->scaleid < 0 ) { //if its a scale (not numeric)
+    $scalerecord = $DB->get_record('scale', array('id' => -$rating->scaleid));
+    if ($scalerecord) {
+        $scalearray = explode(',', $scalerecord->scale);
+    }
+    $aggregatetoreturn = $scalearray[$aggregatetoreturn-1];
+}
+
 $result = new stdClass;
 $result->success = true;
+$result->aggregate = $aggregatetoreturn;
+$result->count = $items[0]->rating->count;
+$result->itemid = $rating->itemid;
 echo json_encode($result);

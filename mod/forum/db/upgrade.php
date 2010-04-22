@@ -285,21 +285,29 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009050400, 'forum');
     }
 
-    if($result && $oldversion < 2010041300) {
+    if($result && $oldversion < 2010042200) {
         //migrate forumratings to the central rating table
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
 
         //forum ratings only have a single time column so use it for both time created and modified
-        $ratingssql = 'SELECT r.id AS rid, r.post AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified, f.scale, f.id AS mid
+        $sql = "INSERT {rating} (contextid, scaleid, itemid, rating, userid, timecreated, timemodified)
+SELECT cxt.id, f.scale, r.post AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified
 FROM {forum_ratings} r
-JOIN {forum_posts} p on p.id=r.post
-JOIN {forum_discussions} d on d.id=p.discussion
-JOIN {forum} f on f.id=d.forum';
-        $result = $result && upgrade_module_ratings($ratingssql,'forum');
+JOIN {forum_posts} p ON p.id=r.post
+JOIN {forum_discussions} d ON d.id=p.discussion
+JOIN {forum} f ON f.id=d.forum
+JOIN {course_modules} cm ON cm.instance=f.id
+JOIN {context} cxt ON cxt.instanceid=cm.id
+JOIN {modules} m ON m.id=cm.module
+WHERE m.name = :modname AND cxt.contextlevel = :contextlevel";
+        $params['modname'] = 'forum';
+        $params['contextlevel'] = CONTEXT_MODULE;
+
+        $DB->execute($sql, $params);
 
         //todo andrew drop forum_ratings
 
-        upgrade_mod_savepoint($result, 2010041300, 'forum');
+        upgrade_mod_savepoint($result, 2010042200, 'forum');
     }
 
     return $result;

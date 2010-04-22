@@ -38,11 +38,11 @@
     //                                 |                     forum_posts
     //                                 |-------------(UL,pk->id,fk->discussion,
     //                                 |                  nt->parent,files)
-    //                                 |                         |
-    //                                 |                         |
-    //                                 |                         |
-    //                            forum_read                forum_ratings
-    //                       (UL,pk->id,fk->post        (UL,pk->id,fk->post)
+    //                                 |                         
+    //                                 |                         
+    //                                 |                         
+    //                            forum_read                
+    //                       (UL,pk->id,fk->post        
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent

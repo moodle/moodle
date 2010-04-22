@@ -1,10 +1,9 @@
 <?php
 
-function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {
+function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $aliases=true) {
     global $CFG, $USER;
 
 
-    $return = false;
     if ($entry) {
         echo '<table class="glossarypost fullwithoutauthor" cellspacing="0">';
         echo '<tr valign="top">';
@@ -33,7 +32,7 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
 
         echo '</td></tr>';
         echo '<tr valign="top"><td colspan="2" class="entrylowersection">';
-        $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
+        glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $aliases);
 
         echo ' ';
         echo '</td></tr>';
@@ -43,10 +42,9 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
         print_string('noentry', 'glossary');
         echo '</center>';
     }
-    return $return;
 }
 
-function glossary_print_entry_fullwithoutauthor($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {
+function glossary_print_entry_fullwithoutauthor($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1) {
 
     //The print view for this format is exactly the normal view, so we use it
 

@@ -1,6 +1,6 @@
 <?php
 
-function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL, $aliases=true) {
+function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $aliases=true) {
     global $USER;
 
     $return = false;
@@ -18,10 +18,10 @@ function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode=''
         if ($printicons) {
             glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,'print');
         }
-        if ($ratings) {
+        if ($entry->rating) {
             echo '<br />';
             echo '<span class="ratings">';
-            $return = glossary_print_entry_ratings($course, $entry, $ratings);
+            $return = glossary_print_entry_ratings($course, $entry);
             echo '</span>';
         }
         echo '<br />';
@@ -36,7 +36,7 @@ function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode=''
     return $return;
 }
 
-function glossary_print_entry_entrylist($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL) {
+function glossary_print_entry_entrylist($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1) {
 
     //The print view for this format is different from the normal view, so we implement it here completely
     global $CFG, $USER;
@@ -52,12 +52,10 @@ function glossary_print_entry_entrylist($course, $cm, $glossary, $entry, $mode='
     glossary_print_entry_concept($entry);
     echo ':</b> ';
     glossary_print_entry_definition($entry, $glossary, $cm);
-    $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);
+    glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, false, false);
     echo '</td>';
     echo '</tr>';
     echo "</table>\n";
-
-    return $return;
 }
 
 

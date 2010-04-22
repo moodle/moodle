@@ -381,7 +381,6 @@ require("sql.php");
 /// printing the entries
 $entriesshown = 0;
 $currentpivot = '';
-$ratingsmenuused = NULL;
 $paging = NULL;
 
 if ($allentries) {
@@ -399,7 +398,27 @@ if ($allentries) {
     echo $paging;
     echo '</div>';
 
-    $ratings = NULL;
+
+    //load ratings
+    require_once('../../rating/lib.php');
+    $ratingoptions = new stdclass();
+    $ratingoptions->context = $cm->context;
+    $ratingoptions->items = $allentries;
+    $ratingoptions->aggregate = $glossary->assessed;//the aggregation method
+    $ratingoptions->scaleid = $glossary->scale;
+    $ratingoptions->userid = $USER->id;
+    //if (!empty($_SERVER['HTTP_REFERER'])) {
+//        $ratingoptions->returnurl = $_SERVER['HTTP_REFERER'];
+  //  } else {
+        $ratingoptions->returnurl = $CFG->wwwroot.'/mod/glossary/view.php?id='.$cm->id;
+    //}
+    $ratingoptions->assesstimestart = $glossary->assesstimestart;
+    $ratingoptions->assesstimefinish = $glossary->assesstimefinish;
+
+    $rm = new rating_manager();
+    $allentries = $rm->get_ratings($ratingoptions);
+
+    /*$ratings = NULL;
     $ratingsmenuused = false;
     if ($glossary->assessed and isloggedin() and !isguestuser()) {
         $ratings = new object();
@@ -418,7 +437,7 @@ if ($allentries) {
         echo "<div>";
         echo "<input type=\"hidden\" name=\"glossaryid\" value=\"$glossary->id\" />";
         echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
-    }
+    }*/
 
     foreach ($allentries as $entry) {
 
@@ -483,28 +502,12 @@ if ($allentries) {
         }
 
         /// and finally print the entry.
-
-        if ( glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook,1,$displayformat,$ratings) ) {
-            $ratingsmenuused = true;
-        }
-
+        glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook,1,$displayformat);
         $entriesshown++;
     }
 }
 if ( !$entriesshown ) {
     echo $OUTPUT->box(get_string("noentries","glossary"), "generalbox boxaligncenter boxwidthwide");
-}
-
-
-if ($ratingsmenuused) {
-
-    echo "<div class=\"boxaligncenter\"><input type=\"submit\" value=\"".get_string("sendinratings", "glossary")."\" />";
-    if ($glossary->scale < 0) {
-        if ($scale = $DB->get_record("scale", array("id"=>abs($glossary->scale)))) {
-            echo $OUTPUT->help_icon_scale($course->id, $scale);
-        }
-    }
-    echo "</div>";
 }
 
 if (!empty($formsent)) {

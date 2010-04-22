@@ -288,7 +288,8 @@
     }
 
     //This function restores the glossary_ratings
-    function glossary_ratings_restore_mods($old_entry_id,$new_entry_id,$info,$restore) {
+    //todo andrew can remove this
+    /*function glossary_ratings_restore_mods($old_entry_id,$new_entry_id,$info,$restore) {
         global $CFG, $DB;
 
         $status = true;
@@ -335,7 +336,7 @@
         }
 
         return $status;
-    }
+    }*/
 
     //This function restores the glossary_alias table
     function glossary_alias_restore_mods($old_entry_id,$new_entry_id,$info,$restore) {

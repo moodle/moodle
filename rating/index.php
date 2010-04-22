@@ -30,6 +30,7 @@ $contextid   = required_param('contextid', PARAM_INT);
 $itemid   = required_param('itemid', PARAM_INT);
 $scaleid   = required_param('scaleid', PARAM_INT);
 $sort = optional_param('sort', '', PARAM_ALPHA);
+$popup = optional_param('popup', 0, PARAM_INT);//==1 if in a popup window?
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm);
@@ -39,11 +40,14 @@ if ($sort !== 0) {
     $url->param('sort', $sort);
 }
 $PAGE->set_url($url);
+if ($popup) {
+    $PAGE->set_pagelayout('popup');
+}
 
-if ( !has_capability('moodle/rating:view',$context) ) {
+if (!has_capability('moodle/rating:view',$context)) {
     print_error('noviewrate', 'rating');
 }
-if ( !has_capability('moodle/rating:viewall',$context) and $USER->id != $item->userid) {
+if (!has_capability('moodle/rating:viewall',$context) and $USER->id != $item->userid) {
     print_error('noviewanyrate', 'rating');
 }
 
@@ -60,29 +64,30 @@ $strrating  = get_string('rating', 'rating');
 $strname    = get_string('name');
 $strtime    = get_string('time');
 
-//Is there something more meaningful we can put in the title?
-//$PAGE->set_title("$strratings: ".format_string($post->subject));
+//Is there something more meaningful we can put in the title? It used to be forum post title
 $PAGE->set_title("$strratings: ".format_string($itemid));
 echo $OUTPUT->header();
 
-//if (!$ratings = forum_get_ratings($post->id, $sqlsort)) {
 $ratingoptions = new stdclass();
 $ratingoptions->context = $context;
 $ratingoptions->itemid = $itemid;
-$ratingoptions->sort = $sort;
+$ratingoptions->sort = $sqlsort;
 
 $rm = new rating_manager();
-$ratings = $rm->load_ratings_for_item($ratingoptions);
+$ratings = $rm->get_all_ratings_for_item($ratingoptions);
 if (!$ratings) {
-    //print_error('noresult', 'forum', '', format_string($post->subject));
-    print_error('noresult');
+    print_error('noresult', 'forum', '', format_string($itemid));
 } else {
+    $sortargs = "contextid=$contextid&amp;itemid=$itemid&amp;scaleid=$scaleid";
+    if($popup) {
+        $sortargs.="&amp;popup=$popup";
+    }
     echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" style=\"width:100%\">";
     echo "<tr>";
     echo "<th class=\"header\" scope=\"col\">&nbsp;</th>";
-    echo "<th class=\"header\" scope=\"col\"><a href=\"report.php?id=$itemid&amp;sort=firstname\">$strname</a></th>";
-    echo "<th class=\"header\" scope=\"col\" style=\"width:100%\"><a href=\"report.php?id=$itemid&amp;sort=rating\">$strrating</a></th>";
-    echo "<th class=\"header\" scope=\"col\"><a href=\"report.php?id=$itemid&amp;sort=time\">$strtime</a></th>";
+    echo "<th class=\"header\" scope=\"col\"><a href=\"index.php?$sortargs&amp;sort=firstname\">$strname</a></th>";
+    echo "<th class=\"header\" scope=\"col\" style=\"width:100%\"><a href=\"index.php?$sortargs&amp;sort=rating\">$strrating</a></th>";
+    echo "<th class=\"header\" scope=\"col\"><a href=\"index.php?$sortargs&amp;sort=time\">$strtime</a></th>";
     echo "</tr>";
 
     foreach ($ratings as $rating) {
@@ -107,5 +112,7 @@ if (!$ratings) {
     echo "<br />";
 }
 
-echo $OUTPUT->close_window_button();
+if ($popup) {
+    echo $OUTPUT->close_window_button();
+}
 echo $OUTPUT->footer();

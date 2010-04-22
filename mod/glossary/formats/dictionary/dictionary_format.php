@@ -1,6 +1,6 @@
 <?php
 
-function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL, $aliases=true) {
+function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $aliases=true) {
 
     global $CFG, $USER;
 
@@ -15,15 +15,13 @@ function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode='
     glossary_print_entry_definition($entry, $glossary, $cm);
     echo '</td></tr>';
     echo '<tr valign="top"><td class="entrylowersection">';
-    $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
+    glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $aliases);
     echo '</td>';
     echo '</tr>';
     echo "</table>\n";
-
-    return $return;
 }
 
-function glossary_print_entry_dictionary($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL) {
+function glossary_print_entry_dictionary($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1) {
 
     //The print view for this format is exactly the normal view, so we use it
 

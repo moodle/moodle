@@ -32,7 +32,8 @@ $contextid = required_param('contextid', PARAM_INT);
 $itemid = required_param('itemid', PARAM_INT);
 $scaleid = required_param('scaleid', PARAM_INT);
 $userrating = required_param('rating', PARAM_INT);
-$returnurl = required_param('returnurl', null, PARAM_LOCALURL);//required for non-ajax requests
+$rateduserid = required_param('rateduserid', PARAM_INT);//which user is being rated. Required to update their grade
+$returnurl = required_param('returnurl', PARAM_LOCALURL);//required for non-ajax requests
 
 $result = new stdClass;
 
@@ -45,8 +46,6 @@ if( !has_capability('moodle/rating:rate',$context) ) {
     echo $OUTPUT->footer();
     die();
 }
-
-//todo andrew deny access to guest user. Petr to define "guest"
 
 $userid = $USER->id;
 
@@ -66,4 +65,19 @@ $rating = new rating($ratingoptions);
 
 $rating->update_rating($userrating);
 
-redirect($CFG->wwwroot.'/'.$returnurl);
+//todo add a setting to turn grade updating off for those who don't want them in gradebook
+//note that this needs to be done in both rate.php and rate_ajax.php
+if(true){
+    //tell the module that its grades have changed
+    if ( !$modinstance = $DB->get_record($cm->modname, array('id' => $cm->instance)) ) {
+        print_error('invalidid');
+    }
+    $modinstance->cmidnumber = $cm->id; //MDL-12961
+    $functionname = $cm->modname.'_update_grades';
+    require_once($CFG->dirroot."/mod/{$cm->modname}/lib.php");
+    if(function_exists($functionname)) {
+        $functionname($modinstance, $rateduserid);
+    }
+}
+
+redirect($returnurl);

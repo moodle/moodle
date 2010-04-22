@@ -1,6 +1,6 @@
 <?php
 
-function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL, $aliases=false) {
+function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $aliases=false) {
 
     global $USER;
 
@@ -17,15 +17,13 @@ function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode='
     echo '</td></tr>';
 
     echo '<tr valign="top"><td class="entrylowersection">';
-    $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
+    glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $aliases);
     echo '</td>';
     echo '</tr>';
     echo "</table>\n";
-
-    return $return;
 }
 
-function glossary_print_entry_continuous($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL) {
+function glossary_print_entry_continuous($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1) {
 
     //The print view for this format is exactly the normal view, so we use it
 
@@ -33,7 +31,7 @@ function glossary_print_entry_continuous($course, $cm, $glossary, $entry, $mode=
     $entry->definition = '<span class="nolink">'.$entry->definition.'</span>';
 
     //Call to view function (without icons, ratings and aliases) and return its result
-    return glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);
+    glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);
 
 }
 

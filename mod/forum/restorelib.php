@@ -38,11 +38,11 @@
     //                                 |                     forum_posts
     //                                 |-------------(UL,pk->id,fk->discussion,
     //                                 |                  nt->parent,files)
-    //                                 |                         |
-    //                                 |                         |
-    //                                 |                         |
-    //                            forum_read                forum_ratings
-    //                       (UL,pk->id,fk->post        (UL,pk->id,fk->post)
+    //                                 |                         
+    //                                 |                         
+    //                                 |                         
+    //                            forum_read                
+    //                       (UL,pk->id,fk->post
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -529,9 +529,6 @@
                 $status = forum_restore_files ($rec->old_id, $new_forum_id,
                                                     $oldid, $newid, $restore);
 
-                //Now restore post ratings
-                $status = forum_ratings_restore_mods($newid,$pos_info,$restore);
-
             } else {
                 $status = false;
             }
@@ -618,7 +615,7 @@
     }
 
     //This function restores the forum_ratings
-    function forum_ratings_restore_mods($new_post_id,$info,$restore) {
+    /*function forum_ratings_restore_mods($new_post_id,$info,$restore) {
         global $CFG, $DB;
 
         $status = true;
@@ -676,7 +673,7 @@
         }
 
         return $status;
-    }
+    }*/
 
     //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
     //some texts in the module

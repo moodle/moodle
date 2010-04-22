@@ -343,15 +343,18 @@ abstract class moodleform_mod extends moodleform {
         }
 
         if (plugin_supports('mod', $this->_modname, FEATURE_RATE, false)) {
-            $mform->addElement('header', 'modstandardratings', get_string('ratings', 'ratings'));
+            require_once($CFG->dirroot.'/rating/lib.php');
+            $rm = new rating_manager();
+
+            $mform->addElement('header', 'modstandardratings', get_string('ratings', 'rating'));
 
             //$mform->addElement('checkbox', 'assessed', get_string('allowratings', 'ratings') , get_string('ratingsuse', 'ratings'));
 
-            $mform->addElement('select', 'assessed', get_string('aggregatetype', 'ratings') , forum_get_aggregate_types());
+            $mform->addElement('select', 'assessed', get_string('aggregatetype', 'rating') , $rm->get_aggregate_types());
             $mform->setDefault('assessed', 0);
-            $mform->setHelpButton('assessed', array('assessaggregate', get_string('aggregatetype', 'ratings'), 'forum'));
+            $mform->setHelpButton('assessed', array('assessaggregate', get_string('aggregatetype', 'rating'), 'forum'));
 
-            $mform->addElement('modgrade', 'scale', get_string('grade'), false);
+            $mform->addElement('modgrade', 'scale', get_string('scale'), false);
             $mform->disabledIf('scale', 'assessed', 'eq', 0);
 
             $mform->addElement('checkbox', 'ratingtime', get_string('ratingtime', 'forum'));

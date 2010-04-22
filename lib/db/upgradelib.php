@@ -404,7 +404,7 @@ function upgrade_cleanup_unwanted_block_contexts($contextidarray) {
  * @param string $modulename the name of the module
  * @return boolean success flag
  */
-function upgrade_module_ratings($ratingssql, $modulename) {
+/*function upgrade_module_ratings($ratingssql, $modulename) {
     global $DB;
     $contextid = null;
     $contextarray = array();
@@ -420,15 +420,15 @@ function upgrade_module_ratings($ratingssql, $modulename) {
 
         //all posts within a given forum, glossary etc will have the same context id so store them in an array
         if( !array_key_exists($old_rating->mid, $contextarray) ) {
-	    $sql = "SELECT cxt.id
+            $sql = "SELECT cxt.id
                       FROM {context} cxt
                       JOIN {course_modules} cm ON cm.id = cxt.instanceid
                       JOIN {modules} m ON cm.module = m.id
                      WHERE m.name = :modulename AND cm.instance = :moduleinstanceid AND cxt.contextlevel = :contextmodule";
             $params = array();
-	    $params['modulename'] = $modulename;
+            $params['modulename'] = $modulename;
             $params['moduleinstanceid'] = $old_rating->mid;
-	    $params['contextmodule'] = CONTEXT_MODULE;
+            $params['contextmodule'] = CONTEXT_MODULE;
             $results = $DB->get_record_sql($sql, $params);
             $contextarray[$old_rating->mid] = $results->id;
         }
@@ -444,11 +444,11 @@ function upgrade_module_ratings($ratingssql, $modulename) {
         $rating->timemodified = $old_rating->timemodified;
 
         if( !$DB->insert_record('rating', $rating) ) {
-	    return false;
-	}
+            return false;
+        }
     }
 
     $ratings->close();
 
     return true;
-}
+}*/

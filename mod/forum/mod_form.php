@@ -107,28 +107,6 @@ class mod_forum_mod_form extends moodleform_mod {
         }
 
 //-------------------------------------------------------------------------------
-        /*$mform->addElement('header', '', get_string('grade'));
-
-        $mform->addElement('select', 'assessed', get_string('aggregatetype', 'forum') , forum_get_aggregate_types());
-        $mform->setDefault('assessed', 0);
-        $mform->setHelpButton('assessed', array('assessaggregate', get_string('aggregatetype', 'forum'), 'forum'));
-
-        $mform->addElement('modgrade', 'scale', get_string('grade'), false);
-        $mform->disabledIf('scale', 'assessed', 'eq', 0);
-
-        $mform->addElement('checkbox', 'ratingtime', get_string('ratingtime', 'forum'));
-        $mform->disabledIf('ratingtime', 'assessed', 'eq', 0);
-
-        $mform->addElement('date_time_selector', 'assesstimestart', get_string('from'));
-        $mform->disabledIf('assesstimestart', 'assessed', 'eq', 0);
-        $mform->disabledIf('assesstimestart', 'ratingtime');
-
-        $mform->addElement('date_time_selector', 'assesstimefinish', get_string('to'));
-        $mform->disabledIf('assesstimefinish', 'assessed', 'eq', 0);
-        $mform->disabledIf('assesstimefinish', 'ratingtime');*/
-
-
-//-------------------------------------------------------------------------------
         $mform->addElement('header', '', get_string('blockafter', 'forum'));
         $options = array();
         $options[0] = get_string('blockperioddisabled','forum');

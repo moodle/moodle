@@ -43,17 +43,6 @@ define('FORUM_TRACKING_OFF', 0);
 define('FORUM_TRACKING_OPTIONAL', 1);
 define('FORUM_TRACKING_ON', 2);
 
-//todo andrew remove this
-define('FORUM_UNSET_POST_RATING', -999);
-
-//todo andrew and remove these
-define ('FORUM_AGGREGATE_NONE', 0); //no ratings
-define ('FORUM_AGGREGATE_AVG', 1);
-define ('FORUM_AGGREGATE_COUNT', 2);
-define ('FORUM_AGGREGATE_MAX', 3);
-define ('FORUM_AGGREGATE_MIN', 4);
-define ('FORUM_AGGREGATE_SUM', 5);
-
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
 
 /**
@@ -1158,41 +1147,13 @@ function forum_user_complete($course, $user, $mod, $forum) {
         }
         $discussions = forum_get_user_involved_discussions($forum->id, $user->id);
 
-        // preload all user ratings for these discussions - one query only and minimal memory
-        $cm->cache->ratings = array();
-        $cm->cache->myratings = array();
-        if ($postratings = forum_get_all_user_ratings($user->id, $discussions)) {
-            foreach ($postratings as $pr) {
-                if (!isset($cm->cache->ratings[$pr->postid])) {
-                    $cm->cache->ratings[$pr->postid] = array();
-                }
-                $cm->cache->ratings[$pr->postid][$pr->id] = $pr->rating;
-
-                if ($pr->userid == $USER->id) {
-                    $cm->cache->myratings[$pr->postid] = $pr->rating;
-                }
-            }
-            unset($postratings);
-        }
-
         foreach ($posts as $post) {
             if (!isset($discussions[$post->discussion])) {
                 continue;
             }
             $discussion = $discussions[$post->discussion];
 
-            $ratings = null;
-
-            if ($forum->assessed) {
-                if ($scale = make_grades_menu($forum->scale)) {
-                    $ratings =new object();
-                    $ratings->scale = $scale;
-                    $ratings->assesstimestart = $forum->assesstimestart;
-                    $ratings->assesstimefinish = $forum->assesstimefinish;
-                    $ratings->allow = false;
-                }
-            }
-            forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false, $ratings);
+            forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false);
         }
     } else {
         echo "<p>".get_string("noposts", "forum")."</p>";
@@ -1458,92 +1419,26 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
  * @param int $userid optional user id, 0 means all users
  * @return array array of grades, false if none
  */
- //todo andrew pretty sure I can remove this
 function forum_get_user_grades($forum, $userid=0) {
-    global $CFG, $DB;
+    global $CFG;
+    
+    require_once($CFG->dirroot.'/rating/lib.php');
+    $rm = new rating_manager();
+    
+    $ratingoptions = new stdclass();
 
-    $params= array();
-    if ($userid) {
-        $params[] = $userid;
-        $user = "AND u.id = ?";
-    } else {
-        $user = "";
-    }
+    //need these to work backwards to get a context id. Is there a better way to get contextid from a module instance?
+    $ratingoptions->modulename = 'forum';
+    $ratingoptions->moduleid   = $forum->id;
+    //$ratingoptions->cmidnumber = $forum->cmidnumber;
 
-    $params[] = $forum->id;
+    $ratingoptions->userid = $userid;
+    $ratingoptions->aggregationmethod = $forum->assessed;
+    $ratingoptions->scaleid = $forum->scale;
+    $ratingoptions->itemtable = 'forum_posts';
+    $ratingoptions->itemtableusercolumn = 'userid';
 
-    $aggtype = $forum->assessed;
-    switch ($aggtype) {
-        case FORUM_AGGREGATE_COUNT :
-            $sql = "SELECT u.id, u.id AS userid, COUNT(fr.rating) AS rawgrade
-                      FROM {user} u, {forum_posts} fp,
-                           {forum_ratings} fr, {forum_discussions} fd
-                     WHERE u.id = fp.userid AND fp.discussion = fd.id AND fr.post = fp.id
-                           AND fr.userid != u.id AND fd.forum = ?
-                           $user
-                  GROUP BY u.id";
-            break;
-        case FORUM_AGGREGATE_MAX :
-            $sql = "SELECT u.id, u.id AS userid, MAX(fr.rating) AS rawgrade
-                      FROM {user} u, {forum_posts} fp,
-                           {forum_ratings} fr, {forum_discussions} fd
-                     WHERE u.id = fp.userid AND fp.discussion = fd.id AND fr.post = fp.id
-                           AND fr.userid != u.id AND fd.forum = ?
-                           $user
-                  GROUP BY u.id";
-            break;
-        case FORUM_AGGREGATE_MIN :
-            $sql = "SELECT u.id, u.id AS userid, MIN(fr.rating) AS rawgrade
-                      FROM {user} u, {forum_posts} fp,
-                           {forum_ratings} fr, {forum_discussions} fd
-                     WHERE u.id = fp.userid AND fp.discussion = fd.id AND fr.post = fp.id
-                           AND fr.userid != u.id AND fd.forum = ?
-                           $user
-                  GROUP BY u.id";
-            break;
-        case FORUM_AGGREGATE_SUM :
-            $sql = "SELECT u.id, u.id AS userid, SUM(fr.rating) AS rawgrade
-                     FROM {user} u, {forum_posts} fp,
-                          {forum_ratings} fr, {forum_discussions} fd
-                    WHERE u.id = fp.userid AND fp.discussion = fd.id AND fr.post = fp.id
-                          AND fr.userid != u.id AND fd.forum = ?
-                          $user
-                 GROUP BY u.id";
-            break;
-        default : //avg
-            $sql = "SELECT u.id, u.id AS userid, AVG(fr.rating) AS rawgrade
-                      FROM {user} u, {forum_posts} fp,
-                           {forum_ratings} fr, {forum_discussions} fd
-                     WHERE u.id = fp.userid AND fp.discussion = fd.id AND fr.post = fp.id
-                           AND fr.userid != u.id AND fd.forum = ?
-                           $user
-                  GROUP BY u.id";
-            break;
-    }
-
-    if ($results = $DB->get_records_sql($sql, $params)) {
-        // it could throw off the grading if count and sum returned a rawgrade higher than scale
-        // so to prevent it we review the results and ensure that rawgrade does not exceed the scale, if it does we set rawgrade = scale (i.e. full credit)
-        foreach ($results as $rid=>$result) {
-            if ($forum->scale >= 0) {
-                //numeric
-                if ($result->rawgrade > $forum->scale) {
-                    $results[$rid]->rawgrade = $forum->scale;
-                }
-            } else {
-                //scales
-                if ($scale = $DB->get_record('scale', array('id' => -$forum->scale))) {
-                    $scale = explode(',', $scale->scale);
-                    $max = count($scale);
-                    if ($result->rawgrade > $max) {
-                        $results[$rid]->rawgrade = $max;
-                    }
-                }
-            }
-        }
-    }
-
-    return $results;
+    return $rm->get_user_grades($ratingoptions);
 }
 
 /**
@@ -1662,7 +1557,7 @@ function forum_grade_item_delete($forum) {
 
 /**
  * Returns the users with data in one forum
- * (users with records in forum_subscriptions, forum_posts and forum_ratings, students)
+ * (users with records in forum_subscriptions, forum_posts, students)
  *
  * @global object
  * @global object
@@ -1688,12 +1583,12 @@ function forum_get_participants($forumid) {
                                        p.discussion = d.id AND
                                        u.id = p.userid", array($forumid));
 
-    //Get students from forum_ratings
+    //Get students from the ratings table
     $st_ratings = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
                                    FROM {user} u,
                                         {forum_discussions} d,
                                         {forum_posts} p,
-                                        {forum_ratings} r
+                                        {ratings} r
                                    WHERE d.forum = ? AND
                                          p.discussion = d.id AND
                                          r.post = p.id AND
@@ -2127,63 +2022,6 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
 }
 
 /**
- * Returns a list of ratings for all posts in discussion
- *
- * @global object
- * @global object
- * @param object $discussion
- * @return array of ratings or false
- */
-function forum_get_all_discussion_ratings($discussion) {
-    global $CFG, $DB;
-    return $DB->get_records_sql("SELECT r.id, r.userid, p.id AS postid, r.rating
-                              FROM {forum_ratings} r,
-                                   {forum_posts} p
-                             WHERE r.post = p.id AND p.discussion = ?
-                             ORDER BY p.id ASC", array($discussion->id));
-}
-
-/**
- * Returns a list of ratings for one specific user for all posts in discussion
- * @global object
- * @global object
- * @param object $discussions the discussions for which we return all ratings
- * @param int $userid the user for who we return all ratings
- * @return array
- */
-function forum_get_all_user_ratings($userid, $discussions) {
-    global $CFG, $DB;
-
-
-    foreach ($discussions as $discussion) {
-     if (!isset($discussionsid)){
-         $discussionsid = $discussion->id;
-     }
-     else {
-         $discussionsid .= ",".$discussion->id;
-     }
-    }
-
-    $sql = "SELECT r.id, r.userid, p.id AS postid, r.rating
-                              FROM {forum_ratings} r,
-                                   {forum_posts} p
-                             WHERE r.post = p.id AND p.userid = :userid";
-
-
-    $params = array();
-    $params['userid'] = $userid;
-    //postgres compability
-    if (!isset($discussionsid)) {
-       $sql .=" AND p.discussion IN (".$discussionsid.")";
-    }
-    $sql .=" ORDER BY p.id ASC";
-
-    return $DB->get_records_sql($sql, $params);
-
-
-}
-
-/**
  * Returns a list of ratings for a particular post - sorted.
  *
  * @global object
@@ -2192,14 +2030,15 @@ function forum_get_all_user_ratings($userid, $discussions) {
  * @param string $sort
  * @return array Array of ratings or false
  */
-function forum_get_ratings($postid, $sort="u.firstname ASC") {
-    global $CFG, $DB;
-    return $DB->get_records_sql("SELECT u.*, r.rating, r.time
-                              FROM {forum_ratings} r,
-                                   {user} u
-                             WHERE r.post = ?
-                               AND r.userid = u.id
-                             ORDER BY $sort", array($postid));
+function forum_get_ratings($context, $postid, $sort="u.firstname ASC") {
+    global $PAGE;
+
+    $options = new stdclass();
+    $options->context = $PAGE->context;
+    $options->itemid = $postid;
+    $options->sort = "ORDER BY $sort";
+
+    get_all_ratings_for_item($options);
 }
 
 /**
@@ -2588,7 +2427,7 @@ function forum_count_discussions($forum, $cm, $course) {
 }
 
 /**
- * How many unrated posts are in the given discussion for a given user?
+ * How many posts by other users are unrated by a given user in the given discussion?
  *
  * @global object
  * @global object
@@ -2606,9 +2445,9 @@ function forum_count_unrated_posts($discussionid, $userid) {
 
         if ($rated = $DB->get_record_sql("SELECT count(*) as num
                                        FROM {forum_posts} p,
-                                            {forum_ratings} r
+                                            {rating} r
                                       WHERE p.discussion = ?
-                                        AND p.id = r.post
+                                        AND p.id = r.itemid
                                         AND r.userid = ?", array($discussionid, $userid))) {
             $difference = $posts->num - $rated->num;
             if ($difference > 0) {
@@ -3238,7 +3077,6 @@ function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfro
  * @param boolean $ownpost Whether this post belongs to the current user.
  * @param boolean $reply Whether to print a 'reply' link at the bottom of the message.
  * @param boolean $link Just print a shortened version of the post as a link to the full post.
- * @param object $ratings -- I don't really know --
  * @param string $footer Extra stuff to print after the message.
  * @param string $highlight Space-separated list of terms to highlight.
  * @param int $post_read true, false or -99. If we already know whether this user
@@ -3249,9 +3087,10 @@ function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfro
  *          (the default) then print a dummy 'you can't see this post' post.
  *          If false, don't output anything at all.
  * @param bool|null $istracked
+ * @return void
  */
 function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=false, $reply=false, $link=false,
-                          $ratings=NULL, $footer="", $highlight="", $post_read=null, $dummyifcantsee=true, $istracked=null) {
+                          $footer="", $highlight="", $post_read=null, $dummyifcantsee=true, $istracked=null) {
 
     global $USER, $CFG, $OUTPUT;
 
@@ -3514,7 +3353,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         }
 
         $porfoliohtml = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
-        if(!empty($porfoliohtml)){
+        if (!empty($porfoliohtml)) {
             $commands[] = $porfoliohtml;
         }
     }
@@ -3525,62 +3364,8 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
 
 
 // Ratings
-
-    $ratingsmenuused = false;
-    if (!empty($ratings) and isloggedin()) {
-        echo '<div class="ratings">';
-        $useratings = true;
-        if ($ratings->assesstimestart and $ratings->assesstimefinish) {
-            if ($post->created < $ratings->assesstimestart or $post->created > $ratings->assesstimefinish) {
-                $useratings = false;
-            }
-        }
-        if ($useratings) {
-            $mypost = ($USER->id == $post->userid);
-
-            $canviewallratings = $cm->cache->caps['mod/forum:viewanyrating'];
-
-            if (isset($cm->cache->ratings)) {
-                if (isset($cm->cache->ratings[$post->id])) {
-                    $allratings = $cm->cache->ratings[$post->id];
-                } else {
-                    $allratings = array(); // no reatings present yet
-                }
-            } else {
-                $allratings = NULL; // not preloaded
-            }
-
-            if (isset($cm->cache->myratings)) {
-                if (isset($cm->cache->myratings[$post->id])) {
-                    $myrating = $cm->cache->myratings[$post->id];
-                } else {
-                    $myrating = FORUM_UNSET_POST_RATING; // no reatings present yet
-                }
-            } else {
-                $myrating = NULL; // not preloaded
-            }
-
-            if ($canviewallratings and !$mypost) {
-                echo '<span class="forumpostratingtext">' .
-                     forum_print_ratings($post->id, $ratings->scale, $forum->assessed, $canviewallratings, $allratings, true) .
-                     '</span>';
-                if (!empty($ratings->allow)) {
-                    echo '&nbsp;';
-                    forum_print_rating_menu($post->id, $USER->id, $ratings->scale, $myrating);
-                    $ratingsmenuused = true;
-                }
-
-            } else if ($mypost) {
-                echo '<span class="forumpostratingtext">' .
-                     forum_print_ratings($post->id, $ratings->scale, $forum->assessed, true, $allratings, true) .
-                     '</span>';
-
-            } else if (!empty($ratings->allow) ) {
-                forum_print_rating_menu($post->id, $USER->id, $ratings->scale, $myrating);
-                $ratingsmenuused = true;
-            }
-        }
-        echo '</div>';
+    if (!empty($post->rating)) {
+        echo $OUTPUT->render($post->rating);
     }
 
 // Link to post if required
@@ -3605,8 +3390,6 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     if ($istracked && !$CFG->forum_usermarksread && !$post_read) {
         forum_tp_mark_post_read($USER->id, $post, $forum->id);
     }
-
-    return $ratingsmenuused;
 }
 
 
@@ -3795,384 +3578,6 @@ function forum_shorten_post($message) {
    }
 
    return substr($message, 0, $truncate);
-}
-
-
-/**
- * Print the multiple ratings on a post given to the current user by others.
- * Forumid prevents the double lookup of the forumid in discussion to determine the aggregate type
- * Scale is an array of ratings
- *
- * @uses FORUM_AGGREGATE_AVG
- * @uses FORUM_AGGREGATE_COUNT
- * @uses FORUM_AGGREGATE_MAX
- * @uses FORUM_AGGREGATE_MIN
- * @uses FORUM_AGGREGATE_SUM
- * @param int $postid
- * @param array $scale
- * @param int $aggregatetype
- * @param bool $link
- * @param array $ratings
- * @param bool $return
- * @return string|void
- */
-function forum_print_ratings($postid, $scale, $aggregatetype, $link=true, $ratings=null, $return=false) {
-    global $OUTPUT;
-    $strratings = '';
-
-    switch ($aggregatetype) {
-        case FORUM_AGGREGATE_AVG :
-            $agg        = forum_get_ratings_mean($postid, $scale, $ratings);
-            $strratings = get_string("aggregateavg", "forum");
-            break;
-        case FORUM_AGGREGATE_COUNT :
-            $agg        = forum_get_ratings_count($postid, $scale, $ratings);
-            $strratings = get_string("aggregatecount", "forum");
-            break;
-        case FORUM_AGGREGATE_MAX :
-            $agg        = forum_get_ratings_max($postid, $scale, $ratings);
-            $strratings = get_string("aggregatemax", "forum");
-            break;
-        case FORUM_AGGREGATE_MIN :
-            $agg        = forum_get_ratings_min($postid, $scale, $ratings);
-            $strratings = get_string("aggregatemin", "forum");
-            break;
-        case FORUM_AGGREGATE_SUM :
-            $agg        = forum_get_ratings_sum($postid, $scale, $ratings);
-            $strratings = get_string("aggregatesum", "forum");
-            break;
-    }
-
-    if ($agg !== "") {
-
-        if (empty($strratings)) {
-            $strratings = get_string("ratings", "forum");
-        }
-
-        $strratings .= ': ';
-
-        if ($link) {
-
-            $link = new moodle_url("/mod/forum/report.php?id=$postid");
-            $action = new popup_action('click', $link, 'ratings', array('height' => 400, 'width' => 600));
-            $strratings .= $OUTPUT->action_link($link, $agg, $action);
-        } else {
-            $strratings .= "$agg ";
-        }
-
-        if ($return) {
-            return $strratings;
-        } else {
-            echo $strratings;
-        }
-    }
-}
-
-
-/**
- * Return the mean rating of a post given to the current user by others.
- *
- * @global object
- * @param int $postid
- * @param array $scal Scale is an array of possible ratings in the scale
- * @param array $ratings Ratings is an optional simple array of actual ratings (just integers)
- * @return string
- */
-function forum_get_ratings_mean($postid, $scale, $ratings=NULL) {
-    global $DB;
-    if (is_null($ratings)) {
-        $ratings = array();
-        if ($rates = $DB->get_records("forum_ratings", array("post" => $postid))) {
-            foreach ($rates as $rate) {
-                $ratings[] = $rate->rating;
-            }
-        }
-    }
-
-    $count = count($ratings);
-
-    if ($count == 0 ) {
-        return "";
-
-    } else if ($count == 1) {
-        $rating = reset($ratings);
-        return $scale[$rating];
-
-    } else {
-        $total = 0;
-        foreach ($ratings as $rating) {
-            $total += $rating;
-        }
-        $mean = round( ((float)$total/(float)$count) + 0.001);  // Little fudge factor so that 0.5 goes UP
-
-        if (isset($scale[$mean])) {
-            return $scale[$mean]." ($count)";
-        } else {
-            return "$mean ($count)";    // Should never happen, hopefully
-        }
-    }
-}
-
-/**
- * Return the count of the ratings of a post given to the current user by others.
- *
- * For numerical grades, the scale index is the same as the real grade value from interval {0..n}
- * and $scale looks like Array( 0 => '0/n', 1 => '1/n', ..., n => 'n/n' )
- *
- * For scales, the index is the order of the scale item {1..n}
- * and $scale looks like Array( 1 => 'poor', 2 => 'weak', 3 => 'good' )
- * In case of no ratings done yet, we have nothing to display.
- *
- * @global object
- * @param int $postid
- * @param array $scale Possible ratings in the scale - the end of the scale is the highest or max grade
- * @param array $ratings An optional simple array of actual ratings (just integers)
- * @return string
- */
-function forum_get_ratings_count($postid, $scale, $ratings=NULL) {
-    global $DB;
-    if (is_null($ratings)) {
-        $ratings = array();
-        if ($rates = $DB->get_records("forum_ratings", array("post" => $postid))) {
-            foreach ($rates as $rate) {
-                $ratings[] = $rate->rating;
-            }
-        }
-    }
-
-    $count = count($ratings);
-    if (! array_key_exists(0, $scale)) {
-        $scaleused = true;
-    } else {
-        $scaleused = false;
-    }
-
-    if ($count == 0) {
-        if ($scaleused) {    // If no rating given yet and we use a scale
-            return get_string('noratinggiven', 'forum');
-        } else {
-            return '';
-        }
-    }
-
-    $maxgradeidx = max(array_keys($scale)); // For numerical grades, the index is the same as the real grade value {0..n}
-                                            // and $scale looks like Array( 0 => '0/n', 1 => '1/n', ..., n => 'n/n' )
-                                            // For scales, the index is the order of the scale item {1..n}
-                                            // and $scale looks like Array( 1 => 'poor', 2 => 'weak', 3 => 'good' )
-
-    if ($count > $maxgradeidx) {      // The count exceeds the max grade
-        $a = new stdClass();
-        $a->count = $count;
-        $a->grade = $scale[$maxgradeidx];
-        return get_string('aggregatecountformat', 'forum', $a);
-    } else {                                // Display the count and the aggregated grade for this post
-        $a = new stdClass();
-        $a->count = $count;
-        $a->grade = $scale[$count];
-        return get_string('aggregatecountformat', 'forum', $a);
-    }
-}
-
-/**
- * Return the max rating of a post given to the current user by others.
- *
- * @global object
- * @param int $postid
- * @param array $scale Scale is an array of possible ratings in the scale
- * @param array $ratings Ratings is an optional simple array of actual ratings (just integers)
- */
-function forum_get_ratings_max($postid, $scale, $ratings=NULL) {
-
-    global $DB;
-    if (is_null($ratings)) {
-        $ratings = array();
-        if ($rates = $DB->get_records("forum_ratings", array("post" => $postid))) {
-            foreach ($rates as $rate) {
-                $ratings[] = $rate->rating;
-            }
-        }
-    }
-
-    $count = count($ratings);
-
-    if ($count == 0 ) {
-        return "";
-
-    } else if ($count == 1) { //this works for max
-        $rating = reset($ratings);
-        return $scale[$rating];
-
-    } else {
-        $max = max($ratings);
-
-        if (isset($scale[$max])) {
-            return $scale[$max]." ($count)";
-        } else {
-            return "$max ($count)";    // Should never happen, hopefully
-        }
-    }
-}
-
-/**
- * Return the min rating of a post given to the current user by others.
- *
- * @global object
- * @param int postid
- * @param array $scale Scale is an array of possible ratings in the scale
- * @param array $ratings  Ratings is an optional simple array of actual ratings (just integers)
- * @return string
- */
-function forum_get_ratings_min($postid, $scale,  $ratings=NULL) {
-    global $DB;
-    if (is_null($ratings)) {
-        $ratings = array();
-        if ($rates = $DB->get_records("forum_ratings", array("post" => $postid))) {
-            foreach ($rates as $rate) {
-                $ratings[] = $rate->rating;
-            }
-        }
-    }
-
-    $count = count($ratings);
-
-    if ($count == 0 ) {
-        return "";
-
-    } else if ($count == 1) {
-        $rating = reset($ratings);
-        return $scale[$rating]; //this works for min
-
-    } else {
-        $min = min($ratings);
-
-        if (isset($scale[$min])) {
-            return $scale[$min]." ($count)";
-        } else {
-            return "$min ($count)";    // Should never happen, hopefully
-        }
-    }
-}
-
-
-/**
- * Return the sum or total of ratings of a post given to the current user by others.
- *
- * @global object
- * @param int $postid
- * @param array $scale Scale is an array of possible ratings in the scale
- * @param array $ratings Ratings is an optional simple array of actual ratings (just integers)
- * @return string
- */
-function forum_get_ratings_sum($postid, $scale, $ratings=NULL) {
-    global $DB;
-    if (is_null($ratings)) {
-        $ratings = array();
-        if ($rates = $DB->get_records("forum_ratings", array("post" => $postid))) {
-            foreach ($rates as $rate) {
-                $ratings[] = $rate->rating;
-            }
-        }
-    }
-
-    $count = count($ratings);
-    $scalecount = count($scale)-1; //this should give us the last element of the scale aka the max grade with  $scale[$scalecount]
-
-    if ($count == 0 ) {
-        return "";
-
-    } else if ($count == 1) { //this works for max.
-        $rating = reset($ratings);
-        return $scale[$rating];
-
-    } else {
-        $total = 0;
-        foreach ($ratings as $rating) {
-            $total += $rating;
-        }
-        if ($total > $scale[$scalecount]) { //if the total exceeds the max grade then set it to the max grade
-            $total = $scale[$scalecount];
-        }
-        if (isset($scale[$total])) {
-            return $scale[$total]." ($count)";
-        } else {
-            return "$total ($count)";    // Should never happen, hopefully
-        }
-    }
-}
-
-/**
- * Return a summary of post ratings given to the current user by others.
- *
- * @global object
- * @param int $postid
- * @param array $scale Scale is an array of possible ratings in the scale
- * @param array $ratings Ratings is an optional simple array of actual ratings (just integers)
- * @return string
- */
-function forum_get_ratings_summary($postid, $scale, $ratings=NULL) {
-    global $DB;
-    if (is_null($ratings)) {
-        $ratings = array();
-        if ($rates = $DB->get_records("forum_ratings", array("post" => $postid))) {
-            foreach ($rates as $rate) {
-                $rating[] = $rate->rating;
-            }
-        }
-    }
-
-
-    if (!$count = count($ratings)) {
-        return "";
-    }
-
-
-    foreach ($scale as $key => $scaleitem) {
-        $sumrating[$key] = 0;
-    }
-
-    foreach ($ratings as $rating) {
-        $sumrating[$rating]++;
-    }
-
-    $summary = "";
-    foreach ($scale as $key => $scaleitem) {
-        $summary = $sumrating[$key].$summary;
-        if ($key > 1) {
-            $summary = "/$summary";
-        }
-    }
-    return $summary;
-}
-
-/**
- * Print the menu of ratings as part of a larger form.
- * If the post has already been - set that value.
- *
- * @global object
- * @param int $postid
- * @param int $userid
- * @param array $scale is an array of ratings
- * @param int $myrating
- */
- //todo andrew remove this function
-function forum_print_rating_menu($postid, $userid, $scale, $myrating=NULL) {
-
-    static $strrate;
-    global $DB, $OUTPUT;
-
-    if (is_null($myrating)) {
-        if (!$rating = $DB->get_record("forum_ratings", array("userid" => $userid, "post" => $postid))) {
-            $myrating = FORUM_UNSET_POST_RATING;
-        } else {
-            $myrating = $rating->rating;
-        }
-    }
-
-    if (empty($strrate)) {
-        $strrate = get_string("rate", "forum");
-    }
-    $scale = array(FORUM_UNSET_POST_RATING => $strrate.'...') + $scale;
-    echo html_writer::select($scale, $postid, $myrating, false, array('class'=>'forumpostratingmenu'));
 }
 
 /**
@@ -4732,7 +4137,7 @@ function forum_delete_discussion($discussion, $fulldelete, $course, $cm, $forum)
  * @return bool
  */
 function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompletion=false) {
-    global $DB;
+    global $DB, $CFG;
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -4747,7 +4152,12 @@ function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompleti
     }
 
     //delete ratings
-    $DB->delete_records("forum_ratings", array("post" => $post->id));
+    require_once($CFG->dirroot.'/rating/lib.php');
+    $delopt = new stdclass();
+    $delopt->contextid = $context->id;
+    $delopt->itemid = $post->id;
+    $rm = new rating_manager();
+    $rm->delete_ratings($delopt);
 
     //delete attachments
     $fs = get_file_storage();
@@ -5766,6 +5176,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
 function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode, $canreply=NULL, $canrate=false) {
 
     global $USER, $CFG, $DB, $PAGE, $OUTPUT;
+    require_once($CFG->dirroot.'/rating/lib.php');
 
     if (isloggedin()) {
         $ownpost = ($USER->id == $post->userid);
@@ -5812,41 +5223,24 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
         unset($postersgroups);
     }
 
-    $ratings = NULL;
-    $ratingsmenuused = false;
-    $ratingsformused = false;
-    if ($forum->assessed and isloggedin()) {
-        if ($scale = make_grades_menu($forum->scale)) {
-            $ratings =new object();
-            $ratings->scale = $scale;
-            $ratings->assesstimestart = $forum->assesstimestart;
-            $ratings->assesstimefinish = $forum->assesstimefinish;
-            $ratings->allow = $canrate;
-
-            if ($ratings->allow) {
-                echo '<form id="form" method="post" action="rate.php">';
-                echo '<div class="ratingform">';
-                echo '<input type="hidden" name="forumid" value="'.$forum->id.'" />';
-                echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-                $ratingsformused = true;
-            }
-          // preload all ratings - one query only and minimal memory
-            $cm->cache->ratings = array();
-            $cm->cache->myratings = array();
-            if ($postratings = forum_get_all_discussion_ratings($discussion)) {
-                foreach ($postratings as $pr) {
-                    if (!isset($cm->cache->ratings[$pr->postid])) {
-                        $cm->cache->ratings[$pr->postid] = array();
-                    }
-                    $cm->cache->ratings[$pr->postid][$pr->id] = $pr->rating;
-                    if ($pr->userid == $USER->id) {
-                        $cm->cache->myratings[$pr->postid] = $pr->rating;
-                    }
-                }
-                unset($postratings);
-            }
-        }
+    //load ratings
+    $ratingoptions = new stdclass();
+    $ratingoptions->context = $cm->context;
+    $ratingoptions->items = $posts;
+    $ratingoptions->aggregate = $forum->assessed;//the aggregation method
+    $ratingoptions->scaleid = $forum->scale;
+    $ratingoptions->userid = $USER->id;
+    if ($forum->type == 'single' or !$discussion->id) {
+        $ratingoptions->returnurl = "$CFG->wwwroot/mod/forum/view.php?id=$cm->id";
+    } else {
+        $ratingoptions->returnurl = "$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id";
     }
+    $ratingoptions->assesstimestart = $forum->assesstimestart;
+    $ratingoptions->assesstimefinish = $forum->assesstimefinish;
+
+    $rm = new rating_manager();
+    $posts = $rm->get_ratings($ratingoptions);
+
 
     $post->forum = $forum->id;   // Add the forum id to the post object, later used by forum_print_post
     $post->forumtype = $forum->type;
@@ -5855,49 +5249,23 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
 
     $postread = !empty($post->postread);
 
-    if (forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, false, $ratings,
-                         '', '', $postread, true, $forumtracked)) {
-        $ratingsmenuused = true;
-    }
+    forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, false,
+                         '', '', $postread, true, $forumtracked);
 
     switch ($mode) {
         case FORUM_MODE_FLATOLDEST :
         case FORUM_MODE_FLATNEWEST :
         default:
-            if (forum_print_posts_flat($course, $cm, $forum, $discussion, $post, $mode, $ratings, $reply, $forumtracked, $posts)) {
-                $ratingsmenuused = true;
-            }
+            forum_print_posts_flat($course, $cm, $forum, $discussion, $post, $mode, $reply, $forumtracked, $posts);
             break;
 
         case FORUM_MODE_THREADED :
-            if (forum_print_posts_threaded($course, $cm, $forum, $discussion, $post, 0, $ratings, $reply, $forumtracked, $posts)) {
-                $ratingsmenuused = true;
-            }
+            forum_print_posts_threaded($course, $cm, $forum, $discussion, $post, 0, $reply, $forumtracked, $posts);
             break;
 
         case FORUM_MODE_NESTED :
-            if (forum_print_posts_nested($course, $cm, $forum, $discussion, $post, $ratings, $reply, $forumtracked, $posts)) {
-                $ratingsmenuused = true;
-            }
+            forum_print_posts_nested($course, $cm, $forum, $discussion, $post, $reply, $forumtracked, $posts);
             break;
-    }
-
-    if ($ratingsformused) {
-        if ($ratingsmenuused) {
-            echo '<div class="ratingsubmit">';
-            echo '<input type="submit" id="forumpostratingsubmit" value="'.get_string('sendinratings', 'forum').'" />';
-            if (ajaxenabled() && !empty($CFG->forum_ajaxrating)) { /// AJAX enabled, standard submission form
-                $PAGE->requires->js_function_call('add_menu_listeners', array($OUTPUT->pix_url('i/loading_small')), true);
-            }
-            if ($forum->scale < 0) {
-                if ($scale = $DB->get_record("scale", array("id" => abs($forum->scale)))) {
-                    echo $OUTPUT->help_icon_scale($course->id, $scale);
-                }
-            }
-            echo '</div>';
-        }
-        echo '</div>';
-        echo '</form>';
     }
 }
 
@@ -5916,12 +5284,12 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
  * @param bool $reply
  * @param bool $forumtracked
  * @param array $posts
+ * @return void
  */
 function forum_print_posts_flat($course, &$cm, $forum, $discussion, $post, $mode, $ratings, $reply, $forumtracked, $posts) {
     global $USER, $CFG;
 
     $link  = false;
-    $ratingsmenuused = false;
 
     if ($mode == FORUM_MODE_FLATNEWEST) {
         $sort = "ORDER BY created DESC";
@@ -5938,15 +5306,10 @@ function forum_print_posts_flat($course, &$cm, $forum, $discussion, $post, $mode
 
         $postread = !empty($post->postread);
 
-        if (forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link, $ratings,
-                             '', '', $postread, true, $forumtracked)) {
-            $ratingsmenuused = true;
-        }
+        forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link, $ratings,
+                             '', '', $postread, true, $forumtracked);
     }
-
-    return $ratingsmenuused;
 }
-
 
 /**
  * @todo Document this function
@@ -5954,12 +5317,12 @@ function forum_print_posts_flat($course, &$cm, $forum, $discussion, $post, $mode
  * @global object
  * @global object
  * @uses CONTEXT_MODULE
+ * @return void
  */
-function forum_print_posts_threaded($course, &$cm, $forum, $discussion, $parent, $depth, $ratings, $reply, $forumtracked, $posts) {
+function forum_print_posts_threaded($course, &$cm, $forum, $discussion, $parent, $depth, $reply, $forumtracked, $posts) {
     global $USER, $CFG;
 
     $link  = false;
-    $ratingsmenuused = false;
 
     if (!empty($posts[$parent->id]->children)) {
         $posts = $posts[$parent->id]->children;
@@ -5976,10 +5339,8 @@ function forum_print_posts_threaded($course, &$cm, $forum, $discussion, $parent,
 
                 $postread = !empty($post->postread);
 
-                if (forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link, $ratings,
-                                     '', '', $postread, true, $forumtracked)) {
-                    $ratingsmenuused = true;
-                }
+                forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link, $ratings,
+                                     '', '', $postread, true, $forumtracked);
             } else {
                 if (!forum_user_can_see_post($forum, $discussion, $post, NULL, $cm)) {
                     echo "</div>\n";
@@ -6004,25 +5365,22 @@ function forum_print_posts_threaded($course, &$cm, $forum, $discussion, $parent,
                 echo "</span>";
             }
 
-            if (forum_print_posts_threaded($course, $cm, $forum, $discussion, $post, $depth-1, $ratings, $reply, $forumtracked, $posts)) {
-                $ratingsmenuused = true;
-            }
+            forum_print_posts_threaded($course, $cm, $forum, $discussion, $post, $depth-1, $ratings, $reply, $forumtracked, $posts);
             echo "</div>\n";
         }
     }
-    return $ratingsmenuused;
 }
 
 /**
  * @todo Document this function
  * @global object
  * @global object
+ * @return void
  */
-function forum_print_posts_nested($course, &$cm, $forum, $discussion, $parent, $ratings, $reply, $forumtracked, $posts) {
+function forum_print_posts_nested($course, &$cm, $forum, $discussion, $parent, $reply, $forumtracked, $posts) {
     global $USER, $CFG;
 
     $link  = false;
-    $ratingsmenuused = false;
 
     if (!empty($posts[$parent->id]->children)) {
         $posts = $posts[$parent->id]->children;
@@ -6039,17 +5397,12 @@ function forum_print_posts_nested($course, &$cm, $forum, $discussion, $parent, $
             $post->subject = format_string($post->subject);
             $postread = !empty($post->postread);
 
-            if (forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link, $ratings,
-                                 '', '', $postread, true, $forumtracked)) {
-                $ratingsmenuused = true;
-            }
-            if (forum_print_posts_nested($course, $cm, $forum, $discussion, $post, $ratings, $reply, $forumtracked, $posts)) {
-                $ratingsmenuused = true;
-            }
+            forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link,
+                                 '', '', $postread, true, $forumtracked);
+            forum_print_posts_nested($course, $cm, $forum, $discussion, $post, $reply, $forumtracked, $posts);
             echo "</div>\n";
         }
     }
-    return $ratingsmenuused;
 }
 
 /**
@@ -7512,6 +6865,7 @@ function forum_reset_gradebook($courseid, $type='') {
  */
 function forum_reset_userdata($data) {
     global $CFG, $DB;
+    require_once($CFG->dirroot.'/rating/lib.php');
 
     $componentstr = get_string('modulenameplural', 'forum');
     $status = array();
@@ -7519,12 +6873,11 @@ function forum_reset_userdata($data) {
     $params = array($data->courseid);
 
     $removeposts = false;
+    $typesql     = "";
     if (!empty($data->reset_forum_all)) {
         $removeposts = true;
-        $typesql     = "";
         $typesstr    = get_string('resetforumsall', 'forum');
         $types       = array();
-
     } else if (!empty($data->reset_forum_types)){
         $removeposts = true;
         $typesql     = "";
@@ -7539,7 +6892,6 @@ function forum_reset_userdata($data) {
             $params[] = $type;
         }
         $typesstr = get_string('resetforums', 'forum').': '.implode(', ', $types);
-
     }
     $alldiscussionssql = "SELECT fd.id
                             FROM {forum_discussions} fd, {forum} f
@@ -7553,20 +6905,31 @@ function forum_reset_userdata($data) {
                             FROM {forum_posts} fp, {forum_discussions} fd, {forum} f
                            WHERE f.course=? AND f.id=fd.forum AND fd.id=fp.discussion";
 
+    $forumssql = $forums = $rm = null;
+    if( $removeposts || !empty($data->reset_forum_ratings) ) {
+        $forumssql      = "$allforumssql $typesql";
+        $forums = $forums = $DB->get_records_sql($forumssql, $params);
+        $rm = new rating_manager();
+    }
+
     if ($removeposts) {
         $discussionssql = "$alldiscussionssql $typesql";
-        $forumssql      = "$allforumssql $typesql";
         $postssql       = "$allpostssql $typesql";
 
         // now get rid of all attachments
         $fs = get_file_storage();
-        if ($forums = $DB->get_records_sql($forumssql, $params)) {
+        $ratingdeloptions = new stdclass();
+        if ($forums) {
             foreach ($forums as $forumid=>$unused) {
                 if (!$cm = get_coursemodule_from_instance('forum', $forumid)) {
                     continue;
                 }
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
                 $fs->delete_area_files($context->id, 'forum_attachment');
+
+                //remove ratings
+                $ratingdeloptions->contextid = $context->id;
+                $rm->delete_ratings($ratingdeloptions);
             }
         }
 
@@ -7578,9 +6941,6 @@ function forum_reset_userdata($data) {
 
         // remove posts from queue
         $DB->delete_records_select('forum_queue', "discussionid IN ($discussionssql)", $params);
-
-        // remove ratings
-        $DB->delete_records_select('forum_ratings', "post IN ($postssql)", $params);
 
         // all posts - initial posts must be kept in single simple discussion forums
         $DB->delete_records_select('forum_posts', "discussion IN ($discussionssql) AND parent <> 0", $params); // first all children
@@ -7603,9 +6963,23 @@ function forum_reset_userdata($data) {
         $status[] = array('component'=>$componentstr, 'item'=>$typesstr, 'error'=>false);
     }
 
-    // remove all ratings
+    // remove all ratings in this course's forums
     if (!empty($data->reset_forum_ratings)) {
-        $DB->delete_records_select('forum_ratings', "post IN ($allpostssql)", $params);
+        $ratingdeloptions = new stdclass();
+        
+        if ($forums) {
+            foreach ($forums as $forumid=>$unused) {
+                if (!$cm = get_coursemodule_from_instance('forum', $forumid)) {
+                    continue;
+                }
+                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+                //remove ratings
+                $ratingdeloptions->contextid = $context->id;
+                $rm->delete_ratings($ratingdeloptions);
+            }
+        }
+
         // remove all grades from gradebook
         if (empty($data->reset_gradebook_grades)) {
             forum_reset_gradebook($data->courseid);
@@ -7888,20 +7262,6 @@ function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
         }
     }
     return true;
-}
-
-/**
- * Returns array of forum aggregate types
- *
- * @return array
- */
-function forum_get_aggregate_types() {
-    return array (FORUM_AGGREGATE_NONE  => get_string('aggregatenone', 'forum'),
-                  FORUM_AGGREGATE_AVG   => get_string('aggregateavg', 'forum'),
-                  FORUM_AGGREGATE_COUNT => get_string('aggregatecount', 'forum'),
-                  FORUM_AGGREGATE_MAX   => get_string('aggregatemax', 'forum'),
-                  FORUM_AGGREGATE_MIN   => get_string('aggregatemin', 'forum'),
-                  FORUM_AGGREGATE_SUM   => get_string('aggregatesum', 'forum'));
 }
 
 /**

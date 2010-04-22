@@ -34,16 +34,23 @@ M.core_rating={
             on : {
                 complete : function(tid, outcome, args) {
                     try {
-                        outcome = this.Y.JSON.parse(outcome.responseText);
+                        var responseobj = this.Y.JSON.parse(outcome.responseText);
+                        var itemid = responseobj.itemid;
+
+                        var node = this.Y.one('#ratingaggregate'+itemid);
+                        node.set('innerHTML',responseobj.aggregate);
+
+                        var node = this.Y.one('#ratingcount'+itemid);
+                        node.set('innerHTML',"("+responseobj.count+")");
                     } catch(e) {
-                        //this.form.submit();
-                        alert(outcome.responseText);
+                        //todo put up an overlay or similar rather than an alert
+                        alert(e.message+" "+outcome.responseText);
                     }
                     if(outcome.success){
                         //do nothing
                     }
                     else if (outcome.error){
-                        //todo andrew put up an overlay or similar rather than an alert
+                        //todo put up an overlay or similar rather than an alert
                         alert(outcome.error);
                     }
                 }

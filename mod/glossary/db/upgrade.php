@@ -260,22 +260,29 @@ function xmldb_glossary_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009110800, 'glossary');
     }
 
-    if($result && $oldversion < 2010041300) {
+    if($result && $oldversion < 2010042200) {
         //migrate glossary_ratings to the central rating table
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
 
         //glossary ratings only have a single time column so use it for both time created and modified
-        $ratingssql = 'SELECT r.id AS rid, r.entryid AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified, g.scale, g.id AS mid
+        $sql = "INSERT {rating} (contextid, scaleid, itemid, rating, userid, timecreated, timemodified)
+SELECT cxt.id, g.scale, r.entryid AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified
 FROM {glossary_ratings} r
 JOIN {glossary_entries} ge ON ge.id=r.entryid
-JOIN {glossary} g ON g.id=ge.glossaryid';
-        $result = $result && upgrade_module_ratings($ratingssql,'glossary');
+JOIN {glossary} g ON g.id=ge.glossaryid
+JOIN {course_modules} cm ON cm.instance=g.id
+JOIN {context} cxt ON cxt.instanceid=cm.id
+JOIN {modules} m ON m.id=cm.module
+WHERE m.name = :modname AND cxt.contextlevel = :contextlevel";
+
+        $params['modname'] = 'glossary';
+        $params['contextlevel'] = CONTEXT_MODULE;
+
+        $DB->execute($sql, $params);
 
         //todo andrew drop glossary_ratings
 
-        //todo andrew set rating permissions based on current value of glossary.assessed
-
-        upgrade_mod_savepoint($result, 2010041300, 'glossary');
+        upgrade_mod_savepoint($result, 2010042200, 'glossary');
     }
 
     return $result;
