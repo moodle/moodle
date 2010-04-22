@@ -91,7 +91,7 @@ class block_blog_menu extends block_base {
                 !$PAGE->url->param('modid') && !$PAGE->url->param('courseid') && !$PAGE->url->param('userid') && !$PAGE->url->param('entryid')) {
                 // no
             } else {
-                $menulist[] = html_writer::add($CFG->wwwroot .'/blog/index.php', get_string('viewsiteentries', 'blog'));
+                $menulist[] = html_writer::link($CFG->wwwroot .'/blog/index.php', get_string('viewsiteentries', 'blog'));
             }
         }
 
