@@ -53,7 +53,7 @@ function external_function_info($function, $strictness=MUST_EXIST) {
 
     // make sure the implementaion class is ok
     if (!method_exists($function->classname, $function->methodname)) {
-        throw new coding_exception('Missing implementation method');
+        throw new coding_exception('Missing implementation method of '.$function->classname.'::'.$function->methodname);
     }
     if (!method_exists($function->classname, $function->parameters_method)) {
         throw new coding_exception('Missing parameters description');
