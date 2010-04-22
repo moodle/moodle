@@ -55,10 +55,6 @@ if (has_capability('mod/workshop:submit', $PAGE->context)) {
 if (has_capability('mod/workshop:allocate', $PAGE->context)) {
     $row[] = new tabobject('allocation', $workshop->allocation_url()->out(), get_string('allocate', 'workshop'));
 }
-if (has_capability('moodle/user:loginas', get_system_context())) {
-    // todo remove these tools from a production release
-    $row[] = new tabobject('loginas', "loginas.php?cmid={$cm->id}", 'Login as a random participant');
-}
 $tabs[] = $row;
 
 if ($currenttab == 'allocation' and !empty($allocators)) {
