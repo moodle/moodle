@@ -126,7 +126,11 @@ class XMLDBAction {
      */
     function loadStrings($strings) {
     /// Load some commonly used strings
-        $this->str['title'] = get_string($this->title, 'xmldb');
+        if (get_string_manager()->string_exists($this->title, 'xmldb')) {
+            $this->str['title'] = get_string($this->title, 'xmldb');
+        } else {
+            $this->str['title'] = $this->title;
+        }
 
     /// Now process the $strings array loading it in the $str atribute
         if ($strings) {
