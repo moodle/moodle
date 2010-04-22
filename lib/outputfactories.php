@@ -152,7 +152,7 @@ abstract class renderer_factory_base implements renderer_factory {
      * @return string the name of the standard renderer class for that module.
      */
     protected function standard_renderer_classname($component, $subtype = null) {
-        global $CFG; // needed in incldued files
+        global $CFG; // needed in included files
 
         // standardize component name ala frankenstyle
         list($plugin, $type) = normalize_component($component);

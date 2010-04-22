@@ -6820,16 +6820,18 @@ function normalize_component($component) {
 }
 
 /**
- * List all core subsystems, this is especially useful for get_string()
- * and output renderers.
+ * List all core subsystems and their location
  *
- * The location is dirroot relative path, NULL means there is no special
- * directory for this subsystem.
+ * This is a whitelist of components that are part of the core and their
+ * language strings are defined in /lang/en/<<subsystem>>.php. If a given
+ * plugin is not listed here and it does not have proper plugintype prefix,
+ * then it is considered as course activity module.
  *
- * Unfortunately no module may be named like any core subsystem because
- * we are still lazy to use proper "mod_" prefix in get_string() and elsewhere.
+ * The location is dirroot relative path. NULL means there is no special
+ * directory for this subsystem. If the location is set, the subsystem's
+ * renderer.php is expected to be there.
  *
- * @return array of strings - name=>location
+ * @return array of (string)name => (string|null)location
  */
 function get_core_subsystems() {
     global $CFG;
