@@ -35,6 +35,16 @@ $string['aggregatemin'] = 'Minimum rating';
 $string['aggregatenone'] = 'No ratings';
 $string['aggregatesum'] = 'Sum of ratings';
 $string['aggregatetype'] = 'Aggregate type';
+$string['aggregatetype_help'] = 'Forum aggregation defines how all the ratings given to posts in a forum are combined to form the final grade (for each post and for the whole forum activity).
+
+There are 5 aggregate types:
+* Average - The mean of all the ratings given to posts in the forum (useful with peer grading when there are a lot of ratings being made)
+* Count - The number of rated posts becomes the final grade (useful when the number of posts is important). Note that the total cannot exceed the maximum grade for the forum.
+* Max - The highest rating is returned as the final grade (useful for emphasising the best post)
+* Min - The smallest rating is returned as the final grade (for promoting a culture of high quality for all posts)
+* Sum - All ratings for a particular student are added together. Note that the total cannot exceed the maximum grade for the forum.
+
+If "No ratings" is selected, then the forum activity will not appear in the gradebook.';
 $string['ajaxrating'] = 'Enable AJAX rating';
 $string['allforums'] = 'All forums';
 $string['allowdiscussions'] = 'Can a {$a} post to this forum?';
@@ -49,7 +59,9 @@ $string['attachment'] = 'Attachment';
 $string['attachmentnopost'] = 'You cannot export attachments without a post id';
 $string['attachments'] = 'Attachments';
 $string['blockafter'] = 'Post threshold for blocking';
+$string['blockafter_help'] = 'This setting specifies the maximum number of posts which a student can post in the given time period.';
 $string['blockperiod'] = 'Time period for blocking';
+$string['blockperiod_help'] = 'Students can be blocked from posting more than a given number of posts in a given time period. To enable this feature, select a time period in which students cannot post more than a given number of posts.';
 $string['blockperioddisabled'] = 'Don\'t block';
 $string['blogforum'] = 'Standard forum displayed in a blog-like format';
 $string['bynameondate'] = 'by {$a->name} - {$a->date}';
@@ -209,8 +221,10 @@ $string['markread'] = 'Mark read';
 $string['markreadbutton'] = 'Mark<br />read';
 $string['markunread'] = 'Mark unread';
 $string['markunreadbutton'] = 'Mark<br />unread';
-$string['maxattachments'] = 'Maximum attachments';
+$string['maxattachments'] = 'Maximum number of attachments';
+$string['maxattachments_help'] = 'This setting specifies the maximum number of files that can be attached to a forum post.';
 $string['maxattachmentsize'] = 'Maximum attachment size';
+$string['maxattachmentsize_help'] = 'This setting specifies the largest size of file that can be attached to a forum post.';
 $string['maxtimehaspassed'] = 'Sorry, but the maximum time for editing this post ({$a}) has passed!';
 $string['message'] = 'Message';
 $string['messageprovider:digests'] = 'Subscribed forum digests';
@@ -221,6 +235,7 @@ $string['modeflatoldestfirst'] = 'Display replies flat, with oldest first';
 $string['modenested'] = 'Display replies in nested form';
 $string['modethreaded'] = 'Display replies in threaded form';
 $string['modulename'] = 'Forum';
+$string['modulename_help'] = 'The forum module enables participants to have asynchronous discussions.';
 $string['modulenameplural'] = 'Forums';
 $string['more'] = 'more';
 $string['movedmarker'] = '(Moved)';
@@ -355,6 +370,13 @@ $string['subscribestart'] = 'Send me email copies of posts to this forum';
 $string['subscribestop'] = 'I don\'t want email copies of posts to this forum';
 $string['subscription'] = 'Subscription';
 $string['subscriptionmode'] = 'Subscription mode';
+$string['subscriptionmode_help'] = 'When a participant is subscribed to a forum it means they will receive email copies of forum posts.
+
+There are 4 subscription mode options:
+* Optional subscription - Participants can choose whether to be subscribed
+* Forced subscription - Everyone is subscribed and cannot unsubscribe
+* Auto subscription - Everyone is subscribed initially but can choose to unsubscribe at any time
+* Subscription disabled - Subscriptions are not allowed';
 $string['subscriptionoptional'] = 'Optional subscription';
 $string['subscriptionforced'] = 'Forced subscription';
 $string['subscriptionauto'] = 'Auto subscription';
@@ -369,6 +391,12 @@ $string['trackingoff'] = 'Off';
 $string['trackingon'] = 'On';
 $string['trackingoptional'] = 'Optional';
 $string['trackingtype'] = 'Read tracking for this forum?';
+$string['trackingtype_help'] = 'If enabled, participants can track read and unread messages in the forum and in discussions. 
+
+There are three options:
+* Optional - Participants can choose whether to turn tracking on or off
+* On - Tracking is always on
+* Off - Tracking is always off';
 $string['unread'] = 'Unread';
 $string['unreadposts'] = 'Unread posts';
 $string['unreadpostsnumber'] = '{$a} unread posts';
@@ -383,6 +411,7 @@ $string['unsubscribeshort'] = 'Unsubscribe';
 $string['usermarksread'] = 'Manual message read marking';
 $string['viewalldiscussions'] = 'View all discussions';
 $string['warnafter'] = 'Post threshold for warning';
+$string['warnafter_help'] = 'Students can be warned as they approach the maximum number of posts allowed in a given period. This setting specifies after how many posts they are warned.';
 $string['youratedthis'] = 'You rated this';
 $string['yournewquestion'] = 'Your new question';
 $string['yournewtopic'] = 'Your new discussion topic';
