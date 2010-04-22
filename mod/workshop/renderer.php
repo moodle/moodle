@@ -48,8 +48,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $sty = empty($message->sty) ? 'info' : $message->sty;
 
         $o = html_writer::tag('span', $message->text);
-        $closer = html_writer::tag('a', array('href' => $this->page->url->out()),
-                    get_string('messageclose', 'workshop'));
+        $closer = html_writer::tag('a', get_string('messageclose', 'workshop'), array('href' => $this->page->url->out()));
         $o .= $this->output->container($closer, 'status-message-closer');
         if (isset($message->extra)) {
             $o .= $message->extra;
