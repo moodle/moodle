@@ -17,7 +17,15 @@ class feedback_item_label extends feedback_item_base {
         
         return $item_form;
     }
-    
+
+    function print_item($item){
+        ?>
+        <td colspan="2">
+            <?php echo format_text($item->presentation, FORMAT_HTML);?>
+        </td>
+        <?php
+    }
+
     /**     
      * print the item at the edit-page of feedback
      *
