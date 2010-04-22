@@ -63,15 +63,8 @@
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
 
-    if (has_capability('mod/scorm:viewreport', $context)) {
-
-        $trackedusers = scorm_get_count_users($scorm->id, $cm->groupingid);
-        if ($trackedusers > 0) {
-            echo "<div class=\"reportlink\"><a href=\"report.php?id=$cm->id\"> ".get_string('viewalluserreports','scorm',$trackedusers).'</a></div>';
-        } else {
-            echo '<div class="reportlink">'.get_string('noreports','scorm').'</div>';
-        }
-    }
+    $currenttab = 'info';
+    require($CFG->dirroot . '/mod/scorm/tabs.php');
 
     // Print the main part of the page
     echo $OUTPUT->heading(format_string($scorm->name));
