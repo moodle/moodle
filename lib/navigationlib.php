@@ -1042,12 +1042,14 @@ class global_navigation extends navigation_node {
      * @param string $activeparam The url used to identify the active section
      * @return array An array of course section nodes
      */
-    public function load_generic_course_sections(stdClass $course, navigation_node $coursenode, $name, $activeparam) {
+    public function load_generic_course_sections(stdClass $course, navigation_node $coursenode, $name, $activeparam, $section0name=null) {
         $modinfo = get_fast_modinfo($course);
         $sections = array_slice(get_all_sections($course->id), 0, $course->numsections+1, true);
         $viewhiddensections = has_capability('moodle/course:viewhiddensections', $this->page->context);
 
-        $strgeneral = get_string('general');
+        if ($section0name === null) {
+            $section0name = get_string('general');
+        }
         foreach ($sections as &$section) {
             if ($course->id == SITEID) {
                 $this->load_section_activities($coursenode, $section->section, $modinfo);
@@ -1056,7 +1058,7 @@ class global_navigation extends navigation_node {
                     continue;
                 }
                 if ($section->section == 0) {
-                    $sectionname = $strgeneral;
+                    $sectionname = $section0name;
                 } else {
                     $sectionname = $name.' '.$section->section;
                 }

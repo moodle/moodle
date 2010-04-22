@@ -25,3 +25,4 @@
 
 $string['sectionname'] = 'topic';
 $string['pluginname'] = 'Topics format';
+$string['section0name'] = 'General';

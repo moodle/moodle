@@ -34,22 +34,7 @@
  * @param stdClass $course The course we are loading the section for
  */
 function callback_weeks_load_content(&$navigation, $course, $coursenode) {
-    return $navigation->load_generic_course_sections($course, $coursenode, get_string('week'), 'week');
-}
-
-/**
- * Used to display the course structure for a course where format=weeks
- *
- * This is called automatically by {@link load_course()} if the current course
- * format = weeks and the navigation was requested via AJAX
- *
- * @param navigation_node $navigation The course node
- * @param array $path An array of keys to the course node
- * @param stdClass $course The course we are loading the section for
- * @param stdClass $section The section to load
- */
-function callback_weeks_load_limited_section(&$navigation, $keys, $course, $section) {
-    $navigation->limited_load_section_generic($keys, $course, $section, get_string('week'), 'week');
+    return $navigation->load_generic_course_sections($course, $coursenode, get_string('week'), 'week', get_string('section0name', 'format_weeks'));
 }
 
 /**

@@ -25,3 +25,4 @@
 
 $string['sectionname'] = 'week';
 $string['pluginname'] = 'Weekly format';
+$string['section0name'] = 'General';

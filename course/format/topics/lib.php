@@ -34,21 +34,7 @@
  * @return bool Returns true
  */
 function callback_topics_load_content(&$navigation, $course, $coursenode) {
-    return $navigation->load_generic_course_sections($course, $coursenode, get_string('topic'), 'topic');
-}
-
-/**
- * Used to display the course structure for a course where format=topic
- *
- * This is called automatically by {@link load_course()} if the current course
- * format = weeks and the navigation was requested via AJAX
- *
- * @param array $path An array of keys to the course node in the navigation
- * @param stdClass $modinfo The mod info object for the current course
- * @return bool Returns true
- */
-function callback_topics_load_limited_section(&$navigation, $keys, $course, $section) {
-    $navigation->limited_load_section_generic($keys, $course, $section, get_string('topic'), 'topic');
+    return $navigation->load_generic_course_sections($course, $coursenode, get_string('topic'), 'topic', get_string('section0name', 'format_topics'));
 }
 
 /**
