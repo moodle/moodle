@@ -265,7 +265,7 @@ function xmldb_glossary_upgrade($oldversion) {
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
 
         //glossary ratings only have a single time column so use it for both time created and modified
-        $sql = "INSERT {rating} (contextid, scaleid, itemid, rating, userid, timecreated, timemodified)
+        $sql = "INSERT INTO {rating} (contextid, scaleid, itemid, rating, userid, timecreated, timemodified)
 SELECT cxt.id, g.scale, r.entryid AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified
 FROM {glossary_ratings} r
 JOIN {glossary_entries} ge ON ge.id=r.entryid

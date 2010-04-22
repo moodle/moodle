@@ -290,7 +290,7 @@ function xmldb_forum_upgrade($oldversion) {
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
 
         //forum ratings only have a single time column so use it for both time created and modified
-        $sql = "INSERT {rating} (contextid, scaleid, itemid, rating, userid, timecreated, timemodified)
+        $sql = "INSERT INTO {rating} (contextid, scaleid, itemid, rating, userid, timecreated, timemodified)
 SELECT cxt.id, f.scale, r.post AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified
 FROM {forum_ratings} r
 JOIN {forum_posts} p ON p.id=r.post
