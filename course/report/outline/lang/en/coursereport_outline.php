@@ -24,3 +24,4 @@
  */
 
 $string['outline:view'] = 'View course activity report';
+$string['pluginname'] = 'Course activity';

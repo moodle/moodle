@@ -156,6 +156,7 @@ $string['tokencreator'] = 'Creator';
 $string['userasclients'] = 'Users as clients with token';
 $string['userasclientsdescription'] = 'The following steps help you to set up the Moodle web service for users as clients. These steps also help to set up the recommended token (security keys) authentication method. In this use case, the user will generate his token from his <strong>Security keys</strong> profile page.';
 $string['validuntil'] = 'Valid until';
+$string['webservice'] = 'Web service';
 $string['webservices'] = 'Web services';
 $string['webservicesoverview'] = 'Overview';
 $string['webservicetokens'] = 'Web service tokens';

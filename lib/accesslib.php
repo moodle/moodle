@@ -4355,9 +4355,9 @@ function get_component_string($component, $contextlevel) {
             } else if (preg_match('|^gradereport|', $component)) {
                 $string = get_string('gradereport', 'grades').': '.get_string('modulename', $component);
             } else if (preg_match('|^coursereport|', $component)) {
-                $string = get_string('coursereports');
+                $string = get_string('coursereport').': '.get_string('pluginname', $component);
             } else if (preg_match('|^webservice|', $component)) {
-                $string = get_string('webservices', 'webservice');
+                $string = get_string('webservice', 'webservice').': '.get_string('pluginname', $component);
             } else {
                 $string = get_string('course');
             }
@@ -4370,7 +4370,7 @@ function get_component_string($component, $contextlevel) {
             } else if (preg_match('|^moodle|', $component)) {
                 $string = get_string('coresystem');
             } else {
-                $string = get_string('modulename', preg_replace('#(\w+_)#', '', basename($component)));
+                $string = get_string('activity').': '.get_string('modulename', preg_replace('#(\w+_)#', '', basename($component)));
             }
         break;
 
