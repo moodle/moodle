@@ -42,12 +42,20 @@ $string['choicefull'] = 'This choice is full and there are no available places.'
 $string['choice:choose'] = 'Record a choice';
 $string['choicename'] = 'Choice name';
 $string['choiceopen'] = 'Open';
+$string['choiceoptions'] = 'Choice options';
+$string['choiceoptions_help'] = 'Here is where you specify the options that participants have to choose from.
+
+You can fill in any number of these. If you leave some of the options blank, they will not be displayed. If you need more than 8 options, click the "Add 3 fields to form" button.';
+$string['limitanswers_help'] = 'This option allows you to limit the number of participants that can select each choice option. When the limit is reached then no-one else can select that option.
+
+If limits are disabled then any number of participants can select each of the options.';
 $string['choice:readresponses'] = 'Read responses';
 $string['choicesaved'] = 'Your choice has been saved';
 $string['choicetext'] = 'Choice text';
 $string['limit'] = 'Limit';
 $string['limitanswers'] = 'Limit the number of responses allowed';
 $string['modulename'] = 'Choice';
+$string['modulename_help'] = 'The choice module enables the teacher to ask a question and specify a choice of multiple responses.';
 $string['modulenameplural'] = 'Choices';
 $string['mustchooseone'] = 'You must choose an answer before saving.  Nothing was saved.';
 $string['noguestchoose'] = 'Sorry, guests are not allowed to make choices.';
