@@ -384,6 +384,51 @@ class assignment_online extends assignment_base {
         session_get_instance()->write_close(); // unlock session during fileserving
         send_stored_file($file, 60*60, 0, true);
     }
+
+    /**
+     * creates a zip of all assignment submissions and sends a zip to the browser
+     */
+    public function download_submissions() {
+        global $CFG, $DB;
+        require_once($CFG->libdir.'/filelib.php');
+        
+        $submissions = $this->get_submissions('','');
+        if (empty($submissions)) {
+            error("there are no submissions to download");
+        }
+        $filesforzipping = array();
+        $tempdir = assignment_create_temp_dir($CFG->dataroot."/temp/", "assignment".$this->assignment->id); //location for temp files.
+        //online assignment can use html
+        $filextn=".html";
+
+        $groupmode = groupmode($this->course,$this->cm);
+        $groupid = 0;   // All users
+        $groupname = '';
+        if($groupmode) {
+            $group = get_current_group($this->course->id, true);
+            $groupid = $group->id;
+            $groupname = $group->name.'-';
+        }
+        $filename = str_replace(' ', '_', clean_filename($this->course->shortname.'-'.$this->assignment->name.'-'.$groupname.$this->assignment->id.".zip")); //name of new zip file.
+        foreach ($submissions as $submission) {
+            $a_userid = $submission->userid; //get userid
+            if ((groups_is_member($groupid,$a_userid)or !$groupmode or !$groupid)) {
+                $a_assignid = $submission->assignment; //get name of this assignment for use in the file names.
+                $a_user = $DB->get_record("user", array("id"=>$a_userid),'id,username,firstname,lastname'); //get user firstname/lastname
+                $submissioncontent = "<html><body>". $submission->data1. "</body></html>";      //fetched from database
+                //get file name.html
+                $fileforzipname =  $a_user->username . "_" . clean_filename($this->assignment->name) . $filextn;
+                $fd = fopen($tempdir . $fileforzipname,'wb');   //create if not exist, write binary
+                fwrite( $fd, $submissioncontent);
+                fclose( $fd );
+                $filesforzipping[$fileforzipname] = $tempdir.$fileforzipname;
+            }    
+        }      //end of foreach
+        if ($zipfile = assignment_pack_files($filesforzipping)) {
+            remove_dir($tempdir); //remove old tempdir with individual files.
+            send_temp_file($zipfile, $filename); //send file and delete after sending.
+        }
+    }
 }
 
 class mod_assignment_online_edit_form extends moodleform {

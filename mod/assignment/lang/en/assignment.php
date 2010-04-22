@@ -64,6 +64,7 @@ $string['coursemisconf'] = 'Course is misconfigured';
 $string['deleteallsubmissions'] = 'Delete all submissions';
 $string['deletefilefailed'] = 'Deleting of file failed.';
 $string['description'] = 'Description';
+$string['downloadall'] = 'Download all assignments as a zip';
 $string['draft'] = 'Draft';
 $string['duedate'] = 'Due date';
 $string['duedateno'] = 'No due date';

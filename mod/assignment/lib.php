@@ -1208,7 +1208,9 @@ class assignment_base {
             echo $OUTPUT->heading(get_string('nosubmitusers','assignment'));
             return true;
         }
-
+        if ($this->assignment->assignmenttype=='upload' || $this->assignment->assignmenttype=='online' || $this->assignment->assignmenttype=='uploadsingle') {
+            echo '<div style="text-align:right"><a href="submissions.php?id='.$this->cm->id.'&amp;download=zip">'.get_string('downloadall', 'assignment').'</div>';
+        }
     /// Construct the SQL
 
         if ($where = $table->get_sql_where()) {
@@ -3381,4 +3383,44 @@ function assignment_extend_settings_navigation(settings_navigation $settings, na
     if (is_object($assignmentinstance) && method_exists($assignmentinstance, 'extend_settings_navigation')) {
         $assignmentinstance->extend_settings_navigation($assignmentnode);
     }
+}
+
+/**
+ * generate zip file from array of given files
+ * @param array $filesforzipping - array of files to pass into archive_to_pathname
+ * @return path of temp file - note this returned file does not have a .zip extension - it is a temp file.
+ */
+function assignment_pack_files($filesforzipping) {
+        global $CFG;
+        //create path for new zip file.
+        $tempzip = tempnam($CFG->dataroot.'/temp/', 'assignment_');
+        //zip files
+        $zipper = new zip_packer();
+        if ($zipper->archive_to_pathname($filesforzipping, $tempzip)) {
+            return $tempzip;
+        }
+        return false;
+}
+//TODO - this is a copy of the function my_mktempdir in admin/uploadpicture.php - it would be good to have as a core function.
+/**
+ * Create a unique temporary directory with a given prefix name,
+ * inside a given directory, with given permissions. Return the
+ * full path to the newly created temp directory.
+ *
+ * @param string $dir where to create the temp directory.
+ * @param string $prefix prefix for the temp directory name (default '')
+ * @param string $mode permissions for the temp directory (default 700)
+ *
+ * @return string The full path to the temp directory.
+ */
+function assignment_create_temp_dir($dir, $prefix='', $mode=0700) {
+    if (substr($dir, -1) != '/') {
+        $dir .= '/';
+    }
+
+    do {
+        $path = $dir.$prefix.mt_rand(0, 9999999);
+    } while (!mkdir($path, $mode));
+
+    return $path;
 }
