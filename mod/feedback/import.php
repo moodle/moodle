@@ -10,15 +10,12 @@
 
     require_once("../../config.php");
     require_once("lib.php");
+    require_once('import_form.php');
 
     // get parameters
     $id = required_param('id', PARAM_INT);
     $choosefile = optional_param('choosefile', false, PARAM_PATH);
     $action = optional_param('action', false, PARAM_ALPHA);
-
-    if(($formdata = data_submitted()) AND !confirm_sesskey()) {
-        print_error('invalidsesskey');
-    }
 
     $url = new moodle_url('/mod/feedback/import.php', array('id'=>$id));
     if ($choosefile !== false) {
@@ -49,25 +46,38 @@
 
     require_capability('mod/feedback:edititems', $context);
 
-    unset($filename);
-    if ($action == 'choosefile' AND confirm_sesskey() ) {
+    $mform = new mod_feedback_import_form();
+    $newformdata = array('id'=>$id,
+                        'deleteolditems'=>'1',
+                        'action'=>'choosefile',
+                        'confirmadd'=>'1',
+                        'do_show'=>'templates');
+    $mform->set_data($newformdata);
+    $formdata = $mform->get_data();
 
-        // file checks out ok
-        $fileisgood = false;
-
-        // work out if this is an uploaded file
-        // or one from the filesarea.
-        if ($choosefile) {
-            $filename = "{$CFG->dataroot}/{$course->id}/{$choosefile}";
-        }
+    if ($mform->is_cancelled()) {
+        redirect('edit.php?id='.$id.'&do_show=templates');
     }
 
+
+    // unset($filename);
+    // if ($action == 'choosefile' AND confirm_sesskey() ) {
+
+        ////file checks out ok
+        // $fileisgood = false;
+
+        ////work out if this is an uploaded file
+        ////or one from the filesarea.
+        // if ($choosefile) {
+            // $filename = "{$CFG->dataroot}/{$course->id}/{$choosefile}";
+        // }
+    // }
+
     // process if we are happy file is ok
-    if (isset($filename)) {
-        if(!is_file($filename) OR !is_readable($filename)) {
-            print_error('filenotreadable');
-        }
-        if(!$xmldata = feedback_load_xml_data($filename)) {
+    if ($choosefile) {
+        $xmlcontent = $mform->get_file_content('choosefile');
+
+        if(!$xmldata = feedback_load_xml_data($xmlcontent)) {
             print_error('cannotloadxml', 'feedback', 'edit.php?id='.$id);
         }
 
@@ -102,52 +112,21 @@
         }
         echo $OUTPUT->box_end();
     }
-
-    ?>
-
-     <form name="form" method="post" action="import.php">
-          <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
-          <input type="hidden" name="action" value="choosefile" />
-          <input type="hidden" name="id" value="<?php p($id);?>" />
-          <input type="hidden" name="do_show" value="templates" />
-          <?php echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide'); ?>
-          <input type="radio" name="deleteolditems" value="1" checked="checked" /> <?php echo get_string('delete_old_items', 'feedback').' ('.get_string('oldvalueswillbedeleted','feedback').')';?><br />
-          <input type="radio" name="deleteolditems" value="0" /> <?php echo get_string('append_new_items', 'feedback').' ('.get_string('oldvaluespreserved','feedback').')';?><br />
-          <table cellpadding="5">
-                <tr>
-                     <td align="right"><?php print_string('file', 'feedback'); ?>:</td>
-                     <td><input type="text" name="choosefile" size="50" /></td>
-                </tr>
-
-                <tr>
-                     <td>&nbsp;</td>
-                     <td><?php
-                        echo 'TODO: implement new file picker and file ahdnling - MDL-14493';
-                        ?>
-                          <input type="submit" name="save" value="<?php print_string('importfromthisfile', 'feedback'); ?>" />
-                    </td>
-                </tr>
-          </table>
-          <?php
-          echo $OUTPUT->box_end(); ?>
-     </form>
-
-     <?php
-
+    
+    $mform->display();
+    
     echo $OUTPUT->container_start('mdl-align');
-    echo $OUTPUT->single_button(new moodle_url('edit.php', array('id'=>$id, 'do_show'=>'templates')), get_string('cancel'));
+    // echo $OUTPUT->single_button(new moodle_url('edit.php', array('id'=>$id, 'do_show'=>'templates')), get_string('cancel'));
     echo $OUTPUT->container_end();
     echo $OUTPUT->footer();
 
-    function feedback_load_xml_data($filename) {
+    function feedback_load_xml_data($xmlcontent) {
         global $CFG;
         require_once($CFG->dirroot.'/lib/xmlize.php');
 
-        $datei =  file_get_contents($filename);
+        if(!$xmlcontent = feedback_check_xml_utf8($xmlcontent)) return false;
 
-        if(!$datei = feedback_check_xml_utf8($datei)) return false;
-
-        $data = xmlize($datei, 1, 'UTF-8');
+        $data = xmlize($xmlcontent, 1, 'UTF-8');
 
         if(intval($data['FEEDBACK']['@']['VERSION']) != 200701) {
             return false;
@@ -159,6 +138,8 @@
     function feedback_import_loaded_data(&$data, $feedbackid){
         global $CFG, $DB;
 
+        feedback_load_feedback_items();
+    
         $deleteolditems = optional_param('deleteolditems', 0, PARAM_INT);
 
         $error = new object();
@@ -223,6 +204,7 @@
             $newitem->template = 0;
             $newitem->typ = $typ;
             $newitem->name = trim($item['#']['ITEMTEXT'][0]['#']);
+            $newitem->label = trim($item['#']['ITEMLABEL'][0]['#']);
             $newitem->presentation = trim($item['#']['PRESENTATION'][0]['#']);
             //check old types of radio, check, and so on
             switch($oldtyp) {

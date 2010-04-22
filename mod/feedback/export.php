@@ -81,6 +81,16 @@ function feedback_get_xml_data($feedbackid) {
         //end of itemtext
         $data .= $space.$space.$space.'</ITEMTEXT>'."\n";
 
+        //start of itemtext
+        $data .= $space.$space.$space.'<ITEMLABEL>'."\n";
+        //start of CDATA
+        $data .= $space.$space.$space.$space.'<![CDATA[';
+        $data .= $item->label;
+        //end of CDATA
+        $data .= ']]>'."\n";
+        //end of itemtext
+        $data .= $space.$space.$space.'</ITEMLABEL>'."\n";
+
         //start of presentation
         $data .= $space.$space.$space.'<PRESENTATION>'."\n";
         //start of CDATA
