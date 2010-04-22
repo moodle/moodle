@@ -4321,16 +4321,18 @@ function get_component_string($component, $contextlevel) {
     switch ($contextlevel) {
 
         case CONTEXT_SYSTEM:
-            if (preg_match('|^enrol/|', $component)) {
+            if (preg_match('|^enrol|', $component)) {
                 $langname = str_replace('/', '_', $component);
                 $string = get_string('enrolname', $langname);
-            } else if (preg_match('|^block/|', $component)) {
+            } else if (preg_match('|^block|', $component)) {
                 $langname = str_replace('/', '_', $component);
                 $string = get_string('pluginname', $langname);
             } else if (preg_match('|^local|', $component)) {
                 $langname = str_replace('/', '_', $component);
                 $string = get_string('local');
-            } else if (preg_match('|^report/|', $component)) {
+            } else if (preg_match('|^repository|', $component)) {
+                $string = get_string('repository', 'repository').': '.get_string('repositoryname', $component);
+            } else if (preg_match('|^report|', $component)) {
                 $string = get_string('reports');
             } else {
                 $string = get_string('coresystem');
@@ -4346,13 +4348,15 @@ function get_component_string($component, $contextlevel) {
         break;
 
         case CONTEXT_COURSE:
-            if (preg_match('|^gradeimport/|', $component)
-                || preg_match('|^gradeexport/|', $component)
-                || preg_match('|^gradereport/|', $component)) {
-                $string = get_string('gradebook', 'admin');
-            } else if (preg_match('|^coursereport/|', $component)) {
+            if (preg_match('|^gradeimport|', $component)) {
+                $string = get_string('gradeimport', 'grades').': '.get_string('modulename', $component);
+            } else if (preg_match('|^gradeexport|', $component)) {
+                $string = get_string('gradeexport', 'grades').': '.get_string('modulename', $component);
+            } else if (preg_match('|^gradereport|', $component)) {
+                $string = get_string('gradereport', 'grades').': '.get_string('modulename', $component);
+            } else if (preg_match('|^coursereport|', $component)) {
                 $string = get_string('coursereports');
-            } else if (preg_match('|^webservice/|', $component)) {
+            } else if (preg_match('|^webservice|', $component)) {
                 $string = get_string('webservices', 'webservice');
             } else {
                 $string = get_string('course');
@@ -4363,16 +4367,18 @@ function get_component_string($component, $contextlevel) {
             if (preg_match('|^quiz_([a-z_]*)|', $component, $matches)){
                 $langname = 'quiz_'.$matches[1];
                 $string = get_string($matches[1].':componentname', $langname);
+            } else if (preg_match('|^moodle|', $component)) {
+                $string = get_string('coresystem');
             } else {
                 $string = get_string('modulename', preg_replace('#(\w+_)#', '', basename($component)));
             }
         break;
 
         case CONTEXT_BLOCK:
-            if( $component == 'moodle' ){
+            if ($component == 'moodle' ){
                 $string = get_string('block');
             }else{
-                $string = get_string('pluginname', basename($component));
+                $string = get_string('block').': '.get_string('pluginname', basename($component));
             }
         break;
 
