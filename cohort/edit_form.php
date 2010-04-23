@@ -29,16 +29,20 @@ require_once($CFG->dirroot . '/lib/formslib.php');
 class cohort_edit_form extends moodleform {
 
     /**
-     * Define the form
+     * Define the cohort edit form
      */
-    function definition() {
+    public function definition() {
 
         $mform = $this->_form;
         $editoroptions = $this->_customdata['editoroptions'];
+        $cohort = $this->_customdata['data'];
 
         $mform->addElement('text', 'name', get_string('name', 'cohort'), 'maxlength="254" size="50"');
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->setType('name', PARAM_MULTILANG);
+
+        $options = $this->get_category_options($cohort->contextid);
+        $mform->addElement('select', 'contextid', get_string('context', 'role'), $options);
 
         $mform->addElement('text', 'idnumber', get_string('idnumber', 'cohort'), 'maxlength="254" size="50"');
         $mform->setType('name', PARAM_RAW);
@@ -49,13 +53,12 @@ class cohort_edit_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        $mform->addElement('hidden', 'contextid');
-        $mform->setType('contextid', PARAM_INT);
-
         $this->add_action_buttons();
+
+        $this->set_data($cohort);
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
         global $DB;
 
         $errors = parent::validation($data, $files);
@@ -75,6 +78,27 @@ class cohort_edit_form extends moodleform {
         }
 
         return $errors;
+    }
+
+    protected function get_category_options($currentcontextid) {
+        $displaylist = array();
+        $parentlist = array();
+        make_categories_list($displaylist, $parentlist, 'moodle/cohort:manage');
+        $options = array();
+        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        if (has_capability('moodle/cohort:manage', $syscontext)) {
+            $options[$syscontext->id] = print_context_name($syscontext);
+        }
+        foreach ($displaylist as $cid=>$name) {
+            $context = get_context_instance(CONTEXT_COURSECAT, $cid, MUST_EXIST);
+            $options[$context->id] = $name;
+        }
+        // always add current - this is not likely, but if the logic get's changed it might be a problem
+        if (!isset($options[$currentcontextid])) {
+            $context = get_context_instance_by_id($currentcontextid, MUST_EXIST);
+            $options[$context->id] = print_context_name($syscontext);
+        }
+        return $options;
     }
 }
     

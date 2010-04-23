@@ -99,8 +99,7 @@ if ($cohort->id) {
 $PAGE->set_title($strheading);
 $PAGE->navbar->add($strheading);
 
-$editform = new cohort_edit_form(null, array('editoroptions'=>$editoroptions));
-$editform->set_data($cohort);
+$editform = new cohort_edit_form(null, array('editoroptions'=>$editoroptions, 'data'=>$cohort));
 
 if ($editform->is_cancelled()) {
     redirect($returnurl);
@@ -114,7 +113,8 @@ if ($editform->is_cancelled()) {
         cohort_add_cohort($data);
     }
 
-    redirect($returnurl);
+    // use new context id, it could have been changed
+    redirect(new moodle_url('/cohort/index.php', array('contextid'=>$data->contextid)));
 }
 
 echo $OUTPUT->header();
