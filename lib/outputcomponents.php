@@ -723,6 +723,20 @@ class html_writer {
     }
 
     /**
+     * Outputs a tag, but only if the contents are not empty
+     * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
+     * @param string $contents What goes between the opening and closing tags
+     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
+     * @return string HTML fragment
+     */
+    public static function nonempty_tag($tagname, $contents, array $attributes = null) {
+        if ($contents === '' || is_null($contents)) {
+            return '';
+        }
+        return self::tag($tagname, $contents, $attributes);
+    }
+
+    /**
      * Outputs a HTML attribute and value
      * @param string $name The name of the attribute ('src', 'href', 'class' etc.)
      * @param string $value The value of the attribute. The value will be escaped with {@link s()}
