@@ -4,54 +4,54 @@
 |--------------210px--------------------------------------------210px----------------|
 |-----------------------------------------------------------------------------------*/
 
-#page-content #regions {
+#page-content #region-main-box {
   left: 210px; /* Width of left sideblock */
 }
 
-#page-content #regions #regions-mask {
+#page-content #region-main-box #region-post-box {
   margin-left: -420px; /* Twice width of left sideblock */
   padding-top: 5px;
 }
 
-#page-content #regions #regions-mask #region-main #region-main-mask {
+#page-content #region-main-box #region-post-box #region-main-wrap #region-main {
   margin-left: 420px; /* Twice width of left sideblock */
   padding: 0 15px; /* Padding around middle column */
 }
 
-#page-content #regions #regions-mask #region-pre {
+#page-content #region-main-box #region-post-box #region-pre {
   left: 210px; /* Width of left sideblock */
   width: 210px; /* Width of left sideblock */
 }
 
-#page-content #regions #regions-mask #region-post {
+#page-content #region-main-box #region-post-box #region-post {
   width: 210px; /* Width of right sideblock */
 }
 
-#page-content #regions .region-content {
+#page-content #region-main-box .region-content {
   padding: 0;
 }
 
 /** Only side pre **/
 
-.side-pre-only #page-content #regions #regions-mask {
+.side-pre-only #page-content #region-main-box #region-post-box {
   margin-left: -210px; 
 }
 
-.side-pre-only #page-content #regions #regions-mask #region-main #region-main-mask {
+.side-pre-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
   margin-left: 210px;
 }
 
 /** Only side post **/
 
-.side-post-only #page-content #regions #regions-mask {
+.side-post-only #page-content #region-main-box #region-post-box {
   margin-left: -210px;
 }
 
-.side-post-only #page-content #regions #regions-mask #region-main #region-main-mask {
+.side-post-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
   margin-left: 210px;
 }
 
 
-.has_dock.side-post-only .page-middle #regions #regions-mask #region-main #region-main-mask {
+.has_dock.side-post-only .page-middle #region-main-box #region-post-box #region-main-wrap #region-main {
   margin-left: 210px;
 }	

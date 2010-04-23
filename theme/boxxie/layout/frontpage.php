@@ -56,35 +56,35 @@ echo $OUTPUT->doctype() ?>
 <?php } ?>
       
     <div id="page-content">
-      <div id="regions">
-        <div id="regions-mask">
-        
-          <div id="region-main">
-            <div id="region-main-mask">
-              <div class="region-content">
-                <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
-              </div>
+        <div id="region-main-box">
+            <div id="region-post-box">
+            
+                <div id="region-main-wrap">
+                    <div id="region-main">
+                        <div class="region-content">
+                            <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
+                        </div>
+                    </div>
+                </div>
+                
+                <?php if ($hassidepre) { ?>
+                <div id="region-pre">
+                    <div class="region-content">
+                        <?php echo $OUTPUT->blocks_for_region('side-pre') ?>
+                    </div>
+                </div>
+                <?php } ?>
+                
+                <?php if ($hassidepost) { ?>
+                <div id="region-post">
+                    <div class="region-content">
+                        <?php echo $OUTPUT->blocks_for_region('side-post') ?>
+                    </div>
+                </div>
+                <?php } ?>
+                
             </div>
-          </div>
-          
-          <?php if ($hassidepre) { ?>
-          <div id="region-pre">
-            <div class="region-content">
-              <?php echo $OUTPUT->blocks_for_region('side-pre') ?>
-            </div>
-          </div>
-          <?php } ?>
-          
-          <?php if ($hassidepost) { ?>
-          <div id="region-post">
-            <div class="region-content">
-              <?php echo $OUTPUT->blocks_for_region('side-post') ?>
-            </div>
-          </div>
-          <?php } ?>
-        
         </div>
-      </div>
     </div>
     
 <?php if ($hasfooter) { ?>
