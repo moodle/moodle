@@ -65,7 +65,7 @@ class ExHtmlReporter extends HtmlReporter {
     function paintFail($message) {
         // Explicitly call grandparent, not parent::paintFail.
         SimpleScorer::paintFail($message);
-        $this->_paintPassFail('fail', $message);
+        $this->_paintPassFail('fail', $message, false, debug_backtrace());
     }
 
     /**
@@ -89,7 +89,7 @@ class ExHtmlReporter extends HtmlReporter {
     /**
      * Private method. Used by printPass/Fail/Skip/Error.
      */
-    function _paintPassFail($passorfail, $message, $rawmessage=false) {
+    function _paintPassFail($passorfail, $message, $rawmessage = false, $stacktrace = null) {
         global $FULLME, $CFG, $OUTPUT;
 
         echo $OUTPUT->box_start($passorfail . ' generalbox ');
@@ -108,6 +108,25 @@ class ExHtmlReporter extends HtmlReporter {
         echo "<a href=\"{$url}path=$folder$file\" title=\"$this->strrunonlyfile\">$file</a>";
         echo $this->strseparator, implode($this->strseparator, $breadcrumb);
         echo '<br />', ($rawmessage ? $message : $this->_htmlEntities($message)), "\n\n";
+        if ($stacktrace) {
+            $dotsadded = false;
+            $interestinglines = 0;
+            $filteredstacktrace = array();
+            foreach ($stacktrace as $frame) {
+                if (empty($frame['file']) || (strpos($frame['file'], 'simpletestlib') === false
+                        && strpos($frame['file'], 'report/unittest') === false)) {
+                    $filteredstacktrace[] = $frame;
+                    $interestinglines += 1;
+                    $dotsadded = false;
+                } else if (!$dotsadded) {
+                    $filteredstacktrace[] = array('line' => '...', 'file' => '...');
+                    $dotsadded = true;
+                }
+            }
+            if ($interestinglines > 1) {
+                echo '<div class="notifytiny">' . format_backtrace($filteredstacktrace) . "</div>\n\n";
+            }
+        }
         echo $OUTPUT->box_end();
         flush();
     }
@@ -165,7 +184,7 @@ class ExHtmlReporter extends HtmlReporter {
             $message.=$exception->getTraceAsString().'</pre>';
         }
 
-        $this->_paintPassFail('exception', $message,true);
+        $this->_paintPassFail('exception', $message, true);
     }
 
     /**
