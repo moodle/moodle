@@ -439,7 +439,7 @@ function blog_get_options_for_course(stdClass $course, stdClass $user=null) {
     }
     // Serve from the cache if we've already generated for this course
     if (array_key_exists($key, $courseoptions)) {
-        return $courseoptions[$course->id];
+        return $courseoptions[$key];
     }
     
     if (has_capability('moodle/blog:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
