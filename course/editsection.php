@@ -48,7 +48,13 @@ $draftitemid = file_get_submitted_draft_itemid('summary');
 $currenttext = file_prepare_draft_area($draftitemid, $context->id, 'course_section', $section->id, array('subdirs'=>true), $section->summary);
 
 $mform = new editsection_form(null, $course);
-$data = array('id'=>$section->id, 'summary'=>array('text'=>$currenttext, 'format'=>FORMAT_HTML, 'itemid'=>$draftitemid));
+$data = array(
+    'id'=>$section->id,
+    'usedefaultname'=>(is_null($section->name)),
+    'name'=>$section->name,
+    'summary'=>array('text'=>$currenttext, 'format'=>FORMAT_HTML, 'itemid'=>$draftitemid)
+);
+
 $mform->set_data($data); // set defaults
 
 /// If data submitted, then process and store.
@@ -56,9 +62,13 @@ if ($mform->is_cancelled()){
     redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
 
 } else if ($data = $mform->get_data()) {
-
-    $text = file_save_draft_area_files($data->summary['itemid'], $context->id, 'course_section', $section->id, array('subdirs'=>true), $data->summary['text']);
-    $DB->set_field("course_sections", "summary", $text, array("id"=>$section->id));
+    if (empty($data->usedefaultname)) {
+        $section->name = $data->name;
+    } else {
+        $section->name = null;
+    }
+    $section->summary = file_save_draft_area_files($data->summary['itemid'], $context->id, 'course_section', $section->id, array('subdirs'=>true), $data->summary['text']);
+    $DB->update_record('course_sections', $section);
     add_to_log($course->id, "course", "editsection", "editsection.php?id=$section->id", "$section->section");
     redirect("view.php?id=$course->id");
 }
@@ -76,7 +86,6 @@ if ($course->format == 'site') {
 
 $PAGE->set_title($stredit);
 $PAGE->navbar->add($stredit);
-$PAGE->set_focuscontrol('theform.summary');
 echo $OUTPUT->header();
 
 echo $OUTPUT->heading_with_help($strsummaryof, 'summaries');

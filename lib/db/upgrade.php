@@ -3578,6 +3578,18 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010042200);
     }
 
+    if ($result && $oldversion < 2010042301) {
+
+        $table = new xmldb_table('course_sections');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'section');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_main_savepoint($result, 2010042301);
+    }
+
     return $result;
 }
 

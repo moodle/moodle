@@ -33,8 +33,8 @@
  * @param stdClass $modinfo The mod info object for the current course
  * @return bool Returns true
  */
-function load_course_format_social(&$navigation, $keys, $course) {
-    $navigation->add_course_section_generic($keys, $course, get_string('social'), 'social');
+function callback_social_load_content(&$navigation, $course, $coursenode) {
+    return $navigation->load_generic_course_sections($course, $coursenode, 'social');
 }
 
 /**

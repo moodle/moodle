@@ -39,7 +39,7 @@ function callback_scorm_definition() {
  *
  * @return string
  */
-function callback_scorm_request_keyscorm() {
+function callback_scorm_request_key() {
     return 'scorm';
 }
 

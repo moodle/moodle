@@ -34,7 +34,7 @@
  * @return bool Returns true
  */
 function callback_topics_load_content(&$navigation, $course, $coursenode) {
-    return $navigation->load_generic_course_sections($course, $coursenode, get_string('topic'), 'topic', get_string('section0name', 'format_topics'));
+    return $navigation->load_generic_course_sections($course, $coursenode, 'topics');
 }
 
 /**
@@ -57,3 +57,13 @@ function callback_topics_request_key() {
     return 'topic';
 }
 
+function callback_topics_get_section_name($course, $section) {
+    // We can't add a node without any text
+    if (!is_empty($section->name)) {
+        return $section->name;
+    } else if ($section->section == 0) {
+        return get_string('section0name', 'format_topics');
+    } else {
+        return get_string('topic').' '.$section->section;
+    }
+}

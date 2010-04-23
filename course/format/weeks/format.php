@@ -87,6 +87,10 @@
         echo '<div class="right side" >&nbsp;</div>';
         echo '<div class="content">';
 
+        if (!empty($thissection->name)) {
+            echo html_writer::tag('h3', $thissection->name, 'sectionname');
+        }
+
         echo '<div class="summary">';
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -212,8 +216,11 @@
                 echo $OUTPUT->heading($currenttext.$weekperiod.' ('.get_string('notavailable').')', 3, 'weekdates');
 
             } else {
-                echo $OUTPUT->heading($currenttext.$weekperiod, 3, 'weekdates');
-
+                if (!is_null($thissection->name)) {
+                    echo $OUTPUT->heading($thissection->name, 3, 'weekdates');
+                } else {
+                    echo $OUTPUT->heading($currenttext.$weekperiod, 3, 'weekdates');
+                }
                 echo '<div class="summary">';
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                 $summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course_section', $thissection->id);

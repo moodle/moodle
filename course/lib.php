@@ -1177,7 +1177,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
 function get_all_sections($courseid) {
     global $DB;
     return $DB->get_records("course_sections", array("course"=>"$courseid"), "section",
-                       "section, id, course, summary, sequence, visible");
+                       "section, id, course, name, summary, sequence, visible");
 }
 
 function course_set_display($courseid, $display=0) {
