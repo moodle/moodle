@@ -65,7 +65,7 @@ class ExHtmlReporter extends HtmlReporter {
     function paintFail($message) {
         // Explicitly call grandparent, not parent::paintFail.
         SimpleScorer::paintFail($message);
-        $this->_paintPassFail('fail', $message, false, debug_backtrace());
+        $this->_paintPassFail('fail', $message, debug_backtrace());
     }
 
     /**
@@ -81,15 +81,29 @@ class ExHtmlReporter extends HtmlReporter {
      * Called when an error (uncaught exception or PHP error) needs to be output.
      */
     function paintError($message) {
-        // Explicitly call grandparent, not parent::paintFail.
+        // Explicitly call grandparent, not parent::paintError.
         SimpleScorer::paintError($message);
         $this->_paintPassFail('exception', $message);
     }
 
     /**
+     * Called when a caught exception needs to be output.
+     */
+    function paintException($exception) {
+        // Explicitly call grandparent, not parent::paintException.
+        SimpleScorer::paintException($exception);
+        $message = 'Unexpected exception of type [' . get_class($exception) .
+                '] with message ['. $exception->getMessage() .
+                '] in ['. $exception->getFile() .
+                ' line ' . $exception->getLine() . ']';
+
+        $this->_paintPassFail('exception', $message, $exception->getTrace());
+    }
+
+    /**
      * Private method. Used by printPass/Fail/Skip/Error.
      */
-    function _paintPassFail($passorfail, $message, $rawmessage = false, $stacktrace = null) {
+    function _paintPassFail($passorfail, $message, $stacktrace = null) {
         global $FULLME, $CFG, $OUTPUT;
 
         echo $OUTPUT->box_start($passorfail . ' generalbox ');
@@ -107,13 +121,14 @@ class ExHtmlReporter extends HtmlReporter {
         }
         echo "<a href=\"{$url}path=$folder$file\" title=\"$this->strrunonlyfile\">$file</a>";
         echo $this->strseparator, implode($this->strseparator, $breadcrumb);
-        echo '<br />', ($rawmessage ? $message : $this->_htmlEntities($message)), "\n\n";
+        echo '<br />', $this->_htmlEntities($message), "\n\n";
         if ($stacktrace) {
             $dotsadded = false;
             $interestinglines = 0;
             $filteredstacktrace = array();
             foreach ($stacktrace as $frame) {
-                if (empty($frame['file']) || (strpos($frame['file'], 'simpletestlib') === false
+                if (empty($frame['file']) || (strpos($frame['file'], 'simpletestlib') === false &&
+                        strpos($frame['file'], 'simpletestcoveragelib') === false
                         && strpos($frame['file'], 'report/unittest') === false)) {
                     $filteredstacktrace[] = $frame;
                     $interestinglines += 1;
@@ -123,7 +138,7 @@ class ExHtmlReporter extends HtmlReporter {
                     $dotsadded = true;
                 }
             }
-            if ($interestinglines > 1) {
+            if ($interestinglines > 1 || ($passorfail == 'exception' && $interestinglines > 0)) {
                 echo '<div class="notifytiny">' . format_backtrace($filteredstacktrace) . "</div>\n\n";
             }
         }
@@ -154,37 +169,6 @@ class ExHtmlReporter extends HtmlReporter {
             echo $OUTPUT->box_end();
             flush();
         }
-    }
-
-    function paintException($exception) {
-        SimpleReporter::paintException($exception);
-
-        $message = 'Unexpected exception of type [' . s(get_class($exception)) .
-                '] with message ['. s($exception->getMessage()) .
-                '] in ['. s($exception->getFile()) .
-                ' line ' . s($exception->getLine()) . ']';
-
-        if(is_a($exception,'moodle_exception')) {
-            $message.='<br/><br/>Error string: <tt>'.s($exception->errorcode).
-                '</tt> from <tt>'.s($exception->module).'</tt>';
-            if($exception->a!==null) {
-                $message.='(<tt>'.s(implode(', ', (array)$exception->a)).'</tt>)';
-            }
-            $message.=' &ndash; <i>'.get_string($exception->errorcode,
-                $exception->module,$exception->a).'</i>';
-            if($exception->link) {
-                $message.='<br/>Link: <tt>'.s($exception->link).'</tt>';
-            }
-            if($exception->debuginfo) {
-                // Note debug info is not escaped so may contain formatting
-                $message.='<pre>'.$exception->debuginfo."\n\n";
-            } else {
-                $message.='<pre>';
-            }
-            $message.=$exception->getTraceAsString().'</pre>';
-        }
-
-        $this->_paintPassFail('exception', $message, true);
     }
 
     /**
