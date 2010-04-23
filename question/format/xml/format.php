@@ -132,6 +132,9 @@ class qformat_xml extends qformat_default {
         $qo->name = $this->getpath( $question, array('#','name',0,'#','text',0,'#'), '', true, $error_noname );
         $qo->questiontext = $this->getpath( $question, array('#','questiontext',0,'#','text',0,'#'), '', true );
         $qo->questiontextformat = $this->getpath( $question, array('#','questiontext',0,'@','format'), '' );
+        if (!is_numeric($qo->questiontextformat)) {
+            $qo->questiontextformat = text_format_name($qo->questiontextformat);
+        }    
         $qo->image = $this->getpath( $question, array('#','image',0,'#'), $qo->image );
         $image_base64 = $this->getpath( $question, array('#','image_base64','0','#'),'' );
         if (!empty($image_base64)) {
@@ -408,14 +411,27 @@ class qformat_xml extends qformat_default {
     }
 
     function import_calculated( $question ) {
-    // import numerical question
+    // import calculated question
 
         // get common parts
         $qo = $this->import_headers( $question );
 
-        // header parts particular to numerical
+        // header parts particular to calculated
         $qo->qtype = CALCULATED ;//CALCULATED;
         $qo->synchronize = $this->getpath( $question, array( '#','synchronize',0,'#' ), 0 );
+        $single = $this->getpath( $question, array('#','single',0,'#'), 'true' );
+        $qo->single = $this->trans_single( $single );
+        $shuffleanswers = $this->getpath( $question, array('#','shuffleanswers',0,'#'), 'false' );
+        $qo->answernumbering = $this->getpath( $question, array('#','answernumbering',0,'#'), 'abc' );
+        $qo->shuffleanswers = $this->trans_single($shuffleanswers);
+        $qo->correctfeedback = $this->getpath( $question, array('#','correctfeedback',0,'#','text',0,'#'), '', true );
+        $qo->partiallycorrectfeedback = $this->getpath( $question, array('#','partiallycorrectfeedback',0,'#','text',0,'#'), '', true );
+        $qo->incorrectfeedback = $this->getpath( $question, array('#','incorrectfeedback',0,'#','text',0,'#'), '', true );
+        $qo->unitgradingtype = $this->getpath( $question, array('#','unitgradingtype',0,'#'), 0 );
+        $qo->unitpenalty = $this->getpath( $question, array('#','unitpenalty',0,'#'), 0 );
+        $qo->showunits = $this->getpath( $question, array('#','showunits',0,'#'), 0 );
+        $qo->unitsleft = $this->getpath( $question, array('#','unitsleft',0,'#'), 0 );
+        $qo->instructions = $this->getpath( $question, array('#','instructions',0,'#','text',0,'#'), '', true );
         // get answers array
        // echo "<pre> question";print_r($question);echo "</pre>";
         $answers = $question['#']['answer'];
@@ -566,6 +582,10 @@ class qformat_xml extends qformat_default {
                 $qo = $this->import_calculated( $question );
                 $qo->qtype = CALCULATEDSIMPLE ;
             }
+            elseif ($question_type=='calculatedmulti') {
+                $qo = $this->import_calculated( $question );
+                $qo->qtype = CALCULATEDMULTI ;
+            }
             elseif ($question_type=='category') {
                 $qo = $this->import_category( $question );
             }
@@ -635,6 +655,9 @@ class qformat_xml extends qformat_default {
             break;
         case CALCULATEDSIMPLE:
             $name = 'calculatedsimple';
+            break;
+        case CALCULATEDMULTI:
+            $name = 'calculatedmulti';
             break;
         default:
             $name = false;
@@ -866,7 +889,7 @@ class qformat_xml extends qformat_default {
             $expout .= "    <correctfeedback>".$this->writetext($question->options->correctfeedback, 3)."</correctfeedback>\n";
             $expout .= "    <partiallycorrectfeedback>".$this->writetext($question->options->partiallycorrectfeedback, 3)."</partiallycorrectfeedback>\n";
             $expout .= "    <incorrectfeedback>".$this->writetext($question->options->incorrectfeedback, 3)."</incorrectfeedback>\n";
-            $expout .= "    <answernumbering>{$question->options->answernumbering}</answernumbering>\n";
+            $expout .= "    <answernumbering>".$this->writetext($question->options->answernumbering, 3)."</answernumbering>\n";
             foreach($question->options->answers as $answer) {
                 $percent = $answer->fraction * 100;
                 $expout .= "      <answer fraction=\"$percent\">\n";
@@ -948,13 +971,15 @@ class qformat_xml extends qformat_default {
             }
             break;
         case CALCULATED:
-            if (!empty($question->options->synchronize)) {
-                $expout .= "    <synchronize>{$question->options->synchronize}</synchronize>\n";
-            }
-            else {
-                $expout .= "    <synchronize>0</synchronize>\n";
-            }
         case CALCULATEDSIMPLE:
+        case CALCULATEDMULTI:
+            $expout .= "    <synchronize>{$question->options->synchronize}</synchronize>\n";
+            $expout .= "    <single>{$question->options->single}</single>\n";
+            $expout .= "    <answernumbering>{$question->options->answernumbering}</answernumbering>\n";
+            $expout .= "    <shuffleanswers>".$this->writetext($question->options->shuffleanswers, 3)."</shuffleanswers>\n";
+            $expout .= "    <correctfeedback>".$this->writetext($question->options->correctfeedback, 3)."</correctfeedback>\n";
+            $expout .= "    <partiallycorrectfeedback>".$this->writetext($question->options->partiallycorrectfeedback, 3)."</partiallycorrectfeedback>\n";
+            $expout .= "    <incorrectfeedback>".$this->writetext($question->options->incorrectfeedback, 3)."</incorrectfeedback>\n";
             foreach ($question->options->answers as $answer) {
                 $tolerance = $answer->tolerance;
                 $tolerancetype = $answer->tolerancetype;
@@ -971,6 +996,11 @@ class qformat_xml extends qformat_default {
                 $expout .= "    <feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
                 $expout .= "</answer>\n";
             }
+            $expout .= "    <unitgradingtype>{$question->options->unitgradingtype}</unitgradingtype>\n";
+            $expout .= "    <unitpenalty>{$question->options->unitpenalty}</unitpenalty>\n";
+            $expout .= "    <showunits>{$question->options->showunits}</showunits>\n";
+            $expout .= "    <unitsleft>{$question->options->unitsleft}</unitsleft>\n";
+            $expout .= "    <instructions>".$this->writetext($question->options->instructions, 3)."</instructions>\n";
             $units = $question->options->units;
             if (count($units)) {
                 $expout .= "<units>\n";
