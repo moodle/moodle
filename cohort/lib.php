@@ -118,6 +118,42 @@ function cohort_remove_member($cohortid, $userid) {
 }
 
 /**
+ * Returns list of visible cohorts in course.
+ *
+ * @param  object $course
+ * @param  bool $enrolled true means include only cohorts with enrolled users
+ * @return array
+ */
+function cohort_get_visible_list($course) {
+    global $DB, $USER;
+
+    $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
+    list($esql, $params) = get_enrolled_sql($context);
+    $parentsql = get_related_contexts_string($context);
+
+    $sql = "SELECT c.id, c.name, c.idnumber, COUNT(u.id) AS cnt
+              FROM {cohort} c
+              JOIN {cohort_members} cm ON cm.cohortid = c.id
+              JOIN ($esql) u ON u.id = cm.userid
+             WHERE c.contextid $parentsql
+          GROUP BY c.id, c.name, c.idnumber
+            HAVING COUNT(u.id) > 0
+          ORDER BY c.name, c.idnumber";
+    $params['ctx'] = $context->id;
+
+    $cohorts = $DB->get_records_sql($sql, $params);
+
+    foreach ($cohorts as $cid=>$cohort) {
+        $cohorts[$cid] = format_string($cohort->name);
+        if ($cohort->idnumber) {
+            $cohorts[$cid] .= ' (' . $cohort->cnt . ')';
+        }
+    }
+
+    return $cohorts;
+}
+
+/**
  * Cohort assignment candidates
  */
 class cohort_candidate_selector extends user_selector_base {

@@ -513,10 +513,11 @@ function groups_get_possible_roles($context) {
  * Gets potential group members for grouping
  * @param int $courseid The id of the course
  * @param int $roleid The role to select users from
+ * @param int $cohortid restrict to cohort id
  * @param string $orderby The colum to sort users by
  * @return array An array of the users
  */
-function groups_get_potential_members($courseid, $roleid = null, $orderby = 'lastname ASC, firstname ASC') {
+function groups_get_potential_members($courseid, $roleid = null, $cohortid = null, $orderby = 'lastname ASC, firstname ASC') {
     global $DB;
 
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
@@ -535,9 +536,17 @@ function groups_get_potential_members($courseid, $roleid = null, $orderby = 'las
         $where = "";
     }
 
+    if ($cohortid) {
+        $cohortjoin = "JOIN {cohort_members} cm ON cm.userid = u.id
+                       JOIN {cohort} c ON c.id = cm.cohortid";
+    } else {
+        $cohortjoin = "";
+    }
+
     $sql = "SELECT u.id, u.username, u.firstname, u.lastname, u.idnumber
               FROM {user} u
               JOIN ($esql) e ON e.id = u.id
+       $cohortjoin
             $where
           ORDER BY $orderby";
 

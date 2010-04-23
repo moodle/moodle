@@ -25,6 +25,7 @@
  */
 
 $string['addcohort'] = 'Add new cohort';
+$string['anycohort'] = 'Any';
 $string['assign'] = 'Assign';
 $string['assignto'] = 'Cohort \'{$a}\' members';
 $string['backtocohorts'] = 'Back to cohorts';
@@ -48,3 +49,4 @@ $string['name'] = 'Name';
 $string['nocomponent'] = 'Created manually';
 $string['potusers'] = 'Potential users';
 $string['potusersmatching'] = 'Potential matching users';
+$string['selectfromcohort'] = 'Select members from cohort';

@@ -1,6 +1,7 @@
 <?php
 
 require_once($CFG->dirroot.'/lib/formslib.php');
+require_once($CFG->dirroot.'/cohort/lib.php');
 
 /// get url variables
 class autogroup_form extends moodleform {
@@ -20,6 +21,16 @@ class autogroup_form extends moodleform {
             $mform->setDefault('roleid', $COURSE->defaultrole);
         } else if (!empty($CFG->defaultcourseroleid) and array_key_exists($CFG->defaultcourseroleid, $options)) {
             $mform->setDefault('roleid', $CFG->defaultcourseroleid);
+        }
+
+        $options = cohort_get_visible_list($COURSE);
+        if ($options) {
+            $options = array(0=>get_string('anycohort', 'cohort')) + $options;
+            $mform->addElement('select', 'cohortid', get_string('selectfromcohort', 'cohort'), $options);
+        } else {
+            $mform->addElement('hidden','cohortid');
+            $mform->setType('cohortid', PARAM_INT);
+            $mform->setDefault('cohortid', '0');
         }
 
         $options = array('groups' => get_string('numgroups', 'group'),
@@ -91,7 +102,7 @@ class autogroup_form extends moodleform {
         $errors = parent::validation($data, $files);
 
         if ($data['allocateby'] != 'no') {
-            if (!$users = groups_get_potential_members($data['courseid'], $data['roleid'])) {
+            if (!$users = groups_get_potential_members($data['courseid'], $data['roleid'], $data['cohortid'])) {
                 $errors['roleid'] = get_string('nousersinrole', 'group');
             }
 
