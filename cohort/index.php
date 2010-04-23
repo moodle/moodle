@@ -25,6 +25,7 @@
  */
 
 require('../config.php');
+require_once($CFG->libdir.'/adminlib.php');
 
 $contextid = optional_param('contextid', 0, PARAM_INT);
 
@@ -50,18 +51,17 @@ if (!$manager) {
     require_capability('moodle/cohort:view', $context);
 }
 
-// TODO: use admin_external_page in system context
-
 $strcohorts = get_string('cohorts', 'cohort');
 
-$PAGE->set_url('/cohort/index.php', array('contextid'=>$context->id));
-$PAGE->set_title($strcohorts);
-$PAGE->set_context($context);
-
 if ($category) {
+    $PAGE->set_url('/cohort/index.php', array('contextid'=>$context->id));
+    $PAGE->set_title($strcohorts);
+    $PAGE->set_context($context);
     $PAGE->navbar->add($category->name, new moodle_url('/course/index.php', array('categoryedit'=>'1')));
+    $PAGE->navbar->add($strcohorts);
+} else {
+    admin_externalpage_setup('cohorts');
 }
-$PAGE->navbar->add($strcohorts);
 
 echo $OUTPUT->header();
 

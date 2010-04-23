@@ -295,6 +295,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
         $str->edit     = get_string('editthiscategory');
         $str->hide     = get_string('hide');
         $str->show     = get_string('show');
+        $str->cohorts  = get_string('cohorts', 'cohort');
         $str->spacer = '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ';
     }
 
@@ -331,6 +332,11 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
             } else {
                 echo '<a title="'.$str->show.'" href="index.php?show='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
                      ' src="'.$OUTPUT->pix_url('t/show') . '" class="iconsmall" alt="'.$str->show.'" /></a> ';
+            }
+
+            if (has_capability('moodle/cohort:manage', $category->context) or has_capability('moodle/cohort:view', $category->context)) {
+                echo '<a title="'.$str->cohorts.'" href="'.$CFG->wwwroot.'/cohort/index.php?contextid='.$category->context->id.'"><img'.
+                     ' src="'.$OUTPUT->pix_url('i/cohort') . '" class="iconsmall" alt="'.$str->cohorts.'" /></a> ';
             }
 
             if ($up) {

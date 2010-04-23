@@ -12,7 +12,9 @@ if ($hassiteconfig
  or has_capability('moodle/user:update', $systemcontext)
  or has_capability('moodle/user:delete', $systemcontext)
  or has_capability('moodle/role:manage', $systemcontext)
- or has_capability('moodle/role:assign', $systemcontext)) { // speedup for non-admins, add all caps used on this page
+ or has_capability('moodle/role:assign', $systemcontext)
+ or has_capability('moodle/cohort:manage', $systemcontext)
+ or has_capability('moodle/cohort:view', $systemcontext)) { // speedup for non-admins, add all caps used on this page
 
 
     $temp = new admin_settingpage('manageauths', get_string('authsettings', 'admin'));
@@ -75,6 +77,7 @@ if ($hassiteconfig
     $ADMIN->add('accounts', new admin_externalpage('uploadusers', get_string('uploadusers'), "$CFG->wwwroot/$CFG->admin/uploaduser.php", 'moodle/site:uploadusers'));
     $ADMIN->add('accounts', new admin_externalpage('uploadpictures', get_string('uploadpictures','admin'), "$CFG->wwwroot/$CFG->admin/uploadpicture.php", 'moodle/site:uploadusers'));
     $ADMIN->add('accounts', new admin_externalpage('profilefields', get_string('profilefields','admin'), "$CFG->wwwroot/user/profile/index.php", 'moodle/site:config'));
+    $ADMIN->add('accounts', new admin_externalpage('cohorts', get_string('cohorts', 'cohort'), $CFG->wwwroot . '/cohort/index.php', array('moodle/cohort:manage', 'moodle/cohort:view')));
 
 
     // stuff under the "roles" subcategory
