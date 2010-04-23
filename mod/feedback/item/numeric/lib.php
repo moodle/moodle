@@ -5,6 +5,9 @@ require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 class feedback_item_numeric extends feedback_item_base {
     var $type = "numeric";
     var $sep_dec, $sep_thous;
+    var $commonparams;
+    var $item_form;
+    var $item;
 
     function init() {
         $this->sep_dec = get_string('separator_decimal', 'feedback');
@@ -18,36 +21,73 @@ class feedback_item_numeric extends feedback_item_base {
         }
     }
 
-    function show_edit($item, $commonparams, $positionlist, $position) {
-        global $CFG;
-
+    function build_editform($item, $feedback, $cm) {
+        global $DB, $CFG;
         require_once('numeric_form.php');
 
-        $item_form = new feedback_numeric_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position));
-
-        $item->presentation = empty($item->presentation) ? '' : $item->presentation;
-        $item->name = empty($item->name) ? '' : $item->name;
-        $item->label = empty($item->label) ? '' : $item->label;
-
-        $item->required = isset($item->required) ? $item->required : 0;
-        if($item->required) {
-            $item_form->requiredcheck->setValue(true);
+        //get the lastposition number of the feedback_items
+        $position = $item->position;
+        $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
+        if($position == -1){
+            $i_formselect_last = $lastposition + 1;
+            $i_formselect_value = $lastposition + 1;
+            $item->position = $lastposition + 1;
+        }else {
+            $i_formselect_last = $lastposition;
+            $i_formselect_value = $item->position;
         }
-
-        $item_form->itemname->setValue($item->name);
-        $item_form->itemlabel->setValue($item->label);
-
+        //the elements for position dropdownlist
+        $positionlist = array_slice(range(0,$i_formselect_last),1,$i_formselect_last,true);
+        
+        $item->presentation = empty($item->presentation) ? '' : $item->presentation;
+        
         $range_from_to = explode('|',$item->presentation);
-
         $range_from = (isset($range_from_to[0]) AND is_numeric($range_from_to[0])) ? str_replace(FEEDBACK_DECIMAL, $this->sep_dec, floatval($range_from_to[0])) : '-';
         $range_to = (isset($range_from_to[1]) AND is_numeric($range_from_to[1])) ? str_replace(FEEDBACK_DECIMAL, $this->sep_dec, floatval($range_from_to[1])) : '-';
+        $item->rangefrom = $range_from;
+        $item->rangeto = $range_to;
 
-        $item_form->selectfrom->setValue($range_from);
+        $commonparams = array('cmid'=>$cm->id,
+                             'id'=>isset($item->id) ? $item->id : NULL,
+                             'typ'=>$item->typ,
+                             'feedback'=>$feedback->id);
 
-        $item_form->selectto->setValue($range_to);
-
-        return $item_form;
+        //build the form
+        $this->item_form = new feedback_numeric_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position));
     }
+
+    //this function only can used after the call of build_editform()
+    function show_editform() {
+        $this->item_form->display();
+    }
+    
+    function is_cancelled() {
+        return $this->item_form->is_cancelled();
+    }
+
+    function get_data() {
+        if($this->item = $this->item_form->get_data()) {
+            return true;
+        }
+        return false;
+    }
+
+    function save_item() {
+        global $DB;
+        
+        if(!$item = $this->item_form->get_data()) {
+            return false;
+        }
+        
+        if(!$item->id) {
+            $item->id = $DB->insert_record('feedback_item', $item);
+        }else {
+            $DB->update_record('feedback_item', $item);
+        }
+        
+        return $DB->get_record('feedback_item', array('id'=>$item->id));
+    }
+
 
     //liefert eine Struktur ->name, ->data = array(mit Antworten)
     function get_analysed($item, $groupid = false, $courseid = false) {

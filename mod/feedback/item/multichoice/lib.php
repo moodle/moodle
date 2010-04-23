@@ -78,36 +78,6 @@ class feedback_item_multichoice extends feedback_item_base {
         return $DB->get_record('feedback_item', array('id'=>$item->id));
     }
 
-    function show_edit($item, $commonparams, $positionlist, $position) {
-        global $CFG;
-
-        require_once('multichoice_form.php');
-
-        $item_form = new feedback_multichoice_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position));
-
-        $item->presentation = empty($item->presentation) ? '' : $item->presentation;
-        $item->name = empty($item->name) ? '' : $item->name;
-        $item->label = empty($item->label) ? '' : $item->label;
-
-        $info = $this->get_info($item);
-
-        $item->required = isset($item->required) ? $item->required : 0;
-        if($item->required) {
-            $item_form->requiredcheck->setValue(true);
-        }
-
-        $item_form->itemname->setValue($item->name);
-        $item_form->itemlabel->setValue($item->label);
-
-        $item_form->selectadjust->setValue($info->horizontal);
-
-        $item_form->selecttype->setValue($info->subtype);
-
-        $itemvalues = str_replace(FEEDBACK_MULTICHOICE_LINE_SEP, "\n", $info->presentation);
-        $itemvalues = str_replace("\n\n", "\n", $itemvalues);
-        $item_form->values->setValue($itemvalues);
-        return $item_form;
-    }
 
     //liefert ein eindimensionales Array mit drei Werten(typ, name, XXX)
     //XXX ist ein eindimensionales Array (anzahl der Antworten bei Typ Radio) Jedes Element ist eine Struktur (answertext, answercount)

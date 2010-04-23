@@ -13,40 +13,76 @@ define('FEEDBACK_MULTICHOICERATED_ADJUST_SEP', '<<<<<');
 
 class feedback_item_multichoicerated extends feedback_item_base {
     var $type = "multichoicerated";
+    var $commonparams;
+    var $item_form;
+    var $item;
+    
     function init() {
 
     }
 
-    function show_edit($item, $commonparams, $positionlist, $position) {
-        global $CFG;
-
+    function build_editform($item, $feedback, $cm) {
+        global $DB, $CFG;
         require_once('multichoicerated_form.php');
 
-        $item_form = new feedback_multichoicerated_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position));
-
+        //get the lastposition number of the feedback_items
+        $position = $item->position;
+        $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
+        if($position == -1){
+            $i_formselect_last = $lastposition + 1;
+            $i_formselect_value = $lastposition + 1;
+            $item->position = $lastposition + 1;
+        }else {
+            $i_formselect_last = $lastposition;
+            $i_formselect_value = $item->position;
+        }
+        //the elements for position dropdownlist
+        $positionlist = array_slice(range(0,$i_formselect_last),1,$i_formselect_last,true);
+        
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
-        $item->name = empty($item->name) ? '' : $item->name;
-        $item->label = empty($item->label) ? '' : $item->label;
-
         $info = $this->get_info($item);
 
-        $item->required = isset($item->required) ? $item->required : 0;
-        if($item->required) {
-            $item_form->requiredcheck->setValue(true);
-        }
+        $commonparams = array('cmid'=>$cm->id,
+                             'id'=>isset($item->id) ? $item->id : NULL,
+                             'typ'=>$item->typ,
+                             'feedback'=>$feedback->id);
 
-        $item_form->itemname->setValue($item->name);
-        $item_form->itemlabel->setValue($item->label);
-
-        $item_form->selectadjust->setValue($info->horizontal);
-
-        $item_form->selecttype->setValue($info->subtype);
-
-        $itemvalues = $this->prepare_presentation_values_print($info->presentation, FEEDBACK_MULTICHOICERATED_VALUE_SEP, FEEDBACK_MULTICHOICERATED_VALUE_SEP2);
-        $item_form->values->setValue($itemvalues);
-
-        return $item_form;
+        //build the form
+        $this->item_form = new feedback_multichoicerated_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position, 'info'=>$info));
     }
+
+    //this function only can used after the call of build_editform()
+    function show_editform() {
+        $this->item_form->display();
+    }
+    
+    function is_cancelled() {
+        return $this->item_form->is_cancelled();
+    }
+
+    function get_data() {
+        if($this->item = $this->item_form->get_data()) {
+            return true;
+        }
+        return false;
+    }
+
+    function save_item() {
+        global $DB;
+        
+        if(!$item = $this->item_form->get_data()) {
+            return false;
+        }
+        
+        if(!$item->id) {
+            $item->id = $DB->insert_record('feedback_item', $item);
+        }else {
+            $DB->update_record('feedback_item', $item);
+        }
+        
+        return $DB->get_record('feedback_item', array('id'=>$item->id));
+    }
+
 
     //liefert ein eindimensionales Array mit drei Werten(typ, name, XXX)
     //XXX ist ein eindimensionales Array (Mittelwert der Werte der Antworten bei Typ Radio_rated) Jedes Element ist eine Struktur (answertext, avg)
@@ -347,15 +383,17 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $info->subtype = '';
         $info->presentation = '';
         $info->horizontal = false;
+        
+        @list($info->subtype, $info->presentation) = explode(FEEDBACK_MULTICHOICERATED_TYPE_SEP, $item->presentation);
 
-        @list($info->subtype, $info->presentation) = explode(FEEDBACK_MULTICHOICE_TYPE_SEP, $item->presentation);
         if(!isset($info->subtype)) {
             $info->subtype = 'r';
         }
 
 
         if($info->subtype != 'd') {
-            @list($info->presentation, $info->horizontal) = explode(FEEDBACK_MULTICHOICE_ADJUST_SEP, $info->presentation);
+            @list($info->presentation, $info->horizontal) = explode(FEEDBACK_MULTICHOICERATED_ADJUST_SEP, $info->presentation);
+
             if(isset($info->horizontal) AND $info->horizontal == 1) {
                 $info->horizontal = true;
             }else {
@@ -363,6 +401,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
             }
         }
 
+        $info->values = $this->prepare_presentation_values_print($info->presentation, FEEDBACK_MULTICHOICERATED_VALUE_SEP, FEEDBACK_MULTICHOICERATED_VALUE_SEP2);
         return $info;
     }
 
@@ -455,8 +494,8 @@ class feedback_item_multichoicerated extends feedback_item_base {
 
     }
 
-    function prepare_presentation_values_print($valuestring, $valuesep1, $valuesep2) {
-        $lines = explode(FEEDBACK_MULTICHOICERATED_LINE_SEP, $valuestring);
+    function prepare_presentation_values($linesep1, $linesep2, $valuestring, $valuesep1, $valuesep2) {
+        $lines = explode($linesep1, $valuestring);
         $newlines = array();
         foreach($lines as $line) {
             $value = '';
@@ -471,29 +510,16 @@ class feedback_item_multichoicerated extends feedback_item_base {
             $value = intval($value);
             $newlines[] = $value.$valuesep2.$text;
         }
-        $newlines = implode("\n", $newlines);
+        $newlines = implode($linesep2, $newlines);
         return $newlines;
     }
 
+    function prepare_presentation_values_print($valuestring, $valuesep1, $valuesep2) {
+        return $this->prepare_presentation_values(FEEDBACK_MULTICHOICERATED_LINE_SEP, "\n", $valuestring, $valuesep1, $valuesep2);
+    }
+
     function prepare_presentation_values_save($valuestring, $valuesep1, $valuesep2) {
-        $lines = explode("\n", $valuestring);
-        $newlines = array();
-        foreach($lines as $line) {
-            $value = '';
-            $text = '';
-
-            if(strpos($line, $valuesep1) === false) {
-                $value = 0;
-                $text = $line;
-            }else {
-                @list($value, $text) = explode($valuesep1, $line, 2);
-            }
-
-            $value = intval($value);
-            $newlines[] = $value.$valuesep2.$text;
-        }
-        $newlines = implode(FEEDBACK_MULTICHOICERATED_LINE_SEP, $newlines);
-        return $newlines;
+        return $this->prepare_presentation_values("\n", FEEDBACK_MULTICHOICERATED_LINE_SEP, $valuestring, $valuesep1, $valuesep2);
     }
 }
 ?>

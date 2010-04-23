@@ -4,37 +4,81 @@ require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 
 class feedback_item_textfield extends feedback_item_base {
     var $type = "textfield";
+    var $commonparams;
+    var $item_form;
+    var $item;
+
     function init() {
 
     }
 
-    function show_edit($item, $commonparams, $positionlist, $position) {
-        global $CFG;
-
+    function build_editform($item, $feedback, $cm) {
+        global $DB, $CFG;
         require_once('textfield_form.php');
 
-        $item_form = new feedback_textfield_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position));
-
-        $item->presentation = empty($item->presentation) ? '' : $item->presentation;
-        $item->name = empty($item->name) ? '' : $item->name;
-        $item->label = empty($item->label) ? '' : $item->label;
-
-        $item->required = isset($item->required) ? $item->required : 0;
-        if($item->required) {
-            $item_form->requiredcheck->setValue(true);
+        //get the lastposition number of the feedback_items
+        $position = $item->position;
+        $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
+        if($position == -1){
+            $i_formselect_last = $lastposition + 1;
+            $i_formselect_value = $lastposition + 1;
+            $item->position = $lastposition + 1;
+        }else {
+            $i_formselect_last = $lastposition;
+            $i_formselect_value = $item->position;
         }
-
-        $item_form->itemname->setValue($item->name);
-        $item_form->itemlabel->setValue($item->label);
-
+        //the elements for position dropdownlist
+        $positionlist = array_slice(range(0,$i_formselect_last),1,$i_formselect_last,true);
+        
+        $item->presentation = empty($item->presentation) ? '' : $item->presentation;
+        
         $sizeAndLength = explode('|',$item->presentation);
         $itemsize = isset($sizeAndLength[0]) ? $sizeAndLength[0] : 30;
         $itemlength = isset($sizeAndLength[1]) ? $sizeAndLength[1] : 5;
-        $item_form->selectwith->setValue($itemsize);
-        $item_form->selectheight->setValue($itemlength);
+        $item->itemsize = $itemsize;
+        $item->itemmaxlength = $itemlength;
 
-        return $item_form;
+        $commonparams = array('cmid'=>$cm->id,
+                             'id'=>isset($item->id) ? $item->id : NULL,
+                             'typ'=>$item->typ,
+                             'feedback'=>$feedback->id);
+
+        //build the form
+        $this->item_form = new feedback_textfield_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position));
     }
+
+    //this function only can used after the call of build_editform()
+    function show_editform() {
+        $this->item_form->display();
+    }
+    
+    function is_cancelled() {
+        return $this->item_form->is_cancelled();
+    }
+
+    function get_data() {
+        if($this->item = $this->item_form->get_data()) {
+            return true;
+        }
+        return false;
+    }
+
+    function save_item() {
+        global $DB;
+        
+        if(!$item = $this->item_form->get_data()) {
+            return false;
+        }
+        
+        if(!$item->id) {
+            $item->id = $DB->insert_record('feedback_item', $item);
+        }else {
+            $DB->update_record('feedback_item', $item);
+        }
+        
+        return $DB->get_record('feedback_item', array('id'=>$item->id));
+    }
+
 
     //liefert eine Struktur ->name, ->data = array(mit Antworten)
     function get_analysed($item, $groupid = false, $courseid = false) {
