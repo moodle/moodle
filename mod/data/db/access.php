@@ -72,6 +72,17 @@ $capabilities = array(
         )
     ),
 
+    'mod/data:rate' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     'mod/data:viewrating' => array(
 
         'captype' => 'read',
@@ -83,15 +94,30 @@ $capabilities = array(
         )
     ),
 
-    'mod/data:rate' => array(
+    'mod/data:viewanyrating' => array(
 
-        'captype' => 'write',
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
-        )
+        ),
+        'clonepermissionsfrom' =>  'mod/data:viewrating'
+    ),
+
+    'mod/data:viewallratings' => array(
+
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' =>  'mod/data:viewrating'
     ),
 
     'mod/data:approve' => array(

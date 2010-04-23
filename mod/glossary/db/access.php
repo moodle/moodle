@@ -156,6 +156,32 @@ $capabilities = array(
         )
     ),
 
+    'mod/glossary:viewanyrating' => array(
+
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' =>  'mod/glossary:viewrating'
+    ),
+
+    'mod/glossary:viewallratings' => array(
+
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' =>  'mod/glossary:viewrating'
+    ),
+
     'mod/glossary:exportentry' => array(
 
         'riskbitmask' => RISK_PERSONAL,
