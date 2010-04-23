@@ -36,7 +36,7 @@ require_login();
 $cohort = $DB->get_record('cohort', array('id'=>$id), '*', MUST_EXIST);
 $context = get_context_instance_by_id($cohort->contextid, MUST_EXIST);
 
-require_capability('moodle/cohort:view', $context);
+require_capability('moodle/cohort:assign', $context);
 
 $PAGE->set_url('/cohort/assign.php', array('id'=>$id));
 $PAGE->set_Context($context);

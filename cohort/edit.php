@@ -52,7 +52,7 @@ if ($id) {
     $cohort->description = '';
 }
 
-require_capability('moodle/cohort:view', $context);
+require_capability('moodle/cohort:manage', $context);
 
 $returnurl = new moodle_url('/cohort/index.php', array('contextid'=>$context->id));
 
