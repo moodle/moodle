@@ -37,7 +37,7 @@ $context = get_context_instance_by_id($cohort->contextid, MUST_EXIST);
 require_capability('moodle/cohort:assign', $context);
 
 $PAGE->set_url('/cohort/assign.php', array('id'=>$id));
-$PAGE->set_Context($context);
+$PAGE->set_context($context);
 
 $returnurl = new moodle_url('/cohort/index.php', array('contextid'=>$cohort->contextid));
 
