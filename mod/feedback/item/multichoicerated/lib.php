@@ -74,6 +74,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
             return false;
         }
         
+        $item->hasvalue = $this->get_hasvalue();
         if(!$item->id) {
             $item->id = $DB->insert_record('feedback_item', $item);
         }else {
