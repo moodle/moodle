@@ -6851,6 +6851,7 @@ function get_core_subsystems() {
             'blog'        => 'blog',
             'bulkusers'   => NULL,
             'calendar'    => 'calendar',
+            'cohort'      => 'cohort',
             'condition'   => NULL,
             'completion'  => NULL,
             'countries'   => NULL,
