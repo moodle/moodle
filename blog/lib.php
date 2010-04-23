@@ -269,6 +269,296 @@ function blog_get_context_url($context=null) {
 }
 
 /**
+ * This function checks that blogs are enabled, and that the user is logged in an
+ * is not the guest user.
+ * @return bool
+ */
+function blog_is_enabled_for_user() {
+    global $CFG;
+    return (!empty($CFG->bloglevel) && $CFG->bloglevel <= BLOG_GLOBAL_LEVEL && isloggedin() && !isguestuser());
+}
+
+/**
+ * This function gets all of the options available for the current user in respect
+ * to blogs.
+ * 
+ * It loads the following if applicable:
+ * -  Module options {@see blog_get_options_for_module}
+ * -  Course options {@see blog_get_options_for_course}
+ * -  User specific options {@see blog_get_options_for_user}
+ * -  General options (BLOG_LEVEL_GLOBAL)
+ *
+ * @param moodle_page $page The page to load for (normally $PAGE)
+ * @param stdClass $userid Load for a specific user
+ * @return array An array of options organised by type.
+ */
+function blog_get_all_options(moodle_page $page, stdClass $userid = null) {
+    global $CFG, $DB, $USER;
+
+    $options = array();
+
+    // If blogs are enabled and the user is logged in and not a guest
+    if (blog_is_enabled_for_user()) {
+        // If the context is the user then assume we want to load for the users context
+        if (is_null($userid) && $page->context->contextlevel == CONTEXT_USER) {
+            $userid = $page->context->instanceid;
+        }
+        // Check the userid var
+        if (!is_null($userid) && $userid!==$USER->id) {
+            // Load the user from the userid... it MUST EXIST throw a wobbly if it doesn't!
+            $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
+        } else {
+            $user = null;
+        }
+
+        if ($CFG->useblogassociations && $page->cm !== null) {
+            // Load for the module associated with the page
+            $options[CONTEXT_MODULE] = blog_get_options_for_module($page->cm, $user);
+        } else if ($CFG->useblogassociations && $page->course->id != SITEID) {
+            // Load the options for the course associated with the page
+            $options[CONTEXT_COURSE] = blog_get_options_for_course($page->course, $user);
+        }
+
+        // Get the options for the user
+        if ($user !== null) {
+            // Load for the requested user
+            $options[CONTEXT_USER+1] = blog_get_options_for_user($user);
+        }
+        // Load for the current user
+        $options[CONTEXT_USER] = blog_get_options_for_user();
+    }
+
+    // If blog level is global then display a link to view all site entries
+    if (!empty($CFG->bloglevel) && $CFG->bloglevel >= BLOG_GLOBAL_LEVEL && has_capability('moodle/blog:view', get_context_instance(CONTEXT_SYSTEM))) {
+        $options[CONTEXT_SYSTEM] = array('viewsite' => array(
+            'string' => get_string('viewsiteentries', 'blog'),
+            'link' => new moodle_url('/blog/index.php')
+        ));
+    }
+
+    // Return the options
+    return $options;
+}
+
+/**
+ * Get all of the blog options that relate to the passed user.
+ *
+ * If no user is passed the current user is assumed.
+ *
+ * @staticvar array $useroptions Cache so we don't have to regenerate multiple times
+ * @param stdClass $user
+ * @return array The array of options for the requested user
+ */
+function blog_get_options_for_user(stdClass $user=null) {
+    global $CFG, $USER;
+    // Cache
+    static $useroptions = array();
+
+    $options = array();
+    // Blogs must be enabled and the user must be logged in
+    if (!blog_is_enabled_for_user()) {
+        return $options;
+    }
+
+    // Sort out the user var
+    if ($user === null || $user->id == $USER->id) {
+        $user = $USER;
+        $iscurrentuser = true;
+    } else {
+        $iscurrentuser = false;
+    }
+
+    // If we've already generated serve from the cache
+    if (array_key_exists($user->id, $useroptions)) {
+        return $useroptions[$user->id];
+    }
+
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    $canview = has_capability('moodle/blog:view', $sitecontext);
+
+    if (!$iscurrentuser && $canview && ($CFG->bloglevel >= BLOG_SITE_LEVEL)) {
+        // Not the current user, but we can view and its blogs are enabled for SITE or GLOBAL
+        $options['userentries'] = array(
+            'string' => get_string('viewuserentries', 'blog', fullname($user)),
+            'link' => new moodle_url('/blog/index.php', array('userid'=>$user->id))
+        );
+    } else {
+        // It's the current user
+        if ($canview) {
+            // We can view our own blogs .... BIG surprise
+            $options['view'] = array(
+                'string' => get_string('viewallmyentries', 'blog'),
+                'link' => new moodle_url('/blog/index.php', array('userid'=>$USER->id))
+            );
+        }
+        if (has_capability('moodle/blog:create', $sitecontext)) {
+            // We can add to our own blog
+            $options['add'] = array(
+                'string' => get_string('addnewentry', 'blog'),
+                'link' => new moodle_url('/blog/edit.php', array('action'=>'add'))
+            );
+        }
+    }
+    // Cache the options
+    $useroptions[$user->id] = $options;
+    // Return the options
+    return $options;
+}
+
+/**
+ * Get the blog options that relate to the given course for the given user.
+ *
+ * @staticvar array $courseoptions A cache so we can save regenerating multiple times
+ * @param stdClass $course The course to load options for
+ * @param stdClass $user The user to load options for null == current user
+ * @return array The array of options
+ */
+function blog_get_options_for_course(stdClass $course, stdClass $user=null) {
+    global $CFG, $USER;
+    // Cache
+    static $courseoptions = array();
+    
+    $options = array();
+
+    // User must be logged in and blogs must be enabled
+    if (!blog_is_enabled_for_user()) {
+        return $options;
+    }
+
+    // Check that the user can associate with the course
+    $sitecontext =      get_context_instance(CONTEXT_SYSTEM);
+    if (!has_capability('moodle/blog:associatecourse', $sitecontext)) {
+        return $options;
+    }
+    // Generate the cache key
+    $key = $course->id.':';
+    if (!empty($user)) {
+        $key .= $user->id;
+    } else {
+        $key .= $USER->id;
+    }
+    // Serve from the cache if we've already generated for this course
+    if (array_key_exists($key, $courseoptions)) {
+        return $courseoptions[$course->id];
+    }
+    
+    if (has_capability('moodle/blog:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
+        // We can view!
+        if ($CFG->bloglevel >= BLOG_SITE_LEVEL) {
+            // View entries about this course
+            $options['courseview'] = array(
+                'string' => get_string('viewcourseblogs', 'blog'),
+                'link' => new moodle_url('/blog/index.php', array('courseid'=>$course->id))
+            );
+        }
+        // View MY entries about this course
+        $options['courseviewmine'] = array(
+            'string' => get_string('viewmyentriesaboutcourse', 'blog'),
+            'link' => new moodle_url('/blog/index.php', array('courseid'=>$course->id, 'userid'=>$USER->id))
+        );
+        if (!empty($user) && ($CFG->bloglevel >= BLOG_SITE_LEVEL)) {
+            // View the provided users entries about this course
+            $options['courseviewuser'] = array(
+                'string' => get_string('viewentriesbyuseraboutcourse', 'blog', fullname($user)),
+                'link' => new moodle_url('/blog/index.php', array('courseid'=>$course->id, 'userid'=>$user->id))
+            );
+        }
+    }
+
+    if (has_capability('moodle/blog:create', $sitecontext)) {
+        // We can blog about this course
+        $options['courseadd'] = array(
+            'string' => get_string('blogaboutthiscourse', 'blog', get_string('course')),
+            'link' => new moodle_url('/blog/edit.php', array('action'=>'add', 'courseid'=>$course->id))
+        );
+    }
+
+
+    // Cache the options for this course
+    $courseoptions[$key] = $options;
+    // Return the options
+    return $options;
+}
+
+/**
+ * Get the blog options relating to the given module for the given user
+ *
+ * @staticvar array $moduleoptions Cache
+ * @param stdClass $module The module to get options for
+ * @param stdClass $user The user to get options for null == currentuser
+ * @return array
+ */
+function blog_get_options_for_module(stdClass $module, stdClass $user=null) {
+    global $CFG, $USER;
+    // Cache
+    static $moduleoptions = array();
+
+    $options = array();
+    // User must be logged in, blogs must be enabled
+    if (!blog_is_enabled_for_user()) {
+        return $options;
+    }
+
+    // Check the user can associate with the module
+    $sitecontext =      get_context_instance(CONTEXT_SYSTEM);
+    if (!has_capability('moodle/blog:associatemodule', $sitecontext)) {
+        return $options;
+    }
+
+    // Generate the cache key
+    $key = $module->id.':';
+    if (!empty($user)) {
+        $key .= $user->id;
+    } else {
+        $key .= $USER->id;
+    }
+    if (array_key_exists($key, $moduleoptions)) {
+        // Serve from the cache so we don't have to regenerate
+        return $moduleoptions[$module->id];
+    }
+
+    if (has_capability('moodle/blog:view', get_context_instance(CONTEXT_MODULE, $module->id))) {
+        // We can view!
+        if ($CFG->bloglevel >= BLOG_SITE_LEVEL) {
+            // View all entries about this module
+            $a = new stdClass;
+            $a->type = $module->modname;
+            $options['moduleview'] = array(
+                'string' => get_string('viewallmodentries', 'blog', $a),
+                'link' => new moodle_url('/blog/index.php', array('modid'=>$module->id))
+            );
+        }
+        // View MY entries about this module
+        $options['moduleviewmine'] = array(
+            'string' => get_string('viewmyentriesaboutmodule', 'blog', $module->modname),
+            'link' => new moodle_url('/blog/index.php', array('modid'=>$module->id, 'userid'=>$USER->id))
+        );
+        if (!empty($user) && ($CFG->bloglevel >= BLOG_SITE_LEVEL)) {
+            // View the given users entries about this module
+            $a = new stdClass;
+            $a->mod = $module->modname;
+            $a->user = fullname($user);
+            $options['moduleviewuser'] = array(
+                'string' => get_string('blogentriesbyuseraboutmodule', 'blog', $a),
+                'link' => new moodle_url('/blog/index.php', array('modid'=>$module->id, 'userid'=>$user->id))
+            );
+        }
+    }
+
+    if (has_capability('moodle/blog:create', $sitecontext)) {
+        // The user can blog about this module
+        $options['moduleadd'] = array(
+            'string' => get_string('blogaboutthismodule', 'blog', $module->modname),
+            'link' => new moodle_url('/blog/edit.php', array('action'=>'add', 'modid'=>$module->id))
+        );
+    }
+    // Cache the options
+    $moduleoptions[$key] = $options;
+    // Return the options
+    return $options;
+}
+
+/**
  * This function encapsulates all the logic behind the complex
  * navigation, titles and headings of the blog listing page, depending
  * on URL params. It looks at URL params and at the current context level.
@@ -358,6 +648,8 @@ function blog_get_headers() {
         $course = $DB->get_record('course', array('id' => $group->courseid));
     }
 
+    $PAGE->set_pagelayout('standard');
+
     if (!empty($modid) && $CFG->useblogassociations && has_capability('moodle/blog:associatemodule', $sitecontext)) { // modid always overrides courseid, so the $course object may be reset here
         $headers['filters']['module'] = $modid;
         // A groupid param may conflict with this coursemod's courseid. Ignore groupid in that case
@@ -425,7 +717,7 @@ function blog_get_headers() {
         $PAGE->set_title("$site->shortname: " . fullname($user) . ": " . get_string('blog', 'blog'));
         $PAGE->set_heading("$site->shortname: " . fullname($user) . ": " . get_string('blog', 'blog'));
         $headers['heading'] = get_string('userblog', 'blog', fullname($user));
-        $headers['strview'] = get_string('viewuserentries', 'blog');
+        $headers['strview'] = get_string('viewuserentries', 'blog', fullname($user));
 
     } else
 

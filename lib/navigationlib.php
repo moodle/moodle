@@ -1237,6 +1237,19 @@ class global_navigation extends navigation_node {
             }
         }
 
+        // Add blog nodes
+        if (!empty($CFG->bloglevel)) {
+            require_once($CFG->dirroot.'/blog/lib.php');
+            // Get all options for the user
+            $options = blog_get_options_for_user($user);
+            if (count($options) > 0) {
+                $blogs = $usernode->add(get_string('blogs', 'blog'), null, navigation_node::TYPE_CONTAINER);
+                foreach ($options as $option) {
+                    $blogs->add($option['string'], $option['link']);
+                }
+            }
+        }
+
         // Add a node to view the users notes if permitted
         if (!empty($CFG->enablenotes) && has_any_capability(array('moodle/notes:manage', 'moodle/notes:view'), $coursecontext)) {
             $url = new moodle_url('/notes/index.php',array('user'=>$user->id));

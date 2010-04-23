@@ -25,9 +25,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
+/**
+ * Require the blog lib file, several useful functions in there
+ */
 require_once($CFG->dirroot .'/blog/lib.php');
 
+/**
+ * The blog menu block class
+ */
 class block_blog_menu extends block_base {
 
     function init() {
@@ -52,84 +57,57 @@ class block_blog_menu extends block_base {
     }
 
     function get_content() {
-        global $CFG, $USER, $PAGE, $OUTPUT;
+        
+        // Check if we've already generated content
+        if (!empty($this->content)) {
+            return $this->content;
+        }
 
-        $context = $PAGE->context;
+        // Prep the content
+        $this->content = new stdClass;
 
-        // don't display menu block if block is set at site level, and user is not logged in
-        if (empty($CFG->bloglevel) || ($CFG->bloglevel < BLOG_GLOBAL_LEVEL && !(isloggedin() && !isguestuser()))) {
+        /**
+         * Prepare the content for this block
+         */
+        $options = blog_get_all_options($this->page);
+        if (count($options)==0) {
+            // Don't display menu block if block is set at site level, and user is not logged in
             $this->content->text = '';
             if ($this->page->user_is_editing()) {
+                // If editing is enabled show an informative message
                 $this->content->text = get_string('blogdisable', 'blog');
             }
             return $this->content;
         }
-
-        $output = '';
-
-        $this->content = new stdClass;
-
-        $blogheaders = blog_get_headers();
-        $canviewblogs = has_capability('moodle/blog:view', $context);
-
-        /// Accessibility: markup as a list.
-
-        $blogmodon = false;
+        
+        // Iterate the option types
         $menulist = array();
-
-        if (!empty($blogheaders['strview']) && $CFG->useblogassociations) {
-            if ($blogheaders['url']->compare($PAGE->url) == URL_MATCH_EXACT) {
-                $menulist[] = html_writer::tag('span', $blogheaders['strview'], array('class'=>'current'));
-            } else {
-                $menulist[] = html_writer::link($blogheaders['url'], $blogheaders['strview']);
+        foreach ($options as $types) {
+            foreach ($types as $link) {
+                $menulist[] = html_writer::link($link['link'], $link['string']);
             }
+            $menulist[] = '<hr />';
         }
+        // Remove the last element (will be an HR)
+        array_pop($menulist);
+        // Display the content as a list
+        $this->content->text = html_writer::alist($menulist, array('class'=>'list'));
 
-        // show View site entries link
-        if ($CFG->bloglevel >= BLOG_SITE_LEVEL && $canviewblogs) {
-            if (!$PAGE->url->param('search') && !$PAGE->url->param('tag') && !$PAGE->url->param('tagid') &&
-                !$PAGE->url->param('modid') && !$PAGE->url->param('courseid') && !$PAGE->url->param('userid') && !$PAGE->url->param('entryid')) {
-                // no
-            } else {
-                $menulist[] = html_writer::link($CFG->wwwroot .'/blog/index.php', get_string('viewsiteentries', 'blog'));
-            }
-        }
-
-        $output .= '';
-
-        // show View my entries link
-        $pageuserid = $PAGE->url->param('userid');
-        if (!empty($pageuserid) && $pageuserid == $USER->id) {
-            // no
+        /**
+         * Prepare the footer for this block
+         */
+        if (has_capability('moodle/blog:search', get_context_instance(CONTEXT_SYSTEM))) {
+            // Full-text search field
+            $form  = html_writer::tag('label', get_string('search', 'admin'), array('for'=>'blogsearchquery', 'class'=>'accesshide'));
+            $form .= html_writer::empty_tag('input', array('id'=>'blogsearchquery', 'type'=>'text', 'name'=>'search'));
+            $form .= html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('search')));
+            $this->content->footer = html_writer::tag('form', html_writer::tag('div', $form), array('class'=>'blogsearchform', 'method'=>'get', 'action'=>new moodle_url('/blog/index.php')));
         } else {
-            $murl = new moodle_url('/blog/index.php', array('userid' => $USER->id));
-            $murl->params($blogheaders['url']->params());
-            $murl->param('userid', $USER->id);
-            $menulist[] = html_writer::link($murl, get_string('viewmyentries', 'blog'));
-        }
-
-        // show "Add entry" or "Blog about this" link
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-        if (has_capability('moodle/blog:create', $sitecontext)) {
-            $aurl = new moodle_url('/blog/edit.php', array('action' => 'add'));
-            $aurl->params($blogheaders['url']->params());
-            if ($PAGE->url->compare($aurl) != URL_MATCH_EXACT) {
-                $menulist[] =html_writer::link($aurl, $blogheaders['stradd']);
-            }
-        }
-
-        // Full-text search field
-        if (has_capability('moodle/blog:search', $sitecontext)) {
-            $target = new moodle_url($blogheaders['url']);
-            $form = '<form class="blogsearchform" method="get" action="'.$target.'">';
-            $form .= '<div><label for="blogsearchquery" class="accesshide">'.s(get_string('search', 'admin')).'</label><input id="blogsearchquery" type="text" name="search" />';
-            $form .= '<input type="submit" value="'.s(get_string('search')).'" />';
-            $form .= '</div></form>';
-            $this->content->footer = $form;
-        } else {
+            // No footer to display
             $this->content->footer = '';
         }
 
-        $this->content->text = html_writer::alist($menulist, array('class'=>'list'));
+        // Return the content object
+        return $this->content;
     }
 }
