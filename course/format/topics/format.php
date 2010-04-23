@@ -97,6 +97,9 @@ if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing())
     echo '<div class="left side">&nbsp;</div>';
     echo '<div class="right side" >&nbsp;</div>';
     echo '<div class="content">';
+    if (!is_null($thissection->name)) {
+        echo $OUTPUT->heading($thissection->name, 3, 'sectionname');
+    }
     echo '<div class="summary">';
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -220,6 +223,9 @@ while ($section <= $course->numsections) {
         if (!has_capability('moodle/course:viewhiddensections', $context) and !$thissection->visible) {   // Hidden for students
             echo get_string('notavailable').'</div>';
         } else {
+            if (!is_null($thissection->name)) {
+                echo $OUTPUT->heading($thissection->name, 3, 'sectionname');
+            }
             echo '<div class="summary">';
             if ($thissection->summary) {
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);

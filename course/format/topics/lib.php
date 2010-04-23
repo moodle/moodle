@@ -59,7 +59,7 @@ function callback_topics_request_key() {
 
 function callback_topics_get_section_name($course, $section) {
     // We can't add a node without any text
-    if (!is_empty($section->name)) {
+    if (!empty($section->name)) {
         return $section->name;
     } else if ($section->section == 0) {
         return get_string('section0name', 'format_topics');
