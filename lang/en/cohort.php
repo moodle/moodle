@@ -27,6 +27,7 @@
 $string['addcohort'] = 'Add new cohort';
 $string['assign'] = 'Assign';
 $string['assignto'] = 'Cohort \'{$a}\' members';
+$string['backtocohorts'] = 'Back to cohorts';
 $string['cohort'] = 'Cohort';
 $string['cohorts'] = 'Cohorts';
 $string['cohortsin'] = '{$a}: available cohorts';

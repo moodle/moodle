@@ -39,6 +39,10 @@ require_capability('moodle/cohort:assign', $context);
 $PAGE->set_url('/cohort/assign.php', array('id'=>$id));
 $PAGE->set_Context($context);
 
+if (optional_param('cancel', false, PARAM_BOOL)) {
+    redirect(new moodle_url('/cohort/index.php', array('contextid'=>$cohort->contextid)));
+}
+
 if ($context->contextlevel == CONTEXT_COURSECAT) {
     $category = $DB->get_record('course_categories', array('id'=>$context->instanceid), '*', MUST_EXIST);
     $PAGE->navbar->add($category->name, new moodle_url('/course/index.php', array('categoryedit'=>'1')));
@@ -49,43 +53,41 @@ $PAGE->navbar->add(get_string('assign', 'cohort'));
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('assignto', 'cohort', format_string($cohort->name)));
 
-/// Get the user_selector we will need.
+// Get the user_selector we will need.
 $potentialuserselector = new cohort_candidate_selector('addselect', array('cohortid'=>$cohort->id));
 $existinguserselector = new cohort_existing_selector('removeselect', array('cohortid'=>$cohort->id));
 
-/// Process incoming user assignments to cohorts
-        if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
-            $userstoassign = $potentialuserselector->get_selected_users();
-            if (!empty($userstoassign)) {
+// Process incoming user assignments to the cohort
 
-                foreach ($userstoassign as $adduser) {
-                    // no duplicates please
-                    if (!$DB->record_exists('cohort_members', array('cohortid'=>$cohort->id, 'userid'=>$adduser->id))) {
-                        cohort_add_member($cohort->id, $adduser->id);
-                    }
-                }
+if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
+    $userstoassign = $potentialuserselector->get_selected_users();
+    if (!empty($userstoassign)) {
 
-                $potentialuserselector->invalidate_selected_users();
-                $existinguserselector->invalidate_selected_users();
+        foreach ($userstoassign as $adduser) {
+            // no duplicates please
+            if (!$DB->record_exists('cohort_members', array('cohortid'=>$cohort->id, 'userid'=>$adduser->id))) {
+                cohort_add_member($cohort->id, $adduser->id);
             }
         }
 
-/// Process removing user assignments to the service
-        if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
-         $userstoremove = $existinguserselector->get_selected_users();
-            if (!empty($userstoremove)) {
+        $potentialuserselector->invalidate_selected_users();
+        $existinguserselector->invalidate_selected_users();
+    }
+}
 
-                foreach ($userstoremove as $removeuser) {
-                    cohort_remove_member($cohort->id, $removeuser->id);
-                }
-
-                $potentialuserselector->invalidate_selected_users();
-                $existinguserselector->invalidate_selected_users();
-                }
+// Process removing user assignments to the cohort
+if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
+    $userstoremove = $existinguserselector->get_selected_users();
+    if (!empty($userstoremove)) {
+        foreach ($userstoremove as $removeuser) {
+            cohort_remove_member($cohort->id, $removeuser->id);
         }
-/// Print the form.
-/// display the UI
+        $potentialuserselector->invalidate_selected_users();
+        $existinguserselector->invalidate_selected_users();
+    }
+}
 
+// Print the form.
 ?>
 <form id="assignform" method="post" action="<?php echo $PAGE->url ?>"><div>
   <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
@@ -98,11 +100,11 @@ $existinguserselector = new cohort_existing_selector('removeselect', array('coho
       </td>
       <td id="buttonscell">
           <div id="addcontrols">
-              <input name="add" id="add" type="submit" value="<?php echo $OUTPUT->larrow().'&nbsp;'.get_string('add'); ?>" title="<?php print_string('add'); ?>" /><br />
+              <input name="add" id="add" type="submit" value="<?php echo $OUTPUT->larrow().'&nbsp;'.s(get_string('add')); ?>" title="<?php p(get_string('add')); ?>" /><br />
           </div>
 
           <div id="removecontrols">
-              <input name="remove" id="remove" type="submit" value="<?php echo get_string('remove').'&nbsp;'.$OUTPUT->rarrow(); ?>" title="<?php print_string('remove'); ?>" />
+              <input name="remove" id="remove" type="submit" value="<?php echo s(get_string('remove')).'&nbsp;'.$OUTPUT->rarrow(); ?>" title="<?php p(get_string('remove')); ?>" />
           </div>
       </td>
       <td id="potentialcell">
@@ -110,10 +112,12 @@ $existinguserselector = new cohort_existing_selector('removeselect', array('coho
           <?php $potentialuserselector->display() ?>
       </td>
     </tr>
+    <tr><td colspan="3" id='backcell'>
+      <input type="submit" name="cancel" value="<?php p(get_string('backtocohorts', 'cohort')); ?>" />
+    </td></tr>
   </table>
 </div></form>
 
 <?php
-
 
 echo $OUTPUT->footer();
