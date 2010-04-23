@@ -122,6 +122,8 @@ class navigation_node implements renderable {
     public $forcetitle = false;
     /** @var navigation_node A reference to the node parent */
     public $parent = null;
+    /** @var bool Override to not display the icon even if one is provided **/
+    public $hideicon = false;
     /** @var array */
     protected $namedtypes = array(0=>'system',10=>'category',20=>'course',30=>'structure',40=>'activity',50=>'resource',60=>'custom',70=>'setting', 80=>'user');
     /** @var moodle_url */

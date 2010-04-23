@@ -2067,6 +2067,7 @@ END;
         $htmlblocks = array();
         // Iterate the navarray and display each node
         foreach ($items as $item) {
+            $item->hideicon = true;
             $htmlblocks[] = html_writer::tag('li', $this->render($item));
         }
 
@@ -2077,7 +2078,7 @@ END;
     protected function render_navigation_node(navigation_node $item) {
         $content = $item->get_content();
         $title = $item->get_title();
-        if ($item->icon instanceof renderable) {
+        if ($item->icon instanceof renderable && !$item->hideicon) {
             $icon = $this->render($item->icon);
             $content = $icon.'&nbsp;'.$content; // use CSS for spacing of icons
         }
