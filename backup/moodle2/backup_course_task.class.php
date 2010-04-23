@@ -103,6 +103,23 @@ class backup_course_task extends backup_task {
         $this->built = true;
     }
 
+    /**
+     * Code the transformations to perform in the course in
+     * order to get transportable (encoded) links
+     */
+    static public function encode_content_links($content) {
+        global $CFG;
+
+        $base = preg_quote($CFG->wwwroot,"/");
+
+        // Link to the course main page (it also covers "&topic=xx" and "&week=xx"
+        // because they don't become transformed (section number) in backup/restore
+        $search = '/(' . $base . '\/course\/view.php\?id\=)([0-9]+)/';
+        $content= preg_replace($search, '$@COURSEVIEWBYID*$2@$', $content);
+
+        return $content;
+    }
+
 // Protected API starts here
 
     /**
