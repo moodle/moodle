@@ -524,7 +524,7 @@ function survey_print_multi($question) {
 
     $stripreferthat = get_string("ipreferthat", "survey");
     $strifoundthat = get_string("ifoundthat", "survey");
-    $strdefault    = get_string('default');
+    $strdefault    = get_string('notyetanswered', 'survey');
     $strresponses  = get_string('responses', 'survey');
 
     echo $OUTPUT->heading($question->text, 3, 'questiontext');
@@ -541,13 +541,14 @@ function survey_print_multi($question) {
     }
 
     echo "<tr class=\"smalltext\"><th scope=\"row\">$strresponses</th>";
+    echo "<th scope=\"col\" class=\"hresponse\">". get_string('notyetanswered', 'survey'). "</th>";
     while (list ($key, $val) = each ($options)) {
         echo "<th scope=\"col\" class=\"hresponse\">$val</th>\n";
     }
-    echo "<th>&nbsp;</th></tr>\n";
+    echo "</tr>\n";
 
     if ($oneanswer) {
-        echo "<tr><th scope=\"col\" colspan=\"6\">$question->intro</th></tr>\n";
+        echo "<tr><th scope=\"col\" colspan=\"7\">$question->intro</th></tr>\n";
     } else {
         echo "<tr><th scope=\"col\" colspan=\"7\">$question->intro</th></tr>\n";
     }
@@ -563,33 +564,37 @@ function survey_print_multi($question) {
 
         echo "<tr class=\"$rowclass rblock\">";
         if ($oneanswer) {
-
             echo "<th scope=\"row\" class=\"optioncell\">";
             echo "<b class=\"qnumtopcell\">$qnum</b> &nbsp; ";
             echo $q->text ."</th>\n";
+
+            $default = get_accesshide($strdefault);
+            echo "<td class=\"whitecell\"><label for=\"q$P$q->id\"><input type=\"radio\" name=\"q$P$q->id\" id=\"q$P" . $q->id . "_D\" value=\"0\" checked=\"checked\" />$default</label></td>";
+
             for ($i=1;$i<=$numoptions;$i++) {
                 $hiddentext = get_accesshide($options[$i-1]);
                 $id = "q$P" . $q->id . "_$i";
                 echo "<td><label for=\"$id\"><input type=\"radio\" name=\"q$P$q->id\" id=\"$id\" value=\"$i\" />$hiddentext</label></td>";
-            }
-            $default = get_accesshide($strdefault, 'label', '', "for=\"q$P$q->id\"");
-            echo "<td class=\"whitecell\"><input type=\"radio\" name=\"q$P$q->id\" id=\"q$P" . $q->id . "_D\" value=\"0\" checked=\"checked\" />$default</td>";
-            $checklist["q$P$q->id"] = $numoptions;
+            }            
+            $checklist["q$P$q->id"] = 0; 
 
-        } else {
+        } else { 
             // yu : fix for MDL-7501, possibly need to use user flag as this is quite ugly.
             echo "<th scope=\"row\" class=\"optioncell\">";
             echo "<b class=\"qnumtopcell\">$qnum</b> &nbsp; ";
             $qnum++;
             echo "<span class=\"preferthat smalltext\">$stripreferthat</span> &nbsp; ";
             echo "<span class=\"option\">$q->text</span></th>\n";
+
+            $default = get_accesshide($strdefault);
+            echo '<td class="whitecell"><label for="qP'. $P.$q->id .'"><input type="radio" name="qP'.$P.$q->id. '" id="qP'. $q->id .'" value="0" checked="checked" />'.$default.'</label></td>';
+
+
             for ($i=1;$i<=$numoptions;$i++) {
                 $hiddentext = get_accesshide($options[$i-1]);
                 $id = "qP" . $q->id . "_$i";
                 echo "<td><label for=\"$id\"><input type=\"radio\" name=\"qP$q->id\" id=\"$id\" value=\"$i\" />$hiddentext</label></td>";
             }
-            $default = get_accesshide($strdefault, 'label', '', "for=\"qP$q->id\"");
-            echo "<td><input type=\"radio\" name=\"qP$q->id\" id=\"qP$q->id\" value=\"0\" checked=\"checked\" />$default</td>";
             echo "</tr>";
 
             echo "<tr class=\"$rowclass rblock\">";
@@ -597,15 +602,18 @@ function survey_print_multi($question) {
             echo "<b class=\"qnumtopcell\">$qnum</b> &nbsp; ";
             echo "<span class=\"foundthat smalltext\">$strifoundthat</span> &nbsp; ";
             echo "<span class=\"option\">$q->text</span></th>\n";
+
+            $default = get_accesshide($strdefault);
+            echo '<td class="whitecell"><label for="q'. $q->id .'"><input type="radio" name="q'.$q->id. '" id="q'. $q->id .'" value="0" checked="checked" />'.$default.'</label></td>';
+          
             for ($i=1;$i<=$numoptions;$i++) {
                 $hiddentext = get_accesshide($options[$i-1]);
                 $id = "q" . $q->id . "_$i";
                 echo "<td><label for=\"$id\"><input type=\"radio\" name=\"q$q->id\" id=\"$id\" value=\"$i\" />$hiddentext</label></td>";
             }
-            $default = get_accesshide($strdefault, 'label', '', "for=\"q$q->id\"");
-            echo "<td class=\"buttoncell\"><input type=\"radio\" name=\"q$q->id\" id=\"q$q->id\" value=\"0\" checked=\"checked\" />$default</td>";
-            $checklist["qP$q->id"] = $numoptions;
-            $checklist["q$q->id"] = $numoptions;
+            
+            $checklist["qP$q->id"] = 0;
+            $checklist["q$q->id"] = 0;
         }
         echo "</tr>\n";
     }

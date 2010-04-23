@@ -4,7 +4,7 @@ function checkform(e) {
         var surveyform = document.getElementById('surveyform');
         for (var i=0; i < surveycheck.questions.length; i++) {
             var tempquestion = surveycheck.questions[i];
-            if (surveyform[tempquestion.question][tempquestion.default].checked) {
+            if (surveyform[tempquestion['question']][tempquestion['default']].checked) {
                 error = true;
             }
         }

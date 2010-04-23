@@ -73,8 +73,8 @@
 
     $answers = array();
 
-    foreach ($formdata as $key => $val) {
-        if ($key <> "userid" && $key <> "id") {
+    foreach ($formdata as $key => $val) {        
+        if ($key <> "userid" && $key <> "id") { 
             if ( substr($key,0,1) == "q") {
                 $key = clean_param(substr($key,1), PARAM_ALPHANUM);   // keep everything but the 'q', number or Pnumber
             }
@@ -92,23 +92,24 @@
 
     $timenow = time();
     foreach ($answers as $key => $val) {
+        if ($key != 'sesskey') {
+            $newdata->time = $timenow;
+            $newdata->userid = $USER->id;
+            $newdata->survey = $survey->id;
+            $newdata->question = $key;
+            if (!empty($val[0])) {
+                $newdata->answer1 = $val[0];
+            } else {
+                $newdata->answer1 = "";
+            }
+            if (!empty($val[1])) {
+                $newdata->answer2 = $val[1];
+            } else {
+                $newdata->answer2 = "";
+            }
 
-        $newdata->time = $timenow;
-        $newdata->userid = $USER->id;
-        $newdata->survey = $survey->id;
-        $newdata->question = $key;
-        if (!empty($val[0])) {
-            $newdata->answer1 = $val[0];
-        } else {
-            $newdata->answer1 = "";
+            $DB->insert_record("survey_answers", $newdata);
         }
-        if (!empty($val[1])) {
-            $newdata->answer2 = $val[1];
-        } else {
-            $newdata->answer2 = "";
-        }
-
-        $DB->insert_record("survey_answers", $newdata);
     }
 
 // Print the page and finish up.

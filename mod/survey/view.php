@@ -135,6 +135,7 @@
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
 
     echo $OUTPUT->box(format_module_intro('survey', $survey, $cm->id), 'generalbox boxaligncenter bowidthnormal', 'intro');
+    echo '<div>'. get_string('allquestionrequireanswer', 'survey'). '</div>';
 
 // Get all the major questions and their proper order
     if (! $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions))) {
