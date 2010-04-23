@@ -260,7 +260,7 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
                         $str = $texteval->answer;
                             }
                         }
-                        $qtext = $qtext.$regs1[0].$str ;
+                        $qtext = $qtext.$str ;
                 }
                 $answer->answer = $qtext.$qtextremaining ; ;
             }
@@ -514,3 +514,7 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
 question_register_questiontype(new question_calculatedmulti_qtype());
+
+if ( ! defined ("CALCULATEDMULTI")) {
+    define("CALCULATEDMULTI",    "calculatedmulti");
+}
