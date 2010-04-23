@@ -210,6 +210,14 @@
                     E_USER_ERROR => 'E_USER_ERROR',
                     E_USER_WARNING => 'E_USER_WARNING',
                     E_USER_NOTICE => 'E_USER_NOTICE');
+            // Moodle additions, to prevent notices in PHP5.
+            if (defined('E_RECOVERABLE_ERROR')) {
+                $map[E_RECOVERABLE_ERROR] = 'E_RECOVERABLE_ERROR';
+            }
+            if (defined('E_DEPRECATED')) {
+                $map[E_DEPRECATED] = 'E_DEPRECATED';
+            }
+            // End Moodle additions.
             return $map[$severity];
         }
     }
