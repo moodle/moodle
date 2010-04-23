@@ -3392,6 +3392,22 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     }
 }
 
+/**
+ * Return rating related permissions
+ * @param string $options the context id
+ * @return array an associative array of the user's rating permissions
+ */
+function forum_rating_permissions($contextid) {
+    $context = get_context_instance_by_id($contextid);
+
+    if (!$context) {
+        print_error('invalidcontext');
+        return null;
+    } else {
+        return array('view'=>has_capability('mod/forum:viewrating',$context), 'viewany'=>has_capability('mod/forum:viewanyrating',$context), 'viewall'=>has_capability('mod/forum:viewallratings',$context), 'rate'=>has_capability('mod/forum:rate',$context));
+    }
+}
+
 
 /**
  * This function prints the overview of a discussion in the forum listing.
@@ -5237,6 +5253,8 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
     }
     $ratingoptions->assesstimestart = $forum->assesstimestart;
     $ratingoptions->assesstimefinish = $forum->assesstimefinish;
+    $ratingoptions->plugintype = 'mod';
+    $ratingoptions->pluginname = 'forum';
 
     $rm = new rating_manager();
     $posts = $rm->get_ratings($ratingoptions);

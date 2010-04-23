@@ -400,20 +400,18 @@ if ($allentries) {
 
 
     //load ratings
-    require_once('../../rating/lib.php');
+    require_once($CFG->dirroot.'/rating/lib.php');
     $ratingoptions = new stdclass();
     $ratingoptions->context = $cm->context;
     $ratingoptions->items = $allentries;
     $ratingoptions->aggregate = $glossary->assessed;//the aggregation method
     $ratingoptions->scaleid = $glossary->scale;
     $ratingoptions->userid = $USER->id;
-    //if (!empty($_SERVER['HTTP_REFERER'])) {
-//        $ratingoptions->returnurl = $_SERVER['HTTP_REFERER'];
-  //  } else {
-        $ratingoptions->returnurl = $CFG->wwwroot.'/mod/glossary/view.php?id='.$cm->id;
-    //}
+    $ratingoptions->returnurl = $CFG->wwwroot.'/mod/glossary/view.php?id='.$cm->id;
     $ratingoptions->assesstimestart = $glossary->assesstimestart;
     $ratingoptions->assesstimefinish = $glossary->assesstimefinish;
+    $ratingoptions->plugintype = 'mod';
+    $ratingoptions->pluginname = 'glossary';
 
     $rm = new rating_manager();
     $allentries = $rm->get_ratings($ratingoptions);

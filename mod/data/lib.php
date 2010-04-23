@@ -862,6 +862,11 @@ function data_update_instance($data) {
         $data->assessed = 0;
     }
 
+    if (empty($data->ratingtime) or empty($data->assessed)) {
+        $data->assesstimestart  = 0;
+        $data->assesstimefinish = 0;
+    }
+
     if (empty($data->notification)) {
         $data->notification = 0;
     }
@@ -995,20 +1000,22 @@ function data_user_complete($course, $user, $mod, $data) {
  * @return array array of grades, false if none
  */
 function data_get_user_grades($data, $userid=0) {
-    global $DB;
+    global $CFG;
 
-    $user = $userid ? "AND u.id = :userid" : "";
-    $params = array('userid'=>$userid, 'dataid'=>$data->id);
+    require_once($CFG->dirroot.'/rating/lib.php');
+    $rm = new rating_manager();
 
-    $sql = "SELECT u.id, u.id AS userid, avg(drt.rating) AS rawgrade
-              FROM {user} u, {data_records} dr,
-                   {data_ratings} drt
-             WHERE u.id = dr.userid AND dr.id = drt.recordid
-                   AND drt.userid != u.id AND dr.dataid = :dataid
-                   $user
-          GROUP BY u.id";
+    $ratingoptions = new stdclass();
+    $ratingoptions->modulename = 'data';
+    $ratingoptions->moduleid   = $data->id;
 
-    return $DB->get_records_sql($sql, $params);
+    $ratingoptions->userid = $userid;
+    $ratingoptions->aggregationmethod = $data->assessed;
+    $ratingoptions->scaleid = $data->scale;
+    $ratingoptions->itemtable = 'data_records';
+    $ratingoptions->itemtableusercolumn = 'userid';
+
+    return $rm->get_user_grades($ratingoptions);
 }
 
 /**
@@ -1128,7 +1135,7 @@ function data_grade_item_delete($data) {
  */
 function data_get_participants($dataid) {
 // Returns the users with data in one data
-// (users with records in data_records, data_comments and data_ratings)
+// (users with records in data_records, data_comments and ratings)
     global $DB;
 
     $records = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
@@ -1140,8 +1147,8 @@ function data_get_participants($dataid) {
                                        WHERE r.dataid = ? AND u.id = r.userid AND r.id = c.itemid AND c.commentarea='database_entry'", array($dataid));
 
     $ratings = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
-                                       FROM {user} u, {data_records} r, {data_ratings} a
-                                      WHERE r.dataid = ? AND u.id = r.userid AND r.id = a.recordid", array($dataid));
+                                       FROM {user} u, {data_records} r, {ratings} a
+                                      WHERE r.dataid = ? AND u.id = r.userid AND r.id = a.itemid", array($dataid));
 
     $participants = array();
 
@@ -1312,9 +1319,9 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
             }
 
             /**********************************
-             *    Printing Ratings Form       *
+             *    Printing Comments Form       *
              *********************************/
-            if (($template == 'singletemplate') && ($data->comments)) {    //prints ratings options
+            if (($template == 'singletemplate') && ($data->comments)) {
                 if (!empty($CFG->usecomments)) {
                     require_once($CFG->dirroot . '/comment/lib.php');
                     list($context, $course, $cm) = get_context_info_array($context->id);
@@ -1331,6 +1338,24 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
                 }
             }
         }
+    }
+}
+
+/**
+ * Return rating related permissions
+ * @param string $options the context id
+ * @return array an associative array of the user's rating permissions
+ */
+function data_rating_permissions($options) {
+    $contextid = $options;
+    $context = get_context_instance_by_id($contextid);
+
+    if (!$context) {
+        print_error('invalidcontext');
+        return null;
+    } else {
+        $ret = new stdclass();
+        return array('view'=>has_capability('mod/data:viewrating',$context), 'viewany'=>has_capability('mod/data:viewanyrating',$context), 'viewall'=>has_capability('mod/data:viewallratings',$context), 'rate'=>has_capability('mod/data:rate',$context));
     }
 }
 
@@ -1528,7 +1553,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
  * @return void Output echo'd
  */
 function data_print_ratings($data, $record) {
-    global $USER, $DB, $OUTPUT;
+    /*global $USER, $DB, $OUTPUT;
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -1564,127 +1589,11 @@ function data_print_ratings($data, $record) {
             echo '</form>';
             echo '</div>';
         }
-    }
-}
-
-/**
- * Print the multiple ratings on a post given to the current user by others.
- * Scale is an array of ratings
- *
- * @staticvar string $strrate
- * @param int $recordid
- * @param array $scale
- * @param bool $link
- */
-function data_print_ratings_mean($recordid, $scale, $link=true) {
+    }*/
     global $OUTPUT;
-    static $strrate;
-
-    $mean = data_get_ratings_mean($recordid, $scale);
-
-    if ($mean !== "") {
-
-        if (empty($strratings)) {
-            $strratings = get_string("ratings", "data");
-        }
-
-        echo "$strratings: ";
-        if ($link) {
-            $link = new moodle_url("/mod/data/report.php?id=$recordid");
-            $action = new popup_action('click', $link, 'ratings', array('height' => 400, 'width' => 600));
-            echo $OUTPUT->action_link($link, $mean, $action);
-        } else {
-            echo "$mean ";
-        }
+    if( !empty($record->rating) ){
+        echo $OUTPUT->render($record->rating);
     }
-}
-
-/**
- * Return the mean rating of a post given to the current user by others.
- * Scale is an array of possible ratings in the scale
- * Ratings is an optional simple array of actual ratings (just integers)
- *
- * @param int $recordid
- * @param array $scale
- * @param array $ratings
- */
-function data_get_ratings_mean($recordid, $scale, $ratings=NULL) {
-    global $DB;
-
-    if (!$ratings) {
-        $ratings = array();
-        if ($rates = $DB->get_records("data_ratings", array("recordid"=>$recordid))) {
-            foreach ($rates as $rate) {
-                $ratings[] = $rate->rating;
-            }
-        }
-    }
-
-    $count = count($ratings);
-
-    if ($count == 0) {
-        return "";
-
-    } else if ($count == 1) {
-        return $scale[$ratings[0]];
-
-    } else {
-        $total = 0;
-        foreach ($ratings as $rating) {
-            $total += $rating;
-        }
-        $mean = round( ((float)$total/(float)$count) + 0.001);  // Little fudge factor so that 0.5 goes UP
-
-        if (isset($scale[$mean])) {
-            return $scale[$mean]." ($count)";
-        } else {
-            return "$mean ($count)";    // Should never happen, hopefully
-        }
-    }
-}
-
-
-/**
- * Print the menu of ratings as part of a larger form.
- * If the post has already been - set that value.
- * Scale is an array of ratings
- *
- * @global object
- * @staticvar string $strrate
- * @param int $recordid
- * @param int $userid
- * @param array $scale
- */
-function data_print_rating_menu($recordid, $userid, $scale) {
-    global $DB, $OUTPUT;
-
-    static $strrate;
-
-    if (!$rating = $DB->get_record("data_ratings", array("userid"=>$userid, "recordid"=>$recordid))) {
-        $rating->rating = -999;
-    }
-
-    if (empty($strrate)) {
-        $strrate = get_string("rate", "data");
-    }
-    echo html_writer::select($scale, $recordid, $rating->rating, array(-999=>"$strrate..."));
-}
-
-/**
- * Returns a list of ratings for a particular post - sorted.
- *
- * @global object
- * @param int $recordid
- * @param string $sort
- * @return array
- */
-function data_get_ratings($recordid, $sort="u.firstname ASC") {
-    global  $DB;
-
-    return $DB->get_records_sql("SELECT u.*, r.rating
-                                   FROM {data_ratings} r, {user} u
-                                  WHERE r.recordid = ? AND r.userid = u.id
-                               ORDER BY $sort", array($recordid));
 }
 
 /**
@@ -2464,6 +2373,7 @@ function data_reset_gradebook($courseid, $type='') {
 function data_reset_userdata($data) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/filelib.php');
+    require_once($CFG->dirroot.'/rating/lib.php');
 
     $componentstr = get_string('modulenameplural', 'data');
     $status = array();
@@ -2477,9 +2387,12 @@ function data_reset_userdata($data) {
                       FROM {data} d
                      WHERE d.course=?";
 
+    $rm = new rating_manager();
+    $ratingdeloptions = new stdclass();
+
     // delete entries if requested
     if (!empty($data->reset_data)) {
-        $DB->delete_records_select('data_ratings', "recordid IN ($allrecordssql)", array($data->courseid));
+        //$DB->delete_records_select('data_ratings', "recordid IN ($allrecordssql)", array($data->courseid));
         $DB->delete_records_select('comments', "itemid IN ($allrecordssql) AND commentarea='database_entry'", array($data->courseid));
         $DB->delete_records_select('data_content', "recordid IN ($allrecordssql)", array($data->courseid));
         $DB->delete_records_select('data_records', "dataid IN ($alldatassql)", array($data->courseid));
@@ -2487,6 +2400,14 @@ function data_reset_userdata($data) {
         if ($datas = $DB->get_records_sql($alldatassql, array($data->courseid))) {
             foreach ($datas as $dataid=>$unused) {
                 fulldelete("$CFG->dataroot/$data->courseid/moddata/data/$dataid");
+
+                if (!$cm = get_coursemodule_from_instance('data', $dataid)) {
+                    continue;
+                }
+                $datacontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+                $ratingdeloptions->contextid = $datacontext->id;
+                $rm->delete_ratings($ratingdeloptions);
             }
         }
 
@@ -2512,7 +2433,16 @@ function data_reset_userdata($data) {
             foreach ($rs as $record) {
                 if (array_key_exists($record->userid, $notenrolled) or !$record->userexists or $record->userdeleted
                   or !is_enrolled($course_context, $record->userid)) {
-                    $DB->delete_records('data_ratings', array('recordid'=>$record->id));
+                    //delete ratings
+                    //$DB->delete_records('data_ratings', array('recordid'=>$record->id));
+                    if (!$cm = get_coursemodule_from_instance('data', $record->dataid)) {
+                        continue;
+                    }
+                    $datacontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+                    $ratingdeloptions->contextid = $datacontext->id;
+                    $ratingdeloptions->itemid = $record->id;
+                    $rm->delete_ratings($ratingdeloptions);
+
                     $DB->delete_records('comments', array('itemid'=>$record->id, 'commentarea'=>'database_entry'));
                     $DB->delete_records('data_content', array('recordid'=>$record->id));
                     $DB->delete_records('data_records', array('id'=>$record->id));
@@ -2537,7 +2467,18 @@ function data_reset_userdata($data) {
 
     // remove all ratings
     if (!empty($data->reset_data_ratings)) {
-        $DB->delete_records_select('data_ratings', "recordid IN ($allrecordssql)", array($data->courseid));
+        //$DB->delete_records_select('data_ratings', "recordid IN ($allrecordssql)", array($data->courseid));
+        if ($datas = $DB->get_records_sql($alldatassql, array($data->courseid))) {
+            foreach ($datas as $dataid=>$unused) {
+                if (!$cm = get_coursemodule_from_instance('data', $dataid)) {
+                    continue;
+                }
+                $datacontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+                $ratingdeloptions->contextid = $datacontext->id;
+                $rm->delete_ratings($ratingdeloptions);
+            }
+        }
 
         if (empty($data->reset_gradebook_grades)) {
             // remove all grades from gradebook
@@ -2584,7 +2525,7 @@ function data_supports($feature) {
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return true;
-        case FEATURE_RATE:                 return false;
+        case FEATURE_RATE:                    return true;
 
         default: return null;
     }

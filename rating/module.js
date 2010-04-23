@@ -37,13 +37,16 @@ M.core_rating={
                         var responseobj = this.Y.JSON.parse(outcome.responseText);
                         var itemid = responseobj.itemid;
 
-                        var node = this.Y.one('#ratingaggregate'+itemid);
-                        node.set('innerHTML',responseobj.aggregate);
+                        //if the user has access to the aggregate
+                        if (responseobj.aggregate) {
+                            var node = this.Y.one('#ratingaggregate'+itemid);
+                            node.set('innerHTML',responseobj.aggregate);
 
-                        var node = this.Y.one('#ratingcount'+itemid);
-                        node.set('innerHTML',"("+responseobj.count+")");
+                            var node = this.Y.one('#ratingcount'+itemid);
+                            node.set('innerHTML',"("+responseobj.count+")");
+                        }
                     } catch(e) {
-                        //todo put up an overlay or similar rather than an alert
+                        //should put up an overlay or similar rather than an alert
                         alert(e.message+" "+outcome.responseText);
                     }
                     if(outcome.success){

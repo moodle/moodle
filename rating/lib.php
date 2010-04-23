@@ -234,6 +234,8 @@ class rating_manager {
     *            returnurl => string the url to return the user to after submitting a rating. Can be left null for ajax requests [optional]
     *            assesstimestart => int only allow rating of items created after this timestamp [optional]
     *            assesstimefinish => int only allow rating of items created before this timestamp [optional]
+    *            plugintype => string plugin type ie 'mod' Used to find the permissions callback [optional]
+    *            pluginname => string plugin name ie 'forum' Used to find the permissions callback [optional]
     * @return array the array of items with their ratings attached at $items[0]->rating
     */
     public function get_ratings($options) {
@@ -333,10 +335,23 @@ class rating_manager {
             $settings->assesstimefinish = $options->assesstimefinish;
         }
 
+        //check site capabilities
         $settings->permissions = new stdclass();
-        $settings->permissions->canview = has_capability('moodle/rating:view',$options->context);
-        $settings->permissions->canviewall = has_capability('moodle/rating:viewall',$options->context);
-        $settings->permissions->canrate = has_capability('moodle/rating:rate',$options->context);
+        $settings->permissions->view = has_capability('moodle/rating:view',$options->context);//can view the aggregate of ratings of their own items
+        $settings->permissions->viewany = has_capability('moodle/rating:viewany',$options->context);//can view the aggregate of ratings of other people's items
+        $settings->permissions->viewall = has_capability('moodle/rating:viewall',$options->context);//can view individual ratings
+        $settings->permissions->rate = has_capability('moodle/rating:rate',$options->context);//can submit ratings
+
+        //check module capabilities (mostly for backwards compatability with old modules that previously implemented their own ratings)
+        $plugintype = !empty($options->plugintype) ? $options->plugintype : null;
+        $pluginname = !empty($options->pluginname) ? $options->pluginname : null;
+        $pluginpermissionsarray = $this->get_plugin_permissions_array($options->context->id, $plugintype, $pluginname);
+        
+        $settings->pluginpermissions = new stdclass();
+        $settings->pluginpermissions->view = $pluginpermissionsarray['view'];
+        $settings->pluginpermissions->viewany = $pluginpermissionsarray['viewany'];
+        $settings->pluginpermissions->viewall = $pluginpermissionsarray['viewall'];
+        $settings->pluginpermissions->rate = $pluginpermissionsarray['rate'];
 
         $rating = null;
         $ratingoptions = new stdclass();
@@ -533,5 +548,16 @@ class rating_manager {
                 break;
         }
         return $aggregatestr;
+    }
+
+    public function get_plugin_permissions_array($contextid, $plugintype=null, $pluginname=null) {
+        $pluginpermissionsarray = null;
+        $defaultpluginpermissions = array('rate'=>true,'view'=>true,'viewany'=>true,'viewall'=>true);//all true == rely on system level permissions if no plugin callback is defined
+        if ($plugintype && $pluginname) {
+            $pluginpermissionsarray = plugin_callback($plugintype, $pluginname, 'rating', 'permissions', array($contextid), $defaultpluginpermissions);
+        } else {
+            $pluginpermissionsarray = $defaultpluginpermissions;
+        }
+        return $pluginpermissionsarray;
     }
 }//end rating_manager class definition

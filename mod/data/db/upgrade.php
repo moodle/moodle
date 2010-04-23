@@ -254,22 +254,29 @@ function xmldb_data_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2010031602, 'data');
     }
 
-    /*leave this commented out until the data module is switched to the new rating system MDL-21657
-     * if($result && $oldversion < 2010041300) {
-        //migrate data_ratings to the central rating table
+    if($result && $oldversion < 2010042300) {
+        //migrate data ratings to the central rating table
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
 
         //data ratings didnt store time created and modified so Im using the times from the record the rating was attached to
-        $ratingssql = 'SELECT r.id AS rid, r.recordid AS itemid, r.rating, r.userid, re.timecreated, re.timemodified, d.scale, d.id AS mid
+        $sql = "INSERT INTO {rating} (contextid, scaleid, itemid, rating, userid, timecreated, timemodified)
+SELECT cxt.id, d.scale, r.recordid AS itemid, r.rating, r.userid, re.timecreated AS timecreated, re.timemodified AS timemodified
 FROM {data_ratings} r
 JOIN {data_records} re ON r.recordid=re.id
-JOIN {data} d ON d.id=re.dataid';
-        $result = $result && upgrade_module_ratings($ratingssql,'data');
+JOIN {data} d ON d.id=re.dataid
+JOIN {course_modules} cm ON cm.instance=d.id
+JOIN {context} cxt ON cxt.instanceid=cm.id
+JOIN {modules} m ON m.id=cm.module
+WHERE m.name = :modname AND cxt.contextlevel = :contextlevel";
+        $params['modname'] = 'data';
+        $params['contextlevel'] = CONTEXT_MODULE;
 
-        //todo drop data_ratings
+        $DB->execute($sql, $params);
 
-        upgrade_mod_savepoint($result, 2010041300, 'data');
-    }*/
+        //todo andrew drop data_ratings
+
+        upgrade_mod_savepoint($result, 2010042300, 'data');
+    }
 
     return $result;
 }

@@ -458,6 +458,23 @@ function glossary_get_user_grades($glossary, $userid=0) {
 }
 
 /**
+ * Return rating related permissions
+ * @param string $options the context id
+ * @return array an associative array of the user's rating permissions
+ */
+function glossary_rating_permissions($options) {
+    $contextid = $options;
+    $context = get_context_instance_by_id($contextid);
+
+    if (!$context) {
+        print_error('invalidcontext');
+        return null;
+    } else {
+        return array('view'=>has_capability('mod/glossary:viewrating',$context), 'viewany'=>has_capability('mod/glossary:viewanyrating',$context), 'viewall'=>has_capability('mod/glossary:viewallratings',$context), 'rate'=>has_capability('mod/glossary:rate',$context));
+    }
+}
+
+/**
  * Update activity grades
  *
  * @global object
@@ -2098,21 +2115,6 @@ function glossary_full_tag($tag,$level=0,$endline=true,$content) {
 }
 
 /**
- * Returns a list of ratings for a particular entry - sorted.
- *
- * @global object
- * @param int $entryid
- * @param string $sort
- */
-function glossary_get_ratings($entryid, $sort="u.firstname ASC") {
-    global $DB;
-    return $DB->get_records_sql("SELECT u.*, r.rating, r.time
-                                   FROM {glossary_ratings} r, {user} u
-                                  WHERE r.entryid = ? AND r.userid = u.id
-                               ORDER BY $sort", array($entryid));
-}
-
-/**
  * How many unrated entries are in the given glossary for a given user?
  *
  * @global object
@@ -2365,6 +2367,7 @@ function glossary_reset_gradebook($courseid, $type='') {
  */
 function glossary_reset_userdata($data) {
     global $CFG, $DB;
+    require_once($CFG->dirroot.'/rating/lib.php');
 
     $componentstr = get_string('modulenameplural', 'glossary');
     $status = array();
@@ -2382,11 +2385,14 @@ function glossary_reset_userdata($data) {
 
     $fs = get_file_storage();
 
+    $rm = new rating_manager();
+    $ratingdeloptions = new stdclass();
+
     // delete entries if requested
     if (!empty($data->reset_glossary_all)
          or (!empty($data->reset_glossary_types) and in_array('main', $data->reset_glossary_types) and in_array('secondary', $data->reset_glossary_types))) {
 
-        $DB->delete_records_select('glossary_ratings', "entryid IN ($allentriessql)", $params);
+        //$DB->delete_records_select('glossary_ratings', "entryid IN ($allentriessql)", $params);
         // TODO: delete comments
         //$DB->delete_records_select('comments', "entryid IN ($allentriessql)", array());
         $DB->delete_records_select('glossary_entries', "glossaryid IN ($allglossariessql)", $params);
@@ -2399,6 +2405,10 @@ function glossary_reset_userdata($data) {
                 }
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
                 $fs->delete_area_files($context->id, 'glossary_attachment');
+
+                //delete ratings
+                $ratingdeloptions->contextid = $context->id;
+                $rm->delete_ratings($ratingdeloptions);
             }
         }
 
@@ -2417,7 +2427,7 @@ function glossary_reset_userdata($data) {
         $secondaryglossariessql = "$allglossariessql AND g.mainglossary=0";
 
         if (in_array('main', $data->reset_glossary_types)) {
-            $DB->delete_records_select('glossary_ratings', "entryid IN ($mainentriessql)", $params);
+            //$DB->delete_records_select('glossary_ratings', "entryid IN ($mainentriessql)", $params);
             $DB->delete_records_select('glossary_comments', "entryid IN ($mainentriessql)", $params);
             $DB->delete_records_select('glossary_entries', "glossaryid IN ($mainglossariessql)", $params);
 
@@ -2428,6 +2438,10 @@ function glossary_reset_userdata($data) {
                     }
                     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
                     $fs->delete_area_files($context->id, 'glossary_attachment');
+
+                    //delete ratings
+                    $ratingdeloptions->contextid = $context->id;
+                    $rm->delete_ratings($ratingdeloptions);
                 }
             }
 
@@ -2454,6 +2468,10 @@ function glossary_reset_userdata($data) {
                     }
                     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
                     $fs->delete_area_files($context->id, 'glossary_attachment');
+
+                    //delete ratings
+                    $ratingdeloptions->contextid = $context->id;
+                    $rm->delete_ratings($ratingdeloptions);
                 }
             }
 

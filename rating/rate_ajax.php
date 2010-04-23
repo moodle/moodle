@@ -47,7 +47,19 @@ if( !isloggedin() ){
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm);
 
-if( !has_capability('moodle/rating:rate',$context) ) {
+//check the module rating permissions
+//doing this check here rather than within rating_manager::get_ratings so we can return a json error response
+$pluginrateallowed = true;
+$pluginpermissionsarray = null;
+if ($context->contextlevel==CONTEXT_MODULE) {
+    $plugintype = 'mod';
+    $pluginname = $cm->modname;
+    $rm = new rating_manager();
+    $pluginpermissionsarray = $rm->get_plugin_permissions_array($context->id, $plugintype, $pluginname);
+    $pluginrateallowed = $pluginpermissionsarray['rate'];
+}
+
+if (!$pluginrateallowed || !has_capability('moodle/rating:rate',$context)) {
     $result->error = get_string('ratepermissiondenied', 'ratings');
     echo json_encode($result);
     die();
@@ -71,19 +83,26 @@ $rating = new rating($ratingoptions);
 
 $rating->update_rating($userrating);
 
-//todo add a setting to turn grade updating off for those who don't want them in gradebook
-//note that this needs to be done in both rate.php and rate_ajax.php
+//Future possible enhancement: add a setting to turn grade updating off for those who don't want them in gradebook
+//note that this would need to be done in both rate.php and rate_ajax.php
 if(true){
-    //tell the module that its grades have changed
-    if ( $modinstance = $DB->get_record($cm->modname, array('id' => $cm->instance)) ) {
-        $modinstance->cmidnumber = $cm->id; //MDL-12961
-        $functionname = $cm->modname.'_update_grades';
-        require_once("../mod/{$cm->modname}/lib.php");
-        if(function_exists($functionname)) {
-            $functionname($modinstance, $rateduserid);
+    if ($context->contextlevel==CONTEXT_MODULE) {
+        //tell the module that its grades have changed
+        if ( $modinstance = $DB->get_record($cm->modname, array('id' => $cm->instance)) ) {
+            $modinstance->cmidnumber = $cm->id; //MDL-12961
+            $functionname = $cm->modname.'_update_grades';
+            require_once("../mod/{$cm->modname}/lib.php");
+            if(function_exists($functionname)) {
+                $functionname($modinstance, $rateduserid);
+            }
         }
     }
 }
+
+//object to return to client as json
+$result = new stdClass;
+$result->success = true;
+
 
 //need to retrieve the updated item to get its new aggregate value
 $item = new stdclass();
@@ -109,9 +128,14 @@ if($rating->scaleid < 0 ) { //if its a scale (not numeric)
     $aggregatetoreturn = $scalearray[$aggregatetoreturn-1];
 }
 
-$result = new stdClass;
-$result->success = true;
-$result->aggregate = $aggregatetoreturn;
-$result->count = $items[0]->rating->count;
-$result->itemid = $rating->itemid;
+//See if the user has permission to see the rating aggregate
+//we could do this check as "if $userid==$rateduserid" but going to the database to determine item owner id seems more secure
+//if we accept the item owner user id from the http request a user could alter the URL and erroneously get access to the rating aggregate
+if (($userid==$items[0]->rating->itemuserid && has_capability('moodle/rating:view',$context) && $pluginpermissionsarray['view'])
+    || ($userid!=$items[0]->rating->itemuserid && has_capability('moodle/rating:viewany',$context) && $pluginpermissionsarray['viewany'])) {
+    $result->aggregate = $aggregatetoreturn;
+    $result->count = $items[0]->rating->count;
+    $result->itemid = $rating->itemid;
+}
+
 echo json_encode($result);

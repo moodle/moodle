@@ -40,7 +40,18 @@ $result = new stdClass;
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm);
 
-if( !has_capability('moodle/rating:rate',$context) ) {
+//check the module rating permissions
+$pluginrateallowed = true;
+$pluginpermissionsarray = null;
+if ($context->contextlevel==CONTEXT_MODULE) {
+    $plugintype = 'mod';
+    $pluginname = $cm->modname;
+    $rm = new rating_manager();
+    $pluginpermissionsarray = $rm->get_plugin_permissions_array($context->id, $plugintype, $pluginname);
+    $pluginrateallowed = $pluginpermissionsarray['rate'];
+}
+
+if (!$pluginrateallowed || !has_capability('moodle/rating:rate',$context)) {
     echo $OUTPUT->header();
     echo get_string('ratepermissiondenied', 'ratings');
     echo $OUTPUT->footer();
