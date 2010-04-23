@@ -23,14 +23,22 @@ class autogroup_form extends moodleform {
             $mform->setDefault('roleid', $CFG->defaultcourseroleid);
         }
 
-        $options = cohort_get_visible_list($COURSE);
-        if ($options) {
-            $options = array(0=>get_string('anycohort', 'cohort')) + $options;
-            $mform->addElement('select', 'cohortid', get_string('selectfromcohort', 'cohort'), $options);
+        $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+        if (has_capability('moodle/cohort:view', $context)) {
+            $options = cohort_get_visible_list($COURSE);
+            if ($options) {
+                $options = array(0=>get_string('anycohort', 'cohort')) + $options;
+                $mform->addElement('select', 'cohortid', get_string('selectfromcohort', 'cohort'), $options);
+                $mform->setDefault('cohortid', '0');
+            } else {
+                $mform->addElement('hidden','cohortid');
+                $mform->setType('cohortid', PARAM_INT);
+                $mform->setConstant('cohortid', '0');
+            }
         } else {
             $mform->addElement('hidden','cohortid');
             $mform->setType('cohortid', PARAM_INT);
-            $mform->setDefault('cohortid', '0');
+            $mform->setConstant('cohortid', '0');
         }
 
         $options = array('groups' => get_string('numgroups', 'group'),
