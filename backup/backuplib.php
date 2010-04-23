@@ -2400,9 +2400,28 @@
             $result = $blockobject->encode_content_links($result,$mypreferences);
         }
 
+        // Finally encode some well-know links to course
+        $result = backup_course_encode_links($result, $mypreferences);
+
         if ($result != $content) {
             debugging('<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />');
         }
+
+        return $result;
+    }
+
+    /**
+     * Encode some well-know links to course. Restore will recode them to new course id
+     */
+    function backup_course_encode_links($content, $preferences) {
+        global $CFG;
+
+        $base = preg_quote($CFG->wwwroot,"/");
+
+        // Link to the course main page (it also covers "&topic=xx" and "&week=xx"
+        // because they don't become transformed (section number) in backup/restore
+        $search = '/(' . $base . '\/course\/view.php\?id\=)([0-9]+)/';
+        $result = preg_replace($search,'$@COURSEVIEWBYID*$2@$', $content);
 
         return $result;
     }

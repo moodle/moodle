@@ -200,11 +200,31 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         return $status;
     }
 
+    /**
+     * This function decodes some well-know links to course
+     */
+    function course_decode_content_links($content, $restore) {
+
+        global $CFG;
+
+        // Links to course
+        $searchstring = '/\$@(COURSEVIEWBYID)\*([0-9]+)@\$/';
+        $replacestring= $CFG->wwwroot . '/course/view?id=' . $restore->course_id;
+        $result = preg_replace($searchstring, $replacestring, $content);
+
+        return $result;
+    }
+
     //This function is called from all xxxx_decode_content_links_caller(),
     //its task is to ask all modules (maybe other linkable objects) to restore
     //links to them.
     function restore_decode_content_links_worker($content,$restore) {
         global $CFG;
+
+        // Course links decoder
+        $content = course_decode_content_links($content, $restore);
+
+        // Module links decoders
         foreach($restore->mods as $name => $info) {
             $function_name = $name."_decode_content_links";
             if (function_exists($function_name)) {
