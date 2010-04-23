@@ -6612,7 +6612,11 @@ function get_list_of_timezones() {
     if ($rawtimezones = $DB->get_records_sql("SELECT MAX(id), name FROM {timezone} GROUP BY name")) {
         foreach($rawtimezones as $timezone) {
             if (!empty($timezone->name)) {
-                $timezones[$timezone->name] = get_string(strtolower($timezone->name), 'timezones');
+                if (get_string_manager()->string_exists(strtolower($timezone->name), 'timezones')) {
+                    $timezones[$timezone->name] = get_string(strtolower($timezone->name), 'timezones');
+                } else {
+                    $timezones[$timezone->name] = $timezone->name;
+                }
                 if (substr($timezones[$timezone->name], 0, 1) == '[') {  // No translation found
                     $timezones[$timezone->name] = $timezone->name;
                 }
