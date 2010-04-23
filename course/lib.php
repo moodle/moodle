@@ -3025,6 +3025,7 @@ function category_delete_full($category, $showfeedback=true) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->libdir.'/questionlib.php');
+    require_once($CFG->dirroot.'/cohort/lib.php');
 
     if ($children = $DB->get_records('course_categories', array('parent'=>$category->id), 'sortorder ASC')) {
         foreach ($children as $childcat) {
@@ -3041,6 +3042,9 @@ function category_delete_full($category, $showfeedback=true) {
             $deletedcourses[] = $course;
         }
     }
+
+    // move or delete cohorts in this context
+    cohort_delete_category($category);
 
     // now delete anything that may depend on course category context
     grade_course_category_delete($category->id, 0, $showfeedback);
@@ -3067,6 +3071,7 @@ function category_delete_move($category, $newparentid, $showfeedback=true) {
     global $CFG, $DB, $OUTPUT;
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->libdir.'/questionlib.php');
+    require_once($CFG->dirroot.'/cohort/lib.php');
 
     if (!$newparentcat = $DB->get_record('course_categories', array('id'=>$newparentid))) {
         return false;
@@ -3085,6 +3090,9 @@ function category_delete_move($category, $newparentid, $showfeedback=true) {
         }
         echo $OUTPUT->notification(get_string('coursesmovedout', '', format_string($category->name)), 'notifysuccess');
     }
+
+    // move or delete cohorts in this context
+    cohort_delete_category($category);
 
     // now delete anything that may depend on course category context
     grade_course_category_delete($category->id, $newparentid, $showfeedback);

@@ -66,6 +66,32 @@ function cohort_delete_cohort($cohort) {
 }
 
 /**
+ * Somehow deal with cohorts when deleting course category,
+ * we can not just delete them because they might be used in enrol
+ * plugins or referenced in external systems.
+ * @param  object $category
+ * @return void
+ */
+function cohort_delete_category($category) {
+    global $DB;
+    // TODO: make sure that cohorts are really, really not used anywhere and delete, for now just move to parent or system context
+
+    $oldcontext = get_context_instance(CONTEXT_COURSECAT, $category->id, MUST_EXIST);
+
+    if ($category->parent and $parent = $DB->get_record('course_categories', array('id'=>$category->parent))) {
+        $parentcontext = get_context_instance(CONTEXT_COURSECAT, $parent->id, MUST_EXIST);
+        $sql = "UPDATE {cohort} SET contextid = :newcontext WHERE contextid = :oldcontext";
+        $params = array('oldcontext'=>$oldcontext->id, 'newcontext'=>$parentcontext->id);
+    } else {
+        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $sql = "UPDATE {cohort} SET contextid = :newcontext WHERE contextid = :oldcontext";
+        $params = array('oldcontext'=>$oldcontext->id, 'newcontext'=>$syscontext->id);
+    }
+
+    $DB->execute($sql, $params);
+}
+
+/**
  * Remove cohort member
  * @param  int $cohortid
  * @param  int $userid
