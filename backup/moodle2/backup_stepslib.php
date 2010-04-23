@@ -160,11 +160,14 @@ class backup_section_structure_step extends backup_structure_step {
         // Define each element separated
 
         $section = new backup_nested_element('section', array('id'), array(
-            'number', 'summary', 'sequence', 'visible'));
+            'number', 'name', 'summary', 'sequence', 'visible'));
 
         // Define sources
 
         $section->set_source_table('course_sections', array('id' => backup::VAR_SECTIONID));
+
+        // Aliases
+        $section->set_source_alias('section', 'number');
 
         // Set annotations
         $section->annotate_files(array('course_section'), 'id');
