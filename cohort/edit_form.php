@@ -24,14 +24,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-require_once($CFG->dirroot.'/lib/formslib.php');
+require_once($CFG->dirroot . '/lib/formslib.php');
 
 class cohort_edit_form extends moodleform {
 
-    // Define the form
-    function definition () {
-        global $USER, $CFG, $COURSE;
+    /**
+     * Define the form
+     */
+    function definition() {
 
         $mform = $this->_form;
         $editoroptions = $this->_customdata['editoroptions'];
@@ -46,10 +46,10 @@ class cohort_edit_form extends moodleform {
         $mform->addElement('editor', 'description_editor', get_string('description', 'cohort'), null, $editoroptions);
         $mform->setType('description_editor', PARAM_RAW);
 
-        $mform->addElement('hidden','id');
+        $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        $mform->addElement('hidden','contextid');
+        $mform->addElement('hidden', 'contextid');
         $mform->setType('contextid', PARAM_INT);
 
         $this->add_action_buttons();
@@ -59,11 +59,19 @@ class cohort_edit_form extends moodleform {
         global $DB;
 
         $errors = parent::validation($data, $files);
-        $textlib = textlib_get_instance();
 
         $idnumber = trim($data['idnumber']);
         if ($data['id']) {
-            //TODO: validate there are no idnumber
+            $current = $DB->get_record('cohort', array('id'=>$data['id']), '*', MUST_EXIST);
+            if ($current->idnumber !== $idnumber) {
+                if ($DB->record_exists('cohort', array('idnumber'=>$idnumber))) {
+                    $errors['idnumber'] = get_string('duplicateidnumber', 'cohort');
+                }
+            }
+        } else {
+            if ($DB->record_exists('cohort', array('idnumber'=>$idnumber))) {
+                $errors['idnumber'] = get_string('duplicateidnumber', 'cohort');
+            }
         }
 
         return $errors;
