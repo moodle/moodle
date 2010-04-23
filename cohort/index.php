@@ -54,9 +54,9 @@ if (!$manager) {
 $strcohorts = get_string('cohorts', 'cohort');
 
 if ($category) {
+    $PAGE->set_context($context);
     $PAGE->set_url('/cohort/index.php', array('contextid'=>$context->id));
     $PAGE->set_title($strcohorts);
-    $PAGE->set_context($context);
     $PAGE->navbar->add($category->name, new moodle_url('/course/index.php', array('categoryedit'=>'1')));
     $PAGE->navbar->add($strcohorts);
 } else {
