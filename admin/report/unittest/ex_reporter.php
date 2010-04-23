@@ -66,7 +66,7 @@ class ExHtmlReporter extends HtmlReporter {
     function paintFail($message) {
         // Explicitly call grandparent, not parent::paintFail.
         SimpleScorer::paintFail($message);
-        $this->_paintPassFail('fail', $message);
+        $this->_paintPassFail('fail', $message, debug_backtrace());
     }
 
     /**
@@ -81,7 +81,7 @@ class ExHtmlReporter extends HtmlReporter {
     /**
      * Private method. Used by printPass/Fail/Error.
      */
-    function _paintPassFail($passorfail, $message) {
+    function _paintPassFail($passorfail, $message, $stacktrace = null) {
         global $FULLME, $CFG;
 
         print_simple_box_start('', '100%', '', 5, $passorfail . ' generalbox');
@@ -100,6 +100,25 @@ class ExHtmlReporter extends HtmlReporter {
         echo "<a href=\"{$url}path=$folder$file\" title=\"$this->strrunonlyfile\">$file</a>";
         echo $this->strseparator, implode($this->strseparator, $breadcrumb);
         echo $this->strseparator, '<br />', $this->_htmlEntities($message), "\n\n";
+        if ($stacktrace) {
+            $dotsadded = false;
+            $interestinglines = 0;
+            $filteredstacktrace = array();
+            foreach ($stacktrace as $frame) {
+                if (empty($frame['file']) || (strpos($frame['file'], 'simpletestlib') === false
+                        && strpos($frame['file'], 'report/unittest') === false)) {
+                    $filteredstacktrace[] = $frame;
+                    $interestinglines += 1;
+                    $dotsadded = false;
+                } else if (!$dotsadded) {
+                    $filteredstacktrace[] = array('line' => '...', 'file' => '...');
+                    $dotsadded = true;
+                }
+            }
+            if ($interestinglines > 1) {
+                echo print_object($filteredstacktrace);
+            }
+        }
         print_simple_box_end();
         flush();
     }
