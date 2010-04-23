@@ -3424,6 +3424,9 @@ function delete_user($user) {
     //move unread messages from this user to read
     message_move_userfrom_unread2read($user->id);
 
+    // remove from all cohorts
+    $DB->delete_records('cohort_members', array('userid'=>$user->id));
+
     // remove from all groups
     $DB->delete_records('groups_members', array('userid'=>$user->id));
 
