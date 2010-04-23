@@ -3590,6 +3590,61 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010042301);
     }
 
+    if ($result && $oldversion < 2010042302) {
+        // Define table cohort to be created
+        $table = new xmldb_table('cohort');
+
+        // Adding fields to table cohort
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '254', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('idnumber', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('description', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
+        $table->add_field('descriptionformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table cohort
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('context', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+
+        // Conditionally launch create table for cohort
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        upgrade_main_savepoint($result, 2010042302);
+    }
+
+    if ($result && $oldversion < 2010042303) {
+        // Define table cohort_members to be created
+        $table = new xmldb_table('cohort_members');
+
+        // Adding fields to table cohort_members
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('cohortid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timeadded', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table cohort_members
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('cohortid', XMLDB_KEY_FOREIGN, array('cohortid'), 'cohort', array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+        // Adding indexes to table cohort_members
+        $table->add_index('cohortid-userid', XMLDB_INDEX_UNIQUE, array('cohortid', 'userid'));
+
+        // Conditionally launch create table for cohort_members
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010042303);
+      }
+
+
     return $result;
 }
 
