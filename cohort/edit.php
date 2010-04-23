@@ -56,6 +56,11 @@ require_capability('moodle/cohort:manage', $context);
 
 $returnurl = new moodle_url('/cohort/index.php', array('contextid'=>$context->id));
 
+if (!empty($cohort->component)) {
+    // we can not manually edit cohorts that were created by external systems, sorry
+    redirect($returnurl);
+}
+
 $PAGE->set_context($context);
 $PAGE->set_url('/cohort/edit.php', array('contextid'=>$context->id, 'id'=>$cohort->id));
 $PAGE->set_context($context);

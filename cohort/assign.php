@@ -39,8 +39,15 @@ require_capability('moodle/cohort:assign', $context);
 $PAGE->set_url('/cohort/assign.php', array('id'=>$id));
 $PAGE->set_Context($context);
 
+$returnurl = new moodle_url('/cohort/index.php', array('contextid'=>$cohort->contextid));
+
+if (!empty($cohort->component)) {
+    // we can not manually edit cohorts that were created by external systems, sorry
+    redirect($returnurl);
+}
+
 if (optional_param('cancel', false, PARAM_BOOL)) {
-    redirect(new moodle_url('/cohort/index.php', array('contextid'=>$cohort->contextid)));
+    redirect($returnurl);
 }
 
 if ($context->contextlevel == CONTEXT_COURSECAT) {
