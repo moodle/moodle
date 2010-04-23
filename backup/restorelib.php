@@ -209,7 +209,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         // Links to course
         $searchstring = '/\$@(COURSEVIEWBYID)\*([0-9]+)@\$/';
-        $replacestring= $CFG->wwwroot . '/course/view?id=' . $restore->course_id;
+        $replacestring= $CFG->wwwroot . '/course/view.php?id=' . $restore->course_id;
         $result = preg_replace($searchstring, $replacestring, $content);
 
         return $result;
