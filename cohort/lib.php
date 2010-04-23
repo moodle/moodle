@@ -200,8 +200,7 @@ class cohort_candidate_selector extends user_selector_base {
 
         if ($search) {
             $groupname = get_string('potusersmatching', 'cohort', $search);
-        }
-        else {
+        } else {
             $groupname = get_string('potusers', 'cohort');
         }
 
@@ -263,8 +262,7 @@ class cohort_existing_selector extends user_selector_base {
 
         if ($search) {
             $groupname = get_string('currentusersmatching', 'cohort', $search);
-        }
-        else {
+        } else {
             $groupname = get_string('currentusers', 'cohort');
         }
 
