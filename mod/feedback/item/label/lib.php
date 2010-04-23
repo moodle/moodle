@@ -4,24 +4,113 @@ require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 
 class feedback_item_label extends feedback_item_base {
     var $type = "label";
+    var $presentationoptions = null;
+    var $commonparams;
+    var $item_form;
+    var $context;
+    var $item;
+    
     function init() {
-
+        global $CFG;
+        $this->presentationoptions = array('trusttext'=>true, 'subdirs'=>false, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>true);
     }
 
-    function show_edit($item, $commonparams, $positionlist, $position) {
-        global $CFG;
-
+    function build_editform($item, $feedback, $cm) {
+        global $DB, $CFG;
         require_once('label_form.php');
 
-        $item_form = new feedback_label_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position));
+        //get the lastposition number of the feedback_items
+        $position = $item->position;
+        $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
+        if($position == -1){
+            $i_formselect_last = $lastposition + 1;
+            $i_formselect_value = $lastposition + 1;
+            $item->position = $lastposition + 1;
+        }else {
+            $i_formselect_last = $lastposition;
+            $i_formselect_value = $item->position;
+        }
+        //the elements for position dropdownlist
+        $positionlist = array_slice(range(0,$i_formselect_last),1,$i_formselect_last,true);
+
+        $commonparams = array('cmid'=>$cm->id,
+                             'id'=>isset($item->id) ? $item->id : NULL,
+                             'typ'=>$item->typ,
+                             'feedback'=>$feedback->id);
+
+        $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
         
-        return $item_form;
+        
+        //preparing the editor for new file-api
+        $item->presentationformat = FORMAT_HTML;
+        $item->presentationtrust = 1;
+        $item = file_prepare_standard_editor($item,
+                                            'presentation', //name of the form element
+                                            $this->presentationoptions,
+                                            $this->context,
+                                            'feedback_item', //the filearea
+                                            $item->id);
+        
+        //build the form
+        $this->item_form = new feedback_label_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position, 'presentationoptions'=>$this->presentationoptions));
+    }
+    
+    //this function only can used after the call of build_editform()
+    function show_editform() {
+        $this->item_form->display();
+    }
+    
+    function is_cancelled() {
+        return $this->item_form->is_cancelled();
     }
 
+    function get_data() {
+        if($this->item = $this->item_form->get_data()) {
+            return true;
+        }
+        return false;
+    }
+
+    function save_item() {
+        global $DB;
+        
+        if(!$item = $this->item_form->get_data()) {
+            return false;
+        }
+        $item->presentation = '';
+        
+        if(!$item->id) {
+            $item->id = $DB->insert_record('feedback_item', $item);
+        }else {
+            $DB->update_record('feedback_item', $item);
+        }
+        
+        $item = file_postupdate_standard_editor($item,
+                                                'presentation',
+                                                $this->presentationoptions,
+                                                $this->context,
+                                                'feedback_item',
+                                                $item->id);
+        
+        $DB->update_record('feedback_item', $item);
+        
+        return $DB->get_record('feedback_item', array('id'=>$item->id));
+    }
+    
     function print_item($item){
+        global $DB;
+        $cm = get_coursemodule_from_instance('feedback', $item->feedback);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        
+        $item->presentationformat = FORMAT_HTML;
+        $item->presentationtrust = 1;
+        
         ?>
         <td colspan="2">
-            <?php echo format_text($item->presentation, FORMAT_HTML);?>
+            <?php 
+                $output = file_rewrite_pluginfile_urls($item->presentation, 'pluginfile.php', $context->id,'feedback_item',$item->id);
+                echo format_text($output, FORMAT_HTML);
+            ?>
         </td>
         <?php
     }
@@ -69,9 +158,34 @@ class feedback_item_label extends feedback_item_base {
     //used by create_item and update_item functions,
     //when provided $data submitted from feedback_show_edit
     function get_presentation($data) {
-        return $data->presentation;
+        // $context = get_context_instance(CONTEXT_MODULE, $data->cmid);
+        
+        // $presentation = new object();
+        // $presentation->id = null;
+        // $presentation->definition = '';
+        // $presentation->format = FORMAT_HTML;
+        
+        // $draftid_editor = file_get_submitted_draft_itemid('presentation');
+        // $currenttext = file_prepare_draft_area($draftid_editor, $context->id, 'feedback_item_label', $presentation->id, array('subdirs'=>true), $presentation->definition);
+        // $presentation->entry = array('text'=>$currenttext, 'format'=>$presentation->format, 'itemid'=>$draftid_editor);
+
+        // return $data->presentation;
     }
 
+    function postupdate($item) {
+        global $DB;
+        
+        $context = get_context_instance(CONTEXT_MODULE, $item->cmid);
+        $item = file_postupdate_standard_editor($item, 'presentation', $this->presentationoptions, $context, 'feedback_item', $item->id);
+
+        // $item = new object();
+        // $item->id = $data->id
+        if($DB->update_record('feedback_item', $item)) {
+            return $item->id;
+        }
+        return false;
+    }
+    
     function get_hasvalue() {
         return 0;
     }

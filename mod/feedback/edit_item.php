@@ -17,6 +17,7 @@ feedback_init_feedback_session();
 $cmid = required_param('cmid', PARAM_INT);
 $typ = optional_param('typ', false, PARAM_ALPHA);
 $id = optional_param('id', false, PARAM_INT);
+$action = optional_param('action', false, PARAM_ALPHA);
 
 $editurl = new moodle_url('/mod/feedback/edit.php', array('id'=>$cmid));
 
@@ -70,16 +71,14 @@ if($typ == 'pagebreak') {
 // $formdata->itemid = isset($formdata->itemid) ? $formdata->itemid : NULL;
 if($id and $item = $DB->get_record('feedback_item', array('id'=>$id))) {
     $typ = $item->typ;
-    $position = $item->position;
 }else {
-    $position = -1;
     $item = new stdClass();
-    if ($position == '') {
-        $position = 0;
-    }
+    $item->id = null;
+    $item->position = -1;
     if (!$typ) {
         print_error('typemissing', 'feedback', $editurl->out(false));
     }
+    $item->typ = $typ;
 }
 
 require_once($CFG->dirroot.'/mod/feedback/item/'.$typ.'/lib.php');
@@ -87,55 +86,19 @@ require_once($CFG->dirroot.'/mod/feedback/item/'.$typ.'/lib.php');
 $itemclass = 'feedback_item_'.$typ;
 $itemobj = new $itemclass();
 
-$lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
-if($position == -1){
-    $i_formselect_last = $lastposition + 1;
-    $i_formselect_value = $lastposition + 1;
-}else {
-    $i_formselect_last = $lastposition;
-    $i_formselect_value = $item->position;
+$itemobj->build_editform($item, $feedback, $cm);
+
+if($itemobj->is_cancelled()) {
+    redirect($editurl->out(false));
+    exit;
 }
-$positionlist = array_slice(range(0,$i_formselect_last),1,$i_formselect_last,true);
-
-$commonarams = array('cmid'=>$cmid,
-                     'id'=>isset($item->id) ? $item->id : NULL,
-                     'typ'=>$typ,
-                     'feedbackid'=>$feedback->id);
-                     
-$item_form = &$itemobj->show_edit($item, $commonarams, $positionlist, $i_formselect_value);
-
-////////////////////////////////////////////////////////////////////////////////////
-$item_form->set_data($item);
-if ($formdata = $item_form->get_data()) {
-    if (isset($formdata->cancel)){
+if($itemobj->get_data()) {
+    if($item = $itemobj->save_item()) {
+        feedback_move_item($item, $item->position);
         redirect($editurl->out(false));
-    } else if (isset($formdata->saveitem) AND $formdata->saveitem == 1) {
-        $newposition = $formdata->position;
-        $formdata->position = $newposition + 1;
-
-        if (!$newitemid = feedback_create_item($formdata)) {
-            $SESSION->feedback->errors[] = get_string('item_creation_failed', 'feedback');
-        }else {
-            $newitem = $DB->get_record('feedback_item', array('id'=>$newitemid));
-            if (!feedback_move_item($newitem, $newposition)){
-                $SESSION->feedback->errors[] = get_string('item_creation_failed', 'feedback');
-            }else {
-                redirect($editurl->out(false));
-            }
-        }
-    } else if (isset($formdata->updateitem) AND $formdata->updateitem == 1) {
-        //update the item and go back
-        if (!feedback_update_item($item, $formdata)) {
-            $SESSION->feedback->errors[] = get_string('item_update_failed', 'feedback');
-        } else {
-            if (!feedback_move_item($item, $formdata->position)){
-                $SESSION->feedback->errors[] = get_string('item_update_failed', 'feedback');
-            }else {
-                redirect($editurl->out(false));
-            }
-        }
     }
 }
+
 ////////////////////////////////////////////////////////////////////////////////////
 /// Print the page header
 $strfeedbacks = get_string("modulenameplural", "feedback");
@@ -155,7 +118,7 @@ if(isset($error)) {
     echo $error;
 }
 feedback_print_errors();
-$item_form->display();
+$itemobj->show_editform();
 
 /*
 echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');

@@ -8,8 +8,74 @@ define('FEEDBACK_MULTICHOICE_ADJUST_SEP', '<<<<<');
 
 class feedback_item_multichoice extends feedback_item_base {
     var $type = "multichoice";
+    var $commonparams;
+    var $item_form;
+    var $item;
+    
     function init() {
 
+    }
+
+    function build_editform($item, $feedback, $cm) {
+        global $DB, $CFG;
+        require_once('multichoice_form.php');
+
+        //get the lastposition number of the feedback_items
+        $position = $item->position;
+        $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
+        if($position == -1){
+            $i_formselect_last = $lastposition + 1;
+            $i_formselect_value = $lastposition + 1;
+            $item->position = $lastposition + 1;
+        }else {
+            $i_formselect_last = $lastposition;
+            $i_formselect_value = $item->position;
+        }
+        //the elements for position dropdownlist
+        $positionlist = array_slice(range(0,$i_formselect_last),1,$i_formselect_last,true);
+        
+        $item->presentation = empty($item->presentation) ? '' : $item->presentation;
+        $info = $this->get_info($item);
+
+        $commonparams = array('cmid'=>$cm->id,
+                             'id'=>isset($item->id) ? $item->id : NULL,
+                             'typ'=>$item->typ,
+                             'feedback'=>$feedback->id);
+
+        //build the form
+        $this->item_form = new feedback_multichoice_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position, 'info'=>$info));
+    }
+
+    //this function only can used after the call of build_editform()
+    function show_editform() {
+        $this->item_form->display();
+    }
+    
+    function is_cancelled() {
+        return $this->item_form->is_cancelled();
+    }
+
+    function get_data() {
+        if($this->item = $this->item_form->get_data()) {
+            return true;
+        }
+        return false;
+    }
+
+    function save_item() {
+        global $DB;
+        
+        if(!$item = $this->item_form->get_data()) {
+            return false;
+        }
+        
+        if(!$item->id) {
+            $item->id = $DB->insert_record('feedback_item', $item);
+        }else {
+            $DB->update_record('feedback_item', $item);
+        }
+        
+        return $DB->get_record('feedback_item', array('id'=>$item->id));
     }
 
     function show_edit($item, $commonparams, $positionlist, $position) {

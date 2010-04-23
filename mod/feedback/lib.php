@@ -133,6 +133,67 @@ function feedback_update_instance($feedback) {
 }
 
 /**
+ * Serves the files included in feedback items like label. Implements needed access control ;-)
+ *
+ * @param object $course
+ * @param object $cminfo
+ * @param object $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
+ * @return bool false if file not found, does not return if found - justsend the file
+ */
+function feedback_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
+    global $CFG, $DB;
+
+    if (!$cminfo->uservisible) {
+        return false;
+    }
+
+    if ($filearea === 'feedback_item') {
+        $itemid = (int)array_shift($args);
+
+        if (!$cm = get_coursemodule_from_instance('feedback', $cminfo->instance, $course->id)) {
+            return false;
+        }
+
+        require_course_login($course, true, $cm);
+
+        if (!$item = $DB->get_record('feedback_item', array('id'=>$itemid))) {
+            return false;
+        }
+
+        if (!$feedback = $DB->get_record('feedback', array('id'=>$cminfo->instance))) {
+            return false;
+        }
+
+        if (!has_capability('mod/feedback:view', $context)) {
+            return false;
+        }
+
+        if ($item->feedback == $cminfo->instance) {
+            $filecontext = $context;
+        } else {
+            return false;
+        }
+
+        $relativepath = '/'.implode('/', $args);
+        $fullpath = $filecontext->id.$filearea.$itemid.$relativepath;
+
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+
+        // finally send the file
+        send_stored_file($file, 0, 0, true); // download MUST be forced - security!
+    }
+
+    return false;
+}
+
+
+/**
  * this will delete a given instance.
  * all referenced data also will be deleted
  *
@@ -748,7 +809,7 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
         unset($item->id);
         $item->feedback = 0;
         $item->template     = $newtempl;
-        $DB->insert_record('feedback_item', $nitem);
+        $DB->insert_record('feedback_item', $item);
     }
     return true;
 }
@@ -917,7 +978,8 @@ function feedback_create_item($data) {
     $itemclass = 'feedback_item_'.$data->typ;
     //get the instance of the item class
     $itemobj = new $itemclass();
-    $item->presentation = $itemobj->get_presentation($data);
+    // $item->presentation = $itemobj->get_presentation($data);
+    $item->presentation = ''; //the date comes from postupdate() of the itemobj
 
     $item->hasvalue = $itemobj->get_hasvalue();
 
@@ -929,7 +991,15 @@ function feedback_create_item($data) {
         $item->required = $data->required;
     }
 
-    return $DB->insert_record('feedback_item', $item);
+    $item->id = $DB->insert_record('feedback_item', $item);
+
+    //move all itemdata to the data
+    $data->id = $item->id;
+    $data->feedback = $item->feedback;
+    $data->name = $item->name;
+    $data->label = $item->label;
+    $data->required = $item->required;
+    return $itemobj->postupdate($data);
 }
 
 /**
@@ -940,34 +1010,8 @@ function feedback_create_item($data) {
  * @param object $data the data from edit_item_form
  * @return boolean
  */
-function feedback_update_item($item, $data = null){
+function feedback_update_item($item){
     global $DB;
-
-    if($data != null){
-        $itemname = trim($data->itemname);
-        $item->name = ($itemname ? $data->itemname : get_string('no_itemname', 'feedback'));
-
-        if (!empty($data->itemlabel)) {
-            $item->label = trim($data->itemlabel);
-        } else {
-            $item->label = get_string('no_itemlabel', 'feedback');
-        }
-
-        //get the used class from item-typ
-        $itemclass = 'feedback_item_'.$data->typ;
-        //get the instance of the item class
-        $itemobj = new $itemclass();
-        $item->presentation = $itemobj->get_presentation($data);
-
-        $item->required=0;
-        if (isset($data->required)) {
-            $item->required=$data->required;
-        }
-    }else {
-        $item->name = $item->name;
-        $item->presentation = $item->presentation;
-    }
-
     return $DB->update_record("feedback_item", $item);
 }
 
@@ -1062,12 +1106,30 @@ function feedback_renumber_items($feedbackid){
 function feedback_moveup_item($item){
     global $DB;
 
-    if($item->position == 1) return;
-    $item_before = $DB->get_record('feedback_item', array('feedback'=>$item->feedback, 'position'=>$item->position-1));
-    $item_before->position = $item->position;
-    $item->position--;
-    feedback_update_item($item_before);
-    feedback_update_item($item);
+    if($item->position == 1) {
+        return true;
+    }
+    
+    if(!$items = $DB->get_records('feedback_item', array('feedback'=>$item->feedback), 'position')) {
+        return false;
+    }
+    
+    $itembefore = null;
+    foreach($items as $i) {
+        if($i->id == $item->id) {
+            if(is_null($itembefore)) {
+                return true;
+            }
+            $itembefore->position = $item->position;
+            $item->position--;
+            feedback_update_item($itembefore);
+            feedback_update_item($item);
+            feedback_renumber_items($item->feedback);
+            return true;
+        }
+        $itembefore = $i;
+    }
+    return false;
 }
 
 /**
@@ -1080,14 +1142,23 @@ function feedback_moveup_item($item){
 function feedback_movedown_item($item){
     global $DB;
 
-    if(!$item_after = $DB->get_record('feedback_item', array('feedback'=>$item->feedback, 'position'=>$item->position+1))) {
-        return;
+    if(!$items = $DB->get_records('feedback_item', array('feedback'=>$item->feedback), 'position')) {
+        return false;
     }
-
-    $item_after->position = $item->position;
-    $item->position++;
-    feedback_update_item($item_after);
-    feedback_update_item($item);
+    
+    $movedownitem = null;
+    foreach($items as $i) {
+        if(!is_null($movedownitem) AND $movedownitem->id == $item->id) {
+            $movedownitem->position = $i->position;
+            $i->position--;
+            feedback_update_item($movedownitem);
+            feedback_update_item($i);
+            feedback_renumber_items($item->feedback);
+            return true;
+        }
+        $movedownitem = $i;
+    }
+    return false;
 }
 
 /**
@@ -1101,29 +1172,23 @@ function feedback_movedown_item($item){
 function feedback_move_item($moveitem, $pos){
     global $DB;
 
-    if ($moveitem->position == $pos) {
-        return true;
-    }
     if (!$allitems = $DB->get_records('feedback_item', array('feedback'=>$moveitem->feedback), 'position')) {
         return false;
     }
     if (is_array($allitems)) {
         $index = 1;
         foreach($allitems as $item) {
-            if($item->id == $moveitem->id) continue; //the moving item is handled special
-
             if($index == $pos) {
-                $moveitem->position = $index;
-                feedback_update_item($moveitem);
                 $index++;
+            }
+            if($item->id == $moveitem->id) {
+                $moveitem->position = $pos;
+                feedback_update_item($moveitem);
+                continue;
             }
             $item->position = $index;
             feedback_update_item($item);
             $index++;
-        }
-        if($pos >= count($allitems)) {
-            $moveitem->position = $index;
-            feedback_update_item($moveitem);
         }
         return true;
     }

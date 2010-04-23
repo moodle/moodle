@@ -4,41 +4,74 @@ require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 
 class feedback_item_captcha extends feedback_item_base {
     var $type = "captcha";
+    var $commonparams;
+    var $item_form;
+    var $item;
+
     function init() {
 
     }
 
-/**
- * Build the editform for the item
- *
- * @global object
- * @param object $item the instance of the recordset feedback_item
- * @param array $commonparams all hidden values needed in the form
- * @param array $positionlist this array build the selection list for itemposition
- * @param int $position the current itemposition
- * @return object instance of the built form
- */
-    function show_edit($item, $commonparams, $positionlist, $position) {
-        global $CFG;
-
+    function build_editform($item, $feedback, $cm) {
+        global $DB, $CFG;
         require_once('captcha_form.php');
 
-        $item_form = new feedback_captcha_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position));
-
-        $item->presentation = empty($item->presentation) ? 3 : $item->presentation;
-        $item->name = empty($item->name) ? '' : $item->name;
-        $item->label = empty($item->label) ? '' : $item->label;
-
-        $item->required = isset($item->required) ? $item->required : 1;
-        if($item->required) {
-            $item_form->requiredcheck->setValue(true);
+        //get the lastposition number of the feedback_items
+        $position = $item->position;
+        $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
+        if($position == -1){
+            $i_formselect_last = $lastposition + 1;
+            $i_formselect_value = $lastposition + 1;
+            $item->position = $lastposition + 1;
+        }else {
+            $i_formselect_last = $lastposition;
+            $i_formselect_value = $item->position;
         }
+        //the elements for position dropdownlist
+        $positionlist = array_slice(range(0,$i_formselect_last),1,$i_formselect_last,true);
+        
+        $item->presentation = empty($item->presentation) ? 3 : $item->presentation;
+        $item->required = 1;
 
-        $item_form->itemname->setValue($item->name);
-        $item_form->itemlabel->setValue($item->label);
+        $commonparams = array('cmid'=>$cm->id,
+                             'id'=>isset($item->id) ? $item->id : NULL,
+                             'typ'=>$item->typ,
+                             'feedback'=>$feedback->id);
 
-        $item_form->select->setValue($item->presentation);
-        return $item_form;
+        //build the form
+        $this->item_form = new feedback_captcha_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position));
+    }
+
+    //this function only can used after the call of build_editform()
+    function show_editform() {
+        $this->item_form->display();
+    }
+    
+    function is_cancelled() {
+        return $this->item_form->is_cancelled();
+    }
+
+    function get_data() {
+        if($this->item = $this->item_form->get_data()) {
+            return true;
+        }
+        return false;
+    }
+
+    function save_item() {
+        global $DB;
+        
+        if(!$item = $this->item_form->get_data()) {
+            return false;
+        }
+        
+        if(!$item->id) {
+            $item->id = $DB->insert_record('feedback_item', $item);
+        }else {
+            $DB->update_record('feedback_item', $item);
+        }
+        
+        return $DB->get_record('feedback_item', array('id'=>$item->id));
     }
 
     //liefert eine Struktur ->name, ->data = array(mit Antworten)
