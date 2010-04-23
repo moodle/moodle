@@ -28,10 +28,9 @@ $SESSION->lang = $lang; // does not actually modify session because we do not us
 
 $sm = get_string_manager();
 
-//TODO: this is a minimalistic help page, needs a lot more love 
-
 $PAGE->set_url('/help.php');
-$PAGE->set_pagelayout('popup'); // not really a popup because this page gets dispalyed directly only when JS disabled
+$PAGE->set_pagelayout('popup');
+$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
 if ($ajax) {
     @header('Content-Type: text/plain; charset=utf-8');
@@ -39,10 +38,26 @@ if ($ajax) {
     echo $OUTPUT->header();
 }
 
-if ($sm->string_exists($identifier.'_hlp', $component)) {
-    echo get_string($identifier.'_hlp', $component);
+if ($sm->string_exists($identifier.'_help', $component)) {
+    $options = new object;
+    $options->trusted = false;
+    $options->noclean = false;
+    $options->smiley = false;
+    $options->filter = false;
+    $options->para = true;
+    $options->newlines = false;
+
+    // Should be simple wiki only MDL-21695
+    echo format_text(get_string($identifier.'_help', $component), FORMAT_MOODLE, $options);  
+
+    if ($sm->string_exists($identifier.'_link', $component)) {  // Link to further info in Moodle docs
+        $link = get_string($identifier.'_link', $component);
+        $linktext = get_string('morehelp');
+        echo '<div class="helpdoclink">'.$OUTPUT->doc_link($link, $linktext).'</div>';
+    }
+
 } else {
-    echo "<p><strong>TODO</strong>: fix help for [{$identifier}_hlp, $component]</p>";
+    echo "<p><strong>TODO</strong>: fix help for [{$identifier}_help, $component]</p>";
 }
 
 if (!$ajax) {

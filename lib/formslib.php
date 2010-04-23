@@ -1364,7 +1364,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      *
      * There has to be two strings defined:
      *   1/ get_string($identifier, $component) - the title of the help page
-     *   2/ get_string($identifier.'_hlp', $component) - the actual help page text
+     *   2/ get_string($identifier.'_help', $component) - the actual help page text
      *
      * @param string $elementname name of the element to add the item to
      * @param string $identifier

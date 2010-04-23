@@ -114,7 +114,7 @@
     } else if ($action == 'edit') {
         $title = get_string('editingrolex', 'role', $rolenames[$roleid]->localname);
     }
-    echo $OUTPUT->heading_with_help($title, 'roles');
+    echo $OUTPUT->heading_with_help($title, 'roles', 'role');
 
 /// Work out some button labels.
     if ($action == 'add' || $action == 'duplicate') {

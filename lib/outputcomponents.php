@@ -200,8 +200,8 @@ class old_help_icon implements renderable {
  */
 class help_icon implements renderable {
     /**
-     * @var string $identifier lang pack identifier (without the "_hlp" suffix),
-     *    both get_string($identifier, $component) and get_string($identifier.'_hlp', $component)
+     * @var string $identifier lang pack identifier (without the "_help" suffix),
+     *    both get_string($identifier, $component) and get_string($identifier.'_help', $component)
      *    must exist.
      */
     public $identifier;
@@ -217,7 +217,8 @@ class help_icon implements renderable {
     /**
      * Constructor
      * @param string $identifier  string for help page title,
-     *  string with _hlp suffix is used for the actual help text.
+     *  string with _help suffix is used for the actual help text.
+     *  string with _link suffix is used to create a link to further info (if it exists)
      * @param string $component
      */
     public function __construct($identifier, $component) {
@@ -233,8 +234,8 @@ class help_icon implements renderable {
         if (!$sm->string_exists($this->identifier, $this->component)) {
             debugging("Help title string does not exist: [$this->identifier, $this->component]");
         }
-        if (!$sm->string_exists($this->identifier.'_hlp', $this->component)) {
-            debugging("Help title string does not exist: [{$this->identifier}_hlp, $this->component]");
+        if (!$sm->string_exists($this->identifier.'_help', $this->component)) {
+            debugging("Help title string does not exist: [{$this->identifier}_help, $this->component]");
         }
     }
 }
