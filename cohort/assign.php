@@ -24,8 +24,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-
 require_once('../config.php');
 require_once($CFG->dirroot.'/cohort/lib.php');
 
@@ -41,8 +39,6 @@ require_capability('moodle/cohort:assign', $context);
 $PAGE->set_url('/cohort/assign.php', array('id'=>$id));
 $PAGE->set_Context($context);
 
-// TODO: ohlala, the navbar is not doing what I would expect
-$PAGE->navbar->add(get_string('home'), new moodle_url('/'), navbar::TYPE_SYSTEM);
 if ($context->contextlevel == CONTEXT_COURSECAT) {
     $category = $DB->get_record('course_categories', array('id'=>$context->instanceid), '*', MUST_EXIST);
     $PAGE->navbar->add($category->name, new moodle_url('/course/index.php', array('categoryedit'=>'1')));

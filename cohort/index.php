@@ -58,8 +58,6 @@ $PAGE->set_url('/cohort/index.php', array('contextid'=>$context->id));
 $PAGE->set_title($strcohorts);
 $PAGE->set_context($context);
 
-// TODO: ohlala, the navbar is not doing what I would expect
-$PAGE->navbar->add(get_string('home'), new moodle_url('/'), navbar::TYPE_SYSTEM);
 if ($category) {
     $PAGE->navbar->add($category->name, new moodle_url('/course/index.php', array('categoryedit'=>'1')));
 }

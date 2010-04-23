@@ -60,8 +60,6 @@ $PAGE->set_context($context);
 $PAGE->set_url('/cohort/edit.php', array('contextid'=>$context->id, 'id'=>$cohort->id));
 $PAGE->set_context($context);
 
-// TODO: ohlala, the navbar is not doing what I would expect
-$PAGE->navbar->add(get_string('home'), new moodle_url('/'), navbar::TYPE_SYSTEM);
 if ($context->contextlevel == CONTEXT_COURSECAT) {
     $category = $DB->get_record('course_categories', array('id'=>$context->instanceid), '*', MUST_EXIST);
     $PAGE->navbar->add($category->name, new moodle_url('/course/index.php', array('categoryedit'=>'1')));
