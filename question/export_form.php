@@ -22,7 +22,7 @@ class question_export_form extends moodleform {
             $mform->setHelpButton("formathelp[$i]", array("$shortname",$fileformatname,"qformat_$shortname"));          
             $i++ ;
         }
-        $mform->addRule('format',null,'required',null,'client');
+        $mform->addRule("formathelp[0]",null,'required',null,'client');
 //--------------------------------------------------------------------------------
         $mform->addElement('header','general', get_string('general', 'form'));
 
