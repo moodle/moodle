@@ -14,14 +14,15 @@ class question_import_form extends moodleform {
 //--------------------------------------------------------------------------------
         $mform->addElement('header','fileformat', get_string('fileformat','quiz'));
         $fileformatnames = get_import_export_formats('import');
-        $radioarray = array();
+        $i = 0 ;
         foreach ($fileformatnames as $shortname => $fileformatname) {
-            $radioelement = &MoodleQuickForm::createElement('radio','format','',$fileformatname,$shortname );
-            $radioelement->setHelpButton(array("$shortname",$fileformatname,"qformat_$shortname"));
-            $radioarray[] = $radioelement;
+            $currentgrp1 = array();
+            $currentgrp1[] = &$mform->createElement('radio','format','',$fileformatname,$shortname); 
+            $mform->addGroup($currentgrp1,"formathelp[$i]",'',array('<br />'),false);
+            $mform->setHelpButton("formathelp[$i]", array("$shortname",$fileformatname,"qformat_$shortname"));          
+            $i++ ;
         }
-        $mform->addGroup($radioarray,'format', '', array('<br />'), false);
-        $mform->addRule('format', null, 'required', null, 'client' );
+        $mform->addRule("formathelp[0]", null, 'required', null, 'client' );
 //--------------------------------------------------------------------------------
         $mform->addElement('header','general', get_string('general', 'form'));
 
