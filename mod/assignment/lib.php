@@ -122,7 +122,7 @@ class assignment_base {
             print_error('invalidid', 'assignment');
         }
 
-        $this->assignment->cmidnumber = $this->cm->id;     // compatibility with modedit assignment obj
+        $this->assignment->cmidnumber = $this->cm->idnumber; // compatibility with modedit assignment obj
         $this->assignment->courseid   = $this->course->id; // compatibility with modedit assignment obj
 
         $this->strassignment = get_string('modulename', 'assignment');
