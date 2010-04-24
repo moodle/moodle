@@ -56,6 +56,7 @@ $string['allunsubscribe'] = 'Unsubscribe from all forums';
 $string['alreadyfirstpost'] = 'This is already the first post in the discussion';
 $string['anyfile'] = 'Any file';
 $string['attachment'] = 'Attachment';
+$string['attachment_help'] = 'You can optionally attach one or more files to a forum post. If you attach an image, it will be displayed after the message.';
 $string['attachmentnopost'] = 'You cannot export attachments without a post id';
 $string['attachments'] = 'Attachments';
 $string['blockafter'] = 'Post threshold for blocking';
@@ -142,9 +143,11 @@ $string['discussionsstartedby'] = 'Discussions started by {$a}';
 $string['discussionsstartedbyrecent'] = 'Discussions recently started by {$a}';
 $string['discussthistopic'] = 'Discuss this topic';
 $string['displayend'] = 'Display end';
+$string['displayend_help'] = 'This setting specifies whether a forum post should be hidden after a certain date. Note that administrators can always view forum posts.';
 $string['displaymode'] = 'Display mode';
-$string['displayperiod'] = 'Display Period';
+$string['displayperiod'] = 'Display period';
 $string['displaystart'] = 'Display start';
+$string['displaystart_help'] = 'This setting specifies whether a forum post should be displayed from a certain date. Note that administrators can always view forum posts.';
 $string['eachuserforum'] = 'Each person posts one discussion';
 $string['edit'] = 'Edit';
 $string['editedby'] = 'Edited by {$a->name} - original submission {$a->date}';
@@ -189,6 +192,12 @@ $string['forum:throttlingapplies'] = 'Throttling applies';
 $string['forumtracked'] = 'Unread posts are being tracked';
 $string['forumtrackednot'] = 'Unread posts are not being tracked';
 $string['forumtype'] = 'Forum type';
+$string['forumtype_help'] = 'There are 5 forum types:
+* A single simple discussion - A single discussion topic which everyone can reply to
+* Each person posts one discussion - Each student can post exactly one new discussion topic, which everyone can then reply to
+* Q and A forum - Students must first post their perspectives before viewing other students\' posts
+* Standard forum displayed in a blog-like format - An open forum where anyone can start a new discussion at any time, and in which discussion topics are displayed on one page with "Discuss this topic" links
+* Standard forum for general use - An open forum where anyone can start a new discussion at any time';
 $string['forum:viewallratings'] = 'View all raw ratings given by individuals';
 $string['forum:viewanyrating'] = 'View total ratings that anyone received';
 $string['forum:viewdiscussion'] = 'View discussions';
@@ -339,6 +348,10 @@ $string['resetsubscriptions'] = 'Delete all forum subscriptions';
 $string['resettrackprefs'] = 'Delete all forum tracking preferences';
 $string['rsssubscriberssdiscussions'] = 'Display the RSS feed for \'{$a}\' discussions';
 $string['rsssubscriberssposts'] = 'Display the RSS feed for \'{$a}\' posts';
+$string['rssarticles'] = 'Number of RSS recent articles';
+$string['rssarticles_help'] = 'This setting specifies the number of articles (either discussions or posts) to include in the RSS feed. Between 5 and 20 generally acceptable.';
+$string['rsstype'] = 'RSS feed for this activity';
+$string['rsstype_help'] = 'To enable the RSS feed for this activity, select either discussions or posts to be included in the feed.';
 $string['search'] = 'Search';
 $string['searchdatefrom'] = 'Posts must be newer than this';
 $string['searchdateto'] = 'Posts must be older than this';
