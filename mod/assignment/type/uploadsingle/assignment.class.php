@@ -243,7 +243,6 @@ class assignment_uploadsingle extends assignment_base {
         }
         $filesforzipping = array();
         $filenewname = clean_filename($this->assignment->name); //create prefix of individual files
-        $tempdir = assignment_create_temp_dir($CFG->dataroot."/temp/", "assignment".$this->assignment->id); //location for temp files.
         $fs = get_file_storage();
 
         $groupmode = groupmode($this->course,$this->cm);
@@ -265,17 +264,12 @@ class assignment_uploadsingle extends assignment_base {
                 foreach ($files as $file) {
                     //get files new name.
                     $fileforzipname =  $a_user->username . "_" . $filenewname . "_" . $file->get_filename();
-                    //get files old name
-                    if (!$file->copy_content_to($tempdir . $fileforzipname)) {
-                        error ("failed to copy file<br>" .$tempdir. $fileforzipname);
-                    }
                     //save file name to array for zipping.
-                    $filesforzipping[$fileforzipname] = $tempdir.$fileforzipname;
+                    $filesforzipping[$fileforzipname] = $file;
                 }
             }
         } // End of foreach
         if ($zipfile = assignment_pack_files($filesforzipping)) {
-            remove_dir($tempdir); //remove old tempdir with individual files.
             send_temp_file($zipfile, $filename); //send file and delete after sending.
         }
     }
