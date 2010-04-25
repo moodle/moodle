@@ -35,13 +35,14 @@ require_capability('mod/chat:chat',$context);
     $groupname = '';
 }
 
+// if requested theme doesn't exist, use default 'bubble' theme
+if (!file_exists(dirname(__FILE__) . '/theme/'.$theme.'/chat.css')) {
+    $theme = 'bubble';
+}
+
 // login chat room
 if (!$chat_sid = chat_login_user($chat->id, 'ajax', $groupid, $course)) {
     print_error('cantlogin', 'chat');
-}
-
-if (!file_exists(dirname(__FILE__) . '/theme/'.$theme.'/chat.css')) {
-    $theme = 'bubble';
 }
 
 $module = array(
@@ -67,6 +68,7 @@ $PAGE->requires->js_init_call('M.mod_chat_ajax.init', array($modulecfg), false, 
 $PAGE->set_title(get_string('modulename', 'chat').": $course->shortname: ".format_string($chat->name,true)."$groupname");
 $PAGE->add_body_class('yui-skin-sam');
 $PAGE->set_pagelayout('embedded');
+$PAGE->requires->css('/mod/chat/gui_ajax/theme/'.$theme.'/chat.css');
 
 echo $OUTPUT->header();
 echo $OUTPUT->box('<ul id="users-list"></ul>', '', 'chat-userlist');
@@ -74,12 +76,8 @@ echo $OUTPUT->box('', '', 'chat-options');
 echo $OUTPUT->box('<ul id="messages-list"></ul>', '', 'chat-messages');
 $table = new html_table();
 $table->data = array(
-    array(
-        ' &raquo;<input type="text" disabled="true" id="input-message" value="Loading..." size="50" /><input type="button" id="button-send" value="'.get_string('send', 'chat').'" />',
-        '<a id="choosetheme" href="###">'.get_string('themes').' ▶</a>'
-    )
+    array(' &raquo; <input type="text" disabled="true" id="input-message" value="Loading..." size="50" /> <input type="button" id="button-send" value="'.get_string('send', 'chat').'" /> <a id="choosetheme" href="###">'.get_string('themes').' &raquo; </a>')
 );
 echo $OUTPUT->box(html_writer::table($table), '', 'chat-input-area');
 echo $OUTPUT->box('', '', 'chat-notify');
 echo $OUTPUT->footer();
-
