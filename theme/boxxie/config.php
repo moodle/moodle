@@ -116,6 +116,13 @@ $THEME->layouts = array(
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
     ),
+    'embedded' => array(
+    	'theme' => 'boxxie',
+        'file' => 'embedded.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true),
+    ),
+    
 );
 
 ///////////////////////////////////////////////////////////////

@@ -85,9 +85,8 @@ tt { display: block; margin: 1.5em 0; line-height: 1.5; }
 /* Tables
 -------------------------------------------------------------- */
 
-table { margin-bottom: 1.4em; }
 th { border-bottom: 2px solid #ddd; font-weight: bold; }
-th,td { padding: 4px 10px 4px 0; }
+th,td { padding: 4px;vertical-align: middle }
 tfoot { font-style: italic; }
 caption { background: #ffc; }
 
