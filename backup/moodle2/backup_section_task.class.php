@@ -96,7 +96,22 @@ class backup_section_task extends backup_task {
      */
     protected function define_settings() {
 
-        // Nothing to add, sections doesn't have common settings (for now)
+        // All the settings related to this activity will include this prefix
+        $settingprefix = 'section_' . $this->sectionid . '_';
 
+        // All these are common settings to be shared by all sections
+
+        // Define section_included (to decide if the whole task must be really executed)
+        $settingname = $settingprefix . 'included';
+        $section_included = new backup_section_included_setting($settingname, base_setting::IS_BOOLEAN, true);
+        $this->add_setting($section_included);
+
+        // Define section_userinfo (dependent of root users setting)
+        $settingname = $settingprefix . 'userinfo';
+        $section_userinfo = new backup_section_userinfo_setting($settingname, base_setting::IS_BOOLEAN, true);
+        $this->add_setting($section_userinfo);
+        // Look for "users" root setting
+        $users = $this->plan->get_setting('users');
+        $users->add_dependency($section_userinfo);
     }
 }

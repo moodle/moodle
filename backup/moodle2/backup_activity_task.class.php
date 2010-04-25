@@ -91,6 +91,12 @@ abstract class backup_activity_task extends backup_task {
      */
     public function build() {
 
+        // If we have decided not to backup activities, prevent anything to be built
+        if (!$this->get_setting_value('activities')) {
+            $this->built = true;
+            return;
+        }
+
         // Add some extra settings that related processors are going to need
         $this->add_setting(new backup_activity_generic_setting(backup::VAR_MODID, base_setting::IS_INTEGER, $this->moduleid));
         $this->add_setting(new backup_activity_generic_setting(backup::VAR_COURSEID, base_setting::IS_INTEGER, $this->get_courseid()));
@@ -213,17 +219,31 @@ abstract class backup_activity_task extends backup_task {
 
         // Define activity_include (to decide if the whole task must be really executed)
         $settingname = $settingprefix . 'included';
-        $activity_userinfo = new backup_activity_generic_setting($settingname, base_setting::IS_BOOLEAN, true);
-        $this->add_setting($activity_userinfo);
+        $activity_included = new backup_activity_generic_setting($settingname, base_setting::IS_BOOLEAN, true);
+        $this->add_setting($activity_included);
+        // Look for "activities" root setting
+        $activities = $this->plan->get_setting('activities');
+        $activities->add_dependency($activity_included);
+        // Look for "section_included" section setting (if exists)
+        $settingname = 'section_' . $this->sectionid . '_included';
+        if ($this->plan->setting_exists($settingname)) {
+            $section_included = $this->plan->get_setting($settingname);
+            $section_included->add_dependency($activity_included);
+        }
 
         // Define activity_userinfo (dependent of root users setting)
         $settingname = $settingprefix . 'userinfo';
-        $settingname = $this->modulename . '_' . $this->moduleid . '_userinfo';
         $activity_userinfo = new backup_activity_userinfo_setting($settingname, base_setting::IS_BOOLEAN, true);
         $this->add_setting($activity_userinfo);
         // Look for "users" root setting
         $users = $this->plan->get_setting('users');
         $users->add_dependency($activity_userinfo);
+        // Look for "section_userinfo" section setting (if exists)
+        $settingname = 'section_' . $this->sectionid . '_userinfo';
+        if ($this->plan->setting_exists($settingname)) {
+            $section_userinfo = $this->plan->get_setting($settingname);
+            $section_userinfo->add_dependency($activity_userinfo);
+        }
 
         // End of common activity settings, let's add the particular ones
         $this->define_my_settings();

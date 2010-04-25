@@ -96,6 +96,19 @@ abstract class base_plan implements checksumable, executable {
         return $result;
     }
 
+    /**
+     * Wrapper over @get_setting() that returns if the requested setting exists or no
+     */
+    public function setting_exists($name) {
+        try {
+            $this->get_setting($name);
+            return true;
+        } catch (base_plan_exception $e) {
+            // Nothing to do
+        }
+        return false;
+    }
+
 
     /**
      * Function responsible for building the tasks of any plan

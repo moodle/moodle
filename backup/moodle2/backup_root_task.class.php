@@ -69,6 +69,10 @@ class backup_root_task extends backup_task {
         $this->add_setting($userfiles);
         $users->add_dependency($userfiles);
 
+        // Define activitites
+        $activities = new backup_activities_setting('activities', base_setting::IS_BOOLEAN, true);
+        $this->add_setting($activities);
+
         // Define blocks
         $blocks = new backup_generic_setting('blocks', base_setting::IS_BOOLEAN, true);
         $this->add_setting($blocks);
