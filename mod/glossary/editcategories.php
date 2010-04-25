@@ -89,7 +89,7 @@ if ( $hook >0 ) {
             add_to_log($course->id, "glossary", "edit category", "editcategories.php?id=$cm->id", $hook,$cm->id);
 
         } else {
-            echo "<p style=\"text-align:center\">" . get_string("edit"). " " . get_string("category","glossary") . "<span style=\"font-size:1.5em\">";
+            echo "<h3 class=\"main\">" . get_string("edit"). " " . get_string("category","glossary") . "</h3>";
 
             $name = $category->name;
             $usedynalink = $category->usedynalink;
@@ -104,8 +104,7 @@ if ( $hook >0 ) {
             $DB->delete_records("glossary_categories", array("id"=>$hook));
 
             echo $OUTPUT->box_start('generalbox boxaligncenter errorboxcontent boxwidthnarrow');
-            echo "<div style=\"text-align:center\">" . get_string("categorydeleted","glossary") ."</div>";
-            echo "</center>";
+            echo "<div>" . get_string("categorydeleted","glossary") ."</div>";
             echo $OUTPUT->box_end();
             echo $OUTPUT->footer();
 
@@ -113,10 +112,10 @@ if ( $hook >0 ) {
 
             redirect("editcategories.php?id=$cm->id");
         } else {
-            echo "<p style=\"text-align:center\">" . get_string("delete"). " " . get_string("category","glossary"). "</p>";
+            echo "<p>" . get_string("delete"). " " . get_string("category","glossary"). "</p>";
 
             echo $OUTPUT->box_start('generalbox boxaligncenter errorboxcontent boxwidthnarrow');
-            echo "<div class=\"boxaligncenter\"><b>".format_text($category->name, FORMAT_PLAIN)."</b><br/>";
+            echo "<div class=\"boxaligncenter deletecatconfirm\">".format_text($category->name, FORMAT_PLAIN)."<br/>";
 
             $num_entries = $DB->count_records("glossary_entries_categories", array("categoryid"=>$category->id));
             if ( $num_entries ) {
@@ -127,7 +126,7 @@ if ( $hook >0 ) {
             echo "</p>";
 ?>
 
-                <table border="0" width="100">
+                <table border="0" width="100" class="confirmbuttons">
                     <tr>
                         <td align="right" style="width:50%">
                         <form id="form" method="post" action="editcategories.php">
@@ -158,10 +157,10 @@ if ( $hook >0 ) {
         $ILIKE = $DB->sql_ilike();
         $dupcategory = $DB->get_records_sql("SELECT * FROM {glossary_categories} WHERE name $ILIKE ? AND glossaryid=?", array($name, $glossary->id));
         if ( $dupcategory ) {
-            echo "<p style=\"text-align:center\">" . get_string("add"). " " . get_string("category","glossary");
+        echo "<h3 class=\"main\">" . get_string("add"). " " . get_string("category","glossary"). "</h3>";
 
             echo $OUTPUT->box_start('generalbox boxaligncenter errorboxcontent boxwidthnarrow');
-            echo "<div style=\"text-align:center\">" . get_string("duplicatedcategory","glossary") ."</div>";
+            echo "<div>" . get_string("duplicatedcategory","glossary") ."</div>";
             echo $OUTPUT->box_end();
 
             redirect("editcategories.php?id=$cm->id&amp;action=add&&amp;name=$name");
@@ -177,7 +176,7 @@ if ( $hook >0 ) {
             add_to_log($course->id, "glossary", "add category", "editcategories.php?id=$cm->id", $cat->id,$cm->id);
         }
     } else {
-        echo "<p style=\"text-align:center\">" . get_string("add"). " " . get_string("category","glossary"). "</p>";
+        echo "<h3 class=\"main\">" . get_string("add"). " " . get_string("category","glossary"). "</h3>";
         $name="";
         require "editcategories.html";
     }
@@ -193,10 +192,10 @@ if ( $action ) {
 <form method="post" action="editcategories.php">
 <table width="40%" class="boxaligncenter generalbox" cellpadding="5">
         <tr>
-          <td style="width:90%" align="center"><b>
-          <?php p(get_string("categories","glossary")) ?></b></td>
-          <td style="width:10%" align="center"><b>
-          <?php p(get_string("action")) ?></b></td>
+          <th style="width:90%" align="center">
+          <?php p(get_string("categories","glossary")) ?></th>
+          <th style="width:10%" align="center">
+          <?php p(get_string("action")) ?></th>
         </tr>
         <tr><td style="width:100%" colspan="2">
 
@@ -212,17 +211,17 @@ if ( $action ) {
 ?>
 
              <tr>
-               <td style="width:90%" align="left">
+               <td style="width:80%" align="left">
                <?php
-                    echo "<b>".format_text($category->name, FORMAT_PLAIN)."</b> <span style=\"font-size:0.75em\">($num_entries " . get_string("entries","glossary") . ")</span>";
+                    echo "<span class=\"bold\">".format_text($category->name, FORMAT_PLAIN)."</span> <span>($num_entries " . get_string("entries","glossary") . ")</span>";
                ?>
                </td>
-               <td style="width:10%" align="center"><b>
+               <td style="width:19%" align="center" class="action">
                <?php
                 echo "<a href=\"editcategories.php?id=$cm->id&amp;action=delete&amp;mode=cat&amp;hook=$category->id\"><img  alt=\"" . get_string("delete") . "\"src=\"" . $OUTPUT->pix_url('t/delete') . "\" class=\"iconsmall\" /></a> ";
                 echo "<a href=\"editcategories.php?id=$cm->id&amp;action=edit&amp;mode=cat&amp;hook=$category->id\"><img  alt=\"" . get_string("edit") . "\" src=\"" . $OUTPUT->pix_url('t/edit') . "\" class=\"iconsmall\" /></a>";
                ?>
-               </b></td>
+               </td>
              </tr>
 
              <?php
@@ -240,7 +239,7 @@ if ( $action ) {
              $options['id'] = $cm->id;
              $options['action'] = "add";
 
-             echo "<table border=\"0\"><tr><td align=\"right\">";
+             echo "<table class=\"editbuttons\" border=\"0\"><tr><td align=\"right\">";
              echo $OUTPUT->single_button(new moodle_url("editcategories.php", $options), get_string("add") . " " . get_string("category","glossary"));
              echo "</td><td align=\"left\">";
              unset($options['action']);

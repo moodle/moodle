@@ -7,13 +7,13 @@
 <div>
 <table  class="generalbox" cellpadding="5">
 <tr valign="top">
-    <td align="right"><b><?php echo get_string("name") ?>:</b></td>
+    <td align="right"><?php echo get_string("name") ?>:</td>
     <td>
         <input type="text" name="name" size="30" value="<?php p($name) ?>" />
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><b><?php echo get_string("linkcategory","glossary") ?>:</b></td>
+    <td align="right"><?php echo get_string("linkcategory","glossary") ?>:</td>
     <td>
       <select size="1" name="usedynalink">
       <option value="1" <?php
@@ -32,8 +32,7 @@
 </tr>
 <tr>
 <td colspan="2">
-    <p style="text-align:center">
-    <div>
+    <div class="buttons">
     <input type="hidden" name="id" value="<?php p($cm->id) ?>" />
     <input type="hidden" name="action" value="<?php p($action) ?>" />
     <input type="hidden" name="confirm" value="1" />
@@ -42,7 +41,6 @@
     <input type="submit" value="<?php print_string("savechanges") ?>" />
     <input type="reset" value="<?php print_string("back","glossary") ?>"  onclick="javascript:history.go(-1);" />
     </div>
-    </p>
 </td>
 </tr>
 </table>
