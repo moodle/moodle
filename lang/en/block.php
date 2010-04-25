@@ -45,6 +45,7 @@ $string['showonfrontpageandsubs'] = 'Display on the front page and any pages add
 $string['showonfrontpageonly'] = 'Display on the front page only';
 $string['site-*'] = 'Any top-level site page';
 $string['subpages'] = 'Specific sub-page';
+$string['restrictpagetypes'] = 'Restrict to these page types';
 $string['thisspecificpage'] = 'This specific page (page {$a})';
 $string['undockall'] = 'Undock all';
 $string['undockitem'] = 'Undock this item';
