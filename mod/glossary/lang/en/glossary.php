@@ -45,7 +45,7 @@ $string['areyousuredeletecomment'] = 'Are you sure you want to delete this comme
 $string['areyousureexport'] = 'Are you sure you want to export this entry to';
 $string['ascending'] = 'ascending';
 $string['attachment'] = 'Attachment';
-$string['attachment_help'] = 'You can optionally attach one or more files to a glossary entry. If you attach an image, it will be displayed after the definition.';
+$string['attachment_help'] = 'You can optionally attach one or more files to a glossary entry.';
 $string['author'] = 'author';
 $string['authorview'] = 'Browse by Author';
 $string['back'] = 'Back';
@@ -86,6 +86,7 @@ $string['currentglossary'] = 'Current glossary';
 $string['date'] = 'date';
 $string['dateview'] = 'Browse by date';
 $string['defaultapproval'] = 'Approved by default';
+$string['defaultapproval_help'] = 'If set to no, entries require approving by a teacher before they are viewable by everyone.';
 $string['defaulthook'] = 'Default hook';
 $string['defaultmode'] = 'Default mode';
 $string['defaultsortkey'] = 'Default sort key';
@@ -99,6 +100,14 @@ $string['deletingnoneemptycategory'] = 'Deleting this category will not delete t
 $string['descending'] = 'descending';
 $string['destination'] = 'Destination';
 $string['displayformat'] = 'Display format';
+$string['displayformat_help'] = 'There are 7 display formats:
+* Simple, dictionary style - No authors are displayed and attachments are shown as links
+* Continuous without author - Entries are displayed one after another without any separation apart from the editing icons
+* Full with author - A forum-like display format showing the author\'s data and with attachments shown as links
+* Full without author - A forum-like display format without authors and with attachments shown as links
+* Encyclopedia - As for "Full with author" but attached images are shown inline
+* Entry list - Concepts are listed as links
+* FAQ - The words QUESTION and ANSWER are appended to the concept and definition respectively';
 $string['displayformatcontinuous'] = 'Continuous without author';
 $string['displayformatdictionary'] = 'Simple, dictionary style';
 $string['displayformatencyclopedia'] = 'Encyclopedia';
