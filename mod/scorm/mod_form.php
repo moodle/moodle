@@ -67,7 +67,6 @@ class mod_scorm_mod_form extends moodleform_mod {
 // Time restrictions
         $mform->addElement('header', 'timerestricthdr', get_string('timerestrict', 'scorm'));
         $mform->addElement('checkbox', 'timerestrict', get_string('timerestrict', 'scorm'));
-        $mform->setHelpButton('timerestrict', array("timerestrict", get_string("timerestrict","scorm"), "scorm"));
 
 
         $mform->addElement('date_time_selector', 'timeopen', get_string("scormopen", "scorm"));
@@ -98,18 +97,20 @@ class mod_scorm_mod_form extends moodleform_mod {
 
 // Max Attempts
         $mform->addElement('select', 'maxattempt', get_string('maximumattempts', 'scorm'), scorm_get_attempts_array());
-        $mform->setHelpButton('maxattempt', array('maxattempt',get_string('maximumattempts', 'scorm'), 'scorm'));
+        $mform->setHelpButton('maxattempt', array('maximumattempts',get_string('maximumattempts', 'scorm'), 'scorm'));
         $mform->setDefault('maxattempt', $cfg_scorm->maxattempts);
+
+// What Grade
+        $mform->addElement('select', 'whatgrade', get_string('whatgrade', 'scorm'),  scorm_get_what_grade_array());
+        $mform->disabledIf('whatgrade', 'maxattempt','eq',1);
+        $mform->setHelpButton('whatgrade', array('whatgrade',get_string('whatgrade', 'scorm'), 'scorm'));
+        $mform->setDefault('whatgrade', $cfg_scorm->whatgrade);
+        $mform->setAdvanced('whatgrade');
 
 // Display attempt status
         $mform->addElement('selectyesno', 'displayattemptstatus', get_string('displayattemptstatus', 'scorm'));
         $mform->setHelpButton('displayattemptstatus', array('displayattemptstatus',get_string('displayattemptstatus', 'scorm'), 'scorm'));
         $mform->setDefault('displayattemptstatus', $cfg_scorm->displayattemptstatus);
-
-// Display course structure
-        $mform->addElement('selectyesno', 'displaycoursestructure', get_string('displaycoursestructure', 'scorm'));
-        $mform->setHelpButton('displaycoursestructure', array('displaycoursestructure',get_string('displaycoursestructure', 'scorm'), 'scorm'));
-        $mform->setDefault('displaycoursestructure', $cfg_scorm->displaycoursestructure);
 
 // Force completed
         $mform->addElement('selectyesno', 'forcecompleted', get_string('forcecompleted', 'scorm'));
@@ -128,13 +129,6 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setHelpButton('lastattemptlock', array('lastattemptlock',get_string('lastattemptlock', 'scorm'), 'scorm'));
         $mform->setDefault('lastattemptlock', $cfg_scorm->lastattemptlock);
         $mform->setAdvanced('lastattemptlock');
-
-// What Grade
-        $mform->addElement('select', 'whatgrade', get_string('whatgrade', 'scorm'),  scorm_get_what_grade_array());
-        $mform->disabledIf('whatgrade', 'maxattempt','eq',1);
-        $mform->setHelpButton('whatgrade', array('whatgrade',get_string('whatgrade', 'scorm'), 'scorm'));
-        $mform->setDefault('whatgrade', $cfg_scorm->whatgrade);
-        $mform->setAdvanced('whatgrade');
 
 // Activation period
 /*        $mform->addElement('static', '', '' ,'<hr />');
@@ -197,8 +191,15 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setDefault('hidebrowse', $cfg_scorm->hidebrowse);
         $mform->setAdvanced('hidebrowse');
 
+// Display course structure
+        $mform->addElement('selectyesno', 'displaycoursestructure', get_string('displaycoursestructure', 'scorm'));
+        $mform->setHelpButton('displaycoursestructure', array('displaycoursestructure',get_string('displaycoursestructure', 'scorm'), 'scorm'));
+        $mform->setDefault('displaycoursestructure', $cfg_scorm->displaycoursestructure);
+        $mform->setAdvanced('displaycoursestructure');
+        
 // Toc display
         $mform->addElement('select', 'hidetoc', get_string('hidetoc', 'scorm'), scorm_get_hidetoc_array());
+        $mform->setHelpButton('hidetoc', array('hidetoc',get_string('hidetoc', 'scorm'), 'scorm'));
         $mform->setDefault('hidetoc', $cfg_scorm->hidetoc);
         $mform->setAdvanced('hidetoc');
 
