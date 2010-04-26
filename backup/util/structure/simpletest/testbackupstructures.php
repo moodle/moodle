@@ -47,10 +47,10 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
 
     protected $testtables = array(
         'lib'       => array(
-            'files'),
+            'files', 'rating'),
         'mod/forum' => array(
             'forum', 'forum_discussions', 'forum_posts',
-            'forum_ratings', 'forum_read'));
+            'forum_read'));
 
     protected $forumid;   // To store the inserted forum->id
     protected $contextid; // Official contextid for these tests
@@ -127,10 +127,14 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
         $DB->insert_record('files', $f1_post2);
 
         // Create two ratings
-        $rating1 = (object)array('userid' => 104, 'post' => $p1id, 'rating' => 2);
-        $r1id = $DB->insert_record('forum_ratings', $rating1);
-        $rating2 = (object)array('userid' => 105, 'post' => $p1id, 'rating' => 3);
-        $r2id = $DB->insert_record('forum_ratings', $rating2);
+        $rating1 = (object)array(
+            'contextid' => $this->contextid, 'userid' => 104, 'itemid' => $p1id, 'rating' => 2,
+            'scaleid' => -1, 'timecreated' => time(), 'timemodified' => time());
+        $r1id = $DB->insert_record('rating', $rating1);
+        $rating2 = (object)array(
+            'contextid' => $this->contextid, 'userid' => 105, 'itemid' => $p1id, 'rating' => 3,
+            'scaleid' => -1, 'timecreated' => time(), 'timemodified' => time());
+        $r2id = $DB->insert_record('rating', $rating2);
 
         // Create 1 reads
         $read1 = (object)array('userid' => 102, 'forumid' => $this->forumid, 'discussionid' => $d2id, 'postid' => $p4id);
@@ -179,7 +183,7 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
         $ratings = new backup_nested_element('ratings');
         $rating = new backup_nested_element('rating',
                                             array('id'),
-                                            array('userid', 'post', 'time', 'post_rating')
+                                            array('userid', 'itemid', 'time', 'post_rating')
                                            );
         $reads = new backup_nested_element('readposts');
         $read = new backup_nested_element('read',
@@ -251,8 +255,8 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
                                     );
         $post->set_source_table('forum_posts', array('discussion' => '/forum/discussions/discussion/id'));
         $rating->set_source_sql('SELECT *
-                                   FROM {forum_ratings}
-                                  WHERE post = ?',
+                                   FROM {rating}
+                                  WHERE itemid = ?',
                                  array(backup::VAR_PARENTID)
                                 );
 
@@ -287,7 +291,7 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
         $discussion->annotate_ids('user1', 'userid');
         $post->annotate_ids('forum_post', 'id');
         $rating->annotate_ids('user2', 'userid');
-        $rating->annotate_ids('forum_post', 'post');
+        $rating->annotate_ids('forum_post', 'itemid');
 
         // Create the backup_ids_temp table
         backup_controller_dbops::create_backup_ids_temp_table($backupid);
@@ -316,7 +320,7 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
         // Check various counters
         $this->assertEqual($forum->get_counter(), $DB->count_records('forum'));
         $this->assertEqual($discussion->get_counter(), $DB->count_records('forum_discussions'));
-        $this->assertEqual($rating->get_counter(), $DB->count_records('forum_ratings'));
+        $this->assertEqual($rating->get_counter(), $DB->count_records('rating'));
         $this->assertEqual($read->get_counter(), $DB->count_records('forum_read'));
         $this->assertEqual($inventeds->get_counter(), 2); // Array
 
@@ -333,7 +337,7 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
 
         // Check ratings information against DB
         $ratings = $dom->getElementsByTagName('rating');
-        $this->assertEqual($ratings->length, $DB->count_records('forum_ratings'));
+        $this->assertEqual($ratings->length, $DB->count_records('rating'));
         foreach ($ratings as $rating) {
             $ratarr = array();
             $ratarr['id'] = $rating->getAttribute('id');
@@ -342,9 +346,9 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
                     $ratarr[$node->nodeName] = $node->nodeValue;
                 }
             }
-            $this->assertEqual($ratarr['userid'], $DB->get_field('forum_ratings', 'userid', array('id' => $ratarr['id'])));
-            $this->assertEqual($ratarr['post'], $DB->get_field('forum_ratings', 'post', array('id' => $ratarr['id'])));
-            $this->assertEqual($ratarr['post_rating'], $DB->get_field('forum_ratings', 'rating', array('id' => $ratarr['id'])));
+            $this->assertEqual($ratarr['userid'], $DB->get_field('rating', 'userid', array('id' => $ratarr['id'])));
+            $this->assertEqual($ratarr['itemid'], $DB->get_field('rating', 'itemid', array('id' => $ratarr['id'])));
+            $this->assertEqual($ratarr['post_rating'], $DB->get_field('rating', 'rating', array('id' => $ratarr['id'])));
         }
 
         // Check forum has "blockeperiod" with value 0 (was declared by object instead of name)
@@ -407,7 +411,7 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
         // Count records in original tables
         $c_postsid    = $DB->count_records_sql('SELECT COUNT(DISTINCT id) FROM {forum_posts}');
         $c_dissuserid = $DB->count_records_sql('SELECT COUNT(DISTINCT userid) FROM {forum_discussions}');
-        $c_ratuserid  = $DB->count_records_sql('SELECT COUNT(DISTINCT userid) FROM {forum_ratings}');
+        $c_ratuserid  = $DB->count_records_sql('SELECT COUNT(DISTINCT userid) FROM {rating}');
         // Count records in backup_ids_table
         $f_forumpost = $DB->count_records('backup_ids_temp', array('backupid' => $backupid, 'itemname' => 'forum_post'));
         $f_user1     = $DB->count_records('backup_ids_temp', array('backupid' => $backupid, 'itemname' => 'user1'));
