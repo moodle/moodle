@@ -26,3 +26,4 @@
 $string['pluginname'] = 'Boxxie';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
+$string['choosereadme'] = 'Boxxie, a Moodle 2.0 theme by Patrick Malley (<a href="http://newschoollearning.com/">newschoollearning.com</a>)';
