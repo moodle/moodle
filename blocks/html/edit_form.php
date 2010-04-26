@@ -37,8 +37,10 @@ class block_html_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_title', get_string('configtitle', 'block_html'));
         $mform->setType('config_title', PARAM_MULTILANG);
 
-        // TODO MDL-19844 should use the new editor field type.
-        $mform->addElement('htmleditor', 'config_text', get_string('configcontent', 'block_html'));
+        // TODO MDL-19844 still needs to be fixed to support files properly
+
+        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusttext'=>true, 'context'=>$this->block->context);
+        $mform->addElement('editor', 'config_text', get_string('configcontent', 'block_html'), null, $editoroptions);
         $mform->setType('config_text', PARAM_RAW); // no XSS prevention here, users must be trusted
     }
 }

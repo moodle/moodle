@@ -33,8 +33,12 @@ class block_html extends block_base {
         }
 
         $this->content = new stdClass;
-        $this->content->text = isset($this->config->text) ? format_text($this->config->text, FORMAT_HTML, $filteropt) : '';
         $this->content->footer = '';
+        if (isset($this->config->text)) {
+            $this->content->text = format_text($this->config->text['text'], $this->config->text['format'], $filteropt);
+        } else {
+            $this->content->text = '';
+        }
 
         unset($filteropt); // memory footprint
 
