@@ -92,21 +92,49 @@ class ExHtmlReporter extends HtmlReporter {
     function paintException($exception) {
         // Explicitly call grandparent, not parent::paintException.
         SimpleScorer::paintException($exception);
+
+        if (is_a($exception, 'moodle_exception') &&
+                !get_string_manager()->string_exists($exception->errorcode, $exception->module)) {
+            $exceptionmessage = 'Exception with missing language string {' .
+                    $exception->errorcode . '} from language file {' . $exception->module . '}';
+
+            if (!empty($exception->a)) {
+                if (is_string($exception->a)) {
+                    $data = $exception->a;
+                } else {
+                    $data = array();
+                    foreach ((array)$exception->a as $name => $value) {
+                        $data[] = $name . ' => [' . $value . ']';
+                    }
+                    $data = implode(', ', $data);
+                }
+                $exceptionmessage .= ' with data {' . $data . '}';
+            }
+
+        } else {
+            $exceptionmessage = $exception->getMessage();
+        }
         $message = 'Unexpected exception of type [' . get_class($exception) .
-                '] with message ['. $exception->getMessage() .
+                '] with message ['. $exceptionmessage .
                 '] in ['. $exception->getFile() .
                 ' line ' . $exception->getLine() . ']';
 
-        $this->_paintPassFail('exception', $message, $exception->getTrace());
+        $debuginfo = null;
+        if (!empty($exception->debuginfo)) {
+            $debuginfo = $exception->debuginfo;
+        }
+
+        $this->_paintPassFail('exception', $message, $exception->getTrace(), $debuginfo);
     }
 
     /**
      * Private method. Used by printPass/Fail/Skip/Error.
      */
-    function _paintPassFail($passorfail, $message, $stacktrace = null) {
+    function _paintPassFail($passorfail, $message, $stacktrace = null, $debuginfo = null) {
         global $FULLME, $CFG, $OUTPUT;
 
         echo $OUTPUT->box_start($passorfail . ' generalbox ');
+
         $url = $this->_htmlEntities($this->_stripParameterFromUrl($FULLME, 'path'));
         echo '<b class="', $passorfail, '">', $this->get_string($passorfail), '</b>: ';
         $breadcrumb = $this->getTestList();
@@ -121,7 +149,14 @@ class ExHtmlReporter extends HtmlReporter {
         }
         echo "<a href=\"{$url}path=$folder$file\" title=\"$this->strrunonlyfile\">$file</a>";
         echo $this->strseparator, implode($this->strseparator, $breadcrumb);
+
         echo '<br />', $this->_htmlEntities($message), "\n\n";
+
+        if (!empty($debuginfo)) {
+            print_object('Debug info:');
+            print_object($debuginfo);
+        }
+
         if ($stacktrace) {
             $dotsadded = false;
             $interestinglines = 0;
@@ -142,6 +177,7 @@ class ExHtmlReporter extends HtmlReporter {
                 echo '<div class="notifytiny">' . format_backtrace($filteredstacktrace) . "</div>\n\n";
             }
         }
+
         echo $OUTPUT->box_end();
         flush();
     }
