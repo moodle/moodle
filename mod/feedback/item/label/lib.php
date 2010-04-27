@@ -100,8 +100,17 @@ class feedback_item_label extends feedback_item_base {
     
     function print_item($item){
         global $DB;
-        $cm = get_coursemodule_from_instance('feedback', $item->feedback);
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+        //is the item a template?
+        if(!$item->feedback AND $item->template) {
+            $template = $DB->get_record('feedback_template', array('id'=>$item->template));
+            $context = get_context_instance(CONTEXT_COURSE, $template->course);
+            $filearea = 'course_summary';
+        }else {
+            $cm = get_coursemodule_from_instance('feedback', $item->feedback);
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $filearea = 'feedback_item';
+        }
         
         $item->presentationformat = FORMAT_HTML;
         $item->presentationtrust = 1;
@@ -109,7 +118,7 @@ class feedback_item_label extends feedback_item_base {
         ?>
         <td colspan="2">
             <?php 
-                $output = file_rewrite_pluginfile_urls($item->presentation, 'pluginfile.php', $context->id,'feedback_item',$item->id);
+                $output = file_rewrite_pluginfile_urls($item->presentation, 'pluginfile.php', $context->id, $filearea, $item->id);
                 echo format_text($output, FORMAT_HTML);
             ?>
         </td>

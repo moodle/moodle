@@ -149,8 +149,14 @@ function feedback_pluginfile($course, $cminfo, $context, $filearea, $args, $forc
     if (!$cminfo->uservisible) {
         return false;
     }
+    
+    if($filearea === 'feedback_template') {
+        $usedcontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    }else {
+        $usedcontext = $context;
+    }
 
-    if ($filearea === 'feedback_item') {
+    if ($filearea === 'feedback_item' OR $filearea === 'feedback_template') {
         $itemid = (int)array_shift($args);
 
         if (!$cm = get_coursemodule_from_instance('feedback', $cminfo->instance, $course->id)) {
@@ -172,7 +178,7 @@ function feedback_pluginfile($course, $cminfo, $context, $filearea, $args, $forc
         }
 
         if ($item->feedback == $cminfo->instance) {
-            $filecontext = $context;
+            $filecontext = $usedcontext;
         } else {
             return false;
         }
@@ -213,7 +219,11 @@ function feedback_delete_instance($id) {
             $DB->delete_records("feedback_value", array("item"=>$feedbackitem->id));
             $DB->delete_records("feedback_valuetmp", array("item"=>$feedbackitem->id));
         }
-        $DB->delete_records("feedback_item", array("feedback"=>$id));
+        if($delitems = $DB->get_records("feedback_item", array("feedback"=>$id))) {
+            foreach($delitems as $delitem) {
+                feedback_delete_item($delitem->id, false);
+            }
+        }
     }
 
     //deleting the referenced tracking data
@@ -780,7 +790,8 @@ function feedback_create_template($courseid, $name, $ispublic = 0) {
     $templ->name     = $name;
     $templ->ispublic = $ispublic;
 
-    return $DB->insert_record('feedback_template', $templ);
+    $templid = $DB->insert_record('feedback_template', $templ);
+    return $DB->get_record('feedback_template', array('id'=>$templid));
 }
 
 /**
@@ -796,6 +807,7 @@ function feedback_create_template($courseid, $name, $ispublic = 0) {
  */
 function feedback_save_as_template($feedback, $name, $ispublic = 0) {
     global $DB;
+    $fs = get_file_storage();
 
     if (!$feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id))) {
         return false;
@@ -804,12 +816,31 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
     if (!$newtempl = feedback_create_template($feedback->course, $name, $ispublic)) {
         return false;
     }
+    
+    //files in the template_item are in the context of the current course
+    //files in the feedback_item are in the feedback_context of the feedback
+    $c_context = get_context_instance(CONTEXT_COURSE, $newtempl->course);
+    $cm = get_coursemodule_from_instance('feedback', $feedback->id);
+    $f_context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
     //create items of this new template
     foreach($feedbackitems as $item) {
-        unset($item->id);
-        $item->feedback = 0;
-        $item->template     = $newtempl;
-        $DB->insert_record('feedback_item', $item);
+        $t_item = clone($item);
+        
+        unset($t_item->id);
+        $t_item->feedback = 0;
+        $t_item->template     = $newtempl->id;
+        $t_item->id = $DB->insert_record('feedback_item', $t_item);
+        //copy all included files to the feedback_template filearea
+        if ($itemfiles = $fs->get_area_files($f_context->id, 'feedback_item', $item->id, "id", false)) {
+            foreach($itemfiles as $ifile) {
+                $file_record = new object();
+                $file_record->contextid = $c_context->id;
+                $file_record->filearea = 'course_summary';
+                $file_record->itemid = $t_item->id;
+                $fs->create_file_from_storedfile($file_record, $ifile);
+            }
+        }
     }
     return true;
 }
@@ -824,7 +855,20 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
 function feedback_delete_template($id) {
     global $DB;
 
-    $DB->delete_records("feedback_item", array("template"=>$id));
+    $template = $DB->get_record("feedback_template", array("id"=>$id));
+
+    //deleting the files from the item
+    $fs = get_file_storage();
+    $context = get_context_instance(CONTEXT_COURSE, $template->course);
+    
+
+    if($t_items = $DB->get_records("feedback_item", array("template"=>$id))) {
+        foreach($t_items as $t_item) {
+            if ($templatefiles = $fs->get_area_files($context->id, 'course_summary', $t_item->id, "id", false)) {
+                $fs->delete_area_files($context->id, 'course_summary', $t_item->id);
+            }
+        }
+    }
     $DB->delete_records("feedback_template", array("id"=>$id));
 }
 
@@ -840,11 +884,18 @@ function feedback_delete_template($id) {
  */
 function feedback_items_from_template($feedback, $templateid, $deleteold = false) {
     global $DB;
+    $fs = get_file_storage();
 
     //get all templateitems
     if(!$templitems = $DB->get_records('feedback_item', array('template'=>$templateid))) {
         return false;
     }
+
+    //files in the template_item are in the context of the current course
+    //files in the feedback_item are in the feedback_context of the feedback
+    $c_context = get_context_instance(CONTEXT_COURSE, $feedback->course);
+    $cm = get_coursemodule_from_instance('feedback', $feedback->id);
+    $f_context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     //if deleteold then delete all old items before
     //get all items
@@ -866,13 +917,25 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
         $positionoffset = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
     }
 
-    foreach($templitems as $newitem) {
-        unset($newitem->id);
-        $newitem->feedback = $feedback->id;
-        $newitem->template = 0;
-        $newitem->position = $newitem->position + $positionoffset;
+    foreach($templitems as $t_item) {
+        $item = clone($t_item);
+        unset($item->id);
+        $item->feedback = $feedback->id;
+        $item->template = 0;
+        $item->position = $item->position + $positionoffset;
 
-        $DB->insert_record('feedback_item', $newitem);
+        $item->id = $DB->insert_record('feedback_item', $item);
+        
+        //TODO: moving the files to the new items
+        if ($templatefiles = $fs->get_area_files($c_context->id, 'course_summary', $t_item->id, "id", false)) {
+            foreach($templatefiles as $tfile) {
+                $file_record = new object();
+                $file_record->contextid = $f_context->id;
+                $file_record->filearea = 'feedback_item';
+                $file_record->itemid = $item->id;
+                $fs->create_file_from_storedfile($file_record, $tfile);
+            }
+        }
     }
 }
 
@@ -1025,8 +1088,21 @@ function feedback_update_item($item){
  */
 function feedback_delete_item($itemid, $renumber = true){
     global $DB;
-
+    
+    
     $item = $DB->get_record('feedback_item', array('id'=>$itemid));
+    
+    //deleting the files from the item
+    $fs = get_file_storage();
+    if (!$cm = get_coursemodule_from_instance('feedback', $item->feedback)) {
+        return false;
+    }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+    if ($itemfiles = $fs->get_area_files($context->id, 'feedback_item', $item->id, "id", false)) {
+        $fs->delete_area_files($context->id, 'feedback_item', $item->id);
+    }
+    
     $DB->delete_records("feedback_value", array("item"=>$itemid));
     $DB->delete_records("feedback_valuetmp", array("item"=>$itemid));
     $DB->delete_records("feedback_item", array("id"=>$itemid));
