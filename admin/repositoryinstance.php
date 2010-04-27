@@ -35,7 +35,6 @@ if ($new) {
 else {
     $baseurl .= $type;
 }
-$configstr  = get_string('managerepositories', 'repository');
 
 $return = true;
 
