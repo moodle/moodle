@@ -196,6 +196,7 @@ abstract class backup_helper {
                 'itemid'      => 0,
                 'filepath'    => '/',
                 'filename'    => basename($filepath),
+                'userid'      => $userid,
                 'timecreated' => time(),
                 'timemodified'=> time());
             return $fs->create_file_from_pathname($fr, $filepath);
