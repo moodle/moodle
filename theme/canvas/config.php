@@ -19,13 +19,6 @@ $THEME->parents = array('base');
 // changes you want to your theme.
 ////////////////////////////////////////////////////
 
-$THEME->parents_exclude_sheets = array('base'=>array('pagelayout'));
-
-////////////////////////////////////////////////////
-// An array of stylesheets not to inherit from the
-// themes parents
-////////////////////////////////////////////////////
-
 $THEME->sheets = array('pagelayout', 'text', 'course', 'core');
 
 ////////////////////////////////////////////////////
@@ -33,88 +26,81 @@ $THEME->sheets = array('pagelayout', 'text', 'course', 'core');
 // this theme's /styles/ directory.
 ////////////////////////////////////////////////////
 
+$THEME->parents_exclude_sheets = array('base'=>array('navigation', 'browser'));
+
+////////////////////////////////////////////////////
+// An array of stylesheets not to inherit from the
+// themes parents
+////////////////////////////////////////////////////
+
 $THEME->layouts = array(
     'base' => array(
-        'theme' => 'canvas',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'general' => array(
-        'theme' => 'canvas',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'course' => array(
-        'theme' => 'canvas',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post'
     ),
     'coursecategory' => array(
-        'theme' => 'canvas',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'incourse' => array(
-        'theme' => 'canvas',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'frontpage' => array(
-        'theme' => 'canvas',
         'file' => 'frontpage.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'admin' => array(
-        'theme' => 'canvas',
         'file' => 'general.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
     'mydashboard' => array(
-        'theme' => 'canvas',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
         'options' => array('langmenu'=>true),
     ),
     'mypublic' => array(
-        'theme' => 'canvas',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'login' => array(
-        'theme' => 'canvas',
         'file' => 'general.php',
         'regions' => array(),
         'options' => array('langmenu'=>true),
     ),
     'popup' => array(
-        'theme' => 'canvas',
         'file' => 'general.php',
         'regions' => array(),
         'options' => array('nofooter'=>true),
     ),
     'frametop' => array(
-        'theme' => 'canvas',
         'file' => 'general.php',
         'regions' => array(),
         'options' => array('nofooter'=>true),
     ),
     'maintenance' => array(
-        'theme' => 'canvas',
         'file' => 'general.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
     ),
     'embedded' => array(
-    	'theme' => 'canvas',
         'file' => 'embedded.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
