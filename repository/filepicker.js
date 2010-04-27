@@ -1155,14 +1155,18 @@ M.core_filepicker.init = function(Y, options) {
                 var path = Y.Node.create('<div id="path-'+client_id+'" class="fp-pathbar"></div>');
                 panel.appendChild(path);
                 for(var i = 0; i < p.length; i++) {
+                    var link_path = p[i].path;
                     var link = document.createElement('A');
                     link.href = "###";
                     link.innerHTML = p[i].name;
+                    link.id = 'path-node-'+client_id+'-'+i;
                     //link.id = 'path-'+client_id+'-'+repo_id;
                     var sep = Y.Node.create('<span>/</span>');
-                    
                     path.appendChild(link);
                     path.appendChild(sep);
+                    Y.one('#'+link.id).on('click', function(){
+                            this.list({'path':link_path});
+                            }, this)
                 }
             }
         },
