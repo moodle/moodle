@@ -254,6 +254,10 @@ class backup_controller extends backup implements loggable {
         return $this->plan->execute();
     }
 
+    public function get_results() {
+        return $this->plan->get_results();
+    }
+
     public function log($message, $level, $a = null, $depth = null, $display = false) {
         backup_helper::log($message, $level, $a, $depth, $display, $this->logger);
     }

@@ -60,7 +60,7 @@ abstract class backup_factory {
         // Create file_logger, observing $CFG->backup_file_logger_level
         check_dir_exists($CFG->dataroot . '/temp/backup', true, true); // need to ensure that temp/backup already exists
         $fllevel = isset($CFG->backup_file_logger_level) ? $CFG->backup_file_logger_level : $dfltloglevel;
-        $enabledloggers[] = new file_logger($fllevel, true, true, $CFG->dataroot . '/temp/backup/' . $backupid . '.log.html');
+        $enabledloggers[] = new file_logger($fllevel, true, true, $CFG->dataroot . '/temp/backup/' . $backupid . '.log');
 
         // Create database_logger, observing $CFG->backup_database_logger_level and defaulting to LOG_WARNING
         // and pointing to the backup_logs table

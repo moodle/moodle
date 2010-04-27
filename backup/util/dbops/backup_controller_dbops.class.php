@@ -178,7 +178,7 @@ abstract class backup_controller_dbops extends backup_dbops {
                 'activity' => $prefix,
                 'name'     => $setting->get_name(),
                 'value'    => $setting->get_value());
-            $settingsinfo[] = (object)$settinginfo;
+            $settingsinfo[$setting->get_name()] = (object)$settinginfo;
         }
         return array($contentinfo, $settingsinfo);
     }
@@ -212,7 +212,7 @@ abstract class backup_controller_dbops extends backup_dbops {
                 'section ' => $prefix,
                 'name'     => $setting->get_name(),
                 'value'    => $setting->get_value());
-            $settingsinfo[] = (object)$settinginfo;
+            $settingsinfo[$setting->get_name()] = (object)$settinginfo;
         }
         return array($contentinfo, $settingsinfo);
     }
@@ -245,7 +245,7 @@ abstract class backup_controller_dbops extends backup_dbops {
                 'level'    => 'course',
                 'name'     => $setting->get_name(),
                 'value'    => $setting->get_value());
-            $settingsinfo[] = (object)$settinginfo;
+            $settingsinfo[$setting->get_name()] = (object)$settinginfo;
         }
         return array($contentinfo, $settingsinfo);
     }
@@ -267,7 +267,7 @@ abstract class backup_controller_dbops extends backup_dbops {
                 'level'    => 'root',
                 'name'     => $setting->get_name(),
                 'value'    => $setting->get_value());
-            $settingsinfo[] = (object)$settinginfo;
+            $settingsinfo[$setting->get_name()] = (object)$settinginfo;
         }
         return array(null, $settingsinfo);
     }
@@ -291,6 +291,7 @@ abstract class backup_controller_dbops extends backup_dbops {
         $detailsinfo['mode'] = $bc->get_mode();
         $detailsinfo['execution'] = $bc->get_execution();
         $detailsinfo['executiontime'] = $bc->get_executiontime();
+        $detailsinfo['userid'] = $bc->get_userid();
 
 
         // Init content placeholders

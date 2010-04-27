@@ -52,9 +52,10 @@ abstract class base_setting {
     const HIDDEN  = 0;
 
     // Editable/locked (by different causes)
-    const NOT_LOCKED           = 5;
-    const LOCKED_BY_PERMISSION = 6;
+    const NOT_LOCKED           = 3;
+    const LOCKED_BY_CONFIG     = 5;
     const LOCKED_BY_HIERARCHY  = 7;
+    const LOCKED_BY_PERMISSION = 9;
 
     // Type of change to inform dependencies
     const CHANGED_VALUE      = 1;
@@ -237,8 +238,9 @@ abstract class base_setting {
         if (is_null($status)) {
             $status = self::NOT_LOCKED;
         }
-        if ($status !== self::NOT_LOCKED && $status !== self::LOCKED_BY_PERMISSION && $status !== self::LOCKED_BY_HIERARCHY) {
-            throw new base_setting_exception('setting_invalid_status');
+        if ($status !== self::NOT_LOCKED && $status !== self::LOCKED_BY_CONFIG &&
+            $status !== self::LOCKED_BY_PERMISSION && $status !== self::LOCKED_BY_HIERARCHY) {
+            throw new base_setting_exception('setting_invalid_status', $status);
         }
         return $status;
     }

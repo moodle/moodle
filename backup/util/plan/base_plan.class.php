@@ -32,6 +32,7 @@ abstract class base_plan implements checksumable, executable {
     protected $name;      // One simple name for identification purposes
     protected $settings;  // One array of (accumulated from tasks) base_setting elements
     protected $tasks;     // One array of base_task elements
+    protected $results;   // One array of results received from tasks
 
     protected $built;     // Flag to know if one plan has been built
 
@@ -42,6 +43,7 @@ abstract class base_plan implements checksumable, executable {
         $this->name = $name;
         $this->settings = array();
         $this->tasks    = array();
+        $this->results  = array();
         $this->built = false;
     }
 
@@ -66,6 +68,14 @@ abstract class base_plan implements checksumable, executable {
 
     public function get_tasks() {
         return $this->tasks;
+    }
+
+    public function add_result($result) {
+        $this->results = array_merge($this->results, $result);
+    }
+
+    public function get_results() {
+        return $this->results;
     }
 
     public function get_settings() {

@@ -1050,6 +1050,59 @@ class backup_main_structure_step extends backup_structure_step {
 }
 
 /**
+ * Execution step that will generate the final zip file with all the contents
+ */
+class backup_zip_contents extends backup_execution_step {
+
+    protected function define_execution() {
+
+        // Get basepath
+        $basepath = $this->get_basepath();
+
+        // Get the list of files in directory
+        $filestemp = get_directory_list($basepath, '', false, true, true);
+        $files = array();
+        foreach ($filestemp as $file) { // Add zip paths and fs paths to all them
+            $files[$file] = $basepath . '/' . $file;
+        }
+
+        // Add the log file if exists
+        $logfilepath = $basepath . '.log';
+        if (file_exists($logfilepath)) {
+             $files['moodle_backup.log'] = $logfilepath;
+        }
+
+        // Calculate the zip fullpath
+        $zipfile = $basepath . '/' . $this->get_setting_value('filename');
+
+        // Get the zip packer
+        $zippacker = get_file_packer('application/zip');
+
+        // Zip files
+        $zippacker->archive_to_pathname($files, $zipfile);
+    }
+}
+
+/**
+ * This step will send the generated backup file to its final destination
+ */
+class backup_store_backup_file extends backup_execution_step {
+
+    protected function define_execution() {
+
+        // Get basepath
+        $basepath = $this->get_basepath();
+
+        // Calculate the zip fullpath
+        $zipfile = $basepath . '/' . $this->get_setting_value('filename');
+
+        // Perform storage and return it (TODO: shouldn't be array but proper result object)
+        return array('backup_destination' => backup_helper::store_backup_file($this->get_backupid(), $zipfile));
+    }
+}
+
+
+/**
  * This step will search for all the activity (not calculations, categories nor aggregations) grade items
  * and put them to the backup_ids tables, to be used later as base to backup them
  */

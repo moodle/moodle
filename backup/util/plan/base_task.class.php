@@ -144,7 +144,12 @@ abstract class base_task implements checksumable, executable, loggable {
             throw new base_task_exception('base_task_not_built', $this->name);
         }
         foreach ($this->steps as $step) {
-            $step->execute();
+            $result = $step->execute();
+            // If step returns array, it will be forwarded to plan
+            // (TODO: shouldn't be array but proper result object)
+            if (is_array($result) and !empty($result)) {
+                $this->plan->add_result($result);
+            }
         }
     }
 

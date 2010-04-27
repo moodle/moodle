@@ -98,7 +98,7 @@ abstract class backup implements checksumable {
 /*
  * Exception class used by all the @backup stuff
  */
-class backup_exception extends moodle_exception {
+abstract class backup_exception extends moodle_exception {
 
     public function __construct($errorcode, $a=NULL, $debuginfo=null) {
         parent::__construct($errorcode, 'error', '', $a, null, $debuginfo);

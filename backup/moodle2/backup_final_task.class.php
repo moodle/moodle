@@ -84,6 +84,12 @@ class backup_final_task extends backup_task {
         // to the backup, settings, license, versions and other useful information
         $this->add_step(new backup_main_structure_step('mainfile', 'moodle_backup.xml'));
 
+        // Generate the zip file
+        $this->add_step(new backup_zip_contents('zip_contents'));
+
+        // Copy the generated zip file to final destination
+        $this->add_step(new backup_store_backup_file('save_backupfile'));
+
         $this->built = true;
     }
 

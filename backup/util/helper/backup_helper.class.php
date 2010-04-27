@@ -163,6 +163,44 @@ abstract class backup_helper {
             output_controller::get_instance()->output($message, 'backup', $a, $depth);
         }
     }
+
+    /**
+     * Given one backupid and the (FS) final generated file, perform its final storage
+     * into Moodle file storage
+     */
+    static public function store_backup_file($backupid, $filepath) {
+
+        // First of all, get some information from the backup_controller to help us decide
+        list($dinfo, $cinfo, $sinfo) = backup_controller_dbops::get_moodle_backup_information($backupid);
+
+        // Extract useful information to decide
+        $hasusers  = (bool)$sinfo['users']->value;     // Backup has users
+        $isannon   = (bool)$sinfo['anonymize']->value; // Backup is annonymzed
+        $backupmode= $dinfo[0]->mode;                  // Backup mode backup::MODE_GENERAL/IMPORT/HUB
+        $userid    = $dinfo[0]->userid;                // User->id executing the backup
+
+        // Backups of type IMPORT aren't stored ever
+        if ($backupmode == backup::MODE_IMPORT) {
+            return true;
+        }
+
+        // Backups of type HUB (by definition never have user info)
+        // are sent to user's "user_tohub" file area. The upload process
+        // will be responsible for cleaning that filearea once finished
+        if ($backupmode == backup::MODE_HUB) {
+            $ctxid = get_context_instance(CONTEXT_USER, $userid)->id;
+            $fs = get_file_storage();
+            $fr = array(
+                'contextid'   => $ctxid,
+                'filearea'    => 'user_tohub',
+                'itemid'      => 0,
+                'filepath'    => '/',
+                'filename'    => basename($filepath),
+                'timecreated' => time(),
+                'timemodified'=> time());
+            return $fs->create_file_from_pathname($fr, $filepath);
+        }
+    }
 }
 
 /*
