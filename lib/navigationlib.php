@@ -883,11 +883,11 @@ class global_navigation extends navigation_node {
 
                     // Load all of the section activities for the section the cm belongs to.
                     $activities = $this->load_section_activities($sections[$cm->sectionnumber]->sectionnode, $cm->sectionnumber, get_fast_modinfo($course));
-                    // Finally load the cm specific navigaton information
                 } else {
                     $activities = array();
                     $activities[$cm->id] = $coursenode->get($cm->id, navigation_node::TYPE_ACTIVITY);
                 }
+                // Finally load the cm specific navigaton information
                 $this->load_activity($cm, $course, $activities[$cm->id]);
                 // And make the activity node active.
                 $activities[$cm->id]->make_active();
@@ -1086,7 +1086,7 @@ class global_navigation extends navigation_node {
                 $sectionnode = $coursenode->add($sectionname, $url, navigation_node::TYPE_SECTION, null, $section->id);
                 $sectionnode->nodetype = navigation_node::NODETYPE_BRANCH;
                 $sectionnode->hidden = (!$section->visible);
-                if ($sectionnode->isactive || ($activesection != null && $section->section == $activesection)) {
+                if ($this->page->context->contextlevel != CONTEXT_MODULE && ($sectionnode->isactive || ($activesection != null && $section->section == $activesection))) {
                     $sectionnode->force_open();
                     $this->load_section_activities($sectionnode, $section->section, $modinfo);
                 }
