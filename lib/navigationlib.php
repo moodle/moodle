@@ -808,7 +808,7 @@ class global_navigation extends navigation_node {
      * @return bool
      */
     public function initialise() {
-        global $SITE, $USER;
+        global $CFG, $SITE, $USER;
         // Check if it has alread been initialised
         if ($this->initialised || during_initial_install()) {
             return true;
@@ -909,6 +909,18 @@ class global_navigation extends navigation_node {
         foreach ($this->extendforuser as $user) {
             if ($user->id !== $USER->id) {
                 $this->load_for_user($user);
+            }
+        }
+
+        // Give the local plugins a chance to include some navigation if they want.
+        foreach (get_list_of_plugins('local') as $plugin) {
+            if (!file_exists($CFG->dirroot.'/local/'.$plugin.'/lib.php')) {
+                continue;
+            }
+            require_once($CFG->dirroot.'/local/'.$plugin.'/lib.php');
+            $function = $plugin.'_extends_navigation';
+            if (function_exists($function)) {
+                $function($this);
             }
         }
 
