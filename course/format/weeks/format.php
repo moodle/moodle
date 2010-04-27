@@ -216,7 +216,7 @@
                 echo $OUTPUT->heading($currenttext.$weekperiod.' ('.get_string('notavailable').')', 3, 'weekdates');
 
             } else {
-                if (!is_null($thissection->name)) {
+                if (isset($thissection->name) && ($thissection->name !== NULL)) {  // empty string is ok
                     echo $OUTPUT->heading($thissection->name, 3, 'weekdates');
                 } else {
                     echo $OUTPUT->heading($currenttext.$weekperiod, 3, 'weekdates');
