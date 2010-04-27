@@ -2079,7 +2079,7 @@ END;
         }
 
         // XHTML
-        return join(get_separator(), $htmlblocks);
+        return html_writer::tag('ul', join(html_writer::tag('li',get_separator()), $htmlblocks));;
     }
 
     protected function render_navigation_node(navigation_node $item) {

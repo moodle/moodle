@@ -96,7 +96,12 @@ class block_navigation_renderer extends plugin_renderer_base {
             $content = html_writer::tag('li', $content, $liattr);
             $lis[] = $content;
         }
-        return html_writer::tag('ul', implode("\n", $lis), $attrs);
+
+        if (count($lis)) {
+            return html_writer::tag('ul', implode("\n", $lis), $attrs);
+        } else {
+            return '';
+        }
     }
 
 }
