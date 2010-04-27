@@ -23,7 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['*'] = 'Any page';
 $string['addtodock'] = 'Move this to the dock';
 $string['anypagematchingtheabove'] = 'Any page matching the above';
 $string['appearsinsubcontexts'] = 'Appears in sub-contexts';

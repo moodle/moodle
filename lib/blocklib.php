@@ -1400,7 +1400,7 @@ function matching_page_type_patterns($pagetype) {
         $patterns[] = implode('-', $bits) . '-*';
         array_pop($bits);
     }
-     $patterns[] = '*';
+    $patterns[] = '*';
     return $patterns;
 }
 
