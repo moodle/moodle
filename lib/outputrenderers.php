@@ -2073,13 +2073,21 @@ END;
 
         $htmlblocks = array();
         // Iterate the navarray and display each node
-        foreach ($items as $item) {
+        $itemcount = count($items);
+        $separator = get_separator();
+        for ($i=0;$i < $itemcount;$i++) {
+            $item = $items[$i];
             $item->hideicon = true;
-            $htmlblocks[] = html_writer::tag('li', $this->render($item));
+            if ($i===0) {
+                $content = html_writer::tag('li', $this->render($item));
+            } else {
+                $content = html_writer::tag('li', $separator.$this->render($item));
+            }
+            $htmlblocks[] = $content;
         }
 
         // XHTML
-        return html_writer::tag('ul', join(html_writer::tag('li',get_separator()), $htmlblocks));;
+        return html_writer::tag('ul', join('', $htmlblocks));
     }
 
     protected function render_navigation_node(navigation_node $item) {
