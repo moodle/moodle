@@ -1,0 +1,6 @@
+.coursebox { border-color:#ddd;border-width:0 0 1px;border-style:solid; }
+.coursebox .name { font-size:1.1em; }
+.coursebox .teachers { margin:0 0 0 0.75em; }
+
+.categorybox { border:none; }
+.categorybox .categorylist td { padding:2px; }
