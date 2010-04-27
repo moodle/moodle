@@ -77,7 +77,7 @@ class portfolio_format_leap2a_writer {
         $this->dom->appendChild($this->feed);
 
         $this->feed->appendChild($this->dom->createElement('id', $this->id));
-        $this->feed->appendChild($this->dom->createElement('title', get_string('feedtitle', 'portfolio_format_leap2a', fullname($this->user))));
+        $this->feed->appendChild($this->dom->createElement('title', get_string('leap2a_feedtitle', 'portfolio', fullname($this->user))));
 
         $generator = $this->dom->createElement('generator', 'Moodle');
         $generator->setAttribute('uri', $CFG->wwwroot);
@@ -101,7 +101,7 @@ class portfolio_format_leap2a_writer {
      */
     public function add_entry(portfolio_format_leap2a_entry $entry) {
         if (array_key_exists($entry->id, $this->entries)) {
-            throw new portfolio_format_leap2a_exception('entryalreadyexists', 'portfolio_format_leap2a', '', $entry->id);
+            throw new portfolio_format_leap2a_exception('leap2a_entryalreadyexists', 'portfolio', '', $entry->id);
         }
         $this->entries[$entry->id] =  $entry;
         return $entry;
@@ -122,18 +122,18 @@ class portfolio_format_leap2a_writer {
             $selectionid = $selectionentry;
         }
         if (!array_key_exists($selectionid, $this->entries)) {
-            throw new portfolio_format_leap2a_exception('invalidentryid', 'portfolio_format_leap2a', '', $selectionid);
+            throw new portfolio_format_leap2a_exception('leap2a_invalidentryid', 'portfolio', '', $selectionid);
         }
         foreach ($ids as $entryid) {
             if (!array_key_exists($entryid, $this->entries)) {
-                throw new portfolio_format_leap2a_exception('invalidentryid', 'portfolio_format_leap2a', '', $entryid);
+                throw new portfolio_format_leap2a_exception('leap2a_invalidentryid', 'portfolio', '', $entryid);
             }
             $this->entries[$selectionid]->add_link($entryid, 'has_part');
             $this->entries[$entryid]->add_link($selectionid, 'is_part_of');
         }
         $this->entries[$selectionid]->add_category($selectiontype, 'selection_type');
         if ($this->entries[$selectionid]->type != 'selection') {
-            debugging(get_string('overwritingselection', 'portfolio_format_leap2a', $this->entries[$selectionid]->type));
+            debugging(get_string('leap2a_overwritingselection', 'portfolio', $this->entries[$selectionid]->type));
             $this->entries[$selectionid]->type = 'selection';
         }
     }
@@ -151,7 +151,7 @@ class portfolio_format_leap2a_writer {
                 // the linked to entry exists
                 if (!array_key_exists($linkedid, $this->entries)) {
                     $a = (object)array('rel' => $rel->type, 'to' => $linkedid, 'from' => $entry->id);
-                    throw new portfolio_format_leap2a_exception('nonexistantlink', 'portfolio_format_leap2a', '', $a);
+                    throw new portfolio_format_leap2a_exception('leap2a_nonexistantlink', 'portfolio', '', $a);
                 }
                 // and contains a link back to us
                 if (!array_key_exists($entry->id, $this->entries[$linkedid]->links)) {
@@ -252,7 +252,7 @@ class portfolio_format_leap2a_entry {
         if (in_array($field, $this->requiredfields) || in_array($field, $this->optionalfields)) {
             return $this->{$field} = $value;
         }
-        throw new portfolio_format_leap2a_exception('invalidentryfield', 'portfolio_format_leap2a', '', $field);
+        throw new portfolio_format_leap2a_exception('leap2a_invalidentryfield', 'portfolio', '', $field);
     }
 
     /**
@@ -281,12 +281,12 @@ class portfolio_format_leap2a_entry {
     public function validate() {
         foreach ($this->requiredfields as $key) {
             if (empty($this->{$key})) {
-                throw new portfolio_format_leap2a_exception('missingfield', 'portfolio_format_leap2a', '', $key);
+                throw new portfolio_format_leap2a_exception('leap2a_missingfield', 'portfolio', '', $key);
             }
         }
         if ($this->type == 'selection') {
             if (count($this->links) == 0) {
-                throw new portfolio_format_leap2a_exception('emptyselection', 'portfolio_format_leap2a');
+                throw new portfolio_format_leap2a_exception('leap2a_emptyselection', 'portfolio');
             }
             //TODO make sure we have a category with a scheme 'selection_type'
         }
@@ -310,7 +310,7 @@ class portfolio_format_leap2a_entry {
             $otherentry = $otherentry->id;
         }
         if ($otherentry == $this->id) {
-            throw new portfolio_format_leap2a_exception('selflink', 'portfolio_format_leap2a', '', (object)array('rel' => $reltype, 'id' => $this->id));
+            throw new portfolio_format_leap2a_exception('leap2a_selflink', 'portfolio', '', (object)array('rel' => $reltype, 'id' => $this->id));
         }
         // add on the leap: ns if required
         if (!in_array($reltype, array('related', 'alternate', 'enclosure'))) {
