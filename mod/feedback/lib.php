@@ -725,7 +725,7 @@ function feedback_get_complete_users($cm, $group = false) {
         $wheregroup = ' AND g.groupid = ? AND g.userid = c.userid';
         $params[] = $group;
     }
-    $sql = 'SELECT u.* FROM {user} u, {feedback_completed} c'.$fromgroup.'
+    $sql = 'SELECT DISTINCT u.* FROM {user} u, {feedback_completed} c'.$fromgroup.'
               WHERE u.id = c.userid AND c.feedback = ?
               '.$wheregroup.'
               ORDER BY u.lastname';
