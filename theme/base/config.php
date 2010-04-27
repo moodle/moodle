@@ -137,7 +137,7 @@ $THEME->layouts = array(
     'maintenance' => array(
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true),
+        'options' => array('noblocks'=>true, 'nofooter'=>true, 'nonavbar'=>true),
     ),
 );
 
