@@ -31,6 +31,7 @@ $string['page-course-view-x'] = 'Any type of course main page';
 $string['page-course-x'] = 'Any course page';
 $string['page-mod-x'] = 'Any activity module page';
 $string['page-mod-x-view'] = 'Any main activity module page';
+$string['page-my-index'] = 'Users\' My home page';
 $string['page-site-index'] = 'The front page only';
 $string['page-site-x'] = 'Any top-level site page';
 $string['page-tag-x'] = 'All tag pages';

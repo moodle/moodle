@@ -106,9 +106,8 @@ class block_edit_form extends moodleform {
         foreach ($pagetypelist as $pagetype) {         // Find human-readable names for the pagetypes
             $pagetypeoptions[$pagetype] = $pagetype;
             $pagetypestringname = 'page-'.str_replace('*', 'x',$pagetype);  // Better names MDL-21375
-            $pagetypestring = get_string($pagetypestringname, 'pagetype');
-            if (substr($pagetypestring, 0, 1) != '[') {
-                $pagetypeoptions[$pagetype] .= ' ('.$pagetypestring.')';
+            if (get_string_manager()->string_exists($pagetypestringname, 'pagetype')) {
+                $pagetypeoptions[$pagetype] .= ' (' . get_string($pagetypestringname, 'pagetype') . ')';
             }
         }
         $mform->addElement('select', 'bui_pagetypepattern', get_string('restrictpagetypes', 'block'), $pagetypeoptions);
