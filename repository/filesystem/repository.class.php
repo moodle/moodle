@@ -32,10 +32,9 @@ class repository_filesystem extends repository {
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         global $CFG;
         parent::__construct($repositoryid, $context, $options);
-        $this->root_path = $CFG->dataroot.'/repository/';
-        if (!empty($options['fs_path'])) {
-            $this->root_path .= ($this->options['fs_path'] . '/');
-        }
+        $root = $CFG->dataroot.'/repository/';
+        $subdir = $this->get_option('fs_path');
+        $this->root_path = $root . $subdir . '/';
         if (!empty($options['ajax'])) {
             if (!is_dir($this->root_path)) {
                 $created = mkdir($this->root_path, 0700);
@@ -55,7 +54,7 @@ class repository_filesystem extends repository {
         $list['list'] = array();
         // process breacrumb trail
         $list['path'] = array(
-            array('name'=>'Root','path'=>'')
+            array('name'=>'Root', 'path'=>'')
         );
         $trail = '';
         if (!empty($path)) {
@@ -156,10 +155,14 @@ class repository_filesystem extends repository {
                     $fieldname = '';
                 }
             }
-            $mform->addElement('select', 'fs_path', $fieldname, $choices);
+            if (empty($choices)) {
+                $mform->addElement('static', '', '', get_string('nosubdir', 'repository_filesystem', $path));
+            } else {
+                $mform->addElement('select', 'fs_path', $fieldname, $choices);
+                $mform->addElement('static', null, '',  get_string('information','repository_filesystem', $path));
+            }
             closedir($handle);
         }
-        $mform->addElement('static', null, '',  get_string('information','repository_filesystem'));
     }
     public function supported_returntypes() {
         return FILE_INTERNAL;
