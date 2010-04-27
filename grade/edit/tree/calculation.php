@@ -29,9 +29,6 @@ $url = new moodle_url('/grade/edit/tree/calculation.php', array('id'=>$id, 'cour
 if ($section !== 'calculation') {
     $url->param('section', $section);
 }
-if ($idnumbers !== null) {
-    $url->param('idnumbers', $idnumbers);
-}
 $PAGE->set_url($url);
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
