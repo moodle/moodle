@@ -29,6 +29,7 @@ require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/conditionlib.php');
+require_once($CFG->libdir.'/plagiarismlib.php');
 
 $add    = optional_param('add', '', PARAM_ALPHA);     // module name
 $update = optional_param('update', 0, PARAM_INT);
@@ -553,6 +554,7 @@ if ($mform->is_cancelled()) {
 
     rebuild_course_cache($course->id);
     grade_regrade_final_grades($course->id);
+    plagiarism_save_form_elements($fromform); //save plagiarism settings
 
     if (isset($fromform->submitbutton)) {
         redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$fromform->coursemodule");

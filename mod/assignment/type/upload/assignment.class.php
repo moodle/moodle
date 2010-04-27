@@ -291,7 +291,7 @@ class assignment_upload extends assignment_base {
                 $mimetype = $file->get_mimetype();
                 $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
                 $output .= '<a href="'.$path.'" ><img class="icon" src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" alt="'.$mimetype.'" />'.s($filename).'</a>&nbsp;';
-
+                $output .= plagiarism_get_links($userid, $file, $this->cm->id, $this->course, $this->assignment);
             }
 
         }
@@ -357,6 +357,9 @@ class assignment_upload extends assignment_base {
                     $output .= '<a href="'.$delurl.'">&nbsp;'
                               .'<img title="'.$strdelete.'" src="'.$OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt="" /></a> ';
                 }
+
+                $output .= plagiarism_get_links($userid, $file, $this->cm->id, $this->course, $this->assignment);
+                $output .= '<br />';
 
                 if (has_capability('mod/assignment:exportownsubmission', $this->context)) {
                     $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'fileid' => $file->get_id()), '/mod/assignment/locallib.php');
@@ -1024,7 +1027,7 @@ class assignment_upload extends assignment_base {
     }
 
     function setup_elements(&$mform) {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $DB;
 
         $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
 
@@ -1060,6 +1063,9 @@ class assignment_upload extends assignment_base {
         $mform->addElement('select', 'var4', get_string("trackdrafts", "assignment"), $ynoptions);
         $mform->setHelpButton('var4', array('trackdrafts', get_string('trackdrafts', 'assignment'), 'assignment'));
         $mform->setDefault('var4', 1);
+
+        $course_context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+        plagiarism_get_form_elements_module($mform, $course_context);
 
     }
 

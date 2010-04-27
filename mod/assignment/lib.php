@@ -207,6 +207,7 @@ class assignment_base {
         echo $OUTPUT->box_start('generalbox boxaligncenter', 'intro');
         echo format_module_intro('assignment', $this->assignment, $this->cm->id);
         echo $OUTPUT->box_end();
+        plagiarism_print_disclosure($this->cm->id);
     }
 
     /**
@@ -468,6 +469,10 @@ class assignment_base {
         }
 
         if (! $DB->delete_records('assignment', array('id'=>$assignment->id))) {
+            $result = false;
+        }
+        $mod = $DB->get_field('modules','id',array('name'=>'assignment'));
+        if (! $DB->delete_records('plagiarism_files', array('cm'=>$cm->id))) {
             $result = false;
         }
 
@@ -1080,7 +1085,7 @@ class assignment_base {
         /* first we check to see if the form has just been submitted
          * to request user_preference updates
          */
-
+        plagiarism_update_status($this->course, $this->cm);
         if (isset($_POST['updatepref'])){
             $perpage = optional_param('perpage', 10, PARAM_INT);
             $perpage = ($perpage <= 0) ? 10 : $perpage ;
@@ -1801,6 +1806,7 @@ class assignment_base {
                     $button->set_format_by_file($file);
                     $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                 }
+                $output .= get_plagiarism_links($userid, $file);
                 $output .= '<br />';
             }
             if (count($files) > 1  && $this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {

@@ -1438,6 +1438,33 @@ $capabilities = array(
         )
     ),
 
+    'moodle/plagiarism:enable' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+         'legacy' => array(
+         'editingteacher' => CAP_ALLOW,
+         'manager' => CAP_ALLOW
+        )
+    ),
+
+    'moodle/plagiarism:viewsimilarityscore' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+         'legacy' => array(
+         'editingteacher' => CAP_ALLOW,
+         'manager' => CAP_ALLOW
+        )
+    ),
+
+    'moodle/plagiarism:viewfullreport' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+         'legacy' => array(
+         'editingteacher' => CAP_ALLOW,
+         'manager' => CAP_ALLOW
+        )
+    ),
+
     'moodle/portfolio:export' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,

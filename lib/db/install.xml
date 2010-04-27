@@ -2484,7 +2484,7 @@
         <INDEX NAME="typeitem_ix" UNIQUE="false" FIELDS="type, itemid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="backup_ids_template" COMMENT="To store all sort of ids along the backup process. Note this table isn't really used but its temporary counterpart." PREVIOUS="backup_controllers">
+    <TABLE NAME="backup_ids_template" COMMENT="To store all sort of ids along the backup process. Note this table isn't really used but its temporary counterpart." PREVIOUS="backup_controllers" NEXT="plagiarism_files">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="backupid"/>
         <FIELD NAME="backupid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="unique id of the backup" PREVIOUS="id" NEXT="itemname"/>
@@ -2499,6 +2499,35 @@
       <INDEXES>
         <INDEX NAME="backupid_parentitemid_ix" UNIQUE="false" FIELDS="backupid, itemname, parentitemid"/>
       </INDEXES>
+    </TABLE>
+    <TABLE NAME="plagiarism_files" COMMENT="info about submitted files" PREVIOUS="backup_ids_template" NEXT="plagiarism_config">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="cm"/>
+        <FIELD NAME="cm" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="cm" NEXT="file"/>
+        <FIELD NAME="file" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="externalid"/>
+        <FIELD NAME="externalid" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="file" NEXT="externalstatus"/>
+        <FIELD NAME="externalstatus" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="externalid" NEXT="statuscode"/>
+        <FIELD NAME="statuscode" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="externalstatus" NEXT="similarityscore"/>
+        <FIELD NAME="similarityscore" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="statuscode"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="cm"/>
+        <KEY NAME="cm" TYPE="foreign" FIELDS="cm" REFTABLE="course_modules" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="cm"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="plagiarism_config" COMMENT="info about submitted files" PREVIOUS="plagiarism_files">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="cm"/>
+        <FIELD NAME="cm" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="text" LENGTH="small" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="cm" NEXT="value"/>
+        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="cm"/>
+        <KEY NAME="cm" TYPE="foreign" FIELDS="cm" REFTABLE="course_modules" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
     </TABLE>
   </TABLES>
 </XMLDB>
