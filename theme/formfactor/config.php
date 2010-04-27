@@ -8,7 +8,7 @@ $THEME->name = 'formfactor';
 ////////////////////////////////////////////////////
 
 
-$THEME->parents = array('base', 'canvas');
+$THEME->parents = array('canvas','base');
 
 /////////////////////////////////////////////////////
 // Which existing theme(s) in the /theme/ directory
