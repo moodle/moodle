@@ -284,6 +284,7 @@ abstract class backup_controller_dbops extends backup_dbops {
         $bc = self::load_controller($backupid); // Load controller
 
         // Details info
+        $detailsinfo['id'] = $bc->get_id();
         $detailsinfo['backup_id'] = $bc->get_backupid();
         $detailsinfo['type'] = $bc->get_type();
         $detailsinfo['format'] = $bc->get_format();
@@ -292,6 +293,7 @@ abstract class backup_controller_dbops extends backup_dbops {
         $detailsinfo['execution'] = $bc->get_execution();
         $detailsinfo['executiontime'] = $bc->get_executiontime();
         $detailsinfo['userid'] = $bc->get_userid();
+        $detailsinfo['courseid'] = $bc->get_courseid();
 
 
         // Init content placeholders

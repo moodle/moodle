@@ -131,8 +131,8 @@ abstract class base_setting {
             switch ($this->status) {
                 case self::LOCKED_BY_PERMISSION:
                     throw new base_setting_exception('setting_locked_by_permission');
-                case self::LOCKED_BY_HIERARCHY:
-                    throw new base_setting_exception('setting_locked_by_hierarchy');
+                case self::LOCKED_BY_CONFIG:
+                    throw new base_setting_exception('setting_locked_by_config');
             }
         }
         $oldvalue = $this->value;
@@ -152,6 +152,7 @@ abstract class base_setting {
     }
 
     public function set_status($status) {
+        print_object('setting '. $this->name . ' to status ' . $status);
         $status = $this->validate_status($status);
         $oldstatus = $this->status;
         $this->status = $status;

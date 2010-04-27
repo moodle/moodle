@@ -147,14 +147,14 @@ class setting_test extends UnitTestCase {
             $this->assertEqual($e->errorcode, 'setting_locked_by_permission');
         }
 
-        // Try to change value of locked setting by permission
-        $bs = new mock_base_setting('test', base_setting::IS_BOOLEAN, null, null, base_setting::LOCKED_BY_HIERARCHY);
+        // Try to change value of locked setting by config
+        $bs = new mock_base_setting('test', base_setting::IS_BOOLEAN, null, null, base_setting::LOCKED_BY_CONFIG);
         try {
             $bs->set_value(true);
             $this->assertTrue(false, 'base_setting_exception expected');
         } catch (exception $e) {
             $this->assertTrue($e instanceof base_setting_exception);
-            $this->assertEqual($e->errorcode, 'setting_locked_by_hierarchy');
+            $this->assertEqual($e->errorcode, 'setting_locked_by_config');
         }
 
         // Try to add same setting twice

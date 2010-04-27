@@ -177,11 +177,36 @@ abstract class backup_helper {
         $hasusers  = (bool)$sinfo['users']->value;     // Backup has users
         $isannon   = (bool)$sinfo['anonymize']->value; // Backup is annonymzed
         $backupmode= $dinfo[0]->mode;                  // Backup mode backup::MODE_GENERAL/IMPORT/HUB
+        $backuptype= $dinfo[0]->type;                  // Backup type backup::TYPE_1ACTIVITY/SECTION/COURSE
         $userid    = $dinfo[0]->userid;                // User->id executing the backup
+        $id        = $dinfo[0]->id;                    // Id of activity/section/course (depends of type)
+        $courseid  = $dinfo[0]->courseid;              // Id of the course
 
         // Backups of type IMPORT aren't stored ever
         if ($backupmode == backup::MODE_IMPORT) {
             return true;
+        }
+
+        // Calculate file storage options of id being backup
+        $ctxid    = 0;
+        $filearea = '';
+        $itemid   = 0;
+        switch ($backuptype) {
+            case backup::TYPE_1ACTIVITY:
+                $ctxid    = get_context_instance(CONTEXT_MODULE, $id)->id;
+                $filearea = 'activity_backup';
+                $itemid   = 0;
+                break;
+            case backup::TYPE_1SECTION:
+                $ctxid    = get_context_instance(CONTEXT_COURSE, $courseid)->id;
+                $filearea = 'section_backup';
+                $itemid   = $id;
+                break;
+            case backup::TYPE_1COURSE:
+                $ctxid    = get_context_instance(CONTEXT_COURSE, $courseid)->id;
+                $filearea = 'course_backup';
+                $itemid   = 0;
+                break;
         }
 
         // Backups of type HUB (by definition never have user info)
@@ -189,18 +214,39 @@ abstract class backup_helper {
         // will be responsible for cleaning that filearea once finished
         if ($backupmode == backup::MODE_HUB) {
             $ctxid = get_context_instance(CONTEXT_USER, $userid)->id;
-            $fs = get_file_storage();
-            $fr = array(
-                'contextid'   => $ctxid,
-                'filearea'    => 'user_tohub',
-                'itemid'      => 0,
-                'filepath'    => '/',
-                'filename'    => basename($filepath),
-                'userid'      => $userid,
-                'timecreated' => time(),
-                'timemodified'=> time());
-            return $fs->create_file_from_pathname($fr, $filepath);
+            $filearea = 'user_tohub';
+            $itemid   = 0;
         }
+
+        // Backups without user info are sent to user's "user_backup"
+        // file area. Maintenance of such area is responsibility of
+        // the user via corresponding file manager frontend
+        if ($backupmode == backup::MODE_GENERAL && !$hasusers) {
+            $ctxid = get_context_instance(CONTEXT_USER, $userid)->id;
+            $filearea = 'user_backup';
+            $itemid   = 0;
+        }
+
+        // Let's send the file to file storage, everything already defined
+        $fs = get_file_storage();
+        $fr = array(
+            'contextid'   => $ctxid,
+            'filearea'    => $filearea,
+            'itemid'      => $itemid,
+            'filepath'    => '/',
+            'filename'    => basename($filepath),
+            'userid'      => $userid,
+            'timecreated' => time(),
+            'timemodified'=> time());
+        // If file already exists, delete if before
+        // creating it again. This is BC behaviour - copy()
+        // overwrites by default
+        if ($fs->file_exists($fr['contextid'], $fr['filearea'], $fr['itemid'], $fr['filepath'], $fr['filename'])) {
+            $pathnamehash = $fs->get_pathname_hash($fr['contextid'], $fr['filearea'], $fr['itemid'], $fr['filepath'], $fr['filename']);
+            $sf = $fs->get_file_by_hash($pathnamehash);
+            $sf->delete();
+        }
+        return $fs->create_file_from_pathname($fr, $filepath);
     }
 }
 
