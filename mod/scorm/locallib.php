@@ -1131,11 +1131,11 @@ function scorm_debugging($scorm) {
 * Delete Scorm tracks for selected users
 *
 * @param array $attemptids list of attempts that need to be deleted
-* @param int $scormid ID of Scorm
+* @param int $scorm instance
 *
 * return bool true deleted all responses, false failed deleting an attempt - stopped here
 */
-function scorm_delete_responses($attemptids, $scormid) {
+function scorm_delete_responses($attemptids, $scorm) {
     if(!is_array($attemptids) || empty($attemptids)) {
         return false;
     }
@@ -1151,7 +1151,7 @@ function scorm_delete_responses($attemptids, $scormid) {
         if (count($keys) == 2) {
             $userid = clean_param($keys[0], PARAM_INT);
             $attemptid = clean_param($keys[1], PARAM_INT);
-            if (!$userid || !$attemptid || !scorm_delete_attempt($userid, $scormid, $attemptid)) {
+            if (!$userid || !$attemptid || !scorm_delete_attempt($userid, $scorm, $attemptid)) {
                     return false;
             }
         } else {
@@ -1170,10 +1170,12 @@ function scorm_delete_responses($attemptids, $scormid) {
 *
 * return bool true suceeded
 */
-function scorm_delete_attempt($userid, $scormid, $attemptid) {
+function scorm_delete_attempt($userid, $scorm, $attemptid) {
     global $DB;
 
-    $DB->delete_records('scorm_scoes_track', array('userid' => $userid, 'scormid' => $scormid, 'attempt' => $attemptid));
+    $DB->delete_records('scorm_scoes_track', array('userid' => $userid, 'scormid' => $scorm->id, 'attempt' => $attemptid));
+    include_once('lib.php');
+    scorm_update_grades($scorm, $userid, true);
     return true;
 }
 
