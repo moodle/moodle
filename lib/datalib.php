@@ -1573,39 +1573,20 @@ function get_my_remotehosts() {
  * existing language translations and older sites.
  *
  * @global object
- * @global object
  * @return void
  */
 function make_default_scale() {
-    global $CFG, $DB;
+    global $DB;
 
     $defaultscale = NULL;
     $defaultscale->courseid = 0;
     $defaultscale->userid = 0;
     $defaultscale->name  = get_string('separateandconnected');
+    $defaultscale->description = get_string('separateandconnectedinfo');
     $defaultscale->scale = get_string('postrating1', 'forum').','.
                            get_string('postrating2', 'forum').','.
                            get_string('postrating3', 'forum');
     $defaultscale->timemodified = time();
-
-    /// Read in the big description from the file.  Note this is not
-    /// HTML (despite the file extension) but Moodle format text.
-    $parentlang = get_parent_language();
-    if (is_readable($CFG->dataroot .'/lang/'. $CFG->lang .'/help/forum/ratings.html')) {
-        $file = file($CFG->dataroot .'/lang/'. $CFG->lang .'/help/forum/ratings.html');
-    } else if (is_readable($CFG->dirroot .'/lang/'. $CFG->lang .'/help/forum/ratings.html')) {
-        $file = file($CFG->dirroot .'/lang/'. $CFG->lang .'/help/forum/ratings.html');
-    } else if ($parentlang and is_readable($CFG->dataroot .'/lang/'. $parentlang .'/help/forum/ratings.html')) {
-        $file = file($CFG->dataroot .'/lang/'. $parentlang .'/help/forum/ratings.html');
-    } else if ($parentlang and is_readable($CFG->dirroot .'/lang/'. $parentlang .'/help/forum/ratings.html')) {
-        $file = file($CFG->dirroot .'/lang/'. $parentlang .'/help/forum/ratings.html');
-    } else if (is_readable($CFG->dirroot .'/lang/en/help/forum/ratings.html')) {
-        $file = file($CFG->dirroot .'/lang/en/help/forum/ratings.html');
-    } else {
-        $file = '';
-    }
-
-    $defaultscale->description = implode('', $file);
 
     if ($defaultscale->id = $DB->insert_record('scale', $defaultscale)) {
         $DB->execute("UPDATE {forum} SET scale = ?", array($defaultscale->id));
