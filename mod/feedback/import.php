@@ -46,7 +46,7 @@
 
     require_capability('mod/feedback:edititems', $context);
 
-    $mform = new mod_feedback_import_form();
+    $mform = new feedback_import_form();
     $newformdata = array('id'=>$id,
                         'deleteolditems'=>'1',
                         'action'=>'choosefile',
@@ -98,6 +98,9 @@
 
     $PAGE->set_title(format_string($feedback->name));
     echo $OUTPUT->header();
+    
+    /// print the tabs
+    include('tabs.php');
 
     /// Print the main part of the page
     ///////////////////////////////////////////////////////////////////////////
@@ -115,9 +118,9 @@
     
     $mform->display();
     
-    echo $OUTPUT->container_start('mdl-align');
+    // echo $OUTPUT->container_start('mdl-align');
     // echo $OUTPUT->single_button(new moodle_url('edit.php', array('id'=>$id, 'do_show'=>'templates')), get_string('cancel'));
-    echo $OUTPUT->container_end();
+    // echo $OUTPUT->container_end();
     echo $OUTPUT->footer();
 
     function feedback_load_xml_data($xmlcontent) {
