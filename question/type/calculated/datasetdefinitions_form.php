@@ -56,10 +56,10 @@ class question_dataset_dependent_definitions_form extends moodleform {
         $datadefscat= array();
         $datadefscat  = $this->qtypeobj->get_dataset_definitions_category($this->question);
         $datasetmenus = array();
-        $label = "<div class='mdl-align'>".get_string('datasetrole', 'qtype_datasetdependent','numerical')."</div>";
+        $label = "<div class='mdl-align'>".get_string('datasetrole', 'qtype_calculated')."</div>";
         $mform->addElement('html', $label);// explaining the role of datasets so other strings can be shortened
         $mform->addElement('header', 'mandatoryhdr', get_string('mandatoryhdr', $stringfile));
-        $labelsharedwildcard = get_string("sharedwildcard", "qtype_datasetdependent");
+        $labelsharedwildcard = get_string('sharedwildcard', 'qtype_calculated');
 
         foreach ($mandatorydatasets as $datasetname) {
             if (!isset($datasetmenus[$datasetname])) {
@@ -69,7 +69,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
                 $label = get_string("wildcard", "quiz"). " <strong>$datasetname</strong> ";
                 $mform->addElement('select', "dataset[$key]", $label, $options);
              if (isset($datadefscat[$datasetname])){
-                  $mform->addElement('static', "there is a category", $labelsharedwildcard." <strong>$datasetname </strong>", get_string('dataitemdefined',"qtype_datasetdependent", $datadefscat[$datasetname]));
+                  $mform->addElement('static', "there is a category", $labelsharedwildcard." <strong>$datasetname </strong>", get_string('dataitemdefined','qtype_calculated', $datadefscat[$datasetname]));
             }
                 $mform->setDefault("dataset[$key]", $selected);
                 $datasetmenus[$datasetname]='';
@@ -87,7 +87,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
                 $mform->addElement('select', "dataset[$key]", $label, $options);
                  //       $mform->addRule("dataset[$key]", null, 'required', null, 'client');
              if (isset($datadefscat[$datasetname])){
-                  $mform->addElement('static', "there is a category", $labelsharedwildcard." <strong>$datasetname </strong>", get_string('dataitemdefined',"qtype_datasetdependent", $datadefscat[$datasetname]));
+                  $mform->addElement('static', "there is a category", $labelsharedwildcard." <strong>$datasetname </strong>", get_string('dataitemdefined',"qtype_calculated", $datadefscat[$datasetname]));
             }
 
               //   $selected ="0";
@@ -97,7 +97,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
             }
         }
         // temporary strings
-        $mform->addElement('header', 'synchronizehdr', get_string("Synchronize the data from shared datasets with other questions in a quiz", $stringfile));
+        $mform->addElement('header', 'synchronizehdr', get_string('synchronize', $stringfile));
         $mform->addElement('checkbox', "synchronize", '', "For each question in a quiz using a given wild card {x..} from a <strong>shared </strong> dataset,  the wild card {x..}will be substituted by the same numerical value.");
         if (isset($this->question->options)&& isset($this->question->options->synchronize) ){
             $mform->setDefault("synchronize", $this->question->options->synchronize);
@@ -147,7 +147,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
         }
         if (!$countvalid){
             foreach ($datasets as $key => $dataset){
-                $errors['dataset['.$key.']'] = get_string('atleastonerealdataset', 'qtype_datasetdependent');
+                $errors['dataset['.$key.']'] = get_string('atleastonerealdataset', 'qtype_calculated');
             }
        }
         return $errors;
