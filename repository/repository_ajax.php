@@ -219,74 +219,85 @@ switch ($action) {
         try {
             // we have two special repoisitory type need to deal with
             if ($repo->options['type'] == 'local' || $repo->options['type'] == 'recent' ) {
-                $fileinfo = repository::move_to_draft($source, $saveas_filename, $itemid, $saveas_path);
+                try {
+                    $fileinfo = $repo->copy_to_draft($source, $saveas_filename, $itemid, $saveas_path);
+                } catch (Exception $e) {
+                    throw $e;
+                }
                 $info = array();
                 $info['client_id'] = $client_id;
                 $info['file'] = $fileinfo['title'];
                 $info['id'] = $itemid;
                 $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
                 $filesize = $fileinfo['filesize'];
-                if (($maxbytes!==-1) && ($filesize > $maxbytes)) {
-                    $fileinfo->delete();
-                    throw new file_exception('maxbytes');
+                // TODO:
+                // Fix maxbytes
+                if (($maxbytes!==-1) && ($filesize>$maxbytes)) {
+                    //throw new file_exception('maxbytes');
                 }
-                die(json_encode($info));
-            }
-
-            $allowexternallink = (int)get_config(null, 'repositoryallowexternallinks');
-            if (!empty($allowexternallink)) {
-                $allowexternallink = true;
+                echo json_encode($info);
+                die; // ends here!!
             } else {
-                $allowexternallink = false;
-            }
-            // allow external links in url element all the time
-            $allowexternallink = ($allowexternallink || ($env == 'url'));
-
-            if ($allowexternallink and $linkexternal === 'yes' and ($repo->supported_returntypes() || FILE_EXTERNAL)) {
-                try {
-                    $link = $repo->get_link($source);
-                } catch (repository_exception $e){
+                $allowexternallink = (int)get_config(null, 'repositoryallowexternallinks');
+                if (!empty($allowexternallink)) {
+                    $allowexternallink = true;
+                } else {
+                    $allowexternallink = false;
                 }
-                $info = array();
-                $info['filename'] = $saveas_filename;
-                $info['type'] = 'link';
-                $info['url'] = $link;
-                die(json_encode($info));
-            }
+                // allow external links in url element all the time
+                $allowexternallink = ($allowexternallink || ($env == 'url'));
 
-            // get the file location
-            $file = $repo->get_file($source, $saveas_filename);
-            if ($file['path'] === false) {
-                $err->e = get_string('cannotdownload', 'repository');
-                die(json_encode($err));
-            }
-            if (($maxbytes!==-1) && (filesize($file['path']) > $maxbytes)) {
-                throw new file_exception('maxbytes');
-            }
+                if ($allowexternallink and $linkexternal === 'yes' and ($repo->supported_returntypes() || FILE_EXTERNAL)) {
+                    // use external link
+                    try {
+                        $link = $repo->get_link($source);
+                    } catch (repository_exception $e){
+                    }
+                    $info = array();
+                    $info['filename'] = $saveas_filename;
+                    $info['type'] = 'link';
+                    $info['url'] = $link;
+                    echo json_encode($info);
+                    die;
+                } else {
+                    // get the file location
+                    $file = $repo->get_file($source, $saveas_filename);
+                    if ($file['path'] === false) {
+                        $err->e = get_string('cannotdownload', 'repository');
+                        die(json_encode($err));
+                    }
+                    // TODO:
+                    // Fix maxbytes
+                    if (($maxbytes!==-1) && (filesize($file['path']) > $maxbytes)) {
+                        //throw new file_exception('maxbytes');
+                    }
 
-            $record = new stdclass;
-            $record->filepath = $saveas_path;
-            $record->filename = $saveas_filename;
-            $record->filearea = $saveas_filearea;
-            $record->itemid   = $itemid;
+                    $record = new stdclass;
+                    $record->filepath = $saveas_path;
+                    $record->filename = $saveas_filename;
+                    $record->filearea = $saveas_filearea;
+                    $record->itemid   = $itemid;
 
-            if (!empty($file['license'])) {
-                $record->license  = $file['license'];
-            } else {
-                $record->license  = $license;
-            }
-            if (!empty($file['author'])) {
-                $record->author   = $file['author'];
-            } else {
-                $record->author   = $author;
-            }
-            $record->source = !empty($file['url']) ? $file['url'] : '';
+                    if (!empty($file['license'])) {
+                        $record->license  = $file['license'];
+                    } else {
+                        $record->license  = $license;
+                    }
+                    if (!empty($file['author'])) {
+                        $record->author   = $file['author'];
+                    } else {
+                        $record->author   = $author;
+                    }
+                    $record->source = !empty($file['url']) ? $file['url'] : '';
 
-            $info = repository::move_to_filepool($file['path'], $record);
-            if (empty($info)) {
-                $info['e'] = get_string('error', 'moodle');
+                    $info = repository::move_to_filepool($file['path'], $record);
+                    if (empty($info)) {
+                        $info['e'] = get_string('error', 'moodle');
+                    }
+                    echo json_encode($info);
+                    die;
+                }
             }
-            echo json_encode($info);
         } catch (repository_exception $e){
             $err->e = $e->getMessage();
             die(json_encode($err));

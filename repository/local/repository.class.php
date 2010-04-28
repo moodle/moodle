@@ -39,7 +39,7 @@ class repository_local extends repository {
     }
 
     /**
-     * local plugin don't need login, so list all files
+     * local plugin doesn't require login, so list all files
      * @return mixed
      */
     public function print_login() {
@@ -59,10 +59,9 @@ class repository_local extends repository {
      * Get file listing
      *
      * @param string $encodedpath
-     * @param string $path not used by this plugin
      * @return mixed
      */
-    public function get_listing($encodedpath = '', $page = '') {
+    public function get_listing($encodedpath = '') {
         global $CFG, $USER, $OUTPUT;
         $ret = array();
         $ret['dynload'] = true;
@@ -90,37 +89,42 @@ class repository_local extends repository {
             $browser = get_file_browser();
 
             if ($fileinfo = $browser->get_file_info($context, $filearea, $itemid, $filepath, $filename)) {
+                // build path navigation
+                $pathnodes = array();
+                $encodedpath = base64_encode(serialize($fileinfo->get_params()));
+                $pathnodes[] = array('name'=>$fileinfo->get_visible_name(), 'path'=>$encodedpath);
                 $level = $fileinfo->get_parent();
                 while ($level) {
-                    $params = base64_encode(serialize($level->get_params()));
-                    $path[] = array('name'=>$level->get_visible_name(), 'path'=>$params);
+                    $encodedpath = base64_encode(serialize($level->get_params()));
+                    $pathnodes[] = array('name'=>$level->get_visible_name(), 'path'=>$encodedpath);
                     $level = $level->get_parent();
                 }
-                if (!empty($path) && is_array($path)) {
-                    $path = array_reverse($path);
-                    $ret['path'] = $path;
+                if (!empty($pathnodes) && is_array($pathnodes)) {
+                    $pathnodes = array_reverse($pathnodes);
+                    $ret['path'] = $pathnodes;
                 }
+                // build file tree
                 $children = $fileinfo->get_children();
                 foreach ($children as $child) {
                     if ($child->is_directory()) {
-                        $params = base64_encode(serialize($child->get_params()));
+                        $encodedpath = base64_encode(serialize($child->get_params()));
                         $node = array(
                             'title' => $child->get_visible_name(),
                             'size' => 0,
                             'date' => '',
-                            'path' => $params,
+                            'path' => $encodedpath,
                             'children'=>array(),
                             'thumbnail' => $OUTPUT->pix_url('f/folder-32') . ''
                         );
                         $list[] = $node;
                     } else {
-                        $params = base64_encode(serialize($child->get_params()));
+                        $encodedpath = base64_encode(serialize($child->get_params()));
                         $icon = 'f/'.str_replace('.gif', '', mimeinfo('icon', $child->get_visible_name())).'-32';
                         $node = array(
                             'title' => $child->get_visible_name(),
                             'size' => 0,
                             'date' => '',
-                            'source'=> $params,
+                            'source'=> $encodedpath,
                             'thumbnail' => $OUTPUT->pix_url($icon) . '',
                         );
                         $list[] = $node;
@@ -151,5 +155,44 @@ class repository_local extends repository {
     public function supported_returntypes() {
         return FILE_INTERNAL;
     }
-}
+    
+    /**
+     * Copy a file to draft area
+     *
+     * @global object $USER
+     * @global object $DB
+     * @param string $encoded The metainfo of file, it is base64 encoded php seriablized data
+     * @param string $new_filename The intended name of file
+     * @param string $new_itemid itemid
+     * @param string $new_filepath the new path in draft area
+     * @return array The information of file
+     */
+    public function copy_to_draft($encoded, $new_filename = '', $new_itemid = '', $new_filepath = '/') {
+        global $USER, $DB;
+        $info = array();
 
+        $browser = get_file_browser();
+        $params = unserialize(base64_decode($encoded));
+        $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+        // the final file
+        $contextid  = $params['contextid'];
+        $filearea   = $params['filearea'];
+        $filepath   = $params['filepath'];
+        $filename   = $params['filename'];
+        $fileitemid = $params['itemid'];
+        $context    = get_context_instance_by_id($contextid);
+        try {
+            $file_info = $browser->get_file_info($context, $filearea, $fileitemid, $filepath, $filename);
+            $file_info->copy_to_storage($user_context->id, 'user_draft', $new_itemid, $new_filepath, $new_filename);
+        } catch (Exception $e) {
+            throw $e;
+        }
+
+        $info['itemid'] = $new_itemid;
+        $info['title']  = $new_filename;
+        $info['contextid'] = $user_context->id;
+        $info['filesize'] = $file_info->get_filesize();
+
+        return $info;
+    }
+}

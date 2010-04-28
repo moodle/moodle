@@ -148,4 +148,49 @@ class repository_recent extends repository {
     public function supported_returntypes() {
         return FILE_INTERNAL;
     }
+    /**
+     * Copy a file to draft area
+     *
+     * @global object $USER
+     * @global object $DB
+     * @param string $encoded The information of file, it is base64 encoded php seriablized data
+     * @param string $new_filename The intended name of file
+     * @param string $new_itemid itemid
+     * @param string $new_filepath the new path in draft area
+     * @return array The information of file
+     */
+    public function copy_to_draft($encoded, $new_filename = '', $new_itemid = '', $new_filepath = '/') {
+        global $USER, $DB;
+        $info = array();
+        $fs = get_file_storage();
+
+        $params = unserialize(base64_decode($encoded));
+        $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+
+        $contextid  = $params['contextid'];
+        $filearea   = $params['filearea'];
+        $filepath   = $params['filepath'];
+        $filename   = $params['filename'];
+        $fileitemid = $params['itemid'];
+
+        // XXX:
+        // When user try to pick a file from other filearea, normally file api will use file browse to
+        // operate the files with capability check, but in some areas, users don't have permission to
+        // browse the files (for example, forum_attachment area).
+        //
+        // To get 'recent' plugin working, we need to use lower level file_stoarge class to bypass the
+        // capability check, we will use a better workaround to improve it. 
+        if ($stored_file = $fs->get_file($contextid, $filearea, $fileitemid, $filepath, $filename)) {
+            $file_record = array('contextid'=>$user_context->id, 'filearea'=>'user_draft',
+                'itemid'=>$new_itemid, 'filepath'=>$new_filepath, 'filename'=>$new_filename);
+            $fs->create_file_from_storedfile($file_record, $stored_file);
+        }
+
+        $info['title']  = $new_filename;
+        $info['itemid'] = $new_itemid;
+        $info['filesize']  = $stored_file->get_filesize();
+        $info['contextid'] = $user_context->id;
+
+        return $info;
+    }
 }
