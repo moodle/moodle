@@ -43,9 +43,9 @@ class block_comments extends block_base {
             $args = new stdclass;
             $args->context   = $PAGE->context;
             $args->course    = $course;
-            $args->area      = 'block_comments';
-            $args->itemid    = $this->instance->id;
-            //XXX: this is a hack to adjust commenting UI in block_comments
+            $args->area      = 'page_comments';
+            $args->itemid    = 0;
+            // set 'env' to tell moodle tweak ui for this block
             $args->env       = 'block_comments';
             $args->linktext  = get_string('showcomments');
             $comment = new comment($args);

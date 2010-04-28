@@ -3644,6 +3644,27 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010042800);
     }
 
+    if ($result && $oldversion < 2010042801) {
+        // migrating old comments block content
+        $DB->execute("
+UPDATE {comments} SET contextid = (
+    SELECT parentcontextid FROM {block_instances}
+    WHERE id = {comments}.itemid AND blockname = 'comments'
+    ),
+    commentarea = 'page_comments',
+    itemid = 0
+WHERE commentarea = 'block_comments'
+AND itemid != 0
+AND EXISTS (SELECT 'x'
+      FROM {block_instances}
+      WHERE id = {comments}.itemid
+      AND blockname = 'comments')");
+
+        // remove all orphaned record
+        $DB->delete_records('comments', array('commentarea'=>'block_comments'));
+        upgrade_main_savepoint($result, 2010042801);
+    }
+
     return $result;
 }
 
