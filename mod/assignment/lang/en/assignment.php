@@ -48,6 +48,7 @@ assignment submission for \'<i>{$a->assignment}</i>\'<br /><br />
 You can see it appended to your <a href="{$a->url}">assignment submission</a>.';
 $string['assignmentname'] = 'Assignment name';
 $string['assignment:submit'] = 'Submit assignment';
+$string['assignmentsubmission'] = 'Assignment Submissions';
 $string['assignmenttype'] = 'Assignment type';
 $string['assignment:view'] = 'View assignment';
 $string['availabledate'] = 'Available from';

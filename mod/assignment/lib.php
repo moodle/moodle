@@ -3430,3 +3430,59 @@ function assignment_create_temp_dir($dir, $prefix='', $mode=0700) {
 
     return $path;
 }
+/**
+ * Lists all file areas current user may browse
+ *
+ * @param object $course
+ * @param object $cm
+ * @param object $context
+ * @return array
+ */
+function assignment_get_file_areas($course, $cm, $context) {
+    $areas = array();
+    if (has_capability('moodle/course:managefiles', $context)) {
+        $areas['assignment_submission'] = get_string('assignmentsubmission', 'assignment');
+    }
+    return $areas;
+}
+/**
+ * File browsing support for assignment module content area.
+ * @param object $browser
+ * @param object $areas
+ * @param object $course
+ * @param object $cm
+ * @param object $context
+ * @param string $filearea
+ * @param int $itemid
+ * @param string $filepath
+ * @param string $filename
+ * @return object file_info instance or null if not found
+ */
+function assignment_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+    global $CFG;
+
+    $canwrite = has_capability('moodle/course:managefiles', $context);
+
+    $fs = get_file_storage();
+
+    if ($filearea === 'assignment_submission') {
+        $filepath = is_null($filepath) ? '/' : $filepath;
+        $filename = is_null($filename) ? '.' : $filename;
+
+        $urlbase = $CFG->wwwroot.'/pluginfile.php';
+        if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+            if ($filepath === '/' and $filename === '.') {
+                $storedfile = new virtual_root_file($context->id, $filearea, 0);
+            } else {
+                // not found
+                return null;
+            }
+        }
+        require_once("$CFG->dirroot/mod/assignment/locallib.php");
+        return new assignment_content_file_info($browser, $context, $storedfile, $urlbase, $areas[$filearea], true, true, $canwrite, false);
+    }
+
+    // note: folder_intro handled in file_browser automatically
+
+    return null;
+}
