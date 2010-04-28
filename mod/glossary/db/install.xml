@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/glossary/db" VERSION="20090925" COMMENT="XMLDB file for Moodle mod/glossary"
+<XMLDB PATH="mod/glossary/db" VERSION="20100428" COMMENT="XMLDB file for Moodle mod/glossary"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -103,7 +103,7 @@
         <KEY NAME="entryid" TYPE="foreign" FIELDS="entryid" REFTABLE="glossary_entries" REFFIELDS="id" PREVIOUS="categoryid"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="glossary_formats" COMMENT="Setting of the display formats" PREVIOUS="glossary_entries_categories" NEXT="glossary_ratings">
+    <TABLE NAME="glossary_formats" COMMENT="Setting of the display formats" PREVIOUS="glossary_entries_categories">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="popupformatname"/>
@@ -118,22 +118,6 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
-    </TABLE>
-    <TABLE NAME="glossary_ratings" COMMENT="Contains user ratings for entries" PREVIOUS="glossary_formats">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="entryid"/>
-        <FIELD NAME="entryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="time"/>
-        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="entryid" NEXT="rating"/>
-        <FIELD NAME="rating" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="time"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="entryid"/>
-        <KEY NAME="entryid" TYPE="foreign" FIELDS="entryid" REFTABLE="glossary_entries" REFFIELDS="id" PREVIOUS="primary"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
-      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>

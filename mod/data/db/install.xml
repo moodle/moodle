@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/data/db" VERSION="20100317" COMMENT="XMLDB file for Moodle mod/data"
+<XMLDB PATH="mod/data/db" VERSION="20100428" COMMENT="XMLDB file for Moodle mod/data"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -88,7 +88,7 @@
         <KEY NAME="dataid" TYPE="foreign" FIELDS="dataid" REFTABLE="data" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="data_content" COMMENT="the content introduced in each record/fields" PREVIOUS="data_records" NEXT="data_ratings">
+    <TABLE NAME="data_content" COMMENT="the content introduced in each record/fields" PREVIOUS="data_records">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="fieldid"/>
         <FIELD NAME="fieldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="recordid"/>
@@ -103,18 +103,6 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="recordid"/>
         <KEY NAME="recordid" TYPE="foreign" FIELDS="recordid" REFTABLE="data_records" REFFIELDS="id" PREVIOUS="primary" NEXT="fieldid"/>
         <KEY NAME="fieldid" TYPE="foreign" FIELDS="fieldid" REFTABLE="data_fields" REFFIELDS="id" PREVIOUS="recordid"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="data_ratings" COMMENT="to rate data records" PREVIOUS="data_content">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="recordid"/>
-        <FIELD NAME="recordid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="rating"/>
-        <FIELD NAME="rating" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="recordid"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="recordid"/>
-        <KEY NAME="recordid" TYPE="foreign" FIELDS="recordid" REFTABLE="data_records" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
   </TABLES>
