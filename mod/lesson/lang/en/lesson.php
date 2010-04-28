@@ -25,6 +25,10 @@
 
 $string['accesscontrol'] = 'Access control';
 $string['actionaftercorrectanswer'] = 'Action after correct answer';
+$string['actionaftercorrectanswer_help'] = 'After answering a question correctly, there are 3 options for the following page:
+* Normal - Follow lesson path
+* Show an unseen page - Pages are shown in a random order with no page shown twice
+* Show an unanswered page - Pages are shown in a random order, with pages containing unanswered questions shown again';
 $string['actions'] = 'Actions';
 $string['activitylink'] = 'Link to an activity';
 $string['activitylinkname'] = 'Go to: {$a}';
@@ -121,6 +125,7 @@ $string['detailedstats'] = 'Detailed statistics';
 $string['didnotanswerquestion'] = 'Did not answer this question.';
 $string['didnotreceivecredit'] = 'Did not receive credit';
 $string['displaydefaultfeedback'] = 'Display default feedback';
+$string['displaydefaultfeedback_help'] = 'If enabled, when a response is not found for a particular question, the default response of "That\'s the correct answer" or "That\'s the wrong answer" will be shown.';
 $string['displayhighscores'] = 'Display high scores';
 $string['displayinleftmenu'] = 'Display in left menu?';
 $string['displayleftif'] = 'Display left menu only if grade greater than:';
@@ -128,6 +133,7 @@ $string['displayleftmenu'] = 'Display left menu';
 $string['displayleftmenuif'] = 'Display left menu: grade condition';
 $string['displayofgrade'] = 'Display of grade (for students only)';
 $string['displayreview'] = 'Display review button';
+$string['displayreview_help'] = 'If enabled, a review button is shown after an incorrectly answered question, allowing a student to re-attempt it.';
 $string['displayscorewithessays'] = 'You earned {$a->score} out of {$a->tempmaxgrade} for the automatically graded questions.<br />Your {$a->essayquestions} essay question(s) will be graded and added<br />into your final score at a later date.<br /><br />Your current grade without the essay question(s) is {$a->score} out of {$a->grade}';
 $string['displayscorewithoutessays'] = 'Your score is {$a->score} (out of {$a->grade}).';
 $string['edit'] = 'Edit';
@@ -220,6 +226,7 @@ $string['maxhighscores'] = 'Number of high scores displayed';
 $string['maximumnumberofanswersbranches'] = 'Maximum number of answers/branches';
 $string['maximumnumberofanswersbranches_help'] = 'This setting specifies the maximum number of answers/branches that may be used in the lesson. If only true/false questions are used, it can be set to 2. The setting may be changed at any time, since it only effects what the teacher sees, not the data.';
 $string['maximumnumberofattempts'] = 'Maximum number of attempts';
+$string['maximumnumberofattempts_help'] = 'This setting specifies the maximum number of attempts allowed for each question. It applies to all questions in the lesson regardless of their type.';
 $string['maximumnumberofattemptsreached'] = 'Maximum number of attempts reached - Moving to next page';
 $string['maxtime'] = 'Time limit (minutes)';
 $string['maxtime_help'] = 'To set a time limit, tick the enable checkbox and enter the time limit in minutes. The timer does not evict a student from the lesson when the time is up, however a question answered after the time limit is not counted.';
@@ -230,10 +237,15 @@ $string['mediafilepopup'] = 'Click here to view';
 $string['mediaheight'] = 'Popup window height:';
 $string['mediawidth'] = 'Popup window width:';
 $string['minimumnumberofquestions'] = 'Minimum number of questions';
+$string['minimumnumberofquestions_help'] = 'This setting specifies the minimum number of questions that will be used to calculate a grade for the activity. If the lesson contains one or more branch tables, the minimum number of questions should be set to zero.
+
+If set to say 20, it is suggested that the following text is added to the opening page of the lesson: "In this lesson you are expected to attempt at least 20 questions. You can attempt more if you wish. However, if you attempt less than 20 questions, your grade will be calculated as though you attempted 20."';
 $string['missingname'] = 'Please enter a nickname';
 $string['modattempts'] = 'Allow student review';
+$string['modattempts_help'] = 'If enabled, students can navigate through the lesson again from the start.';
 $string['modattemptsnoteacher'] = 'Student review only works for students.';
 $string['modulename'] = 'Lesson';
+$string['modulename_help'] = 'The lesson module enables the teacher to create an adaptive learning experience consisting of a series of pages containing questions.';
 $string['modulenameplural'] = 'Lessons';
 $string['move'] = 'Move page';
 $string['movedpage'] = 'Moved page';
@@ -269,7 +281,8 @@ $string['nothighscore'] = 'You did not make the top {$a} high scores list.';
 $string['notitle'] = 'No title';
 $string['numberofcorrectanswers'] = 'Number of correct answers: {$a}';
 $string['numberofcorrectmatches'] = 'Number of correct matches: {$a}';
-$string['numberofpagestoshow'] = 'Number of pages (cards) to show';
+$string['numberofpagestoshow'] = 'Number of pages to show';
+$string['numberofpagestoshow_help'] = 'This setting specifies the number of pages shown in a lesson. It is only applicable for lessons with pages shown in a random order (when "Action after correct answer" is set to "Show an unseen page" or "Show an unanswered page"). If set to zero, then all pages are shown.';
 $string['numberofpagesviewed'] = 'Number of questions answered: {$a}';
 $string['numberofpagesviewednotice'] = 'Number of questions answered: {$a->nquestions}; (You should answer at least: {$a->minquestions})';
 $string['numerical'] = 'Numerical';
