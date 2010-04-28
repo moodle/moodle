@@ -1141,12 +1141,6 @@ class assignment_upload extends assignment_base {
             $groupid = $group->id;
             $groupname = $group->name.'-';
         }
-        $fb = get_file_browser();
-        $fileb = $fb->get_file_info($this->context, 'assignment_submission');
-        print_object($fileb);
-        //print_object($fileb->get_params());
-        error('here');
-        
         $filename = str_replace(' ', '_', clean_filename($this->course->shortname.'-'.$this->assignment->name.'-'.$groupname.$this->assignment->id.".zip")); //name of new zip file.
         foreach ($submissions as $submission) {
             $a_userid = $submission->userid; //get userid
