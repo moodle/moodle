@@ -84,6 +84,7 @@ M.core_filepicker.init = function(Y, options) {
         },
 
         request: function(args, redraw) {
+            var client_id = args.client_id;
             var api = this.api + '?action='+args.action;
             var params = {};
             var scope = this;
@@ -110,6 +111,7 @@ M.core_filepicker.init = function(Y, options) {
                 method: 'POST',
                 on: {
                     complete: function(id,o,p) {
+                        var panel_id = '#panel-'+client_id;
                         if (!o) {
                             alert('IO FATAL');
                             return;
@@ -118,11 +120,11 @@ M.core_filepicker.init = function(Y, options) {
                         try {
                             data = Y.JSON.parse(o.responseText);
                         } catch(e) {
-                            alert(M.str.repository.invalidjson+' - |'+source+'| -'+stripHTML(o.responseText));
+                            Y.one(panel_id).set('innerHTML', 'ERROR: '+M.str.repository.invalidjson);
+                            return;
                         }
                         // error checking
-                        if (data.e) {
-                            var panel_id = '#panel-'+data.client_id;
+                        if (data && data.e) {
                             Y.one(panel_id).set('innerHTML', 'ERROR: '+data.e);
                             return;
                         } else {
@@ -1160,13 +1162,12 @@ M.core_filepicker.init = function(Y, options) {
                     link.href = "###";
                     link.innerHTML = p[i].name;
                     link.id = 'path-node-'+client_id+'-'+i;
-                    //link.id = 'path-'+client_id+'-'+repo_id;
                     var sep = Y.Node.create('<span>/</span>');
                     path.appendChild(link);
                     path.appendChild(sep);
-                    Y.one('#'+link.id).on('click', function(){
-                            this.list({'path':link_path});
-                            }, this)
+                    Y.one('#'+link.id).on('click', function(Y, path){
+                        this.list({'path':path});
+                        }, this, link_path)
                 }
             }
         },
