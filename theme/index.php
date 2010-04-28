@@ -70,11 +70,6 @@ $table->head = array(get_string('theme'), get_string('info'));
 $themes = get_plugin_list('theme');
 
 foreach ($themes as $themename => $themedir) {
-    
-    // Skip the base theme unless we are in theme designer mode (they might want to look at it)
-    if (!$CFG->themedesignermode && $themename == 'base') {
-        continue;
-    }
 
     // Load the theme config.
     try {
@@ -85,6 +80,11 @@ foreach ($themes as $themename => $themedir) {
     }
     if ($themename !== $theme->name) {
         //obsoleted or broken theme, just skip for now
+        continue;
+    }
+    if (!$CFG->themedesignermode && $theme->hidefromselector) {
+        // The theme doesn't want to be shown in the theme selector and as theme
+        // designer mode is switched off we will respect that decision.
         continue;
     }
 
