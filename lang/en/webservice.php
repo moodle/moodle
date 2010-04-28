@@ -96,6 +96,7 @@ $string['invalidextresponse'] = 'Invalid external api response: {$a}';
 $string['invalidiptoken'] = 'Invalid token - your IP is not supported';
 $string['invalidtimedtoken'] = 'Invalid token - token expired';
 $string['invalidtoken'] = 'Invalid token - token not found';
+$string['invalidtokensession'] = 'Invalid session based token - session not found or expired';
 $string['iprestriction'] = 'IP restriction';
 $string['key'] = 'Key';
 $string['keyshelp'] = 'The keys are used to access your Moodle account from external applications.';

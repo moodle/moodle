@@ -41,7 +41,7 @@ if (!webservice_protocol_is_enabled('amf')) {
     die;
 }
 
-$server = new webservice_amf_server(true);
+$server = new webservice_amf_server(WEBSERVICE_AUTHMETHOD_USERNAME);
 $server->run();
 die;
 

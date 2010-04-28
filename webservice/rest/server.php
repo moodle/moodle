@@ -34,7 +34,7 @@ if (!webservice_protocol_is_enabled('rest')) {
     die;
 }
 
-$server = new webservice_rest_server(false);
+$server = new webservice_rest_server(WEBSERVICE_AUTHMETHOD_PERMANENT_TOKEN);
 $server->run();
 die;
 

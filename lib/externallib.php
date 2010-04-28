@@ -453,6 +453,9 @@ function external_generate_token($tokentype, $serviceorid, $userid, $contextorid
     }
     $newtoken->tokentype = $tokentype;
     $newtoken->userid = $userid;
+    if ($tokentype == EXTERNAL_TOKEN_EMBEDDED){
+        $newtoken->sid = session_id();
+    }
 
     $newtoken->contextid = $context->id;
     $newtoken->creatorid = $USER->id;
@@ -463,4 +466,18 @@ function external_generate_token($tokentype, $serviceorid, $userid, $contextorid
     }
     $DB->insert_record('external_tokens', $newtoken);
     return $newtoken->token;
+}
+/**
+ * Create and return a session linked token. Token to be used for html embedded client apps that want to communicate 
+ * with the Moodle server through web services. The token is linked to the current session for the current page request.
+ * It is expected this will be called in the script generating the html page that is embedding the client app and that the
+ * returned token will be somehow passed into the client app being embedded in the page.
+ * @param string $servicename name of the web service. Service name as defined in db/services.php
+ * @param int $context context within which the web service can operate.
+ * @return int returns token id.
+ */
+function external_create_service_token($servicename, $context){
+    global $USER, $DB;
+    $service = $DB->get_record('external_services', array('name'=>$servicename), '*', MUST_EXIST);
+    return external_generate_token(EXTERNAL_TOKEN_EMBEDDED, $service, $USER->id, $context, 0);
 }

@@ -32,11 +32,11 @@ require_once("$CFG->dirroot/webservice/lib.php");
 class webservice_xmlrpc_server extends webservice_zend_server {
     /**
      * Contructor
-     * @param bool $simple use simple authentication
+     * @param integer $authmethod authentication method one of WEBSERVICE_AUTHMETHOD_* 
      */
-    public function __construct($simple) {
+    public function __construct($authmethod) {
         require_once 'Zend/XmlRpc/Server.php';
-        parent::__construct($simple, 'Zend_XmlRpc_Server');
+        parent::__construct($authmethod, 'Zend_XmlRpc_Server');
         $this->wsname = 'xmlrpc';
     }
 

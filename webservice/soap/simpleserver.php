@@ -34,7 +34,7 @@ if (!webservice_protocol_is_enabled('soap')) {
     die;
 }
 
-$server = new webservice_soap_server(true);
+$server = new webservice_soap_server(WEBSERVICE_AUTHMETHOD_USERNAME);
 $server->run();
 die;
 

@@ -34,16 +34,16 @@ class webservice_soap_server extends webservice_zend_server {
      * Contructor
      * @param bool $simple use simple authentication
      */
-    public function __construct($simple) {
+    public function __construct($authmethod) {
          // must not cache wsdl - the list of functions is created on the fly
         ini_set('soap.wsdl_cache_enabled', '0');
         require_once 'Zend/Soap/Server.php';
         require_once 'Zend/Soap/AutoDiscover.php';
 
         if (optional_param('wsdl', 0, PARAM_BOOL)) {
-            parent::__construct($simple, 'Zend_Soap_AutoDiscover');
+            parent::__construct($authmethod, 'Zend_Soap_AutoDiscover');
         } else {
-            parent::__construct($simple, 'Zend_Soap_Server');
+            parent::__construct($authmethod, 'Zend_Soap_Server');
         }
         $this->wsname = 'soap';
     }

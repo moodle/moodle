@@ -34,7 +34,7 @@ if (!webservice_protocol_is_enabled('xmlrpc')) {
     die;
 }
 
-$server = new webservice_xmlrpc_server(false);
+$server = new webservice_xmlrpc_server(WEBSERVICE_AUTHMETHOD_PERMANENT_TOKEN);
 $server->run();
 die;
 

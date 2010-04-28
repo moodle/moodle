@@ -47,26 +47,28 @@ class invalid_return_value_exception extends moodle_exception {
 class webservice_amf_server extends webservice_zend_server {
     /**
      * Contructor
-     * @param bool $simple use simple authentication
+     * @param integer $authmethod authentication method - one of WEBSERVICE_AUTHMETHOD_*
      */
-    public function __construct($simple) {
+    public function __construct($authmethod) {
         require_once 'Zend/Amf/Server.php';
-        parent::__construct($simple, 'Zend_Amf_Server');
+        parent::__construct($authmethod, 'Zend_Amf_Server');
         $this->wsname = 'amf';
     }
     protected function init_service_class(){
-    	parent::init_service_class();
+        parent::init_service_class();
         //allow access to data about methods available.
         $this->zend_server->setClass( "MethodDescriptor" );
         MethodDescriptor::$classnametointrospect = $this->service_class;
     }
     
     protected function service_class_method_body($function, $params){
-    	$params = "webservice_amf_server::cast_objects_to_array($params)";
-    	$externallibcall = $function->classname.'::'.$function->methodname.'('.$params.')';
-    	$descriptionmethod = $function->methodname.'_returns()';
-    	$callforreturnvaluedesc = $function->classname.'::'.$descriptionmethod;
-    	return
+        if ($params){
+            $params = "webservice_amf_server::cast_objects_to_array($params)";
+        }
+        $externallibcall = $function->classname.'::'.$function->methodname.'('.$params.')';
+        $descriptionmethod = $function->methodname.'_returns()';
+        $callforreturnvaluedesc = $function->classname.'::'.$descriptionmethod;
+        return
 '        return webservice_amf_server::validate_and_cast_values('.$callforreturnvaluedesc.', '.$externallibcall.');';
     }
     /**
@@ -80,9 +82,9 @@ class webservice_amf_server extends webservice_zend_server {
      * @return mixed params with added defaults for optional items, invalid_parameters_exception thrown if any problem found
      */
     public static function validate_and_cast_values($description, $value) {
-    	if (is_null($description)){
-    		return;
-    	}
+        if (is_null($description)){
+            return;
+        }
         if ($description instanceof external_value) {
             if (is_array($value) or is_object($value)) {
                 throw new invalid_return_value_exception('Scalar type expected, array or object received.');
@@ -136,27 +138,27 @@ class webservice_amf_server extends webservice_zend_server {
             throw new invalid_return_value_exception('Invalid external api description.');
         }
     }    
-	/**
-	 * Recursive function to recurse down into a complex variable and convert all
-	 * objects to arrays. Doesn't recurse down into objects or cast objects other than stdClass
-	 * which is represented in Flash / Flex as an object. 
-	 * @param mixed $params value to cast
-	 * @return mixed Cast value
-	 */
-	public static function cast_objects_to_array($params){
-		if ($params instanceof stdClass){
-			$params = (array)$params;
-		}
-		if (is_array($params)){
-			$toreturn = array();
-			foreach ($params as $key=> $param){
-				$toreturn[$key] = self::cast_objects_to_array($param);
-			}
-			return $toreturn;
-		} else {
-			return $params;
-		}
-	}
+    /**
+     * Recursive function to recurse down into a complex variable and convert all
+     * objects to arrays. Doesn't recurse down into objects or cast objects other than stdClass
+     * which is represented in Flash / Flex as an object. 
+     * @param mixed $params value to cast
+     * @return mixed Cast value
+     */
+    public static function cast_objects_to_array($params){
+        if ($params instanceof stdClass){
+            $params = (array)$params;
+        }
+        if (is_array($params)){
+            $toreturn = array();
+            foreach ($params as $key=> $param){
+                $toreturn[$key] = self::cast_objects_to_array($param);
+            }
+            return $toreturn;
+        } else {
+            return $params;
+        }
+    }
     /**
      * Set up zend service class
      * @return void

@@ -25,6 +25,10 @@
 
 require_once($CFG->libdir.'/externallib.php');
 
+define('WEBSERVICE_AUTHMETHOD_USERNAME', 0);
+define('WEBSERVICE_AUTHMETHOD_PERMANENT_TOKEN', 1);
+define('WEBSERVICE_AUTHMETHOD_SESSION_TOKEN', 2);
+
 /**
  * Exception indicating access control problem in web service call
  * @author Petr Skoda (skodak)
@@ -102,8 +106,8 @@ abstract class webservice_server implements webservice_server_interface {
     /** @property int $userid the local user */
     protected $userid = null;
 
-    /** @property bool $simple true if simple auth used */
-    protected $simple;
+    /** @property integer $authmethod authentication method one of WEBSERVICE_AUTHMETHOD_* */
+    protected $authmethod;
 
     /** @property string $token authentication token*/
     protected $token = null;
@@ -114,6 +118,15 @@ abstract class webservice_server implements webservice_server_interface {
     /** @property int restrict call to one service id*/
     protected $restricted_serviceid = null;
 
+    /**
+     * Contructor
+     * @param integer $authmethod authentication method one of WEBSERVICE_AUTHMETHOD_* 
+     */
+    public function __construct($authmethod) {
+        $this->authmethod = $authmethod;
+    }    
+    
+    
     /**
      * Authenticate user using username+password or token.
      * This function sets up $USER global.
@@ -129,7 +142,7 @@ abstract class webservice_server implements webservice_server_interface {
             throw new coding_exception('Cookies must be disabled in WS servers!');
         }
 
-        if ($this->simple) {
+        if ($this->authmethod == WEBSERVICE_AUTHMETHOD_USERNAME) {
 
             //we check that authentication plugin is enabled
             //it is only required by simple authentication
@@ -159,40 +172,59 @@ abstract class webservice_server implements webservice_server_interface {
 
             $user = $DB->get_record('user', array('username'=>$this->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);
 
+        } else if ($this->authmethod == WEBSERVICE_AUTHMETHOD_PERMANENT_TOKEN){
+            $user = $this->authenticate_by_token(EXTERNAL_TOKEN_PERMANENT);
         } else {
-            if (!$token = $DB->get_record('external_tokens', array('token'=>$this->token, 'tokentype'=>EXTERNAL_TOKEN_PERMANENT))) {
-                // log failed login attempts
-                add_to_log(1, 'webservice', get_string('tokenauthlog', 'webservice'), '' , get_string('failedtolog', 'webservice').": ".$this->token. " - ".getremoteaddr() , 0);
-                throw new webservice_access_exception(get_string('invalidtoken', 'webservice'));
-            }
-
-            if ($token->validuntil and $token->validuntil < time()) {
-                throw new webservice_access_exception(get_string('invalidtimedtoken', 'webservice'));
-            }
-
-            if ($token->iprestriction and !address_in_subnet(getremoteaddr(), $token->iprestriction)) {
-                add_to_log(1, 'webservice', get_string('tokenauthlog', 'webservice'), '' , get_string('failedtolog', 'webservice').": ".getremoteaddr() , 0);
-                throw new webservice_access_exception(get_string('invalidiptoken', 'webservice'));
-            }
-
-            $this->restricted_context = get_context_instance_by_id($token->contextid);
-            $this->restricted_serviceid = $token->externalserviceid;
-
-            $user = $DB->get_record('user', array('id'=>$token->userid, 'deleted'=>0), '*', MUST_EXIST);
-
-            // log token access
-            $DB->set_field('external_tokens', 'lastaccess', time(), array('id'=>$token->id));
+            $user = $this->authenticate_by_token(EXTERNAL_TOKEN_EMBEDDED);
         }
-
+        
         // now fake user login, the session is completely empty too
         session_set_user($user);
         $this->userid = $user->id;
 
-        if (!has_capability("webservice/$this->wsname:use", $this->restricted_context)) {
+        if ($this->authmethod != EXTERNAL_TOKEN_EMBEDDED && !has_capability("webservice/$this->wsname:use", $this->restricted_context)) {
             throw new webservice_access_exception(get_string('accessnotallowed', 'webservice'));
         }
 
         external_api::set_context_restriction($this->restricted_context);
+    }
+    
+    protected function authenticate_by_token($tokentype){
+        global $DB;
+        if (!$token = $DB->get_record('external_tokens', array('token'=>$this->token, 'tokentype'=>$tokentype))) {
+            // log failed login attempts
+            add_to_log(1, 'webservice', get_string('tokenauthlog', 'webservice'), '' , get_string('failedtolog', 'webservice').": ".$this->token. " - ".getremoteaddr() , 0);
+            throw new webservice_access_exception(get_string('invalidtoken', 'webservice'));
+        }
+    
+        if ($token->validuntil and $token->validuntil < time()) {
+            $DB->delete_records('external_tokens', array('token'=>$this->token, 'tokentype'=>$tokentype));
+            throw new webservice_access_exception(get_string('invalidtimedtoken', 'webservice'));
+        }
+        
+        if ($token->sid){//assumes that if sid is set then there must be a valid associated session no matter the token type
+            $session = session_get_instance();
+            if (!$session->session_exists($token->sid)){
+                $DB->delete_records('external_tokens', array('sid'=>$token->sid));
+                throw new webservice_access_exception(get_string('invalidtokensession', 'webservice'));
+            }
+        }
+
+        if ($token->iprestriction and !address_in_subnet(getremoteaddr(), $token->iprestriction)) {
+            add_to_log(1, 'webservice', get_string('tokenauthlog', 'webservice'), '' , get_string('failedtolog', 'webservice').": ".getremoteaddr() , 0);
+            throw new webservice_access_exception(get_string('invalidiptoken', 'webservice'));
+        }
+
+        $this->restricted_context = get_context_instance_by_id($token->contextid);
+        $this->restricted_serviceid = $token->externalserviceid;
+
+        $user = $DB->get_record('user', array('id'=>$token->userid, 'deleted'=>0), '*', MUST_EXIST);
+
+        // log token access
+        $DB->set_field('external_tokens', 'lastaccess', time(), array('id'=>$token->id));
+        
+        return $user;
+        
     }
 }
 
@@ -214,10 +246,10 @@ abstract class webservice_zend_server extends webservice_server {
 
     /**
      * Contructor
-     * @param bool $simple use simple authentication
+     * @param integer $authmethod authentication method - one of WEBSERVICE_AUTHMETHOD_*
      */
-    public function __construct($simple, $zend_class) {
-        $this->simple = $simple;
+    public function __construct($authmethod, $zend_class) {
+        parent::__construct($authmethod);
         $this->zend_class = $zend_class;
     }
 
@@ -483,7 +515,7 @@ class '.$classname.' {
      */
     protected function service_class_method_body($function, $params){
         $descriptionmethod = $function->methodname.'_returns()';
-    	$callforreturnvaluedesc = $function->classname.'::'.$descriptionmethod;
+        $callforreturnvaluedesc = $function->classname.'::'.$descriptionmethod;
         return '    if ('.$callforreturnvaluedesc.' == null)  {
                         return null;
                     }
@@ -506,7 +538,7 @@ class '.$classname.' {
      * @return void
      */
     protected function parse_request() {
-        if ($this->simple) {
+        if ($this->authmethod == WEBSERVICE_AUTHMETHOD_USERNAME) {
             //note: some clients have problems with entity encoding :-(
             if (isset($_REQUEST['wsusername'])) {
                 $this->username = $_REQUEST['wsusername'];
@@ -570,7 +602,7 @@ class '.$classname.' {
      * @return void
      */
     protected function session_cleanup($exception=null) {
-        if ($this->simple) {
+        if ($this->authmethod == WEBSERVICE_AUTHMETHOD_USERNAME) {
             // nothing needs to be done, there is no persistent session
         } else {
             // close emulated session if used
@@ -597,14 +629,6 @@ abstract class webservice_base_server extends webservice_server {
 
     /** @property mixed $returns function return value */
     protected $returns = null;
-
-    /**
-     * Contructor
-     * @param bool $simple use simple authentication
-     */
-    public function __construct($simple) {
-        $this->simple = $simple;
-    }
 
     /**
      * This method parses the request input, it needs to get:

@@ -74,6 +74,13 @@ interface moodle_session {
      * @return void
      */
     public function write_close();
+    
+    /**
+     * Check for existing session with id $sid
+     * @param unknown_type $sid
+     * @return boolean true if session found.
+     */
+    public function session_exists($sid);
 }
 
 /**
@@ -145,8 +152,10 @@ abstract class session_stub implements moodle_session {
      * Terminates active moodle session
      */
     public function terminate_current() {
-        global $CFG, $SESSION, $USER;
+        global $CFG, $SESSION, $USER, $DB;
 
+        $DB->delete_records('external_tokens', array('sid'=>session_id(), 'tokentype'=>EXTERNAL_TOKEN_EMBEDDED));
+        
         if (NO_MOODLE_COOKIES) {
             return;
         }
@@ -349,6 +358,18 @@ class legacy_file_session extends session_stub {
         }
         ini_set('session.save_path', $CFG->dataroot .'/sessions');
     }
+    /**
+     * Check for existing session with id $sid
+     * @param unknown_type $sid
+     * @return boolean true if session found.
+     */
+    public function session_exists($sid){
+        $sid = clean_param($sid, PARAM_FILE);
+        $sessionfile = clean_param("$CFG->dataroot/sessions/sess_$sid", PARAM_FILE);
+        return file_exists($sessionfile);
+    }
+    
+
 }
 
 /**
@@ -376,7 +397,20 @@ class database_session extends session_stub {
             }
         }
     }
-
+    
+    public function session_exists($sid){
+        global $CFG;
+        try {
+            $sql = "SELECT * FROM {sessions} WHERE timemodified < ? AND sid=? AND state=?";
+            $params = array(time() + $CFG->sessiontimeout, $sid, 0);
+            
+            return $this->database->record_exists_sql($sql, $params);
+        } catch (dml_exception $ex) {
+            error_log('Error checking existance of database session');
+            return false;
+        }
+    }
+    
     protected function init_session_storage() {
         global $CFG;
 

@@ -34,7 +34,7 @@ if (!webservice_protocol_is_enabled('amf')) {
     die;
 }
 
-$server = new webservice_amf_server(false);
+$server = new webservice_amf_server(WEBSERVICE_AUTHMETHOD_PERMANENT_TOKEN);
 $server->run();
 die;
 
