@@ -267,6 +267,7 @@ class moodlelib_test extends UnitTestCase {
      * @uses PARAM_CLEANHTML
      * @uses PARAM_SEQUENCE
      * @uses PARAM_USERNAME
+     * @uses PARAM_STRINGID
      * @param mixed $param the variable we are cleaning
      * @param int $type expected format of param after cleaning.
      * @return mixed
@@ -325,6 +326,20 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual(clean_param('johndóé ', PARAM_USERNAME), 'johndóé');
                 
         $CFG->extendedusernamechars = $currentstatus;
+
+        // Test string identifiers validation
+        // valid strings:
+        $this->assertEqual(clean_param('validstring', PARAM_STRINGID), 'validstring');
+        $this->assertEqual(clean_param('mod/foobar:valid_capability', PARAM_STRINGID), 'mod/foobar:valid_capability');
+        $this->assertEqual(clean_param('CZ', PARAM_STRINGID), 'CZ');
+        $this->assertEqual(clean_param('application/vnd.ms-powerpoint', PARAM_STRINGID), 'application/vnd.ms-powerpoint');
+        $this->assertEqual(clean_param('grade2', PARAM_STRINGID), 'grade2');
+        // invalid strings:
+        $this->assertEqual(clean_param('trailing ', PARAM_STRINGID), '');
+        $this->assertEqual(clean_param('space bar', PARAM_STRINGID), '');
+        $this->assertEqual(clean_param('0numeric', PARAM_STRINGID), '');
+        $this->assertEqual(clean_param('*', PARAM_STRINGID), '');
+        $this->assertEqual(clean_param(' ', PARAM_STRINGID), '');
     }
 
     function test_validate_param() {

@@ -229,6 +229,10 @@ define('PARAM_URL',      'url');
  */
 define('PARAM_USERNAME',    'username');
 
+/**
+ * PARAM_STRINGID - used to check if the given string is valid string identifier for get_string()
+ */
+define('PARAM_STRINGID',    'stringid');
 
 ///// DEPRECATED PARAM TYPES OR ALIASES - DO NOT USE FOR NEW CODE  /////
 /**
@@ -515,6 +519,7 @@ function validate_param($param, $type, $allownull=NULL_NOT_ALLOWED, $debuginfo='
  * @uses PARAM_TAG
  * @uses PARAM_SEQUENCE
  * @uses PARAM_USERNAME
+ * @uses PARAM_STRINGID
  * @param mixed $param the variable we are cleaning
  * @param int $type expected format of param after cleaning.
  * @return mixed
@@ -785,6 +790,13 @@ function clean_param($param, $type) {
 
         case PARAM_EMAIL:
             if (validate_email($param)) {
+                return $param;
+            } else {
+                return '';
+            }
+
+        case PARAM_STRINGID:
+            if (preg_match('|^[a-zA-Z][a-zA-Z0-9\.:/_-]*$|', $param)) {
                 return $param;
             } else {
                 return '';
@@ -6470,6 +6482,12 @@ class install_string_manager implements string_manager {
  * @return string The localized string.
  */
 function get_string($identifier, $component = '', $a = NULL) {
+
+    $identifier = clean_param($identifier, PARAM_STRINGID);
+    if (empty($identifier)) {
+        throw new coding_exception('Invalid string identifier. Most probably some illegal character is part of the string identifier. Please fix your get_string() call and string definition');
+    }
+
     if (func_num_args() > 3) {
         debugging('extralocations parameter in get_string() is not supported any more, please use standard lang locations only.');
     }
