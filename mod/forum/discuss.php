@@ -72,7 +72,6 @@
     $PAGE->requires->yui2_lib('event');
     $PAGE->requires->yui2_lib('connection');
     $PAGE->requires->yui2_lib('json');
-    $PAGE->requires->js('/mod/forum/rate_ajax.js');
 
     // move this down fix for MDL-6926
     require_once('lib.php');
