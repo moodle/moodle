@@ -794,6 +794,42 @@ abstract class repository {
         require_once($typedirectory);
         return call_user_func_array(array('repository_' . $plugin, $function), $args);
     }
+    
+     /**
+     * Move a file to draft area
+     *
+     * @global object $USER
+     * @global object $DB
+     * @param string $encoded The metainfo of file, it is base64 encoded php seriablized data
+     * @param string $title The intended name of file
+     * @param string $itemid itemid
+     * @param string $save_path the new path in draft area
+     * @return array The information of file
+     */
+    public static function move_to_draft($encoded, $title = '', $itemid = '', $save_path = '/') {
+        global $USER, $DB;
+        $ret = array();
+
+        $browser = get_file_browser();
+        $params = unserialize(base64_decode($encoded));
+        $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+        // the final file
+        $contextid  = $params['contextid'];
+        $filearea   = $params['filearea'];
+        $filepath   = $params['filepath'];
+        $filename   = $params['filename'];
+        $fileitemid = $params['itemid'];
+        $context    = get_context_instance_by_id($contextid);
+        $file_info = $browser->get_file_info($context, $filearea, $fileitemid, $filepath, $filename);
+        $file_info->copy_to_storage($user_context->id, 'user_draft', $itemid, $save_path, $title);
+
+        $ret['itemid'] = $itemid;
+        $ret['title']  = $title;
+        $ret['contextid'] = $user_context->id;
+        $ret['filesize'] = $file_info->get_filesize();
+
+        return $ret;
+    }
 
     /**
      * Move file from download folder to file pool using FILE API

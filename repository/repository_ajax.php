@@ -218,8 +218,8 @@ switch ($action) {
     case 'download':
         try {
             // we have two special repoisitory type need to deal with
-            if ($repo->options['type'] == 'local') {
-                $fileinfo = $repo->move_to_draft($source, $saveas_filename, $itemid, $saveas_path);
+            if ($repo->options['type'] == 'local' || $repo->options['type'] == 'recent' ) {
+                $fileinfo = repository::move_to_draft($source, $saveas_filename, $itemid, $saveas_path);
                 $info = array();
                 $info['client_id'] = $client_id;
                 $info['file'] = $fileinfo['title'];
