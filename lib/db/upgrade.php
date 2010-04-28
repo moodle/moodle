@@ -3665,6 +3665,37 @@ AND EXISTS (SELECT 'x'
         upgrade_main_savepoint($result, 2010042801);
     }
 
+    if ($result && $oldversion < 2010042802) { // Change backup_controllers->type to varchar10 (recreate dep. index)
+
+    /// Define index typeitem_ix (not unique) to be dropped form backup_controllers
+        $table = new xmldb_table('backup_controllers');
+        $index = new xmldb_index('typeitem_ix', XMLDB_INDEX_NOTUNIQUE, array('type', 'itemid'));
+
+    /// Conditionally launch drop index typeitem_ix
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+    /// Changing precision of field type on table backup_controllers to (10)
+        $table = new xmldb_table('backup_controllers');
+        $field = new xmldb_field('type', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, 'backupid');
+
+    /// Launch change of precision for field type
+        $dbman->change_field_precision($table, $field);
+
+    /// Define index typeitem_ix (not unique) to be added to backup_controllers
+        $table = new xmldb_table('backup_controllers');
+        $index = new xmldb_index('typeitem_ix', XMLDB_INDEX_NOTUNIQUE, array('type', 'itemid'));
+
+    /// Conditionally launch add index typeitem_ix
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2010042802);
+    }
+
     return $result;
 }
 

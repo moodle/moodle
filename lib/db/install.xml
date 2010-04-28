@@ -2461,7 +2461,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="backupid"/>
         <FIELD NAME="backupid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="unique id of the backup" PREVIOUS="id" NEXT="type"/>
-        <FIELD NAME="type" TYPE="char" LENGTH="6" NOTNULL="true" SEQUENCE="false" COMMENT="Type of the backup (activity/section/course)" PREVIOUS="backupid" NEXT="itemid"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Type of the backup (activity/section/course)" PREVIOUS="backupid" NEXT="itemid"/>
         <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="id of the module/section/activity being backup" PREVIOUS="type" NEXT="format"/>
         <FIELD NAME="format" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="format of the backup (moodle/imscc...)" PREVIOUS="itemid" NEXT="interactive"/>
         <FIELD NAME="interactive" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="is the backup interactive (1-yes/0-no)" PREVIOUS="format" NEXT="purpose"/>
