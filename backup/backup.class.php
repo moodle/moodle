@@ -34,9 +34,9 @@
 abstract class backup implements checksumable {
 
     // Backup type
-    const TYPE_1ACTIVITY = '1act';
-    const TYPE_1SECTION  = '1sec';
-    const TYPE_1COURSE   = '1cou';
+    const TYPE_1ACTIVITY = 'activity';
+    const TYPE_1SECTION  = 'section';
+    const TYPE_1COURSE   = 'course';
 
     // Backup format
     const FORMAT_MOODLE  = 'moodle2';
