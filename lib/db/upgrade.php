@@ -3659,12 +3659,26 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table->add_key('cm', XMLDB_KEY_FOREIGN, array('cm'), 'course_modules', array('id'));
         $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
         if (!$dbman->table_exists($table)) {
-            $result = $result && $dbman->create_table($table);
+            $dbman->create_table($table);
         }
 
         upgrade_main_savepoint($result, 2010042304);
     }
+    if ($result && $oldversion < 2010042305) { /// Plagiarsim API UPGRADE
+        $table = new XMLDBTable('plagiarism_config');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('cm', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL,  null, '0');
+        $table->add_field('name', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('value', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
+        //keys
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('cm', XMLDB_KEY_FOREIGN, array('cm'), 'course_modules', array('id'));
 
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        upgrade_main_savepoint($result, 2010042305);
+    }
 
     return $result;
 }
