@@ -82,7 +82,7 @@ class question_edit_calculated_form extends question_edit_form {
         $this->qtypeobj =& $QTYPES[$this->qtype()];
       // echo code left for testing period
       //  echo "<p>question ".optional_param('multichoice', '', PARAM_RAW)." optional<pre>";print_r($this->question);echo "</pre></p>";
-        $label = get_string("sharedwildcards", "qtype_datasetdependent");
+        $label = get_string('sharedwildcards', 'qtype_calculated');
         $mform->addElement('hidden', 'initialcategory', 1);
         $mform->setType('initialcategory', PARAM_INT);
         $html2 = $this->qtypeobj->print_dataset_definitions_category($this->question);
@@ -110,33 +110,8 @@ class question_edit_calculated_form extends question_edit_form {
 
         $repeated = array();
 
-        $QTYPES['numerical']->edit_numerical_options($mform,$this);
-            $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));
-            $repeated[] =& $mform->createElement('text', 'unit', get_string('unit', 'quiz'));
-            $repeated[] =& $mform->createElement('text', 'multiplier', get_string('multiplier', 'quiz'));
-
-        $mform->setType('unit', PARAM_NOTAGS);
-
-        $mform->setType('multiplier', PARAM_NUMBER);
-
-        if (isset($this->question->options)){
-            $countunits = count($this->question->options->units);
-        } else {
-            $countunits = 0;
-        }
-        if ($this->question->formoptions->repeatelements){
-            $repeatsatstart = $countunits + 1;
-        } else {
-            $repeatsatstart = $countunits;
-        }
-        $this->repeat_elements($repeated, $repeatsatstart, array(), 'nounits', 'addunits', 2, get_string('addmoreunitblanks', 'qtype_calculated', '{no}'));
-
-        if ($mform->elementExists('multiplier[0]')){
-            $firstunit =& $mform->getElement('multiplier[0]');
-            $firstunit->freeze();
-            $firstunit->setValue('1.0');
-            $firstunit->setPersistantFreeze(true);
-        }
+        $QTYPES['numerical']->add_units_options($mform,$this);
+        $QTYPES['numerical']->add_units_elements($mform,$this);
         foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $feedbackname) {
             $mform->addElement('hidden', $feedbackname);
             $mform->setType($feedbackname, PARAM_RAW);
@@ -144,11 +119,6 @@ class question_edit_calculated_form extends question_edit_form {
         //hidden elements
         $mform->addElement('hidden', 'synchronize', '');
         $mform->setType('synchronize', PARAM_INT);
-    /*    if (isset($this->question->options)&& isset($this->question->options->synchronize) ){
-            $mform->setDefault("synchronize", $this->question->options->synchronize);
-        } else {
-            $mform->setDefault("synchronize", 0 );
-        }*/
         $mform->addElement('hidden', 'wizard', 'datasetdefinitions');
         $mform->setType('wizard', PARAM_ALPHA);
 
@@ -156,6 +126,7 @@ class question_edit_calculated_form extends question_edit_form {
     }
 
     function set_data($question) {
+        $default_values = array();
         if (isset($question->options)){
             $answers = $question->options->answers;
             if (count($answers)) {
@@ -171,37 +142,42 @@ class question_edit_calculated_form extends question_edit_form {
                     $key++;
                 }
             }
+          $default_values['synchronize'] = $question->options->synchronize ;
           $default_values['unitgradingtype'] = $question->options->unitgradingtype ;
           $default_values['unitpenalty'] = $question->options->unitpenalty ;
-          $default_values['showunits'] = $question->options->showunits ;
-          $default_values['unitsleft'] = $question->options->unitsleft ;
-          $default_values['instructions'] = $question->options->instructions  ;
-          $default_values['synchronize'] = $question->options->synchronize ;
+          switch ($question->options->showunits){
+            case 'O' :
+            case '1' : 
+                $default_values['showunits0'] = $question->options->showunits ;
+                $default_values['unitrole'] = 0 ;
+                break;
+            case '2' :
+            case '3' : 
+                $default_values['showunits1'] = $question->options->showunits ;
+                $default_values['unitrole'] = 1 ;
+                break;
+           } 
+            $default_values['unitsleft'] = $question->options->unitsleft ;
+            $default_values['instructions'] = $question->options->instructions  ;
 
             if (isset($question->options->units)){
                 $units  = array_values($question->options->units);
-                // make sure the default unit is at index 0
-                usort($units, create_function('$a, $b',
-                'if (1.0 === (float)$a->multiplier) { return -1; } else '.
-                'if (1.0 === (float)$b->multiplier) { return 1; } else { return 0; }'));
-                if (count($units)) {
-                    $key = 0;
-                    foreach ($units as $unit){
+                if (!empty($units)) {
+                    foreach ($units as $key => $unit){
                         $default_values['unit['.$key.']'] = $unit->unit;
                         $default_values['multiplier['.$key.']'] = $unit->multiplier;
-                        $key++;
                     }
                 }
             }
         }
         if (isset($question->options->single)){
-        $default_values['single'] =  $question->options->single;
-        $default_values['answernumbering'] =  $question->options->answernumbering;
-        $default_values['shuffleanswers'] =  $question->options->shuffleanswers;
-        $default_values['correctfeedback'] =  $question->options->correctfeedback;
-        $default_values['partiallycorrectfeedback'] =  $question->options->partiallycorrectfeedback;
-        $default_values['incorrectfeedback'] =  $question->options->incorrectfeedback;
-    }
+            $default_values['single'] =  $question->options->single;
+            $default_values['answernumbering'] =  $question->options->answernumbering;
+            $default_values['shuffleanswers'] =  $question->options->shuffleanswers;
+            $default_values['correctfeedback'] =  $question->options->correctfeedback;
+            $default_values['partiallycorrectfeedback'] =  $question->options->partiallycorrectfeedback;
+            $default_values['incorrectfeedback'] =  $question->options->incorrectfeedback;
+        }
         $default_values['submitbutton'] = get_string('nextpage', 'qtype_calculated');
         $default_values['makecopy'] = get_string('makecopynextpage', 'qtype_calculated');
         /* set the wild cards category display given that on loading the category element is
@@ -235,6 +211,7 @@ class question_edit_calculated_form extends question_edit_form {
     }
 
     function validation($data, $files) {
+        global $QTYPES;
               // echo code left for testing period
 
               //  echo "<p>question <pre>";print_r($this->question);echo "</pre></p>";
@@ -326,7 +303,7 @@ class question_edit_calculated_form extends question_edit_form {
                     $totalfraction = $totalfraction * 100;
                     $errors['fraction[0]'] = get_string('errfractionsaddwrong', 'qtype_multichoice', $totalfraction);
                 }
-            }*/
+            }
             $units  = $data['unit'];
             if (count($units)) {
                 foreach ($units as $key => $unit){
@@ -344,8 +321,29 @@ class question_edit_calculated_form extends question_edit_form {
                         }
 
                     }
+                }                
+            }*/
+            $QTYPES['numerical']->validate_numerical_options($data, $errors) ;
+       /*     if ($data['unitrole'] == 0 ){
+                $showunits = $data['showunits0'];
+            }else {
+                $showunits = $data['showunits1'];
+            }
+            
+            if (($showunits == 0) || ($showunits == 1) || ($showunits == 2)){
+               if (trim($units[0]) == ''){
+                 $errors['unit[0]'] = 'You must set a valid unit name' ;
                 }
             }
+            if ($showunits == 3 ){
+                if (count($units)) {
+                    foreach ($units as $key => $unit){
+                        if ($units[$key] != ''){
+                        $errors["unit[$key]"] = 'You must erase this unit name' ;
+                        }
+                    }
+                }
+            }*/
             if ($answercount==0){
                 $errors['answer[0]'] = get_string('atleastoneanswer', 'qtype_calculated');
             }

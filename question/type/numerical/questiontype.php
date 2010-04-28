@@ -44,7 +44,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         //       the question table as is usually the case for qtype
         //       specific tables.
         global $CFG, $DB, $OUTPUT;
-        $this->get_numerical_options($question);
         if (!$question->options->answers = $DB->get_records_sql(
                                 "SELECT a.*, n.tolerance " .
                                 "FROM {question_answers} a, " .
@@ -56,6 +55,9 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             return false;
         }
         $this->get_numerical_units($question);
+        //get_numerical_options() need to know if there are units
+        // to set correctly default values 
+        $this->get_numerical_options($question);
 
         // If units are defined we strip off the default unit from the answer, if
         // it is present. (Required for compatibility with the old code and DB).
@@ -74,20 +76,25 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     }
     function get_numerical_options(&$question) {
         global $DB;
-                if (!$options = $DB->get_record('question_numerical_options', array('question' => $question->id))) {
-          //  echo $OUTPUT->notification('Error: Missing question options for numerical question'.$question->id.'!');
-          //  return false;
-          $question->options->unitgradingtype = 0;
-          $question->options->unitpenalty = 0;
-          $question->options->showunits = 0 ;
-          $question->options->unitsleft = 0 ;
-          $question->options->instructions = '' ;
+        if (!$options = $DB->get_record('question_numerical_options', array('question' => $question->id))) {
+            $question->options->unitgradingtype = 0;
+            $question->options->unitpenalty = 0;
+            // the default 
+            if ($defaultunit = $this->get_default_numerical_unit($question)) {
+                // so units can be graded
+                $question->options->showunits = 0 ;
+            }else {
+                // only numerical will be graded
+                $question->options->showunits = 3 ;
+            }
+            $question->options->unitsleft = 0 ;
+            $question->options->instructions = '' ;
         } else {
-          $question->options->unitgradingtype = $options->unitgradingtype;
-          $question->options->unitpenalty = $options->unitpenalty;
-          $question->options->showunits = $options->showunits ;
-          $question->options->unitsleft = $options->unitsleft ;
-          $question->options->instructions = $options->instructions ;
+            $question->options->unitgradingtype = $options->unitgradingtype;
+            $question->options->unitpenalty = $options->unitpenalty;
+            $question->options->showunits = $options->showunits ;
+            $question->options->unitsleft = $options->unitsleft ;
+            $question->options->instructions = $options->instructions ;
         }
 
 
@@ -235,10 +242,25 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         }else {
             $options->unitpenalty = 0 ;
         }
-        if(isset($question->showunits)){
-            $options->showunits = $question->showunits;
-        }else {
-            $options->showunits = 0 ;
+        // if we came from the form then 'unitrole' exists
+        if(isset($question->unitrole)){
+            if ($question->unitrole == 0 ){
+                $options->showunits = $question->showunits0;
+            }else {
+                $options->showunits = $question->showunits1;
+            }
+        }else {                
+            if(isset($question->showunits)){
+                $options->showunits = $question->showunits;
+            }else {
+                if ($defaultunit = $this->get_default_numerical_unit($question)) {
+                    // so units can be graded
+                    $options->showunits = 0 ;
+                }else {
+                    // only numerical will be graded
+                    $options->showunits = 3 ;
+                }
+            }
         }
         if(isset($question->unitsleft)){
             $options->unitsleft = $question->unitsleft;
@@ -279,9 +301,11 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
         // Save the new units.
         $units = array();
+        $unitalreadyinsert = array();
         foreach ($question->multiplier as $i => $multiplier) {
             // Discard any unit which doesn't specify the unit or the multiplier
-            if (!empty($question->multiplier[$i]) && !empty($question->unit[$i])) {
+            if (!empty($question->multiplier[$i]) && !empty($question->unit[$i])&& !array_key_exists(addslashes($question->unit[$i]),$unitalreadyinsert)) {
+                $unitalreadyinsert[addslashes($question->unit[$i])] = 1 ;
                 $units[$i] = new stdClass;
                 $units[$i]->question = $question->id;
                 $units[$i]->multiplier = $this->apply_unit($question->multiplier[$i], array());
@@ -665,56 +689,155 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         // Invalid number. Must be wrong.
         return false;
     }
-    function edit_numerical_options(&$mform, &$that){
-        $mform->addElement('header', 'unithandling', get_string("Units handling", 'qtype_numerical'));
-     //   $mform->addElement('checkbox', 'usecurrentcat1', get_string('Don\'t use unit','qtype_numerical'), get_string('leave Unit(s) input field empty ','qtype_numerical'));
-        $mform->addElement('radio', 'showunits', 'No unit display', get_string("Only numerical answer will be graded: leave Unit No1 empty", 'qtype_numerical'),3);
-        $mform->addElement('radio', 'showunits', 'Display unit ', get_string('NON editable text of Unit No1', 'qtype_numerical'),2);
-        $mform->addElement('radio', 'showunits', 'Edit unit  ', get_string('Editable text input element', 'qtype_numerical'),0);
-        $mform->addElement('radio', 'showunits', 'Select units ', get_string('Choice radio element of 2 Units minimum', 'qtype_numerical'),1);
-        $unitslefts = array('0' => get_string('rigth as 1.00cm', 'qtype_numerical'),'1' => get_string('left as $1.00', 'qtype_numerical'));
-        $mform->addElement('select', 'unitsleft', 'Unit position' , $unitslefts );
+/**
+  * function used in in function definition_inner()
+  * of edit_..._form.php for
+  * numerical, calculated, calculatedsimple
+  */    
+    function add_units_options(&$mform, &$that){
+        $mform->addElement('header', 'unithandling', get_string('unitshandling', 'qtype_numerical'));
+        // Units are graded
+        $mform->addElement('radio', 'unitrole', get_string('unitgraded1', 'qtype_numerical'), get_string('unitgraded', 'qtype_numerical'),0);
+        $penaltygrp = array();
+        $penaltygrp[] =& $mform->createElement('text', 'unitpenalty', get_string('unitpenalty', 'qtype_numerical') ,
+                array('size' => 6));
+        $unitgradingtypes = array('1' => get_string('decfractionofquestiongrade', 'qtype_numerical'), '2' => get_string('decfractionofresponsegrade', 'qtype_numerical'));
+        $penaltygrp[] =& $mform->createElement('select', 'unitgradingtype', '' , $unitgradingtypes );
+        $mform->addGroup($penaltygrp, 'penaltygrp', get_string('unitpenalty', 'qtype_numerical'),' ' , false);
+        $showunits0grp = array();
+        $showunits0grp[] =& $mform->createElement('radio', 'showunits0', get_string('unitedit', 'qtype_numerical'), get_string('editableunittext', 'qtype_numerical'),0);
+        $showunits0grp[] =& $mform->createElement('radio', 'showunits0', get_string('selectunits', 'qtype_numerical') , get_string('unitchoice', 'qtype_numerical'),1);
+        $mform->addGroup($showunits0grp, 'showunits0grp', get_string('studentunitanswer', 'qtype_numerical'),' OR ' , false);
+        $mform->addElement('htmleditor', 'instructions', get_string('instructions', 'qtype_numerical'),
+                array('rows' => 10, 'course' => $that->coursefilesid));
+        $mform->addElement('static', 'separator1', '<HR/>', '<HR/>');
+        // Units are not graded
+        $mform->addElement('radio', 'unitrole', get_string('unitnotgraded', 'qtype_numerical'), get_string('onlynumerical', 'qtype_numerical'),1);
+        $showunits1grp = array();
+        $showunits1grp[] = & $mform->createElement('radio', 'showunits1', '', get_string('no', 'moodle'),3);
+        $showunits1grp[] = & $mform->createElement('radio', 'showunits1', '', get_string('yes', 'moodle'),2);
+        $mform->addGroup($showunits1grp, 'showunits1grp', get_string('unitdisplay', 'qtype_numerical'),' ' , false);
+        $unitslefts = array('0' => get_string('rightexample', 'qtype_numerical'),'1' => get_string('leftexample', 'qtype_numerical'));
+        $mform->addElement('static', 'separator2', '<HR/>', '<HR/>');
+        $mform->addElement('select', 'unitsleft', get_string('unitposition', 'qtype_numerical') , $unitslefts );
          $currentgrp1 = array();
 
-        $currentgrp1[] =& $mform->createElement('text', 'unitpenalty', get_string('Penalty for bad unit', 'qtype_numerical') ,
-                array('size' => 3));
-        $currentgrp1[] =& $mform->createElement('static', 'penalty1','', get_string('as decimal fraction (0-1) of', 'qtype_numerical'));
-        $mform->addGroup($currentgrp1, 'penaltygrp', get_string('Penalty for bad unit', 'qtype_numerical'), null, false);
         $mform->setType('unitpenalty', PARAM_NUMBER);
-        //$mform->addRule('unitpenalty', null, 'required', null, 'client');
         $mform->setDefault('unitpenalty', 0.1);
-        $currentgrp = array();
-        $unitgradingtypes = array('1' => get_string('question grade', 'qtype_numerical'), '2' => get_string(' response grade', 'qtype_numerical'));
-        $mform->addElement('select', 'unitgradingtype', '' , $unitgradingtypes );
-     /*   $currentgrp[] =& $mform->createElement('radio', 'unitgradingtype', 'or', get_string('question grade', 'qtype_numerical'),1);
-        $currentgrp[] =& $mform->createElement('radio', 'unitgradingtype', '', get_string(' response grade', 'qtype_numerical'),2);;*/
         $mform->setDefault('unitgradingtype', 1);
-      //  $mform->addGroup($currentgrp, 'penaltychoicegrp', '',' or ', false);
-        $mform->setHelpButton('unitgradingtype', array('penaltygrp', get_string('unitpenalty', 'qtype_numerical'), 'qtype_numerical'));
-        $mform->setDefault('showunits', 0);
-        $currentgrp = array();
-       /*  $leftgrp[] =& $mform->createElement('radio', 'unitsleft', '', get_string('left as $1.00', 'qtype_numerical'),1);
-        $leftgrp[] =& $mform->createElement('radio', 'unitsleft', '', get_string('rigth as 1.00cm', 'qtype_numerical'),0);*/
-       // $mform->addGroup($leftgrp, 'unitsleft', 'Unit position',' or ', false);
+        $mform->setHelpButton('penaltygrp', array('penaltygrp', get_string('unitpenalty', 'qtype_numerical'), 'qtype_numerical'));
+        $mform->setDefault('showunits0', 0);
+        $mform->setDefault('showunits1', 3);
         $mform->setDefault('unitsleft', 0);
-        $mform->addElement('htmleditor', 'instructions', get_string('instructions', 'quiz'),
-                array('rows' => 10, 'course' => $that->coursefilesid));
-                $mform->setAdvanced('instructions',true);
         $mform->setType('instructions', PARAM_RAW);
-        $mform->setHelpButton('instructions', array('instructions', get_string('instructions', 'quiz'), 'quiz'));
-       // $mform->disabledIf('showunits', 'usecurrentcat1', 'checked');
-        $mform->disabledIf('addunits', 'showunits','eq','3');
-        $mform->disabledIf('addunits', 'showunits','eq','2');
-        $mform->disabledIf('unitpenalty', 'showunits','eq','3');
-        $mform->disabledIf('unitpenalty', 'showunits','eq','2');
-        $mform->disabledIf('unitgradingtype', 'showunits','eq','3');
-        $mform->disabledIf('unitgradingtype', 'showunits','eq','2');
-        $mform->disabledIf('instructions', 'showunits','eq','3');
-        $mform->disabledIf('instructions', 'showunits','eq','2');
-        
-       // $mform->disabledIf('usecurrentcat1', 'showunits','eq','3');
-       // $mform->disabledIf('usecurrentcat1', 'units[0]','eq','3');
+        $mform->setHelpButton('instructions', array('instructions', get_string('instructions', 'qtype_numerical'), 'quiz'));
+        $mform->disabledIf('penaltygrp', 'unitrole','eq','1');
+        $mform->disabledIf('unitgradingtype', 'unitrole','eq','1');
+        $mform->disabledIf('instructions', 'unitrole','eq','1');
+        $mform->disabledIf('unitsleft', 'showunits1','eq','3');
+        $mform->disabledIf('showunits1','unitrole','eq','0');
+        $mform->disabledIf('showunits0','unitrole','eq','1');
        
+
+    }
+/**
+  * function used in in function definition_inner()
+  * of edit_..._form.php for
+  * numerical, calculated, calculatedsimple
+  */    
+    function add_units_elements(& $mform,& $that) { 
+        $repeated = array();
+        $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));
+
+        $repeated[] =& $mform->createElement('text', 'unit', get_string('unit', 'quiz'));
+        $mform->setType('unit', PARAM_NOTAGS);
+
+        $repeated[] =& $mform->createElement('text', 'multiplier', get_string('multiplier', 'quiz'));
+        $mform->setType('multiplier', PARAM_NUMBER);
+
+        if (isset($this->question->options)){
+            $countunits = count($that->question->options->units);
+        } else {
+            $countunits = 0;
+        }
+        if ($that->question->formoptions->repeatelements){
+            $repeatsatstart = $countunits + 1;
+        } else {
+            $repeatsatstart = $countunits;
+        }
+        $that->repeat_elements($repeated, $repeatsatstart, array(), 'nounits', 'addunits', 2, get_string('addmoreunitblanks', 'qtype_calculated', '{no}'));
+
+        if ($mform->elementExists('multiplier[0]')){
+            $firstunit =& $mform->getElement('multiplier[0]');
+            $firstunit->freeze();
+            $firstunit->setValue('1.0');
+            $firstunit->setPersistantFreeze(true);
+        }
+    }
+/**
+  * function use in in function validation()
+  * of edit_..._form.php for
+  * numerical, calculated, calculatedsimple
+  */    
+
+    function validate_numerical_options(& $data, & $errors){
+        $units  = $data['unit'];
+        if ($data['unitrole'] == 0 ){
+            $showunits = $data['showunits0'];
+        }else {
+            $showunits = $data['showunits1'];
+        }
+        
+        if (($showunits == 0) || ($showunits == 1) || ($showunits == 2)){
+           if (trim($units[0]) == ''){
+             $errors['unit[0]'] = 'You must set a valid unit name' ;
+            }
+        }
+        if ($showunits == 3 ){
+            if (count($units)) {
+                foreach ($units as $key => $unit){
+                    if ($units[$key] != ''){
+                    $errors["unit[$key]"] = 'You must erase this unit name' ;
+                    }
+                }
+            }
+        }
+    
+        
+        // Check double units.
+        $alreadyseenunits = array();
+        if (isset($data['unit'])) {
+            foreach ($data['unit'] as $key => $unit) {
+                $trimmedunit = trim($unit);
+                if ($trimmedunit!='' && in_array($trimmedunit, $alreadyseenunits)) {
+                    $errors["unit[$key]"] = get_string('errorrepeatedunit', 'qtype_numerical');
+                    if (trim($data['multiplier'][$key]) == '') {
+                        $errors["multiplier[$key]"] = get_string('errornomultiplier', 'qtype_numerical');
+                    }
+                } elseif($trimmedunit!='') {
+                    $alreadyseenunits[] = $trimmedunit;
+                }
+            }
+        }
+             $units  = $data['unit'];
+            if (count($units)) {
+                foreach ($units as $key => $unit){
+                    if (is_numeric($unit)){
+                        $errors['unit['.$key.']'] = get_string('mustnotbenumeric', 'qtype_calculated');
+                    }
+                    $trimmedunit = trim($unit);
+                    $trimmedmultiplier = trim($data['multiplier'][$key]);
+                    if (!empty($trimmedunit)){
+                        if (empty($trimmedmultiplier)){
+                            $errors['multiplier['.$key.']'] = get_string('youmustenteramultiplierhere', 'qtype_calculated');
+                        }
+                        if (!is_numeric($trimmedmultiplier)){
+                            $errors['multiplier['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');
+                        }
+
+                    }
+                }                
+            }
 
     }
 

@@ -301,40 +301,9 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculated', '{no}'),
                 $creategrades->gradeoptions, 1, 1);
 
-        $QTYPES['numerical']->edit_numerical_options($mform,$this);
+        $QTYPES['numerical']->add_units_options($mform,$this);
 
-        $repeated = array();
-        $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));
-
-        $repeated[] =& $mform->createElement('text', 'unit', get_string('unit', 'quiz'));
-        $mform->setType('unit', PARAM_NOTAGS);
-
-        $repeated[] =& $mform->createElement('text', 'multiplier', get_string('multiplier', 'quiz'));
-        $mform->setType('multiplier', PARAM_NUMBER);
-
-        if (isset($this->question->options)){
-            $countunits = count($this->question->options->units);
-        } else {
-            $countunits = 0;
-        }
-        if ($this->question->formoptions->repeatelements){
-            $repeatsatstart = $countunits + 1;
-        } else {
-            $repeatsatstart = $countunits;
-        }
-        $this->repeat_elements($repeated, $repeatsatstart, array(), 'nounits', 'addunits', 2, get_string('addmoreunitblanks', 'qtype_calculated', '{no}'));
-
-        if ($mform->elementExists('multiplier[0]')){
-            $firstunit =& $mform->getElement('multiplier[0]');
-            $firstunit->freeze();
-            $firstunit->setValue('1.0');
-            $firstunit->setPersistantFreeze(true);
-        }
-
-        //hidden elements
-   //     $mform->addElement('hidden', 'wizard', 'datasetdefinitions');
-   //     $mform->setType('wizard', PARAM_ALPHA);
-     //   $mform->addElement('header', '', '');
+        $QTYPES['numerical']->add_units_elements($mform,$this);
         $label = "<div class='mdl-align'></div><div class='mdl-align'>".get_string('wildcardrole', 'qtype_calculatedsimple')."</div>";
         $mform->addElement('html', "<div class='mdl-align'>&nbsp;</div>");
         $mform->addElement('html', $label);// explaining the role of datasets so other strings can be shortened
@@ -572,24 +541,15 @@ class question_edit_calculatedsimple_form extends question_edit_form {
 
               }
             }
-   //     $mform->addElement('hidden', 'wizard', 'edit_calculatedsimple');
-   //     $mform->setType('wizard', PARAM_ALPHA);
-/*
-        $mform->addElement('hidden', 'returnurl');
-        $mform->setType('returnurl', PARAM_LOCALURL);
-        $mform->setDefault('returnurl', 0);
-
-*/
     }
 
     function set_data($question) {
             $answer = $this->answer;
-        $default_values = array();
+            $default_values = array();
             if (count($answer)) {
                 $key = 0;
                 foreach ($answer as $answer){
                     $default_values['answer['.$key.']'] = $answer->answer;
-                  //  echo "<p> $answer->fraction </p>";
                     $default_values['fraction['.$key.']'] = $answer->fraction;
                     $default_values['tolerance['.$key.']'] = $answer->tolerance;
                     $default_values['tolerancetype['.$key.']'] = $answer->tolerancetype;
@@ -601,23 +561,30 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             }
             $default_values['synchronize'] = 0 ;
             if (isset($question->options)){
-                    $default_values['unitgradingtype'] = $question->options->unitgradingtype ;
-                    $default_values['unitpenalty'] = $question->options->unitpenalty ;
-                    $default_values['showunits'] = $question->options->showunits ;
-                    $default_values['unitsleft'] = $question->options->unitsleft ;
-                    $default_values['instructions'] = $question->options->instructions  ;
+                $default_values['unitgradingtype'] = $question->options->unitgradingtype ;
+                $default_values['unitpenalty'] = $question->options->unitpenalty ;
+                switch ($question->options->showunits){
+                    case 'O' :
+                    case '1' : 
+                        $default_values['showunits0'] = $question->options->showunits ;
+                        $default_values['unitrole'] = 0 ;
+                        break;
+                    case '2' :
+                    case '3' : 
+                        $default_values['showunits1'] = $question->options->showunits ;
+                        $default_values['unitrole'] = 1 ;
+                        break;
+                } 
+                $default_values['unitsleft'] = $question->options->unitsleft ;
+                $default_values['instructions'] = $question->options->instructions  ;
 
-                $units  = array_values($question->options->units);
-                // make sure the default unit is at index 0
-                usort($units, create_function('$a, $b',
-                'if (1.0 === (float)$a->multiplier) { return -1; } else '.
-                'if (1.0 === (float)$b->multiplier) { return 1; } else { return 0; }'));
-                if (count($units)) {
-                    $key = 0;
-                    foreach ($units as $unit){
-                        $default_values['unit['.$key.']'] = $unit->unit;
-                        $default_values['multiplier['.$key.']'] = $unit->multiplier;
-                        $key++;
+                if (isset($question->options->units)){
+                    $units  = array_values($question->options->units);
+                    if (!empty($units)) {
+                        foreach ($units as $key => $unit){
+                            $default_values['unit['.$key.']'] = $unit->unit;
+                            $default_values['multiplier['.$key.']'] = $unit->multiplier;
+                        }
                     }
                 }
             }
@@ -682,6 +649,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
     }
 
     function validation($data, $files) {
+        global $QTYPES;
         $errors = parent::validation($data, $files);
         //verifying for errors in {=...} in question text;
         $qtext = "";
@@ -765,6 +733,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 $errors['fraction[0]'] = get_string('errfractionsaddwrong', 'qtype_multichoice', $totalfraction);
             }
         }*/
+            $QTYPES['numerical']->validate_numerical_options($data, $errors) ;
         $units  = $data['unit'];
         if (count($units)) {
             foreach ($units as $key => $unit){

@@ -170,8 +170,8 @@ class question_dataset_dependent_items_form extends moodleform {
         if ($this->qtypeobj->supports_dataset_item_generation()){
             $radiogrp = array();
             $radiogrp[] =& $mform->createElement('radio', 'nextpageparam[forceregeneration]', null, get_string('reuseifpossible', 'qtype_calculated'), 0);
-            $radiogrp[] =& $mform->createElement('radio', 'nextpageparam[forceregeneration]', null, get_string('forceregeneration of only non shared wild cards', 'qtype_calculated'), 1);
-            $radiogrp[] =& $mform->createElement('radio', 'nextpageparam[forceregeneration]', null, get_string('forceregeneration of all wild cards', 'qtype_calculated'), 2);
+            $radiogrp[] =& $mform->createElement('radio', 'nextpageparam[forceregeneration]', null, get_string('forceregenerationshared', 'qtype_calculated'), 1);
+            $radiogrp[] =& $mform->createElement('radio', 'nextpageparam[forceregeneration]', null, get_string('forceregenerationall', 'qtype_calculated'), 2);
             $mform->addGroup($radiogrp, 'forceregenerationgrp', get_string('nextitemtoadd', 'qtype_calculated'), "<br/>", false);
         }
 
@@ -181,14 +181,14 @@ class question_dataset_dependent_items_form extends moodleform {
         $addgrp[] =& $mform->createElement('submit', 'addbutton', get_string('add', 'moodle'));
         $addgrp[] =& $mform->createElement('select', "selectadd", get_string('additem', 'qtype_calculated'), $addremoveoptions);
         $addgrp[] = & $mform->createElement('static',"stat","Items",get_string('newsetwildcardvalues', 'qtype_calculatedsimple'));
-        $mform->addGroup($addgrp, 'addgrp', '', '   ', false);
+        $mform->addGroup($addgrp, 'addgrp', get_string('additem', 'qtype_calculated'), '   ', false);
         $mform->addElement('static', "divideradd", '', '');
     //     $mform->closeHeaderBefore('divideradd');
         if ($this->noofitems > 0) {
             $mform->addElement('header', 'additemhdr', get_string('delete', 'moodle'));
             $deletegrp = array();
             $deletegrp[] =& $mform->createElement('submit', 'deletebutton', get_string('delete', 'moodle'));
-            $deletegrp[] =& $mform->createElement('select', "selectdelete", get_string('deleteitem', 'qtype_calculated')."1", $addremoveoptions);
+            $deletegrp[] =& $mform->createElement('select', 'selectdelete', get_string('deleteitem', 'qtype_calculated')."1", $addremoveoptions);
             $deletegrp[] = & $mform->createElement('static',"stat","Items",get_string('setwildcardvalues', 'qtype_calculatedsimple'));
             $mform->addGroup($deletegrp, 'deletegrp', '', '   ', false);
    //      $mform->addElement('static', "dividerdelete", '', '<hr />');

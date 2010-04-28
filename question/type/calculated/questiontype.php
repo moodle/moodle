@@ -42,13 +42,6 @@ class question_calculated_qtype extends default_questiontype {
             $question->options->incorrectfeedback = '';
 
         }
-    //    echo "<p> questionoptions <pre>";print_r($question);echo "</pre></p>";
-         /* $question->options->unitgradingtype = 0;
-          $question->options->unitpenalty = 0;
-          $question->options->showunits = 0 ;
-          $question->options->unitsleft = 0 ;
-          $question->options->instructions = '' ;*/
-   //     echo "<p> questionoptions <pre>";print_r($question);echo "</pre></p>";
 
         if (!$question->options->answers = $DB->get_records_sql(
                                 "SELECT a.*, c.tolerance, c.tolerancetype, c.correctanswerlength, c.correctanswerformat " .
@@ -62,8 +55,8 @@ class question_calculated_qtype extends default_questiontype {
         }
 
         if ( $this->get_virtual_qtype() ==  $QTYPES['numerical']){
-            $QTYPES['numerical']->get_numerical_options($question);
             $QTYPES['numerical']->get_numerical_units($question);
+            $QTYPES['numerical']->get_numerical_options($question);
         }
 
         if( isset($question->export_process)&&$question->export_process){
