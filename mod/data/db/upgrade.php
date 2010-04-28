@@ -254,7 +254,7 @@ function xmldb_data_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2010031602, 'data');
     }
 
-    if($result && $oldversion < 2010042300) {
+    if($result && $oldversion < 2010042800) {
         //migrate data ratings to the central rating table
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
 
@@ -273,9 +273,13 @@ WHERE m.name = :modname AND cxt.contextlevel = :contextlevel";
 
         $DB->execute($sql, $params);
 
-        //todo andrew drop data_ratings
+        //now drop data_ratings
+        $table = new xmldb_table('data_ratings');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
 
-        upgrade_mod_savepoint($result, 2010042300, 'data');
+        upgrade_mod_savepoint($result, 2010042800, 'data');
     }
 
     return $result;

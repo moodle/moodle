@@ -260,7 +260,7 @@ function xmldb_glossary_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009110800, 'glossary');
     }
 
-    if($result && $oldversion < 2010042200) {
+    if($result && $oldversion < 2010042800) {
         //migrate glossary_ratings to the central rating table
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
 
@@ -280,9 +280,13 @@ WHERE m.name = :modname AND cxt.contextlevel = :contextlevel";
 
         $DB->execute($sql, $params);
 
-        //todo andrew drop glossary_ratings
+        //now drop glossary_ratings
+        $table = new xmldb_table('glossary_ratings');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
 
-        upgrade_mod_savepoint($result, 2010042200, 'glossary');
+        upgrade_mod_savepoint($result, 2010042800, 'glossary');
     }
 
     return $result;

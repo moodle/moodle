@@ -285,7 +285,7 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009050400, 'forum');
     }
 
-    if($result && $oldversion < 2010042200) {
+    if($result && $oldversion < 2010042800) {
         //migrate forumratings to the central rating table
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
 
@@ -305,9 +305,13 @@ WHERE m.name = :modname AND cxt.contextlevel = :contextlevel";
 
         $DB->execute($sql, $params);
 
-        //todo andrew drop forum_ratings
+        //now drop forum_ratings
+        $table = new xmldb_table('forum_ratings');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
 
-        upgrade_mod_savepoint($result, 2010042200, 'forum');
+        upgrade_mod_savepoint($result, 2010042800, 'forum');
     }
 
     return $result;
