@@ -291,7 +291,6 @@ class assignment_upload extends assignment_base {
                 $mimetype = $file->get_mimetype();
                 $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
                 $output .= '<a href="'.$path.'" ><img class="icon" src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" alt="'.$mimetype.'" />'.s($filename).'</a>&nbsp;';
-                $output .= plagiarism_get_links($userid, $file, $this->cm->id, $this->course, $this->assignment);
             }
 
         }
@@ -357,9 +356,6 @@ class assignment_upload extends assignment_base {
                     $output .= '<a href="'.$delurl.'">&nbsp;'
                               .'<img title="'.$strdelete.'" src="'.$OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt="" /></a> ';
                 }
-
-                $output .= plagiarism_get_links($userid, $file, $this->cm->id, $this->course, $this->assignment);
-                $output .= '<br />';
 
                 if (has_capability('mod/assignment:exportownsubmission', $this->context)) {
                     $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'fileid' => $file->get_id()), '/mod/assignment/locallib.php');
@@ -1065,7 +1061,6 @@ class assignment_upload extends assignment_base {
         $mform->setDefault('var4', 1);
 
         $course_context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-        plagiarism_get_form_elements_module($mform, $course_context);
 
     }
 
@@ -1132,7 +1127,6 @@ class assignment_upload extends assignment_base {
     public function download_submissions() {
         global $CFG,$DB;
         require_once($CFG->libdir.'/filelib.php');
-
         $submissions = $this->get_submissions('','');
         if (empty($submissions)) {
             error("there are no submissions to download");
@@ -1149,6 +1143,12 @@ class assignment_upload extends assignment_base {
             $groupid = $group->id;
             $groupname = $group->name.'-';
         }
+        $fb = get_file_browser();
+        $fileb = $fb->get_file_info($this->context, 'assignment_submission');
+        print_object($fileb);
+        //print_object($fileb->get_params());
+        error('here');
+        
         $filename = str_replace(' ', '_', clean_filename($this->course->shortname.'-'.$this->assignment->name.'-'.$groupname.$this->assignment->id.".zip")); //name of new zip file.
         foreach ($submissions as $submission) {
             $a_userid = $submission->userid; //get userid

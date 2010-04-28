@@ -6903,7 +6903,6 @@ function get_core_subsystems() {
             'notes'       => 'notes',
             'pagetype'    => NULL,
             'pix'         => NULL,
-            'plagiarism'  => 'plagiarism',
             'portfolio'   => 'portfolio',
             'question'    => 'question',
             'rating'      => 'rating',

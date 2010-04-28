@@ -23,8 +23,6 @@ class assignment_uploadsingle extends assignment_base {
                 $mimetype = $file->get_mimetype();
                 $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
                 $output .= '<a href="'.$path.'" ><img class="icon" src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" alt="'.$mimetype.'" />'.s($filename).'</a><br />';
-                $output .= get_plagiarism_links($userid, $file);
-                $output .='<br/>';
             }
         }
 
@@ -138,7 +136,7 @@ class assignment_uploadsingle extends assignment_base {
     }
 
     function setup_elements(&$mform) {
-        global $CFG, $COURSE, $DB;
+        global $CFG, $COURSE;
 
         $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
 
@@ -155,8 +153,6 @@ class assignment_uploadsingle extends assignment_base {
         $mform->addElement('select', 'maxbytes', get_string('maximumsize', 'assignment'), $choices);
         $mform->setDefault('maxbytes', $CFG->assignment_maxbytes);
 
-        $course_context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-        plagiarism_get_form_elements_module($mform, $course_context);
     }
 
     function portfolio_exportable() {

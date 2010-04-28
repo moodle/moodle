@@ -125,10 +125,6 @@
     get_mailer('close');
     mtrace("Finished activity modules");
 
-    //now do plagiarism checks
-    require_once($CFG->libdir.'/plagiarismlib.php');
-    plagiarism_check_files();
-
     mtrace("Starting blocks");
     if ($blocks = $DB->get_records_select("block", "cron > 0 AND ((? - lastcron) > cron) AND visible = 1", array($timenow))) {
         // we will need the base class.

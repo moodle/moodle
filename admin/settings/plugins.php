@@ -304,7 +304,6 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
         }
     }
 }
-$ADMIN->add('modsettings', new admin_externalpage('plagiarism',get_string('plagiarism', 'plagiarism'), "$CFG->wwwroot/$CFG->admin/plagiarism/plagiarism.php", 'moodle/site:config'));
 
 $ADMIN->add('reports', new admin_externalpage('comments', get_string('comments'), $CFG->wwwroot.'/comment/', 'moodle/site:viewreports'));
 /// Now add reports
