@@ -152,20 +152,3 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_LEAP2A);
     }
 }
-/**
- * File browsing support class
- */
-class assignment_content_file_info extends file_info_stored {
-    public function get_parent() {
-        if ($this->lf->get_filepath() === '/' and $this->lf->get_filename() === '.') {
-            return $this->browser->get_file_info($this->context);
-        }
-        return parent::get_parent();
-    }
-    public function get_visible_name() {
-        if ($this->lf->get_filepath() === '/' and $this->lf->get_filename() === '.') {
-            return $this->topvisiblename;
-        }
-        return parent::get_visible_name();
-    }
-}

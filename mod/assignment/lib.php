@@ -3459,30 +3459,19 @@ function assignment_get_file_areas($course, $cm, $context) {
  * @return object file_info instance or null if not found
  */
 function assignment_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
-    global $CFG;
+     global $CFG, $DB;
 
-    $canwrite = has_capability('moodle/course:managefiles', $context);
-
-    $fs = get_file_storage();
-
-    if ($filearea === 'assignment_submission') {
-        $filepath = is_null($filepath) ? '/' : $filepath;
-        $filename = is_null($filename) ? '.' : $filename;
-
-        $urlbase = $CFG->wwwroot.'/pluginfile.php';
-        if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
-            if ($filepath === '/' and $filename === '.') {
-                $storedfile = new virtual_root_file($context->id, $filearea, 0);
-            } else {
-                // not found
-                return null;
-            }
-        }
-        require_once("$CFG->dirroot/mod/assignment/locallib.php");
-        return new assignment_content_file_info($browser, $context, $storedfile, $urlbase, $areas[$filearea], true, true, $canwrite, false);
+    if (!has_capability('moodle/course:managefiles', $context)) {
+        // no peaking here, sorry
+        return null;
     }
 
-    // note: folder_intro handled in file_browser automatically
+    if ($filearea !== 'assignment_submission') {
+        return null;
+    }
+    //TODO: handle itemid as group id here.
 
-    return null;
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, $filearea);
+    return $files;
 }
