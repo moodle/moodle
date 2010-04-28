@@ -136,7 +136,7 @@ class assignment_uploadsingle extends assignment_base {
     }
 
     function setup_elements(&$mform) {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $DB;
 
         $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
 
@@ -153,6 +153,7 @@ class assignment_uploadsingle extends assignment_base {
         $mform->addElement('select', 'maxbytes', get_string('maximumsize', 'assignment'), $choices);
         $mform->setDefault('maxbytes', $CFG->assignment_maxbytes);
 
+        $course_context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
     }
 
     function portfolio_exportable() {
