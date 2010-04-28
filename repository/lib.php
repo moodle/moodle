@@ -820,8 +820,13 @@ abstract class repository {
         $filename   = $params['filename'];
         $fileitemid = $params['itemid'];
         $context    = get_context_instance_by_id($contextid);
-        $file_info = $browser->get_file_info($context, $filearea, $fileitemid, $filepath, $filename);
-        $file_info->copy_to_storage($user_context->id, 'user_draft', $itemid, $save_path, $title);
+        try {
+            $file_info = $browser->get_file_info($context, $filearea, $fileitemid, $filepath, $filename);
+            $file_info->copy_to_storage($user_context->id, 'user_draft', $itemid, $save_path, $title);
+        } catch (Exception $e) {
+            $err->e = $e->getMessage();
+            die(json_encode($err));
+        }
 
         $ret['itemid'] = $itemid;
         $ret['title']  = $title;
@@ -1869,8 +1874,8 @@ function repository_setup_default_plugins() {
     $local_plugin_id = $local_plugin->create(true);
     $upload_plugin = new repository_type('upload', array(), true);
     $upload_plugin_id = $upload_plugin->create(true);
-    if (is_int($local_plugin_id) or is_int($upload_plugin_id)) {
-        echo $OUTPUT->box(get_string('setupdefaultplugins', 'repository'));
-    }
+    $recent_plugin = new repository_type('recent', array(), true);
+    $recent_plugin_id = $upload_plugin->create(true);
+    echo $OUTPUT->box(get_string('setupdefaultplugins', 'repository'));
     return true;
 }
