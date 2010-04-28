@@ -1023,7 +1023,7 @@ class assignment_upload extends assignment_base {
     }
 
     function setup_elements(&$mform) {
-        global $CFG, $COURSE, $DB;
+        global $CFG, $COURSE;
 
         $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
 
@@ -1059,8 +1059,6 @@ class assignment_upload extends assignment_base {
         $mform->addElement('select', 'var4', get_string("trackdrafts", "assignment"), $ynoptions);
         $mform->setHelpButton('var4', array('trackdrafts', get_string('trackdrafts', 'assignment'), 'assignment'));
         $mform->setDefault('var4', 1);
-
-        $course_context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
 
     }
 
