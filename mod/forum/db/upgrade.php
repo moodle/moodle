@@ -288,26 +288,25 @@ function xmldb_forum_upgrade($oldversion) {
     if($result && $oldversion < 2010042800) {
         //migrate forumratings to the central rating table
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
-
-        //forum ratings only have a single time column so use it for both time created and modified
-        $sql = "INSERT INTO {rating} (contextid, scaleid, itemid, rating, userid, timecreated, timemodified)
-SELECT cxt.id, f.scale, r.post AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified
-FROM {forum_ratings} r
-JOIN {forum_posts} p ON p.id=r.post
-JOIN {forum_discussions} d ON d.id=p.discussion
-JOIN {forum} f ON f.id=d.forum
-JOIN {course_modules} cm ON cm.instance=f.id
-JOIN {context} cxt ON cxt.instanceid=cm.id
-JOIN {modules} m ON m.id=cm.module
-WHERE m.name = :modname AND cxt.contextlevel = :contextlevel";
-        $params['modname'] = 'forum';
-        $params['contextlevel'] = CONTEXT_MODULE;
-
-        $DB->execute($sql, $params);
-
-        //now drop forum_ratings
         $table = new xmldb_table('forum_ratings');
         if ($dbman->table_exists($table)) {
+            //forum ratings only have a single time column so use it for both time created and modified
+            $sql = "INSERT INTO {rating} (contextid, scaleid, itemid, rating, userid, timecreated, timemodified)
+    SELECT cxt.id, f.scale, r.post AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified
+    FROM {forum_ratings} r
+    JOIN {forum_posts} p ON p.id=r.post
+    JOIN {forum_discussions} d ON d.id=p.discussion
+    JOIN {forum} f ON f.id=d.forum
+    JOIN {course_modules} cm ON cm.instance=f.id
+    JOIN {context} cxt ON cxt.instanceid=cm.id
+    JOIN {modules} m ON m.id=cm.module
+    WHERE m.name = :modname AND cxt.contextlevel = :contextlevel";
+            $params['modname'] = 'forum';
+            $params['contextlevel'] = CONTEXT_MODULE;
+
+            $DB->execute($sql, $params);
+
+            //now drop forum_ratings
             $dbman->drop_table($table);
         }
 

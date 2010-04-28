@@ -264,25 +264,25 @@ function xmldb_glossary_upgrade($oldversion) {
         //migrate glossary_ratings to the central rating table
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
 
-        //glossary ratings only have a single time column so use it for both time created and modified
-        $sql = "INSERT INTO {rating} (contextid, scaleid, itemid, rating, userid, timecreated, timemodified)
-SELECT cxt.id, g.scale, r.entryid AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified
-FROM {glossary_ratings} r
-JOIN {glossary_entries} ge ON ge.id=r.entryid
-JOIN {glossary} g ON g.id=ge.glossaryid
-JOIN {course_modules} cm ON cm.instance=g.id
-JOIN {context} cxt ON cxt.instanceid=cm.id
-JOIN {modules} m ON m.id=cm.module
-WHERE m.name = :modname AND cxt.contextlevel = :contextlevel";
-
-        $params['modname'] = 'glossary';
-        $params['contextlevel'] = CONTEXT_MODULE;
-
-        $DB->execute($sql, $params);
-
-        //now drop glossary_ratings
         $table = new xmldb_table('glossary_ratings');
         if ($dbman->table_exists($table)) {
+            //glossary ratings only have a single time column so use it for both time created and modified
+            $sql = "INSERT INTO {rating} (contextid, scaleid, itemid, rating, userid, timecreated, timemodified)
+    SELECT cxt.id, g.scale, r.entryid AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified
+    FROM {glossary_ratings} r
+    JOIN {glossary_entries} ge ON ge.id=r.entryid
+    JOIN {glossary} g ON g.id=ge.glossaryid
+    JOIN {course_modules} cm ON cm.instance=g.id
+    JOIN {context} cxt ON cxt.instanceid=cm.id
+    JOIN {modules} m ON m.id=cm.module
+    WHERE m.name = :modname AND cxt.contextlevel = :contextlevel";
+
+            $params['modname'] = 'glossary';
+            $params['contextlevel'] = CONTEXT_MODULE;
+
+            $DB->execute($sql, $params);
+
+            //now drop glossary_ratings
             $dbman->drop_table($table);
         }
 
