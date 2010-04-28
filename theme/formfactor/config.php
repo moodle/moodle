@@ -21,7 +21,7 @@ $THEME->parents = array('canvas','base');
 ////////////////////////////////////////////////////
 
 
-$THEME->sheets = array('core', 'course', 'selected');
+$THEME->sheets = array('core', 'course', 'mods', 'blocks', 'selected');
 
 ////////////////////////////////////////////////////
 // Name of the stylesheet(s) you've including in 
@@ -45,86 +45,72 @@ $THEME->editor_sheets = array('editor');
 
 $THEME->layouts = array(
     'base' => array(
-        'theme' => 'formfactor',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'general' => array(
-        'theme' => 'formfactor',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'course' => array(
-        'theme' => 'formfactor',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post'
     ),
     'coursecategory' => array(
-        'theme' => 'formfactor',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'incourse' => array(
-        'theme' => 'formfactor',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'frontpage' => array(
-        'theme' => 'formfactor',
         'file' => 'frontpage.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'admin' => array(
-        'theme' => 'formfactor',
         'file' => 'general.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
     'mydashboard' => array(
-        'theme' => 'formfactor',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
         'options' => array('langmenu'=>true),
     ),
     'mypublic' => array(
-        'theme' => 'formfactor',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'login' => array(
-        'theme' => 'formfactor',
         'file' => 'general.php',
         'regions' => array(),
         'options' => array('langmenu'=>true),
     ),
     'popup' => array(
-        'theme' => 'formfactor',
         'file' => 'general.php',
         'regions' => array(),
         'options' => array('nofooter'=>true),
     ),
     'frametop' => array(
-        'theme' => 'formfactor',
         'file' => 'general.php',
         'regions' => array(),
         'options' => array('nofooter'=>true),
     ),
     'maintenance' => array(
-        'theme' => 'formfactor',
         'file' => 'general.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
     ),
     'embedded' => array(
-    	'theme' => 'formfactor',
         'file' => 'embedded.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true),

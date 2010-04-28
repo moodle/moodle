@@ -1,0 +1,4 @@
+.block_action .reloadnavigation { margin-right: 3px }
+
+.block_calendar_month .minicalendar th,
+.block_calendar_month .minicalendar td { border-color: #ddd; border-style: dotted;border-width: 1px; }

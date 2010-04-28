@@ -19,7 +19,7 @@ $THEME->parents = array('base');
 // changes you want to your theme.
 ////////////////////////////////////////////////////
 
-$THEME->sheets = array('pagelayout', 'text', 'course', 'core');
+$THEME->sheets = array('pagelayout', 'text', 'core', 'course', 'mods', 'blocks');
 
 ////////////////////////////////////////////////////
 // Name of the stylesheet(s) you've including in 

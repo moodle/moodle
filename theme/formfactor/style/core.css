@@ -3,43 +3,35 @@ body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea { font-family: "Trebuchet MS", 
 /* Header 
 -------------------------*/
 
-#page-header-wrapper { margin:0 4%; }
+#page-header-wrapper { margin:0 50px; }
 
 #page-header { float:none; }
-#page-header .headermain { margin:0.75em 0; }
+#page-header .headermain { margin:0.75em 0;font-size:2em; }
+#page-header .headermenu a:hover { color:#fff; }
+
 
 #page-site-index .headermain { margin:0.85em 0;font-size:2.5em; }
 
 /* Menu Navigation 
 --------------------------*/
 
-#page-navigation { margin:0;padding:0 4%; }
+#page-navigation { margin:0;padding:0 40px;font-size:1.1em; }
 #page-navigation li { list-style:none;float:left; }
 #page-navigation a { display:block;padding:5px 10px; }
-#page-navigation #first a { padding-left:0; }
+
+/* Breadcrumb 
+---------------------------*/
+
+.navbar { padding:3px 50px; }
+.navbar .breadcrumb { font-size:0.8em;color:#555; }
 
 /* Content 
 ---------------------------*/
 
-#page-content-wrapper { margin:10px 4%; }
+#page-content-wrapper { margin:10px 50px; }
 
-/* Sideblocks 
----------------------------*/
+/* Footer
+--------------------------*/
 
-.sideblock { border-width:1px 0 0;border-color:#ccc;border-style:solid;background:url([[pix:theme|gradient-sb]]) repeat-x 0 0;}
-.sideblock .header { border-width:0 1px;border-style:solid;border-color:#eee;;padding:3px 10px; }
-.sideblock .header h2 { color:#333;font-size:1.2em; }
-.sideblock .content { padding:5px 10px;border-color:#eee;border-width:0 1px 1px;border-style:solid; }
-.block_login { border:1px solid #ccc;background:#fcffc8; }
-
-/* Forum
----------------------------*/
-
-.forumpost { border:none; }
-.forumpost .left { background:none; }
-.forumpost .topic { background:#eee;border-color:#aaa;border-width:0 0 2px 0;padding-left:7px; }
-.forumpost .topic .subject { font-size:1.25em; }
-.forumpost .topic .author { font-style:italic;color:#444;font-size:0.95em; }
-.forumpost .content { border-bottom:5px solid #aaa;padding:5px 7px 10px 7px; }
-.forumpost .content .commands,
-.forumpost .content .link { font-size:0.9em; }
+#page-footer { margin:25px 0; }
+#page-footer .logininfo  { margin: 1em 0; }

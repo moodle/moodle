@@ -1,0 +1,9 @@
+#intro { border-color:#ddd;margin:2% 10%;padding:10px; }
+
+/* Forums 
+-------------------------*/
+
+.path-mod-forum .forumheaderlist { border-color:#ddd;border-collapse:collapse; }
+.path-mod-forum .forumheaderlist td { border-color:#ddd; }
+.path-mod-forum .forumheaderlist th { text-align:left;border-right:1px solid #ddd; }
+.path-mod-forum .forumheaderlist .replies { text-align:center; }

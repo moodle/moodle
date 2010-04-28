@@ -1,0 +1,14 @@
+.sideblock { border-width:1px 0 0;border-color:#ccc;border-style:solid;background:url([[pix:theme|gradient-sb]]) repeat-x 0 0;}
+.sideblock .header { border-width:0 1px;border-style:solid;border-color:#eee;;padding:3px 10px; }
+.sideblock .header h2 { color:#333;font-size:1.2em; }
+.sideblock .content { padding:5px 10px;border-color:#eee;border-width:0 1px 1px;border-style:solid; }
+
+.block_login { border:1px solid #ccc;background:#fcffc8; }
+.block_login label { font-size:0.85em;display:block; }
+.block_login .fld input { margin:1px 0 5px;padding:2px;width:95%; }
+.block_login .btn { padding:4px 0; }
+.block_login .footer { font-size:0.9em;padding:5px 0 3px; }
+
+.block_calendar_month .content  { padding: 5px }
+
+.block_course_summary .content { padding:10px; }

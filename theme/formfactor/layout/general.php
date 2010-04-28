@@ -26,27 +26,44 @@ echo $OUTPUT->doctype() ?>
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <div id="page">
+
 <?php if ($hasheading || $hasnavbar) { ?>
-    <div id="page-header">
-        <?php if ($hasheading) { ?>
-        <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
-        <div class="headermenu"><?php
-            echo $OUTPUT->login_info();
-            if (!empty($PAGE->layout_options['langmenu'])) {
-                echo $OUTPUT->lang_menu();
-            }
-            echo $PAGE->headingmenu
-        ?></div><?php } ?>
-        <?php if ($hasnavbar) { ?>
-            <div class="navbar clearfix">
-                <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
-                <div class="navbutton"> <?php echo $PAGE->button; ?></div>
-            </div>
-        <?php } ?>
+
+    <div id="page-header" class="clearfix">
+		<div id="page-header-wrapper">
+	        
+	        <?php if ($hasheading) { ?>
+		    	<h1 class="headermain"><?php echo $PAGE->heading ?></h1>
+    		    <div class="headermenu">
+        			<?php
+            			echo $OUTPUT->login_info();
+		           		if (!empty($PAGE->layout_options['langmenu'])) {
+		        	       	echo $OUTPUT->lang_menu();
+			    	    }
+    			       	echo $PAGE->headingmenu
+        			?>
+	        	</div>
+	        <?php } ?>        
+        	
+	    </div>
     </div>
+
+    <ul id="page-navigation" class="clearfix">
+    	<li id="first"><a href="<?php echo $CFG->wwwroot; ?>" title="Home">Home</a></li>
+    	<li><a href="<?php echo $CFG->wwwroot; ?>" title="Courses">Courses</a></li>
+    </ul>
+    
+    <?php if ($hasnavbar) { ?>
+	    <div class="navbar clearfix">
+    	    <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
+            <div class="navbutton"> <?php echo $PAGE->button; ?></div>
+        </div>
+    <?php } ?>
+    
 <?php } ?>
 <!-- END OF HEADER -->
 
+<div id="page-content-wrapper">
     <div id="page-content">
         <div id="region-main-box">
             <div id="region-post-box">
@@ -78,6 +95,7 @@ echo $OUTPUT->doctype() ?>
             </div>
         </div>
     </div>
+</div>
 
 <!-- START OF FOOTER -->
     <?php if ($hasfooter) { ?>
