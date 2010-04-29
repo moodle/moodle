@@ -1032,32 +1032,32 @@ class assignment_upload extends assignment_base {
         $mform->addElement('select', 'maxbytes', get_string('maximumsize', 'assignment'), $choices);
         $mform->setDefault('maxbytes', $CFG->assignment_maxbytes);
 
-        $mform->addElement('select', 'resubmit', get_string("allowdeleting", "assignment"), $ynoptions);
-        $mform->setHelpButton('resubmit', array('allowdeleting', get_string('allowdeleting', 'assignment'), 'assignment'));
+        $mform->addElement('select', 'resubmit', get_string('allowdeleting', 'assignment'), $ynoptions);
+        $mform->addHelpButton('resubmit', 'allowdeleting', 'assignment');
         $mform->setDefault('resubmit', 1);
 
         $options = array();
         for($i = 1; $i <= 20; $i++) {
             $options[$i] = $i;
         }
-        $mform->addElement('select', 'var1', get_string("allowmaxfiles", "assignment"), $options);
-        $mform->setHelpButton('var1', array('allowmaxfiles', get_string('allowmaxfiles', 'assignment'), 'assignment'));
+        $mform->addElement('select', 'var1', get_string('allowmaxfiles', 'assignment'), $options);
+        $mform->addHelpButton('var1', 'allowmaxfiles', 'assignment');
         $mform->setDefault('var1', 3);
 
-        $mform->addElement('select', 'var2', get_string("allownotes", "assignment"), $ynoptions);
-        $mform->setHelpButton('var2', array('allownotes', get_string('allownotes', 'assignment'), 'assignment'));
+        $mform->addElement('select', 'var2', get_string('allownotes', 'assignment'), $ynoptions);
+        $mform->addHelpButton('var2', 'allownotes', 'assignment');
         $mform->setDefault('var2', 0);
 
-        $mform->addElement('select', 'var3', get_string("hideintro", "assignment"), $ynoptions);
-        $mform->setHelpButton('var3', array('hideintro', get_string('hideintro', 'assignment'), 'assignment'));
+        $mform->addElement('select', 'var3', get_string('hideintro', 'assignment'), $ynoptions);
+        $mform->addHelpButton('var3', 'hideintro', 'assignment');
         $mform->setDefault('var3', 0);
 
-        $mform->addElement('select', 'emailteachers', get_string("emailteachers", "assignment"), $ynoptions);
-        $mform->setHelpButton('emailteachers', array('emailteachers', get_string('emailteachers', 'assignment'), 'assignment'));
+        $mform->addElement('select', 'emailteachers', get_string('emailteachers', 'assignment'), $ynoptions);
+        $mform->addHelpButton('emailteachers', 'emailteachers', 'assignment');
         $mform->setDefault('emailteachers', 0);
 
-        $mform->addElement('select', 'var4', get_string("trackdrafts", "assignment"), $ynoptions);
-        $mform->setHelpButton('var4', array('trackdrafts', get_string('trackdrafts', 'assignment'), 'assignment'));
+        $mform->addElement('select', 'var4', get_string('trackdrafts', 'assignment'), $ynoptions);
+        $mform->addHelpButton('var4', 'trackdrafts', 'assignment');
         $mform->setDefault('var4', 1);
 
     }
