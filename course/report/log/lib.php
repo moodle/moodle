@@ -553,10 +553,4 @@ function log_report_extend_navigation($navigation, $course, $context) {
         $url = new moodle_url('/course/report/log/index.php', array('id'=>$course->id));
         $navigation->add(get_string('log:view', 'coursereport_log'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
     }
-    if (has_capability('coursereport/log:viewlive', $context)) {
-        $livelogs = get_string('livelogs');
-        $url = new moodle_url('/course/report/log/live.php', array('id'=>$course->id));
-        $link = new action_link($url, $livelogs, new popup_action('click', $url, 'livelog', array('height' => 500, 'width' => 800)));
-        $navigation->add($livelogs, $link, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
-    }
 }
