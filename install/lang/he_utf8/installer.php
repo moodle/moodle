@@ -36,6 +36,8 @@ $string['configfilewritten'] = 'קובץ config.php נוצר בהצלחה';
 $string['configurationcompletehead'] = 'הגדרות התצורה הושלמו';
 $string['configurationcompletesub'] = 'Moodle ניסה לשמור את הגדרות התצורה שלך בקובץ בספריית ה-root של התקנת ה-Moodle.';
 $string['continue'] = 'המשך';
+$string['ctyperecommended'] = 'התקנת ההרחבה האופציונלית ctype PHP ממולצת ביותר בכדי לשפר את ביצועי האתר, במיוחד אם האתר תומך בשפות לא-לטניות.';
+$string['ctyperequired'] = 'הרחבת ה-ctype PHP כעת נדרשת ע\"י Moodle, כדי לשפר את ביצועי האתר ולהציע תאימות רב-לשונית.';
 $string['curlrecommended'] = 'התקנת ספריית Curl, האופציונלית, מומלצת ביותר בכדי לאפשר ל-Moodle את פונקציונליות התקשורת';
 $string['customcheck'] = 'בדיקות אחרות';
 $string['database'] = 'מסד נתונים';
@@ -69,6 +71,12 @@ $string['databasesettingssub_mssql_n'] = '</b> סוג:</b> SQL*server (UTF-8 ena
 $string['databasesettingssub_mysql'] = '<b>סוג:</b> MySQL<br />
 <b>מחשב מארח:</b> לדוגמה localhost או db.isp.com<br />
 <b>שם:</b> database שם מסד הנתונים למשל-moodle<br />
+<b>שם משתמש:</b> שם משתמש מסד הנתונים שלך<br />
+<b>סיסמה:</b> סיסמת מסד הנתונים שלך<br />
+<b>תחילית הטבלאות:</b> תחילית רשות לכל שמות הטבלאות (אפשרי)';
+$string['databasesettingssub_mysqli'] = '<b>סוג:</b> Improved MySQL<br />
+<b>מחשב מארח:</b> לדוגמה localhost או db.isp.com<br />
+<b>שם:</b> שם מסד הנתונים למשל-moodle<br />
 <b>שם משתמש:</b> שם משתמש מסד הנתונים שלך<br />
 <b>סיסמה:</b> סיסמת מסד הנתונים שלך<br />
 <b>תחילית הטבלאות:</b> תחילית רשות לכל שמות הטבלאות (אפשרי)';
@@ -214,8 +222,9 @@ $string['mssqlextensionisnotpresentinphp'] = 'PHP לא הוגדר כהלכה ע�
 $string['mssql_n'] = 'SQL*Server with UTF-8 support (mssql_n)';
 $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'בכל אופן, אם האתר שלך משתמש ב שפות iso-8859-1 (latin)בלבד, אתה יכול להמשיך להתשמש בגרסת MySQL 4.1.12 המותקנת (או גירסה גבוהה יותר).';
-$string['mysql416required'] = 'היא הגירסה המינימלית הנדרשת ל Moodle 1.6 על-מנת להבטיח המרת כל הנתונים לתבנית UTF-8 בעתיד.';
+$string['mysql416required'] = 'היא הגירסה המינימלית הנדרשת ל Moodle 1.6 על-מנת להבטיח המרת כל הנתונים לפורמט UTF-8 בעתיד.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP לא הוגדר כהלכה עם הרחבת MySQL בכדי שהוא יוכל לתקשר עם MySQL. אנא בדוק את קובץ הגדרות הPHP שלך- php.ini או הדר את ה-PHP שלך.';
+$string['mysqli'] = 'Improved MySQL (mysqli)';
 $string['mysqliextensionisnotpresentinphp'] = 'PHP לא הוגדר נכון עם הרחבת ה-MYSQLi כך שהוא יוכל להתקשר עם MYSQL. אנא בדוק את הגדרות ה-php.ini שלך או הרץ את תוכנת ה-PHP שוב. MYSQLi לא זמינה עבור PHP4.';
 $string['name'] = 'שם';
 $string['next'] = 'הלאה';
@@ -276,7 +285,7 @@ $string['unicoderecommended'] = 'אחסנת המידע שלך בקידוד-Unico
 $string['unicoderequired'] = 'מומלץ לאחסן את כל המידע שלך בפורמט - Uniucode. התקנות חדשות חייבות להופיע במסדי הנתונים אשר להם קבוצת התווים כברירת מחדל המתאימה ל-Unicode. אם אתה משדרג, תציג את ה-UTF-8 migration process (ראה בדף מנהל המערכת).';
 $string['user'] = 'משתמש';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
-$string['welcomep20'] = 'הינך רואה את עמוד זה מפני שהתקנת והפעלת בהלכה את <strong> $a-packname $a->packversion 
+$string['welcomep20'] = 'הינך רואה את עמוד זה מפני שהתקנת והפעלת בהלכה את <strong> \$a-packname $a->packversion 
 </strong>
 חבילה במחשבך. ברכותינו!';
 $string['welcomep30'] = 'גירסת <strong>$a->installername</strong> כוללת את היישומים ליצור סביבה אשר בה <strong> Moodle </strong>
