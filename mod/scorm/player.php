@@ -303,7 +303,7 @@
     if ($result->prerequisites) {
         if ($scorm->popup == 0) {
             $fullurl="loadSCO.php?id=".$cm->id.$scoidstr.$modestr;
-            echo "                <iframe id=\"scoframe1\" class=\"scoframe\" name=\"scoframe1\" src=\"{$fullurl}\"></iframe>\n";
+            echo "                <object id=\"scoframe1\" class=\"scoframe\" type=\"text/html\" data=\"{$fullurl}\"></object>\n";
             $PAGE->requires->js_function_call('scorm_resize');
         } else {
             // Clean the name for the window as IE is fussy
@@ -318,8 +318,7 @@
             echo html_writer::script(js_writer::function_call('scorm_openpopup', Array("loadSCO.php?id=".$cm->id.$scoidpop, $name, $scorm->options, $scorm->width, $scorm->height)));
             ?>
                     <noscript>
-                    <iframe id="main" class="scoframe" src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>">
-                    </iframe>
+                    <object id="main" class="scoframe" type="text/html" data="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>"></object>
                     </noscript>
 <?php
             //Added incase javascript popups are blocked
