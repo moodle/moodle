@@ -133,11 +133,11 @@ class repository_recent extends repository {
 
     public function type_config_form($mform) {
         $number = get_config('repository_recent', 'recentfilesnumber');
-        var_dump($number);
         if (empty($number)) {
             $number = DEFAULT_RECENT_FILES_NUM;
         }
         $mform->addElement('text', 'recentfilesnumber', get_string('recentfilesnumber', 'repository_recent'));
+        $mform->setDefault('recentfilesnumber', $number);
     }
 
     /**
