@@ -572,21 +572,18 @@
                                 echo '</tr></table>';
                         }
                     }
-                } else {
-                    notify(get_string('noactivity', 'scorm'));
                     if (!$download) {
-                        echo html_writer::table($table);
+                        $mform->set_data($displayoptions + compact('detailedrep', 'pagesize'));
+                        $mform->display();
                     }
+                } else {
+                    echo $OUTPUT->notification(get_string('noactivity', 'scorm'));
                 }
                 if ($download == 'Excel' or $download == 'ODS') {
                     $workbook->close();
                     exit;
                 } else if ($download == 'CSV') {
                     exit;
-                }
-                if (!$download) {
-                    $mform->set_data($displayoptions + compact('detailedrep', 'pagesize'));
-                    $mform->display();
                 }
             } else {
                 echo $OUTPUT->notification(get_string('noactivity', 'scorm'));
