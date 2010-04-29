@@ -48,8 +48,8 @@ $contextid   = optional_param('ctx_id',    SYSCONTEXTID, PARAM_INT);    // conte
 $courseid    = optional_param('course',    SITEID, PARAM_INT);    // course ID
 $env         = optional_param('env', 'filepicker', PARAM_ALPHA);  // opened in file picker, file manager or html editor
 $filename    = optional_param('filename', '',      PARAM_FILE);
-$fileurl     = optional_param('fileurl', '',       PARAM_FILE);
-$filearea    = optional_param('filearea', '',      PARAM_TEXT);
+$fileurl     = optional_param('fileurl', '',       PARAM_RAW);
+$filearea    = optional_param('filearea', 'user_draft', PARAM_TEXT);
 $thumbnail   = optional_param('thumbnail', '',     PARAM_RAW);
 $targetpath  = optional_param('targetpath', '',    PARAM_PATH);
 $repo_id     = optional_param('repo_id', 0,        PARAM_INT);    // repository ID
@@ -241,17 +241,15 @@ case 'sign':
 case 'download':
     $thefile = $repo->get_file($fileurl, $filename, $itemid);
     if (!empty($thefile)) {
-        if (!is_array($thefile)) {
-            $record = new stdclass;
-            $record->filepath = $draftpath;
-            $record->filename = $filename;
-            $record->filearea = 'user_draft';
-            $record->itemid   = $itemid;
-            $record->license  = '';
-            $record->author   = '';
-            $record->source   = $fileurl;
-            $info = repository::move_to_filepool($thefile, $record);
-        }
+        $record = new stdclass;
+        $record->filepath = $draftpath;
+        $record->filename = $filename;
+        $record->filearea = 'user_draft';
+        $record->itemid   = $itemid;
+        $record->license  = '';
+        $record->author   = '';
+        $record->source   = $thefile['url'];
+        $info = repository::move_to_filepool($thefile['path'], $record);
         redirect($url, get_string('downloadsucc','repository'));
     } else {
         print_error('cannotdownload', 'repository');
@@ -323,7 +321,9 @@ case 'plugins':
         if ($env == 'filemanager' && $info->type == 'draft') {
             continue;
         }
-        echo '<li>' . $OUTPUT->action_icon($aurl, new pix_icon($info->icon, $info->name)) . '</li>'; // no hardcoded styles!
+        echo '<li>';
+        echo html_writer::link($aurl, $info->name);
+        echo '</li>';
     }
     echo '</ul>';
     echo '</div>';
@@ -381,7 +381,7 @@ case 'movefile':
     $url->param('action', 'movefile');
     $url->param('draftpath', $draftpath);
     $url->param('filename', $filename);
-    file_get_draft_area_folders($itemid, '/', $data);
+    file_get_user_area_folders($itemid, '/', $data);
     print_draft_area_tree($data, true, $url);
     echo $OUTPUT->footer();
     break;
@@ -594,7 +594,6 @@ function print_draft_area_tree($tree, $root, $url) {
     if ($root) {
         echo '</ul>';
     }
-
     echo '</ul>';
 }
 

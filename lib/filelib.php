@@ -515,7 +515,7 @@ function file_get_user_area_folders($draftitemid, $filepath, &$data, $filearea =
                 $item->fullname = trim(array_pop($foldername), '/');
 
                 $item->id = uniqid();
-                file_get_draft_area_folders($draftitemid, $item->filepath, $item);
+                file_get_user_area_folders($draftitemid, $item->filepath, $item);
                 $data->children[] = $item;
             } else {
                 continue;
