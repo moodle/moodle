@@ -53,6 +53,7 @@
             $scorm->updatefreq = (int)backup_todb($info['MOD']['#']['UPDATEFREQ']['0']['#']);
             $scorm->maxattempt = (int)backup_todb($info['MOD']['#']['MAXATTEMPT']['0']['#']);
             $scorm->grademethod = (int)backup_todb($info['MOD']['#']['GRADEMETHOD']['0']['#']);
+            $scorm->whatgrade = (int)backup_todb($info['MOD']['#']['WHATGRADE']['0']['#']);
             if ($restore->backup_version < 2005041500) {
                 $scorm->datadir = substr(backup_todb($info['MOD']['#']['DATADIR']['0']['#']),1);
             } else {
