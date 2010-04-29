@@ -1756,9 +1756,7 @@ class question_calculated_qtype extends default_questiontype {
                     FROM {question_datasets} d,
                          {question_dataset_definitions} i
                   WHERE i.id = d.datasetdefinition
-                    AND i.category = ?
-                    ;
-                   ";
+                    AND i.category = ?";
              if ($records = $DB->get_records_sql($sql, array($form->category))) {
                    foreach ($records as $r) {
                        if ( !isset ($datasetdefs["$r->name"])) $datasetdefs["$r->name"] = $r->itemcount;
@@ -1793,14 +1791,12 @@ class question_calculated_qtype extends default_questiontype {
                     FROM {question_datasets} d,
                          {question_dataset_definitions} i
                     WHERE i.id = d.datasetdefinition
-                    AND i.category = ?;
-                    " ;
+                    AND i.category = ?";
             if ($records = $DB->get_records_sql($sql, array($category))) {
                 foreach ($records as $r) {
                     $sql1 = "SELECT q.*
                         FROM  {question} q
-                             WHERE q.id = ?
-                    ";
+                             WHERE q.id = ?";
                     if ( !isset ($datasetdefs["$r->type-$r->category-$r->name"])){
                         $datasetdefs["$r->type-$r->category-$r->name"]= $r;
                     }
@@ -1860,14 +1856,12 @@ class question_calculated_qtype extends default_questiontype {
                     FROM {question_datasets} d,
                          {question_dataset_definitions} i
                     WHERE i.id = d.datasetdefinition
-                    AND i.category = ?;
-                    " ;
+                    AND i.category = ?";
             if ($records = $DB->get_records_sql($sql, array($category))) {
                 foreach ($records as $r) {
                     $sql1 = "SELECT q.*
                         FROM  {question} q
-                             WHERE q.id = ?
-                    ";
+                             WHERE q.id = ?";
                     if ( !isset ($datasetdefs["$r->type-$r->category-$r->name"])){
                         $datasetdefs["$r->type-$r->category-$r->name"]= $r;
                     }
