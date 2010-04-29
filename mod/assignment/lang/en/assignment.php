@@ -67,6 +67,7 @@ $string['deletefilefailed'] = 'Deleting of file failed.';
 $string['description'] = 'Description';
 $string['downloadall'] = 'Download all assignments as a zip';
 $string['draft'] = 'Draft';
+$string['due'] = 'Assignment due';
 $string['duedate'] = 'Due date';
 $string['duedateno'] = 'No due date';
 $string['early'] = '{$a} early';
