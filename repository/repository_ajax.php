@@ -230,10 +230,8 @@ switch ($action) {
                 $info['id'] = $itemid;
                 $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
                 $filesize = $fileinfo['filesize'];
-                // TODO:
-                // Fix maxbytes
                 if (($maxbytes!==-1) && ($filesize>$maxbytes)) {
-                    //throw new file_exception('maxbytes');
+                    throw new file_exception('maxbytes');
                 }
                 echo json_encode($info);
                 die; // ends here!!
@@ -266,10 +264,8 @@ switch ($action) {
                         $err->e = get_string('cannotdownload', 'repository');
                         die(json_encode($err));
                     }
-                    // TODO:
-                    // Fix maxbytes
                     if (($maxbytes!==-1) && (filesize($file['path']) > $maxbytes)) {
-                        //throw new file_exception('maxbytes');
+                        throw new file_exception('maxbytes');
                     }
 
                     $record = new stdclass;
