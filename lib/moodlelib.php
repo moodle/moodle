@@ -2528,6 +2528,30 @@ function create_user_key($script, $userid, $instance=null, $iprestriction=null, 
 }
 
 /**
+ * Gets a private user access key (and creates one if one doesn't exist).
+ *
+ * @global object
+ * @param string $script unique target identifier
+ * @param int $userid
+ * @param int $instance optional instance id
+ * @param string $iprestriction optional ip restricted access
+ * @param timestamp $validuntil key valid only until given data
+ * @return string access key value
+ */
+function get_user_key($script, $userid, $instance=null, $iprestriction=null, $validuntil=null) {
+    global $DB;
+
+    if ($key = $DB->get_record('user_private_key', array('script'=>$script, 'userid'=>$userid, 
+                                                         'instance'=>$instance, 'iprestriction'=>$iprestriction, 
+                                                         'validuntil'=>$validuntil))) {
+        return $key->value;
+    } else {
+        return create_user_key($script, $userid, $instance, $iprestriction, $validuntil);
+    }
+}
+
+
+/**
  * Modify the user table by setting the currently logged in user's
  * last login to now.
  *
