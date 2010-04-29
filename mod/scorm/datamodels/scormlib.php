@@ -612,7 +612,7 @@ function scorm_parse_scorm($scorm, $manifest) {
         if (empty($scoes->version)) {
             $scoes->version = 'SCORM_1.2';
         }
-        $DB->set_field('scorm','version',$scoes->version, array('id'=>$scormid));
+        $DB->set_field('scorm','version',$scoes->version, array('id'=>$scorm->id));
         $scorm->version = $scoes->version;
     }
 
