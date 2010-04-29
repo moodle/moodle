@@ -186,16 +186,16 @@
         $PAGE->requires->js_init_call('M.core_completion.init');
     }
 
-    // The "Editing On" button will be appearing only in the "main" course screen
-    // (i.e., no breadcrumbs other than the default one added inside this function)
-    $buttons = switchroles_form($course->id);
+    // We are currently keeping the button here from 1.x to help new teachers figure out 
+    // what to do, even though the link also appears in the course admin block.  It also 
+    // means you can back out of a situation where you removed the admin block. :)
     if ($PAGE->user_allowed_editing()) {
-        $buttons .= $OUTPUT->edit_button(new moodle_url('/course/view.php', array('id' => $course->id)));
+        $buttons = $OUTPUT->edit_button(new moodle_url('/course/view.php', array('id' => $course->id)));
+        $PAGE->set_button($buttons);
     }
 
     $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_button($buttons);
     echo $OUTPUT->header();
 
     if ($completion->is_enabled() && ajaxenabled()) {
