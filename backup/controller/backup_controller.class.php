@@ -275,6 +275,7 @@ class backup_controller extends backup implements loggable {
 
     public function save_controller() {
         // Going to save controller to persistent storage, calculate checksum for later checks and save it
+        // TODO: flag the controller as NA. Any operation on it should be forbidden util loaded back
         $this->log('saving controller to db', backup::LOG_DEBUG);
         $this->checksum = $this->calculate_checksum();
         backup_controller_dbops::save_controller($this, $this->checksum);
@@ -282,6 +283,7 @@ class backup_controller extends backup implements loggable {
 
     public static function load_controller($backupid) {
         // Load controller from persistent storage
+        // TODO: flag the controller as available. Operations on it can continue
         $controller = backup_controller_dbops::load_controller($backupid);
         $controller->log('loading controller from db', backup::LOG_DEBUG);
         return $controller;

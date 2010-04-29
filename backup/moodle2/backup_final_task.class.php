@@ -90,6 +90,9 @@ class backup_final_task extends backup_task {
         // Copy the generated zip file to final destination
         $this->add_step(new backup_store_backup_file('save_backupfile'));
 
+        // Clean the temp dir (conditionaly) and drop temp table
+        $this->add_step(new drop_and_clean_temp_stuff('drop_and_clean_temp_stuff'));
+
         $this->built = true;
     }
 

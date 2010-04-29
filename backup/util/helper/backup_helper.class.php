@@ -40,14 +40,24 @@ abstract class backup_helper {
     }
 
     /**
-     * Given one backupid, ensure its temp dir is completelly empty
+     * Given one backupid, ensure its temp dir is completely empty
      */
     static public function clear_backup_dir($backupid) {
         global $CFG;
         if (!self::delete_dir_contents($CFG->dataroot . '/temp/backup/' . $backupid)) {
             throw new backup_helper_exception('cannot_empty_backup_temp_dir');
         }
+        return true;
     }
+
+    /**
+     * Given one backupid, delete completely its temp dir
+     */
+     static public function delete_backup_dir($backupid) {
+         global $CFG;
+         self::clear_backup_dir($backupid);
+         return rmdir($CFG->dataroot . '/temp/backup/' . $backupid);
+     }
 
     /**
      * Given one fullpath to directory, delete its contents recursively
@@ -127,11 +137,7 @@ abstract class backup_helper {
             if ($status && $moddate < $deletefrom) {
                 //If directory, recurse
                 if (is_dir($file_path)) {
-                    $status = self::delete_dir_contents($file_path);
-                    //There is nothing, delete the directory itself
-                    if ($status) {
-                        $status = rmdir($file_path);
-                    }
+                    $status = self::delete_backup_dir($file_path);
                 //If file
                 } else {
                     unlink($file_path);

@@ -25,6 +25,11 @@
 /**
  * Define all the backup steps that will be used by common tasks in backup
  */
+
+/**
+ * create the temp dir where backup/restore will happen,
+ * delete old directories and create temp ids table
+ */
 class create_and_clean_temp_stuff extends backup_execution_step {
 
     protected function define_execution() {
@@ -32,6 +37,25 @@ class create_and_clean_temp_stuff extends backup_execution_step {
         backup_helper::clear_backup_dir($this->get_backupid());           // Empty temp dir, just in case
         backup_helper::delete_old_backup_dirs(time() - (4 * 60 * 60));    // Delete > 4 hours temp dirs
         backup_controller_dbops::create_backup_ids_temp_table($this->get_backupid()); // Create ids temp table
+    }
+}
+
+/**
+ * delete the temp dir used by backup/restore (conditionally),
+ * delete old directories and drop tem ids table. Note we delete
+ * the directory but not the correspondig log file that will be
+ * there for, at least, 4 hours - only delete_old_backup_dirs()
+ * deletes log files (for easier access to them)
+ */
+class drop_and_clean_temp_stuff extends backup_execution_step {
+
+    protected function define_execution() {
+        global $CFG;
+        backup_controller_dbops::drop_backup_ids_temp_table($this->get_backupid()); // Drop ids temp table
+        backup_helper::delete_old_backup_dirs(time() - (4 * 60 * 60));              // Delete > 4 hours temp dirs
+        if (empty($CFG->keeptempdirectoriesonbackup)) { // Conditionally
+            backup_helper::delete_backup_dir($this->get_backupid()); // Empty backup dir
+        }
     }
 }
 

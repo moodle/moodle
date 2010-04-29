@@ -184,6 +184,13 @@ $CFG->admin = 'admin';
 // course requiring users to be created.
 //     $CFG->disableusercreationonrestore = true;
 //
+// Keep the temporary directories used by backup and restore without being
+// deleted at the end of the process. Use it if you want to debug / view
+// all the information stored there after the process has ended. Note that
+// those directories may be deleted (after some ttl) both by cron and / or
+// by new backup / restore invocations.
+//     $CFG->keeptempdirectoriesonbackup = true;
+//
 // Modify the restore process in order to force the "user checks" to assume
 // that the backup originated from a different site, so detection of matching
 // users is performed with different (more "relaxed") rules. Note that this is
