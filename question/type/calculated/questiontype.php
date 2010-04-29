@@ -916,9 +916,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                     FROM {$CFG->prefix}question_datasets d,
                          {$CFG->prefix}question_dataset_definitions i
                   WHERE i.id = d.datasetdefinition
-                    AND i.category = '$form->category'
-                    ;
-                   ";
+                    AND i.category = '$form->category'"; //CQU - patch because of invalid char MDL-22241 on moodle tracker
              if ($records = get_records_sql($sql)) {
                    foreach ($records as $r) {
                        if ( !isset ($datasetdefs["$r->name"])) $datasetdefs["$r->name"] = $r->itemcount;
@@ -953,8 +951,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                     FROM {$CFG->prefix}question_datasets d,
                          {$CFG->prefix}question_dataset_definitions i
                     WHERE i.id = d.datasetdefinition
-                    AND i.category = $category;
-                    " ;
+                    AND i.category = $category"; //CQU - patch because of invalid char MDL-22241 on moodle tracker
             if ($records = get_records_sql($sql)) {
                 foreach ($records as $r) {
                     $sql1 = "SELECT q.*
