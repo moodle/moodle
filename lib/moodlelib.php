@@ -6060,7 +6060,7 @@ class core_string_manager implements string_manager {
     }
 
     /**
-     * Returns a localised list of all country names, sorted by country keys.
+     * Returns a localised list of all country names, sorted by localised name.
      *
      * @param bool $returnall return all or just enabled
      * @param string $lang moodle translation language, NULL means use current
@@ -6074,7 +6074,7 @@ class core_string_manager implements string_manager {
         }
 
         $countries = $this->load_component_strings('core_countries', $lang);
-        ksort($countries);
+        asort($countries);
 
         if (!$returnall and !empty($CFG->allcountrycodes)) {
             $enabled = explode(',', $CFG->allcountrycodes);
