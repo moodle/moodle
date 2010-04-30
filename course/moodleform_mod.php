@@ -453,7 +453,7 @@ abstract class moodleform_mod extends moodleform {
 
             $this->repeat_elements(array($group), $count, array(), 'conditiongraderepeats', 'conditiongradeadds', 2,
                                    get_string('addgrades', 'condition'), true);
-            $mform->setHelpButton('conditiongradegroup[0]', array('gradecondition', get_string('help_gradecondition', 'condition'), 'condition'));
+            $mform->addHelpButton('conditiongradegroup[0]', 'gradecondition', 'condition');
 
             // Conditions based on completion
             $completion = new completion_info($COURSE);
