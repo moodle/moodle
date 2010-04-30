@@ -154,17 +154,18 @@ class feedback_item_textfield extends feedback_item_base {
 
         $presentation = explode ("|", $item->presentation);
         $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
-        ?>
-        <td valign="top" align="<?php echo $align;?>">
-        <?php
-            echo '('.$item->label.') ';
-            echo format_text($item->name . $requiredmark, true, false, false);
-        ?>
-        </td>
-        <td valign="top" align="<?php echo $align;?>">
-            <input type="text" name="<?php echo $item->typ . '_' . $item->id;?>" size="<?php echo $presentation[0];?>" maxlength="<?php echo $presentation[1];?>" value="" />
-        </td>
-        <?php
+        //print the question and label
+        echo '<div class="feedback_item_label_'.$align.'">';
+        echo '('.$item->label.') ';
+        echo format_text($item->name.$requiredmark, true, false, false);
+        echo '</div>';
+
+        //print the presentation
+        echo '<div class="feedback_item_presentation_'.$align.'">';
+        echo '<span class="feedback_item_textfield">';
+        echo '<input type="text" name="'.$item->typ . '_' . $item->id.'" size="'.$presentation[0].'" maxlength="'.$presentation[1].'" value="" />';
+        echo '</span>';
+        echo '</div>';
     }
     
     /**     
@@ -182,21 +183,23 @@ class feedback_item_textfield extends feedback_item_base {
 
         $presentation = explode ("|", $item->presentation);
         if($highlightrequire AND $item->required AND strval($value) == '') {
-            $highlight = 'bgcolor="#FFAAAA" class="missingrequire"';
+            $highlight = ' missingrequire';
         }else {
             $highlight = '';
         }
         $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
-        ?>
-        <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
-        <?php
-            echo format_text($item->name . $requiredmark, true, false, false);
-        ?>
-        </td>
-        <td valign="top" align="<?php echo $align;?>">
-            <input type="text" name="<?php echo $item->typ . '_' . $item->id;?>" size="<?php echo $presentation[0];?>" maxlength="<?php echo $presentation[1];?>" value="<?php echo $value ? htmlspecialchars($value) : '';?>" />
-        </td>
-        <?php
+        
+        //print the question and label
+        echo '<div class="feedback_item_label_'.$align.$highlight.'">';
+            echo format_text($item->name.$requiredmark, true, false, false);
+        echo '</div>';
+        
+        //print the presentation
+        echo '<div class="feedback_item_presentation_'.$align.$highlight.'">';
+        echo '<span class="feedback_item_textfield">';
+        echo '<input type="text" name="'.$item->typ.'_'.$item->id.'" size="'.$presentation[0].'" maxlength="'.$presentation[1].'" value="'.($value ? htmlspecialchars($value) : '').'" />';
+        echo '</span>';
+        echo '</div>';
     }
 
     /**     
@@ -213,21 +216,15 @@ class feedback_item_textfield extends feedback_item_base {
 
         $presentation = explode ("|", $item->presentation);
         $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
-        ?>
-        <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
-        <?php
+        
+        //print the question and label
+        echo '<div class="feedback_item_label_'.$align.'">';
             echo '('.$item->label.') ';
             echo format_text($item->name . $requiredmark, true, false, false);
-        ?>
-        </td>
-        <td valign="top" align="<?php echo $align;?>">
-        <?php
+        echo '</div>';
         echo $OUTPUT->box_start('generalbox boxalign'.$align);
-        echo $value?$value:'&nbsp;';
+        echo $value ? $value : '&nbsp;';
         echo $OUTPUT->box_end();
-        ?>
-        </td>
-        <?php
     }
 
     function check_value($value, $item) {

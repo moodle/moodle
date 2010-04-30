@@ -214,6 +214,8 @@ if($do_show == 'edit') {
 
     if(is_array($feedbackitems)){
         $itemnr = 0;
+        
+        $align = right_to_left() ? 'right' : 'left';
 
         $helpbutton = $OUTPUT->help_icon('preview', 'feedback');
 
@@ -221,7 +223,7 @@ if($do_show == 'edit') {
         if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
             echo $OUTPUT->heading('<a href="edit.php?id='.$id.'">'.get_string('cancel_moving', 'feedback').'</a>');
         }
-        echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
+        // echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
         //check, if there exists required-elements
         $countreq = $DB->count_records('feedback_item', array('feedback'=>$feedback->id, 'required'=> 1));
@@ -230,189 +232,137 @@ if($do_show == 'edit') {
             echo '<span class="feedback_required_mark">(*)' . get_string('items_are_required', 'feedback') . '</span>';
         }
 
-        echo '<table>';
-        if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
-            $moveposition = 1;
-            $movehereurl = new moodle_url($url, array('movehere'=>$moveposition));
-            echo '<tr>'; //only shown if shouldmoving = 1
-                echo '<td>';
-                $buttonlink = $movehereurl->out();
-                echo '<a title="'.get_string('move_here','feedback').'" href="'.$buttonlink.'">
-                        <img class="movetarget" alt="'.get_string('move_here','feedback').'" src="'.$OUTPUT->pix_url('movehere') . '" />
-                      </a>';
-
-                    // echo '<form action="edit.php" method="post"><fieldset>';
-                    // echo '<input title="'.get_string('move_here','feedback').'" type="image" src="'.$OUTPUT->pix_url('movehere') . '" hspace="1" height="16" width="80" border="0" />';
-                    // echo '<input type="hidden" name="movehere" value="'.$moveposition.'" />';
-                    // feedback_edit_print_default_form_values($id, $do_show);
-                    // echo '</fieldset></form>';
-                echo '</td>';
-            echo '</tr>';
-        }
-        //print the inserted items
-        $itempos = 0;
-        foreach($feedbackitems as $feedbackitem){
-            $itempos++;
-            if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->movingitem == $feedbackitem->id){ //hiding the item to move
-                continue;
-            }
-            echo '<tr>';
-            //items without value only are labels
-            if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
-                $itemnr++;
-                echo '<td valign="top">' . $itemnr . '.&nbsp;</td>';
-            } else {
-                echo '<td>&nbsp;</td>';
-            }
-            if($feedbackitem->typ != 'pagebreak') {
-                feedback_print_item_preview($feedbackitem);
-            }else {
-                echo '<td class="feedback_pagebreak"><b>'.get_string('pagebreak', 'feedback').'</b></td><td><hr width="100%" size="8px" noshade="noshade" /></td>';
-            }
-            echo '<td>('.get_string('position', 'feedback').':'.$itempos .')</td>';
-            echo '<td>';
-            if($feedbackitem->position > 1){
-                $moveupurl = new moodle_url($url, array('moveupitem'=>$feedbackitem->id));
-                $buttonlink = $moveupurl->out();
-                echo '<a class="icon up" title="'.get_string('moveup_item','feedback').'" href="'.$buttonlink.'">
-                        <img alt="'.get_string('moveup_item','feedback').'" src="'.$OUTPUT->pix_url('t/up') . '" />
-                      </a>';
-                //print the button to move-up the item
-                // echo '<form action="edit.php" method="post"><fieldset>';
-                // ///////echo '<input title="'.get_string('moveup_item','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/up') . '" hspace="1" height="11" width="11" border="0" />';
-                // echo '<input class="feedback_moveup_button" title="'.get_string('moveup_item','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/up') . '" />';
-                // echo '<input type="hidden" name="moveupitem" value="'.$feedbackitem->id.'" />';
-                // feedback_edit_print_default_form_values($id, $do_show);
-                // echo '</fieldset></form>';
-            }else{
-                echo '&nbsp;';
-            }
-            echo '</td>';
-            echo '<td>';
-            if($feedbackitem->position < $lastposition - 1){
-                $movedownurl = new moodle_url($url, array('movedownitem'=>$feedbackitem->id));
-                $buttonlink = $movedownurl->out();
-                echo '<a class="icon down" title="'.get_string('movedown_item','feedback').'" href="'.$buttonlink.'">
-                        <img alt="'.get_string('movedown_item','feedback').'" src="'.$OUTPUT->pix_url('t/down') . '" />
-                      </a>';
-                //print the button to move-down the item
-                // echo '<form action="edit.php" method="post"><fieldset>';
-                // echo '<input title="'.get_string('movedown_item','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/down') . '" hspace="1" height="11" width="11" border="0" />';
-                // echo '<input class="feedback_movedown_button" title="'.get_string('movedown_item','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/down') . '" />';
-                // echo '<input type="hidden" name="movedownitem" value="'.$feedbackitem->id.'" />';
-                // feedback_edit_print_default_form_values($id, $do_show);
-                // echo '</fieldset></form>';
-            }else{
-                echo '&nbsp;';
-            }
-            echo '</td>';
-            echo '<td>';
-                $moveurl = new moodle_url($url, array('moveitem'=>$feedbackitem->id));
-                $buttonlink = $moveurl->out();
-                echo '<a class="editing_move" title="'.get_string('move_item','feedback').'" href="'.$buttonlink.'">
-                        <img alt="'.get_string('move_item','feedback').'" src="'.$OUTPUT->pix_url('t/move') . '" />
-                      </a>';
-                // echo '<form action="edit.php" method="post"><fieldset>';
-                // echo '<input title="'.get_string('move_item','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/move') . '" hspace="1" height="11" width="11" border="0" />';
-                // echo '<input class="feedback_move_button" title="'.get_string('move_item','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/move') . '" />';
-                // echo '<input type="hidden" name="moveitem" value="'.$feedbackitem->id.'" />';
-                // feedback_edit_print_default_form_values($id, $do_show);
-                // echo '</fieldset></form>';
-            echo '</td>';
-            echo '<td>';
-            //print the button to edit the item
-            if($feedbackitem->typ != 'pagebreak') {
-                $editurl = new moodle_url('/mod/feedback/edit_item.php');
-                $editurl->params(array('do_show'=>$do_show,
-                                         'cmid'=>$id,
-                                         'id'=>$feedbackitem->id,
-                                         'typ'=>$feedbackitem->typ));
-                
-                // in edit_item.php the param id is used for the itemid and the cmid is the id to get the module
-                $buttonlink = $editurl->out();
-                echo '<a class="editing_update" title="'.get_string('edit_item','feedback').'" href="'.$buttonlink.'">
-                        <img alt="'.get_string('edit_item','feedback').'" src="'.$OUTPUT->pix_url('t/edit') . '" />
-                      </a>';
-                // echo '<form action="edit_item.php" method="post"><fieldset>';
-                // echo '<input title="'.get_string('edit_item','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/edit') . '" hspace="1" height="11" width="11" border="0" />';
-                // echo '<input class="feedback_edit_button" title="'.get_string('edit_item','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/edit') . '" />';
-                // echo '<input type="hidden" name="itemid" value="'.$feedbackitem->id.'" />';
-                // echo '<input type="hidden" name="typ" value="'.$feedbackitem->typ.'" />';
-                // feedback_edit_print_default_form_values($id, $do_show);
-                // echo '</fieldset></form>';
-            }else {
-                echo '&nbsp;';
-            }
-            echo '</td>';
-            echo '<td>';
-
-            //print the toggle-button to switch required yes/no
-            if($feedbackitem->hasvalue == 1) {
-                // echo '<form action="edit.php" method="post"><fieldset>';
-                if($feedbackitem->required == 1) {
-                    // echo '<input title="'.get_string('switch_item_to_not_required','feedback').'" type="image" src="pics/required.gif" hspace="1" height="11" width="11" border="0" />';
-                    // echo '<input class="feedback_required_button" title="'.get_string('switch_item_to_not_required','feedback').'" type="image" src="pics/required.gif" />';
-                    $buttontitle = get_string('switch_item_to_not_required','feedback');
-                    $buttonimg = 'pics/required.gif';
-                } else {
-                    // echo '<input title="'.get_string('switch_item_to_required','feedback').'" type="image" src="pics/notrequired.gif" hspace="1" height="11" width="11" border="0" />';
-                    // echo '<input class="feedback_required_button" title="'.get_string('switch_item_to_required','feedback').'" type="image" src="pics/notrequired.gif" />';
-                    $buttontitle = get_string('switch_item_to_required','feedback');
-                    $buttonimg = 'pics/notrequired.gif';
-                }
-                $requiredurl = new moodle_url($url, array('switchitemrequired'=>$feedbackitem->id));
-                $buttonlink = $requiredurl->out();
-                echo '<a class="icon feedback_switchrequired" title="'.$buttontitle.'" href="'.$buttonlink.'">
-                        <img alt="'.$buttontitle.'" src="'.$buttonimg.'" />
-                      </a>';
-                // echo '<input type="hidden" name="switchitemrequired" value="'.$feedbackitem->id.'" />';
-                // feedback_edit_print_default_form_values($id, $do_show);
-                // echo '</fieldset></form>';
-            }else {
-                echo '&nbsp;';
-            }
-            echo '</td>';
-            echo '<td>';
-                $deleteitemurl = new moodle_url('/mod/feedback/delete_item.php');
-                $deleteitemurl->params(array('id'=>$id,
-                                             'do_show'=>$do_show,
-                                             'deleteitem'=>$feedbackitem->id));
-                                             
-                $buttonlink = $deleteitemurl->out();
-                echo '<a class="icon delete" title="'.get_string('delete_item','feedback').'" href="'.$buttonlink.'">
-                        <img alt="'.get_string('delete_item','feedback').'" src="'.$OUTPUT->pix_url('t/delete') . '" />
-                      </a>';
-            //print the button to drop the item
-            // echo '<form action="delete_item.php" method="post"><fieldset>';
-            // echo '<input class="feedback_delete_button" title="'.get_string('delete_item','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/delete') . '" />';
-            // echo '<input type="hidden" name="deleteitem" value="'.$feedbackitem->id.'" />';
-            // feedback_edit_print_default_form_values($id, $do_show);
-            // echo '</fieldset></form>';
-            echo '</td>';
-            echo '</tr>';
+        //use list instead a table
+        echo '<div class="feedback_items_edit">';
             if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
-                $moveposition++;
-                $movehereurl->param('movehere', $moveposition);
-                echo '<tr>'; //only shown if shouldmoving = 1
-                    echo '<td>';
-                        $buttonlink = $movehereurl->out();
-                        echo '<a title="'.get_string('move_here','feedback').'" href="'.$buttonlink.'">
-                                <img class="movetarget" alt="'.get_string('move_here','feedback').'" src="'.$OUTPUT->pix_url('movehere') . '" />
-                              </a>';
-                        // echo '<form action="edit.php" method="post"><fieldset>';
-                        // echo '<input class="feedback_movehere_button" title="'.get_string('move_here','feedback').'" type="image" src="'.$OUTPUT->pix_url('movehere') . '" />';
-                        // echo '<input type="hidden" name="movehere" value="'.$moveposition.'" />';
-                        // feedback_edit_print_default_form_values($id, $do_show);
-                        // echo '</fieldset></form>';
-                    echo '</td>';
-                echo '</tr>';
-            }else {
-                echo '<tr><td>&nbsp;</td></tr>';
+                $moveposition = 1;
+                $movehereurl = new moodle_url($url, array('movehere'=>$moveposition));
+                echo '<div class="feedback_item_box_'.$align.' clipboard">'; //only shown if shouldmoving = 1
+                    $buttonlink = $movehereurl->out();
+                    echo '<a title="'.get_string('move_here','feedback').'" href="'.$buttonlink.'">
+                            <img class="movetarget" alt="'.get_string('move_here','feedback').'" src="'.$OUTPUT->pix_url('movehere') . '" />
+                          </a>';
+                echo '</div>';
             }
+            //print the inserted items
+            $itempos = 0;
+            foreach($feedbackitems as $feedbackitem){
+                $itempos++;
+                if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->movingitem == $feedbackitem->id){ //hiding the item to move
+                    continue;
+                }
+                echo '<div class="feedback_item_box_'.$align.'">';
+                    //items without value only are labels
+                    if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
+                        $itemnr++;
+                        echo '<div class="feedback_item_number_'.$align.'">' . $itemnr . '</div>';
+                    }
+                    echo '<div class="box generalbox boxalign_'.$align.'">';
+                        echo '<div class="feedback_item_commands_'.$align.'">';
+                            echo '<span class="feedback_item_commands">('.get_string('position', 'feedback').':'.$itempos .')</span>';
+                            //print the moveup-button
+                            if($feedbackitem->position > 1){
+                                echo '<span class="feedback_item_command_moveup">';
+                                $moveupurl = new moodle_url($url, array('moveupitem'=>$feedbackitem->id));
+                                $buttonlink = $moveupurl->out();
+                                echo '<a class="icon up" title="'.get_string('moveup_item','feedback').'" href="'.$buttonlink.'">
+                                        <img alt="'.get_string('moveup_item','feedback').'" src="'.$OUTPUT->pix_url('t/up') . '" />
+                                      </a>';
+                                echo '</span>';
+                            }
+                            //print the movedown-button
+                            if($feedbackitem->position < $lastposition - 1){
+                                echo '<span class="feedback_item_command_movedown">';
+                                $movedownurl = new moodle_url($url, array('movedownitem'=>$feedbackitem->id));
+                                $buttonlink = $movedownurl->out();
+                                echo '<a class="icon down" title="'.get_string('movedown_item','feedback').'" href="'.$buttonlink.'">
+                                        <img alt="'.get_string('movedown_item','feedback').'" src="'.$OUTPUT->pix_url('t/down') . '" />
+                                      </a>';
+                                echo '</span>';
+                            }
+                            //print the move-button
+                            echo '<span class="feedback_item_command_move">';
+                            $moveurl = new moodle_url($url, array('moveitem'=>$feedbackitem->id));
+                            $buttonlink = $moveurl->out();
+                            echo '<a class="editing_move" title="'.get_string('move_item','feedback').'" href="'.$buttonlink.'">
+                                    <img alt="'.get_string('move_item','feedback').'" src="'.$OUTPUT->pix_url('t/move') . '" />
+                                  </a>';
+                            echo '</span>';
+                            //print the button to edit the item
+                            if($feedbackitem->typ != 'pagebreak') {
+                                echo '<span class="feedback_item_command_edit">';
+                                $editurl = new moodle_url('/mod/feedback/edit_item.php');
+                                $editurl->params(array('do_show'=>$do_show,
+                                                         'cmid'=>$id,
+                                                         'id'=>$feedbackitem->id,
+                                                         'typ'=>$feedbackitem->typ));
+                                
+                                // in edit_item.php the param id is used for the itemid and the cmid is the id to get the module
+                                $buttonlink = $editurl->out();
+                                echo '<a class="editing_update" title="'.get_string('edit_item','feedback').'" href="'.$buttonlink.'">
+                                        <img alt="'.get_string('edit_item','feedback').'" src="'.$OUTPUT->pix_url('t/edit') . '" />
+                                      </a>';
+                                echo '</span>';
+                            }
 
-        }
-        echo '</table>';
-        echo $OUTPUT->box_end();
+                            //print the toggle-button to switch required yes/no
+                            if($feedbackitem->hasvalue == 1) {
+                                echo '<span class="feedback_item_command_toggle">';
+                                // echo '<form action="edit.php" method="post"><fieldset>';
+                                if($feedbackitem->required == 1) {
+                                    // echo '<input title="'.get_string('switch_item_to_not_required','feedback').'" type="image" src="pics/required.gif" hspace="1" height="11" width="11" border="0" />';
+                                    // echo '<input class="feedback_required_button" title="'.get_string('switch_item_to_not_required','feedback').'" type="image" src="pics/required.gif" />';
+                                    $buttontitle = get_string('switch_item_to_not_required','feedback');
+                                    $buttonimg = 'pics/required.gif';
+                                } else {
+                                    // echo '<input title="'.get_string('switch_item_to_required','feedback').'" type="image" src="pics/notrequired.gif" hspace="1" height="11" width="11" border="0" />';
+                                    // echo '<input class="feedback_required_button" title="'.get_string('switch_item_to_required','feedback').'" type="image" src="pics/notrequired.gif" />';
+                                    $buttontitle = get_string('switch_item_to_required','feedback');
+                                    $buttonimg = 'pics/notrequired.gif';
+                                }
+                                $requiredurl = new moodle_url($url, array('switchitemrequired'=>$feedbackitem->id));
+                                $buttonlink = $requiredurl->out();
+                                echo '<a class="icon feedback_switchrequired" title="'.$buttontitle.'" href="'.$buttonlink.'">
+                                        <img alt="'.$buttontitle.'" src="'.$buttonimg.'" />
+                                      </a>';
+                                echo '</span>';
+                            }
+                            
+                            //print the delete-button
+                            echo '<span class="feedback_item_command_toggle">';
+                            $deleteitemurl = new moodle_url('/mod/feedback/delete_item.php');
+                            $deleteitemurl->params(array('id'=>$id,
+                                                         'do_show'=>$do_show,
+                                                         'deleteitem'=>$feedbackitem->id));
+                                                         
+                            $buttonlink = $deleteitemurl->out();
+                            echo '<a class="icon delete" title="'.get_string('delete_item','feedback').'" href="'.$buttonlink.'">
+                                    <img alt="'.get_string('delete_item','feedback').'" src="'.$OUTPUT->pix_url('t/delete') . '" />
+                                  </a>';
+                            echo '</span>';
+                        echo '</div>';
+                    if($feedbackitem->typ != 'pagebreak') {
+                        // echo '<div class="feedback_item_'.$align.'">';
+                        feedback_print_item_preview($feedbackitem);
+                    }else {
+                        echo '<div class="feedback_pagebreak">'.get_string('pagebreak', 'feedback').'<hr class="feedback_pagebreak" /></div>';
+                    }
+                    echo '</div>';
+                echo '</div>';
+                if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
+                    $moveposition++;
+                    $movehereurl->param('movehere', $moveposition);
+                    echo '<div class="clipboard">'; //only shown if shouldmoving = 1
+                            $buttonlink = $movehereurl->out();
+                            echo '<a title="'.get_string('move_here','feedback').'" href="'.$buttonlink.'">
+                                    <img class="movetarget" alt="'.get_string('move_here','feedback').'" src="'.$OUTPUT->pix_url('movehere') . '" />
+                                  </a>';
+                    echo '</div>';
+                }
+                echo '<div class="clearer">&nbsp;</div>';
+            }
+        echo '</div>';
+        // echo $OUTPUT->box_end();
     }else{
         echo $OUTPUT->box(get_string('no_items_available_yet','feedback'),'generalbox boxaligncenter');
     }

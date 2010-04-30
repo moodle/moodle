@@ -23,8 +23,8 @@ class feedback_info_form extends feedback_item_form {
 
         $options=array();
         $options[1]  = get_string('responsetime', 'feedback');
-        $options[2]  = get_string('coursename', 'feedback');
-        $options[3]  = get_string('coursecategory', 'feedback');
+        $options[2]  = get_string('course');
+        $options[3]  = get_string('coursecategory');
         $this->infotype = &$mform->addElement('select', 'presentation', get_string('infotype', 'feedback'), $options);
 
         ////////////////////////////////////////////////////////////////////////

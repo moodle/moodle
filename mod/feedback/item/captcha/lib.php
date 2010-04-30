@@ -124,24 +124,23 @@ class feedback_item_captcha extends feedback_item_base {
         }
 
         $requiredmark = ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
-        ?>
-        <td valign="top" align="<?php echo $align;?>">
-        <?php
-            echo '('.$item->label.') ';
-            echo format_text($item->name . $requiredmark, true, false, false);
+        
+        //print the question and label
+        echo '<div class="feedback_item_label_'.$align.'">';
+        echo '('.$item->label.') ';
+        echo format_text($item->name.$requiredmark, true, false, false);
+        echo '</div>';
+        
+        //print the presentation
+        echo '<div class="feedback_item_presentation_'.$align.'">';
             $imglink = new moodle_url('/mod/feedback/item/captcha/print_captcha.php', array('id'=>$cmid));
-        ?>
-            <img alt="<?php echo $this->type;?>" src="<?php echo $imglink->out();?>" />
-        </td>
-        <td valign="top" align="<?php echo $align;?>">
-        <?php
-        ?>
-            <input type="text" name="<?php echo $item->typ . '_' . $item->id;?>"
-                                    size="<?php echo $presentation;?>"
-                                    maxlength="<?php echo $presentation;?>"
-                                    value="" />
-        </td>
-        <?php
+            echo '<div class="feedback_item_captcha_img_'.$align.'">';
+                echo '<img alt="'.$this->type.'" src="'.$imglink->out().'" />';
+            echo '</div>';
+            echo '<div class="feedback_item_captcha_text_'.$align.'">';
+                echo '<input type="text" name="'.$item->typ.'_'.$item->id.'" size="'.$presentation.'" maxlength="'.$presentation.'" value="" />';
+            echo '</div>';
+        echo '</div>';
     }
     
     /**     
@@ -185,26 +184,27 @@ class feedback_item_captcha extends feedback_item_base {
         }
 
         if(($highlightrequire AND $item->required AND !$checked) OR $falsevalue) {
-            $highlight = 'bgcolor="#FFAAAA" class="missingrequire"';
+            $highlight = ' missingrequire';
         }else {
             $highlight = '';
         }
         $requiredmark = ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
-        ?>
-        <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
-        <?php
-            echo format_text($item->name . $requiredmark, true, false, false);
+        
+        //print the question and label
+        echo '<div class="feedback_item_label_'.$align.$highlight.'">';
+            echo format_text($item->name.$requiredmark, true, false, false);
+        echo '</div>';
+        
+        //print the presentation
+        echo '<div class="feedback_item_presentation_'.$align.'">';
+            echo '<div class="feedback_item_captcha_img_'.$align.'">';
             $imglink = new moodle_url('/mod/feedback/item/captcha/print_captcha.php', array('id'=>$cmid));
-        ?>
-            <img alt="<?php echo $this->type;?>" src="<?php echo $imglink->out();?>" />
-        </td>
-        <td valign="top" align="<?php echo $align;?>">
-            <input type="text" name="<?php echo $item->typ . '_' . $item->id;?>"
-                                    size="<?php echo $presentation;?>"
-                                    maxlength="<?php echo $presentation;?>"
-                                    value="" />
-        </td>
-        <?php
+            echo '<img alt="'.$this->type.'" src="'.$imglink->out().'" />';
+            echo '</div>';
+            echo '<div class="feedback_item_captcha_text_'.$align.'">';
+            echo '<input type="text" name="'.$item->typ.'_'.$item->id.'" size="'.$presentation.'" maxlength="'.$presentation.'" value="" />';
+            echo '</div>';
+        echo '</div>';
     }
 
     /**     
@@ -233,23 +233,23 @@ class feedback_item_captcha extends feedback_item_base {
         }
 
         $requiredmark = ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
-        ?>
-        <td valign="top" align="<?php echo $align;?>">
-        <?php
+        
+        //print the question and label
+        echo '<div class="feedback_item_label_'.$align.'">';
             echo '('.$item->label.') ';
             echo format_text($item->name . $requiredmark, true, false, false);
+        echo '</div>';
+        
+        //print the presentation
+        echo '<div class="feedback_item_presentation_'.$align.'">';
+            echo '<div class="feedback_item_captcha_img_'.$align.'">';
             $imglink = new moodle_url('/mod/feedback/item/captcha/print_captcha.php', array('id'=>$cmid));
-        ?>
-            <img alt="<?php echo $this->type;?>" src="<?php echo $imglink->out();?>" />
-        </td>
-        <td valign="top" align="<?php echo $align;?>">
-        <?php
-        echo $OUTPUT->box_start('generalbox boxalign'.$align);
-        echo $value ? $value : '&nbsp;';
-        echo $OUTPUT->box_end();
-        ?>
-        </td>
-        <?php
+            echo '<img alt="'.$this->type.'" src="'.$imglink->out().'" />';
+            echo '</div>';
+            echo $OUTPUT->box_start('generalbox boxalign'.$align);
+            echo $value ? $value : '&nbsp;';
+            echo $OUTPUT->box_end();
+        echo '</div>';
     }
 
 

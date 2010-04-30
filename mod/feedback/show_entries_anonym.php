@@ -87,32 +87,34 @@ echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 $PAGE->requires->js('/mod/feedback/feedback.js');
 ?>
 <div class="mdl-align">
-<form name="frm" action="<?php echo me();?>" method="post">
-    <table>
-        <tr>
-            <td>
-                <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
-                <select name="completedid" size="<?php echo (sizeof($feedbackcompleteds)>10)?10:5;?>">
-<?php
-                if(is_array($feedbackcompleteds)) {
-                    $num = 1;
-                    foreach($feedbackcompleteds as $compl) {
-                        $selected = (isset($formdata->completedid) AND $formdata->completedid == $compl->id)?'selected="selected"':'';
-                        echo '<option value="'.$compl->id.'" '. $selected .'>'.get_string('response_nr', 'feedback').': '. $compl->random_response. '</option>';//arb
-                        $num++;
+<form action="<?php echo me();?>" method="post">
+    <fieldset>
+        <table>
+            <tr>
+                <td>
+                    <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
+                    <select name="completedid" size="<?php echo (sizeof($feedbackcompleteds)>10)?10:5;?>">
+    <?php
+                    if(is_array($feedbackcompleteds)) {
+                        $num = 1;
+                        foreach($feedbackcompleteds as $compl) {
+                            $selected = (isset($formdata->completedid) AND $formdata->completedid == $compl->id)?'selected="selected"':'';
+                            echo '<option value="'.$compl->id.'" '. $selected .'>'.get_string('response_nr', 'feedback').': '. $compl->random_response. '</option>';//arb
+                            $num++;
+                        }
                     }
-                }
-?>
-                </select>
-                <input type="hidden" name="showanonym" value="<?php echo FEEDBACK_ANONYMOUS_YES;?>" />
-                <input type="hidden" name="id" value="<?php echo $id;?>" />
-            </td>
-            <td valign="top">
-                <button type="submit"><?php print_string('show_entry', 'feedback');?></button><br />
-                <button type="button" onclick="feedbackGo2delete(this.form);"><?php print_string('delete_entry', 'feedback');?></button>
-            </td>
-        </tr>
-    </table>
+    ?>
+                    </select>
+                    <input type="hidden" name="showanonym" value="<?php echo FEEDBACK_ANONYMOUS_YES;?>" />
+                    <input type="hidden" name="id" value="<?php echo $id;?>" />
+                </td>
+                <td valign="top">
+                    <button type="submit"><?php print_string('show_entry', 'feedback');?></button><br />
+                    <button type="button" onclick="feedbackGo2delete(this.form);"><?php print_string('delete_entry', 'feedback');?></button>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
 </form>
 </div>
 <?php
@@ -126,39 +128,42 @@ if(isset($formdata->showanonym) && $formdata->showanonym == FEEDBACK_ANONYMOUS_Y
     $feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id), 'position');
     $feedbackcompleted = $DB->get_record('feedback_completed', array('id'=>$formdata->completedid));
     if(is_array($feedbackitems)){
+        $align = right_to_left() ? 'right' : 'left';
+        
         if($feedbackcompleted) {
-            echo '<p align="center">'.get_string('chosen_feedback_response', 'feedback').'<br />('.get_string('anonymous', 'feedback').')</p>';//arb
+            echo '<div class="feedback_info">';
+            echo get_string('chosen_feedback_response', 'feedback');
+            echo '</div>';
+            echo '<div class="feedback_info">';
+            echo '('.get_string('anonymous', 'feedback').')';
+            echo '</div>';
         } else {
-            echo '<p align="center">'.get_string('not_completed_yet','feedback').'</p>';
+            echo '<div class="feedback_info">';
+            echo get_string('not_completed_yet','feedback');
+            echo '</div>';
         }
-        echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
-        echo '<form>';
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo '<table width="100%">';
+            
+        echo '<div class="feedback_items_show">';
+        // echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
         $itemnr = 0;
         foreach($feedbackitems as $feedbackitem){
             //get the values
             $value = $DB->get_record('feedback_value', array('completed'=>$feedbackcompleted->id, 'item'=>$feedbackitem->id));
-            echo '<tr>';
+            echo '<div class="feedback_item_box_'.$align.'">';
             if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
                 $itemnr++;
-                echo '<td valign="top">' . $itemnr . '.&nbsp;</td>';
-            } else {
-                echo '<td>&nbsp;</td>';
+                echo '<div class="feedback_item_number_'.$align.'">' . $itemnr . '</div>';
             }
             if($feedbackitem->typ != 'pagebreak') {
+                echo '<div class="box generalbox boxalign_'.$align.'">';
                 $itemvalue = isset($value->value) ? $value->value : false;
                 feedback_print_item_show_value($feedbackitem, $itemvalue);
-            }else {
-                echo '<td colspan="2"><hr /></td>';
+                echo '</div>';
             }
-            echo '</tr>';
+            echo '</div>';
         }
-        echo '<tr><td colspan="2" align="center">';
-        echo '</td></tr>';
-        echo '</table>';
-        echo '</form>';
-        echo $OUTPUT->box_end();
+        // echo $OUTPUT->box_end();
+        echo '</div>';
     }
 }
 /// Finish the page

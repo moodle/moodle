@@ -717,7 +717,7 @@ function feedback_get_complete_users($cm, $group = false) {
             print_error('badcontext');
     }
 
-    $params = array($cm->instance);
+    $params = array(FEEDBACK_ANONYMOUS_NO, $cm->instance);
 
     $fromgroup = '';
     $wheregroup = '';
@@ -727,7 +727,7 @@ function feedback_get_complete_users($cm, $group = false) {
         $params[] = $group;
     }
     $sql = 'SELECT DISTINCT u.* FROM {user} u, {feedback_completed} c'.$fromgroup.'
-              WHERE u.id = c.userid AND c.feedback = ?
+              WHERE anonymous_response = ? AND u.id = c.userid AND c.feedback = ?
               '.$wheregroup.'
               ORDER BY u.lastname';
     return $DB->get_records_sql($sql, $params);

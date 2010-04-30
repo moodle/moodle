@@ -116,14 +116,8 @@ class feedback_item_label extends feedback_item_base {
         $item->presentationformat = FORMAT_HTML;
         $item->presentationtrust = 1;
         
-        ?>
-        <td colspan="2">
-            <?php 
-                $output = file_rewrite_pluginfile_urls($item->presentation, 'pluginfile.php', $context->id, $filearea, $item->id);
-                echo format_text($output, FORMAT_HTML);
-            ?>
-        </td>
-        <?php
+        $output = file_rewrite_pluginfile_urls($item->presentation, 'pluginfile.php', $context->id, $filearea, $item->id);
+        echo format_text($output, FORMAT_HTML);
     }
 
     /**     
