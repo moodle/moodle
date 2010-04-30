@@ -2706,7 +2706,8 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     /// $width and height are legacy fields and no longer used as pixels like they used to be.
     /// However, you can set them to zero to override the mincols and minrows values below.
 
-    debugging('print_textarea() has been deprecated. Please change your code to use $OUTPUT->textarea().');
+    // Disabling because there is not yet a viable $OUTPUT option for cases when mforms can't be used
+    // debugging('print_textarea() has been deprecated. You should be using mforms and the editor element.');
 
     global $CFG;
 
