@@ -909,7 +909,10 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
     $current_sub = '';
     $count = 0;
     $count_sub = 0;
-
+    $scormseperator = '_';
+    if ($sversion == 'scorm_13') { //scorm 1.3 elements use a . instead of an _
+    	$scormseperator = '.';
+    }
     // filter out the ones we want
     $element_list = array();
     foreach($userdata as $element => $value){
@@ -932,7 +935,7 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
         }
         if (count($matches) > 0 && $current != $matches[1]) {
             if ($count_sub > 0) {
-                echo '    '.$element_name.'_'.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
+                echo '    '.$element_name.$scormseperator.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
             }
             $current = $matches[1];
             $count++;
@@ -961,12 +964,7 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
         // check the sub element type
         if (count($matches) > 0 && $current_subelement != $matches[1]) {
             if ($count_sub > 0) {
-                if ($sversion == 'scorm_13') {
-                    echo '    '.$element_name.'.'.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
-                }
-                else {
-                    echo '    '.$element_name.'_'.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
-                }
+                    echo '    '.$element_name.$scormseperator.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
             }
             $current_subelement = $matches[1];
             $current_sub = '';
@@ -988,7 +986,7 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
         echo '    '.$element.' = \''.$value."';\n";
     }
     if ($count_sub > 0) {
-        echo '    '.$element_name.'_'.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
+        echo '    '.$element_name.$scormseperator.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
     }
     if ($count > 0) {
         echo '    '.$element_name.'._count = '.$count.";\n";
