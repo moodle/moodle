@@ -34,7 +34,7 @@ class quiz_overview_report extends quiz_default_report {
 
         /// find out current groups mode
         $currentgroup = groups_get_activity_group($cm, true);
-        if (!$students = get_users_by_capability($this->context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'','','','','','',false)){
+        if (!$students = get_users_by_capability($this->context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'id,1','','','','','',false)){
             $students = array();
         } else {
             $students = array_keys($students);
@@ -46,7 +46,7 @@ class quiz_overview_report extends quiz_default_report {
             $groupstudents = array();
         } else {
             // all users who can attempt quizzes and who are in the currently selected group
-            if (!$groupstudents = get_users_by_capability($this->context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'','','','',$currentgroup,'',false)){
+            if (!$groupstudents = get_users_by_capability($this->context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'id,1','','','',$currentgroup,'',false)){
                 $groupstudents = array();
             } else {
                 $groupstudents = array_keys($groupstudents);
