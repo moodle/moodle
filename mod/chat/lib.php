@@ -120,7 +120,7 @@ function chat_add_instance($chat) {
         $event->userid      = 0;
         $event->modulename  = 'chat';
         $event->instance    = $returnid;
-        $event->eventtype   = $chat->schedule;
+        $event->eventtype   = 'chattime';
         $event->timestart   = $chat->chattime;
         $event->timeduration = 0;
 
@@ -499,7 +499,7 @@ function chat_refresh_events($courseid = 0) {
             $event->userid      = 0;
             $event->modulename  = 'chat';
             $event->instance    = $chat->id;
-            $event->eventtype   = $chat->schedule;
+            $event->eventtype   = 'chattime';
             $event->timeduration = 0;
             $event->visible     = $DB->get_field('course_modules', 'visible', array('module'=>$moduleid, 'instance'=>$chat->id));
 

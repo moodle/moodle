@@ -5968,6 +5968,10 @@ class core_string_manager implements string_manager {
      * @return boot true if exists
      */
     public function string_exists($identifier, $component) {
+       $identifier = clean_param($identifier, PARAM_STRINGID);
+        if (empty($identifier)) {
+            return false;
+        }
         $lang = current_language();
         $string = $this->load_component_strings($component, $lang);
         return isset($string[$identifier]);
@@ -6293,6 +6297,10 @@ class install_string_manager implements string_manager {
      * @return boot true if exists
      */
     public function string_exists($identifier, $component) {
+        $identifier = clean_param($identifier, PARAM_STRINGID);
+        if (empty($identifier)) {
+            return false;
+        }
         // simple old style hack ;)
         $str = get_string($identifier, $component);
         return (strpos($str, '[[') === false);

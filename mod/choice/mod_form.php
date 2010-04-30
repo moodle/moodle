@@ -33,7 +33,7 @@ class mod_choice_mod_form extends moodleform_mod {
         $menuoptions[1] = get_string('enable');
         $mform->addElement('header', 'timerestricthdr', get_string('limit', 'choice'));
         $mform->addElement('select', 'limitanswers', get_string('limitanswers', 'choice'), $menuoptions);
-        $mform->setHelpButton('limitanswers', array('limit', get_string('limit', 'choice'), 'choice'));
+        $mform->addHelpButton('limitanswers', 'choice');
 
         if ($this->_instance){
             $repeatno = $DB->count_records('choice_options', array('choiceid'=>$this->_instance));

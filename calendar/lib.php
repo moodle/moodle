@@ -501,7 +501,12 @@ function calendar_add_event_metadata($event) {
         }
 
         $modulename = get_string('modulename', $event->modulename);
-        $eventtype = get_string($event->eventtype, $event->modulename);
+        if (get_string_manager()->string_exists($event->eventtype, $event->modulename)) {
+            // will be used as alt text if the event icon
+            $eventtype = get_string($event->eventtype, $event->modulename);
+        } else {
+            $eventtype = '';
+        }
         $icon = $OUTPUT->pix_url('icon', $event->modulename) . '';
 
         $event->icon = '<img height="16" width="16" src="'.$icon.'" alt="'.$eventtype.'" title="'.$modulename.'" style="vertical-align: middle;" />';
