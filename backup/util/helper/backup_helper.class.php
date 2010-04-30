@@ -59,7 +59,7 @@ abstract class backup_helper {
          return rmdir($CFG->dataroot . '/temp/backup/' . $backupid);
      }
 
-    /**
+     /**
      * Given one fullpath to directory, delete its contents recursively
      * Copied originally from somewhere in the net.
      * TODO: Modernise this
@@ -137,7 +137,8 @@ abstract class backup_helper {
             if ($status && $moddate < $deletefrom) {
                 //If directory, recurse
                 if (is_dir($file_path)) {
-                    $status = self::delete_backup_dir($file_path);
+                    // $file is really the backupid
+                    $status = self::delete_backup_dir($file);
                 //If file
                 } else {
                     unlink($file_path);
