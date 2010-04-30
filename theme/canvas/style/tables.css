@@ -1,0 +1,6 @@
+.plugincompattable th,
+.plugincompattable td,
+.environmenttable th,
+.environmenttable td { border:1px solid #ddd;border-collapse:collapse; }
+.plugincompattable th,
+.environmenttable th { background:#f3f3f3;border-bottom-width:2px; }

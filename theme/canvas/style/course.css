@@ -1,0 +1,11 @@
+.coursebox { border-color:#ddd;border-width:0 0 1px;border-style:solid; }
+.coursebox .name { font-size:1.1em; }
+.coursebox .teachers { margin:0 0 0 0.75em; }
+
+.categorybox { border:none; }
+.categorybox .categorylist td { padding:2px; }
+
+.categorypicker { margin:15px 0 25px; }
+
+#page-course-category .rolelink { text-align:right; }
+#page-course-category .generalbox { margin:25px auto 30px;width:75%;padding:10px; }
