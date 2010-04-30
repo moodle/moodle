@@ -377,12 +377,17 @@ class repository_type {
     }
 
     /**
-     * 1. Switch the visibility OFF if it's ON, and ON if it's OFF.
+     * 1. Change visibility to the value chosen
+     *
      * 2. Update the type
      * @return boolean
      */
-    public function switch_and_update_visibility() {
-        $this->_visible = !$this->_visible;
+    public function update_visibility($visible = null) {
+        if (is_bool($visible)) {
+            $this->_visible = $visible;
+        } else {
+            $this->_visible = !$this->_visible;
+        }
         return $this->update_visible();
     }
 
@@ -1022,7 +1027,6 @@ abstract class repository {
         $pluginstr = get_string('plugin', 'repository');
         $settingsstr = get_string('settings');
         $deletestr = get_string('delete');
-        $updown = get_string('updown', 'repository');
         //retrieve list of instances. In administration context we want to display all
         //instances of a type, even if this type is not visible. In course/user context we
         //want to display only visible instances, but for every type types. The repository::get_instances()
@@ -1037,7 +1041,7 @@ abstract class repository {
         $alreadyplugins = array();
 
         $table = new html_table();
-        $table->head = array($namestr, $pluginstr, $deletestr, $settingsstr);
+        $table->head = array($namestr, $pluginstr, $settingsstr, $deletestr);
         $table->align = array('left', 'left', 'center','center');
         $table->data = array();
 
@@ -1065,7 +1069,7 @@ abstract class repository {
             }
 
             $type = repository::get_type_by_id($i->options['typeid']);
-            $table->data[] = array($i->name, $type->get_readablename(), $delete, $settings);
+            $table->data[] = array($i->name, $type->get_readablename(), $settings, $delete);
 
             //display a grey row if the type is defined as not visible
             if (isset($type) && !$type->get_visible()) {
@@ -1689,6 +1693,7 @@ final class repository_instance_form extends moodleform {
 final class repository_type_form extends moodleform {
     protected $instance;
     protected $plugin;
+    protected $action;
 
     /**
      * Definition of the moodleform
@@ -1702,15 +1707,18 @@ final class repository_type_form extends moodleform {
                 && is_a($this->_customdata['instance'], 'repository_type'))
             ? $this->_customdata['instance'] : null;
 
+        $this->action = $this->_customdata['action'];
         $mform =& $this->_form;
         $strrequired = get_string('required');
 
-        $mform->addElement('hidden', 'edit',  ($this->instance) ? $this->instance->get_typename() : 0);
-        $mform->setType('edit', PARAM_INT);
-        $mform->addElement('hidden', 'new',   $this->plugin);
-        $mform->setType('new', PARAM_FORMAT);
-        $mform->addElement('hidden', 'plugin', $this->plugin);
-        $mform->setType('plugin', PARAM_SAFEDIR);
+        $mform->addElement('hidden', 'repos', ($this->instance) ? $this->instance->get_typename() : 0);
+        $mform->setType('repos', PARAM_INT);
+        $mform->addElement('hidden', 'repos', $this->plugin);
+        $mform->setType('repos', PARAM_FORMAT);
+        $mform->addElement('hidden', 'action', $this->action);
+        $mform->setType('action', PARAM_TEXT);
+        $mform->addElement('hidden', 'repos', $this->plugin);
+        $mform->setType('repos', PARAM_SAFEDIR);
 
         // let the plugin add its specific fields
         if (!$this->instance) {

@@ -233,7 +233,7 @@ if ($hassiteconfig) {
             $ADMIN->add('repositorysettings',
                 new admin_externalpage('repositorysettings'.$repositorytype->get_typename(),
                         $repositorytype->get_readablename(),
-                        $url . '?edit=' . $repositorytype->get_typename()),
+                        $url . '?action=edit&repos=' . $repositorytype->get_typename()),
                         'moodle/site:config');
         }
     }

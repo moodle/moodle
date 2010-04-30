@@ -28,7 +28,7 @@ admin_externalpage_setup($pagename);
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
 $sesskeyurl = "$CFG->wwwroot/$CFG->admin/repositoryinstance.php?sesskey=" . sesskey();
-$baseurl    = "$CFG->wwwroot/$CFG->admin/repository.php?session=". sesskey() .'&amp;edit=';
+$baseurl    = "$CFG->wwwroot/$CFG->admin/repository.php?session=". sesskey() .'&action=edit&repos=';
 if ($new) {
     $baseurl .= $new;
 }
@@ -53,7 +53,7 @@ if (!empty($edit) || !empty($new)) {
     }
 
     // display the edit form for this instance
-    $mform = new repository_instance_form('', array('plugin' => $plugin, 'typeid' => $typeid,'instance' => $instance, 'contextid' => $context->id));
+    $mform = new repository_instance_form('', array('plugin' => $plugin, 'typeid' => $typeid, 'instance' => $instance, 'contextid' => $context->id));
     // end setup, begin output
 
     if ($mform->is_cancelled()){
@@ -98,7 +98,6 @@ if (!empty($edit) || !empty($new)) {
     $instance->hide();
     $return = true;
 } else if (!empty($delete)) {
-    echo $OUTPUT->header();
     $instance = repository::get_instance($delete);
     //if you try to delete an instance set as readonly, display an error message
     if ($instance->readonly) {
@@ -110,7 +109,6 @@ if (!empty($edit) || !empty($new)) {
         }
         if ($instance->delete()) {
             $deletedstr = get_string('instancedeleted', 'repository');
-            echo $OUTPUT->heading($deletedstr);
             redirect($baseurl, $deletedstr, 3);
         } else {
             print_error('instancenotdeleted', 'repository', $baseurl);
@@ -118,6 +116,7 @@ if (!empty($edit) || !empty($new)) {
         exit;
     }
 
+    echo $OUTPUT->header();
     echo $OUTPUT->confirm(get_string('confirmdelete', 'repository', $instance->name), "$sesskeyurl&type=$type'&delete=$delete'&sure=yes", "$CFG->wwwroot/$CFG->admin/repositoryinstance.php?session=". sesskey());
     $return = false;
 }

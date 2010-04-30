@@ -4,24 +4,32 @@ require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-$edit    = optional_param('edit', 0, PARAM_FORMAT);
-$new     = optional_param('new', '', PARAM_FORMAT);
-$hide    = optional_param('hide', '', PARAM_FORMAT);
-$delete  = optional_param('delete', 0, PARAM_FORMAT);
-$sure    = optional_param('sure', '', PARAM_ALPHA);
-$move    = optional_param('move', '', PARAM_ALPHANUM);
-$type    = optional_param('type', '', PARAM_ALPHANUM);
+$repository    = optional_param('repos', '', PARAM_FORMAT);
+$action        = optional_param('action', '', PARAM_ALPHA);
+$sure          = optional_param('sure', '', PARAM_ALPHA);
 
 $display = true; // fall through to normal display
 
 $pagename = 'repositorycontroller';
 
-if ($edit) {
-    $pagename = 'repositorysettings' . $edit;
-} else if ($delete) {
+if ($action == 'edit') {
+    $pagename = 'repositorysettings' . $repository;
+} else if ($action == 'delete') {
     $pagename = 'repositorydelete';
-} else if ($new) {
+} else if (($action == 'newon') || ($action == 'newoff')) {
     $pagename = 'repositorynew';
+}
+
+// Need to remember this for form
+$formaction = $action;
+
+// Check what visibility to show the new repository
+if ($action == 'newon') {
+    $action = 'new';
+    $visible = true;
+} else if ($action == 'newoff') {
+    $action = 'new';
+    $visible = false;
 }
 
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
@@ -34,26 +42,26 @@ $configstr  = get_string('manage', 'repository');
 
 $return = true;
 
-if (!empty($edit) || !empty($new)) {
-    if (!empty($edit)) {
-        $repositorytype = repository::get_type_by_typename($edit);
+if (($action == 'edit') || ($action == 'new')) {
+    if ($action == 'edit') {
+        $repositorytype = repository::get_type_by_typename($repository);
         $classname = 'repository_' . $repositorytype->get_typename();
         $configs = call_user_func(array($classname,'get_type_option_names'));
         $plugin = $repositorytype->get_typename();
     } else {
         $repositorytype = null;
-        $plugin = $new;
-        $typeid = $new;
+        $plugin = $repository;
+        $typeid = $repository;
     }
     $PAGE->set_pagetype('admin-repository-' . $plugin);
     // display the edit form for this instance
-    $mform = new repository_type_form('', array('plugin' => $plugin, 'instance' => $repositorytype));
+    $mform = new repository_type_form('', array('plugin' => $plugin, 'instance' => $repositorytype, 'action' => $formaction));
     $fromform = $mform->get_data();
 
     //detect if we create a new type without config (in this case if don't want to display a setting page during creation)
     $nosettings = false;
-    if (!empty($new)) {
-        $adminconfignames = repository::static_function($new, 'get_type_option_names');
+    if ($action == 'new') {
+        $adminconfignames = repository::static_function($repository, 'get_type_option_names');
         $nosettings = empty($adminconfignames);
     }
     // end setup, begin output
@@ -61,10 +69,8 @@ if (!empty($edit) || !empty($new)) {
     if ($mform->is_cancelled()){
         redirect($baseurl);
     } else if (!empty($fromform) || $nosettings) {
-        if (!confirm_sesskey()) {
-            print_error('confirmsesskeybad', '', $baseurl);
-        }
-        if ($edit) {
+        require_sesskey();
+        if ($action == 'edit') {
             $settings = array();
             foreach($configs as $config) {
                 if (!empty($fromform->$config)) {
@@ -75,7 +81,7 @@ if (!empty($edit) || !empty($new)) {
                     $settings[$config] = '';
                 }
             }
-             $instanceoptionnames = repository::static_function($edit, 'get_instance_option_names');
+            $instanceoptionnames = repository::static_function($repository, 'get_instance_option_names');
             if (!empty($instanceoptionnames)) {
                 if (array_key_exists('enablecourseinstances', $fromform)) {
                     $settings['enablecourseinstances'] = $fromform->enablecourseinstances;
@@ -92,21 +98,14 @@ if (!empty($edit) || !empty($new)) {
             }
             $success = $repositorytype->update_options($settings);
         } else {
-            $type = new repository_type($plugin, (array)$fromform);
+            $type = new repository_type($plugin, (array)$fromform, $visible);
             $type->create();
             $success = true;
             $data = data_submitted();
         }
         if ($success) {
-            $has_instance = repository::static_function($plugin, 'get_instance_option_names');
-
-            if (!empty($has_instance)) {
-                // no common setting for this type, so go to setup instances
-                redirect($sesskeyurl.'&amp;edit='.$plugin);
-            } else {
-                // configs saved
-                redirect($baseurl);
-            }
+            // configs saved
+            redirect($baseurl);
         } else {
             print_error('instancenotsaved', 'repository', $baseurl);
         }
@@ -115,9 +114,9 @@ if (!empty($edit) || !empty($new)) {
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('configplugin', 'repository_'.$plugin));
         $displaysettingform = true;
-        if ($edit) {
-            $typeoptionnames = repository::static_function($edit, 'get_type_option_names');
-            $instanceoptionnames = repository::static_function($edit, 'get_instance_option_names');
+        if ($action == 'edit') {
+            $typeoptionnames = repository::static_function($repository, 'get_type_option_names');
+            $instanceoptionnames = repository::static_function($repository, 'get_instance_option_names');
             if (empty($typeoptionnames) && empty($instanceoptionnames)) {
                 $displaysettingform = false;
             }
@@ -129,29 +128,38 @@ if (!empty($edit) || !empty($new)) {
         }
         $return = false;
 
-        //display instances list and creation form
-        if ($edit){
-             $instanceoptionnames = repository::static_function($edit, 'get_instance_option_names');
-             if (!empty($instanceoptionnames)){
-                repository::display_instances_list(get_context_instance(CONTEXT_SYSTEM), $edit);
+        // Display instances list and creation form
+        if ($action == 'edit'){
+           $instanceoptionnames = repository::static_function($repository, 'get_instance_option_names');
+           if (!empty($instanceoptionnames)) {
+               repository::display_instances_list(get_context_instance(CONTEXT_SYSTEM), $repository);
            }
         }
-
     }
-} else if (!empty($hide)) {
+} else if ($action == 'show') {
     if (!confirm_sesskey()) {
         print_error('confirmsesskeybad', '', $baseurl);
     }
-    $repositorytype = repository::get_type_by_typename($hide);
+    $repositorytype = repository::get_type_by_typename($repository);
     if (empty($repositorytype)) {
-        print_error('invalidplugin', 'repository', '', $hide);
+        print_error('invalidplugin', 'repository', '', $repository);
     }
-    $repositorytype->switch_and_update_visibility();
+    $repositorytype->update_visibility(true);
     $return = true;
-} else if (!empty($delete)) {
-    $repositorytype = repository::get_type_by_typename($delete);
+} else if ($action == 'hide') {
+    if (!confirm_sesskey()) {
+        print_error('confirmsesskeybad', '', $baseurl);
+    }
+    $repositorytype = repository::get_type_by_typename($repository);
+    if (empty($repositorytype)) {
+        print_error('invalidplugin', 'repository', '', $repository);
+    }
+    $repositorytype->update_visibility(false);
+    $return = true;
+} else if ($action == 'delete') {
+    $repositorytype = repository::get_type_by_typename($repository);
     if ($sure) {
-        $PAGE->set_pagetype('admin-repository-' . $delete);
+        $PAGE->set_pagetype('admin-repository-' . $repository);
         if (!confirm_sesskey()) {
             print_error('confirmsesskeybad', '', $baseurl);
         }
@@ -163,13 +171,15 @@ if (!empty($edit) || !empty($new)) {
         exit;
     } else {
         echo $OUTPUT->header();
-        echo $OUTPUT->confirm(get_string('confirmremove', 'repository', $repositorytype->get_readablename()), $sesskeyurl . '&delete=' . $delete . '&sure=yes', $baseurl);
+        echo $OUTPUT->confirm(get_string('confirmremove', 'repository', $repositorytype->get_readablename()), $sesskeyurl . '&action=delete&repos=' . $repository . '&sure=yes', $baseurl);
         $return = false;
     }
-}
-else if (!empty($move) && !empty($type)) {
-    $repositorytype = repository::get_type_by_typename($type);
-    $repositorytype->move_order($move);
+} else if ($action == 'moveup') {
+    $repositorytype = repository::get_type_by_typename($repository);
+    $repositorytype->move_order('up');
+} else if ($action == 'movedown') {
+    $repositorytype = repository::get_type_by_typename($repository);
+    $repositorytype->move_order('down');
 }
 
 if (!empty($return)) {

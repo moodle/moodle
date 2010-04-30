@@ -1167,7 +1167,7 @@ class admin_settingpage implements part_of_admin_tree {
                 $data = $adminroot->errors[$fullname]->data;
             } else {
                 $data = $setting->get_setting();
-            // do not use defaults if settings not available - upgrdesettings handles the defaults!
+                // do not use defaults if settings not available - upgrade settings handles the defaults!
             }
             $return .= $setting->output_html($data);
         }
@@ -1478,7 +1478,7 @@ class admin_setting_heading extends admin_setting {
         global $OUTPUT;
         $return = '';
         if ($this->visiblename != '') {
-            $return .= $OUTPUT->heading('<a name="'.$this->name.'">'.highlightfast($query, $this->visiblename).'</a>', 3, 'main', true);
+            $return .= $OUTPUT->heading($this->visiblename, 3, 'main', true);
         }
         if ($this->description != '') {
             $return .= $OUTPUT->box(highlight($query, $this->description), 'generalbox formsettingheading');
@@ -6081,6 +6081,15 @@ class admin_setting_managerepository extends admin_setting {
     }
 
     /**
+     * Helper function that generates a moodle_url object
+     * relevant to the repository
+     */
+    
+    function repository_action_url($repository) {
+        return new moodle_url('/admin/repository.php', array('sesskey'=>sesskey(), 'repos'=>$repository));
+    }
+
+    /**
      * Builds XHTML to display the control
      *
      * @param string $data Unused
@@ -6089,117 +6098,118 @@ class admin_setting_managerepository extends admin_setting {
      */
     public function output_html($data, $query='') {
         global $CFG, $USER, $OUTPUT;
-        $output = $OUTPUT->box_start('generalbox');
-        $namestr = get_string('name');
+
+        $actionchoicesforexisting = array(
+            'show' => get_string('on', 'repository'),
+            'hide' => get_string('off', 'repository'),
+            'delete' => get_string('disabled', 'repository')
+        );
+
+        $actionchoicesfornew = array(
+            'newon' => get_string('on', 'repository'),
+            'newoff' => get_string('off', 'repository'),
+            'delete' => get_string('disabled', 'repository')
+        );
+
+        $return = '';
+        $return .= $OUTPUT->box_start('generalbox');
+
+        // Set strings that are used multiple times
         $settingsstr = get_string('settings');
-        $updownstr = get_string('updown', 'repository');
-        $hiddenstr = get_string('hiddenshow', 'repository');
-        $deletestr = get_string('delete');
-        $plugins = get_plugin_list('repository');
-        $instances = repository::get_types();
-        $instancesnumber = count($instances);
-        $alreadyplugins = array();
+        $disablestr = get_string('disable');
+        
+        // Table to list plug-ins
         $table = new html_table();
-        $table->head = array($namestr, $updownstr, $hiddenstr, $deletestr, $settingsstr);
-        $table->align = array('left', 'center', 'center','center','center');
+        $table->head = array(get_string('name'), get_string('isactive', 'repository'), get_string('order'), $settingsstr);
+        $table->align = array('left', 'center', 'center', 'center', 'center');
         $table->data = array();
-        $updowncount=1;
-        foreach ($instances as $i) {
-            $settings = '';
-            //display edit link only if you can config the type or if it has multiple instances (e.g. has instance config)
-            $typeoptionnames = repository::static_function($i->get_typename(), 'get_type_option_names');
-            $instanceoptionnames = repository::static_function($i->get_typename(), 'get_instance_option_names');
 
-            if ( !empty($typeoptionnames) || !empty($instanceoptionnames)) {
+        // Get list of used plug-ins
+        $instances = repository::get_types();
+        if (!empty($instances)) {
+            // Array to store plugins being used
+            $alreadyplugins = array();
+            $totalinstances = count($instances);
+            $updowncount = 1;
+            foreach ($instances as $i) {
+                $settings = '';
+                $typename = $i->get_typename();
+                // Display edit link only if you can config the type or if it has multiple instances (e.g. has instance config)
+                $typeoptionnames = repository::static_function($typename, 'get_type_option_names');
+                $instanceoptionnames = repository::static_function($typename, 'get_instance_option_names');
 
-            //calculate number of instances in order to display them for the Moodle administrator
-                if (!empty($instanceoptionnames)) {
-                    $params = array();
-                    $params['context'] = array(get_system_context());
-                    $params['onlyvisible'] = false;
-                    $params['type'] = $i->get_typename();
-                    $admininstancenumber = count(repository::static_function($i->get_typename(),
-                        'get_instances', $params));
-                    $admininstancenumbertext =   " <br/> ". $admininstancenumber .
-                        " " . get_string('instancesforadmin', 'repository');
-                    $params['context'] = array();
-                    $instancenumber =  count(repository::static_function($i->get_typename(), 'get_instances', $params)) - $admininstancenumber;
-                    $instancenumbertext =  "<br/>" . $instancenumber .
-                        " " . get_string('instancesforothers', 'repository');
+                if (!empty($typeoptionnames) || !empty($instanceoptionnames)) {
+                    // Calculate number of instances in order to display them for the Moodle administrator
+                    if (!empty($instanceoptionnames)) {
+                        $params = array();
+                        $params['context'] = array(get_system_context());
+                        $params['onlyvisible'] = false;
+                        $params['type'] = $typename;
+                        $admininstancenumber = count(repository::static_function($typename, 'get_instances', $params));
+                        $admininstancenumbertext =   " <br/> ". $admininstancenumber . " " . get_string('instancesforadmin', 'repository');
+                        $params['context'] = array();
+                        $instancenumber =  count(repository::static_function($typename, 'get_instances', $params)) - $admininstancenumber;
+                        $instancenumbertext =  "<br/>" . $instancenumber . " " . get_string('instancesforothers', 'repository');
+                    } else {
+                        $admininstancenumbertext = "";
+                        $instancenumbertext = "";
+                    }
+
+                    $settings .= '<a href="' . $this->baseurl . '&amp;action=edit&amp;repos=' . $typename . '">' . $settingsstr .'</a>' . $admininstancenumbertext . $instancenumbertext . "\n";
+                }
+                // Get the current visibility
+                if ($i->get_visible()) {
+                    $currentaction = 'show';
                 } else {
-                    $admininstancenumbertext = "";
-                    $instancenumbertext = "";
+                    $currentaction = 'hide';
+                }
+ 
+                $select = new single_select($this->repository_action_url($typename, 'repos'), 'action', $actionchoicesforexisting, $currentaction, null, 'applyto' . basename($typename));
+
+                // Display up/down link
+                $updown = '';
+                $spacer = $OUTPUT->spacer(array('height'=>15, 'width'=>15)); // should be done with CSS instead
+
+                if ($updowncount > 1) {
+                    $updown .= "<a href=\"$this->baseurl&amp;action=moveup&amp;repos=".$typename."\">";
+                    $updown .= "<img src=\"" . $OUTPUT->pix_url('t/up') . "\" alt=\"up\" /></a>&nbsp;";
+                }
+                else {
+                    $updown .= $spacer;
+                }
+                if ($updowncount < $totalinstances) {
+                    $updown .= "<a href=\"$this->baseurl&amp;action=movedown&amp;repos=".$typename."\">";
+                    $updown .= "<img src=\"" . $OUTPUT->pix_url('t/down') . "\" alt=\"down\" /></a>";
+                }
+                else {
+                    $updown .= $spacer;
                 }
 
-                $settings .= '<a href="' . $this->baseurl . '&amp;edit=' . $i->get_typename() . '">'
-                    . $settingsstr .'</a>' . $admininstancenumbertext . $instancenumbertext . "\n";
-            }
-            $delete = '<a href="' . $this->baseurl . '&amp;delete=' .  $i->get_typename() . '">'
-                . $deletestr . '</a>' . "\n";
+                $updowncount++;
 
-            $hidetitle = $i->get_visible() ? get_string('clicktohide', 'repository') : get_string('clicktoshow', 'repository');
-            $hiddenshow = ' <a href="' . $this->baseurl . '&amp;hide=' . $i->get_typename() . '">'
-                .'<img src="' . $OUTPUT->pix_url('i/' . ($i->get_visible() ? 'hide' : 'show')) . '"'
-                .' alt="' . $hidetitle . '" '
-                .' title="' . $hidetitle . '" />'
-                .'</a>' . "\n";
+                $table->data[] = array($i->get_readablename(), $OUTPUT->render($select), $updown, $settings);
 
-            // display up/down link
-            $updown = '';
-            $spacer = $OUTPUT->spacer(array('height'=>15, 'width'=>15)); // should be done with CSS instead
-
-            if ($updowncount > 1) {
-                $updown .= "<a href=\"$this->baseurl&amp;move=up&amp;type=".$i->get_typename()."\">";
-                $updown .= "<img src=\"" . $OUTPUT->pix_url('t/up') . "\" alt=\"up\" /></a>&nbsp;";
-            }
-            else {
-                $updown .= $spacer;
-            }
-            if ($updowncount < count($instances)) {
-                $updown .= "<a href=\"$this->baseurl&amp;move=down&amp;type=".$i->get_typename()."\">";
-                $updown .= "<img src=\"" . $OUTPUT->pix_url('t/down') . "\" alt=\"down\" /></a>";
-            }
-            else {
-                $updown .= $spacer;
-            }
-
-            $updowncount++;
-
-            $table->data[] = array($i->get_readablename(), $updown, $hiddenshow, $delete, $settings);
-
-            //display a grey row if the type is defined as not visible
-            if (!$i->get_visible()) {
-                $table->rowclasses[] = 'dimmed_text';
-            } else {
-                $table->rowclasses[] = '';
-            }
-
-            if (!in_array($i->get_typename(), $alreadyplugins)) {
-                $alreadyplugins[] = $i->get_typename();
+                if (!in_array($typename, $alreadyplugins)) {
+                    $alreadyplugins[] = $typename;
+                }
             }
         }
-        $output .= html_writer::table($table);
-        $instancehtml = '<div><h3>';
-        $instancehtml .= get_string('addplugin', 'repository');
-        $instancehtml .= '</h3><ul>';
-        $addable = 0;
-        foreach ($plugins as $p=>$dir) {
-            if (!in_array($p, $alreadyplugins)) {
-                $instancehtml .= '<li><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/repository.php?sesskey='
-                    .sesskey().'&amp;new='.$p.'">'.get_string('add', 'repository')
-                    .' "'.get_string('repositoryname', 'repository_'.$p).'" '
-                    .'</a></li>';
-                $addable++;
+
+        // Get all the plugins that exist on disk
+        $plugins = get_plugin_list('repository');
+        if (!empty($plugins)) {
+            foreach ($plugins as $plugin => $dir) {
+                // Check that it has not already been listed
+                if (!in_array($plugin, $alreadyplugins)) {
+                    $select = new single_select($this->repository_action_url($plugin, 'repos'), 'action', $actionchoicesfornew, 'delete', null, 'applyto' . basename($plugin));
+                    $table->data[] = array(get_string('repositoryname', 'repository_'.$plugin), $OUTPUT->render($select), '', '');
+                }
             }
         }
-        $instancehtml .= '</ul>';
-        $instancehtml .= '</div>';
-        if ($addable) {
-            $output .= $instancehtml;
-        }
 
-        $output .= $OUTPUT->box_end();
-        return highlight($query, $output);
+        $return .= html_writer::table($table);
+        $return .= $OUTPUT->box_end();
+        return highlight($query, $return);
     }
 }
 
